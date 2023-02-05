@@ -4,6 +4,7 @@ import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import hpp from 'hpp';
+import http from 'http';
 import morgan from 'morgan';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
@@ -16,29 +17,44 @@ class App {
   public app: express.Application;
   public env: string;
   public port: string | number;
+  public server: http.Server | undefined;
+  public listenPromise: Promise<express.Application>;
 
-  constructor(routes: Routes[]) {
+  constructor(routes: Routes[], port: number | undefined) {
     this.app = express();
     this.env = NODE_ENV || 'development';
-    this.port = PORT || 3000;
+    this.port = port ?? PORT ?? 3000;
 
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
     this.initializeSwagger();
     this.initializeErrorHandling();
+    this.listen();
   }
 
-  public listen() {
-    this.app.listen(this.port, () => {
-      logger.info(`=================================`);
-      logger.info(`======= ENV: ${this.env} =======`);
-      logger.info(`🚀 App listening on the port ${this.port}`);
-      logger.info(`=================================`);
+  private listen() {
+    this.listenPromise = new Promise(resolve => {
+      this.server = this.app.listen(this.port, () => {
+        logger.info(`=================================`);
+        logger.info(`======= ENV: ${this.env} =======`);
+        logger.info(`🚀 App listening on the port ${this.port}`);
+        logger.info(`=================================`);
+        resolve(this.app);
+      });
     });
   }
 
-  public getServer() {
-    return this.app;
+  public async getApp() {
+    return new Promise<express.Application>(resolve => resolve(this.listenPromise));
+  }
+
+  public close() {
+    return new Promise(resolve => {
+      this.server.close(() => {
+        logger.info('======= App closed =======');
+        resolve(undefined);
+      });
+    });
   }
 
   private initializeMiddlewares() {
