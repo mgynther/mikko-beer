@@ -14,8 +14,8 @@ class AuthService {
   public async signup(userData: CreateUserDto): Promise<User> {
     if (isEmpty(userData)) throw new HttpException(400, 'userData is empty');
 
-    const findUser: User = this.users.find(user => user.email === userData.email);
-    if (findUser) throw new HttpException(409, `This email ${userData.email} already exists`);
+    const findUser: User = this.users.find(user => user.username === userData.username);
+    if (findUser) throw new HttpException(409, `This username ${userData.username} already exists`);
 
     const hashedPassword = await hash(userData.password, 10);
     const createUserData: User = { id: this.users.length + 1, ...userData, password: hashedPassword };
@@ -26,8 +26,8 @@ class AuthService {
   public async login(userData: CreateUserDto): Promise<{ cookie: string; findUser: User }> {
     if (isEmpty(userData)) throw new HttpException(400, 'userData is empty');
 
-    const findUser: User = this.users.find(user => user.email === userData.email);
-    if (!findUser) throw new HttpException(409, `This email ${userData.email} was not found`);
+    const findUser: User = this.users.find(user => user.username === userData.username);
+    if (!findUser) throw new HttpException(409, `This username ${userData.username} was not found`);
 
     const isPasswordMatching: boolean = await compare(userData.password, findUser.password);
     if (!isPasswordMatching) throw new HttpException(409, "You're password not matching");
@@ -41,7 +41,7 @@ class AuthService {
   public async logout(userData: User): Promise<User> {
     if (isEmpty(userData)) throw new HttpException(400, 'userData is empty');
 
-    const findUser: User = this.users.find(user => user.email === userData.email && user.password === userData.password);
+    const findUser: User = this.users.find(user => user.username === userData.username && user.password === userData.password);
     if (!findUser) throw new HttpException(409, "User doesn't exist");
 
     return findUser;

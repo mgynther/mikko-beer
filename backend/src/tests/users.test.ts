@@ -34,7 +34,7 @@ describe('Testing Users', () => {
   describe('[POST] /users', () => {
     it('response statusCode 201 / created', async () => {
       const userData: CreateUserDto = {
-        email: 'example@email.com',
+        username: 'example5',
         password: 'password',
       };
       const usersRoute = new UserRoute();
@@ -48,7 +48,7 @@ describe('Testing Users', () => {
     it('response statusCode 200 / updated', async () => {
       const userId = 1;
       const userData: CreateUserDto = {
-        email: 'example@email.com',
+        username: 'example2',
         password: 'password',
       };
       const usersRoute = new UserRoute();

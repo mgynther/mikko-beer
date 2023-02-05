@@ -11,7 +11,7 @@ describe('Testing Auth', () => {
   describe('[POST] /signup', () => {
     it('response should have the Create userData', () => {
       const userData: CreateUserDto = {
-        email: 'example@email.com',
+        username: 'example6',
         password: 'password',
       };
       const authRoute = new AuthRoute();
