@@ -20,7 +20,7 @@ export async function authenticateUser(
     )
   }
 
-  const authorization = ctx.headers['authorization']
+  const authorization = parseAuthorization(ctx)
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
     throw new ControllerError(
@@ -30,22 +30,7 @@ export async function authenticateUser(
     )
   }
 
-  const authToken = authorization.substring('Bearer '.length)
-  let authTokenPayload: AuthTokenPayload | undefined
-
-  try {
-    authTokenPayload = authTokenService.verifyAuthToken({ authToken })
-  } catch (error) {
-    if (error instanceof AuthTokenExpiredError) {
-      throw new ControllerError(
-        401,
-        'ExpiredAuthToken',
-        'the auth token has expired'
-      )
-    }
-
-    throw new ControllerError(401, 'InvalidAuthToken', 'invalid auth token')
-  }
+  const authTokenPayload = validAuthTokenPayload(authorization)
 
   if (userId !== authTokenPayload.userId) {
     throw new ControllerError(403, 'UserMismatch', "wrong user's auth token")
@@ -66,4 +51,46 @@ export async function authenticateUser(
   }
 
   return next()
+}
+
+// TODO this is just a placeholder for proper authentication and authorization.
+export async function authenticateGeneric(
+  ctx: Context,
+  next: Next
+): Promise<void> {
+  const authorization = parseAuthorization(ctx)
+  validAuthTokenPayload(authorization)
+  return next()
+}
+
+function parseAuthorization(ctx: Context) {
+  const authorization = ctx.headers['authorization']
+  if (!authorization || !authorization.startsWith('Bearer ')) {
+    throw new ControllerError(
+      400,
+      'InvalidAuthorizationHeader',
+      'missing or invalid Authorization header'
+    )
+  }
+  return authorization
+}
+
+function validAuthTokenPayload(authorization: string) {
+  const authToken = authorization.substring('Bearer '.length)
+  let authTokenPayload: AuthTokenPayload | undefined
+
+  try {
+    authTokenPayload = authTokenService.verifyAuthToken({ authToken })
+  } catch (error) {
+    if (error instanceof AuthTokenExpiredError) {
+      throw new ControllerError(
+        401,
+        'ExpiredAuthToken',
+        'the auth token has expired'
+      )
+    }
+
+    throw new ControllerError(401, 'InvalidAuthToken', 'invalid auth token')
+  }
+  return authTokenPayload
 }

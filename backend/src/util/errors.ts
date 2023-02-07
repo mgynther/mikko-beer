@@ -6,6 +6,8 @@ export type AuthenticationErrors =
   | 'UserMismatch'
   | 'UserOrRefreshTokenNotFound'
 
+export type BreweryApiErrors = 'InvalidBrewery' | 'BreweryNotFound'
+
 export type UserApiErrors = 'InvalidUser' | 'UserNotFound'
 
 export type SignInMethodApiErros =
@@ -20,6 +22,7 @@ export type SignInMethodApiErros =
 export type ErrorCode =
   | 'UnknownError'
   | AuthenticationErrors
+  | BreweryApiErrors
   | UserApiErrors
   | SignInMethodApiErros
 
