@@ -10,7 +10,7 @@ import {
 } from 'kysely'
 import { Pool } from 'pg'
 
-async function migrateToLatest (): unknown {
+async function migrateToLatest (): Promise<void> {
   const db = new Kysely<Database>({
     dialect: new PostgresDialect({
       pool: new Pool(config.database)
@@ -45,4 +45,4 @@ async function migrateToLatest (): unknown {
   await db.destroy()
 }
 
-migrateToLatest()
+await migrateToLatest()
