@@ -1,10 +1,10 @@
 import * as jwt from 'jsonwebtoken'
 import * as refreshTokenRepository from './refresh-token.repository'
-import { Kysely } from 'kysely'
+import { type Kysely } from 'kysely'
 import { config } from '../config'
-import { Database } from '../database'
-import { AuthToken } from './auth-token'
-import { RefreshToken } from './refresh-token'
+import { type Database } from '../database'
+import { type AuthToken } from './auth-token'
+import { type RefreshToken } from './refresh-token'
 
 export class AuthTokenError extends Error {}
 export class InvalidAuthTokenError extends AuthTokenError {}
@@ -22,7 +22,7 @@ interface RefreshTokenPayload {
   isRefreshToken: true
 }
 
-export async function createRefreshToken(
+export async function createRefreshToken (
   db: Kysely<Database>,
   userId: string
 ): Promise<RefreshToken> {
@@ -34,36 +34,35 @@ export async function createRefreshToken(
   return signRefreshToken({
     userId,
     refreshTokenId: refresh_token_id,
-    isRefreshToken: true,
+    isRefreshToken: true
   })
 }
 
-function signRefreshToken(tokenPayload: RefreshTokenPayload): RefreshToken {
+function signRefreshToken (tokenPayload: RefreshTokenPayload): RefreshToken {
   // Refresh tokens never expire.
   return { refreshToken: jwt.sign(tokenPayload, config.authTokenSecret) }
 }
 
-export async function createAuthToken(
+export async function createAuthToken (
   db: Kysely<Database>,
   refreshToken: RefreshToken
 ): Promise<AuthToken> {
   const { userId, refreshTokenId } = verifyRefreshToken(refreshToken)
 
   await refreshTokenRepository.updateRefreshToken(db, refreshTokenId, {
-    last_refreshed_at: new Date(),
+    last_refreshed_at: new Date()
   })
 
   return signAuthToken({ userId, refreshTokenId })
 }
 
-function verifyRefreshToken(token: RefreshToken): RefreshTokenPayload {
+function verifyRefreshToken (token: RefreshToken): RefreshTokenPayload {
   const payload = verifyToken(token.refreshToken)
 
   if (
-    !payload ||
-    typeof payload !== 'object' ||
-    typeof payload.userId !== 'string' ||
-    typeof payload.refreshTokenId !== 'string' ||
+    typeof payload === 'string' ||
+    typeof payload?.userId !== 'string' ||
+    typeof payload?.refreshTokenId !== 'string' ||
     payload.isRefreshToken !== true
   ) {
     throw new InvalidAuthTokenError()
@@ -72,37 +71,36 @@ function verifyRefreshToken(token: RefreshToken): RefreshTokenPayload {
   return {
     userId: payload.userId,
     refreshTokenId: payload.refreshTokenId,
-    isRefreshToken: true,
+    isRefreshToken: true
   }
 }
 
-function signAuthToken(tokenPayload: AuthTokenPayload): AuthToken {
+function signAuthToken (tokenPayload: AuthTokenPayload): AuthToken {
   return {
     authToken: jwt.sign(tokenPayload, config.authTokenSecret, {
-      expiresIn: config.authTokenExpiryDuration,
-    }),
+      expiresIn: config.authTokenExpiryDuration
+    })
   }
 }
 
-export function verifyAuthToken(token: AuthToken): AuthTokenPayload {
+export function verifyAuthToken (token: AuthToken): AuthTokenPayload {
   const payload = verifyToken(token.authToken)
 
   if (
-    !payload ||
-    typeof payload !== 'object' ||
-    typeof payload.userId !== 'string' ||
-    typeof payload.refreshTokenId !== 'string'
+    typeof payload === 'string' ||
+    typeof payload?.userId !== 'string' ||
+    typeof payload?.refreshTokenId !== 'string'
   ) {
     throw new InvalidAuthTokenError()
   }
 
   return {
     userId: payload.userId,
-    refreshTokenId: payload.refreshTokenId,
+    refreshTokenId: payload.refreshTokenId
   }
 }
 
-function verifyToken(token: string): string | jwt.JwtPayload {
+function verifyToken (token: string): string | jwt.JwtPayload {
   try {
     return jwt.verify(token, config.authTokenSecret)
   } catch (error) {
@@ -114,7 +112,7 @@ function verifyToken(token: string): string | jwt.JwtPayload {
   }
 }
 
-export async function deleteRefreshToken(
+export async function deleteRefreshToken (
   db: Kysely<Database>,
   userId: string,
   refreshToken: RefreshToken

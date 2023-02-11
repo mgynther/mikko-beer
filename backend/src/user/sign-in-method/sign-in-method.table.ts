@@ -1,4 +1,4 @@
-import { Insertable, Selectable, Updateable } from 'kysely'
+import { type Insertable, type Selectable, type Updateable } from 'kysely'
 
 export interface SignInMethodTable {
   user_id: string

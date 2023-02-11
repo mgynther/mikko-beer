@@ -1,4 +1,4 @@
-import { Generated, Insertable, Selectable, Updateable } from 'kysely'
+import { type Generated, type Insertable, type Selectable, type Updateable } from 'kysely'
 
 export interface BreweryTable {
   brewery_id: Generated<string>

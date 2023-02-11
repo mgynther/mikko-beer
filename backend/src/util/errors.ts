@@ -33,7 +33,7 @@ export class ControllerError extends Error {
   readonly code: ErrorCode
   readonly data?: any
 
-  constructor(
+  constructor (
     status: ErrorStatus,
     code: ErrorCode,
     message: string,
@@ -45,9 +45,9 @@ export class ControllerError extends Error {
     this.data = data
   }
 
-  toJSON() {
+  toJSON (): Record<string, unknown> {
     return {
-      error: { code: this.code, message: this.message },
+      error: { code: this.code, message: this.message }
     }
   }
 }

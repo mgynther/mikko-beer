@@ -9,12 +9,16 @@ export interface CreateBreweryRequest {
   name?: string
 }
 
-export const validateCreateBreweryRequest =
+const doValidateCreateBreweryRequest =
   ajv.compile<CreateBreweryRequest>({
     type: 'object',
     properties: {
       name: {
-        type: 'string',
-      },
-    },
+        type: 'string'
+      }
+    }
   })
+
+export function validateCreateBreweryRequest (body: unknown): boolean {
+  return doValidateCreateBreweryRequest(body) !== null
+}

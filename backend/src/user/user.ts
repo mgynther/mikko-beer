@@ -12,15 +12,19 @@ export interface CreateAnonymousUserRequest {
   lastName?: string
 }
 
-export const validateCreateAnonymousUserRequest =
+const doValidateCreateAnonymousUserRequest =
   ajv.compile<CreateAnonymousUserRequest>({
     type: 'object',
     properties: {
       firstName: {
-        type: 'string',
+        type: 'string'
       },
       lastName: {
-        type: 'string',
-      },
-    },
+        type: 'string'
+      }
+    }
   })
+
+export function validateCreateAnonymousUserRequest (body: unknown): boolean {
+  return doValidateCreateAnonymousUserRequest(body) !== null
+}

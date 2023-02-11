@@ -3,11 +3,11 @@ import * as signInMethodRepository from './sign-in-method.repository'
 import * as userService from '../user.service'
 import * as authTokenService from '../../authentication/auth-token.service'
 
-import { Transaction } from 'kysely'
-import { Database } from '../../database'
+import { type Transaction } from 'kysely'
+import { type Database } from '../../database'
 import { UserNotFoundError } from '../../util/errors'
-import { SignedInUser } from '../signed-in-user'
-import { PasswordSignInMethod } from './sign-in-method'
+import { type SignedInUser } from '../signed-in-user'
+import { type PasswordSignInMethod } from './sign-in-method'
 
 export const MIN_PASSWORD_LENGTH = 8
 export const MAX_PASSWORD_LENGTH = 255
@@ -18,30 +18,30 @@ export class WrongPasswordError extends Error {}
 export class PasswordTooWeakError extends Error {}
 export class PasswordTooLongError extends Error {}
 
-export async function addPasswordSignInMethod(
+export async function addPasswordSignInMethod (
   trx: Transaction<Database>,
   userId: string,
   method: PasswordSignInMethod
 ): Promise<void> {
   const user = await userService.lockUserById(trx, userId)
 
-  if (!user) {
+  if (user == null) {
     throw new UserNotFoundError()
   }
 
-  if (user.email) {
+  if (user.email?.length !== undefined && user.email?.length > 0) {
     throw new UserAlreadyHasSignInMethodError()
   }
 
   await signInMethodRepository.insertPasswordSignInMethod(trx, {
     user_id: userId,
-    password_hash: await encryptPassword(method.password),
+    password_hash: await encryptPassword(method.password)
   })
 
   await userService.setUserEmail(trx, userId, method.email)
 }
 
-async function encryptPassword(password: string): Promise<string> {
+async function encryptPassword (password: string): Promise<string> {
   if (password.length < MIN_PASSWORD_LENGTH) {
     throw new PasswordTooWeakError()
   }
@@ -50,29 +50,29 @@ async function encryptPassword(password: string): Promise<string> {
     throw new PasswordTooLongError()
   }
 
-  return encryptSecret(password)
+  return await encryptSecret(password)
 }
 
-async function encryptSecret(secret: string): Promise<string> {
+async function encryptSecret (secret: string): Promise<string> {
   const salt = crypto.randomBytes(16).toString('hex')
   return `${salt}:${await scrypt(secret, salt)}`
 }
 
-async function verifySecret(secret: string, hash: string): Promise<boolean> {
+async function verifySecret (secret: string, hash: string): Promise<boolean> {
   const [salt, secretHash] = hash.split(':')
   return (await scrypt(secret, salt)) === secretHash
 }
 
-async function scrypt(secret: string, salt: string): Promise<string> {
-  return new Promise((resolve, reject) => {
+async function scrypt (secret: string, salt: string): Promise<string> {
+  return await new Promise((resolve, reject) => {
     crypto.scrypt(
       secret,
       salt,
       64,
       { N: 16384, r: 8, p: 1 },
       (err, secretHash) => {
-        if (err) {
-          return reject(err)
+        if (err != null) {
+          reject(err); return
         }
 
         resolve(secretHash.toString('hex'))
@@ -81,13 +81,13 @@ async function scrypt(secret: string, salt: string): Promise<string> {
   })
 }
 
-export async function singInUsingPassword(
+export async function singInUsingPassword (
   trx: Transaction<Database>,
   method: PasswordSignInMethod
 ): Promise<SignedInUser> {
   const user = await userService.lockUserByEmail(trx, method.email)
 
-  if (!user) {
+  if (user == null) {
     throw new UserNotFoundError()
   }
 
@@ -96,7 +96,7 @@ export async function singInUsingPassword(
     user.id
   )
 
-  if (!signInMethod) {
+  if (signInMethod == null) {
     throw new SignInMethodNotFoundError()
   }
 
@@ -110,13 +110,13 @@ export async function singInUsingPassword(
   return {
     user,
     authToken,
-    refreshToken,
+    refreshToken
   }
 }
 
-async function verifyPassword(
+async function verifyPassword (
   password: string,
   hash: string
 ): Promise<boolean> {
-  return verifySecret(password, hash)
+  return await verifySecret(password, hash)
 }

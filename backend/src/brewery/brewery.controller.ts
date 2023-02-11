@@ -1,11 +1,11 @@
 import * as breweryService from './brewery.service'
 import * as authenticationService from '../authentication/authentication.service'
 
-import { Router } from '../router'
-import { validateCreateBreweryRequest } from './brewery'
+import { type Router } from '../router'
+import { type CreateBreweryRequest, validateCreateBreweryRequest } from './brewery'
 import { ControllerError } from '../util/errors'
 
-export function breweryController(router: Router): void {
+export function breweryController (router: Router): void {
   router.post('/api/v1/brewery',
     authenticationService.authenticateGeneric,
     async (ctx) => {
@@ -15,13 +15,14 @@ export function breweryController(router: Router): void {
         throw new ControllerError(400, 'InvalidBrewery', 'invalid brewery')
       }
 
+      const createBreweryRequest: CreateBreweryRequest = body as CreateBreweryRequest
       const result = await ctx.db.transaction().execute(async (trx) => {
-        return breweryService.createBrewery(trx, body)
+        return await breweryService.createBrewery(trx, createBreweryRequest)
       })
 
       ctx.status = 201
       ctx.body = {
-        brewery: result,
+        brewery: result
       }
     }
   )
@@ -33,7 +34,7 @@ export function breweryController(router: Router): void {
       const { breweryId } = ctx.params
       const brewery = await breweryService.findBreweryById(ctx.db, breweryId)
 
-      if (!brewery) {
+      if (brewery == null) {
         throw new ControllerError(
           404,
           'BreweryNotFound',

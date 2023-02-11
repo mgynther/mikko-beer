@@ -1,20 +1,20 @@
 import * as path from 'path'
 import { promises as fs } from 'fs'
-import { Database } from './database'
+import { type Database } from './database'
 import { config } from './config'
 import {
   Kysely,
   Migrator,
   PostgresDialect,
-  FileMigrationProvider,
+  FileMigrationProvider
 } from 'kysely'
 import { Pool } from 'pg'
 
-async function migrateToLatest() {
+async function migrateToLatest (): unknown {
   const db = new Kysely<Database>({
     dialect: new PostgresDialect({
-      pool: new Pool(config.database),
-    }),
+      pool: new Pool(config.database)
+    })
   })
 
   const migrator = new Migrator({
@@ -22,8 +22,8 @@ async function migrateToLatest() {
     provider: new FileMigrationProvider({
       fs,
       path,
-      migrationFolder: path.join(__dirname, 'migrations'),
-    }),
+      migrationFolder: path.join(__dirname, 'migrations')
+    })
   })
 
   const { error, results } = await migrator.migrateToLatest()
@@ -36,7 +36,7 @@ async function migrateToLatest() {
     }
   })
 
-  if (error) {
+  if (error !== undefined) {
     console.error('failed to migrate')
     console.error(error)
     process.exit(1)

@@ -12,10 +12,10 @@ export const validatePasswordSignInMethod = ajv.compile<PasswordSignInMethod>({
   required: ['email', 'password'],
   properties: {
     email: {
-      type: 'string',
+      type: 'string'
     },
     password: {
-      type: 'string',
-    },
-  },
+      type: 'string'
+    }
+  }
 })

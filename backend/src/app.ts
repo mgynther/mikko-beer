@@ -2,12 +2,12 @@ import * as Koa from 'koa'
 import * as json from 'koa-json'
 import * as compress from 'koa-compress'
 import * as bodyParser from 'koa-bodyparser'
-import { Server } from 'http'
+import { type Server } from 'http'
 import { Kysely, PostgresDialect } from 'kysely'
 
-import { Config } from './config'
-import { Context, ContextExtension } from './context'
-import { Database } from './database'
+import { type Config } from './config'
+import { type Context, type ContextExtension } from './context'
+import { type Database } from './database'
 import { Router } from './router'
 import { breweryController } from './brewery/brewery.controller'
 import { userController } from './user/user.controller'
@@ -22,14 +22,14 @@ export class App {
   #db: Kysely<Database>
   #server?: Server
 
-  constructor(config: Config) {
+  constructor (config: Config) {
     this.#config = config
     this.#koa = new Koa()
     this.#router = new Router()
     this.#db = new Kysely<Database>({
       dialect: new PostgresDialect({
-        pool: async () => new Pool(this.#config.database),
-      }),
+        pool: async () => new Pool(this.#config.database)
+      })
     })
 
     this.#koa.use(compress())
@@ -46,20 +46,20 @@ export class App {
     this.#koa.use(this.#router.allowedMethods())
   }
 
-  get db(): Kysely<Database> {
+  get db (): Kysely<Database> {
     return this.#db
   }
 
-  async start(): Promise<void> {
-    return new Promise((resolve) => {
+  async start (): Promise<void> {
+    await new Promise<void>((resolve) => {
       this.#server = this.#koa.listen(this.#config.port, resolve)
     })
   }
 
-  async stop(): Promise<void> {
+  async stop (): Promise<void> {
     await new Promise<void>((resolve, reject) => {
       this.#server?.close((err) => {
-        if (err) {
+        if (err != null) {
           reject(err)
         } else {
           resolve()
@@ -89,17 +89,17 @@ export class App {
     ctx: Context,
     next: Koa.Next
   ): Promise<void> => {
-    ctx.db = this.#db!
+    ctx.db = this.#db
     await next()
   }
 }
 
-function respondError(ctx: Context, error: ControllerError): void {
+function respondError (ctx: Context, error: ControllerError): void {
   ctx.status = error.status
   ctx.body = error.toJSON()
 }
 
-function createUnknownError(error: unknown): ControllerError {
+function createUnknownError (error: unknown): ControllerError {
   return new ControllerError(
     500,
     'UnknownError',

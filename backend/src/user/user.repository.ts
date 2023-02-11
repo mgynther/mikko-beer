@@ -1,8 +1,8 @@
-import { Kysely, Transaction } from 'kysely'
-import { Database } from '../database'
-import { InsertableUserRow, UserRow } from './user.table'
+import { type Kysely, type Transaction } from 'kysely'
+import { type Database } from '../database'
+import { type InsertableUserRow, type UserRow } from './user.table'
 
-export async function insertUser(
+export async function insertUser (
   db: Kysely<Database>,
   user: InsertableUserRow
 ): Promise<UserRow> {
@@ -15,7 +15,7 @@ export async function insertUser(
   return insertedUser
 }
 
-export async function findUserById(
+export async function findUserById (
   db: Kysely<Database>,
   id: string
 ): Promise<UserRow | undefined> {
@@ -28,21 +28,21 @@ export async function findUserById(
   return user
 }
 
-export async function lockUserById(
+export async function lockUserById (
   trx: Transaction<Database>,
   id: string
 ): Promise<UserRow | undefined> {
-  return lockUser(trx, 'user_id', id)
+  return await lockUser(trx, 'user_id', id)
 }
 
-export async function lockUserByEmail(
+export async function lockUserByEmail (
   trx: Transaction<Database>,
   email: string
 ): Promise<UserRow | undefined> {
-  return lockUser(trx, 'email', email)
+  return await lockUser(trx, 'email', email)
 }
 
-async function lockUser(
+async function lockUser (
   trx: Transaction<Database>,
   column: 'user_id' | 'email',
   value: string
@@ -57,7 +57,7 @@ async function lockUser(
   return user
 }
 
-export async function setUserEmail(
+export async function setUserEmail (
   db: Kysely<Database>,
   id: string,
   email: string

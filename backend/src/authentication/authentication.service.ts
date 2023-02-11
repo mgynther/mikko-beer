@@ -1,18 +1,18 @@
 import * as refreshTokenRepository from './refresh-token.repository'
 import * as authTokenService from './auth-token.service'
 
-import { AuthTokenExpiredError, AuthTokenPayload } from './auth-token.service'
-import { Next } from 'koa'
-import { Context } from '../context'
+import { AuthTokenExpiredError, type AuthTokenPayload } from './auth-token.service'
+import { type Next } from 'koa'
+import { type Context } from '../context'
 import { ControllerError } from '../util/errors'
 
-export async function authenticateUser(
+export async function authenticateUser (
   ctx: Context,
   next: Next
 ): Promise<void> {
   const { userId } = ctx.params
 
-  if (!userId) {
+  if (userId === undefined) {
     throw new ControllerError(
       400,
       'NoUserIdParameter',
@@ -22,7 +22,7 @@ export async function authenticateUser(
 
   const authorization = parseAuthorization(ctx)
 
-  if (!authorization || !authorization.startsWith('Bearer ')) {
+  if (authorization === undefined || !authorization.startsWith('Bearer ')) {
     throw new ControllerError(
       400,
       'InvalidAuthorizationHeader',
@@ -42,7 +42,7 @@ export async function authenticateUser(
     authTokenPayload.refreshTokenId
   )
 
-  if (!refreshToken) {
+  if (refreshToken == null) {
     throw new ControllerError(
       404,
       'UserOrRefreshTokenNotFound',
@@ -50,22 +50,22 @@ export async function authenticateUser(
     )
   }
 
-  return next()
+  return await next()
 }
 
 // TODO this is just a placeholder for proper authentication and authorization.
-export async function authenticateGeneric(
+export async function authenticateGeneric (
   ctx: Context,
   next: Next
 ): Promise<void> {
   const authorization = parseAuthorization(ctx)
   validAuthTokenPayload(authorization)
-  return next()
+  return await next()
 }
 
-function parseAuthorization(ctx: Context) {
-  const authorization = ctx.headers['authorization']
-  if (!authorization || !authorization.startsWith('Bearer ')) {
+function parseAuthorization (ctx: Context): string {
+  const authorization = ctx.headers.authorization
+  if (authorization === undefined || !authorization.startsWith('Bearer ')) {
     throw new ControllerError(
       400,
       'InvalidAuthorizationHeader',
@@ -75,7 +75,7 @@ function parseAuthorization(ctx: Context) {
   return authorization
 }
 
-function validAuthTokenPayload(authorization: string) {
+function validAuthTokenPayload (authorization: string): AuthTokenPayload {
   const authToken = authorization.substring('Bearer '.length)
   let authTokenPayload: AuthTokenPayload | undefined
 

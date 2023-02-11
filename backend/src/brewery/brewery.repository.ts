@@ -1,8 +1,8 @@
-import { Kysely, Transaction } from 'kysely'
-import { Database } from '../database'
-import { InsertableBreweryRow, BreweryRow } from './brewery.table'
+import { type Kysely, type Transaction } from 'kysely'
+import { type Database } from '../database'
+import { type InsertableBreweryRow, type BreweryRow } from './brewery.table'
 
-export async function insertBrewery(
+export async function insertBrewery (
   db: Kysely<Database>,
   brewery: InsertableBreweryRow
 ): Promise<BreweryRow> {
@@ -15,7 +15,7 @@ export async function insertBrewery(
   return insertedBrewery
 }
 
-export async function findBreweryById(
+export async function findBreweryById (
   db: Kysely<Database>,
   id: string
 ): Promise<BreweryRow | undefined> {
@@ -28,14 +28,14 @@ export async function findBreweryById(
   return brewery
 }
 
-export async function lockBreweryById(
+export async function lockBreweryById (
   trx: Transaction<Database>,
   id: string
 ): Promise<BreweryRow | undefined> {
-  return lockBrewery(trx, 'brewery_id', id)
+  return await lockBrewery(trx, 'brewery_id', id)
 }
 
-async function lockBrewery(
+async function lockBrewery (
   trx: Transaction<Database>,
   column: 'brewery_id',
   value: string

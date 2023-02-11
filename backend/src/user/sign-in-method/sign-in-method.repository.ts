@@ -1,11 +1,11 @@
-import { Kysely } from 'kysely'
-import { Database } from '../../database'
+import { type Kysely } from 'kysely'
+import { type Database } from '../../database'
 import {
-  InsertablePasswordSignInMethodRow,
-  PasswordSignInMethodRow,
+  type InsertablePasswordSignInMethodRow,
+  type PasswordSignInMethodRow
 } from './password-sign-in-method.table'
 
-export async function findPasswordSignInMethod(
+export async function findPasswordSignInMethod (
   db: Kysely<Database>,
   userId: string
 ): Promise<PasswordSignInMethodRow | undefined> {
@@ -20,7 +20,7 @@ export async function findPasswordSignInMethod(
   return method
 }
 
-export async function insertPasswordSignInMethod(
+export async function insertPasswordSignInMethod (
   db: Kysely<Database>,
   method: InsertablePasswordSignInMethodRow
 ): Promise<PasswordSignInMethodRow> {

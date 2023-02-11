@@ -1,11 +1,11 @@
-import { Kysely } from 'kysely'
-import { Database } from '../database'
+import { type Kysely } from 'kysely'
+import { type Database } from '../database'
 import {
-  RefreshTokenRow,
-  UpdateableRefreshTokenRow,
+  type RefreshTokenRow,
+  type UpdateableRefreshTokenRow
 } from './refresh-token.table'
 
-export async function insertRefreshToken(
+export async function insertRefreshToken (
   db: Kysely<Database>,
   userId: string
 ): Promise<RefreshTokenRow> {
@@ -13,7 +13,7 @@ export async function insertRefreshToken(
     .insertInto('refresh_token')
     .values({
       user_id: userId,
-      last_refreshed_at: new Date(),
+      last_refreshed_at: new Date()
     })
     .returningAll()
     .execute()
@@ -21,7 +21,7 @@ export async function insertRefreshToken(
   return refreshToken
 }
 
-export async function findRefreshToken(
+export async function findRefreshToken (
   db: Kysely<Database>,
   userId: string,
   refreshTokenId: string
@@ -37,7 +37,7 @@ export async function findRefreshToken(
   return token
 }
 
-export async function updateRefreshToken(
+export async function updateRefreshToken (
   db: Kysely<Database>,
   refreshTokenId: string,
   patch: Pick<UpdateableRefreshTokenRow, 'last_refreshed_at'>

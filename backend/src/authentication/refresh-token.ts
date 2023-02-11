@@ -9,7 +9,7 @@ export const validateRefreshToken = ajv.compile<RefreshToken>({
   required: ['refreshToken'],
   properties: {
     refreshToken: {
-      type: 'string',
-    },
-  },
+      type: 'string'
+    }
+  }
 })

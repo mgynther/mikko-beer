@@ -8,14 +8,14 @@ import {
   PasswordTooWeakError,
   SignInMethodNotFoundError,
   UserAlreadyHasSignInMethodError,
-  WrongPasswordError,
+  WrongPasswordError
 } from './sign-in-method.service'
 import { validateRefreshToken } from '../../authentication/refresh-token'
-import { Router } from '../../router'
+import { type Router } from '../../router'
 import { ControllerError, UserNotFoundError } from '../../util/errors'
 import { validatePasswordSignInMethod } from './sign-in-method'
 
-export function signInMethodController(router: Router): void {
+export function signInMethodController (router: Router): void {
   router.post(
     '/api/v1/user/:userId/sign-in-methods',
     authenticationService.authenticateUser,
@@ -82,14 +82,14 @@ export function signInMethodController(router: Router): void {
 
     try {
       const signedInUser = await ctx.db.transaction().execute(async (trx) => {
-        return signInMethodService.singInUsingPassword(trx, body)
+        return await signInMethodService.singInUsingPassword(trx, body)
       })
 
       ctx.status = 200
       ctx.body = {
         user: signedInUser.user,
         authToken: signedInUser.authToken.authToken,
-        refreshToken: signedInUser.refreshToken.refreshToken,
+        refreshToken: signedInUser.refreshToken.refreshToken
       }
     } catch (error) {
       if (

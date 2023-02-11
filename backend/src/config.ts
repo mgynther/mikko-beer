@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv'
-import { ConnectionConfig } from 'pg'
+import { type ConnectionConfig } from 'pg'
 
 dotenv.config()
 
@@ -17,14 +17,15 @@ export const config: Config = Object.freeze({
   database: Object.freeze({
     database: getEnvVariable('DATABASE'),
     host: getEnvVariable('DATABASE_HOST'),
-    user: getEnvVariable('DATABASE_USER'),
-  }),
+    user: getEnvVariable('DATABASE_USER')
+  })
 })
 
-function getEnvVariable(name: string): string {
-  if (!process.env[name]) {
+function getEnvVariable (name: string): string {
+  if (process.env[name] === undefined) {
     throw new Error(`environment variable ${name} not found`)
   }
 
-  return process.env[name]!
+  const str: string = process.env[name] as string
+  return str
 }
