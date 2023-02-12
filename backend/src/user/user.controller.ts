@@ -10,11 +10,7 @@ export function userController (router: Router): void {
   router.post('/api/v1/user', async (ctx) => {
     const { body } = ctx.request
 
-    if (!validateCreateAnonymousUserRequest(body)) {
-      throw new ControllerError(400, 'InvalidUser', 'invalid user')
-    }
-
-    const request: CreateAnonymousUserRequest = body as CreateAnonymousUserRequest
+    const request = validateCreateRequest(body)
     const result = await ctx.db.transaction().execute(async (trx) => {
       return await userService.createAnonymousUser(trx, request)
     })
@@ -47,4 +43,13 @@ export function userController (router: Router): void {
   )
 
   signInMethodController(router)
+}
+
+function validateCreateRequest (body: unknown): CreateAnonymousUserRequest {
+  if (!validateCreateAnonymousUserRequest(body)) {
+    throw new ControllerError(400, 'InvalidUser', 'invalid user')
+  }
+
+  const request: CreateAnonymousUserRequest = body as CreateAnonymousUserRequest
+  return request
 }

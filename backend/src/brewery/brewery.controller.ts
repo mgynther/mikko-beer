@@ -11,11 +11,7 @@ export function breweryController (router: Router): void {
     async (ctx) => {
       const { body } = ctx.request
 
-      if (!validateCreateBreweryRequest(body)) {
-        throw new ControllerError(400, 'InvalidBrewery', 'invalid brewery')
-      }
-
-      const createBreweryRequest: CreateBreweryRequest = body as CreateBreweryRequest
+      const createBreweryRequest = validateCreateRequest(body)
       const result = await ctx.db.transaction().execute(async (trx) => {
         return await breweryService.createBrewery(trx, createBreweryRequest)
       })
@@ -45,4 +41,13 @@ export function breweryController (router: Router): void {
       ctx.body = { brewery }
     }
   )
+}
+
+function validateCreateRequest (body: unknown): CreateBreweryRequest {
+  if (!validateCreateBreweryRequest(body)) {
+    throw new ControllerError(400, 'InvalidBrewery', 'invalid brewery')
+  }
+
+  const result = body as CreateBreweryRequest
+  return result
 }
