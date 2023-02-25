@@ -20,5 +20,5 @@ const doValidateCreateBreweryRequest =
   })
 
 export function validateCreateBreweryRequest (body: unknown): boolean {
-  return doValidateCreateBreweryRequest(body) !== null
+  return doValidateCreateBreweryRequest(body) as boolean
 }
