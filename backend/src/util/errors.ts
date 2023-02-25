@@ -8,6 +8,8 @@ export type AuthenticationErrors =
 
 export type BreweryApiErrors = 'InvalidBrewery' | 'BreweryNotFound'
 
+export type StyleApiErrors = 'InvalidStyle' | 'StyleNotFound'
+
 export type UserApiErrors = 'InvalidUser' | 'UserNotFound'
 
 export type SignInMethodApiErros =
@@ -23,6 +25,7 @@ export type ErrorCode =
   | 'UnknownError'
   | AuthenticationErrors
   | BreweryApiErrors
+  | StyleApiErrors
   | UserApiErrors
   | SignInMethodApiErros
 
