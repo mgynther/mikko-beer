@@ -16,7 +16,9 @@ const doValidateCreateBreweryRequest =
       name: {
         type: 'string'
       }
-    }
+    },
+    required: ['name'],
+    additionalProperties: false
   })
 
 export function validateCreateBreweryRequest (body: unknown): boolean {

@@ -33,6 +33,17 @@ describe('brewery tests', () => {
     expect(getRes.data.brewery).to.eql(res.data.brewery)
   })
 
+  it('should fail to create a brewery without name', async () => {
+    const { user, authToken } = await ctx.createUser()
+
+    const res = await ctx.request.post(`/api/v1/brewery`,
+      {},
+      createAuthHeaders(authToken)
+    )
+
+    expect(res.status).to.equal(400)
+  })
+
   function createAuthHeaders(authToken: string) {
     return {
       headers: {
