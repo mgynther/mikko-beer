@@ -2,7 +2,7 @@ import * as breweryRepository from './brewery.repository'
 
 import { type Kysely, type Transaction } from 'kysely'
 import { type Database } from '../database'
-import { type CreateBreweryRequest, type Brewery } from './brewery'
+import { type CreateBreweryRequest, type UpdateBreweryRequest, type Brewery } from './brewery'
 import { type BreweryRow } from './brewery.table'
 
 export async function createBrewery (
@@ -10,6 +10,18 @@ export async function createBrewery (
   request: CreateBreweryRequest
 ): Promise<Brewery> {
   const brewery = await breweryRepository.insertBrewery(db, {
+    name: request.name
+  })
+
+  return breweryRowToBrewery(brewery)
+}
+
+export async function updateBrewery (
+  db: Kysely<Database>,
+  breweryId: string,
+  request: UpdateBreweryRequest
+): Promise<Brewery> {
+  const brewery = await breweryRepository.updateBrewery(db, breweryId, {
     name: request.name
   })
 

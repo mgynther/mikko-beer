@@ -1,6 +1,6 @@
 import { type Kysely, type Transaction } from 'kysely'
 import { type Database } from '../database'
-import { type InsertableBreweryRow, type BreweryRow } from './brewery.table'
+import { type BreweryRow, type InsertableBreweryRow, type UpdateableBreweryRow } from './brewery.table'
 
 export async function insertBrewery (
   db: Kysely<Database>,
@@ -13,6 +13,23 @@ export async function insertBrewery (
     .executeTakeFirstOrThrow()
 
   return insertedBrewery
+}
+
+export async function updateBrewery (
+  db: Kysely<Database>,
+  id: string,
+  brewery: UpdateableBreweryRow
+): Promise<BreweryRow> {
+  const updatedBrewery = await db
+    .updateTable('brewery')
+    .set({
+      name: brewery.name
+    })
+    .where('brewery_id', '=', id)
+    .returningAll()
+    .executeTakeFirstOrThrow()
+
+  return updatedBrewery
 }
 
 export async function findBreweryById (

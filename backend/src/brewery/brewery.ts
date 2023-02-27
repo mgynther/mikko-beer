@@ -9,12 +9,17 @@ export interface CreateBreweryRequest {
   name?: string
 }
 
-const doValidateCreateBreweryRequest =
+export interface UpdateBreweryRequest {
+  name?: string
+}
+
+const doValidateBreweryRequest =
   ajv.compile<CreateBreweryRequest>({
     type: 'object',
     properties: {
       name: {
-        type: 'string'
+        type: 'string',
+        minLength: 1
       }
     },
     required: ['name'],
@@ -22,5 +27,9 @@ const doValidateCreateBreweryRequest =
   })
 
 export function validateCreateBreweryRequest (body: unknown): boolean {
-  return doValidateCreateBreweryRequest(body) as boolean
+  return doValidateBreweryRequest(body) as boolean
+}
+
+export function validateUpdateBreweryRequest (body: unknown): boolean {
+  return doValidateBreweryRequest(body) as boolean
 }

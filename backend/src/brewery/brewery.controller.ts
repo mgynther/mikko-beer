@@ -2,7 +2,7 @@ import * as breweryService from './brewery.service'
 import * as authenticationService from '../authentication/authentication.service'
 
 import { type Router } from '../router'
-import { type CreateBreweryRequest, validateCreateBreweryRequest } from './brewery'
+import { type CreateBreweryRequest, type UpdateBreweryRequest, validateCreateBreweryRequest, validateUpdateBreweryRequest } from './brewery'
 import { ControllerError } from '../util/errors'
 
 export function breweryController (router: Router): void {
@@ -17,6 +17,24 @@ export function breweryController (router: Router): void {
       })
 
       ctx.status = 201
+      ctx.body = {
+        brewery: result
+      }
+    }
+  )
+
+  router.put('/api/v1/brewery/:breweryId',
+    authenticationService.authenticateGeneric,
+    async (ctx) => {
+      const { body } = ctx.request
+      const { breweryId } = ctx.params
+
+      const updateBreweryRequest = validateUpdateRequest(body, breweryId)
+      const result = await ctx.db.transaction().execute(async (trx) => {
+        return await breweryService.updateBrewery(trx, breweryId, updateBreweryRequest)
+      })
+
+      ctx.status = 200
       ctx.body = {
         brewery: result
       }
@@ -58,5 +76,17 @@ function validateCreateRequest (body: unknown): CreateBreweryRequest {
   }
 
   const result = body as CreateBreweryRequest
+  return result
+}
+
+function validateUpdateRequest (body: unknown, breweryId: string): UpdateBreweryRequest {
+  if (!validateUpdateBreweryRequest(body)) {
+    throw new ControllerError(400, 'InvalidBrewery', 'invalid brewery')
+  }
+  if (typeof breweryId !== 'string' || breweryId.length === 0) {
+    throw new ControllerError(400, 'InvalidBreweryId', 'invalid brewery id')
+  }
+
+  const result = body as UpdateBreweryRequest
   return result
 }

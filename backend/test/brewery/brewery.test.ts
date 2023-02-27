@@ -39,6 +39,33 @@ describe('brewery tests', () => {
     expect(listRes.data.breweries.length).to.equal(1)
   })
 
+  it('should update a brewery', async () => {
+    const { user, authToken } = await ctx.createUser()
+
+    const res = await ctx.request.post(`/api/v1/brewery`,
+      { name: 'Salami Brewing' },
+      createAuthHeaders(authToken)
+    )
+
+    expect(res.status).to.equal(201)
+    expect(res.data.brewery.name).to.equal('Salami Brewing')
+
+    const updateRes = await ctx.request.put(`/api/v1/brewery/${res.data.brewery.id}`,
+      { name: 'Salama Brewing' },
+      createAuthHeaders(authToken)
+    )
+    expect(updateRes.status).to.equal(200)
+    expect(updateRes.data.brewery.name).to.equal('Salama Brewing')
+
+    const getRes = await ctx.request.get<{ brewery: Brewery }>(
+      `/api/v1/brewery/${res.data.brewery.id}`,
+      createAuthHeaders(authToken)
+    )
+
+    expect(getRes.status).to.equal(200)
+    expect(getRes.data.brewery).to.eql(updateRes.data.brewery)
+  })
+
   it('should fail to create a brewery without name', async () => {
     const { user, authToken } = await ctx.createUser()
 

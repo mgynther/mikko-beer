@@ -6,7 +6,7 @@ export type AuthenticationErrors =
   | 'UserMismatch'
   | 'UserOrRefreshTokenNotFound'
 
-export type BreweryApiErrors = 'InvalidBrewery' | 'BreweryNotFound'
+export type BreweryApiErrors = 'InvalidBrewery' | 'InvalidBreweryId' | 'BreweryNotFound'
 
 export type StyleApiErrors = 'InvalidStyle' | 'StyleNotFound'
 
