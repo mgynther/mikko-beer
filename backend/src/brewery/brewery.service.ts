@@ -38,6 +38,18 @@ export async function lockBreweryById (
   }
 }
 
+export async function listBreweries (
+  db: Kysely<Database>
+): Promise<Brewery[] | undefined> {
+  const breweryRows = await breweryRepository.listBreweries(db)
+
+  if (breweryRows === null || breweryRows === undefined) return []
+
+  return breweryRows.map(row => ({
+    ...breweryRowToBrewery(row)
+  }))
+}
+
 export function breweryRowToBrewery (brewery: BreweryRow): Brewery {
   return {
     id: brewery.brewery_id,

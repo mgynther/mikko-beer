@@ -49,3 +49,18 @@ async function lockBrewery (
 
   return brewery
 }
+
+export async function listBreweries (
+  db: Kysely<Database>
+): Promise<BreweryRow[] | undefined> {
+  const breweries = await db
+    .selectFrom('brewery')
+    .selectAll('brewery')
+    .execute()
+
+  if (breweries.length === 0) {
+    return undefined
+  }
+
+  return [...breweries]
+}

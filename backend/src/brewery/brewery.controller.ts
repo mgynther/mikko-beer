@@ -41,6 +41,15 @@ export function breweryController (router: Router): void {
       ctx.body = { brewery }
     }
   )
+
+  router.get(
+    '/api/v1/brewery',
+    authenticationService.authenticateGeneric,
+    async (ctx) => {
+      const breweries = await breweryService.listBreweries(ctx.db)
+      ctx.body = { breweries }
+    }
+  )
 }
 
 function validateCreateRequest (body: unknown): CreateBreweryRequest {

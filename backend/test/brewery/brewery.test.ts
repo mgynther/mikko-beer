@@ -31,6 +31,12 @@ describe('brewery tests', () => {
 
     expect(getRes.status).to.equal(200)
     expect(getRes.data.brewery).to.eql(res.data.brewery)
+
+    const listRes = await ctx.request.get(`/api/v1/brewery`,
+      createAuthHeaders(authToken)
+    )
+    expect(listRes.status).to.equal(200)
+    expect(listRes.data.breweries.length).to.equal(1)
   })
 
   it('should fail to create a brewery without name', async () => {
@@ -42,6 +48,17 @@ describe('brewery tests', () => {
     )
 
     expect(res.status).to.equal(400)
+  })
+
+  it('should get empty brewery list', async () => {
+    const { user, authToken } = await ctx.createUser()
+
+    const res = await ctx.request.get(`/api/v1/brewery`,
+      createAuthHeaders(authToken)
+    )
+
+    expect(res.status).to.equal(200)
+    expect(res.data.breweries.length).to.equal(0)
   })
 
   function createAuthHeaders(authToken: string) {
