@@ -9,6 +9,7 @@ import { type Config } from './config'
 import { type Context, type ContextExtension } from './context'
 import { type Database } from './database'
 import { Router } from './router'
+import { beerController } from './beer/beer.controller'
 import { breweryController } from './brewery/brewery.controller'
 import { styleController } from './style/style.controller'
 import { userController } from './user/user.controller'
@@ -40,6 +41,7 @@ export class App {
     this.#koa.use(this.errorHandler)
     this.#koa.use(this.decorateContext)
 
+    beerController(this.#router)
     breweryController(this.#router)
     styleController(this.#router)
     userController(this.#router)
