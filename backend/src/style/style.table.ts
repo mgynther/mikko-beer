@@ -18,4 +18,3 @@ export type UpdateableStyleRow = Updateable<StyleTable>
 
 export type StyleRelationshipRow = Selectable<StyleRelationshipTable>
 export type InsertableStyleRelationshipRow = Insertable<StyleRelationshipTable>
-export type UpdateableStyleRelationshipRow = Updateable<StyleRelationshipTable>
