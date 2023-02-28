@@ -1,6 +1,6 @@
 import { type Kysely, type Transaction } from 'kysely'
 import { type Database } from '../database'
-import { type InsertableStyleRow, type InsertableStyleRelationshipRow, type StyleRow, type StyleRelationshipRow } from './style.table'
+import { type InsertableStyleRow, type InsertableStyleRelationshipRow, type StyleRow, type StyleRelationshipRow, type UpdateableStyleRow } from './style.table'
 import { type StyleWithParentIds, type StyleWithParents } from './style'
 
 export async function insertStyle (
@@ -27,6 +27,33 @@ export async function insertStyleRelationship (
     .executeTakeFirstOrThrow()
 
   return insertedStyle
+}
+
+export async function deleteStyleChildRelationships (
+  db: Kysely<Database>,
+  styleId: string
+): Promise<void> {
+  await db
+    .deleteFrom('style_relationship')
+    .where('style_relationship.child', '=', styleId)
+    .execute()
+}
+
+export async function updateStyle (
+  db: Kysely<Database>,
+  id: string,
+  style: UpdateableStyleRow
+): Promise<StyleRow> {
+  const updatedStyle = await db
+    .updateTable('style')
+    .set({
+      name: style.name
+    })
+    .where('style_id', '=', id)
+    .returningAll()
+    .executeTakeFirstOrThrow()
+
+  return updatedStyle
 }
 
 export async function findStyleById (

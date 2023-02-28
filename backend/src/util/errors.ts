@@ -8,7 +8,7 @@ export type AuthenticationErrors =
 
 export type BreweryApiErrors = 'InvalidBrewery' | 'InvalidBreweryId' | 'BreweryNotFound'
 
-export type StyleApiErrors = 'InvalidStyle' | 'StyleNotFound'
+export type StyleApiErrors = 'InvalidStyle' | 'InvalidStyleId' | 'StyleNotFound'
 
 export type UserApiErrors = 'InvalidUser' | 'UserNotFound'
 

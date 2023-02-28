@@ -148,6 +148,50 @@ describe('style tests', () => {
     expect(res.status).to.equal(400)
   })
 
+  it('should update a style', async () => {
+    const { user, authToken } = await ctx.createUser()
+
+    const aleRes = await ctx.request.post(`/api/v1/style`,
+      { name: 'Pale Ale' },
+      createAuthHeaders(authToken)
+    )
+
+    const lagerRes = await ctx.request.post(`/api/v1/style`,
+      { name: 'Lager' },
+      createAuthHeaders(authToken)
+    )
+
+    expect(aleRes.status).to.equal(201)
+    expect(lagerRes.status).to.equal(201)
+
+    const createRes = await ctx.request.post(`/api/v1/style`,
+      { name: 'India Pale Ale', parents: [ aleRes.data.style.id ] },
+      createAuthHeaders(authToken)
+    )
+
+    expect(createRes.status).to.equal(201)
+    expect(createRes.data.style.name).to.equal('India Pale Ale')
+    expect(createRes.data.style.parents).to.eql([ aleRes.data.style.id ])
+
+    const updateRes = await ctx.request.put(`/api/v1/style/${createRes.data.style.id}`,
+      { name: 'India Pale Lager', parents: [ lagerRes.data.style.id ] },
+      createAuthHeaders(authToken)
+    )
+
+    const getRes = await ctx.request.get<{ style: StyleWithParents }>(
+      `/api/v1/style/${createRes.data.style.id}`,
+      createAuthHeaders(authToken)
+    )
+
+    expect(getRes.status).to.equal(200)
+    expect(getRes.data.style.id).to.equal(updateRes.data.style.id)
+    expect(getRes.data.style.name).to.equal(updateRes.data.style.name)
+    expect(getRes.data.style.parents).to.eql([{
+      id: lagerRes.data.style.id,
+      name: lagerRes.data.style.name,
+    }])
+  })
+
   it('should get empty style list', async () => {
     const { user, authToken } = await ctx.createUser()
 

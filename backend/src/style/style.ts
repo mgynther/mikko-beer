@@ -18,7 +18,12 @@ export interface CreateStyleRequest {
   parents?: string[]
 }
 
-const doValidateCreateStyleRequest =
+export interface UpdateStyleRequest {
+  name?: string
+  parents?: string[]
+}
+
+const doValidateStyleRequest =
   ajv.compile<CreateStyleRequest>({
     type: 'object',
     properties: {
@@ -37,5 +42,9 @@ const doValidateCreateStyleRequest =
   })
 
 export function validateCreateStyleRequest (body: unknown): boolean {
-  return doValidateCreateStyleRequest(body) as boolean
+  return doValidateStyleRequest(body) as boolean
+}
+
+export function validateUpdateStyleRequest (body: unknown): boolean {
+  return doValidateStyleRequest(body) as boolean
 }
