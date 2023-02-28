@@ -93,4 +93,12 @@ export class TestContext {
 
     return res.data
   }
+
+  createAuthHeaders = (authToken: string) => {
+    return {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    }
+  }
 }

@@ -18,7 +18,7 @@ describe('brewery tests', () => {
 
     const res = await ctx.request.post(`/api/v1/brewery`,
       { name: 'Koskipanimo' },
-      createAuthHeaders(authToken)
+      ctx.createAuthHeaders(authToken)
     )
 
     expect(res.status).to.equal(201)
@@ -26,14 +26,14 @@ describe('brewery tests', () => {
 
     const getRes = await ctx.request.get<{ brewery: Brewery }>(
       `/api/v1/brewery/${res.data.brewery.id}`,
-      createAuthHeaders(authToken)
+      ctx.createAuthHeaders(authToken)
     )
 
     expect(getRes.status).to.equal(200)
     expect(getRes.data.brewery).to.eql(res.data.brewery)
 
     const listRes = await ctx.request.get(`/api/v1/brewery`,
-      createAuthHeaders(authToken)
+      ctx.createAuthHeaders(authToken)
     )
     expect(listRes.status).to.equal(200)
     expect(listRes.data.breweries.length).to.equal(1)
@@ -44,7 +44,7 @@ describe('brewery tests', () => {
 
     const res = await ctx.request.post(`/api/v1/brewery`,
       { name: 'Salami Brewing' },
-      createAuthHeaders(authToken)
+      ctx.createAuthHeaders(authToken)
     )
 
     expect(res.status).to.equal(201)
@@ -52,14 +52,14 @@ describe('brewery tests', () => {
 
     const updateRes = await ctx.request.put(`/api/v1/brewery/${res.data.brewery.id}`,
       { name: 'Salama Brewing' },
-      createAuthHeaders(authToken)
+      ctx.createAuthHeaders(authToken)
     )
     expect(updateRes.status).to.equal(200)
     expect(updateRes.data.brewery.name).to.equal('Salama Brewing')
 
     const getRes = await ctx.request.get<{ brewery: Brewery }>(
       `/api/v1/brewery/${res.data.brewery.id}`,
-      createAuthHeaders(authToken)
+      ctx.createAuthHeaders(authToken)
     )
 
     expect(getRes.status).to.equal(200)
@@ -71,7 +71,7 @@ describe('brewery tests', () => {
 
     const res = await ctx.request.post(`/api/v1/brewery`,
       {},
-      createAuthHeaders(authToken)
+      ctx.createAuthHeaders(authToken)
     )
 
     expect(res.status).to.equal(400)
@@ -81,18 +81,11 @@ describe('brewery tests', () => {
     const { user, authToken } = await ctx.createUser()
 
     const res = await ctx.request.get(`/api/v1/brewery`,
-      createAuthHeaders(authToken)
+      ctx.createAuthHeaders(authToken)
     )
 
     expect(res.status).to.equal(200)
     expect(res.data.breweries.length).to.equal(0)
   })
 
-  function createAuthHeaders(authToken: string) {
-    return {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    }
-  }
 })

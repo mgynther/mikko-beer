@@ -29,7 +29,7 @@ describe('user tests', () => {
     // The returned auth token should be usable.
     const getRes = await ctx.request.get<{ user: User }>(
       `/api/v1/user/${res.data.user.id}`,
-      createAuthHeaders(res.data.authToken)
+      ctx.createAuthHeaders(res.data.authToken)
     )
 
     expect(getRes.status).to.equal(200)
@@ -41,7 +41,7 @@ describe('user tests', () => {
 
     const res = await ctx.request.get<{ user: User }>(
       `/api/v1/user/${user.id}`,
-      createAuthHeaders(authToken)
+      ctx.createAuthHeaders(authToken)
     )
 
     expect(res.status).to.equal(200)
@@ -70,7 +70,7 @@ describe('user tests', () => {
     // The returned auth token should be usable.
     const getRes = await ctx.request.get<{ user: User }>(
       `/api/v1/user/${res.data.user.id}`,
-      createAuthHeaders(authToken)
+      ctx.createAuthHeaders(authToken)
     )
 
     expect(getRes.status).to.equal(200)
@@ -109,7 +109,7 @@ describe('user tests', () => {
     const res = await ctx.request.post(
       `/api/v1/user/${user.id}/sign-out`,
       { refreshToken },
-      createAuthHeaders(authToken)
+      ctx.createAuthHeaders(authToken)
     )
 
     expect(res.status).to.equal(200)
@@ -117,20 +117,12 @@ describe('user tests', () => {
     // The auth token should no longer be usable.
     const getRes = await ctx.request.get(
       `/api/v1/user/${user.id}`,
-      createAuthHeaders(authToken)
+      ctx.createAuthHeaders(authToken)
     )
 
     expect(getRes.status).to.equal(404)
     expect(getRes.data.error.code).to.equal('UserOrRefreshTokenNotFound')
   })
-
-  function createAuthHeaders(authToken: string) {
-    return {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    }
-  }
 
   async function createPasswordSignInMethod(
     userId: string,
@@ -139,7 +131,7 @@ describe('user tests', () => {
     return await ctx.request.post<{ success: true }>(
       `/api/v1/user/${userId}/sign-in-methods`,
       { email: EMAIL, password: PASSWORD },
-      createAuthHeaders(authToken)
+      ctx.createAuthHeaders(authToken)
     )
   }
 })
