@@ -1,8 +1,7 @@
 import * as jwt from 'jsonwebtoken'
 import * as refreshTokenRepository from './refresh-token.repository'
-import { type Kysely } from 'kysely'
 import { config } from '../config'
-import { type Database } from '../database'
+import { type Database, type Transaction } from '../database'
 import { type AuthToken } from './auth-token'
 import { type RefreshToken } from './refresh-token'
 
@@ -23,7 +22,7 @@ interface RefreshTokenPayload {
 }
 
 export async function createRefreshToken (
-  db: Kysely<Database>,
+  db: Transaction,
   userId: string
 ): Promise<RefreshToken> {
   const { refresh_token_id } = await refreshTokenRepository.insertRefreshToken(
@@ -44,7 +43,7 @@ function signRefreshToken (tokenPayload: RefreshTokenPayload): RefreshToken {
 }
 
 export async function createAuthToken (
-  db: Kysely<Database>,
+  db: Transaction,
   refreshToken: RefreshToken
 ): Promise<AuthToken> {
   const { userId, refreshTokenId } = verifyRefreshToken(refreshToken)
@@ -113,7 +112,7 @@ function verifyToken (token: string): string | jwt.JwtPayload {
 }
 
 export async function deleteRefreshToken (
-  db: Kysely<Database>,
+  db: Database,
   userId: string,
   refreshToken: RefreshToken
 ): Promise<void> {
@@ -123,8 +122,5 @@ export async function deleteRefreshToken (
     throw new RefreshTokenUserIdMismatchError()
   }
 
-  await db
-    .deleteFrom('refresh_token')
-    .where('refresh_token_id', '=', payload.refreshTokenId)
-    .execute()
+  await refreshTokenRepository.deleteRefreshToken(db, payload.refreshTokenId)
 }

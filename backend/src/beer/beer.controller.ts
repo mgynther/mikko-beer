@@ -12,7 +12,7 @@ export function beerController (router: Router): void {
       const { body } = ctx.request
 
       const createBeerRequest = validateCreateRequest(body)
-      const result = await ctx.db.transaction().execute(async (trx) => {
+      const result = await ctx.db.executeTransaction(async (trx) => {
         return await beerService.createBeer(trx, createBeerRequest)
       })
 
@@ -30,7 +30,7 @@ export function beerController (router: Router): void {
       const { beerId } = ctx.params
 
       const updateBeerRequest = validateUpdateRequest(body, beerId)
-      const result = await ctx.db.transaction().execute(async (trx) => {
+      const result = await ctx.db.executeTransaction(async (trx) => {
         return await beerService.updateBeer(trx, beerId, updateBeerRequest)
       })
 

@@ -96,7 +96,7 @@ describe('user tests', () => {
 
     // Only the one refresh token created for the anonymous user should exists.
     expect(
-      await ctx.db
+      await ctx.db.getDb()
         .selectFrom('refresh_token')
         .select('refresh_token.user_id')
         .execute()

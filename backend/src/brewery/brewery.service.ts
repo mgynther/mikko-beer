@@ -1,15 +1,14 @@
 import * as breweryRepository from './brewery.repository'
 
-import { type Kysely, type Transaction } from 'kysely'
-import { type Database } from '../database'
+import { type Database, type Transaction } from '../database'
 import { type CreateBreweryRequest, type UpdateBreweryRequest, type Brewery } from './brewery'
 import { type BreweryRow } from './brewery.table'
 
 export async function createBrewery (
-  db: Kysely<Database>,
+  trx: Transaction,
   request: CreateBreweryRequest
 ): Promise<Brewery> {
-  const brewery = await breweryRepository.insertBrewery(db, {
+  const brewery = await breweryRepository.insertBrewery(trx, {
     name: request.name
   })
 
@@ -17,11 +16,11 @@ export async function createBrewery (
 }
 
 export async function updateBrewery (
-  db: Kysely<Database>,
+  trx: Transaction,
   breweryId: string,
   request: UpdateBreweryRequest
 ): Promise<Brewery> {
-  const brewery = await breweryRepository.updateBrewery(db, breweryId, {
+  const brewery = await breweryRepository.updateBrewery(trx, breweryId, {
     name: request.name
   })
 
@@ -29,7 +28,7 @@ export async function updateBrewery (
 }
 
 export async function findBreweryById (
-  db: Kysely<Database>,
+  db: Database,
   breweryId: string
 ): Promise<Brewery | undefined> {
   const breweryRow = await breweryRepository.findBreweryById(db, breweryId)
@@ -40,7 +39,7 @@ export async function findBreweryById (
 }
 
 export async function lockBreweryById (
-  trx: Transaction<Database>,
+  trx: Transaction,
   id: string
 ): Promise<Brewery | undefined> {
   const breweryRow = await breweryRepository.lockBreweryById(trx, id)
@@ -51,7 +50,7 @@ export async function lockBreweryById (
 }
 
 export async function listBreweries (
-  db: Kysely<Database>
+  db: Database
 ): Promise<Brewery[] | undefined> {
   const breweryRows = await breweryRepository.listBreweries(db)
 

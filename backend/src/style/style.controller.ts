@@ -12,7 +12,7 @@ export function styleController (router: Router): void {
       const { body } = ctx.request
 
       const createStyleRequest = validateCreateRequest(body)
-      const result = await ctx.db.transaction().execute(async (trx) => {
+      const result = await ctx.db.executeTransaction(async (trx) => {
         return await styleService.createStyle(trx, createStyleRequest)
       })
 
@@ -30,7 +30,7 @@ export function styleController (router: Router): void {
       const { styleId } = ctx.params
 
       const updateStyleRequest = validateUpdateRequest(body, styleId)
-      const result = await ctx.db.transaction().execute(async (trx) => {
+      const result = await ctx.db.executeTransaction(async (trx) => {
         return await styleService.updateStyle(trx, styleId, updateStyleRequest)
       })
 

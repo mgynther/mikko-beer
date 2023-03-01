@@ -1,6 +1,4 @@
 import { type Generated, type Insertable, type Selectable, type Updateable } from 'kysely'
-import { type BreweryRow } from '../brewery/brewery.table.ts'
-import { type StyleRow } from '../style/style.table.ts'
 
 export interface BeerTable {
   beer_id: Generated<string>

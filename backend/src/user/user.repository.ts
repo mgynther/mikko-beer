@@ -1,12 +1,11 @@
-import { type Kysely, type Transaction } from 'kysely'
-import { type Database } from '../database'
+import { type Database, type Transaction } from '../database'
 import { type InsertableUserRow, type UserRow } from './user.table'
 
 export async function insertUser (
-  db: Kysely<Database>,
+  trx: Transaction,
   user: InsertableUserRow
 ): Promise<UserRow> {
-  const insertedUser = await db
+  const insertedUser = await trx.trx()
     .insertInto('user')
     .values(user)
     .returningAll()
@@ -16,10 +15,10 @@ export async function insertUser (
 }
 
 export async function findUserById (
-  db: Kysely<Database>,
+  db: Database,
   id: string
 ): Promise<UserRow | undefined> {
-  const user = await db
+  const user = await db.getDb()
     .selectFrom('user')
     .where('user_id', '=', id)
     .selectAll('user')
@@ -29,25 +28,25 @@ export async function findUserById (
 }
 
 export async function lockUserById (
-  trx: Transaction<Database>,
+  trx: Transaction,
   id: string
 ): Promise<UserRow | undefined> {
   return await lockUser(trx, 'user_id', id)
 }
 
 export async function lockUserByEmail (
-  trx: Transaction<Database>,
+  trx: Transaction,
   email: string
 ): Promise<UserRow | undefined> {
   return await lockUser(trx, 'email', email)
 }
 
 async function lockUser (
-  trx: Transaction<Database>,
+  trx: Transaction,
   column: 'user_id' | 'email',
   value: string
 ): Promise<UserRow | undefined> {
-  const user = await trx
+  const user = await trx.trx()
     .selectFrom('user')
     .where(column, '=', value)
     .selectAll('user')
@@ -58,11 +57,11 @@ async function lockUser (
 }
 
 export async function setUserEmail (
-  db: Kysely<Database>,
+  trx: Transaction,
   id: string,
   email: string
 ): Promise<void> {
-  await db
+  await trx.trx()
     .updateTable('user')
     .where('user_id', '=', id)
     .set({ email })

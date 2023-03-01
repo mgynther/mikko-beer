@@ -1,15 +1,14 @@
-import { type Kysely } from 'kysely'
-import { type Database } from '../../database'
+import { type Transaction } from '../../database'
 import {
   type InsertablePasswordSignInMethodRow,
   type PasswordSignInMethodRow
 } from './password-sign-in-method.table'
 
 export async function findPasswordSignInMethod (
-  db: Kysely<Database>,
+  trx: Transaction,
   userId: string
 ): Promise<PasswordSignInMethodRow | undefined> {
-  const method = await db
+  const method = await trx.trx()
     .selectFrom('sign_in_method as sim')
     .innerJoin('password_sign_in_method as psim', 'psim.user_id', 'sim.user_id')
     .selectAll('psim')
@@ -21,12 +20,12 @@ export async function findPasswordSignInMethod (
 }
 
 export async function insertPasswordSignInMethod (
-  db: Kysely<Database>,
+  trx: Transaction,
   method: InsertablePasswordSignInMethodRow
 ): Promise<PasswordSignInMethodRow> {
-  await db
-    .with('sim', (db) =>
-      db
+  await trx.trx()
+    .with('sim', (trx) =>
+      trx
         .insertInto('sign_in_method')
         .values({ user_id: method.user_id, type: 'password' })
     )

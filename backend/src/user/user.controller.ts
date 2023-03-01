@@ -11,7 +11,7 @@ export function userController (router: Router): void {
     const { body } = ctx.request
 
     const request = validateCreateRequest(body)
-    const result = await ctx.db.transaction().execute(async (trx) => {
+    const result = await ctx.db.executeTransaction(async (trx) => {
       return await userService.createAnonymousUser(trx, request)
     })
 

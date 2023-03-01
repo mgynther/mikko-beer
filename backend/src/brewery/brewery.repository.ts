@@ -1,12 +1,11 @@
-import { type Kysely, type Transaction } from 'kysely'
-import { type Database } from '../database'
+import { type Database, type Transaction } from '../database'
 import { type BreweryRow, type InsertableBreweryRow, type UpdateableBreweryRow } from './brewery.table'
 
 export async function insertBrewery (
-  db: Kysely<Database>,
+  trx: Transaction,
   brewery: InsertableBreweryRow
 ): Promise<BreweryRow> {
-  const insertedBrewery = await db
+  const insertedBrewery = await trx.trx()
     .insertInto('brewery')
     .values(brewery)
     .returningAll()
@@ -16,11 +15,11 @@ export async function insertBrewery (
 }
 
 export async function updateBrewery (
-  db: Kysely<Database>,
+  trx: Transaction,
   id: string,
   brewery: UpdateableBreweryRow
 ): Promise<BreweryRow> {
-  const updatedBrewery = await db
+  const updatedBrewery = await trx.trx()
     .updateTable('brewery')
     .set({
       name: brewery.name
@@ -33,10 +32,10 @@ export async function updateBrewery (
 }
 
 export async function findBreweryById (
-  db: Kysely<Database>,
+  db: Database,
   id: string
 ): Promise<BreweryRow | undefined> {
-  const brewery = await db
+  const brewery = await db.getDb()
     .selectFrom('brewery')
     .where('brewery_id', '=', id)
     .selectAll('brewery')
@@ -46,18 +45,18 @@ export async function findBreweryById (
 }
 
 export async function lockBreweryById (
-  trx: Transaction<Database>,
+  trx: Transaction,
   id: string
 ): Promise<BreweryRow | undefined> {
   return await lockBrewery(trx, 'brewery_id', id)
 }
 
 async function lockBrewery (
-  trx: Transaction<Database>,
+  trx: Transaction,
   column: 'brewery_id',
   value: string
 ): Promise<BreweryRow | undefined> {
-  const brewery = await trx
+  const brewery = await trx.trx()
     .selectFrom('brewery')
     .where(column, '=', value)
     .selectAll('brewery')
@@ -68,9 +67,9 @@ async function lockBrewery (
 }
 
 export async function listBreweries (
-  db: Kysely<Database>
+  db: Database
 ): Promise<BreweryRow[] | undefined> {
-  const breweries = await db
+  const breweries = await db.getDb()
     .selectFrom('brewery')
     .selectAll('brewery')
     .execute()

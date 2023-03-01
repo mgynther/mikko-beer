@@ -1,24 +1,21 @@
 import * as beerRepository from './beer.repository'
 
-import { type Kysely, type Transaction } from 'kysely'
-import { type Database } from '../database'
+import { type Database, type Transaction } from '../database'
 import { type CreateBeerRequest, type UpdateBeerRequest, type Beer, type BeerWithBreweryAndStyleIds, type BeerWithBreweriesAndStyles } from './beer'
 import { type BeerRow } from './beer.table'
-import { type BreweryRow } from '../brewery/brewery.table'
-import { type StyleRow } from '../style/style.table'
 
 export async function createBeer (
-  db: Kysely<Database>,
+  trx: Transaction,
   request: CreateBeerRequest
 ): Promise<BeerWithBreweryAndStyleIds> {
-  const beer = await beerRepository.insertBeer(db, {
+  const beer = await beerRepository.insertBeer(trx, {
     name: request.name
   })
 
   // TODO It might be a good idea to insert all on one request.
   const breweries = (request.breweries != null)
     ? request.breweries.map(async (brewery) => {
-      return await beerRepository.insertBeerBrewery(db, {
+      return await beerRepository.insertBeerBrewery(trx, {
         beer: beer.beer_id,
         brewery
       })
@@ -28,7 +25,7 @@ export async function createBeer (
 
   const styles = (request.styles != null)
     ? request.styles.map(async (style) => {
-      return await beerRepository.insertBeerStyle(db, {
+      return await beerRepository.insertBeerStyle(trx, {
         beer: beer.beer_id,
         style
       })
@@ -44,21 +41,21 @@ export async function createBeer (
 }
 
 export async function updateBeer (
-  db: Kysely<Database>,
+  trx: Transaction,
   beerId: string,
   request: UpdateBeerRequest
 ): Promise<BeerWithBreweryAndStyleIds> {
-  const beer = await beerRepository.updateBeer(db, beerId, {
+  const beer = await beerRepository.updateBeer(trx, beerId, {
     name: request.name
   })
 
-  await beerRepository.deleteBeerBreweries(db, beerId)
-  await beerRepository.deleteBeerStyles(db, beerId)
+  await beerRepository.deleteBeerBreweries(trx, beerId)
+  await beerRepository.deleteBeerStyles(trx, beerId)
 
   // TODO It might be a good idea to insert all on one request.
   const breweries = (request.breweries != null)
     ? request.breweries.map(async (brewery) => {
-      return await beerRepository.insertBeerBrewery(db, {
+      return await beerRepository.insertBeerBrewery(trx, {
         beer: beer.beer_id,
         brewery
       })
@@ -68,7 +65,7 @@ export async function updateBeer (
 
   const styles = (request.styles != null)
     ? request.styles.map(async (style) => {
-      return await beerRepository.insertBeerStyle(db, {
+      return await beerRepository.insertBeerStyle(trx, {
         beer: beer.beer_id,
         style
       })
@@ -84,7 +81,7 @@ export async function updateBeer (
 }
 
 export async function findBeerById (
-  db: Kysely<Database>,
+  db: Database,
   beerId: string
 ): Promise<BeerWithBreweriesAndStyles | undefined> {
   const beer = await beerRepository.findBeerById(db, beerId)
@@ -95,7 +92,7 @@ export async function findBeerById (
 }
 
 export async function lockBeerById (
-  trx: Transaction<Database>,
+  trx: Transaction,
   id: string
 ): Promise<Beer | undefined> {
   const beerRow = await beerRepository.lockBeerById(trx, id)
@@ -106,7 +103,7 @@ export async function lockBeerById (
 }
 
 export async function listBeers (
-  db: Kysely<Database>
+  db: Database
 ): Promise<Beer[] | undefined> {
   const beerRows = await beerRepository.listBeers(db)
 

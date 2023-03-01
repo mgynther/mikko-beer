@@ -3,8 +3,7 @@ import * as signInMethodRepository from './sign-in-method.repository'
 import * as userService from '../user.service'
 import * as authTokenService from '../../authentication/auth-token.service'
 
-import { type Transaction } from 'kysely'
-import { type Database } from '../../database'
+import { type Transaction } from '../../database'
 import { UserNotFoundError } from '../../util/errors'
 import { type SignedInUser } from '../signed-in-user'
 import { type PasswordSignInMethod } from './sign-in-method'
@@ -19,7 +18,7 @@ export class PasswordTooWeakError extends Error {}
 export class PasswordTooLongError extends Error {}
 
 export async function addPasswordSignInMethod (
-  trx: Transaction<Database>,
+  trx: Transaction,
   userId: string,
   method: PasswordSignInMethod
 ): Promise<void> {
@@ -82,7 +81,7 @@ async function scrypt (secret: string, salt: string): Promise<string> {
 }
 
 export async function singInUsingPassword (
-  trx: Transaction<Database>,
+  trx: Transaction,
   method: PasswordSignInMethod
 ): Promise<SignedInUser> {
   const user = await userService.lockUserByEmail(trx, method.email)

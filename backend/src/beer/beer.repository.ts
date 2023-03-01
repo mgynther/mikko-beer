@@ -1,5 +1,4 @@
-import { type Kysely, type Transaction } from 'kysely'
-import { type Database } from '../database'
+import { type Database, type Transaction } from '../database'
 import { type BeerRow, type BeerBreweryRow, type BeerStyleRow, type InsertableBeerRow, type InsertableBeerBreweryRow, type InsertableBeerStyleRow, type UpdateableBeerRow } from './beer.table'
 import { type BeerWithBreweriesAndStyles } from './beer'
 
@@ -7,10 +6,10 @@ import { type Brewery } from '../brewery/brewery'
 import { type Style } from '../style/style'
 
 export async function insertBeer (
-  db: Kysely<Database>,
+  trx: Transaction,
   beer: InsertableBeerRow
 ): Promise<BeerRow> {
-  const insertedBeer = await db
+  const insertedBeer = await trx.trx()
     .insertInto('beer')
     .values(beer)
     .returningAll()
@@ -20,10 +19,10 @@ export async function insertBeer (
 }
 
 export async function insertBeerBrewery (
-  db: Kysely<Database>,
+  trx: Transaction,
   beerBrewery: InsertableBeerBreweryRow
 ): Promise<BeerBreweryRow> {
-  const insertedBeerBrewery = await db
+  const insertedBeerBrewery = await trx.trx()
     .insertInto('beer_brewery')
     .values(beerBrewery)
     .returningAll()
@@ -33,10 +32,10 @@ export async function insertBeerBrewery (
 }
 
 export async function insertBeerStyle (
-  db: Kysely<Database>,
+  trx: Transaction,
   beerStyle: InsertableBeerStyleRow
 ): Promise<BeerStyleRow> {
-  const insertedBeerStyle = await db
+  const insertedBeerStyle = await trx.trx()
     .insertInto('beer_style')
     .values(beerStyle)
     .returningAll()
@@ -46,31 +45,31 @@ export async function insertBeerStyle (
 }
 
 export async function deleteBeerBreweries (
-  db: Kysely<Database>,
+  trx: Transaction,
   beerId: string
 ): Promise<void> {
-  await db
+  await trx.trx()
     .deleteFrom('beer_brewery')
     .where('beer_brewery.beer', '=', beerId)
     .execute()
 }
 
 export async function deleteBeerStyles (
-  db: Kysely<Database>,
+  trx: Transaction,
   beerId: string
 ): Promise<void> {
-  await db
+  await trx.trx()
     .deleteFrom('beer_style')
     .where('beer_style.beer', '=', beerId)
     .execute()
 }
 
 export async function updateBeer (
-  db: Kysely<Database>,
+  trx: Transaction,
   id: string,
   beer: UpdateableBeerRow
 ): Promise<BeerRow> {
-  const updatedBeer = await db
+  const updatedBeer = await trx.trx()
     .updateTable('beer')
     .set({
       name: beer.name
@@ -83,10 +82,10 @@ export async function updateBeer (
 }
 
 export async function findBeerById (
-  db: Kysely<Database>,
+  db: Database,
   id: string
 ): Promise<BeerWithBreweriesAndStyles | undefined> {
-  const beerRows = await db
+  const beerRows = await db.getDb()
     .selectFrom('beer')
     .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
     .innerJoin('brewery', 'brewery.brewery_id', 'beer_brewery.brewery')
@@ -129,18 +128,18 @@ export async function findBeerById (
 }
 
 export async function lockBeerById (
-  trx: Transaction<Database>,
+  trx: Transaction,
   id: string
 ): Promise<BeerRow | undefined> {
   return await lockBeer(trx, 'beer_id', id)
 }
 
 async function lockBeer (
-  trx: Transaction<Database>,
+  trx: Transaction,
   column: 'beer_id',
   value: string
 ): Promise<BeerRow | undefined> {
-  const beer = await trx
+  const beer = await trx.trx()
     .selectFrom('beer')
     .where(column, '=', value)
     .selectAll('beer')
@@ -151,9 +150,9 @@ async function lockBeer (
 }
 
 export async function listBeers (
-  db: Kysely<Database>
+  db: Database
 ): Promise<BeerRow[] | undefined> {
-  const beers = await db
+  const beers = await db.getDb()
     .selectFrom('beer')
     .selectAll('beer')
     .execute()

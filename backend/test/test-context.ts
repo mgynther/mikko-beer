@@ -23,7 +23,7 @@ export class TestContext {
     validateStatus: () => true,
   })
 
-  get db(): Kysely<Database> {
+  get db(): Database {
     return this.#app!.db
   }
 
@@ -41,14 +41,10 @@ export class TestContext {
     await adminDb.destroy()
 
     // Now connect to the test databse and run the migrations
-    const db = new Kysely<any>({
-      dialect: new PostgresDialect({
-        pool: new Pool(testConfig.database),
-      }),
-    })
+    const db = new Database(testConfig)
 
     const migrator = new Migrator({
-      db,
+      db: db.getDb(),
       provider: new FileMigrationProvider({
         fs,
         path,
@@ -68,13 +64,13 @@ export class TestContext {
     this.#app = new App(testConfig)
 
     // Clear the database
-    await this.db.deleteFrom('beer_brewery').execute()
-    await this.db.deleteFrom('beer_style').execute()
-    await this.db.deleteFrom('beer').execute()
-    await this.db.deleteFrom('brewery').execute()
-    await this.db.deleteFrom('style_relationship').execute()
-    await this.db.deleteFrom('style').execute()
-    await this.db.deleteFrom('user').execute()
+    await this.db.getDb().deleteFrom('beer_brewery').execute()
+    await this.db.getDb().deleteFrom('beer_style').execute()
+    await this.db.getDb().deleteFrom('beer').execute()
+    await this.db.getDb().deleteFrom('brewery').execute()
+    await this.db.getDb().deleteFrom('style_relationship').execute()
+    await this.db.getDb().deleteFrom('style').execute()
+    await this.db.getDb().deleteFrom('user').execute()
 
     await this.#app.start()
   }

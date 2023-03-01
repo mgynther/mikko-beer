@@ -1,15 +1,14 @@
-import { type Kysely } from 'kysely'
-import { type Database } from '../database'
+import { type Database, type Transaction } from '../database'
 import {
   type RefreshTokenRow,
   type UpdateableRefreshTokenRow
 } from './refresh-token.table'
 
 export async function insertRefreshToken (
-  db: Kysely<Database>,
+  trx: Transaction,
   userId: string
 ): Promise<RefreshTokenRow> {
-  const [refreshToken] = await db
+  const [refreshToken] = await trx.trx()
     .insertInto('refresh_token')
     .values({
       user_id: userId,
@@ -22,11 +21,11 @@ export async function insertRefreshToken (
 }
 
 export async function findRefreshToken (
-  db: Kysely<Database>,
+  db: Database,
   userId: string,
   refreshTokenId: string
 ): Promise<RefreshTokenRow | undefined> {
-  const token = await db
+  const token = await db.getDb()
     .selectFrom('refresh_token as rt')
     .selectAll('rt')
     .innerJoin('user as u', 'rt.user_id', 'u.user_id')
@@ -38,13 +37,23 @@ export async function findRefreshToken (
 }
 
 export async function updateRefreshToken (
-  db: Kysely<Database>,
+  trx: Transaction,
   refreshTokenId: string,
   patch: Pick<UpdateableRefreshTokenRow, 'last_refreshed_at'>
 ): Promise<void> {
-  await db
+  await trx.trx()
     .updateTable('refresh_token')
     .set(patch)
+    .where('refresh_token_id', '=', refreshTokenId)
+    .execute()
+}
+
+export async function deleteRefreshToken (
+  db: Database,
+  refreshTokenId: string
+): Promise<void> {
+  await db.getDb()
+    .deleteFrom('refresh_token')
     .where('refresh_token_id', '=', refreshTokenId)
     .execute()
 }

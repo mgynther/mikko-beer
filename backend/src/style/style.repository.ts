@@ -1,13 +1,12 @@
-import { type Kysely, type Transaction } from 'kysely'
-import { type Database } from '../database'
+import { type Database, type Transaction } from '../database'
 import { type InsertableStyleRow, type InsertableStyleRelationshipRow, type StyleRow, type StyleRelationshipRow, type UpdateableStyleRow } from './style.table'
 import { type StyleWithParentIds, type StyleWithParents } from './style'
 
 export async function insertStyle (
-  db: Kysely<Database>,
+  trx: Transaction,
   style: InsertableStyleRow
 ): Promise<StyleRow> {
-  const insertedStyle = await db
+  const insertedStyle = await trx.trx()
     .insertInto('style')
     .values(style)
     .returningAll()
@@ -17,10 +16,10 @@ export async function insertStyle (
 }
 
 export async function insertStyleRelationship (
-  db: Kysely<Database>,
+  trx: Transaction,
   styleRelationship: InsertableStyleRelationshipRow
 ): Promise<StyleRelationshipRow> {
-  const insertedStyle = await db
+  const insertedStyle = await trx.trx()
     .insertInto('style_relationship')
     .values(styleRelationship)
     .returningAll()
@@ -30,21 +29,21 @@ export async function insertStyleRelationship (
 }
 
 export async function deleteStyleChildRelationships (
-  db: Kysely<Database>,
+  trx: Transaction,
   styleId: string
 ): Promise<void> {
-  await db
+  await trx.trx()
     .deleteFrom('style_relationship')
     .where('style_relationship.child', '=', styleId)
     .execute()
 }
 
 export async function updateStyle (
-  db: Kysely<Database>,
+  trx: Transaction,
   id: string,
   style: UpdateableStyleRow
 ): Promise<StyleRow> {
-  const updatedStyle = await db
+  const updatedStyle = await trx.trx()
     .updateTable('style')
     .set({
       name: style.name
@@ -57,10 +56,10 @@ export async function updateStyle (
 }
 
 export async function findStyleById (
-  db: Kysely<Database>,
+  db: Database,
   id: string
 ): Promise<StyleWithParents | undefined> {
-  const styles = await db
+  const styles = await db.getDb()
     .selectFrom('style')
     .leftJoin('style_relationship', 'style.style_id', 'style_relationship.parent')
     .where('style_relationship.child', '=', id)
@@ -82,24 +81,24 @@ export async function findStyleById (
     name: style.name,
     parents: parents.map(parent => ({
       id: parent.style_id,
-      name: parent.name,
+      name: parent.name
     }))
   }
 }
 
 export async function lockStyleById (
-  trx: Transaction<Database>,
+  trx: Transaction,
   id: string
 ): Promise<StyleRow | undefined> {
   return await lockStyle(trx, 'style_id', id)
 }
 
 async function lockStyle (
-  trx: Transaction<Database>,
+  trx: Transaction,
   column: 'style_id',
   value: string
 ): Promise<StyleRow | undefined> {
-  const style = await trx
+  const style = await trx.trx()
     .selectFrom('style')
     .where(column, '=', value)
     .selectAll('style')
@@ -110,9 +109,9 @@ async function lockStyle (
 }
 
 export async function listStyles (
-  db: Kysely<Database>
+  db: Database
 ): Promise<StyleWithParentIds[] | undefined> {
-  const styles = await db
+  const styles = await db.getDb()
     .selectFrom('style')
     .leftJoin('style_relationship', 'style.style_id', 'style_relationship.child')
     .select(['style_id', 'name', 'style.created_at', 'style_relationship.parent as parent'])

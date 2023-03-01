@@ -3,11 +3,10 @@ import * as json from 'koa-json'
 import * as compress from 'koa-compress'
 import * as bodyParser from 'koa-bodyparser'
 import { type Server } from 'http'
-import { Kysely, PostgresDialect } from 'kysely'
 
 import { type Config } from './config'
 import { type Context, type ContextExtension } from './context'
-import { type Database } from './database'
+import { Database } from './database'
 import { Router } from './router'
 import { beerController } from './beer/beer.controller'
 import { breweryController } from './brewery/brewery.controller'
@@ -15,24 +14,19 @@ import { styleController } from './style/style.controller'
 import { userController } from './user/user.controller'
 import { ControllerError } from './util/errors'
 import { isObject } from './util/object'
-import { Pool } from 'pg'
 
 export class App {
   #config: Config
   #koa: Koa<any, ContextExtension>
   #router: Router
-  #db: Kysely<Database>
+  #db: Database
   #server?: Server
 
   constructor (config: Config) {
     this.#config = config
     this.#koa = new Koa()
     this.#router = new Router()
-    this.#db = new Kysely<Database>({
-      dialect: new PostgresDialect({
-        pool: async () => new Pool(this.#config.database)
-      })
-    })
+    this.#db = new Database(this.#config)
 
     this.#koa.use(compress())
     this.#koa.use(bodyParser())
@@ -50,7 +44,7 @@ export class App {
     this.#koa.use(this.#router.allowedMethods())
   }
 
-  get db (): Kysely<Database> {
+  get db (): Database {
     return this.#db
   }
 

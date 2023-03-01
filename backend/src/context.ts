@@ -1,11 +1,10 @@
 import type * as Koa from 'koa'
 import type * as KoaRouter from 'koa-router'
 
-import { type Kysely } from 'kysely'
 import { type Database } from './database'
 
 export interface ContextExtension {
-  db: Kysely<Database>
+  db: Database
 }
 
 export type Context = Koa.ParameterizedContext<

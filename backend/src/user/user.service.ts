@@ -1,27 +1,26 @@
 import * as userRepository from './user.repository'
 import * as authTokenService from '../authentication/auth-token.service'
 
-import { type Kysely, type Transaction } from 'kysely'
-import { type Database } from '../database'
+import { type Database, type Transaction } from '../database'
 import { type SignedInUser } from './signed-in-user'
 import { type CreateAnonymousUserRequest, type User } from './user'
 import { type UserRow } from './user.table'
 
 export async function createAnonymousUser (
-  db: Kysely<Database>,
+  trx: Transaction,
   request: CreateAnonymousUserRequest
 ): Promise<SignedInUser> {
-  const user = await userRepository.insertUser(db, {
+  const user = await userRepository.insertUser(trx, {
     first_name: request.firstName,
     last_name: request.lastName
   })
 
   const refreshToken = await authTokenService.createRefreshToken(
-    db,
+    trx,
     user.user_id
   )
 
-  const authToken = await authTokenService.createAuthToken(db, refreshToken)
+  const authToken = await authTokenService.createAuthToken(trx, refreshToken)
 
   return {
     refreshToken,
@@ -31,7 +30,7 @@ export async function createAnonymousUser (
 }
 
 export async function findUserById (
-  db: Kysely<Database>,
+  db: Database,
   userId: string
 ): Promise<User | undefined> {
   const userRow = await userRepository.findUserById(db, userId)
@@ -42,7 +41,7 @@ export async function findUserById (
 }
 
 export async function lockUserById (
-  trx: Transaction<Database>,
+  trx: Transaction,
   id: string
 ): Promise<User | undefined> {
   const userRow = await userRepository.lockUserById(trx, id)
@@ -53,7 +52,7 @@ export async function lockUserById (
 }
 
 export async function lockUserByEmail (
-  trx: Transaction<Database>,
+  trx: Transaction,
   email: string
 ): Promise<User | undefined> {
   const userRow = await userRepository.lockUserByEmail(trx, email)
@@ -64,11 +63,11 @@ export async function lockUserByEmail (
 }
 
 export async function setUserEmail (
-  db: Kysely<Database>,
+  trx: Transaction,
   userId: string,
   email: string
 ): Promise<void> {
-  await userRepository.setUserEmail(db, userId, email)
+  await userRepository.setUserEmail(trx, userId, email)
 }
 
 export function userRowToUser (user: UserRow): User {
