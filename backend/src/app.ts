@@ -10,6 +10,7 @@ import { Database } from './database'
 import { Router } from './router'
 import { beerController } from './beer/beer.controller'
 import { breweryController } from './brewery/brewery.controller'
+import { containerController } from './container/container.controller'
 import { styleController } from './style/style.controller'
 import { userController } from './user/user.controller'
 import { ControllerError } from './util/errors'
@@ -37,6 +38,7 @@ export class App {
 
     beerController(this.#router)
     breweryController(this.#router)
+    containerController(this.#router)
     styleController(this.#router)
     userController(this.#router)
 

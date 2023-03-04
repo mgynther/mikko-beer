@@ -10,6 +10,8 @@ export type BeerApiErrors = 'InvalidBeer' | 'InvalidBeerId' | 'BeerNotFound'
 
 export type BreweryApiErrors = 'InvalidBrewery' | 'InvalidBreweryId' | 'BreweryNotFound'
 
+export type ContainerApiErrors = 'InvalidContainer' | 'InvalidContainerId' | 'ContainerNotFound'
+
 export type StyleApiErrors = 'InvalidStyle' | 'InvalidStyleId' | 'StyleNotFound'
 
 export type UserApiErrors = 'InvalidUser' | 'UserNotFound'
@@ -28,6 +30,7 @@ export type ErrorCode =
   | AuthenticationErrors
   | BeerApiErrors
   | BreweryApiErrors
+  | ContainerApiErrors
   | StyleApiErrors
   | UserApiErrors
   | SignInMethodApiErros

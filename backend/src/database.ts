@@ -7,6 +7,7 @@ import { type PasswordSignInMethodTable } from './user/sign-in-method/password-s
 import { type SignInMethodTable } from './user/sign-in-method/sign-in-method.table'
 import { type BeerTable, type BeerBreweryTable, type BeerStyleTable } from './beer/beer.table'
 import { type BreweryTable } from './brewery/brewery.table'
+import { type ContainerTable } from './container/container.table'
 import { type StyleTable, type StyleRelationshipTable } from './style/style.table'
 import { type UserTable } from './user/user.table'
 
@@ -15,6 +16,7 @@ export interface KyselyDatabase {
   beer_brewery: BeerBreweryTable
   beer_style: BeerStyleTable
   brewery: BreweryTable
+  container: ContainerTable
   style: StyleTable
   style_relationship: StyleRelationshipTable
   user: UserTable

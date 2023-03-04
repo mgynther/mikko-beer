@@ -68,6 +68,7 @@ export class TestContext {
     await this.db.getDb().deleteFrom('beer_style').execute()
     await this.db.getDb().deleteFrom('beer').execute()
     await this.db.getDb().deleteFrom('brewery').execute()
+    await this.db.getDb().deleteFrom('container').execute()
     await this.db.getDb().deleteFrom('style_relationship').execute()
     await this.db.getDb().deleteFrom('style').execute()
     await this.db.getDb().deleteFrom('user').execute()
