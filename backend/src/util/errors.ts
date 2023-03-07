@@ -12,6 +12,8 @@ export type BreweryApiErrors = 'InvalidBrewery' | 'InvalidBreweryId' | 'BreweryN
 
 export type ContainerApiErrors = 'InvalidContainer' | 'InvalidContainerId' | 'ContainerNotFound'
 
+export type ReviewApiErrors = 'InvalidReview' | 'InvalidReviewId' | 'ReviewNotFound'
+
 export type StyleApiErrors = 'InvalidStyle' | 'InvalidStyleId' | 'StyleNotFound'
 
 export type UserApiErrors = 'InvalidUser' | 'UserNotFound'
@@ -31,6 +33,7 @@ export type ErrorCode =
   | BeerApiErrors
   | BreweryApiErrors
   | ContainerApiErrors
+  | ReviewApiErrors
   | StyleApiErrors
   | UserApiErrors
   | SignInMethodApiErros

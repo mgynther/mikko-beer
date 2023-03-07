@@ -8,6 +8,7 @@ import { type SignInMethodTable } from './user/sign-in-method/sign-in-method.tab
 import { type BeerTable, type BeerBreweryTable, type BeerStyleTable } from './beer/beer.table'
 import { type BreweryTable } from './brewery/brewery.table'
 import { type ContainerTable } from './container/container.table'
+import { type ReviewTable } from './review/review.table'
 import { type StyleTable, type StyleRelationshipTable } from './style/style.table'
 import { type UserTable } from './user/user.table'
 
@@ -17,6 +18,7 @@ export interface KyselyDatabase {
   beer_style: BeerStyleTable
   brewery: BreweryTable
   container: ContainerTable
+  review: ReviewTable
   style: StyleTable
   style_relationship: StyleRelationshipTable
   user: UserTable

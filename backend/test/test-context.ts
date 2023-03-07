@@ -64,6 +64,7 @@ export class TestContext {
     this.#app = new App(testConfig)
 
     // Clear the database
+    await this.db.getDb().deleteFrom('review').execute()
     await this.db.getDb().deleteFrom('beer_brewery').execute()
     await this.db.getDb().deleteFrom('beer_style').execute()
     await this.db.getDb().deleteFrom('beer').execute()
