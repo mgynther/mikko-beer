@@ -6,6 +6,7 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "eslint": "npx eslint --fix src/**",
+    "start": "node dist/index.js",
     "watch": "tsc -w",
     "test": "mocha --timeout 5000 -r ts-node/register test/**/*.test.ts",
     "test:watch": "mocha --timeout 5000 --require ts-node/register --watch --watch-files src, test/**/*.test.ts",
