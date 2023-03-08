@@ -45,4 +45,10 @@ async function migrateToLatest (): Promise<void> {
   await db.destroy()
 }
 
-await migrateToLatest()
+try {
+  migrateToLatest().then(() => {
+    console.log('migration done')
+  }, () => { console.warn('migration promise rejected') })
+} catch (e) {
+  console.warn('error running migration', e)
+}
