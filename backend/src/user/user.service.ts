@@ -1,27 +1,21 @@
 import * as userRepository from './user.repository'
 import * as authTokenService from '../authentication/auth-token.service'
-
 import { type Database, type Transaction } from '../database'
 import { type SignedInUser } from './signed-in-user'
-import { type CreateAnonymousUserRequest, type User } from './user'
+import { type Role, type User } from './user'
 import { type UserRow } from './user.table'
 
 export async function createAnonymousUser (
   trx: Transaction,
-  request: CreateAnonymousUserRequest
+  role: Role,
+  createRefreshToken: boolean = true
 ): Promise<SignedInUser> {
-  const user = await userRepository.insertUser(trx, {
-    first_name: request.firstName,
-    last_name: request.lastName
-  })
+  const user = await userRepository.insertUser(trx, { role })
 
-  const refreshToken = await authTokenService.createRefreshToken(
-    trx,
-    user.user_id
-  )
+  const refreshFunc = createRefreshToken ? authTokenService.createRefreshToken : authTokenService.createInitialAdminRefreshToken
+  const refreshToken = await refreshFunc(trx, user.user_id)
 
-  const authToken = await authTokenService.createAuthToken(trx, refreshToken)
-
+  const authToken = await authTokenService.createAuthToken(trx, user.role, refreshToken)
   return {
     refreshToken,
     authToken,
@@ -38,6 +32,15 @@ export async function findUserById (
   if (userRow != null) {
     return userRowToUser(userRow)
   }
+}
+
+export async function listUsers (
+  db: Database
+): Promise<User[] | undefined> {
+  const userRows = await userRepository.listUsers(db)
+  if (userRows === undefined) return []
+
+  return userRows.map(userRow => userRowToUser(userRow))
 }
 
 export async function lockUserById (
@@ -73,8 +76,7 @@ export async function setUserUsername (
 export function userRowToUser (user: UserRow): User {
   return {
     id: user.user_id,
-    firstName: user.first_name,
-    lastName: user.last_name,
+    role: user.role,
     username: user.username
   }
 }

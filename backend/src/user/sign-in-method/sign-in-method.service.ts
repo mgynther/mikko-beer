@@ -104,7 +104,7 @@ export async function singInUsingPassword (
   }
 
   const refreshToken = await authTokenService.createRefreshToken(trx, user.id)
-  const authToken = await authTokenService.createAuthToken(trx, refreshToken)
+  const authToken = await authTokenService.createAuthToken(trx, user.role, refreshToken)
 
   return {
     user,

@@ -7,7 +7,7 @@ import { ControllerError } from '../util/errors'
 
 export function reviewController (router: Router): void {
   router.post('/api/v1/review',
-    authenticationService.authenticateGeneric,
+    authenticationService.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
 
@@ -24,7 +24,7 @@ export function reviewController (router: Router): void {
   )
 
   router.put('/api/v1/review/:reviewId',
-    authenticationService.authenticateGeneric,
+    authenticationService.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
       const { reviewId } = ctx.params
@@ -43,7 +43,7 @@ export function reviewController (router: Router): void {
 
   router.get(
     '/api/v1/review/:reviewId',
-    authenticationService.authenticateGeneric,
+    authenticationService.authenticateViewer,
     async (ctx) => {
       const { reviewId } = ctx.params
       const review = await reviewService.findReviewById(ctx.db, reviewId)
@@ -62,7 +62,7 @@ export function reviewController (router: Router): void {
 
   router.get(
     '/api/v1/review',
-    authenticationService.authenticateGeneric,
+    authenticationService.authenticateViewer,
     async (ctx) => {
       const reviews = await reviewService.listReviews(ctx.db)
       ctx.body = { reviews }

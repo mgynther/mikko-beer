@@ -14,11 +14,9 @@ describe('container tests', () => {
   afterEach(ctx.afterEach)
 
   it('should create a container', async () => {
-    const { user, authToken } = await ctx.createUser()
-
     const res = await ctx.request.post(`/api/v1/container`,
       { type: 'Bottle', size: '0.33' },
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(res.status).to.equal(201)
@@ -27,7 +25,7 @@ describe('container tests', () => {
 
     const getRes = await ctx.request.get<{ container: Container }>(
       `/api/v1/container/${res.data.container.id}`,
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(getRes.status).to.equal(200)
@@ -36,45 +34,47 @@ describe('container tests', () => {
     expect(getRes.data.container.size).to.equal(res.data.container.size)
   })
 
-  it('should fail to create a container without type', async () => {
-    const { user, authToken } = await ctx.createUser()
+  it('should fail to create a container as viewer', async () => {
+    const { authToken } = await ctx.createUser()
+    const res = await ctx.request.post(`/api/v1/container`,
+      { type: 'Bottle', size: '0.33' },
+      ctx.createAuthHeaders(authToken)
+    )
 
+    expect(res.status).to.equal(403)
+  })
+
+  it('should fail to create a container without type', async () => {
     const res = await ctx.request.post(`/api/v1/container`,
       { size: '0.20' },
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(res.status).to.equal(400)
   })
 
   it('should fail to create a container without size', async () => {
-    const { user, authToken } = await ctx.createUser()
-
     const res = await ctx.request.post(`/api/v1/container`,
       { type: 'Draught' },
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(res.status).to.equal(400)
   })
 
   it('should fail to create a container with invalid size', async () => {
-    const { user, authToken } = await ctx.createUser()
-
     const res = await ctx.request.post(`/api/v1/container`,
       { type: 'Draught', size: 'testing' },
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(res.status).to.equal(400)
   })
 
   it('should update a container', async () => {
-    const { user, authToken } = await ctx.createUser()
-
     const createRes = await ctx.request.post(`/api/v1/container`,
       { type: 'Draught', size: '1.00' },
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
     expect(createRes.status).to.equal(201)
     expect(createRes.data.container.type).to.equal('Draught')
@@ -82,7 +82,7 @@ describe('container tests', () => {
 
     const updateRes = await ctx.request.put(`/api/v1/container/${createRes.data.container.id}`,
       { type: 'Draught', size: '0.10' },
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
     expect(updateRes.status).to.equal(200)
     expect(updateRes.data.container.type).to.equal('Draught')
@@ -90,7 +90,7 @@ describe('container tests', () => {
 
     const getRes = await ctx.request.get<{ container: Container }>(
       `/api/v1/container/${createRes.data.container.id}`,
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(getRes.status).to.equal(200)
@@ -100,10 +100,8 @@ describe('container tests', () => {
   })
 
   it('should get empty container list', async () => {
-    const { user, authToken } = await ctx.createUser()
-
     const res = await ctx.request.get(`/api/v1/container`,
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(res.status).to.equal(200)

@@ -4,9 +4,6 @@ import { TestContext } from '../test-context'
 import { User } from '../../src/user/user'
 import { AxiosResponse } from 'axios'
 
-const USERNAME = 'foo@bar.fake'
-const PASSWORD = '12345678'
-
 describe('user tests', () => {
   const ctx = new TestContext()
 
@@ -16,15 +13,39 @@ describe('user tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('should create an anonoymous user', async () => {
+  it('should fail to create a user without authorization', async () => {
+    const params = {
+      user: {
+        role: 'admin',
+      },
+      passwordSignInMethod: {
+        username: 'Anon',
+        password: 'does not matter'
+      }
+    }
+    const noAuthRes = await ctx.request.post(`/api/v1/user`, params)
+    expect(noAuthRes.status).to.equal(400)
+
+    const invalidAuthRes = await ctx.request.post(`/api/v1/user`, params, ctx.createAuthHeaders('invalid token'))
+    expect(invalidAuthRes.status).to.equal(401)
+  })
+
+  it('should create a user', async () => {
     const res = await ctx.request.post(`/api/v1/user`, {
-      firstName: 'Anon',
-    })
+      user: {
+        role: 'admin',
+      },
+      passwordSignInMethod: {
+        username: 'Anon',
+        password: 'does not matter'
+      }
+    },
+      ctx.adminAuthHeaders()
+    )
 
     expect(res.status).to.equal(201)
-    expect(res.data.user.firstName).to.equal('Anon')
-    expect(res.data.user.lastName).to.equal(null)
-    expect(res.data.user.username).to.equal(null)
+    expect(res.data.user.username).to.equal('Anon')
+    expect(res.data.user.role).to.equal('admin')
 
     // The returned auth token should be usable.
     const getRes = await ctx.request.get<{ user: User }>(
@@ -48,21 +69,12 @@ describe('user tests', () => {
     expect(res.data).to.eql({ user })
   })
 
-  it('should add a password sign in method for a user', async () => {
-    const { user, authToken } = await ctx.createUser()
-    const res = await createPasswordSignInMethod(user.id, authToken)
-
-    expect(res.status).to.equal(201)
-    expect(res.data.success).to.equal(true)
-  })
-
   it('should sign in a user', async () => {
-    const { user, authToken } = await ctx.createUser()
-    await createPasswordSignInMethod(user.id, authToken)
+    const { user, authToken, username, password } = await ctx.createUser()
 
     const res = await ctx.request.post(`/api/v1/user/sign-in`, {
-      username: USERNAME,
-      password: PASSWORD,
+      username: username,
+      password: password,
     })
 
     expect(res.status).to.equal(200)
@@ -78,11 +90,10 @@ describe('user tests', () => {
   })
 
   it('should fail to sign in user with the wrong password', async () => {
-    const { user, authToken } = await ctx.createUser()
-    await createPasswordSignInMethod(user.id, authToken)
+    const { user, authToken, username } = await ctx.createUser()
 
     const res = await ctx.request.post(`/api/v1/user/sign-in`, {
-      username: USERNAME,
+      username: username,
       password: 'wrong password',
     })
 
@@ -124,14 +135,4 @@ describe('user tests', () => {
     expect(getRes.data.error.code).to.equal('UserOrRefreshTokenNotFound')
   })
 
-  async function createPasswordSignInMethod(
-    userId: string,
-    authToken: string
-  ): Promise<AxiosResponse<{ success: true }>> {
-    return await ctx.request.post<{ success: true }>(
-      `/api/v1/user/${userId}/sign-in-methods`,
-      { username: USERNAME, password: PASSWORD },
-      ctx.createAuthHeaders(authToken)
-    )
-  }
 })

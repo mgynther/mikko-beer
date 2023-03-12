@@ -10,7 +10,6 @@ export async function insertUser (
     .values(user)
     .returningAll()
     .executeTakeFirstOrThrow()
-
   return insertedUser
 }
 
@@ -23,6 +22,17 @@ export async function findUserById (
     .where('user_id', '=', id)
     .selectAll('user')
     .executeTakeFirst()
+
+  return user
+}
+
+export async function listUsers (
+  db: Database
+): Promise<UserRow[] | undefined> {
+  const user = await db.getDb()
+    .selectFrom('user')
+    .selectAll('user')
+    .execute()
 
   return user
 }

@@ -1,5 +1,6 @@
 import * as refreshTokenRepository from './refresh-token.repository'
 import * as authTokenService from './auth-token.service'
+import { Role } from '../user/user'
 
 import { AuthTokenExpiredError, type AuthTokenPayload } from './auth-token.service'
 import { type Next } from 'koa'
@@ -53,13 +54,36 @@ export async function authenticateUser (
   return await next()
 }
 
-// TODO this is just a placeholder for proper authentication and authorization.
-export async function authenticateGeneric (
+export async function authenticateAdmin (
   ctx: Context,
   next: Next
 ): Promise<void> {
   const authorization = parseAuthorization(ctx)
-  validAuthTokenPayload(authorization)
+  const payload = validAuthTokenPayload(authorization)
+  if (payload.role !== Role.admin) {
+    throw new ControllerError(
+      403,
+      'Forbidden',
+      'no rights'
+    )
+  }
+  return await next()
+}
+
+export async function authenticateViewer (
+  ctx: Context,
+  next: Next
+): Promise<void> {
+  const authorization = parseAuthorization(ctx)
+  const payload = validAuthTokenPayload(authorization)
+  const role = payload.role
+  if (role !== Role.admin && role !== Role.viewer) {
+    throw new ControllerError(
+      403,
+      'Forbidden',
+      'no rights'
+    )
+  }
   return await next()
 }
 

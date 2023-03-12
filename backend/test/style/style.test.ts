@@ -14,11 +14,9 @@ describe('style tests', () => {
   afterEach(ctx.afterEach)
 
   it('should create a style', async () => {
-    const { user, authToken } = await ctx.createUser()
-
     const res = await ctx.request.post(`/api/v1/style`,
       { name: 'Wild' },
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(res.status).to.equal(201)
@@ -27,7 +25,7 @@ describe('style tests', () => {
 
     const getRes = await ctx.request.get<{ style: StyleWithParents }>(
       `/api/v1/style/${res.data.style.id}`,
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(getRes.status).to.equal(200)
@@ -37,11 +35,9 @@ describe('style tests', () => {
   })
 
   it('should create a child style', async () => {
-    const { user, authToken } = await ctx.createUser()
-
     const res = await ctx.request.post(`/api/v1/style`,
       { name: 'Pale Ale' },
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(res.status).to.equal(201)
@@ -51,7 +47,7 @@ describe('style tests', () => {
 
     const childRes = await ctx.request.post(`/api/v1/style`,
       { name: 'India Pale Ale', parents: [ res.data.style.id ] },
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(childRes.status).to.equal(201)
@@ -61,7 +57,7 @@ describe('style tests', () => {
 
     const getRes = await ctx.request.get<{ style: StyleWithParents }>(
       `/api/v1/style/${childRes.data.style.id}`,
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(getRes.status).to.equal(200)
@@ -74,23 +70,21 @@ describe('style tests', () => {
   })
 
   it('should create a child style with 2 parents', async () => {
-    const { user, authToken } = await ctx.createUser()
-
     const parent1Res = await ctx.request.post(`/api/v1/style`,
       { name: 'Ale' },
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
     expect(parent1Res.status).to.equal(201)
 
     const parent2Res = await ctx.request.post(`/api/v1/style`,
       { name: 'Lager' },
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
     expect(parent2Res.status).to.equal(201)
 
     const childRes = await ctx.request.post(`/api/v1/style`,
       { name: 'Cream Ale', parents: [ parent1Res.data.style.id, parent2Res.data.style.id ] },
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(childRes.status).to.equal(201)
@@ -100,7 +94,7 @@ describe('style tests', () => {
 
     const getRes = await ctx.request.get<{ style: StyleWithParents }>(
       `/api/v1/style/${childRes.data.style.id}`,
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(getRes.status).to.equal(200)
@@ -118,7 +112,7 @@ describe('style tests', () => {
     ])
 
     const listRes = await ctx.request.get(`/api/v1/style`,
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(listRes.status).to.equal(200)
@@ -126,11 +120,9 @@ describe('style tests', () => {
   })
 
   it('should fail to create a child style with invalid parent', async () => {
-    const { user, authToken } = await ctx.createUser()
-
     const childRes = await ctx.request.post(`/api/v1/style`,
       { name: 'Gueuze', parents: ['d31020d9-c400-41f4-91bb-2c847dcf1fbe' ]},
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     // TODO It would be cleaner to report a client error.
@@ -138,27 +130,23 @@ describe('style tests', () => {
   })
 
   it('should fail to create a style without name', async () => {
-    const { user, authToken } = await ctx.createUser()
-
     const res = await ctx.request.post(`/api/v1/style`,
       {},
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(res.status).to.equal(400)
   })
 
   it('should update a style', async () => {
-    const { user, authToken } = await ctx.createUser()
-
     const aleRes = await ctx.request.post(`/api/v1/style`,
       { name: 'Pale Ale' },
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     const lagerRes = await ctx.request.post(`/api/v1/style`,
       { name: 'Lager' },
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(aleRes.status).to.equal(201)
@@ -166,7 +154,7 @@ describe('style tests', () => {
 
     const createRes = await ctx.request.post(`/api/v1/style`,
       { name: 'India Pale Ale', parents: [ aleRes.data.style.id ] },
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(createRes.status).to.equal(201)
@@ -175,12 +163,12 @@ describe('style tests', () => {
 
     const updateRes = await ctx.request.put(`/api/v1/style/${createRes.data.style.id}`,
       { name: 'India Pale Lager', parents: [ lagerRes.data.style.id ] },
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     const getRes = await ctx.request.get<{ style: StyleWithParents }>(
       `/api/v1/style/${createRes.data.style.id}`,
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(getRes.status).to.equal(200)
@@ -193,10 +181,8 @@ describe('style tests', () => {
   })
 
   it('should get empty style list', async () => {
-    const { user, authToken } = await ctx.createUser()
-
     const res = await ctx.request.get(`/api/v1/style`,
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(res.status).to.equal(200)

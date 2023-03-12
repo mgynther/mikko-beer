@@ -1,9 +1,12 @@
 import * as jwt from 'jsonwebtoken'
+import { v4 as uuidv4 } from 'uuid'
+
 import * as refreshTokenRepository from './refresh-token.repository'
 import { config } from '../config'
 import { type Database, type Transaction } from '../database'
 import { type AuthToken } from './auth-token'
 import { type RefreshToken } from './refresh-token'
+import { type Role } from '../user/user'
 
 export class AuthTokenError extends Error {}
 export class InvalidAuthTokenError extends AuthTokenError {}
@@ -12,6 +15,7 @@ export class RefreshTokenUserIdMismatchError extends Error {}
 
 export interface AuthTokenPayload {
   userId: string
+  role: Role
   refreshTokenId: string
 }
 
@@ -37,6 +41,19 @@ export async function createRefreshToken (
   })
 }
 
+export async function createInitialAdminRefreshToken (
+  db: Transaction,
+  userId: string
+): Promise<RefreshToken> {
+  const refresh_token_id = uuidv4()
+
+  return signRefreshToken({
+    userId,
+    refreshTokenId: refresh_token_id,
+    isRefreshToken: true
+  })
+}
+
 function signRefreshToken (tokenPayload: RefreshTokenPayload): RefreshToken {
   // Refresh tokens never expire.
   return { refreshToken: jwt.sign(tokenPayload, config.authTokenSecret) }
@@ -44,6 +61,7 @@ function signRefreshToken (tokenPayload: RefreshTokenPayload): RefreshToken {
 
 export async function createAuthToken (
   db: Transaction,
+  role: Role,
   refreshToken: RefreshToken
 ): Promise<AuthToken> {
   const { userId, refreshTokenId } = verifyRefreshToken(refreshToken)
@@ -52,7 +70,7 @@ export async function createAuthToken (
     last_refreshed_at: new Date()
   })
 
-  return signAuthToken({ userId, refreshTokenId })
+  return signAuthToken({ userId, role, refreshTokenId })
 }
 
 function verifyRefreshToken (token: RefreshToken): RefreshTokenPayload {
@@ -88,6 +106,7 @@ export function verifyAuthToken (token: AuthToken): AuthTokenPayload {
   if (
     typeof payload === 'string' ||
     typeof payload?.userId !== 'string' ||
+    typeof payload?.role !== 'string' ||
     typeof payload?.refreshTokenId !== 'string'
   ) {
     throw new InvalidAuthTokenError()
@@ -95,6 +114,7 @@ export function verifyAuthToken (token: AuthToken): AuthTokenPayload {
 
   return {
     userId: payload.userId,
+    role: payload.role as Role,
     refreshTokenId: payload.refreshTokenId
   }
 }

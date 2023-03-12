@@ -7,7 +7,7 @@ import { ControllerError } from '../util/errors'
 
 export function styleController (router: Router): void {
   router.post('/api/v1/style',
-    authenticationService.authenticateGeneric,
+    authenticationService.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
 
@@ -24,7 +24,7 @@ export function styleController (router: Router): void {
   )
 
   router.put('/api/v1/style/:styleId',
-    authenticationService.authenticateGeneric,
+    authenticationService.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
       const { styleId } = ctx.params
@@ -43,7 +43,7 @@ export function styleController (router: Router): void {
 
   router.get(
     '/api/v1/style/:styleId',
-    authenticationService.authenticateGeneric,
+    authenticationService.authenticateViewer,
     async (ctx) => {
       const { styleId } = ctx.params
       const style = await styleService.findStyleById(ctx.db, styleId)
@@ -62,7 +62,7 @@ export function styleController (router: Router): void {
 
   router.get(
     '/api/v1/style',
-    authenticationService.authenticateGeneric,
+    authenticationService.authenticateViewer,
     async (ctx) => {
       const styles = await styleService.listStyles(ctx.db)
       ctx.body = { styles }

@@ -4,6 +4,7 @@ import { type ConnectionConfig } from 'pg'
 dotenv.config()
 
 export interface Config {
+  readonly generateInitialAdminPassword: boolean
   readonly port: number
   readonly authTokenSecret: string
   readonly authTokenExpiryDuration: string
@@ -11,6 +12,7 @@ export interface Config {
 }
 
 export const config: Config = Object.freeze({
+  generateInitialAdminPassword: getEnvVariable('GENERATE_INITIAL_ADMIN_PASSWORD') === 'true',
   port: parseInt(getEnvVariable('PORT'), 10),
   authTokenSecret: getEnvVariable('AUTH_TOKEN_SECRET'),
   authTokenExpiryDuration: getEnvVariable('AUTH_TOKEN_EXIRY_DURATION'),

@@ -7,7 +7,7 @@ import { ControllerError } from '../util/errors'
 
 export function breweryController (router: Router): void {
   router.post('/api/v1/brewery',
-    authenticationService.authenticateGeneric,
+    authenticationService.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
 
@@ -24,7 +24,7 @@ export function breweryController (router: Router): void {
   )
 
   router.put('/api/v1/brewery/:breweryId',
-    authenticationService.authenticateGeneric,
+    authenticationService.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
       const { breweryId } = ctx.params
@@ -43,7 +43,7 @@ export function breweryController (router: Router): void {
 
   router.get(
     '/api/v1/brewery/:breweryId',
-    authenticationService.authenticateGeneric,
+    authenticationService.authenticateViewer,
     async (ctx) => {
       const { breweryId } = ctx.params
       const brewery = await breweryService.findBreweryById(ctx.db, breweryId)
@@ -62,7 +62,7 @@ export function breweryController (router: Router): void {
 
   router.get(
     '/api/v1/brewery',
-    authenticationService.authenticateGeneric,
+    authenticationService.authenticateViewer,
     async (ctx) => {
       const breweries = await breweryService.listBreweries(ctx.db)
       ctx.body = { breweries }

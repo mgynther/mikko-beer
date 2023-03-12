@@ -7,7 +7,7 @@ import { ControllerError } from '../util/errors'
 
 export function containerController (router: Router): void {
   router.post('/api/v1/container',
-    authenticationService.authenticateGeneric,
+    authenticationService.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
 
@@ -24,7 +24,7 @@ export function containerController (router: Router): void {
   )
 
   router.put('/api/v1/container/:containerId',
-    authenticationService.authenticateGeneric,
+    authenticationService.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
       const { containerId } = ctx.params
@@ -43,7 +43,7 @@ export function containerController (router: Router): void {
 
   router.get(
     '/api/v1/container/:containerId',
-    authenticationService.authenticateGeneric,
+    authenticationService.authenticateViewer,
     async (ctx) => {
       const { containerId } = ctx.params
       const container = await containerService.findContainerById(ctx.db, containerId)
@@ -62,7 +62,7 @@ export function containerController (router: Router): void {
 
   router.get(
     '/api/v1/container',
-    authenticationService.authenticateGeneric,
+    authenticationService.authenticateViewer,
     async (ctx) => {
       const containers = await containerService.listContainers(ctx.db)
       ctx.body = { containers }

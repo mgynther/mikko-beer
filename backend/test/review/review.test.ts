@@ -14,22 +14,22 @@ describe('review tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  async function createDeps(authToken: string) {
+  async function createDeps(adminAuthHeaders: Record<string, unknown>) {
     const styleRes = await ctx.request.post(`/api/v1/style`,
       { name: 'Kriek' },
-      ctx.createAuthHeaders(authToken)
+      adminAuthHeaders
     )
     expect(styleRes.status).to.equal(201)
 
     const breweryRes = await ctx.request.post(`/api/v1/brewery`,
       { name: 'Lindemans' },
-      ctx.createAuthHeaders(authToken)
+      adminAuthHeaders
     )
     expect(breweryRes.status).to.equal(201)
 
     const beerRes = await ctx.request.post(`/api/v1/beer`,
       { name: 'Lindemans Kriek', breweries: [breweryRes.data.brewery.id], styles: [styleRes.data.style.id] },
-      ctx.createAuthHeaders(authToken)
+      adminAuthHeaders
     )
 
     expect(beerRes.status).to.equal(201)
@@ -39,7 +39,7 @@ describe('review tests', () => {
 
     const containerRes = await ctx.request.post(`/api/v1/container`,
       { type: 'Bottle', size: '0.25' },
-      ctx.createAuthHeaders(authToken)
+      adminAuthHeaders
     )
 
     return {
@@ -51,9 +51,7 @@ describe('review tests', () => {
   }
 
   it('should create a review', async () => {
-    const { user, authToken } = await ctx.createUser()
-
-    const { beerRes, breweryRes, containerRes, styleRes } = await createDeps(authToken)
+    const { beerRes, breweryRes, containerRes, styleRes } = await createDeps(ctx.adminAuthHeaders())
 
     const reviewRes = await ctx.request.post(`/api/v1/review`,
       {
@@ -66,7 +64,7 @@ describe('review tests', () => {
         taste: 'Cherries, a little sour',
         time: '2023-03-07T18:31:33.123Z'
       },
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
     expect(reviewRes.status).to.equal(201)
     expect(reviewRes.data.review.additionalInfo).to.equal('From Belgium')
@@ -80,7 +78,7 @@ describe('review tests', () => {
 
     const getRes = await ctx.request.get<{ review: Review }>(
       `/api/v1/review/${reviewRes.data.review.id}`,
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(getRes.status).to.equal(200)
@@ -96,7 +94,7 @@ describe('review tests', () => {
 
     const listRes = await ctx.request.get<{ reviews: Review[] }>(
       '/api/v1/review/',
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
     expect(listRes.status).to.equal(200)
     expect(listRes.data.reviews.length).to.equal(1)
@@ -104,9 +102,7 @@ describe('review tests', () => {
   })
 
   it('should fail create a review without beer', async () => {
-    const { user, authToken } = await ctx.createUser()
-
-    const { beerRes, breweryRes, containerRes, styleRes } = await createDeps(authToken)
+    const { beerRes, breweryRes, containerRes, styleRes } = await createDeps(ctx.adminAuthHeaders())
 
     const reviewRes = await ctx.request.post(`/api/v1/review`,
       {
@@ -118,15 +114,13 @@ describe('review tests', () => {
         taste: 'Cherries, a little sour',
         time: '2023-03-07T18:31:33.123Z'
       },
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
     expect(reviewRes.status).to.equal(400)
   })
 
   it('should update a review', async () => {
-    const { user, authToken } = await ctx.createUser()
-
-    const { beerRes, breweryRes, containerRes, styleRes } = await createDeps(authToken)
+    const { beerRes, breweryRes, containerRes, styleRes } = await createDeps(ctx.adminAuthHeaders())
 
     const requestData = {
       additionalInfo: 'From Belgium',
@@ -140,7 +134,7 @@ describe('review tests', () => {
     }
 
     const reviewRes = await ctx.request.post(`/api/v1/review`,
-      requestData, ctx.createAuthHeaders(authToken)
+      requestData, ctx.adminAuthHeaders()
     )
     expect(reviewRes.status).to.equal(201)
     expect(reviewRes.data.review.taste).to.equal('Crerries, a little sour')
@@ -151,13 +145,13 @@ describe('review tests', () => {
         taste: 'Cherries, a little sour',
         time: '2023-03-07T18:31:33.124Z'
       },
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
     expect(updateRes.status).to.equal(200)
 
     const getRes = await ctx.request.get<{ review: Review }>(
       `/api/v1/review/${reviewRes.data.review.id}`,
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(getRes.status).to.equal(200)
@@ -166,10 +160,8 @@ describe('review tests', () => {
   })
 
   it('should get empty review list', async () => {
-    const { user, authToken } = await ctx.createUser()
-
     const res = await ctx.request.get(`/api/v1/review`,
-      ctx.createAuthHeaders(authToken)
+      ctx.adminAuthHeaders()
     )
 
     expect(res.status).to.equal(200)

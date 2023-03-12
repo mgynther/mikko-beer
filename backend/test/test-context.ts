@@ -8,14 +8,16 @@ import {
   PostgresDialect,
   sql,
 } from 'kysely'
+import { Pool } from 'pg'
+import { v4 as uuidv4 } from 'uuid'
 
 import { testConfig } from './test-config'
 import { App } from '../src/app'
 import { Database } from '../src/database'
 import { User } from '../src/user/user'
-import { Pool } from 'pg'
 
 export class TestContext {
+  #adminAuthToken: string = ''
   #app?: App
 
   request = axios.create({
@@ -74,7 +76,9 @@ export class TestContext {
     await this.db.getDb().deleteFrom('style').execute()
     await this.db.getDb().deleteFrom('user').execute()
 
-    await this.#app.start()
+    const authToken = await this.#app.start()
+
+    this.#adminAuthToken = authToken
   }
 
   afterEach = async (): Promise<void> => {
@@ -82,17 +86,36 @@ export class TestContext {
     this.#app = undefined
   }
 
+  adminAuthHeaders = () => {
+    return this.createAuthHeaders(this.#adminAuthToken)
+  }
+
   createUser = async (): Promise<{
     user: User
     authToken: string
     refreshToken: string
+    username: string
+    password: string
   }> => {
+    const userUsername = 'testerson'
+    const userPassword = uuidv4()
     const res = await this.request.post(`/api/v1/user`, {
-      firstName: 'Test',
-      lastName: 'Testerson',
-    })
+      user: {
+        role: 'viewer'
+      },
+      passwordSignInMethod: {
+        username: userUsername,
+        password: userPassword
+      },
+    },
+      this.adminAuthHeaders()
+    )
 
-    return res.data
+    return {
+      ...res.data,
+      username: userUsername,
+      password: userPassword
+    }
   }
 
   createAuthHeaders = (authToken: string) => {

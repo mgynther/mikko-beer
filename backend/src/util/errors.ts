@@ -3,6 +3,7 @@ export type AuthenticationErrors =
   | 'InvalidAuthorizationHeader'
   | 'InvalidAuthToken'
   | 'ExpiredAuthToken'
+  | 'Forbidden'
   | 'UserMismatch'
   | 'UserOrRefreshTokenNotFound'
 

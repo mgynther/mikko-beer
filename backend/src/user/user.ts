@@ -1,26 +1,30 @@
 import { ajv } from '../util/ajv'
 
+// A much more detailed usage rights could be added but 2 roles is plenty for
+// the time being.
+export enum Role {
+  admin = 'admin',
+  viewer = 'viewer'
+}
+
 export interface User {
   id: string
-  firstName: string | null
-  lastName: string | null
+  role: Role
   username: string | null
 }
 
 export interface CreateAnonymousUserRequest {
-  firstName?: string
-  lastName?: string
+  role?: string
 }
 
 const doValidateCreateAnonymousUserRequest =
   ajv.compile<CreateAnonymousUserRequest>({
     type: 'object',
+    required: ['role'],
+    additionalProperties: false,
     properties: {
-      firstName: {
-        type: 'string'
-      },
-      lastName: {
-        type: 'string'
+      role: {
+        enum: ['admin', 'viewer']
       }
     }
   })

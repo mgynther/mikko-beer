@@ -3,6 +3,7 @@ import * as json from 'koa-json'
 import * as compress from 'koa-compress'
 import * as bodyParser from 'koa-bodyparser'
 import { type Server } from 'http'
+import { v4 as uuidv4 } from 'uuid'
 
 import { type Config } from './config'
 import { type Context, type ContextExtension } from './context'
@@ -14,6 +15,9 @@ import { containerController } from './container/container.controller'
 import { reviewController } from './review/review.controller'
 import { styleController } from './style/style.controller'
 import { userController } from './user/user.controller'
+import { Role } from './user/user'
+import * as userService from './user/user.service'
+import { addPasswordSignInMethod } from './user/sign-in-method/sign-in-method.controller'
 import { ControllerError } from './util/errors'
 import { isObject } from './util/object'
 
@@ -52,9 +56,49 @@ export class App {
     return this.#db
   }
 
-  async start (): Promise<void> {
-    await new Promise<void>((resolve) => {
-      this.#server = this.#koa.listen(this.#config.port, resolve)
+  async start (): Promise<string> {
+    return await new Promise<string>((resolve) => {
+      const port = this.#config.port
+      const db = this.#db
+      const isAdminPasswordNeeded = this.#config.generateInitialAdminPassword
+      function logWithAdminPassword (...args: any[]): void {
+        if (isAdminPasswordNeeded) {
+          console.log(...args)
+        }
+      }
+      let authToken = ''
+      userService.listUsers(db).then(users => {
+        let createPromise: Promise<void> | undefined
+        if (users === undefined || users.length === 0) {
+          logWithAdminPassword('No users. Creating initial admin')
+          const adminUsername = uuidv4()
+          const adminPassword = uuidv4()
+          createPromise = db.executeTransaction(async (trx) => {
+            const user = await userService.createAnonymousUser(trx, Role.admin, false)
+            authToken = user.authToken.authToken
+            if (isAdminPasswordNeeded) {
+              await addPasswordSignInMethod(trx, user.user.id, { username: adminUsername, password: adminPassword })
+            }
+          })
+          logWithAdminPassword(`Created initial user "${adminUsername}" with password "${adminPassword}". Please change the password a.s.a.p.`)
+        }
+        logWithAdminPassword('Server starting')
+        const serverPromise = new Promise<void>((resolve) => {
+          this.#server = this.#koa.listen(port, resolve)
+        })
+        const promises = [serverPromise]
+        if (createPromise !== undefined) {
+          promises.push(createPromise)
+        }
+        Promise.all(promises).then(() => {
+          logWithAdminPassword(`Server started in port ${port}`)
+          resolve(authToken)
+        }, (error) => {
+          console.warn('Error starting', error)
+        })
+      }, (error) => {
+        console.warn('Error starting', error)
+      })
     })
   }
 

@@ -1,10 +1,12 @@
 import { type Generated, type Insertable, type Selectable, type Updateable } from 'kysely'
 
+import { type Role } from './user'
+
+// Here we could have user information such as name if it was needed. In this application is is not.
 export interface UserTable {
   user_id: Generated<string>
-  first_name: string | null
-  last_name: string | null
   username: string | null
+  role: Role
   created_at: Generated<Date>
 }
 

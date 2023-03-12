@@ -1,6 +1,7 @@
 import * as signInMethodService from './sign-in-method.service'
 import * as authenticationService from '../../authentication/authentication.service'
 import * as authTokenService from '../../authentication/auth-token.service'
+import { type Transaction } from '../../database'
 
 import { RefreshTokenUserIdMismatchError } from '../../authentication/auth-token.service'
 import {
@@ -15,60 +16,50 @@ import { type Router } from '../../router'
 import { ControllerError, UserNotFoundError } from '../../util/errors'
 import { validatePasswordSignInMethod } from './sign-in-method'
 
-export function signInMethodController (router: Router): void {
-  router.post(
-    '/api/v1/user/:userId/sign-in-methods',
-    authenticationService.authenticateUser,
-    async (ctx) => {
-      const { body } = ctx.request
+export async function addPasswordSignInMethod (trx: Transaction, userId: string, request: unknown): Promise<string> {
+  if (!validatePasswordSignInMethod(request)) {
+    throw new ControllerError(
+      400,
+      'InvalidSignInMethod',
+      'invalid sign in method'
+    )
+  }
 
-      if (!validatePasswordSignInMethod(body)) {
-        throw new ControllerError(
-          400,
-          'InvalidSignInMethod',
-          'invalid sign in method'
-        )
-      }
-
-      try {
-        await ctx.db.executeTransaction(async (trx) => {
-          await signInMethodService.addPasswordSignInMethod(
-            trx,
-            ctx.params.userId,
-            body
-          )
-        })
-
-        ctx.status = 201
-        ctx.body = { success: true }
-      } catch (error) {
-        if (error instanceof UserNotFoundError) {
-          throw new ControllerError(404, 'UserNotFound', 'user not found')
-        } else if (error instanceof PasswordTooWeakError) {
-          throw new ControllerError(
-            400,
-            'PasswordTooWeak',
-            'password is too weak'
-          )
-        } else if (error instanceof PasswordTooLongError) {
-          throw new ControllerError(
-            400,
-            'PasswordTooLong',
-            'password is too long'
-          )
-        } else if (error instanceof UserAlreadyHasSignInMethodError) {
-          throw new ControllerError(
-            409,
-            'UserAlreadyHasSignInMethod',
-            'the user already has a sign in method'
-          )
-        }
-
-        throw error
-      }
+  try {
+    await signInMethodService.addPasswordSignInMethod(
+      trx,
+      userId,
+      request
+    )
+    return request.username
+  } catch (error) {
+    if (error instanceof UserNotFoundError) {
+      throw new ControllerError(404, 'UserNotFound', 'user not found')
+    } else if (error instanceof PasswordTooWeakError) {
+      throw new ControllerError(
+        400,
+        'PasswordTooWeak',
+        'password is too weak'
+      )
+    } else if (error instanceof PasswordTooLongError) {
+      throw new ControllerError(
+        400,
+        'PasswordTooLong',
+        'password is too long'
+      )
+    } else if (error instanceof UserAlreadyHasSignInMethodError) {
+      throw new ControllerError(
+        409,
+        'UserAlreadyHasSignInMethod',
+        'the user already has a sign in method'
+      )
     }
-  )
 
+    throw error
+  }
+}
+
+export function signInMethodController (router: Router): void {
   router.post('/api/v1/user/sign-in', async (ctx) => {
     const { body } = ctx.request
 
