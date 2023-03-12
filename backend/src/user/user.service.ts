@@ -51,23 +51,23 @@ export async function lockUserById (
   }
 }
 
-export async function lockUserByEmail (
+export async function lockUserByUsername (
   trx: Transaction,
-  email: string
+  username: string
 ): Promise<User | undefined> {
-  const userRow = await userRepository.lockUserByEmail(trx, email)
+  const userRow = await userRepository.lockUserByUsername(trx, username)
 
   if (userRow != null) {
     return userRowToUser(userRow)
   }
 }
 
-export async function setUserEmail (
+export async function setUserUsername (
   trx: Transaction,
   userId: string,
-  email: string
+  username: string
 ): Promise<void> {
-  await userRepository.setUserEmail(trx, userId, email)
+  await userRepository.setUserUsername(trx, userId, username)
 }
 
 export function userRowToUser (user: UserRow): User {
@@ -75,6 +75,6 @@ export function userRowToUser (user: UserRow): User {
     id: user.user_id,
     firstName: user.first_name,
     lastName: user.last_name,
-    email: user.email
+    username: user.username
   }
 }

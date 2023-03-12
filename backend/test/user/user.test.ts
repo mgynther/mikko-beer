@@ -4,7 +4,7 @@ import { TestContext } from '../test-context'
 import { User } from '../../src/user/user'
 import { AxiosResponse } from 'axios'
 
-const EMAIL = 'foo@bar.fake'
+const USERNAME = 'foo@bar.fake'
 const PASSWORD = '12345678'
 
 describe('user tests', () => {
@@ -24,7 +24,7 @@ describe('user tests', () => {
     expect(res.status).to.equal(201)
     expect(res.data.user.firstName).to.equal('Anon')
     expect(res.data.user.lastName).to.equal(null)
-    expect(res.data.user.email).to.equal(null)
+    expect(res.data.user.username).to.equal(null)
 
     // The returned auth token should be usable.
     const getRes = await ctx.request.get<{ user: User }>(
@@ -61,7 +61,7 @@ describe('user tests', () => {
     await createPasswordSignInMethod(user.id, authToken)
 
     const res = await ctx.request.post(`/api/v1/user/sign-in`, {
-      email: EMAIL,
+      username: USERNAME,
       password: PASSWORD,
     })
 
@@ -82,7 +82,7 @@ describe('user tests', () => {
     await createPasswordSignInMethod(user.id, authToken)
 
     const res = await ctx.request.post(`/api/v1/user/sign-in`, {
-      email: EMAIL,
+      username: USERNAME,
       password: 'wrong password',
     })
 
@@ -90,7 +90,7 @@ describe('user tests', () => {
     expect(res.data).to.eql({
       error: {
         code: 'InvalidCredentials',
-        message: 'wrong email or password',
+        message: 'wrong username or password',
       },
     })
 
@@ -130,7 +130,7 @@ describe('user tests', () => {
   ): Promise<AxiosResponse<{ success: true }>> {
     return await ctx.request.post<{ success: true }>(
       `/api/v1/user/${userId}/sign-in-methods`,
-      { email: EMAIL, password: PASSWORD },
+      { username: USERNAME, password: PASSWORD },
       ctx.createAuthHeaders(authToken)
     )
   }

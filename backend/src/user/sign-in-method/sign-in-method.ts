@@ -3,15 +3,15 @@ import { ajv } from '../../util/ajv'
 export type SignInMethod = PasswordSignInMethod
 
 export interface PasswordSignInMethod {
-  email: string
+  username: string
   password: string
 }
 
 export const validatePasswordSignInMethod = ajv.compile<PasswordSignInMethod>({
   type: 'object',
-  required: ['email', 'password'],
+  required: ['username', 'password'],
   properties: {
-    email: {
+    username: {
       type: 'string'
     },
     password: {

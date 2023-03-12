@@ -34,16 +34,16 @@ export async function lockUserById (
   return await lockUser(trx, 'user_id', id)
 }
 
-export async function lockUserByEmail (
+export async function lockUserByUsername (
   trx: Transaction,
-  email: string
+  username: string
 ): Promise<UserRow | undefined> {
-  return await lockUser(trx, 'email', email)
+  return await lockUser(trx, 'username', username)
 }
 
 async function lockUser (
   trx: Transaction,
-  column: 'user_id' | 'email',
+  column: 'user_id' | 'username',
   value: string
 ): Promise<UserRow | undefined> {
   const user = await trx.trx()
@@ -56,14 +56,14 @@ async function lockUser (
   return user
 }
 
-export async function setUserEmail (
+export async function setUserUsername (
   trx: Transaction,
   id: string,
-  email: string
+  username: string
 ): Promise<void> {
   await trx.trx()
     .updateTable('user')
     .where('user_id', '=', id)
-    .set({ email })
+    .set({ username })
     .execute()
 }

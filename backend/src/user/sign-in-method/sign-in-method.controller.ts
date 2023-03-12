@@ -101,7 +101,7 @@ export function signInMethodController (router: Router): void {
         throw new ControllerError(
           401,
           'InvalidCredentials',
-          'wrong email or password'
+          'wrong username or password'
         )
       }
 

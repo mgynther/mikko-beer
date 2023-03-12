@@ -4,7 +4,7 @@ export interface UserTable {
   user_id: Generated<string>
   first_name: string | null
   last_name: string | null
-  email: string | null
+  username: string | null
   created_at: Generated<Date>
 }
 

@@ -28,7 +28,7 @@ export async function addPasswordSignInMethod (
     throw new UserNotFoundError()
   }
 
-  if (user.email?.length !== undefined && user.email?.length > 0) {
+  if (user.username?.length !== undefined && user.username?.length > 0) {
     throw new UserAlreadyHasSignInMethodError()
   }
 
@@ -37,7 +37,7 @@ export async function addPasswordSignInMethod (
     password_hash: await encryptPassword(method.password)
   })
 
-  await userService.setUserEmail(trx, userId, method.email)
+  await userService.setUserUsername(trx, userId, method.username)
 }
 
 async function encryptPassword (password: string): Promise<string> {
@@ -84,7 +84,7 @@ export async function singInUsingPassword (
   trx: Transaction,
   method: PasswordSignInMethod
 ): Promise<SignedInUser> {
-  const user = await userService.lockUserByEmail(trx, method.email)
+  const user = await userService.lockUserByUsername(trx, method.username)
 
   if (user == null) {
     throw new UserNotFoundError()
