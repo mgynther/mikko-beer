@@ -1,4 +1,5 @@
 import * as Koa from 'koa'
+import cors = require("@koa/cors")
 import * as json from 'koa-json'
 import * as compress from 'koa-compress'
 import * as bodyParser from 'koa-bodyparser'
@@ -31,6 +32,7 @@ export class App {
   constructor (config: Config) {
     this.#config = config
     this.#koa = new Koa()
+    this.#koa.use(cors());
     this.#router = new Router()
     this.#db = new Database(this.#config)
 

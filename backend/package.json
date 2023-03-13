@@ -13,6 +13,7 @@
     "migrate:latest": "node dist/migrate-to-latest.js"
   },
   "dependencies": {
+    "@koa/cors": "^4.0.0",
     "ajv": "^8.11.2",
     "dotenv": "^16.0.0",
     "jsonwebtoken": "^9.0.0",
@@ -29,6 +30,7 @@
     "@types/chai": "^4.3.4",
     "@types/jsonwebtoken": "^9.0.0",
     "@types/koa": "^2.13.5",
+    "@types/koa__cors": "^3.3.1",
     "@types/koa-bodyparser": "^4.3.10",
     "@types/koa-compress": "^4.0.3",
     "@types/koa-json": "^2.0.20",
