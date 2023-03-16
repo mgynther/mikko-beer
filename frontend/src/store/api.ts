@@ -10,7 +10,14 @@ import { userTagTypes } from './user/types'
 import { type RootState } from './store'
 
 function mergeTags (): string[] {
-  return [...beerTagTypes(), ...breweryTagTypes(), ...containerTagTypes(), ...loginTagTypes(), ...styleTagTypes(), ...userTagTypes()]
+  return [
+    ...beerTagTypes(),
+    ...breweryTagTypes(),
+    ...containerTagTypes(),
+    ...loginTagTypes(),
+    ...styleTagTypes(),
+    ...userTagTypes()
+  ]
 }
 
 export const emptySplitApi = createApi({

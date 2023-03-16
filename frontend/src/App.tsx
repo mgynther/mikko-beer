@@ -70,7 +70,12 @@ function App (): JSX.Element {
               <Layout
                 isLoggedIn={isLoggedIn}
                 logout={() => {
-                  void logout({ userId: loginState.user?.id ?? '', body: { refreshToken: loginState.refreshToken } })
+                  void logout({
+                    userId: loginState.user?.id ?? '',
+                    body: {
+                      refreshToken: loginState.refreshToken
+                    }
+                  })
                 }}
               />
             }>

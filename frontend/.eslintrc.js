@@ -22,5 +22,6 @@ module.exports = {
       },
     ],
     '@typescript-eslint/no-invalid-void-type': 0,
+    'max-len': ['error', { 'code': 80 }]
   }
 }
