@@ -8,16 +8,20 @@ function Containers (): JSX.Element {
       <h3>Containers</h3>
       {isLoading && (<div>Loading...</div>)}
       <table>
-        <tr>
-          <th>Type</th>
-          <th>Size</th>
-        </tr>
-        {containerData?.containers.map((container: Container) => (
-          <tr key={container.id}>
-            <td>{container.type}</td>
-            <td>{container.size}</td>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Size</th>
           </tr>
-        ))}
+        </thead>
+        <tbody>
+          {containerData?.containers.map((container: Container) => (
+            <tr key={container.id}>
+              <td>{container.type}</td>
+              <td>{container.size}</td>
+            </tr>
+          ))}
+        </tbody>
       </table>
     </div>
   )

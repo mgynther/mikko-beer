@@ -20,22 +20,26 @@ function Beers (): JSX.Element {
       <h3>Beers</h3>
       {isLoading && (<div>Loading...</div>)}
       <table>
-        <tr>
-          <th>Breweries</th>
-          <th>Name</th>
-          <th>Styles</th>
-        </tr>
-        {beerData?.beers.map((beer: Beer) => (
-          <tr key={beer.id}>
-            <td>
-              {toString(beer.breweries.map(b => breweryMap[b].name))}
-            </td>
-            <td>{beer.name}</td>
-            <td>
-              {toString(beer.styles.map(s => styleMap[s].name))}
-            </td>
+        <thead>
+          <tr>
+            <th>Breweries</th>
+            <th>Name</th>
+            <th>Styles</th>
           </tr>
-        ))}
+        </thead>
+        <tbody>
+          {beerData?.beers.map((beer: Beer) => (
+            <tr key={beer.id}>
+              <td>
+                {toString(beer.breweries.map(b => breweryMap[b].name))}
+              </td>
+              <td>{beer.name}</td>
+              <td>
+                {toString(beer.styles.map(s => styleMap[s].name))}
+              </td>
+            </tr>
+          ))}
+        </tbody>
       </table>
     </div>
   )

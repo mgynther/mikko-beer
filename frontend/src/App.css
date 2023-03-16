@@ -1,15 +1,12 @@
 .App {
-  text-align: center;
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  background-color: #282c34;
+  text-align: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  align-items: center;
+  min-height: 100vw;
 }
 
 .App-link {
@@ -28,6 +25,7 @@ nav ul li a {
 
 .Review-table {
   font-size: 12px;
+  width: 100vw;
 }
 
 tr:nth-child(even) {background: rgba(0,0,0,0.2)}

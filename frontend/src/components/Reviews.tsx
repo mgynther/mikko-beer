@@ -39,40 +39,44 @@ function Reviews (): JSX.Element {
       <h3>Reviews</h3>
       {isLoading && (<div>Loading...</div>)}
       <table className="Review-table">
-        <tr>
-          <th>Breweries</th>
-          <th>Name</th>
-          <th>Styles</th>
-          <th>Smell</th>
-          <th>Taste</th>
-          <th>Rating</th>
-          <th>Time</th>
-          <th>Container</th>
-          <th>Location</th>
-          <th>Additional info</th>
-        </tr>
-        {reviewData?.reviews.map((review: Review) => {
-          const beer: Beer = beerMap[review.beer]
-          const container = containerMap[review.container]
-          return (
-            <tr key={review.id}>
-              <td>
-                {toString(beer.breweries.map(b => breweryMap[b].name))}
-              </td>
-              <td>{beer.name}</td>
-              <td>
-                {toString(beer.styles.map(s => styleMap[s].name))}
-              </td>
-              <td>{review.smell}</td>
-              <td>{review.taste}</td>
-              <td>{review.rating}</td>
-              <td>{formatDate(new Date(review.time))}</td>
-              <td>{container.type} {container.size}</td>
-              <td>{review.location}</td>
-              <td>{review.additionalInfo}</td>
-            </tr>
-          )
-        })}
+        <thead>
+          <tr>
+            <th>Breweries</th>
+            <th>Name</th>
+            <th>Styles</th>
+            <th>Smell</th>
+            <th>Taste</th>
+            <th>Rating</th>
+            <th>Time</th>
+            <th>Container</th>
+            <th>Location</th>
+            <th>Additional info</th>
+          </tr>
+        </thead>
+        <tbody>
+          {reviewData?.reviews.map((review: Review) => {
+            const beer: Beer = beerMap[review.beer]
+            const container = containerMap[review.container]
+            return (
+              <tr key={review.id}>
+                <td>
+                  {toString(beer.breweries.map(b => breweryMap[b].name))}
+                </td>
+                <td>{beer.name}</td>
+                <td>
+                  {toString(beer.styles.map(s => styleMap[s].name))}
+                </td>
+                <td>{review.smell}</td>
+                <td>{review.taste}</td>
+                <td>{review.rating}</td>
+                <td>{formatDate(new Date(review.time))}</td>
+                <td>{container.type} {container.size}</td>
+                <td>{review.location}</td>
+                <td>{review.additionalInfo}</td>
+              </tr>
+            )
+          })}
+        </tbody>
       </table>
     </div>
   )

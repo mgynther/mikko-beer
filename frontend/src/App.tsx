@@ -25,31 +25,33 @@ function Layout (props: LayoutProps): JSX.Element {
     <div>
       {props.isLoggedIn && (
         <React.Fragment>
-          <nav>
-            <ul>
-              <li>
-                <Link to="/beers">Beers</Link>
-              </li>
-              <li>
-                <Link to="/breweries">Breweries</Link>
-              </li>
-              <li>
-                <Link to="/reviews">Reviews</Link>
-              </li>
-              <li>
-                <Link to="/styles">Styles</Link>
-              </li>
-              <li>
-                <Link to="/containers">Containers</Link>
-              </li>
-              <li>
-                <Link to="/users">Users</Link>
-              </li>
-              <li>
-                <button onClick={props.logout}>Logout</button>
-              </li>
-            </ul>
-          </nav>
+          <header>
+            <nav>
+              <ul>
+                <li>
+                  <Link to="/beers">Beers</Link>
+                </li>
+                <li>
+                  <Link to="/breweries">Breweries</Link>
+                </li>
+                <li>
+                  <Link to="/reviews">Reviews</Link>
+                </li>
+                <li>
+                  <Link to="/styles">Styles</Link>
+                </li>
+                <li>
+                  <Link to="/containers">Containers</Link>
+                </li>
+                <li>
+                  <Link to="/users">Users</Link>
+                </li>
+                <li>
+                  <button onClick={props.logout}>Logout</button>
+                </li>
+              </ul>
+            </nav>
+          </header>
           <hr />
         </React.Fragment>
       )}
@@ -64,36 +66,34 @@ function App (): JSX.Element {
   const [logout] = useLogoutMutation()
   return (
     <div className="App">
-      <header className="App-header">
-        <Routes>
-          <Route path="/" element={
-              <Layout
-                isLoggedIn={isLoggedIn}
-                logout={() => {
-                  void logout({
-                    userId: loginState.user?.id ?? '',
-                    body: {
-                      refreshToken: loginState.refreshToken
-                    }
-                  })
-                }}
-              />
-            }>
-            <Route index element={isLoggedIn ? <Beers /> : <Login />} />
-            {isLoggedIn && (
-              <React.Fragment>
-                <Route path="beers" element={<Beers />} />
-                <Route path="breweries" element={<Breweries />} />
-                <Route path="containers" element={<Containers />} />
-                <Route path="reviews" element={<Reviews />} />
-                <Route path="styles" element={<Styles />} />
-                <Route path="users" element={<Users />} />
-              </React.Fragment>
-            )}
-            <Route path="*" element={isLoggedIn ? <Beers /> : <Login />} />
-          </Route>
-        </Routes>
-      </header>
+      <Routes>
+        <Route path="/" element={
+            <Layout
+              isLoggedIn={isLoggedIn}
+              logout={() => {
+                void logout({
+                  userId: loginState.user?.id ?? '',
+                  body: {
+                    refreshToken: loginState.refreshToken
+                  }
+                })
+              }}
+            />
+          }>
+          <Route index element={isLoggedIn ? <Beers /> : <Login />} />
+          {isLoggedIn && (
+            <React.Fragment>
+              <Route path="beers" element={<Beers />} />
+              <Route path="breweries" element={<Breweries />} />
+              <Route path="containers" element={<Containers />} />
+              <Route path="reviews" element={<Reviews />} />
+              <Route path="styles" element={<Styles />} />
+              <Route path="users" element={<Users />} />
+            </React.Fragment>
+          )}
+          <Route path="*" element={isLoggedIn ? <Beers /> : <Login />} />
+        </Route>
+      </Routes>
     </div>
   )
 }
