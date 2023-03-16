@@ -1,13 +1,18 @@
 import * as reviewService from './review.service'
-import * as authenticationService from '../authentication/authentication.service'
+import * as authService from '../authentication/authentication.service'
 
 import { type Router } from '../router'
-import { type CreateReviewRequest, type UpdateReviewRequest, validateCreateReviewRequest, validateUpdateReviewRequest } from './review'
+import {
+  type CreateReviewRequest,
+  type UpdateReviewRequest,
+  validateCreateReviewRequest,
+  validateUpdateReviewRequest
+} from './review'
 import { ControllerError } from '../util/errors'
 
 export function reviewController (router: Router): void {
   router.post('/api/v1/review',
-    authenticationService.authenticateAdmin,
+    authService.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
 
@@ -24,14 +29,15 @@ export function reviewController (router: Router): void {
   )
 
   router.put('/api/v1/review/:reviewId',
-    authenticationService.authenticateAdmin,
+    authService.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
       const { reviewId } = ctx.params
 
       const updateReviewRequest = validateUpdateRequest(body, reviewId)
       const result = await ctx.db.executeTransaction(async (trx) => {
-        return await reviewService.updateReview(trx, reviewId, updateReviewRequest)
+        return await reviewService.updateReview(
+          trx, reviewId, updateReviewRequest)
       })
 
       ctx.status = 200
@@ -43,7 +49,7 @@ export function reviewController (router: Router): void {
 
   router.get(
     '/api/v1/review/:reviewId',
-    authenticationService.authenticateViewer,
+    authService.authenticateViewer,
     async (ctx) => {
       const { reviewId } = ctx.params
       const review = await reviewService.findReviewById(ctx.db, reviewId)
@@ -62,7 +68,7 @@ export function reviewController (router: Router): void {
 
   router.get(
     '/api/v1/review',
-    authenticationService.authenticateViewer,
+    authService.authenticateViewer,
     async (ctx) => {
       const reviews = await reviewService.listReviews(ctx.db)
       ctx.body = { reviews }
@@ -79,7 +85,10 @@ function validateCreateRequest (body: unknown): CreateReviewRequest {
   return result
 }
 
-function validateUpdateRequest (body: unknown, reviewId: string): UpdateReviewRequest {
+function validateUpdateRequest (
+  body: unknown,
+  reviewId: string
+): UpdateReviewRequest {
   if (!validateUpdateReviewRequest(body)) {
     throw new ControllerError(400, 'InvalidReview', 'invalid review')
   }

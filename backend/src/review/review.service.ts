@@ -1,7 +1,11 @@
 import * as reviewRepository from './review.repository'
 
 import { type Database, type Transaction } from '../database'
-import { type CreateReviewRequest, type UpdateReviewRequest, type Review } from './review'
+import {
+  type CreateReviewRequest,
+  type UpdateReviewRequest,
+  type Review
+} from './review'
 import { type ReviewRow } from './review.table'
 
 export async function createReview (

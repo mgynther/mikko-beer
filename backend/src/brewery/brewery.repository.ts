@@ -1,5 +1,9 @@
 import { type Database, type Transaction } from '../database'
-import { type BreweryRow, type InsertableBreweryRow, type UpdateableBreweryRow } from './brewery.table'
+import {
+  type BreweryRow,
+  type InsertableBreweryRow,
+  type UpdateableBreweryRow
+} from './brewery.table'
 
 export async function insertBrewery (
   trx: Transaction,

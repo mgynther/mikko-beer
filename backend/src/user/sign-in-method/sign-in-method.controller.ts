@@ -1,9 +1,11 @@
 import * as signInMethodService from './sign-in-method.service'
-import * as authenticationService from '../../authentication/authentication.service'
+import * as authService from '../../authentication/authentication.service'
 import * as authTokenService from '../../authentication/auth-token.service'
 import { type Transaction } from '../../database'
 
-import { RefreshTokenUserIdMismatchError } from '../../authentication/auth-token.service'
+import {
+  RefreshTokenUserIdMismatchError
+} from '../../authentication/auth-token.service'
 import {
   PasswordTooLongError,
   PasswordTooWeakError,
@@ -16,7 +18,11 @@ import { type Router } from '../../router'
 import { ControllerError, UserNotFoundError } from '../../util/errors'
 import { validatePasswordSignInMethod } from './sign-in-method'
 
-export async function addPasswordSignInMethod (trx: Transaction, userId: string, request: unknown): Promise<string> {
+export async function addPasswordSignInMethod (
+  trx: Transaction,
+  userId: string,
+  request: unknown
+): Promise<string> {
   if (!validatePasswordSignInMethod(request)) {
     throw new ControllerError(
       400,
@@ -102,7 +108,7 @@ export function signInMethodController (router: Router): void {
 
   router.post(
     '/api/v1/user/:userId/sign-out',
-    authenticationService.authenticateUser,
+    authService.authenticateUser,
     async (ctx) => {
       const { body } = ctx.request
 

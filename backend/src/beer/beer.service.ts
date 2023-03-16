@@ -1,7 +1,13 @@
 import * as beerRepository from './beer.repository'
 
 import { type Database, type Transaction } from '../database'
-import { type CreateBeerRequest, type UpdateBeerRequest, type Beer, type BeerWithBreweryAndStyleIds, type BeerWithBreweriesAndStyles } from './beer'
+import {
+  type CreateBeerRequest,
+  type UpdateBeerRequest,
+  type Beer,
+  type BeerWithBreweryAndStyleIds,
+  type BeerWithBreweriesAndStyles
+} from './beer'
 import { type BeerRow } from './beer.table'
 
 export async function createBeer (

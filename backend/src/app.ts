@@ -1,5 +1,5 @@
 import * as Koa from 'koa'
-import cors = require("@koa/cors")
+import cors = require('@koa/cors')
 import * as json from 'koa-json'
 import * as compress from 'koa-compress'
 import * as bodyParser from 'koa-bodyparser'
@@ -18,7 +18,9 @@ import { styleController } from './style/style.controller'
 import { userController } from './user/user.controller'
 import { Role } from './user/user'
 import * as userService from './user/user.service'
-import { addPasswordSignInMethod } from './user/sign-in-method/sign-in-method.controller'
+import {
+  addPasswordSignInMethod
+} from './user/sign-in-method/sign-in-method.controller'
 import { ControllerError } from './util/errors'
 import { isObject } from './util/object'
 
@@ -32,7 +34,7 @@ export class App {
   constructor (config: Config) {
     this.#config = config
     this.#koa = new Koa()
-    this.#koa.use(cors());
+    this.#koa.use(cors())
     this.#router = new Router()
     this.#db = new Database(this.#config)
 
@@ -76,13 +78,24 @@ export class App {
           const adminUsername = uuidv4()
           const adminPassword = uuidv4()
           createPromise = db.executeTransaction(async (trx) => {
-            const user = await userService.createAnonymousUser(trx, Role.admin, false)
+            const user = await userService.createAnonymousUser(
+              trx, Role.admin, false)
             authToken = user.authToken.authToken
             if (isAdminPasswordNeeded) {
-              await addPasswordSignInMethod(trx, user.user.id, { username: adminUsername, password: adminPassword })
+              await addPasswordSignInMethod(
+                trx,
+                user.user.id,
+                {
+                  username: adminUsername,
+                  password: adminPassword
+                }
+              )
             }
           })
-          logWithAdminPassword(`Created initial user "${adminUsername}" with password "${adminPassword}". Please change the password a.s.a.p.`)
+          logWithAdminPassword(
+            // eslint-disable-next-line max-len
+            `Created initial user "${adminUsername}" with password "${adminPassword}". Please change the password a.s.a.p.`
+          )
         }
         logWithAdminPassword('Server starting')
         const serverPromise = new Promise<void>((resolve) => {

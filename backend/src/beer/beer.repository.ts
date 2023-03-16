@@ -1,5 +1,13 @@
 import { type Database, type Transaction } from '../database'
-import { type BeerRow, type BeerBreweryRow, type BeerStyleRow, type InsertableBeerRow, type InsertableBeerBreweryRow, type InsertableBeerStyleRow, type UpdateableBeerRow } from './beer.table'
+import {
+  type BeerRow,
+  type BeerBreweryRow,
+  type BeerStyleRow,
+  type InsertableBeerRow,
+  type InsertableBeerBreweryRow,
+  type InsertableBeerStyleRow,
+  type UpdateableBeerRow
+} from './beer.table'
 import { type BeerWithBreweriesAndStyles } from './beer'
 
 import { type Brewery } from '../brewery/brewery'
@@ -92,7 +100,15 @@ export async function findBeerById (
     .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
     .innerJoin('style', 'style.style_id', 'beer_style.style')
     .where('beer_id', '=', id)
-    .select(['beer.beer_id', 'beer.name', 'beer.created_at', 'brewery.brewery_id as brewery_id', 'brewery.name as brewery_name', 'style.style_id as style_id', 'style.name as style_name'])
+    .select([
+      'beer.beer_id',
+      'beer.name',
+      'beer.created_at',
+      'brewery.brewery_id as brewery_id',
+      'brewery.name as brewery_name',
+      'style.style_id as style_id',
+      'style.name as style_name'
+    ])
     .execute()
 
   if (beerRows === undefined || beerRows.length === 0) {

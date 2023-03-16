@@ -1,13 +1,18 @@
 import * as breweryService from './brewery.service'
-import * as authenticationService from '../authentication/authentication.service'
+import * as authService from '../authentication/authentication.service'
 
 import { type Router } from '../router'
-import { type CreateBreweryRequest, type UpdateBreweryRequest, validateCreateBreweryRequest, validateUpdateBreweryRequest } from './brewery'
+import {
+  type CreateBreweryRequest,
+  type UpdateBreweryRequest,
+  validateCreateBreweryRequest,
+  validateUpdateBreweryRequest
+} from './brewery'
 import { ControllerError } from '../util/errors'
 
 export function breweryController (router: Router): void {
   router.post('/api/v1/brewery',
-    authenticationService.authenticateAdmin,
+    authService.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
 
@@ -24,14 +29,15 @@ export function breweryController (router: Router): void {
   )
 
   router.put('/api/v1/brewery/:breweryId',
-    authenticationService.authenticateAdmin,
+    authService.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
       const { breweryId } = ctx.params
 
       const updateBreweryRequest = validateUpdateRequest(body, breweryId)
       const result = await ctx.db.executeTransaction(async (trx) => {
-        return await breweryService.updateBrewery(trx, breweryId, updateBreweryRequest)
+        return await breweryService.updateBrewery(
+          trx, breweryId, updateBreweryRequest)
       })
 
       ctx.status = 200
@@ -43,7 +49,7 @@ export function breweryController (router: Router): void {
 
   router.get(
     '/api/v1/brewery/:breweryId',
-    authenticationService.authenticateViewer,
+    authService.authenticateViewer,
     async (ctx) => {
       const { breweryId } = ctx.params
       const brewery = await breweryService.findBreweryById(ctx.db, breweryId)
@@ -62,7 +68,7 @@ export function breweryController (router: Router): void {
 
   router.get(
     '/api/v1/brewery',
-    authenticationService.authenticateViewer,
+    authService.authenticateViewer,
     async (ctx) => {
       const breweries = await breweryService.listBreweries(ctx.db)
       ctx.body = { breweries }
@@ -79,7 +85,10 @@ function validateCreateRequest (body: unknown): CreateBreweryRequest {
   return result
 }
 
-function validateUpdateRequest (body: unknown, breweryId: string): UpdateBreweryRequest {
+function validateUpdateRequest (
+  body: unknown,
+  breweryId: string
+): UpdateBreweryRequest {
   if (!validateUpdateBreweryRequest(body)) {
     throw new ControllerError(400, 'InvalidBrewery', 'invalid brewery')
   }

@@ -1,5 +1,11 @@
 import { type Database, type Transaction } from '../database'
-import { type InsertableStyleRow, type InsertableStyleRelationshipRow, type StyleRow, type StyleRelationshipRow, type UpdateableStyleRow } from './style.table'
+import {
+  type InsertableStyleRow,
+  type InsertableStyleRelationshipRow,
+  type StyleRow,
+  type StyleRelationshipRow,
+  type UpdateableStyleRow
+} from './style.table'
 import { type StyleWithParentIds, type StyleWithParents } from './style'
 
 export async function insertStyle (
@@ -61,10 +67,19 @@ export async function findStyleById (
 ): Promise<StyleWithParents | undefined> {
   const styles = await db.getDb()
     .selectFrom('style')
-    .leftJoin('style_relationship', 'style.style_id', 'style_relationship.parent')
+    .leftJoin(
+      'style_relationship',
+      'style.style_id',
+      'style_relationship.parent'
+    )
     .where('style_relationship.child', '=', id)
     .orWhere('style.style_id', '=', id)
-    .select(['style_id', 'name', 'style.created_at', 'style_relationship.child as child'])
+    .select([
+      'style_id',
+      'name',
+      'style.created_at',
+      'style_relationship.child as child'
+    ])
     .execute()
 
   if (styles.length === 0) {
@@ -72,7 +87,9 @@ export async function findStyleById (
   }
 
   const style = styles.find(style => style.style_id === id)
-  const parents = styles.map(style => style.child === id ? style : null).filter(style => style !== null && style !== undefined) as StyleRow[]
+  const parents = styles
+    .map(style => style.child === id ? style : null)
+    .filter(style => style !== null && style !== undefined) as StyleRow[]
 
   if (style === null || style === undefined) return undefined
 
@@ -113,8 +130,17 @@ export async function listStyles (
 ): Promise<StyleWithParentIds[] | undefined> {
   const styles = await db.getDb()
     .selectFrom('style')
-    .leftJoin('style_relationship', 'style.style_id', 'style_relationship.child')
-    .select(['style_id', 'name', 'style.created_at', 'style_relationship.parent as parent'])
+    .leftJoin(
+      'style_relationship',
+      'style.style_id',
+      'style_relationship.child'
+    )
+    .select([
+      'style_id',
+      'name',
+      'style.created_at',
+      'style_relationship.parent as parent'
+    ])
     .execute()
 
   if (styles.length === 0) {
@@ -132,8 +158,10 @@ export async function listStyles (
       }
       styleArray.push(styleMap[style.style_id])
     } else {
-      styleMap[style.style_id].parents = [...styleMap[style.style_id].parents, style.parent]
-        .filter(parent => parent) as string[]
+      styleMap[style.style_id].parents = [
+        ...styleMap[style.style_id].parents,
+        style.parent
+      ].filter(parent => parent) as string[]
     }
   })
 

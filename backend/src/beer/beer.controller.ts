@@ -1,13 +1,18 @@
 import * as beerService from './beer.service'
-import * as authenticationService from '../authentication/authentication.service'
+import * as authService from '../authentication/authentication.service'
 
 import { type Router } from '../router'
-import { type CreateBeerRequest, type UpdateBeerRequest, validateCreateBeerRequest, validateUpdateBeerRequest } from './beer'
+import {
+  type CreateBeerRequest,
+  type UpdateBeerRequest,
+  validateCreateBeerRequest,
+  validateUpdateBeerRequest
+} from './beer'
 import { ControllerError } from '../util/errors'
 
 export function beerController (router: Router): void {
   router.post('/api/v1/beer',
-    authenticationService.authenticateAdmin,
+    authService.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
 
@@ -24,7 +29,7 @@ export function beerController (router: Router): void {
   )
 
   router.put('/api/v1/beer/:beerId',
-    authenticationService.authenticateAdmin,
+    authService.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
       const { beerId } = ctx.params
@@ -43,7 +48,7 @@ export function beerController (router: Router): void {
 
   router.get(
     '/api/v1/beer/:beerId',
-    authenticationService.authenticateViewer,
+    authService.authenticateViewer,
     async (ctx) => {
       const { beerId } = ctx.params
       const beer = await beerService.findBeerById(ctx.db, beerId)
@@ -62,7 +67,7 @@ export function beerController (router: Router): void {
 
   router.get(
     '/api/v1/beer',
-    authenticationService.authenticateViewer,
+    authService.authenticateViewer,
     async (ctx) => {
       const beers = await beerService.listBeers(ctx.db)
       ctx.body = { beers }
@@ -79,7 +84,10 @@ function validateCreateRequest (body: unknown): CreateBeerRequest {
   return result
 }
 
-function validateUpdateRequest (body: unknown, beerId: string): UpdateBeerRequest {
+function validateUpdateRequest (
+  body: unknown,
+  beerId: string
+): UpdateBeerRequest {
   if (!validateUpdateBeerRequest(body)) {
     throw new ControllerError(400, 'InvalidBeer', 'invalid beer')
   }

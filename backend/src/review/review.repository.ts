@@ -1,5 +1,9 @@
 import { type Database, type Transaction } from '../database'
-import { type ReviewRow, type InsertableReviewRow, type UpdateableReviewRow } from './review.table'
+import {
+  type ReviewRow,
+  type InsertableReviewRow,
+  type UpdateableReviewRow
+} from './review.table'
 
 export async function insertReview (
   trx: Transaction,

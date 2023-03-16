@@ -1,13 +1,18 @@
 import * as styleService from './style.service'
-import * as authenticationService from '../authentication/authentication.service'
+import * as authService from '../authentication/authentication.service'
 
 import { type Router } from '../router'
-import { type CreateStyleRequest, type UpdateStyleRequest, validateCreateStyleRequest, validateUpdateStyleRequest } from './style'
+import {
+  type CreateStyleRequest,
+  type UpdateStyleRequest,
+  validateCreateStyleRequest,
+  validateUpdateStyleRequest
+} from './style'
 import { ControllerError } from '../util/errors'
 
 export function styleController (router: Router): void {
   router.post('/api/v1/style',
-    authenticationService.authenticateAdmin,
+    authService.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
 
@@ -24,7 +29,7 @@ export function styleController (router: Router): void {
   )
 
   router.put('/api/v1/style/:styleId',
-    authenticationService.authenticateAdmin,
+    authService.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
       const { styleId } = ctx.params
@@ -43,7 +48,7 @@ export function styleController (router: Router): void {
 
   router.get(
     '/api/v1/style/:styleId',
-    authenticationService.authenticateViewer,
+    authService.authenticateViewer,
     async (ctx) => {
       const { styleId } = ctx.params
       const style = await styleService.findStyleById(ctx.db, styleId)
@@ -62,7 +67,7 @@ export function styleController (router: Router): void {
 
   router.get(
     '/api/v1/style',
-    authenticationService.authenticateViewer,
+    authService.authenticateViewer,
     async (ctx) => {
       const styles = await styleService.listStyles(ctx.db)
       ctx.body = { styles }
@@ -79,7 +84,10 @@ function validateCreateRequest (body: unknown): CreateStyleRequest {
   return result
 }
 
-function validateUpdateRequest (body: unknown, styleId: string): UpdateStyleRequest {
+function validateUpdateRequest (
+  body: unknown,
+  styleId: string
+): UpdateStyleRequest {
   if (!validateUpdateStyleRequest(body)) {
     throw new ControllerError(400, 'InvalidStyle', 'invalid style')
   }

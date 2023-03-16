@@ -7,17 +7,34 @@ export type AuthenticationErrors =
   | 'UserMismatch'
   | 'UserOrRefreshTokenNotFound'
 
-export type BeerApiErrors = 'InvalidBeer' | 'InvalidBeerId' | 'BeerNotFound'
+export type BeerApiErrors =
+  | 'InvalidBeer'
+  | 'InvalidBeerId'
+  | 'BeerNotFound'
 
-export type BreweryApiErrors = 'InvalidBrewery' | 'InvalidBreweryId' | 'BreweryNotFound'
+export type BreweryApiErrors =
+  | 'InvalidBrewery'
+  | 'InvalidBreweryId'
+  | 'BreweryNotFound'
 
-export type ContainerApiErrors = 'InvalidContainer' | 'InvalidContainerId' | 'ContainerNotFound'
+export type ContainerApiErrors =
+  | 'InvalidContainer'
+  | 'InvalidContainerId'
+  | 'ContainerNotFound'
 
-export type ReviewApiErrors = 'InvalidReview' | 'InvalidReviewId' | 'ReviewNotFound'
+export type ReviewApiErrors =
+  | 'InvalidReview'
+  | 'InvalidReviewId'
+  | 'ReviewNotFound'
 
-export type StyleApiErrors = 'InvalidStyle' | 'InvalidStyleId' | 'StyleNotFound'
+export type StyleApiErrors =
+  | 'InvalidStyle'
+  | 'InvalidStyleId'
+  | 'StyleNotFound'
 
-export type UserApiErrors = 'InvalidUser' | 'UserNotFound'
+export type UserApiErrors =
+  | 'InvalidUser'
+  | 'UserNotFound'
 
 export type SignInMethodApiErros =
   | 'InvalidSignInMethod'

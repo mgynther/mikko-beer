@@ -2,7 +2,10 @@ import * as refreshTokenRepository from './refresh-token.repository'
 import * as authTokenService from './auth-token.service'
 import { Role } from '../user/user'
 
-import { AuthTokenExpiredError, type AuthTokenPayload } from './auth-token.service'
+import {
+  AuthTokenExpiredError,
+  type AuthTokenPayload
+} from './auth-token.service'
 import { type Next } from 'koa'
 import { type Context } from '../context'
 import { ControllerError } from '../util/errors'

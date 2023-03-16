@@ -1,7 +1,11 @@
 import * as containerRepository from './container.repository'
 
 import { type Database, type Transaction } from '../database'
-import { type CreateContainerRequest, type Container, type UpdateContainerRequest } from './container'
+import {
+  type CreateContainerRequest,
+  type Container,
+  type UpdateContainerRequest
+} from './container'
 import { type ContainerRow } from './container.table'
 
 export async function createContainer (
@@ -23,10 +27,14 @@ export async function updateContainer (
   containerId: string,
   request: UpdateContainerRequest
 ): Promise<Container> {
-  const container = await containerRepository.updateContainer(trx, containerId, {
-    type: request.type,
-    size: request.size
-  })
+  const container = await containerRepository.updateContainer(
+    trx,
+    containerId,
+    {
+      type: request.type,
+      size: request.size
+    }
+  )
 
   return {
     ...containerRowToContainer(container)

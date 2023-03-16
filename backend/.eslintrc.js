@@ -20,6 +20,7 @@ module.exports = {
         'selector': 'variable',
         'format': ['camelCase', 'PascalCase', 'snake_case', 'UPPER_CASE'],
       },
-    ]
+    ],
+    'max-len': ['error', { 'code': 80, 'ignoreRegExpLiterals': true }]
   }
 }

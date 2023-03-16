@@ -1,22 +1,29 @@
 import * as userService from './user.service'
-import { addPasswordSignInMethod, signInMethodController } from './sign-in-method/sign-in-method.controller'
-import * as authenticationService from '../authentication/authentication.service'
+import {
+  addPasswordSignInMethod,
+  signInMethodController
+} from './sign-in-method/sign-in-method.controller'
+import * as authService from '../authentication/authentication.service'
 
 import { type Router } from '../router'
 import { type Role, validateCreateAnonymousUserRequest } from './user'
-import { type PasswordSignInMethod, validatePasswordSignInMethod } from './sign-in-method/sign-in-method'
+import {
+  type PasswordSignInMethod,
+  validatePasswordSignInMethod
+} from './sign-in-method/sign-in-method'
 import { ControllerError } from '../util/errors'
 
 export function userController (router: Router): void {
   router.post('/api/v1/user',
-    authenticationService.authenticateAdmin,
+    authService.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
 
       const request = validateCreateRequest(body)
       const result = await ctx.db.executeTransaction(async (trx) => {
         const user = await userService.createAnonymousUser(trx, request.role)
-        const username = await addPasswordSignInMethod(trx, user.user.id, request.passwordSignInMethod)
+        const username = await addPasswordSignInMethod(
+          trx, user.user.id, request.passwordSignInMethod)
         return {
           ...user,
           user: { ...user.user, username }
@@ -34,7 +41,7 @@ export function userController (router: Router): void {
 
   router.get(
     '/api/v1/user/:userId',
-    authenticationService.authenticateUser,
+    authService.authenticateUser,
     async (ctx) => {
       const { userId } = ctx.params
       const user = await userService.findUserById(ctx.db, userId)
@@ -53,7 +60,7 @@ export function userController (router: Router): void {
 
   router.get(
     '/api/v1/user',
-    authenticationService.authenticateViewer,
+    authService.authenticateViewer,
     async (ctx) => {
       const users = await userService.listUsers(ctx.db)
 
@@ -79,7 +86,8 @@ function validateCreateRequest (body: unknown): ValidCreateRequest {
   }
 
   const role: Role = anyBody.user.role as Role
-  const passwordSignInMethod: PasswordSignInMethod = anyBody.passwordSignInMethod as PasswordSignInMethod
+  const passwordSignInMethod: PasswordSignInMethod =
+    anyBody.passwordSignInMethod as PasswordSignInMethod
   return {
     role,
     passwordSignInMethod

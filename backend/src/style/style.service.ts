@@ -1,7 +1,13 @@
 import * as styleRepository from './style.repository'
 
 import { type Database, type Transaction } from '../database'
-import { type CreateStyleRequest, type Style, type StyleWithParents, type StyleWithParentIds, type UpdateStyleRequest } from './style'
+import {
+  type CreateStyleRequest,
+  type Style,
+  type StyleWithParents,
+  type StyleWithParentIds,
+  type UpdateStyleRequest
+} from './style'
 import { type StyleRow } from './style.table'
 
 export async function createStyle (
