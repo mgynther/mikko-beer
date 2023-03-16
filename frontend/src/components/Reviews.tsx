@@ -1,8 +1,8 @@
 import { useListReviewsQuery } from '../store/review/api'
-import { Review } from '../store/review/types'
+import { type Review } from '../store/review/types'
 
-function Reviews() {
-  const { data: reviewData, isLoading } = useListReviewsQuery();
+function Reviews (): JSX.Element {
+  const { data: reviewData, isLoading } = useListReviewsQuery()
   return (
     <div>
       <h3>Reviews</h3>
@@ -23,4 +23,4 @@ function Reviews() {
   )
 }
 
-export default Reviews;
+export default Reviews

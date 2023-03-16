@@ -1,8 +1,8 @@
 import { useListContainersQuery } from '../store/container/api'
-import { Container } from '../store/container/types'
+import { type Container } from '../store/container/types'
 
-function Containers() {
-  const { data: containerData, isLoading } = useListContainersQuery();
+function Containers (): JSX.Element {
+  const { data: containerData, isLoading } = useListContainersQuery()
   return (
     <div>
       <h3>Containers</h3>
@@ -23,4 +23,4 @@ function Containers() {
   )
 }
 
-export default Containers;
+export default Containers

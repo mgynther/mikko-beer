@@ -1,8 +1,8 @@
-import React from 'react';
+import React from 'react'
 import { useSelector } from 'react-redux'
-import { Routes, Route, Link, Outlet } from "react-router-dom";
+import { Routes, Route, Link, Outlet } from 'react-router-dom'
 
-import './App.css';
+import './App.css'
 
 import Beers from './components/Beers'
 import Breweries from './components/Breweries'
@@ -13,14 +13,14 @@ import Styles from './components/Styles'
 import Users from './components/Users'
 
 import { useLogoutMutation } from './store/login/api'
-import { LoginState, selectLogin } from './store/login/reducer'
+import { type LoginState, selectLogin } from './store/login/reducer'
 
 interface LayoutProps {
   isLoggedIn: boolean
   logout: () => void
 }
 
-function Layout(props: LayoutProps) {
+function Layout (props: LayoutProps): JSX.Element {
   return (
     <div>
       {props.isLoggedIn && (
@@ -55,14 +55,13 @@ function Layout(props: LayoutProps) {
       )}
       <Outlet />
     </div>
-  );
+  )
 }
 
-
-function App() {
+function App (): JSX.Element {
   const loginState: LoginState = useSelector(selectLogin)
-  const isLoggedIn: boolean = !!loginState.authToken
-  const [logout] = useLogoutMutation();
+  const isLoggedIn: boolean = loginState.authToken?.length > 0
+  const [logout] = useLogoutMutation()
   return (
     <div className="App">
       <header className="App-header">
@@ -71,7 +70,7 @@ function App() {
               <Layout
                 isLoggedIn={isLoggedIn}
                 logout={() => {
-                  logout({ userId: loginState.user?.id ?? '', body: { refreshToken: loginState.refreshToken } })
+                  void logout({ userId: loginState.user?.id ?? '', body: { refreshToken: loginState.refreshToken } })
                 }}
               />
             }>
@@ -91,7 +90,7 @@ function App() {
         </Routes>
       </header>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

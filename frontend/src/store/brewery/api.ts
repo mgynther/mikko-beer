@@ -1,16 +1,16 @@
 import { emptySplitApi } from '../api'
 
-import { BreweryList } from './types'
+import { type BreweryList } from './types'
 
 const breweryApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
     listBreweries: build.query<BreweryList, void>({
       query: () => ({
-        url: `/brewery`,
-        method: 'GET',
-      }),
-    }),
-  }),
+        url: '/brewery',
+        method: 'GET'
+      })
+    })
+  })
 })
 
 export const { useListBreweriesQuery } = breweryApi

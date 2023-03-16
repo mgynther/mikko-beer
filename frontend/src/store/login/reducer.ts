@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
 
 interface User {
@@ -37,6 +37,6 @@ export const loginSlice = createSlice({
 
 export const { logout, success } = loginSlice.actions
 
-export const selectLogin = (state: RootState) => state.login
+export const selectLogin = (state: RootState): LoginState => state.login
 
 export default loginSlice.reducer

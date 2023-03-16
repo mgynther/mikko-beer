@@ -6,7 +6,7 @@ import loginReducer from './login/reducer'
 export const store = configureStore({
   reducer: {
     login: loginReducer,
-    [emptySplitApi.reducerPath]: emptySplitApi.reducer,
+    [emptySplitApi.reducerPath]: emptySplitApi.reducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware()

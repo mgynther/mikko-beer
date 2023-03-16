@@ -1,16 +1,16 @@
 import { emptySplitApi } from '../api'
 
-import { UserList } from './types'
+import { type UserList } from './types'
 
 const userApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
     listUsers: build.query<UserList, void>({
       query: () => ({
-        url: `/user`,
-        method: 'GET',
-      }),
-    }),
-  }),
+        url: '/user',
+        method: 'GET'
+      })
+    })
+  })
 })
 
 export const { useListUsersQuery } = userApi

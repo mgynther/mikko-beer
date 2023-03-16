@@ -7,10 +7,10 @@ import { loginTagTypes } from './login/types'
 import { styleTagTypes } from './style/types'
 import { userTagTypes } from './user/types'
 
-import { RootState } from './store'
+import { type RootState } from './store'
 
-function mergeTags(): string[] {
-  return [ ...beerTagTypes(), ...breweryTagTypes(), ...containerTagTypes(), ...loginTagTypes(), ...styleTagTypes(), ...userTagTypes(), ]
+function mergeTags (): string[] {
+  return [...beerTagTypes(), ...breweryTagTypes(), ...containerTagTypes(), ...loginTagTypes(), ...styleTagTypes(), ...userTagTypes()]
 }
 
 export const emptySplitApi = createApi({
@@ -18,13 +18,13 @@ export const emptySplitApi = createApi({
     baseUrl: 'http://localhost:3001/api/v1',
     prepareHeaders: (headers, api) => {
       const authToken = (api.getState() as RootState).login.authToken
-      if (authToken) {
+      if (authToken?.length > 0) {
         headers.set('Authorization', `Bearer ${authToken}`)
       }
-    },
+    }
   }),
   tagTypes: mergeTags(),
-  endpoints: () => ({}),
+  endpoints: () => ({})
 })
 
 export const { reducerPath, reducer, middleware } = emptySplitApi

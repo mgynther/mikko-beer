@@ -1,8 +1,8 @@
 import { useListBreweriesQuery } from '../store/brewery/api'
-import { Brewery } from '../store/brewery/types'
+import { type Brewery } from '../store/brewery/types'
 
-function Breweries() {
-  const { data: breweryData, isLoading } = useListBreweriesQuery();
+function Breweries (): JSX.Element {
+  const { data: breweryData, isLoading } = useListBreweriesQuery()
   return (
     <div>
       <h3>Breweries</h3>
@@ -16,4 +16,4 @@ function Breweries() {
   )
 }
 
-export default Breweries;
+export default Breweries

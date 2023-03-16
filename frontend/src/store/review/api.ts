@@ -1,16 +1,16 @@
 import { emptySplitApi } from '../api'
 
-import { ReviewList } from './types'
+import { type ReviewList } from './types'
 
 const reviewApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
     listReviews: build.query<ReviewList, void>({
       query: () => ({
-        url: `/review`,
-        method: 'GET',
-      }),
-    }),
-  }),
+        url: '/review',
+        method: 'GET'
+      })
+    })
+  })
 })
 
 export const { useListReviewsQuery } = reviewApi

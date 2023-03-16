@@ -1,8 +1,8 @@
 import { useListUsersQuery } from '../store/user/api'
-import { User } from '../store/user/types'
+import { type User } from '../store/user/types'
 
-function Users() {
-  const { data: userData, isLoading } = useListUsersQuery();
+function Users (): JSX.Element {
+  const { data: userData, isLoading } = useListUsersQuery()
   return (
     <div>
       <h3>Users</h3>
@@ -16,4 +16,4 @@ function Users() {
   )
 }
 
-export default Users;
+export default Users

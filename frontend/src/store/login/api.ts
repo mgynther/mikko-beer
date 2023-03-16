@@ -1,17 +1,17 @@
 import { emptySplitApi } from '../api'
 
-import { LoginState, logout, success } from './reducer'
-import { LoginParams, LogoutParams } from './types'
+import { type LoginState, logout, success } from './reducer'
+import { type LoginParams, type LogoutParams } from './types'
 
 const loginApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
     login: build.mutation<LoginState, Partial<LoginParams>>({
       query: (body: LoginParams) => ({
-        url: `/user/sign-in`,
+        url: '/user/sign-in',
         method: 'POST',
-        body,
+        body
       }),
-      async onQueryStarted({ ...patch }, { dispatch, queryFulfilled }) {
+      async onQueryStarted ({ ...patch }, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled
           dispatch(success({
@@ -21,24 +21,24 @@ const loginApi = emptySplitApi.injectEndpoints({
           }))
         } catch {}
       },
-      invalidatesTags: ['Login'],
+      invalidatesTags: ['Login']
     }),
     logout: build.mutation<LoginState, Partial<LogoutParams>>({
       query: (params: LogoutParams) => ({
         url: `/user/${params.userId}/sign-out`,
         method: 'POST',
-        body: params.body,
+        body: params.body
       }),
-      async onQueryStarted({ ...patch }, { dispatch, queryFulfilled }) {
+      async onQueryStarted ({ ...patch }, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled
           dispatch(logout())
         } catch {}
       },
-      invalidatesTags: ['Login'],
-    }),
+      invalidatesTags: ['Login']
+    })
   }),
-  overrideExisting: false,
+  overrideExisting: false
 })
 
 export const { useLoginMutation, useLogoutMutation } = loginApi

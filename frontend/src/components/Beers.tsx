@@ -1,8 +1,8 @@
 import { useListBeersQuery } from '../store/beer/api'
-import { Beer } from '../store/beer/types'
+import { type Beer } from '../store/beer/types'
 
-function Beers() {
-  const { data: beerData, isLoading } = useListBeersQuery();
+function Beers (): JSX.Element {
+  const { data: beerData, isLoading } = useListBeersQuery()
   return (
     <div>
       <h3>Beers</h3>
@@ -16,4 +16,4 @@ function Beers() {
   )
 }
 
-export default Beers;
+export default Beers

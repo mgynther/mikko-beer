@@ -1,8 +1,8 @@
 import { useListStylesQuery } from '../store/style/api'
-import { Style } from '../store/style/types'
+import { type Style } from '../store/style/types'
 
-function Styles() {
-  const { data: styleData, isLoading } = useListStylesQuery();
+function Styles (): JSX.Element {
+  const { data: styleData, isLoading } = useListStylesQuery()
   return (
     <div>
       <h3>Styles</h3>
@@ -16,4 +16,4 @@ function Styles() {
   )
 }
 
-export default Styles;
+export default Styles

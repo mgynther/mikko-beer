@@ -1,20 +1,20 @@
 import { useLoginMutation } from '../store/login/api'
 
-function Login() {
-  const [login, { isLoading }] = useLoginMutation();
+function Login (): JSX.Element {
+  const [login, { isLoading }] = useLoginMutation()
 
-  function doLogin(event: any) {
-    event.preventDefault();
-    login({
-      username: event.target['username'].value,
-      password: event.target['password'].value
-    });
-    event.target.reset();
+  async function doLogin (event: any): Promise<void> {
+    event.preventDefault()
+    await login({
+      username: event.target.username.value,
+      password: event.target.password.value
+    })
+    event.target.reset()
   }
 
   return (
     <div>
-      <form onSubmit={(e) => doLogin(e)}>
+      <form onSubmit={(e) => { void doLogin(e) }}>
         <h3>Login</h3>
         <div>
           <label htmlFor='username'>Username:</label>{' '}
@@ -39,4 +39,4 @@ function Login() {
   )
 }
 
-export default Login;
+export default Login
