@@ -8,7 +8,10 @@ import {
   type InsertableBeerStyleRow,
   type UpdateableBeerRow
 } from './beer.table'
-import { type BeerWithBreweriesAndStyles } from './beer'
+import {
+  type BeerWithBreweriesAndStyles,
+  type BeerWithBreweryAndStyleIds
+} from './beer'
 
 import { type Brewery } from '../brewery/brewery'
 import { type Style } from '../style/style'
@@ -167,15 +170,44 @@ async function lockBeer (
 
 export async function listBeers (
   db: Database
-): Promise<BeerRow[] | undefined> {
+): Promise<BeerWithBreweryAndStyleIds[] | undefined> {
   const beers = await db.getDb()
     .selectFrom('beer')
-    .selectAll('beer')
+    .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
+    .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
+    .select([
+      'beer.beer_id',
+      'beer.name',
+      'beer.created_at',
+      'beer_brewery.brewery as brewery',
+      'beer_style.style as style'
+    ])
     .execute()
 
   if (beers.length === 0) {
     return undefined
   }
 
-  return [...beers]
+  const beerMap: Record<string, BeerWithBreweryAndStyleIds> = {}
+  const beerArray: BeerWithBreweryAndStyleIds[] = []
+
+  beers.forEach(beer => {
+    if (beerMap[beer.beer_id] === undefined) {
+      beerMap[beer.beer_id] = {
+        id: beer.beer_id,
+        name: beer.name,
+        breweries: [],
+        styles: []
+      }
+      beerArray.push(beerMap[beer.beer_id])
+    }
+    if (!beerMap[beer.beer_id].breweries.includes(beer.brewery)) {
+      beerMap[beer.beer_id].breweries.push(beer.brewery)
+    }
+    if (!beerMap[beer.beer_id].styles.includes(beer.style)) {
+      beerMap[beer.beer_id].styles.push(beer.style)
+    }
+  })
+
+  return beerArray
 }

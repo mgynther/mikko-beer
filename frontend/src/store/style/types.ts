@@ -3,6 +3,8 @@ export interface Style {
   name: string
 }
 
+export type StyleMap = Record<string, Style>
+
 export interface StyleList {
   styles: Style[]
 }

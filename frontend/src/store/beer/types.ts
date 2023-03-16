@@ -1,6 +1,8 @@
 export interface Beer {
   id: string
   name: string
+  breweries: string[]
+  styles: string[]
 }
 
 export interface BeerList {

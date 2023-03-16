@@ -110,14 +110,12 @@ export async function lockBeerById (
 
 export async function listBeers (
   db: Database
-): Promise<Beer[] | undefined> {
-  const beerRows = await beerRepository.listBeers(db)
+): Promise<BeerWithBreweryAndStyleIds[] | undefined> {
+  const beers = await beerRepository.listBeers(db)
 
-  if (beerRows === null || beerRows === undefined) return []
+  if (beers === null || beers === undefined) return []
 
-  return beerRows.map(row => ({
-    ...beerRowToBeer(row)
-  }))
+  return beers
 }
 
 export function beerRowToBeer (beer: BeerRow): Beer {
