@@ -5,6 +5,8 @@ export interface Beer {
   styles: string[]
 }
 
+export type BeerMap = Record<string, Beer>
+
 export interface BeerList {
   beers: Beer[]
 }
