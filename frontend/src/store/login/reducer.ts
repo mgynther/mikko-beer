@@ -6,16 +6,30 @@ interface User {
   username: string
 }
 
-export interface LoginState {
+export interface Login {
   user: User | undefined
   authToken: string
   refreshToken: string
 }
 
+export enum PasswordChangeResult {
+  ERROR = 'ERROR',
+  SUCCESS = 'SUCCESS',
+  UNDEFINED = 'UNDEFINED'
+}
+
+export interface LoginState {
+  login: Login
+  passwordChangeResult: PasswordChangeResult
+}
+
 const initialState: LoginState = {
-  user: undefined,
-  authToken: '',
-  refreshToken: ''
+  login: {
+    user: undefined,
+    authToken: '',
+    refreshToken: ''
+  },
+  passwordChangeResult: PasswordChangeResult.UNDEFINED
 }
 
 export const loginSlice = createSlice({
@@ -23,20 +37,27 @@ export const loginSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      state.user = undefined
-      state.authToken = ''
-      state.refreshToken = ''
+      state.login.user = undefined
+      state.login.authToken = ''
+      state.login.refreshToken = ''
     },
-    success: (state, action: PayloadAction<LoginState>) => {
-      state.user = action.payload.user
-      state.authToken = action.payload.authToken
-      state.refreshToken = action.payload.refreshToken
+    success: (state, action: PayloadAction<Login>) => {
+      state.login = action.payload
+      state.passwordChangeResult = PasswordChangeResult.UNDEFINED
+    },
+    passwordChangeResult: (
+      state, action: PayloadAction<PasswordChangeResult>
+    ) => {
+      state.passwordChangeResult = action.payload
     }
   }
 })
 
-export const { logout, success } = loginSlice.actions
+export const { logout, passwordChangeResult, success } = loginSlice.actions
 
-export const selectLogin = (state: RootState): LoginState => state.login
+export const selectLogin = (state: RootState): Login => state.login.login
+export const selectPasswordChangeResult =
+  (state: RootState): PasswordChangeResult =>
+    state.login.passwordChangeResult
 
 export default loginSlice.reducer

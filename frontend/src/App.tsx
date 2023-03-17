@@ -4,16 +4,17 @@ import { Routes, Route, Link, Outlet } from 'react-router-dom'
 
 import './App.css'
 
+import Account from './components/Account'
 import Beers from './components/Beers'
 import Breweries from './components/Breweries'
 import Containers from './components/Containers'
-import Login from './components/Login'
+import LoginComponent from './components/Login'
 import Reviews from './components/Reviews'
 import Styles from './components/Styles'
 import Users from './components/Users'
 
 import { useLogoutMutation } from './store/login/api'
-import { type LoginState, selectLogin } from './store/login/reducer'
+import { type Login, selectLogin } from './store/login/reducer'
 
 interface LayoutProps {
   isLoggedIn: boolean
@@ -47,6 +48,9 @@ function Layout (props: LayoutProps): JSX.Element {
                   <Link to="/users">Users</Link>
                 </li>
                 <li>
+                  <Link to="/account">Account</Link>
+                </li>
+                <li>
                   <button onClick={props.logout}>Logout</button>
                 </li>
               </ul>
@@ -61,8 +65,8 @@ function Layout (props: LayoutProps): JSX.Element {
 }
 
 function App (): JSX.Element {
-  const loginState: LoginState = useSelector(selectLogin)
-  const isLoggedIn: boolean = loginState.authToken?.length > 0
+  const login: Login = useSelector(selectLogin)
+  const isLoggedIn: boolean = login.authToken?.length > 0
   const [logout] = useLogoutMutation()
   return (
     <div className="App">
@@ -72,15 +76,15 @@ function App (): JSX.Element {
               isLoggedIn={isLoggedIn}
               logout={() => {
                 void logout({
-                  userId: loginState.user?.id ?? '',
+                  userId: login.user?.id ?? '',
                   body: {
-                    refreshToken: loginState.refreshToken
+                    refreshToken: login.refreshToken
                   }
                 })
               }}
             />
           }>
-          <Route index element={isLoggedIn ? <Beers /> : <Login />} />
+          <Route index element={isLoggedIn ? <Beers /> : <LoginComponent />} />
           {isLoggedIn && (
             <React.Fragment>
               <Route path="beers" element={<Beers />} />
@@ -89,9 +93,12 @@ function App (): JSX.Element {
               <Route path="reviews" element={<Reviews />} />
               <Route path="styles" element={<Styles />} />
               <Route path="users" element={<Users />} />
+              <Route path="account" element={<Account />} />
             </React.Fragment>
           )}
-          <Route path="*" element={isLoggedIn ? <Beers /> : <Login />} />
+          <Route
+            path="*"
+            element={isLoggedIn ? <Beers /> : <LoginComponent />} />
         </Route>
       </Routes>
     </div>
