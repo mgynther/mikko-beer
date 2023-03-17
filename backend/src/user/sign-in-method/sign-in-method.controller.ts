@@ -79,7 +79,7 @@ export function signInMethodController (router: Router): void {
 
     try {
       const signedInUser = await ctx.db.executeTransaction(async (trx) => {
-        return await signInMethodService.singInUsingPassword(trx, body)
+        return await signInMethodService.signInUsingPassword(trx, body)
       })
 
       ctx.status = 200

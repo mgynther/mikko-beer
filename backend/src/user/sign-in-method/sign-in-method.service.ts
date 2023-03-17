@@ -80,7 +80,7 @@ async function scrypt (secret: string, salt: string): Promise<string> {
   })
 }
 
-export async function singInUsingPassword (
+export async function signInUsingPassword (
   trx: Transaction,
   method: PasswordSignInMethod
 ): Promise<SignedInUser> {
