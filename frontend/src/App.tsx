@@ -5,6 +5,7 @@ import { Routes, Route, Link, Outlet } from 'react-router-dom'
 import './App.css'
 
 import Account from './components/Account'
+import AddReview from './components/AddReview'
 import Beers from './components/Beers'
 import Breweries from './components/Breweries'
 import Containers from './components/Containers'
@@ -29,6 +30,9 @@ function Layout (props: LayoutProps): JSX.Element {
           <header>
             <nav>
               <ul>
+                <li>
+                  <Link to="/addreview">Add review</Link>
+                </li>
                 <li>
                   <Link to="/beers">Beers</Link>
                 </li>
@@ -87,6 +91,7 @@ function App (): JSX.Element {
           <Route index element={isLoggedIn ? <Beers /> : <LoginComponent />} />
           {isLoggedIn && (
             <React.Fragment>
+              <Route path="addreview" element={<AddReview />} />
               <Route path="beers" element={<Beers />} />
               <Route path="breweries" element={<Breweries />} />
               <Route path="containers" element={<Containers />} />

@@ -8,6 +8,8 @@ import {
   selectPasswordChangeResult
 } from '../store/login/reducer'
 
+import LoadingIndicator from './LoadingIndicator'
+
 import './ChangePassword.css'
 
 function ChangePassword (): JSX.Element {
@@ -65,7 +67,7 @@ function ChangePassword (): JSX.Element {
           />
         </div>
         <div>
-          {isLoading && ' Loading...'}
+          <LoadingIndicator isLoading={isLoading} />
           {!isLoading && formatPasswordChangeResult(passwordChangeResult) }
         </div>
       </form>

@@ -1,0 +1,31 @@
+import { type Beer } from '../store/beer/types'
+
+import SearchBeer from './SearchBeer'
+import SelectCreateRadio, { Mode } from './SelectCreateRadio'
+
+import './SelectBeer.css'
+
+export interface Props {
+  select: (beer: Beer) => void
+}
+
+function SelectBeer (props: Props): JSX.Element {
+  return (
+    <div className="SelectBeer">
+      <h4>Select or create beer</h4>
+      <SelectCreateRadio
+        defaultMode={Mode.CREATE}
+        createElement={
+          <div>
+            TODO create
+          </div>
+        }
+        selectElement={
+          <SearchBeer select={props.select} />
+        }
+      />
+    </div>
+  )
+}
+
+export default SelectBeer

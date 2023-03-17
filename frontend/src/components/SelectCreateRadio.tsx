@@ -1,0 +1,61 @@
+import { useState } from 'react'
+import { v4 as uuidv4 } from 'uuid'
+
+export enum Mode {
+  SELECT = 'SELECT',
+  CREATE = 'CREATE'
+}
+
+export interface Props {
+  defaultMode: Mode
+  createElement: JSX.Element
+  selectElement: JSX.Element
+}
+
+function SelectCreateRadio (props: Props): JSX.Element {
+  const [mode, setMode] = useState(props.defaultMode)
+  const [id] = useState(uuidv4())
+
+  function onRadioChange (e: React.ChangeEvent<HTMLInputElement>): void {
+    const newMode = e.target.value === Mode.SELECT ? Mode.SELECT : Mode.CREATE
+    setMode(newMode)
+  }
+
+  const modes = [
+    {
+      name: 'Create',
+      value: Mode.CREATE
+    },
+    {
+      name: 'Select',
+      value: Mode.SELECT
+    }
+  ]
+
+  return (
+    <div>
+      {modes.map(modeOption => (
+        <span key={modeOption.value}>
+          <input
+            type="radio"
+            name={`mode_${id}`}
+            value={modeOption.value}
+            id={modeOption.value}
+            onChange={onRadioChange}
+            checked={modeOption.value === mode}
+          />
+          <label htmlFor={modeOption.value}>{modeOption.name}</label>
+        </span>
+      ))}
+
+      {mode === Mode.SELECT && (
+        <div>{props.selectElement}</div>
+      )}
+      {mode === Mode.CREATE && (
+        <div>{props.createElement}</div>
+      )}
+    </div>
+  )
+}
+
+export default SelectCreateRadio

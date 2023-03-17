@@ -1,5 +1,7 @@
 import { useLoginMutation } from '../store/login/api'
 
+import LoadingIndicator from './LoadingIndicator'
+
 function Login (): JSX.Element {
   const [login, { isLoading }] = useLoginMutation()
 
@@ -32,7 +34,7 @@ function Login (): JSX.Element {
             value='Login'
             disabled={isLoading}
           />
-          {isLoading && ' Loading...'}
+          <LoadingIndicator isLoading={isLoading} />
         </div>
       </form>
     </div>

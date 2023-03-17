@@ -11,6 +11,8 @@ import { toStyleMap } from '../store/style/util'
 import { type Review } from '../store/review/types'
 import { toString } from './util'
 
+import LoadingIndicator from './LoadingIndicator'
+
 import './Reviews.css'
 
 function Reviews (): JSX.Element {
@@ -39,7 +41,7 @@ function Reviews (): JSX.Element {
   return (
     <div>
       <h3>Reviews</h3>
-      {isLoading && (<div>Loading...</div>)}
+      <LoadingIndicator isLoading={isLoading} />
       <table className="Review-table">
         <thead>
           <tr>

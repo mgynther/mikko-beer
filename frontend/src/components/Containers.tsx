@@ -1,12 +1,14 @@
 import { useListContainersQuery } from '../store/container/api'
 import { type Container } from '../store/container/types'
 
+import LoadingIndicator from './LoadingIndicator'
+
 function Containers (): JSX.Element {
   const { data: containerData, isLoading } = useListContainersQuery()
   return (
     <div>
       <h3>Containers</h3>
-      {isLoading && (<div>Loading...</div>)}
+      <LoadingIndicator isLoading={isLoading} />
       <table>
         <thead>
           <tr>

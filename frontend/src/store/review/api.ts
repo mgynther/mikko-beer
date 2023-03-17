@@ -1,6 +1,11 @@
 import { emptySplitApi } from '../api'
 
-import { type ReviewList } from './types'
+import {
+  type Review,
+  type ReviewList,
+  type ReviewRequest,
+  ReviewTags
+} from './types'
 
 const reviewApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
@@ -9,10 +14,18 @@ const reviewApi = emptySplitApi.injectEndpoints({
         url: '/review',
         method: 'GET'
       })
+    }),
+    createReview: build.mutation<Review, Partial<ReviewRequest>>({
+      query: (body: ReviewRequest) => ({
+        url: '/review',
+        method: 'POST',
+        body
+      }),
+      invalidatesTags: [ReviewTags.Review]
     })
   })
 })
 
-export const { useListReviewsQuery } = reviewApi
+export const { useCreateReviewMutation, useListReviewsQuery } = reviewApi
 
 export const { endpoints, reducerPath, reducer, middleware } = reviewApi
