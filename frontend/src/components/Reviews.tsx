@@ -11,6 +11,8 @@ import { toStyleMap } from '../store/style/util'
 import { type Review } from '../store/review/types'
 import { toString } from './util'
 
+import './Reviews.css'
+
 function Reviews (): JSX.Element {
   const { data: beerData, isLoading: areBeersLoading } = useListBeersQuery()
   const beerMap = toBeerMap(beerData)

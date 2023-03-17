@@ -24,10 +24,5 @@ nav ul li a {
   font-size: 18px;
 }
 
-.Review-table {
-  font-size: 12px;
-  width: 100vw;
-}
-
 tr:nth-child(even) {background: rgba(0,0,0,0.2)}
 tr:nth-child(odd) {background: rgba(0,0,0,0.3)}
