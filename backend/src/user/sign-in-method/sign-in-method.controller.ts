@@ -16,7 +16,46 @@ import {
 import { validateRefreshToken } from '../../authentication/refresh-token'
 import { type Router } from '../../router'
 import { ControllerError, UserNotFoundError } from '../../util/errors'
-import { validatePasswordSignInMethod } from './sign-in-method'
+import {
+  validatePasswordChange,
+  validatePasswordSignInMethod
+} from './sign-in-method'
+
+function handleError (error: unknown): void {
+  if (
+    error instanceof UserNotFoundError ||
+    error instanceof WrongPasswordError ||
+    error instanceof SignInMethodNotFoundError
+  ) {
+    // Don't leak too much information about why the sign in failed.
+    throw new ControllerError(
+      401,
+      'InvalidCredentials',
+      'wrong username or password'
+    )
+  }
+  if (error instanceof PasswordTooWeakError) {
+    throw new ControllerError(
+      400,
+      'PasswordTooWeak',
+      'password is too weak'
+    )
+  }
+  if (error instanceof PasswordTooLongError) {
+    throw new ControllerError(
+      400,
+      'PasswordTooLong',
+      'password is too long'
+    )
+  }
+  if (error instanceof UserAlreadyHasSignInMethodError) {
+    throw new ControllerError(
+      409,
+      'UserAlreadyHasSignInMethod',
+      'the user already has a sign in method'
+    )
+  }
+}
 
 export async function addPasswordSignInMethod (
   trx: Transaction,
@@ -38,28 +77,8 @@ export async function addPasswordSignInMethod (
       request
     )
     return request.username
-  } catch (error) {
-    if (error instanceof UserNotFoundError) {
-      throw new ControllerError(404, 'UserNotFound', 'user not found')
-    } else if (error instanceof PasswordTooWeakError) {
-      throw new ControllerError(
-        400,
-        'PasswordTooWeak',
-        'password is too weak'
-      )
-    } else if (error instanceof PasswordTooLongError) {
-      throw new ControllerError(
-        400,
-        'PasswordTooLong',
-        'password is too long'
-      )
-    } else if (error instanceof UserAlreadyHasSignInMethodError) {
-      throw new ControllerError(
-        409,
-        'UserAlreadyHasSignInMethod',
-        'the user already has a sign in method'
-      )
-    }
+  } catch (error: unknown) {
+    handleError(error)
 
     throw error
   }
@@ -89,18 +108,7 @@ export function signInMethodController (router: Router): void {
         refreshToken: signedInUser.refreshToken.refreshToken
       }
     } catch (error) {
-      if (
-        error instanceof UserNotFoundError ||
-        error instanceof WrongPasswordError ||
-        error instanceof SignInMethodNotFoundError
-      ) {
-        // Don't leak too much information about why the sign in failed.
-        throw new ControllerError(
-          401,
-          'InvalidCredentials',
-          'wrong username or password'
-        )
-      }
+      handleError(error)
 
       throw error
     }
@@ -138,6 +146,33 @@ export function signInMethodController (router: Router): void {
           )
         }
 
+        throw error
+      }
+    }
+  )
+
+  router.post(
+    '/api/v1/user/:userId/change-password',
+    authService.authenticateUser,
+    async (ctx) => {
+      const { body } = ctx.request
+
+      if (!validatePasswordChange(body)) {
+        throw new ControllerError(
+          400,
+          'InvalidPasswordChange',
+          'invalid password change'
+        )
+      }
+
+      try {
+        await ctx.db.executeTransaction(async (trx) => {
+          await signInMethodService.changePassword(trx, ctx.params.userId, body)
+        })
+
+        ctx.status = 204
+      } catch (error: unknown) {
+        handleError(error)
         throw error
       }
     }

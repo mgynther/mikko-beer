@@ -6,7 +6,10 @@ import * as authTokenService from '../../authentication/auth-token.service'
 import { type Transaction } from '../../database'
 import { UserNotFoundError } from '../../util/errors'
 import { type SignedInUser } from '../signed-in-user'
-import { type PasswordSignInMethod } from './sign-in-method'
+import {
+  type PasswordChange,
+  type PasswordSignInMethod
+} from './sign-in-method'
 
 export const MIN_PASSWORD_LENGTH = 8
 export const MAX_PASSWORD_LENGTH = 255
@@ -38,6 +41,41 @@ export async function addPasswordSignInMethod (
   })
 
   await userService.setUserUsername(trx, userId, method.username)
+}
+
+export async function changePassword (
+  trx: Transaction,
+  userId: string,
+  change: PasswordChange
+): Promise<void> {
+  const user = await userService.lockUserById(trx, userId)
+
+  if (user == null) {
+    throw new UserNotFoundError()
+  }
+
+  if (user.username === undefined || user.username?.length === 0) {
+    throw new SignInMethodNotFoundError()
+  }
+
+  const signInMethod = await signInMethodRepository.findPasswordSignInMethod(
+    trx,
+    user.id
+  )
+
+  if (signInMethod === undefined) {
+    throw new SignInMethodNotFoundError()
+  }
+
+  if (!(await verifyPassword(change.oldPassword, signInMethod.password_hash))) {
+    throw new WrongPasswordError()
+  }
+
+  await signInMethodRepository.updatePassword(
+    trx,
+    userId,
+    await encryptPassword(change.newPassword)
+  )
 }
 
 async function encryptPassword (password: string): Promise<string> {

@@ -35,3 +35,20 @@ export async function insertPasswordSignInMethod (
 
   return method
 }
+
+export async function updatePassword (
+  trx: Transaction,
+  user_id: string,
+  password_hash: string
+): Promise<PasswordSignInMethodRow> {
+  const updatedMethod = await trx.trx()
+    .updateTable('password_sign_in_method')
+    .set({
+      password_hash
+    })
+    .where('user_id', '=', user_id)
+    .returningAll()
+    .executeTakeFirstOrThrow()
+
+  return updatedMethod
+}

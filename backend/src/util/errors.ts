@@ -37,6 +37,7 @@ export type UserApiErrors =
   | 'UserNotFound'
 
 export type SignInMethodApiErros =
+  | 'InvalidPasswordChange'
   | 'InvalidSignInMethod'
   | 'UserAlreadyHasSignInMethod'
   | 'PasswordTooWeak'

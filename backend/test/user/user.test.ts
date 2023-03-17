@@ -135,4 +135,52 @@ describe('user tests', () => {
     expect(getRes.data.error.code).to.equal('UserOrRefreshTokenNotFound')
   })
 
+  it('should change password', async () => {
+    const { user, authToken, username, password } = await ctx.createUser()
+
+    const getRes = await ctx.request.get<{ user: User }>(
+      `/api/v1/user/${user.id}`,
+      ctx.createAuthHeaders(authToken)
+    )
+
+    expect(getRes.status).to.equal(200)
+    expect(getRes.data.user).to.eql(user)
+
+    const newPassword = 'a different password'
+    const wrongPwdChangeRes = await ctx.request.post(
+      `/api/v1/user/${getRes.data.user.id}/change-password`,
+      {
+        oldPassword: 'a wrong password',
+        newPassword
+      }, ctx.createAuthHeaders(authToken)
+    )
+    expect(wrongPwdChangeRes.status).to.equal(401)
+
+    const changeRes = await ctx.request.post(
+      `/api/v1/user/${getRes.data.user.id}/change-password`,
+      {
+        oldPassword: password,
+        newPassword
+      }, ctx.createAuthHeaders(authToken)
+    )
+    expect(changeRes.status).to.equal(204)
+
+    const oldPwdSignInRes = await ctx.request.post(
+      `/api/v1/user/sign-in`, {
+        username: username,
+        password: password,
+      },
+      ctx.createAuthHeaders(authToken)
+    )
+    expect(oldPwdSignInRes.status).to.equal(401)
+
+    const currentPwdSignInRes = await ctx.request.post(
+      `/api/v1/user/sign-in`, {
+        username: username,
+        password: newPassword,
+      }, ctx.createAuthHeaders(authToken)
+    )
+    expect(currentPwdSignInRes.status).to.equal(200)
+  })
+
 })
