@@ -32,6 +32,7 @@ function SearchBeer (props: Props): JSX.Element {
         isLoading={isLoading}
         setFilter={(filter: string) => { setFilter(filter) }}
         select={(beer: SearchBoxItem) => { props.select(beer as Beer) }}
+        title={'Search beer'}
       />
     </div>
   )

@@ -40,7 +40,6 @@ function SelectCreateRadio (props: Props): JSX.Element {
             type="radio"
             name={`mode_${id}`}
             value={modeOption.value}
-            id={modeOption.value}
             onChange={onRadioChange}
             checked={modeOption.value === mode}
           />

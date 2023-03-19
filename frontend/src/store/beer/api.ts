@@ -1,6 +1,12 @@
 import { emptySplitApi } from '../api'
 
-import { type BeerList } from './types'
+import { type Beer, type BeerList, BeerTags } from './types'
+
+interface BeerRequest {
+  name: string
+  breweries: string[]
+  styles: string[]
+}
 
 const beerApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
@@ -9,10 +15,20 @@ const beerApi = emptySplitApi.injectEndpoints({
         url: '/beer',
         method: 'GET'
       })
+    }),
+    createBeer: build.mutation<{ beer: Beer }, Partial<BeerRequest>>({
+      query: (beer: BeerRequest) => ({
+        url: '/beer',
+        method: 'POST',
+        body: {
+          ...beer
+        }
+      }),
+      invalidatesTags: [BeerTags.Beer]
     })
   })
 })
 
-export const { useListBeersQuery } = beerApi
+export const { useCreateBeerMutation, useListBeersQuery } = beerApi
 
 export const { endpoints, reducerPath, reducer, middleware } = beerApi

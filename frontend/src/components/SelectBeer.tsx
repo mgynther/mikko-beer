@@ -1,5 +1,6 @@
 import { type Beer } from '../store/beer/types'
 
+import CreateBeer from './CreateBeer'
 import SearchBeer from './SearchBeer'
 import SelectCreateRadio, { Mode } from './SelectCreateRadio'
 
@@ -16,9 +17,7 @@ function SelectBeer (props: Props): JSX.Element {
       <SelectCreateRadio
         defaultMode={Mode.CREATE}
         createElement={
-          <div>
-            TODO create
-          </div>
+          <CreateBeer select={props.select} />
         }
         selectElement={
           <SearchBeer select={props.select} />

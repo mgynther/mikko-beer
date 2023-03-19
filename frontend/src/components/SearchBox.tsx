@@ -15,6 +15,7 @@ interface Props {
   isLoading: boolean
   setFilter: (filter: string) => void
   select: (item: SearchBoxItem) => void
+  title: string
 }
 
 const maxResultCount = 10
@@ -27,7 +28,7 @@ function SearchBox (props: Props): JSX.Element {
   const areAllShown = visibleOptions.length === props.currentOptions.length
   return (
     <div className="SearchBox">
-      <label>Search:</label>{' '}
+      <label>{props.title}:</label>{' '}
       <input
         type='text'
         value={props.currentFilter}
@@ -40,7 +41,10 @@ function SearchBox (props: Props): JSX.Element {
               {visibleOptions.map(item => (
                 <li
                   key={item.id}
-                  onClick={() => { props.select(item) }}
+                  onClick={() => {
+                    props.select(item)
+                    props.setFilter('')
+                  }}
                 >
                   {item.name}
                 </li>
