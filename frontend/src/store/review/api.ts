@@ -21,7 +21,8 @@ const reviewApi = emptySplitApi.injectEndpoints({
       query: () => ({
         url: '/review',
         method: 'GET'
-      })
+      }),
+      providesTags: [ReviewTags.Review]
     }),
     createReview: build.mutation<Review, Partial<ReviewRequest>>({
       query: (body: ReviewRequest) => ({

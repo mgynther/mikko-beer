@@ -14,7 +14,8 @@ const beerApi = emptySplitApi.injectEndpoints({
       query: () => ({
         url: '/beer',
         method: 'GET'
-      })
+      }),
+      providesTags: [BeerTags.Beer]
     }),
     createBeer: build.mutation<{ beer: Beer }, Partial<BeerRequest>>({
       query: (beer: BeerRequest) => ({

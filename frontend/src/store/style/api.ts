@@ -13,7 +13,8 @@ const styleApi = emptySplitApi.injectEndpoints({
       query: () => ({
         url: '/style',
         method: 'GET'
-      })
+      }),
+      providesTags: [StyleTags.Style]
     }),
     createStyle: build.mutation<{ style: Style }, Partial<StyleRequest>>({
       query: (style: StyleRequest) => ({

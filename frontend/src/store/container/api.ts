@@ -1,6 +1,6 @@
 import { emptySplitApi } from '../api'
 
-import { type ContainerList } from './types'
+import { type ContainerList, ContainerTags } from './types'
 
 const containerApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
@@ -8,7 +8,8 @@ const containerApi = emptySplitApi.injectEndpoints({
       query: () => ({
         url: '/container',
         method: 'GET'
-      })
+      }),
+      providesTags: [ContainerTags.Container]
     })
   })
 })
