@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { useChangePasswordMutation } from '../store/login/api'
@@ -17,6 +18,10 @@ function ChangePassword (): JSX.Element {
   const login: Login = useSelector(selectLogin)
   const passwordChangeResult: PasswordChangeResult =
     useSelector(selectPasswordChangeResult)
+
+  const [isMismatch, setIsMismatch] = useState(false)
+  const [newPassword, setNewPassword] = useState('')
+  const [newPasswordConfirmation, setNewPasswordConfirmation] = useState('')
 
   async function doChange (event: any): Promise<void> {
     event.preventDefault()
@@ -58,12 +63,30 @@ function ChangePassword (): JSX.Element {
             type='password'
             id='newPassword'
             autoComplete='new-password'
+            onChange={(e) => {
+              const newPassword = e.target.value
+              setIsMismatch(newPassword !== newPasswordConfirmation)
+              setNewPassword(newPassword)
+            }}
+          />
+        </div>
+        <div>
+          <label htmlFor='password'>New password confirmation:</label>{' '}
+          <input
+            type='password'
+            id='newPasswordConfirmation'
+            autoComplete='new-password'
+            onChange={(e) => {
+              const newPasswordConfirmation = e.target.value
+              setIsMismatch(newPassword !== newPasswordConfirmation)
+              setNewPasswordConfirmation(newPasswordConfirmation)
+            }}
           />
         </div>
         <div>
           <input type='submit'
             value='Change'
-            disabled={isLoading}
+            disabled={isLoading || isMismatch}
           />
         </div>
         <div>
