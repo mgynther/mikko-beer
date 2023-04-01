@@ -12,7 +12,7 @@ function Users (): JSX.Element {
       <LoadingIndicator isLoading={isLoading} />
       <ul>
         {userData?.users.map((user: User) => (
-          <li key={user.id}>{user.username}</li>
+          <li key={user.id}>{user.username} ({user.role})</li>
         ))}
       </ul>
       <hr/>
