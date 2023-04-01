@@ -1,5 +1,6 @@
 import { type Database, type Transaction } from '../database'
 import {
+  type ReviewBasicRow,
   type ReviewRow,
   type InsertableReviewRow,
   type UpdateableReviewRow
@@ -83,10 +84,21 @@ async function lockReview (
 
 export async function listReviews (
   db: Database
-): Promise<ReviewRow[] | undefined> {
+): Promise<ReviewBasicRow[] | undefined> {
   const reviews = await db.getDb()
     .selectFrom('review')
-    .selectAll('review')
+    .select([
+      'review.review_id',
+      'review.additional_info',
+      'review.beer',
+      'review.container',
+      'review.location',
+      'review.rating',
+      'review.smell',
+      'review.taste',
+      'review.time',
+      'review.created_at'
+    ])
     .execute()
 
   if (reviews.length === 0) {

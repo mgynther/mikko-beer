@@ -1,15 +1,18 @@
 import { ajv } from '../util/ajv'
 
-export interface Review {
+export interface ReviewBasic {
   id: string
   additionalInfo: string | null
   beer: string
   container: string
   location: string | null
   rating: number | null
+  time: Date
+}
+
+export interface Review extends ReviewBasic {
   smell: string | null
   taste: string | null
-  time: Date
 }
 
 export interface ReviewRequest {

@@ -9,6 +9,14 @@ import {
 
 const reviewApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
+    // Not really a mutation but mutation has much cleaner API for fetching
+    // from an event handler.
+    getReview: build.mutation<{ review: Review }, string>({
+      query: (id: string) => ({
+        url: `/review/${id}`,
+        method: 'GET'
+      })
+    }),
     listReviews: build.query<ReviewList, void>({
       query: () => ({
         url: '/review',
@@ -26,6 +34,10 @@ const reviewApi = emptySplitApi.injectEndpoints({
   })
 })
 
-export const { useCreateReviewMutation, useListReviewsQuery } = reviewApi
+export const {
+  useCreateReviewMutation,
+  useGetReviewMutation,
+  useListReviewsQuery
+} = reviewApi
 
 export const { endpoints, reducerPath, reducer, middleware } = reviewApi

@@ -4,9 +4,10 @@ import { type Database, type Transaction } from '../database'
 import {
   type CreateReviewRequest,
   type UpdateReviewRequest,
+  type ReviewBasic,
   type Review
 } from './review'
-import { type ReviewRow } from './review.table'
+import { type ReviewBasicRow, type ReviewRow } from './review.table'
 
 export async function createReview (
   trx: Transaction,
@@ -73,17 +74,19 @@ export async function lockReviewById (
 
 export async function listReviews (
   db: Database
-): Promise<Review[] | undefined> {
+): Promise<ReviewBasic[] | undefined> {
   const reviewRows = await reviewRepository.listReviews(db)
 
   if (reviewRows === null || reviewRows === undefined) return []
 
   return reviewRows.map(row => ({
-    ...reviewRowToReview(row)
+    ...reviewBasicRowToReviewBasic(row)
   }))
 }
 
-export function reviewRowToReview (review: ReviewRow): Review {
+export function reviewBasicRowToReviewBasic (
+  review: ReviewBasicRow
+): ReviewBasic {
   return {
     id: review.review_id,
     additionalInfo: review.additional_info,
@@ -91,8 +94,14 @@ export function reviewRowToReview (review: ReviewRow): Review {
     container: review.container,
     location: review.location,
     rating: review.rating,
-    smell: review.smell,
-    taste: review.taste,
     time: review.time
+  }
+}
+
+export function reviewRowToReview (review: ReviewRow): Review {
+  return {
+    ...reviewBasicRowToReviewBasic(review),
+    smell: review.smell,
+    taste: review.taste
   }
 }

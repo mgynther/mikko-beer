@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
 import { TestContext } from '../test-context'
-import { Review } from '../../src/review/review'
+import { Review, ReviewBasic } from '../../src/review/review'
 import { Style } from '../../src/style/style'
 import { AxiosResponse } from 'axios'
 
@@ -98,7 +98,10 @@ describe('review tests', () => {
     )
     expect(listRes.status).to.equal(200)
     expect(listRes.data.reviews.length).to.equal(1)
-    expect(listRes.data.reviews[0]).to.eql(getRes.data.review)
+    expect(listRes.data.reviews[0].id).to.eql(getRes.data.review.id)
+    expect(listRes.data.reviews[0].beer).to.eql(getRes.data.review.beer)
+    expect(listRes.data.reviews[0].smell).to.equal(undefined)
+    expect(listRes.data.reviews[0].taste).to.equal(undefined)
   })
 
   it('should fail create a review without beer', async () => {
