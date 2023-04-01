@@ -1,6 +1,7 @@
 import { useListUsersQuery } from '../store/user/api'
 import { type User } from '../store/user/types'
 
+import CreateUser from './CreateUser'
 import LoadingIndicator from './LoadingIndicator'
 
 function Users (): JSX.Element {
@@ -14,6 +15,10 @@ function Users (): JSX.Element {
           <li key={user.id}>{user.username}</li>
         ))}
       </ul>
+      <hr/>
+      <div>
+        <CreateUser />
+      </div>
     </div>
   )
 }

@@ -1,6 +1,16 @@
 import { emptySplitApi } from '../api'
 
-import { type UserList } from './types'
+import { type User, type UserList, UserTags } from './types'
+
+interface CreateUserParams {
+  user: {
+    role: string
+  }
+  passwordSignInMethod: {
+    username: string
+    password: string
+  }
+}
 
 const userApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
@@ -8,11 +18,20 @@ const userApi = emptySplitApi.injectEndpoints({
       query: () => ({
         url: '/user',
         method: 'GET'
-      })
+      }),
+      providesTags: [UserTags.User]
+    }),
+    createUser: build.mutation<{ user: User }, Partial<CreateUserParams>>({
+      query: (params: CreateUserParams) => ({
+        url: '/user',
+        method: 'POST',
+        body: params
+      }),
+      invalidatesTags: [UserTags.User]
     })
   })
 })
 
-export const { useListUsersQuery } = userApi
+export const { useCreateUserMutation, useListUsersQuery } = userApi
 
 export const { endpoints, reducerPath, reducer, middleware } = userApi
