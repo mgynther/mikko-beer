@@ -10,15 +10,20 @@
   flex-direction: row;
   margin-left: 15px;
   margin-right: 15px;
+  margin-bottom: 15px;
 }
 
 .Review {
-  margin-bottom: 20px;
+  padding-bottom: 20px;
 }
+
+.Review:nth-child(even) {background: rgba(0,0,0,0.2)}
+.Review:nth-child(odd) {background: rgba(0,0,0,0.3)}
 
 .Review-first-row {
   display: flex;
   flex-direction: row;
+  padding-top: 15px;
   margin-left: 15px;
   margin-right: 15px;
 }
