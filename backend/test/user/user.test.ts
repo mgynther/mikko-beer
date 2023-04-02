@@ -183,4 +183,26 @@ describe('user tests', () => {
     expect(currentPwdSignInRes.status).to.equal(200)
   })
 
+  it('should delete user', async () => {
+    const { user, authToken } = await ctx.createUser()
+
+    const res = await ctx.request.get<{ user: User }>(
+      `/api/v1/user/${user.id}`,
+      ctx.createAuthHeaders(authToken)
+    )
+    expect(res.status).to.equal(200)
+
+    const deleteRes = await ctx.request.delete(
+      `/api/v1/user/${res.data.user.id}`,
+      ctx.adminAuthHeaders()
+    )
+    expect(deleteRes.status).to.equal(204)
+
+    const afterDeleteGetRes = await ctx.request.get<{ user: User }>(
+      `/api/v1/user/${user.id}`,
+      ctx.adminAuthHeaders()
+    )
+    expect(afterDeleteGetRes.status).to.equal(404)
+  })
+
 })

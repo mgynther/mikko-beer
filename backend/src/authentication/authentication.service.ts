@@ -36,6 +36,10 @@ export async function authenticateUser (
 
   const authTokenPayload = validAuthTokenPayload(authorization)
 
+  if (authTokenPayload.role === Role.admin) {
+    return await next()
+  }
+
   if (userId !== authTokenPayload.userId) {
     throw new ControllerError(403, 'UserMismatch', "wrong user's auth token")
   }

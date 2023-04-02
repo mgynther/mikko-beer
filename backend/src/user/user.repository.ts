@@ -77,3 +77,13 @@ export async function setUserUsername (
     .set({ username })
     .execute()
 }
+
+export async function deleteUserById (
+  trx: Transaction,
+  id: string
+): Promise<void> {
+  await trx.trx()
+    .deleteFrom('user')
+    .where('user_id', '=', id)
+    .execute()
+}

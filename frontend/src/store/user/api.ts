@@ -28,10 +28,21 @@ const userApi = emptySplitApi.injectEndpoints({
         body: params
       }),
       invalidatesTags: [UserTags.User]
+    }),
+    deleteUser: build.mutation<void, Partial<string>>({
+      query: (userId) => ({
+        url: `/user/${userId}`,
+        method: 'DELETE'
+      }),
+      invalidatesTags: [UserTags.User]
     })
   })
 })
 
-export const { useCreateUserMutation, useListUsersQuery } = userApi
+export const {
+  useCreateUserMutation,
+  useDeleteUserMutation,
+  useListUsersQuery
+} = userApi
 
 export const { endpoints, reducerPath, reducer, middleware } = userApi

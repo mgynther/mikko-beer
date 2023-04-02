@@ -76,6 +76,13 @@ export async function setUserUsername (
   await userRepository.setUserUsername(trx, userId, username)
 }
 
+export async function deleteUserById (
+  trx: Transaction,
+  id: string
+): Promise<void> {
+  await userRepository.deleteUserById(trx, id)
+}
+
 export function userRowToUser (user: UserRow): User {
   return {
     id: user.user_id,

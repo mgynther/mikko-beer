@@ -68,6 +68,18 @@ export function userController (router: Router): void {
     }
   )
 
+  router.delete('/api/v1/user/:userId',
+    authService.authenticateAdmin,
+    async (ctx) => {
+      const { userId } = ctx.params
+      await ctx.db.executeTransaction(async (trx) => {
+        await userService.deleteUserById(trx, userId)
+      })
+
+      ctx.status = 204
+    }
+  )
+
   signInMethodController(router)
 }
 
