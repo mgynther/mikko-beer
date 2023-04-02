@@ -20,7 +20,8 @@ export const config: Config = Object.freeze({
   database: Object.freeze({
     database: getEnvVariable('DATABASE'),
     host: getEnvVariable('DATABASE_HOST'),
-    user: getEnvVariable('DATABASE_USER')
+    user: getEnvVariable('DATABASE_USER'),
+    password: getEnvVariable('DATABASE_PASSWORD')
   })
 })
 
