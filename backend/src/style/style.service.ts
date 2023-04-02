@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid'
+
 import * as styleRepository from './style.repository'
 
 import { type Database, type Transaction } from '../database'
@@ -9,11 +11,15 @@ import {
   type UpdateStyleRequest
 } from './style'
 import { type StyleRow } from './style.table'
+import { checkCyclicRelationships } from './style.util'
 
 export async function createStyle (
   trx: Transaction,
   request: CreateStyleRequest
 ): Promise<StyleWithParentIds> {
+  const uuid = uuidv4()
+  await validateRelationships(trx, uuid, request.parents ?? [])
+
   const style = await styleRepository.insertStyle(trx, {
     name: request.name
   })
@@ -40,6 +46,8 @@ export async function updateStyle (
   styleId: string,
   request: UpdateStyleRequest
 ): Promise<StyleWithParentIds> {
+  await validateRelationships(trx, styleId, request.parents ?? [])
+
   const style = await styleRepository.updateStyle(trx, styleId, {
     name: request.name
   })
@@ -100,4 +108,14 @@ export function styleRowToStyle (style: StyleRow): Style {
     id: style.style_id,
     name: style.name
   }
+}
+
+async function validateRelationships (
+  trx: Transaction,
+  styleId: string,
+  parents: string[]
+): Promise<void> {
+  const currentRelationships = await styleRepository.listStyleRelationships(trx)
+
+  checkCyclicRelationships(currentRelationships, styleId, parents)
 }

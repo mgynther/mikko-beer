@@ -28,6 +28,7 @@ export type ReviewApiErrors =
   | 'ReviewNotFound'
 
 export type StyleApiErrors =
+  | 'CyclicStyleRelationship'
   | 'InvalidStyle'
   | 'InvalidStyleId'
   | 'StyleNotFound'

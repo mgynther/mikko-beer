@@ -9,6 +9,18 @@ import {
   validateUpdateStyleRequest
 } from './style'
 import { ControllerError } from '../util/errors'
+import { CyclicRelationshipError } from './style.util'
+
+function handleError (e: unknown): void {
+  if (e instanceof CyclicRelationshipError) {
+    throw new ControllerError(
+      400,
+      'CyclicStyleRelationship',
+      'cyclic style relationships are not allowed'
+    )
+  }
+  throw e
+}
 
 export function styleController (router: Router): void {
   router.post('/api/v1/style',
@@ -17,13 +29,17 @@ export function styleController (router: Router): void {
       const { body } = ctx.request
 
       const createStyleRequest = validateCreateRequest(body)
-      const result = await ctx.db.executeTransaction(async (trx) => {
-        return await styleService.createStyle(trx, createStyleRequest)
-      })
+      try {
+        const result = await ctx.db.executeTransaction(async (trx) => {
+          return await styleService.createStyle(trx, createStyleRequest)
+        })
 
-      ctx.status = 201
-      ctx.body = {
-        style: result
+        ctx.status = 201
+        ctx.body = {
+          style: result
+        }
+      } catch (e) {
+        handleError(e)
       }
     }
   )
@@ -34,14 +50,19 @@ export function styleController (router: Router): void {
       const { body } = ctx.request
       const { styleId } = ctx.params
 
-      const updateStyleRequest = validateUpdateRequest(body, styleId)
-      const result = await ctx.db.executeTransaction(async (trx) => {
-        return await styleService.updateStyle(trx, styleId, updateStyleRequest)
-      })
+      try {
+        const updateStyleRequest = validateUpdateRequest(body, styleId)
+        const result = await ctx.db.executeTransaction(async (trx) => {
+          return await styleService.updateStyle(
+            trx, styleId, updateStyleRequest)
+        })
 
-      ctx.status = 200
-      ctx.body = {
-        style: result
+        ctx.status = 200
+        ctx.body = {
+          style: result
+        }
+      } catch (e) {
+        handleError(e)
       }
     }
   )

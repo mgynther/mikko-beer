@@ -1,8 +1,43 @@
 import { expect } from 'chai'
+import { v4 as uuidv4 } from 'uuid'
 
 import { TestContext } from '../test-context'
 import { Style, StyleWithParents } from '../../src/style/style'
+import { checkCyclicRelationships } from '../../src/style/style.util'
 import { AxiosResponse } from 'axios'
+
+describe('style unit tests', () => {
+  const ale = {
+    id: uuidv4(),
+    name: 'Ale',
+  }
+  const ipa = {
+    id: uuidv4(),
+    name: 'IPA',
+  }
+  const neipa = {
+    id: uuidv4(),
+    name: 'NEIPA',
+  }
+  const relationships = [
+    {
+      child: neipa.id,
+      parent: ipa.id
+    },
+    {
+      child: ipa.id,
+      parent: ale.id
+    }
+  ]
+
+  it('should not find cyclic when there is no cycle', () => {
+    expect(() => checkCyclicRelationships(relationships, neipa.id, [ipa.id])).to.not.throw()
+  })
+
+  it('should find cyclic when there is a cycle', () => {
+    expect(() => checkCyclicRelationships(relationships, ale.id, [neipa.id])).to.throw()
+  })
+})
 
 describe('style tests', () => {
   const ctx = new TestContext()
@@ -187,6 +222,32 @@ describe('style tests', () => {
 
     expect(res.status).to.equal(200)
     expect(res.data.styles.length).to.equal(0)
+  })
+
+  it('should fail to create cyclic relationship', async () => {
+    const aleRes = await ctx.request.post(`/api/v1/style`,
+      { name: 'Pale Ale' },
+      ctx.adminAuthHeaders()
+    )
+    expect(aleRes.status).to.equal(201)
+
+    const ipaRes = await ctx.request.post(`/api/v1/style`,
+      { name: 'Lager', parents: [ aleRes.data.style.id ] },
+      ctx.adminAuthHeaders()
+    )
+    expect(ipaRes.status).to.equal(201)
+
+    const neipaRes = await ctx.request.post(`/api/v1/style`,
+      { name: 'Neipa', parents: [ ipaRes.data.style.id ] },
+      ctx.adminAuthHeaders()
+    )
+    expect(neipaRes.status).to.equal(201)
+
+    const updateRes = await ctx.request.put(`/api/v1/style/${aleRes.data.style.id}`,
+      { name: 'Pale Ale', parents: [ neipaRes.data.style.id ] },
+      ctx.adminAuthHeaders()
+    )
+    expect(updateRes.status).to.equal(400)
   })
 
 })

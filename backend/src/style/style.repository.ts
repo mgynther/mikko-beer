@@ -44,6 +44,15 @@ export async function deleteStyleChildRelationships (
     .execute()
 }
 
+export async function listStyleRelationships (
+  trx: Transaction
+): Promise<StyleRelationshipRow[]> {
+  return await trx.trx()
+    .selectFrom('style_relationship')
+    .selectAll()
+    .execute()
+}
+
 export async function updateStyle (
   trx: Transaction,
   id: string,
