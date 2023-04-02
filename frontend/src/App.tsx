@@ -2,6 +2,8 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { Routes, Route, Link, Outlet } from 'react-router-dom'
 
+import { Role } from './store/user/types'
+
 import './App.css'
 
 import Account from './components/Account'
@@ -18,6 +20,7 @@ import { useLogoutMutation } from './store/login/api'
 import { type Login, selectLogin } from './store/login/reducer'
 
 interface LayoutProps {
+  isAdmin: boolean
   isLoggedIn: boolean
   logout: () => void
 }
@@ -30,9 +33,11 @@ function Layout (props: LayoutProps): JSX.Element {
           <header>
             <nav>
               <ul>
-                <li>
-                  <Link to="/addreview">Add review</Link>
-                </li>
+                {props.isAdmin && (
+                  <li>
+                    <Link to="/addreview">Add review</Link>
+                  </li>
+                )}
                 <li>
                   <Link to="/beers">Beers</Link>
                 </li>
@@ -48,9 +53,11 @@ function Layout (props: LayoutProps): JSX.Element {
                 <li>
                   <Link to="/containers">Containers</Link>
                 </li>
-                <li>
-                  <Link to="/users">Users</Link>
-                </li>
+                {props.isAdmin && (
+                  <li>
+                    <Link to="/users">Users</Link>
+                  </li>
+                )}
                 <li>
                   <Link to="/account">Account</Link>
                 </li>
@@ -72,11 +79,13 @@ function App (): JSX.Element {
   const login: Login = useSelector(selectLogin)
   const isLoggedIn: boolean = login.authToken?.length > 0
   const [logout] = useLogoutMutation()
+  const isAdmin = login?.user?.role === Role.admin
   return (
     <div className="App">
       <Routes>
         <Route path="/" element={
             <Layout
+              isAdmin={isAdmin}
               isLoggedIn={isLoggedIn}
               logout={() => {
                 void logout({
@@ -91,13 +100,13 @@ function App (): JSX.Element {
           <Route index element={isLoggedIn ? <Beers /> : <LoginComponent />} />
           {isLoggedIn && (
             <React.Fragment>
-              <Route path="addreview" element={<AddReview />} />
+              {isAdmin && <Route path="addreview" element={<AddReview />} />}
               <Route path="beers" element={<Beers />} />
               <Route path="breweries" element={<Breweries />} />
               <Route path="containers" element={<Containers />} />
               <Route path="reviews" element={<Reviews />} />
               <Route path="styles" element={<Styles />} />
-              <Route path="users" element={<Users />} />
+              {isAdmin && <Route path="users" element={<Users />} />}
               <Route path="account" element={<Account />} />
             </React.Fragment>
           )}

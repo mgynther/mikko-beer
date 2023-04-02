@@ -1,10 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
-
-interface User {
-  id: string
-  username: string
-}
+import type { User } from '../user/types'
 
 export interface Login {
   user: User | undefined
