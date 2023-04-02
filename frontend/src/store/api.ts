@@ -20,9 +20,11 @@ function mergeTags (): string[] {
   ]
 }
 
+const backendUrl = process.env.REACT_APP_BACKEND_URL ?? 'http://localhost:3001'
+
 export const emptySplitApi = createApi({
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:3001/api/v1',
+    baseUrl: `${backendUrl}/api/v1`,
     prepareHeaders: (headers, api) => {
       const authToken = (api.getState() as RootState).login.login.authToken
       if (authToken?.length > 0) {

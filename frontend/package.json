@@ -24,9 +24,9 @@
   },
   "scripts": {
     "eslint": "npx eslint --fix src",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "REACT_APP_BACKEND_URL=http://localhost:3001 react-scripts start",
+    "build": "REACT_APP_BACKEND_URL=https://mikkolut.net react-scripts build",
+    "test": "REACT_APP_BACKEND_URL=http://localhost:3001 react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
