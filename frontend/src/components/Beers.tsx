@@ -6,6 +6,13 @@ import { toBreweryMap } from '../store/brewery/util'
 import { toStyleMap } from '../store/style/util'
 import { toString } from './util'
 
+interface BeerModel {
+  id: string
+  breweries: string
+  name: string
+  styles: string
+}
+
 function Beers (): JSX.Element {
   const { data: beerData, isLoading: areBeersLoading } = useListBeersQuery()
   const { data: breweryData, isLoading: areBreweriesLoading } =
@@ -15,6 +22,23 @@ function Beers (): JSX.Element {
     useListStylesQuery()
   const styleMap = toStyleMap(styleData)
   const isLoading = areBeersLoading || areBreweriesLoading || areStylesLoading
+
+  const beers = beerData?.beers
+    .map((beer: Beer) => (
+      {
+        id: beer.id,
+        breweries: toString(beer.breweries.map(b => breweryMap[b].name)),
+        name: beer.name,
+        styles: toString(beer.styles.map(s => styleMap[s].name))
+      }
+    ))
+    .sort((a: BeerModel, b: BeerModel) => {
+      if (a.breweries === b.breweries) {
+        return a.name.localeCompare(b.name)
+      }
+      return a.breweries.localeCompare(b.breweries)
+    })
+
   return (
     <div>
       <h3>Beers</h3>
@@ -28,14 +52,14 @@ function Beers (): JSX.Element {
           </tr>
         </thead>
         <tbody>
-          {beerData?.beers.map((beer: Beer) => (
+          {beers?.map((beer: BeerModel) => (
             <tr key={beer.id}>
               <td>
-                {toString(beer.breweries.map(b => breweryMap[b].name))}
+                {beer.breweries}
               </td>
               <td>{beer.name}</td>
               <td>
-                {toString(beer.styles.map(s => styleMap[s].name))}
+                {beer.styles}
               </td>
             </tr>
           ))}

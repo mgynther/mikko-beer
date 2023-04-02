@@ -5,12 +5,19 @@ import LoadingIndicator from './LoadingIndicator'
 
 function Breweries (): JSX.Element {
   const { data: breweryData, isLoading } = useListBreweriesQuery()
+
+  const breweryArray = breweryData?.breweries === undefined
+    ? []
+    : [...breweryData.breweries]
+  const breweries = breweryArray
+    .sort((a, b) => a.name.localeCompare(b.name))
+
   return (
     <div>
       <h3>Breweries</h3>
       <LoadingIndicator isLoading={isLoading} />
       <ul>
-        {breweryData?.breweries.map((brewery: Brewery) => (
+        {breweries?.map((brewery: Brewery) => (
           <li key={brewery.id}>{brewery.name}</li>
         ))}
       </ul>

@@ -14,12 +14,18 @@ function Users (): JSX.Element {
     }
   }
 
+  const userArray = userData?.users === undefined
+    ? []
+    : [...userData.users]
+  const users = userArray
+    .sort((a, b) => a.username.localeCompare(b.username))
+
   return (
     <div>
       <h3>Users</h3>
       <LoadingIndicator isLoading={isLoading} />
       <ul>
-        {userData?.users.map((user: User) => (
+        {users.map((user: User) => (
           <li key={user.id}>
             {user.username} ({user.role}){ ' ' }
             <button

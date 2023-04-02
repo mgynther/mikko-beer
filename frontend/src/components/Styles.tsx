@@ -5,12 +5,19 @@ import LoadingIndicator from './LoadingIndicator'
 
 function Styles (): JSX.Element {
   const { data: styleData, isLoading } = useListStylesQuery()
+
+  const styleArray = styleData?.styles === undefined
+    ? []
+    : [...styleData.styles]
+  const styles = styleArray
+    .sort((a, b) => a.name.localeCompare(b.name))
+
   return (
     <div>
       <h3>Styles</h3>
       <LoadingIndicator isLoading={isLoading} />
       <ul>
-        {styleData?.styles.map((style: Style) => (
+        {styles.map((style: Style) => (
           <li key={style.id}>{style.name}</li>
         ))}
       </ul>

@@ -4,6 +4,7 @@ import { useListBeersQuery } from '../store/beer/api'
 import { type Beer } from '../store/beer/types'
 import { useListBreweriesQuery } from '../store/brewery/api'
 import { useListContainersQuery } from '../store/container/api'
+import { type Container } from '../store/container/types'
 import { useListStylesQuery } from '../store/style/api'
 import { useGetReviewMutation, useListReviewsQuery } from '../store/review/api'
 import { toBeerMap } from '../store/beer/util'
@@ -16,6 +17,18 @@ import { toString } from './util'
 import LoadingIndicator from './LoadingIndicator'
 
 import './Reviews.css'
+
+interface ReviewModel {
+  id: string
+  breweries: string
+  beer: string
+  rating: number
+  time: string
+  container: Container
+  additionalInfo: string
+  location: string
+  styles: string
+}
 
 function Reviews (): JSX.Element {
   const { data: beerData, isLoading: areBeersLoading } = useListBeersQuery()
@@ -41,6 +54,29 @@ function Reviews (): JSX.Element {
   const [openReviews, setOpenReviews] = useState<Record<string, boolean>>({})
 
   const [fullReviews, setFullReviews] = useState<Record<string, Review>>({})
+
+  const reviewArray = reviewData?.reviews === undefined
+    ? []
+    : reviewData?.reviews
+  const reviews = reviewArray
+    .map((review: Review) => {
+      const beer: Beer = beerMap[review.beer]
+      const container = containerMap[review.container]
+      return {
+        ...review,
+        id: review.id,
+        breweries: toString(beer.breweries.map(b => breweryMap[b].name)),
+        beer: beer.name,
+        container,
+        styles: toString(beer.styles.map(s => styleMap[s].name))
+      }
+    })
+    .sort((a: ReviewModel, b: ReviewModel) => {
+      if (a.breweries === b.breweries) {
+        return a.beer.localeCompare(b.beer)
+      }
+      return a.breweries.localeCompare(b.breweries)
+    })
 
   async function fetchReview (id: string): Promise<void> {
     const opened = { ...openReviews }
@@ -76,22 +112,20 @@ function Reviews (): JSX.Element {
             <div></div>
         </div>
         <div>
-          {reviewData?.reviews.map((review: Review) => {
-            const beer: Beer = beerMap[review.beer]
-            const container = containerMap[review.container]
+          {reviews.map((review: ReviewModel) => {
             return (
               <div className="Review" key={review.id}>
                 <div className="Review-first-row">
                   <div>
-                    {toString(beer.breweries.map(b => breweryMap[b].name))}
+                    {review.breweries}
                   </div>
-                  <div>{beer.name}</div>
+                  <div>{review.beer}</div>
                   <div>
-                    {toString(beer.styles.map(s => styleMap[s].name))}
+                    {review.styles}
                   </div>
                   <div>{review.rating}</div>
                   <div>{formatDate(new Date(review.time))}</div>
-                  <div>{container.type} {container.size}</div>
+                  <div>{review.container.type} {review.container.size}</div>
                   <div>{review.location}</div>
                   <div>{review.additionalInfo}</div>
                   <div>
