@@ -21,11 +21,20 @@ interface Props {
 const maxResultCount = 10
 
 function SearchBox (props: Props): JSX.Element {
+  const sortedOptions = [...props.currentOptions].sort((a, b) => {
+    const filter = props.currentFilter.toLowerCase()
+    const aName = a.name.toLowerCase()
+    const bName = b.name.toLowerCase()
+    if (aName === bName) return 0
+    if (aName === filter) return -1
+    if (bName === filter) return 1
+    return aName.localeCompare(bName)
+  })
   const visibleOptions = props.currentFilter.length === 0 ||
     props.isLoading
     ? []
-    : props.currentOptions.slice(0, maxResultCount)
-  const areAllShown = visibleOptions.length === props.currentOptions.length
+    : sortedOptions.slice(0, maxResultCount)
+  const areAllShown = visibleOptions.length === sortedOptions.length
   return (
     <div className="SearchBox">
       <label>{props.title}:</label>{' '}
