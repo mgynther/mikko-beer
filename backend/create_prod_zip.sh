@@ -39,3 +39,5 @@ zipfile=mikko-beer-backend-$time.zip
 zip -r $zipfile * .env .ebextensions
 cd ..
 mv prod_dist/$zipfile .
+
+echo "Created $zipfile"
