@@ -18,25 +18,28 @@ echo $time
 cd prod_dist
 npm ci
 mkdir static
-cp -r ../../frontend/build/* ./
-rm -rf .ebextensions
-mkdir .ebextensions
+cp -r ../../frontend/build/* ./static
 
-cat << EOF >> .ebextensions/static-files.config
-option_settings:
-  aws:elasticbeanstalk:environment:proxy:staticfiles:
-    /static: static
-    /asset-manifest.json: asset-manifest.json
-    /favicon.ico: favicon.ico
-    /index.html: index.html
-    /logo192.png: logo192.png
-    /logo512.png: logo512.png
-    /manifest.json: manifest.json
-    /robots.txt: robots.txt
+rm -rf .platform
+mkdir -p .platform/nginx/conf.d/elasticbeanstalk/
+
+cat << EOF >> .platform/nginx/conf.d/elasticbeanstalk/00_application.conf
+location /api {
+    proxy_pass http://localhost:8080/api;
+    proxy_set_header Host \$host;
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+}
+
+location / {
+  root /var/app/current/static;
+  try_files \$uri /index.html;
+}
+
 EOF
 
 zipfile=mikko-beer-backend-$time.zip
-zip -r $zipfile * .env .ebextensions
+zip -r $zipfile * .env .platform
 cd ..
 mv prod_dist/$zipfile .
 
