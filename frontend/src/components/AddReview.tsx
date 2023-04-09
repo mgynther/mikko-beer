@@ -74,23 +74,29 @@ function AddReview (): JSX.Element {
           }
         </div>
         <div>
-          <label>Smell:</label>{' '}
+          <div><label>Smell:</label>{' '}</div>
           <textarea
+            className="ReviewArea"
             value={smell}
             onChange={e => { setSmell(e.target.value) }}
           />
         </div>
         <div>
-          <label>Taste:</label>{' '}
+          <div><label>Taste:</label>{' '}</div>
           <textarea
+            className="ReviewArea"
             value={taste}
             onChange={e => { setTaste(e.target.value) }}
           />
         </div>
         <div>
-          <label htmlFor='taste'>Rating:</label>{' '}
+          <div>
+            <label htmlFor='taste'>Rating:</label>{' '}
+          </div>
+          <div>{ `${rating}` }</div>
           <input
-            type='number'
+            className="RatingSlider"
+            type='range'
             id='rating'
             min={4}
             max={10}

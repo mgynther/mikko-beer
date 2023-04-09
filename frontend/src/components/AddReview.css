@@ -1,3 +1,13 @@
 .ContainerContent {
   margin-bottom: 15px;
 }
+
+.RatingSlider {
+  width: 70vw;
+  height: 40px;
+}
+
+.ReviewArea {
+  width: 70vw;
+  min-height: 20vh;
+}
