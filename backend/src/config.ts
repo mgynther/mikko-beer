@@ -16,7 +16,7 @@ export const config: Config = Object.freeze({
     getEnvVariable('GENERATE_INITIAL_ADMIN_PASSWORD') === 'true',
   port: parseInt(getEnvVariable('PORT'), 10),
   authTokenSecret: getEnvVariable('AUTH_TOKEN_SECRET'),
-  authTokenExpiryDuration: getEnvVariable('AUTH_TOKEN_EXIRY_DURATION'),
+  authTokenExpiryDuration: getEnvVariable('AUTH_TOKEN_EXPIRY_DURATION'),
   database: Object.freeze({
     database: getEnvVariable('DATABASE'),
     host: getEnvVariable('DATABASE_HOST'),
