@@ -97,7 +97,7 @@ export class TestContext {
     username: string
     password: string
   }> => {
-    const userUsername = 'testerson'
+    const userUsername = `testerson_${uuidv4()}`
     const userPassword = uuidv4()
     const res = await this.request.post(`/api/v1/user`, {
       user: {

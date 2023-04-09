@@ -135,6 +135,54 @@ describe('user tests', () => {
     expect(getRes.data.error.code).to.equal('UserOrRefreshTokenNotFound')
   })
 
+  it('should refresh auth token', async () => {
+    const { user, authToken, refreshToken } = await ctx.createUser()
+
+    const res = await ctx.request.post(
+      `/api/v1/user/${user.id}/refresh`,
+      { refreshToken }
+    )
+
+    expect(res.status).to.equal(200)
+    expect(res.data.authToken).not.to.equal(authToken)
+    expect(res.data.refreshToken).not.to.equal(refreshToken)
+
+    // The old auth token should no longer be usable.
+    const failGetRes = await ctx.request.get(
+      `/api/v1/user/${user.id}`,
+      ctx.createAuthHeaders(authToken)
+    )
+
+    expect(failGetRes.status).to.equal(404)
+    expect(failGetRes.data.error.code).to.equal('UserOrRefreshTokenNotFound')
+
+    const getRes = await ctx.request.get(
+      `/api/v1/user/${user.id}`,
+      ctx.createAuthHeaders(res.data.authToken)
+    )
+
+    expect(getRes.status).to.equal(200)
+    expect(getRes.data.user.username).to.equal(user.username)
+  })
+
+  it('should not change tokens on invalid refresh request', async () => {
+    const { user, authToken, refreshToken } = await ctx.createUser()
+    const anotherUser = await ctx.createUser()
+
+    const res = await ctx.request.post(
+      `/api/v1/user/${user.id}/refresh`,
+      { refreshToken: anotherUser.refreshToken }
+    )
+    expect(res.status).to.equal(401)
+
+    const getRes = await ctx.request.get(
+      `/api/v1/user/${user.id}`,
+      ctx.createAuthHeaders(authToken)
+    )
+    expect(getRes.status).to.equal(200)
+    expect(getRes.data.user.username).to.equal(user.username)
+  })
+
   it('should change password', async () => {
     const { user, authToken, username, password } = await ctx.createUser()
 

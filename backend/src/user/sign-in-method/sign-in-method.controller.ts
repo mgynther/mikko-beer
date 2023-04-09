@@ -1,6 +1,7 @@
 import * as signInMethodService from './sign-in-method.service'
 import * as authService from '../../authentication/authentication.service'
 import * as authTokenService from '../../authentication/auth-token.service'
+import * as userService from '../user.service'
 import { type Transaction } from '../../database'
 
 import {
@@ -32,6 +33,14 @@ function handleError (error: unknown): void {
       401,
       'InvalidCredentials',
       'wrong username or password'
+    )
+  }
+  if (error instanceof RefreshTokenUserIdMismatchError) {
+    // Don't leak too much information about why refresh failed.
+    throw new ControllerError(
+      401,
+      'InvalidCredentials',
+      'invalid token'
     )
   }
   if (error instanceof PasswordTooWeakError) {
@@ -113,6 +122,50 @@ export function signInMethodController (router: Router): void {
       throw error
     }
   })
+
+  router.post(
+    '/api/v1/user/:userId/refresh',
+    async (ctx) => {
+      const { body } = ctx.request
+      const userId = ctx.params.userId
+
+      if (!validateRefreshToken(body)) {
+        throw new ControllerError(
+          400,
+          'InvalidRefreshToken',
+          'the body must contain a valid refresh token'
+        )
+      }
+
+      try {
+        const tokens = await ctx.db.executeTransaction(async (trx) => {
+          const user = await userService.lockUserById(trx, userId)
+          if (user === undefined) {
+            throw new UserNotFoundError()
+          }
+          await authTokenService.deleteRefreshToken(ctx.db, user.id, body)
+          const refreshToken =
+            await authTokenService.createRefreshToken(trx, user.id)
+          const authToken =
+            await authTokenService.createAuthToken(trx, user.role, refreshToken)
+          return {
+            authToken,
+            refreshToken
+          }
+        })
+
+        ctx.status = 200
+        ctx.body = {
+          authToken: tokens.authToken.authToken,
+          refreshToken: tokens.refreshToken.refreshToken
+        }
+      } catch (error) {
+        handleError(error)
+
+        throw error
+      }
+    }
+  )
 
   router.post(
     '/api/v1/user/:userId/sign-out',
