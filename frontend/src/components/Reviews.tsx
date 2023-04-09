@@ -65,10 +65,10 @@ function Reviews (): JSX.Element {
       return {
         ...review,
         id: review.id,
-        breweries: toString(beer.breweries.map(b => breweryMap[b].name)),
+        breweries: toString(beer.breweries.map(b => breweryMap[b]?.name ?? '')),
         beer: beer.name,
         container,
-        styles: toString(beer.styles.map(s => styleMap[s].name))
+        styles: toString(beer.styles.map(s => styleMap[s]?.name ?? ''))
       }
     })
     .sort((a: ReviewModel, b: ReviewModel) => {

@@ -2,10 +2,13 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
 import type { User } from '../user/types'
 
-export interface Login {
-  user: User | undefined
+export interface Refresh {
   authToken: string
   refreshToken: string
+}
+
+export interface Login extends Refresh {
+  user: User | undefined
 }
 
 export enum PasswordChangeResult {
@@ -41,6 +44,11 @@ export const loginSlice = createSlice({
       state.login = action.payload
       state.passwordChangeResult = PasswordChangeResult.UNDEFINED
     },
+    refresh: (state, action: PayloadAction<Refresh>) => {
+      state.login.authToken = action.payload.authToken
+      state.login.refreshToken = action.payload.refreshToken
+      state.passwordChangeResult = PasswordChangeResult.UNDEFINED
+    },
     passwordChangeResult: (
       state, action: PayloadAction<PasswordChangeResult>
     ) => {
@@ -49,7 +57,12 @@ export const loginSlice = createSlice({
   }
 })
 
-export const { logout, passwordChangeResult, success } = loginSlice.actions
+export const {
+  logout,
+  passwordChangeResult,
+  refresh,
+  success
+} = loginSlice.actions
 
 export const selectLogin = (state: RootState): Login => state.login.login
 export const selectPasswordChangeResult =

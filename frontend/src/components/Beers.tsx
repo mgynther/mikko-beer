@@ -27,9 +27,9 @@ function Beers (): JSX.Element {
     .map((beer: Beer) => (
       {
         id: beer.id,
-        breweries: toString(beer.breweries.map(b => breweryMap[b].name)),
+        breweries: toString(beer.breweries.map(b => breweryMap[b]?.name ?? '')),
         name: beer.name,
-        styles: toString(beer.styles.map(s => styleMap[s].name))
+        styles: toString(beer.styles.map(s => styleMap[s]?.name ?? ''))
       }
     ))
     .sort((a: BeerModel, b: BeerModel) => {
