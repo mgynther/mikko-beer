@@ -11,7 +11,6 @@ mkdir prod_dist
 cp -r dist prod_dist
 cp package.json prod_dist
 cp package-lock.json prod_dist
-cp ../private/backend_prod_env prod_dist/.env
 
 time=$(date '+%y%m%d-%H%M%S')
 echo $time
@@ -39,7 +38,7 @@ location / {
 EOF
 
 zipfile=mikko-beer-backend-$time.zip
-zip -r $zipfile * .env .platform
+zip -r $zipfile * .platform
 cd ..
 mv prod_dist/$zipfile .
 
