@@ -10,6 +10,7 @@ import Account from './components/Account'
 import AddReview from './components/AddReview'
 import Beers from './components/Beers'
 import Breweries from './components/Breweries'
+import Brewery from './components/Brewery'
 import Containers from './components/Containers'
 import LoginComponent from './components/Login'
 import Reviews from './components/Reviews'
@@ -103,6 +104,7 @@ function App (): JSX.Element {
               {isAdmin && <Route path="addreview" element={<AddReview />} />}
               <Route path="beers" element={<Beers />} />
               <Route path="breweries" element={<Breweries />} />
+              <Route path="breweries/:breweryId" element={<Brewery />} />
               <Route path="containers" element={<Containers />} />
               <Route path="reviews" element={<Reviews />} />
               <Route path="styles" element={<Styles />} />

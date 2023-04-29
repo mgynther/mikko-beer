@@ -24,5 +24,10 @@ nav ul li a {
   font-size: 18px;
 }
 
+ul li a {
+  color: white;
+  font-size: 16px;
+}
+
 tr:nth-child(even) {background: rgba(0,0,0,0.2)}
 tr:nth-child(odd) {background: rgba(0,0,0,0.3)}

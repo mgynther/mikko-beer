@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 import { useListBreweriesQuery } from '../store/brewery/api'
 import { type Brewery } from '../store/brewery/types'
 
@@ -18,7 +20,11 @@ function Breweries (): JSX.Element {
       <LoadingIndicator isLoading={isLoading} />
       <ul>
         {breweries?.map((brewery: Brewery) => (
-          <li key={brewery.id}>{brewery.name}</li>
+          <li key={brewery.id}>
+            <Link to={`/breweries/${brewery.id}`}>
+              {brewery.name}
+            </Link>
+          </li>
         ))}
       </ul>
     </div>

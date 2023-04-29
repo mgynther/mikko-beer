@@ -8,6 +8,16 @@ import {
 
 const breweryApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
+    getBrewery: build.query<{ brewery: Brewery }, string>({
+      query: (breweryId: string) => ({
+        url: `/brewery/${breweryId}`,
+        method: 'GET'
+      }),
+      providesTags: (result, error, arg) =>
+        result === undefined
+          ? [BreweryTags.Brewery]
+          : [{ type: BreweryTags.Brewery, id: result.brewery.id }]
+    }),
     listBreweries: build.query<BreweryList, void>({
       query: () => ({
         url: '/brewery',
@@ -28,6 +38,10 @@ const breweryApi = emptySplitApi.injectEndpoints({
   })
 })
 
-export const { useCreateBreweryMutation, useListBreweriesQuery } = breweryApi
+export const {
+  useCreateBreweryMutation,
+  useGetBreweryQuery,
+  useListBreweriesQuery
+} = breweryApi
 
 export const { endpoints, reducerPath, reducer, middleware } = breweryApi
