@@ -2,6 +2,7 @@ import * as reviewRepository from './review.repository'
 
 import { type Database, type Transaction } from '../database'
 import {
+  type BreweryReview,
   type CreateReviewRequest,
   type UpdateReviewRequest,
   type ReviewBasic,
@@ -81,6 +82,38 @@ export async function listReviews (
 
   return reviewRows.map(row => ({
     ...reviewBasicRowToReviewBasic(row)
+  }))
+}
+
+export async function listReviewsByBrewery (
+  db: Database,
+  breweryId: string
+): Promise<BreweryReview[] | undefined> {
+  const reviewRows = await reviewRepository.listReviewsByBrewery(db, breweryId)
+
+  if (reviewRows === null || reviewRows === undefined) return []
+
+  return reviewRows.map(row => ({
+    id: row.review_id,
+    additionalInfo: row.additional_info,
+    beerId: row.beer_id,
+    beerName: row.beer_name,
+    breweries: row.breweries.map(brewery => ({
+      id: brewery.brewery_id,
+      name: brewery.name
+    })),
+    container: {
+      id: row.container_id,
+      size: row.container_size,
+      type: row.container_type
+    },
+    location: row.location,
+    rating: row.rating,
+    styles: row.styles.map(style => ({
+      id: style.style_id,
+      name: style.name
+    })),
+    time: row.time
   }))
 }
 

@@ -26,3 +26,27 @@ export type ReviewRow = Selectable<ReviewTable>
 
 export type InsertableReviewRow = Insertable<ReviewTable>
 export type UpdateableReviewRow = Updateable<ReviewTable>
+
+export interface BreweryReviewTable {
+  review_id: Generated<string>
+  beer_id: string
+  beer_name: string | null
+  breweries: Array<{
+    brewery_id: string
+    name: string | null
+  }>
+  additional_info: string | null
+  container_id: Generated<string>
+  container_size: string | null
+  container_type: string | null
+  location: string | null
+  rating: number | null
+  styles: Array<{
+    style_id: string
+    name: string | null
+  }>
+  time: Date
+  created_at: Generated<Date>
+}
+
+export type BreweryReviewRow = Selectable<BreweryReviewTable>

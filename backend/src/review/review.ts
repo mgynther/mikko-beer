@@ -1,5 +1,7 @@
 import { ajv } from '../util/ajv'
 
+import { type Container } from '../container/container'
+
 export interface ReviewBasic {
   id: string
   additionalInfo: string | null
@@ -13,6 +15,25 @@ export interface ReviewBasic {
 export interface Review extends ReviewBasic {
   smell: string | null
   taste: string | null
+}
+
+export interface BreweryReview {
+  id: string
+  additionalInfo: string | null
+  beerId: string
+  beerName: string | null
+  breweries: Array<{
+    id: string
+    name: string | null
+  }>
+  container: Container
+  location: string | null
+  rating: number | null
+  styles: Array<{
+    id: string
+    name: string | null
+  }>
+  time: Date
 }
 
 export interface ReviewRequest {
