@@ -15,4 +15,4 @@ At the moment the code is in very early and rough state but in use. In addition 
 
 ## Acknowledgements
 
-Mikko Beer uses [Kysely](https://github.com/kysely-org/kysely) SQL-query builder and in fact the example app in Kysely repository served as a great backend starting point. My former colleague Sami Koskimäki is the main author of Kysely and knowing his experise on ORMs and whatnot it was a no-brainer to check the project out. It was not a surprise that Kysely and its example app worked far better than any TypeScript Node backend template I could find.
+Mikko Beer uses [Kysely](https://github.com/kysely-org/kysely) SQL-query builder and in fact the example app in Kysely repository served as a great backend starting point. My former colleague Sami Koskimäki is the main author of Kysely and knowing his expertise on ORMs and whatnot it was a no-brainer to check the project out. It was not a surprise that Kysely and its example app worked far better than any TypeScript Node backend template I could find.
