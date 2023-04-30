@@ -24,7 +24,7 @@ export function ReviewHeading (): JSX.Element {
       <div>Breweries</div>
       <div>Name</div>
       <div>Styles</div>
-      <div>Rating</div>
+      <div className="Review-rating-heading">Rating</div>
       <div>Time</div>
       <div>Container</div>
       <div>Location</div>
@@ -66,7 +66,10 @@ function Review (props: ReviewProps): JSX.Element {
         <div>
           {props.styles}
         </div>
-        <div>{props.rating}</div>
+        <div
+          className={`Review-rating Review-rating-${props.rating}`}>
+          <div>{props.rating}</div>
+        </div>
         <div>{formatDate(new Date(props.time))}</div>
         <div>{props.container.type} {props.container.size}</div>
         <div>{props.location}</div>
