@@ -15,6 +15,7 @@ export type BeerApiErrors =
 export type BreweryApiErrors =
   | 'InvalidBrewery'
   | 'InvalidBreweryId'
+  | 'InvalidBrewerySearch'
   | 'BreweryNotFound'
 
 export type ContainerApiErrors =

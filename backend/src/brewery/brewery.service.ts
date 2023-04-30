@@ -3,6 +3,7 @@ import * as breweryRepository from './brewery.repository'
 import { type Database, type Transaction } from '../database'
 import {
   type CreateBreweryRequest,
+  type SearchBreweryRequest,
   type UpdateBreweryRequest,
   type Brewery
 } from './brewery'
@@ -57,6 +58,19 @@ export async function listBreweries (
   db: Database
 ): Promise<Brewery[] | undefined> {
   const breweryRows = await breweryRepository.listBreweries(db)
+
+  if (breweryRows === null || breweryRows === undefined) return []
+
+  return breweryRows.map(row => ({
+    ...breweryRowToBrewery(row)
+  }))
+}
+
+export async function searchBreweries (
+  db: Database,
+  searchRequest: SearchBreweryRequest
+): Promise<Brewery[] | undefined> {
+  const breweryRows = await breweryRepository.searchBreweries(db, searchRequest)
 
   if (breweryRows === null || breweryRows === undefined) return []
 

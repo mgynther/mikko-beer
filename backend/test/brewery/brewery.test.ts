@@ -35,6 +35,20 @@ describe('brewery tests', () => {
     )
     expect(listRes.status).to.equal(200)
     expect(listRes.data.breweries.length).to.equal(1)
+
+    const searchRes = await ctx.request.post(`/api/v1/brewery/search`,
+      { name: 'oSk' },
+      ctx.adminAuthHeaders()
+    )
+    expect(searchRes.status).to.equal(200)
+    expect(searchRes.data.breweries.length).to.equal(1)
+
+    const badSearchRes = await ctx.request.post(`/api/v1/brewery/search`,
+      { name: 'oSkJ' },
+      ctx.adminAuthHeaders()
+    )
+    expect(badSearchRes.status).to.equal(200)
+    expect(badSearchRes.data.breweries.length).to.equal(0)
   })
 
   it('should update a brewery', async () => {

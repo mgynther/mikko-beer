@@ -1,32 +1,47 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { useListBreweriesQuery } from '../store/brewery/api'
+import { useSearchBreweriesMutation } from '../store/brewery/api'
 import { type Brewery } from '../store/brewery/types'
 
 import SearchBox, { type SearchBoxItem } from './SearchBox'
+
+import { useDebounce } from './util'
 
 export interface Props {
   select: (brewery: Brewery) => void
 }
 
 function SearchBrewery (props: Props): JSX.Element {
-  const { data: breweryData, isLoading } = useListBreweriesQuery()
+  const [
+    searchBrewery,
+    { isLoading }
+  ] = useSearchBreweriesMutation()
   const [filter, setFilter] = useState('')
+  const debouncedFilter = useDebounce(filter, 200)
+  const [results, setResults] = useState<Brewery[]>([])
 
-  const filterParts = filter.trim().toLowerCase().split(' ')
-  const filteredBreweries = breweryData?.breweries.filter(brewery => {
-    const name = brewery.name.toLowerCase()
-    for (const part of filterParts) {
-      if (!name.includes(part)) return false
+  async function doSearch (filter: string): Promise<void> {
+    try {
+      const result = await searchBrewery(filter).unwrap()
+      setResults(result.breweries)
+    } catch (e) {
+      console.warn('Failed to search breweries', e)
     }
-    return true
-  }) ?? []
+  }
+
+  useEffect(() => {
+    if (debouncedFilter === '') {
+      setResults([])
+      return
+    }
+    void doSearch(debouncedFilter)
+  }, [debouncedFilter])
 
   return (
     <div>
       <SearchBox
         currentFilter={filter}
-        currentOptions={filteredBreweries}
+        currentOptions={results}
         isLoading={isLoading}
         setFilter={(filter: string) => { setFilter(filter) }}
         select={(brewery: SearchBoxItem) => {

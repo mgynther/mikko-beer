@@ -4,6 +4,9 @@ import {
   type InsertableBreweryRow,
   type UpdateableBreweryRow
 } from './brewery.table'
+import {
+  type SearchBreweryRequest
+} from './brewery'
 
 export async function insertBrewery (
   trx: Transaction,
@@ -76,6 +79,31 @@ export async function listBreweries (
   const breweries = await db.getDb()
     .selectFrom('brewery')
     .selectAll('brewery')
+    .execute()
+
+  if (breweries.length === 0) {
+    return undefined
+  }
+
+  return [...breweries]
+}
+
+export async function searchBreweries (
+  db: Database,
+  searchRequest: SearchBreweryRequest
+): Promise<BreweryRow[] | undefined> {
+  if (searchRequest.name === null ||
+      searchRequest.name === undefined ||
+      searchRequest.name.length === 0) {
+    throw new Error('must not search with missing or empty name')
+  }
+  const breweries = await db.getDb()
+    .selectFrom('brewery')
+    .selectAll('brewery')
+    .where(
+      'brewery.name', 'ilike', `%${searchRequest.name}%`
+    )
+    .limit(20)
     .execute()
 
   if (breweries.length === 0) {
