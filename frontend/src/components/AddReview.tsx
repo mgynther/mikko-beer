@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+
+import { useNavigate } from 'react-router-dom'
 
 import { type Beer } from '../store/beer/types'
 import { type Container } from '../store/container/types'
@@ -11,6 +13,7 @@ import SelectContainer from './SelectContainer'
 import './AddReview.css'
 
 function AddReview (): JSX.Element {
+  const navigate = useNavigate()
   const [beer, setBeer] = useState<Beer | undefined>(undefined)
   const [container, setContainer] = useState<Container | undefined>(undefined)
   const [rating, doSetRating] = useState<number>(7)
@@ -18,8 +21,16 @@ function AddReview (): JSX.Element {
   const [taste, setTaste] = useState('')
   const [
     createReview,
-    { isLoading: isCreating, data: createResult }
+    { isLoading: isCreating, isSuccess, data: createResult }
   ] = useCreateReviewMutation()
+
+  useEffect(() => {
+    if (isSuccess && beer !== undefined) {
+      // TODO rather navigate to beer when there is a view.
+      navigate(`/breweries/${beer.breweries[0]}`)
+    }
+  }, [isSuccess, beer])
+
   function setRating (rating: number): void {
     if (rating < 4) rating = 4
     if (rating > 10) rating = 10
@@ -135,9 +146,6 @@ function AddReview (): JSX.Element {
           />
           <LoadingIndicator isLoading={isCreating} />
         </div>
-        {createResult !== undefined && (
-          <div>{'Created!'}</div>
-        )}
       </form>
     </div>
   )
