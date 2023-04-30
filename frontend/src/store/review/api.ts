@@ -1,6 +1,7 @@
 import { emptySplitApi } from '../api'
 
 import {
+  type BreweryReviewList,
   type Review,
   type ReviewList,
   type ReviewRequest,
@@ -24,6 +25,13 @@ const reviewApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [ReviewTags.Review]
     }),
+    listReviewsByBrewery: build.query<BreweryReviewList, string>({
+      query: (breweryId: string) => ({
+        url: `/brewery/${breweryId}/review`,
+        method: 'GET'
+      }),
+      providesTags: [ReviewTags.Review]
+    }),
     createReview: build.mutation<Review, Partial<ReviewRequest>>({
       query: (body: ReviewRequest) => ({
         url: '/review',
@@ -38,6 +46,7 @@ const reviewApi = emptySplitApi.injectEndpoints({
 export const {
   useCreateReviewMutation,
   useGetReviewMutation,
+  useListReviewsByBreweryQuery,
   useListReviewsQuery
 } = reviewApi
 
