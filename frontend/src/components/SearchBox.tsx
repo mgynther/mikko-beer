@@ -37,8 +37,8 @@ function SearchBox (props: Props): JSX.Element {
   const areAllShown = visibleOptions.length === sortedOptions.length
   return (
     <div className="SearchBox">
-      <label>{props.title}:</label>{' '}
       <input
+        placeholder={props.title}
         type='text'
         value={props.currentFilter}
         onChange={e => { props.setFilter(e.target.value) }}

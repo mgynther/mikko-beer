@@ -1,10 +1,16 @@
 .SearchBox {
-  position: relative;
+  margin: auto;
+  width: 70vw;
+}
+
+.SearchBox input {
+  width: 100%;
 }
 
 .SearchBox .SearchResults{
   position: absolute;
-  width: 100%;
+  left: 0;
+  width: 100vw;
 }
 
 .SearchBox ul {
