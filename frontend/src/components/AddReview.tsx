@@ -116,17 +116,19 @@ function AddReview (): JSX.Element {
           />
         </div>
         <div>
-          <label htmlFor='location'>Location:</label>{' '}
-          <input type='text' id='location' />
+          <input type='text' placeholder='Location' id='location' />
         </div>
         <div>
-          <label htmlFor='additionalInfo'>Additional info:</label>{' '}
-          <input type='text' id='additionalInfo' />
-        </div>
-        <div>
-          <label htmlFor='time'>Time:</label>{' '}
           <input
             type='text'
+            placeholder='Additional info'
+            id='additionalInfo'
+          />
+        </div>
+        <div>
+          <input
+            type='text'
+            placeholder='Time'
             id='time'
             value={time}
             onChange={e => { setTime(e.target.value) }}
