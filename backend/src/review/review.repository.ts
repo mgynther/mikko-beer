@@ -142,6 +142,8 @@ export async function listReviewsByBrewery (
       'style.style_id as style_id',
       'style.name as style_name'
     ])
+    .orderBy('beer_name')
+    .orderBy('time', 'asc')
     .execute()
 
   if (reviews.length === 0) {
