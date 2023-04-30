@@ -54,13 +54,12 @@ function ChangePassword (): JSX.Element {
         className="ChangePasswordForm"
         onSubmit={(e) => { void doChange(e) }}>
         <div>
-          <label htmlFor='password'>Old password:</label>{' '}
-          <input type='password' id='oldPassword' />
+          <input type='password' placeholder='Old password' id='oldPassword' />
         </div>
         <div>
-          <label htmlFor='password'>New password:</label>{' '}
           <input
             type='password'
+            placeholder='New password'
             id='newPassword'
             autoComplete='new-password'
             onChange={(e) => {
@@ -71,9 +70,9 @@ function ChangePassword (): JSX.Element {
           />
         </div>
         <div>
-          <label htmlFor='password'>New password confirmation:</label>{' '}
           <input
             type='password'
+            placeholder='New password confirmation'
             id='newPasswordConfirmation'
             autoComplete='new-password'
             onChange={(e) => {

@@ -39,8 +39,11 @@ function CreateBeer (props: Props): JSX.Element {
   return (
     <div>
       <div className={'Section'}>
-        <label>Name:</label>
-        <input type="text" onChange={(e) => { setName(e.target.value) }}/>
+        <input
+          placeholder='Name'
+          type="text"
+          onChange={(e) => { setName(e.target.value) }}
+        />
       </div>
       <div className={'Section'}>
         <BeerBreweries

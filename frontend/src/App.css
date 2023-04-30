@@ -31,3 +31,8 @@ ul li a {
 
 tr:nth-child(even) {background: rgba(0,0,0,0.2)}
 tr:nth-child(odd) {background: rgba(0,0,0,0.3)}
+
+input[type=text], input[type=password], select {
+  width: 70vw;
+  margin: auto;
+}

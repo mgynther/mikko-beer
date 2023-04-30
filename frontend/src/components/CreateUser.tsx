@@ -34,13 +34,12 @@ function CreateUser (): JSX.Element {
         className="CreateUserForm"
         onSubmit={(e) => { void doChange(e) }}>
         <div>
-          <label htmlFor='username'>Username:</label>{' '}
-          <input type='text' id='username' />
+          <input placeholder='Username' type='text' id='username' />
         </div>
         <div>
-          <label htmlFor='password'>Password:</label>{' '}
           <input
             type='password'
+            placeholder='Password'
             id='password'
             autoComplete='new-password'
             onChange={(e) => {
@@ -51,9 +50,9 @@ function CreateUser (): JSX.Element {
           />
         </div>
         <div>
-          <label htmlFor='password'>Password confirmation:</label>{' '}
           <input
             type='password'
+            placeholder='Password confirmation'
             id='passwordConfirmation'
             autoComplete='new-password'
             onChange={(e) => {
@@ -64,7 +63,7 @@ function CreateUser (): JSX.Element {
           />
         </div>
         <div>
-          Role:{' '}
+          <div>Role:</div>
           <select
             defaultValue={'viewer'}
             id='role'
