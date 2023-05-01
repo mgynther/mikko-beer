@@ -25,7 +25,7 @@ const breweryApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [BreweryTags.Brewery]
     }),
-    searchBreweries: build.mutation<BreweryList, string>({
+    searchBreweries: build.query<BreweryList, string>({
       query: (name: string) => ({
         url: '/brewery/search',
         method: 'POST',
@@ -51,8 +51,8 @@ export const {
   useCreateBreweryMutation,
   useGetBreweryQuery,
   useLazyListBreweriesQuery,
-  useListBreweriesQuery,
-  useSearchBreweriesMutation
+  useLazySearchBreweriesQuery,
+  useListBreweriesQuery
 } = breweryApi
 
 export const { endpoints, reducerPath, reducer, middleware } = breweryApi

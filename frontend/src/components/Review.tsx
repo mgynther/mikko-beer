@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import { type Container } from '../store/container/types'
-import { useGetReviewMutation } from '../store/review/api'
+import { useLazyGetReviewQuery } from '../store/review/api'
 import { type Review as ReviewType } from '../store/review/types'
 
 import './Review.css'
@@ -31,7 +31,7 @@ export function ReviewHeading (): JSX.Element {
 }
 
 function Review (props: ReviewProps): JSX.Element {
-  const [getReview] = useGetReviewMutation()
+  const [getReview] = useLazyGetReviewQuery()
 
   const [isOpen, setIsOpen] = useState(false)
 

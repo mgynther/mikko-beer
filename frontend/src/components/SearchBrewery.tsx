@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { useSearchBreweriesMutation } from '../store/brewery/api'
+import { useLazySearchBreweriesQuery } from '../store/brewery/api'
 import { type Brewery } from '../store/brewery/types'
 
 import SearchBox, { type SearchBoxItem } from './SearchBox'
@@ -15,7 +15,7 @@ function SearchBrewery (props: Props): JSX.Element {
   const [
     searchBrewery,
     { isLoading }
-  ] = useSearchBreweriesMutation()
+  ] = useLazySearchBreweriesQuery()
   const [filter, setFilter] = useState('')
   const debouncedFilter = useDebounce(filter, 200)
   const [results, setResults] = useState<Brewery[]>([])
