@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import { useCreateBeerMutation } from '../store/beer/api'
-import { type Beer } from '../store/beer/types'
+import { type BeerWithIds } from '../store/beer/types'
 
 import BeerBreweries from './BeerBreweries'
 import BeerStyles from './BeerStyles'
@@ -9,7 +9,7 @@ import BeerStyles from './BeerStyles'
 import './CreateBeer.css'
 
 export interface Props {
-  select: (beer: Beer) => void
+  select: (beer: BeerWithIds) => void
 }
 
 function CreateBeer (props: Props): JSX.Element {

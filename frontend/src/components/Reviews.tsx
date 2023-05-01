@@ -1,13 +1,9 @@
 import { useListBeersQuery } from '../store/beer/api'
 import { type Beer } from '../store/beer/types'
-import { useListBreweriesQuery } from '../store/brewery/api'
 import { useListContainersQuery } from '../store/container/api'
-import { useListStylesQuery } from '../store/style/api'
 import { useListReviewsQuery } from '../store/review/api'
 import { toBeerMap } from '../store/beer/util'
-import { toBreweryMap } from '../store/brewery/util'
 import { toContainerMap } from '../store/container/util'
-import { toStyleMap } from '../store/style/util'
 import { type Review as ReviewType } from '../store/review/types'
 import { toString } from './util'
 
@@ -17,39 +13,32 @@ import Review, { ReviewHeading, type ReviewProps } from './Review'
 import './Review.css'
 
 function Reviews (): JSX.Element {
-  const { data: beerData, isLoading: areBeersLoading } = useListBeersQuery()
+  const { data: beerData, isLoading: areBeersLoading } =
+    useListBeersQuery({ size: 10000, skip: 0 })
   const beerMap = toBeerMap(beerData)
-  const { data: breweryData, isLoading: areBreweriesLoading } =
-    useListBreweriesQuery({ skip: 0, size: 10000 })
-  const breweryMap = toBreweryMap(breweryData)
   const { data: containerData, isLoading: areContainersLoading } =
     useListContainersQuery()
   const containerMap = toContainerMap(containerData)
-  const { data: styleData, isLoading: areStylesLoading } =
-    useListStylesQuery()
-  const styleMap = toStyleMap(styleData)
   const { data: reviewData, isLoading: areReviewsLoading } =
     useListReviewsQuery()
   const isLoading = areBeersLoading ||
-    areBreweriesLoading ||
     areContainersLoading ||
-    areReviewsLoading ||
-    areStylesLoading
+    areReviewsLoading
 
   const reviewArray = reviewData?.reviews === undefined
     ? []
     : reviewData?.reviews
   const reviews = reviewArray
     .map((review: ReviewType) => {
-      const beer: Beer = beerMap[review.beer]
+      const beer: Beer | undefined = beerMap[review.beer]
       const container = containerMap[review.container]
       return {
         ...review,
         id: review.id,
-        breweries: toString(beer.breweries.map(b => breweryMap[b]?.name ?? '')),
-        beer: beer.name,
+        breweries: toString(beer?.breweries.map(b => b.name).sort() ?? []),
+        beer: beer?.name ?? '',
         container,
-        styles: toString(beer.styles.map(s => styleMap[s]?.name ?? ''))
+        styles: toString(beer?.styles.map(s => s.name).sort() ?? [])
       }
     })
     .sort((a: ReviewProps, b: ReviewProps) => {

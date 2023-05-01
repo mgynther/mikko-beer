@@ -101,6 +101,13 @@ describe('beer tests', () => {
 
     expect(listRes.status).to.equal(200)
     expect(listRes.data.beers.length).to.equal(1)
+
+    const skippedListRes = await ctx.request.get(`/api/v1/beer?size=30&skip=50`,
+      ctx.adminAuthHeaders()
+    )
+
+    expect(skippedListRes.status).to.equal(200)
+    expect(skippedListRes.data.beers.length).to.equal(0)
   })
 
   it('should fail to create a beer with invalid style', async () => {

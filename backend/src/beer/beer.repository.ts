@@ -1,3 +1,5 @@
+import { sql } from 'kysely'
+
 import { type Database, type Transaction } from '../database'
 import {
   type BeerRow,
@@ -9,9 +11,12 @@ import {
   type UpdateableBeerRow
 } from './beer.table'
 import {
-  type BeerWithBreweriesAndStyles,
-  type BeerWithBreweryAndStyleIds
+  type BeerWithBreweriesAndStyles
 } from './beer'
+
+import {
+  type Pagination
+} from '../util/pagination'
 
 import { type Brewery } from '../brewery/brewery'
 import { type Style } from '../style/style'
@@ -169,27 +174,54 @@ async function lockBeer (
 }
 
 export async function listBeers (
-  db: Database
-): Promise<BeerWithBreweryAndStyleIds[] | undefined> {
-  const beers = await db.getDb()
-    .selectFrom('beer')
-    .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
-    .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
-    .select([
-      'beer.beer_id',
-      'beer.name',
-      'beer.created_at',
-      'beer_brewery.brewery as brewery',
-      'beer_style.style as style'
-    ])
-    .execute()
+  db: Database,
+  pagination: Pagination
+): Promise<BeerWithBreweriesAndStyles[]> {
+  // Regardless of TypeScript checking validate runtime type of parameters that
+  // will be used in raw SQL just to be sure injections are impossible even in
+  // case of wrong type assertions and other bad practices.
+  if (typeof pagination.size !== 'number') {
+    throw new Error('must not get any other type than number in size')
+  }
+  if (typeof pagination.skip !== 'number') {
+    throw new Error('must not get any other type than number in skip')
+  }
+  const start = pagination.skip + 1
+  const end = pagination.skip + pagination.size
+  // Did not find a Kysely way to do a window function subquery and use between
+  // comparison, so raw SQL it is. Kysely would be better because of sanity
+  // checking and typing would not have to be done manually.
+  const beerQuery = sql`SELECT
+    beer.beer_id, beer.name, beer.created_at,
+    brewery.brewery_id as brewery_id, brewery.name as brewery_name,
+    style.style_id as style_id, style.name as style_name
+  FROM (SELECT beer.*, ROW_NUMBER() OVER(ORDER BY name) rn FROM beer) beer
+  INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer
+  INNER JOIN brewery ON brewery.brewery_id = beer_brewery.brewery
+  INNER JOIN beer_style ON beer.beer_id = beer_style.beer
+  INNER JOIN style ON style.style_id = beer_style.style
+  WHERE beer.rn BETWEEN ${start} AND ${end}
+  ORDER BY beer.name ASC
+  `
+  const beers = (await beerQuery
+    .execute(db.getDb()) as {
+    rows: Array<{
+      beer_id: string
+      name: string
+      created_at: Date
+      brewery_id: string
+      brewery_name: string
+      style_id: string
+      style_name: string
+    }>
+  }).rows
 
   if (beers.length === 0) {
-    return undefined
+    return []
   }
 
-  const beerMap: Record<string, BeerWithBreweryAndStyleIds> = {}
-  const beerArray: BeerWithBreweryAndStyleIds[] = []
+  const beerMap: Record<string, BeerWithBreweriesAndStyles> = {}
+  const beerArray: BeerWithBreweriesAndStyles[] = []
 
   beers.forEach(beer => {
     if (beerMap[beer.beer_id] === undefined) {
@@ -201,11 +233,19 @@ export async function listBeers (
       }
       beerArray.push(beerMap[beer.beer_id])
     }
-    if (!beerMap[beer.beer_id].breweries.includes(beer.brewery)) {
-      beerMap[beer.beer_id].breweries.push(beer.brewery)
+    if (!beerMap[beer.beer_id].breweries
+      .some((brewery) => brewery.id === beer.brewery_id)) {
+      beerMap[beer.beer_id].breweries.push({
+        id: beer.brewery_id,
+        name: beer.brewery_name
+      })
     }
-    if (!beerMap[beer.beer_id].styles.includes(beer.style)) {
-      beerMap[beer.beer_id].styles.push(beer.style)
+    if (!beerMap[beer.beer_id].styles
+      .some((style) => style.id === beer.style_id)) {
+      beerMap[beer.beer_id].styles.push({
+        id: beer.style_id,
+        name: beer.style_name
+      })
     }
   })
 

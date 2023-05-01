@@ -1,4 +1,4 @@
-import { type Beer } from '../store/beer/types'
+import { type BeerWithIds } from '../store/beer/types'
 
 import CreateBeer from './CreateBeer'
 import SearchBeer from './SearchBeer'
@@ -7,7 +7,7 @@ import SelectCreateRadio, { Mode } from './SelectCreateRadio'
 import './SelectBeer.css'
 
 export interface Props {
-  select: (beer: Beer) => void
+  select: (beer: BeerWithIds) => void
 }
 
 function SelectBeer (props: Props): JSX.Element {

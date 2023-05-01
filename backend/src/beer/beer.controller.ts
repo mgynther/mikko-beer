@@ -9,6 +9,7 @@ import {
   validateUpdateBeerRequest
 } from './beer'
 import { ControllerError } from '../util/errors'
+import { validatePagination } from '../util/pagination'
 
 export function beerController (router: Router): void {
   router.post('/api/v1/beer',
@@ -69,8 +70,10 @@ export function beerController (router: Router): void {
     '/api/v1/beer',
     authService.authenticateViewer,
     async (ctx) => {
-      const beers = await beerService.listBeers(ctx.db)
-      ctx.body = { beers }
+      const { skip, size } = ctx.request.query
+      const pagination = validatePagination({ skip, size })
+      const beers = await beerService.listBeers(ctx.db, pagination)
+      ctx.body = { beers, pagination }
     }
   )
 }

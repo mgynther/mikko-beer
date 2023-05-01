@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { useNavigate } from 'react-router-dom'
 
-import { type Beer } from '../store/beer/types'
+import { type BeerWithIds } from '../store/beer/types'
 import { type Container } from '../store/container/types'
 import { useCreateReviewMutation } from '../store/review/api'
 
@@ -14,7 +14,7 @@ import './AddReview.css'
 
 function AddReview (): JSX.Element {
   const navigate = useNavigate()
-  const [beer, setBeer] = useState<Beer | undefined>(undefined)
+  const [beer, setBeer] = useState<BeerWithIds | undefined>(undefined)
   const [container, setContainer] = useState<Container | undefined>(undefined)
   const [rating, doSetRating] = useState<number>(7)
   const [smell, setSmell] = useState('')
@@ -66,7 +66,7 @@ function AddReview (): JSX.Element {
         <h3>Add review</h3>
         <div>
           {beer === undefined
-            ? <SelectBeer select={(beer: Beer) => {
+            ? <SelectBeer select={(beer: BeerWithIds) => {
               setBeer(beer)
             }} />
             : (<div onClick={() => { setBeer(undefined) }}>

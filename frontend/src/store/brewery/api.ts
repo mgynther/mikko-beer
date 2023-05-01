@@ -1,5 +1,7 @@
 import { emptySplitApi } from '../api'
 
+import { type Pagination } from '../types'
+
 import {
   type Brewery,
   type BreweryList,
@@ -18,8 +20,8 @@ const breweryApi = emptySplitApi.injectEndpoints({
           ? [BreweryTags.Brewery]
           : [{ type: BreweryTags.Brewery, id: result.brewery.id }]
     }),
-    listBreweries: build.query<BreweryList, { skip: number, size: number }>({
-      query: (pagination: { skip: number, size: number }) => ({
+    listBreweries: build.query<BreweryList, Pagination>({
+      query: (pagination: Pagination) => ({
         url: `/brewery?size=${pagination.size}&skip=${pagination.skip}`,
         method: 'GET'
       }),

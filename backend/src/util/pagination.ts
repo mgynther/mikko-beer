@@ -40,6 +40,10 @@ export function validatePagination (pagination: PaginationRequest): Pagination {
       typeof pagination.skip !== 'string') {
     throw error()
   }
+  const regex = /^[0-9]+$/
+  if (!regex.test(pagination.size) || !regex.test(pagination.skip)) {
+    throw error()
+  }
   const parsed = {
     size: parseInt(pagination.size),
     skip: parseInt(pagination.skip)
