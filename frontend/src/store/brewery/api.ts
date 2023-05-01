@@ -18,9 +18,9 @@ const breweryApi = emptySplitApi.injectEndpoints({
           ? [BreweryTags.Brewery]
           : [{ type: BreweryTags.Brewery, id: result.brewery.id }]
     }),
-    listBreweries: build.query<BreweryList, void>({
-      query: () => ({
-        url: '/brewery',
+    listBreweries: build.query<BreweryList, { skip: number, size: number }>({
+      query: (pagination: { skip: number, size: number }) => ({
+        url: `/brewery?size=${pagination.size}&skip=${pagination.skip}`,
         method: 'GET'
       }),
       providesTags: [BreweryTags.Brewery]
@@ -50,6 +50,7 @@ const breweryApi = emptySplitApi.injectEndpoints({
 export const {
   useCreateBreweryMutation,
   useGetBreweryQuery,
+  useLazyListBreweriesQuery,
   useListBreweriesQuery,
   useSearchBreweriesMutation
 } = breweryApi

@@ -20,7 +20,7 @@ function Reviews (): JSX.Element {
   const { data: beerData, isLoading: areBeersLoading } = useListBeersQuery()
   const beerMap = toBeerMap(beerData)
   const { data: breweryData, isLoading: areBreweriesLoading } =
-    useListBreweriesQuery()
+    useListBreweriesQuery({ skip: 0, size: 10000 })
   const breweryMap = toBreweryMap(breweryData)
   const { data: containerData, isLoading: areContainersLoading } =
     useListContainersQuery()

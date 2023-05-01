@@ -36,3 +36,8 @@ input[type=text], input[type=password], select {
   width: 70vw;
   margin: auto;
 }
+
+.content-end {
+  min-width: 5px;
+  min-height: 5px;
+}

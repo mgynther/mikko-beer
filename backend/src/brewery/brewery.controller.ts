@@ -11,6 +11,7 @@ import {
   validateUpdateBreweryRequest
 } from './brewery'
 import { ControllerError } from '../util/errors'
+import { validatePagination } from '../util/pagination'
 
 export function breweryController (router: Router): void {
   router.post('/api/v1/brewery',
@@ -72,8 +73,10 @@ export function breweryController (router: Router): void {
     '/api/v1/brewery',
     authService.authenticateViewer,
     async (ctx) => {
-      const breweries = await breweryService.listBreweries(ctx.db)
-      ctx.body = { breweries }
+      const { skip, size } = ctx.request.query
+      const pagination = validatePagination({ skip, size })
+      const breweries = await breweryService.listBreweries(ctx.db, pagination)
+      ctx.body = { breweries, pagination }
     }
   )
 

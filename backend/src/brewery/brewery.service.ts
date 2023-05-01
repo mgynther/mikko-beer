@@ -9,6 +9,8 @@ import {
 } from './brewery'
 import { type BreweryRow } from './brewery.table'
 
+import { type Pagination } from '../util/pagination'
+
 export async function createBrewery (
   trx: Transaction,
   request: CreateBreweryRequest
@@ -55,9 +57,10 @@ export async function lockBreweryById (
 }
 
 export async function listBreweries (
-  db: Database
+  db: Database,
+  pagination: Pagination
 ): Promise<Brewery[] | undefined> {
-  const breweryRows = await breweryRepository.listBreweries(db)
+  const breweryRows = await breweryRepository.listBreweries(db, pagination)
 
   if (breweryRows === null || breweryRows === undefined) return []
 

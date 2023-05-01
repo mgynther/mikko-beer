@@ -117,6 +117,7 @@ function App (): JSX.Element {
             element={isLoggedIn ? <Beers /> : <LoginComponent />} />
         </Route>
       </Routes>
+      <div id='content-end'>&nbsp;</div>
     </div>
   )
 }

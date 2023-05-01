@@ -30,7 +30,7 @@ describe('brewery tests', () => {
     expect(getRes.status).to.equal(200)
     expect(getRes.data.brewery).to.eql(res.data.brewery)
 
-    const listRes = await ctx.request.get(`/api/v1/brewery`,
+    const listRes = await ctx.request.get(`/api/v1/brewery?skip=0&size=100`,
       ctx.adminAuthHeaders()
     )
     expect(listRes.status).to.equal(200)

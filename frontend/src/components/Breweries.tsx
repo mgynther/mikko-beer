@@ -1,24 +1,50 @@
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-import { useListBreweriesQuery } from '../store/brewery/api'
+import { useLazyListBreweriesQuery } from '../store/brewery/api'
 import { type Brewery } from '../store/brewery/types'
 
 import LoadingIndicator from './LoadingIndicator'
 import SearchBrewery from './SearchBrewery'
 
+import { infiniteScroll } from './util'
+
+const pageSize = 20
+
 function Breweries (): JSX.Element {
   const navigate = useNavigate()
-  const { data: breweryData, isLoading } = useListBreweriesQuery()
+  const [loadedBreweries, setLoadedBreweries] = useState<Brewery[]>([])
+  const [trigger, result] = useLazyListBreweriesQuery()
+  const isLoading = result.isLoading
 
+  const breweryData = result.data
   const breweryArray = breweryData?.breweries === undefined
     ? []
     : [...breweryData.breweries]
-  const breweries = breweryArray
-    .sort((a, b) => a.name.localeCompare(b.name))
 
   function toRoute (brewery: Brewery): string {
     return `/breweries/${brewery.id}`
   }
+
+  const hasMore = breweryArray.length > 0 || result.isUninitialized
+
+  useEffect(() => {
+    const loadMore = async (): Promise<void> => {
+      const result = await trigger({
+        skip: loadedBreweries.length,
+        size: pageSize
+      })
+      if (result.data === undefined) return
+      const newBreweries = [...loadedBreweries, ...result.data.breweries]
+      setLoadedBreweries(newBreweries)
+    }
+    function checkLoad (): void {
+      if (!isLoading && hasMore) {
+        void loadMore()
+      }
+    }
+    return infiniteScroll(checkLoad)
+  }, [loadedBreweries, setLoadedBreweries, isLoading, hasMore, trigger])
 
   return (
     <div>
@@ -28,7 +54,7 @@ function Breweries (): JSX.Element {
         navigate(toRoute(brewery))
       }} />
       <ul>
-        {breweries?.map((brewery: Brewery) => (
+        {loadedBreweries.map((brewery: Brewery) => (
           <li key={brewery.id}>
             <Link to={toRoute(brewery)}>
               {brewery.name}
@@ -36,6 +62,7 @@ function Breweries (): JSX.Element {
           </li>
         ))}
       </ul>
+      <LoadingIndicator isLoading={isLoading} />
     </div>
   )
 }

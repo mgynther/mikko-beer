@@ -8,6 +8,10 @@ import {
   type SearchBreweryRequest
 } from './brewery'
 
+import {
+  type Pagination
+} from '../util/pagination'
+
 export async function insertBrewery (
   trx: Transaction,
   brewery: InsertableBreweryRow
@@ -74,11 +78,15 @@ async function lockBrewery (
 }
 
 export async function listBreweries (
-  db: Database
+  db: Database,
+  pagination: Pagination
 ): Promise<BreweryRow[] | undefined> {
   const breweries = await db.getDb()
     .selectFrom('brewery')
     .selectAll('brewery')
+    .orderBy('brewery.name')
+    .limit(pagination.size)
+    .offset(pagination.skip)
     .execute()
 
   if (breweries.length === 0) {

@@ -50,6 +50,7 @@ export type SignInMethodApiErros =
 
 export type ErrorCode =
   | 'UnknownError'
+  | 'InvalidPagination'
   | AuthenticationErrors
   | BeerApiErrors
   | BreweryApiErrors

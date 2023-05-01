@@ -16,7 +16,7 @@ interface BeerModel {
 function Beers (): JSX.Element {
   const { data: beerData, isLoading: areBeersLoading } = useListBeersQuery()
   const { data: breweryData, isLoading: areBreweriesLoading } =
-    useListBreweriesQuery()
+    useListBreweriesQuery({ skip: 0, size: 10000 })
   const breweryMap = toBreweryMap(breweryData)
   const { data: styleData, isLoading: areStylesLoading } =
     useListStylesQuery()
