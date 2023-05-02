@@ -6,12 +6,12 @@ The goal of this project is readable, testable and elegant code (although we are
 
 At the moment the code is in very early and rough state but in use. In addition to missing features (such as statistics) plenty of technical shortcuts have been taken to get a minimum set of features into use. Important future work includes:
 
-* Efficient queries that support (future) UX. Currently there's a lot of fetching all data to frontend, including but not limited to client side searches which will be replaced by server-side searches, possibly infinite scrolling etc.
+* Efficient queries that support (future) UX. Currently there's a fair amount of fetching all data to frontend, including but not limited to client side searches which will be replaced by server-side searches, more infinite scrolling etc.
 * E2E testing, at least essential use cases.
-* Frontend unit testing.
+* Frontend unit testing. It will be interesting to see how RTK can be handled. Options include at least wrapping & mocking/stubbing/faking and refactoring to avoid RTK in tests.
 * Editing and deleting data in the frontend which is currently missing in most places.
 * New views that support showing relevant data.
-* Re-calculating password hashes which enables improving cryptographic security in the future.
+* Re-calculating password hash on login which enables adding cryptographic complexity meaning improving security in the future.
 
 ## Acknowledgements
 
