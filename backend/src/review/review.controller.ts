@@ -9,6 +9,7 @@ import {
   validateUpdateReviewRequest
 } from './review'
 import { ControllerError } from '../util/errors'
+import { validatePagination } from '../util/pagination'
 
 export function reviewController (router: Router): void {
   router.post('/api/v1/review',
@@ -83,8 +84,10 @@ export function reviewController (router: Router): void {
     '/api/v1/review',
     authService.authenticateViewer,
     async (ctx) => {
-      const reviews = await reviewService.listReviews(ctx.db)
-      ctx.body = { reviews }
+      const { skip, size } = ctx.request.query
+      const pagination = validatePagination({ skip, size })
+      const reviews = await reviewService.listReviews(ctx.db, pagination)
+      ctx.body = { reviews, pagination }
     }
   )
 }

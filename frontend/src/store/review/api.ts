@@ -1,9 +1,10 @@
 import { emptySplitApi } from '../api'
 
+import { type Pagination } from '../types'
+
 import {
-  type BreweryReviewList,
+  type JoinedReviewList,
   type Review,
-  type ReviewList,
   type ReviewRequest,
   ReviewTags
 } from './types'
@@ -16,14 +17,14 @@ const reviewApi = emptySplitApi.injectEndpoints({
         method: 'GET'
       })
     }),
-    listReviews: build.query<ReviewList, void>({
-      query: () => ({
-        url: '/review',
+    listReviews: build.query<JoinedReviewList, Pagination>({
+      query: (pagination: Pagination) => ({
+        url: `/review?size=${pagination.size}&skip=${pagination.skip}`,
         method: 'GET'
       }),
       providesTags: [ReviewTags.Review]
     }),
-    listReviewsByBrewery: build.query<BreweryReviewList, string>({
+    listReviewsByBrewery: build.query<JoinedReviewList, string>({
       query: (breweryId: string) => ({
         url: `/brewery/${breweryId}/review`,
         method: 'GET'
@@ -44,8 +45,8 @@ const reviewApi = emptySplitApi.injectEndpoints({
 export const {
   useCreateReviewMutation,
   useLazyGetReviewQuery,
-  useListReviewsByBreweryQuery,
-  useListReviewsQuery
+  useLazyListReviewsQuery,
+  useListReviewsByBreweryQuery
 } = reviewApi
 
 export const { endpoints, reducerPath, reducer, middleware } = reviewApi

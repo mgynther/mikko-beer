@@ -1,11 +1,14 @@
+import { sql } from 'kysely'
+
 import { type Database, type Transaction } from '../database'
 import {
-  type BreweryReviewRow,
-  type ReviewBasicRow,
+  type DbJoinedReview,
   type ReviewRow,
   type InsertableReviewRow,
   type UpdateableReviewRow
 } from './review.table'
+
+import { type Pagination } from '../util/pagination'
 
 export async function insertReview (
   trx: Transaction,
@@ -84,35 +87,59 @@ async function lockReview (
 }
 
 export async function listReviews (
-  db: Database
-): Promise<ReviewBasicRow[] | undefined> {
-  const reviews = await db.getDb()
-    .selectFrom('review')
-    .select([
-      'review.review_id',
-      'review.additional_info',
-      'review.beer',
-      'review.container',
-      'review.location',
-      'review.rating',
-      'review.smell',
-      'review.taste',
-      'review.time',
-      'review.created_at'
-    ])
-    .execute()
+  db: Database,
+  pagination: Pagination
+): Promise<DbJoinedReview[]> {
+  // Regardless of TypeScript checking validate runtime type of parameters that
+  // will be used in raw SQL just to be sure injections are impossible even in
+  // case of wrong type assertions and other bad practices.
+  if (typeof pagination.size !== 'number') {
+    throw new Error('must not get any other type than number in size')
+  }
+  if (typeof pagination.skip !== 'number') {
+    throw new Error('must not get any other type than number in skip')
+  }
+  const start = pagination.skip + 1
+  const end = pagination.skip + pagination.size
+  // Did not find a Kysely way to do a window function subquery and use between
+  // comparison, so raw SQL it is. Kysely would be better because of sanity
+  // checking and typing would not have to be done manually.
+  const reviewQuery = sql`SELECT
+    review.review_id, review.additional_info, review.location,
+    review.rating, review.time, review.created_at,
+    beer.beer_id as beer_id, beer.name as beer_name,
+    brewery.brewery_id as brewery_id, brewery.name as brewery_name,
+    style.style_id as style_id, style.name as style_name,
+    container.container_id as container_id, container.type as container_type,
+    container.size as container_size
+  FROM (
+    SELECT review.*, ROW_NUMBER() OVER(ORDER BY time DESC) rn
+    FROM review) review
+  INNER JOIN beer ON review.beer = beer.beer_id
+  INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer
+  INNER JOIN brewery ON brewery.brewery_id = beer_brewery.brewery
+  INNER JOIN beer_style ON beer.beer_id = beer_style.beer
+  INNER JOIN style ON style.style_id = beer_style.style
+  INNER JOIN container ON review.container = container.container_id
+  WHERE review.rn BETWEEN ${start} AND ${end}
+  ORDER BY review.time DESC
+  `
+  const reviews = (await reviewQuery
+    .execute(db.getDb()) as {
+    rows: JoinedReview[]
+  }).rows
 
   if (reviews.length === 0) {
-    return undefined
+    return []
   }
 
-  return [...reviews]
+  return parseBreweryReviewRows(reviews)
 }
 
 export async function listReviewsByBrewery (
   db: Database,
   breweryId: string
-): Promise<BreweryReviewRow[] | undefined> {
+): Promise<DbJoinedReview[]> {
   const reviews = await db.getDb()
     .selectFrom('beer_brewery as querybrewery')
     .innerJoin('beer', 'querybrewery.beer', 'beer.beer_id')
@@ -135,8 +162,6 @@ export async function listReviewsByBrewery (
       'container.type as container_type',
       'review.location',
       'review.rating',
-      'review.smell',
-      'review.taste',
       'review.time',
       'review.created_at',
       'style.style_id as style_id',
@@ -147,11 +172,34 @@ export async function listReviewsByBrewery (
     .execute()
 
   if (reviews.length === 0) {
-    return undefined
+    return []
   }
+  return parseBreweryReviewRows(reviews)
+}
 
-  const reviewMap: Record<string, BreweryReviewRow> = {}
-  const reviewArray: BreweryReviewRow[] = []
+interface JoinedReview {
+  review_id: string
+  additional_info: string | null
+  beer_id: string
+  beer_name: string | null
+  brewery_id: string
+  brewery_name: string | null
+  container_id: string
+  container_size: string | null
+  container_type: string | null
+  location: string | null
+  rating: number | null
+  time: Date
+  created_at: Date
+  style_id: string
+  style_name: string | null
+}
+
+function parseBreweryReviewRows (
+  reviews: JoinedReview[]
+): DbJoinedReview[] {
+  const reviewMap: Record<string, DbJoinedReview> = {}
+  const reviewArray: DbJoinedReview[] = []
 
   reviews.forEach(review => {
     if (reviewMap[review.review_id] === undefined) {

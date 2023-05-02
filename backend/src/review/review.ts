@@ -2,7 +2,7 @@ import { ajv } from '../util/ajv'
 
 import { type Container } from '../container/container'
 
-export interface ReviewBasic {
+export interface Review {
   id: string
   additionalInfo: string | null
   beer: string
@@ -10,14 +10,11 @@ export interface ReviewBasic {
   location: string | null
   rating: number | null
   time: Date
-}
-
-export interface Review extends ReviewBasic {
   smell: string | null
   taste: string | null
 }
 
-export interface BreweryReview {
+export interface JoinedReview {
   id: string
   additionalInfo: string | null
   beerId: string

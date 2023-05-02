@@ -12,26 +12,26 @@ export interface Review {
   time: string
 }
 
-interface BreweryReviewBrewery {
+interface JoinedReviewBrewery {
   id: string
   name: string
 }
 
-interface BreweryReviewStyle {
+interface JoinedReviewStyle {
   id: string
   name: string
 }
 
-export interface BreweryReview {
+export interface JoinedReview {
   id: string
   additionalInfo: string
   beerId: string
   beerName: string
-  breweries: BreweryReviewBrewery[]
+  breweries: JoinedReviewBrewery[]
   container: Container
   location: string
   rating: number
-  styles: BreweryReviewStyle[]
+  styles: JoinedReviewStyle[]
   time: string
 }
 
@@ -50,8 +50,8 @@ export interface ReviewList {
   reviews: Review[]
 }
 
-export interface BreweryReviewList {
-  reviews: BreweryReview[]
+export interface JoinedReviewList {
+  reviews: JoinedReview[]
 }
 
 export enum ReviewTags {

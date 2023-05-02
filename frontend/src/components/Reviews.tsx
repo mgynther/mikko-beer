@@ -1,51 +1,51 @@
-import { useListBeersQuery } from '../store/beer/api'
-import { type Beer } from '../store/beer/types'
-import { useListContainersQuery } from '../store/container/api'
-import { useListReviewsQuery } from '../store/review/api'
-import { toBeerMap } from '../store/beer/util'
-import { toContainerMap } from '../store/container/util'
-import { type Review as ReviewType } from '../store/review/types'
-import { toString } from './util'
+import { useEffect, useState } from 'react'
+
+import { useLazyListReviewsQuery } from '../store/review/api'
+import { type JoinedReview } from '../store/review/types'
 
 import LoadingIndicator from './LoadingIndicator'
 import Review, { ReviewHeading, type ReviewProps } from './Review'
+import { infiniteScroll, toString } from './util'
 
 import './Review.css'
 
+const pageSize = 20
+
 function Reviews (): JSX.Element {
-  const { data: beerData, isLoading: areBeersLoading } =
-    useListBeersQuery({ size: 10000, skip: 0 })
-  const beerMap = toBeerMap(beerData)
-  const { data: containerData, isLoading: areContainersLoading } =
-    useListContainersQuery()
-  const containerMap = toContainerMap(containerData)
-  const { data: reviewData, isLoading: areReviewsLoading } =
-    useListReviewsQuery()
-  const isLoading = areBeersLoading ||
-    areContainersLoading ||
-    areReviewsLoading
+  const [loadedReviews, setLoadedReviews] = useState<JoinedReview[]>([])
+  const [trigger, { data: reviewData, isLoading, isUninitialized }] =
+    useLazyListReviewsQuery()
 
   const reviewArray = reviewData?.reviews === undefined
     ? []
-    : reviewData?.reviews
-  const reviews = reviewArray
-    .map((review: ReviewType) => {
-      const beer: Beer | undefined = beerMap[review.beer]
-      const container = containerMap[review.container]
+    : [...reviewData.reviews]
+  const hasMore = reviewArray.length > 0 || isUninitialized
+
+  useEffect(() => {
+    const loadMore = async (): Promise<void> => {
+      const result = await trigger({
+        skip: loadedReviews.length,
+        size: pageSize
+      })
+      if (result.data === undefined) return
+      setLoadedReviews([...loadedReviews, ...result.data.reviews])
+    }
+    function checkLoad (): void {
+      if (!isLoading && hasMore) {
+        void loadMore()
+      }
+    }
+    return infiniteScroll(checkLoad)
+  }, [loadedReviews, setLoadedReviews, isLoading, hasMore, trigger])
+
+  const reviews = loadedReviews
+    .map((review) => {
       return {
         ...review,
-        id: review.id,
-        breweries: toString(beer?.breweries.map(b => b.name).sort() ?? []),
-        beer: beer?.name ?? '',
-        container,
-        styles: toString(beer?.styles.map(s => s.name).sort() ?? [])
+        beer: review.beerName,
+        breweries: toString(review.breweries.map(b => b.name).sort() ?? []),
+        styles: toString(review.styles.map(s => s.name).sort() ?? [])
       }
-    })
-    .sort((a: ReviewProps, b: ReviewProps) => {
-      if (a.breweries === b.breweries) {
-        return a.beer.localeCompare(b.beer)
-      }
-      return a.breweries.localeCompare(b.breweries)
     })
 
   return (

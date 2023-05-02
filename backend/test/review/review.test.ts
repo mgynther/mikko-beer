@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
 import { TestContext } from '../test-context'
-import { BreweryReview, Review, ReviewBasic } from '../../src/review/review'
+import { JoinedReview, Review } from '../../src/review/review'
 import { Style } from '../../src/style/style'
 import { AxiosResponse } from 'axios'
 
@@ -92,18 +92,28 @@ describe('review tests', () => {
     expect(getRes.data.review.taste).to.equal('Cherries, a little sour')
     expect(getRes.data.review.time).to.equal('2023-03-07T18:31:33.123Z')
 
-    const listRes = await ctx.request.get<{ reviews: Review[] }>(
+    const listRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
       '/api/v1/review/',
       ctx.adminAuthHeaders()
     )
     expect(listRes.status).to.equal(200)
     expect(listRes.data.reviews.length).to.equal(1)
     expect(listRes.data.reviews[0].id).to.eql(getRes.data.review.id)
-    expect(listRes.data.reviews[0].beer).to.eql(getRes.data.review.beer)
-    expect(listRes.data.reviews[0].smell).to.equal(undefined)
-    expect(listRes.data.reviews[0].taste).to.equal(undefined)
+    expect(listRes.data.reviews[0].beerId).to.eql(getRes.data.review.beer)
+    expect(listRes.data.reviews[0].container).to.eql(containerRes.data.container)
+    expect(listRes.data.reviews[0].breweries[0]).to.eql(breweryRes.data.brewery)
+    const parentlessStyle = { ...styleRes.data.style }
+    delete parentlessStyle.parents
+    expect(listRes.data.reviews[0].styles[0]).to.eql(parentlessStyle)
 
-    const breweryListRes = await ctx.request.get<{ reviews: BreweryReview[] }>(
+    const skippedListRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
+      '/api/v1/review?size=50&skip=30',
+      ctx.adminAuthHeaders()
+    )
+    expect(skippedListRes.status).to.equal(200)
+    expect(skippedListRes.data.reviews.length).to.equal(0)
+
+    const breweryListRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
       `/api/v1/brewery/${breweryRes.data.brewery.id}/review/`,
       ctx.adminAuthHeaders()
     )
@@ -254,7 +264,7 @@ describe('review tests', () => {
     expect(collabReviewRes.status).to.equal(201)
     expect(collabReviewRes.data.review.beer).to.equal(collabBeerRes.data.beer.id)
 
-    const breweryListRes = await ctx.request.get<{ reviews: BreweryReview[] }>(
+    const breweryListRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
       `/api/v1/brewery/${breweryRes.data.brewery.id}/review/`,
       ctx.adminAuthHeaders()
     )

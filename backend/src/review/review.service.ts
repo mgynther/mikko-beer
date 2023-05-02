@@ -2,13 +2,17 @@ import * as reviewRepository from './review.repository'
 
 import { type Database, type Transaction } from '../database'
 import {
-  type BreweryReview,
   type CreateReviewRequest,
   type UpdateReviewRequest,
-  type ReviewBasic,
+  type JoinedReview,
   type Review
 } from './review'
-import { type ReviewBasicRow, type ReviewRow } from './review.table'
+import {
+  type DbJoinedReview,
+  type ReviewRow
+} from './review.table'
+
+import { type Pagination } from '../util/pagination'
 
 export async function createReview (
   trx: Transaction,
@@ -74,25 +78,22 @@ export async function lockReviewById (
 }
 
 export async function listReviews (
-  db: Database
-): Promise<ReviewBasic[] | undefined> {
-  const reviewRows = await reviewRepository.listReviews(db)
-
-  if (reviewRows === null || reviewRows === undefined) return []
-
-  return reviewRows.map(row => ({
-    ...reviewBasicRowToReviewBasic(row)
-  }))
+  db: Database,
+  pagination: Pagination
+): Promise<JoinedReview[]> {
+  const reviewRows = await reviewRepository.listReviews(db, pagination)
+  return toBreweryReviews(reviewRows)
 }
 
 export async function listReviewsByBrewery (
   db: Database,
   breweryId: string
-): Promise<BreweryReview[] | undefined> {
+): Promise<JoinedReview[]> {
   const reviewRows = await reviewRepository.listReviewsByBrewery(db, breweryId)
+  return toBreweryReviews(reviewRows)
+}
 
-  if (reviewRows === null || reviewRows === undefined) return []
-
+function toBreweryReviews (reviewRows: DbJoinedReview[]): JoinedReview[] {
   return reviewRows.map(row => ({
     id: row.review_id,
     additionalInfo: row.additional_info,
@@ -117,9 +118,7 @@ export async function listReviewsByBrewery (
   }))
 }
 
-export function reviewBasicRowToReviewBasic (
-  review: ReviewBasicRow
-): ReviewBasic {
+export function reviewRowToReview (review: ReviewRow): Review {
   return {
     id: review.review_id,
     additionalInfo: review.additional_info,
@@ -127,13 +126,7 @@ export function reviewBasicRowToReviewBasic (
     container: review.container,
     location: review.location,
     rating: review.rating,
-    time: review.time
-  }
-}
-
-export function reviewRowToReview (review: ReviewRow): Review {
-  return {
-    ...reviewBasicRowToReviewBasic(review),
+    time: review.time,
     smell: review.smell,
     taste: review.taste
   }

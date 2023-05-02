@@ -5,7 +5,7 @@ import {
   type Updateable
 } from 'kysely'
 
-export interface ReviewBasicTable {
+export interface ReviewTable {
   review_id: Generated<string>
   beer: Generated<string>
   additional_info: string | null
@@ -14,21 +14,17 @@ export interface ReviewBasicTable {
   rating: number | null
   time: Date
   created_at: Generated<Date>
-}
-
-export interface ReviewTable extends ReviewBasicTable {
   smell: string | null
   taste: string | null
 }
 
-export type ReviewBasicRow = Selectable<ReviewBasicTable>
 export type ReviewRow = Selectable<ReviewTable>
 
 export type InsertableReviewRow = Insertable<ReviewTable>
 export type UpdateableReviewRow = Updateable<ReviewTable>
 
-export interface BreweryReviewTable {
-  review_id: Generated<string>
+export interface DbJoinedReview {
+  review_id: string
   beer_id: string
   beer_name: string | null
   breweries: Array<{
@@ -36,7 +32,7 @@ export interface BreweryReviewTable {
     name: string | null
   }>
   additional_info: string | null
-  container_id: Generated<string>
+  container_id: string
   container_size: string | null
   container_type: string | null
   location: string | null
@@ -46,7 +42,5 @@ export interface BreweryReviewTable {
     name: string | null
   }>
   time: Date
-  created_at: Generated<Date>
+  created_at: Date
 }
-
-export type BreweryReviewRow = Selectable<BreweryReviewTable>

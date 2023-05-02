@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 
 import { useGetBreweryQuery } from '../store/brewery/api'
 import { useListReviewsByBreweryQuery } from '../store/review/api'
-import { type BreweryReview } from '../store/review/types'
+import { type JoinedReview } from '../store/review/types'
 
 import LoadingIndicator from './LoadingIndicator'
 import Review, { ReviewHeading, type ReviewProps } from './Review'
@@ -16,7 +16,7 @@ function NotFound (): JSX.Element {
   return <div>Not found</div>
 }
 
-function toReviewProps (review: BreweryReview): ReviewProps {
+function toReviewProps (review: JoinedReview): ReviewProps {
   return {
     id: review.id,
     additionalInfo: review.additionalInfo,
