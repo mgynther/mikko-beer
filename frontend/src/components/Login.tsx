@@ -19,12 +19,10 @@ function Login (): JSX.Element {
       <form onSubmit={(e) => { void doLogin(e) }}>
         <h3>Login</h3>
         <div>
-          <label htmlFor='username'>Username:</label>{' '}
-          <input type='text' id='username' />
+          <input type='text' placeholder='Username' id='username' />
         </div>
         <div>
-          <label htmlFor='password'>Password:</label>{' '}
-          <input type='password' id='password' />
+          <input type='password' placeholder='Password' id='password' />
         </div>
 
         <br />
