@@ -1,22 +1,15 @@
 import { useState } from 'react'
 
-import { type Container } from '../store/container/types'
 import { useLazyGetReviewQuery } from '../store/review/api'
-import { type Review as ReviewType } from '../store/review/types'
+import {
+  type JoinedReview,
+  type Review as ReviewType
+} from '../store/review/types'
+
+import BreweryLinks from './BreweryLinks'
+import { toString } from './util'
 
 import './Review.css'
-
-export interface ReviewProps {
-  id: string
-  breweries: string
-  beer: string
-  rating: number
-  time: string
-  container: Container
-  additionalInfo: string
-  location: string
-  styles: string
-}
 
 export function ReviewHeading (): JSX.Element {
   return (
@@ -30,8 +23,13 @@ export function ReviewHeading (): JSX.Element {
   )
 }
 
-function Review (props: ReviewProps): JSX.Element {
+interface Props {
+  review: JoinedReview
+}
+
+function Review (props: Props): JSX.Element {
   const [getReview] = useLazyGetReviewQuery()
+  const review = props.review
 
   const [isOpen, setIsOpen] = useState(false)
 
@@ -53,34 +51,38 @@ function Review (props: ReviewProps): JSX.Element {
   }
 
   return (
-    <div className='Review' key={props.id} onClick={() => {
+    <div className='Review' key={review.id} onClick={() => {
       if (fullReview === undefined) {
-        void fetchReview(props.id)
+        void fetchReview(review.id)
         return
       }
       setIsOpen(!isOpen)
     }}>
       <div className='Review-primary-info-row'>
         <div>
-          {props.breweries}
+          <BreweryLinks breweries={review.breweries} />
         </div>
-        <div>{props.beer}</div>
+        <div>{review.beerName}</div>
         <div>
-          {props.styles}
+          {toString(
+            [...review.styles]
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map(s => s.name)
+          )}
         </div>
         <div
-          className={`Review-rating Review-rating-${props.rating}`}>
-          <div>{props.rating}</div>
+          className={`Review-rating Review-rating-${review.rating}`}>
+          <div>{review.rating}</div>
         </div>
-        <div className='Review-time'>{formatDate(new Date(props.time))}</div>
+        <div className='Review-time'>{formatDate(new Date(review.time))}</div>
       </div>
       <div className='Review-secondary-info-row'>
-        <div>{props.container.type} {props.container.size}</div>
-        <div>{props.location}</div>
+        <div>{review.container.type} {review.container.size}</div>
+        <div>{review.location}</div>
       </div>
-      {props.additionalInfo !== '' && (
+      {review.additionalInfo !== '' && (
         <div className='Review-additional-row'>
-          <div className='Review-additional'>{props.additionalInfo}</div>
+          <div className='Review-additional'>{review.additionalInfo}</div>
         </div>
       )}
       {isOpen && fullReview !== undefined && (

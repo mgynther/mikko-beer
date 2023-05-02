@@ -4,8 +4,8 @@ import { useLazyListReviewsQuery } from '../store/review/api'
 import { type JoinedReview } from '../store/review/types'
 
 import LoadingIndicator from './LoadingIndicator'
-import Review, { ReviewHeading, type ReviewProps } from './Review'
-import { infiniteScroll, toString } from './util'
+import Review, { ReviewHeading } from './Review'
+import { infiniteScroll } from './util'
 
 import './Review.css'
 
@@ -38,16 +38,6 @@ function Reviews (): JSX.Element {
     return infiniteScroll(checkLoad)
   }, [loadedReviews, setLoadedReviews, isLoading, hasMore, trigger])
 
-  const reviews = loadedReviews
-    .map((review) => {
-      return {
-        ...review,
-        beer: review.beerName,
-        breweries: toString(review.breweries.map(b => b.name).sort() ?? []),
-        styles: toString(review.styles.map(s => s.name).sort() ?? [])
-      }
-    })
-
   return (
     <div>
       <h3>Reviews</h3>
@@ -55,9 +45,9 @@ function Reviews (): JSX.Element {
       <div className="Review-content">
         <ReviewHeading />
         <div>
-          {reviews.map((review: ReviewProps) => {
+          {loadedReviews.map((review) => {
             return (
-              <Review key={review.id} {...review} />
+              <Review key={review.id} review={review} />
             )
           })}
         </div>

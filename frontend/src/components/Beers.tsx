@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 
 import { useLazyListBeersQuery } from '../store/beer/api'
 import { type Beer } from '../store/beer/types'
 import { infiniteScroll, toString } from './util'
+
+import BreweryLinks from './BreweryLinks'
 
 import './Beers.css'
 
@@ -55,16 +56,7 @@ function Beers (): JSX.Element {
             <tr key={beer.id}>
               <td>{beer.name}</td>
               <td>
-                {[...beer.breweries]
-                  .sort((a, b) => a.name.localeCompare(b.name))
-                  .map((brewery, index) => (
-                    <span key={brewery.id}>
-                      <Link
-                        to={`/breweries/${brewery.id}`}>{brewery.name}
-                      </Link>
-                      {index < beer.breweries.length - 1 ? ', ' : ''}
-                    </span>
-                  ))}
+                <BreweryLinks breweries={beer.breweries} />
               </td>
               <td>
                 {toString(beer.styles.map(style => style.name).sort())}

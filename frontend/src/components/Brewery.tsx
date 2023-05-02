@@ -4,30 +4,14 @@ import { useParams } from 'react-router-dom'
 
 import { useGetBreweryQuery } from '../store/brewery/api'
 import { useListReviewsByBreweryQuery } from '../store/review/api'
-import { type JoinedReview } from '../store/review/types'
 
 import LoadingIndicator from './LoadingIndicator'
-import Review, { ReviewHeading, type ReviewProps } from './Review'
-import { toString } from './util'
+import Review, { ReviewHeading } from './Review'
 
 import './Review.css'
 
 function NotFound (): JSX.Element {
   return <div>Not found</div>
-}
-
-function toReviewProps (review: JoinedReview): ReviewProps {
-  return {
-    id: review.id,
-    additionalInfo: review.additionalInfo,
-    beer: review.beerName,
-    breweries: toString(review.breweries.map(brewery => brewery.name)),
-    location: review.location,
-    rating: review.rating,
-    time: review.time,
-    container: review.container,
-    styles: toString(review.styles.map(style => style.name))
-  }
 }
 
 function Brewery (): JSX.Element {
@@ -50,7 +34,7 @@ function Brewery (): JSX.Element {
         <ReviewHeading />
         <div>
           {reviewData?.reviews.map(review => (
-            <Review key={review.id} {...toReviewProps(review)} />
+            <Review key={review.id} review={review} />
           ))}
         </div>
       </div>
