@@ -13,6 +13,7 @@ import { type BeerRow } from './beer.table'
 import {
   type Pagination
 } from '../util/pagination'
+import { type SearchByName } from '../util/search'
 
 export async function createBeer (
   trx: Transaction,
@@ -117,6 +118,13 @@ export async function listBeers (
   pagination: Pagination
 ): Promise<BeerWithBreweriesAndStyles[]> {
   return await beerRepository.listBeers(db, pagination)
+}
+
+export async function searchBeers (
+  db: Database,
+  searchRequest: SearchByName
+): Promise<BeerWithBreweriesAndStyles[]> {
+  return await beerRepository.searchBeers(db, searchRequest)
 }
 
 export function beerRowToBeer (beer: BeerRow): Beer {

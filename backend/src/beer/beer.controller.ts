@@ -10,6 +10,7 @@ import {
 } from './beer'
 import { ControllerError } from '../util/errors'
 import { validatePagination } from '../util/pagination'
+import { validateSearchByName } from '../util/search'
 
 export function beerController (router: Router): void {
   router.post('/api/v1/beer',
@@ -74,6 +75,20 @@ export function beerController (router: Router): void {
       const pagination = validatePagination({ skip, size })
       const beers = await beerService.listBeers(ctx.db, pagination)
       ctx.body = { beers, pagination }
+    }
+  )
+
+  router.post('/api/v1/beer/search',
+    authService.authenticateViewer,
+    async (ctx) => {
+      const { body } = ctx.request
+
+      const searchBeerRequest = validateSearchByName(body)
+      const beers =
+        await beerService.searchBeers(ctx.db, searchBeerRequest)
+
+      ctx.status = 200
+      ctx.body = { beers }
     }
   )
 }

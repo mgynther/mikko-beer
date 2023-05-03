@@ -1,6 +1,8 @@
 import { ajv } from './ajv'
 import { ControllerError } from './errors'
 
+export const defaultSearchMaxResults = 20
+
 export interface SearchByName {
   name: string
 }
@@ -12,6 +14,9 @@ export function toIlike (search: SearchByName): string {
       search.name === undefined ||
       search.name.length === 0) {
     throw new Error('must not search with missing or empty name')
+  }
+  if (/^".*"$/.test(search.name)) {
+    return search.name.substring(1, search.name.length - 1)
   }
   return `%${search.name}%`
 }

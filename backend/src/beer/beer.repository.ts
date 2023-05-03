@@ -15,6 +15,11 @@ import {
 } from './beer'
 
 import { type Pagination, toRowNumbers } from '../util/pagination'
+import {
+  type SearchByName,
+  defaultSearchMaxResults,
+  toIlike
+} from '../util/search'
 
 import { type Brewery } from '../brewery/brewery'
 import { type Style } from '../style/style'
@@ -171,6 +176,16 @@ async function lockBeer (
   return beer
 }
 
+interface JoinedBeerRow {
+  beer_id: string
+  name: string
+  created_at: Date
+  brewery_id: string
+  brewery_name: string
+  style_id: string
+  style_name: string
+}
+
 export async function listBeers (
   db: Database,
   pagination: Pagination
@@ -179,7 +194,7 @@ export async function listBeers (
   // Did not find a Kysely way to do a window function subquery and use between
   // comparison, so raw SQL it is. Kysely would be better because of sanity
   // checking and typing would not have to be done manually.
-  const beerQuery = sql`SELECT
+  const beerQuery = sql<JoinedBeerRow>`SELECT
     beer.beer_id, beer.name, beer.created_at,
     brewery.brewery_id as brewery_id, brewery.name as brewery_name,
     style.style_id as style_id, style.name as style_name
@@ -192,18 +207,14 @@ export async function listBeers (
   ORDER BY beer.name ASC
   `
   const beers = (await beerQuery
-    .execute(db.getDb()) as {
-    rows: Array<{
-      beer_id: string
-      name: string
-      created_at: Date
-      brewery_id: string
-      brewery_name: string
-      style_id: string
-      style_name: string
-    }>
-  }).rows
+    .execute(db.getDb())).rows
 
+  return toBeersWithBreweriesAndStyles(beers)
+}
+
+function toBeersWithBreweriesAndStyles (
+  beers: JoinedBeerRow[]
+): BeerWithBreweriesAndStyles[] {
   if (beers.length === 0) {
     return []
   }
@@ -238,4 +249,35 @@ export async function listBeers (
   })
 
   return beerArray
+}
+
+export async function searchBeers (
+  db: Database,
+  searchRequest: SearchByName
+): Promise<BeerWithBreweriesAndStyles[]> {
+  const nameIlike = toIlike(searchRequest)
+
+  // Did not find a Kysely way to do a window function subquery and use between
+  // comparison, so raw SQL it is. Kysely would be better because of sanity
+  // checking and typing would not have to be done manually.
+  const beerQuery = sql<JoinedBeerRow>`SELECT
+    beer.beer_id, beer.name, beer.created_at,
+    brewery.brewery_id as brewery_id, brewery.name as brewery_name,
+    style.style_id as style_id, style.name as style_name
+  FROM (SELECT beer.*, DENSE_RANK() OVER(ORDER BY name) rn
+        FROM beer
+        WHERE beer.name ILIKE ${nameIlike}
+  ) beer
+  INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer
+  INNER JOIN brewery ON brewery.brewery_id = beer_brewery.brewery
+  INNER JOIN beer_style ON beer.beer_id = beer_style.beer
+  INNER JOIN style ON style.style_id = beer_style.style
+  WHERE beer.rn BETWEEN ${1} AND ${defaultSearchMaxResults}
+  ORDER BY beer.name ASC
+  `
+
+  const beers = (await beerQuery
+    .execute(db.getDb())).rows
+
+  return toBeersWithBreweriesAndStyles(beers)
 }

@@ -8,7 +8,11 @@ import {
 import {
   type Pagination
 } from '../util/pagination'
-import { type SearchByName, toIlike } from '../util/search'
+import {
+  type SearchByName,
+  defaultSearchMaxResults,
+  toIlike
+} from '../util/search'
 
 export async function insertBrewery (
   trx: Transaction,
@@ -105,7 +109,7 @@ export async function searchBreweries (
     .where(
       'brewery.name', 'ilike', nameIlike
     )
-    .limit(20)
+    .limit(defaultSearchMaxResults)
     .execute()
 
   if (breweries.length === 0) {
