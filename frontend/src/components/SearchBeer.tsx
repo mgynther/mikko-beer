@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react'
 import { useLazySearchBeersQuery } from '../store/beer/api'
 import { type Beer, type BeerWithIds } from '../store/beer/types'
 
-import SearchBox, { type SearchBoxItem } from './SearchBox'
+import SearchBox from './SearchBox'
 
-import { useDebounce } from './util'
+import { toString, useDebounce } from './util'
 
 import './SelectBeer.css'
 
@@ -44,17 +44,18 @@ function SearchBeer (props: Props): JSX.Element {
       <SearchBox
         currentFilter={filter}
         currentOptions={results}
+        formatter={(beer: Beer) => {
+          const breweryStr = toString(beer.breweries.map(b => b.name).sort())
+          return `${beer.name} (${breweryStr})`
+        }}
         isLoading={isLoading}
         setFilter={(filter: string) => { setFilter(filter) }}
-        select={(beer: SearchBoxItem) => {
-          // TODO a generic search would be better than type assertion which
-          // will fail silently.
-          const typedBeer: Beer = beer as Beer
+        select={(beer: Beer) => {
           props.select({
-            id: typedBeer.id,
-            name: typedBeer.name,
-            breweries: typedBeer.breweries.map(b => b.id),
-            styles: typedBeer.styles.map(s => s.id)
+            id: beer.id,
+            name: beer.name,
+            breweries: beer.breweries.map(b => b.id),
+            styles: beer.styles.map(s => s.id)
           })
         }}
         title={'Search beer'}

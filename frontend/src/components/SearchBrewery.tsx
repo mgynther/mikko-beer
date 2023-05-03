@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useLazySearchBreweriesQuery } from '../store/brewery/api'
 import { type Brewery } from '../store/brewery/types'
 
-import SearchBox, { type SearchBoxItem } from './SearchBox'
+import SearchBox, { nameFormatter } from './SearchBox'
 
 import { useDebounce } from './util'
 
@@ -42,10 +42,11 @@ function SearchBrewery (props: Props): JSX.Element {
       <SearchBox
         currentFilter={filter}
         currentOptions={results}
+        formatter={nameFormatter}
         isLoading={isLoading}
         setFilter={(filter: string) => { setFilter(filter) }}
-        select={(brewery: SearchBoxItem) => {
-          props.select(brewery as Brewery)
+        select={(brewery: Brewery) => {
+          props.select(brewery)
         }}
         title={'Search brewery'}
       />

@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useListStylesQuery } from '../store/style/api'
 import { type Style } from '../store/style/types'
 
-import SearchBox, { type SearchBoxItem } from './SearchBox'
+import SearchBox, { nameFormatter } from './SearchBox'
 
 export interface Props {
   select: (style: Style) => void
@@ -27,10 +27,11 @@ function SearchStyle (props: Props): JSX.Element {
       <SearchBox
         currentFilter={filter}
         currentOptions={filteredStyles}
+        formatter={nameFormatter}
         isLoading={isLoading}
         setFilter={(filter: string) => { setFilter(filter) }}
-        select={(style: SearchBoxItem) => {
-          props.select(style as Style)
+        select={(style: Style) => {
+          props.select(style)
         }}
         title={'Search style'}
       />
