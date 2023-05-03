@@ -1,8 +1,10 @@
+import { useState } from 'react'
+
 import { type Style } from '../store/style/types'
 
 import CreateStyle from './CreateStyle'
 import SearchStyle from './SearchStyle'
-import SelectCreateRadio, { Mode } from './SelectCreateRadio'
+import { Mode, SelectCreateRadioBasic } from './SelectCreateRadio'
 
 import './SelectStyle.css'
 
@@ -12,19 +14,26 @@ export interface Props {
 }
 
 function SelectStyle (props: Props): JSX.Element {
+  const [mode, setMode] = useState(Mode.SELECT)
   return (
     <div className="SelectStyle">
-      <h4>Select or create style</h4>
-      <SelectCreateRadio
-        defaultMode={Mode.SELECT}
-        createElement={
-          <CreateStyle select={props.select} />
-        }
-        selectElement={
-          <SearchStyle select={props.select} />
-        }
+      <SelectCreateRadioBasic
+        mode={mode}
+        onChange={(mode: Mode) => { setMode(mode) }}
       />
-      <button onClick={props.remove}>Remove</button>
+      <div className='SelectStyleContent'>
+        {mode === Mode.CREATE && (
+          <>
+            <CreateStyle select={props.select} remove={props.remove} />
+          </>
+        )}
+        {mode === Mode.SELECT && (
+          <>
+            <SearchStyle select={props.select} />
+            <button onClick={props.remove}>Remove</button>
+          </>
+        )}
+      </div>
     </div>
   )
 }

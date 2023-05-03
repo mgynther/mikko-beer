@@ -1,5 +1,3 @@
-import { Fragment } from 'react'
-
 import LoadingIndicator from './LoadingIndicator'
 
 import './SearchBox.css'
@@ -55,33 +53,33 @@ const SearchBox = <T extends SearchBoxItem>({
         onChange={e => { setFilter(e.target.value) }}
       />
       {!isLoading && currentFilter.length > 0 && (
-        <Fragment>
-          <div className="SearchResults">
-            <ul>
-              {visibleOptions.map(item => (
-                <li
-                  key={item.id}
-                  onClick={() => {
-                    select(item)
-                    setFilter('')
-                  }}
-                >
-                  {formatter(item)}
-                </li>
-              ))}
-              <div className="SearchInfo">
-                <hr/>
-                {!areAllShown &&
+        <div className="SearchResults">
+          <ul>
+            {visibleOptions.map(item => (
+              <li
+                key={item.id}
+                onClick={() => {
+                  select(item)
+                  setFilter('')
+                }}
+              >
+                {formatter(item)}
+              </li>
+            ))}
+            <div className="SearchInfo">
+              {!areAllShown &&
+                <>
+                  <hr/>
                   <div>
                     There are more results. Refine search...
                   </div>
-                }
-                {visibleOptions.length === 0 && <div>No results</div>}
-                <LoadingIndicator isLoading={isLoading} />
-              </div>
-            </ul>
-          </div>
-        </Fragment>
+                </>
+              }
+              {visibleOptions.length === 0 && <div>No results</div>}
+              <LoadingIndicator isLoading={isLoading} />
+            </div>
+          </ul>
+        </div>
       )}
     </div>
   )

@@ -1,13 +1,19 @@
-.ContainerContent {
+.AddReviewContent {
+  margin-left: 15px;
+  margin-right: 15px;
   margin-bottom: 15px;
 }
 
+.RatingNumber {
+  text-align: center;
+}
+
 .RatingSlider {
-  width: 70vw;
+  width: 100%;
   height: 40px;
 }
 
 .ReviewArea {
-  width: 70vw;
+  width: 100%;
   min-height: 20vh;
 }

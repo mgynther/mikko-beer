@@ -12,13 +12,17 @@ export interface Props {
   selectElement: JSX.Element
 }
 
-function SelectCreateRadio (props: Props): JSX.Element {
-  const [mode, setMode] = useState(props.defaultMode)
+interface BasicProps {
+  mode: Mode
+  onChange: (mode: Mode) => void
+}
+
+export function SelectCreateRadioBasic (props: BasicProps): JSX.Element {
   const [id] = useState(uuidv4())
 
   function onRadioChange (e: React.ChangeEvent<HTMLInputElement>): void {
     const newMode = e.target.value === Mode.SELECT ? Mode.SELECT : Mode.CREATE
-    setMode(newMode)
+    props.onChange(newMode)
   }
 
   const modes = [
@@ -35,25 +39,38 @@ function SelectCreateRadio (props: Props): JSX.Element {
   return (
     <div>
       {modes.map(modeOption => (
-        <span key={modeOption.value}>
+        <label key={modeOption.value}>
           <input
             type="radio"
             name={`mode_${id}`}
             value={modeOption.value}
             onChange={onRadioChange}
-            checked={modeOption.value === mode}
+            checked={modeOption.value === props.mode}
           />
-          <label htmlFor={modeOption.value}>{modeOption.name}</label>
-        </span>
+          {modeOption.name}
+        </label>
       ))}
+    </div>
+  )
+}
+
+function SelectCreateRadio (props: Props): JSX.Element {
+  const [mode, setMode] = useState(props.defaultMode)
+
+  return (
+    <span>
+      <SelectCreateRadioBasic
+        mode={mode}
+        onChange={(mode: Mode) => { setMode(mode) }}
+      />
 
       {mode === Mode.SELECT && (
-        <div>{props.selectElement}</div>
+        <span>{props.selectElement}</span>
       )}
       {mode === Mode.CREATE && (
-        <div>{props.createElement}</div>
+        <span>{props.createElement}</span>
       )}
-    </div>
+    </span>
   )
 }
 

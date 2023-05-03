@@ -3,8 +3,6 @@ import { type Container } from '../store/container/types'
 
 import LoadingIndicator from './LoadingIndicator'
 
-import './Containers.css'
-
 function Containers (): JSX.Element {
   const { data: containerData, isLoading } = useListContainersQuery()
 
@@ -22,22 +20,13 @@ function Containers (): JSX.Element {
     <div>
       <h3>Containers</h3>
       <LoadingIndicator isLoading={isLoading} />
-      <table className='ContainerTable'>
-        <thead>
-          <tr>
-            <th>Type</th>
-            <th>Size</th>
-          </tr>
-        </thead>
-        <tbody>
-          {containers.map((container: Container) => (
-            <tr key={container.id}>
-              <td>{container.type}</td>
-              <td>{container.size}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <ul>
+        {containers.map((container: Container) => (
+          <li key={container.id}>
+            {`${container.type} ${container.size}`}
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

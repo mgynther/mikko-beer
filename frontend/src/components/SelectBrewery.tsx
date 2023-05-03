@@ -1,30 +1,36 @@
+import { useState } from 'react'
+
 import { type Brewery } from '../store/brewery/types'
 
 import CreateBrewery from './CreateBrewery'
 import SearchBrewery from './SearchBrewery'
-import SelectCreateRadio, { Mode } from './SelectCreateRadio'
-
-import './SelectBrewery.css'
+import { Mode, SelectCreateRadioBasic } from './SelectCreateRadio'
 
 export interface Props {
   select: (brewery: Brewery) => void
+  isRemoveVisible: boolean
   remove: () => void
 }
 
 function SelectBrewery (props: Props): JSX.Element {
+  const [mode, setMode] = useState(Mode.SELECT)
   return (
     <div className="SelectBrewery">
-      <h4>Select or create brewery</h4>
-      <SelectCreateRadio
-        defaultMode={Mode.SELECT}
-        createElement={
-          <CreateBrewery select={props.select} />
-        }
-        selectElement={
-          <SearchBrewery select={props.select} />
-        }
+      <SelectCreateRadioBasic
+        mode={mode}
+        onChange={(mode: Mode) => { setMode(mode) }}
       />
-      <button onClick={props.remove}>Remove</button>
+      <div className='SelectBreweryContent'>
+        {mode === Mode.CREATE && (
+          <CreateBrewery select={props.select} />
+        )}
+        {mode === Mode.SELECT && (
+          <SearchBrewery select={props.select} />
+        )}
+        {props.isRemoveVisible && (
+          <button onClick={props.remove}>Remove</button>
+        )}
+      </div>
     </div>
   )
 }

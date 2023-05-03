@@ -20,7 +20,6 @@ function SelectContainer (props: Props): JSX.Element {
 
   return (
     <div>
-      <h4>Select or create container</h4>
       <SelectCreateRadio
         defaultMode={Mode.SELECT}
         createElement={

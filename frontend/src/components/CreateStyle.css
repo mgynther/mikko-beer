@@ -1,0 +1,8 @@
+.ButtonContainer button {
+  margin-right: 30px;
+}
+
+.NameContainer {
+  display: flex;
+  width: 100%;
+}

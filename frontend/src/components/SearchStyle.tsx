@@ -23,7 +23,7 @@ function SearchStyle (props: Props): JSX.Element {
   }) ?? []
 
   return (
-    <div>
+    <>
       <SearchBox
         currentFilter={filter}
         currentOptions={filteredStyles}
@@ -35,7 +35,7 @@ function SearchStyle (props: Props): JSX.Element {
         }}
         title={'Search style'}
       />
-    </div>
+    </>
   )
 }
 

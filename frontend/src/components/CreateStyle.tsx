@@ -6,8 +6,11 @@ import { type Style } from '../store/style/types'
 import LoadingIndicator from './LoadingIndicator'
 import StyleParents from './StyleParents'
 
+import './CreateStyle.css'
+
 export interface Props {
   select: (style: Style) => void
+  remove: () => void
 }
 
 function CreateStyle (props: Props): JSX.Element {
@@ -29,23 +32,25 @@ function CreateStyle (props: Props): JSX.Element {
 
   return (
     <div>
-      <h5>Create style</h5>
-      <div>
+      <div className='NameContainer'>
         <input
           type='text'
           placeholder='Name'
           value={name}
           onChange={e => { setName(e.target.value) }}
         />
-        <StyleParents select={(parents) => { setParents(parents) }} />
+      </div>
+      <StyleParents select={(parents) => { setParents(parents) }} />
+      <div className='ButtonContainer'>
         <button
           disabled={name.trim().length === 0}
           onClick={() => { void doCreate() }}
         >
           Create
         </button>
-        <LoadingIndicator isLoading={isCreating} />
+        <button onClick={() => { props.remove() }}>Remove</button>
       </div>
+      <LoadingIndicator isLoading={isCreating} />
     </div>
   )
 }

@@ -65,55 +65,65 @@ function AddReview (): JSX.Element {
       <form onSubmit={(e) => { void doAddReview(e) }}>
         <h3>Add review</h3>
         <div>
-          {beer === undefined
-            ? <SelectBeer select={(beer: BeerWithIds) => {
-              setBeer(beer)
-            }} />
-            : (<div onClick={() => { setBeer(undefined) }}>
-                  {`Beer: ${beer.name}`}
-              </div>)
-          }
-        </div>
-        <div className="ContainerContent">
-          {container === undefined
-            ? <SelectContainer select={(container: Container) => {
-              setContainer(container)
-            }} />
-            : (<div onClick={() => { setContainer(undefined) }}>
-                {`Container: ${container.type} ${container.size}`}
-              </div>)
-          }
-        </div>
-        <div>
-          <div><label>Smell:</label>{' '}</div>
-          <textarea
-            className="ReviewArea"
-            value={smell}
-            onChange={e => { setSmell(e.target.value) }}
-          />
-        </div>
-        <div>
-          <div><label>Taste:</label>{' '}</div>
-          <textarea
-            className="ReviewArea"
-            value={taste}
-            onChange={e => { setTaste(e.target.value) }}
-          />
-        </div>
-        <div>
-          <div>
-            <label htmlFor='taste'>Rating:</label>{' '}
+          <h5>Beer</h5>
+          <div className='AddReviewContent'>
+            {beer === undefined
+              ? <SelectBeer select={(beer: BeerWithIds) => {
+                setBeer(beer)
+              }} />
+              : (<div onClick={() => { setBeer(undefined) }}>
+                    {beer.name}
+                </div>)
+            }
           </div>
-          <div>{ `${rating}` }</div>
-          <input
-            className="RatingSlider"
-            type='range'
-            id='rating'
-            min={4}
-            max={10}
-            value={rating}
-            onChange={e => { setRating(parseInt(e.target.value)) }}
-          />
+        </div>
+        <div>
+          <h5>Container</h5>
+          <div className='AddReviewContent'>
+            {container === undefined
+              ? <SelectContainer select={(container: Container) => {
+                setContainer(container)
+              }} />
+              : (<div onClick={() => { setContainer(undefined) }}>
+                  {`Container: ${container.type} ${container.size}`}
+                </div>)
+            }
+          </div>
+        </div>
+        <div>
+          <h5>Smell</h5>
+          <div className='AddReviewContent'>
+            <textarea
+              className="ReviewArea"
+              value={smell}
+              onChange={e => { setSmell(e.target.value) }}
+            />
+          </div>
+        </div>
+        <div>
+          <h5>Taste</h5>
+          <div className='AddReviewContent'>
+            <textarea
+              className="ReviewArea"
+              value={taste}
+              onChange={e => { setTaste(e.target.value) }}
+            />
+          </div>
+        </div>
+        <div>
+          <h5>Rating</h5>
+          <div className='AddReviewContent'>
+            <div className='RatingNumber'>{ `${rating}` }</div>
+            <input
+              className="RatingSlider"
+              type='range'
+              id='rating'
+              min={4}
+              max={10}
+              value={rating}
+              onChange={e => { setRating(parseInt(e.target.value)) }}
+            />
+          </div>
         </div>
         <div>
           <input type='text' placeholder='Location' id='location' />

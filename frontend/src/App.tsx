@@ -83,41 +83,46 @@ function App (): JSX.Element {
   const isAdmin = login?.user?.role === Role.admin
   return (
     <div className="App">
-      <Routes>
-        <Route path="/" element={
-            <Layout
-              isAdmin={isAdmin}
-              isLoggedIn={isLoggedIn}
-              logout={() => {
-                void logout({
-                  userId: login.user?.id ?? '',
-                  body: {
-                    refreshToken: login.refreshToken
-                  }
-                })
-              }}
+      <div className="AppContent">
+        <Routes>
+          <Route path="/" element={
+              <Layout
+                isAdmin={isAdmin}
+                isLoggedIn={isLoggedIn}
+                logout={() => {
+                  void logout({
+                    userId: login.user?.id ?? '',
+                    body: {
+                      refreshToken: login.refreshToken
+                    }
+                  })
+                }}
+              />
+            }>
+            <Route index element={isLoggedIn
+              ? <Beers />
+              : <LoginComponent />}
             />
-          }>
-          <Route index element={isLoggedIn ? <Beers /> : <LoginComponent />} />
-          {isLoggedIn && (
-            <React.Fragment>
-              {isAdmin && <Route path="addreview" element={<AddReview />} />}
-              <Route path="beers" element={<Beers />} />
-              <Route path="breweries" element={<Breweries />} />
-              <Route path="breweries/:breweryId" element={<Brewery />} />
-              <Route path="containers" element={<Containers />} />
-              <Route path="reviews" element={<Reviews />} />
-              <Route path="styles" element={<Styles />} />
-              {isAdmin && <Route path="users" element={<Users />} />}
-              <Route path="account" element={<Account />} />
-            </React.Fragment>
-          )}
-          <Route
-            path="*"
-            element={isLoggedIn ? <Beers /> : <LoginComponent />} />
-        </Route>
-      </Routes>
-      <div id='content-end'>&nbsp;</div>
+            {isLoggedIn && (
+              <React.Fragment>
+                {isAdmin && <Route path="addreview" element={<AddReview />} />}
+                <Route path="beers" element={<Beers />} />
+                <Route path="breweries" element={<Breweries />} />
+                <Route path="breweries/:breweryId" element={<Brewery />} />
+                <Route path="containers" element={<Containers />} />
+                <Route path="reviews" element={<Reviews />} />
+                <Route path="styles" element={<Styles />} />
+                {isAdmin && <Route path="users" element={<Users />} />}
+                <Route path="account" element={<Account />} />
+              </React.Fragment>
+            )}
+            <Route
+              path="*"
+              element={isLoggedIn ? <Beers /> : <LoginComponent />} />
+          </Route>
+        </Routes>
+        <div id='content-end'>&nbsp;</div>
+      </div>
     </div>
   )
 }

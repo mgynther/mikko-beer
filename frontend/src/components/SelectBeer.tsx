@@ -13,7 +13,6 @@ export interface Props {
 function SelectBeer (props: Props): JSX.Element {
   return (
     <div className="SelectBeer">
-      <h4>Select or create beer</h4>
       <SelectCreateRadio
         defaultMode={Mode.CREATE}
         createElement={

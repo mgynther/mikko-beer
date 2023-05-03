@@ -26,24 +26,21 @@ function CreateBrewery (props: Props): JSX.Element {
   }
 
   return (
-    <div>
-      <h5>Create brewery</h5>
-      <div>
-        <input
-          type='text'
-          placeholder='Name'
-          value={name}
-          onChange={e => { setName(e.target.value) }}
-        />
-        <button
-          disabled={name.trim().length === 0}
-          onClick={() => { void doCreate() }}
-        >
-          Create
-        </button>
-        <LoadingIndicator isLoading={isCreating} />
-      </div>
-    </div>
+    <>
+      <input
+        type='text'
+        placeholder='Create brewery'
+        value={name}
+        onChange={e => { setName(e.target.value) }}
+      />
+      <button
+        disabled={name.trim().length === 0}
+        onClick={() => { void doCreate() }}
+      >
+        Create
+      </button>
+      {isCreating && <LoadingIndicator isLoading={isCreating} />}
+    </>
   )
 }
 

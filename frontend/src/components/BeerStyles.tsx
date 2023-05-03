@@ -5,6 +5,9 @@ import { type Style } from '../store/style/types'
 
 import SelectStyle from './SelectStyle'
 
+import './BeerStyles.css'
+import './SelectedItem.css'
+
 export interface Props {
   select: (styles: string[]) => void
 }
@@ -31,9 +34,9 @@ function SelectionItem (props: SelectionItemProps): JSX.Element {
         />
       )}
       {props.style !== undefined && (
-        <div>
-          Selected style: {props.style.name}
-          <button onClick={props.clear}>Clear</button>
+        <div className='SelectedItem'>
+          <div>{props.style.name}</div>
+          <button onClick={props.clear}>Change</button>
         </div>
       )}
     </Fragment>
@@ -91,22 +94,24 @@ function BeerStyles (props: Props): JSX.Element {
           }}
         />
       ))}
-      <div>
-        <button
-          onClick={() => {
-            const newStyles = [
-              ...selections,
-              {
-                style: undefined,
-                id: uuidv4()
-              }
-            ]
-            setSelections(newStyles)
-          }}
-        >
-          Add style
-        </button>
-      </div>
+      {!hasUndefinedStyle(selections) && (
+        <div>
+          <button
+            onClick={() => {
+              const newStyles = [
+                ...selections,
+                {
+                  style: undefined,
+                  id: uuidv4()
+                }
+              ]
+              setSelections(newStyles)
+            }}
+          >
+            Add style
+          </button>
+        </div>
+      )}
     </div>
   )
 }

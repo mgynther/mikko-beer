@@ -1,0 +1,11 @@
+.SelectedItem {
+  display: flex;
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
+}
+
+.SelectedItem div {
+  flex-grow: 1;
+}

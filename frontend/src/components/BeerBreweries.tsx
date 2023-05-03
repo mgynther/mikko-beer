@@ -5,6 +5,9 @@ import { type Brewery } from '../store/brewery/types'
 
 import SelectBrewery from './SelectBrewery'
 
+import './BeerBreweries.css'
+import './SelectedItem.css'
+
 export interface Props {
   select: (breweries: string[]) => void
 }
@@ -17,6 +20,7 @@ interface BrewerySelection {
 interface SelectionItemProps {
   brewery: Brewery | undefined
   select: (brewery: Brewery) => void
+  isRemoveVisible: boolean
   remove: () => void
   clear: () => void
 }
@@ -27,13 +31,14 @@ function SelectionItem (props: SelectionItemProps): JSX.Element {
       {props.brewery === undefined && (
         <SelectBrewery
           select={props.select}
+          isRemoveVisible={props.isRemoveVisible}
           remove={props.remove}
         />
       )}
       {props.brewery !== undefined && (
-        <div>
-          Selected brewery: {props.brewery.name}
-          <button onClick={props.clear}>Clear</button>
+        <div className='SelectedItem'>
+          <div>{props.brewery.name}</div>
+          <button onClick={props.clear}>Change</button>
         </div>
       )}
     </Fragment>
@@ -80,6 +85,7 @@ function BeerBreweries (props: Props): JSX.Element {
             newBreweries[selectionIndex].brewery = brewery
             setSelections(newBreweries)
           }}
+          isRemoveVisible={selections.length > 1}
           remove={() => {
             const newBreweries = [...selections]
             newBreweries.splice(selectionIndex, 1)
@@ -92,22 +98,24 @@ function BeerBreweries (props: Props): JSX.Element {
           }}
         />
       ))}
-      <div>
-        <button
-          onClick={() => {
-            const newBreweries = [
-              ...selections,
-              {
-                brewery: undefined,
-                id: uuidv4()
-              }
-            ]
-            setSelections(newBreweries)
-          }}
-        >
-          Add brewery
-        </button>
-      </div>
+      {!hasUndefinedBrewery(selections) && (
+        <div className='AddBrewery'>
+          <button
+            onClick={() => {
+              const newBreweries = [
+                ...selections,
+                {
+                  brewery: undefined,
+                  id: uuidv4()
+                }
+              ]
+              setSelections(newBreweries)
+            }}
+          >
+            Add brewery
+          </button>
+        </div>
+      )}
     </div>
   )
 }

@@ -5,6 +5,8 @@ import { type Style } from '../store/style/types'
 import LoadingIndicator from './LoadingIndicator'
 import SearchStyle from './SearchStyle'
 
+import './SelectedItem.css'
+
 export interface Props {
   select: (parents: string[]) => void
 }
@@ -27,8 +29,8 @@ function StyleParents (props: Props): JSX.Element {
       }} />
       <div>
         {parents.map((parent, index) => (
-          <div key={parent.id}>
-            {parent.name}
+          <div key={parent.id} className='SelectedItem'>
+            <div>{parent.name}</div>
             <button onClick={() => {
               const newParents = [...parents]
               newParents.splice(index, 1)

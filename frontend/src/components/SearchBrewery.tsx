@@ -38,7 +38,7 @@ function SearchBrewery (props: Props): JSX.Element {
   }, [debouncedFilter])
 
   return (
-    <div>
+    <>
       <SearchBox
         currentFilter={filter}
         currentOptions={results}
@@ -50,7 +50,7 @@ function SearchBrewery (props: Props): JSX.Element {
         }}
         title={'Search brewery'}
       />
-    </div>
+    </>
   )
 }
 
