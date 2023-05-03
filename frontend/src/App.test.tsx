@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import { store } from './store/store'
 
-test('renders learn react link', () => {
+test('renders app', () => {
   render(
     <Provider store={store}>
       <BrowserRouter>
@@ -13,6 +13,7 @@ test('renders learn react link', () => {
       </BrowserRouter>
     </Provider>
   )
-  const linkElement = screen.getByText(/Username/i)
-  expect(linkElement).toBeInTheDocument()
+  const loginElements = screen.getAllByText(/Login/i)
+  expect(loginElements.length).toEqual(2)
+  expect(loginElements[0]).toBeInTheDocument()
 })
