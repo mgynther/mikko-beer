@@ -4,13 +4,11 @@ import {
   type InsertableBreweryRow,
   type UpdateableBreweryRow
 } from './brewery.table'
-import {
-  type SearchBreweryRequest
-} from './brewery'
 
 import {
   type Pagination
 } from '../util/pagination'
+import { type SearchByName, toIlike } from '../util/search'
 
 export async function insertBrewery (
   trx: Transaction,
@@ -98,18 +96,14 @@ export async function listBreweries (
 
 export async function searchBreweries (
   db: Database,
-  searchRequest: SearchBreweryRequest
+  searchRequest: SearchByName
 ): Promise<BreweryRow[] | undefined> {
-  if (searchRequest.name === null ||
-      searchRequest.name === undefined ||
-      searchRequest.name.length === 0) {
-    throw new Error('must not search with missing or empty name')
-  }
+  const nameIlike = toIlike(searchRequest)
   const breweries = await db.getDb()
     .selectFrom('brewery')
     .selectAll('brewery')
     .where(
-      'brewery.name', 'ilike', `%${searchRequest.name}%`
+      'brewery.name', 'ilike', nameIlike
     )
     .limit(20)
     .execute()

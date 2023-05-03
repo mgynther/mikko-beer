@@ -4,14 +4,13 @@ import * as authService from '../authentication/authentication.service'
 import { type Router } from '../router'
 import {
   type CreateBreweryRequest,
-  type SearchBreweryRequest,
   type UpdateBreweryRequest,
   validateCreateBreweryRequest,
-  validateSearchBreweryRequest,
   validateUpdateBreweryRequest
 } from './brewery'
 import { ControllerError } from '../util/errors'
 import { validatePagination } from '../util/pagination'
+import { validateSearchByName } from '../util/search'
 
 export function breweryController (router: Router): void {
   router.post('/api/v1/brewery',
@@ -85,7 +84,7 @@ export function breweryController (router: Router): void {
     async (ctx) => {
       const { body } = ctx.request
 
-      const searchBreweryRequest = validateSearchRequest(body)
+      const searchBreweryRequest = validateSearchByName(body)
       const breweries =
         await breweryService.searchBreweries(ctx.db, searchBreweryRequest)
 
@@ -101,17 +100,6 @@ function validateCreateRequest (body: unknown): CreateBreweryRequest {
   }
 
   const result = body as CreateBreweryRequest
-  return result
-}
-
-function validateSearchRequest (body: unknown): SearchBreweryRequest {
-  if (!validateSearchBreweryRequest(body)) {
-    throw new ControllerError(
-      400, 'InvalidBrewerySearch', 'invalid brewery search'
-    )
-  }
-
-  const result = body as SearchBreweryRequest
   return result
 }
 

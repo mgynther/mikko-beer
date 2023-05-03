@@ -3,13 +3,13 @@ import * as breweryRepository from './brewery.repository'
 import { type Database, type Transaction } from '../database'
 import {
   type CreateBreweryRequest,
-  type SearchBreweryRequest,
   type UpdateBreweryRequest,
   type Brewery
 } from './brewery'
 import { type BreweryRow } from './brewery.table'
 
 import { type Pagination } from '../util/pagination'
+import { type SearchByName } from '../util/search'
 
 export async function createBrewery (
   trx: Transaction,
@@ -71,7 +71,7 @@ export async function listBreweries (
 
 export async function searchBreweries (
   db: Database,
-  searchRequest: SearchBreweryRequest
+  searchRequest: SearchByName
 ): Promise<Brewery[] | undefined> {
   const breweryRows = await breweryRepository.searchBreweries(db, searchRequest)
 

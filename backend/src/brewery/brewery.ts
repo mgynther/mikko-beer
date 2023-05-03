@@ -9,10 +9,6 @@ export interface CreateBreweryRequest {
   name?: string
 }
 
-export interface SearchBreweryRequest {
-  name?: string
-}
-
 export interface UpdateBreweryRequest {
   name?: string
 }
@@ -31,10 +27,6 @@ const doValidateBreweryRequest =
   })
 
 export function validateCreateBreweryRequest (body: unknown): boolean {
-  return doValidateBreweryRequest(body) as boolean
-}
-
-export function validateSearchBreweryRequest (body: unknown): boolean {
   return doValidateBreweryRequest(body) as boolean
 }
 
