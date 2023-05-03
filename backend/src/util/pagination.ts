@@ -54,3 +54,23 @@ export function validatePagination (pagination: PaginationRequest): Pagination {
   }
   return parsed
 }
+
+interface RowNumbers {
+  start: number
+  end: number
+}
+
+export function toRowNumbers (pagination: Pagination): RowNumbers {
+  // Regardless of TypeScript checking validate runtime type of parameters that
+  // will be used in raw SQL just to be sure injections are impossible even in
+  // case of wrong type assertions and other bad practices.
+  if (typeof pagination.size !== 'number') {
+    throw new Error('must not get any other type than number in size')
+  }
+  if (typeof pagination.skip !== 'number') {
+    throw new Error('must not get any other type than number in skip')
+  }
+  const start = pagination.skip + 1
+  const end = pagination.skip + pagination.size
+  return { start, end }
+}

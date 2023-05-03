@@ -8,7 +8,7 @@ import {
   type UpdateableReviewRow
 } from './review.table'
 
-import { type Pagination } from '../util/pagination'
+import { type Pagination, toRowNumbers } from '../util/pagination'
 
 export async function insertReview (
   trx: Transaction,
@@ -90,17 +90,7 @@ export async function listReviews (
   db: Database,
   pagination: Pagination
 ): Promise<DbJoinedReview[]> {
-  // Regardless of TypeScript checking validate runtime type of parameters that
-  // will be used in raw SQL just to be sure injections are impossible even in
-  // case of wrong type assertions and other bad practices.
-  if (typeof pagination.size !== 'number') {
-    throw new Error('must not get any other type than number in size')
-  }
-  if (typeof pagination.skip !== 'number') {
-    throw new Error('must not get any other type than number in skip')
-  }
-  const start = pagination.skip + 1
-  const end = pagination.skip + pagination.size
+  const { start, end } = toRowNumbers(pagination)
   // Did not find a Kysely way to do a window function subquery and use between
   // comparison, so raw SQL it is. Kysely would be better because of sanity
   // checking and typing would not have to be done manually.
