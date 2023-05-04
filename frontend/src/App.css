@@ -20,6 +20,10 @@ body {
   color: #61dafb;
 }
 
+nav ul {
+  padding-left: 0;
+}
+
 nav ul li {
   display: inline-block;
   margin-left: 20px;
