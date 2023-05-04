@@ -43,28 +43,24 @@ function Beers (): JSX.Element {
     <div>
       <h3>Beers</h3>
       {isLoading && (<div>Loading...</div>)}
-      <table className='BeersTable'>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Breweries</th>
-            <th>Styles</th>
-          </tr>
-        </thead>
-        <tbody>
-          {loadedBeers.map((beer: Beer) => (
-            <tr key={beer.id}>
-              <td>{beer.name}</td>
-              <td>
-                <BreweryLinks breweries={beer.breweries} />
-              </td>
-              <td>
-                {toString(beer.styles.map(style => style.name).sort())}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className='BeerHeading'>
+          <div className='BeerName'>Name</div>
+          <div className='BeerBreweries'>Breweries</div>
+          <div className='BeerStyles'>Styles</div>
+      </div>
+      <div>
+        {loadedBeers.map((beer: Beer) => (
+          <div className='BeerRow' key={beer.id}>
+            <div className='BeerName'>{beer.name}</div>
+            <div className='BeerBreweries'>
+              <BreweryLinks breweries={beer.breweries} />
+            </div>
+            <div className='BeerStyles'>
+              {toString(beer.styles.map(style => style.name).sort())}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

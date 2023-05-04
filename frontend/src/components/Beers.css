@@ -1,4 +1,33 @@
-.BeersTable {
-  margin-left: auto;
-  margin-right: auto;
+.BeerHeading,
+.BeerRow {
+  display: flex;
+  flex-direction: row;
+}
+
+.BeerHeading {
+  font-weight: 600;
+}
+
+.BeerHeading div,
+.BeerRow div {
+  padding: 5px;
+}
+
+.BeerName,
+.BeerBreweries {
+  width: 40%;
+}
+
+.BeerStyles {
+  width: 20%;
+}
+
+.BeerHeading:nth-child(even),
+.BeerRow:nth-child(even) {
+  background: rgba(0,0,0,0.2)
+}
+
+.BeerHeading:nth-child(odd),
+.BeerRow:nth-child(odd) {
+  background: rgba(0,0,0,0.3)
 }
