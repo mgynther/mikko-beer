@@ -15,6 +15,7 @@ import Brewery from './components/Brewery'
 import Containers from './components/Containers'
 import LoginComponent from './components/Login'
 import Reviews from './components/Reviews'
+import Stats from './components/Stats'
 import Styles from './components/Styles'
 import Users from './components/Users'
 
@@ -62,6 +63,9 @@ function Layout (props: LayoutProps): JSX.Element {
                 )}
                 <li>
                   <Link to="/account">Account</Link>
+                </li>
+                <li>
+                  <Link to="/stats">Statistics</Link>
                 </li>
                 <li>
                   <button onClick={props.logout}>Logout</button>
@@ -116,6 +120,7 @@ function App (): JSX.Element {
                 <Route path="styles" element={<Styles />} />
                 {isAdmin && <Route path="users" element={<Users />} />}
                 <Route path="account" element={<Account />} />
+                <Route path="stats" element={<Stats />} />
               </React.Fragment>
             )}
             <Route

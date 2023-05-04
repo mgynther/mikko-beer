@@ -1,6 +1,7 @@
 import { emptySplitApi } from '../api'
 
 import { type Style, type StyleList, StyleTags } from './types'
+import { statsTagTypes } from '../stats/types'
 
 interface StyleRequest {
   name: string
@@ -24,7 +25,7 @@ const styleApi = emptySplitApi.injectEndpoints({
           ...style
         }
       }),
-      invalidatesTags: [StyleTags.Style]
+      invalidatesTags: [StyleTags.Style, ...statsTagTypes()]
     })
   })
 })

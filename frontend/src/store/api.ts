@@ -11,6 +11,7 @@ import { beerTagTypes } from './beer/types'
 import { breweryTagTypes } from './brewery/types'
 import { containerTagTypes } from './container/types'
 import { loginTagTypes } from './login/types'
+import { statsTagTypes } from './stats/types'
 import { styleTagTypes } from './style/types'
 import { userTagTypes } from './user/types'
 
@@ -22,6 +23,7 @@ function mergeTags (): string[] {
     ...breweryTagTypes(),
     ...containerTagTypes(),
     ...loginTagTypes(),
+    ...statsTagTypes(),
     ...styleTagTypes(),
     ...userTagTypes()
   ]
