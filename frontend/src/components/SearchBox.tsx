@@ -45,7 +45,7 @@ const SearchBox = <T extends SearchBoxItem>({
     : sortedOptions.slice(0, maxResultCount)
   const areAllShown = visibleOptions.length === sortedOptions.length
   return (
-    <div className="SearchBox">
+    <div className='SearchBox'>
       <input
         placeholder={title}
         type='text'
@@ -53,7 +53,7 @@ const SearchBox = <T extends SearchBoxItem>({
         onChange={e => { setFilter(e.target.value) }}
       />
       {!isLoading && currentFilter.length > 0 && (
-        <div className="SearchResults">
+        <div className='SearchResults'>
           <ul>
             {visibleOptions.map(item => (
               <li
@@ -66,7 +66,7 @@ const SearchBox = <T extends SearchBoxItem>({
                 {formatter(item)}
               </li>
             ))}
-            <div className="SearchInfo">
+            <div className='SearchInfo'>
               {!areAllShown &&
                 <>
                   <hr/>
