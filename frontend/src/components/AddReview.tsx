@@ -94,7 +94,7 @@ function AddReview (): JSX.Element {
           <h5>Smell</h5>
           <div className='AddReviewContent'>
             <textarea
-              className="ReviewArea"
+              className='ReviewArea'
               value={smell}
               onChange={e => { setSmell(e.target.value) }}
             />
@@ -104,7 +104,7 @@ function AddReview (): JSX.Element {
           <h5>Taste</h5>
           <div className='AddReviewContent'>
             <textarea
-              className="ReviewArea"
+              className='ReviewArea'
               value={taste}
               onChange={e => { setTaste(e.target.value) }}
             />
@@ -115,7 +115,7 @@ function AddReview (): JSX.Element {
           <div className='AddReviewContent'>
             <div className='RatingNumber'>{ `${rating}` }</div>
             <input
-              className="RatingSlider"
+              className='RatingSlider'
               type='range'
               id='rating'
               min={4}
