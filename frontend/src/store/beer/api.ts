@@ -3,6 +3,7 @@ import { emptySplitApi } from '../api'
 import { type Pagination } from '../types'
 
 import {
+  type Beer,
   type BeerList,
   type BeerWithIds,
   BeerTags
@@ -16,6 +17,16 @@ interface BeerRequest {
 
 const beerApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
+    getBeer: build.query<{ beer: Beer }, string>({
+      query: (beerId: string) => ({
+        url: `/beer/${beerId}`,
+        method: 'GET'
+      }),
+      providesTags: (result, error, arg) =>
+        result === undefined
+          ? [BeerTags.Beer]
+          : [{ type: BeerTags.Beer, id: result.beer.id }]
+    }),
     listBeers: build.query<BeerList, Pagination>({
       query: (pagination: Pagination) => ({
         url: `/beer?size=${pagination.size}&skip=${pagination.skip}`,
@@ -47,6 +58,7 @@ const beerApi = emptySplitApi.injectEndpoints({
 
 export const {
   useCreateBeerMutation,
+  useGetBeerQuery,
   useLazyListBeersQuery,
   useLazySearchBeersQuery,
   useListBeersQuery

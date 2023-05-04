@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { useLazyListBeersQuery } from '../store/beer/api'
 import { type Beer } from '../store/beer/types'
-import { infiniteScroll, toString } from './util'
+import { infiniteScroll, joinSortedNames } from './util'
+
+import BeerLink from './BeerLink'
+import SearchBeer from './SearchBeer'
 
 import BreweryLinks from './BreweryLinks'
 
@@ -11,6 +15,7 @@ import './Beers.css'
 const pageSize = 20
 
 function Beers (): JSX.Element {
+  const navigate = useNavigate()
   const [loadedBeers, setLoadedBeers] = useState<Beer[]>([])
   const [trigger, result] = useLazyListBeersQuery()
 
@@ -42,6 +47,9 @@ function Beers (): JSX.Element {
   return (
     <div>
       <h3>Beers</h3>
+      <SearchBeer select={(beer) => {
+        navigate(`/beers/${beer.id}`)
+      }} />
       {isLoading && (<div>Loading...</div>)}
       <div className='BeerHeading'>
           <div className='BeerName'>Name</div>
@@ -51,12 +59,14 @@ function Beers (): JSX.Element {
       <div>
         {loadedBeers.map((beer: Beer) => (
           <div className='BeerRow' key={beer.id}>
-            <div className='BeerName'>{beer.name}</div>
+            <div className='BeerName'>
+              <BeerLink beer={beer} />
+            </div>
             <div className='BeerBreweries'>
               <BreweryLinks breweries={beer.breweries} />
             </div>
             <div className='BeerStyles'>
-              {toString(beer.styles.map(style => style.name).sort())}
+              {joinSortedNames(beer.styles)}
             </div>
           </div>
         ))}

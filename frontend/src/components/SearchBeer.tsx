@@ -5,7 +5,7 @@ import { type Beer, type BeerWithIds } from '../store/beer/types'
 
 import SearchBox from './SearchBox'
 
-import { toString, useDebounce } from './util'
+import { joinSortedNames, useDebounce } from './util'
 
 import './SelectBeer.css'
 
@@ -45,7 +45,7 @@ function SearchBeer (props: Props): JSX.Element {
         currentFilter={filter}
         currentOptions={results}
         formatter={(beer: Beer) => {
-          const breweryStr = toString(beer.breweries.map(b => b.name).sort())
+          const breweryStr = joinSortedNames(beer.breweries)
           return `${beer.name} (${breweryStr})`
         }}
         isLoading={isLoading}

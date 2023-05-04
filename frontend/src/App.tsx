@@ -8,6 +8,7 @@ import './App.css'
 
 import Account from './components/Account'
 import AddReview from './components/AddReview'
+import Beer from './components/Beer'
 import Beers from './components/Beers'
 import Breweries from './components/Breweries'
 import Brewery from './components/Brewery'
@@ -107,6 +108,7 @@ function App (): JSX.Element {
               <React.Fragment>
                 {isAdmin && <Route path="addreview" element={<AddReview />} />}
                 <Route path="beers" element={<Beers />} />
+                <Route path="beers/:beerId" element={<Beer />} />
                 <Route path="breweries" element={<Breweries />} />
                 <Route path="breweries/:breweryId" element={<Brewery />} />
                 <Route path="containers" element={<Containers />} />

@@ -6,8 +6,9 @@ import {
   type Review as ReviewType
 } from '../store/review/types'
 
+import BeerLink from './BeerLink'
 import BreweryLinks from './BreweryLinks'
-import { toString } from './util'
+import { joinSortedNames } from './util'
 
 import './Review.css'
 
@@ -62,13 +63,14 @@ function Review (props: Props): JSX.Element {
         <div>
           <BreweryLinks breweries={review.breweries} />
         </div>
-        <div>{review.beerName}</div>
         <div>
-          {toString(
-            [...review.styles]
-              .sort((a, b) => a.name.localeCompare(b.name))
-              .map(s => s.name)
-          )}
+          <BeerLink beer={{
+            id: review.beerId,
+            name: review.beerName
+          }} />
+        </div>
+        <div>
+          {joinSortedNames([...review.styles])}
         </div>
         <div
           className={`Review-rating Review-rating-${review.rating}`}>

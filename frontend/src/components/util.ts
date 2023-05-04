@@ -18,8 +18,12 @@ export function infiniteScroll (loadMore: () => void): () => void {
   }
 }
 
-export function toString (array: string[]): string {
-  return array.join(', ')
+interface NamedItem {
+  name: string
+}
+
+export function joinSortedNames (array: NamedItem[]): string {
+  return array.map(i => i.name).sort().join(', ')
 }
 
 export function useDebounce (value: string, delay: number): string {
