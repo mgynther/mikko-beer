@@ -1,6 +1,10 @@
-import { sql } from 'kysely'
+import { type SelectQueryBuilder, sql } from 'kysely'
 
-import { type Database, type Transaction } from '../database'
+import {
+  type Database,
+  type KyselyDatabase,
+  type Transaction
+} from '../database'
 import {
   type DbJoinedReview,
   type ReviewRow,
@@ -126,20 +130,37 @@ export async function listReviews (
   return parseBreweryReviewRows(reviews)
 }
 
+export async function listReviewsByBeer (
+  db: Database,
+  beerId: string
+): Promise<DbJoinedReview[]> {
+  return await joinReviewData(db.getDb()
+    .selectFrom('beer')
+    .where('beer.beer_id', '=', beerId)
+  )
+}
+
 export async function listReviewsByBrewery (
   db: Database,
   breweryId: string
 ): Promise<DbJoinedReview[]> {
-  const reviews = await db.getDb()
+  return await joinReviewData(db.getDb()
     .selectFrom('beer_brewery as querybrewery')
     .innerJoin('beer', 'querybrewery.beer', 'beer.beer_id')
+    .where('querybrewery.brewery', '=', breweryId)
+  )
+}
+
+export async function joinReviewData (
+  query: SelectQueryBuilder<KyselyDatabase, 'beer', unknown>
+): Promise<DbJoinedReview[]> {
+  const reviews = await query
     .innerJoin('review', 'beer.beer_id', 'review.beer')
     .innerJoin('beer_brewery', 'beer_brewery.beer', 'beer.beer_id')
     .innerJoin('brewery', 'brewery.brewery_id', 'beer_brewery.brewery')
     .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
     .innerJoin('container', 'container.container_id', 'review.container')
     .innerJoin('style', 'style.style_id', 'beer_style.style')
-    .where('querybrewery.brewery', '=', breweryId)
     .select([
       'review.review_id',
       'review.additional_info',

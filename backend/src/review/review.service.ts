@@ -82,7 +82,15 @@ export async function listReviews (
   pagination: Pagination
 ): Promise<JoinedReview[]> {
   const reviewRows = await reviewRepository.listReviews(db, pagination)
-  return toBreweryReviews(reviewRows)
+  return toJoinedReviews(reviewRows)
+}
+
+export async function listReviewsByBeer (
+  db: Database,
+  beerId: string
+): Promise<JoinedReview[]> {
+  const reviewRows = await reviewRepository.listReviewsByBeer(db, beerId)
+  return toJoinedReviews(reviewRows)
 }
 
 export async function listReviewsByBrewery (
@@ -90,10 +98,10 @@ export async function listReviewsByBrewery (
   breweryId: string
 ): Promise<JoinedReview[]> {
   const reviewRows = await reviewRepository.listReviewsByBrewery(db, breweryId)
-  return toBreweryReviews(reviewRows)
+  return toJoinedReviews(reviewRows)
 }
 
-function toBreweryReviews (reviewRows: DbJoinedReview[]): JoinedReview[] {
+function toJoinedReviews (reviewRows: DbJoinedReview[]): JoinedReview[] {
   return reviewRows.map(row => ({
     id: row.review_id,
     additionalInfo: row.additional_info,

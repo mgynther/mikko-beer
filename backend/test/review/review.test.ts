@@ -121,6 +121,13 @@ describe('review tests', () => {
     expect(breweryListRes.data.reviews.length).to.equal(1)
     expect(breweryListRes.data.reviews[0].id).to.eql(getRes.data.review.id)
     expect(breweryListRes.data.reviews[0].beerId).to.eql(getRes.data.review.beer)
+
+    const beerListRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
+      `/api/v1/beer/${beerRes.data.beer.id}/review/`,
+      ctx.adminAuthHeaders()
+    )
+    expect(beerListRes.status).to.equal(200)
+    expect(beerListRes.data.reviews).to.eql(breweryListRes.data.reviews)
   })
 
   it('should fail create a review without beer', async () => {

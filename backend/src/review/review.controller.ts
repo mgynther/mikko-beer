@@ -68,6 +68,19 @@ export function reviewController (router: Router): void {
   )
 
   router.get(
+    '/api/v1/beer/:beerId/review',
+    authService.authenticateViewer,
+    async (ctx) => {
+      const { beerId } = ctx.params
+      const reviewResult =
+        await reviewService.listReviewsByBeer(ctx.db, beerId)
+      const reviews = reviewResult ?? []
+
+      ctx.body = { reviews }
+    }
+  )
+
+  router.get(
     '/api/v1/brewery/:breweryId/review',
     authService.authenticateViewer,
     async (ctx) => {

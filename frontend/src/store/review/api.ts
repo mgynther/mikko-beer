@@ -24,6 +24,13 @@ const reviewApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [ReviewTags.Review]
     }),
+    listReviewsByBeer: build.query<JoinedReviewList, string>({
+      query: (beerId: string) => ({
+        url: `/beer/${beerId}/review`,
+        method: 'GET'
+      }),
+      providesTags: [ReviewTags.Review]
+    }),
     listReviewsByBrewery: build.query<JoinedReviewList, string>({
       query: (breweryId: string) => ({
         url: `/brewery/${breweryId}/review`,
@@ -46,6 +53,7 @@ export const {
   useCreateReviewMutation,
   useLazyGetReviewQuery,
   useLazyListReviewsQuery,
+  useListReviewsByBeerQuery,
   useListReviewsByBreweryQuery
 } = reviewApi
 
