@@ -1,3 +1,7 @@
 .Section {
   margin-bottom: 20px;
 }
+
+.Section > div > div {
+  margin-left: 15px;
+}
