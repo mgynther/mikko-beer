@@ -1,11 +1,13 @@
+body {
+  background-color: #282c34;
+}
+
 .App {
   display: flex;
   flex-direction: column;
-  background-color: #282c34;
   font-size: calc(10px + 2vmin);
   color: white;
   align-items: center;
-  min-height: 100vw;
 }
 
 .AppContent {
