@@ -3,6 +3,8 @@ import * as authService from '../authentication/authentication.service'
 
 import { type Router } from '../router'
 
+import { validatePagination } from '../util/pagination'
+
 export function statsController (router: Router): void {
   router.get(
     '/api/v1/stats/overall',
@@ -24,7 +26,9 @@ export function statsController (router: Router): void {
     '/api/v1/stats/brewery',
     authService.authenticateViewer,
     async (ctx) => {
-      const brewery = await statsService.getBrewery(ctx.db)
+      const { skip, size } = ctx.request.query
+      const pagination = validatePagination({ skip, size })
+      const brewery = await statsService.getBrewery(ctx.db, pagination)
       ctx.body = { brewery }
     }
   )

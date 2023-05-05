@@ -1,29 +1,61 @@
-import { useGetBreweryStatsQuery } from '../../store/stats/api'
+import { useEffect, useState } from 'react'
+
+import { useLazyGetBreweryStatsQuery } from '../../store/stats/api'
+import { type OneBreweryStats } from '../../store/stats/types'
+import { infiniteScroll } from '../util'
 
 import LoadingIndicator from '../LoadingIndicator'
 
+import './Brewery.css'
 import './Stats.css'
 
+const pageSize = 30
+
 function Brewery (): JSX.Element {
-  const { data: breweryData, isLoading } = useGetBreweryStatsQuery()
-  const brewery = breweryData?.brewery
+  const [trigger, { data: breweryData, isLoading, isUninitialized }] =
+    useLazyGetBreweryStatsQuery()
+  const [loadedBreweries, setLoadedBreweries] = useState<OneBreweryStats[]>([])
+
+  const breweryArray = breweryData?.brewery === undefined
+    ? []
+    : [...breweryData.brewery]
+  const hasMore = breweryArray.length > 0 || isUninitialized
+
+  useEffect(() => {
+    const loadMore = async (): Promise<void> => {
+      const result = await trigger({
+        skip: loadedBreweries.length,
+        size: pageSize
+      })
+      if (result.data === undefined) return
+      const newBreweries = [...loadedBreweries, ...result.data.brewery]
+      setLoadedBreweries(newBreweries)
+    }
+    function checkLoad (): void {
+      if (!isLoading && hasMore) {
+        void loadMore()
+      }
+    }
+    return infiniteScroll(checkLoad)
+  }, [loadedBreweries, setLoadedBreweries, isLoading, hasMore, trigger])
+
   return (
     <div>
       <LoadingIndicator isLoading={isLoading} />
       <table className='StatsTable'>
         <thead>
           <tr>
-            <th>Brewery</th>
-            <th>Reviews</th>
-            <th>Review rating average</th>
+            <th className='BreweryNameColumn'>Brewery</th>
+            <th className='BreweryNumColumn'>Reviews</th>
+            <th className='BreweryNumColumn'>Review rating average</th>
           </tr>
         </thead>
         <tbody>
-          {brewery?.map(brewery => (
+          {loadedBreweries.map(brewery => (
             <tr key={brewery.breweryId}>
-              <td>{brewery.breweryName}</td>
-              <td>{brewery.reviewCount}</td>
-              <td>{brewery.reviewAverage}</td>
+              <td className='BreweryNameColumn'>{brewery.breweryName}</td>
+              <td className='BreweryNumColumn'>{brewery.reviewCount}</td>
+              <td className='BreweryNumColumn'>{brewery.reviewAverage}</td>
             </tr>
           ))}
         </tbody>

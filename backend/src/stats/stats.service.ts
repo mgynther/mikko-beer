@@ -1,6 +1,8 @@
 import * as statsRepository from './stats.repository'
 
 import { type Database } from '../database'
+import { type Pagination } from '../util/pagination'
+
 import {
   type AnnualStats,
   type BreweryStats,
@@ -15,9 +17,10 @@ export async function getAnnual (
 }
 
 export async function getBrewery (
-  db: Database
+  db: Database,
+  pagination: Pagination
 ): Promise<BreweryStats> {
-  return await statsRepository.getBrewery(db)
+  return await statsRepository.getBrewery(db, pagination)
 }
 
 export async function getOverall (

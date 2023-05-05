@@ -1,5 +1,7 @@
 import { emptySplitApi } from '../api'
 
+import { type Pagination } from '../types'
+
 import {
   type AnnualStats,
   type BreweryStats,
@@ -17,9 +19,9 @@ const statsApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [StatsTags.Annual]
     }),
-    getBreweryStats: build.query<BreweryStats, void>({
-      query: () => ({
-        url: '/stats/brewery',
+    getBreweryStats: build.query<BreweryStats, Pagination>({
+      query: (pagination: Pagination) => ({
+        url: `/stats/brewery?size=${pagination.size}&skip=${pagination.skip}`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Brewery]
@@ -43,9 +45,9 @@ const statsApi = emptySplitApi.injectEndpoints({
 
 export const {
   useGetAnnualStatsQuery,
-  useGetBreweryStatsQuery,
   useGetOverallStatsQuery,
-  useGetStyleStatsQuery
+  useGetStyleStatsQuery,
+  useLazyGetBreweryStatsQuery
 } = statsApi
 
 export const { endpoints, reducerPath, reducer, middleware } = statsApi

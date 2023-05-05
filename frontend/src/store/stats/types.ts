@@ -14,13 +14,15 @@ export interface AnnualStats {
   }>
 }
 
+export interface OneBreweryStats {
+  breweryId: string
+  breweryName: string
+  reviewAverage: string
+  reviewCount: string
+}
+
 export interface BreweryStats {
-  brewery: Array<{
-    breweryId: string
-    breweryName: string
-    reviewAverage: string
-    reviewCount: string
-  }>
+  brewery: OneBreweryStats[]
 }
 
 export interface StyleStats {

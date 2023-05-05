@@ -270,6 +270,13 @@ describe('stats tests', () => {
       styles
     } = await createDeps(ctx.adminAuthHeaders())
 
+    const skippedStatsRes = await ctx.request.get<{ brewery: BreweryStats }>(
+      '/api/v1/stats/brewery?size=30&skip=20',
+      ctx.adminAuthHeaders()
+    )
+    expect(skippedStatsRes.status).to.equal(200)
+    expect(skippedStatsRes.data.brewery).to.eql([])
+
     const statsRes = await ctx.request.get<{ brewery: BreweryStats }>(
       '/api/v1/stats/brewery',
       ctx.adminAuthHeaders()

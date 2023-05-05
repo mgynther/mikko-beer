@@ -1,0 +1,9 @@
+th.BreweryNameColumn,
+td.BreweryNameColumn {
+  width: 70%;
+}
+
+th.BreweryNumColumn,
+th.BreweryNumColumn {
+  width: 15%;
+}

@@ -1,6 +1,8 @@
 import { sql } from 'kysely'
 
 import { type Database } from '../database'
+import { type Pagination } from '../util/pagination'
+
 import {
   type AnnualStats,
   type BreweryStats,
@@ -43,7 +45,8 @@ export async function getAnnual (
 }
 
 export async function getBrewery (
-  db: Database
+  db: Database,
+  pagination: Pagination
 ): Promise<BreweryStats> {
   const breweryQuery = sql`SELECT
     COUNT(1) as review_count,
@@ -56,6 +59,8 @@ export async function getBrewery (
     INNER JOIN brewery ON beer_brewery.brewery = brewery.brewery_id
     GROUP BY brewery_id
     ORDER BY brewery_name ASC
+    OFFSET ${pagination.skip}
+    LIMIT ${pagination.size}
   `
 
   const brewery = (await breweryQuery
