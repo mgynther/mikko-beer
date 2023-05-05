@@ -36,8 +36,22 @@ function AddReview (): JSX.Element {
     if (rating > 10) rating = 10
     doSetRating(rating)
   }
-  // TODO add a date picker.
-  const [time, setTime] = useState(new Date().toISOString())
+  function localDateTime (): string {
+    function str (num: number): string {
+      if (num < 10) {
+        return `0${num}`
+      }
+      return `${num}`
+    }
+    const date = new Date()
+    const y = date.getFullYear()
+    const mo = date.getMonth() + 1
+    const d = date.getDay()
+    const h = date.getHours()
+    const mi = date.getMinutes()
+    return `${str(y)}-${str(mo)}-${str(d)}T${str(h)}:${str(mi)}`
+  }
+  const [time, setTime] = useState(localDateTime())
 
   const isMissingData =
     beer === undefined ||
@@ -56,7 +70,7 @@ function AddReview (): JSX.Element {
       rating,
       smell: smell.trim(),
       taste: taste.trim(),
-      time
+      time: new Date(time).toISOString()
     }
     void createReview(review)
   }
@@ -137,8 +151,7 @@ function AddReview (): JSX.Element {
         </div>
         <div>
           <input
-            type='text'
-            placeholder='Time'
+            type='datetime-local'
             id='time'
             value={time}
             onChange={e => { setTime(e.target.value) }}
