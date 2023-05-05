@@ -1,12 +1,23 @@
 import * as statsRepository from './stats.repository'
 
 import { type Database } from '../database'
-import { type AnnualStats, type OverallStats, type StyleStats } from './stats'
+import {
+  type AnnualStats,
+  type BreweryStats,
+  type OverallStats,
+  type StyleStats
+} from './stats'
 
 export async function getAnnual (
   db: Database
 ): Promise<AnnualStats> {
   return await statsRepository.getAnnual(db)
+}
+
+export async function getBrewery (
+  db: Database
+): Promise<BreweryStats> {
+  return await statsRepository.getBrewery(db)
 }
 
 export async function getOverall (

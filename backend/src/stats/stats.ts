@@ -4,6 +4,13 @@ export type AnnualStats = Array<{
   year: string
 }>
 
+export type BreweryStats = Array<{
+  reviewAverage: string
+  reviewCount: string
+  breweryId: string
+  breweryName: string
+}>
+
 export interface OverallStats {
   beerCount: string
   containerCount: string

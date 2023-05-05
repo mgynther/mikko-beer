@@ -1,11 +1,11 @@
-import { useGetOverallQuery } from '../../store/stats/api'
+import { useGetOverallStatsQuery } from '../../store/stats/api'
 
 import LoadingIndicator from '../LoadingIndicator'
 
 import './Stats.css'
 
 function Overall (): JSX.Element {
-  const { data: overallData, isLoading } = useGetOverallQuery()
+  const { data: overallData, isLoading } = useGetOverallStatsQuery()
   const overall = overallData?.overall
   return (
     <div>

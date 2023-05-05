@@ -1,11 +1,11 @@
-import { useGetStyleQuery } from '../../store/stats/api'
+import { useGetStyleStatsQuery } from '../../store/stats/api'
 
 import LoadingIndicator from '../LoadingIndicator'
 
 import './Stats.css'
 
 function Style (): JSX.Element {
-  const { data: styleData, isLoading } = useGetStyleQuery()
+  const { data: styleData, isLoading } = useGetStyleStatsQuery()
   const style = styleData?.style
   return (
     <div>

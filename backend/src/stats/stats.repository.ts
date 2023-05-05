@@ -1,7 +1,12 @@
 import { sql } from 'kysely'
 
 import { type Database } from '../database'
-import { type AnnualStats, type OverallStats, type StyleStats } from './stats'
+import {
+  type AnnualStats,
+  type BreweryStats,
+  type OverallStats,
+  type StyleStats
+} from './stats'
 
 // TODO try converting raw sql queries to Kysely for automatic types.
 function round (value: number, decimals: number): string {
@@ -34,6 +39,40 @@ export async function getAnnual (
     reviewAverage: round(row.review_average, 2),
     reviewCount: `${row.review_count}`,
     year: `${row.year}`
+  }))
+}
+
+export async function getBrewery (
+  db: Database
+): Promise<BreweryStats> {
+  const breweryQuery = sql`SELECT
+    COUNT(1) as review_count,
+    AVG(rating) as review_average,
+    brewery.brewery_id as brewery_id,
+    brewery.name as brewery_name
+    FROM review
+    INNER JOIN beer ON review.beer = beer.beer_id
+    INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer
+    INNER JOIN brewery ON beer_brewery.brewery = brewery.brewery_id
+    GROUP BY brewery_id
+    ORDER BY brewery_name ASC
+  `
+
+  const brewery = (await breweryQuery
+    .execute(db.getDb()) as {
+    rows: Array<{
+      review_average: number
+      review_count: number
+      brewery_id: string
+      brewery_name: string
+    }>
+  })
+
+  return brewery.rows.map(row => ({
+    reviewAverage: round(row.review_average, 2),
+    reviewCount: `${row.review_count}`,
+    breweryId: row.brewery_id,
+    breweryName: row.brewery_name
   }))
 }
 
@@ -79,8 +118,8 @@ export async function getStyle (
     INNER JOIN beer ON review.beer = beer.beer_id
     INNER JOIN beer_style ON beer.beer_id = beer_style.beer
     INNER JOIN style ON beer_style.style = style.style_id
-    GROUP BY style.style_id
-    ORDER BY style.name ASC
+    GROUP BY style_id
+    ORDER BY style_name ASC
   `
 
   const style = (await styleQuery

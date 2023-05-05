@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import Annual from './Annual'
+import Brewery from './Brewery'
 import Overall from './Overall'
 import Style from './Style'
 
@@ -8,6 +9,7 @@ import TabButton from '../TabButton'
 
 enum Mode {
   Annual = 'Annual',
+  Brewery = 'Brewery',
   Overall = 'Overall',
   Style = 'Style',
 }
@@ -25,6 +27,10 @@ function Stats (): JSX.Element {
       title: 'Annual'
     },
     {
+      mode: Mode.Brewery,
+      title: 'Brewery'
+    },
+    {
       mode: Mode.Style,
       title: 'Style'
     }
@@ -36,6 +42,7 @@ function Stats (): JSX.Element {
       <div className='StatsModeContainer'>
         {buttons.map(model => (
           <TabButton
+            key={model.title}
             isSelected={mode === model.mode}
             onClick={() => { setMode(model.mode) }}
             title={model.title}
@@ -43,6 +50,7 @@ function Stats (): JSX.Element {
         ))}
       </div>
       {mode === Mode.Annual && <Annual />}
+      {mode === Mode.Brewery && <Brewery />}
       {mode === Mode.Overall && <Overall />}
       {mode === Mode.Style && <Style />}
     </div>

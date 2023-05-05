@@ -2,6 +2,7 @@ import { emptySplitApi } from '../api'
 
 import {
   type AnnualStats,
+  type BreweryStats,
   type OverallStats,
   type StyleStats,
   StatsTags
@@ -9,21 +10,28 @@ import {
 
 const statsApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
-    getAnnual: build.query<AnnualStats, void>({
+    getAnnualStats: build.query<AnnualStats, void>({
       query: () => ({
         url: '/stats/annual',
         method: 'GET'
       }),
       providesTags: [StatsTags.Annual]
     }),
-    getOverall: build.query<{ overall: OverallStats }, void>({
+    getBreweryStats: build.query<BreweryStats, void>({
+      query: () => ({
+        url: '/stats/brewery',
+        method: 'GET'
+      }),
+      providesTags: [StatsTags.Brewery]
+    }),
+    getOverallStats: build.query<{ overall: OverallStats }, void>({
       query: () => ({
         url: '/stats/overall',
         method: 'GET'
       }),
       providesTags: [StatsTags.Overall]
     }),
-    getStyle: build.query<StyleStats, void>({
+    getStyleStats: build.query<StyleStats, void>({
       query: () => ({
         url: '/stats/style',
         method: 'GET'
@@ -34,9 +42,10 @@ const statsApi = emptySplitApi.injectEndpoints({
 })
 
 export const {
-  useGetAnnualQuery,
-  useGetOverallQuery,
-  useGetStyleQuery
+  useGetAnnualStatsQuery,
+  useGetBreweryStatsQuery,
+  useGetOverallStatsQuery,
+  useGetStyleStatsQuery
 } = statsApi
 
 export const { endpoints, reducerPath, reducer, middleware } = statsApi

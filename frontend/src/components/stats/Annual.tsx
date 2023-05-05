@@ -1,11 +1,11 @@
-import { useGetAnnualQuery } from '../../store/stats/api'
+import { useGetAnnualStatsQuery } from '../../store/stats/api'
 
 import LoadingIndicator from '../LoadingIndicator'
 
 import './Stats.css'
 
 function Annual (): JSX.Element {
-  const { data: annualData, isLoading } = useGetAnnualQuery()
+  const { data: annualData, isLoading } = useGetAnnualStatsQuery()
   const annual = annualData?.annual
   return (
     <div>

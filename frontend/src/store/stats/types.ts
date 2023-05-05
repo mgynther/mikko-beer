@@ -14,6 +14,15 @@ export interface AnnualStats {
   }>
 }
 
+export interface BreweryStats {
+  brewery: Array<{
+    breweryId: string
+    breweryName: string
+    reviewAverage: string
+    reviewCount: string
+  }>
+}
+
 export interface StyleStats {
   style: Array<{
     reviewAverage: string
@@ -25,16 +34,26 @@ export interface StyleStats {
 
 export enum StatsTags {
   Annual = 'Annual',
+  Brewery = 'Brewery',
   Overall = 'Overall',
   Style = 'Style'
 }
 
 export function allStatsTagTypes (): string[] {
-  return [StatsTags.Annual, StatsTags.Overall, StatsTags.Style]
+  return [
+    StatsTags.Annual,
+    StatsTags.Brewery,
+    StatsTags.Overall,
+    StatsTags.Style
+  ]
 }
 
 export function beerStatsTagTypes (): string[] {
   return [StatsTags.Overall, StatsTags.Style]
+}
+
+export function breweryStatsTagTypes (): string[] {
+  return [StatsTags.Overall, StatsTags.Brewery]
 }
 
 export function containerStatsTagTypes (): string[] {

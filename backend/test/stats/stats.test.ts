@@ -6,6 +6,7 @@ import { type Brewery } from '../../src/brewery/brewery'
 import { type Review } from '../../src/review/review'
 import {
   type AnnualStats,
+  type BreweryStats,
   type OverallStats,
   type StyleStats
 } from '../../src/stats/stats'
@@ -258,6 +259,57 @@ describe('stats tests', () => {
     expect(average2022).to.eql('7.00')
     expect(count2023).to.eql(2)
     expect(average2023).to.eql('7.50')
+  })
+
+  it('should get brewery stats', async () => {
+    const {
+      beers,
+      breweries,
+      reviews,
+      containers,
+      styles
+    } = await createDeps(ctx.adminAuthHeaders())
+
+    const statsRes = await ctx.request.get<{ brewery: BreweryStats }>(
+      '/api/v1/stats/brewery',
+      ctx.adminAuthHeaders()
+    )
+    expect(statsRes.status).to.equal(200)
+    const lindemansBrewery = breweries[0].data.brewery
+    expect(lindemansBrewery.name).to.equal('Lindemans')
+    const nokiaBrewery = breweries[1].data.brewery
+    expect(nokiaBrewery.name).to.equal('Nokian Panimo')
+    function reviewRatingsByBrewery(breweryId: string): number[] {
+      return reviews.map(reviewData).filter(review => {
+        const beer = beers.find(
+          beer => beer.data.beer.id === review.beer
+        )?.data?.beer
+        if (beer === undefined) throw error()
+        return beer.breweries.some(brewery => brewery === breweryId)
+      }).map(review => review.rating) as number[]
+    }
+    const nokiaRatings = reviewRatingsByBrewery(nokiaBrewery.id)
+    const nokiaAverage = average(nokiaRatings)
+    const lindemansRatings = reviewRatingsByBrewery(lindemansBrewery.id)
+    const lindemansAverage = average(lindemansRatings)
+    expect(statsRes.data.brewery).to.eql([
+      {
+        reviewCount: `${lindemansRatings.length}`,
+        reviewAverage: lindemansAverage,
+        breweryId: lindemansBrewery.id,
+        breweryName: lindemansBrewery.name
+      },
+      {
+        reviewCount: `${nokiaRatings.length}`,
+        reviewAverage: nokiaAverage,
+        breweryId: nokiaBrewery.id,
+        breweryName: nokiaBrewery.name
+      }
+    ])
+    expect(nokiaRatings.length).to.equal(3)
+    expect(nokiaAverage).to.equal('7.33')
+    expect(lindemansRatings.length).to.equal(3)
+    expect(lindemansAverage).to.equal('6.67')
   })
 
   it('should get style stats', async () => {
