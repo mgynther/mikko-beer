@@ -1,3 +1,8 @@
+export interface ContainerRequest {
+  type: string
+  size: string
+}
+
 export interface Container {
   id: string
   type: string

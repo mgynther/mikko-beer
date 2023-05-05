@@ -90,6 +90,8 @@ export async function listContainers (
   const containers = await db.getDb()
     .selectFrom('container')
     .select(['container_id', 'type', 'size', 'container.created_at'])
+    .orderBy('type', 'asc')
+    .orderBy('size', 'asc')
     .execute()
 
   if (containers.length === 0) {

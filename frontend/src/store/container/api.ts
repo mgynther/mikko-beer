@@ -1,6 +1,13 @@
 import { emptySplitApi } from '../api'
 
-import { type ContainerList, ContainerTags } from './types'
+import { containerStatsTagTypes } from '../stats/types'
+
+import {
+  type Container,
+  type ContainerList,
+  type ContainerRequest,
+  ContainerTags
+} from './types'
 
 const containerApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
@@ -10,10 +17,26 @@ const containerApi = emptySplitApi.injectEndpoints({
         method: 'GET'
       }),
       providesTags: [ContainerTags.Container]
+    }),
+    createContainer: build.mutation<
+    { container: Container },
+    ContainerRequest
+    >({
+      query: (container: ContainerRequest) => ({
+        url: '/container',
+        method: 'POST',
+        body: {
+          ...container
+        }
+      }),
+      invalidatesTags: [ContainerTags.Container, ...containerStatsTagTypes()]
     })
   })
 })
 
-export const { useListContainersQuery } = containerApi
+export const {
+  useCreateContainerMutation,
+  useListContainersQuery
+} = containerApi
 
 export const { endpoints, reducerPath, reducer, middleware } = containerApi
