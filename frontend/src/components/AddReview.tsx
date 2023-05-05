@@ -26,8 +26,7 @@ function AddReview (): JSX.Element {
 
   useEffect(() => {
     if (isSuccess && beer !== undefined) {
-      // TODO rather navigate to beer when there is a view.
-      navigate(`/breweries/${beer.breweries[0]}`)
+      navigate(`/beers/${beer.id}`)
     }
   }, [isSuccess, beer])
 
