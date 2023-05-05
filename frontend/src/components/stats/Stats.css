@@ -1,0 +1,12 @@
+.StatsModeContainer {
+  display: flex;
+}
+
+table.StatsTable {
+  margin-top: 10px;
+}
+
+table.StatsTable td,
+table.StatsTable th {
+  padding: 5px;
+}

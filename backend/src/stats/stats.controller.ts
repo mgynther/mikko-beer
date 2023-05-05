@@ -5,11 +5,27 @@ import { type Router } from '../router'
 
 export function statsController (router: Router): void {
   router.get(
-    '/api/v1/stats',
+    '/api/v1/stats/overall',
     authService.authenticateViewer,
     async (ctx) => {
-      const stats = await statsService.getStats(ctx.db)
-      ctx.body = { stats }
+      const overall = await statsService.getOverall(ctx.db)
+      ctx.body = { overall }
+    }
+  )
+  router.get(
+    '/api/v1/stats/annual',
+    authService.authenticateViewer,
+    async (ctx) => {
+      const annual = await statsService.getAnnual(ctx.db)
+      ctx.body = { annual }
+    }
+  )
+  router.get(
+    '/api/v1/stats/style',
+    authService.authenticateViewer,
+    async (ctx) => {
+      const style = await statsService.getStyle(ctx.db)
+      ctx.body = { style }
     }
   )
 }

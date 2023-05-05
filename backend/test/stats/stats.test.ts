@@ -4,10 +4,16 @@ import { TestContext } from '../test-context'
 import { type BeerWithBreweryAndStyleIds } from '../../src/beer/beer'
 import { type Brewery } from '../../src/brewery/brewery'
 import { type Review } from '../../src/review/review'
-import { Stats } from '../../src/stats/stats'
+import {
+  type AnnualStats,
+  type OverallStats,
+  type StyleStats
+} from '../../src/stats/stats'
 import { type Style } from '../../src/style/style'
 import { AxiosResponse } from 'axios'
 
+// Math is hard. By both hard coding and calculating it should be easier to spot
+// an error when it happens.
 describe('stats tests', () => {
   const ctx = new TestContext()
 
@@ -161,9 +167,11 @@ describe('stats tests', () => {
     }
   }
 
-  // Math is hard. By both hard coding and calculating it should be easier to
-  // spot an error when it happens.
-  it('should get stats', async () => {
+  function error() {
+    return new Error('must not happen')
+  }
+
+  it('should get overall stats', async () => {
     const {
       beers,
       breweries,
@@ -172,24 +180,17 @@ describe('stats tests', () => {
       styles
     } = await createDeps(ctx.adminAuthHeaders())
 
-
-    const statsRes = await ctx.request.get<{ stats: Stats }>(
-      '/api/v1/stats',
+    const statsRes = await ctx.request.get<{ overall: OverallStats }>(
+      '/api/v1/stats/overall',
       ctx.adminAuthHeaders()
     )
     expect(statsRes.status).to.equal(200)
-    expect(statsRes.data.stats.beerCount).to.equal(`${beers.length}`)
+    expect(statsRes.data.overall.beerCount).to.equal(`${beers.length}`)
     expect(beers.length).to.equal(3)
-    expect(statsRes.data.stats.containerCount).to.equal(`${containers.length}`)
+    expect(statsRes.data.overall.containerCount).to.equal(`${containers.length}`)
     expect(containers.length).to.equal(1)
-    expect(statsRes.data.stats.reviewCount).to.equal(`${reviews.length}`)
+    expect(statsRes.data.overall.reviewCount).to.equal(`${reviews.length}`)
     expect(reviews.length).to.equal(4)
-    function error() {
-      return new Error('must not happen')
-    }
-    if (reviews === null || reviews === undefined || reviews.length === null) {
-      throw error()
-    }
     const ratings = reviews
       ?.map(r => {
         const value = r?.data?.review?.rating
@@ -201,22 +202,40 @@ describe('stats tests', () => {
     }
     const ratingSum = ratings?.reduce((sum: number, rating: number) => sum + rating, 0)
     const countedAverage = ratingSum / reviews.length
-    expect(statsRes.data.stats.reviewAverage).to.equal(countedAverage.toFixed(2))
+    expect(statsRes.data.overall.reviewAverage).to.equal(countedAverage.toFixed(2))
     expect(countedAverage).to.equal(6.75)
-    expect(statsRes.data.stats.styleCount).to.equal(`${styles.length}`)
+    expect(statsRes.data.overall.styleCount).to.equal(`${styles.length}`)
     expect(styles.length).to.equal(2)
+  })
 
-    function reviewData(reviewRes: typeof reviews[0]): Review {
-      return reviewRes.data.review
-    }
+  function reviewData(reviewRes: any): Review {
+    if (reviewRes?.data?.review === undefined) throw error()
+    return reviewRes.data.review
+  }
+  function average(ratings: number[]): string {
+    const sumReducer = (sum: number, rating: number) => sum + rating
+    return (ratings.reduce(sumReducer, 0) / ratings.length).toFixed(2)
+  }
+
+  it('should get annual stats', async () => {
+    const {
+      beers,
+      breweries,
+      reviews,
+      containers,
+      styles
+    } = await createDeps(ctx.adminAuthHeaders())
+
+    const statsRes = await ctx.request.get<{ annual: AnnualStats }>(
+      '/api/v1/stats/annual',
+      ctx.adminAuthHeaders()
+    )
+    expect(statsRes.status).to.equal(200)
     function reviewRatingsByYear(year: string): number[] {
-      return reviews.map(reviewData).filter(review => {
+      return reviews.map(reviewData).filter((review: any) => {
+        if (typeof review?.time !== 'string') throw error()
         return (review.time as unknown as string).startsWith(year)
-      }).map(review => review.rating) as number[]
-    }
-    function average(ratings: number[]): string {
-      const sumReducer = (sum: number, rating: number) => sum + rating
-      return (ratings.reduce(sumReducer, 0) / ratings.length).toFixed(2)
+      }).map((review: Review) => review.rating) as number[]
     }
     const year2021Ratings = reviewRatingsByYear('2021');
     const count2021 = year2021Ratings.length
@@ -228,10 +247,10 @@ describe('stats tests', () => {
     const count2023 = year2023Ratings.length
     const average2023 = average(year2023Ratings)
 
-    expect(statsRes.data.stats.annual).to.eql([
+    expect(statsRes.data.annual).to.eql([
       { reviewCount: `${count2021}`, reviewAverage: average2021, year: '2021' },
-      { reviewCount: '1', reviewAverage: '7.00', year: '2022' },
-      { reviewCount: '2', reviewAverage: '7.50', year: '2023' }
+      { reviewCount: `${count2022}`, reviewAverage: average2022, year: '2022' },
+      { reviewCount: `${count2023}`, reviewAverage: average2023, year: '2023' }
     ])
     expect(count2021).to.eql(1)
     expect(average2021).to.eql('5.00')
@@ -239,7 +258,22 @@ describe('stats tests', () => {
     expect(average2022).to.eql('7.00')
     expect(count2023).to.eql(2)
     expect(average2023).to.eql('7.50')
+  })
 
+  it('should get style stats', async () => {
+    const {
+      beers,
+      breweries,
+      reviews,
+      containers,
+      styles
+    } = await createDeps(ctx.adminAuthHeaders())
+
+    const statsRes = await ctx.request.get<{ style: StyleStats }>(
+      '/api/v1/stats/style',
+      ctx.adminAuthHeaders()
+    )
+    expect(statsRes.status).to.equal(200)
     const kriekStyle = styles[0].data.style
     expect(kriekStyle.name).to.equal('Kriek')
     const ipaStyle = styles[1].data.style
@@ -257,7 +291,7 @@ describe('stats tests', () => {
     const ipaAverage = average(ipaRatings)
     const kriekRatings = reviewRatingsByStyle(kriekStyle.id)
     const kriekAverage = average(kriekRatings)
-    expect(statsRes.data.stats.styles).to.eql([
+    expect(statsRes.data.style).to.eql([
       {
         reviewCount: `${ipaRatings.length}`,
         reviewAverage: ipaAverage,

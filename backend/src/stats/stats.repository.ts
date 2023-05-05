@@ -1,19 +1,18 @@
 import { sql } from 'kysely'
 
 import { type Database } from '../database'
-import { type Stats } from './stats'
+import { type AnnualStats, type OverallStats, type StyleStats } from './stats'
 
-export async function getStats (
+// TODO try converting raw sql queries to Kysely for automatic types.
+function round (value: number, decimals: number): string {
+  return Number(
+    `${Math.round(parseFloat(`${value}e${decimals}`))}e-${decimals}`
+  ).toFixed(decimals)
+}
+
+export async function getAnnual (
   db: Database
-): Promise<Stats> {
-  // TODO try converting raw sql queries to Kysely for automatic types.
-  const statsQuery = sql`SELECT
-    (SELECT COUNT(1) FROM beer) AS beer_count,
-    (SELECT COUNT(1) FROM container) AS container_count,
-    (SELECT COUNT(1) FROM review) AS review_count,
-    (SELECT COUNT(1) FROM style) AS style_count,
-    (SELECT AVG(rating) FROM review) AS review_average
-  `
+): Promise<AnnualStats> {
   const annualQuery = sql`SELECT
     COUNT(1) as review_count,
     AVG(rating) as review_average,
@@ -22,6 +21,55 @@ export async function getStats (
     ORDER BY year ASC
   `
 
+  const annual = (await annualQuery
+    .execute(db.getDb()) as {
+    rows: Array<{
+      review_average: number
+      review_count: number
+      year: number
+    }>
+  })
+
+  return annual.rows.map(row => ({
+    reviewAverage: round(row.review_average, 2),
+    reviewCount: `${row.review_count}`,
+    year: `${row.year}`
+  }))
+}
+
+export async function getOverall (
+  db: Database
+): Promise<OverallStats> {
+  const statsQuery = sql`SELECT
+    (SELECT COUNT(1) FROM beer) AS beer_count,
+    (SELECT COUNT(1) FROM container) AS container_count,
+    (SELECT COUNT(1) FROM review) AS review_count,
+    (SELECT COUNT(1) FROM style) AS style_count,
+    (SELECT AVG(rating) FROM review) AS review_average
+  `
+  const stats = (await statsQuery
+    .execute(db.getDb()) as {
+    rows: Array<{
+      beer_count: number
+      container_count: number
+      review_count: number
+      review_average: number
+      style_count: number
+    }>
+  }).rows[0]
+
+  return {
+    beerCount: `${stats.beer_count}`,
+    containerCount: `${stats.container_count}`,
+    reviewAverage: round(stats.review_average, 2),
+    reviewCount: `${stats.review_count}`,
+    styleCount: `${stats.style_count}`
+  }
+}
+
+export async function getStyle (
+  db: Database
+): Promise<StyleStats> {
   const styleQuery = sql`SELECT
     COUNT(1) as review_count,
     AVG(rating) as review_average,
@@ -35,15 +83,6 @@ export async function getStats (
     ORDER BY style.name ASC
   `
 
-  const annual = (await annualQuery
-    .execute(db.getDb()) as {
-    rows: Array<{
-      review_average: number
-      review_count: number
-      year: number
-    }>
-  })
-
   const style = (await styleQuery
     .execute(db.getDb()) as {
     rows: Array<{
@@ -54,39 +93,10 @@ export async function getStats (
     }>
   })
 
-  const stats = (await statsQuery
-    .execute(db.getDb()) as {
-    rows: Array<{
-      beer_count: number
-      container_count: number
-      review_count: number
-      review_average: number
-      style_count: number
-    }>
-  }).rows[0]
-
-  function round (value: number, decimals: number): string {
-    return Number(
-      `${Math.round(parseFloat(`${value}e${decimals}`))}e-${decimals}`
-    ).toFixed(decimals)
-  }
-
-  return {
-    beerCount: `${stats.beer_count}`,
-    containerCount: `${stats.container_count}`,
-    reviewAverage: round(stats.review_average, 2),
-    reviewCount: `${stats.review_count}`,
-    styleCount: `${stats.style_count}`,
-    annual: annual.rows.map(row => ({
-      reviewAverage: round(row.review_average, 2),
-      reviewCount: `${row.review_count}`,
-      year: `${row.year}`
-    })),
-    styles: style.rows.map(row => ({
-      reviewAverage: round(row.review_average, 2),
-      reviewCount: `${row.review_count}`,
-      styleId: row.style_id,
-      styleName: row.style_name
-    }))
-  }
+  return style.rows.map(row => ({
+    reviewAverage: round(row.review_average, 2),
+    reviewCount: `${row.review_count}`,
+    styleId: row.style_id,
+    styleName: row.style_name
+  }))
 }

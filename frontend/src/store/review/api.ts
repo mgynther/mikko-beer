@@ -1,7 +1,7 @@
 import { emptySplitApi } from '../api'
 
 import { type Pagination } from '../types'
-import { statsTagTypes } from '../stats/types'
+import { reviewStatsTagTypes } from '../stats/types'
 
 import {
   type JoinedReviewList,
@@ -45,7 +45,7 @@ const reviewApi = emptySplitApi.injectEndpoints({
         method: 'POST',
         body
       }),
-      invalidatesTags: [ReviewTags.Review, ...statsTagTypes()]
+      invalidatesTags: [ReviewTags.Review, ...reviewStatsTagTypes()]
     })
   })
 })

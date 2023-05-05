@@ -15,7 +15,7 @@ import Brewery from './components/Brewery'
 import Containers from './components/Containers'
 import LoginComponent from './components/Login'
 import Reviews from './components/Reviews'
-import Stats from './components/Stats'
+import Stats from './components/stats/Stats'
 import Styles from './components/Styles'
 import Users from './components/Users'
 

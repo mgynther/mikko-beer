@@ -1,7 +1,6 @@
 import { emptySplitApi } from '../api'
 
 import { type Pagination } from '../types'
-import { statsTagTypes } from '../stats/types'
 
 import {
   type Brewery,
@@ -45,7 +44,7 @@ const breweryApi = emptySplitApi.injectEndpoints({
           name
         }
       }),
-      invalidatesTags: [BreweryTags.Brewery, ...statsTagTypes()]
+      invalidatesTags: [BreweryTags.Brewery]
     })
   })
 })

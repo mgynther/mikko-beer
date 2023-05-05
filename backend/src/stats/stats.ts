@@ -1,18 +1,20 @@
-export interface Stats {
+export type AnnualStats = Array<{
+  reviewAverage: string
+  reviewCount: string
+  year: string
+}>
+
+export interface OverallStats {
   beerCount: string
   containerCount: string
   reviewAverage: string
   reviewCount: string
   styleCount: string
-  annual: Array<{
-    reviewAverage: string
-    reviewCount: string
-    year: string
-  }>
-  styles: Array<{
-    reviewAverage: string
-    reviewCount: string
-    styleId: string
-    styleName: string
-  }>
 }
+
+export type StyleStats = Array<{
+  reviewAverage: string
+  reviewCount: string
+  styleId: string
+  styleName: string
+}>
