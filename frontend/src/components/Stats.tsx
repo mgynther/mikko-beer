@@ -15,56 +15,66 @@ function Stats (): JSX.Element {
         <>
           <h4>Overall</h4>
           <table className='StatsTable'>
-            <tr>
-              <td>Beers</td>
-              <td>{stats.beerCount}</td>
-            </tr>
-            <tr>
-              <td>Containers</td>
-              <td>{stats.containerCount}</td>
-            </tr>
-            <tr>
-              <td>Reviews</td>
-              <td>{stats.reviewCount}</td>
-            </tr>
-            <tr>
-              <td>Review rating average</td>
-              <td>{stats.reviewAverage}</td>
-            </tr>
-            <tr>
-              <td>Styles</td>
-              <td>{stats.styleCount}</td>
-            </tr>
+            <tbody>
+              <tr>
+                <td>Beers</td>
+                <td>{stats.beerCount}</td>
+              </tr>
+              <tr>
+                <td>Containers</td>
+                <td>{stats.containerCount}</td>
+              </tr>
+              <tr>
+                <td>Reviews</td>
+                <td>{stats.reviewCount}</td>
+              </tr>
+              <tr>
+                <td>Review rating average</td>
+                <td>{stats.reviewAverage}</td>
+              </tr>
+              <tr>
+                <td>Styles</td>
+                <td>{stats.styleCount}</td>
+              </tr>
+            </tbody>
           </table>
           <h4>Annual</h4>
           <table className='StatsTable'>
-            <tr>
-              <th>Year</th>
-              <th>Reviews</th>
-              <th>Review rating average</th>
-            </tr>
-            {stats.annual.map(year => (
+            <thead>
               <tr>
-                <td>{year.year}</td>
-                <td>{year.reviewCount}</td>
-                <td>{year.reviewAverage}</td>
+                <th>Year</th>
+                <th>Reviews</th>
+                <th>Review rating average</th>
               </tr>
-            ))}
+            </thead>
+            <tbody>
+              {stats.annual.map(year => (
+                <tr key={year.year}>
+                  <td>{year.year}</td>
+                  <td>{year.reviewCount}</td>
+                  <td>{year.reviewAverage}</td>
+                </tr>
+              ))}
+            </tbody>
           </table>
           <h4>By style</h4>
           <table className='StatsTable'>
-            <tr>
-              <th>Style</th>
-              <th>Reviews</th>
-              <th>Review rating average</th>
-            </tr>
-            {stats.styles.map(style => (
+            <thead>
               <tr>
-                <td>{style.styleName}</td>
-                <td>{style.reviewCount}</td>
-                <td>{style.reviewAverage}</td>
+                <th>Style</th>
+                <th>Reviews</th>
+                <th>Review rating average</th>
               </tr>
-            ))}
+            </thead>
+            <tbody>
+              {stats.styles.map(style => (
+                <tr key={style.styleId}>
+                  <td>{style.styleName}</td>
+                  <td>{style.reviewCount}</td>
+                  <td>{style.reviewAverage}</td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </>
       )}
