@@ -7,6 +7,7 @@ import { useListReviewsByBeerQuery } from '../store/review/api'
 
 import { joinSortedNames } from './util'
 
+import BreweryLinks from './BreweryLinks'
 import LoadingIndicator from './LoadingIndicator'
 import Review, { ReviewHeading } from './Review'
 
@@ -33,7 +34,9 @@ function Beer (): JSX.Element {
       <h3>{ beer.name }</h3>
       <div className='BeerInfo'>
         <h5>Breweries</h5>
-        <div>{joinSortedNames(beer.breweries)}</div>
+        <div>
+          <BreweryLinks breweries={beer.breweries} />
+        </div>
       </div>
       <div className='BeerInfo'>
         <h5>Styles</h5>
