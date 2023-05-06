@@ -84,7 +84,8 @@ input[type=text],
 input[type=password],
 input[type=datetime-local],
 select {
-  width: 100%;
+  padding: 1px 2px;
+  width: calc(100% - 8px);
   margin: auto;
 }
 
