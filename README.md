@@ -4,14 +4,15 @@ Mikko Beer is a hobby, learning and showcase web app by Mikko Gynther. See `back
 
 The goal of this project is readable, testable and elegant code (although we are not there yet). Scope will most likely be limited compared to real-world applications but I will try to address also issues beyond the scope of this project in interfaces and code comments.
 
-At the moment the code is in very early and rough state but in use. In addition to missing features (such as statistics) plenty of technical shortcuts have been taken to get a minimum set of features into use. Important future work includes:
+At the moment the code is in early and partially rough state but in use. In addition to missing features (such as style relationship aware statistics) technical shortcuts have been taken to get a minimum set of features into use. Important future work includes:
 
-* Efficient queries that support (future) UX. Currently there's a fair amount of fetching all data to frontend, including but not limited to client side searches which will be replaced by server-side searches, more infinite scrolling etc.
+* UX review and query efficiency including proper DB indices.
 * E2E testing, at least essential use cases.
 * Frontend unit testing. It will be interesting to see how RTK can be handled. Options include at least wrapping & mocking/stubbing/faking and refactoring to avoid RTK in tests.
 * Editing and deleting data in the frontend which is currently missing in most places.
 * New views that support showing relevant data.
 * Re-calculating password hash on login which enables adding cryptographic complexity meaning improving security in the future.
+* Localization although I may opt out implementing it as I don't need other languages myself.
 
 ## Acknowledgements
 
