@@ -17,9 +17,6 @@
   cursor: pointer;
 }
 
-.Review:nth-child(even) {background: rgba(0,0,0,0.2)}
-.Review:nth-child(odd) {background: rgba(0,0,0,0.3)}
-
 .Review-primary-info-row,
 .Review-secondary-info-row,
 .Review-additional-row {

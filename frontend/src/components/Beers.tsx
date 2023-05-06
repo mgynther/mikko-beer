@@ -58,7 +58,7 @@ function Beers (): JSX.Element {
       </div>
       <div>
         {loadedBeers.map((beer: Beer) => (
-          <div className='BeerRow' key={beer.id}>
+          <div className='BeerRow RowLike' key={beer.id}>
             <div className='BeerName'>
               <BeerLink beer={beer} />
             </div>

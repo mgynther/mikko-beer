@@ -52,7 +52,7 @@ function Review (props: Props): JSX.Element {
   }
 
   return (
-    <div className='Review' key={review.id} onClick={() => {
+    <div className='Review RowLike' key={review.id} onClick={() => {
       if (fullReview === undefined) {
         void fetchReview(review.id)
         return

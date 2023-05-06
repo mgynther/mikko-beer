@@ -2,12 +2,20 @@ body {
   background-color: #282c34;
 }
 
+body.light {
+  background-color: hsl(220, 3%, 97%);
+}
+
 .App {
   display: flex;
   flex-direction: column;
   font-size: calc(10px + 2vmin);
   color: white;
   align-items: center;
+}
+
+body.light .App {
+  color: black;
 }
 
 .AppContent {
@@ -32,6 +40,10 @@ nav ul li {
 
 nav ul li a {
   color: white;
+}
+
+nav ul li a,
+nav ul li label {
   font-size: 18px;
 }
 
@@ -44,8 +56,29 @@ a {
   color: white;
 }
 
-tr:nth-child(even) {background: rgba(0,0,0,0.2)}
-tr:nth-child(odd) {background: rgba(0,0,0,0.3)}
+body.light a {
+  color: black;
+}
+
+.RowLike:nth-child(odd),
+tr:nth-child(odd) {
+  background: rgba(0,0,0,0.2)
+}
+
+body.light .RowLike:nth-child(odd),
+body.light tr:nth-child(odd) {
+  background: rgba(0,0,0,0.05)
+}
+
+.RowLike:nth-child(even),
+tr:nth-child(even) {
+  background: rgba(0,0,0,0.3)
+}
+
+body.light .RowLike:nth-child(even),
+body.light tr:nth-child(even) {
+  background: rgba(0,0,0,0.1)
+}
 
 input[type=text],
 input[type=password],

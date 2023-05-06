@@ -13,15 +13,17 @@ import {
 
 import * as emptySplitApi from './api'
 import loginReducer from './login/reducer'
+import themeReducer from './theme/reducer'
 
 const persistConfig = {
   key: 'login',
   storage,
-  whitelist: ['login']
+  whitelist: ['login', 'theme']
 }
 
 export const rootReducers = combineReducers({
   login: loginReducer,
+  theme: themeReducer,
   [emptySplitApi.reducerPath]: emptySplitApi.reducer
 })
 const persistedReducer = persistReducer(persistConfig, rootReducers)

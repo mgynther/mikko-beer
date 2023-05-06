@@ -11,7 +11,13 @@ button.TabButton {
   cursor: pointer;
 }
 
-button.TabButton.Selected {
+body.light button.TabButton {
+  color: black;
+}
+
+button.TabButton.Selected,
+body.light button.TabButton.Selected
+{
   border-bottom: 2px solid hsl(200, 50%, 50%);
   color: hsl(200, 50%, 50%);
 }

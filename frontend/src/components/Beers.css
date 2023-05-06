@@ -5,8 +5,9 @@
 }
 
 .BeerHeading {
-  font-weight: 600;
+  font-size: 12px;
   margin-top: 20px;
+  margin-bottom: 15px;
 }
 
 .BeerHeading div,
@@ -21,14 +22,4 @@
 
 .BeerStyles {
   width: 20%;
-}
-
-.BeerHeading:nth-child(even),
-.BeerRow:nth-child(even) {
-  background: rgba(0,0,0,0.2)
-}
-
-.BeerHeading:nth-child(odd),
-.BeerRow:nth-child(odd) {
-  background: rgba(0,0,0,0.3)
 }

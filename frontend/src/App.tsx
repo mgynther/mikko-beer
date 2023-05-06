@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Routes, Route, Link, Outlet } from 'react-router-dom'
 
 import { Role } from './store/user/types'
+import { useAppDispatch } from './store/hooks'
 
 import './App.css'
 
@@ -21,11 +22,14 @@ import Users from './components/Users'
 
 import { useLogoutMutation } from './store/login/api'
 import { type Login, selectLogin } from './store/login/reducer'
+import { Theme, selectTheme, setTheme } from './store/theme/reducer'
 
 interface LayoutProps {
   isAdmin: boolean
   isLoggedIn: boolean
   logout: () => void
+  theme: Theme
+  setTheme: (theme: Theme) => void
 }
 
 function Layout (props: LayoutProps): JSX.Element {
@@ -68,6 +72,18 @@ function Layout (props: LayoutProps): JSX.Element {
                   <Link to="/stats">Statistics</Link>
                 </li>
                 <li>
+                  <label>
+                    <input
+                      type='checkbox'
+                      checked={props.theme === Theme.DARK}
+                      onChange={(e) => {
+                        props.setTheme(
+                          e.target.checked ? Theme.DARK : Theme.LIGHT)
+                      }} />
+                    Dark
+                    </label>
+                </li>
+                <li>
                   <button onClick={props.logout}>Logout</button>
                 </li>
               </ul>
@@ -83,6 +99,16 @@ function Layout (props: LayoutProps): JSX.Element {
 
 function App (): JSX.Element {
   const login: Login = useSelector(selectLogin)
+  const theme: Theme = useSelector(selectTheme)
+  useEffect(() => {
+    const bodyElements = document.getElementsByTagName('body')
+    if (theme === Theme.DARK) {
+      bodyElements[0].removeAttribute('class')
+    } else {
+      bodyElements[0].setAttribute('class', 'light')
+    }
+  }, [theme])
+  const dispatch = useAppDispatch()
   const isLoggedIn: boolean = login.authToken?.length > 0
   const [logout] = useLogoutMutation()
   const isAdmin = login?.user?.role === Role.admin
@@ -101,6 +127,10 @@ function App (): JSX.Element {
                       refreshToken: login.refreshToken
                     }
                   })
+                }}
+                theme={theme}
+                setTheme={(theme: Theme) => {
+                  dispatch(setTheme(theme))
                 }}
               />
             }>
