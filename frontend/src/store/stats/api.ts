@@ -6,6 +6,7 @@ import {
   type AnnualStats,
   type BreweryStats,
   type OverallStats,
+  type RatingStats,
   type StyleStats,
   StatsTags
 } from './types'
@@ -33,6 +34,13 @@ const statsApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [StatsTags.Overall]
     }),
+    getRatingStats: build.query<RatingStats, void>({
+      query: () => ({
+        url: '/stats/rating',
+        method: 'GET'
+      }),
+      providesTags: [StatsTags.Rating]
+    }),
     getStyleStats: build.query<StyleStats, void>({
       query: () => ({
         url: '/stats/style',
@@ -46,6 +54,7 @@ const statsApi = emptySplitApi.injectEndpoints({
 export const {
   useGetAnnualStatsQuery,
   useGetOverallStatsQuery,
+  useGetRatingStatsQuery,
   useGetStyleStatsQuery,
   useLazyGetBreweryStatsQuery
 } = statsApi

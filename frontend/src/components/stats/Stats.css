@@ -1,5 +1,6 @@
 .StatsModeContainer {
   display: flex;
+  flex-wrap: wrap;
 }
 
 table.StatsTable {

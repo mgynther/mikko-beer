@@ -8,6 +8,7 @@ import {
   type AnnualStats,
   type BreweryStats,
   type OverallStats,
+  type RatingStats,
   type StyleStats
 } from '../../src/stats/stats'
 import { type Style } from '../../src/style/style'
@@ -319,6 +320,44 @@ describe('stats tests', () => {
     expect(nokiaAverage).to.equal('7.33')
     expect(lindemansRatings.length).to.equal(3)
     expect(lindemansAverage).to.equal('6.67')
+  })
+
+  it('should get rating stats', async () => {
+    const {
+      beers,
+      breweries,
+      reviews,
+      containers,
+      styles
+    } = await createDeps(ctx.adminAuthHeaders())
+
+    const statsRes = await ctx.request.get<{ rating: RatingStats }>(
+      '/api/v1/stats/rating',
+      ctx.adminAuthHeaders()
+    )
+    expect(statsRes.status).to.equal(200)
+    const stats = reviews
+      .reduce((ratingStats: Array<{ rating: number,  count: number }>, reviewRes) => {
+      const rating = reviewRes.data.review.rating as unknown as number
+      const existing = ratingStats.find(r => r.rating === rating)
+      if (existing === undefined) {
+        ratingStats.push({ rating, count: 1 })
+        return ratingStats
+      }
+      existing.count++
+      return ratingStats
+    }, [])
+    stats.sort((a, b) => a.rating - b.rating)
+    const expectedStats = stats.map(s => ({
+      rating: `${s.rating}`,
+      count: `${s.count}`
+    }))
+    expect(statsRes.data.rating).to.eql(expectedStats)
+    expect(statsRes.data.rating).to.eql([
+      { rating: '5', count: '1' },
+      { rating: '7', count: '2' },
+      { rating: '8', count: '1' }
+    ])
   })
 
   it('should get style stats', async () => {

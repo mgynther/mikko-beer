@@ -20,6 +20,11 @@ export interface OverallStats {
   styleCount: string
 }
 
+export type RatingStats = Array<{
+  rating: string
+  count: string
+}>
+
 export type StyleStats = Array<{
   reviewAverage: string
   reviewCount: string

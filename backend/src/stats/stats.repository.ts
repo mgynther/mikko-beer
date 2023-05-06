@@ -7,6 +7,7 @@ import {
   type AnnualStats,
   type BreweryStats,
   type OverallStats,
+  type RatingStats,
   type StyleStats
 } from './stats'
 
@@ -112,6 +113,31 @@ export async function getOverall (
     reviewCount: `${stats.review_count}`,
     styleCount: `${stats.style_count}`
   }
+}
+
+export async function getRating (
+  db: Database
+): Promise<RatingStats> {
+  const styleQuery = sql`SELECT
+    review.rating as rating,
+    COUNT(1) as count
+    FROM review
+    GROUP BY review.rating
+    ORDER BY review.rating ASC
+  `
+
+  const style = (await styleQuery
+    .execute(db.getDb()) as {
+    rows: Array<{
+      rating: number
+      count: number
+    }>
+  })
+
+  return style.rows.map(row => ({
+    rating: `${row.rating}`,
+    count: `${row.count}`
+  }))
 }
 
 export async function getStyle (

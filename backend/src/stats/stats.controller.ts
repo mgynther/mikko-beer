@@ -32,6 +32,16 @@ export function statsController (router: Router): void {
       ctx.body = { brewery }
     }
   )
+
+  router.get(
+    '/api/v1/stats/rating',
+    authService.authenticateViewer,
+    async (ctx) => {
+      const rating = await statsService.getRating(ctx.db)
+      ctx.body = { rating }
+    }
+  )
+
   router.get(
     '/api/v1/stats/style',
     authService.authenticateViewer,

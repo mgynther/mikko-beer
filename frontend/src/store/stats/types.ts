@@ -26,6 +26,13 @@ export interface BreweryStats {
   brewery: OneBreweryStats[]
 }
 
+export interface RatingStats {
+  rating: Array<{
+    rating: string
+    count: string
+  }>
+}
+
 export interface StyleStats {
   style: Array<{
     reviewAverage: string
@@ -39,6 +46,7 @@ export enum StatsTags {
   Annual = 'Annual',
   Brewery = 'Brewery',
   Overall = 'Overall',
+  Rating = 'Rating',
   Style = 'Style'
 }
 
@@ -47,6 +55,7 @@ export function allStatsTagTypes (): string[] {
     StatsTags.Annual,
     StatsTags.Brewery,
     StatsTags.Overall,
+    StatsTags.Rating,
     StatsTags.Style
   ]
 }

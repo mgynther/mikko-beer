@@ -7,6 +7,7 @@ import {
   type AnnualStats,
   type BreweryStats,
   type OverallStats,
+  type RatingStats,
   type StyleStats
 } from './stats'
 
@@ -27,6 +28,12 @@ export async function getOverall (
   db: Database
 ): Promise<OverallStats> {
   return await statsRepository.getOverall(db)
+}
+
+export async function getRating (
+  db: Database
+): Promise<RatingStats> {
+  return await statsRepository.getRating(db)
 }
 
 export async function getStyle (

@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Annual from './Annual'
 import Brewery from './Brewery'
 import Overall from './Overall'
+import Rating from './Rating'
 import Style from './Style'
 
 import TabButton from '../TabButton'
@@ -11,6 +12,7 @@ enum Mode {
   Annual = 'Annual',
   Brewery = 'Brewery',
   Overall = 'Overall',
+  Rating = 'Rating',
   Style = 'Style',
 }
 
@@ -29,6 +31,10 @@ function Stats (): JSX.Element {
     {
       mode: Mode.Brewery,
       title: 'Brewery'
+    },
+    {
+      mode: Mode.Rating,
+      title: 'Rating'
     },
     {
       mode: Mode.Style,
@@ -52,6 +58,7 @@ function Stats (): JSX.Element {
       {mode === Mode.Annual && <Annual />}
       {mode === Mode.Brewery && <Brewery />}
       {mode === Mode.Overall && <Overall />}
+      {mode === Mode.Rating && <Rating />}
       {mode === Mode.Style && <Style />}
     </div>
   )
