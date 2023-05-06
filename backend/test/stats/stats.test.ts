@@ -188,6 +188,8 @@ describe('stats tests', () => {
     expect(statsRes.status).to.equal(200)
     expect(statsRes.data.overall.beerCount).to.equal(`${beers.length}`)
     expect(beers.length).to.equal(3)
+    expect(statsRes.data.overall.breweryCount).to.equal(`${breweries.length}`)
+    expect(breweries.length).to.equal(2)
     expect(statsRes.data.overall.containerCount).to.equal(`${containers.length}`)
     expect(containers.length).to.equal(1)
     expect(statsRes.data.overall.reviewCount).to.equal(`${reviews.length}`)

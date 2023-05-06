@@ -13,6 +13,7 @@ export type BreweryStats = Array<{
 
 export interface OverallStats {
   beerCount: string
+  breweryCount: string
   containerCount: string
   reviewAverage: string
   reviewCount: string

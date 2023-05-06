@@ -18,6 +18,10 @@ function Overall (): JSX.Element {
               <td>{overall.beerCount}</td>
             </tr>
             <tr>
+              <td>Breweries</td>
+              <td>{overall.breweryCount}</td>
+            </tr>
+            <tr>
               <td>Containers</td>
               <td>{overall.containerCount}</td>
             </tr>

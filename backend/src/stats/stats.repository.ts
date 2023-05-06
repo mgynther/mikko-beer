@@ -86,6 +86,7 @@ export async function getOverall (
 ): Promise<OverallStats> {
   const statsQuery = sql`SELECT
     (SELECT COUNT(1) FROM beer) AS beer_count,
+    (SELECT COUNT(1) FROM brewery) AS brewery_count,
     (SELECT COUNT(1) FROM container) AS container_count,
     (SELECT COUNT(1) FROM review) AS review_count,
     (SELECT COUNT(1) FROM style) AS style_count,
@@ -95,6 +96,7 @@ export async function getOverall (
     .execute(db.getDb()) as {
     rows: Array<{
       beer_count: number
+      brewery_count: number
       container_count: number
       review_count: number
       review_average: number
@@ -104,6 +106,7 @@ export async function getOverall (
 
   return {
     beerCount: `${stats.beer_count}`,
+    breweryCount: `${stats.brewery_count}`,
     containerCount: `${stats.container_count}`,
     reviewAverage: round(stats.review_average, 2),
     reviewCount: `${stats.review_count}`,
