@@ -51,12 +51,17 @@ function AddReview (): JSX.Element {
     return `${str(y)}-${str(mo)}-${str(d)}T${str(h)}:${str(mi)}`
   }
   const [time, setTime] = useState(localDateTime())
+  // Very crude validation may let garbage pass but assuming datetime-local
+  // implementations set invalid or missing input to an empty string or
+  // similar it should be fine.
+  const isTimeValid = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(time)
 
   const isMissingData =
     beer === undefined ||
     container === undefined ||
     smell.length === 0 ||
-    taste.length === 0
+    taste.length === 0 ||
+    !isTimeValid
 
   async function doAddReview (event: any): Promise<void> {
     event.preventDefault()
