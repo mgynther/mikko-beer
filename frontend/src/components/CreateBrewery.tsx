@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useCreateBreweryMutation } from '../store/brewery/api'
 import { type Brewery } from '../store/brewery/types'
 
+import BreweryEditor from './BreweryEditor'
 import LoadingIndicator from './LoadingIndicator'
 
 export interface Props {
@@ -10,15 +11,22 @@ export interface Props {
 }
 
 function CreateBrewery (props: Props): JSX.Element {
-  const [name, setName] = useState('')
+  const [initialBrewery] = useState<Brewery>({
+    id: 'newbrewery',
+    name: ''
+  })
+  const [newBrewery, setNewBrewery] = useState<Brewery | undefined>(undefined)
   const [
     createBrewery,
     { isLoading: isCreating }
   ] = useCreateBreweryMutation()
 
   async function doCreate (): Promise<void> {
+    if (newBrewery === undefined) {
+      throw new Error('brewery must not be undefined when creating')
+    }
     try {
-      const result = await createBrewery(name).unwrap()
+      const result = await createBrewery(newBrewery.name).unwrap()
       props.select(result.brewery)
     } catch (e) {
       console.warn('Failed to create brewery', e)
@@ -27,14 +35,13 @@ function CreateBrewery (props: Props): JSX.Element {
 
   return (
     <>
-      <input
-        type='text'
+      <BreweryEditor
+        brewery={initialBrewery}
         placeholder='Create brewery'
-        value={name}
-        onChange={e => { setName(e.target.value) }}
+        onChange={(brewery: Brewery | undefined) => { setNewBrewery(brewery) }}
       />
       <button
-        disabled={name.trim().length === 0}
+        disabled={newBrewery === undefined}
         onClick={() => { void doCreate() }}
       >
         Create

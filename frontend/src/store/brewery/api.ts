@@ -2,6 +2,10 @@ import { emptySplitApi } from '../api'
 
 import { type Pagination } from '../types'
 
+import { BeerTags } from '../beer/types'
+import { ReviewTags } from '../review/types'
+import { breweryStatsTagTypes } from '../stats/types'
+
 import {
   type Brewery,
   type BreweryList,
@@ -45,6 +49,21 @@ const breweryApi = emptySplitApi.injectEndpoints({
         }
       }),
       invalidatesTags: [BreweryTags.Brewery]
+    }),
+    updateBrewery: build.mutation<{ brewery: Brewery }, Brewery>({
+      query: (brewery: Brewery) => ({
+        url: `/brewery/${brewery.id}`,
+        method: 'PUT',
+        body: {
+          name: brewery.name
+        }
+      }),
+      invalidatesTags: [
+        BeerTags.Beer,
+        BreweryTags.Brewery,
+        ...breweryStatsTagTypes(),
+        ReviewTags.Review
+      ]
     })
   })
 })
@@ -54,7 +73,8 @@ export const {
   useGetBreweryQuery,
   useLazyListBreweriesQuery,
   useLazySearchBreweriesQuery,
-  useListBreweriesQuery
+  useListBreweriesQuery,
+  useUpdateBreweryMutation
 } = breweryApi
 
 export const { endpoints, reducerPath, reducer, middleware } = breweryApi
