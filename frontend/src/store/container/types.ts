@@ -9,8 +9,6 @@ export interface Container {
   size: string
 }
 
-export type ContainerMap = Record<string, Container>
-
 export interface ContainerList {
   containers: Container[]
 }

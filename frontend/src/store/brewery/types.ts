@@ -3,8 +3,6 @@ export interface Brewery {
   name: string
 }
 
-export type BreweryMap = Record<string, Brewery>
-
 export interface BreweryList {
   breweries: Brewery[]
 }
