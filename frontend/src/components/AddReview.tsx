@@ -103,7 +103,7 @@ function AddReview (): JSX.Element {
                 setContainer(container)
               }} />
               : (<div onClick={() => { setContainer(undefined) }}>
-                  {`Container: ${container.type} ${container.size}`}
+                  {`${container.type} ${container.size}`}
                 </div>)
             }
           </div>
