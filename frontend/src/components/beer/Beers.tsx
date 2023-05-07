@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { useLazyListBeersQuery } from '../../store/beer/api'
-import { type Beer } from '../../store/beer/types'
+import { type Beer, type BeerWithIds } from '../../store/beer/types'
 import { infiniteScroll, joinSortedNames } from '../util'
 
 import BreweryLinks from '../brewery/BreweryLinks'
@@ -47,7 +47,7 @@ function Beers (): JSX.Element {
   return (
     <div>
       <h3>Beers</h3>
-      <SearchBeer select={(beer) => {
+      <SearchBeer select={(beer: BeerWithIds) => {
         navigate(`/beers/${beer.id}`)
       }} />
       {isLoading && (<div>Loading...</div>)}
