@@ -1,6 +1,6 @@
 import { useLoginMutation } from '../../store/login/api'
 
-import LoadingIndicator from '../LoadingIndicator'
+import LoadingIndicator from '../common/LoadingIndicator'
 
 function Login (): JSX.Element {
   const [login, { isLoading }] = useLoginMutation()

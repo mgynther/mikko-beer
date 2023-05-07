@@ -5,7 +5,7 @@ import { type Brewery } from '../../store/brewery/types'
 
 import SelectBrewery from './SelectBrewery'
 
-import '../SelectedItem.css'
+import '../common/SelectedItem.css'
 
 import './SelectBreweries.css'
 

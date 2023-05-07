@@ -6,8 +6,8 @@ import { useGetBreweryQuery } from '../../store/brewery/api'
 import { type Brewery as BreweryType } from '../../store/brewery/types'
 import { useListReviewsByBreweryQuery } from '../../store/review/api'
 
-import EditButton from '../EditButton'
-import LoadingIndicator from '../LoadingIndicator'
+import EditButton from '../common/EditButton'
+import LoadingIndicator from '../common/LoadingIndicator'
 import ReviewList from '../review/ReviewList'
 
 import UpdateBrewery from './UpdateBrewery'

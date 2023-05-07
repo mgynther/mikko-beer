@@ -6,7 +6,7 @@ import { type Brewery } from '../../store/brewery/types'
 
 import { infiniteScroll } from '../util'
 
-import LoadingIndicator from '../LoadingIndicator'
+import LoadingIndicator from '../common/LoadingIndicator'
 
 import SearchBrewery from './SearchBrewery'
 

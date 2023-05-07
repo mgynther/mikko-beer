@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { type Style } from '../../store/style/types'
 
-import { Mode, SelectCreateRadioBasic } from '../SelectCreateRadio'
+import { Mode, SelectCreateRadioBasic } from '../common/SelectCreateRadio'
 
 import CreateStyle from './CreateStyle'
 import SearchStyle from './SearchStyle'

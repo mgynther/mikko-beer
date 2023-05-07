@@ -8,7 +8,7 @@ import { useListReviewsByBeerQuery } from '../../store/review/api'
 import { joinSortedNames } from '../util'
 
 import BreweryLinks from '../brewery/BreweryLinks'
-import LoadingIndicator from '../LoadingIndicator'
+import LoadingIndicator from '../common/LoadingIndicator'
 import ReviewList from '../review/ReviewList'
 
 import './Beer.css'

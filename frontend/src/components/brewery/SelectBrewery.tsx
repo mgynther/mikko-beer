@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { type Brewery } from '../../store/brewery/types'
 
-import { Mode, SelectCreateRadioBasic } from '../SelectCreateRadio'
+import { Mode, SelectCreateRadioBasic } from '../common/SelectCreateRadio'
 
 import CreateBrewery from './CreateBrewery'
 import SearchBrewery from './SearchBrewery'

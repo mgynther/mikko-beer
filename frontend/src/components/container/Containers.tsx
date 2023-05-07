@@ -1,7 +1,7 @@
 import { useListContainersQuery } from '../../store/container/api'
 import { type Container } from '../../store/container/types'
 
-import LoadingIndicator from '../LoadingIndicator'
+import LoadingIndicator from '../common/LoadingIndicator'
 
 function Containers (): JSX.Element {
   const { data: containerData, isLoading } = useListContainersQuery()

@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useCreateBreweryMutation } from '../../store/brewery/api'
 import { type Brewery } from '../../store/brewery/types'
 
-import LoadingIndicator from '../LoadingIndicator'
+import LoadingIndicator from '../common/LoadingIndicator'
 
 import BreweryEditor from './BreweryEditor'
 

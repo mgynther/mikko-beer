@@ -9,7 +9,7 @@ import {
   selectPasswordChangeResult
 } from '../../store/login/reducer'
 
-import LoadingIndicator from '../LoadingIndicator'
+import LoadingIndicator from '../common/LoadingIndicator'
 
 import './ChangePassword.css'
 

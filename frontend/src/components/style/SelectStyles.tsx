@@ -5,7 +5,7 @@ import { type Style } from '../../store/style/types'
 
 import SelectStyle from './SelectStyle'
 
-import '../SelectedItem.css'
+import '../common/SelectedItem.css'
 
 import './SelectStyles.css'
 

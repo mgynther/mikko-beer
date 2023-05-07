@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useCreateStyleMutation } from '../../store/style/api'
 import { type Style } from '../../store/style/types'
 
-import LoadingIndicator from '../LoadingIndicator'
+import LoadingIndicator from '../common/LoadingIndicator'
 
 import StyleParents from './StyleParents'
 

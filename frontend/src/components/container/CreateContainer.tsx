@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useCreateContainerMutation } from '../../store/container/api'
 import { type Container } from '../../store/container/types'
 
-import LoadingIndicator from '../LoadingIndicator'
+import LoadingIndicator from '../common/LoadingIndicator'
 
 export interface Props {
   select: (container: Container) => void

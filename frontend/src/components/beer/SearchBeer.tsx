@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useLazySearchBeersQuery } from '../../store/beer/api'
 import { type Beer, type BeerWithIds } from '../../store/beer/types'
 
-import SearchBox from '../SearchBox'
+import SearchBox from '../common/SearchBox'
 
 import { joinSortedNames, useDebounce } from '../util'
 

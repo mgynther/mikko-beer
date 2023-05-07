@@ -6,7 +6,7 @@ import Overall from './Overall'
 import Rating from './Rating'
 import Style from './Style'
 
-import TabButton from '../TabButton'
+import TabButton from '../common/TabButton'
 
 enum Mode {
   Annual = 'Annual',

@@ -1,6 +1,6 @@
 import { type BeerWithIds } from '../../store/beer/types'
 
-import SelectCreateRadio, { Mode } from '../SelectCreateRadio'
+import SelectCreateRadio, { Mode } from '../common/SelectCreateRadio'
 
 import CreateBeer from './CreateBeer'
 import SearchBeer from './SearchBeer'

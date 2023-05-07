@@ -1,8 +1,8 @@
 import { useListContainersQuery } from '../../store/container/api'
 import { type Container } from '../../store/container/types'
 
-import LoadingIndicator from '../LoadingIndicator'
-import SelectCreateRadio, { Mode } from '../SelectCreateRadio'
+import LoadingIndicator from '../common/LoadingIndicator'
+import SelectCreateRadio, { Mode } from '../common/SelectCreateRadio'
 
 import CreateContainer from './CreateContainer'
 

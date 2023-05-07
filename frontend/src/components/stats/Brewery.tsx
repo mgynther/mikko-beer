@@ -4,7 +4,7 @@ import { useLazyGetBreweryStatsQuery } from '../../store/stats/api'
 import { type OneBreweryStats } from '../../store/stats/types'
 import { infiniteScroll } from '../util'
 
-import LoadingIndicator from '../LoadingIndicator'
+import LoadingIndicator from '../common/LoadingIndicator'
 
 import './Brewery.css'
 import './Stats.css'

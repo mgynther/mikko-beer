@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useLazySearchBreweriesQuery } from '../../store/brewery/api'
 import { type Brewery } from '../../store/brewery/types'
 
-import SearchBox, { nameFormatter } from '../SearchBox'
+import SearchBox, { nameFormatter } from '../common/SearchBox'
 
 import { useDebounce } from '../util'
 

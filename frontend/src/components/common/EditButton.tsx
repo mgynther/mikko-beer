@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 
-import { type Login, selectLogin } from '../store/login/reducer'
-import { Role } from '../store/user/types'
+import { type Login, selectLogin } from '../../store/login/reducer'
+import { Role } from '../../store/user/types'
 
 import './EditButton.css'
 

@@ -1,6 +1,6 @@
 import { useGetAnnualStatsQuery } from '../../store/stats/api'
 
-import LoadingIndicator from '../LoadingIndicator'
+import LoadingIndicator from '../common/LoadingIndicator'
 
 import './Stats.css'
 
