@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
-import { useCreateUserMutation } from '../store/user/api'
+import { useCreateUserMutation } from '../../store/user/api'
 
-import LoadingIndicator from './LoadingIndicator'
+import LoadingIndicator from '../LoadingIndicator'
 
 import './CreateUser.css'
 

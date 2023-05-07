@@ -1,8 +1,9 @@
-import { useDeleteUserMutation, useListUsersQuery } from '../store/user/api'
-import { type User } from '../store/user/types'
+import { useDeleteUserMutation, useListUsersQuery } from '../../store/user/api'
+import { type User } from '../../store/user/types'
+
+import LoadingIndicator from '../LoadingIndicator'
 
 import CreateUser from './CreateUser'
-import LoadingIndicator from './LoadingIndicator'
 
 function Users (): JSX.Element {
   const { data: userData, isLoading } = useListUsersQuery()

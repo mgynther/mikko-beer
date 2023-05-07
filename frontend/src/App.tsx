@@ -18,7 +18,7 @@ import LoginComponent from './components/Login'
 import Reviews from './components/Reviews'
 import Stats from './components/stats/Stats'
 import Styles from './components/Styles'
-import Users from './components/Users'
+import Users from './components/user/Users'
 
 import { useLogoutMutation } from './store/login/api'
 import { type Login, selectLogin } from './store/login/reducer'
