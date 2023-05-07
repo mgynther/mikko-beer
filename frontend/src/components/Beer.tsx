@@ -9,7 +9,7 @@ import { joinSortedNames } from './util'
 
 import BreweryLinks from './brewery/BreweryLinks'
 import LoadingIndicator from './LoadingIndicator'
-import Review, { ReviewHeading } from './Review'
+import ReviewList from './ReviewList'
 
 import './Beer.css'
 import './Review.css'
@@ -42,15 +42,11 @@ function Beer (): JSX.Element {
         <h5>Styles</h5>
         <div>{joinSortedNames(beer.styles)}</div>
       </div>
-      <LoadingIndicator isLoading={isLoadingReviews} />
-      <div className="Review-content">
-        <ReviewHeading />
-        <div>
-          {reviewData?.reviews.map(review => (
-            <Review key={review.id} review={review} />
-          ))}
-        </div>
-      </div>
+      <ReviewList
+        isLoading={isLoadingReviews}
+        isTitleVisible={true}
+        reviews={reviewData?.reviews ?? []}
+      />
     </div>
   )
 }

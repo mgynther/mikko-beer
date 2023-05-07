@@ -1,17 +1,3 @@
-.Review-content {
-  font-size: 12px;
-  display: flex;
-  flex-direction: column;
-}
-
-.Review-heading {
-  display: flex;
-  flex-direction: row;
-  margin-left: 5px;
-  margin-right: 5px;
-  margin-bottom: 15px;
-}
-
 .Review {
   padding-bottom: 20px;
   cursor: pointer;

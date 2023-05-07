@@ -8,11 +8,9 @@ import { useListReviewsByBreweryQuery } from '../../store/review/api'
 
 import EditButton from '../EditButton'
 import LoadingIndicator from '../LoadingIndicator'
-import Review, { ReviewHeading } from '../Review'
+import ReviewList from '../ReviewList'
 
 import UpdateBrewery from './UpdateBrewery'
-
-import '../Review.css'
 
 function NotFound (): JSX.Element {
   return <div>Not found</div>
@@ -65,16 +63,11 @@ function Brewery (): JSX.Element {
           }}
         />
       )}
-      <h4>Reviews</h4>
-      <LoadingIndicator isLoading={isLoadingReviews} />
-      <div className="Review-content">
-        <ReviewHeading />
-        <div>
-          {reviewData?.reviews.map(review => (
-            <Review key={review.id} review={review} />
-          ))}
-        </div>
-      </div>
+      <ReviewList
+        isLoading={isLoadingReviews}
+        isTitleVisible={true}
+        reviews={reviewData?.reviews ?? []}
+      />
     </div>
   )
 }

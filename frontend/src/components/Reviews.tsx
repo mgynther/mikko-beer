@@ -3,8 +3,7 @@ import { useEffect, useState } from 'react'
 import { useLazyListReviewsQuery } from '../store/review/api'
 import { type JoinedReview } from '../store/review/types'
 
-import LoadingIndicator from './LoadingIndicator'
-import Review, { ReviewHeading } from './Review'
+import ReviewList from './ReviewList'
 import { infiniteScroll } from './util'
 
 import './Review.css'
@@ -41,17 +40,11 @@ function Reviews (): JSX.Element {
   return (
     <div>
       <h3>Reviews</h3>
-      <LoadingIndicator isLoading={isLoading} />
-      <div className="Review-content">
-        <ReviewHeading />
-        <div>
-          {loadedReviews.map((review) => {
-            return (
-              <Review key={review.id} review={review} />
-            )
-          })}
-        </div>
-      </div>
+      <ReviewList
+        isLoading={isLoading}
+        isTitleVisible={false}
+        reviews={loadedReviews}
+      />
     </div>
   )
 }

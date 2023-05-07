@@ -12,18 +12,6 @@ import { joinSortedNames } from './util'
 
 import './Review.css'
 
-export function ReviewHeading (): JSX.Element {
-  return (
-    <div className='Review-heading'>
-      <div>Breweries</div>
-      <div>Name</div>
-      <div>Styles</div>
-      <div className='Review-rating-heading'>Rating</div>
-      <div className='Review-time-heading'>Time</div>
-    </div>
-  )
-}
-
 interface Props {
   review: JoinedReview
 }
