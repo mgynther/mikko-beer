@@ -9,7 +9,7 @@ import { joinSortedNames } from '../util'
 
 import BreweryLinks from '../brewery/BreweryLinks'
 import LoadingIndicator from '../LoadingIndicator'
-import ReviewList from '../ReviewList'
+import ReviewList from '../review/ReviewList'
 
 import './Beer.css'
 

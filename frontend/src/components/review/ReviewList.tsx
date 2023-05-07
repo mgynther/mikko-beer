@@ -1,6 +1,7 @@
-import { type JoinedReview } from '../store/review/types'
+import { type JoinedReview } from '../../store/review/types'
 
-import LoadingIndicator from './LoadingIndicator'
+import LoadingIndicator from '../LoadingIndicator'
+
 import Review from './Review'
 
 import './ReviewList.css'

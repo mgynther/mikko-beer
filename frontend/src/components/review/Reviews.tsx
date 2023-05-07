@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 
-import { useLazyListReviewsQuery } from '../store/review/api'
-import { type JoinedReview } from '../store/review/types'
+import { useLazyListReviewsQuery } from '../../store/review/api'
+import { type JoinedReview } from '../../store/review/types'
+
+import { infiniteScroll } from '../util'
 
 import ReviewList from './ReviewList'
-import { infiniteScroll } from './util'
 
 import './Review.css'
 

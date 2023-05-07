@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 
 import { useNavigate } from 'react-router-dom'
 
-import { type BeerWithIds } from '../store/beer/types'
-import { type Container } from '../store/container/types'
-import { useCreateReviewMutation } from '../store/review/api'
+import { type BeerWithIds } from '../../store/beer/types'
+import { type Container } from '../../store/container/types'
+import { useCreateReviewMutation } from '../../store/review/api'
 
-import LoadingIndicator from './LoadingIndicator'
-import SelectBeer from './beer/SelectBeer'
-import SelectContainer from './container/SelectContainer'
+import LoadingIndicator from '../LoadingIndicator'
+import SelectBeer from '../beer/SelectBeer'
+import SelectContainer from '../container/SelectContainer'
 
 import './AddReview.css'
 

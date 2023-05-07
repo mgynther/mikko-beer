@@ -1,14 +1,14 @@
 import { useState } from 'react'
 
-import { useLazyGetReviewQuery } from '../store/review/api'
+import { useLazyGetReviewQuery } from '../../store/review/api'
 import {
   type JoinedReview,
   type Review as ReviewType
-} from '../store/review/types'
+} from '../../store/review/types'
 
-import BeerLink from './beer/BeerLink'
-import BreweryLinks from './brewery/BreweryLinks'
-import { joinSortedNames } from './util'
+import BeerLink from '../beer/BeerLink'
+import BreweryLinks from '../brewery/BreweryLinks'
+import { joinSortedNames } from '../util'
 
 import './Review.css'
 

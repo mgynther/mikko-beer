@@ -8,7 +8,7 @@ import { useListReviewsByBreweryQuery } from '../../store/review/api'
 
 import EditButton from '../EditButton'
 import LoadingIndicator from '../LoadingIndicator'
-import ReviewList from '../ReviewList'
+import ReviewList from '../review/ReviewList'
 
 import UpdateBrewery from './UpdateBrewery'
 
