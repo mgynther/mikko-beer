@@ -1,10 +1,10 @@
 import { useState } from 'react'
 
-import { useCreateBeerMutation } from '../store/beer/api'
-import { type BeerWithIds } from '../store/beer/types'
+import { useCreateBeerMutation } from '../../store/beer/api'
+import { type BeerWithIds } from '../../store/beer/types'
 
-import SelectBreweries from './brewery/SelectBreweries'
-import SelectStyles from './SelectStyles'
+import SelectBreweries from '../brewery/SelectBreweries'
+import SelectStyles from '../SelectStyles'
 
 import './CreateBeer.css'
 

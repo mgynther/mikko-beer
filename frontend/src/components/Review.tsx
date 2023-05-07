@@ -6,7 +6,7 @@ import {
   type Review as ReviewType
 } from '../store/review/types'
 
-import BeerLink from './BeerLink'
+import BeerLink from './beer/BeerLink'
 import BreweryLinks from './brewery/BreweryLinks'
 import { joinSortedNames } from './util'
 

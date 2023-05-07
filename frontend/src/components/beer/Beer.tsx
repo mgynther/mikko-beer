@@ -2,17 +2,16 @@ import React from 'react'
 
 import { useParams } from 'react-router-dom'
 
-import { useGetBeerQuery } from '../store/beer/api'
-import { useListReviewsByBeerQuery } from '../store/review/api'
+import { useGetBeerQuery } from '../../store/beer/api'
+import { useListReviewsByBeerQuery } from '../../store/review/api'
 
-import { joinSortedNames } from './util'
+import { joinSortedNames } from '../util'
 
-import BreweryLinks from './brewery/BreweryLinks'
-import LoadingIndicator from './LoadingIndicator'
-import ReviewList from './ReviewList'
+import BreweryLinks from '../brewery/BreweryLinks'
+import LoadingIndicator from '../LoadingIndicator'
+import ReviewList from '../ReviewList'
 
 import './Beer.css'
-import './Review.css'
 
 function NotFound (): JSX.Element {
   return <div>Not found</div>

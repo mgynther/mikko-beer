@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { useLazyListBeersQuery } from '../store/beer/api'
-import { type Beer } from '../store/beer/types'
-import { infiniteScroll, joinSortedNames } from './util'
+import { useLazyListBeersQuery } from '../../store/beer/api'
+import { type Beer } from '../../store/beer/types'
+import { infiniteScroll, joinSortedNames } from '../util'
+
+import BreweryLinks from '../brewery/BreweryLinks'
 
 import BeerLink from './BeerLink'
 import SearchBeer from './SearchBeer'
-
-import BreweryLinks from './brewery/BreweryLinks'
 
 import './Beers.css'
 

@@ -7,7 +7,7 @@ import { type Container } from '../store/container/types'
 import { useCreateReviewMutation } from '../store/review/api'
 
 import LoadingIndicator from './LoadingIndicator'
-import SelectBeer from './SelectBeer'
+import SelectBeer from './beer/SelectBeer'
 import SelectContainer from './SelectContainer'
 
 import './AddReview.css'

@@ -1,8 +1,9 @@
-import { type BeerWithIds } from '../store/beer/types'
+import { type BeerWithIds } from '../../store/beer/types'
+
+import SelectCreateRadio, { Mode } from '../SelectCreateRadio'
 
 import CreateBeer from './CreateBeer'
 import SearchBeer from './SearchBeer'
-import SelectCreateRadio, { Mode } from './SelectCreateRadio'
 
 import './SelectBeer.css'
 
