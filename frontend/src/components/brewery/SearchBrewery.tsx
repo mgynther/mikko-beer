@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 
-import { useLazySearchBreweriesQuery } from '../store/brewery/api'
-import { type Brewery } from '../store/brewery/types'
+import { useLazySearchBreweriesQuery } from '../../store/brewery/api'
+import { type Brewery } from '../../store/brewery/types'
 
-import SearchBox, { nameFormatter } from './SearchBox'
+import SearchBox, { nameFormatter } from '../SearchBox'
 
-import { useDebounce } from './util'
+import { useDebounce } from '../util'
 
 export interface Props {
   select: (brewery: Brewery) => void

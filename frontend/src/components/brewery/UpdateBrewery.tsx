@@ -1,10 +1,11 @@
 import { useState } from 'react'
 
-import { useUpdateBreweryMutation } from '../store/brewery/api'
-import { type Brewery } from '../store/brewery/types'
+import { useUpdateBreweryMutation } from '../../store/brewery/api'
+import { type Brewery } from '../../store/brewery/types'
+
+import EditActions from '../EditActions'
 
 import BreweryEditor from './BreweryEditor'
-import EditActions from './EditActions'
 
 interface Props {
   initialBrewery: Brewery

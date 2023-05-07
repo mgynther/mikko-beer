@@ -7,7 +7,7 @@ import { useListReviewsByBeerQuery } from '../store/review/api'
 
 import { joinSortedNames } from './util'
 
-import BreweryLinks from './BreweryLinks'
+import BreweryLinks from './brewery/BreweryLinks'
 import LoadingIndicator from './LoadingIndicator'
 import Review, { ReviewHeading } from './Review'
 

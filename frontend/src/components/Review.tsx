@@ -7,7 +7,7 @@ import {
 } from '../store/review/types'
 
 import BeerLink from './BeerLink'
-import BreweryLinks from './BreweryLinks'
+import BreweryLinks from './brewery/BreweryLinks'
 import { joinSortedNames } from './util'
 
 import './Review.css'

@@ -2,16 +2,17 @@ import React, { useState } from 'react'
 
 import { useParams } from 'react-router-dom'
 
-import { useGetBreweryQuery } from '../store/brewery/api'
-import { type Brewery as BreweryType } from '../store/brewery/types'
-import { useListReviewsByBreweryQuery } from '../store/review/api'
+import { useGetBreweryQuery } from '../../store/brewery/api'
+import { type Brewery as BreweryType } from '../../store/brewery/types'
+import { useListReviewsByBreweryQuery } from '../../store/review/api'
 
-import EditButton from './EditButton'
-import LoadingIndicator from './LoadingIndicator'
-import Review, { ReviewHeading } from './Review'
+import EditButton from '../EditButton'
+import LoadingIndicator from '../LoadingIndicator'
+import Review, { ReviewHeading } from '../Review'
+
 import UpdateBrewery from './UpdateBrewery'
 
-import './Review.css'
+import '../Review.css'
 
 function NotFound (): JSX.Element {
   return <div>Not found</div>

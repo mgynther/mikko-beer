@@ -1,10 +1,11 @@
 import { useState } from 'react'
 
-import { useCreateBreweryMutation } from '../store/brewery/api'
-import { type Brewery } from '../store/brewery/types'
+import { useCreateBreweryMutation } from '../../store/brewery/api'
+import { type Brewery } from '../../store/brewery/types'
+
+import LoadingIndicator from '../LoadingIndicator'
 
 import BreweryEditor from './BreweryEditor'
-import LoadingIndicator from './LoadingIndicator'
 
 export interface Props {
   select: (brewery: Brewery) => void

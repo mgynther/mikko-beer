@@ -1,12 +1,13 @@
 import { Fragment, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
-import { type Brewery } from '../store/brewery/types'
+import { type Brewery } from '../../store/brewery/types'
 
 import SelectBrewery from './SelectBrewery'
 
+import '../SelectedItem.css'
+
 import './BeerBreweries.css'
-import './SelectedItem.css'
 
 export interface Props {
   select: (breweries: string[]) => void

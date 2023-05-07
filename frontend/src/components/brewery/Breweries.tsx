@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-import { useLazyListBreweriesQuery } from '../store/brewery/api'
-import { type Brewery } from '../store/brewery/types'
+import { useLazyListBreweriesQuery } from '../../store/brewery/api'
+import { type Brewery } from '../../store/brewery/types'
 
-import LoadingIndicator from './LoadingIndicator'
+import { infiniteScroll } from '../util'
+
+import LoadingIndicator from '../LoadingIndicator'
+
 import SearchBrewery from './SearchBrewery'
-
-import { infiniteScroll } from './util'
 
 const pageSize = 20
 

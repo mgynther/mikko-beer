@@ -8,7 +8,7 @@ import { infiniteScroll, joinSortedNames } from './util'
 import BeerLink from './BeerLink'
 import SearchBeer from './SearchBeer'
 
-import BreweryLinks from './BreweryLinks'
+import BreweryLinks from './brewery/BreweryLinks'
 
 import './Beers.css'
 

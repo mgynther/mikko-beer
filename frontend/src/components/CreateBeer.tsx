@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useCreateBeerMutation } from '../store/beer/api'
 import { type BeerWithIds } from '../store/beer/types'
 
-import BeerBreweries from './BeerBreweries'
+import BeerBreweries from './brewery/BeerBreweries'
 import BeerStyles from './BeerStyles'
 
 import './CreateBeer.css'
