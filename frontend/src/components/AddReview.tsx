@@ -45,7 +45,7 @@ function AddReview (): JSX.Element {
     const date = new Date()
     const y = date.getFullYear()
     const mo = date.getMonth() + 1
-    const d = date.getDay()
+    const d = date.getDate()
     const h = date.getHours()
     const mi = date.getMinutes()
     return `${str(y)}-${str(mo)}-${str(d)}T${str(h)}:${str(mi)}`
