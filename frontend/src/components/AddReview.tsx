@@ -8,7 +8,7 @@ import { useCreateReviewMutation } from '../store/review/api'
 
 import LoadingIndicator from './LoadingIndicator'
 import SelectBeer from './beer/SelectBeer'
-import SelectContainer from './SelectContainer'
+import SelectContainer from './container/SelectContainer'
 
 import './AddReview.css'
 
