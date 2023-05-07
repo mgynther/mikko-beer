@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux'
 
-import { type Login, selectLogin } from '../store/login/reducer'
+import { type Login, selectLogin } from '../../store/login/reducer'
 
 import ChangePassword from './ChangePassword'
 

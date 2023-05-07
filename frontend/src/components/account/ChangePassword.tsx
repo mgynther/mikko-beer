@@ -1,15 +1,15 @@
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 
-import { useChangePasswordMutation } from '../store/login/api'
+import { useChangePasswordMutation } from '../../store/login/api'
 import {
   type Login,
   PasswordChangeResult,
   selectLogin,
   selectPasswordChangeResult
-} from '../store/login/reducer'
+} from '../../store/login/reducer'
 
-import LoadingIndicator from './LoadingIndicator'
+import LoadingIndicator from '../LoadingIndicator'
 
 import './ChangePassword.css'
 

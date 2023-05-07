@@ -7,7 +7,7 @@ import { useAppDispatch } from './store/hooks'
 
 import './App.css'
 
-import Account from './components/Account'
+import Account from './components/account/Account'
 import AddReview from './components/AddReview'
 import Beer from './components/beer/Beer'
 import Beers from './components/beer/Beers'
