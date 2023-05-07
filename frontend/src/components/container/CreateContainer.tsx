@@ -5,23 +5,32 @@ import { type Container } from '../../store/container/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
+import ContainerEditor from './ContainerEditor'
+
 export interface Props {
   select: (container: Container) => void
 }
 
 function CreateContainer (props: Props): JSX.Element {
-  const [type, setType] = useState('')
-  const [size, setSize] = useState('')
+  const [container, setContainer] = useState<Container | undefined>(undefined)
+  const [initialContainer] = useState<Container>({
+    id: 'notused',
+    type: '',
+    size: ''
+  })
   const [
     createContainer,
     { isLoading: isCreating }
   ] = useCreateContainerMutation()
 
   async function doCreate (): Promise<void> {
+    if (container === undefined) {
+      throw new Error('container must not be undefined')
+    }
     try {
       const result = await createContainer({
-        type: type.trim(),
-        size: size.trim()
+        type: container.type.trim(),
+        size: container.size.trim()
       }).unwrap()
       props.select(result.container)
     } catch (e) {
@@ -29,26 +38,16 @@ function CreateContainer (props: Props): JSX.Element {
     }
   }
 
-  function isSizeValid (size: string): boolean {
-    return /^[0-9].[0-9]{2}$/.test(size.trim())
-  }
-
   return (
     <>
-      <input
-        type='text'
-        placeholder='Type'
-        value={type}
-        onChange={e => { setType(e.target.value) }}
-      />
-      <input
-        type='text'
-        placeholder='Size, for example 0.25'
-        value={size}
-        onChange={e => { setSize(e.target.value) }}
+      <ContainerEditor
+        initialContainer={initialContainer}
+        onChange={(container: Container | undefined) => {
+          setContainer(container)
+        }}
       />
       <button
-        disabled={type.trim().length === 0 || !isSizeValid(size)}
+        disabled={container === undefined}
         onClick={() => { void doCreate() }}
       >
         Create

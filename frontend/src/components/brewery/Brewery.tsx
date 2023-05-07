@@ -6,24 +6,22 @@ import { useGetBreweryQuery } from '../../store/brewery/api'
 import { type Brewery as BreweryType } from '../../store/brewery/types'
 import { useListReviewsByBreweryQuery } from '../../store/review/api'
 
+import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'
 import LoadingIndicator from '../common/LoadingIndicator'
 import ReviewList from '../review/ReviewList'
 
 import UpdateBrewery from './UpdateBrewery'
 
+import '../common/FlexRow.css'
+
 function NotFound (): JSX.Element {
   return <div>Not found</div>
 }
 
-enum Mode {
-  View = 'View',
-  Edit = 'Edit'
-}
-
 function Brewery (): JSX.Element {
   const { breweryId } = useParams()
-  const [mode, setMode] = useState(Mode.View)
+  const [mode, setMode] = useState(EditableMode.View)
   const [initialBrewery, setInitialBrewery] =
     useState<BreweryType | undefined>(undefined)
   if (breweryId === undefined) {
@@ -37,29 +35,33 @@ function Brewery (): JSX.Element {
   const brewery = breweryData.brewery
   return (
     <div>
-      {mode === Mode.View && (
-        <>
-          <h3>
-            { brewery.name }
+      {mode === EditableMode.View && (
+        <div className='FlexRow'>
+          <div>
+            <h3>
+              { brewery.name }
+            </h3>
+          </div>
+          <div>
             <EditButton
               disabled={brewery === undefined}
               onClick={() => {
-                setMode(Mode.Edit)
+                setMode(EditableMode.Edit)
                 setInitialBrewery({ ...brewery })
               }}
             />
-          </h3>
-        </>
+          </div>
+        </div>
       )}
-      {mode === Mode.Edit && initialBrewery !== undefined && (
+      {mode === EditableMode.Edit && initialBrewery !== undefined && (
         <UpdateBrewery
           initialBrewery={initialBrewery}
           onCancel={() => {
             setInitialBrewery(undefined)
-            setMode(Mode.View)
+            setMode(EditableMode.View)
           }}
           onSaved={() => {
-            setMode(Mode.View)
+            setMode(EditableMode.View)
           }}
         />
       )}

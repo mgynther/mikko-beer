@@ -1,7 +1,9 @@
 import { useListContainersQuery } from '../../store/container/api'
-import { type Container } from '../../store/container/types'
+import { type Container as ContainerType } from '../../store/container/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
+
+import Container from './Container'
 
 function Containers (): JSX.Element {
   const { data: containerData, isLoading } = useListContainersQuery()
@@ -21,9 +23,9 @@ function Containers (): JSX.Element {
       <h3>Containers</h3>
       <LoadingIndicator isLoading={isLoading} />
       <ul>
-        {containers.map((container: Container) => (
-          <li key={container.id}>
-            {`${container.type} ${container.size}`}
+        {containers.map((container: ContainerType) => (
+          <li key={container.id} className='RowLike'>
+            <Container container={container} />
           </li>
         ))}
       </ul>

@@ -1,0 +1,13 @@
+.FlexRow {
+  display: flex;
+  width: 100%;
+}
+
+.FlexRow > div:first-child {
+  flex-grow: 1;
+}
+
+.FlexRow > div:not(first-child) {
+  display: flex;
+  align-items: center;
+}

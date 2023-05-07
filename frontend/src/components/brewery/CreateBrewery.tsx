@@ -7,6 +7,8 @@ import LoadingIndicator from '../common/LoadingIndicator'
 
 import BreweryEditor from './BreweryEditor'
 
+import '../common/FlexRow.css'
+
 export interface Props {
   select: (brewery: Brewery) => void
 }
@@ -36,17 +38,23 @@ function CreateBrewery (props: Props): JSX.Element {
 
   return (
     <>
-      <BreweryEditor
-        brewery={initialBrewery}
-        placeholder='Create brewery'
-        onChange={(brewery: Brewery | undefined) => { setNewBrewery(brewery) }}
-      />
-      <button
-        disabled={newBrewery === undefined}
-        onClick={() => { void doCreate() }}
-      >
-        Create
-      </button>
+      <div className='FlexRow'>
+        <BreweryEditor
+          brewery={initialBrewery}
+          placeholder='Create brewery'
+          onChange={(brewery: Brewery | undefined) => {
+            setNewBrewery(brewery)
+          }}
+        />
+        <div>
+          <button
+            disabled={newBrewery === undefined}
+            onClick={() => { void doCreate() }}
+          >
+            Create
+          </button>
+        </div>
+      </div>
       {isCreating && <LoadingIndicator isLoading={isCreating} />}
     </>
   )
