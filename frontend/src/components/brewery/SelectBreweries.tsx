@@ -7,7 +7,7 @@ import SelectBrewery from './SelectBrewery'
 
 import '../SelectedItem.css'
 
-import './BeerBreweries.css'
+import './SelectBreweries.css'
 
 export interface Props {
   select: (breweries: string[]) => void
@@ -46,7 +46,7 @@ function SelectionItem (props: SelectionItemProps): JSX.Element {
   )
 }
 
-function BeerBreweries (props: Props): JSX.Element {
+function SelectBreweries (props: Props): JSX.Element {
   const [selections, doSetSelections] = useState<BrewerySelection[]>(
     [
       {
@@ -121,4 +121,4 @@ function BeerBreweries (props: Props): JSX.Element {
   )
 }
 
-export default BeerBreweries
+export default SelectBreweries

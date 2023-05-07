@@ -5,7 +5,7 @@ import { type Style } from '../store/style/types'
 
 import SelectStyle from './SelectStyle'
 
-import './BeerStyles.css'
+import './SelectStyles.css'
 import './SelectedItem.css'
 
 export interface Props {
@@ -43,7 +43,7 @@ function SelectionItem (props: SelectionItemProps): JSX.Element {
   )
 }
 
-function BeerStyles (props: Props): JSX.Element {
+function SelectStyles (props: Props): JSX.Element {
   const [selections, doSetSelections] = useState<StyleSelection[]>(
     [
       {
@@ -116,4 +116,4 @@ function BeerStyles (props: Props): JSX.Element {
   )
 }
 
-export default BeerStyles
+export default SelectStyles

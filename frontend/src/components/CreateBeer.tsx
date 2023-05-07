@@ -3,8 +3,8 @@ import { useState } from 'react'
 import { useCreateBeerMutation } from '../store/beer/api'
 import { type BeerWithIds } from '../store/beer/types'
 
-import BeerBreweries from './brewery/BeerBreweries'
-import BeerStyles from './BeerStyles'
+import SelectBreweries from './brewery/SelectBreweries'
+import SelectStyles from './SelectStyles'
 
 import './CreateBeer.css'
 
@@ -46,12 +46,12 @@ function CreateBeer (props: Props): JSX.Element {
         />
       </div>
       <div className={'Section'}>
-        <BeerBreweries
+        <SelectBreweries
           select={(breweryIds) => { setBreweryIds(breweryIds) }}
         />
       </div>
       <div className={'Section'}>
-        <BeerStyles
+        <SelectStyles
           select={(styleIds) => { setStyleIds(styleIds) }}
         />
       </div>
