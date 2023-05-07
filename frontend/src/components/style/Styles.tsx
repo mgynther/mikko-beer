@@ -1,7 +1,7 @@
-import { useListStylesQuery } from '../store/style/api'
-import { type Style } from '../store/style/types'
+import { useListStylesQuery } from '../../store/style/api'
+import { type Style } from '../../store/style/types'
 
-import LoadingIndicator from './LoadingIndicator'
+import LoadingIndicator from '../LoadingIndicator'
 
 function Styles (): JSX.Element {
   const { data: styleData, isLoading } = useListStylesQuery()

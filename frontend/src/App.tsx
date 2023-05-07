@@ -17,7 +17,7 @@ import Containers from './components/Containers'
 import LoginComponent from './components/login/Login'
 import Reviews from './components/Reviews'
 import Stats from './components/stats/Stats'
-import Styles from './components/Styles'
+import Styles from './components/style/Styles'
 import Users from './components/user/Users'
 
 import { useLogoutMutation } from './store/login/api'

@@ -4,7 +4,7 @@ import { useCreateBeerMutation } from '../../store/beer/api'
 import { type BeerWithIds } from '../../store/beer/types'
 
 import SelectBreweries from '../brewery/SelectBreweries'
-import SelectStyles from '../SelectStyles'
+import SelectStyles from '../style/SelectStyles'
 
 import './CreateBeer.css'
 

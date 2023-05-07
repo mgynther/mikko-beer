@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
-import { useListStylesQuery } from '../store/style/api'
-import { type Style } from '../store/style/types'
+import { useListStylesQuery } from '../../store/style/api'
+import { type Style } from '../../store/style/types'
 
-import SearchBox, { nameFormatter } from './SearchBox'
+import SearchBox, { nameFormatter } from '../SearchBox'
 
 export interface Props {
   select: (style: Style) => void

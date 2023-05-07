@@ -1,11 +1,12 @@
 import { useState } from 'react'
 
-import { type Style } from '../store/style/types'
+import { type Style } from '../../store/style/types'
 
-import LoadingIndicator from './LoadingIndicator'
+import LoadingIndicator from '../LoadingIndicator'
+
 import SearchStyle from './SearchStyle'
 
-import './SelectedItem.css'
+import '../SelectedItem.css'
 
 export interface Props {
   select: (parents: string[]) => void

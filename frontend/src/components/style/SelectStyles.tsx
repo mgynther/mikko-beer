@@ -1,12 +1,13 @@
 import { Fragment, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
-import { type Style } from '../store/style/types'
+import { type Style } from '../../store/style/types'
 
 import SelectStyle from './SelectStyle'
 
+import '../SelectedItem.css'
+
 import './SelectStyles.css'
-import './SelectedItem.css'
 
 export interface Props {
   select: (styles: string[]) => void
