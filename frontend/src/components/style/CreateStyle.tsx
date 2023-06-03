@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useCreateStyleMutation } from '../../store/style/api'
-import { type Style } from '../../store/style/types'
+import { type Style, type StyleWithParentIds } from '../../store/style/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
-import StyleParents from './StyleParents'
+import StyleEditor from './StyleEditor'
 
 import './CreateStyle.css'
 
@@ -15,17 +15,27 @@ export interface Props {
 }
 
 function CreateStyle (props: Props): JSX.Element {
-  const [name, setName] = useState('')
-  const [parents, setParents] = useState<string[]>([])
+  const [style, setStyle] = useState<StyleWithParentIds | undefined>(undefined)
   const [
     createStyle,
-    { isLoading: isCreating }
+    { data: createdStyle, isError, isLoading: isCreating, isSuccess }
   ] = useCreateStyleMutation()
 
+  const select = props.select
+
+  useEffect(() => {
+    if (isSuccess && createdStyle !== undefined) {
+      select(createdStyle.style)
+    }
+  }, [isSuccess, select, createdStyle])
+
   async function doCreate (): Promise<void> {
+    if (style === undefined) return
     try {
-      const result = await createStyle({ name, parents }).unwrap()
-      props.select(result.style)
+      await createStyle({
+        name: style.name,
+        parents: style.parents
+      })
     } catch (e) {
       console.warn('Failed to create style', e)
     }
@@ -33,18 +43,18 @@ function CreateStyle (props: Props): JSX.Element {
 
   return (
     <div>
-      <div className='NameContainer'>
-        <input
-          type='text'
-          placeholder='Name'
-          value={name}
-          onChange={e => { setName(e.target.value) }}
-        />
-      </div>
-      <StyleParents select={(parents) => { setParents(parents) }} />
+      <StyleEditor
+        onChange={(style) => { setStyle(style) }}
+        initialStyle={{
+          id: 'newStyle',
+          name: '',
+          parents: []
+        }}
+        hasError={isError}
+      />
       <div className='ButtonContainer'>
         <button
-          disabled={name.trim().length === 0}
+          disabled={style === undefined}
           onClick={() => { void doCreate() }}
         >
           Create

@@ -1,6 +1,13 @@
 import { emptySplitApi } from '../api'
 
-import { type Style, type StyleList, StyleTags } from './types'
+import { ReviewTags } from '../review/types'
+import {
+  type Style,
+  type StyleList,
+  StyleTags,
+  type StyleWithParentIds,
+  type StyleWithParents
+} from './types'
 import { styleStatsTagTypes } from '../stats/types'
 
 interface StyleRequest {
@@ -10,6 +17,13 @@ interface StyleRequest {
 
 const styleApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
+    getStyle: build.query<{ style: StyleWithParents }, string>({
+      query: (id: string) => ({
+        url: `/style/${id}`,
+        method: 'GET'
+      }),
+      providesTags: [StyleTags.Style]
+    }),
     listStyles: build.query<StyleList, void>({
       query: () => ({
         url: '/style',
@@ -26,10 +40,33 @@ const styleApi = emptySplitApi.injectEndpoints({
         }
       }),
       invalidatesTags: [StyleTags.Style, ...styleStatsTagTypes()]
+    }),
+    updateStyle: build.mutation<{
+      style: StyleWithParentIds
+    }, StyleWithParentIds
+    >({
+      query: (style: StyleWithParentIds) => ({
+        url: `/style/${style.id}`,
+        method: 'PUT',
+        body: {
+          name: style.name,
+          parents: style.parents
+        }
+      }),
+      invalidatesTags: [
+        StyleTags.Style,
+        ...styleStatsTagTypes(),
+        ReviewTags.Review
+      ]
     })
   })
 })
 
-export const { useCreateStyleMutation, useListStylesQuery } = styleApi
+export const {
+  useCreateStyleMutation,
+  useGetStyleQuery,
+  useListStylesQuery,
+  useUpdateStyleMutation
+} = styleApi
 
 export const { endpoints, reducerPath, reducer, middleware } = styleApi

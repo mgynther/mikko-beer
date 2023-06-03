@@ -1,7 +1,8 @@
 import { useListStylesQuery } from '../../store/style/api'
-import { type Style } from '../../store/style/types'
+import { type StyleWithParentIds } from '../../store/style/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
+import Style from './Style'
 
 function Styles (): JSX.Element {
   const { data: styleData, isLoading } = useListStylesQuery()
@@ -17,8 +18,10 @@ function Styles (): JSX.Element {
       <h3>Styles</h3>
       <LoadingIndicator isLoading={isLoading} />
       <ul>
-        {styles.map((style: Style) => (
-          <li key={style.id}>{style.name}</li>
+        {styles.map((style: StyleWithParentIds) => (
+          <li key={style.id} className='RowLike'>
+            <Style style={style} />
+          </li>
         ))}
       </ul>
     </div>

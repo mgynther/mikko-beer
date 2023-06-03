@@ -9,11 +9,12 @@ import SearchStyle from './SearchStyle'
 import '../common/SelectedItem.css'
 
 export interface Props {
+  initialParents: Style[]
   select: (parents: string[]) => void
 }
 
 function StyleParents (props: Props): JSX.Element {
-  const [parents, doSetParents] = useState<Style[]>([])
+  const [parents, doSetParents] = useState<Style[]>(props.initialParents)
 
   function setParents (parents: Style[]): void {
     props.select(parents.map((parent) => parent.id))

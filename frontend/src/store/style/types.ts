@@ -3,8 +3,16 @@ export interface Style {
   name: string
 }
 
+export interface StyleWithParentIds extends Style {
+  parents: string[]
+}
+
+export interface StyleWithParents extends Style {
+  parents: Style[]
+}
+
 export interface StyleList {
-  styles: Style[]
+  styles: StyleWithParentIds[]
 }
 
 export enum StyleTags {
