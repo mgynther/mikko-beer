@@ -10,6 +10,7 @@ import '../common/SelectedItem.css'
 import './SelectBreweries.css'
 
 export interface Props {
+  initialBreweries: Brewery[]
   select: (breweries: string[]) => void
 }
 
@@ -47,13 +48,24 @@ function SelectionItem (props: SelectionItemProps): JSX.Element {
 }
 
 function SelectBreweries (props: Props): JSX.Element {
-  const [selections, doSetSelections] = useState<BrewerySelection[]>(
-    [
-      {
-        brewery: undefined,
-        id: uuidv4()
+  function getInitialBrewerySelections (): BrewerySelection[] {
+    if (props.initialBreweries.length === 0) {
+      return [
+        {
+          brewery: undefined,
+          id: uuidv4()
+        }
+      ]
+    }
+    return props.initialBreweries.map(brewery => {
+      return {
+        id: brewery.id,
+        brewery
       }
-    ]
+    })
+  }
+  const [selections, doSetSelections] = useState<BrewerySelection[]>(
+    getInitialBrewerySelections()
   )
 
   function setSelections (selections: BrewerySelection[]): void {

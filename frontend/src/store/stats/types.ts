@@ -61,7 +61,7 @@ export function allStatsTagTypes (): string[] {
 }
 
 export function beerStatsTagTypes (): string[] {
-  return [StatsTags.Overall, StatsTags.Style]
+  return [StatsTags.Overall, StatsTags.Brewery, StatsTags.Style]
 }
 
 export function breweryStatsTagTypes (): string[] {

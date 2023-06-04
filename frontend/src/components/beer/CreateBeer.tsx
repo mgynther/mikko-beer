@@ -3,8 +3,7 @@ import { useState } from 'react'
 import { useCreateBeerMutation } from '../../store/beer/api'
 import { type BeerWithIds } from '../../store/beer/types'
 
-import SelectBreweries from '../brewery/SelectBreweries'
-import SelectStyles from '../style/SelectStyles'
+import BeerEditor from './BeerEditor'
 
 import './CreateBeer.css'
 
@@ -13,22 +12,19 @@ export interface Props {
 }
 
 function CreateBeer (props: Props): JSX.Element {
-  const [name, setName] = useState('')
-  const [breweryIds, setBreweryIds] = useState<string[]>([])
-  const [styleIds, setStyleIds] = useState<string[]>([])
+  const [beer, setBeer] = useState<BeerWithIds | undefined>(undefined)
   const [
     createBeer,
     { isLoading: isCreating }
   ] = useCreateBeerMutation()
-  const isDataMissing =
-    name.length === 0 || breweryIds.length === 0 || styleIds.length === 0
 
   async function doCreate (): Promise<void> {
+    if (beer === undefined) return
     try {
       const result = await createBeer({
-        name,
-        breweries: breweryIds,
-        styles: styleIds
+        name: beer.name,
+        breweries: beer.breweries,
+        styles: beer.styles
       }).unwrap()
       props.select(result.beer)
     } catch (e) {
@@ -38,25 +34,12 @@ function CreateBeer (props: Props): JSX.Element {
 
   return (
     <div>
-      <div className={'Section'}>
-        <input
-          placeholder='Name'
-          type="text"
-          onChange={(e) => { setName(e.target.value) }}
-        />
-      </div>
-      <div className={'Section'}>
-        <SelectBreweries
-          select={(breweryIds) => { setBreweryIds(breweryIds) }}
-        />
-      </div>
-      <div className={'Section'}>
-        <SelectStyles
-          select={(styleIds) => { setStyleIds(styleIds) }}
-        />
-      </div>
+      <BeerEditor
+        initialBeer={undefined}
+        onChange={setBeer}
+      />
       <button
-        disabled={isDataMissing || isCreating}
+        disabled={beer === undefined || isCreating}
         onClick={() => { void doCreate() }}
       >Create beer</button>
     </div>

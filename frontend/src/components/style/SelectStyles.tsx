@@ -10,6 +10,7 @@ import '../common/SelectedItem.css'
 import './SelectStyles.css'
 
 export interface Props {
+  initialStyles: Style[]
   select: (styles: string[]) => void
 }
 
@@ -45,13 +46,24 @@ function SelectionItem (props: SelectionItemProps): JSX.Element {
 }
 
 function SelectStyles (props: Props): JSX.Element {
-  const [selections, doSetSelections] = useState<StyleSelection[]>(
-    [
-      {
-        style: undefined,
-        id: uuidv4()
+  function getInitialStyleSelections (): StyleSelection[] {
+    if (props.initialStyles.length === 0) {
+      return [
+        {
+          style: undefined,
+          id: uuidv4()
+        }
+      ]
+    }
+    return props.initialStyles.map(style => {
+      return {
+        id: style.id,
+        style
       }
-    ]
+    })
+  }
+  const [selections, doSetSelections] = useState<StyleSelection[]>(
+    getInitialStyleSelections()
   )
 
   function setSelections (selections: StyleSelection[]): void {
