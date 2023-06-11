@@ -10,6 +10,8 @@ import LoadingIndicator from '../common/LoadingIndicator'
 import SelectBeer from '../beer/SelectBeer'
 import SelectContainer from '../container/SelectContainer'
 
+import '../common/FlexRow.css'
+
 import './AddReview.css'
 
 function AddReview (): JSX.Element {
@@ -89,8 +91,14 @@ function AddReview (): JSX.Element {
               ? <SelectBeer select={(beer: BeerWithIds) => {
                 setBeer(beer)
               }} />
-              : (<div onClick={() => { setBeer(undefined) }}>
-                    {beer.name}
+              : (<div className='FlexRow'>
+                    <div>{beer.name}</div>
+                    <div>
+                      <button
+                        onClick={() => { setBeer(undefined) }}>
+                        Change
+                      </button>
+                  </div>
                 </div>)
             }
           </div>
@@ -102,8 +110,16 @@ function AddReview (): JSX.Element {
               ? <SelectContainer select={(container: Container) => {
                 setContainer(container)
               }} />
-              : (<div onClick={() => { setContainer(undefined) }}>
-                  {`${container.type} ${container.size}`}
+              : (<div className='FlexRow'>
+                  <div>
+                    {`${container.type} ${container.size}`}
+                  </div>
+                  <div>
+                    <button
+                      onClick={() => { setContainer(undefined) }}>
+                      Change
+                    </button>
+                  </div>
                 </div>)
             }
           </div>
