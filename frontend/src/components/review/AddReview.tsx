@@ -125,6 +125,29 @@ function AddReview (): JSX.Element {
           </div>
         </div>
         <div>
+          <h5>Other info</h5>
+          <div className='AddReviewContent'>
+            <div>
+              <input type='text' placeholder='Location' id='location' />
+            </div>
+            <div>
+              <input
+                type='text'
+                placeholder='Additional info'
+                id='additionalInfo'
+              />
+            </div>
+            <div>
+              <input
+                type='datetime-local'
+                id='time'
+                value={time}
+                onChange={e => { setTime(e.target.value) }}
+              />
+            </div>
+          </div>
+        </div>
+        <div>
           <h5>Smell</h5>
           <div className='AddReviewContent'>
             <textarea
@@ -158,24 +181,6 @@ function AddReview (): JSX.Element {
               onChange={e => { setRating(parseInt(e.target.value)) }}
             />
           </div>
-        </div>
-        <div>
-          <input type='text' placeholder='Location' id='location' />
-        </div>
-        <div>
-          <input
-            type='text'
-            placeholder='Additional info'
-            id='additionalInfo'
-          />
-        </div>
-        <div>
-          <input
-            type='datetime-local'
-            id='time'
-            value={time}
-            onChange={e => { setTime(e.target.value) }}
-          />
         </div>
 
         <br />
