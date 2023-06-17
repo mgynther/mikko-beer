@@ -39,7 +39,7 @@ const reviewApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [ReviewTags.Review]
     }),
-    createReview: build.mutation<Review, Partial<ReviewRequest>>({
+    createReview: build.mutation<{ review: Review }, Partial<ReviewRequest>>({
       query: (body: ReviewRequest) => ({
         url: '/review',
         method: 'POST',
