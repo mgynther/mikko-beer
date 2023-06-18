@@ -46,6 +46,23 @@ const reviewApi = emptySplitApi.injectEndpoints({
         body
       }),
       invalidatesTags: [ReviewTags.Review, ...reviewStatsTagTypes()]
+    }),
+    updateReview: build.mutation<{ review: Review }, Partial<Review>>({
+      query: (review: Review) => ({
+        url: `/review/${review.id}`,
+        method: 'PUT',
+        body: {
+          additionalInfo: review.additionalInfo,
+          beer: review.beer,
+          container: review.container,
+          location: review.location,
+          rating: review.rating,
+          smell: review.smell,
+          taste: review.taste,
+          time: review.time
+        }
+      }),
+      invalidatesTags: [ReviewTags.Review, ...reviewStatsTagTypes()]
     })
   })
 })
@@ -55,7 +72,8 @@ export const {
   useLazyGetReviewQuery,
   useLazyListReviewsQuery,
   useListReviewsByBeerQuery,
-  useListReviewsByBreweryQuery
+  useListReviewsByBreweryQuery,
+  useUpdateReviewMutation
 } = reviewApi
 
 export const { endpoints, reducerPath, reducer, middleware } = reviewApi

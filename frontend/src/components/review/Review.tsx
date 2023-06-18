@@ -8,7 +8,11 @@ import {
 
 import BeerLink from '../beer/BeerLink'
 import BreweryLinks from '../brewery/BreweryLinks'
+import { EditableMode } from '../common/EditableMode'
+import EditButton from '../common/EditButton'
 import { joinSortedNames } from '../util'
+
+import UpdateReview from './UpdateReview'
 
 import './Review.css'
 
@@ -17,6 +21,7 @@ interface Props {
 }
 
 function Review (props: Props): JSX.Element {
+  const [mode, setMode] = useState(EditableMode.View)
   const [getReview] = useLazyGetReviewQuery()
   const review = props.review
 
@@ -40,48 +45,83 @@ function Review (props: Props): JSX.Element {
   }
 
   return (
-    <div className='Review RowLike' key={review.id} onClick={() => {
-      if (fullReview === undefined) {
-        void fetchReview(review.id)
-        return
-      }
-      setIsOpen(!isOpen)
-    }}>
-      <div className='Review-primary-info-row'>
-        <div>
-          <BreweryLinks breweries={review.breweries} />
-        </div>
-        <div>
-          <BeerLink beer={{
-            id: review.beerId,
-            name: review.beerName
-          }} />
-        </div>
-        <div>
-          {joinSortedNames([...review.styles])}
-        </div>
-        <div
-          className={`Review-rating Review-rating-${review.rating}`}>
-          <div>{review.rating}</div>
-        </div>
-        <div className='Review-time'>{formatDate(new Date(review.time))}</div>
-      </div>
-      <div className='Review-secondary-info-row'>
-        <div>{review.container.type} {review.container.size}</div>
-        <div>{review.location}</div>
-      </div>
-      {review.additionalInfo !== '' && (
-        <div className='Review-additional-row'>
-          <div className='Review-additional'>{review.additionalInfo}</div>
-        </div>
-      )}
-      {isOpen && fullReview !== undefined && (
-          <div className='Review-sensory-row'>
-            <div>{fullReview.smell}</div>
-            <div>{fullReview.taste}</div>
+    <>
+      {mode === EditableMode.View && (
+        <div className='Review RowLike' key={review.id} onClick={() => {
+          if (fullReview === undefined) {
+            void fetchReview(review.id)
+            return
+          }
+          setIsOpen(!isOpen)
+        }}>
+          <div className='Review-primary-info-row'>
+            <div>
+              <BreweryLinks breweries={review.breweries} />
+            </div>
+            <div>
+              <BeerLink beer={{
+                id: review.beerId,
+                name: review.beerName
+              }} />
+            </div>
+            <div>
+              {joinSortedNames([...review.styles])}
+            </div>
+            <div
+              className={`Review-rating Review-rating-${review.rating}`}>
+              <div>{review.rating}</div>
+            </div>
+            <div className='Review-time'>{
+              formatDate(new Date(review.time))
+            }</div>
           </div>
+          <div className='Review-secondary-info-row'>
+            <div>{review.container.type} {review.container.size}</div>
+            <div>{review.location}</div>
+          </div>
+          {review.additionalInfo !== '' && (
+            <div className='Review-additional-row'>
+              <div className='Review-additional'>{review.additionalInfo}</div>
+            </div>
+          )}
+          {isOpen && fullReview !== undefined && (
+            <>
+              <div className='Review-sensory-row'>
+                <div>{fullReview.smell}</div>
+                <div>{fullReview.taste}</div>
+              </div>
+              <div className='Review-additional-row'>
+                <div>
+                  <EditButton
+                    disabled={fullReview === undefined}
+                    onClick={() => {
+                      setMode(EditableMode.Edit)
+                    }}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       )}
-    </div>
+      {mode === EditableMode.Edit && fullReview !== undefined && (
+        <>
+          <UpdateReview
+            initialReview={{
+              joined: review,
+              review: fullReview
+            }}
+            onCancel={() => {
+              setMode(EditableMode.View)
+            }}
+            onSaved={() => {
+              setMode(EditableMode.View)
+              void fetchReview(review.id)
+            }}
+          />
+        </>
+      )}
+    </>
   )
 }
 

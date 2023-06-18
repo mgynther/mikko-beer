@@ -68,7 +68,9 @@ function ReviewEditor (props: Props): JSX.Element {
       }
       return `${num}`
     }
-    const date = new Date()
+    const date = props.initialReview === undefined
+      ? new Date()
+      : new Date(props.initialReview?.review.time)
     const y = date.getFullYear()
     const mo = date.getMonth() + 1
     const d = date.getDate()
