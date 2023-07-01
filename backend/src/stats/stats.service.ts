@@ -8,13 +8,15 @@ import {
   type BreweryStats,
   type OverallStats,
   type RatingStats,
+  type StatsFilter,
   type StyleStats
 } from './stats'
 
 export async function getAnnual (
-  db: Database
+  db: Database,
+  statsFilter: StatsFilter | undefined
 ): Promise<AnnualStats> {
-  return await statsRepository.getAnnual(db)
+  return await statsRepository.getAnnual(db, statsFilter)
 }
 
 export async function getBrewery (
@@ -31,13 +33,15 @@ export async function getOverall (
 }
 
 export async function getRating (
-  db: Database
+  db: Database,
+  statsFilter: StatsFilter | undefined
 ): Promise<RatingStats> {
-  return await statsRepository.getRating(db)
+  return await statsRepository.getRating(db, statsFilter)
 }
 
 export async function getStyle (
-  db: Database
+  db: Database,
+  statsFilter: StatsFilter | undefined
 ): Promise<StyleStats> {
-  return await statsRepository.getStyle(db)
+  return await statsRepository.getStyle(db, statsFilter)
 }

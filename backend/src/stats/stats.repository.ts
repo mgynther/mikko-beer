@@ -8,6 +8,7 @@ import {
   type BreweryStats,
   type OverallStats,
   type RatingStats,
+  type StatsFilter,
   type StyleStats
 } from './stats'
 
@@ -19,12 +20,21 @@ function round (value: number, decimals: number): string {
 }
 
 export async function getAnnual (
-  db: Database
+  db: Database,
+  statsFilter: StatsFilter | undefined
 ): Promise<AnnualStats> {
   const annualQuery = sql`SELECT
     COUNT(1) as review_count,
     AVG(rating) as review_average,
-    DATE_PART('YEAR', time) as year FROM review as year
+    DATE_PART('YEAR', time) as year FROM review
+    ${statsFilter === undefined
+      ? sql``
+      : sql`
+      INNER JOIN beer ON review.beer = beer.beer_id
+      INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer
+      WHERE beer_brewery.brewery = ${statsFilter.brewery}
+      `
+    }
     GROUP BY year
     ORDER BY year ASC
   `
@@ -116,12 +126,21 @@ export async function getOverall (
 }
 
 export async function getRating (
-  db: Database
+  db: Database,
+  statsFilter: StatsFilter | undefined
 ): Promise<RatingStats> {
   const styleQuery = sql`SELECT
     review.rating as rating,
     COUNT(1) as count
     FROM review
+    ${statsFilter === undefined
+      ? sql``
+      : sql`
+      INNER JOIN beer ON review.beer = beer.beer_id
+      INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer
+      WHERE beer_brewery.brewery = ${statsFilter.brewery}
+      `
+    }
     GROUP BY review.rating
     ORDER BY review.rating ASC
   `
@@ -141,7 +160,8 @@ export async function getRating (
 }
 
 export async function getStyle (
-  db: Database
+  db: Database,
+  statsFilter: StatsFilter | undefined
 ): Promise<StyleStats> {
   const styleQuery = sql`SELECT
     COUNT(1) as review_count,
@@ -150,8 +170,16 @@ export async function getStyle (
     style.name as style_name
     FROM review
     INNER JOIN beer ON review.beer = beer.beer_id
+    ${statsFilter === undefined
+      ? sql``
+      : sql`INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer`
+    }
     INNER JOIN beer_style ON beer.beer_id = beer_style.beer
     INNER JOIN style ON beer_style.style = style.style_id
+    ${statsFilter === undefined
+      ? sql``
+      : sql`WHERE beer_brewery.brewery = ${statsFilter.brewery}`
+    }
     GROUP BY style_id
     ORDER BY style_name ASC
   `

@@ -5,6 +5,8 @@ import { type Router } from '../router'
 
 import { validatePagination } from '../util/pagination'
 
+import { validateStatsFilter } from './stats'
+
 export function statsController (router: Router): void {
   router.get(
     '/api/v1/stats/overall',
@@ -18,7 +20,8 @@ export function statsController (router: Router): void {
     '/api/v1/stats/annual',
     authService.authenticateViewer,
     async (ctx) => {
-      const annual = await statsService.getAnnual(ctx.db)
+      const statsFilter = validateStatsFilter(ctx.request.query)
+      const annual = await statsService.getAnnual(ctx.db, statsFilter)
       ctx.body = { annual }
     }
   )
@@ -37,7 +40,8 @@ export function statsController (router: Router): void {
     '/api/v1/stats/rating',
     authService.authenticateViewer,
     async (ctx) => {
-      const rating = await statsService.getRating(ctx.db)
+      const statsFilter = validateStatsFilter(ctx.request.query)
+      const rating = await statsService.getRating(ctx.db, statsFilter)
       ctx.body = { rating }
     }
   )
@@ -46,7 +50,8 @@ export function statsController (router: Router): void {
     '/api/v1/stats/style',
     authService.authenticateViewer,
     async (ctx) => {
-      const style = await statsService.getStyle(ctx.db)
+      const statsFilter = validateStatsFilter(ctx.request.query)
+      const style = await statsService.getStyle(ctx.db, statsFilter)
       ctx.body = { style }
     }
   )

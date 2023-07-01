@@ -25,9 +25,29 @@ export type RatingStats = Array<{
   count: string
 }>
 
+export interface StatsFilter {
+  brewery: string
+}
+
 export type StyleStats = Array<{
   reviewAverage: string
   reviewCount: string
   styleId: string
   styleName: string
 }>
+
+export function validateStatsFilter (
+  query: Record<string, unknown>
+): StatsFilter | undefined {
+  if (query === undefined) {
+    return undefined
+  }
+  const { brewery } = query
+  if (brewery === undefined) {
+    return undefined
+  }
+  if (typeof brewery === 'string' && brewery.length > 0) {
+    return { brewery }
+  }
+  return undefined
+}

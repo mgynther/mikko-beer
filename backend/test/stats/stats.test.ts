@@ -217,8 +217,50 @@ describe('stats tests', () => {
     return reviewRes.data.review
   }
   function average(ratings: number[]): string {
+    if (ratings.length === 0) {
+      const zero = 0
+      return zero.toFixed(2)
+    }
     const sumReducer = (sum: number, rating: number) => sum + rating
     return (ratings.reduce(sumReducer, 0) / ratings.length).toFixed(2)
+  }
+
+  interface Annual {
+    count: number,
+    average: string
+  }
+
+  function checkAnnualStats (
+    reviewRatingsByYear: (year: string) => number[],
+    annualStats: AnnualStats,
+    expectedAnnual: Annual[]
+  ): void {
+    const annual = ['2021', '2022', '2023'].map(year => {
+      const ratings = reviewRatingsByYear(year)
+      return {
+        ratings,
+        average: average(ratings),
+        count: ratings.length,
+        year
+      }
+    })
+
+    function stat (count: number, average: string, year: string) {
+      if (count <= 0) return undefined
+      return {
+        reviewCount: `${count}`,
+        reviewAverage: average,
+        year
+      }
+    }
+
+    expect(annualStats).to.eql(annual.map(
+      annual => stat(annual.count, annual.average, annual.year)
+    ).filter(stat => stat))
+
+    expect(annual.map(
+      annual => ({ average: annual.average, count: annual.count })
+    )).eql(expectedAnnual)
   }
 
   it('should get annual stats', async () => {
@@ -241,27 +283,64 @@ describe('stats tests', () => {
         return (review.time as unknown as string).startsWith(year)
       }).map((review: Review) => review.rating) as number[]
     }
-    const year2021Ratings = reviewRatingsByYear('2021');
-    const count2021 = year2021Ratings.length
-    const average2021 = average(year2021Ratings)
-    const year2022Ratings = reviewRatingsByYear('2022');
-    const count2022 = year2022Ratings.length
-    const average2022 = average(year2022Ratings)
-    const year2023Ratings = reviewRatingsByYear('2023');
-    const count2023 = year2023Ratings.length
-    const average2023 = average(year2023Ratings)
-
-    expect(statsRes.data.annual).to.eql([
-      { reviewCount: `${count2021}`, reviewAverage: average2021, year: '2021' },
-      { reviewCount: `${count2022}`, reviewAverage: average2022, year: '2022' },
-      { reviewCount: `${count2023}`, reviewAverage: average2023, year: '2023' }
+    checkAnnualStats(reviewRatingsByYear, statsRes.data.annual, [
+      {
+        count: 1,
+        average: '5.00'
+      },
+      {
+        count: 1,
+        average: '7.00'
+      },
+      {
+        count: 2,
+        average: '7.50'
+      }
     ])
-    expect(count2021).to.eql(1)
-    expect(average2021).to.eql('5.00')
-    expect(count2022).to.eql(1)
-    expect(average2022).to.eql('7.00')
-    expect(count2023).to.eql(2)
-    expect(average2023).to.eql('7.50')
+  })
+
+  it('should get annual stats by brewery', async () => {
+    const {
+      beers,
+      breweries,
+      reviews,
+      containers,
+      styles
+    } = await createDeps(ctx.adminAuthHeaders())
+
+    const breweryId = breweries[0].data.brewery.id
+    const statsRes = await ctx.request.get<{ annual: AnnualStats }>(
+      `/api/v1/stats/annual?brewery=${breweryId}`,
+      ctx.adminAuthHeaders()
+    )
+    expect(statsRes.status).to.equal(200)
+    function reviewRatingsByYear(year: string): number[] {
+      return reviews.map(reviewData).filter((review: any) => {
+        if (typeof review?.time !== 'string') throw error()
+        return (review.time as unknown as string).startsWith(year)
+      }).filter((review: Review) => {
+        const beerId = review.beer
+        const beerRes = beers.find(beerRes => beerRes.data.beer.id === beerId)
+        if (beerRes === undefined) {
+          return false
+        }
+        return beerRes.data.beer.breweries.includes(breweryId)
+      }).map((review: Review) => review.rating) as number[]
+    }
+    checkAnnualStats(reviewRatingsByYear, statsRes.data.annual, [
+      {
+        count: 1,
+        average: '5.00'
+      },
+      {
+        count: 0,
+        average: '0.00'
+      },
+      {
+        count: 2,
+        average: '7.50'
+      }
+    ])
   })
 
   it('should get brewery stats', async () => {
@@ -322,6 +401,22 @@ describe('stats tests', () => {
     expect(lindemansAverage).to.equal('6.67')
   })
 
+  type TestRatingStats = Array<{ rating: number,  count: number }>
+
+  function checkRatingStats (
+    stats: TestRatingStats,
+    actualStats: RatingStats,
+    expectedStats: RatingStats
+  ): void {
+    stats.sort((a, b) => a.rating - b.rating)
+    const convertedStats = stats.map(s => ({
+      rating: `${s.rating}`,
+      count: `${s.count}`
+    }))
+    expect(actualStats).to.eql(convertedStats)
+    expect(actualStats).to.eql(expectedStats)
+  }
+
   it('should get rating stats', async () => {
     const {
       beers,
@@ -337,7 +432,7 @@ describe('stats tests', () => {
     )
     expect(statsRes.status).to.equal(200)
     const stats = reviews
-      .reduce((ratingStats: Array<{ rating: number,  count: number }>, reviewRes) => {
+      .reduce((ratingStats: TestRatingStats, reviewRes) => {
       const rating = reviewRes.data.review.rating as unknown as number
       const existing = ratingStats.find(r => r.rating === rating)
       if (existing === undefined) {
@@ -347,18 +442,89 @@ describe('stats tests', () => {
       existing.count++
       return ratingStats
     }, [])
-    stats.sort((a, b) => a.rating - b.rating)
-    const expectedStats = stats.map(s => ({
-      rating: `${s.rating}`,
-      count: `${s.count}`
-    }))
-    expect(statsRes.data.rating).to.eql(expectedStats)
-    expect(statsRes.data.rating).to.eql([
+    const expectedStats = [
       { rating: '5', count: '1' },
       { rating: '7', count: '2' },
       { rating: '8', count: '1' }
-    ])
+    ]
+    checkRatingStats(stats, statsRes.data.rating, expectedStats)
   })
+
+  it('should get rating stats by brewery', async () => {
+    const {
+      beers,
+      breweries,
+      reviews,
+      containers,
+      styles
+    } = await createDeps(ctx.adminAuthHeaders())
+
+    const breweryId = breweries[0].data.brewery.id
+    const statsRes = await ctx.request.get<{ rating: RatingStats }>(
+      `/api/v1/stats/rating?brewery=${breweryId}`,
+      ctx.adminAuthHeaders()
+    )
+    expect(statsRes.status).to.equal(200)
+    const stats = reviews
+      .reduce((ratingStats: Array<{ rating: number,  count: number }>, reviewRes) => {
+      const beerId = reviewRes.data.review.beer
+      const beerRes = beers.find(beerRes => beerRes.data.beer.id === beerId)
+      if (beerRes === undefined) {
+        return ratingStats
+      }
+      if (!beerRes.data.beer.breweries.includes(breweryId)) {
+        return ratingStats
+      }
+      const rating = reviewRes.data.review.rating as unknown as number
+      const existing = ratingStats.find(r => r.rating === rating)
+      if (existing === undefined) {
+        ratingStats.push({ rating, count: 1 })
+        return ratingStats
+      }
+      existing.count++
+      return ratingStats
+    }, [])
+    const expectedStats = [
+      { rating: '5', count: '1' },
+      { rating: '7', count: '1' },
+      { rating: '8', count: '1' }
+    ]
+    checkRatingStats(stats, statsRes.data.rating, expectedStats)
+  })
+
+  interface StyleStatData {
+    ratings: number[],
+    style: Style,
+    average: string,
+    count: number
+  }
+
+  function checkStyleStats (
+    ipa: StyleStatData,
+    kriek: StyleStatData,
+    styleStats: StyleStats
+  ) {
+    const ipaAverage = average(ipa.ratings)
+    const kriekAverage = average(kriek.ratings)
+    expect(styleStats).to.eql([
+      {
+        reviewCount: `${ipa.ratings.length}`,
+        reviewAverage: ipa.average,
+        styleId: ipa.style.id,
+        styleName: ipa.style.name
+      },
+      {
+        reviewCount: `${kriek.ratings.length}`,
+        reviewAverage: kriek.average,
+        styleId: kriek.style.id,
+        styleName: kriek.style.name
+      }
+    ])
+    expect(ipa.ratings.length).to.equal(ipa.count)
+    expect(ipaAverage).to.equal(ipa.average)
+    expect(kriek.ratings.length).to.equal(kriek.count)
+    expect(kriekAverage).to.equal(kriek.average)
+  }
 
   it('should get style stats', async () => {
     const {
@@ -388,26 +554,69 @@ describe('stats tests', () => {
       }).map(review => review.rating) as number[]
     }
     const ipaRatings = reviewRatingsByStyle(ipaStyle.id)
-    const ipaAverage = average(ipaRatings)
     const kriekRatings = reviewRatingsByStyle(kriekStyle.id)
-    const kriekAverage = average(kriekRatings)
-    expect(statsRes.data.style).to.eql([
+    checkStyleStats(
       {
-        reviewCount: `${ipaRatings.length}`,
-        reviewAverage: ipaAverage,
-        styleId: ipaStyle.id,
-        styleName: ipaStyle.name
+        ratings: ipaRatings,
+        style: ipaStyle,
+        average: '7.33',
+        count: 3
       },
       {
-        reviewCount: `${kriekRatings.length}`,
-        reviewAverage: kriekAverage,
-        styleId: kriekStyle.id,
-        styleName: kriekStyle.name
-      }
-    ])
-    expect(ipaRatings.length).to.equal(3)
-    expect(ipaAverage).to.equal('7.33')
-    expect(kriekRatings.length).to.equal(3)
-    expect(kriekAverage).to.equal('6.67')
+        ratings: kriekRatings,
+        style: kriekStyle,
+        average: '6.67',
+        count: 3
+      },
+      statsRes.data.style
+    )
+  })
+
+  it('should get style stats by brewery', async () => {
+    const {
+      beers,
+      breweries,
+      reviews,
+      containers,
+      styles
+    } = await createDeps(ctx.adminAuthHeaders())
+
+    const breweryId = breweries[0].data.brewery.id
+    const statsRes = await ctx.request.get<{ style: StyleStats }>(
+      `/api/v1/stats/style?brewery=${breweryId}`,
+      ctx.adminAuthHeaders()
+    )
+    expect(statsRes.status).to.equal(200)
+    const kriekStyle = styles[0].data.style
+    expect(kriekStyle.name).to.equal('Kriek')
+    const ipaStyle = styles[1].data.style
+    expect(ipaStyle.name).to.equal('IPA')
+    function reviewRatingsByStyle(styleId: string): number[] {
+      return reviews.map(reviewData).filter(review => {
+        const beer = beers.find(
+          beer => beer.data.beer.id === review.beer
+        )?.data?.beer
+        if (beer === undefined) throw error()
+        return beer.styles.some(style => style === styleId) &&
+          beer.breweries.some(brewery => brewery === breweryId)
+      }).map(review => review.rating) as number[]
+    }
+    const ipaRatings = reviewRatingsByStyle(ipaStyle.id)
+    const kriekRatings = reviewRatingsByStyle(kriekStyle.id)
+    checkStyleStats(
+      {
+        ratings: ipaRatings,
+        style: ipaStyle,
+        average: '7.50',
+        count: 2
+      },
+      {
+        ratings: kriekRatings,
+        style: kriekStyle,
+        average: '6.67',
+        count: 3
+      },
+      statsRes.data.style
+    )
   })
 })
