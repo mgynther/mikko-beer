@@ -150,7 +150,7 @@ function App (): JSX.Element {
                 <Route path="styles" element={<Styles />} />
                 {isAdmin && <Route path="users" element={<Users />} />}
                 <Route path="account" element={<Account />} />
-                <Route path="stats" element={<Stats />} />
+                <Route path="stats" element={<Stats breweryId={undefined} />} />
               </React.Fragment>
             )}
             <Route

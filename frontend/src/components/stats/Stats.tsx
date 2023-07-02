@@ -16,22 +16,36 @@ enum Mode {
   Style = 'Style',
 }
 
-function Stats (): JSX.Element {
-  const [mode, setMode] = useState(Mode.Overall)
+interface Props {
+  breweryId: string | undefined
+}
+
+interface ModeButton {
+  mode: Mode
+  title: string
+}
+
+function Stats (props: Props): JSX.Element {
+  const showOnlyBrewery = props.breweryId !== undefined
+  const [mode, setMode] = useState(showOnlyBrewery ? Mode.Annual : Mode.Overall)
 
   const buttons = [
-    {
-      mode: Mode.Overall,
-      title: 'Overall'
-    },
+    showOnlyBrewery
+      ? undefined
+      : {
+          mode: Mode.Overall,
+          title: 'Overall'
+        },
     {
       mode: Mode.Annual,
       title: 'Annual'
     },
-    {
-      mode: Mode.Brewery,
-      title: 'Brewery'
-    },
+    showOnlyBrewery
+      ? undefined
+      : {
+          mode: Mode.Brewery,
+          title: 'Brewery'
+        },
     {
       mode: Mode.Rating,
       title: 'Rating'
@@ -40,11 +54,12 @@ function Stats (): JSX.Element {
       mode: Mode.Style,
       title: 'Style'
     }
-  ]
+  ].filter(button => button) as ModeButton[]
 
   return (
     <div>
-      <h3>Statistics</h3>
+      {showOnlyBrewery && <h4>Statistics</h4>}
+      {!showOnlyBrewery && <h3>Statistics</h3>}
       <div className='StatsModeContainer'>
         {buttons.map(model => (
           <TabButton
@@ -55,11 +70,11 @@ function Stats (): JSX.Element {
           />
         ))}
       </div>
-      {mode === Mode.Annual && <Annual />}
+      {mode === Mode.Annual && <Annual breweryId={props.breweryId} />}
       {mode === Mode.Brewery && <Brewery />}
       {mode === Mode.Overall && <Overall />}
-      {mode === Mode.Rating && <Rating />}
-      {mode === Mode.Style && <Style />}
+      {mode === Mode.Rating && <Rating breweryId={props.breweryId} />}
+      {mode === Mode.Style && <Style breweryId={props.breweryId} />}
     </div>
   )
 }

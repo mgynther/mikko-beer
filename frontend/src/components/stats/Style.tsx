@@ -4,8 +4,12 @@ import LoadingIndicator from '../common/LoadingIndicator'
 
 import './Stats.css'
 
-function Style (): JSX.Element {
-  const { data: styleData, isLoading } = useGetStyleStatsQuery()
+interface Props {
+  breweryId: string | undefined
+}
+
+function Style (props: Props): JSX.Element {
+  const { data: styleData, isLoading } = useGetStyleStatsQuery(props.breweryId)
   const style = styleData?.style
   return (
     <div>

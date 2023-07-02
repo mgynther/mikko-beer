@@ -4,8 +4,13 @@ import LoadingIndicator from '../common/LoadingIndicator'
 
 import './Stats.css'
 
-function Annual (): JSX.Element {
-  const { data: annualData, isLoading } = useGetAnnualStatsQuery()
+interface Props {
+  breweryId: string | undefined
+}
+
+function Annual (props: Props): JSX.Element {
+  const { data: annualData, isLoading } =
+    useGetAnnualStatsQuery(props.breweryId)
   const annual = annualData?.annual
   return (
     <div>

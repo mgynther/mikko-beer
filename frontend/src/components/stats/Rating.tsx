@@ -4,8 +4,13 @@ import LoadingIndicator from '../common/LoadingIndicator'
 
 import './Stats.css'
 
-function Rating (): JSX.Element {
-  const { data: ratingData, isLoading } = useGetRatingStatsQuery()
+interface Props {
+  breweryId: string | undefined
+}
+
+function Rating (props: Props): JSX.Element {
+  const { data: ratingData, isLoading } =
+    useGetRatingStatsQuery(props.breweryId)
   const rating = ratingData?.rating
   return (
     <div>

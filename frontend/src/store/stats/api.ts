@@ -11,11 +11,16 @@ import {
   StatsTags
 } from './types'
 
+function breweryIdFilter (breweryId: string | undefined): string {
+  if (breweryId === undefined) return ''
+  return `?brewery=${breweryId}`
+}
+
 const statsApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
-    getAnnualStats: build.query<AnnualStats, void>({
-      query: () => ({
-        url: '/stats/annual',
+    getAnnualStats: build.query<AnnualStats, string | undefined>({
+      query: (breweryId: string | undefined) => ({
+        url: `/stats/annual${breweryIdFilter(breweryId)}`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Annual]
@@ -34,16 +39,16 @@ const statsApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [StatsTags.Overall]
     }),
-    getRatingStats: build.query<RatingStats, void>({
-      query: () => ({
-        url: '/stats/rating',
+    getRatingStats: build.query<RatingStats, string | undefined>({
+      query: (breweryId: string | undefined) => ({
+        url: `/stats/rating${breweryIdFilter(breweryId)}`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Rating]
     }),
-    getStyleStats: build.query<StyleStats, void>({
-      query: () => ({
-        url: '/stats/style',
+    getStyleStats: build.query<StyleStats, string | undefined>({
+      query: (breweryId: string | undefined) => ({
+        url: `/stats/style${breweryIdFilter(breweryId)}`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Style]

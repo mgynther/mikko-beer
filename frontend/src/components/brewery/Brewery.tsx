@@ -11,6 +11,8 @@ import EditButton from '../common/EditButton'
 import LoadingIndicator from '../common/LoadingIndicator'
 import ReviewList from '../review/ReviewList'
 
+import Stats from '../stats/Stats'
+
 import UpdateBrewery from './UpdateBrewery'
 
 import '../common/FlexRow.css'
@@ -36,22 +38,25 @@ function Brewery (): JSX.Element {
   return (
     <div>
       {mode === EditableMode.View && (
-        <div className='FlexRow'>
-          <div>
-            <h3>
-              { brewery.name }
-            </h3>
+        <>
+          <div className='FlexRow'>
+            <div>
+              <h3>
+                { brewery.name }
+              </h3>
+            </div>
+            <div>
+              <EditButton
+                disabled={brewery === undefined}
+                onClick={() => {
+                  setMode(EditableMode.Edit)
+                  setInitialBrewery({ ...brewery })
+                }}
+              />
+            </div>
           </div>
-          <div>
-            <EditButton
-              disabled={brewery === undefined}
-              onClick={() => {
-                setMode(EditableMode.Edit)
-                setInitialBrewery({ ...brewery })
-              }}
-            />
-          </div>
-        </div>
+          <Stats breweryId={brewery.id} />
+        </>
       )}
       {mode === EditableMode.Edit && initialBrewery !== undefined && (
         <UpdateBrewery
