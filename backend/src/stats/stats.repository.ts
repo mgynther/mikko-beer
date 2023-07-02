@@ -57,9 +57,10 @@ export async function getAnnual (
 
 export async function getBrewery (
   db: Database,
-  pagination: Pagination
+  pagination: Pagination,
+  statsFilter: StatsFilter | undefined
 ): Promise<BreweryStats> {
-  const breweryQuery = sql`SELECT
+  let breweryQuery = sql`SELECT
     COUNT(1) as review_count,
     AVG(rating) as review_average,
     brewery.brewery_id as brewery_id,
@@ -73,6 +74,25 @@ export async function getBrewery (
     OFFSET ${pagination.skip}
     LIMIT ${pagination.size}
   `
+
+  if (statsFilter !== undefined) {
+    breweryQuery = sql`SELECT
+      COUNT(review) AS review_count,
+      AVG(review.rating) AS review_average,
+      brewery.brewery_id AS brewery_id,
+      brewery.name AS brewery_name
+      FROM beer_brewery AS querybrewery
+      INNER JOIN beer ON querybrewery.beer = beer.beer_id
+      INNER JOIN review ON beer.beer_id = review.beer
+      INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer
+      INNER JOIN brewery ON beer_brewery.brewery = brewery.brewery_id
+      WHERE querybrewery.brewery = ${statsFilter.brewery}
+      GROUP BY brewery_id
+      ORDER BY brewery_name ASC
+      OFFSET ${pagination.skip}
+      LIMIT ${pagination.size}
+    `
+  }
 
   const brewery = (await breweryQuery
     .execute(db.getDb()) as {

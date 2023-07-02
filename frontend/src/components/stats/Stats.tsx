@@ -40,12 +40,10 @@ function Stats (props: Props): JSX.Element {
       mode: Mode.Annual,
       title: 'Annual'
     },
-    showOnlyBrewery
-      ? undefined
-      : {
-          mode: Mode.Brewery,
-          title: 'Brewery'
-        },
+    {
+      mode: Mode.Brewery,
+      title: 'Brewery'
+    },
     {
       mode: Mode.Rating,
       title: 'Rating'
@@ -71,7 +69,7 @@ function Stats (props: Props): JSX.Element {
         ))}
       </div>
       {mode === Mode.Annual && <Annual breweryId={props.breweryId} />}
-      {mode === Mode.Brewery && <Brewery />}
+      {mode === Mode.Brewery && <Brewery breweryId={props.breweryId} />}
       {mode === Mode.Overall && <Overall />}
       {mode === Mode.Rating && <Rating breweryId={props.breweryId} />}
       {mode === Mode.Style && <Style breweryId={props.breweryId} />}

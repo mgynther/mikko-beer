@@ -31,7 +31,9 @@ export function statsController (router: Router): void {
     async (ctx) => {
       const { skip, size } = ctx.request.query
       const pagination = validatePagination({ skip, size })
-      const brewery = await statsService.getBrewery(ctx.db, pagination)
+      const statsFilter = validateStatsFilter(ctx.request.query)
+      const brewery =
+        await statsService.getBrewery(ctx.db, pagination, statsFilter)
       ctx.body = { brewery }
     }
   )

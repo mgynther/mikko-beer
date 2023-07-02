@@ -25,9 +25,17 @@ const statsApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [StatsTags.Annual]
     }),
-    getBreweryStats: build.query<BreweryStats, Pagination>({
-      query: (pagination: Pagination) => ({
-        url: `/stats/brewery?size=${pagination.size}&skip=${pagination.skip}`,
+    getBreweryStats: build.query<BreweryStats, {
+      breweryId: string | undefined
+      pagination: Pagination
+    }>({
+      query: (params: {
+        breweryId: string | undefined
+        pagination: Pagination
+      }) => ({
+        url: `/stats/brewery${
+          breweryIdFilter(params.breweryId)
+        }&size=${params.pagination.size}&skip=${params.pagination.skip}`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Brewery]

@@ -21,9 +21,10 @@ export async function getAnnual (
 
 export async function getBrewery (
   db: Database,
-  pagination: Pagination
+  pagination: Pagination,
+  statsFilter: StatsFilter | undefined
 ): Promise<BreweryStats> {
-  return await statsRepository.getBrewery(db, pagination)
+  return await statsRepository.getBrewery(db, pagination, statsFilter)
 }
 
 export async function getOverall (
