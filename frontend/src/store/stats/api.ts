@@ -11,16 +11,25 @@ import {
   StatsTags
 } from './types'
 
-function breweryIdFilter (breweryId: string | undefined): string {
+function breweryIdFilter (breweryId: string): string {
+  return `brewery=${breweryId}`
+}
+
+function andBreweryIdFilter (breweryId: string | undefined): string {
   if (breweryId === undefined) return ''
-  return `?brewery=${breweryId}`
+  return `&${breweryIdFilter(breweryId)}`
+}
+
+function onlyBreweryIdFilter (breweryId: string | undefined): string {
+  if (breweryId === undefined) return ''
+  return `?${breweryIdFilter(breweryId)}`
 }
 
 const statsApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
     getAnnualStats: build.query<AnnualStats, string | undefined>({
       query: (breweryId: string | undefined) => ({
-        url: `/stats/annual${breweryIdFilter(breweryId)}`,
+        url: `/stats/annual${onlyBreweryIdFilter(breweryId)}`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Annual]
@@ -33,9 +42,13 @@ const statsApi = emptySplitApi.injectEndpoints({
         breweryId: string | undefined
         pagination: Pagination
       }) => ({
-        url: `/stats/brewery${
-          breweryIdFilter(params.breweryId)
-        }&size=${params.pagination.size}&skip=${params.pagination.skip}`,
+        url: `/stats/brewery?size=${
+          params.pagination.size
+          }&skip=${
+            params.pagination.skip
+          }${
+          andBreweryIdFilter(params.breweryId)
+        }`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Brewery]
@@ -49,14 +62,14 @@ const statsApi = emptySplitApi.injectEndpoints({
     }),
     getRatingStats: build.query<RatingStats, string | undefined>({
       query: (breweryId: string | undefined) => ({
-        url: `/stats/rating${breweryIdFilter(breweryId)}`,
+        url: `/stats/rating${onlyBreweryIdFilter(breweryId)}`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Rating]
     }),
     getStyleStats: build.query<StyleStats, string | undefined>({
       query: (breweryId: string | undefined) => ({
-        url: `/stats/style${breweryIdFilter(breweryId)}`,
+        url: `/stats/style${onlyBreweryIdFilter(breweryId)}`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Style]
