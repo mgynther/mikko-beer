@@ -13,7 +13,8 @@ import {
 } from './stats'
 
 // TODO try converting raw sql queries to Kysely for automatic types.
-function round (value: number, decimals: number): string {
+function round (value: number | null, decimals: number): string {
+  if (value === undefined || value === null) return ''
   return Number(
     `${Math.round(parseFloat(`${value}e${decimals}`))}e-${decimals}`
   ).toFixed(decimals)
@@ -112,35 +113,91 @@ export async function getBrewery (
   }))
 }
 
+interface Stats {
+  beer_count: number
+  brewery_count: number
+  container_count: number
+  style_count: number
+}
+
+interface ReviewStats {
+  review_count: number
+  review_average: number
+}
+
 export async function getOverall (
-  db: Database
+  db: Database,
+  statsFilter: StatsFilter | undefined
 ): Promise<OverallStats> {
+  if (statsFilter === undefined) {
+    const statsQuery = sql`SELECT
+      (SELECT COUNT(1) FROM beer) AS beer_count,
+      (SELECT COUNT(1) FROM brewery) AS brewery_count,
+      (SELECT COUNT(1) FROM container) AS container_count,
+      (SELECT COUNT(1) FROM review) AS review_count,
+      (SELECT COUNT(1) FROM style) AS style_count,
+      (SELECT AVG(rating) FROM review) AS review_average
+    `
+    const stats = (await statsQuery
+      .execute(db.getDb()) as {
+      rows: Array<Stats & ReviewStats>
+    }).rows[0]
+
+    return {
+      beerCount: `${stats.beer_count}`,
+      breweryCount: `${stats.brewery_count}`,
+      containerCount: `${stats.container_count}`,
+      reviewAverage: round(stats.review_average, 2),
+      reviewCount: `${stats.review_count}`,
+      styleCount: `${stats.style_count}`
+    }
+  }
+
   const statsQuery = sql`SELECT
-    (SELECT COUNT(1) FROM beer) AS beer_count,
-    (SELECT COUNT(1) FROM brewery) AS brewery_count,
-    (SELECT COUNT(1) FROM container) AS container_count,
-    (SELECT COUNT(1) FROM review) AS review_count,
-    (SELECT COUNT(1) FROM style) AS style_count,
-    (SELECT AVG(rating) FROM review) AS review_average
+    COUNT(DISTINCT beer.beer_id) AS beer_count,
+    COUNT(DISTINCT brewery.brewery_id) AS brewery_count,
+    COUNT(DISTINCT container.container_id) AS container_count,
+    COUNT(DISTINCT beer_style.style) AS style_count
+    FROM beer_brewery AS querybrewery
+    INNER JOIN beer ON querybrewery.beer = beer.beer_id
+    INNER JOIN review ON beer.beer_id = review.beer
+    INNER JOIN container ON review.container = container.container_id
+    INNER JOIN beer_style ON beer.beer_id = beer_style.beer
+    INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer
+    INNER JOIN brewery ON beer_brewery.brewery = brewery.brewery_id
+    WHERE querybrewery.brewery = ${statsFilter.brewery}
   `
-  const stats = (await statsQuery
-    .execute(db.getDb()) as {
-    rows: Array<{
-      beer_count: number
-      brewery_count: number
-      container_count: number
-      review_count: number
-      review_average: number
-      style_count: number
-    }>
-  }).rows[0]
+
+  const averageQuery = sql`SELECT
+    COUNT(1) as review_count,
+    AVG(review.rating) as review_average
+    FROM beer_brewery
+    INNER JOIN beer ON beer_brewery.beer = beer.beer_id
+    INNER JOIN review ON beer.beer_id = review.beer
+    WHERE beer_brewery.brewery = ${statsFilter.brewery}
+  `
+
+  const statsPromise = (statsQuery
+    .execute(db.getDb()) as Promise<{
+    rows: Stats[]
+  }>)
+
+  const averageStatsPromise = (averageQuery
+    .execute(db.getDb()) as Promise<{
+    rows: ReviewStats[]
+  }>)
+
+  const [statsResults, averageStatsResults] =
+    await Promise.all([statsPromise, averageStatsPromise])
+  const stats = statsResults.rows[0]
+  const averageStats = averageStatsResults.rows[0]
 
   return {
     beerCount: `${stats.beer_count}`,
     breweryCount: `${stats.brewery_count}`,
     containerCount: `${stats.container_count}`,
-    reviewAverage: round(stats.review_average, 2),
-    reviewCount: `${stats.review_count}`,
+    reviewAverage: round(averageStats.review_average, 2),
+    reviewCount: `${averageStats.review_count}`,
     styleCount: `${stats.style_count}`
   }
 }

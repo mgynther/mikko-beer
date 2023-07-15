@@ -27,15 +27,13 @@ interface ModeButton {
 
 function Stats (props: Props): JSX.Element {
   const showOnlyBrewery = props.breweryId !== undefined
-  const [mode, setMode] = useState(showOnlyBrewery ? Mode.Annual : Mode.Overall)
+  const [mode, setMode] = useState(Mode.Overall)
 
   const buttons = [
-    showOnlyBrewery
-      ? undefined
-      : {
-          mode: Mode.Overall,
-          title: 'Overall'
-        },
+    {
+      mode: Mode.Overall,
+      title: 'Overall'
+    },
     {
       mode: Mode.Annual,
       title: 'Annual'
@@ -70,7 +68,7 @@ function Stats (props: Props): JSX.Element {
       </div>
       {mode === Mode.Annual && <Annual breweryId={props.breweryId} />}
       {mode === Mode.Brewery && <Brewery breweryId={props.breweryId} />}
-      {mode === Mode.Overall && <Overall />}
+      {mode === Mode.Overall && <Overall breweryId={props.breweryId} />}
       {mode === Mode.Rating && <Rating breweryId={props.breweryId} />}
       {mode === Mode.Style && <Style breweryId={props.breweryId} />}
     </div>

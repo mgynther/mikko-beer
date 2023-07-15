@@ -53,9 +53,11 @@ const statsApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [StatsTags.Brewery]
     }),
-    getOverallStats: build.query<{ overall: OverallStats }, void>({
-      query: () => ({
-        url: '/stats/overall',
+    getOverallStats: build.query<{
+      overall: OverallStats
+    }, string | undefined>({
+      query: (breweryId: string | undefined) => ({
+        url: `/stats/overall${onlyBreweryIdFilter(breweryId)}`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Overall]

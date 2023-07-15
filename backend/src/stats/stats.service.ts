@@ -28,9 +28,10 @@ export async function getBrewery (
 }
 
 export async function getOverall (
-  db: Database
+  db: Database,
+  statsFilter: StatsFilter | undefined
 ): Promise<OverallStats> {
-  return await statsRepository.getOverall(db)
+  return await statsRepository.getOverall(db, statsFilter)
 }
 
 export async function getRating (

@@ -12,7 +12,8 @@ export function statsController (router: Router): void {
     '/api/v1/stats/overall',
     authService.authenticateViewer,
     async (ctx) => {
-      const overall = await statsService.getOverall(ctx.db)
+      const statsFilter = validateStatsFilter(ctx.request.query)
+      const overall = await statsService.getOverall(ctx.db, statsFilter)
       ctx.body = { overall }
     }
   )

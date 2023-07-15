@@ -4,8 +4,13 @@ import LoadingIndicator from '../common/LoadingIndicator'
 
 import './Stats.css'
 
-function Overall (): JSX.Element {
-  const { data: overallData, isLoading } = useGetOverallStatsQuery()
+interface Props {
+  breweryId: string | undefined
+}
+
+function Overall (props: Props): JSX.Element {
+  const { data: overallData, isLoading } =
+    useGetOverallStatsQuery(props.breweryId)
   const overall = overallData?.overall
   return (
     <div>

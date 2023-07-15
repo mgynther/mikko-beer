@@ -196,19 +196,52 @@ describe('stats tests', () => {
     expect(statsRes.data.overall.reviewCount).to.equal(`${reviews.length}`)
     expect(reviews.length).to.equal(4)
     const ratings = reviews
-      ?.map(r => {
-        const value = r?.data?.review?.rating
-        if (value === undefined || value === null) throw error()
-        return value
-      })
-    if (ratings === null || ratings === undefined) {
-      throw error()
-    }
-    const ratingSum = ratings?.reduce((sum: number, rating: number) => sum + rating, 0)
+      .map(r => r.data.review)
+      .filter(r => r)
+      .map(r => r.rating) as number[]
+    const ratingSum = ratings.reduce((sum: number, rating: number) => sum + rating, 0)
     const countedAverage = ratingSum / reviews.length
     expect(statsRes.data.overall.reviewAverage).to.equal(countedAverage.toFixed(2))
     expect(countedAverage).to.equal(6.75)
     expect(statsRes.data.overall.styleCount).to.equal(`${styles.length}`)
+    expect(styles.length).to.equal(2)
+  })
+
+  it('should get overall stats by brewery', async () => {
+    const {
+      beers,
+      breweries,
+      reviews,
+      containers,
+      styles
+    } = await createDeps(ctx.adminAuthHeaders())
+
+    const breweryId = breweries[0].data.brewery.id
+    const statsRes = await ctx.request.get<{ overall: OverallStats }>(
+      `/api/v1/stats/overall?brewery=${breweryId}`,
+      ctx.adminAuthHeaders()
+    )
+    expect(statsRes.status).to.equal(200)
+    expect(statsRes.data.overall.beerCount).to.equal('2')
+    expect(statsRes.data.overall.breweryCount).to.equal('2')
+    expect(statsRes.data.overall.containerCount).to.equal('1')
+    expect(statsRes.data.overall.reviewCount).to.equal('3')
+    const ratings = reviews
+      .map(r => r.data.review)
+      .filter((review: Review) => {
+        const beerId = review.beer
+        const beerRes = beers.find(beerRes => beerRes.data.beer.id === beerId)
+        if (beerRes === undefined) {
+          return false
+        }
+        return beerRes.data.beer.breweries.includes(breweryId)
+      })
+      .map(r => r.rating) as number[]
+    const ratingSum = ratings.reduce((sum: number, rating: number) => sum + rating, 0)
+    const countedAverage = ratingSum / ratings.length
+    expect(statsRes.data.overall.reviewAverage).to.equal(countedAverage.toFixed(2))
+    expect(countedAverage).to.equal(6 + 2/3)
+    expect(statsRes.data.overall.styleCount).to.equal('2')
     expect(styles.length).to.equal(2)
   })
 
