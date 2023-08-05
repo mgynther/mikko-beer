@@ -22,6 +22,7 @@ interface Props {
   isLoading: boolean
   isTitleVisible: boolean
   reviews: JoinedReview[]
+  onChanged: () => void
 }
 
 function ReviewList (props: Props): JSX.Element {
@@ -34,7 +35,11 @@ function ReviewList (props: Props): JSX.Element {
         <div>
           {props.reviews.map((review) => {
             return (
-              <Review key={review.id} review={review} />
+              <Review
+                key={review.id}
+                review={review}
+                onChanged={props.onChanged}
+              />
             )
           })}
         </div>

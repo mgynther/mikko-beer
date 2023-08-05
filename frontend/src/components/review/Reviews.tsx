@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { useLazyListReviewsQuery } from '../../store/review/api'
+import { useListReviewsMutation } from '../../store/review/api'
 import { type JoinedReview } from '../../store/review/types'
 
 import { infiniteScroll } from '../util'
@@ -14,7 +14,7 @@ const pageSize = 20
 function Reviews (): JSX.Element {
   const [loadedReviews, setLoadedReviews] = useState<JoinedReview[]>([])
   const [trigger, { data: reviewData, isLoading, isUninitialized }] =
-    useLazyListReviewsQuery()
+    useListReviewsMutation()
 
   const reviewArray = reviewData?.reviews === undefined
     ? []
@@ -26,9 +26,9 @@ function Reviews (): JSX.Element {
       const result = await trigger({
         skip: loadedReviews.length,
         size: pageSize
-      })
-      if (result.data === undefined) return
-      setLoadedReviews([...loadedReviews, ...result.data.reviews])
+      }).unwrap()
+      if (result === undefined) return
+      setLoadedReviews([...loadedReviews, ...result.reviews])
     }
     function checkLoad (): void {
       if (!isLoading && hasMore) {
@@ -45,6 +45,9 @@ function Reviews (): JSX.Element {
         isLoading={isLoading}
         isTitleVisible={false}
         reviews={loadedReviews}
+        onChanged={() => {
+          setLoadedReviews([])
+        }}
       />
     </div>
   )

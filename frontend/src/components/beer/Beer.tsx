@@ -83,6 +83,7 @@ function Beer (): JSX.Element {
         isLoading={isLoadingReviews}
         isTitleVisible={true}
         reviews={reviewData?.reviews ?? []}
+        onChanged={() => {}}
       />
     </div>
   )

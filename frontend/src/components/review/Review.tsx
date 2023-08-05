@@ -18,6 +18,7 @@ import './Review.css'
 
 interface Props {
   review: JoinedReview
+  onChanged: () => void
 }
 
 function Review (props: Props): JSX.Element {
@@ -117,6 +118,7 @@ function Review (props: Props): JSX.Element {
             onSaved={() => {
               setMode(EditableMode.View)
               void fetchReview(review.id)
+              props.onChanged()
             }}
           />
         </>
