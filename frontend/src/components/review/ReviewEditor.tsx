@@ -106,7 +106,17 @@ function ReviewEditor (props: Props): JSX.Element {
       taste,
       time: new Date(time).toISOString()
     })
-  }, [isMissingData, beer, container, location, rating, smell, taste, time])
+  }, [
+    isMissingData,
+    additionalInfo,
+    beer,
+    container,
+    location,
+    rating,
+    smell,
+    taste,
+    time
+  ])
 
   return (
     <div>
