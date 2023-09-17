@@ -21,6 +21,7 @@ import {
 import { type BreweryTable } from './brewery/brewery.table'
 import { type ContainerTable } from './container/container.table'
 import { type ReviewTable } from './review/review.table'
+import { type StorageTable } from './storage/storage.table'
 import {
   type StyleTable,
   type StyleRelationshipTable
@@ -34,6 +35,7 @@ export interface KyselyDatabase {
   brewery: BreweryTable
   container: ContainerTable
   review: ReviewTable
+  storage: StorageTable
   style: StyleTable
   style_relationship: StyleRelationshipTable
   user: UserTable

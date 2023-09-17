@@ -14,6 +14,7 @@ import { beerController } from './beer/beer.controller'
 import { breweryController } from './brewery/brewery.controller'
 import { containerController } from './container/container.controller'
 import { reviewController } from './review/review.controller'
+import { storageController } from './storage/storage.controller'
 import { statsController } from './stats/stats.controller'
 import { styleController } from './style/style.controller'
 import { userController } from './user/user.controller'
@@ -50,6 +51,7 @@ export class App {
     breweryController(this.#router)
     containerController(this.#router)
     reviewController(this.#router)
+    storageController(this.#router)
     statsController(this.#router)
     styleController(this.#router)
     userController(this.#router)
