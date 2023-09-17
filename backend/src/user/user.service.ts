@@ -12,11 +12,11 @@ export async function createAnonymousUser (
 ): Promise<SignedInUser> {
   const user = await userRepository.insertUser(trx, { role })
 
-  const refreshFunc = createRefreshToken
-    ? authTokenService.createRefreshToken
-    : authTokenService.createInitialAdminRefreshToken
-  const refreshToken = await refreshFunc(trx, user.user_id)
+  const refreshTokenPromise = createRefreshToken
+    ? authTokenService.createRefreshToken(trx, user.user_id)
+    : authTokenService.createInitialAdminRefreshToken(user.user_id)
 
+  const refreshToken = await refreshTokenPromise
   const authToken = await authTokenService.createAuthToken(
     trx, user.role, refreshToken)
   return {

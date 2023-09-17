@@ -42,7 +42,6 @@ export async function createRefreshToken (
 }
 
 export async function createInitialAdminRefreshToken (
-  db: Transaction,
   userId: string
 ): Promise<RefreshToken> {
   const refresh_token_id = uuidv4()
