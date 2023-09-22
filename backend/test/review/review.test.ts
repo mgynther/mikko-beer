@@ -130,6 +130,43 @@ describe('review tests', () => {
     expect(beerListRes.data.reviews).to.eql(breweryListRes.data.reviews)
   })
 
+  it('should delete storage when review created from storage', async () => {
+    const { beerRes, containerRes } = await createDeps(ctx.adminAuthHeaders())
+
+    const bestBefore = '2024-10-01T00:00:00.000Z'
+    const storageRes = await ctx.request.post(`/api/v1/storage`,
+      {
+        bestBefore,
+        beer: beerRes.data.beer.id,
+        container: containerRes.data.container.id,
+      },
+      ctx.adminAuthHeaders()
+    )
+    expect(storageRes.status).to.equal(201)
+    expect(storageRes.data.storage.beer).to.equal(beerRes.data.beer.id)
+
+    const reviewRes = await ctx.request.post(`/api/v1/review?storage=${storageRes.data.storage.id}`,
+      {
+        beer: beerRes.data.beer.id,
+        container: containerRes.data.container.id,
+        location: 'Pikilinna',
+        rating: 8,
+        smell: 'Cherries',
+        taste: 'Cherries, a little sour',
+        time: '2023-03-07T18:31:33.123Z'
+      },
+      ctx.adminAuthHeaders()
+    )
+    expect(reviewRes.status).to.equal(201)
+    expect(reviewRes.data.review.beer).to.equal(beerRes.data.beer.id)
+
+    const getStorageRes = await ctx.request.get<{ storage: Storage }>(
+      `/api/v1/storage/${storageRes.data.storage.id}`,
+      ctx.adminAuthHeaders()
+    )
+    expect(getStorageRes.status).to.equal(404)
+  })
+
   it('should fail create a review without beer', async () => {
     const { beerRes, breweryRes, containerRes, styleRes } = await createDeps(ctx.adminAuthHeaders())
 

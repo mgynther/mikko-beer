@@ -54,13 +54,23 @@ export async function findStorageById (
     .selectFrom('storage')
     .where('storage_id', '=', id)
     .selectAll('storage')
-    .executeTakeFirstOrThrow()
+    .executeTakeFirst()
 
   if (storageRow === undefined) {
     return undefined
   }
 
   return storageRow
+}
+
+export async function deleteStorageById (
+  trx: Transaction,
+  id: string
+): Promise<void> {
+  await trx.trx()
+    .deleteFrom('storage')
+    .where('storage_id', '=', id)
+    .execute()
 }
 
 export async function lockStorageById (

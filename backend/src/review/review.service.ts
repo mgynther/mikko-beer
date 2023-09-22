@@ -1,4 +1,5 @@
 import * as reviewRepository from './review.repository'
+import * as storageRepository from '../storage/storage.repository'
 
 import { type Database, type Transaction } from '../database'
 import {
@@ -16,7 +17,8 @@ import { type Pagination } from '../util/pagination'
 
 export async function createReview (
   trx: Transaction,
-  request: CreateReviewRequest
+  request: CreateReviewRequest,
+  fromStorageId: string | undefined
 ): Promise<Review> {
   const review = await reviewRepository.insertReview(trx, {
     additional_info: request.additionalInfo,
@@ -28,6 +30,10 @@ export async function createReview (
     taste: request.taste,
     time: request.time
   })
+
+  if (typeof fromStorageId === 'string') {
+    await storageRepository.deleteStorageById(trx, fromStorageId)
+  }
 
   return {
     ...reviewRowToReview(review)

@@ -55,7 +55,7 @@ export function storageController (router: Router): void {
       const { storageId } = ctx.params
       const storage = await storageService.findStorageById(ctx.db, storageId)
 
-      if (storage == null) {
+      if (storage === undefined) {
         throw new ControllerError(
           404,
           'StorageNotFound',

@@ -16,10 +16,17 @@ export function reviewController (router: Router): void {
     authService.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
+      const { storage } = ctx.request.query
 
       const createReviewRequest = validateCreateRequest(body)
       const result = await ctx.db.executeTransaction(async (trx) => {
-        return await reviewService.createReview(trx, createReviewRequest)
+        const storageParam = typeof storage === 'string' &&
+          storage.length > 0
+          ? storage
+          : undefined
+        return await reviewService.createReview(
+          trx, createReviewRequest, storageParam
+        )
       })
 
       ctx.status = 201
