@@ -121,7 +121,7 @@ export async function listStorages (
   INNER JOIN style ON style.style_id = beer_style.style
   INNER JOIN container ON storage.container = container.container_id
   WHERE storage.rn BETWEEN ${start} AND ${end}
-  ORDER BY storage.best_before DESC
+  ORDER BY storage.best_before ASC, beer.name ASC
   `
 
   const storages = (await storageQuery
@@ -181,8 +181,8 @@ export async function joinStorageData (
       'style.style_id as style_id',
       'style.name as style_name'
     ])
-    .orderBy('beer_name')
     .orderBy('storage.best_before', 'asc')
+    .orderBy('beer_name')
     .execute()
 
   if (storages.length === 0) {

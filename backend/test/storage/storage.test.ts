@@ -176,7 +176,7 @@ describe('storage tests', () => {
     const storageRes = await ctx.request.post(`/api/v1/storage`,
       {
         beer: beerRes.data.beer.id,
-        bestBefore,
+        bestBefore: bestBeforeLater,
         container: containerRes.data.container.id,
       },
       ctx.adminAuthHeaders()
@@ -256,5 +256,8 @@ describe('storage tests', () => {
     const otherCollabStyle = collabStorage?.styles?.find(style => style.id === otherStyleRes.data.style.id);
     expect(collabStyle).to.eql({ id: styleRes.data.style.id, name: styleRes.data.style.name });
     expect(otherCollabStyle).to.eql({ id: otherStyleRes.data.style.id, name: otherStyleRes.data.style.name });
+
+    const ids = breweryListRes.data.storages.map(storage => storage.id)
+    expect(ids).to.eql([collabStorage?.id, kriekStorage?.id])
   })
 })
