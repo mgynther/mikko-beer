@@ -40,6 +40,7 @@ function UpdateReview (props: Props): JSX.Element {
     <>
       <ReviewEditor
         initialReview={props.initialReview}
+        isFromStorage={false}
         onChange={(review: ReviewRequest | undefined) => {
           setNewReview(review)
         }}

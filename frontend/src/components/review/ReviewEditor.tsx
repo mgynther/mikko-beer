@@ -7,15 +7,20 @@ import { type JoinedReview, type ReviewRequest } from '../../store/review/types'
 import SelectBeer from '../beer/SelectBeer'
 import SelectContainer from '../container/SelectContainer'
 
+import { pad } from '../util'
+
 import '../common/FlexRow.css'
 
 import './ReviewEditor.css'
 
+export interface InitialReview {
+  joined: JoinedReview
+  review: ReviewRequest
+}
+
 interface Props {
-  initialReview: {
-    joined: JoinedReview
-    review: ReviewRequest
-  } | undefined
+  initialReview: InitialReview | undefined
+  isFromStorage: boolean
   onChange: (review: ReviewRequest | undefined) => void
 }
 
@@ -62,12 +67,6 @@ function ReviewEditor (props: Props): JSX.Element {
   }
 
   function localDateTime (): string {
-    function str (num: number): string {
-      if (num < 10) {
-        return `0${num}`
-      }
-      return `${num}`
-    }
     const date = props.initialReview === undefined
       ? new Date()
       : new Date(props.initialReview?.review.time)
@@ -76,7 +75,7 @@ function ReviewEditor (props: Props): JSX.Element {
     const d = date.getDate()
     const h = date.getHours()
     const mi = date.getMinutes()
-    return `${str(y)}-${str(mo)}-${str(d)}T${str(h)}:${str(mi)}`
+    return `${pad(y)}-${pad(mo)}-${pad(d)}T${pad(h)}:${pad(mi)}`
   }
   const [time, setTime] = useState(localDateTime())
   // Very crude validation may let garbage pass but assuming datetime-local
@@ -129,12 +128,14 @@ function ReviewEditor (props: Props): JSX.Element {
             }} />
             : (<div className='FlexRow'>
                   <div>{beer.name}</div>
-                  <div>
-                    <button
-                      onClick={() => { setBeer(undefined) }}>
-                      Change
-                    </button>
-                </div>
+                  {!props.isFromStorage && (
+                    <div>
+                      <button
+                        onClick={() => { setBeer(undefined) }}>
+                        Change
+                      </button>
+                    </div>
+                  )}
               </div>)
           }
         </div>
@@ -150,12 +151,14 @@ function ReviewEditor (props: Props): JSX.Element {
                 <div>
                   {`${container.type} ${container.size}`}
                 </div>
-                <div>
-                  <button
-                    onClick={() => { setContainer(undefined) }}>
-                    Change
-                  </button>
-                </div>
+                {!props.isFromStorage && (
+                  <div>
+                    <button
+                      onClick={() => { setContainer(undefined) }}>
+                      Change
+                    </button>
+                  </div>
+                )}
               </div>)
           }
         </div>

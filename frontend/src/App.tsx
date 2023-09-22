@@ -17,6 +17,7 @@ import Containers from './components/container/Containers'
 import LoginComponent from './components/login/Login'
 import Reviews from './components/review/Reviews'
 import Stats from './components/stats/Stats'
+import Storages from './components/storage/Storages'
 import Styles from './components/style/Styles'
 import Users from './components/user/Users'
 
@@ -70,6 +71,9 @@ function Layout (props: LayoutProps): JSX.Element {
                 </li>
                 <li>
                   <Link to="/stats">Statistics</Link>
+                </li>
+                <li>
+                  <Link to="/storage">Storage</Link>
                 </li>
                 <li>
                   <label>
@@ -141,6 +145,9 @@ function App (): JSX.Element {
             {isLoggedIn && (
               <React.Fragment>
                 {isAdmin && <Route path="addreview" element={<AddReview />} />}
+                {isAdmin &&
+                  <Route path="addreview/:storageId" element={<AddReview />} />
+                }
                 <Route path="beers" element={<Beers />} />
                 <Route path="beers/:beerId" element={<Beer />} />
                 <Route path="breweries" element={<Breweries />} />
@@ -151,6 +158,7 @@ function App (): JSX.Element {
                 {isAdmin && <Route path="users" element={<Users />} />}
                 <Route path="account" element={<Account />} />
                 <Route path="stats" element={<Stats breweryId={undefined} />} />
+                <Route path="storage" element={<Storages />} />
               </React.Fragment>
             )}
             <Route

@@ -1,5 +1,18 @@
 import { useEffect, useState } from 'react'
 
+export function pad (number: number): string {
+  if (number < 10) return `0${number}`
+  return `${number}`
+}
+
+export function formatBestBefore (bb: string): string {
+  const date = new Date(bb)
+  const year = date.getFullYear()
+  const month = pad(date.getMonth() + 1)
+  const dayOfMonth = pad(date.getDate())
+  return `${year}-${month}-${dayOfMonth}`
+}
+
 export function infiniteScroll (loadMore: () => void): () => void {
   const observer = new IntersectionObserver(entries => {
     const intersecting = entries[0].isIntersecting

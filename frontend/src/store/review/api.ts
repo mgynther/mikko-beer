@@ -10,6 +10,18 @@ import {
   ReviewTags
 } from './types'
 
+export interface ReviewRequestWrapper {
+  body: ReviewRequest
+  storageId: string | undefined
+}
+
+function getStorageGetParam (storageId: string | undefined): string {
+  if (storageId === undefined || storageId.length === 0) {
+    return ''
+  }
+  return `?storage=${storageId}`
+}
+
 const reviewApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
     getReview: build.query<{ review: Review }, string>({
@@ -38,11 +50,14 @@ const reviewApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [ReviewTags.Review]
     }),
-    createReview: build.mutation<{ review: Review }, Partial<ReviewRequest>>({
-      query: (body: ReviewRequest) => ({
-        url: '/review',
+    createReview: build.mutation<
+    { review: Review },
+    Partial<ReviewRequestWrapper>
+    >({
+      query: (wrapper: ReviewRequestWrapper) => ({
+        url: `/review${getStorageGetParam(wrapper.storageId)}`,
         method: 'POST',
-        body
+        body: wrapper.body
       }),
       invalidatesTags: [ReviewTags.Review, ...reviewStatsTagTypes()]
     }),

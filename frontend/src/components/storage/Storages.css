@@ -1,0 +1,26 @@
+.StorageHeading,
+.StorageRow {
+  display: flex;
+  flex-direction: row;
+}
+
+.StorageHeading {
+  font-size: 12px;
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+
+.StorageHeading div,
+.StorageRow div {
+  padding: 5px;
+}
+
+.BeerName,
+.BeerBreweries {
+  width: 40%;
+}
+
+.BestBefore,
+.ReviewLink {
+  width: 20%;
+}

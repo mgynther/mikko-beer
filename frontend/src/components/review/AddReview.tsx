@@ -1,21 +1,60 @@
 import { useEffect, useState } from 'react'
 
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { useCreateReviewMutation } from '../../store/review/api'
 import { type ReviewRequest } from '../../store/review/types'
+import { useGetStorageQuery } from '../../store/storage/api'
+import { type Storage } from '../../store/storage/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
+import { formatBestBefore } from '../util'
 
-import ReviewEditor from './ReviewEditor'
+import ReviewEditor, { type InitialReview } from './ReviewEditor'
+
+function toInitialReview (storageData: Storage): InitialReview {
+  if (storageData === undefined) {
+    throw new Error('must wait for storageData to load')
+  }
+  // TODO add user editable template and store it to localStorage.
+  const additionalInfo =
+    `From storage, BB ${formatBestBefore(storageData.bestBefore)}`
+  const time = new Date().toISOString()
+  return {
+    review: {
+      additionalInfo,
+      beer: storageData.beerId,
+      container: storageData.container.id,
+      location: '',
+      rating: 7,
+      smell: '',
+      taste: '',
+      time
+    },
+    joined: {
+      ...storageData,
+      additionalInfo,
+      id: '',
+      location: '',
+      rating: 7,
+      styles: [],
+      time
+    }
+  }
+}
 
 function AddReview (): JSX.Element {
   const navigate = useNavigate()
+  const { storageId } = useParams()
   const [review, setReview] = useState<ReviewRequest | undefined>(undefined)
   const [
     createReview,
     { isLoading: isCreating, isSuccess, data: createResult }
   ] = useCreateReviewMutation()
+  const { data: storageData, isLoading: isLoadingStorage } =
+    storageId === undefined
+      ? { data: undefined, isLoading: false }
+      : useGetStorageQuery(storageId)
 
   useEffect(() => {
     if (isSuccess && createResult !== undefined) {
@@ -25,15 +64,30 @@ function AddReview (): JSX.Element {
 
   async function doAddReview (): Promise<void> {
     if (review === undefined) return
-    void createReview(review)
+    void createReview({ body: review, storageId })
   }
+
+  function getInitialReview (): InitialReview | undefined {
+    if (storageId === undefined) {
+      return undefined
+    }
+    if (storageData === undefined) {
+      throw new Error('must not be called without storageData')
+    }
+    return toInitialReview(storageData.storage)
+  }
+
   return (
     <div>
       <h3>Add review</h3>
-      <ReviewEditor
-        initialReview={undefined}
-        onChange={review => { setReview(review) }}
-      />
+      <LoadingIndicator isLoading={isLoadingStorage} />
+      {(storageId === undefined || storageData !== undefined) && (
+        <ReviewEditor
+          initialReview={getInitialReview()}
+          isFromStorage={storageId !== undefined}
+          onChange={review => { setReview(review) }}
+        />
+      )}
 
       <br />
 
