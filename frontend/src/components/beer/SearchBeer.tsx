@@ -19,7 +19,7 @@ function SearchBeer (props: Props): JSX.Element {
     { isLoading }
   ] = useLazySearchBeersQuery()
   const [filter, setFilter] = useState('')
-  const debouncedFilter = useDebounce(filter, 200)
+  const debouncedFilter = useDebounce(filter)
   const [results, setResults] = useState<Beer[]>([])
 
   async function doSearch (filter: string): Promise<void> {

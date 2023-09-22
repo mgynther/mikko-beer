@@ -26,7 +26,7 @@ export function joinSortedNames (array: NamedItem[]): string {
   return array.map(i => i.name).sort().join(', ')
 }
 
-export function useDebounce (value: string, delay: number): string {
+export function useDebounce (value: string, delay: number = 400): string {
   const [debouncedValue, setDebouncedValue] = useState(value)
 
   useEffect(() => {

@@ -17,7 +17,7 @@ function SearchBrewery (props: Props): JSX.Element {
     { isLoading }
   ] = useLazySearchBreweriesQuery()
   const [filter, setFilter] = useState('')
-  const debouncedFilter = useDebounce(filter, 200)
+  const debouncedFilter = useDebounce(filter)
   const [results, setResults] = useState<Brewery[]>([])
 
   async function doSearch (filter: string): Promise<void> {
