@@ -67,7 +67,7 @@ describe('storage tests', () => {
     expect(storageRes.data.storage.beer).to.equal(beerRes.data.beer.id)
     expect(storageRes.data.storage.container).to.equal(containerRes.data.container.id)
 
-    const getRes = await ctx.request.get<{ storage: Storage }>(
+    const getRes = await ctx.request.get<{ storage: JoinedStorage }>(
       `/api/v1/storage/${storageRes.data.storage.id}`,
       ctx.adminAuthHeaders()
     )
@@ -75,8 +75,8 @@ describe('storage tests', () => {
     expect(getRes.status).to.equal(200)
     expect(getRes.data.storage.id).to.equal(storageRes.data.storage.id)
     expect(getRes.data.storage.bestBefore).to.equal(bestBefore)
-    expect(getRes.data.storage.beer).to.equal(beerRes.data.beer.id)
-    expect(getRes.data.storage.container).to.equal(containerRes.data.container.id)
+    expect(getRes.data.storage.beerId).to.equal(beerRes.data.beer.id)
+    expect(getRes.data.storage.container).to.eql(containerRes.data.container)
 
     const listRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
       '/api/v1/storage/',
@@ -85,7 +85,7 @@ describe('storage tests', () => {
     expect(listRes.status).to.equal(200)
     expect(listRes.data.storages.length).to.equal(1)
     expect(listRes.data.storages[0].id).to.eql(getRes.data.storage.id)
-    expect(listRes.data.storages[0].beerId).to.eql(getRes.data.storage.beer)
+    expect(listRes.data.storages[0].beerId).to.eql(getRes.data.storage.beerId)
     expect(listRes.data.storages[0].container).to.eql(containerRes.data.container)
     expect(listRes.data.storages[0].breweries[0]).to.eql(breweryRes.data.brewery)
     const parentlessStyle = { ...styleRes.data.style }
@@ -106,7 +106,7 @@ describe('storage tests', () => {
     expect(breweryListRes.status).to.equal(200)
     expect(breweryListRes.data.storages.length).to.equal(1)
     expect(breweryListRes.data.storages[0].id).to.eql(getRes.data.storage.id)
-    expect(breweryListRes.data.storages[0].beerId).to.eql(getRes.data.storage.beer)
+    expect(breweryListRes.data.storages[0]).to.eql(getRes.data.storage)
 
     const beerListRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
       `/api/v1/beer/${beerRes.data.beer.id}/storage/`,

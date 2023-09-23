@@ -48,12 +48,13 @@ export async function updateStorage (
 export async function findStorageById (
   db: Database,
   storageId: string
-): Promise<Storage | undefined> {
+): Promise<JoinedStorage | undefined> {
   const storage = await storageRepository.findStorageById(db, storageId)
 
   if (storage === null || storage === undefined) return undefined
 
-  return storageRowToStorage(storage)
+  const joined = toJoinedStorages([storage])
+  return joined?.[0]
 }
 
 export async function lockStorageById (

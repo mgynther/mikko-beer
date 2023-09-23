@@ -49,18 +49,38 @@ export async function updateStorage (
 export async function findStorageById (
   db: Database,
   id: string
-): Promise<StorageRow | undefined> {
-  const storageRow = await db.getDb()
+): Promise<DbJoinedStorage | undefined> {
+  const storageRows = await db.getDb()
     .selectFrom('storage')
+    .innerJoin('beer', 'storage.beer', 'beer.beer_id')
+    .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
+    .innerJoin('brewery', 'beer_brewery.brewery', 'brewery.brewery_id')
+    .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
+    .innerJoin('style', 'beer_style.style', 'style.style_id')
+    .innerJoin('container', 'storage.container', 'container.container_id')
     .where('storage_id', '=', id)
-    .selectAll('storage')
-    .executeTakeFirst()
+    .select([
+      'storage_id',
+      'storage.created_at as created_at',
+      'best_before',
+      'beer.beer_id as beer_id',
+      'beer.name as beer_name',
+      'brewery.brewery_id as brewery_id',
+      'brewery.name as brewery_name',
+      'container.container_id as container_id',
+      'container.size as container_size',
+      'container.type as container_type',
+      'style.style_id as style_id',
+      'style.name as style_name'
+    ])
+    .execute()
 
-  if (storageRow === undefined) {
+  if (storageRows === undefined || storageRows.length === 0) {
     return undefined
   }
 
-  return storageRow
+  const parsed = parseBreweryStorageRows(storageRows)
+  return parsed?.[0]
 }
 
 export async function deleteStorageById (
