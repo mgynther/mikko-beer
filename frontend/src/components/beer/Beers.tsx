@@ -1,21 +1,19 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 import { useLazyListBeersQuery } from '../../store/beer/api'
-import { type Beer, type BeerWithIds } from '../../store/beer/types'
+import { type Beer } from '../../store/beer/types'
 import { infiniteScroll, joinSortedNames } from '../util'
 
 import BreweryLinks from '../brewery/BreweryLinks'
 
 import BeerLink from './BeerLink'
-import SearchBeer from './SearchBeer'
+import SearchBeerWithNavi from './SearchBeerWithNavi'
 
 import './Beers.css'
 
 const pageSize = 20
 
 function Beers (): JSX.Element {
-  const navigate = useNavigate()
   const [loadedBeers, setLoadedBeers] = useState<Beer[]>([])
   const [trigger, result] = useLazyListBeersQuery()
 
@@ -47,9 +45,7 @@ function Beers (): JSX.Element {
   return (
     <div>
       <h3>Beers</h3>
-      <SearchBeer select={(beer: BeerWithIds) => {
-        navigate(`/beers/${beer.id}`)
-      }} />
+      <SearchBeerWithNavi />
       {isLoading && (<div>Loading...</div>)}
       <div className='BeerHeading'>
           <div className='BeerName'>Name</div>

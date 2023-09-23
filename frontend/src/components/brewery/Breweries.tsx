@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 import { useLazyListBreweriesQuery } from '../../store/brewery/api'
 import { type Brewery } from '../../store/brewery/types'
@@ -8,12 +8,11 @@ import { infiniteScroll } from '../util'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
-import SearchBrewery from './SearchBrewery'
+import SearchBreweryWithNavi from './SearchBreweryWithNavi'
 
 const pageSize = 20
 
 function Breweries (): JSX.Element {
-  const navigate = useNavigate()
   const [loadedBreweries, setLoadedBreweries] = useState<Brewery[]>([])
   const [trigger, result] = useLazyListBreweriesQuery()
   const isLoading = result.isLoading
@@ -51,9 +50,7 @@ function Breweries (): JSX.Element {
     <div>
       <h3>Breweries</h3>
       <LoadingIndicator isLoading={isLoading} />
-      <SearchBrewery select={(brewery) => {
-        navigate(toRoute(brewery))
-      }} />
+      <SearchBreweryWithNavi />
       <ul>
         {loadedBreweries.map((brewery: Brewery) => (
           <li key={brewery.id}>

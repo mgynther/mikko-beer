@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Routes, Route, Link, Outlet, useNavigate } from 'react-router-dom'
+import { Routes, Route, Link, Outlet } from 'react-router-dom'
 
 import { Role } from './store/user/types'
 import { useAppDispatch } from './store/hooks'
@@ -16,14 +16,13 @@ import Brewery from './components/brewery/Brewery'
 import Containers from './components/container/Containers'
 import LoginComponent from './components/login/Login'
 import Reviews from './components/review/Reviews'
-import SearchBeer from './components/beer/SearchBeer'
-import SearchBrewery from './components/brewery/SearchBrewery'
+import SearchBeerWithNavi from './components/beer/SearchBeerWithNavi'
+import SearchBreweryWithNavi from './components/brewery/SearchBreweryWithNavi'
 import Stats from './components/stats/Stats'
 import Storages from './components/storage/Storages'
 import Styles from './components/style/Styles'
 import Users from './components/user/Users'
 
-import { type BeerWithIds } from './store/beer/types'
 import { useLogoutMutation } from './store/login/api'
 import { type Login, selectLogin } from './store/login/reducer'
 import { Theme, selectTheme, setTheme } from './store/theme/reducer'
@@ -37,7 +36,6 @@ interface LayoutProps {
 }
 
 function Layout (props: LayoutProps): JSX.Element {
-  const navigate = useNavigate()
   const [isMoreOpen, setIsMoreOpen] = useState(false)
   function toggleMore (): void {
     setIsMoreOpen(!isMoreOpen)
@@ -79,14 +77,10 @@ function Layout (props: LayoutProps): JSX.Element {
               {isMoreOpen && (
                 <div>
                   <div className='Search'>
-                    <SearchBeer select={(beer: BeerWithIds) => {
-                      navigate(`/beers/${beer.id}`)
-                    }} />
+                    <SearchBeerWithNavi />
                   </div>
                   <div className='Search'>
-                    <SearchBrewery select={(brewery) => {
-                      navigate(`/breweries/${brewery.id}`)
-                    }} />
+                    <SearchBreweryWithNavi />
                   </div>
 
                   <ul>
