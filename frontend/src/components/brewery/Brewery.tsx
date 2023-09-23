@@ -5,11 +5,13 @@ import { useParams } from 'react-router-dom'
 import { useGetBreweryQuery } from '../../store/brewery/api'
 import { type Brewery as BreweryType } from '../../store/brewery/types'
 import { useListReviewsByBreweryQuery } from '../../store/review/api'
+import { useListStoragesByBreweryQuery } from '../../store/storage/api'
 
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'
 import LoadingIndicator from '../common/LoadingIndicator'
 import ReviewList from '../review/ReviewList'
+import StorageList from '../storage/StorageList'
 
 import Stats from '../stats/Stats'
 
@@ -32,6 +34,7 @@ function Brewery (): JSX.Element {
   const { data: breweryData, isLoading } = useGetBreweryQuery(breweryId)
   const { data: reviewData, isLoading: isLoadingReviews } =
     useListReviewsByBreweryQuery(breweryId)
+  const { data: storageData } = useListStoragesByBreweryQuery(breweryId)
   if (isLoading) return <LoadingIndicator isLoading={true} />
   if (breweryData?.brewery === undefined) return <NotFound />
   const brewery = breweryData.brewery
@@ -68,6 +71,13 @@ function Brewery (): JSX.Element {
           onSaved={() => {
             setMode(EditableMode.View)
           }}
+        />
+      )}
+      {(storageData?.storages ?? []).length > 0 && (
+        <StorageList
+          isLoading={isLoadingReviews}
+          isTitleVisible={true}
+          storages={storageData?.storages ?? []}
         />
       )}
       <ReviewList

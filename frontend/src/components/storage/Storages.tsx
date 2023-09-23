@@ -21,6 +21,7 @@ function Storages (): JSX.Element {
       <h3>Storage beers</h3>
       <StorageList
         isLoading={isLoading}
+        isTitleVisible={false}
         storages={storages}
       />
       <hr/>

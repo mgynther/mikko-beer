@@ -24,6 +24,20 @@ const storageApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [StorageTags.Storage]
     }),
+    listStoragesByBeer: build.query<StorageList, string>({
+      query: (beerId: string) => ({
+        url: `/beer/${beerId}/storage`,
+        method: 'GET'
+      }),
+      providesTags: [StorageTags.Storage]
+    }),
+    listStoragesByBrewery: build.query<StorageList, string>({
+      query: (breweryId: string) => ({
+        url: `/brewery/${breweryId}/storage`,
+        method: 'GET'
+      }),
+      providesTags: [StorageTags.Storage]
+    }),
     createStorage: build.mutation<
     { storage: Storage },
     Partial<CreateStorageParams>
@@ -41,7 +55,9 @@ const storageApi = emptySplitApi.injectEndpoints({
 export const {
   useCreateStorageMutation,
   useGetStorageQuery,
-  useListStoragesQuery
+  useListStoragesQuery,
+  useListStoragesByBeerQuery,
+  useListStoragesByBreweryQuery
 } = storageApi
 
 export const { endpoints, reducerPath, reducer, middleware } = storageApi
