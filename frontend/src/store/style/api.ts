@@ -1,6 +1,7 @@
 import { emptySplitApi } from '../api'
 
 import { ReviewTags } from '../review/types'
+import { StorageTags } from '../storage/types'
 import {
   type Style,
   type StyleList,
@@ -56,7 +57,8 @@ const styleApi = emptySplitApi.injectEndpoints({
       invalidatesTags: [
         StyleTags.Style,
         ...styleStatsTagTypes(),
-        ReviewTags.Review
+        ReviewTags.Review,
+        StorageTags.Storage
       ]
     })
   })

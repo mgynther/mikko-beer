@@ -4,6 +4,7 @@ import { type Pagination } from '../types'
 
 import { BeerTags } from '../beer/types'
 import { ReviewTags } from '../review/types'
+import { StorageTags } from '../storage/types'
 import { breweryStatsTagTypes } from '../stats/types'
 
 import {
@@ -62,7 +63,8 @@ const breweryApi = emptySplitApi.injectEndpoints({
         BeerTags.Beer,
         BreweryTags.Brewery,
         ...breweryStatsTagTypes(),
-        ReviewTags.Review
+        ReviewTags.Review,
+        StorageTags.Storage
       ]
     })
   })

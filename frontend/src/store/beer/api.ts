@@ -2,6 +2,7 @@ import { emptySplitApi } from '../api'
 
 import { type Pagination } from '../types'
 import { ReviewTags } from '../review/types'
+import { StorageTags } from '../storage/types'
 import { beerStatsTagTypes } from '../stats/types'
 
 import {
@@ -53,7 +54,11 @@ const beerApi = emptySplitApi.injectEndpoints({
           ...beer
         }
       }),
-      invalidatesTags: [BeerTags.Beer, ...beerStatsTagTypes()]
+      invalidatesTags: [
+        BeerTags.Beer,
+        ...beerStatsTagTypes(),
+        StorageTags.Storage
+      ]
     }),
     updateBeer: build.mutation<{ beer: Beer }, BeerWithIds>({
       query: (beer: BeerWithIds) => ({
@@ -68,7 +73,8 @@ const beerApi = emptySplitApi.injectEndpoints({
       invalidatesTags: [
         BeerTags.Beer,
         ...beerStatsTagTypes(),
-        ReviewTags.Review
+        ReviewTags.Review,
+        StorageTags.Storage
       ]
     })
   })
