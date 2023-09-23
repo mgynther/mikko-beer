@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Routes, Route, Link, Outlet } from 'react-router-dom'
+import { Routes, Route, Link, Outlet, useNavigate } from 'react-router-dom'
 
 import { Role } from './store/user/types'
 import { useAppDispatch } from './store/hooks'
@@ -16,11 +16,14 @@ import Brewery from './components/brewery/Brewery'
 import Containers from './components/container/Containers'
 import LoginComponent from './components/login/Login'
 import Reviews from './components/review/Reviews'
+import SearchBeer from './components/beer/SearchBeer'
+import SearchBrewery from './components/brewery/SearchBrewery'
 import Stats from './components/stats/Stats'
 import Storages from './components/storage/Storages'
 import Styles from './components/style/Styles'
 import Users from './components/user/Users'
 
+import { type BeerWithIds } from './store/beer/types'
 import { useLogoutMutation } from './store/login/api'
 import { type Login, selectLogin } from './store/login/reducer'
 import { Theme, selectTheme, setTheme } from './store/theme/reducer'
@@ -34,6 +37,11 @@ interface LayoutProps {
 }
 
 function Layout (props: LayoutProps): JSX.Element {
+  const navigate = useNavigate()
+  const [isMoreOpen, setIsMoreOpen] = useState(false)
+  function toggleMore (): void {
+    setIsMoreOpen(!isMoreOpen)
+  }
   return (
     <div>
       {props.isLoggedIn && (
@@ -56,41 +64,64 @@ function Layout (props: LayoutProps): JSX.Element {
                   <Link to="/reviews">Reviews</Link>
                 </li>
                 <li>
-                  <Link to="/styles">Styles</Link>
-                </li>
-                <li>
-                  <Link to="/containers">Containers</Link>
-                </li>
-                {props.isAdmin && (
-                  <li>
-                    <Link to="/users">Users</Link>
-                  </li>
-                )}
-                <li>
-                  <Link to="/account">Account</Link>
-                </li>
-                <li>
                   <Link to="/stats">Statistics</Link>
                 </li>
                 <li>
                   <Link to="/storage">Storage</Link>
                 </li>
                 <li>
-                  <label>
-                    <input
-                      type='checkbox'
-                      checked={props.theme === Theme.DARK}
-                      onChange={(e) => {
-                        props.setTheme(
-                          e.target.checked ? Theme.DARK : Theme.LIGHT)
-                      }} />
-                    Dark
-                    </label>
-                </li>
-                <li>
-                  <button onClick={props.logout}>Logout</button>
+                  <button onClick={toggleMore}>
+                    {isMoreOpen ? 'Less' : 'More'}
+                  </button>
                 </li>
               </ul>
+
+              {isMoreOpen && (
+                <div>
+                  <div className='Search'>
+                    <SearchBeer select={(beer: BeerWithIds) => {
+                      navigate(`/beers/${beer.id}`)
+                    }} />
+                  </div>
+                  <div className='Search'>
+                    <SearchBrewery select={(brewery) => {
+                      navigate(`/breweries/${brewery.id}`)
+                    }} />
+                  </div>
+
+                  <ul>
+                    <li>
+                      <Link to="/styles">Styles</Link>
+                    </li>
+                    <li>
+                      <Link to="/containers">Containers</Link>
+                    </li>
+                    {props.isAdmin && (
+                      <li>
+                        <Link to="/users">Users</Link>
+                      </li>
+                    )}
+                    <li>
+                      <Link to="/account">Account</Link>
+                    </li>
+                    <li>
+                      <label>
+                        <input
+                          type='checkbox'
+                          checked={props.theme === Theme.DARK}
+                          onChange={(e) => {
+                            props.setTheme(
+                              e.target.checked ? Theme.DARK : Theme.LIGHT)
+                          }} />
+                        Dark
+                        </label>
+                    </li>
+                    <li>
+                      <button onClick={props.logout}>Logout</button>
+                    </li>
+                  </ul>
+                </div>
+              )}
             </nav>
           </header>
           <hr />

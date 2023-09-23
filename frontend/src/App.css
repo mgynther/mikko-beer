@@ -47,6 +47,12 @@ nav ul li label {
   font-size: 18px;
 }
 
+nav .Search {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+}
+
 ul li a {
   color: white;
   font-size: 16px;
