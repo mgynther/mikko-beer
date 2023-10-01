@@ -1,3 +1,5 @@
+import { useRef } from 'react'
+
 import LoadingIndicator from './LoadingIndicator'
 
 import './SearchBox.css'
@@ -30,6 +32,7 @@ const SearchBox = <T extends SearchBoxItem>({
   select,
   title
 }: Props<T>): JSX.Element => {
+  const inputRef = useRef<HTMLInputElement>(null)
   const sortedOptions = [...currentOptions].sort((a, b) => {
     const filter = currentFilter.toLowerCase()
     const aName = a.name.toLowerCase()
@@ -50,8 +53,13 @@ const SearchBox = <T extends SearchBoxItem>({
         placeholder={title}
         type='text'
         value={currentFilter}
+        ref={inputRef}
         onChange={e => { setFilter(e.target.value) }}
       />
+      <button onClick={() => {
+        setFilter('')
+        inputRef.current?.focus()
+      }}>X</button>
       {!isLoading && currentFilter.length > 0 && (
         <div className='SearchResults'>
           <ul>

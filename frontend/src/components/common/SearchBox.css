@@ -3,10 +3,6 @@
   margin: auto;
 }
 
-.SearchBox input {
-  width: 100%;
-}
-
 .SearchResults {
   position: absolute;
   left: 10vw;
