@@ -17,6 +17,8 @@ import { userTagTypes } from './user/types'
 
 import { type RootState } from './store'
 
+import { backendUrl } from '../constants'
+
 function mergeTags (): string[] {
   return [
     ...allStatsTagTypes(),
@@ -28,8 +30,6 @@ function mergeTags (): string[] {
     ...userTagTypes()
   ]
 }
-
-const backendUrl = process.env.REACT_APP_BACKEND_URL ?? 'http://localhost:3001'
 
 const mutex = new Mutex()
 const baseQuery = fetchBaseQuery({

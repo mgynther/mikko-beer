@@ -25,7 +25,7 @@ const beerApi = emptySplitApi.injectEndpoints({
         url: `/beer/${beerId}`,
         method: 'GET'
       }),
-      providesTags: (result, error, arg) =>
+      providesTags: (result) =>
         result === undefined
           ? [BeerTags.Beer]
           : [{ type: BeerTags.Beer, id: result.beer.id }]

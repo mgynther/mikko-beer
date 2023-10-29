@@ -21,7 +21,7 @@ const loginApi = emptySplitApi.injectEndpoints({
         method: 'POST',
         body
       }),
-      async onQueryStarted ({ ...patch }, { dispatch, queryFulfilled }) {
+      async onQueryStarted (_, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled
           dispatch(success({
@@ -39,7 +39,7 @@ const loginApi = emptySplitApi.injectEndpoints({
         method: 'POST',
         body: params.body
       }),
-      async onQueryStarted ({ ...patch }, { dispatch, queryFulfilled }) {
+      async onQueryStarted (_, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled
           dispatch(passwordChangeResult(PasswordChangeResult.SUCCESS))
@@ -54,7 +54,7 @@ const loginApi = emptySplitApi.injectEndpoints({
         method: 'POST',
         body: params.body
       }),
-      async onQueryStarted ({ ...patch }, { dispatch, queryFulfilled }) {
+      async onQueryStarted (_, { dispatch, queryFulfilled }) {
         try {
           dispatch(logout())
           await queryFulfilled

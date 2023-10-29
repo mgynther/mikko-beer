@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 import { type Container as ContainerType } from '../../store/container/types'
 

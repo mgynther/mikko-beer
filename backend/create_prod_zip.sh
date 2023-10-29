@@ -17,7 +17,7 @@ echo $time
 cd prod_dist
 npm ci
 mkdir static
-cp -r ../../frontend/build/* ./static
+cp -r ../../frontend/dist/* ./static
 
 rm -rf .platform
 mkdir -p .platform/nginx/conf.d/elasticbeanstalk/

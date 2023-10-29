@@ -1,9 +1,13 @@
-import React from 'react'
 import { render, screen } from '@testing-library/react'
+import '@testing-library/jest-dom'
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import { store } from './store/store'
+
+jest.mock('./constants', () => ({
+  backendUrl: 'http://localhost:3001'
+}))
 
 test('renders app', () => {
   render(
