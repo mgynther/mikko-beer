@@ -13,6 +13,7 @@ import {
 
 import * as emptySplitApi from './api'
 import loginReducer from './login/reducer'
+import searchReducer from './search/reducer'
 import themeReducer from './theme/reducer'
 
 const persistConfig = {
@@ -23,6 +24,7 @@ const persistConfig = {
 
 export const rootReducers = combineReducers({
   login: loginReducer,
+  search: searchReducer,
   theme: themeReducer,
   [emptySplitApi.reducerPath]: emptySplitApi.reducer
 })

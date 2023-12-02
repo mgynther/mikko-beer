@@ -1,4 +1,7 @@
-import { useRef } from 'react'
+import { useId, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+
+import { activate, selectActiveSearch } from '../../store/search/reducer'
 
 import LoadingIndicator from './LoadingIndicator'
 
@@ -33,6 +36,9 @@ const SearchBox = <T extends SearchBoxItem>({
   title
 }: Props<T>): JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null)
+  const id = useId()
+  const dispatch = useDispatch()
+  const activeSearch: string = useSelector(selectActiveSearch)
   const sortedOptions = [...currentOptions].sort((a, b) => {
     const filter = currentFilter.toLowerCase()
     const aName = a.name.toLowerCase()
@@ -47,6 +53,7 @@ const SearchBox = <T extends SearchBoxItem>({
     ? []
     : sortedOptions.slice(0, maxResultCount)
   const areAllShown = visibleOptions.length === sortedOptions.length
+  const isActive = activeSearch === id
   return (
     <div className='SearchBox'>
       <input
@@ -54,13 +61,19 @@ const SearchBox = <T extends SearchBoxItem>({
         type='text'
         value={currentFilter}
         ref={inputRef}
-        onChange={e => { setFilter(e.target.value) }}
+        onChange={e => {
+          setFilter(e.target.value)
+          dispatch(activate(id))
+        }}
+        onFocus={() => {
+          dispatch(activate(id))
+        }}
       />
       <button onClick={() => {
         setFilter('')
         inputRef.current?.focus()
       }}>X</button>
-      {!isLoading && currentFilter.length > 0 && (
+      {!isLoading && currentFilter.length > 0 && isActive && (
         <div className='SearchResults'>
           <ul>
             {visibleOptions.map(item => (
