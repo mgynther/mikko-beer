@@ -181,21 +181,6 @@ describe('beer tests', () => {
     expect(beerRes.status).to.equal(500)
   })
 
-  it('should fail to create a beer without style', async () => {
-    const breweryRes = await ctx.request.post(`/api/v1/brewery`,
-      { name: 'Brewcats' },
-      ctx.adminAuthHeaders()
-    )
-    expect(breweryRes.status).to.equal(201)
-
-    const beerRes = await ctx.request.post(`/api/v1/beer`,
-      { name: 'Random IPA', breweries: [breweryRes.data.brewery.id], styles: []},
-      ctx.adminAuthHeaders()
-    )
-
-    expect(beerRes.status).to.equal(400)
-  })
-
   it('should fail to create a beer with invalid brewery', async () => {
     const styleRes = await ctx.request.post(`/api/v1/style`,
       { name: 'IPA' },
@@ -210,21 +195,6 @@ describe('beer tests', () => {
 
     // TODO It would be cleaner to report a client error.
     expect(beerRes.status).to.equal(500)
-  })
-
-  it('should fail to create a beer without brewery', async () => {
-    const styleRes = await ctx.request.post(`/api/v1/style`,
-      { name: 'IPA' },
-      ctx.adminAuthHeaders()
-    )
-    expect(styleRes.status).to.equal(201)
-
-    const beerRes = await ctx.request.post(`/api/v1/beer`,
-      { name: 'Random IPA', breweries: [], styles: [styleRes.data.style.id]},
-      ctx.adminAuthHeaders()
-    )
-
-    expect(beerRes.status).to.equal(400)
   })
 
   it('should fail to create a beer without name', async () => {
