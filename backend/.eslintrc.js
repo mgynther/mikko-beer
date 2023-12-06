@@ -22,5 +22,23 @@ module.exports = {
       },
     ],
     'max-len': ['error', { 'code': 80, 'ignoreRegExpLiterals': true }]
-  }
+  },
+  overrides: [
+    {
+      files: ['src/core/*.ts', 'src/core/**/*.ts'],
+      rules: {
+        'no-restricted-imports': ['error',
+          { patterns: ['data', 'web'] }
+        ]
+      }
+    },
+    {
+      files: ['src/data/*.ts', 'src/data/**/*.ts'],
+      rules: {
+        'no-restricted-imports': ['error',
+          { patterns: ['web'] }
+        ]
+      }
+    }
+  ]
 }

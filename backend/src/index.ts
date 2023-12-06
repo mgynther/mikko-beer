@@ -1,5 +1,5 @@
-import { App } from './app'
-import { config } from './config'
+import { App } from './web/app'
+import { config } from './web/config'
 
 const app = new App(config)
 
