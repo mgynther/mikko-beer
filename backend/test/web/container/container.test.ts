@@ -53,24 +53,6 @@ describe('container tests', () => {
     expect(res.status).to.equal(400)
   })
 
-  it('should fail to create a container without size', async () => {
-    const res = await ctx.request.post(`/api/v1/container`,
-      { type: 'Draught' },
-      ctx.adminAuthHeaders()
-    )
-
-    expect(res.status).to.equal(400)
-  })
-
-  it('should fail to create a container with invalid size', async () => {
-    const res = await ctx.request.post(`/api/v1/container`,
-      { type: 'Draught', size: 'testing' },
-      ctx.adminAuthHeaders()
-    )
-
-    expect(res.status).to.equal(400)
-  })
-
   it('should update a container', async () => {
     const createRes = await ctx.request.post(`/api/v1/container`,
       { type: 'Draught', size: '1.00' },

@@ -21,7 +21,8 @@ const doValidateContainerRequest =
     type: 'object',
     properties: {
       type: {
-        type: 'string'
+        type: 'string',
+        minLength: 1
       },
       size: {
         type: 'string',
