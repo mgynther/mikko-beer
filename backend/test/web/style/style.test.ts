@@ -197,7 +197,7 @@ describe('style tests', () => {
     expect(aleRes.status).to.equal(201)
 
     const ipaRes = await ctx.request.post(`/api/v1/style`,
-      { name: 'Lager', parents: [ aleRes.data.style.id ] },
+      { name: 'IPA', parents: [ aleRes.data.style.id ] },
       ctx.adminAuthHeaders()
     )
     expect(ipaRes.status).to.equal(201)
