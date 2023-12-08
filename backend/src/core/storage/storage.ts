@@ -1,6 +1,7 @@
 import { ajv } from '../ajv'
 
 import { type Container } from '../container/container'
+import { timePattern } from '../time'
 
 export interface Storage {
   id: string
@@ -40,8 +41,7 @@ const doValidateStorageRequest =
     properties: {
       bestBefore: {
         type: 'string',
-        // eslint-disable-next-line max-len
-        pattern: '^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d.\\d+([+-][0-2]\\d:[0-5]\\d|Z)$'
+        pattern: timePattern
       },
       beer: {
         type: 'string',

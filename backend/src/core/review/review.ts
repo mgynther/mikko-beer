@@ -1,6 +1,7 @@
 import { ajv } from '../ajv'
 
 import { type Container } from '../container/container'
+import { timePattern } from '../time'
 
 export interface Review {
   id: string
@@ -80,8 +81,7 @@ const doValidateReviewRequest =
       },
       time: {
         type: 'string',
-        // eslint-disable-next-line max-len
-        pattern: '^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d.\\d+([+-][0-2]\\d:[0-5]\\d|Z)$'
+        pattern: timePattern
       }
     },
     required: ['beer', 'container', 'rating', 'smell', 'taste', 'time'],
