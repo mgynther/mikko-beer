@@ -10,7 +10,7 @@ import { type SignedInUser } from '../../../core/user/signed-in-user'
 import {
   type PasswordChange,
   type PasswordSignInMethod
-} from '../../../core/user/sign-in-method/sign-in-method'
+} from '../../../core/user/sign-in-method'
 
 export const MIN_PASSWORD_LENGTH = 8
 export const MAX_PASSWORD_LENGTH = 255

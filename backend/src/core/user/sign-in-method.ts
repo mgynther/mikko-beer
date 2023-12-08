@@ -1,4 +1,4 @@
-import { ajv } from '../../ajv'
+import { ajv } from '../ajv'
 
 export type SignInMethod = PasswordSignInMethod
 

@@ -13,7 +13,7 @@ import {
 import {
   type PasswordSignInMethod,
   validatePasswordSignInMethod
-} from '../../core/user/sign-in-method/sign-in-method'
+} from '../../core/user/sign-in-method'
 import { ControllerError } from '../errors'
 
 export function userController (router: Router): void {

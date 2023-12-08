@@ -22,7 +22,7 @@ import { ControllerError, UserNotFoundError } from '../../errors'
 import {
   validatePasswordChange,
   validatePasswordSignInMethod
-} from '../../../core/user/sign-in-method/sign-in-method'
+} from '../../../core/user/sign-in-method'
 
 function handleError (error: unknown): void {
   if (
