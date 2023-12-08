@@ -13,10 +13,12 @@ export const validatePasswordSignInMethod = ajv.compile<PasswordSignInMethod>({
   additionalProperties: false,
   properties: {
     username: {
-      type: 'string'
+      type: 'string',
+      minLength: 1
     },
     password: {
-      type: 'string'
+      type: 'string',
+      minLength: 1
     }
   }
 })
@@ -32,10 +34,12 @@ export const validatePasswordChange = ajv.compile<PasswordChange>({
   additionalProperties: false,
   properties: {
     oldPassword: {
-      type: 'string'
+      type: 'string',
+      minLength: 1
     },
     newPassword: {
-      type: 'string'
+      type: 'string',
+      minLength: 1
     }
   }
 })
