@@ -37,7 +37,7 @@ export type StyleStats = Array<{
 }>
 
 export function validateStatsFilter (
-  query: Record<string, unknown>
+  query: Record<string, unknown> | undefined
 ): StatsFilter | undefined {
   if (query === undefined) {
     return undefined
