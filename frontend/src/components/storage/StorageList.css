@@ -12,15 +12,25 @@
 
 .StorageHeading div,
 .StorageRow div {
-  padding: 5px;
+  margin: 1%;
+  overflow-wrap: break-word;
 }
 
-.BeerName,
-.BeerBreweries {
-  width: 40%;
+.StorageHeading .BeerName,
+.StorageRow .BeerName,
+.StorageHeading .BeerBreweries,
+.StorageRow .BeerBreweries {
+  width: 25%;
 }
 
-.BestBefore,
-.ReviewLink {
+.StorageHeading .BestStyles,
+.StorageRow .BestStyles {
   width: 20%;
+}
+
+.StorageHeading .BestBefore,
+.StorageRow .BestBefore,
+.StorageHeading .ReviewLink,
+.StorageRow .ReviewLink {
+  width: 10%;
 }
