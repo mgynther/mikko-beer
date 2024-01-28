@@ -84,8 +84,10 @@ export async function findStyleById (
       'style.style_id',
       'style_relationship.parent'
     )
-    .where('style_relationship.child', '=', id)
-    .orWhere('style.style_id', '=', id)
+    .where((eb) => eb.or([
+      eb('style_relationship.child', '=', id),
+      eb('style.style_id', '=', id)
+    ]))
     .select([
       'style_id',
       'name',
