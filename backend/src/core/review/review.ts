@@ -1,6 +1,7 @@
 import { ajv } from '../ajv'
 
 import { type Container } from '../container/container'
+import { type ListDirection } from '../list'
 import { timePattern } from '../time'
 
 export interface Review {
@@ -43,6 +44,13 @@ export interface ReviewRequest {
   smell: string
   taste: string
   time: Date
+}
+
+type ReviewListOrderProperty = 'beer_name' | 'rating' | 'time'
+
+export interface ReviewListOrder {
+  property: ReviewListOrderProperty
+  direction: ListDirection
 }
 
 export type CreateReviewRequest = ReviewRequest
@@ -88,10 +96,60 @@ const doValidateReviewRequest =
     additionalProperties: false
   })
 
+const doValidateReviewListOrder =
+  ajv.compile<ReviewListOrder>({
+    type: 'object',
+    properties: {
+      property: {
+        enum: ['beer_name', 'rating', 'time']
+      },
+      direction: {
+        enum: ['asc', 'desc']
+      }
+    },
+    required: ['property', 'direction'],
+    additionalProperties: false
+  })
+
 export function validateCreateReviewRequest (body: unknown): boolean {
   return doValidateReviewRequest(body) as boolean
 }
 
 export function validateUpdateReviewRequest (body: unknown): boolean {
   return doValidateReviewRequest(body) as boolean
+}
+
+function validateReviewListOrder (body: unknown): boolean {
+  return doValidateReviewListOrder(body) as boolean
+}
+
+interface ReviewListOrderParams {
+  property: unknown
+  direction: unknown
+}
+
+function reviewListOrderParamsOrDefaults (
+  query: Record<string, unknown>
+): ReviewListOrderParams {
+  let { order, direction } = query
+  if (order === undefined || order === '') {
+    order = 'time'
+  }
+  if (direction === undefined || direction === '') {
+    direction = 'desc'
+  }
+  return { property: order, direction }
+}
+
+export function validReviewListOrder (
+  query: Record<string, unknown>
+): ReviewListOrder | undefined {
+  const params = reviewListOrderParamsOrDefaults(query)
+  if (validateReviewListOrder(params)) {
+    return {
+      property: params.property as ReviewListOrderProperty,
+      direction: params.direction as ListDirection
+    }
+  }
+  return undefined
 }

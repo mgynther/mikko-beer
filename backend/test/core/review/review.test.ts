@@ -18,7 +18,7 @@ function validRequest (): Record<string, unknown> {
   }
 }
 
-describe('review unit tests', () => {
+describe('review create/update unit tests', () => {
   [
     {
       func: validateCreateReviewRequest,

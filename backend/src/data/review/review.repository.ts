@@ -8,11 +8,14 @@ import {
 import {
   type DbJoinedReview,
   type ReviewRow,
+  type ReviewTable,
   type InsertableReviewRow,
   type UpdateableReviewRow
 } from './review.table'
 
+import { type ListDirection } from '../../core/list'
 import { type Pagination, toRowNumbers } from '../../core/pagination'
+import { type ReviewListOrder } from '../../core/review/review'
 
 export async function insertReview (
   trx: Transaction,
@@ -90,38 +93,145 @@ async function lockReview (
   return review
 }
 
+interface ReviewTableRn extends ReviewTable {
+  rn: number
+}
+
+const listByRatingAsc =
+  sql<ReviewTableRn>`(
+    SELECT
+      review.*,
+      ROW_NUMBER() OVER(ORDER BY review.rating ASC, review.time DESC) rn
+    FROM review
+  )`
+
+const listByRatingDesc =
+  sql<ReviewTableRn>`(
+    SELECT
+      review.*,
+      ROW_NUMBER() OVER(ORDER BY review.rating DESC, review.time DESC) rn
+    FROM review
+  )`
+
+function getListQueryByRating (
+  direction: ListDirection
+): typeof listByRatingAsc {
+  if (direction === 'asc') {
+    return listByRatingAsc
+  }
+  return listByRatingDesc
+}
+
+const listByTimeAsc = sql<ReviewTableRn>`(
+  SELECT
+    review.*,
+    ROW_NUMBER() OVER(ORDER BY review.time ASC) rn
+  FROM review
+  )`
+
+const listByTimeDesc = sql<ReviewTableRn>`(
+  SELECT
+    review.*,
+    ROW_NUMBER() OVER(ORDER BY review.time DESC) rn
+  FROM review
+  )`
+
+function getListQueryByTime (
+  direction: ListDirection
+): typeof listByRatingAsc {
+  if (direction === 'asc') {
+    return listByTimeAsc
+  }
+  return listByTimeDesc
+}
+
+type ListQueryBuilder =
+  SelectQueryBuilder<KyselyDatabase, 'review', JoinedReview>
+
+interface ListQueryHelper {
+  selectQuery: typeof listByRatingAsc
+  orderBy: (query: ListQueryBuilder) => ListQueryBuilder
+}
+
+function getListQueryHelper (
+  reviewListOrder: ReviewListOrder
+): ListQueryHelper {
+  if (reviewListOrder.property === 'rating') {
+    const orderByRating = (query: ListQueryBuilder): ListQueryBuilder => {
+      return query
+        .orderBy('review.rating', reviewListOrder.direction)
+        .orderBy('review.time', 'desc')
+    }
+    return {
+      selectQuery: getListQueryByRating(reviewListOrder.direction),
+      orderBy: orderByRating
+    }
+  }
+  const orderByTime = (query: ListQueryBuilder): ListQueryBuilder =>
+    query.orderBy('review.time', reviewListOrder.direction)
+  return {
+    selectQuery: getListQueryByTime(reviewListOrder.direction),
+    orderBy: orderByTime
+  }
+}
+
+type ListPossibleColumns =
+  'review.review_id' |
+  'review.additional_info' |
+  'review.location' |
+  'review.rating' |
+  'review.time' |
+  'review.created_at' |
+  'beer.beer_id as beer_id' |
+  'beer.name as beer_name' |
+  'brewery.brewery_id as brewery_id' |
+  'brewery.name as brewery_name' |
+  'style.style_id as style_id' |
+  'style.name as style_name' |
+  'container.container_id as container_id' |
+  'container.type as container_type' |
+  'container.size as container_size'
+
+const listColumns: ListPossibleColumns[] = [
+  'review.review_id',
+  'review.additional_info',
+  'review.location',
+  'review.rating',
+  'review.time',
+  'review.created_at',
+  'beer.beer_id as beer_id',
+  'beer.name as beer_name',
+  'brewery.brewery_id as brewery_id',
+  'brewery.name as brewery_name',
+  'style.style_id as style_id',
+  'style.name as style_name',
+  'container.container_id as container_id',
+  'container.type as container_type',
+  'container.size as container_size'
+]
+
 export async function listReviews (
   db: Database,
-  pagination: Pagination
+  pagination: Pagination,
+  reviewListOrder: ReviewListOrder
 ): Promise<DbJoinedReview[]> {
   const { start, end } = toRowNumbers(pagination)
-  // Did not find a Kysely way to do a window function subquery and use between
-  // comparison, so raw SQL it is. Kysely would be better because of sanity
-  // checking and typing would not have to be done manually.
-  const reviewQuery = sql`SELECT
-    review.review_id, review.additional_info, review.location,
-    review.rating, review.time, review.created_at,
-    beer.beer_id as beer_id, beer.name as beer_name,
-    brewery.brewery_id as brewery_id, brewery.name as brewery_name,
-    style.style_id as style_id, style.name as style_name,
-    container.container_id as container_id, container.type as container_type,
-    container.size as container_size
-  FROM (
-    SELECT review.*, ROW_NUMBER() OVER(ORDER BY time DESC) rn
-    FROM review) review
-  INNER JOIN beer ON review.beer = beer.beer_id
-  INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer
-  INNER JOIN brewery ON brewery.brewery_id = beer_brewery.brewery
-  INNER JOIN beer_style ON beer.beer_id = beer_style.beer
-  INNER JOIN style ON style.style_id = beer_style.style
-  INNER JOIN container ON review.container = container.container_id
-  WHERE review.rn BETWEEN ${start} AND ${end}
-  ORDER BY review.time DESC
-  `
-  const reviews = (await reviewQuery
-    .execute(db.getDb()) as {
-    rows: JoinedReview[]
-  }).rows
+
+  const queryHelper = getListQueryHelper(reviewListOrder)
+
+  const query = db.getDb()
+    .selectFrom(queryHelper.selectQuery.as('review'))
+    .innerJoin('beer', 'review.beer', 'beer_id')
+    .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
+    .innerJoin('brewery', 'brewery.brewery_id', 'beer_brewery.brewery')
+    .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
+    .innerJoin('style', 'style.style_id', 'beer_style.style')
+    .innerJoin('container', 'review.container', 'container.container_id')
+    .select(listColumns)
+    .where((eb) => eb.between('rn', start, end))
+
+  const reviews = await queryHelper.orderBy(query)
+    .execute()
 
   if (reviews.length === 0) {
     return []
@@ -161,23 +271,7 @@ export async function joinReviewData (
     .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
     .innerJoin('container', 'container.container_id', 'review.container')
     .innerJoin('style', 'style.style_id', 'beer_style.style')
-    .select([
-      'review.review_id',
-      'review.additional_info',
-      'beer.beer_id as beer_id',
-      'beer.name as beer_name',
-      'brewery.brewery_id as brewery_id',
-      'brewery.name as brewery_name',
-      'container.container_id as container_id',
-      'container.size as container_size',
-      'container.type as container_type',
-      'review.location',
-      'review.rating',
-      'review.time',
-      'review.created_at',
-      'style.style_id as style_id',
-      'style.name as style_name'
-    ])
+    .select(listColumns)
     .orderBy('beer_name')
     .orderBy('time', 'asc')
     .execute()

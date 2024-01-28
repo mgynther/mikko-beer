@@ -25,6 +25,7 @@ export type ContainerApiErrors =
 export type ReviewApiErrors =
   | 'InvalidReview'
   | 'InvalidReviewId'
+  | 'InvalidReviewListQuery'
   | 'ReviewNotFound'
 
 export type StorageApiErrors =

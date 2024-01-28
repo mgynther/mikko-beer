@@ -6,7 +6,8 @@ import {
   type CreateReviewRequest,
   type UpdateReviewRequest,
   type JoinedReview,
-  type Review
+  type Review,
+  type ReviewListOrder
 } from '../../core/review/review'
 import {
   type DbJoinedReview,
@@ -85,9 +86,10 @@ export async function lockReviewById (
 
 export async function listReviews (
   db: Database,
-  pagination: Pagination
+  pagination: Pagination,
+  query: ReviewListOrder
 ): Promise<JoinedReview[]> {
-  const reviewRows = await reviewRepository.listReviews(db, pagination)
+  const reviewRows = await reviewRepository.listReviews(db, pagination, query)
   return toJoinedReviews(reviewRows)
 }
 

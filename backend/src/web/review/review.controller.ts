@@ -5,8 +5,10 @@ import { type Router } from '../router'
 import {
   type CreateReviewRequest,
   type UpdateReviewRequest,
+  type ReviewListOrder,
   validateCreateReviewRequest,
-  validateUpdateReviewRequest
+  validateUpdateReviewRequest,
+  validReviewListOrder
 } from '../../core/review/review'
 import { ControllerError } from '../errors'
 import { validatePagination } from '../pagination'
@@ -105,8 +107,10 @@ export function reviewController (router: Router): void {
     authService.authenticateViewer,
     async (ctx) => {
       const { skip, size } = ctx.request.query
+      const reviewListOrder = doValidateReviewListOrder(ctx.request.query)
       const pagination = validatePagination({ skip, size })
-      const reviews = await reviewService.listReviews(ctx.db, pagination)
+      const reviews =
+        await reviewService.listReviews(ctx.db, pagination, reviewListOrder)
       ctx.body = { reviews, pagination }
     }
   )
@@ -134,4 +138,20 @@ function validateUpdateRequest (
 
   const result = body as UpdateReviewRequest
   return result
+}
+
+function doValidateReviewListOrder (
+  query: Record<string, unknown>
+): ReviewListOrder {
+  const reviewListOrder = validReviewListOrder(query)
+  if (reviewListOrder === undefined) {
+    throw new ControllerError(
+      400, 'InvalidReviewListQuery', 'invalid review list query')
+  }
+
+  if (reviewListOrder.property === 'beer_name') {
+    throw new ControllerError(
+      400, 'InvalidReviewListQuery', 'invalid use of beer_name order')
+  }
+  return reviewListOrder
 }

@@ -3,7 +3,6 @@ import { expect } from 'chai'
 import { TestContext } from '../test-context'
 import { JoinedReview, Review } from '../../../src/core/review/review'
 import { Style } from '../../../src/core/style/style'
-import { AxiosResponse } from 'axios'
 
 describe('review tests', () => {
   const ctx = new TestContext()
@@ -168,7 +167,7 @@ describe('review tests', () => {
   })
 
   it('should fail create a review without beer', async () => {
-    const { beerRes, breweryRes, containerRes, styleRes } = await createDeps(ctx.adminAuthHeaders())
+    const { containerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const reviewRes = await ctx.request.post(`/api/v1/review`,
       {
@@ -186,7 +185,7 @@ describe('review tests', () => {
   })
 
   it('should update a review', async () => {
-    const { beerRes, breweryRes, containerRes, styleRes } = await createDeps(ctx.adminAuthHeaders())
+    const { beerRes, containerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const requestData = {
       additionalInfo: 'From Belgium',
@@ -234,8 +233,8 @@ describe('review tests', () => {
     expect(res.data.reviews.length).to.equal(0)
   })
 
-  it('should list reviews by brewery', async () => {
-    const { beerRes, breweryRes, containerRes, styleRes } = await createDeps(ctx.adminAuthHeaders())
+  async function createListDeps(adminAuthHeaders: Record<string, unknown>) {
+    const { beerRes, breweryRes, containerRes, styleRes } = await createDeps(adminAuthHeaders)
 
     const reviewRes = await ctx.request.post(`/api/v1/review`,
       {
@@ -277,10 +276,10 @@ describe('review tests', () => {
       {
         beer: otherBeerRes.data.beer.id,
         container: containerRes.data.container.id,
-        rating: 8,
+        rating: 7,
         smell: 'Grapefruit',
         taste: 'Bitter',
-        time: '2023-03-08T18:31:33.123Z'
+        time: '2023-03-10T18:31:33.123Z'
       },
       ctx.adminAuthHeaders()
     )
@@ -298,7 +297,7 @@ describe('review tests', () => {
       {
         beer: collabBeerRes.data.beer.id,
         container: containerRes.data.container.id,
-        rating: 8,
+        rating: 6,
         smell: 'Grapefruit, cherries',
         taste: 'Bitter, sour',
         time: '2023-03-09T18:31:33.123Z'
@@ -308,34 +307,123 @@ describe('review tests', () => {
     expect(collabReviewRes.status).to.equal(201)
     expect(collabReviewRes.data.review.beer).to.equal(collabBeerRes.data.beer.id)
 
+    return { beerRes, breweryRes, containerRes, styleRes, reviewRes, collabReviewRes, otherReviewRes }
+  }
+
+  it('should list reviews by brewery', async () => {
+    const { breweryRes, reviewRes, collabReviewRes } = await createListDeps(ctx.adminAuthHeaders())
+
     const breweryListRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
       `/api/v1/brewery/${breweryRes.data.brewery.id}/review/`,
       ctx.adminAuthHeaders()
     )
     expect(breweryListRes.status).to.equal(200)
     expect(breweryListRes.data.reviews.length).to.equal(2)
-    const kriekReview = breweryListRes.data.reviews.find(review => review.id === reviewRes.data.review.id)
+
+    const kriekReview = breweryListRes.data.reviews[0]
     expect(kriekReview?.id).to.eql(reviewRes.data.review.id)
     expect(kriekReview?.beerId).to.eql(reviewRes.data.review.beer)
-    const collabReview = breweryListRes.data.reviews.find(review => review.id === collabReviewRes.data.review.id)
+
+    const collabReview = breweryListRes.data.reviews[1]
     expect(collabReview?.id).to.eql(collabReviewRes.data.review.id)
     expect(collabReview?.beerId).to.eql(collabReviewRes.data.review.beer)
     expect(collabReview?.breweries?.length).to.equal(2)
-    const collabBrewery = collabReview?.breweries?.find(brewery => brewery.id === breweryRes.data.brewery.id);
-    const otherCollabBrewery = collabReview?.breweries?.find(brewery => brewery.id === otherBreweryRes.data.brewery.id);
-    expect(collabBrewery).to.eql({ id: breweryRes.data.brewery.id, name: breweryRes.data.brewery.name });
-    expect(otherCollabBrewery).to.eql({ id: otherBreweryRes.data.brewery.id, name: otherBreweryRes.data.brewery.name });
-    const collabStyle = collabReview?.styles?.find(style => style.id === styleRes.data.style.id);
-    const otherCollabStyle = collabReview?.styles?.find(style => style.id === otherStyleRes.data.style.id);
-    expect(collabStyle).to.eql({ id: styleRes.data.style.id, name: styleRes.data.style.name });
-    expect(otherCollabStyle).to.eql({ id: otherStyleRes.data.style.id, name: otherStyleRes.data.style.name });
   })
 
-  function withoutParents(style: Style) {
-    return {
-      id: style.id,
-      name: style.name
-    }
+
+  interface ListOrderTestData {
+    query: string,
+    kriekIndex: number,
+    otherIndex: number,
+    collabIndex: number
   }
 
+  async function testListOrder(adminAuthHeaders: Record<string, unknown>, data: ListOrderTestData) {
+    const { reviewRes, collabReviewRes, otherReviewRes } = await createListDeps(adminAuthHeaders);
+    const listRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
+      `/api/v1/review${data.query}`,
+      ctx.adminAuthHeaders()
+    )
+    expect(listRes.status).to.equal(200)
+    expect(listRes.data.reviews.length).to.equal(3)
+
+    const kriekReview = listRes.data.reviews[data.kriekIndex]
+    expect(kriekReview?.time).to.eql(reviewRes.data.review.time)
+    expect(kriekReview?.id).to.eql(reviewRes.data.review.id)
+    expect(kriekReview?.beerId).to.eql(reviewRes.data.review.beer)
+
+    const otherReview = listRes.data.reviews[data.otherIndex]
+    expect(otherReview?.time).to.eql(otherReviewRes.data.review.time)
+    expect(otherReview?.id).to.eql(otherReviewRes.data.review.id)
+    expect(otherReview?.beerId).to.eql(otherReviewRes.data.review.beer)
+
+    const collabReview = listRes.data.reviews[data.collabIndex]
+    expect(collabReview?.time).to.eql(collabReviewRes.data.review.time)
+    expect(collabReview?.id).to.eql(collabReviewRes.data.review.id)
+    expect(collabReview?.beerId).to.eql(collabReviewRes.data.review.beer)
+    expect(collabReview?.breweries?.length).to.equal(2)
+  }
+
+  it('should list reviews', async() => {
+    await testListOrder(ctx.adminAuthHeaders(), {
+      query: '',
+      kriekIndex: 2,
+      otherIndex: 0,
+      collabIndex: 1
+    })
+  })
+
+  it('should list reviews, time', async() => {
+    await testListOrder(ctx.adminAuthHeaders(), {
+      query: '?order=time',
+      kriekIndex: 2,
+      otherIndex: 0,
+      collabIndex: 1
+    })
+  })
+
+  it('should list reviews, time asc', async() => {
+    await testListOrder(ctx.adminAuthHeaders(), {
+      query: '?order=time&direction=asc',
+      kriekIndex: 0,
+      otherIndex: 2,
+      collabIndex: 1
+    })
+  })
+
+  it('should list reviews, time desc', async() => {
+    await testListOrder(ctx.adminAuthHeaders(), {
+      query: '?order=time&direction=desc',
+      kriekIndex: 2,
+      otherIndex: 0,
+      collabIndex: 1
+    })
+  })
+
+  it('should list reviews, rating', async() => {
+    await testListOrder(ctx.adminAuthHeaders(), {
+      query: '?order=rating',
+      kriekIndex: 0,
+      otherIndex: 1,
+      collabIndex: 2
+    })
+  })
+
+  it('should list reviews, rating desc', async() => {
+    await testListOrder(ctx.adminAuthHeaders(), {
+      query: '?order=rating&direction=desc',
+      kriekIndex: 0,
+      otherIndex: 1,
+      collabIndex: 2
+    })
+  })
+
+  it('should list reviews, rating asc', async() => {
+    await testListOrder(ctx.adminAuthHeaders(), {
+      query: '?order=rating&direction=asc',
+      kriekIndex: 2,
+      otherIndex: 1,
+      collabIndex: 0
+    })
+  })
 })
