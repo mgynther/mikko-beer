@@ -11,3 +11,7 @@
   margin-right: 5px;
   margin-bottom: 15px;
 }
+
+.Review-heading > div {
+  padding-top: 3px;
+}

@@ -7,6 +7,7 @@ import {
   type JoinedReviewList,
   type Review,
   type ReviewRequest,
+  type ReviewSorting,
   ReviewTags
 } from './types'
 
@@ -15,11 +16,24 @@ export interface ReviewRequestWrapper {
   storageId: string | undefined
 }
 
+interface ListReviewParams {
+  pagination: Pagination
+  sorting: ReviewSorting
+}
+
 function getStorageGetParam (storageId: string | undefined): string {
   if (storageId === undefined || storageId.length === 0) {
     return ''
   }
   return `?storage=${storageId}`
+}
+
+function getListUrl (params: ListReviewParams): string {
+  const { size, skip } = params.pagination
+  const { order, direction } = params.sorting
+  const url =
+    `/review?size=${size}&skip=${skip}&order=${order}&direction=${direction}`
+  return url
 }
 
 const reviewApi = emptySplitApi.injectEndpoints({
@@ -30,9 +44,9 @@ const reviewApi = emptySplitApi.injectEndpoints({
         method: 'GET'
       })
     }),
-    listReviews: build.mutation<JoinedReviewList, Pagination>({
-      query: (pagination: Pagination) => ({
-        url: `/review?size=${pagination.size}&skip=${pagination.skip}`,
+    listReviews: build.mutation<JoinedReviewList, ListReviewParams>({
+      query: (params: ListReviewParams) => ({
+        url: getListUrl(params),
         method: 'GET'
       })
     }),

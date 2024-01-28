@@ -2,13 +2,21 @@ button.TabButton {
   margin-right: 20px;
   padding: 12px 16px;
   outline: 0;
-  border: 0;
+  border: 2px solid hsl(200, 50%, 50%, 0.05);
   background-color: transparent;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.02);
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
   color: white;
   font-weight: 600;
   text-transform: uppercase;
   cursor: pointer;
+}
+
+button.TabButton.Compact {
+  margin-right: 0;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: unset;
 }
 
 body.light button.TabButton {

@@ -60,6 +60,7 @@ function Stats (props: Props): JSX.Element {
         {buttons.map(model => (
           <TabButton
             key={model.title}
+            isCompact={false}
             isSelected={mode === model.mode}
             onClick={() => { setMode(model.mode) }}
             title={model.title}

@@ -1,4 +1,5 @@
 import { type Container } from '../container/types'
+import { type ListDirection } from '../types'
 
 export interface Review {
   id: string
@@ -50,8 +51,16 @@ export interface ReviewList {
   reviews: Review[]
 }
 
+export type ReviewSortingOrder = 'rating' | 'time'
+
+export interface ReviewSorting {
+  order: ReviewSortingOrder
+  direction: ListDirection
+}
+
 export interface JoinedReviewList {
   reviews: JoinedReview[]
+  sorting?: ReviewSorting
 }
 
 export enum ReviewTags {

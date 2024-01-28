@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react'
 
 import { useListReviewsMutation } from '../../store/review/api'
-import { type JoinedReview } from '../../store/review/types'
+import {
+  type JoinedReview,
+  type ReviewSorting,
+  type ReviewSortingOrder
+} from '../../store/review/types'
+import { type ListDirection } from '../../store/types'
 
 import { infiniteScroll } from '../util'
 
@@ -12,9 +17,30 @@ import './Review.css'
 const pageSize = 20
 
 function Reviews (): JSX.Element {
+  const [order, doSetOrder] = useState<ReviewSortingOrder>('time')
+  const [direction, doSetDirection] = useState<ListDirection>('desc')
   const [loadedReviews, setLoadedReviews] = useState<JoinedReview[]>([])
   const [trigger, { data: reviewData, isLoading, isUninitialized }] =
     useListReviewsMutation()
+
+  function setOrder (order: ReviewSortingOrder): void {
+    setLoadedReviews([])
+    doSetOrder(order)
+  }
+
+  function setDirection (direction: ListDirection): void {
+    setLoadedReviews([])
+    doSetDirection(direction)
+  }
+
+  function setSorting (reviewSorting: ReviewSorting): void {
+    if (reviewSorting.order !== order) {
+      setOrder(reviewSorting.order)
+    }
+    if (reviewSorting.direction !== direction) {
+      setDirection(reviewSorting.direction)
+    }
+  }
 
   const reviewArray = reviewData?.reviews === undefined
     ? []
@@ -24,8 +50,11 @@ function Reviews (): JSX.Element {
   useEffect(() => {
     const loadMore = async (): Promise<void> => {
       const result = await trigger({
-        skip: loadedReviews.length,
-        size: pageSize
+        pagination: {
+          skip: loadedReviews.length,
+          size: pageSize
+        },
+        sorting: { order, direction }
       }).unwrap()
       if (result === undefined) return
       setLoadedReviews([...loadedReviews, ...result.reviews])
@@ -36,7 +65,15 @@ function Reviews (): JSX.Element {
       }
     }
     return infiniteScroll(checkLoad)
-  }, [loadedReviews, setLoadedReviews, isLoading, hasMore, trigger])
+  }, [
+    loadedReviews,
+    setLoadedReviews,
+    isLoading,
+    hasMore,
+    trigger,
+    order,
+    direction
+  ])
 
   return (
     <div>
@@ -45,6 +82,8 @@ function Reviews (): JSX.Element {
         isLoading={isLoading}
         isTitleVisible={false}
         reviews={loadedReviews}
+        sorting={reviewData?.sorting}
+        setSorting={setSorting}
         onChanged={() => {
           setLoadedReviews([])
         }}
