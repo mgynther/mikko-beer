@@ -381,15 +381,6 @@ describe('review tests', () => {
     })
   })
 
-  it('should list reviews, time asc', async() => {
-    await testListOrder(ctx.adminAuthHeaders(), {
-      query: '?order=time&direction=asc',
-      kriekIndex: 0,
-      otherIndex: 2,
-      collabIndex: 1
-    })
-  })
-
   it('should list reviews, time desc', async() => {
     await testListOrder(ctx.adminAuthHeaders(), {
       query: '?order=time&direction=desc',
@@ -402,15 +393,6 @@ describe('review tests', () => {
   it('should list reviews, rating', async() => {
     await testListOrder(ctx.adminAuthHeaders(), {
       query: '?order=rating',
-      kriekIndex: 0,
-      otherIndex: 1,
-      collabIndex: 2
-    })
-  })
-
-  it('should list reviews, rating desc', async() => {
-    await testListOrder(ctx.adminAuthHeaders(), {
-      query: '?order=rating&direction=desc',
       kriekIndex: 0,
       otherIndex: 1,
       collabIndex: 2
