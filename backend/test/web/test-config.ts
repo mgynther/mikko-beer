@@ -1,4 +1,5 @@
 import { ConnectionConfig } from 'pg'
+import { testConfig as testDataConfig, testAdminConfig } from '../data/test-config'
 import { Config } from '../../src/web/config'
 
 export interface TestConfig extends Config {
@@ -10,14 +11,6 @@ export const testConfig: TestConfig = {
   port: 3001,
   authTokenSecret: '26494cafdd9e008ab95e0fb5d02b47ffe77708ecdf2a7804b6',
   authTokenExpiryDuration: '2h',
-  database: {
-    host: 'localhost',
-    database: 'mikko_beer_test',
-    user: 'postgres',
-  },
-  adminDatabase: {
-    host: 'localhost',
-    database: 'postgres',
-    user: 'postgres',
-  },
+  database: testDataConfig,
+  adminDatabase: testAdminConfig
 }
