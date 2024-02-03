@@ -3,7 +3,6 @@ import { expect } from 'chai'
 import { TestContext } from '../test-context'
 import { Beer, BeerWithBreweriesAndStyles } from '../../../src/core/beer/beer'
 import { Style } from '../../../src/core/style/style'
-import { AxiosResponse } from 'axios'
 
 describe('beer tests', () => {
   const ctx = new TestContext()
