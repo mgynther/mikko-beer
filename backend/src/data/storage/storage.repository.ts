@@ -8,6 +8,7 @@ import {
 import {
   type DbJoinedStorage,
   type StorageRow,
+  type StorageTable,
   type InsertableStorageRow,
   type UpdateableStorageRow
 } from './storage.table'
@@ -115,39 +116,65 @@ async function lockStorage (
   return storage
 }
 
+interface StorageTableRn extends StorageTable {
+  rn: number
+}
+
+const listByBestBeforeDesc = sql<StorageTableRn>`(
+  SELECT
+    storage.*,
+    ROW_NUMBER() OVER(ORDER BY best_before DESC) rn
+  FROM storage
+  )`
+
+type PossibleListColumns =
+  'storage.storage_id' |
+  'storage.best_before' |
+  'storage.created_at' |
+  'beer.beer_id as beer_id' |
+  'beer.name as beer_name' |
+  'brewery.brewery_id as brewery_id' |
+  'brewery.name as brewery_name' |
+  'style.style_id as style_id' |
+  'style.name as style_name' |
+  'container.container_id as container_id' |
+  'container.type as container_type' |
+  'container.size as container_size'
+
+const listColumns: PossibleListColumns[] = [
+  'storage.storage_id',
+  'storage.best_before',
+  'storage.created_at',
+  'beer.beer_id as beer_id',
+  'beer.name as beer_name',
+  'brewery.brewery_id as brewery_id',
+  'brewery.name as brewery_name',
+  'style.style_id as style_id',
+  'style.name as style_name',
+  'container.container_id as container_id',
+  'container.type as container_type',
+  'container.size as container_size'
+]
+
 export async function listStorages (
   db: Database,
   pagination: Pagination
 ): Promise<DbJoinedStorage[]> {
   const { start, end } = toRowNumbers(pagination)
-  // Did not find a Kysely way to do a window function subquery and use between
-  // comparison, so raw SQL it is. Kysely would be better because of sanity
-  // checking and typing would not have to be done manually.
-  const storageQuery = sql`SELECT
-    storage.storage_id, storage.best_before,
-    storage.created_at,
-    beer.beer_id as beer_id, beer.name as beer_name,
-    brewery.brewery_id as brewery_id, brewery.name as brewery_name,
-    style.style_id as style_id, style.name as style_name,
-    container.container_id as container_id, container.type as container_type,
-    container.size as container_size
-  FROM (
-    SELECT storage.*, ROW_NUMBER() OVER(ORDER BY best_before DESC) rn
-    FROM storage) storage
-  INNER JOIN beer ON storage.beer = beer.beer_id
-  INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer
-  INNER JOIN brewery ON brewery.brewery_id = beer_brewery.brewery
-  INNER JOIN beer_style ON beer.beer_id = beer_style.beer
-  INNER JOIN style ON style.style_id = beer_style.style
-  INNER JOIN container ON storage.container = container.container_id
-  WHERE storage.rn BETWEEN ${start} AND ${end}
-  ORDER BY storage.best_before ASC, beer.name ASC
-  `
 
-  const storages = (await storageQuery
-    .execute(db.getDb()) as {
-    rows: JoinedStorage[]
-  }).rows
+  const storages = await db.getDb()
+    .selectFrom(listByBestBeforeDesc.as('storage'))
+    .innerJoin('beer', 'storage.beer', 'beer.beer_id')
+    .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
+    .innerJoin('brewery', 'beer_brewery.brewery', 'brewery.brewery_id')
+    .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
+    .innerJoin('style', 'beer_style.style', 'style.style_id')
+    .innerJoin('container', 'storage.container', 'container.container_id')
+    .select(listColumns)
+    .where((eb) => eb.between('rn', start, end))
+    .orderBy('best_before', 'asc')
+    .orderBy('beer_name', 'asc')
+    .execute()
 
   if (storages.length === 0) {
     return []
@@ -187,20 +214,7 @@ export async function joinStorageData (
     .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
     .innerJoin('container', 'container.container_id', 'storage.container')
     .innerJoin('style', 'style.style_id', 'beer_style.style')
-    .select([
-      'storage.storage_id',
-      'storage.best_before',
-      'beer.beer_id as beer_id',
-      'beer.name as beer_name',
-      'brewery.brewery_id as brewery_id',
-      'brewery.name as brewery_name',
-      'container.container_id as container_id',
-      'container.size as container_size',
-      'container.type as container_type',
-      'storage.created_at as created_at',
-      'style.style_id as style_id',
-      'style.name as style_name'
-    ])
+    .select(listColumns)
     .orderBy('storage.best_before', 'asc')
     .orderBy('beer_name')
     .execute()
