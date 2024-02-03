@@ -2,7 +2,6 @@ import { expect } from 'chai'
 
 import { TestContext } from '../test-context'
 import { JoinedReview, Review } from '../../../src/core/review/review'
-import { Style } from '../../../src/core/style/style'
 
 describe('review tests', () => {
   const ctx = new TestContext()
