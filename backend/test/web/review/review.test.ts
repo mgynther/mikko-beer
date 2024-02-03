@@ -329,17 +329,22 @@ describe('review tests', () => {
     expect(collabReview?.breweries?.length).to.equal(2)
   })
 
+  interface Sorting {
+    order: 'rating' | 'time',
+    direction: 'asc' | 'desc'
+  }
 
   interface ListOrderTestData {
-    query: string,
-    kriekIndex: number,
-    otherIndex: number,
+    query: string
+    sorting: Sorting
+    kriekIndex: number
+    otherIndex: number
     collabIndex: number
   }
 
   async function testListOrder(adminAuthHeaders: Record<string, unknown>, data: ListOrderTestData) {
     const { reviewRes, collabReviewRes, otherReviewRes } = await createListDeps(adminAuthHeaders);
-    const listRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
+    const listRes = await ctx.request.get<{ reviews: JoinedReview[], sorting: Sorting }>(
       `/api/v1/review${data.query}`,
       ctx.adminAuthHeaders()
     )
@@ -361,11 +366,14 @@ describe('review tests', () => {
     expect(collabReview?.id).to.eql(collabReviewRes.data.review.id)
     expect(collabReview?.beerId).to.eql(collabReviewRes.data.review.beer)
     expect(collabReview?.breweries?.length).to.equal(2)
+
+    expect(listRes.data.sorting).eql(data.sorting)
   }
 
   it('should list reviews', async() => {
     await testListOrder(ctx.adminAuthHeaders(), {
       query: '',
+      sorting: { order: 'time', direction: 'desc' },
       kriekIndex: 2,
       otherIndex: 0,
       collabIndex: 1
@@ -375,6 +383,7 @@ describe('review tests', () => {
   it('should list reviews, time', async() => {
     await testListOrder(ctx.adminAuthHeaders(), {
       query: '?order=time',
+      sorting: { order: 'time', direction: 'desc' },
       kriekIndex: 2,
       otherIndex: 0,
       collabIndex: 1
@@ -384,6 +393,7 @@ describe('review tests', () => {
   it('should list reviews, time desc', async() => {
     await testListOrder(ctx.adminAuthHeaders(), {
       query: '?order=time&direction=desc',
+      sorting: { order: 'time', direction: 'desc' },
       kriekIndex: 2,
       otherIndex: 0,
       collabIndex: 1
@@ -393,6 +403,7 @@ describe('review tests', () => {
   it('should list reviews, rating', async() => {
     await testListOrder(ctx.adminAuthHeaders(), {
       query: '?order=rating',
+      sorting: { order: 'rating', direction: 'desc' },
       kriekIndex: 0,
       otherIndex: 1,
       collabIndex: 2
@@ -402,6 +413,7 @@ describe('review tests', () => {
   it('should list reviews, rating asc', async() => {
     await testListOrder(ctx.adminAuthHeaders(), {
       query: '?order=rating&direction=asc',
+      sorting: { order: 'rating', direction: 'asc' },
       kriekIndex: 2,
       otherIndex: 1,
       collabIndex: 0

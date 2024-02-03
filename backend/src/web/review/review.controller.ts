@@ -111,7 +111,14 @@ export function reviewController (router: Router): void {
       const pagination = validatePagination({ skip, size })
       const reviews =
         await reviewService.listReviews(ctx.db, pagination, reviewListOrder)
-      ctx.body = { reviews, pagination }
+      ctx.body = {
+        reviews,
+        pagination,
+        sorting: {
+          order: reviewListOrder.property,
+          direction: reviewListOrder.direction
+        }
+      }
     }
   )
 }
