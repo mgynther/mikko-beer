@@ -5,6 +5,7 @@ import {
   type BeerRow,
   type BeerBreweryRow,
   type BeerStyleRow,
+  type BeerTable,
   type InsertableBeerRow,
   type InsertableBeerBreweryRow,
   type InsertableBeerStyleRow,
@@ -178,12 +179,54 @@ async function lockBeer (
 
 interface JoinedBeerRow {
   beer_id: string
-  name: string
+  name: string | null
   created_at: Date
   brewery_id: string
-  brewery_name: string
+  brewery_name: string | null
   style_id: string
-  style_name: string
+  style_name: string | null
+}
+
+interface BeerTableRn extends BeerTable {
+  rn: number
+}
+
+const listByNameAsc = sql<BeerTableRn>`(
+  SELECT
+    beer.*,
+    ROW_NUMBER() OVER(ORDER BY beer.name ASC) rn
+  FROM beer
+  )`
+
+type BeerListPossibleColumns = 'beer.beer_id' |
+'beer.name' |
+'beer.created_at' |
+'brewery.brewery_id as brewery_id' |
+'brewery.name as brewery_name' |
+'style.style_id as style_id' |
+'style.name as style_name'
+
+const beerListColumns: BeerListPossibleColumns[] = [
+  'beer.beer_id',
+  'beer.name',
+  'beer.created_at',
+  'brewery.brewery_id as brewery_id',
+  'brewery.name as brewery_name',
+  'style.style_id as style_id',
+  'style.name as style_name'
+]
+
+// Kysely types are complicated and it's easier to rely on the implicit type
+// here.
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function getSelectListQuery (db: Database, fromQuery: typeof listByNameAsc) {
+  return db.getDb()
+    .selectFrom(fromQuery.as('beer'))
+    .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
+    .innerJoin('brewery', 'beer_brewery.brewery', 'brewery.brewery_id')
+    .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
+    .innerJoin('style', 'beer_style.style', 'style.style_id')
+    .select(beerListColumns)
 }
 
 export async function listBeers (
@@ -191,23 +234,10 @@ export async function listBeers (
   pagination: Pagination
 ): Promise<BeerWithBreweriesAndStyles[]> {
   const { start, end } = toRowNumbers(pagination)
-  // Did not find a Kysely way to do a window function subquery and use between
-  // comparison, so raw SQL it is. Kysely would be better because of sanity
-  // checking and typing would not have to be done manually.
-  const beerQuery = sql<JoinedBeerRow>`SELECT
-    beer.beer_id, beer.name, beer.created_at,
-    brewery.brewery_id as brewery_id, brewery.name as brewery_name,
-    style.style_id as style_id, style.name as style_name
-  FROM (SELECT beer.*, ROW_NUMBER() OVER(ORDER BY name) rn FROM beer) beer
-  INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer
-  INNER JOIN brewery ON brewery.brewery_id = beer_brewery.brewery
-  INNER JOIN beer_style ON beer.beer_id = beer_style.beer
-  INNER JOIN style ON style.style_id = beer_style.style
-  WHERE beer.rn BETWEEN ${start} AND ${end}
-  ORDER BY beer.name ASC
-  `
-  const beers = (await beerQuery
-    .execute(db.getDb())).rows
+  const beers = await getSelectListQuery(db, listByNameAsc)
+    .where((eb) => eb.between('rn', start, end))
+    .orderBy('beer.name', 'asc')
+    .execute()
 
   return toBeersWithBreweriesAndStyles(beers)
 }
@@ -256,28 +286,16 @@ export async function searchBeers (
   searchRequest: SearchByName
 ): Promise<BeerWithBreweriesAndStyles[]> {
   const nameIlike = toIlike(searchRequest)
+  const beerNameLike = sql<BeerTableRn>`(
+    SELECT beer.*, DENSE_RANK() OVER(ORDER BY name) rn
+          FROM beer
+          WHERE beer.name ILIKE ${nameIlike}
+    )`
 
-  // Did not find a Kysely way to do a window function subquery and use between
-  // comparison, so raw SQL it is. Kysely would be better because of sanity
-  // checking and typing would not have to be done manually.
-  const beerQuery = sql<JoinedBeerRow>`SELECT
-    beer.beer_id, beer.name, beer.created_at,
-    brewery.brewery_id as brewery_id, brewery.name as brewery_name,
-    style.style_id as style_id, style.name as style_name
-  FROM (SELECT beer.*, DENSE_RANK() OVER(ORDER BY name) rn
-        FROM beer
-        WHERE beer.name ILIKE ${nameIlike}
-  ) beer
-  INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer
-  INNER JOIN brewery ON brewery.brewery_id = beer_brewery.brewery
-  INNER JOIN beer_style ON beer.beer_id = beer_style.beer
-  INNER JOIN style ON style.style_id = beer_style.style
-  WHERE beer.rn BETWEEN ${1} AND ${defaultSearchMaxResults}
-  ORDER BY beer.name ASC
-  `
-
-  const beers = (await beerQuery
-    .execute(db.getDb())).rows
+  const beers = await getSelectListQuery(db, beerNameLike)
+    .where((eb) => eb.between('rn', 1, defaultSearchMaxResults))
+    .orderBy('beer.name', 'asc')
+    .execute()
 
   return toBeersWithBreweriesAndStyles(beers)
 }
