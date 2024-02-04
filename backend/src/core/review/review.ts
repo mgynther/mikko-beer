@@ -46,7 +46,7 @@ export interface ReviewRequest {
   time: Date
 }
 
-type ReviewListOrderProperty = 'beer_name' | 'rating' | 'time'
+export type ReviewListOrderProperty = 'beer_name' | 'rating' | 'time'
 
 export interface ReviewListOrder {
   property: ReviewListOrderProperty
@@ -129,22 +129,27 @@ interface ReviewListOrderParams {
 }
 
 function reviewListOrderParamsOrDefaults (
-  query: Record<string, unknown>
+  query: Record<string, unknown>,
+  defaultProperty: ReviewListOrderProperty,
+  defaultDirection: ListDirection
 ): ReviewListOrderParams {
   let { order, direction } = query
   if (order === undefined || order === '') {
-    order = 'time'
+    order = defaultProperty
   }
   if (direction === undefined || direction === '') {
-    direction = 'desc'
+    direction = defaultDirection
   }
   return { property: order, direction }
 }
 
 export function validReviewListOrder (
-  query: Record<string, unknown>
+  query: Record<string, unknown>,
+  defaultProperty: ReviewListOrderProperty,
+  defaultDirection: ListDirection
 ): ReviewListOrder | undefined {
-  const params = reviewListOrderParamsOrDefaults(query)
+  const params =
+    reviewListOrderParamsOrDefaults(query, defaultProperty, defaultDirection)
   if (validateReviewListOrder(params)) {
     return {
       property: params.property as ReviewListOrderProperty,

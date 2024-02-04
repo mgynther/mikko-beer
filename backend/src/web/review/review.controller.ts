@@ -81,11 +81,19 @@ export function reviewController (router: Router): void {
     authService.authenticateViewer,
     async (ctx) => {
       const { beerId } = ctx.params
+      const reviewListOrder =
+        doValidateFilteredReviewListOrder(ctx.request.query)
       const reviewResult =
-        await reviewService.listReviewsByBeer(ctx.db, beerId)
+        await reviewService.listReviewsByBeer(ctx.db, beerId, reviewListOrder)
       const reviews = reviewResult ?? []
 
-      ctx.body = { reviews }
+      ctx.body = {
+        reviews,
+        sorting: {
+          order: reviewListOrder.property,
+          direction: reviewListOrder.direction
+        }
+      }
     }
   )
 
@@ -94,11 +102,22 @@ export function reviewController (router: Router): void {
     authService.authenticateViewer,
     async (ctx) => {
       const { breweryId } = ctx.params
-      const reviewResult =
-        await reviewService.listReviewsByBrewery(ctx.db, breweryId)
+      const reviewListOrder =
+        doValidateFilteredReviewListOrder(ctx.request.query)
+      const reviewResult = await reviewService.listReviewsByBrewery(
+        ctx.db,
+        breweryId,
+        reviewListOrder
+      )
       const reviews = reviewResult ?? []
 
-      ctx.body = { reviews }
+      ctx.body = {
+        reviews,
+        sorting: {
+          order: reviewListOrder.property,
+          direction: reviewListOrder.direction
+        }
+      }
     }
   )
 
@@ -107,7 +126,7 @@ export function reviewController (router: Router): void {
     authService.authenticateViewer,
     async (ctx) => {
       const { skip, size } = ctx.request.query
-      const reviewListOrder = doValidateReviewListOrder(ctx.request.query)
+      const reviewListOrder = doValidateFullReviewListOrder(ctx.request.query)
       const pagination = validatePagination({ skip, size })
       const reviews =
         await reviewService.listReviews(ctx.db, pagination, reviewListOrder)
@@ -147,18 +166,33 @@ function validateUpdateRequest (
   return result
 }
 
-function doValidateReviewListOrder (
+function doValidateFullReviewListOrder (
   query: Record<string, unknown>
 ): ReviewListOrder {
-  const reviewListOrder = validReviewListOrder(query)
+  const reviewListOrder = validReviewListOrder(query, 'time', 'desc')
+  const validated = validateReviewListOrder(reviewListOrder)
+
+  if (validated.property === 'beer_name') {
+    throw new ControllerError(
+      400, 'InvalidReviewListQuery', 'invalid use of beer_name order')
+  }
+  return validated
+}
+
+function doValidateFilteredReviewListOrder (
+  query: Record<string, unknown>
+): ReviewListOrder {
+  const reviewListOrder = validReviewListOrder(query, 'beer_name', 'asc')
+  const validated = validateReviewListOrder(reviewListOrder)
+  return validated
+}
+
+function validateReviewListOrder (
+  reviewListOrder: ReviewListOrder | undefined
+): ReviewListOrder {
   if (reviewListOrder === undefined) {
     throw new ControllerError(
       400, 'InvalidReviewListQuery', 'invalid review list query')
-  }
-
-  if (reviewListOrder.property === 'beer_name') {
-    throw new ControllerError(
-      400, 'InvalidReviewListQuery', 'invalid use of beer_name order')
   }
   return reviewListOrder
 }

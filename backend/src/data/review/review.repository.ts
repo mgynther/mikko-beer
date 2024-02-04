@@ -148,31 +148,65 @@ function getListQueryByTime (
 type ListQueryBuilder =
   SelectQueryBuilder<KyselyDatabase, 'review', JoinedReview>
 
+type OrderByGetter = (query: ListQueryBuilder) => ListQueryBuilder
+
 interface ListQueryHelper {
   selectQuery: typeof listByRatingAsc
-  orderBy: (query: ListQueryBuilder) => ListQueryBuilder
+  orderBy: OrderByGetter
+}
+
+function getOrderByBeerName (direction: ListDirection) {
+  return (query: ListQueryBuilder): ListQueryBuilder => {
+    return query
+      .orderBy('beer_name', direction)
+      .orderBy('review.time', 'asc')
+  }
+}
+
+function getOrderByRating (direction: ListDirection) {
+  return (query: ListQueryBuilder): ListQueryBuilder => {
+    return query
+      .orderBy('review.rating', direction)
+      .orderBy('review.time', 'desc')
+  }
+}
+
+function getOrderByTime (direction: ListDirection) {
+  return (query: ListQueryBuilder): ListQueryBuilder =>
+    query.orderBy('review.time', direction)
 }
 
 function getListQueryHelper (
   reviewListOrder: ReviewListOrder
 ): ListQueryHelper {
-  if (reviewListOrder.property === 'rating') {
-    const orderByRating = (query: ListQueryBuilder): ListQueryBuilder => {
-      return query
-        .orderBy('review.rating', reviewListOrder.direction)
-        .orderBy('review.time', 'desc')
-    }
+  if (reviewListOrder.property === 'beer_name') {
     return {
       selectQuery: getListQueryByRating(reviewListOrder.direction),
-      orderBy: orderByRating
+      orderBy: getOrderByBeerName(reviewListOrder.direction)
     }
   }
-  const orderByTime = (query: ListQueryBuilder): ListQueryBuilder =>
-    query.orderBy('review.time', reviewListOrder.direction)
+  if (reviewListOrder.property === 'rating') {
+    return {
+      selectQuery: getListQueryByRating(reviewListOrder.direction),
+      orderBy: getOrderByRating(reviewListOrder.direction)
+    }
+  }
   return {
     selectQuery: getListQueryByTime(reviewListOrder.direction),
-    orderBy: orderByTime
+    orderBy: getOrderByTime(reviewListOrder.direction)
   }
+}
+
+function getOrderBy (
+  reviewListOrder: ReviewListOrder
+): OrderByGetter {
+  if (reviewListOrder.property === 'beer_name') {
+    return getOrderByBeerName(reviewListOrder.direction)
+  }
+  if (reviewListOrder.property === 'rating') {
+    return getOrderByRating(reviewListOrder.direction)
+  }
+  return getOrderByTime(reviewListOrder.direction)
 }
 
 type ListPossibleColumns =
@@ -242,29 +276,36 @@ export async function listReviews (
 
 export async function listReviewsByBeer (
   db: Database,
-  beerId: string
+  beerId: string,
+  reviewListOrder: ReviewListOrder
 ): Promise<DbJoinedReview[]> {
   return await joinReviewData(db.getDb()
     .selectFrom('beer')
-    .where('beer.beer_id', '=', beerId)
+    .where('beer.beer_id', '=', beerId),
+  reviewListOrder
   )
 }
 
 export async function listReviewsByBrewery (
   db: Database,
-  breweryId: string
+  breweryId: string,
+  reviewListOrder: ReviewListOrder
 ): Promise<DbJoinedReview[]> {
   return await joinReviewData(db.getDb()
     .selectFrom('beer_brewery as querybrewery')
     .innerJoin('beer', 'querybrewery.beer', 'beer.beer_id')
-    .where('querybrewery.brewery', '=', breweryId)
+    .where('querybrewery.brewery', '=', breweryId),
+  reviewListOrder
   )
 }
 
 export async function joinReviewData (
-  query: SelectQueryBuilder<KyselyDatabase, 'beer', unknown>
+  query: SelectQueryBuilder<KyselyDatabase, 'beer', unknown>,
+  reviewListOrder: ReviewListOrder
 ): Promise<DbJoinedReview[]> {
-  const reviews = await query
+  const orderBy = getOrderBy(reviewListOrder)
+
+  const selectQuery = query
     .innerJoin('review', 'beer.beer_id', 'review.beer')
     .innerJoin('beer_brewery', 'beer_brewery.beer', 'beer.beer_id')
     .innerJoin('brewery', 'brewery.brewery_id', 'beer_brewery.brewery')
@@ -272,8 +313,8 @@ export async function joinReviewData (
     .innerJoin('container', 'container.container_id', 'review.container')
     .innerJoin('style', 'style.style_id', 'beer_style.style')
     .select(listColumns)
-    .orderBy('beer_name')
-    .orderBy('time', 'asc')
+
+  const reviews = await orderBy(selectQuery)
     .execute()
 
   if (reviews.length === 0) {

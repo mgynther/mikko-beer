@@ -95,17 +95,21 @@ export async function listReviews (
 
 export async function listReviewsByBeer (
   db: Database,
-  beerId: string
+  beerId: string,
+  reviewListOrder: ReviewListOrder
 ): Promise<JoinedReview[]> {
-  const reviewRows = await reviewRepository.listReviewsByBeer(db, beerId)
+  const reviewRows =
+    await reviewRepository.listReviewsByBeer(db, beerId, reviewListOrder)
   return toJoinedReviews(reviewRows)
 }
 
 export async function listReviewsByBrewery (
   db: Database,
-  breweryId: string
+  breweryId: string,
+  reviewListOrder: ReviewListOrder
 ): Promise<JoinedReview[]> {
-  const reviewRows = await reviewRepository.listReviewsByBrewery(db, breweryId)
+  const reviewRows =
+    await reviewRepository.listReviewsByBrewery(db, breweryId, reviewListOrder)
   return toJoinedReviews(reviewRows)
 }
 

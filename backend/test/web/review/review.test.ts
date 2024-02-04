@@ -1,7 +1,8 @@
 import { expect } from 'chai'
 
 import { TestContext } from '../test-context'
-import { JoinedReview, Review } from '../../../src/core/review/review'
+import { type ListDirection } from '../../../src/core/list'
+import { JoinedReview, Review, type ReviewListOrderProperty } from '../../../src/core/review/review'
 
 describe('review tests', () => {
   const ctx = new TestContext()
@@ -312,21 +313,76 @@ describe('review tests', () => {
   it('should list reviews by brewery', async () => {
     const { breweryRes, reviewRes, collabReviewRes } = await createListDeps(ctx.adminAuthHeaders())
 
-    const breweryListRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
-      `/api/v1/brewery/${breweryRes.data.brewery.id}/review/`,
+    const breweryListRes = await ctx.request.get<{
+      reviews: JoinedReview[],
+      sorting: {
+        order: ReviewListOrderProperty,
+        direction: ListDirection
+      }
+    }>(
+      `/api/v1/brewery/${breweryRes.data.brewery.id}/review?order=beer_name&direction=desc`,
       ctx.adminAuthHeaders()
     )
     expect(breweryListRes.status).to.equal(200)
     expect(breweryListRes.data.reviews.length).to.equal(2)
 
-    const kriekReview = breweryListRes.data.reviews[0]
+    const kriekReview = breweryListRes.data.reviews[1]
     expect(kriekReview?.id).to.eql(reviewRes.data.review.id)
     expect(kriekReview?.beerId).to.eql(reviewRes.data.review.beer)
 
-    const collabReview = breweryListRes.data.reviews[1]
+    const collabReview = breweryListRes.data.reviews[0]
     expect(collabReview?.id).to.eql(collabReviewRes.data.review.id)
     expect(collabReview?.beerId).to.eql(collabReviewRes.data.review.beer)
     expect(collabReview?.breweries?.length).to.equal(2)
+
+    const sorting = breweryListRes.data.sorting
+    expect(sorting.order).equal('beer_name')
+    expect(sorting.direction).equal('desc')
+  })
+
+  it('list reviews by beer', async () => {
+    const { beerRes, containerRes } = await createDeps(ctx.adminAuthHeaders())
+
+    const reviewBase = {
+      beer: beerRes.data.beer.id,
+      container: containerRes.data.container.id,
+      smell: 'Cherries',
+      taste: 'Cherries, a little sour',
+    }
+
+    const reviewRes = await ctx.request.post(`/api/v1/review`,
+      {
+        ...reviewBase,
+        rating: 8,
+        time: '2023-03-08T18:31:33.123Z'
+      },
+      ctx.adminAuthHeaders()
+    )
+    expect(reviewRes.status).to.equal(201)
+
+    const otherReviewRes = await ctx.request.post(`/api/v1/review`,
+      {
+        ...reviewBase,
+        rating: 7,
+        time: '2023-03-07T18:31:33.123Z'
+      },
+      ctx.adminAuthHeaders()
+    )
+    expect(otherReviewRes.status).to.equal(201)
+
+    const beerListRes = await ctx.request.get<{
+      reviews: JoinedReview[],
+      sorting: {
+        order: ReviewListOrderProperty,
+        direction: ListDirection
+      }
+    }>(
+      `/api/v1/beer/${beerRes.data.beer.id}/review?order=rating&direction=asc`,
+      ctx.adminAuthHeaders()
+    )
+    expect(beerListRes.status).to.equal(200)
+    expect(beerListRes.data.reviews.length).to.equal(2)
+    expect(beerListRes.data.reviews.map(r => r.rating)).to.eql([7, 8])
   })
 
   interface Sorting {
