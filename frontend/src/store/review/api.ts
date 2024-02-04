@@ -36,6 +36,16 @@ function getListUrl (params: ListReviewParams): string {
   return url
 }
 
+function getSorting (sorting: ReviewSorting): string {
+  const { order, direction } = sorting
+  return `order=${order}&direction=${direction}`
+}
+
+interface FilteredListReviewParams {
+  id: string
+  sorting: ReviewSorting
+}
+
 const reviewApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
     getReview: build.query<{ review: Review }, string>({
@@ -50,16 +60,18 @@ const reviewApi = emptySplitApi.injectEndpoints({
         method: 'GET'
       })
     }),
-    listReviewsByBeer: build.query<JoinedReviewList, string>({
-      query: (beerId: string) => ({
-        url: `/beer/${beerId}/review`,
+    listReviewsByBeer: build.query<JoinedReviewList, FilteredListReviewParams>({
+      query: (params: FilteredListReviewParams) => ({
+        url: `/beer/${params.id}/review?${getSorting(params.sorting)}`,
         method: 'GET'
       }),
       providesTags: [ReviewTags.Review]
     }),
-    listReviewsByBrewery: build.query<JoinedReviewList, string>({
-      query: (breweryId: string) => ({
-        url: `/brewery/${breweryId}/review`,
+    listReviewsByBrewery: build.query<
+    JoinedReviewList, FilteredListReviewParams
+    >({
+      query: (params: FilteredListReviewParams) => ({
+        url: `/brewery/${params.id}/review?${getSorting(params.sorting)}`,
         method: 'GET'
       }),
       providesTags: [ReviewTags.Review]

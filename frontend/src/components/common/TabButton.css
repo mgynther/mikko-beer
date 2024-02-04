@@ -17,6 +17,7 @@ button.TabButton.Compact {
   font-size: 12px;
   font-weight: 400;
   text-transform: unset;
+  width: 100%;
 }
 
 body.light button.TabButton {

@@ -5,7 +5,12 @@ import { useParams } from 'react-router-dom'
 import { useGetBeerQuery } from '../../store/beer/api'
 import { type Beer as BeerType } from '../../store/beer/types'
 import { useListReviewsByBeerQuery } from '../../store/review/api'
+import {
+  type ReviewSorting,
+  type ReviewSortingOrder
+} from '../../store/review/types'
 import { useListStoragesByBeerQuery } from '../../store/storage/api'
+import { type ListDirection } from '../../store/types'
 
 import { joinSortedNames } from '../util'
 
@@ -27,6 +32,8 @@ function NotFound (): JSX.Element {
 
 function Beer (): JSX.Element {
   const { beerId } = useParams()
+  const [order, doSetOrder] = useState<ReviewSortingOrder>('beer_name')
+  const [direction, doSetDirection] = useState<ListDirection>('asc')
   const [mode, setMode] = useState(EditableMode.View)
   const [initialBeer, setInitialBeer] =
     useState<BeerType | undefined>(undefined)
@@ -35,7 +42,13 @@ function Beer (): JSX.Element {
   }
   const { data: beerData, isLoading } = useGetBeerQuery(beerId)
   const { data: reviewData, isLoading: isLoadingReviews } =
-    useListReviewsByBeerQuery(beerId)
+    useListReviewsByBeerQuery({
+      id: beerId,
+      sorting: {
+        order,
+        direction
+      }
+    })
   const { data: storageData } = useListStoragesByBeerQuery(beerId)
   if (isLoading) return <LoadingIndicator isLoading={true} />
   if (beerData?.beer === undefined) return <NotFound />
@@ -93,8 +106,16 @@ function Beer (): JSX.Element {
         isLoading={isLoadingReviews}
         isTitleVisible={true}
         reviews={reviewData?.reviews ?? []}
-        sorting={undefined}
-        setSorting={undefined}
+        sorting={reviewData?.sorting}
+        setSorting={(sorting: ReviewSorting) => {
+          if (order !== sorting.order) {
+            doSetOrder(sorting.order)
+          }
+          if (direction !== sorting.direction) {
+            doSetDirection(sorting.direction)
+          }
+        }}
+        supportedSorting={['beer_name', 'rating', 'time']}
         onChanged={() => {}}
       />
     </div>

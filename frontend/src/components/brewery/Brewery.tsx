@@ -5,7 +5,12 @@ import { useParams } from 'react-router-dom'
 import { useGetBreweryQuery } from '../../store/brewery/api'
 import { type Brewery as BreweryType } from '../../store/brewery/types'
 import { useListReviewsByBreweryQuery } from '../../store/review/api'
+import {
+  type ReviewSorting,
+  type ReviewSortingOrder
+} from '../../store/review/types'
 import { useListStoragesByBreweryQuery } from '../../store/storage/api'
+import { type ListDirection } from '../../store/types'
 
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'
@@ -25,6 +30,8 @@ function NotFound (): JSX.Element {
 
 function Brewery (): JSX.Element {
   const { breweryId } = useParams()
+  const [order, doSetOrder] = useState<ReviewSortingOrder>('beer_name')
+  const [direction, doSetDirection] = useState<ListDirection>('asc')
   const [mode, setMode] = useState(EditableMode.View)
   const [initialBrewery, setInitialBrewery] =
     useState<BreweryType | undefined>(undefined)
@@ -33,7 +40,13 @@ function Brewery (): JSX.Element {
   }
   const { data: breweryData, isLoading } = useGetBreweryQuery(breweryId)
   const { data: reviewData, isLoading: isLoadingReviews } =
-    useListReviewsByBreweryQuery(breweryId)
+    useListReviewsByBreweryQuery({
+      id: breweryId,
+      sorting: {
+        order,
+        direction
+      }
+    })
   const { data: storageData } = useListStoragesByBreweryQuery(breweryId)
   if (isLoading) return <LoadingIndicator isLoading={true} />
   if (breweryData?.brewery === undefined) return <NotFound />
@@ -84,8 +97,16 @@ function Brewery (): JSX.Element {
         isLoading={isLoadingReviews}
         isTitleVisible={true}
         reviews={reviewData?.reviews ?? []}
-        sorting={undefined}
-        setSorting={undefined}
+        sorting={reviewData?.sorting}
+        setSorting={(sorting: ReviewSorting) => {
+          if (order !== sorting.order) {
+            doSetOrder(sorting.order)
+          }
+          if (direction !== sorting.direction) {
+            doSetDirection(sorting.direction)
+          }
+        }}
+        supportedSorting={['beer_name', 'rating', 'time']}
         onChanged={() => {}}
       />
     </div>

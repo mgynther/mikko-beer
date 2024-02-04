@@ -84,6 +84,7 @@ function Reviews (): JSX.Element {
         reviews={loadedReviews}
         sorting={reviewData?.sorting}
         setSorting={setSorting}
+        supportedSorting={['rating', 'time']}
         onChanged={() => {
           setLoadedReviews([])
         }}

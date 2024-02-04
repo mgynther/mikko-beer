@@ -15,6 +15,7 @@ import './ReviewList.css'
 interface HeadingProps {
   sorting: ReviewSorting | undefined
   setSorting: ((sorting: ReviewSorting) => void) | undefined
+  supportedSorting: ReviewSortingOrder[]
 }
 
 export function ReviewHeading (
@@ -29,6 +30,7 @@ export function ReviewHeading (
       : ''
     return `${base} ${directionSymbol}`
   }
+  const nameTitle = formatTitle('Name', 'beer_name')
   const ratingTitle = formatTitle('Rating', 'rating')
   const timeTitle = formatTitle('Time', 'time')
   function createClickHandler (property: ReviewSortingOrder): () => void {
@@ -44,29 +46,47 @@ export function ReviewHeading (
       props.setSorting({ order: property, direction: 'desc' })
     }
   }
+  function isSortingSupported (property: ReviewSortingOrder): boolean {
+    return props.sorting !== undefined &&
+      props.supportedSorting.includes(property)
+  }
   return (
     <div className='Review-heading'>
       <div>Breweries</div>
-      <div>Name</div>
+      {!isSortingSupported('beer_name') &&
+        <div>Name</div>
+      }
+      {isSortingSupported('beer_name') &&
+        <TabButton
+          title={nameTitle}
+          onClick={createClickHandler('beer_name')}
+          isCompact={true}
+          isSelected={props.sorting?.order === 'beer_name'} />}
       <div>Styles</div>
-      {props.sorting === undefined &&
+      {!isSortingSupported('rating') &&
         <div className="Review-rating-heading">Rating</div>
       }
-      {props.sorting !== undefined &&
-        <TabButton
-          title={ratingTitle}
-          onClick={createClickHandler('rating')}
-          isCompact={true}
-          isSelected={props.sorting?.order === 'rating'} />}
-      {props.sorting === undefined &&
+      {isSortingSupported('rating') &&
+        <div className="Review-rating-heading">
+          <TabButton
+            title={ratingTitle}
+            onClick={createClickHandler('rating')}
+            isCompact={true}
+            isSelected={props.sorting?.order === 'rating'} />
+        </div>
+      }
+      {!isSortingSupported('time') &&
         <div className="Review-time-heading">Time</div>
       }
-      {props.sorting !== undefined &&
-        <TabButton
-          title={timeTitle}
-          onClick={createClickHandler('time')}
-          isCompact={true}
-          isSelected={props.sorting?.order === 'time'} />}
+      {isSortingSupported('time') &&
+        <div className="Review-time-heading">
+          <TabButton
+            title={timeTitle}
+            onClick={createClickHandler('time')}
+            isCompact={true}
+            isSelected={props.sorting?.order === 'time'} />
+        </div>
+      }
     </div>
   )
 }
@@ -77,6 +97,7 @@ interface Props {
   reviews: JoinedReview[]
   sorting: ReviewSorting | undefined
   setSorting: ((sorting: ReviewSorting) => void) | undefined
+  supportedSorting: ReviewSortingOrder[]
   onChanged: () => void
 }
 
@@ -89,6 +110,7 @@ function ReviewList (props: Props): JSX.Element {
         <ReviewHeading
           sorting={props.sorting}
           setSorting={props.setSorting}
+          supportedSorting={props.supportedSorting}
         />
         <div>
           {props.reviews.map((review) => {
