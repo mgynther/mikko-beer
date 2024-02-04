@@ -11,9 +11,9 @@ import { Provider } from 'react-redux'
 import { store } from './store/store'
 
 const persistor = persistStore(store)
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-)
+const rootElement = document.getElementById('root')
+if (rootElement === null) throw new Error('Element with id root missing')
+const root = ReactDOM.createRoot(rootElement)
 root.render(
   <Provider store={store}>
     <PersistGate persistor={persistor}>
