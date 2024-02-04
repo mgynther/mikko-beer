@@ -28,6 +28,9 @@ export type ReviewApiErrors =
   | 'InvalidReviewListQuery'
   | 'ReviewNotFound'
 
+export type StatsApiErrors =
+  | 'InvalidBreweryStatsQuery'
+
 export type StorageApiErrors =
   | 'InvalidStorage'
   | 'InvalidStorageId'
@@ -62,6 +65,7 @@ export type ErrorCode =
   | BreweryApiErrors
   | ContainerApiErrors
   | ReviewApiErrors
+  | StatsApiErrors
   | StorageApiErrors
   | StyleApiErrors
   | UserApiErrors

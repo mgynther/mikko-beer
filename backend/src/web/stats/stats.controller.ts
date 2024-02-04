@@ -1,11 +1,16 @@
 import * as statsService from './stats.service'
 import * as authService from '../authentication/authentication.service'
 
+import { ControllerError } from '../errors'
 import { type Router } from '../router'
 
 import { validatePagination } from '../pagination'
 
-import { validateStatsFilter } from '../../core/stats/stats'
+import {
+  type BreweryStatsOrder,
+  validBreweryStatsOrder,
+  validateStatsFilter
+} from '../../core/stats/stats'
 
 export function statsController (router: Router): void {
   router.get(
@@ -31,10 +36,17 @@ export function statsController (router: Router): void {
     authService.authenticateViewer,
     async (ctx) => {
       const { skip, size } = ctx.request.query
+      const { order, direction } = ctx.request.query
       const pagination = validatePagination({ skip, size })
       const statsFilter = validateStatsFilter(ctx.request.query)
+      const breweryStatsOrder = validateBreweryStatsOrder({ order, direction })
       const brewery =
-        await statsService.getBrewery(ctx.db, pagination, statsFilter)
+        await statsService.getBrewery(
+          ctx.db,
+          pagination,
+          statsFilter,
+          breweryStatsOrder
+        )
       ctx.body = { brewery }
     }
   )
@@ -58,4 +70,15 @@ export function statsController (router: Router): void {
       ctx.body = { style }
     }
   )
+}
+
+function validateBreweryStatsOrder (
+  query: Record<string, unknown>
+): BreweryStatsOrder {
+  const breweryStatsOrder = validBreweryStatsOrder(query)
+  if (breweryStatsOrder === undefined) {
+    throw new ControllerError(
+      400, 'InvalidBreweryStatsQuery', 'invalid brewery stats query')
+  }
+  return breweryStatsOrder
 }

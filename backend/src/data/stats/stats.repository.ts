@@ -1,11 +1,12 @@
-import { sql } from 'kysely'
+import { type SelectQueryBuilder, sql } from 'kysely'
 
-import { type Database } from '../database'
+import { type Database, type KyselyDatabase } from '../database'
 import { type Pagination } from '../../core/pagination'
 
 import {
   type AnnualStats,
   type BreweryStats,
+  type BreweryStatsOrder,
   type OverallStats,
   type RatingStats,
   type StatsFilter,
@@ -56,61 +57,90 @@ export async function getAnnual (
   }))
 }
 
+interface BreweryQuerySelection {
+  review_average: number
+  review_count: number
+  brewery_id: string
+  brewery_name: string | null
+}
+
+type BreweryQueryBuilder =
+  SelectQueryBuilder<
+  KyselyDatabase,
+  'review' | 'brewery' | 'beer' | 'beer_brewery',
+  BreweryQuerySelection
+  >
+
+function breweryOrderBy (
+  builder: BreweryQueryBuilder,
+  breweryStatsOrder: BreweryStatsOrder
+): BreweryQueryBuilder {
+  if (breweryStatsOrder.property === 'average') {
+    return builder
+      .orderBy('review_average', breweryStatsOrder.direction)
+      .orderBy('review_count', 'desc')
+      .orderBy('brewery_name', 'asc')
+  }
+  if (breweryStatsOrder.property === 'brewery_name') {
+    return builder
+      .orderBy('brewery_name', breweryStatsOrder.direction)
+  }
+  if (breweryStatsOrder.property === 'count') {
+    return builder
+      .orderBy('review_count', breweryStatsOrder.direction)
+      .orderBy('review_average', 'desc')
+      .orderBy('brewery_name', 'asc')
+  }
+  return builder
+}
+
 export async function getBrewery (
   db: Database,
   pagination: Pagination,
-  statsFilter: StatsFilter | undefined
+  statsFilter: StatsFilter | undefined,
+  breweryStatsOrder: BreweryStatsOrder
 ): Promise<BreweryStats> {
-  let breweryQuery = sql`SELECT
-    COUNT(1) as review_count,
-    AVG(rating) as review_average,
-    brewery.brewery_id as brewery_id,
-    brewery.name as brewery_name
-    FROM review
-    INNER JOIN beer ON review.beer = beer.beer_id
-    INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer
-    INNER JOIN brewery ON beer_brewery.brewery = brewery.brewery_id
-    GROUP BY brewery_id
-    ORDER BY brewery_name ASC
-    OFFSET ${pagination.skip}
-    LIMIT ${pagination.size}
-  `
+  let breweryQuery = db.getDb()
+    .selectFrom('review')
+    .innerJoin('beer', 'review.beer', 'beer.beer_id')
+    .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
+    .innerJoin('brewery', 'beer_brewery.brewery', 'brewery.brewery_id')
+    .select(({ fn }) => [
+      fn.count<number>('review.review_id').as('review_count'),
+      fn.avg<number>('review.rating').as('review_average'),
+      'brewery.brewery_id as brewery_id',
+      'brewery.name as brewery_name'
+    ])
 
   if (statsFilter !== undefined) {
-    breweryQuery = sql`SELECT
-      COUNT(review) AS review_count,
-      AVG(review.rating) AS review_average,
-      brewery.brewery_id AS brewery_id,
-      brewery.name AS brewery_name
-      FROM beer_brewery AS querybrewery
-      INNER JOIN beer ON querybrewery.beer = beer.beer_id
-      INNER JOIN review ON beer.beer_id = review.beer
-      INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer
-      INNER JOIN brewery ON beer_brewery.brewery = brewery.brewery_id
-      WHERE querybrewery.brewery = ${statsFilter.brewery}
-      GROUP BY brewery_id
-      ORDER BY brewery_name ASC
-      OFFSET ${pagination.skip}
-      LIMIT ${pagination.size}
-    `
+    breweryQuery = db.getDb()
+      .selectFrom('beer_brewery as querybrewery')
+      .innerJoin('beer', 'querybrewery.beer', 'beer.beer_id')
+      .innerJoin('review', 'beer.beer_id', 'review.beer')
+      .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
+      .innerJoin('brewery', 'beer_brewery.brewery', 'brewery.brewery_id')
+      .where('querybrewery.brewery', '=', statsFilter.brewery)
+      .select(({ fn }) => [
+        fn.count<number>('review.review_id').as('review_count'),
+        fn.avg<number>('review.rating').as('review_average'),
+        'brewery.brewery_id as brewery_id',
+        'brewery.name as brewery_name'
+      ])
   }
 
-  const brewery = (await breweryQuery
-    .execute(db.getDb()) as {
-    rows: Array<{
-      review_average: number
-      review_count: number
-      brewery_id: string
-      brewery_name: string
-    }>
-  })
-
-  return brewery.rows.map(row => ({
-    reviewAverage: round(row.review_average, 2),
-    reviewCount: `${row.review_count}`,
-    breweryId: row.brewery_id,
-    breweryName: row.brewery_name
-  }))
+  return (await breweryOrderBy(
+    breweryQuery
+      .groupBy('brewery_id'), breweryStatsOrder
+  )
+    .offset(pagination.skip)
+    .limit(pagination.size)
+    .execute())
+    .map(row => ({
+      reviewAverage: round(row.review_average, 2),
+      reviewCount: `${row.review_count}`,
+      breweryId: row.brewery_id,
+      breweryName: row.brewery_name ?? ''
+    }))
 }
 
 interface Stats {

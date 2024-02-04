@@ -6,6 +6,7 @@ import { type Pagination } from '../../core/pagination'
 import {
   type AnnualStats,
   type BreweryStats,
+  type BreweryStatsOrder,
   type OverallStats,
   type RatingStats,
   type StatsFilter,
@@ -22,9 +23,15 @@ export async function getAnnual (
 export async function getBrewery (
   db: Database,
   pagination: Pagination,
-  statsFilter: StatsFilter | undefined
+  statsFilter: StatsFilter | undefined,
+  breweryStatsOrder: BreweryStatsOrder
 ): Promise<BreweryStats> {
-  return await statsRepository.getBrewery(db, pagination, statsFilter)
+  return await statsRepository.getBrewery(
+    db,
+    pagination,
+    statsFilter,
+    breweryStatsOrder
+  )
 }
 
 export async function getOverall (

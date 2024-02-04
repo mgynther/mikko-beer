@@ -1,7 +1,7 @@
 import { ajv } from '../ajv'
 
 import { type Container } from '../container/container'
-import { type ListDirection } from '../list'
+import { type ListDirection, directionValidation } from '../list'
 import { timePattern } from '../time'
 
 export interface Review {
@@ -103,9 +103,7 @@ const doValidateReviewListOrder =
       property: {
         enum: ['beer_name', 'rating', 'time']
       },
-      direction: {
-        enum: ['asc', 'desc']
-      }
+      direction: directionValidation
     },
     required: ['property', 'direction'],
     additionalProperties: false

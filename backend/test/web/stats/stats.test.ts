@@ -12,7 +12,6 @@ import {
   type StyleStats
 } from '../../../src/core/stats/stats'
 import { type Style } from '../../../src/core/style/style'
-import { AxiosResponse } from 'axios'
 
 // Math is hard. By both hard coding and calculating it should be easier to spot
 // an error when it happens.
@@ -212,7 +211,6 @@ describe('stats tests', () => {
       beers,
       breweries,
       reviews,
-      containers,
       styles
     } = await createDeps(ctx.adminAuthHeaders())
 
@@ -386,16 +384,16 @@ describe('stats tests', () => {
     const lindemansAverage = average(lindemansRatings)
     expect(breweryStats).to.eql([
       {
-        reviewCount: `${lindemansRatings.length}`,
-        reviewAverage: lindemansAverage,
-        breweryId: lindemans.brewery.id,
-        breweryName: lindemans.brewery.name
-      },
-      {
         reviewCount: `${nokiaRatings.length}`,
         reviewAverage: nokiaAverage,
         breweryId: nokia.brewery.id,
         breweryName: nokia.brewery.name
+      },
+      {
+        reviewCount: `${lindemansRatings.length}`,
+        reviewAverage: lindemansAverage,
+        breweryId: lindemans.brewery.id,
+        breweryName: lindemans.brewery.name
       }
     ])
     expect(nokiaRatings.length).to.equal(nokia.count)
@@ -419,7 +417,7 @@ describe('stats tests', () => {
     expect(skippedStatsRes.data.brewery).to.eql([])
 
     const statsRes = await ctx.request.get<{ brewery: BreweryStats }>(
-      '/api/v1/stats/brewery',
+      '/api/v1/stats/brewery?order=average&direction=desc',
       ctx.adminAuthHeaders()
     )
     expect(statsRes.status).to.equal(200)
@@ -452,8 +450,9 @@ describe('stats tests', () => {
     } = await createDeps(ctx.adminAuthHeaders())
 
     const filterBreweryId = breweries[0].data.brewery.id
+    const order = '&order=count&direction=asc'
     const statsRes = await ctx.request.get<{ brewery: BreweryStats }>(
-      `/api/v1/stats/brewery?brewery=${filterBreweryId}`,
+      `/api/v1/stats/brewery?brewery=${filterBreweryId}${order}`,
       ctx.adminAuthHeaders()
     )
     expect(statsRes.status).to.equal(200)

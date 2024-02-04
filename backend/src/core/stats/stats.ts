@@ -1,3 +1,7 @@
+import { ajv } from '../ajv'
+
+import { type ListDirection, directionValidation } from '../list'
+
 export type AnnualStats = Array<{
   reviewAverage: string
   reviewCount: string
@@ -10,6 +14,13 @@ export type BreweryStats = Array<{
   breweryId: string
   breweryName: string
 }>
+
+type BreweryStatsOrderProperty = 'average' | 'brewery_name' | 'count'
+
+export interface BreweryStatsOrder {
+  property: BreweryStatsOrderProperty
+  direction: ListDirection
+}
 
 export interface OverallStats {
   beerCount: string
@@ -48,6 +59,55 @@ export function validateStatsFilter (
   }
   if (typeof brewery === 'string' && brewery.length > 0) {
     return { brewery }
+  }
+  return undefined
+}
+
+const doValidateBreweryStatsOrder =
+  ajv.compile<BreweryStatsOrder>({
+    type: 'object',
+    properties: {
+      property: {
+        enum: ['average', 'brewery_name', 'count']
+      },
+      direction: directionValidation
+    },
+    required: ['property', 'direction'],
+    additionalProperties: false
+  })
+
+function validateBreweryStatsOrder (body: unknown): boolean {
+  return doValidateBreweryStatsOrder(body) as boolean
+}
+
+interface ReviewListOrderParams {
+  property: unknown
+  direction: unknown
+}
+
+function reviewListOrderParamsOrDefaults (
+  query: Record<string, unknown>
+): ReviewListOrderParams {
+  let { order, direction } = query
+  if (order === undefined || order === '') {
+    order = 'brewery_name'
+  }
+  if (direction === undefined || direction === '') {
+    direction = 'asc'
+  }
+  return { property: order, direction }
+}
+
+export function validBreweryStatsOrder (
+  query: Record<string, unknown>
+): BreweryStatsOrder | undefined {
+  const params =
+    reviewListOrderParamsOrDefaults(query)
+  if (validateBreweryStatsOrder(params)) {
+    return {
+      property: params.property as BreweryStatsOrderProperty,
+      direction: params.direction as ListDirection
+    }
   }
   return undefined
 }
