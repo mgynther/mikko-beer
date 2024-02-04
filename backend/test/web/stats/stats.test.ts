@@ -297,13 +297,7 @@ describe('stats tests', () => {
   }
 
   it('should get annual stats', async () => {
-    const {
-      beers,
-      breweries,
-      reviews,
-      containers,
-      styles
-    } = await createDeps(ctx.adminAuthHeaders())
+    const { reviews } = await createDeps(ctx.adminAuthHeaders())
 
     const statsRes = await ctx.request.get<{ annual: AnnualStats }>(
       '/api/v1/stats/annual',
@@ -336,9 +330,7 @@ describe('stats tests', () => {
     const {
       beers,
       breweries,
-      reviews,
-      containers,
-      styles
+      reviews
     } = await createDeps(ctx.adminAuthHeaders())
 
     const breweryId = breweries[0].data.brewery.id
@@ -416,9 +408,7 @@ describe('stats tests', () => {
     const {
       beers,
       breweries,
-      reviews,
-      containers,
-      styles
+      reviews
     } = await createDeps(ctx.adminAuthHeaders())
 
     const skippedStatsRes = await ctx.request.get<{ brewery: BreweryStats }>(
@@ -458,9 +448,7 @@ describe('stats tests', () => {
     const {
       beers,
       breweries,
-      reviews,
-      containers,
-      styles
+      reviews
     } = await createDeps(ctx.adminAuthHeaders())
 
     const filterBreweryId = breweries[0].data.brewery.id
@@ -508,13 +496,7 @@ describe('stats tests', () => {
   }
 
   it('should get rating stats', async () => {
-    const {
-      beers,
-      breweries,
-      reviews,
-      containers,
-      styles
-    } = await createDeps(ctx.adminAuthHeaders())
+    const { reviews } = await createDeps(ctx.adminAuthHeaders())
 
     const statsRes = await ctx.request.get<{ rating: RatingStats }>(
       '/api/v1/stats/rating',
@@ -544,9 +526,7 @@ describe('stats tests', () => {
     const {
       beers,
       breweries,
-      reviews,
-      containers,
-      styles
+      reviews
     } = await createDeps(ctx.adminAuthHeaders())
 
     const breweryId = breweries[0].data.brewery.id
@@ -619,9 +599,7 @@ describe('stats tests', () => {
   it('should get style stats', async () => {
     const {
       beers,
-      breweries,
       reviews,
-      containers,
       styles
     } = await createDeps(ctx.adminAuthHeaders())
 
@@ -667,7 +645,6 @@ describe('stats tests', () => {
       beers,
       breweries,
       reviews,
-      containers,
       styles
     } = await createDeps(ctx.adminAuthHeaders())
 
