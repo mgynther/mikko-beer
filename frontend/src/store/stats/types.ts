@@ -1,3 +1,5 @@
+import { type ListDirection } from '../types'
+
 export interface OverallStats {
   beerCount: string
   breweryCount: string
@@ -24,6 +26,13 @@ export interface OneBreweryStats {
 
 export interface BreweryStats {
   brewery: OneBreweryStats[]
+}
+
+export type BreweryStatsSortingOrder = 'average' | 'brewery_name' | 'count'
+
+export interface BreweryStatsSorting {
+  order: BreweryStatsSortingOrder
+  direction: ListDirection
 }
 
 export interface RatingStats {

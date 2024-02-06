@@ -4,7 +4,7 @@ import {
   type ReviewSortingOrder
 } from '../../store/review/types'
 
-import { getDirectionSymbol, invertDirection } from '../list-helpers'
+import { formatTitle, invertDirection } from '../list-helpers'
 import LoadingIndicator from '../common/LoadingIndicator'
 import TabButton from '../common/TabButton'
 
@@ -24,15 +24,10 @@ export function ReviewHeading (
   function isSelected (property: ReviewSortingOrder): boolean {
     return props.sorting?.order === property
   }
-  function formatTitle (base: string, property: ReviewSortingOrder): string {
-    const directionSymbol = isSelected(property)
-      ? getDirectionSymbol(props.sorting?.direction)
-      : ''
-    return `${base} ${directionSymbol}`
-  }
-  const nameTitle = formatTitle('Name', 'beer_name')
-  const ratingTitle = formatTitle('Rating', 'rating')
-  const timeTitle = formatTitle('Time', 'time')
+  const direction = props.sorting?.direction
+  const nameTitle = formatTitle('Name', isSelected('beer_name'), direction)
+  const ratingTitle = formatTitle('Rating', isSelected('rating'), direction)
+  const timeTitle = formatTitle('Time', isSelected('time'), direction)
   function createClickHandler (property: ReviewSortingOrder): () => void {
     return () => {
       if (props.setSorting === undefined) return

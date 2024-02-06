@@ -5,6 +5,7 @@ import { type Pagination } from '../types'
 import {
   type AnnualStats,
   type BreweryStats,
+  type BreweryStatsSorting,
   type OverallStats,
   type RatingStats,
   type StyleStats,
@@ -25,6 +26,10 @@ function onlyBreweryIdFilter (breweryId: string | undefined): string {
   return `?${breweryIdFilter(breweryId)}`
 }
 
+function breweryStatsSorting (sorting: BreweryStatsSorting): string {
+  return `order=${sorting.order}&direction=${sorting.direction}`
+}
+
 const statsApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
     getAnnualStats: build.query<AnnualStats, string | undefined>({
@@ -37,10 +42,12 @@ const statsApi = emptySplitApi.injectEndpoints({
     getBreweryStats: build.query<BreweryStats, {
       breweryId: string | undefined
       pagination: Pagination
+      sorting: BreweryStatsSorting
     }>({
       query: (params: {
         breweryId: string | undefined
         pagination: Pagination
+        sorting: BreweryStatsSorting
       }) => ({
         url: `/stats/brewery?size=${
           params.pagination.size
@@ -48,7 +55,7 @@ const statsApi = emptySplitApi.injectEndpoints({
             params.pagination.skip
           }${
           andBreweryIdFilter(params.breweryId)
-        }`,
+        }&${breweryStatsSorting(params.sorting)}`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Brewery]

@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react'
 
+import { formatTitle, invertDirection } from '../list-helpers'
 import { useLazyGetBreweryStatsQuery } from '../../store/stats/api'
-import { type OneBreweryStats } from '../../store/stats/types'
-import { type Pagination } from '../../store/types'
+import {
+  type BreweryStatsSortingOrder,
+  type OneBreweryStats
+} from '../../store/stats/types'
+import { type ListDirection, type Pagination } from '../../store/types'
 import { infiniteScroll } from '../util'
 
+import BreweryLinks from '../brewery/BreweryLinks'
 import LoadingIndicator from '../common/LoadingIndicator'
+import TabButton from '../common/TabButton'
 
 import './Brewery.css'
 import './Stats.css'
@@ -22,6 +28,14 @@ interface TriggerParams {
 }
 
 function Brewery (props: Props): JSX.Element {
+  const [
+    sortingOrder,
+    setSortingOrder
+  ] = useState<BreweryStatsSortingOrder>('brewery_name')
+  const [
+    sortingDirection,
+    setSortingDirection
+  ] = useState<ListDirection>('asc')
   const [trigger, { data: breweryData, isLoading, isUninitialized }] =
     useLazyGetBreweryStatsQuery()
   const [loadedBreweries, setLoadedBreweries] = useState<OneBreweryStats[]>([])
@@ -45,12 +59,18 @@ function Brewery (props: Props): JSX.Element {
       return
     }
     async function loadAll (): Promise<void> {
-      const result = await trigger(breweryIdTriggerParams)
+      const result = await trigger({
+        ...breweryIdTriggerParams,
+        sorting: {
+          order: sortingOrder,
+          direction: sortingDirection
+        }
+      })
       if (result?.data === undefined) return
       setLoadedBreweries([...result.data.brewery])
     }
     void loadAll()
-  }, [])
+  }, [sortingOrder, sortingDirection])
 
   useEffect(() => {
     if (breweryId !== undefined) {
@@ -62,6 +82,10 @@ function Brewery (props: Props): JSX.Element {
         pagination: {
           skip: loadedBreweries.length,
           size: pageSize
+        },
+        sorting: {
+          order: sortingOrder,
+          direction: sortingDirection
         }
       })
       if (result.data === undefined) return
@@ -80,24 +104,77 @@ function Brewery (props: Props): JSX.Element {
     setLoadedBreweries,
     isLoading,
     hasMore,
+    sortingOrder,
+    sortingDirection,
     trigger
   ])
+
+  function isSelected (property: BreweryStatsSortingOrder): boolean {
+    return sortingOrder === property
+  }
+
+  function createClickHandler (property: BreweryStatsSortingOrder): () => void {
+    return () => {
+      setLoadedBreweries([])
+      if (isSelected(property)) {
+        setSortingDirection(invertDirection(sortingDirection))
+        return
+      }
+      setSortingOrder(property)
+      setSortingDirection(property === 'brewery_name' ? 'asc' : 'desc')
+    }
+  }
 
   return (
     <div>
       <LoadingIndicator isLoading={isLoading} />
-      <table className='StatsTable'>
+      <table className='StatsTable BreweryStats'>
         <thead>
           <tr>
-            <th className='BreweryNameColumn'>Brewery</th>
-            <th className='BreweryNumColumn'>Reviews</th>
-            <th className='BreweryNumColumn'>Review rating average</th>
+            <th className='BreweryNameColumn'>
+              <TabButton
+                isCompact={false}
+                isSelected={isSelected('brewery_name')}
+                title={formatTitle(
+                  'Brewery',
+                  isSelected('brewery_name'),
+                  sortingDirection
+                )}
+                onClick={createClickHandler('brewery_name')} />
+            </th>
+            <th className='BreweryNumColumn'>
+              <TabButton
+                isCompact={false}
+                isSelected={isSelected('count')}
+                title={formatTitle(
+                  'Reviews',
+                  isSelected('count'),
+                  sortingDirection
+                )}
+                onClick={createClickHandler('count')} />
+            </th>
+            <th className='BreweryNumColumn'>
+              <TabButton
+                isCompact={false}
+                isSelected={isSelected('average')}
+                title={formatTitle(
+                  'Average',
+                  isSelected('average'),
+                  sortingDirection
+                )}
+                onClick={createClickHandler('average')} />
+            </th>
           </tr>
         </thead>
         <tbody>
           {loadedBreweries.map(brewery => (
             <tr key={brewery.breweryId}>
-              <td className='BreweryNameColumn'>{brewery.breweryName}</td>
+              <td className='BreweryNameColumn'>
+                <BreweryLinks breweries={[{
+                  id: brewery.breweryId,
+                  name: brewery.breweryName
+                }]} />
+              </td>
               <td className='BreweryNumColumn'>{brewery.reviewCount}</td>
               <td className='BreweryNumColumn'>{brewery.reviewAverage}</td>
             </tr>

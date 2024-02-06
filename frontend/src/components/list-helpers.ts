@@ -21,3 +21,17 @@ export function invertDirection (
     default: return 'desc'
   }
 }
+
+export function formatTitle (
+  base: string,
+  isSelected: boolean,
+  direction: ListDirection | undefined
+): string {
+  const directionSymbol = isSelected
+    ? getDirectionSymbol(direction)
+    : ''
+  if (directionSymbol === '') {
+    return base
+  }
+  return `${base} ${directionSymbol}`
+}
