@@ -3,6 +3,10 @@
   flex-wrap: wrap;
 }
 
+.StatsModeContainer button {
+  margin-bottom: 5px;
+}
+
 table.StatsTable {
   margin-top: 10px;
 }
