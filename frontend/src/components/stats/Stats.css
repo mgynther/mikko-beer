@@ -15,3 +15,24 @@ table.StatsTable td,
 table.StatsTable th {
   padding: 5px;
 }
+
+th.StatsNameColumn,
+td.StatsNameColumn {
+  width: 60%;
+  min-width: 125px;
+}
+
+th.StatsNumColumn,
+th.StatsNumColumn {
+  width: 20%;
+  min-width: 100px;
+}
+
+th.StatsNameColumn,
+th.StatsNumColumn button.TabButton {
+  margin: 0;
+}
+
+table.SortableStats thead tr {
+  background-color: transparent;
+}

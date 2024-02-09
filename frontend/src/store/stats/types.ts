@@ -51,6 +51,13 @@ export interface StyleStats {
   }>
 }
 
+export type StyleStatsSortingOrder = 'average' | 'style_name' | 'count'
+
+export interface StyleStatsSorting {
+  order: StyleStatsSortingOrder
+  direction: ListDirection
+}
+
 export enum StatsTags {
   Annual = 'Annual',
   Brewery = 'Brewery',

@@ -54,7 +54,7 @@ const formatTitleTests: FormatTitleTest[] = [
   { base: 'Test', isSelected: true, direction: 'asc', output: 'Test ▲' },
   { base: 'Test', isSelected: true, direction: 'desc', output: 'Test ▼' },
   { base: 'Test', isSelected: false, direction: 'asc', output: 'Test' },
-  { base: 'Test', isSelected: false, direction: 'desc', output: 'Test' },
+  { base: 'Test', isSelected: false, direction: 'desc', output: 'Test' }
 ]
 
 formatTitleTests.forEach(({ base, isSelected, direction, output }) => {

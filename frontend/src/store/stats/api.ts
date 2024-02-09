@@ -9,6 +9,7 @@ import {
   type OverallStats,
   type RatingStats,
   type StyleStats,
+  type StyleStatsSorting,
   StatsTags
 } from './types'
 
@@ -27,6 +28,17 @@ function onlyBreweryIdFilter (breweryId: string | undefined): string {
 }
 
 function breweryStatsSorting (sorting: BreweryStatsSorting): string {
+  return `order=${sorting.order}&direction=${sorting.direction}`
+}
+
+function styleFilters (
+  breweryId: string | undefined,
+  sorting: StyleStatsSorting
+): string {
+  return `?${styleStatsSorting(sorting)}${andBreweryIdFilter(breweryId)}`
+}
+
+function styleStatsSorting (sorting: StyleStatsSorting): string {
   return `order=${sorting.order}&direction=${sorting.direction}`
 }
 
@@ -76,9 +88,15 @@ const statsApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [StatsTags.Rating]
     }),
-    getStyleStats: build.query<StyleStats, string | undefined>({
-      query: (breweryId: string | undefined) => ({
-        url: `/stats/style${onlyBreweryIdFilter(breweryId)}`,
+    getStyleStats: build.query<StyleStats, {
+      breweryId: string | undefined
+      sorting: StyleStatsSorting
+    }>({
+      query: (params: {
+        breweryId: string | undefined
+        sorting: StyleStatsSorting
+      }) => ({
+        url: `/stats/style${styleFilters(params.breweryId, params.sorting)}`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Style]

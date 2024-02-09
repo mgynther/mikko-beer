@@ -13,7 +13,6 @@ import BreweryLinks from '../brewery/BreweryLinks'
 import LoadingIndicator from '../common/LoadingIndicator'
 import TabButton from '../common/TabButton'
 
-import './Brewery.css'
 import './Stats.css'
 
 const pageSize = 30
@@ -128,10 +127,10 @@ function Brewery (props: Props): JSX.Element {
   return (
     <div>
       <LoadingIndicator isLoading={isLoading} />
-      <table className='StatsTable BreweryStats'>
+      <table className='StatsTable SortableStats'>
         <thead>
           <tr>
-            <th className='BreweryNameColumn'>
+            <th className='StatsNameColumn'>
               <TabButton
                 isCompact={false}
                 isSelected={isSelected('brewery_name')}
@@ -142,7 +141,7 @@ function Brewery (props: Props): JSX.Element {
                 )}
                 onClick={createClickHandler('brewery_name')} />
             </th>
-            <th className='BreweryNumColumn'>
+            <th className='StatsNumColumn'>
               <TabButton
                 isCompact={false}
                 isSelected={isSelected('count')}
@@ -153,7 +152,7 @@ function Brewery (props: Props): JSX.Element {
                 )}
                 onClick={createClickHandler('count')} />
             </th>
-            <th className='BreweryNumColumn'>
+            <th className='StatsNumColumn'>
               <TabButton
                 isCompact={false}
                 isSelected={isSelected('average')}
@@ -169,14 +168,14 @@ function Brewery (props: Props): JSX.Element {
         <tbody>
           {loadedBreweries.map(brewery => (
             <tr key={brewery.breweryId}>
-              <td className='BreweryNameColumn'>
+              <td className='StatsNameColumn'>
                 <BreweryLinks breweries={[{
                   id: brewery.breweryId,
                   name: brewery.breweryName
                 }]} />
               </td>
-              <td className='BreweryNumColumn'>{brewery.reviewCount}</td>
-              <td className='BreweryNumColumn'>{brewery.reviewAverage}</td>
+              <td className='StatsNumColumn'>{brewery.reviewCount}</td>
+              <td className='StatsNumColumn'>{brewery.reviewAverage}</td>
             </tr>
           ))}
         </tbody>
