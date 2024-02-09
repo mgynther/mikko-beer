@@ -30,6 +30,7 @@ export type ReviewApiErrors =
 
 export type StatsApiErrors =
   | 'InvalidBreweryStatsQuery'
+  | 'InvalidStyleStatsQuery'
 
 export type StorageApiErrors =
   | 'InvalidStorage'

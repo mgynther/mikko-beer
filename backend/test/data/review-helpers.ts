@@ -7,6 +7,7 @@ import * as containerRepository from '../../src/data/container/container.reposit
 import { type ContainerRow } from '../../src/data/container/container.table'
 import * as reviewRepository from '../../src/data/review/review.repository'
 import * as styleRepository from '../../src/data/style/style.repository'
+import { StyleRow } from '../../src/data/style/style.table'
 import { ReviewRow } from '../../src/data/review/review.table'
 
 export interface InsertedData {
@@ -14,7 +15,9 @@ export interface InsertedData {
   otherBeer: BeerRow
   brewery: BreweryRow
   otherBrewery: BreweryRow
-  container: ContainerRow
+  container: ContainerRow,
+  style: StyleRow,
+  otherStyle: StyleRow
 }
 
 export async function insertData(trx: Transaction): Promise<InsertedData> {
@@ -22,10 +25,11 @@ export async function insertData(trx: Transaction): Promise<InsertedData> {
     await breweryRepository.insertBrewery(trx, { name: 'Salama' })
   const otherBrewery =
     await breweryRepository.insertBrewery(trx, { name: 'Brewdog' })
-  const style = await styleRepository.insertStyle(trx, { name: 'Lager' })
+  const style = await styleRepository.insertStyle(trx, { name: 'Helles' })
+  const otherStyle = await styleRepository.insertStyle(trx, { name: 'Lager' })
   const beer = await beerRepository.insertBeer(trx, { name: 'Brainzilla' })
   const otherBeer =
-    await beerRepository.insertBeer(trx, { name: 'Lost Planet' })
+    await beerRepository.insertBeer(trx, { name: 'Lost Lager' })
   const beerBreweryRequest = {
     beer: beer.beer_id,
     brewery: brewery.brewery_id
@@ -43,7 +47,7 @@ export async function insertData(trx: Transaction): Promise<InsertedData> {
   await beerRepository.insertBeerStyle(trx, beerStyleRequest)
   const otherBeerStyleRequest = {
     beer: otherBeer.beer_id,
-    style: style.style_id
+    style: otherStyle.style_id
   }
   await beerRepository.insertBeerStyle(trx, otherBeerStyleRequest)
   const containerRequest = {
@@ -52,7 +56,7 @@ export async function insertData(trx: Transaction): Promise<InsertedData> {
   }
   const container =
     await containerRepository.insertContainer(trx, containerRequest)
-  return { beer, otherBeer, brewery, otherBrewery, container }
+  return { beer, otherBeer, brewery, otherBrewery, container, style, otherStyle }
 }
 
 export async function insertMultipleReviews(

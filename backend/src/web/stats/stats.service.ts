@@ -10,7 +10,8 @@ import {
   type OverallStats,
   type RatingStats,
   type StatsFilter,
-  type StyleStats
+  type StyleStats,
+  type StyleStatsOrder
 } from '../../core/stats/stats'
 
 export async function getAnnual (
@@ -50,7 +51,8 @@ export async function getRating (
 
 export async function getStyle (
   db: Database,
-  statsFilter: StatsFilter | undefined
+  statsFilter: StatsFilter | undefined,
+  styleStatsOrder: StyleStatsOrder
 ): Promise<StyleStats> {
-  return await statsRepository.getStyle(db, statsFilter)
+  return await statsRepository.getStyle(db, statsFilter, styleStatsOrder)
 }

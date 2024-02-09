@@ -9,6 +9,8 @@ import { validatePagination } from '../pagination'
 import {
   type BreweryStatsOrder,
   validBreweryStatsOrder,
+  type StyleStatsOrder,
+  validStyleStatsOrder,
   validateStatsFilter
 } from '../../core/stats/stats'
 
@@ -65,8 +67,15 @@ export function statsController (router: Router): void {
     '/api/v1/stats/style',
     authService.authenticateViewer,
     async (ctx) => {
+      const { order, direction } = ctx.request.query
+      const styleStatsOrder = validateStyleStatsOrder({ order, direction })
       const statsFilter = validateStatsFilter(ctx.request.query)
-      const style = await statsService.getStyle(ctx.db, statsFilter)
+      const style =
+        await statsService.getStyle(
+          ctx.db,
+          statsFilter,
+          styleStatsOrder
+        )
       ctx.body = { style }
     }
   )
@@ -81,4 +90,15 @@ function validateBreweryStatsOrder (
       400, 'InvalidBreweryStatsQuery', 'invalid brewery stats query')
   }
   return breweryStatsOrder
+}
+
+function validateStyleStatsOrder (
+  query: Record<string, unknown>
+): StyleStatsOrder {
+  const styleStatsOrder = validStyleStatsOrder(query)
+  if (styleStatsOrder === undefined) {
+    throw new ControllerError(
+      400, 'InvalidStyleStatsQuery', 'invalid style stats query')
+  }
+  return styleStatsOrder
 }

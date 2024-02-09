@@ -10,7 +10,8 @@ import {
   type OverallStats,
   type RatingStats,
   type StatsFilter,
-  type StyleStats
+  type StyleStats,
+  type StyleStatsOrder
 } from '../../core/stats/stats'
 
 // TODO try converting raw sql queries to Kysely for automatic types.
@@ -266,45 +267,75 @@ export async function getRating (
   }))
 }
 
+interface StyleQuerySelection {
+  review_average: number
+  review_count: number
+  style_id: string
+  style_name: string | null
+}
+
+type StyleQueryBuilder =
+  SelectQueryBuilder<
+  KyselyDatabase,
+  'review' | 'style' | 'beer' | 'beer_style',
+  StyleQuerySelection
+  >
+
+function styleOrderBy (
+  builder: StyleQueryBuilder,
+  styleStatsOrder: StyleStatsOrder
+): StyleQueryBuilder {
+  if (styleStatsOrder.property === 'average') {
+    return builder
+      .orderBy('review_average', styleStatsOrder.direction)
+      .orderBy('review_count', 'desc')
+      .orderBy('style_name', 'asc')
+  }
+  if (styleStatsOrder.property === 'style_name') {
+    return builder
+      .orderBy('style_name', styleStatsOrder.direction)
+  }
+  if (styleStatsOrder.property === 'count') {
+    return builder
+      .orderBy('review_count', styleStatsOrder.direction)
+      .orderBy('review_average', 'desc')
+      .orderBy('style_name', 'asc')
+  }
+  return builder
+}
+
 export async function getStyle (
   db: Database,
-  statsFilter: StatsFilter | undefined
+  statsFilter: StatsFilter | undefined,
+  styleStatsOrder: StyleStatsOrder
 ): Promise<StyleStats> {
-  const styleQuery = sql`SELECT
-    COUNT(1) as review_count,
-    AVG(rating) as review_average,
-    style.style_id as style_id,
-    style.name as style_name
-    FROM review
-    INNER JOIN beer ON review.beer = beer.beer_id
-    ${statsFilter === undefined
-      ? sql``
-      : sql`INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer`
-    }
-    INNER JOIN beer_style ON beer.beer_id = beer_style.beer
-    INNER JOIN style ON beer_style.style = style.style_id
-    ${statsFilter === undefined
-      ? sql``
-      : sql`WHERE beer_brewery.brewery = ${statsFilter.brewery}`
-    }
-    GROUP BY style_id
-    ORDER BY style_name ASC
-  `
+  let beerQuery = db.getDb()
+    .selectFrom('review')
+    .innerJoin('beer', 'review.beer', 'beer.beer_id')
+  if (statsFilter !== undefined) {
+    beerQuery = beerQuery
+      .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
+      .where('beer_brewery.brewery', '=', statsFilter.brewery)
+  }
+  const styleQuery = beerQuery
+    .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
+    .innerJoin('style', 'beer_style.style', 'style.style_id')
+    .select(({ fn }) => [
+      fn.count<number>('review.review_id').as('review_count'),
+      fn.avg<number>('review.rating').as('review_average'),
+      'style.style_id as style_id',
+      'style.name as style_name'
+    ])
 
-  const style = (await styleQuery
-    .execute(db.getDb()) as {
-    rows: Array<{
-      review_average: number
-      review_count: number
-      style_id: string
-      style_name: string
-    }>
-  })
-
-  return style.rows.map(row => ({
-    reviewAverage: round(row.review_average, 2),
-    reviewCount: `${row.review_count}`,
-    styleId: row.style_id,
-    styleName: row.style_name
-  }))
+  return (await styleOrderBy(
+    styleQuery
+      .groupBy('style_id'), styleStatsOrder
+  )
+    .execute())
+    .map(row => ({
+      reviewAverage: round(row.review_average, 2),
+      reviewCount: `${row.review_count}`,
+      styleId: row.style_id,
+      styleName: row.style_name ?? ''
+    }))
 }

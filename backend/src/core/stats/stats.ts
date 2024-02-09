@@ -47,6 +47,13 @@ export type StyleStats = Array<{
   styleName: string
 }>
 
+type StyleStatsOrderProperty = 'average' | 'style_name' | 'count'
+
+export interface StyleStatsOrder {
+  property: StyleStatsOrderProperty
+  direction: ListDirection
+}
+
 export function validateStatsFilter (
   query: Record<string, unknown> | undefined
 ): StatsFilter | undefined {
@@ -80,12 +87,29 @@ function validateBreweryStatsOrder (body: unknown): boolean {
   return doValidateBreweryStatsOrder(body) as boolean
 }
 
+const doValidateStyleStatsOrder =
+  ajv.compile<StyleStatsOrder>({
+    type: 'object',
+    properties: {
+      property: {
+        enum: ['average', 'style_name', 'count']
+      },
+      direction: directionValidation
+    },
+    required: ['property', 'direction'],
+    additionalProperties: false
+  })
+
+function validateStyleStatsOrder (body: unknown): boolean {
+  return doValidateStyleStatsOrder(body) as boolean
+}
+
 interface ReviewListOrderParams {
   property: unknown
   direction: unknown
 }
 
-function reviewListOrderParamsOrDefaults (
+function breweryStatsParamsOrDefaults (
   query: Record<string, unknown>
 ): ReviewListOrderParams {
   let { order, direction } = query
@@ -101,11 +125,36 @@ function reviewListOrderParamsOrDefaults (
 export function validBreweryStatsOrder (
   query: Record<string, unknown>
 ): BreweryStatsOrder | undefined {
-  const params =
-    reviewListOrderParamsOrDefaults(query)
+  const params = breweryStatsParamsOrDefaults(query)
   if (validateBreweryStatsOrder(params)) {
     return {
       property: params.property as BreweryStatsOrderProperty,
+      direction: params.direction as ListDirection
+    }
+  }
+  return undefined
+}
+
+function styleStatsParamsOrDefaults (
+  query: Record<string, unknown>
+): ReviewListOrderParams {
+  let { order, direction } = query
+  if (order === undefined || order === '') {
+    order = 'style_name'
+  }
+  if (direction === undefined || direction === '') {
+    direction = 'asc'
+  }
+  return { property: order, direction }
+}
+
+export function validStyleStatsOrder (
+  query: Record<string, unknown>
+): StyleStatsOrder | undefined {
+  const params = styleStatsParamsOrDefaults(query)
+  if (validateStyleStatsOrder(params)) {
+    return {
+      property: params.property as StyleStatsOrderProperty,
       direction: params.direction as ListDirection
     }
   }

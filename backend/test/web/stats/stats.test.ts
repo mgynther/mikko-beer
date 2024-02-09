@@ -603,7 +603,7 @@ describe('stats tests', () => {
     } = await createDeps(ctx.adminAuthHeaders())
 
     const statsRes = await ctx.request.get<{ style: StyleStats }>(
-      '/api/v1/stats/style',
+      '/api/v1/stats/style?order=average&direction=desc',
       ctx.adminAuthHeaders()
     )
     expect(statsRes.status).to.equal(200)
@@ -648,8 +648,9 @@ describe('stats tests', () => {
     } = await createDeps(ctx.adminAuthHeaders())
 
     const breweryId = breweries[0].data.brewery.id
+    const order = '&order=count&direction=asc'
     const statsRes = await ctx.request.get<{ style: StyleStats }>(
-      `/api/v1/stats/style?brewery=${breweryId}`,
+      `/api/v1/stats/style?brewery=${breweryId}${order}`,
       ctx.adminAuthHeaders()
     )
     expect(statsRes.status).to.equal(200)
