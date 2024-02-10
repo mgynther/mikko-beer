@@ -26,6 +26,11 @@ interface TriggerParams {
   pagination: Pagination
 }
 
+const giantPage = {
+  skip: 0,
+  size: 10000
+}
+
 function Brewery (props: Props): JSX.Element {
   const [
     sortingOrder,
@@ -38,20 +43,24 @@ function Brewery (props: Props): JSX.Element {
   const [trigger, { data: breweryData, isLoading, isUninitialized }] =
     useLazyGetBreweryStatsQuery()
   const [loadedBreweries, setLoadedBreweries] = useState<OneBreweryStats[]>([])
-  const [breweryIdTriggerParams] = useState<TriggerParams>({
-    breweryId: props.breweryId,
-    pagination: {
-      skip: 0,
-      size: 10000
-    }
+  const breweryId = props.breweryId
+  const [breweryIdTriggerParams, setBreweryIdTriggerParams] =
+  useState<TriggerParams>({
+    breweryId,
+    pagination: giantPage
   })
+
+  useEffect(() => {
+    setBreweryIdTriggerParams({
+      breweryId,
+      pagination: giantPage
+    })
+  }, [breweryId])
 
   const breweryArray = breweryData?.brewery === undefined
     ? []
     : [...breweryData.brewery]
   const hasMore = breweryArray.length > 0 || isUninitialized
-
-  const breweryId = props.breweryId
 
   useEffect(() => {
     if (breweryId === undefined) {
@@ -69,7 +78,7 @@ function Brewery (props: Props): JSX.Element {
       setLoadedBreweries([...result.data.brewery])
     }
     void loadAll()
-  }, [sortingOrder, sortingDirection])
+  }, [sortingOrder, sortingDirection, breweryIdTriggerParams])
 
   useEffect(() => {
     if (breweryId !== undefined) {
