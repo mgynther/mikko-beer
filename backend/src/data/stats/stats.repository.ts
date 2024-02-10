@@ -152,8 +152,113 @@ interface Stats {
 }
 
 interface ReviewStats {
+  distinct_beer_review_count: number
   review_count: number
   review_average: number
+}
+
+async function getFullOverall (
+  db: Database
+): Promise<OverallStats> {
+  const statsQuery = sql`SELECT
+    (SELECT COUNT(1) FROM beer) AS beer_count,
+    (SELECT COUNT(1) FROM brewery) AS brewery_count,
+    (SELECT COUNT(1) FROM container) AS container_count,
+    (SELECT COUNT(1) FROM review) AS review_count,
+    (SELECT COUNT(DISTINCT beer) FROM review) AS distinct_beer_review_count,
+    (SELECT COUNT(1) FROM style) AS style_count,
+    (SELECT AVG(rating) FROM review) AS review_average
+  `
+  const stats = (await statsQuery
+    .execute(db.getDb()) as {
+    rows: Array<Stats & ReviewStats>
+  }).rows[0]
+
+  return {
+    beerCount: `${stats.beer_count}`,
+    breweryCount: `${stats.brewery_count}`,
+    containerCount: `${stats.container_count}`,
+    distinctBeerReviewCount: `${stats.distinct_beer_review_count}`,
+    reviewAverage: round(stats.review_average, 2),
+    reviewCount: `${stats.review_count}`,
+    styleCount: `${stats.style_count}`
+  }
+}
+
+interface ContainerIds {
+  review_container: string | null
+  storage_container: string | null
+}
+
+function countContainerIds (idRows: ContainerIds[]): number {
+  const containers = idRows.reduce<Record<string, boolean>>((map, row) => {
+    function add (value: string | null): void {
+      if (value !== null && map[value] === undefined) {
+        map[value] = true
+      }
+    }
+    add(row.review_container)
+    add(row.storage_container)
+    return map
+  }, {})
+
+  return Object.keys(containers).length
+}
+
+async function getBreweryOverall (
+  db: Database,
+  brewery: string
+): Promise<OverallStats> {
+  const beerQuery = db.getDb()
+    .selectFrom('beer_brewery as querybrewery')
+
+  const beerStatsQuery = beerQuery
+    .innerJoin('beer_style', 'querybrewery.beer', 'beer_style.beer')
+    .innerJoin('beer_brewery', 'querybrewery.beer', 'beer_brewery.beer')
+    .select(({ fn }) => [
+      fn.count<number>('querybrewery.beer').distinct().as('beer_count'),
+      fn.count<number>('beer_brewery.brewery').distinct().as('brewery_count'),
+      fn.count<number>('beer_style.style').distinct().as('style_count')
+    ])
+    .where('querybrewery.brewery', '=', brewery)
+
+  const containerQuery = beerQuery
+    .leftJoin('review', 'querybrewery.beer', 'review.beer')
+    .leftJoin('storage', 'querybrewery.beer', 'storage.beer')
+    .select([
+      'review.container as review_container',
+      'storage.container as storage_container'
+    ])
+    .where('querybrewery.brewery', '=', brewery)
+
+  const reviewQuery = db.getDb()
+    .selectFrom('beer_brewery')
+    .innerJoin('review', 'beer_brewery.beer', 'review.beer')
+    .select(({ fn }) => [
+      fn.count<number>('review.review_id').as('review_count'),
+      fn.avg<number>('review.rating').as('review_average'),
+      fn.count<number>('review.beer')
+        .distinct().as('distinct_beer_review_count')
+    ])
+    .where('beer_brewery.brewery', '=', brewery)
+
+  const [beerStatsResults, containerResults, reviewStats] =
+    await Promise.all([
+      beerStatsQuery.execute(),
+      containerQuery.execute(),
+      reviewQuery.execute()
+    ])
+  const containerCount = countContainerIds(containerResults)
+
+  return {
+    beerCount: `${beerStatsResults[0].beer_count}`,
+    breweryCount: `${beerStatsResults[0].brewery_count}`,
+    containerCount: `${containerCount}`,
+    distinctBeerReviewCount: `${reviewStats[0].distinct_beer_review_count}`,
+    reviewAverage: round(reviewStats[0].review_average, 2),
+    reviewCount: `${reviewStats[0].review_count}`,
+    styleCount: `${beerStatsResults[0].style_count}`
+  }
 }
 
 export async function getOverall (
@@ -161,76 +266,9 @@ export async function getOverall (
   statsFilter: StatsFilter | undefined
 ): Promise<OverallStats> {
   if (statsFilter === undefined) {
-    const statsQuery = sql`SELECT
-      (SELECT COUNT(1) FROM beer) AS beer_count,
-      (SELECT COUNT(1) FROM brewery) AS brewery_count,
-      (SELECT COUNT(1) FROM container) AS container_count,
-      (SELECT COUNT(1) FROM review) AS review_count,
-      (SELECT COUNT(1) FROM style) AS style_count,
-      (SELECT AVG(rating) FROM review) AS review_average
-    `
-    const stats = (await statsQuery
-      .execute(db.getDb()) as {
-      rows: Array<Stats & ReviewStats>
-    }).rows[0]
-
-    return {
-      beerCount: `${stats.beer_count}`,
-      breweryCount: `${stats.brewery_count}`,
-      containerCount: `${stats.container_count}`,
-      reviewAverage: round(stats.review_average, 2),
-      reviewCount: `${stats.review_count}`,
-      styleCount: `${stats.style_count}`
-    }
+    return await getFullOverall(db)
   }
-
-  const statsQuery = sql`SELECT
-    COUNT(DISTINCT beer.beer_id) AS beer_count,
-    COUNT(DISTINCT brewery.brewery_id) AS brewery_count,
-    COUNT(DISTINCT container.container_id) AS container_count,
-    COUNT(DISTINCT beer_style.style) AS style_count
-    FROM beer_brewery AS querybrewery
-    INNER JOIN beer ON querybrewery.beer = beer.beer_id
-    INNER JOIN review ON beer.beer_id = review.beer
-    INNER JOIN container ON review.container = container.container_id
-    INNER JOIN beer_style ON beer.beer_id = beer_style.beer
-    INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer
-    INNER JOIN brewery ON beer_brewery.brewery = brewery.brewery_id
-    WHERE querybrewery.brewery = ${statsFilter.brewery}
-  `
-
-  const averageQuery = sql`SELECT
-    COUNT(1) as review_count,
-    AVG(review.rating) as review_average
-    FROM beer_brewery
-    INNER JOIN beer ON beer_brewery.beer = beer.beer_id
-    INNER JOIN review ON beer.beer_id = review.beer
-    WHERE beer_brewery.brewery = ${statsFilter.brewery}
-  `
-
-  const statsPromise = (statsQuery
-    .execute(db.getDb()) as Promise<{
-    rows: Stats[]
-  }>)
-
-  const averageStatsPromise = (averageQuery
-    .execute(db.getDb()) as Promise<{
-    rows: ReviewStats[]
-  }>)
-
-  const [statsResults, averageStatsResults] =
-    await Promise.all([statsPromise, averageStatsPromise])
-  const stats = statsResults.rows[0]
-  const averageStats = averageStatsResults.rows[0]
-
-  return {
-    beerCount: `${stats.beer_count}`,
-    breweryCount: `${stats.brewery_count}`,
-    containerCount: `${stats.container_count}`,
-    reviewAverage: round(averageStats.review_average, 2),
-    reviewCount: `${averageStats.review_count}`,
-    styleCount: `${stats.style_count}`
-  }
+  return await getBreweryOverall(db, statsFilter.brewery)
 }
 
 export async function getRating (
@@ -240,9 +278,8 @@ export async function getRating (
   const styleQuery = sql`SELECT
     review.rating as rating,
     COUNT(1) as count
-    FROM review
-    ${statsFilter === undefined
-      ? sql``
+    FROM review ${statsFilter === undefined
+? sql``
       : sql`
       INNER JOIN beer ON review.beer = beer.beer_id
       INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer

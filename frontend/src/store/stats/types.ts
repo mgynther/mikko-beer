@@ -4,6 +4,7 @@ export interface OverallStats {
   beerCount: string
   breweryCount: string
   containerCount: string
+  distinctBeerReviewCount: string
   reviewAverage: string
   reviewCount: string
   styleCount: string

@@ -35,6 +35,10 @@ function Overall (props: Props): JSX.Element {
               <td>{overall.reviewCount}</td>
             </tr>
             <tr>
+              <td>Beers reviewed</td>
+              <td>{overall.distinctBeerReviewCount}</td>
+            </tr>
+            <tr>
               <td>Review rating average</td>
               <td>{overall.reviewAverage}</td>
             </tr>

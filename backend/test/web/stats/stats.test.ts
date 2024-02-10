@@ -194,6 +194,8 @@ describe('stats tests', () => {
     expect(containers.length).to.equal(1)
     expect(statsRes.data.overall.reviewCount).to.equal(`${reviews.length}`)
     expect(reviews.length).to.equal(4)
+    expect(statsRes.data.overall.distinctBeerReviewCount)
+      .to.equal(`${beers.length}`)
     const ratings = reviews
       .map(r => r.data.review)
       .filter(r => r)
