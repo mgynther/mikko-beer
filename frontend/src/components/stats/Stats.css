@@ -9,6 +9,7 @@
 
 table.StatsTable {
   margin-top: 10px;
+  width: 100%;
 }
 
 table.StatsTable td,

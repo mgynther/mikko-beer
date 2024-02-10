@@ -13,6 +13,8 @@ import BreweryLinks from '../brewery/BreweryLinks'
 import LoadingIndicator from '../common/LoadingIndicator'
 import TabButton from '../common/TabButton'
 
+import MinimumReviewCount from './MinimumReviewCount'
+
 import './Stats.css'
 
 const pageSize = 30
@@ -24,6 +26,7 @@ interface Props {
 interface TriggerParams {
   breweryId: string | undefined
   pagination: Pagination
+  minReviewCount: number
 }
 
 const giantPage = {
@@ -40,27 +43,36 @@ function Brewery (props: Props): JSX.Element {
     sortingDirection,
     setSortingDirection
   ] = useState<ListDirection>('asc')
-  const [trigger, { data: breweryData, isLoading, isUninitialized }] =
+  const [minReviewCount, doSetMinReviewCount] = useState(1)
+  const [trigger, { data: breweryData, isLoading }] =
     useLazyGetBreweryStatsQuery()
-  const [loadedBreweries, setLoadedBreweries] = useState<OneBreweryStats[]>([])
+  const [loadedBreweries, setLoadedBreweries] =
+    useState<OneBreweryStats[] | undefined>(undefined)
   const breweryId = props.breweryId
   const [breweryIdTriggerParams, setBreweryIdTriggerParams] =
   useState<TriggerParams>({
     breweryId,
-    pagination: giantPage
+    pagination: giantPage,
+    minReviewCount
   })
+
+  function setMinReviewCount (minReviewCount: number): void {
+    doSetMinReviewCount(minReviewCount)
+    setLoadedBreweries(undefined)
+  }
 
   useEffect(() => {
     setBreweryIdTriggerParams({
       breweryId,
-      pagination: giantPage
+      pagination: giantPage,
+      minReviewCount
     })
-  }, [breweryId])
+  }, [breweryId, minReviewCount])
 
   const breweryArray = breweryData?.brewery === undefined
     ? []
     : [...breweryData.brewery]
-  const hasMore = breweryArray.length > 0 || isUninitialized
+  const hasMore = breweryArray.length > 0 || loadedBreweries === undefined
 
   useEffect(() => {
     if (breweryId === undefined) {
@@ -72,13 +84,20 @@ function Brewery (props: Props): JSX.Element {
         sorting: {
           order: sortingOrder,
           direction: sortingDirection
-        }
+        },
+        minReviewCount
       })
       if (result?.data === undefined) return
       setLoadedBreweries([...result.data.brewery])
     }
     void loadAll()
-  }, [sortingOrder, sortingDirection, breweryIdTriggerParams])
+  }, [
+    sortingOrder,
+    sortingDirection,
+    breweryIdTriggerParams,
+    minReviewCount,
+    loadedBreweries
+  ])
 
   useEffect(() => {
     if (breweryId !== undefined) {
@@ -88,16 +107,17 @@ function Brewery (props: Props): JSX.Element {
       const result = await trigger({
         breweryId: props.breweryId,
         pagination: {
-          skip: loadedBreweries.length,
+          skip: loadedBreweries?.length ?? 0,
           size: pageSize
         },
         sorting: {
           order: sortingOrder,
           direction: sortingDirection
-        }
+        },
+        minReviewCount
       })
       if (result.data === undefined) return
-      const newBreweries = [...loadedBreweries, ...result.data.brewery]
+      const newBreweries = [...(loadedBreweries ?? []), ...result.data.brewery]
       setLoadedBreweries(newBreweries)
     }
     function checkLoad (): void {
@@ -112,6 +132,7 @@ function Brewery (props: Props): JSX.Element {
     setLoadedBreweries,
     isLoading,
     hasMore,
+    minReviewCount,
     sortingOrder,
     sortingDirection,
     trigger
@@ -123,7 +144,7 @@ function Brewery (props: Props): JSX.Element {
 
   function createClickHandler (property: BreweryStatsSortingOrder): () => void {
     return () => {
-      setLoadedBreweries([])
+      setLoadedBreweries(undefined)
       if (isSelected(property)) {
         setSortingDirection(invertDirection(sortingDirection))
         return
@@ -173,9 +194,17 @@ function Brewery (props: Props): JSX.Element {
                 onClick={createClickHandler('average')} />
             </th>
           </tr>
+          <tr>
+            <th colSpan={3}>
+              <MinimumReviewCount
+                minReviewCount={minReviewCount}
+                setMinReviewCount={setMinReviewCount}
+              />
+            </th>
+          </tr>
         </thead>
         <tbody>
-          {loadedBreweries.map(brewery => (
+          {loadedBreweries?.map(brewery => (
             <tr key={brewery.breweryId}>
               <td className='StatsNameColumn'>
                 <BreweryLinks breweries={[{

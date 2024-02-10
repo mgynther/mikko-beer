@@ -55,11 +55,13 @@ const statsApi = emptySplitApi.injectEndpoints({
       breweryId: string | undefined
       pagination: Pagination
       sorting: BreweryStatsSorting
+      minReviewCount: number
     }>({
       query: (params: {
         breweryId: string | undefined
         pagination: Pagination
         sorting: BreweryStatsSorting
+        minReviewCount: number
       }) => ({
         url: `/stats/brewery?size=${
           params.pagination.size
@@ -67,7 +69,9 @@ const statsApi = emptySplitApi.injectEndpoints({
             params.pagination.skip
           }${
           andBreweryIdFilter(params.breweryId)
-        }&${breweryStatsSorting(params.sorting)}`,
+        }&${breweryStatsSorting(params.sorting)}&min_review_count=${
+          params.minReviewCount
+        }`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Brewery]
@@ -91,12 +95,18 @@ const statsApi = emptySplitApi.injectEndpoints({
     getStyleStats: build.query<StyleStats, {
       breweryId: string | undefined
       sorting: StyleStatsSorting
+      minReviewCount: number
     }>({
       query: (params: {
         breweryId: string | undefined
         sorting: StyleStatsSorting
+        minReviewCount: number
       }) => ({
-        url: `/stats/style${styleFilters(params.breweryId, params.sorting)}`,
+        url: `/stats/style${
+          styleFilters(params.breweryId, params.sorting)
+        }&min_review_count=${
+          params.minReviewCount
+        }`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Style]

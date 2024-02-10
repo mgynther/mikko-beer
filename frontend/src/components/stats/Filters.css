@@ -1,0 +1,8 @@
+input.FilterSlider {
+  width: 100%;
+  height: 40px;
+}
+
+div.FilterSliderLabel {
+  font-size: 12px;
+}

@@ -8,6 +8,8 @@ import { type ListDirection } from '../../store/types'
 import LoadingIndicator from '../common/LoadingIndicator'
 import TabButton from '../common/TabButton'
 
+import MinimumReviewCount from './MinimumReviewCount'
+
 import './Stats.css'
 
 interface Props {
@@ -23,12 +25,14 @@ function Style (props: Props): JSX.Element {
     sortingDirection,
     setSortingDirection
   ] = useState<ListDirection>('asc')
+  const [minReviewCount, setMinReviewCount] = useState(1)
   const { data: styleData, isLoading } = useGetStyleStatsQuery({
     breweryId: props.breweryId,
     sorting: {
       order: sortingOrder,
       direction: sortingDirection
-    }
+    },
+    minReviewCount
   })
 
   function isSelected (property: StyleStatsSortingOrder): boolean {
@@ -85,6 +89,14 @@ function Style (props: Props): JSX.Element {
                   sortingDirection
                 )}
                 onClick={createClickHandler('average')} />
+            </th>
+          </tr>
+          <tr>
+            <th colSpan={3}>
+              <MinimumReviewCount
+                minReviewCount={minReviewCount}
+                setMinReviewCount={setMinReviewCount}
+              />
             </th>
           </tr>
         </thead>
