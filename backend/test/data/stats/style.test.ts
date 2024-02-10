@@ -39,7 +39,7 @@ describe('style stats tests', () => {
     const { reviews, data } = await insertMultipleReviews(9, db)
     const stats = await statsRepository.getStyle(
       db,
-      statsFilter?.(data),
+      statsFilter?.(data) ?? { brewery: undefined, minReviewCount: 1 },
       styleStatsOrder
     )
     const style = {
@@ -114,7 +114,16 @@ describe('style stats tests', () => {
   it('filter by brewery', async () => {
     const { stats, otherStyle } = await getResults(
       ctx.db,
-      (data: InsertedData) => ({ brewery: data.otherBrewery.brewery_id }),
+      (data: InsertedData) => ({ brewery: data.otherBrewery.brewery_id, minReviewCount: 1 }),
+      { property: 'style_name', direction: 'desc' }
+    )
+    expect(stats).eql([ otherStyle ])
+  })
+
+  it('filter by review count', async () => {
+    const { stats, otherStyle } = await getResults(
+      ctx.db,
+      () => ({ brewery: undefined, minReviewCount: 5 }),
       { property: 'style_name', direction: 'desc' }
     )
     expect(stats).eql([ otherStyle ])

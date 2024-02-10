@@ -9,6 +9,7 @@ import {
   type BreweryStatsOrder,
   type OverallStats,
   type RatingStats,
+  type StatsBreweryFilter,
   type StatsFilter,
   type StyleStats,
   type StyleStatsOrder
@@ -16,7 +17,7 @@ import {
 
 export async function getAnnual (
   db: Database,
-  statsFilter: StatsFilter | undefined
+  statsFilter: StatsBreweryFilter | undefined
 ): Promise<AnnualStats> {
   return await statsRepository.getAnnual(db, statsFilter)
 }
@@ -24,7 +25,7 @@ export async function getAnnual (
 export async function getBrewery (
   db: Database,
   pagination: Pagination,
-  statsFilter: StatsFilter | undefined,
+  statsFilter: StatsFilter,
   breweryStatsOrder: BreweryStatsOrder
 ): Promise<BreweryStats> {
   return await statsRepository.getBrewery(
@@ -37,21 +38,21 @@ export async function getBrewery (
 
 export async function getOverall (
   db: Database,
-  statsFilter: StatsFilter | undefined
+  statsFilter: StatsBreweryFilter | undefined
 ): Promise<OverallStats> {
   return await statsRepository.getOverall(db, statsFilter)
 }
 
 export async function getRating (
   db: Database,
-  statsFilter: StatsFilter | undefined
+  statsFilter: StatsBreweryFilter | undefined
 ): Promise<RatingStats> {
   return await statsRepository.getRating(db, statsFilter)
 }
 
 export async function getStyle (
   db: Database,
-  statsFilter: StatsFilter | undefined,
+  statsFilter: StatsFilter,
   styleStatsOrder: StyleStatsOrder
 ): Promise<StyleStats> {
   return await statsRepository.getStyle(db, statsFilter, styleStatsOrder)

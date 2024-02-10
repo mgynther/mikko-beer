@@ -42,7 +42,7 @@ describe('brewery stats tests', () => {
     const stats = await statsRepository.getBrewery(
       db,
       pagination,
-      statsFilter?.(data),
+      statsFilter?.(data) ?? { brewery: undefined, minReviewCount: 1 },
       breweryStatsOrder
     )
     const brewery = {
@@ -126,7 +126,20 @@ describe('brewery stats tests', () => {
     const { stats, otherBrewery } = await getResults(
       ctx.db,
       allResults,
-      (data: InsertedData) => ({ brewery: data.otherBrewery.brewery_id }),
+      (data: InsertedData) => ({
+        brewery: data.otherBrewery.brewery_id,
+        minReviewCount: 1
+      }),
+      { property: 'brewery_name', direction: 'desc' }
+    )
+    expect(stats).eql([ otherBrewery ])
+  })
+
+  it('filter by review count', async () => {
+    const { stats, otherBrewery } = await getResults(
+      ctx.db,
+      allResults,
+      () => ({ brewery: undefined, minReviewCount: 5 }),
       { property: 'brewery_name', direction: 'desc' }
     )
     expect(stats).eql([ otherBrewery ])

@@ -11,6 +11,7 @@ import {
   validBreweryStatsOrder,
   type StyleStatsOrder,
   validStyleStatsOrder,
+  validateStatsBreweryFilter,
   validateStatsFilter
 } from '../../core/stats/stats'
 
@@ -19,7 +20,7 @@ export function statsController (router: Router): void {
     '/api/v1/stats/overall',
     authService.authenticateViewer,
     async (ctx) => {
-      const statsFilter = validateStatsFilter(ctx.request.query)
+      const statsFilter = validateStatsBreweryFilter(ctx.request.query)
       const overall = await statsService.getOverall(ctx.db, statsFilter)
       ctx.body = { overall }
     }
@@ -28,7 +29,7 @@ export function statsController (router: Router): void {
     '/api/v1/stats/annual',
     authService.authenticateViewer,
     async (ctx) => {
-      const statsFilter = validateStatsFilter(ctx.request.query)
+      const statsFilter = validateStatsBreweryFilter(ctx.request.query)
       const annual = await statsService.getAnnual(ctx.db, statsFilter)
       ctx.body = { annual }
     }
@@ -57,7 +58,7 @@ export function statsController (router: Router): void {
     '/api/v1/stats/rating',
     authService.authenticateViewer,
     async (ctx) => {
-      const statsFilter = validateStatsFilter(ctx.request.query)
+      const statsFilter = validateStatsBreweryFilter(ctx.request.query)
       const rating = await statsService.getRating(ctx.db, statsFilter)
       ctx.body = { rating }
     }

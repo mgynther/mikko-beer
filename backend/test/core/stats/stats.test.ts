@@ -1,29 +1,72 @@
 import { expect } from 'chai'
 
-import { validateStatsFilter } from '../../../src/core/stats/stats'
+import {
+  validateStatsBreweryFilter,
+  validateStatsFilter,
+  type StatsFilter
+} from '../../../src/core/stats/stats'
 
-describe('stats filter unit tests', () => {
+describe('stats brewery filter unit tests', () => {
   it('validate undefined filter', () => {
-    expect(validateStatsFilter(undefined)).to.equal(undefined)
+    expect(validateStatsBreweryFilter(undefined)).to.equal(undefined)
   })
 
   it('validate empty filter', () => {
-    expect(validateStatsFilter({})).to.equal(undefined)
+    expect(validateStatsBreweryFilter({})).to.equal(undefined)
   })
 
   it('validate brewery filter', () => {
     expect(
-      validateStatsFilter({ brewery: 'testing' })
+      validateStatsBreweryFilter({ brewery: 'testing' })
     ).to.eql({ brewery: 'testing' })
   })
 
   it('validate invalid brewery filter', () => {
     expect(
-      validateStatsFilter({ brewery: 123 })).to.equal(undefined)
+      validateStatsBreweryFilter({ brewery: 123 })).to.equal(undefined)
   })
 
   it('validate unknown filter', () => {
     expect(
-      validateStatsFilter({ additional: 'testing' })).to.equal(undefined)
+      validateStatsBreweryFilter({ additional: 'testing' })).to.equal(undefined)
   })
+})
+
+describe('stats filter unit tests', () => {
+  const defaultFilter: StatsFilter = { brewery: undefined, minReviewCount: 1 }
+it('validate undefined filter', () => {
+  expect(validateStatsFilter(undefined)).to.eql(defaultFilter)
+})
+
+it('validate empty filter', () => {
+  expect(validateStatsFilter({})).to.eql(defaultFilter)
+})
+
+it('validate valid filter', () => {
+  expect(
+    validateStatsFilter({ brewery: 'testing', min_review_count: '4' })
+  ).to.eql({ brewery: 'testing', minReviewCount: 4 })
+})
+
+it('validate invalid min review count', () => {
+  expect(
+    validateStatsFilter({ brewery: 'testing', min_review_count: 'test' })
+  ).to.eql({ brewery: 'testing', minReviewCount: 1 })
+})
+
+it('validate too small', () => {
+  expect(
+    validateStatsFilter({ brewery: 'testing', min_review_count: '-1' })
+  ).to.eql({ brewery: 'testing', minReviewCount: 1 })
+})
+
+it('validate invalid brewery filter', () => {
+  expect(
+    validateStatsFilter({ brewery: 123 })).to.eql(defaultFilter)
+})
+
+it('validate unknown filter', () => {
+  expect(
+    validateStatsFilter({ additional: 'testing' })).to.eql(defaultFilter)
+})
 })

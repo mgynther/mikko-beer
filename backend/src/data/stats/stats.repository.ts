@@ -9,6 +9,7 @@ import {
   type BreweryStatsOrder,
   type OverallStats,
   type RatingStats,
+  type StatsBreweryFilter,
   type StatsFilter,
   type StyleStats,
   type StyleStatsOrder
@@ -24,7 +25,7 @@ function round (value: number | null, decimals: number): string {
 
 export async function getAnnual (
   db: Database,
-  statsFilter: StatsFilter | undefined
+  statsFilter: StatsBreweryFilter | undefined
 ): Promise<AnnualStats> {
   const annualQuery = sql`SELECT
     COUNT(1) as review_count,
@@ -98,7 +99,7 @@ function breweryOrderBy (
 export async function getBrewery (
   db: Database,
   pagination: Pagination,
-  statsFilter: StatsFilter | undefined,
+  statsFilter: StatsFilter,
   breweryStatsOrder: BreweryStatsOrder
 ): Promise<BreweryStats> {
   let breweryQuery = db.getDb()
@@ -113,7 +114,7 @@ export async function getBrewery (
       'brewery.name as brewery_name'
     ])
 
-  if (statsFilter !== undefined) {
+  if (statsFilter.brewery !== undefined) {
     breweryQuery = db.getDb()
       .selectFrom('beer_brewery as querybrewery')
       .innerJoin('beer', 'querybrewery.beer', 'beer.beer_id')
@@ -131,7 +132,11 @@ export async function getBrewery (
 
   return (await breweryOrderBy(
     breweryQuery
-      .groupBy('brewery_id'), breweryStatsOrder
+      .groupBy('brewery_id')
+      .having((eb) => eb.fn.count(
+        'review.review_id'), '>=', statsFilter.minReviewCount
+      )
+    , breweryStatsOrder
   )
     .offset(pagination.skip)
     .limit(pagination.size)
@@ -263,7 +268,7 @@ async function getBreweryOverall (
 
 export async function getOverall (
   db: Database,
-  statsFilter: StatsFilter | undefined
+  statsFilter: StatsBreweryFilter | undefined
 ): Promise<OverallStats> {
   if (statsFilter === undefined) {
     return await getFullOverall(db)
@@ -273,7 +278,7 @@ export async function getOverall (
 
 export async function getRating (
   db: Database,
-  statsFilter: StatsFilter | undefined
+  statsFilter: StatsBreweryFilter | undefined
 ): Promise<RatingStats> {
   const styleQuery = sql`SELECT
     review.rating as rating,
@@ -343,13 +348,13 @@ function styleOrderBy (
 
 export async function getStyle (
   db: Database,
-  statsFilter: StatsFilter | undefined,
+  statsFilter: StatsFilter,
   styleStatsOrder: StyleStatsOrder
 ): Promise<StyleStats> {
   let beerQuery = db.getDb()
     .selectFrom('review')
     .innerJoin('beer', 'review.beer', 'beer.beer_id')
-  if (statsFilter !== undefined) {
+  if (statsFilter.brewery !== undefined) {
     beerQuery = beerQuery
       .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
       .where('beer_brewery.brewery', '=', statsFilter.brewery)
@@ -366,7 +371,11 @@ export async function getStyle (
 
   return (await styleOrderBy(
     styleQuery
-      .groupBy('style_id'), styleStatsOrder
+      .groupBy('style_id')
+      .having((eb) => eb.fn.count(
+        'review.review_id'), '>=', statsFilter.minReviewCount
+      )
+    , styleStatsOrder
   )
     .execute())
     .map(row => ({

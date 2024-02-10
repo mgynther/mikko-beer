@@ -146,19 +146,19 @@ describe('stats tests', () => {
 
     return {
       beers: [
-        beerRes,
-        collabBeerRes,
-        otherBeerRes
+        beerRes.data.beer,
+        collabBeerRes.data.beer,
+        otherBeerRes.data.beer
       ],
       breweries: [
         breweryRes,
         otherBreweryRes
       ],
       reviews: [
-        collabReviewRes,
-        collabReview2Res,
-        reviewRes,
-        otherReviewRes
+        collabReviewRes.data.review,
+        collabReview2Res.data.review,
+        reviewRes.data.review,
+        otherReviewRes.data.review
       ],
       containers: [containerRes],
       styles: [
@@ -197,7 +197,6 @@ describe('stats tests', () => {
     expect(statsRes.data.overall.distinctBeerReviewCount)
       .to.equal(`${beers.length}`)
     const ratings = reviews
-      .map(r => r.data.review)
       .filter(r => r)
       .map(r => r.rating) as number[]
     const ratingSum = ratings.reduce((sum: number, rating: number) => sum + rating, 0)
@@ -227,14 +226,13 @@ describe('stats tests', () => {
     expect(statsRes.data.overall.containerCount).to.equal('1')
     expect(statsRes.data.overall.reviewCount).to.equal('3')
     const ratings = reviews
-      .map(r => r.data.review)
       .filter((review: Review) => {
         const beerId = review.beer
-        const beerRes = beers.find(beerRes => beerRes.data.beer.id === beerId)
-        if (beerRes === undefined) {
+        const beer = beers.find(beer => beer.id === beerId)
+        if (beer === undefined) {
           return false
         }
-        return beerRes.data.beer.breweries.includes(breweryId)
+        return beer.breweries.includes(breweryId)
       })
       .map(r => r.rating) as number[]
     const ratingSum = ratings.reduce((sum: number, rating: number) => sum + rating, 0)
@@ -245,10 +243,6 @@ describe('stats tests', () => {
     expect(styles.length).to.equal(2)
   })
 
-  function reviewData(reviewRes: any): Review {
-    if (reviewRes?.data?.review === undefined) throw error()
-    return reviewRes.data.review
-  }
   function average(ratings: number[]): string {
     if (ratings.length === 0) {
       const zero = 0
@@ -305,7 +299,7 @@ describe('stats tests', () => {
     )
     expect(statsRes.status).to.equal(200)
     function reviewRatingsByYear(year: string): number[] {
-      return reviews.map(reviewData).filter((review: any) => {
+      return reviews.filter((review: any) => {
         if (typeof review?.time !== 'string') throw error()
         return (review.time as unknown as string).startsWith(year)
       }).map((review: Review) => review.rating) as number[]
@@ -340,16 +334,16 @@ describe('stats tests', () => {
     )
     expect(statsRes.status).to.equal(200)
     function reviewRatingsByYear(year: string): number[] {
-      return reviews.map(reviewData).filter((review: any) => {
+      return reviews.filter((review: any) => {
         if (typeof review?.time !== 'string') throw error()
         return (review.time as unknown as string).startsWith(year)
       }).filter((review: Review) => {
         const beerId = review.beer
-        const beerRes = beers.find(beerRes => beerRes.data.beer.id === beerId)
-        if (beerRes === undefined) {
+        const beer = beers.find(beer => beer.id === beerId)
+        if (beer === undefined) {
           return false
         }
-        return beerRes.data.beer.breweries.includes(breweryId)
+        return beer.breweries.includes(breweryId)
       }).map((review: Review) => review.rating) as number[]
     }
     checkAnnualStats(reviewRatingsByYear, statsRes.data.annual, [
@@ -404,6 +398,20 @@ describe('stats tests', () => {
     expect(lindemansAverage).to.equal(lindemans.average)
   }
 
+  function reviewRatingsByBrewery(
+    breweryId: string,
+    beers: BeerWithBreweryAndStyleIds[],
+    reviews: Review[],
+    filterBreweryId: string
+  ): number[] {
+    return reviews.filter(review => {
+      const beer = beers.find(beer => beer.id === review.beer)
+      if (beer === undefined) throw error()
+      return beer.breweries.some(brewery => brewery === breweryId) &&
+        beer.breweries.some(brewery => brewery === filterBreweryId)
+    }).map(review => review.rating) as number[]
+  }
+
   it('should get brewery stats', async () => {
     const {
       beers,
@@ -427,19 +435,13 @@ describe('stats tests', () => {
     expect(lindemansBrewery.name).to.equal('Lindemans')
     const nokiaBrewery = breweries[1].data.brewery
     expect(nokiaBrewery.name).to.equal('Nokian Panimo')
-    function reviewRatingsByBrewery(breweryId: string): number[] {
-      return reviews.map(reviewData).filter(review => {
-        const beer = beers.find(
-          beer => beer.data.beer.id === review.beer
-        )?.data?.beer
-        if (beer === undefined) throw error()
-        return beer.breweries.some(brewery => brewery === breweryId)
-      }).map(review => review.rating) as number[]
+    function filter(breweryId: string): number[] {
+      return reviewRatingsByBrewery(breweryId, beers, reviews, breweryId)
     }
     checkBreweryStats(
       { brewery: nokiaBrewery, count: 3, average: '7.33' },
       { brewery: lindemansBrewery, count: 3, average: '6.67' },
-      reviewRatingsByBrewery,
+      filter,
       statsRes.data.brewery
     )
   })
@@ -462,22 +464,52 @@ describe('stats tests', () => {
     expect(lindemansBrewery.name).to.equal('Lindemans')
     const nokiaBrewery = breweries[1].data.brewery
     expect(nokiaBrewery.name).to.equal('Nokian Panimo')
-    function reviewRatingsByBrewery(breweryId: string): number[] {
-      return reviews.map(reviewData).filter(review => {
-        const beer = beers.find(
-          beer => beer.data.beer.id === review.beer
-        )?.data?.beer
-        if (beer === undefined) throw error()
-        return beer.breweries.some(brewery => brewery === breweryId) &&
-          beer.breweries.some(brewery => brewery === filterBreweryId)
-      }).map(review => review.rating) as number[]
+    function filter(breweryId: string): number[] {
+      return reviewRatingsByBrewery(breweryId, beers, reviews, filterBreweryId)
     }
     checkBreweryStats(
       { brewery: nokiaBrewery, count: 2, average: '7.50' },
       { brewery: lindemansBrewery, count: 3, average: '6.67' },
-      reviewRatingsByBrewery,
+      filter,
       statsRes.data.brewery
     )
+  })
+
+  it('should get brewery stats by brewery and min review count', async () => {
+    const {
+      beers,
+      breweries,
+      reviews
+    } = await createDeps(ctx.adminAuthHeaders())
+
+    const filterBreweryId = breweries[0].data.brewery.id
+    const order = '&order=count&direction=asc'
+    const statsRes = await ctx.request.get<{ brewery: BreweryStats }>(
+      `/api/v1/stats/brewery?brewery=${
+        filterBreweryId
+      }${order}&min_review_count=3`,
+      ctx.adminAuthHeaders()
+    )
+    expect(statsRes.status).to.equal(200)
+    const lindemansBrewery = breweries[0].data.brewery
+    expect(lindemansBrewery.name).to.equal('Lindemans')
+    const lindemansRatings = reviewRatingsByBrewery(
+      lindemansBrewery.id,
+      beers,
+      reviews,
+      filterBreweryId
+    )
+    const lindemansAverage = average(lindemansRatings)
+    expect(statsRes.data.brewery).to.eql([
+      {
+        reviewCount: `${lindemansRatings.length}`,
+        reviewAverage: lindemansAverage,
+        breweryId: lindemansBrewery.id,
+        breweryName: lindemansBrewery.name
+      }
+    ])
+    expect(lindemansRatings.length).to.equal(3)
+    expect(lindemansAverage).to.equal('6.67')
   })
 
   type TestRatingStats = Array<{ rating: number,  count: number }>
@@ -505,8 +537,8 @@ describe('stats tests', () => {
     )
     expect(statsRes.status).to.equal(200)
     const stats = reviews
-      .reduce((ratingStats: TestRatingStats, reviewRes) => {
-      const rating = reviewRes.data.review.rating as unknown as number
+      .reduce((ratingStats: TestRatingStats, review) => {
+      const rating = review.rating as unknown as number
       const existing = ratingStats.find(r => r.rating === rating)
       if (existing === undefined) {
         ratingStats.push({ rating, count: 1 })
@@ -537,16 +569,16 @@ describe('stats tests', () => {
     )
     expect(statsRes.status).to.equal(200)
     const stats = reviews
-      .reduce((ratingStats: Array<{ rating: number,  count: number }>, reviewRes) => {
-      const beerId = reviewRes.data.review.beer
-      const beerRes = beers.find(beerRes => beerRes.data.beer.id === beerId)
+      .reduce((ratingStats: Array<{ rating: number,  count: number }>, review) => {
+      const beerId = review.beer
+      const beerRes = beers.find(beer => beer.id === beerId)
       if (beerRes === undefined) {
         return ratingStats
       }
-      if (!beerRes.data.beer.breweries.includes(breweryId)) {
+      if (!beerRes.breweries.includes(breweryId)) {
         return ratingStats
       }
-      const rating = reviewRes.data.review.rating as unknown as number
+      const rating = review.rating as unknown as number
       const existing = ratingStats.find(r => r.rating === rating)
       if (existing === undefined) {
         ratingStats.push({ rating, count: 1 })
@@ -597,6 +629,21 @@ describe('stats tests', () => {
     expect(kriekAverage).to.equal(kriek.average)
   }
 
+  function reviewRatingsByStyle(
+      styleId: string,
+      beers: BeerWithBreweryAndStyleIds[],
+      reviews: Review[],
+      filterBreweryId: string | undefined
+    ): number[] {
+    return reviews.filter(review => {
+      const beer = beers.find(beer => beer.id === review.beer)
+      if (beer === undefined) throw error()
+      return beer.styles.some(style => style === styleId) &&
+        beer.breweries.some(
+          brewery => filterBreweryId === undefined || brewery === filterBreweryId)
+    }).map(review => review.rating) as number[]
+  }
+
   it('should get style stats', async () => {
     const {
       beers,
@@ -613,17 +660,8 @@ describe('stats tests', () => {
     expect(kriekStyle.name).to.equal('Kriek')
     const ipaStyle = styles[1].data.style
     expect(ipaStyle.name).to.equal('IPA')
-    function reviewRatingsByStyle(styleId: string): number[] {
-      return reviews.map(reviewData).filter(review => {
-        const beer = beers.find(
-          beer => beer.data.beer.id === review.beer
-        )?.data?.beer
-        if (beer === undefined) throw error()
-        return beer.styles.some(style => style === styleId)
-      }).map(review => review.rating) as number[]
-    }
-    const ipaRatings = reviewRatingsByStyle(ipaStyle.id)
-    const kriekRatings = reviewRatingsByStyle(kriekStyle.id)
+    const ipaRatings = reviewRatingsByStyle(ipaStyle.id, beers, reviews, undefined)
+    const kriekRatings = reviewRatingsByStyle(kriekStyle.id, beers, reviews, undefined)
     checkStyleStats(
       {
         ratings: ipaRatings,
@@ -660,18 +698,17 @@ describe('stats tests', () => {
     expect(kriekStyle.name).to.equal('Kriek')
     const ipaStyle = styles[1].data.style
     expect(ipaStyle.name).to.equal('IPA')
-    function reviewRatingsByStyle(styleId: string): number[] {
-      return reviews.map(reviewData).filter(review => {
-        const beer = beers.find(
-          beer => beer.data.beer.id === review.beer
-        )?.data?.beer
-        if (beer === undefined) throw error()
-        return beer.styles.some(style => style === styleId) &&
-          beer.breweries.some(brewery => brewery === breweryId)
-      }).map(review => review.rating) as number[]
-    }
-    const ipaRatings = reviewRatingsByStyle(ipaStyle.id)
-    const kriekRatings = reviewRatingsByStyle(kriekStyle.id)
+    const ipaRatings = reviewRatingsByStyle(
+      ipaStyle.id,
+      beers,
+      reviews,breweryId
+    )
+    const kriekRatings = reviewRatingsByStyle(
+      kriekStyle.id,
+      beers,
+      reviews,
+      breweryId
+    )
     checkStyleStats(
       {
         ratings: ipaRatings,
@@ -687,5 +724,39 @@ describe('stats tests', () => {
       },
       statsRes.data.style
     )
+  })
+
+  it('should get style stats by brewery and min review count', async () => {
+    const {
+      beers,
+      breweries,
+      reviews,
+      styles
+    } = await createDeps(ctx.adminAuthHeaders())
+
+    const breweryId = breweries[0].data.brewery.id
+    const order = '&order=count&direction=asc'
+    const statsRes = await ctx.request.get<{ style: StyleStats }>(
+      `/api/v1/stats/style?brewery=${breweryId}${order}&min_review_count=3`,
+      ctx.adminAuthHeaders()
+    )
+    expect(statsRes.status).to.equal(200)
+    const kriekStyle = styles[0].data.style
+    expect(kriekStyle.name).to.equal('Kriek')
+    const ipaStyle = styles[1].data.style
+    expect(ipaStyle.name).to.equal('IPA')
+
+    const kriekRatings = reviewRatingsByStyle(kriekStyle.id, beers, reviews, breweryId)
+    const kriekAverage = average(kriekRatings)
+    expect(statsRes.data.style).to.eql([
+      {
+        reviewCount: '3',
+        reviewAverage: kriekAverage,
+        styleId: kriekStyle.id,
+        styleName: kriekStyle.name
+      }
+    ])
+    expect(kriekRatings.length).to.equal(3)
+    expect(kriekAverage).to.equal(kriekAverage)
   })
 })

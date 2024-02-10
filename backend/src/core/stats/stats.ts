@@ -37,8 +37,13 @@ export type RatingStats = Array<{
   count: string
 }>
 
-export interface StatsFilter {
+export interface StatsBreweryFilter {
   brewery: string
+}
+
+export interface StatsFilter {
+  brewery: string | undefined
+  minReviewCount: number
 }
 
 export type StyleStats = Array<{
@@ -55,9 +60,9 @@ export interface StyleStatsOrder {
   direction: ListDirection
 }
 
-export function validateStatsFilter (
+export function validateStatsBreweryFilter (
   query: Record<string, unknown> | undefined
-): StatsFilter | undefined {
+): StatsBreweryFilter | undefined {
   if (query === undefined) {
     return undefined
   }
@@ -69,6 +74,32 @@ export function validateStatsFilter (
     return { brewery }
   }
   return undefined
+}
+
+export function validateStatsFilter (
+  query: Record<string, unknown> | undefined
+): StatsFilter {
+  let defaultFilter: StatsFilter = { brewery: undefined, minReviewCount: 1 }
+  if (query === undefined) {
+    return defaultFilter
+  }
+  const breweryFilter = validateStatsBreweryFilter(query)
+  defaultFilter = { brewery: breweryFilter?.brewery, minReviewCount: 1 }
+  const { min_review_count } = query
+  if (min_review_count === undefined) {
+    return defaultFilter
+  }
+  if (typeof min_review_count === 'string' && min_review_count.length > 0) {
+    const minReviewCount = parseInt(min_review_count)
+    if (isNaN(minReviewCount) || minReviewCount < 1) {
+      return defaultFilter
+    }
+    return {
+      brewery: breweryFilter?.brewery,
+      minReviewCount
+    }
+  }
+  return defaultFilter
 }
 
 const doValidateBreweryStatsOrder =
