@@ -11,6 +11,14 @@ import * as statsRepository from '../../../src/data/stats/stats.repository'
 import { ReviewRow } from '../../../src/data/review/review.table'
 import { type InsertedData, insertMultipleReviews } from '../review-helpers'
 
+const defaultFilter: StatsFilter = {
+  brewery: undefined,
+  maxReviewAverage: 10,
+  minReviewAverage: 4,
+  maxReviewCount: Infinity,
+  minReviewCount: 1
+}
+
 describe('brewery stats tests', () => {
   const ctx = new TestContext()
 
@@ -42,7 +50,7 @@ describe('brewery stats tests', () => {
     const stats = await statsRepository.getBrewery(
       db,
       pagination,
-      statsFilter?.(data) ?? { brewery: undefined, minReviewCount: 1 },
+      statsFilter?.(data) ?? defaultFilter,
       breweryStatsOrder
     )
     const brewery = {
@@ -127,22 +135,64 @@ describe('brewery stats tests', () => {
       ctx.db,
       allResults,
       (data: InsertedData) => ({
-        brewery: data.otherBrewery.brewery_id,
-        minReviewCount: 1
+        ...defaultFilter,
+        brewery: data.otherBrewery.brewery_id
       }),
       { property: 'brewery_name', direction: 'desc' }
     )
     expect(stats).eql([ otherBrewery ])
   })
 
-  it('filter by review count', async () => {
+  it('filter by min review count', async () => {
     const { stats, otherBrewery } = await getResults(
       ctx.db,
       allResults,
-      () => ({ brewery: undefined, minReviewCount: 5 }),
+      () => ({
+        ...defaultFilter,
+        minReviewCount: 5
+      }),
       { property: 'brewery_name', direction: 'desc' }
     )
     expect(stats).eql([ otherBrewery ])
+  })
+
+  it('filter by max review count', async () => {
+    const { stats, brewery } = await getResults(
+      ctx.db,
+      allResults,
+      () => ({
+        ...defaultFilter,
+        maxReviewCount: 4
+      }),
+      { property: 'brewery_name', direction: 'desc' }
+    )
+    expect(stats).eql([ brewery ])
+  })
+
+  it('filter by min review average', async () => {
+    const { stats, otherBrewery } = await getResults(
+      ctx.db,
+      allResults,
+      () => ({
+        ...defaultFilter,
+        minReviewAverage: 6.3
+      }),
+      { property: 'brewery_name', direction: 'desc' }
+    )
+    expect(stats).eql([ otherBrewery ])
+  })
+
+  it('filter by max review average', async () => {
+    const { stats, brewery } = await getResults(
+      ctx.db,
+      allResults,
+      () => ({
+        ...defaultFilter,
+        maxReviewAverage: 6.3
+      }),
+      { property: 'brewery_name', direction: 'desc' }
+    )
+    expect(stats).eql([ brewery ])
   })
 
 })

@@ -23,6 +23,13 @@ function round (value: number | null, decimals: number): string {
   ).toFixed(decimals)
 }
 
+function noInfinity (value: number): number {
+  if (value > 0 && !Number.isFinite(value)) {
+    return 10000000
+  }
+  return value
+}
+
 export async function getAnnual (
   db: Database,
   statsFilter: StatsBreweryFilter | undefined
@@ -133,8 +140,17 @@ export async function getBrewery (
   return (await breweryOrderBy(
     breweryQuery
       .groupBy('brewery_id')
+      .having((eb) => eb.fn.avg(
+        'review.rating'), '<=', statsFilter.maxReviewAverage
+      )
+      .having((eb) => eb.fn.avg(
+        'review.rating'), '>=', statsFilter.minReviewAverage
+      )
       .having((eb) => eb.fn.count(
-        'review.review_id'), '>=', statsFilter.minReviewCount
+        'review.review_id'), '<=', noInfinity(statsFilter.maxReviewCount)
+      )
+      .having((eb) => eb.fn.count(
+        'review.review_id'), '>=', noInfinity(statsFilter.minReviewCount)
       )
     , breweryStatsOrder
   )
@@ -372,8 +388,17 @@ export async function getStyle (
   return (await styleOrderBy(
     styleQuery
       .groupBy('style_id')
+      .having((eb) => eb.fn.avg(
+        'review.rating'), '<=', statsFilter.maxReviewAverage
+      )
+      .having((eb) => eb.fn.avg(
+        'review.rating'), '>=', statsFilter.minReviewAverage
+      )
       .having((eb) => eb.fn.count(
-        'review.review_id'), '>=', statsFilter.minReviewCount
+        'review.review_id'), '<=', noInfinity(statsFilter.maxReviewCount)
+      )
+      .having((eb) => eb.fn.count(
+        'review.review_id'), '>=', noInfinity(statsFilter.minReviewCount)
       )
     , styleStatsOrder
   )

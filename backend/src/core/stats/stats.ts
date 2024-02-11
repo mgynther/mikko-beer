@@ -43,7 +43,10 @@ export interface StatsBreweryFilter {
 
 export interface StatsFilter {
   brewery: string | undefined
+  maxReviewCount: number
   minReviewCount: number
+  maxReviewAverage: number
+  minReviewAverage: number
 }
 
 export type StyleStats = Array<{
@@ -79,27 +82,52 @@ export function validateStatsBreweryFilter (
 export function validateStatsFilter (
   query: Record<string, unknown> | undefined
 ): StatsFilter {
-  let defaultFilter: StatsFilter = { brewery: undefined, minReviewCount: 1 }
+  const result: StatsFilter = {
+    brewery: undefined,
+    maxReviewAverage: 10,
+    minReviewAverage: 4,
+    maxReviewCount: Infinity,
+    minReviewCount: 1
+  }
   if (query === undefined) {
-    return defaultFilter
+    return result
   }
   const breweryFilter = validateStatsBreweryFilter(query)
-  defaultFilter = { brewery: breweryFilter?.brewery, minReviewCount: 1 }
-  const { min_review_count } = query
-  if (min_review_count === undefined) {
-    return defaultFilter
-  }
-  if (typeof min_review_count === 'string' && min_review_count.length > 0) {
-    const minReviewCount = parseInt(min_review_count)
-    if (isNaN(minReviewCount) || minReviewCount < 1) {
-      return defaultFilter
+  result.brewery = breweryFilter?.brewery
+  const {
+    min_review_count,
+    max_review_count,
+    min_review_average,
+    max_review_average
+  } = query
+  type NumberKey =
+    'maxReviewAverage' |
+    'minReviewAverage' |
+    'maxReviewCount' |
+    'minReviewCount'
+  function assignValid (
+    key: NumberKey,
+    value: unknown,
+    validator: (value: number) => boolean,
+    parser: (valud: string) => number
+  ): void {
+    if (typeof value === 'string' && value.length > 0) {
+      const numValue = parser(value)
+      if (!isNaN(numValue) && validator(numValue)) {
+        result[key] = numValue
+      }
     }
-    return {
-      brewery: breweryFilter?.brewery,
-      minReviewCount
-    }
   }
-  return defaultFilter
+  const validateAverage = (value: number): boolean => value <= 10 && value >= 4
+  const validateCount =
+    (value: number): boolean => value <= Infinity && value >= 1
+  assignValid(
+    'maxReviewAverage', max_review_average, validateAverage, parseFloat)
+  assignValid(
+    'minReviewAverage', min_review_average, validateAverage, parseFloat)
+  assignValid('maxReviewCount', max_review_count, validateCount, parseInt)
+  assignValid('minReviewCount', min_review_count, validateCount, parseInt)
+  return result
 }
 
 const doValidateBreweryStatsOrder =

@@ -10,6 +10,14 @@ import * as statsRepository from '../../../src/data/stats/stats.repository'
 import { ReviewRow } from '../../../src/data/review/review.table'
 import { type InsertedData, insertMultipleReviews } from '../review-helpers'
 
+const defaultFilter: StatsFilter = {
+  brewery: undefined,
+  maxReviewAverage: 10,
+  minReviewAverage: 4,
+  maxReviewCount: Infinity,
+  minReviewCount: 1
+}
+
 describe('style stats tests', () => {
   const ctx = new TestContext()
 
@@ -39,7 +47,7 @@ describe('style stats tests', () => {
     const { reviews, data } = await insertMultipleReviews(9, db)
     const stats = await statsRepository.getStyle(
       db,
-      statsFilter?.(data) ?? { brewery: undefined, minReviewCount: 1 },
+      statsFilter?.(data) ?? defaultFilter,
       styleStatsOrder
     )
     const style = {
@@ -114,19 +122,61 @@ describe('style stats tests', () => {
   it('filter by brewery', async () => {
     const { stats, otherStyle } = await getResults(
       ctx.db,
-      (data: InsertedData) => ({ brewery: data.otherBrewery.brewery_id, minReviewCount: 1 }),
+      (data: InsertedData) => ({
+        ...defaultFilter,
+        brewery: data.otherBrewery.brewery_id
+      }),
       { property: 'style_name', direction: 'desc' }
     )
     expect(stats).eql([ otherStyle ])
   })
 
-  it('filter by review count', async () => {
+  it('filter by min review count', async () => {
     const { stats, otherStyle } = await getResults(
       ctx.db,
-      () => ({ brewery: undefined, minReviewCount: 5 }),
+      () => ({
+        ...defaultFilter,
+        minReviewCount: 5
+      }),
       { property: 'style_name', direction: 'desc' }
     )
     expect(stats).eql([ otherStyle ])
+  })
+
+  it('filter by max review count', async () => {
+    const { stats, style } = await getResults(
+      ctx.db,
+      () => ({
+        ...defaultFilter,
+        maxReviewCount: 4
+      }),
+      { property: 'style_name', direction: 'desc' }
+    )
+    expect(stats).eql([ style ])
+  })
+
+  it('filter by min review average', async () => {
+    const { stats, otherStyle } = await getResults(
+      ctx.db,
+      () => ({
+        ...defaultFilter,
+        minReviewAverage: 6.3
+      }),
+      { property: 'style_name', direction: 'desc' }
+    )
+    expect(stats).eql([ otherStyle ])
+  })
+
+  it('filter by max review average', async () => {
+    const { stats, style } = await getResults(
+      ctx.db,
+      () => ({
+        ...defaultFilter,
+        maxReviewAverage: 6.3
+      }),
+      { property: 'style_name', direction: 'desc' }
+    )
+    expect(stats).eql([ style ])
   })
 
 })
