@@ -31,6 +31,11 @@ function breweryStatsSorting (sorting: BreweryStatsSorting): string {
   return `order=${sorting.order}&direction=${sorting.direction}`
 }
 
+function andMaxReviewCount (maxReviewCount: number): string {
+  if (!isFinite(maxReviewCount)) return ''
+  return `&max_review_count=${maxReviewCount}`
+}
+
 function styleFilters (
   breweryId: string | undefined,
   sorting: StyleStatsSorting
@@ -56,12 +61,14 @@ const statsApi = emptySplitApi.injectEndpoints({
       pagination: Pagination
       sorting: BreweryStatsSorting
       minReviewCount: number
+      maxReviewCount: number
     }>({
       query: (params: {
         breweryId: string | undefined
         pagination: Pagination
         sorting: BreweryStatsSorting
         minReviewCount: number
+        maxReviewCount: number
       }) => ({
         url: `/stats/brewery?size=${
           params.pagination.size
@@ -71,7 +78,7 @@ const statsApi = emptySplitApi.injectEndpoints({
           andBreweryIdFilter(params.breweryId)
         }&${breweryStatsSorting(params.sorting)}&min_review_count=${
           params.minReviewCount
-        }`,
+        }${andMaxReviewCount(params.maxReviewCount)}`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Brewery]
@@ -96,17 +103,19 @@ const statsApi = emptySplitApi.injectEndpoints({
       breweryId: string | undefined
       sorting: StyleStatsSorting
       minReviewCount: number
+      maxReviewCount: number
     }>({
       query: (params: {
         breweryId: string | undefined
         sorting: StyleStatsSorting
         minReviewCount: number
+        maxReviewCount: number
       }) => ({
         url: `/stats/style${
           styleFilters(params.breweryId, params.sorting)
         }&min_review_count=${
           params.minReviewCount
-        }`,
+        }${andMaxReviewCount(params.maxReviewCount)}`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Style]

@@ -13,7 +13,7 @@ import BreweryLinks from '../brewery/BreweryLinks'
 import LoadingIndicator from '../common/LoadingIndicator'
 import TabButton from '../common/TabButton'
 
-import MinimumReviewCount from './MinimumReviewCount'
+import Filters from './Filters'
 
 import './Stats.css'
 
@@ -27,6 +27,7 @@ interface TriggerParams {
   breweryId: string | undefined
   pagination: Pagination
   minReviewCount: number
+  maxReviewCount: number
 }
 
 const giantPage = {
@@ -44,6 +45,7 @@ function Brewery (props: Props): JSX.Element {
     setSortingDirection
   ] = useState<ListDirection>('asc')
   const [minReviewCount, doSetMinReviewCount] = useState(1)
+  const [maxReviewCount, doSetMaxReviewCount] = useState(Infinity)
   const [trigger, { data: breweryData, isLoading }] =
     useLazyGetBreweryStatsQuery()
   const [loadedBreweries, setLoadedBreweries] =
@@ -53,7 +55,8 @@ function Brewery (props: Props): JSX.Element {
   useState<TriggerParams>({
     breweryId,
     pagination: giantPage,
-    minReviewCount
+    minReviewCount,
+    maxReviewCount
   })
 
   function setMinReviewCount (minReviewCount: number): void {
@@ -61,13 +64,19 @@ function Brewery (props: Props): JSX.Element {
     setLoadedBreweries(undefined)
   }
 
+  function setMaxReviewCount (maxReviewCount: number): void {
+    doSetMaxReviewCount(maxReviewCount)
+    setLoadedBreweries(undefined)
+  }
+
   useEffect(() => {
     setBreweryIdTriggerParams({
       breweryId,
       pagination: giantPage,
-      minReviewCount
+      minReviewCount,
+      maxReviewCount
     })
-  }, [breweryId, minReviewCount])
+  }, [breweryId, minReviewCount, maxReviewCount])
 
   const breweryArray = breweryData?.brewery === undefined
     ? []
@@ -85,7 +94,8 @@ function Brewery (props: Props): JSX.Element {
           order: sortingOrder,
           direction: sortingDirection
         },
-        minReviewCount
+        minReviewCount,
+        maxReviewCount
       })
       if (result?.data === undefined) return
       setLoadedBreweries([...result.data.brewery])
@@ -96,6 +106,7 @@ function Brewery (props: Props): JSX.Element {
     sortingDirection,
     breweryIdTriggerParams,
     minReviewCount,
+    maxReviewCount,
     loadedBreweries
   ])
 
@@ -114,7 +125,8 @@ function Brewery (props: Props): JSX.Element {
           order: sortingOrder,
           direction: sortingDirection
         },
-        minReviewCount
+        minReviewCount,
+        maxReviewCount
       })
       if (result.data === undefined) return
       const newBreweries = [...(loadedBreweries ?? []), ...result.data.brewery]
@@ -133,6 +145,7 @@ function Brewery (props: Props): JSX.Element {
     isLoading,
     hasMore,
     minReviewCount,
+    maxReviewCount,
     sortingOrder,
     sortingDirection,
     trigger
@@ -196,9 +209,11 @@ function Brewery (props: Props): JSX.Element {
           </tr>
           <tr>
             <th colSpan={3}>
-              <MinimumReviewCount
+              <Filters
                 minReviewCount={minReviewCount}
                 setMinReviewCount={setMinReviewCount}
+                maxReviewCount={maxReviewCount}
+                setMaxReviewCount={setMaxReviewCount}
               />
             </th>
           </tr>

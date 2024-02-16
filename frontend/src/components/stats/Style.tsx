@@ -8,7 +8,7 @@ import { type ListDirection } from '../../store/types'
 import LoadingIndicator from '../common/LoadingIndicator'
 import TabButton from '../common/TabButton'
 
-import MinimumReviewCount from './MinimumReviewCount'
+import Filters from './Filters'
 
 import './Stats.css'
 
@@ -26,13 +26,15 @@ function Style (props: Props): JSX.Element {
     setSortingDirection
   ] = useState<ListDirection>('asc')
   const [minReviewCount, setMinReviewCount] = useState(1)
+  const [maxReviewCount, setMaxReviewCount] = useState(Infinity)
   const { data: styleData, isLoading } = useGetStyleStatsQuery({
     breweryId: props.breweryId,
     sorting: {
       order: sortingOrder,
       direction: sortingDirection
     },
-    minReviewCount
+    minReviewCount,
+    maxReviewCount
   })
 
   function isSelected (property: StyleStatsSortingOrder): boolean {
@@ -93,9 +95,11 @@ function Style (props: Props): JSX.Element {
           </tr>
           <tr>
             <th colSpan={3}>
-              <MinimumReviewCount
+              <Filters
                 minReviewCount={minReviewCount}
                 setMinReviewCount={setMinReviewCount}
+                maxReviewCount={maxReviewCount}
+                setMaxReviewCount={setMaxReviewCount}
               />
             </th>
           </tr>
