@@ -10,6 +10,14 @@
   transform: translate(0, 30px)
 }
 
+.SearchResults > ul > li > button {
+  width: 100%;
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: calc(10px + 2vmin);
+}
+
 .SearchBox ul {
   margin-top: 0;
   margin-bottom: 10px;
@@ -26,7 +34,6 @@
   display: block;
   margin-top: 10px;
   margin-bottom: 10px;
-  cursor: pointer;
 }
 
 .SearchInfo {

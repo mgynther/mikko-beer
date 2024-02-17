@@ -77,14 +77,15 @@ const SearchBox = <T extends SearchBoxItem>({
         <div className='SearchResults'>
           <ul>
             {visibleOptions.map(item => (
-              <li
-                key={item.id}
-                onClick={() => {
-                  select(item)
-                  setFilter('')
-                }}
-              >
-                {formatter(item)}
+              <li key={item.id} >
+                <button
+                  onClick={() => {
+                    select(item)
+                    setFilter('')
+                  }}
+                >
+                  {formatter(item)}
+                </button>
               </li>
             ))}
             <div className='SearchInfo'>
