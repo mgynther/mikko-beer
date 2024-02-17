@@ -1,8 +1,8 @@
-input.FilterSlider {
+input.StepFilterSlider {
   width: 100%;
   height: 40px;
 }
 
-div.FilterSliderLabel {
+div.StepFilterSliderLabel {
   font-size: 12px;
 }
