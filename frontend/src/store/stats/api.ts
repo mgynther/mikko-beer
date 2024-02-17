@@ -62,6 +62,8 @@ const statsApi = emptySplitApi.injectEndpoints({
       sorting: BreweryStatsSorting
       minReviewCount: number
       maxReviewCount: number
+      minReviewAverage: number
+      maxReviewAverage: number
     }>({
       query: (params: {
         breweryId: string | undefined
@@ -69,6 +71,8 @@ const statsApi = emptySplitApi.injectEndpoints({
         sorting: BreweryStatsSorting
         minReviewCount: number
         maxReviewCount: number
+        minReviewAverage: number
+        maxReviewAverage: number
       }) => ({
         url: `/stats/brewery?size=${
           params.pagination.size
@@ -78,7 +82,11 @@ const statsApi = emptySplitApi.injectEndpoints({
           andBreweryIdFilter(params.breweryId)
         }&${breweryStatsSorting(params.sorting)}&min_review_count=${
           params.minReviewCount
-        }${andMaxReviewCount(params.maxReviewCount)}`,
+        }${
+          andMaxReviewCount(params.maxReviewCount)
+        }&min_review_average=${
+          params.minReviewAverage
+        }&max_review_average=${params.maxReviewAverage}`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Brewery]
@@ -104,18 +112,28 @@ const statsApi = emptySplitApi.injectEndpoints({
       sorting: StyleStatsSorting
       minReviewCount: number
       maxReviewCount: number
+      minReviewAverage: number
+      maxReviewAverage: number
     }>({
       query: (params: {
         breweryId: string | undefined
         sorting: StyleStatsSorting
         minReviewCount: number
         maxReviewCount: number
+        minReviewAverage: number
+        maxReviewAverage: number
       }) => ({
         url: `/stats/style${
           styleFilters(params.breweryId, params.sorting)
         }&min_review_count=${
           params.minReviewCount
-        }${andMaxReviewCount(params.maxReviewCount)}`,
+        }${
+          andMaxReviewCount(params.maxReviewCount)
+        }&min_review_average=${
+          params.minReviewAverage
+        }&max_review_average=${
+          params.maxReviewAverage
+        }`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Style]

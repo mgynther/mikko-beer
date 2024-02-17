@@ -28,6 +28,8 @@ interface TriggerParams {
   pagination: Pagination
   minReviewCount: number
   maxReviewCount: number
+  minReviewAverage: number
+  maxReviewAverage: number
 }
 
 const giantPage = {
@@ -46,6 +48,8 @@ function Brewery (props: Props): JSX.Element {
   ] = useState<ListDirection>('asc')
   const [minReviewCount, doSetMinReviewCount] = useState(1)
   const [maxReviewCount, doSetMaxReviewCount] = useState(Infinity)
+  const [minReviewAverage, doSetMinReviewAverage] = useState(4)
+  const [maxReviewAverage, doSetMaxReviewAverage] = useState(10)
   const [trigger, { data: breweryData, isLoading }] =
     useLazyGetBreweryStatsQuery()
   const [loadedBreweries, setLoadedBreweries] =
@@ -56,7 +60,9 @@ function Brewery (props: Props): JSX.Element {
     breweryId,
     pagination: giantPage,
     minReviewCount,
-    maxReviewCount
+    maxReviewCount,
+    minReviewAverage,
+    maxReviewAverage
   })
 
   function setMinReviewCount (minReviewCount: number): void {
@@ -69,14 +75,32 @@ function Brewery (props: Props): JSX.Element {
     setLoadedBreweries(undefined)
   }
 
+  function setMinReviewAverage (minReviewAverage: number): void {
+    doSetMinReviewAverage(minReviewAverage)
+    setLoadedBreweries(undefined)
+  }
+
+  function setMaxReviewAverage (maxReviewAverage: number): void {
+    doSetMaxReviewAverage(maxReviewAverage)
+    setLoadedBreweries(undefined)
+  }
+
   useEffect(() => {
     setBreweryIdTriggerParams({
       breweryId,
       pagination: giantPage,
       minReviewCount,
-      maxReviewCount
+      maxReviewCount,
+      minReviewAverage,
+      maxReviewAverage
     })
-  }, [breweryId, minReviewCount, maxReviewCount])
+  }, [
+    breweryId,
+    minReviewCount,
+    maxReviewCount,
+    minReviewAverage,
+    maxReviewAverage
+  ])
 
   const breweryArray = breweryData?.brewery === undefined
     ? []
@@ -95,7 +119,9 @@ function Brewery (props: Props): JSX.Element {
           direction: sortingDirection
         },
         minReviewCount,
-        maxReviewCount
+        maxReviewCount,
+        minReviewAverage,
+        maxReviewAverage
       })
       if (result?.data === undefined) return
       setLoadedBreweries([...result.data.brewery])
@@ -107,6 +133,8 @@ function Brewery (props: Props): JSX.Element {
     breweryIdTriggerParams,
     minReviewCount,
     maxReviewCount,
+    minReviewAverage,
+    maxReviewAverage,
     loadedBreweries
   ])
 
@@ -126,7 +154,9 @@ function Brewery (props: Props): JSX.Element {
           direction: sortingDirection
         },
         minReviewCount,
-        maxReviewCount
+        maxReviewCount,
+        minReviewAverage,
+        maxReviewAverage
       })
       if (result.data === undefined) return
       const newBreweries = [...(loadedBreweries ?? []), ...result.data.brewery]
@@ -146,6 +176,8 @@ function Brewery (props: Props): JSX.Element {
     hasMore,
     minReviewCount,
     maxReviewCount,
+    minReviewAverage,
+    maxReviewAverage,
     sortingOrder,
     sortingDirection,
     trigger
@@ -214,6 +246,10 @@ function Brewery (props: Props): JSX.Element {
                 setMinReviewCount={setMinReviewCount}
                 maxReviewCount={maxReviewCount}
                 setMaxReviewCount={setMaxReviewCount}
+                minReviewAverage={minReviewAverage}
+                setMinReviewAverage={setMinReviewAverage}
+                maxReviewAverage={maxReviewAverage}
+                setMaxReviewAverage={setMaxReviewAverage}
               />
             </th>
           </tr>

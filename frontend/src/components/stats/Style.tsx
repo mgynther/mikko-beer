@@ -27,6 +27,8 @@ function Style (props: Props): JSX.Element {
   ] = useState<ListDirection>('asc')
   const [minReviewCount, setMinReviewCount] = useState(1)
   const [maxReviewCount, setMaxReviewCount] = useState(Infinity)
+  const [minReviewAverage, setMinReviewAverage] = useState(4)
+  const [maxReviewAverage, setMaxReviewAverage] = useState(10)
   const { data: styleData, isLoading } = useGetStyleStatsQuery({
     breweryId: props.breweryId,
     sorting: {
@@ -34,7 +36,9 @@ function Style (props: Props): JSX.Element {
       direction: sortingDirection
     },
     minReviewCount,
-    maxReviewCount
+    maxReviewCount,
+    minReviewAverage,
+    maxReviewAverage
   })
 
   function isSelected (property: StyleStatsSortingOrder): boolean {
@@ -100,6 +104,10 @@ function Style (props: Props): JSX.Element {
                 setMinReviewCount={setMinReviewCount}
                 maxReviewCount={maxReviewCount}
                 setMaxReviewCount={setMaxReviewCount}
+                minReviewAverage={minReviewAverage}
+                setMinReviewAverage={setMinReviewAverage}
+                maxReviewAverage={maxReviewAverage}
+                setMaxReviewAverage={setMaxReviewAverage}
               />
             </th>
           </tr>
