@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux'
+import { useSelector } from '../../react-redux-wrapper'
 
 import { type Login, selectLogin } from '../../store/login/reducer'
 import { useListStoragesQuery } from '../../store/storage/api'

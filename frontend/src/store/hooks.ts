@@ -1,10 +1,8 @@
 import {
-  type TypedUseSelectorHook,
   useDispatch,
   useSelector
-} from 'react-redux'
+} from '../react-redux-wrapper'
 import type { RootState, AppDispatch } from './store'
 
-type DispatchFunc = () => AppDispatch
-export const useAppDispatch: DispatchFunc = useDispatch
-export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
+export const useAppDispatch = useDispatch.withTypes<AppDispatch>()
+export const useAppSelector = useSelector.withTypes<RootState>()

@@ -1,6 +1,6 @@
 import { useId, useRef } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 
+import { useDispatch, useSelector } from '../../react-redux-wrapper'
 import { activate, selectActiveSearch } from '../../store/search/reducer'
 
 import LoadingIndicator from './LoadingIndicator'
