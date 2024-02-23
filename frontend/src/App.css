@@ -20,12 +20,11 @@ body.light .App {
 
 .AppContent {
   max-width: 800px;
-  padding-left: 15px;
-  padding-right: 15px;
 }
 
 .AppContent > div {
   width: 100%;
+  max-width: calc(100vw - 30px);
 }
 
 .App-link {
