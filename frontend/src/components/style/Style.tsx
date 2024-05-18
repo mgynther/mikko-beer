@@ -20,9 +20,12 @@ import LoadingIndicator from '../common/LoadingIndicator'
 import ReviewList from '../review/ReviewList'
 import StorageList from '../storage/StorageList'
 
+import StyleLinks from './StyleLinks'
 import UpdateStyle from './UpdateStyle'
 
 import '../common/FlexRow.css'
+
+import './Style.css'
 
 function NotFound (): JSX.Element {
   return <div>Not found</div>
@@ -54,23 +57,31 @@ function Style (): JSX.Element {
   return (
     <>
       {mode === EditableMode.View && (
-        <div className='FlexRow'>
-          <div>
-            <h3>{ style.name }</h3>
+        <>
+          <div className='FlexRow'>
+            <div>
+              <h3>{ style.name }</h3>
+            </div>
+            <div>
+              <EditButton
+                disabled={false}
+                onClick={() => {
+                  setMode(EditableMode.Edit)
+                  setInitialStyle({
+                    ...style,
+                    parents: style.parents.map(parent => parent.id)
+                  })
+                }}
+              />
+            </div>
           </div>
-          <div>
-            <EditButton
-              disabled={false}
-              onClick={() => {
-                setMode(EditableMode.Edit)
-                setInitialStyle({
-                  ...style,
-                  parents: style.parents.map(parent => parent.id)
-                })
-              }}
-            />
+          <div className='StyleInfo'>
+            <h5>Parents</h5>
+            <div>
+              <StyleLinks styles={style.parents} />
+            </div>
           </div>
-        </div>
+        </>
       )}
       {mode === EditableMode.Edit && initialStyle !== undefined && (
         <div>
