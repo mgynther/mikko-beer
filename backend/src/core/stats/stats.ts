@@ -144,7 +144,7 @@ const doValidateBreweryStatsOrder =
   })
 
 function validateBreweryStatsOrder (body: unknown): boolean {
-  return doValidateBreweryStatsOrder(body) as boolean
+  return doValidateBreweryStatsOrder(body)
 }
 
 const doValidateStyleStatsOrder =
@@ -161,7 +161,7 @@ const doValidateStyleStatsOrder =
   })
 
 function validateStyleStatsOrder (body: unknown): boolean {
-  return doValidateStyleStatsOrder(body) as boolean
+  return doValidateStyleStatsOrder(body)
 }
 
 interface ReviewListOrderParams {

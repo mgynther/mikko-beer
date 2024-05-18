@@ -34,9 +34,9 @@ const doValidateContainerRequest =
   })
 
 export function validateCreateContainerRequest (body: unknown): boolean {
-  return doValidateContainerRequest(body) as boolean
+  return doValidateContainerRequest(body)
 }
 
 export function validateUpdateContainerRequest (body: unknown): boolean {
-  return doValidateContainerRequest(body) as boolean
+  return doValidateContainerRequest(body)
 }

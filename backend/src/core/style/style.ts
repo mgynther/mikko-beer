@@ -42,9 +42,9 @@ const doValidateStyleRequest =
   })
 
 export function validateCreateStyleRequest (body: unknown): boolean {
-  return doValidateStyleRequest(body) as boolean
+  return doValidateStyleRequest(body)
 }
 
 export function validateUpdateStyleRequest (body: unknown): boolean {
-  return doValidateStyleRequest(body) as boolean
+  return doValidateStyleRequest(body)
 }

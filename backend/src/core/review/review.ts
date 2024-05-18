@@ -110,15 +110,15 @@ const doValidateReviewListOrder =
   })
 
 export function validateCreateReviewRequest (body: unknown): boolean {
-  return doValidateReviewRequest(body) as boolean
+  return doValidateReviewRequest(body)
 }
 
 export function validateUpdateReviewRequest (body: unknown): boolean {
-  return doValidateReviewRequest(body) as boolean
+  return doValidateReviewRequest(body)
 }
 
 function validateReviewListOrder (body: unknown): boolean {
-  return doValidateReviewListOrder(body) as boolean
+  return doValidateReviewListOrder(body)
 }
 
 interface ReviewListOrderParams {

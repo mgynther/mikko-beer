@@ -60,9 +60,9 @@ const doValidateBeerRequest =
   })
 
 export function validateCreateBeerRequest (body: unknown): boolean {
-  return doValidateBeerRequest(body) as boolean
+  return doValidateBeerRequest(body)
 }
 
 export function validateUpdateBeerRequest (body: unknown): boolean {
-  return doValidateBeerRequest(body) as boolean
+  return doValidateBeerRequest(body)
 }

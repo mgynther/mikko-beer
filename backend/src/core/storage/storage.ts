@@ -57,9 +57,9 @@ const doValidateStorageRequest =
   })
 
 export function validateCreateStorageRequest (body: unknown): boolean {
-  return doValidateStorageRequest(body) as boolean
+  return doValidateStorageRequest(body)
 }
 
 export function validateUpdateStorageRequest (body: unknown): boolean {
-  return doValidateStorageRequest(body) as boolean
+  return doValidateStorageRequest(body)
 }

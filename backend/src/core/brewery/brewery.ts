@@ -27,9 +27,9 @@ const doValidateBreweryRequest =
   })
 
 export function validateCreateBreweryRequest (body: unknown): boolean {
-  return doValidateBreweryRequest(body) as boolean
+  return doValidateBreweryRequest(body)
 }
 
 export function validateUpdateBreweryRequest (body: unknown): boolean {
-  return doValidateBreweryRequest(body) as boolean
+  return doValidateBreweryRequest(body)
 }

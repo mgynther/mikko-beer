@@ -30,5 +30,5 @@ const doValidateCreateAnonymousUserRequest =
   })
 
 export function validateCreateAnonymousUserRequest (body: unknown): boolean {
-  return doValidateCreateAnonymousUserRequest(body) as boolean
+  return doValidateCreateAnonymousUserRequest(body)
 }
