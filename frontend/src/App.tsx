@@ -20,6 +20,7 @@ import SearchBeerWithNavi from './components/beer/SearchBeerWithNavi'
 import SearchBreweryWithNavi from './components/brewery/SearchBreweryWithNavi'
 import Stats from './components/stats/Stats'
 import Storages from './components/storage/Storages'
+import Style from './components/style/Style'
 import Styles from './components/style/Styles'
 import Users from './components/user/Users'
 
@@ -180,6 +181,7 @@ function App (): JSX.Element {
                 <Route path="containers" element={<Containers />} />
                 <Route path="reviews" element={<Reviews />} />
                 <Route path="styles" element={<Styles />} />
+                <Route path="styles/:styleId" element={<Style />} />
                 {isAdmin && <Route path="users" element={<Users />} />}
                 <Route path="account" element={<Account />} />
                 <Route path="stats" element={<Stats breweryId={undefined} />} />

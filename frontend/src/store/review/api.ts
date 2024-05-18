@@ -76,6 +76,15 @@ const reviewApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [ReviewTags.Review]
     }),
+    listReviewsByStyle: build.query<
+    JoinedReviewList, FilteredListReviewParams
+    >({
+      query: (params: FilteredListReviewParams) => ({
+        url: `/style/${params.id}/review?${getSorting(params.sorting)}`,
+        method: 'GET'
+      }),
+      providesTags: [ReviewTags.Review]
+    }),
     createReview: build.mutation<
     { review: Review },
     Partial<ReviewRequestWrapper>
@@ -113,6 +122,7 @@ export const {
   useListReviewsMutation,
   useListReviewsByBeerQuery,
   useListReviewsByBreweryQuery,
+  useListReviewsByStyleQuery,
   useUpdateReviewMutation
 } = reviewApi
 

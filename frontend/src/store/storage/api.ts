@@ -38,6 +38,13 @@ const storageApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [StorageTags.Storage]
     }),
+    listStoragesByStyle: build.query<StorageList, string>({
+      query: (styleId: string) => ({
+        url: `/style/${styleId}/storage`,
+        method: 'GET'
+      }),
+      providesTags: [StorageTags.Storage]
+    }),
     createStorage: build.mutation<
     { storage: Storage },
     Partial<CreateStorageParams>
@@ -57,7 +64,8 @@ export const {
   useGetStorageQuery,
   useListStoragesQuery,
   useListStoragesByBeerQuery,
-  useListStoragesByBreweryQuery
+  useListStoragesByBreweryQuery,
+  useListStoragesByStyleQuery
 } = storageApi
 
 export const { endpoints, reducerPath, reducer, middleware } = storageApi
