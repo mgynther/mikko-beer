@@ -93,6 +93,15 @@ export async function listStoragesByBrewery (
   return toJoinedStorages(storageRows)
 }
 
+export async function listStoragesByStyle (
+  db: Database,
+  styleId: string
+): Promise<JoinedStorage[]> {
+  const storageRows =
+    await storageRepository.listStoragesByStyle(db, styleId)
+  return toJoinedStorages(storageRows)
+}
+
 function toJoinedStorages (storageRows: DbJoinedStorage[]): JoinedStorage[] {
   return storageRows.map(row => ({
     id: row.storage_id,

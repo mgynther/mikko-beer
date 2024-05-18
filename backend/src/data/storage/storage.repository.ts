@@ -204,6 +204,17 @@ export async function listStoragesByBrewery (
   )
 }
 
+export async function listStoragesByStyle (
+  db: Database,
+  styleId: string
+): Promise<DbJoinedStorage[]> {
+  return await joinStorageData(db.getDb()
+    .selectFrom('beer_style as querystyle')
+    .innerJoin('beer', 'querystyle.beer', 'beer.beer_id')
+    .where('querystyle.style', '=', styleId)
+  )
+}
+
 export async function joinStorageData (
   query: SelectQueryBuilder<KyselyDatabase, 'beer', unknown>
 ): Promise<DbJoinedStorage[]> {

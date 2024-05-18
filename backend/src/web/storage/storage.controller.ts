@@ -94,6 +94,19 @@ export function storageController (router: Router): void {
   )
 
   router.get(
+    '/api/v1/style/:styleId/storage',
+    authService.authenticateViewer,
+    async (ctx) => {
+      const { styleId } = ctx.params
+      const storageResult =
+        await storageService.listStoragesByStyle(ctx.db, styleId)
+      const storages = storageResult ?? []
+
+      ctx.body = { storages }
+    }
+  )
+
+  router.get(
     '/api/v1/storage',
     authService.authenticateViewer,
     async (ctx) => {
