@@ -14,6 +14,7 @@ import './Stats.css'
 
 interface Props {
   breweryId: string | undefined
+  styleId: string | undefined
 }
 
 function Style (props: Props): JSX.Element {
@@ -31,6 +32,7 @@ function Style (props: Props): JSX.Element {
   const [maxReviewAverage, setMaxReviewAverage] = useState(10)
   const { data: styleData, isLoading } = useGetStyleStatsQuery({
     breweryId: props.breweryId,
+    styleId: props.styleId,
     sorting: {
       order: sortingOrder,
       direction: sortingDirection

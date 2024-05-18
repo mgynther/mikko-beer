@@ -6,11 +6,12 @@ import './Stats.css'
 
 interface Props {
   breweryId: string | undefined
+  styleId: string | undefined
 }
 
 function Overall (props: Props): JSX.Element {
   const { data: overallData, isLoading } =
-    useGetOverallStatsQuery(props.breweryId)
+    useGetOverallStatsQuery(props)
   const overall = overallData?.overall
   return (
     <div>

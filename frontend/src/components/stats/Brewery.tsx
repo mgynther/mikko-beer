@@ -21,10 +21,12 @@ const pageSize = 30
 
 interface Props {
   breweryId: string | undefined
+  styleId: string | undefined
 }
 
 interface TriggerParams {
   breweryId: string | undefined
+  styleId: string | undefined
   pagination: Pagination
   minReviewCount: number
   maxReviewCount: number
@@ -55,9 +57,11 @@ function Brewery (props: Props): JSX.Element {
   const [loadedBreweries, setLoadedBreweries] =
     useState<OneBreweryStats[] | undefined>(undefined)
   const breweryId = props.breweryId
+  const styleId = props.styleId
   const [breweryIdTriggerParams, setBreweryIdTriggerParams] =
   useState<TriggerParams>({
     breweryId,
+    styleId,
     pagination: giantPage,
     minReviewCount,
     maxReviewCount,
@@ -88,6 +92,7 @@ function Brewery (props: Props): JSX.Element {
   useEffect(() => {
     setBreweryIdTriggerParams({
       breweryId,
+      styleId,
       pagination: giantPage,
       minReviewCount,
       maxReviewCount,
@@ -108,7 +113,7 @@ function Brewery (props: Props): JSX.Element {
   const hasMore = breweryArray.length > 0 || loadedBreweries === undefined
 
   useEffect(() => {
-    if (breweryId === undefined) {
+    if (breweryId === undefined && styleId === undefined) {
       return
     }
     async function loadAll (): Promise<void> {
@@ -139,12 +144,13 @@ function Brewery (props: Props): JSX.Element {
   ])
 
   useEffect(() => {
-    if (breweryId !== undefined) {
+    if (breweryId !== undefined || styleId !== undefined) {
       return
     }
     const loadMore = async (): Promise<void> => {
       const result = await trigger({
         breweryId: props.breweryId,
+        styleId: props.styleId,
         pagination: {
           skip: loadedBreweries?.length ?? 0,
           size: pageSize
@@ -170,6 +176,7 @@ function Brewery (props: Props): JSX.Element {
     return infiniteScroll(checkLoad)
   }, [
     breweryId,
+    styleId,
     loadedBreweries,
     setLoadedBreweries,
     isLoading,

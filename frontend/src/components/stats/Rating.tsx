@@ -6,11 +6,12 @@ import './Stats.css'
 
 interface Props {
   breweryId: string | undefined
+  styleId: string | undefined
 }
 
 function Rating (props: Props): JSX.Element {
   const { data: ratingData, isLoading } =
-    useGetRatingStatsQuery(props.breweryId)
+    useGetRatingStatsQuery(props)
   const rating = ratingData?.rating
   return (
     <div>

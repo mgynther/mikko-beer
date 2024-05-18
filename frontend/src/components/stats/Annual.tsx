@@ -6,11 +6,12 @@ import './Stats.css'
 
 interface Props {
   breweryId: string | undefined
+  styleId: string | undefined
 }
 
 function Annual (props: Props): JSX.Element {
   const { data: annualData, isLoading } =
-    useGetAnnualStatsQuery(props.breweryId)
+    useGetAnnualStatsQuery(props)
   const annual = annualData?.annual
   return (
     <div>

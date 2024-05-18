@@ -21,6 +21,7 @@ import EditButton from '../common/EditButton'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 import ReviewList from '../review/ReviewList'
+import Stats from '../stats/Stats'
 import StorageList from '../storage/StorageList'
 
 import StyleLinks from './StyleLinks'
@@ -117,6 +118,7 @@ function Style (): JSX.Element {
           />
         </div>
       )}
+      <Stats breweryId={undefined} styleId={styleId} />
       {(storageData?.storages ?? []).length > 0 && (
         <StorageList
           isLoading={isLoadingReviews}

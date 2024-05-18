@@ -184,7 +184,9 @@ function App (): JSX.Element {
                 <Route path="styles/:styleId" element={<Style />} />
                 {isAdmin && <Route path="users" element={<Users />} />}
                 <Route path="account" element={<Account />} />
-                <Route path="stats" element={<Stats breweryId={undefined} />} />
+                <Route path="stats" element={
+                  <Stats breweryId={undefined} styleId={undefined} />
+                } />
                 <Route path="storage" element={<Storages />} />
               </React.Fragment>
             )}

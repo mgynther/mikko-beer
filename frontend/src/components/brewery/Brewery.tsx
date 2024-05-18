@@ -71,7 +71,7 @@ function Brewery (): JSX.Element {
               />
             </div>
           </div>
-          <Stats breweryId={brewery.id} />
+          <Stats breweryId={brewery.id} styleId={undefined} />
         </>
       )}
       {mode === EditableMode.Edit && initialBrewery !== undefined && (
