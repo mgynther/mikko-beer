@@ -12,8 +12,6 @@ import {
 import { useListStoragesByBeerQuery } from '../../store/storage/api'
 import { type ListDirection } from '../../store/types'
 
-import { joinSortedNames } from '../util'
-
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'
 
@@ -21,6 +19,7 @@ import BreweryLinks from '../brewery/BreweryLinks'
 import LoadingIndicator from '../common/LoadingIndicator'
 import ReviewList from '../review/ReviewList'
 import StorageList from '../storage/StorageList'
+import StyleLinks from '../style/StyleLinks'
 
 import UpdateBeer from './UpdateBeer'
 
@@ -79,7 +78,9 @@ function Beer (): JSX.Element {
           </div>
           <div className='BeerInfo'>
             <h5>Styles</h5>
-            <div>{joinSortedNames(beer.styles)}</div>
+            <div>
+              <StyleLinks styles={beer.styles} />
+            </div>
           </div>
         </>
       )}

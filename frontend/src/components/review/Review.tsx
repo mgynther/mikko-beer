@@ -10,7 +10,7 @@ import BeerLink from '../beer/BeerLink'
 import BreweryLinks from '../brewery/BreweryLinks'
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'
-import { joinSortedNames } from '../util'
+import StyleLinks from '../style/StyleLinks'
 
 import UpdateReview from './UpdateReview'
 
@@ -66,7 +66,7 @@ function Review (props: Props): JSX.Element {
               }} />
             </div>
             <div>
-              {joinSortedNames([...review.styles])}
+              <StyleLinks styles={review.styles} />
             </div>
             <div
               className={`Review-rating Review-rating-${review.rating}`}>

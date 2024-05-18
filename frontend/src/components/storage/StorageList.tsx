@@ -8,7 +8,8 @@ import { Role } from '../../store/user/types'
 import BeerLink from '../beer/BeerLink'
 import BreweryLinks from '../brewery/BreweryLinks'
 import LoadingIndicator from '../common/LoadingIndicator'
-import { formatBestBefore, joinSortedNames } from '../util'
+import StyleLinks from '../style/StyleLinks'
+import { formatBestBefore } from '../util'
 
 import './StorageList.css'
 
@@ -45,7 +46,7 @@ function StorageList (props: Props): JSX.Element {
             }}/ >
           </div>
           <div className='BeerStyles'>
-            {joinSortedNames(storage.styles)}
+            <StyleLinks styles={storage.styles} />
           </div>
           <div className='BestBefore'>
             {formatBestBefore(storage.bestBefore)}

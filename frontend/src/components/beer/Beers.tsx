@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 
 import { useLazyListBeersQuery } from '../../store/beer/api'
 import { type Beer } from '../../store/beer/types'
-import { infiniteScroll, joinSortedNames } from '../util'
+import { infiniteScroll } from '../util'
 
 import BreweryLinks from '../brewery/BreweryLinks'
+import StyleLinks from '../style/StyleLinks'
 
 import BeerLink from './BeerLink'
 import SearchBeerWithNavi from './SearchBeerWithNavi'
@@ -62,7 +63,7 @@ function Beers (): JSX.Element {
               <BreweryLinks breweries={beer.breweries} />
             </div>
             <div className='BeerStyles'>
-              {joinSortedNames(beer.styles)}
+              <StyleLinks styles={beer.styles} />
             </div>
           </div>
         ))}
