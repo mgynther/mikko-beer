@@ -121,6 +121,15 @@ describe('review tests', () => {
     expect(breweryListRes.data.reviews[0].id).to.eql(getRes.data.review.id)
     expect(breweryListRes.data.reviews[0].beerId).to.eql(getRes.data.review.beer)
 
+    const styleListRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
+      `/api/v1/style/${styleRes.data.style.id}/review/`,
+      ctx.adminAuthHeaders()
+    )
+    expect(styleListRes.status).to.equal(200)
+    expect(styleListRes.data.reviews.length).to.equal(1)
+    expect(styleListRes.data.reviews[0].id).to.eql(getRes.data.review.id)
+    expect(styleListRes.data.reviews[0].beerId).to.eql(getRes.data.review.beer)
+
     const beerListRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
       `/api/v1/beer/${beerRes.data.beer.id}/review/`,
       ctx.adminAuthHeaders()
@@ -336,6 +345,36 @@ describe('review tests', () => {
     expect(collabReview?.breweries?.length).to.equal(2)
 
     const sorting = breweryListRes.data.sorting
+    expect(sorting.order).equal('beer_name')
+    expect(sorting.direction).equal('desc')
+  })
+
+  it('should list reviews by style', async () => {
+    const { styleRes, reviewRes, collabReviewRes } = await createListDeps(ctx.adminAuthHeaders())
+
+    const styleListRes = await ctx.request.get<{
+      reviews: JoinedReview[],
+      sorting: {
+        order: ReviewListOrderProperty,
+        direction: ListDirection
+      }
+    }>(
+      `/api/v1/style/${styleRes.data.style.id}/review?order=beer_name&direction=desc`,
+      ctx.adminAuthHeaders()
+    )
+    expect(styleListRes.status).to.equal(200)
+    expect(styleListRes.data.reviews.length).to.equal(2)
+
+    const kriekReview = styleListRes.data.reviews[1]
+    expect(kriekReview?.id).to.eql(reviewRes.data.review.id)
+    expect(kriekReview?.beerId).to.eql(reviewRes.data.review.beer)
+
+    const collabReview = styleListRes.data.reviews[0]
+    expect(collabReview?.id).to.eql(collabReviewRes.data.review.id)
+    expect(collabReview?.beerId).to.eql(collabReviewRes.data.review.beer)
+    expect(collabReview?.breweries?.length).to.equal(2)
+
+    const sorting = styleListRes.data.sorting
     expect(sorting.order).equal('beer_name')
     expect(sorting.direction).equal('desc')
   })

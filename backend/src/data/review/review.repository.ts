@@ -298,6 +298,18 @@ export async function listReviewsByBrewery (
   reviewListOrder
   )
 }
+export async function listReviewsByStyle (
+  db: Database,
+  styleId: string,
+  reviewListOrder: ReviewListOrder
+): Promise<DbJoinedReview[]> {
+  return await joinReviewData(db.getDb()
+    .selectFrom('beer_style as querystyle')
+    .innerJoin('beer', 'querystyle.beer', 'beer.beer_id')
+    .where('querystyle.style', '=', styleId),
+  reviewListOrder
+  )
+}
 
 export async function joinReviewData (
   query: SelectQueryBuilder<KyselyDatabase, 'beer', unknown>,

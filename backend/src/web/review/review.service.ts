@@ -113,6 +113,16 @@ export async function listReviewsByBrewery (
   return toJoinedReviews(reviewRows)
 }
 
+export async function listReviewsByStyle (
+  db: Database,
+  styleId: string,
+  reviewListOrder: ReviewListOrder
+): Promise<JoinedReview[]> {
+  const reviewRows =
+    await reviewRepository.listReviewsByStyle(db, styleId, reviewListOrder)
+  return toJoinedReviews(reviewRows)
+}
+
 function toJoinedReviews (reviewRows: DbJoinedReview[]): JoinedReview[] {
   return reviewRows.map(row => ({
     id: row.review_id,

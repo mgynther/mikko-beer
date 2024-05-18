@@ -122,6 +122,30 @@ export function reviewController (router: Router): void {
   )
 
   router.get(
+    '/api/v1/style/:styleId/review',
+    authService.authenticateViewer,
+    async (ctx) => {
+      const { styleId } = ctx.params
+      const reviewListOrder =
+        doValidateFilteredReviewListOrder(ctx.request.query)
+      const reviewResult = await reviewService.listReviewsByStyle(
+        ctx.db,
+        styleId,
+        reviewListOrder
+      )
+      const reviews = reviewResult ?? []
+
+      ctx.body = {
+        reviews,
+        sorting: {
+          order: reviewListOrder.property,
+          direction: reviewListOrder.direction
+        }
+      }
+    }
+  )
+
+  router.get(
     '/api/v1/review',
     authService.authenticateViewer,
     async (ctx) => {

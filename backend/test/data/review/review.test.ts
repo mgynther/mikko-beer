@@ -255,4 +255,39 @@ describe('review tests', () => {
     const list = await listReviewsByBrewery(db, data.otherBrewery.brewery_id, reviewListOrder)
     testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.beer_id)
   })
+
+  async function listReviewsByStyle(db: Database, styleId: string, reviewListOrder: ReviewListOrder) {
+    return await reviewRepository.listReviewsByStyle(
+      db,
+      styleId,
+      reviewListOrder
+    )
+  }
+
+  it('list reviews by style, beer_name asc', async() => {
+    const db = ctx.db
+    const { reviews, data } = await insertMultipleReviews(10, db)
+    const reviewListOrder: ReviewListOrder =
+      { property: 'beer_name', direction: 'asc' }
+    const list = await listReviewsByStyle(db, data.otherStyle.style_id, reviewListOrder)
+    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.beer_id)
+  })
+
+  it('list reviews by style, rating desc', async() => {
+    const db = ctx.db
+    const { reviews, data } = await insertMultipleReviews(10, db)
+    const reviewListOrder: ReviewListOrder =
+      { property: 'rating', direction: 'desc' }
+    const list = await listReviewsByStyle(db, data.style.style_id, reviewListOrder)
+    testFilteredList(reviews, list, toRatingTime, descendingRatings, data.beer.beer_id)
+  })
+
+  it('list reviews by style, time asc', async() => {
+    const db = ctx.db
+    const { reviews, data } = await insertMultipleReviews(10, db)
+    const reviewListOrder: ReviewListOrder =
+      { property: 'time', direction: 'asc' }
+    const list = await listReviewsByStyle(db, data.otherStyle.style_id, reviewListOrder)
+    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.beer_id)
+  })
 })
