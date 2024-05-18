@@ -8,7 +8,7 @@ import {
 } from './style.table'
 import {
   type StyleWithParentIds,
-  type StyleWithParents
+  type StyleWithParentsAndChildren
 } from '../../core/style/style'
 
 export async function insertStyle (
@@ -76,40 +76,39 @@ export async function updateStyle (
 export async function findStyleById (
   db: Database,
   id: string
-): Promise<StyleWithParents | undefined> {
-  const styles = await db.getDb()
+): Promise<StyleWithParentsAndChildren | undefined> {
+  const stylePromise = db.getDb()
     .selectFrom('style')
-    .leftJoin(
-      'style_relationship',
-      'style.style_id',
-      'style_relationship.parent'
-    )
-    .where((eb) => eb.or([
-      eb('style_relationship.child', '=', id),
-      eb('style.style_id', '=', id)
-    ]))
-    .select([
-      'style_id',
-      'name',
-      'style.created_at',
-      'style_relationship.child as child'
-    ])
+    .where('style_id', '=', id)
+    .selectAll('style')
+    .executeTakeFirst()
+
+  const childrenPromise = db.getDb()
+    .selectFrom('style_relationship')
+    .innerJoin('style', 'style_relationship.child', 'style.style_id')
+    .where('style_relationship.parent', '=', id)
+    .selectAll('style')
     .execute()
 
-  if (styles.length === 0) {
-    return undefined
-  }
+  const parentsPromise = db.getDb()
+    .selectFrom('style_relationship')
+    .innerJoin('style', 'style_relationship.parent', 'style.style_id')
+    .where('style_relationship.child', '=', id)
+    .selectAll('style')
+    .execute()
 
-  const style = styles.find(style => style.style_id === id)
-  const parents = styles
-    .map(style => style.child === id ? style : null)
-    .filter(style => style !== null && style !== undefined) as StyleRow[]
+  const [style, children, parents] =
+    await Promise.all([stylePromise, childrenPromise, parentsPromise])
 
   if (style === null || style === undefined) return undefined
 
   return {
     id: style.style_id,
     name: style.name,
+    children: children.map(child => ({
+      id: child.style_id,
+      name: child.name
+    })),
     parents: parents.map(parent => ({
       id: parent.style_id,
       name: parent.name

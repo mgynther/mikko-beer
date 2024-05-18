@@ -5,7 +5,8 @@ export interface Style {
   name: string | null
 }
 
-export interface StyleWithParents extends Style {
+export interface StyleWithParentsAndChildren extends Style {
+  children: Style[]
   parents: Style[]
 }
 

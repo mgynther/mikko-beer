@@ -2,7 +2,10 @@ import { useState } from 'react'
 
 import { useParams } from 'react-router-dom'
 
-import { type StyleWithParentIds } from '../../store/style/types'
+import {
+  type Style as StyleType,
+  type StyleWithParentIds
+} from '../../store/style/types'
 
 import { useGetStyleQuery } from '../../store/style/api'
 import { useListReviewsByStyleQuery } from '../../store/review/api'
@@ -29,6 +32,15 @@ import './Style.css'
 
 function NotFound (): JSX.Element {
   return <div>Not found</div>
+}
+
+interface NoLinksProps {
+  styles: StyleType[]
+}
+
+function NoLinks (props: NoLinksProps): JSX.Element | null {
+  if (props.styles.length > 0) return null
+  return <>-</>
 }
 
 function Style (): JSX.Element {
@@ -79,6 +91,14 @@ function Style (): JSX.Element {
             <h5>Parents</h5>
             <div>
               <StyleLinks styles={style.parents} />
+              <NoLinks styles={style.parents} />
+            </div>
+          </div>
+          <div className='StyleInfo'>
+            <h5>Children</h5>
+            <div>
+              <StyleLinks styles={style.children} />
+              <NoLinks styles={style.children} />
             </div>
           </div>
         </>

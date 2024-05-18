@@ -7,7 +7,7 @@ import {
   type StyleList,
   StyleTags,
   type StyleWithParentIds,
-  type StyleWithParents
+  type StyleWithParentsAndChildren
 } from './types'
 import { styleStatsTagTypes } from '../stats/types'
 
@@ -18,7 +18,7 @@ interface StyleRequest {
 
 const styleApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
-    getStyle: build.query<{ style: StyleWithParents }, string>({
+    getStyle: build.query<{ style: StyleWithParentsAndChildren }, string>({
       query: (id: string) => ({
         url: `/style/${id}`,
         method: 'GET'

@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
 import { TestContext } from '../test-context'
-import { StyleWithParents } from '../../../src/core/style/style'
+import { StyleWithParentsAndChildren } from '../../../src/core/style/style'
 import { AxiosResponse } from 'axios'
 
 describe('style tests', () => {
@@ -23,7 +23,7 @@ describe('style tests', () => {
     expect(res.data.style.name).to.equal('Wild')
     expect(res.data.style.parents).to.eql([])
 
-    const getRes = await ctx.request.get<{ style: StyleWithParents }>(
+    const getRes = await ctx.request.get<{ style: StyleWithParentsAndChildren }>(
       `/api/v1/style/${res.data.style.id}`,
       ctx.adminAuthHeaders()
     )
@@ -31,6 +31,7 @@ describe('style tests', () => {
     expect(getRes.status).to.equal(200)
     expect(getRes.data.style.id).to.equal(res.data.style.id)
     expect(getRes.data.style.name).to.equal(res.data.style.name)
+    expect(getRes.data.style.children).to.eql([])
     expect(getRes.data.style.parents).to.eql([])
   })
 
@@ -55,7 +56,7 @@ describe('style tests', () => {
     expect(childRes.data.style.parents).not.to.equal(null)
     expect(childRes.data.style.parents).to.eql([ res.data.style.id ])
 
-    const getRes = await ctx.request.get<{ style: StyleWithParents }>(
+    const getRes = await ctx.request.get<{ style: StyleWithParentsAndChildren }>(
       `/api/v1/style/${childRes.data.style.id}`,
       ctx.adminAuthHeaders()
     )
@@ -63,10 +64,23 @@ describe('style tests', () => {
     expect(getRes.status).to.equal(200)
     expect(getRes.data.style.id).to.equal(childRes.data.style.id)
     expect(getRes.data.style.name).to.equal(childRes.data.style.name)
+    expect(getRes.data.style.children).to.eql([])
     expect(getRes.data.style.parents).to.eql([{
       id: res.data.style.id,
       name: res.data.style.name,
     }])
+
+    const getParentRes = await ctx.request.get<{ style: StyleWithParentsAndChildren }>(
+      `/api/v1/style/${res.data.style.id}`,
+      ctx.adminAuthHeaders()
+    )
+
+    expect(getParentRes.status).to.equal(200)
+    expect(getParentRes.data.style.children).to.eql([{
+      id: childRes.data.style.id,
+      name: childRes.data.style.name,
+    }])
+    expect(getParentRes.data.style.parents).to.eql([])
   })
 
   it('should create a child style with 2 parents', async () => {
@@ -92,7 +106,7 @@ describe('style tests', () => {
     expect(childRes.data.style.parents).not.to.equal(null)
     expect(childRes.data.style.parents).to.eql([ parent1Res.data.style.id, parent2Res.data.style.id ])
 
-    const getRes = await ctx.request.get<{ style: StyleWithParents }>(
+    const getRes = await ctx.request.get<{ style: StyleWithParentsAndChildren }>(
       `/api/v1/style/${childRes.data.style.id}`,
       ctx.adminAuthHeaders()
     )
@@ -100,6 +114,7 @@ describe('style tests', () => {
     expect(getRes.status).to.equal(200)
     expect(getRes.data.style.id).to.equal(childRes.data.style.id)
     expect(getRes.data.style.name).to.equal('Cream Ale')
+    expect(getRes.data.style.children).to.eql([])
     expect(getRes.data.style.parents).to.eql([
       {
         id: parent1Res.data.style.id,
@@ -166,7 +181,7 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    const getRes = await ctx.request.get<{ style: StyleWithParents }>(
+    const getRes = await ctx.request.get<{ style: StyleWithParentsAndChildren }>(
       `/api/v1/style/${createRes.data.style.id}`,
       ctx.adminAuthHeaders()
     )

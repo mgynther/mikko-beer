@@ -6,7 +6,7 @@ import { type Database, type Transaction } from '../../data/database'
 import {
   type CreateStyleRequest,
   type Style,
-  type StyleWithParents,
+  type StyleWithParentsAndChildren,
   type StyleWithParentIds,
   type UpdateStyleRequest
 } from '../../core/style/style'
@@ -74,7 +74,7 @@ export async function updateStyle (
 export async function findStyleById (
   db: Database,
   styleId: string
-): Promise<StyleWithParents | undefined> {
+): Promise<StyleWithParentsAndChildren | undefined> {
   const style = await styleRepository.findStyleById(db, styleId)
 
   if (style === null || style === undefined) return undefined
