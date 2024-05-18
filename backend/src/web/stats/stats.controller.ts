@@ -11,7 +11,8 @@ import {
   validBreweryStatsOrder,
   type StyleStatsOrder,
   validStyleStatsOrder,
-  validateStatsBreweryFilter,
+  type StatsBreweryStyleFilter,
+  validStatsBreweryStyleFilter,
   validateStatsFilter
 } from '../../core/stats/stats'
 
@@ -20,7 +21,7 @@ export function statsController (router: Router): void {
     '/api/v1/stats/overall',
     authService.authenticateViewer,
     async (ctx) => {
-      const statsFilter = validateStatsBreweryFilter(ctx.request.query)
+      const statsFilter = validateStatsBreweryStyleFilter(ctx.request.query)
       const overall = await statsService.getOverall(ctx.db, statsFilter)
       ctx.body = { overall }
     }
@@ -29,7 +30,7 @@ export function statsController (router: Router): void {
     '/api/v1/stats/annual',
     authService.authenticateViewer,
     async (ctx) => {
-      const statsFilter = validateStatsBreweryFilter(ctx.request.query)
+      const statsFilter = validateStatsBreweryStyleFilter(ctx.request.query)
       const annual = await statsService.getAnnual(ctx.db, statsFilter)
       ctx.body = { annual }
     }
@@ -58,7 +59,7 @@ export function statsController (router: Router): void {
     '/api/v1/stats/rating',
     authService.authenticateViewer,
     async (ctx) => {
-      const statsFilter = validateStatsBreweryFilter(ctx.request.query)
+      const statsFilter = validateStatsBreweryStyleFilter(ctx.request.query)
       const rating = await statsService.getRating(ctx.db, statsFilter)
       ctx.body = { rating }
     }
@@ -100,6 +101,20 @@ function validateStyleStatsOrder (
   if (styleStatsOrder === undefined) {
     throw new ControllerError(
       400, 'InvalidStyleStatsQuery', 'invalid style stats query')
+  }
+  return styleStatsOrder
+}
+
+function validateStatsBreweryStyleFilter (
+  query: Record<string, unknown>
+): StatsBreweryStyleFilter {
+  const styleStatsOrder = validStatsBreweryStyleFilter(query)
+  if (styleStatsOrder === undefined) {
+    throw new ControllerError(
+      400,
+      'InvalidStatsBreweryAndStyleFilter',
+      'invalid filter with both brewery and style'
+    )
   }
   return styleStatsOrder
 }

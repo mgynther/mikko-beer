@@ -37,12 +37,14 @@ export type RatingStats = Array<{
   count: string
 }>
 
-export interface StatsBreweryFilter {
-  brewery: string
+export interface StatsBreweryStyleFilter {
+  brewery: string | undefined
+  style: string | undefined
 }
 
 export interface StatsFilter {
   brewery: string | undefined
+  style: string | undefined
   maxReviewCount: number
   minReviewCount: number
   maxReviewAverage: number
@@ -63,20 +65,29 @@ export interface StyleStatsOrder {
   direction: ListDirection
 }
 
-export function validateStatsBreweryFilter (
+export function validStatsBreweryStyleFilter (
   query: Record<string, unknown> | undefined
-): StatsBreweryFilter | undefined {
+): StatsBreweryStyleFilter | undefined {
+  const noFilter = { brewery: undefined, style: undefined }
   if (query === undefined) {
+    return noFilter
+  }
+  const { brewery, style } = query
+  const validBrewery = typeof brewery === 'string' && brewery.length > 0
+    ? brewery
+    : undefined
+  const validStyle = typeof style === 'string' && style.length > 0
+    ? style
+    : undefined
+  if (validBrewery !== undefined && validStyle !== undefined) {
+    // Both are not supported as it's currently not a valid use case and
+    // queries are not trivial.
     return undefined
   }
-  const { brewery } = query
-  if (brewery === undefined) {
-    return undefined
+  return {
+    brewery: validBrewery,
+    style: validStyle
   }
-  if (typeof brewery === 'string' && brewery.length > 0) {
-    return { brewery }
-  }
-  return undefined
 }
 
 export function validateStatsFilter (
@@ -84,6 +95,7 @@ export function validateStatsFilter (
 ): StatsFilter {
   const result: StatsFilter = {
     brewery: undefined,
+    style: undefined,
     maxReviewAverage: 10,
     minReviewAverage: 4,
     maxReviewCount: Infinity,
@@ -92,8 +104,12 @@ export function validateStatsFilter (
   if (query === undefined) {
     return result
   }
-  const breweryFilter = validateStatsBreweryFilter(query)
-  result.brewery = breweryFilter?.brewery
+  const breweryFilter = validStatsBreweryStyleFilter(query)
+  if (breweryFilter === undefined) {
+    return result
+  }
+  result.brewery = breweryFilter.brewery
+  result.style = breweryFilter.style
   const {
     min_review_count,
     max_review_count,

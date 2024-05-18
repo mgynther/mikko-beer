@@ -1,40 +1,58 @@
 import { expect } from 'chai'
 
 import {
-  validateStatsBreweryFilter,
+  validStatsBreweryStyleFilter,
   validateStatsFilter,
   type StatsFilter
 } from '../../../src/core/stats/stats'
 
-describe('stats brewery filter unit tests', () => {
+const noFilter = {
+  brewery: undefined,
+  style: undefined
+}
+
+describe('stats brewery style filter unit tests', () => {
   it('validate undefined filter', () => {
-    expect(validateStatsBreweryFilter(undefined)).to.equal(undefined)
+    expect(validStatsBreweryStyleFilter(undefined)).to.eql(noFilter)
   })
 
   it('validate empty filter', () => {
-    expect(validateStatsBreweryFilter({})).to.equal(undefined)
+    expect(validStatsBreweryStyleFilter({})).to.eql(noFilter)
   })
 
   it('validate brewery filter', () => {
     expect(
-      validateStatsBreweryFilter({ brewery: 'testing' })
-    ).to.eql({ brewery: 'testing' })
+      validStatsBreweryStyleFilter({ brewery: 'testing' })
+    ).to.eql({ brewery: 'testing', style: undefined })
+  })
+
+  it('validate style filter', () => {
+    expect(
+      validStatsBreweryStyleFilter({ style: 'testing' })
+    ).to.eql({ brewery: undefined, style: 'testing' })
+  })
+
+  it('validate brewery and style filter', () => {
+    expect(
+      validStatsBreweryStyleFilter({ brewery: 'testing', style: 'testing' })
+    ).to.equal(undefined)
   })
 
   it('validate invalid brewery filter', () => {
     expect(
-      validateStatsBreweryFilter({ brewery: 123 })).to.equal(undefined)
+      validStatsBreweryStyleFilter({ brewery: 123 })).to.eql(noFilter)
   })
 
   it('validate unknown filter', () => {
     expect(
-      validateStatsBreweryFilter({ additional: 'testing' })).to.equal(undefined)
+      validStatsBreweryStyleFilter({ additional: 'testing' })).to.eql(noFilter)
   })
 })
 
 describe('stats filter unit tests', () => {
   const defaultFilter: StatsFilter = {
     brewery: undefined,
+    style: undefined,
     maxReviewAverage: 10,
     minReviewAverage: 4,
     maxReviewCount: Infinity,

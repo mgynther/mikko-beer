@@ -12,6 +12,7 @@ import { type InsertedData, insertMultipleReviews } from '../review-helpers'
 
 const defaultFilter: StatsFilter = {
   brewery: undefined,
+  style: undefined,
   maxReviewAverage: 10,
   minReviewAverage: 4,
   maxReviewCount: Infinity,
@@ -129,6 +130,18 @@ describe('style stats tests', () => {
       { property: 'style_name', direction: 'desc' }
     )
     expect(stats).eql([ otherStyle ])
+  })
+
+  it('filter by style', async () => {
+    const { stats, style } = await getResults(
+      ctx.db,
+      (data: InsertedData) => ({
+        ...defaultFilter,
+        style: data.style.style_id
+      }),
+      { property: 'style_name', direction: 'desc' }
+    )
+    expect(stats).eql([ style ])
   })
 
   it('filter by min review count', async () => {

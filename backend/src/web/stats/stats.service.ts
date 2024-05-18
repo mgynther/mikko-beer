@@ -9,7 +9,7 @@ import {
   type BreweryStatsOrder,
   type OverallStats,
   type RatingStats,
-  type StatsBreweryFilter,
+  type StatsBreweryStyleFilter,
   type StatsFilter,
   type StyleStats,
   type StyleStatsOrder
@@ -17,7 +17,7 @@ import {
 
 export async function getAnnual (
   db: Database,
-  statsFilter: StatsBreweryFilter | undefined
+  statsFilter: StatsBreweryStyleFilter
 ): Promise<AnnualStats> {
   return await statsRepository.getAnnual(db, statsFilter)
 }
@@ -38,14 +38,14 @@ export async function getBrewery (
 
 export async function getOverall (
   db: Database,
-  statsFilter: StatsBreweryFilter | undefined
+  statsFilter: StatsBreweryStyleFilter
 ): Promise<OverallStats> {
   return await statsRepository.getOverall(db, statsFilter)
 }
 
 export async function getRating (
   db: Database,
-  statsFilter: StatsBreweryFilter | undefined
+  statsFilter: StatsBreweryStyleFilter
 ): Promise<RatingStats> {
   return await statsRepository.getRating(db, statsFilter)
 }

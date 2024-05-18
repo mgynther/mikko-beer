@@ -13,6 +13,7 @@ import { type InsertedData, insertMultipleReviews } from '../review-helpers'
 
 const defaultFilter: StatsFilter = {
   brewery: undefined,
+  style: undefined,
   maxReviewAverage: 10,
   minReviewAverage: 4,
   maxReviewCount: Infinity,
@@ -65,7 +66,13 @@ describe('brewery stats tests', () => {
       breweryId: data.otherBrewery.brewery_id,
       breweryName: data.otherBrewery.name
     }
-    return { stats, brewery, otherBrewery }
+    const style = {
+      reviewAverage: avg(reviews, data.style.style_id),
+      reviewCount: '4',
+      styleId: data.style.style_id,
+      styleName: data.style.name
+    }
+    return { stats, brewery, otherBrewery, style }
   }
 
   const allResults: Pagination = { size: 10, skip: 0 }
@@ -141,6 +148,19 @@ describe('brewery stats tests', () => {
       { property: 'brewery_name', direction: 'desc' }
     )
     expect(stats).eql([ otherBrewery ])
+  })
+
+  it('filter by style', async () => {
+    const { stats, brewery } = await getResults(
+      ctx.db,
+      allResults,
+      (data: InsertedData) => ({
+        ...defaultFilter,
+        style: data.style.style_id
+      }),
+      { property: 'brewery_name', direction: 'desc' }
+    )
+    expect(stats).eql([ brewery ])
   })
 
   it('filter by min review count', async () => {

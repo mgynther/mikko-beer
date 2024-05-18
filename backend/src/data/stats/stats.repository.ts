@@ -1,4 +1,4 @@
-import { type SelectQueryBuilder, sql } from 'kysely'
+import { type SelectQueryBuilder, type RawBuilder, sql } from 'kysely'
 
 import { type Database, type KyselyDatabase } from '../database'
 import { type Pagination } from '../../core/pagination'
@@ -9,7 +9,7 @@ import {
   type BreweryStatsOrder,
   type OverallStats,
   type RatingStats,
-  type StatsBreweryFilter,
+  type StatsBreweryStyleFilter,
   type StatsFilter,
   type StyleStats,
   type StyleStatsOrder
@@ -30,22 +30,44 @@ function noInfinity (value: number): number {
   return value
 }
 
+function breweryStyleFilter (
+  statsFilter: StatsBreweryStyleFilter
+): RawBuilder<unknown> {
+  if (statsFilter.brewery !== undefined && statsFilter.style !== undefined) {
+    return sql`
+      INNER JOIN beer ON review.beer = beer.beer_id
+      INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer
+      INNER JOIN beer_style ON beer.beer_id = beer_style.beer
+      WHERE beer_brewery.brewery = ${statsFilter.brewery}
+      AND beer_style.style = ${statsFilter.style}
+      `
+  }
+  if (statsFilter.brewery !== undefined) {
+    return sql`
+      INNER JOIN beer ON review.beer = beer.beer_id
+      INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer
+      WHERE beer_brewery.brewery = ${statsFilter.brewery}
+      `
+  }
+  if (statsFilter.style !== undefined) {
+    return sql`
+      INNER JOIN beer ON review.beer = beer.beer_id
+      INNER JOIN beer_style ON beer.beer_id = beer_style.beer
+      WHERE beer_style.style = ${statsFilter.style}
+      `
+  }
+  return sql``
+}
+
 export async function getAnnual (
   db: Database,
-  statsFilter: StatsBreweryFilter | undefined
+  statsFilter: StatsBreweryStyleFilter
 ): Promise<AnnualStats> {
   const annualQuery = sql`SELECT
     COUNT(1) as review_count,
     AVG(rating) as review_average,
     DATE_PART('YEAR', time) as year FROM review
-    ${statsFilter === undefined
-      ? sql``
-      : sql`
-      INNER JOIN beer ON review.beer = beer.beer_id
-      INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer
-      WHERE beer_brewery.brewery = ${statsFilter.brewery}
-      `
-    }
+    ${breweryStyleFilter(statsFilter)}
     GROUP BY year
     ORDER BY year ASC
   `
@@ -109,25 +131,40 @@ export async function getBrewery (
   statsFilter: StatsFilter,
   breweryStatsOrder: BreweryStatsOrder
 ): Promise<BreweryStats> {
-  let breweryQuery = db.getDb()
+  let tempQuery = db.getDb()
     .selectFrom('review')
     .innerJoin('beer', 'review.beer', 'beer.beer_id')
     .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
     .innerJoin('brewery', 'beer_brewery.brewery', 'brewery.brewery_id')
-    .select(({ fn }) => [
-      fn.count<number>('review.review_id').as('review_count'),
-      fn.avg<number>('review.rating').as('review_average'),
-      'brewery.brewery_id as brewery_id',
-      'brewery.name as brewery_name'
-    ])
+
+  if (statsFilter.style !== undefined) {
+    tempQuery = tempQuery
+      .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
+      .where('beer_style.style', '=', statsFilter.style)
+  }
+
+  let breweryQuery = tempQuery.select(({ fn }) => [
+    fn.count<number>('review.review_id').as('review_count'),
+    fn.avg<number>('review.rating').as('review_average'),
+    'brewery.brewery_id as brewery_id',
+    'brewery.name as brewery_name'
+  ])
 
   if (statsFilter.brewery !== undefined) {
-    breweryQuery = db.getDb()
+    let query = db.getDb()
       .selectFrom('beer_brewery as querybrewery')
       .innerJoin('beer', 'querybrewery.beer', 'beer.beer_id')
       .innerJoin('review', 'beer.beer_id', 'review.beer')
       .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
       .innerJoin('brewery', 'beer_brewery.brewery', 'brewery.brewery_id')
+
+    if (statsFilter.style !== undefined) {
+      query = query
+        .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
+        .where('beer_style.style', '=', statsFilter.style)
+    }
+
+    breweryQuery = query
       .where('querybrewery.brewery', '=', statsFilter.brewery)
       .select(({ fn }) => [
         fn.count<number>('review.review_id').as('review_count'),
@@ -282,31 +319,84 @@ async function getBreweryOverall (
   }
 }
 
+async function getStyleOverall (
+  db: Database,
+  style: string
+): Promise<OverallStats> {
+  const beerQuery = db.getDb()
+    .selectFrom('beer_style as querystyle')
+
+  const beerStatsQuery = beerQuery
+    .innerJoin('beer_style', 'querystyle.beer', 'beer_style.beer')
+    .innerJoin('beer_brewery', 'querystyle.beer', 'beer_brewery.beer')
+    .select(({ fn }) => [
+      fn.count<number>('querystyle.beer').distinct().as('beer_count'),
+      fn.count<number>('beer_brewery.brewery').distinct().as('brewery_count'),
+      fn.count<number>('beer_style.style').distinct().as('style_count')
+    ])
+    .where('querystyle.style', '=', style)
+
+  const containerQuery = beerQuery
+    .leftJoin('review', 'querystyle.beer', 'review.beer')
+    .leftJoin('storage', 'querystyle.beer', 'storage.beer')
+    .select([
+      'review.container as review_container',
+      'storage.container as storage_container'
+    ])
+    .where('querystyle.style', '=', style)
+
+  const reviewQuery = db.getDb()
+    .selectFrom('beer_style')
+    .innerJoin('review', 'beer_style.beer', 'review.beer')
+    .select(({ fn }) => [
+      fn.count<number>('review.review_id').as('review_count'),
+      fn.avg<number>('review.rating').as('review_average'),
+      fn.count<number>('review.beer')
+        .distinct().as('distinct_beer_review_count')
+    ])
+    .where('beer_style.style', '=', style)
+
+  const [beerStatsResults, containerResults, reviewStats] =
+    await Promise.all([
+      beerStatsQuery.execute(),
+      containerQuery.execute(),
+      reviewQuery.execute()
+    ])
+  const containerCount = countContainerIds(containerResults)
+
+  return {
+    beerCount: `${beerStatsResults[0].beer_count}`,
+    breweryCount: `${beerStatsResults[0].brewery_count}`,
+    containerCount: `${containerCount}`,
+    distinctBeerReviewCount: `${reviewStats[0].distinct_beer_review_count}`,
+    reviewAverage: round(reviewStats[0].review_average, 2),
+    reviewCount: `${reviewStats[0].review_count}`,
+    styleCount: `${beerStatsResults[0].style_count}`
+  }
+}
+
 export async function getOverall (
   db: Database,
-  statsFilter: StatsBreweryFilter | undefined
+  statsFilter: StatsBreweryStyleFilter
 ): Promise<OverallStats> {
-  if (statsFilter === undefined) {
-    return await getFullOverall(db)
+  // NOTE both brewery and style are not supported.
+  if (statsFilter.brewery !== undefined) {
+    return await getBreweryOverall(db, statsFilter.brewery)
   }
-  return await getBreweryOverall(db, statsFilter.brewery)
+  if (statsFilter.style !== undefined) {
+    return await getStyleOverall(db, statsFilter.style)
+  }
+  return await getFullOverall(db)
 }
 
 export async function getRating (
   db: Database,
-  statsFilter: StatsBreweryFilter | undefined
+  statsFilter: StatsBreweryStyleFilter
 ): Promise<RatingStats> {
   const styleQuery = sql`SELECT
     review.rating as rating,
     COUNT(1) as count
-    FROM review ${statsFilter === undefined
-? sql``
-      : sql`
-      INNER JOIN beer ON review.beer = beer.beer_id
-      INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer
-      WHERE beer_brewery.brewery = ${statsFilter.brewery}
-      `
-    }
+    FROM review ${breweryStyleFilter(statsFilter)}
     GROUP BY review.rating
     ORDER BY review.rating ASC
   `
@@ -375,9 +465,15 @@ export async function getStyle (
       .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
       .where('beer_brewery.brewery', '=', statsFilter.brewery)
   }
-  const styleQuery = beerQuery
+  let styleQuery = beerQuery
     .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
     .innerJoin('style', 'beer_style.style', 'style.style_id')
+  if (statsFilter.style !== undefined) {
+    styleQuery = styleQuery
+      .where('beer_style.style', '=', statsFilter.style)
+  }
+
+  const statsQuery = styleQuery
     .select(({ fn }) => [
       fn.count<number>('review.review_id').as('review_count'),
       fn.avg<number>('review.rating').as('review_average'),
@@ -386,7 +482,7 @@ export async function getStyle (
     ])
 
   return (await styleOrderBy(
-    styleQuery
+    statsQuery
       .groupBy('style_id')
       .having((eb) => eb.fn.avg(
         'review.rating'), '<=', statsFilter.maxReviewAverage
