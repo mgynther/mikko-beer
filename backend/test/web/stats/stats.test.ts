@@ -757,6 +757,6 @@ describe('stats tests', () => {
       }
     ])
     expect(kriekRatings.length).to.equal(3)
-    expect(kriekAverage).to.equal(kriekAverage)
+    expect(kriekAverage).to.equal('6.67')
   })
 })
