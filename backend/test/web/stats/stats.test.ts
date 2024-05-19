@@ -759,4 +759,36 @@ describe('stats tests', () => {
     expect(kriekRatings.length).to.equal(3)
     expect(kriekAverage).to.equal('6.67')
   })
+
+  it('should get style stats by style', async () => {
+    const { styles } = await createDeps(ctx.adminAuthHeaders())
+
+    const styleId = styles[0].data.style.id
+    const order = '&order=average&direction=desc'
+    const statsRes = await ctx.request.get<{ style: StyleStats }>(
+      `/api/v1/stats/style?style=${styleId}${order}`,
+      ctx.adminAuthHeaders()
+    )
+    expect(statsRes.status).to.equal(200)
+    const kriekStyle = styles[0].data.style
+    expect(kriekStyle.name).to.equal('Kriek')
+    const ipaStyle = styles[1].data.style
+    expect(ipaStyle.name).to.equal('IPA')
+
+    expect(statsRes.data.style).to.eql([
+      {
+        // Collab reviews only.
+        reviewCount: '2',
+        reviewAverage: '7.50',
+        styleId: ipaStyle.id,
+        styleName: ipaStyle.name
+      },
+      {
+        reviewCount: '3',
+        reviewAverage: '6.67',
+        styleId: kriekStyle.id,
+        styleName: kriekStyle.name
+      }
+    ])
+  })
 })

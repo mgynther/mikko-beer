@@ -460,18 +460,21 @@ export async function getStyle (
   let beerQuery = db.getDb()
     .selectFrom('review')
     .innerJoin('beer', 'review.beer', 'beer.beer_id')
+  if (statsFilter.style !== undefined) {
+    beerQuery = db.getDb()
+      .selectFrom('beer_style as querystyle')
+      .where('querystyle.style', '=', statsFilter.style)
+      .innerJoin('beer', 'querystyle.beer', 'beer.beer_id')
+      .innerJoin('review', 'beer.beer_id', 'review.beer')
+  }
   if (statsFilter.brewery !== undefined) {
     beerQuery = beerQuery
       .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
       .where('beer_brewery.brewery', '=', statsFilter.brewery)
   }
-  let styleQuery = beerQuery
+  const styleQuery = beerQuery
     .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
     .innerJoin('style', 'beer_style.style', 'style.style_id')
-  if (statsFilter.style !== undefined) {
-    styleQuery = styleQuery
-      .where('beer_style.style', '=', statsFilter.style)
-  }
 
   const statsQuery = styleQuery
     .select(({ fn }) => [
