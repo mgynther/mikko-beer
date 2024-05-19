@@ -163,6 +163,18 @@ function getOrderByBeerName (direction: ListDirection) {
   }
 }
 
+// Note that this completely ignores collaborations. If name sorting is wanted
+// to take the brewery list name into account, it needs to be done in combining
+// the rows.
+function getOrderByBreweryName (direction: ListDirection) {
+  return (query: ListQueryBuilder): ListQueryBuilder => {
+    return query
+      .orderBy('brewery_name', direction)
+      .orderBy('beer_name', 'asc')
+      .orderBy('review.time', 'asc')
+  }
+}
+
 function getOrderByRating (direction: ListDirection) {
   return (query: ListQueryBuilder): ListQueryBuilder => {
     return query
@@ -185,6 +197,12 @@ function getListQueryHelper (
       orderBy: getOrderByBeerName(reviewListOrder.direction)
     }
   }
+  if (reviewListOrder.property === 'brewery_name') {
+    return {
+      selectQuery: getListQueryByRating(reviewListOrder.direction),
+      orderBy: getOrderByBreweryName(reviewListOrder.direction)
+    }
+  }
   if (reviewListOrder.property === 'rating') {
     return {
       selectQuery: getListQueryByRating(reviewListOrder.direction),
@@ -202,6 +220,9 @@ function getOrderBy (
 ): OrderByGetter {
   if (reviewListOrder.property === 'beer_name') {
     return getOrderByBeerName(reviewListOrder.direction)
+  }
+  if (reviewListOrder.property === 'brewery_name') {
+    return getOrderByBreweryName(reviewListOrder.direction)
   }
   if (reviewListOrder.property === 'rating') {
     return getOrderByRating(reviewListOrder.direction)

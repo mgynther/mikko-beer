@@ -74,4 +74,11 @@ describe('review list order unit tests', () => {
     )
     expect(result).eql({ property: 'beer_name', direction: 'desc' })
   })
+
+  it('brewery_name asc', () => {
+    const result = validReviewListOrder(
+      { order: 'brewery_name', direction: 'asc' }, 'time', 'desc'
+    )
+    expect(result).eql({ property: 'brewery_name', direction: 'asc' })
+  })
 })

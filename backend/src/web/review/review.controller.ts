@@ -200,6 +200,10 @@ function doValidateFullReviewListOrder (
     throw new ControllerError(
       400, 'InvalidReviewListQuery', 'invalid use of beer_name order')
   }
+  if (validated.property === 'brewery_name') {
+    throw new ControllerError(
+      400, 'InvalidReviewListQuery', 'invalid use of brewery order')
+  }
   return validated
 }
 

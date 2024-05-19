@@ -46,7 +46,11 @@ export interface ReviewRequest {
   time: Date
 }
 
-export type ReviewListOrderProperty = 'beer_name' | 'rating' | 'time'
+export type ReviewListOrderProperty =
+  | 'beer_name'
+  | 'brewery_name'
+  | 'rating'
+  | 'time'
 
 export interface ReviewListOrder {
   property: ReviewListOrderProperty
@@ -101,7 +105,7 @@ const doValidateReviewListOrder =
     type: 'object',
     properties: {
       property: {
-        enum: ['beer_name', 'rating', 'time']
+        enum: ['beer_name', 'brewery_name', 'rating', 'time']
       },
       direction: directionValidation
     },

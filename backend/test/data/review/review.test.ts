@@ -59,6 +59,37 @@ describe('review tests', () => {
     })
   })
 
+  it('list reviews, brewery_name desc', async() => {
+    const db = ctx.db
+    const { data } = await insertMultipleReviews(10, db)
+    const reviewListOrder: ReviewListOrder =
+      { property: 'brewery_name', direction: 'desc' }
+    const list = await listReviews(db, reviewListOrder)
+    expect(list.length).to.equal(10);
+    const start = new Array(5).fill(1).map(_ => data.brewery.name)
+    const end = new Array(5).fill(1).map(_ => data.otherBrewery.name)
+    const expectedNames = [...start, ...end]
+    expect(list.map(item => item.breweries[0].name)).to.eql(expectedNames)
+    function reviewToTime(row: DbJoinedReview): Date {
+      return row.time
+    }
+
+    const breweryReviewTimes = list.slice(0, 5).map(reviewToTime)
+    expect(breweryReviewTimes.length).to.equal(5)
+    const expectedBreweryReviewTimes = [...breweryReviewTimes]
+    function sortDate(a: Date, b: Date) {
+      return a.getTime() - b.getTime()
+    }
+    expectedBreweryReviewTimes.sort(sortDate)
+    expect(breweryReviewTimes).to.eql(expectedBreweryReviewTimes)
+
+    const otherBreweryReviewTimes = list.slice(5, 10).map(reviewToTime)
+    expect(otherBreweryReviewTimes.length).to.equal(5)
+    const expectedOtherBreweryReviewTimes = [...otherBreweryReviewTimes]
+    expectedOtherBreweryReviewTimes.sort(sortDate)
+    expect(otherBreweryReviewTimes).to.eql(expectedOtherBreweryReviewTimes)
+  })
+
   function toTime(review: DbJoinedReview | ReviewRow): Date {
     return review.time
   }
@@ -290,4 +321,5 @@ describe('review tests', () => {
     const list = await listReviewsByStyle(db, data.otherStyle.style_id, reviewListOrder)
     testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.beer_id)
   })
+
 })
