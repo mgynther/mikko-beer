@@ -7,6 +7,7 @@ import { type StyleStatsSortingOrder } from '../../store/stats/types'
 import { type ListDirection } from '../../store/types'
 import LoadingIndicator from '../common/LoadingIndicator'
 import TabButton from '../common/TabButton'
+import StyleLink from '../style/StyleLink'
 
 import Filters from './Filters'
 
@@ -117,7 +118,12 @@ function Style (props: Props): JSX.Element {
         <tbody>
           {style?.map(style => (
             <tr key={style.styleId}>
-              <td className='StatsNameColumn'>{style.styleName}</td>
+              <td className='StatsNameColumn'>
+                <StyleLink style={{
+                  id: style.styleId,
+                  name: style.styleName
+                }} />
+              </td>
               <td className='StatsNumColumn'>{style.reviewCount}</td>
               <td className='StatsNumColumn'>{style.reviewAverage}</td>
             </tr>
