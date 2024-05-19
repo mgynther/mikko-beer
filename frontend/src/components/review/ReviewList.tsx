@@ -25,6 +25,8 @@ export function ReviewHeading (
     return props.sorting?.order === property
   }
   const direction = props.sorting?.direction
+  const breweryNameTitle =
+    formatTitle('Breweries', isSelected('brewery_name'), direction)
   const nameTitle = formatTitle('Name', isSelected('beer_name'), direction)
   const ratingTitle = formatTitle('Rating', isSelected('rating'), direction)
   const timeTitle = formatTitle('Time', isSelected('time'), direction)
@@ -47,7 +49,15 @@ export function ReviewHeading (
   }
   return (
     <div className='Review-heading'>
-      <div>Breweries</div>
+      {!isSortingSupported('brewery_name') &&
+        <div>Brewerires</div>
+      }
+      {isSortingSupported('brewery_name') &&
+        <TabButton
+          title={breweryNameTitle}
+          onClick={createClickHandler('brewery_name')}
+          isCompact={true}
+          isSelected={props.sorting?.order === 'brewery_name'} />}
       {!isSortingSupported('beer_name') &&
         <div>Name</div>
       }

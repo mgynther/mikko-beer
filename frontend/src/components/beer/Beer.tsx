@@ -116,7 +116,7 @@ function Beer (): JSX.Element {
             doSetDirection(sorting.direction)
           }
         }}
-        supportedSorting={['beer_name', 'rating', 'time']}
+        supportedSorting={['beer_name', 'brewery_name', 'rating', 'time']}
         onChanged={() => {}}
       />
     </div>

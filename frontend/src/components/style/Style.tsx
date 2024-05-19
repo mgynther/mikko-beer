@@ -46,7 +46,7 @@ function NoLinks (props: NoLinksProps): JSX.Element | null {
 
 function Style (): JSX.Element {
   const { styleId } = useParams()
-  const [order, doSetOrder] = useState<ReviewSortingOrder>('beer_name')
+  const [order, doSetOrder] = useState<ReviewSortingOrder>('brewery_name')
   const [direction, doSetDirection] = useState<ListDirection>('asc')
   const [mode, setMode] = useState(EditableMode.View)
   const [initialStyle, setInitialStyle] =
@@ -139,7 +139,7 @@ function Style (): JSX.Element {
             doSetDirection(sorting.direction)
           }
         }}
-        supportedSorting={['beer_name', 'rating', 'time']}
+        supportedSorting={['beer_name', 'brewery_name', 'rating', 'time']}
         onChanged={() => {}}
       />
     </>

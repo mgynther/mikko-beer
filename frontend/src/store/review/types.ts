@@ -51,7 +51,11 @@ export interface ReviewList {
   reviews: Review[]
 }
 
-export type ReviewSortingOrder = 'beer_name' | 'rating' | 'time'
+export type ReviewSortingOrder =
+  | 'beer_name'
+  | 'brewery_name'
+  | 'rating'
+  | 'time'
 
 export interface ReviewSorting {
   order: ReviewSortingOrder
