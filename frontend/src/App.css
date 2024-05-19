@@ -69,6 +69,11 @@ body.light a {
   color: black;
 }
 
+.RowLike {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
 .RowLike:nth-child(odd),
 tr:nth-child(odd) {
   background: rgba(0,0,0,0.2)
