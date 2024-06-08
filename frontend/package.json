@@ -4,7 +4,7 @@
   "author": "Mikko Gynther",
   "scripts": {
     "dev": "VITE_BACKEND_URL=http://localhost:3001 vite",
-    "build": "tsc && VITE_BACKEND_URL=https://mikkolut.net vite build",
+    "build": "tsc && vite build",
     "lint": "eslint --fix . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "VITE_BACKEND_URL=http://localhost:3001 npx jest",
     "preview": "vite preview"
