@@ -24,16 +24,12 @@ export async function createStyle (
     name: request.name
   })
 
-  // TODO It might be a good idea to insert all on one request.
-  const relationships = (request.parents != null)
-    ? request.parents.map(async (parent) => {
-      return await styleRepository.insertStyleRelationship(trx, {
+  if (request.parents !== undefined) {
+    await styleRepository.insertStyleRelationships(trx, request.parents.map(parent => ({
         parent,
         child: style.style_id
-      })
-    })
-    : []
-  await Promise.all(relationships)
+      })))
+  }
 
   return {
     ...styleRowToStyle(style),
@@ -52,18 +48,14 @@ export async function updateStyle (
     name: request.name
   })
 
-  await styleRepository.deleteStyleChildRelationships(trx, styleId)
-
-  // TODO It might be a good idea to insert all on one request.
-  const relationships = (request.parents != null)
-    ? request.parents.map(async (parent) => {
-      return await styleRepository.insertStyleRelationship(trx, {
+  await Promise.all([
+    styleRepository.deleteStyleChildRelationships(trx, styleId),
+    request.parents === undefined ? () => {} :
+    styleRepository.insertStyleRelationships(trx, request.parents.map(parent => ({
         parent,
         child: style.style_id
-      })
-    })
-    : []
-  await Promise.all(relationships)
+    })))
+  ])
 
   return {
     ...styleRowToStyle(style),

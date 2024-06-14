@@ -24,13 +24,13 @@ export async function insertStyle (
   return insertedStyle
 }
 
-export async function insertStyleRelationship (
+export async function insertStyleRelationships (
   trx: Transaction,
-  styleRelationship: InsertableStyleRelationshipRow
+  styleRelationships: InsertableStyleRelationshipRow[]
 ): Promise<StyleRelationshipRow> {
   const insertedStyle = await trx.trx()
     .insertInto('style_relationship')
-    .values(styleRelationship)
+    .values(styleRelationships)
     .returningAll()
     .executeTakeFirstOrThrow()
 
