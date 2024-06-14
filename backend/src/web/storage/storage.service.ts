@@ -57,17 +57,6 @@ export async function findStorageById (
   return joined?.[0]
 }
 
-export async function lockStorageById (
-  trx: Transaction,
-  id: string
-): Promise<Storage | undefined> {
-  const storageRow = await storageRepository.lockStorageById(trx, id)
-
-  if (storageRow != null) {
-    return storageRowToStorage(storageRow)
-  }
-}
-
 export async function listStorages (
   db: Database,
   pagination: Pagination

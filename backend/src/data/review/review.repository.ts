@@ -71,28 +71,6 @@ export async function findReviewById (
   return reviewRow
 }
 
-export async function lockReviewById (
-  trx: Transaction,
-  id: string
-): Promise<ReviewRow | undefined> {
-  return await lockReview(trx, 'review_id', id)
-}
-
-async function lockReview (
-  trx: Transaction,
-  column: 'review_id',
-  value: string
-): Promise<ReviewRow | undefined> {
-  const review = await trx.trx()
-    .selectFrom('review')
-    .where(column, '=', value)
-    .selectAll('review')
-    .forUpdate()
-    .executeTakeFirst()
-
-  return review
-}
-
 interface ReviewTableRn extends ReviewTable {
   rn: number
 }

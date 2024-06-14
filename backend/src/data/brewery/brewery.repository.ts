@@ -57,28 +57,6 @@ export async function findBreweryById (
   return brewery
 }
 
-export async function lockBreweryById (
-  trx: Transaction,
-  id: string
-): Promise<BreweryRow | undefined> {
-  return await lockBrewery(trx, 'brewery_id', id)
-}
-
-async function lockBrewery (
-  trx: Transaction,
-  column: 'brewery_id',
-  value: string
-): Promise<BreweryRow | undefined> {
-  const brewery = await trx.trx()
-    .selectFrom('brewery')
-    .where(column, '=', value)
-    .selectAll('brewery')
-    .forUpdate()
-    .executeTakeFirst()
-
-  return brewery
-}
-
 export async function listBreweries (
   db: Database,
   pagination: Pagination

@@ -62,28 +62,6 @@ export async function findContainerById (
   }
 }
 
-export async function lockContainerById (
-  trx: Transaction,
-  id: string
-): Promise<ContainerRow | undefined> {
-  return await lockContainer(trx, 'container_id', id)
-}
-
-async function lockContainer (
-  trx: Transaction,
-  column: 'container_id',
-  value: string
-): Promise<ContainerRow | undefined> {
-  const container = await trx.trx()
-    .selectFrom('container')
-    .where(column, '=', value)
-    .selectAll('container')
-    .forUpdate()
-    .executeTakeFirst()
-
-  return container
-}
-
 export async function listContainers (
   db: Database
 ): Promise<ContainerRow[] | undefined> {

@@ -52,17 +52,6 @@ export async function findContainerById (
   return container
 }
 
-export async function lockContainerById (
-  trx: Transaction,
-  id: string
-): Promise<Container | undefined> {
-  const containerRow = await containerRepository.lockContainerById(trx, id)
-
-  if (containerRow != null) {
-    return containerRowToContainer(containerRow)
-  }
-}
-
 export async function listContainers (
   db: Database
 ): Promise<Container[] | undefined> {

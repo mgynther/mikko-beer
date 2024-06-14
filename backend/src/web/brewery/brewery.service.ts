@@ -45,17 +45,6 @@ export async function findBreweryById (
   }
 }
 
-export async function lockBreweryById (
-  trx: Transaction,
-  id: string
-): Promise<Brewery | undefined> {
-  const breweryRow = await breweryRepository.lockBreweryById(trx, id)
-
-  if (breweryRow != null) {
-    return breweryRowToBrewery(breweryRow)
-  }
-}
-
 export async function listBreweries (
   db: Database,
   pagination: Pagination

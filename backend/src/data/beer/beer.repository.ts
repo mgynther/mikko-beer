@@ -155,28 +155,6 @@ export async function findBeerById (
   }
 }
 
-export async function lockBeerById (
-  trx: Transaction,
-  id: string
-): Promise<BeerRow | undefined> {
-  return await lockBeer(trx, 'beer_id', id)
-}
-
-async function lockBeer (
-  trx: Transaction,
-  column: 'beer_id',
-  value: string
-): Promise<BeerRow | undefined> {
-  const beer = await trx.trx()
-    .selectFrom('beer')
-    .where(column, '=', value)
-    .selectAll('beer')
-    .forUpdate()
-    .executeTakeFirst()
-
-  return beer
-}
-
 interface JoinedBeerRow {
   beer_id: string
   name: string | null

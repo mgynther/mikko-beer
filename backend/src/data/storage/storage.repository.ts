@@ -94,28 +94,6 @@ export async function deleteStorageById (
     .execute()
 }
 
-export async function lockStorageById (
-  trx: Transaction,
-  id: string
-): Promise<StorageRow | undefined> {
-  return await lockStorage(trx, 'storage_id', id)
-}
-
-async function lockStorage (
-  trx: Transaction,
-  column: 'storage_id',
-  value: string
-): Promise<StorageRow | undefined> {
-  const storage = await trx.trx()
-    .selectFrom('storage')
-    .where(column, '=', value)
-    .selectAll('storage')
-    .forUpdate()
-    .executeTakeFirst()
-
-  return storage
-}
-
 interface StorageTableRn extends StorageTable {
   rn: number
 }

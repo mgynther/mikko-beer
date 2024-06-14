@@ -116,28 +116,6 @@ export async function findStyleById (
   }
 }
 
-export async function lockStyleById (
-  trx: Transaction,
-  id: string
-): Promise<StyleRow | undefined> {
-  return await lockStyle(trx, 'style_id', id)
-}
-
-async function lockStyle (
-  trx: Transaction,
-  column: 'style_id',
-  value: string
-): Promise<StyleRow | undefined> {
-  const style = await trx.trx()
-    .selectFrom('style')
-    .where(column, '=', value)
-    .selectAll('style')
-    .forUpdate()
-    .executeTakeFirst()
-
-  return style
-}
-
 export async function listStyles (
   db: Database
 ): Promise<StyleWithParentIds[] | undefined> {

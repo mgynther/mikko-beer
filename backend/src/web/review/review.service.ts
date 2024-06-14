@@ -73,17 +73,6 @@ export async function findReviewById (
   return reviewRowToReview(review)
 }
 
-export async function lockReviewById (
-  trx: Transaction,
-  id: string
-): Promise<Review | undefined> {
-  const reviewRow = await reviewRepository.lockReviewById(trx, id)
-
-  if (reviewRow != null) {
-    return reviewRowToReview(reviewRow)
-  }
-}
-
 export async function listReviews (
   db: Database,
   pagination: Pagination,

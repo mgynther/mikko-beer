@@ -82,17 +82,6 @@ export async function findStyleById (
   return style
 }
 
-export async function lockStyleById (
-  trx: Transaction,
-  id: string
-): Promise<Style | undefined> {
-  const styleRow = await styleRepository.lockStyleById(trx, id)
-
-  if (styleRow != null) {
-    return styleRowToStyle(styleRow)
-  }
-}
-
 export async function listStyles (
   db: Database
 ): Promise<StyleWithParentIds[] | undefined> {
