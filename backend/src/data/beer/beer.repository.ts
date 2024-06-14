@@ -38,30 +38,30 @@ export async function insertBeer (
   return insertedBeer
 }
 
-export async function insertBeerBrewery (
+export async function insertBeerBreweries (
   trx: Transaction,
-  beerBrewery: InsertableBeerBreweryRow
+  beerBreweries: InsertableBeerBreweryRow[]
 ): Promise<BeerBreweryRow> {
-  const insertedBeerBrewery = await trx.trx()
+  const insertedBeerBreweries = await trx.trx()
     .insertInto('beer_brewery')
-    .values(beerBrewery)
+    .values(beerBreweries)
     .returningAll()
     .executeTakeFirstOrThrow()
 
-  return insertedBeerBrewery
+  return insertedBeerBreweries
 }
 
-export async function insertBeerStyle (
+export async function insertBeerStyles (
   trx: Transaction,
-  beerStyle: InsertableBeerStyleRow
+  beerStyles: InsertableBeerStyleRow[]
 ): Promise<BeerStyleRow> {
-  const insertedBeerStyle = await trx.trx()
+  const insertedBeerStyles = await trx.trx()
     .insertInto('beer_style')
-    .values(beerStyle)
+    .values(beerStyles)
     .returningAll()
     .executeTakeFirstOrThrow()
 
-  return insertedBeerStyle
+  return insertedBeerStyles
 }
 
 export async function deleteBeerBreweries (

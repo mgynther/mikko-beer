@@ -23,26 +23,18 @@ export async function createBeer (
     name: request.name
   })
 
-  // TODO It might be a good idea to insert all on one request.
-  const breweries = (request.breweries != null)
-    ? request.breweries.map(async (brewery) => {
-      return await beerRepository.insertBeerBrewery(trx, {
+  await Promise.all([
+    request.breweries === null ? () => {} :
+      beerRepository.insertBeerBreweries(trx, request.breweries.map(brewery => ({
         beer: beer.beer_id,
         brewery
-      })
-    })
-    : []
-  await Promise.all(breweries)
-
-  const styles = (request.styles != null)
-    ? request.styles.map(async (style) => {
-      return await beerRepository.insertBeerStyle(trx, {
+      }))),
+    request.styles === null ? () => {} :
+      beerRepository.insertBeerStyles(trx, request.styles.map(style => ({
         beer: beer.beer_id,
         style
-      })
-    })
-    : []
-  await Promise.all(styles)
+      }))),
+  ])
 
   return {
     ...beerRowToBeer(beer),
@@ -60,29 +52,20 @@ export async function updateBeer (
     name: request.name
   })
 
-  await beerRepository.deleteBeerBreweries(trx, beerId)
-  await beerRepository.deleteBeerStyles(trx, beerId)
-
-  // TODO It might be a good idea to insert all on one request.
-  const breweries = (request.breweries != null)
-    ? request.breweries.map(async (brewery) => {
-      return await beerRepository.insertBeerBrewery(trx, {
+  await Promise.all([
+    beerRepository.deleteBeerBreweries(trx, beerId),
+    beerRepository.deleteBeerStyles(trx, beerId),
+    request.breweries === null ? () => {} :
+      beerRepository.insertBeerBreweries(trx, request.breweries.map(brewery => ({
         beer: beer.beer_id,
         brewery
-      })
-    })
-    : []
-  await Promise.all(breweries)
-
-  const styles = (request.styles != null)
-    ? request.styles.map(async (style) => {
-      return await beerRepository.insertBeerStyle(trx, {
+      }))),
+    request.styles === null ? () => {} :
+      beerRepository.insertBeerStyles(trx, request.styles.map(style => ({
         beer: beer.beer_id,
         style
-      })
-    })
-    : []
-  await Promise.all(styles)
+      }))),
+  ])
 
   return {
     ...beerRowToBeer(beer),

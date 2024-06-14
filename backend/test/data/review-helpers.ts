@@ -34,22 +34,20 @@ export async function insertData(trx: Transaction): Promise<InsertedData> {
     beer: beer.beer_id,
     brewery: brewery.brewery_id
   }
-  await beerRepository.insertBeerBrewery(trx, beerBreweryRequest)
   const otherBeerBreweryRequest = {
     beer: otherBeer.beer_id,
     brewery: otherBrewery.brewery_id
   }
-  await beerRepository.insertBeerBrewery(trx, otherBeerBreweryRequest)
+  await beerRepository.insertBeerBreweries(trx, [beerBreweryRequest, otherBeerBreweryRequest])
   const beerStyleRequest = {
     beer: beer.beer_id,
     style: style.style_id
   }
-  await beerRepository.insertBeerStyle(trx, beerStyleRequest)
   const otherBeerStyleRequest = {
     beer: otherBeer.beer_id,
     style: otherStyle.style_id
   }
-  await beerRepository.insertBeerStyle(trx, otherBeerStyleRequest)
+  await beerRepository.insertBeerStyles(trx, [beerStyleRequest, otherBeerStyleRequest])
   const containerRequest = {
     size: '0.50',
     type: 'bottle'
