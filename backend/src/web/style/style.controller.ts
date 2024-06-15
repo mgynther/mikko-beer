@@ -1,12 +1,17 @@
-import * as styleService from './style.service'
+import * as styleRepository from '../../data/style/style.repository'
+import { type Transaction } from '../../data/database'
+import * as styleService from '../../core/style/style.service'
 import * as authService from '../authentication/authentication.service'
 
 import { type Router } from '../router'
 import {
   type CreateStyleRequest,
+  type NewStyle,
+  type Style,
   type UpdateStyleRequest,
   validateCreateStyleRequest,
-  validateUpdateStyleRequest
+  validateUpdateStyleRequest,
+  StyleRelationship
 } from '../../core/style/style'
 import { ControllerError } from '../errors'
 import { CyclicRelationshipError } from '../../core/style/style.util'
@@ -31,7 +36,13 @@ export function styleController (router: Router): void {
       const createStyleRequest = validateCreateRequest(body)
       try {
         const result = await ctx.db.executeTransaction(async (trx) => {
-          return await styleService.createStyle(trx, createStyleRequest)
+          const relationshipIf: styleService.CreateRelationshipIf = {
+            insert: createInserter(trx),
+            listAllRelationships: createLister(trx)
+          }
+          return await styleService.createStyle(
+            (style: NewStyle) => styleRepository.insertStyle(trx, style),
+            relationshipIf, createStyleRequest)
         })
 
         ctx.status = 201
@@ -53,8 +64,16 @@ export function styleController (router: Router): void {
       try {
         const updateStyleRequest = validateUpdateRequest(body, styleId)
         const result = await ctx.db.executeTransaction(async (trx) => {
+          const relationshipIf: styleService.UpdateRelationshipIf = {
+              insert: createInserter(trx),
+              listAllRelationships: createLister(trx),
+              deleteStyleChildRelationships: function(styleId: string): Promise<void> {
+                return styleRepository.deleteStyleChildRelationships(trx, styleId)
+              }
+          }
           return await styleService.updateStyle(
-            trx, styleId, updateStyleRequest)
+            (style: Style) => styleRepository.updateStyle(trx, style),
+            relationshipIf, styleId, updateStyleRequest)
         })
 
         ctx.status = 200
@@ -72,7 +91,9 @@ export function styleController (router: Router): void {
     authService.authenticateViewer,
     async (ctx) => {
       const { styleId } = ctx.params
-      const style = await styleService.findStyleById(ctx.db, styleId)
+      const style = await styleService.findStyleById((styleId: string) => {
+        return styleRepository.findStyleById(ctx.db, styleId)
+      }, styleId)
 
       if (style == null) {
         throw new ControllerError(
@@ -90,7 +111,9 @@ export function styleController (router: Router): void {
     '/api/v1/style',
     authService.authenticateViewer,
     async (ctx) => {
-      const styles = await styleService.listStyles(ctx.db)
+      const styles = await styleService.listStyles(() => {
+        return styleRepository.listStyles(ctx.db)
+      })
       ctx.body = { styles }
     }
   )
@@ -118,4 +141,24 @@ function validateUpdateRequest (
 
   const result = body as UpdateStyleRequest
   return result
+}
+
+function createInserter(trx: Transaction) {
+  return async function(
+    styleId: string,
+    parents: string[]
+  ): Promise<void> {
+    const relationships = parents.map(parent => ({
+      parent,
+      child: styleId
+    }))
+    return styleRepository.insertStyleRelationships(
+      trx, relationships) as Promise<unknown> as Promise<void>
+  }
+}
+
+function createLister(trx: Transaction) {
+  return async function(): Promise<StyleRelationship[]> {
+    return styleRepository.listStyleRelationships(trx)
+  }
 }

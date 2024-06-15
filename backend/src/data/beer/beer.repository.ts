@@ -147,7 +147,7 @@ export async function findBeerById (
     }
     if (!styleIds[row.style_id]) {
       styleIds[row.style_id] = true
-      styles.push({ id: row.style_id, name: row.style_name })
+      styles.push({ id: row.style_id, name: row.style_name ?? '' })
     }
   })
 
@@ -255,7 +255,7 @@ function toBeersWithBreweriesAndStyles (
       .some((style) => style.id === beer.style_id)) {
       beerMap[beer.beer_id].styles.push({
         id: beer.style_id,
-        name: beer.style_name
+        name: beer.style_name ?? ''
       })
     }
   })

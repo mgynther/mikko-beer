@@ -1,14 +1,11 @@
+import { type StyleRelationship } from './style'
+
 export class CyclicRelationshipError extends Error {
 }
 
 interface Style {
   id: string
   parents: string[]
-}
-
-interface StyleRelationship {
-  parent: string
-  child: string
 }
 
 export function checkCyclicRelationships (

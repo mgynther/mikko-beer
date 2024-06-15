@@ -2,7 +2,16 @@ import { ajv } from '../ajv'
 
 export interface Style {
   id: string
-  name: string | null
+  name: string
+}
+
+export interface NewStyle {
+  name: string
+}
+
+export interface StyleRelationship {
+  parent: string
+  child: string
 }
 
 export interface StyleWithParentsAndChildren extends Style {

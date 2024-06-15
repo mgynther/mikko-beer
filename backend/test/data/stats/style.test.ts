@@ -54,13 +54,13 @@ describe('style stats tests', () => {
     const style = {
       reviewAverage: avg(reviews, data.beer.id),
       reviewCount: '4',
-      styleId: data.style.style_id,
+      styleId: data.style.id,
       styleName: data.style.name
     }
     const otherStyle = {
       reviewAverage: avg(reviews, data.otherBeer.id),
       reviewCount: '5',
-      styleId: data.otherStyle.style_id,
+      styleId: data.otherStyle.id,
       styleName: data.otherStyle.name
     }
     return { stats, style, otherStyle }
@@ -137,7 +137,7 @@ describe('style stats tests', () => {
       ctx.db,
       (data: InsertedData) => ({
         ...defaultFilter,
-        style: data.style.style_id
+        style: data.style.id
       }),
       { property: 'style_name', direction: 'desc' }
     )
