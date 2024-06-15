@@ -1,9 +1,14 @@
-import * as reviewService from './review.service'
+import * as reviewRepository from '../../data/review/review.repository'
+import * as storageRepository from '../../data/storage/storage.repository'
+import * as reviewService from '../../core/review/review.service'
 import * as authService from '../authentication/authentication.service'
 
 import { type Router } from '../router'
+import { type Pagination } from '../../core/pagination'
 import {
   type CreateReviewRequest,
+  type NewReview,
+  type Review,
   type UpdateReviewRequest,
   type ReviewListOrder,
   validateCreateReviewRequest,
@@ -21,14 +26,16 @@ export function reviewController (router: Router): void {
       const { storage } = ctx.request.query
 
       const createReviewRequest = validateCreateRequest(body)
+      const storageParam = typeof storage === 'string' &&
+        storage.length > 0
+        ? storage
+        : undefined
       const result = await ctx.db.executeTransaction(async (trx) => {
-        const storageParam = typeof storage === 'string' &&
-          storage.length > 0
-          ? storage
-          : undefined
         return await reviewService.createReview(
-          trx, createReviewRequest, storageParam
-        )
+          (review: NewReview) => reviewRepository.insertReview(trx, review),
+          (storageId: string) => storageRepository.deleteStorageById(
+            trx, storageId),
+          createReviewRequest, storageParam)
       })
 
       ctx.status = 201
@@ -47,7 +54,9 @@ export function reviewController (router: Router): void {
       const updateReviewRequest = validateUpdateRequest(body, reviewId)
       const result = await ctx.db.executeTransaction(async (trx) => {
         return await reviewService.updateReview(
-          trx, reviewId, updateReviewRequest)
+          (review: Review) =>
+            reviewRepository.updateReview(trx, review),
+          reviewId, updateReviewRequest)
       })
 
       ctx.status = 200
@@ -62,7 +71,9 @@ export function reviewController (router: Router): void {
     authService.authenticateViewer,
     async (ctx) => {
       const { reviewId } = ctx.params
-      const review = await reviewService.findReviewById(ctx.db, reviewId)
+      const review = await reviewService.findReviewById((reviewId: string) => {
+        return reviewRepository.findReviewById(ctx.db, reviewId)
+      }, reviewId)
 
       if (review == null) {
         throw new ControllerError(
@@ -83,9 +94,12 @@ export function reviewController (router: Router): void {
       const { beerId } = ctx.params
       const reviewListOrder =
         doValidateFilteredReviewListOrder(ctx.request.query)
-      const reviewResult =
-        await reviewService.listReviewsByBeer(ctx.db, beerId, reviewListOrder)
-      const reviews = reviewResult ?? []
+      const reviews = await reviewService.listReviewsByBeer((
+        beerId: string, reviewListOrder: ReviewListOrder
+      ) => {
+        return reviewRepository.listReviewsByBeer(
+          ctx.db, beerId, reviewListOrder)
+      }, beerId, reviewListOrder)
 
       ctx.body = {
         reviews,
@@ -104,12 +118,12 @@ export function reviewController (router: Router): void {
       const { breweryId } = ctx.params
       const reviewListOrder =
         doValidateFilteredReviewListOrder(ctx.request.query)
-      const reviewResult = await reviewService.listReviewsByBrewery(
-        ctx.db,
-        breweryId,
-        reviewListOrder
-      )
-      const reviews = reviewResult ?? []
+      const reviews = await reviewService.listReviewsByBrewery((
+        breweryId: string, reviewListOrder: ReviewListOrder
+      ) => (
+        reviewRepository.listReviewsByBrewery(
+          ctx.db, breweryId, reviewListOrder)
+      ), breweryId, reviewListOrder)
 
       ctx.body = {
         reviews,
@@ -128,12 +142,11 @@ export function reviewController (router: Router): void {
       const { styleId } = ctx.params
       const reviewListOrder =
         doValidateFilteredReviewListOrder(ctx.request.query)
-      const reviewResult = await reviewService.listReviewsByStyle(
-        ctx.db,
-        styleId,
-        reviewListOrder
-      )
-      const reviews = reviewResult ?? []
+      const reviews = await reviewService.listReviewsByStyle((
+        styleId: string, reviewListOrder: ReviewListOrder
+      ) => (
+        reviewRepository.listReviewsByStyle(ctx.db, styleId, reviewListOrder)
+      ), styleId, reviewListOrder)
 
       ctx.body = {
         reviews,
@@ -152,8 +165,11 @@ export function reviewController (router: Router): void {
       const { skip, size } = ctx.request.query
       const reviewListOrder = doValidateFullReviewListOrder(ctx.request.query)
       const pagination = validatePagination({ skip, size })
-      const reviews =
-        await reviewService.listReviews(ctx.db, pagination, reviewListOrder)
+      const reviews = await reviewService.listReviews((
+        pagination: Pagination, reviewListOrder: ReviewListOrder
+      ) => (
+        reviewRepository.listReviews(ctx.db, pagination, reviewListOrder)
+      ), pagination, reviewListOrder)
       ctx.body = {
         reviews,
         pagination,

@@ -6,14 +6,25 @@ import { timePattern } from '../time'
 
 export interface Review {
   id: string
-  additionalInfo: string | null
+  additionalInfo: string
   beer: string
   container: string
-  location: string | null
-  rating: number | null
+  location: string
+  rating: number
   time: Date
-  smell: string | null
-  taste: string | null
+  smell: string
+  taste: string
+}
+
+export interface NewReview {
+  additionalInfo: string
+  beer: string
+  container: string
+  location: string
+  rating: number
+  time: Date
+  smell: string
+  taste: string
 }
 
 export interface JoinedReview {
@@ -36,10 +47,10 @@ export interface JoinedReview {
 }
 
 export interface ReviewRequest {
-  additionalInfo: string | undefined
+  additionalInfo: string
   beer: string
   container: string
-  location: string | undefined
+  location: string
   rating: number
   smell: string
   taste: string

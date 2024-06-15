@@ -9,55 +9,49 @@ import {
   type DbJoinedReview,
   type ReviewRow,
   type ReviewTable,
-  type InsertableReviewRow,
-  type UpdateableReviewRow
+  type ReviewTableContent
 } from './review.table'
 
 import { type ListDirection } from '../../core/list'
 import { type Pagination, toRowNumbers } from '../../core/pagination'
-import { type ReviewListOrder } from '../../core/review/review'
+import {
+  type JoinedReview,
+  type NewReview,
+  type Review,
+  type ReviewListOrder
+} from '../../core/review/review'
 
 export async function insertReview (
   trx: Transaction,
-  review: InsertableReviewRow
-): Promise<ReviewRow> {
+  review: NewReview
+): Promise<Review> {
   const insertedReview = await trx.trx()
     .insertInto('review')
-    .values(review)
+    .values(toRow(review))
     .returningAll()
     .executeTakeFirstOrThrow()
 
-  return insertedReview
+  return toReview(insertedReview)
 }
 
 export async function updateReview (
   trx: Transaction,
-  id: string,
-  review: UpdateableReviewRow
-): Promise<ReviewRow> {
+  review: Review
+): Promise<Review> {
   const updatedReview = await trx.trx()
     .updateTable('review')
-    .set({
-      additional_info: review.additional_info,
-      beer: review.beer,
-      container: review.container,
-      location: review.location,
-      rating: review.rating,
-      smell: review.smell,
-      taste: review.taste,
-      time: review.time
-    })
-    .where('review_id', '=', id)
+    .set(toRow(review))
+    .where('review_id', '=', review.id)
     .returningAll()
     .executeTakeFirstOrThrow()
 
-  return updatedReview
+  return toReview(updatedReview)
 }
 
 export async function findReviewById (
   db: Database,
   id: string
-): Promise<ReviewRow | undefined> {
+): Promise<Review | undefined> {
   const reviewRow = await db.getDb()
     .selectFrom('review')
     .where('review_id', '=', id)
@@ -68,7 +62,7 @@ export async function findReviewById (
     return undefined
   }
 
-  return reviewRow
+  return toReview(reviewRow)
 }
 
 interface ReviewTableRn extends ReviewTable {
@@ -124,7 +118,7 @@ function getListQueryByTime (
 }
 
 type ListQueryBuilder =
-  SelectQueryBuilder<KyselyDatabase, 'review', JoinedReview>
+  SelectQueryBuilder<KyselyDatabase, 'review', InternalJoinedReview>
 
 type OrderByGetter = (query: ListQueryBuilder) => ListQueryBuilder
 
@@ -247,7 +241,7 @@ export async function listReviews (
   db: Database,
   pagination: Pagination,
   reviewListOrder: ReviewListOrder
-): Promise<DbJoinedReview[]> {
+): Promise<JoinedReview[]> {
   const { start, end } = toRowNumbers(pagination)
 
   const queryHelper = getListQueryHelper(reviewListOrder)
@@ -270,47 +264,47 @@ export async function listReviews (
     return []
   }
 
-  return parseBreweryReviewRows(reviews)
+  return toJoinedReviews(parseReviewRows(reviews))
 }
 
 export async function listReviewsByBeer (
   db: Database,
   beerId: string,
   reviewListOrder: ReviewListOrder
-): Promise<DbJoinedReview[]> {
-  return await joinReviewData(db.getDb()
+): Promise<JoinedReview[]> {
+  return toJoinedReviews(await joinReviewData(db.getDb()
     .selectFrom('beer')
     .where('beer.beer_id', '=', beerId),
   reviewListOrder
-  )
+  ))
 }
 
 export async function listReviewsByBrewery (
   db: Database,
   breweryId: string,
   reviewListOrder: ReviewListOrder
-): Promise<DbJoinedReview[]> {
-  return await joinReviewData(db.getDb()
+): Promise<JoinedReview[]> {
+  return toJoinedReviews(await joinReviewData(db.getDb()
     .selectFrom('beer_brewery as querybrewery')
     .innerJoin('beer', 'querybrewery.beer', 'beer.beer_id')
     .where('querybrewery.brewery', '=', breweryId),
   reviewListOrder
-  )
+  ))
 }
 export async function listReviewsByStyle (
   db: Database,
   styleId: string,
   reviewListOrder: ReviewListOrder
-): Promise<DbJoinedReview[]> {
-  return await joinReviewData(db.getDb()
+): Promise<JoinedReview[]> {
+  return toJoinedReviews(await joinReviewData(db.getDb()
     .selectFrom('beer_style as querystyle')
     .innerJoin('beer', 'querystyle.beer', 'beer.beer_id')
     .where('querystyle.style', '=', styleId),
   reviewListOrder
-  )
+  ))
 }
 
-export async function joinReviewData (
+async function joinReviewData (
   query: SelectQueryBuilder<KyselyDatabase, 'beer', unknown>,
   reviewListOrder: ReviewListOrder
 ): Promise<DbJoinedReview[]> {
@@ -331,10 +325,10 @@ export async function joinReviewData (
   if (reviews.length === 0) {
     return []
   }
-  return parseBreweryReviewRows(reviews)
+  return parseReviewRows(reviews)
 }
 
-interface JoinedReview {
+interface InternalJoinedReview {
   review_id: string
   additional_info: string | null
   beer_id: string
@@ -352,8 +346,8 @@ interface JoinedReview {
   style_name: string | null
 }
 
-function parseBreweryReviewRows (
-  reviews: JoinedReview[]
+function parseReviewRows (
+  reviews: InternalJoinedReview[]
 ): DbJoinedReview[] {
   const reviewMap: Record<string, DbJoinedReview> = {}
   const reviewArray: DbJoinedReview[] = []
@@ -397,4 +391,56 @@ function parseBreweryReviewRows (
   })
 
   return reviewArray
+}
+
+function toReview (row: ReviewRow): Review {
+  return {
+    id: row.review_id,
+    additionalInfo: row.additional_info ?? '',
+    beer: row.beer,
+    container: row.container,
+    location: row.location ?? '',
+    rating: row.rating ?? 4,
+    time: row.time,
+    smell: row.smell ?? '',
+    taste: row.taste ?? ''
+  }
+}
+
+function toJoinedReviews (reviewRows: DbJoinedReview[]): JoinedReview[] {
+  return reviewRows.map(row => ({
+    id: row.review_id,
+    additionalInfo: row.additional_info,
+    beerId: row.beer_id,
+    beerName: row.beer_name,
+    breweries: row.breweries.map(brewery => ({
+      id: brewery.brewery_id,
+      name: brewery.name
+    })),
+    container: {
+      id: row.container_id,
+      size: row.container_size ?? '',
+      type: row.container_type ?? ''
+    },
+    location: row.location,
+    rating: row.rating,
+    styles: row.styles.map(style => ({
+      id: style.style_id,
+      name: style.name
+    })),
+    time: row.time
+  }))
+}
+
+function toRow (review: NewReview | Review): ReviewTableContent {
+  return {
+    additional_info: review.additionalInfo,
+    beer: review.beer,
+    container: review.container,
+    location: review.location,
+    rating: review.rating,
+    smell: review.smell,
+    taste: review.taste,
+    time: review.time
+  }
 }

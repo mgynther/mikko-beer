@@ -3,8 +3,11 @@ import { expect } from 'chai'
 import { TestContext } from '../test-context'
 import { type Database } from '../../../src/data/database'
 import * as reviewRepository from '../../../src/data/review/review.repository'
-import { type ReviewListOrder } from '../../../src/core/review/review'
-import { DbJoinedReview, ReviewRow } from '../../../src/data/review/review.table'
+import {
+  type JoinedReview,
+  type Review,
+  type ReviewListOrder,
+} from '../../../src/core/review/review'
 import { insertData, insertMultipleReviews } from '../review-helpers'
 
 describe('review tests', () => {
@@ -19,7 +22,7 @@ describe('review tests', () => {
   async function listReviews(
     db: Database,
     reviewListOrder: ReviewListOrder
-  ): Promise<DbJoinedReview[]> {
+  ): Promise<JoinedReview[]> {
     return await reviewRepository.listReviews(
       db,
       { size: 50, skip: 0 },
@@ -42,7 +45,7 @@ describe('review tests', () => {
       const { beer, container } = await insertData(trx)
       const reviewRequest = {
         beer: beer.id,
-        additional_info: "additional",
+        additionalInfo: "additional",
         container: container.id,
         location: "location",
         rating: 8,
@@ -53,8 +56,7 @@ describe('review tests', () => {
       const review = await reviewRepository.insertReview(trx, reviewRequest)
       expect(review).eql({
         ...reviewRequest,
-        created_at: review.created_at,
-        review_id: review.review_id
+        id: review.id,
       })
     })
   })
@@ -70,7 +72,7 @@ describe('review tests', () => {
     const end = new Array(5).fill(1).map(_ => data.otherBrewery.name)
     const expectedNames = [...start, ...end]
     expect(list.map(item => item.breweries[0].name)).to.eql(expectedNames)
-    function reviewToTime(row: DbJoinedReview): Date {
+    function reviewToTime(row: JoinedReview): Date {
       return row.time
     }
 
@@ -90,7 +92,7 @@ describe('review tests', () => {
     expect(otherBreweryReviewTimes).to.eql(expectedOtherBreweryReviewTimes)
   })
 
-  function toTime(review: DbJoinedReview | ReviewRow): Date {
+  function toTime(review: Review | JoinedReview): Date {
     return review.time
   }
 
@@ -111,7 +113,7 @@ describe('review tests', () => {
     time: Date
   }
 
-  function toRatingTime(review: DbJoinedReview | ReviewRow): RatingTime {
+  function toRatingTime(review: Review | JoinedReview): RatingTime {
     return { rating: review.rating, time: review.time }
   }
 
@@ -207,9 +209,9 @@ describe('review tests', () => {
   }
 
   function testFilteredList<T>(
-    reviews: ReviewRow[],
-    list: DbJoinedReview[],
-    converter: (review: DbJoinedReview | ReviewRow) => T,
+    reviews: Review[],
+    list: JoinedReview[],
+    converter: (review: Review | JoinedReview) => T,
     sorter: (a: T, b: T) => number,
     beerId: string
   ) {

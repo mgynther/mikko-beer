@@ -5,6 +5,17 @@ import {
   type Updateable
 } from 'kysely'
 
+export interface ReviewTableContent {
+  beer: string
+  additional_info: string | null
+  container: string
+  location: string | null
+  rating: number | null
+  time: Date
+  smell: string | null
+  taste: string | null
+}
+
 export interface ReviewTable {
   review_id: Generated<string>
   beer: Generated<string>

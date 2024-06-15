@@ -1,6 +1,7 @@
 import { type Beer } from '../../src/core/beer/beer'
 import { type Brewery } from '../../src/core/brewery/brewery'
 import { type Container} from '../../src/core/container/container'
+import { type Review} from '../../src/core/review/review'
 import { type Database, type Transaction } from '../../src/data/database'
 import * as beerRepository from '../../src/data/beer/beer.repository'
 import * as breweryRepository from '../../src/data/brewery/brewery.repository'
@@ -8,7 +9,6 @@ import * as containerRepository from '../../src/data/container/container.reposit
 import * as reviewRepository from '../../src/data/review/review.repository'
 import * as styleRepository from '../../src/data/style/style.repository'
 import { StyleRow } from '../../src/data/style/style.table'
-import { ReviewRow } from '../../src/data/review/review.table'
 
 export interface InsertedData {
   beer: Beer
@@ -60,16 +60,18 @@ export async function insertData(trx: Transaction): Promise<InsertedData> {
 export async function insertMultipleReviews(
   count: number,
   db: Database
-): Promise<{ reviews: ReviewRow[], data: InsertedData }> {
-  const reviews: ReviewRow[] = []
+): Promise<{ reviews: Review[], data: InsertedData }> {
+  const reviews: Review[] = []
   let data: InsertedData | undefined = undefined
   await db.executeTransaction(async (trx: Transaction) => {
     data = await insertData(trx)
     const { beer, otherBeer, container } = data
     for (let i = 0; i < count; i++) {
       const reviewRequest = {
+        additionalInfo: '',
         beer: (i % 2 === 0) ? otherBeer.id : beer.id,
         container: container.id,
+        location: '',
         rating: (i % 7) + 4,
         time: new Date(`2024-0${(i % 3) + 2}-0${(i % 5) + 1}T18:00:00.000Z`),
         smell: "vanilla",

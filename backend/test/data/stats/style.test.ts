@@ -1,13 +1,13 @@
 import { expect } from 'chai'
 
 import { TestContext } from '../test-context'
+import { Review } from '../../../src/core/review/review'
 import {
   type StyleStatsOrder,
   type StatsFilter
 } from '../../../src/core/stats/stats'
 import { type Database } from '../../../src/data/database'
 import * as statsRepository from '../../../src/data/stats/stats.repository'
-import { ReviewRow } from '../../../src/data/review/review.table'
 import { type InsertedData, insertMultipleReviews } from '../review-helpers'
 
 const defaultFilter: StatsFilter = {
@@ -28,7 +28,7 @@ describe('style stats tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  function avg(reviews: ReviewRow[], beerId: string) {
+  function avg(reviews: Review[], beerId: string) {
     if (reviews === null) throw new Error('must not be null')
     const filteredReviews = reviews
       .filter(r => r.beer === beerId)
