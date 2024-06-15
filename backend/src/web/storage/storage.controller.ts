@@ -1,9 +1,12 @@
-import * as storageService from './storage.service'
+import * as storageRepository from '../../data/storage/storage.repository'
+import * as storageService from '../../core/storage/storage.service'
 import * as authService from '../authentication/authentication.service'
 
 import { type Router } from '../router'
+import { type Pagination } from '../../core/pagination'
 import {
   type CreateStorageRequest,
+  type Storage,
   type UpdateStorageRequest,
   validateCreateStorageRequest,
   validateUpdateStorageRequest
@@ -19,7 +22,11 @@ export function storageController (router: Router): void {
 
       const createStorageRequest = validateCreateRequest(body)
       const result = await ctx.db.executeTransaction(async (trx) => {
-        return await storageService.createStorage(trx, createStorageRequest)
+        return await storageService.createStorage((
+          createStorageRequest: CreateStorageRequest
+        ) => {
+          return storageRepository.insertStorage(trx, createStorageRequest)
+        }, createStorageRequest)
       })
 
       ctx.status = 201
@@ -37,8 +44,11 @@ export function storageController (router: Router): void {
 
       const updateStorageRequest = validateUpdateRequest(body, storageId)
       const result = await ctx.db.executeTransaction(async (trx) => {
-        return await storageService.updateStorage(
-          trx, { ...updateStorageRequest, id: storageId })
+        return await storageService.updateStorage((
+          storage: Storage
+        ) => {
+          return storageRepository.updateStorage(trx, storage)
+        }, { ...updateStorageRequest, id: storageId })
       })
 
       ctx.status = 200
@@ -53,7 +63,11 @@ export function storageController (router: Router): void {
     authService.authenticateViewer,
     async (ctx) => {
       const { storageId } = ctx.params
-      const storage = await storageService.findStorageById(ctx.db, storageId)
+      const storage = await storageService.findStorageById((
+        storageId: string,
+      ) => {
+        return storageRepository.findStorageById(ctx.db, storageId)
+      }, storageId)
 
       if (storage === undefined) {
         throw new ControllerError(
@@ -72,8 +86,11 @@ export function storageController (router: Router): void {
     authService.authenticateViewer,
     async (ctx) => {
       const { beerId } = ctx.params
-      const storageResult =
-        await storageService.listStoragesByBeer(ctx.db, beerId)
+      const storageResult = await storageService.listStoragesByBeer((
+        beerId: string
+      ) => {
+        return storageRepository.listStoragesByBeer(ctx.db, beerId)
+      }, beerId)
       const storages = storageResult ?? []
 
       ctx.body = { storages }
@@ -85,8 +102,11 @@ export function storageController (router: Router): void {
     authService.authenticateViewer,
     async (ctx) => {
       const { breweryId } = ctx.params
-      const storageResult =
-        await storageService.listStoragesByBrewery(ctx.db, breweryId)
+      const storageResult = await storageService.listStoragesByBrewery((
+        breweryId: string
+      ) => {
+        return storageRepository.listStoragesByBrewery(ctx.db, breweryId)
+      }, breweryId)
       const storages = storageResult ?? []
 
       ctx.body = { storages }
@@ -98,8 +118,11 @@ export function storageController (router: Router): void {
     authService.authenticateViewer,
     async (ctx) => {
       const { styleId } = ctx.params
-      const storageResult =
-        await storageService.listStoragesByStyle(ctx.db, styleId)
+      const storageResult = await storageService.listStoragesByStyle((
+        styleId: string
+      ) => {
+        return storageRepository.listStoragesByStyle(ctx.db, styleId)
+      }, styleId)
       const storages = storageResult ?? []
 
       ctx.body = { storages }
@@ -112,7 +135,11 @@ export function storageController (router: Router): void {
     async (ctx) => {
       const { skip, size } = ctx.request.query
       const pagination = validatePagination({ skip, size })
-      const storages = await storageService.listStorages(ctx.db, pagination)
+      const storages = await storageService.listStorages((
+        pagination: Pagination
+      ) => {
+        return storageRepository.listStorages(ctx.db, pagination)
+      }, pagination)
       ctx.body = { storages, pagination }
     }
   )
