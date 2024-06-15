@@ -1,10 +1,12 @@
-import * as statsService from './stats.service'
+import * as statsRepository from '../../data/stats/stats.repository'
+import * as statsService from '../../core/stats/stats.service'
 import * as authService from '../authentication/authentication.service'
 
+import { type Pagination } from '../../core/pagination'
 import { ControllerError } from '../errors'
 import { type Router } from '../router'
 
-import { validatePagination } from '../pagination'
+import { validatePagination} from '../pagination'
 
 import {
   type BreweryStatsOrder,
@@ -12,6 +14,7 @@ import {
   type StyleStatsOrder,
   validStyleStatsOrder,
   type StatsBreweryStyleFilter,
+  type StatsFilter,
   validStatsBreweryStyleFilter,
   validateStatsFilter
 } from '../../core/stats/stats'
@@ -22,7 +25,11 @@ export function statsController (router: Router): void {
     authService.authenticateViewer,
     async (ctx) => {
       const statsFilter = validateStatsBreweryStyleFilter(ctx.request.query)
-      const overall = await statsService.getOverall(ctx.db, statsFilter)
+      const overall = await statsService.getOverall((
+        statsFilter: StatsBreweryStyleFilter
+      ) => {
+        return statsRepository.getOverall(ctx.db, statsFilter)
+      }, statsFilter)
       ctx.body = { overall }
     }
   )
@@ -31,7 +38,11 @@ export function statsController (router: Router): void {
     authService.authenticateViewer,
     async (ctx) => {
       const statsFilter = validateStatsBreweryStyleFilter(ctx.request.query)
-      const annual = await statsService.getAnnual(ctx.db, statsFilter)
+      const annual = await statsService.getAnnual((
+        statsFilter: StatsBreweryStyleFilter
+      ) => {
+        return statsRepository.getAnnual(ctx.db, statsFilter)
+      }, statsFilter)
       ctx.body = { annual }
     }
   )
@@ -46,7 +57,15 @@ export function statsController (router: Router): void {
       const breweryStatsOrder = validateBreweryStatsOrder({ order, direction })
       const brewery =
         await statsService.getBrewery(
-          ctx.db,
+          (
+            pagination: Pagination,
+            statsFilter: StatsFilter,
+            breweryStatsOrder: BreweryStatsOrder
+          ) => {
+            return statsRepository.getBrewery(
+              ctx.db, pagination, statsFilter, breweryStatsOrder
+            )
+          },
           pagination,
           statsFilter,
           breweryStatsOrder
@@ -60,7 +79,11 @@ export function statsController (router: Router): void {
     authService.authenticateViewer,
     async (ctx) => {
       const statsFilter = validateStatsBreweryStyleFilter(ctx.request.query)
-      const rating = await statsService.getRating(ctx.db, statsFilter)
+      const rating = await statsService.getRating((
+        statsFilter: StatsBreweryStyleFilter
+      ) => {
+        return statsRepository.getRating(ctx.db, statsFilter)
+      }, statsFilter)
       ctx.body = { rating }
     }
   )
@@ -72,12 +95,15 @@ export function statsController (router: Router): void {
       const { order, direction } = ctx.request.query
       const styleStatsOrder = validateStyleStatsOrder({ order, direction })
       const statsFilter = validateStatsFilter(ctx.request.query)
-      const style =
-        await statsService.getStyle(
+      const style = await statsService.getStyle((
+        statsFilter: StatsFilter,
+        styleStatsOrder: StyleStatsOrder
+      ) => {
+        return statsRepository.getStyle(
           ctx.db,
           statsFilter,
           styleStatsOrder
-        )
+        )}, statsFilter, styleStatsOrder)
       ctx.body = { style }
     }
   )

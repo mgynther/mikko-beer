@@ -1,6 +1,3 @@
-import * as statsRepository from '../../data/stats/stats.repository'
-
-import { type Database } from '../../data/database'
 import { type Pagination } from '../../core/pagination'
 
 import {
@@ -15,21 +12,27 @@ import {
   type StyleStatsOrder
 } from '../../core/stats/stats'
 
+// Test functionality if added. Left untested as there was no logic at the time
+// of adding the file. However, it is used to enable adding logic later easily.
+
 export async function getAnnual (
-  db: Database,
+  getAnnual: (statsFilter: StatsBreweryStyleFilter) => Promise<AnnualStats>,
   statsFilter: StatsBreweryStyleFilter
 ): Promise<AnnualStats> {
-  return await statsRepository.getAnnual(db, statsFilter)
+  return await getAnnual(statsFilter)
 }
 
 export async function getBrewery (
-  db: Database,
+  getBrewery: (
+    pagination: Pagination,
+    statsFilter: StatsFilter,
+    breweryStatsOrder: BreweryStatsOrder
+  ) => Promise<BreweryStats>,
   pagination: Pagination,
   statsFilter: StatsFilter,
   breweryStatsOrder: BreweryStatsOrder
 ): Promise<BreweryStats> {
-  return await statsRepository.getBrewery(
-    db,
+  return await getBrewery(
     pagination,
     statsFilter,
     breweryStatsOrder
@@ -37,23 +40,26 @@ export async function getBrewery (
 }
 
 export async function getOverall (
-  db: Database,
+  getOverall: (statsFilter: StatsBreweryStyleFilter) => Promise<OverallStats>,
   statsFilter: StatsBreweryStyleFilter
 ): Promise<OverallStats> {
-  return await statsRepository.getOverall(db, statsFilter)
+  return await getOverall(statsFilter)
 }
 
 export async function getRating (
-  db: Database,
+  getRating: (statsFilter: StatsBreweryStyleFilter) => Promise<RatingStats>,
   statsFilter: StatsBreweryStyleFilter
 ): Promise<RatingStats> {
-  return await statsRepository.getRating(db, statsFilter)
+  return await getRating(statsFilter)
 }
 
 export async function getStyle (
-  db: Database,
+  getStyle: (
+    statsFilter: StatsFilter,
+    styleStatsOrder: StyleStatsOrder
+  ) => Promise<StyleStats>,
   statsFilter: StatsFilter,
   styleStatsOrder: StyleStatsOrder
 ): Promise<StyleStats> {
-  return await statsRepository.getStyle(db, statsFilter, styleStatsOrder)
+  return await getStyle(statsFilter, styleStatsOrder)
 }
