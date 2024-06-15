@@ -15,7 +15,7 @@ import {
   validateCreateBeerRequest,
   validateUpdateBeerRequest
 } from '../../core/beer/beer'
-import { ControllerError } from '../errors'
+import { ControllerError } from '../../core/errors'
 import { validatePagination } from '../pagination'
 import { validateSearchByName } from '../search'
 
@@ -76,7 +76,7 @@ export function beerController (router: Router): void {
         return beerRepository.findBeerById(ctx.db, beerId)
       }, beerId)
 
-      if (beer == null) {
+      if (beer === undefined) {
         throw new ControllerError(
           404,
           'BeerNotFound',

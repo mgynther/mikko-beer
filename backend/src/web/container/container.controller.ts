@@ -11,7 +11,7 @@ import {
   validateCreateContainerRequest,
   validateUpdateContainerRequest
 } from '../../core/container/container'
-import { ControllerError } from '../errors'
+import { ControllerError } from '../../core/errors'
 
 export function containerController (router: Router): void {
   router.post('/api/v1/container',
@@ -62,7 +62,7 @@ export function containerController (router: Router): void {
         return containerRepository.findContainerById(ctx.db, containerId)
       }, containerId)
 
-      if (container == null) {
+      if (container === undefined) {
         throw new ControllerError(
           404,
           'ContainerNotFound',

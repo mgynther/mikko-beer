@@ -52,7 +52,7 @@ export async function findContainerById (
 
   const container = containers.find(container => container.container_id === id)
 
-  if (container === null || container === undefined) return undefined
+  if (container === undefined) return undefined
 
   return toContainer(container)
 }

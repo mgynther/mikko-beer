@@ -13,7 +13,7 @@ import {
   validateUpdateStyleRequest,
   StyleRelationship
 } from '../../core/style/style'
-import { ControllerError } from '../errors'
+import { ControllerError } from '../../core/errors'
 import { CyclicRelationshipError } from '../../core/style/style.util'
 
 function handleError (e: unknown): void {
@@ -95,7 +95,7 @@ export function styleController (router: Router): void {
         return styleRepository.findStyleById(ctx.db, styleId)
       }, styleId)
 
-      if (style == null) {
+      if (style === undefined) {
         throw new ControllerError(
           404,
           'StyleNotFound',

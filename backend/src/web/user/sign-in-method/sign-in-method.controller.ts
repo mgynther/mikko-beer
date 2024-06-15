@@ -1,4 +1,5 @@
-import * as signInMethodService from './sign-in-method.service'
+import * as signInMethodService from '../../../core/user/sign-in-method.service'
+import * as signInMethodRepository from '../../../data/user/sign-in-method/sign-in-method.repository'
 import * as authService from '../../authentication/authentication.service'
 import * as authTokenService from '../../authentication/auth-token.service'
 import * as userService from '../user.service'
@@ -12,17 +13,24 @@ import {
   PasswordTooWeakError,
   SignInMethodNotFoundError,
   UserAlreadyHasSignInMethodError,
-  WrongPasswordError
-} from './sign-in-method.service'
+  WrongPasswordError,
+  type AddPasswordUserIf,
+  type ChangePasswordUserIf,
+  type SignInUsingPasswordIf,
+} from '../../../core/user/sign-in-method.service'
 import {
+    RefreshToken,
   validateRefreshToken
 } from '../../../core/authentication/refresh-token'
 import { type Router } from '../../router'
-import { ControllerError, UserNotFoundError } from '../../errors'
+import { ControllerError, UserNotFoundError } from '../../../core/errors'
 import {
+  type UserPasswordHash,
   validatePasswordChange,
   validatePasswordSignInMethod
 } from '../../../core/user/sign-in-method'
+import { type Role, type User } from '../../../core/user/user'
+import { type AuthToken } from '../../../core/authentication/auth-token'
 
 function handleError (error: unknown): void {
   if (
@@ -82,8 +90,23 @@ export async function addPasswordSignInMethod (
   }
 
   try {
+    const addPasswordUserIf: AddPasswordUserIf = {
+      lockUserById: createLockUserById(trx),
+      insertPasswordSignInMethod: function(
+        userPassword: UserPasswordHash
+      ): Promise<void> {
+        return signInMethodRepository.insertPasswordSignInMethod(
+          trx, userPassword
+        ) as Promise<unknown> as Promise<void>
+      },
+      setUserUsername: function(
+        userId: string, username: string
+      ): Promise<void> {
+        return userService.setUserUsername(trx, userId, username)
+      }
+    }
     await signInMethodService.addPasswordSignInMethod(
-      trx,
+      addPasswordUserIf,
       userId,
       request
     )
@@ -109,7 +132,25 @@ export function signInMethodController (router: Router): void {
 
     try {
       const signedInUser = await ctx.db.executeTransaction(async (trx) => {
-        return await signInMethodService.signInUsingPassword(trx, body)
+        const signInUsingPasswordIf: SignInUsingPasswordIf = {
+          lockUserByUsername: function(
+            userName: string
+          ): Promise<User | undefined> {
+            return userService.lockUserByUsername(trx, userName)
+          },
+          findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
+          createRefreshToken: function(userId: string): Promise<RefreshToken> {
+            return authTokenService.createRefreshToken(trx, userId)
+          },
+          createAuthToken: function(
+            role: Role, refreshToken: RefreshToken
+          ): Promise<AuthToken> {
+            return authTokenService.createAuthToken(trx, role, refreshToken)
+          }
+        }
+        return await signInMethodService.signInUsingPassword(
+          signInUsingPasswordIf, body
+        )
       })
 
       ctx.status = 200
@@ -222,7 +263,20 @@ export function signInMethodController (router: Router): void {
 
       try {
         await ctx.db.executeTransaction(async (trx) => {
-          await signInMethodService.changePassword(trx, ctx.params.userId, body)
+          const changePasswordUserIf: ChangePasswordUserIf = {
+            lockUserById: createLockUserById(trx),
+            findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
+            updatePassword: function(
+              userPasswordHash: UserPasswordHash
+            ): Promise<void> {
+              return signInMethodRepository.updatePassword(
+                trx, userPasswordHash
+              ) as Promise<unknown> as Promise<void>
+            }
+          }
+          await signInMethodService.changePassword(
+            changePasswordUserIf, ctx.params.userId, body
+          )
         })
 
         ctx.status = 204
@@ -232,4 +286,18 @@ export function signInMethodController (router: Router): void {
       }
     }
   )
+}
+
+function createLockUserById(trx: Transaction) {
+  return function(userId: string): Promise<any> {
+    return userService.lockUserById(trx, userId)
+  }
+}
+
+function createFindPasswordSignInMethod(trx: Transaction) {
+  return function(
+    userId: string
+  ): Promise<UserPasswordHash | undefined> {
+    return signInMethodRepository.findPasswordSignInMethod(trx, userId)
+  }
 }

@@ -1,4 +1,4 @@
-import { ControllerError } from './errors'
+import { ControllerError } from '../core/errors'
 import {
   type SearchByName as SearchByNameInternal,
   validateSearchByName as coreValidate

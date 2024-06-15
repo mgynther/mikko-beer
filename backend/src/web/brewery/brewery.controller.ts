@@ -13,7 +13,7 @@ import {
   validateCreateBreweryRequest,
   validateUpdateBreweryRequest
 } from '../../core/brewery/brewery'
-import { ControllerError } from '../errors'
+import { ControllerError } from '../../core/errors'
 import { validatePagination } from '../pagination'
 import { validateSearchByName } from '../search'
 
@@ -66,7 +66,7 @@ export function breweryController (router: Router): void {
         return breweryRepository.findBreweryById(ctx.db, breweryId)
       }, breweryId)
 
-      if (brewery == null) {
+      if (brewery === undefined) {
         throw new ControllerError(
           404,
           'BreweryNotFound',

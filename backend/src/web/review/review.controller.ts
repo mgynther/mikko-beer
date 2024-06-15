@@ -15,7 +15,7 @@ import {
   validateUpdateReviewRequest,
   validReviewListOrder
 } from '../../core/review/review'
-import { ControllerError } from '../errors'
+import { ControllerError } from '../../core/errors'
 import { validatePagination } from '../pagination'
 
 export function reviewController (router: Router): void {
@@ -75,7 +75,7 @@ export function reviewController (router: Router): void {
         return reviewRepository.findReviewById(ctx.db, reviewId)
       }, reviewId)
 
-      if (review == null) {
+      if (review === undefined) {
         throw new ControllerError(
           404,
           'ReviewNotFound',

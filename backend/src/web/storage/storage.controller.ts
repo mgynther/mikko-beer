@@ -11,7 +11,7 @@ import {
   validateCreateStorageRequest,
   validateUpdateStorageRequest
 } from '../../core/storage/storage'
-import { ControllerError } from '../errors'
+import { ControllerError } from '../../core/errors'
 import { validatePagination } from '../pagination'
 
 export function storageController (router: Router): void {

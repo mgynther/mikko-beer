@@ -43,3 +43,8 @@ export const validatePasswordChange = ajv.compile<PasswordChange>({
     }
   }
 })
+
+export interface UserPasswordHash {
+  userId: string
+  passwordHash: string
+}

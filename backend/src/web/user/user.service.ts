@@ -32,9 +32,10 @@ export async function findUserById (
 ): Promise<User | undefined> {
   const userRow = await userRepository.findUserById(db, userId)
 
-  if (userRow != null) {
-    return userRowToUser(userRow)
+  if (userRow === undefined) {
+    return undefined
   }
+  return userRowToUser(userRow)
 }
 
 export async function listUsers (

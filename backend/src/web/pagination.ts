@@ -1,4 +1,4 @@
-import { ControllerError } from './errors'
+import { ControllerError } from '../core/errors'
 import {
   type Pagination,
   type PaginationRequest,

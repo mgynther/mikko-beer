@@ -14,7 +14,7 @@ import {
   type PasswordSignInMethod,
   validatePasswordSignInMethod
 } from '../../core/user/sign-in-method'
-import { ControllerError } from '../errors'
+import { ControllerError } from '../../core/errors'
 
 export function userController (router: Router): void {
   router.post('/api/v1/user',
@@ -49,7 +49,7 @@ export function userController (router: Router): void {
       const { userId } = ctx.params
       const user = await userService.findUserById(ctx.db, userId)
 
-      if (user == null) {
+      if (user === undefined) {
         throw new ControllerError(
           404,
           'UserNotFound',

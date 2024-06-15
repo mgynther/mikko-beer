@@ -3,7 +3,7 @@ import * as statsService from '../../core/stats/stats.service'
 import * as authService from '../authentication/authentication.service'
 
 import { type Pagination } from '../../core/pagination'
-import { ControllerError } from '../errors'
+import { ControllerError } from '../../core/errors'
 import { type Router } from '../router'
 
 import { validatePagination} from '../pagination'

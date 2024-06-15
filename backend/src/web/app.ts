@@ -23,7 +23,7 @@ import * as userService from '../web/user/user.service'
 import {
   addPasswordSignInMethod
 } from '../web/user/sign-in-method/sign-in-method.controller'
-import { ControllerError } from '../web/errors'
+import { ControllerError } from '../core/errors'
 
 export class App {
   #config: Config

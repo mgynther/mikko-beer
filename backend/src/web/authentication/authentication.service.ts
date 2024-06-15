@@ -9,7 +9,7 @@ import {
 } from './auth-token.service'
 import { type Next } from 'koa'
 import { type Context } from '../context'
-import { ControllerError } from '../errors'
+import { ControllerError } from '../../core/errors'
 
 export async function authenticateUser (
   ctx: Context,
@@ -51,7 +51,7 @@ export async function authenticateUser (
     authTokenPayload.refreshTokenId
   )
 
-  if (refreshToken == null) {
+  if (refreshToken === undefined) {
     throw new ControllerError(
       404,
       'UserOrRefreshTokenNotFound',
