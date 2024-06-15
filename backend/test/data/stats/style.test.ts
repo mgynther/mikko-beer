@@ -125,7 +125,7 @@ describe('style stats tests', () => {
       ctx.db,
       (data: InsertedData) => ({
         ...defaultFilter,
-        brewery: data.otherBrewery.brewery_id
+        brewery: data.otherBrewery.id
       }),
       { property: 'style_name', direction: 'desc' }
     )

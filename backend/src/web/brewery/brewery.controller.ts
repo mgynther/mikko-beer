@@ -1,9 +1,14 @@
-import * as breweryService from './brewery.service'
+import * as breweryRepository from '../../data/brewery/brewery.repository'
+import * as breweryService from '../../core/brewery/brewery.service'
+import { type Pagination } from '../../core/pagination'
+import { type SearchByName } from '../../core/search'
 import * as authService from '../authentication/authentication.service'
 
 import { type Router } from '../router'
 import {
+  type Brewery,
   type CreateBreweryRequest,
+  type NewBrewery,
   type UpdateBreweryRequest,
   validateCreateBreweryRequest,
   validateUpdateBreweryRequest
@@ -20,7 +25,9 @@ export function breweryController (router: Router): void {
 
       const createBreweryRequest = validateCreateRequest(body)
       const result = await ctx.db.executeTransaction(async (trx) => {
-        return await breweryService.createBrewery(trx, createBreweryRequest)
+        return await breweryService.createBrewery(
+          (brewery: NewBrewery) => breweryRepository.insertBrewery(trx, brewery),
+          createBreweryRequest)
       })
 
       ctx.status = 201
@@ -39,7 +46,8 @@ export function breweryController (router: Router): void {
       const updateBreweryRequest = validateUpdateRequest(body, breweryId)
       const result = await ctx.db.executeTransaction(async (trx) => {
         return await breweryService.updateBrewery(
-          trx, breweryId, updateBreweryRequest)
+          (brewery: Brewery) =>
+            breweryRepository.updateBrewery(trx, brewery), breweryId, updateBreweryRequest)
       })
 
       ctx.status = 200
@@ -54,7 +62,9 @@ export function breweryController (router: Router): void {
     authService.authenticateViewer,
     async (ctx) => {
       const { breweryId } = ctx.params
-      const brewery = await breweryService.findBreweryById(ctx.db, breweryId)
+      const brewery = await breweryService.findBreweryById((breweryId: string) => {
+        return breweryRepository.findBreweryById(ctx.db, breweryId)
+      }, breweryId)
 
       if (brewery == null) {
         throw new ControllerError(
@@ -74,7 +84,9 @@ export function breweryController (router: Router): void {
     async (ctx) => {
       const { skip, size } = ctx.request.query
       const pagination = validatePagination({ skip, size })
-      const breweries = await breweryService.listBreweries(ctx.db, pagination)
+      const breweries = await breweryService.listBreweries((pagination: Pagination) => {
+        return breweryRepository.listBreweries(ctx.db, pagination)
+      }, pagination)
       ctx.body = { breweries, pagination }
     }
   )
@@ -85,8 +97,9 @@ export function breweryController (router: Router): void {
       const { body } = ctx.request
 
       const searchBreweryRequest = validateSearchByName(body)
-      const breweries =
-        await breweryService.searchBreweries(ctx.db, searchBreweryRequest)
+      const breweries = await breweryService.searchBreweries((searchRequest: SearchByName) => {
+        return breweryRepository.searchBreweries(ctx.db, searchRequest)
+      }, searchBreweryRequest)
 
       ctx.status = 200
       ctx.body = { breweries }

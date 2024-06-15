@@ -2,15 +2,19 @@ import { ajv } from '../ajv'
 
 export interface Brewery {
   id: string
-  name: string | null
+  name: string
+}
+
+export interface NewBrewery {
+  name: string
 }
 
 export interface CreateBreweryRequest {
-  name?: string
+  name: string
 }
 
 export interface UpdateBreweryRequest {
-  name?: string
+  name: string
 }
 
 const doValidateBreweryRequest =

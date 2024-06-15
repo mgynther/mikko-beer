@@ -57,13 +57,13 @@ describe('brewery stats tests', () => {
     const brewery = {
       reviewAverage: avg(reviews, data.beer.id),
       reviewCount: '4',
-      breweryId: data.brewery.brewery_id,
+      breweryId: data.brewery.id,
       breweryName: data.brewery.name
     }
     const otherBrewery = {
       reviewAverage: avg(reviews, data.otherBeer.id),
       reviewCount: '5',
-      breweryId: data.otherBrewery.brewery_id,
+      breweryId: data.otherBrewery.id,
       breweryName: data.otherBrewery.name
     }
     const style = {
@@ -143,7 +143,7 @@ describe('brewery stats tests', () => {
       allResults,
       (data: InsertedData) => ({
         ...defaultFilter,
-        brewery: data.otherBrewery.brewery_id
+        brewery: data.otherBrewery.id
       }),
       { property: 'brewery_name', direction: 'desc' }
     )

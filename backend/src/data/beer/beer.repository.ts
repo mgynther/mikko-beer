@@ -143,7 +143,7 @@ export async function findBeerById (
   beerRows.forEach(row => {
     if (!breweryIds[row.brewery_id]) {
       breweryIds[row.brewery_id] = true
-      breweries.push({ id: row.brewery_id, name: row.brewery_name })
+      breweries.push({ id: row.brewery_id, name: row.brewery_name ?? '' })
     }
     if (!styleIds[row.style_id]) {
       styleIds[row.style_id] = true
@@ -248,7 +248,7 @@ function toBeersWithBreweriesAndStyles (
       .some((brewery) => brewery.id === beer.brewery_id)) {
       beerMap[beer.beer_id].breweries.push({
         id: beer.brewery_id,
-        name: beer.brewery_name
+        name: beer.brewery_name ?? ''
       })
     }
     if (!beerMap[beer.beer_id].styles

@@ -1,8 +1,8 @@
 import { type Beer } from '../../src/core/beer/beer'
+import { type Brewery } from '../../src/core/brewery/brewery'
 import { type Database, type Transaction } from '../../src/data/database'
 import * as beerRepository from '../../src/data/beer/beer.repository'
 import * as breweryRepository from '../../src/data/brewery/brewery.repository'
-import { type BreweryRow } from '../../src/data/brewery/brewery.table'
 import * as containerRepository from '../../src/data/container/container.repository'
 import { type ContainerRow } from '../../src/data/container/container.table'
 import * as reviewRepository from '../../src/data/review/review.repository'
@@ -13,8 +13,8 @@ import { ReviewRow } from '../../src/data/review/review.table'
 export interface InsertedData {
   beer: Beer
   otherBeer: Beer
-  brewery: BreweryRow
-  otherBrewery: BreweryRow
+  brewery: Brewery
+  otherBrewery: Brewery
   container: ContainerRow,
   style: StyleRow,
   otherStyle: StyleRow
@@ -32,11 +32,11 @@ export async function insertData(trx: Transaction): Promise<InsertedData> {
     await beerRepository.insertBeer(trx, { name: 'Lost Lager' })
   const beerBreweryRequest = {
     beer: beer.id,
-    brewery: brewery.brewery_id
+    brewery: brewery.id
   }
   const otherBeerBreweryRequest = {
     beer: otherBeer.id,
-    brewery: otherBrewery.brewery_id
+    brewery: otherBrewery.id
   }
   await beerRepository.insertBeerBreweries(trx, [beerBreweryRequest, otherBeerBreweryRequest])
   const beerStyleRequest = {

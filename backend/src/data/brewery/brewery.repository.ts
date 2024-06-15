@@ -1,10 +1,12 @@
 import { type Database, type Transaction } from '../database'
 import {
-  type BreweryRow,
-  type InsertableBreweryRow,
-  type UpdateableBreweryRow
+  type BreweryRow
 } from './brewery.table'
 
+import {
+  type Brewery,
+  type NewBrewery
+} from '../../core/brewery/brewery'
 import {
   type Pagination
 } from '../../core/pagination'
@@ -16,51 +18,54 @@ import {
 
 export async function insertBrewery (
   trx: Transaction,
-  brewery: InsertableBreweryRow
-): Promise<BreweryRow> {
+  brewery: NewBrewery
+): Promise<Brewery> {
   const insertedBrewery = await trx.trx()
     .insertInto('brewery')
     .values(brewery)
     .returningAll()
     .executeTakeFirstOrThrow()
 
-  return insertedBrewery
+  return rowToBrewery(insertedBrewery)
 }
 
 export async function updateBrewery (
   trx: Transaction,
-  id: string,
-  brewery: UpdateableBreweryRow
-): Promise<BreweryRow> {
+  brewery: Brewery
+): Promise<Brewery> {
   const updatedBrewery = await trx.trx()
     .updateTable('brewery')
     .set({
       name: brewery.name
     })
-    .where('brewery_id', '=', id)
+    .where('brewery_id', '=', brewery.id)
     .returningAll()
     .executeTakeFirstOrThrow()
 
-  return updatedBrewery
+  return rowToBrewery(updatedBrewery)
 }
 
 export async function findBreweryById (
   db: Database,
   id: string
-): Promise<BreweryRow | undefined> {
-  const brewery = await db.getDb()
+): Promise<Brewery | undefined> {
+  const breweryRow = await db.getDb()
     .selectFrom('brewery')
     .where('brewery_id', '=', id)
     .selectAll('brewery')
     .executeTakeFirst()
 
-  return brewery
+  if (breweryRow === undefined) {
+    return undefined
+  }
+
+  return rowToBrewery(breweryRow)
 }
 
 export async function listBreweries (
   db: Database,
   pagination: Pagination
-): Promise<BreweryRow[] | undefined> {
+): Promise<Brewery[]> {
   const breweries = await db.getDb()
     .selectFrom('brewery')
     .selectAll('brewery')
@@ -69,17 +74,13 @@ export async function listBreweries (
     .offset(pagination.skip)
     .execute()
 
-  if (breweries.length === 0) {
-    return undefined
-  }
-
-  return [...breweries]
+  return breweries.map(rowToBrewery)
 }
 
 export async function searchBreweries (
   db: Database,
   searchRequest: SearchByName
-): Promise<BreweryRow[] | undefined> {
+): Promise<Brewery[]> {
   const nameIlike = toIlike(searchRequest)
   const breweries = await db.getDb()
     .selectFrom('brewery')
@@ -90,9 +91,12 @@ export async function searchBreweries (
     .limit(defaultSearchMaxResults)
     .execute()
 
-  if (breweries.length === 0) {
-    return undefined
-  }
+  return breweries.map(rowToBrewery)
+}
 
-  return [...breweries]
+function rowToBrewery (row: BreweryRow): Brewery {
+  return {
+    id: row.brewery_id,
+    name: row.name ?? ''
+  }
 }
