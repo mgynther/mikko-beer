@@ -15,7 +15,7 @@ describe('style tests', () => {
 
   it('should create a style', async () => {
     const res = await ctx.request.post(`/api/v1/style`,
-      { name: 'Wild' },
+      { name: 'Wild', parents: [] },
       ctx.adminAuthHeaders()
     )
 
@@ -37,7 +37,7 @@ describe('style tests', () => {
 
   it('should create a child style', async () => {
     const res = await ctx.request.post(`/api/v1/style`,
-      { name: 'Pale Ale' },
+      { name: 'Pale Ale', parents: [] },
       ctx.adminAuthHeaders()
     )
 
@@ -85,13 +85,13 @@ describe('style tests', () => {
 
   it('should create a child style with 2 parents', async () => {
     const parent1Res = await ctx.request.post(`/api/v1/style`,
-      { name: 'Ale' },
+      { name: 'Ale', parents: [] },
       ctx.adminAuthHeaders()
     )
     expect(parent1Res.status).to.equal(201)
 
     const parent2Res = await ctx.request.post(`/api/v1/style`,
-      { name: 'Lager' },
+      { name: 'Lager', parents: [] },
       ctx.adminAuthHeaders()
     )
     expect(parent2Res.status).to.equal(201)
@@ -146,7 +146,7 @@ describe('style tests', () => {
 
   it('should fail to create a style without name', async () => {
     const res = await ctx.request.post(`/api/v1/style`,
-      {},
+      { parents: [] },
       ctx.adminAuthHeaders()
     )
 
@@ -155,12 +155,12 @@ describe('style tests', () => {
 
   it('should update a style', async () => {
     const aleRes = await ctx.request.post(`/api/v1/style`,
-      { name: 'Pale Ale' },
+      { name: 'Pale Ale', parents: [] },
       ctx.adminAuthHeaders()
     )
 
     const lagerRes = await ctx.request.post(`/api/v1/style`,
-      { name: 'Lager' },
+      { name: 'Lager', parents: [] },
       ctx.adminAuthHeaders()
     )
 
@@ -206,7 +206,7 @@ describe('style tests', () => {
 
   it('should fail to create cyclic relationship', async () => {
     const aleRes = await ctx.request.post(`/api/v1/style`,
-      { name: 'Pale Ale' },
+      { name: 'Pale Ale', parents: [] },
       ctx.adminAuthHeaders()
     )
     expect(aleRes.status).to.equal(201)

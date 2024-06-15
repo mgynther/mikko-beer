@@ -15,7 +15,7 @@ describe('beer tests', () => {
 
   async function createBeer () {
     const styleRes = await ctx.request.post(`/api/v1/style`,
-      { name: 'Kriek' },
+      { name: 'Kriek', parents: [] },
       ctx.adminAuthHeaders()
     )
     expect(styleRes.status).to.equal(201)
@@ -111,13 +111,13 @@ describe('beer tests', () => {
 
   it('should create a child beer with 2 breweries and 2 styles', async () => {
     const style1Res = await ctx.request.post(`/api/v1/style`,
-      { name: 'Wild' },
+      { name: 'Wild', parents: [] },
       ctx.adminAuthHeaders()
     )
     expect(style1Res.status).to.equal(201)
 
     const style2Res = await ctx.request.post(`/api/v1/style`,
-      { name: 'IPA' },
+      { name: 'IPA', parents: [] },
       ctx.adminAuthHeaders()
     )
     expect(style2Res.status).to.equal(201)
@@ -191,7 +191,7 @@ describe('beer tests', () => {
 
   it('should fail to create a beer with invalid brewery', async () => {
     const styleRes = await ctx.request.post(`/api/v1/style`,
-      { name: 'IPA' },
+      { name: 'IPA', parents: [] },
       ctx.adminAuthHeaders()
     )
     expect(styleRes.status).to.equal(201)
@@ -207,7 +207,7 @@ describe('beer tests', () => {
 
   it('should fail to create a beer without name', async () => {
     const styleRes = await ctx.request.post(`/api/v1/style`,
-      { name: 'Kriek' },
+      { name: 'Kriek', parents: [] },
       ctx.adminAuthHeaders()
     )
     expect(styleRes.status).to.equal(201)
@@ -227,12 +227,12 @@ describe('beer tests', () => {
 
   it('should update a beer', async () => {
     const style1Res = await ctx.request.post(`/api/v1/style`,
-      { name: 'Kriek' },
+      { name: 'Kriek', parents: [] },
       ctx.adminAuthHeaders()
     )
     expect(style1Res.status).to.equal(201)
     const style2Res = await ctx.request.post(`/api/v1/style`,
-      { name: 'IPA' },
+      { name: 'IPA', parents: [] },
       ctx.adminAuthHeaders()
     )
     expect(style2Res.status).to.equal(201)

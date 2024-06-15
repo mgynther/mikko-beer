@@ -18,13 +18,13 @@ export async function createStyle (
   request: CreateStyleRequest
 ): Promise<StyleWithParentIds> {
   const uuid = uuidv4()
-  await validateRelationships(trx, uuid, request.parents ?? [])
+  await validateRelationships(trx, uuid, request.parents)
 
   const style = await styleRepository.insertStyle(trx, {
     name: request.name
   })
 
-  if (request.parents !== undefined) {
+  if (request.parents.length > 0) {
     await styleRepository.insertStyleRelationships(trx, request.parents.map(parent => ({
         parent,
         child: style.style_id
@@ -42,7 +42,7 @@ export async function updateStyle (
   styleId: string,
   request: UpdateStyleRequest
 ): Promise<StyleWithParentIds> {
-  await validateRelationships(trx, styleId, request.parents ?? [])
+  await validateRelationships(trx, styleId, request.parents)
 
   const style = await styleRepository.updateStyle(trx, styleId, {
     name: request.name
@@ -50,7 +50,7 @@ export async function updateStyle (
 
   await Promise.all([
     styleRepository.deleteStyleChildRelationships(trx, styleId),
-    request.parents === undefined ? () => {} :
+    request.parents.length === 0 ? () => {} :
     styleRepository.insertStyleRelationships(trx, request.parents.map(parent => ({
         parent,
         child: style.style_id

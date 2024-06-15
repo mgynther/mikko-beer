@@ -15,13 +15,13 @@ export interface StyleWithParentIds extends Style {
 }
 
 export interface CreateStyleRequest {
-  name?: string
-  parents?: string[]
+  name: string
+  parents: string[]
 }
 
 export interface UpdateStyleRequest {
-  name?: string
-  parents?: string[]
+  name: string
+  parents: string[]
 }
 
 const doValidateStyleRequest =
@@ -38,7 +38,7 @@ const doValidateStyleRequest =
         }
       }
     },
-    required: ['name'],
+    required: ['name', 'parents'],
     additionalProperties: false
   })
 

@@ -15,7 +15,7 @@ describe('review tests', () => {
 
   async function createDeps(adminAuthHeaders: Record<string, unknown>) {
     const styleRes = await ctx.request.post(`/api/v1/style`,
-      { name: 'Kriek' },
+      { name: 'Kriek', parents: [] },
       adminAuthHeaders
     )
     expect(styleRes.status).to.equal(201)
@@ -260,7 +260,7 @@ describe('review tests', () => {
     expect(reviewRes.data.review.beer).to.equal(beerRes.data.beer.id)
 
     const otherStyleRes = await ctx.request.post(`/api/v1/style`,
-      { name: 'IPA' },
+      { name: 'IPA', parents: [] },
       ctx.adminAuthHeaders()
     )
     expect(otherStyleRes.status).to.equal(201)
