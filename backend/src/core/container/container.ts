@@ -2,18 +2,23 @@ import { ajv } from '../ajv'
 
 export interface Container {
   id: string
-  type: string | null
-  size: string | null
+  type: string
+  size: string
+}
+
+export interface NewContainer {
+  type: string
+  size: string
 }
 
 export interface CreateContainerRequest {
-  type?: string
-  size?: string
+  type: string
+  size: string
 }
 
 export interface UpdateContainerRequest {
-  type?: string
-  size?: string
+  type: string
+  size: string
 }
 
 const doValidateContainerRequest =

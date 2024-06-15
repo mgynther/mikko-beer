@@ -1,10 +1,10 @@
 import { type Beer } from '../../src/core/beer/beer'
 import { type Brewery } from '../../src/core/brewery/brewery'
+import { type Container} from '../../src/core/container/container'
 import { type Database, type Transaction } from '../../src/data/database'
 import * as beerRepository from '../../src/data/beer/beer.repository'
 import * as breweryRepository from '../../src/data/brewery/brewery.repository'
 import * as containerRepository from '../../src/data/container/container.repository'
-import { type ContainerRow } from '../../src/data/container/container.table'
 import * as reviewRepository from '../../src/data/review/review.repository'
 import * as styleRepository from '../../src/data/style/style.repository'
 import { StyleRow } from '../../src/data/style/style.table'
@@ -15,7 +15,7 @@ export interface InsertedData {
   otherBeer: Beer
   brewery: Brewery
   otherBrewery: Brewery
-  container: ContainerRow,
+  container: Container,
   style: StyleRow,
   otherStyle: StyleRow
 }
@@ -69,7 +69,7 @@ export async function insertMultipleReviews(
     for (let i = 0; i < count; i++) {
       const reviewRequest = {
         beer: (i % 2 === 0) ? otherBeer.id : beer.id,
-        container: container.container_id,
+        container: container.id,
         rating: (i % 7) + 4,
         time: new Date(`2024-0${(i % 3) + 2}-0${(i % 5) + 1}T18:00:00.000Z`),
         smell: "vanilla",

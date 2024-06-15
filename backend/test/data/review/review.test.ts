@@ -43,7 +43,7 @@ describe('review tests', () => {
       const reviewRequest = {
         beer: beer.id,
         additional_info: "additional",
-        container: container.container_id,
+        container: container.id,
         location: "location",
         rating: 8,
         time: new Date(),

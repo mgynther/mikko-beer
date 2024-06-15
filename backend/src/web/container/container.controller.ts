@@ -1,9 +1,12 @@
-import * as containerService from './container.service'
+import * as containerRepository from '../../data/container/container.repository'
+import * as containerService from '../../core/container/container.service'
 import * as authService from '../authentication/authentication.service'
 
 import { type Router } from '../router'
 import {
+  type Container,
   type CreateContainerRequest,
+  type NewContainer,
   type UpdateContainerRequest,
   validateCreateContainerRequest,
   validateUpdateContainerRequest
@@ -19,7 +22,8 @@ export function containerController (router: Router): void {
       const createContainerRequest = validateCreateRequest(body)
       const result = await ctx.db.executeTransaction(async (trx) => {
         return await containerService.createContainer(
-          trx, createContainerRequest)
+          (container: NewContainer) => containerRepository.insertContainer(trx, container),
+          createContainerRequest)
       })
 
       ctx.status = 201
@@ -38,7 +42,8 @@ export function containerController (router: Router): void {
       const updateContainerRequest = validateUpdateRequest(body, containerId)
       const result = await ctx.db.executeTransaction(async (trx) => {
         return await containerService.updateContainer(
-          trx, containerId, updateContainerRequest)
+          (container: Container) =>
+            containerRepository.updateContainer(trx, container), containerId, updateContainerRequest)
       })
 
       ctx.status = 200
@@ -53,8 +58,9 @@ export function containerController (router: Router): void {
     authService.authenticateViewer,
     async (ctx) => {
       const { containerId } = ctx.params
-      const container = await containerService.findContainerById(
-        ctx.db, containerId)
+      const container = await containerService.findContainerById((containerId: string) => {
+        return containerRepository.findContainerById(ctx.db, containerId)
+      }, containerId)
 
       if (container == null) {
         throw new ControllerError(
@@ -72,7 +78,9 @@ export function containerController (router: Router): void {
     '/api/v1/container',
     authService.authenticateViewer,
     async (ctx) => {
-      const containers = await containerService.listContainers(ctx.db)
+      const containers = await containerService.listContainers(() => {
+        return containerRepository.listContainers(ctx.db)
+      })
       ctx.body = { containers }
     }
   )

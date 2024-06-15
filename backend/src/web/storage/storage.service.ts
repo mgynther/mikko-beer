@@ -103,8 +103,8 @@ function toJoinedStorages (storageRows: DbJoinedStorage[]): JoinedStorage[] {
     })),
     container: {
       id: row.container_id,
-      size: row.container_size,
-      type: row.container_type
+      size: row.container_size ?? '',
+      type: row.container_type ?? ''
     },
     styles: row.styles.map(style => ({
       id: style.style_id,

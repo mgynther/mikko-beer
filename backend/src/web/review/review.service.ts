@@ -124,8 +124,8 @@ function toJoinedReviews (reviewRows: DbJoinedReview[]): JoinedReview[] {
     })),
     container: {
       id: row.container_id,
-      size: row.container_size,
-      type: row.container_type
+      size: row.container_size ?? '',
+      type: row.container_type ?? ''
     },
     location: row.location,
     rating: row.rating,
