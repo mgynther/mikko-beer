@@ -2,17 +2,16 @@ import { sql } from 'kysely'
 
 import { type Database, type Transaction } from '../database'
 import {
-  type BeerRow,
   type BeerBreweryRow,
   type BeerStyleRow,
   type BeerTable,
-  type InsertableBeerRow,
   type InsertableBeerBreweryRow,
-  type InsertableBeerStyleRow,
-  type UpdateableBeerRow
+  type InsertableBeerStyleRow
 } from './beer.table'
 import {
-  type BeerWithBreweriesAndStyles
+  type BeerWithBreweriesAndStyles,
+  type Beer,
+  type NewBeer
 } from '../../core/beer/beer'
 
 import { type Pagination, toRowNumbers } from '../../core/pagination'
@@ -27,15 +26,18 @@ import { type Style } from '../../core/style/style'
 
 export async function insertBeer (
   trx: Transaction,
-  beer: InsertableBeerRow
-): Promise<BeerRow> {
+  beer: NewBeer
+): Promise<Beer> {
   const insertedBeer = await trx.trx()
     .insertInto('beer')
     .values(beer)
     .returningAll()
     .executeTakeFirstOrThrow()
 
-  return insertedBeer
+  return {
+    id: insertedBeer.beer_id,
+    name: insertedBeer.name ?? ''
+  }
 }
 
 export async function insertBeerBreweries (
@@ -86,19 +88,21 @@ export async function deleteBeerStyles (
 
 export async function updateBeer (
   trx: Transaction,
-  id: string,
-  beer: UpdateableBeerRow
-): Promise<BeerRow> {
+  beer: Beer
+): Promise<Beer> {
   const updatedBeer = await trx.trx()
     .updateTable('beer')
     .set({
       name: beer.name
     })
-    .where('beer_id', '=', id)
+    .where('beer_id', '=', beer.id)
     .returningAll()
     .executeTakeFirstOrThrow()
 
-  return updatedBeer
+  return {
+    id: updatedBeer.beer_id,
+    name: updatedBeer.name ?? ''
+  }
 }
 
 export async function findBeerById (
@@ -149,7 +153,7 @@ export async function findBeerById (
 
   return {
     id: beer_id,
-    name,
+    name: name ?? '',
     breweries,
     styles
   }
@@ -234,7 +238,7 @@ function toBeersWithBreweriesAndStyles (
     if (beerMap[beer.beer_id] === undefined) {
       beerMap[beer.beer_id] = {
         id: beer.beer_id,
-        name: beer.name,
+        name: beer.name ?? '',
         breweries: [],
         styles: []
       }

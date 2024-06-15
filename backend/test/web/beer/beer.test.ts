@@ -54,8 +54,17 @@ describe('beer tests', () => {
     expect(getRes.data.beer.styles).to.eql([withoutParents(styleRes.data.style)])
   })
 
+  it('should not find a beer that does not exist', async () => {
+    const getRes = await ctx.request.get<{ beer: BeerWithBreweriesAndStyles }>(
+      `/api/v1/beer/e733fe0f-3b6a-438c-85cf-021987bec5f6`,
+      ctx.adminAuthHeaders()
+    )
+
+    expect(getRes.status).to.equal(404)
+  })
+
   it('should search beer', async () => {
-    const { beerRes, breweryRes, styleRes } = await createBeer()
+    const { beerRes } = await createBeer()
     const searchRes = await ctx.request.post<{ beers: Beer[] }>(
       '/api/v1/beer/search',
       { name: 'iNd' },
@@ -67,7 +76,7 @@ describe('beer tests', () => {
   })
 
   it('should not find beer without a match', async () => {
-    const { beerRes, breweryRes, styleRes } = await createBeer()
+    await createBeer()
     const searchNoMatchRes = await ctx.request.post<{ beers: Beer[] }>(
       '/api/v1/beer/search',
       { name: 'iNda' },
@@ -78,7 +87,7 @@ describe('beer tests', () => {
   })
 
   it('should find beer with exact match', async () => {
-    const { beerRes, breweryRes, styleRes } = await createBeer()
+    const { beerRes } = await createBeer()
     const searchExactRes = await ctx.request.post<{ beers: Beer[] }>(
       '/api/v1/beer/search',
       { name: '"lindemans kriek"' },
@@ -90,7 +99,7 @@ describe('beer tests', () => {
   })
 
   it('should not find beer with exact match mismatch', async () => {
-    const { beerRes, breweryRes, styleRes } = await createBeer()
+    await createBeer()
     const searchExactNoMatchRes = await ctx.request.post<{ beers: Beer[] }>(
       '/api/v1/beer/search',
       { name: '"lindemans krie"' },
@@ -148,7 +157,7 @@ describe('beer tests', () => {
   })
 
   it('should list beers', async () => {
-    const { beerRes, breweryRes, styleRes } = await createBeer()
+    await createBeer()
     const listRes = await ctx.request.get(`/api/v1/beer`,
       ctx.adminAuthHeaders()
     )

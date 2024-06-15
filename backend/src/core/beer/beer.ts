@@ -3,9 +3,13 @@ import { ajv } from '../ajv'
 import { type Brewery } from '../brewery/brewery'
 import { type Style } from '../style/style'
 
+export interface NewBeer {
+  name: string
+}
+
 export interface Beer {
   id: string
-  name: string | null
+  name: string
 }
 
 export interface BeerWithBreweryAndStyleIds {
@@ -17,13 +21,13 @@ export interface BeerWithBreweryAndStyleIds {
 
 export interface BeerWithBreweriesAndStyles {
   id: string
-  name: string | null
+  name: string
   breweries: Brewery[]
   styles: Style[]
 }
 
 export interface BeerRequest {
-  name?: string
+  name: string
   breweries: string[]
   styles: string[]
 }

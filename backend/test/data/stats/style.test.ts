@@ -52,13 +52,13 @@ describe('style stats tests', () => {
       styleStatsOrder
     )
     const style = {
-      reviewAverage: avg(reviews, data.beer.beer_id),
+      reviewAverage: avg(reviews, data.beer.id),
       reviewCount: '4',
       styleId: data.style.style_id,
       styleName: data.style.name
     }
     const otherStyle = {
-      reviewAverage: avg(reviews, data.otherBeer.beer_id),
+      reviewAverage: avg(reviews, data.otherBeer.id),
       reviewCount: '5',
       styleId: data.otherStyle.style_id,
       styleName: data.otherStyle.name

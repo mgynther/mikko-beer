@@ -55,13 +55,13 @@ describe('brewery stats tests', () => {
       breweryStatsOrder
     )
     const brewery = {
-      reviewAverage: avg(reviews, data.beer.beer_id),
+      reviewAverage: avg(reviews, data.beer.id),
       reviewCount: '4',
       breweryId: data.brewery.brewery_id,
       breweryName: data.brewery.name
     }
     const otherBrewery = {
-      reviewAverage: avg(reviews, data.otherBeer.beer_id),
+      reviewAverage: avg(reviews, data.otherBeer.id),
       reviewCount: '5',
       breweryId: data.otherBrewery.brewery_id,
       breweryName: data.otherBrewery.name

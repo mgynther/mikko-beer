@@ -41,7 +41,7 @@ describe('review tests', () => {
     await ctx.db.executeTransaction(async (trx) => {
       const { beer, container } = await insertData(trx)
       const reviewRequest = {
-        beer: beer.beer_id,
+        beer: beer.id,
         additional_info: "additional",
         container: container.container_id,
         location: "location",
@@ -230,8 +230,8 @@ describe('review tests', () => {
     const { reviews, data } = await insertMultipleReviews(10, db)
     const reviewListOrder: ReviewListOrder =
       { property: 'beer_name', direction: 'desc' }
-    const list = await listReviewsByBeer(db, data.otherBeer.beer_id, reviewListOrder)
-    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.beer_id)
+    const list = await listReviewsByBeer(db, data.otherBeer.id, reviewListOrder)
+    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.id)
   })
 
   it('list reviews by beer, rating asc', async() => {
@@ -239,8 +239,8 @@ describe('review tests', () => {
     const { reviews, data } = await insertMultipleReviews(10, db)
     const reviewListOrder: ReviewListOrder =
       { property: 'rating', direction: 'asc' }
-    const list = await listReviewsByBeer(db, data.beer.beer_id, reviewListOrder)
-    testFilteredList(reviews, list, toRatingTime, ascendingRatings, data.beer.beer_id)
+    const list = await listReviewsByBeer(db, data.beer.id, reviewListOrder)
+    testFilteredList(reviews, list, toRatingTime, ascendingRatings, data.beer.id)
   })
 
   it('list reviews by beer, time desc', async() => {
@@ -248,8 +248,8 @@ describe('review tests', () => {
     const { reviews, data } = await insertMultipleReviews(10, db)
     const reviewListOrder: ReviewListOrder =
       { property: 'time', direction: 'desc' }
-    const list = await listReviewsByBeer(db, data.otherBeer.beer_id, reviewListOrder)
-    testFilteredList(reviews, list, toTime, descendingDates, data.otherBeer.beer_id)
+    const list = await listReviewsByBeer(db, data.otherBeer.id, reviewListOrder)
+    testFilteredList(reviews, list, toTime, descendingDates, data.otherBeer.id)
   })
 
   async function listReviewsByBrewery(db: Database, breweryId: string, reviewListOrder: ReviewListOrder) {
@@ -266,7 +266,7 @@ describe('review tests', () => {
     const reviewListOrder: ReviewListOrder =
       { property: 'beer_name', direction: 'asc' }
     const list = await listReviewsByBrewery(db, data.otherBrewery.brewery_id, reviewListOrder)
-    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.beer_id)
+    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.id)
   })
 
   it('list reviews by brewery, rating desc', async() => {
@@ -275,7 +275,7 @@ describe('review tests', () => {
     const reviewListOrder: ReviewListOrder =
       { property: 'rating', direction: 'desc' }
     const list = await listReviewsByBrewery(db, data.brewery.brewery_id, reviewListOrder)
-    testFilteredList(reviews, list, toRatingTime, descendingRatings, data.beer.beer_id)
+    testFilteredList(reviews, list, toRatingTime, descendingRatings, data.beer.id)
   })
 
   it('list reviews by brewery, time asc', async() => {
@@ -284,7 +284,7 @@ describe('review tests', () => {
     const reviewListOrder: ReviewListOrder =
       { property: 'time', direction: 'asc' }
     const list = await listReviewsByBrewery(db, data.otherBrewery.brewery_id, reviewListOrder)
-    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.beer_id)
+    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.id)
   })
 
   async function listReviewsByStyle(db: Database, styleId: string, reviewListOrder: ReviewListOrder) {
@@ -301,7 +301,7 @@ describe('review tests', () => {
     const reviewListOrder: ReviewListOrder =
       { property: 'beer_name', direction: 'asc' }
     const list = await listReviewsByStyle(db, data.otherStyle.style_id, reviewListOrder)
-    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.beer_id)
+    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.id)
   })
 
   it('list reviews by style, rating desc', async() => {
@@ -310,7 +310,7 @@ describe('review tests', () => {
     const reviewListOrder: ReviewListOrder =
       { property: 'rating', direction: 'desc' }
     const list = await listReviewsByStyle(db, data.style.style_id, reviewListOrder)
-    testFilteredList(reviews, list, toRatingTime, descendingRatings, data.beer.beer_id)
+    testFilteredList(reviews, list, toRatingTime, descendingRatings, data.beer.id)
   })
 
   it('list reviews by style, time asc', async() => {
@@ -319,7 +319,7 @@ describe('review tests', () => {
     const reviewListOrder: ReviewListOrder =
       { property: 'time', direction: 'asc' }
     const list = await listReviewsByStyle(db, data.otherStyle.style_id, reviewListOrder)
-    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.beer_id)
+    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.id)
   })
 
 })

@@ -1,6 +1,6 @@
+import { type Beer } from '../../src/core/beer/beer'
 import { type Database, type Transaction } from '../../src/data/database'
 import * as beerRepository from '../../src/data/beer/beer.repository'
-import { type BeerRow } from '../../src/data/beer/beer.table'
 import * as breweryRepository from '../../src/data/brewery/brewery.repository'
 import { type BreweryRow } from '../../src/data/brewery/brewery.table'
 import * as containerRepository from '../../src/data/container/container.repository'
@@ -11,8 +11,8 @@ import { StyleRow } from '../../src/data/style/style.table'
 import { ReviewRow } from '../../src/data/review/review.table'
 
 export interface InsertedData {
-  beer: BeerRow
-  otherBeer: BeerRow
+  beer: Beer
+  otherBeer: Beer
   brewery: BreweryRow
   otherBrewery: BreweryRow
   container: ContainerRow,
@@ -31,20 +31,20 @@ export async function insertData(trx: Transaction): Promise<InsertedData> {
   const otherBeer =
     await beerRepository.insertBeer(trx, { name: 'Lost Lager' })
   const beerBreweryRequest = {
-    beer: beer.beer_id,
+    beer: beer.id,
     brewery: brewery.brewery_id
   }
   const otherBeerBreweryRequest = {
-    beer: otherBeer.beer_id,
+    beer: otherBeer.id,
     brewery: otherBrewery.brewery_id
   }
   await beerRepository.insertBeerBreweries(trx, [beerBreweryRequest, otherBeerBreweryRequest])
   const beerStyleRequest = {
-    beer: beer.beer_id,
+    beer: beer.id,
     style: style.style_id
   }
   const otherBeerStyleRequest = {
-    beer: otherBeer.beer_id,
+    beer: otherBeer.id,
     style: otherStyle.style_id
   }
   await beerRepository.insertBeerStyles(trx, [beerStyleRequest, otherBeerStyleRequest])
@@ -68,7 +68,7 @@ export async function insertMultipleReviews(
     const { beer, otherBeer, container } = data
     for (let i = 0; i < count; i++) {
       const reviewRequest = {
-        beer: (i % 2 === 0) ? otherBeer.beer_id : beer.beer_id,
+        beer: (i % 2 === 0) ? otherBeer.id : beer.id,
         container: container.container_id,
         rating: (i % 7) + 4,
         time: new Date(`2024-0${(i % 3) + 2}-0${(i % 5) + 1}T18:00:00.000Z`),

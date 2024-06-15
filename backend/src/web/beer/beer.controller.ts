@@ -1,9 +1,16 @@
-import * as beerService from './beer.service'
+import * as beerRepository from '../../data/beer/beer.repository'
+import { type Transaction } from '../../data/database'
+import * as beerService from '../../core/beer/beer.service'
+import { type CreateIf, type UpdateIf } from '../../core/beer/beer.service'
+import { type Pagination } from '../../core/pagination'
+import { type SearchByName } from '../../core/search'
 import * as authService from '../authentication/authentication.service'
 
 import { type Router } from '../router'
 import {
+  type Beer,
   type CreateBeerRequest,
+  type NewBeer,
   type UpdateBeerRequest,
   validateCreateBeerRequest,
   validateUpdateBeerRequest
@@ -20,7 +27,12 @@ export function beerController (router: Router): void {
 
       const createBeerRequest = validateCreateRequest(body)
       const result = await ctx.db.executeTransaction(async (trx) => {
-        return await beerService.createBeer(trx, createBeerRequest)
+        const createIf: CreateIf = {
+          create: (beer: NewBeer) => beerRepository.insertBeer(trx, beer),
+          insertBeerBreweries: createBeerBreweryInserter(trx),
+          insertBeerStyles: createBeerStyleInserter(trx),
+        }
+        return await beerService.createBeer(createIf, createBeerRequest)
       })
 
       ctx.status = 201
@@ -38,7 +50,14 @@ export function beerController (router: Router): void {
 
       const updateBeerRequest = validateUpdateRequest(body, beerId)
       const result = await ctx.db.executeTransaction(async (trx) => {
-        return await beerService.updateBeer(trx, beerId, updateBeerRequest)
+        const updateIf: UpdateIf = {
+          update: (beer: Beer) => beerRepository.updateBeer(trx, beer),
+          insertBeerBreweries: createBeerBreweryInserter(trx),
+          deleteBeerBreweries: (beerId: string) => beerRepository.deleteBeerBreweries(trx, beerId),
+          insertBeerStyles: createBeerStyleInserter(trx),
+          deleteBeerStyles: (beerId: string) => beerRepository.deleteBeerStyles(trx, beerId),
+        }
+        return await beerService.updateBeer(updateIf, beerId, updateBeerRequest)
       })
 
       ctx.status = 200
@@ -53,7 +72,9 @@ export function beerController (router: Router): void {
     authService.authenticateViewer,
     async (ctx) => {
       const { beerId } = ctx.params
-      const beer = await beerService.findBeerById(ctx.db, beerId)
+      const beer = await beerService.findBeerById((beerId: string) => {
+        return beerRepository.findBeerById(ctx.db, beerId)
+      }, beerId)
 
       if (beer == null) {
         throw new ControllerError(
@@ -73,7 +94,9 @@ export function beerController (router: Router): void {
     async (ctx) => {
       const { skip, size } = ctx.request.query
       const pagination = validatePagination({ skip, size })
-      const beers = await beerService.listBeers(ctx.db, pagination)
+      const beers = await beerService.listBeers((pagination: Pagination) => {
+        return beerRepository.listBeers(ctx.db, pagination)
+      }, pagination)
       ctx.body = { beers, pagination }
     }
   )
@@ -84,8 +107,9 @@ export function beerController (router: Router): void {
       const { body } = ctx.request
 
       const searchBeerRequest = validateSearchByName(body)
-      const beers =
-        await beerService.searchBeers(ctx.db, searchBeerRequest)
+      const beers = await beerService.searchBeers((searchRequest: SearchByName) => {
+        return beerRepository.searchBeers(ctx.db, searchRequest)
+      }, searchBeerRequest)
 
       ctx.status = 200
       ctx.body = { beers }
@@ -115,4 +139,22 @@ function validateUpdateRequest (
 
   const result = body as UpdateBeerRequest
   return result
+}
+
+function createBeerBreweryInserter(trx: Transaction) {
+  return (beerId: string, breweries: string[]) => {
+    return beerRepository.insertBeerBreweries(trx, breweries.map(brewery => ({
+      beer: beerId,
+      brewery
+    }))) as Promise<unknown> as Promise<void>
+  }
+}
+
+function createBeerStyleInserter(trx: Transaction) {
+  return (beerId: string, styles: string[]) => {
+    return beerRepository.insertBeerStyles(trx, styles.map(style => ({
+      beer: beerId,
+      style
+    }))) as Promise<unknown> as Promise<void>
+  }
 }
