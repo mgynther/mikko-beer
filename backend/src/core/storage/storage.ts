@@ -13,16 +13,16 @@ export interface Storage {
 export interface JoinedStorage {
   id: string
   beerId: string
-  beerName: string | null
+  beerName: string
   bestBefore: Date
   breweries: Array<{
     id: string
-    name: string | null
+    name: string
   }>
   container: Container
   styles: Array<{
     id: string
-    name: string | null
+    name: string
   }>
 }
 

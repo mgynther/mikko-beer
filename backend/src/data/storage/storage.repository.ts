@@ -8,49 +8,55 @@ import {
 import {
   type DbJoinedStorage,
   type StorageRow,
-  type StorageTable,
-  type InsertableStorageRow,
-  type UpdateableStorageRow
+  type StorageTable
 } from './storage.table'
 
 import { type Pagination, toRowNumbers } from '../../core/pagination'
+import {
+  type JoinedStorage,
+  type Storage,
+  type StorageRequest
+} from '../../core/storage/storage'
 
 export async function insertStorage (
   trx: Transaction,
-  storage: InsertableStorageRow
-): Promise<StorageRow> {
+  storage: StorageRequest
+): Promise<Storage> {
   const insertedStorage = await trx.trx()
     .insertInto('storage')
-    .values(storage)
+    .values({
+      beer: storage.beer,
+      best_before: new Date(storage.bestBefore),
+      container: storage.container
+    })
     .returningAll()
     .executeTakeFirstOrThrow()
 
-  return insertedStorage
+  return toStorage(insertedStorage)
 }
 
 export async function updateStorage (
   trx: Transaction,
-  id: string,
-  storage: UpdateableStorageRow
-): Promise<StorageRow> {
+  storage: Storage
+): Promise<Storage> {
   const updatedStorage = await trx.trx()
     .updateTable('storage')
     .set({
-      best_before: storage.best_before,
+      best_before: new Date(storage.bestBefore),
       beer: storage.beer,
       container: storage.container
     })
-    .where('storage_id', '=', id)
+    .where('storage_id', '=', storage.id)
     .returningAll()
     .executeTakeFirstOrThrow()
 
-  return updatedStorage
+  return toStorage(updatedStorage)
 }
 
 export async function findStorageById (
   db: Database,
   id: string
-): Promise<DbJoinedStorage | undefined> {
+): Promise<JoinedStorage | undefined> {
   const storageRows = await db.getDb()
     .selectFrom('storage')
     .innerJoin('beer', 'storage.beer', 'beer.beer_id')
@@ -81,7 +87,7 @@ export async function findStorageById (
   }
 
   const parsed = parseBreweryStorageRows(storageRows)
-  return parsed?.[0]
+  return toJoinedStorages(parsed)?.[0]
 }
 
 export async function deleteStorageById (
@@ -137,7 +143,7 @@ const listColumns: PossibleListColumns[] = [
 export async function listStorages (
   db: Database,
   pagination: Pagination
-): Promise<DbJoinedStorage[]> {
+): Promise<JoinedStorage[]> {
   const { start, end } = toRowNumbers(pagination)
 
   const storages = await db.getDb()
@@ -158,39 +164,39 @@ export async function listStorages (
     return []
   }
 
-  return parseBreweryStorageRows(storages)
+  return toJoinedStorages(parseBreweryStorageRows(storages))
 }
 
 export async function listStoragesByBeer (
   db: Database,
   beerId: string
-): Promise<DbJoinedStorage[]> {
-  return await joinStorageData(db.getDb()
+): Promise<JoinedStorage[]> {
+  return toJoinedStorages(await joinStorageData(db.getDb()
     .selectFrom('beer')
     .where('beer.beer_id', '=', beerId)
-  )
+  ))
 }
 
 export async function listStoragesByBrewery (
   db: Database,
   breweryId: string
-): Promise<DbJoinedStorage[]> {
-  return await joinStorageData(db.getDb()
+): Promise<JoinedStorage[]> {
+  return toJoinedStorages(await joinStorageData(db.getDb()
     .selectFrom('beer_brewery as querybrewery')
     .innerJoin('beer', 'querybrewery.beer', 'beer.beer_id')
     .where('querybrewery.brewery', '=', breweryId)
-  )
+  ))
 }
 
 export async function listStoragesByStyle (
   db: Database,
   styleId: string
-): Promise<DbJoinedStorage[]> {
-  return await joinStorageData(db.getDb()
+): Promise<JoinedStorage[]> {
+  return toJoinedStorages(await joinStorageData(db.getDb()
     .selectFrom('beer_style as querystyle')
     .innerJoin('beer', 'querystyle.beer', 'beer.beer_id')
     .where('querystyle.style', '=', styleId)
-  )
+  ))
 }
 
 export async function joinStorageData (
@@ -214,7 +220,7 @@ export async function joinStorageData (
   return parseBreweryStorageRows(storages)
 }
 
-interface JoinedStorage {
+interface InternalJoinedStorage {
   storage_id: string
   best_before: Date
   beer_id: string
@@ -230,7 +236,7 @@ interface JoinedStorage {
 }
 
 function parseBreweryStorageRows (
-  storages: JoinedStorage[]
+  storages: InternalJoinedStorage[]
 ): DbJoinedStorage[] {
   const storageMap: Record<string, DbJoinedStorage> = {}
   const storageArray: DbJoinedStorage[] = []
@@ -274,4 +280,35 @@ function parseBreweryStorageRows (
   })
 
   return storageArray
+}
+
+export function toStorage (storage: StorageRow): Storage {
+  return {
+    id: storage.storage_id,
+    beer: storage.beer,
+    bestBefore: storage.best_before,
+    container: storage.container
+  }
+}
+
+function toJoinedStorages (storageRows: DbJoinedStorage[]): JoinedStorage[] {
+  return storageRows.map(row => ({
+    id: row.storage_id,
+    beerId: row.beer_id,
+    beerName: row.beer_name ?? '',
+    bestBefore: row.best_before,
+    breweries: row.breweries.map(brewery => ({
+      id: brewery.brewery_id,
+      name: brewery.name ?? ''
+    })),
+    container: {
+      id: row.container_id,
+      size: row.container_size ?? '',
+      type: row.container_type ?? ''
+    },
+    styles: row.styles.map(style => ({
+      id: style.style_id,
+      name: style.name ?? ''
+    }))
+  }))
 }

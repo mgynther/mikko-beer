@@ -152,7 +152,8 @@ describe('storage tests', () => {
     )
     expect(storageRes.status).to.equal(201)
 
-    const updateRes = await ctx.request.put(`/api/v1/storage/${storageRes.data.storage.id}`,
+    const updateRes = await ctx.request.put(
+      `/api/v1/storage/${storageRes.data.storage.id}`,
       {
         ...requestData,
         bestBefore: bestBeforeLater

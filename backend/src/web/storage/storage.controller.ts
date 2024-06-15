@@ -38,7 +38,7 @@ export function storageController (router: Router): void {
       const updateStorageRequest = validateUpdateRequest(body, storageId)
       const result = await ctx.db.executeTransaction(async (trx) => {
         return await storageService.updateStorage(
-          trx, storageId, updateStorageRequest)
+          trx, { ...updateStorageRequest, id: storageId })
       })
 
       ctx.status = 200
