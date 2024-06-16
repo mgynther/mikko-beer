@@ -19,7 +19,7 @@ import { statsController } from '../web/stats/stats.controller'
 import { styleController } from '../web/style/style.controller'
 import { userController } from '../web/user/user.controller'
 import { Role } from '../core/user/user'
-import * as userService from '../web/user/user.service'
+import * as userService from './user/user.service'
 import {
   addPasswordSignInMethod
 } from '../web/user/sign-in-method/sign-in-method.controller'
