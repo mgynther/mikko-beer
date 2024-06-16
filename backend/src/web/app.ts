@@ -18,7 +18,7 @@ import { storageController } from '../web/storage/storage.controller'
 import { statsController } from '../web/stats/stats.controller'
 import { styleController } from '../web/style/style.controller'
 import { userController } from '../web/user/user.controller'
-import { Role } from '../core/user/user'
+import { Role, type User } from '../core/user/user'
 import * as userService from './user/user.service'
 import {
   addPasswordSignInMethod
@@ -74,7 +74,7 @@ export class App {
         }
       }
       let authToken = ''
-      userService.listUsers(db).then(users => {
+      userService.listUsers(db).then((users: User[]) => {
         let createPromise: Promise<void> | undefined
         if (users === undefined || users.length === 0) {
           logWithAdminPassword('No users. Creating initial admin')
