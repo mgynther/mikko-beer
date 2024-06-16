@@ -28,7 +28,7 @@ export async function findUserById (
 
 export async function listUsers (
   db: Database
-): Promise<UserRow[] | undefined> {
+): Promise<UserRow[]> {
   const user = await db.getDb()
     .selectFrom('user')
     .selectAll('user')

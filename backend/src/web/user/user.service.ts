@@ -31,7 +31,6 @@ export async function findUserById (
   userId: string
 ): Promise<User | undefined> {
   const userRow = await userRepository.findUserById(db, userId)
-
   if (userRow === undefined) {
     return undefined
   }
@@ -40,10 +39,8 @@ export async function findUserById (
 
 export async function listUsers (
   db: Database
-): Promise<User[] | undefined> {
+): Promise<User[]> {
   const userRows = await userRepository.listUsers(db)
-  if (userRows === undefined) return []
-
   return userRows.map(userRow => userRowToUser(userRow))
 }
 
@@ -52,10 +49,10 @@ export async function lockUserById (
   id: string
 ): Promise<User | undefined> {
   const userRow = await userRepository.lockUserById(trx, id)
-
-  if (userRow != null) {
-    return userRowToUser(userRow)
+  if (userRow === undefined) {
+    return undefined
   }
+  return userRowToUser(userRow)
 }
 
 export async function lockUserByUsername (
@@ -63,10 +60,10 @@ export async function lockUserByUsername (
   username: string
 ): Promise<User | undefined> {
   const userRow = await userRepository.lockUserByUsername(trx, username)
-
-  if (userRow != null) {
-    return userRowToUser(userRow)
+  if (userRow === undefined) {
+    return undefined
   }
+  return userRowToUser(userRow)
 }
 
 export async function setUserUsername (
