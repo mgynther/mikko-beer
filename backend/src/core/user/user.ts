@@ -13,8 +13,13 @@ export interface User {
   username: string | null
 }
 
+export interface NewUser {
+  role: Role
+  username: string
+}
+
 export interface CreateAnonymousUserRequest {
-  role?: string
+  role: Role
 }
 
 const doValidateCreateAnonymousUserRequest =

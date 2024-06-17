@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 
 import { TestContext } from '../test-context'
+import { type NewUser, type User } from '../../../src/core/user/user'
 import * as userRepository from '../../../src/data/user/user.repository'
-import { type UserRow } from '../../../src/data/user/user.table'
 import { Role } from '../../../src/core/user/user'
 import { Transaction } from '../../../src/data/database'
 
@@ -15,14 +15,12 @@ describe('user tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  const user: UserRow = {
-    user_id: '35370921-5d47-4274-a5cc-9fe0246d74e5',
+  const user: NewUser = {
     username: 'user',
     role: Role.admin,
-    created_at: new Date()
   }
 
-  async function insertUser(): Promise<UserRow> {
+  async function insertUser(): Promise<User> {
     return await ctx.db.executeTransaction(async (trx) => {
       return await userRepository.insertUser(trx, { ...user })
     })
@@ -30,7 +28,6 @@ describe('user tests', () => {
 
   it('insert user', async () => {
     const insertedUser = await insertUser()
-    expect(insertedUser.user_id).to.equal(user.user_id)
     expect(insertedUser.username).to.equal(user.username)
     expect(insertedUser.role).to.equal(user.role)
   })
@@ -38,7 +35,7 @@ describe('user tests', () => {
   it('find user', async () => {
     const insertedUser = await insertUser()
     const foundUser = await userRepository.findUserById(
-      ctx.db, insertedUser.user_id
+      ctx.db, insertedUser.id
     )
     expect(foundUser).to.eql(insertedUser)
   })
@@ -61,8 +58,8 @@ describe('user tests', () => {
   })
 
   async function testLocking(
-    lockFunc: (trx: Transaction, str: string) => Promise<UserRow | undefined>,
-    lockStrGetter: (user: UserRow) => string
+    lockFunc: (trx: Transaction, str: string) => Promise<User | undefined>,
+    lockStrGetter: (user: User) => string
   ) {
     const insertedUser = await insertUser()
     const lockStr = lockStrGetter(insertedUser)
@@ -92,7 +89,7 @@ describe('user tests', () => {
         setTimeout(function() {
           expectRenames(false, true)
           const promise = userRepository.setUserUsername(
-            trx, insertedUser.user_id, temporaryName
+            trx, insertedUser.id, temporaryName
           )
           isFirstRenameStarted = true
           resolve(promise)
@@ -104,7 +101,7 @@ describe('user tests', () => {
         setTimeout(function() {
           expectRenames(false, false)
           const promise = userRepository.setUserUsername(
-            trx2, insertedUser.user_id, remainingName
+            trx2, insertedUser.id, remainingName
           )
           isSecondRenameStarted = true
           return resolve(promise)
@@ -115,7 +112,7 @@ describe('user tests', () => {
     expectRenames(true, true)
 
     const foundUser = await userRepository.findUserById(
-      ctx.db, insertedUser.user_id
+      ctx.db, insertedUser.id
     )
     expect(foundUser?.username).to.eql(remainingName)
   }
@@ -123,18 +120,18 @@ describe('user tests', () => {
   it('lock user by id', async () => {
     await testLocking(
       userRepository.lockUserById,
-      (userRow: UserRow) => userRow.user_id
+      (user: User) => user.id
     )
   })
 
   it('lock user by username', async () => {
     await testLocking(
       userRepository.lockUserByUsername,
-      (userRow: UserRow) => {
-      if (userRow.username === null) {
+      (user: User) => {
+      if (user.username === null) {
         throw new Error('username must not be null')
       }
-      return userRow.username
+      return user.username
     })
   })
 
@@ -142,10 +139,10 @@ describe('user tests', () => {
     const insertedUser = await insertUser()
     const username = 'another username'
     await ctx.db.executeTransaction(async (trx) => {
-      userRepository.setUserUsername(trx, insertedUser.user_id, username)
+      userRepository.setUserUsername(trx, insertedUser.id, username)
     })
     const foundUser = await userRepository.findUserById(
-      ctx.db, insertedUser.user_id
+      ctx.db, insertedUser.id
     )
     expect(foundUser?.username).to.eql(username)
   })
@@ -153,10 +150,10 @@ describe('user tests', () => {
   it('delete user', async () => {
     const insertedUser = await insertUser()
     await ctx.db.executeTransaction(async (trx) => {
-      userRepository.deleteUserById(trx, insertedUser.user_id)
+      userRepository.deleteUserById(trx, insertedUser.id)
     })
     const foundUser = await userRepository.findUserById(
-      ctx.db, insertedUser.user_id
+      ctx.db, insertedUser.id
     )
     expect(foundUser).to.eql(undefined)
   })

@@ -1,53 +1,74 @@
+import {
+  type CreateAnonymousUserRequest,
+  type NewUser,
+  type User
+} from '../../core/user/user'
 import { type Database, type Transaction } from '../../data/database'
-import { type InsertableUserRow, type UserRow } from './user.table'
+import { type UserRow } from './user.table'
 
-export async function insertUser (
+export async function createAnonymousUser (
   trx: Transaction,
-  user: InsertableUserRow
-): Promise<UserRow> {
+  user: CreateAnonymousUserRequest
+): Promise<User> {
   const insertedUser = await trx.trx()
     .insertInto('user')
     .values(user)
     .returningAll()
     .executeTakeFirstOrThrow()
-  return insertedUser
+  return toUser(insertedUser)
+}
+
+export async function insertUser (
+  trx: Transaction,
+  user: NewUser
+): Promise<User> {
+  const insertedUser = await trx.trx()
+    .insertInto('user')
+    .values(user)
+    .returningAll()
+    .executeTakeFirstOrThrow()
+  return toUser(insertedUser)
 }
 
 export async function findUserById (
   db: Database,
   id: string
-): Promise<UserRow | undefined> {
-  const user = await db.getDb()
+): Promise<User | undefined> {
+  const row = await db.getDb()
     .selectFrom('user')
     .where('user_id', '=', id)
     .selectAll('user')
     .executeTakeFirst()
 
-  return user
+  if (row === undefined) {
+    return undefined
+  }
+
+  return toUser(row)
 }
 
 export async function listUsers (
   db: Database
-): Promise<UserRow[]> {
-  const user = await db.getDb()
+): Promise<User[]> {
+  const rows = await db.getDb()
     .selectFrom('user')
     .selectAll('user')
     .execute()
 
-  return user
+  return rows.map(toUser)
 }
 
 export async function lockUserById (
   trx: Transaction,
   id: string
-): Promise<UserRow | undefined> {
+): Promise<User | undefined> {
   return await lockUser(trx, 'user_id', id)
 }
 
 export async function lockUserByUsername (
   trx: Transaction,
   username: string
-): Promise<UserRow | undefined> {
+): Promise<User | undefined> {
   return await lockUser(trx, 'username', username)
 }
 
@@ -55,15 +76,19 @@ async function lockUser (
   trx: Transaction,
   column: 'user_id' | 'username',
   value: string
-): Promise<UserRow | undefined> {
-  const user = await trx.trx()
+): Promise<User | undefined> {
+  const row = await trx.trx()
     .selectFrom('user')
     .where(column, '=', value)
     .selectAll('user')
     .forUpdate()
     .executeTakeFirst()
 
-  return user
+  if (row === undefined) {
+    return undefined
+  }
+
+  return toUser(row)
 }
 
 export async function setUserUsername (
@@ -86,4 +111,12 @@ export async function deleteUserById (
     .deleteFrom('user')
     .where('user_id', '=', id)
     .execute()
+}
+
+function toUser (row: UserRow): User {
+  return {
+    id: row.user_id,
+    username: row.username,
+    role: row.role
+  }
 }
