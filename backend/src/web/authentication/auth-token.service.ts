@@ -30,14 +30,14 @@ export async function createRefreshToken (
   db: Transaction,
   userId: string
 ): Promise<RefreshToken> {
-  const { refresh_token_id } = await refreshTokenRepository.insertRefreshToken(
+  const token = await refreshTokenRepository.insertRefreshToken(
     db,
     userId
   )
 
   return signRefreshToken({
     userId,
-    refreshTokenId: refresh_token_id,
+    refreshTokenId: token.id,
     isRefreshToken: true
   })
 }
@@ -45,11 +45,11 @@ export async function createRefreshToken (
 export async function createInitialAdminRefreshToken (
   userId: string
 ): Promise<RefreshToken> {
-  const refresh_token_id = uuidv4()
+  const refreshTokenId = uuidv4()
 
   return signRefreshToken({
     userId,
-    refreshTokenId: refresh_token_id,
+    refreshTokenId: refreshTokenId,
     isRefreshToken: true
   })
 }
@@ -66,9 +66,11 @@ export async function createAuthToken (
 ): Promise<AuthToken> {
   const { userId, refreshTokenId } = verifyRefreshToken(refreshToken)
 
-  await refreshTokenRepository.updateRefreshToken(db, refreshTokenId, {
-    last_refreshed_at: new Date()
-  })
+  await refreshTokenRepository.updateRefreshToken(
+    db,
+    refreshTokenId,
+    new Date()
+  )
 
   return signAuthToken({ userId, role, refreshTokenId })
 }

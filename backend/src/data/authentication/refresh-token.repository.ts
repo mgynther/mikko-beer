@@ -1,13 +1,10 @@
+import { type DbRefreshToken } from '../../core/authentication/refresh-token'
 import { type Database, type Transaction } from '../database'
-import {
-  type RefreshTokenRow,
-  type UpdateableRefreshTokenRow
-} from './refresh-token.table'
 
 export async function insertRefreshToken (
   trx: Transaction,
   userId: string
-): Promise<RefreshTokenRow> {
+): Promise<DbRefreshToken> {
   const [refreshToken] = await trx.trx()
     .insertInto('refresh_token')
     .values({
@@ -17,14 +14,17 @@ export async function insertRefreshToken (
     .returningAll()
     .execute()
 
-  return refreshToken
+  return {
+    id: refreshToken.refresh_token_id,
+    userId: refreshToken.user_id
+  }
 }
 
 export async function findRefreshToken (
   db: Database,
   userId: string,
   refreshTokenId: string
-): Promise<RefreshTokenRow | undefined> {
+): Promise<DbRefreshToken | undefined> {
   const token = await db.getDb()
     .selectFrom('refresh_token as rt')
     .selectAll('rt')
@@ -33,17 +33,24 @@ export async function findRefreshToken (
     .where('rt.refresh_token_id', '=', refreshTokenId)
     .executeTakeFirst()
 
-  return token
+  if (token === undefined) {
+    return undefined
+  }
+
+  return {
+    id: token.refresh_token_id,
+    userId: token.user_id
+  }
 }
 
 export async function updateRefreshToken (
   trx: Transaction,
   refreshTokenId: string,
-  patch: Pick<UpdateableRefreshTokenRow, 'last_refreshed_at'>
+  refreshTime: Date
 ): Promise<void> {
   await trx.trx()
     .updateTable('refresh_token')
-    .set(patch)
+    .set({ last_refreshed_at: refreshTime })
     .where('refresh_token_id', '=', refreshTokenId)
     .execute()
 }

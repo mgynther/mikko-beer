@@ -1,8 +1,5 @@
 import { type UserPasswordHash } from '../../../core/user/sign-in-method'
 import { type Transaction } from '../../database'
-import {
-  type PasswordSignInMethodRow
-} from './password-sign-in-method.table'
 
 export async function findPasswordSignInMethod (
   trx: Transaction,
@@ -49,7 +46,7 @@ export async function insertPasswordSignInMethod (
 export async function updatePassword (
   trx: Transaction,
   userPasswordHash: UserPasswordHash
-): Promise<PasswordSignInMethodRow> {
+): Promise<UserPasswordHash> {
   const updatedMethod = await trx.trx()
     .updateTable('password_sign_in_method')
     .set({
@@ -59,5 +56,8 @@ export async function updatePassword (
     .returningAll()
     .executeTakeFirstOrThrow()
 
-  return updatedMethod
+  return {
+    userId: updatedMethod.user_id,
+    passwordHash: updatedMethod.password_hash
+  }
 }
