@@ -2,27 +2,31 @@ import * as userRepository from '../../data/user/user.repository'
 import * as authTokenService from '../authentication/auth-token.service'
 import { type Database, type Transaction } from '../../data/database'
 import { type SignedInUser } from '../../core/user/signed-in-user'
-import { type Role, type User } from '../../core/user/user'
+import { Role, type User } from '../../core/user/user'
+import { type RefreshToken } from '../../core/authentication/refresh-token'
 
 export async function createAnonymousUser (
   trx: Transaction,
   role: Role,
-  createRefreshToken: boolean = true
 ): Promise<SignedInUser> {
   const user = await userRepository.createAnonymousUser(trx, { role })
 
-  const refreshTokenPromise = createRefreshToken
-    ? authTokenService.createRefreshToken(trx, user.id)
-    : authTokenService.createInitialAdminRefreshToken(user.id)
+  const refreshToken = await authTokenService.createRefreshToken(trx, user.id)
+  return createSignedInUser(trx, user, refreshToken)
+}
 
-  const refreshToken = await refreshTokenPromise
-  const authToken = await authTokenService.createAuthToken(
-    trx, user.role, refreshToken)
-  return {
-    refreshToken,
-    authToken,
-    user
-  }
+export async function createInitialAdmin (
+  trx: Transaction,
+): Promise<SignedInUser> {
+  const user = await userRepository.createAnonymousUser(
+    trx,
+    { role: Role.admin }
+  )
+
+  const refreshToken = await authTokenService.createInitialAdminRefreshToken(
+    user.id
+  )
+  return createSignedInUser(trx, user, refreshToken)
 }
 
 export async function findUserById (
@@ -65,4 +69,18 @@ export async function deleteUserById (
   id: string
 ): Promise<void> {
   await userRepository.deleteUserById(trx, id)
+}
+
+async function createSignedInUser(
+  trx: Transaction,
+  user: User,
+  refreshToken: RefreshToken
+): Promise<SignedInUser> {
+  const authToken = await authTokenService.createAuthToken(
+    trx, user.role, refreshToken)
+  return {
+    refreshToken,
+    authToken,
+    user
+  }
 }

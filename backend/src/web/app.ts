@@ -81,8 +81,7 @@ export class App {
           const adminUsername = uuidv4()
           const adminPassword = uuidv4()
           createPromise = db.executeTransaction(async (trx) => {
-            const user = await userService.createAnonymousUser(
-              trx, Role.admin, false)
+            const user = await userService.createInitialAdmin(trx)
             authToken = user.authToken.authToken
             if (isAdminPasswordNeeded) {
               await addPasswordSignInMethod(
