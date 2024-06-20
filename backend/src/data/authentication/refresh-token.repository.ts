@@ -3,13 +3,14 @@ import { type Database, type Transaction } from '../database'
 
 export async function insertRefreshToken (
   trx: Transaction,
-  userId: string
+  userId: string,
+  date: Date
 ): Promise<DbRefreshToken> {
   const [refreshToken] = await trx.trx()
     .insertInto('refresh_token')
     .values({
       user_id: userId,
-      last_refreshed_at: new Date()
+      last_refreshed_at: date
     })
     .returningAll()
     .execute()

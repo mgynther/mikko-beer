@@ -32,7 +32,8 @@ export async function createRefreshToken (
 ): Promise<RefreshToken> {
   const token = await refreshTokenRepository.insertRefreshToken(
     db,
-    userId
+    userId,
+    new Date()
   )
 
   return signRefreshToken({
