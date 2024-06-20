@@ -1,12 +1,12 @@
 import * as jwt from 'jsonwebtoken'
 import { v4 as uuidv4 } from 'uuid'
 
-import * as refreshTokenRepository
-  from '../../data/authentication/refresh-token.repository'
 import { config } from '../config'
-import { type Database, type Transaction } from '../../data/database'
 import { type AuthToken } from '../../core/authentication/auth-token'
-import { type RefreshToken } from '../../core/authentication/refresh-token'
+import {
+  type DbRefreshToken,
+  type RefreshToken
+} from '../../core/authentication/refresh-token'
 import { type Role } from '../../core/user/user'
 
 export class AuthTokenError extends Error {}
@@ -27,14 +27,10 @@ interface RefreshTokenPayload {
 }
 
 export async function createRefreshToken (
-  db: Transaction,
+  insertRefreshToken: (userId: string) => Promise<DbRefreshToken>,
   userId: string
 ): Promise<RefreshToken> {
-  const token = await refreshTokenRepository.insertRefreshToken(
-    db,
-    userId,
-    new Date()
-  )
+  const token = await insertRefreshToken(userId)
 
   return signRefreshToken({
     userId,
@@ -61,17 +57,13 @@ function signRefreshToken (tokenPayload: RefreshTokenPayload): RefreshToken {
 }
 
 export async function createAuthToken (
-  db: Transaction,
+  updateRefreshToken: (refreshTokenId: string) => Promise<void>,
   role: Role,
-  refreshToken: RefreshToken
+  refreshToken: RefreshToken,
 ): Promise<AuthToken> {
   const { userId, refreshTokenId } = verifyRefreshToken(refreshToken)
 
-  await refreshTokenRepository.updateRefreshToken(
-    db,
-    refreshTokenId,
-    new Date()
-  )
+  await updateRefreshToken(refreshTokenId)
 
   return signAuthToken({ userId, role, refreshTokenId })
 }
@@ -135,7 +127,7 @@ function verifyToken (token: string): string | jwt.JwtPayload {
 }
 
 export async function deleteRefreshToken (
-  db: Database,
+  deleteRefreshToken: (refreshTokenId: string) => Promise<void>,
   userId: string,
   refreshToken: RefreshToken
 ): Promise<void> {
@@ -145,5 +137,5 @@ export async function deleteRefreshToken (
     throw new RefreshTokenUserIdMismatchError()
   }
 
-  await refreshTokenRepository.deleteRefreshToken(db, payload.refreshTokenId)
+  await deleteRefreshToken(payload.refreshTokenId)
 }

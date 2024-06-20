@@ -1,4 +1,5 @@
 import * as signInMethodService from '../../../core/user/sign-in-method.service'
+import * as refreshTokenRepository from '../../../data/authentication/refresh-token.repository'
 import * as signInMethodRepository from '../../../data/user/sign-in-method/sign-in-method.repository'
 import * as authService from '../../authentication/authentication.service'
 import * as authTokenService from '../../authentication/auth-token.service'
@@ -19,7 +20,8 @@ import {
   type SignInUsingPasswordIf,
 } from '../../../core/user/sign-in-method.service'
 import {
-    RefreshToken,
+  type DbRefreshToken,
+  type RefreshToken,
   validateRefreshToken
 } from '../../../core/authentication/refresh-token'
 import { type Router } from '../../router'
@@ -140,12 +142,28 @@ export function signInMethodController (router: Router): void {
           },
           findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
           createRefreshToken: function(userId: string): Promise<RefreshToken> {
-            return authTokenService.createRefreshToken(trx, userId)
+            return authTokenService.createRefreshToken((
+              userId: string
+            ): Promise<DbRefreshToken> => {
+              return refreshTokenRepository.insertRefreshToken(
+                trx,
+                userId,
+                new Date()
+              )
+            }, userId)
           },
           createAuthToken: function(
             role: Role, refreshToken: RefreshToken
           ): Promise<AuthToken> {
-            return authTokenService.createAuthToken(trx, role, refreshToken)
+            return authTokenService.createAuthToken((
+              refreshTokenId: string
+            ): Promise<void> => {
+              return refreshTokenRepository.updateRefreshToken(
+                trx,
+                refreshTokenId,
+                new Date()
+              )
+            }, role, refreshToken)
           }
         }
         return await signInMethodService.signInUsingPassword(
@@ -186,11 +204,32 @@ export function signInMethodController (router: Router): void {
           if (user === undefined) {
             throw new UserNotFoundError()
           }
-          await authTokenService.deleteRefreshToken(ctx.db, user.id, body)
-          const refreshToken =
-            await authTokenService.createRefreshToken(trx, user.id)
+          await authTokenService.deleteRefreshToken((
+            refreshTokenId: string
+          ) => {
+            return refreshTokenRepository.deleteRefreshToken(
+              ctx.db, refreshTokenId
+            )
+          }, user.id, body)
+          const refreshToken = await authTokenService.createRefreshToken((
+            userId: string
+          ) => {
+            return refreshTokenRepository.insertRefreshToken(
+              trx,
+              userId,
+              new Date()
+            )
+          }, user.id)
           const authToken =
-            await authTokenService.createAuthToken(trx, user.role, refreshToken)
+            await authTokenService.createAuthToken((
+              refreshTokenId: string
+          ) => {
+            return refreshTokenRepository.updateRefreshToken(
+              trx,
+              refreshTokenId,
+              new Date()
+            )
+          }, user.role, refreshToken)
           return {
             authToken,
             refreshToken
@@ -225,11 +264,14 @@ export function signInMethodController (router: Router): void {
       }
 
       try {
-        await authTokenService.deleteRefreshToken(
-          ctx.db,
-          ctx.params.userId,
-          body
-        )
+        await authTokenService.deleteRefreshToken((
+          refreshTokenId: string
+        ) => {
+          return refreshTokenRepository.deleteRefreshToken(
+            ctx.db,
+            refreshTokenId
+          )
+        }, ctx.params.userId, body)
 
         ctx.status = 200
         ctx.body = { success: true }

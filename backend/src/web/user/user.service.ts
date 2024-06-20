@@ -3,20 +3,29 @@ import * as authTokenService from '../authentication/auth-token.service'
 import { type Database, type Transaction } from '../../data/database'
 import { type SignedInUser } from '../../core/user/signed-in-user'
 import { Role, type User } from '../../core/user/user'
-import { type RefreshToken } from '../../core/authentication/refresh-token'
+import {
+  type DbRefreshToken,
+  type RefreshToken
+} from '../../core/authentication/refresh-token'
 
 export async function createAnonymousUser (
   trx: Transaction,
+  insertRefreshToken: (userId: string) => Promise<DbRefreshToken>,
+  updateRefreshToken: (refreshTokenId: string) => Promise<void>,
   role: Role,
 ): Promise<SignedInUser> {
   const user = await userRepository.createAnonymousUser(trx, { role })
 
-  const refreshToken = await authTokenService.createRefreshToken(trx, user.id)
-  return createSignedInUser(trx, user, refreshToken)
+  const refreshToken = await authTokenService.createRefreshToken(
+    insertRefreshToken,
+    user.id,
+  )
+  return createSignedInUser(updateRefreshToken, user, refreshToken)
 }
 
 export async function createInitialAdmin (
   trx: Transaction,
+  updateRefreshToken: (refreshTokenId: string) => Promise<void>,
 ): Promise<SignedInUser> {
   const user = await userRepository.createAnonymousUser(
     trx,
@@ -26,7 +35,7 @@ export async function createInitialAdmin (
   const refreshToken = await authTokenService.createInitialAdminRefreshToken(
     user.id
   )
-  return createSignedInUser(trx, user, refreshToken)
+  return createSignedInUser(updateRefreshToken, user, refreshToken)
 }
 
 export async function findUserById (
@@ -72,12 +81,12 @@ export async function deleteUserById (
 }
 
 async function createSignedInUser(
-  trx: Transaction,
+  updateRefreshToken: (refreshTokenId: string) => Promise<void>,
   user: User,
   refreshToken: RefreshToken
 ): Promise<SignedInUser> {
   const authToken = await authTokenService.createAuthToken(
-    trx, user.role, refreshToken)
+    updateRefreshToken, user.role, refreshToken)
   return {
     refreshToken,
     authToken,
