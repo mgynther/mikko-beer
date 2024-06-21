@@ -1,12 +1,12 @@
-import * as authTokenService from '../../core/authentication/auth-token.service'
-import { Role } from '../../core/user/user'
+import * as authTokenService from './auth-token.service'
+import { Role } from '../user/user'
 
 import {
   AuthTokenExpiredError,
   type AuthTokenPayload
 } from '../../core/authentication/auth-token.service'
-import { ControllerError } from '../../core/errors'
-import { type DbRefreshToken } from '../../core/authentication/refresh-token'
+import { ControllerError } from '../errors'
+import { type DbRefreshToken } from './refresh-token'
 
 export async function authenticateUser (
   userId: string | undefined,
@@ -27,7 +27,7 @@ export async function authenticateUser (
 
   const authorization = validAuthorizationOrThrow(authorizationHeader)
 
-  if (authorization === undefined || !authorization.startsWith('Bearer ')) {
+  if (!authorization?.startsWith('Bearer ')) {
     throw new ControllerError(
       400,
       'InvalidAuthorizationHeader',
@@ -91,17 +91,24 @@ export function authenticateViewer (
 }
 
 function validAuthorizationOrThrow (authorization: string | undefined): string {
-  if (authorization === undefined || !authorization.startsWith('Bearer ')) {
-    throw new ControllerError(
-      400,
-      'InvalidAuthorizationHeader',
-      'missing or invalid Authorization header'
-    )
+  const error = new ControllerError(
+    400,
+    'InvalidAuthorizationHeader',
+    'missing or invalid Authorization header'
+  )
+  if (authorization === undefined) {
+    throw error
+  }
+  if (!authorization.startsWith('Bearer ')) {
+    throw error
   }
   return authorization
 }
 
-function validAuthTokenPayload (authorization: string, authTokenSecret: string): AuthTokenPayload {
+function validAuthTokenPayload (
+  authorization: string,
+  authTokenSecret: string
+): AuthTokenPayload {
   const authToken = authorization.substring('Bearer '.length)
   let authTokenPayload: AuthTokenPayload | undefined
 

@@ -3,7 +3,7 @@ import { type Next } from 'koa'
 import { config } from '../config'
 import { type Context } from '../context'
 
-import * as authService from '../authentication/authentication.service'
+import * as authService from '../../core/authentication/authentication.service'
 import * as refreshTokenRepository
   from '../../data/authentication/refresh-token.repository'
 
