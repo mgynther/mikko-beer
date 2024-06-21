@@ -1,22 +1,22 @@
-import * as refreshTokenRepository
-  from '../../data/authentication/refresh-token.repository'
-import * as authTokenService from './auth-token.service'
+import * as authTokenService from '../../core/authentication/auth-token.service'
 import { Role } from '../../core/user/user'
 
 import {
   AuthTokenExpiredError,
   type AuthTokenPayload
-} from './auth-token.service'
-import { type Next } from 'koa'
-import { type Context } from '../context'
+} from '../../core/authentication/auth-token.service'
 import { ControllerError } from '../../core/errors'
+import { type DbRefreshToken } from '../../core/authentication/refresh-token'
 
 export async function authenticateUser (
-  ctx: Context,
-  next: Next
+  userId: string | undefined,
+  authorizationHeader: string | undefined,
+  authTokenSecret: string,
+  findRefreshToken: (
+    userId: string,
+    refreshTokenId: string
+  ) => Promise<DbRefreshToken | undefined>
 ): Promise<void> {
-  const { userId } = ctx.params
-
   if (userId === undefined) {
     throw new ControllerError(
       400,
@@ -25,7 +25,6 @@ export async function authenticateUser (
     )
   }
 
-  const authorizationHeader = ctx.headers.authorization
   const authorization = validAuthorizationOrThrow(authorizationHeader)
 
   if (authorization === undefined || !authorization.startsWith('Bearer ')) {
@@ -36,18 +35,17 @@ export async function authenticateUser (
     )
   }
 
-  const authTokenPayload = validAuthTokenPayload(authorization)
+  const authTokenPayload = validAuthTokenPayload(authorization, authTokenSecret)
 
   if (authTokenPayload.role === Role.admin) {
-    return await next()
+    return
   }
 
   if (userId !== authTokenPayload.userId) {
     throw new ControllerError(403, 'UserMismatch', "wrong user's auth token")
   }
 
-  const refreshToken = await refreshTokenRepository.findRefreshToken(
-    ctx.db,
+  const refreshToken = await findRefreshToken(
     authTokenPayload.userId,
     authTokenPayload.refreshTokenId
   )
@@ -59,15 +57,14 @@ export async function authenticateUser (
       'either the user or the refresh token has been deleted'
     )
   }
-
-  return await next()
 }
 
 export function authenticateAdmin (
   authorizationHeader: string | undefined,
+  authTokenSecret: string
 ): void {
   const authorization = validAuthorizationOrThrow(authorizationHeader)
-  const payload = validAuthTokenPayload(authorization)
+  const payload = validAuthTokenPayload(authorization, authTokenSecret)
   if (payload.role !== Role.admin) {
     throw new ControllerError(
       403,
@@ -79,9 +76,10 @@ export function authenticateAdmin (
 
 export function authenticateViewer (
   authorizationHeader: string | undefined,
+  authTokenSecret: string
 ): void {
   const authorization = validAuthorizationOrThrow(authorizationHeader)
-  const payload = validAuthTokenPayload(authorization)
+  const payload = validAuthTokenPayload(authorization, authTokenSecret)
   const role = payload.role
   if (role !== Role.admin && role !== Role.viewer) {
     throw new ControllerError(
@@ -103,12 +101,15 @@ function validAuthorizationOrThrow (authorization: string | undefined): string {
   return authorization
 }
 
-function validAuthTokenPayload (authorization: string): AuthTokenPayload {
+function validAuthTokenPayload (authorization: string, authTokenSecret: string): AuthTokenPayload {
   const authToken = authorization.substring('Bearer '.length)
   let authTokenPayload: AuthTokenPayload | undefined
 
   try {
-    authTokenPayload = authTokenService.verifyAuthToken({ authToken })
+    authTokenPayload = authTokenService.verifyAuthToken(
+      { authToken },
+      authTokenSecret
+    )
   } catch (error) {
     if (error instanceof AuthTokenExpiredError) {
       throw new ControllerError(

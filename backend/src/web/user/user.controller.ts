@@ -3,7 +3,6 @@ import {
   addPasswordSignInMethod,
   signInMethodController
 } from './sign-in-method/sign-in-method.controller'
-import * as authService from '../authentication/authentication.service'
 import * as authHelper from '../authentication/authentication-helper'
 import * as refreshTokenRepository from '../../data/authentication/refresh-token.repository'
 
@@ -56,7 +55,7 @@ export function userController (router: Router): void {
 
   router.get(
     '/api/v1/user/:userId',
-    authService.authenticateUser,
+    authHelper.authenticateUser,
     async (ctx) => {
       const { userId } = ctx.params
       const user = await userService.findUserById(ctx.db, userId)

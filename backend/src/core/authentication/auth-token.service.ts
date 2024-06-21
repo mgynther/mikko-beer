@@ -1,7 +1,6 @@
 import * as jwt from 'jsonwebtoken'
 import { v4 as uuidv4 } from 'uuid'
 
-import { config } from '../config'
 import { type AuthToken } from '../../core/authentication/auth-token'
 import {
   type DbRefreshToken,
@@ -28,7 +27,8 @@ interface RefreshTokenPayload {
 
 export async function createRefreshToken (
   insertRefreshToken: (userId: string) => Promise<DbRefreshToken>,
-  userId: string
+  userId: string,
+  authTokenSecret: string
 ): Promise<RefreshToken> {
   const token = await insertRefreshToken(userId)
 
@@ -36,40 +36,56 @@ export async function createRefreshToken (
     userId,
     refreshTokenId: token.id,
     isRefreshToken: true
-  })
+  }, authTokenSecret)
 }
 
 export async function createInitialAdminRefreshToken (
-  userId: string
+  userId: string,
+  authTokenSecret: string
 ): Promise<RefreshToken> {
   const refreshTokenId = uuidv4()
 
   return signRefreshToken({
     userId,
-    refreshTokenId: refreshTokenId,
+    refreshTokenId,
     isRefreshToken: true
-  })
+  }, authTokenSecret)
 }
 
-function signRefreshToken (tokenPayload: RefreshTokenPayload): RefreshToken {
+function signRefreshToken (
+  tokenPayload: RefreshTokenPayload,
+  authTokenSecret: string
+): RefreshToken {
   // Refresh tokens never expire.
-  return { refreshToken: jwt.sign(tokenPayload, config.authTokenSecret) }
+  return { refreshToken: jwt.sign(tokenPayload, authTokenSecret) }
 }
 
 export async function createAuthToken (
   updateRefreshToken: (refreshTokenId: string) => Promise<void>,
   role: Role,
   refreshToken: RefreshToken,
+  authTokenSecret: string,
+  authTokenExpiryDuration: string
 ): Promise<AuthToken> {
-  const { userId, refreshTokenId } = verifyRefreshToken(refreshToken)
+  const { userId, refreshTokenId } = verifyRefreshToken(
+    refreshToken,
+    authTokenSecret
+  )
 
   await updateRefreshToken(refreshTokenId)
 
-  return signAuthToken({ userId, role, refreshTokenId })
+  return signAuthToken(
+    { userId, role, refreshTokenId },
+    authTokenSecret,
+    authTokenExpiryDuration
+  )
 }
 
-function verifyRefreshToken (token: RefreshToken): RefreshTokenPayload {
-  const payload = verifyToken(token.refreshToken)
+function verifyRefreshToken (
+  token: RefreshToken,
+  authTokenSecret: string
+): RefreshTokenPayload {
+  const payload = verifyToken(token.refreshToken, authTokenSecret)
 
   if (
     typeof payload === 'string' ||
@@ -87,16 +103,23 @@ function verifyRefreshToken (token: RefreshToken): RefreshTokenPayload {
   }
 }
 
-function signAuthToken (tokenPayload: AuthTokenPayload): AuthToken {
+function signAuthToken (
+  tokenPayload: AuthTokenPayload,
+  authTokenSecret: string,
+  authTokenExpiryDuration: string
+): AuthToken {
   return {
-    authToken: jwt.sign(tokenPayload, config.authTokenSecret, {
-      expiresIn: config.authTokenExpiryDuration
+    authToken: jwt.sign(tokenPayload, authTokenSecret, {
+      expiresIn: authTokenExpiryDuration
     })
   }
 }
 
-export function verifyAuthToken (token: AuthToken): AuthTokenPayload {
-  const payload = verifyToken(token.authToken)
+export function verifyAuthToken (
+  token: AuthToken,
+  authTokenSecret: string
+): AuthTokenPayload {
+  const payload = verifyToken(token.authToken, authTokenSecret)
 
   if (
     typeof payload === 'string' ||
@@ -114,9 +137,12 @@ export function verifyAuthToken (token: AuthToken): AuthTokenPayload {
   }
 }
 
-function verifyToken (token: string): string | jwt.JwtPayload {
+function verifyToken (
+  token: string,
+  authTokenSecret: string
+): string | jwt.JwtPayload {
   try {
-    return jwt.verify(token, config.authTokenSecret)
+    return jwt.verify(token, authTokenSecret)
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
       throw new AuthTokenExpiredError()
@@ -129,9 +155,10 @@ function verifyToken (token: string): string | jwt.JwtPayload {
 export async function deleteRefreshToken (
   deleteRefreshToken: (refreshTokenId: string) => Promise<void>,
   userId: string,
-  refreshToken: RefreshToken
+  refreshToken: RefreshToken,
+  authTokenSecret: string
 ): Promise<void> {
-  const payload = verifyRefreshToken(refreshToken)
+  const payload = verifyRefreshToken(refreshToken, authTokenSecret)
 
   if (payload.userId !== userId) {
     throw new RefreshTokenUserIdMismatchError()

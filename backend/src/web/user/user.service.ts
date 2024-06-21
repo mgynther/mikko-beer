@@ -1,5 +1,6 @@
 import * as userRepository from '../../data/user/user.repository'
-import * as authTokenService from '../authentication/auth-token.service'
+import * as authTokenService from '../../core/authentication/auth-token.service'
+import { config } from '../config'
 import { type Database, type Transaction } from '../../data/database'
 import { type SignedInUser } from '../../core/user/signed-in-user'
 import { Role, type User } from '../../core/user/user'
@@ -19,6 +20,7 @@ export async function createAnonymousUser (
   const refreshToken = await authTokenService.createRefreshToken(
     insertRefreshToken,
     user.id,
+    config.authTokenSecret
   )
   return createSignedInUser(updateRefreshToken, user, refreshToken)
 }
@@ -33,7 +35,8 @@ export async function createInitialAdmin (
   )
 
   const refreshToken = await authTokenService.createInitialAdminRefreshToken(
-    user.id
+    user.id,
+    config.authTokenSecret
   )
   return createSignedInUser(updateRefreshToken, user, refreshToken)
 }
@@ -86,7 +89,12 @@ async function createSignedInUser(
   refreshToken: RefreshToken
 ): Promise<SignedInUser> {
   const authToken = await authTokenService.createAuthToken(
-    updateRefreshToken, user.role, refreshToken)
+    updateRefreshToken,
+    user.role,
+    refreshToken,
+    config.authTokenSecret,
+    config.authTokenExpiryDuration
+  )
   return {
     refreshToken,
     authToken,

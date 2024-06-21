@@ -1,14 +1,15 @@
 import * as signInMethodService from '../../../core/user/sign-in-method.service'
 import * as refreshTokenRepository from '../../../data/authentication/refresh-token.repository'
 import * as signInMethodRepository from '../../../data/user/sign-in-method/sign-in-method.repository'
-import * as authService from '../../authentication/authentication.service'
-import * as authTokenService from '../../authentication/auth-token.service'
+import { config } from '../../config'
+import * as authHelper from '../../authentication/authentication-helper'
+import * as authTokenService from '../../../core/authentication/auth-token.service'
 import * as userService from '../user.service'
 import { type Transaction } from '../../../data/database'
 
 import {
   RefreshTokenUserIdMismatchError
-} from '../../authentication/auth-token.service'
+} from '../../../core/authentication/auth-token.service'
 import {
   PasswordTooLongError,
   PasswordTooWeakError,
@@ -143,14 +144,14 @@ export function signInMethodController (router: Router): void {
           findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
           createRefreshToken: function(userId: string): Promise<RefreshToken> {
             return authTokenService.createRefreshToken((
-              userId: string
+              userId: string,
             ): Promise<DbRefreshToken> => {
               return refreshTokenRepository.insertRefreshToken(
                 trx,
                 userId,
                 new Date()
               )
-            }, userId)
+            }, userId, config.authTokenSecret)
           },
           createAuthToken: function(
             role: Role, refreshToken: RefreshToken
@@ -163,7 +164,12 @@ export function signInMethodController (router: Router): void {
                 refreshTokenId,
                 new Date()
               )
-            }, role, refreshToken)
+            },
+              role,
+              refreshToken,
+              config.authTokenSecret,
+              config.authTokenExpiryDuration
+            )
           }
         }
         return await signInMethodService.signInUsingPassword(
@@ -210,7 +216,7 @@ export function signInMethodController (router: Router): void {
             return refreshTokenRepository.deleteRefreshToken(
               ctx.db, refreshTokenId
             )
-          }, user.id, body)
+          }, user.id, body, config.authTokenSecret)
           const refreshToken = await authTokenService.createRefreshToken((
             userId: string
           ) => {
@@ -219,7 +225,7 @@ export function signInMethodController (router: Router): void {
               userId,
               new Date()
             )
-          }, user.id)
+          }, user.id, config.authTokenSecret)
           const authToken =
             await authTokenService.createAuthToken((
               refreshTokenId: string
@@ -229,7 +235,9 @@ export function signInMethodController (router: Router): void {
               refreshTokenId,
               new Date()
             )
-          }, user.role, refreshToken)
+          }, user.role, refreshToken,
+             config.authTokenSecret, config.authTokenExpiryDuration
+                                                  )
           return {
             authToken,
             refreshToken
@@ -251,7 +259,7 @@ export function signInMethodController (router: Router): void {
 
   router.post(
     '/api/v1/user/:userId/sign-out',
-    authService.authenticateUser,
+    authHelper.authenticateUser,
     async (ctx) => {
       const { body } = ctx.request
 
@@ -271,7 +279,7 @@ export function signInMethodController (router: Router): void {
             ctx.db,
             refreshTokenId
           )
-        }, ctx.params.userId, body)
+        }, ctx.params.userId, body, config.authTokenSecret)
 
         ctx.status = 200
         ctx.body = { success: true }
@@ -291,7 +299,7 @@ export function signInMethodController (router: Router): void {
 
   router.post(
     '/api/v1/user/:userId/change-password',
-    authService.authenticateUser,
+    authHelper.authenticateUser,
     async (ctx) => {
       const { body } = ctx.request
 
