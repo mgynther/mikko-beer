@@ -4,7 +4,7 @@ import * as beerService from '../../core/beer/beer.service'
 import { type CreateIf, type UpdateIf } from '../../core/beer/beer.service'
 import { type Pagination } from '../../core/pagination'
 import { type SearchByName } from '../../core/search'
-import * as authService from '../authentication/authentication.service'
+import * as authHelper from '../authentication/authentication-helper'
 
 import { type Router } from '../router'
 import {
@@ -21,7 +21,7 @@ import { validateSearchByName } from '../search'
 
 export function beerController (router: Router): void {
   router.post('/api/v1/beer',
-    authService.authenticateAdmin,
+    authHelper.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
 
@@ -43,7 +43,7 @@ export function beerController (router: Router): void {
   )
 
   router.put('/api/v1/beer/:beerId',
-    authService.authenticateAdmin,
+    authHelper.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
       const { beerId } = ctx.params
@@ -69,7 +69,7 @@ export function beerController (router: Router): void {
 
   router.get(
     '/api/v1/beer/:beerId',
-    authService.authenticateViewer,
+    authHelper.authenticateViewer,
     async (ctx) => {
       const { beerId } = ctx.params
       const beer = await beerService.findBeerById((beerId: string) => {
@@ -90,7 +90,7 @@ export function beerController (router: Router): void {
 
   router.get(
     '/api/v1/beer',
-    authService.authenticateViewer,
+    authHelper.authenticateViewer,
     async (ctx) => {
       const { skip, size } = ctx.request.query
       const pagination = validatePagination({ skip, size })
@@ -102,7 +102,7 @@ export function beerController (router: Router): void {
   )
 
   router.post('/api/v1/beer/search',
-    authService.authenticateViewer,
+    authHelper.authenticateViewer,
     async (ctx) => {
       const { body } = ctx.request
 

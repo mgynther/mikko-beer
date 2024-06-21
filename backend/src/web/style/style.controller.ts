@@ -1,7 +1,7 @@
 import * as styleRepository from '../../data/style/style.repository'
 import { type Transaction } from '../../data/database'
 import * as styleService from '../../core/style/style.service'
-import * as authService from '../authentication/authentication.service'
+import * as authHelper from '../authentication/authentication-helper'
 
 import { type Router } from '../router'
 import {
@@ -29,7 +29,7 @@ function handleError (e: unknown): void {
 
 export function styleController (router: Router): void {
   router.post('/api/v1/style',
-    authService.authenticateAdmin,
+    authHelper.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
 
@@ -56,7 +56,7 @@ export function styleController (router: Router): void {
   )
 
   router.put('/api/v1/style/:styleId',
-    authService.authenticateAdmin,
+    authHelper.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
       const { styleId } = ctx.params
@@ -88,7 +88,7 @@ export function styleController (router: Router): void {
 
   router.get(
     '/api/v1/style/:styleId',
-    authService.authenticateViewer,
+    authHelper.authenticateViewer,
     async (ctx) => {
       const { styleId } = ctx.params
       const style = await styleService.findStyleById((styleId: string) => {
@@ -109,7 +109,7 @@ export function styleController (router: Router): void {
 
   router.get(
     '/api/v1/style',
-    authService.authenticateViewer,
+    authHelper.authenticateViewer,
     async (ctx) => {
       const styles = await styleService.listStyles(() => {
         return styleRepository.listStyles(ctx.db)

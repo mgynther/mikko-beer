@@ -1,6 +1,6 @@
 import * as storageRepository from '../../data/storage/storage.repository'
 import * as storageService from '../../core/storage/storage.service'
-import * as authService from '../authentication/authentication.service'
+import * as authHelper from '../authentication/authentication-helper'
 
 import { type Router } from '../router'
 import { type Pagination } from '../../core/pagination'
@@ -16,7 +16,7 @@ import { validatePagination } from '../pagination'
 
 export function storageController (router: Router): void {
   router.post('/api/v1/storage',
-    authService.authenticateAdmin,
+    authHelper.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
 
@@ -37,7 +37,7 @@ export function storageController (router: Router): void {
   )
 
   router.put('/api/v1/storage/:storageId',
-    authService.authenticateAdmin,
+    authHelper.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
       const { storageId } = ctx.params
@@ -60,7 +60,7 @@ export function storageController (router: Router): void {
 
   router.get(
     '/api/v1/storage/:storageId',
-    authService.authenticateViewer,
+    authHelper.authenticateViewer,
     async (ctx) => {
       const { storageId } = ctx.params
       const storage = await storageService.findStorageById((
@@ -83,7 +83,7 @@ export function storageController (router: Router): void {
 
   router.get(
     '/api/v1/beer/:beerId/storage',
-    authService.authenticateViewer,
+    authHelper.authenticateViewer,
     async (ctx) => {
       const { beerId } = ctx.params
       const storageResult = await storageService.listStoragesByBeer((
@@ -99,7 +99,7 @@ export function storageController (router: Router): void {
 
   router.get(
     '/api/v1/brewery/:breweryId/storage',
-    authService.authenticateViewer,
+    authHelper.authenticateViewer,
     async (ctx) => {
       const { breweryId } = ctx.params
       const storageResult = await storageService.listStoragesByBrewery((
@@ -115,7 +115,7 @@ export function storageController (router: Router): void {
 
   router.get(
     '/api/v1/style/:styleId/storage',
-    authService.authenticateViewer,
+    authHelper.authenticateViewer,
     async (ctx) => {
       const { styleId } = ctx.params
       const storageResult = await storageService.listStoragesByStyle((
@@ -131,7 +131,7 @@ export function storageController (router: Router): void {
 
   router.get(
     '/api/v1/storage',
-    authService.authenticateViewer,
+    authHelper.authenticateViewer,
     async (ctx) => {
       const { skip, size } = ctx.request.query
       const pagination = validatePagination({ skip, size })

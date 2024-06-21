@@ -1,7 +1,7 @@
 import * as reviewRepository from '../../data/review/review.repository'
 import * as storageRepository from '../../data/storage/storage.repository'
 import * as reviewService from '../../core/review/review.service'
-import * as authService from '../authentication/authentication.service'
+import * as authHelper from '../authentication/authentication-helper'
 
 import { type Router } from '../router'
 import { type Pagination } from '../../core/pagination'
@@ -20,7 +20,7 @@ import { validatePagination } from '../pagination'
 
 export function reviewController (router: Router): void {
   router.post('/api/v1/review',
-    authService.authenticateAdmin,
+    authHelper.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
       const { storage } = ctx.request.query
@@ -46,7 +46,7 @@ export function reviewController (router: Router): void {
   )
 
   router.put('/api/v1/review/:reviewId',
-    authService.authenticateAdmin,
+    authHelper.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
       const { reviewId } = ctx.params
@@ -68,7 +68,7 @@ export function reviewController (router: Router): void {
 
   router.get(
     '/api/v1/review/:reviewId',
-    authService.authenticateViewer,
+    authHelper.authenticateViewer,
     async (ctx) => {
       const { reviewId } = ctx.params
       const review = await reviewService.findReviewById((reviewId: string) => {
@@ -89,7 +89,7 @@ export function reviewController (router: Router): void {
 
   router.get(
     '/api/v1/beer/:beerId/review',
-    authService.authenticateViewer,
+    authHelper.authenticateViewer,
     async (ctx) => {
       const { beerId } = ctx.params
       const reviewListOrder =
@@ -113,7 +113,7 @@ export function reviewController (router: Router): void {
 
   router.get(
     '/api/v1/brewery/:breweryId/review',
-    authService.authenticateViewer,
+    authHelper.authenticateViewer,
     async (ctx) => {
       const { breweryId } = ctx.params
       const reviewListOrder =
@@ -137,7 +137,7 @@ export function reviewController (router: Router): void {
 
   router.get(
     '/api/v1/style/:styleId/review',
-    authService.authenticateViewer,
+    authHelper.authenticateViewer,
     async (ctx) => {
       const { styleId } = ctx.params
       const reviewListOrder =
@@ -160,7 +160,7 @@ export function reviewController (router: Router): void {
 
   router.get(
     '/api/v1/review',
-    authService.authenticateViewer,
+    authHelper.authenticateViewer,
     async (ctx) => {
       const { skip, size } = ctx.request.query
       const reviewListOrder = doValidateFullReviewListOrder(ctx.request.query)

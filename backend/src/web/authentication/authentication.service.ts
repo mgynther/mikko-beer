@@ -25,7 +25,8 @@ export async function authenticateUser (
     )
   }
 
-  const authorization = parseAuthorization(ctx)
+  const authorizationHeader = ctx.headers.authorization
+  const authorization = validAuthorizationOrThrow(authorizationHeader)
 
   if (authorization === undefined || !authorization.startsWith('Bearer ')) {
     throw new ControllerError(
@@ -62,11 +63,10 @@ export async function authenticateUser (
   return await next()
 }
 
-export async function authenticateAdmin (
-  ctx: Context,
-  next: Next
-): Promise<void> {
-  const authorization = parseAuthorization(ctx)
+export function authenticateAdmin (
+  authorizationHeader: string | undefined,
+): void {
+  const authorization = validAuthorizationOrThrow(authorizationHeader)
   const payload = validAuthTokenPayload(authorization)
   if (payload.role !== Role.admin) {
     throw new ControllerError(
@@ -75,14 +75,12 @@ export async function authenticateAdmin (
       'no rights'
     )
   }
-  return await next()
 }
 
-export async function authenticateViewer (
-  ctx: Context,
-  next: Next
-): Promise<void> {
-  const authorization = parseAuthorization(ctx)
+export function authenticateViewer (
+  authorizationHeader: string | undefined,
+): void {
+  const authorization = validAuthorizationOrThrow(authorizationHeader)
   const payload = validAuthTokenPayload(authorization)
   const role = payload.role
   if (role !== Role.admin && role !== Role.viewer) {
@@ -92,11 +90,9 @@ export async function authenticateViewer (
       'no rights'
     )
   }
-  return await next()
 }
 
-function parseAuthorization (ctx: Context): string {
-  const authorization = ctx.headers.authorization
+function validAuthorizationOrThrow (authorization: string | undefined): string {
   if (authorization === undefined || !authorization.startsWith('Bearer ')) {
     throw new ControllerError(
       400,

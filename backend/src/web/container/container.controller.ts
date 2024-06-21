@@ -1,6 +1,6 @@
 import * as containerRepository from '../../data/container/container.repository'
 import * as containerService from '../../core/container/container.service'
-import * as authService from '../authentication/authentication.service'
+import * as authHelper from '../authentication/authentication-helper'
 
 import { type Router } from '../router'
 import {
@@ -15,7 +15,7 @@ import { ControllerError } from '../../core/errors'
 
 export function containerController (router: Router): void {
   router.post('/api/v1/container',
-    authService.authenticateAdmin,
+    authHelper.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
 
@@ -34,7 +34,7 @@ export function containerController (router: Router): void {
   )
 
   router.put('/api/v1/container/:containerId',
-    authService.authenticateAdmin,
+    authHelper.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
       const { containerId } = ctx.params
@@ -55,7 +55,7 @@ export function containerController (router: Router): void {
 
   router.get(
     '/api/v1/container/:containerId',
-    authService.authenticateViewer,
+    authHelper.authenticateViewer,
     async (ctx) => {
       const { containerId } = ctx.params
       const container = await containerService.findContainerById((containerId: string) => {
@@ -76,7 +76,7 @@ export function containerController (router: Router): void {
 
   router.get(
     '/api/v1/container',
-    authService.authenticateViewer,
+    authHelper.authenticateViewer,
     async (ctx) => {
       const containers = await containerService.listContainers(() => {
         return containerRepository.listContainers(ctx.db)

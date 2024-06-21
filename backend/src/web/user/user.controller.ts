@@ -4,6 +4,7 @@ import {
   signInMethodController
 } from './sign-in-method/sign-in-method.controller'
 import * as authService from '../authentication/authentication.service'
+import * as authHelper from '../authentication/authentication-helper'
 import * as refreshTokenRepository from '../../data/authentication/refresh-token.repository'
 
 import { type Router } from '../router'
@@ -20,7 +21,7 @@ import { type DbRefreshToken } from '../../core/authentication/refresh-token'
 
 export function userController (router: Router): void {
   router.post('/api/v1/user',
-    authService.authenticateAdmin,
+    authHelper.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
 
@@ -74,7 +75,7 @@ export function userController (router: Router): void {
 
   router.get(
     '/api/v1/user',
-    authService.authenticateViewer,
+    authHelper.authenticateViewer,
     async (ctx) => {
       const users = await userService.listUsers(ctx.db)
 
@@ -83,7 +84,7 @@ export function userController (router: Router): void {
   )
 
   router.delete('/api/v1/user/:userId',
-    authService.authenticateAdmin,
+    authHelper.authenticateAdmin,
     async (ctx) => {
       const { userId } = ctx.params
       await ctx.db.executeTransaction(async (trx) => {

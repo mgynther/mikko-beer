@@ -2,7 +2,7 @@ import * as breweryRepository from '../../data/brewery/brewery.repository'
 import * as breweryService from '../../core/brewery/brewery.service'
 import { type Pagination } from '../../core/pagination'
 import { type SearchByName } from '../../core/search'
-import * as authService from '../authentication/authentication.service'
+import * as authHelper from '../authentication/authentication-helper'
 
 import { type Router } from '../router'
 import {
@@ -19,7 +19,7 @@ import { validateSearchByName } from '../search'
 
 export function breweryController (router: Router): void {
   router.post('/api/v1/brewery',
-    authService.authenticateAdmin,
+    authHelper.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
 
@@ -38,7 +38,7 @@ export function breweryController (router: Router): void {
   )
 
   router.put('/api/v1/brewery/:breweryId',
-    authService.authenticateAdmin,
+    authHelper.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
       const { breweryId } = ctx.params
@@ -59,7 +59,7 @@ export function breweryController (router: Router): void {
 
   router.get(
     '/api/v1/brewery/:breweryId',
-    authService.authenticateViewer,
+    authHelper.authenticateViewer,
     async (ctx) => {
       const { breweryId } = ctx.params
       const brewery = await breweryService.findBreweryById((breweryId: string) => {
@@ -80,7 +80,7 @@ export function breweryController (router: Router): void {
 
   router.get(
     '/api/v1/brewery',
-    authService.authenticateViewer,
+    authHelper.authenticateViewer,
     async (ctx) => {
       const { skip, size } = ctx.request.query
       const pagination = validatePagination({ skip, size })
@@ -92,7 +92,7 @@ export function breweryController (router: Router): void {
   )
 
   router.post('/api/v1/brewery/search',
-    authService.authenticateViewer,
+    authHelper.authenticateViewer,
     async (ctx) => {
       const { body } = ctx.request
 
