@@ -6,21 +6,20 @@ import {
   type User
 } from '../../core/user/user'
 import { type DbRefreshToken } from '../../core/authentication/refresh-token'
+import { type AuthTokenConfig } from '../authentication/auth-token'
 
 export async function createAnonymousUser (
   createAnonymousUser: (request: CreateAnonymousUserRequest) => Promise<User>,
   insertRefreshToken: (userId: string) => Promise<DbRefreshToken>,
   role: Role,
-  authTokenSecret: string,
-  authTokenExpiryDuration: string
+  authTokenConfig: AuthTokenConfig
 ): Promise<SignedInUser> {
   const user = await createAnonymousUser({ role })
 
   const { refresh, auth } = await authTokenService.createTokens(
     insertRefreshToken,
     user,
-    authTokenSecret,
-    authTokenExpiryDuration
+    authTokenConfig
   )
   return {
     refreshToken: refresh,

@@ -29,6 +29,7 @@ import {
   addPasswordSignInMethod
 } from '../web/user/sign-in-method/sign-in-method.controller'
 import { ControllerError } from '../core/errors'
+import { type AuthTokenConfig } from '../core/authentication/auth-token'
 
 export interface StartResult {
   authToken: string,
@@ -96,6 +97,10 @@ export class App {
           const adminUsername = uuidv4()
           const adminPassword = uuidv4()
           createPromise = db.executeTransaction(async (trx) => {
+            const authTokenConfig: AuthTokenConfig ={
+              secret: this.#config.authTokenSecret,
+              expiryDuration: this.#config.authTokenExpiryDuration
+            };
             const user = await userService.createAnonymousUser(
               (request: CreateAnonymousUserRequest) => {
                 return userRepository.createAnonymousUser(trx, request)
@@ -107,8 +112,7 @@ export class App {
                   id: uuidv4(),
                   userId
                 }
-              }, Role.admin, this.#config.authTokenSecret,
-              this.#config.authTokenExpiryDuration)
+              }, Role.admin, authTokenConfig)
             startResult.authToken = user.authToken.authToken
             if (isAdminPasswordNeeded) {
               startResult.initialAdminUsername = adminUsername

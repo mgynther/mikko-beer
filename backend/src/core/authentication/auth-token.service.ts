@@ -1,6 +1,9 @@
 import * as jwt from 'jsonwebtoken'
 
-import { type AuthToken } from '../../core/authentication/auth-token'
+import {
+  type AuthTokenConfig,
+  type AuthToken
+} from '../../core/authentication/auth-token'
 import { type Tokens } from '../../core/authentication/tokens'
 import {
   type DbRefreshToken,
@@ -28,8 +31,7 @@ interface RefreshTokenPayload {
 export async function createTokens (
   insertRefreshToken: (userId: string) => Promise<DbRefreshToken>,
   user: User,
-  authTokenSecret: string,
-  authTokenExpiryDuration: string
+  authTokenConfig: AuthTokenConfig
 ): Promise<Tokens> {
   const token = await insertRefreshToken(user.id)
 
@@ -37,13 +39,12 @@ export async function createTokens (
     userId: user.id,
     refreshTokenId: token.id,
     isRefreshToken: true
-  }, authTokenSecret)
+  }, authTokenConfig.secret)
 
   const auth = createAuthToken(
     user.role,
     refresh,
-    authTokenSecret,
-    authTokenExpiryDuration
+    authTokenConfig
   )
 
   return {
@@ -63,18 +64,16 @@ function signRefreshToken (
 function createAuthToken (
   role: Role,
   refreshToken: RefreshToken,
-  authTokenSecret: string,
-  authTokenExpiryDuration: string
+  authTokenConfig: AuthTokenConfig
 ): AuthToken {
   const { userId, refreshTokenId } = verifyRefreshToken(
     refreshToken,
-    authTokenSecret
+    authTokenConfig.secret
   )
 
   return signAuthToken(
     { userId, role, refreshTokenId },
-    authTokenSecret,
-    authTokenExpiryDuration
+    authTokenConfig
   )
 }
 
@@ -102,12 +101,11 @@ function verifyRefreshToken (
 
 function signAuthToken (
   tokenPayload: AuthTokenPayload,
-  authTokenSecret: string,
-  authTokenExpiryDuration: string
+  authTokenConfig: AuthTokenConfig
 ): AuthToken {
   return {
-    authToken: jwt.sign(tokenPayload, authTokenSecret, {
-      expiresIn: authTokenExpiryDuration
+    authToken: jwt.sign(tokenPayload, authTokenConfig.secret, {
+      expiresIn: authTokenConfig.expiryDuration
     })
   }
 }

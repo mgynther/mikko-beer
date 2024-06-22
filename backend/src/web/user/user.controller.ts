@@ -21,6 +21,7 @@ import {
 } from '../../core/user/sign-in-method'
 import { ControllerError } from '../../core/errors'
 import { type DbRefreshToken } from '../../core/authentication/refresh-token'
+import { type AuthTokenConfig } from '../../core/authentication/auth-token'
 
 export function userController (router: Router, config: Config): void {
   router.post('/api/v1/user',
@@ -30,6 +31,10 @@ export function userController (router: Router, config: Config): void {
 
       const request = validateCreateRequest(body)
       const result = await ctx.db.executeTransaction(async (trx) => {
+        const authTokenConfig: AuthTokenConfig = {
+          secret: config.authTokenSecret,
+          expiryDuration: config.authTokenExpiryDuration
+        }
         const user = await userService.createAnonymousUser(
           (request: CreateAnonymousUserRequest) => {
             return userRepository.createAnonymousUser(trx, request)
@@ -37,7 +42,7 @@ export function userController (router: Router, config: Config): void {
           (userId: string): Promise<DbRefreshToken> => {
             return refreshTokenRepository.insertRefreshToken(trx, userId, new Date())
           },
-          request.role, config.authTokenSecret, config.authTokenExpiryDuration
+          request.role, authTokenConfig
         )
         const username = await addPasswordSignInMethod(
           trx, user.user.id, request.passwordSignInMethod)

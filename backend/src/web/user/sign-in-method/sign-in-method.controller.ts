@@ -33,6 +33,8 @@ import {
   validatePasswordSignInMethod
 } from '../../../core/user/sign-in-method'
 import { type User } from '../../../core/user/user'
+import { type AuthTokenConfig } from '../../../core/authentication/auth-token'
+import { type Context } from '../../context'
 
 function handleError (error: unknown): void {
   if (
@@ -147,6 +149,7 @@ export function signInMethodController (router: Router): void {
           },
           findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
           createTokens: function(user: User): Promise<Tokens> {
+            const authTokenConfig: AuthTokenConfig = getAuthTokenConfig(ctx)
             return authTokenService.createTokens((
               userId: string,
             ): Promise<DbRefreshToken> => {
@@ -155,8 +158,7 @@ export function signInMethodController (router: Router): void {
                 userId,
                 new Date()
               )
-            }, user, ctx.config.authTokenSecret,
-            ctx.config.authTokenExpiryDuration)
+            }, user, authTokenConfig)
           },
         }
         return await signInMethodService.signInUsingPassword(
@@ -206,6 +208,7 @@ export function signInMethodController (router: Router): void {
               ctx.db, refreshTokenId
             )
           }, user.id, body, ctx.config.authTokenSecret)
+          const authTokenConfig: AuthTokenConfig = getAuthTokenConfig(ctx)
           const tokens = await authTokenService.createTokens((
             userId: string
           ) => {
@@ -214,8 +217,7 @@ export function signInMethodController (router: Router): void {
               userId,
               new Date()
             )
-          }, user, ctx.config.authTokenSecret,
-          ctx.config.authTokenExpiryDuration)
+          }, user, authTokenConfig)
           return tokens
         })
 
@@ -326,5 +328,12 @@ function createFindPasswordSignInMethod(trx: Transaction) {
     userId: string
   ): Promise<UserPasswordHash | undefined> {
     return signInMethodRepository.findPasswordSignInMethod(trx, userId)
+  }
+}
+
+function getAuthTokenConfig(ctx: Context): AuthTokenConfig {
+  return {
+    secret: ctx.config.authTokenSecret,
+    expiryDuration: ctx.config.authTokenExpiryDuration
   }
 }
