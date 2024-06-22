@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { type Config } from './config'
 import { type Context, type ContextExtension } from './context'
 import { Database } from '../data/database'
-import * as refreshTokenRepository from '../data/authentication/refresh-token.repository'
+import * as userRepository from '../data/user/user.repository'
 import { Router } from './router'
 import { beerController } from '../web/beer/beer.controller'
 import { breweryController } from '../web/brewery/brewery.controller'
@@ -19,8 +19,12 @@ import { storageController } from '../web/storage/storage.controller'
 import { statsController } from '../web/stats/stats.controller'
 import { styleController } from '../web/style/style.controller'
 import { userController } from '../web/user/user.controller'
-import { Role, type User } from '../core/user/user'
-import * as userService from './user/user.service'
+import {
+  type CreateAnonymousUserRequest,
+  Role,
+  type User
+} from '../core/user/user'
+import * as userService from '../core/user/user.service'
 import {
   addPasswordSignInMethod
 } from '../web/user/sign-in-method/sign-in-method.controller'
@@ -60,7 +64,7 @@ export class App {
     storageController(this.#router)
     statsController(this.#router)
     styleController(this.#router)
-    userController(this.#router)
+    userController(this.#router, this.#config)
 
     this.#koa.use(this.#router.routes())
     this.#koa.use(this.#router.allowedMethods())
@@ -85,7 +89,7 @@ export class App {
           console.log(...args)
         }
       }
-      userService.listUsers(db).then((users: User[]) => {
+      userRepository.listUsers(db).then((users: User[]) => {
         let createPromise: Promise<void> | undefined
         if (users === undefined || users.length === 0) {
           logWithAdminPassword('No users. Creating initial admin')
@@ -93,7 +97,9 @@ export class App {
           const adminPassword = uuidv4()
           createPromise = db.executeTransaction(async (trx) => {
             const user = await userService.createAnonymousUser(
-              trx,
+              (request: CreateAnonymousUserRequest) => {
+                return userRepository.createAnonymousUser(trx, request)
+              },
               async (userId: string) => {
                 // Here we don't need a refresh token in db. One will be created
                 // when admin user logs in.
@@ -101,7 +107,8 @@ export class App {
                   id: uuidv4(),
                   userId
                 }
-              }, Role.admin)
+              }, Role.admin, this.#config.authTokenSecret,
+              this.#config.authTokenExpiryDuration)
             startResult.authToken = user.authToken.authToken
             if (isAdminPasswordNeeded) {
               startResult.initialAdminUsername = adminUsername
@@ -175,6 +182,7 @@ export class App {
     next: Koa.Next
   ): Promise<void> => {
     ctx.db = this.#db
+    ctx.config = this.#config
     await next()
   }
 }

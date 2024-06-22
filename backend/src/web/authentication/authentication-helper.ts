@@ -1,6 +1,5 @@
 import { type Next } from 'koa'
 
-import { config } from '../config'
 import { type Context } from '../context'
 
 import * as authService from '../../core/authentication/authentication.service'
@@ -23,7 +22,7 @@ export async function authenticateUser (
   await authService.authenticateUser(
     userId,
     authorizationHeader,
-    config.authTokenSecret,
+    ctx.config.authTokenSecret,
     findRefreshToken
   )
   return await next()
@@ -34,7 +33,7 @@ export async function authenticateAdmin (
   next: Next
 ): Promise<void> {
   const authorization = ctx.headers.authorization
-  authService.authenticateAdmin(authorization, config.authTokenSecret)
+  authService.authenticateAdmin(authorization, ctx.config.authTokenSecret)
   return await next()
 }
 
@@ -43,6 +42,6 @@ export async function authenticateViewer (
   next: Next
 ): Promise<void> {
   const authorization = ctx.headers.authorization
-  authService.authenticateViewer(authorization, config.authTokenSecret)
+  authService.authenticateViewer(authorization, ctx.config.authTokenSecret)
   return await next()
 }

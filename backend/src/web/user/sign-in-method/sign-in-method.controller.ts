@@ -1,10 +1,10 @@
 import * as signInMethodService from '../../../core/user/sign-in-method.service'
 import * as refreshTokenRepository from '../../../data/authentication/refresh-token.repository'
 import * as signInMethodRepository from '../../../data/user/sign-in-method/sign-in-method.repository'
-import { config } from '../../config'
+import * as userRepository from '../../../data/user/user.repository'
 import * as authHelper from '../../authentication/authentication-helper'
 import * as authTokenService from '../../../core/authentication/auth-token.service'
-import * as userService from '../user.service'
+import * as userService from '../../../core/user/user.service'
 import { type Transaction } from '../../../data/database'
 
 import {
@@ -104,7 +104,10 @@ export async function addPasswordSignInMethod (
       setUserUsername: function(
         userId: string, username: string
       ): Promise<void> {
-        return userService.setUserUsername(trx, userId, username)
+        return userService.setUserUsername(
+          (userId: string, username: string) => {
+            return userRepository.setUserUsername(trx, userId, username)
+        }, userId, username)
       }
     }
     await signInMethodService.addPasswordSignInMethod(
@@ -136,9 +139,11 @@ export function signInMethodController (router: Router): void {
       const signedInUser = await ctx.db.executeTransaction(async (trx) => {
         const signInUsingPasswordIf: SignInUsingPasswordIf = {
           lockUserByUsername: function(
-            userName: string
+            username: string
           ): Promise<User | undefined> {
-            return userService.lockUserByUsername(trx, userName)
+            return userService.lockUserByUsername((username: string) => {
+              return userRepository.lockUserByUsername(trx, username)
+            }, username)
           },
           findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
           createTokens: function(user: User): Promise<Tokens> {
@@ -150,7 +155,8 @@ export function signInMethodController (router: Router): void {
                 userId,
                 new Date()
               )
-            }, user, config.authTokenSecret, config.authTokenExpiryDuration)
+            }, user, ctx.config.authTokenSecret,
+            ctx.config.authTokenExpiryDuration)
           },
         }
         return await signInMethodService.signInUsingPassword(
@@ -187,7 +193,9 @@ export function signInMethodController (router: Router): void {
 
       try {
         const tokens = await ctx.db.executeTransaction(async (trx) => {
-          const user = await userService.lockUserById(trx, userId)
+          const user = await userService.lockUserById((userId: string) => {
+            return userRepository.lockUserById(trx, userId)
+          }, userId)
           if (user === undefined) {
             throw new UserNotFoundError()
           }
@@ -197,7 +205,7 @@ export function signInMethodController (router: Router): void {
             return refreshTokenRepository.deleteRefreshToken(
               ctx.db, refreshTokenId
             )
-          }, user.id, body, config.authTokenSecret)
+          }, user.id, body, ctx.config.authTokenSecret)
           const tokens = await authTokenService.createTokens((
             userId: string
           ) => {
@@ -206,7 +214,8 @@ export function signInMethodController (router: Router): void {
               userId,
               new Date()
             )
-          }, user, config.authTokenSecret, config.authTokenExpiryDuration)
+          }, user, ctx.config.authTokenSecret,
+          ctx.config.authTokenExpiryDuration)
           return tokens
         })
 
@@ -245,7 +254,7 @@ export function signInMethodController (router: Router): void {
             ctx.db,
             refreshTokenId
           )
-        }, ctx.params.userId, body, config.authTokenSecret)
+        }, ctx.params.userId, body, ctx.config.authTokenSecret)
 
         ctx.status = 200
         ctx.body = { success: true }
@@ -306,7 +315,9 @@ export function signInMethodController (router: Router): void {
 
 function createLockUserById(trx: Transaction) {
   return function(userId: string): Promise<any> {
-    return userService.lockUserById(trx, userId)
+    return userService.lockUserById((userId: string) => {
+      return userRepository.lockUserById(trx, userId)
+    }, userId)
   }
 }
 

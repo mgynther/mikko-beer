@@ -1,23 +1,26 @@
-import * as userRepository from '../../data/user/user.repository'
 import * as authTokenService from '../../core/authentication/auth-token.service'
-import { config } from '../config'
-import { type Database, type Transaction } from '../../data/database'
 import { type SignedInUser } from '../../core/user/signed-in-user'
-import { Role, type User } from '../../core/user/user'
-import { type DbRefreshToken, } from '../../core/authentication/refresh-token'
+import {
+  type CreateAnonymousUserRequest,
+  type Role,
+  type User
+} from '../../core/user/user'
+import { type DbRefreshToken } from '../../core/authentication/refresh-token'
 
 export async function createAnonymousUser (
-  trx: Transaction,
+  createAnonymousUser: (request: CreateAnonymousUserRequest) => Promise<User>,
   insertRefreshToken: (userId: string) => Promise<DbRefreshToken>,
   role: Role,
+  authTokenSecret: string,
+  authTokenExpiryDuration: string
 ): Promise<SignedInUser> {
-  const user = await userRepository.createAnonymousUser(trx, { role })
+  const user = await createAnonymousUser({ role })
 
   const { refresh, auth } = await authTokenService.createTokens(
     insertRefreshToken,
     user,
-    config.authTokenSecret,
-    config.authTokenExpiryDuration,
+    authTokenSecret,
+    authTokenExpiryDuration
   )
   return {
     refreshToken: refresh,
@@ -27,43 +30,43 @@ export async function createAnonymousUser (
 }
 
 export async function findUserById (
-  db: Database,
+  findUserById: (userId: string) => Promise<User | undefined>,
   userId: string
 ): Promise<User | undefined> {
-  return await userRepository.findUserById(db, userId)
+  return await findUserById(userId)
 }
 
 export async function listUsers (
-  db: Database
+  listUsers: () => Promise<User[]>
 ): Promise<User[]> {
-  return await userRepository.listUsers(db)
+  return await listUsers()
 }
 
 export async function lockUserById (
-  trx: Transaction,
+  lockUserById: (id: string) => Promise<User | undefined>,
   id: string
 ): Promise<User | undefined> {
-  return await userRepository.lockUserById(trx, id)
+  return await lockUserById(id)
 }
 
 export async function lockUserByUsername (
-  trx: Transaction,
+  lockUserByUsername: (username: string) => Promise<User | undefined>,
   username: string
 ): Promise<User | undefined> {
-  return await userRepository.lockUserByUsername(trx, username)
+  return await lockUserByUsername(username)
 }
 
 export async function setUserUsername (
-  trx: Transaction,
+  setUserUsername: (userId: string, username: string) => Promise<void>,
   userId: string,
   username: string
 ): Promise<void> {
-  await userRepository.setUserUsername(trx, userId, username)
+  await setUserUsername(userId, username)
 }
 
 export async function deleteUserById (
-  trx: Transaction,
+  deleteUserById: (id: string) => Promise<void>,
   id: string
 ): Promise<void> {
-  await userRepository.deleteUserById(trx, id)
+  await deleteUserById(id)
 }
