@@ -26,6 +26,12 @@ import {
 } from '../web/user/sign-in-method/sign-in-method.controller'
 import { ControllerError } from '../core/errors'
 
+export interface StartResult {
+  authToken: string,
+  initialAdminUsername: string | undefined,
+  initialAdminPassword: string | undefined
+}
+
 export class App {
   #config: Config
   #koa: Koa<any, ContextExtension>
@@ -64,17 +70,21 @@ export class App {
     return this.#db
   }
 
-  async start (): Promise<string> {
-    return await new Promise<string>((resolve) => {
+  async start (): Promise<StartResult> {
+    return await new Promise<StartResult>((resolve) => {
       const port = this.#config.port
       const db = this.#db
       const isAdminPasswordNeeded = this.#config.generateInitialAdminPassword
+      const startResult: StartResult = {
+        authToken: '',
+        initialAdminUsername: undefined,
+        initialAdminPassword: undefined
+      }
       function logWithAdminPassword (...args: any[]): void {
         if (isAdminPasswordNeeded) {
           console.log(...args)
         }
       }
-      let authToken = ''
       userService.listUsers(db).then((users: User[]) => {
         let createPromise: Promise<void> | undefined
         if (users === undefined || users.length === 0) {
@@ -92,8 +102,10 @@ export class App {
                   userId
                 }
               }, Role.admin)
-            authToken = user.authToken.authToken
+            startResult.authToken = user.authToken.authToken
             if (isAdminPasswordNeeded) {
+              startResult.initialAdminUsername = adminUsername
+              startResult.initialAdminPassword = adminPassword
               await addPasswordSignInMethod(
                 trx,
                 user.user.id,
@@ -119,7 +131,7 @@ export class App {
         }
         Promise.all(promises).then(() => {
           logWithAdminPassword(`Server started in port ${port}`)
-          resolve(authToken)
+          resolve(startResult)
         }, (error) => {
           console.warn('Error starting', error)
         })

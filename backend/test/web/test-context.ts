@@ -38,9 +38,13 @@ export class TestContext {
 
     await beforeTest(this.db)
 
-    const authToken = await this.#app.start()
+    const result = await this.#app.start()
+    if (result.initialAdminUsername !== undefined ||
+        result.initialAdminPassword !== undefined) {
+      throw new Error('initial admin was created although not supposed to')
+    }
 
-    this.#adminAuthToken = authToken
+    this.#adminAuthToken = result.authToken
   }
 
   afterEach = async (): Promise<void> => {
