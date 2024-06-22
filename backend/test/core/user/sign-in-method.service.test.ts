@@ -16,6 +16,7 @@ import {
   WrongPasswordError,
 } from '../../../src/core/user/sign-in-method.service'
 
+import { type Tokens } from '../../../src/core/authentication/tokens'
 import {
   type PasswordChange,
   type PasswordSignInMethod,
@@ -102,12 +103,13 @@ describe('password sign-in-method service unit tests', () => {
     passwordHash: knownHash,
   }
 
-  const dummyRefreshToken: RefreshToken = {
-    refreshToken: 'dummy'
-  }
-
-  const dummyAuthToken: AuthToken = {
-    authToken: 'dummy'
+  const dummyTokens: Tokens = {
+    refresh: {
+      refreshToken: 'dummy'
+    },
+    auth: {
+      authToken: 'dummy'
+    }
   }
 
   async function notCalled(): Promise<any> {
@@ -163,20 +165,11 @@ describe('password sign-in-method service unit tests', () => {
     return undefined
   }
 
-  async function createDummyRefreshToken(
-    userId: string
-  ): Promise<RefreshToken> {
-    expect(userId).to.equal(user.id)
-    return dummyRefreshToken
-  }
-
-  async function createDummyAuthToken(
-    role: Role,
-    refreshToken: RefreshToken
-  ): Promise<AuthToken> {
-    expect(role).to.eql(user.role)
-    expect(refreshToken).to.eql(dummyRefreshToken)
-    return dummyAuthToken
+  async function createDummyTokens(
+    dummyUser: User
+  ): Promise<Tokens> {
+    expect(dummyUser).to.eql(user)
+    return dummyTokens
   }
 
   it('add password sign-in-method', async () => {
@@ -316,21 +309,19 @@ describe('password sign-in-method service unit tests', () => {
     const signInUsingPasswordIf: SignInUsingPasswordIf = {
       lockUserByUsername: lockValidUserByUsername,
       findPasswordSignInMethod: getUserPasswordHash,
-      createRefreshToken: createDummyRefreshToken,
-      createAuthToken: createDummyAuthToken,
+      createTokens: createDummyTokens,
     }
     const result = await signInUsingPassword(signInUsingPasswordIf, method)
     expect(result.user).to.eql(user)
-    expect(result.refreshToken).to.eql(dummyRefreshToken)
-    expect(result.authToken).to.eql(dummyAuthToken)
+    expect(result.refreshToken).to.eql(dummyTokens.refresh)
+    expect(result.authToken).to.eql(dummyTokens.auth)
   })
 
   it('fail to sign in using password without user', async () => {
     const signInUsingPasswordIf: SignInUsingPasswordIf = {
       lockUserByUsername: lockMissingUser,
       findPasswordSignInMethod: notCalled,
-      createRefreshToken: notCalled,
-      createAuthToken: notCalled,
+      createTokens: notCalled
     }
     try {
       await signInUsingPassword(signInUsingPasswordIf, method)
@@ -344,8 +335,7 @@ describe('password sign-in-method service unit tests', () => {
     const signInUsingPasswordIf: SignInUsingPasswordIf = {
       lockUserByUsername: lockValidUserByUsername,
       findPasswordSignInMethod: getMissingPasswordHash,
-      createRefreshToken: notCalled,
-      createAuthToken: notCalled,
+      createTokens: notCalled
     }
     try {
       await signInUsingPassword(signInUsingPasswordIf, method)
@@ -359,8 +349,7 @@ describe('password sign-in-method service unit tests', () => {
     const signInUsingPasswordIf: SignInUsingPasswordIf = {
       lockUserByUsername: lockValidUserByUsername,
       findPasswordSignInMethod: getOtherPasswordHash,
-      createRefreshToken: notCalled,
-      createAuthToken: notCalled,
+      createTokens: notCalled
     }
     try {
       await signInUsingPassword(signInUsingPasswordIf, method)

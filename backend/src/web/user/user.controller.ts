@@ -31,9 +31,6 @@ export function userController (router: Router): void {
           (userId: string): Promise<DbRefreshToken> => {
             return refreshTokenRepository.insertRefreshToken(trx, userId, new Date())
           },
-          (refreshTokenId: string): Promise<void> => {
-            return refreshTokenRepository.updateRefreshToken(trx, refreshTokenId, new Date())
-          },
           request.role
         )
         const username = await addPasswordSignInMethod(

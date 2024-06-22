@@ -1,12 +1,12 @@
 import * as jwt from 'jsonwebtoken'
-import { v4 as uuidv4 } from 'uuid'
 
 import { type AuthToken } from '../../core/authentication/auth-token'
+import { type Tokens } from '../../core/authentication/tokens'
 import {
   type DbRefreshToken,
   type RefreshToken
 } from '../../core/authentication/refresh-token'
-import { type Role } from '../../core/user/user'
+import { type User, type Role } from '../../core/user/user'
 
 export class AuthTokenError extends Error {}
 export class InvalidAuthTokenError extends AuthTokenError {}
@@ -25,31 +25,31 @@ interface RefreshTokenPayload {
   isRefreshToken: true
 }
 
-export async function createRefreshToken (
+export async function createTokens (
   insertRefreshToken: (userId: string) => Promise<DbRefreshToken>,
-  userId: string,
-  authTokenSecret: string
-): Promise<RefreshToken> {
-  const token = await insertRefreshToken(userId)
+  user: User,
+  authTokenSecret: string,
+  authTokenExpiryDuration: string
+): Promise<Tokens> {
+  const token = await insertRefreshToken(user.id)
 
-  return signRefreshToken({
-    userId,
+  const refresh = signRefreshToken({
+    userId: user.id,
     refreshTokenId: token.id,
     isRefreshToken: true
   }, authTokenSecret)
-}
 
-export async function createInitialAdminRefreshToken (
-  userId: string,
-  authTokenSecret: string
-): Promise<RefreshToken> {
-  const refreshTokenId = uuidv4()
+  const auth = createAuthToken(
+    user.role,
+    refresh,
+    authTokenSecret,
+    authTokenExpiryDuration
+  )
 
-  return signRefreshToken({
-    userId,
-    refreshTokenId,
-    isRefreshToken: true
-  }, authTokenSecret)
+  return {
+    auth,
+    refresh
+  }
 }
 
 function signRefreshToken (
@@ -60,19 +60,16 @@ function signRefreshToken (
   return { refreshToken: jwt.sign(tokenPayload, authTokenSecret) }
 }
 
-export async function createAuthToken (
-  updateRefreshToken: (refreshTokenId: string) => Promise<void>,
+function createAuthToken (
   role: Role,
   refreshToken: RefreshToken,
   authTokenSecret: string,
   authTokenExpiryDuration: string
-): Promise<AuthToken> {
+): AuthToken {
   const { userId, refreshTokenId } = verifyRefreshToken(
     refreshToken,
     authTokenSecret
   )
-
-  await updateRefreshToken(refreshTokenId)
 
   return signAuthToken(
     { userId, role, refreshTokenId },

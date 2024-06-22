@@ -1,9 +1,8 @@
 import * as crypto from 'crypto'
 
 import { UserNotFoundError } from '../errors'
-import { type AuthToken } from '../authentication/auth-token'
-import { type RefreshToken } from '../authentication/refresh-token'
-import { type Role, type User } from '../user/user'
+import { type Tokens } from '../authentication/tokens'
+import { type User } from '../user/user'
 import { type SignedInUser } from '../user/signed-in-user'
 import {
   type PasswordChange,
@@ -89,10 +88,7 @@ export interface SignInUsingPasswordIf {
   findPasswordSignInMethod: (
     userId: string
   ) => Promise<UserPasswordHash | undefined>
-  createRefreshToken: (userId: string) => Promise<RefreshToken>
-  createAuthToken: (
-    role: Role, refreshToken: RefreshToken
-  ) => Promise<AuthToken>
+  createTokens: (user: User) => Promise<Tokens>
 }
 
 export async function signInUsingPassword (
@@ -117,14 +113,13 @@ export async function signInUsingPassword (
     throw new WrongPasswordError()
   }
 
-  const refreshToken = await signInUsingPasswordIf.createRefreshToken(user.id)
-  const authToken = await signInUsingPasswordIf.createAuthToken(
-    user.role, refreshToken)
+  const { refresh, auth } =
+    await signInUsingPasswordIf.createTokens(user)
 
   return {
     user,
-    authToken,
-    refreshToken
+    authToken: auth,
+    refreshToken: refresh
   }
 }
 

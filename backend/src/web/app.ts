@@ -19,7 +19,7 @@ import { storageController } from '../web/storage/storage.controller'
 import { statsController } from '../web/stats/stats.controller'
 import { styleController } from '../web/style/style.controller'
 import { userController } from '../web/user/user.controller'
-import { type User } from '../core/user/user'
+import { Role, type User } from '../core/user/user'
 import * as userService from './user/user.service'
 import {
   addPasswordSignInMethod
@@ -82,11 +82,16 @@ export class App {
           const adminUsername = uuidv4()
           const adminPassword = uuidv4()
           createPromise = db.executeTransaction(async (trx) => {
-            const user = await userService.createInitialAdmin(
+            const user = await userService.createAnonymousUser(
               trx,
-              (refreshTokenId: string) => {
-              return refreshTokenRepository.updateRefreshToken(trx, refreshTokenId, new Date())
-            })
+              async (userId: string) => {
+                // Here we don't need a refresh token in db. One will be created
+                // when admin user logs in.
+                return {
+                  id: uuidv4(),
+                  userId
+                }
+              }, Role.admin)
             authToken = user.authToken.authToken
             if (isAdminPasswordNeeded) {
               await addPasswordSignInMethod(

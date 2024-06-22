@@ -2,7 +2,6 @@ import { expect } from 'chai'
 
 import { TestContext } from '../test-context'
 import { User } from '../../../src/core/user/user'
-import { AxiosResponse } from 'axios'
 
 describe('user tests', () => {
   const ctx = new TestContext()
@@ -70,7 +69,7 @@ describe('user tests', () => {
   })
 
   it('should sign in a user', async () => {
-    const { user, authToken, username, password } = await ctx.createUser()
+    const { authToken, username, password } = await ctx.createUser()
 
     const res = await ctx.request.post(`/api/v1/user/sign-in`, {
       username: username,
@@ -90,7 +89,7 @@ describe('user tests', () => {
   })
 
   it('should fail to sign in user with the wrong password', async () => {
-    const { user, authToken, username } = await ctx.createUser()
+    const { username } = await ctx.createUser()
 
     const res = await ctx.request.post(`/api/v1/user/sign-in`, {
       username: username,
@@ -166,7 +165,7 @@ describe('user tests', () => {
   })
 
   it('should not change tokens on invalid refresh request', async () => {
-    const { user, authToken, refreshToken } = await ctx.createUser()
+    const { user, authToken } = await ctx.createUser()
     const anotherUser = await ctx.createUser()
 
     const res = await ctx.request.post(

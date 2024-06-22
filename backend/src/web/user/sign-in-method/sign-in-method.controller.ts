@@ -20,9 +20,9 @@ import {
   type ChangePasswordUserIf,
   type SignInUsingPasswordIf,
 } from '../../../core/user/sign-in-method.service'
+import { type Tokens } from '../../../core/authentication/tokens'
 import {
   type DbRefreshToken,
-  type RefreshToken,
   validateRefreshToken
 } from '../../../core/authentication/refresh-token'
 import { type Router } from '../../router'
@@ -32,8 +32,7 @@ import {
   validatePasswordChange,
   validatePasswordSignInMethod
 } from '../../../core/user/sign-in-method'
-import { type Role, type User } from '../../../core/user/user'
-import { type AuthToken } from '../../../core/authentication/auth-token'
+import { type User } from '../../../core/user/user'
 
 function handleError (error: unknown): void {
   if (
@@ -142,8 +141,8 @@ export function signInMethodController (router: Router): void {
             return userService.lockUserByUsername(trx, userName)
           },
           findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
-          createRefreshToken: function(userId: string): Promise<RefreshToken> {
-            return authTokenService.createRefreshToken((
+          createTokens: function(user: User): Promise<Tokens> {
+            return authTokenService.createTokens((
               userId: string,
             ): Promise<DbRefreshToken> => {
               return refreshTokenRepository.insertRefreshToken(
@@ -151,26 +150,8 @@ export function signInMethodController (router: Router): void {
                 userId,
                 new Date()
               )
-            }, userId, config.authTokenSecret)
+            }, user, config.authTokenSecret, config.authTokenExpiryDuration)
           },
-          createAuthToken: function(
-            role: Role, refreshToken: RefreshToken
-          ): Promise<AuthToken> {
-            return authTokenService.createAuthToken((
-              refreshTokenId: string
-            ): Promise<void> => {
-              return refreshTokenRepository.updateRefreshToken(
-                trx,
-                refreshTokenId,
-                new Date()
-              )
-            },
-              role,
-              refreshToken,
-              config.authTokenSecret,
-              config.authTokenExpiryDuration
-            )
-          }
         }
         return await signInMethodService.signInUsingPassword(
           signInUsingPasswordIf, body
@@ -217,7 +198,7 @@ export function signInMethodController (router: Router): void {
               ctx.db, refreshTokenId
             )
           }, user.id, body, config.authTokenSecret)
-          const refreshToken = await authTokenService.createRefreshToken((
+          const tokens = await authTokenService.createTokens((
             userId: string
           ) => {
             return refreshTokenRepository.insertRefreshToken(
@@ -225,29 +206,14 @@ export function signInMethodController (router: Router): void {
               userId,
               new Date()
             )
-          }, user.id, config.authTokenSecret)
-          const authToken =
-            await authTokenService.createAuthToken((
-              refreshTokenId: string
-          ) => {
-            return refreshTokenRepository.updateRefreshToken(
-              trx,
-              refreshTokenId,
-              new Date()
-            )
-          }, user.role, refreshToken,
-             config.authTokenSecret, config.authTokenExpiryDuration
-                                                  )
-          return {
-            authToken,
-            refreshToken
-          }
+          }, user, config.authTokenSecret, config.authTokenExpiryDuration)
+          return tokens
         })
 
         ctx.status = 200
         ctx.body = {
-          authToken: tokens.authToken.authToken,
-          refreshToken: tokens.refreshToken.refreshToken
+          authToken: tokens.auth.authToken,
+          refreshToken: tokens.refresh.refreshToken
         }
       } catch (error) {
         handleError(error)
