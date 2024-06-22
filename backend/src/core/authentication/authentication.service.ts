@@ -1,12 +1,9 @@
 import * as authTokenService from './auth-token.service'
 import { Role } from '../user/user'
 
-import {
-  AuthTokenExpiredError,
-  type AuthTokenPayload
-} from '../../core/authentication/auth-token.service'
 import { ControllerError } from '../errors'
 import { type DbRefreshToken } from './refresh-token'
+import { AuthTokenExpiredError, type AuthTokenPayload } from './auth-token'
 
 export async function authenticateUser (
   userId: string | undefined,

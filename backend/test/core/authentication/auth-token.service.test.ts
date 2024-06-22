@@ -1,10 +1,13 @@
 import { expect } from 'chai'
 
 import * as authTokenService from '../../../src/core/authentication/auth-token.service'
-import { AuthTokenConfig, type AuthToken } from '../../../src/core/authentication/auth-token'
 import {
+  type AuthTokenConfig,
   AuthTokenExpiredError,
   InvalidAuthTokenError,
+  type AuthToken
+} from '../../../src/core/authentication/auth-token'
+import {
   RefreshTokenUserIdMismatchError
 } from '../../../src/core/authentication/auth-token.service'
 import {
@@ -83,7 +86,10 @@ describe('auth token service unit tests', () => {
     )
     expectKnownTokens(tokens)
 
-    const authTokenPayload = authTokenService.verifyAuthToken(tokens.auth, authTokenSecret)
+    const authTokenPayload = authTokenService.verifyAuthToken(
+      tokens.auth,
+      authTokenSecret
+    )
     expect(authTokenPayload).to.eql({
       userId: user.id,
       role: Role.admin,
