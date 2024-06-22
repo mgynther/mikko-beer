@@ -53,6 +53,43 @@ export async function createTokens (
   }
 }
 
+export function verifyAuthToken (
+  token: AuthToken,
+  authTokenSecret: string
+): AuthTokenPayload {
+  const payload = verifyToken(token.authToken, authTokenSecret)
+
+  if (
+    typeof payload === 'string' ||
+    typeof payload?.userId !== 'string' ||
+    typeof payload?.role !== 'string' ||
+    typeof payload?.refreshTokenId !== 'string'
+  ) {
+    throw new InvalidAuthTokenError()
+  }
+
+  return {
+    userId: payload.userId,
+    role: payload.role as Role,
+    refreshTokenId: payload.refreshTokenId
+  }
+}
+
+export async function deleteRefreshToken (
+  deleteRefreshToken: (refreshTokenId: string) => Promise<void>,
+  userId: string,
+  refreshToken: RefreshToken,
+  authTokenSecret: string
+): Promise<void> {
+  const payload = verifyRefreshToken(refreshToken, authTokenSecret)
+
+  if (payload.userId !== userId) {
+    throw new RefreshTokenUserIdMismatchError()
+  }
+
+  await deleteRefreshToken(payload.refreshTokenId)
+}
+
 function signRefreshToken (
   tokenPayload: RefreshTokenPayload,
   authTokenSecret: string
@@ -110,28 +147,6 @@ function signAuthToken (
   }
 }
 
-export function verifyAuthToken (
-  token: AuthToken,
-  authTokenSecret: string
-): AuthTokenPayload {
-  const payload = verifyToken(token.authToken, authTokenSecret)
-
-  if (
-    typeof payload === 'string' ||
-    typeof payload?.userId !== 'string' ||
-    typeof payload?.role !== 'string' ||
-    typeof payload?.refreshTokenId !== 'string'
-  ) {
-    throw new InvalidAuthTokenError()
-  }
-
-  return {
-    userId: payload.userId,
-    role: payload.role as Role,
-    refreshTokenId: payload.refreshTokenId
-  }
-}
-
 function verifyToken (
   token: string,
   authTokenSecret: string
@@ -145,19 +160,4 @@ function verifyToken (
 
     throw new InvalidAuthTokenError()
   }
-}
-
-export async function deleteRefreshToken (
-  deleteRefreshToken: (refreshTokenId: string) => Promise<void>,
-  userId: string,
-  refreshToken: RefreshToken,
-  authTokenSecret: string
-): Promise<void> {
-  const payload = verifyRefreshToken(refreshToken, authTokenSecret)
-
-  if (payload.userId !== userId) {
-    throw new RefreshTokenUserIdMismatchError()
-  }
-
-  await deleteRefreshToken(payload.refreshTokenId)
 }
