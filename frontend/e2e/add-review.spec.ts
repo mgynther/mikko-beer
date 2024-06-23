@@ -1,17 +1,9 @@
 import { test, expect } from '@playwright/test'
 import { v4 as uuidv4 } from 'uuid'
-import {
-  localUrl,
-  testUsername,
-  testPassword
-} from './constants'
+import { login } from './login'
 
 test('Add review', async ({ page }) => {
-  await page.goto(localUrl)
-
-  await page.getByRole('textbox', { name: /username/i }).fill(testUsername)
-  await page.getByRole('textbox', { name: /password/i }).fill(testPassword)
-  await page.getByRole('button', { name: /login/i }).click()
+  await login(page)
   await page.getByRole('link', { name: /add review/i }).click()
 
   const beerName = `e2e test beer ${uuidv4()}`
