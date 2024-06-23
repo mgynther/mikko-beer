@@ -197,6 +197,7 @@ function ReviewEditor (props: Props): JSX.Element {
         <div className='ReviewContent'>
           <textarea
             className='ReviewArea'
+            placeholder='Smell'
             value={smell}
             onChange={e => { setSmell(e.target.value) }}
           />
@@ -207,6 +208,7 @@ function ReviewEditor (props: Props): JSX.Element {
         <div className='ReviewContent'>
           <textarea
             className='ReviewArea'
+            placeholder='Taste'
             value={taste}
             onChange={e => { setTaste(e.target.value) }}
           />

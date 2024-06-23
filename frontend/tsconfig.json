@@ -21,6 +21,16 @@
     "noFallthroughCasesInSwitch": true,
     "types": ["vite/client"]
   },
-  "include": ["src"],
+  "exclude": [
+    "./playwright-report/*",
+    "./test-results/*",
+    "./dist/*",
+    "./node_modules/*"
+  ],
+  "include": [
+    "./e2e",
+    "./playwright.config.ts",
+    "./src"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

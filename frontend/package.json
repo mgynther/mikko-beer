@@ -7,6 +7,8 @@
     "build": "tsc && vite build",
     "lint": "eslint --fix . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "VITE_BACKEND_URL=http://localhost:3001 npx jest",
+    "e2e": "npx playwright test",
+    "e2e:ui": "npx playwright test --ui",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -20,10 +22,12 @@
     "uuid": "9.0.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.44.1",
     "@testing-library/jest-dom": "6.4.2",
     "@testing-library/react": "15.0.2",
     "@testing-library/user-event": "14.5.2",
     "@types/jest": "29.5.12",
+    "@types/node": "^20.14.8",
     "@types/react": "18.2.79",
     "@types/react-dom": "18.2.25",
     "@types/uuid": "9.0.8",
@@ -41,8 +45,8 @@
     "ts-jest": "29.1.2",
     "ts-node": "10.9.2",
     "typescript": "5.4.5",
-    "web-vitals": "3.5.2",
-    "vite": "5.2.10"
+    "vite": "5.2.10",
+    "web-vitals": "3.5.2"
   },
   "eslintConfig": {
     "extends": [
