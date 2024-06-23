@@ -5,6 +5,48 @@ import { ControllerError } from '../errors'
 import { type DbRefreshToken } from './refresh-token'
 import { AuthTokenExpiredError, type AuthTokenPayload } from './auth-token'
 
+export const expiredAuthTokenError = new ControllerError(
+  401,
+  'ExpiredAuthToken',
+  'the auth token has expired'
+)
+
+export const invalidAuthorizationHeaderError = new ControllerError(
+  400,
+  'InvalidAuthorizationHeader',
+  'missing or invalid Authorization header'
+)
+
+export const invalidAuthTokenError = new ControllerError(
+  401,
+  'InvalidAuthToken',
+  'invalid auth token'
+)
+
+export const noUserIdParameterError = new ControllerError(
+  400,
+  'NoUserIdParameter',
+  'no user id parameter found in the route'
+)
+
+export const noRightsError = new ControllerError(
+  403,
+  'Forbidden',
+  'no rights'
+)
+
+export const userMismatchError = new ControllerError(
+  403,
+  'UserMismatch',
+  "wrong user's auth token"
+)
+
+export const userOrRefreshTokenNotFoundError = new ControllerError(
+  404,
+  'UserOrRefreshTokenNotFound',
+  'either the user or the refresh token has been deleted'
+)
+
 export async function authenticateUser (
   userId: string | undefined,
   authorizationHeader: string | undefined,
@@ -15,23 +57,10 @@ export async function authenticateUser (
   ) => Promise<DbRefreshToken | undefined>
 ): Promise<void> {
   if (userId === undefined) {
-    throw new ControllerError(
-      400,
-      'NoUserIdParameter',
-      'no user id parameter found in the route'
-    )
+    throw noUserIdParameterError
   }
 
   const authorization = validAuthorizationOrThrow(authorizationHeader)
-
-  if (!authorization?.startsWith('Bearer ')) {
-    throw new ControllerError(
-      400,
-      'InvalidAuthorizationHeader',
-      'missing or invalid Authorization header'
-    )
-  }
-
   const authTokenPayload = validAuthTokenPayload(authorization, authTokenSecret)
 
   if (authTokenPayload.role === Role.admin) {
@@ -39,7 +68,7 @@ export async function authenticateUser (
   }
 
   if (userId !== authTokenPayload.userId) {
-    throw new ControllerError(403, 'UserMismatch', "wrong user's auth token")
+    throw userMismatchError
   }
 
   const refreshToken = await findRefreshToken(
@@ -48,11 +77,7 @@ export async function authenticateUser (
   )
 
   if (refreshToken === undefined) {
-    throw new ControllerError(
-      404,
-      'UserOrRefreshTokenNotFound',
-      'either the user or the refresh token has been deleted'
-    )
+    throw userOrRefreshTokenNotFoundError
   }
 }
 
@@ -63,11 +88,7 @@ export function authenticateAdmin (
   const authorization = validAuthorizationOrThrow(authorizationHeader)
   const payload = validAuthTokenPayload(authorization, authTokenSecret)
   if (payload.role !== Role.admin) {
-    throw new ControllerError(
-      403,
-      'Forbidden',
-      'no rights'
-    )
+    throw noRightsError
   }
 }
 
@@ -79,20 +100,12 @@ export function authenticateViewer (
   const payload = validAuthTokenPayload(authorization, authTokenSecret)
   const role = payload.role
   if (role !== Role.admin && role !== Role.viewer) {
-    throw new ControllerError(
-      403,
-      'Forbidden',
-      'no rights'
-    )
+    throw noRightsError
   }
 }
 
 function validAuthorizationOrThrow (authorization: string | undefined): string {
-  const error = new ControllerError(
-    400,
-    'InvalidAuthorizationHeader',
-    'missing or invalid Authorization header'
-  )
+  const error = invalidAuthorizationHeaderError
   if (authorization === undefined) {
     throw error
   }
@@ -116,14 +129,10 @@ function validAuthTokenPayload (
     )
   } catch (error) {
     if (error instanceof AuthTokenExpiredError) {
-      throw new ControllerError(
-        401,
-        'ExpiredAuthToken',
-        'the auth token has expired'
-      )
+      throw expiredAuthTokenError
     }
 
-    throw new ControllerError(401, 'InvalidAuthToken', 'invalid auth token')
+    throw invalidAuthTokenError
   }
   return authTokenPayload
 }
