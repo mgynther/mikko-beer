@@ -7,6 +7,7 @@ import {
   type NewBeer
 } from './beer'
 
+import { INFO, log } from '../log'
 import {
   type Pagination
 } from '../pagination'
@@ -25,6 +26,7 @@ export async function createBeer (
   createIf: CreateIf,
   request: CreateBeerRequest
 ): Promise<BeerWithBreweryAndStyleIds> {
+  log(INFO, 'create beer with name', request.name)
   const beer = await createIf.create({
     name: request.name
   })
@@ -34,6 +36,7 @@ export async function createBeer (
     createIf.insertBeerStyles(beer.id, request.styles)
   ])
 
+  log(INFO, 'created beer with name', beer.name, 'and id', beer.id)
   return {
     id: beer.id,
     name: beer.name,
@@ -55,6 +58,7 @@ export async function updateBeer (
   beerId: string,
   request: UpdateBeerRequest
 ): Promise<BeerWithBreweryAndStyleIds> {
+  log(INFO, 'update beer with id', beerId)
   await Promise.all([
     updateIf.update({
       id: beerId,
@@ -66,6 +70,7 @@ export async function updateBeer (
     updateIf.insertBeerStyles(beerId, request.styles)
   ])
 
+  log(INFO, 'updated beer with id', beerId)
   return {
     id: beerId,
     name: request.name,
@@ -78,6 +83,7 @@ export async function findBeerById (
   find: (id: string) => Promise<BeerWithBreweriesAndStyles | undefined>,
   beerId: string
 ): Promise<BeerWithBreweriesAndStyles | undefined> {
+  log(INFO, 'find beer with id', beerId)
   const beer = await find(beerId)
 
   if (beer === undefined) return undefined
@@ -89,6 +95,7 @@ export async function listBeers (
   list: (pagination: Pagination) => Promise<BeerWithBreweriesAndStyles[]>,
   pagination: Pagination
 ): Promise<BeerWithBreweriesAndStyles[]> {
+  log(INFO, 'list beers', pagination)
   return await list(pagination)
 }
 
@@ -97,5 +104,6 @@ export async function searchBeers (
   Promise<BeerWithBreweriesAndStyles[]>,
   searchRequest: SearchByName
 ): Promise<BeerWithBreweriesAndStyles[]> {
+  log(INFO, 'search beers', searchRequest)
   return await search(searchRequest)
 }

@@ -1,11 +1,13 @@
-import * as authTokenService from '../../core/authentication/auth-token.service'
-import { type SignedInUser } from '../../core/user/signed-in-user'
+import * as authTokenService from '../authentication/auth-token.service'
+import { type SignedInUser } from './signed-in-user'
 import {
   type CreateAnonymousUserRequest,
   type Role,
   type User
-} from '../../core/user/user'
-import { type DbRefreshToken } from '../../core/authentication/refresh-token'
+} from './user'
+
+import { INFO, log } from '../log'
+import { type DbRefreshToken } from '../authentication/refresh-token'
 import { type AuthTokenConfig } from '../authentication/auth-token'
 
 export async function createAnonymousUser (
@@ -14,6 +16,7 @@ export async function createAnonymousUser (
   role: Role,
   authTokenConfig: AuthTokenConfig
 ): Promise<SignedInUser> {
+  log(INFO, 'create user with role', role)
   const user = await createAnonymousUser({ role })
 
   const { refresh, auth } = await authTokenService.createTokens(
@@ -21,6 +24,7 @@ export async function createAnonymousUser (
     user,
     authTokenConfig
   )
+  log(INFO, 'created user', user.id)
   return {
     refreshToken: refresh,
     authToken: auth,
@@ -32,12 +36,14 @@ export async function findUserById (
   findUserById: (userId: string) => Promise<User | undefined>,
   userId: string
 ): Promise<User | undefined> {
+  log(INFO, 'find user', userId)
   return await findUserById(userId)
 }
 
 export async function listUsers (
   listUsers: () => Promise<User[]>
 ): Promise<User[]> {
+  log(INFO, 'list users')
   return await listUsers()
 }
 
@@ -60,6 +66,7 @@ export async function setUserUsername (
   userId: string,
   username: string
 ): Promise<void> {
+  log(INFO, 'set user username', userId, username)
   await setUserUsername(userId, username)
 }
 
@@ -67,5 +74,6 @@ export async function deleteUserById (
   deleteUserById: (id: string) => Promise<void>,
   id: string
 ): Promise<void> {
+  log(INFO, 'delete user', id)
   await deleteUserById(id)
 }
