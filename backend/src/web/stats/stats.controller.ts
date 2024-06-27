@@ -29,7 +29,7 @@ export function statsController (router: Router): void {
         statsFilter: StatsBreweryStyleFilter
       ) => {
         return statsRepository.getOverall(ctx.db, statsFilter)
-      }, statsFilter)
+      }, statsFilter, ctx.log)
       ctx.body = { overall }
     }
   )
@@ -42,7 +42,7 @@ export function statsController (router: Router): void {
         statsFilter: StatsBreweryStyleFilter
       ) => {
         return statsRepository.getAnnual(ctx.db, statsFilter)
-      }, statsFilter)
+      }, statsFilter, ctx.log)
       ctx.body = { annual }
     }
   )
@@ -68,7 +68,8 @@ export function statsController (router: Router): void {
           },
           pagination,
           statsFilter,
-          breweryStatsOrder
+          breweryStatsOrder,
+          ctx.log
         )
       ctx.body = { brewery }
     }
@@ -83,7 +84,7 @@ export function statsController (router: Router): void {
         statsFilter: StatsBreweryStyleFilter
       ) => {
         return statsRepository.getRating(ctx.db, statsFilter)
-      }, statsFilter)
+      }, statsFilter, ctx.log)
       ctx.body = { rating }
     }
   )
@@ -103,7 +104,7 @@ export function statsController (router: Router): void {
           ctx.db,
           statsFilter,
           styleStatsOrder
-        )}, statsFilter, styleStatsOrder)
+        )}, statsFilter, styleStatsOrder, ctx.log)
       ctx.body = { style }
     }
   )

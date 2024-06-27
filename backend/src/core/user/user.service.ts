@@ -6,7 +6,7 @@ import {
   type User
 } from './user'
 
-import { INFO, log } from '../log'
+import { INFO, type log } from '../log'
 import { type DbRefreshToken } from '../authentication/refresh-token'
 import { type AuthTokenConfig } from '../authentication/auth-token'
 
@@ -14,7 +14,8 @@ export async function createAnonymousUser (
   createAnonymousUser: (request: CreateAnonymousUserRequest) => Promise<User>,
   insertRefreshToken: (userId: string) => Promise<DbRefreshToken>,
   role: Role,
-  authTokenConfig: AuthTokenConfig
+  authTokenConfig: AuthTokenConfig,
+  log: log
 ): Promise<SignedInUser> {
   log(INFO, 'create user with role', role)
   const user = await createAnonymousUser({ role })
@@ -34,14 +35,16 @@ export async function createAnonymousUser (
 
 export async function findUserById (
   findUserById: (userId: string) => Promise<User | undefined>,
-  userId: string
+  userId: string,
+  log: log
 ): Promise<User | undefined> {
   log(INFO, 'find user', userId)
   return await findUserById(userId)
 }
 
 export async function listUsers (
-  listUsers: () => Promise<User[]>
+  listUsers: () => Promise<User[]>,
+  log: log
 ): Promise<User[]> {
   log(INFO, 'list users')
   return await listUsers()
@@ -64,7 +67,8 @@ export async function lockUserByUsername (
 export async function setUserUsername (
   setUserUsername: (userId: string, username: string) => Promise<void>,
   userId: string,
-  username: string
+  username: string,
+  log: log
 ): Promise<void> {
   log(INFO, 'set user username', userId, username)
   await setUserUsername(userId, username)
@@ -72,7 +76,8 @@ export async function setUserUsername (
 
 export async function deleteUserById (
   deleteUserById: (id: string) => Promise<void>,
-  id: string
+  id: string,
+  log: log
 ): Promise<void> {
   log(INFO, 'delete user', id)
   await deleteUserById(id)

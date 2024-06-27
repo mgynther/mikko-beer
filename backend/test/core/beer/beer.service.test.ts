@@ -10,6 +10,8 @@ import { type Pagination } from '../../../src/core/pagination'
 import { type SearchByName } from '../../../src/core/search'
 import * as beerService from '../../../src/core/beer/beer.service'
 
+import { dummyLog as log } from '../dummy-log'
+
 const beer: BeerWithBreweriesAndStyles = {
   id: '406a337c-3107-4307-bd84-be3ec7c7d2f6',
   name: 'Siperia',
@@ -56,7 +58,7 @@ describe('beer service unit tests', () => {
         expect(insertStyles).to.eql(styles)
       }
     }
-    const result = await beerService.createBeer(createIf, request)
+    const result = await beerService.createBeer(createIf, request, log)
     expect(result).to.eql({
       ...request,
       id: beer.id
@@ -111,7 +113,7 @@ describe('beer service unit tests', () => {
         expect(insertStyles).to.eql(styles)
       }
     }
-    const result = await beerService.updateBeer(updateIf, beer.id, request)
+    const result = await beerService.updateBeer(updateIf, beer.id, request, log)
     expect(result).to.eql({
       ...request,
       id: beer.id
@@ -127,7 +129,7 @@ describe('beer service unit tests', () => {
       expect(beerId).to.equal(beer.id)
       return beer
     }
-    const result = await beerService.findBeerById(finder, beer.id)
+    const result = await beerService.findBeerById(finder, beer.id, log)
     expect(result).to.eql(beer)
   })
 
@@ -137,7 +139,7 @@ describe('beer service unit tests', () => {
       expect(searchId).to.equal(id)
       return undefined
     }
-    const result = await beerService.findBeerById(finder, id)
+    const result = await beerService.findBeerById(finder, id, log)
     expect(result).to.eql(undefined)
   })
 
@@ -150,7 +152,7 @@ describe('beer service unit tests', () => {
       expect(listPagination).to.eql(pagination)
       return [beer]
     }
-    const result = await beerService.listBeers(lister, pagination)
+    const result = await beerService.listBeers(lister, pagination, log)
     expect(result).to.eql([beer])
   })
 
@@ -162,7 +164,7 @@ describe('beer service unit tests', () => {
       expect(search).to.eql(searchByName)
       return [beer]
     }
-    const result = await beerService.searchBeers(searcher, searchByName)
+    const result = await beerService.searchBeers(searcher, searchByName, log)
     expect(result).to.eql([beer])
   })
 })

@@ -26,7 +26,7 @@ export function storageController (router: Router): void {
           createStorageRequest: CreateStorageRequest
         ) => {
           return storageRepository.insertStorage(trx, createStorageRequest)
-        }, createStorageRequest)
+        }, createStorageRequest, ctx.log)
       })
 
       ctx.status = 201
@@ -48,7 +48,7 @@ export function storageController (router: Router): void {
           storage: Storage
         ) => {
           return storageRepository.updateStorage(trx, storage)
-        }, { ...updateStorageRequest, id: storageId })
+        }, { ...updateStorageRequest, id: storageId }, ctx.log)
       })
 
       ctx.status = 200
@@ -67,7 +67,7 @@ export function storageController (router: Router): void {
         storageId: string,
       ) => {
         return storageRepository.findStorageById(ctx.db, storageId)
-      }, storageId)
+      }, storageId, ctx.log)
 
       if (storage === undefined) {
         throw new ControllerError(
@@ -90,7 +90,7 @@ export function storageController (router: Router): void {
         beerId: string
       ) => {
         return storageRepository.listStoragesByBeer(ctx.db, beerId)
-      }, beerId)
+      }, beerId, ctx.log)
       const storages = storageResult ?? []
 
       ctx.body = { storages }
@@ -106,7 +106,7 @@ export function storageController (router: Router): void {
         breweryId: string
       ) => {
         return storageRepository.listStoragesByBrewery(ctx.db, breweryId)
-      }, breweryId)
+      }, breweryId, ctx.log)
       const storages = storageResult ?? []
 
       ctx.body = { storages }
@@ -122,7 +122,7 @@ export function storageController (router: Router): void {
         styleId: string
       ) => {
         return storageRepository.listStoragesByStyle(ctx.db, styleId)
-      }, styleId)
+      }, styleId, ctx.log)
       const storages = storageResult ?? []
 
       ctx.body = { storages }
@@ -139,7 +139,7 @@ export function storageController (router: Router): void {
         pagination: Pagination
       ) => {
         return storageRepository.listStorages(ctx.db, pagination)
-      }, pagination)
+      }, pagination, ctx.log)
       ctx.body = { storages, pagination }
     }
   )

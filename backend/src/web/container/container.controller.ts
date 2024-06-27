@@ -23,7 +23,7 @@ export function containerController (router: Router): void {
       const result = await ctx.db.executeTransaction(async (trx) => {
         return await containerService.createContainer(
           (container: NewContainer) => containerRepository.insertContainer(trx, container),
-          createContainerRequest)
+          createContainerRequest, ctx.log)
       })
 
       ctx.status = 201
@@ -43,7 +43,8 @@ export function containerController (router: Router): void {
       const result = await ctx.db.executeTransaction(async (trx) => {
         return await containerService.updateContainer(
           (container: Container) =>
-            containerRepository.updateContainer(trx, container), containerId, updateContainerRequest)
+            containerRepository.updateContainer(trx, container),
+            containerId, updateContainerRequest, ctx.log)
       })
 
       ctx.status = 200
@@ -60,7 +61,7 @@ export function containerController (router: Router): void {
       const { containerId } = ctx.params
       const container = await containerService.findContainerById((containerId: string) => {
         return containerRepository.findContainerById(ctx.db, containerId)
-      }, containerId)
+      }, containerId, ctx.log)
 
       if (container === undefined) {
         throw new ControllerError(
@@ -80,7 +81,7 @@ export function containerController (router: Router): void {
     async (ctx) => {
       const containers = await containerService.listContainers(() => {
         return containerRepository.listContainers(ctx.db)
-      })
+      }, ctx.log)
       ctx.body = { containers }
     }
   )

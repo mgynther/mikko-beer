@@ -5,11 +5,12 @@ import {
   type NewContainer
 } from './container'
 
-import { INFO, log } from '../log'
+import { INFO, type log } from '../log'
 
 export async function createContainer (
   create: (container: NewContainer) => Promise<Container>,
-  request: CreateContainerRequest
+  request: CreateContainerRequest,
+  log: log
 ): Promise<Container> {
   log(INFO, 'create container', request)
   const container = await create({
@@ -24,7 +25,8 @@ export async function createContainer (
 export async function updateContainer (
   update: (container: Container) => Promise<Container>,
   containerId: string,
-  request: UpdateContainerRequest
+  request: UpdateContainerRequest,
+  log: log
 ): Promise<Container> {
   log(INFO, 'update container with id', containerId)
   const container = await update({
@@ -39,7 +41,8 @@ export async function updateContainer (
 
 export async function findContainerById (
   find: (id: string) => Promise<Container | undefined>,
-  containerId: string
+  containerId: string,
+  log: log
 ): Promise<Container | undefined> {
   log(INFO, 'find container with id', containerId)
   const container = await find(containerId)
@@ -50,7 +53,8 @@ export async function findContainerById (
 }
 
 export async function listContainers (
-  list: () => Promise<Container[]>
+  list: () => Promise<Container[]>,
+  log: log
 ): Promise<Container[]> {
   log(INFO, 'list containers')
   return await list()

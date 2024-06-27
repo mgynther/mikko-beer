@@ -9,6 +9,8 @@ import { type Pagination } from '../../../src/core/pagination'
 import { type SearchByName } from '../../../src/core/search'
 import * as breweryService from '../../../src/core/brewery/brewery.service'
 
+import { dummyLog as log } from '../dummy-log'
+
 const brewery: Brewery = {
   id: 'd804c8fe-8d41-4c8b-88d1-95bdfeb558ef',
   name: 'Koskipanimo',
@@ -27,7 +29,7 @@ describe('brewery service unit tests', () => {
       expect(newBrewery).to.eql({ name: brewery.name })
       return result
     }
-    const result = await breweryService.createBrewery(create, request)
+    const result = await breweryService.createBrewery(create, request, log)
     expect(result).to.eql({
       ...request,
       id: brewery.id
@@ -46,7 +48,12 @@ describe('brewery service unit tests', () => {
       expect(brewery).to.eql(result)
       return result
     }
-    const result = await breweryService.updateBrewery(update, brewery.id, request)
+    const result = await breweryService.updateBrewery(
+      update,
+      brewery.id,
+      request,
+      log
+    )
     expect(result).to.eql({
       ...request,
       id: brewery.id
@@ -58,7 +65,7 @@ describe('brewery service unit tests', () => {
       expect(breweryId).to.equal(brewery.id)
       return brewery
     }
-    const result = await breweryService.findBreweryById(finder, brewery.id)
+    const result = await breweryService.findBreweryById(finder, brewery.id, log)
     expect(result).to.eql(brewery)
   })
 
@@ -68,7 +75,7 @@ describe('brewery service unit tests', () => {
       expect(searchId).to.equal(id)
       return undefined
     }
-    const result = await breweryService.findBreweryById(finder, id)
+    const result = await breweryService.findBreweryById(finder, id, log)
     expect(result).to.eql(undefined)
   })
 
@@ -81,7 +88,7 @@ describe('brewery service unit tests', () => {
       expect(listPagination).to.eql(pagination)
       return [brewery]
     }
-    const result = await breweryService.listBreweries(lister, pagination)
+    const result = await breweryService.listBreweries(lister, pagination, log)
     expect(result).to.eql([brewery])
   })
 
@@ -93,7 +100,11 @@ describe('brewery service unit tests', () => {
       expect(search).to.eql(searchByName)
       return [brewery]
     }
-    const result = await breweryService.searchBreweries(searcher, searchByName)
+    const result = await breweryService.searchBreweries(
+      searcher,
+      searchByName,
+      log
+    )
     expect(result).to.eql([brewery])
   })
 })

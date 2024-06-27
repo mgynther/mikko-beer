@@ -35,7 +35,7 @@ export function reviewController (router: Router): void {
           (review: NewReview) => reviewRepository.insertReview(trx, review),
           (storageId: string) => storageRepository.deleteStorageById(
             trx, storageId),
-          createReviewRequest, storageParam)
+          createReviewRequest, storageParam, ctx.log)
       })
 
       ctx.status = 201
@@ -56,7 +56,7 @@ export function reviewController (router: Router): void {
         return await reviewService.updateReview(
           (review: Review) =>
             reviewRepository.updateReview(trx, review),
-          reviewId, updateReviewRequest)
+          reviewId, updateReviewRequest, ctx.log)
       })
 
       ctx.status = 200
@@ -73,7 +73,7 @@ export function reviewController (router: Router): void {
       const { reviewId } = ctx.params
       const review = await reviewService.findReviewById((reviewId: string) => {
         return reviewRepository.findReviewById(ctx.db, reviewId)
-      }, reviewId)
+      }, reviewId, ctx.log)
 
       if (review === undefined) {
         throw new ControllerError(
@@ -99,7 +99,7 @@ export function reviewController (router: Router): void {
       ) => {
         return reviewRepository.listReviewsByBeer(
           ctx.db, beerId, reviewListOrder)
-      }, beerId, reviewListOrder)
+      }, beerId, reviewListOrder, ctx.log)
 
       ctx.body = {
         reviews,
@@ -123,7 +123,7 @@ export function reviewController (router: Router): void {
       ) => (
         reviewRepository.listReviewsByBrewery(
           ctx.db, breweryId, reviewListOrder)
-      ), breweryId, reviewListOrder)
+      ), breweryId, reviewListOrder, ctx.log)
 
       ctx.body = {
         reviews,
@@ -146,7 +146,7 @@ export function reviewController (router: Router): void {
         styleId: string, reviewListOrder: ReviewListOrder
       ) => (
         reviewRepository.listReviewsByStyle(ctx.db, styleId, reviewListOrder)
-      ), styleId, reviewListOrder)
+      ), styleId, reviewListOrder, ctx.log)
 
       ctx.body = {
         reviews,
@@ -169,7 +169,7 @@ export function reviewController (router: Router): void {
         pagination: Pagination, reviewListOrder: ReviewListOrder
       ) => (
         reviewRepository.listReviews(ctx.db, pagination, reviewListOrder)
-      ), pagination, reviewListOrder)
+      ), pagination, reviewListOrder, ctx.log)
       ctx.body = {
         reviews,
         pagination,

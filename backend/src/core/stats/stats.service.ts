@@ -12,14 +12,15 @@ import {
   type StyleStatsOrder
 } from '../../core/stats/stats'
 
-import { INFO, log } from '../log'
+import { INFO, type log } from '../log'
 
 // Test functionality if added. Left untested as there was no logic at the time
 // of adding the file. However, it is used to enable adding logic later easily.
 
 export async function getAnnual (
   getAnnual: (statsFilter: StatsBreweryStyleFilter) => Promise<AnnualStats>,
-  statsFilter: StatsBreweryStyleFilter
+  statsFilter: StatsBreweryStyleFilter,
+  log: log
 ): Promise<AnnualStats> {
   log(INFO, 'get annual stats', statsFilter)
   return await getAnnual(statsFilter)
@@ -33,7 +34,8 @@ export async function getBrewery (
   ) => Promise<BreweryStats>,
   pagination: Pagination,
   statsFilter: StatsFilter,
-  breweryStatsOrder: BreweryStatsOrder
+  breweryStatsOrder: BreweryStatsOrder,
+  log: log
 ): Promise<BreweryStats> {
   log(INFO, 'get brewery stats', statsFilter, breweryStatsOrder, pagination)
   return await getBrewery(
@@ -45,7 +47,8 @@ export async function getBrewery (
 
 export async function getOverall (
   getOverall: (statsFilter: StatsBreweryStyleFilter) => Promise<OverallStats>,
-  statsFilter: StatsBreweryStyleFilter
+  statsFilter: StatsBreweryStyleFilter,
+  log: log
 ): Promise<OverallStats> {
   log(INFO, 'get overall stats', statsFilter)
   return await getOverall(statsFilter)
@@ -53,7 +56,8 @@ export async function getOverall (
 
 export async function getRating (
   getRating: (statsFilter: StatsBreweryStyleFilter) => Promise<RatingStats>,
-  statsFilter: StatsBreweryStyleFilter
+  statsFilter: StatsBreweryStyleFilter,
+  log: log
 ): Promise<RatingStats> {
   log(INFO, 'get rating stats', statsFilter)
   return await getRating(statsFilter)
@@ -65,7 +69,8 @@ export async function getStyle (
     styleStatsOrder: StyleStatsOrder
   ) => Promise<StyleStats>,
   statsFilter: StatsFilter,
-  styleStatsOrder: StyleStatsOrder
+  styleStatsOrder: StyleStatsOrder,
+  log: log
 ): Promise<StyleStats> {
   log(INFO, 'get style stats', statsFilter)
   return await getStyle(statsFilter, styleStatsOrder)

@@ -13,6 +13,8 @@ import {
   type User
 } from "../../../src/core/user/user"
 
+import { dummyLog as log } from '../dummy-log'
+
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {
   expiryDuration: '5m',
@@ -49,7 +51,8 @@ describe('user service unit tests', () => {
       create,
       insertRefreshToken,
       user.role,
-      authTokenConfig
+      authTokenConfig,
+      log
     )
     expect(signedInUser.user).to.eql(user)
     expect(signedInUser.refreshToken.refreshToken).not.to.be.empty

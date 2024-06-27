@@ -27,7 +27,7 @@ export function breweryController (router: Router): void {
       const result = await ctx.db.executeTransaction(async (trx) => {
         return await breweryService.createBrewery(
           (brewery: NewBrewery) => breweryRepository.insertBrewery(trx, brewery),
-          createBreweryRequest)
+          createBreweryRequest, ctx.log)
       })
 
       ctx.status = 201
@@ -47,7 +47,8 @@ export function breweryController (router: Router): void {
       const result = await ctx.db.executeTransaction(async (trx) => {
         return await breweryService.updateBrewery(
           (brewery: Brewery) =>
-            breweryRepository.updateBrewery(trx, brewery), breweryId, updateBreweryRequest)
+            breweryRepository.updateBrewery(trx, brewery),
+            breweryId, updateBreweryRequest, ctx.log)
       })
 
       ctx.status = 200
@@ -64,7 +65,7 @@ export function breweryController (router: Router): void {
       const { breweryId } = ctx.params
       const brewery = await breweryService.findBreweryById((breweryId: string) => {
         return breweryRepository.findBreweryById(ctx.db, breweryId)
-      }, breweryId)
+      }, breweryId, ctx.log)
 
       if (brewery === undefined) {
         throw new ControllerError(
@@ -86,7 +87,7 @@ export function breweryController (router: Router): void {
       const pagination = validatePagination({ skip, size })
       const breweries = await breweryService.listBreweries((pagination: Pagination) => {
         return breweryRepository.listBreweries(ctx.db, pagination)
-      }, pagination)
+      }, pagination, ctx.log)
       ctx.body = { breweries, pagination }
     }
   )
@@ -99,7 +100,7 @@ export function breweryController (router: Router): void {
       const searchBreweryRequest = validateSearchByName(body)
       const breweries = await breweryService.searchBreweries((searchRequest: SearchByName) => {
         return breweryRepository.searchBreweries(ctx.db, searchRequest)
-      }, searchBreweryRequest)
+      }, searchBreweryRequest, ctx.log)
 
       ctx.status = 200
       ctx.body = { breweries }

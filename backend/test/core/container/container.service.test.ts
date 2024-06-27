@@ -7,6 +7,8 @@ import {
 } from '../../../src/core/container/container'
 import * as containerService from '../../../src/core/container/container.service'
 
+import { dummyLog as log } from '../dummy-log'
+
 const container: Container = {
   id: '1fcbeb9e-1ea1-4c50-8fe5-b0aa18ac7e9a',
   type: 'draft',
@@ -30,7 +32,7 @@ describe('container service unit tests', () => {
       )
       return result
     }
-    const result = await containerService.createContainer(create, request)
+    const result = await containerService.createContainer(create, request, log)
     expect(result).to.eql({
       ...request,
       id: container.id
@@ -51,7 +53,12 @@ describe('container service unit tests', () => {
       expect(container).to.eql(result)
       return result
     }
-    const result = await containerService.updateContainer(update, container.id, request)
+    const result = await containerService.updateContainer(
+      update,
+      container.id,
+      request,
+      log
+    )
     expect(result).to.eql({
       ...request,
       id: container.id
@@ -63,7 +70,11 @@ describe('container service unit tests', () => {
       expect(containerId).to.equal(container.id)
       return container
     }
-    const result = await containerService.findContainerById(finder, container.id)
+    const result = await containerService.findContainerById(
+      finder,
+      container.id,
+      log
+    )
     expect(result).to.eql(container)
   })
 
@@ -73,7 +84,7 @@ describe('container service unit tests', () => {
       expect(searchId).to.equal(id)
       return undefined
     }
-    const result = await containerService.findContainerById(finder, id)
+    const result = await containerService.findContainerById(finder, id, log)
     expect(result).to.eql(undefined)
   })
 
@@ -81,7 +92,7 @@ describe('container service unit tests', () => {
     const lister = async () => {
       return [container]
     }
-    const result = await containerService.listContainers(lister)
+    const result = await containerService.listContainers(lister, log)
     expect(result).to.eql([container])
   })
 

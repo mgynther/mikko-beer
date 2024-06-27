@@ -29,6 +29,7 @@ import {
   addPasswordSignInMethod
 } from '../web/user/sign-in-method/sign-in-method.controller'
 import { ControllerError } from '../core/errors'
+import { log } from '../core/log'
 import { type AuthTokenConfig } from '../core/authentication/auth-token'
 
 export interface StartResult {
@@ -39,13 +40,15 @@ export interface StartResult {
 
 export class App {
   #config: Config
+  #log: log
   #koa: Koa<any, ContextExtension>
   #router: Router
   #db: Database
   #server?: Server
 
-  constructor (config: Config) {
+  constructor (config: Config, log: log) {
     this.#config = config
+    this.#log = log
     this.#koa = new Koa()
     this.#koa.use(cors())
     this.#router = new Router()
@@ -112,7 +115,7 @@ export class App {
                   id: uuidv4(),
                   userId
                 }
-              }, Role.admin, authTokenConfig)
+              }, Role.admin, authTokenConfig, this.#log)
             startResult.authToken = user.authToken.authToken
             if (isAdminPasswordNeeded) {
               startResult.initialAdminUsername = adminUsername
@@ -123,7 +126,8 @@ export class App {
                 {
                   username: adminUsername,
                   password: adminPassword
-                }
+                },
+                this.#log
               )
             }
           })
@@ -187,6 +191,7 @@ export class App {
   ): Promise<void> => {
     ctx.db = this.#db
     ctx.config = this.#config
+    ctx.log = this.#log
     await next()
   }
 }

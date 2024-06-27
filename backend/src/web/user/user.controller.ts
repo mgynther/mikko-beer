@@ -42,10 +42,14 @@ export function userController (router: Router, config: Config): void {
           (userId: string): Promise<DbRefreshToken> => {
             return refreshTokenRepository.insertRefreshToken(trx, userId, new Date())
           },
-          request.role, authTokenConfig
+          request.role, authTokenConfig, ctx.log
         )
         const username = await addPasswordSignInMethod(
-          trx, user.user.id, request.passwordSignInMethod)
+          trx,
+          user.user.id,
+          request.passwordSignInMethod,
+          ctx.log
+        )
         return {
           ...user,
           user: { ...user.user, username }
@@ -68,7 +72,7 @@ export function userController (router: Router, config: Config): void {
       const { userId } = ctx.params
       const user = await userService.findUserById((userId: string) => {
         return userRepository.findUserById(ctx.db, userId)
-      }, userId)
+      }, userId, ctx.log)
 
       if (user === undefined) {
         throw new ControllerError(
@@ -88,7 +92,7 @@ export function userController (router: Router, config: Config): void {
     async (ctx) => {
       const users = await userService.listUsers(() => {
         return userRepository.listUsers(ctx.db)
-      })
+      }, ctx.log)
 
       ctx.body = { users }
     }
@@ -101,7 +105,7 @@ export function userController (router: Router, config: Config): void {
       await ctx.db.executeTransaction(async (trx) => {
         await userService.deleteUserById((userId: string) => {
           return userRepository.deleteUserById(trx, userId)
-        }, userId)
+        }, userId, ctx.log)
       })
 
       ctx.status = 204

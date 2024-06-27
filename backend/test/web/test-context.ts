@@ -12,6 +12,8 @@ import { App } from '../../src/web/app'
 import { Database } from '../../src/data/database'
 import { User } from '../../src/core/user/user'
 
+import { dummyLog as log } from '../core/dummy-log'
+
 export class TestContext {
   #adminAuthToken: string = ''
   #app?: App
@@ -34,7 +36,7 @@ export class TestContext {
   }
 
   beforeEach = async (): Promise<void> => {
-    this.#app = new App(testConfig)
+    this.#app = new App(testConfig, log)
 
     await beforeTest(this.db)
 

@@ -10,6 +10,8 @@ import {
 import { type Pagination } from '../../../src/core/pagination'
 import * as reviewService from '../../../src/core/review/review.service'
 
+import { dummyLog as log } from '../dummy-log'
+
 const newReview: NewReview = {
   additionalInfo: 'something interesting',
   beer: 'f796e263-650e-4044-b5c9-9f550b97aa5a',
@@ -67,7 +69,13 @@ describe('review service unit tests', () => {
     const deleteFromStorage = async (storageId: string) => {
       expect('not expected to be called with').to.equal(storageId)
     }
-    const result = await reviewService.createReview(create, deleteFromStorage, request, undefined)
+    const result = await reviewService.createReview(
+      create,
+      deleteFromStorage,
+      request,
+      undefined,
+      log
+    )
     expect(result).to.eql({
       ...request,
       id: review.id
@@ -90,7 +98,13 @@ describe('review service unit tests', () => {
       deletedFromStorage = true
       expect(deleteId).to.equal(storageId)
     }
-    const result = await reviewService.createReview(create, deleteFromStorage, request, storageId)
+    const result = await reviewService.createReview(
+      create,
+      deleteFromStorage,
+      request,
+      storageId,
+      log
+    )
     expect(result).to.eql({
       ...request,
       id: review.id
@@ -106,7 +120,12 @@ describe('review service unit tests', () => {
       expect(review).to.eql(request)
       return { ...review }
     }
-    const result = await reviewService.updateReview(update, review.id, request)
+    const result = await reviewService.updateReview(
+      update,
+      review.id,
+      request,
+      log
+    )
     expect(result).to.eql({
       ...request,
       id: review.id
@@ -118,7 +137,7 @@ describe('review service unit tests', () => {
       expect(reviewId).to.equal(review.id)
       return review
     }
-    const result = await reviewService.findReviewById(finder, review.id)
+    const result = await reviewService.findReviewById(finder, review.id, log)
     expect(result).to.eql(review)
   })
 
@@ -128,7 +147,7 @@ describe('review service unit tests', () => {
       expect(searchId).to.equal(id)
       return undefined
     }
-    const result = await reviewService.findReviewById(finder, id)
+    const result = await reviewService.findReviewById(finder, id, log)
     expect(result).to.eql(undefined)
   })
 
@@ -138,7 +157,12 @@ describe('review service unit tests', () => {
       expect(listOrder).to.eql(order)
       return [joinedReview]
     }
-    const result = await reviewService.listReviews(lister, pagination, order)
+    const result = await reviewService.listReviews(
+      lister,
+      pagination,
+      order,
+      log
+    )
     expect(result).to.eql([joinedReview])
   })
 
@@ -150,7 +174,11 @@ describe('review service unit tests', () => {
       return [joinedReview]
     }
     const result = await reviewService.listReviewsByBeer(
-      lister, beerId, order)
+      lister,
+      beerId,
+      order,
+      log
+    )
     expect(result).to.eql([joinedReview])
   })
 
@@ -162,7 +190,11 @@ describe('review service unit tests', () => {
       return [joinedReview]
     }
     const result = await reviewService.listReviewsByBrewery(
-      lister, breweryId, order)
+      lister,
+      breweryId,
+      order,
+      log
+    )
     expect(result).to.eql([joinedReview])
   })
 
@@ -174,7 +206,11 @@ describe('review service unit tests', () => {
       return [joinedReview]
     }
     const result = await reviewService.listReviewsByStyle(
-      lister, styleId, order)
+      lister,
+      styleId,
+      order,
+      log
+    )
     expect(result).to.eql([joinedReview])
   })
 })

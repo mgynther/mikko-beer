@@ -27,6 +27,7 @@ import {
 } from '../../../core/authentication/refresh-token'
 import { type Router } from '../../router'
 import { ControllerError, UserNotFoundError } from '../../../core/errors'
+import { log } from '../../../core/log'
 import {
   type UserPasswordHash,
   validatePasswordChange,
@@ -83,7 +84,8 @@ function handleError (error: unknown): void {
 export async function addPasswordSignInMethod (
   trx: Transaction,
   userId: string,
-  request: unknown
+  request: unknown,
+  log: log
 ): Promise<string> {
   if (!validatePasswordSignInMethod(request)) {
     throw new ControllerError(
@@ -109,7 +111,7 @@ export async function addPasswordSignInMethod (
         return userService.setUserUsername(
           (userId: string, username: string) => {
             return userRepository.setUserUsername(trx, userId, username)
-        }, userId, username)
+        }, userId, username, log)
       }
     }
     await signInMethodService.addPasswordSignInMethod(

@@ -10,7 +10,7 @@ import {
   type UpdateStyleRequest
 } from './style'
 
-import { INFO, log } from '../log'
+import { INFO, type log } from '../log'
 import { checkCyclicRelationships } from './style.util'
 
 export interface CreateRelationshipIf {
@@ -21,7 +21,8 @@ export interface CreateRelationshipIf {
 export async function createStyle (
   create: (style: NewStyle) => Promise<Style>,
   relationshipHandlers: CreateRelationshipIf,
-  request: CreateStyleRequest
+  request: CreateStyleRequest,
+  log: log
 ): Promise<StyleWithParentIds> {
   log(
     INFO,
@@ -57,7 +58,8 @@ export async function updateStyle (
   update: (style: Style) => Promise<Style>,
   relationshipHandlers: UpdateRelationshipIf,
   styleId: string,
-  request: UpdateStyleRequest
+  request: UpdateStyleRequest,
+  log: log
 ): Promise<StyleWithParentIds> {
   log(INFO, 'update style', styleId)
   const allRelationships = await relationshipHandlers.listAllRelationships()
@@ -84,7 +86,8 @@ export async function updateStyle (
 
 export async function findStyleById (
   find: (id: string) => Promise<StyleWithParentsAndChildren | undefined>,
-  styleId: string
+  styleId: string,
+  log: log
 ): Promise<StyleWithParentsAndChildren | undefined> {
   log(INFO, 'find style', styleId)
   const style = await find(styleId)
@@ -95,7 +98,8 @@ export async function findStyleById (
 }
 
 export async function listStyles (
-  list: () => Promise<StyleWithParentIds[]>
+  list: () => Promise<StyleWithParentIds[]>,
+  log: log
 ): Promise<StyleWithParentIds[]> {
   log(INFO, 'list styles')
   return await list()

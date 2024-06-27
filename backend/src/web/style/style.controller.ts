@@ -42,7 +42,7 @@ export function styleController (router: Router): void {
           }
           return await styleService.createStyle(
             (style: NewStyle) => styleRepository.insertStyle(trx, style),
-            relationshipIf, createStyleRequest)
+            relationshipIf, createStyleRequest, ctx.log)
         })
 
         ctx.status = 201
@@ -73,7 +73,7 @@ export function styleController (router: Router): void {
           }
           return await styleService.updateStyle(
             (style: Style) => styleRepository.updateStyle(trx, style),
-            relationshipIf, styleId, updateStyleRequest)
+            relationshipIf, styleId, updateStyleRequest, ctx.log)
         })
 
         ctx.status = 200
@@ -93,7 +93,7 @@ export function styleController (router: Router): void {
       const { styleId } = ctx.params
       const style = await styleService.findStyleById((styleId: string) => {
         return styleRepository.findStyleById(ctx.db, styleId)
-      }, styleId)
+      }, styleId, ctx.log)
 
       if (style === undefined) {
         throw new ControllerError(
@@ -113,7 +113,7 @@ export function styleController (router: Router): void {
     async (ctx) => {
       const styles = await styleService.listStyles(() => {
         return styleRepository.listStyles(ctx.db)
-      })
+      }, ctx.log)
       ctx.body = { styles }
     }
   )

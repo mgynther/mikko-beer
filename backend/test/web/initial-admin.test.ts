@@ -13,6 +13,8 @@ import { App, type StartResult } from '../../src/web/app'
 import { Database } from '../../src/data/database'
 import { type User } from '../../src/core/user/user'
 
+import { dummyLog as log } from '../core/dummy-log'
+
 export class TestContext {
   #app?: App
   #appStartResult?: StartResult
@@ -39,7 +41,7 @@ export class TestContext {
       ...testConfig,
       generateInitialAdminPassword: true
     }
-    this.#app = new App(config)
+    this.#app = new App(config, log)
 
     await beforeTest(this.db)
     this.#appStartResult = await this.#app.start()

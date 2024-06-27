@@ -13,6 +13,8 @@ import {
 } from '../../../src/core/style/style.util'
 import * as styleService from '../../../src/core/style/style.service'
 
+import { dummyLog as log } from '../dummy-log'
+
 const style: Style = {
   id: '71dcc323-7e59-4122-9afa-d4ffc484dee6',
   name: 'imperial gose',
@@ -70,7 +72,11 @@ describe('style service unit tests', () => {
       listAllRelationships: noRelationships
     }
     const result = await styleService.createStyle(
-      create, relationshipIf, request)
+      create,
+      relationshipIf,
+      request,
+      log
+    )
     expect(result).to.eql({
       id: style.id,
       name: style.name,
@@ -88,7 +94,11 @@ describe('style service unit tests', () => {
       listAllRelationships: noRelationships
     }
     const result = await styleService.createStyle(
-      create, relationshipIf, request)
+      create,
+      relationshipIf,
+      request,
+      log
+    )
     expect(result).to.eql({
       id: style.id,
       name: style.name,
@@ -113,7 +123,7 @@ describe('style service unit tests', () => {
       }
     }
     try {
-      await styleService.createStyle(create, relationshipIf, request)
+      await styleService.createStyle(create, relationshipIf, request, log)
       expect('not to be called').to.equal(false)
     } catch (e) {
       expect(e).to.eql(new CyclicRelationshipError('Cyclic relationship found'))
@@ -139,7 +149,13 @@ describe('style service unit tests', () => {
       deleteStyleChildRelationships,
       listAllRelationships: noRelationships
     }
-    const result = await styleService.updateStyle(update, relationshipIf, style.id, request)
+    const result = await styleService.updateStyle(
+      update,
+      relationshipIf,
+      style.id,
+      request,
+      log
+    )
     expect(result).to.eql({
       id: style.id,
       name: style.name,
@@ -158,7 +174,12 @@ describe('style service unit tests', () => {
       listAllRelationships: noRelationships
     }
     const result = await styleService.updateStyle(
-      update, relationshipIf, style.id, request)
+      update,
+      relationshipIf,
+      style.id,
+      request,
+      log
+    )
     expect(result).to.eql({
       id: style.id,
       name: style.name,
@@ -184,7 +205,13 @@ describe('style service unit tests', () => {
       }
     }
     try {
-      await styleService.updateStyle(update, relationshipIf, style.id, request)
+      await styleService.updateStyle(
+        update,
+        relationshipIf,
+        style.id,
+        request,
+        log
+      )
       expect('not to be called').to.equal(false)
     } catch (e) {
       expect(e).to.eql(new CyclicRelationshipError('Cyclic relationship found'))
@@ -196,7 +223,7 @@ describe('style service unit tests', () => {
       expect(styleId).to.equal(style.id)
       return styleWithParentsAndChildren
     }
-    const result = await styleService.findStyleById(finder, style.id)
+    const result = await styleService.findStyleById(finder, style.id, log)
     expect(result).to.eql(styleWithParentsAndChildren)
   })
 
@@ -206,7 +233,7 @@ describe('style service unit tests', () => {
       expect(searchId).to.equal(id)
       return undefined
     }
-    const result = await styleService.findStyleById(finder, id)
+    const result = await styleService.findStyleById(finder, id, log)
     expect(result).to.eql(undefined)
   })
 
@@ -214,7 +241,7 @@ describe('style service unit tests', () => {
     const lister = async () => {
       return [styleWithParentIds]
     }
-    const result = await styleService.listStyles(lister)
+    const result = await styleService.listStyles(lister, log)
     expect(result).to.eql([styleWithParentIds])
   })
 })

@@ -32,7 +32,7 @@ export function beerController (router: Router): void {
           insertBeerBreweries: createBeerBreweryInserter(trx),
           insertBeerStyles: createBeerStyleInserter(trx),
         }
-        return await beerService.createBeer(createIf, createBeerRequest)
+        return await beerService.createBeer(createIf, createBeerRequest, ctx.log)
       })
 
       ctx.status = 201
@@ -57,7 +57,12 @@ export function beerController (router: Router): void {
           insertBeerStyles: createBeerStyleInserter(trx),
           deleteBeerStyles: (beerId: string) => beerRepository.deleteBeerStyles(trx, beerId),
         }
-        return await beerService.updateBeer(updateIf, beerId, updateBeerRequest)
+        return await beerService.updateBeer(
+          updateIf,
+          beerId,
+          updateBeerRequest,
+          ctx.log
+        )
       })
 
       ctx.status = 200
@@ -74,7 +79,7 @@ export function beerController (router: Router): void {
       const { beerId } = ctx.params
       const beer = await beerService.findBeerById((beerId: string) => {
         return beerRepository.findBeerById(ctx.db, beerId)
-      }, beerId)
+      }, beerId, ctx.log)
 
       if (beer === undefined) {
         throw new ControllerError(
@@ -96,7 +101,7 @@ export function beerController (router: Router): void {
       const pagination = validatePagination({ skip, size })
       const beers = await beerService.listBeers((pagination: Pagination) => {
         return beerRepository.listBeers(ctx.db, pagination)
-      }, pagination)
+      }, pagination, ctx.log)
       ctx.body = { beers, pagination }
     }
   )
@@ -109,7 +114,7 @@ export function beerController (router: Router): void {
       const searchBeerRequest = validateSearchByName(body)
       const beers = await beerService.searchBeers((searchRequest: SearchByName) => {
         return beerRepository.searchBeers(ctx.db, searchRequest)
-      }, searchBeerRequest)
+      }, searchBeerRequest, ctx.log)
 
       ctx.status = 200
       ctx.body = { beers }

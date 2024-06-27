@@ -8,6 +8,8 @@ import {
 } from '../../../src/core/storage/storage'
 import * as storageService from '../../../src/core/storage/storage.service'
 
+import { dummyLog as log } from '../dummy-log'
+
 const storage: Storage = {
   id: '8980b34a-d7b7-4e15-8e88-477176f5aee9',
   beer: '77d16346-2a56-4b52-9425-1e885b2be7c4',
@@ -58,7 +60,7 @@ describe('storage service unit tests', () => {
       )
       return result
     }
-    const result = await storageService.createStorage(create, request)
+    const result = await storageService.createStorage(create, request, log)
     expect(result).to.eql({
       ...request,
       id: storage.id
@@ -79,7 +81,7 @@ describe('storage service unit tests', () => {
       expect(storage).to.eql(result)
       return result
     }
-    const result = await storageService.updateStorage(update, request)
+    const result = await storageService.updateStorage(update, request, log)
     expect(result).to.eql({
       ...request,
       id: storage.id
@@ -91,7 +93,7 @@ describe('storage service unit tests', () => {
       expect(storageId).to.equal(joinedStorage.id)
       return joinedStorage
     }
-    const result = await storageService.findStorageById(finder, storage.id)
+    const result = await storageService.findStorageById(finder, storage.id, log)
     expect(result).to.eql(joinedStorage)
   })
 
@@ -101,7 +103,7 @@ describe('storage service unit tests', () => {
       expect(searchId).to.equal(id)
       return undefined
     }
-    const result = await storageService.findStorageById(finder, id)
+    const result = await storageService.findStorageById(finder, id, log)
     expect(result).to.eql(undefined)
   })
 
@@ -113,7 +115,7 @@ describe('storage service unit tests', () => {
     const lister = async () => {
       return [joinedStorage]
     }
-    const result = await storageService.listStorages(lister, pagination)
+    const result = await storageService.listStorages(lister, pagination, log)
     expect(result).to.eql([joinedStorage])
   })
 
@@ -122,7 +124,9 @@ describe('storage service unit tests', () => {
       return [joinedStorage]
     }
     const result = await storageService.listStoragesByBeer(
-      lister, joinedStorage.beerId
+      lister,
+      joinedStorage.beerId,
+      log
     )
     expect(result).to.eql([joinedStorage])
   })
@@ -132,7 +136,9 @@ describe('storage service unit tests', () => {
       return [joinedStorage]
     }
     const result = await storageService.listStoragesByBeer(
-      lister, joinedStorage.breweries[0].id
+      lister,
+      joinedStorage.breweries[0].id,
+      log
     )
     expect(result).to.eql([joinedStorage])
   })
@@ -142,7 +148,9 @@ describe('storage service unit tests', () => {
       return [joinedStorage]
     }
     const result = await storageService.listStoragesByStyle(
-      lister, joinedStorage.styles[0].id
+      lister,
+      joinedStorage.styles[0].id,
+      log
     )
     expect(result).to.eql([joinedStorage])
   })
