@@ -13,14 +13,19 @@ import {
 import { INFO, type log } from '../log'
 import { checkCyclicRelationships } from './style.util'
 
-export interface CreateRelationshipIf {
-  insert: (styleId: string, parents: string[]) => Promise<void>
+export class ParentStyleNotFoundError extends Error {}
+
+export interface CreateStyleIf {
+  create: (style: NewStyle) => Promise<Style>
+  lockStyles: lockStyles
+  insertParents: (styleId: string, parents: string[]) => Promise<void>
   listAllRelationships: () => Promise<StyleRelationship[]>
 }
 
+type lockStyles = (styleIds: string[]) => Promise<string[]>
+
 export async function createStyle (
-  create: (style: NewStyle) => Promise<Style>,
-  relationshipHandlers: CreateRelationshipIf,
+  createStyleIf: CreateStyleIf,
   request: CreateStyleRequest,
   log: log
 ): Promise<StyleWithParentIds> {
@@ -32,15 +37,20 @@ export async function createStyle (
     request.parents
   )
   const styleId = uuidv4()
-  const allRelationships = await relationshipHandlers.listAllRelationships()
+
+  if (request.parents.length > 0) {
+    await lockParents(createStyleIf.lockStyles, request.parents)
+  }
+
+  const allRelationships = await createStyleIf.listAllRelationships()
   validateRelationships(allRelationships, styleId, request.parents)
 
-  const style = await create({
+  const style = await createStyleIf.create({
     name: request.name
   })
 
   if (request.parents.length > 0) {
-    await relationshipHandlers.insert(style.id, request.parents)
+    await createStyleIf.insertParents(style.id, request.parents)
   }
 
   log(INFO, 'created style', style.id)
@@ -50,31 +60,37 @@ export async function createStyle (
   }
 }
 
-export interface UpdateRelationshipIf extends CreateRelationshipIf {
+export interface UpdateStyleIf {
+  update: (style: Style) => Promise<Style>
+  lockStyles: lockStyles
+  insertParents: (styleId: string, parents: string[]) => Promise<void>
+  listAllRelationships: () => Promise<StyleRelationship[]>
   deleteStyleChildRelationships: (styleId: string) => Promise<void>
 }
 
 export async function updateStyle (
-  update: (style: Style) => Promise<Style>,
-  relationshipHandlers: UpdateRelationshipIf,
+  updateStyleIf: UpdateStyleIf,
   styleId: string,
   request: UpdateStyleRequest,
   log: log
 ): Promise<StyleWithParentIds> {
   log(INFO, 'update style', styleId)
-  const allRelationships = await relationshipHandlers.listAllRelationships()
+  if (request.parents.length > 0) {
+    await lockParents(updateStyleIf.lockStyles, request.parents)
+  }
+  const allRelationships = await updateStyleIf.listAllRelationships()
   validateRelationships(allRelationships, styleId, request.parents)
 
-  const style = await update({
+  const style = await updateStyleIf.update({
     id: styleId,
     name: request.name
   })
 
   await Promise.all([
-    relationshipHandlers.deleteStyleChildRelationships(styleId),
+    updateStyleIf.deleteStyleChildRelationships(styleId),
     request.parents.length === 0
       ? () => {}
-      : relationshipHandlers.insert(style.id, request.parents)
+      : updateStyleIf.insertParents(style.id, request.parents)
   ])
 
   log(INFO, 'updated style', style.id)
@@ -111,4 +127,15 @@ function validateRelationships (
   parents: string[]
 ): void {
   checkCyclicRelationships(allRelationships, styleId, parents)
+}
+
+async function lockParents (
+  lockStyles: lockStyles,
+  parentKeys: string[]
+): Promise<void> {
+  const lockedParents = await lockStyles(parentKeys)
+  if (parentKeys.length !== lockedParents.length ||
+    !parentKeys.every(p => lockedParents.includes(p))) {
+    throw new ParentStyleNotFoundError()
+  }
 }

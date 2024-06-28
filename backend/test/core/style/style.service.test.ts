@@ -46,6 +46,16 @@ describe('style service unit tests', () => {
     return result
   }
 
+  async function lockParent (parents: string[]) {
+    expect(parents).to.eql([parentStyle.id])
+    return [parentStyle.id]
+  }
+
+  async function noParentLocking () {
+    await notCalled()
+    return []
+  }
+
   async function noRelationships (): Promise<StyleRelationship[]> {
     return []
   }
@@ -67,13 +77,17 @@ describe('style service unit tests', () => {
       name: style.name,
       parents: []
     }
-    const relationshipIf: styleService.CreateRelationshipIf = {
-      insert: notCalled,
-      listAllRelationships: noRelationships
+    const createStyleIf: styleService.CreateStyleIf = {
+      create,
+      insertParents: notCalled,
+      listAllRelationships: noRelationships,
+      lockStyles: async function(): Promise<string[]> {
+        await notCalled()
+        return []
+      }
     }
     const result = await styleService.createStyle(
-      create,
-      relationshipIf,
+      createStyleIf,
       request,
       log
     )
@@ -89,16 +103,13 @@ describe('style service unit tests', () => {
       name: style.name,
       parents: [parentStyle.id]
     }
-    const relationshipIf: styleService.CreateRelationshipIf = {
-      insert: insertRelationship,
+    const createIf: styleService.CreateStyleIf = {
+      create,
+      lockStyles: lockParent,
+      insertParents: insertRelationship,
       listAllRelationships: noRelationships
     }
-    const result = await styleService.createStyle(
-      create,
-      relationshipIf,
-      request,
-      log
-    )
+    const result = await styleService.createStyle(createIf, request, log)
     expect(result).to.eql({
       id: style.id,
       name: style.name,
@@ -111,8 +122,10 @@ describe('style service unit tests', () => {
       name: style.name,
       parents: [parentStyle.id]
     }
-    const relationshipIf: styleService.CreateRelationshipIf = {
-      insert: notCalled,
+    const createIf: styleService.CreateStyleIf = {
+      create,
+      lockStyles: lockParent,
+      insertParents: notCalled,
       listAllRelationships: async function(): Promise<StyleRelationship[]> {
         const id1 = '22f915bc-2202-4b16-b39f-cceff957833d'
         const id2 = '60e3102f-c333-49a8-b956-10095e963ccc'
@@ -123,7 +136,7 @@ describe('style service unit tests', () => {
       }
     }
     try {
-      await styleService.createStyle(create, relationshipIf, request, log)
+      await styleService.createStyle(createIf, request, log)
       expect('not to be called').to.equal(false)
     } catch (e) {
       expect(e).to.eql(new CyclicRelationshipError('Cyclic relationship found'))
@@ -144,14 +157,15 @@ describe('style service unit tests', () => {
       name: style.name,
       parents: []
     }
-    const relationshipIf: styleService.UpdateRelationshipIf = {
-      insert: notCalled,
+    const updateIf: styleService.UpdateStyleIf = {
+      update,
+      lockStyles: noParentLocking,
+      insertParents: notCalled,
       deleteStyleChildRelationships,
       listAllRelationships: noRelationships
     }
     const result = await styleService.updateStyle(
-      update,
-      relationshipIf,
+      updateIf,
       style.id,
       request,
       log
@@ -168,14 +182,15 @@ describe('style service unit tests', () => {
       name: style.name,
       parents: [parentStyle.id]
     }
-    const relationshipIf: styleService.UpdateRelationshipIf = {
-      insert: insertRelationship,
+    const updateIf: styleService.UpdateStyleIf = {
+      update,
+      lockStyles: lockParent,
+      insertParents: insertRelationship,
       deleteStyleChildRelationships,
       listAllRelationships: noRelationships
     }
     const result = await styleService.updateStyle(
-      update,
-      relationshipIf,
+      updateIf,
       style.id,
       request,
       log
@@ -192,8 +207,10 @@ describe('style service unit tests', () => {
       name: style.name,
       parents: [parentStyle.id]
     }
-    const relationshipIf: styleService.UpdateRelationshipIf = {
-      insert: notCalled,
+    const updateIf: styleService.UpdateStyleIf = {
+      update,
+      lockStyles: lockParent,
+      insertParents: notCalled,
       deleteStyleChildRelationships: notCalled,
       listAllRelationships: async function(): Promise<StyleRelationship[]> {
         const id1 = '22f915bc-2202-4b16-b39f-cceff957833d'
@@ -205,13 +222,7 @@ describe('style service unit tests', () => {
       }
     }
     try {
-      await styleService.updateStyle(
-        update,
-        relationshipIf,
-        style.id,
-        request,
-        log
-      )
+      await styleService.updateStyle(updateIf, style.id, request, log)
       expect('not to be called').to.equal(false)
     } catch (e) {
       expect(e).to.eql(new CyclicRelationshipError('Cyclic relationship found'))

@@ -40,6 +40,7 @@ export type StorageApiErrors =
 
 export type StyleApiErrors =
   | 'CyclicStyleRelationship'
+  | 'ParentStyleNotFound'
   | 'InvalidStyle'
   | 'InvalidStyleId'
   | 'StyleNotFound'

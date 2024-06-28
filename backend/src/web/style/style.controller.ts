@@ -14,6 +14,7 @@ import {
   StyleRelationship
 } from '../../core/style/style'
 import { ControllerError } from '../../core/errors'
+import { ParentStyleNotFoundError } from '../../core/style/style.service'
 import { CyclicRelationshipError } from '../../core/style/style.util'
 
 function handleError (e: unknown): void {
@@ -22,6 +23,13 @@ function handleError (e: unknown): void {
       400,
       'CyclicStyleRelationship',
       'cyclic style relationships are not allowed'
+    )
+  }
+  if (e instanceof ParentStyleNotFoundError) {
+    throw new ControllerError(
+      400,
+      'ParentStyleNotFound',
+      'parent style was not found'
     )
   }
   throw e
@@ -36,13 +44,16 @@ export function styleController (router: Router): void {
       const createStyleRequest = validateCreateRequest(body)
       try {
         const result = await ctx.db.executeTransaction(async (trx) => {
-          const relationshipIf: styleService.CreateRelationshipIf = {
-            insert: createInserter(trx),
+          const createIf: styleService.CreateStyleIf = {
+            create: (
+              style: NewStyle
+            ) => styleRepository.insertStyle(trx, style),
+            lockStyles: createStyleLocker(trx),
+            insertParents: createParentInserter(trx),
             listAllRelationships: createLister(trx)
           }
           return await styleService.createStyle(
-            (style: NewStyle) => styleRepository.insertStyle(trx, style),
-            relationshipIf, createStyleRequest, ctx.log)
+            createIf, createStyleRequest, ctx.log)
         })
 
         ctx.status = 201
@@ -64,16 +75,19 @@ export function styleController (router: Router): void {
       try {
         const updateStyleRequest = validateUpdateRequest(body, styleId)
         const result = await ctx.db.executeTransaction(async (trx) => {
-          const relationshipIf: styleService.UpdateRelationshipIf = {
-              insert: createInserter(trx),
-              listAllRelationships: createLister(trx),
-              deleteStyleChildRelationships: function(styleId: string): Promise<void> {
-                return styleRepository.deleteStyleChildRelationships(trx, styleId)
-              }
+          const updateIf: styleService.UpdateStyleIf = {
+            update: (
+              style: Style
+            ) => styleRepository.updateStyle(trx, style),
+            lockStyles: createStyleLocker(trx),
+            insertParents: createParentInserter(trx),
+            listAllRelationships: createLister(trx),
+            deleteStyleChildRelationships: (styleId: string): Promise<void> => {
+              return styleRepository.deleteStyleChildRelationships(trx, styleId)
+            }
           }
           return await styleService.updateStyle(
-            (style: Style) => styleRepository.updateStyle(trx, style),
-            relationshipIf, styleId, updateStyleRequest, ctx.log)
+            updateIf, styleId, updateStyleRequest, ctx.log)
         })
 
         ctx.status = 200
@@ -143,7 +157,7 @@ function validateUpdateRequest (
   return result
 }
 
-function createInserter(trx: Transaction) {
+function createParentInserter(trx: Transaction) {
   return async function(
     styleId: string,
     parents: string[]
@@ -160,5 +174,11 @@ function createInserter(trx: Transaction) {
 function createLister(trx: Transaction) {
   return async function(): Promise<StyleRelationship[]> {
     return styleRepository.listStyleRelationships(trx)
+  }
+}
+
+function createStyleLocker(trx: Transaction) {
+  return async function(styleIds: string[]): Promise<string[]> {
+    return styleRepository.lockStyles(trx, styleIds)
   }
 }

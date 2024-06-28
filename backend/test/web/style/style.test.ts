@@ -140,8 +140,7 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    // TODO It would be cleaner to report a client error.
-    expect(childRes.status).to.equal(500)
+    expect(childRes.status).to.equal(400)
   })
 
   it('should fail to create a style without name', async () => {
@@ -193,6 +192,22 @@ describe('style tests', () => {
       id: lagerRes.data.style.id,
       name: lagerRes.data.style.name,
     }])
+  })
+
+  it('should fail to update a child style with invalid parent', async () => {
+    const createRes = await ctx.request.post(`/api/v1/style`,
+      { name: 'Gueuze', parents: []},
+      ctx.adminAuthHeaders()
+    )
+    expect(createRes.status).to.equal(201)
+
+    const style = createRes.data.style
+    const updateRes = await ctx.request.put(`/api/v1/style/${style.id}`,
+      { name: style.name, parents: ['c407a67d-1e4c-48b3-8e46-29e05d834a8f']},
+      ctx.adminAuthHeaders()
+    )
+    expect(updateRes.status).to.equal(400)
+
   })
 
   it('should get empty style list', async () => {
