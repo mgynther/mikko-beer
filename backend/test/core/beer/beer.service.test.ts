@@ -59,10 +59,12 @@ describe('beer service unit tests', () => {
         return result
       },
       lockBreweries: async (breweryIds: string[]) => {
+        expect(breweriesLocked).to.equal(false)
         breweriesLocked = true
         return lockBreweries(breweryIds)
       },
       lockStyles: async (styleIds: string[]) => {
+        expect(stylesLocked).to.equal(false)
         stylesLocked = true
         return lockStyles(styleIds)
       },

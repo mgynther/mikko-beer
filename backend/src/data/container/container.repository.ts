@@ -57,6 +57,20 @@ export async function findContainerById (
   return toContainer(container)
 }
 
+export async function lockContainer (
+  trx: Transaction,
+  key: string
+): Promise<string | undefined> {
+  const container = await trx.trx()
+    .selectFrom('container')
+    .where('container_id', '=', key)
+    .select('container_id')
+    .forUpdate()
+    .executeTakeFirst()
+
+  return container?.container_id
+}
+
 export async function listContainers (
   db: Database
 ): Promise<Container[]> {

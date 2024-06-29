@@ -7,6 +7,12 @@ import {
   type JoinedStorage,
 } from '../../../src/core/storage/storage'
 import * as storageService from '../../../src/core/storage/storage.service'
+import {
+  BeerNotFoundError,
+  ContainerNotFoundError,
+  type CreateIf,
+  type UpdateIf
+} from '../../../src/core/storage/storage.service'
 
 import { dummyLog as log } from '../dummy-log'
 
@@ -37,14 +43,42 @@ const joinedStorage: JoinedStorage = {
   }],
 }
 
+const createRequest: CreateStorageRequest = {
+  beer: storage.beer,
+  bestBefore: storage.bestBefore,
+  container: storage.container,
+}
+
+const updateRequest: Storage = {
+  ...storage,
+}
+
+const lockBeer = async (
+  beerId: string
+): Promise<string | undefined> => {
+  expect(beerId).to.eql(storage.beer)
+  return storage.beer
+}
+
+const lockContainer = async (
+  containerId: string
+): Promise<string | undefined> => {
+  expect(containerId).to.eql(storage.container)
+  return storage.container
+}
+
+function notCalled() {
+  expect('should not be called').to.equal(true)
+}
+
+const notLocked = async () => {
+  notCalled()
+  return undefined
+}
+
 describe('storage service unit tests', () => {
   it('should create storage', async () => {
-    const request: CreateStorageRequest = {
-      beer: storage.beer,
-      bestBefore: storage.bestBefore,
-      container: storage.container,
-    }
-    const create = async (newStorage: CreateStorageRequest) => {
+    const insertStorage = async (newStorage: CreateStorageRequest) => {
       const result = {
         id: storage.id,
         beer: storage.beer,
@@ -60,18 +94,80 @@ describe('storage service unit tests', () => {
       )
       return result
     }
-    const result = await storageService.createStorage(create, request, log)
+    let isBeerLocked = false
+    let isContainerLocked = false
+    const createIf: CreateIf = {
+      insertStorage,
+      lockBeer: async (beerId: string) => {
+        expect(isBeerLocked).to.equal(false)
+        isBeerLocked = true
+        return lockBeer(beerId)
+      },
+      lockContainer: async (containerId: string) => {
+        expect(isContainerLocked).to.equal(false)
+        isContainerLocked = true
+        return lockContainer(containerId)
+      }
+    }
+    const result = await storageService.createStorage(
+      createIf,
+      createRequest,
+      log
+    )
     expect(result).to.eql({
-      ...request,
+      ...createRequest,
       id: storage.id
     })
+    expect(isBeerLocked).to.equal(true)
+    expect(isContainerLocked).to.equal(true)
+  })
+
+  it('should fail to create storage with invalid beer', async () => {
+    const insertStorage = async () => {
+      throw new Error('should not be called')
+    }
+    const createIf: CreateIf = {
+      insertStorage,
+      lockBeer: async () => {
+        return undefined
+      },
+      lockContainer: async (id: string) => {
+        return id
+      }
+    }
+    try {
+      await storageService.createStorage(createIf, createRequest, log)
+      notCalled()
+    } catch (e) {
+      expect(e instanceof BeerNotFoundError).to.equal(true)
+    }
+  })
+
+  it('should fail to create storage with invalid container', async () => {
+    const insertStorage = async () => {
+      throw new Error('should not be called')
+    }
+    const createIf: CreateIf = {
+      insertStorage,
+      lockBeer: async (id: string) => {
+        return id
+      },
+      lockContainer: async () => {
+        return undefined
+      }
+    }
+    try {
+      await storageService.createStorage(createIf, createRequest, log)
+      notCalled()
+    } catch (e) {
+      expect(e instanceof ContainerNotFoundError).to.equal(true)
+    }
   })
 
   it('should update storage', async () => {
-    const request: Storage = {
-      ...storage,
-    }
-    const update = async (storage: Storage) => {
+    let isBeerLocked = false
+    let isContainerLocked = false
+    const updateStorage = async (storage: Storage) => {
       const result = {
         id: storage.id,
         beer: storage.beer,
@@ -81,11 +177,72 @@ describe('storage service unit tests', () => {
       expect(storage).to.eql(result)
       return result
     }
-    const result = await storageService.updateStorage(update, request, log)
+    const updateIf: UpdateIf = {
+      updateStorage,
+      lockBeer: async (beerId: string) => {
+        expect(isBeerLocked).to.equal(false)
+        isBeerLocked = true
+        return lockBeer(beerId)
+      },
+      lockContainer: async (containerId: string) => {
+        expect(isContainerLocked).to.equal(false)
+        isContainerLocked = true
+        return lockContainer(containerId)
+      }
+    }
+    const result = await storageService.updateStorage(
+      updateIf,
+      updateRequest,
+      log
+    )
     expect(result).to.eql({
-      ...request,
+      ...updateRequest,
       id: storage.id
     })
+    expect(isBeerLocked).to.equal(true)
+    expect(isContainerLocked).to.equal(true)
+  })
+
+  it('should fail to update storage with invalid beer', async () => {
+    const updateStorage = async () => {
+      throw new Error('should not be called')
+    }
+    const updateIf: UpdateIf = {
+      updateStorage,
+      lockBeer: async () => {
+        return undefined
+      },
+      lockContainer: async (id: string) => {
+        return id
+      }
+    }
+    try {
+      await storageService.updateStorage(updateIf, updateRequest, log)
+      notCalled()
+    } catch (e) {
+      expect(e instanceof BeerNotFoundError).to.equal(true)
+    }
+  })
+
+  it('should fail to update storage with invalid container', async () => {
+    const updateStorage = async () => {
+      throw new Error('should not be called')
+    }
+    const updateIf: UpdateIf = {
+      updateStorage,
+      lockBeer: async (id: string) => {
+        return id
+      },
+      lockContainer: async () => {
+        return undefined
+      },
+    }
+    try {
+      await storageService.updateStorage(updateIf, updateRequest, log)
+      notCalled()
+    } catch (e) {
+      expect(e instanceof ContainerNotFoundError).to.equal(true)
+    }
   })
 
   it('should find storage', async () => {

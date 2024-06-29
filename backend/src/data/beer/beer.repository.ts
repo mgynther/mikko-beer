@@ -211,6 +211,20 @@ function getSelectListQuery (db: Database, fromQuery: typeof listByNameAsc) {
     .select(beerListColumns)
 }
 
+export async function lockBeer (
+  trx: Transaction,
+  key: string
+): Promise<string | undefined> {
+  const beer = await trx.trx()
+    .selectFrom('beer')
+    .where('beer_id', '=', key)
+    .select('beer_id')
+    .forUpdate()
+    .executeTakeFirst()
+
+  return beer?.beer_id
+}
+
 export async function listBeers (
   db: Database,
   pagination: Pagination

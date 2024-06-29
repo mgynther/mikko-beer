@@ -8,13 +8,30 @@ import { INFO, type log } from '../log'
 
 import { type Pagination } from '../../core/pagination'
 
+export class BeerNotFoundError extends Error {}
+export class ContainerNotFoundError extends Error {}
+
+type LockId = (id: string) => Promise<string | undefined>
+
+export interface CreateIf {
+  insertStorage: (request: CreateStorageRequest) => Promise<Storage>
+  lockBeer: LockId
+  lockContainer: LockId
+}
+
 export async function createStorage (
-  insert: (request: CreateStorageRequest) => Promise<Storage>,
+  createIf: CreateIf,
   request: CreateStorageRequest,
   log: log
 ): Promise<Storage> {
   log(INFO, 'create storage for beer', request.beer)
-  const storage = await insert(request)
+  await lockId(createIf.lockBeer, request.beer, new BeerNotFoundError())
+  await lockId(
+    createIf.lockContainer,
+    request.container,
+    new ContainerNotFoundError()
+  )
+  const storage = await createIf.insertStorage(request)
 
   log(INFO, 'created storage for beer', request.beer)
   return {
@@ -22,13 +39,25 @@ export async function createStorage (
   }
 }
 
+export interface UpdateIf {
+  updateStorage: (request: Storage) => Promise<Storage>
+  lockBeer: LockId
+  lockContainer: LockId
+}
+
 export async function updateStorage (
-  update: (request: Storage) => Promise<Storage>,
+  updateIf: UpdateIf,
   request: Storage,
   log: log
 ): Promise<Storage> {
   log(INFO, 'update storage', request.id)
-  const storage = await update(request)
+  await lockId(updateIf.lockBeer, request.beer, new BeerNotFoundError())
+  await lockId(
+    updateIf.lockContainer,
+    request.container,
+    new ContainerNotFoundError()
+  )
+  const storage = await updateIf.updateStorage(request)
 
   log(INFO, 'updated storage', request.id)
   return {
@@ -83,4 +112,15 @@ export async function listStoragesByStyle (
 ): Promise<JoinedStorage[]> {
   log(INFO, 'list storages by style', styleId)
   return await listByStyle(styleId)
+}
+
+async function lockId (
+  lockId: LockId,
+  key: string,
+  error: Error
+): Promise<void> {
+  const lockedId = await lockId(key)
+  if (lockedId === undefined) {
+    throw error
+  }
 }
