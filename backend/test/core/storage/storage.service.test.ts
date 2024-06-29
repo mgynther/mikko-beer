@@ -71,11 +71,6 @@ function notCalled() {
   expect('should not be called').to.equal(true)
 }
 
-const notLocked = async () => {
-  notCalled()
-  return undefined
-}
-
 describe('storage service unit tests', () => {
   it('should create storage', async () => {
     const insertStorage = async (newStorage: CreateStorageRequest) => {
