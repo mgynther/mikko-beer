@@ -13,7 +13,7 @@ describe('beer tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('lock beer exists', async () => {
+  it('lock beer that exists', async () => {
     const beer = await ctx.db.executeTransaction(async (trx: Transaction) => {
       return await beerRepository.insertBeer(trx, { name: 'Weizenbock' })
     })

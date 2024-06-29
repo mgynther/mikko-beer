@@ -13,7 +13,7 @@ describe('container tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('lock container exists', async () => {
+  it('lock container that exists', async () => {
     const container = await ctx.db.executeTransaction(async (trx: Transaction) => {
       return await containerRepository.insertContainer(
         trx,
