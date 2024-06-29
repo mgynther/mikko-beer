@@ -46,7 +46,7 @@ describe('user tests', () => {
     expect(res.data.user.username).to.equal('Anon')
     expect(res.data.user.role).to.equal('admin')
 
-    // The returned auth token should be usable.
+    // The returned auth token is be usable.
     const getRes = await ctx.request.get<{ user: User }>(
       `/api/v1/user/${res.data.user.id}`,
       ctx.createAuthHeaders(res.data.authToken)
@@ -78,7 +78,7 @@ describe('user tests', () => {
 
     expect(res.status).to.equal(200)
 
-    // The returned auth token should be usable.
+    // The returned auth token is be usable.
     const getRes = await ctx.request.get<{ user: User }>(
       `/api/v1/user/${res.data.user.id}`,
       ctx.createAuthHeaders(authToken)
@@ -104,7 +104,7 @@ describe('user tests', () => {
       },
     })
 
-    // Only the one refresh token created for the anonymous user should exists.
+    // Only the one refresh token created for the anonymous user exists.
     expect(
       await ctx.db.getDb()
         .selectFrom('refresh_token')

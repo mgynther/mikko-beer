@@ -68,7 +68,7 @@ const lockContainer = async (
 }
 
 function notCalled() {
-  expect('should not be called').to.equal(true)
+  expect('must not be called').to.equal(true)
 }
 
 describe('storage service unit tests', () => {
@@ -119,7 +119,7 @@ describe('storage service unit tests', () => {
 
   it('fail to create storage with invalid beer', async () => {
     const insertStorage = async () => {
-      throw new Error('should not be called')
+      throw new Error('must not be called')
     }
     const createIf: CreateIf = {
       insertStorage,
@@ -140,7 +140,7 @@ describe('storage service unit tests', () => {
 
   it('fail to create storage with invalid container', async () => {
     const insertStorage = async () => {
-      throw new Error('should not be called')
+      throw new Error('must not be called')
     }
     const createIf: CreateIf = {
       insertStorage,
@@ -200,7 +200,7 @@ describe('storage service unit tests', () => {
 
   it('fail to update storage with invalid beer', async () => {
     const updateStorage = async () => {
-      throw new Error('should not be called')
+      throw new Error('must not be called')
     }
     const updateIf: UpdateIf = {
       updateStorage,
@@ -221,7 +221,7 @@ describe('storage service unit tests', () => {
 
   it('fail to update storage with invalid container', async () => {
     const updateStorage = async () => {
-      throw new Error('should not be called')
+      throw new Error('must not be called')
     }
     const updateIf: UpdateIf = {
       updateStorage,

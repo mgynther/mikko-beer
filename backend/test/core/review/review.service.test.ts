@@ -114,7 +114,7 @@ const updateReview = async (review: Review) => {
 }
 
 async function notCalled(): Promise<undefined> {
-  expect('should not be called').to.equal(true)
+  expect('must not be called').to.equal(true)
 }
 
 describe('review service unit tests', () => {

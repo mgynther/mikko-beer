@@ -73,9 +73,9 @@ describe('user tests', () => {
     }
     expectRenames(false, false)
     // A delay is needed to control race condition so that test execution is
-    // similar every time. Longer delay should improve probability while
-    // obviously slowing the test down. The delay value is multiplied to
-    // achieve desired execution order in the setup phase.
+    // similar every time. Longer delay improves probability while obviously
+    // slowing the test down. The delay value is multiplied to achieve desired
+    // execution order in the setup phase.
     const delayMs = 50
     const rename1Promise = ctx.db.executeTransaction(async (trx) => {
       expectRenames(false, false)

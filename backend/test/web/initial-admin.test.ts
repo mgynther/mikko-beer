@@ -95,7 +95,7 @@ describe('initial admin', () => {
     expect(res.status).to.equal(200)
     const authToken = res.data.authToken
 
-    // The returned auth token should be usable.
+    // The returned auth token is be usable.
     const getRes = await ctx.request.get<{ user: User }>(
       `/api/v1/user/${res.data.user.id}`,
       {

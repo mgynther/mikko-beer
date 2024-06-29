@@ -13,8 +13,8 @@ import {
 } from '../../../src/core/stats/stats'
 import { type Style } from '../../../src/core/style/style'
 
-// Math is hard. By both hard coding and calculating it should be easier to spot
-// an error when it happens.
+// Math is hard. By both hard coding and calculating it is easier to spot an
+// error when it happens.
 describe('stats tests', () => {
   const ctx = new TestContext()
 

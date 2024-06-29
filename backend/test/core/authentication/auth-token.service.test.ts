@@ -68,7 +68,7 @@ describe('auth token service unit tests', () => {
   }
 
   function unreachable() {
-    expect('should not reach this line').to.equal(true)
+    expect('must not reach this line').to.equal(true)
   }
 
   it('fail to verify invalid auth token', () => {
@@ -142,7 +142,7 @@ describe('auth token service unit tests', () => {
     const wrongUserId = 'f388b0cb-63f5-4f6e-a9e6-3b6ac92844a7'
     try {
       await authTokenService.deleteRefreshToken(
-        () => { throw new Error('should not be called') },
+        () => { throw new Error('must not be called') },
         wrongUserId,
         tokens.refresh,
         authTokenSecret

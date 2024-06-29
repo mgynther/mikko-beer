@@ -43,7 +43,7 @@ const lockStyles = async (lockStyleIds: string[]) => {
 }
 
 async function notCalled() {
-  expect('should not be called').to.equal(true)
+  expect('must not be called').to.equal(true)
 }
 
 const createBeerRequest: CreateBeerRequest = {

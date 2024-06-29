@@ -72,7 +72,7 @@ async function findRefreshToken(
 
 async function notCalledFindRefreshToken(
 ): Promise<DbRefreshToken | undefined> {
-  expect('should not be called').to.equal(true)
+  expect('must not be called').to.equal(true)
   return undefined
 }
 
@@ -96,7 +96,7 @@ function header(authToken: AuthToken): string {
 describe('authentication service unit tests', () => {
 
   function unreachable() {
-    expect('should not reach this line').to.equal(true)
+    expect('must not reach this line').to.equal(true)
   }
 
   it('authenticate admin', async () => {
