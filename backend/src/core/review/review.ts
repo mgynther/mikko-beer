@@ -54,7 +54,7 @@ export interface ReviewRequest {
   rating: number
   smell: string
   taste: string
-  time: Date
+  time: string
 }
 
 export type ReviewListOrderProperty =

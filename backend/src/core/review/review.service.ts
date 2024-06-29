@@ -12,9 +12,22 @@ import {
   type Pagination
 } from '../pagination'
 
+export class BeerNotFoundError extends Error {}
+export class ContainerNotFoundError extends Error {}
+export class StorageNotFoundError extends Error {}
+
+type LockId = (id: string) => Promise<string | undefined>
+
+export interface CreateIf {
+  createReview: (review: NewReview) => Promise<Review>
+  deleteFromStorage: (storageId: string) => Promise<void>
+  lockBeer: LockId
+  lockContainer: LockId
+  lockStorage: LockId
+}
+
 export async function createReview (
-  create: (review: NewReview) => Promise<Review>,
-  deleteFromStorage: (storageId: string) => Promise<void>,
+  createIf: CreateIf,
   request: CreateReviewRequest,
   fromStorageId: string | undefined,
   log: log
@@ -24,27 +37,55 @@ export async function createReview (
   } else {
     log(INFO, 'create review for beer', request.beer, 'from storage')
   }
-  const review = await create({
-    ...request
+  await lockId(createIf.lockBeer, request.beer, new BeerNotFoundError())
+  await lockId(
+    createIf.lockContainer,
+    request.container,
+    new ContainerNotFoundError()
+  )
+  if (typeof fromStorageId === 'string') {
+    await lockId(
+      createIf.lockStorage,
+      fromStorageId,
+      new StorageNotFoundError()
+    )
+  }
+  const review = await createIf.createReview({
+    ...request,
+    time: new Date(request.time)
   })
 
   if (typeof fromStorageId === 'string') {
-    await deleteFromStorage(fromStorageId)
+    await createIf.deleteFromStorage(fromStorageId)
   }
 
   log(INFO, 'created review with id', review.id)
   return { ...review }
 }
 
+export interface UpdateIf {
+  updateReview: (review: Review) => Promise<Review>
+  lockBeer: LockId
+  lockContainer: LockId
+}
+
 export async function updateReview (
-  update: (review: Review) => Promise<Review>,
+  updateIf: UpdateIf,
   reviewId: string,
   request: UpdateReviewRequest,
   log: log
 ): Promise<Review> {
   log(INFO, 'update review with id', reviewId)
-  const review = await update({
+  await lockId(updateIf.lockBeer, request.beer, new BeerNotFoundError())
+  await lockId(
+    updateIf.lockContainer,
+    request.container,
+    new ContainerNotFoundError()
+  )
+
+  const review = await updateIf.updateReview({
     ...request,
+    time: new Date(request.time),
     id: reviewId
   })
 
@@ -115,4 +156,15 @@ export async function listReviewsByStyle (
 ): Promise<JoinedReview[]> {
   log(INFO, 'list by style', styleId, reviewListOrder)
   return await list(styleId, reviewListOrder)
+}
+
+async function lockId (
+  lockId: LockId,
+  key: string,
+  error: Error
+): Promise<void> {
+  const lockedId = await lockId(key)
+  if (lockedId === undefined) {
+    throw error
+  }
 }

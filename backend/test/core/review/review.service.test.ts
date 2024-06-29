@@ -9,6 +9,13 @@ import {
 } from '../../../src/core/review/review'
 import { type Pagination } from '../../../src/core/pagination'
 import * as reviewService from '../../../src/core/review/review.service'
+import {
+  BeerNotFoundError,
+  ContainerNotFoundError,
+  StorageNotFoundError,
+  type CreateIf,
+  type UpdateIf
+} from '../../../src/core/review/review.service'
 
 import { dummyLog as log } from '../dummy-log'
 
@@ -23,9 +30,19 @@ const newReview: NewReview = {
   taste: 'tasty'
 }
 
+const createReviewRequest: CreateReviewRequest = {
+  ...newReview,
+  time: new Date().toISOString()
+}
+
 const review: Review = {
   ...newReview,
   id: '8cb936ee-77d7-46ed-89e1-4ca25bbd0416',
+}
+
+const updateReviewRequest: UpdateReviewRequest = {
+  ...review,
+  time: new Date().toISOString()
 }
 
 const joinedReview: JoinedReview = {
@@ -57,79 +74,218 @@ const pagination: Pagination = {
   skip: 80
 }
 
+const lockBeer = async (
+  beerId: string
+): Promise<string | undefined> => {
+  expect(beerId).to.eql(review.beer)
+  return review.beer
+}
+
+const lockContainer = async (
+  containerId: string
+): Promise<string | undefined> => {
+  expect(containerId).to.eql(review.container)
+  return review.container
+}
+
+const storageId = '1e90c440-73d4-4de4-bc31-c267df3e8d46'
+
+const lockStorage = async (
+  lockStorageId: string
+): Promise<string | undefined> => {
+  expect(lockStorageId).to.eql(storageId)
+  return storageId
+}
+
+const createReview = async (newReview: NewReview) => {
+  expect({
+    ...newReview,
+    time: newReview.time.toISOString()
+  }).to.eql(createReviewRequest)
+  return { ...review }
+}
+
+const updateReview = async (review: Review) => {
+  expect({
+    ...review,
+    time: review.time.toISOString()
+  }).to.eql(updateReviewRequest)
+  return { ...review }
+}
+
+async function notCalled(): Promise<undefined> {
+  expect('should not be called').to.equal(true)
+}
+
 describe('review service unit tests', () => {
   it('should create review', async () => {
-    const request: CreateReviewRequest = {
-      ...newReview
-    }
-    const create = async (newReview: NewReview) => {
-      expect(newReview).to.eql(request)
-      return { ...review }
-    }
-    const deleteFromStorage = async (storageId: string) => {
-      expect('not expected to be called with').to.equal(storageId)
+    const createIf: CreateIf = {
+      createReview,
+      deleteFromStorage: notCalled,
+      lockBeer,
+      lockContainer,
+      lockStorage: notCalled
     }
     const result = await reviewService.createReview(
-      create,
-      deleteFromStorage,
-      request,
+      createIf,
+      createReviewRequest,
       undefined,
       log
     )
     expect(result).to.eql({
-      ...request,
-      id: review.id
+      ...createReviewRequest,
+      id: review.id,
+      time: new Date(createReviewRequest.time)
     })
   })
 
-  it('should create review from storage', async () => {
-    const request: CreateReviewRequest = {
-      ...newReview
+  it('fail to create review with invalid beer', async () => {
+    const createIf: CreateIf = {
+      createReview,
+      deleteFromStorage: notCalled,
+      lockBeer: async () => undefined,
+      lockContainer,
+      lockStorage: notCalled
     }
+    try {
+      await reviewService.createReview(
+        createIf,
+        createReviewRequest,
+        undefined,
+        log
+      )
+    } catch (e) {
+      expect(e instanceof BeerNotFoundError).to.equal(true)
+    }
+  })
+
+  it('fail to create review with invalid container', async () => {
+    const createIf: CreateIf = {
+      createReview,
+      deleteFromStorage: notCalled,
+      lockBeer,
+      lockContainer: async () => undefined,
+      lockStorage: notCalled
+    }
+    try {
+      await reviewService.createReview(
+        createIf,
+        createReviewRequest,
+        undefined,
+        log
+      )
+    } catch (e) {
+      expect(e instanceof ContainerNotFoundError).to.equal(true)
+    }
+  })
+
+  it('should create review from storage', async () => {
+    let deletedFromStorage = false
     const create = async (newReview: NewReview) => {
       expect(deletedFromStorage).to.equal(false)
-      expect(newReview).to.eql(request)
-      return { ...review }
+      return createReview(newReview)
     }
-    let deletedFromStorage = false
-    const storageId = '1e90c440-73d4-4de4-bc31-c267df3e8d46'
     const deleteFromStorage = async (deleteId: string) => {
       expect(deletedFromStorage).to.equal(false)
       deletedFromStorage = true
       expect(deleteId).to.equal(storageId)
     }
-    const result = await reviewService.createReview(
-      create,
+    const createIf: CreateIf = {
+      createReview: create,
       deleteFromStorage,
-      request,
+      lockBeer,
+      lockContainer,
+      lockStorage,
+    }
+    const result = await reviewService.createReview(
+      createIf,
+      createReviewRequest,
       storageId,
       log
     )
     expect(result).to.eql({
-      ...request,
-      id: review.id
+      ...createReviewRequest,
+      id: review.id,
+      time: new Date(createReviewRequest.time)
     })
     expect(deletedFromStorage).to.equal(true)
   })
 
-  it('should update review', async () => {
-    const request: UpdateReviewRequest = {
-      ...review,
+  it('fail to create review with invalid storage', async () => {
+    const createIf: CreateIf = {
+      createReview,
+      deleteFromStorage: notCalled,
+      lockBeer,
+      lockContainer,
+      lockStorage: async () => undefined
     }
-    const update = async (review: Review) => {
-      expect(review).to.eql(request)
-      return { ...review }
+    try {
+      await reviewService.createReview(
+        createIf,
+        createReviewRequest,
+        storageId,
+        log
+      )
+    } catch (e) {
+      expect(e instanceof StorageNotFoundError).to.equal(true)
+    }
+  })
+
+  it('should update review', async () => {
+    const updateIf: UpdateIf = {
+      updateReview,
+      lockBeer,
+      lockContainer,
     }
     const result = await reviewService.updateReview(
-      update,
+      updateIf,
       review.id,
-      request,
+      updateReviewRequest,
       log
     )
     expect(result).to.eql({
-      ...request,
-      id: review.id
+      ...updateReviewRequest,
+      id: review.id,
+      time: new Date(updateReviewRequest.time)
     })
+  })
+
+  it('fail to update review with invalid beer', async () => {
+    const updateIf: UpdateIf = {
+      updateReview,
+      lockBeer: async () => undefined,
+      lockContainer,
+    }
+    try {
+      await reviewService.updateReview(
+        updateIf,
+        review.id,
+        updateReviewRequest,
+        log
+      )
+      notCalled()
+    } catch (e) {
+      expect(e instanceof BeerNotFoundError).to.equal(true)
+    }
+  })
+
+  it('fail to update review with invalid container', async () => {
+    const updateIf: UpdateIf = {
+      updateReview,
+      lockBeer,
+      lockContainer: async () => undefined,
+    }
+    try {
+      await reviewService.updateReview(
+        updateIf,
+        review.id,
+        updateReviewRequest,
+        log
+      )
+      notCalled()
+    } catch (e) {
+      expect(e instanceof ContainerNotFoundError).to.equal(true)
+    }
   })
 
   it('should find review', async () => {

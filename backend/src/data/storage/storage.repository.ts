@@ -140,6 +140,20 @@ const listColumns: PossibleListColumns[] = [
   'container.size as container_size'
 ]
 
+export async function lockStorage (
+  trx: Transaction,
+  key: string
+): Promise<string | undefined> {
+  const storage = await trx.trx()
+    .selectFrom('storage')
+    .where('storage_id', '=', key)
+    .select('storage_id')
+    .forUpdate()
+    .executeTakeFirst()
+
+  return storage?.storage_id
+}
+
 export async function listStorages (
   db: Database,
   pagination: Pagination

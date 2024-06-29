@@ -2,7 +2,26 @@ import { expect } from 'chai'
 
 import { TestContext } from '../test-context'
 import { type ListDirection } from '../../../src/core/list'
-import { JoinedReview, Review, type ReviewListOrderProperty } from '../../../src/core/review/review'
+import {
+  type JoinedReview,
+  type Review,
+  type ReviewListOrderProperty,
+  type ReviewRequest
+} from '../../../src/core/review/review'
+
+const createNewReviewRequest = (
+  beerId: string,
+  containerId: string
+): ReviewRequest => ({
+  additionalInfo: 'From Belgium',
+  beer: beerId,
+  container: containerId,
+  location: 'Pikilinna',
+  rating: 8,
+  smell: 'Cherries',
+  taste: 'Cherries, a little sour',
+  time: '2023-03-07T18:31:33.123Z'
+})
 
 describe('review tests', () => {
   const ctx = new TestContext()
@@ -53,16 +72,10 @@ describe('review tests', () => {
     const { beerRes, breweryRes, containerRes, styleRes } = await createDeps(ctx.adminAuthHeaders())
 
     const reviewRes = await ctx.request.post(`/api/v1/review`,
-      {
-        additionalInfo: 'From Belgium',
-        beer: beerRes.data.beer.id,
-        container: containerRes.data.container.id,
-        location: 'Pikilinna',
-        rating: 8,
-        smell: 'Cherries',
-        taste: 'Cherries, a little sour',
-        time: '2023-03-07T18:31:33.123Z'
-      },
+      createNewReviewRequest(
+        beerRes.data.beer.id,
+        containerRes.data.container.id
+      ),
       ctx.adminAuthHeaders()
     )
     expect(reviewRes.status).to.equal(201)
@@ -138,6 +151,32 @@ describe('review tests', () => {
     expect(beerListRes.data.reviews).to.eql(breweryListRes.data.reviews)
   })
 
+  it('fail to create a review with invalid beer', async () => {
+    const { containerRes } = await createDeps(ctx.adminAuthHeaders())
+
+    const reviewRes = await ctx.request.post(`/api/v1/review`,
+      createNewReviewRequest(
+        'bc589557-ca7d-4be3-97fb-d9369c7c6c3c',
+        containerRes.data.container.id
+      ),
+      ctx.adminAuthHeaders()
+    )
+    expect(reviewRes.status).to.equal(400)
+  })
+
+  it('fail to create a review with invalid container', async () => {
+    const { beerRes } = await createDeps(ctx.adminAuthHeaders())
+
+    const reviewRes = await ctx.request.post(`/api/v1/review`,
+      createNewReviewRequest(
+        beerRes.data.beer.id,
+        '645d27c8-3a7b-416f-8174-3baa68bb4f38',
+      ),
+      ctx.adminAuthHeaders()
+    )
+    expect(reviewRes.status).to.equal(400)
+  })
+
   it('should delete storage when review created from storage', async () => {
     const { beerRes, containerRes } = await createDeps(ctx.adminAuthHeaders())
 
@@ -175,6 +214,20 @@ describe('review tests', () => {
     expect(getStorageRes.status).to.equal(404)
   })
 
+  it('fail to create review with invalid storage', async () => {
+    const { beerRes, containerRes } = await createDeps(ctx.adminAuthHeaders())
+
+    const dummyId = 'b6c2c801-d8a5-4a13-98bb-32cfb9611359'
+    const reviewRes = await ctx.request.post(`/api/v1/review?storage=${dummyId}`,
+      createNewReviewRequest(
+        beerRes.data.beer.id,
+        containerRes.data.container.id
+      ),
+      ctx.adminAuthHeaders()
+    )
+    expect(reviewRes.status).to.equal(400)
+  })
+
   it('should fail create a review without beer', async () => {
     const { containerRes } = await createDeps(ctx.adminAuthHeaders())
 
@@ -193,18 +246,15 @@ describe('review tests', () => {
     expect(reviewRes.status).to.equal(400)
   })
 
-  it('should update a review', async () => {
+  it('should update review', async () => {
     const { beerRes, containerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const requestData = {
-      additionalInfo: 'From Belgium',
-      beer: beerRes.data.beer.id,
-      container: containerRes.data.container.id,
-      location: 'Pikilinna',
-      rating: 8,
-      smell: 'Cherries',
-      taste: 'Crerries, a little sour',
-      time: '2023-03-07T18:31:33.123Z'
+      ...createNewReviewRequest(
+        beerRes.data.beer.id,
+        containerRes.data.container.id,
+      ),
+      taste: 'Crerries, a little sour'
     }
 
     const reviewRes = await ctx.request.post(`/api/v1/review`,
@@ -213,7 +263,8 @@ describe('review tests', () => {
     expect(reviewRes.status).to.equal(201)
     expect(reviewRes.data.review.taste).to.equal('Crerries, a little sour')
 
-    const updateRes = await ctx.request.put(`/api/v1/review/${reviewRes.data.review.id}`,
+    const updateRes = await ctx.request.put(
+      `/api/v1/review/${reviewRes.data.review.id}`,
       {
         ...requestData,
         taste: 'Cherries, a little sour',
@@ -231,6 +282,52 @@ describe('review tests', () => {
     expect(getRes.status).to.equal(200)
     expect(getRes.data.review.taste).to.equal('Cherries, a little sour')
     expect(getRes.data.review.time).to.equal('2023-03-07T18:31:33.124Z')
+  })
+
+  it('fail to update review with invalid beer', async () => {
+    const { beerRes, containerRes } = await createDeps(ctx.adminAuthHeaders())
+
+    const requestData = createNewReviewRequest(
+      beerRes.data.beer.id,
+      containerRes.data.container.id
+    )
+
+    const reviewRes = await ctx.request.post(`/api/v1/review`,
+      requestData, ctx.adminAuthHeaders()
+    )
+    expect(reviewRes.status).to.equal(201)
+    const updateRes = await ctx.request.put(
+      `/api/v1/review/${reviewRes.data.review.id}`,
+      {
+        ...requestData,
+        beer: 'b06a997e-d073-4878-860f-63839596ebd6'
+      },
+      ctx.adminAuthHeaders()
+    )
+    expect(updateRes.status).to.equal(400)
+  })
+
+  it('fail to update review with invalid container', async () => {
+    const { beerRes, containerRes } = await createDeps(ctx.adminAuthHeaders())
+
+    const requestData = createNewReviewRequest(
+      beerRes.data.beer.id,
+      containerRes.data.container.id
+    )
+
+    const reviewRes = await ctx.request.post(`/api/v1/review`,
+      requestData, ctx.adminAuthHeaders()
+    )
+    expect(reviewRes.status).to.equal(201)
+    const updateRes = await ctx.request.put(
+      `/api/v1/review/${reviewRes.data.review.id}`,
+      {
+        ...requestData,
+        container: 'a7ae5013-9556-4fec-95bc-21cfc69bd92c'
+      },
+      ctx.adminAuthHeaders()
+    )
+    expect(updateRes.status).to.equal(400)
   })
 
   it('should get empty review list', async () => {
