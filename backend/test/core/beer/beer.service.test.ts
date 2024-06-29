@@ -11,6 +11,10 @@ import { type SearchByName } from '../../../src/core/search'
 import * as beerService from '../../../src/core/beer/beer.service'
 
 import { dummyLog as log } from '../dummy-log'
+import {
+  BreweryNotFoundError,
+  StyleNotFoundError
+} from '../../../src/core/beer/beer.service'
 
 const beer: BeerWithBreweriesAndStyles = {
   id: '406a337c-3107-4307-bd84-be3ec7c7d2f6',
@@ -38,13 +42,24 @@ const lockStyles = async (lockStyleIds: string[]) => {
   return lockStyleIds
 }
 
+async function notCalled() {
+  expect('should not be called').to.equal(true)
+}
+
+const createBeerRequest: CreateBeerRequest = {
+  name: beer.name,
+  breweries,
+  styles,
+}
+
+const updateBeerRequest: UpdateBeerRequest = {
+  name: beer.name,
+  breweries,
+  styles,
+}
+
 describe('beer service unit tests', () => {
   it('should create beer', async () => {
-    const request: CreateBeerRequest = {
-      name: beer.name,
-      breweries,
-      styles,
-    }
     let breweriesInserted = false
     let breweriesLocked = false
     let stylesInserted = false
@@ -81,9 +96,13 @@ describe('beer service unit tests', () => {
         expect(insertStyles).to.eql(styles)
       }
     }
-    const result = await beerService.createBeer(createIf, request, log)
+    const result = await beerService.createBeer(
+      createIf,
+      createBeerRequest,
+      log
+    )
     expect(result).to.eql({
-      ...request,
+      ...createBeerRequest,
       id: beer.id
     })
     expect(breweriesInserted).to.equal(true)
@@ -92,12 +111,39 @@ describe('beer service unit tests', () => {
     expect(stylesLocked).to.equal(true)
   })
 
-  it('should update beer', async () => {
-    const request: UpdateBeerRequest = {
-      name: beer.name,
-      breweries,
-      styles,
+  it('fail to create beer with invalid brewery', async () => {
+    const createIf: beerService.CreateIf = {
+      create: async () => beer,
+      lockBreweries: async () => [],
+      lockStyles,
+      insertBeerBreweries: async () => {},
+      insertBeerStyles: async () => {}
     }
+    try {
+      await beerService.createBeer(createIf, createBeerRequest, log)
+      notCalled()
+    } catch (e) {
+      expect(e instanceof BreweryNotFoundError).to.equal(true)
+    }
+  })
+
+  it('fail to create beer with invalid style', async () => {
+    const createIf: beerService.CreateIf = {
+      create: async () => beer,
+      lockBreweries,
+      lockStyles: async () => [],
+      insertBeerBreweries: async () => {},
+      insertBeerStyles: async () => {}
+    }
+    try {
+      await beerService.createBeer(createIf, createBeerRequest, log)
+      notCalled()
+    } catch (e) {
+      expect(e instanceof StyleNotFoundError).to.equal(true)
+    }
+  })
+
+  it('should update beer', async () => {
     let breweriesDeleted = false
     let breweriesInserted = false
     let breweriesLocked = false
@@ -146,9 +192,14 @@ describe('beer service unit tests', () => {
         expect(insertStyles).to.eql(styles)
       }
     }
-    const result = await beerService.updateBeer(updateIf, beer.id, request, log)
+    const result = await beerService.updateBeer(
+      updateIf,
+      beer.id,
+      updateBeerRequest,
+      log
+    )
     expect(result).to.eql({
-      ...request,
+      ...updateBeerRequest,
       id: beer.id
     })
     expect(breweriesDeleted).to.equal(true)
@@ -158,6 +209,50 @@ describe('beer service unit tests', () => {
     expect(stylesInserted).to.equal(true)
     expect(stylesLocked).to.equal(true)
   })
+
+  it('fail to update beer with invalid brewery', async () => {
+    const updateIf: beerService.UpdateIf = {
+      update: async () => beer,
+      lockBreweries: async () => [],
+      lockStyles,
+      deleteBeerBreweries: notCalled,
+      insertBeerBreweries: notCalled,
+      deleteBeerStyles: notCalled,
+      insertBeerStyles: notCalled
+    }
+    try {
+      await beerService.updateBeer(
+        updateIf,
+        beer.id,
+        updateBeerRequest,
+        log
+      )
+    } catch (e) {
+      expect(e instanceof BreweryNotFoundError).to.equal(true)
+    }
+  })
+
+  it('fail to update beer with invalid style', async () => {
+    const updateIf: beerService.UpdateIf = {
+      update: async () => beer,
+      lockBreweries,
+      lockStyles: async () => [],
+      deleteBeerBreweries: notCalled,
+      insertBeerBreweries: notCalled,
+      deleteBeerStyles: notCalled,
+      insertBeerStyles: notCalled
+    }
+    try {
+      await beerService.updateBeer(
+        updateIf,
+        beer.id,
+        updateBeerRequest,
+        log
+      )
+    } catch (e) {
+      expect(e instanceof StyleNotFoundError).to.equal(true)
+    }
+})
 
   it('should find beer', async () => {
     const finder = async (beerId: string) => {
