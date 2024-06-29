@@ -62,6 +62,20 @@ export async function findBreweryById (
   return rowToBrewery(breweryRow)
 }
 
+export async function lockBreweries (
+  trx: Transaction,
+  keys: string[]
+): Promise<string[]> {
+  const breweries = await trx.trx()
+    .selectFrom('brewery')
+    .where('brewery_id', 'in', keys)
+    .select('brewery_id')
+    .forUpdate()
+    .execute()
+
+  return breweries.map(brewery => brewery?.brewery_id)
+}
+
 export async function listBreweries (
   db: Database,
   pagination: Pagination

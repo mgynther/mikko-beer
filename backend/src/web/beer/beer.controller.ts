@@ -1,9 +1,11 @@
 import * as beerRepository from '../../data/beer/beer.repository'
+import * as breweryRepository from '../../data/brewery/brewery.repository'
 import { type Transaction } from '../../data/database'
 import * as beerService from '../../core/beer/beer.service'
 import {
   type CreateIf,
   type UpdateIf,
+  BreweryNotFoundError,
   StyleNotFoundError
 } from '../../core/beer/beer.service'
 import { type Pagination } from '../../core/pagination'
@@ -25,6 +27,13 @@ import { validatePagination } from '../pagination'
 import { validateSearchByName } from '../search'
 
 function handleError (e: unknown): void {
+  if (e instanceof BreweryNotFoundError) {
+    throw new ControllerError(
+      400,
+      'BreweryNotFound',
+      'brewery not found'
+    )
+  }
   if (e instanceof StyleNotFoundError) {
     throw new ControllerError(
       400,
@@ -46,6 +55,7 @@ export function beerController (router: Router): void {
         const result = await ctx.db.executeTransaction(async (trx) => {
           const createIf: CreateIf = {
             create: (beer: NewBeer) => beerRepository.insertBeer(trx, beer),
+            lockBreweries: createBreweryLocker(trx),
             lockStyles: createStyleLocker(trx),
             insertBeerBreweries: createBeerBreweryInserter(trx),
             insertBeerStyles: createBeerStyleInserter(trx),
@@ -78,6 +88,7 @@ export function beerController (router: Router): void {
         const result = await ctx.db.executeTransaction(async (trx) => {
           const updateIf: UpdateIf = {
             update: (beer: Beer) => beerRepository.updateBeer(trx, beer),
+            lockBreweries: createBreweryLocker(trx),
             lockStyles: createStyleLocker(trx),
             insertBeerBreweries: createBeerBreweryInserter(trx),
             deleteBeerBreweries: (
@@ -195,6 +206,12 @@ function createBeerStyleInserter(trx: Transaction) {
       beer: beerId,
       style
     }))) as Promise<unknown> as Promise<void>
+  }
+}
+
+function createBreweryLocker(trx: Transaction) {
+  return async function(styleIds: string[]): Promise<string[]> {
+    return breweryRepository.lockBreweries(trx, styleIds)
   }
 }
 

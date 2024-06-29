@@ -122,7 +122,7 @@ export async function lockStyles (
   const styles = await trx.trx()
     .selectFrom('style')
     .where('style_id', 'in', keys)
-    .selectAll('style')
+    .select('style_id')
     .forUpdate()
     .execute()
 

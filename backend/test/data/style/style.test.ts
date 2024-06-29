@@ -1,5 +1,4 @@
 import { expect } from 'chai'
-import { v4 as uuidv4 } from 'uuid'
 
 import { TestContext } from '../test-context'
 import { type Transaction } from '../../../src/data/database'
@@ -18,9 +17,12 @@ describe('style tests', () => {
     const style = await ctx.db.executeTransaction(async (trx: Transaction) => {
       return await styleRepository.insertStyle(trx, { name: 'Helles' })
     })
-    const dummyId = uuidv4()
+    const dummyId = '778fd028-62a4-4a8a-a636-3e5db5475df2'
     await ctx.db.executeTransaction(async (trx: Transaction) => {
-      const lockedKeys = await styleRepository.lockStyles(trx, [style.id, dummyId])
+      const lockedKeys = await styleRepository.lockStyles(
+        trx,
+        [style.id, dummyId]
+      )
       expect(lockedKeys).to.eql([style.id])
     })
   })

@@ -14,15 +14,17 @@ import {
 import { type SearchByName } from '../search'
 import { areKeysEqual } from '../key'
 
+export class BreweryNotFoundError extends Error {}
 export class StyleNotFoundError extends Error {}
 
 type InsertBreweries = (beerId: string, breweries: string[]) => Promise<void>
 type InsertStyles = (beerId: string, styles: string[]) => Promise<void>
-type LockStyles = (styleIds: string[]) => Promise<string[]>
+type LockIds = (ids: string[]) => Promise<string[]>
 
 export interface CreateIf {
   create: (beer: NewBeer) => Promise<Beer>
-  lockStyles: LockStyles
+  lockBreweries: LockIds
+  lockStyles: LockIds
   insertBeerBreweries: InsertBreweries
   insertBeerStyles: InsertStyles
 }
@@ -33,7 +35,12 @@ export async function createBeer (
   log: log
 ): Promise<BeerWithBreweryAndStyleIds> {
   log(INFO, 'create beer with name', request.name)
-  await lockStyles(createIf.lockStyles, request.styles)
+  await lockIds(
+    createIf.lockBreweries,
+    request.breweries,
+    new BreweryNotFoundError()
+  )
+  await lockIds(createIf.lockStyles, request.styles, new StyleNotFoundError())
   const beer = await createIf.create({
     name: request.name
   })
@@ -54,7 +61,8 @@ export async function createBeer (
 
 export interface UpdateIf {
   update: (beer: Beer) => Promise<Beer>
-  lockStyles: LockStyles
+  lockBreweries: LockIds
+  lockStyles: LockIds
   insertBeerBreweries: InsertBreweries
   deleteBeerBreweries: (beerId: string) => Promise<void>
   insertBeerStyles: InsertStyles
@@ -68,7 +76,12 @@ export async function updateBeer (
   log: log
 ): Promise<BeerWithBreweryAndStyleIds> {
   log(INFO, 'update beer with id', beerId)
-  await lockStyles(updateIf.lockStyles, request.styles)
+  await lockIds(
+    updateIf.lockBreweries,
+    request.breweries,
+    new BreweryNotFoundError()
+  )
+  await lockIds(updateIf.lockStyles, request.styles, new StyleNotFoundError())
   await Promise.all([
     updateIf.update({
       id: beerId,
@@ -121,12 +134,13 @@ export async function searchBeers (
   return await search(searchRequest)
 }
 
-async function lockStyles (
-  lockStyles: LockStyles,
-  styleKeys: string[]
+async function lockIds (
+  lockIds: LockIds,
+  keys: string[],
+  error: Error
 ): Promise<void> {
-  const lockedStyles = await lockStyles(styleKeys)
-  if (!areKeysEqual(lockedStyles, styleKeys)) {
-    throw new StyleNotFoundError()
+  const lockedIds = await lockIds(keys)
+  if (!areKeysEqual(lockedIds, keys)) {
+    throw error
   }
 }

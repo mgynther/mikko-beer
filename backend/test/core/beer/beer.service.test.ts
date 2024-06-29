@@ -28,6 +28,11 @@ const beer: BeerWithBreweriesAndStyles = {
 const breweries = beer.breweries.map(brewery => brewery.id)
 const styles = beer.styles.map(style => style.id)
 
+const lockBreweries = async (lockBreweryIds: string[]) => {
+  expect(lockBreweryIds).to.eql(breweries)
+  return lockBreweryIds
+}
+
 const lockStyles = async (lockStyleIds: string[]) => {
   expect(lockStyleIds).to.eql(styles)
   return lockStyleIds
@@ -41,6 +46,7 @@ describe('beer service unit tests', () => {
       styles,
     }
     let breweriesInserted = false
+    let breweriesLocked = false
     let stylesInserted = false
     let stylesLocked = false
     const createIf: beerService.CreateIf = {
@@ -51,6 +57,10 @@ describe('beer service unit tests', () => {
         }
         expect(newBeer).to.eql({ name: beer.name })
         return result
+      },
+      lockBreweries: async (breweryIds: string[]) => {
+        breweriesLocked = true
+        return lockBreweries(breweryIds)
       },
       lockStyles: async (styleIds: string[]) => {
         stylesLocked = true
@@ -75,6 +85,7 @@ describe('beer service unit tests', () => {
       id: beer.id
     })
     expect(breweriesInserted).to.equal(true)
+    expect(breweriesLocked).to.equal(true)
     expect(stylesInserted).to.equal(true)
     expect(stylesLocked).to.equal(true)
   })
@@ -87,6 +98,7 @@ describe('beer service unit tests', () => {
     }
     let breweriesDeleted = false
     let breweriesInserted = false
+    let breweriesLocked = false
     let stylesDeleted = false
     let stylesInserted = false
     let stylesLocked = false
@@ -98,6 +110,10 @@ describe('beer service unit tests', () => {
         }
         expect(beer).to.eql(result)
         return result
+      },
+      lockBreweries: async (breweryIds: string[]) => {
+        breweriesLocked = true
+        return lockBreweries(breweryIds)
       },
       lockStyles: async (styleIds: string[]) => {
         stylesLocked = true
@@ -135,6 +151,7 @@ describe('beer service unit tests', () => {
     })
     expect(breweriesDeleted).to.equal(true)
     expect(breweriesInserted).to.equal(true)
+    expect(breweriesLocked).to.equal(true)
     expect(stylesDeleted).to.equal(true)
     expect(stylesInserted).to.equal(true)
     expect(stylesLocked).to.equal(true)

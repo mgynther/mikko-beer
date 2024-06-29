@@ -200,8 +200,7 @@ describe('beer tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    // TODO It would be cleaner to report a client error.
-    expect(beerRes.status).to.equal(500)
+    expect(beerRes.status).to.equal(400)
   })
 
   it('should fail to create a beer without name', async () => {
