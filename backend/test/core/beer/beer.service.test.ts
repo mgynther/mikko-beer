@@ -25,10 +25,16 @@ const beer: BeerWithBreweriesAndStyles = {
   }]
 }
 
+const breweries = beer.breweries.map(brewery => brewery.id)
+const styles = beer.styles.map(style => style.id)
+
+const lockStyles = async (lockStyleIds: string[]) => {
+  expect(lockStyleIds).to.eql(styles)
+  return lockStyleIds
+}
+
 describe('beer service unit tests', () => {
   it('should create beer', async () => {
-    const breweries = beer.breweries.map(brewery => brewery.id)
-    const styles = beer.styles.map(style => style.id)
     const request: CreateBeerRequest = {
       name: beer.name,
       breweries,
@@ -36,6 +42,7 @@ describe('beer service unit tests', () => {
     }
     let breweriesInserted = false
     let stylesInserted = false
+    let stylesLocked = false
     const createIf: beerService.CreateIf = {
       create: async (newBeer: NewBeer) => {
         const result = {
@@ -44,6 +51,10 @@ describe('beer service unit tests', () => {
         }
         expect(newBeer).to.eql({ name: beer.name })
         return result
+      },
+      lockStyles: async (styleIds: string[]) => {
+        stylesLocked = true
+        return lockStyles(styleIds)
       },
       insertBeerBreweries: async (beerId: string, insertBreweries: string[]) => {
         expect(breweriesInserted).to.equal(false)
@@ -65,11 +76,10 @@ describe('beer service unit tests', () => {
     })
     expect(breweriesInserted).to.equal(true)
     expect(stylesInserted).to.equal(true)
+    expect(stylesLocked).to.equal(true)
   })
 
   it('should update beer', async () => {
-    const breweries = beer.breweries.map(brewery => brewery.id)
-    const styles = beer.styles.map(style => style.id)
     const request: UpdateBeerRequest = {
       name: beer.name,
       breweries,
@@ -79,6 +89,7 @@ describe('beer service unit tests', () => {
     let breweriesInserted = false
     let stylesDeleted = false
     let stylesInserted = false
+    let stylesLocked = false
     const updateIf: beerService.UpdateIf = {
       update: async (beer: Beer) => {
         const result = {
@@ -87,6 +98,10 @@ describe('beer service unit tests', () => {
         }
         expect(beer).to.eql(result)
         return result
+      },
+      lockStyles: async (styleIds: string[]) => {
+        stylesLocked = true
+        return lockStyles(styleIds)
       },
       deleteBeerBreweries: async (beerId: string) => {
         expect(breweriesDeleted).to.equal(false)
@@ -122,6 +137,7 @@ describe('beer service unit tests', () => {
     expect(breweriesInserted).to.equal(true)
     expect(stylesDeleted).to.equal(true)
     expect(stylesInserted).to.equal(true)
+    expect(stylesLocked).to.equal(true)
   })
 
   it('should find beer', async () => {

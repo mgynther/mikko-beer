@@ -12,6 +12,7 @@ import {
 
 import { INFO, type log } from '../log'
 import { checkCyclicRelationships } from './style.util'
+import { areKeysEqual } from '../key'
 
 export class ParentStyleNotFoundError extends Error {}
 
@@ -134,8 +135,7 @@ async function lockParents (
   parentKeys: string[]
 ): Promise<void> {
   const lockedParents = await lockStyles(parentKeys)
-  if (parentKeys.length !== lockedParents.length ||
-    !parentKeys.every(p => lockedParents.includes(p))) {
+  if (!areKeysEqual(lockedParents, parentKeys)) {
     throw new ParentStyleNotFoundError()
   }
 }

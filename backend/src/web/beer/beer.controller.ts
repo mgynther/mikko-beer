@@ -1,9 +1,14 @@
 import * as beerRepository from '../../data/beer/beer.repository'
 import { type Transaction } from '../../data/database'
 import * as beerService from '../../core/beer/beer.service'
-import { type CreateIf, type UpdateIf } from '../../core/beer/beer.service'
+import {
+  type CreateIf,
+  type UpdateIf,
+  StyleNotFoundError
+} from '../../core/beer/beer.service'
 import { type Pagination } from '../../core/pagination'
 import { type SearchByName } from '../../core/search'
+import * as styleRepository from '../../data/style/style.repository'
 import * as authHelper from '../authentication/authentication-helper'
 
 import { type Router } from '../router'
@@ -19,25 +24,45 @@ import { ControllerError } from '../../core/errors'
 import { validatePagination } from '../pagination'
 import { validateSearchByName } from '../search'
 
+function handleError (e: unknown): void {
+  if (e instanceof StyleNotFoundError) {
+    throw new ControllerError(
+      400,
+      'StyleNotFound',
+      'style not found'
+    )
+  }
+  throw e
+}
+
 export function beerController (router: Router): void {
   router.post('/api/v1/beer',
     authHelper.authenticateAdmin,
     async (ctx) => {
       const { body } = ctx.request
 
-      const createBeerRequest = validateCreateRequest(body)
-      const result = await ctx.db.executeTransaction(async (trx) => {
-        const createIf: CreateIf = {
-          create: (beer: NewBeer) => beerRepository.insertBeer(trx, beer),
-          insertBeerBreweries: createBeerBreweryInserter(trx),
-          insertBeerStyles: createBeerStyleInserter(trx),
-        }
-        return await beerService.createBeer(createIf, createBeerRequest, ctx.log)
-      })
+      try {
+        const createBeerRequest = validateCreateRequest(body)
+        const result = await ctx.db.executeTransaction(async (trx) => {
+          const createIf: CreateIf = {
+            create: (beer: NewBeer) => beerRepository.insertBeer(trx, beer),
+            lockStyles: createStyleLocker(trx),
+            insertBeerBreweries: createBeerBreweryInserter(trx),
+            insertBeerStyles: createBeerStyleInserter(trx),
+          }
+          return await beerService.createBeer(
+            createIf,
+            createBeerRequest,
+            ctx.log
+          )
+        })
 
-      ctx.status = 201
-      ctx.body = {
-        beer: result
+        ctx.status = 201
+        ctx.body = {
+          beer: result
+        }
+      } catch (e) {
+        handleError(e)
       }
     }
   )
@@ -48,26 +73,35 @@ export function beerController (router: Router): void {
       const { body } = ctx.request
       const { beerId } = ctx.params
 
-      const updateBeerRequest = validateUpdateRequest(body, beerId)
-      const result = await ctx.db.executeTransaction(async (trx) => {
-        const updateIf: UpdateIf = {
-          update: (beer: Beer) => beerRepository.updateBeer(trx, beer),
-          insertBeerBreweries: createBeerBreweryInserter(trx),
-          deleteBeerBreweries: (beerId: string) => beerRepository.deleteBeerBreweries(trx, beerId),
-          insertBeerStyles: createBeerStyleInserter(trx),
-          deleteBeerStyles: (beerId: string) => beerRepository.deleteBeerStyles(trx, beerId),
-        }
-        return await beerService.updateBeer(
-          updateIf,
-          beerId,
-          updateBeerRequest,
-          ctx.log
-        )
-      })
+      try {
+        const updateBeerRequest = validateUpdateRequest(body, beerId)
+        const result = await ctx.db.executeTransaction(async (trx) => {
+          const updateIf: UpdateIf = {
+            update: (beer: Beer) => beerRepository.updateBeer(trx, beer),
+            lockStyles: createStyleLocker(trx),
+            insertBeerBreweries: createBeerBreweryInserter(trx),
+            deleteBeerBreweries: (
+              beerId: string
+            ) => beerRepository.deleteBeerBreweries(trx, beerId),
+            insertBeerStyles: createBeerStyleInserter(trx),
+            deleteBeerStyles: (
+              beerId: string
+            ) => beerRepository.deleteBeerStyles(trx, beerId),
+          }
+          return await beerService.updateBeer(
+            updateIf,
+            beerId,
+            updateBeerRequest,
+            ctx.log
+          )
+        })
 
-      ctx.status = 200
-      ctx.body = {
-        beer: result
+        ctx.status = 200
+        ctx.body = {
+          beer: result
+        }
+      } catch (e) {
+        handleError(e)
       }
     }
   )
@@ -161,5 +195,11 @@ function createBeerStyleInserter(trx: Transaction) {
       beer: beerId,
       style
     }))) as Promise<unknown> as Promise<void>
+  }
+}
+
+function createStyleLocker(trx: Transaction) {
+  return async function(styleIds: string[]): Promise<string[]> {
+    return styleRepository.lockStyles(trx, styleIds)
   }
 }

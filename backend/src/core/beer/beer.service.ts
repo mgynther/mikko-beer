@@ -12,12 +12,17 @@ import {
   type Pagination
 } from '../pagination'
 import { type SearchByName } from '../search'
+import { areKeysEqual } from '../key'
+
+export class StyleNotFoundError extends Error {}
 
 type InsertBreweries = (beerId: string, breweries: string[]) => Promise<void>
 type InsertStyles = (beerId: string, styles: string[]) => Promise<void>
+type LockStyles = (styleIds: string[]) => Promise<string[]>
 
 export interface CreateIf {
   create: (beer: NewBeer) => Promise<Beer>
+  lockStyles: LockStyles
   insertBeerBreweries: InsertBreweries
   insertBeerStyles: InsertStyles
 }
@@ -28,6 +33,7 @@ export async function createBeer (
   log: log
 ): Promise<BeerWithBreweryAndStyleIds> {
   log(INFO, 'create beer with name', request.name)
+  await lockStyles(createIf.lockStyles, request.styles)
   const beer = await createIf.create({
     name: request.name
   })
@@ -48,6 +54,7 @@ export async function createBeer (
 
 export interface UpdateIf {
   update: (beer: Beer) => Promise<Beer>
+  lockStyles: LockStyles
   insertBeerBreweries: InsertBreweries
   deleteBeerBreweries: (beerId: string) => Promise<void>
   insertBeerStyles: InsertStyles
@@ -61,6 +68,7 @@ export async function updateBeer (
   log: log
 ): Promise<BeerWithBreweryAndStyleIds> {
   log(INFO, 'update beer with id', beerId)
+  await lockStyles(updateIf.lockStyles, request.styles)
   await Promise.all([
     updateIf.update({
       id: beerId,
@@ -111,4 +119,14 @@ export async function searchBeers (
 ): Promise<BeerWithBreweriesAndStyles[]> {
   log(INFO, 'search beers', searchRequest)
   return await search(searchRequest)
+}
+
+async function lockStyles (
+  lockStyles: LockStyles,
+  styleKeys: string[]
+): Promise<void> {
+  const lockedStyles = await lockStyles(styleKeys)
+  if (!areKeysEqual(lockedStyles, styleKeys)) {
+    throw new StyleNotFoundError()
+  }
 }
