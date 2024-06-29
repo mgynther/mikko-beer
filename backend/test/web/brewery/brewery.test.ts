@@ -13,7 +13,7 @@ describe('brewery tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('should create a brewery', async () => {
+  it('create a brewery', async () => {
     const res = await ctx.request.post(`/api/v1/brewery`,
       { name: 'Koskipanimo' },
       ctx.adminAuthHeaders()
@@ -51,7 +51,7 @@ describe('brewery tests', () => {
     expect(badSearchRes.data.breweries.length).to.equal(0)
   })
 
-  it('should update a brewery', async () => {
+  it('update a brewery', async () => {
     const res = await ctx.request.post(`/api/v1/brewery`,
       { name: 'Salami Brewing' },
       ctx.adminAuthHeaders()
@@ -76,7 +76,7 @@ describe('brewery tests', () => {
     expect(getRes.data.brewery).to.eql(updateRes.data.brewery)
   })
 
-  it('should fail to create a brewery without name', async () => {
+  it('fail to create a brewery without name', async () => {
     const res = await ctx.request.post(`/api/v1/brewery`,
       {},
       ctx.adminAuthHeaders()
@@ -85,7 +85,7 @@ describe('brewery tests', () => {
     expect(res.status).to.equal(400)
   })
 
-  it('should get empty brewery list', async () => {
+  it('get empty brewery list', async () => {
     const res = await ctx.request.get(`/api/v1/brewery`,
       ctx.adminAuthHeaders()
     )

@@ -68,7 +68,7 @@ describe('review tests', () => {
     }
   }
 
-  it('should create a review', async () => {
+  it('create a review', async () => {
     const { beerRes, breweryRes, containerRes, styleRes } = await createDeps(ctx.adminAuthHeaders())
 
     const reviewRes = await ctx.request.post(`/api/v1/review`,
@@ -177,7 +177,7 @@ describe('review tests', () => {
     expect(reviewRes.status).to.equal(400)
   })
 
-  it('should delete storage when review created from storage', async () => {
+  it('delete storage when review created from storage', async () => {
     const { beerRes, containerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const bestBefore = '2024-10-01T00:00:00.000Z'
@@ -228,7 +228,7 @@ describe('review tests', () => {
     expect(reviewRes.status).to.equal(400)
   })
 
-  it('should fail create a review without beer', async () => {
+  it('fail to create a review without beer', async () => {
     const { containerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const reviewRes = await ctx.request.post(`/api/v1/review`,
@@ -246,7 +246,7 @@ describe('review tests', () => {
     expect(reviewRes.status).to.equal(400)
   })
 
-  it('should update review', async () => {
+  it('update review', async () => {
     const { beerRes, containerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const requestData = {
@@ -330,7 +330,7 @@ describe('review tests', () => {
     expect(updateRes.status).to.equal(400)
   })
 
-  it('should get empty review list', async () => {
+  it('get empty review list', async () => {
     const res = await ctx.request.get(`/api/v1/review`,
       ctx.adminAuthHeaders()
     )
@@ -416,7 +416,7 @@ describe('review tests', () => {
     return { beerRes, breweryRes, containerRes, styleRes, reviewRes, collabReviewRes, otherReviewRes }
   }
 
-  it('should list reviews by brewery', async () => {
+  it('list reviews by brewery', async () => {
     const { breweryRes, reviewRes, collabReviewRes } = await createListDeps(ctx.adminAuthHeaders())
 
     const breweryListRes = await ctx.request.get<{
@@ -446,7 +446,7 @@ describe('review tests', () => {
     expect(sorting.direction).equal('desc')
   })
 
-  it('should list reviews by style', async () => {
+  it('list reviews by style', async () => {
     const { styleRes, reviewRes, collabReviewRes } = await createListDeps(ctx.adminAuthHeaders())
 
     const styleListRes = await ctx.request.get<{
@@ -562,7 +562,7 @@ describe('review tests', () => {
     expect(listRes.data.sorting).eql(data.sorting)
   }
 
-  it('should list reviews', async() => {
+  it('list reviews', async() => {
     await testListOrder(ctx.adminAuthHeaders(), {
       query: '',
       sorting: { order: 'time', direction: 'desc' },
@@ -572,7 +572,7 @@ describe('review tests', () => {
     })
   })
 
-  it('should list reviews, time', async() => {
+  it('list reviews, time', async() => {
     await testListOrder(ctx.adminAuthHeaders(), {
       query: '?order=time',
       sorting: { order: 'time', direction: 'desc' },
@@ -582,7 +582,7 @@ describe('review tests', () => {
     })
   })
 
-  it('should list reviews, time desc', async() => {
+  it('list reviews, time desc', async() => {
     await testListOrder(ctx.adminAuthHeaders(), {
       query: '?order=time&direction=desc',
       sorting: { order: 'time', direction: 'desc' },
@@ -592,7 +592,7 @@ describe('review tests', () => {
     })
   })
 
-  it('should list reviews, rating', async() => {
+  it('list reviews, rating', async() => {
     await testListOrder(ctx.adminAuthHeaders(), {
       query: '?order=rating',
       sorting: { order: 'rating', direction: 'desc' },
@@ -602,7 +602,7 @@ describe('review tests', () => {
     })
   })
 
-  it('should list reviews, rating asc', async() => {
+  it('list reviews, rating asc', async() => {
     await testListOrder(ctx.adminAuthHeaders(), {
       query: '?order=rating&direction=asc',
       sorting: { order: 'rating', direction: 'asc' },

@@ -21,11 +21,11 @@ describe('password sign-in-method unit tests', () => {
     expect(validatePasswordSignInMethod(signInMethod)).to.equal(false)
   }
 
-  it('should pass validation', () => {
+  it('pass validation', () => {
     pass(validPasswordSignInMethod())
   })
 
-  it('should fail with empty username', () => {
+  it('fail with empty username', () => {
     const request = {
       ...validPasswordSignInMethod(),
       username: ''
@@ -33,7 +33,7 @@ describe('password sign-in-method unit tests', () => {
     fail(request)
   })
 
-  it('should fail with invalid username', () => {
+  it('fail with invalid username', () => {
     const request = {
       ...validPasswordSignInMethod(),
       username: 1
@@ -41,12 +41,12 @@ describe('password sign-in-method unit tests', () => {
     fail(request)
   })
 
-  it('should fail without username', () => {
+  it('fail without username', () => {
     const { password } = validPasswordSignInMethod()
     fail({ password })
   })
 
-  it('should fail with empty password', () => {
+  it('fail with empty password', () => {
     const request = {
       ...validPasswordSignInMethod(),
       password: ''
@@ -54,7 +54,7 @@ describe('password sign-in-method unit tests', () => {
     fail(request)
   })
 
-  it('should fail with invalid password', () => {
+  it('fail with invalid password', () => {
     const request = {
       ...validPasswordSignInMethod(),
       password: {}
@@ -62,12 +62,12 @@ describe('password sign-in-method unit tests', () => {
     fail(request)
   })
 
-  it('should fail without password', () => {
+  it('fail without password', () => {
     const { username } = validPasswordSignInMethod()
     fail({ username })
   })
 
-  it('should fail with additional property', () => {
+  it('fail with additional property', () => {
     fail({ ...validPasswordSignInMethod(), additional: true })
   })
 })
@@ -88,11 +88,11 @@ describe('password change unit tests', () => {
     expect(validatePasswordChange(passwordChange)).to.equal(false)
   }
 
-  it('should pass validation', () => {
+  it('pass validation', () => {
     pass(validPasswordChange())
   })
 
-  it('should fail with empty old password', () => {
+  it('fail with empty old password', () => {
     const request = {
       ...validPasswordChange(),
       oldPassword: ''
@@ -100,7 +100,7 @@ describe('password change unit tests', () => {
     fail(request)
   })
 
-  it('should fail with invalid old password', () => {
+  it('fail with invalid old password', () => {
     const request = {
       ...validPasswordChange(),
       oldPassword: 1
@@ -108,12 +108,12 @@ describe('password change unit tests', () => {
     fail(request)
   })
 
-  it('should fail without old password', () => {
+  it('fail without old password', () => {
     const { newPassword } = validPasswordChange()
     fail({ newPassword })
   })
 
-  it('should fail with empty new password', () => {
+  it('fail with empty new password', () => {
     const request = {
       ...validPasswordChange(),
       newPassword: ''
@@ -121,7 +121,7 @@ describe('password change unit tests', () => {
     fail(request)
   })
 
-  it('should fail with invalid new password', () => {
+  it('fail with invalid new password', () => {
     const request = {
       ...validPasswordChange(),
       newPassword: {}
@@ -129,12 +129,12 @@ describe('password change unit tests', () => {
     fail(request)
   })
 
-  it('should fail without new password', () => {
+  it('fail without new password', () => {
     const { oldPassword } = validPasswordChange()
     fail({ oldPassword })
   })
 
-  it('should fail with additional property', () => {
+  it('fail with additional property', () => {
     fail({ ...validPasswordChange(), additional: true })
   })
 })

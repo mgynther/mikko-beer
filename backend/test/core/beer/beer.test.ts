@@ -26,7 +26,7 @@ describe('beer unit tests', () => {
   ].forEach(validator => {
     const { func, title } = validator
 
-    it(title('should pass validation'), () => {
+    it(title('pass validation'), () => {
       expect(func(validRequest())).to.equal(true)
     })
 
@@ -34,7 +34,7 @@ describe('beer unit tests', () => {
       expect(func(beer)).to.equal(false)
     }
 
-    it(title('should fail with empty name'), () => {
+    it(title('fail with empty name'), () => {
       const beer = {
         ...validRequest(),
         name: ''
@@ -42,22 +42,22 @@ describe('beer unit tests', () => {
       fail(beer)
     })
 
-    it(title('should fail without name'), () => {
+    it(title('fail without name'), () => {
       const { breweries, styles } = validRequest()
       fail({ breweries, styles })
     })
 
-    it(title('should fail without breweries'), () => {
+    it(title('fail without breweries'), () => {
       const { name, styles } = validRequest()
       fail({ name, styles })
     })
 
-    it(title('should fail without styles'), () => {
+    it(title('fail without styles'), () => {
       const { name, breweries } = validRequest()
       fail({ name, breweries })
     })
 
-    it(title('should fail with 0 breweries'), () => {
+    it(title('fail with 0 breweries'), () => {
       const beer = {
         ...validRequest(),
         breweries: []
@@ -65,7 +65,7 @@ describe('beer unit tests', () => {
       fail(beer)
     })
 
-    it(title('should fail with 0 styles'), () => {
+    it(title('fail with 0 styles'), () => {
       const beer = {
         ...validRequest(),
         styles: []
@@ -73,7 +73,7 @@ describe('beer unit tests', () => {
       fail(beer)
     })
 
-    it(title('should fail with invalid breweries'), () => {
+    it(title('fail with invalid breweries'), () => {
       const beer = {
         ...validRequest(),
         breweries: [9]
@@ -81,7 +81,7 @@ describe('beer unit tests', () => {
       fail(beer)
     })
 
-    it(title('should fail with invalid styles'), () => {
+    it(title('fail with invalid styles'), () => {
       const beer = {
         ...validRequest(),
         styles: [ { testing: 'will fail' } ]
@@ -89,7 +89,7 @@ describe('beer unit tests', () => {
       fail(beer)
     })
 
-    it(title('should fail with invalid name'), () => {
+    it(title('fail with invalid name'), () => {
       const beer = {
         ...validRequest(),
         name: [ 'f', 'a', 'i', 'l' ]
@@ -97,7 +97,7 @@ describe('beer unit tests', () => {
       fail(beer)
     })
 
-    it(title('should fail with additional property'), () => {
+    it(title('fail with additional property'), () => {
       const beer = {
         ...validRequest(),
         additional: 'will fail'

@@ -39,7 +39,7 @@ describe('beer tests', () => {
     return { beerRes, breweryRes, styleRes }
   }
 
-  it('should create a beer', async () => {
+  it('create a beer', async () => {
     const { beerRes, breweryRes, styleRes } = await createBeer()
 
     const getRes = await ctx.request.get<{ beer: BeerWithBreweriesAndStyles }>(
@@ -54,7 +54,7 @@ describe('beer tests', () => {
     expect(getRes.data.beer.styles).to.eql([withoutParents(styleRes.data.style)])
   })
 
-  it('should not find a beer that does not exist', async () => {
+  it('fail to find beer that does not exist', async () => {
     const getRes = await ctx.request.get<{ beer: BeerWithBreweriesAndStyles }>(
       `/api/v1/beer/e733fe0f-3b6a-438c-85cf-021987bec5f6`,
       ctx.adminAuthHeaders()
@@ -63,7 +63,7 @@ describe('beer tests', () => {
     expect(getRes.status).to.equal(404)
   })
 
-  it('should search beer', async () => {
+  it('search beer', async () => {
     const { beerRes } = await createBeer()
     const searchRes = await ctx.request.post<{ beers: Beer[] }>(
       '/api/v1/beer/search',
@@ -75,7 +75,7 @@ describe('beer tests', () => {
     expect(searchRes.data.beers[0].id).to.equal(beerRes.data.beer.id)
   })
 
-  it('should not find beer without a match', async () => {
+  it('fail to find beer without a match', async () => {
     await createBeer()
     const searchNoMatchRes = await ctx.request.post<{ beers: Beer[] }>(
       '/api/v1/beer/search',
@@ -86,7 +86,7 @@ describe('beer tests', () => {
     expect(searchNoMatchRes.data.beers.length).to.equal(0)
   })
 
-  it('should find beer with exact match', async () => {
+  it('find beer with exact match', async () => {
     const { beerRes } = await createBeer()
     const searchExactRes = await ctx.request.post<{ beers: Beer[] }>(
       '/api/v1/beer/search',
@@ -98,7 +98,7 @@ describe('beer tests', () => {
     expect(searchExactRes.data.beers[0].id).to.equal(beerRes.data.beer.id)
   })
 
-  it('should not find beer with exact match mismatch', async () => {
+  it('not find beer with exact match mismatch', async () => {
     await createBeer()
     const searchExactNoMatchRes = await ctx.request.post<{ beers: Beer[] }>(
       '/api/v1/beer/search',
@@ -109,7 +109,7 @@ describe('beer tests', () => {
     expect(searchExactNoMatchRes.data.beers.length).to.equal(0)
   })
 
-  it('should create a child beer with 2 breweries and 2 styles', async () => {
+  it('create a child beer with 2 breweries and 2 styles', async () => {
     const style1Res = await ctx.request.post(`/api/v1/style`,
       { name: 'Wild', parents: [] },
       ctx.adminAuthHeaders()
@@ -156,7 +156,7 @@ describe('beer tests', () => {
     expect(getRes.data.beer.styles).to.eql([withoutParents(style1Res.data.style), withoutParents(style2Res.data.style)])
   })
 
-  it('should list beers', async () => {
+  it('list beers', async () => {
     await createBeer()
     const listRes = await ctx.request.get(`/api/v1/beer`,
       ctx.adminAuthHeaders()
@@ -173,7 +173,7 @@ describe('beer tests', () => {
     expect(skippedListRes.data.beers.length).to.equal(0)
   })
 
-  it('should fail to create a beer with invalid style', async () => {
+  it('fail to create a beer with invalid style', async () => {
     const breweryRes = await ctx.request.post(`/api/v1/brewery`,
       { name: 'Brewcats' },
       ctx.adminAuthHeaders()
@@ -188,7 +188,7 @@ describe('beer tests', () => {
     expect(beerRes.status).to.equal(400)
   })
 
-  it('should fail to create a beer with invalid brewery', async () => {
+  it('fail to create a beer with invalid brewery', async () => {
     const styleRes = await ctx.request.post(`/api/v1/style`,
       { name: 'IPA', parents: [] },
       ctx.adminAuthHeaders()
@@ -203,7 +203,7 @@ describe('beer tests', () => {
     expect(beerRes.status).to.equal(400)
   })
 
-  it('should fail to create a beer without name', async () => {
+  it('fail to create a beer without name', async () => {
     const styleRes = await ctx.request.post(`/api/v1/style`,
       { name: 'Kriek', parents: [] },
       ctx.adminAuthHeaders()
@@ -223,7 +223,7 @@ describe('beer tests', () => {
     expect(beerRes.status).to.equal(400)
   })
 
-  it('should update a beer', async () => {
+  it('update a beer', async () => {
     const style1Res = await ctx.request.post(`/api/v1/style`,
       { name: 'Kriek', parents: [] },
       ctx.adminAuthHeaders()
@@ -270,7 +270,7 @@ describe('beer tests', () => {
     expect(getRes.data.beer.styles).to.eql([withoutParents(style2Res.data.style)])
   })
 
-  it('should get empty beer list', async () => {
+  it('get empty beer list', async () => {
     const res = await ctx.request.get(`/api/v1/beer`,
       ctx.adminAuthHeaders()
     )

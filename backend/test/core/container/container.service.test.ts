@@ -16,7 +16,7 @@ const container: Container = {
 }
 
 describe('container service unit tests', () => {
-  it('should create container', async () => {
+  it('create container', async () => {
     const request: CreateContainerRequest = {
       type: container.type,
       size: container.size,
@@ -39,7 +39,7 @@ describe('container service unit tests', () => {
     })
   })
 
-  it('should update container', async () => {
+  it('update container', async () => {
     const request: UpdateContainerRequest = {
       type: container.type,
       size: container.size,
@@ -65,7 +65,7 @@ describe('container service unit tests', () => {
     })
   })
 
-  it('should find container', async () => {
+  it('find container', async () => {
     const finder = async (containerId: string) => {
       expect(containerId).to.equal(container.id)
       return container
@@ -78,7 +78,7 @@ describe('container service unit tests', () => {
     expect(result).to.eql(container)
   })
 
-  it('should not find container with unknown id', async () => {
+  it('fail to find container with unknown id', async () => {
     const id = 'd29b2ee6-5d2e-40bf-bb87-c02c00a6628f'
     const finder = async (searchId: string) => {
       expect(searchId).to.equal(id)
@@ -88,7 +88,7 @@ describe('container service unit tests', () => {
     expect(result).to.eql(undefined)
   })
 
-  it('should list containers', async () => {
+  it('list containers', async () => {
     const lister = async () => {
       return [container]
     }

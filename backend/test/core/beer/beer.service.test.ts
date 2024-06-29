@@ -59,7 +59,7 @@ const updateBeerRequest: UpdateBeerRequest = {
 }
 
 describe('beer service unit tests', () => {
-  it('should create beer', async () => {
+  it('create beer', async () => {
     let breweriesInserted = false
     let breweriesLocked = false
     let stylesInserted = false
@@ -143,7 +143,7 @@ describe('beer service unit tests', () => {
     }
   })
 
-  it('should update beer', async () => {
+  it('update beer', async () => {
     let breweriesDeleted = false
     let breweriesInserted = false
     let breweriesLocked = false
@@ -254,7 +254,7 @@ describe('beer service unit tests', () => {
     }
 })
 
-  it('should find beer', async () => {
+  it('find beer', async () => {
     const finder = async (beerId: string) => {
       expect(beerId).to.equal(beer.id)
       return beer
@@ -263,7 +263,7 @@ describe('beer service unit tests', () => {
     expect(result).to.eql(beer)
   })
 
-  it('should not find beer with unknown id', async () => {
+  it('not find beer with unknown id', async () => {
     const id = '7b27cdc4-53cf-493a-be92-07924a9f3399'
     const finder = async (searchId: string) => {
       expect(searchId).to.equal(id)
@@ -273,7 +273,7 @@ describe('beer service unit tests', () => {
     expect(result).to.eql(undefined)
   })
 
-  it('should list beers', async () => {
+  it('list beers', async () => {
     const pagination: Pagination = {
       size: 10,
       skip: 80
@@ -286,7 +286,7 @@ describe('beer service unit tests', () => {
     expect(result).to.eql([beer])
   })
 
-  it('should search beers', async () => {
+  it('search beers', async () => {
     const searchByName: SearchByName = {
       name: 'Sipe',
     }

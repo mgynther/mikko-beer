@@ -13,31 +13,31 @@ describe('search validation unit tests', () => {
   function fail(input: unknown) {
     expect(() => (validateSearchByName(input))).to.throw(Error)
   }
-  it('should pass validation', () => {
+  it('pass validation', () => {
     pass({ name: 'testing' }, { name: 'testing' })
   })
-  it('should fail with empty name', () => {
+  it('fail with empty name', () => {
     fail({ name: '' })
   })
-  it('should fail with missing name', () => {
+  it('fail with missing name', () => {
     fail({})
   })
-  it('should fail with additional property', () => {
+  it('fail with additional property', () => {
     fail({ name: 'testing', something: 123 })
   })
-  it('should fail with wrong type', () => {
+  it('fail with wrong type', () => {
     fail({ name: 123 })
   })
 })
 
 describe('search ilike unit tests', () => {
-  it('should add wildcards', () => {
+  it('add wildcards', () => {
     expect(toIlike({ name: 'test' })).to.equal('%test%')
   })
-  it('should add wildcards to exact match pattern with whitespace', () => {
+  it('add wildcards to exact match pattern with whitespace', () => {
     expect(toIlike({ name: '"test " ' })).to.equal('%"test " %')
   })
-  it('should match exactly', () => {
+  it('match exactly', () => {
     expect(toIlike({ name: '"test"' })).to.equal('test')
   })
 })

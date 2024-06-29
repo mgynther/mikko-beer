@@ -51,7 +51,7 @@ describe('storage tests', () => {
   const bestBefore = '2024-10-01T00:00:00.000Z'
   const bestBeforeLater = '2024-10-02T00:00:00.000Z'
 
-  it('should create a storage', async () => {
+  it('create a storage', async () => {
     const { beerRes, breweryRes, containerRes, styleRes } = await createDeps(ctx.adminAuthHeaders())
 
     const storageRes = await ctx.request.post(`/api/v1/storage`,
@@ -125,7 +125,7 @@ describe('storage tests', () => {
     expect(beerListRes.data.storages).to.eql(breweryListRes.data.storages)
   })
 
-  it('should fail to create a storage without beer', async () => {
+  it('fail to create a storage without beer', async () => {
     const { containerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const storageRes = await ctx.request.post(`/api/v1/storage`,
@@ -138,7 +138,7 @@ describe('storage tests', () => {
     expect(storageRes.status).to.equal(400)
   })
 
-  it('should fail to create a storage with invalid beer', async () => {
+  it('fail to create a storage with invalid beer', async () => {
     const { containerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const storageRes = await ctx.request.post(`/api/v1/storage`,
@@ -152,7 +152,7 @@ describe('storage tests', () => {
     expect(storageRes.status).to.equal(400)
   })
 
-  it('should fail to create a storage without container', async () => {
+  it('fail to create a storage without container', async () => {
     const { beerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const storageRes = await ctx.request.post(`/api/v1/storage`,
@@ -165,7 +165,7 @@ describe('storage tests', () => {
     expect(storageRes.status).to.equal(400)
   })
 
-  it('should fail to create a storage with invalid container', async () => {
+  it('fail to create a storage with invalid container', async () => {
     const { beerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const storageRes = await ctx.request.post(`/api/v1/storage`,
@@ -179,7 +179,7 @@ describe('storage tests', () => {
     expect(storageRes.status).to.equal(400)
   })
 
-  it('should update a storage', async () => {
+  it('update a storage', async () => {
     const { beerRes, containerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const requestData = {
@@ -212,7 +212,7 @@ describe('storage tests', () => {
     expect(getRes.data.storage.bestBefore).to.equal(bestBeforeLater)
   })
 
-  it('should get empty storage list', async () => {
+  it('get empty storage list', async () => {
     const res = await ctx.request.get(`/api/v1/storage`,
       ctx.adminAuthHeaders()
     )
@@ -289,7 +289,7 @@ describe('storage tests', () => {
     return { beerRes, otherBeerRes, collabBeerRes, breweryRes, otherBreweryRes, styleRes, otherStyleRes, storageRes, otherStorageRes, collabStorageRes }
   }
 
-  it('should list storages by brewery', async () => {
+  it('list storages by brewery', async () => {
     const { breweryRes, otherBreweryRes, storageRes, collabStorageRes } = await createListByDeps(ctx.adminAuthHeaders())
 
     const breweryListRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
@@ -314,7 +314,7 @@ describe('storage tests', () => {
     expect(ids).to.eql([collabStorage?.id, kriekStorage?.id])
   })
 
-  it('should list storages by style', async () => {
+  it('list storages by style', async () => {
     const { styleRes, otherStyleRes, storageRes, collabStorageRes } = await createListByDeps(ctx.adminAuthHeaders())
 
     const styleListRes = await ctx.request.get<{ storages: JoinedStorage[] }>(

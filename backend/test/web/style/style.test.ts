@@ -13,7 +13,7 @@ describe('style tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('should create a style', async () => {
+  it('create a style', async () => {
     const res = await ctx.request.post(`/api/v1/style`,
       { name: 'Wild', parents: [] },
       ctx.adminAuthHeaders()
@@ -35,7 +35,7 @@ describe('style tests', () => {
     expect(getRes.data.style.parents).to.eql([])
   })
 
-  it('should create a child style', async () => {
+  it('create a child style', async () => {
     const res = await ctx.request.post(`/api/v1/style`,
       { name: 'Pale Ale', parents: [] },
       ctx.adminAuthHeaders()
@@ -83,7 +83,7 @@ describe('style tests', () => {
     expect(getParentRes.data.style.parents).to.eql([])
   })
 
-  it('should create a child style with 2 parents', async () => {
+  it('create a child style with 2 parents', async () => {
     const parent1Res = await ctx.request.post(`/api/v1/style`,
       { name: 'Ale', parents: [] },
       ctx.adminAuthHeaders()
@@ -134,7 +134,7 @@ describe('style tests', () => {
     expect(listRes.data.styles.length).to.equal(3)
   })
 
-  it('should fail to create a child style with invalid parent', async () => {
+  it('fail to create a child style with invalid parent', async () => {
     const childRes = await ctx.request.post(`/api/v1/style`,
       { name: 'Gueuze', parents: ['d31020d9-c400-41f4-91bb-2c847dcf1fbe' ]},
       ctx.adminAuthHeaders()
@@ -143,7 +143,7 @@ describe('style tests', () => {
     expect(childRes.status).to.equal(400)
   })
 
-  it('should fail to create a style without name', async () => {
+  it('fail to create a style without name', async () => {
     const res = await ctx.request.post(`/api/v1/style`,
       { parents: [] },
       ctx.adminAuthHeaders()
@@ -152,7 +152,7 @@ describe('style tests', () => {
     expect(res.status).to.equal(400)
   })
 
-  it('should update a style', async () => {
+  it('update a style', async () => {
     const aleRes = await ctx.request.post(`/api/v1/style`,
       { name: 'Pale Ale', parents: [] },
       ctx.adminAuthHeaders()
@@ -194,7 +194,7 @@ describe('style tests', () => {
     }])
   })
 
-  it('should fail to update a child style with invalid parent', async () => {
+  it('fail to update a child style with invalid parent', async () => {
     const createRes = await ctx.request.post(`/api/v1/style`,
       { name: 'Gueuze', parents: []},
       ctx.adminAuthHeaders()
@@ -210,7 +210,7 @@ describe('style tests', () => {
 
   })
 
-  it('should get empty style list', async () => {
+  it('get empty style list', async () => {
     const res = await ctx.request.get(`/api/v1/style`,
       ctx.adminAuthHeaders()
     )
@@ -219,7 +219,7 @@ describe('style tests', () => {
     expect(res.data.styles.length).to.equal(0)
   })
 
-  it('should fail to create cyclic relationship', async () => {
+  it('fail to create cyclic relationship', async () => {
     const aleRes = await ctx.request.post(`/api/v1/style`,
       { name: 'Pale Ale', parents: [] },
       ctx.adminAuthHeaders()

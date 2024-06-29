@@ -12,7 +12,7 @@ describe('user tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('should fail to create a user without authorization', async () => {
+  it('fail to create a user without authorization', async () => {
     const params = {
       user: {
         role: 'admin',
@@ -29,7 +29,7 @@ describe('user tests', () => {
     expect(invalidAuthRes.status).to.equal(401)
   })
 
-  it('should create a user', async () => {
+  it('create a user', async () => {
     const res = await ctx.request.post(`/api/v1/user`, {
       user: {
         role: 'admin',
@@ -56,7 +56,7 @@ describe('user tests', () => {
     expect(getRes.data.user).to.eql(res.data.user)
   })
 
-  it('should get user by id', async () => {
+  it('get user by id', async () => {
     const { user, authToken } = await ctx.createUser()
 
     const res = await ctx.request.get<{ user: User }>(
@@ -68,7 +68,7 @@ describe('user tests', () => {
     expect(res.data).to.eql({ user })
   })
 
-  it('should sign in a user', async () => {
+  it('sign in a user', async () => {
     const { authToken, username, password } = await ctx.createUser()
 
     const res = await ctx.request.post(`/api/v1/user/sign-in`, {
@@ -88,7 +88,7 @@ describe('user tests', () => {
     expect(getRes.data.user).to.eql(res.data.user)
   })
 
-  it('should fail to sign in user with the wrong password', async () => {
+  it('fail to sign in user with the wrong password', async () => {
     const { username } = await ctx.createUser()
 
     const res = await ctx.request.post(`/api/v1/user/sign-in`, {
@@ -113,7 +113,7 @@ describe('user tests', () => {
     ).to.have.length(1)
   })
 
-  it('should sign out a user', async () => {
+  it('sign out a user', async () => {
     const { user, authToken, refreshToken } = await ctx.createUser()
 
     const res = await ctx.request.post(
@@ -124,7 +124,7 @@ describe('user tests', () => {
 
     expect(res.status).to.equal(200)
 
-    // The auth token should no longer be usable.
+    // The auth token is no longer be usable.
     const getRes = await ctx.request.get(
       `/api/v1/user/${user.id}`,
       ctx.createAuthHeaders(authToken)
@@ -134,7 +134,7 @@ describe('user tests', () => {
     expect(getRes.data.error.code).to.equal('UserOrRefreshTokenNotFound')
   })
 
-  it('should refresh auth token', async () => {
+  it('refresh auth token', async () => {
     const { user, authToken, refreshToken } = await ctx.createUser()
 
     const res = await ctx.request.post(
@@ -146,7 +146,7 @@ describe('user tests', () => {
     expect(res.data.authToken).not.to.equal(authToken)
     expect(res.data.refreshToken).not.to.equal(refreshToken)
 
-    // The old auth token should no longer be usable.
+    // The old auth token is no longer be usable.
     const failGetRes = await ctx.request.get(
       `/api/v1/user/${user.id}`,
       ctx.createAuthHeaders(authToken)
@@ -164,7 +164,7 @@ describe('user tests', () => {
     expect(getRes.data.user.username).to.equal(user.username)
   })
 
-  it('should not change tokens on invalid refresh request', async () => {
+  it('do not change tokens on invalid refresh request', async () => {
     const { user, authToken } = await ctx.createUser()
     const anotherUser = await ctx.createUser()
 
@@ -182,7 +182,7 @@ describe('user tests', () => {
     expect(getRes.data.user.username).to.equal(user.username)
   })
 
-  it('should change password', async () => {
+  it('change password', async () => {
     const { user, authToken, username, password } = await ctx.createUser()
 
     const getRes = await ctx.request.get<{ user: User }>(
@@ -230,7 +230,7 @@ describe('user tests', () => {
     expect(currentPwdSignInRes.status).to.equal(200)
   })
 
-  it('should delete user', async () => {
+  it('delete user', async () => {
     const { user, authToken } = await ctx.createUser()
 
     const res = await ctx.request.get<{ user: User }>(

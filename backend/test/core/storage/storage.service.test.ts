@@ -72,7 +72,7 @@ function notCalled() {
 }
 
 describe('storage service unit tests', () => {
-  it('should create storage', async () => {
+  it('create storage', async () => {
     const insertStorage = async (newStorage: CreateStorageRequest) => {
       const result = {
         id: storage.id,
@@ -117,7 +117,7 @@ describe('storage service unit tests', () => {
     expect(isContainerLocked).to.equal(true)
   })
 
-  it('should fail to create storage with invalid beer', async () => {
+  it('fail to create storage with invalid beer', async () => {
     const insertStorage = async () => {
       throw new Error('should not be called')
     }
@@ -138,7 +138,7 @@ describe('storage service unit tests', () => {
     }
   })
 
-  it('should fail to create storage with invalid container', async () => {
+  it('fail to create storage with invalid container', async () => {
     const insertStorage = async () => {
       throw new Error('should not be called')
     }
@@ -159,7 +159,7 @@ describe('storage service unit tests', () => {
     }
   })
 
-  it('should update storage', async () => {
+  it('update storage', async () => {
     let isBeerLocked = false
     let isContainerLocked = false
     const updateStorage = async (storage: Storage) => {
@@ -198,7 +198,7 @@ describe('storage service unit tests', () => {
     expect(isContainerLocked).to.equal(true)
   })
 
-  it('should fail to update storage with invalid beer', async () => {
+  it('fail to update storage with invalid beer', async () => {
     const updateStorage = async () => {
       throw new Error('should not be called')
     }
@@ -219,7 +219,7 @@ describe('storage service unit tests', () => {
     }
   })
 
-  it('should fail to update storage with invalid container', async () => {
+  it('fail to update storage with invalid container', async () => {
     const updateStorage = async () => {
       throw new Error('should not be called')
     }
@@ -240,7 +240,7 @@ describe('storage service unit tests', () => {
     }
   })
 
-  it('should find storage', async () => {
+  it('find storage', async () => {
     const finder = async (storageId: string) => {
       expect(storageId).to.equal(joinedStorage.id)
       return joinedStorage
@@ -249,7 +249,7 @@ describe('storage service unit tests', () => {
     expect(result).to.eql(joinedStorage)
   })
 
-  it('should not find storage with unknown id', async () => {
+  it('not find storage with unknown id', async () => {
     const id = 'd29b2ee6-5d2e-40bf-bb87-c02c00a6628f'
     const finder = async (searchId: string) => {
       expect(searchId).to.equal(id)
@@ -259,7 +259,7 @@ describe('storage service unit tests', () => {
     expect(result).to.eql(undefined)
   })
 
-  it('should list storages', async () => {
+  it('list storages', async () => {
     const pagination: Pagination = {
       size: 10,
       skip: 80
@@ -271,7 +271,7 @@ describe('storage service unit tests', () => {
     expect(result).to.eql([joinedStorage])
   })
 
-  it('should list storages by beer', async () => {
+  it('list storages by beer', async () => {
     const lister = async () => {
       return [joinedStorage]
     }
@@ -283,7 +283,7 @@ describe('storage service unit tests', () => {
     expect(result).to.eql([joinedStorage])
   })
 
-  it('should list storages by brewery', async () => {
+  it('list storages by brewery', async () => {
     const lister = async () => {
       return [joinedStorage]
     }
@@ -295,7 +295,7 @@ describe('storage service unit tests', () => {
     expect(result).to.eql([joinedStorage])
   })
 
-  it('should list storages by style', async () => {
+  it('list storages by style', async () => {
     const lister = async () => {
       return [joinedStorage]
     }

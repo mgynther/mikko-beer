@@ -13,7 +13,7 @@ describe('container tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('should create a container', async () => {
+  it('create a container', async () => {
     const res = await ctx.request.post(`/api/v1/container`,
       { type: 'Bottle', size: '0.33' },
       ctx.adminAuthHeaders()
@@ -34,7 +34,7 @@ describe('container tests', () => {
     expect(getRes.data.container.size).to.equal(res.data.container.size)
   })
 
-  it('should fail to create a container as viewer', async () => {
+  it('fail to create a container as viewer', async () => {
     const { authToken } = await ctx.createUser()
     const res = await ctx.request.post(`/api/v1/container`,
       { type: 'Bottle', size: '0.33' },
@@ -44,7 +44,7 @@ describe('container tests', () => {
     expect(res.status).to.equal(403)
   })
 
-  it('should fail to create a container without type', async () => {
+  it('fail to create a container without type', async () => {
     const res = await ctx.request.post(`/api/v1/container`,
       { size: '0.20' },
       ctx.adminAuthHeaders()
@@ -53,7 +53,7 @@ describe('container tests', () => {
     expect(res.status).to.equal(400)
   })
 
-  it('should update a container', async () => {
+  it('update a container', async () => {
     const createRes = await ctx.request.post(`/api/v1/container`,
       { type: 'Draught', size: '1.00' },
       ctx.adminAuthHeaders()
@@ -81,7 +81,7 @@ describe('container tests', () => {
     expect(getRes.data.container.size).to.equal(updateRes.data.container.size)
   })
 
-  it('should get empty container list', async () => {
+  it('get empty container list', async () => {
     const res = await ctx.request.get(`/api/v1/container`,
       ctx.adminAuthHeaders()
     )

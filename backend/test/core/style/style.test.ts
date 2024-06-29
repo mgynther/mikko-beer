@@ -27,11 +27,11 @@ describe('style unit tests', () => {
     }
   ]
 
-  it('should not find cyclic when there is no cycle', () => {
+  it('fail to find cyclic when there is no cycle', () => {
     expect(() => checkCyclicRelationships(relationships, neipa.id, [ipa.id])).to.not.throw()
   })
 
-  it('should find cyclic when there is a cycle', () => {
+  it('find cyclic when there is a cycle', () => {
     expect(() => checkCyclicRelationships(relationships, ale.id, [neipa.id])).to.throw()
   })
 })

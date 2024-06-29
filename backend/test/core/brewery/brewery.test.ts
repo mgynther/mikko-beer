@@ -24,7 +24,7 @@ describe('brewery unit tests', () => {
   ].forEach(validator => {
     const { func, title } = validator
 
-    it(title('should pass validation'), () => {
+    it(title('pass validation'), () => {
       expect(func(validRequest())).to.equal(true)
     })
 
@@ -32,7 +32,7 @@ describe('brewery unit tests', () => {
       expect(func(brewery)).to.equal(false)
     }
 
-    it(title('should fail with empty name'), () => {
+    it(title('fail with empty name'), () => {
       const brewery = {
         ...validRequest(),
         name: ''
@@ -40,11 +40,11 @@ describe('brewery unit tests', () => {
       fail(brewery)
     })
 
-    it(title('should fail without name'), () => {
+    it(title('fail without name'), () => {
       fail({})
     })
 
-    it(title('should fail with invalid name'), () => {
+    it(title('fail with invalid name'), () => {
       const brewery = {
         ...validRequest(),
         name: [ 'f', 'a', 'i', 'l' ]
@@ -52,7 +52,7 @@ describe('brewery unit tests', () => {
       fail(brewery)
     })
 
-    it(title('should fail with additional property'), () => {
+    it(title('fail with additional property'), () => {
       const brewery = {
         ...validRequest(),
         additional: 'will fail'

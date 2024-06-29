@@ -26,7 +26,7 @@ describe('storage unit tests', () => {
   ].forEach(validator => {
     const { func, title } = validator
 
-    it(title('should pass validation'), () => {
+    it(title('pass validation'), () => {
       expect(func(validRequest())).to.equal(true)
     })
 
@@ -34,7 +34,7 @@ describe('storage unit tests', () => {
       expect(func(storage)).to.equal(false)
     }
 
-    it(title('should fail with empty beer'), () => {
+    it(title('fail with empty beer'), () => {
       const storage = {
         ...validRequest(),
         beer: ''
@@ -42,7 +42,7 @@ describe('storage unit tests', () => {
       fail(storage)
     })
 
-    it(title('should fail with invalid beer'), () => {
+    it(title('fail with invalid beer'), () => {
       const storage = {
         ...validRequest(),
         beer: {}
@@ -50,12 +50,12 @@ describe('storage unit tests', () => {
       fail(storage)
     })
 
-    it(title('should fail without beer'), () => {
+    it(title('fail without beer'), () => {
       const { bestBefore, container } = validRequest()
       fail({ bestBefore, container })
     })
 
-    it(title('should fail with empty best before'), () => {
+    it(title('fail with empty best before'), () => {
       const storage = {
         ...validRequest(),
         bestBefore: ''
@@ -63,7 +63,7 @@ describe('storage unit tests', () => {
       fail(storage)
     })
 
-    it(title('should fail with invalid best before'), () => {
+    it(title('fail with invalid best before'), () => {
       const storage = {
         ...validRequest(),
         bestBefore: 123
@@ -71,12 +71,12 @@ describe('storage unit tests', () => {
       fail(storage)
     })
 
-    it(title('should fail without best before'), () => {
+    it(title('fail without best before'), () => {
       const { beer, container } = validRequest()
       fail({ beer, container })
     })
 
-    it(title('should fail with empty container'), () => {
+    it(title('fail with empty container'), () => {
       const storage = {
         ...validRequest(),
         container: ''
@@ -84,7 +84,7 @@ describe('storage unit tests', () => {
       fail(storage)
     })
 
-    it(title('should fail with invalid container'), () => {
+    it(title('fail with invalid container'), () => {
       const storage = {
         ...validRequest(),
         container: [ null ]
@@ -92,12 +92,12 @@ describe('storage unit tests', () => {
       fail(storage)
     })
 
-    it(title('should fail without container'), () => {
+    it(title('fail without container'), () => {
       const { beer, bestBefore } = validRequest()
       fail({ beer, bestBefore })
     })
 
-    it(title('should fail with additional property'), () => {
+    it(title('fail with additional property'), () => {
       const storage = {
         ...validRequest(),
         additional: 'will fail'

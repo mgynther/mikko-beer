@@ -83,7 +83,7 @@ describe('style service unit tests', () => {
     expect(parents).to.eql([parentStyle.id])
   }
 
-  it('should create style without parents', async () => {
+  it('create style without parents', async () => {
     const request: CreateStyleRequest = {
       name: style.name,
       parents: []
@@ -109,7 +109,7 @@ describe('style service unit tests', () => {
     })
   })
 
-  it('should create style with parent', async () => {
+  it('create style with parent', async () => {
     const createIf: styleService.CreateStyleIf = {
       create,
       lockStyles: lockParent,
@@ -128,7 +128,7 @@ describe('style service unit tests', () => {
     })
   })
 
-  it('should fail to create style with invalid parent', async () => {
+  it('fail to create style with invalid parent', async () => {
     const createIf: styleService.CreateStyleIf = {
       create,
       lockStyles: async () => {
@@ -149,7 +149,7 @@ describe('style service unit tests', () => {
     }
   })
 
-  it('should fail to create with existing cyclic relationship', async () => {
+  it('fail to create with existing cyclic relationship', async () => {
     const request: CreateStyleRequest = {
       name: style.name,
       parents: [parentStyle.id]
@@ -184,7 +184,7 @@ describe('style service unit tests', () => {
     return updateStyle
   }
 
-  it('should update without parents', async () => {
+  it('update without parents', async () => {
     const request: UpdateStyleRequest = {
       name: style.name,
       parents: []
@@ -209,7 +209,7 @@ describe('style service unit tests', () => {
     })
   })
 
-  it('should update with parent', async () => {
+  it('update with parent', async () => {
     const updateIf: styleService.UpdateStyleIf = {
       update,
       lockStyles: lockParent,
@@ -253,7 +253,7 @@ describe('style service unit tests', () => {
     }
   })
 
-  it('should fail to update with existing cyclic relationship', async () => {
+  it('fail to update with existing cyclic relationship', async () => {
     const request: UpdateStyleRequest = {
       name: style.name,
       parents: [parentStyle.id]
@@ -280,7 +280,7 @@ describe('style service unit tests', () => {
     }
   })
 
-  it('should find style', async () => {
+  it('find style', async () => {
     const finder = async (styleId: string) => {
       expect(styleId).to.equal(style.id)
       return styleWithParentsAndChildren
@@ -289,7 +289,7 @@ describe('style service unit tests', () => {
     expect(result).to.eql(styleWithParentsAndChildren)
   })
 
-  it('should not find style with unknown id', async () => {
+  it('fail to find style with unknown id', async () => {
     const id = '76cac82a-58a6-4978-8a00-1de381df032f'
     const finder = async (searchId: string) => {
       expect(searchId).to.equal(id)
@@ -299,7 +299,7 @@ describe('style service unit tests', () => {
     expect(result).to.eql(undefined)
   })
 
-  it('should list styles', async () => {
+  it('list styles', async () => {
     const lister = async () => {
       return [styleWithParentIds]
     }

@@ -25,7 +25,7 @@ describe('container unit tests', () => {
   ].forEach(validator => {
     const { func, title } = validator
 
-    it(title('should pass validation'), () => {
+    it(title('pass validation'), () => {
       expect(func(validRequest())).to.equal(true)
     })
 
@@ -33,7 +33,7 @@ describe('container unit tests', () => {
       expect(func(container)).to.equal(false)
     }
 
-    it(title('should fail with empty type'), () => {
+    it(title('fail with empty type'), () => {
       const container = {
         ...validRequest(),
         type: ''
@@ -41,7 +41,7 @@ describe('container unit tests', () => {
       fail(container)
     })
 
-    it(title('should fail with empty size'), () => {
+    it(title('fail with empty size'), () => {
       const container = {
         ...validRequest(),
         size: ''
@@ -49,17 +49,17 @@ describe('container unit tests', () => {
       fail(container)
     })
 
-    it(title('should fail without type'), () => {
+    it(title('fail without type'), () => {
       const { size } = validRequest()
       fail({ size })
     })
 
-    it(title('should fail without size'), () => {
+    it(title('fail without size'), () => {
       const { type } = validRequest()
       fail({ type })
     })
 
-    it(title('should fail with invalid type'), () => {
+    it(title('fail with invalid type'), () => {
       const container = {
         ...validRequest(),
         type: 123
@@ -67,7 +67,7 @@ describe('container unit tests', () => {
       fail(container)
     })
 
-    it(title('should fail with invalid size'), () => {
+    it(title('fail with invalid size'), () => {
       const container = {
         ...validRequest(),
         size: {}
@@ -75,7 +75,7 @@ describe('container unit tests', () => {
       fail(container)
     })
 
-    it(title('should fail with vague size'), () => {
+    it(title('fail with vague size'), () => {
       const container = {
         ...validRequest(),
         size: '1.0'
@@ -83,7 +83,7 @@ describe('container unit tests', () => {
       fail(container)
     })
 
-    it(title('should fail with specific size'), () => {
+    it(title('fail with specific size'), () => {
       const container = {
         ...validRequest(),
         size: '1.001'
@@ -91,7 +91,7 @@ describe('container unit tests', () => {
       fail(container)
     })
 
-    it(title('should fail with additional property'), () => {
+    it(title('fail with additional property'), () => {
       const container = {
         ...validRequest(),
         additional: 'will fail'

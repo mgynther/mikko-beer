@@ -172,7 +172,7 @@ describe('stats tests', () => {
     return new Error('must not happen')
   }
 
-  it('should get overall stats', async () => {
+  it('get overall stats', async () => {
     const {
       beers,
       breweries,
@@ -207,7 +207,7 @@ describe('stats tests', () => {
     expect(styles.length).to.equal(2)
   })
 
-  it('should get overall stats by brewery', async () => {
+  it('get overall stats by brewery', async () => {
     const {
       beers,
       breweries,
@@ -290,7 +290,7 @@ describe('stats tests', () => {
     )).eql(expectedAnnual)
   }
 
-  it('should get annual stats', async () => {
+  it('get annual stats', async () => {
     const { reviews } = await createDeps(ctx.adminAuthHeaders())
 
     const statsRes = await ctx.request.get<{ annual: AnnualStats }>(
@@ -320,7 +320,7 @@ describe('stats tests', () => {
     ])
   })
 
-  it('should get annual stats by brewery', async () => {
+  it('get annual stats by brewery', async () => {
     const {
       beers,
       breweries,
@@ -412,7 +412,7 @@ describe('stats tests', () => {
     }).map(review => review.rating) as number[]
   }
 
-  it('should get brewery stats', async () => {
+  it('get brewery stats', async () => {
     const {
       beers,
       breweries,
@@ -446,7 +446,7 @@ describe('stats tests', () => {
     )
   })
 
-  it('should get brewery stats by brewery', async () => {
+  it('get brewery stats by brewery', async () => {
     const {
       beers,
       breweries,
@@ -475,7 +475,7 @@ describe('stats tests', () => {
     )
   })
 
-  it('should get brewery stats by brewery and min review count', async () => {
+  it('get brewery stats by brewery and min review count', async () => {
     const {
       beers,
       breweries,
@@ -528,7 +528,7 @@ describe('stats tests', () => {
     expect(actualStats).to.eql(expectedStats)
   }
 
-  it('should get rating stats', async () => {
+  it('get rating stats', async () => {
     const { reviews } = await createDeps(ctx.adminAuthHeaders())
 
     const statsRes = await ctx.request.get<{ rating: RatingStats }>(
@@ -555,7 +555,7 @@ describe('stats tests', () => {
     checkRatingStats(stats, statsRes.data.rating, expectedStats)
   })
 
-  it('should get rating stats by brewery', async () => {
+  it('get rating stats by brewery', async () => {
     const {
       beers,
       breweries,
@@ -644,7 +644,7 @@ describe('stats tests', () => {
     }).map(review => review.rating) as number[]
   }
 
-  it('should get style stats', async () => {
+  it('get style stats', async () => {
     const {
       beers,
       reviews,
@@ -679,7 +679,7 @@ describe('stats tests', () => {
     )
   })
 
-  it('should get style stats by brewery', async () => {
+  it('get style stats by brewery', async () => {
     const {
       beers,
       breweries,
@@ -726,7 +726,7 @@ describe('stats tests', () => {
     )
   })
 
-  it('should get style stats by brewery and min review count', async () => {
+  it('get style stats by brewery and min review count', async () => {
     const {
       beers,
       breweries,
@@ -760,7 +760,7 @@ describe('stats tests', () => {
     expect(kriekAverage).to.equal('6.67')
   })
 
-  it('should get style stats by style', async () => {
+  it('get style stats by style', async () => {
     const { styles } = await createDeps(ctx.adminAuthHeaders())
 
     const styleId = styles[0].data.style.id

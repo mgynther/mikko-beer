@@ -118,7 +118,7 @@ async function notCalled(): Promise<undefined> {
 }
 
 describe('review service unit tests', () => {
-  it('should create review', async () => {
+  it('create review', async () => {
     const createIf: CreateIf = {
       createReview,
       deleteFromStorage: notCalled,
@@ -179,7 +179,7 @@ describe('review service unit tests', () => {
     }
   })
 
-  it('should create review from storage', async () => {
+  it('create review from storage', async () => {
     let deletedFromStorage = false
     const create = async (newReview: NewReview) => {
       expect(deletedFromStorage).to.equal(false)
@@ -231,7 +231,7 @@ describe('review service unit tests', () => {
     }
   })
 
-  it('should update review', async () => {
+  it('update review', async () => {
     const updateIf: UpdateIf = {
       updateReview,
       lockBeer,
@@ -288,7 +288,7 @@ describe('review service unit tests', () => {
     }
   })
 
-  it('should find review', async () => {
+  it('find review', async () => {
     const finder = async (reviewId: string) => {
       expect(reviewId).to.equal(review.id)
       return review
@@ -297,7 +297,7 @@ describe('review service unit tests', () => {
     expect(result).to.eql(review)
   })
 
-  it('should not find review with unknown id', async () => {
+  it('not find review with unknown id', async () => {
     const id = '544369e2-f10b-4799-9b67-527731a78011'
     const finder = async (searchId: string) => {
       expect(searchId).to.equal(id)
@@ -307,7 +307,7 @@ describe('review service unit tests', () => {
     expect(result).to.eql(undefined)
   })
 
-  it('should list reviews', async () => {
+  it('list reviews', async () => {
     const lister = async (listPagination: Pagination, listOrder: ReviewListOrder) => {
       expect(listPagination).to.eql(pagination)
       expect(listOrder).to.eql(order)
@@ -322,7 +322,7 @@ describe('review service unit tests', () => {
     expect(result).to.eql([joinedReview])
   })
 
-  it('should list reviews by beer', async () => {
+  it('list reviews by beer', async () => {
     const beerId = 'ff16b2f6-7862-4e55-9ecb-b67d617e8f9c'
     const lister = async (listBeerId: string, listOrder: ReviewListOrder) => {
       expect(listBeerId).to.eql(beerId)
@@ -338,7 +338,7 @@ describe('review service unit tests', () => {
     expect(result).to.eql([joinedReview])
   })
 
-  it('should list reviews by brewery', async () => {
+  it('list reviews by brewery', async () => {
     const breweryId = 'f7471dfd-9af9-4a9b-b39d-47f4e7199800'
     const lister = async (listBreweryId: string, listOrder: ReviewListOrder) => {
       expect(listBreweryId).to.eql(breweryId)
@@ -354,7 +354,7 @@ describe('review service unit tests', () => {
     expect(result).to.eql([joinedReview])
   })
 
-  it('should list reviews by style', async () => {
+  it('list reviews by style', async () => {
     const styleId = 'b265c454-6842-415b-840c-bfdb579aa658'
     const lister = async (listStyleId: string, listOrder: ReviewListOrder) => {
       expect(listStyleId).to.eql(styleId)
