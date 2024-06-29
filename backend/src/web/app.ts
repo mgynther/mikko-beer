@@ -33,9 +33,7 @@ import { Level, log } from '../core/log'
 import { type AuthTokenConfig } from '../core/authentication/auth-token'
 
 export interface StartResult {
-  authToken: string,
-  initialAdminUsername: string | undefined,
-  initialAdminPassword: string | undefined
+  authToken: string
 }
 
 export class App {
@@ -82,15 +80,14 @@ export class App {
     return await new Promise<StartResult>((resolve) => {
       const port = this.#config.port
       const db = this.#db
+      const log = this.#log
       const isAdminPasswordNeeded = this.#config.generateInitialAdminPassword
       const startResult: StartResult = {
-        authToken: '',
-        initialAdminUsername: undefined,
-        initialAdminPassword: undefined
+        authToken: ''
       }
       function logWithAdminPassword (...args: any[]): void {
         if (isAdminPasswordNeeded) {
-          console.log(...args)
+          log(Level.INFO, ...args)
         }
       }
       userRepository.listUsers(db).then((users: User[]) => {
@@ -118,8 +115,6 @@ export class App {
               }, Role.admin, authTokenConfig, this.#log)
             startResult.authToken = user.authToken.authToken
             if (isAdminPasswordNeeded) {
-              startResult.initialAdminUsername = adminUsername
-              startResult.initialAdminPassword = adminPassword
               await addPasswordSignInMethod(
                 trx,
                 user.user.id,
@@ -148,10 +143,10 @@ export class App {
           logWithAdminPassword(`Server started in port ${port}`)
           resolve(startResult)
         }, (error) => {
-          console.warn('Error starting', error)
+          log(Level.ERROR, 'Error starting', error)
         })
       }, (error) => {
-        console.warn('Error starting', error)
+        log(Level.ERROR, 'Error starting', error)
       })
     })
   }

@@ -12,7 +12,7 @@ import { App } from '../../src/web/app'
 import { Database } from '../../src/data/database'
 import { User } from '../../src/core/user/user'
 
-import { dummyLog as log } from '../core/dummy-log'
+import { Level, type log } from '../../src/core/log'
 
 export class TestContext {
   #adminAuthToken: string = ''
@@ -36,14 +36,21 @@ export class TestContext {
   }
 
   beforeEach = async (): Promise<void> => {
+    const logMessages: string[] = []
+    const log: log = (_: Level, ...args: unknown[]) => {
+      logMessages.push(
+        args.map((a: unknown) => (a as any).toString()).join()
+      )
+    }
     this.#app = new App(testConfig, log)
 
     await beforeTest(this.db)
 
     const result = await this.#app.start()
-    if (result.initialAdminUsername !== undefined ||
-        result.initialAdminPassword !== undefined) {
-      throw new Error('initial admin was created although not supposed to')
+    if (logMessages.some((m: string) => m.toLowerCase().includes('password'))) {
+      throw new Error(
+        'initial admin password was created although not supposed to'
+      )
     }
 
     this.#adminAuthToken = result.authToken

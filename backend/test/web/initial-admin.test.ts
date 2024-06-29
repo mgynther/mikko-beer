@@ -9,15 +9,20 @@ import {
   beforeTest,
   beforeTests
 } from '../data/test-helpers'
-import { App, type StartResult } from '../../src/web/app'
+import { App } from '../../src/web/app'
 import { Database } from '../../src/data/database'
 import { type User } from '../../src/core/user/user'
 
-import { dummyLog as log } from '../core/dummy-log'
+import { Level, type log } from '../../src/core/log'
+
+interface LogEntry {
+  level: Level
+  message: string
+}
 
 export class TestContext {
   #app?: App
-  #appStartResult?: StartResult
+  #logMessages: LogEntry[] = []
 
   request = axios.create({
     baseURL: `http://localhost:${testConfig.port}`,
@@ -41,10 +46,16 @@ export class TestContext {
       ...testConfig,
       generateInitialAdminPassword: true
     }
+    const log: log = (level: Level, ...args: unknown[]) => {
+      this.#logMessages.push({
+        level,
+        message: args.map((a: unknown) => (a as any).toString()).join()
+      })
+    }
     this.#app = new App(config, log)
 
     await beforeTest(this.db)
-    this.#appStartResult = await this.#app.start()
+    await this.#app.start()
   }
 
   afterEach = async (): Promise<void> => {
@@ -53,18 +64,8 @@ export class TestContext {
     await afterTest()
   }
 
-  adminUsername = () => {
-    if (this.#appStartResult === undefined) {
-      throw new Error('not started properly')
-    }
-    return this.#appStartResult.initialAdminUsername
-  }
-
-  adminPassword = () => {
-    if (this.#appStartResult === undefined) {
-      throw new Error('not started properly')
-    }
-    return this.#appStartResult.initialAdminPassword
+  logMessages = () => {
+    return this.#logMessages
   }
 }
 
@@ -78,9 +79,17 @@ describe('initial admin', () => {
   afterEach(ctx.afterEach)
 
   it('initial admin sign in works', async () => {
+    const messages = ctx.logMessages()
+    expect(messages.length).to.be.greaterThan(1)
+    const parts = messages[1].message.split('"')
+    expect(parts.length).to.equal(5)
+    expect(parts[0]).to.contain('Created initial user')
+    expect(parts[2]).to.contain('with password')
+    const adminUsername = parts[1]
+    const adminPassword = parts[3]
     const res = await ctx.request.post(`/api/v1/user/sign-in`, {
-      username: ctx.adminUsername(),
-      password: ctx.adminPassword(),
+      username: adminUsername,
+      password: adminPassword,
     })
 
     expect(res.status).to.equal(200)
