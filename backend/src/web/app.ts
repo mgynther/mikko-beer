@@ -29,7 +29,7 @@ import {
   addPasswordSignInMethod
 } from '../web/user/sign-in-method/sign-in-method.controller'
 import { ControllerError } from '../core/errors'
-import { log } from '../core/log'
+import { Level, log } from '../core/log'
 import { type AuthTokenConfig } from '../core/authentication/auth-token'
 
 export interface StartResult {
@@ -180,7 +180,7 @@ export class App {
       if (error instanceof ControllerError) {
         respondError(ctx, error)
       } else {
-        respondError(ctx, createUnknownError(error))
+        respondError(ctx, createUnknownError(error, ctx.log))
       }
     }
   }
@@ -205,7 +205,17 @@ function isObject (value: unknown): value is Record<string, any> {
   return typeof value === 'object' && value !== null
 }
 
-function createUnknownError (error: unknown): ControllerError {
+function createUnknownError (error: unknown, log: log): ControllerError {
+  if (error instanceof Error) {
+    log(
+      Level.ERROR,
+      'unknown error, name:',
+      `${error.name}, message:`,
+      error.message
+    )
+  } else {
+    log(Level.ERROR, 'unknown error:', error)
+  }
   return new ControllerError(
     500,
     'UnknownError',
