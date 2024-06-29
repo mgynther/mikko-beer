@@ -14,6 +14,7 @@ import {
 import * as styleService from '../../../src/core/style/style.service'
 
 import { dummyLog as log } from '../dummy-log'
+import { ParentStyleNotFoundError } from '../../../src/core/style/style.service'
 
 const style: Style = {
   id: '71dcc323-7e59-4122-9afa-d4ffc484dee6',
@@ -34,6 +35,16 @@ const styleWithParentsAndChildren: StyleWithParentsAndChildren = {
   ...style,
   children: [],
   parents: [parentStyle]
+}
+
+const createWithParentRequest: CreateStyleRequest = {
+  name: style.name,
+  parents: [parentStyle.id]
+}
+
+const updateWithParentRequest: UpdateStyleRequest = {
+  name: style.name,
+  parents: [parentStyle.id]
 }
 
 describe('style service unit tests', () => {
@@ -99,22 +110,43 @@ describe('style service unit tests', () => {
   })
 
   it('should create style with parent', async () => {
-    const request: CreateStyleRequest = {
-      name: style.name,
-      parents: [parentStyle.id]
-    }
     const createIf: styleService.CreateStyleIf = {
       create,
       lockStyles: lockParent,
       insertParents: insertRelationship,
       listAllRelationships: noRelationships
     }
-    const result = await styleService.createStyle(createIf, request, log)
+    const result = await styleService.createStyle(
+      createIf,
+      createWithParentRequest,
+      log
+    )
     expect(result).to.eql({
       id: style.id,
       name: style.name,
       parents: [parentStyle.id],
     })
+  })
+
+  it('should fail to create style with invalid parent', async () => {
+    const createIf: styleService.CreateStyleIf = {
+      create,
+      lockStyles: async () => {
+        return []
+      },
+      insertParents: insertRelationship,
+      listAllRelationships: noRelationships
+    }
+    try {
+      await styleService.createStyle(
+        createIf,
+        createWithParentRequest,
+        log
+      )
+      notCalled()
+    } catch (e) {
+      expect(e instanceof ParentStyleNotFoundError).to.equal(true)
+    }
   })
 
   it('should fail to create with existing cyclic relationship', async () => {
@@ -178,10 +210,6 @@ describe('style service unit tests', () => {
   })
 
   it('should update with parent', async () => {
-    const request: UpdateStyleRequest = {
-      name: style.name,
-      parents: [parentStyle.id]
-    }
     const updateIf: styleService.UpdateStyleIf = {
       update,
       lockStyles: lockParent,
@@ -192,7 +220,7 @@ describe('style service unit tests', () => {
     const result = await styleService.updateStyle(
       updateIf,
       style.id,
-      request,
+      updateWithParentRequest,
       log
     )
     expect(result).to.eql({
@@ -200,6 +228,29 @@ describe('style service unit tests', () => {
       name: style.name,
       parents: [parentStyle.id],
     })
+  })
+
+  it('fail to update with invalid parent', async () => {
+    const updateIf: styleService.UpdateStyleIf = {
+      update,
+      lockStyles: async () => {
+        return []
+      },
+      insertParents: insertRelationship,
+      deleteStyleChildRelationships,
+      listAllRelationships: noRelationships
+    }
+    try {
+      await styleService.updateStyle(
+        updateIf,
+        style.id,
+        updateWithParentRequest,
+        log
+      )
+      notCalled()
+    } catch (e) {
+      expect(e instanceof ParentStyleNotFoundError).to.equal(true)
+    }
   })
 
   it('should fail to update with existing cyclic relationship', async () => {
