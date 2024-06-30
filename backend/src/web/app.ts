@@ -173,6 +173,7 @@ export class App {
       await next()
     } catch (error) {
       if (error instanceof ControllerError) {
+        this.#log(Level.INFO, 'controller error', error.status, error.code)
         respondError(ctx, error)
       } else {
         respondError(ctx, createUnknownError(error, ctx.log))
