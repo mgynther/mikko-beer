@@ -2,6 +2,8 @@ import * as path from 'path'
 import { promises as fs } from 'fs'
 import { type Database } from './database'
 import { config } from './config'
+import { consoleLog as log } from '../core/console-log'
+import { Level } from '../core/log'
 import {
   Kysely,
   Migrator,
@@ -30,15 +32,18 @@ async function migrateToLatest (): Promise<void> {
 
   results?.forEach((it) => {
     if (it.status === 'Success') {
-      console.log(`migration "${it.migrationName}" was executed successfully`)
+      log(
+        Level.INFO,
+        `migration "${it.migrationName}" was executed successfully`
+      )
     } else if (it.status === 'Error') {
-      console.error(`failed to execute migration "${it.migrationName}"`)
+      log(Level.ERROR, `failed to execute migration "${it.migrationName}"`)
     }
   })
 
   if (error !== undefined) {
-    console.error('failed to migrate')
-    console.error(error)
+    log(Level.ERROR, 'failed to migrate')
+    log(Level.ERROR, error)
     process.exit(1)
   }
 
@@ -47,8 +52,8 @@ async function migrateToLatest (): Promise<void> {
 
 try {
   migrateToLatest().then(() => {
-    console.log('migration done')
-  }, () => { console.warn('migration promise rejected') })
+    log(Level.INFO, 'migration done')
+  }, () => { log(Level.WARN, 'migration promise rejected') })
 } catch (e) {
-  console.warn('error running migration', e)
+  log(Level.WARN, 'error running migration', e)
 }
