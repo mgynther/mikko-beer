@@ -1,5 +1,10 @@
 import { ajv } from '../ajv'
 
+import {
+  invalidBreweryError,
+  invalidBreweryIdError
+} from '../errors'
+
 export interface Brewery {
   id: string
   name: string
@@ -30,10 +35,36 @@ const doValidateBreweryRequest =
     additionalProperties: false
   })
 
-export function validateCreateBreweryRequest (body: unknown): boolean {
+function isCreateBreweryRequestValid (body: unknown): boolean {
   return doValidateBreweryRequest(body)
 }
 
-export function validateUpdateBreweryRequest (body: unknown): boolean {
+function isUpdateBreweryRequestValid (body: unknown): boolean {
   return doValidateBreweryRequest(body)
+}
+
+export function validateCreateBreweryRequest (
+  body: unknown
+): CreateBreweryRequest {
+  if (!isCreateBreweryRequestValid(body)) {
+    throw invalidBreweryError
+  }
+
+  const result = body as CreateBreweryRequest
+  return result
+}
+
+export function validateUpdateBreweryRequest (
+  body: unknown,
+  breweryId: string
+): UpdateBreweryRequest {
+  if (!isUpdateBreweryRequestValid(body)) {
+    throw invalidBreweryError
+  }
+  if (typeof breweryId !== 'string' || breweryId.length === 0) {
+    throw invalidBreweryIdError
+  }
+
+  const result = body as UpdateBreweryRequest
+  return result
 }

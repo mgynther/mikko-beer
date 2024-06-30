@@ -7,16 +7,10 @@ import * as authHelper from '../authentication/authentication-helper'
 import { type Router } from '../router'
 import {
   type Brewery,
-  type CreateBreweryRequest,
   type NewBrewery,
-  type UpdateBreweryRequest,
   validateCreateBreweryRequest,
   validateUpdateBreweryRequest
 } from '../../core/brewery/brewery'
-import {
-  invalidBreweryError,
-  invalidBreweryIdError
-} from '../../core/errors'
 import { validatePagination } from '../pagination'
 import { validateSearchByName } from '../search'
 
@@ -26,10 +20,12 @@ export function breweryController (router: Router): void {
     async (ctx) => {
       const { body } = ctx.request
 
-      const createBreweryRequest = validateCreateRequest(body)
+      const createBreweryRequest = validateCreateBreweryRequest(body)
       const result = await ctx.db.executeTransaction(async (trx) => {
         return await breweryService.createBrewery(
-          (brewery: NewBrewery) => breweryRepository.insertBrewery(trx, brewery),
+          (
+            brewery: NewBrewery
+          ) => breweryRepository.insertBrewery(trx, brewery),
           createBreweryRequest, ctx.log)
       })
 
@@ -46,7 +42,7 @@ export function breweryController (router: Router): void {
       const { body } = ctx.request
       const { breweryId } = ctx.params
 
-      const updateBreweryRequest = validateUpdateRequest(body, breweryId)
+      const updateBreweryRequest = validateUpdateBreweryRequest(body, breweryId)
       const result = await ctx.db.executeTransaction(async (trx) => {
         return await breweryService.updateBrewery(
           (brewery: Brewery) =>
@@ -101,28 +97,4 @@ export function breweryController (router: Router): void {
       ctx.body = { breweries }
     }
   )
-}
-
-function validateCreateRequest (body: unknown): CreateBreweryRequest {
-  if (!validateCreateBreweryRequest(body)) {
-    throw invalidBreweryError
-  }
-
-  const result = body as CreateBreweryRequest
-  return result
-}
-
-function validateUpdateRequest (
-  body: unknown,
-  breweryId: string
-): UpdateBreweryRequest {
-  if (!validateUpdateBreweryRequest(body)) {
-    throw invalidBreweryError
-  }
-  if (typeof breweryId !== 'string' || breweryId.length === 0) {
-    throw invalidBreweryIdError
-  }
-
-  const result = body as UpdateBreweryRequest
-  return result
 }
