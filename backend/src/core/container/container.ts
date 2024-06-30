@@ -1,5 +1,10 @@
 import { ajv } from '../ajv'
 
+import {
+  invalidContainerError,
+  invalidContainerIdError
+} from '../errors'
+
 export interface Container {
   id: string
   type: string
@@ -38,10 +43,39 @@ const doValidateContainerRequest =
     additionalProperties: false
   })
 
-export function validateCreateContainerRequest (body: unknown): boolean {
+function isCreateContainerRequestValid (body: unknown): boolean {
   return doValidateContainerRequest(body)
 }
 
-export function validateUpdateContainerRequest (body: unknown): boolean {
+function isUpdateContainerRequestValid (body: unknown): boolean {
   return doValidateContainerRequest(body)
+}
+
+export function validateCreateContainerRequest (
+  body: unknown
+): CreateContainerRequest {
+  if (!isCreateContainerRequestValid(body)) {
+    throw invalidContainerError
+  }
+
+  const result = body as CreateContainerRequest
+  return result
+}
+
+export function validateUpdateContainerRequest (
+  body: unknown,
+  containerId: string
+): UpdateContainerRequest {
+  if (!isUpdateContainerRequestValid(body)) {
+    throw invalidContainerError
+  }
+  if (containerId === undefined ||
+      containerId === null ||
+      containerId.length === 0
+  ) {
+    throw invalidContainerIdError
+  }
+
+  const result = body as UpdateContainerRequest
+  return result
 }

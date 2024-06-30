@@ -4,6 +4,7 @@ import {
   validateCreateContainerRequest,
   validateUpdateContainerRequest,
 } from '../../../src/core/container/container'
+import { invalidContainerError, invalidContainerIdError } from '../../../src/core/errors'
 
 function validRequest (): Record<string, unknown> {
   return {
@@ -19,18 +20,23 @@ describe('container unit tests', () => {
       title: (base: string) => `${base}: create`
     },
     {
-      func: validateUpdateContainerRequest,
+      func: (request: unknown) => {
+        const id = '04a90b9c-b96a-4013-8d84-1680fff0abe1'
+        return validateUpdateContainerRequest(request, id)
+      },
       title: (base: string) => `${base}: update`
     }
   ].forEach(validator => {
     const { func, title } = validator
 
     it(title('pass validation'), () => {
-      expect(func(validRequest())).to.equal(true)
+      const input = validRequest()
+      const output = validRequest()
+      expect(func(input)).to.eql(output)
     })
 
     function fail (container: unknown) {
-      expect(func(container)).to.equal(false)
+      expect(() => func(container)).to.throw(invalidContainerError)
     }
 
     it(title('fail with empty type'), () => {
@@ -98,5 +104,11 @@ describe('container unit tests', () => {
       }
       fail(container)
     })
+  })
+
+  it('fail update with empty id', () => {
+    expect(
+      () => validateUpdateContainerRequest(validRequest(), '')
+    ).to.throw(invalidContainerIdError)
   })
 })

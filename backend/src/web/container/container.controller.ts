@@ -5,16 +5,10 @@ import * as authHelper from '../authentication/authentication-helper'
 import { type Router } from '../router'
 import {
   type Container,
-  type CreateContainerRequest,
   type NewContainer,
-  type UpdateContainerRequest,
   validateCreateContainerRequest,
   validateUpdateContainerRequest
 } from '../../core/container/container'
-import {
-  invalidContainerError,
-  invalidContainerIdError
-} from '../../core/errors'
 
 export function containerController (router: Router): void {
   router.post('/api/v1/container',
@@ -22,10 +16,12 @@ export function containerController (router: Router): void {
     async (ctx) => {
       const { body } = ctx.request
 
-      const createContainerRequest = validateCreateRequest(body)
+      const createContainerRequest = validateCreateContainerRequest(body)
       const result = await ctx.db.executeTransaction(async (trx) => {
         return await containerService.createContainer(
-          (container: NewContainer) => containerRepository.insertContainer(trx, container),
+          (
+            container: NewContainer
+          ) => containerRepository.insertContainer(trx, container),
           createContainerRequest, ctx.log)
       })
 
@@ -42,7 +38,10 @@ export function containerController (router: Router): void {
       const { body } = ctx.request
       const { containerId } = ctx.params
 
-      const updateContainerRequest = validateUpdateRequest(body, containerId)
+      const updateContainerRequest = validateUpdateContainerRequest(
+        body,
+        containerId
+      )
       const result = await ctx.db.executeTransaction(async (trx) => {
         return await containerService.updateContainer(
           (container: Container) =>
@@ -80,31 +79,4 @@ export function containerController (router: Router): void {
       ctx.body = { containers }
     }
   )
-}
-
-function validateCreateRequest (body: unknown): CreateContainerRequest {
-  if (!validateCreateContainerRequest(body)) {
-    throw invalidContainerError
-  }
-
-  const result = body as CreateContainerRequest
-  return result
-}
-
-function validateUpdateRequest (
-  body: unknown,
-  containerId: string
-): UpdateContainerRequest {
-  if (!validateUpdateContainerRequest(body)) {
-    throw invalidContainerError
-  }
-  if (containerId === undefined ||
-      containerId === null ||
-      containerId.length === 0
-  ) {
-    throw invalidContainerIdError
-  }
-
-  const result = body as UpdateContainerRequest
-  return result
 }
