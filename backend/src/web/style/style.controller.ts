@@ -13,27 +13,7 @@ import {
   validateUpdateStyleRequest,
   StyleRelationship
 } from '../../core/style/style'
-import { ControllerError } from '../../core/errors'
-import { ParentStyleNotFoundError } from '../../core/style/style.service'
-import { CyclicRelationshipError } from '../../core/style/style.util'
-
-function handleError (e: unknown): void {
-  if (e instanceof CyclicRelationshipError) {
-    throw new ControllerError(
-      400,
-      'CyclicStyleRelationship',
-      'cyclic style relationships are not allowed'
-    )
-  }
-  if (e instanceof ParentStyleNotFoundError) {
-    throw new ControllerError(
-      400,
-      'ParentStyleNotFound',
-      'parent style was not found'
-    )
-  }
-  throw e
-}
+import { invalidStyleError, invalidStyleIdError } from '../../core/errors'
 
 export function styleController (router: Router): void {
   router.post('/api/v1/style',
@@ -42,26 +22,22 @@ export function styleController (router: Router): void {
       const { body } = ctx.request
 
       const createStyleRequest = validateCreateRequest(body)
-      try {
-        const result = await ctx.db.executeTransaction(async (trx) => {
-          const createIf: styleService.CreateStyleIf = {
-            create: (
-              style: NewStyle
-            ) => styleRepository.insertStyle(trx, style),
-            lockStyles: createStyleLocker(trx),
-            insertParents: createParentInserter(trx),
-            listAllRelationships: createLister(trx)
-          }
-          return await styleService.createStyle(
-            createIf, createStyleRequest, ctx.log)
-        })
-
-        ctx.status = 201
-        ctx.body = {
-          style: result
+      const result = await ctx.db.executeTransaction(async (trx) => {
+        const createIf: styleService.CreateStyleIf = {
+          create: (
+            style: NewStyle
+          ) => styleRepository.insertStyle(trx, style),
+          lockStyles: createStyleLocker(trx),
+          insertParents: createParentInserter(trx),
+          listAllRelationships: createLister(trx)
         }
-      } catch (e) {
-        handleError(e)
+        return await styleService.createStyle(
+          createIf, createStyleRequest, ctx.log)
+      })
+
+      ctx.status = 201
+      ctx.body = {
+        style: result
       }
     }
   )
@@ -72,30 +48,26 @@ export function styleController (router: Router): void {
       const { body } = ctx.request
       const { styleId } = ctx.params
 
-      try {
-        const updateStyleRequest = validateUpdateRequest(body, styleId)
-        const result = await ctx.db.executeTransaction(async (trx) => {
-          const updateIf: styleService.UpdateStyleIf = {
-            update: (
-              style: Style
-            ) => styleRepository.updateStyle(trx, style),
-            lockStyles: createStyleLocker(trx),
-            insertParents: createParentInserter(trx),
-            listAllRelationships: createLister(trx),
-            deleteStyleChildRelationships: (styleId: string): Promise<void> => {
-              return styleRepository.deleteStyleChildRelationships(trx, styleId)
-            }
+      const updateStyleRequest = validateUpdateRequest(body, styleId)
+      const result = await ctx.db.executeTransaction(async (trx) => {
+        const updateIf: styleService.UpdateStyleIf = {
+          update: (
+            style: Style
+          ) => styleRepository.updateStyle(trx, style),
+          lockStyles: createStyleLocker(trx),
+          insertParents: createParentInserter(trx),
+          listAllRelationships: createLister(trx),
+          deleteStyleChildRelationships: (styleId: string): Promise<void> => {
+            return styleRepository.deleteStyleChildRelationships(trx, styleId)
           }
-          return await styleService.updateStyle(
-            updateIf, styleId, updateStyleRequest, ctx.log)
-        })
-
-        ctx.status = 200
-        ctx.body = {
-          style: result
         }
-      } catch (e) {
-        handleError(e)
+        return await styleService.updateStyle(
+          updateIf, styleId, updateStyleRequest, ctx.log)
+      })
+
+      ctx.status = 200
+      ctx.body = {
+        style: result
       }
     }
   )
@@ -108,14 +80,6 @@ export function styleController (router: Router): void {
       const style = await styleService.findStyleById((styleId: string) => {
         return styleRepository.findStyleById(ctx.db, styleId)
       }, styleId, ctx.log)
-
-      if (style === undefined) {
-        throw new ControllerError(
-          404,
-          'StyleNotFound',
-          `style with id ${styleId} was not found`
-        )
-      }
 
       ctx.body = { style }
     }
@@ -135,7 +99,7 @@ export function styleController (router: Router): void {
 
 function validateCreateRequest (body: unknown): CreateStyleRequest {
   if (!validateCreateStyleRequest(body)) {
-    throw new ControllerError(400, 'InvalidStyle', 'invalid style')
+    throw invalidStyleError
   }
 
   const result = body as CreateStyleRequest
@@ -147,10 +111,10 @@ function validateUpdateRequest (
   styleId: string
 ): UpdateStyleRequest {
   if (!validateUpdateStyleRequest(body)) {
-    throw new ControllerError(400, 'InvalidStyle', 'invalid style')
+    throw invalidStyleError
   }
   if (styleId === undefined || styleId === null || styleId.length === 0) {
-    throw new ControllerError(400, 'InvalidStyleId', 'invalid style id')
+    throw invalidStyleIdError
   }
 
   const result = body as UpdateStyleRequest

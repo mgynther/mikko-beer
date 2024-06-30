@@ -1,7 +1,6 @@
 import { type StyleRelationship } from './style'
 
-export class CyclicRelationshipError extends Error {
-}
+import { cyclicRelationshipError } from '../errors'
 
 interface Style {
   id: string
@@ -61,7 +60,7 @@ export function checkCyclicRelationships (
     }
     checkStyle(style)
     if (hasCyclic) {
-      throw new CyclicRelationshipError('Cyclic relationship found')
+      throw cyclicRelationshipError
     }
   })
 }

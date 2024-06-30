@@ -7,14 +7,16 @@ import {
   type NewReview
 } from './review'
 
+import {
+  referredBeerNotFoundError,
+  referredContainerNotFoundError,
+  referredStorageNotFoundError,
+  reviewNotFoundError
+} from '../errors'
 import { INFO, type log } from '../log'
 import {
   type Pagination
 } from '../pagination'
-
-export class BeerNotFoundError extends Error {}
-export class ContainerNotFoundError extends Error {}
-export class StorageNotFoundError extends Error {}
 
 type LockId = (id: string) => Promise<string | undefined>
 
@@ -37,17 +39,17 @@ export async function createReview (
   } else {
     log(INFO, 'create review for beer', request.beer, 'from storage')
   }
-  await lockId(createIf.lockBeer, request.beer, new BeerNotFoundError())
+  await lockId(createIf.lockBeer, request.beer, referredBeerNotFoundError)
   await lockId(
     createIf.lockContainer,
     request.container,
-    new ContainerNotFoundError()
+    referredContainerNotFoundError
   )
   if (typeof fromStorageId === 'string') {
     await lockId(
       createIf.lockStorage,
       fromStorageId,
-      new StorageNotFoundError()
+      referredStorageNotFoundError
     )
   }
   const review = await createIf.createReview({
@@ -76,11 +78,11 @@ export async function updateReview (
   log: log
 ): Promise<Review> {
   log(INFO, 'update review with id', reviewId)
-  await lockId(updateIf.lockBeer, request.beer, new BeerNotFoundError())
+  await lockId(updateIf.lockBeer, request.beer, referredBeerNotFoundError)
   await lockId(
     updateIf.lockContainer,
     request.container,
-    new ContainerNotFoundError()
+    referredContainerNotFoundError
   )
 
   const review = await updateIf.updateReview({
@@ -97,11 +99,11 @@ export async function findReviewById (
   find: (id: string) => Promise<Review | undefined>,
   reviewId: string,
   log: log
-): Promise<Review | undefined> {
+): Promise<Review> {
   log(INFO, 'find review with id', reviewId)
   const review = await find(reviewId)
 
-  if (review === undefined) return undefined
+  if (review === undefined) throw reviewNotFoundError(reviewId)
 
   return review
 }

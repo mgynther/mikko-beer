@@ -10,11 +10,13 @@ import {
   type UpdateStyleRequest
 } from './style'
 
+import {
+  parentStyleNotFoundError,
+  styleNotFoundError
+} from '../errors'
 import { INFO, type log } from '../log'
 import { checkCyclicRelationships } from './style.util'
 import { areKeysEqual } from '../key'
-
-export class ParentStyleNotFoundError extends Error {}
 
 export interface CreateStyleIf {
   create: (style: NewStyle) => Promise<Style>
@@ -105,11 +107,11 @@ export async function findStyleById (
   find: (id: string) => Promise<StyleWithParentsAndChildren | undefined>,
   styleId: string,
   log: log
-): Promise<StyleWithParentsAndChildren | undefined> {
+): Promise<StyleWithParentsAndChildren> {
   log(INFO, 'find style', styleId)
   const style = await find(styleId)
 
-  if (style === undefined) return undefined
+  if (style === undefined) throw styleNotFoundError(styleId)
 
   return style
 }
@@ -136,6 +138,6 @@ async function lockParents (
 ): Promise<void> {
   const lockedParents = await lockStyles(parentKeys)
   if (!areKeysEqual(lockedParents, parentKeys)) {
-    throw new ParentStyleNotFoundError()
+    throw parentStyleNotFoundError
   }
 }

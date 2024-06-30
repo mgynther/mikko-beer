@@ -1,4 +1,4 @@
-import { ControllerError } from '../core/errors'
+import { invalidPaginationError } from '../core/errors'
 import {
   type Pagination,
   type PaginationRequest,
@@ -9,6 +9,6 @@ export function validatePagination (pagination: PaginationRequest): Pagination {
   try {
     return coreValidate(pagination)
   } catch (e) {
-    throw new ControllerError(400, 'InvalidPagination', 'invalid pagination')
+    throw invalidPaginationError
   }
 }

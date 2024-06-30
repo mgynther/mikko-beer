@@ -1,5 +1,11 @@
 import { expect } from 'chai'
 import {
+  referredBeerNotFoundError,
+  referredContainerNotFoundError,
+  referredStorageNotFoundError,
+  reviewNotFoundError
+} from '../../../src/core/errors'
+import {
   type CreateReviewRequest,
   type JoinedReview,
   type Review,
@@ -10,9 +16,6 @@ import {
 import { type Pagination } from '../../../src/core/pagination'
 import * as reviewService from '../../../src/core/review/review.service'
 import {
-  BeerNotFoundError,
-  ContainerNotFoundError,
-  StorageNotFoundError,
   type CreateIf,
   type UpdateIf
 } from '../../../src/core/review/review.service'
@@ -155,7 +158,7 @@ describe('review service unit tests', () => {
         log
       )
     } catch (e) {
-      expect(e instanceof BeerNotFoundError).to.equal(true)
+      expect(e).to.eql(referredBeerNotFoundError)
     }
   })
 
@@ -175,7 +178,7 @@ describe('review service unit tests', () => {
         log
       )
     } catch (e) {
-      expect(e instanceof ContainerNotFoundError).to.equal(true)
+      expect(e).to.eql(referredContainerNotFoundError)
     }
   })
 
@@ -227,7 +230,7 @@ describe('review service unit tests', () => {
         log
       )
     } catch (e) {
-      expect(e instanceof StorageNotFoundError).to.equal(true)
+      expect(e).to.eql(referredStorageNotFoundError)
     }
   })
 
@@ -265,7 +268,7 @@ describe('review service unit tests', () => {
       )
       notCalled()
     } catch (e) {
-      expect(e instanceof BeerNotFoundError).to.equal(true)
+      expect(e).to.eql(referredBeerNotFoundError)
     }
   })
 
@@ -284,7 +287,7 @@ describe('review service unit tests', () => {
       )
       notCalled()
     } catch (e) {
-      expect(e instanceof ContainerNotFoundError).to.equal(true)
+      expect(e).to.eql(referredContainerNotFoundError)
     }
   })
 
@@ -303,8 +306,12 @@ describe('review service unit tests', () => {
       expect(searchId).to.equal(id)
       return undefined
     }
-    const result = await reviewService.findReviewById(finder, id, log)
-    expect(result).to.eql(undefined)
+    try {
+      await reviewService.findReviewById(finder, id, log)
+      notCalled()
+    } catch (e) {
+      expect(e).to.eql(reviewNotFoundError(id))
+    }
   })
 
   it('list reviews', async () => {

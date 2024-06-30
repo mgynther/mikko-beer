@@ -8,13 +8,11 @@ import {
   type AuthToken
 } from '../../../src/core/authentication/auth-token'
 import {
-  RefreshTokenUserIdMismatchError
-} from '../../../src/core/authentication/auth-token.service'
-import {
   type DbRefreshToken
 } from '../../../src/core/authentication/refresh-token'
 import { Role, type User } from '../../../src/core/user/user'
 import { type Tokens } from '../../../src/core/authentication/tokens'
+import { invalidCredentialsTokenError } from '../../../src/core/errors'
 
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {
@@ -149,7 +147,7 @@ describe('auth token service unit tests', () => {
       )
       unreachable()
     } catch (e) {
-      expect(e instanceof RefreshTokenUserIdMismatchError).to.equal(true)
+      expect(e).to.eql(invalidCredentialsTokenError)
     }
   })
 })

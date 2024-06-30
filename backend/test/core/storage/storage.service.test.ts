@@ -1,5 +1,10 @@
 import { expect } from 'chai'
 
+import {
+  referredBeerNotFoundError,
+  referredContainerNotFoundError,
+  storageNotFoundError
+} from '../../../src/core/errors'
 import { type Pagination } from '../../../src/core/pagination'
 import {
   type Storage,
@@ -8,8 +13,6 @@ import {
 } from '../../../src/core/storage/storage'
 import * as storageService from '../../../src/core/storage/storage.service'
 import {
-  BeerNotFoundError,
-  ContainerNotFoundError,
   type CreateIf,
   type UpdateIf
 } from '../../../src/core/storage/storage.service'
@@ -134,7 +137,7 @@ describe('storage service unit tests', () => {
       await storageService.createStorage(createIf, createRequest, log)
       notCalled()
     } catch (e) {
-      expect(e instanceof BeerNotFoundError).to.equal(true)
+      expect(e).to.eql(referredBeerNotFoundError)
     }
   })
 
@@ -155,7 +158,7 @@ describe('storage service unit tests', () => {
       await storageService.createStorage(createIf, createRequest, log)
       notCalled()
     } catch (e) {
-      expect(e instanceof ContainerNotFoundError).to.equal(true)
+      expect(e).to.eql(referredContainerNotFoundError)
     }
   })
 
@@ -215,7 +218,7 @@ describe('storage service unit tests', () => {
       await storageService.updateStorage(updateIf, updateRequest, log)
       notCalled()
     } catch (e) {
-      expect(e instanceof BeerNotFoundError).to.equal(true)
+      expect(e).to.eql(referredBeerNotFoundError)
     }
   })
 
@@ -236,7 +239,7 @@ describe('storage service unit tests', () => {
       await storageService.updateStorage(updateIf, updateRequest, log)
       notCalled()
     } catch (e) {
-      expect(e instanceof ContainerNotFoundError).to.equal(true)
+      expect(e).to.equal(referredContainerNotFoundError)
     }
   })
 
@@ -255,8 +258,11 @@ describe('storage service unit tests', () => {
       expect(searchId).to.equal(id)
       return undefined
     }
-    const result = await storageService.findStorageById(finder, id, log)
-    expect(result).to.eql(undefined)
+    try {
+    await storageService.findStorageById(finder, id, log)
+    } catch (e) {
+      expect(e).to.eql(storageNotFoundError(id))
+    }
   })
 
   it('list storages', async () => {

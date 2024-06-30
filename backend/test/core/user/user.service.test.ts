@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 
+import { userNotFoundError } from '../../../src/core/errors'
 import * as userService from '../../../src/core/user/user.service'
 import {
   type AuthTokenConfig
@@ -57,6 +58,15 @@ describe('user service unit tests', () => {
     expect(signedInUser.user).to.eql(user)
     expect(signedInUser.refreshToken.refreshToken).not.to.be.empty
     expect(signedInUser.authToken.authToken).not.to.be.empty
+  })
+
+  it('fail to find user that does not exist', async () => {
+    const id = 'a52a35af-060a-4f43-ae00-c3d0dbaa8e6f'
+    try {
+      await userService.findUserById(async () => undefined, id, log)
+    } catch (e) {
+      expect(e).to.eql(userNotFoundError(id))
+    }
   })
 
 })

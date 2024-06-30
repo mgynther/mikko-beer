@@ -6,6 +6,7 @@ import {
   type NewContainer
 } from '../../../src/core/container/container'
 import * as containerService from '../../../src/core/container/container.service'
+import { containerNotFoundError } from '../../../src/core/errors'
 
 import { dummyLog as log } from '../dummy-log'
 
@@ -13,6 +14,10 @@ const container: Container = {
   id: '1fcbeb9e-1ea1-4c50-8fe5-b0aa18ac7e9a',
   type: 'draft',
   size: '0.1',
+}
+
+async function notCalled() {
+  expect('must not be called').to.equal(true)
 }
 
 describe('container service unit tests', () => {
@@ -84,8 +89,12 @@ describe('container service unit tests', () => {
       expect(searchId).to.equal(id)
       return undefined
     }
-    const result = await containerService.findContainerById(finder, id, log)
-    expect(result).to.eql(undefined)
+    try {
+      await containerService.findContainerById(finder, id, log)
+      notCalled()
+    } catch (e) {
+      expect(e).to.eql(containerNotFoundError(id))
+    }
   })
 
   it('list containers', async () => {

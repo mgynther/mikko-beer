@@ -5,6 +5,7 @@ import {
   type UpdateBreweryRequest,
   type NewBrewery
 } from '../../../src/core/brewery/brewery'
+import { breweryNotFoundError } from '../../../src/core/errors'
 import { type Pagination } from '../../../src/core/pagination'
 import { type SearchByName } from '../../../src/core/search'
 import * as breweryService from '../../../src/core/brewery/brewery.service'
@@ -14,6 +15,10 @@ import { dummyLog as log } from '../dummy-log'
 const brewery: Brewery = {
   id: 'd804c8fe-8d41-4c8b-88d1-95bdfeb558ef',
   name: 'Koskipanimo',
+}
+
+async function notCalled() {
+  expect('must not be called').to.equal(true)
 }
 
 describe('brewery service unit tests', () => {
@@ -75,8 +80,12 @@ describe('brewery service unit tests', () => {
       expect(searchId).to.equal(id)
       return undefined
     }
-    const result = await breweryService.findBreweryById(finder, id, log)
-    expect(result).to.eql(undefined)
+    try {
+      await breweryService.findBreweryById(finder, id, log)
+      notCalled()
+    } catch (e) {
+      expect(e).to.eql(breweryNotFoundError(id))
+    }
   })
 
   it('list brewerys', async () => {

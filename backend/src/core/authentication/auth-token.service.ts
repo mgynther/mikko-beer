@@ -10,8 +10,7 @@ import {
 } from './refresh-token'
 import { type User, type Role } from '../user/user'
 import * as jwt from './jwt'
-
-export class RefreshTokenUserIdMismatchError extends Error {}
+import { invalidCredentialsTokenError } from '../errors'
 
 export async function createTokens (
   insertRefreshToken: (userId: string) => Promise<DbRefreshToken>,
@@ -54,7 +53,7 @@ export async function deleteRefreshToken (
   const payload = jwt.verifyRefreshToken(refreshToken, authTokenSecret)
 
   if (payload.userId !== userId) {
-    throw new RefreshTokenUserIdMismatchError()
+    throw invalidCredentialsTokenError
   }
 
   await deleteRefreshToken(payload.refreshTokenId)

@@ -5,6 +5,7 @@ import {
   type NewBrewery
 } from './brewery'
 
+import { breweryNotFoundError } from '../errors'
 import { INFO, type log } from '../log'
 import {
   type Pagination
@@ -45,11 +46,11 @@ export async function findBreweryById (
   find: (id: string) => Promise<Brewery | undefined>,
   breweryId: string,
   log: log
-): Promise<Brewery | undefined> {
+): Promise<Brewery> {
   log(INFO, 'find brewery with id', breweryId)
   const brewery = await find(breweryId)
 
-  if (brewery === undefined) return undefined
+  if (brewery === undefined) throw breweryNotFoundError(breweryId)
 
   return brewery
 }

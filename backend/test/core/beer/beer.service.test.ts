@@ -12,9 +12,10 @@ import * as beerService from '../../../src/core/beer/beer.service'
 
 import { dummyLog as log } from '../dummy-log'
 import {
-  BreweryNotFoundError,
-  StyleNotFoundError
-} from '../../../src/core/beer/beer.service'
+  beerNotFoundError,
+  referredBreweryNotFoundError,
+  referredStyleNotFoundError
+} from '../../../src/core/errors'
 
 const beer: BeerWithBreweriesAndStyles = {
   id: '406a337c-3107-4307-bd84-be3ec7c7d2f6',
@@ -123,7 +124,7 @@ describe('beer service unit tests', () => {
       await beerService.createBeer(createIf, createBeerRequest, log)
       notCalled()
     } catch (e) {
-      expect(e instanceof BreweryNotFoundError).to.equal(true)
+      expect(e).to.eql(referredBreweryNotFoundError)
     }
   })
 
@@ -139,7 +140,7 @@ describe('beer service unit tests', () => {
       await beerService.createBeer(createIf, createBeerRequest, log)
       notCalled()
     } catch (e) {
-      expect(e instanceof StyleNotFoundError).to.equal(true)
+      expect(e).to.eql(referredStyleNotFoundError)
     }
   })
 
@@ -228,7 +229,7 @@ describe('beer service unit tests', () => {
         log
       )
     } catch (e) {
-      expect(e instanceof BreweryNotFoundError).to.equal(true)
+      expect(e).to.eql(referredBreweryNotFoundError)
     }
   })
 
@@ -250,7 +251,7 @@ describe('beer service unit tests', () => {
         log
       )
     } catch (e) {
-      expect(e instanceof StyleNotFoundError).to.equal(true)
+      expect(e).to.eql(referredStyleNotFoundError)
     }
 })
 
@@ -263,14 +264,18 @@ describe('beer service unit tests', () => {
     expect(result).to.eql(beer)
   })
 
-  it('not find beer with unknown id', async () => {
+  it('fail to find beer with unknown id', async () => {
     const id = '7b27cdc4-53cf-493a-be92-07924a9f3399'
     const finder = async (searchId: string) => {
       expect(searchId).to.equal(id)
       return undefined
     }
-    const result = await beerService.findBeerById(finder, id, log)
-    expect(result).to.eql(undefined)
+    try {
+      await beerService.findBeerById(finder, id, log)
+      notCalled()
+    } catch (e) {
+      expect(e).to.eql(beerNotFoundError(id))
+    }
   })
 
   it('list beers', async () => {

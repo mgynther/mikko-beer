@@ -14,32 +14,15 @@ import {
   validateCreateStorageRequest,
   validateUpdateStorageRequest
 } from '../../core/storage/storage'
-import { ControllerError } from '../../core/errors'
+import {
+  invalidStorageError,
+  invalidStorageIdError
+} from '../../core/errors'
 import {
   type CreateIf,
   type UpdateIf,
-  BeerNotFoundError,
-  ContainerNotFoundError
 } from '../../core/storage/storage.service'
 import { validatePagination } from '../pagination'
-
-function handleError (e: unknown): void {
-  if (e instanceof BeerNotFoundError) {
-    throw new ControllerError(
-      400,
-      'BeerNotFound',
-      'beer not found'
-    )
-  }
-  if (e instanceof ContainerNotFoundError) {
-    throw new ControllerError(
-      400,
-      'ContainerNotFound',
-      'container not found'
-    )
-  }
-  throw e
-}
 
 export function storageController (router: Router): void {
   router.post('/api/v1/storage',
@@ -47,31 +30,27 @@ export function storageController (router: Router): void {
     async (ctx) => {
       const { body } = ctx.request
 
-      try {
-        const createStorageRequest = validateCreateRequest(body)
-        const result = await ctx.db.executeTransaction(async (trx) => {
-          const createIf: CreateIf = {
-            insertStorage: (
-                createStorageRequest: CreateStorageRequest
-            ) => {
-                return storageRepository.insertStorage(trx, createStorageRequest)
-            },
-            lockBeer: createBeerLocker(trx),
-            lockContainer: createContainerLocker(trx)
-          }
-          return await storageService.createStorage(
-            createIf,
-            createStorageRequest,
-            ctx.log
-          )
-        })
-
-        ctx.status = 201
-        ctx.body = {
-          storage: result
+      const createStorageRequest = validateCreateRequest(body)
+      const result = await ctx.db.executeTransaction(async (trx) => {
+        const createIf: CreateIf = {
+          insertStorage: (
+              createStorageRequest: CreateStorageRequest
+          ) => {
+              return storageRepository.insertStorage(trx, createStorageRequest)
+          },
+          lockBeer: createBeerLocker(trx),
+          lockContainer: createContainerLocker(trx)
         }
-      } catch (e) {
-        handleError(e)
+        return await storageService.createStorage(
+          createIf,
+          createStorageRequest,
+          ctx.log
+        )
+      })
+
+      ctx.status = 201
+      ctx.body = {
+        storage: result
       }
     }
   )
@@ -82,31 +61,27 @@ export function storageController (router: Router): void {
       const { body } = ctx.request
       const { storageId } = ctx.params
 
-      try {
-        const updateStorageRequest = validateUpdateRequest(body, storageId)
-        const result = await ctx.db.executeTransaction(async (trx) => {
-          const updateIf: UpdateIf = {
-            updateStorage: (
-              storage: Storage
-            ) => {
-              return storageRepository.updateStorage(trx, storage)
-            },
-            lockBeer: createBeerLocker(trx),
-            lockContainer: createContainerLocker(trx)
-          }
-          return await storageService.updateStorage(
-            updateIf,
-            { ...updateStorageRequest, id: storageId },
-            ctx.log
-          )
-        })
-
-        ctx.status = 200
-        ctx.body = {
-          storage: result
+      const updateStorageRequest = validateUpdateRequest(body, storageId)
+      const result = await ctx.db.executeTransaction(async (trx) => {
+        const updateIf: UpdateIf = {
+          updateStorage: (
+            storage: Storage
+          ) => {
+            return storageRepository.updateStorage(trx, storage)
+          },
+          lockBeer: createBeerLocker(trx),
+          lockContainer: createContainerLocker(trx)
         }
-      } catch (e) {
-        handleError(e)
+        return await storageService.updateStorage(
+          updateIf,
+          { ...updateStorageRequest, id: storageId },
+          ctx.log
+        )
+      })
+
+      ctx.status = 200
+      ctx.body = {
+        storage: result
       }
     }
   )
@@ -121,14 +96,6 @@ export function storageController (router: Router): void {
       ) => {
         return storageRepository.findStorageById(ctx.db, storageId)
       }, storageId, ctx.log)
-
-      if (storage === undefined) {
-        throw new ControllerError(
-          404,
-          'StorageNotFound',
-          `storage with id ${storageId} was not found`
-        )
-      }
 
       ctx.body = { storage }
     }
@@ -200,7 +167,7 @@ export function storageController (router: Router): void {
 
 function validateCreateRequest (body: unknown): CreateStorageRequest {
   if (!validateCreateStorageRequest(body)) {
-    throw new ControllerError(400, 'InvalidStorage', 'invalid storage')
+    throw invalidStorageError
   }
 
   const result = body as CreateStorageRequest
@@ -212,10 +179,10 @@ function validateUpdateRequest (
   storageId: string
 ): UpdateStorageRequest {
   if (!validateUpdateStorageRequest(body)) {
-    throw new ControllerError(400, 'InvalidStorage', 'invalid storage')
+    throw invalidStorageError
   }
   if (typeof storageId !== 'string' || storageId.length === 0) {
-    throw new ControllerError(400, 'InvalidStorageId', 'invalid storage id')
+    throw invalidStorageIdError
   }
 
   const result = body as UpdateStorageRequest

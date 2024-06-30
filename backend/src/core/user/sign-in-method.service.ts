@@ -1,6 +1,11 @@
 import * as crypto from 'crypto'
 
-import { UserNotFoundError } from '../errors'
+import {
+  invalidCredentialsError,
+  passwordTooLongError,
+  passwordTooWeakError,
+  userAlreadyHasSignInMethodError
+} from '../errors'
 import { type Tokens } from '../authentication/tokens'
 import { type User } from '../user/user'
 import { type SignedInUser } from '../user/signed-in-user'
@@ -12,12 +17,6 @@ import {
 
 export const MIN_PASSWORD_LENGTH = 8
 export const MAX_PASSWORD_LENGTH = 255
-
-export class UserAlreadyHasSignInMethodError extends Error {}
-export class SignInMethodNotFoundError extends Error {}
-export class WrongPasswordError extends Error {}
-export class PasswordTooWeakError extends Error {}
-export class PasswordTooLongError extends Error {}
 
 type LockUserById = (userId: string) => Promise<User | undefined>
 
@@ -35,7 +34,7 @@ export async function addPasswordSignInMethod (
   const user = await lockUser(addPasswordUserIf.lockUserById, userId)
 
   if (user.username?.length !== undefined && user.username?.length > 0) {
-    throw new UserAlreadyHasSignInMethodError()
+    throw userAlreadyHasSignInMethodError
   }
 
   await addPasswordUserIf.insertPasswordSignInMethod({
@@ -62,7 +61,7 @@ export async function changePassword (
   const user = await lockUser(changePasswordUserIf.lockUserById, userId)
 
   if (user.username === undefined || user.username?.length === 0) {
-    throw new SignInMethodNotFoundError()
+    throw invalidCredentialsError
   }
 
   const signInMethod = await changePasswordUserIf.findPasswordSignInMethod(
@@ -70,11 +69,11 @@ export async function changePassword (
   )
 
   if (signInMethod === undefined) {
-    throw new SignInMethodNotFoundError()
+    throw invalidCredentialsError
   }
 
   if (!(await verifyPassword(change.oldPassword, signInMethod.passwordHash))) {
-    throw new WrongPasswordError()
+    throw invalidCredentialsError
   }
 
   await changePasswordUserIf.updatePassword({
@@ -98,7 +97,7 @@ export async function signInUsingPassword (
   const user = await signInUsingPasswordIf.lockUserByUsername(method.username)
 
   if (user === undefined) {
-    throw new UserNotFoundError()
+    throw invalidCredentialsError
   }
 
   const signInMethod = await signInUsingPasswordIf.findPasswordSignInMethod(
@@ -106,11 +105,11 @@ export async function signInUsingPassword (
   )
 
   if (signInMethod === undefined) {
-    throw new SignInMethodNotFoundError()
+    throw invalidCredentialsError
   }
 
   if (!(await verifyPassword(method.password, signInMethod.passwordHash))) {
-    throw new WrongPasswordError()
+    throw invalidCredentialsError
   }
 
   const { refresh, auth } =
@@ -125,11 +124,11 @@ export async function signInUsingPassword (
 
 export async function encryptPassword (password: string): Promise<string> {
   if (password.length < MIN_PASSWORD_LENGTH) {
-    throw new PasswordTooWeakError()
+    throw passwordTooWeakError
   }
 
   if (password.length > MAX_PASSWORD_LENGTH) {
-    throw new PasswordTooLongError()
+    throw passwordTooLongError
   }
 
   return await encryptSecret(password)
@@ -179,7 +178,7 @@ async function lockUser (
   const user = await lockUserById(userId)
 
   if (user === undefined) {
-    throw new UserNotFoundError()
+    throw invalidCredentialsError
   }
   return user
 }

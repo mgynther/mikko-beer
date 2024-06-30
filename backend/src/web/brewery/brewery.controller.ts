@@ -13,7 +13,10 @@ import {
   validateCreateBreweryRequest,
   validateUpdateBreweryRequest
 } from '../../core/brewery/brewery'
-import { ControllerError } from '../../core/errors'
+import {
+  invalidBreweryError,
+  invalidBreweryIdError
+} from '../../core/errors'
 import { validatePagination } from '../pagination'
 import { validateSearchByName } from '../search'
 
@@ -67,14 +70,6 @@ export function breweryController (router: Router): void {
         return breweryRepository.findBreweryById(ctx.db, breweryId)
       }, breweryId, ctx.log)
 
-      if (brewery === undefined) {
-        throw new ControllerError(
-          404,
-          'BreweryNotFound',
-          `brewery with id ${breweryId} was not found`
-        )
-      }
-
       ctx.body = { brewery }
     }
   )
@@ -110,7 +105,7 @@ export function breweryController (router: Router): void {
 
 function validateCreateRequest (body: unknown): CreateBreweryRequest {
   if (!validateCreateBreweryRequest(body)) {
-    throw new ControllerError(400, 'InvalidBrewery', 'invalid brewery')
+    throw invalidBreweryError
   }
 
   const result = body as CreateBreweryRequest
@@ -122,10 +117,10 @@ function validateUpdateRequest (
   breweryId: string
 ): UpdateBreweryRequest {
   if (!validateUpdateBreweryRequest(body)) {
-    throw new ControllerError(400, 'InvalidBrewery', 'invalid brewery')
+    throw invalidBreweryError
   }
   if (typeof breweryId !== 'string' || breweryId.length === 0) {
-    throw new ControllerError(400, 'InvalidBreweryId', 'invalid brewery id')
+    throw invalidBreweryIdError
   }
 
   const result = body as UpdateBreweryRequest

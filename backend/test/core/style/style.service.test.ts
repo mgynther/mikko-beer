@@ -1,4 +1,10 @@
 import { expect } from 'chai'
+
+import {
+  cyclicRelationshipError,
+  parentStyleNotFoundError,
+  styleNotFoundError
+} from '../../../src/core/errors'
 import {
   type Style,
   type StyleWithParentIds,
@@ -8,13 +14,9 @@ import {
   type NewStyle,
   StyleRelationship
 } from '../../../src/core/style/style'
-import {
-  CyclicRelationshipError,
-} from '../../../src/core/style/style.util'
 import * as styleService from '../../../src/core/style/style.service'
 
 import { dummyLog as log } from '../dummy-log'
-import { ParentStyleNotFoundError } from '../../../src/core/style/style.service'
 
 const style: Style = {
   id: '71dcc323-7e59-4122-9afa-d4ffc484dee6',
@@ -145,7 +147,7 @@ describe('style service unit tests', () => {
       )
       notCalled()
     } catch (e) {
-      expect(e instanceof ParentStyleNotFoundError).to.equal(true)
+      expect(e).to.eql(parentStyleNotFoundError)
     }
   })
 
@@ -171,7 +173,7 @@ describe('style service unit tests', () => {
       await styleService.createStyle(createIf, request, log)
       expect('not to be called').to.equal(false)
     } catch (e) {
-      expect(e).to.eql(new CyclicRelationshipError('Cyclic relationship found'))
+      expect(e).to.eql(cyclicRelationshipError)
     }
   })
 
@@ -249,7 +251,7 @@ describe('style service unit tests', () => {
       )
       notCalled()
     } catch (e) {
-      expect(e instanceof ParentStyleNotFoundError).to.equal(true)
+      expect(e).to.eql(parentStyleNotFoundError)
     }
   })
 
@@ -276,7 +278,7 @@ describe('style service unit tests', () => {
       await styleService.updateStyle(updateIf, style.id, request, log)
       expect('not to be called').to.equal(false)
     } catch (e) {
-      expect(e).to.eql(new CyclicRelationshipError('Cyclic relationship found'))
+      expect(e).to.eql(cyclicRelationshipError)
     }
   })
 
@@ -295,8 +297,11 @@ describe('style service unit tests', () => {
       expect(searchId).to.equal(id)
       return undefined
     }
-    const result = await styleService.findStyleById(finder, id, log)
-    expect(result).to.eql(undefined)
+    try {
+      await styleService.findStyleById(finder, id, log)
+    } catch (e) {
+      expect(e).to.eql(styleNotFoundError(id))
+    }
   })
 
   it('list styles', async () => {

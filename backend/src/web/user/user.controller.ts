@@ -19,7 +19,10 @@ import {
   type PasswordSignInMethod,
   validatePasswordSignInMethod
 } from '../../core/user/sign-in-method'
-import { ControllerError } from '../../core/errors'
+import {
+  invalidUserError,
+  invalidUserSignInMethodError
+} from '../../core/errors'
 import { type DbRefreshToken } from '../../core/authentication/refresh-token'
 import { type AuthTokenConfig } from '../../core/authentication/auth-token'
 
@@ -74,14 +77,6 @@ export function userController (router: Router, config: Config): void {
         return userRepository.findUserById(ctx.db, userId)
       }, userId, ctx.log)
 
-      if (user === undefined) {
-        throw new ControllerError(
-          404,
-          'UserNotFound',
-          `user with id ${userId} was not found`
-        )
-      }
-
       ctx.body = { user }
     }
   )
@@ -123,10 +118,10 @@ interface ValidCreateRequest {
 function validateCreateRequest (body: unknown): ValidCreateRequest {
   const anyBody: any = body
   if (!validateCreateAnonymousUserRequest(anyBody.user)) {
-    throw new ControllerError(400, 'InvalidUser', 'invalid user')
+    throw invalidUserError
   }
   if (!validatePasswordSignInMethod(anyBody.passwordSignInMethod)) {
-    throw new ControllerError(400, 'InvalidUser', 'invalid sign in method')
+    throw invalidUserSignInMethodError
   }
 
   const role: Role = anyBody.user.role as Role

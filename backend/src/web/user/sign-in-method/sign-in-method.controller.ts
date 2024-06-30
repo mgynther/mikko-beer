@@ -8,14 +8,6 @@ import * as userService from '../../../core/user/user.service'
 import { type Transaction } from '../../../data/database'
 
 import {
-  RefreshTokenUserIdMismatchError
-} from '../../../core/authentication/auth-token.service'
-import {
-  PasswordTooLongError,
-  PasswordTooWeakError,
-  SignInMethodNotFoundError,
-  UserAlreadyHasSignInMethodError,
-  WrongPasswordError,
   type AddPasswordUserIf,
   type ChangePasswordUserIf,
   type SignInUsingPasswordIf,
@@ -26,7 +18,11 @@ import {
   validateRefreshToken
 } from '../../../core/authentication/refresh-token'
 import { type Router } from '../../router'
-import { ControllerError, UserNotFoundError } from '../../../core/errors'
+import {
+  invalidPasswordChangeError,
+  invalidRefreshTokenError,
+  invalidSignInMethodError,
+} from '../../../core/errors'
 import { log } from '../../../core/log'
 import {
   type UserPasswordHash,
@@ -37,50 +33,6 @@ import { type User } from '../../../core/user/user'
 import { type AuthTokenConfig } from '../../../core/authentication/auth-token'
 import { type Context } from '../../context'
 
-function handleError (error: unknown): void {
-  if (
-    error instanceof UserNotFoundError ||
-    error instanceof WrongPasswordError ||
-    error instanceof SignInMethodNotFoundError
-  ) {
-    // Don't leak too much information about why the sign in failed.
-    throw new ControllerError(
-      401,
-      'InvalidCredentials',
-      'wrong username or password'
-    )
-  }
-  if (error instanceof RefreshTokenUserIdMismatchError) {
-    // Don't leak too much information about why refresh failed.
-    throw new ControllerError(
-      401,
-      'InvalidCredentials',
-      'invalid token'
-    )
-  }
-  if (error instanceof PasswordTooWeakError) {
-    throw new ControllerError(
-      400,
-      'PasswordTooWeak',
-      'password is too weak'
-    )
-  }
-  if (error instanceof PasswordTooLongError) {
-    throw new ControllerError(
-      400,
-      'PasswordTooLong',
-      'password is too long'
-    )
-  }
-  if (error instanceof UserAlreadyHasSignInMethodError) {
-    throw new ControllerError(
-      409,
-      'UserAlreadyHasSignInMethod',
-      'the user already has a sign in method'
-    )
-  }
-}
-
 export async function addPasswordSignInMethod (
   trx: Transaction,
   userId: string,
@@ -88,43 +40,33 @@ export async function addPasswordSignInMethod (
   log: log
 ): Promise<string> {
   if (!validatePasswordSignInMethod(request)) {
-    throw new ControllerError(
-      400,
-      'InvalidSignInMethod',
-      'invalid sign in method'
-    )
+    throw invalidSignInMethodError
   }
 
-  try {
-    const addPasswordUserIf: AddPasswordUserIf = {
-      lockUserById: createLockUserById(trx),
-      insertPasswordSignInMethod: function(
-        userPassword: UserPasswordHash
-      ): Promise<void> {
-        return signInMethodRepository.insertPasswordSignInMethod(
-          trx, userPassword
-        ) as Promise<unknown> as Promise<void>
-      },
-      setUserUsername: function(
-        userId: string, username: string
-      ): Promise<void> {
-        return userService.setUserUsername(
-          (userId: string, username: string) => {
-            return userRepository.setUserUsername(trx, userId, username)
-        }, userId, username, log)
-      }
+  const addPasswordUserIf: AddPasswordUserIf = {
+    lockUserById: createLockUserById(trx),
+    insertPasswordSignInMethod: function(
+      userPassword: UserPasswordHash
+    ): Promise<void> {
+      return signInMethodRepository.insertPasswordSignInMethod(
+        trx, userPassword
+      ) as Promise<unknown> as Promise<void>
+    },
+    setUserUsername: function(
+      userId: string, username: string
+    ): Promise<void> {
+      return userService.setUserUsername(
+        (userId: string, username: string) => {
+          return userRepository.setUserUsername(trx, userId, username)
+      }, userId, username, log)
     }
-    await signInMethodService.addPasswordSignInMethod(
-      addPasswordUserIf,
-      userId,
-      request
-    )
-    return request.username
-  } catch (error: unknown) {
-    handleError(error)
-
-    throw error
   }
+  await signInMethodService.addPasswordSignInMethod(
+    addPasswordUserIf,
+    userId,
+    request
+  )
+  return request.username
 }
 
 export function signInMethodController (router: Router): void {
@@ -132,52 +74,42 @@ export function signInMethodController (router: Router): void {
     const { body } = ctx.request
 
     if (!validatePasswordSignInMethod(body)) {
-      throw new ControllerError(
-        400,
-        'InvalidSignInMethod',
-        'invalid sign in method'
-      )
+      throw invalidSignInMethodError
     }
 
-    try {
-      const signedInUser = await ctx.db.executeTransaction(async (trx) => {
-        const signInUsingPasswordIf: SignInUsingPasswordIf = {
-          lockUserByUsername: function(
-            username: string
-          ): Promise<User | undefined> {
-            return userService.lockUserByUsername((username: string) => {
-              return userRepository.lockUserByUsername(trx, username)
-            }, username)
-          },
-          findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
-          createTokens: function(user: User): Promise<Tokens> {
-            const authTokenConfig: AuthTokenConfig = getAuthTokenConfig(ctx)
-            return authTokenService.createTokens((
-              userId: string,
-            ): Promise<DbRefreshToken> => {
-              return refreshTokenRepository.insertRefreshToken(
-                trx,
-                userId,
-                new Date()
-              )
-            }, user, authTokenConfig)
-          },
-        }
-        return await signInMethodService.signInUsingPassword(
-          signInUsingPasswordIf, body
-        )
-      })
-
-      ctx.status = 200
-      ctx.body = {
-        user: signedInUser.user,
-        authToken: signedInUser.authToken.authToken,
-        refreshToken: signedInUser.refreshToken.refreshToken
+    const signedInUser = await ctx.db.executeTransaction(async (trx) => {
+      const signInUsingPasswordIf: SignInUsingPasswordIf = {
+        lockUserByUsername: function(
+          username: string
+        ): Promise<User | undefined> {
+          return userService.lockUserByUsername((username: string) => {
+            return userRepository.lockUserByUsername(trx, username)
+          }, username)
+        },
+        findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
+        createTokens: function(user: User): Promise<Tokens> {
+          const authTokenConfig: AuthTokenConfig = getAuthTokenConfig(ctx)
+          return authTokenService.createTokens((
+            userId: string,
+          ): Promise<DbRefreshToken> => {
+            return refreshTokenRepository.insertRefreshToken(
+              trx,
+              userId,
+              new Date()
+            )
+          }, user, authTokenConfig)
+        },
       }
-    } catch (error) {
-      handleError(error)
+      return await signInMethodService.signInUsingPassword(
+        signInUsingPasswordIf, body
+      )
+    })
 
-      throw error
+    ctx.status = 200
+    ctx.body = {
+      user: signedInUser.user,
+      authToken: signedInUser.authToken.authToken,
+      refreshToken: signedInUser.refreshToken.refreshToken
     }
   })
 
@@ -188,50 +120,37 @@ export function signInMethodController (router: Router): void {
       const userId = ctx.params.userId
 
       if (!validateRefreshToken(body)) {
-        throw new ControllerError(
-          400,
-          'InvalidRefreshToken',
-          'the body must contain a valid refresh token'
-        )
+        throw invalidRefreshTokenError
       }
 
-      try {
-        const tokens = await ctx.db.executeTransaction(async (trx) => {
-          const user = await userService.lockUserById((userId: string) => {
-            return userRepository.lockUserById(trx, userId)
-          }, userId)
-          if (user === undefined) {
-            throw new UserNotFoundError()
-          }
-          await authTokenService.deleteRefreshToken((
-            refreshTokenId: string
-          ) => {
-            return refreshTokenRepository.deleteRefreshToken(
-              ctx.db, refreshTokenId
-            )
-          }, user.id, body, ctx.config.authTokenSecret)
-          const authTokenConfig: AuthTokenConfig = getAuthTokenConfig(ctx)
-          const tokens = await authTokenService.createTokens((
-            userId: string
-          ) => {
-            return refreshTokenRepository.insertRefreshToken(
-              trx,
-              userId,
-              new Date()
-            )
-          }, user, authTokenConfig)
-          return tokens
-        })
+      const tokens = await ctx.db.executeTransaction(async (trx) => {
+        const user = await userService.lockUserById((userId: string) => {
+          return userRepository.lockUserById(trx, userId)
+        }, userId)
+        await authTokenService.deleteRefreshToken((
+          refreshTokenId: string
+        ) => {
+          return refreshTokenRepository.deleteRefreshToken(
+            ctx.db, refreshTokenId
+          )
+        }, user.id, body, ctx.config.authTokenSecret)
+        const authTokenConfig: AuthTokenConfig = getAuthTokenConfig(ctx)
+        const tokens = await authTokenService.createTokens((
+          userId: string
+        ) => {
+          return refreshTokenRepository.insertRefreshToken(
+            trx,
+            userId,
+            new Date()
+          )
+        }, user, authTokenConfig)
+        return tokens
+      })
 
-        ctx.status = 200
-        ctx.body = {
-          authToken: tokens.auth.authToken,
-          refreshToken: tokens.refresh.refreshToken
-        }
-      } catch (error) {
-        handleError(error)
-
-        throw error
+      ctx.status = 200
+      ctx.body = {
+        authToken: tokens.auth.authToken,
+        refreshToken: tokens.refresh.refreshToken
       }
     }
   )
@@ -243,36 +162,20 @@ export function signInMethodController (router: Router): void {
       const { body } = ctx.request
 
       if (!validateRefreshToken(body)) {
-        throw new ControllerError(
-          400,
-          'InvalidRefreshToken',
-          'the body must contain a valid refresh token'
+        throw invalidRefreshTokenError
+      }
+
+      await authTokenService.deleteRefreshToken((
+        refreshTokenId: string
+      ) => {
+        return refreshTokenRepository.deleteRefreshToken(
+          ctx.db,
+          refreshTokenId
         )
-      }
+      }, ctx.params.userId, body, ctx.config.authTokenSecret)
 
-      try {
-        await authTokenService.deleteRefreshToken((
-          refreshTokenId: string
-        ) => {
-          return refreshTokenRepository.deleteRefreshToken(
-            ctx.db,
-            refreshTokenId
-          )
-        }, ctx.params.userId, body, ctx.config.authTokenSecret)
-
-        ctx.status = 200
-        ctx.body = { success: true }
-      } catch (error) {
-        if (error instanceof RefreshTokenUserIdMismatchError) {
-          throw new ControllerError(
-            403,
-            'RefreshTokenUserIdMismatch',
-            "cannot delete another user's refresh token"
-          )
-        }
-
-        throw error
-      }
+      ctx.status = 200
+      ctx.body = { success: true }
     }
   )
 
@@ -283,36 +186,27 @@ export function signInMethodController (router: Router): void {
       const { body } = ctx.request
 
       if (!validatePasswordChange(body)) {
-        throw new ControllerError(
-          400,
-          'InvalidPasswordChange',
-          'invalid password change'
-        )
+        throw invalidPasswordChangeError
       }
 
-      try {
-        await ctx.db.executeTransaction(async (trx) => {
-          const changePasswordUserIf: ChangePasswordUserIf = {
-            lockUserById: createLockUserById(trx),
-            findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
-            updatePassword: function(
-              userPasswordHash: UserPasswordHash
-            ): Promise<void> {
-              return signInMethodRepository.updatePassword(
-                trx, userPasswordHash
-              ) as Promise<unknown> as Promise<void>
-            }
+      await ctx.db.executeTransaction(async (trx) => {
+        const changePasswordUserIf: ChangePasswordUserIf = {
+          lockUserById: createLockUserById(trx),
+          findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
+          updatePassword: function(
+            userPasswordHash: UserPasswordHash
+          ): Promise<void> {
+            return signInMethodRepository.updatePassword(
+              trx, userPasswordHash
+            ) as Promise<unknown> as Promise<void>
           }
-          await signInMethodService.changePassword(
-            changePasswordUserIf, ctx.params.userId, body
-          )
-        })
+        }
+        await signInMethodService.changePassword(
+          changePasswordUserIf, ctx.params.userId, body
+        )
+      })
 
-        ctx.status = 204
-      } catch (error: unknown) {
-        handleError(error)
-        throw error
-      }
+      ctx.status = 204
     }
   )
 }

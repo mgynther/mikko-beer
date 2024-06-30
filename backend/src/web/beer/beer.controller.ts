@@ -2,12 +2,7 @@ import * as beerRepository from '../../data/beer/beer.repository'
 import * as breweryRepository from '../../data/brewery/brewery.repository'
 import { type Transaction } from '../../data/database'
 import * as beerService from '../../core/beer/beer.service'
-import {
-  type CreateIf,
-  type UpdateIf,
-  BreweryNotFoundError,
-  StyleNotFoundError
-} from '../../core/beer/beer.service'
+import { type CreateIf, type UpdateIf } from '../../core/beer/beer.service'
 import { type Pagination } from '../../core/pagination'
 import { type SearchByName } from '../../core/search'
 import * as styleRepository from '../../data/style/style.repository'
@@ -22,27 +17,12 @@ import {
   validateCreateBeerRequest,
   validateUpdateBeerRequest
 } from '../../core/beer/beer'
-import { ControllerError } from '../../core/errors'
+import {
+  invalidBeerError,
+  invalidBeerIdError,
+} from '../../core/errors'
 import { validatePagination } from '../pagination'
 import { validateSearchByName } from '../search'
-
-function handleError (e: unknown): void {
-  if (e instanceof BreweryNotFoundError) {
-    throw new ControllerError(
-      400,
-      'BreweryNotFound',
-      'brewery not found'
-    )
-  }
-  if (e instanceof StyleNotFoundError) {
-    throw new ControllerError(
-      400,
-      'StyleNotFound',
-      'style not found'
-    )
-  }
-  throw e
-}
 
 export function beerController (router: Router): void {
   router.post('/api/v1/beer',
@@ -50,29 +30,25 @@ export function beerController (router: Router): void {
     async (ctx) => {
       const { body } = ctx.request
 
-      try {
-        const createBeerRequest = validateCreateRequest(body)
-        const result = await ctx.db.executeTransaction(async (trx) => {
-          const createIf: CreateIf = {
-            create: (beer: NewBeer) => beerRepository.insertBeer(trx, beer),
-            lockBreweries: createBreweryLocker(trx),
-            lockStyles: createStyleLocker(trx),
-            insertBeerBreweries: createBeerBreweryInserter(trx),
-            insertBeerStyles: createBeerStyleInserter(trx),
-          }
-          return await beerService.createBeer(
-            createIf,
-            createBeerRequest,
-            ctx.log
-          )
-        })
-
-        ctx.status = 201
-        ctx.body = {
-          beer: result
+      const createBeerRequest = validateCreateRequest(body)
+      const result = await ctx.db.executeTransaction(async (trx) => {
+        const createIf: CreateIf = {
+          create: (beer: NewBeer) => beerRepository.insertBeer(trx, beer),
+          lockBreweries: createBreweryLocker(trx),
+          lockStyles: createStyleLocker(trx),
+          insertBeerBreweries: createBeerBreweryInserter(trx),
+          insertBeerStyles: createBeerStyleInserter(trx),
         }
-      } catch (e) {
-        handleError(e)
+        return await beerService.createBeer(
+          createIf,
+          createBeerRequest,
+          ctx.log
+        )
+      })
+
+      ctx.status = 201
+      ctx.body = {
+        beer: result
       }
     }
   )
@@ -83,36 +59,32 @@ export function beerController (router: Router): void {
       const { body } = ctx.request
       const { beerId } = ctx.params
 
-      try {
-        const updateBeerRequest = validateUpdateRequest(body, beerId)
-        const result = await ctx.db.executeTransaction(async (trx) => {
-          const updateIf: UpdateIf = {
-            update: (beer: Beer) => beerRepository.updateBeer(trx, beer),
-            lockBreweries: createBreweryLocker(trx),
-            lockStyles: createStyleLocker(trx),
-            insertBeerBreweries: createBeerBreweryInserter(trx),
-            deleteBeerBreweries: (
-              beerId: string
-            ) => beerRepository.deleteBeerBreweries(trx, beerId),
-            insertBeerStyles: createBeerStyleInserter(trx),
-            deleteBeerStyles: (
-              beerId: string
-            ) => beerRepository.deleteBeerStyles(trx, beerId),
-          }
-          return await beerService.updateBeer(
-            updateIf,
-            beerId,
-            updateBeerRequest,
-            ctx.log
-          )
-        })
-
-        ctx.status = 200
-        ctx.body = {
-          beer: result
+      const updateBeerRequest = validateUpdateRequest(body, beerId)
+      const result = await ctx.db.executeTransaction(async (trx) => {
+        const updateIf: UpdateIf = {
+          update: (beer: Beer) => beerRepository.updateBeer(trx, beer),
+          lockBreweries: createBreweryLocker(trx),
+          lockStyles: createStyleLocker(trx),
+          insertBeerBreweries: createBeerBreweryInserter(trx),
+          deleteBeerBreweries: (
+            beerId: string
+          ) => beerRepository.deleteBeerBreweries(trx, beerId),
+          insertBeerStyles: createBeerStyleInserter(trx),
+          deleteBeerStyles: (
+            beerId: string
+          ) => beerRepository.deleteBeerStyles(trx, beerId),
         }
-      } catch (e) {
-        handleError(e)
+        return await beerService.updateBeer(
+          updateIf,
+          beerId,
+          updateBeerRequest,
+          ctx.log
+        )
+      })
+
+      ctx.status = 200
+      ctx.body = {
+        beer: result
       }
     }
   )
@@ -125,14 +97,6 @@ export function beerController (router: Router): void {
       const beer = await beerService.findBeerById((beerId: string) => {
         return beerRepository.findBeerById(ctx.db, beerId)
       }, beerId, ctx.log)
-
-      if (beer === undefined) {
-        throw new ControllerError(
-          404,
-          'BeerNotFound',
-          `beer with id ${beerId} was not found`
-        )
-      }
 
       ctx.body = { beer }
     }
@@ -169,7 +133,7 @@ export function beerController (router: Router): void {
 
 function validateCreateRequest (body: unknown): CreateBeerRequest {
   if (!validateCreateBeerRequest(body)) {
-    throw new ControllerError(400, 'InvalidBeer', 'invalid beer')
+    throw invalidBeerError
   }
 
   const result = body as CreateBeerRequest
@@ -181,10 +145,10 @@ function validateUpdateRequest (
   beerId: string
 ): UpdateBeerRequest {
   if (!validateUpdateBeerRequest(body)) {
-    throw new ControllerError(400, 'InvalidBeer', 'invalid beer')
+    throw invalidBeerError
   }
   if (typeof beerId !== 'string' || beerId.length === 0) {
-    throw new ControllerError(400, 'InvalidBeerId', 'invalid beer id')
+    throw invalidBeerIdError
   }
 
   const result = body as UpdateBeerRequest

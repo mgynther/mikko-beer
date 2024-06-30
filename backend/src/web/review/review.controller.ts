@@ -17,40 +17,18 @@ import {
   validateUpdateReviewRequest,
   validReviewListOrder
 } from '../../core/review/review'
-import { ControllerError } from '../../core/errors'
+import {
+  invalidReviewError,
+  invalidReviewIdError,
+  invalidReviewListQueryBeerNameError,
+  invalidReviewListQueryBreweryNameError,
+  invalidReviewListQueryOrderError
+} from '../../core/errors'
 import { validatePagination } from '../pagination'
 import {
-  BeerNotFoundError,
-  ContainerNotFoundError,
-  StorageNotFoundError,
   type CreateIf,
   type UpdateIf
 } from '../../core/review/review.service'
-
-function handleError (e: unknown): void {
-  if (e instanceof BeerNotFoundError) {
-    throw new ControllerError(
-      400,
-      'BeerNotFound',
-      'beer not found'
-    )
-  }
-  if (e instanceof ContainerNotFoundError) {
-    throw new ControllerError(
-      400,
-      'ContainerNotFound',
-      'container not found'
-    )
-  }
-  if (e instanceof StorageNotFoundError) {
-    throw new ControllerError(
-      400,
-      'StorageNotFound',
-      'storage not found'
-    )
-  }
-  throw e
-}
 
 export function reviewController (router: Router): void {
   router.post('/api/v1/review',
@@ -59,45 +37,41 @@ export function reviewController (router: Router): void {
       const { body } = ctx.request
       const { storage } = ctx.request.query
 
-      try {
-        const createReviewRequest = validateCreateRequest(body)
-        const storageParam = typeof storage === 'string' &&
-          storage.length > 0
-          ? storage
-          : undefined
-        const result = await ctx.db.executeTransaction(async (trx) => {
-          const createIf: CreateIf = {
-            createReview: (
-              review: NewReview
-            ) => reviewRepository.insertReview(trx, review),
-            deleteFromStorage: (
-              storageId: string
-            ) => storageRepository.deleteStorageById(
-              trx, storageId),
-            lockBeer: function(id: string): Promise<string | undefined> {
-              return beerRepository.lockBeer(trx, id)
-            },
-            lockContainer: function(id: string): Promise<string | undefined> {
-              return containerRepository.lockContainer(trx, id)
-            },
-            lockStorage: function(id: string): Promise<string | undefined> {
-              return storageRepository.lockStorage(trx, id)
-            }
+      const createReviewRequest = validateCreateRequest(body)
+      const storageParam = typeof storage === 'string' &&
+        storage.length > 0
+        ? storage
+        : undefined
+      const result = await ctx.db.executeTransaction(async (trx) => {
+        const createIf: CreateIf = {
+          createReview: (
+            review: NewReview
+          ) => reviewRepository.insertReview(trx, review),
+          deleteFromStorage: (
+            storageId: string
+          ) => storageRepository.deleteStorageById(
+            trx, storageId),
+          lockBeer: function(id: string): Promise<string | undefined> {
+            return beerRepository.lockBeer(trx, id)
+          },
+          lockContainer: function(id: string): Promise<string | undefined> {
+            return containerRepository.lockContainer(trx, id)
+          },
+          lockStorage: function(id: string): Promise<string | undefined> {
+            return storageRepository.lockStorage(trx, id)
           }
-          return await reviewService.createReview(
-            createIf,
-            createReviewRequest,
-            storageParam,
-            ctx.log
-          )
-        })
-
-        ctx.status = 201
-        ctx.body = {
-          review: result
         }
-      } catch (e) {
-        handleError(e)
+        return await reviewService.createReview(
+          createIf,
+          createReviewRequest,
+          storageParam,
+          ctx.log
+        )
+      })
+
+      ctx.status = 201
+      ctx.body = {
+        review: result
       }
     }
   )
@@ -108,34 +82,30 @@ export function reviewController (router: Router): void {
       const { body } = ctx.request
       const { reviewId } = ctx.params
 
-      try {
-        const updateReviewRequest = validateUpdateRequest(body, reviewId)
-        const result = await ctx.db.executeTransaction(async (trx) => {
-          const updateIf: UpdateIf = {
-            updateReview: (
-              review: Review
-            ) => reviewRepository.updateReview(trx, review),
-            lockBeer: function(id: string): Promise<string | undefined> {
-              return beerRepository.lockBeer(trx, id)
-            },
-            lockContainer: function(id: string): Promise<string | undefined> {
-              return containerRepository.lockContainer(trx, id)
-            }
+      const updateReviewRequest = validateUpdateRequest(body, reviewId)
+      const result = await ctx.db.executeTransaction(async (trx) => {
+        const updateIf: UpdateIf = {
+          updateReview: (
+            review: Review
+          ) => reviewRepository.updateReview(trx, review),
+          lockBeer: function(id: string): Promise<string | undefined> {
+            return beerRepository.lockBeer(trx, id)
+          },
+          lockContainer: function(id: string): Promise<string | undefined> {
+            return containerRepository.lockContainer(trx, id)
           }
-          return await reviewService.updateReview(
-            updateIf,
-            reviewId,
-            updateReviewRequest,
-            ctx.log
-          )
-        })
-
-        ctx.status = 200
-        ctx.body = {
-          review: result
         }
-      } catch (e) {
-        handleError(e)
+        return await reviewService.updateReview(
+          updateIf,
+          reviewId,
+          updateReviewRequest,
+          ctx.log
+        )
+      })
+
+      ctx.status = 200
+      ctx.body = {
+        review: result
       }
     }
   )
@@ -148,14 +118,6 @@ export function reviewController (router: Router): void {
       const review = await reviewService.findReviewById((reviewId: string) => {
         return reviewRepository.findReviewById(ctx.db, reviewId)
       }, reviewId, ctx.log)
-
-      if (review === undefined) {
-        throw new ControllerError(
-          404,
-          'ReviewNotFound',
-          `review with id ${reviewId} was not found`
-        )
-      }
 
       ctx.body = { review }
     }
@@ -258,7 +220,7 @@ export function reviewController (router: Router): void {
 
 function validateCreateRequest (body: unknown): CreateReviewRequest {
   if (!validateCreateReviewRequest(body)) {
-    throw new ControllerError(400, 'InvalidReview', 'invalid review')
+    throw invalidReviewError
   }
 
   const result = body as CreateReviewRequest
@@ -270,10 +232,10 @@ function validateUpdateRequest (
   reviewId: string
 ): UpdateReviewRequest {
   if (!validateUpdateReviewRequest(body)) {
-    throw new ControllerError(400, 'InvalidReview', 'invalid review')
+    throw invalidReviewError
   }
   if (typeof reviewId !== 'string' || reviewId.length === 0) {
-    throw new ControllerError(400, 'InvalidReviewId', 'invalid review id')
+    throw invalidReviewIdError
   }
 
   const result = body as UpdateReviewRequest
@@ -287,12 +249,10 @@ function doValidateFullReviewListOrder (
   const validated = validateReviewListOrder(reviewListOrder)
 
   if (validated.property === 'beer_name') {
-    throw new ControllerError(
-      400, 'InvalidReviewListQuery', 'invalid use of beer_name order')
+    throw invalidReviewListQueryBeerNameError
   }
   if (validated.property === 'brewery_name') {
-    throw new ControllerError(
-      400, 'InvalidReviewListQuery', 'invalid use of brewery order')
+    throw invalidReviewListQueryBreweryNameError
   }
   return validated
 }
@@ -309,8 +269,7 @@ function validateReviewListOrder (
   reviewListOrder: ReviewListOrder | undefined
 ): ReviewListOrder {
   if (reviewListOrder === undefined) {
-    throw new ControllerError(
-      400, 'InvalidReviewListQuery', 'invalid review list query')
+    throw invalidReviewListQueryOrderError
   }
   return reviewListOrder
 }

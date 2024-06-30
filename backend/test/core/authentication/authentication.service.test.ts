@@ -9,14 +9,14 @@ import {
   type AuthTokenConfig
 } from '../../../src/core/authentication/auth-token'
 import {
-    expiredAuthTokenError,
-    invalidAuthTokenError,
+  expiredAuthTokenError,
+  invalidAuthTokenError,
   invalidAuthorizationHeaderError,
   noRightsError,
   noUserIdParameterError,
   userMismatchError,
   userOrRefreshTokenNotFoundError
-} from '../../../src/core/authentication/authentication.service'
+} from '../../../src/core/errors'
 
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {

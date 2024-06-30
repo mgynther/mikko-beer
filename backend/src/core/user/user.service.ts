@@ -6,6 +6,7 @@ import {
   type User
 } from './user'
 
+import { invalidCredentialsError, userNotFoundError } from '../errors'
 import { INFO, type log } from '../log'
 import { type DbRefreshToken } from '../authentication/refresh-token'
 import { type AuthTokenConfig } from '../authentication/auth-token'
@@ -37,9 +38,13 @@ export async function findUserById (
   findUserById: (userId: string) => Promise<User | undefined>,
   userId: string,
   log: log
-): Promise<User | undefined> {
+): Promise<User> {
   log(INFO, 'find user', userId)
-  return await findUserById(userId)
+  const user = await findUserById(userId)
+  if (user === undefined) {
+    throw userNotFoundError(userId)
+  }
+  return user
 }
 
 export async function listUsers (
@@ -53,8 +58,12 @@ export async function listUsers (
 export async function lockUserById (
   lockUserById: (id: string) => Promise<User | undefined>,
   id: string
-): Promise<User | undefined> {
-  return await lockUserById(id)
+): Promise<User> {
+  const user = await lockUserById(id)
+  if (user === undefined) {
+    throw invalidCredentialsError
+  }
+  return user
 }
 
 export async function lockUserByUsername (

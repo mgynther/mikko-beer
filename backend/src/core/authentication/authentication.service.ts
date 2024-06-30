@@ -1,51 +1,17 @@
 import * as authTokenService from './auth-token.service'
 import { Role } from '../user/user'
 
-import { ControllerError } from '../errors'
 import { type DbRefreshToken } from './refresh-token'
 import { AuthTokenExpiredError, type AuthTokenPayload } from './auth-token'
-
-export const expiredAuthTokenError = new ControllerError(
-  401,
-  'ExpiredAuthToken',
-  'the auth token has expired'
-)
-
-export const invalidAuthorizationHeaderError = new ControllerError(
-  400,
-  'InvalidAuthorizationHeader',
-  'missing or invalid Authorization header'
-)
-
-export const invalidAuthTokenError = new ControllerError(
-  401,
-  'InvalidAuthToken',
-  'invalid auth token'
-)
-
-export const noUserIdParameterError = new ControllerError(
-  400,
-  'NoUserIdParameter',
-  'no user id parameter found in the route'
-)
-
-export const noRightsError = new ControllerError(
-  403,
-  'Forbidden',
-  'no rights'
-)
-
-export const userMismatchError = new ControllerError(
-  403,
-  'UserMismatch',
-  "wrong user's auth token"
-)
-
-export const userOrRefreshTokenNotFoundError = new ControllerError(
-  404,
-  'UserOrRefreshTokenNotFound',
-  'either the user or the refresh token has been deleted'
-)
+import {
+  expiredAuthTokenError,
+  invalidAuthTokenError,
+  invalidAuthorizationHeaderError,
+  noRightsError,
+  noUserIdParameterError,
+  userMismatchError,
+  userOrRefreshTokenNotFoundError
+} from '../errors'
 
 export async function authenticateUser (
   userId: string | undefined,

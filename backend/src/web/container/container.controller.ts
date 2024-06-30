@@ -11,7 +11,10 @@ import {
   validateCreateContainerRequest,
   validateUpdateContainerRequest
 } from '../../core/container/container'
-import { ControllerError } from '../../core/errors'
+import {
+  invalidContainerError,
+  invalidContainerIdError
+} from '../../core/errors'
 
 export function containerController (router: Router): void {
   router.post('/api/v1/container',
@@ -63,14 +66,6 @@ export function containerController (router: Router): void {
         return containerRepository.findContainerById(ctx.db, containerId)
       }, containerId, ctx.log)
 
-      if (container === undefined) {
-        throw new ControllerError(
-          404,
-          'ContainerNotFound',
-          `container with id ${containerId} was not found`
-        )
-      }
-
       ctx.body = { container }
     }
   )
@@ -89,7 +84,7 @@ export function containerController (router: Router): void {
 
 function validateCreateRequest (body: unknown): CreateContainerRequest {
   if (!validateCreateContainerRequest(body)) {
-    throw new ControllerError(400, 'InvalidContainer', 'invalid container')
+    throw invalidContainerError
   }
 
   const result = body as CreateContainerRequest
@@ -101,13 +96,13 @@ function validateUpdateRequest (
   containerId: string
 ): UpdateContainerRequest {
   if (!validateUpdateContainerRequest(body)) {
-    throw new ControllerError(400, 'InvalidContainer', 'invalid container')
+    throw invalidContainerError
   }
   if (containerId === undefined ||
       containerId === null ||
       containerId.length === 0
   ) {
-    throw new ControllerError(400, 'InvalidContainerId', 'invalid container id')
+    throw invalidContainerIdError
   }
 
   const result = body as UpdateContainerRequest

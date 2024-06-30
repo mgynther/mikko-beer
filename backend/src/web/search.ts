@@ -1,4 +1,4 @@
-import { ControllerError } from '../core/errors'
+import { invalidSearchError } from '../core/errors'
 import {
   type SearchByName as SearchByNameInternal,
   validateSearchByName as coreValidate
@@ -10,8 +10,6 @@ export function validateSearchByName (search: unknown): SearchByName {
   try {
     return coreValidate(search)
   } catch (e) {
-    throw new ControllerError(
-      400, 'InvalidSearch', 'invalid search'
-    )
+    throw invalidSearchError
   }
 }

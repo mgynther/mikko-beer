@@ -8,12 +8,7 @@ import {
   changePassword,
   encryptPassword,
   signInUsingPassword,
-  verifySecret,
-  PasswordTooLongError,
-  PasswordTooWeakError,
-  SignInMethodNotFoundError,
-  UserAlreadyHasSignInMethodError,
-  WrongPasswordError,
+  verifySecret
 } from '../../../src/core/user/sign-in-method.service'
 
 import { type Tokens } from '../../../src/core/authentication/tokens'
@@ -23,9 +18,12 @@ import {
   type UserPasswordHash,
 } from '../../../src/core/user/sign-in-method'
 import { Role, User } from '../../../src/core/user/user'
-import { UserNotFoundError } from '../../../src/core/errors'
-import { AuthToken } from '../../../src/core/authentication/auth-token'
-import { RefreshToken } from '../../../src/core/authentication/refresh-token'
+import {
+  invalidCredentialsError,
+  passwordTooLongError,
+  passwordTooWeakError,
+  userAlreadyHasSignInMethodError
+} from '../../../src/core/errors'
 
 function unreachable() {
   expect('supposed to be unreachable').to.equal(true)
@@ -37,7 +35,7 @@ describe('encrypt and verify password', () => {
       await encryptPassword('passwor')
       unreachable()
     } catch (e) {
-      expect(e instanceof PasswordTooWeakError).to.equal(true)
+      expect(e).to.eql(passwordTooWeakError)
     }
   })
 
@@ -46,7 +44,7 @@ describe('encrypt and verify password', () => {
       await encryptPassword('password'.repeat(100))
       unreachable()
     } catch (e) {
-      expect(e instanceof PasswordTooLongError).to.equal(true)
+      expect(e).to.eql(passwordTooLongError)
     }
   })
 
@@ -205,7 +203,7 @@ describe('password sign-in-method service unit tests', () => {
       await addPasswordSignInMethod(addPasswordUserIf, userId, method)
       unreachable()
     } catch (e) {
-      expect(e instanceof UserNotFoundError).to.equal(true)
+      expect(e).to.eql(invalidCredentialsError)
     }
   })
 
@@ -219,7 +217,7 @@ describe('password sign-in-method service unit tests', () => {
       await addPasswordSignInMethod(addPasswordUserIf, userId, method)
       unreachable()
     } catch (e) {
-      expect(e instanceof UserAlreadyHasSignInMethodError).to.equal(true)
+      expect(e).to.eql(userAlreadyHasSignInMethodError)
     }
   })
 
@@ -239,7 +237,7 @@ describe('password sign-in-method service unit tests', () => {
       await addPasswordSignInMethod(addPasswordUserIf, userId, method)
       unreachable()
     } catch (e) {
-      expect(e instanceof PasswordTooWeakError).to.equal(true)
+      expect(e).to.equal(passwordTooWeakError)
     }
   })
 
@@ -273,7 +271,7 @@ describe('password sign-in-method service unit tests', () => {
       await changePassword(changePasswordUserIf, userId, passwordChange)
       unreachable()
     } catch (e) {
-      expect(e instanceof UserNotFoundError).to.equal(true)
+      expect(e).to.eql(invalidCredentialsError)
     }
   })
 
@@ -287,7 +285,7 @@ describe('password sign-in-method service unit tests', () => {
       await changePassword(changePasswordUserIf, userId, passwordChange)
       unreachable()
     } catch (e) {
-      expect(e instanceof SignInMethodNotFoundError).to.equal(true)
+      expect(e).to.eql(invalidCredentialsError)
     }
   })
 
@@ -301,7 +299,7 @@ describe('password sign-in-method service unit tests', () => {
       await changePassword(changePasswordUserIf, userId, passwordChange)
       unreachable()
     } catch (e) {
-      expect(e instanceof WrongPasswordError).to.equal(true)
+      expect(e).to.equal(invalidCredentialsError)
     }
   })
 
@@ -327,7 +325,7 @@ describe('password sign-in-method service unit tests', () => {
       await signInUsingPassword(signInUsingPasswordIf, method)
       unreachable()
     } catch (e) {
-      expect(e instanceof UserNotFoundError).to.equal(true)
+      expect(e).to.eql(invalidCredentialsError)
     }
   })
 
@@ -341,7 +339,7 @@ describe('password sign-in-method service unit tests', () => {
       await signInUsingPassword(signInUsingPasswordIf, method)
       unreachable()
     } catch (e) {
-      expect(e instanceof SignInMethodNotFoundError).to.equal(true)
+      expect(e).to.equal(invalidCredentialsError)
     }
   })
 
@@ -355,7 +353,7 @@ describe('password sign-in-method service unit tests', () => {
       await signInUsingPassword(signInUsingPasswordIf, method)
       unreachable()
     } catch (e) {
-      expect(e instanceof WrongPasswordError).to.equal(true)
+      expect(e).to.equal(invalidCredentialsError)
     }
   })
 })

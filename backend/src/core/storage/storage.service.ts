@@ -4,12 +4,14 @@ import {
   type Storage
 } from '../../core/storage/storage'
 
+import {
+  referredBeerNotFoundError,
+  referredContainerNotFoundError,
+  storageNotFoundError
+} from '../errors'
 import { INFO, type log } from '../log'
 
 import { type Pagination } from '../../core/pagination'
-
-export class BeerNotFoundError extends Error {}
-export class ContainerNotFoundError extends Error {}
 
 type LockId = (id: string) => Promise<string | undefined>
 
@@ -25,11 +27,11 @@ export async function createStorage (
   log: log
 ): Promise<Storage> {
   log(INFO, 'create storage for beer', request.beer)
-  await lockId(createIf.lockBeer, request.beer, new BeerNotFoundError())
+  await lockId(createIf.lockBeer, request.beer, referredBeerNotFoundError)
   await lockId(
     createIf.lockContainer,
     request.container,
-    new ContainerNotFoundError()
+    referredContainerNotFoundError
   )
   const storage = await createIf.insertStorage(request)
 
@@ -51,11 +53,11 @@ export async function updateStorage (
   log: log
 ): Promise<Storage> {
   log(INFO, 'update storage', request.id)
-  await lockId(updateIf.lockBeer, request.beer, new BeerNotFoundError())
+  await lockId(updateIf.lockBeer, request.beer, referredBeerNotFoundError)
   await lockId(
     updateIf.lockContainer,
     request.container,
-    new ContainerNotFoundError()
+    referredContainerNotFoundError
   )
   const storage = await updateIf.updateStorage(request)
 
@@ -73,7 +75,7 @@ export async function findStorageById (
   log(INFO, 'find storage', storageId)
   const storage = await findById(storageId)
 
-  if (storage === undefined) return undefined
+  if (storage === undefined) throw storageNotFoundError(storageId)
 
   return storage
 }

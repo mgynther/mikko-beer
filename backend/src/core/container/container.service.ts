@@ -5,6 +5,7 @@ import {
   type NewContainer
 } from './container'
 
+import { containerNotFoundError } from '../errors'
 import { INFO, type log } from '../log'
 
 export async function createContainer (
@@ -43,11 +44,11 @@ export async function findContainerById (
   find: (id: string) => Promise<Container | undefined>,
   containerId: string,
   log: log
-): Promise<Container | undefined> {
+): Promise<Container> {
   log(INFO, 'find container with id', containerId)
   const container = await find(containerId)
 
-  if (container === undefined) return undefined
+  if (container === undefined) throw containerNotFoundError(containerId)
 
   return container
 }

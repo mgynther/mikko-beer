@@ -3,7 +3,11 @@ import * as statsService from '../../core/stats/stats.service'
 import * as authHelper from '../authentication/authentication-helper'
 
 import { type Pagination } from '../../core/pagination'
-import { ControllerError } from '../../core/errors'
+import {
+  invalidBreweryAndStyleFilterError,
+  invalidBreweryStatsQueryError,
+  invalidStyleStatsQueryError
+} from '../../core/errors'
 import { type Router } from '../router'
 
 import { validatePagination} from '../pagination'
@@ -115,8 +119,7 @@ function validateBreweryStatsOrder (
 ): BreweryStatsOrder {
   const breweryStatsOrder = validBreweryStatsOrder(query)
   if (breweryStatsOrder === undefined) {
-    throw new ControllerError(
-      400, 'InvalidBreweryStatsQuery', 'invalid brewery stats query')
+    throw invalidBreweryStatsQueryError
   }
   return breweryStatsOrder
 }
@@ -126,8 +129,7 @@ function validateStyleStatsOrder (
 ): StyleStatsOrder {
   const styleStatsOrder = validStyleStatsOrder(query)
   if (styleStatsOrder === undefined) {
-    throw new ControllerError(
-      400, 'InvalidStyleStatsQuery', 'invalid style stats query')
+    throw invalidStyleStatsQueryError
   }
   return styleStatsOrder
 }
@@ -137,11 +139,7 @@ function validateStatsBreweryStyleFilter (
 ): StatsBreweryStyleFilter {
   const styleStatsOrder = validStatsBreweryStyleFilter(query)
   if (styleStatsOrder === undefined) {
-    throw new ControllerError(
-      400,
-      'InvalidStatsBreweryAndStyleFilter',
-      'invalid filter with both brewery and style'
-    )
+    throw invalidBreweryAndStyleFilterError
   }
   return styleStatsOrder
 }
