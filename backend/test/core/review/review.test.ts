@@ -4,6 +4,10 @@ import {
   validateCreateReviewRequest,
   validateUpdateReviewRequest,
 } from '../../../src/core/review/review'
+import {
+  invalidReviewError,
+  invalidReviewIdError
+} from '../../../src/core/errors'
 
 function validRequest (): Record<string, unknown> {
   return {
@@ -25,14 +29,19 @@ describe('review create/update unit tests', () => {
       title: (base: string) => `${base}: create`
     },
     {
-      func: validateUpdateReviewRequest,
+      func: (request: unknown) => {
+        const id = '49f208f7-07b2-4fca-bbd3-8a4bc49b9b38'
+        return validateUpdateReviewRequest(request, id)
+      },
       title: (base: string) => `${base}: update`
     }
   ].forEach(validator => {
     const { func, title } = validator
 
-    function pass (review: unknown) {
-      expect(func(review)).to.equal(true)
+    function pass (review: object) {
+      const input = { ...review }
+      const output = { ...review }
+      expect(func(input)).to.eql(output)
     }
 
     it(title('pass validation'), () => {
@@ -85,11 +94,13 @@ describe('review create/update unit tests', () => {
           ...validRequest(),
           rating
         }
-        expect(func(review)).to.equal(true)
+        const input = { ...review }
+        const output = { ...review }
+        expect(func(input)).to.eql(output)
       }))
 
     function fail (review: unknown) {
-      expect(func(review)).to.equal(false)
+      expect(() => func(review)).to.throw(invalidReviewError)
     }
 
     it(title('fail with empty beer'), () => {
@@ -188,5 +199,11 @@ describe('review create/update unit tests', () => {
       }
       fail(review)
     })
+  })
+
+  it('fail update with empty id', () => {
+    expect(
+      () => validateUpdateReviewRequest(validRequest(), '')
+    ).to.throw(invalidReviewIdError)
   })
 })

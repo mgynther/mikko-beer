@@ -4,6 +4,14 @@ import { type Container } from '../container/container'
 import { type ListDirection, directionValidation } from '../list'
 import { timePattern } from '../time'
 
+import {
+  invalidReviewError,
+  invalidReviewIdError,
+  invalidReviewListQueryBeerNameError,
+  invalidReviewListQueryBreweryNameError,
+  invalidReviewListQueryOrderError
+} from '../errors'
+
 export interface Review {
   id: string
   additionalInfo: string
@@ -124,15 +132,41 @@ const doValidateReviewListOrder =
     additionalProperties: false
   })
 
-export function validateCreateReviewRequest (body: unknown): boolean {
+function isCreateReviewRequestValid (body: unknown): boolean {
   return doValidateReviewRequest(body)
 }
 
-export function validateUpdateReviewRequest (body: unknown): boolean {
+function isUpdateReviewRequestValid (body: unknown): boolean {
   return doValidateReviewRequest(body)
 }
 
-function validateReviewListOrder (body: unknown): boolean {
+export function validateCreateReviewRequest (
+  body: unknown
+): CreateReviewRequest {
+  if (!isCreateReviewRequestValid(body)) {
+    throw invalidReviewError
+  }
+
+  const result = body as CreateReviewRequest
+  return result
+}
+
+export function validateUpdateReviewRequest (
+  body: unknown,
+  reviewId: string
+): UpdateReviewRequest {
+  if (!isUpdateReviewRequestValid(body)) {
+    throw invalidReviewError
+  }
+  if (typeof reviewId !== 'string' || reviewId.length === 0) {
+    throw invalidReviewIdError
+  }
+
+  const result = body as UpdateReviewRequest
+  return result
+}
+
+function isReviewListOrderValid (body: unknown): boolean {
   return doValidateReviewListOrder(body)
 }
 
@@ -156,18 +190,49 @@ function reviewListOrderParamsOrDefaults (
   return { property: order, direction }
 }
 
-export function validReviewListOrder (
+function validReviewListOrder (
   query: Record<string, unknown>,
   defaultProperty: ReviewListOrderProperty,
   defaultDirection: ListDirection
 ): ReviewListOrder | undefined {
   const params =
     reviewListOrderParamsOrDefaults(query, defaultProperty, defaultDirection)
-  if (validateReviewListOrder(params)) {
+  if (isReviewListOrderValid(params)) {
     return {
       property: params.property as ReviewListOrderProperty,
       direction: params.direction as ListDirection
     }
   }
   return undefined
+}
+
+export function validateFullReviewListOrder (
+  query: Record<string, unknown>
+): ReviewListOrder {
+  const reviewListOrder = validReviewListOrder(query, 'time', 'desc')
+  const validated = validateReviewListOrder(reviewListOrder)
+
+  if (validated.property === 'beer_name') {
+    throw invalidReviewListQueryBeerNameError
+  }
+  if (validated.property === 'brewery_name') {
+    throw invalidReviewListQueryBreweryNameError
+  }
+  return validated
+}
+
+export function validateFilteredReviewListOrder (
+  query: Record<string, unknown>
+): ReviewListOrder {
+  const reviewListOrder = validReviewListOrder(query, 'beer_name', 'asc')
+  return validateReviewListOrder(reviewListOrder)
+}
+
+function validateReviewListOrder (
+  reviewListOrder: ReviewListOrder | undefined
+): ReviewListOrder {
+  if (reviewListOrder === undefined) {
+    throw invalidReviewListQueryOrderError
+  }
+  return reviewListOrder
 }

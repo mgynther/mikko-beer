@@ -8,22 +8,14 @@ import * as authHelper from '../authentication/authentication-helper'
 import { type Router } from '../router'
 import { type Pagination } from '../../core/pagination'
 import {
-  type CreateReviewRequest,
   type NewReview,
   type Review,
-  type UpdateReviewRequest,
   type ReviewListOrder,
   validateCreateReviewRequest,
   validateUpdateReviewRequest,
-  validReviewListOrder
+  validateFilteredReviewListOrder,
+  validateFullReviewListOrder
 } from '../../core/review/review'
-import {
-  invalidReviewError,
-  invalidReviewIdError,
-  invalidReviewListQueryBeerNameError,
-  invalidReviewListQueryBreweryNameError,
-  invalidReviewListQueryOrderError
-} from '../../core/errors'
 import { validatePagination } from '../pagination'
 import {
   type CreateIf,
@@ -37,7 +29,7 @@ export function reviewController (router: Router): void {
       const { body } = ctx.request
       const { storage } = ctx.request.query
 
-      const createReviewRequest = validateCreateRequest(body)
+      const createReviewRequest = validateCreateReviewRequest(body)
       const storageParam = typeof storage === 'string' &&
         storage.length > 0
         ? storage
@@ -82,7 +74,7 @@ export function reviewController (router: Router): void {
       const { body } = ctx.request
       const { reviewId } = ctx.params
 
-      const updateReviewRequest = validateUpdateRequest(body, reviewId)
+      const updateReviewRequest = validateUpdateReviewRequest(body, reviewId)
       const result = await ctx.db.executeTransaction(async (trx) => {
         const updateIf: UpdateIf = {
           updateReview: (
@@ -129,7 +121,7 @@ export function reviewController (router: Router): void {
     async (ctx) => {
       const { beerId } = ctx.params
       const reviewListOrder =
-        doValidateFilteredReviewListOrder(ctx.request.query)
+        validateFilteredReviewListOrder(ctx.request.query)
       const reviews = await reviewService.listReviewsByBeer((
         beerId: string, reviewListOrder: ReviewListOrder
       ) => {
@@ -153,7 +145,7 @@ export function reviewController (router: Router): void {
     async (ctx) => {
       const { breweryId } = ctx.params
       const reviewListOrder =
-        doValidateFilteredReviewListOrder(ctx.request.query)
+        validateFilteredReviewListOrder(ctx.request.query)
       const reviews = await reviewService.listReviewsByBrewery((
         breweryId: string, reviewListOrder: ReviewListOrder
       ) => (
@@ -177,7 +169,7 @@ export function reviewController (router: Router): void {
     async (ctx) => {
       const { styleId } = ctx.params
       const reviewListOrder =
-        doValidateFilteredReviewListOrder(ctx.request.query)
+        validateFilteredReviewListOrder(ctx.request.query)
       const reviews = await reviewService.listReviewsByStyle((
         styleId: string, reviewListOrder: ReviewListOrder
       ) => (
@@ -199,7 +191,7 @@ export function reviewController (router: Router): void {
     authHelper.authenticateViewer,
     async (ctx) => {
       const { skip, size } = ctx.request.query
-      const reviewListOrder = doValidateFullReviewListOrder(ctx.request.query)
+      const reviewListOrder = validateFullReviewListOrder(ctx.request.query)
       const pagination = validatePagination({ skip, size })
       const reviews = await reviewService.listReviews((
         pagination: Pagination, reviewListOrder: ReviewListOrder
@@ -216,60 +208,4 @@ export function reviewController (router: Router): void {
       }
     }
   )
-}
-
-function validateCreateRequest (body: unknown): CreateReviewRequest {
-  if (!validateCreateReviewRequest(body)) {
-    throw invalidReviewError
-  }
-
-  const result = body as CreateReviewRequest
-  return result
-}
-
-function validateUpdateRequest (
-  body: unknown,
-  reviewId: string
-): UpdateReviewRequest {
-  if (!validateUpdateReviewRequest(body)) {
-    throw invalidReviewError
-  }
-  if (typeof reviewId !== 'string' || reviewId.length === 0) {
-    throw invalidReviewIdError
-  }
-
-  const result = body as UpdateReviewRequest
-  return result
-}
-
-function doValidateFullReviewListOrder (
-  query: Record<string, unknown>
-): ReviewListOrder {
-  const reviewListOrder = validReviewListOrder(query, 'time', 'desc')
-  const validated = validateReviewListOrder(reviewListOrder)
-
-  if (validated.property === 'beer_name') {
-    throw invalidReviewListQueryBeerNameError
-  }
-  if (validated.property === 'brewery_name') {
-    throw invalidReviewListQueryBreweryNameError
-  }
-  return validated
-}
-
-function doValidateFilteredReviewListOrder (
-  query: Record<string, unknown>
-): ReviewListOrder {
-  const reviewListOrder = validReviewListOrder(query, 'beer_name', 'asc')
-  const validated = validateReviewListOrder(reviewListOrder)
-  return validated
-}
-
-function validateReviewListOrder (
-  reviewListOrder: ReviewListOrder | undefined
-): ReviewListOrder {
-  if (reviewListOrder === undefined) {
-    throw invalidReviewListQueryOrderError
-  }
-  return reviewListOrder
 }
