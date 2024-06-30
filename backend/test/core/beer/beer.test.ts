@@ -4,11 +4,18 @@ import {
   validateCreateBeerRequest,
   validateUpdateBeerRequest,
 } from '../../../src/core/beer/beer'
+import {
+  invalidBeerError,
+  invalidBeerIdError
+} from '../../../src/core/errors'
 
 function validRequest (): Record<string, unknown> {
   return {
     name: 'Craft lager',
-    breweries: ['b672f77e-4e70-40a8-9218-bbecce0ad9ff', '040d3ce2-4cc4-46e5-9a4e-8315d552599a'],
+    breweries: [
+      'b672f77e-4e70-40a8-9218-bbecce0ad9ff',
+      '040d3ce2-4cc4-46e5-9a4e-8315d552599a'
+    ],
     styles: ['93d01fef-3097-49c9-8594-caba487b79f1']
   }
 }
@@ -20,18 +27,23 @@ describe('beer unit tests', () => {
       title: (base: string) => `${base}: create`
     },
     {
-      func: validateUpdateBeerRequest,
+      func: (request: unknown) => {
+        const id = 'baa97b9c-cb55-48f8-9aa9-e04248b9a695'
+        return validateUpdateBeerRequest(request, id)
+      },
       title: (base: string) => `${base}: update`
     }
   ].forEach(validator => {
     const { func, title } = validator
 
     it(title('pass validation'), () => {
-      expect(func(validRequest())).to.equal(true)
+      const input = validRequest()
+      const output = validRequest()
+      expect(func(input)).to.eql(output)
     })
 
     function fail (beer: unknown) {
-      expect(func(beer)).to.equal(false)
+      expect(() => func(beer)).to.throw(invalidBeerError)
     }
 
     it(title('fail with empty name'), () => {
@@ -104,5 +116,11 @@ describe('beer unit tests', () => {
       }
       fail(beer)
     })
+  })
+
+  it('fail update with empty id', () => {
+    expect(
+      () => validateUpdateBeerRequest(validRequest(), '')
+    ).to.throw(invalidBeerIdError)
   })
 })

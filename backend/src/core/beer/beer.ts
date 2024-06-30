@@ -1,5 +1,10 @@
 import { ajv } from '../ajv'
 
+import {
+  invalidBeerError,
+  invalidBeerIdError
+} from '../errors'
+
 import { type Brewery } from '../brewery/brewery'
 import { type Style } from '../style/style'
 
@@ -63,10 +68,34 @@ const doValidateBeerRequest =
     additionalProperties: false
   })
 
-export function validateCreateBeerRequest (body: unknown): boolean {
+function isCreateBeerRequestValid (body: unknown): boolean {
   return doValidateBeerRequest(body)
 }
 
-export function validateUpdateBeerRequest (body: unknown): boolean {
+export function isUpdateBeerRequestValid (body: unknown): boolean {
   return doValidateBeerRequest(body)
+}
+
+export function validateCreateBeerRequest (body: unknown): CreateBeerRequest {
+  if (!isCreateBeerRequestValid(body)) {
+    throw invalidBeerError
+  }
+
+  const result = body as CreateBeerRequest
+  return result
+}
+
+export function validateUpdateBeerRequest (
+  body: unknown,
+  beerId: string
+): UpdateBeerRequest {
+  if (!isUpdateBeerRequestValid(body)) {
+    throw invalidBeerError
+  }
+  if (typeof beerId !== 'string' || beerId.length === 0) {
+    throw invalidBeerIdError
+  }
+
+  const result = body as UpdateBeerRequest
+  return result
 }

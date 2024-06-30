@@ -11,16 +11,10 @@ import * as authHelper from '../authentication/authentication-helper'
 import { type Router } from '../router'
 import {
   type Beer,
-  type CreateBeerRequest,
   type NewBeer,
-  type UpdateBeerRequest,
   validateCreateBeerRequest,
-  validateUpdateBeerRequest
+  validateUpdateBeerRequest,
 } from '../../core/beer/beer'
-import {
-  invalidBeerError,
-  invalidBeerIdError,
-} from '../../core/errors'
 import { validatePagination } from '../pagination'
 import { validateSearchByName } from '../search'
 
@@ -30,7 +24,7 @@ export function beerController (router: Router): void {
     async (ctx) => {
       const { body } = ctx.request
 
-      const createBeerRequest = validateCreateRequest(body)
+      const createBeerRequest = validateCreateBeerRequest(body)
       const result = await ctx.db.executeTransaction(async (trx) => {
         const createIf: CreateIf = {
           create: (beer: NewBeer) => beerRepository.insertBeer(trx, beer),
@@ -59,7 +53,7 @@ export function beerController (router: Router): void {
       const { body } = ctx.request
       const { beerId } = ctx.params
 
-      const updateBeerRequest = validateUpdateRequest(body, beerId)
+      const updateBeerRequest = validateUpdateBeerRequest(body, beerId)
       const result = await ctx.db.executeTransaction(async (trx) => {
         const updateIf: UpdateIf = {
           update: (beer: Beer) => beerRepository.updateBeer(trx, beer),
@@ -129,30 +123,6 @@ export function beerController (router: Router): void {
       ctx.body = { beers }
     }
   )
-}
-
-function validateCreateRequest (body: unknown): CreateBeerRequest {
-  if (!validateCreateBeerRequest(body)) {
-    throw invalidBeerError
-  }
-
-  const result = body as CreateBeerRequest
-  return result
-}
-
-function validateUpdateRequest (
-  body: unknown,
-  beerId: string
-): UpdateBeerRequest {
-  if (!validateUpdateBeerRequest(body)) {
-    throw invalidBeerError
-  }
-  if (typeof beerId !== 'string' || beerId.length === 0) {
-    throw invalidBeerIdError
-  }
-
-  const result = body as UpdateBeerRequest
-  return result
 }
 
 function createBeerBreweryInserter(trx: Transaction) {
