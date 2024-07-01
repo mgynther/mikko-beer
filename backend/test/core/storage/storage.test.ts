@@ -4,6 +4,10 @@ import {
   validateCreateStorageRequest,
   validateUpdateStorageRequest,
 } from '../../../src/core/storage/storage'
+import {
+  invalidStorageError,
+  invalidStorageIdError
+} from '../../../src/core/errors'
 
 function validRequest (): Record<string, unknown> {
   return {
@@ -20,18 +24,23 @@ describe('storage unit tests', () => {
       title: (base: string) => `${base}: create`
     },
     {
-      func: validateUpdateStorageRequest,
+      func: (request: unknown) => {
+        const id = 'f824f850-e7b7-4972-a3ac-2e2fc447c8aa'
+        return validateUpdateStorageRequest(request, id)
+      },
       title: (base: string) => `${base}: update`
     }
   ].forEach(validator => {
     const { func, title } = validator
 
     it(title('pass validation'), () => {
-      expect(func(validRequest())).to.equal(true)
+      const input = validRequest()
+      const output = validRequest()
+      expect(func(input)).to.eql(output)
     })
 
     function fail (storage: unknown) {
-      expect(func(storage)).to.equal(false)
+      expect(() => func(storage)).to.throw(invalidStorageError)
     }
 
     it(title('fail with empty beer'), () => {
@@ -104,5 +113,11 @@ describe('storage unit tests', () => {
       }
       fail(storage)
     })
+  })
+
+  it('fail update with empty id', () => {
+    expect(
+      () => validateUpdateStorageRequest(validRequest(), '')
+    ).to.throw(invalidStorageIdError)
   })
 })

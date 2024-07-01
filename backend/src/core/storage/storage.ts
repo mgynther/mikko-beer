@@ -1,6 +1,10 @@
 import { ajv } from '../ajv'
 
 import { type Container } from '../container/container'
+import {
+  invalidStorageError,
+  invalidStorageIdError
+} from '../errors'
 import { timePattern } from '../time'
 
 export interface Storage {
@@ -56,10 +60,36 @@ const doValidateStorageRequest =
     additionalProperties: false
   })
 
-export function validateCreateStorageRequest (body: unknown): boolean {
+function isCreateStorageRequestValid (body: unknown): boolean {
   return doValidateStorageRequest(body)
 }
 
-export function validateUpdateStorageRequest (body: unknown): boolean {
+export function isUpdateStorageRequestValid (body: unknown): boolean {
   return doValidateStorageRequest(body)
+}
+
+export function validateCreateStorageRequest (
+  body: unknown
+): CreateStorageRequest {
+  if (!isCreateStorageRequestValid(body)) {
+    throw invalidStorageError
+  }
+
+  const result = body as CreateStorageRequest
+  return result
+}
+
+export function validateUpdateStorageRequest (
+  body: unknown,
+  storageId: string
+): UpdateStorageRequest {
+  if (!isUpdateStorageRequestValid(body)) {
+    throw invalidStorageError
+  }
+  if (typeof storageId !== 'string' || storageId.length === 0) {
+    throw invalidStorageIdError
+  }
+
+  const result = body as UpdateStorageRequest
+  return result
 }

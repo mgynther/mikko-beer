@@ -10,14 +10,9 @@ import { type Pagination } from '../../core/pagination'
 import {
   type CreateStorageRequest,
   type Storage,
-  type UpdateStorageRequest,
   validateCreateStorageRequest,
   validateUpdateStorageRequest
 } from '../../core/storage/storage'
-import {
-  invalidStorageError,
-  invalidStorageIdError
-} from '../../core/errors'
 import {
   type CreateIf,
   type UpdateIf,
@@ -30,7 +25,7 @@ export function storageController (router: Router): void {
     async (ctx) => {
       const { body } = ctx.request
 
-      const createStorageRequest = validateCreateRequest(body)
+      const createStorageRequest = validateCreateStorageRequest(body)
       const result = await ctx.db.executeTransaction(async (trx) => {
         const createIf: CreateIf = {
           insertStorage: (
@@ -61,7 +56,7 @@ export function storageController (router: Router): void {
       const { body } = ctx.request
       const { storageId } = ctx.params
 
-      const updateStorageRequest = validateUpdateRequest(body, storageId)
+      const updateStorageRequest = validateUpdateStorageRequest(body, storageId)
       const result = await ctx.db.executeTransaction(async (trx) => {
         const updateIf: UpdateIf = {
           updateStorage: (
@@ -163,30 +158,6 @@ export function storageController (router: Router): void {
       ctx.body = { storages, pagination }
     }
   )
-}
-
-function validateCreateRequest (body: unknown): CreateStorageRequest {
-  if (!validateCreateStorageRequest(body)) {
-    throw invalidStorageError
-  }
-
-  const result = body as CreateStorageRequest
-  return result
-}
-
-function validateUpdateRequest (
-  body: unknown,
-  storageId: string
-): UpdateStorageRequest {
-  if (!validateUpdateStorageRequest(body)) {
-    throw invalidStorageError
-  }
-  if (typeof storageId !== 'string' || storageId.length === 0) {
-    throw invalidStorageIdError
-  }
-
-  const result = body as UpdateStorageRequest
-  return result
 }
 
 function createBeerLocker (
