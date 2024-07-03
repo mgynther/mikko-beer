@@ -1,10 +1,13 @@
 import { expect } from 'chai'
 
 import {
-  validStatsBreweryStyleFilter,
+  validateStatsBreweryStyleFilter,
   validateStatsFilter,
   type StatsFilter
 } from '../../../src/core/stats/stats'
+import {
+  invalidBreweryAndStyleFilterError
+} from '../../../src/core/errors'
 
 const noFilter = {
   brewery: undefined,
@@ -13,39 +16,42 @@ const noFilter = {
 
 describe('stats brewery style filter unit tests', () => {
   it('validate undefined filter', () => {
-    expect(validStatsBreweryStyleFilter(undefined)).to.eql(noFilter)
+    expect(validateStatsBreweryStyleFilter(undefined)).to.eql(noFilter)
   })
 
   it('validate empty filter', () => {
-    expect(validStatsBreweryStyleFilter({})).to.eql(noFilter)
+    expect(validateStatsBreweryStyleFilter({})).to.eql(noFilter)
   })
 
   it('validate brewery filter', () => {
     expect(
-      validStatsBreweryStyleFilter({ brewery: 'testing' })
+      validateStatsBreweryStyleFilter({ brewery: 'testing' })
     ).to.eql({ brewery: 'testing', style: undefined })
   })
 
   it('validate style filter', () => {
     expect(
-      validStatsBreweryStyleFilter({ style: 'testing' })
+      validateStatsBreweryStyleFilter({ style: 'testing' })
     ).to.eql({ brewery: undefined, style: 'testing' })
   })
 
   it('validate brewery and style filter', () => {
     expect(
-      validStatsBreweryStyleFilter({ brewery: 'testing', style: 'testing' })
-    ).to.equal(undefined)
+      () =>
+        validateStatsBreweryStyleFilter(
+          { brewery: 'testing', style: 'testing' }
+        )
+    ).to.throw(invalidBreweryAndStyleFilterError)
   })
 
   it('validate invalid brewery filter', () => {
     expect(
-      validStatsBreweryStyleFilter({ brewery: 123 })).to.eql(noFilter)
+      validateStatsBreweryStyleFilter({ brewery: 123 })).to.eql(noFilter)
   })
 
   it('validate unknown filter', () => {
     expect(
-      validStatsBreweryStyleFilter({ additional: 'testing' })).to.eql(noFilter)
+      validateStatsBreweryStyleFilter({ additional: 'testing' })).to.eql(noFilter)
   })
 })
 

@@ -3,23 +3,18 @@ import * as statsService from '../../core/stats/stats.service'
 import * as authHelper from '../authentication/authentication-helper'
 
 import { type Pagination } from '../../core/pagination'
-import {
-  invalidBreweryAndStyleFilterError,
-  invalidBreweryStatsQueryError,
-  invalidStyleStatsQueryError
-} from '../../core/errors'
 import { type Router } from '../router'
 
 import { validatePagination} from '../pagination'
 
 import {
   type BreweryStatsOrder,
-  validBreweryStatsOrder,
+  validateBreweryStatsOrder,
   type StyleStatsOrder,
-  validStyleStatsOrder,
+  validateStyleStatsOrder,
   type StatsBreweryStyleFilter,
   type StatsFilter,
-  validStatsBreweryStyleFilter,
+  validateStatsBreweryStyleFilter,
   validateStatsFilter
 } from '../../core/stats/stats'
 
@@ -112,34 +107,4 @@ export function statsController (router: Router): void {
       ctx.body = { style }
     }
   )
-}
-
-function validateBreweryStatsOrder (
-  query: Record<string, unknown>
-): BreweryStatsOrder {
-  const breweryStatsOrder = validBreweryStatsOrder(query)
-  if (breweryStatsOrder === undefined) {
-    throw invalidBreweryStatsQueryError
-  }
-  return breweryStatsOrder
-}
-
-function validateStyleStatsOrder (
-  query: Record<string, unknown>
-): StyleStatsOrder {
-  const styleStatsOrder = validStyleStatsOrder(query)
-  if (styleStatsOrder === undefined) {
-    throw invalidStyleStatsQueryError
-  }
-  return styleStatsOrder
-}
-
-function validateStatsBreweryStyleFilter (
-  query: Record<string, unknown>
-): StatsBreweryStyleFilter {
-  const styleStatsOrder = validStatsBreweryStyleFilter(query)
-  if (styleStatsOrder === undefined) {
-    throw invalidBreweryAndStyleFilterError
-  }
-  return styleStatsOrder
 }

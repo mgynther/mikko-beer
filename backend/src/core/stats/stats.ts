@@ -1,5 +1,10 @@
 import { ajv } from '../ajv'
 
+import {
+  invalidBreweryAndStyleFilterError,
+  invalidBreweryStatsQueryError,
+  invalidStyleStatsQueryError
+} from '../errors'
 import { type ListDirection, directionValidation } from '../list'
 
 export type AnnualStats = Array<{
@@ -65,7 +70,7 @@ export interface StyleStatsOrder {
   direction: ListDirection
 }
 
-export function validStatsBreweryStyleFilter (
+function validStatsBreweryStyleFilter (
   query: Record<string, unknown> | undefined
 ): StatsBreweryStyleFilter | undefined {
   const noFilter = { brewery: undefined, style: undefined }
@@ -90,6 +95,16 @@ export function validStatsBreweryStyleFilter (
   }
 }
 
+export function validateStatsBreweryStyleFilter (
+  query: Record<string, unknown> | undefined
+): StatsBreweryStyleFilter {
+  const result = validStatsBreweryStyleFilter(query)
+  if (result === undefined) {
+    throw invalidBreweryAndStyleFilterError
+  }
+  return result
+}
+
 export function validateStatsFilter (
   query: Record<string, unknown> | undefined
 ): StatsFilter {
@@ -104,7 +119,7 @@ export function validateStatsFilter (
   if (query === undefined) {
     return result
   }
-  const breweryFilter = validStatsBreweryStyleFilter(query)
+  const breweryFilter = validateStatsBreweryStyleFilter(query)
   if (breweryFilter === undefined) {
     return result
   }
@@ -159,7 +174,7 @@ const doValidateBreweryStatsOrder =
     additionalProperties: false
   })
 
-function validateBreweryStatsOrder (body: unknown): boolean {
+function isBreweryStatsOrderValid (body: unknown): boolean {
   return doValidateBreweryStatsOrder(body)
 }
 
@@ -176,7 +191,7 @@ const doValidateStyleStatsOrder =
     additionalProperties: false
   })
 
-function validateStyleStatsOrder (body: unknown): boolean {
+function isStyleStatsOrderValid (body: unknown): boolean {
   return doValidateStyleStatsOrder(body)
 }
 
@@ -198,17 +213,17 @@ function breweryStatsParamsOrDefaults (
   return { property: order, direction }
 }
 
-export function validBreweryStatsOrder (
+export function validateBreweryStatsOrder (
   query: Record<string, unknown>
-): BreweryStatsOrder | undefined {
+): BreweryStatsOrder {
   const params = breweryStatsParamsOrDefaults(query)
-  if (validateBreweryStatsOrder(params)) {
+  if (isBreweryStatsOrderValid(params)) {
     return {
       property: params.property as BreweryStatsOrderProperty,
       direction: params.direction as ListDirection
     }
   }
-  return undefined
+  throw invalidBreweryStatsQueryError
 }
 
 function styleStatsParamsOrDefaults (
@@ -224,15 +239,15 @@ function styleStatsParamsOrDefaults (
   return { property: order, direction }
 }
 
-export function validStyleStatsOrder (
+export function validateStyleStatsOrder (
   query: Record<string, unknown>
-): StyleStatsOrder | undefined {
+): StyleStatsOrder {
   const params = styleStatsParamsOrDefaults(query)
-  if (validateStyleStatsOrder(params)) {
+  if (isStyleStatsOrderValid(params)) {
     return {
       property: params.property as StyleStatsOrderProperty,
       direction: params.direction as ListDirection
     }
   }
-  return undefined
+  throw invalidStyleStatsQueryError
 }
