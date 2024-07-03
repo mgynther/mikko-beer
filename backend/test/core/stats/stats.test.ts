@@ -1,12 +1,14 @@
 import { expect } from 'chai'
 
 import {
+  validateBreweryStatsOrder,
   validateStatsBreweryStyleFilter,
   validateStatsFilter,
   type StatsFilter
 } from '../../../src/core/stats/stats'
 import {
-  invalidBreweryAndStyleFilterError
+  invalidBreweryAndStyleFilterError,
+  invalidBreweryStatsQueryError,
 } from '../../../src/core/errors'
 
 const noFilter = {
@@ -111,5 +113,52 @@ describe('stats filter unit tests', () => {
   it('validate unknown filter', () => {
     expect(
       validateStatsFilter({ additional: 'testing' })).to.eql(defaultFilter)
+  })
+})
+
+
+describe('brewery stats order unit tests', () => {
+  const defaultOrder = {
+    property: 'brewery_name',
+    direction: 'asc'
+  }
+
+  it('validate empty order', () => {
+    expect(validateBreweryStatsOrder({})).to.eql(defaultOrder)
+  })
+
+  it('validate average desc order', () => {
+    expect(validateBreweryStatsOrder({
+      order: 'average',
+      direction: 'desc'
+    })).to.eql({ property: 'average', direction: 'desc' })
+  })
+
+  it('validate brewery name desc order', () => {
+    expect(validateBreweryStatsOrder({
+      order: 'brewery_name',
+      direction: 'desc'
+    })).to.eql({ property: 'brewery_name', direction: 'desc' })
+  })
+
+  it('validate count asc order', () => {
+    expect(validateBreweryStatsOrder({
+      order: 'count',
+      direction: 'asc'
+    })).to.eql({ property: 'count', direction: 'asc' })
+  })
+
+  it('validate invalid asc order', () => {
+    expect(() => validateBreweryStatsOrder({
+      order: 'invalid',
+      direction: 'asc'
+    })).to.throw(invalidBreweryStatsQueryError)
+  })
+
+  it('validate beer name invalid order', () => {
+    expect(() => validateBreweryStatsOrder({
+      order: 'beer_name',
+      direction: 'invalid'
+    })).to.throw(invalidBreweryStatsQueryError)
   })
 })
