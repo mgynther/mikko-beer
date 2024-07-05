@@ -1,5 +1,7 @@
 import { ajv } from './ajv'
 
+import { invalidPaginationError } from './errors'
+
 export interface Pagination {
   size: number
   skip: number
@@ -36,11 +38,11 @@ export function validatePagination (pagination: PaginationRequest): Pagination {
   }
   if (typeof pagination.size !== 'string' ||
       typeof pagination.skip !== 'string') {
-    throw new PaginationError()
+    throw invalidPaginationError
   }
   const regex = /^[0-9]+$/
   if (!regex.test(pagination.size) || !regex.test(pagination.skip)) {
-    throw new PaginationError()
+    throw invalidPaginationError
   }
   const parsed = {
     size: parseInt(pagination.size),
@@ -48,7 +50,7 @@ export function validatePagination (pagination: PaginationRequest): Pagination {
   }
   const isValid = doValidatePagination(parsed)
   if (!isValid) {
-    throw new PaginationError()
+    throw invalidPaginationError
   }
   return parsed
 }

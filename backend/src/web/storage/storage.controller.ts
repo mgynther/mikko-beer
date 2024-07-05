@@ -17,7 +17,7 @@ import {
   type CreateIf,
   type UpdateIf,
 } from '../../core/storage/storage.service'
-import { validatePagination } from '../pagination'
+import { validatePagination } from '../../core/pagination'
 
 export function storageController (router: Router): void {
   router.post('/api/v1/storage',

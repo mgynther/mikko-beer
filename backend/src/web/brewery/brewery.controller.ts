@@ -11,7 +11,7 @@ import {
   validateCreateBreweryRequest,
   validateUpdateBreweryRequest
 } from '../../core/brewery/brewery'
-import { validatePagination } from '../pagination'
+import { validatePagination } from '../../core/pagination'
 import { validateSearchByName } from '../../core/search'
 
 export function breweryController (router: Router): void {

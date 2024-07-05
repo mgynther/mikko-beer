@@ -5,7 +5,7 @@ import * as authHelper from '../authentication/authentication-helper'
 import { type Pagination } from '../../core/pagination'
 import { type Router } from '../router'
 
-import { validatePagination} from '../pagination'
+import { validatePagination} from '../../core/pagination'
 
 import {
   type BreweryStatsOrder,

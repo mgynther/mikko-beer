@@ -16,7 +16,7 @@ import {
   validateFilteredReviewListOrder,
   validateFullReviewListOrder
 } from '../../core/review/review'
-import { validatePagination } from '../pagination'
+import { validatePagination } from '../../core/pagination'
 import {
   type CreateIf,
   type UpdateIf

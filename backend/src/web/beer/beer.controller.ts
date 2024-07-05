@@ -15,7 +15,7 @@ import {
   validateCreateBeerRequest,
   validateUpdateBeerRequest,
 } from '../../core/beer/beer'
-import { validatePagination } from '../pagination'
+import { validatePagination } from '../../core/pagination'
 import { validateSearchByName } from '../../core/search'
 
 export function beerController (router: Router): void {

@@ -6,12 +6,14 @@ import {
   validatePagination
 } from '../../src/core/pagination'
 
+import { invalidPaginationError } from '../../src/core/errors'
+
 describe('pagination unit tests', () => {
   function pass(input: PaginationRequest, output: Pagination) {
     expect(validatePagination(input)).to.eql(output)
   }
   function fail(input: PaginationRequest) {
-    expect(() => (validatePagination(input))).to.throw(Error)
+    expect(() => (validatePagination(input))).to.throw(invalidPaginationError)
   }
   it('pass validation', () => {
     pass({ size: '30', skip: '8' }, { size: 30, skip: 8 })
