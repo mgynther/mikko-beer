@@ -12,7 +12,7 @@ import {
   validateUpdateBreweryRequest
 } from '../../core/brewery/brewery'
 import { validatePagination } from '../pagination'
-import { validateSearchByName } from '../search'
+import { validateSearchByName } from '../../core/search'
 
 export function breweryController (router: Router): void {
   router.post('/api/v1/brewery',

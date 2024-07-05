@@ -1,5 +1,7 @@
 import { ajv } from './ajv'
 
+import { invalidSearchError } from './errors'
+
 export const defaultSearchMaxResults = 20
 
 export interface SearchByName {
@@ -33,11 +35,9 @@ const doValidateSearchByNameRequest =
     additionalProperties: false
   })
 
-export class SearchError extends Error { }
-
 export function validateSearchByName (body: unknown): SearchByName {
   if (!(doValidateSearchByNameRequest(body))) {
-    throw new SearchError()
+    throw invalidSearchError
   }
   const name: string = (body as any).name
   return { name }

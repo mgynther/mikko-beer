@@ -16,7 +16,7 @@ import {
   validateUpdateBeerRequest,
 } from '../../core/beer/beer'
 import { validatePagination } from '../pagination'
-import { validateSearchByName } from '../search'
+import { validateSearchByName } from '../../core/search'
 
 export function beerController (router: Router): void {
   router.post('/api/v1/beer',

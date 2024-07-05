@@ -6,12 +6,14 @@ import {
   validateSearchByName
 } from '../../src/core/search'
 
+import { invalidSearchError } from '../../src/core/errors'
+
 describe('search validation unit tests', () => {
   function pass(input: unknown, output: SearchByName) {
     expect(validateSearchByName(input)).to.eql(output)
   }
   function fail(input: unknown) {
-    expect(() => (validateSearchByName(input))).to.throw(Error)
+    expect(() => (validateSearchByName(input))).to.throw(invalidSearchError)
   }
   it('pass validation', () => {
     pass({ name: 'testing' }, { name: 'testing' })
