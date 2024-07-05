@@ -1,5 +1,10 @@
 import { ajv } from '../ajv'
 
+import {
+  invalidStyleError,
+  invalidStyleIdError
+} from '../errors'
+
 export interface Style {
   id: string
   name: string
@@ -38,12 +43,14 @@ const doValidateStyleRequest =
     type: 'object',
     properties: {
       name: {
-        type: 'string'
+        type: 'string',
+        minLength: 1
       },
       parents: {
         type: 'array',
         items: {
-          type: 'string'
+          type: 'string',
+          minLength: 1
         }
       }
     },
@@ -51,10 +58,34 @@ const doValidateStyleRequest =
     additionalProperties: false
   })
 
-export function validateCreateStyleRequest (body: unknown): boolean {
+function isCreateStyleRequestValid (body: unknown): boolean {
   return doValidateStyleRequest(body)
 }
 
-export function validateUpdateStyleRequest (body: unknown): boolean {
+function isUpdateStyleRequestValid (body: unknown): boolean {
   return doValidateStyleRequest(body)
+}
+
+export function validateCreateStyleRequest (body: unknown): CreateStyleRequest {
+  if (!isCreateStyleRequestValid(body)) {
+    throw invalidStyleError
+  }
+
+  const result = body as CreateStyleRequest
+  return result
+}
+
+export function validateUpdateStyleRequest (
+  body: unknown,
+  styleId: string
+): UpdateStyleRequest {
+  if (!isUpdateStyleRequestValid(body)) {
+    throw invalidStyleError
+  }
+  if (styleId === undefined || styleId === null || styleId.length === 0) {
+    throw invalidStyleIdError
+  }
+
+  const result = body as UpdateStyleRequest
+  return result
 }

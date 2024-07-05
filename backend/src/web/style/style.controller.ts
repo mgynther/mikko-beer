@@ -5,15 +5,12 @@ import * as authHelper from '../authentication/authentication-helper'
 
 import { type Router } from '../router'
 import {
-  type CreateStyleRequest,
   type NewStyle,
   type Style,
-  type UpdateStyleRequest,
+  type StyleRelationship,
   validateCreateStyleRequest,
-  validateUpdateStyleRequest,
-  StyleRelationship
+  validateUpdateStyleRequest
 } from '../../core/style/style'
-import { invalidStyleError, invalidStyleIdError } from '../../core/errors'
 
 export function styleController (router: Router): void {
   router.post('/api/v1/style',
@@ -21,7 +18,7 @@ export function styleController (router: Router): void {
     async (ctx) => {
       const { body } = ctx.request
 
-      const createStyleRequest = validateCreateRequest(body)
+      const createStyleRequest = validateCreateStyleRequest(body)
       const result = await ctx.db.executeTransaction(async (trx) => {
         const createIf: styleService.CreateStyleIf = {
           create: (
@@ -48,7 +45,7 @@ export function styleController (router: Router): void {
       const { body } = ctx.request
       const { styleId } = ctx.params
 
-      const updateStyleRequest = validateUpdateRequest(body, styleId)
+      const updateStyleRequest = validateUpdateStyleRequest(body, styleId)
       const result = await ctx.db.executeTransaction(async (trx) => {
         const updateIf: styleService.UpdateStyleIf = {
           update: (
@@ -95,30 +92,6 @@ export function styleController (router: Router): void {
       ctx.body = { styles }
     }
   )
-}
-
-function validateCreateRequest (body: unknown): CreateStyleRequest {
-  if (!validateCreateStyleRequest(body)) {
-    throw invalidStyleError
-  }
-
-  const result = body as CreateStyleRequest
-  return result
-}
-
-function validateUpdateRequest (
-  body: unknown,
-  styleId: string
-): UpdateStyleRequest {
-  if (!validateUpdateStyleRequest(body)) {
-    throw invalidStyleError
-  }
-  if (styleId === undefined || styleId === null || styleId.length === 0) {
-    throw invalidStyleIdError
-  }
-
-  const result = body as UpdateStyleRequest
-  return result
 }
 
 function createParentInserter(trx: Transaction) {
