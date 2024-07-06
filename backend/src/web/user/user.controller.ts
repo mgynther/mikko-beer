@@ -12,17 +12,8 @@ import { type Config } from '../config'
 import { type Router } from '../router'
 import {
   type CreateAnonymousUserRequest,
-  type Role,
-  validateCreateAnonymousUserRequest
+  validateCreateUserRequest
 } from '../../core/user/user'
-import {
-  type PasswordSignInMethod,
-  validatePasswordSignInMethod
-} from '../../core/user/sign-in-method'
-import {
-  invalidUserError,
-  invalidUserSignInMethodError
-} from '../../core/errors'
 import { type DbRefreshToken } from '../../core/authentication/refresh-token'
 import { type AuthTokenConfig } from '../../core/authentication/auth-token'
 
@@ -32,7 +23,7 @@ export function userController (router: Router, config: Config): void {
     async (ctx) => {
       const { body } = ctx.request
 
-      const request = validateCreateRequest(body)
+      const request = validateCreateUserRequest(body)
       const result = await ctx.db.executeTransaction(async (trx) => {
         const authTokenConfig: AuthTokenConfig = {
           secret: config.authTokenSecret,
@@ -108,27 +99,4 @@ export function userController (router: Router, config: Config): void {
   )
 
   signInMethodController(router)
-}
-
-interface ValidCreateRequest {
-  role: Role
-  passwordSignInMethod: PasswordSignInMethod
-}
-
-function validateCreateRequest (body: unknown): ValidCreateRequest {
-  const anyBody: any = body
-  if (!validateCreateAnonymousUserRequest(anyBody.user)) {
-    throw invalidUserError
-  }
-  if (!validatePasswordSignInMethod(anyBody.passwordSignInMethod)) {
-    throw invalidUserSignInMethodError
-  }
-
-  const role: Role = anyBody.user.role as Role
-  const passwordSignInMethod: PasswordSignInMethod =
-    anyBody.passwordSignInMethod as PasswordSignInMethod
-  return {
-    role,
-    passwordSignInMethod
-  }
 }
