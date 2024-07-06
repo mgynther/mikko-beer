@@ -22,20 +22,22 @@ import {
 
 import { dummyLog as log } from '../dummy-log'
 
+const time = '2024-07-06T19:36:38.182Z'
+
 const newReview: NewReview = {
   additionalInfo: 'something interesting',
   beer: 'f796e263-650e-4044-b5c9-9f550b97aa5a',
   container: '7bf36e1b-f740-42a6-8318-72acbcee74db',
   location: '',
   rating: 8,
-  time: new Date(),
+  time: new Date(time),
   smell: 'good',
   taste: 'tasty'
 }
 
 const createReviewRequest: CreateReviewRequest = {
   ...newReview,
-  time: new Date().toISOString()
+  time: new Date(time).toISOString()
 }
 
 const review: Review = {
@@ -45,7 +47,7 @@ const review: Review = {
 
 const updateReviewRequest: UpdateReviewRequest = {
   ...review,
-  time: new Date().toISOString()
+  time: new Date(time).toISOString()
 }
 
 const joinedReview: JoinedReview = {
