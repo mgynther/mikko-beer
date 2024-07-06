@@ -1,5 +1,10 @@
 import { ajv } from '../ajv'
 
+import {
+  invalidPasswordChangeError,
+  invalidSignInMethodError
+} from '../errors'
+
 export type SignInMethod = PasswordSignInMethod
 
 export interface PasswordSignInMethod {
@@ -7,7 +12,7 @@ export interface PasswordSignInMethod {
   password: string
 }
 
-export const validatePasswordSignInMethod = ajv.compile<PasswordSignInMethod>({
+const isPasswordSignInMethodValid = ajv.compile<PasswordSignInMethod>({
   type: 'object',
   required: ['username', 'password'],
   additionalProperties: false,
@@ -23,12 +28,24 @@ export const validatePasswordSignInMethod = ajv.compile<PasswordSignInMethod>({
   }
 })
 
+export function validatePasswordSignInMethod (
+  request: unknown
+): PasswordSignInMethod {
+  if (!isPasswordSignInMethodValid(request)) {
+    throw invalidSignInMethodError
+  }
+  return {
+    username: request.username,
+    password: request.password
+  }
+}
+
 export interface PasswordChange {
   oldPassword: string
   newPassword: string
 }
 
-export const validatePasswordChange = ajv.compile<PasswordChange>({
+const isPasswordChangeValid = ajv.compile<PasswordChange>({
   type: 'object',
   required: ['oldPassword', 'newPassword'],
   additionalProperties: false,
@@ -43,6 +60,16 @@ export const validatePasswordChange = ajv.compile<PasswordChange>({
     }
   }
 })
+
+export function validatePasswordChange (request: unknown): PasswordChange {
+  if (!isPasswordChangeValid(request)) {
+    throw invalidPasswordChangeError
+  }
+  return {
+    oldPassword: request.oldPassword,
+    newPassword: request.newPassword
+  }
+}
 
 export interface UserPasswordHash {
   userId: string

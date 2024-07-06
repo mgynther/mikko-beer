@@ -1,5 +1,7 @@
 import { ajv } from '../ajv'
 
+import { invalidRefreshTokenError } from '../errors'
+
 export interface RefreshToken {
   refreshToken: string
 }
@@ -9,12 +11,23 @@ export interface DbRefreshToken {
   userId: string
 }
 
-export const validateRefreshToken = ajv.compile<RefreshToken>({
+const isRefreshTokenValid = ajv.compile<RefreshToken>({
   type: 'object',
   required: ['refreshToken'],
+  additionalProperties: false,
   properties: {
     refreshToken: {
-      type: 'string'
+      type: 'string',
+      minLength: 1
     }
   }
 })
+
+export function validateRefreshToken (request: unknown): RefreshToken {
+  if (!isRefreshTokenValid(request)) {
+    throw invalidRefreshTokenError
+  }
+  return {
+    refreshToken: request.refreshToken
+  }
+}
