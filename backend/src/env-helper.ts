@@ -3,6 +3,6 @@ export function getEnvVariable (name: string): string {
     throw new Error(`environment variable ${name} not found`)
   }
 
-  const str: string = process.env[name] as string
+  const str: string = process.env[name]
   return str
 }
