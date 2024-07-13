@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import {
   validateCreateReviewRequest,
@@ -8,6 +8,7 @@ import {
   invalidReviewError,
   invalidReviewIdError
 } from '../../../src/core/errors'
+import { expectThrow } from '../controller-error-helper'
 
 function validRequest (): Record<string, unknown> {
   return {
@@ -41,7 +42,7 @@ describe('review create/update unit tests', () => {
     function pass (review: object) {
       const input = { ...review }
       const output = { ...review }
-      expect(func(input)).to.eql(output)
+      expect(func(input)).toLooseEqual(output)
     }
 
     it(title('pass validation'), () => {
@@ -96,11 +97,11 @@ describe('review create/update unit tests', () => {
         }
         const input = { ...review }
         const output = { ...review }
-        expect(func(input)).to.eql(output)
+        expect(func(input)).toLooseEqual(output)
       }))
 
     function fail (review: unknown) {
-      expect(() => func(review)).to.throw(invalidReviewError)
+      expectThrow(() => func(review), invalidReviewError)
     }
 
     it(title('fail with empty beer'), () => {
@@ -202,8 +203,8 @@ describe('review create/update unit tests', () => {
   })
 
   it('fail update with empty id', () => {
-    expect(
+    expectThrow(
       () => validateUpdateReviewRequest(validRequest(), '')
-    ).to.throw(invalidReviewIdError)
+    , invalidReviewIdError)
   })
 })

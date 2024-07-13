@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 import { v4 as uuidv4 } from 'uuid'
 
 import {
@@ -6,10 +6,11 @@ import {
   validateUpdateStyleRequest
 } from '../../../src/core/style/style'
 import {
+  cyclicRelationshipError,
   invalidStyleError,
-  invalidStyleIdError
 } from '../../../src/core/errors'
 import { checkCyclicRelationships } from '../../../src/core/style/style.util'
+import { expectThrow } from '../controller-error-helper'
 
 describe('style relationship unit tests', () => {
   const ale = {
@@ -36,18 +37,20 @@ describe('style relationship unit tests', () => {
   ]
 
   it('fail to find cyclic when there is no cycle', () => {
-    expect(() => checkCyclicRelationships(relationships, neipa.id, [ipa.id])).to.not.throw()
+    expect(() => checkCyclicRelationships(relationships, neipa.id, [ipa.id])).not.toThrow()
   })
 
   it('find cyclic when there is a cycle', () => {
-    expect(() => checkCyclicRelationships(relationships, ale.id, [neipa.id])).to.throw()
+    expectThrow(
+      () => checkCyclicRelationships(relationships, ale.id, [neipa.id])
+    , cyclicRelationshipError)
   })
 
   it('valid create request is valid', () => {
     expect(validateCreateStyleRequest({
       name: 'name',
       parents: []
-    })).to.eql({name: 'name', parents: []})
+    })).toEqual({name: 'name', parents: []})
   })
 })
 
@@ -80,17 +83,17 @@ describe('style unit tests', () => {
     it(title('pass validation'), () => {
       const input = validRequest()
       const output = validRequest()
-      expect(func(input)).to.eql(output)
+      expect(func(input)).toLooseEqual(output)
     })
 
     it(title('pass validation without parents'), () => {
       const input = { name: validRequest().name, parents: [] }
       const output = { ...input }
-      expect(func(input)).to.eql(output)
+      expect(func(input)).toLooseEqual(output)
     })
 
     function fail (style: unknown) {
-      expect(() => func(style)).to.throw(invalidStyleError)
+      expectThrow(() => func(style), invalidStyleError)
     }
 
     it(title('fail with empty name'), () => {

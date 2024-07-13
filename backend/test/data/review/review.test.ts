@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
 import { type Database } from '../../../src/data/database'
@@ -36,7 +36,7 @@ describe('review tests', () => {
   ) {
     const { reviews, data } = await insertMultipleReviews(10, db)
     const list = await listReviews(db, reviewListOrder)
-    expect(reviews.length).equal(list.length)
+    expect(reviews.length).toEqual(list.length)
     return { reviews, data, list }
   }
 
@@ -54,7 +54,7 @@ describe('review tests', () => {
         taste: "chocolate"
       }
       const review = await reviewRepository.insertReview(trx, reviewRequest)
-      expect(review).eql({
+      expect(review).toEqual({
         ...reviewRequest,
         id: review.id,
       })
@@ -67,29 +67,29 @@ describe('review tests', () => {
     const reviewListOrder: ReviewListOrder =
       { property: 'brewery_name', direction: 'desc' }
     const list = await listReviews(db, reviewListOrder)
-    expect(list.length).to.equal(10);
+    expect(list.length).toEqual(10);
     const start = new Array(5).fill(1).map(_ => data.brewery.name)
     const end = new Array(5).fill(1).map(_ => data.otherBrewery.name)
     const expectedNames = [...start, ...end]
-    expect(list.map(item => item.breweries[0].name)).to.eql(expectedNames)
+    expect(list.map(item => item.breweries[0].name)).toEqual(expectedNames)
     function reviewToTime(row: JoinedReview): Date {
       return row.time
     }
 
     const breweryReviewTimes = list.slice(0, 5).map(reviewToTime)
-    expect(breweryReviewTimes.length).to.equal(5)
+    expect(breweryReviewTimes.length).toEqual(5)
     const expectedBreweryReviewTimes = [...breweryReviewTimes]
     function sortDate(a: Date, b: Date) {
       return a.getTime() - b.getTime()
     }
     expectedBreweryReviewTimes.sort(sortDate)
-    expect(breweryReviewTimes).to.eql(expectedBreweryReviewTimes)
+    expect(breweryReviewTimes).toEqual(expectedBreweryReviewTimes)
 
     const otherBreweryReviewTimes = list.slice(5, 10).map(reviewToTime)
-    expect(otherBreweryReviewTimes.length).to.equal(5)
+    expect(otherBreweryReviewTimes.length).toEqual(5)
     const expectedOtherBreweryReviewTimes = [...otherBreweryReviewTimes]
     expectedOtherBreweryReviewTimes.sort(sortDate)
-    expect(otherBreweryReviewTimes).to.eql(expectedOtherBreweryReviewTimes)
+    expect(otherBreweryReviewTimes).toEqual(expectedOtherBreweryReviewTimes)
   })
 
   function toTime(review: Review | JoinedReview): Date {
@@ -147,10 +147,10 @@ describe('review tests', () => {
     const listTimes = list.map(toTime)
     const expectedTimes = reviews.map(toTime)
       .sort(sorter)
-    expect(listTimes).eql(expectedTimes)
+    expect(listTimes).toEqual(expectedTimes)
 
     const originalTimes = reviews.map(toTime)
-    expect(listTimes).not.eql(originalTimes)
+    expect(listTimes).not.toEqual(originalTimes)
   }
 
   it('list reviews, time asc', async() => {
@@ -178,10 +178,10 @@ describe('review tests', () => {
     const listRatingTimes = list.map(toRatingTime)
     const expectedRatingTimes = reviews.map(toRatingTime)
       .sort(sorter)
-    expect(listRatingTimes).eql(expectedRatingTimes)
+    expect(listRatingTimes).toEqual(expectedRatingTimes)
 
     const originalRatingTimes = reviews.map(toRatingTime)
-    expect(listRatingTimes).not.eql(originalRatingTimes)
+    expect(listRatingTimes).not.toEqual(originalRatingTimes)
   }
 
   it('list reviews, rating desc', async() => {
@@ -215,16 +215,16 @@ describe('review tests', () => {
     sorter: (a: T, b: T) => number,
     beerId: string
   ) {
-    expect(reviews.length / 2).equal(list.length)
+    expect(reviews.length / 2).toEqual(list.length)
     const listValues = list.map(converter)
     const expectedValues = reviews
       .filter(review => review.beer === beerId)
       .map(converter)
       .sort(sorter)
-    expect(listValues).eql(expectedValues)
+    expect(listValues).toEqual(expectedValues)
 
     const originalValues = reviews.map(converter)
-    expect(listValues).not.eql(originalValues)
+    expect(listValues).not.toEqual(originalValues)
   }
 
   it('list reviews by beer, beer_name desc', async() => {

@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import {
   validateCreateBeerRequest,
@@ -8,6 +8,7 @@ import {
   invalidBeerError,
   invalidBeerIdError
 } from '../../../src/core/errors'
+import { expectThrow } from '../controller-error-helper'
 
 function validRequest (): Record<string, unknown> {
   return {
@@ -39,11 +40,11 @@ describe('beer unit tests', () => {
     it(title('pass validation'), () => {
       const input = validRequest()
       const output = validRequest()
-      expect(func(input)).to.eql(output)
+      expect(func(input)).toLooseEqual(output)
     })
 
     function fail (beer: unknown) {
-      expect(() => func(beer)).to.throw(invalidBeerError)
+      expectThrow(() => func(beer), invalidBeerError)
     }
 
     it(title('fail with empty name'), () => {
@@ -119,8 +120,8 @@ describe('beer unit tests', () => {
   })
 
   it('fail update with empty id', () => {
-    expect(
+    expectThrow(
       () => validateUpdateBeerRequest(validRequest(), '')
-    ).to.throw(invalidBeerIdError)
+    , invalidBeerIdError)
   })
 })

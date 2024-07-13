@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
 import { JoinedStorage, Storage } from '../../../src/core/storage/storage'
@@ -17,23 +17,23 @@ describe('storage tests', () => {
       { name: 'Kriek', parents: [] },
       adminAuthHeaders
     )
-    expect(styleRes.status).to.equal(201)
+    expect(styleRes.status).toEqual(201)
 
     const breweryRes = await ctx.request.post(`/api/v1/brewery`,
       { name: 'Lindemans' },
       adminAuthHeaders
     )
-    expect(breweryRes.status).to.equal(201)
+    expect(breweryRes.status).toEqual(201)
 
     const beerRes = await ctx.request.post(`/api/v1/beer`,
       { name: 'Lindemans Kriek', breweries: [breweryRes.data.brewery.id], styles: [styleRes.data.style.id] },
       adminAuthHeaders
     )
 
-    expect(beerRes.status).to.equal(201)
-    expect(beerRes.data.beer.name).to.equal('Lindemans Kriek')
-    expect(beerRes.data.beer.breweries).to.eql([breweryRes.data.brewery.id])
-    expect(beerRes.data.beer.styles).to.eql([styleRes.data.style.id])
+    expect(beerRes.status).toEqual(201)
+    expect(beerRes.data.beer.name).toEqual('Lindemans Kriek')
+    expect(beerRes.data.beer.breweries).toEqual([breweryRes.data.brewery.id])
+    expect(beerRes.data.beer.styles).toEqual([styleRes.data.style.id])
 
     const containerRes = await ctx.request.post(`/api/v1/container`,
       { type: 'Bottle', size: '0.25' },
@@ -62,67 +62,67 @@ describe('storage tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(storageRes.status).to.equal(201)
-    expect(storageRes.data.storage.bestBefore).to.equal(bestBefore)
-    expect(storageRes.data.storage.beer).to.equal(beerRes.data.beer.id)
-    expect(storageRes.data.storage.container).to.equal(containerRes.data.container.id)
+    expect(storageRes.status).toEqual(201)
+    expect(storageRes.data.storage.bestBefore).toEqual(bestBefore)
+    expect(storageRes.data.storage.beer).toEqual(beerRes.data.beer.id)
+    expect(storageRes.data.storage.container).toEqual(containerRes.data.container.id)
 
     const getRes = await ctx.request.get<{ storage: JoinedStorage }>(
       `/api/v1/storage/${storageRes.data.storage.id}`,
       ctx.adminAuthHeaders()
     )
 
-    expect(getRes.status).to.equal(200)
-    expect(getRes.data.storage.id).to.equal(storageRes.data.storage.id)
-    expect(getRes.data.storage.bestBefore).to.equal(bestBefore)
-    expect(getRes.data.storage.beerId).to.equal(beerRes.data.beer.id)
-    expect(getRes.data.storage.container).to.eql(containerRes.data.container)
+    expect(getRes.status).toEqual(200)
+    expect(getRes.data.storage.id).toEqual(storageRes.data.storage.id)
+    expect(getRes.data.storage.bestBefore.toString()).toEqual(bestBefore)
+    expect(getRes.data.storage.beerId).toEqual(beerRes.data.beer.id)
+    expect(getRes.data.storage.container).toEqual(containerRes.data.container)
 
     const listRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
       '/api/v1/storage/',
       ctx.adminAuthHeaders()
     )
-    expect(listRes.status).to.equal(200)
-    expect(listRes.data.storages.length).to.equal(1)
-    expect(listRes.data.storages[0].id).to.eql(getRes.data.storage.id)
-    expect(listRes.data.storages[0].beerId).to.eql(getRes.data.storage.beerId)
-    expect(listRes.data.storages[0].container).to.eql(containerRes.data.container)
-    expect(listRes.data.storages[0].breweries[0]).to.eql(breweryRes.data.brewery)
+    expect(listRes.status).toEqual(200)
+    expect(listRes.data.storages.length).toEqual(1)
+    expect(listRes.data.storages[0].id).toEqual(getRes.data.storage.id)
+    expect(listRes.data.storages[0].beerId).toEqual(getRes.data.storage.beerId)
+    expect(listRes.data.storages[0].container).toEqual(containerRes.data.container)
+    expect(listRes.data.storages[0].breweries[0]).toEqual(breweryRes.data.brewery)
     const parentlessStyle = { ...styleRes.data.style }
     delete parentlessStyle.parents
-    expect(listRes.data.storages[0].styles[0]).to.eql(parentlessStyle)
+    expect(listRes.data.storages[0].styles[0]).toEqual(parentlessStyle)
 
     const skippedListRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
       '/api/v1/storage?size=50&skip=30',
       ctx.adminAuthHeaders()
     )
-    expect(skippedListRes.status).to.equal(200)
-    expect(skippedListRes.data.storages.length).to.equal(0)
+    expect(skippedListRes.status).toEqual(200)
+    expect(skippedListRes.data.storages.length).toEqual(0)
 
     const breweryListRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
       `/api/v1/brewery/${breweryRes.data.brewery.id}/storage/`,
       ctx.adminAuthHeaders()
     )
-    expect(breweryListRes.status).to.equal(200)
-    expect(breweryListRes.data.storages.length).to.equal(1)
-    expect(breweryListRes.data.storages[0].id).to.eql(getRes.data.storage.id)
-    expect(breweryListRes.data.storages[0]).to.eql(getRes.data.storage)
+    expect(breweryListRes.status).toEqual(200)
+    expect(breweryListRes.data.storages.length).toEqual(1)
+    expect(breweryListRes.data.storages[0].id).toEqual(getRes.data.storage.id)
+    expect(breweryListRes.data.storages[0]).toEqual(getRes.data.storage)
 
     const styleListRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
       `/api/v1/style/${styleRes.data.style.id}/storage/`,
       ctx.adminAuthHeaders()
     )
-    expect(styleListRes.status).to.equal(200)
-    expect(styleListRes.data.storages.length).to.equal(1)
-    expect(styleListRes.data.storages[0].id).to.eql(getRes.data.storage.id)
-    expect(styleListRes.data.storages[0]).to.eql(getRes.data.storage)
+    expect(styleListRes.status).toEqual(200)
+    expect(styleListRes.data.storages.length).toEqual(1)
+    expect(styleListRes.data.storages[0].id).toEqual(getRes.data.storage.id)
+    expect(styleListRes.data.storages[0]).toEqual(getRes.data.storage)
 
     const beerListRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
       `/api/v1/beer/${beerRes.data.beer.id}/storage/`,
       ctx.adminAuthHeaders()
     )
-    expect(beerListRes.status).to.equal(200)
-    expect(beerListRes.data.storages).to.eql(breweryListRes.data.storages)
+    expect(beerListRes.status).toEqual(200)
+    expect(beerListRes.data.storages).toEqual(breweryListRes.data.storages)
   })
 
   it('fail to create a storage without beer', async () => {
@@ -135,7 +135,7 @@ describe('storage tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(storageRes.status).to.equal(400)
+    expect(storageRes.status).toEqual(400)
   })
 
   it('fail to create a storage with invalid beer', async () => {
@@ -149,7 +149,7 @@ describe('storage tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(storageRes.status).to.equal(400)
+    expect(storageRes.status).toEqual(400)
   })
 
   it('fail to create a storage without container', async () => {
@@ -162,7 +162,7 @@ describe('storage tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(storageRes.status).to.equal(400)
+    expect(storageRes.status).toEqual(400)
   })
 
   it('fail to create a storage with invalid container', async () => {
@@ -176,7 +176,7 @@ describe('storage tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(storageRes.status).to.equal(400)
+    expect(storageRes.status).toEqual(400)
   })
 
   it('update a storage', async () => {
@@ -191,7 +191,7 @@ describe('storage tests', () => {
     const storageRes = await ctx.request.post(`/api/v1/storage`,
       requestData, ctx.adminAuthHeaders()
     )
-    expect(storageRes.status).to.equal(201)
+    expect(storageRes.status).toEqual(201)
 
     const updateRes = await ctx.request.put(
       `/api/v1/storage/${storageRes.data.storage.id}`,
@@ -201,15 +201,15 @@ describe('storage tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(updateRes.status).to.equal(200)
+    expect(updateRes.status).toEqual(200)
 
     const getRes = await ctx.request.get<{ storage: Storage }>(
       `/api/v1/storage/${storageRes.data.storage.id}`,
       ctx.adminAuthHeaders()
     )
 
-    expect(getRes.status).to.equal(200)
-    expect(getRes.data.storage.bestBefore).to.equal(bestBeforeLater)
+    expect(getRes.status).toEqual(200)
+    expect(getRes.data.storage.bestBefore.toString()).toEqual(bestBeforeLater)
   })
 
   it('get empty storage list', async () => {
@@ -217,8 +217,8 @@ describe('storage tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(res.status).to.equal(200)
-    expect(res.data.storages.length).to.equal(0)
+    expect(res.status).toEqual(200)
+    expect(res.data.storages.length).toEqual(0)
   })
 
   async function createListByDeps(adminAuthHeaders: Record<string, unknown>) {
@@ -232,30 +232,30 @@ describe('storage tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(storageRes.status).to.equal(201)
-    expect(storageRes.data.storage.beer).to.equal(beerRes.data.beer.id)
+    expect(storageRes.status).toEqual(201)
+    expect(storageRes.data.storage.beer).toEqual(beerRes.data.beer.id)
 
     const otherStyleRes = await ctx.request.post(`/api/v1/style`,
       { name: 'IPA', parents: [] },
       ctx.adminAuthHeaders()
     )
-    expect(otherStyleRes.status).to.equal(201)
+    expect(otherStyleRes.status).toEqual(201)
 
     const otherBreweryRes = await ctx.request.post(`/api/v1/brewery`,
       { name: 'Nokian Panimo' },
       ctx.adminAuthHeaders()
     )
-    expect(otherBreweryRes.status).to.equal(201)
+    expect(otherBreweryRes.status).toEqual(201)
 
     const otherBeerRes = await ctx.request.post(`/api/v1/beer`,
       { name: 'IPA', breweries: [otherBreweryRes.data.brewery.id], styles: [otherStyleRes.data.style.id] },
       ctx.adminAuthHeaders()
     )
 
-    expect(otherBeerRes.status).to.equal(201)
-    expect(otherBeerRes.data.beer.name).to.equal('IPA')
-    expect(otherBeerRes.data.beer.breweries).to.eql([otherBreweryRes.data.brewery.id])
-    expect(otherBeerRes.data.beer.styles).to.eql([otherStyleRes.data.style.id])
+    expect(otherBeerRes.status).toEqual(201)
+    expect(otherBeerRes.data.beer.name).toEqual('IPA')
+    expect(otherBeerRes.data.beer.breweries).toEqual([otherBreweryRes.data.brewery.id])
+    expect(otherBeerRes.data.beer.styles).toEqual([otherStyleRes.data.style.id])
 
     const otherStorageRes = await ctx.request.post(`/api/v1/storage`,
       {
@@ -265,15 +265,15 @@ describe('storage tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(otherStorageRes.status).to.equal(201)
-    expect(otherStorageRes.data.storage.beer).to.equal(otherBeerRes.data.beer.id)
+    expect(otherStorageRes.status).toEqual(201)
+    expect(otherStorageRes.data.storage.beer).toEqual(otherBeerRes.data.beer.id)
 
     const collabBeerRes = await ctx.request.post(`/api/v1/beer`,
       { name: 'Wild Kriek IPA', breweries: [breweryRes.data.brewery.id, otherBreweryRes.data.brewery.id], styles: [styleRes.data.style.id, otherStyleRes.data.style.id] },
       ctx.adminAuthHeaders()
     )
-    expect(collabBeerRes.status).to.equal(201)
-    expect(collabBeerRes.data.beer.name).to.equal('Wild Kriek IPA')
+    expect(collabBeerRes.status).toEqual(201)
+    expect(collabBeerRes.data.beer.name).toEqual('Wild Kriek IPA')
 
     const collabStorageRes = await ctx.request.post(`/api/v1/storage`,
       {
@@ -283,8 +283,8 @@ describe('storage tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(collabStorageRes.status).to.equal(201)
-    expect(collabStorageRes.data.storage.beer).to.equal(collabBeerRes.data.beer.id)
+    expect(collabStorageRes.status).toEqual(201)
+    expect(collabStorageRes.data.storage.beer).toEqual(collabBeerRes.data.beer.id)
 
     return { beerRes, otherBeerRes, collabBeerRes, breweryRes, otherBreweryRes, styleRes, otherStyleRes, storageRes, otherStorageRes, collabStorageRes }
   }
@@ -296,22 +296,24 @@ describe('storage tests', () => {
       `/api/v1/brewery/${breweryRes.data.brewery.id}/storage/`,
       ctx.adminAuthHeaders()
     )
-    expect(breweryListRes.status).to.equal(200)
-    expect(breweryListRes.data.storages.length).to.equal(2)
+    expect(breweryListRes.status).toEqual(200)
+    expect(breweryListRes.data.storages.length).toEqual(2)
     const kriekStorage = breweryListRes.data.storages.find(storage => storage.id === storageRes.data.storage.id)
-    expect(kriekStorage?.id).to.eql(storageRes.data.storage.id)
-    expect(kriekStorage?.beerId).to.eql(storageRes.data.storage.beer)
+    if (kriekStorage === undefined) throw new Error('kriekStorage not found')
+    expect(kriekStorage.id).toEqual(storageRes.data.storage.id)
+    expect(kriekStorage.beerId).toEqual(storageRes.data.storage.beer)
     const collabStorage = breweryListRes.data.storages.find(storage => storage.id === collabStorageRes.data.storage.id)
-    expect(collabStorage?.id).to.eql(collabStorageRes.data.storage.id)
-    expect(collabStorage?.beerId).to.eql(collabStorageRes.data.storage.beer)
-    expect(collabStorage?.breweries?.length).to.equal(2)
+    if (collabStorage === undefined) throw new Error('collabStorage not found')
+    expect(collabStorage.id).toEqual(collabStorageRes.data.storage.id)
+    expect(collabStorage.beerId).toEqual(collabStorageRes.data.storage.beer)
+    expect(collabStorage.breweries?.length).toEqual(2)
     const collabBrewery = collabStorage?.breweries?.find(brewery => brewery.id === breweryRes.data.brewery.id);
     const otherCollabBrewery = collabStorage?.breweries?.find(brewery => brewery.id === otherBreweryRes.data.brewery.id);
-    expect(collabBrewery).to.eql({ id: breweryRes.data.brewery.id, name: breweryRes.data.brewery.name });
-    expect(otherCollabBrewery).to.eql({ id: otherBreweryRes.data.brewery.id, name: otherBreweryRes.data.brewery.name });
+    expect(collabBrewery).toEqual({ id: breweryRes.data.brewery.id, name: breweryRes.data.brewery.name });
+    expect(otherCollabBrewery).toEqual({ id: otherBreweryRes.data.brewery.id, name: otherBreweryRes.data.brewery.name });
 
     const ids = breweryListRes.data.storages.map(storage => storage.id)
-    expect(ids).to.eql([collabStorage?.id, kriekStorage?.id])
+    expect(ids).toEqual([collabStorage?.id, kriekStorage.id])
   })
 
   it('list storages by style', async () => {
@@ -321,21 +323,23 @@ describe('storage tests', () => {
       `/api/v1/style/${styleRes.data.style.id}/storage/`,
       ctx.adminAuthHeaders()
     )
-    expect(styleListRes.status).to.equal(200)
-    expect(styleListRes.data.storages.length).to.equal(2)
+    expect(styleListRes.status).toEqual(200)
+    expect(styleListRes.data.storages.length).toEqual(2)
     const kriekStorage = styleListRes.data.storages.find(storage => storage.id === storageRes.data.storage.id)
-    expect(kriekStorage?.id).to.eql(storageRes.data.storage.id)
-    expect(kriekStorage?.beerId).to.eql(storageRes.data.storage.beer)
+    if (kriekStorage === undefined) throw new Error('kriekStorage not found')
+    expect(kriekStorage.id).toEqual(storageRes.data.storage.id)
+    expect(kriekStorage.beerId).toEqual(storageRes.data.storage.beer)
     const collabStorage = styleListRes.data.storages.find(storage => storage.id === collabStorageRes.data.storage.id)
-    expect(collabStorage?.id).to.eql(collabStorageRes.data.storage.id)
-    expect(collabStorage?.beerId).to.eql(collabStorageRes.data.storage.beer)
-    expect(collabStorage?.breweries?.length).to.equal(2)
-    const collabStyle = collabStorage?.styles?.find(style => style.id === styleRes.data.style.id);
-    const otherCollabStyle = collabStorage?.styles?.find(style => style.id === otherStyleRes.data.style.id);
-    expect(collabStyle).to.eql({ id: styleRes.data.style.id, name: styleRes.data.style.name });
-    expect(otherCollabStyle).to.eql({ id: otherStyleRes.data.style.id, name: otherStyleRes.data.style.name });
+    if (collabStorage === undefined) throw new Error('collabStorage not found')
+    expect(collabStorage.id).toEqual(collabStorageRes.data.storage.id)
+    expect(collabStorage.beerId).toEqual(collabStorageRes.data.storage.beer)
+    expect(collabStorage.breweries?.length).toEqual(2)
+    const collabStyle = collabStorage.styles?.find(style => style.id === styleRes.data.style.id);
+    const otherCollabStyle = collabStorage.styles?.find(style => style.id === otherStyleRes.data.style.id);
+    expect(collabStyle).toEqual({ id: styleRes.data.style.id, name: styleRes.data.style.name });
+    expect(otherCollabStyle).toEqual({ id: otherStyleRes.data.style.id, name: otherStyleRes.data.style.name });
 
     const ids = styleListRes.data.storages.map(storage => storage.id)
-    expect(ids).to.eql([collabStorage?.id, kriekStorage?.id])
+    expect(ids).toEqual([collabStorage.id, kriekStorage.id])
   })
 })

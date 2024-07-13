@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import {
   validatePasswordSignInMethod,
@@ -9,6 +9,7 @@ import {
   invalidPasswordChangeError,
   invalidSignInMethodError,
 } from '../../../src/core/errors'
+import { expectThrow } from '../controller-error-helper'
 
 describe('password sign-in-method unit tests', () => {
   function validPasswordSignInMethod () {
@@ -21,13 +22,13 @@ describe('password sign-in-method unit tests', () => {
   function pass(signInMethod: Record<string, unknown>) {
     const input = { ...signInMethod }
     const output = { ...signInMethod }
-    expect(validatePasswordSignInMethod(input)).to.eql(output)
+    expect(validatePasswordSignInMethod(input)).toLooseEqual(output)
   }
 
   function fail(signInMethod: unknown) {
-    expect(
+    expectThrow(
       () => validatePasswordSignInMethod(signInMethod)
-    ).to.throw(invalidSignInMethodError)
+    , invalidSignInMethodError)
   }
 
   it('pass validation', () => {
@@ -92,13 +93,13 @@ describe('password change unit tests', () => {
   function pass(passwordChange: Record<string, unknown>) {
     const input = { ...passwordChange }
     const output = { ...passwordChange }
-    expect(validatePasswordChange(input)).to.eql(output)
+    expect(validatePasswordChange(input)).toLooseEqual(output)
   }
 
   function fail(passwordChange: unknown) {
-    expect(
+    expectThrow(
       () => validatePasswordChange(passwordChange)
-    ).to.throw(invalidPasswordChangeError)
+    , invalidPasswordChangeError)
   }
 
   it('pass validation', () => {

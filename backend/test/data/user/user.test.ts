@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
 import { type NewUser, type User } from '../../../src/core/user/user'
@@ -28,8 +28,8 @@ describe('user tests', () => {
 
   it('insert user', async () => {
     const insertedUser = await insertUser()
-    expect(insertedUser.username).to.equal(user.username)
-    expect(insertedUser.role).to.equal(user.role)
+    expect(insertedUser.username).toEqual(user.username)
+    expect(insertedUser.role).toEqual(user.role)
   })
 
   it('find user', async () => {
@@ -37,24 +37,24 @@ describe('user tests', () => {
     const foundUser = await userRepository.findUserById(
       ctx.db, insertedUser.id
     )
-    expect(foundUser).to.eql(insertedUser)
+    expect(foundUser).toEqual(insertedUser)
   })
 
   it('do not find user that does not exist', async () => {
     const userId = '35370921-5d47-4274-a5cc-9fe0246d74e5'
     const foundUser = await userRepository.findUserById(ctx.db, userId)
-    expect(foundUser).to.eql(undefined)
+    expect(foundUser).toEqual(undefined)
   })
 
   it('list users', async () => {
     const insertedUser = await insertUser()
     const users = await userRepository.listUsers(ctx.db)
-    expect(users).to.eql([insertedUser])
+    expect(users).toEqual([insertedUser])
   })
 
   it('do not list users when there are none', async () => {
     const users = await userRepository.listUsers(ctx.db)
-    expect(users).to.eql([])
+    expect(users).toEqual([])
   })
 
   async function testLocking(
@@ -68,8 +68,8 @@ describe('user tests', () => {
     let isFirstRenameStarted = false
     let isSecondRenameStarted = false
     function expectRenames(isFirstStarted: boolean, isSecondStarted: boolean) {
-      expect(isFirstRenameStarted).to.equal(isFirstStarted)
-      expect(isSecondRenameStarted).to.equal(isSecondStarted)
+      expect(isFirstRenameStarted).toEqual(isFirstStarted)
+      expect(isSecondRenameStarted).toEqual(isSecondStarted)
     }
     expectRenames(false, false)
     // A delay is needed to control race condition so that test execution is
@@ -83,7 +83,7 @@ describe('user tests', () => {
       // Getting lock before either rename is in progress is essential for the
       // the test to be reliable.
       expectRenames(false, false)
-      expect(lockedUser).to.eql(insertedUser)
+      expect(lockedUser).toEqual(insertedUser)
       // Second rename may or may not have started here.
       return new Promise(function(resolve) {
         setTimeout(function() {
@@ -114,7 +114,7 @@ describe('user tests', () => {
     const foundUser = await userRepository.findUserById(
       ctx.db, insertedUser.id
     )
-    expect(foundUser?.username).to.eql(remainingName)
+    expect(foundUser?.username).toEqual(remainingName)
   }
 
   it('lock user by id', async () => {
@@ -144,7 +144,7 @@ describe('user tests', () => {
     const foundUser = await userRepository.findUserById(
       ctx.db, insertedUser.id
     )
-    expect(foundUser?.username).to.eql(username)
+    expect(foundUser?.username).toEqual(username)
   })
 
   it('delete user', async () => {
@@ -155,6 +155,6 @@ describe('user tests', () => {
     const foundUser = await userRepository.findUserById(
       ctx.db, insertedUser.id
     )
-    expect(foundUser).to.eql(undefined)
+    expect(foundUser).toEqual(undefined)
   })
 })

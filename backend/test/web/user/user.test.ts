@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
 import { User } from '../../../src/core/user/user'
@@ -23,10 +23,10 @@ describe('user tests', () => {
       }
     }
     const noAuthRes = await ctx.request.post(`/api/v1/user`, params)
-    expect(noAuthRes.status).to.equal(400)
+    expect(noAuthRes.status).toEqual(400)
 
     const invalidAuthRes = await ctx.request.post(`/api/v1/user`, params, ctx.createAuthHeaders('invalid token'))
-    expect(invalidAuthRes.status).to.equal(401)
+    expect(invalidAuthRes.status).toEqual(401)
   })
 
   it('create a user', async () => {
@@ -42,9 +42,9 @@ describe('user tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(res.status).to.equal(201)
-    expect(res.data.user.username).to.equal('Anon')
-    expect(res.data.user.role).to.equal('admin')
+    expect(res.status).toEqual(201)
+    expect(res.data.user.username).toEqual('Anon')
+    expect(res.data.user.role).toEqual('admin')
 
     // The returned auth token is be usable.
     const getRes = await ctx.request.get<{ user: User }>(
@@ -52,8 +52,8 @@ describe('user tests', () => {
       ctx.createAuthHeaders(res.data.authToken)
     )
 
-    expect(getRes.status).to.equal(200)
-    expect(getRes.data.user).to.eql(res.data.user)
+    expect(getRes.status).toEqual(200)
+    expect(getRes.data.user).toEqual(res.data.user)
   })
 
   it('get user by id', async () => {
@@ -64,8 +64,8 @@ describe('user tests', () => {
       ctx.createAuthHeaders(authToken)
     )
 
-    expect(res.status).to.equal(200)
-    expect(res.data).to.eql({ user })
+    expect(res.status).toEqual(200)
+    expect(res.data).toEqual({ user })
   })
 
   it('sign in a user', async () => {
@@ -76,7 +76,7 @@ describe('user tests', () => {
       password: password,
     })
 
-    expect(res.status).to.equal(200)
+    expect(res.status).toEqual(200)
 
     // The returned auth token is be usable.
     const getRes = await ctx.request.get<{ user: User }>(
@@ -84,8 +84,8 @@ describe('user tests', () => {
       ctx.createAuthHeaders(authToken)
     )
 
-    expect(getRes.status).to.equal(200)
-    expect(getRes.data.user).to.eql(res.data.user)
+    expect(getRes.status).toEqual(200)
+    expect(getRes.data.user).toEqual(res.data.user)
   })
 
   it('fail to sign in user with the wrong password', async () => {
@@ -96,8 +96,8 @@ describe('user tests', () => {
       password: 'wrong password',
     })
 
-    expect(res.status).to.equal(401)
-    expect(res.data).to.eql({
+    expect(res.status).toEqual(401)
+    expect(res.data).toEqual({
       error: {
         code: 'InvalidCredentials',
         message: 'wrong username or password',
@@ -110,7 +110,7 @@ describe('user tests', () => {
         .selectFrom('refresh_token')
         .select('refresh_token.user_id')
         .execute()
-    ).to.have.length(1)
+    ).toHaveLength(1)
   })
 
   it('sign out a user', async () => {
@@ -122,7 +122,7 @@ describe('user tests', () => {
       ctx.createAuthHeaders(authToken)
     )
 
-    expect(res.status).to.equal(200)
+    expect(res.status).toEqual(200)
 
     // The auth token is no longer be usable.
     const getRes = await ctx.request.get(
@@ -130,8 +130,8 @@ describe('user tests', () => {
       ctx.createAuthHeaders(authToken)
     )
 
-    expect(getRes.status).to.equal(404)
-    expect(getRes.data.error.code).to.equal('UserOrRefreshTokenNotFound')
+    expect(getRes.status).toEqual(404)
+    expect(getRes.data.error.code).toEqual('UserOrRefreshTokenNotFound')
   })
 
   it('refresh auth token', async () => {
@@ -142,9 +142,9 @@ describe('user tests', () => {
       { refreshToken }
     )
 
-    expect(res.status).to.equal(200)
-    expect(res.data.authToken).not.to.equal(authToken)
-    expect(res.data.refreshToken).not.to.equal(refreshToken)
+    expect(res.status).toEqual(200)
+    expect(res.data.authToken).not.toEqual(authToken)
+    expect(res.data.refreshToken).not.toEqual(refreshToken)
 
     // The old auth token is no longer be usable.
     const failGetRes = await ctx.request.get(
@@ -152,16 +152,16 @@ describe('user tests', () => {
       ctx.createAuthHeaders(authToken)
     )
 
-    expect(failGetRes.status).to.equal(404)
-    expect(failGetRes.data.error.code).to.equal('UserOrRefreshTokenNotFound')
+    expect(failGetRes.status).toEqual(404)
+    expect(failGetRes.data.error.code).toEqual('UserOrRefreshTokenNotFound')
 
     const getRes = await ctx.request.get(
       `/api/v1/user/${user.id}`,
       ctx.createAuthHeaders(res.data.authToken)
     )
 
-    expect(getRes.status).to.equal(200)
-    expect(getRes.data.user.username).to.equal(user.username)
+    expect(getRes.status).toEqual(200)
+    expect(getRes.data.user.username).toEqual(user.username)
   })
 
   it('do not change tokens on invalid refresh request', async () => {
@@ -172,14 +172,14 @@ describe('user tests', () => {
       `/api/v1/user/${user.id}/refresh`,
       { refreshToken: anotherUser.refreshToken }
     )
-    expect(res.status).to.equal(401)
+    expect(res.status).toEqual(401)
 
     const getRes = await ctx.request.get(
       `/api/v1/user/${user.id}`,
       ctx.createAuthHeaders(authToken)
     )
-    expect(getRes.status).to.equal(200)
-    expect(getRes.data.user.username).to.equal(user.username)
+    expect(getRes.status).toEqual(200)
+    expect(getRes.data.user.username).toEqual(user.username)
   })
 
   it('change password', async () => {
@@ -190,8 +190,8 @@ describe('user tests', () => {
       ctx.createAuthHeaders(authToken)
     )
 
-    expect(getRes.status).to.equal(200)
-    expect(getRes.data.user).to.eql(user)
+    expect(getRes.status).toEqual(200)
+    expect(getRes.data.user).toEqual(user)
 
     const newPassword = 'a different password'
     const wrongPwdChangeRes = await ctx.request.post(
@@ -201,7 +201,7 @@ describe('user tests', () => {
         newPassword
       }, ctx.createAuthHeaders(authToken)
     )
-    expect(wrongPwdChangeRes.status).to.equal(401)
+    expect(wrongPwdChangeRes.status).toEqual(401)
 
     const changeRes = await ctx.request.post(
       `/api/v1/user/${getRes.data.user.id}/change-password`,
@@ -210,7 +210,7 @@ describe('user tests', () => {
         newPassword
       }, ctx.createAuthHeaders(authToken)
     )
-    expect(changeRes.status).to.equal(204)
+    expect(changeRes.status).toEqual(204)
 
     const oldPwdSignInRes = await ctx.request.post(
       `/api/v1/user/sign-in`, {
@@ -219,7 +219,7 @@ describe('user tests', () => {
       },
       ctx.createAuthHeaders(authToken)
     )
-    expect(oldPwdSignInRes.status).to.equal(401)
+    expect(oldPwdSignInRes.status).toEqual(401)
 
     const currentPwdSignInRes = await ctx.request.post(
       `/api/v1/user/sign-in`, {
@@ -227,7 +227,7 @@ describe('user tests', () => {
         password: newPassword,
       }, ctx.createAuthHeaders(authToken)
     )
-    expect(currentPwdSignInRes.status).to.equal(200)
+    expect(currentPwdSignInRes.status).toEqual(200)
   })
 
   it('delete user', async () => {
@@ -237,19 +237,19 @@ describe('user tests', () => {
       `/api/v1/user/${user.id}`,
       ctx.createAuthHeaders(authToken)
     )
-    expect(res.status).to.equal(200)
+    expect(res.status).toEqual(200)
 
     const deleteRes = await ctx.request.delete(
       `/api/v1/user/${res.data.user.id}`,
       ctx.adminAuthHeaders()
     )
-    expect(deleteRes.status).to.equal(204)
+    expect(deleteRes.status).toEqual(204)
 
     const afterDeleteGetRes = await ctx.request.get<{ user: User }>(
       `/api/v1/user/${user.id}`,
       ctx.adminAuthHeaders()
     )
-    expect(afterDeleteGetRes.status).to.equal(404)
+    expect(afterDeleteGetRes.status).toEqual(404)
   })
 
 })

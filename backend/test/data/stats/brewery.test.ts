@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
 import { type Pagination } from '../../../src/core/pagination'
@@ -84,7 +84,7 @@ describe('brewery stats tests', () => {
       undefined,
       { property: 'average', direction: 'asc' }
     )
-    expect(stats).eql([ brewery, otherBrewery ])
+    expect(stats).toEqual([ brewery, otherBrewery ])
   })
 
   it('by average desc', async () => {
@@ -94,7 +94,7 @@ describe('brewery stats tests', () => {
       undefined,
       { property: 'average', direction: 'desc' }
     )
-    expect(stats).eql([ otherBrewery, brewery ])
+    expect(stats).toEqual([ otherBrewery, brewery ])
   })
 
   it('by count asc', async () => {
@@ -104,7 +104,7 @@ describe('brewery stats tests', () => {
       undefined,
       { property: 'count', direction: 'asc' }
     )
-    expect(stats).eql([ brewery, otherBrewery ])
+    expect(stats).toEqual([ brewery, otherBrewery ])
   })
 
   it('by count desc', async () => {
@@ -114,7 +114,7 @@ describe('brewery stats tests', () => {
       undefined,
       { property: 'count', direction: 'desc' }
     )
-    expect(stats).eql([ otherBrewery, brewery ])
+    expect(stats).toEqual([ otherBrewery, brewery ])
   })
 
   it('by brewery_name asc', async () => {
@@ -124,7 +124,7 @@ describe('brewery stats tests', () => {
       undefined,
       { property: 'brewery_name', direction: 'asc' }
     )
-    expect(stats).eql([ otherBrewery, brewery ])
+    expect(stats).toEqual([ otherBrewery, brewery ])
   })
 
   it('by brewery_name desc', async () => {
@@ -134,7 +134,7 @@ describe('brewery stats tests', () => {
       undefined,
       { property: 'brewery_name', direction: 'desc' }
     )
-    expect(stats).eql([ brewery, otherBrewery ])
+    expect(stats).toEqual([ brewery, otherBrewery ])
   })
 
   it('filter by brewery', async () => {
@@ -147,7 +147,7 @@ describe('brewery stats tests', () => {
       }),
       { property: 'brewery_name', direction: 'desc' }
     )
-    expect(stats).eql([ otherBrewery ])
+    expect(stats).toEqual([ otherBrewery ])
   })
 
   it('filter by style', async () => {
@@ -160,7 +160,7 @@ describe('brewery stats tests', () => {
       }),
       { property: 'brewery_name', direction: 'desc' }
     )
-    expect(stats).eql([ brewery ])
+    expect(stats).toEqual([ brewery ])
   })
 
   it('filter by min review count', async () => {
@@ -173,7 +173,7 @@ describe('brewery stats tests', () => {
       }),
       { property: 'brewery_name', direction: 'desc' }
     )
-    expect(stats).eql([ otherBrewery ])
+    expect(stats).toEqual([ otherBrewery ])
   })
 
   it('filter by max review count', async () => {
@@ -186,7 +186,7 @@ describe('brewery stats tests', () => {
       }),
       { property: 'brewery_name', direction: 'desc' }
     )
-    expect(stats).eql([ brewery ])
+    expect(stats).toEqual([ brewery ])
   })
 
   it('filter by min review average', async () => {
@@ -199,7 +199,7 @@ describe('brewery stats tests', () => {
       }),
       { property: 'brewery_name', direction: 'desc' }
     )
-    expect(stats).eql([ otherBrewery ])
+    expect(stats).toEqual([ otherBrewery ])
   })
 
   it('filter by max review average', async () => {
@@ -212,7 +212,7 @@ describe('brewery stats tests', () => {
       }),
       { property: 'brewery_name', direction: 'desc' }
     )
-    expect(stats).eql([ brewery ])
+    expect(stats).toEqual([ brewery ])
   })
 
 })

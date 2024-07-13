@@ -1,8 +1,9 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 import {
   validateRefreshToken
 } from '../../../src/core/authentication/refresh-token'
 import { invalidRefreshTokenError } from '../../../src/core/errors'
+import { expectThrow } from '../controller-error-helper'
 
 describe('refresh token unit tests', () => {
 
@@ -12,11 +13,11 @@ describe('refresh token unit tests', () => {
     }
     const expected = { ...token }
     const result = validateRefreshToken(token)
-    expect(result).to.eql(expected)
+    expect(result).toEqual(expected)
   })
 
   function fail(token: Record<string, unknown>) {
-    expect(() => validateRefreshToken(token)).to.throw(invalidRefreshTokenError)
+    expectThrow(() => validateRefreshToken(token), invalidRefreshTokenError)
   }
 
   it('invalid token missing property', async () => {

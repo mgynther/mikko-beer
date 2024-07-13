@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
 import { Review } from '../../../src/core/review/review'
@@ -72,7 +72,7 @@ describe('style stats tests', () => {
       undefined,
       { property: 'average', direction: 'asc' }
     )
-    expect(stats).eql([ style, otherStyle ])
+    expect(stats).toEqual([ style, otherStyle ])
   })
 
   it('by average desc', async () => {
@@ -81,7 +81,7 @@ describe('style stats tests', () => {
       undefined,
       { property: 'average', direction: 'desc' }
     )
-    expect(stats).eql([ otherStyle, style ])
+    expect(stats).toEqual([ otherStyle, style ])
   })
 
   it('by count asc', async () => {
@@ -90,7 +90,7 @@ describe('style stats tests', () => {
       undefined,
       { property: 'count', direction: 'asc' }
     )
-    expect(stats).eql([ style, otherStyle ])
+    expect(stats).toEqual([ style, otherStyle ])
   })
 
   it('by count desc', async () => {
@@ -99,7 +99,7 @@ describe('style stats tests', () => {
       undefined,
       { property: 'count', direction: 'desc' }
     )
-    expect(stats).eql([ otherStyle, style ])
+    expect(stats).toEqual([ otherStyle, style ])
   })
 
   it('by style_name asc', async () => {
@@ -108,7 +108,7 @@ describe('style stats tests', () => {
       undefined,
       { property: 'style_name', direction: 'asc' }
     )
-    expect(stats).eql([ style, otherStyle ])
+    expect(stats).toEqual([ style, otherStyle ])
   })
 
   it('by style_name desc', async () => {
@@ -117,7 +117,7 @@ describe('style stats tests', () => {
       undefined,
       { property: 'style_name', direction: 'desc' }
     )
-    expect(stats).eql([ otherStyle, style ])
+    expect(stats).toEqual([ otherStyle, style ])
   })
 
   it('filter by brewery', async () => {
@@ -129,7 +129,7 @@ describe('style stats tests', () => {
       }),
       { property: 'style_name', direction: 'desc' }
     )
-    expect(stats).eql([ otherStyle ])
+    expect(stats).toEqual([ otherStyle ])
   })
 
   it('filter by style', async () => {
@@ -141,7 +141,7 @@ describe('style stats tests', () => {
       }),
       { property: 'style_name', direction: 'desc' }
     )
-    expect(stats).eql([ style ])
+    expect(stats).toEqual([ style ])
   })
 
   it('filter by min review count', async () => {
@@ -153,7 +153,7 @@ describe('style stats tests', () => {
       }),
       { property: 'style_name', direction: 'desc' }
     )
-    expect(stats).eql([ otherStyle ])
+    expect(stats).toEqual([ otherStyle ])
   })
 
   it('filter by max review count', async () => {
@@ -165,7 +165,7 @@ describe('style stats tests', () => {
       }),
       { property: 'style_name', direction: 'desc' }
     )
-    expect(stats).eql([ style ])
+    expect(stats).toEqual([ style ])
   })
 
   it('filter by min review average', async () => {
@@ -177,7 +177,7 @@ describe('style stats tests', () => {
       }),
       { property: 'style_name', direction: 'desc' }
     )
-    expect(stats).eql([ otherStyle ])
+    expect(stats).toEqual([ otherStyle ])
   })
 
   it('filter by max review average', async () => {
@@ -189,7 +189,7 @@ describe('style stats tests', () => {
       }),
       { property: 'style_name', direction: 'desc' }
     )
-    expect(stats).eql([ style ])
+    expect(stats).toEqual([ style ])
   })
 
 })

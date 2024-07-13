@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 import {
   type Container,
   type CreateContainerRequest,
@@ -9,15 +9,12 @@ import * as containerService from '../../../src/core/container/container.service
 import { containerNotFoundError } from '../../../src/core/errors'
 
 import { dummyLog as log } from '../dummy-log'
+import { expectReject } from '../controller-error-helper'
 
 const container: Container = {
   id: '1fcbeb9e-1ea1-4c50-8fe5-b0aa18ac7e9a',
   type: 'draft',
   size: '0.1',
-}
-
-async function notCalled() {
-  expect('must not be called').to.equal(true)
 }
 
 describe('container service unit tests', () => {
@@ -32,13 +29,13 @@ describe('container service unit tests', () => {
         type: container.type,
         size: container.size,
       }
-      expect(newContainer).to.eql(
+      expect(newContainer).toEqual(
         { type: container.type, size: container.size }
       )
       return result
     }
     const result = await containerService.createContainer(create, request, log)
-    expect(result).to.eql({
+    expect(result).toEqual({
       ...request,
       id: container.id
     })
@@ -55,7 +52,7 @@ describe('container service unit tests', () => {
         type: container.type,
         size: container.size,
       }
-      expect(container).to.eql(result)
+      expect(container).toEqual(result)
       return result
     }
     const result = await containerService.updateContainer(
@@ -64,7 +61,7 @@ describe('container service unit tests', () => {
       request,
       log
     )
-    expect(result).to.eql({
+    expect(result).toEqual({
       ...request,
       id: container.id
     })
@@ -72,7 +69,7 @@ describe('container service unit tests', () => {
 
   it('find container', async () => {
     const finder = async (containerId: string) => {
-      expect(containerId).to.equal(container.id)
+      expect(containerId).toEqual(container.id)
       return container
     }
     const result = await containerService.findContainerById(
@@ -80,21 +77,18 @@ describe('container service unit tests', () => {
       container.id,
       log
     )
-    expect(result).to.eql(container)
+    expect(result).toEqual(container)
   })
 
   it('fail to find container with unknown id', async () => {
     const id = 'd29b2ee6-5d2e-40bf-bb87-c02c00a6628f'
     const finder = async (searchId: string) => {
-      expect(searchId).to.equal(id)
+      expect(searchId).toEqual(id)
       return undefined
     }
-    try {
+    expectReject(async () => {
       await containerService.findContainerById(finder, id, log)
-      notCalled()
-    } catch (e) {
-      expect(e).to.eql(containerNotFoundError(id))
-    }
+    }, containerNotFoundError(id))
   })
 
   it('list containers', async () => {
@@ -102,7 +96,7 @@ describe('container service unit tests', () => {
       return [container]
     }
     const result = await containerService.listContainers(lister, log)
-    expect(result).to.eql([container])
+    expect(result).toEqual([container])
   })
 
 })

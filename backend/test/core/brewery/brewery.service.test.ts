@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 import {
   type Brewery,
   type CreateBreweryRequest,
@@ -11,14 +11,11 @@ import { type SearchByName } from '../../../src/core/search'
 import * as breweryService from '../../../src/core/brewery/brewery.service'
 
 import { dummyLog as log } from '../dummy-log'
+import { expectReject } from '../controller-error-helper'
 
 const brewery: Brewery = {
   id: 'd804c8fe-8d41-4c8b-88d1-95bdfeb558ef',
   name: 'Koskipanimo',
-}
-
-async function notCalled() {
-  expect('must not be called').to.equal(true)
 }
 
 describe('brewery service unit tests', () => {
@@ -31,11 +28,11 @@ describe('brewery service unit tests', () => {
         id: brewery.id,
         name: brewery.name,
       }
-      expect(newBrewery).to.eql({ name: brewery.name })
+      expect(newBrewery).toEqual({ name: brewery.name })
       return result
     }
     const result = await breweryService.createBrewery(create, request, log)
-    expect(result).to.eql({
+    expect(result).toEqual({
       ...request,
       id: brewery.id
     })
@@ -50,7 +47,7 @@ describe('brewery service unit tests', () => {
         id: brewery.id,
         name: brewery.name,
       }
-      expect(brewery).to.eql(result)
+      expect(brewery).toEqual(result)
       return result
     }
     const result = await breweryService.updateBrewery(
@@ -59,7 +56,7 @@ describe('brewery service unit tests', () => {
       request,
       log
     )
-    expect(result).to.eql({
+    expect(result).toEqual({
       ...request,
       id: brewery.id
     })
@@ -67,25 +64,22 @@ describe('brewery service unit tests', () => {
 
   it('find brewery', async () => {
     const finder = async (breweryId: string) => {
-      expect(breweryId).to.equal(brewery.id)
+      expect(breweryId).toEqual(brewery.id)
       return brewery
     }
     const result = await breweryService.findBreweryById(finder, brewery.id, log)
-    expect(result).to.eql(brewery)
+    expect(result).toEqual(brewery)
   })
 
   it('fail to find brewery with unknown id', async () => {
     const id = '2f15e28b-ccbf-4afa-aa05-25f43b1e548b'
     const finder = async (searchId: string) => {
-      expect(searchId).to.equal(id)
+      expect(searchId).toEqual(id)
       return undefined
     }
-    try {
+    expectReject(async () => {
       await breweryService.findBreweryById(finder, id, log)
-      notCalled()
-    } catch (e) {
-      expect(e).to.eql(breweryNotFoundError(id))
-    }
+    }, breweryNotFoundError(id))
   })
 
   it('list brewerys', async () => {
@@ -94,11 +88,11 @@ describe('brewery service unit tests', () => {
       skip: 80
     }
     const lister = async (listPagination: Pagination) => {
-      expect(listPagination).to.eql(pagination)
+      expect(listPagination).toEqual(pagination)
       return [brewery]
     }
     const result = await breweryService.listBreweries(lister, pagination, log)
-    expect(result).to.eql([brewery])
+    expect(result).toEqual([brewery])
   })
 
   it('search brewerys', async () => {
@@ -106,7 +100,7 @@ describe('brewery service unit tests', () => {
       name: 'Sipe',
     }
     const searcher = async (search: SearchByName) => {
-      expect(search).to.eql(searchByName)
+      expect(search).toEqual(searchByName)
       return [brewery]
     }
     const result = await breweryService.searchBreweries(
@@ -114,6 +108,6 @@ describe('brewery service unit tests', () => {
       searchByName,
       log
     )
-    expect(result).to.eql([brewery])
+    expect(result).toEqual([brewery])
   })
 })

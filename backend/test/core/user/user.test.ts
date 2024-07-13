@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import {
   validateCreateAnonymousUserRequest,
@@ -8,18 +8,19 @@ import {
   invalidSignInMethodError,
   invalidUserError
 } from '../../../src/core/errors'
+import { expectThrow } from '../controller-error-helper'
 
 describe('create anonymous user unit tests', () => {
   function pass(user: Record<string, unknown>) {
     const input = { ...user }
     const output = { ...user }
-    expect(validateCreateAnonymousUserRequest(input)).to.eql(output)
+    expect(validateCreateAnonymousUserRequest(input)).toLooseEqual(output)
   }
 
   function fail(user: unknown) {
-    expect(
+    expectThrow(
       () => validateCreateAnonymousUserRequest(user)
-    ).to.throw(invalidUserError)
+    , invalidUserError)
   }
 
   it('pass as admin', () => {
@@ -66,7 +67,7 @@ describe('create user unit tests', () => {
         ...validRequest.passwordSignInMethod
       }
     }
-    expect(validateCreateUserRequest(validRequest)).to.eql(expected)
+    expect(validateCreateUserRequest(validRequest)).toLooseEqual(expected)
   })
 
   it('fail with invalid user', () => {
@@ -74,9 +75,9 @@ describe('create user unit tests', () => {
       user: {},
       passwordSignInMethod: { ...validRequest.passwordSignInMethod }
     }
-    expect(
+    expectThrow(
       () => validateCreateUserRequest(request)
-    ).to.throw(invalidUserError)
+    , invalidUserError)
   })
 
   it('fail with invalid password change method', () => {
@@ -84,8 +85,8 @@ describe('create user unit tests', () => {
       user: { ...validRequest.user },
       passwordSignInMethod: { }
     }
-    expect(
+    expectThrow(
       () => validateCreateUserRequest(request)
-    ).to.throw(invalidSignInMethodError)
+    , invalidSignInMethodError)
   })
 })

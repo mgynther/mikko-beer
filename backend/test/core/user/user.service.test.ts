@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import { userNotFoundError } from '../../../src/core/errors'
 import * as userService from '../../../src/core/user/user.service'
@@ -15,6 +15,7 @@ import {
 } from "../../../src/core/user/user"
 
 import { dummyLog as log } from '../dummy-log'
+import { expectReject } from '../controller-error-helper'
 
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {
@@ -36,13 +37,13 @@ describe('user service unit tests', () => {
     async function create(
       request: CreateAnonymousUserRequest
     ): Promise<User> {
-      expect(request.role).to.equal(user.role)
+      expect(request.role).toEqual(user.role)
       return user
     }
     async function insertRefreshToken(
       requestUserId: string
     ): Promise<DbRefreshToken> {
-      expect(requestUserId).to.equal(userId)
+      expect(requestUserId).toEqual(userId)
       return {
         id: '0586c701-e053-46bf-b599-346093989140',
         userId
@@ -55,18 +56,16 @@ describe('user service unit tests', () => {
       authTokenConfig,
       log
     )
-    expect(signedInUser.user).to.eql(user)
-    expect(signedInUser.refreshToken.refreshToken).not.to.be.empty
-    expect(signedInUser.authToken.authToken).not.to.be.empty
+    expect(signedInUser.user).toEqual(user)
+    expect(signedInUser.refreshToken.refreshToken).not.toEqual('')
+    expect(signedInUser.authToken.authToken).not.toEqual('')
   })
 
   it('fail to find user that does not exist', async () => {
     const id = 'a52a35af-060a-4f43-ae00-c3d0dbaa8e6f'
-    try {
+    expectReject(async () => {
       await userService.findUserById(async () => undefined, id, log)
-    } catch (e) {
-      expect(e).to.eql(userNotFoundError(id))
-    }
+    }, userNotFoundError(id))
   })
 
 })

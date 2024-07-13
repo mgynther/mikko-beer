@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 import {
   referredBeerNotFoundError,
   referredContainerNotFoundError,
@@ -21,6 +21,7 @@ import {
 } from '../../../src/core/review/review.service'
 
 import { dummyLog as log } from '../dummy-log'
+import { expectReject } from '../controller-error-helper'
 
 const time = '2024-07-06T19:36:38.182Z'
 
@@ -82,14 +83,14 @@ const pagination: Pagination = {
 const lockBeer = async (
   beerId: string
 ): Promise<string | undefined> => {
-  expect(beerId).to.eql(review.beer)
+  expect(beerId).toEqual(review.beer)
   return review.beer
 }
 
 const lockContainer = async (
   containerId: string
 ): Promise<string | undefined> => {
-  expect(containerId).to.eql(review.container)
+  expect(containerId).toEqual(review.container)
   return review.container
 }
 
@@ -98,7 +99,7 @@ const storageId = '1e90c440-73d4-4de4-bc31-c267df3e8d46'
 const lockStorage = async (
   lockStorageId: string
 ): Promise<string | undefined> => {
-  expect(lockStorageId).to.eql(storageId)
+  expect(lockStorageId).toEqual(storageId)
   return storageId
 }
 
@@ -106,7 +107,7 @@ const createReview = async (newReview: NewReview) => {
   expect({
     ...newReview,
     time: newReview.time.toISOString()
-  }).to.eql(createReviewRequest)
+  }).toEqual(createReviewRequest)
   return { ...review }
 }
 
@@ -114,12 +115,12 @@ const updateReview = async (review: Review) => {
   expect({
     ...review,
     time: review.time.toISOString()
-  }).to.eql(updateReviewRequest)
+  }).toLooseEqual(updateReviewRequest)
   return { ...review }
 }
 
 async function notCalled(): Promise<undefined> {
-  expect('must not be called').to.equal(true)
+  throw new Error('must not be called')
 }
 
 describe('review service unit tests', () => {
@@ -137,7 +138,7 @@ describe('review service unit tests', () => {
       undefined,
       log
     )
-    expect(result).to.eql({
+    expect(result).toEqual({
       ...createReviewRequest,
       id: review.id,
       time: new Date(createReviewRequest.time)
@@ -152,16 +153,14 @@ describe('review service unit tests', () => {
       lockContainer,
       lockStorage: notCalled
     }
-    try {
+    expectReject(async () => {
       await reviewService.createReview(
         createIf,
         createReviewRequest,
         undefined,
         log
       )
-    } catch (e) {
-      expect(e).to.eql(referredBeerNotFoundError)
-    }
+    }, referredBeerNotFoundError)
   })
 
   it('fail to create review with invalid container', async () => {
@@ -172,28 +171,26 @@ describe('review service unit tests', () => {
       lockContainer: async () => undefined,
       lockStorage: notCalled
     }
-    try {
+    expectReject(async () => {
       await reviewService.createReview(
         createIf,
         createReviewRequest,
         undefined,
         log
       )
-    } catch (e) {
-      expect(e).to.eql(referredContainerNotFoundError)
-    }
+    }, referredContainerNotFoundError)
   })
 
   it('create review from storage', async () => {
     let deletedFromStorage = false
     const create = async (newReview: NewReview) => {
-      expect(deletedFromStorage).to.equal(false)
+      expect(deletedFromStorage).toEqual(false)
       return createReview(newReview)
     }
     const deleteFromStorage = async (deleteId: string) => {
-      expect(deletedFromStorage).to.equal(false)
+      expect(deletedFromStorage).toEqual(false)
       deletedFromStorage = true
-      expect(deleteId).to.equal(storageId)
+      expect(deleteId).toEqual(storageId)
     }
     const createIf: CreateIf = {
       createReview: create,
@@ -208,12 +205,12 @@ describe('review service unit tests', () => {
       storageId,
       log
     )
-    expect(result).to.eql({
+    expect(result).toEqual({
       ...createReviewRequest,
       id: review.id,
       time: new Date(createReviewRequest.time)
     })
-    expect(deletedFromStorage).to.equal(true)
+    expect(deletedFromStorage).toEqual(true)
   })
 
   it('fail to create review with invalid storage', async () => {
@@ -224,16 +221,14 @@ describe('review service unit tests', () => {
       lockContainer,
       lockStorage: async () => undefined
     }
-    try {
+    expectReject(async () => {
       await reviewService.createReview(
         createIf,
         createReviewRequest,
         storageId,
         log
       )
-    } catch (e) {
-      expect(e).to.eql(referredStorageNotFoundError)
-    }
+    }, referredStorageNotFoundError)
   })
 
   it('update review', async () => {
@@ -248,7 +243,7 @@ describe('review service unit tests', () => {
       updateReviewRequest,
       log
     )
-    expect(result).to.eql({
+    expect(result).toEqual({
       ...updateReviewRequest,
       id: review.id,
       time: new Date(updateReviewRequest.time)
@@ -261,17 +256,14 @@ describe('review service unit tests', () => {
       lockBeer: async () => undefined,
       lockContainer,
     }
-    try {
+    expectReject(async () => {
       await reviewService.updateReview(
         updateIf,
         review.id,
         updateReviewRequest,
         log
       )
-      notCalled()
-    } catch (e) {
-      expect(e).to.eql(referredBeerNotFoundError)
-    }
+    }, referredBeerNotFoundError)
   })
 
   it('fail to update review with invalid container', async () => {
@@ -280,46 +272,40 @@ describe('review service unit tests', () => {
       lockBeer,
       lockContainer: async () => undefined,
     }
-    try {
+    expectReject(async () => {
       await reviewService.updateReview(
         updateIf,
         review.id,
         updateReviewRequest,
         log
       )
-      notCalled()
-    } catch (e) {
-      expect(e).to.eql(referredContainerNotFoundError)
-    }
+    }, referredContainerNotFoundError)
   })
 
   it('find review', async () => {
     const finder = async (reviewId: string) => {
-      expect(reviewId).to.equal(review.id)
+      expect(reviewId).toEqual(review.id)
       return review
     }
     const result = await reviewService.findReviewById(finder, review.id, log)
-    expect(result).to.eql(review)
+    expect(result).toEqual(review)
   })
 
   it('not find review with unknown id', async () => {
     const id = '544369e2-f10b-4799-9b67-527731a78011'
     const finder = async (searchId: string) => {
-      expect(searchId).to.equal(id)
+      expect(searchId).toEqual(id)
       return undefined
     }
-    try {
+    expectReject(async () => {
       await reviewService.findReviewById(finder, id, log)
-      notCalled()
-    } catch (e) {
-      expect(e).to.eql(reviewNotFoundError(id))
-    }
+    }, reviewNotFoundError(id))
   })
 
   it('list reviews', async () => {
     const lister = async (listPagination: Pagination, listOrder: ReviewListOrder) => {
-      expect(listPagination).to.eql(pagination)
-      expect(listOrder).to.eql(order)
+      expect(listPagination).toEqual(pagination)
+      expect(listOrder).toEqual(order)
       return [joinedReview]
     }
     const result = await reviewService.listReviews(
@@ -328,14 +314,14 @@ describe('review service unit tests', () => {
       order,
       log
     )
-    expect(result).to.eql([joinedReview])
+    expect(result).toEqual([joinedReview])
   })
 
   it('list reviews by beer', async () => {
     const beerId = 'ff16b2f6-7862-4e55-9ecb-b67d617e8f9c'
     const lister = async (listBeerId: string, listOrder: ReviewListOrder) => {
-      expect(listBeerId).to.eql(beerId)
-      expect(listOrder).to.eql(order)
+      expect(listBeerId).toEqual(beerId)
+      expect(listOrder).toEqual(order)
       return [joinedReview]
     }
     const result = await reviewService.listReviewsByBeer(
@@ -344,14 +330,14 @@ describe('review service unit tests', () => {
       order,
       log
     )
-    expect(result).to.eql([joinedReview])
+    expect(result).toEqual([joinedReview])
   })
 
   it('list reviews by brewery', async () => {
     const breweryId = 'f7471dfd-9af9-4a9b-b39d-47f4e7199800'
     const lister = async (listBreweryId: string, listOrder: ReviewListOrder) => {
-      expect(listBreweryId).to.eql(breweryId)
-      expect(listOrder).to.eql(order)
+      expect(listBreweryId).toEqual(breweryId)
+      expect(listOrder).toEqual(order)
       return [joinedReview]
     }
     const result = await reviewService.listReviewsByBrewery(
@@ -360,14 +346,14 @@ describe('review service unit tests', () => {
       order,
       log
     )
-    expect(result).to.eql([joinedReview])
+    expect(result).toEqual([joinedReview])
   })
 
   it('list reviews by style', async () => {
     const styleId = 'b265c454-6842-415b-840c-bfdb579aa658'
     const lister = async (listStyleId: string, listOrder: ReviewListOrder) => {
-      expect(listStyleId).to.eql(styleId)
-      expect(listOrder).to.eql(order)
+      expect(listStyleId).toEqual(styleId)
+      expect(listOrder).toEqual(order)
       return [joinedReview]
     }
     const result = await reviewService.listReviewsByStyle(
@@ -376,6 +362,6 @@ describe('review service unit tests', () => {
       order,
       log
     )
-    expect(result).to.eql([joinedReview])
+    expect(result).toEqual([joinedReview])
   })
 })

@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 import {
   type Beer,
   type BeerWithBreweriesAndStyles,
@@ -16,6 +16,7 @@ import {
   referredBreweryNotFoundError,
   referredStyleNotFoundError
 } from '../../../src/core/errors'
+import { expectReject } from '../controller-error-helper'
 
 const beer: BeerWithBreweriesAndStyles = {
   id: '406a337c-3107-4307-bd84-be3ec7c7d2f6',
@@ -34,17 +35,17 @@ const breweries = beer.breweries.map(brewery => brewery.id)
 const styles = beer.styles.map(style => style.id)
 
 const lockBreweries = async (lockBreweryIds: string[]) => {
-  expect(lockBreweryIds).to.eql(breweries)
+  expect(lockBreweryIds).toEqual(breweries)
   return lockBreweryIds
 }
 
 const lockStyles = async (lockStyleIds: string[]) => {
-  expect(lockStyleIds).to.eql(styles)
+  expect(lockStyleIds).toEqual(styles)
   return lockStyleIds
 }
 
 async function notCalled() {
-  expect('must not be called').to.equal(true)
+  throw new Error('must not be called')
 }
 
 const createBeerRequest: CreateBeerRequest = {
@@ -71,30 +72,30 @@ describe('beer service unit tests', () => {
           id: beer.id,
           name: beer.name,
         }
-        expect(newBeer).to.eql({ name: beer.name })
+        expect(newBeer).toEqual({ name: beer.name })
         return result
       },
       lockBreweries: async (breweryIds: string[]) => {
-        expect(breweriesLocked).to.equal(false)
+        expect(breweriesLocked).toEqual(false)
         breweriesLocked = true
         return lockBreweries(breweryIds)
       },
       lockStyles: async (styleIds: string[]) => {
-        expect(stylesLocked).to.equal(false)
+        expect(stylesLocked).toEqual(false)
         stylesLocked = true
         return lockStyles(styleIds)
       },
       insertBeerBreweries: async (beerId: string, insertBreweries: string[]) => {
-        expect(breweriesInserted).to.equal(false)
+        expect(breweriesInserted).toEqual(false)
         breweriesInserted = true
-        expect(beerId).to.equal(beer.id)
-        expect(insertBreweries).to.eql(breweries)
+        expect(beerId).toEqual(beer.id)
+        expect(insertBreweries).toEqual(breweries)
       },
       insertBeerStyles: async (beerId: string, insertStyles: string[]) => {
-        expect(stylesInserted).to.equal(false)
+        expect(stylesInserted).toEqual(false)
         stylesInserted = true
-        expect(beerId).to.equal(beer.id)
-        expect(insertStyles).to.eql(styles)
+        expect(beerId).toEqual(beer.id)
+        expect(insertStyles).toEqual(styles)
       }
     }
     const result = await beerService.createBeer(
@@ -102,14 +103,14 @@ describe('beer service unit tests', () => {
       createBeerRequest,
       log
     )
-    expect(result).to.eql({
+    expect(result).toEqual({
       ...createBeerRequest,
       id: beer.id
     })
-    expect(breweriesInserted).to.equal(true)
-    expect(breweriesLocked).to.equal(true)
-    expect(stylesInserted).to.equal(true)
-    expect(stylesLocked).to.equal(true)
+    expect(breweriesInserted).toEqual(true)
+    expect(breweriesLocked).toEqual(true)
+    expect(stylesInserted).toEqual(true)
+    expect(stylesLocked).toEqual(true)
   })
 
   it('fail to create beer with invalid brewery', async () => {
@@ -120,12 +121,9 @@ describe('beer service unit tests', () => {
       insertBeerBreweries: async () => {},
       insertBeerStyles: async () => {}
     }
-    try {
+    expectReject(async () => {
       await beerService.createBeer(createIf, createBeerRequest, log)
-      notCalled()
-    } catch (e) {
-      expect(e).to.eql(referredBreweryNotFoundError)
-    }
+    }, referredBreweryNotFoundError)
   })
 
   it('fail to create beer with invalid style', async () => {
@@ -136,12 +134,9 @@ describe('beer service unit tests', () => {
       insertBeerBreweries: async () => {},
       insertBeerStyles: async () => {}
     }
-    try {
+    expectReject(async () => {
       await beerService.createBeer(createIf, createBeerRequest, log)
-      notCalled()
-    } catch (e) {
-      expect(e).to.eql(referredStyleNotFoundError)
-    }
+    }, referredStyleNotFoundError)
   })
 
   it('update beer', async () => {
@@ -157,7 +152,7 @@ describe('beer service unit tests', () => {
           id: beer.id,
           name: beer.name,
         }
-        expect(beer).to.eql(result)
+        expect(beer).toEqual(result)
         return result
       },
       lockBreweries: async (breweryIds: string[]) => {
@@ -169,28 +164,28 @@ describe('beer service unit tests', () => {
         return lockStyles(styleIds)
       },
       deleteBeerBreweries: async (beerId: string) => {
-        expect(breweriesDeleted).to.equal(false)
+        expect(breweriesDeleted).toEqual(false)
         breweriesDeleted = true
-        expect(beerId).to.equal(beer.id)
+        expect(beerId).toEqual(beer.id)
       },
       insertBeerBreweries: async (beerId: string, insertBreweries: string[]) => {
-        expect(breweriesDeleted).to.equal(true)
-        expect(breweriesInserted).to.equal(false)
+        expect(breweriesDeleted).toEqual(true)
+        expect(breweriesInserted).toEqual(false)
         breweriesInserted = true
-        expect(beerId).to.equal(beer.id)
-        expect(insertBreweries).to.eql(breweries)
+        expect(beerId).toEqual(beer.id)
+        expect(insertBreweries).toEqual(breweries)
       },
       deleteBeerStyles: async (beerId: string) => {
-        expect(stylesDeleted).to.equal(false)
+        expect(stylesDeleted).toEqual(false)
         stylesDeleted = true
-        expect(beerId).to.equal(beer.id)
+        expect(beerId).toEqual(beer.id)
       },
       insertBeerStyles: async (beerId: string, insertStyles: string[]) => {
-        expect(stylesDeleted).to.equal(true)
-        expect(stylesInserted).to.equal(false)
+        expect(stylesDeleted).toEqual(true)
+        expect(stylesInserted).toEqual(false)
         stylesInserted = true
-        expect(beerId).to.equal(beer.id)
-        expect(insertStyles).to.eql(styles)
+        expect(beerId).toEqual(beer.id)
+        expect(insertStyles).toEqual(styles)
       }
     }
     const result = await beerService.updateBeer(
@@ -199,16 +194,16 @@ describe('beer service unit tests', () => {
       updateBeerRequest,
       log
     )
-    expect(result).to.eql({
+    expect(result).toEqual({
       ...updateBeerRequest,
       id: beer.id
     })
-    expect(breweriesDeleted).to.equal(true)
-    expect(breweriesInserted).to.equal(true)
-    expect(breweriesLocked).to.equal(true)
-    expect(stylesDeleted).to.equal(true)
-    expect(stylesInserted).to.equal(true)
-    expect(stylesLocked).to.equal(true)
+    expect(breweriesDeleted).toEqual(true)
+    expect(breweriesInserted).toEqual(true)
+    expect(breweriesLocked).toEqual(true)
+    expect(stylesDeleted).toEqual(true)
+    expect(stylesInserted).toEqual(true)
+    expect(stylesLocked).toEqual(true)
   })
 
   it('fail to update beer with invalid brewery', async () => {
@@ -221,16 +216,14 @@ describe('beer service unit tests', () => {
       deleteBeerStyles: notCalled,
       insertBeerStyles: notCalled
     }
-    try {
+    expectReject(async () => {
       await beerService.updateBeer(
         updateIf,
         beer.id,
         updateBeerRequest,
         log
       )
-    } catch (e) {
-      expect(e).to.eql(referredBreweryNotFoundError)
-    }
+    }, referredBreweryNotFoundError)
   })
 
   it('fail to update beer with invalid style', async () => {
@@ -243,39 +236,34 @@ describe('beer service unit tests', () => {
       deleteBeerStyles: notCalled,
       insertBeerStyles: notCalled
     }
-    try {
+    expectReject(async () => {
       await beerService.updateBeer(
         updateIf,
         beer.id,
         updateBeerRequest,
         log
       )
-    } catch (e) {
-      expect(e).to.eql(referredStyleNotFoundError)
-    }
-})
+    }, referredStyleNotFoundError)
+  })
 
   it('find beer', async () => {
     const finder = async (beerId: string) => {
-      expect(beerId).to.equal(beer.id)
+      expect(beerId).toEqual(beer.id)
       return beer
     }
     const result = await beerService.findBeerById(finder, beer.id, log)
-    expect(result).to.eql(beer)
+    expect(result).toEqual(beer)
   })
 
   it('fail to find beer with unknown id', async () => {
     const id = '7b27cdc4-53cf-493a-be92-07924a9f3399'
     const finder = async (searchId: string) => {
-      expect(searchId).to.equal(id)
+      expect(searchId).toEqual(id)
       return undefined
     }
-    try {
+    expectReject(async () => {
       await beerService.findBeerById(finder, id, log)
-      notCalled()
-    } catch (e) {
-      expect(e).to.eql(beerNotFoundError(id))
-    }
+    }, beerNotFoundError(id))
   })
 
   it('list beers', async () => {
@@ -284,11 +272,11 @@ describe('beer service unit tests', () => {
       skip: 80
     }
     const lister = async (listPagination: Pagination) => {
-      expect(listPagination).to.eql(pagination)
+      expect(listPagination).toEqual(pagination)
       return [beer]
     }
     const result = await beerService.listBeers(lister, pagination, log)
-    expect(result).to.eql([beer])
+    expect(result).toEqual([beer])
   })
 
   it('search beers', async () => {
@@ -296,10 +284,10 @@ describe('beer service unit tests', () => {
       name: 'Sipe',
     }
     const searcher = async (search: SearchByName) => {
-      expect(search).to.eql(searchByName)
+      expect(search).toEqual(searchByName)
       return [beer]
     }
     const result = await beerService.searchBeers(searcher, searchByName, log)
-    expect(result).to.eql([beer])
+    expect(result).toEqual([beer])
   })
 })

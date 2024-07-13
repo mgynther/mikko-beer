@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
 import { type Transaction } from '../../../src/data/database'
@@ -28,7 +28,7 @@ describe('container tests', () => {
         trx,
         container.id
       )
-      expect(lockedKey).to.eql(container.id)
+      expect(lockedKey).toEqual(container.id)
     })
   })
 
@@ -39,7 +39,7 @@ describe('container tests', () => {
         trx,
         dummyId
       )
-      expect(lockedKey).to.eql(undefined)
+      expect(lockedKey).toEqual(undefined)
     })
   })
 })

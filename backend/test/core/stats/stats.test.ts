@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import {
   validateBreweryStatsOrder,
@@ -10,6 +10,7 @@ import {
   invalidBreweryAndStyleFilterError,
   invalidBreweryStatsQueryError,
 } from '../../../src/core/errors'
+import { expectThrow } from '../controller-error-helper'
 
 const noFilter = {
   brewery: undefined,
@@ -18,42 +19,42 @@ const noFilter = {
 
 describe('stats brewery style filter unit tests', () => {
   it('validate undefined filter', () => {
-    expect(validateStatsBreweryStyleFilter(undefined)).to.eql(noFilter)
+    expect(validateStatsBreweryStyleFilter(undefined)).toEqual(noFilter)
   })
 
   it('validate empty filter', () => {
-    expect(validateStatsBreweryStyleFilter({})).to.eql(noFilter)
+    expect(validateStatsBreweryStyleFilter({})).toEqual(noFilter)
   })
 
   it('validate brewery filter', () => {
     expect(
       validateStatsBreweryStyleFilter({ brewery: 'testing' })
-    ).to.eql({ brewery: 'testing', style: undefined })
+    ).toEqual({ brewery: 'testing', style: undefined })
   })
 
   it('validate style filter', () => {
     expect(
       validateStatsBreweryStyleFilter({ style: 'testing' })
-    ).to.eql({ brewery: undefined, style: 'testing' })
+    ).toEqual({ brewery: undefined, style: 'testing' })
   })
 
   it('validate brewery and style filter', () => {
-    expect(
+    expectThrow(
       () =>
         validateStatsBreweryStyleFilter(
           { brewery: 'testing', style: 'testing' }
         )
-    ).to.throw(invalidBreweryAndStyleFilterError)
+    , invalidBreweryAndStyleFilterError)
   })
 
   it('validate invalid brewery filter', () => {
     expect(
-      validateStatsBreweryStyleFilter({ brewery: 123 })).to.eql(noFilter)
+      validateStatsBreweryStyleFilter({ brewery: 123 })).toEqual(noFilter)
   })
 
   it('validate unknown filter', () => {
     expect(
-      validateStatsBreweryStyleFilter({ additional: 'testing' })).to.eql(noFilter)
+      validateStatsBreweryStyleFilter({ additional: 'testing' })).toEqual(noFilter)
   })
 })
 
@@ -67,11 +68,11 @@ describe('stats filter unit tests', () => {
     minReviewCount: 1
   }
   it('validate undefined filter', () => {
-    expect(validateStatsFilter(undefined)).to.eql(defaultFilter)
+    expect(validateStatsFilter(undefined)).toEqual(defaultFilter)
   })
 
   it('validate empty filter', () => {
-    expect(validateStatsFilter({})).to.eql(defaultFilter)
+    expect(validateStatsFilter({})).toEqual(defaultFilter)
   })
 
   it('validate valid filter', () => {
@@ -83,7 +84,7 @@ describe('stats filter unit tests', () => {
         max_review_count: '100',
         min_review_count: '4'
       })
-    ).to.eql({
+    ).toEqual({
       ...defaultFilter,
       brewery: 'testing',
       maxReviewAverage: 9.54,
@@ -96,23 +97,23 @@ describe('stats filter unit tests', () => {
   it('validate invalid min review count', () => {
     expect(
       validateStatsFilter({ brewery: 'testing', min_review_count: 'test' })
-    ).to.eql({ ...defaultFilter, brewery: 'testing' })
+    ).toEqual({ ...defaultFilter, brewery: 'testing' })
   })
 
   it('validate too small', () => {
     expect(
       validateStatsFilter({ brewery: 'testing', min_review_count: '-1' })
-    ).to.eql({ ...defaultFilter, brewery: 'testing' })
+    ).toEqual({ ...defaultFilter, brewery: 'testing' })
   })
 
   it('validate invalid brewery filter', () => {
     expect(
-      validateStatsFilter({ brewery: 123 })).to.eql(defaultFilter)
+      validateStatsFilter({ brewery: 123 })).toEqual(defaultFilter)
   })
 
   it('validate unknown filter', () => {
     expect(
-      validateStatsFilter({ additional: 'testing' })).to.eql(defaultFilter)
+      validateStatsFilter({ additional: 'testing' })).toEqual(defaultFilter)
   })
 })
 
@@ -124,41 +125,41 @@ describe('brewery stats order unit tests', () => {
   }
 
   it('validate empty order', () => {
-    expect(validateBreweryStatsOrder({})).to.eql(defaultOrder)
+    expect(validateBreweryStatsOrder({})).toLooseEqual(defaultOrder)
   })
 
   it('validate average desc order', () => {
     expect(validateBreweryStatsOrder({
       order: 'average',
       direction: 'desc'
-    })).to.eql({ property: 'average', direction: 'desc' })
+    })).toEqual({ property: 'average', direction: 'desc' })
   })
 
   it('validate brewery name desc order', () => {
     expect(validateBreweryStatsOrder({
       order: 'brewery_name',
       direction: 'desc'
-    })).to.eql({ property: 'brewery_name', direction: 'desc' })
+    })).toEqual({ property: 'brewery_name', direction: 'desc' })
   })
 
   it('validate count asc order', () => {
     expect(validateBreweryStatsOrder({
       order: 'count',
       direction: 'asc'
-    })).to.eql({ property: 'count', direction: 'asc' })
+    })).toEqual({ property: 'count', direction: 'asc' })
   })
 
   it('validate invalid asc order', () => {
-    expect(() => validateBreweryStatsOrder({
+    expectThrow(() => validateBreweryStatsOrder({
       order: 'invalid',
       direction: 'asc'
-    })).to.throw(invalidBreweryStatsQueryError)
+    }), invalidBreweryStatsQueryError)
   })
 
   it('validate beer name invalid order', () => {
-    expect(() => validateBreweryStatsOrder({
+    expectThrow(() => validateBreweryStatsOrder({
       order: 'beer_name',
       direction: 'invalid'
-    })).to.throw(invalidBreweryStatsQueryError)
+    }), invalidBreweryStatsQueryError)
   })
 })

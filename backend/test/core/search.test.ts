@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import {
   type SearchByName,
@@ -7,13 +7,14 @@ import {
 } from '../../src/core/search'
 
 import { invalidSearchError } from '../../src/core/errors'
+import { expectThrow } from './controller-error-helper'
 
 describe('search validation unit tests', () => {
   function pass(input: unknown, output: SearchByName) {
-    expect(validateSearchByName(input)).to.eql(output)
+    expect(validateSearchByName(input)).toEqual(output)
   }
   function fail(input: unknown) {
-    expect(() => (validateSearchByName(input))).to.throw(invalidSearchError)
+    expectThrow(() => (validateSearchByName(input)), invalidSearchError)
   }
   it('pass validation', () => {
     pass({ name: 'testing' }, { name: 'testing' })
@@ -34,13 +35,13 @@ describe('search validation unit tests', () => {
 
 describe('search ilike unit tests', () => {
   it('add wildcards', () => {
-    expect(toIlike({ name: 'test' })).to.equal('%test%')
+    expect(toIlike({ name: 'test' })).toEqual('%test%')
   })
   it('add wildcards to exact match pattern with whitespace', () => {
-    expect(toIlike({ name: '"test " ' })).to.equal('%"test " %')
+    expect(toIlike({ name: '"test " ' })).toEqual('%"test " %')
   })
   it('match exactly', () => {
-    expect(toIlike({ name: '"test"' })).to.equal('test')
+    expect(toIlike({ name: '"test"' })).toEqual('test')
   })
 })
 

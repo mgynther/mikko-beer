@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
 import { type Transaction } from '../../../src/data/database'
@@ -26,7 +26,7 @@ describe('brewery tests', () => {
         trx,
         [brewery.id, dummyId]
       )
-      expect(lockedKeys).to.eql([brewery.id])
+      expect(lockedKeys).toEqual([brewery.id])
     })
   })
 })

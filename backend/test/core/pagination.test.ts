@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import {
   type Pagination,
@@ -7,13 +7,14 @@ import {
 } from '../../src/core/pagination'
 
 import { invalidPaginationError } from '../../src/core/errors'
+import { expectThrow } from './controller-error-helper'
 
 describe('pagination unit tests', () => {
   function pass(input: PaginationRequest, output: Pagination) {
-    expect(validatePagination(input)).to.eql(output)
+    expect(validatePagination(input)).toEqual(output)
   }
   function fail(input: PaginationRequest) {
-    expect(() => (validatePagination(input))).to.throw(invalidPaginationError)
+    expectThrow(() => (validatePagination(input)), invalidPaginationError)
   }
   it('pass validation', () => {
     pass({ size: '30', skip: '8' }, { size: 30, skip: 8 })

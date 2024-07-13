@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import {
   referredBeerNotFoundError,
@@ -18,6 +18,7 @@ import {
 } from '../../../src/core/storage/storage.service'
 
 import { dummyLog as log } from '../dummy-log'
+import { expectReject } from '../controller-error-helper'
 
 const storage: Storage = {
   id: '8980b34a-d7b7-4e15-8e88-477176f5aee9',
@@ -59,19 +60,15 @@ const updateRequest: Storage = {
 const lockBeer = async (
   beerId: string
 ): Promise<string | undefined> => {
-  expect(beerId).to.eql(storage.beer)
+  expect(beerId).toEqual(storage.beer)
   return storage.beer
 }
 
 const lockContainer = async (
   containerId: string
 ): Promise<string | undefined> => {
-  expect(containerId).to.eql(storage.container)
+  expect(containerId).toEqual(storage.container)
   return storage.container
-}
-
-function notCalled() {
-  expect('must not be called').to.equal(true)
 }
 
 describe('storage service unit tests', () => {
@@ -83,7 +80,7 @@ describe('storage service unit tests', () => {
         bestBefore: storage.bestBefore,
         container: storage.container,
       }
-      expect(newStorage).to.eql(
+      expect(newStorage).toEqual(
         {
           beer: storage.beer,
           bestBefore: storage.bestBefore,
@@ -97,12 +94,12 @@ describe('storage service unit tests', () => {
     const createIf: CreateIf = {
       insertStorage,
       lockBeer: async (beerId: string) => {
-        expect(isBeerLocked).to.equal(false)
+        expect(isBeerLocked).toEqual(false)
         isBeerLocked = true
         return lockBeer(beerId)
       },
       lockContainer: async (containerId: string) => {
-        expect(isContainerLocked).to.equal(false)
+        expect(isContainerLocked).toEqual(false)
         isContainerLocked = true
         return lockContainer(containerId)
       }
@@ -112,12 +109,12 @@ describe('storage service unit tests', () => {
       createRequest,
       log
     )
-    expect(result).to.eql({
+    expect(result).toEqual({
       ...createRequest,
       id: storage.id
     })
-    expect(isBeerLocked).to.equal(true)
-    expect(isContainerLocked).to.equal(true)
+    expect(isBeerLocked).toEqual(true)
+    expect(isContainerLocked).toEqual(true)
   })
 
   it('fail to create storage with invalid beer', async () => {
@@ -133,12 +130,9 @@ describe('storage service unit tests', () => {
         return id
       }
     }
-    try {
+    expectReject(async () => {
       await storageService.createStorage(createIf, createRequest, log)
-      notCalled()
-    } catch (e) {
-      expect(e).to.eql(referredBeerNotFoundError)
-    }
+    }, referredBeerNotFoundError)
   })
 
   it('fail to create storage with invalid container', async () => {
@@ -154,12 +148,9 @@ describe('storage service unit tests', () => {
         return undefined
       }
     }
-    try {
+    expectReject(async () => {
       await storageService.createStorage(createIf, createRequest, log)
-      notCalled()
-    } catch (e) {
-      expect(e).to.eql(referredContainerNotFoundError)
-    }
+    }, referredContainerNotFoundError)
   })
 
   it('update storage', async () => {
@@ -172,18 +163,18 @@ describe('storage service unit tests', () => {
         bestBefore: storage.bestBefore,
         container: storage.container,
       }
-      expect(storage).to.eql(result)
+      expect(storage).toEqual(result)
       return result
     }
     const updateIf: UpdateIf = {
       updateStorage,
       lockBeer: async (beerId: string) => {
-        expect(isBeerLocked).to.equal(false)
+        expect(isBeerLocked).toEqual(false)
         isBeerLocked = true
         return lockBeer(beerId)
       },
       lockContainer: async (containerId: string) => {
-        expect(isContainerLocked).to.equal(false)
+        expect(isContainerLocked).toEqual(false)
         isContainerLocked = true
         return lockContainer(containerId)
       }
@@ -193,12 +184,12 @@ describe('storage service unit tests', () => {
       updateRequest,
       log
     )
-    expect(result).to.eql({
+    expect(result).toEqual({
       ...updateRequest,
       id: storage.id
     })
-    expect(isBeerLocked).to.equal(true)
-    expect(isContainerLocked).to.equal(true)
+    expect(isBeerLocked).toEqual(true)
+    expect(isContainerLocked).toEqual(true)
   })
 
   it('fail to update storage with invalid beer', async () => {
@@ -214,12 +205,9 @@ describe('storage service unit tests', () => {
         return id
       }
     }
-    try {
+    expectReject(async () => {
       await storageService.updateStorage(updateIf, updateRequest, log)
-      notCalled()
-    } catch (e) {
-      expect(e).to.eql(referredBeerNotFoundError)
-    }
+    }, referredBeerNotFoundError)
   })
 
   it('fail to update storage with invalid container', async () => {
@@ -235,34 +223,29 @@ describe('storage service unit tests', () => {
         return undefined
       },
     }
-    try {
+    expectReject(async () => {
       await storageService.updateStorage(updateIf, updateRequest, log)
-      notCalled()
-    } catch (e) {
-      expect(e).to.equal(referredContainerNotFoundError)
-    }
+    }, referredContainerNotFoundError)
   })
 
   it('find storage', async () => {
     const finder = async (storageId: string) => {
-      expect(storageId).to.equal(joinedStorage.id)
+      expect(storageId).toEqual(joinedStorage.id)
       return joinedStorage
     }
     const result = await storageService.findStorageById(finder, storage.id, log)
-    expect(result).to.eql(joinedStorage)
+    expect(result).toEqual(joinedStorage)
   })
 
   it('not find storage with unknown id', async () => {
     const id = 'd29b2ee6-5d2e-40bf-bb87-c02c00a6628f'
     const finder = async (searchId: string) => {
-      expect(searchId).to.equal(id)
+      expect(searchId).toEqual(id)
       return undefined
     }
-    try {
-    await storageService.findStorageById(finder, id, log)
-    } catch (e) {
-      expect(e).to.eql(storageNotFoundError(id))
-    }
+    expectReject(async () => {
+      await storageService.findStorageById(finder, id, log)
+    }, storageNotFoundError(id))
   })
 
   it('list storages', async () => {
@@ -274,7 +257,7 @@ describe('storage service unit tests', () => {
       return [joinedStorage]
     }
     const result = await storageService.listStorages(lister, pagination, log)
-    expect(result).to.eql([joinedStorage])
+    expect(result).toEqual([joinedStorage])
   })
 
   it('list storages by beer', async () => {
@@ -286,7 +269,7 @@ describe('storage service unit tests', () => {
       joinedStorage.beerId,
       log
     )
-    expect(result).to.eql([joinedStorage])
+    expect(result).toEqual([joinedStorage])
   })
 
   it('list storages by brewery', async () => {
@@ -298,7 +281,7 @@ describe('storage service unit tests', () => {
       joinedStorage.breweries[0].id,
       log
     )
-    expect(result).to.eql([joinedStorage])
+    expect(result).toEqual([joinedStorage])
   })
 
   it('list storages by style', async () => {
@@ -310,7 +293,7 @@ describe('storage service unit tests', () => {
       joinedStorage.styles[0].id,
       log
     )
-    expect(result).to.eql([joinedStorage])
+    expect(result).toEqual([joinedStorage])
   })
 
 })

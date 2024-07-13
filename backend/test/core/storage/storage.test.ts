@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import {
   validateCreateStorageRequest,
@@ -8,6 +8,7 @@ import {
   invalidStorageError,
   invalidStorageIdError
 } from '../../../src/core/errors'
+import { expectThrow } from '../controller-error-helper'
 
 function validRequest (): Record<string, unknown> {
   return {
@@ -36,11 +37,11 @@ describe('storage unit tests', () => {
     it(title('pass validation'), () => {
       const input = validRequest()
       const output = validRequest()
-      expect(func(input)).to.eql(output)
+      expect(func(input)).toLooseEqual(output)
     })
 
     function fail (storage: unknown) {
-      expect(() => func(storage)).to.throw(invalidStorageError)
+      expectThrow(() => func(storage), invalidStorageError)
     }
 
     it(title('fail with empty beer'), () => {
@@ -116,8 +117,8 @@ describe('storage unit tests', () => {
   })
 
   it('fail update with empty id', () => {
-    expect(
+    expectThrow(
       () => validateUpdateStorageRequest(validRequest(), '')
-    ).to.throw(invalidStorageIdError)
+    , invalidStorageIdError)
   })
 })

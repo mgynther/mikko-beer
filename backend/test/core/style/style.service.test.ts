@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import {
   cyclicRelationshipError,
@@ -17,6 +17,7 @@ import {
 import * as styleService from '../../../src/core/style/style.service'
 
 import { dummyLog as log } from '../dummy-log'
+import { expectReject } from '../controller-error-helper'
 
 const style: Style = {
   id: '71dcc323-7e59-4122-9afa-d4ffc484dee6',
@@ -55,12 +56,12 @@ describe('style service unit tests', () => {
       id: style.id,
       name: style.name,
     }
-    expect(newStyle).to.eql({ name: style.name })
+    expect(newStyle).toEqual({ name: style.name })
     return result
   }
 
   async function lockParent (parents: string[]) {
-    expect(parents).to.eql([parentStyle.id])
+    expect(parents).toEqual([parentStyle.id])
     return [parentStyle.id]
   }
 
@@ -74,15 +75,15 @@ describe('style service unit tests', () => {
   }
 
   async function notCalled(): Promise<void> {
-    expect('not to be called').to.equal(false)
+    throw new Error('not to be called')
   }
 
   async function insertRelationship (
     styleId: string,
     parents: string[]
   ): Promise<void> {
-    expect(styleId).to.equal(style.id)
-    expect(parents).to.eql([parentStyle.id])
+    expect(styleId).toEqual(style.id)
+    expect(parents).toEqual([parentStyle.id])
   }
 
   it('create style without parents', async () => {
@@ -104,7 +105,7 @@ describe('style service unit tests', () => {
       request,
       log
     )
-    expect(result).to.eql({
+    expect(result).toEqual({
       id: style.id,
       name: style.name,
       parents: [],
@@ -123,7 +124,7 @@ describe('style service unit tests', () => {
       createWithParentRequest,
       log
     )
-    expect(result).to.eql({
+    expect(result).toEqual({
       id: style.id,
       name: style.name,
       parents: [parentStyle.id],
@@ -139,16 +140,13 @@ describe('style service unit tests', () => {
       insertParents: insertRelationship,
       listAllRelationships: noRelationships
     }
-    try {
+    expectReject(async () => {
       await styleService.createStyle(
         createIf,
         createWithParentRequest,
         log
       )
-      notCalled()
-    } catch (e) {
-      expect(e).to.eql(parentStyleNotFoundError)
-    }
+    }, parentStyleNotFoundError)
   })
 
   it('fail to create with existing cyclic relationship', async () => {
@@ -169,20 +167,17 @@ describe('style service unit tests', () => {
         ]
       }
     }
-    try {
+    expectReject(async () => {
       await styleService.createStyle(createIf, request, log)
-      expect('not to be called').to.equal(false)
-    } catch (e) {
-      expect(e).to.eql(cyclicRelationshipError)
-    }
+    }, cyclicRelationshipError)
   })
 
   async function deleteStyleChildRelationships (styleId: string): Promise<void> {
-    expect(styleId).to.equal(style.id)
+    expect(styleId).toEqual(style.id)
   }
 
   async function update (updateStyle: Style) {
-    expect(updateStyle).to.eql(style)
+    expect(updateStyle).toEqual(style)
     return updateStyle
   }
 
@@ -204,7 +199,7 @@ describe('style service unit tests', () => {
       request,
       log
     )
-    expect(result).to.eql({
+    expect(result).toEqual({
       id: style.id,
       name: style.name,
       parents: [],
@@ -225,7 +220,7 @@ describe('style service unit tests', () => {
       updateWithParentRequest,
       log
     )
-    expect(result).to.eql({
+    expect(result).toEqual({
       id: style.id,
       name: style.name,
       parents: [parentStyle.id],
@@ -242,17 +237,14 @@ describe('style service unit tests', () => {
       deleteStyleChildRelationships,
       listAllRelationships: noRelationships
     }
-    try {
+    expectReject(async () => {
       await styleService.updateStyle(
         updateIf,
         style.id,
         updateWithParentRequest,
         log
       )
-      notCalled()
-    } catch (e) {
-      expect(e).to.eql(parentStyleNotFoundError)
-    }
+    }, parentStyleNotFoundError)
   })
 
   it('fail to update with existing cyclic relationship', async () => {
@@ -274,34 +266,29 @@ describe('style service unit tests', () => {
         ]
       }
     }
-    try {
+    expectReject(async () => {
       await styleService.updateStyle(updateIf, style.id, request, log)
-      expect('not to be called').to.equal(false)
-    } catch (e) {
-      expect(e).to.eql(cyclicRelationshipError)
-    }
+    }, cyclicRelationshipError)
   })
 
   it('find style', async () => {
     const finder = async (styleId: string) => {
-      expect(styleId).to.equal(style.id)
+      expect(styleId).toEqual(style.id)
       return styleWithParentsAndChildren
     }
     const result = await styleService.findStyleById(finder, style.id, log)
-    expect(result).to.eql(styleWithParentsAndChildren)
+    expect(result).toEqual(styleWithParentsAndChildren)
   })
 
   it('fail to find style with unknown id', async () => {
     const id = '76cac82a-58a6-4978-8a00-1de381df032f'
     const finder = async (searchId: string) => {
-      expect(searchId).to.equal(id)
+      expect(searchId).toEqual(id)
       return undefined
     }
-    try {
+    expectReject(async () => {
       await styleService.findStyleById(finder, id, log)
-    } catch (e) {
-      expect(e).to.eql(styleNotFoundError(id))
-    }
+    }, styleNotFoundError(id))
   })
 
   it('list styles', async () => {
@@ -309,6 +296,6 @@ describe('style service unit tests', () => {
       return [styleWithParentIds]
     }
     const result = await styleService.listStyles(lister, log)
-    expect(result).to.eql([styleWithParentIds])
+    expect(result).toEqual([styleWithParentIds])
   })
 })

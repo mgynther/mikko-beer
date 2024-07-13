@@ -1,8 +1,7 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
 import { Container } from '../../../src/core/container/container'
-import { AxiosResponse } from 'axios'
 
 describe('container tests', () => {
   const ctx = new TestContext()
@@ -19,19 +18,19 @@ describe('container tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(res.status).to.equal(201)
-    expect(res.data.container.type).to.equal('Bottle')
-    expect(res.data.container.size).to.equal('0.33')
+    expect(res.status).toEqual(201)
+    expect(res.data.container.type).toEqual('Bottle')
+    expect(res.data.container.size).toEqual('0.33')
 
     const getRes = await ctx.request.get<{ container: Container }>(
       `/api/v1/container/${res.data.container.id}`,
       ctx.adminAuthHeaders()
     )
 
-    expect(getRes.status).to.equal(200)
-    expect(getRes.data.container.id).to.equal(res.data.container.id)
-    expect(getRes.data.container.type).to.equal(res.data.container.type)
-    expect(getRes.data.container.size).to.equal(res.data.container.size)
+    expect(getRes.status).toEqual(200)
+    expect(getRes.data.container.id).toEqual(res.data.container.id)
+    expect(getRes.data.container.type).toEqual(res.data.container.type)
+    expect(getRes.data.container.size).toEqual(res.data.container.size)
   })
 
   it('fail to create a container as viewer', async () => {
@@ -41,7 +40,7 @@ describe('container tests', () => {
       ctx.createAuthHeaders(authToken)
     )
 
-    expect(res.status).to.equal(403)
+    expect(res.status).toEqual(403)
   })
 
   it('fail to create a container without type', async () => {
@@ -50,7 +49,7 @@ describe('container tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(res.status).to.equal(400)
+    expect(res.status).toEqual(400)
   })
 
   it('update a container', async () => {
@@ -58,27 +57,27 @@ describe('container tests', () => {
       { type: 'Draught', size: '1.00' },
       ctx.adminAuthHeaders()
     )
-    expect(createRes.status).to.equal(201)
-    expect(createRes.data.container.type).to.equal('Draught')
-    expect(createRes.data.container.size).to.equal('1.00')
+    expect(createRes.status).toEqual(201)
+    expect(createRes.data.container.type).toEqual('Draught')
+    expect(createRes.data.container.size).toEqual('1.00')
 
     const updateRes = await ctx.request.put(`/api/v1/container/${createRes.data.container.id}`,
       { type: 'Draught', size: '0.10' },
       ctx.adminAuthHeaders()
     )
-    expect(updateRes.status).to.equal(200)
-    expect(updateRes.data.container.type).to.equal('Draught')
-    expect(updateRes.data.container.size).to.equal('0.10')
+    expect(updateRes.status).toEqual(200)
+    expect(updateRes.data.container.type).toEqual('Draught')
+    expect(updateRes.data.container.size).toEqual('0.10')
 
     const getRes = await ctx.request.get<{ container: Container }>(
       `/api/v1/container/${createRes.data.container.id}`,
       ctx.adminAuthHeaders()
     )
 
-    expect(getRes.status).to.equal(200)
-    expect(getRes.data.container.id).to.equal(updateRes.data.container.id)
-    expect(getRes.data.container.type).to.equal(updateRes.data.container.type)
-    expect(getRes.data.container.size).to.equal(updateRes.data.container.size)
+    expect(getRes.status).toEqual(200)
+    expect(getRes.data.container.id).toEqual(updateRes.data.container.id)
+    expect(getRes.data.container.type).toEqual(updateRes.data.container.type)
+    expect(getRes.data.container.size).toEqual(updateRes.data.container.size)
   })
 
   it('get empty container list', async () => {
@@ -86,8 +85,8 @@ describe('container tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(res.status).to.equal(200)
-    expect(res.data.containers.length).to.equal(0)
+    expect(res.status).toEqual(200)
+    expect(res.data.containers.length).toEqual(0)
   })
 
 })

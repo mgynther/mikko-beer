@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 import { type DbRefreshToken } from '../../../src/core/authentication/refresh-token'
 import * as authTokenService from '../../../src/core/authentication/auth-token.service'
 import * as authenticationService from '../../../src/core/authentication/authentication.service'
@@ -17,6 +17,7 @@ import {
   userMismatchError,
   userOrRefreshTokenNotFoundError
 } from '../../../src/core/errors'
+import { expectReject, expectThrow } from '../controller-error-helper'
 
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {
@@ -72,8 +73,7 @@ async function findRefreshToken(
 
 async function notCalledFindRefreshToken(
 ): Promise<DbRefreshToken | undefined> {
-  expect('must not be called').to.equal(true)
-  return undefined
+  throw new Error('must not be called')
 }
 
 async function dontFindRefresToken(
@@ -95,10 +95,6 @@ function header(authToken: AuthToken): string {
 
 describe('authentication service unit tests', () => {
 
-  function unreachable() {
-    expect('must not reach this line').to.equal(true)
-  }
-
   it('authenticate admin', async () => {
     const tokens = await createTokens(admin)
     authenticationService.authenticateAdmin(
@@ -109,48 +105,48 @@ describe('authentication service unit tests', () => {
 
   it('fail to authenticate admin as viewer', async () => {
     const tokens = await createTokens(viewer)
-    expect(() => {
+    expectThrow(() => {
       authenticationService.authenticateAdmin(
         header(tokens.auth),
         authTokenSecret
       )
-    }).to.throw(noRightsError)
+    }, noRightsError)
   })
 
   it('fail to authenticate admin without auth header', () => {
-    expect(() => {
+    expectThrow(() => {
       authenticationService.authenticateAdmin(
         undefined,
         authTokenSecret
       )
-    }).to.throw(invalidAuthorizationHeaderError)
+    }, invalidAuthorizationHeaderError)
   })
 
   it('fail to authenticate admin with invalid auth header', () => {
-    expect(() => {
+    expectThrow(() => {
       authenticationService.authenticateAdmin(
         'invalid header',
         authTokenSecret
       )
-    }).to.throw(invalidAuthorizationHeaderError)
+    }, invalidAuthorizationHeaderError)
   })
 
   it('fail to authenticate admin with invalid auth token', () => {
-    expect(() => {
+    expectThrow(() => {
       authenticationService.authenticateAdmin(
         'Bearer abcd',
         authTokenSecret
       )
-    }).to.throw(invalidAuthTokenError)
+    }, invalidAuthTokenError)
   })
 
   it('fail to authenticate admin with expired auth token', () => {
-    expect(() => {
+    expectThrow(() => {
       authenticationService.authenticateAdmin(
         header(expiredAuthToken),
         authTokenSecret
       )
-    }).to.throw(expiredAuthTokenError)
+    }, expiredAuthTokenError)
   })
 
   it('authenticate viewer', async () => {
@@ -170,110 +166,95 @@ describe('authentication service unit tests', () => {
   })
 
   it('fail to authenticate viewer without auth header', () => {
-    expect(() => {
+    expectThrow(() => {
       authenticationService.authenticateViewer(
         undefined,
         authTokenSecret
       )
-    }).to.throw(invalidAuthorizationHeaderError)
+    }, invalidAuthorizationHeaderError)
   })
 
   it('fail to authenticate viewer with invalid auth header', () => {
-    expect(() => {
+    expectThrow(() => {
       authenticationService.authenticateViewer(
         'invalid header',
         authTokenSecret
       )
-    }).to.throw(invalidAuthorizationHeaderError)
+    }, invalidAuthorizationHeaderError)
   })
 
   it('fail to authenticate viewer with invalid auth token', () => {
-    expect(() => {
+    expectThrow(() => {
       authenticationService.authenticateViewer(
         'Bearer 12345',
         authTokenSecret
       )
-    }).to.throw(invalidAuthTokenError)
+    }, invalidAuthTokenError)
   })
 
   it('fail to authenticate viewer with expired auth token', () => {
-    expect(() => {
+    expectThrow(() => {
       authenticationService.authenticateViewer(
         header(expiredAuthToken),
         authTokenSecret
       )
-    }).to.throw(expiredAuthTokenError)
+    }, expiredAuthTokenError)
   })
 
   it('fail to authenticate user without user id', async () => {
     const tokens = await createTokens(admin)
-    try {
+    expectReject(async () => {
       await authenticationService.authenticateUser(
         undefined,
         header(tokens.auth),
         authTokenSecret,
         notCalledFindRefreshToken
       )
-      unreachable()
-    } catch (e) {
-      expect(e).to.equal(noUserIdParameterError)
-    }
+    }, noUserIdParameterError)
   })
 
   it('fail to authenticate user without auth header', async () => {
-    try {
+    expectReject(async () => {
       await authenticationService.authenticateUser(
         admin.id,
         undefined,
         authTokenSecret,
         notCalledFindRefreshToken
       )
-      unreachable()
-    } catch (e) {
-      expect(e).to.equal(invalidAuthorizationHeaderError)
-    }
+    }, invalidAuthorizationHeaderError)
   })
 
   it('fail to authenticate user with invalid auth header', async () => {
-    try {
+    expectReject(async () => {
       await authenticationService.authenticateUser(
         admin.id,
         'this is invalid auth header',
         authTokenSecret,
         notCalledFindRefreshToken
       )
-      unreachable()
-    } catch (e) {
-      expect(e).to.equal(invalidAuthorizationHeaderError)
-    }
+    }, invalidAuthorizationHeaderError)
   })
 
   it('fail to authenticate user with invalid auth token', async () => {
-    try {
+    expectReject(async () => {
       await authenticationService.authenticateUser(
         admin.id,
         'Bearer abc',
         authTokenSecret,
         notCalledFindRefreshToken
       )
-      unreachable()
-    } catch (e) {
-      expect(e).to.equal(invalidAuthTokenError)
-    }
+    }, invalidAuthTokenError)
   })
 
   it('fail to authenticate user with expired auth header', async () => {
-    try {
+    expectReject(async () => {
       await authenticationService.authenticateUser(
         admin.id,
         header(expiredAuthToken),
         authTokenSecret,
         notCalledFindRefreshToken
       )
-      unreachable()
-    } catch (e) {
-      expect(e).to.equal(expiredAuthTokenError)
-    }
+    }, expiredAuthTokenError)
   })
 
   it('authenticate self user as admin', async () => {
@@ -318,43 +299,37 @@ describe('authentication service unit tests', () => {
 
   it('fail to authenticate admin user as viewer', async () => {
     const tokens = await createTokens(viewer)
-    try {
+    expectReject(async () => {
       await authenticationService.authenticateUser(
         admin.id,
         header(tokens.auth),
         authTokenSecret,
         notCalledFindRefreshToken
       )
-    } catch (e) {
-      expect(e).to.equal(userMismatchError)
-    }
+    }, userMismatchError)
   })
 
   it('fail to authenticate other viewer user as viewer', async () => {
     const tokens = await createTokens(viewer)
-    try {
+    expectReject(async () => {
       await authenticationService.authenticateUser(
         otherViewer.id,
         header(tokens.auth),
         authTokenSecret,
         notCalledFindRefreshToken
       )
-    } catch (e) {
-      expect(e).to.equal(userMismatchError)
-    }
+    }, userMismatchError)
   })
 
   it('fail to authenticate viewer when refresh token not found', async () => {
     const tokens = await createTokens(viewer)
-    try {
+    expectReject(async () => {
       await authenticationService.authenticateUser(
         viewer.id,
         header(tokens.auth),
         authTokenSecret,
         dontFindRefresToken
       )
-    } catch (e) {
-      expect(e).to.equal(userOrRefreshTokenNotFoundError)
-    }
+    }, userOrRefreshTokenNotFoundError)
   })
 })

@@ -1,10 +1,11 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import {
   validateCreateContainerRequest,
   validateUpdateContainerRequest,
 } from '../../../src/core/container/container'
 import { invalidContainerError, invalidContainerIdError } from '../../../src/core/errors'
+import { expectThrow } from '../controller-error-helper'
 
 function validRequest (): Record<string, unknown> {
   return {
@@ -32,11 +33,11 @@ describe('container unit tests', () => {
     it(title('pass validation'), () => {
       const input = validRequest()
       const output = validRequest()
-      expect(func(input)).to.eql(output)
+      expect(func(input)).toLooseEqual(output)
     })
 
     function fail (container: unknown) {
-      expect(() => func(container)).to.throw(invalidContainerError)
+      expectThrow(() => func(container), invalidContainerError)
     }
 
     it(title('fail with empty type'), () => {
@@ -107,8 +108,8 @@ describe('container unit tests', () => {
   })
 
   it('fail update with empty id', () => {
-    expect(
+    expectThrow(
       () => validateUpdateContainerRequest(validRequest(), '')
-    ).to.throw(invalidContainerIdError)
+    , invalidContainerIdError)
   })
 })

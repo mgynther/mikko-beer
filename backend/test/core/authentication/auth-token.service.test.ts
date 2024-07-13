@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import * as authTokenService from '../../../src/core/authentication/auth-token.service'
 import {
@@ -13,6 +13,7 @@ import {
 import { Role, type User } from '../../../src/core/user/user'
 import { type Tokens } from '../../../src/core/authentication/tokens'
 import { invalidCredentialsTokenError } from '../../../src/core/errors'
+import { expectReject } from '../controller-error-helper'
 
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {
@@ -41,16 +42,16 @@ function expectKnownTokens(tokens: Tokens) {
   function getStart(token: string) {
     return token.split('.')[0]
   }
-  expect(getStart(tokens.auth.authToken)).to.equal(
+  expect(getStart(tokens.auth.authToken)).toEqual(
     getStart(knownTokens.auth.authToken)
   )
-  expect(getStart(tokens.refresh.refreshToken)).to.equal(
+  expect(getStart(tokens.refresh.refreshToken)).toEqual(
     getStart(knownTokens.refresh.refreshToken)
   )
 }
 
 async function insertAuthToken(userId: string): Promise<DbRefreshToken> {
-  expect(userId).to.equal(user.id)
+  expect(userId).toEqual(user.id)
   return {
     id: refreshTokenId,
     userId
@@ -65,14 +66,10 @@ describe('auth token service unit tests', () => {
     }
   }
 
-  function unreachable() {
-    expect('must not reach this line').to.equal(true)
-  }
-
   it('fail to verify invalid auth token', () => {
     expect(() => {
       authTokenService.verifyAuthToken(token('invalid'), authTokenSecret)
-    }).to.throw(InvalidAuthTokenError)
+    }).toThrow(InvalidAuthTokenError)
   })
 
   // Tokens are time sensitive so they are difficult to test in isolated steps.
@@ -88,7 +85,7 @@ describe('auth token service unit tests', () => {
       tokens.auth,
       authTokenSecret
     )
-    expect(authTokenPayload).to.eql({
+    expect(authTokenPayload).toEqual({
       userId: user.id,
       role: Role.admin,
       refreshTokenId
@@ -96,8 +93,8 @@ describe('auth token service unit tests', () => {
 
     let wasDeleted = false
     async function deleteToken(deletedRefreshTokenId: string) {
-      expect(deletedRefreshTokenId).to.equal(refreshTokenId)
-      expect(wasDeleted).to.equal(false)
+      expect(deletedRefreshTokenId).toEqual(refreshTokenId)
+      expect(wasDeleted).toEqual(false)
       wasDeleted = true
     }
 
@@ -107,7 +104,7 @@ describe('auth token service unit tests', () => {
       tokens.refresh,
       authTokenSecret
     )
-    expect(wasDeleted).to.equal(true)
+    expect(wasDeleted).toEqual(true)
   })
 
   it('fail to verify auth token with wrong secret', async () => {
@@ -120,13 +117,13 @@ describe('auth token service unit tests', () => {
 
     expect(() => {
       authTokenService.verifyAuthToken(tokens.auth, 'ThisIsWrongSecret')
-    }).to.throw(InvalidAuthTokenError)
+    }).toThrow(InvalidAuthTokenError)
   })
 
   it('fail to verify expired auth token', async () => {
     expect(() => {
       authTokenService.verifyAuthToken(knownTokens.auth, authTokenSecret)
-    }).to.throw(AuthTokenExpiredError)
+    }).toThrow(AuthTokenExpiredError)
   })
 
   it('fail to delete refresh token on user mismatch', async () => {
@@ -138,16 +135,13 @@ describe('auth token service unit tests', () => {
     expectKnownTokens(tokens)
 
     const wrongUserId = 'f388b0cb-63f5-4f6e-a9e6-3b6ac92844a7'
-    try {
+    expectReject(async () => {
       await authTokenService.deleteRefreshToken(
         () => { throw new Error('must not be called') },
         wrongUserId,
         tokens.refresh,
         authTokenSecret
       )
-      unreachable()
-    } catch (e) {
-      expect(e).to.eql(invalidCredentialsTokenError)
-    }
+    }, invalidCredentialsTokenError)
   })
 })

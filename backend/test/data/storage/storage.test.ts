@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
 import { type Transaction } from '../../../src/data/database'
@@ -44,7 +44,7 @@ describe('storage tests', () => {
         trx,
         storage.id
       )
-      expect(lockedKey).to.eql(storage.id)
+      expect(lockedKey).toEqual(storage.id)
     })
   })
 
@@ -55,7 +55,7 @@ describe('storage tests', () => {
         trx,
         dummyId
       )
-      expect(lockedKey).to.eql(undefined)
+      expect(lockedKey).toEqual(undefined)
     })
   })
 })

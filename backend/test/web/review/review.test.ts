@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
 import { type ListDirection } from '../../../src/core/list'
@@ -37,23 +37,23 @@ describe('review tests', () => {
       { name: 'Kriek', parents: [] },
       adminAuthHeaders
     )
-    expect(styleRes.status).to.equal(201)
+    expect(styleRes.status).toEqual(201)
 
     const breweryRes = await ctx.request.post(`/api/v1/brewery`,
       { name: 'Lindemans' },
       adminAuthHeaders
     )
-    expect(breweryRes.status).to.equal(201)
+    expect(breweryRes.status).toEqual(201)
 
     const beerRes = await ctx.request.post(`/api/v1/beer`,
       { name: 'Lindemans Kriek', breweries: [breweryRes.data.brewery.id], styles: [styleRes.data.style.id] },
       adminAuthHeaders
     )
 
-    expect(beerRes.status).to.equal(201)
-    expect(beerRes.data.beer.name).to.equal('Lindemans Kriek')
-    expect(beerRes.data.beer.breweries).to.eql([breweryRes.data.brewery.id])
-    expect(beerRes.data.beer.styles).to.eql([styleRes.data.style.id])
+    expect(beerRes.status).toEqual(201)
+    expect(beerRes.data.beer.name).toEqual('Lindemans Kriek')
+    expect(beerRes.data.beer.breweries).toEqual([breweryRes.data.brewery.id])
+    expect(beerRes.data.beer.styles).toEqual([styleRes.data.style.id])
 
     const containerRes = await ctx.request.post(`/api/v1/container`,
       { type: 'Bottle', size: '0.25' },
@@ -78,77 +78,77 @@ describe('review tests', () => {
       ),
       ctx.adminAuthHeaders()
     )
-    expect(reviewRes.status).to.equal(201)
-    expect(reviewRes.data.review.additionalInfo).to.equal('From Belgium')
-    expect(reviewRes.data.review.beer).to.equal(beerRes.data.beer.id)
-    expect(reviewRes.data.review.container).to.equal(containerRes.data.container.id)
-    expect(reviewRes.data.review.location).to.equal('Pikilinna')
-    expect(reviewRes.data.review.rating).to.equal(8)
-    expect(reviewRes.data.review.smell).to.equal('Cherries')
-    expect(reviewRes.data.review.taste).to.equal('Cherries, a little sour')
-    expect(reviewRes.data.review.time).to.equal('2023-03-07T18:31:33.123Z')
+    expect(reviewRes.status).toEqual(201)
+    expect(reviewRes.data.review.additionalInfo).toEqual('From Belgium')
+    expect(reviewRes.data.review.beer).toEqual(beerRes.data.beer.id)
+    expect(reviewRes.data.review.container).toEqual(containerRes.data.container.id)
+    expect(reviewRes.data.review.location).toEqual('Pikilinna')
+    expect(reviewRes.data.review.rating).toEqual(8)
+    expect(reviewRes.data.review.smell).toEqual('Cherries')
+    expect(reviewRes.data.review.taste).toEqual('Cherries, a little sour')
+    expect(reviewRes.data.review.time).toEqual('2023-03-07T18:31:33.123Z')
 
     const getRes = await ctx.request.get<{ review: Review }>(
       `/api/v1/review/${reviewRes.data.review.id}`,
       ctx.adminAuthHeaders()
     )
 
-    expect(getRes.status).to.equal(200)
-    expect(getRes.data.review.id).to.equal(reviewRes.data.review.id)
-    expect(getRes.data.review.additionalInfo).to.equal('From Belgium')
-    expect(getRes.data.review.beer).to.equal(beerRes.data.beer.id)
-    expect(getRes.data.review.container).to.equal(containerRes.data.container.id)
-    expect(getRes.data.review.location).to.equal('Pikilinna')
-    expect(getRes.data.review.rating).to.equal(8)
-    expect(getRes.data.review.smell).to.equal('Cherries')
-    expect(getRes.data.review.taste).to.equal('Cherries, a little sour')
-    expect(getRes.data.review.time).to.equal('2023-03-07T18:31:33.123Z')
+    expect(getRes.status).toEqual(200)
+    expect(getRes.data.review.id).toEqual(reviewRes.data.review.id)
+    expect(getRes.data.review.additionalInfo).toEqual('From Belgium')
+    expect(getRes.data.review.beer).toEqual(beerRes.data.beer.id)
+    expect(getRes.data.review.container).toEqual(containerRes.data.container.id)
+    expect(getRes.data.review.location).toEqual('Pikilinna')
+    expect(getRes.data.review.rating).toEqual(8)
+    expect(getRes.data.review.smell).toEqual('Cherries')
+    expect(getRes.data.review.taste).toEqual('Cherries, a little sour')
+    expect(getRes.data.review.time.toString()).toEqual('2023-03-07T18:31:33.123Z')
 
     const listRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
       '/api/v1/review/',
       ctx.adminAuthHeaders()
     )
-    expect(listRes.status).to.equal(200)
-    expect(listRes.data.reviews.length).to.equal(1)
-    expect(listRes.data.reviews[0].id).to.eql(getRes.data.review.id)
-    expect(listRes.data.reviews[0].beerId).to.eql(getRes.data.review.beer)
-    expect(listRes.data.reviews[0].container).to.eql(containerRes.data.container)
-    expect(listRes.data.reviews[0].breweries[0]).to.eql(breweryRes.data.brewery)
+    expect(listRes.status).toEqual(200)
+    expect(listRes.data.reviews.length).toEqual(1)
+    expect(listRes.data.reviews[0].id).toEqual(getRes.data.review.id)
+    expect(listRes.data.reviews[0].beerId).toEqual(getRes.data.review.beer)
+    expect(listRes.data.reviews[0].container).toEqual(containerRes.data.container)
+    expect(listRes.data.reviews[0].breweries[0]).toEqual(breweryRes.data.brewery)
     const parentlessStyle = { ...styleRes.data.style }
     delete parentlessStyle.parents
-    expect(listRes.data.reviews[0].styles[0]).to.eql(parentlessStyle)
+    expect(listRes.data.reviews[0].styles[0]).toEqual(parentlessStyle)
 
     const skippedListRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
       '/api/v1/review?size=50&skip=30',
       ctx.adminAuthHeaders()
     )
-    expect(skippedListRes.status).to.equal(200)
-    expect(skippedListRes.data.reviews.length).to.equal(0)
+    expect(skippedListRes.status).toEqual(200)
+    expect(skippedListRes.data.reviews.length).toEqual(0)
 
     const breweryListRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
       `/api/v1/brewery/${breweryRes.data.brewery.id}/review/`,
       ctx.adminAuthHeaders()
     )
-    expect(breweryListRes.status).to.equal(200)
-    expect(breweryListRes.data.reviews.length).to.equal(1)
-    expect(breweryListRes.data.reviews[0].id).to.eql(getRes.data.review.id)
-    expect(breweryListRes.data.reviews[0].beerId).to.eql(getRes.data.review.beer)
+    expect(breweryListRes.status).toEqual(200)
+    expect(breweryListRes.data.reviews.length).toEqual(1)
+    expect(breweryListRes.data.reviews[0].id).toEqual(getRes.data.review.id)
+    expect(breweryListRes.data.reviews[0].beerId).toEqual(getRes.data.review.beer)
 
     const styleListRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
       `/api/v1/style/${styleRes.data.style.id}/review/`,
       ctx.adminAuthHeaders()
     )
-    expect(styleListRes.status).to.equal(200)
-    expect(styleListRes.data.reviews.length).to.equal(1)
-    expect(styleListRes.data.reviews[0].id).to.eql(getRes.data.review.id)
-    expect(styleListRes.data.reviews[0].beerId).to.eql(getRes.data.review.beer)
+    expect(styleListRes.status).toEqual(200)
+    expect(styleListRes.data.reviews.length).toEqual(1)
+    expect(styleListRes.data.reviews[0].id).toEqual(getRes.data.review.id)
+    expect(styleListRes.data.reviews[0].beerId).toEqual(getRes.data.review.beer)
 
     const beerListRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
       `/api/v1/beer/${beerRes.data.beer.id}/review/`,
       ctx.adminAuthHeaders()
     )
-    expect(beerListRes.status).to.equal(200)
-    expect(beerListRes.data.reviews).to.eql(breweryListRes.data.reviews)
+    expect(beerListRes.status).toEqual(200)
+    expect(beerListRes.data.reviews).toEqual(breweryListRes.data.reviews)
   })
 
   it('fail to create a review with invalid beer', async () => {
@@ -161,7 +161,7 @@ describe('review tests', () => {
       ),
       ctx.adminAuthHeaders()
     )
-    expect(reviewRes.status).to.equal(400)
+    expect(reviewRes.status).toEqual(400)
   })
 
   it('fail to create a review with invalid container', async () => {
@@ -174,7 +174,7 @@ describe('review tests', () => {
       ),
       ctx.adminAuthHeaders()
     )
-    expect(reviewRes.status).to.equal(400)
+    expect(reviewRes.status).toEqual(400)
   })
 
   it('delete storage when review created from storage', async () => {
@@ -189,8 +189,8 @@ describe('review tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(storageRes.status).to.equal(201)
-    expect(storageRes.data.storage.beer).to.equal(beerRes.data.beer.id)
+    expect(storageRes.status).toEqual(201)
+    expect(storageRes.data.storage.beer).toEqual(beerRes.data.beer.id)
 
     const reviewRes = await ctx.request.post(`/api/v1/review?storage=${storageRes.data.storage.id}`,
       {
@@ -204,14 +204,14 @@ describe('review tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(reviewRes.status).to.equal(201)
-    expect(reviewRes.data.review.beer).to.equal(beerRes.data.beer.id)
+    expect(reviewRes.status).toEqual(201)
+    expect(reviewRes.data.review.beer).toEqual(beerRes.data.beer.id)
 
     const getStorageRes = await ctx.request.get<{ storage: Storage }>(
       `/api/v1/storage/${storageRes.data.storage.id}`,
       ctx.adminAuthHeaders()
     )
-    expect(getStorageRes.status).to.equal(404)
+    expect(getStorageRes.status).toEqual(404)
   })
 
   it('fail to create review with invalid storage', async () => {
@@ -225,7 +225,7 @@ describe('review tests', () => {
       ),
       ctx.adminAuthHeaders()
     )
-    expect(reviewRes.status).to.equal(400)
+    expect(reviewRes.status).toEqual(400)
   })
 
   it('fail to create a review without beer', async () => {
@@ -243,7 +243,7 @@ describe('review tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(reviewRes.status).to.equal(400)
+    expect(reviewRes.status).toEqual(400)
   })
 
   it('update review', async () => {
@@ -260,8 +260,8 @@ describe('review tests', () => {
     const reviewRes = await ctx.request.post(`/api/v1/review`,
       requestData, ctx.adminAuthHeaders()
     )
-    expect(reviewRes.status).to.equal(201)
-    expect(reviewRes.data.review.taste).to.equal('Crerries, a little sour')
+    expect(reviewRes.status).toEqual(201)
+    expect(reviewRes.data.review.taste).toEqual('Crerries, a little sour')
 
     const updateRes = await ctx.request.put(
       `/api/v1/review/${reviewRes.data.review.id}`,
@@ -272,16 +272,16 @@ describe('review tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(updateRes.status).to.equal(200)
+    expect(updateRes.status).toEqual(200)
 
     const getRes = await ctx.request.get<{ review: Review }>(
       `/api/v1/review/${reviewRes.data.review.id}`,
       ctx.adminAuthHeaders()
     )
 
-    expect(getRes.status).to.equal(200)
-    expect(getRes.data.review.taste).to.equal('Cherries, a little sour')
-    expect(getRes.data.review.time).to.equal('2023-03-07T18:31:33.124Z')
+    expect(getRes.status).toEqual(200)
+    expect(getRes.data.review.taste).toEqual('Cherries, a little sour')
+    expect(getRes.data.review.time.toString()).toEqual('2023-03-07T18:31:33.124Z')
   })
 
   it('fail to update review with invalid beer', async () => {
@@ -295,7 +295,7 @@ describe('review tests', () => {
     const reviewRes = await ctx.request.post(`/api/v1/review`,
       requestData, ctx.adminAuthHeaders()
     )
-    expect(reviewRes.status).to.equal(201)
+    expect(reviewRes.status).toEqual(201)
     const updateRes = await ctx.request.put(
       `/api/v1/review/${reviewRes.data.review.id}`,
       {
@@ -304,7 +304,7 @@ describe('review tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(updateRes.status).to.equal(400)
+    expect(updateRes.status).toEqual(400)
   })
 
   it('fail to update review with invalid container', async () => {
@@ -318,7 +318,7 @@ describe('review tests', () => {
     const reviewRes = await ctx.request.post(`/api/v1/review`,
       requestData, ctx.adminAuthHeaders()
     )
-    expect(reviewRes.status).to.equal(201)
+    expect(reviewRes.status).toEqual(201)
     const updateRes = await ctx.request.put(
       `/api/v1/review/${reviewRes.data.review.id}`,
       {
@@ -327,7 +327,7 @@ describe('review tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(updateRes.status).to.equal(400)
+    expect(updateRes.status).toEqual(400)
   })
 
   it('get empty review list', async () => {
@@ -335,8 +335,8 @@ describe('review tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(res.status).to.equal(200)
-    expect(res.data.reviews.length).to.equal(0)
+    expect(res.status).toEqual(200)
+    expect(res.data.reviews.length).toEqual(0)
   })
 
   async function createListDeps(adminAuthHeaders: Record<string, unknown>) {
@@ -353,30 +353,30 @@ describe('review tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(reviewRes.status).to.equal(201)
-    expect(reviewRes.data.review.beer).to.equal(beerRes.data.beer.id)
+    expect(reviewRes.status).toEqual(201)
+    expect(reviewRes.data.review.beer).toEqual(beerRes.data.beer.id)
 
     const otherStyleRes = await ctx.request.post(`/api/v1/style`,
       { name: 'IPA', parents: [] },
       ctx.adminAuthHeaders()
     )
-    expect(otherStyleRes.status).to.equal(201)
+    expect(otherStyleRes.status).toEqual(201)
 
     const otherBreweryRes = await ctx.request.post(`/api/v1/brewery`,
       { name: 'Nokian Panimo' },
       ctx.adminAuthHeaders()
     )
-    expect(otherBreweryRes.status).to.equal(201)
+    expect(otherBreweryRes.status).toEqual(201)
 
     const otherBeerRes = await ctx.request.post(`/api/v1/beer`,
       { name: 'IPA', breweries: [otherBreweryRes.data.brewery.id], styles: [otherStyleRes.data.style.id] },
       ctx.adminAuthHeaders()
     )
 
-    expect(otherBeerRes.status).to.equal(201)
-    expect(otherBeerRes.data.beer.name).to.equal('IPA')
-    expect(otherBeerRes.data.beer.breweries).to.eql([otherBreweryRes.data.brewery.id])
-    expect(otherBeerRes.data.beer.styles).to.eql([otherStyleRes.data.style.id])
+    expect(otherBeerRes.status).toEqual(201)
+    expect(otherBeerRes.data.beer.name).toEqual('IPA')
+    expect(otherBeerRes.data.beer.breweries).toEqual([otherBreweryRes.data.brewery.id])
+    expect(otherBeerRes.data.beer.styles).toEqual([otherStyleRes.data.style.id])
 
     const otherReviewRes = await ctx.request.post(`/api/v1/review`,
       {
@@ -389,15 +389,15 @@ describe('review tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(otherReviewRes.status).to.equal(201)
-    expect(otherReviewRes.data.review.beer).to.equal(otherBeerRes.data.beer.id)
+    expect(otherReviewRes.status).toEqual(201)
+    expect(otherReviewRes.data.review.beer).toEqual(otherBeerRes.data.beer.id)
 
     const collabBeerRes = await ctx.request.post(`/api/v1/beer`,
       { name: 'Wild Kriek IPA', breweries: [breweryRes.data.brewery.id, otherBreweryRes.data.brewery.id], styles: [styleRes.data.style.id, otherStyleRes.data.style.id] },
       ctx.adminAuthHeaders()
     )
-    expect(collabBeerRes.status).to.equal(201)
-    expect(collabBeerRes.data.beer.name).to.equal('Wild Kriek IPA')
+    expect(collabBeerRes.status).toEqual(201)
+    expect(collabBeerRes.data.beer.name).toEqual('Wild Kriek IPA')
 
     const collabReviewRes = await ctx.request.post(`/api/v1/review`,
       {
@@ -410,8 +410,8 @@ describe('review tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(collabReviewRes.status).to.equal(201)
-    expect(collabReviewRes.data.review.beer).to.equal(collabBeerRes.data.beer.id)
+    expect(collabReviewRes.status).toEqual(201)
+    expect(collabReviewRes.data.review.beer).toEqual(collabBeerRes.data.beer.id)
 
     return { beerRes, breweryRes, containerRes, styleRes, reviewRes, collabReviewRes, otherReviewRes }
   }
@@ -429,21 +429,21 @@ describe('review tests', () => {
       `/api/v1/brewery/${breweryRes.data.brewery.id}/review?order=beer_name&direction=desc`,
       ctx.adminAuthHeaders()
     )
-    expect(breweryListRes.status).to.equal(200)
-    expect(breweryListRes.data.reviews.length).to.equal(2)
+    expect(breweryListRes.status).toEqual(200)
+    expect(breweryListRes.data.reviews.length).toEqual(2)
 
     const kriekReview = breweryListRes.data.reviews[1]
-    expect(kriekReview?.id).to.eql(reviewRes.data.review.id)
-    expect(kriekReview?.beerId).to.eql(reviewRes.data.review.beer)
+    expect(kriekReview?.id).toEqual(reviewRes.data.review.id)
+    expect(kriekReview?.beerId).toEqual(reviewRes.data.review.beer)
 
     const collabReview = breweryListRes.data.reviews[0]
-    expect(collabReview?.id).to.eql(collabReviewRes.data.review.id)
-    expect(collabReview?.beerId).to.eql(collabReviewRes.data.review.beer)
-    expect(collabReview?.breweries?.length).to.equal(2)
+    expect(collabReview?.id).toEqual(collabReviewRes.data.review.id)
+    expect(collabReview?.beerId).toEqual(collabReviewRes.data.review.beer)
+    expect(collabReview?.breweries?.length).toEqual(2)
 
     const sorting = breweryListRes.data.sorting
-    expect(sorting.order).equal('beer_name')
-    expect(sorting.direction).equal('desc')
+    expect(sorting.order).toEqual('beer_name')
+    expect(sorting.direction).toEqual('desc')
   })
 
   it('list reviews by style', async () => {
@@ -459,21 +459,21 @@ describe('review tests', () => {
       `/api/v1/style/${styleRes.data.style.id}/review?order=beer_name&direction=desc`,
       ctx.adminAuthHeaders()
     )
-    expect(styleListRes.status).to.equal(200)
-    expect(styleListRes.data.reviews.length).to.equal(2)
+    expect(styleListRes.status).toEqual(200)
+    expect(styleListRes.data.reviews.length).toEqual(2)
 
     const kriekReview = styleListRes.data.reviews[1]
-    expect(kriekReview?.id).to.eql(reviewRes.data.review.id)
-    expect(kriekReview?.beerId).to.eql(reviewRes.data.review.beer)
+    expect(kriekReview?.id).toEqual(reviewRes.data.review.id)
+    expect(kriekReview?.beerId).toEqual(reviewRes.data.review.beer)
 
     const collabReview = styleListRes.data.reviews[0]
-    expect(collabReview?.id).to.eql(collabReviewRes.data.review.id)
-    expect(collabReview?.beerId).to.eql(collabReviewRes.data.review.beer)
-    expect(collabReview?.breweries?.length).to.equal(2)
+    expect(collabReview?.id).toEqual(collabReviewRes.data.review.id)
+    expect(collabReview?.beerId).toEqual(collabReviewRes.data.review.beer)
+    expect(collabReview?.breweries?.length).toEqual(2)
 
     const sorting = styleListRes.data.sorting
-    expect(sorting.order).equal('beer_name')
-    expect(sorting.direction).equal('desc')
+    expect(sorting.order).toEqual('beer_name')
+    expect(sorting.direction).toEqual('desc')
   })
 
   it('list reviews by beer', async () => {
@@ -494,7 +494,7 @@ describe('review tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(reviewRes.status).to.equal(201)
+    expect(reviewRes.status).toEqual(201)
 
     const otherReviewRes = await ctx.request.post(`/api/v1/review`,
       {
@@ -504,7 +504,7 @@ describe('review tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(otherReviewRes.status).to.equal(201)
+    expect(otherReviewRes.status).toEqual(201)
 
     const beerListRes = await ctx.request.get<{
       reviews: JoinedReview[],
@@ -516,9 +516,9 @@ describe('review tests', () => {
       `/api/v1/beer/${beerRes.data.beer.id}/review?order=rating&direction=asc`,
       ctx.adminAuthHeaders()
     )
-    expect(beerListRes.status).to.equal(200)
-    expect(beerListRes.data.reviews.length).to.equal(2)
-    expect(beerListRes.data.reviews.map(r => r.rating)).to.eql([7, 8])
+    expect(beerListRes.status).toEqual(200)
+    expect(beerListRes.data.reviews.length).toEqual(2)
+    expect(beerListRes.data.reviews.map(r => r.rating)).toEqual([7, 8])
   })
 
   interface Sorting {
@@ -540,26 +540,26 @@ describe('review tests', () => {
       `/api/v1/review${data.query}`,
       ctx.adminAuthHeaders()
     )
-    expect(listRes.status).to.equal(200)
-    expect(listRes.data.reviews.length).to.equal(3)
+    expect(listRes.status).toEqual(200)
+    expect(listRes.data.reviews.length).toEqual(3)
 
     const kriekReview = listRes.data.reviews[data.kriekIndex]
-    expect(kriekReview?.time).to.eql(reviewRes.data.review.time)
-    expect(kriekReview?.id).to.eql(reviewRes.data.review.id)
-    expect(kriekReview?.beerId).to.eql(reviewRes.data.review.beer)
+    expect(kriekReview?.time).toEqual(reviewRes.data.review.time)
+    expect(kriekReview?.id).toEqual(reviewRes.data.review.id)
+    expect(kriekReview?.beerId).toEqual(reviewRes.data.review.beer)
 
     const otherReview = listRes.data.reviews[data.otherIndex]
-    expect(otherReview?.time).to.eql(otherReviewRes.data.review.time)
-    expect(otherReview?.id).to.eql(otherReviewRes.data.review.id)
-    expect(otherReview?.beerId).to.eql(otherReviewRes.data.review.beer)
+    expect(otherReview?.time).toEqual(otherReviewRes.data.review.time)
+    expect(otherReview?.id).toEqual(otherReviewRes.data.review.id)
+    expect(otherReview?.beerId).toEqual(otherReviewRes.data.review.beer)
 
     const collabReview = listRes.data.reviews[data.collabIndex]
-    expect(collabReview?.time).to.eql(collabReviewRes.data.review.time)
-    expect(collabReview?.id).to.eql(collabReviewRes.data.review.id)
-    expect(collabReview?.beerId).to.eql(collabReviewRes.data.review.beer)
-    expect(collabReview?.breweries?.length).to.equal(2)
+    expect(collabReview?.time).toEqual(collabReviewRes.data.review.time)
+    expect(collabReview?.id).toEqual(collabReviewRes.data.review.id)
+    expect(collabReview?.beerId).toEqual(collabReviewRes.data.review.beer)
+    expect(collabReview?.breweries?.length).toEqual(2)
 
-    expect(listRes.data.sorting).eql(data.sorting)
+    expect(listRes.data.sorting).toEqual(data.sorting)
   }
 
   it('list reviews', async() => {

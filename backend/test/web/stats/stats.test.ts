@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
 import { type BeerWithBreweryAndStyleIds } from '../../../src/core/beer/beer'
@@ -29,13 +29,13 @@ describe('stats tests', () => {
       { name: 'Kriek', parents: [] },
       adminAuthHeaders
     )
-    expect(styleRes.status).to.equal(201)
+    expect(styleRes.status).toEqual(201)
 
     const breweryRes = await ctx.request.post<{ brewery: Brewery }>(`/api/v1/brewery`,
       { name: 'Lindemans' },
       adminAuthHeaders
     )
-    expect(breweryRes.status).to.equal(201)
+    expect(breweryRes.status).toEqual(201)
 
     const beerRes = await ctx.request.post<{ beer: BeerWithBreweryAndStyleIds }>(`/api/v1/beer`,
       {
@@ -45,13 +45,13 @@ describe('stats tests', () => {
       },
       adminAuthHeaders
     )
-    expect(beerRes.status).to.equal(201)
+    expect(beerRes.status).toEqual(201)
 
     const containerRes = await ctx.request.post(`/api/v1/container`,
       { type: 'Bottle', size: '0.25' },
       adminAuthHeaders
     )
-    expect(containerRes.status).to.equal(201)
+    expect(containerRes.status).toEqual(201)
 
     const reviewRes = await ctx.request.post<{ review: Review }>(`/api/v1/review`,
       {
@@ -64,19 +64,19 @@ describe('stats tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(reviewRes.status).to.equal(201)
+    expect(reviewRes.status).toEqual(201)
 
     const otherStyleRes = await ctx.request.post<{ style: Style }>(`/api/v1/style`,
       { name: 'IPA', parents: [] },
       ctx.adminAuthHeaders()
     )
-    expect(otherStyleRes.status).to.equal(201)
+    expect(otherStyleRes.status).toEqual(201)
 
     const otherBreweryRes = await ctx.request.post<{ brewery: Brewery }>(`/api/v1/brewery`,
       { name: 'Nokian Panimo' },
       ctx.adminAuthHeaders()
     )
-    expect(otherBreweryRes.status).to.equal(201)
+    expect(otherBreweryRes.status).toEqual(201)
 
     const otherBeerRes = await ctx.request.post<{ beer: BeerWithBreweryAndStyleIds }>(`/api/v1/beer`,
       {
@@ -86,7 +86,7 @@ describe('stats tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(otherBeerRes.status).to.equal(201)
+    expect(otherBeerRes.status).toEqual(201)
 
     const otherReviewRes = await ctx.request.post<{ review: Review }>(`/api/v1/review`,
       {
@@ -99,7 +99,7 @@ describe('stats tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(otherReviewRes.status).to.equal(201)
+    expect(otherReviewRes.status).toEqual(201)
 
     const collabBeerRes = await ctx.request.post<{ beer: BeerWithBreweryAndStyleIds }>(`/api/v1/beer`,
       {
@@ -115,7 +115,7 @@ describe('stats tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(collabBeerRes.status).to.equal(201)
+    expect(collabBeerRes.status).toEqual(201)
 
     const collabReviewRes = await ctx.request.post<{ review: Review }>(`/api/v1/review`,
       {
@@ -128,7 +128,7 @@ describe('stats tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(collabReviewRes.status).to.equal(201)
+    expect(collabReviewRes.status).toEqual(201)
 
     const collabReview2Res = await ctx.request.post<{ review: Review }>(`/api/v1/review`,
       {
@@ -142,7 +142,7 @@ describe('stats tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(collabReview2Res.status).to.equal(201)
+    expect(collabReview2Res.status).toEqual(201)
 
     return {
       beers: [
@@ -185,26 +185,26 @@ describe('stats tests', () => {
       '/api/v1/stats/overall',
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).to.equal(200)
-    expect(statsRes.data.overall.beerCount).to.equal(`${beers.length}`)
-    expect(beers.length).to.equal(3)
-    expect(statsRes.data.overall.breweryCount).to.equal(`${breweries.length}`)
-    expect(breweries.length).to.equal(2)
-    expect(statsRes.data.overall.containerCount).to.equal(`${containers.length}`)
-    expect(containers.length).to.equal(1)
-    expect(statsRes.data.overall.reviewCount).to.equal(`${reviews.length}`)
-    expect(reviews.length).to.equal(4)
+    expect(statsRes.status).toEqual(200)
+    expect(statsRes.data.overall.beerCount).toEqual(`${beers.length}`)
+    expect(beers.length).toEqual(3)
+    expect(statsRes.data.overall.breweryCount).toEqual(`${breweries.length}`)
+    expect(breweries.length).toEqual(2)
+    expect(statsRes.data.overall.containerCount).toEqual(`${containers.length}`)
+    expect(containers.length).toEqual(1)
+    expect(statsRes.data.overall.reviewCount).toEqual(`${reviews.length}`)
+    expect(reviews.length).toEqual(4)
     expect(statsRes.data.overall.distinctBeerReviewCount)
-      .to.equal(`${beers.length}`)
+      .toEqual(`${beers.length}`)
     const ratings = reviews
       .filter(r => r)
       .map(r => r.rating) as number[]
     const ratingSum = ratings.reduce((sum: number, rating: number) => sum + rating, 0)
     const countedAverage = ratingSum / reviews.length
-    expect(statsRes.data.overall.reviewAverage).to.equal(countedAverage.toFixed(2))
-    expect(countedAverage).to.equal(6.75)
-    expect(statsRes.data.overall.styleCount).to.equal(`${styles.length}`)
-    expect(styles.length).to.equal(2)
+    expect(statsRes.data.overall.reviewAverage).toEqual(countedAverage.toFixed(2))
+    expect(countedAverage).toEqual(6.75)
+    expect(statsRes.data.overall.styleCount).toEqual(`${styles.length}`)
+    expect(styles.length).toEqual(2)
   })
 
   it('get overall stats by brewery', async () => {
@@ -220,11 +220,11 @@ describe('stats tests', () => {
       `/api/v1/stats/overall?brewery=${breweryId}`,
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).to.equal(200)
-    expect(statsRes.data.overall.beerCount).to.equal('2')
-    expect(statsRes.data.overall.breweryCount).to.equal('2')
-    expect(statsRes.data.overall.containerCount).to.equal('1')
-    expect(statsRes.data.overall.reviewCount).to.equal('3')
+    expect(statsRes.status).toEqual(200)
+    expect(statsRes.data.overall.beerCount).toEqual('2')
+    expect(statsRes.data.overall.breweryCount).toEqual('2')
+    expect(statsRes.data.overall.containerCount).toEqual('1')
+    expect(statsRes.data.overall.reviewCount).toEqual('3')
     const ratings = reviews
       .filter((review: Review) => {
         const beerId = review.beer
@@ -237,10 +237,10 @@ describe('stats tests', () => {
       .map(r => r.rating) as number[]
     const ratingSum = ratings.reduce((sum: number, rating: number) => sum + rating, 0)
     const countedAverage = ratingSum / ratings.length
-    expect(statsRes.data.overall.reviewAverage).to.equal(countedAverage.toFixed(2))
-    expect(countedAverage).to.equal(6 + 2/3)
-    expect(statsRes.data.overall.styleCount).to.equal('2')
-    expect(styles.length).to.equal(2)
+    expect(statsRes.data.overall.reviewAverage).toEqual(countedAverage.toFixed(2))
+    expect(countedAverage).toEqual(6 + 2/3)
+    expect(statsRes.data.overall.styleCount).toEqual('2')
+    expect(styles.length).toEqual(2)
   })
 
   function average(ratings: number[]): string {
@@ -273,7 +273,6 @@ describe('stats tests', () => {
     })
 
     function stat (count: number, average: string, year: string) {
-      if (count <= 0) return undefined
       return {
         reviewCount: `${count}`,
         reviewAverage: average,
@@ -281,13 +280,13 @@ describe('stats tests', () => {
       }
     }
 
-    expect(annualStats).to.eql(annual.map(
+    expect(annualStats).toEqual(annual.filter(a => a.count > 0).map(
       annual => stat(annual.count, annual.average, annual.year)
-    ).filter(stat => stat))
+    ))
 
     expect(annual.map(
       annual => ({ average: annual.average, count: annual.count })
-    )).eql(expectedAnnual)
+    )).toEqual(expectedAnnual)
   }
 
   it('get annual stats', async () => {
@@ -297,7 +296,7 @@ describe('stats tests', () => {
       '/api/v1/stats/annual',
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).to.equal(200)
+    expect(statsRes.status).toEqual(200)
     function reviewRatingsByYear(year: string): number[] {
       return reviews.filter((review: any) => {
         if (typeof review?.time !== 'string') throw error()
@@ -332,7 +331,7 @@ describe('stats tests', () => {
       `/api/v1/stats/annual?brewery=${breweryId}`,
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).to.equal(200)
+    expect(statsRes.status).toEqual(200)
     function reviewRatingsByYear(year: string): number[] {
       return reviews.filter((review: any) => {
         if (typeof review?.time !== 'string') throw error()
@@ -378,7 +377,7 @@ describe('stats tests', () => {
     const nokiaAverage = average(nokiaRatings)
     const lindemansRatings = reviewRatingsByBrewery(lindemans.brewery.id)
     const lindemansAverage = average(lindemansRatings)
-    expect(breweryStats).to.eql([
+    expect(breweryStats).toEqual([
       {
         reviewCount: `${nokiaRatings.length}`,
         reviewAverage: nokiaAverage,
@@ -392,10 +391,10 @@ describe('stats tests', () => {
         breweryName: lindemans.brewery.name
       }
     ])
-    expect(nokiaRatings.length).to.equal(nokia.count)
-    expect(nokiaAverage).to.equal(nokia.average)
-    expect(lindemansRatings.length).to.equal(lindemans.count)
-    expect(lindemansAverage).to.equal(lindemans.average)
+    expect(nokiaRatings.length).toEqual(nokia.count)
+    expect(nokiaAverage).toEqual(nokia.average)
+    expect(lindemansRatings.length).toEqual(lindemans.count)
+    expect(lindemansAverage).toEqual(lindemans.average)
   }
 
   function reviewRatingsByBrewery(
@@ -423,18 +422,18 @@ describe('stats tests', () => {
       '/api/v1/stats/brewery?size=30&skip=20',
       ctx.adminAuthHeaders()
     )
-    expect(skippedStatsRes.status).to.equal(200)
-    expect(skippedStatsRes.data.brewery).to.eql([])
+    expect(skippedStatsRes.status).toEqual(200)
+    expect(skippedStatsRes.data.brewery).toEqual([])
 
     const statsRes = await ctx.request.get<{ brewery: BreweryStats }>(
       '/api/v1/stats/brewery?order=average&direction=desc',
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).to.equal(200)
+    expect(statsRes.status).toEqual(200)
     const lindemansBrewery = breweries[0].data.brewery
-    expect(lindemansBrewery.name).to.equal('Lindemans')
+    expect(lindemansBrewery.name).toEqual('Lindemans')
     const nokiaBrewery = breweries[1].data.brewery
-    expect(nokiaBrewery.name).to.equal('Nokian Panimo')
+    expect(nokiaBrewery.name).toEqual('Nokian Panimo')
     function filter(breweryId: string): number[] {
       return reviewRatingsByBrewery(breweryId, beers, reviews, breweryId)
     }
@@ -459,11 +458,11 @@ describe('stats tests', () => {
       `/api/v1/stats/brewery?brewery=${filterBreweryId}${order}`,
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).to.equal(200)
+    expect(statsRes.status).toEqual(200)
     const lindemansBrewery = breweries[0].data.brewery
-    expect(lindemansBrewery.name).to.equal('Lindemans')
+    expect(lindemansBrewery.name).toEqual('Lindemans')
     const nokiaBrewery = breweries[1].data.brewery
-    expect(nokiaBrewery.name).to.equal('Nokian Panimo')
+    expect(nokiaBrewery.name).toEqual('Nokian Panimo')
     function filter(breweryId: string): number[] {
       return reviewRatingsByBrewery(breweryId, beers, reviews, filterBreweryId)
     }
@@ -490,9 +489,9 @@ describe('stats tests', () => {
       }${order}&min_review_count=3`,
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).to.equal(200)
+    expect(statsRes.status).toEqual(200)
     const lindemansBrewery = breweries[0].data.brewery
-    expect(lindemansBrewery.name).to.equal('Lindemans')
+    expect(lindemansBrewery.name).toEqual('Lindemans')
     const lindemansRatings = reviewRatingsByBrewery(
       lindemansBrewery.id,
       beers,
@@ -500,7 +499,7 @@ describe('stats tests', () => {
       filterBreweryId
     )
     const lindemansAverage = average(lindemansRatings)
-    expect(statsRes.data.brewery).to.eql([
+    expect(statsRes.data.brewery).toEqual([
       {
         reviewCount: `${lindemansRatings.length}`,
         reviewAverage: lindemansAverage,
@@ -508,8 +507,8 @@ describe('stats tests', () => {
         breweryName: lindemansBrewery.name
       }
     ])
-    expect(lindemansRatings.length).to.equal(3)
-    expect(lindemansAverage).to.equal('6.67')
+    expect(lindemansRatings.length).toEqual(3)
+    expect(lindemansAverage).toEqual('6.67')
   })
 
   type TestRatingStats = Array<{ rating: number,  count: number }>
@@ -524,8 +523,8 @@ describe('stats tests', () => {
       rating: `${s.rating}`,
       count: `${s.count}`
     }))
-    expect(actualStats).to.eql(convertedStats)
-    expect(actualStats).to.eql(expectedStats)
+    expect(actualStats).toEqual(convertedStats)
+    expect(actualStats).toEqual(expectedStats)
   }
 
   it('get rating stats', async () => {
@@ -535,7 +534,7 @@ describe('stats tests', () => {
       '/api/v1/stats/rating',
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).to.equal(200)
+    expect(statsRes.status).toEqual(200)
     const stats = reviews
       .reduce((ratingStats: TestRatingStats, review) => {
       const rating = review.rating as unknown as number
@@ -567,7 +566,7 @@ describe('stats tests', () => {
       `/api/v1/stats/rating?brewery=${breweryId}`,
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).to.equal(200)
+    expect(statsRes.status).toEqual(200)
     const stats = reviews
       .reduce((ratingStats: Array<{ rating: number,  count: number }>, review) => {
       const beerId = review.beer
@@ -609,7 +608,7 @@ describe('stats tests', () => {
   ) {
     const ipaAverage = average(ipa.ratings)
     const kriekAverage = average(kriek.ratings)
-    expect(styleStats).to.eql([
+    expect(styleStats).toEqual([
       {
         reviewCount: `${ipa.ratings.length}`,
         reviewAverage: ipa.average,
@@ -623,10 +622,10 @@ describe('stats tests', () => {
         styleName: kriek.style.name
       }
     ])
-    expect(ipa.ratings.length).to.equal(ipa.count)
-    expect(ipaAverage).to.equal(ipa.average)
-    expect(kriek.ratings.length).to.equal(kriek.count)
-    expect(kriekAverage).to.equal(kriek.average)
+    expect(ipa.ratings.length).toEqual(ipa.count)
+    expect(ipaAverage).toEqual(ipa.average)
+    expect(kriek.ratings.length).toEqual(kriek.count)
+    expect(kriekAverage).toEqual(kriek.average)
   }
 
   function reviewRatingsByStyle(
@@ -655,11 +654,11 @@ describe('stats tests', () => {
       '/api/v1/stats/style?order=average&direction=desc',
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).to.equal(200)
+    expect(statsRes.status).toEqual(200)
     const kriekStyle = styles[0].data.style
-    expect(kriekStyle.name).to.equal('Kriek')
+    expect(kriekStyle.name).toEqual('Kriek')
     const ipaStyle = styles[1].data.style
-    expect(ipaStyle.name).to.equal('IPA')
+    expect(ipaStyle.name).toEqual('IPA')
     const ipaRatings = reviewRatingsByStyle(ipaStyle.id, beers, reviews, undefined)
     const kriekRatings = reviewRatingsByStyle(kriekStyle.id, beers, reviews, undefined)
     checkStyleStats(
@@ -693,11 +692,11 @@ describe('stats tests', () => {
       `/api/v1/stats/style?brewery=${breweryId}${order}`,
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).to.equal(200)
+    expect(statsRes.status).toEqual(200)
     const kriekStyle = styles[0].data.style
-    expect(kriekStyle.name).to.equal('Kriek')
+    expect(kriekStyle.name).toEqual('Kriek')
     const ipaStyle = styles[1].data.style
-    expect(ipaStyle.name).to.equal('IPA')
+    expect(ipaStyle.name).toEqual('IPA')
     const ipaRatings = reviewRatingsByStyle(
       ipaStyle.id,
       beers,
@@ -740,15 +739,15 @@ describe('stats tests', () => {
       `/api/v1/stats/style?brewery=${breweryId}${order}&min_review_count=3`,
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).to.equal(200)
+    expect(statsRes.status).toEqual(200)
     const kriekStyle = styles[0].data.style
-    expect(kriekStyle.name).to.equal('Kriek')
+    expect(kriekStyle.name).toEqual('Kriek')
     const ipaStyle = styles[1].data.style
-    expect(ipaStyle.name).to.equal('IPA')
+    expect(ipaStyle.name).toEqual('IPA')
 
     const kriekRatings = reviewRatingsByStyle(kriekStyle.id, beers, reviews, breweryId)
     const kriekAverage = average(kriekRatings)
-    expect(statsRes.data.style).to.eql([
+    expect(statsRes.data.style).toEqual([
       {
         reviewCount: '3',
         reviewAverage: kriekAverage,
@@ -756,8 +755,8 @@ describe('stats tests', () => {
         styleName: kriekStyle.name
       }
     ])
-    expect(kriekRatings.length).to.equal(3)
-    expect(kriekAverage).to.equal('6.67')
+    expect(kriekRatings.length).toEqual(3)
+    expect(kriekAverage).toEqual('6.67')
   })
 
   it('get style stats by style', async () => {
@@ -769,13 +768,13 @@ describe('stats tests', () => {
       `/api/v1/stats/style?style=${styleId}${order}`,
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).to.equal(200)
+    expect(statsRes.status).toEqual(200)
     const kriekStyle = styles[0].data.style
-    expect(kriekStyle.name).to.equal('Kriek')
+    expect(kriekStyle.name).toEqual('Kriek')
     const ipaStyle = styles[1].data.style
-    expect(ipaStyle.name).to.equal('IPA')
+    expect(ipaStyle.name).toEqual('IPA')
 
-    expect(statsRes.data.style).to.eql([
+    expect(statsRes.data.style).toEqual([
       {
         // Collab reviews only.
         reviewCount: '2',

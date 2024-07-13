@@ -1,10 +1,15 @@
-import { expect } from 'chai'
+import { expect } from 'earl'
 
 import {
   validateFilteredReviewListOrder,
   validateFullReviewListOrder
 } from '../../../src/core/review/review'
-import { invalidReviewListQueryBeerNameError, invalidReviewListQueryBreweryNameError, invalidReviewListQueryOrderError } from '../../../src/core/errors'
+import {
+  invalidReviewListQueryBeerNameError,
+  invalidReviewListQueryBreweryNameError,
+  invalidReviewListQueryOrderError
+} from '../../../src/core/errors'
+import { expectThrow } from '../controller-error-helper'
 
 function valid (): Record<string, unknown> {
   return { order: 'time', direction: 'desc' }
@@ -31,106 +36,106 @@ describe('review list order unit tests', () => {
   .forEach((test: CommonCase) => {
     it(`valid test helper is valid, ${test.title}`, () => {
       const result = test.func(valid())
-      expect(result).to.eql({ property: 'time', direction: 'desc' })
+      expect(result).toEqual({ property: 'time', direction: 'desc' })
     })
 
     it(`invalid order value, ${test.title}`, () => {
-      expect(
+      expectThrow(
         () => test.func({ ...valid(), order: 'testing' })
-      ).to.throw(invalidReviewListQueryOrderError)
+      , invalidReviewListQueryOrderError)
     })
 
     it(`invalid order type, ${test.title}`, () => {
-      expect(
+      expectThrow(
         () => test.func( { ...valid(), order: 123 })
-      ).to.throw(invalidReviewListQueryOrderError)
+      , invalidReviewListQueryOrderError)
     })
 
     it(`invalid direction value, ${test.title}`, () => {
-      expect(
+      expectThrow(
         () => test.func({ ...valid(), direction: 'testing' })
-      ).to.throw(invalidReviewListQueryOrderError)
+      , invalidReviewListQueryOrderError)
     })
 
     it(`invalid direction type, ${test.title}`, () => {
-      expect(
+      expectThrow(
         () => test.func({ ...valid(), direction: [] })
-      ).to.throw(invalidReviewListQueryOrderError)
+      , invalidReviewListQueryOrderError)
     })
 
     it(`time desc, ${test.title}`, () => {
       const result = test.func(
         { order: 'time', direction: 'desc' }
       )
-      expect(result).eql({ property: 'time', direction: 'desc' })
+      expect(result).toEqual({ property: 'time', direction: 'desc' })
     })
 
     it(`rating asc, ${test.title}`, () => {
       const result = test.func(
         { order: 'rating', direction: 'asc' }
       )
-      expect(result).eql({ property: 'rating', direction: 'asc' })
+      expect(result).toEqual({ property: 'rating', direction: 'asc' })
     })
   })
 
   it('defaults with undefined, full review list order', () => {
     const result = validateFullReviewListOrder({})
-    expect(result).eql({ property: 'time', direction: 'desc' })
+    expect(result).toEqual({ property: 'time', direction: 'desc' })
   })
 
   it('defaults with undefined, filtered review list order', () => {
     const result = validateFilteredReviewListOrder({})
-    expect(result).eql({ property: 'beer_name', direction: 'asc' })
+    expect(result).toEqual({ property: 'beer_name', direction: 'asc' })
   })
 
   it('defaults with empty string, full review list order', () => {
     const result = validateFullReviewListOrder(
       { order: '', direction: '' },
     )
-    expect(result).eql({ property: 'time', direction: 'desc' })
+    expect(result).toEqual({ property: 'time', direction: 'desc' })
   })
 
   it('defaults with empty string, filtered review list order', () => {
     const result = validateFilteredReviewListOrder(
       { order: '', direction: '' }
     )
-    expect(result).eql({ property: 'beer_name', direction: 'asc' })
+    expect(result).toEqual({ property: 'beer_name', direction: 'asc' })
   })
 
   it('defaults with empty string, full review list order', () => {
     const result = validateFullReviewListOrder(
       { order: '', direction: '' },
     )
-    expect(result).eql({ property: 'time', direction: 'desc' })
+    expect(result).toEqual({ property: 'time', direction: 'desc' })
   })
 
   it('beer_name, full review list order', () => {
-    expect(
+    expectThrow(
       () => validateFullReviewListOrder(
         { order: 'beer_name', direction: 'desc' }
       )
-    ).to.throw(invalidReviewListQueryBeerNameError)
+    , invalidReviewListQueryBeerNameError)
   })
 
   it('beer_name desc, filtered review list order', () => {
     const result = validateFilteredReviewListOrder(
       { order: 'beer_name', direction: 'desc' }
     )
-    expect(result).eql({ property: 'beer_name', direction: 'desc' })
+    expect(result).toEqual({ property: 'beer_name', direction: 'desc' })
   })
 
   it('brewery_name, full review list order', () => {
-    expect(
+    expectThrow(
       () => validateFullReviewListOrder(
         { order: 'brewery_name', direction: 'desc' }
       )
-    ).to.throw(invalidReviewListQueryBreweryNameError)
+    , invalidReviewListQueryBreweryNameError)
   })
 
   it('brewery_name asc, filtered review list order', () => {
     const result = validateFilteredReviewListOrder(
       { order: 'brewery_name', direction: 'asc' }
     )
-    expect(result).eql({ property: 'brewery_name', direction: 'asc' })
+    expect(result).toEqual({ property: 'brewery_name', direction: 'asc' })
   })
 })
