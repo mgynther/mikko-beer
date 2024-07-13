@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "VITE_BACKEND_URL=http://localhost:3001 vite",
     "build": "tsc && vite build",
-    "lint": "eslint --fix . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "eslint": "eslint --fix . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "VITE_BACKEND_URL=http://localhost:3001 vitest --environment jsdom",
     "e2e": "npx playwright test",
     "e2e:ui": "npx playwright test --ui",
