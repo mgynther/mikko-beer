@@ -1,6 +1,7 @@
 {
   "name": "mikko-beer-frontend",
   "version": "0.0.0",
+  "type": "module",
   "author": "Mikko Gynther",
   "scripts": {
     "dev": "VITE_BACKEND_URL=http://localhost:3001 vite",
