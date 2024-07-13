@@ -1,4 +1,4 @@
-import '@testing-library/jest-dom'
+import { expect, test } from 'vitest'
 
 import { type ListDirection } from '../store/types'
 import {

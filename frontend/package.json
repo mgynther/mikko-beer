@@ -6,7 +6,7 @@
     "dev": "VITE_BACKEND_URL=http://localhost:3001 vite",
     "build": "tsc && vite build",
     "lint": "eslint --fix . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "test": "VITE_BACKEND_URL=http://localhost:3001 npx jest",
+    "test": "VITE_BACKEND_URL=http://localhost:3001 vitest --environment jsdom",
     "e2e": "npx playwright test",
     "e2e:ui": "npx playwright test --ui",
     "preview": "vite preview"
@@ -23,10 +23,8 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.44.1",
-    "@testing-library/jest-dom": "6.4.2",
     "@testing-library/react": "15.0.2",
     "@testing-library/user-event": "14.5.2",
-    "@types/jest": "29.5.12",
     "@types/node": "^20.14.8",
     "@types/react": "18.2.79",
     "@types/react-dom": "18.2.25",
@@ -39,19 +37,17 @@
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-react-refresh": "0.4.6",
     "identity-obj-proxy": "3.0.0",
-    "jest": "29.7.0",
-    "jest-environment-jsdom": "29.7.0",
+    "jsdom": "24.1.0",
     "react-test-renderer": "18.2.0",
-    "ts-jest": "29.1.2",
     "ts-node": "10.9.2",
     "typescript": "5.4.5",
     "vite": "5.2.10",
+    "vitest": "2.0.2",
     "web-vitals": "3.5.2"
   },
   "eslintConfig": {
     "extends": [
-      "react-app",
-      "react-app/jest"
+      "react-app"
     ]
   },
   "browserslist": {
