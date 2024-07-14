@@ -18,6 +18,15 @@ export interface CreateContainerIf {
   isLoading: boolean
 }
 
+interface ListContainersData {
+  data: ContainerList | undefined,
+  isLoading: boolean
+}
+
+export interface ListContainersIf {
+  useList: () => ListContainersData
+}
+
 export interface UpdateContainerIf {
   update: (container: Container) => Promise<void>
   isLoading: boolean

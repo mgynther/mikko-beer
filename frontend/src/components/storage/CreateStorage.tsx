@@ -3,7 +3,8 @@ import { useState } from 'react'
 import { type BeerWithIds } from '../../store/beer/types'
 import {
   type Container,
-  type CreateContainerIf
+  type CreateContainerIf,
+  type ListContainersIf
 } from '../../core/container/types'
 import { useCreateStorageMutation } from '../../store/storage/api'
 
@@ -15,6 +16,7 @@ import './CreateStorage.css'
 
 interface Props {
   createContainerIf: CreateContainerIf
+  listContainersIf: ListContainersIf
 }
 
 function CreateStorage (props: Props): JSX.Element {
@@ -78,6 +80,7 @@ function CreateStorage (props: Props): JSX.Element {
             {container === undefined
               ? <SelectContainer
                   createContainerIf={props.createContainerIf}
+                  listContainersIf={props.listContainersIf}
                   select={(container: Container) => {
                     setContainer(container)
                   }} />

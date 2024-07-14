@@ -1,4 +1,7 @@
-import { type CreateContainerIf } from '../../core/container/types'
+import {
+  type CreateContainerIf,
+  type ListContainersIf
+} from '../../core/container/types'
 import { useSelector } from '../../react-redux-wrapper'
 
 import { type Login, selectLogin } from '../../store/login/reducer'
@@ -10,6 +13,7 @@ import StorageList from './StorageList'
 
 interface Props {
   createContainerIf: CreateContainerIf
+  listContainersIf: ListContainersIf
 }
 
 function Storages (props: Props): JSX.Element {
@@ -34,6 +38,7 @@ function Storages (props: Props): JSX.Element {
         <div>
           <CreateStorage
             createContainerIf={props.createContainerIf}
+            listContainersIf={props.listContainersIf}
             />
         </div>
       )}

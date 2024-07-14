@@ -23,7 +23,10 @@ import Stats from '../stats/Stats'
 import UpdateBrewery from './UpdateBrewery'
 
 import '../common/FlexRow.css'
-import { type CreateContainerIf } from '../../core/container/types'
+import {
+  type CreateContainerIf,
+  type ListContainersIf
+} from '../../core/container/types'
 
 function NotFound (): JSX.Element {
   return <div>Not found</div>
@@ -31,6 +34,7 @@ function NotFound (): JSX.Element {
 
 interface Props {
   createContainerIf: CreateContainerIf
+  listContainersIf: ListContainersIf
 }
 
 function Brewery (props: Props): JSX.Element {
@@ -100,6 +104,7 @@ function Brewery (props: Props): JSX.Element {
       )}
       <ReviewList
         createContainerIf={props.createContainerIf}
+        listContainersIf={props.listContainersIf}
         isLoading={isLoadingReviews}
         isTitleVisible={true}
         reviews={reviewData?.reviews ?? []}

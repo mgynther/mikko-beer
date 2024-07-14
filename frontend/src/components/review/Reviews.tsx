@@ -13,12 +13,16 @@ import { infiniteScroll } from '../util'
 import ReviewList from './ReviewList'
 
 import './Review.css'
-import { CreateContainerIf } from '../../core/container/types'
+import {
+  type CreateContainerIf,
+  type ListContainersIf
+} from '../../core/container/types'
 
 const pageSize = 20
 
 interface Props {
   createContainerIf: CreateContainerIf
+  listContainersIf: ListContainersIf
 }
 
 function Reviews (props: Props): JSX.Element {
@@ -85,6 +89,7 @@ function Reviews (props: Props): JSX.Element {
       <h3>Reviews</h3>
       <ReviewList
         createContainerIf={props.createContainerIf}
+        listContainersIf={props.listContainersIf}
         isLoading={isLoading}
         isTitleVisible={false}
         reviews={loadedReviews}

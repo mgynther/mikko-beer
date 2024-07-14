@@ -1,6 +1,9 @@
 import { useState } from 'react'
 
-import { type CreateContainerIf } from '../../core/container/types'
+import {
+  type CreateContainerIf,
+  type ListContainersIf
+} from '../../core/container/types'
 
 import { useUpdateReviewMutation } from '../../store/review/api'
 import { type JoinedReview, type ReviewRequest } from '../../store/review/types'
@@ -11,6 +14,7 @@ import ReviewEditor from './ReviewEditor'
 
 interface Props {
   createContainerIf: CreateContainerIf
+  listContainersIf: ListContainersIf
   initialReview: {
     joined: JoinedReview
     review: ReviewRequest
@@ -43,6 +47,7 @@ function UpdateReview (props: Props): JSX.Element {
     <>
       <ReviewEditor
         createContainerIf={props.createContainerIf}
+        listContainersIf={props.listContainersIf}
         initialReview={props.initialReview}
         isFromStorage={false}
         onChange={(review: ReviewRequest | undefined) => {

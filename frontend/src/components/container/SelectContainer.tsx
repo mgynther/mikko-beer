@@ -1,7 +1,7 @@
-import { useListContainersQuery } from '../../store/container/api'
 import {
   type Container,
-  type CreateContainerIf
+  type CreateContainerIf,
+  type ListContainersIf
 } from '../../core/container/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
@@ -11,11 +11,12 @@ import CreateContainer from './CreateContainer'
 
 export interface Props {
   select: (container: Container) => void
-  createContainerIf: CreateContainerIf
+  createContainerIf: CreateContainerIf,
+  listContainersIf: ListContainersIf
 }
 
 function SelectContainer (props: Props): JSX.Element {
-  const { data: containerData, isLoading } = useListContainersQuery()
+  const { data: containerData, isLoading } = props.listContainersIf.useList()
 
   function selectContainerById (containerId: string): void {
     const container = containerData?.containers

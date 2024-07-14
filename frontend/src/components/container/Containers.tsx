@@ -1,6 +1,6 @@
-import { useListContainersQuery } from '../../store/container/api'
 import {
   type Container as ContainerType,
+  type ListContainersIf,
   type UpdateContainerIf
 } from '../../core/container/types'
 
@@ -9,11 +9,12 @@ import LoadingIndicator from '../common/LoadingIndicator'
 import Container from './Container'
 
 interface Props {
+  listContainersIf: ListContainersIf
   updateContainerIf: UpdateContainerIf
 }
 
 function Containers (props: Props): JSX.Element {
-  const { data: containerData, isLoading } = useListContainersQuery()
+  const { data: containerData, isLoading } = props.listContainersIf.useList()
 
   const containerArray = containerData?.containers === undefined
     ? []
