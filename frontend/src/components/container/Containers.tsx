@@ -1,11 +1,18 @@
 import { useListContainersQuery } from '../../store/container/api'
-import { type Container as ContainerType } from '../../core/container/types'
+import {
+  type Container as ContainerType,
+  type UpdateContainerIf
+} from '../../core/container/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
 import Container from './Container'
 
-function Containers (): JSX.Element {
+interface Props {
+  updateContainerIf: UpdateContainerIf
+}
+
+function Containers (props: Props): JSX.Element {
   const { data: containerData, isLoading } = useListContainersQuery()
 
   const containerArray = containerData?.containers === undefined
@@ -25,7 +32,10 @@ function Containers (): JSX.Element {
       <ul>
         {containers.map((container: ContainerType) => (
           <li key={container.id} className='RowLike'>
-            <Container container={container} />
+            <Container
+              container={container}
+              updateContainerIf={props.updateContainerIf}
+              />
           </li>
         ))}
       </ul>

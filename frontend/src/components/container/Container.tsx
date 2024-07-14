@@ -1,6 +1,9 @@
 import { useState } from 'react'
 
-import { type Container as ContainerType } from '../../core/container/types'
+import {
+  type Container as ContainerType,
+  type UpdateContainerIf
+} from '../../core/container/types'
 
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'
@@ -11,6 +14,7 @@ import '../common/FlexRow.css'
 
 interface Props {
   container: ContainerType
+  updateContainerIf: UpdateContainerIf
 }
 
 function Container (props: Props): JSX.Element {
@@ -44,6 +48,7 @@ function Container (props: Props): JSX.Element {
             onSaved={() => {
               setMode(EditableMode.View)
             }}
+            updateContainerIf={props.updateContainerIf}
           />
         </div>
       )}

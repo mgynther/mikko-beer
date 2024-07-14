@@ -1,7 +1,9 @@
 import { useState } from 'react'
 
-import { useUpdateContainerMutation } from '../../store/container/api'
-import { type Container } from '../../core/container/types'
+import {
+  type Container,
+  type UpdateContainerIf
+} from '../../core/container/types'
 
 import EditActions from '../common/EditActions'
 
@@ -9,6 +11,7 @@ import ContainerEditor from './ContainerEditor'
 
 interface Props {
   initialContainer: Container
+  updateContainerIf: UpdateContainerIf
   onCancel: () => void
   onSaved: () => void
 }
@@ -16,14 +19,12 @@ interface Props {
 function UpdateContainer (props: Props): JSX.Element {
   const [newContainer, setNewContainer] =
     useState<Container | undefined>(undefined)
-  const [updateContainer, { isLoading }] =
-    useUpdateContainerMutation()
   async function update (): Promise<void> {
     if (newContainer === undefined) {
       throw new Error('container must not be undefined when updating')
     }
     try {
-      await updateContainer({ ...newContainer })
+      await props.updateContainerIf.update({ ...newContainer })
       props.onSaved()
     } catch (e) {
       console.warn('Failed to update container', e)
@@ -39,7 +40,7 @@ function UpdateContainer (props: Props): JSX.Element {
       />
       <EditActions
         isSaveDisabled={newContainer === undefined}
-        isSaving={isLoading}
+        isSaving={props.updateContainerIf.isLoading}
         onCancel={() => {
           setNewContainer(undefined)
           props.onCancel()

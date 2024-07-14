@@ -17,3 +17,8 @@ export interface CreateContainerIf {
   create: (container: ContainerRequest) => Promise<Container>
   isLoading: boolean
 }
+
+export interface UpdateContainerIf {
+  update: (container: Container) => Promise<void>
+  isLoading: boolean
+}

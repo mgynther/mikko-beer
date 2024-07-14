@@ -24,13 +24,18 @@ import Style from './components/style/Style'
 import Styles from './components/style/Styles'
 import Users from './components/user/Users'
 
-import { useCreateContainerMutation } from './store/container/api'
+import {
+  useCreateContainerMutation,
+  useUpdateContainerMutation
+} from './store/container/api'
 import { useLogoutMutation } from './store/login/api'
 import { type Login, selectLogin } from './store/login/reducer'
 import { Theme, selectTheme, setTheme } from './store/theme/reducer'
 import {
+  type Container,
   type ContainerRequest,
-  type CreateContainerIf
+  type CreateContainerIf,
+  type UpdateContainerIf
 } from './core/container/types'
 
 interface LayoutProps {
@@ -150,13 +155,22 @@ function App (): JSX.Element {
 
   const [
     createContainer,
-    { isLoading: isCreating }
+    { isLoading: isCreatingContainer }
   ] = useCreateContainerMutation()
   const createContainerIf: CreateContainerIf = {
     create: async (containerRequest: ContainerRequest) => {
       return (await createContainer(containerRequest).unwrap()).container
     },
-    isLoading: isCreating
+    isLoading: isCreatingContainer
+  }
+
+  const [updateContainer, { isLoading: isUpdatingContainer }] =
+    useUpdateContainerMutation()
+  const updateContainerIf: UpdateContainerIf = {
+    update: async (container: Container) => {
+      await updateContainer(container)
+    },
+    isLoading: isUpdatingContainer
   }
 
   return (
@@ -203,7 +217,9 @@ function App (): JSX.Element {
                 <Route path="breweries/:breweryId" element={
                   <Brewery createContainerIf={createContainerIf} />
                 } />
-                <Route path="containers" element={<Containers />} />
+                <Route path="containers" element={
+                  <Containers updateContainerIf={updateContainerIf}/>
+                } />
                 <Route path="reviews" element={
                   <Reviews createContainerIf={createContainerIf} />
                 } />
