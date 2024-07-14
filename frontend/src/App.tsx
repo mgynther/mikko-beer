@@ -33,7 +33,7 @@ import {
   useListContainersQuery,
   useUpdateContainerMutation
 } from './store/container/api'
-import { useLogoutMutation } from './store/login/api'
+import { useLoginMutation, useLogoutMutation } from './store/login/api'
 import { type Login, selectLogin } from './store/login/reducer'
 import { Theme, selectTheme, setTheme } from './store/theme/reducer'
 import {
@@ -67,6 +67,7 @@ import type {
   StyleWithParentIds,
   UpdateStyleIf
 } from './core/style/types'
+import type { LoginIf, LoginParams } from './core/login/types'
 
 interface LayoutProps {
   isAdmin: boolean
@@ -328,6 +329,18 @@ function App (): JSX.Element {
     }
   }
 
+  const loginIf: LoginIf = {
+    useLogin: () => {
+      const [login, { isLoading }] = useLoginMutation()
+      return {
+        login: async (loginParams: LoginParams) => {
+          await login(loginParams)
+        },
+        isLoading
+      }
+    }
+  }
+
   return (
     <div className="App">
       <div className="AppContent">
@@ -352,7 +365,7 @@ function App (): JSX.Element {
             }>
             <Route index element={isLoggedIn
               ? <Beers />
-              : <LoginComponent />}
+              : <LoginComponent loginIf={loginIf} />}
             />
             {isLoggedIn && (
               <React.Fragment>
@@ -424,7 +437,8 @@ function App (): JSX.Element {
             )}
             <Route
               path="*"
-              element={isLoggedIn ? <Beers /> : <LoginComponent />} />
+              element={isLoggedIn ?
+                <Beers /> : <LoginComponent loginIf={loginIf}/>} />
           </Route>
         </Routes>
         <div id='content-end'>&nbsp;</div>

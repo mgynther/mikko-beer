@@ -1,9 +1,13 @@
-import { useLoginMutation } from '../../store/login/api'
+import type { LoginIf } from '../../core/login/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
-function Login (): JSX.Element {
-  const [login, { isLoading }] = useLoginMutation()
+interface Props {
+  loginIf: LoginIf
+}
+
+function Login (props: Props): JSX.Element {
+  const { login, isLoading } = props.loginIf.useLogin()
 
   async function doLogin (event: any): Promise<void> {
     event.preventDefault()

@@ -17,3 +17,10 @@ export interface LogoutParams {
     refreshToken: string
   }
 }
+
+export interface LoginIf {
+  useLogin: () => {
+    login: (login: LoginParams) => Promise<void>
+    isLoading: boolean
+  }
+}
