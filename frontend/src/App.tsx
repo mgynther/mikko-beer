@@ -54,13 +54,16 @@ import {
 } from './core/review/types'
 import {
   useCreateStyleMutation,
-  useListStylesQuery
+  useListStylesQuery,
+  useUpdateStyleMutation
 } from './store/style/api'
 import type {
   CreateStyleIf,
   CreateStyleRequest,
   ListStylesIf,
-  SelectStyleIf
+  SelectStyleIf,
+  StyleWithParentIds,
+  UpdateStyleIf
 } from './core/style/types'
 
 interface LayoutProps {
@@ -296,6 +299,23 @@ function App (): JSX.Element {
     list: listStylesIf
   }
 
+  const updateStyleIf: UpdateStyleIf = {
+    useUpdate: () => {
+      const [
+        updateStyle,
+        { isError, isLoading, isSuccess }
+      ] = useUpdateStyleMutation()
+      return {
+        update: async (style: StyleWithParentIds) => {
+          await updateStyle(style)
+        },
+        hasError: isError,
+        isLoading,
+        isSuccess
+      }
+    }
+  }
+
   return (
     <div className="App">
       <div className="AppContent">
@@ -371,6 +391,7 @@ function App (): JSX.Element {
                   <Style
                     reviewContainerIf={reviewContainerIf}
                     selectStyleIf={selectStyleIf}
+                    updateStyleIf={updateStyleIf}
                   />
                 } />
                 {isAdmin && <Route path="users" element={

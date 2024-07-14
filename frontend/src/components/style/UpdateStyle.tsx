@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 
-import { useGetStyleQuery, useUpdateStyleMutation } from '../../store/style/api'
+import { useGetStyleQuery } from '../../store/style/api'
 import type {
   ListStylesIf,
-  StyleWithParentIds
+  StyleWithParentIds,
+  UpdateStyleIf
 } from '../../core/style/types'
 
 import EditActions from '../common/EditActions'
@@ -13,6 +14,7 @@ import StyleEditor from './StyleEditor'
 
 interface Props {
   listStylesIf: ListStylesIf
+  updateStyleIf: UpdateStyleIf
   initialStyle: StyleWithParentIds
   onCancel: () => void
   onSaved: () => void
@@ -22,8 +24,8 @@ function UpdateStyle (props: Props): JSX.Element {
   const { data: styleWithParents } = useGetStyleQuery(props.initialStyle.id)
   const [newStyle, setNewStyle] =
     useState<StyleWithParentIds | undefined>(undefined)
-  const [updateStyle, { isError, isLoading, isSuccess }] =
-    useUpdateStyleMutation()
+  const { update, hasError, isLoading, isSuccess } =
+    props.updateStyleIf.useUpdate()
   const onSaved = props.onSaved
 
   useEffect(() => {
@@ -32,12 +34,12 @@ function UpdateStyle (props: Props): JSX.Element {
     }
   }, [isSuccess, onSaved])
 
-  async function update (): Promise<void> {
+  async function doUpdate (): Promise<void> {
     if (newStyle === undefined) {
       throw new Error('style must not be undefined when updating')
     }
     try {
-      await updateStyle({ ...newStyle }).unwrap()
+      await update({ ...newStyle })
     } catch (e) {
       console.warn('Failed to update style', e)
     }
@@ -49,7 +51,7 @@ function UpdateStyle (props: Props): JSX.Element {
         <StyleEditor
           initialStyle={styleWithParents.style}
           listStylesIf={props.listStylesIf}
-          hasError={isError}
+          hasError={hasError}
           onChange={(style: StyleWithParentIds | undefined) => {
             setNewStyle(style)
           }}
@@ -62,7 +64,7 @@ function UpdateStyle (props: Props): JSX.Element {
           setNewStyle(undefined)
           props.onCancel()
         }}
-        onSave={() => { void update() }}
+        onSave={() => { void doUpdate() }}
       />
     </>
   )

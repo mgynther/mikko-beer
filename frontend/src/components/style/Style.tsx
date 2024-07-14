@@ -5,7 +5,8 @@ import { useParams } from 'react-router-dom'
 import type {
   SelectStyleIf,
   Style as StyleType,
-  StyleWithParentIds
+  StyleWithParentIds,
+  UpdateStyleIf
 } from '../../core/style/types'
 
 import { useGetStyleQuery } from '../../store/style/api'
@@ -49,6 +50,7 @@ function NoLinks (props: NoLinksProps): JSX.Element | null {
 interface Props {
   selectStyleIf: SelectStyleIf
   reviewContainerIf: ReviewContainerIf
+  updateStyleIf: UpdateStyleIf
 }
 
 function Style (props: Props): JSX.Element {
@@ -116,6 +118,7 @@ function Style (props: Props): JSX.Element {
           <UpdateStyle
             initialStyle={initialStyle}
             listStylesIf={props.selectStyleIf.list}
+            updateStyleIf={props.updateStyleIf}
             onCancel={() => {
               setInitialStyle(undefined)
               setMode(EditableMode.View)

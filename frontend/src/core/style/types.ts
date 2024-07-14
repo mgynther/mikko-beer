@@ -46,3 +46,12 @@ export interface SelectStyleIf {
   create: CreateStyleIf,
   list: ListStylesIf
 }
+
+export interface UpdateStyleIf {
+  useUpdate: () => {
+    update: (style: StyleWithParentIds) => Promise<void>
+    hasError: boolean
+    isLoading: boolean
+    isSuccess: boolean
+  }
+}
