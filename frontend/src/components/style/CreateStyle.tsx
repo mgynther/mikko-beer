@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
 
-import { useCreateStyleMutation } from '../../store/style/api'
-import { type Style, type StyleWithParentIds } from '../../core/style/types'
+import type {
+  SelectStyleIf,
+  Style,
+  StyleWithParentIds
+} from '../../core/style/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
@@ -10,29 +13,28 @@ import StyleEditor from './StyleEditor'
 import './CreateStyle.css'
 
 export interface Props {
+  selectStyleIf: SelectStyleIf
   select: (style: Style) => void
   remove: () => void
 }
 
 function CreateStyle (props: Props): JSX.Element {
   const [style, setStyle] = useState<StyleWithParentIds | undefined>(undefined)
-  const [
-    createStyle,
-    { data: createdStyle, isError, isLoading: isCreating, isSuccess }
-  ] = useCreateStyleMutation()
+  const { create, createdStyle, hasError, isLoading, isSuccess } =
+    props.selectStyleIf.create.useCreate()
 
   const select = props.select
 
   useEffect(() => {
     if (isSuccess && createdStyle !== undefined) {
-      select(createdStyle.style)
+      select(createdStyle)
     }
   }, [isSuccess, select, createdStyle])
 
   async function doCreate (): Promise<void> {
     if (style === undefined) return
     try {
-      await createStyle({
+      await create({
         name: style.name,
         parents: style.parents
       })
@@ -50,7 +52,8 @@ function CreateStyle (props: Props): JSX.Element {
           name: '',
           parents: []
         }}
-        hasError={isError}
+        listStylesIf={props.selectStyleIf.list}
+        hasError={hasError}
       />
       <div className='ButtonContainer'>
         <button
@@ -61,7 +64,7 @@ function CreateStyle (props: Props): JSX.Element {
         </button>
         <button onClick={() => { props.remove() }}>Remove</button>
       </div>
-      <LoadingIndicator isLoading={isCreating} />
+      <LoadingIndicator isLoading={isLoading} />
     </div>
   )
 }

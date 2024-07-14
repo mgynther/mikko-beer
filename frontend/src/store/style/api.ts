@@ -2,19 +2,15 @@ import { emptySplitApi } from '../api'
 
 import { ReviewTags } from '../review/types'
 import { StorageTags } from '../storage/types'
-import {
-  type Style,
-  type StyleList,
-  type StyleWithParentIds,
-  type StyleWithParentsAndChildren
+import type {
+  CreateStyleRequest,
+  Style,
+  StyleList,
+  StyleWithParentIds,
+  StyleWithParentsAndChildren
 } from '../../core/style/types'
 import { StyleTags } from './types'
 import { styleStatsTagTypes } from '../stats/types'
-
-interface StyleRequest {
-  name: string
-  parents: string[]
-}
 
 const styleApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
@@ -32,8 +28,8 @@ const styleApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [StyleTags.Style]
     }),
-    createStyle: build.mutation<{ style: Style }, Partial<StyleRequest>>({
-      query: (style: StyleRequest) => ({
+    createStyle: build.mutation<{ style: Style }, Partial<CreateStyleRequest>>({
+      query: (style: CreateStyleRequest) => ({
         url: '/style',
         method: 'POST',
         body: {

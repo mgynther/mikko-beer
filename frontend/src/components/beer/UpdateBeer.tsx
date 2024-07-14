@@ -6,8 +6,10 @@ import { type Beer, type BeerWithIds } from '../../core/beer/types'
 import EditActions from '../common/EditActions'
 
 import BeerEditor from './BeerEditor'
+import type { SelectStyleIf } from '../../core/style/types'
 
 interface Props {
+  selectStyleIf: SelectStyleIf
   initialBeer: Beer
   onCancel: () => void
   onSaved: () => void
@@ -31,6 +33,7 @@ function UpdateBeer (props: Props): JSX.Element {
   return (
     <>
       <BeerEditor
+        selectStyleIf={props.selectStyleIf}
         initialBeer={props.initialBeer}
         onChange={(beer: BeerWithIds | undefined) => {
           setNewBeer(beer)

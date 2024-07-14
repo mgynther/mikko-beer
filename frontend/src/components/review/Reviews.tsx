@@ -14,11 +14,13 @@ import ReviewList from './ReviewList'
 
 import './Review.css'
 import { type ReviewContainerIf } from '../../core/review/types'
+import type { SelectStyleIf } from '../../core/style/types'
 
 const pageSize = 20
 
 interface Props {
   reviewContainerIf: ReviewContainerIf
+  selectStyleIf: SelectStyleIf
 }
 
 function Reviews (props: Props): JSX.Element {
@@ -85,6 +87,7 @@ function Reviews (props: Props): JSX.Element {
       <h3>Reviews</h3>
       <ReviewList
         reviewContainerIf={props.reviewContainerIf}
+        selectStyleIf={props.selectStyleIf}
         isLoading={isLoading}
         isTitleVisible={false}
         reviews={loadedReviews}

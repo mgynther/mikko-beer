@@ -52,6 +52,16 @@ import {
 import {
   type ReviewContainerIf
 } from './core/review/types'
+import {
+  useCreateStyleMutation,
+  useListStylesQuery
+} from './store/style/api'
+import type {
+  CreateStyleIf,
+  CreateStyleRequest,
+  ListStylesIf,
+  SelectStyleIf
+} from './core/style/types'
 
 interface LayoutProps {
   isAdmin: boolean
@@ -253,6 +263,39 @@ function App (): JSX.Element {
     }
   }
 
+  const createStyleIf: CreateStyleIf = {
+    useCreate: () => {
+      const [
+        createStyle,
+        { data, isError, isLoading, isSuccess }
+      ] = useCreateStyleMutation()
+      return {
+        create: async (style: CreateStyleRequest) => {
+          await createStyle(style)
+        },
+        createdStyle: data?.style,
+        hasError: isError,
+        isLoading,
+        isSuccess
+      }
+    }
+  }
+
+  const listStylesIf: ListStylesIf = {
+    useList: () => {
+      const { data, isLoading } = useListStylesQuery()
+      return {
+        styles: data?.styles,
+        isLoading
+      }
+    }
+  }
+
+  const selectStyleIf: SelectStyleIf = {
+    create: createStyleIf,
+    list: listStylesIf
+  }
+
   return (
     <div className="App">
       <div className="AppContent">
@@ -282,20 +325,32 @@ function App (): JSX.Element {
             {isLoggedIn && (
               <React.Fragment>
                 {isAdmin && <Route path="addreview" element={
-                  <AddReview reviewContainerIf={reviewContainerIf} />
+                  <AddReview
+                    reviewContainerIf={reviewContainerIf}
+                    selectStyleIf={selectStyleIf}
+                  />
                 } />}
                 {isAdmin &&
                   <Route path="addreview/:storageId" element={
-                    <AddReview reviewContainerIf={reviewContainerIf} />
+                    <AddReview
+                      reviewContainerIf={reviewContainerIf}
+                      selectStyleIf={selectStyleIf}
+                    />
                 } />
                 }
                 <Route path="beers" element={<Beers />} />
                 <Route path="beers/:beerId" element={
-                  <Beer reviewContainerIf={reviewContainerIf} />
+                  <Beer
+                    reviewContainerIf={reviewContainerIf}
+                    selectStyleIf={selectStyleIf}
+                  />
                 } />
                 <Route path="breweries" element={<Breweries />} />
                 <Route path="breweries/:breweryId" element={
-                  <Brewery reviewContainerIf={reviewContainerIf} />
+                  <Brewery
+                    reviewContainerIf={reviewContainerIf}
+                    selectStyleIf={selectStyleIf}
+                  />
                 } />
                 <Route path="containers" element={
                   <Containers
@@ -304,11 +359,18 @@ function App (): JSX.Element {
                     />
                 } />
                 <Route path="reviews" element={
-                  <Reviews reviewContainerIf={reviewContainerIf} />
+                  <Reviews
+                    reviewContainerIf={reviewContainerIf}
+                    selectStyleIf={selectStyleIf}
+                  />
                 } />
-                <Route path="styles" element={<Styles />} />
+                <Route path="styles" element={
+                  <Styles listStylesIf={listStylesIf} />
+                } />
                 <Route path="styles/:styleId" element={
-                  <Style reviewContainerIf={reviewContainerIf}
+                  <Style
+                    reviewContainerIf={reviewContainerIf}
+                    selectStyleIf={selectStyleIf}
                   />
                 } />
                 {isAdmin && <Route path="users" element={
@@ -319,7 +381,10 @@ function App (): JSX.Element {
                   <Stats breweryId={undefined} styleId={undefined} />
                 } />
                 <Route path="storage" element={
-                  <Storages reviewContainerIf={reviewContainerIf} />
+                  <Storages
+                    reviewContainerIf={reviewContainerIf}
+                    selectStyleIf={selectStyleIf}
+                  />
                 } />
               </React.Fragment>
             )}

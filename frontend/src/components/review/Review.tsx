@@ -16,9 +16,11 @@ import UpdateReview from './UpdateReview'
 
 import './Review.css'
 import { type ReviewContainerIf } from '../../core/review/types'
+import type { SelectStyleIf } from '../../core/style/types'
 
 interface Props {
   reviewContainerIf: ReviewContainerIf
+  selectStyleIf: SelectStyleIf
   review: JoinedReview
   onChanged: () => void
 }
@@ -111,6 +113,7 @@ function Review (props: Props): JSX.Element {
         <>
           <UpdateReview
             reviewContainerIf={props.reviewContainerIf}
+            selectStyleIf={props.selectStyleIf}
             initialReview={{
               joined: review,
               review: fullReview

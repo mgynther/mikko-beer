@@ -1,7 +1,10 @@
 import { Fragment, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
-import { type Style } from '../../core/style/types'
+import type {
+  SelectStyleIf,
+  Style
+} from '../../core/style/types'
 
 import SelectStyle from './SelectStyle'
 
@@ -10,6 +13,7 @@ import '../common/SelectedItem.css'
 import './SelectStyles.css'
 
 export interface Props {
+  selectStyleIf: SelectStyleIf
   initialStyles: Style[]
   select: (styles: string[]) => void
 }
@@ -20,6 +24,7 @@ interface StyleSelection {
 }
 
 interface SelectionItemProps {
+  selectStyleIf: SelectStyleIf
   style: Style | undefined
   select: (style: Style) => void
   remove: () => void
@@ -31,6 +36,7 @@ function SelectionItem (props: SelectionItemProps): JSX.Element {
     <Fragment>
       {props.style === undefined && (
         <SelectStyle
+          selectStyleIf={props.selectStyleIf}
           select={props.select}
           remove={props.remove}
         />
@@ -89,6 +95,7 @@ function SelectStyles (props: Props): JSX.Element {
       {selections.map((selection, selectionIndex) => (
         <SelectionItem
           key={selection.id}
+          selectStyleIf={props.selectStyleIf}
           style={selection.style}
           select={(style) => {
             const newStyles = [...selections]

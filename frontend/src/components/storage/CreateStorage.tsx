@@ -10,8 +10,10 @@ import SelectBeer from '../beer/SelectBeer'
 import SelectContainer from '../container/SelectContainer'
 
 import './CreateStorage.css'
+import type { SelectStyleIf } from '../../core/style/types'
 
 interface Props {
+  selectStyleIf: SelectStyleIf
   reviewContainerIf: ReviewContainerIf
 }
 
@@ -56,9 +58,12 @@ function CreateStorage (props: Props): JSX.Element {
         <h5>Beer</h5>
         <div className='CreateStorageContent'>
           {beer === undefined
-            ? <SelectBeer select={(beer: BeerWithIds) => {
-              setBeer(beer)
-            }} />
+            ? <SelectBeer
+                selectStyleIf={props.selectStyleIf}
+                select={(beer: BeerWithIds) => {
+                  setBeer(beer)
+                }}
+              />
             : (<div className='FlexRow'>
                   <div>{beer.name}</div>
                   <div>

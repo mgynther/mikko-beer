@@ -7,8 +7,10 @@ import { Role } from '../../core/user/types'
 
 import CreateStorage from './CreateStorage'
 import StorageList from './StorageList'
+import type { SelectStyleIf } from '../../core/style/types'
 
 interface Props {
+  selectStyleIf: SelectStyleIf
   reviewContainerIf: ReviewContainerIf
 }
 
@@ -32,7 +34,10 @@ function Storages (props: Props): JSX.Element {
       <hr/>
       {isAdmin && (
         <div>
-          <CreateStorage reviewContainerIf={props.reviewContainerIf} />
+          <CreateStorage
+            selectStyleIf={props.selectStyleIf}
+            reviewContainerIf={props.reviewContainerIf}
+          />
         </div>
       )}
     </div>

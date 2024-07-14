@@ -1,13 +1,21 @@
 import { useNavigate } from 'react-router-dom'
 
 import { useListStylesQuery } from '../../store/style/api'
-import { type Style, type StyleWithParentIds } from '../../core/style/types'
+import type {
+  ListStylesIf,
+  Style,
+  StyleWithParentIds
+} from '../../core/style/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 import SearchStyle from './SearchStyle'
 import StyleLink from './StyleLink'
 
-function Styles (): JSX.Element {
+interface Props {
+  listStylesIf: ListStylesIf
+}
+
+function Styles (props: Props): JSX.Element {
   const navigate = useNavigate()
   const { data: styleData, isLoading } = useListStylesQuery()
 
@@ -20,9 +28,12 @@ function Styles (): JSX.Element {
   return (
     <div>
       <h3>Styles</h3>
-      <SearchStyle select={(style: Style) => {
-        navigate(`/styles/${style.id}`)
-      }} />
+      <SearchStyle
+        listStylesIf={props.listStylesIf}
+        select={(style: Style) => {
+          navigate(`/styles/${style.id}`)
+        }}
+      />
       <LoadingIndicator isLoading={isLoading} />
       <ul>
         {styles.map((style: StyleWithParentIds) => (

@@ -24,7 +24,8 @@ import StyleLinks from '../style/StyleLinks'
 import UpdateBeer from './UpdateBeer'
 
 import './Beer.css'
-import { type ReviewContainerIf } from '../../core/review/types'
+import type { ReviewContainerIf } from '../../core/review/types'
+import type { SelectStyleIf } from '../../core/style/types'
 
 function NotFound (): JSX.Element {
   return <div>Not found</div>
@@ -32,6 +33,7 @@ function NotFound (): JSX.Element {
 
 interface Props {
   reviewContainerIf: ReviewContainerIf
+  selectStyleIf: SelectStyleIf
 }
 
 function Beer (props: Props): JSX.Element {
@@ -92,6 +94,7 @@ function Beer (props: Props): JSX.Element {
       {mode === EditableMode.Edit && initialBeer !== undefined && (
         <UpdateBeer
           initialBeer={initialBeer}
+          selectStyleIf={props.selectStyleIf}
           onCancel={() => {
             setInitialBeer(undefined)
             setMode(EditableMode.View)
@@ -110,6 +113,7 @@ function Beer (props: Props): JSX.Element {
       )}
       <ReviewList
         reviewContainerIf={props.reviewContainerIf}
+        selectStyleIf={props.selectStyleIf}
         isLoading={isLoadingReviews}
         isTitleVisible={true}
         reviews={reviewData?.reviews ?? []}

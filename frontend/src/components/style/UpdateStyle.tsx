@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
 
 import { useGetStyleQuery, useUpdateStyleMutation } from '../../store/style/api'
-import { type StyleWithParentIds } from '../../core/style/types'
+import type {
+  ListStylesIf,
+  StyleWithParentIds
+} from '../../core/style/types'
 
 import EditActions from '../common/EditActions'
 import LoadingIndicator from '../common/LoadingIndicator'
@@ -9,6 +12,7 @@ import LoadingIndicator from '../common/LoadingIndicator'
 import StyleEditor from './StyleEditor'
 
 interface Props {
+  listStylesIf: ListStylesIf
   initialStyle: StyleWithParentIds
   onCancel: () => void
   onSaved: () => void
@@ -44,6 +48,7 @@ function UpdateStyle (props: Props): JSX.Element {
       {styleWithParents !== undefined &&
         <StyleEditor
           initialStyle={styleWithParents.style}
+          listStylesIf={props.listStylesIf}
           hasError={isError}
           onChange={(style: StyleWithParentIds | undefined) => {
             setNewStyle(style)

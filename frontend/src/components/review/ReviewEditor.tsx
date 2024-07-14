@@ -13,6 +13,7 @@ import { pad } from '../util'
 import '../common/FlexRow.css'
 
 import './ReviewEditor.css'
+import type { SelectStyleIf } from '../../core/style/types'
 
 export interface InitialReview {
   joined: JoinedReview
@@ -21,6 +22,7 @@ export interface InitialReview {
 
 interface Props {
   reviewContainerIf: ReviewContainerIf
+  selectStyleIf: SelectStyleIf
   initialReview: InitialReview | undefined
   isFromStorage: boolean
   onChange: (review: ReviewRequest | undefined) => void
@@ -125,9 +127,12 @@ function ReviewEditor (props: Props): JSX.Element {
         <h5>Beer</h5>
         <div className='ReviewContent'>
           {beer === undefined
-            ? <SelectBeer select={(beer: BeerWithIds) => {
-              setBeer(beer)
-            }} />
+            ? <SelectBeer
+              select={(beer: BeerWithIds) => {
+                setBeer(beer)
+              }}
+              selectStyleIf={props.selectStyleIf}
+              />
             : (<div className='FlexRow'>
                   <div>{beer.name}</div>
                   {!props.isFromStorage && (

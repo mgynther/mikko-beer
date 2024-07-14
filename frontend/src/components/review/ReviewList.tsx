@@ -12,6 +12,7 @@ import Review from './Review'
 
 import './ReviewList.css'
 import { type ReviewContainerIf } from '../../core/review/types'
+import type { SelectStyleIf } from '../../core/style/types'
 
 interface HeadingProps {
   sorting: ReviewSorting | undefined
@@ -99,6 +100,7 @@ export function ReviewHeading (
 
 interface Props {
   reviewContainerIf: ReviewContainerIf
+  selectStyleIf: SelectStyleIf
   isLoading: boolean
   isTitleVisible: boolean
   reviews: JoinedReview[]
@@ -124,6 +126,7 @@ function ReviewList (props: Props): JSX.Element {
             return (
               <Review
                 reviewContainerIf={props.reviewContainerIf}
+                selectStyleIf={props.selectStyleIf}
                 key={review.id}
                 review={review}
                 onChanged={props.onChanged}

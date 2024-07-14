@@ -1,6 +1,9 @@
 import { useState } from 'react'
 
-import { type Style } from '../../core/style/types'
+import type {
+  SelectStyleIf,
+  Style
+} from '../../core/style/types'
 
 import { Mode, SelectCreateRadioBasic } from '../common/SelectCreateRadio'
 
@@ -10,6 +13,7 @@ import SearchStyle from './SearchStyle'
 import './SelectStyle.css'
 
 export interface Props {
+  selectStyleIf: SelectStyleIf
   select: (style: Style) => void
   remove: () => void
 }
@@ -25,12 +29,19 @@ function SelectStyle (props: Props): JSX.Element {
       <div className='SelectStyleContent'>
         {mode === Mode.CREATE && (
           <>
-            <CreateStyle select={props.select} remove={props.remove} />
+            <CreateStyle
+              selectStyleIf={props.selectStyleIf}
+              select={props.select}
+              remove={props.remove}
+            />
           </>
         )}
         {mode === Mode.SELECT && (
           <>
-            <SearchStyle select={props.select} />
+            <SearchStyle
+              listStylesIf={props.selectStyleIf.list}
+              select={props.select}
+            />
             <button onClick={props.remove}>Remove</button>
           </>
         )}

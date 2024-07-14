@@ -1,13 +1,15 @@
 import { useState } from 'react'
 
-import {
-  type StyleWithParents,
-  type StyleWithParentIds
+import type {
+  ListStylesIf,
+  StyleWithParents,
+  StyleWithParentIds
 } from '../../core/style/types'
 
 import StyleParents from './StyleParents'
 
 interface Props {
+  listStylesIf: ListStylesIf
   initialStyle: StyleWithParents
   hasError: boolean
   onChange: (style: StyleWithParentIds | undefined) => void
@@ -47,6 +49,7 @@ function StyleEditor (props: Props): JSX.Element {
       </div>
       <StyleParents
         initialParents={props.initialStyle.parents}
+        listStylesIf={props.listStylesIf}
         select={(parents) => {
           setParents(parents)
           onChange(name, parents)

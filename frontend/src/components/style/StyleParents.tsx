@@ -1,6 +1,9 @@
 import { useState } from 'react'
 
-import { type Style } from '../../core/style/types'
+import type {
+  ListStylesIf,
+  Style
+} from '../../core/style/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
@@ -9,6 +12,7 @@ import SearchStyle from './SearchStyle'
 import '../common/SelectedItem.css'
 
 export interface Props {
+  listStylesIf: ListStylesIf
   initialParents: Style[]
   select: (parents: string[]) => void
 }
@@ -24,11 +28,14 @@ function StyleParents (props: Props): JSX.Element {
   return (
     <div>
       <h6>Parents</h6>
-      <SearchStyle select={(style) => {
-        const newParents = [...parents]
-        newParents.push(style)
-        setParents(newParents)
-      }} />
+      <SearchStyle
+        listStylesIf={props.listStylesIf}
+        select={(style) => {
+          const newParents = [...parents]
+          newParents.push(style)
+          setParents(newParents)
+        }}
+      />
       <div>
         {parents.map((parent, index) => (
           <div key={parent.id} className='SelectedItem'>
