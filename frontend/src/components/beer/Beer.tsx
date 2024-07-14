@@ -2,8 +2,10 @@ import { useState } from 'react'
 
 import { useParams } from 'react-router-dom'
 
-import { useGetBeerQuery } from '../../store/beer/api'
-import { type Beer as BeerType } from '../../core/beer/types'
+import type {
+  GetBeerIf,
+  Beer as BeerType
+} from '../../core/beer/types'
 import { useListReviewsByBeerQuery } from '../../store/review/api'
 import {
   type ReviewSorting,
@@ -33,6 +35,7 @@ function NotFound (): JSX.Element {
 }
 
 interface Props {
+  getBeerIf: GetBeerIf
   getLogin: GetLogin
   reviewContainerIf: ReviewContainerIf
   selectStyleIf: SelectStyleIf
@@ -48,7 +51,7 @@ function Beer (props: Props): JSX.Element {
   if (beerId === undefined) {
     throw new Error('Beer component without beerId. Should not happen.')
   }
-  const { data: beerData, isLoading } = useGetBeerQuery(beerId)
+  const { beer, isLoading } = props.getBeerIf.useGetBeer(beerId)
   const { data: reviewData, isLoading: isLoadingReviews } =
     useListReviewsByBeerQuery({
       id: beerId,
@@ -59,8 +62,7 @@ function Beer (props: Props): JSX.Element {
     })
   const { data: storageData } = useListStoragesByBeerQuery(beerId)
   if (isLoading) return <LoadingIndicator isLoading={true} />
-  if (beerData?.beer === undefined) return <NotFound />
-  const beer = beerData.beer
+  if (beer === undefined) return <NotFound />
   return (
     <div className='Beer'>
       {mode === EditableMode.View && (
@@ -71,11 +73,11 @@ function Beer (props: Props): JSX.Element {
             </div>
             <div>
               <EditButton
-                disabled={beerData.beer === undefined}
+                disabled={beer === undefined}
                 getLogin={props.getLogin}
                 onClick={() => {
                   setMode(EditableMode.Edit)
-                  setInitialBeer({ ...beerData.beer })
+                  setInitialBeer({ ...beer })
                 }}
               />
             </div>

@@ -81,6 +81,8 @@ import type {
   LoginParams,
   PasswordChangeResult
 } from './core/login/types'
+import { type GetBeerIf } from './core/beer/types'
+import { useGetBeerQuery } from './store/beer/api'
 
 interface LayoutProps {
   isAdmin: boolean
@@ -193,6 +195,16 @@ function App (): JSX.Element {
   }, [theme])
   const dispatch = useAppDispatch()
   const [logout] = useLogoutMutation()
+
+  const getBeerIf: GetBeerIf = {
+    useGetBeer: (beerId: string) => {
+      const { data, isLoading } = useGetBeerQuery(beerId)
+      return {
+        beer: data?.beer,
+        isLoading
+      }
+    }
+  }
 
   const createContainerIf: CreateContainerIf = {
     useCreate: () => {
@@ -426,6 +438,7 @@ function App (): JSX.Element {
                 <Route path="beers" element={<Beers />} />
                 <Route path="beers/:beerId" element={
                   <Beer
+                    getBeerIf={getBeerIf}
                     getLogin={getLogin}
                     reviewContainerIf={reviewContainerIf}
                     selectStyleIf={selectStyleIf}

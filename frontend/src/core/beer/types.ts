@@ -18,3 +18,10 @@ export interface BeerWithIds {
 export interface BeerList {
   beers: Beer[]
 }
+
+export interface GetBeerIf {
+  useGetBeer: (beerId: string) => {
+    beer: Beer | undefined
+    isLoading: boolean
+  }
+}
