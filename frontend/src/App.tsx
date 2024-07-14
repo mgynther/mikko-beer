@@ -54,12 +54,14 @@ import {
 } from './core/review/types'
 import {
   useCreateStyleMutation,
+  useGetStyleQuery,
   useListStylesQuery,
   useUpdateStyleMutation
 } from './store/style/api'
 import type {
   CreateStyleIf,
   CreateStyleRequest,
+  GetStyleIf,
   ListStylesIf,
   SelectStyleIf,
   StyleWithParentIds,
@@ -284,6 +286,16 @@ function App (): JSX.Element {
     }
   }
 
+  const getStyleIf: GetStyleIf = {
+    useGet: (styleId: string) => {
+      const { data, isLoading } = useGetStyleQuery(styleId)
+      return {
+        style: data?.style,
+        isLoading
+      }
+    }
+  }
+
   const listStylesIf: ListStylesIf = {
     useList: () => {
       const { data, isLoading } = useListStylesQuery()
@@ -389,6 +401,7 @@ function App (): JSX.Element {
                 } />
                 <Route path="styles/:styleId" element={
                   <Style
+                    getStyleIf={getStyleIf}
                     reviewContainerIf={reviewContainerIf}
                     selectStyleIf={selectStyleIf}
                     updateStyleIf={updateStyleIf}

@@ -3,13 +3,13 @@ import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import type {
+  GetStyleIf,
   SelectStyleIf,
   Style as StyleType,
   StyleWithParentIds,
   UpdateStyleIf
 } from '../../core/style/types'
 
-import { useGetStyleQuery } from '../../store/style/api'
 import { useListReviewsByStyleQuery } from '../../store/review/api'
 import {
   type ReviewSorting,
@@ -48,6 +48,7 @@ function NoLinks (props: NoLinksProps): JSX.Element | null {
 }
 
 interface Props {
+  getStyleIf: GetStyleIf
   selectStyleIf: SelectStyleIf
   reviewContainerIf: ReviewContainerIf
   updateStyleIf: UpdateStyleIf
@@ -63,7 +64,7 @@ function Style (props: Props): JSX.Element {
   if (styleId === undefined) {
     throw new Error('Style component without styleId. Should not happen.')
   }
-  const { data: styleData, isLoading } = useGetStyleQuery(styleId)
+  const { style, isLoading } = props.getStyleIf.useGet(styleId)
   const { data: reviewData, isLoading: isLoadingReviews } =
     useListReviewsByStyleQuery({
       id: styleId,
@@ -74,8 +75,7 @@ function Style (props: Props): JSX.Element {
     })
   const { data: storageData } = useListStoragesByStyleQuery(styleId)
   if (isLoading) return <LoadingIndicator isLoading={true} />
-  if (styleData?.style === undefined) return <NotFound />
-  const style = styleData.style
+  if (style === undefined) return <NotFound />
   return (
     <>
       {mode === EditableMode.View && (
@@ -116,6 +116,7 @@ function Style (props: Props): JSX.Element {
       {mode === EditableMode.Edit && initialStyle !== undefined && (
         <div>
           <UpdateStyle
+            getStyleIf={props.getStyleIf}
             initialStyle={initialStyle}
             listStylesIf={props.selectStyleIf.list}
             updateStyleIf={props.updateStyleIf}

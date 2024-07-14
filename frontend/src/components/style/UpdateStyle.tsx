@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
-import { useGetStyleQuery } from '../../store/style/api'
 import type {
+  GetStyleIf,
   ListStylesIf,
   StyleWithParentIds,
   UpdateStyleIf
@@ -13,6 +13,7 @@ import LoadingIndicator from '../common/LoadingIndicator'
 import StyleEditor from './StyleEditor'
 
 interface Props {
+  getStyleIf: GetStyleIf
   listStylesIf: ListStylesIf
   updateStyleIf: UpdateStyleIf
   initialStyle: StyleWithParentIds
@@ -21,7 +22,7 @@ interface Props {
 }
 
 function UpdateStyle (props: Props): JSX.Element {
-  const { data: styleWithParents } = useGetStyleQuery(props.initialStyle.id)
+  const { style: styleWithParents } = props.getStyleIf.useGet(props.initialStyle.id)
   const [newStyle, setNewStyle] =
     useState<StyleWithParentIds | undefined>(undefined)
   const { update, hasError, isLoading, isSuccess } =
@@ -49,7 +50,7 @@ function UpdateStyle (props: Props): JSX.Element {
       {styleWithParents === undefined && <LoadingIndicator isLoading={true} />}
       {styleWithParents !== undefined &&
         <StyleEditor
-          initialStyle={styleWithParents.style}
+          initialStyle={styleWithParents}
           listStylesIf={props.listStylesIf}
           hasError={hasError}
           onChange={(style: StyleWithParentIds | undefined) => {

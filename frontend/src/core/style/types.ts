@@ -35,6 +35,13 @@ export interface CreateStyleIf {
   }
 }
 
+export interface GetStyleIf {
+  useGet: (styleId: string) => {
+    style: StyleWithParentsAndChildren | undefined
+    isLoading: boolean
+  }
+}
+
 export interface ListStylesIf {
   useList: () => {
     styles: StyleWithParentIds[] | undefined
