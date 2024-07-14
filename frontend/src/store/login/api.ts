@@ -1,16 +1,16 @@
 import { emptySplitApi } from '../api'
 
 import {
-  type Login,
   logout,
-  PasswordChangeResult,
   passwordChangeResult,
   success
 } from './reducer'
 import {
+  type Login,
   type ChangePasswordParams,
   type LoginParams,
-  type LogoutParams
+  type LogoutParams,
+  PasswordChangeResult
 } from '../../core/login/types'
 
 const loginApi = emptySplitApi.injectEndpoints({

@@ -1,21 +1,10 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
-import type { User } from '../../core/user/types'
-
-export interface Refresh {
-  authToken: string
-  refreshToken: string
-}
-
-export interface Login extends Refresh {
-  user: User | undefined
-}
-
-export enum PasswordChangeResult {
-  ERROR = 'ERROR',
-  SUCCESS = 'SUCCESS',
-  UNDEFINED = 'UNDEFINED'
-}
+import {
+  type Login,
+  type Refresh,
+  PasswordChangeResult
+} from '../../core/login/types'
 
 export interface LoginState {
   login: Login

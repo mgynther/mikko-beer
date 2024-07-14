@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom'
 
-import { useSelector } from '../../react-redux-wrapper'
-import { type Login, selectLogin } from '../../store/login/reducer'
 import { type Storage } from '../../core/storage/types'
 import { Role } from '../../core/user/types'
 
@@ -12,15 +10,20 @@ import StyleLinks from '../style/StyleLinks'
 import { formatBestBefore } from '../util'
 
 import './StorageList.css'
+import type {
+  GetLogin,
+  Login
+} from '../../core/login/types'
 
 interface Props {
+  getLogin: GetLogin
   isLoading: boolean
   isTitleVisible: boolean
   storages: Storage[]
 }
 
 function StorageList (props: Props): JSX.Element {
-  const login: Login = useSelector(selectLogin)
+  const login: Login = props.getLogin()
   const isAdmin = login?.user?.role === Role.admin
 
   return (

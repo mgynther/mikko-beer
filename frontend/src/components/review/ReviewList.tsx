@@ -13,6 +13,7 @@ import Review from './Review'
 import './ReviewList.css'
 import { type ReviewContainerIf } from '../../core/review/types'
 import type { SelectStyleIf } from '../../core/style/types'
+import type { GetLogin } from '../../core/login/types'
 
 interface HeadingProps {
   sorting: ReviewSorting | undefined
@@ -99,6 +100,7 @@ export function ReviewHeading (
 }
 
 interface Props {
+  getLogin: GetLogin
   reviewContainerIf: ReviewContainerIf
   selectStyleIf: SelectStyleIf
   isLoading: boolean
@@ -125,6 +127,7 @@ function ReviewList (props: Props): JSX.Element {
           {props.reviews.map((review) => {
             return (
               <Review
+                getLogin={props.getLogin}
                 reviewContainerIf={props.reviewContainerIf}
                 selectStyleIf={props.selectStyleIf}
                 key={review.id}

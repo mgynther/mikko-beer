@@ -3,19 +3,25 @@ import { useState } from 'react'
 import { useSelector } from '../../react-redux-wrapper'
 import { useChangePasswordMutation } from '../../store/login/api'
 import {
-  type Login,
-  PasswordChangeResult,
-  selectLogin,
   selectPasswordChangeResult
 } from '../../store/login/reducer'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
 import './ChangePassword.css'
+import {
+  type GetLogin,
+  type Login,
+  PasswordChangeResult
+} from '../../core/login/types'
 
-function ChangePassword (): JSX.Element {
+interface Props {
+  getLogin: GetLogin
+}
+
+function ChangePassword (props: Props): JSX.Element {
   const [changePassword, { isLoading }] = useChangePasswordMutation()
-  const login: Login = useSelector(selectLogin)
+  const login: Login = props.getLogin()
   const passwordChangeResult: PasswordChangeResult =
     useSelector(selectPasswordChangeResult)
 

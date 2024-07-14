@@ -1,16 +1,17 @@
-import { useSelector } from '../../react-redux-wrapper'
-
-import { type Login, selectLogin } from '../../store/login/reducer'
-
+import type { GetLogin, Login } from '../../core/login/types'
 import ChangePassword from './ChangePassword'
 
-function Account (): JSX.Element {
-  const login: Login = useSelector(selectLogin)
+interface Props {
+  getLogin: GetLogin
+}
+
+function Account (props: Props): JSX.Element {
+  const login: Login = props.getLogin()
   return (
     <div>
       <h3>Account</h3>
       <div>Username: { login.user?.username }</div>
-      <ChangePassword />
+      <ChangePassword getLogin={props.getLogin} />
     </div>
   )
 }

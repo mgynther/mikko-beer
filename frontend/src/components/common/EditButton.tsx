@@ -1,15 +1,14 @@
-import { useSelector } from '../../react-redux-wrapper'
-
-import { type Login, selectLogin } from '../../store/login/reducer'
 import { Role } from '../../core/user/types'
+import type { GetLogin, Login } from '../../core/login/types'
 
 interface Props {
   disabled: boolean
+  getLogin: GetLogin
   onClick: () => void
 }
 
 function EditButton (props: Props): JSX.Element | null {
-  const login: Login = useSelector(selectLogin)
+  const login: Login = props.getLogin()
   if (login?.user?.role !== Role.admin) {
     return null
   }

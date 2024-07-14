@@ -34,7 +34,7 @@ import {
   useUpdateContainerMutation
 } from './store/container/api'
 import { useLoginMutation, useLogoutMutation } from './store/login/api'
-import { type Login, selectLogin } from './store/login/reducer'
+import { selectLogin } from './store/login/reducer'
 import { Theme, selectTheme, setTheme } from './store/theme/reducer'
 import {
   useCreateUserMutation,
@@ -67,7 +67,12 @@ import type {
   StyleWithParentIds,
   UpdateStyleIf
 } from './core/style/types'
-import type { LoginIf, LoginParams } from './core/login/types'
+import type {
+  GetLogin,
+  Login,
+  LoginIf,
+  LoginParams
+} from './core/login/types'
 
 interface LayoutProps {
   isAdmin: boolean
@@ -169,7 +174,6 @@ function Layout (props: LayoutProps): JSX.Element {
 }
 
 function App (): JSX.Element {
-  const login: Login = useSelector(selectLogin)
   const theme: Theme = useSelector(selectTheme)
   useEffect(() => {
     const bodyElements = document.getElementsByTagName('body')
@@ -180,9 +184,7 @@ function App (): JSX.Element {
     }
   }, [theme])
   const dispatch = useAppDispatch()
-  const isLoggedIn: boolean = login.authToken?.length > 0
   const [logout] = useLogoutMutation()
-  const isAdmin = login?.user?.role === Role.admin
 
   const createContainerIf: CreateContainerIf = {
     useCreate: () => {
@@ -341,6 +343,14 @@ function App (): JSX.Element {
     }
   }
 
+  const getLogin: GetLogin = () => {
+    const login: Login = useSelector(selectLogin)
+    return login
+  }
+  const login = getLogin()
+  const isLoggedIn: boolean = login.authToken?.length > 0
+  const isAdmin = login?.user?.role === Role.admin
+
   return (
     <div className="App">
       <div className="AppContent">
@@ -386,6 +396,7 @@ function App (): JSX.Element {
                 <Route path="beers" element={<Beers />} />
                 <Route path="beers/:beerId" element={
                   <Beer
+                    getLogin={getLogin}
                     reviewContainerIf={reviewContainerIf}
                     selectStyleIf={selectStyleIf}
                   />
@@ -393,18 +404,21 @@ function App (): JSX.Element {
                 <Route path="breweries" element={<Breweries />} />
                 <Route path="breweries/:breweryId" element={
                   <Brewery
+                    getLogin={getLogin}
                     reviewContainerIf={reviewContainerIf}
                     selectStyleIf={selectStyleIf}
                   />
                 } />
                 <Route path="containers" element={
                   <Containers
+                    getLogin={getLogin}
                     listContainersIf={listContainersIf}
                     updateContainerIf={updateContainerIf}
                     />
                 } />
                 <Route path="reviews" element={
                   <Reviews
+                    getLogin={getLogin}
                     reviewContainerIf={reviewContainerIf}
                     selectStyleIf={selectStyleIf}
                   />
@@ -414,6 +428,7 @@ function App (): JSX.Element {
                 } />
                 <Route path="styles/:styleId" element={
                   <Style
+                    getLogin={getLogin}
                     getStyleIf={getStyleIf}
                     reviewContainerIf={reviewContainerIf}
                     selectStyleIf={selectStyleIf}
@@ -423,12 +438,15 @@ function App (): JSX.Element {
                 {isAdmin && <Route path="users" element={
                   <Users userIf={userIf}/>} />
                 }
-                <Route path="account" element={<Account />} />
+                <Route path="account" element={
+                  <Account getLogin={getLogin} />
+                } />
                 <Route path="stats" element={
                   <Stats breweryId={undefined} styleId={undefined} />
                 } />
                 <Route path="storage" element={
                   <Storages
+                    getLogin={getLogin}
                     reviewContainerIf={reviewContainerIf}
                     selectStyleIf={selectStyleIf}
                   />

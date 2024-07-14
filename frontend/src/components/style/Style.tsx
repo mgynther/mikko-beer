@@ -33,6 +33,7 @@ import '../common/FlexRow.css'
 
 import './Style.css'
 import { type ReviewContainerIf } from '../../core/review/types'
+import type { GetLogin } from '../../core/login/types'
 
 function NotFound (): JSX.Element {
   return <div>Not found</div>
@@ -48,6 +49,7 @@ function NoLinks (props: NoLinksProps): JSX.Element | null {
 }
 
 interface Props {
+  getLogin: GetLogin
   getStyleIf: GetStyleIf
   selectStyleIf: SelectStyleIf
   reviewContainerIf: ReviewContainerIf
@@ -87,6 +89,7 @@ function Style (props: Props): JSX.Element {
             <div>
               <EditButton
                 disabled={false}
+                getLogin={props.getLogin}
                 onClick={() => {
                   setMode(EditableMode.Edit)
                   setInitialStyle({
@@ -133,12 +136,14 @@ function Style (props: Props): JSX.Element {
       <Stats breweryId={undefined} styleId={styleId} />
       {(storageData?.storages ?? []).length > 0 && (
         <StorageList
+          getLogin={props.getLogin}
           isLoading={isLoadingReviews}
           isTitleVisible={true}
           storages={storageData?.storages ?? []}
         />
       )}
       <ReviewList
+        getLogin={props.getLogin}
         reviewContainerIf={props.reviewContainerIf}
         selectStyleIf={props.selectStyleIf}
         isLoading={isLoadingReviews}

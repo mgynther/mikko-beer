@@ -17,8 +17,10 @@ import UpdateReview from './UpdateReview'
 import './Review.css'
 import { type ReviewContainerIf } from '../../core/review/types'
 import type { SelectStyleIf } from '../../core/style/types'
+import type { GetLogin } from '../../core/login/types'
 
 interface Props {
+  getLogin: GetLogin
   reviewContainerIf: ReviewContainerIf
   selectStyleIf: SelectStyleIf
   review: JoinedReview
@@ -99,6 +101,7 @@ function Review (props: Props): JSX.Element {
                 <div>
                   <EditButton
                     disabled={fullReview === undefined}
+                    getLogin={props.getLogin}
                     onClick={() => {
                       setMode(EditableMode.Edit)
                     }}

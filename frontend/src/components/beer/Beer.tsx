@@ -26,12 +26,14 @@ import UpdateBeer from './UpdateBeer'
 import './Beer.css'
 import type { ReviewContainerIf } from '../../core/review/types'
 import type { SelectStyleIf } from '../../core/style/types'
+import type { GetLogin } from '../../core/login/types'
 
 function NotFound (): JSX.Element {
   return <div>Not found</div>
 }
 
 interface Props {
+  getLogin: GetLogin
   reviewContainerIf: ReviewContainerIf
   selectStyleIf: SelectStyleIf
 }
@@ -70,6 +72,7 @@ function Beer (props: Props): JSX.Element {
             <div>
               <EditButton
                 disabled={beerData.beer === undefined}
+                getLogin={props.getLogin}
                 onClick={() => {
                   setMode(EditableMode.Edit)
                   setInitialBeer({ ...beerData.beer })
@@ -106,12 +109,14 @@ function Beer (props: Props): JSX.Element {
       )}
       {(storageData?.storages ?? []).length > 0 && (
         <StorageList
+          getLogin={props.getLogin}
           isLoading={isLoadingReviews}
           isTitleVisible={true}
           storages={storageData?.storages ?? []}
         />
       )}
       <ReviewList
+        getLogin={props.getLogin}
         reviewContainerIf={props.reviewContainerIf}
         selectStyleIf={props.selectStyleIf}
         isLoading={isLoadingReviews}

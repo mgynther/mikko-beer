@@ -11,9 +11,11 @@ import EditButton from '../common/EditButton'
 import UpdateContainer from './UpdateContainer'
 
 import '../common/FlexRow.css'
+import type { GetLogin } from '../../core/login/types'
 
 interface Props {
   container: ContainerType
+  getLogin: GetLogin
   updateContainerIf: UpdateContainerIf
 }
 
@@ -29,6 +31,7 @@ function Container (props: Props): JSX.Element {
           <div>
             <EditButton
               disabled={false}
+              getLogin={props.getLogin}
               onClick={() => {
                 setMode(EditableMode.Edit)
                 setInitialContainer({ ...props.container })
