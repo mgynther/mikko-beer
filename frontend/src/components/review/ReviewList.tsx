@@ -11,10 +11,7 @@ import TabButton from '../common/TabButton'
 import Review from './Review'
 
 import './ReviewList.css'
-import {
-  type CreateContainerIf,
-  type ListContainersIf
-} from '../../core/container/types'
+import { type ReviewContainerIf } from '../../core/review/types'
 
 interface HeadingProps {
   sorting: ReviewSorting | undefined
@@ -101,8 +98,7 @@ export function ReviewHeading (
 }
 
 interface Props {
-  createContainerIf: CreateContainerIf
-  listContainersIf: ListContainersIf
+  reviewContainerIf: ReviewContainerIf
   isLoading: boolean
   isTitleVisible: boolean
   reviews: JoinedReview[]
@@ -127,8 +123,7 @@ function ReviewList (props: Props): JSX.Element {
           {props.reviews.map((review) => {
             return (
               <Review
-                createContainerIf={props.createContainerIf}
-                listContainersIf={props.listContainersIf}
+                reviewContainerIf={props.reviewContainerIf}
                 key={review.id}
                 review={review}
                 onChanged={props.onChanged}

@@ -1,11 +1,8 @@
 import { useEffect, useState } from 'react'
 
 import { type BeerWithIds } from '../../store/beer/types'
-import {
-  type Container,
-  type CreateContainerIf,
-  type ListContainersIf
-} from '../../core/container/types'
+import { type Container } from '../../core/container/types'
+import { type ReviewContainerIf } from '../../core/review/types'
 import { type JoinedReview, type ReviewRequest } from '../../store/review/types'
 
 import SelectBeer from '../beer/SelectBeer'
@@ -23,8 +20,7 @@ export interface InitialReview {
 }
 
 interface Props {
-  createContainerIf: CreateContainerIf
-  listContainersIf: ListContainersIf
+  reviewContainerIf: ReviewContainerIf
   initialReview: InitialReview | undefined
   isFromStorage: boolean
   onChange: (review: ReviewRequest | undefined) => void
@@ -151,8 +147,7 @@ function ReviewEditor (props: Props): JSX.Element {
         <div className='ReviewContent'>
           {container === undefined
             ? <SelectContainer
-              createContainerIf={props.createContainerIf}
-              listContainersIf={props.listContainersIf}
+              reviewContainerIf={props.reviewContainerIf}
               select={(container: Container) => {
                 setContainer(container)
               }} />

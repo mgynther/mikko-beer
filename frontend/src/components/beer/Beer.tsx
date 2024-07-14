@@ -24,18 +24,14 @@ import StyleLinks from '../style/StyleLinks'
 import UpdateBeer from './UpdateBeer'
 
 import './Beer.css'
-import {
-  type CreateContainerIf,
-  type ListContainersIf
-} from '../../core/container/types'
+import { type ReviewContainerIf } from '../../core/review/types'
 
 function NotFound (): JSX.Element {
   return <div>Not found</div>
 }
 
 interface Props {
-  createContainerIf: CreateContainerIf
-  listContainersIf: ListContainersIf
+  reviewContainerIf: ReviewContainerIf
 }
 
 function Beer (props: Props): JSX.Element {
@@ -113,8 +109,7 @@ function Beer (props: Props): JSX.Element {
         />
       )}
       <ReviewList
-        createContainerIf={props.createContainerIf}
-        listContainersIf={props.listContainersIf}
+        reviewContainerIf={props.reviewContainerIf}
         isLoading={isLoadingReviews}
         isTitleVisible={true}
         reviews={reviewData?.reviews ?? []}

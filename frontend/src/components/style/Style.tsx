@@ -30,10 +30,7 @@ import UpdateStyle from './UpdateStyle'
 import '../common/FlexRow.css'
 
 import './Style.css'
-import {
-  type CreateContainerIf,
-  type ListContainersIf
-} from '../../core/container/types'
+import { type ReviewContainerIf } from '../../core/review/types'
 
 function NotFound (): JSX.Element {
   return <div>Not found</div>
@@ -49,8 +46,7 @@ function NoLinks (props: NoLinksProps): JSX.Element | null {
 }
 
 interface Props {
-  createContainerIf: CreateContainerIf
-  listContainersIf: ListContainersIf
+  reviewContainerIf: ReviewContainerIf
 }
 
 function Style (props: Props): JSX.Element {
@@ -136,8 +132,7 @@ function Style (props: Props): JSX.Element {
         />
       )}
       <ReviewList
-        createContainerIf={props.createContainerIf}
-        listContainersIf={props.listContainersIf}
+        reviewContainerIf={props.reviewContainerIf}
         isLoading={isLoadingReviews}
         isTitleVisible={true}
         reviews={reviewData?.reviews ?? []}

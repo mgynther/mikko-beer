@@ -15,14 +15,10 @@ import StyleLinks from '../style/StyleLinks'
 import UpdateReview from './UpdateReview'
 
 import './Review.css'
-import {
-  type CreateContainerIf,
-  type ListContainersIf
-} from '../../core/container/types'
+import { type ReviewContainerIf } from '../../core/review/types'
 
 interface Props {
-  createContainerIf: CreateContainerIf
-  listContainersIf: ListContainersIf
+  reviewContainerIf: ReviewContainerIf
   review: JoinedReview
   onChanged: () => void
 }
@@ -114,8 +110,7 @@ function Review (props: Props): JSX.Element {
       {mode === EditableMode.Edit && fullReview !== undefined && (
         <>
           <UpdateReview
-            createContainerIf={props.createContainerIf}
-            listContainersIf={props.listContainersIf}
+            reviewContainerIf={props.reviewContainerIf}
             initialReview={{
               joined: review,
               review: fullReview

@@ -1,8 +1,5 @@
-import {
-  type Container,
-  type CreateContainerIf,
-  type ListContainersIf
-} from '../../core/container/types'
+import { type Container } from '../../core/container/types'
+import { type ReviewContainerIf } from '../../core/review/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 import SelectCreateRadio, { Mode } from '../common/SelectCreateRadio'
@@ -11,12 +8,12 @@ import CreateContainer from './CreateContainer'
 
 export interface Props {
   select: (container: Container) => void
-  createContainerIf: CreateContainerIf,
-  listContainersIf: ListContainersIf
+  reviewContainerIf: ReviewContainerIf,
 }
 
 function SelectContainer (props: Props): JSX.Element {
-  const { data: containerData, isLoading } = props.listContainersIf.useList()
+  const { data: containerData, isLoading } =
+    props.reviewContainerIf.listIf.useList()
 
   function selectContainerById (containerId: string): void {
     const container = containerData?.containers
@@ -32,7 +29,7 @@ function SelectContainer (props: Props): JSX.Element {
         createElement={
           <CreateContainer
             select={props.select}
-            createContainerIf={props.createContainerIf}
+            createContainerIf={props.reviewContainerIf.createIf}
           />
         }
         selectElement={

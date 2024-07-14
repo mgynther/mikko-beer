@@ -12,9 +12,8 @@ import { formatBestBefore } from '../util'
 
 import ReviewEditor, { type InitialReview } from './ReviewEditor'
 import {
-  type CreateContainerIf,
-  type ListContainersIf
-} from '../../core/container/types'
+  type ReviewContainerIf
+} from '../../core/review/types'
 
 function toInitialReview (storageData: Storage): InitialReview {
   if (storageData === undefined) {
@@ -48,8 +47,7 @@ function toInitialReview (storageData: Storage): InitialReview {
 }
 
 interface Props {
-  createContainerIf: CreateContainerIf
-  listContainersIf: ListContainersIf
+  reviewContainerIf: ReviewContainerIf
 }
 
 function AddReview (props: Props): JSX.Element {
@@ -92,8 +90,7 @@ function AddReview (props: Props): JSX.Element {
       <LoadingIndicator isLoading={isLoadingStorage} />
       {(storageId === undefined || storageData !== undefined) && (
         <ReviewEditor
-          createContainerIf={props.createContainerIf}
-          listContainersIf={props.listContainersIf}
+          reviewContainerIf={props.reviewContainerIf}
           initialReview={getInitialReview()}
           isFromStorage={storageId !== undefined}
           onChange={review => { setReview(review) }}

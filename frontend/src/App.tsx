@@ -40,6 +40,10 @@ import {
   type UpdateContainerIf
 } from './core/container/types'
 
+import {
+  type ReviewContainerIf
+} from './core/review/types'
+
 interface LayoutProps {
   isAdmin: boolean
   isLoggedIn: boolean
@@ -185,6 +189,11 @@ function App (): JSX.Element {
     isLoading: isUpdatingContainer
   }
 
+  const reviewContainerIf: ReviewContainerIf = {
+    createIf: createContainerIf,
+    listIf: listContainersIf
+  }
+
   return (
     <div className="App">
       <div className="AppContent">
@@ -214,32 +223,20 @@ function App (): JSX.Element {
             {isLoggedIn && (
               <React.Fragment>
                 {isAdmin && <Route path="addreview" element={
-                  <AddReview
-                    createContainerIf={createContainerIf}
-                    listContainersIf={listContainersIf}
-                  />
+                  <AddReview reviewContainerIf={reviewContainerIf} />
                 } />}
                 {isAdmin &&
                   <Route path="addreview/:storageId" element={
-                    <AddReview
-                      createContainerIf={createContainerIf}
-                      listContainersIf={listContainersIf}
-                    />
+                    <AddReview reviewContainerIf={reviewContainerIf} />
                 } />
                 }
                 <Route path="beers" element={<Beers />} />
                 <Route path="beers/:beerId" element={
-                  <Beer
-                    createContainerIf={createContainerIf}
-                    listContainersIf={listContainersIf}
-                  />
+                  <Beer reviewContainerIf={reviewContainerIf} />
                 } />
                 <Route path="breweries" element={<Breweries />} />
                 <Route path="breweries/:breweryId" element={
-                  <Brewery
-                    createContainerIf={createContainerIf}
-                    listContainersIf={listContainersIf}
-                  />
+                  <Brewery reviewContainerIf={reviewContainerIf} />
                 } />
                 <Route path="containers" element={
                   <Containers
@@ -248,16 +245,11 @@ function App (): JSX.Element {
                     />
                 } />
                 <Route path="reviews" element={
-                  <Reviews
-                    createContainerIf={createContainerIf}
-                    listContainersIf={listContainersIf}
-                  />
+                  <Reviews reviewContainerIf={reviewContainerIf} />
                 } />
                 <Route path="styles" element={<Styles />} />
                 <Route path="styles/:styleId" element={
-                  <Style
-                    createContainerIf={createContainerIf}
-                    listContainersIf={listContainersIf}
+                  <Style reviewContainerIf={reviewContainerIf}
                   />
                 } />
                 {isAdmin && <Route path="users" element={<Users />} />}
@@ -266,10 +258,7 @@ function App (): JSX.Element {
                   <Stats breweryId={undefined} styleId={undefined} />
                 } />
                 <Route path="storage" element={
-                  <Storages
-                    createContainerIf={createContainerIf}
-                    listContainersIf={listContainersIf}
-                  />
+                  <Storages reviewContainerIf={reviewContainerIf} />
                 } />
               </React.Fragment>
             )}

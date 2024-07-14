@@ -1,11 +1,8 @@
 import { useState } from 'react'
 
 import { type BeerWithIds } from '../../store/beer/types'
-import {
-  type Container,
-  type CreateContainerIf,
-  type ListContainersIf
-} from '../../core/container/types'
+import { type Container } from '../../core/container/types'
+import { type ReviewContainerIf } from '../../core/review/types'
 import { useCreateStorageMutation } from '../../store/storage/api'
 
 import LoadingIndicator from '../common/LoadingIndicator'
@@ -15,8 +12,7 @@ import SelectContainer from '../container/SelectContainer'
 import './CreateStorage.css'
 
 interface Props {
-  createContainerIf: CreateContainerIf
-  listContainersIf: ListContainersIf
+  reviewContainerIf: ReviewContainerIf
 }
 
 function CreateStorage (props: Props): JSX.Element {
@@ -79,8 +75,7 @@ function CreateStorage (props: Props): JSX.Element {
           <div className='ReviewContent'>
             {container === undefined
               ? <SelectContainer
-                  createContainerIf={props.createContainerIf}
-                  listContainersIf={props.listContainersIf}
+                  reviewContainerIf={props.reviewContainerIf}
                   select={(container: Container) => {
                     setContainer(container)
                   }} />

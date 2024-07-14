@@ -1,7 +1,4 @@
-import {
-  type CreateContainerIf,
-  type ListContainersIf
-} from '../../core/container/types'
+import { type ReviewContainerIf } from '../../core/review/types'
 import { useSelector } from '../../react-redux-wrapper'
 
 import { type Login, selectLogin } from '../../store/login/reducer'
@@ -12,8 +9,7 @@ import CreateStorage from './CreateStorage'
 import StorageList from './StorageList'
 
 interface Props {
-  createContainerIf: CreateContainerIf
-  listContainersIf: ListContainersIf
+  reviewContainerIf: ReviewContainerIf
 }
 
 function Storages (props: Props): JSX.Element {
@@ -36,10 +32,7 @@ function Storages (props: Props): JSX.Element {
       <hr/>
       {isAdmin && (
         <div>
-          <CreateStorage
-            createContainerIf={props.createContainerIf}
-            listContainersIf={props.listContainersIf}
-            />
+          <CreateStorage reviewContainerIf={props.reviewContainerIf} />
         </div>
       )}
     </div>
