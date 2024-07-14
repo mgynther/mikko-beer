@@ -1,5 +1,5 @@
 import { useListContainersQuery } from '../../store/container/api'
-import { type Container as ContainerType } from '../../store/container/types'
+import { type Container as ContainerType } from '../../core/container/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 

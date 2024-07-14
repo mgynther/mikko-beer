@@ -1,5 +1,8 @@
 import { useListContainersQuery } from '../../store/container/api'
-import { type Container } from '../../store/container/types'
+import {
+  type Container,
+  type CreateContainerIf
+} from '../../core/container/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 import SelectCreateRadio, { Mode } from '../common/SelectCreateRadio'
@@ -8,6 +11,7 @@ import CreateContainer from './CreateContainer'
 
 export interface Props {
   select: (container: Container) => void
+  createContainerIf: CreateContainerIf
 }
 
 function SelectContainer (props: Props): JSX.Element {
@@ -25,7 +29,10 @@ function SelectContainer (props: Props): JSX.Element {
       <SelectCreateRadio
         defaultMode={Mode.SELECT}
         createElement={
-          <CreateContainer select={props.select} />
+          <CreateContainer
+            select={props.select}
+            createContainerIf={props.createContainerIf}
+          />
         }
         selectElement={
           <div>

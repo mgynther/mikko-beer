@@ -11,6 +11,7 @@ import LoadingIndicator from '../common/LoadingIndicator'
 import { formatBestBefore } from '../util'
 
 import ReviewEditor, { type InitialReview } from './ReviewEditor'
+import { type CreateContainerIf } from '../../core/container/types'
 
 function toInitialReview (storageData: Storage): InitialReview {
   if (storageData === undefined) {
@@ -43,7 +44,11 @@ function toInitialReview (storageData: Storage): InitialReview {
   }
 }
 
-function AddReview (): JSX.Element {
+interface Props {
+  createContainerIf: CreateContainerIf
+}
+
+function AddReview (props: Props): JSX.Element {
   const navigate = useNavigate()
   const { storageId } = useParams()
   const [review, setReview] = useState<ReviewRequest | undefined>(undefined)
@@ -83,6 +88,7 @@ function AddReview (): JSX.Element {
       <LoadingIndicator isLoading={isLoadingStorage} />
       {(storageId === undefined || storageData !== undefined) && (
         <ReviewEditor
+          createContainerIf={props.createContainerIf}
           initialReview={getInitialReview()}
           isFromStorage={storageId !== undefined}
           onChange={review => { setReview(review) }}

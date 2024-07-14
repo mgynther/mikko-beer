@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { type Container } from '../../store/container/types'
+import { type Container } from '../../core/container/types'
 
 interface Props {
   initialContainer: Container

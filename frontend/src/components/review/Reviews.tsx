@@ -13,10 +13,15 @@ import { infiniteScroll } from '../util'
 import ReviewList from './ReviewList'
 
 import './Review.css'
+import { CreateContainerIf } from '../../core/container/types'
 
 const pageSize = 20
 
-function Reviews (): JSX.Element {
+interface Props {
+  createContainerIf: CreateContainerIf
+}
+
+function Reviews (props: Props): JSX.Element {
   const [order, doSetOrder] = useState<ReviewSortingOrder>('time')
   const [direction, doSetDirection] = useState<ListDirection>('desc')
   const [loadedReviews, setLoadedReviews] = useState<JoinedReview[]>([])
@@ -79,6 +84,7 @@ function Reviews (): JSX.Element {
     <div>
       <h3>Reviews</h3>
       <ReviewList
+        createContainerIf={props.createContainerIf}
         isLoading={isLoading}
         isTitleVisible={false}
         reviews={loadedReviews}

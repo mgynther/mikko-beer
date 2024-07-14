@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { type Container as ContainerType } from '../../store/container/types'
+import { type Container as ContainerType } from '../../core/container/types'
 
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'

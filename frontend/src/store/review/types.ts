@@ -1,4 +1,4 @@
-import { type Container } from '../container/types'
+import { type Container } from '../../core/container/types'
 import { type ListDirection } from '../types'
 
 export interface Review {

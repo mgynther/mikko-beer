@@ -30,6 +30,7 @@ import UpdateStyle from './UpdateStyle'
 import '../common/FlexRow.css'
 
 import './Style.css'
+import { type CreateContainerIf } from '../../core/container/types'
 
 function NotFound (): JSX.Element {
   return <div>Not found</div>
@@ -44,7 +45,11 @@ function NoLinks (props: NoLinksProps): JSX.Element | null {
   return <>-</>
 }
 
-function Style (): JSX.Element {
+interface Props {
+  createContainerIf: CreateContainerIf
+}
+
+function Style (props: Props): JSX.Element {
   const { styleId } = useParams()
   const [order, doSetOrder] = useState<ReviewSortingOrder>('brewery_name')
   const [direction, doSetDirection] = useState<ListDirection>('asc')
@@ -127,6 +132,7 @@ function Style (): JSX.Element {
         />
       )}
       <ReviewList
+        createContainerIf={props.createContainerIf}
         isLoading={isLoadingReviews}
         isTitleVisible={true}
         reviews={reviewData?.reviews ?? []}

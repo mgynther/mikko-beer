@@ -1,7 +1,10 @@
 import { useState } from 'react'
 
 import { type BeerWithIds } from '../../store/beer/types'
-import { type Container } from '../../store/container/types'
+import {
+  type Container,
+  type CreateContainerIf
+} from '../../core/container/types'
 import { useCreateStorageMutation } from '../../store/storage/api'
 
 import LoadingIndicator from '../common/LoadingIndicator'
@@ -10,7 +13,11 @@ import SelectContainer from '../container/SelectContainer'
 
 import './CreateStorage.css'
 
-function CreateStorage (): JSX.Element {
+interface Props {
+  createContainerIf: CreateContainerIf
+}
+
+function CreateStorage (props: Props): JSX.Element {
   const [createStorage, { error, isLoading }] = useCreateStorageMutation()
 
   const [beer, setBeer] = useState<BeerWithIds | undefined>(undefined)
@@ -69,9 +76,11 @@ function CreateStorage (): JSX.Element {
           <h5>Container</h5>
           <div className='ReviewContent'>
             {container === undefined
-              ? <SelectContainer select={(container: Container) => {
-                setContainer(container)
-              }} />
+              ? <SelectContainer
+                  createContainerIf={props.createContainerIf}
+                  select={(container: Container) => {
+                    setContainer(container)
+                  }} />
               : (<div className='FlexRow'>
                   <div>
                     {`${container.type} ${container.size}`}

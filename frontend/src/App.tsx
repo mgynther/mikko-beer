@@ -24,9 +24,14 @@ import Style from './components/style/Style'
 import Styles from './components/style/Styles'
 import Users from './components/user/Users'
 
+import { useCreateContainerMutation } from './store/container/api'
 import { useLogoutMutation } from './store/login/api'
 import { type Login, selectLogin } from './store/login/reducer'
 import { Theme, selectTheme, setTheme } from './store/theme/reducer'
+import {
+  type ContainerRequest,
+  type CreateContainerIf
+} from './core/container/types'
 
 interface LayoutProps {
   isAdmin: boolean
@@ -142,6 +147,18 @@ function App (): JSX.Element {
   const isLoggedIn: boolean = login.authToken?.length > 0
   const [logout] = useLogoutMutation()
   const isAdmin = login?.user?.role === Role.admin
+
+  const [
+    createContainer,
+    { isLoading: isCreating }
+  ] = useCreateContainerMutation()
+  const createContainerIf: CreateContainerIf = {
+    create: async (containerRequest: ContainerRequest) => {
+      return (await createContainer(containerRequest).unwrap()).container
+    },
+    isLoading: isCreating
+  }
+
   return (
     <div className="App">
       <div className="AppContent">
@@ -170,24 +187,38 @@ function App (): JSX.Element {
             />
             {isLoggedIn && (
               <React.Fragment>
-                {isAdmin && <Route path="addreview" element={<AddReview />} />}
+                {isAdmin && <Route path="addreview" element={
+                  <AddReview createContainerIf={createContainerIf} />
+                } />}
                 {isAdmin &&
-                  <Route path="addreview/:storageId" element={<AddReview />} />
+                  <Route path="addreview/:storageId" element={
+                    <AddReview createContainerIf={createContainerIf} />
+                } />
                 }
                 <Route path="beers" element={<Beers />} />
-                <Route path="beers/:beerId" element={<Beer />} />
+                <Route path="beers/:beerId" element={
+                  <Beer createContainerIf={createContainerIf} />
+                } />
                 <Route path="breweries" element={<Breweries />} />
-                <Route path="breweries/:breweryId" element={<Brewery />} />
+                <Route path="breweries/:breweryId" element={
+                  <Brewery createContainerIf={createContainerIf} />
+                } />
                 <Route path="containers" element={<Containers />} />
-                <Route path="reviews" element={<Reviews />} />
+                <Route path="reviews" element={
+                  <Reviews createContainerIf={createContainerIf} />
+                } />
                 <Route path="styles" element={<Styles />} />
-                <Route path="styles/:styleId" element={<Style />} />
+                <Route path="styles/:styleId" element={
+                  <Style createContainerIf={createContainerIf} />
+                } />
                 {isAdmin && <Route path="users" element={<Users />} />}
                 <Route path="account" element={<Account />} />
                 <Route path="stats" element={
                   <Stats breweryId={undefined} styleId={undefined} />
                 } />
-                <Route path="storage" element={<Storages />} />
+                <Route path="storage" element={
+                  <Storages createContainerIf={createContainerIf} />
+                } />
               </React.Fragment>
             )}
             <Route

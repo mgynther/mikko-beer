@@ -1,3 +1,4 @@
+import { type CreateContainerIf } from '../../core/container/types'
 import { useSelector } from '../../react-redux-wrapper'
 
 import { type Login, selectLogin } from '../../store/login/reducer'
@@ -7,7 +8,11 @@ import { Role } from '../../store/user/types'
 import CreateStorage from './CreateStorage'
 import StorageList from './StorageList'
 
-function Storages (): JSX.Element {
+interface Props {
+  createContainerIf: CreateContainerIf
+}
+
+function Storages (props: Props): JSX.Element {
   const { data: storageData, isLoading } = useListStoragesQuery()
   const login: Login = useSelector(selectLogin)
   const isAdmin = login?.user?.role === Role.admin
@@ -27,7 +32,9 @@ function Storages (): JSX.Element {
       <hr/>
       {isAdmin && (
         <div>
-          <CreateStorage />
+          <CreateStorage
+            createContainerIf={props.createContainerIf}
+            />
         </div>
       )}
     </div>

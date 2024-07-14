@@ -1,7 +1,9 @@
 import { useState } from 'react'
 
-import { useCreateContainerMutation } from '../../store/container/api'
-import { type Container } from '../../store/container/types'
+import {
+  type Container,
+  type CreateContainerIf
+} from '../../core/container/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
@@ -9,6 +11,7 @@ import ContainerEditor from './ContainerEditor'
 
 export interface Props {
   select: (container: Container) => void
+  createContainerIf: CreateContainerIf
 }
 
 function CreateContainer (props: Props): JSX.Element {
@@ -18,25 +21,23 @@ function CreateContainer (props: Props): JSX.Element {
     type: '',
     size: ''
   })
-  const [
-    createContainer,
-    { isLoading: isCreating }
-  ] = useCreateContainerMutation()
 
   async function doCreate (): Promise<void> {
     if (container === undefined) {
       throw new Error('container must not be undefined')
     }
     try {
-      const result = await createContainer({
+      const result = await props.createContainerIf.create({
         type: container.type.trim(),
         size: container.size.trim()
-      }).unwrap()
-      props.select(result.container)
+      })
+      props.select(result)
     } catch (e) {
       console.warn('Failed to create container', e)
     }
   }
+
+  const isCreating = props.createContainerIf.isLoading
 
   return (
     <>

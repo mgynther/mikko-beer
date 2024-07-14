@@ -23,12 +23,17 @@ import Stats from '../stats/Stats'
 import UpdateBrewery from './UpdateBrewery'
 
 import '../common/FlexRow.css'
+import { type CreateContainerIf } from '../../core/container/types'
 
 function NotFound (): JSX.Element {
   return <div>Not found</div>
 }
 
-function Brewery (): JSX.Element {
+interface Props {
+  createContainerIf: CreateContainerIf
+}
+
+function Brewery (props: Props): JSX.Element {
   const { breweryId } = useParams()
   const [order, doSetOrder] = useState<ReviewSortingOrder>('beer_name')
   const [direction, doSetDirection] = useState<ListDirection>('asc')
@@ -94,6 +99,7 @@ function Brewery (): JSX.Element {
         />
       )}
       <ReviewList
+        createContainerIf={props.createContainerIf}
         isLoading={isLoadingReviews}
         isTitleVisible={true}
         reviews={reviewData?.reviews ?? []}

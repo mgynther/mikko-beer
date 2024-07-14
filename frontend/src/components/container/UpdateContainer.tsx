@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import { useUpdateContainerMutation } from '../../store/container/api'
-import { type Container } from '../../store/container/types'
+import { type Container } from '../../core/container/types'
 
 import EditActions from '../common/EditActions'
 
