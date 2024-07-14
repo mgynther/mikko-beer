@@ -17,14 +17,15 @@ interface Props {
 }
 
 function UpdateContainer (props: Props): JSX.Element {
+  const { update, isLoading } = props.updateContainerIf.useUpdate()
   const [newContainer, setNewContainer] =
     useState<Container | undefined>(undefined)
-  async function update (): Promise<void> {
+  async function doUpdate (): Promise<void> {
     if (newContainer === undefined) {
       throw new Error('container must not be undefined when updating')
     }
     try {
-      await props.updateContainerIf.update({ ...newContainer })
+      await update({ ...newContainer })
       props.onSaved()
     } catch (e) {
       console.warn('Failed to update container', e)
@@ -40,12 +41,12 @@ function UpdateContainer (props: Props): JSX.Element {
       />
       <EditActions
         isSaveDisabled={newContainer === undefined}
-        isSaving={props.updateContainerIf.isLoading}
+        isSaving={isLoading}
         onCancel={() => {
           setNewContainer(undefined)
           props.onCancel()
         }}
-        onSave={() => { void update() }}
+        onSave={() => { void doUpdate() }}
       />
     </>
   )

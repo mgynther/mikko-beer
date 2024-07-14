@@ -168,15 +168,19 @@ function App (): JSX.Element {
   const [logout] = useLogoutMutation()
   const isAdmin = login?.user?.role === Role.admin
 
-  const [
-    createContainer,
-    { isLoading: isCreatingContainer }
-  ] = useCreateContainerMutation()
   const createContainerIf: CreateContainerIf = {
-    create: async (containerRequest: ContainerRequest) => {
-      return (await createContainer(containerRequest).unwrap()).container
-    },
-    isLoading: isCreatingContainer
+    useCreate: () => {
+      const [
+        createContainer,
+        { isLoading: isCreatingContainer }
+      ] = useCreateContainerMutation()
+      return {
+        create: async (containerRequest: ContainerRequest) => {
+          return (await createContainer(containerRequest).unwrap()).container
+        },
+        isLoading: isCreatingContainer
+      }
+    }
   }
 
   const listContainersIf: ListContainersIf = {
@@ -189,13 +193,17 @@ function App (): JSX.Element {
     }
   }
 
-  const [updateContainer, { isLoading: isUpdatingContainer }] =
-    useUpdateContainerMutation()
   const updateContainerIf: UpdateContainerIf = {
-    update: async (container: Container) => {
-      await updateContainer(container)
-    },
-    isLoading: isUpdatingContainer
+    useUpdate: () => {
+      const [updateContainer, { isLoading: isUpdatingContainer }] =
+        useUpdateContainerMutation()
+      return {
+        update: async (container: Container) => {
+          await updateContainer(container)
+        },
+        isLoading: isUpdatingContainer
+      }
+    }
   }
 
   const reviewContainerIf: ReviewContainerIf = {
@@ -203,7 +211,6 @@ function App (): JSX.Element {
     listIf: listContainersIf
   }
 
-  const [deleteUser] = useDeleteUserMutation()
   const userIf: UserIf = {
     create: {
       useCreate: () => {
@@ -225,8 +232,15 @@ function App (): JSX.Element {
         }
       }
     },
-    delete: async (userId: string) => {
-      await deleteUser(userId)
+    delete: {
+      useDelete: () => {
+        const [deleteUser] = useDeleteUserMutation()
+        return {
+          delete: async (userId: string) => {
+            await deleteUser(userId)
+          }
+        }
+      }
     },
     list: {
       useList: () => {

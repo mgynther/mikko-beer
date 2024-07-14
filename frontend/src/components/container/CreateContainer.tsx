@@ -15,6 +15,7 @@ export interface Props {
 }
 
 function CreateContainer (props: Props): JSX.Element {
+  const { create, isLoading } = props.createContainerIf.useCreate()
   const [container, setContainer] = useState<Container | undefined>(undefined)
   const [initialContainer] = useState<Container>({
     id: 'notused',
@@ -27,7 +28,7 @@ function CreateContainer (props: Props): JSX.Element {
       throw new Error('container must not be undefined')
     }
     try {
-      const result = await props.createContainerIf.create({
+      const result = await create({
         type: container.type.trim(),
         size: container.size.trim()
       })
@@ -36,8 +37,6 @@ function CreateContainer (props: Props): JSX.Element {
       console.warn('Failed to create container', e)
     }
   }
-
-  const isCreating = props.createContainerIf.isLoading
 
   return (
     <>
@@ -53,7 +52,7 @@ function CreateContainer (props: Props): JSX.Element {
       >
         Create
       </button>
-      {isCreating && <LoadingIndicator isLoading={isCreating} />}
+      {isLoading && <LoadingIndicator isLoading={isLoading} />}
     </>
   )
 }

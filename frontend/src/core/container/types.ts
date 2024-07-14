@@ -14,8 +14,10 @@ export interface ContainerList {
 }
 
 export interface CreateContainerIf {
-  create: (container: ContainerRequest) => Promise<Container>
-  isLoading: boolean
+  useCreate: () => {
+    create: (container: ContainerRequest) => Promise<Container>
+    isLoading: boolean
+  }
 }
 
 interface ListContainersData {
@@ -28,6 +30,8 @@ export interface ListContainersIf {
 }
 
 export interface UpdateContainerIf {
-  update: (container: Container) => Promise<void>
-  isLoading: boolean
+  useUpdate: () => {
+    update: (container: Container) => Promise<void>
+    isLoading: boolean
+  }
 }

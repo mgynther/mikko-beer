@@ -13,10 +13,11 @@ interface Props {
 
 function Users (props: Props): JSX.Element {
   const { data: userData, isLoading } = props.userIf.list.useList()
+  const { delete: del } = props.userIf.delete.useDelete()
 
   async function confirmDeleteUser (user: User): Promise<void> {
     if (confirm(`Are you sure you want to delete "${user.username}"?`)) {
-      await props.userIf.delete(user.id)
+      await del(user.id)
     }
   }
 
