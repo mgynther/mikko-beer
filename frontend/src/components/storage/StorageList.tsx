@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useSelector } from '../../react-redux-wrapper'
 import { type Login, selectLogin } from '../../store/login/reducer'
 import { type Storage } from '../../store/storage/types'
-import { Role } from '../../store/user/types'
+import { Role } from '../../core/user/types'
 
 import BeerLink from '../beer/BeerLink'
 import BreweryLinks from '../brewery/BreweryLinks'

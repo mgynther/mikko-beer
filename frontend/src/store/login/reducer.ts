@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
-import type { User } from '../user/types'
+import type { User } from '../../core/user/types'
 
 export interface Refresh {
   authToken: string

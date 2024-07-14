@@ -1,7 +1,7 @@
 import { useSelector } from '../../react-redux-wrapper'
 
 import { type Login, selectLogin } from '../../store/login/reducer'
-import { Role } from '../../store/user/types'
+import { Role } from '../../core/user/types'
 
 interface Props {
   disabled: boolean

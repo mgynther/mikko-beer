@@ -1,6 +1,7 @@
 import { emptySplitApi } from '../api'
 
-import { type User, type UserList, UserTags } from './types'
+import { UserTags } from './types'
+import { type User, type UserList } from '../../core/user/types'
 
 interface CreateUserParams {
   user: {

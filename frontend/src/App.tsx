@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Routes, Route, Link, Outlet } from 'react-router-dom'
 
 import { useSelector } from './react-redux-wrapper'
-import { Role } from './store/user/types'
+import { Role } from './core/user/types'
 import { useAppDispatch } from './store/hooks'
 
 import './App.css'

@@ -1,5 +1,5 @@
 import { useDeleteUserMutation, useListUsersQuery } from '../../store/user/api'
-import { type User } from '../../store/user/types'
+import { type User } from '../../core/user/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
