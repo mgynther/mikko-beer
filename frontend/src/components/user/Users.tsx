@@ -1,17 +1,22 @@
-import { useDeleteUserMutation, useListUsersQuery } from '../../store/user/api'
-import { type User } from '../../core/user/types'
+import {
+  type User,
+  UserIf
+} from '../../core/user/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
 import CreateUser from './CreateUser'
 
-function Users (): JSX.Element {
-  const { data: userData, isLoading } = useListUsersQuery()
-  const [deleteUser] = useDeleteUserMutation()
+interface Props {
+  userIf: UserIf
+}
+
+function Users (props: Props): JSX.Element {
+  const { data: userData, isLoading } = props.userIf.list.useList()
 
   async function confirmDeleteUser (user: User): Promise<void> {
     if (confirm(`Are you sure you want to delete "${user.username}"?`)) {
-      await deleteUser(user.id)
+      await props.userIf.delete(user.id)
     }
   }
 
@@ -38,7 +43,7 @@ function Users (): JSX.Element {
       </ul>
       <hr/>
       <div>
-        <CreateUser />
+        <CreateUser createUserIf={props.userIf.create}/>
       </div>
     </div>
   )

@@ -1,13 +1,16 @@
 import { useState } from 'react'
 
-import { useCreateUserMutation } from '../../store/user/api'
-
 import LoadingIndicator from '../common/LoadingIndicator'
 
 import './CreateUser.css'
+import { type CreateUserIf } from '../../core/user/types'
 
-function CreateUser (): JSX.Element {
-  const [createUser, { data, error, isLoading }] = useCreateUserMutation()
+interface Props {
+  createUserIf: CreateUserIf
+}
+
+function CreateUser (props: Props): JSX.Element {
+  const {create, user, hasError, isLoading } = props.createUserIf.useCreate()
 
   const [isMismatch, setIsMismatch] = useState(false)
   const [password, setPassword] = useState('')
@@ -15,7 +18,7 @@ function CreateUser (): JSX.Element {
 
   async function doChange (event: any): Promise<void> {
     event.preventDefault()
-    await createUser({
+    await create({
       passwordSignInMethod: {
         username: event.target.username.value as string,
         password: event.target.password.value as string
@@ -80,8 +83,8 @@ function CreateUser (): JSX.Element {
         </div>
         <div>
           <LoadingIndicator isLoading={isLoading} />
-          {!isLoading && data !== undefined && 'Created!' }
-          {!isLoading && error !== undefined &&
+          {!isLoading && user !== undefined && 'Created!' }
+          {!isLoading && hasError &&
             'Creating failed. Please check the username and passwords.' }
         </div>
       </form>

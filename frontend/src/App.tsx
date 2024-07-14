@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { Routes, Route, Link, Outlet } from 'react-router-dom'
 
 import { useSelector } from './react-redux-wrapper'
-import { Role } from './core/user/types'
+import {
+  Role,
+  type CreateUserRequest,
+  type UserIf
+} from './core/user/types'
 import { useAppDispatch } from './store/hooks'
 
 import './App.css'
@@ -32,6 +36,11 @@ import {
 import { useLogoutMutation } from './store/login/api'
 import { type Login, selectLogin } from './store/login/reducer'
 import { Theme, selectTheme, setTheme } from './store/theme/reducer'
+import {
+  useCreateUserMutation,
+  useDeleteUserMutation,
+  useListUsersQuery
+} from './store/user/api'
 import {
   type Container,
   type ContainerRequest,
@@ -194,6 +203,42 @@ function App (): JSX.Element {
     listIf: listContainersIf
   }
 
+  const [deleteUser] = useDeleteUserMutation()
+  const userIf: UserIf = {
+    create: {
+      useCreate: () => {
+        const [
+          createUser,
+          {
+            data: createdUserData,
+            error: createUserError,
+            isLoading: isCreatingUser
+          }
+        ] = useCreateUserMutation()
+        return {
+          create: async (user: CreateUserRequest) => {
+            await createUser(user)
+          },
+          user: createdUserData?.user,
+          hasError: createUserError !== undefined,
+          isLoading: isCreatingUser
+        }
+      }
+    },
+    delete: async (userId: string) => {
+      await deleteUser(userId)
+    },
+    list: {
+      useList: () => {
+        const { data, isLoading } = useListUsersQuery()
+        return {
+          data,
+          isLoading
+        }
+      }
+    }
+  }
+
   return (
     <div className="App">
       <div className="AppContent">
@@ -252,7 +297,9 @@ function App (): JSX.Element {
                   <Style reviewContainerIf={reviewContainerIf}
                   />
                 } />
-                {isAdmin && <Route path="users" element={<Users />} />}
+                {isAdmin && <Route path="users" element={
+                  <Users userIf={userIf}/>} />
+                }
                 <Route path="account" element={<Account />} />
                 <Route path="stats" element={
                   <Stats breweryId={undefined} styleId={undefined} />
