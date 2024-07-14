@@ -34,7 +34,7 @@ import {
   useUpdateContainerMutation
 } from './store/container/api'
 import { useLoginMutation, useLogoutMutation } from './store/login/api'
-import { selectLogin } from './store/login/reducer'
+import { selectLogin, selectPasswordChangeResult } from './store/login/reducer'
 import { Theme, selectTheme, setTheme } from './store/theme/reducer'
 import {
   useCreateUserMutation,
@@ -69,9 +69,11 @@ import type {
 } from './core/style/types'
 import type {
   GetLogin,
+  GetPasswordChangeResult,
   Login,
   LoginIf,
-  LoginParams
+  LoginParams,
+  PasswordChangeResult
 } from './core/login/types'
 
 interface LayoutProps {
@@ -351,6 +353,12 @@ function App (): JSX.Element {
   const isLoggedIn: boolean = login.authToken?.length > 0
   const isAdmin = login?.user?.role === Role.admin
 
+  const getPasswordChangeResult: GetPasswordChangeResult = () => {
+    const passwordChangeResult: PasswordChangeResult =
+      useSelector(selectPasswordChangeResult)
+    return passwordChangeResult
+  }
+
   return (
     <div className="App">
       <div className="AppContent">
@@ -439,7 +447,10 @@ function App (): JSX.Element {
                   <Users userIf={userIf}/>} />
                 }
                 <Route path="account" element={
-                  <Account getLogin={getLogin} />
+                  <Account
+                    getLogin={getLogin}
+                    getPasswordChangeResult={getPasswordChangeResult}
+                  />
                 } />
                 <Route path="stats" element={
                   <Stats breweryId={undefined} styleId={undefined} />
