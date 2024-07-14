@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
-import { type Brewery } from '../../store/brewery/types'
+import { type Brewery } from '../../core/brewery/types'
 
 import SelectBrewery from './SelectBrewery'
 

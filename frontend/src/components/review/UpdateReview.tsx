@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { type ReviewContainerIf } from '../../core/review/types'
 
 import { useUpdateReviewMutation } from '../../store/review/api'
-import { type JoinedReview, type ReviewRequest } from '../../store/review/types'
+import { type JoinedReview, type ReviewRequest } from '../../core/review/types'
 
 import EditActions from '../common/EditActions'
 

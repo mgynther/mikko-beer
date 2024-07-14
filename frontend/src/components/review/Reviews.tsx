@@ -5,8 +5,8 @@ import {
   type JoinedReview,
   type ReviewSorting,
   type ReviewSortingOrder
-} from '../../store/review/types'
-import { type ListDirection } from '../../store/types'
+} from '../../core/review/types'
+import { type ListDirection } from '../../core/types'
 
 import { infiniteScroll } from '../util'
 

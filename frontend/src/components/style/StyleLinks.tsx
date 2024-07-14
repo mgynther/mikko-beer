@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-import { type Style } from '../../store/style/types'
+import { type Style } from '../../core/style/types'
 
 interface Props {
   styles: Style[]

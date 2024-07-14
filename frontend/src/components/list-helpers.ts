@@ -1,4 +1,4 @@
-import { type ListDirection } from '../store/types'
+import { type ListDirection } from '../core/types'
 
 export function getDirectionSymbol (
   direction: ListDirection | undefined

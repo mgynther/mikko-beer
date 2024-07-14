@@ -5,10 +5,10 @@ import { StorageTags } from '../storage/types'
 import {
   type Style,
   type StyleList,
-  StyleTags,
   type StyleWithParentIds,
   type StyleWithParentsAndChildren
-} from './types'
+} from '../../core/style/types'
+import { StyleTags } from './types'
 import { styleStatsTagTypes } from '../stats/types'
 
 interface StyleRequest {

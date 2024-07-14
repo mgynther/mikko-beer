@@ -4,7 +4,7 @@ import { useLazyGetReviewQuery } from '../../store/review/api'
 import {
   type JoinedReview,
   type Review as ReviewType
-} from '../../store/review/types'
+} from '../../core/review/types'
 
 import BeerLink from '../beer/BeerLink'
 import BreweryLinks from '../brewery/BreweryLinks'

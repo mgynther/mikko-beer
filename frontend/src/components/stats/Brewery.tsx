@@ -5,8 +5,8 @@ import { useLazyGetBreweryStatsQuery } from '../../store/stats/api'
 import {
   type BreweryStatsSortingOrder,
   type OneBreweryStats
-} from '../../store/stats/types'
-import { type ListDirection, type Pagination } from '../../store/types'
+} from '../../core/stats/types'
+import { type ListDirection, type Pagination } from '../../core/types'
 import { infiniteScroll } from '../util'
 
 import BreweryLinks from '../brewery/BreweryLinks'

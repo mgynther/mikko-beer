@@ -1,6 +1,6 @@
 import { emptySplitApi } from '../api'
 
-import { type Pagination } from '../types'
+import { type Pagination } from '../../core/types'
 import { reviewStatsTagTypes } from '../stats/types'
 
 import {
@@ -8,8 +8,9 @@ import {
   type Review,
   type ReviewRequest,
   type ReviewSorting,
-  ReviewTags
-} from './types'
+} from '../../core/review/types'
+
+import { ReviewTags } from './types'
 
 export interface ReviewRequestWrapper {
   body: ReviewRequest

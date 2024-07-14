@@ -2,7 +2,7 @@ import {
   type JoinedReview,
   type ReviewSorting,
   type ReviewSortingOrder
-} from '../../store/review/types'
+} from '../../core/review/types'
 
 import { formatTitle, invertDirection } from '../list-helpers'
 import LoadingIndicator from '../common/LoadingIndicator'

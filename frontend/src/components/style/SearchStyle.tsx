@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import { useListStylesQuery } from '../../store/style/api'
-import { type Style } from '../../store/style/types'
+import { type Style } from '../../core/style/types'
 
 import SearchBox, { nameFormatter } from '../common/SearchBox'
 

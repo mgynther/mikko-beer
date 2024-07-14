@@ -5,16 +5,16 @@ import { useParams } from 'react-router-dom'
 import {
   type Style as StyleType,
   type StyleWithParentIds
-} from '../../store/style/types'
+} from '../../core/style/types'
 
 import { useGetStyleQuery } from '../../store/style/api'
 import { useListReviewsByStyleQuery } from '../../store/review/api'
 import {
   type ReviewSorting,
   type ReviewSortingOrder
-} from '../../store/review/types'
+} from '../../core/review/types'
 import { useListStoragesByStyleQuery } from '../../store/storage/api'
-import { type ListDirection } from '../../store/types'
+import { type ListDirection } from '../../core/types'
 
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'

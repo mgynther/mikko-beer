@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import { useUpdateBeerMutation } from '../../store/beer/api'
-import { type Beer, type BeerWithIds } from '../../store/beer/types'
+import { type Beer, type BeerWithIds } from '../../core/beer/types'
 
 import EditActions from '../common/EditActions'
 

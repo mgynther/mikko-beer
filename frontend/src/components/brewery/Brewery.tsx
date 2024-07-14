@@ -3,14 +3,14 @@ import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { useGetBreweryQuery } from '../../store/brewery/api'
-import { type Brewery as BreweryType } from '../../store/brewery/types'
+import { type Brewery as BreweryType } from '../../core/brewery/types'
 import { useListReviewsByBreweryQuery } from '../../store/review/api'
 import {
   type ReviewSorting,
   type ReviewSortingOrder
-} from '../../store/review/types'
+} from '../../core/review/types'
 import { useListStoragesByBreweryQuery } from '../../store/storage/api'
-import { type ListDirection } from '../../store/types'
+import { type ListDirection } from '../../core/types'
 
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'

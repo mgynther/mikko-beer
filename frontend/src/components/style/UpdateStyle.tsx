@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { useGetStyleQuery, useUpdateStyleMutation } from '../../store/style/api'
-import { type StyleWithParentIds } from '../../store/style/types'
+import { type StyleWithParentIds } from '../../core/style/types'
 
 import EditActions from '../common/EditActions'
 import LoadingIndicator from '../common/LoadingIndicator'

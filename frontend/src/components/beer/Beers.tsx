@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { useLazyListBeersQuery } from '../../store/beer/api'
-import { type Beer } from '../../store/beer/types'
+import { type Beer } from '../../core/beer/types'
 import { infiniteScroll } from '../util'
 
 import BreweryLinks from '../brewery/BreweryLinks'

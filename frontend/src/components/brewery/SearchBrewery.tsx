@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { useLazySearchBreweriesQuery } from '../../store/brewery/api'
-import { type Brewery } from '../../store/brewery/types'
+import { type Brewery } from '../../core/brewery/types'
 
 import SearchBox, { nameFormatter } from '../common/SearchBox'
 

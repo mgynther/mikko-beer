@@ -3,7 +3,7 @@ import { useState } from 'react'
 import {
   type StyleWithParents,
   type StyleWithParentIds
-} from '../../store/style/types'
+} from '../../core/style/types'
 
 import StyleParents from './StyleParents'
 

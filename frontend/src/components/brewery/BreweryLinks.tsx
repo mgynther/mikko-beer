@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-import { type Brewery } from '../../store/brewery/types'
+import { type Brewery } from '../../core/brewery/types'
 
 interface Props {
   breweries: Brewery[]

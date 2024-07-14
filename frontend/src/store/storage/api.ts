@@ -1,6 +1,7 @@
 import { emptySplitApi } from '../api'
 
-import { type Storage, type StorageList, StorageTags } from './types'
+import { type Storage, type StorageList } from '../../core/storage/types'
+import { StorageTags } from './types'
 
 interface CreateStorageParams {
   beer: string

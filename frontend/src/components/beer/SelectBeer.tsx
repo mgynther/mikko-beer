@@ -1,4 +1,4 @@
-import { type BeerWithIds } from '../../store/beer/types'
+import { type BeerWithIds } from '../../core/beer/types'
 
 import SelectCreateRadio, { Mode } from '../common/SelectCreateRadio'
 

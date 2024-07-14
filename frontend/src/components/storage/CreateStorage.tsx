@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { type BeerWithIds } from '../../store/beer/types'
+import { type BeerWithIds } from '../../core/beer/types'
 import { type Container } from '../../core/container/types'
 import { type ReviewContainerIf } from '../../core/review/types'
 import { useCreateStorageMutation } from '../../store/storage/api'

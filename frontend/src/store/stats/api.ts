@@ -1,6 +1,6 @@
 import { emptySplitApi } from '../api'
 
-import { type Pagination } from '../types'
+import { type Pagination } from '../../core/types'
 
 import {
   type AnnualStats,
@@ -10,8 +10,8 @@ import {
   type RatingStats,
   type StyleStats,
   type StyleStatsSorting,
-  StatsTags
-} from './types'
+} from '../../core/stats/types'
+import { StatsTags } from './types'
 
 function breweryIdFilter (breweryId: string): string {
   return `brewery=${breweryId}`

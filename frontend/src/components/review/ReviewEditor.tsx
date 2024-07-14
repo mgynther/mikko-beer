@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 
-import { type BeerWithIds } from '../../store/beer/types'
+import { type BeerWithIds } from '../../core/beer/types'
 import { type Container } from '../../core/container/types'
 import { type ReviewContainerIf } from '../../core/review/types'
-import { type JoinedReview, type ReviewRequest } from '../../store/review/types'
+import { type JoinedReview, type ReviewRequest } from '../../core/review/types'
 
 import SelectBeer from '../beer/SelectBeer'
 import SelectContainer from '../container/SelectContainer'

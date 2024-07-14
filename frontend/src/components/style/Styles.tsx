@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 
 import { useListStylesQuery } from '../../store/style/api'
-import { type Style, type StyleWithParentIds } from '../../store/style/types'
+import { type Style, type StyleWithParentIds } from '../../core/style/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 import SearchStyle from './SearchStyle'

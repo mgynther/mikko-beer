@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { useCreateReviewMutation } from '../../store/review/api'
-import { type ReviewRequest } from '../../store/review/types'
+import { type ReviewRequest } from '../../core/review/types'
 import { useGetStorageQuery } from '../../store/storage/api'
-import { type Storage } from '../../store/storage/types'
+import { type Storage } from '../../core/storage/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 import { formatBestBefore } from '../util'
