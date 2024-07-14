@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom'
 
-import { useListStylesQuery } from '../../store/style/api'
 import type {
   ListStylesIf,
   Style,
@@ -17,12 +16,12 @@ interface Props {
 
 function Styles (props: Props): JSX.Element {
   const navigate = useNavigate()
-  const { data: styleData, isLoading } = useListStylesQuery()
+  const { styles, isLoading } = props.listStylesIf.useList()
 
-  const styleArray = styleData?.styles === undefined
+  const styleArray = styles === undefined
     ? []
-    : [...styleData.styles]
-  const styles = styleArray
+    : [...styles]
+  const sortedStyles = styleArray
     .sort((a, b) => a.name.localeCompare(b.name))
 
   return (
@@ -36,7 +35,7 @@ function Styles (props: Props): JSX.Element {
       />
       <LoadingIndicator isLoading={isLoading} />
       <ul>
-        {styles.map((style: StyleWithParentIds) => (
+        {sortedStyles.map((style: StyleWithParentIds) => (
           <li key={style.id} className='RowLike'>
             <StyleLink style={style} />
           </li>
