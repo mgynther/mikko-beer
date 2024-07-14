@@ -44,3 +44,13 @@ export interface LoginIf {
 
 export type GetLogin = () => Login
 export type GetPasswordChangeResult = () => PasswordChangeResult
+
+export interface ChangePasswordIf {
+  useChangePassword: () => {
+    changePassword: (params: ChangePasswordParams) => Promise<void>
+    isLoading: boolean
+  },
+  useGetPasswordChangeResult: () => {
+    getResult: GetPasswordChangeResult
+  }
+}

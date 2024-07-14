@@ -33,7 +33,11 @@ import {
   useListContainersQuery,
   useUpdateContainerMutation
 } from './store/container/api'
-import { useLoginMutation, useLogoutMutation } from './store/login/api'
+import {
+  useChangePasswordMutation,
+  useLoginMutation,
+  useLogoutMutation
+} from './store/login/api'
 import { selectLogin, selectPasswordChangeResult } from './store/login/reducer'
 import { Theme, selectTheme, setTheme } from './store/theme/reducer'
 import {
@@ -68,6 +72,8 @@ import type {
   UpdateStyleIf
 } from './core/style/types'
 import type {
+  ChangePasswordIf,
+  ChangePasswordParams,
   GetLogin,
   GetPasswordChangeResult,
   Login,
@@ -353,10 +359,26 @@ function App (): JSX.Element {
   const isLoggedIn: boolean = login.authToken?.length > 0
   const isAdmin = login?.user?.role === Role.admin
 
-  const getPasswordChangeResult: GetPasswordChangeResult = () => {
-    const passwordChangeResult: PasswordChangeResult =
-      useSelector(selectPasswordChangeResult)
-    return passwordChangeResult
+  const changePasswordIf: ChangePasswordIf = {
+    useChangePassword: () => {
+      const [changePassword, { isLoading }] = useChangePasswordMutation()
+      return {
+        changePassword: async (params: ChangePasswordParams) => {
+          await changePassword(params)
+        },
+        isLoading,
+      }
+    },
+    useGetPasswordChangeResult: () => {
+      const getPasswordChangeResult: GetPasswordChangeResult = () => {
+        const passwordChangeResult: PasswordChangeResult =
+          useSelector(selectPasswordChangeResult)
+        return passwordChangeResult
+      }
+      return {
+        getResult: getPasswordChangeResult
+      }
+    }
   }
 
   return (
@@ -448,8 +470,8 @@ function App (): JSX.Element {
                 }
                 <Route path="account" element={
                   <Account
+                    changePasswordIf={changePasswordIf}
                     getLogin={getLogin}
-                    getPasswordChangeResult={getPasswordChangeResult}
                   />
                 } />
                 <Route path="stats" element={

@@ -1,27 +1,26 @@
 import { useState } from 'react'
 
-import { useChangePasswordMutation } from '../../store/login/api'
-
 import LoadingIndicator from '../common/LoadingIndicator'
 
 import './ChangePassword.css'
 import {
+  type ChangePasswordIf,
   type GetLogin,
-  type GetPasswordChangeResult,
   type Login,
   PasswordChangeResult
 } from '../../core/login/types'
 
 interface Props {
   getLogin: GetLogin
-  getPasswordChangeResult: GetPasswordChangeResult
+  changePasswordIf: ChangePasswordIf
 }
 
 function ChangePassword (props: Props): JSX.Element {
-  const [changePassword, { isLoading }] = useChangePasswordMutation()
   const login: Login = props.getLogin()
+  const { changePassword, isLoading } =
+    props.changePasswordIf.useChangePassword()
   const passwordChangeResult: PasswordChangeResult =
-    props.getPasswordChangeResult()
+    props.changePasswordIf.useGetPasswordChangeResult().getResult()
 
   const [isMismatch, setIsMismatch] = useState(false)
   const [newPassword, setNewPassword] = useState('')

@@ -1,13 +1,13 @@
 import type {
+  ChangePasswordIf,
   GetLogin,
-  GetPasswordChangeResult,
   Login
 } from '../../core/login/types'
 import ChangePassword from './ChangePassword'
 
 interface Props {
+  changePasswordIf: ChangePasswordIf
   getLogin: GetLogin
-  getPasswordChangeResult: GetPasswordChangeResult
 }
 
 function Account (props: Props): JSX.Element {
@@ -18,7 +18,7 @@ function Account (props: Props): JSX.Element {
       <div>Username: { login.user?.username }</div>
       <ChangePassword
         getLogin={props.getLogin}
-        getPasswordChangeResult={props.getPasswordChangeResult}
+        changePasswordIf={props.changePasswordIf}
       />
     </div>
   )
