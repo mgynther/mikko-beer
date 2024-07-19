@@ -4,15 +4,19 @@ import { useParams } from 'react-router-dom'
 
 import type {
   GetBeerIf,
-  Beer as BeerType
+  Beer as BeerType,
+  EditBeerIf
 } from '../../core/beer/types'
-import { useListReviewsByBeerQuery } from '../../store/review/api'
-import {
-  type ReviewSorting,
-  type ReviewSortingOrder
-} from '../../core/review/types'
 import { useListStoragesByBeerQuery } from '../../store/storage/api'
-import { type ListDirection } from '../../core/types'
+import { useListReviewsByBeerQuery } from '../../store/review/api'
+
+import type { GetLogin } from '../../core/login/types'
+import type {
+  ReviewContainerIf,
+  ReviewSorting,
+  ReviewSortingOrder
+} from '../../core/review/types'
+import type { ListDirection } from '../../core/types'
 
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'
@@ -26,19 +30,16 @@ import StyleLinks from '../style/StyleLinks'
 import UpdateBeer from './UpdateBeer'
 
 import './Beer.css'
-import type { ReviewContainerIf } from '../../core/review/types'
-import type { SelectStyleIf } from '../../core/style/types'
-import type { GetLogin } from '../../core/login/types'
 
 function NotFound (): JSX.Element {
   return <div>Not found</div>
 }
 
 interface Props {
+  editBeerIf: EditBeerIf
   getBeerIf: GetBeerIf
   getLogin: GetLogin
   reviewContainerIf: ReviewContainerIf
-  selectStyleIf: SelectStyleIf
 }
 
 function Beer (props: Props): JSX.Element {
@@ -98,8 +99,8 @@ function Beer (props: Props): JSX.Element {
       )}
       {mode === EditableMode.Edit && initialBeer !== undefined && (
         <UpdateBeer
+          editBeerIf={props.editBeerIf}
           initialBeer={initialBeer}
-          selectStyleIf={props.selectStyleIf}
           onCancel={() => {
             setInitialBeer(undefined)
             setMode(EditableMode.View)
@@ -118,9 +119,9 @@ function Beer (props: Props): JSX.Element {
         />
       )}
       <ReviewList
+        editBeerIf={props.editBeerIf}
         getLogin={props.getLogin}
         reviewContainerIf={props.reviewContainerIf}
-        selectStyleIf={props.selectStyleIf}
         isLoading={isLoadingReviews}
         isTitleVisible={true}
         reviews={reviewData?.reviews ?? []}

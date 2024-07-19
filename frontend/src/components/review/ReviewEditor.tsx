@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 
-import { type BeerWithIds } from '../../core/beer/types'
+import type {
+  EditBeerIf,
+  BeerWithIds
+} from '../../core/beer/types'
 import { type Container } from '../../core/container/types'
 import { type ReviewContainerIf } from '../../core/review/types'
 import { type JoinedReview, type ReviewRequest } from '../../core/review/types'
@@ -13,7 +16,6 @@ import { pad } from '../util'
 import '../common/FlexRow.css'
 
 import './ReviewEditor.css'
-import type { SelectStyleIf } from '../../core/style/types'
 
 export interface InitialReview {
   joined: JoinedReview
@@ -22,7 +24,7 @@ export interface InitialReview {
 
 interface Props {
   reviewContainerIf: ReviewContainerIf
-  selectStyleIf: SelectStyleIf
+  editBeerIf: EditBeerIf
   initialReview: InitialReview | undefined
   isFromStorage: boolean
   onChange: (review: ReviewRequest | undefined) => void
@@ -131,7 +133,7 @@ function ReviewEditor (props: Props): JSX.Element {
               select={(beer: BeerWithIds) => {
                 setBeer(beer)
               }}
-              selectStyleIf={props.selectStyleIf}
+              editBeerIf={props.editBeerIf}
               />
             : (<div className='FlexRow'>
                   <div>{beer.name}</div>

@@ -8,11 +8,11 @@ import { type JoinedReview, type ReviewRequest } from '../../core/review/types'
 import EditActions from '../common/EditActions'
 
 import ReviewEditor from './ReviewEditor'
-import type { SelectStyleIf } from '../../core/style/types'
+import type { EditBeerIf } from '../../core/beer/types'
 
 interface Props {
+  editBeerIf: EditBeerIf
   reviewContainerIf: ReviewContainerIf
-  selectStyleIf: SelectStyleIf
   initialReview: {
     joined: JoinedReview
     review: ReviewRequest
@@ -44,8 +44,8 @@ function UpdateReview (props: Props): JSX.Element {
   return (
     <>
       <ReviewEditor
+        editBeerIf={props.editBeerIf}
         reviewContainerIf={props.reviewContainerIf}
-        selectStyleIf={props.selectStyleIf}
         initialReview={props.initialReview}
         isFromStorage={false}
         onChange={(review: ReviewRequest | undefined) => {

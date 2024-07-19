@@ -23,18 +23,18 @@ import Stats from '../stats/Stats'
 import UpdateBrewery from './UpdateBrewery'
 
 import '../common/FlexRow.css'
-import { type ReviewContainerIf } from '../../core/review/types'
-import type { SelectStyleIf } from '../../core/style/types'
+import type { EditBeerIf } from '../../core/beer/types'
 import type { GetLogin } from '../../core/login/types'
+import type { ReviewContainerIf } from '../../core/review/types'
 
 function NotFound (): JSX.Element {
   return <div>Not found</div>
 }
 
 interface Props {
+  editBeerIf: EditBeerIf
   getLogin: GetLogin
   reviewContainerIf: ReviewContainerIf
-  selectStyleIf: SelectStyleIf
 }
 
 function Brewery (props: Props): JSX.Element {
@@ -105,9 +105,9 @@ function Brewery (props: Props): JSX.Element {
         />
       )}
       <ReviewList
+        editBeerIf={props.editBeerIf}
         getLogin={props.getLogin}
         reviewContainerIf={props.reviewContainerIf}
-        selectStyleIf={props.selectStyleIf}
         isLoading={isLoadingReviews}
         isTitleVisible={true}
         reviews={reviewData?.reviews ?? []}

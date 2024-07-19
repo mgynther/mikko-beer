@@ -1,5 +1,7 @@
-import { type BeerWithIds } from '../../core/beer/types'
-import type { SelectStyleIf } from '../../core/style/types'
+import type {
+  EditBeerIf,
+  BeerWithIds
+} from '../../core/beer/types'
 
 import SelectCreateRadio, { Mode } from '../common/SelectCreateRadio'
 
@@ -9,7 +11,7 @@ import SearchBeer from './SearchBeer'
 import './SelectBeer.css'
 
 export interface Props {
-  selectStyleIf: SelectStyleIf
+  editBeerIf: EditBeerIf
   select: (beer: BeerWithIds) => void
 }
 
@@ -20,7 +22,7 @@ function SelectBeer (props: Props): JSX.Element {
         defaultMode={Mode.CREATE}
         createElement={
           <CreateBeer
-            selectStyleIf={props.selectStyleIf}
+            editBeerIf={props.editBeerIf}
             select={props.select}
           />
         }

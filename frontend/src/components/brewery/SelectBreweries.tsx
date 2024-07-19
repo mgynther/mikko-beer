@@ -1,7 +1,10 @@
 import { Fragment, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
-import { type Brewery } from '../../core/brewery/types'
+import type {
+  Brewery,
+  SelectBreweryIf
+} from '../../core/brewery/types'
 
 import SelectBrewery from './SelectBrewery'
 
@@ -10,6 +13,7 @@ import '../common/SelectedItem.css'
 import './SelectBreweries.css'
 
 export interface Props {
+  selectBreweryIf: SelectBreweryIf
   initialBreweries: Brewery[]
   select: (breweries: string[]) => void
 }
@@ -20,6 +24,7 @@ interface BrewerySelection {
 }
 
 interface SelectionItemProps {
+  selectBreweryIf: SelectBreweryIf
   brewery: Brewery | undefined
   select: (brewery: Brewery) => void
   isRemoveVisible: boolean
@@ -32,6 +37,7 @@ function SelectionItem (props: SelectionItemProps): JSX.Element {
     <Fragment>
       {props.brewery === undefined && (
         <SelectBrewery
+          selectBreweryIf={props.selectBreweryIf}
           select={props.select}
           isRemoveVisible={props.isRemoveVisible}
           remove={props.remove}
@@ -92,6 +98,7 @@ function SelectBreweries (props: Props): JSX.Element {
       {selections.map((selection, selectionIndex) => (
         <SelectionItem
           key={selection.id}
+          selectBreweryIf={props.selectBreweryIf}
           brewery={selection.brewery}
           select={(brewery) => {
             const newBreweries = [...selections]

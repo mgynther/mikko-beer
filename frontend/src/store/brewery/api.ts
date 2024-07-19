@@ -7,7 +7,11 @@ import { ReviewTags } from '../review/types'
 import { StorageTags } from '../storage/types'
 import { breweryStatsTagTypes } from '../stats/types'
 
-import { type Brewery, type BreweryList } from '../../core/brewery/types'
+import type {
+  Brewery,
+  BreweryList,
+  CreateBreweryRequest
+} from '../../core/brewery/types'
 import { BreweryTags } from './types'
 
 const breweryApi = emptySplitApi.injectEndpoints({
@@ -38,12 +42,14 @@ const breweryApi = emptySplitApi.injectEndpoints({
         }
       })
     }),
-    createBrewery: build.mutation<{ brewery: Brewery }, Partial<string>>({
-      query: (name: string) => ({
+    createBrewery: build.mutation<{
+      brewery: Brewery
+    }, Partial<CreateBreweryRequest>>({
+      query: (brewery: CreateBreweryRequest) => ({
         url: '/brewery',
         method: 'POST',
         body: {
-          name
+          ...brewery
         }
       }),
       invalidatesTags: [BreweryTags.Brewery]

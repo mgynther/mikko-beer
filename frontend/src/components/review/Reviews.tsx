@@ -1,28 +1,29 @@
 import { useEffect, useState } from 'react'
 
 import { useListReviewsMutation } from '../../store/review/api'
-import {
-  type JoinedReview,
-  type ReviewSorting,
-  type ReviewSortingOrder
+
+import type { EditBeerIf } from '../../core/beer/types'
+import type { GetLogin } from '../../core/login/types'
+import type { ReviewContainerIf } from '../../core/review/types'
+import type {
+  JoinedReview,
+  ReviewSorting,
+  ReviewSortingOrder
 } from '../../core/review/types'
-import { type ListDirection } from '../../core/types'
+import type { ListDirection } from '../../core/types'
 
 import { infiniteScroll } from '../util'
 
 import ReviewList from './ReviewList'
 
 import './Review.css'
-import { type ReviewContainerIf } from '../../core/review/types'
-import type { SelectStyleIf } from '../../core/style/types'
-import type { GetLogin } from '../../core/login/types'
 
 const pageSize = 20
 
 interface Props {
   getLogin: GetLogin
+  editBeerIf: EditBeerIf
   reviewContainerIf: ReviewContainerIf
-  selectStyleIf: SelectStyleIf
 }
 
 function Reviews (props: Props): JSX.Element {
@@ -88,9 +89,9 @@ function Reviews (props: Props): JSX.Element {
     <div>
       <h3>Reviews</h3>
       <ReviewList
+        editBeerIf={props.editBeerIf}
         getLogin={props.getLogin}
         reviewContainerIf={props.reviewContainerIf}
-        selectStyleIf={props.selectStyleIf}
         isLoading={isLoading}
         isTitleVisible={false}
         reviews={loadedReviews}

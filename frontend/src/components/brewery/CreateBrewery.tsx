@@ -1,7 +1,9 @@
 import { useState } from 'react'
 
-import { useCreateBreweryMutation } from '../../store/brewery/api'
-import { type Brewery } from '../../core/brewery/types'
+import type {
+  Brewery,
+  CreateBreweryIf
+} from '../../core/brewery/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
@@ -10,6 +12,7 @@ import BreweryEditor from './BreweryEditor'
 import '../common/FlexRow.css'
 
 export interface Props {
+  createBreweryIf: CreateBreweryIf
   select: (brewery: Brewery) => void
 }
 
@@ -19,18 +22,17 @@ function CreateBrewery (props: Props): JSX.Element {
     name: ''
   })
   const [newBrewery, setNewBrewery] = useState<Brewery | undefined>(undefined)
-  const [
-    createBrewery,
-    { isLoading: isCreating }
-  ] = useCreateBreweryMutation()
+  const { create, isLoading } = props.createBreweryIf.useCreate()
 
   async function doCreate (): Promise<void> {
     if (newBrewery === undefined) {
       throw new Error('brewery must not be undefined when creating')
     }
     try {
-      const result = await createBrewery(newBrewery.name).unwrap()
-      props.select(result.brewery)
+      const result = await create({
+        name: newBrewery.name
+      })
+      props.select(result)
     } catch (e) {
       console.warn('Failed to create brewery', e)
     }
@@ -55,7 +57,7 @@ function CreateBrewery (props: Props): JSX.Element {
           </button>
         </div>
       </div>
-      {isCreating && <LoadingIndicator isLoading={isCreating} />}
+      {isLoading && <LoadingIndicator isLoading={isLoading} />}
     </>
   )
 }

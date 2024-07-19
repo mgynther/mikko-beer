@@ -14,7 +14,7 @@ import ReviewEditor, { type InitialReview } from './ReviewEditor'
 import {
   type ReviewContainerIf
 } from '../../core/review/types'
-import type { SelectStyleIf } from '../../core/style/types'
+import type { EditBeerIf } from '../../core/beer/types'
 
 function toInitialReview (storageData: Storage): InitialReview {
   if (storageData === undefined) {
@@ -48,8 +48,8 @@ function toInitialReview (storageData: Storage): InitialReview {
 }
 
 interface Props {
+  editBeerIf: EditBeerIf
   reviewContainerIf: ReviewContainerIf
-  selectStyleIf: SelectStyleIf
 }
 
 function AddReview (props: Props): JSX.Element {
@@ -92,8 +92,8 @@ function AddReview (props: Props): JSX.Element {
       <LoadingIndicator isLoading={isLoadingStorage} />
       {(storageId === undefined || storageData !== undefined) && (
         <ReviewEditor
+          editBeerIf={props.editBeerIf}
           reviewContainerIf={props.reviewContainerIf}
-          selectStyleIf={props.selectStyleIf}
           initialReview={getInitialReview()}
           isFromStorage={storageId !== undefined}
           onChange={review => { setReview(review) }}

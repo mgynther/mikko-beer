@@ -1,6 +1,9 @@
 import { useState } from 'react'
 
-import { type Brewery } from '../../core/brewery/types'
+import type {
+  Brewery,
+  SelectBreweryIf
+} from '../../core/brewery/types'
 
 import { Mode, SelectCreateRadioBasic } from '../common/SelectCreateRadio'
 
@@ -8,6 +11,7 @@ import CreateBrewery from './CreateBrewery'
 import SearchBrewery from './SearchBrewery'
 
 export interface Props {
+  selectBreweryIf: SelectBreweryIf
   select: (brewery: Brewery) => void
   isRemoveVisible: boolean
   remove: () => void
@@ -23,10 +27,16 @@ function SelectBrewery (props: Props): JSX.Element {
       />
       <div className='SelectBreweryContent'>
         {mode === Mode.CREATE && (
-          <CreateBrewery select={props.select} />
+          <CreateBrewery
+            createBreweryIf={props.selectBreweryIf.create}
+            select={props.select}
+          />
         )}
         {mode === Mode.SELECT && (
-          <SearchBrewery select={props.select} />
+          <SearchBrewery
+            searchBreweryIf={props.selectBreweryIf.search}
+            select={props.select}
+          />
         )}
         {props.isRemoveVisible && (
           <button onClick={props.remove}>Remove</button>

@@ -1,15 +1,14 @@
 import { useState } from 'react'
 
 import { useCreateBeerMutation } from '../../store/beer/api'
-import { type BeerWithIds } from '../../core/beer/types'
+import type { BeerWithIds, EditBeerIf } from '../../core/beer/types'
 
 import BeerEditor from './BeerEditor'
 
 import './CreateBeer.css'
-import type { SelectStyleIf } from '../../core/style/types'
 
 export interface Props {
-  selectStyleIf: SelectStyleIf
+  editBeerIf: EditBeerIf
   select: (beer: BeerWithIds) => void
 }
 
@@ -37,7 +36,7 @@ function CreateBeer (props: Props): JSX.Element {
   return (
     <div>
       <BeerEditor
-        selectStyleIf={props.selectStyleIf}
+        editBeerIf={props.editBeerIf}
         initialBeer={undefined}
         onChange={setBeer}
       />

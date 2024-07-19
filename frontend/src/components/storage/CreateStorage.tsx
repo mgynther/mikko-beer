@@ -1,8 +1,11 @@
 import { useState } from 'react'
 
-import { type BeerWithIds } from '../../core/beer/types'
-import { type Container } from '../../core/container/types'
-import { type ReviewContainerIf } from '../../core/review/types'
+import type {
+  EditBeerIf,
+  BeerWithIds
+} from '../../core/beer/types'
+import type { Container } from '../../core/container/types'
+import type { ReviewContainerIf } from '../../core/review/types'
 import { useCreateStorageMutation } from '../../store/storage/api'
 
 import LoadingIndicator from '../common/LoadingIndicator'
@@ -10,10 +13,9 @@ import SelectBeer from '../beer/SelectBeer'
 import SelectContainer from '../container/SelectContainer'
 
 import './CreateStorage.css'
-import type { SelectStyleIf } from '../../core/style/types'
 
 interface Props {
-  selectStyleIf: SelectStyleIf
+  editBeerIf: EditBeerIf
   reviewContainerIf: ReviewContainerIf
 }
 
@@ -59,7 +61,7 @@ function CreateStorage (props: Props): JSX.Element {
         <div className='CreateStorageContent'>
           {beer === undefined
             ? <SelectBeer
-                selectStyleIf={props.selectStyleIf}
+                editBeerIf={props.editBeerIf}
                 select={(beer: BeerWithIds) => {
                   setBeer(beer)
                 }}

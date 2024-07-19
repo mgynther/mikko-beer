@@ -1,16 +1,16 @@
 import { useState } from 'react'
 
-import {
-  type Beer,
-  type BeerWithIds
+import type {
+  Beer,
+  BeerWithIds,
+  EditBeerIf
 } from '../../core/beer/types'
 
 import SelectBreweries from '../brewery/SelectBreweries'
 import SelectStyles from '../style/SelectStyles'
-import type { SelectStyleIf } from '../../core/style/types'
 
 interface Props {
-  selectStyleIf: SelectStyleIf
+  editBeerIf: EditBeerIf
   initialBeer: Beer | undefined
   onChange: (beer: BeerWithIds | undefined) => void
 }
@@ -58,6 +58,7 @@ function BeerEditor (props: Props): JSX.Element {
       </div>
       <div className={'Section'}>
         <SelectBreweries
+          selectBreweryIf={props.editBeerIf.selectBreweryIf}
           initialBreweries={props.initialBeer?.breweries ?? []}
           select={(breweryIds) => {
             setBreweryIds(breweryIds)
@@ -67,7 +68,7 @@ function BeerEditor (props: Props): JSX.Element {
       </div>
       <div className={'Section'}>
         <SelectStyles
-          selectStyleIf={props.selectStyleIf}
+          selectStyleIf={props.editBeerIf.selectStyleIf}
           initialStyles={props.initialBeer?.styles ?? []}
           select={(styleIds) => {
             setStyleIds(styleIds)

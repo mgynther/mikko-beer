@@ -4,19 +4,19 @@ import { useParams } from 'react-router-dom'
 
 import type {
   GetStyleIf,
-  SelectStyleIf,
   Style as StyleType,
   StyleWithParentIds,
   UpdateStyleIf
 } from '../../core/style/types'
 
-import { useListReviewsByStyleQuery } from '../../store/review/api'
-import {
-  type ReviewSorting,
-  type ReviewSortingOrder
+import type { EditBeerIf } from '../../core/beer/types'
+import type { GetLogin } from '../../core/login/types'
+import type {
+  ReviewSorting,
+  ReviewSortingOrder
 } from '../../core/review/types'
-import { useListStoragesByStyleQuery } from '../../store/storage/api'
 import { type ListDirection } from '../../core/types'
+import type { ReviewContainerIf } from '../../core/review/types'
 
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'
@@ -26,14 +26,15 @@ import ReviewList from '../review/ReviewList'
 import Stats from '../stats/Stats'
 import StorageList from '../storage/StorageList'
 
+import { useListReviewsByStyleQuery } from '../../store/review/api'
+import { useListStoragesByStyleQuery } from '../../store/storage/api'
+
 import StyleLinks from './StyleLinks'
 import UpdateStyle from './UpdateStyle'
 
 import '../common/FlexRow.css'
 
 import './Style.css'
-import { type ReviewContainerIf } from '../../core/review/types'
-import type { GetLogin } from '../../core/login/types'
 
 function NotFound (): JSX.Element {
   return <div>Not found</div>
@@ -51,7 +52,7 @@ function NoLinks (props: NoLinksProps): JSX.Element | null {
 interface Props {
   getLogin: GetLogin
   getStyleIf: GetStyleIf
-  selectStyleIf: SelectStyleIf
+  editBeerIf: EditBeerIf
   reviewContainerIf: ReviewContainerIf
   updateStyleIf: UpdateStyleIf
 }
@@ -121,7 +122,7 @@ function Style (props: Props): JSX.Element {
           <UpdateStyle
             getStyleIf={props.getStyleIf}
             initialStyle={initialStyle}
-            listStylesIf={props.selectStyleIf.list}
+            listStylesIf={props.editBeerIf.selectStyleIf.list}
             updateStyleIf={props.updateStyleIf}
             onCancel={() => {
               setInitialStyle(undefined)
@@ -145,7 +146,7 @@ function Style (props: Props): JSX.Element {
       <ReviewList
         getLogin={props.getLogin}
         reviewContainerIf={props.reviewContainerIf}
-        selectStyleIf={props.selectStyleIf}
+        editBeerIf={props.editBeerIf}
         isLoading={isLoadingReviews}
         isTitleVisible={true}
         reviews={reviewData?.reviews ?? []}
