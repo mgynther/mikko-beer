@@ -23,7 +23,7 @@ import Stats from '../stats/Stats'
 import UpdateBrewery from './UpdateBrewery'
 
 import '../common/FlexRow.css'
-import type { EditBeerIf } from '../../core/beer/types'
+import type { CreateBeerIf } from '../../core/beer/types'
 import type { GetLogin } from '../../core/login/types'
 import type { ReviewContainerIf } from '../../core/review/types'
 
@@ -32,7 +32,7 @@ function NotFound (): JSX.Element {
 }
 
 interface Props {
-  editBeerIf: EditBeerIf
+  createBeerIf: CreateBeerIf
   getLogin: GetLogin
   reviewContainerIf: ReviewContainerIf
 }
@@ -105,7 +105,7 @@ function Brewery (props: Props): JSX.Element {
         />
       )}
       <ReviewList
-        editBeerIf={props.editBeerIf}
+        createBeerIf={props.createBeerIf}
         getLogin={props.getLogin}
         reviewContainerIf={props.reviewContainerIf}
         isLoading={isLoadingReviews}

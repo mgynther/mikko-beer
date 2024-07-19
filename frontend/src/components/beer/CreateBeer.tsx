@@ -1,33 +1,32 @@
 import { useState } from 'react'
 
-import { useCreateBeerMutation } from '../../store/beer/api'
-import type { BeerWithIds, EditBeerIf } from '../../core/beer/types'
+import type {
+  BeerWithIds,
+  CreateBeerIf
+} from '../../core/beer/types'
 
 import BeerEditor from './BeerEditor'
 
 import './CreateBeer.css'
 
 export interface Props {
-  editBeerIf: EditBeerIf
+  createBeerIf: CreateBeerIf
   select: (beer: BeerWithIds) => void
 }
 
 function CreateBeer (props: Props): JSX.Element {
   const [beer, setBeer] = useState<BeerWithIds | undefined>(undefined)
-  const [
-    createBeer,
-    { isLoading: isCreating }
-  ] = useCreateBeerMutation()
+  const { create, isLoading } = props.createBeerIf.useCreate()
 
   async function doCreate (): Promise<void> {
     if (beer === undefined) return
     try {
-      const result = await createBeer({
+      const result = await create({
         name: beer.name,
         breweries: beer.breweries,
         styles: beer.styles
-      }).unwrap()
-      props.select(result.beer)
+      })
+      props.select(result)
     } catch (e) {
       console.warn('Failed to create brewery', e)
     }
@@ -36,12 +35,12 @@ function CreateBeer (props: Props): JSX.Element {
   return (
     <div>
       <BeerEditor
-        editBeerIf={props.editBeerIf}
+        editBeerIf={props.createBeerIf.editBeerIf}
         initialBeer={undefined}
         onChange={setBeer}
       />
       <button
-        disabled={beer === undefined || isCreating}
+        disabled={beer === undefined || isLoading}
         onClick={() => { void doCreate() }}
       >Create beer</button>
     </div>

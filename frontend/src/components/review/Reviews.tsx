@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { useListReviewsMutation } from '../../store/review/api'
 
-import type { EditBeerIf } from '../../core/beer/types'
+import type { CreateBeerIf } from '../../core/beer/types'
 import type { GetLogin } from '../../core/login/types'
 import type { ReviewContainerIf } from '../../core/review/types'
 import type {
@@ -22,7 +22,7 @@ const pageSize = 20
 
 interface Props {
   getLogin: GetLogin
-  editBeerIf: EditBeerIf
+  createBeerIf: CreateBeerIf
   reviewContainerIf: ReviewContainerIf
 }
 
@@ -89,7 +89,7 @@ function Reviews (props: Props): JSX.Element {
     <div>
       <h3>Reviews</h3>
       <ReviewList
-        editBeerIf={props.editBeerIf}
+        createBeerIf={props.createBeerIf}
         getLogin={props.getLogin}
         reviewContainerIf={props.reviewContainerIf}
         isLoading={isLoading}

@@ -90,10 +90,13 @@ import type {
   PasswordChangeResult
 } from './core/login/types'
 import type {
+  BeerWithIds,
+  CreateBeerIf,
+  CreateBeerRequest,
   EditBeerIf,
   GetBeerIf
 } from './core/beer/types'
-import { useGetBeerQuery } from './store/beer/api'
+import { useCreateBeerMutation, useGetBeerQuery } from './store/beer/api'
 import {
   useCreateBreweryMutation,
   useLazySearchBreweriesQuery
@@ -396,6 +399,27 @@ function App (): JSX.Element {
     selectStyleIf
   }
 
+  const createBeerIf: CreateBeerIf = {
+    useCreate: () => {
+      const [
+        createBeer,
+        { isLoading }
+      ] = useCreateBeerMutation()
+      return {
+        create: async (
+          beerRequest: CreateBeerRequest
+        ): Promise<BeerWithIds> => {
+          const result = await createBeer({
+            ...beerRequest
+          }).unwrap()
+          return result.beer
+        },
+        isLoading
+      }
+    },
+    editBeerIf
+  }
+
   const updateStyleIf: UpdateStyleIf = {
     useUpdate: () => {
       const [
@@ -487,14 +511,14 @@ function App (): JSX.Element {
                 {isAdmin && <Route path="addreview" element={
                   <AddReview
                     reviewContainerIf={reviewContainerIf}
-                    editBeerIf={editBeerIf}
+                    createBeerIf={createBeerIf}
                   />
                 } />}
                 {isAdmin &&
                   <Route path="addreview/:storageId" element={
                     <AddReview
                       reviewContainerIf={reviewContainerIf}
-                      editBeerIf={editBeerIf}
+                      createBeerIf={createBeerIf}
                     />
                 } />
                 }
@@ -504,7 +528,7 @@ function App (): JSX.Element {
                     getBeerIf={getBeerIf}
                     getLogin={getLogin}
                     reviewContainerIf={reviewContainerIf}
-                    editBeerIf={editBeerIf}
+                    createBeerIf={createBeerIf}
                   />
                 } />
                 <Route path="breweries" element={
@@ -516,7 +540,7 @@ function App (): JSX.Element {
                   <Brewery
                     getLogin={getLogin}
                     reviewContainerIf={reviewContainerIf}
-                    editBeerIf={editBeerIf}
+                    createBeerIf={createBeerIf}
                   />
                 } />
                 <Route path="containers" element={
@@ -530,7 +554,7 @@ function App (): JSX.Element {
                   <Reviews
                     getLogin={getLogin}
                     reviewContainerIf={reviewContainerIf}
-                    editBeerIf={editBeerIf}
+                    createBeerIf={createBeerIf}
                   />
                 } />
                 <Route path="styles" element={
@@ -541,7 +565,7 @@ function App (): JSX.Element {
                     getLogin={getLogin}
                     getStyleIf={getStyleIf}
                     reviewContainerIf={reviewContainerIf}
-                    editBeerIf={editBeerIf}
+                    createBeerIf={createBeerIf}
                     updateStyleIf={updateStyleIf}
                   />
                 } />
@@ -561,7 +585,7 @@ function App (): JSX.Element {
                   <Storages
                     getLogin={getLogin}
                     reviewContainerIf={reviewContainerIf}
-                    editBeerIf={editBeerIf}
+                    createBeerIf={createBeerIf}
                   />
                 } />
               </React.Fragment>

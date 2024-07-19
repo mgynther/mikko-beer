@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
 import type {
-  EditBeerIf,
-  BeerWithIds
+  BeerWithIds,
+  CreateBeerIf
 } from '../../core/beer/types'
 import type { Container } from '../../core/container/types'
 import type { ReviewContainerIf } from '../../core/review/types'
@@ -15,7 +15,7 @@ import SelectContainer from '../container/SelectContainer'
 import './CreateStorage.css'
 
 interface Props {
-  editBeerIf: EditBeerIf
+  createBeerIf: CreateBeerIf
   reviewContainerIf: ReviewContainerIf
 }
 
@@ -61,7 +61,7 @@ function CreateStorage (props: Props): JSX.Element {
         <div className='CreateStorageContent'>
           {beer === undefined
             ? <SelectBeer
-                editBeerIf={props.editBeerIf}
+                createBeerIf={props.createBeerIf}
                 select={(beer: BeerWithIds) => {
                   setBeer(beer)
                 }}

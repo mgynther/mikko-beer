@@ -7,6 +7,12 @@ import type {
   Style
 } from '../style/types'
 
+export interface CreateBeerRequest {
+  name: string
+  breweries: string[]
+  styles: string[]
+}
+
 export interface Beer {
   id: string
   name: string
@@ -23,6 +29,14 @@ export interface BeerWithIds {
 
 export interface BeerList {
   beers: Beer[]
+}
+
+export interface CreateBeerIf {
+  useCreate: () => {
+    create: (request: CreateBeerRequest) => Promise<BeerWithIds>
+    isLoading: boolean
+  },
+  editBeerIf: EditBeerIf
 }
 
 export interface GetBeerIf {

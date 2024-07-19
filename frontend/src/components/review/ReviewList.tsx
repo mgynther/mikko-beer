@@ -11,7 +11,7 @@ import TabButton from '../common/TabButton'
 import Review from './Review'
 
 import './ReviewList.css'
-import type { EditBeerIf } from '../../core/beer/types'
+import type { CreateBeerIf } from '../../core/beer/types'
 import type { GetLogin } from '../../core/login/types'
 import type { ReviewContainerIf } from '../../core/review/types'
 
@@ -102,7 +102,7 @@ export function ReviewHeading (
 interface Props {
   getLogin: GetLogin
   reviewContainerIf: ReviewContainerIf
-  editBeerIf: EditBeerIf
+  createBeerIf: CreateBeerIf
   isLoading: boolean
   isTitleVisible: boolean
   reviews: JoinedReview[]
@@ -129,7 +129,7 @@ function ReviewList (props: Props): JSX.Element {
               <Review
                 getLogin={props.getLogin}
                 reviewContainerIf={props.reviewContainerIf}
-                editBeerIf={props.editBeerIf}
+                createBeerIf={props.createBeerIf}
                 key={review.id}
                 review={review}
                 onChanged={props.onChanged}
