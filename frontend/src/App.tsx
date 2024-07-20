@@ -94,9 +94,14 @@ import type {
   CreateBeerIf,
   CreateBeerRequest,
   EditBeerIf,
-  GetBeerIf
+  GetBeerIf,
+  UpdateBeerIf
 } from './core/beer/types'
-import { useCreateBeerMutation, useGetBeerQuery } from './store/beer/api'
+import {
+  useCreateBeerMutation,
+  useGetBeerQuery,
+  useUpdateBeerMutation
+} from './store/beer/api'
 import {
   useCreateBreweryMutation,
   useLazySearchBreweriesQuery
@@ -420,6 +425,20 @@ function App (): JSX.Element {
     editBeerIf
   }
 
+  const updateBeerIf: UpdateBeerIf = {
+    useUpdate: () => {
+      const [updateBeer, { isLoading }] =
+        useUpdateBeerMutation()
+      return {
+        update: async (beer: BeerWithIds): Promise<void> => {
+          await updateBeer({ ...beer })
+        },
+        isLoading
+      }
+    },
+    editBeerIf
+  }
+
   const updateStyleIf: UpdateStyleIf = {
     useUpdate: () => {
       const [
@@ -529,6 +548,7 @@ function App (): JSX.Element {
                     getLogin={getLogin}
                     reviewContainerIf={reviewContainerIf}
                     createBeerIf={createBeerIf}
+                    updateBeerIf={updateBeerIf}
                   />
                 } />
                 <Route path="breweries" element={

@@ -5,7 +5,8 @@ import { useParams } from 'react-router-dom'
 import type {
   GetBeerIf,
   Beer as BeerType,
-  CreateBeerIf
+  CreateBeerIf,
+  UpdateBeerIf
 } from '../../core/beer/types'
 import { useListStoragesByBeerQuery } from '../../store/storage/api'
 import { useListReviewsByBeerQuery } from '../../store/review/api'
@@ -37,6 +38,7 @@ function NotFound (): JSX.Element {
 
 interface Props {
   createBeerIf: CreateBeerIf
+  updateBeerIf: UpdateBeerIf
   getBeerIf: GetBeerIf
   getLogin: GetLogin
   reviewContainerIf: ReviewContainerIf
@@ -99,7 +101,7 @@ function Beer (props: Props): JSX.Element {
       )}
       {mode === EditableMode.Edit && initialBeer !== undefined && (
         <UpdateBeer
-          editBeerIf={props.createBeerIf.editBeerIf}
+          updateBeerIf={props.updateBeerIf}
           initialBeer={initialBeer}
           onCancel={() => {
             setInitialBeer(undefined)

@@ -39,6 +39,14 @@ export interface CreateBeerIf {
   editBeerIf: EditBeerIf
 }
 
+export interface UpdateBeerIf {
+  useUpdate: () => {
+    update: (request: BeerWithIds) => Promise<void>
+    isLoading: boolean
+  },
+  editBeerIf: EditBeerIf
+}
+
 export interface GetBeerIf {
   useGetBeer: (beerId: string) => {
     beer: Beer | undefined
