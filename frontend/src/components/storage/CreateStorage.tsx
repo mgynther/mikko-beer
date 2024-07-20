@@ -6,21 +6,22 @@ import type {
 } from '../../core/beer/types'
 import type { Container } from '../../core/container/types'
 import type { ReviewContainerIf } from '../../core/review/types'
-import { useCreateStorageMutation } from '../../store/storage/api'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 import SelectBeer from '../beer/SelectBeer'
 import SelectContainer from '../container/SelectContainer'
 
 import './CreateStorage.css'
+import type { CreateStorageIf } from '../../core/storage/types'
 
 interface Props {
   createBeerIf: CreateBeerIf
+  createStorageIf: CreateStorageIf
   reviewContainerIf: ReviewContainerIf
 }
 
 function CreateStorage (props: Props): JSX.Element {
-  const [createStorage, { error, isLoading }] = useCreateStorageMutation()
+  const { create, hasError, isLoading } = props.createStorageIf.useCreate()
 
   const [beer, setBeer] = useState<BeerWithIds | undefined>(undefined)
   const [container, setContainer] = useState<Container | undefined>(
@@ -32,7 +33,7 @@ function CreateStorage (props: Props): JSX.Element {
     event.preventDefault()
     if (beer === undefined || container === undefined) return
     const bb = new Date(`${bestBefore}T12:00:00.000`).toISOString()
-    await createStorage({
+    await create({
       beer: beer.id,
       bestBefore: bb,
       container: container.id
@@ -119,7 +120,7 @@ function CreateStorage (props: Props): JSX.Element {
         </div>
         <div>
           <LoadingIndicator isLoading={isLoading} />
-          {!isLoading && error !== undefined &&
+          {!isLoading && hasError &&
             'Creating failed. Please check data.' }
         </div>
       </form>

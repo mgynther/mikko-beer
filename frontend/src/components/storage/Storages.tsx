@@ -8,10 +8,12 @@ import StorageList from './StorageList'
 
 import type { CreateBeerIf } from '../../core/beer/types'
 import type { GetLogin, Login } from '../../core/login/types'
+import type { CreateStorageIf } from '../../core/storage/types'
 
 interface Props {
   getLogin: GetLogin
   createBeerIf: CreateBeerIf
+  createStorageIf: CreateStorageIf
   reviewContainerIf: ReviewContainerIf
 }
 
@@ -38,6 +40,7 @@ function Storages (props: Props): JSX.Element {
         <div>
           <CreateStorage
             createBeerIf={props.createBeerIf}
+            createStorageIf={props.createStorageIf}
             reviewContainerIf={props.reviewContainerIf}
           />
         </div>

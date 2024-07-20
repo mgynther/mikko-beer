@@ -1,13 +1,11 @@
 import { emptySplitApi } from '../api'
 
-import { type Storage, type StorageList } from '../../core/storage/types'
+import type {
+  CreateStorageRequest,
+  Storage,
+  StorageList
+} from '../../core/storage/types'
 import { StorageTags } from './types'
-
-interface CreateStorageParams {
-  beer: string
-  bestBefore: string
-  container: string
-}
 
 const storageApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
@@ -48,9 +46,9 @@ const storageApi = emptySplitApi.injectEndpoints({
     }),
     createStorage: build.mutation<
     { storage: Storage },
-    Partial<CreateStorageParams>
+    CreateStorageRequest
     >({
-      query: (params: CreateStorageParams) => ({
+      query: (params: CreateStorageRequest) => ({
         url: '/storage',
         method: 'POST',
         body: params

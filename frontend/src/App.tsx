@@ -107,6 +107,11 @@ import {
   useLazySearchBreweriesQuery,
   useUpdateBreweryMutation
 } from './store/brewery/api'
+import type {
+  CreateStorageIf,
+  CreateStorageRequest
+} from './core/storage/types'
+import { useCreateStorageMutation } from './store/storage/api'
 
 interface LayoutProps {
   searchBreweryIf: SearchBreweryIf
@@ -516,6 +521,20 @@ function App (): JSX.Element {
     }
   }
 
+  const createStorageIf: CreateStorageIf = {
+    useCreate: () => {
+      const [createStorage, { error, isLoading }] =
+        useCreateStorageMutation()
+      return {
+        create: async (request: CreateStorageRequest) => {
+          await createStorage(request)
+        },
+        hasError: error !== undefined,
+        isLoading
+      }
+    }
+  }
+
   return (
     <div className="App">
       <div className="AppContent">
@@ -625,6 +644,7 @@ function App (): JSX.Element {
                     getLogin={getLogin}
                     reviewContainerIf={reviewContainerIf}
                     createBeerIf={createBeerIf}
+                    createStorageIf={createStorageIf}
                   />
                 } />
               </React.Fragment>
