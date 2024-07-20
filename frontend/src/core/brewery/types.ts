@@ -18,6 +18,13 @@ export interface CreateBreweryIf {
   }
 }
 
+export interface GetBreweryIf {
+  useGet: (breweryId: string) => {
+    brewery: Brewery | undefined
+    isLoading: boolean
+  }
+}
+
 export interface UpdateBreweryIf {
   useUpdate: () => {
     update: (breweryRequest: Brewery) => Promise<void>

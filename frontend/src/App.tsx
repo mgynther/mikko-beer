@@ -50,6 +50,7 @@ import type {
   SelectBreweryIf,
   CreateBreweryIf,
   CreateBreweryRequest,
+  GetBreweryIf,
   SearchBreweryIf,
   UpdateBreweryIf
 } from './core/brewery/types'
@@ -104,6 +105,7 @@ import {
 } from './store/beer/api'
 import {
   useCreateBreweryMutation,
+  useGetBreweryQuery,
   useLazySearchBreweriesQuery,
   useUpdateBreweryMutation
 } from './store/brewery/api'
@@ -268,6 +270,16 @@ function App (): JSX.Element {
         ): Promise<void> => {
           await updateBrewery(breweryRequest)
         },
+        isLoading
+      }
+    }
+  }
+
+  const getBreweryIf: GetBreweryIf = {
+    useGet: (breweryId: string) => {
+      const { data, isLoading } = useGetBreweryQuery(breweryId)
+      return {
+        brewery: data?.brewery,
         isLoading
       }
     }
@@ -598,6 +610,7 @@ function App (): JSX.Element {
                     getLogin={getLogin}
                     reviewContainerIf={reviewContainerIf}
                     createBeerIf={createBeerIf}
+                    getBreweryIf={getBreweryIf}
                     updateBreweryIf={updateBreweryIf}
                   />
                 } />

@@ -2,9 +2,9 @@ import { useState } from 'react'
 
 import { useParams } from 'react-router-dom'
 
-import { useGetBreweryQuery } from '../../store/brewery/api'
 import type {
   Brewery as BreweryType,
+  GetBreweryIf,
   UpdateBreweryIf
 } from '../../core/brewery/types'
 import { useListReviewsByBreweryQuery } from '../../store/review/api'
@@ -36,6 +36,7 @@ function NotFound (): JSX.Element {
 
 interface Props {
   createBeerIf: CreateBeerIf
+  getBreweryIf: GetBreweryIf
   updateBreweryIf: UpdateBreweryIf
   getLogin: GetLogin
   reviewContainerIf: ReviewContainerIf
@@ -51,7 +52,7 @@ function Brewery (props: Props): JSX.Element {
   if (breweryId === undefined) {
     throw new Error('Brewery component without breweryId. Should not happen.')
   }
-  const { data: breweryData, isLoading } = useGetBreweryQuery(breweryId)
+  const { brewery, isLoading } = props.getBreweryIf.useGet(breweryId)
   const { data: reviewData, isLoading: isLoadingReviews } =
     useListReviewsByBreweryQuery({
       id: breweryId,
@@ -62,8 +63,7 @@ function Brewery (props: Props): JSX.Element {
     })
   const { data: storageData } = useListStoragesByBreweryQuery(breweryId)
   if (isLoading) return <LoadingIndicator isLoading={true} />
-  if (breweryData?.brewery === undefined) return <NotFound />
-  const brewery = breweryData.brewery
+  if (brewery === undefined) return <NotFound />
   return (
     <div>
       {mode === EditableMode.View && (
