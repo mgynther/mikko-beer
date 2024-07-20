@@ -47,11 +47,11 @@ import {
 } from './store/user/api'
 import type {
   Brewery as BreweryType,
-  SelectBreweryIf
-,
+  SelectBreweryIf,
   CreateBreweryIf,
   CreateBreweryRequest,
-  SearchBreweryIf
+  SearchBreweryIf,
+  UpdateBreweryIf
 } from './core/brewery/types'
 import type {
   Container,
@@ -104,7 +104,8 @@ import {
 } from './store/beer/api'
 import {
   useCreateBreweryMutation,
-  useLazySearchBreweriesQuery
+  useLazySearchBreweriesQuery,
+  useUpdateBreweryMutation
 } from './store/brewery/api'
 
 interface LayoutProps {
@@ -244,6 +245,23 @@ function App (): JSX.Element {
         ): Promise<BreweryType> => {
           const result = await createBrewery(breweryRequest).unwrap()
           return result.brewery
+        },
+        isLoading
+      }
+    }
+  }
+
+  const updateBreweryIf: UpdateBreweryIf = {
+    useUpdate: () => {
+      const [
+        updateBrewery,
+        { isLoading }
+      ] = useUpdateBreweryMutation()
+      return {
+        update: async (
+          breweryRequest: BreweryType
+        ): Promise<void> => {
+          await updateBrewery(breweryRequest)
         },
         isLoading
       }
@@ -561,6 +579,7 @@ function App (): JSX.Element {
                     getLogin={getLogin}
                     reviewContainerIf={reviewContainerIf}
                     createBeerIf={createBeerIf}
+                    updateBreweryIf={updateBreweryIf}
                   />
                 } />
                 <Route path="containers" element={

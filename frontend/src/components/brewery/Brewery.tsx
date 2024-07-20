@@ -3,14 +3,17 @@ import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { useGetBreweryQuery } from '../../store/brewery/api'
-import { type Brewery as BreweryType } from '../../core/brewery/types'
+import type {
+  Brewery as BreweryType,
+  UpdateBreweryIf
+} from '../../core/brewery/types'
 import { useListReviewsByBreweryQuery } from '../../store/review/api'
-import {
-  type ReviewSorting,
-  type ReviewSortingOrder
+import type {
+  ReviewSorting,
+  ReviewSortingOrder
 } from '../../core/review/types'
 import { useListStoragesByBreweryQuery } from '../../store/storage/api'
-import { type ListDirection } from '../../core/types'
+import type { ListDirection } from '../../core/types'
 
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'
@@ -33,6 +36,7 @@ function NotFound (): JSX.Element {
 
 interface Props {
   createBeerIf: CreateBeerIf
+  updateBreweryIf: UpdateBreweryIf
   getLogin: GetLogin
   reviewContainerIf: ReviewContainerIf
 }
@@ -86,6 +90,7 @@ function Brewery (props: Props): JSX.Element {
       )}
       {mode === EditableMode.Edit && initialBrewery !== undefined && (
         <UpdateBrewery
+          updateBreweryIf={props.updateBreweryIf}
           initialBrewery={initialBrewery}
           onCancel={() => {
             setInitialBrewery(undefined)

@@ -1,13 +1,16 @@
 import { useState } from 'react'
 
-import { useUpdateBreweryMutation } from '../../store/brewery/api'
-import { type Brewery } from '../../core/brewery/types'
+import type {
+  UpdateBreweryIf,
+  Brewery
+} from '../../core/brewery/types'
 
 import EditActions from '../common/EditActions'
 
 import BreweryEditor from './BreweryEditor'
 
 interface Props {
+  updateBreweryIf: UpdateBreweryIf
   initialBrewery: Brewery
   onCancel: () => void
   onSaved: () => void
@@ -15,14 +18,13 @@ interface Props {
 
 function UpdateBrewery (props: Props): JSX.Element {
   const [newBrewery, setNewBrewery] = useState<Brewery | undefined>(undefined)
-  const [updateBrewery, { isLoading }] =
-    useUpdateBreweryMutation()
-  async function update (): Promise<void> {
+  const { update, isLoading } = props.updateBreweryIf.useUpdate()
+  async function doUpdate (): Promise<void> {
     if (newBrewery === undefined) {
       throw new Error('brewery must not be undefined when updating')
     }
     try {
-      await updateBrewery({ ...newBrewery })
+      await update({ ...newBrewery })
       props.onSaved()
     } catch (e) {
       console.warn('Failed to update brewery', e)
@@ -44,7 +46,7 @@ function UpdateBrewery (props: Props): JSX.Element {
           setNewBrewery(undefined)
           props.onCancel()
         }}
-        onSave={() => { void update() }}
+        onSave={() => { void doUpdate() }}
       />
     </>
   )

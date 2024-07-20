@@ -18,6 +18,13 @@ export interface CreateBreweryIf {
   }
 }
 
+export interface UpdateBreweryIf {
+  useUpdate: () => {
+    update: (breweryRequest: Brewery) => Promise<void>
+    isLoading: boolean
+  }
+}
+
 export interface SearchBreweryIf {
   useSearch: () => {
     search: (name: string) => Promise<Brewery[]>,
