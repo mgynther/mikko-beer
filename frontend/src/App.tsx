@@ -62,8 +62,10 @@ import type {
   UpdateContainerIf
 } from './core/container/types'
 
-import {
-  type ReviewContainerIf
+import type {
+  CreateReviewIf,
+  ReviewRequestWrapper,
+  ReviewContainerIf
 } from './core/review/types'
 import {
   useCreateStyleMutation,
@@ -114,6 +116,7 @@ import type {
   CreateStorageRequest
 } from './core/storage/types'
 import { useCreateStorageMutation } from './store/storage/api'
+import { useCreateReviewMutation } from './store/review/api'
 
 interface LayoutProps {
   searchBreweryIf: SearchBreweryIf
@@ -547,6 +550,23 @@ function App (): JSX.Element {
     }
   }
 
+  const createReviewIf: CreateReviewIf = {
+    useCreate: () => {
+      const [ createReview, { isLoading, isSuccess, data }] =
+        useCreateReviewMutation()
+      return {
+        create: async (request: ReviewRequestWrapper) => {
+          await createReview(request)
+        },
+        isLoading,
+        isSuccess,
+        review: data?.review
+      }
+    },
+    createBeerIf,
+    reviewContainerIf
+  }
+
   return (
     <div className="App">
       <div className="AppContent">
@@ -578,15 +598,13 @@ function App (): JSX.Element {
               <React.Fragment>
                 {isAdmin && <Route path="addreview" element={
                   <AddReview
-                    reviewContainerIf={reviewContainerIf}
-                    createBeerIf={createBeerIf}
+                    createReviewIf={createReviewIf}
                   />
                 } />}
                 {isAdmin &&
                   <Route path="addreview/:storageId" element={
                     <AddReview
-                      reviewContainerIf={reviewContainerIf}
-                      createBeerIf={createBeerIf}
+                      createReviewIf={createReviewIf}
                     />
                 } />
                 }

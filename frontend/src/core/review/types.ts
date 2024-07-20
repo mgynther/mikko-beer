@@ -1,10 +1,11 @@
-import {
-  type CreateContainerIf,
-  type ListContainersIf
+import type { CreateBeerIf } from "../beer/types"
+import type {
+  CreateContainerIf,
+  ListContainersIf
 } from "../container/types"
 
-import { type Container } from '../container/types'
-import { type ListDirection } from '../types'
+import type { Container } from '../container/types'
+import type { ListDirection } from '../types'
 
 export interface Review {
   id: string
@@ -52,6 +53,11 @@ export interface ReviewRequest {
   time: string
 }
 
+export interface ReviewRequestWrapper {
+  body: ReviewRequest
+  storageId: string | undefined
+}
+
 export interface ReviewList {
   reviews: Review[]
 }
@@ -70,6 +76,17 @@ export interface ReviewSorting {
 export interface JoinedReviewList {
   reviews: JoinedReview[]
   sorting?: ReviewSorting
+}
+
+export interface CreateReviewIf {
+  useCreate: () => {
+    create: (request: ReviewRequestWrapper) => Promise<void>
+    isLoading: boolean
+    isSuccess: boolean
+    review: Review | undefined
+  }
+  createBeerIf: CreateBeerIf
+  reviewContainerIf: ReviewContainerIf
 }
 
 export interface ReviewContainerIf {

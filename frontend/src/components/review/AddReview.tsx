@@ -2,19 +2,17 @@ import { useEffect, useState } from 'react'
 
 import { useNavigate, useParams } from 'react-router-dom'
 
-import { useCreateReviewMutation } from '../../store/review/api'
-import { type ReviewRequest } from '../../core/review/types'
+import type {
+  CreateReviewIf,
+  ReviewRequest
+} from '../../core/review/types'
 import { useGetStorageQuery } from '../../store/storage/api'
-import { type Storage } from '../../core/storage/types'
+import type { Storage } from '../../core/storage/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 import { formatBestBefore } from '../util'
 
 import ReviewEditor, { type InitialReview } from './ReviewEditor'
-import {
-  type ReviewContainerIf
-} from '../../core/review/types'
-import type { CreateBeerIf } from '../../core/beer/types'
 
 function toInitialReview (storageData: Storage): InitialReview {
   if (storageData === undefined) {
@@ -48,32 +46,29 @@ function toInitialReview (storageData: Storage): InitialReview {
 }
 
 interface Props {
-  createBeerIf: CreateBeerIf
-  reviewContainerIf: ReviewContainerIf
+  createReviewIf: CreateReviewIf
 }
 
 function AddReview (props: Props): JSX.Element {
   const navigate = useNavigate()
   const { storageId } = useParams()
   const [review, setReview] = useState<ReviewRequest | undefined>(undefined)
-  const [
-    createReview,
-    { isLoading: isCreating, isSuccess, data: createResult }
-  ] = useCreateReviewMutation()
+  const { create, isLoading, isSuccess, review: createdReview } =
+    props.createReviewIf.useCreate()
   const { data: storageData, isLoading: isLoadingStorage } =
     storageId === undefined
       ? { data: undefined, isLoading: false }
       : useGetStorageQuery(storageId)
 
   useEffect(() => {
-    if (isSuccess && createResult !== undefined) {
-      navigate(`/beers/${createResult.review.beer}`)
+    if (isSuccess && createdReview !== undefined) {
+      navigate(`/beers/${createdReview.beer}`)
     }
-  }, [isSuccess, createResult])
+  }, [isSuccess, createdReview])
 
   async function doAddReview (): Promise<void> {
     if (review === undefined) return
-    void createReview({ body: review, storageId })
+    void create({ body: review, storageId })
   }
 
   function getInitialReview (): InitialReview | undefined {
@@ -92,8 +87,8 @@ function AddReview (props: Props): JSX.Element {
       <LoadingIndicator isLoading={isLoadingStorage} />
       {(storageId === undefined || storageData !== undefined) && (
         <ReviewEditor
-          createBeerIf={props.createBeerIf}
-          reviewContainerIf={props.reviewContainerIf}
+          createBeerIf={props.createReviewIf.createBeerIf}
+          reviewContainerIf={props.createReviewIf.reviewContainerIf}
           initialReview={getInitialReview()}
           isFromStorage={storageId !== undefined}
           onChange={review => { setReview(review) }}
@@ -106,14 +101,14 @@ function AddReview (props: Props): JSX.Element {
         <button
           disabled={
             review === undefined ||
-            isCreating ||
-            createResult !== undefined
+            isLoading ||
+            createdReview !== undefined
           }
           onClick={() => { void doAddReview() }}
         >
           Add
         </button>
-        <LoadingIndicator isLoading={isCreating} />
+        <LoadingIndicator isLoading={isLoading} />
       </div>
     </div>
   )

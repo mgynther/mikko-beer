@@ -6,16 +6,11 @@ import { reviewStatsTagTypes } from '../stats/types'
 import {
   type JoinedReviewList,
   type Review,
-  type ReviewRequest,
+  type ReviewRequestWrapper,
   type ReviewSorting,
 } from '../../core/review/types'
 
 import { ReviewTags } from './types'
-
-export interface ReviewRequestWrapper {
-  body: ReviewRequest
-  storageId: string | undefined
-}
 
 interface ListReviewParams {
   pagination: Pagination
