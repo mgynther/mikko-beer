@@ -123,11 +123,13 @@ import {
 import type {
   CreateStorageIf,
   CreateStorageRequest,
-  GetStorageIf
+  GetStorageIf,
+  ListStoragesIf
 } from './core/storage/types'
 import {
   useCreateStorageMutation,
-  useGetStorageQuery
+  useGetStorageQuery,
+  useListStoragesQuery
 } from './store/storage/api'
 import {
   useCreateReviewMutation,
@@ -610,6 +612,16 @@ function App (): JSX.Element {
     }
   }
 
+  const listStoragesIf: ListStoragesIf = {
+    useList: () => {
+      const { data, isLoading } = useListStoragesQuery()
+      return {
+        storages: data,
+        isLoading
+      }
+    }
+  }
+
   const getReviewIf: GetReviewIf = {
     useGet: () => {
       const [getReview] = useLazyGetReviewQuery()
@@ -836,6 +848,7 @@ function App (): JSX.Element {
                 <Route path="storage" element={
                   <Storages
                     getLogin={getLogin}
+                    listStoragesIf={listStoragesIf}
                     reviewContainerIf={reviewContainerIf}
                     selectBeerIf={selectBeerIf}
                     createStorageIf={createStorageIf}

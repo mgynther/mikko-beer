@@ -1,6 +1,5 @@
 import { type ReviewContainerIf } from '../../core/review/types'
 
-import { useListStoragesQuery } from '../../store/storage/api'
 import { Role } from '../../core/user/types'
 
 import CreateStorage from './CreateStorage'
@@ -8,23 +7,27 @@ import StorageList from './StorageList'
 
 import type { SelectBeerIf } from '../../core/beer/types'
 import type { GetLogin, Login } from '../../core/login/types'
-import type { CreateStorageIf } from '../../core/storage/types'
+import type {
+  CreateStorageIf,
+  ListStoragesIf
+} from '../../core/storage/types'
 
 interface Props {
   getLogin: GetLogin
+  listStoragesIf: ListStoragesIf
   selectBeerIf: SelectBeerIf
   createStorageIf: CreateStorageIf
   reviewContainerIf: ReviewContainerIf
 }
 
 function Storages (props: Props): JSX.Element {
-  const { data: storageData, isLoading } = useListStoragesQuery()
+  const { storages, isLoading } = props.listStoragesIf.useList()
   const login: Login = props.getLogin()
   const isAdmin = login?.user?.role === Role.admin
 
-  const storages = storageData?.storages === undefined
+  const storageItems = storages === undefined
     ? []
-    : [...storageData.storages]
+    : [...storages.storages]
 
   return (
     <div>
@@ -33,7 +36,7 @@ function Storages (props: Props): JSX.Element {
         getLogin={props.getLogin}
         isLoading={isLoading}
         isTitleVisible={false}
-        storages={storages}
+        storages={storageItems}
       />
       <hr/>
       {isAdmin && (
