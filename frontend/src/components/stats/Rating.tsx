@@ -1,18 +1,20 @@
-import { useGetRatingStatsQuery } from '../../store/stats/api'
+import type { GetRatingStatsIf } from '../../core/stats/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
 import './Stats.css'
 
 interface Props {
+  getRatingStatsIf: GetRatingStatsIf
   breweryId: string | undefined
   styleId: string | undefined
 }
 
 function Rating (props: Props): JSX.Element {
-  const { data: ratingData, isLoading } =
-    useGetRatingStatsQuery(props)
-  const rating = ratingData?.rating
+  const { stats, isLoading } = props.getRatingStatsIf.useStats({
+    breweryId: props.breweryId,
+    styleId: props.styleId
+  })
   return (
     <div>
       <LoadingIndicator isLoading={isLoading} />
@@ -24,7 +26,7 @@ function Rating (props: Props): JSX.Element {
           </tr>
         </thead>
         <tbody>
-          {rating?.map(rating => (
+          {stats?.rating.map(rating => (
             <tr key={rating.rating}>
               <td>{rating.rating}</td>
               <td>{rating.count}</td>

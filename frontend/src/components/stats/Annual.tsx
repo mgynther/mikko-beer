@@ -1,18 +1,20 @@
-import { useGetAnnualStatsQuery } from '../../store/stats/api'
+import type { GetAnnualStatsIf } from '../../core/stats/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
 import './Stats.css'
 
 interface Props {
+  getAnnualStatsIf: GetAnnualStatsIf
   breweryId: string | undefined
   styleId: string | undefined
 }
 
 function Annual (props: Props): JSX.Element {
-  const { data: annualData, isLoading } =
-    useGetAnnualStatsQuery(props)
-  const annual = annualData?.annual
+  const { stats, isLoading } = props.getAnnualStatsIf.useStats({
+    breweryId: props.breweryId,
+    styleId: props.styleId
+  })
   return (
     <div>
       <LoadingIndicator isLoading={isLoading} />
@@ -25,7 +27,7 @@ function Annual (props: Props): JSX.Element {
           </tr>
         </thead>
         <tbody>
-          {annual?.map(year => (
+          {stats?.annual.map(year => (
             <tr key={year.year}>
               <td>{year.year}</td>
               <td>{year.reviewCount}</td>

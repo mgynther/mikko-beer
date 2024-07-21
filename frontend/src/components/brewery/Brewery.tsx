@@ -29,6 +29,7 @@ import '../common/FlexRow.css'
 import type { CreateBeerIf } from '../../core/beer/types'
 import type { GetLogin } from '../../core/login/types'
 import type { ReviewContainerIf } from '../../core/review/types'
+import type { StatsIf } from '../../core/stats/types'
 
 function NotFound (): JSX.Element {
   return <div>Not found</div>
@@ -40,6 +41,7 @@ interface Props {
   updateBreweryIf: UpdateBreweryIf
   getLogin: GetLogin
   reviewContainerIf: ReviewContainerIf
+  statsIf: StatsIf
 }
 
 function Brewery (props: Props): JSX.Element {
@@ -85,7 +87,11 @@ function Brewery (props: Props): JSX.Element {
               />
             </div>
           </div>
-          <Stats breweryId={brewery.id} styleId={undefined} />
+          <Stats
+            statsIf={props.statsIf}
+            breweryId={brewery.id}
+            styleId={undefined}
+          />
         </>
       )}
       {mode === EditableMode.Edit && initialBrewery !== undefined && (

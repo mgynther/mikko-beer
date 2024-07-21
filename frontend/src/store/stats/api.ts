@@ -1,6 +1,7 @@
 import { emptySplitApi } from '../api'
 
-import { type Pagination } from '../../core/types'
+import type { BreweryStyleParams } from '../../core/stats/types'
+import type { Pagination } from '../../core/types'
 
 import {
   type AnnualStats,
@@ -62,11 +63,6 @@ function styleFilters (
 
 function styleStatsSorting (sorting: StyleStatsSorting): string {
   return `order=${sorting.order}&direction=${sorting.direction}`
-}
-
-interface BreweryStyleParams {
-  breweryId: string | undefined
-  styleId: string | undefined
 }
 
 const statsApi = emptySplitApi.injectEndpoints({

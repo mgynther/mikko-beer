@@ -117,6 +117,15 @@ import type {
 } from './core/storage/types'
 import { useCreateStorageMutation } from './store/storage/api'
 import { useCreateReviewMutation } from './store/review/api'
+import type {
+  BreweryStyleParams,
+  StatsIf
+} from './core/stats/types'
+import {
+  useGetAnnualStatsQuery,
+  useGetOverallStatsQuery,
+  useGetRatingStatsQuery
+} from './store/stats/api'
 
 interface LayoutProps {
   searchBreweryIf: SearchBreweryIf
@@ -567,6 +576,39 @@ function App (): JSX.Element {
     reviewContainerIf
   }
 
+  const statsIf: StatsIf = {
+    annual: {
+      useStats: (params: BreweryStyleParams) => {
+        const { data, isLoading } =
+          useGetAnnualStatsQuery(params)
+        return {
+          stats: data,
+          isLoading
+        }
+      }
+    },
+    overall: {
+      useStats: (params: BreweryStyleParams) => {
+        const { data, isLoading } =
+          useGetOverallStatsQuery(params)
+        return {
+          stats: data?.overall,
+          isLoading
+        }
+      }
+    },
+    rating: {
+      useStats: (params: BreweryStyleParams) => {
+        const { data, isLoading } =
+          useGetRatingStatsQuery(params)
+        return {
+          stats: data,
+          isLoading
+        }
+      }
+    }
+  }
+
   return (
     <div className="App">
       <div className="AppContent">
@@ -625,10 +667,11 @@ function App (): JSX.Element {
                 } />
                 <Route path="breweries/:breweryId" element={
                   <Brewery
-                    getLogin={getLogin}
-                    reviewContainerIf={reviewContainerIf}
                     createBeerIf={createBeerIf}
                     getBreweryIf={getBreweryIf}
+                    getLogin={getLogin}
+                    reviewContainerIf={reviewContainerIf}
+                    statsIf={statsIf}
                     updateBreweryIf={updateBreweryIf}
                   />
                 } />
@@ -651,10 +694,11 @@ function App (): JSX.Element {
                 } />
                 <Route path="styles/:styleId" element={
                   <Style
+                    createBeerIf={createBeerIf}
                     getLogin={getLogin}
                     getStyleIf={getStyleIf}
                     reviewContainerIf={reviewContainerIf}
-                    createBeerIf={createBeerIf}
+                    statsIf={statsIf}
                     updateStyleIf={updateStyleIf}
                   />
                 } />
@@ -668,7 +712,11 @@ function App (): JSX.Element {
                   />
                 } />
                 <Route path="stats" element={
-                  <Stats breweryId={undefined} styleId={undefined} />
+                  <Stats
+                    statsIf={statsIf}
+                    breweryId={undefined}
+                    styleId={undefined}
+                  />
                 } />
                 <Route path="storage" element={
                   <Storages

@@ -35,6 +35,7 @@ import UpdateStyle from './UpdateStyle'
 import '../common/FlexRow.css'
 
 import './Style.css'
+import type { StatsIf } from '../../core/stats/types'
 
 function NotFound (): JSX.Element {
   return <div>Not found</div>
@@ -54,6 +55,7 @@ interface Props {
   getStyleIf: GetStyleIf
   createBeerIf: CreateBeerIf
   reviewContainerIf: ReviewContainerIf
+  statsIf: StatsIf
   updateStyleIf: UpdateStyleIf
 }
 
@@ -134,7 +136,11 @@ function Style (props: Props): JSX.Element {
           />
         </div>
       )}
-      <Stats breweryId={undefined} styleId={styleId} />
+      <Stats
+        statsIf={props.statsIf}
+        breweryId={undefined}
+        styleId={styleId}
+      />
       {(storageData?.storages ?? []).length > 0 && (
         <StorageList
           getLogin={props.getLogin}

@@ -1,51 +1,53 @@
-import { useGetOverallStatsQuery } from '../../store/stats/api'
+import type { GetOverallStatsIf } from '../../core/stats/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
 import './Stats.css'
 
 interface Props {
+  getOverallStatsIf: GetOverallStatsIf
   breweryId: string | undefined
   styleId: string | undefined
 }
 
 function Overall (props: Props): JSX.Element {
-  const { data: overallData, isLoading } =
-    useGetOverallStatsQuery(props)
-  const overall = overallData?.overall
+  const { stats, isLoading } = props.getOverallStatsIf.useStats({
+    breweryId: props.breweryId,
+    styleId: props.styleId
+  })
   return (
     <div>
       <LoadingIndicator isLoading={isLoading} />
-      {overall !== undefined && (
+      {stats !== undefined && (
         <table className='StatsTable'>
           <tbody>
             <tr>
               <td>Beers</td>
-              <td>{overall.beerCount}</td>
+              <td>{stats.beerCount}</td>
             </tr>
             <tr>
               <td>Breweries</td>
-              <td>{overall.breweryCount}</td>
+              <td>{stats.breweryCount}</td>
             </tr>
             <tr>
               <td>Containers</td>
-              <td>{overall.containerCount}</td>
+              <td>{stats.containerCount}</td>
             </tr>
             <tr>
               <td>Reviews</td>
-              <td>{overall.reviewCount}</td>
+              <td>{stats.reviewCount}</td>
             </tr>
             <tr>
               <td>Beers reviewed</td>
-              <td>{overall.distinctBeerReviewCount}</td>
+              <td>{stats.distinctBeerReviewCount}</td>
             </tr>
             <tr>
               <td>Review rating average</td>
-              <td>{overall.reviewAverage}</td>
+              <td>{stats.reviewAverage}</td>
             </tr>
             <tr>
               <td>Styles</td>
-              <td>{overall.styleCount}</td>
+              <td>{stats.styleCount}</td>
             </tr>
           </tbody>
         </table>

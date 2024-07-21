@@ -7,6 +7,7 @@ import Rating from './Rating'
 import Style from './Style'
 
 import TabButton from '../common/TabButton'
+import type { StatsIf } from '../../core/stats/types'
 
 enum Mode {
   Annual = 'Annual',
@@ -17,6 +18,7 @@ enum Mode {
 }
 
 interface Props {
+  statsIf: StatsIf
   breweryId: string | undefined
   styleId: string | undefined
 }
@@ -69,16 +71,28 @@ function Stats (props: Props): JSX.Element {
         ))}
       </div>
       {mode === Mode.Annual &&
-        <Annual breweryId={props.breweryId} styleId={props.styleId} />
+        <Annual
+          getAnnualStatsIf={props.statsIf.annual}
+          breweryId={props.breweryId}
+          styleId={props.styleId}
+        />
       }
       {mode === Mode.Brewery &&
         <Brewery breweryId={props.breweryId} styleId={props.styleId} />
       }
       {mode === Mode.Overall &&
-        <Overall breweryId={props.breweryId} styleId={props.styleId} />
+        <Overall
+          getOverallStatsIf={props.statsIf.overall}
+          breweryId={props.breweryId}
+          styleId={props.styleId}
+        />
       }
       {mode === Mode.Rating &&
-        <Rating breweryId={props.breweryId} styleId={props.styleId} />
+        <Rating
+          getRatingStatsIf={props.statsIf.rating}
+          breweryId={props.breweryId}
+          styleId={props.styleId}
+        />
       }
       {mode === Mode.Style &&
         <Style breweryId={props.breweryId} styleId={props.styleId} />
