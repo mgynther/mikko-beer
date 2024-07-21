@@ -4,6 +4,7 @@ import type {
   BeerWithIds,
   CreateBeerIf
 } from '../../core/beer/types'
+import type { SearchIf } from '../../core/search/types'
 
 import BeerEditor from './BeerEditor'
 
@@ -11,6 +12,7 @@ import './CreateBeer.css'
 
 export interface Props {
   createBeerIf: CreateBeerIf
+  searchIf: SearchIf
   select: (beer: BeerWithIds) => void
 }
 
@@ -38,6 +40,7 @@ function CreateBeer (props: Props): JSX.Element {
         editBeerIf={props.createBeerIf.editBeerIf}
         initialBeer={undefined}
         onChange={setBeer}
+        searchIf={props.searchIf}
       />
       <button
         disabled={beer === undefined || isLoading}

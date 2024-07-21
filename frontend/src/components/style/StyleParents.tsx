@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import type { SearchIf } from '../../core/search/types'
 import type {
   ListStylesIf,
   Style
@@ -14,6 +15,7 @@ import '../common/SelectedItem.css'
 export interface Props {
   listStylesIf: ListStylesIf
   initialParents: Style[]
+  searchIf: SearchIf
   select: (parents: string[]) => void
 }
 
@@ -30,6 +32,7 @@ function StyleParents (props: Props): JSX.Element {
       <h6>Parents</h6>
       <SearchStyle
         listStylesIf={props.listStylesIf}
+        searchIf={props.searchIf}
         select={(style) => {
           const newParents = [...parents]
           newParents.push(style)

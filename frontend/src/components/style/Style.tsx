@@ -9,6 +9,8 @@ import type {
   UpdateStyleIf
 } from '../../core/style/types'
 
+import type { SearchIf } from '../../core/search/types'
+import type { StatsIf } from '../../core/stats/types'
 import type {
   ListReviewsByIf,
   ReviewIf,
@@ -32,7 +34,6 @@ import UpdateStyle from './UpdateStyle'
 import '../common/FlexRow.css'
 
 import './Style.css'
-import type { StatsIf } from '../../core/stats/types'
 
 function NotFound (): JSX.Element {
   return <div>Not found</div>
@@ -52,6 +53,7 @@ interface Props {
   listStoragesByStyleIf: ListStoragesByIf
   getStyleIf: GetStyleIf
   reviewIf: ReviewIf
+  searchIf: SearchIf
   statsIf: StatsIf
   updateStyleIf: UpdateStyleIf
 }
@@ -134,6 +136,7 @@ function Style (props: Props): JSX.Element {
             onSaved={() => {
               setMode(EditableMode.View)
             }}
+            searchIf={props.searchIf}
           />
         </div>
       )}
@@ -155,6 +158,7 @@ function Style (props: Props): JSX.Element {
         isLoading={isLoadingReviews}
         isTitleVisible={true}
         reviews={reviews?.reviews ?? []}
+        searchIf={props.searchIf}
         sorting={reviews?.sorting}
         setSorting={(sorting: ReviewSorting) => {
           if (order !== sorting.order) {

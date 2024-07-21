@@ -6,6 +6,7 @@ import type {
   CreateReviewIf,
   ReviewRequest
 } from '../../core/review/types'
+import type { SearchIf } from '../../core/search/types'
 import type {
   GetStorageIf,
   Storage
@@ -50,6 +51,7 @@ function toInitialReview (storageData: Storage): InitialReview {
 interface Props {
   createReviewIf: CreateReviewIf
   getStorageIf: GetStorageIf
+  searchIf: SearchIf
 }
 
 function AddReview (props: Props): JSX.Element {
@@ -90,6 +92,7 @@ function AddReview (props: Props): JSX.Element {
       <LoadingIndicator isLoading={isLoadingStorage} />
       {(storageId === undefined || storage !== undefined) && (
         <ReviewEditor
+          searchIf={props.searchIf}
           selectBeerIf={props.createReviewIf.selectBeerIf}
           reviewContainerIf={props.createReviewIf.reviewContainerIf}
           initialReview={getInitialReview()}

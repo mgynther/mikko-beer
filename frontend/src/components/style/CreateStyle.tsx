@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 
+import type { SearchIf } from '../../core/search/types'
 import type {
   SelectStyleIf,
   Style,
@@ -13,6 +14,7 @@ import StyleEditor from './StyleEditor'
 import './CreateStyle.css'
 
 export interface Props {
+  searchIf: SearchIf
   selectStyleIf: SelectStyleIf
   select: (style: Style) => void
   remove: () => void
@@ -54,6 +56,7 @@ function CreateStyle (props: Props): JSX.Element {
         }}
         listStylesIf={props.selectStyleIf.list}
         hasError={hasError}
+        searchIf={props.searchIf}
       />
       <div className='ButtonContainer'>
         <button

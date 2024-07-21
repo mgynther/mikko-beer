@@ -5,6 +5,7 @@ import type {
   BeerWithIds,
   EditBeerIf
 } from '../../core/beer/types'
+import type { SearchIf } from '../../core/search/types'
 
 import SelectBreweries from '../brewery/SelectBreweries'
 import SelectStyles from '../style/SelectStyles'
@@ -13,6 +14,7 @@ interface Props {
   editBeerIf: EditBeerIf
   initialBeer: Beer | undefined
   onChange: (beer: BeerWithIds | undefined) => void
+  searchIf: SearchIf
 }
 
 function BeerEditor (props: Props): JSX.Element {
@@ -58,6 +60,7 @@ function BeerEditor (props: Props): JSX.Element {
       </div>
       <div className={'Section'}>
         <SelectBreweries
+          searchIf={props.searchIf}
           selectBreweryIf={props.editBeerIf.selectBreweryIf}
           initialBreweries={props.initialBeer?.breweries ?? []}
           select={(breweryIds) => {
@@ -68,6 +71,7 @@ function BeerEditor (props: Props): JSX.Element {
       </div>
       <div className={'Section'}>
         <SelectStyles
+          searchIf={props.searchIf}
           selectStyleIf={props.editBeerIf.selectStyleIf}
           initialStyles={props.initialBeer?.styles ?? []}
           select={(styleIds) => {

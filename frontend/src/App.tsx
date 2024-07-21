@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useId, useState } from 'react'
 import { Routes, Route, Link, Outlet } from 'react-router-dom'
 
-import { useSelector } from './react-redux-wrapper'
+import { activate, selectActiveSearch } from './store/search/reducer'
+import { useDispatch, useSelector } from './react-redux-wrapper'
 import {
   Role,
   type CreateUserRequest,
@@ -164,10 +165,12 @@ import {
   useLazyGetBreweryStatsQuery
 } from './store/stats/api'
 import type { Pagination } from './core/types'
+import { type SearchIf } from './core/search/types'
 
 interface LayoutProps {
   searchBeerIf: SearchBeerIf
   searchBreweryIf: SearchBreweryIf
+  searchIf: SearchIf
   isAdmin: boolean
   isLoggedIn: boolean
   logout: () => void
@@ -217,11 +220,15 @@ function Layout (props: LayoutProps): JSX.Element {
               {isMoreOpen && (
                 <div>
                   <div className='Search'>
-                    <SearchBeerWithNavi searchBeerIf={props.searchBeerIf} />
+                    <SearchBeerWithNavi
+                      searchBeerIf={props.searchBeerIf}
+                      searchIf={props.searchIf}
+                    />
                   </div>
                   <div className='Search'>
                     <SearchBreweryWithNavi
                       searchBreweryIf={props.searchBreweryIf}
+                      searchIf={props.searchIf}
                     />
                   </div>
 
@@ -844,6 +851,21 @@ function App (): JSX.Element {
     }
   }
 
+  const searchIf: SearchIf = {
+    useSearch: () => {
+      const activeSearch: string = useSelector(selectActiveSearch)
+      const dispatch = useDispatch()
+      const id = useId()
+      const isActive = activeSearch === id
+      return {
+        activate: () => {
+          dispatch(activate(id))
+        },
+        isActive
+      }
+    }
+  }
+
   return (
     <div className="App">
       <div className="AppContent">
@@ -852,6 +874,7 @@ function App (): JSX.Element {
               <Layout
                 searchBeerIf={searchBeerIf}
                 searchBreweryIf={searchBreweryIf}
+                searchIf={searchIf}
                 isAdmin={isAdmin}
                 isLoggedIn={isLoggedIn}
                 logout={() => {
@@ -872,6 +895,7 @@ function App (): JSX.Element {
               ? <Beers
                   listBeersIf={listBeersIf}
                   searchBeerIf={searchBeerIf}
+                  searchIf={searchIf}
                 />
               : <LoginComponent loginIf={loginIf} />}
             />
@@ -881,6 +905,7 @@ function App (): JSX.Element {
                   <AddReview
                     createReviewIf={createReviewIf}
                     getStorageIf={getStorageIf}
+                    searchIf={searchIf}
                   />
                 } />}
                 {isAdmin &&
@@ -888,6 +913,7 @@ function App (): JSX.Element {
                     <AddReview
                       createReviewIf={createReviewIf}
                       getStorageIf={getStorageIf}
+                      searchIf={searchIf}
                     />
                 } />
                 }
@@ -895,6 +921,7 @@ function App (): JSX.Element {
                   <Beers
                     listBeersIf={listBeersIf}
                     searchBeerIf={searchBeerIf}
+                    searchIf={searchIf}
                   />
                 } />
                 <Route path="beers/:beerId" element={
@@ -903,6 +930,7 @@ function App (): JSX.Element {
                     listReviewsByBeerIf={listReviewsByBeerIf}
                     listStoragesByBeerIf={listStoragesByBeerIf}
                     reviewIf={reviewIf}
+                    searchIf={searchIf}
                     updateBeerIf={updateBeerIf}
                   />
                 } />
@@ -910,6 +938,7 @@ function App (): JSX.Element {
                   <Breweries
                     listBreweriesIf={listBreweriesIf}
                     searchBreweryIf={searchBreweryIf}
+                    searchIf={searchIf}
                   />
                 } />
                 <Route path="breweries/:breweryId" element={
@@ -918,6 +947,7 @@ function App (): JSX.Element {
                     listReviewsByBreweryIf={listReviewsByBreweryIf}
                     listStoragesByBreweryIf={listStoragesByBreweryIf}
                     reviewIf={reviewIf}
+                    searchIf={searchIf}
                     statsIf={statsIf}
                     updateBreweryIf={updateBreweryIf}
                   />
@@ -933,10 +963,14 @@ function App (): JSX.Element {
                   <Reviews
                     listReviewsIf={listReviewsIf}
                     reviewIf={reviewIf}
+                    searchIf={searchIf}
                   />
                 } />
                 <Route path="styles" element={
-                  <Styles listStylesIf={listStylesIf} />
+                  <Styles
+                    listStylesIf={listStylesIf}
+                    searchIf={searchIf}
+                  />
                 } />
                 <Route path="styles/:styleId" element={
                   <Style
@@ -945,6 +979,7 @@ function App (): JSX.Element {
                     reviewIf={reviewIf}
                     getStyleIf={getStyleIf}
                     statsIf={statsIf}
+                    searchIf={searchIf}
                     updateStyleIf={updateStyleIf}
                   />
                 } />
@@ -969,6 +1004,7 @@ function App (): JSX.Element {
                     getLogin={getLogin}
                     listStoragesIf={listStoragesIf}
                     reviewContainerIf={reviewContainerIf}
+                    searchIf={searchIf}
                     selectBeerIf={selectBeerIf}
                     createStorageIf={createStorageIf}
                   />
@@ -981,6 +1017,7 @@ function App (): JSX.Element {
                 ? <Beers
                     listBeersIf={listBeersIf}
                     searchBeerIf={searchBeerIf}
+                    searchIf={searchIf}
                   />
                 : <LoginComponent loginIf={loginIf}/>} />
           </Route>

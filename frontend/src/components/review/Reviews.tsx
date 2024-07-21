@@ -2,13 +2,12 @@ import { useEffect, useState } from 'react'
 
 import type {
   ListReviewsIf,
-  ReviewIf
-} from '../../core/review/types'
-import type {
   JoinedReview,
+  ReviewIf,
   ReviewSorting,
   ReviewSortingOrder
 } from '../../core/review/types'
+import type { SearchIf } from '../../core/search/types'
 import type { ListDirection } from '../../core/types'
 
 import { infiniteScroll } from '../util'
@@ -22,6 +21,7 @@ const pageSize = 20
 interface Props {
   listReviewsIf: ListReviewsIf
   reviewIf: ReviewIf
+  searchIf: SearchIf
 }
 
 function Reviews (props: Props): JSX.Element {
@@ -91,6 +91,7 @@ function Reviews (props: Props): JSX.Element {
         isLoading={isLoading}
         isTitleVisible={false}
         reviews={loadedReviews}
+        searchIf={props.searchIf}
         sorting={reviewList?.sorting}
         setSorting={setSorting}
         supportedSorting={['rating', 'time']}

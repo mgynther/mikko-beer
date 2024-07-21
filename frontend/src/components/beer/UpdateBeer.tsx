@@ -5,12 +5,14 @@ import type {
   BeerWithIds,
   UpdateBeerIf
 } from '../../core/beer/types'
+import type { SearchIf } from '../../core/search/types'
 
 import EditActions from '../common/EditActions'
 
 import BeerEditor from './BeerEditor'
 
 interface Props {
+  searchIf: SearchIf
   updateBeerIf: UpdateBeerIf
   initialBeer: Beer
   onCancel: () => void
@@ -39,6 +41,7 @@ function UpdateBeer (props: Props): JSX.Element {
         onChange={(beer: BeerWithIds | undefined) => {
           setNewBeer(beer)
         }}
+        searchIf={props.searchIf}
       />
       <EditActions
         isSaveDisabled={newBeer === undefined}

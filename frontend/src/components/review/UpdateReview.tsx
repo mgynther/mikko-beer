@@ -3,12 +3,14 @@ import { useState } from 'react'
 import type { UpdateReviewIf } from '../../core/review/types'
 
 import { type JoinedReview, type ReviewRequest } from '../../core/review/types'
+import type { SearchIf } from '../../core/search/types'
 
 import EditActions from '../common/EditActions'
 
 import ReviewEditor from './ReviewEditor'
 
 interface Props {
+  searchIf: SearchIf
   updateReviewIf: UpdateReviewIf
   initialReview: {
     joined: JoinedReview
@@ -40,6 +42,7 @@ function UpdateReview (props: Props): JSX.Element {
   return (
     <>
       <ReviewEditor
+        searchIf={props.searchIf}
         selectBeerIf={props.updateReviewIf.selectBeerIf}
         reviewContainerIf={props.updateReviewIf.reviewContainerIf}
         initialReview={props.initialReview}

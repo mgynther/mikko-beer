@@ -6,9 +6,11 @@ import type {
 } from '../../core/style/types'
 
 import SearchBox, { nameFormatter } from '../common/SearchBox'
+import { SearchIf } from '../../core/search/types'
 
 export interface Props {
   listStylesIf: ListStylesIf
+  searchIf: SearchIf
   select: (style: Style) => void
 }
 
@@ -32,6 +34,7 @@ function SearchStyle (props: Props): JSX.Element {
         currentOptions={filteredStyles}
         formatter={nameFormatter}
         isLoading={isLoading}
+        searchIf={props.searchIf}
         setFilter={(filter: string) => { setFilter(filter) }}
         select={(style: Style) => {
           props.select(style)

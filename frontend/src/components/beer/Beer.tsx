@@ -14,6 +14,7 @@ import type {
   ReviewSorting,
   ReviewSortingOrder
 } from '../../core/review/types'
+import type { SearchIf } from '../../core/search/types'
 import type { ListStoragesByIf } from '../../core/storage/types'
 import type { ListDirection } from '../../core/types'
 
@@ -38,6 +39,7 @@ interface Props {
   listReviewsByBeerIf: ListReviewsByIf
   listStoragesByBeerIf: ListStoragesByIf
   reviewIf: ReviewIf
+  searchIf: SearchIf
   updateBeerIf: UpdateBeerIf
   getBeerIf: GetBeerIf
 }
@@ -100,6 +102,7 @@ function Beer (props: Props): JSX.Element {
       )}
       {mode === EditableMode.Edit && initialBeer !== undefined && (
         <UpdateBeer
+          searchIf={props.searchIf}
           updateBeerIf={props.updateBeerIf}
           initialBeer={initialBeer}
           onCancel={() => {
@@ -121,6 +124,7 @@ function Beer (props: Props): JSX.Element {
       )}
       <ReviewList
         reviewIf={props.reviewIf}
+        searchIf={props.searchIf}
         isLoading={isLoadingReviews}
         isTitleVisible={true}
         reviews={reviews?.reviews ?? []}

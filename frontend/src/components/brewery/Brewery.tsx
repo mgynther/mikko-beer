@@ -13,6 +13,7 @@ import type {
   ReviewSorting,
   ReviewSortingOrder
 } from '../../core/review/types'
+import type { SearchIf } from '../../core/search/types'
 import type { ListStoragesByIf } from '../../core/storage/types'
 import type { ListDirection } from '../../core/types'
 
@@ -38,6 +39,7 @@ interface Props {
   listStoragesByBreweryIf: ListStoragesByIf
   reviewIf: ReviewIf
   getBreweryIf: GetBreweryIf
+  searchIf: SearchIf
   updateBreweryIf: UpdateBreweryIf
   statsIf: StatsIf
 }
@@ -116,6 +118,7 @@ function Brewery (props: Props): JSX.Element {
       )}
       <ReviewList
         reviewIf={props.reviewIf}
+        searchIf={props.searchIf}
         isLoading={isLoadingReviews}
         isTitleVisible={true}
         reviews={reviews?.reviews ?? []}

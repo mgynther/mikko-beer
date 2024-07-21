@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 
+import type { SearchIf } from '../../core/search/types'
 import type {
   ListStylesIf,
   Style,
@@ -12,6 +13,7 @@ import StyleLink from './StyleLink'
 
 interface Props {
   listStylesIf: ListStylesIf
+  searchIf: SearchIf
 }
 
 function Styles (props: Props): JSX.Element {
@@ -29,6 +31,7 @@ function Styles (props: Props): JSX.Element {
       <h3>Styles</h3>
       <SearchStyle
         listStylesIf={props.listStylesIf}
+        searchIf={props.searchIf}
         select={(style: Style) => {
           navigate(`/styles/${style.id}`)
         }}

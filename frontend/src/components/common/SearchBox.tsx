@@ -1,11 +1,9 @@
-import { useId, useRef } from 'react'
-
-import { useDispatch, useSelector } from '../../react-redux-wrapper'
-import { activate, selectActiveSearch } from '../../store/search/reducer'
+import { useRef } from 'react'
 
 import LoadingIndicator from './LoadingIndicator'
 
 import './SearchBox.css'
+import { SearchIf } from '../../core/search/types'
 
 export interface SearchBoxItem {
   id: string
@@ -15,6 +13,7 @@ export interface SearchBoxItem {
 export const nameFormatter = (item: SearchBoxItem): string => item.name
 
 interface Props<T extends SearchBoxItem> {
+  searchIf: SearchIf
   currentFilter: string
   currentOptions: T[]
   formatter: (item: T) => string
@@ -31,14 +30,13 @@ const SearchBox = <T extends SearchBoxItem>({
   currentOptions,
   formatter,
   isLoading,
+  searchIf,
   setFilter,
   select,
   title
 }: Props<T>): JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null)
-  const id = useId()
-  const dispatch = useDispatch()
-  const activeSearch: string = useSelector(selectActiveSearch)
+  const { activate, isActive } = searchIf.useSearch()
   const sortedOptions = [...currentOptions].sort((a, b) => {
     const filter = currentFilter.toLowerCase()
     const aName = a.name.toLowerCase()
@@ -53,7 +51,6 @@ const SearchBox = <T extends SearchBoxItem>({
     ? []
     : sortedOptions.slice(0, maxResultCount)
   const areAllShown = visibleOptions.length === sortedOptions.length
-  const isActive = activeSearch === id
   return (
     <div className='SearchBox'>
       <input
@@ -63,10 +60,10 @@ const SearchBox = <T extends SearchBoxItem>({
         ref={inputRef}
         onChange={e => {
           setFilter(e.target.value)
-          dispatch(activate(id))
+          activate()
         }}
         onFocus={() => {
-          dispatch(activate(id))
+          activate()
         }}
       />
       <button onClick={() => {

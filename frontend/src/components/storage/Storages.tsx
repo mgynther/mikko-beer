@@ -1,20 +1,21 @@
 import { type ReviewContainerIf } from '../../core/review/types'
 
+import type { SelectBeerIf } from '../../core/beer/types'
+import type { GetLogin, Login } from '../../core/login/types'
+import type { SearchIf } from '../../core/search/types'
+import type {
+  CreateStorageIf,
+  ListStoragesIf
+} from '../../core/storage/types'
 import { Role } from '../../core/user/types'
 
 import CreateStorage from './CreateStorage'
 import StorageList from './StorageList'
 
-import type { SelectBeerIf } from '../../core/beer/types'
-import type { GetLogin, Login } from '../../core/login/types'
-import type {
-  CreateStorageIf,
-  ListStoragesIf
-} from '../../core/storage/types'
-
 interface Props {
   getLogin: GetLogin
   listStoragesIf: ListStoragesIf
+  searchIf: SearchIf
   selectBeerIf: SelectBeerIf
   createStorageIf: CreateStorageIf
   reviewContainerIf: ReviewContainerIf
@@ -42,6 +43,7 @@ function Storages (props: Props): JSX.Element {
       {isAdmin && (
         <div>
           <CreateStorage
+            searchIf={props.searchIf}
             selectBeerIf={props.selectBeerIf}
             createStorageIf={props.createStorageIf}
             reviewContainerIf={props.reviewContainerIf}

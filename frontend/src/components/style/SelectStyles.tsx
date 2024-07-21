@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
+import type { SearchIf } from '../../core/search/types'
 import type {
   SelectStyleIf,
   Style
@@ -13,6 +14,7 @@ import '../common/SelectedItem.css'
 import './SelectStyles.css'
 
 export interface Props {
+  searchIf: SearchIf
   selectStyleIf: SelectStyleIf
   initialStyles: Style[]
   select: (styles: string[]) => void
@@ -24,6 +26,7 @@ interface StyleSelection {
 }
 
 interface SelectionItemProps {
+  searchIf: SearchIf
   selectStyleIf: SelectStyleIf
   style: Style | undefined
   select: (style: Style) => void
@@ -36,6 +39,7 @@ function SelectionItem (props: SelectionItemProps): JSX.Element {
     <Fragment>
       {props.style === undefined && (
         <SelectStyle
+          searchIf={props.searchIf}
           selectStyleIf={props.selectStyleIf}
           select={props.select}
           remove={props.remove}
@@ -95,6 +99,7 @@ function SelectStyles (props: Props): JSX.Element {
       {selections.map((selection, selectionIndex) => (
         <SelectionItem
           key={selection.id}
+          searchIf={props.searchIf}
           selectStyleIf={props.selectStyleIf}
           style={selection.style}
           select={(style) => {

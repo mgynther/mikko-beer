@@ -1,8 +1,10 @@
-import {
-  type JoinedReview,
-  type ReviewSorting,
-  type ReviewSortingOrder
+import type {
+  JoinedReview,
+  ReviewIf,
+  ReviewSorting,
+  ReviewSortingOrder
 } from '../../core/review/types'
+import type { SearchIf } from '../../core/search/types'
 
 import { formatTitle, invertDirection } from '../list-helpers'
 import LoadingIndicator from '../common/LoadingIndicator'
@@ -11,7 +13,6 @@ import TabButton from '../common/TabButton'
 import Review from './Review'
 
 import './ReviewList.css'
-import type { ReviewIf } from '../../core/review/types'
 
 interface HeadingProps {
   sorting: ReviewSorting | undefined
@@ -102,6 +103,7 @@ interface Props {
   isLoading: boolean
   isTitleVisible: boolean
   reviews: JoinedReview[]
+  searchIf: SearchIf
   sorting: ReviewSorting | undefined
   setSorting: ((sorting: ReviewSorting) => void) | undefined
   supportedSorting: ReviewSortingOrder[]
@@ -124,6 +126,7 @@ function ReviewList (props: Props): JSX.Element {
             return (
               <Review
                 reviewIf={props.reviewIf}
+                searchIf={props.searchIf}
                 key={review.id}
                 review={review}
                 onChanged={props.onChanged}

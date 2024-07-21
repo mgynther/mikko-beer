@@ -4,6 +4,7 @@ import type {
   Brewery,
   SelectBreweryIf
 } from '../../core/brewery/types'
+import type { SearchIf } from '../../core/search/types'
 
 import { Mode, SelectCreateRadioBasic } from '../common/SelectCreateRadio'
 
@@ -11,6 +12,7 @@ import CreateBrewery from './CreateBrewery'
 import SearchBrewery from './SearchBrewery'
 
 export interface Props {
+  searchIf: SearchIf
   selectBreweryIf: SelectBreweryIf
   select: (brewery: Brewery) => void
   isRemoveVisible: boolean
@@ -34,6 +36,7 @@ function SelectBrewery (props: Props): JSX.Element {
         )}
         {mode === Mode.SELECT && (
           <SearchBrewery
+            searchIf={props.searchIf}
             searchBreweryIf={props.selectBreweryIf.search}
             select={props.select}
           />

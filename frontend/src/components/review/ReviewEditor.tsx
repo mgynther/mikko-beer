@@ -7,6 +7,7 @@ import type {
 import { type Container } from '../../core/container/types'
 import { type ReviewContainerIf } from '../../core/review/types'
 import { type JoinedReview, type ReviewRequest } from '../../core/review/types'
+import type { SearchIf } from '../../core/search/types'
 
 import SelectBeer from '../beer/SelectBeer'
 import SelectContainer from '../container/SelectContainer'
@@ -23,6 +24,7 @@ export interface InitialReview {
 }
 
 interface Props {
+  searchIf: SearchIf
   selectBeerIf: SelectBeerIf
   reviewContainerIf: ReviewContainerIf
   initialReview: InitialReview | undefined
@@ -130,10 +132,11 @@ function ReviewEditor (props: Props): JSX.Element {
         <div className='ReviewContent'>
           {beer === undefined
             ? <SelectBeer
-              select={(beer: BeerWithIds) => {
-                setBeer(beer)
-              }}
-              selectBeerIf={props.selectBeerIf}
+                searchIf={props.searchIf}
+                select={(beer: BeerWithIds) => {
+                  setBeer(beer)
+                }}
+                selectBeerIf={props.selectBeerIf}
               />
             : (<div className='FlexRow'>
                   <div>{beer.name}</div>

@@ -6,15 +6,17 @@ import type {
 } from '../../core/beer/types'
 import type { Container } from '../../core/container/types'
 import type { ReviewContainerIf } from '../../core/review/types'
+import type { SearchIf } from '../../core/search/types'
+import type { CreateStorageIf } from '../../core/storage/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 import SelectBeer from '../beer/SelectBeer'
 import SelectContainer from '../container/SelectContainer'
 
 import './CreateStorage.css'
-import type { CreateStorageIf } from '../../core/storage/types'
 
 interface Props {
+  searchIf: SearchIf
   selectBeerIf: SelectBeerIf
   createStorageIf: CreateStorageIf
   reviewContainerIf: ReviewContainerIf
@@ -62,6 +64,7 @@ function CreateStorage (props: Props): JSX.Element {
         <div className='CreateStorageContent'>
           {beer === undefined
             ? <SelectBeer
+                searchIf={props.searchIf}
                 selectBeerIf={props.selectBeerIf}
                 select={(beer: BeerWithIds) => {
                   setBeer(beer)

@@ -5,6 +5,7 @@ import type {
   BeerWithIds,
   SearchBeerIf
 } from '../../core/beer/types'
+import type { SearchIf } from '../../core/search/types'
 
 import SearchBox from '../common/SearchBox'
 
@@ -14,6 +15,7 @@ import './SelectBeer.css'
 
 export interface Props {
   searchBeerIf: SearchBeerIf
+  searchIf: SearchIf
   select: (beer: BeerWithIds) => void
 }
 
@@ -50,6 +52,7 @@ function SearchBeer (props: Props): JSX.Element {
           return `${beer.name} (${breweryStr})`
         }}
         isLoading={isLoading}
+        searchIf={props.searchIf}
         setFilter={(filter: string) => { setFilter(filter) }}
         select={(beer: Beer) => {
           props.select({

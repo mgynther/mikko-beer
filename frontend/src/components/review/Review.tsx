@@ -1,9 +1,11 @@
 import { useState } from 'react'
 
-import {
-  type JoinedReview,
-  type Review as ReviewType
+import type {
+  JoinedReview,
+  Review as ReviewType,
+  ReviewIf
 } from '../../core/review/types'
+import type { SearchIf } from '../../core/search/types'
 
 import BeerLink from '../beer/BeerLink'
 import BreweryLinks from '../brewery/BreweryLinks'
@@ -14,11 +16,11 @@ import StyleLinks from '../style/StyleLinks'
 import UpdateReview from './UpdateReview'
 
 import './Review.css'
-import type { ReviewIf } from '../../core/review/types'
 
 interface Props {
   reviewIf: ReviewIf
   review: JoinedReview
+  searchIf: SearchIf
   onChanged: () => void
 }
 
@@ -108,6 +110,7 @@ function Review (props: Props): JSX.Element {
       {mode === EditableMode.Edit && fullReview !== undefined && (
         <>
           <UpdateReview
+            searchIf={props.searchIf}
             updateReviewIf={props.reviewIf.update}
             initialReview={{
               joined: review,

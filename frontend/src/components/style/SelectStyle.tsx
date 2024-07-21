@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import type { SearchIf } from '../../core/search/types'
 import type {
   SelectStyleIf,
   Style
@@ -13,6 +14,7 @@ import SearchStyle from './SearchStyle'
 import './SelectStyle.css'
 
 export interface Props {
+  searchIf: SearchIf
   selectStyleIf: SelectStyleIf
   select: (style: Style) => void
   remove: () => void
@@ -30,6 +32,7 @@ function SelectStyle (props: Props): JSX.Element {
         {mode === Mode.CREATE && (
           <>
             <CreateStyle
+              searchIf={props.searchIf}
               selectStyleIf={props.selectStyleIf}
               select={props.select}
               remove={props.remove}
@@ -40,6 +43,7 @@ function SelectStyle (props: Props): JSX.Element {
           <>
             <SearchStyle
               listStylesIf={props.selectStyleIf.list}
+              searchIf={props.searchIf}
               select={props.select}
             />
             <button onClick={props.remove}>Remove</button>

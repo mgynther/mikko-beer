@@ -4,6 +4,7 @@ import type {
   Brewery,
   SearchBreweryIf
 } from '../../core/brewery/types'
+import type { SearchIf } from '../../core/search/types'
 
 import SearchBox, { nameFormatter } from '../common/SearchBox'
 
@@ -11,6 +12,7 @@ import { useDebounce } from '../util'
 
 export interface Props {
   searchBreweryIf: SearchBreweryIf
+  searchIf: SearchIf
   select: (brewery: Brewery) => void
 }
 
@@ -47,6 +49,7 @@ function SearchBrewery (props: Props): JSX.Element {
         currentOptions={results}
         formatter={nameFormatter}
         isLoading={isLoading}
+        searchIf={props.searchIf}
         setFilter={(filter: string) => { setFilter(filter) }}
         select={(brewery: Brewery) => {
           props.select(brewery)
