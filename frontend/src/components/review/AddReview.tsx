@@ -20,7 +20,7 @@ function toInitialReview (storageData: Storage): InitialReview {
   if (storageData === undefined) {
     throw new Error('must wait for storageData to load')
   }
-  // TODO add user editable template and store it to localStorage.
+  // TODO add user editable template and save it to localStorage.
   const additionalInfo =
     `From storage, BB ${formatBestBefore(storageData.bestBefore)}`
   const time = new Date().toISOString()
