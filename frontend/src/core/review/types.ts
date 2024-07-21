@@ -8,6 +8,11 @@ import type { Container } from '../container/types'
 import type { GetLogin } from "../login/types"
 import type { ListDirection, Pagination } from '../types'
 
+export interface FilteredListReviewParams {
+  id: string
+  sorting: ReviewSorting
+}
+
 export interface ListReviewParams {
   pagination: Pagination
   sorting: ReviewSorting
@@ -96,6 +101,13 @@ export interface ListReviewsIf {
     reviewList: JoinedReviewList | undefined
     isLoading: boolean
     isUninitialized: boolean
+  }
+}
+
+export interface ListReviewsByIf {
+  useList: (params: FilteredListReviewParams) => {
+    reviews: JoinedReviewList | undefined
+    isLoading: boolean
   }
 }
 

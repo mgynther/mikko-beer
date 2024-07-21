@@ -7,8 +7,8 @@ import type {
   GetBreweryIf,
   UpdateBreweryIf
 } from '../../core/brewery/types'
-import { useListReviewsByBreweryQuery } from '../../store/review/api'
 import type {
+  ListReviewsByIf,
   ReviewIf,
   ReviewSorting,
   ReviewSortingOrder
@@ -34,6 +34,7 @@ function NotFound (): JSX.Element {
 }
 
 interface Props {
+  listReviewsByBreweryIf: ListReviewsByIf
   reviewIf: ReviewIf
   getBreweryIf: GetBreweryIf
   updateBreweryIf: UpdateBreweryIf
@@ -51,8 +52,8 @@ function Brewery (props: Props): JSX.Element {
     throw new Error('Brewery component without breweryId. Should not happen.')
   }
   const { brewery, isLoading } = props.getBreweryIf.useGet(breweryId)
-  const { data: reviewData, isLoading: isLoadingReviews } =
-    useListReviewsByBreweryQuery({
+  const { reviews, isLoading: isLoadingReviews } =
+    props.listReviewsByBreweryIf.useList({
       id: breweryId,
       sorting: {
         order,
@@ -115,8 +116,8 @@ function Brewery (props: Props): JSX.Element {
         reviewIf={props.reviewIf}
         isLoading={isLoadingReviews}
         isTitleVisible={true}
-        reviews={reviewData?.reviews ?? []}
-        sorting={reviewData?.sorting}
+        reviews={reviews?.reviews ?? []}
+        sorting={reviews?.sorting}
         setSorting={(sorting: ReviewSorting) => {
           if (order !== sorting.order) {
             doSetOrder(sorting.order)

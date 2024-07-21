@@ -10,6 +10,7 @@ import type {
 } from '../../core/style/types'
 
 import type {
+  ListReviewsByIf,
   ReviewIf,
   ReviewSorting,
   ReviewSortingOrder
@@ -24,7 +25,6 @@ import ReviewList from '../review/ReviewList'
 import Stats from '../stats/Stats'
 import StorageList from '../storage/StorageList'
 
-import { useListReviewsByStyleQuery } from '../../store/review/api'
 import { useListStoragesByStyleQuery } from '../../store/storage/api'
 
 import StyleLinks from './StyleLinks'
@@ -49,6 +49,7 @@ function NoLinks (props: NoLinksProps): JSX.Element | null {
 }
 
 interface Props {
+  listReviewsByStyleIf: ListReviewsByIf
   getStyleIf: GetStyleIf
   reviewIf: ReviewIf
   statsIf: StatsIf
@@ -66,8 +67,8 @@ function Style (props: Props): JSX.Element {
     throw new Error('Style component without styleId. Should not happen.')
   }
   const { style, isLoading } = props.getStyleIf.useGet(styleId)
-  const { data: reviewData, isLoading: isLoadingReviews } =
-    useListReviewsByStyleQuery({
+  const { reviews, isLoading: isLoadingReviews } =
+    props.listReviewsByStyleIf.useList({
       id: styleId,
       sorting: {
         order,
@@ -152,8 +153,8 @@ function Style (props: Props): JSX.Element {
         reviewIf={props.reviewIf}
         isLoading={isLoadingReviews}
         isTitleVisible={true}
-        reviews={reviewData?.reviews ?? []}
-        sorting={reviewData?.sorting}
+        reviews={reviews?.reviews ?? []}
+        sorting={reviews?.sorting}
         setSorting={(sorting: ReviewSorting) => {
           if (order !== sorting.order) {
             doSetOrder(sorting.order)
