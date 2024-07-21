@@ -118,9 +118,13 @@ import {
 } from './store/brewery/api'
 import type {
   CreateStorageIf,
-  CreateStorageRequest
+  CreateStorageRequest,
+  GetStorageIf
 } from './core/storage/types'
-import { useCreateStorageMutation } from './store/storage/api'
+import {
+  useCreateStorageMutation,
+  useGetStorageQuery
+} from './store/storage/api'
 import {
   useCreateReviewMutation,
   useUpdateReviewMutation
@@ -590,6 +594,16 @@ function App (): JSX.Element {
     }
   }
 
+  const getStorageIf: GetStorageIf = {
+    useGet: (storageId: string) => {
+      const { data, isLoading } = useGetStorageQuery(storageId)
+      return {
+        storage: data?.storage,
+        isLoading
+      }
+    }
+  }
+
   const createReviewIf: CreateReviewIf = {
     useCreate: () => {
       const [ createReview, { isLoading, isSuccess, data }] =
@@ -706,12 +720,14 @@ function App (): JSX.Element {
                 {isAdmin && <Route path="addreview" element={
                   <AddReview
                     createReviewIf={createReviewIf}
+                    getStorageIf={getStorageIf}
                   />
                 } />}
                 {isAdmin &&
                   <Route path="addreview/:storageId" element={
                     <AddReview
                       createReviewIf={createReviewIf}
+                      getStorageIf={getStorageIf}
                     />
                 } />
                 }

@@ -6,8 +6,10 @@ import type {
   CreateReviewIf,
   ReviewRequest
 } from '../../core/review/types'
-import { useGetStorageQuery } from '../../store/storage/api'
-import type { Storage } from '../../core/storage/types'
+import type {
+  GetStorageIf,
+  Storage
+} from '../../core/storage/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 import { formatBestBefore } from '../util'
@@ -47,6 +49,7 @@ function toInitialReview (storageData: Storage): InitialReview {
 
 interface Props {
   createReviewIf: CreateReviewIf
+  getStorageIf: GetStorageIf
 }
 
 function AddReview (props: Props): JSX.Element {
@@ -55,10 +58,10 @@ function AddReview (props: Props): JSX.Element {
   const [review, setReview] = useState<ReviewRequest | undefined>(undefined)
   const { create, isLoading, isSuccess, review: createdReview } =
     props.createReviewIf.useCreate()
-  const { data: storageData, isLoading: isLoadingStorage } =
+  const { storage, isLoading: isLoadingStorage } =
     storageId === undefined
-      ? { data: undefined, isLoading: false }
-      : useGetStorageQuery(storageId)
+      ? { storage: undefined, isLoading: false }
+      : props.getStorageIf.useGet(storageId)
 
   useEffect(() => {
     if (isSuccess && createdReview !== undefined) {
@@ -75,17 +78,17 @@ function AddReview (props: Props): JSX.Element {
     if (storageId === undefined) {
       return undefined
     }
-    if (storageData === undefined) {
+    if (storage === undefined) {
       throw new Error('must not be called without storageData')
     }
-    return toInitialReview(storageData.storage)
+    return toInitialReview(storage)
   }
 
   return (
     <div>
       <h3>Add review</h3>
       <LoadingIndicator isLoading={isLoadingStorage} />
-      {(storageId === undefined || storageData !== undefined) && (
+      {(storageId === undefined || storage !== undefined) && (
         <ReviewEditor
           selectBeerIf={props.createReviewIf.selectBeerIf}
           reviewContainerIf={props.createReviewIf.reviewContainerIf}

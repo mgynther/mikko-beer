@@ -29,3 +29,10 @@ export interface CreateStorageIf {
     isLoading: boolean
   }
 }
+
+export interface GetStorageIf {
+  useGet: (storageId: string) => {
+    storage: Storage | undefined,
+    isLoading: boolean
+  }
+}
