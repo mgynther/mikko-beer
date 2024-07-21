@@ -37,10 +37,9 @@ function Review (props: Props): JSX.Element {
 
   async function fetchReview (id: string): Promise<void> {
     setIsOpen(true)
-    const fetched = await getReview(id)
-    const anyReviewData = (fetched as any).data
-    if (anyReviewData?.review !== undefined) {
-      const reviewData = anyReviewData?.review as ReviewType
+    const fetched = await getReview(id).unwrap()
+    if (fetched.review !== undefined) {
+      const reviewData = fetched.review
       setFullReview(reviewData)
     }
   }
