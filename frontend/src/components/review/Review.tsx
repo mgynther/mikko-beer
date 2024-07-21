@@ -15,14 +15,12 @@ import StyleLinks from '../style/StyleLinks'
 import UpdateReview from './UpdateReview'
 
 import './Review.css'
-import type { CreateBeerIf } from '../../core/beer/types'
 import type { GetLogin } from '../../core/login/types'
-import type { ReviewContainerIf } from '../../core/review/types'
+import type { UpdateReviewIf } from '../../core/review/types'
 
 interface Props {
   getLogin: GetLogin
-  createBeerIf: CreateBeerIf
-  reviewContainerIf: ReviewContainerIf
+  updateReviewIf: UpdateReviewIf
   review: JoinedReview
   onChanged: () => void
 }
@@ -115,8 +113,7 @@ function Review (props: Props): JSX.Element {
       {mode === EditableMode.Edit && fullReview !== undefined && (
         <>
           <UpdateReview
-            createBeerIf={props.createBeerIf}
-            reviewContainerIf={props.reviewContainerIf}
+            updateReviewIf={props.updateReviewIf}
             initialReview={{
               joined: review,
               review: fullReview

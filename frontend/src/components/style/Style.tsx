@@ -9,14 +9,13 @@ import type {
   UpdateStyleIf
 } from '../../core/style/types'
 
-import type { CreateBeerIf } from '../../core/beer/types'
 import type { GetLogin } from '../../core/login/types'
 import type {
   ReviewSorting,
   ReviewSortingOrder
 } from '../../core/review/types'
 import { type ListDirection } from '../../core/types'
-import type { ReviewContainerIf } from '../../core/review/types'
+import type { UpdateReviewIf } from '../../core/review/types'
 
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'
@@ -53,8 +52,7 @@ function NoLinks (props: NoLinksProps): JSX.Element | null {
 interface Props {
   getLogin: GetLogin
   getStyleIf: GetStyleIf
-  createBeerIf: CreateBeerIf
-  reviewContainerIf: ReviewContainerIf
+  updateReviewIf: UpdateReviewIf
   statsIf: StatsIf
   updateStyleIf: UpdateStyleIf
 }
@@ -124,7 +122,10 @@ function Style (props: Props): JSX.Element {
           <UpdateStyle
             getStyleIf={props.getStyleIf}
             initialStyle={initialStyle}
-            listStylesIf={props.createBeerIf.editBeerIf.selectStyleIf.list}
+            listStylesIf={
+              props.updateReviewIf.selectBeerIf.create.editBeerIf.selectStyleIf
+                .list
+            }
             updateStyleIf={props.updateStyleIf}
             onCancel={() => {
               setInitialStyle(undefined)
@@ -151,8 +152,7 @@ function Style (props: Props): JSX.Element {
       )}
       <ReviewList
         getLogin={props.getLogin}
-        reviewContainerIf={props.reviewContainerIf}
-        createBeerIf={props.createBeerIf}
+        updateReviewIf={props.updateReviewIf}
         isLoading={isLoadingReviews}
         isTitleVisible={true}
         reviews={reviewData?.reviews ?? []}

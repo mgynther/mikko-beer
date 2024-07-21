@@ -10,7 +10,8 @@ import type {
 import { useListReviewsByBreweryQuery } from '../../store/review/api'
 import type {
   ReviewSorting,
-  ReviewSortingOrder
+  ReviewSortingOrder,
+  UpdateReviewIf
 } from '../../core/review/types'
 import { useListStoragesByBreweryQuery } from '../../store/storage/api'
 import type { ListDirection } from '../../core/types'
@@ -26,9 +27,7 @@ import Stats from '../stats/Stats'
 import UpdateBrewery from './UpdateBrewery'
 
 import '../common/FlexRow.css'
-import type { CreateBeerIf } from '../../core/beer/types'
 import type { GetLogin } from '../../core/login/types'
-import type { ReviewContainerIf } from '../../core/review/types'
 import type { StatsIf } from '../../core/stats/types'
 
 function NotFound (): JSX.Element {
@@ -36,11 +35,10 @@ function NotFound (): JSX.Element {
 }
 
 interface Props {
-  createBeerIf: CreateBeerIf
+  updateReviewIf: UpdateReviewIf
   getBreweryIf: GetBreweryIf
   updateBreweryIf: UpdateBreweryIf
   getLogin: GetLogin
-  reviewContainerIf: ReviewContainerIf
   statsIf: StatsIf
 }
 
@@ -116,9 +114,8 @@ function Brewery (props: Props): JSX.Element {
         />
       )}
       <ReviewList
-        createBeerIf={props.createBeerIf}
+        updateReviewIf={props.updateReviewIf}
         getLogin={props.getLogin}
-        reviewContainerIf={props.reviewContainerIf}
         isLoading={isLoadingReviews}
         isTitleVisible={true}
         reviews={reviewData?.reviews ?? []}

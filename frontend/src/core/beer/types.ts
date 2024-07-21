@@ -58,3 +58,7 @@ export interface EditBeerIf {
   selectBreweryIf: SelectBreweryIf
   selectStyleIf: SelectStyleIf
 }
+
+export interface SelectBeerIf {
+  create: CreateBeerIf
+}

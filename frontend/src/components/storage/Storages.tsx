@@ -6,13 +6,13 @@ import { Role } from '../../core/user/types'
 import CreateStorage from './CreateStorage'
 import StorageList from './StorageList'
 
-import type { CreateBeerIf } from '../../core/beer/types'
+import type { SelectBeerIf } from '../../core/beer/types'
 import type { GetLogin, Login } from '../../core/login/types'
 import type { CreateStorageIf } from '../../core/storage/types'
 
 interface Props {
   getLogin: GetLogin
-  createBeerIf: CreateBeerIf
+  selectBeerIf: SelectBeerIf
   createStorageIf: CreateStorageIf
   reviewContainerIf: ReviewContainerIf
 }
@@ -39,7 +39,7 @@ function Storages (props: Props): JSX.Element {
       {isAdmin && (
         <div>
           <CreateStorage
-            createBeerIf={props.createBeerIf}
+            selectBeerIf={props.selectBeerIf}
             createStorageIf={props.createStorageIf}
             reviewContainerIf={props.reviewContainerIf}
           />

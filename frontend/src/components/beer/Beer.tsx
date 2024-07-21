@@ -5,7 +5,6 @@ import { useParams } from 'react-router-dom'
 import type {
   GetBeerIf,
   Beer as BeerType,
-  CreateBeerIf,
   UpdateBeerIf
 } from '../../core/beer/types'
 import { useListStoragesByBeerQuery } from '../../store/storage/api'
@@ -13,9 +12,9 @@ import { useListReviewsByBeerQuery } from '../../store/review/api'
 
 import type { GetLogin } from '../../core/login/types'
 import type {
-  ReviewContainerIf,
   ReviewSorting,
-  ReviewSortingOrder
+  ReviewSortingOrder,
+  UpdateReviewIf
 } from '../../core/review/types'
 import type { ListDirection } from '../../core/types'
 
@@ -37,11 +36,10 @@ function NotFound (): JSX.Element {
 }
 
 interface Props {
-  createBeerIf: CreateBeerIf
+  updateReviewIf: UpdateReviewIf
   updateBeerIf: UpdateBeerIf
   getBeerIf: GetBeerIf
   getLogin: GetLogin
-  reviewContainerIf: ReviewContainerIf
 }
 
 function Beer (props: Props): JSX.Element {
@@ -121,9 +119,8 @@ function Beer (props: Props): JSX.Element {
         />
       )}
       <ReviewList
-        createBeerIf={props.createBeerIf}
+        updateReviewIf={props.updateReviewIf}
         getLogin={props.getLogin}
-        reviewContainerIf={props.reviewContainerIf}
         isLoading={isLoadingReviews}
         isTitleVisible={true}
         reviews={reviewData?.reviews ?? []}

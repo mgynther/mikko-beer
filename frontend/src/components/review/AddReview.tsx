@@ -87,7 +87,7 @@ function AddReview (props: Props): JSX.Element {
       <LoadingIndicator isLoading={isLoadingStorage} />
       {(storageId === undefined || storageData !== undefined) && (
         <ReviewEditor
-          createBeerIf={props.createReviewIf.createBeerIf}
+          selectBeerIf={props.createReviewIf.selectBeerIf}
           reviewContainerIf={props.createReviewIf.reviewContainerIf}
           initialReview={getInitialReview()}
           isFromStorage={storageId !== undefined}

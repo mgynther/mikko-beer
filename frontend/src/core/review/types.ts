@@ -1,4 +1,4 @@
-import type { CreateBeerIf } from "../beer/types"
+import type { SelectBeerIf } from "../beer/types"
 import type {
   CreateContainerIf,
   ListContainersIf
@@ -85,7 +85,16 @@ export interface CreateReviewIf {
     isSuccess: boolean
     review: Review | undefined
   }
-  createBeerIf: CreateBeerIf
+  selectBeerIf: SelectBeerIf
+  reviewContainerIf: ReviewContainerIf
+}
+
+export interface UpdateReviewIf {
+  useUpdate: () => {
+    update: (request: Review) => Promise<void>
+    isLoading: boolean
+  }
+  selectBeerIf: SelectBeerIf
   reviewContainerIf: ReviewContainerIf
 }
 

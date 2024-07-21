@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import type {
   BeerWithIds,
-  CreateBeerIf
+  SelectBeerIf
 } from '../../core/beer/types'
 import { type Container } from '../../core/container/types'
 import { type ReviewContainerIf } from '../../core/review/types'
@@ -23,7 +23,7 @@ export interface InitialReview {
 }
 
 interface Props {
-  createBeerIf: CreateBeerIf
+  selectBeerIf: SelectBeerIf
   reviewContainerIf: ReviewContainerIf
   initialReview: InitialReview | undefined
   isFromStorage: boolean
@@ -133,7 +133,7 @@ function ReviewEditor (props: Props): JSX.Element {
               select={(beer: BeerWithIds) => {
                 setBeer(beer)
               }}
-              createBeerIf={props.createBeerIf}
+              selectBeerIf={props.selectBeerIf}
               />
             : (<div className='FlexRow'>
                   <div>{beer.name}</div>

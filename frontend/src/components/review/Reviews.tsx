@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react'
 
 import { useLazyListReviewsQuery } from '../../store/review/api'
 
-import type { CreateBeerIf } from '../../core/beer/types'
 import type { GetLogin } from '../../core/login/types'
-import type { ReviewContainerIf } from '../../core/review/types'
+import type { UpdateReviewIf } from '../../core/review/types'
 import type {
   JoinedReview,
   ReviewSorting,
@@ -22,8 +21,7 @@ const pageSize = 20
 
 interface Props {
   getLogin: GetLogin
-  createBeerIf: CreateBeerIf
-  reviewContainerIf: ReviewContainerIf
+  updateReviewIf: UpdateReviewIf
 }
 
 function Reviews (props: Props): JSX.Element {
@@ -89,9 +87,8 @@ function Reviews (props: Props): JSX.Element {
     <div>
       <h3>Reviews</h3>
       <ReviewList
-        createBeerIf={props.createBeerIf}
+        updateReviewIf={props.updateReviewIf}
         getLogin={props.getLogin}
-        reviewContainerIf={props.reviewContainerIf}
         isLoading={isLoading}
         isTitleVisible={false}
         reviews={loadedReviews}

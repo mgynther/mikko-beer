@@ -1,18 +1,15 @@
 import { useState } from 'react'
 
-import { type ReviewContainerIf } from '../../core/review/types'
+import type { UpdateReviewIf } from '../../core/review/types'
 
-import { useUpdateReviewMutation } from '../../store/review/api'
 import { type JoinedReview, type ReviewRequest } from '../../core/review/types'
 
 import EditActions from '../common/EditActions'
 
 import ReviewEditor from './ReviewEditor'
-import type { CreateBeerIf } from '../../core/beer/types'
 
 interface Props {
-  createBeerIf: CreateBeerIf
-  reviewContainerIf: ReviewContainerIf
+  updateReviewIf: UpdateReviewIf
   initialReview: {
     joined: JoinedReview
     review: ReviewRequest
@@ -25,14 +22,13 @@ function UpdateReview (props: Props): JSX.Element {
   const [newReview, setNewReview] = useState<ReviewRequest | undefined>(
     undefined
   )
-  const [updateReview, { isLoading }] =
-    useUpdateReviewMutation()
-  async function update (): Promise<void> {
+  const { update, isLoading } = props.updateReviewIf.useUpdate()
+  async function doUpdate (): Promise<void> {
     if (newReview === undefined) {
       throw new Error('review must not be undefined when updating')
     }
     try {
-      await updateReview({
+      await update({
         ...newReview,
         id: props.initialReview.joined.id
       })
@@ -44,8 +40,8 @@ function UpdateReview (props: Props): JSX.Element {
   return (
     <>
       <ReviewEditor
-        createBeerIf={props.createBeerIf}
-        reviewContainerIf={props.reviewContainerIf}
+        selectBeerIf={props.updateReviewIf.selectBeerIf}
+        reviewContainerIf={props.updateReviewIf.reviewContainerIf}
         initialReview={props.initialReview}
         isFromStorage={false}
         onChange={(review: ReviewRequest | undefined) => {
@@ -59,7 +55,7 @@ function UpdateReview (props: Props): JSX.Element {
           setNewReview(undefined)
           props.onCancel()
         }}
-        onSave={() => { void update() }}
+        onSave={() => { void doUpdate() }}
       />
     </>
   )

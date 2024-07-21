@@ -11,9 +11,8 @@ import TabButton from '../common/TabButton'
 import Review from './Review'
 
 import './ReviewList.css'
-import type { CreateBeerIf } from '../../core/beer/types'
 import type { GetLogin } from '../../core/login/types'
-import type { ReviewContainerIf } from '../../core/review/types'
+import type { UpdateReviewIf } from '../../core/review/types'
 
 interface HeadingProps {
   sorting: ReviewSorting | undefined
@@ -101,8 +100,7 @@ export function ReviewHeading (
 
 interface Props {
   getLogin: GetLogin
-  reviewContainerIf: ReviewContainerIf
-  createBeerIf: CreateBeerIf
+  updateReviewIf: UpdateReviewIf
   isLoading: boolean
   isTitleVisible: boolean
   reviews: JoinedReview[]
@@ -128,8 +126,7 @@ function ReviewList (props: Props): JSX.Element {
             return (
               <Review
                 getLogin={props.getLogin}
-                reviewContainerIf={props.reviewContainerIf}
-                createBeerIf={props.createBeerIf}
+                updateReviewIf={props.updateReviewIf}
                 key={review.id}
                 review={review}
                 onChanged={props.onChanged}

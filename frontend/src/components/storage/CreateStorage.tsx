@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import type {
   BeerWithIds,
-  CreateBeerIf
+  SelectBeerIf
 } from '../../core/beer/types'
 import type { Container } from '../../core/container/types'
 import type { ReviewContainerIf } from '../../core/review/types'
@@ -15,7 +15,7 @@ import './CreateStorage.css'
 import type { CreateStorageIf } from '../../core/storage/types'
 
 interface Props {
-  createBeerIf: CreateBeerIf
+  selectBeerIf: SelectBeerIf
   createStorageIf: CreateStorageIf
   reviewContainerIf: ReviewContainerIf
 }
@@ -62,7 +62,7 @@ function CreateStorage (props: Props): JSX.Element {
         <div className='CreateStorageContent'>
           {beer === undefined
             ? <SelectBeer
-                createBeerIf={props.createBeerIf}
+                selectBeerIf={props.selectBeerIf}
                 select={(beer: BeerWithIds) => {
                   setBeer(beer)
                 }}
