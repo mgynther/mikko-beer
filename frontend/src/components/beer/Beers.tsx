@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 
-import { useLazyListBeersQuery } from '../../store/beer/api'
 import type {
   Beer,
+  ListBeersIf,
   SearchBeerIf
 } from '../../core/beer/types'
 import { infiniteScroll } from '../util'
@@ -18,28 +18,28 @@ import './Beers.css'
 const pageSize = 20
 
 interface Props {
+  listBeersIf: ListBeersIf
   searchBeerIf: SearchBeerIf
 }
 
 function Beers (props: Props): JSX.Element {
   const [loadedBeers, setLoadedBeers] = useState<Beer[]>([])
-  const [trigger, result] = useLazyListBeersQuery()
+  const { beerList, list, isLoading, isUninitialized } =
+    props.listBeersIf.useList()
 
-  const isLoading = result.isLoading
-  const beerData = result.data
-  const beerArray = beerData?.beers === undefined
+  const beerArray = beerList?.beers === undefined
     ? []
-    : [...beerData.beers]
-  const hasMore = beerArray.length > 0 || result.isUninitialized
+    : [...beerList.beers]
+  const hasMore = beerArray.length > 0 || isUninitialized
 
   useEffect(() => {
     const loadMore = async (): Promise<void> => {
-      const result = await trigger({
+      const result = await list({
         skip: loadedBeers.length,
         size: pageSize
       })
-      if (result.data === undefined) return
-      const newBeers = [...loadedBeers, ...result.data.beers]
+      if (result === undefined) return
+      const newBeers = [...loadedBeers, ...result.beers]
       setLoadedBeers(newBeers)
     }
     function checkLoad (): void {
@@ -48,7 +48,7 @@ function Beers (props: Props): JSX.Element {
       }
     }
     return infiniteScroll(checkLoad)
-  }, [loadedBeers, setLoadedBeers, isLoading, hasMore, trigger])
+  }, [loadedBeers, setLoadedBeers, isLoading, hasMore, list])
 
   return (
     <div>

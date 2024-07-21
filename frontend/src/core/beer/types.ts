@@ -6,6 +6,7 @@ import type {
   SelectStyleIf,
   Style
 } from '../style/types'
+import type { Pagination } from '../types'
 
 export interface CreateBeerRequest {
   name: string
@@ -51,6 +52,15 @@ export interface GetBeerIf {
   useGetBeer: (beerId: string) => {
     beer: Beer | undefined
     isLoading: boolean
+  }
+}
+
+export interface ListBeersIf {
+  useList: () => {
+    list: (pagination: Pagination) => Promise<BeerList>
+    beerList: BeerList | undefined
+    isLoading: boolean
+    isUninitialized: boolean
   }
 }
 

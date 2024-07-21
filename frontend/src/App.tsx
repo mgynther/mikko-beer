@@ -105,6 +105,7 @@ import type {
   CreateBeerRequest,
   EditBeerIf,
   GetBeerIf,
+  ListBeersIf,
   SearchBeerIf,
   SelectBeerIf,
   UpdateBeerIf
@@ -112,6 +113,7 @@ import type {
 import {
   useCreateBeerMutation,
   useGetBeerQuery,
+  useLazyListBeersQuery,
   useLazySearchBeersQuery,
   useUpdateBeerMutation
 } from './store/beer/api'
@@ -276,6 +278,22 @@ function App (): JSX.Element {
       return {
         beer: data?.beer,
         isLoading
+      }
+    }
+  }
+
+  const listBeersIf: ListBeersIf = {
+    useList: () => {
+      const [trigger, { data, isLoading, isUninitialized } ] =
+        useLazyListBeersQuery()
+      return {
+        beerList: data,
+        list: async (pagination: Pagination) => {
+          const result = await trigger(pagination).unwrap()
+          return result
+        },
+        isLoading,
+        isUninitialized
       }
     }
   }
@@ -782,7 +800,10 @@ function App (): JSX.Element {
               />
             }>
             <Route index element={isLoggedIn
-              ? <Beers searchBeerIf={searchBeerIf} />
+              ? <Beers
+                  listBeersIf={listBeersIf}
+                  searchBeerIf={searchBeerIf}
+                />
               : <LoginComponent loginIf={loginIf} />}
             />
             {isLoggedIn && (
@@ -802,7 +823,10 @@ function App (): JSX.Element {
                 } />
                 }
                 <Route path="beers" element={
-                  <Beers searchBeerIf={searchBeerIf} />
+                  <Beers
+                    listBeersIf={listBeersIf}
+                    searchBeerIf={searchBeerIf}
+                  />
                 } />
                 <Route path="beers/:beerId" element={
                   <Beer
@@ -879,7 +903,10 @@ function App (): JSX.Element {
             <Route
               path="*"
               element={isLoggedIn
-                ? <Beers searchBeerIf={searchBeerIf} />
+                ? <Beers
+                    listBeersIf={listBeersIf}
+                    searchBeerIf={searchBeerIf}
+                  />
                 : <LoginComponent loginIf={loginIf}/>} />
           </Route>
         </Routes>
