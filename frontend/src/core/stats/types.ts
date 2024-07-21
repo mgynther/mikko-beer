@@ -48,6 +48,16 @@ export interface RatingStats {
   }>
 }
 
+export interface StyleStatsQueryParams {
+  breweryId: string | undefined
+  styleId: string | undefined
+  sorting: StyleStatsSorting
+  minReviewCount: number
+  maxReviewCount: number
+  minReviewAverage: number
+  maxReviewAverage: number
+}
+
 export interface StyleStats {
   style: Array<{
     reviewAverage: string
@@ -85,8 +95,16 @@ export interface GetRatingStatsIf {
   }
 }
 
+export interface GetStyleStatsIf {
+  useStats: (params: StyleStatsQueryParams) => {
+    stats: StyleStats | undefined
+    isLoading: boolean
+  }
+}
+
 export interface StatsIf {
   annual: GetAnnualStatsIf
   overall: GetOverallStatsIf
   rating: GetRatingStatsIf
+  style: GetStyleStatsIf
 }

@@ -119,12 +119,14 @@ import { useCreateStorageMutation } from './store/storage/api'
 import { useCreateReviewMutation } from './store/review/api'
 import type {
   BreweryStyleParams,
-  StatsIf
+  StatsIf,
+  StyleStatsQueryParams
 } from './core/stats/types'
 import {
   useGetAnnualStatsQuery,
   useGetOverallStatsQuery,
-  useGetRatingStatsQuery
+  useGetRatingStatsQuery,
+  useGetStyleStatsQuery
 } from './store/stats/api'
 
 interface LayoutProps {
@@ -601,6 +603,15 @@ function App (): JSX.Element {
       useStats: (params: BreweryStyleParams) => {
         const { data, isLoading } =
           useGetRatingStatsQuery(params)
+        return {
+          stats: data,
+          isLoading
+        }
+      }
+    },
+    style: {
+      useStats: (params: StyleStatsQueryParams) => {
+        const { data, isLoading } = useGetStyleStatsQuery(params)
         return {
           stats: data,
           isLoading

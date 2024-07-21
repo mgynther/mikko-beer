@@ -95,7 +95,11 @@ function Stats (props: Props): JSX.Element {
         />
       }
       {mode === Mode.Style &&
-        <Style breweryId={props.breweryId} styleId={props.styleId} />
+        <Style
+          getStyleStatsIf={props.statsIf.style}
+          breweryId={props.breweryId}
+          styleId={props.styleId}
+        />
       }
     </div>
   )

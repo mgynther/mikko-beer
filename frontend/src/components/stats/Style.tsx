@@ -1,9 +1,10 @@
 import { useState } from 'react'
 
-import { useGetStyleStatsQuery } from '../../store/stats/api'
-
 import { formatTitle, invertDirection } from '../list-helpers'
-import { type StyleStatsSortingOrder } from '../../core/stats/types'
+import type {
+  GetStyleStatsIf,
+  StyleStatsSortingOrder
+} from '../../core/stats/types'
 import { type ListDirection } from '../../core/types'
 import LoadingIndicator from '../common/LoadingIndicator'
 import TabButton from '../common/TabButton'
@@ -14,6 +15,7 @@ import Filters from './Filters'
 import './Stats.css'
 
 interface Props {
+  getStyleStatsIf: GetStyleStatsIf
   breweryId: string | undefined
   styleId: string | undefined
 }
@@ -31,7 +33,7 @@ function Style (props: Props): JSX.Element {
   const [maxReviewCount, setMaxReviewCount] = useState(Infinity)
   const [minReviewAverage, setMinReviewAverage] = useState(4)
   const [maxReviewAverage, setMaxReviewAverage] = useState(10)
-  const { data: styleData, isLoading } = useGetStyleStatsQuery({
+  const { stats, isLoading } = props.getStyleStatsIf.useStats({
     breweryId: props.breweryId,
     styleId: props.styleId,
     sorting: {
@@ -59,7 +61,6 @@ function Style (props: Props): JSX.Element {
     }
   }
 
-  const style = styleData?.style
   return (
     <div>
       <LoadingIndicator isLoading={isLoading} />
@@ -116,7 +117,7 @@ function Style (props: Props): JSX.Element {
           </tr>
         </thead>
         <tbody>
-          {style?.map(style => (
+          {stats?.style.map(style => (
             <tr key={style.styleId}>
               <td className='StatsNameColumn'>
                 <StyleLink style={{

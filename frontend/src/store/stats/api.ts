@@ -1,6 +1,9 @@
 import { emptySplitApi } from '../api'
 
-import type { BreweryStyleParams } from '../../core/stats/types'
+import type {
+  BreweryStyleParams,
+  StyleStatsQueryParams
+} from '../../core/stats/types'
 import type { Pagination } from '../../core/types'
 
 import {
@@ -127,24 +130,8 @@ const statsApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [StatsTags.Rating]
     }),
-    getStyleStats: build.query<StyleStats, {
-      breweryId: string | undefined
-      styleId: string | undefined
-      sorting: StyleStatsSorting
-      minReviewCount: number
-      maxReviewCount: number
-      minReviewAverage: number
-      maxReviewAverage: number
-    }>({
-      query: (params: {
-        breweryId: string | undefined
-        styleId: string | undefined
-        sorting: StyleStatsSorting
-        minReviewCount: number
-        maxReviewCount: number
-        minReviewAverage: number
-        maxReviewAverage: number
-      }) => ({
+    getStyleStats: build.query<StyleStats, StyleStatsQueryParams>({
+      query: (params: StyleStatsQueryParams) => ({
         url: `/stats/style${
           styleFilters(params.breweryId, params.styleId, params.sorting)
         }&min_review_count=${
