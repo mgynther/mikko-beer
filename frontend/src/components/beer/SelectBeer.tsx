@@ -28,6 +28,7 @@ function SelectBeer (props: Props): JSX.Element {
         }
         selectElement={
           <SearchBeer
+            searchBeerIf={props.selectBeerIf.search}
             select={props.select}
           />
         }

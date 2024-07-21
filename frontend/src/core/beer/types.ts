@@ -59,6 +59,14 @@ export interface EditBeerIf {
   selectStyleIf: SelectStyleIf
 }
 
+export interface SearchBeerIf {
+  useSearch: () => {
+    search: (query: string) => Promise<Beer[]>
+    isLoading: boolean
+  }
+}
+
 export interface SelectBeerIf {
   create: CreateBeerIf
+  search: SearchBeerIf
 }

@@ -100,12 +100,14 @@ import type {
   CreateBeerRequest,
   EditBeerIf,
   GetBeerIf,
+  SearchBeerIf,
   SelectBeerIf,
   UpdateBeerIf
 } from './core/beer/types'
 import {
   useCreateBeerMutation,
   useGetBeerQuery,
+  useLazySearchBeersQuery,
   useUpdateBeerMutation
 } from './store/beer/api'
 import {
@@ -138,6 +140,7 @@ import {
 } from './store/stats/api'
 
 interface LayoutProps {
+  searchBeerIf: SearchBeerIf
   searchBreweryIf: SearchBreweryIf
   isAdmin: boolean
   isLoggedIn: boolean
@@ -188,7 +191,7 @@ function Layout (props: LayoutProps): JSX.Element {
               {isMoreOpen && (
                 <div>
                   <div className='Search'>
-                    <SearchBeerWithNavi />
+                    <SearchBeerWithNavi searchBeerIf={props.searchBeerIf} />
                   </div>
                   <div className='Search'>
                     <SearchBreweryWithNavi
@@ -482,8 +485,22 @@ function App (): JSX.Element {
     editBeerIf
   }
 
+  const searchBeerIf: SearchBeerIf = {
+    useSearch: () => {
+      const [ searchBeers, { isLoading } ] = useLazySearchBeersQuery()
+      return {
+        search: async (query: string) => {
+          const results = await searchBeers(query).unwrap()
+          return results.beers
+        },
+        isLoading
+      }
+    }
+  }
+
   const selectBeerIf: SelectBeerIf = {
     create: createBeerIf,
+    search: searchBeerIf
   }
 
   const updateBeerIf: UpdateBeerIf = {
@@ -662,6 +679,7 @@ function App (): JSX.Element {
         <Routes>
           <Route path="/" element={
               <Layout
+                searchBeerIf={searchBeerIf}
                 searchBreweryIf={searchBreweryIf}
                 isAdmin={isAdmin}
                 isLoggedIn={isLoggedIn}
@@ -680,7 +698,7 @@ function App (): JSX.Element {
               />
             }>
             <Route index element={isLoggedIn
-              ? <Beers />
+              ? <Beers searchBeerIf={searchBeerIf} />
               : <LoginComponent loginIf={loginIf} />}
             />
             {isLoggedIn && (
@@ -697,7 +715,9 @@ function App (): JSX.Element {
                     />
                 } />
                 }
-                <Route path="beers" element={<Beers />} />
+                <Route path="beers" element={
+                  <Beers searchBeerIf={searchBeerIf} />
+                } />
                 <Route path="beers/:beerId" element={
                   <Beer
                     getBeerIf={getBeerIf}
@@ -773,8 +793,9 @@ function App (): JSX.Element {
             )}
             <Route
               path="*"
-              element={isLoggedIn ?
-                <Beers /> : <LoginComponent loginIf={loginIf}/>} />
+              element={isLoggedIn
+                ? <Beers searchBeerIf={searchBeerIf} />
+                : <LoginComponent loginIf={loginIf}/>} />
           </Route>
         </Routes>
         <div id='content-end'>&nbsp;</div>

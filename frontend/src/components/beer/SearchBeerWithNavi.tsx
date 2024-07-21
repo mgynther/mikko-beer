@@ -1,13 +1,21 @@
 import { useNavigate } from 'react-router-dom'
 
 import SearchBeer from './SearchBeer'
+import type { SearchBeerIf } from '../../core/beer/types'
 
-function SearchBeerWithNavi (): JSX.Element {
+interface Props {
+  searchBeerIf: SearchBeerIf
+}
+
+function SearchBeerWithNavi (props: Props): JSX.Element {
   const navigate = useNavigate()
   return (
-    <SearchBeer select={(beer) => {
-      navigate(`/beers/${beer.id}`)
-    }} />
+    <SearchBeer
+      searchBeerIf={props.searchBeerIf}
+      select={(beer) => {
+        navigate(`/beers/${beer.id}`)
+      }
+    } />
   )
 }
 

@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
 
 import { useLazyListBeersQuery } from '../../store/beer/api'
-import { type Beer } from '../../core/beer/types'
+import type {
+  Beer,
+  SearchBeerIf
+} from '../../core/beer/types'
 import { infiniteScroll } from '../util'
 
 import BreweryLinks from '../brewery/BreweryLinks'
@@ -14,7 +17,11 @@ import './Beers.css'
 
 const pageSize = 20
 
-function Beers (): JSX.Element {
+interface Props {
+  searchBeerIf: SearchBeerIf
+}
+
+function Beers (props: Props): JSX.Element {
   const [loadedBeers, setLoadedBeers] = useState<Beer[]>([])
   const [trigger, result] = useLazyListBeersQuery()
 
@@ -46,7 +53,7 @@ function Beers (): JSX.Element {
   return (
     <div>
       <h3>Beers</h3>
-      <SearchBeerWithNavi />
+      <SearchBeerWithNavi searchBeerIf={props.searchBeerIf} />
       {isLoading && (<div>Loading...</div>)}
       <div className='BeerHeading'>
           <div className='BeerName'>Name</div>
