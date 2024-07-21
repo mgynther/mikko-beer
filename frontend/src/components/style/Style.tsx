@@ -9,13 +9,12 @@ import type {
   UpdateStyleIf
 } from '../../core/style/types'
 
-import type { GetLogin } from '../../core/login/types'
 import type {
+  ReviewIf,
   ReviewSorting,
   ReviewSortingOrder
 } from '../../core/review/types'
 import { type ListDirection } from '../../core/types'
-import type { UpdateReviewIf } from '../../core/review/types'
 
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'
@@ -50,9 +49,8 @@ function NoLinks (props: NoLinksProps): JSX.Element | null {
 }
 
 interface Props {
-  getLogin: GetLogin
   getStyleIf: GetStyleIf
-  updateReviewIf: UpdateReviewIf
+  reviewIf: ReviewIf
   statsIf: StatsIf
   updateStyleIf: UpdateStyleIf
 }
@@ -90,7 +88,7 @@ function Style (props: Props): JSX.Element {
             <div>
               <EditButton
                 disabled={false}
-                getLogin={props.getLogin}
+                getLogin={props.reviewIf.login}
                 onClick={() => {
                   setMode(EditableMode.Edit)
                   setInitialStyle({
@@ -123,7 +121,7 @@ function Style (props: Props): JSX.Element {
             getStyleIf={props.getStyleIf}
             initialStyle={initialStyle}
             listStylesIf={
-              props.updateReviewIf.selectBeerIf.create.editBeerIf.selectStyleIf
+              props.reviewIf.update.selectBeerIf.create.editBeerIf.selectStyleIf
                 .list
             }
             updateStyleIf={props.updateStyleIf}
@@ -144,15 +142,14 @@ function Style (props: Props): JSX.Element {
       />
       {(storageData?.storages ?? []).length > 0 && (
         <StorageList
-          getLogin={props.getLogin}
+          getLogin={props.reviewIf.login}
           isLoading={isLoadingReviews}
           isTitleVisible={true}
           storages={storageData?.storages ?? []}
         />
       )}
       <ReviewList
-        getLogin={props.getLogin}
-        updateReviewIf={props.updateReviewIf}
+        reviewIf={props.reviewIf}
         isLoading={isLoadingReviews}
         isTitleVisible={true}
         reviews={reviewData?.reviews ?? []}

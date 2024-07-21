@@ -9,9 +9,9 @@ import type {
 } from '../../core/brewery/types'
 import { useListReviewsByBreweryQuery } from '../../store/review/api'
 import type {
+  ReviewIf,
   ReviewSorting,
-  ReviewSortingOrder,
-  UpdateReviewIf
+  ReviewSortingOrder
 } from '../../core/review/types'
 import { useListStoragesByBreweryQuery } from '../../store/storage/api'
 import type { ListDirection } from '../../core/types'
@@ -27,7 +27,6 @@ import Stats from '../stats/Stats'
 import UpdateBrewery from './UpdateBrewery'
 
 import '../common/FlexRow.css'
-import type { GetLogin } from '../../core/login/types'
 import type { StatsIf } from '../../core/stats/types'
 
 function NotFound (): JSX.Element {
@@ -35,10 +34,9 @@ function NotFound (): JSX.Element {
 }
 
 interface Props {
-  updateReviewIf: UpdateReviewIf
+  reviewIf: ReviewIf
   getBreweryIf: GetBreweryIf
   updateBreweryIf: UpdateBreweryIf
-  getLogin: GetLogin
   statsIf: StatsIf
 }
 
@@ -77,7 +75,7 @@ function Brewery (props: Props): JSX.Element {
             <div>
               <EditButton
                 disabled={brewery === undefined}
-                getLogin={props.getLogin}
+                getLogin={props.reviewIf.login}
                 onClick={() => {
                   setMode(EditableMode.Edit)
                   setInitialBrewery({ ...brewery })
@@ -107,15 +105,14 @@ function Brewery (props: Props): JSX.Element {
       )}
       {(storageData?.storages ?? []).length > 0 && (
         <StorageList
-          getLogin={props.getLogin}
+          getLogin={props.reviewIf.login}
           isLoading={isLoadingReviews}
           isTitleVisible={true}
           storages={storageData?.storages ?? []}
         />
       )}
       <ReviewList
-        updateReviewIf={props.updateReviewIf}
-        getLogin={props.getLogin}
+        reviewIf={props.reviewIf}
         isLoading={isLoadingReviews}
         isTitleVisible={true}
         reviews={reviewData?.reviews ?? []}

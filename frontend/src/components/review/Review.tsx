@@ -1,6 +1,5 @@
 import { useState } from 'react'
 
-import { useLazyGetReviewQuery } from '../../store/review/api'
 import {
   type JoinedReview,
   type Review as ReviewType
@@ -15,19 +14,17 @@ import StyleLinks from '../style/StyleLinks'
 import UpdateReview from './UpdateReview'
 
 import './Review.css'
-import type { GetLogin } from '../../core/login/types'
-import type { UpdateReviewIf } from '../../core/review/types'
+import type { ReviewIf } from '../../core/review/types'
 
 interface Props {
-  getLogin: GetLogin
-  updateReviewIf: UpdateReviewIf
+  reviewIf: ReviewIf
   review: JoinedReview
   onChanged: () => void
 }
 
 function Review (props: Props): JSX.Element {
   const [mode, setMode] = useState(EditableMode.View)
-  const [getReview] = useLazyGetReviewQuery()
+  const { get } = props.reviewIf.get.useGet()
   const review = props.review
 
   const [isOpen, setIsOpen] = useState(false)
@@ -37,10 +34,9 @@ function Review (props: Props): JSX.Element {
 
   async function fetchReview (id: string): Promise<void> {
     setIsOpen(true)
-    const fetched = await getReview(id).unwrap()
-    if (fetched.review !== undefined) {
-      const reviewData = fetched.review
-      setFullReview(reviewData)
+    const review = await get(id)
+    if (review !== undefined) {
+      setFullReview(review)
     }
   }
 
@@ -98,7 +94,7 @@ function Review (props: Props): JSX.Element {
                 <div>
                   <EditButton
                     disabled={fullReview === undefined}
-                    getLogin={props.getLogin}
+                    getLogin={props.reviewIf.login}
                     onClick={() => {
                       setMode(EditableMode.Edit)
                     }}
@@ -112,7 +108,7 @@ function Review (props: Props): JSX.Element {
       {mode === EditableMode.Edit && fullReview !== undefined && (
         <>
           <UpdateReview
-            updateReviewIf={props.updateReviewIf}
+            updateReviewIf={props.reviewIf.update}
             initialReview={{
               joined: review,
               review: fullReview

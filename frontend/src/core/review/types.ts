@@ -5,6 +5,7 @@ import type {
 } from "../container/types"
 
 import type { Container } from '../container/types'
+import type { GetLogin } from "../login/types"
 import type { ListDirection } from '../types'
 
 export interface Review {
@@ -78,6 +79,12 @@ export interface JoinedReviewList {
   sorting?: ReviewSorting
 }
 
+export interface GetReviewIf {
+  useGet: () => {
+    get: (reviewId: string) => Promise<Review | undefined>
+  }
+}
+
 export interface CreateReviewIf {
   useCreate: () => {
     create: (request: ReviewRequestWrapper) => Promise<void>
@@ -101,4 +108,10 @@ export interface UpdateReviewIf {
 export interface ReviewContainerIf {
   createIf: CreateContainerIf
   listIf: ListContainersIf
+}
+
+export interface ReviewIf {
+  get: GetReviewIf
+  update: UpdateReviewIf
+  login: GetLogin
 }

@@ -64,10 +64,12 @@ import type {
 
 import type {
   CreateReviewIf,
+  GetReviewIf,
   ReviewRequestWrapper,
   ReviewContainerIf,
   UpdateReviewIf,
-  Review
+  Review,
+  ReviewIf
 } from './core/review/types'
 import {
   useCreateStyleMutation,
@@ -127,6 +129,7 @@ import {
 } from './store/storage/api'
 import {
   useCreateReviewMutation,
+  useLazyGetReviewQuery,
   useUpdateReviewMutation
 } from './store/review/api'
 import type {
@@ -604,6 +607,17 @@ function App (): JSX.Element {
     }
   }
 
+  const getReviewIf: GetReviewIf = {
+    useGet: () => {
+      const [getReview] = useLazyGetReviewQuery()
+      return {
+        get: async (reviewId: string) => {
+          return (await getReview(reviewId).unwrap())?.review
+        }
+      }
+    }
+  }
+
   const createReviewIf: CreateReviewIf = {
     useCreate: () => {
       const [ createReview, { isLoading, isSuccess, data }] =
@@ -633,6 +647,12 @@ function App (): JSX.Element {
     },
     selectBeerIf,
     reviewContainerIf
+  }
+
+  const reviewIf: ReviewIf = {
+    get: getReviewIf,
+    update: updateReviewIf,
+    login: getLogin
   }
 
   const statsIf: StatsIf = {
@@ -737,9 +757,8 @@ function App (): JSX.Element {
                 <Route path="beers/:beerId" element={
                   <Beer
                     getBeerIf={getBeerIf}
-                    getLogin={getLogin}
+                    reviewIf={reviewIf}
                     updateBeerIf={updateBeerIf}
-                    updateReviewIf={updateReviewIf}
                   />
                 } />
                 <Route path="breweries" element={
@@ -750,10 +769,9 @@ function App (): JSX.Element {
                 <Route path="breweries/:breweryId" element={
                   <Brewery
                     getBreweryIf={getBreweryIf}
-                    getLogin={getLogin}
+                    reviewIf={reviewIf}
                     statsIf={statsIf}
                     updateBreweryIf={updateBreweryIf}
-                    updateReviewIf={updateReviewIf}
                   />
                 } />
                 <Route path="containers" element={
@@ -765,8 +783,7 @@ function App (): JSX.Element {
                 } />
                 <Route path="reviews" element={
                   <Reviews
-                    getLogin={getLogin}
-                    updateReviewIf={updateReviewIf}
+                    reviewIf={reviewIf}
                   />
                 } />
                 <Route path="styles" element={
@@ -774,8 +791,7 @@ function App (): JSX.Element {
                 } />
                 <Route path="styles/:styleId" element={
                   <Style
-                    updateReviewIf={updateReviewIf}
-                    getLogin={getLogin}
+                    reviewIf={reviewIf}
                     getStyleIf={getStyleIf}
                     statsIf={statsIf}
                     updateStyleIf={updateStyleIf}
