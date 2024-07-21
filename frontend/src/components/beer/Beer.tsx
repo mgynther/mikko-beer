@@ -7,7 +7,6 @@ import type {
   Beer as BeerType,
   UpdateBeerIf
 } from '../../core/beer/types'
-import { useListStoragesByBeerQuery } from '../../store/storage/api'
 
 import type {
   ListReviewsByIf,
@@ -15,6 +14,7 @@ import type {
   ReviewSorting,
   ReviewSortingOrder
 } from '../../core/review/types'
+import type { ListStoragesByIf } from '../../core/storage/types'
 import type { ListDirection } from '../../core/types'
 
 import { EditableMode } from '../common/EditableMode'
@@ -36,6 +36,7 @@ function NotFound (): JSX.Element {
 
 interface Props {
   listReviewsByBeerIf: ListReviewsByIf
+  listStoragesByBeerIf: ListStoragesByIf
   reviewIf: ReviewIf
   updateBeerIf: UpdateBeerIf
   getBeerIf: GetBeerIf
@@ -60,7 +61,8 @@ function Beer (props: Props): JSX.Element {
         direction
       }
     })
-  const { data: storageData } = useListStoragesByBeerQuery(beerId)
+  const { storages, isLoading: isLoadingStorages } =
+    props.listStoragesByBeerIf.useList(beerId)
   if (isLoading) return <LoadingIndicator isLoading={true} />
   if (beer === undefined) return <NotFound />
   return (
@@ -109,12 +111,12 @@ function Beer (props: Props): JSX.Element {
           }}
         />
       )}
-      {(storageData?.storages ?? []).length > 0 && (
+      {(storages?.storages ?? []).length > 0 && (
         <StorageList
           getLogin={props.reviewIf.login}
-          isLoading={isLoadingReviews}
+          isLoading={isLoadingStorages}
           isTitleVisible={true}
-          storages={storageData?.storages ?? []}
+          storages={storages?.storages ?? []}
         />
       )}
       <ReviewList

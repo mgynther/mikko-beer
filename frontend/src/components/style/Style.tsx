@@ -15,6 +15,7 @@ import type {
   ReviewSorting,
   ReviewSortingOrder
 } from '../../core/review/types'
+import type { ListStoragesByIf } from '../../core/storage/types'
 import { type ListDirection } from '../../core/types'
 
 import { EditableMode } from '../common/EditableMode'
@@ -24,8 +25,6 @@ import LoadingIndicator from '../common/LoadingIndicator'
 import ReviewList from '../review/ReviewList'
 import Stats from '../stats/Stats'
 import StorageList from '../storage/StorageList'
-
-import { useListStoragesByStyleQuery } from '../../store/storage/api'
 
 import StyleLinks from './StyleLinks'
 import UpdateStyle from './UpdateStyle'
@@ -50,6 +49,7 @@ function NoLinks (props: NoLinksProps): JSX.Element | null {
 
 interface Props {
   listReviewsByStyleIf: ListReviewsByIf
+  listStoragesByStyleIf: ListStoragesByIf
   getStyleIf: GetStyleIf
   reviewIf: ReviewIf
   statsIf: StatsIf
@@ -75,7 +75,8 @@ function Style (props: Props): JSX.Element {
         direction
       }
     })
-  const { data: storageData } = useListStoragesByStyleQuery(styleId)
+  const { storages, isLoading: isLoadingStorages } =
+    props.listStoragesByStyleIf.useList(styleId)
   if (isLoading) return <LoadingIndicator isLoading={true} />
   if (style === undefined) return <NotFound />
   return (
@@ -141,12 +142,12 @@ function Style (props: Props): JSX.Element {
         breweryId={undefined}
         styleId={styleId}
       />
-      {(storageData?.storages ?? []).length > 0 && (
+      {(storages?.storages ?? []).length > 0 && (
         <StorageList
           getLogin={props.reviewIf.login}
-          isLoading={isLoadingReviews}
+          isLoading={isLoadingStorages}
           isTitleVisible={true}
-          storages={storageData?.storages ?? []}
+          storages={storages?.storages ?? []}
         />
       )}
       <ReviewList

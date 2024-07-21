@@ -43,3 +43,10 @@ export interface ListStoragesIf {
     isLoading: boolean
   }
 }
+
+export interface ListStoragesByIf {
+  useList: (id: string) => {
+    storages: StorageList | undefined
+    isLoading: boolean
+  }
+}

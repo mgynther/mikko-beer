@@ -130,11 +130,15 @@ import type {
   CreateStorageIf,
   CreateStorageRequest,
   GetStorageIf,
+  ListStoragesByIf,
   ListStoragesIf
 } from './core/storage/types'
 import {
   useCreateStorageMutation,
   useGetStorageQuery,
+  useListStoragesByBeerQuery,
+  useListStoragesByBreweryQuery,
+  useListStoragesByStyleQuery,
   useListStoragesQuery
 } from './store/storage/api'
 import {
@@ -664,6 +668,36 @@ function App (): JSX.Element {
     }
   }
 
+  const listStoragesByBeerIf: ListStoragesByIf = {
+    useList: (beerId: string) => {
+      const { data, isLoading } = useListStoragesByBeerQuery(beerId)
+      return {
+        storages: data,
+        isLoading
+      }
+    }
+  }
+
+  const listStoragesByBreweryIf: ListStoragesByIf = {
+    useList: (breweryId: string) => {
+      const { data, isLoading } = useListStoragesByBreweryQuery(breweryId)
+      return {
+        storages: data,
+        isLoading
+      }
+    }
+  }
+
+  const listStoragesByStyleIf: ListStoragesByIf = {
+    useList: (breweryId: string) => {
+      const { data, isLoading } = useListStoragesByStyleQuery(breweryId)
+      return {
+        storages: data,
+        isLoading
+      }
+    }
+  }
+
   const getReviewIf: GetReviewIf = {
     useGet: () => {
       const [getReview] = useLazyGetReviewQuery()
@@ -867,6 +901,7 @@ function App (): JSX.Element {
                   <Beer
                     getBeerIf={getBeerIf}
                     listReviewsByBeerIf={listReviewsByBeerIf}
+                    listStoragesByBeerIf={listStoragesByBeerIf}
                     reviewIf={reviewIf}
                     updateBeerIf={updateBeerIf}
                   />
@@ -881,6 +916,7 @@ function App (): JSX.Element {
                   <Brewery
                     getBreweryIf={getBreweryIf}
                     listReviewsByBreweryIf={listReviewsByBreweryIf}
+                    listStoragesByBreweryIf={listStoragesByBreweryIf}
                     reviewIf={reviewIf}
                     statsIf={statsIf}
                     updateBreweryIf={updateBreweryIf}
@@ -905,6 +941,7 @@ function App (): JSX.Element {
                 <Route path="styles/:styleId" element={
                   <Style
                     listReviewsByStyleIf={listReviewsByStyleIf}
+                    listStoragesByStyleIf={listStoragesByStyleIf}
                     reviewIf={reviewIf}
                     getStyleIf={getStyleIf}
                     statsIf={statsIf}
