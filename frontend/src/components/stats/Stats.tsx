@@ -78,7 +78,11 @@ function Stats (props: Props): JSX.Element {
         />
       }
       {mode === Mode.Brewery &&
-        <Brewery breweryId={props.breweryId} styleId={props.styleId} />
+        <Brewery
+          getBreweryStatsIf={props.statsIf.brewery}
+          breweryId={props.breweryId}
+          styleId={props.styleId}
+        />
       }
       {mode === Mode.Overall &&
         <Overall

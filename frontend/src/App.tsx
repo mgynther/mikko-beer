@@ -118,6 +118,7 @@ import type {
 import { useCreateStorageMutation } from './store/storage/api'
 import { useCreateReviewMutation } from './store/review/api'
 import type {
+  BreweryStatsQueryParams,
   BreweryStyleParams,
   StatsIf,
   StyleStatsQueryParams
@@ -126,7 +127,8 @@ import {
   useGetAnnualStatsQuery,
   useGetOverallStatsQuery,
   useGetRatingStatsQuery,
-  useGetStyleStatsQuery
+  useGetStyleStatsQuery,
+  useLazyGetBreweryStatsQuery
 } from './store/stats/api'
 
 interface LayoutProps {
@@ -581,9 +583,21 @@ function App (): JSX.Element {
   const statsIf: StatsIf = {
     annual: {
       useStats: (params: BreweryStyleParams) => {
-        const { data, isLoading } =
-          useGetAnnualStatsQuery(params)
+        const { data, isLoading } = useGetAnnualStatsQuery(params)
         return {
+          stats: data,
+          isLoading
+        }
+      }
+    },
+    brewery: {
+      useStats: () => {
+        const [trigger, { data, isLoading }] =
+          useLazyGetBreweryStatsQuery()
+        return {
+          query: async (
+            params: BreweryStatsQueryParams
+          ) => (await trigger(params))?.data,
           stats: data,
           isLoading
         }
@@ -591,8 +605,7 @@ function App (): JSX.Element {
     },
     overall: {
       useStats: (params: BreweryStyleParams) => {
-        const { data, isLoading } =
-          useGetOverallStatsQuery(params)
+        const { data, isLoading } = useGetOverallStatsQuery(params)
         return {
           stats: data?.overall,
           isLoading
@@ -601,8 +614,7 @@ function App (): JSX.Element {
     },
     rating: {
       useStats: (params: BreweryStyleParams) => {
-        const { data, isLoading } =
-          useGetRatingStatsQuery(params)
+        const { data, isLoading } = useGetRatingStatsQuery(params)
         return {
           stats: data,
           isLoading

@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
 
 import { formatTitle, invertDirection } from '../list-helpers'
-import { useLazyGetBreweryStatsQuery } from '../../store/stats/api'
-import {
-  type BreweryStatsSortingOrder,
-  type OneBreweryStats
+import type {
+  GetBreweryStatsIf,
+  BreweryStatsSortingOrder,
+  OneBreweryStats
 } from '../../core/stats/types'
-import { type ListDirection, type Pagination } from '../../core/types'
+import type {
+  ListDirection,
+  Pagination
+} from '../../core/types'
 import { infiniteScroll } from '../util'
 
 import BreweryLinks from '../brewery/BreweryLinks'
@@ -20,6 +23,7 @@ import './Stats.css'
 const pageSize = 30
 
 interface Props {
+  getBreweryStatsIf: GetBreweryStatsIf
   breweryId: string | undefined
   styleId: string | undefined
 }
@@ -52,8 +56,7 @@ function Brewery (props: Props): JSX.Element {
   const [maxReviewCount, doSetMaxReviewCount] = useState(Infinity)
   const [minReviewAverage, doSetMinReviewAverage] = useState(4)
   const [maxReviewAverage, doSetMaxReviewAverage] = useState(10)
-  const [trigger, { data: breweryData, isLoading }] =
-    useLazyGetBreweryStatsQuery()
+  const { query, stats, isLoading } = props.getBreweryStatsIf.useStats()
   const [loadedBreweries, setLoadedBreweries] =
     useState<OneBreweryStats[] | undefined>(undefined)
   const breweryId = props.breweryId
@@ -107,9 +110,9 @@ function Brewery (props: Props): JSX.Element {
     maxReviewAverage
   ])
 
-  const breweryArray = breweryData?.brewery === undefined
+  const breweryArray = stats?.brewery === undefined
     ? []
-    : [...breweryData.brewery]
+    : [...stats.brewery]
   const hasMore = breweryArray.length > 0 || loadedBreweries === undefined
 
   useEffect(() => {
@@ -117,7 +120,7 @@ function Brewery (props: Props): JSX.Element {
       return
     }
     async function loadAll (): Promise<void> {
-      const result = await trigger({
+      const result = await query({
         ...breweryIdTriggerParams,
         sorting: {
           order: sortingOrder,
@@ -128,8 +131,8 @@ function Brewery (props: Props): JSX.Element {
         minReviewAverage,
         maxReviewAverage
       })
-      if (result?.data === undefined) return
-      setLoadedBreweries([...result.data.brewery])
+      if (result === undefined) return
+      setLoadedBreweries([...result.brewery])
     }
     void loadAll()
   }, [
@@ -148,7 +151,7 @@ function Brewery (props: Props): JSX.Element {
       return
     }
     const loadMore = async (): Promise<void> => {
-      const result = await trigger({
+      const result = await query({
         breweryId: props.breweryId,
         styleId: props.styleId,
         pagination: {
@@ -164,8 +167,8 @@ function Brewery (props: Props): JSX.Element {
         minReviewAverage,
         maxReviewAverage
       })
-      if (result.data === undefined) return
-      const newBreweries = [...(loadedBreweries ?? []), ...result.data.brewery]
+      if (result === undefined) return
+      const newBreweries = [...(loadedBreweries ?? []), ...result.brewery]
       setLoadedBreweries(newBreweries)
     }
     function checkLoad (): void {
@@ -187,7 +190,7 @@ function Brewery (props: Props): JSX.Element {
     maxReviewAverage,
     sortingOrder,
     sortingDirection,
-    trigger
+    query
   ])
 
   function isSelected (property: BreweryStatsSortingOrder): boolean {

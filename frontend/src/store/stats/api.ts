@@ -1,10 +1,10 @@
 import { emptySplitApi } from '../api'
 
 import type {
+  BreweryStatsQueryParams,
   BreweryStyleParams,
   StyleStatsQueryParams
 } from '../../core/stats/types'
-import type { Pagination } from '../../core/types'
 
 import {
   type AnnualStats,
@@ -77,26 +77,8 @@ const statsApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [StatsTags.Annual]
     }),
-    getBreweryStats: build.query<BreweryStats, {
-      breweryId: string | undefined
-      styleId: string | undefined
-      pagination: Pagination
-      sorting: BreweryStatsSorting
-      minReviewCount: number
-      maxReviewCount: number
-      minReviewAverage: number
-      maxReviewAverage: number
-    }>({
-      query: (params: {
-        breweryId: string | undefined
-        styleId: string | undefined
-        pagination: Pagination
-        sorting: BreweryStatsSorting
-        minReviewCount: number
-        maxReviewCount: number
-        minReviewAverage: number
-        maxReviewAverage: number
-      }) => ({
+    getBreweryStats: build.query<BreweryStats, BreweryStatsQueryParams>({
+      query: (params: BreweryStatsQueryParams) => ({
         url: `/stats/brewery?size=${
           params.pagination.size
           }&skip=${

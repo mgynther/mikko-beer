@@ -1,4 +1,7 @@
-import { type ListDirection } from '../types'
+import type {
+  ListDirection,
+  Pagination
+} from '../types'
 
 export interface BreweryStyleParams {
   breweryId: string | undefined
@@ -48,6 +51,17 @@ export interface RatingStats {
   }>
 }
 
+export interface BreweryStatsQueryParams {
+  breweryId: string | undefined
+  styleId: string | undefined
+  pagination: Pagination
+  sorting: BreweryStatsSorting
+  minReviewCount: number
+  maxReviewCount: number
+  minReviewAverage: number
+  maxReviewAverage: number
+}
+
 export interface StyleStatsQueryParams {
   breweryId: string | undefined
   styleId: string | undefined
@@ -81,6 +95,16 @@ export interface GetAnnualStatsIf {
   }
 }
 
+export interface GetBreweryStatsIf {
+  useStats: () => {
+    query: (
+      params: BreweryStatsQueryParams
+    ) => Promise<BreweryStats | undefined>
+    stats: BreweryStats | undefined
+    isLoading: boolean
+  }
+}
+
 export interface GetOverallStatsIf {
   useStats: (params: BreweryStyleParams) => {
     stats: OverallStats | undefined
@@ -104,6 +128,7 @@ export interface GetStyleStatsIf {
 
 export interface StatsIf {
   annual: GetAnnualStatsIf
+  brewery: GetBreweryStatsIf
   overall: GetOverallStatsIf
   rating: GetRatingStatsIf
   style: GetStyleStatsIf
