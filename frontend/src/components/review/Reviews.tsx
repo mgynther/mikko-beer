@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { useListReviewsMutation } from '../../store/review/api'
+import { useLazyListReviewsQuery } from '../../store/review/api'
 
 import type { CreateBeerIf } from '../../core/beer/types'
 import type { GetLogin } from '../../core/login/types'
@@ -31,7 +31,7 @@ function Reviews (props: Props): JSX.Element {
   const [direction, doSetDirection] = useState<ListDirection>('desc')
   const [loadedReviews, setLoadedReviews] = useState<JoinedReview[]>([])
   const [trigger, { data: reviewData, isLoading, isUninitialized }] =
-    useListReviewsMutation()
+    useLazyListReviewsQuery()
 
   function setOrder (order: ReviewSortingOrder): void {
     setLoadedReviews([])

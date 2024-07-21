@@ -50,7 +50,7 @@ const reviewApi = emptySplitApi.injectEndpoints({
         method: 'GET'
       })
     }),
-    listReviews: build.mutation<JoinedReviewList, ListReviewParams>({
+    listReviews: build.query<JoinedReviewList, ListReviewParams>({
       query: (params: ListReviewParams) => ({
         url: getListUrl(params),
         method: 'GET'
@@ -115,7 +115,7 @@ const reviewApi = emptySplitApi.injectEndpoints({
 export const {
   useCreateReviewMutation,
   useLazyGetReviewQuery,
-  useListReviewsMutation,
+  useLazyListReviewsQuery,
   useListReviewsByBeerQuery,
   useListReviewsByBreweryQuery,
   useListReviewsByStyleQuery,
