@@ -51,6 +51,7 @@ import type {
   CreateBreweryIf,
   CreateBreweryRequest,
   GetBreweryIf,
+  ListBreweriesIf,
   SearchBreweryIf,
   UpdateBreweryIf
 } from './core/brewery/types'
@@ -117,6 +118,7 @@ import {
 import {
   useCreateBreweryMutation,
   useGetBreweryQuery,
+  useLazyListBreweriesQuery,
   useLazySearchBreweriesQuery,
   useUpdateBreweryMutation
 } from './store/brewery/api'
@@ -150,6 +152,7 @@ import {
   useGetStyleStatsQuery,
   useLazyGetBreweryStatsQuery
 } from './store/stats/api'
+import type { Pagination } from './core/types'
 
 interface LayoutProps {
   searchBeerIf: SearchBeerIf
@@ -318,6 +321,22 @@ function App (): JSX.Element {
       return {
         brewery: data?.brewery,
         isLoading
+      }
+    }
+  }
+
+  const listBreweriesIf: ListBreweriesIf = {
+    useList: () => {
+      const [trigger, { data, isLoading, isUninitialized } ] =
+        useLazyListBreweriesQuery()
+      return {
+        breweryList: data,
+        list: async (pagination: Pagination) => {
+          const result = await trigger(pagination).unwrap()
+          return result
+        },
+        isLoading,
+        isUninitialized
       }
     }
   }
@@ -794,6 +813,7 @@ function App (): JSX.Element {
                 } />
                 <Route path="breweries" element={
                   <Breweries
+                    listBreweriesIf={listBreweriesIf}
                     searchBreweryIf={searchBreweryIf}
                   />
                 } />

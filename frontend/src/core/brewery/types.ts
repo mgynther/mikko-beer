@@ -1,3 +1,5 @@
+import type { Pagination } from "../types"
+
 export interface CreateBreweryRequest {
   name: string
 }
@@ -22,6 +24,15 @@ export interface GetBreweryIf {
   useGet: (breweryId: string) => {
     brewery: Brewery | undefined
     isLoading: boolean
+  }
+}
+
+export interface ListBreweriesIf {
+  useList: () => {
+    list: (pagination: Pagination) => Promise<BreweryList>
+    breweryList: BreweryList | undefined
+    isLoading: boolean
+    isUninitialized: boolean
   }
 }
 

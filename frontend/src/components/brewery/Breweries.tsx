@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { useLazyListBreweriesQuery } from '../../store/brewery/api'
 import type {
   Brewery,
+  ListBreweriesIf,
   SearchBreweryIf
 } from '../../core/brewery/types'
 
@@ -16,33 +16,33 @@ import SearchBreweryWithNavi from './SearchBreweryWithNavi'
 const pageSize = 20
 
 export interface Props {
+  listBreweriesIf: ListBreweriesIf
   searchBreweryIf: SearchBreweryIf
 }
 
 function Breweries (props: Props): JSX.Element {
   const [loadedBreweries, setLoadedBreweries] = useState<Brewery[]>([])
-  const [trigger, result] = useLazyListBreweriesQuery()
-  const isLoading = result.isLoading
+  const { breweryList, list, isLoading, isUninitialized } =
+    props.listBreweriesIf.useList()
 
-  const breweryData = result.data
-  const breweryArray = breweryData?.breweries === undefined
+  const breweryArray = breweryList?.breweries === undefined
     ? []
-    : [...breweryData.breweries]
+    : [...breweryList.breweries]
 
   function toRoute (brewery: Brewery): string {
     return `/breweries/${brewery.id}`
   }
 
-  const hasMore = breweryArray.length > 0 || result.isUninitialized
+  const hasMore = breweryArray.length > 0 || isUninitialized
 
   useEffect(() => {
     const loadMore = async (): Promise<void> => {
-      const result = await trigger({
+      const result = await list({
         skip: loadedBreweries.length,
         size: pageSize
       })
-      if (result.data === undefined) return
-      const newBreweries = [...loadedBreweries, ...result.data.breweries]
+      if (result === undefined) return
+      const newBreweries = [...loadedBreweries, ...result.breweries]
       setLoadedBreweries(newBreweries)
     }
     function checkLoad (): void {
@@ -51,7 +51,7 @@ function Breweries (props: Props): JSX.Element {
       }
     }
     return infiniteScroll(checkLoad)
-  }, [loadedBreweries, setLoadedBreweries, isLoading, hasMore, trigger])
+  }, [loadedBreweries, setLoadedBreweries, isLoading, hasMore, list])
 
   return (
     <div>
