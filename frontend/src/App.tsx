@@ -65,6 +65,8 @@ import type {
 import type {
   CreateReviewIf,
   GetReviewIf,
+  ListReviewParams,
+  ListReviewsIf,
   ReviewRequestWrapper,
   ReviewContainerIf,
   UpdateReviewIf,
@@ -130,6 +132,7 @@ import {
 import {
   useCreateReviewMutation,
   useLazyGetReviewQuery,
+  useLazyListReviewsQuery,
   useUpdateReviewMutation
 } from './store/review/api'
 import type {
@@ -618,6 +621,22 @@ function App (): JSX.Element {
     }
   }
 
+  const listReviewsIf: ListReviewsIf = {
+    useList: () => {
+      const [trigger, { data, isLoading, isUninitialized }] =
+        useLazyListReviewsQuery()
+      return {
+        reviewList: data,
+        list: async (params: ListReviewParams) => {
+          const result = await trigger(params).unwrap()
+          return result
+        },
+        isLoading,
+        isUninitialized
+      }
+    }
+  }
+
   const createReviewIf: CreateReviewIf = {
     useCreate: () => {
       const [ createReview, { isLoading, isSuccess, data }] =
@@ -783,6 +802,7 @@ function App (): JSX.Element {
                 } />
                 <Route path="reviews" element={
                   <Reviews
+                    listReviewsIf={listReviewsIf}
                     reviewIf={reviewIf}
                   />
                 } />

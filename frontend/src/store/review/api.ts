@@ -1,21 +1,17 @@
 import { emptySplitApi } from '../api'
 
-import { type Pagination } from '../../core/types'
 import { reviewStatsTagTypes } from '../stats/types'
 
-import {
-  type JoinedReviewList,
-  type Review,
-  type ReviewRequestWrapper,
-  type ReviewSorting,
+import type {
+  ListReviewParams,
+  JoinedReviewList,
+  Review,
+  ReviewRequestWrapper,
+  ReviewSorting,
 } from '../../core/review/types'
 
 import { ReviewTags } from './types'
 
-interface ListReviewParams {
-  pagination: Pagination
-  sorting: ReviewSorting
-}
 
 function getStorageGetParam (storageId: string | undefined): string {
   if (storageId === undefined || storageId.length === 0) {

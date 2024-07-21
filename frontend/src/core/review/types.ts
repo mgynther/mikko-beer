@@ -6,7 +6,12 @@ import type {
 
 import type { Container } from '../container/types'
 import type { GetLogin } from "../login/types"
-import type { ListDirection } from '../types'
+import type { ListDirection, Pagination } from '../types'
+
+export interface ListReviewParams {
+  pagination: Pagination
+  sorting: ReviewSorting
+}
 
 export interface Review {
   id: string
@@ -82,6 +87,15 @@ export interface JoinedReviewList {
 export interface GetReviewIf {
   useGet: () => {
     get: (reviewId: string) => Promise<Review | undefined>
+  }
+}
+
+export interface ListReviewsIf {
+  useList: () => {
+    list: (params: ListReviewParams) => Promise<JoinedReviewList | undefined>
+    reviewList: JoinedReviewList | undefined
+    isLoading: boolean
+    isUninitialized: boolean
   }
 }
 

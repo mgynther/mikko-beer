@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 
-import { useLazyListReviewsQuery } from '../../store/review/api'
-
-import type { ReviewIf } from '../../core/review/types'
+import type {
+  ListReviewsIf,
+  ReviewIf
+} from '../../core/review/types'
 import type {
   JoinedReview,
   ReviewSorting,
@@ -19,6 +20,7 @@ import './Review.css'
 const pageSize = 20
 
 interface Props {
+  listReviewsIf: ListReviewsIf
   reviewIf: ReviewIf
 }
 
@@ -26,8 +28,8 @@ function Reviews (props: Props): JSX.Element {
   const [order, doSetOrder] = useState<ReviewSortingOrder>('time')
   const [direction, doSetDirection] = useState<ListDirection>('desc')
   const [loadedReviews, setLoadedReviews] = useState<JoinedReview[]>([])
-  const [trigger, { data: reviewData, isLoading, isUninitialized }] =
-    useLazyListReviewsQuery()
+  const { list, reviewList, isLoading, isUninitialized } =
+    props.listReviewsIf.useList()
 
   function setOrder (order: ReviewSortingOrder): void {
     setLoadedReviews([])
@@ -48,20 +50,20 @@ function Reviews (props: Props): JSX.Element {
     }
   }
 
-  const reviewArray = reviewData?.reviews === undefined
+  const reviewArray = reviewList === undefined
     ? []
-    : [...reviewData.reviews]
+    : [...reviewList.reviews]
   const hasMore = reviewArray.length > 0 || isUninitialized
 
   useEffect(() => {
     const loadMore = async (): Promise<void> => {
-      const result = await trigger({
+      const result = await list({
         pagination: {
           skip: loadedReviews.length,
           size: pageSize
         },
         sorting: { order, direction }
-      }).unwrap()
+      })
       if (result === undefined) return
       setLoadedReviews([...loadedReviews, ...result.reviews])
     }
@@ -76,7 +78,7 @@ function Reviews (props: Props): JSX.Element {
     setLoadedReviews,
     isLoading,
     hasMore,
-    trigger,
+    list,
     order,
     direction
   ])
@@ -89,7 +91,7 @@ function Reviews (props: Props): JSX.Element {
         isLoading={isLoading}
         isTitleVisible={false}
         reviews={loadedReviews}
-        sorting={reviewData?.sorting}
+        sorting={reviewList?.sorting}
         setSorting={setSorting}
         supportedSorting={['rating', 'time']}
         onChanged={() => {
