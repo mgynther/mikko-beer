@@ -12,7 +12,7 @@ export interface SearchBoxItem {
 
 export const nameFormatter = (item: SearchBoxItem): string => item.name
 
-interface Props<T extends SearchBoxItem> {
+export interface Props<T extends SearchBoxItem> {
   searchIf: SearchIf
   currentFilter: string
   currentOptions: T[]
