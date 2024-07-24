@@ -70,10 +70,10 @@ const SearchBox = <T extends SearchBoxItem>({
         setFilter('')
         inputRef.current?.focus()
       }}>X</button>
-      {!isLoading && currentFilter.length > 0 && isActive && (
+      {currentFilter.length > 0 && isActive && (
         <div className='SearchResults'>
           <ul>
-            {visibleOptions.map(item => (
+            {!isLoading && visibleOptions.map(item => (
               <li key={item.id} >
                 <button
                   onClick={() => {
@@ -86,7 +86,7 @@ const SearchBox = <T extends SearchBoxItem>({
               </li>
             ))}
             <div className='SearchInfo'>
-              {!areAllShown &&
+              {!isLoading && !areAllShown &&
                 <>
                   <hr/>
                   <div>
@@ -94,7 +94,10 @@ const SearchBox = <T extends SearchBoxItem>({
                   </div>
                 </>
               }
-              {visibleOptions.length === 0 && <div>No results</div>}
+              {!isLoading &&
+                visibleOptions.length === 0 &&
+                <div>No results</div>
+              }
               <LoadingIndicator isLoading={isLoading} />
             </div>
           </ul>
