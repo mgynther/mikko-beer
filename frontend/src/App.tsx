@@ -300,7 +300,7 @@ function App (): JSX.Element {
 
   const listBeersIf: ListBeersIf = {
     useList: () => {
-      const [trigger, { data, isLoading, isUninitialized } ] =
+      const [trigger, { data, isFetching, isUninitialized } ] =
         useLazyListBeersQuery()
       return {
         beerList: data,
@@ -308,7 +308,7 @@ function App (): JSX.Element {
           const result = await trigger(pagination).unwrap()
           return result
         },
-        isLoading,
+        isLoading: isFetching,
         isUninitialized
       }
     }
@@ -361,7 +361,7 @@ function App (): JSX.Element {
 
   const listBreweriesIf: ListBreweriesIf = {
     useList: () => {
-      const [trigger, { data, isLoading, isUninitialized } ] =
+      const [trigger, { data, isFetching, isUninitialized } ] =
         useLazyListBreweriesQuery()
       return {
         breweryList: data,
@@ -369,7 +369,7 @@ function App (): JSX.Element {
           const result = await trigger(pagination).unwrap()
           return result
         },
-        isLoading,
+        isLoading: isFetching,
         isUninitialized
       }
     }
@@ -379,14 +379,14 @@ function App (): JSX.Element {
     useSearch: () => {
       const [
         searchBrewery,
-        { isLoading }
+        { isFetching }
       ] = useLazySearchBreweriesQuery()
       return {
         search: async (name: string) => {
           const result = await searchBrewery(name).unwrap()
           return result.breweries
         },
-        isLoading
+        isLoading: isFetching
       }
     }
   }
@@ -552,13 +552,13 @@ function App (): JSX.Element {
 
   const searchBeerIf: SearchBeerIf = {
     useSearch: () => {
-      const [ searchBeers, { isLoading } ] = useLazySearchBeersQuery()
+      const [ searchBeers, { isFetching } ] = useLazySearchBeersQuery()
       return {
         search: async (query: string) => {
           const results = await searchBeers(query).unwrap()
           return results.beers
         },
-        isLoading
+        isLoading: isFetching
       }
     }
   }
@@ -718,7 +718,7 @@ function App (): JSX.Element {
 
   const listReviewsIf: ListReviewsIf = {
     useList: () => {
-      const [trigger, { data, isLoading, isUninitialized }] =
+      const [trigger, { data, isFetching, isUninitialized }] =
         useLazyListReviewsQuery()
       return {
         reviewList: data,
@@ -726,7 +726,7 @@ function App (): JSX.Element {
           const result = await trigger(params).unwrap()
           return result
         },
-        isLoading,
+        isLoading: isFetching,
         isUninitialized
       }
     }
@@ -811,14 +811,14 @@ function App (): JSX.Element {
     },
     brewery: {
       useStats: () => {
-        const [trigger, { data, isLoading }] =
+        const [trigger, { data, isFetching }] =
           useLazyGetBreweryStatsQuery()
         return {
           query: async (
             params: BreweryStatsQueryParams
           ) => (await trigger(params))?.data,
           stats: data,
-          isLoading
+          isLoading: isFetching
         }
       }
     },
