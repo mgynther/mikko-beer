@@ -86,8 +86,8 @@ test('does not show items when inactive', () => {
   expect(item).toEqual(null)
 })
 
-test('does not show items while loading', async () => {
-  const itemName = 'Must not be visible'
+test('show items while loading', async () => {
+  const itemName = 'Must be visible'
   render(
     <SearchBox
       { ...defaultProps }
@@ -100,8 +100,10 @@ test('does not show items while loading', async () => {
       isLoading={true}
     />
   )
-  const item = screen.queryByText(itemName)
-  expect(item).toEqual(null)
+  const item = screen.getByText(itemName)
+  expect(item).toBeDefined()
+  const loadingText = screen.getByText(loadingIndicatorText)
+  expect(loadingText).toBeDefined()
 })
 
 test('does not show items while filter empty', async () => {

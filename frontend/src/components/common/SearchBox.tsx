@@ -46,11 +46,12 @@ const SearchBox = <T extends SearchBoxItem>({
     if (bName === filter) return 1
     return aName.localeCompare(bName)
   })
-  const visibleOptions = currentFilter.length === 0 ||
-    isLoading
+  const visibleOptions = currentFilter.length === 0
     ? []
     : sortedOptions.slice(0, maxResultCount)
   const areAllShown = visibleOptions.length === sortedOptions.length
+  const hasMoreResults = !isLoading && !areAllShown
+  const hasNoResults = !isLoading && visibleOptions.length === 0
   return (
     <div className='SearchBox'>
       <input
@@ -73,33 +74,41 @@ const SearchBox = <T extends SearchBoxItem>({
       {currentFilter.length > 0 && isActive && (
         <div className='SearchResults'>
           <ul>
-            {!isLoading && visibleOptions.map(item => (
+            {visibleOptions.map(item => (
               <li key={item.id} >
                 <button
                   onClick={() => {
                     select(item)
                     setFilter('')
-                  }}
-                >
+                  }} >
                   {formatter(item)}
                 </button>
               </li>
             ))}
-            <div className='SearchInfo'>
-              {!isLoading && !areAllShown &&
-                <>
-                  <hr/>
-                  <div>
-                    There are more results. Refine search...
-                  </div>
-                </>
-              }
-              {!isLoading &&
-                visibleOptions.length === 0 &&
-                <div>No results</div>
-              }
-              <LoadingIndicator isLoading={isLoading} />
-            </div>
+            {visibleOptions.length === 0 && (
+              <div className="SearchInfo">
+                {hasNoResults &&
+                  <div>No results</div>
+                }
+                <LoadingIndicator isLoading={isLoading} />
+              </div>
+            )}
+            {visibleOptions.length > 0 && (
+              <div className={`SearchInfoContainer ${
+                    hasMoreResults || isLoading
+                      ? 'shown'
+                      : ''}`}>
+                <hr/>
+                <div className="SearchInfo">
+                  {hasMoreResults &&
+                    <div>
+                      There are more results. Refine search...
+                    </div>
+                  }
+                  <LoadingIndicator isLoading={isLoading} />
+                </div>
+              </div>
+            )}
           </ul>
         </div>
       )}
