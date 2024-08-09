@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 
@@ -51,7 +51,7 @@ test('activates', async () => {
     activate: vitest.fn(),
     isActive: false
   }
-  render(
+  const { getByRole } = render(
     <SearchBox
       { ...defaultProps }
       searchIf={{
@@ -65,14 +65,14 @@ test('activates', async () => {
       }}
     />
   )
-  await user.click(screen.getByRole('button'))
+  await user.click(getByRole('button'))
   expect(search.activate.mock.calls.length).toEqual(1)
   expect(useSearchCount).toEqual(1)
 })
 
 test('does not show items when inactive', () => {
   const itemName = 'Must not be visible'
-  render(
+  const { queryByText } = render(
     <SearchBox
       { ...defaultProps }
       currentFilter={"M"}
@@ -82,13 +82,13 @@ test('does not show items when inactive', () => {
       }]}
     />
   )
-  const item = screen.queryByText(itemName)
+  const item = queryByText(itemName)
   expect(item).toEqual(null)
 })
 
 test('show items while loading', async () => {
   const itemName = 'Must be visible'
-  render(
+  const { getByText } = render(
     <SearchBox
       { ...defaultProps }
       searchIf={activeSearch}
@@ -100,15 +100,15 @@ test('show items while loading', async () => {
       isLoading={true}
     />
   )
-  const item = screen.getByText(itemName)
+  const item = getByText(itemName)
   expect(item).toBeDefined()
-  const loadingText = screen.getByText(loadingIndicatorText)
+  const loadingText = getByText(loadingIndicatorText)
   expect(loadingText).toBeDefined()
 })
 
 test('does not show items while filter empty', async () => {
   const itemName = 'Must not be visible'
-  render(
+  const { queryByText } = render(
     <SearchBox
       { ...defaultProps }
       searchIf={activeSearch}
@@ -118,7 +118,7 @@ test('does not show items while filter empty', async () => {
       }]}
     />
   )
-  const item = screen.queryByText(itemName)
+  const item = queryByText(itemName)
   expect(item).toEqual(null)
 })
 
@@ -126,7 +126,7 @@ test('formats custom name', async () => {
   const itemName = 'Must not be visible'
   const customFormattedName = 'Must be visible'
   const selector = vitest.fn()
-  render(
+  const { getByText, queryByText } = render(
     <SearchBox
       { ...defaultProps }
       searchIf={activeSearch}
@@ -139,14 +139,14 @@ test('formats custom name', async () => {
       select={selector}
     />
   )
-  const realName = screen.queryByText(itemName)
+  const realName = queryByText(itemName)
   expect(realName).toBeNull()
-  const formattedName = screen.getByText(customFormattedName)
+  const formattedName = getByText(customFormattedName)
   expect(formattedName).toBeDefined()
 })
 
 test('renders more results info', async () => {
-  render(
+  const { getByText } = render(
     <SearchBox
       { ...defaultProps }
       searchIf={activeSearch}
@@ -157,19 +157,19 @@ test('renders more results info', async () => {
       }))}
     />
   )
-  const text = screen.getByText('There are more results. Refine search...')
+  const text = getByText('There are more results. Refine search...')
   expect(text).toBeDefined()
 })
 
 test('renders no results info', async () => {
-  render(
+  const { getByText } = render(
     <SearchBox
       { ...defaultProps }
       searchIf={activeSearch}
       currentFilter={'M'}
     />
   )
-  const text = screen.getByText('No results')
+  const text = getByText('No results')
   expect(text).toBeDefined()
 })
 
@@ -177,7 +177,7 @@ test('item is selected', async () => {
   const user = userEvent.setup()
   const itemName = 'Must be visible'
   const selector = vitest.fn()
-  render(
+  const { getByRole } = render(
     <SearchBox
       { ...defaultProps }
       searchIf={activeSearch}
@@ -189,7 +189,7 @@ test('item is selected', async () => {
       select={selector}
     />
   )
-  const itemButton = screen.getByRole('button', { name: itemName })
+  const itemButton = getByRole('button', { name: itemName })
   expect(itemButton).toBeDefined()
   await user.click(itemButton)
   expect(selector.mock.calls).toEqual([[ { id: '1', name: itemName } ]])
@@ -197,13 +197,13 @@ test('item is selected', async () => {
 
 test('renders filter', async () => {
   const filter = 'Must render this'
-  render(
+  const { getByRole } = render(
     <SearchBox
       { ...defaultProps }
       currentFilter={filter}
     />
   )
-  const input = screen.getByRole('textbox')
+  const input = getByRole('textbox')
   expect(input).toBeInstanceOf(HTMLInputElement)
   expect((input as HTMLInputElement).value).toEqual(filter)
 })
@@ -211,14 +211,14 @@ test('renders filter', async () => {
 test('clears filter', async () => {
   const user = userEvent.setup()
   const setter = vitest.fn()
-  render(
+  const { getByRole } = render(
     <SearchBox
       { ...defaultProps }
       currentFilter={'Some text'}
       setFilter={setter}
     />
   )
-  const clearButton = screen.getByRole('button')
+  const clearButton = getByRole('button')
   expect(clearButton).toBeDefined()
   await user.click(clearButton)
   expect(setter).toHaveBeenCalledWith('')
@@ -227,13 +227,13 @@ test('clears filter', async () => {
 test('inputs text', async () => {
   const user = userEvent.setup()
   const setter = vitest.fn()
-  render(
+  const { getByRole } = render(
     <SearchBox
       { ...defaultProps }
       setFilter={setter}
     />
   )
-  const input = screen.getByRole('textbox')
+  const input = getByRole('textbox')
   expect(input).toBeDefined()
   await user.type(input, 'Test')
   const expected = [ [ 'T' ], [ 'e' ], [ 's' ], [ 't' ] ]
@@ -241,7 +241,7 @@ test('inputs text', async () => {
 })
 
 test('shows loading indicator', async () => {
-  render(
+  const { getByText } = render(
     <SearchBox
       { ...defaultProps }
       searchIf={activeSearch}
@@ -249,6 +249,6 @@ test('shows loading indicator', async () => {
       isLoading={true}
     />
   )
-  const loadingText = screen.getByText(loadingIndicatorText)
+  const loadingText = getByText(loadingIndicatorText)
   expect(loadingText).toBeDefined()
 })
