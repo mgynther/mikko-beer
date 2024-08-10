@@ -6,7 +6,7 @@ import type {
   SearchBeerIf
 } from '../../core/beer/types'
 import type { SearchIf } from '../../core/search/types'
-import { infiniteScroll } from '../util'
+import { infiniteScroll, type NavigateIf } from '../util'
 
 import BreweryLinks from '../brewery/BreweryLinks'
 import StyleLinks from '../style/StyleLinks'
@@ -20,6 +20,7 @@ const pageSize = 20
 
 interface Props {
   listBeersIf: ListBeersIf
+  navigateIf: NavigateIf
   searchBeerIf: SearchBeerIf
   searchIf: SearchIf
 }
@@ -56,6 +57,7 @@ function Beers (props: Props): JSX.Element {
     <div>
       <h3>Beers</h3>
       <SearchBeerWithNavi
+        navigateIf={props.navigateIf}
         searchIf={props.searchIf}
         searchBeerIf={props.searchBeerIf}
       />

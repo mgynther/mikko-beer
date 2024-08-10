@@ -166,8 +166,10 @@ import {
 } from './store/stats/api'
 import type { Pagination } from './core/types'
 import { type SearchIf } from './core/search/types'
+import { type NavigateIf, navigateIf } from './components/util'
 
 interface LayoutProps {
+  navigateIf: NavigateIf
   searchBeerIf: SearchBeerIf
   searchBreweryIf: SearchBreweryIf
   searchIf: SearchIf
@@ -221,12 +223,14 @@ function Layout (props: LayoutProps): JSX.Element {
                 <div>
                   <div className='Search'>
                     <SearchBeerWithNavi
+                      navigateIf={props.navigateIf}
                       searchBeerIf={props.searchBeerIf}
                       searchIf={props.searchIf}
                     />
                   </div>
                   <div className='Search'>
                     <SearchBreweryWithNavi
+                      navigateIf={props.navigateIf}
                       searchBreweryIf={props.searchBreweryIf}
                       searchIf={props.searchIf}
                     />
@@ -872,6 +876,7 @@ function App (): JSX.Element {
         <Routes>
           <Route path="/" element={
               <Layout
+                navigateIf={navigateIf}
                 searchBeerIf={searchBeerIf}
                 searchBreweryIf={searchBreweryIf}
                 searchIf={searchIf}
@@ -894,6 +899,7 @@ function App (): JSX.Element {
             <Route index element={isLoggedIn
               ? <Beers
                   listBeersIf={listBeersIf}
+                  navigateIf={navigateIf}
                   searchBeerIf={searchBeerIf}
                   searchIf={searchIf}
                 />
@@ -905,6 +911,7 @@ function App (): JSX.Element {
                   <AddReview
                     createReviewIf={createReviewIf}
                     getStorageIf={getStorageIf}
+                    navigateIf={navigateIf}
                     searchIf={searchIf}
                   />
                 } />}
@@ -913,6 +920,7 @@ function App (): JSX.Element {
                     <AddReview
                       createReviewIf={createReviewIf}
                       getStorageIf={getStorageIf}
+                      navigateIf={navigateIf}
                       searchIf={searchIf}
                     />
                 } />
@@ -920,6 +928,7 @@ function App (): JSX.Element {
                 <Route path="beers" element={
                   <Beers
                     listBeersIf={listBeersIf}
+                    navigateIf={navigateIf}
                     searchBeerIf={searchBeerIf}
                     searchIf={searchIf}
                   />
@@ -937,6 +946,7 @@ function App (): JSX.Element {
                 <Route path="breweries" element={
                   <Breweries
                     listBreweriesIf={listBreweriesIf}
+                    navigateIf={navigateIf}
                     searchBreweryIf={searchBreweryIf}
                     searchIf={searchIf}
                   />
@@ -969,6 +979,7 @@ function App (): JSX.Element {
                 <Route path="styles" element={
                   <Styles
                     listStylesIf={listStylesIf}
+                    navigateIf={navigateIf}
                     searchIf={searchIf}
                   />
                 } />
@@ -1016,6 +1027,7 @@ function App (): JSX.Element {
               element={isLoggedIn
                 ? <Beers
                     listBeersIf={listBeersIf}
+                    navigateIf={navigateIf}
                     searchBeerIf={searchBeerIf}
                     searchIf={searchIf}
                   />

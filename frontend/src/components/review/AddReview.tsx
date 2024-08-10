@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
 import type {
   CreateReviewIf,
@@ -13,7 +13,7 @@ import type {
 } from '../../core/storage/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
-import { formatBestBefore } from '../util'
+import { formatBestBefore, type NavigateIf } from '../util'
 
 import ReviewEditor, { type InitialReview } from './ReviewEditor'
 
@@ -51,11 +51,12 @@ function toInitialReview (storageData: Storage): InitialReview {
 interface Props {
   createReviewIf: CreateReviewIf
   getStorageIf: GetStorageIf
+  navigateIf: NavigateIf
   searchIf: SearchIf
 }
 
 function AddReview (props: Props): JSX.Element {
-  const navigate = useNavigate()
+  const navigate = props.navigateIf.useNavigate()
   const { storageId } = useParams()
   const [review, setReview] = useState<ReviewRequest | undefined>(undefined)
   const { create, isLoading, isSuccess, review: createdReview } =

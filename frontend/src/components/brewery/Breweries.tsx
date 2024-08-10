@@ -8,7 +8,7 @@ import type {
 } from '../../core/brewery/types'
 import type { SearchIf } from '../../core/search/types'
 
-import { infiniteScroll } from '../util'
+import { infiniteScroll, type NavigateIf } from '../util'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
@@ -18,6 +18,7 @@ const pageSize = 20
 
 export interface Props {
   listBreweriesIf: ListBreweriesIf
+  navigateIf: NavigateIf
   searchBreweryIf: SearchBreweryIf
   searchIf: SearchIf
 }
@@ -60,6 +61,7 @@ function Breweries (props: Props): JSX.Element {
       <h3>Breweries</h3>
       <LoadingIndicator isLoading={isLoading} />
       <SearchBreweryWithNavi
+        navigateIf={props.navigateIf}
         searchBreweryIf={props.searchBreweryIf}
         searchIf={props.searchIf}
       />

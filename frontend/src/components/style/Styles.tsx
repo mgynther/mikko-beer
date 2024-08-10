@@ -1,5 +1,3 @@
-import { useNavigate } from 'react-router-dom'
-
 import type { SearchIf } from '../../core/search/types'
 import type {
   ListStylesIf,
@@ -10,14 +8,16 @@ import type {
 import LoadingIndicator from '../common/LoadingIndicator'
 import SearchStyle from './SearchStyle'
 import StyleLink from './StyleLink'
+import type { NavigateIf } from '../util'
 
 interface Props {
   listStylesIf: ListStylesIf
+  navigateIf: NavigateIf
   searchIf: SearchIf
 }
 
 function Styles (props: Props): JSX.Element {
-  const navigate = useNavigate()
+  const navigate = props.navigateIf.useNavigate()
   const { styles, isLoading } = props.listStylesIf.useList()
 
   const styleArray = styles === undefined

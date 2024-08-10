@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+import { useNavigate as useRouterNavigate } from 'react-router-dom'
+
 export function pad (number: number): string {
   if (number < 10) return `0${number}`
   return `${number}`
@@ -53,4 +55,16 @@ export function useDebounce (value: string, delay: number = 300): string {
   }, [value, delay])
 
   return debouncedValue
+}
+
+function useNavigate (): (url: string) => void {
+  return useRouterNavigate()
+}
+
+export interface NavigateIf {
+  useNavigate: () => (url: string) => void
+}
+
+export const navigateIf: NavigateIf = {
+  useNavigate
 }
