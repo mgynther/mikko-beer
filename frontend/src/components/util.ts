@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 
-import { useNavigate as useRouterNavigate } from 'react-router-dom'
+import {
+  useNavigate as useRouterNavigate,
+  useParams as useRouterParams
+} from 'react-router-dom'
 
 export function pad (number: number): string {
   if (number < 10) return `0${number}`
@@ -67,4 +70,16 @@ export interface NavigateIf {
 
 export const navigateIf: NavigateIf = {
   useNavigate
+}
+
+function useParams (): Record<string, string | undefined> {
+  return useRouterParams()
+}
+
+export interface ParamsIf {
+  useParams: () => Record<string, string | undefined>
+}
+
+export const paramsIf: ParamsIf = {
+  useParams
 }

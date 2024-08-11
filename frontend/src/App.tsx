@@ -166,7 +166,11 @@ import {
 } from './store/stats/api'
 import type { Pagination } from './core/types'
 import { type SearchIf } from './core/search/types'
-import { type NavigateIf, navigateIf } from './components/util'
+import {
+  type NavigateIf,
+  navigateIf,
+  paramsIf
+} from './components/util'
 
 interface LayoutProps {
   navigateIf: NavigateIf
@@ -912,6 +916,7 @@ function App (): JSX.Element {
                     createReviewIf={createReviewIf}
                     getStorageIf={getStorageIf}
                     navigateIf={navigateIf}
+                    paramsIf={paramsIf}
                     searchIf={searchIf}
                   />
                 } />}
@@ -921,6 +926,7 @@ function App (): JSX.Element {
                       createReviewIf={createReviewIf}
                       getStorageIf={getStorageIf}
                       navigateIf={navigateIf}
+                      paramsIf={paramsIf}
                       searchIf={searchIf}
                     />
                 } />
