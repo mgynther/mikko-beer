@@ -783,6 +783,7 @@ function App (): JSX.Element {
         review: data?.review
       }
     },
+    getCurrentDate: () => new Date(),
     selectBeerIf,
     reviewContainerIf
   }

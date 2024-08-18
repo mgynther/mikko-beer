@@ -118,6 +118,7 @@ export interface CreateReviewIf {
     isSuccess: boolean
     review: Review | undefined
   }
+  getCurrentDate: () => Date
   selectBeerIf: SelectBeerIf
   reviewContainerIf: ReviewContainerIf
 }

@@ -27,6 +27,7 @@ interface Props {
   searchIf: SearchIf
   selectBeerIf: SelectBeerIf
   reviewContainerIf: ReviewContainerIf
+  currentDate: Date
   initialReview: InitialReview | undefined
   isFromStorage: boolean
   onChange: (review: ReviewRequest | undefined) => void
@@ -76,7 +77,7 @@ function ReviewEditor (props: Props): JSX.Element {
 
   function localDateTime (): string {
     const date = props.initialReview === undefined
-      ? new Date()
+      ? props.currentDate
       : new Date(props.initialReview?.review.time)
     const y = date.getFullYear()
     const mo = date.getMonth() + 1

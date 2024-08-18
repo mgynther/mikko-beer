@@ -21,6 +21,7 @@ interface Props {
 }
 
 function UpdateReview (props: Props): JSX.Element {
+  const [currentDate] = useState<Date>(new Date())
   const [newReview, setNewReview] = useState<ReviewRequest | undefined>(
     undefined
   )
@@ -45,6 +46,7 @@ function UpdateReview (props: Props): JSX.Element {
         searchIf={props.searchIf}
         selectBeerIf={props.updateReviewIf.selectBeerIf}
         reviewContainerIf={props.updateReviewIf.reviewContainerIf}
+        currentDate={currentDate}
         initialReview={props.initialReview}
         isFromStorage={false}
         onChange={(review: ReviewRequest | undefined) => {

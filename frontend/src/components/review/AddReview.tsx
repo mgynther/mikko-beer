@@ -15,14 +15,14 @@ import { formatBestBefore, type NavigateIf, type ParamsIf } from '../util'
 
 import ReviewEditor, { type InitialReview } from './ReviewEditor'
 
-function toInitialReview (storageData: Storage): InitialReview {
+function toInitialReview (storageData: Storage, currentDate: Date): InitialReview {
   if (storageData === undefined) {
     throw new Error('must wait for storageData to load')
   }
   // TODO add user editable template and save it to localStorage.
   const additionalInfo =
     `From storage, BB ${formatBestBefore(storageData.bestBefore)}`
-  const time = new Date().toISOString()
+  const time = currentDate.toISOString()
   return {
     review: {
       additionalInfo,
@@ -46,7 +46,7 @@ function toInitialReview (storageData: Storage): InitialReview {
   }
 }
 
-interface Props {
+export interface Props {
   createReviewIf: CreateReviewIf
   getStorageIf: GetStorageIf
   navigateIf: NavigateIf
@@ -58,8 +58,14 @@ function AddReview (props: Props): JSX.Element {
   const navigate = props.navigateIf.useNavigate()
   const { storageId } = props.paramsIf.useParams()
   const [review, setReview] = useState<ReviewRequest | undefined>(undefined)
-  const { create, isLoading, isSuccess, review: createdReview } =
+  const {
+    create,
+    isLoading,
+    isSuccess,
+    review: createdReview,
+  } =
     props.createReviewIf.useCreate()
+  const [currentDate] = useState<Date>(props.createReviewIf.getCurrentDate())
   const { storage, isLoading: isLoadingStorage } =
     storageId === undefined
       ? { storage: undefined, isLoading: false }
@@ -76,14 +82,14 @@ function AddReview (props: Props): JSX.Element {
     void create({ body: review, storageId })
   }
 
-  function getInitialReview (): InitialReview | undefined {
+  function getInitialReview (currentDate: Date): InitialReview | undefined {
     if (storageId === undefined) {
       return undefined
     }
     if (storage === undefined) {
       throw new Error('must not be called without storageData')
     }
-    return toInitialReview(storage)
+    return toInitialReview(storage, currentDate)
   }
 
   return (
@@ -95,7 +101,8 @@ function AddReview (props: Props): JSX.Element {
           searchIf={props.searchIf}
           selectBeerIf={props.createReviewIf.selectBeerIf}
           reviewContainerIf={props.createReviewIf.reviewContainerIf}
-          initialReview={getInitialReview()}
+          currentDate={currentDate}
+          initialReview={getInitialReview(currentDate)}
           isFromStorage={storageId !== undefined}
           onChange={review => { setReview(review) }}
         />
