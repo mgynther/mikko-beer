@@ -169,7 +169,8 @@ import { type SearchIf } from './core/search/types'
 import {
   type NavigateIf,
   navigateIf,
-  paramsIf
+  paramsIf,
+  useDebounce
 } from './components/util'
 
 interface LayoutProps {
@@ -872,7 +873,8 @@ function App (): JSX.Element {
         },
         isActive
       }
-    }
+    },
+    useDebounce
   }
 
   return (

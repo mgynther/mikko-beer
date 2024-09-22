@@ -7,18 +7,22 @@ import type { Props, SearchBoxItem } from './SearchBox'
 import { loadingIndicatorText } from './LoadingIndicator'
 import type { SearchIf } from '../../core/search/types'
 
+const useDebounce = (str: string) => str
+
 const passiveSearch: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
     isActive: false
-  })
+  }),
+  useDebounce
 }
 
 const activeSearch: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
     isActive: true
-  })
+  }),
+  useDebounce
 }
 
 const defaultProps: Props<SearchBoxItem> = {
@@ -61,7 +65,8 @@ test('activates', async () => {
           }
           useSearchCount++
           return search
-        }
+        },
+        useDebounce
       }}
     />
   )

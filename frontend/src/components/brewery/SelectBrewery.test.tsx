@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import SelectBrewery from './SelectBrewery'
 import type { Brewery } from '../../core/brewery/types'
+import type { UseDebounce } from '../../core/types'
 
 const brewery: Brewery = {
   id: 'e8d6ca94-e17f-43a5-9ff4-3ac72349f33d',
@@ -21,6 +22,8 @@ const useSearch = () => ({
   ]),
   isLoading: false
 })
+
+const useDebounce: UseDebounce = (str: string) => str
 
 test('selects brewery', async () => {
   const user = userEvent.setup()
@@ -44,14 +47,15 @@ test('selects brewery', async () => {
         useSearch: () => ({
           activate: () => {},
           isActive: true
-        })
+        }),
+        useDebounce
       }}
     />
   )
   const brewerySearch = getByPlaceholderText('Search brewery')
-  await act(async () => await user.type(brewerySearch, 'Koskip'))
+  await user.type(brewerySearch, 'Koskip')
   const breweryOption = await findByRole('button', { name: 'Koskipanimo' })
-  await act(async () => breweryOption.click());
+  await act(async () => breweryOption.click())
   const selectCalls = onSelect.mock.calls
   expect(selectCalls).toEqual([[brewery]])
 })
@@ -83,7 +87,8 @@ test('selects created brewery', async () => {
         useSearch: () => ({
           activate: () => {},
           isActive: false
-        })
+        }),
+        useDebounce
       }}
     />
   )

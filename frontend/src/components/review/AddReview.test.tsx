@@ -3,6 +3,9 @@ import userEvent, { type UserEvent } from "@testing-library/user-event"
 import { expect, test, vitest } from "vitest"
 import AddReview, { type Props as AddReviewProps } from "./AddReview"
 import { loadingIndicatorText } from "../common/LoadingIndicator"
+import type { UseDebounce } from "../../core/types"
+
+const useDebounce: UseDebounce = (str: string) => str
 
 const dontCall = () => {
   throw new Error('must not be called')
@@ -37,7 +40,7 @@ const beerSearchIf = {
 }
 const dontCreateBeerIf = {
   useCreate: () => dontCreate,
-    editBeerIf: {
+  editBeerIf: {
     selectBreweryIf: {
       create: {
         useCreate: () => dontCreate
@@ -133,7 +136,7 @@ const noOpContainerIf = {
 const noParamsIf = { useParams: () => ({}) }
 const storageIdParamsIf = { useParams: () => ({ storageId }) }
 
-const noSearchIf = { useSearch: dontCall }
+const noSearchIf = { useSearch: dontCall, useDebounce }
 
 const unusedStorageIf = {
   useGet: dontCall
@@ -182,7 +185,8 @@ test('adds review', async () => {
       useSearch: () => ({
         activate: () => { },
         isActive: true
-      })
+      }),
+      useDebounce
     }
   }
   const { findByRole, getAllByRole, getByPlaceholderText, getByRole } = render(
@@ -195,10 +199,10 @@ test('adds review', async () => {
   act(() => selects[0].click())
   const beerSearch = getByPlaceholderText('Search beer')
   expect(beerSearch).toBeDefined()
-  await act(async () => await user.type(beerSearch, 'Seve'))
+  await user.type(beerSearch, 'Seve')
   const beerButton = await findByRole(
     'button',
-    { name: 'Severin (Koskipanimo)' }, { timeout: 1000 }
+    { name: 'Severin (Koskipanimo)' }
   )
   expect(beerButton).toBeDefined()
   act(() => beerButton.click())
@@ -297,7 +301,8 @@ test('adds review from storage', async () => {
       useSearch: () => ({
         activate: () => { },
           isActive: true
-      })
+      }),
+      useDebounce
     }
   }
 

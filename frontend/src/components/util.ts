@@ -4,6 +4,7 @@ import {
   useNavigate as useRouterNavigate,
   useParams as useRouterParams
 } from 'react-router-dom'
+import type { UseDebounce } from '../core/types'
 
 export function pad (number: number): string {
   if (number < 10) return `0${number}`
@@ -44,7 +45,7 @@ export function joinSortedNames (array: NamedItem[]): string {
   return array.map(i => i.name).sort().join(', ')
 }
 
-export function useDebounce (value: string, delay: number = 300): string {
+export const useDebounce: UseDebounce = (value: string, delay: number = 300): string => {
   const [debouncedValue, setDebouncedValue] = useState(value)
 
   useEffect(() => {

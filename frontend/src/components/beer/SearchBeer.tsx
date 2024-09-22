@@ -9,7 +9,7 @@ import type { SearchIf } from '../../core/search/types'
 
 import SearchBox from '../common/SearchBox'
 
-import { joinSortedNames, useDebounce } from '../util'
+import { joinSortedNames } from '../util'
 
 import './SelectBeer.css'
 
@@ -22,7 +22,7 @@ export interface Props {
 function SearchBeer (props: Props): JSX.Element {
   const { search, isLoading } = props.searchBeerIf.useSearch()
   const [filter, setFilter] = useState('')
-  const debouncedFilter = useDebounce(filter)
+  const debouncedFilter = props.searchIf.useDebounce(filter)
   const [results, setResults] = useState<Beer[]>([])
 
   async function doSearch (filter: string): Promise<void> {

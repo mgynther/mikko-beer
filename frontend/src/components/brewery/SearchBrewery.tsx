@@ -8,8 +8,6 @@ import type { SearchIf } from '../../core/search/types'
 
 import SearchBox, { nameFormatter } from '../common/SearchBox'
 
-import { useDebounce } from '../util'
-
 export interface Props {
   searchBreweryIf: SearchBreweryIf
   searchIf: SearchIf
@@ -22,7 +20,7 @@ function SearchBrewery (props: Props): JSX.Element {
     isLoading
   } = props.searchBreweryIf.useSearch()
   const [filter, setFilter] = useState('')
-  const debouncedFilter = useDebounce(filter)
+  const debouncedFilter = props.searchIf.useDebounce(filter)
   const [results, setResults] = useState<Brewery[]>([])
 
   async function doSearch (filter: string): Promise<void> {
