@@ -64,13 +64,12 @@ export function validateCreateContainerRequest (
 
 export function validateUpdateContainerRequest (
   body: unknown,
-  containerId: string
+  containerId: string | undefined
 ): UpdateContainerRequest {
   if (!isUpdateContainerRequestValid(body)) {
     throw invalidContainerError
   }
   if (containerId === undefined ||
-      containerId === null ||
       containerId.length === 0
   ) {
     throw invalidContainerIdError

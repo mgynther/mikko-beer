@@ -1,5 +1,5 @@
-import { type DbRefreshToken } from '../../core/authentication/refresh-token'
-import { type Database, type Transaction } from '../database'
+import type { DbRefreshToken } from '../../core/authentication/refresh-token'
+import type { Database, Transaction } from '../database'
 
 export async function insertRefreshToken (
   trx: Transaction,

@@ -11,15 +11,17 @@ export interface SearchByName {
 export function toIlike (search: SearchByName): string {
   // To be absolutely sure type assertions or other bad practices do not cause
   // unexpected values ending up in queries we do run-time validation here.
-  if (search.name === null ||
-      search.name === undefined ||
-      search.name.length === 0) {
+  const nameStr: string = search.name
+  const name: string | null | undefined = nameStr as string | null | undefined
+  if (name === null ||
+      name === undefined ||
+      name.length === 0) {
     throw new Error('must not search with missing or empty name')
   }
-  if (/^".*"$/.test(search.name)) {
-    return search.name.substring(1, search.name.length - 1)
+  if (/^".*"$/.test(name)) {
+    return name.substring(1, name.length - 1)
   }
-  return `%${search.name}%`
+  return `%${name}%`
 }
 
 const doValidateSearchByNameRequest =
@@ -39,6 +41,6 @@ export function validateSearchByName (body: unknown): SearchByName {
   if (!(doValidateSearchByNameRequest(body))) {
     throw invalidSearchError
   }
-  const name: string = (body as any).name
+  const name: string = (body as { name: string }).name
   return { name }
 }

@@ -1,22 +1,23 @@
 import { type SelectQueryBuilder, sql } from 'kysely'
 
-import {
-  type Database,
-  type KyselyDatabase,
-  type Transaction
+import type {
+  Database,
+  KyselyDatabase,
+  Transaction
 } from '../database'
-import {
-  type DbJoinedStorage,
-  type StorageRow,
-  type StorageTable
+import type {
+  DbJoinedStorage,
+  StorageRow,
+  StorageTable
 } from './storage.table'
 
 import { type Pagination, toRowNumbers } from '../../core/pagination'
-import {
-  type JoinedStorage,
-  type Storage,
-  type StorageRequest
+import type {
+  JoinedStorage,
+  Storage,
+  StorageRequest
 } from '../../core/storage/storage'
+import { contains } from '../../core/record'
 
 export async function insertStorage (
   trx: Transaction,
@@ -82,12 +83,12 @@ export async function findStorageById (
     ])
     .execute()
 
-  if (storageRows === undefined || storageRows.length === 0) {
+  if (storageRows.length === 0) {
     return undefined
   }
 
   const parsed = parseBreweryStorageRows(storageRows)
-  return toJoinedStorages(parsed)?.[0]
+  return toJoinedStorages(parsed)[0]
 }
 
 export async function deleteStorageById (
@@ -256,7 +257,7 @@ function parseBreweryStorageRows (
   const storageArray: DbJoinedStorage[] = []
 
   storages.forEach(storage => {
-    if (storageMap[storage.storage_id] === undefined) {
+    if (!contains(storageMap, storage.storage_id)) {
       storageMap[storage.storage_id] = {
         ...storage,
         breweries: [{
@@ -289,8 +290,8 @@ function parseBreweryStorageRows (
   })
 
   storageArray.forEach(storage => {
-    storage.breweries.sort((a, b) => a.name?.localeCompare(b?.name ?? '') ?? 0)
-    storage.styles.sort((a, b) => a.name?.localeCompare(b?.name ?? '') ?? 0)
+    storage.breweries.sort((a, b) => a.name?.localeCompare(b.name ?? '') ?? 0)
+    storage.styles.sort((a, b) => a.name?.localeCompare(b.name ?? '') ?? 0)
   })
 
   return storageArray

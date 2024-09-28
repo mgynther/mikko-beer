@@ -1,7 +1,7 @@
 import * as authTokenService from './auth-token.service'
 import { Role } from '../user/user'
 
-import { type DbRefreshToken } from './refresh-token'
+import type { DbRefreshToken } from './refresh-token'
 import { AuthTokenExpiredError, type AuthTokenPayload } from './auth-token'
 import {
   expiredAuthTokenError,
@@ -65,8 +65,9 @@ export function authenticateViewer (
   const authorization = validAuthorizationOrThrow(authorizationHeader)
   const payload = validAuthTokenPayload(authorization, authTokenSecret)
   const role = payload.role
-  if (role !== Role.admin && role !== Role.viewer) {
-    throw noRightsError
+  switch (role) {
+    case Role.admin:
+    case Role.viewer:
   }
 }
 
@@ -86,13 +87,12 @@ function validAuthTokenPayload (
   authTokenSecret: string
 ): AuthTokenPayload {
   const authToken = authorization.substring('Bearer '.length)
-  let authTokenPayload: AuthTokenPayload | undefined
-
   try {
-    authTokenPayload = authTokenService.verifyAuthToken(
+    const authTokenPayload: AuthTokenPayload = authTokenService.verifyAuthToken(
       { authToken },
       authTokenSecret
     )
+    return authTokenPayload
   } catch (error) {
     if (error instanceof AuthTokenExpiredError) {
       throw expiredAuthTokenError
@@ -100,5 +100,4 @@ function validAuthTokenPayload (
 
     throw invalidAuthTokenError
   }
-  return authTokenPayload
 }

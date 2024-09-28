@@ -1,8 +1,8 @@
-import {
-  type CreateContainerRequest,
-  type UpdateContainerRequest,
-  type Container,
-  type NewContainer
+import type {
+  CreateContainerRequest,
+  UpdateContainerRequest,
+  Container,
+  NewContainer
 } from './container'
 
 import { containerNotFoundError } from '../errors'

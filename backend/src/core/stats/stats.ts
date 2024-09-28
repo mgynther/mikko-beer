@@ -120,9 +120,6 @@ export function validateStatsFilter (
     return result
   }
   const breweryFilter = validateStatsBreweryStyleFilter(query)
-  if (breweryFilter === undefined) {
-    return result
-  }
   result.brewery = breweryFilter.brewery
   result.style = breweryFilter.style
   const {

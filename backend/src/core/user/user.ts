@@ -56,13 +56,18 @@ export interface CreateUserRequest {
   passwordSignInMethod: PasswordSignInMethod
 }
 
+interface CreateUserType {
+  user?: unknown,
+  passwordSignInMethod?: unknown
+}
+
 export function validateCreateUserRequest (body: unknown): CreateUserRequest {
-  const anyBody: any = body
+  const typedBody: CreateUserType = body as CreateUserType
   const anonymousUserRequest = validateCreateAnonymousUserRequest(
-    anyBody.user
+    typedBody.user
   )
   const passwordSignInMethod = validatePasswordSignInMethod(
-    anyBody.passwordSignInMethod
+    typedBody.passwordSignInMethod
   )
   return {
     role: anonymousUserRequest.role,

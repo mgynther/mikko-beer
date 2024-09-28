@@ -5,8 +5,8 @@ import {
   invalidBeerIdError
 } from '../errors'
 
-import { type Brewery } from '../brewery/brewery'
-import { type Style } from '../style/style'
+import type { Brewery } from '../brewery/brewery'
+import type { Style } from '../style/style'
 
 export interface NewBeer {
   name: string

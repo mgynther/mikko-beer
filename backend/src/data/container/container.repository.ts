@@ -1,9 +1,9 @@
-import { type Database, type Transaction } from '../database'
-import {
-  type ContainerRow
+import type { Database, Transaction } from '../database'
+import type {
+  ContainerRow
 } from './container.table'
-import {
-  type Container, type NewContainer
+import type {
+  Container, NewContainer
 } from '../../core/container/container'
 
 export async function insertContainer (

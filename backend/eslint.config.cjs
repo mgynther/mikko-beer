@@ -27,6 +27,8 @@ const rules = {
       'format': ['camelCase', 'PascalCase', 'snake_case', 'UPPER_CASE'],
     },
   ],
+  '@typescript-eslint/no-magic-numbers': 'off',
+  '@typescript-eslint/max-params': 'off',
   'max-len': ['error', { 'code': 80, 'ignoreRegExpLiterals': true }]
 }
 
@@ -65,6 +67,15 @@ module.exports = [
       'no-restricted-imports': ['error',
         { patterns: ['web'] }
       ]
+    }
+  },
+  {
+    languageOptions,
+    files: ['src/data/migrations/*.ts'],
+    plugins,
+    rules: {
+      ...rules,
+      '@typescript-eslint/no-explicit-any': 'off'
     }
   }
 ]

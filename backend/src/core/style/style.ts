@@ -77,12 +77,12 @@ export function validateCreateStyleRequest (body: unknown): CreateStyleRequest {
 
 export function validateUpdateStyleRequest (
   body: unknown,
-  styleId: string
+  styleId: string | undefined
 ): UpdateStyleRequest {
   if (!isUpdateStyleRequestValid(body)) {
     throw invalidStyleError
   }
-  if (styleId === undefined || styleId === null || styleId.length === 0) {
+  if (styleId === undefined || styleId.length === 0) {
     throw invalidStyleIdError
   }
 

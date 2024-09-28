@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv'
-import { type ConnectionConfig } from 'pg'
+import type { ConnectionConfig } from 'pg'
 import { getEnvVariable } from '../env-helper'
 
 dotenv.config()

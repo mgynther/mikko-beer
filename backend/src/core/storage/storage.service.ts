@@ -1,7 +1,7 @@
-import {
-  type CreateStorageRequest,
-  type JoinedStorage,
-  type Storage
+import type {
+  CreateStorageRequest,
+  JoinedStorage,
+  Storage
 } from '../../core/storage/storage'
 
 import {
@@ -11,7 +11,7 @@ import {
 } from '../errors'
 import { INFO, type log } from '../log'
 
-import { type Pagination } from '../../core/pagination'
+import type { Pagination } from '../../core/pagination'
 
 type LockId = (id: string) => Promise<string | undefined>
 

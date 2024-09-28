@@ -1,22 +1,23 @@
 import { type SelectQueryBuilder, type RawBuilder, sql } from 'kysely'
 
-import { type Database, type KyselyDatabase } from '../database'
-import { type Pagination } from '../../core/pagination'
+import type { Database, KyselyDatabase } from '../database'
+import type { Pagination } from '../../core/pagination'
 
-import {
-  type AnnualStats,
-  type BreweryStats,
-  type BreweryStatsOrder,
-  type OverallStats,
-  type RatingStats,
-  type StatsBreweryStyleFilter,
-  type StatsFilter,
-  type StyleStats,
-  type StyleStatsOrder
+import type {
+  AnnualStats,
+  BreweryStats,
+  BreweryStatsOrder,
+  OverallStats,
+  RatingStats,
+  StatsBreweryStyleFilter,
+  StatsFilter,
+  StyleStats,
+  StyleStatsOrder
 } from '../../core/stats/stats'
+import { contains } from '../../core/record'
 
 // TODO try converting raw sql queries to Kysely for automatic types.
-function round (value: number | null, decimals: number): string {
+function round (value: number | null | undefined, decimals: number): string {
   if (value === undefined || value === null) return ''
   return Number(
     `${Math.round(parseFloat(`${value}e${decimals}`))}e-${decimals}`
@@ -106,23 +107,20 @@ function breweryOrderBy (
   builder: BreweryQueryBuilder,
   breweryStatsOrder: BreweryStatsOrder
 ): BreweryQueryBuilder {
-  if (breweryStatsOrder.property === 'average') {
-    return builder
+  switch (breweryStatsOrder.property) {
+    case 'average': return builder
       .orderBy('review_average', breweryStatsOrder.direction)
       .orderBy('review_count', 'desc')
       .orderBy('brewery_name', 'asc')
+    case 'brewery_name':
+      return builder
+        .orderBy('brewery_name', breweryStatsOrder.direction)
+    case 'count':
+      return builder
+        .orderBy('review_count', breweryStatsOrder.direction)
+        .orderBy('review_average', 'desc')
+        .orderBy('brewery_name', 'asc')
   }
-  if (breweryStatsOrder.property === 'brewery_name') {
-    return builder
-      .orderBy('brewery_name', breweryStatsOrder.direction)
-  }
-  if (breweryStatsOrder.property === 'count') {
-    return builder
-      .orderBy('review_count', breweryStatsOrder.direction)
-      .orderBy('review_average', 'desc')
-      .orderBy('brewery_name', 'asc')
-  }
-  return builder
 }
 
 export async function getBrewery (
@@ -251,7 +249,7 @@ interface ContainerIds {
 function countContainerIds (idRows: ContainerIds[]): number {
   const containers = idRows.reduce<Record<string, boolean>>((map, row) => {
     function add (value: string | null): void {
-      if (value !== null && map[value] === undefined) {
+      if (value !== null && !contains(map, value)) {
         map[value] = true
       }
     }
@@ -433,23 +431,18 @@ function styleOrderBy (
   builder: StyleQueryBuilder,
   styleStatsOrder: StyleStatsOrder
 ): StyleQueryBuilder {
-  if (styleStatsOrder.property === 'average') {
-    return builder
+  switch (styleStatsOrder.property) {
+    case 'average': return builder
       .orderBy('review_average', styleStatsOrder.direction)
       .orderBy('review_count', 'desc')
       .orderBy('style_name', 'asc')
-  }
-  if (styleStatsOrder.property === 'style_name') {
-    return builder
+    case 'style_name': return builder
       .orderBy('style_name', styleStatsOrder.direction)
-  }
-  if (styleStatsOrder.property === 'count') {
-    return builder
+    case 'count': return builder
       .orderBy('review_count', styleStatsOrder.direction)
       .orderBy('review_average', 'desc')
       .orderBy('style_name', 'asc')
   }
-  return builder
 }
 
 export async function getStyle (

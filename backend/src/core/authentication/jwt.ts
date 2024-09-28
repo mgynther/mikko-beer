@@ -1,6 +1,6 @@
 // This file wraps jsonwebtoken usage to core types.
 import * as jwt from 'jsonwebtoken'
-import { type Role } from '../user/user'
+import type { Role } from '../user/user'
 import {
   type AuthToken,
   type AuthTokenConfig,
@@ -8,7 +8,7 @@ import {
   AuthTokenExpiredError,
   InvalidAuthTokenError
 } from './auth-token'
-import { type RefreshToken } from './refresh-token'
+import type { RefreshToken } from './refresh-token'
 
 interface RefreshTokenPayload {
   userId: string
@@ -42,9 +42,9 @@ export function verifyAuthToken (
   const payload = verifyToken(token.authToken, authTokenSecret)
   if (
     typeof payload === 'string' ||
-    typeof payload?.userId !== 'string' ||
-    typeof payload?.role !== 'string' ||
-    typeof payload?.refreshTokenId !== 'string'
+    typeof payload.userId !== 'string' ||
+    typeof payload.role !== 'string' ||
+    typeof payload.refreshTokenId !== 'string'
   ) {
     throw new InvalidAuthTokenError()
   }
@@ -64,8 +64,8 @@ export function verifyRefreshToken (
 
   if (
     typeof payload === 'string' ||
-    typeof payload?.userId !== 'string' ||
-    typeof payload?.refreshTokenId !== 'string' ||
+    typeof payload.userId !== 'string' ||
+    typeof payload.refreshTokenId !== 'string' ||
     payload.isRefreshToken !== true
   ) {
     throw new InvalidAuthTokenError()

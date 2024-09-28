@@ -1,15 +1,15 @@
 import * as authTokenService from '../authentication/auth-token.service'
-import { type SignedInUser } from './signed-in-user'
-import {
-  type CreateAnonymousUserRequest,
-  type Role,
-  type User
+import type { SignedInUser } from './signed-in-user'
+import type {
+  CreateAnonymousUserRequest,
+  Role,
+  User
 } from './user'
 
 import { invalidCredentialsError, userNotFoundError } from '../errors'
 import { INFO, type log } from '../log'
-import { type DbRefreshToken } from '../authentication/refresh-token'
-import { type AuthTokenConfig } from '../authentication/auth-token'
+import type { DbRefreshToken } from '../authentication/refresh-token'
+import type { AuthTokenConfig } from '../authentication/auth-token'
 
 export async function createAnonymousUser (
   createAnonymousUser: (request: CreateAnonymousUserRequest) => Promise<User>,

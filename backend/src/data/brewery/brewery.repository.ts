@@ -1,14 +1,14 @@
-import { type Database, type Transaction } from '../database'
-import {
-  type BreweryRow
+import type { Database, Transaction } from '../database'
+import type {
+  BreweryRow
 } from './brewery.table'
 
-import {
-  type Brewery,
-  type NewBrewery
+import type {
+  Brewery,
+  NewBrewery
 } from '../../core/brewery/brewery'
-import {
-  type Pagination
+import type {
+  Pagination
 } from '../../core/pagination'
 import {
   type SearchByName,
@@ -73,7 +73,7 @@ export async function lockBreweries (
     .forUpdate()
     .execute()
 
-  return breweries.map(brewery => brewery?.brewery_id)
+  return breweries.map(brewery => brewery.brewery_id)
 }
 
 export async function listBreweries (

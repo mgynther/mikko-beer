@@ -1,10 +1,10 @@
-import {
-  type CreateBeerRequest,
-  type UpdateBeerRequest,
-  type Beer,
-  type BeerWithBreweryAndStyleIds,
-  type BeerWithBreweriesAndStyles,
-  type NewBeer
+import type {
+  CreateBeerRequest,
+  UpdateBeerRequest,
+  Beer,
+  BeerWithBreweryAndStyleIds,
+  BeerWithBreweriesAndStyles,
+  NewBeer
 } from './beer'
 
 import {
@@ -13,10 +13,10 @@ import {
   referredStyleNotFoundError
 } from '../errors'
 import { INFO, type log } from '../log'
-import {
-  type Pagination
+import type {
+  Pagination
 } from '../pagination'
-import { type SearchByName } from '../search'
+import type { SearchByName } from '../search'
 import { areKeysEqual } from '../key'
 
 type InsertBreweries = (beerId: string, breweries: string[]) => Promise<void>

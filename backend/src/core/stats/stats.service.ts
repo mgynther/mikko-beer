@@ -1,15 +1,15 @@
-import { type Pagination } from '../../core/pagination'
+import type { Pagination } from '../../core/pagination'
 
-import {
-  type AnnualStats,
-  type BreweryStats,
-  type BreweryStatsOrder,
-  type OverallStats,
-  type RatingStats,
-  type StatsBreweryStyleFilter,
-  type StatsFilter,
-  type StyleStats,
-  type StyleStatsOrder
+import type {
+  AnnualStats,
+  BreweryStats,
+  BreweryStatsOrder,
+  OverallStats,
+  RatingStats,
+  StatsBreweryStyleFilter,
+  StatsFilter,
+  StyleStats,
+  StyleStatsOrder
 } from '../../core/stats/stats'
 
 import { INFO, type log } from '../log'

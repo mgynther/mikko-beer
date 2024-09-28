@@ -6,13 +6,13 @@ import {
   passwordTooWeakError,
   userAlreadyHasSignInMethodError
 } from '../errors'
-import { type Tokens } from '../authentication/tokens'
-import { type User } from '../user/user'
-import { type SignedInUser } from '../user/signed-in-user'
-import {
-  type PasswordChange,
-  type PasswordSignInMethod,
-  type UserPasswordHash
+import type { Tokens } from '../authentication/tokens'
+import type { User } from '../user/user'
+import type { SignedInUser } from '../user/signed-in-user'
+import type {
+  PasswordChange,
+  PasswordSignInMethod,
+  UserPasswordHash
 } from './sign-in-method'
 
 export const MIN_PASSWORD_LENGTH = 8
@@ -33,7 +33,7 @@ export async function addPasswordSignInMethod (
 ): Promise<void> {
   const user = await lockUser(addPasswordUserIf.lockUserById, userId)
 
-  if (user.username?.length !== undefined && user.username?.length > 0) {
+  if (user.username?.length !== undefined && user.username.length > 0) {
     throw userAlreadyHasSignInMethodError
   }
 
@@ -60,7 +60,7 @@ export async function changePassword (
 ): Promise<void> {
   const user = await lockUser(changePasswordUserIf.lockUserById, userId)
 
-  if (user.username === undefined || user.username?.length === 0) {
+  if (user.username === null || user.username.length === 0) {
     throw invalidCredentialsError
   }
 

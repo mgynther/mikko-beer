@@ -1,6 +1,6 @@
 import { ajv } from '../ajv'
 
-import { type Container } from '../container/container'
+import type { Container } from '../container/container'
 import {
   invalidStorageError,
   invalidStorageIdError

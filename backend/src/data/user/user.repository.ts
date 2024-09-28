@@ -1,10 +1,10 @@
-import {
-  type CreateAnonymousUserRequest,
-  type NewUser,
-  type User
+import type {
+  CreateAnonymousUserRequest,
+  NewUser,
+  User
 } from '../../core/user/user'
-import { type Database, type Transaction } from '../../data/database'
-import { type UserRow } from './user.table'
+import type { Database, Transaction } from '../../data/database'
+import type { UserRow } from './user.table'
 
 export async function createAnonymousUser (
   trx: Transaction,

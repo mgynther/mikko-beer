@@ -1,15 +1,16 @@
-import { type Database, type Transaction } from '../database'
-import {
-  type StyleRow,
-  type StyleRelationshipRow
+import type { Database, Transaction } from '../database'
+import type {
+  StyleRow,
+  StyleRelationshipRow
 } from './style.table'
-import {
-  type NewStyle,
-  type Style,
-  type StyleRelationship,
-  type StyleWithParentIds,
-  type StyleWithParentsAndChildren
+import type {
+  NewStyle,
+  Style,
+  StyleRelationship,
+  StyleWithParentIds,
+  StyleWithParentsAndChildren
 } from '../../core/style/style'
+import { contains } from '../../core/record'
 
 export async function insertStyle (
   trx: Transaction,
@@ -99,7 +100,7 @@ export async function findStyleById (
   const [style, children, parents] =
     await Promise.all([stylePromise, childrenPromise, parentsPromise])
 
-  if (style === null || style === undefined) return undefined
+  if (style === undefined) return undefined
 
   return {
     id: style.style_id,
@@ -126,7 +127,7 @@ export async function lockStyles (
     .forUpdate()
     .execute()
 
-  return styles.map(style => style?.style_id)
+  return styles.map(style => style.style_id)
 }
 
 export async function listStyles (
@@ -150,7 +151,7 @@ export async function listStyles (
   const styleMap: Record<string, StyleWithParentIds> = {}
   const styleArray: StyleWithParentIds[] = []
   styles.forEach(style => {
-    if (styleMap[style.style_id] === undefined) {
+    if (!contains(styleMap, style.style_id)) {
       styleMap[style.style_id] = {
         id: style.style_id,
         name: style.name ?? '',

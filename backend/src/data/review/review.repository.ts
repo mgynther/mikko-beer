@@ -1,25 +1,26 @@
 import { type SelectQueryBuilder, sql } from 'kysely'
 
-import {
-  type Database,
-  type KyselyDatabase,
-  type Transaction
+import type {
+  Database,
+  KyselyDatabase,
+  Transaction
 } from '../database'
-import {
-  type DbJoinedReview,
-  type ReviewRow,
-  type ReviewTable,
-  type ReviewTableContent
+import type {
+  DbJoinedReview,
+  ReviewRow,
+  ReviewTable,
+  ReviewTableContent
 } from './review.table'
 
-import { type ListDirection } from '../../core/list'
+import type { ListDirection } from '../../core/list'
 import { type Pagination, toRowNumbers } from '../../core/pagination'
-import {
-  type JoinedReview,
-  type NewReview,
-  type Review,
-  type ReviewListOrder
+import type {
+  JoinedReview,
+  NewReview,
+  Review,
+  ReviewListOrder
 } from '../../core/review/review'
+import { contains } from '../../core/record'
 
 export async function insertReview (
   trx: Transaction,
@@ -51,16 +52,12 @@ export async function updateReview (
 export async function findReviewById (
   db: Database,
   id: string
-): Promise<Review | undefined> {
+): Promise<Review> {
   const reviewRow = await db.getDb()
     .selectFrom('review')
     .where('review_id', '=', id)
     .selectAll('review')
     .executeTakeFirstOrThrow()
-
-  if (reviewRow === undefined) {
-    return undefined
-  }
 
   return toReview(reviewRow)
 }
@@ -353,7 +350,7 @@ function parseReviewRows (
   const reviewArray: DbJoinedReview[] = []
 
   reviews.forEach(review => {
-    if (reviewMap[review.review_id] === undefined) {
+    if (!contains(reviewMap, review.review_id)) {
       reviewMap[review.review_id] = {
         ...review,
         breweries: [{
@@ -386,8 +383,8 @@ function parseReviewRows (
   })
 
   reviewArray.forEach(review => {
-    review.breweries.sort((a, b) => a.name?.localeCompare(b?.name ?? '') ?? 0)
-    review.styles.sort((a, b) => a.name?.localeCompare(b?.name ?? '') ?? 0)
+    review.breweries.sort((a, b) => a.name?.localeCompare(b.name ?? '') ?? 0)
+    review.styles.sort((a, b) => a.name?.localeCompare(b.name ?? '') ?? 0)
   })
 
   return reviewArray

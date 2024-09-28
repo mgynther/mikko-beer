@@ -5,27 +5,27 @@ import {
 } from 'kysely'
 import { type ConnectionConfig, Pool } from 'pg'
 
-import { type RefreshTokenTable } from './authentication/refresh-token.table'
-import {
-  type PasswordSignInMethodTable
+import type { RefreshTokenTable } from './authentication/refresh-token.table'
+import type {
+  PasswordSignInMethodTable
 } from './user/sign-in-method/password-sign-in-method.table'
-import {
-  type SignInMethodTable
+import type {
+  SignInMethodTable
 } from './user/sign-in-method/sign-in-method.table'
-import {
-  type BeerTable,
-  type BeerBreweryTable,
-  type BeerStyleTable
+import type {
+  BeerTable,
+  BeerBreweryTable,
+  BeerStyleTable
 } from './beer/beer.table'
-import { type BreweryTable } from './brewery/brewery.table'
-import { type ContainerTable } from './container/container.table'
-import { type ReviewTable } from './review/review.table'
-import { type StorageTable } from './storage/storage.table'
-import {
-  type StyleTable,
-  type StyleRelationshipTable
+import type { BreweryTable } from './brewery/brewery.table'
+import type { ContainerTable } from './container/container.table'
+import type { ReviewTable } from './review/review.table'
+import type { StorageTable } from './storage/storage.table'
+import type {
+  StyleTable,
+  StyleRelationshipTable
 } from './style/style.table'
-import { type UserTable } from './user/user.table'
+import type { UserTable } from './user/user.table'
 
 export interface KyselyDatabase {
   beer: BeerTable

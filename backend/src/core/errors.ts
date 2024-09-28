@@ -79,13 +79,13 @@ type ErrorStatus = 400 | 401 | 403 | 404 | 409 | 500
 export class ControllerError extends Error {
   readonly status: ErrorStatus
   readonly code: ErrorCode
-  readonly data?: any
+  readonly data?: unknown
 
   constructor (
     status: ErrorStatus,
     code: ErrorCode,
     message: string,
-    data?: any
+    data?: unknown
   ) {
     super(message)
     this.status = status

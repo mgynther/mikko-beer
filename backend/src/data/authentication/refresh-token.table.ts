@@ -1,8 +1,8 @@
-import {
-  type Generated,
-  type Insertable,
-  type Selectable,
-  type Updateable
+import type {
+  Generated,
+  Insertable,
+  Selectable,
+  Updateable
 } from 'kysely'
 
 export interface RefreshTokenTable {

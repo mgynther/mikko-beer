@@ -1,5 +1,5 @@
-import { type UserPasswordHash } from '../../../core/user/sign-in-method'
-import { type Transaction } from '../../database'
+import type { UserPasswordHash } from '../../../core/user/sign-in-method'
+import type { Transaction } from '../../database'
 
 export async function findPasswordSignInMethod (
   trx: Transaction,

@@ -1,17 +1,17 @@
 import { sql } from 'kysely'
 
-import { type Database, type Transaction } from '../database'
-import {
-  type BeerBreweryRow,
-  type BeerStyleRow,
-  type BeerTable,
-  type InsertableBeerBreweryRow,
-  type InsertableBeerStyleRow
+import type { Database, Transaction } from '../database'
+import type {
+  BeerBreweryRow,
+  BeerStyleRow,
+  BeerTable,
+  InsertableBeerBreweryRow,
+  InsertableBeerStyleRow
 } from './beer.table'
-import {
-  type BeerWithBreweriesAndStyles,
-  type Beer,
-  type NewBeer
+import type {
+  BeerWithBreweriesAndStyles,
+  Beer,
+  NewBeer
 } from '../../core/beer/beer'
 
 import { type Pagination, toRowNumbers } from '../../core/pagination'
@@ -21,8 +21,9 @@ import {
   toIlike
 } from '../../core/search'
 
-import { type Brewery } from '../../core/brewery/brewery'
-import { type Style } from '../../core/style/style'
+import type { Brewery } from '../../core/brewery/brewery'
+import type { Style } from '../../core/style/style'
+import { contains } from '../../core/record'
 
 export async function insertBeer (
   trx: Transaction,
@@ -127,7 +128,7 @@ export async function findBeerById (
     ])
     .execute()
 
-  if (beerRows === undefined || beerRows.length === 0) {
+  if (beerRows.length === 0) {
     return undefined
   }
 
@@ -249,7 +250,7 @@ function toBeersWithBreweriesAndStyles (
   const beerArray: BeerWithBreweriesAndStyles[] = []
 
   beers.forEach(beer => {
-    if (beerMap[beer.beer_id] === undefined) {
+    if (!contains(beerMap, beer.beer_id)) {
       beerMap[beer.beer_id] = {
         id: beer.beer_id,
         name: beer.name ?? '',

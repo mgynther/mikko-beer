@@ -1,13 +1,13 @@
 import { v4 as uuidv4 } from 'uuid'
 
-import {
-  type CreateStyleRequest,
-  type NewStyle,
-  type Style,
-  type StyleRelationship,
-  type StyleWithParentsAndChildren,
-  type StyleWithParentIds,
-  type UpdateStyleRequest
+import type {
+  CreateStyleRequest,
+  NewStyle,
+  Style,
+  StyleRelationship,
+  StyleWithParentsAndChildren,
+  StyleWithParentIds,
+  UpdateStyleRequest
 } from './style'
 
 import {
@@ -92,7 +92,7 @@ export async function updateStyle (
   await Promise.all([
     updateStyleIf.deleteStyleChildRelationships(styleId),
     request.parents.length === 0
-      ? () => {}
+      ? () => undefined
       : updateStyleIf.insertParents(style.id, request.parents)
   ])
 

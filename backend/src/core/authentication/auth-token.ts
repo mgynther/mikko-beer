@@ -1,4 +1,4 @@
-import { type Role } from '../user/user'
+import type { Role } from '../user/user'
 
 export interface AuthToken {
   authToken: string

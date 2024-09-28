@@ -1,6 +1,7 @@
-import { type StyleRelationship } from './style'
+import type { StyleRelationship } from './style'
 
 import { cyclicRelationshipError } from '../errors'
+import { contains } from '../record'
 
 interface Style {
   id: string
@@ -33,11 +34,11 @@ export function checkCyclicRelationships (
 
   const relationshipMap: Record<string, Style> = {}
   relationships.forEach((relationship: StyleRelationship) => {
-    if (relationshipMap[relationship.child] === undefined) {
+    if (!contains(relationshipMap, relationship.child)) {
       relationshipMap[relationship.child] = newStyleFromId(relationship.child)
     }
     relationshipMap[relationship.child].parents.push(relationship.parent)
-    if (relationshipMap[relationship.parent] === undefined) {
+    if (!contains(relationshipMap, relationship.parent)) {
       relationshipMap[relationship.parent] = newStyleFromId(relationship.parent)
     }
   })
@@ -45,12 +46,9 @@ export function checkCyclicRelationships (
   Object.keys(relationshipMap).forEach((id: string) => {
     const style = relationshipMap[id]
     const styles: Record<string, boolean> = {}
-    let hasCyclic = false
     const checkStyle = (style: Style): void => {
-      if (hasCyclic) return
       if (styles[style.id]) {
-        hasCyclic = true
-        return
+        throw cyclicRelationshipError
       }
       styles[style.id] = true
       style.parents.forEach(parentId => {
@@ -59,8 +57,5 @@ export function checkCyclicRelationships (
       })
     }
     checkStyle(style)
-    if (hasCyclic) {
-      throw cyclicRelationshipError
-    }
   })
 }

@@ -1,6 +1,6 @@
 import * as path from 'path'
 import { promises as fs } from 'fs'
-import { type Database } from './database'
+import type { Database } from './database'
 import { config } from './config'
 import { consoleLog as log } from '../core/console-log'
 import { Level } from '../core/log'

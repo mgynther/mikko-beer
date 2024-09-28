@@ -1,14 +1,14 @@
-import {
-  type AuthTokenConfig,
-  type AuthToken,
-  type AuthTokenPayload
+import type {
+  AuthTokenConfig,
+  AuthToken,
+  AuthTokenPayload
 } from './auth-token'
-import { type Tokens } from './tokens'
-import {
-  type DbRefreshToken,
-  type RefreshToken
+import type { Tokens } from './tokens'
+import type {
+  DbRefreshToken,
+  RefreshToken
 } from './refresh-token'
-import { type User, type Role } from '../user/user'
+import type { User, Role } from '../user/user'
 import * as jwt from './jwt'
 import { invalidCredentialsTokenError } from '../errors'
 

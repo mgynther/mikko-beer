@@ -1,10 +1,10 @@
-import {
-  type CreateReviewRequest,
-  type JoinedReview,
-  type UpdateReviewRequest,
-  type Review,
-  type ReviewListOrder,
-  type NewReview
+import type {
+  CreateReviewRequest,
+  JoinedReview,
+  UpdateReviewRequest,
+  Review,
+  ReviewListOrder,
+  NewReview
 } from './review'
 
 import {
@@ -14,8 +14,8 @@ import {
   reviewNotFoundError
 } from '../errors'
 import { INFO, type log } from '../log'
-import {
-  type Pagination
+import type {
+  Pagination
 } from '../pagination'
 
 type LockId = (id: string) => Promise<string | undefined>
