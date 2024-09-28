@@ -27,6 +27,7 @@ const rules = {
       'format': ['camelCase', 'PascalCase', 'snake_case', 'UPPER_CASE'],
     },
   ],
+  '@typescript-eslint/no-magic-numbers': 'off',
   'max-len': ['error', { 'code': 80, 'ignoreRegExpLiterals': true }]
 }
 

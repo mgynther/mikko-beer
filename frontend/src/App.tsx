@@ -165,7 +165,7 @@ import {
   useLazyGetBreweryStatsQuery
 } from './store/stats/api'
 import type { Pagination } from './core/types'
-import { type SearchIf } from './core/search/types'
+import type { SearchIf } from './core/search/types'
 import {
   type NavigateIf,
   navigateIf,
@@ -185,7 +185,7 @@ interface LayoutProps {
   setTheme: (theme: Theme) => void
 }
 
-function Layout (props: LayoutProps): JSX.Element {
+function Layout (props: LayoutProps): React.JSX.Element {
   const [isMoreOpen, setIsMoreOpen] = useState(false)
   function toggleMore (): void {
     setIsMoreOpen(!isMoreOpen)
@@ -284,7 +284,7 @@ function Layout (props: LayoutProps): JSX.Element {
   )
 }
 
-function App (): JSX.Element {
+function App (): React.JSX.Element {
   const theme: Theme = useSelector(selectTheme)
   useEffect(() => {
     const bodyElements = document.getElementsByTagName('body')
@@ -625,8 +625,8 @@ function App (): JSX.Element {
     return login
   }
   const login = getLogin()
-  const isLoggedIn: boolean = login.authToken?.length > 0
-  const isAdmin = login?.user?.role === Role.admin
+  const isLoggedIn: boolean = login.authToken.length > 0
+  const isAdmin = login.user?.role === Role.admin
 
   const changePasswordIf: ChangePasswordIf = {
     useChangePassword: () => {
@@ -719,7 +719,7 @@ function App (): JSX.Element {
       const [getReview] = useLazyGetReviewQuery()
       return {
         get: async (reviewId: string) => {
-          return (await getReview(reviewId).unwrap())?.review
+          return (await getReview(reviewId).unwrap()).review
         }
       }
     }
@@ -826,7 +826,7 @@ function App (): JSX.Element {
         return {
           query: async (
             params: BreweryStatsQueryParams
-          ) => (await trigger(params))?.data,
+          ) => (await trigger(params)).data,
           stats: data,
           isLoading: isFetching
         }
