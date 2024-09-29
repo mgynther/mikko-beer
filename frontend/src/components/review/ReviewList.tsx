@@ -52,7 +52,7 @@ export function ReviewHeading (
   return (
     <div className='Review-heading'>
       {!isSortingSupported('brewery_name') &&
-        <div>Brewerires</div>
+        <div>Breweries</div>
       }
       {isSortingSupported('brewery_name') &&
         <TabButton
