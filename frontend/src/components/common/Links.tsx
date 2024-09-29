@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from './Link'
 
 interface Item {
   id: string
@@ -18,8 +18,9 @@ export function Links (props: Props): JSX.Element {
       .map((item, index) => (
         <span key={item.id}>
           <Link
-            to={props.linkFormatter(item.id)}>{item.name}
-          </Link>
+            to={props.linkFormatter(item.id)}
+            text={item.name}
+          />
           {index < props.items.length - 1 ? ', ' : ''}
         </span>
       ))

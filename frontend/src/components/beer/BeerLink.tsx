@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../common/Link'
 
 interface BasicBeer {
   id: string
@@ -11,9 +11,10 @@ interface Props {
 
 export function BeerLink (props: Props): JSX.Element {
   return (
-    <Link to={`/beers/${props.beer.id}`}>
-      {props.beer.name}
-    </Link>
+    <Link
+      to={`/beers/${props.beer.id}`}
+      text={props.beer.name}
+    />
   )
 }
 

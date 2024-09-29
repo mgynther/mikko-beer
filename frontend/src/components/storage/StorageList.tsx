@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../common/Link'
 
 import { type Storage } from '../../core/storage/types'
 import { Role } from '../../core/user/types'
@@ -56,7 +56,10 @@ function StorageList (props: Props): JSX.Element {
           </div>
           {isAdmin && (
             <div className='ReviewLink'>
-              <Link to={`/addreview/${storage.id}`}>Review</Link>
+              <Link
+                to={`/addreview/${storage.id}`}
+                text="Review"
+              />
             </div>
           )}
         </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from '../common/Link'
 
 import type {
   Brewery,
@@ -68,9 +68,10 @@ function Breweries (props: Props): JSX.Element {
       <ul>
         {loadedBreweries.map((brewery: Brewery) => (
           <li key={brewery.id}>
-            <Link to={toRoute(brewery)}>
-              {brewery.name}
-            </Link>
+            <Link
+              to={toRoute(brewery)}
+              text={brewery.name}
+            />
           </li>
         ))}
       </ul>

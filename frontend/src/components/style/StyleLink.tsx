@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../common/Link'
 
 interface BasicStyle {
   id: string
@@ -11,9 +11,10 @@ interface Props {
 
 export function StyleLink (props: Props): JSX.Element {
   return (
-    <Link to={`/styles/${props.style.id}`}>
-      {props.style.name}
-    </Link>
+    <Link
+      to={`/styles/${props.style.id}`}
+      text={props.style.name}
+    />
   )
 }
 
