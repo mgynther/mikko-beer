@@ -6,11 +6,15 @@ interface Props {
   breweries: Brewery[]
 }
 
+export function breweryLinkFormatter (id: string) {
+  return `/breweries/${id}`
+}
+
 export function BreweryLinks (props: Props): JSX.Element {
   return (
     <Links
       items={props.breweries}
-      linkFormatter={(id) => `/breweries/${id}`}
+      linkFormatter={breweryLinkFormatter}
     />
   )
 }

@@ -12,6 +12,7 @@ import { infiniteScroll, type NavigateIf } from '../util'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
+import { breweryLinkFormatter } from './BreweryLinks'
 import SearchBreweryWithNavi from './SearchBreweryWithNavi'
 
 const pageSize = 20
@@ -31,10 +32,6 @@ function Breweries (props: Props): JSX.Element {
   const breweryArray = breweryList?.breweries === undefined
     ? []
     : [...breweryList.breweries]
-
-  function toRoute (brewery: Brewery): string {
-    return `/breweries/${brewery.id}`
-  }
 
   const hasMore = breweryArray.length > 0 || isUninitialized
 
@@ -69,7 +66,7 @@ function Breweries (props: Props): JSX.Element {
         {loadedBreweries.map((brewery: Brewery) => (
           <li key={brewery.id}>
             <Link
-              to={toRoute(brewery)}
+              to={breweryLinkFormatter(brewery.id)}
               text={brewery.name}
             />
           </li>
