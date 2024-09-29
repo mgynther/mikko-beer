@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react'
 import { expect, test } from 'vitest'
-import { BrowserRouter } from 'react-router-dom'
+import LinkWrapper from './components/LinkWrapper'
 
 import { Provider } from './react-redux-wrapper'
 import App from './App'
@@ -9,9 +9,9 @@ import { store } from './store/store'
 test('renders app', () => {
   const { getByRole } = render(
     <Provider store={store}>
-      <BrowserRouter>
+      <LinkWrapper>
         <App />
-      </BrowserRouter>
+      </LinkWrapper>
     </Provider>
   )
   const loginButton = getByRole('button', { name: 'Login' })

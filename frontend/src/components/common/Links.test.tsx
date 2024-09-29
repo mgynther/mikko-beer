@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
-import { BrowserRouter } from 'react-router-dom'
+import LinkWrapper from '../LinkWrapper'
 
 import Links from './Links'
 
@@ -9,7 +9,7 @@ test('renders links', () => {
   const id1 = '95b4f459-ea6c-49f3-829a-f5ed6688def6'
   const id2 = '1138ddd1-bb90-4fa9-984b-40266c33a626'
   const { getByRole } = render(
-    <BrowserRouter>
+    <LinkWrapper>
       <Links
         items={[
           {
@@ -26,7 +26,7 @@ test('renders links', () => {
           return `/testing/${id}`
         }}
       />
-    </BrowserRouter>
+    </LinkWrapper>
   )
   expect(linkFormattingRequests.mock.calls).toEqual([[id1], [id2]])
   getByRole('link', { name: '1' })

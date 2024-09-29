@@ -1,12 +1,12 @@
 import { render } from '@testing-library/react'
 import { test } from 'vitest'
-import { BrowserRouter } from 'react-router-dom'
+import LinkWrapper from '../LinkWrapper'
 
 import BreweryLinks from './BreweryLinks'
 
 test('renders brewery links', () => {
   const { getByRole } = render(
-    <BrowserRouter>
+    <LinkWrapper>
       <BreweryLinks
         breweries={[
           {
@@ -19,7 +19,7 @@ test('renders brewery links', () => {
           }
         ]}
       />
-    </BrowserRouter>
+    </LinkWrapper>
   )
   getByRole('link', { name: '1' })
   getByRole('link', { name: '2' })

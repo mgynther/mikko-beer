@@ -1,17 +1,17 @@
 import { render } from '@testing-library/react'
 import { test } from 'vitest'
-import { BrowserRouter } from 'react-router-dom'
+import LinkWrapper from '../LinkWrapper'
 
 import Link from './Link'
 
 test('renders link', () => {
   const { getByRole } = render(
-    <BrowserRouter>
+    <LinkWrapper>
       <Link
         to="/testing"
         text="Link text"
       />
-    </BrowserRouter>
+    </LinkWrapper>
   )
   getByRole('link', { name: 'Link text' })
 })
