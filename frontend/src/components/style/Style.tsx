@@ -32,12 +32,9 @@ import StyleLinks from './StyleLinks'
 import UpdateStyle from './UpdateStyle'
 
 import '../common/FlexRow.css'
+import NotFound from '../common/NotFound'
 
 import './Style.css'
-
-function NotFound (): JSX.Element {
-  return <div>Not found</div>
-}
 
 interface NoLinksProps {
   styles: StyleType[]

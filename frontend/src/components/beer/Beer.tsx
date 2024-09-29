@@ -23,6 +23,7 @@ import EditButton from '../common/EditButton'
 
 import BreweryLinks from '../brewery/BreweryLinks'
 import LoadingIndicator from '../common/LoadingIndicator'
+import NotFound from '../common/NotFound'
 import ReviewList from '../review/ReviewList'
 import StorageList from '../storage/StorageList'
 import StyleLinks from '../style/StyleLinks'
@@ -30,10 +31,6 @@ import StyleLinks from '../style/StyleLinks'
 import UpdateBeer from './UpdateBeer'
 
 import './Beer.css'
-
-function NotFound (): JSX.Element {
-  return <div>Not found</div>
-}
 
 interface Props {
   listReviewsByBeerIf: ListReviewsByIf

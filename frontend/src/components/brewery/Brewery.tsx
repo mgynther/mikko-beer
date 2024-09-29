@@ -26,10 +26,7 @@ import '../common/FlexRow.css'
 import type { StatsIf } from '../../core/stats/types'
 import BreweryStorages from './BreweryStorages'
 import BreweryReviews from './BreweryReviews'
-
-function NotFound (): JSX.Element {
-  return <div>Not found</div>
-}
+import NotFound from '../common/NotFound'
 
 interface Props {
   listReviewsByBreweryIf: ListReviewsByIf
