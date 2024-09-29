@@ -6,7 +6,7 @@ import BreweryEditor from './BreweryEditor'
 const id = 'a89fbb3e-df4b-4ee6-ad88-887936726df3'
 const namePlaceholder = 'Name'
 
-test('edits valid container', async () => {
+test('edits valid brewery', async () => {
   const user = userEvent.setup()
   const onChange = vitest.fn()
   const { getByPlaceholderText } = render(
