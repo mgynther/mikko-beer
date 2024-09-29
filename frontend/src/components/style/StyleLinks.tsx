@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Links } from '../common/Links'
 
 import type { Style } from '../../core/style/types'
 
@@ -8,19 +8,10 @@ interface Props {
 
 export function StyleLinks (props: Props): JSX.Element {
   return (
-    <>
-    {[...props.styles]
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map((style, index) => (
-        <span key={style.id}>
-          <Link
-            to={`/styles/${style.id}`}>{style.name}
-          </Link>
-          {index < props.styles.length - 1 ? ', ' : ''}
-        </span>
-      ))
-    }
-    </>
+    <Links
+      items={props.styles}
+      linkFormatter={(id) => `/styles/${id}`}
+    />
   )
 }
 

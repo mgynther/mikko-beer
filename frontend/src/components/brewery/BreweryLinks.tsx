@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom'
+import { Links } from '../common/Links'
 
-import { type Brewery } from '../../core/brewery/types'
+import type { Brewery } from '../../core/brewery/types'
 
 interface Props {
   breweries: Brewery[]
@@ -8,19 +8,10 @@ interface Props {
 
 export function BreweryLinks (props: Props): JSX.Element {
   return (
-    <>
-    {[...props.breweries]
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map((brewery, index) => (
-        <span key={brewery.id}>
-          <Link
-            to={`/breweries/${brewery.id}`}>{brewery.name}
-          </Link>
-          {index < props.breweries.length - 1 ? ', ' : ''}
-        </span>
-      ))
-    }
-    </>
+    <Links
+      items={props.breweries}
+      linkFormatter={(id) => `/breweries/${id}`}
+    />
   )
 }
 
