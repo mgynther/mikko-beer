@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { useParams } from 'react-router-dom'
+import type { ParamsIf } from '../util'
 
 import type {
   GetStyleIf,
@@ -52,6 +52,7 @@ interface Props {
   listReviewsByStyleIf: ListReviewsByIf
   listStoragesByStyleIf: ListStoragesByIf
   getStyleIf: GetStyleIf
+  paramsIf: ParamsIf
   reviewIf: ReviewIf
   searchIf: SearchIf
   statsIf: StatsIf
@@ -59,7 +60,7 @@ interface Props {
 }
 
 function Style (props: Props): JSX.Element {
-  const { styleId } = useParams()
+  const { styleId } = props.paramsIf.useParams()
   const [order, doSetOrder] = useState<ReviewSortingOrder>('brewery_name')
   const [direction, doSetDirection] = useState<ListDirection>('asc')
   const [mode, setMode] = useState(EditableMode.View)

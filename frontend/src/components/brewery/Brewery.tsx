@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { useParams } from 'react-router-dom'
+import type { ParamsIf } from '../util'
 
 import type {
   Brewery as BreweryType,
@@ -37,6 +37,7 @@ function NotFound (): JSX.Element {
 interface Props {
   listReviewsByBreweryIf: ListReviewsByIf
   listStoragesByBreweryIf: ListStoragesByIf
+  paramsIf: ParamsIf
   reviewIf: ReviewIf
   getBreweryIf: GetBreweryIf
   searchIf: SearchIf
@@ -45,7 +46,7 @@ interface Props {
 }
 
 function Brewery (props: Props): JSX.Element {
-  const { breweryId } = useParams()
+  const { breweryId } = props.paramsIf.useParams()
   const [order, doSetOrder] = useState<ReviewSortingOrder>('beer_name')
   const [direction, doSetDirection] = useState<ListDirection>('asc')
   const [mode, setMode] = useState(EditableMode.View)

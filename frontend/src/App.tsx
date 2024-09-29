@@ -947,6 +947,7 @@ function App (): React.JSX.Element {
                     getBeerIf={getBeerIf}
                     listReviewsByBeerIf={listReviewsByBeerIf}
                     listStoragesByBeerIf={listStoragesByBeerIf}
+                    paramsIf={paramsIf}
                     reviewIf={reviewIf}
                     searchIf={searchIf}
                     updateBeerIf={updateBeerIf}
@@ -965,6 +966,7 @@ function App (): React.JSX.Element {
                     getBreweryIf={getBreweryIf}
                     listReviewsByBreweryIf={listReviewsByBreweryIf}
                     listStoragesByBreweryIf={listStoragesByBreweryIf}
+                    paramsIf={paramsIf}
                     reviewIf={reviewIf}
                     searchIf={searchIf}
                     statsIf={statsIf}
@@ -996,6 +998,7 @@ function App (): React.JSX.Element {
                   <Style
                     listReviewsByStyleIf={listReviewsByStyleIf}
                     listStoragesByStyleIf={listStoragesByStyleIf}
+                    paramsIf={paramsIf}
                     reviewIf={reviewIf}
                     getStyleIf={getStyleIf}
                     statsIf={statsIf}
