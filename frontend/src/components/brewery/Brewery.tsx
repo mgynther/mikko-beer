@@ -53,30 +53,23 @@ function Brewery (props: Props): JSX.Element {
   return (
     <div>
       {mode === EditableMode.View && (
-        <>
-          <div className='FlexRow'>
-            <div>
-              <h3>
-                { brewery.name }
-              </h3>
-            </div>
-            <div>
-              <EditButton
-                disabled={brewery === undefined}
-                getLogin={props.reviewIf.login}
-                onClick={() => {
-                  setMode(EditableMode.Edit)
-                  setInitialBrewery({ ...brewery })
-                }}
-              />
-            </div>
+        <div className='FlexRow'>
+          <div>
+            <h3>
+              { brewery.name }
+            </h3>
           </div>
-          <Stats
-            statsIf={props.statsIf}
-            breweryId={brewery.id}
-            styleId={undefined}
-          />
-        </>
+          <div>
+            <EditButton
+              disabled={false}
+              getLogin={props.reviewIf.login}
+              onClick={() => {
+                setMode(EditableMode.Edit)
+                setInitialBrewery({ ...brewery })
+              }}
+            />
+          </div>
+        </div>
       )}
       {mode === EditableMode.Edit && initialBrewery !== undefined && (
         <UpdateBrewery
@@ -91,6 +84,11 @@ function Brewery (props: Props): JSX.Element {
           }}
         />
       )}
+      <Stats
+        statsIf={props.statsIf}
+        breweryId={brewery.id}
+        styleId={undefined}
+      />
       <BreweryStorages
         breweryId={breweryId}
         listStoragesByBreweryIf={props.listStoragesByBreweryIf}
