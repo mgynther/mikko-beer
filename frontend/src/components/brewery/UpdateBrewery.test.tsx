@@ -6,7 +6,7 @@ import UpdateBrewery from './UpdateBrewery'
 const id = 'a992b512-c636-486c-a85f-33938da9101c'
 const newNamePlaceholder = 'New name'
 
-test('updates container', async () => {
+test('updates brewery', async () => {
   const user = userEvent.setup()
   const onSaved = vitest.fn()
   const update = vitest.fn()
