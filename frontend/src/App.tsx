@@ -168,6 +168,7 @@ import {
 import type { Pagination } from './core/types'
 import type { SearchIf } from './core/search/types'
 import {
+  infiniteScroll,
   type NavigateIf,
   navigateIf,
   paramsIf,
@@ -382,7 +383,8 @@ function App (): React.JSX.Element {
         isLoading: isFetching,
         isUninitialized
       }
-    }
+    },
+    infiniteScroll
   }
 
   const searchBreweryIf: SearchBreweryIf = {

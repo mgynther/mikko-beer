@@ -4,7 +4,7 @@ import {
   useNavigate as useRouterNavigate,
   useParams as useRouterParams
 } from 'react-router-dom'
-import type { UseDebounce } from '../core/types'
+import type { InfiniteScroll, UseDebounce } from '../core/types'
 
 export function pad (number: number): string {
   if (number < 10) return `0${number}`
@@ -19,7 +19,7 @@ export function formatBestBefore (bb: string): string {
   return `${year}-${month}-${dayOfMonth}`
 }
 
-export function infiniteScroll (loadMore: () => void): () => void {
+export const infiniteScroll: InfiniteScroll = (loadMore: () => void) => {
   const observer = new IntersectionObserver(entries => {
     const intersecting = entries[0].isIntersecting
     if (intersecting) {

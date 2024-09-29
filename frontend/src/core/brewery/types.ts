@@ -1,4 +1,5 @@
 import type { Pagination } from "../types"
+import type { InfiniteScroll } from "../types"
 
 export interface CreateBreweryRequest {
   name: string
@@ -33,7 +34,8 @@ export interface ListBreweriesIf {
     breweryList: BreweryList | undefined
     isLoading: boolean
     isUninitialized: boolean
-  }
+  },
+  infiniteScroll: InfiniteScroll
 }
 
 export interface UpdateBreweryIf {

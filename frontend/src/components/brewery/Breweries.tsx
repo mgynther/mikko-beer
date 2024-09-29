@@ -8,7 +8,7 @@ import type {
 } from '../../core/brewery/types'
 import type { SearchIf } from '../../core/search/types'
 
-import { infiniteScroll, type NavigateIf } from '../util'
+import type { NavigateIf } from '../util'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
@@ -50,7 +50,7 @@ function Breweries (props: Props): JSX.Element {
         void loadMore()
       }
     }
-    return infiniteScroll(checkLoad)
+    return props.listBreweriesIf.infiniteScroll(checkLoad)
   }, [loadedBreweries, setLoadedBreweries, isLoading, hasMore, list])
 
   return (
