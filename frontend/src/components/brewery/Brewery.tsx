@@ -9,19 +9,14 @@ import type {
 } from '../../core/brewery/types'
 import type {
   ListReviewsByIf,
-  ReviewIf,
-  ReviewSorting,
-  ReviewSortingOrder
+  ReviewIf
 } from '../../core/review/types'
 import type { SearchIf } from '../../core/search/types'
 import type { ListStoragesByIf } from '../../core/storage/types'
-import type { ListDirection } from '../../core/types'
 
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'
 import LoadingIndicator from '../common/LoadingIndicator'
-import ReviewList from '../review/ReviewList'
-import StorageList from '../storage/StorageList'
 
 import Stats from '../stats/Stats'
 
@@ -29,6 +24,8 @@ import UpdateBrewery from './UpdateBrewery'
 
 import '../common/FlexRow.css'
 import type { StatsIf } from '../../core/stats/types'
+import BreweryStorages from './BreweryStorages'
+import BreweryReviews from './BreweryReviews'
 
 function NotFound (): JSX.Element {
   return <div>Not found</div>
@@ -47,8 +44,6 @@ interface Props {
 
 function Brewery (props: Props): JSX.Element {
   const { breweryId } = props.paramsIf.useParams()
-  const [order, doSetOrder] = useState<ReviewSortingOrder>('beer_name')
-  const [direction, doSetDirection] = useState<ListDirection>('asc')
   const [mode, setMode] = useState(EditableMode.View)
   const [initialBrewery, setInitialBrewery] =
     useState<BreweryType | undefined>(undefined)
@@ -56,16 +51,6 @@ function Brewery (props: Props): JSX.Element {
     throw new Error('Brewery component without breweryId. Should not happen.')
   }
   const { brewery, isLoading } = props.getBreweryIf.useGet(breweryId)
-  const { reviews, isLoading: isLoadingReviews } =
-    props.listReviewsByBreweryIf.useList({
-      id: breweryId,
-      sorting: {
-        order,
-        direction
-      }
-    })
-  const { storages, isLoading: isLoadingStorages } =
-    props.listStoragesByBreweryIf.useList(breweryId)
   if (isLoading) return <LoadingIndicator isLoading={true} />
   if (brewery === undefined) return <NotFound />
   return (
@@ -109,31 +94,16 @@ function Brewery (props: Props): JSX.Element {
           }}
         />
       )}
-      {(storages?.storages ?? []).length > 0 && (
-        <StorageList
-          getLogin={props.reviewIf.login}
-          isLoading={isLoadingStorages}
-          isTitleVisible={true}
-          storages={storages?.storages ?? []}
-        />
-      )}
-      <ReviewList
+      <BreweryStorages
+        breweryId={breweryId}
+        listStoragesByBreweryIf={props.listStoragesByBreweryIf}
+        getLogin={props.reviewIf.login}
+      />
+      <BreweryReviews
+        breweryId={breweryId}
+        listReviewsByBreweryIf={props.listReviewsByBreweryIf}
         reviewIf={props.reviewIf}
         searchIf={props.searchIf}
-        isLoading={isLoadingReviews}
-        isTitleVisible={true}
-        reviews={reviews?.reviews ?? []}
-        sorting={reviews?.sorting}
-        setSorting={(sorting: ReviewSorting) => {
-          if (order !== sorting.order) {
-            doSetOrder(sorting.order)
-          }
-          if (direction !== sorting.direction) {
-            doSetDirection(sorting.direction)
-          }
-        }}
-        supportedSorting={['beer_name', 'brewery_name', 'rating', 'time']}
-        onChanged={() => {}}
       />
     </div>
   )
