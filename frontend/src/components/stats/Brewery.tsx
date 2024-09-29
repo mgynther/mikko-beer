@@ -93,6 +93,14 @@ function Brewery (props: Props): JSX.Element {
   }
 
   useEffect(() => {
+    setLoadedBreweries(undefined)
+  }, [breweryId])
+
+  useEffect(() => {
+    setLoadedBreweries(undefined)
+  }, [styleId])
+
+  useEffect(() => {
     setBreweryIdTriggerParams({
       breweryId,
       styleId,
@@ -104,6 +112,7 @@ function Brewery (props: Props): JSX.Element {
     })
   }, [
     breweryId,
+    styleId,
     minReviewCount,
     maxReviewCount,
     minReviewAverage,
@@ -117,6 +126,12 @@ function Brewery (props: Props): JSX.Element {
 
   useEffect(() => {
     if (breweryId === undefined && styleId === undefined) {
+      return
+    }
+    if (loadedBreweries !== undefined) {
+      return
+    }
+    if (isLoading) {
       return
     }
     async function loadAll (): Promise<void> {
