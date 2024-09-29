@@ -1,5 +1,5 @@
 import React, { useEffect, useId, useState } from 'react'
-import { Routes, Route, Link, Outlet } from 'react-router-dom'
+import { Routes, Route, Outlet } from 'react-router-dom'
 
 import { activate, selectActiveSearch } from './store/search/reducer'
 import { useDispatch, useSelector } from './react-redux-wrapper'
@@ -13,6 +13,7 @@ import { useAppDispatch } from './store/hooks'
 import './App.css'
 
 import Account from './components/account/Account'
+import Link from './components/common/Link'
 import AddReview from './components/review/AddReview'
 import Beer from './components/beer/Beer'
 import Beers from './components/beer/Beers'
@@ -199,23 +200,23 @@ function Layout (props: LayoutProps): React.JSX.Element {
               <ul>
                 {props.isAdmin && (
                   <li>
-                    <Link to="/addreview">Add review</Link>
+                    <Link to="/addreview" text="Add review" />
                   </li>
                 )}
                 <li>
-                  <Link to="/beers">Beers</Link>
+                  <Link to="/beers" text="Beers" />
                 </li>
                 <li>
-                  <Link to="/breweries">Breweries</Link>
+                  <Link to="/breweries" text="Breweries" />
                 </li>
                 <li>
-                  <Link to="/reviews">Reviews</Link>
+                  <Link to="/reviews" text="Reviews" />
                 </li>
                 <li>
-                  <Link to="/stats">Statistics</Link>
+                  <Link to="/stats" text="Statistics" />
                 </li>
                 <li>
-                  <Link to="/storage">Storage</Link>
+                  <Link to="/storage" text="Storage" />
                 </li>
                 <li>
                   <button onClick={toggleMore}>
@@ -243,18 +244,18 @@ function Layout (props: LayoutProps): React.JSX.Element {
 
                   <ul>
                     <li>
-                      <Link to="/styles">Styles</Link>
+                      <Link to="/styles" text="Styles" />
                     </li>
                     <li>
-                      <Link to="/containers">Containers</Link>
+                      <Link to="/containers" text="Containers" />
                     </li>
                     {props.isAdmin && (
                       <li>
-                        <Link to="/users">Users</Link>
+                        <Link to="/users" text="Users" />
                       </li>
                     )}
                     <li>
-                      <Link to="/account">Account</Link>
+                      <Link to="/account" text="Account" />
                     </li>
                     <li>
                       <label>
