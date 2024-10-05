@@ -9,10 +9,10 @@ const namePlaceholder = 'Create brewery'
 
 test('creates brewery', async () => {
   const user = userEvent.setup()
-  const selectContainer = vitest.fn()
+  const selectBrewery = vitest.fn()
   const { getByPlaceholderText, getByRole } = render(
     <CreateBrewery
-      select={selectContainer}
+      select={selectBrewery}
       createBreweryIf={{
           useCreate: () => ({
             create: async (brewery: CreateBreweryRequest) => ({
@@ -29,7 +29,7 @@ test('creates brewery', async () => {
   await user.type(nameInput, 'Salama Brewing')
   expect(createButton.hasAttribute('disabled')).toEqual(false)
   await act(async() => createButton.click())
-  const createCalls = selectContainer.mock.calls
+  const createCalls = selectBrewery.mock.calls
   expect(createCalls).toEqual([[{
     id,
     name: 'Salama Brewing'
