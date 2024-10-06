@@ -28,7 +28,7 @@ function StorageList (props: Props): JSX.Element {
 
   return (
     <div>
-      {props.isTitleVisible && <h4>Storage</h4>}
+      {props.isTitleVisible && <h4>Storage {`(${props.storages.length})`}</h4>}
       <LoadingIndicator isLoading={props.isLoading} />
       <div className='StorageHeading'>
           <div className='BeerBreweries'>Breweries</div>

@@ -29,10 +29,13 @@ function Storages (props: Props): JSX.Element {
   const storageItems = storages === undefined
     ? []
     : [...storages.storages]
+  const title = storages === undefined
+    ? 'Storage beers'
+    : `Storage beers (${storageItems.length})`
 
   return (
     <div>
-      <h3>Storage beers</h3>
+      <h3>{title}</h3>
       <StorageList
         getLogin={props.getLogin}
         isLoading={isLoading}
