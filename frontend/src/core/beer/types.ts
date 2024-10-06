@@ -6,7 +6,7 @@ import type {
   SelectStyleIf,
   Style
 } from '../style/types'
-import type { Pagination } from '../types'
+import type { InfiniteScroll, Pagination } from '../types'
 
 export interface CreateBeerRequest {
   name: string
@@ -61,7 +61,8 @@ export interface ListBeersIf {
     beerList: BeerList | undefined
     isLoading: boolean
     isUninitialized: boolean
-  }
+  },
+  infiniteScroll: InfiniteScroll
 }
 
 export interface EditBeerIf {

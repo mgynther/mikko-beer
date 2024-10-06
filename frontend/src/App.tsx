@@ -322,7 +322,8 @@ function App (): React.JSX.Element {
         isLoading: isFetching,
         isUninitialized
       }
-    }
+    },
+    infiniteScroll
   }
 
   const createBreweryIf: CreateBreweryIf = {

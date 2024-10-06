@@ -6,7 +6,7 @@ import type {
   SearchBeerIf
 } from '../../core/beer/types'
 import type { SearchIf } from '../../core/search/types'
-import { infiniteScroll, type NavigateIf } from '../util'
+import { type NavigateIf } from '../util'
 
 import BreweryLinks from '../brewery/BreweryLinks'
 import StyleLinks from '../style/StyleLinks'
@@ -50,7 +50,7 @@ function Beers (props: Props): JSX.Element {
         void loadMore()
       }
     }
-    return infiniteScroll(checkLoad)
+    return props.listBeersIf.infiniteScroll(checkLoad)
   }, [loadedBeers, setLoadedBeers, isLoading, hasMore, list])
 
   return (
