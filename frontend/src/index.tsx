@@ -4,7 +4,7 @@ import LinkWrapper from './components/LinkWrapper'
 import { persistStore } from 'redux-persist'
 import { PersistGate } from 'redux-persist/integration/react'
 import './index.css'
-import App from './App'
+import RtkApp from './RtkApp'
 import {onCLS, onINP, onLCP} from 'web-vitals';
 
 import { Provider } from './react-redux-wrapper'
@@ -19,7 +19,7 @@ root.render(
     <PersistGate persistor={persistor}>
       <React.StrictMode>
         <LinkWrapper>
-          <App />
+          <RtkApp />
         </LinkWrapper>
       </React.StrictMode>
     </PersistGate>
