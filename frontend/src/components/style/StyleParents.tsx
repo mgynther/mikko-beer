@@ -6,8 +6,6 @@ import type {
   Style
 } from '../../core/style/types'
 
-import LoadingIndicator from '../common/LoadingIndicator'
-
 import SearchStyle from './SearchStyle'
 
 import '../common/SelectedItem.css'
@@ -53,9 +51,6 @@ function StyleParents (props: Props): JSX.Element {
             </button>
           </div>
         ))}
-      </div>
-      <div>
-        <LoadingIndicator isLoading={false} />
       </div>
     </div>
   )
