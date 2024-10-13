@@ -4,7 +4,7 @@ import LinkWrapper from '../LinkWrapper'
 
 import BeerLink from './BeerLink'
 
-test('renders brewery links', () => {
+test('renders beer link', () => {
   const beerName = 'Siperia'
   const { getByRole } = render(
     <LinkWrapper>
