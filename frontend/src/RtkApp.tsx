@@ -19,6 +19,7 @@ import {
 import {
   useChangePasswordMutation,
   useLoginMutation,
+  useLogoutMutation,
 } from './store/login/api'
 import { selectLogin, selectPasswordChangeResult } from './store/login/reducer'
 import {
@@ -80,6 +81,8 @@ import type {
   Login,
   LoginIf,
   LoginParams,
+  LogoutIf,
+  LogoutParams,
   PasswordChangeResult
 } from './core/login/types'
 import type {
@@ -478,6 +481,17 @@ function RtkApp (): React.JSX.Element {
     }
   }
 
+  const logoutIf: LogoutIf = {
+    useLogout: () => {
+      const [logout] = useLogoutMutation()
+      return {
+        logout: async (params: LogoutParams) => {
+          await logout(params)
+        }
+      }
+    }
+  }
+
   const getLogin: GetLogin = () => {
     const login: Login = useSelector(selectLogin)
     return login
@@ -750,6 +764,7 @@ function RtkApp (): React.JSX.Element {
 
     changePasswordIf,
     loginIf,
+    logoutIf,
 
     createReviewIf,
     listReviewsIf,

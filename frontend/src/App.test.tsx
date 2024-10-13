@@ -108,6 +108,11 @@ test('renders app', () => {
         isLoading: false
       })
     },
+    logoutIf: {
+      useLogout: () => ({
+        logout: dontCall
+      })
+    },
     createReviewIf: {
       useCreate: dontCall,
       getCurrentDate: dontCall,

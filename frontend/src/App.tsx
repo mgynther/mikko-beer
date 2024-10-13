@@ -27,9 +27,6 @@ import Style from './components/style/Style'
 import Styles from './components/style/Styles'
 import Users from './components/user/Users'
 
-import {
-  useLogoutMutation
-} from './store/login/api'
 import { selectLogin } from './store/login/reducer'
 import { Theme, selectTheme, setTheme } from './store/theme/reducer'
 import type {
@@ -177,7 +174,6 @@ function App (props: Props): React.JSX.Element {
     }
   }, [theme])
   const dispatch = useAppDispatch()
-  const [logout] = useLogoutMutation()
 
   const {
     getBeerIf,
@@ -197,6 +193,7 @@ function App (props: Props): React.JSX.Element {
 
     changePasswordIf,
     loginIf,
+    logoutIf,
 
     createReviewIf,
     listReviewsIf,
@@ -231,6 +228,8 @@ function App (props: Props): React.JSX.Element {
   const login = getLogin()
   const isLoggedIn: boolean = login.authToken.length > 0
   const isAdmin = login.user?.role === Role.admin
+
+  const { logout } = logoutIf.useLogout()
 
   return (
     <div className="App">

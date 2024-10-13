@@ -42,6 +42,12 @@ export interface LoginIf {
   }
 }
 
+export interface LogoutIf {
+  useLogout: () => {
+    logout: (params: LogoutParams) => Promise<void>
+  }
+}
+
 export type GetLogin = () => Login
 export type GetPasswordChangeResult = () => PasswordChangeResult
 

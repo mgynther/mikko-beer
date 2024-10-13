@@ -17,7 +17,8 @@ import type {
 } from "../core/container/types"
 import type {
   ChangePasswordIf,
-  LoginIf
+  LoginIf,
+  LogoutIf
 } from "../core/login/types"
 import type {
   CreateReviewIf,
@@ -65,6 +66,7 @@ export interface StoreIf {
 
   changePasswordIf: ChangePasswordIf
   loginIf: LoginIf
+  logoutIf: LogoutIf
 
   createReviewIf: CreateReviewIf
   listReviewsIf: ListReviewsIf
