@@ -49,7 +49,7 @@ const joinedReview: JoinedReview = {
 }
 
 const review: Review = {
-  id: '9a3f616c-b6f3-4053-9986-64312b9547fe',
+  id: joinedReview.id,
   additionalInfo: joinedReview.additionalInfo,
   beer: beer.id,
   container: joinedReview.container.id,
