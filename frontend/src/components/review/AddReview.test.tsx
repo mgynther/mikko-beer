@@ -143,14 +143,16 @@ const unusedStorageIf = {
 }
 
 async function addReview(getByPlaceholderText: (
-  text: string) => Element,
+  text: string) => HTMLElement,
   getByRole: (text: string, props?: Record<string, unknown>) => HTMLElement,
   user: UserEvent
 ) {
   const smellInput = getByPlaceholderText('Smell')
-  await act(async () => await user.type(smellInput, smellText))
+  smellInput.focus()
+  userEvent.paste(smellText)
   const tasteInput = getByPlaceholderText('Taste')
-  await act(async () => await user.type(tasteInput, tasteText))
+  tasteInput.focus()
+  await user.paste(tasteText)
   const ratingInput = getByRole('slider')
   ratingInput.click()
   const addButton = getByRole('button', { name: 'Add' })
@@ -199,7 +201,8 @@ test('adds review', async () => {
   act(() => selects[0].click())
   const beerSearch = getByPlaceholderText('Search beer')
   expect(beerSearch).toBeDefined()
-  await user.type(beerSearch, 'Seve')
+  beerSearch.focus()
+  await user.paste('Seve')
   const beerButton = await findByRole(
     'button',
     { name: 'Severin (Koskipanimo)' }
