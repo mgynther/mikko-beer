@@ -18,7 +18,6 @@ function StepFilterSlider (props: Props): JSX.Element {
       <input
         className='StepFilterSlider'
         type='range'
-        id='rating'
         min={props.min}
         max={props.max}
         step={props.step}
