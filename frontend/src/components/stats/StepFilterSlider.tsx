@@ -1,3 +1,5 @@
+import Slider from '../common/Slider'
+
 import './StepFilterSlider.css'
 
 interface Props {
@@ -15,14 +17,13 @@ function StepFilterSlider (props: Props): JSX.Element {
       <div className='StepFilterSliderLabel'>
         {props.title}
       </div>
-      <input
+      <Slider
         className='StepFilterSlider'
-        type='range'
         min={props.min}
         max={props.max}
         step={props.step}
         value={props.value}
-        onChange={e => { props.setValue(parseFloat(e.target.value)) }}
+        setValue={props.setValue}
       />
     </div>
   )

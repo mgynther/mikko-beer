@@ -14,6 +14,8 @@ import SelectContainer from '../container/SelectContainer'
 
 import { pad } from '../util'
 
+import Slider from '../common/Slider'
+
 import '../common/FlexRow.css'
 
 import './ReviewEditor.css'
@@ -233,14 +235,13 @@ function ReviewEditor (props: Props): JSX.Element {
         <h5>Rating</h5>
         <div className='ReviewContent'>
           <div className='RatingNumber'>{ `${rating}` }</div>
-          <input
+          <Slider
             className='RatingSlider'
-            type='range'
-            id='rating'
             min={4}
             max={10}
+            step={1}
             value={rating}
-            onChange={e => { setRating(parseInt(e.target.value)) }}
+            setValue={(value: number) => setRating(value) }
           />
         </div>
       </div>
