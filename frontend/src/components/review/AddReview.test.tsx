@@ -1,4 +1,4 @@
-import { act, render } from "@testing-library/react"
+import { act, render, fireEvent } from "@testing-library/react"
 import userEvent, { type UserEvent } from "@testing-library/user-event"
 import { expect, test, vitest } from "vitest"
 import AddReview, { type Props as AddReviewProps } from "./AddReview"
@@ -142,6 +142,8 @@ const unusedStorageIf = {
   useGet: dontCall
 }
 
+const reviewRating = 8
+
 async function addReview(getByPlaceholderText: (
   text: string) => HTMLElement,
   getByRole: (text: string, props?: Record<string, unknown>) => HTMLElement,
@@ -155,6 +157,7 @@ async function addReview(getByPlaceholderText: (
   await user.paste(tasteText)
   const ratingInput = getByRole('slider')
   ratingInput.click()
+  fireEvent.change(ratingInput, {target: {value: `${reviewRating}`}})
   const addButton = getByRole('button', { name: 'Add' })
   expect(addButton.hasAttribute('disabled')).toEqual(false)
   addButton.click()
@@ -221,7 +224,7 @@ test('adds review', async () => {
       beer: beerId,
       container: containerId,
       location: '',
-      rating: 7,
+      rating: reviewRating,
       smell: smellText,
       taste: tasteText,
       time: dateStr
@@ -322,7 +325,7 @@ test('adds review from storage', async () => {
       beer: beerId,
       container: containerId,
       location: '',
-      rating: 7,
+      rating: reviewRating,
       smell: smellText,
       taste: tasteText,
       time: dateStr
