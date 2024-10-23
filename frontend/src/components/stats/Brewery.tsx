@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { formatTitle, invertDirection } from '../list-helpers'
+import { invertDirection } from '../list-helpers'
 import type {
   GetBreweryStatsIf,
   BreweryStatsSortingOrder,
@@ -12,11 +12,7 @@ import type {
 } from '../../core/types'
 import { infiniteScroll } from '../util'
 
-import BreweryLinks from '../brewery/BreweryLinks'
-import LoadingIndicator from '../common/LoadingIndicator'
-import TabButton from '../common/TabButton'
-
-import Filters from './Filters'
+import BreweryStatsTable from './BreweryStatsTable'
 
 import './Stats.css'
 
@@ -212,89 +208,42 @@ function Brewery (props: Props): JSX.Element {
     return sortingOrder === property
   }
 
-  function createClickHandler (property: BreweryStatsSortingOrder): () => void {
-    return () => {
-      setLoadedBreweries(undefined)
-      if (isSelected(property)) {
-        setSortingDirection(invertDirection(sortingDirection))
-        return
-      }
-      setSortingOrder(property)
-      setSortingDirection(property === 'brewery_name' ? 'asc' : 'desc')
+  function changeSortingOrder (property: BreweryStatsSortingOrder) {
+    setLoadedBreweries(undefined)
+    if (isSelected(property)) {
+      setSortingDirection(invertDirection(sortingDirection))
+      return
     }
+    setSortingOrder(property)
+    setSortingDirection(property === 'brewery_name' ? 'asc' : 'desc')
   }
 
   return (
-    <div>
-      <LoadingIndicator isLoading={isLoading} />
-      <table className='StatsTable SortableStats'>
-        <thead>
-          <tr>
-            <th className='StatsNameColumn'>
-              <TabButton
-                isCompact={false}
-                isSelected={isSelected('brewery_name')}
-                title={formatTitle(
-                  'Brewery',
-                  isSelected('brewery_name'),
-                  sortingDirection
-                )}
-                onClick={createClickHandler('brewery_name')} />
-            </th>
-            <th className='StatsNumColumn'>
-              <TabButton
-                isCompact={false}
-                isSelected={isSelected('count')}
-                title={formatTitle(
-                  'Reviews',
-                  isSelected('count'),
-                  sortingDirection
-                )}
-                onClick={createClickHandler('count')} />
-            </th>
-            <th className='StatsNumColumn'>
-              <TabButton
-                isCompact={false}
-                isSelected={isSelected('average')}
-                title={formatTitle(
-                  'Average',
-                  isSelected('average'),
-                  sortingDirection
-                )}
-                onClick={createClickHandler('average')} />
-            </th>
-          </tr>
-          <tr>
-            <th colSpan={3}>
-              <Filters
-                minReviewCount={minReviewCount}
-                setMinReviewCount={setMinReviewCount}
-                maxReviewCount={maxReviewCount}
-                setMaxReviewCount={setMaxReviewCount}
-                minReviewAverage={minReviewAverage}
-                setMinReviewAverage={setMinReviewAverage}
-                maxReviewAverage={maxReviewAverage}
-                setMaxReviewAverage={setMaxReviewAverage}
-              />
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {loadedBreweries?.map(brewery => (
-            <tr key={brewery.breweryId}>
-              <td className='StatsNameColumn'>
-                <BreweryLinks breweries={[{
-                  id: brewery.breweryId,
-                  name: brewery.breweryName
-                }]} />
-              </td>
-              <td className='StatsNumColumn'>{brewery.reviewCount}</td>
-              <td className='StatsNumColumn'>{brewery.reviewAverage}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <BreweryStatsTable
+      breweries={loadedBreweries ?? []}
+      filters={{
+        minReviewCount: {
+          value: minReviewCount,
+          setValue: setMinReviewCount
+        },
+        maxReviewCount: {
+          value: maxReviewCount,
+          setValue: setMaxReviewCount
+        },
+        minReviewAverage: {
+          value: minReviewAverage,
+          setValue: setMinReviewAverage
+        },
+        maxReviewAverage: {
+          value: maxReviewAverage,
+          setValue: setMaxReviewAverage
+        }
+      }}
+      isLoading={isLoading}
+      sortingDirection={sortingDirection}
+      sortingOrder={sortingOrder}
+      setSortingOrder={changeSortingOrder}
+    />
   )
 }
 
