@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+import type { StatsFilters } from '../../core/stats/types'
+
 import MaximumReviewCount from './MaximumReviewCount'
 import MinimumReviewCount from './MinimumReviewCount'
 import StepFilterSlider from './StepFilterSlider'
@@ -9,14 +11,7 @@ import TabButton from '../common/TabButton'
 import './Filters.css'
 
 interface Props {
-  minReviewCount: number
-  setMinReviewCount: (minimumReviewCount: number) => void
-  maxReviewCount: number
-  setMaxReviewCount: (maximumReviewCount: number) => void
-  minReviewAverage: number
-  setMinReviewAverage: (minimumReviewAverage: number) => void
-  maxReviewAverage: number
-  setMaxReviewAverage: (maximumReviewAverage: number) => void
+  filters: StatsFilters
 }
 
 function Filters (props: Props): JSX.Element {
@@ -24,6 +19,12 @@ function Filters (props: Props): JSX.Element {
   function getOpenSymbol (isOpen: boolean): string {
     return isOpen ? '▲' : '▼'
   }
+  const {
+    minReviewCount,
+    maxReviewCount,
+    minReviewAverage,
+    maxReviewAverage
+  } = props.filters
   return (
     <div>
       <div className='Toggle'>
@@ -37,28 +38,28 @@ function Filters (props: Props): JSX.Element {
       {isOpen && (
         <div className='FilterControls'>
           <MinimumReviewCount
-            minReviewCount={props.minReviewCount}
-            setMinReviewCount={props.setMinReviewCount}
+            minReviewCount={minReviewCount.value}
+            setMinReviewCount={minReviewCount.setValue}
           />
           <MaximumReviewCount
-            maxReviewCount={props.maxReviewCount}
-            setMaxReviewCount={props.setMaxReviewCount}
+            maxReviewCount={maxReviewCount.value}
+            setMaxReviewCount={maxReviewCount.setValue}
           />
           <StepFilterSlider
-            title={`Minimum review average: ${props.minReviewAverage}`}
+            title={`Minimum review average: ${minReviewAverage.value}`}
             min={4}
             max={10}
             step={0.1}
-            value={props.minReviewAverage}
-            setValue={props.setMinReviewAverage}
+            value={minReviewAverage.value}
+            setValue={minReviewAverage.setValue}
           />
           <StepFilterSlider
-            title={`Maximum review average: ${props.maxReviewAverage}`}
+            title={`Maximum review average: ${maxReviewAverage.value}`}
             min={4}
             max={10}
             step={0.1}
-            value={props.maxReviewAverage}
-            setValue={props.setMaxReviewAverage}
+            value={maxReviewAverage.value}
+            setValue={maxReviewAverage.setValue}
           />
         </div>
       )}

@@ -104,14 +104,24 @@ function Style (props: Props): JSX.Element {
           <tr>
             <th colSpan={3}>
               <Filters
-                minReviewCount={minReviewCount}
-                setMinReviewCount={setMinReviewCount}
-                maxReviewCount={maxReviewCount}
-                setMaxReviewCount={setMaxReviewCount}
-                minReviewAverage={minReviewAverage}
-                setMinReviewAverage={setMinReviewAverage}
-                maxReviewAverage={maxReviewAverage}
-                setMaxReviewAverage={setMaxReviewAverage}
+                filters={{
+                  minReviewCount: {
+                    value: minReviewCount,
+                    setValue: setMinReviewCount
+                  },
+                  maxReviewCount: {
+                    value: maxReviewCount,
+                    setValue: setMaxReviewCount
+                  },
+                  minReviewAverage: {
+                    value: minReviewAverage,
+                    setValue: setMinReviewAverage
+                  },
+                  maxReviewAverage: {
+                    value: maxReviewAverage,
+                    setValue: setMaxReviewAverage
+                  }
+                }}
               />
             </th>
           </tr>

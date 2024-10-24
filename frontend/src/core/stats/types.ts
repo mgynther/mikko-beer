@@ -88,6 +88,18 @@ export interface StyleStatsSorting {
   direction: ListDirection
 }
 
+export interface StatsFilter {
+  value: number
+  setValue: (value: number) => void
+}
+
+export interface StatsFilters {
+  minReviewCount: StatsFilter
+  maxReviewCount: StatsFilter
+  minReviewAverage: StatsFilter
+  maxReviewAverage: StatsFilter
+}
+
 export interface GetAnnualStatsIf {
   useStats: (params: BreweryStyleParams) => {
     stats: AnnualStats | undefined

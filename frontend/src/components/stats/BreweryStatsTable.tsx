@@ -2,7 +2,8 @@ import { formatTitle } from '../list-helpers'
 
 import type {
   BreweryStatsSortingOrder,
-  OneBreweryStats
+  OneBreweryStats,
+  StatsFilters
 } from '../../core/stats/types'
 
 import type {
@@ -15,21 +16,9 @@ import TabButton from '../common/TabButton'
 
 import Filters from './Filters'
 
-interface Filter {
-  value: number
-  setValue: (value: number) => void
-}
-
-interface FiltersIf {
-  minReviewCount: Filter
-  maxReviewCount: Filter
-  minReviewAverage: Filter
-  maxReviewAverage: Filter
-}
-
 interface Props {
   breweries: OneBreweryStats[]
-  filters: FiltersIf
+  filters: StatsFilters
   isLoading: boolean
   sortingDirection: ListDirection
   sortingOrder: BreweryStatsSortingOrder
@@ -86,14 +75,7 @@ function BreweryStatsTable (props: Props): JSX.Element {
           <tr>
             <th colSpan={3}>
               <Filters
-                minReviewCount={filters.minReviewCount.value}
-                setMinReviewCount={filters.minReviewCount.setValue}
-                maxReviewCount={filters.maxReviewCount.value}
-                setMaxReviewCount={filters.maxReviewCount.setValue}
-                minReviewAverage={filters.minReviewAverage.value}
-                setMinReviewAverage={filters.minReviewAverage.setValue}
-                maxReviewAverage={filters.maxReviewAverage.value}
-                setMaxReviewAverage={filters.maxReviewAverage.setValue}
+                filters={filters}
               />
             </th>
           </tr>
