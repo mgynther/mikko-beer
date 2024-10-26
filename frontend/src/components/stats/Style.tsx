@@ -12,7 +12,7 @@ import StyleLink from '../style/StyleLink'
 
 import Filters from './Filters'
 
-import './Stats.css'
+import './StatsTable.css'
 
 interface Props {
   getStyleStatsIf: GetStyleStatsIf

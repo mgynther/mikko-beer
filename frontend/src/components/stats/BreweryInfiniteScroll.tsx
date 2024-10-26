@@ -11,8 +11,6 @@ import { infiniteScroll } from '../util'
 
 import BreweryStatsTable from './BreweryStatsTable'
 
-import './Stats.css'
-
 const pageSize = 30
 
 interface Props {

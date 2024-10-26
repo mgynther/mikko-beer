@@ -10,8 +10,6 @@ import type { ListDirection } from '../../core/types'
 
 import BreweryStatsTable from './BreweryStatsTable'
 
-import './Stats.css'
-
 interface Props {
   getBreweryStatsIf: GetBreweryStatsIf
   filters: StatsFilters

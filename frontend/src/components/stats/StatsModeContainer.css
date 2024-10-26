@@ -1,0 +1,8 @@
+.StatsModeContainer {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.StatsModeContainer button {
+  margin-bottom: 5px;
+}

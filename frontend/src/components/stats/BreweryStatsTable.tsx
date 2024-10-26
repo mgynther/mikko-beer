@@ -16,6 +16,8 @@ import TabButton from '../common/TabButton'
 
 import Filters from './Filters'
 
+import './StatsTable.css'
+
 interface Props {
   breweries: OneBreweryStats[]
   filters: StatsFilters

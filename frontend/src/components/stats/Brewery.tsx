@@ -12,8 +12,6 @@ import { invertDirection } from '../list-helpers'
 import BreweryAllAtOnce from './BreweryAllAtOnce'
 import BreweryInfiniteScroll from './BreweryInfiniteScroll'
 
-import './Stats.css'
-
 interface Props {
   getBreweryStatsIf: GetBreweryStatsIf
   breweryId: string | undefined

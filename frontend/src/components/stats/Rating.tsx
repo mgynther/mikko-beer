@@ -2,7 +2,7 @@ import type { GetRatingStatsIf } from '../../core/stats/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
-import './Stats.css'
+import './StatsTable.css'
 
 interface Props {
   getRatingStatsIf: GetRatingStatsIf
