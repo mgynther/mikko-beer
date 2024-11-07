@@ -130,8 +130,8 @@ orderTests.forEach(data => {
         />
       </LinkWrapper>
     )
-    const breweryNameButton = getByRole('button', { name: data.buttonText })
-    breweryNameButton.click()
+    const orderButton = getByRole('button', { name: data.buttonText })
+    orderButton.click()
     expect(setSortingOrder.mock.calls).toEqual([[data.expectedOrder]])
   })
 })
