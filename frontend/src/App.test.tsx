@@ -215,7 +215,8 @@ test('renders app', () => {
         useStats: dontCall
       },
       brewery: {
-        useStats: dontCall
+        useStats: dontCall,
+        infiniteScroll: dontCall
       },
       overall: {
         useStats: dontCall

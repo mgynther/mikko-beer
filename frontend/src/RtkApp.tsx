@@ -699,7 +699,8 @@ function RtkApp (): React.JSX.Element {
           stats: data,
           isLoading: isFetching
         }
-      }
+      },
+      infiniteScroll
     },
     overall: {
       useStats: (params: BreweryStyleParams) => {

@@ -78,7 +78,8 @@ const statsIf: StatsIf = {
       query: async () => undefined,
       stats: undefined,
       isLoading: false
-    })
+    }),
+    infiniteScroll: dontCall
   },
   overall: noStats,
   rating: noStats,

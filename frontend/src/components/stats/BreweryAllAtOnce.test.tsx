@@ -54,7 +54,8 @@ const unusedStats = {
     query: async () => ({ brewery: []}),
       stats: { brewery: [] },
     isLoading: false
-  })
+  }),
+  infiniteScroll: dontCall
 }
 
 test('queries brewery stats', async () => {
@@ -78,7 +79,8 @@ test('queries brewery stats', async () => {
               brewery: []
             },
             isLoading: false
-          })
+          }),
+          infiniteScroll: dontCall
         }}
         breweryId={undefined}
         styleId={styleId}

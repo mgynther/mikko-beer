@@ -7,7 +7,6 @@ import type {
   StatsFilters
 } from '../../core/stats/types'
 import type { ListDirection } from '../../core/types'
-import { infiniteScroll } from '../util'
 
 import BreweryStatsTable from './BreweryStatsTable'
 
@@ -69,7 +68,7 @@ function BreweryInfiniteScroll (props: Props): JSX.Element {
         void loadMore()
       }
     }
-    return infiniteScroll(checkLoad)
+    return props.getBreweryStatsIf.infiniteScroll(checkLoad)
   }, [
     loadedBreweries,
     setLoadedBreweries,

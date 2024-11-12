@@ -1,4 +1,5 @@
 import type {
+  InfiniteScroll,
   ListDirection,
   Pagination
 } from '../types'
@@ -114,7 +115,8 @@ export interface GetBreweryStatsIf {
     ) => Promise<BreweryStats | undefined>
     stats: BreweryStats | undefined
     isLoading: boolean
-  }
+  },
+  infiniteScroll: InfiniteScroll
 }
 
 export interface GetOverallStatsIf {
