@@ -47,6 +47,7 @@ import {
   paramsIf,
 } from './components/util'
 import type { StoreIf } from './store/storeIf'
+import ContentEnd from './components/ContentEnd'
 
 interface Props {
   storeIf: StoreIf
@@ -400,7 +401,7 @@ function App (props: Props): React.JSX.Element {
                 : <LoginComponent loginIf={loginIf}/>} />
           </Route>
         </Routes>
-        <div id='content-end'>&nbsp;</div>
+        <ContentEnd/>
       </div>
     </div>
   )

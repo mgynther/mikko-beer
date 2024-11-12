@@ -5,6 +5,7 @@ import {
   useParams as useRouterParams
 } from 'react-router-dom'
 import type { InfiniteScroll, UseDebounce } from '../core/types'
+import { className as contentEndClassName } from './ContentEnd'
 
 export function pad (number: number): string {
   if (number < 10) return `0${number}`
@@ -26,7 +27,7 @@ export const infiniteScroll: InfiniteScroll = (loadMore: () => void) => {
       loadMore()
     }
   })
-  const element = document.getElementById('content-end')
+  const element = document.getElementById(contentEndClassName)
   if (element !== null) {
     observer.observe(element)
   }
