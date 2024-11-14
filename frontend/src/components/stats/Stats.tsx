@@ -28,32 +28,32 @@ interface ModeButton {
   title: string
 }
 
+const buttons: ModeButton[] = [
+  {
+    mode: Mode.Overall,
+    title: 'Overall'
+  },
+  {
+    mode: Mode.Annual,
+    title: 'Annual'
+  },
+  {
+    mode: Mode.Brewery,
+    title: 'Brewery'
+  },
+  {
+    mode: Mode.Rating,
+    title: 'Rating'
+  },
+  {
+    mode: Mode.Style,
+    title: 'Style'
+  }
+]
+
 function Stats (props: Props): JSX.Element {
   const showFull = props.breweryId === undefined && props.styleId === undefined
   const [mode, setMode] = useState(Mode.Overall)
-
-  const buttons = [
-    {
-      mode: Mode.Overall,
-      title: 'Overall'
-    },
-    {
-      mode: Mode.Annual,
-      title: 'Annual'
-    },
-    {
-      mode: Mode.Brewery,
-      title: 'Brewery'
-    },
-    {
-      mode: Mode.Rating,
-      title: 'Rating'
-    },
-    {
-      mode: Mode.Style,
-      title: 'Style'
-    }
-  ].filter(button => button) as ModeButton[]
 
   return (
     <div>
