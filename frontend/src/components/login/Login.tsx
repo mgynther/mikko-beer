@@ -12,8 +12,8 @@ function Login (props: Props): JSX.Element {
   async function doLogin (event: any): Promise<void> {
     event.preventDefault()
     await login({
-      username: event.target.username.value,
-      password: event.target.password.value
+      username: event.target.elements.username.value,
+      password: event.target.elements.password.value
     })
     event.target.reset()
   }
