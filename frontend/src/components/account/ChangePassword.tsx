@@ -31,8 +31,8 @@ function ChangePassword (props: Props): JSX.Element {
     await changePassword({
       userId: login.user?.id ?? '',
       body: {
-        oldPassword: event.target.oldPassword.value as string,
-        newPassword: event.target.newPassword.value as string
+        oldPassword: event.target.elements.oldPassword.value as string,
+        newPassword: event.target.elements.newPassword.value as string
       }
     })
     event.target.reset()
