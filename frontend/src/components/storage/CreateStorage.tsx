@@ -106,7 +106,7 @@ function CreateStorage (props: Props): JSX.Element {
         </div>
         <div className='CreateStorageContent'>
           <div>
-            <h5>Best before</h5>
+            <label className='bestBefore' htmlFor='time'>Best before</label>
             <input
               type='date'
               id='time'
