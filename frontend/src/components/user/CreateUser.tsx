@@ -20,11 +20,11 @@ function CreateUser (props: Props): JSX.Element {
     event.preventDefault()
     await create({
       passwordSignInMethod: {
-        username: event.target.username.value as string,
-        password: event.target.password.value as string
+        username: event.target.elements.username.value as string,
+        password: event.target.elements.password.value as string
       },
       user: {
-        role: event.target.role.value as string
+        role: event.target.elements.role.value as string
       }
     })
     event.target.reset()
