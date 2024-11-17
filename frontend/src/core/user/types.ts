@@ -41,12 +41,14 @@ export interface ListUsersIf {
   useList: () => ListUsersData
 }
 
+export interface DeleteUserIf {
+  useDelete: () => {
+    delete: (userId: string) => Promise<void>
+  }
+}
+
 export interface UserIf {
   create: CreateUserIf
   list: ListUsersIf
-  delete: {
-    useDelete: () => {
-      delete: (userId: string) => Promise<void>
-    }
-  }
+  delete: DeleteUserIf
 }
