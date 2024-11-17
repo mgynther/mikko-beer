@@ -12,6 +12,7 @@ function Users (props: Props): JSX.Element {
     <div>
       <h3>Users</h3>
       <UserList
+        getConfirm={() => confirm}
         deleteUserIf={props.userIf.delete}
         listUsersIf={props.userIf.list}
       />
