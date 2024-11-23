@@ -70,7 +70,7 @@ const dontCreateBeerIf = {
   }
 }
 
-const containerId = '50d565d4-49b5-4900-a747-2512e83afe76'
+const containerId = 'b1afbf73-74be-46c7-967f-238975bba841'
 const containerListResult = {
   id: containerId,
   type: 'bottle',
