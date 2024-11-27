@@ -10,8 +10,6 @@ import type {
 import type { SearchIf } from '../../core/search/types'
 import type { ListDirection } from '../../core/types'
 
-import { infiniteScroll } from '../util'
-
 import ReviewList from './ReviewList'
 
 import './Review.css'
@@ -72,7 +70,7 @@ function Reviews (props: Props): JSX.Element {
         void loadMore()
       }
     }
-    return infiniteScroll(checkLoad)
+    return props.listReviewsIf.infiniteScroll(checkLoad)
   }, [
     loadedReviews,
     setLoadedReviews,

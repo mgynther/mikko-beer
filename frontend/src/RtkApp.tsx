@@ -607,7 +607,8 @@ function RtkApp (): React.JSX.Element {
         isLoading: isFetching,
         isUninitialized
       }
-    }
+    },
+    infiniteScroll
   }
 
   const listReviewsByBeerIf: ListReviewsByIf = {

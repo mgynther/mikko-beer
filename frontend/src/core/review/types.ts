@@ -6,7 +6,7 @@ import type {
 
 import type { Container } from '../container/types'
 import type { GetLogin } from "../login/types"
-import type { ListDirection, Pagination } from '../types'
+import type { InfiniteScroll, ListDirection, Pagination } from '../types'
 
 export interface FilteredListReviewParams {
   id: string
@@ -101,7 +101,8 @@ export interface ListReviewsIf {
     reviewList: JoinedReviewList | undefined
     isLoading: boolean
     isUninitialized: boolean
-  }
+  },
+  infiniteScroll: InfiniteScroll
 }
 
 export interface ListReviewsByIf {

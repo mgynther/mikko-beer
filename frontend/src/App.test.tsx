@@ -152,7 +152,8 @@ test('renders app', () => {
       }
     },
     listReviewsIf: {
-      useList: dontCall
+      useList: dontCall,
+      infiniteScroll: dontCall
     },
     listReviewsByBeerIf: {
         useList: dontCall
