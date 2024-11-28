@@ -1,10 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
-
-export enum Theme {
-  LIGHT = 'LIGHT',
-  DARK = 'DARK'
-}
+import { Theme } from '../../core/types'
 
 export interface ThemeState {
   theme: Theme

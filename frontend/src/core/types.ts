@@ -3,6 +3,11 @@ export interface Pagination {
   skip: number
 }
 
+export enum Theme {
+  LIGHT = 'LIGHT',
+  DARK = 'DARK'
+}
+
 export type InfiniteScroll = (loadMore: () => void) => () => void
 
 export type ListDirection = 'asc' | 'desc'

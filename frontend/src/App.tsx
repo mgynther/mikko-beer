@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Routes, Route, Outlet } from 'react-router-dom'
 
 import { useSelector } from './react-redux-wrapper'
@@ -10,7 +10,6 @@ import { useAppDispatch } from './store/hooks'
 import './App.css'
 
 import Account from './components/account/Account'
-import Link from './components/common/Link'
 import AddReview from './components/review/AddReview'
 import Beer from './components/beer/Beer'
 import Beers from './components/beer/Beers'
@@ -19,8 +18,6 @@ import Brewery from './components/brewery/Brewery'
 import Containers from './components/container/Containers'
 import LoginComponent from './components/login/Login'
 import Reviews from './components/review/Reviews'
-import SearchBeerWithNavi from './components/beer/SearchBeerWithNavi'
-import SearchBreweryWithNavi from './components/brewery/SearchBreweryWithNavi'
 import Stats from './components/stats/Stats'
 import Storages from './components/storage/Storages'
 import Style from './components/style/Style'
@@ -28,7 +25,7 @@ import Styles from './components/style/Styles'
 import Users from './components/user/Users'
 
 import { selectLogin } from './store/login/reducer'
-import { Theme, selectTheme, setTheme } from './store/theme/reducer'
+import { selectTheme, setTheme } from './store/theme/reducer'
 import type {
   SearchBreweryIf,
 } from './core/brewery/types'
@@ -48,6 +45,8 @@ import {
 } from './components/util'
 import type { StoreIf } from './store/storeIf'
 import ContentEnd from './components/ContentEnd'
+import Nav from './Nav'
+import { Theme } from './core/types'
 
 interface Props {
   storeIf: StoreIf
@@ -66,95 +65,21 @@ interface LayoutProps {
 }
 
 function Layout (props: LayoutProps): React.JSX.Element {
-  const [isMoreOpen, setIsMoreOpen] = useState(false)
-  function toggleMore (): void {
-    setIsMoreOpen(!isMoreOpen)
-  }
   return (
     <div>
       {props.isLoggedIn && (
         <React.Fragment>
           <header>
-            <nav>
-              <ul>
-                {props.isAdmin && (
-                  <li>
-                    <Link to="/addreview" text="Add review" />
-                  </li>
-                )}
-                <li>
-                  <Link to="/beers" text="Beers" />
-                </li>
-                <li>
-                  <Link to="/breweries" text="Breweries" />
-                </li>
-                <li>
-                  <Link to="/reviews" text="Reviews" />
-                </li>
-                <li>
-                  <Link to="/stats" text="Statistics" />
-                </li>
-                <li>
-                  <Link to="/storage" text="Storage" />
-                </li>
-                <li>
-                  <button onClick={toggleMore}>
-                    {isMoreOpen ? 'Less' : 'More'}
-                  </button>
-                </li>
-              </ul>
-
-              {isMoreOpen && (
-                <div>
-                  <div className='Search'>
-                    <SearchBeerWithNavi
-                      navigateIf={props.navigateIf}
-                      searchBeerIf={props.searchBeerIf}
-                      searchIf={props.searchIf}
-                    />
-                  </div>
-                  <div className='Search'>
-                    <SearchBreweryWithNavi
-                      navigateIf={props.navigateIf}
-                      searchBreweryIf={props.searchBreweryIf}
-                      searchIf={props.searchIf}
-                    />
-                  </div>
-
-                  <ul>
-                    <li>
-                      <Link to="/styles" text="Styles" />
-                    </li>
-                    <li>
-                      <Link to="/containers" text="Containers" />
-                    </li>
-                    {props.isAdmin && (
-                      <li>
-                        <Link to="/users" text="Users" />
-                      </li>
-                    )}
-                    <li>
-                      <Link to="/account" text="Account" />
-                    </li>
-                    <li>
-                      <label>
-                        <input
-                          type='checkbox'
-                          checked={props.theme === Theme.DARK}
-                          onChange={(e) => {
-                            props.setTheme(
-                              e.target.checked ? Theme.DARK : Theme.LIGHT)
-                          }} />
-                        Dark
-                        </label>
-                    </li>
-                    <li>
-                      <button onClick={props.logout}>Logout</button>
-                    </li>
-                  </ul>
-                </div>
-              )}
-            </nav>
+            <Nav
+              isAdmin={props.isAdmin}
+              logout={props.logout}
+              navigateIf={props.navigateIf}
+              searchBeerIf={props.searchBeerIf}
+              searchBreweryIf={props.searchBreweryIf}
+              searchIf={props.searchIf}
+              setTheme={props.setTheme}
+              theme={props.theme}
+            />
           </header>
           <hr />
         </React.Fragment>
