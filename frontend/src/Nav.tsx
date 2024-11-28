@@ -100,7 +100,7 @@ function Nav (props: Props): React.JSX.Element {
                 </label>
             </li>
             <li>
-              <button onClick={props.logout}>Logout</button>
+              <button onClick={() => { props.logout(); }}>Logout</button>
             </li>
           </ul>
         </div>
