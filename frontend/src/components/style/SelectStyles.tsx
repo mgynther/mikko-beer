@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
 import type { SearchIf } from '../../core/search/types'
@@ -36,7 +36,7 @@ interface SelectionItemProps {
 
 function SelectionItem (props: SelectionItemProps): JSX.Element {
   return (
-    <Fragment>
+    <>
       {props.style === undefined && (
         <SelectStyle
           searchIf={props.searchIf}
@@ -51,7 +51,7 @@ function SelectionItem (props: SelectionItemProps): JSX.Element {
           <button onClick={props.clear}>Change</button>
         </div>
       )}
-    </Fragment>
+    </>
   )
 }
 

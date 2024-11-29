@@ -147,7 +147,7 @@ function App (props: Props): React.JSX.Element {
               : <LoginComponent loginIf={loginIf} />}
             />
             {isLoggedIn && (
-              <React.Fragment>
+              <>
                 {isAdmin && <Route path="addreview" element={
                   <AddReview
                     createReviewIf={createReviewIf}
@@ -266,7 +266,7 @@ function App (props: Props): React.JSX.Element {
                     createStorageIf={createStorageIf}
                   />
                 } />
-              </React.Fragment>
+              </>
             )}
             <Route
               path="*"

@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
 import type {
@@ -37,7 +37,7 @@ interface SelectionItemProps {
 
 function SelectionItem (props: SelectionItemProps): JSX.Element {
   return (
-    <Fragment>
+    <>
       {props.brewery === undefined && (
         <SelectBrewery
           searchIf={props.searchIf}
@@ -53,7 +53,7 @@ function SelectionItem (props: SelectionItemProps): JSX.Element {
           <button onClick={props.clear}>Change</button>
         </div>
       )}
-    </Fragment>
+    </>
   )
 }
 
