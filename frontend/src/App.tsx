@@ -24,13 +24,8 @@ import Style from './components/style/Style'
 import Styles from './components/style/Styles'
 import Users from './components/user/Users'
 
-import { selectLogin } from './store/login/reducer'
 import { selectTheme, setTheme } from './store/theme/reducer'
 
-import type {
-  GetLogin,
-  Login,
-} from './core/login/types'
 import { navigateIf, paramsIf } from './components/util'
 import type { StoreIf } from './store/storeIf'
 import ContentEnd from './components/ContentEnd'
@@ -54,6 +49,8 @@ function App (props: Props): React.JSX.Element {
   const dispatch = useAppDispatch()
 
   const {
+    getLogin,
+
     getBeerIf,
     listBeersIf,
     searchBeerIf,
@@ -99,10 +96,6 @@ function App (props: Props): React.JSX.Element {
 
   } = props.storeIf
 
-  const getLogin: GetLogin = () => {
-    const login: Login = useSelector(selectLogin)
-    return login
-  }
   const login = getLogin()
   const isLoggedIn: boolean = login.authToken.length > 0
   const isAdmin = login.user?.role === Role.admin

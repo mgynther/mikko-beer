@@ -17,6 +17,7 @@ import type {
 } from "../core/container/types"
 import type {
   ChangePasswordIf,
+  GetLogin,
   LoginIf,
   LogoutIf
 } from "../core/login/types"
@@ -49,6 +50,8 @@ import type {
 } from "../core/user/types"
 
 export interface StoreIf {
+  getLogin: GetLogin
+
   getBeerIf: GetBeerIf
   listBeersIf: ListBeersIf
   searchBeerIf: SearchBeerIf

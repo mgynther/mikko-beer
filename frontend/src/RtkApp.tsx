@@ -749,6 +749,8 @@ function RtkApp (): React.JSX.Element {
   }
 
   const storeIf: StoreIf = {
+    getLogin,
+
     getBeerIf,
     listBeersIf,
     searchBeerIf,
