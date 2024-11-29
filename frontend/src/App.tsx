@@ -26,67 +26,19 @@ import Users from './components/user/Users'
 
 import { selectLogin } from './store/login/reducer'
 import { selectTheme, setTheme } from './store/theme/reducer'
-import type {
-  SearchBreweryIf,
-} from './core/brewery/types'
 
 import type {
   GetLogin,
   Login,
 } from './core/login/types'
-import type {
-  SearchBeerIf,
-} from './core/beer/types'
-import type { SearchIf } from './core/search/types'
-import {
-  type NavigateIf,
-  navigateIf,
-  paramsIf,
-} from './components/util'
+import { navigateIf, paramsIf } from './components/util'
 import type { StoreIf } from './store/storeIf'
 import ContentEnd from './components/ContentEnd'
-import Nav from './Nav'
 import { Theme } from './core/types'
+import Layout from './Layout'
 
 interface Props {
   storeIf: StoreIf
-}
-
-interface LayoutProps {
-  navigateIf: NavigateIf
-  searchBeerIf: SearchBeerIf
-  searchBreweryIf: SearchBreweryIf
-  searchIf: SearchIf
-  isAdmin: boolean
-  isLoggedIn: boolean
-  logout: () => void
-  theme: Theme
-  setTheme: (theme: Theme) => void
-}
-
-function Layout (props: LayoutProps): React.JSX.Element {
-  return (
-    <div>
-      {props.isLoggedIn && (
-        <React.Fragment>
-          <header>
-            <Nav
-              isAdmin={props.isAdmin}
-              logout={props.logout}
-              navigateIf={props.navigateIf}
-              searchBeerIf={props.searchBeerIf}
-              searchBreweryIf={props.searchBreweryIf}
-              searchIf={props.searchIf}
-              setTheme={props.setTheme}
-              theme={props.theme}
-            />
-          </header>
-          <hr />
-        </React.Fragment>
-      )}
-      <Outlet />
-    </div>
-  )
 }
 
 function App (props: Props): React.JSX.Element {
@@ -181,7 +133,9 @@ function App (props: Props): React.JSX.Element {
                 setTheme={(theme: Theme) => {
                   dispatch(setTheme(theme))
                 }}
-              />
+              >
+                <Outlet/>
+              </Layout>
             }>
             <Route index element={isLoggedIn
               ? <Beers
