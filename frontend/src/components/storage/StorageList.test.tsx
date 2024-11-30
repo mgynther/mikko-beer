@@ -1,4 +1,5 @@
 import { render } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { expect, test } from 'vitest'
 import StorageList from './StorageList'
 import type { Storage } from '../../core/storage/types'
@@ -29,7 +30,8 @@ const storage: Storage = {
   styles: [style]
 }
 
-test('renders storage', () => {
+test('renders storage', async () => {
+  const user = userEvent.setup()
   const { getByRole, getByText } = render(
     <LinkWrapper>
       <StorageList
@@ -55,5 +57,8 @@ test('renders storage', () => {
   getByRole('link', { name: style.name })
   getByText(storage.bestBefore)
   const reviewLink = getByRole('link', { name: 'Review' })
-  expect(reviewLink.getAttribute('href')).toEqual(`/addreview/${storage.id}`)
+  const path = `/addreview/${storage.id}`
+  expect(reviewLink.getAttribute('href')).toEqual(path)
+  await user.click(reviewLink)
+  expect(window.location.pathname).toEqual(path)
 })
