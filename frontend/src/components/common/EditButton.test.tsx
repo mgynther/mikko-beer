@@ -23,7 +23,7 @@ test('is disabled without user', () => {
     <EditButton
       disabled={false}
       getLogin={() => getLogin(undefined)}
-      onClick={() => {}}
+      onClick={() => undefined}
     />
   )
   const button = queryByRole('button')
@@ -39,7 +39,7 @@ test('is disabled for viewer', () => {
         username: 'test',
         role: Role.viewer
       })}
-      onClick={() => {}}
+      onClick={() => undefined}
     />
   )
   const button = queryByRole('button')

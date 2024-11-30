@@ -5,7 +5,7 @@ import SearchBreweryWithNavi from './SearchBreweryWithNavi'
 
 import type { SearchIf } from '../../core/search/types'
 
-const useDebounce = (str: string) => str
+const useDebounce = (str: string): string => str
 
 const activeSearch: SearchIf = {
   useSearch: () => ({

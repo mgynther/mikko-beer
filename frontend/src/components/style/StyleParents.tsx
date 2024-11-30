@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 import type { SearchIf } from '../../core/search/types'
 import type {
@@ -17,7 +17,7 @@ export interface Props {
   select: (parents: string[]) => void
 }
 
-function StyleParents (props: Props): JSX.Element {
+function StyleParents (props: Props): React.JSX.Element {
   const [parents, doSetParents] = useState<Style[]>(props.initialParents)
 
   function setParents (parents: Style[]): void {

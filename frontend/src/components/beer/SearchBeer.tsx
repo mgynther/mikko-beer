@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import type {
   Beer,
@@ -19,7 +19,7 @@ export interface Props {
   select: (beer: BeerWithIds) => void
 }
 
-function SearchBeer (props: Props): JSX.Element {
+function SearchBeer (props: Props): React.JSX.Element {
   const { search, isLoading } = props.searchBeerIf.useSearch()
   const [filter, setFilter] = useState('')
   const debouncedFilter = props.searchIf.useDebounce(filter)

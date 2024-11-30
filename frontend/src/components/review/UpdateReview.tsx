@@ -1,8 +1,11 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
-import type { UpdateReviewIf } from '../../core/review/types'
+import type {
+  UpdateReviewIf,
+  JoinedReview,
+  ReviewRequest
+} from '../../core/review/types'
 
-import { type JoinedReview, type ReviewRequest } from '../../core/review/types'
 import type { SearchIf } from '../../core/search/types'
 
 import EditActions from '../common/EditActions'
@@ -20,7 +23,7 @@ interface Props {
   onSaved: () => void
 }
 
-function UpdateReview (props: Props): JSX.Element {
+function UpdateReview (props: Props): React.JSX.Element {
   const [currentDate] = useState<Date>(new Date())
   const [newReview, setNewReview] = useState<ReviewRequest | undefined>(
     undefined

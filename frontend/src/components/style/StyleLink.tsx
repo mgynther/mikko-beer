@@ -1,3 +1,5 @@
+import React from 'react'
+
 import { Link } from '../common/Link'
 
 interface BasicStyle {
@@ -9,7 +11,7 @@ interface Props {
   style: BasicStyle
 }
 
-export function StyleLink (props: Props): JSX.Element {
+export function StyleLink (props: Props): React.JSX.Element {
   return (
     <Link
       to={`/styles/${props.style.id}`}

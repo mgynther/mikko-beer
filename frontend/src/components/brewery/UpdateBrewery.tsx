@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 import type {
   UpdateBreweryIf,
@@ -16,7 +16,7 @@ interface Props {
   onSaved: () => void
 }
 
-function UpdateBrewery (props: Props): JSX.Element {
+function UpdateBrewery (props: Props): React.JSX.Element {
   const [newBrewery, setNewBrewery] = useState<Brewery | undefined>(undefined)
   const { update, isLoading } = props.updateBreweryIf.useUpdate()
   async function doUpdate (): Promise<void> {

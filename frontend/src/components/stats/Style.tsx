@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 import { formatTitle, invertDirection } from '../list-helpers'
 import type {
   GetStyleStatsIf,
   StyleStatsSortingOrder
 } from '../../core/stats/types'
-import { type ListDirection } from '../../core/types'
+import type { ListDirection } from '../../core/types'
 import LoadingIndicator from '../common/LoadingIndicator'
 import TabButton from '../common/TabButton'
 import StyleLink from '../style/StyleLink'
@@ -20,7 +20,7 @@ interface Props {
   styleId: string | undefined
 }
 
-function Style (props: Props): JSX.Element {
+function Style (props: Props): React.JSX.Element {
   const [
     sortingOrder,
     setSortingOrder

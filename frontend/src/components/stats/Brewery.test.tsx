@@ -3,15 +3,15 @@ import { expect, test, vitest } from 'vitest'
 import Brewery from './Brewery'
 import LinkWrapper from '../LinkWrapper'
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
 function openFilters(
   getByRole: (type: string, props: Record<string, string>) => HTMLElement
-) {
+): void {
   const toggleButton = getByRole('button', { name: 'Filters ▼' })
-  act(() => toggleButton.click())
+  act(() => { toggleButton.click(); })
 }
 
 const koskipanimo = {
@@ -95,7 +95,7 @@ test('queries brewery stats', async () => {
     </LinkWrapper>
   )
   expect(query.mock.calls).toEqual([])
-  await act(async() => loadCallback())
+  await act(async() => { loadCallback(); })
   expect(query.mock.calls).toEqual([[{
     breweryId: undefined,
     maxReviewAverage: unusedFilters.maxReviewAverage.value,
@@ -125,7 +125,7 @@ test('renders brewery stats', async () => {
     </LinkWrapper>
   )
   // Need to do something to get breweries set.
-  await act(async() => openFilters(getByRole))
+  await act(async() => { openFilters(getByRole); })
   getByText(koskipanimo.breweryName)
   getByText(koskipanimo.reviewAverage)
   getByText(koskipanimo.reviewCount)
@@ -144,7 +144,7 @@ test('sets minimum review count filter', async () => {
       />
     </LinkWrapper>
   )
-  await act(async() => openFilters(getByRole))
+  await act(async() => { openFilters(getByRole); })
   const slider = getByDisplayValue('4')
   await act(async() => fireEvent.change(slider, {target: {value: '4.5'}}))
   getByDisplayValue('4.5')

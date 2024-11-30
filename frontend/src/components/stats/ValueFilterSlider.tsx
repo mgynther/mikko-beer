@@ -1,3 +1,5 @@
+import React from 'react'
+
 import StepFilterSlider from './StepFilterSlider'
 
 interface Props {
@@ -7,7 +9,7 @@ interface Props {
   setValue: (index: number) => void
 }
 
-function ValueFilterSlider (props: Props): JSX.Element {
+function ValueFilterSlider (props: Props): React.JSX.Element {
   function setSliderValue (index: number): void {
     props.setValue(props.values[index])
   }

@@ -28,7 +28,7 @@ test('creates brewery', async () => {
   const nameInput = getByPlaceholderText(namePlaceholder)
   await user.type(nameInput, 'Salama Brewing')
   expect(createButton.hasAttribute('disabled')).toEqual(false)
-  await act(async() => createButton.click())
+  await act(async() => { createButton.click(); })
   const createCalls = selectBrewery.mock.calls
   expect(createCalls).toEqual([[{
     id,

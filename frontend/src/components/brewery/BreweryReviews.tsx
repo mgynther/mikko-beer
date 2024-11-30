@@ -1,8 +1,12 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
-import type { ListReviewsByIf } from "../../core/review/types"
+import type {
+  ListReviewsByIf,
+  ReviewIf,
+  ReviewSorting,
+  ReviewSortingOrder
+} from "../../core/review/types"
 import ReviewList from "../review/ReviewList"
-import type { ReviewIf, ReviewSorting, ReviewSortingOrder } from '../../core/review/types'
 import type { ListDirection } from '../../core/types'
 import type { SearchIf } from '../../core/search/types'
 
@@ -13,7 +17,7 @@ interface Props {
   searchIf: SearchIf
 }
 
-const BreweryReviews = (props: Props) => {
+const BreweryReviews = (props: Props): React.JSX.Element => {
   const [order, doSetOrder] = useState<ReviewSortingOrder>('beer_name')
   const [direction, doSetDirection] = useState<ListDirection>('asc')
   const { reviews, isLoading: isLoadingReviews } =
@@ -40,7 +44,7 @@ const BreweryReviews = (props: Props) => {
       }
     }}
     supportedSorting={['beer_name', 'brewery_name', 'rating', 'time']}
-    onChanged={() => {}}
+    onChanged={() => undefined}
     />
 }
 

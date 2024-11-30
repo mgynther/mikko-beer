@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 import Annual from './Annual'
 import Brewery from './Brewery'
@@ -51,7 +51,7 @@ const buttons: ModeButton[] = [
   }
 ]
 
-function Stats (props: Props): JSX.Element {
+function Stats (props: Props): React.JSX.Element {
   const showFull = props.breweryId === undefined && props.styleId === undefined
   const [mode, setMode] = useState(Mode.Overall)
 

@@ -1,3 +1,5 @@
+import React from 'react'
+
 import { Link as RouterLink } from 'react-router-dom'
 
 interface Props {
@@ -5,7 +7,7 @@ interface Props {
   text: string
 }
 
-export function Link (props: Props): JSX.Element {
+export function Link (props: Props): React.JSX.Element {
   return (
     <RouterLink
       to={props.to}>{props.text}

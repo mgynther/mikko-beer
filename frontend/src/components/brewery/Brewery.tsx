@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 import type { ParamsIf } from '../util'
 
@@ -39,7 +39,7 @@ interface Props {
   statsIf: StatsIf
 }
 
-function Brewery (props: Props): JSX.Element {
+function Brewery (props: Props): React.JSX.Element {
   const { breweryId } = props.paramsIf.useParams()
   const [mode, setMode] = useState(EditableMode.View)
   const [initialBrewery, setInitialBrewery] =

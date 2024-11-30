@@ -7,7 +7,7 @@ import type { UseDebounce } from "../../core/types"
 
 const useDebounce: UseDebounce = (str: string) => str
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
@@ -32,9 +32,7 @@ const beerSearchResult = {
 }
 const beerSearchIf = {
   useSearch: () => ({
-    search: async () => {
-      return [beerSearchResult]
-    },
+    search: async () => [beerSearchResult],
     isLoading: false
   })
 }
@@ -79,7 +77,7 @@ const containerListResult = {
 }
 
 const dateStr ='2022-04-01T12:00:00.000Z'
-const getCurrentDate = () => new Date(dateStr)
+const getCurrentDate = (): Date => new Date(dateStr)
 const reviewContainerIf = {
   createIf: {
     useCreate: () => dontCreate
@@ -148,10 +146,10 @@ async function addReview(getByPlaceholderText: (
   text: string) => HTMLElement,
   getByRole: (text: string, props?: Record<string, unknown>) => HTMLElement,
   user: UserEvent
-) {
+): Promise<void> {
   const smellInput = getByPlaceholderText('Smell')
   smellInput.focus()
-  userEvent.paste(smellText)
+  await userEvent.paste(smellText)
   const tasteInput = getByPlaceholderText('Taste')
   tasteInput.focus()
   await user.paste(tasteText)
@@ -188,7 +186,7 @@ test('adds review', async () => {
     paramsIf: noParamsIf,
     searchIf: {
       useSearch: () => ({
-        activate: () => { },
+        activate: () => undefined,
         isActive: true
       }),
       useDebounce
@@ -201,7 +199,7 @@ test('adds review', async () => {
   )
 
   const selects = getAllByRole('radio', { name: 'Select' })
-  act(() => selects[0].click())
+  act(() => { selects[0].click(); })
   const beerSearch = getByPlaceholderText('Search beer')
   expect(beerSearch).toBeDefined()
   beerSearch.focus()
@@ -211,13 +209,13 @@ test('adds review', async () => {
     { name: 'Severin (Koskipanimo)' }
   )
   expect(beerButton).toBeDefined()
-  act(() => beerButton.click())
+  act(() => { beerButton.click(); })
   const containerSelect = getByRole('combobox')
-  act(() => containerSelect.click())
+  act(() => { containerSelect.click(); })
   const bottle = getByRole('option', { name: 'bottle 0.33' })
-  userEvent.selectOptions(containerSelect, bottle);
-  act(() => bottle.click())
-  await addReview(getByPlaceholderText, getByRole, user);
+  await userEvent.selectOptions(containerSelect, bottle)
+  act(() => { bottle.click(); })
+  await addReview(getByPlaceholderText, getByRole, user)
   expect(create.mock.calls).toEqual([[{
     body: {
       additionalInfo: '',
@@ -305,8 +303,8 @@ test('adds review from storage', async () => {
     },
     searchIf: {
       useSearch: () => ({
-        activate: () => { },
-          isActive: true
+        activate: () => undefined,
+        isActive: true
       }),
       useDebounce
     }
@@ -317,7 +315,7 @@ test('adds review from storage', async () => {
       {...props}
     />
   )
-  await addReview(getByPlaceholderText, getByRole, user);
+  await addReview(getByPlaceholderText, getByRole, user)
 
   expect(create.mock.calls).toEqual([[{
     body: {

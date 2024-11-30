@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import type {
   Beer,
@@ -6,7 +6,7 @@ import type {
   SearchBeerIf
 } from '../../core/beer/types'
 import type { SearchIf } from '../../core/search/types'
-import { type NavigateIf } from '../util'
+import type { NavigateIf } from '../util'
 
 import BreweryLinks from '../brewery/BreweryLinks'
 import StyleLinks from '../style/StyleLinks'
@@ -25,7 +25,7 @@ interface Props {
   searchIf: SearchIf
 }
 
-function Beers (props: Props): JSX.Element {
+function Beers (props: Props): React.JSX.Element {
   const [loadedBeers, setLoadedBeers] = useState<Beer[]>([])
   const { beerList, list, isLoading, isUninitialized } =
     props.listBeersIf.useList()
@@ -41,7 +41,6 @@ function Beers (props: Props): JSX.Element {
         skip: loadedBeers.length,
         size: pageSize
       })
-      if (result === undefined) return
       const newBeers = [...loadedBeers, ...result.beers]
       setLoadedBeers(newBeers)
     }

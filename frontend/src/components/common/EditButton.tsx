@@ -1,3 +1,5 @@
+import React from 'react'
+
 import { Role } from '../../core/user/types'
 import type { GetLogin, Login } from '../../core/login/types'
 
@@ -7,9 +9,9 @@ interface Props {
   onClick: () => void
 }
 
-function EditButton (props: Props): JSX.Element | null {
+function EditButton (props: Props): React.JSX.Element | null {
   const login: Login = props.getLogin()
-  if (login?.user?.role !== Role.admin) {
+  if (login.user?.role !== Role.admin) {
     return null
   }
   return (

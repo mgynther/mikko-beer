@@ -2,12 +2,22 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import BeerEditor from './BeerEditor'
-import type { Brewery } from '../../core/brewery/types'
-import type { Style, StyleWithParentIds } from '../../core/style/types'
+import type {
+  Brewery,
+  SearchBreweryIf,
+  SelectBreweryIf
+} from '../../core/brewery/types'
+import type {
+  CreateStyleIf,
+  Style,
+  StyleWithParentIds
+} from '../../core/style/types'
+import type { UseDebounce } from '../../core/types'
+import type { EditBeerIf } from '../../core/beer/types'
 
-const useDebounce = (str: string) => str
+const useDebounce: UseDebounce = (str: string) => str
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
@@ -51,13 +61,15 @@ const styles: Style[] = [
   style
 ]
 
-const useBrewerySearch = () => ({
-  search: async () => ([
-    brewery,
-    anotherBrewery
-  ]),
-  isLoading: false
-})
+const search: SearchBreweryIf = {
+  useSearch: () => ({
+    search: async () => ([
+      brewery,
+      anotherBrewery
+    ]),
+    isLoading: false
+  })
+}
 
 const doSearch = {
   useSearch: () => ({
@@ -75,35 +87,31 @@ const dontSearch = {
   useDebounce
 }
 
-const dontSearchBrewery = () => ({
-  search: dontCall,
-  isLoading: false
-})
-
-const dontCreateBrewery = () => dontCreate
-
-const dontSelectBrewery = {
+const dontSelectBrewery: SelectBreweryIf = {
   create: {
-    useCreate: dontCreateBrewery,
+    useCreate: () => dontCreate,
   },
   search: {
-    useSearch: dontSearchBrewery
+    useSearch: () => ({
+      search: dontCall,
+      isLoading: false
+    })
   }
 }
 
-const dontCreateStyle = () => ({
-  ...dontCreate,
-  createdStyle: undefined,
-  hasError: false,
-  isSuccess: false
-})
+const dontCreateStyleIf: CreateStyleIf = {
+  useCreate: () => ({
+    ...dontCreate,
+    createdStyle: undefined,
+    hasError: false,
+    isSuccess: false
+  })
+}
 
-const dontEditBeer = {
+const dontEditBeer: EditBeerIf = {
   selectBreweryIf: dontSelectBrewery,
   selectStyleIf: {
-    create: {
-      useCreate: dontCreateStyle
-    },
+    create: dontCreateStyleIf,
     list: {
       useList: () => ({
         styles: [],
@@ -114,9 +122,7 @@ const dontEditBeer = {
 }
 
 const dontSelectStyle = {
-  create: {
-    useCreate: dontCreateStyle
-  },
+  create: dontCreateStyleIf,
   list: {
     useList: () => ({
       styles: undefined,
@@ -150,7 +156,7 @@ test('edits beer name', async () => {
     />
   )
   const nameInput = getByPlaceholderText(namePlaceholder)
-  user.clear(nameInput)
+  await user.clear(nameInput)
   await user.type(nameInput, beerName)
   const calls = onChange.mock.calls
   expect(calls[calls.length - 1]).toEqual([{
@@ -177,9 +183,7 @@ test('edits beer breweries', async () => {
           create: {
             useCreate: () => dontCreate,
           },
-          search: {
-            useSearch: useBrewerySearch
-          }
+          search
         },
         selectStyleIf: dontSelectStyle
       }}
@@ -212,9 +216,7 @@ test('edits beer styles', async () => {
       editBeerIf={{
         selectBreweryIf: dontSelectBrewery,
         selectStyleIf: {
-          create: {
-            useCreate: dontCreateStyle
-          },
+          create: dontCreateStyleIf,
           list: {
             useList: () => ({
               styles: [ styleWithParentIds ],

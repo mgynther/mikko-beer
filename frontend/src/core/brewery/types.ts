@@ -1,5 +1,4 @@
-import type { Pagination } from "../types"
-import type { InfiniteScroll } from "../types"
+import type { Pagination , InfiniteScroll } from "../types"
 
 export interface CreateBreweryRequest {
   name: string

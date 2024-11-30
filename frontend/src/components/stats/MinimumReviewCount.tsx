@@ -1,3 +1,5 @@
+import React from 'react'
+
 import ValueFilterSlider from './ValueFilterSlider'
 
 interface Props {
@@ -5,7 +7,7 @@ interface Props {
   setMinReviewCount: (minimumReviewCount: number) => void
 }
 
-function MinimumReviewCount (props: Props): JSX.Element {
+function MinimumReviewCount (props: Props): React.JSX.Element {
   const sliderValues = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
   return (
     <ValueFilterSlider

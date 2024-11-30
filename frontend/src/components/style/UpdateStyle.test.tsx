@@ -4,11 +4,11 @@ import { expect, test, vitest } from 'vitest'
 import UpdateStyle from './UpdateStyle'
 import type { StyleWithParentIds } from '../../core/style/types'
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const useDebounce = (value: string) => value
+const useDebounce = (value: string): string => value
 
 const id = '5a416374-4940-44a3-aa85-016b052e4310'
 const name = 'Pale Ale'
@@ -88,10 +88,10 @@ test('updates style', async () => {
   const searchInput = getByPlaceholderText('Search style')
   await user.type(searchInput, 'a')
   const otherParentButton = getByRole('button', { name: otherParent.name })
-  act(() => otherParentButton.click())
+  act(() => { otherParentButton.click(); })
 
   const saveButton = getByRole('button', { name: 'Save' })
-  await act(async () => saveButton.click())
+  await act(async () => { saveButton.click(); })
   expect(update.mock.calls).toEqual([[{
     id,
     name: newName,

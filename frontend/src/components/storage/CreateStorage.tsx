@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { type FormEvent, useState } from 'react'
 
 import type {
   BeerWithIds,
@@ -22,7 +22,7 @@ interface Props {
   reviewContainerIf: ReviewContainerIf
 }
 
-function CreateStorage (props: Props): JSX.Element {
+function CreateStorage (props: Props): React.JSX.Element {
   const { create, hasError, isLoading } = props.createStorageIf.useCreate()
 
   const [beer, setBeer] = useState<BeerWithIds | undefined>(undefined)
@@ -31,7 +31,7 @@ function CreateStorage (props: Props): JSX.Element {
   )
   const [bestBefore, setBestBefore] = useState('')
 
-  async function doChange (event: any): Promise<void> {
+  async function doChange (event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     if (beer === undefined || container === undefined) return
     const bb = new Date(`${bestBefore}T12:00:00.000`).toISOString()
@@ -40,7 +40,6 @@ function CreateStorage (props: Props): JSX.Element {
       bestBefore: bb,
       container: container.id
     })
-    event.target.reset()
     setBeer(undefined)
     setContainer(undefined)
     setBestBefore('')

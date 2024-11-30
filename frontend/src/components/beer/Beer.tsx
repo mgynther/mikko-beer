@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 import type { ParamsIf } from '../util'
 
@@ -42,7 +42,7 @@ interface Props {
   getBeerIf: GetBeerIf
 }
 
-function Beer (props: Props): JSX.Element {
+function Beer (props: Props): React.JSX.Element {
   const { beerId } = props.paramsIf.useParams()
   const [order, doSetOrder] = useState<ReviewSortingOrder>('beer_name')
   const [direction, doSetDirection] = useState<ListDirection>('asc')
@@ -75,7 +75,7 @@ function Beer (props: Props): JSX.Element {
             </div>
             <div>
               <EditButton
-                disabled={beer === undefined}
+                disabled={false}
                 getLogin={props.reviewIf.login}
                 onClick={() => {
                   setMode(EditableMode.Edit)
@@ -136,7 +136,7 @@ function Beer (props: Props): JSX.Element {
           }
         }}
         supportedSorting={['beer_name', 'brewery_name', 'rating', 'time']}
-        onChanged={() => {}}
+        onChanged={() => undefined}
       />
     </div>
   )

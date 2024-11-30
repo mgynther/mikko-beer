@@ -5,7 +5,7 @@ import SearchBrewery from './SearchBrewery'
 
 import type { SearchIf } from '../../core/search/types'
 
-const useDebounce = (str: string) => str
+const useDebounce = (str: string): string => str
 
 const activeSearch: SearchIf = {
   useSearch: () => ({
@@ -53,5 +53,7 @@ test('selects brewery', async () => {
   const itemButton = getByRole('button', { name: brewery.name })
   expect(itemButton).toBeDefined()
   await user.click(itemButton)
-  expect(selector.mock.calls).toEqual([[ { id: brewery.id, name: brewery.name } ]])
+  expect(selector.mock.calls).toEqual([[
+    { id: brewery.id, name: brewery.name }
+  ]])
 })

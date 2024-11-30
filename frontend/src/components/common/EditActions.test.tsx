@@ -8,8 +8,8 @@ test('renders loading text', () => {
     <EditActions
       isSaving={true}
       isSaveDisabled={false}
-      onCancel={() => {}}
-      onSave={() => {}}
+      onCancel={() => undefined}
+      onSave={() => undefined}
     />
   )
   const text = getByText(loadingIndicatorText)
@@ -22,7 +22,7 @@ test('disables save button while saving', () => {
     <EditActions
       isSaving={true}
       isSaveDisabled={false}
-      onCancel={() => {}}
+      onCancel={() => undefined}
       onSave={saveCb}
     />
   )
@@ -38,7 +38,7 @@ test('disables save button while saving disabled', () => {
     <EditActions
       isSaving={false}
       isSaveDisabled={true}
-      onCancel={() => {}}
+      onCancel={() => undefined}
       onSave={saveCb}
     />
   )
@@ -55,7 +55,7 @@ test('cancels', () => {
       isSaving={false}
       isSaveDisabled={false}
       onCancel={cancelCb}
-      onSave={() => {}}
+      onSave={() => undefined}
     />
   )
   const cancelButton = getByRole('button', { name: 'Cancel' })
@@ -70,7 +70,7 @@ test('saves', () => {
     <EditActions
       isSaving={false}
       isSaveDisabled={false}
-      onCancel={() => {}}
+      onCancel={() => undefined}
       onSave={saveCb}
     />
   )

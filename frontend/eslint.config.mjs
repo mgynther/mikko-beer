@@ -46,14 +46,14 @@ export default [
   {
     ...love,
     languageOptions,
-    files: ['src/*.{js,ts,tsx,jsx}'],
+    files: ['src/*.{js,ts,tsx,jsx}', 'src/**/*.{js,ts,tsx,jsx}'],
     plugins,
     rules,
   },
   {
     ...love,
     languageOptions,
-    files: ['src/*.test.{js,ts,tsx,jsx}'],
+    files: ['src/*.test.{js,ts,tsx,jsx}', 'src/**/*.test.{js,ts,tsx,jsx}'],
     plugins,
     rules: {
       ...rules,

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { type FormEvent, useState } from 'react'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
@@ -15,7 +15,7 @@ interface Props {
   changePasswordIf: ChangePasswordIf
 }
 
-function ChangePassword (props: Props): JSX.Element {
+function ChangePassword (props: Props): React.JSX.Element {
   const login: Login = props.getLogin()
   const { changePassword, isLoading } =
     props.changePasswordIf.useChangePassword()
@@ -23,19 +23,23 @@ function ChangePassword (props: Props): JSX.Element {
     props.changePasswordIf.useGetPasswordChangeResult().getResult()
 
   const [isMismatch, setIsMismatch] = useState(false)
+  const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [newPasswordConfirmation, setNewPasswordConfirmation] = useState('')
 
-  async function doChange (event: any): Promise<void> {
+  async function doChange (event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     await changePassword({
       userId: login.user?.id ?? '',
       body: {
-        oldPassword: event.target.elements.oldPassword.value as string,
-        newPassword: event.target.elements.newPassword.value as string
+        oldPassword,
+        newPassword
       }
     })
-    event.target.reset()
+    setIsMismatch(false)
+    setOldPassword('')
+    setNewPassword('')
+    setNewPasswordConfirmation('')
   }
 
   function formatPasswordChangeResult (
@@ -57,7 +61,13 @@ function ChangePassword (props: Props): JSX.Element {
         className="ChangePasswordForm"
         onSubmit={(e) => { void doChange(e) }}>
         <div>
-          <input type='password' placeholder='Old password' id='oldPassword' />
+          <input
+            type='password'
+            placeholder='Old password'
+            id='oldPassword'
+            value={oldPassword}
+            onChange={e => { setOldPassword(e.target.value); }}
+          />
         </div>
         <div>
           <input
@@ -65,6 +75,7 @@ function ChangePassword (props: Props): JSX.Element {
             placeholder='New password'
             id='newPassword'
             autoComplete='new-password'
+            value={newPassword}
             onChange={(e) => {
               const newPassword = e.target.value
               setIsMismatch(newPassword !== newPasswordConfirmation)
@@ -78,6 +89,7 @@ function ChangePassword (props: Props): JSX.Element {
             placeholder='New password confirmation'
             id='newPasswordConfirmation'
             autoComplete='new-password'
+            value={newPasswordConfirmation}
             onChange={(e) => {
               const newPasswordConfirmation = e.target.value
               setIsMismatch(newPassword !== newPasswordConfirmation)

@@ -16,6 +16,9 @@ const storageApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [StorageTags.Storage]
     }),
+    /* eslint-disable-next-line @typescript-eslint/no-invalid-void-type --
+     * Void required here to generate correct hook.
+     */
     listStorages: build.query<StorageList, void>({
       query: () => ({
         url: '/storage',

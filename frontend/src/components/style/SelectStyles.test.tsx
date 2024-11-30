@@ -3,9 +3,9 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import SelectStyles from './SelectStyles'
 import type { UseDebounce } from '../../core/types'
-import { StyleWithParentIds } from '../../core/style/types'
+import type { StyleWithParentIds } from '../../core/style/types'
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
@@ -52,10 +52,10 @@ test('removes style', async () => {
     />
   )
   const changeButtons = getAllByRole('button', { name: 'Change' })
-  act(() => changeButtons[0].click())
+  act(() => { changeButtons[0].click(); })
 
   const removeButton = getByRole('button', { name: 'Remove' })
-  act(() => removeButton.click())
+  act(() => { removeButton.click(); })
 
   const calls = select.mock.calls
   expect(calls.length).toEqual(3)
@@ -88,7 +88,7 @@ test('selects style', async () => {
   const searchInput = getByPlaceholderText('Search style')
   await user.type(searchInput, 'Pils')
   const styleButton = getByRole('button', { name: style.name })
-  act(() => styleButton.click())
+  act(() => { styleButton.click(); })
 
   const calls = select.mock.calls
   expect(calls.length).toEqual(2)
@@ -131,7 +131,7 @@ test('selects created style', async () => {
     />
   )
   const createRadio = getByRole('radio', { name: 'Create' })
-  act(() => createRadio.click())
+  act(() => { createRadio.click(); })
 
   const nameInput = getByPlaceholderText('Name')
   await user.clear(nameInput)
@@ -140,10 +140,10 @@ test('selects created style', async () => {
   const searchInput = getByPlaceholderText('Search style')
   await user.type(searchInput, 'a')
   const parentButton = getByRole('button', { name: parent.name })
-  act(() => parentButton.click())
+  act(() => { parentButton.click(); })
 
   const createButton = getByRole('button', { name: 'Create' })
-  await act(async () => createButton.click())
+  await act(async () => { createButton.click(); })
   expect(create.mock.calls).toEqual([[{
     name: newStyle.name,
     parents: [parent].map(p => p.id)

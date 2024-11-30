@@ -1,7 +1,7 @@
 import { act, render } from '@testing-library/react'
 import { test } from 'vitest'
 import Container from './Container'
-import { Container as ContainerType } from '../../core/container/types'
+import type { Container as ContainerType } from '../../core/container/types'
 import { Role } from '../../core/user/types'
 
 const container: ContainerType = {
@@ -50,8 +50,8 @@ test('renders editable container as admin', async () => {
   )
   getByText('bottle 0.25')
   const editButton = getByRole('button', { name: 'Edit' })
-  act(() => editButton.click())
+  act(() => { editButton.click(); })
   const cancelButton = getByRole('button', { name: 'Cancel' })
-  act(() => cancelButton.click())
+  act(() => { cancelButton.click(); })
   getByRole('button', { name: 'Edit' })
 })

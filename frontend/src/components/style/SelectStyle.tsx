@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 import type { SearchIf } from '../../core/search/types'
 import type {
@@ -20,7 +20,7 @@ export interface Props {
   remove: () => void
 }
 
-function SelectStyle (props: Props): JSX.Element {
+function SelectStyle (props: Props): React.JSX.Element {
   const [mode, setMode] = useState(Mode.SELECT)
   return (
     <div className="SelectStyle">

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import type {
   ListReviewsIf,
@@ -22,7 +22,7 @@ interface Props {
   searchIf: SearchIf
 }
 
-function Reviews (props: Props): JSX.Element {
+function Reviews (props: Props): React.JSX.Element {
   const [order, doSetOrder] = useState<ReviewSortingOrder>('time')
   const [direction, doSetDirection] = useState<ListDirection>('desc')
   const [loadedReviews, setLoadedReviews] = useState<JoinedReview[]>([])

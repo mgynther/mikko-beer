@@ -7,7 +7,7 @@ import type { Props, SearchBoxItem } from './SearchBox'
 import { loadingIndicatorText } from './LoadingIndicator'
 import type { SearchIf } from '../../core/search/types'
 
-const useDebounce = (str: string) => str
+const useDebounce = (str: string): string => str
 
 const passiveSearch: SearchIf = {
   useSearch: () => ({
@@ -210,6 +210,9 @@ test('renders filter', async () => {
   )
   const input = getByRole('textbox')
   expect(input).toBeInstanceOf(HTMLInputElement)
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * No other way to access value of input. Also type already checked.
+   */
   expect((input as HTMLInputElement).value).toEqual(filter)
 })
 

@@ -21,6 +21,9 @@ const styleApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [StyleTags.Style]
     }),
+    /* eslint-disable-next-line @typescript-eslint/no-invalid-void-type --
+     * Void required here to generate correct hook.
+     */
     listStyles: build.query<StyleList, void>({
       query: () => ({
         url: '/style',

@@ -1,3 +1,5 @@
+import React from 'react'
+
 import type { GetRatingStatsIf } from '../../core/stats/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
@@ -10,7 +12,7 @@ interface Props {
   styleId: string | undefined
 }
 
-function Rating (props: Props): JSX.Element {
+function Rating (props: Props): React.JSX.Element {
   const { stats, isLoading } = props.getRatingStatsIf.useStats({
     breweryId: props.breweryId,
     styleId: props.styleId

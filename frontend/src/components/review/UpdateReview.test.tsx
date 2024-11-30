@@ -6,7 +6,7 @@ import type { UseDebounce } from "../../core/types"
 
 const useDebounce: UseDebounce = (str: string) => str
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
@@ -34,9 +34,7 @@ const beerSearchResult = {
 
 const beerSearchIf = {
   useSearch: () => ({
-    search: async () => {
-      return [beerSearchResult]
-    },
+    search: async () => [beerSearchResult],
     isLoading: false
   })
 }
@@ -98,8 +96,8 @@ const reviewContainerIf = {
 
 const searchIf = {
   useSearch: () => ({
-    activate: () => { },
-      isActive: true
+    activate: () => undefined,
+    isActive: true
   }),
   useDebounce
 }
@@ -146,17 +144,17 @@ async function addReview(getByPlaceholderText: (
   text: string) => HTMLElement,
   getByRole: (text: string, props?: Record<string, unknown>) => HTMLElement,
   user: UserEvent
-) {
+): Promise<void> {
   const smellInput = getByPlaceholderText('Smell')
   smellInput.focus()
-  user.clear(smellInput)
-  userEvent.paste(smellText)
+  await user.clear(smellInput)
+  await userEvent.paste(smellText)
   const ratingInput = getByRole('slider')
   ratingInput.click()
   fireEvent.change(ratingInput, {target: {value: `${reviewRating}`}})
   const tasteInput = getByPlaceholderText('Taste')
   tasteInput.focus()
-  user.clear(tasteInput)
+  await user.clear(tasteInput)
   await user.paste(tasteText)
 }
 
@@ -173,7 +171,7 @@ test('updates review', async () => {
       onSaved={onSaved}
       updateReviewIf={{
         useUpdate: () => ({
-          update: update,
+          update,
           isLoading: false
         }),
         selectBeerIf,
@@ -183,7 +181,7 @@ test('updates review', async () => {
       onCancel={dontCall}
     />
   )
-  await addReview(getByPlaceholderText, getByRole, user);
+  await addReview(getByPlaceholderText, getByRole, user)
   const saveButton = getByRole('button', { name: 'Save' })
   await user.click(saveButton)
   expect(update.mock.calls).toEqual([[{
@@ -222,7 +220,7 @@ test('cancels update', async () => {
       onCancel={onCancel}
     />
   )
-  await addReview(getByPlaceholderText, getByRole, user);
+  await addReview(getByPlaceholderText, getByRole, user)
   const cancelButton = getByRole('button', { name: 'Cancel' })
   await user.click(cancelButton)
   expect(onCancel.mock.calls).toEqual([[]])

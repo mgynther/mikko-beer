@@ -4,14 +4,19 @@ import { expect, test, vitest } from 'vitest'
 import Style from './Style'
 import { Role } from '../../core/user/types'
 import LinkWrapper from '../LinkWrapper'
-import type { JoinedReview, Review, UpdateReviewIf } from '../../core/review/types'
+import type {
+  JoinedReview,
+  ListReviewsByIf,
+  Review,
+  UpdateReviewIf
+} from '../../core/review/types'
 import type { ListStoragesByIf, Storage } from '../../core/storage/types'
 import type { StatsIf } from '../../core/stats/types'
-import { GetStyleIf } from '../../core/style/types'
+import type { GetStyleIf } from '../../core/style/types'
 
-const useDebounce = (str: string) => str
+const useDebounce = (str: string): string => str
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
@@ -97,8 +102,8 @@ const login = {
 
 const searchIf = {
   useSearch: () => ({
-    activate: () => { },
-      isActive: true
+    activate: () => undefined,
+    isActive: true
   }),
   useDebounce
 }
@@ -157,7 +162,7 @@ const getStyleIf: GetStyleIf = {
 const reviewIf = {
   get: {
     useGet: () => ({
-      review: review,
+      review,
       get: async () => review
     })
   },
@@ -171,7 +176,7 @@ const paramsIf = {
   })
 }
 
-function getListReviewsIf(reviews: JoinedReview[]) {
+function getListReviewsIf(reviews: JoinedReview[]): ListReviewsByIf {
   return {
     useList: () => ({
       reviews: {
@@ -187,7 +192,7 @@ function getListStoragesByStyleIf(storages: Storage[]): ListStoragesByIf {
   return {
     useList: () => ({
       storages: {
-        storages: storages
+        storages
       },
       isLoading: false
     })
@@ -273,15 +278,15 @@ test('updates style', async () => {
   )
 
   const editButton = getByRole('button', { name: 'Edit' })
-  act(() => editButton.click())
+  act(() => { editButton.click(); })
   const nameInput = getByPlaceholderText('Name')
-  user.clear(nameInput)
+  await user.clear(nameInput)
   const styleName = 'Rye IPA'
   await user.type(nameInput, styleName)
   const removeParentButton = getByRole('button', { name: 'Remove' })
-  act(() => removeParentButton.click())
+  act(() => { removeParentButton.click(); })
   const saveButton = getByRole('button', { name: 'Save' })
-  act(() => saveButton.click())
+  act(() => { saveButton.click(); })
   expect(update.mock.calls).toEqual([[{
     id: style.id,
     name: styleName,

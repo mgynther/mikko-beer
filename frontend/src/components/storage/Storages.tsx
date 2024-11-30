@@ -1,4 +1,6 @@
-import { type ReviewContainerIf } from '../../core/review/types'
+import React from 'react'
+
+import type { ReviewContainerIf } from '../../core/review/types'
 
 import type { SelectBeerIf } from '../../core/beer/types'
 import type { GetLogin, Login } from '../../core/login/types'
@@ -21,10 +23,10 @@ interface Props {
   reviewContainerIf: ReviewContainerIf
 }
 
-function Storages (props: Props): JSX.Element {
+function Storages (props: Props): React.JSX.Element {
   const { storages, isLoading } = props.listStoragesIf.useList()
   const login: Login = props.getLogin()
-  const isAdmin = login?.user?.role === Role.admin
+  const isAdmin = login.user?.role === Role.admin
 
   const storageItems = storages === undefined
     ? []

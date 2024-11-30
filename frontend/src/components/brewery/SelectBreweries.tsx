@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
 import type {
@@ -35,7 +35,7 @@ interface SelectionItemProps {
   clear: () => void
 }
 
-function SelectionItem (props: SelectionItemProps): JSX.Element {
+function SelectionItem (props: SelectionItemProps): React.JSX.Element {
   return (
     <>
       {props.brewery === undefined && (
@@ -57,7 +57,7 @@ function SelectionItem (props: SelectionItemProps): JSX.Element {
   )
 }
 
-function SelectBreweries (props: Props): JSX.Element {
+function SelectBreweries (props: Props): React.JSX.Element {
   function getInitialBrewerySelections (): BrewerySelection[] {
     if (props.initialBreweries.length === 0) {
       return [
@@ -67,12 +67,10 @@ function SelectBreweries (props: Props): JSX.Element {
         }
       ]
     }
-    return props.initialBreweries.map(brewery => {
-      return {
+    return props.initialBreweries.map(brewery => ({
         id: brewery.id,
         brewery
-      }
-    })
+      }))
   }
   const [selections, doSetSelections] = useState<BrewerySelection[]>(
     getInitialBrewerySelections()
@@ -84,7 +82,7 @@ function SelectBreweries (props: Props): JSX.Element {
     if (hasUndefinedBrewery(selections)) return
     const breweries = selections
       .map(selections => selections.brewery)
-      .filter(brewery => brewery) as Brewery[]
+      .filter(brewery => brewery !== undefined)
     const breweryIds = breweries.map(brewery => brewery.id)
     props.select(breweryIds)
   }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import type { SearchIf } from '../../core/search/types'
 import type {
@@ -20,7 +20,7 @@ export interface Props {
   remove: () => void
 }
 
-function CreateStyle (props: Props): JSX.Element {
+function CreateStyle (props: Props): React.JSX.Element {
   const [style, setStyle] = useState<StyleWithParentIds | undefined>(undefined)
   const { create, createdStyle, hasError, isLoading, isSuccess } =
     props.selectStyleIf.create.useCreate()

@@ -6,25 +6,23 @@ import LinkWrapper from '../LinkWrapper'
 
 function openFilters(
   getByRole: (type: string, props: Record<string, string>) => HTMLElement
-) {
+): void {
   const toggleButton = getByRole('button', { name: 'Filters ▼' })
-  act(() => toggleButton.click())
+  act(() => { toggleButton.click(); })
 }
 
 const emptyBreweryStats = { brewery: []}
 
 const emptyStatsIf: StatsIf = {
   annual: {
-    useStats: () => {
-      return {
+    useStats: () => ({
         stats: {
           annual: [
             { reviewAverage: '0.00', reviewCount: '0', year: '2020' }
           ]
         },
         isLoading: false
-      }
-    }
+      })
   },
   brewery: {
     useStats: () => ({
@@ -38,8 +36,7 @@ const emptyStatsIf: StatsIf = {
     }
   },
   overall: {
-    useStats: () => {
-      return {
+    useStats: () => ({
         stats: {
           beerCount: '0',
           breweryCount: '0',
@@ -50,20 +47,17 @@ const emptyStatsIf: StatsIf = {
           styleCount: '0'
         },
         isLoading: false
-      }
-    }
+      })
   },
   rating: {
-    useStats: () => {
-      return {
+    useStats: () => ({
         stats: {
           rating: [
             { rating: '4', count: '0' }
           ]
         },
         isLoading: false
-      }
-    }
+      })
   },
   style: {
     useStats: () => ({
@@ -81,8 +75,7 @@ test('renders overall stats', () => {
       statsIf={{
         ...emptyStatsIf,
         overall: {
-          useStats: () => {
-            return {
+          useStats: () => ({
               stats: {
                 beerCount: '123',
                 breweryCount: '54',
@@ -93,8 +86,7 @@ test('renders overall stats', () => {
                 styleCount: '29'
               },
               isLoading: false
-            }
-          }
+            })
         }
       }}
       breweryId={'282844e4-f411-4c6a-95d6-9131b8c0491f'}
@@ -102,9 +94,9 @@ test('renders overall stats', () => {
     />
   )
   const annualButton = getByRole('button', { name: 'Annual' })
-  act(() => annualButton.click())
+  act(() => { annualButton.click(); })
   const overallButton = getByRole('button', { name: 'Overall' })
-  act(() => overallButton.click())
+  act(() => { overallButton.click(); })
   getByText('123')
   getByText('54')
   getByText('8')
@@ -120,8 +112,7 @@ test('renders annual stats', () => {
       statsIf={{
         ...emptyStatsIf,
         annual: {
-          useStats: () => {
-            return {
+          useStats: () => ({
               stats: {
                 annual: [
                   { reviewAverage: '7.87', reviewCount: '10', year: '2020' },
@@ -129,8 +120,7 @@ test('renders annual stats', () => {
                 ]
               },
               isLoading: false
-            }
-          }
+            })
         }
       }}
       breweryId={'ed60c2f7-b799-4b47-834c-d123f92f6eac'}
@@ -138,7 +128,7 @@ test('renders annual stats', () => {
     />
   )
   const annualButton = getByRole('button', { name: 'Annual' })
-  act(() => annualButton.click())
+  act(() => { annualButton.click(); })
   getByText('7.87')
   getByText('10')
   getByText('2020')
@@ -185,9 +175,9 @@ test('renders brewery stats', async () => {
     </LinkWrapper>
   )
   const breweryButton = getByRole('button', { name: 'Brewery' })
-  act(() => breweryButton.click())
+  act(() => { breweryButton.click(); })
   // Need to do something to get breweries set.
-  await act(async() => openFilters(getByRole))
+  await act(async() => { openFilters(getByRole); })
   getByText(koskipanimo.breweryName)
   getByText(koskipanimo.reviewAverage)
   getByText(koskipanimo.reviewCount)
@@ -202,8 +192,7 @@ test('renders rating stats', () => {
       statsIf={{
         ...emptyStatsIf,
         rating: {
-          useStats: () => {
-            return {
+          useStats: () => ({
               stats: {
                 rating: [
                   { rating: '7', count: '10' },
@@ -211,8 +200,7 @@ test('renders rating stats', () => {
                 ]
               },
               isLoading: false
-            }
-          }
+            })
         }
       }}
       breweryId={'a64a3770-7bc2-46a1-8be6-87d137d0d644'}
@@ -220,7 +208,7 @@ test('renders rating stats', () => {
     />
   )
   const ratingButton = getByRole('button', { name: 'Rating' })
-  act(() => ratingButton.click())
+  act(() => { ratingButton.click(); })
   getByText('7')
   getByText('10')
   getByText('8')
@@ -262,7 +250,7 @@ test('renders style stats', () => {
     </LinkWrapper>
   )
   const styleButton = getByRole('button', { name: 'Style' })
-  act(() => styleButton.click())
+  act(() => { styleButton.click(); })
   getByText(pils.styleName)
   getByText(pils.reviewAverage)
   getByText(pils.reviewCount)

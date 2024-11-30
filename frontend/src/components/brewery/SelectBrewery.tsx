@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 import type {
   Brewery,
@@ -19,7 +19,7 @@ export interface Props {
   remove: () => void
 }
 
-function SelectBrewery (props: Props): JSX.Element {
+function SelectBrewery (props: Props): React.JSX.Element {
   const [mode, setMode] = useState(Mode.SELECT)
   return (
     <div className="SelectBrewery">

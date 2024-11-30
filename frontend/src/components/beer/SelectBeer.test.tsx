@@ -6,9 +6,9 @@ import type { CreateBeerRequest } from '../../core/beer/types'
 
 const namePlaceholder = 'Name'
 
-const useDebounce = (str: string) => str
+const useDebounce = (str: string): string => str
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
@@ -37,7 +37,7 @@ const dontCreate = {
 
 const searchIf = {
   useSearch: () => ({
-    activate: () => { },
+    activate: () => undefined,
       isActive: true
   }),
   useDebounce
@@ -105,16 +105,16 @@ test('selects created beer', async () => {
   const brewerySearch = getByPlaceholderText('Search brewery')
   await user.type(brewerySearch, 'Koskipa')
   const breweryButton = getByRole('button', { name: 'Koskipanimo' })
-  act(() => breweryButton.click())
+  act(() => { breweryButton.click(); })
 
   const styleSearch = getByPlaceholderText('Search style')
   await user.type(styleSearch, 'IPA')
   const styleButton = getByRole('button', { name: 'IPA' })
-  act(() => styleButton.click())
+  act(() => { styleButton.click(); })
 
   const createButton = getByRole('button', { name: 'Create beer' })
   expect(createButton.hasAttribute('disabled')).toEqual(false)
-  await act(async() => createButton.click())
+  await act(async() => { createButton.click(); })
   const createCalls = selectBeer.mock.calls
   expect(createCalls).toEqual([[{
     id,
@@ -178,7 +178,7 @@ test('selects beer', async () => {
   )
 
   const selectRadio = getAllByRole('radio', { name: 'Select' })[0]
-  act(() => selectRadio.click())
+  act(() => { selectRadio.click(); })
 
   const input = getByRole('textbox')
   expect(input).toBeDefined()

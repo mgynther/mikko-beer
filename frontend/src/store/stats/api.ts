@@ -3,18 +3,16 @@ import { emptySplitApi } from '../api'
 import type {
   BreweryStatsQueryParams,
   BreweryStyleParams,
-  StyleStatsQueryParams
+  StyleStatsQueryParams,
+  AnnualStats,
+  BreweryStats,
+  BreweryStatsSorting,
+  OverallStats,
+  RatingStats,
+  StyleStats,
+  StyleStatsSorting,
 } from '../../core/stats/types'
 
-import {
-  type AnnualStats,
-  type BreweryStats,
-  type BreweryStatsSorting,
-  type OverallStats,
-  type RatingStats,
-  type StyleStats,
-  type StyleStatsSorting,
-} from '../../core/stats/types'
 import { StatsTags } from './types'
 
 function breweryIdFilter (breweryId: string): string {
@@ -28,8 +26,8 @@ function styleIdFilter (styleId: string): string {
 function breweryStyleFilter (
   { breweryId, styleId }: BreweryStyleParams
 ): string {
-  if (breweryId !== undefined) return `${breweryIdFilter(breweryId)}`
-  if (styleId !== undefined) return `${styleIdFilter(styleId)}`
+  if (breweryId !== undefined) return breweryIdFilter(breweryId)
+  if (styleId !== undefined) return styleIdFilter(styleId)
   return ''
 }
 

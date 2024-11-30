@@ -2,7 +2,7 @@ import { render, fireEvent } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
 import StepFilterSlider from './StepFilterSlider'
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 

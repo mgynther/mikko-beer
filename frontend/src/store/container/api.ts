@@ -3,10 +3,10 @@ import { emptySplitApi } from '../api'
 import { ReviewTags } from '../review/types'
 import { containerStatsTagTypes } from '../stats/types'
 
-import {
-  type Container,
-  type ContainerList,
-  type ContainerRequest,
+import type {
+  Container,
+  ContainerList,
+  ContainerRequest,
 } from '../../core/container/types'
 
 import {
@@ -15,6 +15,9 @@ import {
 
 const containerApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
+    /* eslint-disable-next-line @typescript-eslint/no-invalid-void-type --
+     * Void required here to generate correct hook.
+     */
     listContainers: build.query<ContainerList, void>({
       query: () => ({
         url: '/container',

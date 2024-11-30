@@ -1,12 +1,15 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import type {
   BeerWithIds,
   SelectBeerIf
 } from '../../core/beer/types'
-import { type Container } from '../../core/container/types'
-import { type ReviewContainerIf } from '../../core/review/types'
-import { type JoinedReview, type ReviewRequest } from '../../core/review/types'
+import type { Container } from '../../core/container/types'
+import type {
+  ReviewContainerIf,
+  JoinedReview,
+  ReviewRequest
+} from '../../core/review/types'
 import type { SearchIf } from '../../core/search/types'
 
 import SelectBeer from '../beer/SelectBeer'
@@ -35,7 +38,7 @@ interface Props {
   onChange: (review: ReviewRequest | undefined) => void
 }
 
-function ReviewEditor (props: Props): JSX.Element {
+function ReviewEditor (props: Props): React.JSX.Element {
   function getInitialBeer (): BeerWithIds | undefined {
     if (props.initialReview === undefined) return undefined
     return {
@@ -80,7 +83,7 @@ function ReviewEditor (props: Props): JSX.Element {
   function localDateTime (): string {
     const date = props.initialReview === undefined
       ? props.currentDate
-      : new Date(props.initialReview?.review.time)
+      : new Date(props.initialReview.review.time)
     const y = date.getFullYear()
     const mo = date.getMonth() + 1
     const d = date.getDate()
@@ -241,7 +244,7 @@ function ReviewEditor (props: Props): JSX.Element {
             max={10}
             step={1}
             value={rating}
-            setValue={(value: number) => setRating(value) }
+            setValue={(value: number) => { setRating(value); } }
           />
         </div>
       </div>

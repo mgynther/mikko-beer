@@ -22,16 +22,16 @@ test('updates brewery', async () => {
           isLoading: false
         })
       }}
-      onCancel={() => {}}
+      onCancel={() => undefined}
       onSaved={onSaved}
     />
   )
   const saveButton = getByRole('button', { name: 'Save' })
   const nameInput = getByPlaceholderText(newNamePlaceholder)
-  user.clear(nameInput)
-  await act(async () => await user.type(nameInput, 'Koskipanimo'))
+  await user.clear(nameInput)
+  await act(async () => { await user.type(nameInput, 'Koskipanimo'); })
   expect(saveButton.hasAttribute('disabled')).toEqual(false)
-  await act(async() => saveButton.click())
+  await act(async() => { saveButton.click(); })
   const updateCalls = update.mock.calls
   expect(updateCalls).toEqual([[{
     id,

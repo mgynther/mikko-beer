@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import type {
   Brewery,
@@ -14,7 +14,7 @@ export interface Props {
   select: (brewery: Brewery) => void
 }
 
-function SearchBrewery (props: Props): JSX.Element {
+function SearchBrewery (props: Props): React.JSX.Element {
   const {
     search,
     isLoading

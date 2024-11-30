@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 
 import type {
   GetBreweryStatsIf,
@@ -27,7 +27,7 @@ const giantPage = {
   size: 10000
 }
 
-function BreweryAllAtOnce (props: Props): JSX.Element {
+function BreweryAllAtOnce (props: Props): React.JSX.Element {
   const minReviewCount = props.filters.minReviewCount.value
   const maxReviewCount = props.filters.maxReviewCount.value
   const minReviewAverage = props.filters.minReviewAverage.value

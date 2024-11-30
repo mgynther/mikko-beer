@@ -1,5 +1,5 @@
-const NotFound = (): JSX.Element => {
-  return <div>Not found</div>
-}
+import React from 'react'
+
+const NotFound = (): React.JSX.Element => <div>Not found</div>
 
 export default NotFound

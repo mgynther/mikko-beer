@@ -1,4 +1,4 @@
-import { type ListDirection } from '../core/types'
+import type { ListDirection } from '../core/types'
 
 export function getDirectionSymbol (
   direction: ListDirection | undefined
@@ -7,7 +7,6 @@ export function getDirectionSymbol (
   switch (direction) {
     case 'asc': return '▲'
     case 'desc': return '▼'
-    default: return ''
   }
 }
 
@@ -18,7 +17,6 @@ export function invertDirection (
   switch (direction) {
     case 'asc': return 'desc'
     case 'desc': return 'asc'
-    default: return 'desc'
   }
 }
 

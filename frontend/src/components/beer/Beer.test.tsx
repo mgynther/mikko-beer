@@ -4,12 +4,17 @@ import { expect, test, vitest } from 'vitest'
 import Beer from './Beer'
 import { Role } from '../../core/user/types'
 import LinkWrapper from '../LinkWrapper'
-import type { JoinedReview, Review } from '../../core/review/types'
+import type {
+  JoinedReview,
+  ListReviewsByIf,
+  Review
+} from '../../core/review/types'
 import type { ListStoragesByIf, Storage } from '../../core/storage/types'
+import type { UseDebounce } from '../../core/types'
 
-const useDebounce = (str: string) => str
+const useDebounce: UseDebounce = (str: string) => str
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
@@ -87,8 +92,8 @@ const dontCreate = {
 
 const searchIf = {
   useSearch: () => ({
-    activate: () => { },
-      isActive: true
+    activate: () => undefined,
+    isActive: true
   }),
   useDebounce
 }
@@ -144,7 +149,7 @@ const getBeerIf = {
 const reviewIf = {
   get: {
     useGet: () => ({
-      review: review,
+      review,
       get: async () => review
     })
   },
@@ -158,7 +163,7 @@ const paramsIf = {
   })
 }
 
-function getListReviewsIf(reviews: JoinedReview[]) {
+function getListReviewsIf(reviews: JoinedReview[]): ListReviewsByIf {
   return {
     useList: () => ({
       reviews: {
@@ -174,7 +179,7 @@ function getListStoragesByBeerIf(storages: Storage[]): ListStoragesByIf {
   return {
     useList: () => ({
       storages: {
-        storages: storages
+        storages
       },
       isLoading: false
     })
@@ -248,7 +253,7 @@ test('updates beer', async () => {
       <Beer
         updateBeerIf={{
           useUpdate: () => ({
-            update: update,
+            update,
             isLoading: false
           }),
           editBeerIf
@@ -264,13 +269,13 @@ test('updates beer', async () => {
   )
 
   const editButton = getByRole('button', { name: 'Edit' })
-  act(() => editButton.click())
+  act(() => { editButton.click(); })
   const nameInput = getByPlaceholderText('Name')
-  user.clear(nameInput)
+  await user.clear(nameInput)
   const beerName = 'Sumutar'
   await user.type(nameInput, beerName)
   const saveButton = getByRole('button', { name: 'Save' })
-  act(() => saveButton.click())
+  act(() => { saveButton.click(); })
   expect(update.mock.calls).toEqual([[{
     ...beer,
     name: beerName,

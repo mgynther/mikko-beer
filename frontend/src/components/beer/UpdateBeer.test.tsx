@@ -28,11 +28,11 @@ const anotherStyle = {
   parents: ['1f1eb9e4-8925-45a5-9dd5-7b34bba11418']
 }
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const useDebounce = (str: string) => str
+const useDebounce = (str: string): string => str
 
 const dontSelectBrewery = {
   create: {
@@ -111,11 +111,11 @@ test('updates beer name', async () => {
     />
   )
   const nameInput = getByPlaceholderText('Name')
-  user.clear(nameInput)
+  await user.clear(nameInput)
   await user.type(nameInput, beerName)
   const saveButton = getByRole('button', { name: 'Save' })
   expect(saveButton.hasAttribute('disabled')).toEqual(false)
-  await act(async() => saveButton.click())
+  await act(async() => { saveButton.click(); })
   const updateCalls = update.mock.calls
   expect(updateCalls).toEqual([[{
     id,
@@ -168,14 +168,14 @@ test('updates beer brewery', async () => {
     />
   )
   const changeButton = getAllByRole('button', { name: 'Change' })
-  await act(async () => changeButton[0].click())
+  await act(async () => { changeButton[0].click(); })
   const searchBreweryField = getByPlaceholderText('Search brewery')
   await user.type(searchBreweryField, 'Laiti')
   const breweryButton = getByRole('button', { name: anotherBrewery.name })
-  await act(async () => breweryButton.click())
+  await act(async () => { breweryButton.click(); })
   const saveButton = getByRole('button', { name: 'Save' })
   expect(saveButton.hasAttribute('disabled')).toEqual(false)
-  await act(async() => saveButton.click())
+  await act(async() => { saveButton.click(); })
   const updateCalls = update.mock.calls
   expect(updateCalls).toEqual([[{
     id,
@@ -231,14 +231,14 @@ test('updates beer style', async () => {
     />
   )
   const changeButton = getAllByRole('button', { name: 'Change' })
-  await act(async () => changeButton[1].click())
+  await act(async () => { changeButton[1].click(); })
   const searchBreweryField = getByPlaceholderText('Search style')
   await user.type(searchBreweryField, 'Lager')
   const breweryButton = getByRole('button', { name: anotherStyle.name })
-  await act(async () => breweryButton.click())
+  await act(async () => { breweryButton.click(); })
   const saveButton = getByRole('button', { name: 'Save' })
   expect(saveButton.hasAttribute('disabled')).toEqual(false)
-  await act(async() => saveButton.click())
+  await act(async() => { saveButton.click(); })
   const updateCalls = update.mock.calls
   expect(updateCalls).toEqual([[{
     id,

@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
-import { type Container } from '../../core/container/types'
+import type { Container } from '../../core/container/types'
 import { isSizeValid } from './util'
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
   onChange: (container: Container | undefined) => void
 }
 
-function ContainerEditor (props: Props): JSX.Element {
+function ContainerEditor (props: Props): React.JSX.Element {
   const [container, setContainer] = useState(props.initialContainer)
 
   function onChange (type: string, size: string): void {

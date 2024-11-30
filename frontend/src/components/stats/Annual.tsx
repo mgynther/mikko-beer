@@ -1,3 +1,5 @@
+import React from 'react'
+
 import type { GetAnnualStatsIf } from '../../core/stats/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
@@ -10,7 +12,7 @@ interface Props {
   styleId: string | undefined
 }
 
-function Annual (props: Props): JSX.Element {
+function Annual (props: Props): React.JSX.Element {
   const { stats, isLoading } = props.getAnnualStatsIf.useStats({
     breweryId: props.breweryId,
     styleId: props.styleId

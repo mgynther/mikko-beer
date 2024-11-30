@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import type {
   CreateReviewIf,
@@ -15,10 +15,10 @@ import { formatBestBefore, type NavigateIf, type ParamsIf } from '../util'
 
 import ReviewEditor, { type InitialReview } from './ReviewEditor'
 
-function toInitialReview (storageData: Storage, currentDate: Date): InitialReview {
-  if (storageData === undefined) {
-    throw new Error('must wait for storageData to load')
-  }
+function toInitialReview (
+  storageData: Storage,
+  currentDate: Date
+): InitialReview {
   // TODO add user editable template and save it to localStorage.
   const additionalInfo =
     `From storage, BB ${formatBestBefore(storageData.bestBefore)}`
@@ -54,7 +54,7 @@ export interface Props {
   searchIf: SearchIf
 }
 
-function AddReview (props: Props): JSX.Element {
+function AddReview (props: Props): React.JSX.Element {
   const navigate = props.navigateIf.useNavigate()
   const { storageId } = props.paramsIf.useParams()
   const [review, setReview] = useState<ReviewRequest | undefined>(undefined)
@@ -77,7 +77,7 @@ function AddReview (props: Props): JSX.Element {
     }
   }, [isSuccess, createdReview])
 
-  async function doAddReview (): Promise<void> {
+  function doAddReview (): void {
     if (review === undefined) return
     void create({ body: review, storageId })
   }
@@ -117,7 +117,7 @@ function AddReview (props: Props): JSX.Element {
             isLoading ||
             createdReview !== undefined
           }
-          onClick={() => { void doAddReview() }}
+          onClick={() => { doAddReview() }}
         >
           Add
         </button>

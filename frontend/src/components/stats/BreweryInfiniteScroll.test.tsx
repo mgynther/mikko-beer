@@ -3,15 +3,15 @@ import { expect, test, vitest } from 'vitest'
 import BreweryInfiniteScroll from './BreweryInfiniteScroll'
 import LinkWrapper from '../LinkWrapper'
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
 function openFilters(
   getByRole: (type: string, props: Record<string, string>) => HTMLElement
-) {
+): void {
   const toggleButton = getByRole('button', { name: 'Filters ▼' })
-  act(() => toggleButton.click())
+  act(() => { toggleButton.click(); })
 }
 
 const koskipanimo = {
@@ -112,7 +112,7 @@ test('queries brewery stats', async () => {
     styleId: undefined
   }]])
   // Need to do something to get breweries set.
-  await act(async() => openFilters(getByRole))
+  await act(async() => { openFilters(getByRole); })
   expect(setLoadedBreweries.mock.calls).toEqual([[[koskipanimo, lehe]]])
 })
 
@@ -159,7 +159,7 @@ test('sets minimum review count filter', async () => {
       />
     </LinkWrapper>
   )
-  await act(async() => openFilters(getByRole))
+  await act(async() => { openFilters(getByRole); })
   const slider = getByDisplayValue('4')
   fireEvent.change(slider, {target: {value: '4.5'}})
   expect(setMinimumReviewAverage.mock.calls).toEqual([[4.5]])

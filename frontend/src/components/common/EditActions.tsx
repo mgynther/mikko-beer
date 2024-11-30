@@ -1,3 +1,5 @@
+import React from 'react'
+
 import LoadingIndicator from './LoadingIndicator'
 
 import './EditActions.css'
@@ -9,7 +11,7 @@ interface Props {
   onSave: () => void
 }
 
-function EditActions (props: Props): JSX.Element | null {
+function EditActions (props: Props): React.JSX.Element | null {
   return (
     <span className='EditActions'>
       <button onClick={() => { props.onCancel() }}>Cancel</button>

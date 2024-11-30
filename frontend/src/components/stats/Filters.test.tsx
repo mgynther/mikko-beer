@@ -2,15 +2,15 @@ import { act, fireEvent, render } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
 import Filters from './Filters'
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
 function open(
   getByRole: (type: string, props: Record<string, string>) => HTMLElement
-) {
+): void {
   const toggleButton = getByRole('button', { name: 'Filters ▼' })
-  act(() => toggleButton.click())
+  act(() => { toggleButton.click(); })
 }
 
 test('renders values when open', () => {

@@ -3,11 +3,11 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import CreateStyle from './CreateStyle'
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const useDebounce = (value: string) => value
+const useDebounce = (value: string): string => value
 
 const parent = {
   id: '1771b86d-236f-40e8-a4ce-cb464cdce2d1',
@@ -63,22 +63,22 @@ test('creates style', async () => {
   await user.clear(nameInput)
   await user.type(nameInput, name)
 
-  async function search() {
+  async function search(): Promise<void> {
     const searchInput = getByPlaceholderText('Search style')
     await user.type(searchInput, 'a')
   }
 
   await search()
   const parentButton = getByRole('button', { name: parent.name })
-  act(() => parentButton.click())
+  act(() => { parentButton.click(); })
   await search()
   const otherParentButton = getByRole('button', { name: otherParent.name })
-  act(() => otherParentButton.click())
+  act(() => { otherParentButton.click(); })
 
   const createButton = getByRole('button', { name: 'Create' })
-  await act(async () => createButton.click())
+  await act(async () => { createButton.click(); })
   expect(create.mock.calls).toEqual([[{
-    name: name,
+    name,
     parents: [parent, otherParent].map(p => p.id)
   }]])
 

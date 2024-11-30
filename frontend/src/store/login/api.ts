@@ -33,7 +33,7 @@ const loginApi = emptySplitApi.injectEndpoints({
       },
       invalidatesTags: ['Login']
     }),
-    changePassword: build.mutation<void, Partial<ChangePasswordParams>>({
+    changePassword: build.mutation<undefined, Partial<ChangePasswordParams>>({
       query: (params: ChangePasswordParams) => ({
         url: `/user/${params.userId}/change-password`,
         method: 'POST',

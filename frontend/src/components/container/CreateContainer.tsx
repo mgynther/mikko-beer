@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
-import {
-  type Container,
-  type CreateContainerIf
+import type {
+  Container,
+  CreateContainerIf
 } from '../../core/container/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
@@ -14,7 +14,7 @@ export interface Props {
   createContainerIf: CreateContainerIf
 }
 
-function CreateContainer (props: Props): JSX.Element {
+function CreateContainer (props: Props): React.JSX.Element {
   const { create, isLoading } = props.createContainerIf.useCreate()
   const [container, setContainer] = useState<Container | undefined>(undefined)
   const [initialContainer] = useState<Container>({

@@ -2,9 +2,8 @@ import type { SelectBeerIf } from "../beer/types"
 import type {
   CreateContainerIf,
   ListContainersIf
-} from "../container/types"
+, Container } from "../container/types"
 
-import type { Container } from '../container/types'
 import type { GetLogin } from "../login/types"
 import type { InfiniteScroll, ListDirection, Pagination } from '../types'
 

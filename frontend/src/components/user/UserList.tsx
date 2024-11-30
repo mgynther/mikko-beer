@@ -1,3 +1,5 @@
+import React from 'react'
+
 import type {
   DeleteUserIf,
   ListUsersIf,
@@ -13,7 +15,7 @@ interface Props {
   listUsersIf: ListUsersIf
 }
 
-function UserList (props: Props): JSX.Element {
+function UserList (props: Props): React.JSX.Element {
   const { data: userData, isLoading } = props.listUsersIf.useList()
   const { delete: del } = props.deleteUserIf.useDelete()
 

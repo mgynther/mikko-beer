@@ -5,15 +5,15 @@ import LinkWrapper from '../LinkWrapper'
 import type { BreweryStatsSortingOrder } from '../../core/stats/types'
 import type { ListDirection } from '../../core/types'
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
 function openFilters(
   getByRole: (type: string, props: Record<string, string>) => HTMLElement
-) {
+): void {
   const toggleButton = getByRole('button', { name: 'Filters ▼' })
-  act(() => toggleButton.click())
+  act(() => { toggleButton.click(); })
 }
 
 const koskipanimo = {

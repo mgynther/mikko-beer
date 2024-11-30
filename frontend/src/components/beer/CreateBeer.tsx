@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 import type {
   BeerWithIds,
@@ -16,7 +16,7 @@ export interface Props {
   select: (beer: BeerWithIds) => void
 }
 
-function CreateBeer (props: Props): JSX.Element {
+function CreateBeer (props: Props): React.JSX.Element {
   const [beer, setBeer] = useState<BeerWithIds | undefined>(undefined)
   const { create, isLoading } = props.createBeerIf.useCreate()
 

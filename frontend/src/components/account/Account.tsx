@@ -1,3 +1,5 @@
+import React from 'react'
+
 import type {
   ChangePasswordIf,
   GetLogin,
@@ -10,7 +12,7 @@ interface Props {
   getLogin: GetLogin
 }
 
-function Account (props: Props): JSX.Element {
+function Account (props: Props): React.JSX.Element {
   const login: Login = props.getLogin()
   return (
     <div>

@@ -6,7 +6,7 @@ import type { UseDebounce } from "../../core/types"
 
 const useDebounce: UseDebounce = (str: string) => str
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
@@ -31,9 +31,7 @@ const beerSearchResult = {
 }
 const beerSearchIf = {
   useSearch: () => ({
-    search: async () => {
-      return [beerSearchResult]
-    },
+    search: async () => [beerSearchResult],
     isLoading: false
   })
 }
@@ -104,8 +102,8 @@ test('creates storage', async () => {
     <CreateStorage
       searchIf={{
         useSearch: () => ({
-          activate: () => { },
-            isActive: true
+          activate: () => undefined,
+          isActive: true
         }),
         useDebounce
       }}
@@ -125,7 +123,7 @@ test('creates storage', async () => {
   )
 
   const selects = getAllByRole('radio', { name: 'Select' })
-  act(() => selects[0].click())
+  act(() => { selects[0].click(); })
   const beerSearch = getByPlaceholderText('Search beer')
   expect(beerSearch).toBeDefined()
   beerSearch.focus()
@@ -139,7 +137,7 @@ test('creates storage', async () => {
   const containerSelect = getByRole('combobox')
   await user.click(containerSelect)
   const bottle = getByRole('option', { name: 'bottle 0.33' })
-  userEvent.selectOptions(containerSelect, bottle);
+  await userEvent.selectOptions(containerSelect, bottle)
 
   const date = '2023-12-25'
   const dateInput = getByLabelText('Best before')

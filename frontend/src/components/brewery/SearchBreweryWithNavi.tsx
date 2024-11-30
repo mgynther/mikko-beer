@@ -1,3 +1,5 @@
+import React from 'react'
+
 import SearchBrewery from './SearchBrewery'
 import type { SearchBreweryIf } from '../../core/brewery/types'
 import type { SearchIf } from '../../core/search/types'
@@ -9,7 +11,7 @@ export interface Props {
   searchBreweryIf: SearchBreweryIf
 }
 
-function SearchBreweryWithNavi (props: Props): JSX.Element {
+function SearchBreweryWithNavi (props: Props): React.JSX.Element {
   const navigate = props.navigateIf.useNavigate()
   return (
     <SearchBrewery

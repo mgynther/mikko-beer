@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
 import Overall from './Overall'
-import { BreweryStyleParams } from '../../core/stats/types'
+import type { BreweryStyleParams } from '../../core/stats/types'
 
 test('renders overall stats', () => {
   const stats = vitest.fn()

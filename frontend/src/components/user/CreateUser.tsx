@@ -1,33 +1,38 @@
-import { useState } from 'react'
+import React, { type FormEvent, useState } from 'react'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
 import './CreateUser.css'
-import { type CreateUserIf } from '../../core/user/types'
+import type { CreateUserIf } from '../../core/user/types'
 
 interface Props {
   createUserIf: CreateUserIf
 }
 
-function CreateUser (props: Props): JSX.Element {
+function CreateUser (props: Props): React.JSX.Element {
   const {create, user, hasError, isLoading } = props.createUserIf.useCreate()
 
   const [isMismatch, setIsMismatch] = useState(false)
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [role, setRole] = useState('viewer')
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
 
-  async function doChange (event: any): Promise<void> {
+  async function doChange (event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     await create({
       passwordSignInMethod: {
-        username: event.target.elements.username.value as string,
-        password: event.target.elements.password.value as string
+        username,
+        password
       },
       user: {
-        role: event.target.elements.role.value as string
+        role
       }
     })
-    event.target.reset()
+    setUsername('')
+    setPassword('')
+    setRole('viewer')
+    setPasswordConfirmation('')
   }
 
   return (
@@ -37,7 +42,14 @@ function CreateUser (props: Props): JSX.Element {
         className="CreateUserForm"
         onSubmit={(e) => { void doChange(e) }}>
         <div>
-          <input placeholder='Username' type='text' id='username' />
+          <input
+            type='text'
+            placeholder='Username'
+            id='username'
+            onChange={(e) => {
+              setUsername(e.target.value)
+            }}
+          />
         </div>
         <div>
           <input
@@ -68,8 +80,11 @@ function CreateUser (props: Props): JSX.Element {
         <div>
           <div>Role:</div>
           <select
-            defaultValue={'viewer'}
+            value={role}
             id='role'
+            onChange={(e) => {
+              setRole(e.target.value)
+            }}
           >
             <option value={'admin'}>Admin</option>
             <option value={'viewer'}>Viewer</option>

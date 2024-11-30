@@ -4,9 +4,9 @@ import Breweries from './Breweries'
 import type { SearchIf } from '../../core/search/types'
 import LinkWrapper from '../LinkWrapper'
 
-const useDebounce = (str: string) => str
+const useDebounce = (str: string): string => str
 
-const notUsed = () => { throw new Error('Do not call') }
+const notUsed = (): any => { throw new Error('Do not call') }
 
 const activeSearch: SearchIf = {
   useSearch: () => ({
@@ -61,7 +61,7 @@ test('renders breweries', async () => {
     </LinkWrapper>
   )
   expect(scrollCb).not.toEqual(undefined)
-  await act(async () => scrollCb())
+  await act(async () => { scrollCb(); })
   getByRole('link', { name: brewery.name })
   getByRole('link', { name: anotherBrewery.name })
   getByRole('textbox')

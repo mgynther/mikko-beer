@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 import type { StatsFilters } from '../../core/stats/types'
 
@@ -14,7 +14,7 @@ interface Props {
   filters: StatsFilters
 }
 
-function Filters (props: Props): JSX.Element {
+function Filters (props: Props): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false)
   function getOpenSymbol (isOpen: boolean): string {
     return isOpen ? '▲' : '▼'

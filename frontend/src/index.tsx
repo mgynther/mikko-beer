@@ -5,7 +5,7 @@ import { persistStore } from 'redux-persist'
 import { PersistGate } from 'redux-persist/integration/react'
 import './index.css'
 import RtkApp from './RtkApp'
-import {onCLS, onINP, onLCP} from 'web-vitals';
+import {onCLS, onINP, onLCP} from 'web-vitals'
 
 import { Provider } from './react-redux-wrapper'
 import { store } from './store/store'
@@ -26,6 +26,6 @@ root.render(
   </Provider>
 )
 
-onCLS(console.log);
-onINP(console.log);
-onLCP(console.log);
+onCLS(console.log)
+onINP(console.log)
+onLCP(console.log)

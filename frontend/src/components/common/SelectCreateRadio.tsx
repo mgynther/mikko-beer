@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
 export enum Mode {
@@ -8,8 +8,8 @@ export enum Mode {
 
 export interface Props {
   defaultMode: Mode
-  createElement: JSX.Element
-  selectElement: JSX.Element
+  createElement: React.JSX.Element
+  selectElement: React.JSX.Element
 }
 
 interface BasicProps {
@@ -17,10 +17,13 @@ interface BasicProps {
   onChange: (mode: Mode) => void
 }
 
-export function SelectCreateRadioBasic (props: BasicProps): JSX.Element {
+export function SelectCreateRadioBasic (props: BasicProps): React.JSX.Element {
   const [id] = useState(uuidv4())
 
   function onRadioChange (e: React.ChangeEvent<HTMLInputElement>): void {
+    /* eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison --
+     * Type is lost in the radio button input.
+     */
     const newMode = e.target.value === Mode.SELECT ? Mode.SELECT : Mode.CREATE
     props.onChange(newMode)
   }
@@ -54,7 +57,7 @@ export function SelectCreateRadioBasic (props: BasicProps): JSX.Element {
   )
 }
 
-function SelectCreateRadio (props: Props): JSX.Element {
+function SelectCreateRadio (props: Props): React.JSX.Element {
   const [mode, setMode] = useState(props.defaultMode)
 
   return (

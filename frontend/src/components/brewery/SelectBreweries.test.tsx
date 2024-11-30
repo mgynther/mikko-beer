@@ -2,7 +2,7 @@ import { act, render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import SelectBreweries from './SelectBreweries'
-import type { Brewery } from '../../core/brewery/types'
+import type { Brewery, SearchBreweryIf } from '../../core/brewery/types'
 import type { UseDebounce } from '../../core/types'
 
 const brewery: Brewery = {
@@ -15,16 +15,18 @@ const anotherBrewery: Brewery = {
   name: 'Mallaskoski'
 }
 
-const useCreate = () => {
+const useCreate = (): any => {
   throw new Error('do not call')
 }
 
-const useSearch = () => ({
-  search: async () => ([
-    anotherBrewery
-  ]),
-  isLoading: false
-})
+const search: SearchBreweryIf = {
+  useSearch: () => ({
+    search: async () => ([
+      anotherBrewery
+    ]),
+    isLoading: false
+  })
+}
 
 const useDebounce: UseDebounce = (str: string) => str
 
@@ -37,13 +39,11 @@ test('selects one more brewery', async () => {
       select={onSelect}
       selectBreweryIf={{
         create: { useCreate },
-        search: {
-          useSearch
-        }
+        search
       }}
       searchIf={{
         useSearch: () => ({
-          activate: () => {},
+          activate: () => undefined,
           isActive: true
         }),
         useDebounce
@@ -52,12 +52,13 @@ test('selects one more brewery', async () => {
   )
 
   const addButton = getByRole('button', { name: 'Add brewery' })
-  await act(async() => addButton.click())
+  await act(async() => { addButton.click(); })
 
   const brewerySearch = getByPlaceholderText('Search brewery')
   await user.type(brewerySearch, anotherBrewery.name)
-  const breweryOption = await findByRole('button', { name: anotherBrewery.name })
-  await act(async () => breweryOption.click())
+  const breweryOption =
+    await findByRole('button', { name: anotherBrewery.name })
+  await act(async () => { breweryOption.click(); })
   const selectCalls = onSelect.mock.calls
   expect(selectCalls).toEqual([ [[]], [[]], [[brewery.id, anotherBrewery.id]] ])
 })
@@ -70,13 +71,11 @@ test('removes selected brewery', async () => {
       select={onSelect}
       selectBreweryIf={{
         create: { useCreate },
-        search: {
-          useSearch
-        }
+        search
       }}
       searchIf={{
         useSearch: () => ({
-          activate: () => {},
+          activate: () => undefined,
           isActive: false
         }),
         useDebounce
@@ -84,13 +83,13 @@ test('removes selected brewery', async () => {
     />
   )
   const changeButtons = getAllByRole('button', { name: 'Change' })
-  await act(async() => changeButtons[0].click())
+  await act(async() => { changeButtons[0].click(); })
 
   const selectCalls = onSelect.mock.calls
   expect(selectCalls).toEqual([[[]]])
 
   const removeButton = getByRole('button', { name: 'Remove' })
-  await act(async() => removeButton.click())
+  await act(async() => { removeButton.click(); })
 
   const finalSelectedCalls = onSelect.mock.calls
   expect(finalSelectedCalls).toEqual([ [[]], [[]], [[anotherBrewery.id] ]])

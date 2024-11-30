@@ -1,9 +1,9 @@
-import { useRef } from 'react'
+import React, { useRef } from 'react'
 
 import LoadingIndicator from './LoadingIndicator'
 
 import './SearchBox.css'
-import { SearchIf } from '../../core/search/types'
+import type { SearchIf } from '../../core/search/types'
 
 export interface SearchBoxItem {
   id: string
@@ -34,7 +34,7 @@ const SearchBox = <T extends SearchBoxItem>({
   setFilter,
   select,
   title
-}: Props<T>): JSX.Element => {
+}: Props<T>): React.JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null)
   const { activate, isActive } = searchIf.useSearch()
   const sortedOptions = [...currentOptions].sort((a, b) => {

@@ -1,3 +1,5 @@
+import React from 'react'
+
 import type {
   JoinedReview,
   ReviewIf,
@@ -25,7 +27,7 @@ interface Props {
   onChanged: () => void
 }
 
-function ReviewList (props: Props): JSX.Element {
+function ReviewList (props: Props): React.JSX.Element {
   return (
     <div>
       {props.isTitleVisible && <h4>Reviews</h4>}
@@ -37,8 +39,7 @@ function ReviewList (props: Props): JSX.Element {
           supportedSorting={props.supportedSorting}
         />
         <div>
-          {props.reviews.map((review) => {
-            return (
+          {props.reviews.map((review) => (
               <Review
                 reviewIf={props.reviewIf}
                 searchIf={props.searchIf}
@@ -46,8 +47,7 @@ function ReviewList (props: Props): JSX.Element {
                 review={review}
                 onChanged={props.onChanged}
               />
-            )
-          })}
+            ))}
         </div>
       </div>
     </div>

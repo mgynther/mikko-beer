@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
 import Annual from './Annual'
-import { BreweryStyleParams } from '../../core/stats/types'
+import type { BreweryStyleParams } from '../../core/stats/types'
 
 test('renders annual stats', () => {
   const stats = vitest.fn()

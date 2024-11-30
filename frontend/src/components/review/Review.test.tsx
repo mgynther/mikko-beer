@@ -9,7 +9,7 @@ import LinkWrapper from "../LinkWrapper"
 
 const useDebounce: UseDebounce = (str: string) => str
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
@@ -84,8 +84,8 @@ const reviewContainerIf = {
 
 const searchIf = {
   useSearch: () => ({
-    activate: () => { },
-      isActive: true
+    activate: () => undefined,
+    isActive: true
   }),
   useDebounce
 }
@@ -161,17 +161,17 @@ async function addReview(getByPlaceholderText: (
   text: string) => HTMLElement,
   getByRole: (text: string, props?: Record<string, unknown>) => HTMLElement,
   user: UserEvent
-) {
+): Promise<void> {
   const smellInput = getByPlaceholderText('Smell')
   smellInput.focus()
-  user.clear(smellInput)
-  userEvent.paste(smellText)
+  await user.clear(smellInput)
+  await userEvent.paste(smellText)
   const ratingInput = getByRole('slider')
   ratingInput.click()
   fireEvent.change(ratingInput, {target: {value: `${reviewRating}`}})
   const tasteInput = getByPlaceholderText('Taste')
   tasteInput.focus()
-  user.clear(tasteInput)
+  await user.clear(tasteInput)
   await user.paste(tasteText)
 }
 
@@ -192,7 +192,7 @@ test('updates review', async () => {
           },
           update: {
             useUpdate: () => ({
-              update: update,
+              update,
               isLoading: false
             }),
             selectBeerIf,
@@ -208,7 +208,7 @@ test('updates review', async () => {
   await user.click(beerName)
   const editButton = getByRole('button', { name: 'Edit' })
   await user.click(editButton)
-  await addReview(getByPlaceholderText, getByRole, user);
+  await addReview(getByPlaceholderText, getByRole, user)
   const saveButton = getByRole('button', { name: 'Save' })
   await user.click(saveButton)
   expect(update.mock.calls).toEqual([[{
@@ -242,7 +242,7 @@ test('cannot update review as viewer', async () => {
           },
           update: {
             useUpdate: () => ({
-              update: update,
+              update,
               isLoading: false
             }),
             selectBeerIf,
@@ -283,7 +283,7 @@ test('renders review', async () => {
           },
           update: {
             useUpdate: () => ({
-              update: update,
+              update,
               isLoading: false
             }),
             selectBeerIf,

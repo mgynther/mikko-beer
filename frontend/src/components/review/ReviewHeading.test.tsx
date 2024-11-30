@@ -171,7 +171,7 @@ const sortingTests: SortingTest[] = [
   },
 ]
 
-sortingTests.forEach(testCase =>
+sortingTests.forEach(testCase => {
   test(testCase.name, async () => {
     const user = userEvent.setup()
     const setSorting = vitest.fn()
@@ -186,7 +186,7 @@ sortingTests.forEach(testCase =>
     await user.click(sortButton)
     expect(setSorting.mock.calls).toEqual([[testCase.expectedSorting]])
   })
-)
+})
 
 test('no sorting buttons when not supported', () => {
   const setSorting = vitest.fn()

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 import type {
   JoinedReview,
@@ -24,7 +24,7 @@ interface Props {
   onChanged: () => void
 }
 
-function Review (props: Props): JSX.Element {
+function Review (props: Props): React.JSX.Element {
   const [mode, setMode] = useState(EditableMode.View)
   const { get } = props.reviewIf.get.useGet()
   const review = props.review
@@ -95,7 +95,7 @@ function Review (props: Props): JSX.Element {
               <div className='Review-additional-row'>
                 <div>
                   <EditButton
-                    disabled={fullReview === undefined}
+                    disabled={false}
                     getLogin={props.reviewIf.login}
                     onClick={() => {
                       setMode(EditableMode.Edit)

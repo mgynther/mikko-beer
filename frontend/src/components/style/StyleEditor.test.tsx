@@ -3,11 +3,11 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import StyleEditor from './StyleEditor'
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const useDebounce = (value: string) => value
+const useDebounce = (value: string): string => value
 
 const id = '17d234da-032d-41a3-b526-b3dc63ba019a'
 const name = 'IPA'
@@ -99,7 +99,7 @@ test('removes parent', async () => {
   )
   const removeButtons = getAllByRole('button', { name: 'Remove' })
   expect(removeButtons.length).toEqual(2)
-  act(() => removeButtons[0].click())
+  act(() => { removeButtons[0].click(); })
   expect(onChange.mock.calls).toEqual([[{
     id,
     name,

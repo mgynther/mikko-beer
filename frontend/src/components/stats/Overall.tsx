@@ -1,3 +1,5 @@
+import React from 'react'
+
 import type { GetOverallStatsIf } from '../../core/stats/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
@@ -10,7 +12,7 @@ interface Props {
   styleId: string | undefined
 }
 
-function Overall (props: Props): JSX.Element {
+function Overall (props: Props): React.JSX.Element {
   const { stats, isLoading } = props.getOverallStatsIf.useStats({
     breweryId: props.breweryId,
     styleId: props.styleId

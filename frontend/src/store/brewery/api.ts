@@ -1,6 +1,6 @@
 import { emptySplitApi } from '../api'
 
-import { type Pagination } from '../../core/types'
+import type { Pagination } from '../../core/types'
 
 import { BeerTags } from '../beer/types'
 import { ReviewTags } from '../review/types'

@@ -360,8 +360,8 @@ const navigationTests: NavigationTest[] = [
   },
 ]
 
-navigationTests.forEach(testCase =>
-  { test(`navigates to ${testCase.heading}`, async () => {
+navigationTests.forEach(testCase => {
+  test(`navigates to ${testCase.heading}`, async () => {
     const user = userEvent.setup()
     const { getByRole } = render(
       <Provider store={store}>
@@ -376,8 +376,8 @@ navigationTests.forEach(testCase =>
     const link = getByRole('link', { name: testCase.linkText })
     await user.click(link)
     getByRole('heading', { name: testCase.heading })
-  }); }
-)
+  })
+})
 
 const navigationMoreTests: NavigationTest[] = [
   {
@@ -398,8 +398,8 @@ const navigationMoreTests: NavigationTest[] = [
   }
 ]
 
-navigationMoreTests.forEach(testCase =>
-  { test(`navigates to ${testCase.heading}`, async () => {
+navigationMoreTests.forEach(testCase => {
+  test(`navigates to ${testCase.heading}`, async () => {
     const user = userEvent.setup()
     const { getByRole } = render(
       <Provider store={store}>
@@ -417,5 +417,5 @@ navigationMoreTests.forEach(testCase =>
     const link = getByRole('link', { name: testCase.linkText })
     await user.click(link)
     getByRole('heading', { name: testCase.heading })
-  }); }
-)
+  })
+})

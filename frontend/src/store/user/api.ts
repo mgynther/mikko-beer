@@ -1,14 +1,17 @@
 import { emptySplitApi } from '../api'
 
 import { UserTags } from './types'
-import {
-  type CreateUserRequest,
-  type User,
-  type UserList
+import type {
+  CreateUserRequest,
+  User,
+  UserList
 } from '../../core/user/types'
 
 const userApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
+    /* eslint-disable-next-line @typescript-eslint/no-invalid-void-type --
+     * Void required here to generate correct hook.
+     */
     listUsers: build.query<UserList, void>({
       query: () => ({
         url: '/user',
@@ -24,7 +27,7 @@ const userApi = emptySplitApi.injectEndpoints({
       }),
       invalidatesTags: [UserTags.User]
     }),
-    deleteUser: build.mutation<void, Partial<string>>({
+    deleteUser: build.mutation<undefined, Partial<string>>({
       query: (userId) => ({
         url: `/user/${userId}`,
         method: 'DELETE'

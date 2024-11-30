@@ -1,3 +1,5 @@
+import React from 'react'
+
 import Slider from '../common/Slider'
 
 import './StepFilterSlider.css'
@@ -11,7 +13,7 @@ interface Props {
   setValue: (value: number) => void
 }
 
-function StepFilterSlider (props: Props): JSX.Element {
+function StepFilterSlider (props: Props): React.JSX.Element {
   return (
     <div>
       <div className='StepFilterSliderLabel'>

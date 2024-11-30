@@ -1,14 +1,14 @@
 import { emptySplitApi } from '../api'
 
-import { type Pagination } from '../../core/types'
+import type { Pagination } from '../../core/types'
 import { ReviewTags } from '../review/types'
 import { StorageTags } from '../storage/types'
 import { beerStatsTagTypes } from '../stats/types'
 
-import {
-  type Beer,
-  type BeerList,
-  type BeerWithIds,
+import type {
+  Beer,
+  BeerList,
+  BeerWithIds,
 } from '../../core/beer/types'
 import { BeerTags } from './types'
 

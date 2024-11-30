@@ -1,3 +1,5 @@
+import React from 'react'
+
 import type {
   BeerWithIds,
   SelectBeerIf
@@ -17,7 +19,7 @@ export interface Props {
   select: (beer: BeerWithIds) => void
 }
 
-function SelectBeer (props: Props): JSX.Element {
+function SelectBeer (props: Props): React.JSX.Element {
   return (
     <div className="SelectBeer">
       <SelectCreateRadio

@@ -1,3 +1,5 @@
+import React from 'react'
+
 import { formatTitle } from '../list-helpers'
 
 import type {
@@ -27,7 +29,7 @@ interface Props {
   setSortingOrder: (order: BreweryStatsSortingOrder) => void
 }
 
-function BreweryStatsTable (props: Props): JSX.Element {
+function BreweryStatsTable (props: Props): React.JSX.Element {
   const filters = props.filters
 
   function isSelected (property: BreweryStatsSortingOrder): boolean {
@@ -49,7 +51,7 @@ function BreweryStatsTable (props: Props): JSX.Element {
                   isSelected('brewery_name'),
                   props.sortingDirection
                 )}
-                onClick={() => props.setSortingOrder('brewery_name')} />
+                onClick={() => { props.setSortingOrder('brewery_name'); }} />
             </th>
             <th className='StatsNumColumn'>
               <TabButton
@@ -60,7 +62,7 @@ function BreweryStatsTable (props: Props): JSX.Element {
                   isSelected('count'),
                   props.sortingDirection
                 )}
-                onClick={() => props.setSortingOrder('count')} />
+                onClick={() => { props.setSortingOrder('count'); }} />
             </th>
             <th className='StatsNumColumn'>
               <TabButton
@@ -71,7 +73,7 @@ function BreweryStatsTable (props: Props): JSX.Element {
                   isSelected('average'),
                   props.sortingDirection
                 )}
-                onClick={() => props.setSortingOrder('average')} />
+                onClick={() => { props.setSortingOrder('average'); }} />
             </th>
           </tr>
           <tr>

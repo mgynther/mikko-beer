@@ -1,3 +1,5 @@
+import React from 'react'
+
 import type { SearchIf } from '../../core/search/types'
 import type {
   ListStylesIf,
@@ -16,7 +18,7 @@ interface Props {
   searchIf: SearchIf
 }
 
-function Styles (props: Props): JSX.Element {
+function Styles (props: Props): React.JSX.Element {
   const navigate = props.navigateIf.useNavigate()
   const { styles, isLoading } = props.listStylesIf.useList()
 

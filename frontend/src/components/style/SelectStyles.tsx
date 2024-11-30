@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
 import type { SearchIf } from '../../core/search/types'
@@ -34,7 +34,7 @@ interface SelectionItemProps {
   clear: () => void
 }
 
-function SelectionItem (props: SelectionItemProps): JSX.Element {
+function SelectionItem (props: SelectionItemProps): React.JSX.Element {
   return (
     <>
       {props.style === undefined && (
@@ -55,7 +55,7 @@ function SelectionItem (props: SelectionItemProps): JSX.Element {
   )
 }
 
-function SelectStyles (props: Props): JSX.Element {
+function SelectStyles (props: Props): React.JSX.Element {
   function getInitialStyleSelections (): StyleSelection[] {
     if (props.initialStyles.length === 0) {
       return [
@@ -65,12 +65,10 @@ function SelectStyles (props: Props): JSX.Element {
         }
       ]
     }
-    return props.initialStyles.map(style => {
-      return {
+    return props.initialStyles.map(style => ({
         id: style.id,
         style
-      }
-    })
+      }))
   }
   const [selections, doSetSelections] = useState<StyleSelection[]>(
     getInitialStyleSelections()
@@ -82,7 +80,7 @@ function SelectStyles (props: Props): JSX.Element {
     if (hasUndefinedStyle(selections)) return
     const styles = selections
       .map(selections => selections.style)
-      .filter(style => style) as Style[]
+      .filter(style => style !== undefined)
     const styleIds = styles.map(style => style.id)
     props.select(styleIds)
   }

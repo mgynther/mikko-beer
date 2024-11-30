@@ -26,19 +26,19 @@ test('updates container', async () => {
           isLoading: false
         })
       }}
-      onCancel={() => {}}
+      onCancel={() => undefined}
       onSaved={onSaved}
     />
   )
   const saveButton = getByRole('button', { name: 'Save' })
   const typeInput = getByPlaceholderText(typePlaceholder)
-  user.clear(typeInput)
-  await act(async () => await user.type(typeInput, 'Draft'))
+  await user.clear(typeInput)
+  await act(async () => { await user.type(typeInput, 'Draft'); })
   const sizeInput = getByPlaceholderText(sizePlaceholder)
-  user.clear(sizeInput)
-  await act(async () => await user.type(sizeInput, '0.33'))
+  await user.clear(sizeInput)
+  await act(async () => { await user.type(sizeInput, '0.33'); })
   expect(saveButton.hasAttribute('disabled')).toEqual(false)
-  await act(async() => saveButton.click())
+  await act(async() => { saveButton.click(); })
   const updateCalls = update.mock.calls
   expect(updateCalls).toEqual([[{
     id,

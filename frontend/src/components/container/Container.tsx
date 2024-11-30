@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
-import {
-  type Container as ContainerType,
-  type UpdateContainerIf
+import type {
+  Container as ContainerType,
+  UpdateContainerIf
 } from '../../core/container/types'
 
 import { EditableMode } from '../common/EditableMode'
@@ -19,7 +19,7 @@ interface Props {
   updateContainerIf: UpdateContainerIf
 }
 
-function Container (props: Props): JSX.Element {
+function Container (props: Props): React.JSX.Element {
   const [mode, setMode] = useState(EditableMode.View)
   const [initialContainer, setInitialContainer] =
     useState<ContainerType | undefined>(undefined)

@@ -1,6 +1,6 @@
-import { type Brewery } from '../brewery/types'
-import { type Container } from '../../core/container/types'
-import { type Style } from '../style/types'
+import type { Brewery } from '../brewery/types'
+import type { Container } from '../../core/container/types'
+import type { Style } from '../style/types'
 
 export interface CreateStorageRequest {
   beer: string

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 import type {
   ListStylesIf,
@@ -6,7 +6,7 @@ import type {
 } from '../../core/style/types'
 
 import SearchBox, { nameFormatter } from '../common/SearchBox'
-import { SearchIf } from '../../core/search/types'
+import type { SearchIf } from '../../core/search/types'
 
 export interface Props {
   listStylesIf: ListStylesIf
@@ -14,7 +14,7 @@ export interface Props {
   select: (style: Style) => void
 }
 
-function SearchStyle (props: Props): JSX.Element {
+function SearchStyle (props: Props): React.JSX.Element {
   const { styles, isLoading } = props.listStylesIf.useList()
   const [filter, setFilter] = useState('')
 

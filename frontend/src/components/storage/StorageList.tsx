@@ -1,6 +1,8 @@
+import React from 'react'
+
 import { Link } from '../common/Link'
 
-import { type Storage } from '../../core/storage/types'
+import type { Storage } from '../../core/storage/types'
 import { Role } from '../../core/user/types'
 
 import BeerLink from '../beer/BeerLink'
@@ -22,9 +24,9 @@ interface Props {
   storages: Storage[]
 }
 
-function StorageList (props: Props): JSX.Element {
+function StorageList (props: Props): React.JSX.Element {
   const login: Login = props.getLogin()
-  const isAdmin = login?.user?.role === Role.admin
+  const isAdmin = login.user?.role === Role.admin
 
   return (
     <div>

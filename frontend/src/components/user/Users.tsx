@@ -1,4 +1,6 @@
-import { UserIf } from '../../core/user/types'
+import React from 'react'
+
+import type { UserIf } from '../../core/user/types'
 
 import CreateUser from './CreateUser'
 import UserList from './UserList'
@@ -7,7 +9,7 @@ interface Props {
   userIf: UserIf
 }
 
-function Users (props: Props): JSX.Element {
+function Users (props: Props): React.JSX.Element {
   return (
     <div>
       <h3>Users</h3>

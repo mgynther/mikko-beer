@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 
-import { type ListDirection } from '../core/types'
+import type { ListDirection } from '../core/types'
 import {
   formatTitle,
   getDirectionSymbol,

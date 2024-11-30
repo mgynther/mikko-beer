@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from '../common/Link'
 
 import type {
@@ -24,7 +24,7 @@ export interface Props {
   searchIf: SearchIf
 }
 
-function Breweries (props: Props): JSX.Element {
+function Breweries (props: Props): React.JSX.Element {
   const [loadedBreweries, setLoadedBreweries] = useState<Brewery[]>([])
   const { breweryList, list, isLoading, isUninitialized } =
     props.listBreweriesIf.useList()
@@ -41,7 +41,6 @@ function Breweries (props: Props): JSX.Element {
         skip: loadedBreweries.length,
         size: pageSize
       })
-      if (result === undefined) return
       const newBreweries = [...loadedBreweries, ...result.breweries]
       setLoadedBreweries(newBreweries)
     }

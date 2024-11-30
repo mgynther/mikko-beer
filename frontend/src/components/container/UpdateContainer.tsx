@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
-import {
-  type Container,
-  type UpdateContainerIf
+import type {
+  Container,
+  UpdateContainerIf
 } from '../../core/container/types'
 
 import EditActions from '../common/EditActions'
@@ -16,7 +16,7 @@ interface Props {
   onSaved: () => void
 }
 
-function UpdateContainer (props: Props): JSX.Element {
+function UpdateContainer (props: Props): React.JSX.Element {
   const { update, isLoading } = props.updateContainerIf.useUpdate()
   const [newContainer, setNewContainer] =
     useState<Container | undefined>(undefined)

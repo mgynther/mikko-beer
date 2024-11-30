@@ -15,7 +15,7 @@ import { allStatsTagTypes } from './stats/types'
 import { styleTagTypes } from './style/types'
 import { userTagTypes } from './user/types'
 
-import { type RootState } from './store'
+import type { RootState } from './store'
 
 import { backendUrl } from '../constants'
 
@@ -35,8 +35,12 @@ const mutex = new Mutex()
 const baseQuery = fetchBaseQuery({
   baseUrl: `${backendUrl}/api/v1`,
   prepareHeaders: (headers, api) => {
-    const authToken = (api.getState() as RootState).login.login.authToken
-    if (authToken?.length > 0) {
+    const authToken =
+      /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+       * Unknown in the rtk types.
+       */
+      (api.getState() as (RootState | undefined))?.login.login.authToken ?? ''
+    if (authToken.length > 0) {
       headers.set('Authorization', `Bearer ${authToken}`)
     }
   }
@@ -48,7 +52,7 @@ FetchBaseQueryError
 > = async (args, api, extraOptions) => {
   await mutex.waitForUnlock()
   let result = await baseQuery(args, api, extraOptions)
-  if (result?.error?.status === 401) {
+  if (result.error?.status === 401) {
     if (!mutex.isLocked()) {
       const release = await mutex.acquire()
       try {
@@ -88,9 +92,12 @@ interface RefreshDetails {
 }
 
 function parseRefreshDetails (state: unknown): RefreshDetails {
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * Unknown in the rtk types.
+   */
   const rootState = state as (RootState | undefined)
-  const userId: string = rootState?.login?.login?.user?.id ?? ''
-  const refreshToken: string = rootState?.login?.login?.refreshToken ?? ''
+  const userId: string = rootState?.login.login.user?.id ?? ''
+  const refreshToken: string = rootState?.login.login.refreshToken ?? ''
   return {
     userId,
     refreshToken

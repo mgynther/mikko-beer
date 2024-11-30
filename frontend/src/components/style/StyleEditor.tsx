@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 import type { SearchIf } from '../../core/search/types'
 import type {
@@ -17,7 +17,7 @@ interface Props {
   searchIf: SearchIf
 }
 
-function StyleEditor (props: Props): JSX.Element {
+function StyleEditor (props: Props): React.JSX.Element {
   const [name, setName] = useState(props.initialStyle.name)
   const [parents, setParents] = useState<string[]>(
     props.initialStyle.parents.map(style => style.id)

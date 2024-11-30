@@ -46,7 +46,9 @@ export function joinSortedNames (array: NamedItem[]): string {
   return array.map(i => i.name).sort().join(', ')
 }
 
-export const useDebounce: UseDebounce = (value: string, delay: number = 300): string => {
+export const useDebounce: UseDebounce = (
+  value: string, delay = 300
+): string => {
   const [debouncedValue, setDebouncedValue] = useState(value)
 
   useEffect(() => {
@@ -62,7 +64,7 @@ export const useDebounce: UseDebounce = (value: string, delay: number = 300): st
   return debouncedValue
 }
 
-function useNavigate (): (url: string) => void {
+function useNavigate (): (url: string) => (void | Promise<void>) {
   return useRouterNavigate()
 }
 

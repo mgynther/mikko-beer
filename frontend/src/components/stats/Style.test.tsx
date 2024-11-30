@@ -3,6 +3,7 @@ import { expect, test, vitest } from 'vitest'
 import Style from './Style'
 import LinkWrapper from '../LinkWrapper'
 import type {
+  GetStyleStatsIf,
   StyleStatsSortingOrder,
   StyleStatsQueryParams
 } from '../../core/stats/types'
@@ -10,9 +11,9 @@ import type { ListDirection } from '../../core/types'
 
 function openFilters(
   getByRole: (type: string, props: Record<string, string>) => HTMLElement
-) {
+): void {
   const toggleButton = getByRole('button', { name: 'Filters ▼' })
-  act(() => toggleButton.click())
+  act(() => { toggleButton.click(); })
 }
 
 const breweryId = 'd02852f6-8cef-40fd-9dfd-2cf5489de63e'
@@ -54,7 +55,7 @@ const defaultParams = {
 
 const getRecordingIf = (
   statsRequests: (params: StyleStatsQueryParams) => void
-) => ({
+): GetStyleStatsIf => ({
   useStats: (params: StyleStatsQueryParams) => {
     statsRequests(params)
     return statsResult
@@ -92,7 +93,7 @@ test('sets minimum review count filter', async () => {
       />
     </LinkWrapper>
   )
-  await act(async() => openFilters(getByRole))
+  await act(async() => { openFilters(getByRole); })
   const slider = getByDisplayValue('0')
   fireEvent.change(slider, {target: {value: '1'}})
   const calls = statsRequests.mock.calls
@@ -114,7 +115,7 @@ test('sets maximum review count filter', async () => {
       />
     </LinkWrapper>
   )
-  await act(async() => openFilters(getByRole))
+  await act(async() => { openFilters(getByRole); })
   const slider = getByDisplayValue('11')
   fireEvent.change(slider, {target: {value: '10'}})
   const calls = statsRequests.mock.calls
@@ -136,7 +137,7 @@ test('sets minimum review average filter', async () => {
       />
     </LinkWrapper>
   )
-  await act(async() => openFilters(getByRole))
+  await act(async() => { openFilters(getByRole); })
   const slider = getByDisplayValue('4')
   fireEvent.change(slider, {target: {value: '4.5'}})
   const calls = statsRequests.mock.calls
@@ -158,7 +159,7 @@ test('sets maximum review average filter', async () => {
       />
     </LinkWrapper>
   )
-  await act(async() => openFilters(getByRole))
+  await act(async() => { openFilters(getByRole); })
   const slider = getByDisplayValue('10')
   fireEvent.change(slider, {target: {value: '9.4'}})
   const calls = statsRequests.mock.calls
@@ -234,7 +235,7 @@ orderTests.forEach(data => {
       </LinkWrapper>
     )
     const orderButton = getByRole('button', { name: data.buttonText })
-    act(() => orderButton.click())
+    act(() => { orderButton.click(); })
     const calls = statsRequests.mock.calls
     expect(calls.length).toEqual(2)
     expect(calls[1]).toEqual([{
@@ -291,9 +292,9 @@ twoTimeOrderTests.forEach(data => {
       </LinkWrapper>
     )
     const firstButton = getByRole('button', { name: data.initialButtonText })
-    act(() => firstButton.click())
+    act(() => { firstButton.click(); })
     const secondButton = getByRole('button', { name: data.buttonText })
-    act(() => secondButton.click())
+    act(() => { secondButton.click(); })
     const calls = statsRequests.mock.calls
     expect(calls.length).toEqual(3)
     expect(calls[2]).toEqual([{

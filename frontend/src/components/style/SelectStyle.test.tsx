@@ -3,9 +3,9 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import SelectStyle from './SelectStyle'
 import type { UseDebounce } from '../../core/types'
-import { StyleWithParentIds } from '../../core/style/types'
+import type { StyleWithParentIds } from '../../core/style/types'
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
@@ -36,7 +36,7 @@ test('selects style', async () => {
   const select = vitest.fn()
   const { getByPlaceholderText, getByRole } = render(
     <SelectStyle
-      remove={() => {}}
+      remove={() => undefined}
       select={select}
       selectStyleIf={{
         create: {
@@ -55,7 +55,7 @@ test('selects style', async () => {
   const searchInput = getByPlaceholderText('Search style')
   await user.type(searchInput, 'Ses')
   const styleButton = getByRole('button', { name: style.name })
-  act(() => styleButton.click())
+  act(() => { styleButton.click(); })
 
   expect(select.mock.calls).toEqual([[{
     ...style
@@ -73,7 +73,7 @@ test('selects created style', async () => {
   }
   const { getByPlaceholderText, getByRole, } = render(
     <SelectStyle
-      remove={() => {}}
+      remove={() => undefined}
       select={select}
       selectStyleIf={{
         create: {
@@ -96,7 +96,7 @@ test('selects created style', async () => {
     />
   )
   const createRadio = getByRole('radio', { name: 'Create' })
-  act(() => createRadio.click())
+  act(() => { createRadio.click(); })
 
   const nameInput = getByPlaceholderText('Name')
   await user.clear(nameInput)
@@ -105,10 +105,10 @@ test('selects created style', async () => {
   const searchInput = getByPlaceholderText('Search style')
   await user.type(searchInput, 'a')
   const parentButton = getByRole('button', { name: parent.name })
-  act(() => parentButton.click())
+  act(() => { parentButton.click(); })
 
   const createButton = getByRole('button', { name: 'Create' })
-  await act(async () => createButton.click())
+  await act(async () => { createButton.click(); })
   expect(create.mock.calls).toEqual([[{
     name: newStyle.name,
     parents: [parent].map(p => p.id)

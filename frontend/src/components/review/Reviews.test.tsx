@@ -11,7 +11,7 @@ import ContentEnd from "../ContentEnd"
 
 const useDebounce: UseDebounce = (str: string) => str
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
@@ -79,8 +79,8 @@ const reviewContainerIf = {
 
 const searchIf = {
   useSearch: () => ({
-    activate: () => { },
-      isActive: true
+    activate: () => undefined,
+    isActive: true
   }),
   useDebounce
 }
@@ -203,7 +203,7 @@ test('updates review', async () => {
           },
           update: {
             useUpdate: () => ({
-              update: update,
+              update,
               isLoading: false
             }),
             selectBeerIf,
@@ -217,7 +217,7 @@ test('updates review', async () => {
     </LinkWrapper>
   )
   expect(scrollCb).not.toEqual(undefined)
-  await act(async () => scrollCb())
+  await act(async () => { scrollCb(); })
   const beerName = getByText(joinedReview.beerName)
   await user.click(beerName)
   const editButton = getByRole('button', { name: 'Edit' })
@@ -225,7 +225,7 @@ test('updates review', async () => {
 
   const tasteInput = getByPlaceholderText('Taste')
   tasteInput.focus()
-  user.clear(tasteInput)
+  await user.clear(tasteInput)
   await user.paste(newTasteText)
 
   const saveButton = getByRole('button', { name: 'Save' })
@@ -261,7 +261,7 @@ test('sets review sorting', async () => {
     </LinkWrapper>
   )
   expect(scrollCb).not.toEqual(undefined)
-  await act(async () => scrollCb())
+  await act(async () => { scrollCb(); })
   getByRole('button', { name: 'Rating ▼' })
   const timeButton = getByRole('button', { name: 'Time' })
   await user.click(timeButton)

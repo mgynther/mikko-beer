@@ -3,8 +3,8 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import Brewery from './Brewery'
 import { Role } from '../../core/user/types'
-import { UseDebounce } from '../../core/types'
-import { StatsIf } from '../../core/stats/types'
+import type { UseDebounce } from '../../core/types'
+import type { StatsIf } from '../../core/stats/types'
 
 const useDebounce: UseDebounce = (str: string) => str
 
@@ -12,7 +12,7 @@ const id = 'f57c65dd-80b1-46db-a41c-21ad137cb2a8'
 const name = 'Hopping Brewsters'
 const newNamePlaceholder = 'New name'
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
@@ -141,7 +141,7 @@ test('updates brewery', async () => {
       }}
       searchIf={{
         useSearch: () => ({
-          activate: () => { },
+          activate: () => undefined,
           isActive: true
         }),
         useDebounce
@@ -152,15 +152,15 @@ test('updates brewery', async () => {
   getByRole('heading', { name })
 
   const editButton = getByRole('button', { name: 'Edit' })
-  await act(async() => editButton.click())
+  await act(async() => { editButton.click(); })
 
   const saveButton = getByRole('button', { name: 'Save' })
   const nameInput = getByPlaceholderText(newNamePlaceholder)
-  user.clear(nameInput)
+  await user.clear(nameInput)
   const newName = 'Hopping Brewsters R.I.P.'
-  await act(async () => await user.type(nameInput, newName))
+  await act(async () => { await user.type(nameInput, newName); })
   expect(saveButton.hasAttribute('disabled')).toEqual(false)
-  await act(async() => saveButton.click())
+  await act(async() => { saveButton.click(); })
   const updateCalls = update.mock.calls
   expect(updateCalls).toEqual([[{
     id,

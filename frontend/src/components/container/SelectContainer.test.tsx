@@ -2,7 +2,7 @@ import { act, render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import SelectContainer from './SelectContainer'
-import { Container } from '../../core/container/types'
+import type { Container, ListContainersData } from '../../core/container/types'
 
 const sizePlaceholder = 'Size, for example 0.25'
 const typePlaceholder = 'Type'
@@ -19,7 +19,7 @@ const bottleContainer: Container = {
   size: '0.33'
 }
 
-const useList = () => ({
+const useList = (): ListContainersData => ({
   data: {
     containers: [
       draftContainer,
@@ -47,9 +47,11 @@ test('selects container', async () => {
     />
   )
   const containerSelect = getByRole('combobox')
-  act(() => containerSelect.click())
+  act(() => { containerSelect.click(); })
   const bottle = getByRole('option', { name: 'bottle 0.33' })
-  await act(async () => userEvent.selectOptions(containerSelect, bottle));
+  await act(async () => {
+    await userEvent.selectOptions(containerSelect, bottle)
+  })
   const selectCalls = onSelect.mock.calls
   expect(selectCalls).toEqual([[bottleContainer]])
 })
@@ -79,14 +81,14 @@ test('selects created container', async () => {
     />
   )
   const createRadio = getByRole('radio', { name: 'Create' })
-  act(() => createRadio.click())
+  act(() => { createRadio.click(); })
 
   const createButton = getByRole('button', { name: 'Create' })
   const typeInput = getByPlaceholderText(typePlaceholder)
   await user.type(typeInput, newContainer.type)
   const sizeInput = getByPlaceholderText(sizePlaceholder)
   await user.type(sizeInput, newContainer.size)
-  await act(async() => createButton.click())
+  await act(async() => { createButton.click(); })
 
   const selectCalls = onSelect.mock.calls
   expect(selectCalls).toEqual([[newContainer]])

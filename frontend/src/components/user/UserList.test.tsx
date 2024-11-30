@@ -2,7 +2,7 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import UserList from './UserList'
-import { Role, type User } from '../../core/user/types'
+import { type ListUsersIf, Role, type User } from '../../core/user/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -16,7 +16,7 @@ const user1 = {
   role: Role.viewer
 }
 
-const oneUserListIf = (user: User) => ({
+const oneUserListIf = (user: User): ListUsersIf => ({
   useList: () => ({
     data: {
       users: [user],

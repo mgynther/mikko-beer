@@ -1,3 +1,5 @@
+import React from 'react'
+
 import './TabButton.css'
 
 interface TabButtonProps {
@@ -7,7 +9,7 @@ interface TabButtonProps {
   title: string
 }
 
-function TabButton (props: TabButtonProps): JSX.Element {
+function TabButton (props: TabButtonProps): React.JSX.Element {
   const selectedClass = props.isSelected ? 'Selected' : ''
   const compactClass = props.isCompact ? 'Compact' : ''
   const className =

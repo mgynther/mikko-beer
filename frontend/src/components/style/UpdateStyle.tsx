@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import type { SearchIf } from '../../core/search/types'
 import type {
@@ -23,8 +23,9 @@ interface Props {
   searchIf: SearchIf
 }
 
-function UpdateStyle (props: Props): JSX.Element {
-  const { style: styleWithParents } = props.getStyleIf.useGet(props.initialStyle.id)
+function UpdateStyle (props: Props): React.JSX.Element {
+  const { style: styleWithParents } =
+    props.getStyleIf.useGet(props.initialStyle.id)
   const [newStyle, setNewStyle] =
     useState<StyleWithParentIds | undefined>(undefined)
   const { update, hasError, isLoading, isSuccess } =

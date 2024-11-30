@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 import type {
   BreweryStatsSortingOrder,
@@ -18,7 +18,7 @@ interface Props {
   styleId: string | undefined
 }
 
-function Brewery (props: Props): JSX.Element {
+function Brewery (props: Props): React.JSX.Element {
   const isAllAtOnce =
     props.breweryId !== undefined || props.styleId !== undefined
 
@@ -68,7 +68,7 @@ function Brewery (props: Props): JSX.Element {
     }
   }
 
-  function changeSortingOrder (property: BreweryStatsSortingOrder) {
+  function changeSortingOrder (property: BreweryStatsSortingOrder): void {
     setLoadedBreweries(undefined)
     if (sortingOrder === property) {
       setSortingDirection(invertDirection(sortingDirection))

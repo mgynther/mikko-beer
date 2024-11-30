@@ -2,7 +2,10 @@ import { expect, test, vitest } from 'vitest'
 import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import SelectCreateRadio, { Mode, SelectCreateRadioBasic } from './SelectCreateRadio'
+import
+  SelectCreateRadio,
+  { Mode, SelectCreateRadioBasic }
+from './SelectCreateRadio'
 
 test('basic, clicks create when already selected', async () => {
   const user = userEvent.setup()
@@ -15,7 +18,7 @@ test('basic, clicks create when already selected', async () => {
   )
   const create = getByRole('radio', { name: 'Create' })
   expect(create).toBeDefined()
-  expect((create as HTMLInputElement).checked).toEqual(true)
+  expect(asInput(create).checked).toEqual(true)
   await user.click(create)
   expect(onChange.mock.calls).toEqual([])
 })
@@ -30,7 +33,7 @@ test('basic, clicks select when already selected', async () => {
     />
   )
   const select = getByRole('radio', { name: 'Select' })
-  expect((select as HTMLInputElement).checked).toEqual(true)
+  expect(asInput(select).checked).toEqual(true)
   expect(select).toBeDefined()
   await user.click(select)
   expect(onChange.mock.calls).toEqual([])
@@ -47,7 +50,7 @@ test('basic, clicks create', async () => {
   )
   const create = getByRole('radio', { name: 'Create' })
   expect(create).toBeDefined()
-  expect((create as HTMLInputElement).checked).toEqual(false)
+  expect(asInput(create).checked).toEqual(false)
   await user.click(create)
   expect(onChange.mock.calls).toEqual([[Mode.CREATE]])
 })
@@ -63,7 +66,7 @@ test('basic, clicks select', async () => {
   )
   const select = getByRole('radio', { name: 'Select' })
   expect(select).toBeDefined()
-  expect((select as HTMLInputElement).checked).toEqual(false)
+  expect(asInput(select).checked).toEqual(false)
   await user.click(select)
   expect(onChange.mock.calls).toEqual([[Mode.SELECT]])
 })
@@ -84,7 +87,7 @@ test('full, changes mode', async () => {
 
   const create = getByRole('radio', { name: 'Create' })
   expect(create).toBeDefined()
-  expect((create as HTMLInputElement).checked).toEqual(false)
+  expect(asInput(create).checked).toEqual(false)
   await user.click(create)
   const createText = getByText(createTextValue)
   expect(createText).toBeDefined()
@@ -93,10 +96,17 @@ test('full, changes mode', async () => {
 
   const select = getByRole('radio', { name: 'Select' })
   expect(select).toBeDefined()
-  expect((select as HTMLInputElement).checked).toEqual(false)
+  expect(asInput(select).checked).toEqual(false)
   await user.click(select)
   const secondCreateText = queryByText(createTextValue)
   expect(secondCreateText).toEqual(null)
   const secondSelectText = getByText(selectTextValue)
   expect(secondSelectText).toBeDefined()
 })
+
+function asInput(element: HTMLElement): HTMLInputElement {
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * Unknown in the rtk types.
+   */
+  return element as HTMLInputElement
+}

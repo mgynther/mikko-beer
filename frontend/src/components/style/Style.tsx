@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 import type { ParamsIf } from '../util'
 
@@ -18,7 +18,7 @@ import type {
   ReviewSortingOrder
 } from '../../core/review/types'
 import type { ListStoragesByIf } from '../../core/storage/types'
-import { type ListDirection } from '../../core/types'
+import type { ListDirection } from '../../core/types'
 
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'
@@ -40,7 +40,7 @@ interface NoLinksProps {
   styles: StyleType[]
 }
 
-function NoLinks (props: NoLinksProps): JSX.Element | null {
+function NoLinks (props: NoLinksProps): React.JSX.Element | null {
   if (props.styles.length > 0) return null
   return <>-</>
 }
@@ -56,7 +56,7 @@ interface Props {
   updateStyleIf: UpdateStyleIf
 }
 
-function Style (props: Props): JSX.Element {
+function Style (props: Props): React.JSX.Element {
   const { styleId } = props.paramsIf.useParams()
   const [order, doSetOrder] = useState<ReviewSortingOrder>('brewery_name')
   const [direction, doSetDirection] = useState<ListDirection>('asc')
@@ -167,7 +167,7 @@ function Style (props: Props): JSX.Element {
           }
         }}
         supportedSorting={['beer_name', 'brewery_name', 'rating', 'time']}
-        onChanged={() => {}}
+        onChanged={() => undefined}
       />
     </>
   )

@@ -1,3 +1,5 @@
+import React, { type FormEvent, useState } from 'react'
+
 import type { LoginIf } from '../../core/login/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
@@ -6,16 +8,20 @@ interface Props {
   loginIf: LoginIf
 }
 
-function Login (props: Props): JSX.Element {
+function Login (props: Props): React.JSX.Element {
   const { login, isLoading } = props.loginIf.useLogin()
 
-  async function doLogin (event: any): Promise<void> {
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
+  async function doLogin (event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     await login({
-      username: event.target.elements.username.value,
-      password: event.target.elements.password.value
+      username,
+      password
     })
-    event.target.reset()
+    setUsername('')
+    setPassword('')
   }
 
   return (
@@ -23,10 +29,22 @@ function Login (props: Props): JSX.Element {
       <form onSubmit={(e) => { void doLogin(e) }}>
         <h3>Login</h3>
         <div>
-          <input type='text' placeholder='Username' id='username' />
+          <input
+            type='text'
+            placeholder='Username'
+            id='username'
+            value={username}
+            onChange={(e) => { setUsername(e.target.value); }}
+          />
         </div>
         <div>
-          <input type='password' placeholder='Password' id='password' />
+          <input
+            type='password'
+            placeholder='Password'
+            id='password'
+            value={password}
+            onChange={(e) => { setPassword(e.target.value); }}
+          />
         </div>
 
         <br />

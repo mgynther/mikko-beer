@@ -1,3 +1,5 @@
+import React from 'react'
+
 import type {
   ReviewSorting,
   ReviewSortingOrder
@@ -17,7 +19,7 @@ interface HeadingProps {
 
 export function ReviewHeading (
   props: HeadingProps
-): JSX.Element {
+): React.JSX.Element {
   function isSelected (property: ReviewSortingOrder): boolean {
     return props.sorting?.order === property
   }

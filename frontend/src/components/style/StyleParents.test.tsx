@@ -3,11 +3,11 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import StyleParents from './StyleParents'
 
-const dontCall = () => {
+const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const useDebounce = (value: string) => value
+const useDebounce = (value: string): string => value
 
 const parent = {
   id: 'aa9d0ed0-ceb5-4d22-80a3-adbb9a526b6b',
@@ -65,7 +65,7 @@ test('removes parent', async () => {
   )
   const removeButtons = getAllByRole('button', { name: 'Remove' })
   expect(removeButtons.length).toEqual(2)
-  act(() => removeButtons[0].click())
+  act(() => { removeButtons[0].click(); })
   expect(select.mock.calls).toEqual([[[otherParent.id]]])
 })
 
@@ -94,8 +94,8 @@ test('adds parent', async () => {
     />
   )
   const searchField = getByPlaceholderText('Search style')
-  await act(async () => await user.type(searchField, parent.name))
+  await act(async () => { await user.type(searchField, parent.name); })
   const addButton = getByRole('button', { name: parent.name })
-  act(() => addButton.click())
+  act(() => { addButton.click(); })
   expect(select.mock.calls).toEqual([[[otherParent.id, parent.id]]])
 })

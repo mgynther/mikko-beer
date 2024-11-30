@@ -3,10 +3,11 @@ import { expect, test } from 'vitest'
 import Beers from './Beers'
 import type { SearchIf } from '../../core/search/types'
 import LinkWrapper from '../LinkWrapper'
+import type { UseDebounce } from '../../core/types'
 
-const useDebounce = (str: string) => str
+const useDebounce: UseDebounce = (str: string) => str
 
-const notUsed = () => { throw new Error('Do not call') }
+const notUsed = (): any => { throw new Error('Do not call') }
 
 const activeSearch: SearchIf = {
   useSearch: () => ({
@@ -80,7 +81,7 @@ test('renders breweries', async () => {
     </LinkWrapper>
   )
   expect(scrollCb).not.toEqual(undefined)
-  await act(async () => scrollCb())
+  await act(async () => { scrollCb(); })
   getByRole('link', { name: beer.name })
   getByRole('link', { name: anotherBeer.name })
   getAllByRole('link', { name: brewery.name })

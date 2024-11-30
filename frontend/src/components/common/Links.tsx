@@ -1,3 +1,5 @@
+import React from 'react'
+
 import { Link } from './Link'
 
 interface Item {
@@ -10,7 +12,7 @@ interface Props {
   linkFormatter: (id: string) => string
 }
 
-export function Links (props: Props): JSX.Element {
+export function Links (props: Props): React.JSX.Element {
   return (
     <>
     {[...props.items]

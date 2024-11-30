@@ -1,3 +1,5 @@
+import React from 'react'
+
 interface Props {
   className: string | undefined
   value: number
@@ -7,7 +9,7 @@ interface Props {
   setValue: (value: number) => void
 }
 
-function Slider (props: Props): JSX.Element {
+function Slider (props: Props): React.JSX.Element {
   return (
     <input
       className={props.className ?? ''}

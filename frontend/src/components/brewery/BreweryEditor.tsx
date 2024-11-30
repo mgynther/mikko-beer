@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
-import { type Brewery } from '../../core/brewery/types'
+import type { Brewery } from '../../core/brewery/types'
 
 interface Props {
   brewery: Brewery
@@ -8,7 +8,7 @@ interface Props {
   onChange: (brewery: Brewery | undefined) => void
 }
 
-function BreweryEditor (props: Props): JSX.Element {
+function BreweryEditor (props: Props): React.JSX.Element {
   const [name, setName] = useState(props.brewery.name)
   return (
     <div>
