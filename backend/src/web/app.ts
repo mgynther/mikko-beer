@@ -1,5 +1,4 @@
 import * as Koa from 'koa'
-import cors = require('@koa/cors')
 import * as json from 'koa-json'
 import * as compress from 'koa-compress'
 import * as bodyParser from 'koa-bodyparser'
@@ -48,7 +47,6 @@ export class App {
     this.#config = config
     this.#log = log
     this.#koa = new Koa()
-    this.#koa.use(cors())
     this.#router = new Router()
     this.#db = new Database(this.#config.database)
 
@@ -56,6 +54,7 @@ export class App {
     this.#koa.use(bodyParser())
     this.#koa.use(json())
 
+    this.#koa.use(this.addHeaders)
     this.#koa.use(this.errorHandler)
     this.#koa.use(this.decorateContext)
 
@@ -163,6 +162,17 @@ export class App {
     })
 
     await this.#db?.destroy()
+  }
+
+  private readonly addHeaders = async (
+    ctx: Context,
+    next: Koa.Next
+  ): Promise<void> => {
+    ctx.set('Access-Control-Allow-Origin', '*')
+    ctx.set('Access-Control-Allow-Headers', 'Authorization, Content-Type')
+    ctx.set('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,DELETE,PATCH')
+    ctx.set('Vary', 'Origin, Accept-Encoding')
+    await next()
   }
 
   private readonly errorHandler = async (
