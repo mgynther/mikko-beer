@@ -1,17 +1,23 @@
 import { render } from '@testing-library/react'
-import { test } from 'vitest'
+import userEvent from '@testing-library/user-event'
+import { expect, test } from 'vitest'
 import LinkWrapper from '../LinkWrapper'
 
 import Link from './Link'
 
-test('renders link', () => {
+test('renders link', async () => {
+  const user = userEvent.setup()
+  const path = '/testing'
   const { getByRole } = render(
     <LinkWrapper>
       <Link
-        to="/testing"
+        to={path}
         text="Link text"
       />
     </LinkWrapper>
   )
-  getByRole('link', { name: 'Link text' })
+  const link = getByRole('link', { name: 'Link text' })
+  expect(link.getAttribute('href')).toEqual(path)
+  await user.click(link)
+  expect(window.location.pathname).toEqual(path)
 })
