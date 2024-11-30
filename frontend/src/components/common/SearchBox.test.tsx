@@ -6,8 +6,9 @@ import SearchBox from './SearchBox'
 import type { Props, SearchBoxItem } from './SearchBox'
 import { loadingIndicatorText } from './LoadingIndicator'
 import type { SearchIf } from '../../core/search/types'
+import type { UseDebounce } from '../../core/types'
 
-const useDebounce = (str: string): string => str
+const useDebounce: UseDebounce = str => str
 
 const passiveSearch: SearchIf = {
   useSearch: () => ({

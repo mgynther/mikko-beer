@@ -6,7 +6,7 @@ import { Role } from '../../core/user/types'
 import LinkWrapper from '../LinkWrapper'
 import type { UseDebounce } from '../../core/types'
 
-const useDebounce: UseDebounce = (str: string) => str
+const useDebounce: UseDebounce = str => str
 
 const dontCall = (): any => {
   throw new Error('must not be called')

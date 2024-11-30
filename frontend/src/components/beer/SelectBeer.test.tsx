@@ -3,10 +3,11 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import SelectBeer from './SelectBeer'
 import type { CreateBeerRequest } from '../../core/beer/types'
+import type { UseDebounce } from '../../core/types'
 
 const namePlaceholder = 'Name'
 
-const useDebounce = (str: string): string => str
+const useDebounce: UseDebounce = str => str
 
 const dontCall = (): any => {
   throw new Error('must not be called')

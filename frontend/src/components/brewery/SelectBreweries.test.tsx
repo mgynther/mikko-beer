@@ -28,7 +28,7 @@ const search: SearchBreweryIf = {
   })
 }
 
-const useDebounce: UseDebounce = (str: string) => str
+const useDebounce: UseDebounce = str => str
 
 test('selects one more brewery', async () => {
   const user = userEvent.setup()

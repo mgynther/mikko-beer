@@ -8,9 +8,9 @@ import type { SearchBeerIf } from './core/beer/types'
 import type { SearchIf } from './core/search/types'
 import type { SearchBreweryIf } from './core/brewery/types'
 import type { NavigateIf } from './components/util'
-import { Theme } from './core/types'
+import { Theme, type UseDebounce } from './core/types'
 
-const useDebounce: (text: string) => string = (value: string) => value
+const useDebounce: UseDebounce = str => str
 
 const dontCall = (): any => {
   throw new Error('must not be called')

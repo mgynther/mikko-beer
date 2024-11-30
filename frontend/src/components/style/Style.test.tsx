@@ -13,8 +13,9 @@ import type {
 import type { ListStoragesByIf, Storage } from '../../core/storage/types'
 import type { StatsIf } from '../../core/stats/types'
 import type { GetStyleIf } from '../../core/style/types'
+import type { UseDebounce } from '../../core/types'
 
-const useDebounce = (str: string): string => str
+const useDebounce: UseDebounce = str => str
 
 const dontCall = (): any => {
   throw new Error('must not be called')

@@ -15,7 +15,7 @@ import type {
 import type { UseDebounce } from '../../core/types'
 import type { EditBeerIf } from '../../core/beer/types'
 
-const useDebounce: UseDebounce = (str: string) => str
+const useDebounce: UseDebounce = str => str
 
 const dontCall = (): any => {
   throw new Error('must not be called')

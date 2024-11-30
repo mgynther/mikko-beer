@@ -6,7 +6,7 @@ import { Role } from '../../core/user/types'
 import type { UseDebounce } from '../../core/types'
 import type { StatsIf } from '../../core/stats/types'
 
-const useDebounce: UseDebounce = (str: string) => str
+const useDebounce: UseDebounce = str => str
 
 const id = 'f57c65dd-80b1-46db-a41c-21ad137cb2a8'
 const name = 'Hopping Brewsters'

@@ -9,7 +9,7 @@ const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const useDebounce: UseDebounce = (value: string) => value
+const useDebounce: UseDebounce = str => str
 
 const parent = {
   id: 'c4ebc3fd-eeb1-4e76-bad9-8b0097038f9f',

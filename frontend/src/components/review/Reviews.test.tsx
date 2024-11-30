@@ -9,7 +9,7 @@ import LinkWrapper from "../LinkWrapper"
 import type { ListReviewParams, ListReviewsIf } from "../../core/review/types"
 import ContentEnd from "../ContentEnd"
 
-const useDebounce: UseDebounce = (str: string) => str
+const useDebounce: UseDebounce = str => str
 
 const dontCall = (): any => {
   throw new Error('must not be called')

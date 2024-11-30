@@ -5,7 +5,7 @@ import AddReview, { type Props as AddReviewProps } from "./AddReview"
 import { loadingIndicatorText } from "../common/LoadingIndicator"
 import type { UseDebounce } from "../../core/types"
 
-const useDebounce: UseDebounce = (str: string) => str
+const useDebounce: UseDebounce = str => str
 
 const dontCall = (): any => {
   throw new Error('must not be called')

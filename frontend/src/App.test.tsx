@@ -9,6 +9,7 @@ import { store } from './store/store'
 import type { StoreIf } from './store/storeIf'
 import { Role } from './core/user/types'
 import { type GetLogin, PasswordChangeResult } from './core/login/types'
+import type { UseDebounce } from './core/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -16,7 +17,7 @@ const dontCall = (): any => {
 
 const infiniteScroll = () => () => undefined
 
-const useDebounce: (value: string) => string = (value: string) => value
+const useDebounce: UseDebounce = str => str
 
 const getUndefinedLogin: GetLogin = () => ({
   user: undefined,

@@ -2,12 +2,13 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import StyleParents from './StyleParents'
+import type { UseDebounce } from '../../core/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const useDebounce = (value: string): string => value
+const useDebounce: UseDebounce = str => str
 
 const parent = {
   id: 'aa9d0ed0-ceb5-4d22-80a3-adbb9a526b6b',

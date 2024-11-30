@@ -2,12 +2,13 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import StyleEditor from './StyleEditor'
+import type { UseDebounce } from '../../core/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const useDebounce = (value: string): string => value
+const useDebounce: UseDebounce = str => str
 
 const id = '17d234da-032d-41a3-b526-b3dc63ba019a'
 const name = 'IPA'

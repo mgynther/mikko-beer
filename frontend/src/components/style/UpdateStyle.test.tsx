@@ -3,12 +3,13 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import UpdateStyle from './UpdateStyle'
 import type { StyleWithParentIds } from '../../core/style/types'
+import type { UseDebounce } from '../../core/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const useDebounce = (value: string): string => value
+const useDebounce: UseDebounce = str => str
 
 const id = '5a416374-4940-44a3-aa85-016b052e4310'
 const name = 'Pale Ale'

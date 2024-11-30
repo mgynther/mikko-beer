@@ -4,8 +4,9 @@ import { expect, test, vitest } from 'vitest'
 import SearchBrewery from './SearchBrewery'
 
 import type { SearchIf } from '../../core/search/types'
+import type { UseDebounce } from '../../core/types'
 
-const useDebounce = (str: string): string => str
+const useDebounce: UseDebounce = str => str
 
 const activeSearch: SearchIf = {
   useSearch: () => ({

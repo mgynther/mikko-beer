@@ -2,6 +2,7 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import UpdateBeer from './UpdateBeer'
+import type { UseDebounce } from '../../core/types'
 
 const id = 'b3cee2c7-81b8-4b4d-8625-f5a3955258eb'
 const beerName = 'Kukko Pils'
@@ -32,7 +33,7 @@ const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const useDebounce = (str: string): string => str
+const useDebounce: UseDebounce = str => str
 
 const dontSelectBrewery = {
   create: {

@@ -3,8 +3,9 @@ import { expect, test } from 'vitest'
 import Breweries from './Breweries'
 import type { SearchIf } from '../../core/search/types'
 import LinkWrapper from '../LinkWrapper'
+import type { UseDebounce } from '../../core/types'
 
-const useDebounce = (str: string): string => str
+const useDebounce: UseDebounce = str => str
 
 const notUsed = (): any => { throw new Error('Do not call') }
 

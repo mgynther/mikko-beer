@@ -4,7 +4,7 @@ import { expect, test, vitest } from "vitest"
 import ReviewEditor from "./ReviewEditor"
 import type { UseDebounce } from "../../core/types"
 
-const useDebounce: UseDebounce = (str: string) => str
+const useDebounce: UseDebounce = str => str
 
 const dontCall = (): any => {
   throw new Error('must not be called')
