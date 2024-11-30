@@ -1,4 +1,4 @@
-import { act, render, fireEvent } from "@testing-library/react"
+import { render, fireEvent } from "@testing-library/react"
 import userEvent, { type UserEvent } from "@testing-library/user-event"
 import { expect, test, vitest } from "vitest"
 import AddReview, { type Props as AddReviewProps } from "./AddReview"
@@ -199,7 +199,7 @@ test('adds review', async () => {
   )
 
   const selects = getAllByRole('radio', { name: 'Select' })
-  act(() => { selects[0].click(); })
+  await user.click(selects[0])
   const beerSearch = getByPlaceholderText('Search beer')
   expect(beerSearch).toBeDefined()
   beerSearch.focus()
@@ -209,12 +209,12 @@ test('adds review', async () => {
     { name: 'Severin (Koskipanimo)' }
   )
   expect(beerButton).toBeDefined()
-  act(() => { beerButton.click(); })
+  await user.click(beerButton)
   const containerSelect = getByRole('combobox')
-  act(() => { containerSelect.click(); })
+  await user.click(containerSelect)
   const bottle = getByRole('option', { name: 'bottle 0.33' })
   await userEvent.selectOptions(containerSelect, bottle)
-  act(() => { bottle.click(); })
+  await user.click(bottle)
   await addReview(getByPlaceholderText, getByRole, user)
   expect(create.mock.calls).toEqual([[{
     body: {

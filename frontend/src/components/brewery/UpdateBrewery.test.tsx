@@ -1,4 +1,4 @@
-import { act, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import UpdateBrewery from './UpdateBrewery'
@@ -29,9 +29,9 @@ test('updates brewery', async () => {
   const saveButton = getByRole('button', { name: 'Save' })
   const nameInput = getByPlaceholderText(newNamePlaceholder)
   await user.clear(nameInput)
-  await act(async () => { await user.type(nameInput, 'Koskipanimo'); })
+  await user.type(nameInput, 'Koskipanimo')
   expect(saveButton.hasAttribute('disabled')).toEqual(false)
-  await act(async() => { saveButton.click(); })
+  await user.click(saveButton)
   const updateCalls = update.mock.calls
   expect(updateCalls).toEqual([[{
     id,

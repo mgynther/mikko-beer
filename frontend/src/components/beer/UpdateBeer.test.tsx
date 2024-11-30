@@ -1,4 +1,4 @@
-import { act, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import UpdateBeer from './UpdateBeer'
@@ -115,7 +115,7 @@ test('updates beer name', async () => {
   await user.type(nameInput, beerName)
   const saveButton = getByRole('button', { name: 'Save' })
   expect(saveButton.hasAttribute('disabled')).toEqual(false)
-  await act(async() => { saveButton.click(); })
+  await user.click(saveButton)
   const updateCalls = update.mock.calls
   expect(updateCalls).toEqual([[{
     id,
@@ -168,14 +168,14 @@ test('updates beer brewery', async () => {
     />
   )
   const changeButton = getAllByRole('button', { name: 'Change' })
-  await act(async () => { changeButton[0].click(); })
+  await user.click(changeButton[0])
   const searchBreweryField = getByPlaceholderText('Search brewery')
   await user.type(searchBreweryField, 'Laiti')
   const breweryButton = getByRole('button', { name: anotherBrewery.name })
-  await act(async () => { breweryButton.click(); })
+  await user.click(breweryButton)
   const saveButton = getByRole('button', { name: 'Save' })
   expect(saveButton.hasAttribute('disabled')).toEqual(false)
-  await act(async() => { saveButton.click(); })
+  await user.click(saveButton)
   const updateCalls = update.mock.calls
   expect(updateCalls).toEqual([[{
     id,
@@ -231,14 +231,14 @@ test('updates beer style', async () => {
     />
   )
   const changeButton = getAllByRole('button', { name: 'Change' })
-  await act(async () => { changeButton[1].click(); })
+  await user.click(changeButton[1])
   const searchBreweryField = getByPlaceholderText('Search style')
   await user.type(searchBreweryField, 'Lager')
   const breweryButton = getByRole('button', { name: anotherStyle.name })
-  await act(async () => { breweryButton.click(); })
+  await user.click(breweryButton)
   const saveButton = getByRole('button', { name: 'Save' })
   expect(saveButton.hasAttribute('disabled')).toEqual(false)
-  await act(async() => { saveButton.click(); })
+  await user.click(saveButton)
   const updateCalls = update.mock.calls
   expect(updateCalls).toEqual([[{
     id,

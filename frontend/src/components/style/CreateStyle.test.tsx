@@ -1,4 +1,4 @@
-import { act, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import CreateStyle from './CreateStyle'
@@ -70,13 +70,13 @@ test('creates style', async () => {
 
   await search()
   const parentButton = getByRole('button', { name: parent.name })
-  act(() => { parentButton.click(); })
+  await user.click(parentButton)
   await search()
   const otherParentButton = getByRole('button', { name: otherParent.name })
-  act(() => { otherParentButton.click(); })
+  await user.click(otherParentButton)
 
   const createButton = getByRole('button', { name: 'Create' })
-  await act(async () => { createButton.click(); })
+  await user.click(createButton)
   expect(create.mock.calls).toEqual([[{
     name,
     parents: [parent, otherParent].map(p => p.id)

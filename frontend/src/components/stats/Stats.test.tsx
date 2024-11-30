@@ -1,14 +1,16 @@
-import { act, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
+import userEvent, { type UserEvent } from '@testing-library/user-event'
 import { test } from 'vitest'
 import Stats from './Stats'
 import type { StatsIf } from '../../core/stats/types'
 import LinkWrapper from '../LinkWrapper'
 
-function openFilters(
-  getByRole: (type: string, props: Record<string, string>) => HTMLElement
-): void {
+async function openFilters(
+  getByRole: (type: string, props: Record<string, string>) => HTMLElement,
+  user: UserEvent
+): Promise<void> {
   const toggleButton = getByRole('button', { name: 'Filters ▼' })
-  act(() => { toggleButton.click(); })
+  await user.click(toggleButton)
 }
 
 const emptyBreweryStats = { brewery: []}
@@ -69,7 +71,8 @@ const emptyStatsIf: StatsIf = {
   }
 }
 
-test('renders overall stats', () => {
+test('renders overall stats', async () => {
+  const user = userEvent.setup()
   const { getByRole, getByText } = render(
     <Stats
       statsIf={{
@@ -94,9 +97,9 @@ test('renders overall stats', () => {
     />
   )
   const annualButton = getByRole('button', { name: 'Annual' })
-  act(() => { annualButton.click(); })
+  await user.click(annualButton)
   const overallButton = getByRole('button', { name: 'Overall' })
-  act(() => { overallButton.click(); })
+  await user.click(overallButton)
   getByText('123')
   getByText('54')
   getByText('8')
@@ -106,7 +109,8 @@ test('renders overall stats', () => {
   getByText('29')
 })
 
-test('renders annual stats', () => {
+test('renders annual stats', async () => {
+  const user = userEvent.setup()
   const { getByRole, getByText } = render(
     <Stats
       statsIf={{
@@ -128,7 +132,7 @@ test('renders annual stats', () => {
     />
   )
   const annualButton = getByRole('button', { name: 'Annual' })
-  act(() => { annualButton.click(); })
+  await user.click(annualButton)
   getByText('7.87')
   getByText('10')
   getByText('2020')
@@ -138,6 +142,7 @@ test('renders annual stats', () => {
 })
 
 test('renders brewery stats', async () => {
+  const user = userEvent.setup()
   const koskipanimo = {
     breweryId: '8981fe71-1a4d-48f3-8b4e-9b9b3ddf9d8a',
     breweryName: 'Koskipanimo',
@@ -175,9 +180,9 @@ test('renders brewery stats', async () => {
     </LinkWrapper>
   )
   const breweryButton = getByRole('button', { name: 'Brewery' })
-  act(() => { breweryButton.click(); })
+  await user.click(breweryButton)
   // Need to do something to get breweries set.
-  await act(async() => { openFilters(getByRole); })
+  await openFilters(getByRole, user)
   getByText(koskipanimo.breweryName)
   getByText(koskipanimo.reviewAverage)
   getByText(koskipanimo.reviewCount)
@@ -186,7 +191,8 @@ test('renders brewery stats', async () => {
   getByText(lehe.reviewCount)
 })
 
-test('renders rating stats', () => {
+test('renders rating stats', async () => {
+  const user = userEvent.setup()
   const { getByRole, getByText } = render(
     <Stats
       statsIf={{
@@ -208,14 +214,15 @@ test('renders rating stats', () => {
     />
   )
   const ratingButton = getByRole('button', { name: 'Rating' })
-  act(() => { ratingButton.click(); })
+  await user.click(ratingButton)
   getByText('7')
   getByText('10')
   getByText('8')
   getByText('11')
 })
 
-test('renders style stats', () => {
+test('renders style stats', async () => {
+  const user = userEvent.setup()
   const pils = {
     styleId: 'e9929659-1d35-4ea4-be15-80b667686384',
     styleName: 'Pils',
@@ -250,7 +257,7 @@ test('renders style stats', () => {
     </LinkWrapper>
   )
   const styleButton = getByRole('button', { name: 'Style' })
-  act(() => { styleButton.click(); })
+  await user.click(styleButton)
   getByText(pils.styleName)
   getByText(pils.reviewAverage)
   getByText(pils.reviewCount)

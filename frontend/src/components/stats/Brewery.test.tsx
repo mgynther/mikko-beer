@@ -1,4 +1,5 @@
 import { act, fireEvent, render } from '@testing-library/react'
+import userEvent, { type UserEvent } from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import Brewery from './Brewery'
 import LinkWrapper from '../LinkWrapper'
@@ -7,11 +8,12 @@ const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-function openFilters(
-  getByRole: (type: string, props: Record<string, string>) => HTMLElement
-): void {
+async function openFilters(
+  getByRole: (type: string, props: Record<string, string>) => HTMLElement,
+  user: UserEvent
+): Promise<void> {
   const toggleButton = getByRole('button', { name: 'Filters ▼' })
-  act(() => { toggleButton.click(); })
+  await user.click(toggleButton)
 }
 
 const koskipanimo = {
@@ -115,6 +117,7 @@ test('queries brewery stats', async () => {
 })
 
 test('renders brewery stats', async () => {
+  const user = userEvent.setup()
   const { getByRole, getByText } = render(
     <LinkWrapper>
       <Brewery
@@ -125,7 +128,7 @@ test('renders brewery stats', async () => {
     </LinkWrapper>
   )
   // Need to do something to get breweries set.
-  await act(async() => { openFilters(getByRole); })
+  await openFilters(getByRole, user)
   getByText(koskipanimo.breweryName)
   getByText(koskipanimo.reviewAverage)
   getByText(koskipanimo.reviewCount)
@@ -135,6 +138,7 @@ test('renders brewery stats', async () => {
 })
 
 test('sets minimum review count filter', async () => {
+  const user = userEvent.setup()
   const { getByDisplayValue, getByRole } = render(
     <LinkWrapper>
       <Brewery
@@ -144,7 +148,7 @@ test('sets minimum review count filter', async () => {
       />
     </LinkWrapper>
   )
-  await act(async() => { openFilters(getByRole); })
+  await openFilters(getByRole, user)
   const slider = getByDisplayValue('4')
   await act(async() => fireEvent.change(slider, {target: {value: '4.5'}}))
   getByDisplayValue('4.5')

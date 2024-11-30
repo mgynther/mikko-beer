@@ -1,4 +1,4 @@
-import { act, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import SelectBeer from './SelectBeer'
@@ -105,16 +105,16 @@ test('selects created beer', async () => {
   const brewerySearch = getByPlaceholderText('Search brewery')
   await user.type(brewerySearch, 'Koskipa')
   const breweryButton = getByRole('button', { name: 'Koskipanimo' })
-  act(() => { breweryButton.click(); })
+  await user.click(breweryButton)
 
   const styleSearch = getByPlaceholderText('Search style')
   await user.type(styleSearch, 'IPA')
   const styleButton = getByRole('button', { name: 'IPA' })
-  act(() => { styleButton.click(); })
+  await user.click(styleButton)
 
   const createButton = getByRole('button', { name: 'Create beer' })
   expect(createButton.hasAttribute('disabled')).toEqual(false)
-  await act(async() => { createButton.click(); })
+  await user.click(createButton)
   const createCalls = selectBeer.mock.calls
   expect(createCalls).toEqual([[{
     id,
@@ -178,7 +178,7 @@ test('selects beer', async () => {
   )
 
   const selectRadio = getAllByRole('radio', { name: 'Select' })[0]
-  act(() => { selectRadio.click(); })
+  await user.click(selectRadio)
 
   const input = getByRole('textbox')
   expect(input).toBeDefined()

@@ -1,4 +1,4 @@
-import { act, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import SelectBreweries from './SelectBreweries'
@@ -52,18 +52,19 @@ test('selects one more brewery', async () => {
   )
 
   const addButton = getByRole('button', { name: 'Add brewery' })
-  await act(async() => { addButton.click(); })
+  await user.click(addButton)
 
   const brewerySearch = getByPlaceholderText('Search brewery')
   await user.type(brewerySearch, anotherBrewery.name)
   const breweryOption =
     await findByRole('button', { name: anotherBrewery.name })
-  await act(async () => { breweryOption.click(); })
+  await user.click(breweryOption)
   const selectCalls = onSelect.mock.calls
   expect(selectCalls).toEqual([ [[]], [[]], [[brewery.id, anotherBrewery.id]] ])
 })
 
 test('removes selected brewery', async () => {
+  const user = userEvent.setup()
   const onSelect = vitest.fn()
   const { getAllByRole, getByRole } = render(
     <SelectBreweries
@@ -83,13 +84,13 @@ test('removes selected brewery', async () => {
     />
   )
   const changeButtons = getAllByRole('button', { name: 'Change' })
-  await act(async() => { changeButtons[0].click(); })
+  await user.click(changeButtons[0])
 
   const selectCalls = onSelect.mock.calls
   expect(selectCalls).toEqual([[[]]])
 
   const removeButton = getByRole('button', { name: 'Remove' })
-  await act(async() => { removeButton.click(); })
+  await user.click(removeButton)
 
   const finalSelectedCalls = onSelect.mock.calls
   expect(finalSelectedCalls).toEqual([ [[]], [[]], [[anotherBrewery.id] ]])

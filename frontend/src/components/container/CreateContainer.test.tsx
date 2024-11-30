@@ -1,4 +1,4 @@
-import { act, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import CreateContainer from './CreateContainer'
@@ -32,7 +32,7 @@ test('creates container', async () => {
   expect(createButton.hasAttribute('disabled')).toEqual(true)
   await user.type(sizeInput, '0.33')
   expect(createButton.hasAttribute('disabled')).toEqual(false)
-  await act(async() => { createButton.click(); })
+  await user.click(createButton)
   const createCalls = selectContainer.mock.calls
   expect(createCalls).toEqual([[{
     id,

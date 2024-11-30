@@ -1,4 +1,5 @@
-import { act, fireEvent, render } from '@testing-library/react'
+import { fireEvent, render } from '@testing-library/react'
+import userEvent, { type UserEvent } from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import Filters from './Filters'
 
@@ -6,14 +7,16 @@ const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-function open(
-  getByRole: (type: string, props: Record<string, string>) => HTMLElement
-): void {
+async function open(
+  getByRole: (type: string, props: Record<string, string>) => HTMLElement,
+  user: UserEvent
+): Promise<void> {
   const toggleButton = getByRole('button', { name: 'Filters ▼' })
-  act(() => { toggleButton.click(); })
+  await user.click(toggleButton)
 }
 
-test('renders values when open', () => {
+test('renders values when open', async () => {
+  const user = userEvent.setup()
   const { getByRole, getByText } = render(
     <Filters
       filters={{
@@ -36,7 +39,7 @@ test('renders values when open', () => {
       }}
     />
   )
-  open(getByRole)
+  await open(getByRole, user)
   getByRole('button', { name: 'Filters ▲' })
   getByText('Minimum review count: 3')
   getByText('Maximum review count: 13')
@@ -44,7 +47,8 @@ test('renders values when open', () => {
   getByText('Maximum review average: 9.2')
 })
 
-test('sets minimum review count', () => {
+test('sets minimum review count', async () => {
+  const user = userEvent.setup()
   const setMinimumReviewCount = vitest.fn()
   const { getByDisplayValue, getByRole } = render(
     <Filters
@@ -68,13 +72,14 @@ test('sets minimum review count', () => {
       }}
     />
   )
-  open(getByRole)
+  await open(getByRole, user)
   const slider = getByDisplayValue('2')
   fireEvent.change(slider, {target: {value: '3'}})
   expect(setMinimumReviewCount.mock.calls).toEqual([[5]])
 })
 
-test('sets maximum review count', () => {
+test('sets maximum review count', async () => {
+  const user = userEvent.setup()
   const setMaximumReviewCount = vitest.fn()
   const { getByDisplayValue, getByRole } = render(
     <Filters
@@ -98,13 +103,14 @@ test('sets maximum review count', () => {
       }}
     />
   )
-  open(getByRole)
+  await open(getByRole, user)
   const slider = getByDisplayValue('5')
   fireEvent.change(slider, {target: {value: '6'}})
   expect(setMaximumReviewCount.mock.calls).toEqual([[21]])
 })
 
-test('sets minimum review average', () => {
+test('sets minimum review average', async () => {
+  const user = userEvent.setup()
   const setMinimumReviewAverage = vitest.fn()
   const { getByDisplayValue, getByRole } = render(
     <Filters
@@ -128,13 +134,14 @@ test('sets minimum review average', () => {
       }}
     />
   )
-  open(getByRole)
+  await open(getByRole, user)
   const slider = getByDisplayValue('6.8')
   fireEvent.change(slider, {target: {value: '6.9'}})
   expect(setMinimumReviewAverage.mock.calls).toEqual([[6.9]])
 })
 
-test('sets maximum review average', () => {
+test('sets maximum review average', async () => {
+  const user = userEvent.setup()
   const setMaximumReviewAverage = vitest.fn()
   const { getByDisplayValue, getByRole } = render(
     <Filters
@@ -158,7 +165,7 @@ test('sets maximum review average', () => {
       }}
     />
   )
-  open(getByRole)
+  await open(getByRole, user)
   const slider = getByDisplayValue('9.2')
   fireEvent.change(slider, {target: {value: '9.1'}})
   expect(setMaximumReviewAverage.mock.calls).toEqual([[9.1]])

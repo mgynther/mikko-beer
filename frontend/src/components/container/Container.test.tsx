@@ -1,4 +1,5 @@
-import { act, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { test } from 'vitest'
 import Container from './Container'
 import type { Container as ContainerType } from '../../core/container/types'
@@ -41,6 +42,7 @@ test('renders container as viewer', async () => {
 })
 
 test('renders editable container as admin', async () => {
+  const user = userEvent.setup()
   const { getByRole, getByText } = render(
     <Container
       container={container}
@@ -50,8 +52,8 @@ test('renders editable container as admin', async () => {
   )
   getByText('bottle 0.25')
   const editButton = getByRole('button', { name: 'Edit' })
-  act(() => { editButton.click(); })
+  await user.click(editButton)
   const cancelButton = getByRole('button', { name: 'Cancel' })
-  act(() => { cancelButton.click(); })
+  await user.click(cancelButton)
   getByRole('button', { name: 'Edit' })
 })

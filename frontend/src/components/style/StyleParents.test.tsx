@@ -1,4 +1,4 @@
-import { act, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import StyleParents from './StyleParents'
@@ -51,6 +51,7 @@ test('renders parents', async () => {
 })
 
 test('removes parent', async () => {
+  const user = userEvent.setup()
   const select = vitest.fn()
   const { getAllByRole } = render(
     <StyleParents
@@ -65,7 +66,7 @@ test('removes parent', async () => {
   )
   const removeButtons = getAllByRole('button', { name: 'Remove' })
   expect(removeButtons.length).toEqual(2)
-  act(() => { removeButtons[0].click(); })
+  await user.click(removeButtons[0])
   expect(select.mock.calls).toEqual([[[otherParent.id]]])
 })
 
@@ -94,8 +95,8 @@ test('adds parent', async () => {
     />
   )
   const searchField = getByPlaceholderText('Search style')
-  await act(async () => { await user.type(searchField, parent.name); })
+  await user.type(searchField, parent.name)
   const addButton = getByRole('button', { name: parent.name })
-  act(() => { addButton.click(); })
+  await user.click(addButton)
   expect(select.mock.calls).toEqual([[[otherParent.id, parent.id]]])
 })

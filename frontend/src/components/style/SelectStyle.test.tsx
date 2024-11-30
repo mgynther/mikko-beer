@@ -1,4 +1,4 @@
-import { act, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import SelectStyle from './SelectStyle'
@@ -55,7 +55,7 @@ test('selects style', async () => {
   const searchInput = getByPlaceholderText('Search style')
   await user.type(searchInput, 'Ses')
   const styleButton = getByRole('button', { name: style.name })
-  act(() => { styleButton.click(); })
+  await user.click(styleButton)
 
   expect(select.mock.calls).toEqual([[{
     ...style
@@ -96,7 +96,7 @@ test('selects created style', async () => {
     />
   )
   const createRadio = getByRole('radio', { name: 'Create' })
-  act(() => { createRadio.click(); })
+  await user.click(createRadio)
 
   const nameInput = getByPlaceholderText('Name')
   await user.clear(nameInput)
@@ -105,10 +105,10 @@ test('selects created style', async () => {
   const searchInput = getByPlaceholderText('Search style')
   await user.type(searchInput, 'a')
   const parentButton = getByRole('button', { name: parent.name })
-  act(() => { parentButton.click(); })
+  await user.click(parentButton)
 
   const createButton = getByRole('button', { name: 'Create' })
-  await act(async () => { createButton.click(); })
+  await user.click(createButton)
   expect(create.mock.calls).toEqual([[{
     name: newStyle.name,
     parents: [parent].map(p => p.id)

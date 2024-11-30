@@ -1,4 +1,4 @@
-import { act, render, fireEvent } from "@testing-library/react"
+import { render, fireEvent } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { expect, test, vitest } from "vitest"
 import CreateStorage from "./CreateStorage"
@@ -123,7 +123,7 @@ test('creates storage', async () => {
   )
 
   const selects = getAllByRole('radio', { name: 'Select' })
-  act(() => { selects[0].click(); })
+  await user.click(selects[0])
   const beerSearch = getByPlaceholderText('Search beer')
   expect(beerSearch).toBeDefined()
   beerSearch.focus()

@@ -1,4 +1,4 @@
-import { act, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import StyleEditor from './StyleEditor'
@@ -80,6 +80,7 @@ test('renders error', async () => {
 })
 
 test('removes parent', async () => {
+  const user = userEvent.setup()
   const onChange = vitest.fn()
   const { getAllByRole } = render(
     <StyleEditor
@@ -99,7 +100,7 @@ test('removes parent', async () => {
   )
   const removeButtons = getAllByRole('button', { name: 'Remove' })
   expect(removeButtons.length).toEqual(2)
-  act(() => { removeButtons[0].click(); })
+  await user.click(removeButtons[0])
   expect(onChange.mock.calls).toEqual([[{
     id,
     name,

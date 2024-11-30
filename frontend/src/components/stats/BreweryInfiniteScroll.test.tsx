@@ -1,5 +1,6 @@
-import { act, fireEvent, render } from '@testing-library/react'
+import { fireEvent, render } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
+import userEvent, { type UserEvent } from '@testing-library/user-event'
 import BreweryInfiniteScroll from './BreweryInfiniteScroll'
 import LinkWrapper from '../LinkWrapper'
 
@@ -7,11 +8,12 @@ const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-function openFilters(
-  getByRole: (type: string, props: Record<string, string>) => HTMLElement
-): void {
+async function openFilters(
+  getByRole: (type: string, props: Record<string, string>) => HTMLElement,
+  user: UserEvent
+): Promise<void> {
   const toggleButton = getByRole('button', { name: 'Filters ▼' })
-  act(() => { toggleButton.click(); })
+  await user.click(toggleButton)
 }
 
 const koskipanimo = {
@@ -57,6 +59,7 @@ const unusedStats = {
 }
 
 test('queries brewery stats', async () => {
+  const user = userEvent.setup()
   const query = vitest.fn()
   const setLoadedBreweries = vitest.fn()
   let loadCallback: () => void = () => undefined
@@ -112,7 +115,7 @@ test('queries brewery stats', async () => {
     styleId: undefined
   }]])
   // Need to do something to get breweries set.
-  await act(async() => { openFilters(getByRole); })
+  await openFilters(getByRole, user)
   expect(setLoadedBreweries.mock.calls).toEqual([[[koskipanimo, lehe]]])
 })
 
@@ -139,6 +142,7 @@ test('renders brewery stats', () => {
 })
 
 test('sets minimum review count filter', async () => {
+  const user = userEvent.setup()
   const setMinimumReviewAverage = vitest.fn()
   const { getByDisplayValue, getByRole } = render(
     <LinkWrapper>
@@ -159,7 +163,7 @@ test('sets minimum review count filter', async () => {
       />
     </LinkWrapper>
   )
-  await act(async() => { openFilters(getByRole); })
+  await openFilters(getByRole, user)
   const slider = getByDisplayValue('4')
   fireEvent.change(slider, {target: {value: '4.5'}})
   expect(setMinimumReviewAverage.mock.calls).toEqual([[4.5]])

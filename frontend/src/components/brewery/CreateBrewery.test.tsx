@@ -1,4 +1,4 @@
-import { act, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import CreateBrewery from './CreateBrewery'
@@ -28,7 +28,7 @@ test('creates brewery', async () => {
   const nameInput = getByPlaceholderText(namePlaceholder)
   await user.type(nameInput, 'Salama Brewing')
   expect(createButton.hasAttribute('disabled')).toEqual(false)
-  await act(async() => { createButton.click(); })
+  await user.click(createButton)
   const createCalls = selectBrewery.mock.calls
   expect(createCalls).toEqual([[{
     id,

@@ -1,4 +1,4 @@
-import { act, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import UpdateStyle from './UpdateStyle'
@@ -88,10 +88,10 @@ test('updates style', async () => {
   const searchInput = getByPlaceholderText('Search style')
   await user.type(searchInput, 'a')
   const otherParentButton = getByRole('button', { name: otherParent.name })
-  act(() => { otherParentButton.click(); })
+  await user.click(otherParentButton)
 
   const saveButton = getByRole('button', { name: 'Save' })
-  await act(async () => { saveButton.click(); })
+  await user.click(saveButton)
   expect(update.mock.calls).toEqual([[{
     id,
     name: newName,

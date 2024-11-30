@@ -1,4 +1,4 @@
-import { act, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import Beer from './Beer'
@@ -269,13 +269,13 @@ test('updates beer', async () => {
   )
 
   const editButton = getByRole('button', { name: 'Edit' })
-  act(() => { editButton.click(); })
+  await user.click(editButton)
   const nameInput = getByPlaceholderText('Name')
   await user.clear(nameInput)
   const beerName = 'Sumutar'
   await user.type(nameInput, beerName)
   const saveButton = getByRole('button', { name: 'Save' })
-  act(() => { saveButton.click(); })
+  await user.click(saveButton)
   expect(update.mock.calls).toEqual([[{
     ...beer,
     name: beerName,

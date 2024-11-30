@@ -1,4 +1,5 @@
-import { act, fireEvent, render } from '@testing-library/react'
+import { fireEvent, render } from '@testing-library/react'
+import userEvent, { type UserEvent } from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import BreweryStatsTable from './BreweryStatsTable'
 import LinkWrapper from '../LinkWrapper'
@@ -9,11 +10,12 @@ const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-function openFilters(
-  getByRole: (type: string, props: Record<string, string>) => HTMLElement
-): void {
+async function openFilters(
+  getByRole: (type: string, props: Record<string, string>) => HTMLElement,
+  user: UserEvent
+): Promise<void> {
   const toggleButton = getByRole('button', { name: 'Filters ▼' })
-  act(() => { toggleButton.click(); })
+  await user.click(toggleButton)
 }
 
 const koskipanimo = {
@@ -136,7 +138,8 @@ orderTests.forEach(data => {
   })
 })
 
-test('sets minimum review count filter', () => {
+test('sets minimum review count filter', async () => {
+  const user = userEvent.setup()
   const setMinimumReviewCount = vitest.fn()
   const { getByDisplayValue, getByRole } = render(
     <LinkWrapper>
@@ -170,7 +173,7 @@ test('sets minimum review count filter', () => {
       />
     </LinkWrapper>
   )
-  openFilters(getByRole)
+  await openFilters(getByRole, user)
   const slider = getByDisplayValue('2')
   fireEvent.change(slider, {target: {value: '3'}})
   expect(setMinimumReviewCount.mock.calls).toEqual([[5]])

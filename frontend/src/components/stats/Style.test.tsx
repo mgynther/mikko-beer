@@ -1,4 +1,5 @@
-import { act, fireEvent, render } from '@testing-library/react'
+import { fireEvent, render } from '@testing-library/react'
+import userEvent, { type UserEvent } from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import Style from './Style'
 import LinkWrapper from '../LinkWrapper'
@@ -9,11 +10,12 @@ import type {
 } from '../../core/stats/types'
 import type { ListDirection } from '../../core/types'
 
-function openFilters(
-  getByRole: (type: string, props: Record<string, string>) => HTMLElement
-): void {
+async function openFilters(
+  getByRole: (type: string, props: Record<string, string>) => HTMLElement,
+  user: UserEvent
+): Promise<void> {
   const toggleButton = getByRole('button', { name: 'Filters ▼' })
-  act(() => { toggleButton.click(); })
+  await user.click(toggleButton)
 }
 
 const breweryId = 'd02852f6-8cef-40fd-9dfd-2cf5489de63e'
@@ -83,6 +85,7 @@ test('renders style stats', () => {
 })
 
 test('sets minimum review count filter', async () => {
+  const user = userEvent.setup()
   const statsRequests = vitest.fn()
   const { getByDisplayValue, getByRole } = render(
     <LinkWrapper>
@@ -93,7 +96,7 @@ test('sets minimum review count filter', async () => {
       />
     </LinkWrapper>
   )
-  await act(async() => { openFilters(getByRole); })
+  await openFilters(getByRole, user)
   const slider = getByDisplayValue('0')
   fireEvent.change(slider, {target: {value: '1'}})
   const calls = statsRequests.mock.calls
@@ -105,6 +108,7 @@ test('sets minimum review count filter', async () => {
 })
 
 test('sets maximum review count filter', async () => {
+  const user = userEvent.setup()
   const statsRequests = vitest.fn()
   const { getByDisplayValue, getByRole } = render(
     <LinkWrapper>
@@ -115,7 +119,7 @@ test('sets maximum review count filter', async () => {
       />
     </LinkWrapper>
   )
-  await act(async() => { openFilters(getByRole); })
+  await openFilters(getByRole, user)
   const slider = getByDisplayValue('11')
   fireEvent.change(slider, {target: {value: '10'}})
   const calls = statsRequests.mock.calls
@@ -127,6 +131,7 @@ test('sets maximum review count filter', async () => {
 })
 
 test('sets minimum review average filter', async () => {
+  const user = userEvent.setup()
   const statsRequests = vitest.fn()
   const { getByDisplayValue, getByRole } = render(
     <LinkWrapper>
@@ -137,7 +142,7 @@ test('sets minimum review average filter', async () => {
       />
     </LinkWrapper>
   )
-  await act(async() => { openFilters(getByRole); })
+  await openFilters(getByRole, user)
   const slider = getByDisplayValue('4')
   fireEvent.change(slider, {target: {value: '4.5'}})
   const calls = statsRequests.mock.calls
@@ -149,6 +154,7 @@ test('sets minimum review average filter', async () => {
 })
 
 test('sets maximum review average filter', async () => {
+  const user = userEvent.setup()
   const statsRequests = vitest.fn()
   const { getByDisplayValue, getByRole } = render(
     <LinkWrapper>
@@ -159,7 +165,7 @@ test('sets maximum review average filter', async () => {
       />
     </LinkWrapper>
   )
-  await act(async() => { openFilters(getByRole); })
+  await openFilters(getByRole, user)
   const slider = getByDisplayValue('10')
   fireEvent.change(slider, {target: {value: '9.4'}})
   const calls = statsRequests.mock.calls
@@ -223,7 +229,8 @@ const orderTests: OrderTestData[] = [
 ]
 
 orderTests.forEach(data => {
-  test(`set order to ${data.testName}`, () => {
+  test(`set order to ${data.testName}`, async () => {
+    const user = userEvent.setup()
     const statsRequests = vitest.fn()
     const { getByRole } = render(
       <LinkWrapper>
@@ -235,7 +242,7 @@ orderTests.forEach(data => {
       </LinkWrapper>
     )
     const orderButton = getByRole('button', { name: data.buttonText })
-    act(() => { orderButton.click(); })
+    await user.click(orderButton)
     const calls = statsRequests.mock.calls
     expect(calls.length).toEqual(2)
     expect(calls[1]).toEqual([{
@@ -280,7 +287,8 @@ const twoTimeOrderTests: TwoTimeOrderTestData[] = [
 ]
 
 twoTimeOrderTests.forEach(data => {
-  test(`set two time order to ${data.testName}`, () => {
+  test(`set two time order to ${data.testName}`, async () => {
+    const user = userEvent.setup()
     const statsRequests = vitest.fn()
     const { getByRole } = render(
       <LinkWrapper>
@@ -292,9 +300,9 @@ twoTimeOrderTests.forEach(data => {
       </LinkWrapper>
     )
     const firstButton = getByRole('button', { name: data.initialButtonText })
-    act(() => { firstButton.click(); })
+    await user.click(firstButton)
     const secondButton = getByRole('button', { name: data.buttonText })
-    act(() => { secondButton.click(); })
+    await user.click(secondButton)
     const calls = statsRequests.mock.calls
     expect(calls.length).toEqual(3)
     expect(calls[2]).toEqual([{
