@@ -52,10 +52,7 @@ FetchBaseQueryError
     if (!mutex.isLocked()) {
       const release = await mutex.acquire()
       try {
-        const userId: string =
-          (api.getState() as any)?.login?.login?.user?.id ?? ''
-        const refreshToken: string =
-          (api.getState() as any)?.login?.login?.refreshToken ?? ''
+        const {userId, refreshToken} = parseRefreshDetails(api.getState())
         const refreshResult = await baseQuery(
           {
             method: 'POST',
@@ -83,6 +80,21 @@ FetchBaseQueryError
     }
   }
   return result
+}
+
+interface RefreshDetails {
+  userId: string
+  refreshToken: string
+}
+
+function parseRefreshDetails (state: unknown): RefreshDetails {
+  const rootState = state as (RootState | undefined)
+  const userId: string = rootState?.login?.login?.user?.id ?? ''
+  const refreshToken: string = rootState?.login?.login?.refreshToken ?? ''
+  return {
+    userId,
+    refreshToken
+  }
 }
 
 export const emptySplitApi = createApi({
