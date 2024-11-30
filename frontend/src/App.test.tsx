@@ -10,7 +10,6 @@ import type { StoreIf } from './store/storeIf'
 import { Role } from './core/user/types'
 import { type GetLogin, PasswordChangeResult } from './core/login/types'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const dontCall = (): any => {
   throw new Error('must not be called')
 }

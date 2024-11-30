@@ -12,7 +12,6 @@ import { Theme } from './core/types'
 
 const useDebounce: (text: string) => string = (value: string) => value
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const dontCall = (): any => {
   throw new Error('must not be called')
 }

@@ -273,9 +273,8 @@ function RtkApp (): React.JSX.Element {
         { isLoading: isCreatingContainer }
       ] = useCreateContainerMutation()
       return {
-        create: async (containerRequest: ContainerRequest) => {
-          return (await createContainer(containerRequest).unwrap()).container
-        },
+        create: async (containerRequest: ContainerRequest) =>
+          (await createContainer(containerRequest).unwrap()).container,
         isLoading: isCreatingContainer
       }
     }
@@ -587,9 +586,8 @@ function RtkApp (): React.JSX.Element {
     useGet: () => {
       const [getReview] = useLazyGetReviewQuery()
       return {
-        get: async (reviewId: string) => {
-          return (await getReview(reviewId).unwrap()).review
-        }
+        get: async (reviewId: string) =>
+          (await getReview(reviewId).unwrap()).review
       }
     }
   }

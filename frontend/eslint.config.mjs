@@ -1,4 +1,5 @@
 import love from 'eslint-config-love'
+import eslintComments from 'eslint-plugin-eslint-comments'
 import typescriptEslint from '@typescript-eslint/eslint-plugin'
 import pluginImport from 'eslint-plugin-import'
 import pluginN from 'eslint-plugin-n'
@@ -20,6 +21,7 @@ const languageOptions = {
 
 const rules = {
   ...love.rules,
+  'complexity': 'off',
   '@typescript-eslint/naming-convention': [
     'error',
     {
@@ -28,11 +30,13 @@ const rules = {
     },
   ],
   '@typescript-eslint/no-magic-numbers': 'off',
+  '@typescript-eslint/prefer-destructuring': 'off',
   'max-len': ['error', { 'code': 80, 'ignoreRegExpLiterals': true }]
 }
 
 const plugins = {
   '@typescript-eslint': typescriptEslint,
+  'eslint-comments': eslintComments,
   'import': pluginImport,
   'n': pluginN,
   'promise': pluginPromise
@@ -45,5 +49,25 @@ export default [
     files: ['src/*.{js,ts,tsx,jsx}'],
     plugins,
     rules,
+  },
+  {
+    ...love,
+    languageOptions,
+    files: ['src/*.test.{js,ts,tsx,jsx}'],
+    plugins,
+    rules: {
+      ...rules,
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/require-await': 'off'
+    }
+  },
+  {
+    ignores: [
+      '*.css',
+      '*.svg',
+      '*.json',
+      'vite.config.ts',
+      'vitest.config.ts'
+    ]
   }
 ]
