@@ -125,31 +125,25 @@ interface ListQueryHelper {
 }
 
 function getOrderByBeerName (direction: ListDirection) {
-  return (query: ListQueryBuilder): ListQueryBuilder => {
-    return query
+  return (query: ListQueryBuilder): ListQueryBuilder => query
       .orderBy('beer_name', direction)
       .orderBy('review.time', 'asc')
-  }
 }
 
 // Note that this completely ignores collaborations. If name sorting is wanted
 // to take the brewery list name into account, it needs to be done in combining
 // the rows.
 function getOrderByBreweryName (direction: ListDirection) {
-  return (query: ListQueryBuilder): ListQueryBuilder => {
-    return query
+  return (query: ListQueryBuilder): ListQueryBuilder => query
       .orderBy('brewery_name', direction)
       .orderBy('beer_name', 'asc')
       .orderBy('review.time', 'asc')
-  }
 }
 
 function getOrderByRating (direction: ListDirection) {
-  return (query: ListQueryBuilder): ListQueryBuilder => {
-    return query
+  return (query: ListQueryBuilder): ListQueryBuilder => query
       .orderBy('review.rating', direction)
       .orderBy('review.time', 'desc')
-  }
 }
 
 function getOrderByTime (direction: ListDirection) {

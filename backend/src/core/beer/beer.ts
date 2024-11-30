@@ -81,6 +81,9 @@ export function validateCreateBeerRequest (body: unknown): CreateBeerRequest {
     throw invalidBeerError
   }
 
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * Validated using ajv.
+   */
   const result = body as CreateBeerRequest
   return result
 }
@@ -96,6 +99,9 @@ export function validateUpdateBeerRequest (
     throw invalidBeerIdError
   }
 
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * Validated using ajv.
+   */
   const result = body as UpdateBeerRequest
   return result
 }

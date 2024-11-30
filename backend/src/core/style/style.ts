@@ -71,6 +71,9 @@ export function validateCreateStyleRequest (body: unknown): CreateStyleRequest {
     throw invalidStyleError
   }
 
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * Validated using ajv.
+   */
   const result = body as CreateStyleRequest
   return result
 }
@@ -86,6 +89,9 @@ export function validateUpdateStyleRequest (
     throw invalidStyleIdError
   }
 
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * Validated using ajv.
+   */
   const result = body as UpdateStyleRequest
   return result
 }

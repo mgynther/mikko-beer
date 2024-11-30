@@ -73,6 +73,9 @@ export async function getAnnual (
     ORDER BY year ASC
   `
 
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * Tightly coupled with the string query.
+   */
   const annual = (await annualQuery
     .execute(db.getDb()) as {
     rows: Array<{
@@ -225,6 +228,9 @@ async function getFullOverall (
     (SELECT COUNT(1) FROM style) AS style_count,
     (SELECT AVG(rating) FROM review) AS review_average
   `
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * Tightly coupled with the string query.
+   */
   const stats = (await statsQuery
     .execute(db.getDb()) as {
     rows: Array<Stats & ReviewStats>
@@ -399,6 +405,9 @@ export async function getRating (
     ORDER BY review.rating ASC
   `
 
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * Tightly coupled with the string query.
+   */
   const style = (await styleQuery
     .execute(db.getDb()) as {
     rows: Array<{

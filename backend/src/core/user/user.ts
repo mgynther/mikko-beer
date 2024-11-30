@@ -40,14 +40,20 @@ const doValidateCreateAnonymousUserRequest =
     }
   })
 
+interface RoleContainer {
+  role: Role
+}
+
 export function validateCreateAnonymousUserRequest (
   body: unknown
 ): CreateAnonymousUserRequest {
   if (!doValidateCreateAnonymousUserRequest(body)) {
     throw invalidUserError
   }
+  const roleContainer = body as RoleContainer
+
   return {
-    role: body.role
+    role: roleContainer.role
   }
 }
 
@@ -62,6 +68,10 @@ interface CreateUserType {
 }
 
 export function validateCreateUserRequest (body: unknown): CreateUserRequest {
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * Using a helper type for validation. Contents being right is not assumed
+   * yet.
+   */
   const typedBody: CreateUserType = body as CreateUserType
   const anonymousUserRequest = validateCreateAnonymousUserRequest(
     typedBody.user

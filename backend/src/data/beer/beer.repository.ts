@@ -132,8 +132,7 @@ export async function findBeerById (
     return undefined
   }
 
-  const beer_id = beerRows[0].beer_id
-  const name = beerRows[0].name
+  const {beer_id, name} = beerRows[0]
 
   const breweryIds: Record<string, boolean> = {}
   const styleIds: Record<string, boolean> = {}
@@ -199,9 +198,10 @@ const beerListColumns: BeerListPossibleColumns[] = [
   'style.name as style_name'
 ]
 
-// Kysely types are complicated and it's easier to rely on the implicit type
-// here.
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+/* eslint-disable-next-line @typescript-eslint/explicit-function-return-type --
+ * Kysely types are complicated and it's easier to rely on the implicit type
+ * here.
+ */
 function getSelectListQuery (db: Database, fromQuery: typeof listByNameAsc) {
   return db.getDb()
     .selectFrom(fromQuery.as('beer'))

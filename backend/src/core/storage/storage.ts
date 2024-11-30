@@ -75,6 +75,9 @@ export function validateCreateStorageRequest (
     throw invalidStorageError
   }
 
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * Validated using ajv.
+   */
   const result = body as CreateStorageRequest
   return result
 }
@@ -90,6 +93,9 @@ export function validateUpdateStorageRequest (
     throw invalidStorageIdError
   }
 
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * Validated using ajv.
+   */
   const result = body as UpdateStorageRequest
   return result
 }

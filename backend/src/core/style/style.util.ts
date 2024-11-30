@@ -14,9 +14,7 @@ export function checkCyclicRelationships (
   parents: string[]
 ): void {
   const relationships = currentRelationships.filter(
-    (row: StyleRelationship) => {
-      return row.child !== styleId
-    })
+    (row: StyleRelationship) => row.child !== styleId)
 
   parents.forEach(parent => {
     relationships.push({
@@ -44,7 +42,6 @@ export function checkCyclicRelationships (
   })
 
   Object.keys(relationshipMap).forEach((id: string) => {
-    const style = relationshipMap[id]
     const styles: Record<string, boolean> = {}
     const checkStyle = (style: Style): void => {
       if (styles[style.id]) {
@@ -52,10 +49,9 @@ export function checkCyclicRelationships (
       }
       styles[style.id] = true
       style.parents.forEach(parentId => {
-        const parent = relationshipMap[parentId]
-        checkStyle(parent)
+        checkStyle(relationshipMap[parentId])
       })
     }
-    checkStyle(style)
+    checkStyle(relationshipMap[id])
   })
 }

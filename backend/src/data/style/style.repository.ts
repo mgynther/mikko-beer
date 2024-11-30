@@ -151,18 +151,22 @@ export async function listStyles (
   const styleMap: Record<string, StyleWithParentIds> = {}
   const styleArray: StyleWithParentIds[] = []
   styles.forEach(style => {
-    if (!contains(styleMap, style.style_id)) {
+    const parent: string | null = style.parent
+    if (contains(styleMap, style.style_id)) {
+      if (parent !== null) {
+        styleMap[style.style_id].parents = [
+          ...styleMap[style.style_id].parents,
+          parent
+        ]
+      }
+    } else {
       styleMap[style.style_id] = {
         id: style.style_id,
         name: style.name ?? '',
-        parents: [style.parent].filter(parent => parent) as string[]
+        parents: parent === null ? [] : [parent]
       }
       styleArray.push(styleMap[style.style_id])
-    } else {
-      styleMap[style.style_id].parents = [
-        ...styleMap[style.style_id].parents,
-        style.parent
-      ].filter(parent => parent) as string[]
+
     }
   })
 

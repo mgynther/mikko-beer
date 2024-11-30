@@ -147,6 +147,9 @@ export function validateCreateReviewRequest (
     throw invalidReviewError
   }
 
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * Validated using ajv.
+   */
   const result = body as CreateReviewRequest
   return result
 }
@@ -162,6 +165,9 @@ export function validateUpdateReviewRequest (
     throw invalidReviewIdError
   }
 
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * Validated using ajv.
+   */
   const result = body as UpdateReviewRequest
   return result
 }
@@ -199,7 +205,13 @@ function validReviewListOrder (
     reviewListOrderParamsOrDefaults(query, defaultProperty, defaultDirection)
   if (isReviewListOrderValid(params)) {
     return {
+      /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+       * Validated using ajv.
+       */
       property: params.property as ReviewListOrderProperty,
+      /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+       * Validated using ajv.
+       */
       direction: params.direction as ListDirection
     }
   }

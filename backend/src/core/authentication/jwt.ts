@@ -1,6 +1,6 @@
 // This file wraps jsonwebtoken usage to core types.
 import * as jwt from 'jsonwebtoken'
-import type { Role } from '../user/user'
+import { Role } from '../user/user'
 import {
   type AuthToken,
   type AuthTokenConfig,
@@ -49,9 +49,17 @@ export function verifyAuthToken (
     throw new InvalidAuthTokenError()
   }
 
+  const {role} = payload
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison --
+   * Validation requires unsafe comparison.
+   */
+  if (role !== Role.admin && role !== Role.viewer) {
+    throw new InvalidAuthTokenError()
+  }
+
   return {
     userId: payload.userId,
-    role: payload.role as Role,
+    role: role as Role,
     refreshTokenId: payload.refreshTokenId
   }
 }

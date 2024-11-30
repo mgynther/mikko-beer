@@ -58,6 +58,9 @@ export function validateCreateContainerRequest (
     throw invalidContainerError
   }
 
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * Validated using ajv.
+   */
   const result = body as CreateContainerRequest
   return result
 }
@@ -75,6 +78,9 @@ export function validateUpdateContainerRequest (
     throw invalidContainerIdError
   }
 
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * Validated using ajv.
+   */
   const result = body as UpdateContainerRequest
   return result
 }

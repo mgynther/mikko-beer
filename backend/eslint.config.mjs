@@ -1,9 +1,10 @@
-const love = require('eslint-config-love')
-const typescriptEslint = require('@typescript-eslint/eslint-plugin')
-const pluginImport = require('eslint-plugin-import')
-const pluginN = require('eslint-plugin-n')
-const pluginPromise = require('eslint-plugin-promise')
-const typescriptEslintParser = require('@typescript-eslint/parser')
+import love from 'eslint-config-love'
+import eslintComments from 'eslint-plugin-eslint-comments'
+import typescriptEslint from '@typescript-eslint/eslint-plugin'
+import pluginImport from 'eslint-plugin-import'
+import pluginN from 'eslint-plugin-n'
+import pluginPromise from 'eslint-plugin-promise'
+import typescriptEslintParser from '@typescript-eslint/parser'
 
 const languageOptions = {
   globals: {
@@ -27,19 +28,22 @@ const rules = {
       'format': ['camelCase', 'PascalCase', 'snake_case', 'UPPER_CASE'],
     },
   ],
+  'complexity': 'off',
   '@typescript-eslint/no-magic-numbers': 'off',
   '@typescript-eslint/max-params': 'off',
+  '@typescript-eslint/prefer-destructuring': 'off',
   'max-len': ['error', { 'code': 80, 'ignoreRegExpLiterals': true }]
 }
 
 const plugins = {
   '@typescript-eslint': typescriptEslint,
+  'eslint-comments': eslintComments,
   'import': pluginImport,
   'n': pluginN,
   'promise': pluginPromise
 }
 
-module.exports = [
+export default [
   {
     ...love,
     languageOptions,

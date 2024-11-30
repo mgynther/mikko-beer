@@ -108,7 +108,7 @@ export function validateStatsBreweryStyleFilter (
 export function validateStatsFilter (
   query: Record<string, unknown> | undefined
 ): StatsFilter {
-  const result: StatsFilter = {
+  const defaultResult: StatsFilter = {
     brewery: undefined,
     style: undefined,
     maxReviewAverage: 10,
@@ -117,11 +117,14 @@ export function validateStatsFilter (
     minReviewCount: 1
   }
   if (query === undefined) {
-    return result
+    return defaultResult
   }
   const breweryFilter = validateStatsBreweryStyleFilter(query)
-  result.brewery = breweryFilter.brewery
-  result.style = breweryFilter.style
+  const result = {
+    ...defaultResult,
+    brewery: breweryFilter.brewery,
+    style: breweryFilter.style
+  }
   const {
     min_review_count,
     max_review_count,
@@ -216,7 +219,13 @@ export function validateBreweryStatsOrder (
   const params = breweryStatsParamsOrDefaults(query)
   if (isBreweryStatsOrderValid(params)) {
     return {
+      /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+       * Validated using ajv.
+       */
       property: params.property as BreweryStatsOrderProperty,
+      /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+       * Validated using ajv.
+       */
       direction: params.direction as ListDirection
     }
   }
@@ -242,7 +251,13 @@ export function validateStyleStatsOrder (
   const params = styleStatsParamsOrDefaults(query)
   if (isStyleStatsOrderValid(params)) {
     return {
+      /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+       * Validated using ajv.
+       */
       property: params.property as StyleStatsOrderProperty,
+      /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+       * Validated using ajv.
+       */
       direction: params.direction as ListDirection
     }
   }

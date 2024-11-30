@@ -50,9 +50,7 @@ export class Transaction {
     this.internalTrx = trx
   }
 
-  trx = (): KyselyTransaction<KyselyDatabase> => {
-    return this.internalTrx
-  }
+  trx = (): KyselyTransaction<KyselyDatabase> => this.internalTrx
 }
 
 // Abstract Kysely away so it's not visible everywhere.
@@ -62,6 +60,9 @@ export class Database {
   constructor (config: ConnectionConfig) {
     this.internalDb = new Kysely<KyselyDatabase>({
       dialect: new PostgresDialect({
+        /* eslint-disable-next-line @typescript-eslint/require-await --
+         * async required by interface.
+         */
         pool: async () => new Pool(config)
       })
     })
@@ -75,9 +76,9 @@ export class Database {
     cb: (trx: Transaction) => Promise<T>
   ): Promise<T> {
     const db = this.internalDb
-    return await db.transaction().execute(async (trx) => {
-      return await cb(new Transaction(trx))
-    })
+    return await db.transaction().execute(
+      async (trx) => await cb(new Transaction(trx))
+    )
   }
 
   getDb (): Kysely<KyselyDatabase> {

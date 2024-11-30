@@ -50,6 +50,9 @@ export function validateCreateBreweryRequest (
     throw invalidBreweryError
   }
 
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * Validated using ajv.
+   */
   const result = body as CreateBreweryRequest
   return result
 }
@@ -65,6 +68,9 @@ export function validateUpdateBreweryRequest (
     throw invalidBreweryIdError
   }
 
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * Validated using ajv.
+   */
   const result = body as UpdateBreweryRequest
   return result
 }

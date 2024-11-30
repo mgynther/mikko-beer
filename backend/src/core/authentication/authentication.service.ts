@@ -64,7 +64,7 @@ export function authenticateViewer (
 ): void {
   const authorization = validAuthorizationOrThrow(authorizationHeader)
   const payload = validAuthTokenPayload(authorization, authTokenSecret)
-  const role = payload.role
+  const {role} = payload
   switch (role) {
     case Role.admin:
     case Role.viewer:
