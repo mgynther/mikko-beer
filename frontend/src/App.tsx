@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Routes, Route, Outlet } from 'react-router-dom'
+import { Routes, Route, Outlet } from 'react-router'
 
 import { useSelector } from './react-redux-wrapper'
 import {

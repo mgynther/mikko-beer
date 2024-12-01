@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import {
   useNavigate as useRouterNavigate,
   useParams as useRouterParams
-} from 'react-router-dom'
+} from 'react-router'
 import type { InfiniteScroll, UseDebounce } from '../core/types'
 import { className as contentEndClassName } from './ContentEnd'
 
