@@ -1,18 +1,11 @@
 import { fireEvent, render } from '@testing-library/react'
-import userEvent, { type UserEvent } from '@testing-library/user-event'
+import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import Filters from './Filters'
+import { openFilters } from './filters-test-util'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
-}
-
-async function open(
-  getByRole: (type: string, props: Record<string, string>) => HTMLElement,
-  user: UserEvent
-): Promise<void> {
-  const toggleButton = getByRole('button', { name: 'Filters ▼' })
-  await user.click(toggleButton)
 }
 
 test('renders values when open', async () => {
@@ -39,7 +32,7 @@ test('renders values when open', async () => {
       }}
     />
   )
-  await open(getByRole, user)
+  await openFilters(getByRole, user)
   getByRole('button', { name: 'Filters ▲' })
   getByText('Minimum review count: 3')
   getByText('Maximum review count: 13')
@@ -72,7 +65,7 @@ test('sets minimum review count', async () => {
       }}
     />
   )
-  await open(getByRole, user)
+  await openFilters(getByRole, user)
   const slider = getByDisplayValue('2')
   fireEvent.change(slider, {target: {value: '3'}})
   expect(setMinimumReviewCount.mock.calls).toEqual([[5]])
@@ -103,7 +96,7 @@ test('sets maximum review count', async () => {
       }}
     />
   )
-  await open(getByRole, user)
+  await openFilters(getByRole, user)
   const slider = getByDisplayValue('5')
   fireEvent.change(slider, {target: {value: '6'}})
   expect(setMaximumReviewCount.mock.calls).toEqual([[21]])
@@ -134,7 +127,7 @@ test('sets minimum review average', async () => {
       }}
     />
   )
-  await open(getByRole, user)
+  await openFilters(getByRole, user)
   const slider = getByDisplayValue('6.8')
   fireEvent.change(slider, {target: {value: '6.9'}})
   expect(setMinimumReviewAverage.mock.calls).toEqual([[6.9]])
@@ -165,7 +158,7 @@ test('sets maximum review average', async () => {
       }}
     />
   )
-  await open(getByRole, user)
+  await openFilters(getByRole, user)
   const slider = getByDisplayValue('9.2')
   fireEvent.change(slider, {target: {value: '9.1'}})
   expect(setMaximumReviewAverage.mock.calls).toEqual([[9.1]])

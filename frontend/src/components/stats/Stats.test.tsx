@@ -1,17 +1,10 @@
 import { render } from '@testing-library/react'
-import userEvent, { type UserEvent } from '@testing-library/user-event'
+import userEvent from '@testing-library/user-event'
 import { test } from 'vitest'
 import Stats from './Stats'
 import type { StatsIf } from '../../core/stats/types'
 import LinkWrapper from '../LinkWrapper'
-
-async function openFilters(
-  getByRole: (type: string, props: Record<string, string>) => HTMLElement,
-  user: UserEvent
-): Promise<void> {
-  const toggleButton = getByRole('button', { name: 'Filters ▼' })
-  await user.click(toggleButton)
-}
+import { openFilters } from './filters-test-util'
 
 const emptyBreweryStats = { brewery: []}
 
