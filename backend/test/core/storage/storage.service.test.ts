@@ -1,4 +1,4 @@
-import { expect } from 'earl'
+import { expect, mockFn } from 'earl'
 
 import {
   referredBeerNotFoundError,
@@ -226,6 +226,16 @@ describe('storage service unit tests', () => {
     expectReject(async () => {
       await storageService.updateStorage(updateIf, updateRequest, log)
     }, referredContainerNotFoundError)
+  })
+
+  it('delete storage', async () => {
+    const deleter = mockFn(async (id: string) => {
+      id
+    })
+    const id = '18801a29-1c4e-40a4-ab3b-1701b4416c6c'
+    await storageService.deleteStorageById(deleter, id, log)
+    expect(deleter).toHaveBeenCalledTimes(1)
+    expect(deleter).toHaveBeenLastCalledWith(id)
   })
 
   it('find storage', async () => {

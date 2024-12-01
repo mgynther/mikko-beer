@@ -67,6 +67,15 @@ export async function updateStorage (
   }
 }
 
+export async function deleteStorageById (
+  deleteStorageById: (id: string) => Promise<void>,
+  id: string,
+  log: log
+): Promise<void> {
+  log(INFO, 'delete storage', id)
+  await deleteStorageById(id)
+}
+
 export async function findStorageById (
   findById: (id: string) => Promise<JoinedStorage | undefined>,
   storageId: string,

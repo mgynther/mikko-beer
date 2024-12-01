@@ -212,6 +212,34 @@ describe('storage tests', () => {
     expect(getRes.data.storage.bestBefore.toString()).toEqual(bestBeforeLater)
   })
 
+  it('delete a storage', async () => {
+    const { beerRes, containerRes } = await createDeps(ctx.adminAuthHeaders())
+
+    const requestData = {
+      bestBefore,
+      beer: beerRes.data.beer.id,
+      container: containerRes.data.container.id,
+    }
+
+    const storageRes = await ctx.request.post(`/api/v1/storage`,
+      requestData, ctx.adminAuthHeaders()
+    )
+    expect(storageRes.status).toEqual(201)
+    const storageId = storageRes.data.storage.id
+
+    const deleteRes = await ctx.request.delete(
+      `/api/v1/storage/${storageId}`,
+      ctx.adminAuthHeaders()
+    )
+    expect(deleteRes.status).toEqual(204)
+
+    const getRes = await ctx.request.get<{ storage: Storage }>(
+      `/api/v1/storage/${storageId}`,
+      ctx.adminAuthHeaders()
+    )
+    expect(getRes.status).toEqual(404)
+  })
+
   it('get empty storage list', async () => {
     const res = await ctx.request.get(`/api/v1/storage`,
       ctx.adminAuthHeaders()

@@ -81,6 +81,28 @@ export function storageController (router: Router): void {
     }
   )
 
+  router.delete('/api/v1/storage/:storageId',
+    authHelper.authenticateAdmin,
+    async (ctx) => {
+      const { storageId } = ctx.params
+
+      await ctx.db.executeTransaction(async (trx) => {
+        const deleteStorage: (id: string) => Promise<void> = (
+          storageId: string
+          ) => {
+            return storageRepository.deleteStorageById(trx, storageId)
+          }
+        return await storageService.deleteStorageById(
+          deleteStorage,
+          storageId,
+          ctx.log
+        )
+      })
+
+      ctx.status = 204
+    }
+  )
+
   router.get(
     '/api/v1/storage/:storageId',
     authHelper.authenticateViewer,
