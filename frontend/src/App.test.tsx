@@ -10,6 +10,7 @@ import type { StoreIf } from './store/storeIf'
 import { Role } from './core/user/types'
 import { type GetLogin, PasswordChangeResult } from './core/login/types'
 import type { UseDebounce } from './core/types'
+import type { DeleteStorageIf } from './core/storage/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -90,6 +91,12 @@ const reviewContainerIf = {
       isLoading: false
     })
   }
+}
+
+const deleteStorageIf: DeleteStorageIf = {
+  useDelete: () => ({
+    delete: dontCall
+  })
 }
 
 const storeIf: StoreIf = {
@@ -259,16 +266,20 @@ const storeIf: StoreIf = {
     useList: () => ({
       storages: undefined,
       isLoading: false
-    })
+    }),
+    delete: deleteStorageIf
   },
   listStoragesByBeerIf: {
-    useList: dontCall
+    useList: dontCall,
+    delete: deleteStorageIf
   },
   listStoragesByBreweryIf: {
-    useList: dontCall
+    useList: dontCall,
+    delete: deleteStorageIf
   },
   listStoragesByStyleIf: {
-    useList: dontCall
+    useList: dontCall,
+    delete: deleteStorageIf
   },
   getStyleIf: {
     useGet: dontCall

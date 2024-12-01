@@ -37,16 +37,24 @@ export interface GetStorageIf {
   }
 }
 
+export interface DeleteStorageIf {
+  useDelete: () => {
+    delete: (storageId: string) => Promise<void>
+  }
+}
+
 export interface ListStoragesIf {
   useList: () => {
     storages: StorageList | undefined
     isLoading: boolean
-  }
+  },
+  delete: DeleteStorageIf
 }
 
 export interface ListStoragesByIf {
   useList: (id: string) => {
     storages: StorageList | undefined
     isLoading: boolean
-  }
+  },
+  delete: DeleteStorageIf
 }

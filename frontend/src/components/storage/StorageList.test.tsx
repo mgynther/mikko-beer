@@ -1,10 +1,14 @@
 import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { expect, test } from 'vitest'
+import { expect, test, vitest } from 'vitest'
 import StorageList from './StorageList'
 import type { Storage } from '../../core/storage/types'
 import { Role } from '../../core/user/types'
 import LinkWrapper from '../LinkWrapper'
+
+const dontCall = (): any => {
+  throw new Error('must not be called')
+}
 
 const brewery = {
   id: 'a2725b45-e4d8-4892-a54b-e610f5b72aa9',
@@ -30,20 +34,28 @@ const storage: Storage = {
   styles: [style]
 }
 
+const adminLogin = {
+  user: {
+    id: 'e809902c-f056-4c73-8929-31c87d164d85',
+    username: 'admin',
+    role: Role.admin
+  },
+  authToken: 'auth',
+  refreshToken: 'refresh'
+}
+
 test('renders storage', async () => {
   const user = userEvent.setup()
   const { getByRole, getByText } = render(
     <LinkWrapper>
       <StorageList
-        getLogin={() => ({
-          user: {
-            id: 'e809902c-f056-4c73-8929-31c87d164d85',
-            username: 'admin',
-            role: Role.admin
-          },
-          authToken: 'auth',
-          refreshToken: 'refresh'
-        })}
+        deleteStorageIf={{
+          useDelete: () => ({
+            delete: dontCall
+          })
+        }}
+        getConfirm={dontCall}
+        getLogin={() => adminLogin}
         isLoading={false}
         isTitleVisible={true}
         storages={[
@@ -61,4 +73,56 @@ test('renders storage', async () => {
   expect(reviewLink.getAttribute('href')).toEqual(path)
   await user.click(reviewLink)
   expect(window.location.pathname).toEqual(path)
+})
+
+test('deletes storage', async () => {
+  const user = userEvent.setup()
+  const del = vitest.fn()
+  const { getByRole } = render(
+    <LinkWrapper>
+      <StorageList
+        deleteStorageIf={{
+          useDelete: () => ({
+            delete: del
+          })
+        }}
+        getConfirm={() => () => true}
+        getLogin={() => adminLogin}
+        isLoading={false}
+        isTitleVisible={true}
+        storages={[
+          storage
+        ]}
+      />
+    </LinkWrapper>
+  )
+  const deleteButton = getByRole('button', { name: 'Delete' })
+  await user.click(deleteButton)
+  expect(del.mock.calls).toEqual([[storage.id]])
+})
+
+test('does not delete storage on not confirmed', async () => {
+  const user = userEvent.setup()
+  const del = vitest.fn()
+  const { getByRole } = render(
+    <LinkWrapper>
+      <StorageList
+        deleteStorageIf={{
+          useDelete: () => ({
+            delete: del
+          })
+        }}
+        getConfirm={() => () => false}
+        getLogin={() => adminLogin}
+        isLoading={false}
+        isTitleVisible={true}
+        storages={[
+          storage
+        ]}
+      />
+    </LinkWrapper>
+  )
+  const deleteButton = getByRole('button', { name: 'Delete' })
+  await user.click(deleteButton)
+  expect(del.mock.calls).toEqual([])
 })

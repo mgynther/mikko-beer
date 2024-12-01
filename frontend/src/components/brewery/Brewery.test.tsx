@@ -101,7 +101,10 @@ test('updates brewery', async () => {
         useList: () => ({
           storages: { storages: [] },
           isLoading: false
-        })
+        }),
+        delete: {
+          useDelete: dontCall
+        }
       }}
       paramsIf={{
         useParams: () => ({ breweryId: id })

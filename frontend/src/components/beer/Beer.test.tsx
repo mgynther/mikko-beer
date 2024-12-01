@@ -182,7 +182,12 @@ function getListStoragesByBeerIf(storages: Storage[]): ListStoragesByIf {
         storages
       },
       isLoading: false
-    })
+    }),
+    delete: {
+      useDelete: () => ({
+        delete: dontCall
+      })
+    }
   }
 }
 

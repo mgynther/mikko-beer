@@ -196,7 +196,12 @@ function getListStoragesByStyleIf(storages: Storage[]): ListStoragesByIf {
         storages
       },
       isLoading: false
-    })
+    }),
+    delete: {
+      useDelete: () => ({
+        delete: dontCall
+      })
+    }
   }
 }
 

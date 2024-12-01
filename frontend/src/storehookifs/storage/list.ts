@@ -1,7 +1,11 @@
-import type { ListStoragesIf } from "../../core/storage/types"
+import type { DeleteStorageIf, ListStoragesIf } from "../../core/storage/types"
 import { useListStoragesQuery } from "../../store/storage/api"
 
-const listStorages: () => ListStoragesIf = () => {
+const listStorages: (
+  deleteStorageIf: DeleteStorageIf
+) => ListStoragesIf = (
+  deleteStorageIf: DeleteStorageIf
+) => {
   const listStoragesIf: ListStoragesIf = {
     useList: () => {
       const { data, isLoading } = useListStoragesQuery()
@@ -9,7 +13,8 @@ const listStorages: () => ListStoragesIf = () => {
         storages: data,
         isLoading
       }
-    }
+    },
+    delete: deleteStorageIf
   }
   return listStoragesIf
 }

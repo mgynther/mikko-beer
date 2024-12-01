@@ -30,7 +30,16 @@
 
 .StorageHeading .BestBefore,
 .StorageRow .BestBefore,
-.StorageHeading .ReviewLink,
-.StorageRow .ReviewLink {
+.StorageHeading .Actions,
+.StorageRow .Actions {
   width: 10%;
+}
+
+.Actions button {
+  margin-top: 10px;
+  font-size: 12px;
+}
+
+.Actions div {
+  margin: 0;
 }

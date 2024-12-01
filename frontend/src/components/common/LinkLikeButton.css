@@ -1,0 +1,8 @@
+button.linklike-button {
+  padding: 0;
+  background: transparent;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  text-align: left;
+}

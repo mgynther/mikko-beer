@@ -145,6 +145,8 @@ function Style (props: Props): React.JSX.Element {
       />
       {(storages?.storages ?? []).length > 0 && (
         <StorageList
+          deleteStorageIf={props.listStoragesByStyleIf.delete}
+          getConfirm={() => confirm}
           getLogin={props.reviewIf.login}
           isLoading={isLoadingStorages}
           isTitleVisible={true}

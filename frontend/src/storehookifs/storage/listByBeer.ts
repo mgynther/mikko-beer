@@ -1,7 +1,14 @@
-import type { ListStoragesByIf } from "../../core/storage/types"
+import type {
+  DeleteStorageIf,
+  ListStoragesByIf
+} from "../../core/storage/types"
 import { useListStoragesByBeerQuery } from "../../store/storage/api"
 
-const listStoragesByBeer: () => ListStoragesByIf = () => {
+const listStoragesByBeer: (
+  deleteStorageIf: DeleteStorageIf
+) => ListStoragesByIf = (
+  deleteStorageIf: DeleteStorageIf
+) => {
   const listStoragesByBeerIf: ListStoragesByIf = {
     useList: (beerId: string) => {
       const { data, isLoading } = useListStoragesByBeerQuery(beerId)
@@ -9,7 +16,8 @@ const listStoragesByBeer: () => ListStoragesByIf = () => {
         storages: data,
         isLoading
       }
-    }
+    },
+    delete: deleteStorageIf
   }
   return listStoragesByBeerIf
 }

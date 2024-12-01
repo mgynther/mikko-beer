@@ -119,7 +119,12 @@ test('renders storage', () => {
               storages: [storage]
             },
             isLoading: false
-          })
+          }),
+          delete: {
+            useDelete: () => ({
+              delete: dontCall
+            })
+          }
         }}
         searchIf={{
           useSearch: () => ({

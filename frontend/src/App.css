@@ -14,7 +14,12 @@ body.light {
   align-items: center;
 }
 
-body.light .App {
+.App button.linklike-button {
+  color: white;
+}
+
+body.light .App,
+body.light .App button.linklike-button {
   color: black;
 }
 

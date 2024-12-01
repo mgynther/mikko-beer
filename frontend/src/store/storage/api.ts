@@ -57,12 +57,23 @@ const storageApi = emptySplitApi.injectEndpoints({
         body: params
       }),
       invalidatesTags: [StorageTags.Storage]
+    }),
+    /* eslint-disable-next-line @typescript-eslint/no-invalid-void-type --
+     * Void required here to generate correct hook.
+     */
+    deleteStorage: build.mutation<void, string>({
+      query: (id: string) => ({
+        url: `/storage/${id}`,
+        method: 'DELETE'
+      }),
+      invalidatesTags: [StorageTags.Storage]
     })
   })
 })
 
 export const {
   useCreateStorageMutation,
+  useDeleteStorageMutation,
   useGetStorageQuery,
   useListStoragesQuery,
   useListStoragesByBeerQuery,

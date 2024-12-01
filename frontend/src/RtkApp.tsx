@@ -61,6 +61,7 @@ import type {
 } from './core/beer/types'
 import type {
   CreateStorageIf,
+  DeleteStorageIf,
   GetStorageIf,
   ListStoragesByIf,
   ListStoragesIf
@@ -105,6 +106,7 @@ import stats from './storehookifs/stats'
 
 import createStorage from './storehookifs/storage/create'
 import getStorage from './storehookifs/storage/get'
+import deleteStorage from './storehookifs/storage/delete'
 import listStorages from './storehookifs/storage/list'
 import listStoragesByBeer from './storehookifs/storage/listByBeer'
 import listStoragesByBrewery from './storehookifs/storage/listByBrewery'
@@ -187,10 +189,14 @@ function RtkApp (): React.JSX.Element {
 
   const createStorageIf: CreateStorageIf = createStorage()
   const getStorageIf: GetStorageIf = getStorage()
-  const listStoragesIf: ListStoragesIf = listStorages()
-  const listStoragesByBeerIf: ListStoragesByIf = listStoragesByBeer()
-  const listStoragesByBreweryIf: ListStoragesByIf = listStoragesByBrewery()
-  const listStoragesByStyleIf: ListStoragesByIf = listStoragesByStyle()
+  const deleteStorageIf: DeleteStorageIf = deleteStorage()
+  const listStoragesIf: ListStoragesIf = listStorages(deleteStorageIf)
+  const listStoragesByBeerIf: ListStoragesByIf =
+    listStoragesByBeer(deleteStorageIf)
+  const listStoragesByBreweryIf: ListStoragesByIf =
+    listStoragesByBrewery(deleteStorageIf)
+  const listStoragesByStyleIf: ListStoragesByIf =
+    listStoragesByStyle(deleteStorageIf)
 
   const getReviewIf: GetReviewIf = getReview()
   const listReviewsIf: ListReviewsIf = listReviews(infiniteScroll)
