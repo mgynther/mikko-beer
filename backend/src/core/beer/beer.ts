@@ -17,6 +17,28 @@ export interface Beer {
   name: string
 }
 
+export type LockIds = (ids: string[]) => Promise<string[]>
+type InsertBreweries = (beerId: string, breweries: string[]) => Promise<void>
+type InsertStyles = (beerId: string, styles: string[]) => Promise<void>
+
+export interface CreateIf {
+  create: (beer: NewBeer) => Promise<Beer>
+  lockBreweries: LockIds
+  lockStyles: LockIds
+  insertBeerBreweries: InsertBreweries
+  insertBeerStyles: InsertStyles
+}
+
+export interface UpdateIf {
+  update: (beer: Beer) => Promise<Beer>
+  lockBreweries: LockIds
+  lockStyles: LockIds
+  insertBeerBreweries: InsertBreweries
+  deleteBeerBreweries: (beerId: string) => Promise<void>
+  insertBeerStyles: InsertStyles
+  deleteBeerStyles: (beerId: string) => Promise<void>
+}
+
 export interface BeerWithBreweryAndStyleIds {
   id: string
   name: string | null

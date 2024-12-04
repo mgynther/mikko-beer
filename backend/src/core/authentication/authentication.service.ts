@@ -26,9 +26,19 @@ export async function authenticateUser (
     throw noUserIdParameterError
   }
 
-  const authorization = validAuthorizationOrThrow(authorizationHeader)
-  const authTokenPayload = validAuthTokenPayload(authorization, authTokenSecret)
+  const authTokenPayload =
+    parseAuthTokenPayload(authorizationHeader, authTokenSecret)
+  await authenticateUserPayload(userId, authTokenPayload, findRefreshToken)
+}
 
+export async function authenticateUserPayload (
+  userId: string,
+  authTokenPayload: AuthTokenPayload,
+  findRefreshToken: (
+    userId: string,
+    refreshTokenId: string
+  ) => Promise<DbRefreshToken | undefined>
+): Promise<void> {
   if (authTokenPayload.role === Role.admin) {
     return
   }
@@ -51,8 +61,13 @@ export function authenticateAdmin (
   authorizationHeader: string | undefined,
   authTokenSecret: string
 ): void {
-  const authorization = validAuthorizationOrThrow(authorizationHeader)
-  const payload = validAuthTokenPayload(authorization, authTokenSecret)
+  const payload = parseAuthTokenPayload(authorizationHeader, authTokenSecret)
+  authenticateAdminPayload(payload)
+}
+
+export function authenticateAdminPayload (
+  payload: AuthTokenPayload
+): void {
   if (payload.role !== Role.admin) {
     throw noRightsError
   }
@@ -62,13 +77,26 @@ export function authenticateViewer (
   authorizationHeader: string | undefined,
   authTokenSecret: string
 ): void {
-  const authorization = validAuthorizationOrThrow(authorizationHeader)
-  const payload = validAuthTokenPayload(authorization, authTokenSecret)
+  const payload = parseAuthTokenPayload(authorizationHeader, authTokenSecret)
+  authenticateViewerPayload(payload)
+}
+
+export function authenticateViewerPayload (
+  payload: AuthTokenPayload
+): void {
   const {role} = payload
   switch (role) {
     case Role.admin:
     case Role.viewer:
   }
+}
+
+export function parseAuthTokenPayload (
+  authorizationHeader: string | undefined,
+  authTokenSecret: string
+): AuthTokenPayload {
+  const authorization = validAuthorizationOrThrow(authorizationHeader)
+  return validAuthTokenPayload(authorization, authTokenSecret)
 }
 
 function validAuthorizationOrThrow (authorization: string | undefined): string {

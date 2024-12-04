@@ -5,6 +5,7 @@ import { type Context } from '../context'
 import * as authService from '../../core/authentication/authentication.service'
 import * as refreshTokenRepository
   from '../../data/authentication/refresh-token.repository'
+import { AuthTokenPayload } from '../../core/authentication/auth-token'
 
 export async function authenticateUser (
   ctx: Context,
@@ -44,4 +45,11 @@ export async function authenticateViewer (
   const authorization = ctx.headers.authorization
   authService.authenticateViewer(authorization, ctx.config.authTokenSecret)
   return await next()
+}
+
+export function parseAuthToken (
+  ctx: Context
+): AuthTokenPayload {
+  const authorization = ctx.headers.authorization
+  return authService.parseAuthTokenPayload(authorization, ctx.config.authTokenSecret)
 }

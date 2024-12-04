@@ -4,7 +4,9 @@ import {
   type BeerWithBreweriesAndStyles,
   type CreateBeerRequest,
   type UpdateBeerRequest,
-  type NewBeer
+  type NewBeer,
+  CreateIf,
+  UpdateIf
 } from '../../../src/core/beer/beer'
 import { type Pagination } from '../../../src/core/pagination'
 import { type SearchByName } from '../../../src/core/search'
@@ -66,7 +68,7 @@ describe('beer service unit tests', () => {
     let breweriesLocked = false
     let stylesInserted = false
     let stylesLocked = false
-    const createIf: beerService.CreateIf = {
+    const createIf: CreateIf = {
       create: async (newBeer: NewBeer) => {
         const result = {
           id: beer.id,
@@ -114,7 +116,7 @@ describe('beer service unit tests', () => {
   })
 
   it('fail to create beer with invalid brewery', async () => {
-    const createIf: beerService.CreateIf = {
+    const createIf: CreateIf = {
       create: async () => beer,
       lockBreweries: async () => [],
       lockStyles,
@@ -127,7 +129,7 @@ describe('beer service unit tests', () => {
   })
 
   it('fail to create beer with invalid style', async () => {
-    const createIf: beerService.CreateIf = {
+    const createIf: CreateIf = {
       create: async () => beer,
       lockBreweries,
       lockStyles: async () => [],
@@ -146,7 +148,7 @@ describe('beer service unit tests', () => {
     let stylesDeleted = false
     let stylesInserted = false
     let stylesLocked = false
-    const updateIf: beerService.UpdateIf = {
+    const updateIf: UpdateIf = {
       update: async (beer: Beer) => {
         const result = {
           id: beer.id,
@@ -207,7 +209,7 @@ describe('beer service unit tests', () => {
   })
 
   it('fail to update beer with invalid brewery', async () => {
-    const updateIf: beerService.UpdateIf = {
+    const updateIf: UpdateIf = {
       update: async () => beer,
       lockBreweries: async () => [],
       lockStyles,
@@ -227,7 +229,7 @@ describe('beer service unit tests', () => {
   })
 
   it('fail to update beer with invalid style', async () => {
-    const updateIf: beerService.UpdateIf = {
+    const updateIf: UpdateIf = {
       update: async () => beer,
       lockBreweries,
       lockStyles: async () => [],

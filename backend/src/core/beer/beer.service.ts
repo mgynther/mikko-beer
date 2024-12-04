@@ -1,10 +1,11 @@
 import type {
   CreateBeerRequest,
   UpdateBeerRequest,
-  Beer,
   BeerWithBreweryAndStyleIds,
   BeerWithBreweriesAndStyles,
-  NewBeer
+  CreateIf,
+  UpdateIf,
+  LockIds
 } from './beer'
 
 import {
@@ -18,18 +19,6 @@ import type {
 } from '../pagination'
 import type { SearchByName } from '../search'
 import { areKeysEqual } from '../key'
-
-type InsertBreweries = (beerId: string, breweries: string[]) => Promise<void>
-type InsertStyles = (beerId: string, styles: string[]) => Promise<void>
-type LockIds = (ids: string[]) => Promise<string[]>
-
-export interface CreateIf {
-  create: (beer: NewBeer) => Promise<Beer>
-  lockBreweries: LockIds
-  lockStyles: LockIds
-  insertBeerBreweries: InsertBreweries
-  insertBeerStyles: InsertStyles
-}
 
 export async function createBeer (
   createIf: CreateIf,
@@ -59,16 +48,6 @@ export async function createBeer (
     breweries: request.breweries,
     styles: request.styles
   }
-}
-
-export interface UpdateIf {
-  update: (beer: Beer) => Promise<Beer>
-  lockBreweries: LockIds
-  lockStyles: LockIds
-  insertBeerBreweries: InsertBreweries
-  deleteBeerBreweries: (beerId: string) => Promise<void>
-  insertBeerStyles: InsertStyles
-  deleteBeerStyles: (beerId: string) => Promise<void>
 }
 
 export async function updateBeer (
