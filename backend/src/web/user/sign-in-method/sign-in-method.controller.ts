@@ -8,7 +8,6 @@ import * as userService from '../../../core/user/user.service'
 import { type Transaction } from '../../../data/database'
 
 import {
-  type AddPasswordUserIf,
   type ChangePasswordUserIf,
   type SignInUsingPasswordIf,
 } from '../../../core/user/sign-in-method.service'
@@ -18,7 +17,6 @@ import {
   validateRefreshToken
 } from '../../../core/authentication/refresh-token'
 import { type Router } from '../../router'
-import { log } from '../../../core/log'
 import {
   type UserPasswordHash,
   validatePasswordChange,
@@ -27,40 +25,7 @@ import {
 import { type User } from '../../../core/user/user'
 import { type AuthTokenConfig } from '../../../core/authentication/auth-token'
 import { type Context } from '../../context'
-
-export async function addPasswordSignInMethod (
-  trx: Transaction,
-  userId: string,
-  request: unknown,
-  log: log
-): Promise<string> {
-  const passwordSignInMethod = validatePasswordSignInMethod(request)
-
-  const addPasswordUserIf: AddPasswordUserIf = {
-    lockUserById: createLockUserById(trx),
-    insertPasswordSignInMethod: function(
-      userPassword: UserPasswordHash
-    ): Promise<void> {
-      return signInMethodRepository.insertPasswordSignInMethod(
-        trx, userPassword
-      ) as Promise<unknown> as Promise<void>
-    },
-    setUserUsername: function(
-      userId: string, username: string
-    ): Promise<void> {
-      return userService.setUserUsername(
-        (userId: string, username: string) => {
-          return userRepository.setUserUsername(trx, userId, username)
-      }, userId, username, log)
-    }
-  }
-  await signInMethodService.addPasswordSignInMethod(
-    addPasswordUserIf,
-    userId,
-    passwordSignInMethod
-  )
-  return passwordSignInMethod.username
-}
+import { createLockUserById } from './sign-in-method-helper'
 
 export function signInMethodController (router: Router): void {
   router.post('/api/v1/user/sign-in', async (ctx) => {
@@ -190,14 +155,6 @@ export function signInMethodController (router: Router): void {
       ctx.status = 204
     }
   )
-}
-
-function createLockUserById(trx: Transaction) {
-  return function(userId: string): Promise<any> {
-    return userService.lockUserById((userId: string) => {
-      return userRepository.lockUserById(trx, userId)
-    }, userId)
-  }
 }
 
 function createFindPasswordSignInMethod(trx: Transaction) {

@@ -1,6 +1,8 @@
-import * as userService from '../../core/user/user.service'
+import * as userService from '../../core/user/authorized-user.service'
 import {
   addPasswordSignInMethod,
+} from './sign-in-method/sign-in-method-helper'
+import {
   signInMethodController
 } from './sign-in-method/sign-in-method.controller'
 import * as authHelper from '../authentication/authentication-helper'
@@ -9,45 +11,54 @@ import * as userRepository from '../../data/user/user.repository'
 
 import { type Config } from '../config'
 
-import { type Router } from '../router'
-import {
-  type CreateAnonymousUserRequest,
-  validateCreateUserRequest
-} from '../../core/user/user'
-import { type DbRefreshToken } from '../../core/authentication/refresh-token'
-import { type AuthTokenConfig } from '../../core/authentication/auth-token'
+import type { Router } from '../router'
+import type { CreateAnonymousUserRequest } from '../../core/user/user'
+import type { DbRefreshToken } from '../../core/authentication/refresh-token'
+import type { AuthTokenConfig } from '../../core/authentication/auth-token'
+import type { CreateUserIf } from '../../core/user/authorized-user.service'
+import type { PasswordSignInMethod } from '../../core/user/sign-in-method'
 
 export function userController (router: Router, config: Config): void {
   router.post('/api/v1/user',
-    authHelper.authenticateAdmin,
     async (ctx) => {
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
       const { body } = ctx.request
 
-      const request = validateCreateUserRequest(body)
       const result = await ctx.db.executeTransaction(async (trx) => {
         const authTokenConfig: AuthTokenConfig = {
           secret: config.authTokenSecret,
           expiryDuration: config.authTokenExpiryDuration
         }
-        const user = await userService.createAnonymousUser(
-          (request: CreateAnonymousUserRequest) => {
+        const createUserIf: CreateUserIf = {
+          createAnonymousUser: (request: CreateAnonymousUserRequest) => {
             return userRepository.createAnonymousUser(trx, request)
           },
-          (userId: string): Promise<DbRefreshToken> => {
-            return refreshTokenRepository.insertRefreshToken(trx, userId, new Date())
+          insertRefreshToken: (userId: string): Promise<DbRefreshToken> => {
+            return refreshTokenRepository.insertRefreshToken(
+              trx,
+              userId,
+              new Date()
+            )
           },
-          request.role, authTokenConfig, ctx.log
-        )
-        const username = await addPasswordSignInMethod(
-          trx,
-          user.user.id,
-          request.passwordSignInMethod,
+          addPasswordSignInMethod: async (
+            userId: string,
+            passwordSignInMethod: PasswordSignInMethod
+          ) => {
+            return await addPasswordSignInMethod(
+              trx,
+              userId,
+              passwordSignInMethod,
+              ctx.log
+            )
+          }
+        }
+        return await userService.createUser(
+          createUserIf,
+          authTokenPayload,
+          body,
+          authTokenConfig,
           ctx.log
         )
-        return {
-          ...user,
-          user: { ...user.user, username }
-        }
       })
 
       ctx.status = 201
@@ -61,12 +72,22 @@ export function userController (router: Router, config: Config): void {
 
   router.get(
     '/api/v1/user/:userId',
-    authHelper.authenticateUser,
     async (ctx) => {
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
       const { userId } = ctx.params
+      const findRefreshToken = (userId: string, refreshTokenId: string) => {
+        return refreshTokenRepository.findRefreshToken(
+          ctx.db,
+          userId,
+          refreshTokenId
+        )
+      }
       const user = await userService.findUserById((userId: string) => {
         return userRepository.findUserById(ctx.db, userId)
-      }, userId, ctx.log)
+      }, findRefreshToken, {
+        authTokenPayload,
+        id: userId
+      }, ctx.log)
 
       ctx.body = { user }
     }
@@ -74,24 +95,27 @@ export function userController (router: Router, config: Config): void {
 
   router.get(
     '/api/v1/user',
-    authHelper.authenticateViewer,
     async (ctx) => {
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
       const users = await userService.listUsers(() => {
         return userRepository.listUsers(ctx.db)
-      }, ctx.log)
+      }, authTokenPayload, ctx.log)
 
       ctx.body = { users }
     }
   )
 
   router.delete('/api/v1/user/:userId',
-    authHelper.authenticateAdmin,
     async (ctx) => {
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
       const { userId } = ctx.params
       await ctx.db.executeTransaction(async (trx) => {
         await userService.deleteUserById((userId: string) => {
           return userRepository.deleteUserById(trx, userId)
-        }, userId, ctx.log)
+        }, {
+          authTokenPayload,
+          id: userId
+        }, ctx.log)
       })
 
       ctx.status = 204

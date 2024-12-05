@@ -26,7 +26,7 @@ import {
 import * as userService from '../core/user/user.service'
 import {
   addPasswordSignInMethod
-} from '../web/user/sign-in-method/sign-in-method.controller'
+} from '../web/user/sign-in-method/sign-in-method-helper'
 import { ControllerError } from '../core/errors'
 import { Level, log } from '../core/log'
 import { type AuthTokenConfig } from '../core/authentication/auth-token'
