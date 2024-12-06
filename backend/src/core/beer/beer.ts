@@ -122,16 +122,19 @@ export function validateUpdateBeerRequest (
   if (!isUpdateBeerRequestValid(body)) {
     throw invalidBeerError
   }
-  if (typeof beerId !== 'string' || beerId.length === 0) {
-    throw invalidBeerIdError
-  }
-
   /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
    * Validated using ajv.
    */
   const result = body as UpdateBeerRequest
   return {
-    id: beerId,
+    id: validateBeerId(beerId),
     request: result
   }
+}
+
+export function validateBeerId (id: string | undefined): string {
+  if (typeof id !== 'string' || id.length === 0) {
+    throw invalidBeerIdError
+  }
+  return id
 }

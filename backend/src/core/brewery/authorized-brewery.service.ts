@@ -3,6 +3,7 @@ import * as breweryService from '../../core/brewery/brewery.service'
 
 import type { BodyRequest, IdRequest } from "../request";
 import {
+  validateBreweryId,
   validateCreateBreweryRequest,
   validateUpdateBreweryRequest
 } from "./brewery";
@@ -46,7 +47,7 @@ export async function findBreweryById (
   authService.authenticateViewerPayload(request.authTokenPayload)
   return await breweryService.findBreweryById(
     find,
-    request.id,
+    validateBreweryId(request.id),
     log
   )
 }

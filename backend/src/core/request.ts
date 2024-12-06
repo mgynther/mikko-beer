@@ -9,7 +9,7 @@ export interface BodyRequest {
 
 export interface IdRequest {
   authTokenPayload: AuthTokenPayload
-  id: string
+  id: string | undefined
 }
 
 export interface PaginationRequest {

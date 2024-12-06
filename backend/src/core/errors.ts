@@ -47,6 +47,7 @@ type StyleApiErrors =
 
 type UserApiErrors =
   | 'InvalidUser'
+  | 'InvalidUserId'
   | 'UserNotFound'
 
 type SignInMethodApiErros =
@@ -367,6 +368,12 @@ export const invalidUserError = new ControllerError(
   400,
   'InvalidUser',
   'invalid user'
+)
+
+export const invalidUserIdError = new ControllerError(
+  400,
+  'InvalidUserId',
+  'invalid user id'
 )
 
 export const invalidUserSignInMethodError = new ControllerError(

@@ -4,6 +4,7 @@ import * as authTokenService from './auth-token.service'
 import type { IdRequest } from "../request";
 import type { DbRefreshToken } from "./refresh-token";
 import { validateRefreshToken } from "./refresh-token";
+import { validateUserId } from '../user/user';
 
 export async function deleteRefreshToken (
   findRefreshToken: (
@@ -20,7 +21,7 @@ export async function deleteRefreshToken (
   const refreshToken = validateRefreshToken(body)
   await authTokenService.deleteRefreshToken(
     deleteRefreshToken,
-    request.id,
+    validateUserId(request.id),
     refreshToken,
     authTokenSecret
   )

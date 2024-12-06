@@ -9,6 +9,7 @@ import type {
 } from "./beer";
 
 import {
+  validateBeerId,
   validateCreateBeerRequest,
   validateUpdateBeerRequest
 } from "./beer";
@@ -59,7 +60,7 @@ export async function findBeerById (
   log: log
 ): Promise<BeerWithBreweriesAndStyles> {
   authService.authenticateViewerPayload(request.authTokenPayload)
-  return await beerService.findBeerById(find, request.id, log)
+  return await beerService.findBeerById(find, validateBeerId(request.id), log)
 }
 
 export async function listBeers (

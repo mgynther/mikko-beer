@@ -2,11 +2,9 @@ import * as authService from '../../core/authentication/authentication.service'
 import * as userService from '../../core/user/user.service'
 
 import type { IdRequest } from "../request"
-import {
-  validateCreateUserRequest,
-  type CreateAnonymousUserRequest,
-  type User
-} from "./user"
+import type { CreateAnonymousUserRequest, User } from "./user"
+import { validateCreateUserRequest, validateUserId } from "./user"
+
 import type { log } from '../log'
 import type {
   AuthTokenConfig,
@@ -62,7 +60,11 @@ export async function findUserById (
 ): Promise<User> {
   await authService.authenticateUser(
     request.id, request.authTokenPayload, findRefreshToken)
-  return await userService.findUserById(findUserById, request.id, log)
+  return await userService.findUserById(
+    findUserById,
+    validateUserId(request.id),
+    log
+  )
 }
 
 export async function listUsers (
@@ -80,5 +82,9 @@ export async function deleteUserById (
   log: log
 ): Promise<void> {
   authService.authenticateAdminPayload(request.authTokenPayload)
-  await userService.deleteUserById(deleteUserById, request.id, log)
+  await userService.deleteUserById(
+    deleteUserById,
+    validateUserId(request.id),
+    log
+  )
 }

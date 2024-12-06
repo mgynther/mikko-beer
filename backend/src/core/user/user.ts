@@ -4,7 +4,7 @@ import {
   validatePasswordSignInMethod
 } from './sign-in-method'
 
-import { invalidUserError } from '../../core/errors'
+import { invalidUserError, invalidUserIdError } from '../../core/errors'
 
 // A much more detailed usage rights could be added but 2 roles is plenty for
 // the time being.
@@ -83,4 +83,11 @@ export function validateCreateUserRequest (body: unknown): CreateUserRequest {
     role: anonymousUserRequest.role,
     passwordSignInMethod
   }
+}
+
+export function validateUserId (id: string | undefined): string {
+  if (id === undefined || id.length === 0) {
+    throw invalidUserIdError
+  }
+  return id
 }

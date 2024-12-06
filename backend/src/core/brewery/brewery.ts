@@ -69,16 +69,19 @@ export function validateUpdateBreweryRequest (
   if (!isUpdateBreweryRequestValid(body)) {
     throw invalidBreweryError
   }
-  if (typeof breweryId !== 'string' || breweryId.length === 0) {
-    throw invalidBreweryIdError
-  }
-
   /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
    * Validated using ajv.
    */
   const result = body as UpdateBreweryRequest
   return {
-    id: breweryId,
+    id: validateBreweryId(breweryId),
     request: result
   }
+}
+
+export function validateBreweryId (id: string | undefined): string {
+  if (typeof id !== 'string' || id.length === 0) {
+    throw invalidBreweryIdError
+  }
+  return id
 }

@@ -12,6 +12,7 @@ import type {
 } from './sign-in-method'
 import type { IdRequest } from '../request'
 import type { SignedInUser } from './signed-in-user'
+import { validateUserId } from './user'
 
 export async function signInUsingPassword (
   signInUsingPasswordIf: SignInUsingPasswordIf,
@@ -39,7 +40,7 @@ export async function changePassword (
   const change = validatePasswordChange(body)
   await signInMethodService.changePassword(
     changePasswordUserIf,
-    request.id,
+    validateUserId(request.id),
     change
   );
 }

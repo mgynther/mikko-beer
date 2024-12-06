@@ -108,6 +108,7 @@ export function signInMethodController (router: Router): void {
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const { body } = ctx.request
+      const userId: string | undefined = ctx.params.userId
 
       const findRefreshToken = authHelper.createFindRefreshToken(ctx.db)
       await authorizedAuthTokenService.deleteRefreshToken(findRefreshToken, (
@@ -119,7 +120,7 @@ export function signInMethodController (router: Router): void {
         )
       }, {
         authTokenPayload,
-        id: ctx.params.userId
+        id: userId
       }, body, ctx.config.authTokenSecret)
 
       ctx.status = 200
@@ -132,6 +133,7 @@ export function signInMethodController (router: Router): void {
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const { body } = ctx.request
+      const userId: string | undefined = ctx.params.userId
 
       await ctx.db.executeTransaction(async (trx) => {
         const changePasswordUserIf: ChangePasswordUserIf = {
@@ -149,7 +151,7 @@ export function signInMethodController (router: Router): void {
         await authSignInMethodService.changePassword(
           changePasswordUserIf, findRefreshToken, {
             authTokenPayload,
-            id: ctx.params.userId
+            id: userId
           }, body
         )
       })
