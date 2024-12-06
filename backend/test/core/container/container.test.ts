@@ -15,6 +15,22 @@ function validRequest (): Record<string, unknown> {
 }
 
 describe('container unit tests', () => {
+  it('valid create container request passes validation', () => {
+    const input = validRequest()
+    const output = validRequest()
+    expect(validateCreateContainerRequest(input)).toLooseEqual(output)
+  })
+
+  it('valid update container request passes validation', () => {
+    const input = validRequest()
+    const output = validRequest()
+    const id = '259b2593-7ec5-47c5-b379-cd29083fa726'
+    expect(validateUpdateContainerRequest(input, id)).toLooseEqual({
+      id,
+      request: output
+    })
+  });
+
   [
     {
       func: validateCreateContainerRequest,
@@ -30,11 +46,6 @@ describe('container unit tests', () => {
   ].forEach(validator => {
     const { func, title } = validator
 
-    it(title('pass validation'), () => {
-      const input = validRequest()
-      const output = validRequest()
-      expect(func(input)).toLooseEqual(output)
-    })
 
     function fail (container: unknown) {
       expectThrow(() => func(container), invalidContainerError)

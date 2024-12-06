@@ -65,22 +65,31 @@ export function validateCreateContainerRequest (
   return result
 }
 
+interface ValidUpdateContainerRequest {
+  id: string,
+  request: UpdateContainerRequest
+}
+
 export function validateUpdateContainerRequest (
   body: unknown,
   containerId: string | undefined
-): UpdateContainerRequest {
+): ValidUpdateContainerRequest {
   if (!isUpdateContainerRequestValid(body)) {
     throw invalidContainerError
   }
-  if (containerId === undefined ||
-      containerId.length === 0
-  ) {
-    throw invalidContainerIdError
-  }
-
   /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
    * Validated using ajv.
    */
   const result = body as UpdateContainerRequest
-  return result
+  return {
+    id: validateContainerId(containerId),
+    request: result
+  }
+}
+
+export function validateContainerId (id: string | undefined): string {
+  if (id === undefined || id.length === 0) {
+    throw invalidContainerIdError
+  }
+  return id
 }
