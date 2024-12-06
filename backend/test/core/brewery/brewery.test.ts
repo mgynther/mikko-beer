@@ -14,6 +14,22 @@ function validRequest (): Record<string, unknown> {
 }
 
 describe('brewery unit tests', () => {
+  it('valid create brewery request passes validation', () => {
+    const input = validRequest()
+    const output = validRequest()
+    expect(validateCreateBreweryRequest(input)).toLooseEqual(output)
+  })
+
+  it('valid update brewery request passes validation', () => {
+    const input = validRequest()
+    const output = validRequest()
+    const id = '3e2d9787-4787-4435-8e1e-475e0bb7c525'
+    expect(validateUpdateBreweryRequest(input, id)).toLooseEqual({
+      id,
+      request: output
+    })
+  });
+
   [
     {
       func: validateCreateBreweryRequest,
@@ -28,12 +44,6 @@ describe('brewery unit tests', () => {
     }
   ].forEach(validator => {
     const { func, title } = validator
-
-    it(title('pass validation'), () => {
-      const input = validRequest()
-      const output = validRequest()
-      expect(func(input)).toLooseEqual(output)
-    })
 
     function fail (brewery: unknown) {
       expectThrow(() => func(brewery), invalidBreweryError)

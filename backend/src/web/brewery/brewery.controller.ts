@@ -1,5 +1,5 @@
 import * as breweryRepository from '../../data/brewery/brewery.repository'
-import * as breweryService from '../../core/brewery/brewery.service'
+import * as breweryService from '../../core/brewery/authorized-brewery.service'
 import { type Pagination } from '../../core/pagination'
 import { type SearchByName } from '../../core/search'
 import * as authHelper from '../authentication/authentication-helper'
@@ -8,25 +8,24 @@ import { type Router } from '../router'
 import {
   type Brewery,
   type NewBrewery,
-  validateCreateBreweryRequest,
-  validateUpdateBreweryRequest
 } from '../../core/brewery/brewery'
 import { validatePagination } from '../../core/pagination'
-import { validateSearchByName } from '../../core/search'
 
 export function breweryController (router: Router): void {
   router.post('/api/v1/brewery',
-    authHelper.authenticateAdmin,
     async (ctx) => {
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
       const { body } = ctx.request
 
-      const createBreweryRequest = validateCreateBreweryRequest(body)
       const result = await ctx.db.executeTransaction(async (trx) => {
         return await breweryService.createBrewery(
           (
             brewery: NewBrewery
           ) => breweryRepository.insertBrewery(trx, brewery),
-          createBreweryRequest, ctx.log)
+          {
+            authTokenPayload,
+            body
+          }, ctx.log)
       })
 
       ctx.status = 201
@@ -37,17 +36,19 @@ export function breweryController (router: Router): void {
   )
 
   router.put('/api/v1/brewery/:breweryId',
-    authHelper.authenticateAdmin,
     async (ctx) => {
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
       const { body } = ctx.request
-      const { breweryId } = ctx.params
+      const breweryId: string | undefined = ctx.params.breweryId
 
-      const updateBreweryRequest = validateUpdateBreweryRequest(body, breweryId)
       const result = await ctx.db.executeTransaction(async (trx) => {
         return await breweryService.updateBrewery(
           (brewery: Brewery) =>
             breweryRepository.updateBrewery(trx, brewery),
-            breweryId, updateBreweryRequest, ctx.log)
+            breweryId, {
+              authTokenPayload,
+              body
+            }, ctx.log)
       })
 
       ctx.status = 200
@@ -59,12 +60,15 @@ export function breweryController (router: Router): void {
 
   router.get(
     '/api/v1/brewery/:breweryId',
-    authHelper.authenticateViewer,
     async (ctx) => {
-      const { breweryId } = ctx.params
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
+      const breweryId: string | undefined = ctx.params.breweryId
       const brewery = await breweryService.findBreweryById((breweryId: string) => {
         return breweryRepository.findBreweryById(ctx.db, breweryId)
-      }, breweryId, ctx.log)
+      }, {
+        authTokenPayload,
+        id: breweryId
+      }, ctx.log)
 
       ctx.body = { brewery }
     }
@@ -72,26 +76,28 @@ export function breweryController (router: Router): void {
 
   router.get(
     '/api/v1/brewery',
-    authHelper.authenticateViewer,
     async (ctx) => {
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
       const { skip, size } = ctx.request.query
       const pagination = validatePagination({ skip, size })
       const breweries = await breweryService.listBreweries((pagination: Pagination) => {
         return breweryRepository.listBreweries(ctx.db, pagination)
-      }, pagination, ctx.log)
+      }, authTokenPayload, pagination, ctx.log)
       ctx.body = { breweries, pagination }
     }
   )
 
   router.post('/api/v1/brewery/search',
-    authHelper.authenticateViewer,
     async (ctx) => {
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
       const { body } = ctx.request
 
-      const searchBreweryRequest = validateSearchByName(body)
       const breweries = await breweryService.searchBreweries((searchRequest: SearchByName) => {
         return breweryRepository.searchBreweries(ctx.db, searchRequest)
-      }, searchBreweryRequest, ctx.log)
+      }, {
+        authTokenPayload,
+        body
+      }, ctx.log)
 
       ctx.status = 200
       ctx.body = { breweries }

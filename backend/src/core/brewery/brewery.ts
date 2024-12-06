@@ -57,10 +57,15 @@ export function validateCreateBreweryRequest (
   return result
 }
 
+interface ValidUpdateBreweryRequest {
+  request: UpdateBreweryRequest
+  id: string
+}
+
 export function validateUpdateBreweryRequest (
   body: unknown,
-  breweryId: string
-): UpdateBreweryRequest {
+  breweryId: string | undefined
+): ValidUpdateBreweryRequest {
   if (!isUpdateBreweryRequestValid(body)) {
     throw invalidBreweryError
   }
@@ -72,5 +77,8 @@ export function validateUpdateBreweryRequest (
    * Validated using ajv.
    */
   const result = body as UpdateBreweryRequest
-  return result
+  return {
+    id: breweryId,
+    request: result
+  }
 }
