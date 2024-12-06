@@ -39,16 +39,16 @@ export async function createBeer (
 
 export async function updateBeer (
   updateIf: UpdateIf,
-  beerId: string,
+  beerId: string | undefined,
   request: BodyRequest,
   log: log
 ): Promise<BeerWithBreweryAndStyleIds> {
   authService.authenticateAdminPayload(request.authTokenPayload)
-  const updateBeerRequest = validateUpdateBeerRequest(request.body, beerId)
+  const validRequest = validateUpdateBeerRequest(request.body, beerId)
   return await beerService.updateBeer(
     updateIf,
-    beerId,
-    updateBeerRequest,
+    validRequest.id,
+    validRequest.request,
     log
   )
 }

@@ -110,10 +110,15 @@ export function validateCreateBeerRequest (body: unknown): CreateBeerRequest {
   return result
 }
 
+interface ValidUpdateBeerRequest {
+  request: UpdateBeerRequest
+  id: string
+}
+
 export function validateUpdateBeerRequest (
   body: unknown,
-  beerId: string
-): UpdateBeerRequest {
+  beerId: string | undefined
+): ValidUpdateBeerRequest {
   if (!isUpdateBeerRequestValid(body)) {
     throw invalidBeerError
   }
@@ -125,5 +130,8 @@ export function validateUpdateBeerRequest (
    * Validated using ajv.
    */
   const result = body as UpdateBeerRequest
-  return result
+  return {
+    id: beerId,
+    request: result
+  }
 }

@@ -47,7 +47,7 @@ export function beerController (router: Router): void {
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const { body } = ctx.request
-      const { beerId } = ctx.params
+      const beerId: string | undefined = ctx.params.beerId
 
       const result = await ctx.db.executeTransaction(async (trx) => {
         const updateIf: UpdateIf = {
@@ -85,7 +85,7 @@ export function beerController (router: Router): void {
     '/api/v1/beer/:beerId',
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const { beerId } = ctx.params
+      const beerId: string | undefined = ctx.params.beerId
       const beer = await beerService.findBeerById((beerId: string) => {
         return beerRepository.findBeerById(ctx.db, beerId)
       }, {
