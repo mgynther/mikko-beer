@@ -1,7 +1,9 @@
 import type {
+  CreateIf,
   CreateStorageRequest,
   JoinedStorage,
-  Storage
+  Storage,
+  UpdateIf
 } from '../../core/storage/storage'
 
 import {
@@ -13,12 +15,6 @@ import { INFO, type log } from '../log'
 
 import type { Pagination } from '../../core/pagination'
 import type { LockId } from '../db'
-
-export interface CreateIf {
-  insertStorage: (request: CreateStorageRequest) => Promise<Storage>
-  lockBeer: LockId
-  lockContainer: LockId
-}
 
 export async function createStorage (
   createIf: CreateIf,
@@ -38,12 +34,6 @@ export async function createStorage (
   return {
     ...storage
   }
-}
-
-export interface UpdateIf {
-  updateStorage: (request: Storage) => Promise<Storage>
-  lockBeer: LockId
-  lockContainer: LockId
 }
 
 export async function updateStorage (

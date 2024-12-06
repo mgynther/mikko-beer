@@ -1,11 +1,24 @@
 import { ajv } from '../ajv'
 
 import type { Container } from '../container/container'
+import type { LockId } from '../db'
 import {
   invalidStorageError,
   invalidStorageIdError
 } from '../errors'
 import { timePattern } from '../time'
+
+export interface CreateIf {
+  insertStorage: (request: CreateStorageRequest) => Promise<Storage>
+  lockBeer: LockId
+  lockContainer: LockId
+}
+
+export interface UpdateIf {
+  updateStorage: (request: Storage) => Promise<Storage>
+  lockBeer: LockId
+  lockContainer: LockId
+}
 
 export interface Storage {
   id: string
@@ -82,20 +95,31 @@ export function validateCreateStorageRequest (
   return result
 }
 
+interface ValidUpdateStorageRequest {
+  id: string
+  request: UpdateStorageRequest
+}
+
 export function validateUpdateStorageRequest (
   body: unknown,
-  storageId: string
-): UpdateStorageRequest {
+  storageId: string | undefined
+): ValidUpdateStorageRequest {
   if (!isUpdateStorageRequestValid(body)) {
     throw invalidStorageError
   }
-  if (typeof storageId !== 'string' || storageId.length === 0) {
-    throw invalidStorageIdError
-  }
-
   /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
    * Validated using ajv.
    */
   const result = body as UpdateStorageRequest
-  return result
+  return {
+    id: validateStorageId(storageId),
+    request: result
+  }
+}
+
+export function validateStorageId(id: string | undefined): string {
+  if (typeof id !== 'string' || id.length === 0) {
+    throw invalidStorageIdError
+  }
+  return id
 }

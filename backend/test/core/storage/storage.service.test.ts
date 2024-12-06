@@ -6,16 +6,14 @@ import {
   storageNotFoundError
 } from '../../../src/core/errors'
 import { type Pagination } from '../../../src/core/pagination'
-import {
-  type Storage,
-  type CreateStorageRequest,
-  type JoinedStorage,
+import type {
+  CreateIf,
+  CreateStorageRequest,
+  JoinedStorage,
+  Storage,
+  UpdateIf
 } from '../../../src/core/storage/storage'
 import * as storageService from '../../../src/core/storage/storage.service'
-import {
-  type CreateIf,
-  type UpdateIf
-} from '../../../src/core/storage/storage.service'
 
 import { dummyLog as log } from '../dummy-log'
 import { expectReject } from '../controller-error-helper'

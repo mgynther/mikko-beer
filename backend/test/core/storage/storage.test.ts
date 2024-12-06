@@ -19,6 +19,22 @@ function validRequest (): Record<string, unknown> {
 }
 
 describe('storage unit tests', () => {
+  it('valid create storate request passes validation', () => {
+    const input = validRequest()
+    const output = validRequest()
+    expect(validateCreateStorageRequest(input)).toLooseEqual(output)
+  })
+
+  it('valid update storate request passes validation', () => {
+    const input = validRequest()
+    const output = validRequest()
+    const id = '328ec839-cf21-43b3-8a33-8b69c126eebc'
+    expect(validateUpdateStorageRequest(input, id)).toLooseEqual({
+      id,
+      request: output
+    })
+  });
+
   [
     {
       func: validateCreateStorageRequest,
@@ -33,12 +49,6 @@ describe('storage unit tests', () => {
     }
   ].forEach(validator => {
     const { func, title } = validator
-
-    it(title('pass validation'), () => {
-      const input = validRequest()
-      const output = validRequest()
-      expect(func(input)).toLooseEqual(output)
-    })
 
     function fail (storage: unknown) {
       expectThrow(() => func(storage), invalidStorageError)
