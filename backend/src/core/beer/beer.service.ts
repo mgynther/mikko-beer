@@ -5,7 +5,6 @@ import type {
   BeerWithBreweriesAndStyles,
   CreateIf,
   UpdateIf,
-  LockIds
 } from './beer'
 
 import {
@@ -19,6 +18,7 @@ import type {
 } from '../pagination'
 import type { SearchByName } from '../search'
 import { areKeysEqual } from '../key'
+import type { LockIds } from '../db'
 
 export async function createBeer (
   createIf: CreateIf,

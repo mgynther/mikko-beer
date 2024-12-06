@@ -12,8 +12,7 @@ import {
 import { INFO, type log } from '../log'
 
 import type { Pagination } from '../../core/pagination'
-
-type LockId = (id: string) => Promise<string | undefined>
+import type { LockId } from '../db'
 
 export interface CreateIf {
   insertStorage: (request: CreateStorageRequest) => Promise<Storage>

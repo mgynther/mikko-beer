@@ -7,6 +7,7 @@ import {
 
 import type { Brewery } from '../brewery/brewery'
 import type { Style } from '../style/style'
+import type { LockIds } from '../db'
 
 export interface NewBeer {
   name: string
@@ -17,7 +18,6 @@ export interface Beer {
   name: string
 }
 
-export type LockIds = (ids: string[]) => Promise<string[]>
 type InsertBreweries = (beerId: string, breweries: string[]) => Promise<void>
 type InsertStyles = (beerId: string, styles: string[]) => Promise<void>
 
