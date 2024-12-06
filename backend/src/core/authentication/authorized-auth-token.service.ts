@@ -15,7 +15,7 @@ export async function deleteRefreshToken (
   body: unknown,
   authTokenSecret: string
 ): Promise<void> {
-  await authService.authenticateUserPayload(
+  await authService.authenticateUser(
     request.id, request.authTokenPayload, findRefreshToken)
   const refreshToken = validateRefreshToken(body)
   await authTokenService.deleteRefreshToken(

@@ -15,8 +15,7 @@ import {
 
 export async function authenticateUser (
   userId: string | undefined,
-  authorizationHeader: string | undefined,
-  authTokenSecret: string,
+  authTokenPayload: AuthTokenPayload,
   findRefreshToken: (
     userId: string,
     refreshTokenId: string
@@ -26,19 +25,6 @@ export async function authenticateUser (
     throw noUserIdParameterError
   }
 
-  const authTokenPayload =
-    parseAuthTokenPayload(authorizationHeader, authTokenSecret)
-  await authenticateUserPayload(userId, authTokenPayload, findRefreshToken)
-}
-
-export async function authenticateUserPayload (
-  userId: string,
-  authTokenPayload: AuthTokenPayload,
-  findRefreshToken: (
-    userId: string,
-    refreshTokenId: string
-  ) => Promise<DbRefreshToken | undefined>
-): Promise<void> {
   if (authTokenPayload.role === Role.admin) {
     return
   }

@@ -34,7 +34,7 @@ export async function changePassword (
   request: IdRequest,
   body: unknown
 ): Promise<void> {
-  await authService.authenticateUserPayload(
+  await authService.authenticateUser(
     request.id, request.authTokenPayload, findRefreshToken)
   const change = validatePasswordChange(body)
   await signInMethodService.changePassword(

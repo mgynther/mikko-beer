@@ -60,7 +60,7 @@ export async function findUserById (
   request: IdRequest,
   log: log
 ): Promise<User> {
-  await authService.authenticateUserPayload(
+  await authService.authenticateUser(
     request.id, request.authTokenPayload, findRefreshToken)
   return await userService.findUserById(findUserById, request.id, log)
 }
