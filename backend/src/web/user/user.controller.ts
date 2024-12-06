@@ -75,13 +75,7 @@ export function userController (router: Router, config: Config): void {
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const { userId } = ctx.params
-      const findRefreshToken = (userId: string, refreshTokenId: string) => {
-        return refreshTokenRepository.findRefreshToken(
-          ctx.db,
-          userId,
-          refreshTokenId
-        )
-      }
+      const findRefreshToken = authHelper.createFindRefreshToken(ctx.db)
       const user = await userService.findUserById((userId: string) => {
         return userRepository.findUserById(ctx.db, userId)
       }, findRefreshToken, {

@@ -1,9 +1,11 @@
 import { ajv } from '../ajv'
 
+import type { Tokens } from '../authentication/tokens'
 import {
   invalidPasswordChangeError,
   invalidSignInMethodError
 } from '../errors'
+import type { User } from './user'
 
 export type SignInMethod = PasswordSignInMethod
 
@@ -28,6 +30,14 @@ const isPasswordSignInMethodValid = ajv.compile<PasswordSignInMethod>({
   }
 })
 
+export interface SignInUsingPasswordIf {
+  lockUserByUsername: (userName: string) => Promise<User | undefined>
+  findPasswordSignInMethod: (
+    userId: string
+  ) => Promise<UserPasswordHash | undefined>
+  createTokens: (user: User) => Promise<Tokens>
+}
+
 export function validatePasswordSignInMethod (
   request: unknown
 ): PasswordSignInMethod {
@@ -38,6 +48,16 @@ export function validatePasswordSignInMethod (
     username: request.username,
     password: request.password
   }
+}
+
+type LockUserById = (userId: string) => Promise<User | undefined>
+
+export interface ChangePasswordUserIf {
+  lockUserById: LockUserById
+  findPasswordSignInMethod: (
+    userId: string
+  ) => Promise<UserPasswordHash | undefined>
+  updatePassword: (userPasswordHash: UserPasswordHash) => Promise<void>
 }
 
 export interface PasswordChange {

@@ -1,26 +1,23 @@
-import * as signInMethodService from '../../../core/user/sign-in-method.service'
+import * as authSignInMethodService from '../../../core/user/authorized-sign-in-method.service'
 import * as refreshTokenRepository from '../../../data/authentication/refresh-token.repository'
 import * as signInMethodRepository from '../../../data/user/sign-in-method/sign-in-method.repository'
 import * as userRepository from '../../../data/user/user.repository'
 import * as authHelper from '../../authentication/authentication-helper'
+import * as authorizedAuthTokenService from '../../../core/authentication/authorized-auth-token.service'
 import * as authTokenService from '../../../core/authentication/auth-token.service'
 import * as userService from '../../../core/user/user.service'
-import { type Transaction } from '../../../data/database'
+import type { Database, Transaction } from '../../../data/database'
 
-import {
-  type ChangePasswordUserIf,
-  type SignInUsingPasswordIf,
-} from '../../../core/user/sign-in-method.service'
 import { type Tokens } from '../../../core/authentication/tokens'
 import {
   type DbRefreshToken,
   validateRefreshToken
 } from '../../../core/authentication/refresh-token'
 import { type Router } from '../../router'
-import {
-  type UserPasswordHash,
-  validatePasswordChange,
-  validatePasswordSignInMethod
+import type {
+  ChangePasswordUserIf,
+  SignInUsingPasswordIf,
+  UserPasswordHash
 } from '../../../core/user/sign-in-method'
 import { type User } from '../../../core/user/user'
 import { type AuthTokenConfig } from '../../../core/authentication/auth-token'
@@ -31,7 +28,6 @@ export function signInMethodController (router: Router): void {
   router.post('/api/v1/user/sign-in', async (ctx) => {
     const { body } = ctx.request
 
-    const passwordSignInMethod = validatePasswordSignInMethod(body)
     const signedInUser = await ctx.db.executeTransaction(async (trx) => {
       const signInUsingPasswordIf: SignInUsingPasswordIf = {
         lockUserByUsername: function(
@@ -55,8 +51,8 @@ export function signInMethodController (router: Router): void {
           }, user, authTokenConfig)
         },
       }
-      return await signInMethodService.signInUsingPassword(
-        signInUsingPasswordIf, passwordSignInMethod
+      return await authSignInMethodService.signInUsingPassword(
+        signInUsingPasswordIf, body
       )
     })
 
@@ -109,19 +105,22 @@ export function signInMethodController (router: Router): void {
 
   router.post(
     '/api/v1/user/:userId/sign-out',
-    authHelper.authenticateUser,
     async (ctx) => {
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
       const { body } = ctx.request
 
-      const refreshToken = validateRefreshToken(body)
-      await authTokenService.deleteRefreshToken((
+      const findRefreshToken = authHelper.createFindRefreshToken(ctx.db)
+      await authorizedAuthTokenService.deleteRefreshToken(findRefreshToken, (
         refreshTokenId: string
       ) => {
         return refreshTokenRepository.deleteRefreshToken(
           ctx.db,
           refreshTokenId
         )
-      }, ctx.params.userId, refreshToken, ctx.config.authTokenSecret)
+      }, {
+        authTokenPayload,
+        id: ctx.params.userId
+      }, body, ctx.config.authTokenSecret)
 
       ctx.status = 200
       ctx.body = { success: true }
@@ -130,11 +129,10 @@ export function signInMethodController (router: Router): void {
 
   router.post(
     '/api/v1/user/:userId/change-password',
-    authHelper.authenticateUser,
     async (ctx) => {
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
       const { body } = ctx.request
 
-      const passwordChange = validatePasswordChange(body)
       await ctx.db.executeTransaction(async (trx) => {
         const changePasswordUserIf: ChangePasswordUserIf = {
           lockUserById: createLockUserById(trx),
@@ -147,8 +145,12 @@ export function signInMethodController (router: Router): void {
             ) as Promise<unknown> as Promise<void>
           }
         }
-        await signInMethodService.changePassword(
-          changePasswordUserIf, ctx.params.userId, passwordChange
+        const findRefreshToken = authHelper.createFindRefreshToken(ctx.db)
+        await authSignInMethodService.changePassword(
+          changePasswordUserIf, findRefreshToken, {
+            authTokenPayload,
+            id: ctx.params.userId
+          }, body
         )
       })
 

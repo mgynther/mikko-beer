@@ -2,8 +2,6 @@ import { expect } from 'earl'
 
 import {
   type AddPasswordUserIf,
-  type ChangePasswordUserIf,
-  type SignInUsingPasswordIf,
   addPasswordSignInMethod,
   changePassword,
   encryptPassword,
@@ -12,10 +10,12 @@ import {
 } from '../../../src/core/user/sign-in-method.service'
 
 import { type Tokens } from '../../../src/core/authentication/tokens'
-import {
-  type PasswordChange,
-  type PasswordSignInMethod,
-  type UserPasswordHash,
+import type {
+  ChangePasswordUserIf,
+  PasswordChange,
+  PasswordSignInMethod,
+  SignInUsingPasswordIf,
+  UserPasswordHash,
 } from '../../../src/core/user/sign-in-method'
 import { Role, User } from '../../../src/core/user/user'
 import {

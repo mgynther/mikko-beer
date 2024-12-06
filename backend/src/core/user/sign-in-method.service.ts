@@ -6,12 +6,13 @@ import {
   passwordTooWeakError,
   userAlreadyHasSignInMethodError
 } from '../errors'
-import type { Tokens } from '../authentication/tokens'
 import type { User } from '../user/user'
 import type { SignedInUser } from '../user/signed-in-user'
 import type {
+  ChangePasswordUserIf,
   PasswordChange,
   PasswordSignInMethod,
+  SignInUsingPasswordIf,
   UserPasswordHash
 } from './sign-in-method'
 
@@ -45,14 +46,6 @@ export async function addPasswordSignInMethod (
   await addPasswordUserIf.setUserUsername(userId, method.username)
 }
 
-export interface ChangePasswordUserIf {
-  lockUserById: LockUserById
-  findPasswordSignInMethod: (
-    userId: string
-  ) => Promise<UserPasswordHash | undefined>
-  updatePassword: (userPasswordHash: UserPasswordHash) => Promise<void>
-}
-
 export async function changePassword (
   changePasswordUserIf: ChangePasswordUserIf,
   userId: string,
@@ -80,14 +73,6 @@ export async function changePassword (
     userId,
     passwordHash: await encryptPassword(change.newPassword)
   })
-}
-
-export interface SignInUsingPasswordIf {
-  lockUserByUsername: (userName: string) => Promise<User | undefined>
-  findPasswordSignInMethod: (
-    userId: string
-  ) => Promise<UserPasswordHash | undefined>
-  createTokens: (user: User) => Promise<Tokens>
 }
 
 export async function signInUsingPassword (
