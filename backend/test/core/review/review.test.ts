@@ -24,25 +24,31 @@ function validRequest (): Record<string, unknown> {
 }
 
 describe('review create/update unit tests', () => {
+  const id = '49f208f7-07b2-4fca-bbd3-8a4bc49b9b38';
+
   [
     {
       func: validateCreateReviewRequest,
-      title: (base: string) => `${base}: create`
+      title: (base: string) => `${base}: create`,
+      outputFormatter: (input: object) => input
     },
     {
       func: (request: unknown) => {
-        const id = '49f208f7-07b2-4fca-bbd3-8a4bc49b9b38'
         return validateUpdateReviewRequest(request, id)
       },
-      title: (base: string) => `${base}: update`
+      title: (base: string) => `${base}: update`,
+      outputFormatter: (input: object) => ({
+        id,
+        request: input
+      })
     }
   ].forEach(validator => {
-    const { func, title } = validator
+    const { func, title, outputFormatter } = validator
 
     function pass (review: object) {
       const input = { ...review }
       const output = { ...review }
-      expect(func(input)).toLooseEqual(output)
+      expect(func(input)).toLooseEqual(outputFormatter(output))
     }
 
     it(title('pass validation'), () => {
@@ -97,7 +103,7 @@ describe('review create/update unit tests', () => {
         }
         const input = { ...review }
         const output = { ...review }
-        expect(func(input)).toLooseEqual(output)
+        expect(func(input)).toLooseEqual(outputFormatter(output))
       }))
 
     function fail (review: unknown) {

@@ -4,7 +4,8 @@ import type {
   UpdateReviewRequest,
   Review,
   ReviewListOrder,
-  NewReview
+  CreateIf,
+  UpdateIf
 } from './review'
 
 import {
@@ -17,16 +18,7 @@ import { INFO, type log } from '../log'
 import type {
   Pagination
 } from '../pagination'
-
-type LockId = (id: string) => Promise<string | undefined>
-
-export interface CreateIf {
-  createReview: (review: NewReview) => Promise<Review>
-  deleteFromStorage: (storageId: string) => Promise<void>
-  lockBeer: LockId
-  lockContainer: LockId
-  lockStorage: LockId
-}
+import type { LockId } from '../db'
 
 export async function createReview (
   createIf: CreateIf,
@@ -63,12 +55,6 @@ export async function createReview (
 
   log(INFO, 'created review with id', review.id)
   return { ...review }
-}
-
-export interface UpdateIf {
-  updateReview: (review: Review) => Promise<Review>
-  lockBeer: LockId
-  lockContainer: LockId
 }
 
 export async function updateReview (

@@ -11,6 +11,21 @@ import {
   invalidReviewListQueryBreweryNameError,
   invalidReviewListQueryOrderError
 } from '../errors'
+import type { LockId } from '../db'
+
+export interface CreateIf {
+  createReview: (review: NewReview) => Promise<Review>
+  deleteFromStorage: (storageId: string) => Promise<void>
+  lockBeer: LockId
+  lockContainer: LockId
+  lockStorage: LockId
+}
+
+export interface UpdateIf {
+  updateReview: (review: Review) => Promise<Review>
+  lockBeer: LockId
+  lockContainer: LockId
+}
 
 export interface Review {
   id: string
@@ -154,22 +169,33 @@ export function validateCreateReviewRequest (
   return result
 }
 
+interface ValidUpdateReviewRequest {
+  id: string,
+  request: UpdateReviewRequest
+}
+
 export function validateUpdateReviewRequest (
   body: unknown,
-  reviewId: string
-): UpdateReviewRequest {
+  reviewId: string | undefined
+): ValidUpdateReviewRequest {
   if (!isUpdateReviewRequestValid(body)) {
     throw invalidReviewError
   }
-  if (typeof reviewId !== 'string' || reviewId.length === 0) {
-    throw invalidReviewIdError
-  }
-
   /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
    * Validated using ajv.
    */
   const result = body as UpdateReviewRequest
-  return result
+  return {
+    id: validateReviewId(reviewId),
+    request: result
+  }
+}
+
+export function validateReviewId(id: string | undefined): string {
+  if (typeof id !== 'string' || id.length === 0) {
+    throw invalidReviewIdError
+  }
+  return id
 }
 
 function isReviewListOrderValid (body: unknown): boolean {

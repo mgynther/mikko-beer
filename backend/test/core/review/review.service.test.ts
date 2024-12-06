@@ -5,20 +5,18 @@ import {
   referredStorageNotFoundError,
   reviewNotFoundError
 } from '../../../src/core/errors'
-import {
-  type CreateReviewRequest,
-  type JoinedReview,
-  type Review,
-  type ReviewListOrder,
-  type UpdateReviewRequest,
-  type NewReview
+import type {
+  CreateIf,
+  CreateReviewRequest,
+  JoinedReview,
+  NewReview,
+  Review,
+  ReviewListOrder,
+  UpdateIf,
+  UpdateReviewRequest
 } from '../../../src/core/review/review'
-import { type Pagination } from '../../../src/core/pagination'
+import type { Pagination } from '../../../src/core/pagination'
 import * as reviewService from '../../../src/core/review/review.service'
-import {
-  type CreateIf,
-  type UpdateIf
-} from '../../../src/core/review/review.service'
 
 import { dummyLog as log } from '../dummy-log'
 import { expectReject } from '../controller-error-helper'

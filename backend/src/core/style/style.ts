@@ -85,13 +85,18 @@ export function validateUpdateStyleRequest (
   if (!isUpdateStyleRequestValid(body)) {
     throw invalidStyleError
   }
-  if (styleId === undefined || styleId.length === 0) {
-    throw invalidStyleIdError
-  }
+  validateStyleId(styleId)
 
   /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
    * Validated using ajv.
    */
   const result = body as UpdateStyleRequest
   return result
+}
+
+export function validateStyleId (id: string | undefined): string {
+  if (id === undefined || id.length === 0) {
+    throw invalidStyleIdError
+  }
+  return id
 }

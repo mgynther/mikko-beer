@@ -2,34 +2,31 @@ import * as beerRepository from '../../data/beer/beer.repository'
 import * as containerRepository from '../../data/container/container.repository'
 import * as reviewRepository from '../../data/review/review.repository'
 import * as storageRepository from '../../data/storage/storage.repository'
-import * as reviewService from '../../core/review/review.service'
-import * as authHelper from '../authentication/authentication-helper'
+import * as reviewService from '../../core/review/authorized-review.service'
+import { parseAuthToken } from '../authentication/authentication-helper'
 
-import { type Router } from '../router'
-import { type Pagination } from '../../core/pagination'
+import type { Router } from '../router'
+import type { Pagination } from '../../core/pagination'
+import type {
+  CreateIf,
+  NewReview,
+  Review,
+  ReviewListOrder,
+  UpdateIf
+} from '../../core/review/review'
 import {
-  type NewReview,
-  type Review,
-  type ReviewListOrder,
-  validateCreateReviewRequest,
-  validateUpdateReviewRequest,
   validateFilteredReviewListOrder,
   validateFullReviewListOrder
 } from '../../core/review/review'
 import { validatePagination } from '../../core/pagination'
-import {
-  type CreateIf,
-  type UpdateIf
-} from '../../core/review/review.service'
 
 export function reviewController (router: Router): void {
   router.post('/api/v1/review',
-    authHelper.authenticateAdmin,
     async (ctx) => {
+      const authTokenPayload = parseAuthToken(ctx)
       const { body } = ctx.request
       const { storage } = ctx.request.query
 
-      const createReviewRequest = validateCreateReviewRequest(body)
       const storageParam = typeof storage === 'string' &&
         storage.length > 0
         ? storage
@@ -55,7 +52,10 @@ export function reviewController (router: Router): void {
         }
         return await reviewService.createReview(
           createIf,
-          createReviewRequest,
+          {
+            authTokenPayload,
+            body
+          },
           storageParam,
           ctx.log
         )
@@ -69,12 +69,11 @@ export function reviewController (router: Router): void {
   )
 
   router.put('/api/v1/review/:reviewId',
-    authHelper.authenticateAdmin,
     async (ctx) => {
+      const authTokenPayload = parseAuthToken(ctx)
       const { body } = ctx.request
-      const { reviewId } = ctx.params
+      const reviewId: string | undefined = ctx.params.reviewId
 
-      const updateReviewRequest = validateUpdateReviewRequest(body, reviewId)
       const result = await ctx.db.executeTransaction(async (trx) => {
         const updateIf: UpdateIf = {
           updateReview: (
@@ -89,8 +88,11 @@ export function reviewController (router: Router): void {
         }
         return await reviewService.updateReview(
           updateIf,
-          reviewId,
-          updateReviewRequest,
+          {
+            authTokenPayload,
+            id: reviewId
+          },
+          body,
           ctx.log
         )
       })
@@ -104,12 +106,15 @@ export function reviewController (router: Router): void {
 
   router.get(
     '/api/v1/review/:reviewId',
-    authHelper.authenticateViewer,
     async (ctx) => {
-      const { reviewId } = ctx.params
+      const authTokenPayload = parseAuthToken(ctx)
+      const reviewId: string | undefined = ctx.params.reviewId
       const review = await reviewService.findReviewById((reviewId: string) => {
         return reviewRepository.findReviewById(ctx.db, reviewId)
-      }, reviewId, ctx.log)
+      }, {
+        authTokenPayload,
+        id: reviewId
+      }, ctx.log)
 
       ctx.body = { review }
     }
@@ -117,9 +122,9 @@ export function reviewController (router: Router): void {
 
   router.get(
     '/api/v1/beer/:beerId/review',
-    authHelper.authenticateViewer,
     async (ctx) => {
-      const { beerId } = ctx.params
+      const authTokenPayload = parseAuthToken(ctx)
+      const beerId: string | undefined = ctx.params.beerId
       const reviewListOrder =
         validateFilteredReviewListOrder(ctx.request.query)
       const reviews = await reviewService.listReviewsByBeer((
@@ -127,7 +132,10 @@ export function reviewController (router: Router): void {
       ) => {
         return reviewRepository.listReviewsByBeer(
           ctx.db, beerId, reviewListOrder)
-      }, beerId, reviewListOrder, ctx.log)
+      }, {
+        authTokenPayload,
+        id: beerId
+      }, reviewListOrder, ctx.log)
 
       ctx.body = {
         reviews,
@@ -141,9 +149,9 @@ export function reviewController (router: Router): void {
 
   router.get(
     '/api/v1/brewery/:breweryId/review',
-    authHelper.authenticateViewer,
     async (ctx) => {
-      const { breweryId } = ctx.params
+      const authTokenPayload = parseAuthToken(ctx)
+      const breweryId: string | undefined = ctx.params.breweryId
       const reviewListOrder =
         validateFilteredReviewListOrder(ctx.request.query)
       const reviews = await reviewService.listReviewsByBrewery((
@@ -151,7 +159,10 @@ export function reviewController (router: Router): void {
       ) => (
         reviewRepository.listReviewsByBrewery(
           ctx.db, breweryId, reviewListOrder)
-      ), breweryId, reviewListOrder, ctx.log)
+      ), {
+        authTokenPayload,
+        id: breweryId
+      }, reviewListOrder, ctx.log)
 
       ctx.body = {
         reviews,
@@ -165,16 +176,19 @@ export function reviewController (router: Router): void {
 
   router.get(
     '/api/v1/style/:styleId/review',
-    authHelper.authenticateViewer,
     async (ctx) => {
-      const { styleId } = ctx.params
+      const authTokenPayload = parseAuthToken(ctx)
+      const styleId: string | undefined = ctx.params.styleId
       const reviewListOrder =
         validateFilteredReviewListOrder(ctx.request.query)
       const reviews = await reviewService.listReviewsByStyle((
         styleId: string, reviewListOrder: ReviewListOrder
       ) => (
         reviewRepository.listReviewsByStyle(ctx.db, styleId, reviewListOrder)
-      ), styleId, reviewListOrder, ctx.log)
+      ), {
+        authTokenPayload,
+        id: styleId
+      }, reviewListOrder, ctx.log)
 
       ctx.body = {
         reviews,
@@ -188,8 +202,8 @@ export function reviewController (router: Router): void {
 
   router.get(
     '/api/v1/review',
-    authHelper.authenticateViewer,
     async (ctx) => {
+      const authTokenPayload = parseAuthToken(ctx)
       const { skip, size } = ctx.request.query
       const reviewListOrder = validateFullReviewListOrder(ctx.request.query)
       const pagination = validatePagination({ skip, size })
@@ -197,7 +211,7 @@ export function reviewController (router: Router): void {
         pagination: Pagination, reviewListOrder: ReviewListOrder
       ) => (
         reviewRepository.listReviews(ctx.db, pagination, reviewListOrder)
-      ), pagination, reviewListOrder, ctx.log)
+      ), authTokenPayload, pagination, reviewListOrder, ctx.log)
       ctx.body = {
         reviews,
         pagination,
