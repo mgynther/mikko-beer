@@ -44,14 +44,6 @@ export async function authenticateUser (
 }
 
 export function authenticateAdmin (
-  authorizationHeader: string | undefined,
-  authTokenSecret: string
-): void {
-  const payload = parseAuthTokenPayload(authorizationHeader, authTokenSecret)
-  authenticateAdminPayload(payload)
-}
-
-export function authenticateAdminPayload (
   payload: AuthTokenPayload
 ): void {
   if (payload.role !== Role.admin) {
@@ -60,14 +52,6 @@ export function authenticateAdminPayload (
 }
 
 export function authenticateViewer (
-  authorizationHeader: string | undefined,
-  authTokenSecret: string
-): void {
-  const payload = parseAuthTokenPayload(authorizationHeader, authTokenSecret)
-  authenticateViewerPayload(payload)
-}
-
-export function authenticateViewerPayload (
   payload: AuthTokenPayload
 ): void {
   const {role} = payload

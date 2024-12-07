@@ -30,7 +30,7 @@ export async function createUser (
   authTokenConfig: AuthTokenConfig,
   log: log
 ): Promise<SignedInUser> {
-  authService.authenticateAdminPayload(authTokenPayload)
+  authService.authenticateAdmin(authTokenPayload)
   const request = validateCreateUserRequest(body)
   const user = await userService.createAnonymousUser(
     createUserIf.createAnonymousUser,
@@ -72,7 +72,7 @@ export async function listUsers (
   authTokenPayload: AuthTokenPayload,
   log: log
 ): Promise<User[]> {
-  authService.authenticateViewerPayload(authTokenPayload)
+  authService.authenticateViewer(authTokenPayload)
   return await userService.listUsers(listUsers, log)
 }
 
@@ -81,7 +81,7 @@ export async function deleteUserById (
   request: IdRequest,
   log: log
 ): Promise<void> {
-  authService.authenticateAdminPayload(request.authTokenPayload)
+  authService.authenticateAdmin(request.authTokenPayload)
   await userService.deleteUserById(
     deleteUserById,
     validateUserId(request.id),

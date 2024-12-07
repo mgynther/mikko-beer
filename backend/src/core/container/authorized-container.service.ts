@@ -16,7 +16,7 @@ export async function createContainer (
   request: BodyRequest,
   log: log
 ): Promise<Container> {
-  authService.authenticateAdminPayload(request.authTokenPayload)
+  authService.authenticateAdmin(request.authTokenPayload)
   const createRequest = validateCreateContainerRequest(request.body)
   return await containerService.createContainer(create, createRequest, log)
 }
@@ -27,7 +27,7 @@ export async function updateContainer (
   body: unknown,
   log: log
 ): Promise<Container> {
-  authService.authenticateAdminPayload(request.authTokenPayload)
+  authService.authenticateAdmin(request.authTokenPayload)
   const validRequest = validateUpdateContainerRequest(body, request.id)
   return await containerService.updateContainer(
     update,
@@ -42,7 +42,7 @@ export async function findContainerById (
   request: IdRequest,
   log: log
 ): Promise<Container> {
-  authService.authenticateViewerPayload(request.authTokenPayload)
+  authService.authenticateViewer(request.authTokenPayload)
   return await containerService.findContainerById(
     find,
     validateContainerId(request.id),
@@ -55,6 +55,6 @@ export async function listContainers (
   authTokenPayload: AuthTokenPayload,
   log: log
 ): Promise<Container[]> {
-  authService.authenticateViewerPayload(authTokenPayload)
+  authService.authenticateViewer(authTokenPayload)
   return await containerService.listContainers(list, log)
 }

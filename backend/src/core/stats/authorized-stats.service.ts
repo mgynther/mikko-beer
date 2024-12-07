@@ -24,7 +24,7 @@ export async function getAnnual (
   statsFilter: StatsBreweryStyleFilter,
   log: log
 ): Promise<AnnualStats> {
-  authService.authenticateViewerPayload(authTokenPayload)
+  authService.authenticateViewer(authTokenPayload)
   return await statsService.getAnnual(getAnnual, statsFilter, log)
 }
 
@@ -40,7 +40,7 @@ export async function getBrewery (
   breweryStatsOrder: BreweryStatsOrder,
   log: log
 ): Promise<BreweryStats> {
-  authService.authenticateViewerPayload(authTokenPayload)
+  authService.authenticateViewer(authTokenPayload)
   return await statsService.getBrewery(
     getBrewery,
     pagination,
@@ -56,7 +56,7 @@ export async function getOverall (
   statsFilter: StatsBreweryStyleFilter,
   log: log
 ): Promise<OverallStats> {
-  authService.authenticateViewerPayload(authTokenPayload)
+  authService.authenticateViewer(authTokenPayload)
   return await statsService.getOverall(getOverall, statsFilter, log)
 }
 
@@ -66,7 +66,7 @@ export async function getRating (
   statsFilter: StatsBreweryStyleFilter,
   log: log
 ): Promise<RatingStats> {
-  authService.authenticateViewerPayload(authTokenPayload)
+  authService.authenticateViewer(authTokenPayload)
   return await statsService.getRating(getRating, statsFilter, log)
 }
 
@@ -80,7 +80,7 @@ export async function getStyle (
   styleStatsOrder: StyleStatsOrder,
   log: log
 ): Promise<StyleStats> {
-  authService.authenticateViewerPayload(authTokenPayload)
+  authService.authenticateViewer(authTokenPayload)
   return await statsService.getStyle(
     getStyle,
     statsFilter,

@@ -18,7 +18,7 @@ export async function createBrewery (
   request: BodyRequest,
   log: log
 ): Promise<Brewery> {
-  authService.authenticateAdminPayload(request.authTokenPayload)
+  authService.authenticateAdmin(request.authTokenPayload)
   const createRequest = validateCreateBreweryRequest(request.body)
   return await breweryService.createBrewery(create, createRequest, log)
 }
@@ -29,7 +29,7 @@ export async function updateBrewery (
   request: BodyRequest,
   log: log
 ): Promise<Brewery> {
-  authService.authenticateAdminPayload(request.authTokenPayload)
+  authService.authenticateAdmin(request.authTokenPayload)
   const validRequest = validateUpdateBreweryRequest(request.body, breweryId)
   return await breweryService.updateBrewery(
     update,
@@ -44,7 +44,7 @@ export async function findBreweryById (
   request: IdRequest,
   log: log
 ): Promise<Brewery> {
-  authService.authenticateViewerPayload(request.authTokenPayload)
+  authService.authenticateViewer(request.authTokenPayload)
   return await breweryService.findBreweryById(
     find,
     validateBreweryId(request.id),
@@ -58,7 +58,7 @@ export async function listBreweries (
   pagination: Pagination,
   log: log
 ): Promise<Brewery[]> {
-  authService.authenticateViewerPayload(authTokenPayload)
+  authService.authenticateViewer(authTokenPayload)
   return await breweryService.listBreweries(list, pagination, log)
 }
 
@@ -68,7 +68,7 @@ export async function searchBreweries (
   request: BodyRequest,
   log: log
 ): Promise<Brewery[]> {
-  authService.authenticateViewerPayload(request.authTokenPayload)
+  authService.authenticateViewer(request.authTokenPayload)
   const validRequest = validateSearchByName(request.body)
   return await breweryService.searchBreweries(search, validRequest, log)
 }

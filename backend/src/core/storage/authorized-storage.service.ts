@@ -20,7 +20,7 @@ export async function createStorage (
   request: BodyRequest,
   log: log
 ): Promise<Storage> {
-  authService.authenticateAdminPayload(request.authTokenPayload)
+  authService.authenticateAdmin(request.authTokenPayload)
   const createRequest = validateCreateStorageRequest(request.body)
   return await storageService.createStorage(createIf, createRequest, log)
 }
@@ -31,7 +31,7 @@ export async function updateStorage (
   body: unknown,
   log: log
 ): Promise<Storage> {
-  authService.authenticateAdminPayload(request.authTokenPayload)
+  authService.authenticateAdmin(request.authTokenPayload)
   const updateRequest = validateUpdateStorageRequest(body, request.id)
   return await storageService.updateStorage(
     updateIf,
@@ -48,7 +48,7 @@ export async function deleteStorageById (
   request: IdRequest,
   log: log
 ): Promise<void> {
-  authService.authenticateAdminPayload(request.authTokenPayload)
+  authService.authenticateAdmin(request.authTokenPayload)
   await storageService.deleteStorageById(
     deleteStorageById,
     validateStorageId(request.id),
@@ -61,7 +61,7 @@ export async function findStorageById (
   request: IdRequest,
   log: log
 ): Promise<JoinedStorage | undefined> {
-  authService.authenticateViewerPayload(request.authTokenPayload)
+  authService.authenticateViewer(request.authTokenPayload)
   return await storageService.findStorageById(
     findById,
     validateStorageId(request.id),
@@ -75,7 +75,7 @@ export async function listStorages (
   pagination: Pagination,
   log: log
 ): Promise<JoinedStorage[]> {
-  authService.authenticateViewerPayload(authTokenPayload)
+  authService.authenticateViewer(authTokenPayload)
   return await storageService.listStorages(
     list,
     pagination,
@@ -88,7 +88,7 @@ export async function listStoragesByBeer (
   request: IdRequest,
   log: log
 ): Promise<JoinedStorage[]> {
-  authService.authenticateViewerPayload(request.authTokenPayload)
+  authService.authenticateViewer(request.authTokenPayload)
   return await storageService.listStoragesByBeer(
     listByBeer,
     validateBeerId(request.id),
@@ -101,7 +101,7 @@ export async function listStoragesByBrewery (
   request: IdRequest,
   log: log
 ): Promise<JoinedStorage[]> {
-  authService.authenticateViewerPayload(request.authTokenPayload)
+  authService.authenticateViewer(request.authTokenPayload)
   return await storageService.listStoragesByBrewery(
     listByBrewery,
     validateBreweryId(request.id),
@@ -114,7 +114,7 @@ export async function listStoragesByStyle (
   request: IdRequest,
   log: log
 ): Promise<JoinedStorage[]> {
-  authService.authenticateViewerPayload(request.authTokenPayload)
+  authService.authenticateViewer(request.authTokenPayload)
   return await storageService.listStoragesByStyle(
     listByStyle,
     validateStyleId(request.id),
