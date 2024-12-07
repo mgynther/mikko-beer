@@ -1,9 +1,25 @@
 import { ajv } from '../ajv'
+import type { LockIds } from '../db'
 
 import {
   invalidStyleError,
   invalidStyleIdError
 } from '../errors'
+
+export interface CreateStyleIf {
+  create: (style: NewStyle) => Promise<Style>
+  lockStyles: LockIds
+  insertParents: (styleId: string, parents: string[]) => Promise<void>
+  listAllRelationships: () => Promise<StyleRelationship[]>
+}
+
+export interface UpdateStyleIf {
+  update: (style: Style) => Promise<Style>
+  lockStyles: LockIds
+  insertParents: (styleId: string, parents: string[]) => Promise<void>
+  listAllRelationships: () => Promise<StyleRelationship[]>
+  deleteStyleChildRelationships: (styleId: string) => Promise<void>
+}
 
 export interface Style {
   id: string
@@ -78,20 +94,26 @@ export function validateCreateStyleRequest (body: unknown): CreateStyleRequest {
   return result
 }
 
+interface ValidUpdateStyleRequest {
+  id: string
+  request: UpdateStyleRequest
+}
+
 export function validateUpdateStyleRequest (
   body: unknown,
   styleId: string | undefined
-): UpdateStyleRequest {
+): ValidUpdateStyleRequest {
   if (!isUpdateStyleRequestValid(body)) {
     throw invalidStyleError
   }
-  validateStyleId(styleId)
-
   /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
    * Validated using ajv.
    */
   const result = body as UpdateStyleRequest
-  return result
+  return {
+    id: validateStyleId(styleId),
+    request: result
+  }
 }
 
 export function validateStyleId (id: string | undefined): string {

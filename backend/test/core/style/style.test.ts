@@ -8,6 +8,7 @@ import {
 import {
   cyclicRelationshipError,
   invalidStyleError,
+  invalidStyleIdError,
 } from '../../../src/core/errors'
 import { checkCyclicRelationships } from '../../../src/core/style/style.util'
 import { expectThrow } from '../controller-error-helper'
@@ -55,6 +56,8 @@ describe('style relationship unit tests', () => {
 })
 
 describe('style unit tests', () => {
+  const id = 'c8e02862-7fe7-44d5-b0eb-cd23e72faf56'
+
   function validRequest (): Record<string, unknown> {
     return {
       name: 'Cream Ale',
@@ -68,28 +71,32 @@ describe('style unit tests', () => {
   [
     {
       func: validateCreateStyleRequest,
-      title: (base: string) => `${base}: create`
+      title: (base: string) => `${base}: create`,
+      outFormatter: (input: object) => input
     },
     {
       func: (request: unknown) => {
-        const id = 'c8e02862-7fe7-44d5-b0eb-cd23e72faf56'
         return validateUpdateStyleRequest(request, id)
       },
-      title: (base: string) => `${base}: update`
+      title: (base: string) => `${base}: update`,
+      outFormatter: (input: object) => ({
+        id,
+        request: input
+      })
     }
   ].forEach(validator => {
-    const { func, title } = validator
+    const { func, outFormatter, title } = validator
 
     it(title('pass validation'), () => {
       const input = validRequest()
       const output = validRequest()
-      expect(func(input)).toLooseEqual(output)
+      expect(func(input)).toLooseEqual(outFormatter(output))
     })
 
     it(title('pass validation without parents'), () => {
       const input = { name: validRequest().name, parents: [] }
       const output = { ...input }
-      expect(func(input)).toLooseEqual(output)
+      expect(func(input)).toLooseEqual(outFormatter(output))
     })
 
     function fail (style: unknown) {
@@ -129,5 +136,19 @@ describe('style unit tests', () => {
       }
       fail(style)
     })
+  })
+
+  it('fail update with undefined style id', () => {
+    expectThrow(
+      () => validateUpdateStyleRequest(validRequest(), undefined),
+      invalidStyleIdError
+    )
+  })
+
+  it('fail update with empty style id', () => {
+    expectThrow(
+      () => validateUpdateStyleRequest(validRequest(), ''),
+      invalidStyleIdError
+    )
   })
 })

@@ -5,14 +5,16 @@ import {
   parentStyleNotFoundError,
   styleNotFoundError
 } from '../../../src/core/errors'
-import {
-  type Style,
-  type StyleWithParentIds,
-  type StyleWithParentsAndChildren,
-  type CreateStyleRequest,
-  type UpdateStyleRequest,
-  type NewStyle,
-  StyleRelationship
+import type {
+  Style,
+  StyleWithParentIds,
+  StyleWithParentsAndChildren,
+  CreateStyleRequest,
+  UpdateStyleRequest,
+  NewStyle,
+  StyleRelationship,
+  CreateStyleIf,
+  UpdateStyleIf
 } from '../../../src/core/style/style'
 import * as styleService from '../../../src/core/style/style.service'
 
@@ -91,7 +93,7 @@ describe('style service unit tests', () => {
       name: style.name,
       parents: []
     }
-    const createStyleIf: styleService.CreateStyleIf = {
+    const createStyleIf: CreateStyleIf = {
       create,
       insertParents: notCalled,
       listAllRelationships: noRelationships,
@@ -113,7 +115,7 @@ describe('style service unit tests', () => {
   })
 
   it('create style with parent', async () => {
-    const createIf: styleService.CreateStyleIf = {
+    const createIf: CreateStyleIf = {
       create,
       lockStyles: lockParent,
       insertParents: insertRelationship,
@@ -132,7 +134,7 @@ describe('style service unit tests', () => {
   })
 
   it('fail to create style with invalid parent', async () => {
-    const createIf: styleService.CreateStyleIf = {
+    const createIf: CreateStyleIf = {
       create,
       lockStyles: async () => {
         return []
@@ -154,7 +156,7 @@ describe('style service unit tests', () => {
       name: style.name,
       parents: [parentStyle.id]
     }
-    const createIf: styleService.CreateStyleIf = {
+    const createIf: CreateStyleIf = {
       create,
       lockStyles: lockParent,
       insertParents: notCalled,
@@ -186,7 +188,7 @@ describe('style service unit tests', () => {
       name: style.name,
       parents: []
     }
-    const updateIf: styleService.UpdateStyleIf = {
+    const updateIf: UpdateStyleIf = {
       update,
       lockStyles: noParentLocking,
       insertParents: notCalled,
@@ -207,7 +209,7 @@ describe('style service unit tests', () => {
   })
 
   it('update with parent', async () => {
-    const updateIf: styleService.UpdateStyleIf = {
+    const updateIf: UpdateStyleIf = {
       update,
       lockStyles: lockParent,
       insertParents: insertRelationship,
@@ -228,7 +230,7 @@ describe('style service unit tests', () => {
   })
 
   it('fail to update with invalid parent', async () => {
-    const updateIf: styleService.UpdateStyleIf = {
+    const updateIf: UpdateStyleIf = {
       update,
       lockStyles: async () => {
         return []
@@ -252,7 +254,7 @@ describe('style service unit tests', () => {
       name: style.name,
       parents: [parentStyle.id]
     }
-    const updateIf: styleService.UpdateStyleIf = {
+    const updateIf: UpdateStyleIf = {
       update,
       lockStyles: lockParent,
       insertParents: notCalled,

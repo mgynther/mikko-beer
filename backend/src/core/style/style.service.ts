@@ -1,13 +1,13 @@
 import { v4 as uuidv4 } from 'uuid'
 
 import type {
+  CreateStyleIf,
   CreateStyleRequest,
-  NewStyle,
-  Style,
   StyleRelationship,
   StyleWithParentsAndChildren,
   StyleWithParentIds,
-  UpdateStyleRequest
+  UpdateStyleRequest,
+  UpdateStyleIf
 } from './style'
 
 import {
@@ -17,15 +17,7 @@ import {
 import { INFO, type log } from '../log'
 import { checkCyclicRelationships } from './style.util'
 import { areKeysEqual } from '../key'
-
-export interface CreateStyleIf {
-  create: (style: NewStyle) => Promise<Style>
-  lockStyles: lockStyles
-  insertParents: (styleId: string, parents: string[]) => Promise<void>
-  listAllRelationships: () => Promise<StyleRelationship[]>
-}
-
-type lockStyles = (styleIds: string[]) => Promise<string[]>
+import type { LockIds } from '../db'
 
 export async function createStyle (
   createStyleIf: CreateStyleIf,
@@ -61,14 +53,6 @@ export async function createStyle (
     ...style,
     parents: request.parents
   }
-}
-
-export interface UpdateStyleIf {
-  update: (style: Style) => Promise<Style>
-  lockStyles: lockStyles
-  insertParents: (styleId: string, parents: string[]) => Promise<void>
-  listAllRelationships: () => Promise<StyleRelationship[]>
-  deleteStyleChildRelationships: (styleId: string) => Promise<void>
 }
 
 export async function updateStyle (
@@ -133,7 +117,7 @@ function validateRelationships (
 }
 
 async function lockParents (
-  lockStyles: lockStyles,
+  lockStyles: LockIds,
   parentKeys: string[]
 ): Promise<void> {
   const lockedParents = await lockStyles(parentKeys)

@@ -1,26 +1,25 @@
 import * as styleRepository from '../../data/style/style.repository'
-import { type Transaction } from '../../data/database'
-import * as styleService from '../../core/style/style.service'
-import * as authHelper from '../authentication/authentication-helper'
+import type { Transaction } from '../../data/database'
+import * as styleService from '../../core/style/authorized-style.service'
 
-import { type Router } from '../router'
-import {
-  type NewStyle,
-  type Style,
-  type StyleRelationship,
-  validateCreateStyleRequest,
-  validateUpdateStyleRequest
+import type { Router } from '../router'
+import type {
+  CreateStyleIf,
+  NewStyle,
+  Style,
+  StyleRelationship,
+  UpdateStyleIf,
 } from '../../core/style/style'
+import { parseAuthToken } from '../authentication/authentication-helper'
 
 export function styleController (router: Router): void {
   router.post('/api/v1/style',
-    authHelper.authenticateAdmin,
     async (ctx) => {
+      const authTokenPayload = parseAuthToken(ctx)
       const { body } = ctx.request
 
-      const createStyleRequest = validateCreateStyleRequest(body)
       const result = await ctx.db.executeTransaction(async (trx) => {
-        const createIf: styleService.CreateStyleIf = {
+        const createIf: CreateStyleIf = {
           create: (
             style: NewStyle
           ) => styleRepository.insertStyle(trx, style),
@@ -29,7 +28,10 @@ export function styleController (router: Router): void {
           listAllRelationships: createLister(trx)
         }
         return await styleService.createStyle(
-          createIf, createStyleRequest, ctx.log)
+          createIf, {
+            authTokenPayload,
+            body
+          }, ctx.log)
       })
 
       ctx.status = 201
@@ -40,14 +42,13 @@ export function styleController (router: Router): void {
   )
 
   router.put('/api/v1/style/:styleId',
-    authHelper.authenticateAdmin,
     async (ctx) => {
+      const authTokenPayload = parseAuthToken(ctx)
       const { body } = ctx.request
-      const { styleId } = ctx.params
+      const styleId: string | undefined = ctx.params.styleId
 
-      const updateStyleRequest = validateUpdateStyleRequest(body, styleId)
       const result = await ctx.db.executeTransaction(async (trx) => {
-        const updateIf: styleService.UpdateStyleIf = {
+        const updateIf: UpdateStyleIf = {
           update: (
             style: Style
           ) => styleRepository.updateStyle(trx, style),
@@ -59,7 +60,10 @@ export function styleController (router: Router): void {
           }
         }
         return await styleService.updateStyle(
-          updateIf, styleId, updateStyleRequest, ctx.log)
+          updateIf, {
+            authTokenPayload,
+            id: styleId
+          }, body, ctx.log)
       })
 
       ctx.status = 200
@@ -71,12 +75,15 @@ export function styleController (router: Router): void {
 
   router.get(
     '/api/v1/style/:styleId',
-    authHelper.authenticateViewer,
     async (ctx) => {
-      const { styleId } = ctx.params
+      const authTokenPayload = parseAuthToken(ctx)
+      const styleId: string | undefined = ctx.params.styleId
       const style = await styleService.findStyleById((styleId: string) => {
         return styleRepository.findStyleById(ctx.db, styleId)
-      }, styleId, ctx.log)
+      }, {
+        authTokenPayload,
+        id: styleId
+      }, ctx.log)
 
       ctx.body = { style }
     }
@@ -84,11 +91,11 @@ export function styleController (router: Router): void {
 
   router.get(
     '/api/v1/style',
-    authHelper.authenticateViewer,
     async (ctx) => {
+      const authTokenPayload = parseAuthToken(ctx)
       const styles = await styleService.listStyles(() => {
         return styleRepository.listStyles(ctx.db)
-      }, ctx.log)
+      }, authTokenPayload, ctx.log)
       ctx.body = { styles }
     }
   )
