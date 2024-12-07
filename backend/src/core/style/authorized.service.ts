@@ -1,4 +1,4 @@
-import * as authorizationService from '../../core/auth/authorization.service'
+import * as authorizationService from '../auth/authorization.service'
 import * as styleService from './internal/service'
 
 import type { BodyRequest, IdRequest } from "../request"

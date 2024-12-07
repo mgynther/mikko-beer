@@ -1,4 +1,4 @@
-import * as authorizationService from '../../core/auth/authorization.service'
+import * as authorizationService from '../auth/authorization.service'
 import * as signInMethodService from './sign-in-method.service'
 
 import type { DbRefreshToken } from '../auth/refresh-token'

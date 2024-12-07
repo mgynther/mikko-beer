@@ -4,7 +4,7 @@ import {
   validatePasswordSignInMethod
 } from './sign-in-method'
 
-import { invalidUserError, invalidUserIdError } from '../../core/errors'
+import { invalidUserError, invalidUserIdError } from '../errors'
 
 // A much more detailed usage rights could be added but 2 roles is plenty for
 // the time being.

@@ -1,5 +1,5 @@
-import * as authorizationService from '../../core/auth/authorization.service'
-import * as userService from '../../core/user/user.service'
+import * as authorizationService from '../auth/authorization.service'
+import * as userService from '../user/user.service'
 
 import type { IdRequest } from "../request"
 import type { CreateAnonymousUserRequest, User } from "./user"

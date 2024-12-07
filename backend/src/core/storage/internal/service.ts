@@ -13,7 +13,7 @@ import {
 } from '../../errors'
 import { INFO, type log } from '../../log'
 
-import type { Pagination } from '../../../core/pagination'
+import type { Pagination } from '../../pagination'
 import type { LockId } from '../../db'
 
 export async function createStorage (

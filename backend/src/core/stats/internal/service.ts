@@ -1,4 +1,4 @@
-import type { Pagination } from '../../../core/pagination'
+import type { Pagination } from '../../pagination'
 
 import type {
   AnnualStats,
@@ -10,7 +10,7 @@ import type {
   StatsFilter,
   StyleStats,
   StyleStatsOrder
-} from '../../../core/stats/stats'
+} from '../../stats/stats'
 
 import { INFO, type log } from '../../log'
 
