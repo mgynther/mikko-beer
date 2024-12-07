@@ -1,5 +1,5 @@
-import * as authorizationService from '../../core/auth/authorization.service'
-import * as beerService from '../../core/beer/beer.service'
+import * as authorizationService from '../auth/authorization.service'
+import * as beerService from './internal/service'
 
 import type {
   BeerWithBreweriesAndStyles,

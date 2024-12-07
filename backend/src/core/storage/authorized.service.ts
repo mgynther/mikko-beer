@@ -1,5 +1,5 @@
 import * as authorizationService from '../../core/auth/authorization.service'
-import * as storageService from '../../core/storage/storage.service'
+import * as storageService from './internal/service'
 
 import type { CreateIf, JoinedStorage, Storage, UpdateIf } from "./storage";
 import {

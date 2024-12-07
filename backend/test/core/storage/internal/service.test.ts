@@ -4,19 +4,19 @@ import {
   referredBeerNotFoundError,
   referredContainerNotFoundError,
   storageNotFoundError
-} from '../../../src/core/errors'
-import { type Pagination } from '../../../src/core/pagination'
+} from '../../../../src/core/errors'
+import type { Pagination } from '../../../../src/core/pagination'
 import type {
   CreateIf,
   CreateStorageRequest,
   JoinedStorage,
   Storage,
   UpdateIf
-} from '../../../src/core/storage/storage'
-import * as storageService from '../../../src/core/storage/storage.service'
+} from '../../../../src/core/storage/storage'
+import * as storageService from '../../../../src/core/storage/internal/service'
 
-import { dummyLog as log } from '../dummy-log'
-import { expectReject } from '../controller-error-helper'
+import { dummyLog as log } from '../../dummy-log'
+import { expectReject } from '../../controller-error-helper'
 
 const storage: Storage = {
   id: '8980b34a-d7b7-4e15-8e88-477176f5aee9',

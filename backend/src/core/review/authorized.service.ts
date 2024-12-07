@@ -1,5 +1,5 @@
 import * as authorizationService from '../../core/auth/authorization.service'
-import * as reviewService from '../../core/review/review.service'
+import * as reviewService from './internal/service'
 
 import type {
   CreateIf,

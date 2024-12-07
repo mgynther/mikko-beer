@@ -1,15 +1,15 @@
 import { expect } from 'earl'
-import {
-  type Container,
-  type CreateContainerRequest,
-  type UpdateContainerRequest,
-  type NewContainer
-} from '../../../src/core/container/container'
-import * as containerService from '../../../src/core/container/container.service'
-import { containerNotFoundError } from '../../../src/core/errors'
+import type {
+  Container,
+  CreateContainerRequest,
+  NewContainer,
+  UpdateContainerRequest,
+} from '../../../../src/core/container/container'
+import * as containerService from '../../../../src/core/container/internal/service'
+import { containerNotFoundError } from '../../../../src/core/errors'
 
-import { dummyLog as log } from '../dummy-log'
-import { expectReject } from '../controller-error-helper'
+import { dummyLog as log } from '../../dummy-log'
+import { expectReject } from '../../controller-error-helper'
 
 const container: Container = {
   id: '1fcbeb9e-1ea1-4c50-8fe5-b0aa18ac7e9a',

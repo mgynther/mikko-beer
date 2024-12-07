@@ -1,6 +1,6 @@
 import * as styleRepository from '../../data/style/style.repository'
 import type { Transaction } from '../../data/database'
-import * as styleService from '../../core/style/authorized-style.service'
+import * as styleService from '../../core/style/authorized.service'
 
 import type { Router } from '../router'
 import type {

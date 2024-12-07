@@ -1,5 +1,5 @@
 import * as authorizationService from '../../core/auth/authorization.service'
-import * as statsService from '../../core/stats/stats.service'
+import * as statsService from './internal/service'
 
 import type {
   AuthTokenPayload

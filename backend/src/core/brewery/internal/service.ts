@@ -3,14 +3,14 @@ import type {
   UpdateBreweryRequest,
   Brewery,
   NewBrewery
-} from './brewery'
+} from '../brewery'
 
-import { breweryNotFoundError } from '../errors'
-import { INFO, type log } from '../log'
+import { breweryNotFoundError } from '../../errors'
+import { INFO, type log } from '../../log'
 import type {
   Pagination
-} from '../pagination'
-import type { SearchByName } from '../search'
+} from '../../pagination'
+import type { SearchByName } from '../../search'
 
 export async function createBrewery (
   create: (brewery: NewBrewery) => Promise<Brewery>,

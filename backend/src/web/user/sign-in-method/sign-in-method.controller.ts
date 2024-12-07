@@ -1,4 +1,4 @@
-import * as authSignInMethodService from '../../../core/user/authorized-sign-in-method.service'
+import * as signInMethodService from '../../../core/user/authorized-sign-in-method.service'
 import * as refreshTokenRepository from '../../../data/authentication/refresh-token.repository'
 import * as signInMethodRepository from '../../../data/user/sign-in-method/sign-in-method.repository'
 import * as userRepository from '../../../data/user/user.repository'
@@ -49,7 +49,7 @@ export function signInMethodController (router: Router): void {
           }, user, authTokenConfig)
         },
       }
-      return await authSignInMethodService.signInUsingPassword(
+      return await signInMethodService.signInUsingPassword(
         signInUsingPasswordIf, body
       )
     })
@@ -146,7 +146,7 @@ export function signInMethodController (router: Router): void {
           }
         }
         const findRefreshToken = authHelper.createFindRefreshToken(ctx.db)
-        await authSignInMethodService.changePassword(
+        await signInMethodService.changePassword(
           changePasswordUserIf, findRefreshToken, {
             authTokenPayload,
             id: userId

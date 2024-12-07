@@ -1,4 +1,4 @@
-import type { Pagination } from '../../core/pagination'
+import type { Pagination } from '../../../core/pagination'
 
 import type {
   AnnualStats,
@@ -10,9 +10,9 @@ import type {
   StatsFilter,
   StyleStats,
   StyleStatsOrder
-} from '../../core/stats/stats'
+} from '../../../core/stats/stats'
 
-import { INFO, type log } from '../log'
+import { INFO, type log } from '../../log'
 
 // Test functionality if added. Left untested as there was no logic at the time
 // of adding the file. However, it is used to enable adding logic later easily.

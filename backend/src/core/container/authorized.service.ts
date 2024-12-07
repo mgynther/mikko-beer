@@ -1,5 +1,5 @@
 import * as authorizationService from '../../core/auth/authorization.service'
-import * as containerService from '../../core/container/container.service'
+import * as containerService from './internal/service'
 
 import type { BodyRequest, IdRequest } from '../request';
 import type { Container, NewContainer } from './container';

@@ -4,17 +4,17 @@ import type {
   JoinedStorage,
   Storage,
   UpdateIf
-} from '../../core/storage/storage'
+} from '../storage'
 
 import {
   referredBeerNotFoundError,
   referredContainerNotFoundError,
   storageNotFoundError
-} from '../errors'
-import { INFO, type log } from '../log'
+} from '../../errors'
+import { INFO, type log } from '../../log'
 
-import type { Pagination } from '../../core/pagination'
-import type { LockId } from '../db'
+import type { Pagination } from '../../../core/pagination'
+import type { LockId } from '../../db'
 
 export async function createStorage (
   createIf: CreateIf,

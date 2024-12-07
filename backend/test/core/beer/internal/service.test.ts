@@ -7,18 +7,18 @@ import {
   type NewBeer,
   CreateIf,
   UpdateIf
-} from '../../../src/core/beer/beer'
-import { type Pagination } from '../../../src/core/pagination'
-import { type SearchByName } from '../../../src/core/search'
-import * as beerService from '../../../src/core/beer/beer.service'
+} from '../../../../src/core/beer/beer'
+import { type Pagination } from '../../../../src/core/pagination'
+import { type SearchByName } from '../../../../src/core/search'
+import * as beerService from '../../../../src/core/beer/internal/service'
 
-import { dummyLog as log } from '../dummy-log'
+import { dummyLog as log } from '../../dummy-log'
 import {
   beerNotFoundError,
   referredBreweryNotFoundError,
   referredStyleNotFoundError
-} from '../../../src/core/errors'
-import { expectReject } from '../controller-error-helper'
+} from '../../../../src/core/errors'
+import { expectReject } from '../../controller-error-helper'
 
 const beer: BeerWithBreweriesAndStyles = {
   id: '406a337c-3107-4307-bd84-be3ec7c7d2f6',

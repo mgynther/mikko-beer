@@ -1,17 +1,17 @@
 import { expect } from 'earl'
-import {
-  type Brewery,
-  type CreateBreweryRequest,
-  type UpdateBreweryRequest,
-  type NewBrewery
-} from '../../../src/core/brewery/brewery'
-import { breweryNotFoundError } from '../../../src/core/errors'
-import { type Pagination } from '../../../src/core/pagination'
-import { type SearchByName } from '../../../src/core/search'
-import * as breweryService from '../../../src/core/brewery/brewery.service'
+import type {
+  Brewery,
+  CreateBreweryRequest,
+  UpdateBreweryRequest,
+  NewBrewery
+} from '../../../../src/core/brewery/brewery'
+import { breweryNotFoundError } from '../../../../src/core/errors'
+import type { Pagination } from '../../../../src/core/pagination'
+import type { SearchByName } from '../../../../src/core/search'
+import * as breweryService from '../../../../src/core/brewery/internal/service'
 
-import { dummyLog as log } from '../dummy-log'
-import { expectReject } from '../controller-error-helper'
+import { dummyLog as log } from '../../dummy-log'
+import { expectReject } from '../../controller-error-helper'
 
 const brewery: Brewery = {
   id: 'd804c8fe-8d41-4c8b-88d1-95bdfeb558ef',

@@ -1,5 +1,5 @@
 import * as authorizationService from '../../core/auth/authorization.service'
-import * as breweryService from '../../core/brewery/brewery.service'
+import * as breweryService from './internal/service'
 
 import type { BodyRequest, IdRequest } from "../request";
 import {
