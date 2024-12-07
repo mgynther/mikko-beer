@@ -1,4 +1,4 @@
-import * as authService from '../../core/auth/auth.service'
+import * as authorizationService from '../../core/auth/authorization.service'
 import * as userService from '../../core/user/user.service'
 
 import type { IdRequest } from "../request"
@@ -30,7 +30,7 @@ export async function createUser (
   authTokenConfig: AuthTokenConfig,
   log: log
 ): Promise<SignedInUser> {
-  authService.authorizeAdmin(authTokenPayload)
+  authorizationService.authorizeAdmin(authTokenPayload)
   const request = validateCreateUserRequest(body)
   const user = await userService.createAnonymousUser(
     createUserIf.createAnonymousUser,
@@ -58,7 +58,7 @@ export async function findUserById (
   request: IdRequest,
   log: log
 ): Promise<User> {
-  await authService.authorizeUser(
+  await authorizationService.authorizeUser(
     request.id, request.authTokenPayload, findRefreshToken)
   return await userService.findUserById(
     findUserById,
@@ -72,7 +72,7 @@ export async function listUsers (
   authTokenPayload: AuthTokenPayload,
   log: log
 ): Promise<User[]> {
-  authService.authorizeViewer(authTokenPayload)
+  authorizationService.authorizeViewer(authTokenPayload)
   return await userService.listUsers(listUsers, log)
 }
 
@@ -81,7 +81,7 @@ export async function deleteUserById (
   request: IdRequest,
   log: log
 ): Promise<void> {
-  authService.authorizeAdmin(request.authTokenPayload)
+  authorizationService.authorizeAdmin(request.authTokenPayload)
   await userService.deleteUserById(
     deleteUserById,
     validateUserId(request.id),

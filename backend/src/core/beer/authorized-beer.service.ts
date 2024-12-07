@@ -1,4 +1,4 @@
-import * as authService from '../../core/auth/auth.service'
+import * as authorizationService from '../../core/auth/authorization.service'
 import * as beerService from '../../core/beer/beer.service'
 
 import type {
@@ -29,7 +29,7 @@ export async function createBeer (
   request: BodyRequest,
   log: log
 ): Promise<BeerWithBreweryAndStyleIds> {
-  authService.authorizeAdmin(request.authTokenPayload)
+  authorizationService.authorizeAdmin(request.authTokenPayload)
   const createBeerRequest = validateCreateBeerRequest(request.body)
   return await beerService.createBeer(
     createIf,
@@ -44,7 +44,7 @@ export async function updateBeer (
   request: BodyRequest,
   log: log
 ): Promise<BeerWithBreweryAndStyleIds> {
-  authService.authorizeAdmin(request.authTokenPayload)
+  authorizationService.authorizeAdmin(request.authTokenPayload)
   const validRequest = validateUpdateBeerRequest(request.body, beerId)
   return await beerService.updateBeer(
     updateIf,
@@ -59,7 +59,7 @@ export async function findBeerById (
   request: IdRequest,
   log: log
 ): Promise<BeerWithBreweriesAndStyles> {
-  authService.authorizeViewer(request.authTokenPayload)
+  authorizationService.authorizeViewer(request.authTokenPayload)
   return await beerService.findBeerById(find, validateBeerId(request.id), log)
 }
 
@@ -68,7 +68,7 @@ export async function listBeers (
   request: PaginationRequest,
   log: log
 ): Promise<BeerWithBreweriesAndStyles[]> {
-  authService.authorizeViewer(request.authTokenPayload)
+  authorizationService.authorizeViewer(request.authTokenPayload)
   return await beerService.listBeers(list, request.pagination, log)
 }
 
@@ -78,6 +78,6 @@ export async function searchBeers (
   request: SearchByNameRequest,
   log: log
 ): Promise<BeerWithBreweriesAndStyles[]> {
-  authService.authorizeViewer(request.authTokenPayload)
+  authorizationService.authorizeViewer(request.authTokenPayload)
   return await beerService.searchBeers(search, request.searchByName, log)
 }

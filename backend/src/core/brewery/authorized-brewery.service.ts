@@ -1,4 +1,4 @@
-import * as authService from '../../core/auth/auth.service'
+import * as authorizationService from '../../core/auth/authorization.service'
 import * as breweryService from '../../core/brewery/brewery.service'
 
 import type { BodyRequest, IdRequest } from "../request";
@@ -18,7 +18,7 @@ export async function createBrewery (
   request: BodyRequest,
   log: log
 ): Promise<Brewery> {
-  authService.authorizeAdmin(request.authTokenPayload)
+  authorizationService.authorizeAdmin(request.authTokenPayload)
   const createRequest = validateCreateBreweryRequest(request.body)
   return await breweryService.createBrewery(create, createRequest, log)
 }
@@ -29,7 +29,7 @@ export async function updateBrewery (
   request: BodyRequest,
   log: log
 ): Promise<Brewery> {
-  authService.authorizeAdmin(request.authTokenPayload)
+  authorizationService.authorizeAdmin(request.authTokenPayload)
   const validRequest = validateUpdateBreweryRequest(request.body, breweryId)
   return await breweryService.updateBrewery(
     update,
@@ -44,7 +44,7 @@ export async function findBreweryById (
   request: IdRequest,
   log: log
 ): Promise<Brewery> {
-  authService.authorizeViewer(request.authTokenPayload)
+  authorizationService.authorizeViewer(request.authTokenPayload)
   return await breweryService.findBreweryById(
     find,
     validateBreweryId(request.id),
@@ -58,7 +58,7 @@ export async function listBreweries (
   pagination: Pagination,
   log: log
 ): Promise<Brewery[]> {
-  authService.authorizeViewer(authTokenPayload)
+  authorizationService.authorizeViewer(authTokenPayload)
   return await breweryService.listBreweries(list, pagination, log)
 }
 
@@ -68,7 +68,7 @@ export async function searchBreweries (
   request: BodyRequest,
   log: log
 ): Promise<Brewery[]> {
-  authService.authorizeViewer(request.authTokenPayload)
+  authorizationService.authorizeViewer(request.authTokenPayload)
   const validRequest = validateSearchByName(request.body)
   return await breweryService.searchBreweries(search, validRequest, log)
 }

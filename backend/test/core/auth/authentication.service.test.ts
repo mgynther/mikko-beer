@@ -1,0 +1,126 @@
+import { expect } from 'earl'
+import type {
+  DbRefreshToken
+} from '../../../src/core/auth/refresh-token'
+import * as authTokenService from '../../../src/core/auth/auth-token.service'
+import * as authenticationService from '../../../src/core/auth/authentication.service'
+import { Role, type User } from '../../../src/core/user/user'
+import type { Tokens } from '../../../src/core/auth/tokens'
+import type {
+  AuthTokenPayload,
+  AuthToken,
+  AuthTokenConfig
+} from '../../../src/core/auth/auth-token'
+import {
+  expiredAuthTokenError,
+  invalidAuthTokenError,
+  invalidAuthorizationHeaderError
+} from '../../../src/core/errors'
+import { expectThrow } from '../controller-error-helper'
+
+const authTokenSecret = 'ThisIsSecret'
+const authTokenConfig: AuthTokenConfig = {
+  expiryDuration: '5m',
+  secret: authTokenSecret
+}
+const refreshTokenId = 'f2224f80-b478-43e2-8cc9-d39cf8079524'
+
+const admin: User = {
+  id: 'f4768755-d692-458f-a311-5aaeb81fd4ec',
+  role: Role.admin,
+  username: 'admin'
+}
+
+const viewer: User = {
+  id: 'c232d501-748e-4897-a2b7-4ee3387716e0',
+  role: Role.viewer,
+  username: 'viewer'
+}
+
+const expiredAuthToken: AuthToken = {
+  authToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI0YjcxZWZlMi00MmVmLTQ3MjQtOGU2Ny0xYmIzZTdiYzIxZDMiLCJyb2xlIjoiYWRtaW4iLCJyZWZyZXNoVG9rZW5JZCI6IjkxNGY0MDM3LTZjZWUtNDZlZS04Nzk5LTE2NzNkYWQ2M2Y1NSIsImlhdCI6MTcxOTA3NjI2MiwiZXhwIjoxNzE5MDc2NTYyfQ.FX28XilV4myW0993MdBEnxeIYoDDljG6ZeOUJA5XMtY'
+}
+
+async function insertAuthToken(userId: string): Promise<DbRefreshToken> {
+  return {
+    id: refreshTokenId,
+    userId
+  }
+}
+
+async function createTokens(user: User): Promise<Tokens> {
+  return await authTokenService.createTokens(
+    insertAuthToken,
+    user,
+    authTokenConfig
+  )
+}
+
+function header(authToken: AuthToken): string {
+  return `Bearer ${authToken.authToken}`
+}
+
+describe('authentication service unit tests', () => {
+
+  it('authenticate admin', async () => {
+    const tokens = await createTokens(admin)
+    const parsed = authenticationService.parseAuthTokenPayload(
+      header(tokens.auth),
+      authTokenSecret
+    )
+    expect(parsed).toLooseEqual({
+      userId: admin.id,
+      role: Role.admin,
+      refreshTokenId
+    })
+  })
+
+  it('authenticate viewer', async () => {
+    const tokens = await createTokens(viewer)
+    const parsed = authenticationService.parseAuthTokenPayload(
+      header(tokens.auth),
+      authTokenSecret
+    )
+    expect(parsed).toLooseEqual({
+      userId: viewer.id,
+      role: Role.viewer,
+      refreshTokenId
+    })
+  })
+
+  it('fail to parse auth token with expired auth header', () => {
+    expectThrow(() => {
+      authenticationService.parseAuthTokenPayload(
+        header(expiredAuthToken),
+        authTokenSecret
+      )
+    }, expiredAuthTokenError)
+  })
+
+  it('fail to parse auth token without auth header', () => {
+    expectThrow(() => {
+      authenticationService.parseAuthTokenPayload(
+        undefined,
+        authTokenSecret
+      )
+    }, invalidAuthorizationHeaderError)
+  })
+
+  it('fail to parse auth token with invalid auth header', () => {
+    expectThrow(() => {
+      authenticationService.parseAuthTokenPayload(
+        'this is invalid auth header',
+        authTokenSecret
+      )
+    }, invalidAuthorizationHeaderError)
+  })
+
+  it('fail to parse auth token with invalid auth token', () => {
+    expectThrow(() => {
+      authenticationService.parseAuthTokenPayload(
+        'Bearer abc',
+        authTokenSecret
+      )
+    }, invalidAuthTokenError)
+  })
+})
