@@ -1,19 +1,37 @@
 import { expect } from 'earl'
 import { ControllerError } from '../../src/core/errors'
 
-// Note that these helpers cannot thoroughly check the error as long as earl
-// error functions are used. However, as long as errors are constants it does
-// not really matter. In case of ad hoc construction it would be important to
-// check everything in errors.
-
-export async function expectReject(fn: () => Promise<void>, error: ControllerError) {
-  expect(async () => {
-    await fn()
-  }).toBeRejectedWith(ControllerError, error.message)
+export async function expectReject(
+  fn: () => Promise<void>,
+  error: ControllerError
+) {
+ try {
+   await fn()
+ } catch (e: unknown) {
+   assertControllerError(e, error)
+   return
+ }
+ throw new Error('expected rejection but promise was not rejected')
 }
 
 export function expectThrow(fn: () => void, error: ControllerError) {
-  expect(() => {
-    fn()
-  }).toThrow(ControllerError, error.message)
+ try {
+   fn()
+ } catch (e: unknown) {
+   assertControllerError(e, error)
+   return
+ }
+ throw new Error('expected error but nothing was thrown')
+}
+
+// earl Error validator do not seem to check message at least with async
+// rejections. To avoid mistakes it's better to have a custom validator.
+function assertControllerError(
+  receivedError: unknown,
+  expectedError: ControllerError
+) {
+   expect(receivedError).toBeA(ControllerError)
+   const error: ControllerError = receivedError as ControllerError
+   expect(error.message).toEqual(expectedError.message)
+   expect(error.status).toEqual(expectedError.status)
 }
