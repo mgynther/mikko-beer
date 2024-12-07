@@ -66,7 +66,7 @@ export function signInMethodController (router: Router): void {
     '/api/v1/user/:userId/refresh',
     async (ctx) => {
       const { body } = ctx.request
-      const userId = ctx.params.userId
+      const userId: string | undefined = ctx.params.userId
 
       const refreshToken = validateRefreshToken(body)
       const tokens = await ctx.db.executeTransaction(async (trx) => {

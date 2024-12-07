@@ -74,7 +74,7 @@ export function userController (router: Router, config: Config): void {
     '/api/v1/user/:userId',
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const { userId } = ctx.params
+      const userId: string | undefined = ctx.params.userId
       const findRefreshToken = authHelper.createFindRefreshToken(ctx.db)
       const user = await userService.findUserById((userId: string) => {
         return userRepository.findUserById(ctx.db, userId)
@@ -102,7 +102,7 @@ export function userController (router: Router, config: Config): void {
   router.delete('/api/v1/user/:userId',
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const { userId } = ctx.params
+      const userId: string | undefined = ctx.params.userId
       await ctx.db.executeTransaction(async (trx) => {
         await userService.deleteUserById((userId: string) => {
           return userRepository.deleteUserById(trx, userId)
