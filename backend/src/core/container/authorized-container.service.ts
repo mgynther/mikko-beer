@@ -1,4 +1,4 @@
-import * as authService from '../../core/authentication/authentication.service'
+import * as authService from '../../core/auth/auth.service'
 import * as containerService from '../../core/container/container.service'
 
 import type { BodyRequest, IdRequest } from '../request';
@@ -9,14 +9,14 @@ import {
   validateUpdateContainerRequest
 } from './container';
 import type { log } from '../log'
-import type { AuthTokenPayload } from '../authentication/auth-token';
+import type { AuthTokenPayload } from '../auth/auth-token';
 
 export async function createContainer (
   create: (container: NewContainer) => Promise<Container>,
   request: BodyRequest,
   log: log
 ): Promise<Container> {
-  authService.authenticateAdmin(request.authTokenPayload)
+  authService.authorizeAdmin(request.authTokenPayload)
   const createRequest = validateCreateContainerRequest(request.body)
   return await containerService.createContainer(create, createRequest, log)
 }
@@ -27,7 +27,7 @@ export async function updateContainer (
   body: unknown,
   log: log
 ): Promise<Container> {
-  authService.authenticateAdmin(request.authTokenPayload)
+  authService.authorizeAdmin(request.authTokenPayload)
   const validRequest = validateUpdateContainerRequest(body, request.id)
   return await containerService.updateContainer(
     update,
@@ -42,7 +42,7 @@ export async function findContainerById (
   request: IdRequest,
   log: log
 ): Promise<Container> {
-  authService.authenticateViewer(request.authTokenPayload)
+  authService.authorizeViewer(request.authTokenPayload)
   return await containerService.findContainerById(
     find,
     validateContainerId(request.id),
@@ -55,6 +55,6 @@ export async function listContainers (
   authTokenPayload: AuthTokenPayload,
   log: log
 ): Promise<Container[]> {
-  authService.authenticateViewer(authTokenPayload)
+  authService.authorizeViewer(authTokenPayload)
   return await containerService.listContainers(list, log)
 }

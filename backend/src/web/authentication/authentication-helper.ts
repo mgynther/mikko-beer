@@ -1,8 +1,8 @@
 import { type Context } from '../context'
 
-import * as authService from '../../core/authentication/authentication.service'
+import * as authService from '../../core/auth/auth.service'
 import * as refreshTokenRepository from '../../data/authentication/refresh-token.repository'
-import type { AuthTokenPayload } from '../../core/authentication/auth-token'
+import type { AuthTokenPayload } from '../../core/auth/auth-token'
 import type { Database } from '../../data/database'
 
 export function createFindRefreshToken(db: Database) {

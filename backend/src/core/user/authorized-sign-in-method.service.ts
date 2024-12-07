@@ -1,7 +1,7 @@
-import * as authService from '../../core/authentication/authentication.service'
+import * as authService from '../../core/auth/auth.service'
 import * as signInMethodService from './sign-in-method.service'
 
-import type { DbRefreshToken } from '../authentication/refresh-token'
+import type { DbRefreshToken } from '../auth/refresh-token'
 import {
   validatePasswordChange,
   validatePasswordSignInMethod
@@ -35,7 +35,7 @@ export async function changePassword (
   request: IdRequest,
   body: unknown
 ): Promise<void> {
-  await authService.authenticateUser(
+  await authService.authorizeUser(
     request.id, request.authTokenPayload, findRefreshToken)
   const change = validatePasswordChange(body)
   await signInMethodService.changePassword(

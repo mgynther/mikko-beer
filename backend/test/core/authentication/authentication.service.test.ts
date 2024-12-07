@@ -1,15 +1,15 @@
 import type {
   DbRefreshToken
-} from '../../../src/core/authentication/refresh-token'
-import * as authTokenService from '../../../src/core/authentication/auth-token.service'
-import * as authenticationService from '../../../src/core/authentication/authentication.service'
+} from '../../../src/core/auth/refresh-token'
+import * as authTokenService from '../../../src/core/auth/auth-token.service'
+import * as authenticationService from '../../../src/core/auth/auth.service'
 import { Role, type User } from '../../../src/core/user/user'
-import { type Tokens } from '../../../src/core/authentication/tokens'
+import type { Tokens } from '../../../src/core/auth/tokens'
 import type {
   AuthTokenPayload,
   AuthToken,
   AuthTokenConfig
-} from '../../../src/core/authentication/auth-token'
+} from '../../../src/core/auth/auth-token'
 import {
   expiredAuthTokenError,
   invalidAuthTokenError,
@@ -108,30 +108,30 @@ describe('authentication service unit tests', () => {
 
   it('authenticate admin', async () => {
     const payload = await createAuthTokenPayload(admin)
-    authenticationService.authenticateAdmin(payload)
+    authenticationService.authorizeAdmin(payload)
   })
 
   it('fail to authenticate admin as viewer', async () => {
     const payload = await createAuthTokenPayload(viewer)
     expectThrow(() => {
-      authenticationService.authenticateAdmin(payload)
+      authenticationService.authorizeAdmin(payload)
     }, noRightsError)
   })
 
   it('authenticate viewer', async () => {
     const payload = await createAuthTokenPayload(viewer)
-    authenticationService.authenticateViewer(payload)
+    authenticationService.authorizeViewer(payload)
   })
 
   it('authenticate viewer as admin', async () => {
     const payload = await createAuthTokenPayload(admin)
-    authenticationService.authenticateViewer(payload)
+    authenticationService.authorizeViewer(payload)
   })
 
   it('fail to authenticate user without user id', async () => {
     const authTokenPayload = await createAuthTokenPayload(admin)
     expectReject(async () => {
-      await authenticationService.authenticateUser(
+      await authenticationService.authorizeUser(
         '',
         authTokenPayload,
         notCalledFindRefreshToken
@@ -141,7 +141,7 @@ describe('authentication service unit tests', () => {
 
   it('authenticate self user as admin', async () => {
     const authTokenPayload = await createAuthTokenPayload(admin)
-    await authenticationService.authenticateUser(
+    await authenticationService.authorizeUser(
       admin.id,
       authTokenPayload,
       notCalledFindRefreshToken
@@ -150,7 +150,7 @@ describe('authentication service unit tests', () => {
 
   it('authenticate other admin user as admin', async () => {
     const authTokenPayload = await createAuthTokenPayload(admin)
-    await authenticationService.authenticateUser(
+    await authenticationService.authorizeUser(
       otherAdmin.id,
       authTokenPayload,
       notCalledFindRefreshToken
@@ -159,7 +159,7 @@ describe('authentication service unit tests', () => {
 
   it('authenticate viewer user as admin', async () => {
     const authTokenPayload = await createAuthTokenPayload(admin)
-    await authenticationService.authenticateUser(
+    await authenticationService.authorizeUser(
       viewer.id,
       authTokenPayload,
       notCalledFindRefreshToken
@@ -168,7 +168,7 @@ describe('authentication service unit tests', () => {
 
   it('authenticate self user as viewer', async () => {
     const authTokenPayload = await createAuthTokenPayload(admin)
-    await authenticationService.authenticateUser(
+    await authenticationService.authorizeUser(
       viewer.id,
       authTokenPayload,
       findRefreshToken
@@ -178,7 +178,7 @@ describe('authentication service unit tests', () => {
   it('fail to authenticate admin user as viewer', async () => {
     const authTokenPayload = await createAuthTokenPayload(viewer)
     expectReject(async () => {
-      await authenticationService.authenticateUser(
+      await authenticationService.authorizeUser(
         admin.id,
         authTokenPayload,
         notCalledFindRefreshToken
@@ -189,7 +189,7 @@ describe('authentication service unit tests', () => {
   it('fail to authenticate other viewer user as viewer', async () => {
     const authTokenPayload = await createAuthTokenPayload(viewer)
     expectReject(async () => {
-      await authenticationService.authenticateUser(
+      await authenticationService.authorizeUser(
         otherViewer.id,
         authTokenPayload,
         notCalledFindRefreshToken
@@ -200,7 +200,7 @@ describe('authentication service unit tests', () => {
   it('fail to authenticate viewer when refresh token not found', async () => {
     const authTokenPayload = await createAuthTokenPayload(viewer)
     expectReject(async () => {
-      await authenticationService.authenticateUser(
+      await authenticationService.authorizeUser(
         viewer.id,
         authTokenPayload,
         dontFindRefresToken

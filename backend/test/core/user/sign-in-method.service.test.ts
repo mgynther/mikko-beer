@@ -9,7 +9,7 @@ import {
   verifySecret
 } from '../../../src/core/user/sign-in-method.service'
 
-import { type Tokens } from '../../../src/core/authentication/tokens'
+import type { Tokens } from '../../../src/core/auth/tokens'
 import type {
   ChangePasswordUserIf,
   PasswordChange,

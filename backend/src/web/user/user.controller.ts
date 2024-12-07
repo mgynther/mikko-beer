@@ -13,8 +13,8 @@ import { type Config } from '../config'
 
 import type { Router } from '../router'
 import type { CreateAnonymousUserRequest } from '../../core/user/user'
-import type { DbRefreshToken } from '../../core/authentication/refresh-token'
-import type { AuthTokenConfig } from '../../core/authentication/auth-token'
+import type { DbRefreshToken } from '../../core/auth/refresh-token'
+import type { AuthTokenConfig } from '../../core/auth/auth-token'
 import type { CreateUserIf } from '../../core/user/authorized-user.service'
 import type { PasswordSignInMethod } from '../../core/user/sign-in-method'
 

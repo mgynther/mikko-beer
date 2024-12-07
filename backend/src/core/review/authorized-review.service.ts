@@ -1,4 +1,4 @@
-import * as authService from '../../core/authentication/authentication.service'
+import * as authService from '../../core/auth/auth.service'
 import * as reviewService from '../../core/review/review.service'
 
 import type {
@@ -16,7 +16,7 @@ import {
 import type { log } from '../log'
 import type { BodyRequest, IdRequest } from '../request';
 import type { Pagination } from '../pagination';
-import type { AuthTokenPayload } from '../authentication/auth-token';
+import type { AuthTokenPayload } from '../auth/auth-token';
 import { validateBeerId } from '../beer/beer';
 import { validateBreweryId } from '../brewery/brewery';
 import { validateStyleId } from '../style/style';
@@ -27,7 +27,7 @@ export async function createReview (
   fromStorageId: string | undefined,
   log: log
 ): Promise<Review> {
-  authService.authenticateAdmin(request.authTokenPayload)
+  authService.authorizeAdmin(request.authTokenPayload)
   const createRequest = validateCreateReviewRequest(request.body)
   return await reviewService.createReview(
     createIf,
@@ -43,7 +43,7 @@ export async function updateReview (
   body: unknown,
   log: log
 ): Promise<Review> {
-  authService.authenticateAdmin(request.authTokenPayload)
+  authService.authorizeAdmin(request.authTokenPayload)
   const updateRequest = validateUpdateReviewRequest(body, request.id)
   return await reviewService.updateReview(
     updateIf,
@@ -58,7 +58,7 @@ export async function findReviewById (
   request: IdRequest,
   log: log
 ): Promise<Review> {
-  authService.authenticateViewer(request.authTokenPayload)
+  authService.authorizeViewer(request.authTokenPayload)
   return await reviewService.findReviewById(
     find,
     validateReviewId(request.id),
@@ -76,7 +76,7 @@ export async function listReviews (
   reviewListOrder: ReviewListOrder,
   log: log
 ): Promise<JoinedReview[]> {
-  authService.authenticateViewer(authTokenPayload)
+  authService.authorizeViewer(authTokenPayload)
   return await reviewService.listReviews(
     list,
     pagination,
@@ -94,7 +94,7 @@ export async function listReviewsByBeer (
   reviewListOrder: ReviewListOrder,
   log: log
 ): Promise<JoinedReview[]> {
-  authService.authenticateViewer(request.authTokenPayload)
+  authService.authorizeViewer(request.authTokenPayload)
   return await reviewService.listReviewsByBeer(
     list,
     validateBeerId(request.id),
@@ -112,7 +112,7 @@ export async function listReviewsByBrewery (
   reviewListOrder: ReviewListOrder,
   log: log
 ): Promise<JoinedReview[]> {
-  authService.authenticateViewer(request.authTokenPayload)
+  authService.authorizeViewer(request.authTokenPayload)
   return await reviewService.listReviewsByBrewery(
     list,
     validateBreweryId(request.id),
@@ -130,7 +130,7 @@ export async function listReviewsByStyle (
   reviewListOrder: ReviewListOrder,
   log: log
 ): Promise<JoinedReview[]> {
-  authService.authenticateViewer(request.authTokenPayload)
+  authService.authorizeViewer(request.authTokenPayload)
   return await reviewService.listReviewsByStyle(
     list,
     validateStyleId(request.id),

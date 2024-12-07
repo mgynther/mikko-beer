@@ -1,9 +1,9 @@
-import * as authService from '../../core/authentication/authentication.service'
+import * as authService from '../../core/auth/auth.service'
 import * as statsService from '../../core/stats/stats.service'
 
 import type {
   AuthTokenPayload
-} from "../authentication/auth-token"
+} from "../auth/auth-token"
 import type {
   AnnualStats,
   BreweryStats,
@@ -24,7 +24,7 @@ export async function getAnnual (
   statsFilter: StatsBreweryStyleFilter,
   log: log
 ): Promise<AnnualStats> {
-  authService.authenticateViewer(authTokenPayload)
+  authService.authorizeViewer(authTokenPayload)
   return await statsService.getAnnual(getAnnual, statsFilter, log)
 }
 
@@ -40,7 +40,7 @@ export async function getBrewery (
   breweryStatsOrder: BreweryStatsOrder,
   log: log
 ): Promise<BreweryStats> {
-  authService.authenticateViewer(authTokenPayload)
+  authService.authorizeViewer(authTokenPayload)
   return await statsService.getBrewery(
     getBrewery,
     pagination,
@@ -56,7 +56,7 @@ export async function getOverall (
   statsFilter: StatsBreweryStyleFilter,
   log: log
 ): Promise<OverallStats> {
-  authService.authenticateViewer(authTokenPayload)
+  authService.authorizeViewer(authTokenPayload)
   return await statsService.getOverall(getOverall, statsFilter, log)
 }
 
@@ -66,7 +66,7 @@ export async function getRating (
   statsFilter: StatsBreweryStyleFilter,
   log: log
 ): Promise<RatingStats> {
-  authService.authenticateViewer(authTokenPayload)
+  authService.authorizeViewer(authTokenPayload)
   return await statsService.getRating(getRating, statsFilter, log)
 }
 
@@ -80,7 +80,7 @@ export async function getStyle (
   styleStatsOrder: StyleStatsOrder,
   log: log
 ): Promise<StyleStats> {
-  authService.authenticateViewer(authTokenPayload)
+  authService.authorizeViewer(authTokenPayload)
   return await statsService.getStyle(
     getStyle,
     statsFilter,

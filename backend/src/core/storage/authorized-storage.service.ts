@@ -1,4 +1,4 @@
-import * as authService from '../../core/authentication/authentication.service'
+import * as authService from '../../core/auth/auth.service'
 import * as storageService from '../../core/storage/storage.service'
 
 import type { CreateIf, JoinedStorage, Storage, UpdateIf } from "./storage";
@@ -10,7 +10,7 @@ import {
 import type { log } from '../log'
 import type { BodyRequest, IdRequest } from '../request';
 import type { Pagination } from '../pagination';
-import type { AuthTokenPayload } from '../authentication/auth-token';
+import type { AuthTokenPayload } from '../auth/auth-token';
 import { validateBeerId } from '../beer/beer';
 import { validateBreweryId } from '../brewery/brewery';
 import { validateStyleId } from '../style/style';
@@ -20,7 +20,7 @@ export async function createStorage (
   request: BodyRequest,
   log: log
 ): Promise<Storage> {
-  authService.authenticateAdmin(request.authTokenPayload)
+  authService.authorizeAdmin(request.authTokenPayload)
   const createRequest = validateCreateStorageRequest(request.body)
   return await storageService.createStorage(createIf, createRequest, log)
 }
@@ -31,7 +31,7 @@ export async function updateStorage (
   body: unknown,
   log: log
 ): Promise<Storage> {
-  authService.authenticateAdmin(request.authTokenPayload)
+  authService.authorizeAdmin(request.authTokenPayload)
   const updateRequest = validateUpdateStorageRequest(body, request.id)
   return await storageService.updateStorage(
     updateIf,
@@ -48,7 +48,7 @@ export async function deleteStorageById (
   request: IdRequest,
   log: log
 ): Promise<void> {
-  authService.authenticateAdmin(request.authTokenPayload)
+  authService.authorizeAdmin(request.authTokenPayload)
   await storageService.deleteStorageById(
     deleteStorageById,
     validateStorageId(request.id),
@@ -61,7 +61,7 @@ export async function findStorageById (
   request: IdRequest,
   log: log
 ): Promise<JoinedStorage | undefined> {
-  authService.authenticateViewer(request.authTokenPayload)
+  authService.authorizeViewer(request.authTokenPayload)
   return await storageService.findStorageById(
     findById,
     validateStorageId(request.id),
@@ -75,7 +75,7 @@ export async function listStorages (
   pagination: Pagination,
   log: log
 ): Promise<JoinedStorage[]> {
-  authService.authenticateViewer(authTokenPayload)
+  authService.authorizeViewer(authTokenPayload)
   return await storageService.listStorages(
     list,
     pagination,
@@ -88,7 +88,7 @@ export async function listStoragesByBeer (
   request: IdRequest,
   log: log
 ): Promise<JoinedStorage[]> {
-  authService.authenticateViewer(request.authTokenPayload)
+  authService.authorizeViewer(request.authTokenPayload)
   return await storageService.listStoragesByBeer(
     listByBeer,
     validateBeerId(request.id),
@@ -101,7 +101,7 @@ export async function listStoragesByBrewery (
   request: IdRequest,
   log: log
 ): Promise<JoinedStorage[]> {
-  authService.authenticateViewer(request.authTokenPayload)
+  authService.authorizeViewer(request.authTokenPayload)
   return await storageService.listStoragesByBrewery(
     listByBrewery,
     validateBreweryId(request.id),
@@ -114,7 +114,7 @@ export async function listStoragesByStyle (
   request: IdRequest,
   log: log
 ): Promise<JoinedStorage[]> {
-  authService.authenticateViewer(request.authTokenPayload)
+  authService.authorizeViewer(request.authTokenPayload)
   return await storageService.listStoragesByStyle(
     listByStyle,
     validateStyleId(request.id),

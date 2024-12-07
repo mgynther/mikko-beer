@@ -13,7 +13,7 @@ import {
   userOrRefreshTokenNotFoundError
 } from '../errors'
 
-export async function authenticateUser (
+export async function authorizeUser (
   userId: string | undefined,
   authTokenPayload: AuthTokenPayload,
   findRefreshToken: (
@@ -43,7 +43,7 @@ export async function authenticateUser (
   }
 }
 
-export function authenticateAdmin (
+export function authorizeAdmin (
   payload: AuthTokenPayload
 ): void {
   if (payload.role !== Role.admin) {
@@ -51,7 +51,7 @@ export function authenticateAdmin (
   }
 }
 
-export function authenticateViewer (
+export function authorizeViewer (
   payload: AuthTokenPayload
 ): void {
   const {role} = payload

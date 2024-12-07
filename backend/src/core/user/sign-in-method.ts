@@ -1,6 +1,6 @@
 import { ajv } from '../ajv'
 
-import type { Tokens } from '../authentication/tokens'
+import type { Tokens } from '../auth/tokens'
 import {
   invalidPasswordChangeError,
   invalidSignInMethodError

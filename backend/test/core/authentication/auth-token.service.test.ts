@@ -1,17 +1,17 @@
 import { expect } from 'earl'
 
-import * as authTokenService from '../../../src/core/authentication/auth-token.service'
+import * as authTokenService from '../../../src/core/auth/auth-token.service'
+import type {
+  AuthToken,
+  AuthTokenConfig,
+} from '../../../src/core/auth/auth-token'
 import {
-  type AuthTokenConfig,
   AuthTokenExpiredError,
-  InvalidAuthTokenError,
-  type AuthToken
-} from '../../../src/core/authentication/auth-token'
-import {
-  type DbRefreshToken
-} from '../../../src/core/authentication/refresh-token'
+  InvalidAuthTokenError
+} from '../../../src/core/auth/auth-token'
+import type { DbRefreshToken } from '../../../src/core/auth/refresh-token'
 import { Role, type User } from '../../../src/core/user/user'
-import { type Tokens } from '../../../src/core/authentication/tokens'
+import type { Tokens } from '../../../src/core/auth/tokens'
 import { invalidCredentialsTokenError } from '../../../src/core/errors'
 import { expectReject } from '../controller-error-helper'
 

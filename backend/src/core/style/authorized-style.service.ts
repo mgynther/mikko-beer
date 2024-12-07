@@ -1,4 +1,4 @@
-import * as authService from '../../core/authentication/authentication.service'
+import * as authService from '../../core/auth/auth.service'
 import * as styleService from '../../core/style/style.service'
 
 import type { BodyRequest, IdRequest } from "../request"
@@ -14,14 +14,14 @@ import {
   validateUpdateStyleRequest
 } from "./style"
 import type { log } from '../log'
-import type { AuthTokenPayload } from '../authentication/auth-token'
+import type { AuthTokenPayload } from '../auth/auth-token'
 
 export async function createStyle (
   createStyleIf: CreateStyleIf,
   request: BodyRequest,
   log: log
 ): Promise<StyleWithParentIds> {
-  authService.authenticateAdmin(request.authTokenPayload)
+  authService.authorizeAdmin(request.authTokenPayload)
   const createStyleRequest = validateCreateStyleRequest(request.body)
   return await styleService.createStyle(createStyleIf, createStyleRequest, log)
 }
@@ -32,7 +32,7 @@ export async function updateStyle (
   body: unknown,
   log: log
 ): Promise<StyleWithParentIds> {
-  authService.authenticateAdmin(request.authTokenPayload)
+  authService.authorizeAdmin(request.authTokenPayload)
   const validRequest = validateUpdateStyleRequest(body, request.id)
   return await styleService.updateStyle(
     updateStyleIf,
@@ -47,7 +47,7 @@ export async function findStyleById (
   request: IdRequest,
   log: log
 ): Promise<StyleWithParentsAndChildren> {
-  authService.authenticateViewer(request.authTokenPayload)
+  authService.authorizeViewer(request.authTokenPayload)
   return await styleService.findStyleById(
     find,
     validateStyleId(request.id),
@@ -60,6 +60,6 @@ export async function listStyles (
   authTokenPayload: AuthTokenPayload,
   log: log
 ): Promise<StyleWithParentIds[]> {
-  authService.authenticateViewer(authTokenPayload)
+  authService.authorizeViewer(authTokenPayload)
   return await styleService.listStyles(list, log)
 }

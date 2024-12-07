@@ -2,11 +2,11 @@ import * as Koa from 'koa'
 import * as json from 'koa-json'
 import * as compress from 'koa-compress'
 import * as bodyParser from 'koa-bodyparser'
-import { type Server } from 'http'
+import type { Server } from 'http'
 import { v4 as uuidv4 } from 'uuid'
 
-import { type Config } from './config'
-import { type Context, type ContextExtension } from './context'
+import type { Config } from './config'
+import type { Context, ContextExtension } from './context'
 import { Database } from '../data/database'
 import * as userRepository from '../data/user/user.repository'
 import { Router } from './router'
@@ -29,7 +29,7 @@ import {
 } from '../web/user/sign-in-method/sign-in-method-helper'
 import { ControllerError } from '../core/errors'
 import { Level, log } from '../core/log'
-import { type AuthTokenConfig } from '../core/authentication/auth-token'
+import { type AuthTokenConfig } from '../core/auth/auth-token'
 
 export interface StartResult {
   authToken: string

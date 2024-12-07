@@ -3,25 +3,23 @@ import * as refreshTokenRepository from '../../../data/authentication/refresh-to
 import * as signInMethodRepository from '../../../data/user/sign-in-method/sign-in-method.repository'
 import * as userRepository from '../../../data/user/user.repository'
 import * as authHelper from '../../authentication/authentication-helper'
-import * as authorizedAuthTokenService from '../../../core/authentication/authorized-auth-token.service'
-import * as authTokenService from '../../../core/authentication/auth-token.service'
+import * as authorizedAuthTokenService from '../../../core/auth/authorized-auth-token.service'
+import * as authTokenService from '../../../core/auth/auth-token.service'
 import * as userService from '../../../core/user/user.service'
-import type { Database, Transaction } from '../../../data/database'
+import type { Transaction } from '../../../data/database'
 
-import { type Tokens } from '../../../core/authentication/tokens'
-import {
-  type DbRefreshToken,
-  validateRefreshToken
-} from '../../../core/authentication/refresh-token'
-import { type Router } from '../../router'
+import type { Tokens } from '../../../core/auth/tokens'
+import type { DbRefreshToken } from '../../../core/auth/refresh-token'
+import { validateRefreshToken } from '../../../core/auth/refresh-token'
+import type { Router } from '../../router'
 import type {
   ChangePasswordUserIf,
   SignInUsingPasswordIf,
   UserPasswordHash
 } from '../../../core/user/sign-in-method'
-import { type User } from '../../../core/user/user'
-import { type AuthTokenConfig } from '../../../core/authentication/auth-token'
-import { type Context } from '../../context'
+import type { User } from '../../../core/user/user'
+import type { AuthTokenConfig } from '../../../core/auth/auth-token'
+import type { Context } from '../../context'
 import { createLockUserById } from './sign-in-method-helper'
 
 export function signInMethodController (router: Router): void {

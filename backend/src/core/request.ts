@@ -1,4 +1,4 @@
-import type { AuthTokenPayload } from "./authentication/auth-token"
+import type { AuthTokenPayload } from "./auth/auth-token"
 import type { Pagination } from "./pagination"
 import type { SearchByName } from "./search"
 

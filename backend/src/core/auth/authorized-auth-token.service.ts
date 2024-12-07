@@ -1,4 +1,4 @@
-import * as authService from '../../core/authentication/authentication.service'
+import * as authService from '../../core/auth/auth.service'
 import * as authTokenService from './auth-token.service'
 
 import type { IdRequest } from "../request";
@@ -16,7 +16,7 @@ export async function deleteRefreshToken (
   body: unknown,
   authTokenSecret: string
 ): Promise<void> {
-  await authService.authenticateUser(
+  await authService.authorizeUser(
     request.id, request.authTokenPayload, findRefreshToken)
   const refreshToken = validateRefreshToken(body)
   await authTokenService.deleteRefreshToken(

@@ -2,16 +2,12 @@ import { expect } from 'earl'
 
 import { userNotFoundError } from '../../../src/core/errors'
 import * as userService from '../../../src/core/user/user.service'
-import {
-  type AuthTokenConfig
-} from "../../../src/core/authentication/auth-token"
-import {
-  type DbRefreshToken
-} from "../../../src/core/authentication/refresh-token"
-import {
-    Role,
-  type CreateAnonymousUserRequest,
-  type User
+import type { AuthTokenConfig } from "../../../src/core/auth/auth-token"
+import type { DbRefreshToken } from "../../../src/core/auth/refresh-token"
+import { Role } from "../../../src/core/user/user"
+import type {
+  CreateAnonymousUserRequest,
+  User
 } from "../../../src/core/user/user"
 
 import { dummyLog as log } from '../dummy-log'
