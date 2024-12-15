@@ -3,6 +3,7 @@ import type {
   CreateStorageRequest,
   JoinedStorage,
   Storage,
+  StorageWithDate,
   UpdateIf
 } from '../storage'
 
@@ -20,7 +21,7 @@ export async function createStorage (
   createIf: CreateIf,
   request: CreateStorageRequest,
   log: log
-): Promise<Storage> {
+): Promise<StorageWithDate> {
   log(INFO, 'create storage for beer', request.beer)
   await lockId(createIf.lockBeer, request.beer, referredBeerNotFoundError)
   await lockId(
@@ -40,7 +41,7 @@ export async function updateStorage (
   updateIf: UpdateIf,
   request: Storage,
   log: log
-): Promise<Storage> {
+): Promise<StorageWithDate> {
   log(INFO, 'update storage', request.id)
   await lockId(updateIf.lockBeer, request.beer, referredBeerNotFoundError)
   await lockId(

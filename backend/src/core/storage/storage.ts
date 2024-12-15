@@ -9,18 +9,25 @@ import {
 import { timePattern } from '../time'
 
 export interface CreateIf {
-  insertStorage: (request: CreateStorageRequest) => Promise<Storage>
+  insertStorage: (request: CreateStorageRequest) => Promise<StorageWithDate>
   lockBeer: LockId
   lockContainer: LockId
 }
 
 export interface UpdateIf {
-  updateStorage: (request: Storage) => Promise<Storage>
+  updateStorage: (request: Storage) => Promise<StorageWithDate>
   lockBeer: LockId
   lockContainer: LockId
 }
 
 export interface Storage {
+  id: string
+  bestBefore: string
+  beer: string
+  container: string
+}
+
+export interface StorageWithDate {
   id: string
   bestBefore: Date
   beer: string
@@ -45,7 +52,7 @@ export interface JoinedStorage {
 
 export interface StorageRequest {
   beer: string
-  bestBefore: Date
+  bestBefore: string
   container: string
 }
 

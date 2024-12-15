@@ -15,14 +15,15 @@ import { type Pagination, toRowNumbers } from '../../core/pagination'
 import type {
   JoinedStorage,
   Storage,
-  StorageRequest
+  StorageRequest,
+  StorageWithDate
 } from '../../core/storage/storage'
 import { contains } from '../../core/record'
 
 export async function insertStorage (
   trx: Transaction,
   storage: StorageRequest
-): Promise<Storage> {
+): Promise<StorageWithDate> {
   const insertedStorage = await trx.trx()
     .insertInto('storage')
     .values({
@@ -39,7 +40,7 @@ export async function insertStorage (
 export async function updateStorage (
   trx: Transaction,
   storage: Storage
-): Promise<Storage> {
+): Promise<StorageWithDate> {
   const updatedStorage = await trx.trx()
     .updateTable('storage')
     .set({
@@ -297,7 +298,7 @@ function parseBreweryStorageRows (
   return storageArray
 }
 
-export function toStorage (storage: StorageRow): Storage {
+export function toStorage (storage: StorageRow): StorageWithDate {
   return {
     id: storage.storage_id,
     beer: storage.beer,

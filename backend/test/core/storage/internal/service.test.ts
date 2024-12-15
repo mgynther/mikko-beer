@@ -21,7 +21,7 @@ import { expectReject } from '../../controller-error-helper'
 const storage: Storage = {
   id: '8980b34a-d7b7-4e15-8e88-477176f5aee9',
   beer: '77d16346-2a56-4b52-9425-1e885b2be7c4',
-  bestBefore: new Date('2024-03-29T12:21:09.123Z'),
+  bestBefore: '2024-03-29T12:21:09.123Z',
   container: 'c44ba7c6-80d2-4564-93ba-a84b020511ca',
 }
 
@@ -29,7 +29,7 @@ const joinedStorage: JoinedStorage = {
   id: storage.id,
   beerId: storage.beer,
   beerName: 'Severin',
-  bestBefore: storage.bestBefore,
+  bestBefore: new Date(storage.bestBefore),
   breweries: [{
     id: 'cbc84989-ad82-4a46-b9ee-c6be16ef5e46',
     name: 'Koskipanimo',
@@ -85,7 +85,10 @@ describe('storage service unit tests', () => {
           container: storage.container,
         }
       )
-      return result
+      return {
+        ...result,
+        bestBefore: new Date(result.bestBefore)
+      }
     }
     let isBeerLocked = false
     let isContainerLocked = false
@@ -109,6 +112,7 @@ describe('storage service unit tests', () => {
     )
     expect(result).toEqual({
       ...createRequest,
+      bestBefore: new Date(createRequest.bestBefore),
       id: storage.id
     })
     expect(isBeerLocked).toEqual(true)
@@ -162,7 +166,10 @@ describe('storage service unit tests', () => {
         container: storage.container,
       }
       expect(storage).toEqual(result)
-      return result
+      return {
+        ...result,
+        bestBefore: new Date(result.bestBefore)
+      }
     }
     const updateIf: UpdateIf = {
       updateStorage,
@@ -184,6 +191,7 @@ describe('storage service unit tests', () => {
     )
     expect(result).toEqual({
       ...updateRequest,
+      bestBefore: new Date(updateRequest.bestBefore),
       id: storage.id
     })
     expect(isBeerLocked).toEqual(true)

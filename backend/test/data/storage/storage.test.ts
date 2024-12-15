@@ -1,7 +1,7 @@
 import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
-import type { Storage } from '../../../src/core/storage/storage'
+import type { Storage, StorageWithDate } from '../../../src/core/storage/storage'
 import { type Transaction } from '../../../src/data/database'
 import * as beerRepository from '../../../src/data/beer/beer.repository'
 import * as breweryRepository from '../../../src/data/brewery/brewery.repository'
@@ -18,10 +18,10 @@ describe('storage tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  async function createStorage(): Promise<Storage> {
+  async function createStorage(): Promise<StorageWithDate> {
     return await ctx.db.executeTransaction(async (
       trx: Transaction
-    ): Promise<Storage> => {
+    ): Promise<StorageWithDate> => {
       const brewery = await breweryRepository.insertBrewery(
         trx,
         {
@@ -59,7 +59,7 @@ describe('storage tests', () => {
         trx,
         {
           beer: beer.id,
-          bestBefore: new Date(),
+          bestBefore: '2024-12-02T12:12:12.000Z',
           container: container.id
         }
       )

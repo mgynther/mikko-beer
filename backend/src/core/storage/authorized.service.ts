@@ -1,7 +1,12 @@
 import * as authorizationService from '../auth/authorization.service'
 import * as storageService from './internal/service'
 
-import type { CreateIf, JoinedStorage, Storage, UpdateIf } from "./storage";
+import type {
+  CreateIf,
+  JoinedStorage,
+  StorageWithDate,
+  UpdateIf
+} from "./storage";
 import {
   validateCreateStorageRequest,
   validateStorageId,
@@ -19,7 +24,7 @@ export async function createStorage (
   createIf: CreateIf,
   request: BodyRequest,
   log: log
-): Promise<Storage> {
+): Promise<StorageWithDate> {
   authorizationService.authorizeAdmin(request.authTokenPayload)
   const createRequest = validateCreateStorageRequest(request.body)
   return await storageService.createStorage(createIf, createRequest, log)
@@ -30,7 +35,7 @@ export async function updateStorage (
   request: IdRequest,
   body: unknown,
   log: log
-): Promise<Storage> {
+): Promise<StorageWithDate> {
   authorizationService.authorizeAdmin(request.authTokenPayload)
   const updateRequest = validateUpdateStorageRequest(body, request.id)
   return await storageService.updateStorage(
