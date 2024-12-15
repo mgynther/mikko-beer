@@ -62,7 +62,7 @@ export interface CreateUserRequest {
   passwordSignInMethod: PasswordSignInMethod
 }
 
-interface CreateUserType {
+export interface CreateUserType {
   user?: unknown,
   passwordSignInMethod?: unknown
 }
