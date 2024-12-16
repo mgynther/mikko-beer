@@ -132,6 +132,9 @@ export async function verifySecret (
 }
 
 async function scrypt (secret: string, salt: string): Promise<string> {
+  /* eslint-disable-next-line promise/avoid-new --
+   * Promisefying would be tedious and it could easily hide errors.
+   */
   return await new Promise((resolve, reject) => {
     crypto.scrypt(
       secret,
