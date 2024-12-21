@@ -23,7 +23,7 @@
 .StorageRow .BeerName,
 .StorageHeading .BeerBreweries,
 .StorageRow .BeerBreweries {
-  width: 30%;
+  width: 27%;
 }
 
 .StorageHeading .BestStyles,
@@ -32,10 +32,13 @@
 }
 
 .StorageHeading .BestBefore,
-.StorageRow .BestBefore,
+.StorageRow .BestBefore {
+  width: 10%;
+}
+
 .StorageHeading .Actions,
 .StorageRow .Actions {
-  width: 10%;
+  width: 16%;
 }
 
 .Actions button {
