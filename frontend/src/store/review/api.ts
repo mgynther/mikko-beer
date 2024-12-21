@@ -1,6 +1,7 @@
 import { emptySplitApi } from '../api'
 
 import { reviewStatsTagTypes } from '../stats/types'
+import { storageTagTypes } from '../storage/types'
 
 import type {
   ListReviewParams,
@@ -86,7 +87,11 @@ const reviewApi = emptySplitApi.injectEndpoints({
         method: 'POST',
         body: wrapper.body
       }),
-      invalidatesTags: [ReviewTags.Review, ...reviewStatsTagTypes()]
+      invalidatesTags: [
+        ReviewTags.Review,
+        ...storageTagTypes(),
+        ...reviewStatsTagTypes()
+      ]
     }),
     updateReview: build.mutation<{ review: Review }, Partial<Review>>({
       query: (review: Review) => ({
