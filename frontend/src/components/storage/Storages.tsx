@@ -40,7 +40,6 @@ function Storages (props: Props): React.JSX.Element {
       <h3>{title}</h3>
       <StorageList
         deleteStorageIf={props.listStoragesIf.delete}
-        getConfirm={() => confirm}
         getLogin={props.getLogin}
         isLoading={isLoading}
         isTitleVisible={false}

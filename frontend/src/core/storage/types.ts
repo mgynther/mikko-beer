@@ -15,6 +15,7 @@ export interface Storage {
   bestBefore: string
   breweries: Brewery[]
   container: Container
+  createdAt: string
   styles: Style[]
 }
 

@@ -322,6 +322,7 @@ function toJoinedStorages (storageRows: DbJoinedStorage[]): JoinedStorage[] {
       size: row.container_size ?? '',
       type: row.container_type ?? ''
     },
+    createdAt: row.created_at,
     styles: row.styles.map(style => ({
       id: style.style_id,
       name: style.name ?? ''

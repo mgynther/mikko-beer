@@ -11,7 +11,7 @@ import type {
 } from '../../core/storage/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
-import { formatBestBefore, type NavigateIf, type ParamsIf } from '../util'
+import { formatDateString, type NavigateIf, type ParamsIf } from '../util'
 
 import ReviewEditor, { type InitialReview } from './ReviewEditor'
 
@@ -21,7 +21,7 @@ function toInitialReview (
 ): InitialReview {
   // TODO add user editable template and save it to localStorage.
   const additionalInfo =
-    `From storage, BB ${formatBestBefore(storageData.bestBefore)}`
+    `From storage, BB ${formatDateString(storageData.bestBefore)}`
   const time = currentDate.toISOString()
   return {
     review: {

@@ -288,6 +288,7 @@ test('adds review from storage', async () => {
           bestBefore: '2024-07-31T12:00:00.000Z',
           breweries: beerSearchResult.breweries,
           container: containerListResult,
+          createdAt: '2022-03-30T18:00:00.000Z',
           styles: beerSearchResult.styles
         },
         isLoading: false

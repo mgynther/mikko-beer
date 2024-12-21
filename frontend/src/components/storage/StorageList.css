@@ -1,7 +1,10 @@
-.StorageHeading,
-.StorageRow {
+.StorageHeading {
   display: flex;
   flex-direction: row;
+  font-size: 12px;
+}
+
+.StorageRow {
   font-size: 12px;
 }
 
@@ -10,17 +13,17 @@
   margin-bottom: 15px;
 }
 
-.StorageHeading div,
-.StorageRow div {
-  margin: 1%;
+.StorageHeading > div {
   overflow-wrap: break-word;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 .StorageHeading .BeerName,
 .StorageRow .BeerName,
 .StorageHeading .BeerBreweries,
 .StorageRow .BeerBreweries {
-  width: 25%;
+  width: 30%;
 }
 
 .StorageHeading .BestStyles,
@@ -36,10 +39,40 @@
 }
 
 .Actions button {
-  margin-top: 10px;
   font-size: 12px;
 }
 
 .Actions div {
   margin: 0;
+}
+
+.StorageItem-primary-row,
+.StorageItem-secondary-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.StorageItem-primary-row {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.StorageItem-secondary-row {
+  padding-bottom: 10px;
+}
+
+.StorageItem-primary-row div {
+  margin: 0;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-wrap: break-word;
+}
+
+.StorageItem-secondary-row div {
+  text-align: center;
+  width: 100%;
+  margin: 0;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-wrap: break-word;
 }

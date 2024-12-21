@@ -44,6 +44,7 @@ export interface JoinedStorage {
     name: string
   }>
   container: Container
+  createdAt: Date
   styles: Array<{
     id: string
     name: string

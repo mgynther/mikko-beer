@@ -81,13 +81,14 @@ const review: Review = {
   taste: ''
 }
 
-const storage = {
+const storage: Storage = {
   id: '350d015b-22d7-4bc7-b126-19ad09c5733c',
   beerId: beer.id,
   beerName: beer.name,
   bestBefore: '2025-01-30',
   breweries: joinedReview.breweries,
   container: joinedReview.container,
+  createdAt: '2023-02-02T12:00:00.000Z',
   styles: joinedReview.styles
 }
 

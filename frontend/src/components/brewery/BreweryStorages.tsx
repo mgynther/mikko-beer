@@ -17,7 +17,6 @@ const BreweryStorages = (props: Props): React.JSX.Element => {
     {(storages?.storages ?? []).length > 0 && (
       <StorageList
         deleteStorageIf={props.listStoragesByBreweryIf.delete}
-        getConfirm={() => confirm}
         getLogin={props.getLogin}
         isLoading={isLoading}
         isTitleVisible={true}

@@ -12,8 +12,8 @@ export function pad (number: number): string {
   return `${number}`
 }
 
-export function formatBestBefore (bb: string): string {
-  const date = new Date(bb)
+export function formatDateString (dateString: string): string {
+  const date = new Date(dateString)
   const year = date.getFullYear()
   const month = pad(date.getMonth() + 1)
   const dayOfMonth = pad(date.getDate())
