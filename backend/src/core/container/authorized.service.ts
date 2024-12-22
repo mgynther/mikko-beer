@@ -1,13 +1,8 @@
 import * as authorizationService from '../auth/authorization.service'
-import * as containerService from './internal/service'
+import * as containerService from './internal/validated.service'
 
 import type { BodyRequest, IdRequest } from '../request';
 import type { Container, NewContainer } from './container';
-import {
-  validateContainerId,
-  validateCreateContainerRequest,
-  validateUpdateContainerRequest
-} from './container';
 import type { log } from '../log'
 import type { AuthTokenPayload } from '../auth/auth-token';
 
@@ -17,8 +12,7 @@ export async function createContainer (
   log: log
 ): Promise<Container> {
   authorizationService.authorizeAdmin(request.authTokenPayload)
-  const createRequest = validateCreateContainerRequest(request.body)
-  return await containerService.createContainer(create, createRequest, log)
+  return await containerService.createContainer(create, request.body, log)
 }
 
 export async function updateContainer (
@@ -28,11 +22,10 @@ export async function updateContainer (
   log: log
 ): Promise<Container> {
   authorizationService.authorizeAdmin(request.authTokenPayload)
-  const validRequest = validateUpdateContainerRequest(body, request.id)
   return await containerService.updateContainer(
     update,
-    validRequest.id,
-    validRequest.request,
+    request.id,
+    body,
     log
   )
 }
@@ -45,7 +38,7 @@ export async function findContainerById (
   authorizationService.authorizeViewer(request.authTokenPayload)
   return await containerService.findContainerById(
     find,
-    validateContainerId(request.id),
+    request.id,
     log
   )
 }

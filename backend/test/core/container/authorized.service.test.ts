@@ -1,3 +1,4 @@
+import { expect } from 'earl'
 import * as containerService from '../../../src/core/container/authorized.service'
 
 import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
@@ -11,9 +12,7 @@ import { Role } from '../../../src/core/user/user'
 import { dummyLog as log } from '../dummy-log'
 import { expectReject } from '../controller-error-helper'
 import {
-  ControllerError,
   invalidContainerError,
-  invalidContainerIdError,
   noRightsError
 } from '../../../src/core/errors'
 
@@ -56,80 +55,6 @@ const viewerAuthToken: AuthTokenPayload = {
   refreshTokenId: 'e820508c-1c47-4676-8812-0ee2ec94c20e'
 }
 
-interface CreateRejectionTest {
-  token: AuthTokenPayload
-  body: unknown
-  error: ControllerError
-  title: string
-}
-
-const createRejectionTests: CreateRejectionTest[] = [
-  {
-    token: viewerAuthToken,
-    body: validCreateContainerRequest,
-    error: noRightsError,
-    title: 'fail to create container as viewer'
-  },
-  {
-    token: viewerAuthToken,
-    body: invalidContainerRequest,
-    error: noRightsError,
-    title: 'fail to create invalid container as viewer'
-  },
-  {
-    token: adminAuthToken,
-    body: invalidContainerRequest,
-    error: invalidContainerError,
-    title: 'fail to create invalid container as admin'
-  }
-]
-
-interface UpdateRejectionTest {
-  token: AuthTokenPayload
-  body: unknown
-  containerId: string | undefined
-  error: ControllerError
-  title: string
-}
-
-const updateRejectionTests: UpdateRejectionTest[] = [
-  {
-    token: viewerAuthToken,
-    body: validUpdateContainerRequest,
-    containerId: container.id,
-    error: noRightsError,
-    title: 'fail to update container as viewer'
-  },
-  {
-    token: viewerAuthToken,
-    body: invalidContainerRequest,
-    containerId: container.id,
-    error: noRightsError,
-    title: 'fail to update invalid container as viewer'
-  },
-  {
-    token: viewerAuthToken,
-    body: validUpdateContainerRequest,
-    containerId: undefined,
-    error: noRightsError,
-    title: 'fail to update container with undefined id as viewer'
-  },
-  {
-    token: adminAuthToken,
-    body: invalidContainerRequest,
-    containerId: container.id,
-    error: invalidContainerError,
-    title: 'fail to update invalid container as admin'
-  },
-  {
-    token: adminAuthToken,
-    body: validUpdateContainerRequest,
-    containerId: undefined,
-    error: invalidContainerIdError,
-    title: 'fail to update container with undefined id as admin'
-  },
-]
-
 describe('container authorized service unit tests', () => {
   it('create container as admin', async () => {
     await containerService.createContainer(create, {
@@ -138,15 +63,22 @@ describe('container authorized service unit tests', () => {
     }, log)
   })
 
-  createRejectionTests.forEach(testCase => {
-    it(testCase.title, async () => {
-      await expectReject(async () => {
-        await containerService.createContainer(create, {
-          authTokenPayload: testCase.token,
-          body: testCase.body
-        }, log)
-      }, testCase.error)
-    })
+  it('fail to create container as viewer', async () => {
+    await expectReject(async () => {
+      await containerService.createContainer(create, {
+        authTokenPayload: viewerAuthToken,
+        body: validCreateContainerRequest
+      }, log)
+    }, noRightsError)
+  })
+
+  it('fail to create invalid container as admin', async () => {
+    await expectReject(async () => {
+      await containerService.createContainer(create, {
+        authTokenPayload: adminAuthToken,
+        body: invalidContainerRequest
+      }, log)
+    }, invalidContainerError)
   })
 
   it('update container as admin', async () => {
@@ -156,14 +88,46 @@ describe('container authorized service unit tests', () => {
     }, validUpdateContainerRequest, log)
   })
 
-  updateRejectionTests.forEach(testCase => {
-    it(testCase.title, async () => {
-      await expectReject(async () => {
-        await containerService.updateContainer(update, {
-          authTokenPayload: testCase.token,
-          id: testCase.containerId
-        }, testCase.body, log)
-      }, testCase.error)
+  it('fail to update container as viewer', async () => {
+    await expectReject(async () => {
+      await containerService.updateContainer(update, {
+        authTokenPayload: viewerAuthToken,
+        id: container.id
+      }, validUpdateContainerRequest, log)
+    }, noRightsError)
+  })
+
+  it('fail to update invalid container as admin', async () => {
+    await expectReject(async () => {
+      await containerService.updateContainer(update, {
+        authTokenPayload: adminAuthToken,
+        id: container.id
+      }, invalidContainerRequest, log)
+    }, invalidContainerError)
+  })
+  ;
+
+  [adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
+    it(`find container as ${token.role}`, async () => {
+      const result = await containerService.findContainerById(
+        async () => container,
+        {
+          authTokenPayload: token,
+          id: container.id
+        },
+        log
+      )
+      expect(result).toEqual(container)
+    })
+
+    it(`list breweries as ${token.role}`, async () => {
+      const result = await containerService.listContainers(
+        async () => [container],
+        token,
+        log
+      )
+      expect(result).toEqual([container])
     })
   })
+
 })
