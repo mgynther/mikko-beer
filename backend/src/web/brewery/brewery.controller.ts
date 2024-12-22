@@ -79,7 +79,10 @@ export function breweryController (router: Router): void {
       const pagination = validatePagination({ skip, size })
       const breweries = await breweryService.listBreweries((pagination: Pagination) => {
         return breweryRepository.listBreweries(ctx.db, pagination)
-      }, authTokenPayload, pagination, ctx.log)
+      }, {
+        authTokenPayload,
+        pagination
+      }, ctx.log)
       ctx.body = { breweries, pagination }
     }
   )
