@@ -11,6 +11,7 @@ import type {
 } from '../../core/review/types'
 import type { ListStoragesByIf, Storage } from '../../core/storage/types'
 import type { UseDebounce } from '../../core/types'
+import { asText } from '../container/ContainerInfo'
 
 const useDebounce: UseDebounce = str => str
 
@@ -247,7 +248,7 @@ test('renders beer', async () => {
   getByRole('link', { name: brewery.name })
   getByRole('link', { name: style.name })
   getByText(joinedReview.additionalInfo)
-  getByText(`${joinedReview.container.type} ${joinedReview.container.size}`)
+  getByText(asText(joinedReview.container))
   getByText(storage.bestBefore)
 })
 

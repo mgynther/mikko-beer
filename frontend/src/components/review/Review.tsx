@@ -16,6 +16,7 @@ import StyleLinks from '../style/StyleLinks'
 import UpdateReview from './UpdateReview'
 
 import './Review.css'
+import ContainerInfo from '../container/ContainerInfo'
 
 interface Props {
   reviewIf: ReviewIf
@@ -78,7 +79,7 @@ function Review (props: Props): React.JSX.Element {
             }</div>
           </div>
           <div className='Review-secondary-info-row'>
-            <div>{review.container.type} {review.container.size}</div>
+            <ContainerInfo container={review.container} />
             <div>{review.location}</div>
           </div>
           {review.additionalInfo !== '' && (

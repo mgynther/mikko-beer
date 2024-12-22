@@ -14,6 +14,7 @@ import SelectBeer from '../beer/SelectBeer'
 import SelectContainer from '../container/SelectContainer'
 
 import './CreateStorage.css'
+import ContainerInfo from '../container/ContainerInfo'
 
 interface Props {
   searchIf: SearchIf
@@ -90,9 +91,7 @@ function CreateStorage (props: Props): React.JSX.Element {
                     setContainer(container)
                   }} />
               : (<div className='FlexRow'>
-                  <div>
-                    {`${container.type} ${container.size}`}
-                  </div>
+                  <ContainerInfo container={container} />
                   <div>
                     <button
                       onClick={() => { setContainer(undefined) }}>

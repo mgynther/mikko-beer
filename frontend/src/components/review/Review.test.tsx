@@ -6,6 +6,7 @@ import type { UseDebounce } from "../../core/types"
 import type { Login } from "../../core/login/types"
 import { Role } from "../../core/user/types"
 import LinkWrapper from "../LinkWrapper"
+import { asText } from "../container/ContainerInfo"
 
 const useDebounce: UseDebounce = str => str
 
@@ -302,7 +303,7 @@ test('renders review', async () => {
   getByRole('link', { name: joinedReview.styles[0].name })
   getByText(joinedReview.rating)
   getByText(joinedReview.time.split('T')[0])
-  getByText(`${joinedReview.container.type} ${joinedReview.container.size}`)
+  getByText(asText(joinedReview.container))
   getByText(additionalInfo)
   getByText(location)
   getByText(review.smell)

@@ -22,6 +22,7 @@ import Slider from '../common/Slider'
 import '../common/FlexRow.css'
 
 import './ReviewEditor.css'
+import ContainerInfo from '../container/ContainerInfo'
 
 export interface InitialReview {
   joined: JoinedReview
@@ -168,9 +169,7 @@ function ReviewEditor (props: Props): React.JSX.Element {
                 setContainer(container)
               }} />
             : (<div className='FlexRow'>
-                <div>
-                  {`${container.type} ${container.size}`}
-                </div>
+                <ContainerInfo container={container} />
                 {!props.isFromStorage && (
                   <div>
                     <button

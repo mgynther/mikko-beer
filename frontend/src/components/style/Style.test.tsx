@@ -14,6 +14,7 @@ import type { ListStoragesByIf, Storage } from '../../core/storage/types'
 import type { StatsIf } from '../../core/stats/types'
 import type { GetStyleIf } from '../../core/style/types'
 import type { UseDebounce } from '../../core/types'
+import { asText } from '../container/ContainerInfo'
 
 const useDebounce: UseDebounce = str => str
 
@@ -255,7 +256,7 @@ test('renders style', async () => {
   getByRole('link', { name: parent.name })
   getByRole('link', { name: child.name })
   getByText(joinedReview.additionalInfo)
-  getByText(`${joinedReview.container.type} ${joinedReview.container.size}`)
+  getByText(asText(joinedReview.container))
   getByText(storage.bestBefore)
 })
 

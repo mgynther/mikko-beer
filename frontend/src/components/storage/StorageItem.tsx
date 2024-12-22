@@ -16,6 +16,7 @@ import LinkLikeButton from '../common/LinkLikeButton'
 import StyleLinks from '../style/StyleLinks'
 
 import './StorageList.css'
+import ContainerInfo from '../container/ContainerInfo'
 
 interface Props {
   deleteStorageIf: DeleteStorageIf
@@ -73,6 +74,7 @@ function StorageItem (props: Props): React.JSX.Element {
       </div>
       {isOpen && (
         <div className='StorageItem-secondary-row'>
+          <ContainerInfo container={storage.container} />
           <div>
             Added on {formatDateString(storage.createdAt)}
           </div>

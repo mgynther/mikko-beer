@@ -12,6 +12,7 @@ import UpdateContainer from './UpdateContainer'
 
 import '../common/FlexRow.css'
 import type { GetLogin } from '../../core/login/types'
+import ContainerInfo from './ContainerInfo'
 
 interface Props {
   container: ContainerType
@@ -27,7 +28,7 @@ function Container (props: Props): React.JSX.Element {
     <>
       {mode === EditableMode.View && (
         <div className='FlexRow'>
-          <div>{`${props.container.type} ${props.container.size}`}</div>
+          <ContainerInfo container={props.container} />
           <div>
             <EditButton
               disabled={false}

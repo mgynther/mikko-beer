@@ -7,6 +7,7 @@ import LoadingIndicator from '../common/LoadingIndicator'
 import SelectCreateRadio, { Mode } from '../common/SelectCreateRadio'
 
 import CreateContainer from './CreateContainer'
+import { asText } from './ContainerInfo'
 
 export interface Props {
   select: (container: Container) => void
@@ -44,7 +45,7 @@ function SelectContainer (props: Props): React.JSX.Element {
               <option value={''} disabled={true} />
               {containerData?.containers.map((container: Container) => (
                 <option key={container.id} value={container.id}>
-                  {container.type} {container.size}
+                  {asText(container)}
                 </option>
               ))}
             </select>
