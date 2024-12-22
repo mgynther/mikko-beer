@@ -1,8 +1,11 @@
+import { expect } from 'earl'
+
 import * as beerService from '../../../src/core/beer/authorized.service'
 
 import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
 import type {
   Beer,
+  BeerWithBreweriesAndStyles,
   CreateBeerRequest,
   CreateIf,
   UpdateBeerRequest,
@@ -12,9 +15,7 @@ import { Role } from '../../../src/core/user/user'
 import { dummyLog as log } from '../dummy-log'
 import { expectReject } from '../controller-error-helper'
 import {
-  ControllerError,
   invalidBeerError,
-  invalidBeerIdError,
   noRightsError
 } from '../../../src/core/errors'
 
@@ -36,6 +37,12 @@ const validUpdateBeerRequest: UpdateBeerRequest = {
 const beer: Beer = {
   id: '149bfae4-a2e6-45b9-a397-e61d3fa7a1c3',
   name: validCreateBeerRequest.name
+}
+
+const beerWithBreweriesAndStyles: BeerWithBreweriesAndStyles = {
+  ...beer,
+  breweries: [],
+  styles: []
 }
 
 const invalidBeerRequest = {
@@ -73,80 +80,6 @@ const viewerAuthToken: AuthTokenPayload = {
   refreshTokenId: 'db81d9d8-d11e-40f2-83cf-4cddc98504c7'
 }
 
-interface CreateRejectionTest {
-  token: AuthTokenPayload
-  body: unknown
-  error: ControllerError
-  title: string
-}
-
-const createRejectionTests: CreateRejectionTest[] = [
-  {
-    token: viewerAuthToken,
-    body: validCreateBeerRequest,
-    error: noRightsError,
-    title: 'fail to create beer as viewer'
-  },
-  {
-    token: viewerAuthToken,
-    body: invalidBeerRequest,
-    error: noRightsError,
-    title: 'fail to create invalid beer as viewer'
-  },
-  {
-    token: adminAuthToken,
-    body: invalidBeerRequest,
-    error: invalidBeerError,
-    title: 'fail to create invalid beer as admin'
-  }
-]
-
-interface UpdateRejectionTest {
-  token: AuthTokenPayload
-  body: unknown
-  beerId: string | undefined
-  error: ControllerError
-  title: string
-}
-
-const updateRejectionTests: UpdateRejectionTest[] = [
-  {
-    token: viewerAuthToken,
-    body: validUpdateBeerRequest,
-    beerId: beer.id,
-    error: noRightsError,
-    title: 'fail to update beer as viewer'
-  },
-  {
-    token: viewerAuthToken,
-    body: invalidBeerRequest,
-    beerId: beer.id,
-    error: noRightsError,
-    title: 'fail to update invalid beer as viewer'
-  },
-  {
-    token: viewerAuthToken,
-    body: validUpdateBeerRequest,
-    beerId: undefined,
-    error: noRightsError,
-    title: 'fail to update beer with undefined id as viewer'
-  },
-  {
-    token: adminAuthToken,
-    body: invalidBeerRequest,
-    beerId: beer.id,
-    error: invalidBeerError,
-    title: 'fail to update invalid beer as admin'
-  },
-  {
-    token: adminAuthToken,
-    body: validUpdateBeerRequest,
-    beerId: undefined,
-    error: invalidBeerIdError,
-    title: 'fail to update beer with undefined id as admin'
-  },
-]
-
 describe('beer authorized service unit tests', () => {
   it('create beer as admin', async () => {
     await beerService.createBeer(createIf, {
@@ -155,15 +88,22 @@ describe('beer authorized service unit tests', () => {
     }, log)
   })
 
-  createRejectionTests.forEach(testCase => {
-    it(testCase.title, async () => {
-      await expectReject(async () => {
-        await beerService.createBeer(createIf, {
-          authTokenPayload: testCase.token,
-          body: testCase.body
-        }, log)
-      }, testCase.error)
-    })
+  it('fail to create beer as viewer', async () => {
+    await expectReject(async () => {
+      await beerService.createBeer(createIf, {
+        authTokenPayload: viewerAuthToken,
+        body: validCreateBeerRequest
+      }, log)
+    }, noRightsError)
+  })
+
+  it('fail to create invalid beer', async () => {
+    await expectReject(async () => {
+      await beerService.createBeer(createIf, {
+        authTokenPayload: adminAuthToken,
+        body: invalidBeerRequest
+      }, log)
+    }, invalidBeerError)
   })
 
   it('update beer as admin', async () => {
@@ -173,14 +113,61 @@ describe('beer authorized service unit tests', () => {
     }, log)
   })
 
-  updateRejectionTests.forEach(testCase => {
-    it(testCase.title, async () => {
-      await expectReject(async () => {
-        await beerService.updateBeer(updateIf, testCase.beerId, {
-          authTokenPayload: testCase.token,
-          body: testCase.body
-        }, log)
-      }, testCase.error)
+  it('fail to update beer as viewer', async () => {
+    await expectReject(async () => {
+      await beerService.updateBeer(updateIf, beer.id, {
+        authTokenPayload: viewerAuthToken,
+        body: validUpdateBeerRequest
+      }, log)
+    }, noRightsError)
+  })
+
+  it('fail to update invalid beer as admin', async () => {
+    await expectReject(async () => {
+      await beerService.updateBeer(updateIf, beer.id, {
+        authTokenPayload: adminAuthToken,
+        body: invalidBeerRequest
+      }, log)
+    }, invalidBeerError)
+  })
+  ;
+
+  [adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
+    it(`find beer as ${token.role}`, async () => {
+      const result = await beerService.findBeerById(
+        async () => beerWithBreweriesAndStyles,
+        {
+          authTokenPayload: token,
+          id: beer.id
+        },
+        log
+      )
+      expect(result).toEqual(beerWithBreweriesAndStyles)
+    })
+
+    it(`list beers as ${token.role}`, async () => {
+      const result = await beerService.listBeers(
+        async () => [beerWithBreweriesAndStyles],
+        {
+          authTokenPayload: token,
+          pagination: { skip: 0, size: 10 }
+        },
+        log
+      )
+      expect(result).toEqual([beerWithBreweriesAndStyles])
+    })
+
+    it(`searches beers as ${token.role}`, async () => {
+      const result = await beerService.searchBeers(
+        async () => [beerWithBreweriesAndStyles],
+        {
+          authTokenPayload: token,
+          searchByName: { name: beer.name }
+        },
+        log
+      )
+      expect(result).toEqual([beerWithBreweriesAndStyles])
     })
   })
+
 })
