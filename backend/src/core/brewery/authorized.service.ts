@@ -11,7 +11,8 @@ import type { Brewery, NewBrewery } from "./brewery";
 import type { log } from '../log'
 import type { Pagination } from '../pagination';
 import type { AuthTokenPayload } from '../auth/auth-token';
-import { type SearchByName, validateSearchByName } from '../search';
+import type { SearchByName } from '../search';
+import { validateSearchByName } from '../search';
 
 export async function createBrewery (
   create: (brewery: NewBrewery) => Promise<Brewery>,

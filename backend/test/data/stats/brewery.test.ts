@@ -1,15 +1,16 @@
 import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
-import { type Pagination } from '../../../src/core/pagination'
-import { type Review } from '../../../src/core/review/review'
-import {
-  type BreweryStatsOrder,
-  type StatsFilter
+import type { Pagination } from '../../../src/core/pagination'
+import type { Review } from '../../../src/core/review/review'
+import type {
+  BreweryStatsOrder,
+  StatsFilter
 } from '../../../src/core/stats/stats'
-import { type Database } from '../../../src/data/database'
+import type { Database } from '../../../src/data/database'
 import * as statsRepository from '../../../src/data/stats/stats.repository'
-import { type InsertedData, insertMultipleReviews } from '../review-helpers'
+import type { InsertedData } from '../review-helpers'
+import { insertMultipleReviews } from '../review-helpers'
 
 const defaultFilter: StatsFilter = {
   brewery: undefined,

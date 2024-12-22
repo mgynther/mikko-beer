@@ -1,7 +1,7 @@
 import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
-import { type NewUser, type User } from '../../../src/core/user/user'
+import type { NewUser, User } from '../../../src/core/user/user'
 import * as userRepository from '../../../src/data/user/user.repository'
 import { Role } from '../../../src/core/user/user'
 import { Transaction } from '../../../src/data/database'

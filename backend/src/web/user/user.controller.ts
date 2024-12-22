@@ -9,7 +9,7 @@ import * as authHelper from '../authentication/authentication-helper'
 import * as refreshTokenRepository from '../../data/authentication/refresh-token.repository'
 import * as userRepository from '../../data/user/user.repository'
 
-import { type Config } from '../config'
+import type { Config } from '../config'
 
 import type { Router } from '../router'
 import type { CreateAnonymousUserRequest } from '../../core/user/user'

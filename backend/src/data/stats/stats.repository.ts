@@ -1,4 +1,5 @@
-import { type SelectQueryBuilder, type RawBuilder, sql } from 'kysely'
+import type { SelectQueryBuilder, RawBuilder } from 'kysely'
+import { sql } from 'kysely'
 
 import type { Database, KyselyDatabase } from '../database'
 import type { Pagination } from '../../core/pagination'

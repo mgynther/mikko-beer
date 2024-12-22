@@ -1,7 +1,9 @@
 import { expect } from 'earl'
 
+import type {
+  AddPasswordUserIf
+} from '../../../src/core/user/sign-in-method.service'
 import {
-  type AddPasswordUserIf,
   addPasswordSignInMethod,
   changePassword,
   encryptPassword,

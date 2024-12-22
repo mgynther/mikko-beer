@@ -1,17 +1,17 @@
 import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
-import { type BeerWithBreweryAndStyleIds } from '../../../src/core/beer/beer'
-import { type Brewery } from '../../../src/core/brewery/brewery'
-import { type Review } from '../../../src/core/review/review'
-import {
-  type AnnualStats,
-  type BreweryStats,
-  type OverallStats,
-  type RatingStats,
-  type StyleStats
+import type { BeerWithBreweryAndStyleIds } from '../../../src/core/beer/beer'
+import type { Brewery } from '../../../src/core/brewery/brewery'
+import type { Review } from '../../../src/core/review/review'
+import type {
+  AnnualStats,
+  BreweryStats,
+  OverallStats,
+  RatingStats,
+  StyleStats
 } from '../../../src/core/stats/stats'
-import { type Style } from '../../../src/core/style/style'
+import type { Style } from '../../../src/core/style/style'
 
 // Math is hard. By both hard coding and calculating it is easier to spot an
 // error when it happens.

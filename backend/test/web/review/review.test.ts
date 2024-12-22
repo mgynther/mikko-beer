@@ -1,12 +1,12 @@
 import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
-import { type ListDirection } from '../../../src/core/list'
-import {
-  type JoinedReview,
-  type Review,
-  type ReviewListOrderProperty,
-  type ReviewRequest
+import type { ListDirection } from '../../../src/core/list'
+import type {
+  JoinedReview,
+  Review,
+  ReviewListOrderProperty,
+  ReviewRequest
 } from '../../../src/core/review/review'
 
 const createNewReviewRequest = (

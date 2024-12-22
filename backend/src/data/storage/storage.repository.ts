@@ -1,4 +1,5 @@
-import { type SelectQueryBuilder, sql } from 'kysely'
+import type { SelectQueryBuilder } from 'kysely'
+import { sql } from 'kysely'
 
 import type {
   Database,
@@ -11,7 +12,8 @@ import type {
   StorageTable
 } from './storage.table'
 
-import { type Pagination, toRowNumbers } from '../../core/pagination'
+import type { Pagination } from '../../core/pagination'
+import { toRowNumbers } from '../../core/pagination'
 import type {
   JoinedStorage,
   Storage,

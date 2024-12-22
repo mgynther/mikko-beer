@@ -7,7 +7,7 @@ import type { SearchByName } from '../../core/search'
 import * as styleRepository from '../../data/style/style.repository'
 import * as authHelper from '../authentication/authentication-helper'
 
-import { type Router } from '../router'
+import type { Router } from '../router'
 import type { Beer, CreateIf, NewBeer, UpdateIf } from '../../core/beer/beer'
 import { validatePagination } from '../../core/pagination'
 import { validateSearchByName } from '../../core/search'

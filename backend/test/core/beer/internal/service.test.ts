@@ -1,15 +1,15 @@
 import { expect } from 'earl'
-import {
-  type Beer,
-  type BeerWithBreweriesAndStyles,
-  type CreateBeerRequest,
-  type UpdateBeerRequest,
-  type NewBeer,
+import type {
+  Beer,
+  BeerWithBreweriesAndStyles,
+  CreateBeerRequest,
+  UpdateBeerRequest,
+  NewBeer,
   CreateIf,
   UpdateIf
 } from '../../../../src/core/beer/beer'
-import { type Pagination } from '../../../../src/core/pagination'
-import { type SearchByName } from '../../../../src/core/search'
+import type { Pagination } from '../../../../src/core/pagination'
+import type { SearchByName } from '../../../../src/core/search'
 import * as beerService from '../../../../src/core/beer/internal/service'
 
 import { dummyLog as log } from '../../dummy-log'

@@ -14,12 +14,10 @@ import type {
   NewBeer
 } from '../../core/beer/beer'
 
-import { type Pagination, toRowNumbers } from '../../core/pagination'
-import {
-  type SearchByName,
-  defaultSearchMaxResults,
-  toIlike
-} from '../../core/search'
+import type { Pagination } from '../../core/pagination'
+import { toRowNumbers } from '../../core/pagination'
+import type { SearchByName } from '../../core/search'
+import { defaultSearchMaxResults, toIlike } from '../../core/search'
 
 import type { Brewery } from '../../core/brewery/brewery'
 import type { Style } from '../../core/style/style'

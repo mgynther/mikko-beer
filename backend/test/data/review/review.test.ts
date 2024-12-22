@@ -1,12 +1,12 @@
 import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
-import { type Database } from '../../../src/data/database'
+import type { Database } from '../../../src/data/database'
 import * as reviewRepository from '../../../src/data/review/review.repository'
-import {
-  type JoinedReview,
-  type Review,
-  type ReviewListOrder,
+import type {
+  JoinedReview,
+  Review,
+  ReviewListOrder
 } from '../../../src/core/review/review'
 import { insertData, insertMultipleReviews } from '../review-helpers'
 

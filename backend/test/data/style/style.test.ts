@@ -1,7 +1,7 @@
 import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
-import { type Transaction } from '../../../src/data/database'
+import type { Transaction } from '../../../src/data/database'
 import * as styleRepository from '../../../src/data/style/style.repository'
 
 describe('style tests', () => {

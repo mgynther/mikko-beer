@@ -11,9 +11,10 @@ import {
 } from '../data/test-helpers'
 import { App } from '../../src/web/app'
 import { Database } from '../../src/data/database'
-import { type User } from '../../src/core/user/user'
+import type { User } from '../../src/core/user/user'
 
-import { Level, type log } from '../../src/core/log'
+import { Level } from '../../src/core/log'
+import type { log } from '../../src/core/log'
 
 interface LogEntry {
   level: Level

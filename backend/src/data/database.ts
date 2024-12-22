@@ -1,9 +1,7 @@
-import {
-  Kysely,
-  PostgresDialect,
-  type Transaction as KyselyTransaction
-} from 'kysely'
-import { type ConnectionConfig, Pool } from 'pg'
+import type { Transaction as KyselyTransaction } from 'kysely'
+import { Kysely, PostgresDialect, } from 'kysely'
+import type { ConnectionConfig } from 'pg'
+import { Pool } from 'pg'
 
 import type { RefreshTokenTable } from './authentication/refresh-token.table'
 import type {

@@ -1,4 +1,4 @@
-import { type Context } from '../context'
+import type { Context } from '../context'
 
 import * as authenticationService from '../../core/auth/authentication.service'
 import * as refreshTokenRepository from '../../data/authentication/refresh-token.repository'

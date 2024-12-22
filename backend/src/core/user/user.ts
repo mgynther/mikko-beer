@@ -1,8 +1,6 @@
 import { ajv } from '../ajv'
-import {
-  type PasswordSignInMethod,
-  validatePasswordSignInMethod
-} from './sign-in-method'
+import type { PasswordSignInMethod, } from './sign-in-method'
+import { validatePasswordSignInMethod } from './sign-in-method'
 
 import { invalidUserError, invalidUserIdError } from '../errors'
 

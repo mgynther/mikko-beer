@@ -6,10 +6,8 @@ import * as userRepository from '../../../data/user/user.repository'
 
 import type { Transaction } from "../../../data/database"
 import { log } from '../../../core/log'
-import {
-  type UserPasswordHash,
-  validatePasswordSignInMethod
-} from "../../../core/user/sign-in-method"
+import type { UserPasswordHash } from "../../../core/user/sign-in-method"
+import { validatePasswordSignInMethod } from "../../../core/user/sign-in-method"
 import type { AddPasswordUserIf } from "../../../core/user/sign-in-method.service"
 
 export async function addPasswordSignInMethod (

@@ -1,7 +1,8 @@
 import { ajv } from '../ajv'
 
 import type { Container } from '../container/container'
-import { type ListDirection, directionValidation } from '../list'
+import type { ListDirection } from '../list'
+import { directionValidation } from '../list'
 import { timePattern } from '../time'
 
 import {

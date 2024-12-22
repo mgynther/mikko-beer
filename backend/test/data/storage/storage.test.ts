@@ -1,8 +1,8 @@
 import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
-import type { Storage, StorageWithDate } from '../../../src/core/storage/storage'
-import { type Transaction } from '../../../src/data/database'
+import type { StorageWithDate } from '../../../src/core/storage/storage'
+import type { Transaction } from '../../../src/data/database'
 import * as beerRepository from '../../../src/data/beer/beer.repository'
 import * as breweryRepository from '../../../src/data/brewery/brewery.repository'
 import * as containerRepository from '../../../src/data/container/container.repository'

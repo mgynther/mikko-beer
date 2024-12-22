@@ -1,7 +1,7 @@
 import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
-import { type Transaction } from '../../../src/data/database'
+import type { Transaction } from '../../../src/data/database'
 import * as breweryRepository from '../../../src/data/brewery/brewery.repository'
 
 describe('brewery tests', () => {

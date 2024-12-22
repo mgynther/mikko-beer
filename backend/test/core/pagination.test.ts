@@ -1,10 +1,8 @@
 import { expect } from 'earl'
 
-import {
-  type Pagination,
-  type PaginationRequest,
-  validatePagination
-} from '../../src/core/pagination'
+import type { Pagination, PaginationRequest } from '../../src/core/pagination'
+import { validatePagination } from '../../src/core/pagination'
+
 
 import { invalidPaginationError } from '../../src/core/errors'
 import { expectThrow } from './controller-error-helper'

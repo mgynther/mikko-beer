@@ -1,10 +1,7 @@
 import { expect } from 'earl'
 
-import {
-  type SearchByName,
-  toIlike,
-  validateSearchByName
-} from '../../src/core/search'
+import type { SearchByName } from '../../src/core/search'
+import { toIlike, validateSearchByName } from '../../src/core/search'
 
 import { invalidSearchError } from '../../src/core/errors'
 import { expectThrow } from './controller-error-helper'

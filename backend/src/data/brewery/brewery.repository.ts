@@ -10,11 +10,8 @@ import type {
 import type {
   Pagination
 } from '../../core/pagination'
-import {
-  type SearchByName,
-  defaultSearchMaxResults,
-  toIlike
-} from '../../core/search'
+import type { SearchByName } from '../../core/search'
+import { defaultSearchMaxResults, toIlike } from '../../core/search'
 
 export async function insertBrewery (
   trx: Transaction,

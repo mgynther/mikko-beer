@@ -4,8 +4,8 @@ import {
   validateBreweryStatsOrder,
   validateStatsBreweryStyleFilter,
   validateStatsFilter,
-  type StatsFilter
 } from '../../../src/core/stats/stats'
+import type { StatsFilter } from '../../../src/core/stats/stats'
 import {
   invalidBreweryAndStyleFilterError,
   invalidBreweryStatsQueryError,

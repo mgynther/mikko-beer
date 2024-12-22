@@ -5,7 +5,8 @@ import {
   invalidBreweryStatsQueryError,
   invalidStyleStatsQueryError
 } from '../errors'
-import { type ListDirection, directionValidation } from '../list'
+import type { ListDirection } from '../list'
+import { directionValidation } from '../list'
 
 export type AnnualStats = Array<{
   reviewAverage: string

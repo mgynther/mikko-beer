@@ -18,18 +18,15 @@ import { storageController } from '../web/storage/storage.controller'
 import { statsController } from '../web/stats/stats.controller'
 import { styleController } from '../web/style/style.controller'
 import { userController } from '../web/user/user.controller'
-import {
-  type CreateAnonymousUserRequest,
-  Role,
-  type User
-} from '../core/user/user'
+import type { CreateAnonymousUserRequest, User } from '../core/user/user'
+import { Role } from '../core/user/user'
 import * as userService from '../core/user/user.service'
 import {
   addPasswordSignInMethod
 } from '../web/user/sign-in-method/sign-in-method-helper'
 import { ControllerError } from '../core/errors'
 import { Level, log } from '../core/log'
-import { type AuthTokenConfig } from '../core/auth/auth-token'
+import type { AuthTokenConfig } from '../core/auth/auth-token'
 
 export interface StartResult {
   authToken: string
