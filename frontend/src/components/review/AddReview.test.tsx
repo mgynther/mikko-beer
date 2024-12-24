@@ -289,6 +289,7 @@ test('adds review from storage', async () => {
           breweries: beerSearchResult.breweries,
           container: containerListResult,
           createdAt: '2022-03-30T18:00:00.000Z',
+          hasReview: false,
           styles: beerSearchResult.styles
         },
         isLoading: false

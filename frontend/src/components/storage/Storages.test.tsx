@@ -79,6 +79,7 @@ const storage: Storage = {
     size: '0.33'
   },
   createdAt: '2021-05-05T10:00:00.000Z',
+  hasReview: true,
   styles: [style]
 }
 

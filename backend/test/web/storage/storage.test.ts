@@ -330,11 +330,13 @@ describe('storage tests', () => {
     if (kriekStorage === undefined) throw new Error('kriekStorage not found')
     expect(kriekStorage.id).toEqual(storageRes.data.storage.id)
     expect(kriekStorage.beerId).toEqual(storageRes.data.storage.beer)
+    expect(kriekStorage.hasReview).toEqual(false)
     const collabStorage = breweryListRes.data.storages.find(storage => storage.id === collabStorageRes.data.storage.id)
     if (collabStorage === undefined) throw new Error('collabStorage not found')
     expect(collabStorage.id).toEqual(collabStorageRes.data.storage.id)
     expect(collabStorage.beerId).toEqual(collabStorageRes.data.storage.beer)
     expect(collabStorage.breweries?.length).toEqual(2)
+    expect(collabStorage.hasReview).toEqual(false)
     const collabBrewery = collabStorage?.breweries?.find(brewery => brewery.id === breweryRes.data.brewery.id);
     const otherCollabBrewery = collabStorage?.breweries?.find(brewery => brewery.id === otherBreweryRes.data.brewery.id);
     expect(collabBrewery).toEqual({ id: breweryRes.data.brewery.id, name: breweryRes.data.brewery.name });
@@ -357,11 +359,13 @@ describe('storage tests', () => {
     if (kriekStorage === undefined) throw new Error('kriekStorage not found')
     expect(kriekStorage.id).toEqual(storageRes.data.storage.id)
     expect(kriekStorage.beerId).toEqual(storageRes.data.storage.beer)
+    expect(kriekStorage.hasReview).toEqual(false)
     const collabStorage = styleListRes.data.storages.find(storage => storage.id === collabStorageRes.data.storage.id)
     if (collabStorage === undefined) throw new Error('collabStorage not found')
     expect(collabStorage.id).toEqual(collabStorageRes.data.storage.id)
     expect(collabStorage.beerId).toEqual(collabStorageRes.data.storage.beer)
     expect(collabStorage.breweries?.length).toEqual(2)
+    expect(collabStorage.hasReview).toEqual(false)
     const collabStyle = collabStorage.styles?.find(style => style.id === styleRes.data.style.id);
     const otherCollabStyle = collabStorage.styles?.find(style => style.id === otherStyleRes.data.style.id);
     expect(collabStyle).toEqual({ id: styleRes.data.style.id, name: styleRes.data.style.name });

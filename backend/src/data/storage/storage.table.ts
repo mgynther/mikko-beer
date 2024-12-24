@@ -30,6 +30,7 @@ export interface DbJoinedStorage {
   container_id: string
   container_size: string | null
   container_type: string | null
+  has_review: boolean
   styles: Array<{
     style_id: string
     name: string | null

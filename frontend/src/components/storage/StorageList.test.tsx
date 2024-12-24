@@ -41,6 +41,7 @@ const storageOne: Storage = {
     size: '0.33'
   },
   createdAt: '2020-09-12T12:00:00.000Z',
+  hasReview: false,
   styles: [styleOne]
 }
 
@@ -56,6 +57,7 @@ const storageTwo: Storage = {
     size: '0.33'
   },
   createdAt: '2021-08-11T11:00:00.000Z',
+  hasReview: true,
   styles: [styleTwo]
 }
 

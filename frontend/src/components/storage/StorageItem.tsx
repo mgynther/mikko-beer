@@ -54,7 +54,7 @@ function StorageItem (props: Props): React.JSX.Element {
           <BeerLink beer={{
             id: storage.beerId,
             name: storage.beerName
-          }}/ >
+          }}/ >{storage.hasReview ? ' *' : null}
         </div>
         <div className='BeerStyles'>
           <StyleLinks styles={storage.styles} />

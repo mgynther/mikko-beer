@@ -40,6 +40,7 @@ const joinedStorage: JoinedStorage = {
     size: '0.10',
   },
   createdAt: new Date('2021-02-03T11:12:13.456Z'),
+  hasReview: true,
   styles: [{
     id: '1c753e76-1231-4ced-8fb0-94c2031283f8',
     name: 'IPA',

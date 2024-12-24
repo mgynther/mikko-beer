@@ -23,7 +23,7 @@ function StorageList (props: Props): React.JSX.Element {
       <LoadingIndicator isLoading={props.isLoading} />
       <div className='StorageHeading'>
           <div className='BeerBreweries'>Breweries</div>
-          <div className='BeerName'>Beer name</div>
+          <div className='BeerName'>Beer name (reviewed *)</div>
           <div className='BeerStyles'>Styles</div>
           <div className='BestBefore'>Best before</div>
           <div className='Actions'></div>

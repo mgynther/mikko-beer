@@ -45,6 +45,7 @@ export interface JoinedStorage {
   }>
   container: Container
   createdAt: Date
+  hasReview: boolean
   styles: Array<{
     id: string
     name: string

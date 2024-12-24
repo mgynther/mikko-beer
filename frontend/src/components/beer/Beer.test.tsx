@@ -74,6 +74,7 @@ const storage: Storage = {
   breweries: joinedReview.breweries,
   container: joinedReview.container,
   createdAt: '2019-09-29T09:00:00.000Z',
+  hasReview: false,
   styles: joinedReview.styles
 }
 

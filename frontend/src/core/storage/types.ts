@@ -16,6 +16,7 @@ export interface Storage {
   breweries: Brewery[]
   container: Container
   createdAt: string
+  hasReview: boolean
   styles: Style[]
 }
 

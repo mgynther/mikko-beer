@@ -69,6 +69,7 @@ export async function findStorageById (
     .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
     .innerJoin('style', 'beer_style.style', 'style.style_id')
     .innerJoin('container', 'storage.container', 'container.container_id')
+    .leftJoin('review', 'storage.beer', 'review.beer')
     .where('storage_id', '=', id)
     .select([
       'storage_id',
@@ -82,7 +83,8 @@ export async function findStorageById (
       'container.size as container_size',
       'container.type as container_type',
       'style.style_id as style_id',
-      'style.name as style_name'
+      'style.name as style_name',
+      'review.review_id as review_id'
     ])
     .execute()
 
@@ -127,7 +129,8 @@ type PossibleListColumns =
   'style.name as style_name' |
   'container.container_id as container_id' |
   'container.type as container_type' |
-  'container.size as container_size'
+  'container.size as container_size' |
+  'review.review_id as review_id'
 
 const listColumns: PossibleListColumns[] = [
   'storage.storage_id',
@@ -141,7 +144,8 @@ const listColumns: PossibleListColumns[] = [
   'style.name as style_name',
   'container.container_id as container_id',
   'container.type as container_type',
-  'container.size as container_size'
+  'container.size as container_size',
+  'review.review_id as review_id'
 ]
 
 export async function lockStorage (
@@ -172,6 +176,7 @@ export async function listStorages (
     .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
     .innerJoin('style', 'beer_style.style', 'style.style_id')
     .innerJoin('container', 'storage.container', 'container.container_id')
+    .leftJoin('review', 'storage.beer', 'review.beer')
     .select(listColumns)
     .where((eb) => eb.between('rn', start, end))
     .orderBy('best_before', 'asc')
@@ -227,6 +232,7 @@ export async function joinStorageData (
     .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
     .innerJoin('container', 'container.container_id', 'storage.container')
     .innerJoin('style', 'style.style_id', 'beer_style.style')
+    .leftJoin('review', 'storage.beer', 'review.beer')
     .select(listColumns)
     .orderBy('storage.best_before', 'asc')
     .orderBy('beer_name')
@@ -249,6 +255,7 @@ interface InternalJoinedStorage {
   container_size: string | null
   container_type: string | null
   created_at: Date
+  review_id: string | null
   style_id: string
   style_name: string | null
 }
@@ -263,6 +270,7 @@ function parseBreweryStorageRows (
     if (!contains(storageMap, storage.storage_id)) {
       storageMap[storage.storage_id] = {
         ...storage,
+        has_review: storage.review_id !== null,
         breweries: [{
           brewery_id: storage.brewery_id,
           name: storage.brewery_name
@@ -275,6 +283,7 @@ function parseBreweryStorageRows (
       storageArray.push(storageMap[storage.storage_id])
     } else {
       const existing = storageMap[storage.storage_id]
+      existing.has_review ||= storage.review_id !== null
       if (existing.breweries.find(
         brewery => brewery.brewery_id === storage.brewery_id) === undefined) {
         existing.breweries.push({
@@ -325,6 +334,7 @@ function toJoinedStorages (storageRows: DbJoinedStorage[]): JoinedStorage[] {
       type: row.container_type ?? ''
     },
     createdAt: row.created_at,
+    hasReview: row.has_review,
     styles: row.styles.map(style => ({
       id: style.style_id,
       name: style.name ?? ''

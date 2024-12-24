@@ -8,6 +8,7 @@ import * as breweryRepository from '../../../src/data/brewery/brewery.repository
 import * as containerRepository from '../../../src/data/container/container.repository'
 import * as storageRepository from '../../../src/data/storage/storage.repository'
 import * as styleRepository from '../../../src/data/style/style.repository'
+import { insertMultipleReviews } from '../review-helpers'
 
 describe('storage tests', () => {
   const ctx = new TestContext()
@@ -75,6 +76,50 @@ describe('storage tests', () => {
       )
       expect(lockedKey).toEqual(storage.id)
     })
+  })
+
+  it('storage does not have review', async () => {
+    const storage = await createStorage()
+    const found = await storageRepository.findStorageById(
+      ctx.db,
+      storage.id
+    )
+    expect(found?.hasReview).toEqual(false)
+  })
+
+  it('storages have reviews', async () => {
+    const noReviewStorage = await createStorage()
+    const { data } = await insertMultipleReviews(5, ctx.db)
+    await ctx.db.executeTransaction(async (trx: Transaction) => {
+      await storageRepository.insertStorage(
+        trx,
+        {
+          beer: data.otherBeer.id,
+          bestBefore: '2023-12-02T12:12:12.000Z',
+          container: data.container.id
+        }
+      )
+      await storageRepository.insertStorage(
+        trx,
+        {
+          beer: data.beer.id,
+          bestBefore: '2022-12-02T12:12:12.000Z',
+          container: data.container.id
+        }
+      )
+    })
+    const results = await storageRepository.listStorages(
+      ctx.db,
+      { skip: 0, size: 20 }
+    )
+    expect(results.length).toEqual(3)
+    const [ beerResult, otherBeerResult, noReviewResult ] = results
+    expect(beerResult.beerId).toEqual(data.beer.id)
+    expect(beerResult.hasReview).toEqual(true)
+    expect(otherBeerResult.beerId).toEqual(data.otherBeer.id)
+    expect(otherBeerResult.hasReview).toEqual(true)
+    expect(noReviewResult.beerId).toEqual(noReviewStorage.beer)
+    expect(noReviewResult.hasReview).toEqual(false)
   })
 
   it('delete storage', async () => {

@@ -32,6 +32,7 @@ const storage: Storage = {
     size: '0.33'
   },
   createdAt: '2020-09-12T12:00:00.000Z',
+  hasReview: false,
   styles: [style]
 }
 
@@ -45,16 +46,18 @@ const adminLogin = {
   refreshToken: 'refresh'
 }
 
+const dontDelete = {
+  useDelete: () => ({
+    delete: dontCall
+  })
+}
+
 test('renders storage', async () => {
   const user = userEvent.setup()
   const { getByRole, getByText } = render(
     <LinkWrapper>
       <StorageItem
-        deleteStorageIf={{
-          useDelete: () => ({
-            delete: dontCall
-          })
-        }}
+        deleteStorageIf={dontDelete}
         getConfirm={dontCall}
         getLogin={() => adminLogin}
         storage={storage}
@@ -72,6 +75,24 @@ test('renders storage', async () => {
   expect(reviewLink.getAttribute('href')).toEqual(path)
   await user.click(reviewLink)
   expect(window.location.pathname).toEqual(path)
+})
+
+test('renders storage with review', async () => {
+  const { getByRole, getByText } = render(
+    <LinkWrapper>
+      <StorageItem
+        deleteStorageIf={dontDelete}
+        getConfirm={dontCall}
+        getLogin={() => adminLogin}
+        storage={{
+          ...storage,
+          hasReview: true
+        }}
+      />
+    </LinkWrapper>
+  )
+  getByRole('link', { name: storage.beerName })
+  getByText('*')
 })
 
 test('deletes storage', async () => {
