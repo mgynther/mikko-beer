@@ -1,3 +1,4 @@
+import { expect } from 'earl'
 import * as userService from '../../../src/core/user/authorized-user.service'
 
 import type { AuthTokenConfig, AuthTokenPayload } from '../../../src/core/auth/auth-token'
@@ -6,15 +7,16 @@ import { Role } from '../../../src/core/user/user'
 import { dummyLog as log } from '../dummy-log'
 import { expectReject } from '../controller-error-helper'
 import {
-  ControllerError,
   invalidUserError,
   invalidUserIdError,
-  noRightsError
+  noRightsError,
+  userMismatchError
 } from '../../../src/core/errors'
 import type {
   CreateUserIf
 } from '../../../src/core/user/authorized-user.service'
-import { SignedInUser } from '../../../src/core/user/signed-in-user'
+import type { SignedInUser } from '../../../src/core/user/signed-in-user'
+import type { DbRefreshToken } from '../../../src/core/auth/refresh-token'
 
 const validCreateUserRequest: CreateUserType = {
   user: {
@@ -71,68 +73,6 @@ const authTokenConfig: AuthTokenConfig = {
   expiryDuration: '1min'
 }
 
-interface CreateRejectionTest {
-  token: AuthTokenPayload
-  body: unknown
-  error: ControllerError
-  title: string
-}
-
-const createRejectionTests: CreateRejectionTest[] = [
-  {
-    token: viewerAuthToken,
-    body: validCreateUserRequest,
-    error: noRightsError,
-    title: 'fail to create user as viewer'
-  },
-  {
-    token: viewerAuthToken,
-    body: invalidUserRequest,
-    error: noRightsError,
-    title: 'fail to create invalid user as viewer'
-  },
-  {
-    token: adminAuthToken,
-    body: invalidUserRequest,
-    error: invalidUserError,
-    title: 'fail to create invalid user as admin'
-  }
-]
-
-interface DeleteRejectionTest {
-  token: AuthTokenPayload
-  userId: string | undefined
-  error: ControllerError
-  title: string
-}
-
-const deleteRejectionTests: DeleteRejectionTest[] = [
-  {
-    token: viewerAuthToken,
-    userId: user.user.id,
-    error: noRightsError,
-    title: 'fail to delete user as viewer'
-  },
-  {
-    token: viewerAuthToken,
-    userId: user.user.id,
-    error: noRightsError,
-    title: 'fail to delete invalid user as viewer'
-  },
-  {
-    token: viewerAuthToken,
-    userId: undefined,
-    error: noRightsError,
-    title: 'fail to delete user with undefined id as viewer'
-  },
-  {
-    token: adminAuthToken,
-    userId: undefined,
-    error: invalidUserIdError,
-    title: 'fail to delete user with undefined id as admin'
-  },
-]
-
 describe('user authorized service unit tests', () => {
   it('create user as admin', async () => {
     await userService.createUser(
@@ -144,18 +84,28 @@ describe('user authorized service unit tests', () => {
     )
   })
 
-  createRejectionTests.forEach(testCase => {
-    it(testCase.title, async () => {
-      await expectReject(async () => {
-        await userService.createUser(
-          createIf,
-          testCase.token,
-          testCase.body,
-          authTokenConfig,
-          log
-        )
-      }, testCase.error)
-    })
+  it('fail to create user as viewer', async () => {
+    await expectReject(async () => {
+      await userService.createUser(
+        createIf,
+        viewerAuthToken,
+        validCreateUserRequest,
+        authTokenConfig,
+        log
+      )
+    }, noRightsError)
+  })
+
+  it('fail to create invalid user as admin', async () => {
+    await expectReject(async () => {
+      await userService.createUser(
+        createIf,
+        adminAuthToken,
+        invalidUserRequest,
+        authTokenConfig,
+        log
+      )
+    }, invalidUserError)
   })
 
   it('delete user as admin', async () => {
@@ -165,14 +115,93 @@ describe('user authorized service unit tests', () => {
     }, log)
   })
 
-  deleteRejectionTests.forEach(testCase => {
-    it(testCase.title, async () => {
-      await expectReject(async () => {
-        await userService.deleteUserById(deleteUserById, {
-          authTokenPayload: testCase.token,
-          id: testCase.userId
-        }, log)
-      }, testCase.error)
+  it('fail to delete user as viewer', async () => {
+    await expectReject(async () => {
+      await userService.deleteUserById(deleteUserById, {
+        authTokenPayload: viewerAuthToken,
+        id: user.user.id
+      }, log)
+    }, noRightsError)
+  })
+
+  it('fail to delete user with undefined id as admin', async () => {
+    await expectReject(async () => {
+      await userService.deleteUserById(deleteUserById, {
+        authTokenPayload: adminAuthToken,
+        id: undefined
+      }, log)
+    }, invalidUserIdError)
+  })
+
+  const dbRefreshToken: DbRefreshToken = {
+    id: '0cc90f4e-706c-4edc-a58c-67f8008cf27e',
+    userId: user.user.id
+  }
+
+  it('find viewer user as admin', async () => {
+    const user = {
+      id: viewerAuthToken.userId,
+      role: viewerAuthToken.role,
+      username: 'viewer'
+    }
+    const result = await userService.findUserById(
+      async () => (user),
+      async () => dbRefreshToken,
+      {
+        authTokenPayload: adminAuthToken,
+        id: user.id
+      },
+      log
+    )
+    expect(result).toEqual(user)
+  })
+
+  it('fail to find admin user as viewer', async () => {
+    const user = {
+      id: adminAuthToken.userId,
+      role: adminAuthToken.role,
+      username: 'admin'
+    }
+    await expectReject(async () => {
+      await userService.findUserById(
+        async () => (user),
+        async () => dbRefreshToken,
+        {
+          authTokenPayload: viewerAuthToken,
+          id: user.id
+        },
+        log
+      )
+    }, userMismatchError)
+  })
+  ;
+
+  [adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
+    it(`find self user as ${token.role}`, async () => {
+      const user = {
+        id: token.userId,
+        role: token.role,
+        username: 'doesnotmatter'
+      }
+      const result = await userService.findUserById(
+        async () => (user),
+        async () => dbRefreshToken,
+        {
+          authTokenPayload: token,
+          id: token.userId
+        },
+        log
+      )
+      expect(result).toEqual(user)
+    })
+
+    it(`list user as ${token.role}`, async () => {
+      const result = await userService.listUsers(
+        async () => [user.user],
+        token,
+        log
+      )
+      expect(result).toEqual([user.user])
     })
   })
 })

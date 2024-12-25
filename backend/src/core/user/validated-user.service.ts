@@ -1,13 +1,11 @@
-import * as authorizationService from '../auth/authorization.service'
-import * as userService from './validated-user.service'
+import * as userService from '../user/user.service'
 
-import type { IdRequest } from "../request"
 import type { CreateAnonymousUserRequest, User } from "./user"
+import { validateCreateUserRequest, validateUserId } from "./user"
 
 import type { log } from '../log'
 import type {
-  AuthTokenConfig,
-  AuthTokenPayload
+  AuthTokenConfig
 } from '../auth/auth-token'
 import type { DbRefreshToken } from '../auth/refresh-token'
 import type { PasswordSignInMethod } from './sign-in-method'
@@ -24,51 +22,55 @@ export interface CreateUserIf {
 
 export async function createUser (
   createUserIf: CreateUserIf,
-  authTokenPayload: AuthTokenPayload,
   body: unknown,
   authTokenConfig: AuthTokenConfig,
   log: log
 ): Promise<SignedInUser> {
-  authorizationService.authorizeAdmin(authTokenPayload)
-  return await userService.createUser(createUserIf, body, authTokenConfig, log)
+  const request = validateCreateUserRequest(body)
+  const user = await userService.createAnonymousUser(
+    createUserIf.createAnonymousUser,
+    createUserIf.insertRefreshToken,
+    request.role,
+    authTokenConfig,
+    log
+  )
+  const username = await createUserIf.addPasswordSignInMethod(
+    user.user.id,
+    request.passwordSignInMethod,
+  )
+  return {
+    ...user,
+    user: { ...user.user, username }
+  }
 }
 
 export async function findUserById (
   findUserById: (userId: string) => Promise<User | undefined>,
-  findRefreshToken: (
-    userId: string,
-    refreshTokenId: string
-  ) => Promise<DbRefreshToken | undefined>,
-  request: IdRequest,
+  id: string | undefined,
   log: log
 ): Promise<User> {
-  await authorizationService.authorizeUser(
-    request.id, request.authTokenPayload, findRefreshToken)
   return await userService.findUserById(
     findUserById,
-    request.id,
+    validateUserId(id),
     log
   )
 }
 
 export async function listUsers (
   listUsers: () => Promise<User[]>,
-  authTokenPayload: AuthTokenPayload,
   log: log
 ): Promise<User[]> {
-  authorizationService.authorizeViewer(authTokenPayload)
   return await userService.listUsers(listUsers, log)
 }
 
 export async function deleteUserById (
   deleteUserById: (id: string) => Promise<void>,
-  request: IdRequest,
+  id: string | undefined,
   log: log
 ): Promise<void> {
-  authorizationService.authorizeAdmin(request.authTokenPayload)
   await userService.deleteUserById(
     deleteUserById,
-    request.id,
+    validateUserId(id),
     log
   )
 }
