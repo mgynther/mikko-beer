@@ -1,7 +1,9 @@
+import { expect } from 'earl'
 import * as storageService from '../../../src/core/storage/authorized.service'
 
 import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
 import type {
+  JoinedStorage,
   Storage,
   CreateStorageRequest,
   UpdateStorageRequest,
@@ -13,9 +15,7 @@ import { Role } from '../../../src/core/user/user'
 import { dummyLog as log } from '../dummy-log'
 import { expectReject } from '../controller-error-helper'
 import {
-  ControllerError,
   invalidStorageError,
-  invalidStorageIdError,
   noRightsError
 } from '../../../src/core/errors'
 
@@ -74,80 +74,6 @@ const viewerAuthToken: AuthTokenPayload = {
   refreshTokenId: '5354aaa4-b3d0-45d8-8c81-75d18588b58d'
 }
 
-interface CreateRejectionTest {
-  token: AuthTokenPayload
-  body: unknown
-  error: ControllerError
-  title: string
-}
-
-const createRejectionTests: CreateRejectionTest[] = [
-  {
-    token: viewerAuthToken,
-    body: validCreateStorageRequest,
-    error: noRightsError,
-    title: 'fail to create storage as viewer'
-  },
-  {
-    token: viewerAuthToken,
-    body: invalidStorageRequest,
-    error: noRightsError,
-    title: 'fail to create invalid storage as viewer'
-  },
-  {
-    token: adminAuthToken,
-    body: invalidStorageRequest,
-    error: invalidStorageError,
-    title: 'fail to create invalid storage as admin'
-  }
-]
-
-interface UpdateRejectionTest {
-  token: AuthTokenPayload
-  body: unknown
-  storageId: string | undefined
-  error: ControllerError
-  title: string
-}
-
-const updateRejectionTests: UpdateRejectionTest[] = [
-  {
-    token: viewerAuthToken,
-    body: validUpdateStorageRequest,
-    storageId: storage.id,
-    error: noRightsError,
-    title: 'fail to update storage as viewer'
-  },
-  {
-    token: viewerAuthToken,
-    body: invalidStorageRequest,
-    storageId: storage.id,
-    error: noRightsError,
-    title: 'fail to update invalid storage as viewer'
-  },
-  {
-    token: viewerAuthToken,
-    body: validUpdateStorageRequest,
-    storageId: undefined,
-    error: noRightsError,
-    title: 'fail to update storage with undefined id as viewer'
-  },
-  {
-    token: adminAuthToken,
-    body: invalidStorageRequest,
-    storageId: storage.id,
-    error: invalidStorageError,
-    title: 'fail to update invalid storage as admin'
-  },
-  {
-    token: adminAuthToken,
-    body: validUpdateStorageRequest,
-    storageId: undefined,
-    error: invalidStorageIdError,
-    title: 'fail to update storage with undefined id as admin'
-  },
-]
-
 describe('storage authorized service unit tests', () => {
   it('create storage as admin', async () => {
     await storageService.createStorage(createIf, {
@@ -156,15 +82,22 @@ describe('storage authorized service unit tests', () => {
     }, log)
   })
 
-  createRejectionTests.forEach(testCase => {
-    it(testCase.title, async () => {
-      await expectReject(async () => {
-        await storageService.createStorage(createIf, {
-          authTokenPayload: testCase.token,
-          body: testCase.body
-        }, log)
-      }, testCase.error)
-    })
+  it('fail to create storage as viewer', async () => {
+    await expectReject(async () => {
+      await storageService.createStorage(createIf, {
+        authTokenPayload: viewerAuthToken,
+        body: validCreateStorageRequest
+      }, log)
+    }, noRightsError)
+  })
+
+  it('fail to create invalid storage as admin', async () => {
+    await expectReject(async () => {
+      await storageService.createStorage(createIf, {
+        authTokenPayload: adminAuthToken,
+        body: invalidStorageRequest
+      }, log)
+    }, invalidStorageError)
   })
 
   it('update storage as admin', async () => {
@@ -174,14 +107,121 @@ describe('storage authorized service unit tests', () => {
     }, validUpdateStorageRequest, log)
   })
 
-  updateRejectionTests.forEach(testCase => {
-    it(testCase.title, async () => {
-      await expectReject(async () => {
-        await storageService.updateStorage(updateIf, {
-          authTokenPayload: testCase.token,
-          id: testCase.storageId
-        }, testCase.body, log)
-      }, testCase.error)
+  it('fail to update storage as viewer', async () => {
+    await expectReject(async () => {
+      await storageService.updateStorage(updateIf, {
+        authTokenPayload: viewerAuthToken,
+        id: storage.id
+      }, validUpdateStorageRequest, log)
+    }, noRightsError)
+  })
+
+  it('fail to update invalid storage as admin', async () => {
+    await expectReject(async () => {
+      await storageService.updateStorage(updateIf, {
+        authTokenPayload: adminAuthToken,
+        id: storage.id
+      }, invalidStorageRequest, log)
+    }, invalidStorageError)
+  })
+
+  it('delete storage as admin', async () => {
+    await storageService.deleteStorageById(async () => undefined, {
+      authTokenPayload: adminAuthToken,
+      id: storage.id
+    }, log)
+  })
+
+  it('fail to delete storage as viewer', async () => {
+    await expectReject(async () => {
+      await storageService.deleteStorageById(async () => undefined, {
+        authTokenPayload: viewerAuthToken,
+        id: storage.id
+      }, log)
+    }, noRightsError)
+  })
+  ;
+
+  [adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
+    const joinedStorage: JoinedStorage = {
+      ...storage,
+      bestBefore: new Date(storage.bestBefore),
+      beerId: storage.beer,
+      beerName: 'Weizenbock',
+      breweries: [{
+        id: 'dd528975-07b6-4e11-b523-5c64986b618f',
+        name: 'Koskipanimo'
+      }],
+      container: {
+        id: 'c14851cd-9740-4cdc-8248-e1561d26ff9b',
+        size: '0.50',
+        type: 'draft'
+      },
+      createdAt: new Date('2022-12-30T17:15:12.123.Z'),
+      hasReview: false,
+      styles: [{
+        id: 'd3353300-9ccc-4640-940a-5391655a3a73',
+        name: 'Weizenbock'
+      }]
+    }
+
+    it(`find storage as ${token.role}`, async () => {
+      const result = await storageService.findStorageById(
+        async () => joinedStorage,
+        {
+          authTokenPayload: token,
+          id: storage.id
+        },
+        log
+      )
+      expect(result).toEqual(joinedStorage)
+    })
+
+    it(`list storages as ${token.role}`, async () => {
+      const result = await storageService.listStorages(
+        async () => [joinedStorage],
+        token,
+        { skip: 0, size: 20 },
+        log
+      )
+      expect(result).toEqual([joinedStorage])
+    })
+
+    it(`list storages by beer as ${token.role}`, async () => {
+      const result = await storageService.listStoragesByBeer(
+        async () => [joinedStorage],
+        {
+          authTokenPayload: token,
+          id: joinedStorage.beerId
+        },
+        log
+      )
+      expect(result).toEqual([joinedStorage])
+    })
+
+    it(`list storages by brewery as ${token.role}`, async () => {
+      const result = await storageService.listStoragesByBrewery(
+        async () => [joinedStorage],
+        {
+          authTokenPayload: token,
+          id: joinedStorage.breweries[0].id
+        },
+        log
+      )
+      expect(result).toEqual([joinedStorage])
+    })
+
+    it(`list storages by style as ${token.role}`, async () => {
+      const result = await storageService.listStoragesByStyle(
+        async () => [joinedStorage],
+        {
+          authTokenPayload: token,
+          id: joinedStorage.styles[0].id
+        },
+        log
+      )
+      expect(result).toEqual([joinedStorage])
     })
   })
+
 })
