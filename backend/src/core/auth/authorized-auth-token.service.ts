@@ -1,10 +1,8 @@
 import * as authorizationService from '../auth/authorization.service'
-import * as authTokenService from './auth-token.service'
+import * as authTokenService from './validated-auth-token.service'
 
 import type { IdRequest } from "../request";
 import type { DbRefreshToken } from "./refresh-token";
-import { validateRefreshToken } from "./refresh-token";
-import { validateUserId } from '../user/user';
 
 export async function deleteRefreshToken (
   findRefreshToken: (
@@ -18,11 +16,10 @@ export async function deleteRefreshToken (
 ): Promise<void> {
   await authorizationService.authorizeUser(
     request.id, request.authTokenPayload, findRefreshToken)
-  const refreshToken = validateRefreshToken(body)
   await authTokenService.deleteRefreshToken(
     deleteRefreshToken,
-    validateUserId(request.id),
-    refreshToken,
+    request.id,
+    body,
     authTokenSecret
   )
 }
