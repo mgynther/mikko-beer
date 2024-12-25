@@ -1,3 +1,4 @@
+import { expect } from 'earl'
 import * as reviewService from '../../../src/core/review/authorized.service'
 
 import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
@@ -5,6 +6,8 @@ import type {
   Review,
   CreateReviewRequest,
   CreateIf,
+  JoinedReview,
+  ReviewListOrder,
   UpdateReviewRequest,
   UpdateIf
 } from '../../../src/core/review/review'
@@ -12,9 +15,7 @@ import { Role } from '../../../src/core/user/user'
 import { dummyLog as log } from '../dummy-log'
 import { expectReject } from '../controller-error-helper'
 import {
-  ControllerError,
   invalidReviewError,
-  invalidReviewIdError,
   noRightsError
 } from '../../../src/core/errors'
 
@@ -79,80 +80,6 @@ const viewerAuthToken: AuthTokenPayload = {
   refreshTokenId: '35cab924-9f13-4a9c-a204-77d77dca0c5f'
 }
 
-interface CreateRejectionTest {
-  token: AuthTokenPayload
-  body: unknown
-  error: ControllerError
-  title: string
-}
-
-const createRejectionTests: CreateRejectionTest[] = [
-  {
-    token: viewerAuthToken,
-    body: validCreateReviewRequest,
-    error: noRightsError,
-    title: 'fail to create review as viewer'
-  },
-  {
-    token: viewerAuthToken,
-    body: invalidReviewRequest,
-    error: noRightsError,
-    title: 'fail to create invalid review as viewer'
-  },
-  {
-    token: adminAuthToken,
-    body: invalidReviewRequest,
-    error: invalidReviewError,
-    title: 'fail to create invalid review as admin'
-  }
-]
-
-interface UpdateRejectionTest {
-  token: AuthTokenPayload
-  body: unknown
-  reviewId: string | undefined
-  error: ControllerError
-  title: string
-}
-
-const updateRejectionTests: UpdateRejectionTest[] = [
-  {
-    token: viewerAuthToken,
-    body: validUpdateReviewRequest,
-    reviewId: review.id,
-    error: noRightsError,
-    title: 'fail to update review as viewer'
-  },
-  {
-    token: viewerAuthToken,
-    body: invalidReviewRequest,
-    reviewId: review.id,
-    error: noRightsError,
-    title: 'fail to update invalid review as viewer'
-  },
-  {
-    token: viewerAuthToken,
-    body: validUpdateReviewRequest,
-    reviewId: undefined,
-    error: noRightsError,
-    title: 'fail to update review with undefined id as viewer'
-  },
-  {
-    token: adminAuthToken,
-    body: invalidReviewRequest,
-    reviewId: review.id,
-    error: invalidReviewError,
-    title: 'fail to update invalid review as admin'
-  },
-  {
-    token: adminAuthToken,
-    body: validUpdateReviewRequest,
-    reviewId: undefined,
-    error: invalidReviewIdError,
-    title: 'fail to update review with undefined id as admin'
-  },
-]
-
 describe('review authorized service unit tests', () => {
   it('create review as admin', async () => {
     await reviewService.createReview(createIf, {
@@ -161,15 +88,22 @@ describe('review authorized service unit tests', () => {
     }, storageId, log)
   })
 
-  createRejectionTests.forEach(testCase => {
-    it(testCase.title, async () => {
-      await expectReject(async () => {
-        await reviewService.createReview(createIf, {
-          authTokenPayload: testCase.token,
-          body: testCase.body
-        }, storageId, log)
-      }, testCase.error)
-    })
+  it('fail to create review as viewer', async () => {
+    await expectReject(async () => {
+      await reviewService.createReview(createIf, {
+        authTokenPayload: viewerAuthToken,
+        body: validCreateReviewRequest
+      }, storageId, log)
+    }, noRightsError)
+  })
+
+  it('fail to create invalid review as admin', async () => {
+    await expectReject(async () => {
+      await reviewService.createReview(createIf, {
+        authTokenPayload: adminAuthToken,
+        body: invalidReviewRequest
+      }, storageId, log)
+    }, invalidReviewError)
   })
 
   it('update review as admin', async () => {
@@ -179,14 +113,109 @@ describe('review authorized service unit tests', () => {
     }, validUpdateReviewRequest, log)
   })
 
-  updateRejectionTests.forEach(testCase => {
-    it(testCase.title, async () => {
-      await expectReject(async () => {
-        await reviewService.updateReview(updateIf, {
-          authTokenPayload: testCase.token,
-          id: testCase.reviewId
-        }, testCase.body, log)
-      }, testCase.error)
+  it('fail to update review as viewer', async () => {
+    await expectReject(async () => {
+      await reviewService.updateReview(updateIf, {
+        authTokenPayload: viewerAuthToken,
+        id: review.id
+      }, validUpdateReviewRequest, log)
+    }, noRightsError)
+  })
+
+  it('fail to update invalid review as admin', async () => {
+    await expectReject(async () => {
+      await reviewService.updateReview(updateIf, {
+        authTokenPayload: adminAuthToken,
+        id: review.id
+      }, invalidReviewRequest, log)
+    }, invalidReviewError)
+  })
+  ;
+
+  [adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
+    const reviewListOrder: ReviewListOrder = {
+      property: 'beer_name',
+      direction: 'asc'
+    }
+    const joinedReview: JoinedReview = {
+      ...review,
+      beerId: review.beer,
+      beerName: 'Weizenbock',
+      breweries: [{
+        id: '10a7f306-5cf8-480e-aa52-9d85a421c7c0',
+        name: 'Koskipanimo'
+      }],
+      container: {
+        id: '30f66fe6-4f2c-4b76-a03e-e9ebead65a14',
+        size: '0.50',
+        type: 'draft'
+      },
+      styles: [{
+        id: 'c9ea7133-9392-4c28-b8f5-33c61350809c',
+        name: 'Weizenbock'
+      }]
+    }
+    it(`find review as ${token.role}`, async () => {
+      const result = await reviewService.findReviewById(
+        async () => review,
+        {
+          authTokenPayload: token,
+          id: review.id
+        },
+        log
+      )
+      expect(result).toEqual(review)
+    })
+
+    it(`list reviews as ${token.role}`, async () => {
+      const result = await reviewService.listReviews(
+        async () => [joinedReview],
+        token,
+        { skip: 0, size: 20 },
+        reviewListOrder,
+        log
+      )
+      expect(result).toEqual([joinedReview])
+    })
+
+    it(`list reviews by beer as ${token.role}`, async () => {
+      const result = await reviewService.listReviewsByBeer(
+        async () => [joinedReview],
+        {
+          authTokenPayload: token,
+          id: joinedReview.beerId
+        },
+        reviewListOrder,
+        log
+      )
+      expect(result).toEqual([joinedReview])
+    })
+
+    it(`list reviews by brewery as ${token.role}`, async () => {
+      const result = await reviewService.listReviewsByBrewery(
+        async () => [joinedReview],
+        {
+          authTokenPayload: token,
+          id: joinedReview.breweries[0].id
+        },
+        reviewListOrder,
+        log
+      )
+      expect(result).toEqual([joinedReview])
+    })
+
+    it(`list reviews by style as ${token.role}`, async () => {
+      const result = await reviewService.listReviewsByStyle(
+        async () => [joinedReview],
+        {
+          authTokenPayload: token,
+          id: joinedReview.styles[0].id
+        },
+        reviewListOrder,
+        log
+      )
+      expect(result).toEqual([joinedReview])
     })
   })
+
 })

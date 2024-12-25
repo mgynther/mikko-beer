@@ -1,5 +1,4 @@
-import * as authorizationService from '../auth/authorization.service'
-import * as reviewService from './internal/validated.service'
+import * as reviewService from './service'
 
 import type {
   CreateIf,
@@ -7,22 +6,28 @@ import type {
   Review,
   ReviewListOrder,
   UpdateIf
-} from "./review";
-import type { log } from '../log'
-import type { BodyRequest, IdRequest } from '../request';
-import type { Pagination } from '../pagination';
-import type { AuthTokenPayload } from '../auth/auth-token';
+} from "../review";
+import {
+  validateCreateReviewRequest,
+  validateReviewId,
+  validateUpdateReviewRequest
+} from "../review";
+import type { log } from '../../log'
+import type { Pagination } from '../../pagination';
+import { validateBeerId } from '../../beer/beer';
+import { validateBreweryId } from '../../brewery/brewery';
+import { validateStyleId } from '../../style/style';
 
 export async function createReview (
   createIf: CreateIf,
-  request: BodyRequest,
+  body: unknown,
   fromStorageId: string | undefined,
   log: log
 ): Promise<Review> {
-  authorizationService.authorizeAdmin(request.authTokenPayload)
+  const createRequest = validateCreateReviewRequest(body)
   return await reviewService.createReview(
     createIf,
-    request.body,
+    createRequest,
     fromStorageId,
     log
   )
@@ -30,28 +35,27 @@ export async function createReview (
 
 export async function updateReview (
   updateIf: UpdateIf,
-  request: IdRequest,
+  id: string | undefined,
   body: unknown,
   log: log
 ): Promise<Review> {
-  authorizationService.authorizeAdmin(request.authTokenPayload)
+  const updateRequest = validateUpdateReviewRequest(body, id)
   return await reviewService.updateReview(
     updateIf,
-    request.id,
-    body,
+    updateRequest.id,
+    updateRequest.request,
     log
   )
 }
 
 export async function findReviewById (
   find: (id: string) => Promise<Review | undefined>,
-  request: IdRequest,
+  id: string | undefined,
   log: log
 ): Promise<Review> {
-  authorizationService.authorizeViewer(request.authTokenPayload)
   return await reviewService.findReviewById(
     find,
-    request.id,
+    validateReviewId(id),
     log
   )
 }
@@ -61,12 +65,10 @@ export async function listReviews (
     pagination: Pagination,
     reviewListOrder: ReviewListOrder
   ) => Promise<JoinedReview[]>,
-  authTokenPayload: AuthTokenPayload,
   pagination: Pagination,
   reviewListOrder: ReviewListOrder,
   log: log
 ): Promise<JoinedReview[]> {
-  authorizationService.authorizeViewer(authTokenPayload)
   return await reviewService.listReviews(
     list,
     pagination,
@@ -80,14 +82,13 @@ export async function listReviewsByBeer (
     beerId: string,
     reviewListOrder: ReviewListOrder
   ) => Promise<JoinedReview[]>,
-  request: IdRequest,
+  beerId: string | undefined,
   reviewListOrder: ReviewListOrder,
   log: log
 ): Promise<JoinedReview[]> {
-  authorizationService.authorizeViewer(request.authTokenPayload)
   return await reviewService.listReviewsByBeer(
     list,
-    request.id,
+    validateBeerId(beerId),
     reviewListOrder,
     log
   )
@@ -98,14 +99,13 @@ export async function listReviewsByBrewery (
     breweryId: string,
     reviewListOrder: ReviewListOrder
   ) => Promise<JoinedReview[]>,
-  request: IdRequest,
+  breweryId: string | undefined,
   reviewListOrder: ReviewListOrder,
   log: log
 ): Promise<JoinedReview[]> {
-  authorizationService.authorizeViewer(request.authTokenPayload)
   return await reviewService.listReviewsByBrewery(
     list,
-    request.id,
+    validateBreweryId(breweryId),
     reviewListOrder,
     log
   )
@@ -116,14 +116,13 @@ export async function listReviewsByStyle (
     styleId: string,
     reviewListOrder: ReviewListOrder
   ) => Promise<JoinedReview[]>,
-  request: IdRequest,
+  styleId: string | undefined,
   reviewListOrder: ReviewListOrder,
   log: log
 ): Promise<JoinedReview[]> {
-  authorizationService.authorizeViewer(request.authTokenPayload)
   return await reviewService.listReviewsByStyle(
     list,
-    request.id,
+    validateStyleId(styleId),
     reviewListOrder,
     log
   )
