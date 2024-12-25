@@ -1,8 +1,11 @@
+import { expect } from 'earl'
 import * as styleService from '../../../src/core/style/authorized.service'
 
 import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
 import type {
   Style,
+  StyleWithParentIds,
+  StyleWithParentsAndChildren,
   CreateStyleRequest,
   CreateStyleIf,
   UpdateStyleRequest,
@@ -12,9 +15,7 @@ import { Role } from '../../../src/core/user/user'
 import { dummyLog as log } from '../dummy-log'
 import { expectReject } from '../controller-error-helper'
 import {
-  ControllerError,
   invalidStyleError,
-  invalidStyleIdError,
   noRightsError
 } from '../../../src/core/errors'
 
@@ -66,80 +67,6 @@ const viewerAuthToken: AuthTokenPayload = {
   refreshTokenId: '2223ec08-40e9-4fda-a5db-c66bafa796cc'
 }
 
-interface CreateRejectionTest {
-  token: AuthTokenPayload
-  body: unknown
-  error: ControllerError
-  title: string
-}
-
-const createRejectionTests: CreateRejectionTest[] = [
-  {
-    token: viewerAuthToken,
-    body: validCreateStyleRequest,
-    error: noRightsError,
-    title: 'fail to create style as viewer'
-  },
-  {
-    token: viewerAuthToken,
-    body: invalidStyleRequest,
-    error: noRightsError,
-    title: 'fail to create invalid style as viewer'
-  },
-  {
-    token: adminAuthToken,
-    body: invalidStyleRequest,
-    error: invalidStyleError,
-    title: 'fail to create invalid style as admin'
-  }
-]
-
-interface UpdateRejectionTest {
-  token: AuthTokenPayload
-  body: unknown
-  styleId: string | undefined
-  error: ControllerError
-  title: string
-}
-
-const updateRejectionTests: UpdateRejectionTest[] = [
-  {
-    token: viewerAuthToken,
-    body: validUpdateStyleRequest,
-    styleId: style.id,
-    error: noRightsError,
-    title: 'fail to update style as viewer'
-  },
-  {
-    token: viewerAuthToken,
-    body: invalidStyleRequest,
-    styleId: style.id,
-    error: noRightsError,
-    title: 'fail to update invalid style as viewer'
-  },
-  {
-    token: viewerAuthToken,
-    body: validUpdateStyleRequest,
-    styleId: undefined,
-    error: noRightsError,
-    title: 'fail to update style with undefined id as viewer'
-  },
-  {
-    token: adminAuthToken,
-    body: invalidStyleRequest,
-    styleId: style.id,
-    error: invalidStyleError,
-    title: 'fail to update invalid style as admin'
-  },
-  {
-    token: adminAuthToken,
-    body: validUpdateStyleRequest,
-    styleId: undefined,
-    error: invalidStyleIdError,
-    title: 'fail to update style with undefined id as admin'
-  },
-]
-
 describe('style authorized service unit tests', () => {
   it('create style as admin', async () => {
     await styleService.createStyle(createIf, {
@@ -148,15 +75,22 @@ describe('style authorized service unit tests', () => {
     }, log)
   })
 
-  createRejectionTests.forEach(testCase => {
-    it(testCase.title, async () => {
-      await expectReject(async () => {
-        await styleService.createStyle(createIf, {
-          authTokenPayload: testCase.token,
-          body: testCase.body
-        }, log)
-      }, testCase.error)
-    })
+  it('fail to create style as viewer', async () => {
+    await expectReject(async () => {
+      await styleService.createStyle(createIf, {
+        authTokenPayload: viewerAuthToken,
+        body: validCreateStyleRequest
+      }, log)
+    }, noRightsError)
+  })
+
+  it('fail to create invalid style as admin', async () => {
+    await expectReject(async () => {
+      await styleService.createStyle(createIf, {
+        authTokenPayload: adminAuthToken,
+        body: invalidStyleRequest
+      }, log)
+    }, invalidStyleError)
   })
 
   it('update style as admin', async () => {
@@ -166,14 +100,55 @@ describe('style authorized service unit tests', () => {
     }, validUpdateStyleRequest, log)
   })
 
-  updateRejectionTests.forEach(testCase => {
-    it(testCase.title, async () => {
-      await expectReject(async () => {
-        await styleService.updateStyle(updateIf, {
-          authTokenPayload: testCase.token,
-          id: testCase.styleId
-        }, testCase.body, log)
-      }, testCase.error)
+  it('fail to update style as viewer', async () => {
+    await expectReject(async () => {
+      await styleService.updateStyle(updateIf, {
+        authTokenPayload: viewerAuthToken,
+        id: style.id
+      }, validUpdateStyleRequest, log)
+    }, noRightsError)
+  })
+
+  it('fail to update invalid style as admin', async () => {
+    await expectReject(async () => {
+      await styleService.updateStyle(updateIf, {
+        authTokenPayload: adminAuthToken,
+        id: style.id
+      }, invalidStyleRequest, log)
+    }, invalidStyleError)
+  })
+  ;
+
+  [adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
+    it(`find style as ${token.role}`, async () => {
+      const styleWithParentsAndChilden: StyleWithParentsAndChildren = {
+        ...style,
+        children: [],
+        parents: []
+      }
+      const result = await styleService.findStyleById(
+        async () => styleWithParentsAndChilden,
+        {
+          authTokenPayload: token,
+          id: style.id
+        },
+        log
+      )
+      expect(result).toEqual(styleWithParentsAndChilden)
+    })
+
+    it(`list styles as ${token.role}`, async () => {
+      const styleWithParentIds: StyleWithParentIds = {
+        ...style,
+        parents: []
+      }
+      const result = await styleService.listStyles(
+        async () => [styleWithParentIds],
+        token,
+        log
+      )
+      expect(result).toEqual([styleWithParentIds])
     })
   })
+
 })

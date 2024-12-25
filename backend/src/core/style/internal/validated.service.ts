@@ -1,58 +1,57 @@
-import * as authorizationService from '../auth/authorization.service'
-import * as styleService from './internal/validated.service'
+import * as styleService from './service'
 
-import type { BodyRequest, IdRequest } from "../request"
 import type {
   CreateStyleIf,
   StyleWithParentIds,
   StyleWithParentsAndChildren,
   UpdateStyleIf
-} from "./style"
-import type { log } from '../log'
-import type { AuthTokenPayload } from '../auth/auth-token'
+} from "../style"
+import {
+  validateCreateStyleRequest,
+  validateStyleId,
+  validateUpdateStyleRequest
+} from "../style"
+import type { log } from '../../log'
 
 export async function createStyle (
   createStyleIf: CreateStyleIf,
-  request: BodyRequest,
+  body: unknown,
   log: log
 ): Promise<StyleWithParentIds> {
-  authorizationService.authorizeAdmin(request.authTokenPayload)
-  return await styleService.createStyle(createStyleIf, request.body, log)
+  const createStyleRequest = validateCreateStyleRequest(body)
+  return await styleService.createStyle(createStyleIf, createStyleRequest, log)
 }
 
 export async function updateStyle (
   updateStyleIf: UpdateStyleIf,
-  request: IdRequest,
+  id: string | undefined,
   body: unknown,
   log: log
 ): Promise<StyleWithParentIds> {
-  authorizationService.authorizeAdmin(request.authTokenPayload)
+  const validRequest = validateUpdateStyleRequest(body, id)
   return await styleService.updateStyle(
     updateStyleIf,
-    request.id,
-    body,
+    validRequest.id,
+    validRequest.request,
     log
   )
 }
 
 export async function findStyleById (
   find: (id: string) => Promise<StyleWithParentsAndChildren | undefined>,
-  request: IdRequest,
+  id: string | undefined,
   log: log
 ): Promise<StyleWithParentsAndChildren> {
-  authorizationService.authorizeViewer(request.authTokenPayload)
   return await styleService.findStyleById(
     find,
-    request.id,
+    validateStyleId(id),
     log
   )
 }
 
 export async function listStyles (
   list: () => Promise<StyleWithParentIds[]>,
-  authTokenPayload: AuthTokenPayload,
   log: log
 ): Promise<StyleWithParentIds[]> {
-  authorizationService.authorizeViewer(authTokenPayload)
   return await styleService.listStyles(list, log)
 }
