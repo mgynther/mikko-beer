@@ -120,7 +120,7 @@ describe('container authorized service unit tests', () => {
       expect(result).toEqual(container)
     })
 
-    it(`list breweries as ${token.role}`, async () => {
+    it(`list containers as ${token.role}`, async () => {
       const result = await containerService.listContainers(
         async () => [container],
         token,
