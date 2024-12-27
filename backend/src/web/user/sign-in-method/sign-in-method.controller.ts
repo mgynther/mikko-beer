@@ -8,7 +8,6 @@ import * as authTokenService from '../../../core/auth/auth-token.service'
 import * as userService from '../../../core/user/user.service'
 import type { Transaction } from '../../../data/database'
 
-import type { Tokens } from '../../../core/auth/tokens'
 import type { DbRefreshToken } from '../../../core/auth/refresh-token'
 import { validateRefreshToken } from '../../../core/auth/refresh-token'
 import type { Router } from '../../router'
@@ -36,21 +35,18 @@ export function signInMethodController (router: Router): void {
           }, username)
         },
         findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
-        createTokens: function(user: User): Promise<Tokens> {
-          const authTokenConfig: AuthTokenConfig = getAuthTokenConfig(ctx)
-          return authTokenService.createTokens((
+        insertRefreshToken: (
             userId: string,
-          ): Promise<DbRefreshToken> => {
-            return refreshTokenRepository.insertRefreshToken(
-              trx,
-              userId,
-              new Date()
-            )
-          }, user, authTokenConfig)
-        },
+        ): Promise<DbRefreshToken> => {
+          return refreshTokenRepository.insertRefreshToken(
+            trx,
+            userId,
+            new Date()
+          )
+        }
       }
       return await signInMethodService.signInUsingPassword(
-        signInUsingPasswordIf, body
+        signInUsingPasswordIf, body, getAuthTokenConfig(ctx)
       )
     })
 

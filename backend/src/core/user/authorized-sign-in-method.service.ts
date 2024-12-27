@@ -13,16 +13,19 @@ import type {
 import type { IdRequest } from '../request'
 import type { SignedInUser } from './signed-in-user'
 import { validateUserId } from './user'
+import type { AuthTokenConfig } from '../auth/auth-token'
 
 export async function signInUsingPassword (
   signInUsingPasswordIf: SignInUsingPasswordIf,
-  body: unknown
+  body: unknown,
+  authTokenConfig: AuthTokenConfig
 ): Promise<SignedInUser> {
   // No authorization as sign in takes place here.
   const method = validatePasswordSignInMethod(body)
   return await signInMethodService.signInUsingPassword(
     signInUsingPasswordIf,
-    method
+    method,
+    authTokenConfig
   )
 }
 

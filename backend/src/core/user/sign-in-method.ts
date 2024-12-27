@@ -1,6 +1,6 @@
 import { ajv } from '../ajv'
+import type { DbRefreshToken } from '../auth/refresh-token'
 
-import type { Tokens } from '../auth/tokens'
 import {
   invalidPasswordChangeError,
   invalidSignInMethodError
@@ -35,7 +35,7 @@ export interface SignInUsingPasswordIf {
   findPasswordSignInMethod: (
     userId: string
   ) => Promise<UserPasswordHash | undefined>
-  createTokens: (user: User) => Promise<Tokens>
+  insertRefreshToken: (userId: string) => Promise<DbRefreshToken>
 }
 
 export function validatePasswordSignInMethod (

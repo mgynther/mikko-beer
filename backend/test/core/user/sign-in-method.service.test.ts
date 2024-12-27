@@ -1,5 +1,7 @@
 import { expect } from 'earl'
 
+import * as authTokenService from '../../../src/core/auth/auth-token.service'
+
 import type {
   AddPasswordUserIf
 } from '../../../src/core/user/sign-in-method.service'
@@ -11,7 +13,6 @@ import {
   verifySecret
 } from '../../../src/core/user/sign-in-method.service'
 
-import type { Tokens } from '../../../src/core/auth/tokens'
 import type {
   ChangePasswordUserIf,
   PasswordChange,
@@ -27,6 +28,7 @@ import {
   userAlreadyHasSignInMethodError
 } from '../../../src/core/errors'
 import { expectReject } from '../controller-error-helper'
+import { AuthTokenConfig } from '../../../src/core/auth/auth-token'
 
 describe('encrypt and verify password', () => {
   it('fail to encrypt too short password', async () => {
@@ -94,13 +96,9 @@ describe('password sign-in-method service unit tests', () => {
     passwordHash: knownHash,
   }
 
-  const dummyTokens: Tokens = {
-    refresh: {
-      refreshToken: 'dummy'
-    },
-    auth: {
-      authToken: 'dummy'
-    }
+  const authTokenConfig: AuthTokenConfig = {
+    secret: 'this is a secret',
+    expiryDuration: '5min'
   }
 
   async function notCalled(): Promise<any> {
@@ -156,11 +154,12 @@ describe('password sign-in-method service unit tests', () => {
     return undefined
   }
 
-  async function createDummyTokens(
-    dummyUser: User
-  ): Promise<Tokens> {
-    expect(dummyUser).toEqual(user)
-    return dummyTokens
+  async function insertRefreshToken(userId: string) {
+    expect(userId).toEqual(user.id)
+    return {
+      id: 'a8d69fd5-1491-4b63-86ea-6d5e3c7f624d',
+      userId
+    }
   }
 
   it('add password sign-in-method', async () => {
@@ -282,22 +281,31 @@ describe('password sign-in-method service unit tests', () => {
     const signInUsingPasswordIf: SignInUsingPasswordIf = {
       lockUserByUsername: lockValidUserByUsername,
       findPasswordSignInMethod: getUserPasswordHash,
-      createTokens: createDummyTokens,
+      insertRefreshToken
     }
-    const result = await signInUsingPassword(signInUsingPasswordIf, method)
+    const result = await signInUsingPassword(
+      signInUsingPasswordIf,
+      method,
+      authTokenConfig
+    )
     expect(result.user).toEqual(user)
-    expect(result.refreshToken).toEqual(dummyTokens.refresh)
-    expect(result.authToken).toEqual(dummyTokens.auth)
+    const reference = await authTokenService.createTokens(
+      insertRefreshToken,
+      user,
+      authTokenConfig
+    )
+    expect(result.refreshToken).toEqual(reference.refresh)
+    expect(result.authToken).toEqual(reference.auth)
   })
 
   it('fail to sign in using password without user', async () => {
     const signInUsingPasswordIf: SignInUsingPasswordIf = {
       lockUserByUsername: lockMissingUser,
       findPasswordSignInMethod: notCalled,
-      createTokens: notCalled
+      insertRefreshToken: notCalled
     }
     expectReject(async () => {
-      await signInUsingPassword(signInUsingPasswordIf, method)
+      await signInUsingPassword(signInUsingPasswordIf, method, authTokenConfig)
     }, invalidCredentialsError)
   })
 
@@ -305,10 +313,10 @@ describe('password sign-in-method service unit tests', () => {
     const signInUsingPasswordIf: SignInUsingPasswordIf = {
       lockUserByUsername: lockValidUserByUsername,
       findPasswordSignInMethod: getMissingPasswordHash,
-      createTokens: notCalled
+      insertRefreshToken: notCalled
     }
     expectReject(async () => {
-      await signInUsingPassword(signInUsingPasswordIf, method)
+      await signInUsingPassword(signInUsingPasswordIf, method, authTokenConfig)
     }, invalidCredentialsError)
   })
 
@@ -316,10 +324,10 @@ describe('password sign-in-method service unit tests', () => {
     const signInUsingPasswordIf: SignInUsingPasswordIf = {
       lockUserByUsername: lockValidUserByUsername,
       findPasswordSignInMethod: getOtherPasswordHash,
-      createTokens: notCalled
+      insertRefreshToken: notCalled
     }
     expectReject(async () => {
-      await signInUsingPassword(signInUsingPasswordIf, method)
+      await signInUsingPassword(signInUsingPasswordIf, method, authTokenConfig)
     }, invalidCredentialsError)
   })
 })

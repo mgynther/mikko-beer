@@ -1,5 +1,7 @@
 import * as crypto from 'crypto'
 
+import * as authTokenService from '../auth/auth-token.service'
+
 import {
   invalidCredentialsError,
   passwordTooLongError,
@@ -15,6 +17,7 @@ import type {
   SignInUsingPasswordIf,
   UserPasswordHash
 } from './sign-in-method'
+import type { AuthTokenConfig } from '../auth/auth-token'
 
 export const MIN_PASSWORD_LENGTH = 8
 export const MAX_PASSWORD_LENGTH = 255
@@ -77,7 +80,8 @@ export async function changePassword (
 
 export async function signInUsingPassword (
   signInUsingPasswordIf: SignInUsingPasswordIf,
-  method: PasswordSignInMethod
+  method: PasswordSignInMethod,
+  authTokenConfig: AuthTokenConfig
 ): Promise<SignedInUser> {
   const user = await signInUsingPasswordIf.lockUserByUsername(method.username)
 
@@ -97,8 +101,11 @@ export async function signInUsingPassword (
     throw invalidCredentialsError
   }
 
-  const { refresh, auth } =
-    await signInUsingPasswordIf.createTokens(user)
+  const { refresh, auth } = await authTokenService.createTokens(
+    signInUsingPasswordIf.insertRefreshToken,
+    user,
+    authTokenConfig
+  )
 
   return {
     user,
