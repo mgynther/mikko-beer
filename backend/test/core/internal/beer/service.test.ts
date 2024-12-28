@@ -7,10 +7,10 @@ import type {
   NewBeer,
   CreateIf,
   UpdateIf
-} from '../../../../src/core/beer/beer'
+} from '../../../../src/core/beer'
 import type { Pagination } from '../../../../src/core/pagination'
 import type { SearchByName } from '../../../../src/core/search'
-import * as beerService from '../../../../src/core/beer/internal/service'
+import * as beerService from '../../../../src/core/internal/beer/service'
 
 import { dummyLog as log } from '../../dummy-log'
 import {

@@ -1,4 +1,4 @@
-import * as beerService from '../../../../src/core/beer/internal/validated.service'
+import * as beerService from '../../../../src/core/internal/beer/validated.service'
 
 import type {
   Beer,
@@ -6,7 +6,7 @@ import type {
   CreateIf,
   UpdateBeerRequest,
   UpdateIf
-} from '../../../../src/core/beer/beer'
+} from '../../../../src/core/beer'
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
 import {

@@ -3,12 +3,12 @@ import { expect } from 'earl'
 import {
   validateCreateBeerRequest,
   validateUpdateBeerRequest,
-} from '../../../src/core/beer/beer'
+} from '../../src/core/beer'
 import {
   invalidBeerError,
   invalidBeerIdError
-} from '../../../src/core/errors'
-import { expectThrow } from '../controller-error-helper'
+} from '../../src/core/errors'
+import { expectThrow } from './controller-error-helper'
 
 function validRequest (): Record<string, unknown> {
   return {

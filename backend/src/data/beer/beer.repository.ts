@@ -12,7 +12,7 @@ import type {
   BeerWithBreweriesAndStyles,
   Beer,
   NewBeer
-} from '../../core/beer/beer'
+} from '../../core/beer'
 
 import type { Pagination } from '../../core/pagination'
 import { toRowNumbers } from '../../core/pagination'

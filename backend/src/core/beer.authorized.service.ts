@@ -1,5 +1,5 @@
-import * as authorizationService from '../auth/authorization.service'
-import * as beerService from './internal/validated.service'
+import * as authorizationService from './auth/authorization.service'
+import * as beerService from './internal/beer/validated.service'
 
 import type {
   BeerWithBreweriesAndStyles,
@@ -8,15 +8,15 @@ import type {
   UpdateIf
 } from "./beer";
 
-import type { log } from '../log'
-import type { Pagination } from '../pagination';
-import type { SearchByName } from '../search';
+import type { log } from './log'
+import type { Pagination } from './pagination';
+import type { SearchByName } from './search';
 import type {
   BodyRequest,
   IdRequest,
   PaginationRequest,
   SearchByNameRequest
-} from '../request';
+} from './request';
 
 export async function createBeer (
   createIf: CreateIf,

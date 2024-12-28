@@ -1,4 +1,4 @@
-import type { Beer } from '../../src/core/beer/beer'
+import type { Beer } from '../../src/core/beer'
 import type { Brewery } from '../../src/core/brewery/brewery'
 import type { Container } from '../../src/core/container/container'
 import type { Review } from '../../src/core/review/review'

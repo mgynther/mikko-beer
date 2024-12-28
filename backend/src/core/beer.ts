@@ -1,13 +1,13 @@
-import { ajv } from '../internal/ajv'
+import { ajv } from './internal/ajv'
 
 import {
   invalidBeerError,
   invalidBeerIdError
-} from '../errors'
+} from './errors'
 
-import type { Brewery } from '../brewery/brewery'
-import type { Style } from '../style/style'
-import type { LockIds } from '../db'
+import type { Brewery } from './brewery/brewery'
+import type { Style } from './style/style'
+import type { LockIds } from './db'
 
 export interface NewBeer {
   name: string

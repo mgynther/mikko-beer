@@ -1,8 +1,8 @@
 import { expect } from 'earl'
 
-import * as beerService from '../../../src/core/beer/authorized.service'
+import * as beerService from '../../src/core/beer.authorized.service'
 
-import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
+import type { AuthTokenPayload } from '../../src/core/auth/auth-token'
 import type {
   Beer,
   BeerWithBreweriesAndStyles,
@@ -10,14 +10,14 @@ import type {
   CreateIf,
   UpdateBeerRequest,
   UpdateIf
-} from '../../../src/core/beer/beer'
-import { Role } from '../../../src/core/user/user'
-import { dummyLog as log } from '../dummy-log'
-import { expectReject } from '../controller-error-helper'
+} from '../../src/core/beer'
+import { Role } from '../../src/core/user/user'
+import { dummyLog as log } from './dummy-log'
+import { expectReject } from './controller-error-helper'
 import {
   invalidBeerError,
   noRightsError
-} from '../../../src/core/errors'
+} from '../../src/core/errors'
 
 const breweryId = '25eb0361-ed50-4de7-aec5-74fe4e7fe011'
 const styleId = '0716f9c8-a419-4c36-af3d-425ed1a3a306'
