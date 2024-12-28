@@ -1,7 +1,9 @@
+import * as authTokenService from '../auth/auth-token.service'
 import * as authorizationService from '../auth/authorization.service'
 import * as signInMethodService from './sign-in-method.service'
+import * as userService from '../user/user.service'
 
-import type { DbRefreshToken } from '../auth/refresh-token'
+import type { DbRefreshToken, RefreshToken } from '../auth/refresh-token'
 import {
   validatePasswordChange,
   validatePasswordSignInMethod
@@ -13,7 +15,9 @@ import type {
 import type { IdRequest } from '../request'
 import type { SignedInUser } from './signed-in-user'
 import { validateUserId } from './user'
+import type { User } from './user'
 import type { AuthTokenConfig } from '../auth/auth-token'
+import type { Tokens } from '../auth/tokens'
 
 export async function signInUsingPassword (
   signInUsingPasswordIf: SignInUsingPasswordIf,
@@ -46,4 +50,36 @@ export async function changePassword (
     validateUserId(request.id),
     change
   );
+}
+
+export interface RefreshTokensIf {
+  lockUserById: (userId: string) => Promise<User | undefined>
+  deleteRefreshToken: (refreshTokenId: string) => Promise<void>
+  insertRefreshToken: (userId: string) => Promise<DbRefreshToken>
+}
+
+export async function refreshTokens (
+  refreshTokensIf: RefreshTokensIf,
+  userId: string,
+  refreshToken: RefreshToken,
+  authTokenConfig: AuthTokenConfig
+): Promise<Tokens> {
+  // No authorization as refresh provides new tokens based on refresh token
+  // only.
+  const user = await userService.lockUserById(
+    refreshTokensIf.lockUserById,
+    userId
+  )
+  await authTokenService.deleteRefreshToken(
+    refreshTokensIf.deleteRefreshToken,
+    user.id,
+    refreshToken,
+    authTokenConfig.secret
+  )
+  const tokens = await authTokenService.createTokens(
+    refreshTokensIf.insertRefreshToken,
+    user,
+    authTokenConfig
+  )
+  return tokens
 }
