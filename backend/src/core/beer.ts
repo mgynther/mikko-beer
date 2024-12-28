@@ -6,7 +6,7 @@ import {
 } from './errors'
 
 import type { Brewery } from './brewery'
-import type { Style } from './style/style'
+import type { Style } from './style'
 import type { LockIds } from './db'
 
 export interface NewBeer {

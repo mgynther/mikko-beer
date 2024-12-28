@@ -8,7 +8,7 @@ import type {
   StyleWithParentIds,
   UpdateStyleRequest,
   UpdateStyleIf
-} from '../style'
+} from '../../style'
 
 import {
   parentStyleNotFoundError,
@@ -16,7 +16,7 @@ import {
 } from '../../errors'
 import type { log } from '../../log'
 import { INFO, } from '../../log'
-import { checkCyclicRelationships } from '../style.util'
+import { checkCyclicRelationships } from './style.util'
 import { areKeysEqual } from '../../internal/key'
 import type { LockIds } from '../../db'
 

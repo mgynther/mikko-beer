@@ -1,7 +1,7 @@
 import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
-import { StyleWithParentsAndChildren } from '../../../src/core/style/style'
+import { StyleWithParentsAndChildren } from '../../../src/core/style'
 
 describe('style tests', () => {
   const ctx = new TestContext()

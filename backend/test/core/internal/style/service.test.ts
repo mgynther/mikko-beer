@@ -15,8 +15,8 @@ import type {
   StyleRelationship,
   CreateStyleIf,
   UpdateStyleIf
-} from '../../../../src/core/style/style'
-import * as styleService from '../../../../src/core/style/internal/service'
+} from '../../../../src/core/style'
+import * as styleService from '../../../../src/core/internal/style/service'
 
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'

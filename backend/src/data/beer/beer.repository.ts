@@ -20,7 +20,7 @@ import type { SearchByName } from '../../core/search'
 import { defaultSearchMaxResults, toIlike } from '../../core/search'
 
 import type { Brewery } from '../../core/brewery'
-import type { Style } from '../../core/style/style'
+import type { Style } from '../../core/style'
 import { contains } from '../../core/record'
 
 export async function insertBeer (

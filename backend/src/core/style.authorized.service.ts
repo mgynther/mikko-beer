@@ -1,15 +1,15 @@
-import * as authorizationService from '../auth/authorization.service'
-import * as styleService from './internal/validated.service'
+import * as authorizationService from './auth/authorization.service'
+import * as styleService from './internal/style/validated.service'
 
-import type { BodyRequest, IdRequest } from "../request"
+import type { BodyRequest, IdRequest } from "./request"
 import type {
   CreateStyleIf,
   StyleWithParentIds,
   StyleWithParentsAndChildren,
   UpdateStyleIf
 } from "./style"
-import type { log } from '../log'
-import type { AuthTokenPayload } from '../auth/auth-token'
+import type { log } from './log'
+import type { AuthTokenPayload } from './auth/auth-token'
 
 export async function createStyle (
   createStyleIf: CreateStyleIf,

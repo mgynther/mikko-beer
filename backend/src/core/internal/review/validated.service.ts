@@ -16,7 +16,7 @@ import type { log } from '../../log'
 import type { Pagination } from '../../pagination';
 import { validateBeerId } from '../../beer';
 import { validateBreweryId } from '../../brewery';
-import { validateStyleId } from '../../style/style';
+import { validateStyleId } from '../../style';
 
 export async function createReview (
   createIf: CreateIf,

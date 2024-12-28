@@ -11,7 +11,7 @@ import type {
   RatingStats,
   StyleStats
 } from '../../../src/core/stats'
-import type { Style } from '../../../src/core/style/style'
+import type { Style } from '../../../src/core/style'
 
 // Math is hard. By both hard coding and calculating it is easier to spot an
 // error when it happens.

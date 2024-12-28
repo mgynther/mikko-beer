@@ -11,7 +11,7 @@ import type { log } from './log'
 import type { BodyRequest, IdRequest } from './request';
 import type { Pagination } from './pagination';
 import type { AuthTokenPayload } from './auth/auth-token';
-import { validateStyleId } from './style/style';
+import { validateStyleId } from './style';
 
 export async function createStorage (
   createIf: CreateIf,

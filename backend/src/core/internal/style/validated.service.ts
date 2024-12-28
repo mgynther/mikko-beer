@@ -5,12 +5,12 @@ import type {
   StyleWithParentIds,
   StyleWithParentsAndChildren,
   UpdateStyleIf
-} from "../style"
+} from "../../style"
 import {
   validateCreateStyleRequest,
   validateStyleId,
   validateUpdateStyleRequest
-} from "../style"
+} from "../../style"
 import type { log } from '../../log'
 
 export async function createStyle (

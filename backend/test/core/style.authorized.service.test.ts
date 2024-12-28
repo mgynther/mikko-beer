@@ -1,7 +1,7 @@
 import { expect } from 'earl'
-import * as styleService from '../../../src/core/style/authorized.service'
+import * as styleService from '../../src/core/style.authorized.service'
 
-import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
+import type { AuthTokenPayload } from '../../src/core/auth/auth-token'
 import type {
   Style,
   StyleWithParentIds,
@@ -10,14 +10,14 @@ import type {
   CreateStyleIf,
   UpdateStyleRequest,
   UpdateStyleIf
-} from '../../../src/core/style/style'
-import { Role } from '../../../src/core/user/user'
-import { dummyLog as log } from '../dummy-log'
-import { expectReject } from '../controller-error-helper'
+} from '../../src/core/style'
+import { Role } from '../../src/core/user/user'
+import { dummyLog as log } from './dummy-log'
+import { expectReject } from './controller-error-helper'
 import {
   invalidStyleError,
   noRightsError
-} from '../../../src/core/errors'
+} from '../../src/core/errors'
 
 const styleId = '6e68f545-097c-4f1a-af81-23c2f9cdb533'
 

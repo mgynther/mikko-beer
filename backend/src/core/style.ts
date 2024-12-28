@@ -1,10 +1,10 @@
-import { ajv } from '../internal/ajv'
-import type { LockIds } from '../db'
+import { ajv } from './internal/ajv'
+import type { LockIds } from './db'
 
 import {
   invalidStyleError,
   invalidStyleIdError
-} from '../errors'
+} from './errors'
 
 export interface CreateStyleIf {
   create: (style: NewStyle) => Promise<Style>

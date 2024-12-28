@@ -4,14 +4,14 @@ import { v4 as uuidv4 } from 'uuid'
 import {
   validateCreateStyleRequest,
   validateUpdateStyleRequest
-} from '../../../src/core/style/style'
+} from '../../src/core/style'
 import {
   cyclicRelationshipError,
   invalidStyleError,
   invalidStyleIdError,
-} from '../../../src/core/errors'
-import { checkCyclicRelationships } from '../../../src/core/style/style.util'
-import { expectThrow } from '../controller-error-helper'
+} from '../../src/core/errors'
+import { checkCyclicRelationships } from '../../src/core/internal/style/style.util'
+import { expectThrow } from './controller-error-helper'
 
 describe('style relationship unit tests', () => {
   const ale = {

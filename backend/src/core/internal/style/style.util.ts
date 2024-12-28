@@ -1,7 +1,7 @@
-import type { StyleRelationship } from './style'
+import type { StyleRelationship } from '../../style'
 
-import { cyclicRelationshipError } from '../errors'
-import { contains } from '../record'
+import { cyclicRelationshipError } from '../../errors'
+import { contains } from '../../record'
 
 interface Style {
   id: string

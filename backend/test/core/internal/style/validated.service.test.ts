@@ -1,4 +1,4 @@
-import * as styleService from '../../../../src/core/style/internal/validated.service'
+import * as styleService from '../../../../src/core/internal/style/validated.service'
 
 import type {
   Style,
@@ -6,7 +6,7 @@ import type {
   CreateStyleIf,
   UpdateStyleRequest,
   UpdateStyleIf
-} from '../../../../src/core/style/style'
+} from '../../../../src/core/style'
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
 import {
