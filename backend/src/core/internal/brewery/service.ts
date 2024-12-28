@@ -3,7 +3,7 @@ import type {
   UpdateBreweryRequest,
   Brewery,
   NewBrewery
-} from '../brewery'
+} from '../../brewery'
 
 import { breweryNotFoundError } from '../../errors'
 import { INFO, type log } from '../../log'

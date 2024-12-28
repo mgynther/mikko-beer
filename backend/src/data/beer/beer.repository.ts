@@ -19,7 +19,7 @@ import { toRowNumbers } from '../../core/pagination'
 import type { SearchByName } from '../../core/search'
 import { defaultSearchMaxResults, toIlike } from '../../core/search'
 
-import type { Brewery } from '../../core/brewery/brewery'
+import type { Brewery } from '../../core/brewery'
 import type { Style } from '../../core/style/style'
 import { contains } from '../../core/record'
 

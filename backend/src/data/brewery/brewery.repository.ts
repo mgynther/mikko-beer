@@ -6,7 +6,7 @@ import type {
 import type {
   Brewery,
   NewBrewery
-} from '../../core/brewery/brewery'
+} from '../../core/brewery'
 import type {
   Pagination
 } from '../../core/pagination'

@@ -1,9 +1,9 @@
-import { ajv } from '../internal/ajv'
+import { ajv } from './internal/ajv'
 
 import {
   invalidBreweryError,
   invalidBreweryIdError
-} from '../errors'
+} from './errors'
 
 export interface Brewery {
   id: string

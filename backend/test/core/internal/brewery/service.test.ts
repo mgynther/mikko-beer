@@ -4,11 +4,11 @@ import type {
   CreateBreweryRequest,
   UpdateBreweryRequest,
   NewBrewery
-} from '../../../../src/core/brewery/brewery'
+} from '../../../../src/core/brewery'
 import { breweryNotFoundError } from '../../../../src/core/errors'
 import type { Pagination } from '../../../../src/core/pagination'
 import type { SearchByName } from '../../../../src/core/search'
-import * as breweryService from '../../../../src/core/brewery/internal/service'
+import * as breweryService from '../../../../src/core/internal/brewery/service'
 
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'

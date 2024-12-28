@@ -3,9 +3,9 @@ import { expect } from 'earl'
 import {
   validateCreateBreweryRequest,
   validateUpdateBreweryRequest,
-} from '../../../src/core/brewery/brewery'
-import { invalidBreweryError, invalidBreweryIdError } from '../../../src/core/errors'
-import { expectThrow } from '../controller-error-helper'
+} from '../../src/core/brewery'
+import { invalidBreweryError, invalidBreweryIdError } from '../../src/core/errors'
+import { expectThrow } from './controller-error-helper'
 
 function validRequest (): Record<string, unknown> {
   return {

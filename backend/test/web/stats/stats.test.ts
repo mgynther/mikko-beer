@@ -2,7 +2,7 @@ import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
 import type { BeerWithBreweryAndStyleIds } from '../../../src/core/beer'
-import type { Brewery } from '../../../src/core/brewery/brewery'
+import type { Brewery } from '../../../src/core/brewery'
 import type { Review } from '../../../src/core/review/review'
 import type {
   AnnualStats,

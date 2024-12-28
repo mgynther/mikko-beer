@@ -1,19 +1,19 @@
 import { expect } from 'earl'
-import * as breweryService from '../../../src/core/brewery/authorized.service'
+import * as breweryService from '../../src/core/brewery.authorized.service'
 
-import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
+import type { AuthTokenPayload } from '../../src/core/auth/auth-token'
 import type {
   Brewery,
   NewBrewery,
   UpdateBreweryRequest
-} from '../../../src/core/brewery/brewery'
-import { Role } from '../../../src/core/user/user'
-import { dummyLog as log } from '../dummy-log'
-import { expectReject } from '../controller-error-helper'
+} from '../../src/core/brewery'
+import { Role } from '../../src/core/user/user'
+import { dummyLog as log } from './dummy-log'
+import { expectReject } from './controller-error-helper'
 import {
   invalidBreweryError,
   noRightsError
-} from '../../../src/core/errors'
+} from '../../src/core/errors'
 
 const validCreateBreweryRequest: NewBrewery = {
   name: 'Koskipanimo'

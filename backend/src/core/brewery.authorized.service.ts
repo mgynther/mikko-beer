@@ -1,15 +1,15 @@
-import * as authorizationService from '../auth/authorization.service'
-import * as breweryService from './internal/validated.service'
+import * as authorizationService from './auth/authorization.service'
+import * as breweryService from './internal/brewery/validated.service'
 
 import type {
   BodyRequest,
   IdRequest,
   PaginationRequest
-} from "../request"
+} from "./request"
 import type { Brewery, NewBrewery } from "./brewery"
-import type { log } from '../log'
-import type { Pagination } from '../pagination'
-import type { SearchByName } from '../search'
+import type { log } from './log'
+import type { Pagination } from './pagination'
+import type { SearchByName } from './search'
 
 export async function createBrewery (
   create: (brewery: NewBrewery) => Promise<Brewery>,

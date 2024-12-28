@@ -1,10 +1,10 @@
-import * as breweryService from '../../../../src/core/brewery/internal/validated.service'
+import * as breweryService from '../../../../src/core/internal/brewery/validated.service'
 
 import type {
   Brewery,
   NewBrewery,
   UpdateBreweryRequest
-} from '../../../../src/core/brewery/brewery'
+} from '../../../../src/core/brewery'
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
 import {

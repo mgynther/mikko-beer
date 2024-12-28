@@ -1,7 +1,7 @@
 import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
-import { Brewery } from '../../../src/core/brewery/brewery'
+import { Brewery } from '../../../src/core/brewery'
 
 describe('brewery tests', () => {
   const ctx = new TestContext()
