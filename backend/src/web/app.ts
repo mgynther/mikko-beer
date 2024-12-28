@@ -19,14 +19,16 @@ import { statsController } from '../web/stats/stats.controller'
 import { styleController } from '../web/style/style.controller'
 import { userController } from '../web/user/user.controller'
 import type { CreateAnonymousUserRequest, User } from '../core/user/user'
-import { Role } from '../core/user/user'
-import * as userService from '../core/user/user.service'
 import {
-  addPasswordSignInMethod
-} from '../web/user/sign-in-method/sign-in-method-helper'
+  createAddPasswordUserIf
+} from './user/sign-in-method/sign-in-method-helper'
 import { ControllerError } from '../core/errors'
 import { Level, log } from '../core/log'
 import type { AuthTokenConfig } from '../core/auth/auth-token'
+import {
+  createInitialUser,
+  addPasswordForInitialUser
+} from '../core/app-initial-user'
 
 export interface StartResult {
   authToken: string
@@ -97,22 +99,16 @@ export class App {
               secret: this.#config.authTokenSecret,
               expiryDuration: this.#config.authTokenExpiryDuration
             };
-            const user = await userService.createAnonymousUser(
+            const user = await createInitialUser(
               (request: CreateAnonymousUserRequest) => {
                 return userRepository.createAnonymousUser(trx, request)
               },
-              async (userId: string) => {
-                // Here we don't need a refresh token in db. One will be created
-                // when admin user logs in.
-                return {
-                  id: uuidv4(),
-                  userId
-                }
-              }, Role.admin, authTokenConfig, this.#log)
+              authTokenConfig, this.#log)
             startResult.authToken = user.authToken.authToken
             if (isAdminPasswordNeeded) {
-              await addPasswordSignInMethod(
-                trx,
+              const addPasswordUserIf = createAddPasswordUserIf(trx)
+              await addPasswordForInitialUser(
+                addPasswordUserIf,
                 user.user.id,
                 {
                   username: adminUsername,

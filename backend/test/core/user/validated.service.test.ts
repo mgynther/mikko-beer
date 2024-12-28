@@ -1,7 +1,7 @@
 import * as userService from '../../../src/core/user/validated-user.service'
 
 import type { AuthTokenConfig } from '../../../src/core/auth/auth-token'
-import type { CreateUserType } from '../../../src/core/user/user'
+import type { CreateUserIf, CreateUserType } from '../../../src/core/user/user'
 import { Role } from '../../../src/core/user/user'
 import { dummyLog as log } from '../dummy-log'
 import { expectReject } from '../controller-error-helper'
@@ -9,9 +9,6 @@ import {
   invalidUserError,
   invalidUserIdError
 } from '../../../src/core/errors'
-import type {
-  CreateUserIf
-} from '../../../src/core/user/authorized-user.service'
 import { SignedInUser } from '../../../src/core/user/signed-in-user'
 
 const validCreateUserRequest: CreateUserType = {
@@ -20,7 +17,7 @@ const validCreateUserRequest: CreateUserType = {
   },
   passwordSignInMethod: {
     username: 'admin',
-    password: 'admin'
+    password: 'adminpassword'
   }
 }
 
@@ -47,7 +44,15 @@ const createIf: CreateUserIf = {
     id: '58f535ef-8e6f-4345-a3ad-3b5920fc2a4b',
     userId: user.user.id
   }),
-  addPasswordSignInMethod: async () => '',
+  addPasswordUserIf: {
+    lockUserById: async () => ({
+      id: user.user.id,
+      role: user.user.role,
+      username: null
+    }),
+    insertPasswordSignInMethod: async () => undefined,
+    setUserUsername: async () => undefined
+  }
 }
 
 const deleteUserById = async () => undefined

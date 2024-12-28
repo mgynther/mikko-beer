@@ -1,6 +1,6 @@
 import * as userService from '../../core/user/authorized-user.service'
 import {
-  addPasswordSignInMethod,
+  createAddPasswordUserIf,
 } from './sign-in-method/sign-in-method-helper'
 import {
   signInMethodController
@@ -15,8 +15,7 @@ import type { Router } from '../router'
 import type { CreateAnonymousUserRequest } from '../../core/user/user'
 import type { DbRefreshToken } from '../../core/auth/refresh-token'
 import type { AuthTokenConfig } from '../../core/auth/auth-token'
-import type { CreateUserIf } from '../../core/user/authorized-user.service'
-import type { PasswordSignInMethod } from '../../core/user/sign-in-method'
+import type { CreateUserIf } from '../../core/user/user'
 
 export function userController (router: Router, config: Config): void {
   router.post('/api/v1/user',
@@ -40,17 +39,7 @@ export function userController (router: Router, config: Config): void {
               new Date()
             )
           },
-          addPasswordSignInMethod: async (
-            userId: string,
-            passwordSignInMethod: PasswordSignInMethod
-          ) => {
-            return await addPasswordSignInMethod(
-              trx,
-              userId,
-              passwordSignInMethod,
-              ctx.log
-            )
-          }
+          addPasswordUserIf: createAddPasswordUserIf(trx)
         }
         return await userService.createUser(
           createUserIf,

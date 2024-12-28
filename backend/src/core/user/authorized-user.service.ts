@@ -2,7 +2,7 @@ import * as authorizationService from '../auth/authorization.service'
 import * as userService from './validated-user.service'
 
 import type { IdRequest } from "../request"
-import type { CreateAnonymousUserRequest, User } from "./user"
+import type { CreateUserIf, User } from "./user"
 
 import type { log } from '../log'
 import type {
@@ -10,17 +10,7 @@ import type {
   AuthTokenPayload
 } from '../auth/auth-token'
 import type { DbRefreshToken } from '../auth/refresh-token'
-import type { PasswordSignInMethod } from './sign-in-method'
 import type { SignedInUser } from './signed-in-user'
-
-export interface CreateUserIf {
-  createAnonymousUser: (request: CreateAnonymousUserRequest) => Promise<User>,
-  insertRefreshToken: (userId: string) => Promise<DbRefreshToken>,
-  addPasswordSignInMethod: (
-    userId: string,
-    passwordSignInMethod: PasswordSignInMethod
-  ) => Promise<string>,
-}
 
 export async function createUser (
   createUserIf: CreateUserIf,

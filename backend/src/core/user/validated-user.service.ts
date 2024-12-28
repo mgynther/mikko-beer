@@ -1,24 +1,12 @@
 import * as userService from '../user/user.service'
+import * as signInMethodUserService from '../user/sign-in-method-user.service'
 
-import type { CreateAnonymousUserRequest, User } from "./user"
+import type { CreateUserIf, User } from "./user"
 import { validateCreateUserRequest, validateUserId } from "./user"
 
 import type { log } from '../log'
-import type {
-  AuthTokenConfig
-} from '../auth/auth-token'
-import type { DbRefreshToken } from '../auth/refresh-token'
-import type { PasswordSignInMethod } from './sign-in-method'
+import type { AuthTokenConfig } from '../auth/auth-token'
 import type { SignedInUser } from './signed-in-user'
-
-export interface CreateUserIf {
-  createAnonymousUser: (request: CreateAnonymousUserRequest) => Promise<User>,
-  insertRefreshToken: (userId: string) => Promise<DbRefreshToken>,
-  addPasswordSignInMethod: (
-    userId: string,
-    passwordSignInMethod: PasswordSignInMethod
-  ) => Promise<string>,
-}
 
 export async function createUser (
   createUserIf: CreateUserIf,
@@ -27,21 +15,12 @@ export async function createUser (
   log: log
 ): Promise<SignedInUser> {
   const request = validateCreateUserRequest(body)
-  const user = await userService.createAnonymousUser(
-    createUserIf.createAnonymousUser,
-    createUserIf.insertRefreshToken,
-    request.role,
+  return await signInMethodUserService.createUser(
+    createUserIf,
+    request,
     authTokenConfig,
     log
   )
-  const username = await createUserIf.addPasswordSignInMethod(
-    user.user.id,
-    request.passwordSignInMethod,
-  )
-  return {
-    ...user,
-    user: { ...user.user, username }
-  }
 }
 
 export async function findUserById (

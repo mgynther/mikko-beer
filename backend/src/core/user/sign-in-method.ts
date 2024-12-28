@@ -7,6 +7,12 @@ import {
 } from '../errors'
 import type { User } from './user'
 
+export interface AddPasswordUserIf {
+  lockUserById: LockUserById
+  insertPasswordSignInMethod: (userPassword: UserPasswordHash) => Promise<void>
+  setUserUsername: (userId: string, username: string) => Promise<void>
+}
+
 export type SignInMethod = PasswordSignInMethod
 
 export interface PasswordSignInMethod {

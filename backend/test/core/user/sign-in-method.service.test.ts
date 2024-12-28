@@ -2,9 +2,6 @@ import { expect } from 'earl'
 
 import * as authTokenService from '../../../src/core/auth/auth-token.service'
 
-import type {
-  AddPasswordUserIf
-} from '../../../src/core/user/sign-in-method.service'
 import {
   addPasswordSignInMethod,
   changePassword,
@@ -14,6 +11,7 @@ import {
 } from '../../../src/core/user/sign-in-method.service'
 
 import type {
+  AddPasswordUserIf,
   ChangePasswordUserIf,
   PasswordChange,
   PasswordSignInMethod,

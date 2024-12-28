@@ -10,27 +10,18 @@ import {
   userAlreadyHasSignInMethodError
 } from '../errors'
 import type { log } from '../log'
-import type { User } from '../user/user'
 import type { SignedInUser } from '../user/signed-in-user'
 import type {
+  AddPasswordUserIf,
   ChangePasswordUserIf,
   PasswordChange,
   PasswordSignInMethod,
-  SignInUsingPasswordIf,
-  UserPasswordHash
+  SignInUsingPasswordIf
 } from './sign-in-method'
 import type { AuthTokenConfig } from '../auth/auth-token'
 
 export const MIN_PASSWORD_LENGTH = 8
 export const MAX_PASSWORD_LENGTH = 255
-
-type LockUserById = (userId: string) => Promise<User | undefined>
-
-export interface AddPasswordUserIf {
-  lockUserById: LockUserById
-  insertPasswordSignInMethod: (userPassword: UserPasswordHash) => Promise<void>
-  setUserUsername: (userId: string, username: string) => Promise<void>
-}
 
 export async function addPasswordSignInMethod (
   addPasswordUserIf: AddPasswordUserIf,

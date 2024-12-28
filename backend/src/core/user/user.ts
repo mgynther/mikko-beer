@@ -1,8 +1,15 @@
 import { ajv } from '../ajv'
-import type { PasswordSignInMethod, } from './sign-in-method'
+import type { AddPasswordUserIf, PasswordSignInMethod } from './sign-in-method'
 import { validatePasswordSignInMethod } from './sign-in-method'
 
 import { invalidUserError, invalidUserIdError } from '../errors'
+import type { DbRefreshToken } from '../auth/refresh-token'
+
+export interface CreateUserIf {
+  createAnonymousUser: (request: CreateAnonymousUserRequest) => Promise<User>
+  insertRefreshToken: (userId: string) => Promise<DbRefreshToken>
+  addPasswordUserIf: AddPasswordUserIf
+}
 
 // A much more detailed usage rights could be added but 2 roles is plenty for
 // the time being.

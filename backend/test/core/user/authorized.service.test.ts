@@ -2,7 +2,7 @@ import { expect } from 'earl'
 import * as userService from '../../../src/core/user/authorized-user.service'
 
 import type { AuthTokenConfig, AuthTokenPayload } from '../../../src/core/auth/auth-token'
-import type { CreateUserType } from '../../../src/core/user/user'
+import type { CreateUserIf, CreateUserType, User } from '../../../src/core/user/user'
 import { Role } from '../../../src/core/user/user'
 import { dummyLog as log } from '../dummy-log'
 import { expectReject } from '../controller-error-helper'
@@ -12,9 +12,6 @@ import {
   noRightsError,
   userMismatchError
 } from '../../../src/core/errors'
-import type {
-  CreateUserIf
-} from '../../../src/core/user/authorized-user.service'
 import type { SignedInUser } from '../../../src/core/user/signed-in-user'
 import type { DbRefreshToken } from '../../../src/core/auth/refresh-token'
 
@@ -24,7 +21,7 @@ const validCreateUserRequest: CreateUserType = {
   },
   passwordSignInMethod: {
     username: 'admin',
-    password: 'admin'
+    password: 'adminpassword'
   }
 }
 
@@ -51,7 +48,15 @@ const createIf: CreateUserIf = {
     id: 'c7473953-1c2d-4945-b00f-174f371d6e57',
     userId: user.user.id
   }),
-  addPasswordSignInMethod: async () => '',
+  addPasswordUserIf: {
+    lockUserById: async () => ({
+      id: user.user.id,
+      role: user.user.role,
+      username: null
+    }),
+    insertPasswordSignInMethod: async () => undefined,
+    setUserUsername: async () => undefined
+  }
 }
 
 const deleteUserById = async () => undefined
