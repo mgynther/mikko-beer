@@ -1,5 +1,5 @@
 import * as statsRepository from '../../data/stats/stats.repository'
-import * as statsService from '../../core/stats/authorized.service'
+import * as statsService from '../../core/stats.authorized.service'
 
 import type { Pagination } from '../../core/pagination'
 import type { Router } from '../router'
@@ -11,13 +11,13 @@ import type {
   StyleStatsOrder,
   StatsBreweryStyleFilter,
   StatsFilter,
-} from '../../core/stats/stats'
+} from '../../core/stats'
 import {
   validateBreweryStatsOrder,
   validateStyleStatsOrder,
   validateStatsBreweryStyleFilter,
   validateStatsFilter
-} from '../../core/stats/stats'
+} from '../../core/stats'
 import { parseAuthToken } from '../authentication/authentication-helper'
 
 export function statsController (router: Router): void {

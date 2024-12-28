@@ -14,7 +14,7 @@ import type {
   StatsFilter,
   StyleStats,
   StyleStatsOrder
-} from '../../core/stats/stats'
+} from '../../core/stats'
 import { contains } from '../../core/record'
 
 // TODO try converting raw sql queries to Kysely for automatic types.

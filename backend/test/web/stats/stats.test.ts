@@ -10,7 +10,7 @@ import type {
   OverallStats,
   RatingStats,
   StyleStats
-} from '../../../src/core/stats/stats'
+} from '../../../src/core/stats'
 import type { Style } from '../../../src/core/style/style'
 
 // Math is hard. By both hard coding and calculating it is easier to spot an

@@ -1,5 +1,9 @@
-import type { Pagination } from '../../pagination'
+import * as authorizationService from './auth/authorization.service'
+import * as statsService from './internal/stats/service'
 
+import type {
+  AuthTokenPayload
+} from "./auth/auth-token"
 import type {
   AnnualStats,
   BreweryStats,
@@ -10,20 +14,18 @@ import type {
   StatsFilter,
   StyleStats,
   StyleStatsOrder
-} from '../../stats/stats'
-
-import { INFO, type log } from '../../log'
-
-// Test functionality if added. Left untested as there was no logic at the time
-// of adding the file. However, it is used to enable adding logic later easily.
+} from "./stats"
+import type { log } from './log'
+import type { Pagination } from './pagination'
 
 export async function getAnnual (
   getAnnual: (statsFilter: StatsBreweryStyleFilter) => Promise<AnnualStats>,
+  authTokenPayload: AuthTokenPayload,
   statsFilter: StatsBreweryStyleFilter,
   log: log
 ): Promise<AnnualStats> {
-  log(INFO, 'get annual stats', statsFilter)
-  return await getAnnual(statsFilter)
+  authorizationService.authorizeViewer(authTokenPayload)
+  return await statsService.getAnnual(getAnnual, statsFilter, log)
 }
 
 export async function getBrewery (
@@ -32,35 +34,40 @@ export async function getBrewery (
     statsFilter: StatsFilter,
     breweryStatsOrder: BreweryStatsOrder
   ) => Promise<BreweryStats>,
+  authTokenPayload: AuthTokenPayload,
   pagination: Pagination,
   statsFilter: StatsFilter,
   breweryStatsOrder: BreweryStatsOrder,
   log: log
 ): Promise<BreweryStats> {
-  log(INFO, 'get brewery stats', statsFilter, breweryStatsOrder, pagination)
-  return await getBrewery(
+  authorizationService.authorizeViewer(authTokenPayload)
+  return await statsService.getBrewery(
+    getBrewery,
     pagination,
     statsFilter,
-    breweryStatsOrder
+    breweryStatsOrder,
+    log
   )
 }
 
 export async function getOverall (
   getOverall: (statsFilter: StatsBreweryStyleFilter) => Promise<OverallStats>,
+  authTokenPayload: AuthTokenPayload,
   statsFilter: StatsBreweryStyleFilter,
   log: log
 ): Promise<OverallStats> {
-  log(INFO, 'get overall stats', statsFilter)
-  return await getOverall(statsFilter)
+  authorizationService.authorizeViewer(authTokenPayload)
+  return await statsService.getOverall(getOverall, statsFilter, log)
 }
 
 export async function getRating (
   getRating: (statsFilter: StatsBreweryStyleFilter) => Promise<RatingStats>,
+  authTokenPayload: AuthTokenPayload,
   statsFilter: StatsBreweryStyleFilter,
   log: log
 ): Promise<RatingStats> {
-  log(INFO, 'get rating stats', statsFilter)
-  return await getRating(statsFilter)
+  authorizationService.authorizeViewer(authTokenPayload)
+  return await statsService.getRating(getRating, statsFilter, log)
 }
 
 export async function getStyle (
@@ -68,10 +75,16 @@ export async function getStyle (
     statsFilter: StatsFilter,
     styleStatsOrder: StyleStatsOrder
   ) => Promise<StyleStats>,
+  authTokenPayload: AuthTokenPayload,
   statsFilter: StatsFilter,
   styleStatsOrder: StyleStatsOrder,
   log: log
 ): Promise<StyleStats> {
-  log(INFO, 'get style stats', statsFilter)
-  return await getStyle(statsFilter, styleStatsOrder)
+  authorizationService.authorizeViewer(authTokenPayload)
+  return await statsService.getStyle(
+    getStyle,
+    statsFilter,
+    styleStatsOrder,
+    log
+  )
 }

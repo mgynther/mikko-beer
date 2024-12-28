@@ -1,9 +1,9 @@
 import { expect } from 'earl'
-import * as statsService from '../../../src/core/stats/authorized.service'
+import * as statsService from '../../src/core/stats.authorized.service'
 
-import type { AuthTokenPayload } from "../../../src/core/auth/auth-token"
-import { Role } from "../../../src/core/user/user"
-import { dummyLog as log } from '../dummy-log'
+import type { AuthTokenPayload } from "../../src/core/auth/auth-token"
+import { Role } from "../../src/core/user/user"
+import { dummyLog as log } from './dummy-log'
 import type {
   AnnualStats,
   BreweryStats,
@@ -11,7 +11,7 @@ import type {
   RatingStats,
   StatsBreweryStyleFilter,
   StyleStats
-} from '../../../src/core/stats/stats'
+} from '../../src/core/stats'
 
 const adminAuthToken: AuthTokenPayload = {
   userId: '2238a6f3-6cc7-44a4-bb91-6369bd9adf56',

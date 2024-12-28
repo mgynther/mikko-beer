@@ -4,13 +4,13 @@ import {
   validateBreweryStatsOrder,
   validateStatsBreweryStyleFilter,
   validateStatsFilter,
-} from '../../../src/core/stats/stats'
-import type { StatsFilter } from '../../../src/core/stats/stats'
+} from '../../src/core/stats'
+import type { StatsFilter } from '../../src/core/stats'
 import {
   invalidBreweryAndStyleFilterError,
   invalidBreweryStatsQueryError,
-} from '../../../src/core/errors'
-import { expectThrow } from '../controller-error-helper'
+} from '../../src/core/errors'
+import { expectThrow } from './controller-error-helper'
 
 const noFilter = {
   brewery: undefined,
