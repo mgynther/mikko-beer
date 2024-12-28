@@ -3,7 +3,7 @@ import { ajv } from './internal/ajv'
 import type { Container } from './container'
 import type { ListDirection } from './list'
 import { directionValidation } from './list'
-import { timePattern } from './time'
+import { timePattern } from './internal/time'
 
 import {
   invalidReviewError,

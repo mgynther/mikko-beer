@@ -6,7 +6,7 @@ import {
   invalidStorageError,
   invalidStorageIdError
 } from './errors'
-import { timePattern } from './time'
+import { timePattern } from './internal/time'
 
 export interface CreateIf {
   insertStorage: (request: CreateStorageRequest) => Promise<StorageWithDate>
