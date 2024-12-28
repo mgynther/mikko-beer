@@ -4,7 +4,8 @@ import type {
 } from '../../../src/core/auth/refresh-token'
 import * as authTokenService from '../../../src/core/auth/auth-token.service'
 import * as authentication from '../../../src/core/auth/authentication'
-import { Role, type User } from '../../../src/core/user/user'
+import { Role } from '../../../src/core/user/user'
+import type { User } from '../../../src/core/user/user'
 import type { Tokens } from '../../../src/core/auth/tokens'
 import type {
   AuthToken,
