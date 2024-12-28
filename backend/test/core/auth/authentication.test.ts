@@ -3,11 +3,10 @@ import type {
   DbRefreshToken
 } from '../../../src/core/auth/refresh-token'
 import * as authTokenService from '../../../src/core/auth/auth-token.service'
-import * as authenticationService from '../../../src/core/auth/authentication.service'
+import * as authentication from '../../../src/core/auth/authentication'
 import { Role, type User } from '../../../src/core/user/user'
 import type { Tokens } from '../../../src/core/auth/tokens'
 import type {
-  AuthTokenPayload,
   AuthToken,
   AuthTokenConfig
 } from '../../../src/core/auth/auth-token'
@@ -64,7 +63,7 @@ describe('authentication service unit tests', () => {
 
   it('authenticate admin', async () => {
     const tokens = await createTokens(admin)
-    const parsed = authenticationService.parseAuthTokenPayload(
+    const parsed = authentication.parseAuthTokenPayload(
       header(tokens.auth),
       authTokenSecret
     )
@@ -77,7 +76,7 @@ describe('authentication service unit tests', () => {
 
   it('authenticate viewer', async () => {
     const tokens = await createTokens(viewer)
-    const parsed = authenticationService.parseAuthTokenPayload(
+    const parsed = authentication.parseAuthTokenPayload(
       header(tokens.auth),
       authTokenSecret
     )
@@ -90,7 +89,7 @@ describe('authentication service unit tests', () => {
 
   it('fail to parse auth token with expired auth header', () => {
     expectThrow(() => {
-      authenticationService.parseAuthTokenPayload(
+      authentication.parseAuthTokenPayload(
         header(expiredAuthToken),
         authTokenSecret
       )
@@ -99,7 +98,7 @@ describe('authentication service unit tests', () => {
 
   it('fail to parse auth token without auth header', () => {
     expectThrow(() => {
-      authenticationService.parseAuthTokenPayload(
+      authentication.parseAuthTokenPayload(
         undefined,
         authTokenSecret
       )
@@ -108,7 +107,7 @@ describe('authentication service unit tests', () => {
 
   it('fail to parse auth token with invalid auth header', () => {
     expectThrow(() => {
-      authenticationService.parseAuthTokenPayload(
+      authentication.parseAuthTokenPayload(
         'this is invalid auth header',
         authTokenSecret
       )
@@ -117,7 +116,7 @@ describe('authentication service unit tests', () => {
 
   it('fail to parse auth token with invalid auth token', () => {
     expectThrow(() => {
-      authenticationService.parseAuthTokenPayload(
+      authentication.parseAuthTokenPayload(
         'Bearer abc',
         authTokenSecret
       )
