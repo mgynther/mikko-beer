@@ -1,4 +1,4 @@
-import * as authTokenService from '../auth/auth-token.service'
+import * as authTokenService from '../internal/auth/auth-token.service'
 import type { SignedInUser } from './signed-in-user'
 import type {
   CreateAnonymousUserRequest,

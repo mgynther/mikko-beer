@@ -1,7 +1,7 @@
 import * as authTokenService from './auth-token.service'
 
-import { validateRefreshToken } from "./refresh-token";
-import { validateUserId } from '../user/user';
+import { validateRefreshToken } from "../../auth/refresh-token";
+import { validateUserId } from '../../user/user';
 
 export async function deleteRefreshToken (
   deleteRefreshToken: (refreshTokenId: string) => Promise<void>,

@@ -1,19 +1,20 @@
 import { expect } from 'earl'
 
-import * as authTokenService from '../../../src/core/auth/auth-token.service'
+import * as authTokenService from '../../../../src/core/internal/auth/auth-token.service'
 import type {
   AuthToken,
   AuthTokenConfig,
-} from '../../../src/core/auth/auth-token'
+} from '../../../../src/core/auth/auth-token'
 import {
   AuthTokenExpiredError,
   InvalidAuthTokenError
-} from '../../../src/core/auth/auth-token'
-import type { DbRefreshToken } from '../../../src/core/auth/refresh-token'
-import { Role, type User } from '../../../src/core/user/user'
-import type { Tokens } from '../../../src/core/auth/tokens'
-import { invalidCredentialsTokenError } from '../../../src/core/errors'
-import { expectReject } from '../controller-error-helper'
+} from '../../../../src/core/auth/auth-token'
+import type { DbRefreshToken } from '../../../../src/core/auth/refresh-token'
+import { Role } from '../../../../src/core/user/user'
+import type { User } from '../../../../src/core/user/user'
+import type { Tokens } from '../../../../src/core/auth/tokens'
+import { invalidCredentialsTokenError } from '../../../../src/core/errors'
+import { expectReject } from '../../controller-error-helper'
 
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {

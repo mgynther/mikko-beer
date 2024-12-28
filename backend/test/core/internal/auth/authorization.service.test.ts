@@ -1,16 +1,17 @@
 import type {
   DbRefreshToken
-} from '../../../src/core/auth/refresh-token'
-import * as authorizationService from '../../../src/core/auth/authorization.service'
-import { Role, type User } from '../../../src/core/user/user'
-import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
+} from '../../../../src/core/auth/refresh-token'
+import * as authorizationService from '../../../../src/core/internal/auth/authorization.service'
+import { Role } from '../../../../src/core/user/user'
+import type { User } from '../../../../src/core/user/user'
+import type { AuthTokenPayload } from '../../../../src/core/auth/auth-token'
 import {
   noRightsError,
   noUserIdParameterError,
   userMismatchError,
   userOrRefreshTokenNotFoundError
-} from '../../../src/core/errors'
-import { expectReject, expectThrow } from '../controller-error-helper'
+} from '../../../../src/core/errors'
+import { expectReject, expectThrow } from '../../controller-error-helper'
 
 const refreshTokenId = 'f2224f80-b478-43e2-8cc9-d39cf8079524'
 

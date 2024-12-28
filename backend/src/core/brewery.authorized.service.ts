@@ -1,4 +1,4 @@
-import * as authorizationService from './auth/authorization.service'
+import * as authorizationService from './internal/auth/authorization.service'
 import * as breweryService from './internal/brewery/validated.service'
 
 import type {

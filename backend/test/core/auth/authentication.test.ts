@@ -2,7 +2,7 @@ import { expect } from 'earl'
 import type {
   DbRefreshToken
 } from '../../../src/core/auth/refresh-token'
-import * as authTokenService from '../../../src/core/auth/auth-token.service'
+import * as authTokenService from '../../../src/core/internal/auth/auth-token.service'
 import * as authentication from '../../../src/core/auth/authentication'
 import { Role } from '../../../src/core/user/user'
 import type { User } from '../../../src/core/user/user'

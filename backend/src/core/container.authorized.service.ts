@@ -1,4 +1,4 @@
-import * as authorizationService from './auth/authorization.service'
+import * as authorizationService from './internal/auth/authorization.service'
 import * as containerService from './internal/container/validated.service'
 
 import type { BodyRequest, IdRequest } from './request';

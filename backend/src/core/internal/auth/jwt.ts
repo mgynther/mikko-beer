@@ -1,10 +1,15 @@
 // This file wraps jsonwebtoken usage to core types.
 import * as jwt from 'jsonwebtoken'
-import { Role } from '../user/user'
-import type { AuthToken, AuthTokenConfig, AuthTokenPayload } from './auth-token'
-import { AuthTokenExpiredError, InvalidAuthTokenError } from './auth-token'
+import { Role } from '../../user/user'
+import type {
+  AuthToken,
+  AuthTokenConfig, AuthTokenPayload
+} from '../../auth/auth-token'
+import {
+  AuthTokenExpiredError, InvalidAuthTokenError
+} from '../../auth/auth-token'
 
-import type { RefreshToken } from './refresh-token'
+import type { RefreshToken } from '../../auth/refresh-token'
 
 interface RefreshTokenPayload {
   userId: string

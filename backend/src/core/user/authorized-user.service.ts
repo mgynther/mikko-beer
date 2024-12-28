@@ -1,4 +1,4 @@
-import * as authorizationService from '../auth/authorization.service'
+import * as authorizationService from '../internal/auth/authorization.service'
 import * as userService from './validated-user.service'
 
 import type { IdRequest } from "../request"

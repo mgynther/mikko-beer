@@ -1,5 +1,6 @@
-import * as authorizationService from '../auth/authorization.service'
-import * as authTokenService from './validated-auth-token.service'
+import * as authorizationService from '../internal/auth/authorization.service'
+import * as authTokenService
+from '../internal/auth/validated-auth-token.service'
 
 import type { IdRequest } from "../request";
 import type { DbRefreshToken } from "./refresh-token";

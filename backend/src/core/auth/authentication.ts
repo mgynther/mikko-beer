@@ -1,6 +1,7 @@
-import * as authTokenService from './auth-token.service'
+import * as authTokenService from '../internal/auth/auth-token.service'
 
-import { AuthTokenExpiredError, type AuthTokenPayload } from './auth-token'
+import type { AuthTokenPayload } from './auth-token'
+import { AuthTokenExpiredError } from './auth-token'
 import {
   expiredAuthTokenError,
   invalidAuthTokenError,

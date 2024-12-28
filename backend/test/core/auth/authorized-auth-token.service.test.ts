@@ -1,6 +1,5 @@
-import * as jwt from '../../../src/core/auth/jwt'
+import * as jwt from '../../../src/core/internal/auth/jwt'
 
-import { expect } from 'earl'
 import * as authTokenService from '../../../src/core/auth/authorized-auth-token.service'
 
 import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'

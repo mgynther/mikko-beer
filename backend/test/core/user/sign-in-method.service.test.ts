@@ -1,6 +1,6 @@
 import { expect } from 'earl'
 
-import * as authTokenService from '../../../src/core/auth/auth-token.service'
+import * as authTokenService from '../../../src/core/internal/auth/auth-token.service'
 
 import {
   addPasswordSignInMethod,

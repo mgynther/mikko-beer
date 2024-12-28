@@ -1,5 +1,5 @@
-import * as authTokenService from '../auth/auth-token.service'
-import * as authorizationService from '../auth/authorization.service'
+import * as authTokenService from '../internal/auth/auth-token.service'
+import * as authorizationService from '../internal/auth/authorization.service'
 import * as signInMethodService from './sign-in-method.service'
 import * as userService from '../user/user.service'
 
