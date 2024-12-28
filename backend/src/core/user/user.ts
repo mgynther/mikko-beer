@@ -1,4 +1,4 @@
-import { ajv } from '../ajv'
+import { ajv } from '../internal/ajv'
 import type { AddPasswordUserIf, PasswordSignInMethod } from './sign-in-method'
 import { validatePasswordSignInMethod } from './sign-in-method'
 

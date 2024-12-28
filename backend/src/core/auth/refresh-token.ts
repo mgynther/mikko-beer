@@ -1,4 +1,4 @@
-import { ajv } from '../ajv'
+import { ajv } from '../internal/ajv'
 
 import { invalidRefreshTokenError } from '../errors'
 

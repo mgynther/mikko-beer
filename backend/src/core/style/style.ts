@@ -1,4 +1,4 @@
-import { ajv } from '../ajv'
+import { ajv } from '../internal/ajv'
 import type { LockIds } from '../db'
 
 import {
