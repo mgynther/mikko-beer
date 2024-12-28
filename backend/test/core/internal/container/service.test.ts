@@ -4,8 +4,8 @@ import type {
   CreateContainerRequest,
   NewContainer,
   UpdateContainerRequest,
-} from '../../../../src/core/container/container'
-import * as containerService from '../../../../src/core/container/internal/service'
+} from '../../../../src/core/container'
+import * as containerService from '../../../../src/core/internal/container/service'
 import { containerNotFoundError } from '../../../../src/core/errors'
 
 import { dummyLog as log } from '../../dummy-log'

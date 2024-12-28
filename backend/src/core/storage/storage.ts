@@ -1,6 +1,6 @@
 import { ajv } from '../internal/ajv'
 
-import type { Container } from '../container/container'
+import type { Container } from '../container'
 import type { LockId } from '../db'
 import {
   invalidStorageError,

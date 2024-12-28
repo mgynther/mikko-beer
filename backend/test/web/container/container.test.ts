@@ -1,7 +1,7 @@
 import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
-import { Container } from '../../../src/core/container/container'
+import { Container } from '../../../src/core/container'
 
 describe('container tests', () => {
   const ctx = new TestContext()

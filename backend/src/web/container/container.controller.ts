@@ -1,9 +1,9 @@
 import * as containerRepository from '../../data/container/container.repository'
-import * as containerService from '../../core/container/authorized.service'
+import * as containerService from '../../core/container.authorized.service'
 import * as authHelper from '../authentication/authentication-helper'
 
 import type { Router } from '../router'
-import type { Container, NewContainer } from '../../core/container/container'
+import type { Container, NewContainer } from '../../core/container'
 
 export function containerController (router: Router): void {
   router.post('/api/v1/container',

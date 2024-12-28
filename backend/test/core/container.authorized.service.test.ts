@@ -1,20 +1,20 @@
 import { expect } from 'earl'
-import * as containerService from '../../../src/core/container/authorized.service'
+import * as containerService from '../../src/core/container.authorized.service'
 
-import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
+import type { AuthTokenPayload } from '../../src/core/auth/auth-token'
 import type {
   Container,
   CreateContainerRequest,
   NewContainer,
   UpdateContainerRequest
-} from '../../../src/core/container/container'
-import { Role } from '../../../src/core/user/user'
-import { dummyLog as log } from '../dummy-log'
-import { expectReject } from '../controller-error-helper'
+} from '../../src/core/container'
+import { Role } from '../../src/core/user/user'
+import { dummyLog as log } from './dummy-log'
+import { expectReject } from './controller-error-helper'
 import {
   invalidContainerError,
   noRightsError
-} from '../../../src/core/errors'
+} from '../../src/core/errors'
 
 const validCreateContainerRequest: CreateContainerRequest = {
   size: '0.33',

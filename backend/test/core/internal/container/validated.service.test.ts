@@ -1,11 +1,11 @@
-import * as containerService from '../../../../src/core/container/internal/validated.service'
+import * as containerService from '../../../../src/core/internal/container/validated.service'
 
 import type {
   Container,
   CreateContainerRequest,
   NewContainer,
   UpdateContainerRequest
-} from '../../../../src/core/container/container'
+} from '../../../../src/core/container'
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
 import {

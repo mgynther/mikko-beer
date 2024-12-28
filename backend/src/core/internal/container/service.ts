@@ -3,7 +3,7 @@ import type {
   UpdateContainerRequest,
   Container,
   NewContainer
-} from '../container'
+} from '../../container'
 
 import { containerNotFoundError } from '../../errors'
 import { INFO, type log } from '../../log'

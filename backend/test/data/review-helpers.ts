@@ -1,6 +1,6 @@
 import type { Beer } from '../../src/core/beer'
 import type { Brewery } from '../../src/core/brewery'
-import type { Container } from '../../src/core/container/container'
+import type { Container } from '../../src/core/container'
 import type { Review } from '../../src/core/review/review'
 import type { Style } from '../../src/core/style/style'
 import type { Database, Transaction } from '../../src/data/database'

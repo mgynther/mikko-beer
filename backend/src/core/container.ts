@@ -1,9 +1,9 @@
-import { ajv } from '../internal/ajv'
+import { ajv } from './internal/ajv'
 
 import {
   invalidContainerError,
   invalidContainerIdError
-} from '../errors'
+} from './errors'
 
 export interface Container {
   id: string

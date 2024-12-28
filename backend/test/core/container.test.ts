@@ -3,9 +3,9 @@ import { expect } from 'earl'
 import {
   validateCreateContainerRequest,
   validateUpdateContainerRequest,
-} from '../../../src/core/container/container'
-import { invalidContainerError, invalidContainerIdError } from '../../../src/core/errors'
-import { expectThrow } from '../controller-error-helper'
+} from '../../src/core/container'
+import { invalidContainerError, invalidContainerIdError } from '../../src/core/errors'
+import { expectThrow } from './controller-error-helper'
 
 function validRequest (): Record<string, unknown> {
   return {
