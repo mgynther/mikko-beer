@@ -19,7 +19,7 @@ import type {
   Storage,
   StorageRequest,
   StorageWithDate
-} from '../../core/storage/storage'
+} from '../../core/storage'
 import { contains } from '../../core/record'
 
 export async function insertStorage (

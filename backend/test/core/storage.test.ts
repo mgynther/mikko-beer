@@ -3,12 +3,12 @@ import { expect } from 'earl'
 import {
   validateCreateStorageRequest,
   validateUpdateStorageRequest,
-} from '../../../src/core/storage/storage'
+} from '../../src/core/storage'
 import {
   invalidStorageError,
   invalidStorageIdError
-} from '../../../src/core/errors'
-import { expectThrow } from '../controller-error-helper'
+} from '../../src/core/errors'
+import { expectThrow } from './controller-error-helper'
 
 function validRequest (): Record<string, unknown> {
   return {

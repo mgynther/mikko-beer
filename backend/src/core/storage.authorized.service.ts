@@ -1,77 +1,75 @@
-import * as storageService from './service'
+import * as authorizationService from './auth/authorization.service'
+import * as storageService from './internal/storage/validated.service'
 
 import type {
   CreateIf,
   JoinedStorage,
   StorageWithDate,
   UpdateIf
-} from "../storage";
-import {
-  validateCreateStorageRequest,
-  validateStorageId,
-  validateUpdateStorageRequest
-} from "../storage";
-import type { log } from '../../log'
-import type { Pagination } from '../../pagination';
-import { validateBeerId } from '../../beer';
-import { validateBreweryId } from '../../brewery';
-import { validateStyleId } from '../../style/style';
+} from "./storage";
+import type { log } from './log'
+import type { BodyRequest, IdRequest } from './request';
+import type { Pagination } from './pagination';
+import type { AuthTokenPayload } from './auth/auth-token';
+import { validateStyleId } from './style/style';
 
 export async function createStorage (
   createIf: CreateIf,
-  body: unknown,
+  request: BodyRequest,
   log: log
 ): Promise<StorageWithDate> {
-  const createRequest = validateCreateStorageRequest(body)
-  return await storageService.createStorage(createIf, createRequest, log)
+  authorizationService.authorizeAdmin(request.authTokenPayload)
+  return await storageService.createStorage(createIf, request.body, log)
 }
 
 export async function updateStorage (
   updateIf: UpdateIf,
-  id: string | undefined,
+  request: IdRequest,
   body: unknown,
   log: log
 ): Promise<StorageWithDate> {
-  const updateRequest = validateUpdateStorageRequest(body, id)
+  authorizationService.authorizeAdmin(request.authTokenPayload)
   return await storageService.updateStorage(
     updateIf,
-    {
-      ...updateRequest.request,
-      id: updateRequest.id,
-    },
+    request.id,
+    body,
     log
   )
 }
 
 export async function deleteStorageById (
   deleteStorageById: (id: string) => Promise<void>,
-  id: string | undefined,
+  request: IdRequest,
   log: log
 ): Promise<void> {
+  authorizationService.authorizeAdmin(request.authTokenPayload)
   await storageService.deleteStorageById(
     deleteStorageById,
-    validateStorageId(id),
+    request.id,
     log
   );
 }
 
 export async function findStorageById (
   findById: (id: string) => Promise<JoinedStorage | undefined>,
-  id: string | undefined,
+  request: IdRequest,
   log: log
 ): Promise<JoinedStorage | undefined> {
+  authorizationService.authorizeViewer(request.authTokenPayload)
   return await storageService.findStorageById(
     findById,
-    validateStorageId(id),
+    request.id,
     log
   )
 }
 
 export async function listStorages (
   list: (pagination: Pagination) => Promise<JoinedStorage[]>,
+  authTokenPayload: AuthTokenPayload,
   pagination: Pagination,
   log: log
 ): Promise<JoinedStorage[]> {
+  authorizationService.authorizeViewer(authTokenPayload)
   return await storageService.listStorages(
     list,
     pagination,
@@ -81,36 +79,39 @@ export async function listStorages (
 
 export async function listStoragesByBeer (
   listByBeer: (beerId: string) => Promise<JoinedStorage[]>,
-  beerId: string | undefined,
+  request: IdRequest,
   log: log
 ): Promise<JoinedStorage[]> {
+  authorizationService.authorizeViewer(request.authTokenPayload)
   return await storageService.listStoragesByBeer(
     listByBeer,
-    validateBeerId(beerId),
+    request.id,
     log
   )
 }
 
 export async function listStoragesByBrewery (
   listByBrewery: (beerId: string) => Promise<JoinedStorage[]>,
-  breweryId: string | undefined,
+  request: IdRequest,
   log: log
 ): Promise<JoinedStorage[]> {
+  authorizationService.authorizeViewer(request.authTokenPayload)
   return await storageService.listStoragesByBrewery(
     listByBrewery,
-    validateBreweryId(breweryId),
+    request.id,
     log
   )
 }
 
 export async function listStoragesByStyle (
   listByStyle: (beerId: string) => Promise<JoinedStorage[]>,
-  styleId: string | undefined,
+  request: IdRequest,
   log: log
 ): Promise<JoinedStorage[]> {
+  authorizationService.authorizeViewer(request.authTokenPayload)
   return await storageService.listStoragesByStyle(
     listByStyle,
-    validateStyleId(styleId),
+    validateStyleId(request.id),
     log
   )
 }

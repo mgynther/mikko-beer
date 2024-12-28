@@ -12,8 +12,8 @@ import type {
   JoinedStorage,
   Storage,
   UpdateIf
-} from '../../../../src/core/storage/storage'
-import * as storageService from '../../../../src/core/storage/internal/service'
+} from '../../../../src/core/storage'
+import * as storageService from '../../../../src/core/internal/storage/service'
 
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'

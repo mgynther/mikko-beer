@@ -5,14 +5,15 @@ import type {
   Storage,
   StorageWithDate,
   UpdateIf
-} from '../storage'
+} from '../../storage'
 
 import {
   referredBeerNotFoundError,
   referredContainerNotFoundError,
   storageNotFoundError
 } from '../../errors'
-import { INFO, type log } from '../../log'
+import type { log } from '../../log'
+import { INFO, } from '../../log'
 
 import type { Pagination } from '../../pagination'
 import type { LockId } from '../../db'

@@ -1,7 +1,7 @@
 import * as beerRepository from '../../data/beer/beer.repository'
 import * as containerRepository from '../../data/container/container.repository'
 import * as storageRepository from '../../data/storage/storage.repository'
-import * as storageService from '../../core/storage/authorized.service'
+import * as storageService from '../../core/storage.authorized.service'
 
 import type { Transaction } from '../../data/database'
 import type { Router } from '../router'
@@ -11,7 +11,7 @@ import type {
   CreateStorageRequest,
   Storage,
   UpdateIf,
-} from '../../core/storage/storage'
+} from '../../core/storage'
 import { validatePagination } from '../../core/pagination'
 import { parseAuthToken } from '../authentication/authentication-helper'
 

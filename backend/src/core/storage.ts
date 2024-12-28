@@ -1,12 +1,12 @@
-import { ajv } from '../internal/ajv'
+import { ajv } from './internal/ajv'
 
-import type { Container } from '../container'
-import type { LockId } from '../db'
+import type { Container } from './container'
+import type { LockId } from './db'
 import {
   invalidStorageError,
   invalidStorageIdError
-} from '../errors'
-import { timePattern } from '../time'
+} from './errors'
+import { timePattern } from './time'
 
 export interface CreateIf {
   insertStorage: (request: CreateStorageRequest) => Promise<StorageWithDate>

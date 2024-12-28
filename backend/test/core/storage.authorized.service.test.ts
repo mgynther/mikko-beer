@@ -1,7 +1,7 @@
 import { expect } from 'earl'
-import * as storageService from '../../../src/core/storage/authorized.service'
+import * as storageService from '../../src/core/storage.authorized.service'
 
-import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
+import type { AuthTokenPayload } from '../../src/core/auth/auth-token'
 import type {
   JoinedStorage,
   Storage,
@@ -10,14 +10,14 @@ import type {
   CreateIf,
   UpdateIf,
   StorageWithDate
-} from '../../../src/core/storage/storage'
-import { Role } from '../../../src/core/user/user'
-import { dummyLog as log } from '../dummy-log'
-import { expectReject } from '../controller-error-helper'
+} from '../../src/core/storage'
+import { Role } from '../../src/core/user/user'
+import { dummyLog as log } from './dummy-log'
+import { expectReject } from './controller-error-helper'
 import {
   invalidStorageError,
   noRightsError
-} from '../../../src/core/errors'
+} from '../../src/core/errors'
 
 const validCreateStorageRequest: CreateStorageRequest = {
   beer: 'd667bdcb-a26e-4079-b249-c50769129c4c',

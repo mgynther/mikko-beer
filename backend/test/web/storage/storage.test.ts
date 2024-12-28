@@ -1,7 +1,7 @@
 import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
-import { JoinedStorage, Storage } from '../../../src/core/storage/storage'
+import { JoinedStorage, Storage } from '../../../src/core/storage'
 
 describe('storage tests', () => {
   const ctx = new TestContext()

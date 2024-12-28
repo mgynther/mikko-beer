@@ -1,4 +1,4 @@
-import * as storageService from '../../../../src/core/storage/internal/validated.service'
+import * as storageService from '../../../../src/core/internal/storage/validated.service'
 
 import type {
   Storage,
@@ -7,11 +7,10 @@ import type {
   CreateIf,
   UpdateIf,
   StorageWithDate
-} from '../../../../src/core/storage/storage'
+} from '../../../../src/core/storage'
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
 import {
-  ControllerError,
   invalidStorageError,
   invalidStorageIdError
 } from '../../../../src/core/errors'
