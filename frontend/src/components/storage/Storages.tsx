@@ -13,6 +13,7 @@ import { Role } from '../../core/user/types'
 
 import CreateStorage from './CreateStorage'
 import StorageList from './StorageList'
+import { countText } from './count-text'
 
 interface Props {
   getLogin: GetLogin
@@ -33,7 +34,7 @@ function Storages (props: Props): React.JSX.Element {
     : [...storages.storages]
   const title = storages === undefined
     ? 'Storage beers'
-    : `Storage beers (${storageItems.length})`
+    : `Storage beers (${countText(storageItems)})`
 
   return (
     <div>

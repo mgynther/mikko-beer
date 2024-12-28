@@ -7,6 +7,7 @@ import StorageItem from './StorageItem'
 
 import './StorageList.css'
 import type { GetLogin } from '../../core/login/types'
+import { countText } from './count-text'
 
 interface Props {
   deleteStorageIf: DeleteStorageIf
@@ -19,7 +20,9 @@ interface Props {
 function StorageList (props: Props): React.JSX.Element {
   return (
     <div>
-      {props.isTitleVisible && <h4>Storage {`(${props.storages.length})`}</h4>}
+      {props.isTitleVisible &&
+        <h4>Storage {`(${countText(props.storages)})`}</h4>
+      }
       <LoadingIndicator isLoading={props.isLoading} />
       <div className='StorageHeading'>
           <div className='BeerBreweries'>Breweries</div>

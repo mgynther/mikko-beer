@@ -98,4 +98,5 @@ test('renders storage list', async () => {
   getByRole('link', { name: storageTwo.beerName })
   getByRole('link', { name: styleTwo.name })
   getByText(storageTwo.bestBefore)
+  getByRole('heading', { name: 'Storage (1/2)' })
 })
