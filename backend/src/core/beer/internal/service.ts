@@ -12,12 +12,13 @@ import {
   referredBreweryNotFoundError,
   referredStyleNotFoundError
 } from '../../errors'
-import { INFO, type log } from '../../log'
+import type { log } from '../../log'
+import { INFO } from '../../log'
 import type {
   Pagination
 } from '../../pagination'
 import type { SearchByName } from '../../search'
-import { areKeysEqual } from '../../key'
+import { areKeysEqual } from '../../internal/key'
 import type { LockIds } from '../../db'
 
 export async function createBeer (

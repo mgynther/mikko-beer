@@ -1,6 +1,6 @@
 import { expect } from 'earl'
 
-import { areKeysEqual } from '../../src/core/key'
+import { areKeysEqual } from '../../../src/core/internal/key'
 
 describe('key tests', () => {
   it('keys equal', () => {

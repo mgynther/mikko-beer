@@ -14,9 +14,10 @@ import {
   parentStyleNotFoundError,
   styleNotFoundError
 } from '../../errors'
-import { INFO, type log } from '../../log'
+import type { log } from '../../log'
+import { INFO, } from '../../log'
 import { checkCyclicRelationships } from '../style.util'
-import { areKeysEqual } from '../../key'
+import { areKeysEqual } from '../../internal/key'
 import type { LockIds } from '../../db'
 
 export async function createStyle (
