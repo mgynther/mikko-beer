@@ -19,7 +19,6 @@ import type {
 import type { User } from '../../../core/user/user'
 import type { AuthTokenConfig } from '../../../core/auth/auth-token'
 import type { Context } from '../../context'
-import { createLockUserById } from './sign-in-method-helper'
 import type {
   RefreshTokensIf
 } from '../../../core/user/authorized-sign-in-method.service'
@@ -136,7 +135,7 @@ export function signInMethodController (router: Router): void {
 
       await ctx.db.executeTransaction(async (trx) => {
         const changePasswordUserIf: ChangePasswordUserIf = {
-          lockUserById: createLockUserById(trx),
+          lockUserById: (userId: string) => userRepository.lockUserById(trx, userId),
           findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
           updatePassword: function(
             userPasswordHash: UserPasswordHash

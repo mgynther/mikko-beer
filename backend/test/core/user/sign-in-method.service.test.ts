@@ -28,6 +28,7 @@ import {
   userAlreadyHasSignInMethodError
 } from '../../../src/core/errors'
 import { expectReject } from '../controller-error-helper'
+import { dummyLog as log } from '../dummy-log'
 import { AuthTokenConfig } from '../../../src/core/auth/auth-token'
 
 describe('encrypt and verify password', () => {
@@ -182,7 +183,7 @@ describe('password sign-in-method service unit tests', () => {
         expect(username).toEqual(user.username)
       }
     }
-    await addPasswordSignInMethod(addPasswordUserIf, userId, method)
+    await addPasswordSignInMethod(addPasswordUserIf, userId, method, log)
   })
 
   it('fail to add password sign-in-method for missing user', async () => {
@@ -192,7 +193,7 @@ describe('password sign-in-method service unit tests', () => {
       setUserUsername: notCalled,
     }
     expectReject(async () => {
-      await addPasswordSignInMethod(addPasswordUserIf, userId, method)
+      await addPasswordSignInMethod(addPasswordUserIf, userId, method, log)
     }, invalidCredentialsError)
   })
 
@@ -203,7 +204,7 @@ describe('password sign-in-method service unit tests', () => {
       setUserUsername: notCalled,
     }
     expectReject(async () => {
-      await addPasswordSignInMethod(addPasswordUserIf, userId, method)
+      await addPasswordSignInMethod(addPasswordUserIf, userId, method, log)
     }, userAlreadyHasSignInMethodError)
   })
 
@@ -220,7 +221,7 @@ describe('password sign-in-method service unit tests', () => {
       password: 'passwor',
     }
     expectReject(async () => {
-      await addPasswordSignInMethod(addPasswordUserIf, userId, method)
+      await addPasswordSignInMethod(addPasswordUserIf, userId, method, log)
     }, passwordTooWeakError)
   })
 

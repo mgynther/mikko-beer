@@ -9,6 +9,7 @@ import {
   passwordTooWeakError,
   userAlreadyHasSignInMethodError
 } from '../errors'
+import type { log } from '../log'
 import type { User } from '../user/user'
 import type { SignedInUser } from '../user/signed-in-user'
 import type {
@@ -34,9 +35,13 @@ export interface AddPasswordUserIf {
 export async function addPasswordSignInMethod (
   addPasswordUserIf: AddPasswordUserIf,
   userId: string,
-  method: PasswordSignInMethod
+  method: PasswordSignInMethod,
+  log: log
 ): Promise<void> {
-  const user = await lockUser(addPasswordUserIf.lockUserById, userId)
+  const user = await userService.lockUserById(
+    addPasswordUserIf.lockUserById,
+    userId
+  )
 
   if (user.username?.length !== undefined && user.username.length > 0) {
     throw userAlreadyHasSignInMethodError
@@ -47,7 +52,12 @@ export async function addPasswordSignInMethod (
     passwordHash: await encryptPassword(method.password)
   })
 
-  await addPasswordUserIf.setUserUsername(userId, method.username)
+  await userService.setUserUsername(
+    addPasswordUserIf.setUserUsername,
+    userId,
+    method.username,
+    log
+  )
 }
 
 export async function changePassword (
@@ -55,7 +65,10 @@ export async function changePassword (
   userId: string,
   change: PasswordChange
 ): Promise<void> {
-  const user = await lockUser(changePasswordUserIf.lockUserById, userId)
+  const user = await userService.lockUserById(
+    changePasswordUserIf.lockUserById,
+    userId
+  )
 
   if (user.username === null || user.username.length === 0) {
     throw invalidCredentialsError
@@ -161,16 +174,4 @@ async function verifyPassword (
   hash: string
 ): Promise<boolean> {
   return await verifySecret(password, hash)
-}
-
-async function lockUser (
-  lockUserById: LockUserById,
-  userId: string
-): Promise<User> {
-  const user = await lockUserById(userId)
-
-  if (user === undefined) {
-    throw invalidCredentialsError
-  }
-  return user
 }
