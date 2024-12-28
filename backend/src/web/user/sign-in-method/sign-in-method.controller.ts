@@ -30,9 +30,7 @@ export function signInMethodController (router: Router): void {
         lockUserByUsername: function(
           username: string
         ): Promise<User | undefined> {
-          return userService.lockUserByUsername((username: string) => {
-            return userRepository.lockUserByUsername(trx, username)
-          }, username)
+          return userRepository.lockUserByUsername(trx, username)
         },
         findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
         insertRefreshToken: (

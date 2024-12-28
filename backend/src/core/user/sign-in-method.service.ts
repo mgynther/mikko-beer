@@ -1,6 +1,7 @@
 import * as crypto from 'crypto'
 
 import * as authTokenService from '../auth/auth-token.service'
+import * as userService from '../user/user.service'
 
 import {
   invalidCredentialsError,
@@ -83,12 +84,8 @@ export async function signInUsingPassword (
   method: PasswordSignInMethod,
   authTokenConfig: AuthTokenConfig
 ): Promise<SignedInUser> {
-  const user = await signInUsingPasswordIf.lockUserByUsername(method.username)
-
-  if (user === undefined) {
-    throw invalidCredentialsError
-  }
-
+  const user = await userService.lockUserByUsername(
+    signInUsingPasswordIf.lockUserByUsername, method.username);
   const signInMethod = await signInUsingPasswordIf.findPasswordSignInMethod(
     user.id
   )

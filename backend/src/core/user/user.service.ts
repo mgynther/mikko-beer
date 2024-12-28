@@ -69,8 +69,12 @@ export async function lockUserById (
 export async function lockUserByUsername (
   lockUserByUsername: (username: string) => Promise<User | undefined>,
   username: string
-): Promise<User | undefined> {
-  return await lockUserByUsername(username)
+): Promise<User> {
+  const user = await lockUserByUsername(username)
+  if (user === undefined) {
+    throw invalidCredentialsError
+  }
+  return user
 }
 
 export async function setUserUsername (
