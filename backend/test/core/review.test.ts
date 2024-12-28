@@ -3,12 +3,12 @@ import { expect } from 'earl'
 import {
   validateCreateReviewRequest,
   validateUpdateReviewRequest,
-} from '../../../src/core/review/review'
+} from '../../src/core/review'
 import {
   invalidReviewError,
   invalidReviewIdError
-} from '../../../src/core/errors'
-import { expectThrow } from '../controller-error-helper'
+} from '../../src/core/errors'
+import { expectThrow } from './controller-error-helper'
 
 function validRequest (): Record<string, unknown> {
   return {

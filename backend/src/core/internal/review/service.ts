@@ -6,7 +6,7 @@ import type {
   ReviewListOrder,
   CreateIf,
   UpdateIf
-} from '../review'
+} from '../../review'
 
 import {
   referredBeerNotFoundError,
@@ -14,7 +14,8 @@ import {
   referredStorageNotFoundError,
   reviewNotFoundError
 } from '../../errors'
-import { INFO, type log } from '../../log'
+import type { log } from '../../log'
+import { INFO } from '../../log'
 import type {
   Pagination
 } from '../../pagination'

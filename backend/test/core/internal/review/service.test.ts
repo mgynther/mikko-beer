@@ -14,9 +14,9 @@ import type {
   ReviewListOrder,
   UpdateIf,
   UpdateReviewRequest
-} from '../../../../src/core/review/review'
+} from '../../../../src/core/review'
 import type { Pagination } from '../../../../src/core/pagination'
-import * as reviewService from '../../../../src/core/review/internal/service'
+import * as reviewService from '../../../../src/core/internal/review/service'
 
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'

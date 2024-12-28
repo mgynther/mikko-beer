@@ -1,7 +1,7 @@
 import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
-import { Review } from '../../../src/core/review/review'
+import { Review } from '../../../src/core/review'
 import type {
   StyleStatsOrder,
   StatsFilter

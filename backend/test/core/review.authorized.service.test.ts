@@ -1,7 +1,7 @@
 import { expect } from 'earl'
-import * as reviewService from '../../../src/core/review/authorized.service'
+import * as reviewService from '../../src/core/review.authorized.service'
 
-import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
+import type { AuthTokenPayload } from '../../src/core/auth/auth-token'
 import type {
   Review,
   CreateReviewRequest,
@@ -10,14 +10,14 @@ import type {
   ReviewListOrder,
   UpdateReviewRequest,
   UpdateIf
-} from '../../../src/core/review/review'
-import { Role } from '../../../src/core/user/user'
-import { dummyLog as log } from '../dummy-log'
-import { expectReject } from '../controller-error-helper'
+} from '../../src/core/review'
+import { Role } from '../../src/core/user/user'
+import { dummyLog as log } from './dummy-log'
+import { expectReject } from './controller-error-helper'
 import {
   invalidReviewError,
   noRightsError
-} from '../../../src/core/errors'
+} from '../../src/core/errors'
 
 const storageId = '5e11fcf9-3fa4-402d-90e2-17706e8d78e6'
 

@@ -3,13 +3,13 @@ import { expect } from 'earl'
 import {
   validateFilteredReviewListOrder,
   validateFullReviewListOrder
-} from '../../../src/core/review/review'
+} from '../../src/core/review'
 import {
   invalidReviewListQueryBeerNameError,
   invalidReviewListQueryBreweryNameError,
   invalidReviewListQueryOrderError
-} from '../../../src/core/errors'
-import { expectThrow } from '../controller-error-helper'
+} from '../../src/core/errors'
+import { expectThrow } from './controller-error-helper'
 
 function valid (): Record<string, unknown> {
   return { order: 'time', direction: 'desc' }

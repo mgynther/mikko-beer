@@ -2,7 +2,7 @@ import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
 import type { Pagination } from '../../../src/core/pagination'
-import type { Review } from '../../../src/core/review/review'
+import type { Review } from '../../../src/core/review'
 import type {
   BreweryStatsOrder,
   StatsFilter

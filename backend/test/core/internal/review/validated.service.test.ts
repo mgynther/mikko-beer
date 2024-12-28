@@ -1,4 +1,4 @@
-import * as reviewService from '../../../../src/core/review/internal/validated.service'
+import * as reviewService from '../../../../src/core/internal/review/validated.service'
 
 import type {
   Review,
@@ -6,7 +6,7 @@ import type {
   CreateIf,
   UpdateReviewRequest,
   UpdateIf
-} from '../../../../src/core/review/review'
+} from '../../../../src/core/review'
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
 import {
