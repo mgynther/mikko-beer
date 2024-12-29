@@ -3,7 +3,7 @@ import { expect } from 'earl'
 import {
   validateCreateStorageRequest,
   validateUpdateStorageRequest,
-} from '../../../src/core/storage/storage'
+} from '../../../src/core/internal/storage/validation'
 import {
   invalidStorageError,
   invalidStorageIdError
@@ -18,7 +18,7 @@ function validRequest (): Record<string, unknown> {
   }
 }
 
-describe('storage unit tests', () => {
+describe('storage validation unit tests', () => {
   it('valid create storate request passes validation', () => {
     const input = validRequest()
     const output = validRequest()

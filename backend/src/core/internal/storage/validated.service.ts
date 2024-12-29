@@ -10,7 +10,7 @@ import {
   validateCreateStorageRequest,
   validateStorageId,
   validateUpdateStorageRequest
-} from "../../storage/storage";
+} from "./validation";
 import type { log } from '../../log'
 import type { Pagination } from '../../pagination';
 import { validateBeerId } from '../beer/validation';
