@@ -3,14 +3,14 @@ import { expect } from 'earl'
 import {
   validateCreateAnonymousUserRequest,
   validateCreateUserRequest
-} from '../../../src/core/user/user'
+} from '../../../../src/core/internal/user/validation'
 import {
   invalidSignInMethodError,
   invalidUserError
-} from '../../../src/core/errors'
-import { expectThrow } from '../controller-error-helper'
+} from '../../../../src/core/errors'
+import { expectThrow } from '../../controller-error-helper'
 
-describe('create anonymous user unit tests', () => {
+describe('create anonymous user validation unit tests', () => {
   function pass(user: Record<string, unknown>) {
     const input = { ...user }
     const output = { ...user }
@@ -49,7 +49,7 @@ describe('create anonymous user unit tests', () => {
 })
 
 
-describe('create user unit tests', () => {
+describe('create user validation unit tests', () => {
   const validRequest = {
     user: {
       role: 'admin'

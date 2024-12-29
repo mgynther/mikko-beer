@@ -14,7 +14,7 @@ import type {
 } from './sign-in-method'
 import type { IdRequest } from '../request'
 import type { SignedInUser } from '../internal/user/signed-in-user'
-import { validateUserId } from './user'
+import { validateUserId } from '../internal/user/validation'
 import type { User } from './user'
 import type { AuthTokenConfig } from '../auth/auth-token'
 import type { Tokens } from '../auth/tokens'
