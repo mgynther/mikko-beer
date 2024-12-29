@@ -59,7 +59,14 @@ export default [
     rules: {
       ...rules,
       'no-restricted-imports': ['error',
-        { patterns: ['data', 'web'] }
+        { patterns: [
+          {
+            regex: 'data/'
+          },
+          {
+            regex: 'web/'
+          }
+        ]}
       ]
     }
   },
@@ -70,7 +77,27 @@ export default [
     rules: {
       ...rules,
       'no-restricted-imports': ['error',
-        { patterns: ['web'] }
+        { patterns: [
+          {
+            regex: 'web/',
+          },
+          {
+            regex: 'core/internal/'
+          }
+        ] }
+      ]
+    }
+  },
+  {
+    languageOptions,
+    files: ['src/web/*.ts', 'src/web/**/*.ts'],
+    plugins,
+    rules: {
+      ...rules,
+      'no-restricted-imports': ['error',
+        { patterns: [{
+          regex: 'core/internal/'
+        }]}
       ]
     }
   },
