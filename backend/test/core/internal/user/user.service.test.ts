@@ -1,17 +1,17 @@
 import { expect } from 'earl'
 
-import { userNotFoundError } from '../../../src/core/errors'
-import * as userService from '../../../src/core/user/user.service'
-import type { AuthTokenConfig } from "../../../src/core/auth/auth-token"
-import type { DbRefreshToken } from "../../../src/core/auth/refresh-token"
-import { Role } from "../../../src/core/user/user"
+import { userNotFoundError } from '../../../../src/core/errors'
+import * as userService from '../../../../src/core/internal/user/user.service'
+import type { AuthTokenConfig } from "../../../../src/core/auth/auth-token"
+import type { DbRefreshToken } from "../../../../src/core/auth/refresh-token"
+import { Role } from "../../../../src/core/user/user"
 import type {
   CreateAnonymousUserRequest,
   User
-} from "../../../src/core/user/user"
+} from "../../../../src/core/user/user"
 
-import { dummyLog as log } from '../dummy-log'
-import { expectReject } from '../controller-error-helper'
+import { dummyLog as log } from '../../dummy-log'
+import { expectReject } from '../../controller-error-helper'
 
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {

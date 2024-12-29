@@ -1,6 +1,6 @@
 import { expect } from 'earl'
 
-import * as authTokenService from '../../../src/core/internal/auth/auth-token.service'
+import * as authTokenService from '../../../../src/core/internal/auth/auth-token.service'
 
 import {
   addPasswordSignInMethod,
@@ -8,7 +8,7 @@ import {
   encryptPassword,
   signInUsingPassword,
   verifySecret
-} from '../../../src/core/user/sign-in-method.service'
+} from '../../../../src/core/internal/user/sign-in-method.service'
 
 import type {
   AddPasswordUserIf,
@@ -17,17 +17,17 @@ import type {
   PasswordSignInMethod,
   SignInUsingPasswordIf,
   UserPasswordHash,
-} from '../../../src/core/user/sign-in-method'
-import { Role, User } from '../../../src/core/user/user'
+} from '../../../../src/core/user/sign-in-method'
+import { Role, User } from '../../../../src/core/user/user'
 import {
   invalidCredentialsError,
   passwordTooLongError,
   passwordTooWeakError,
   userAlreadyHasSignInMethodError
-} from '../../../src/core/errors'
-import { expectReject } from '../controller-error-helper'
-import { dummyLog as log } from '../dummy-log'
-import { AuthTokenConfig } from '../../../src/core/auth/auth-token'
+} from '../../../../src/core/errors'
+import { expectReject } from '../../controller-error-helper'
+import { dummyLog as log } from '../../dummy-log'
+import { AuthTokenConfig } from '../../../../src/core/auth/auth-token'
 
 describe('encrypt and verify password', () => {
   it('fail to encrypt too short password', async () => {

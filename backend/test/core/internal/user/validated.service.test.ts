@@ -1,15 +1,15 @@
-import * as userService from '../../../src/core/user/validated-user.service'
+import * as userService from '../../../../src/core/internal/user/validated-user.service'
 
-import type { AuthTokenConfig } from '../../../src/core/auth/auth-token'
-import type { CreateUserIf, CreateUserType } from '../../../src/core/user/user'
-import { Role } from '../../../src/core/user/user'
-import { dummyLog as log } from '../dummy-log'
-import { expectReject } from '../controller-error-helper'
+import type { AuthTokenConfig } from '../../../../src/core/auth/auth-token'
+import type { CreateUserIf, CreateUserType } from '../../../../src/core/user/user'
+import { Role } from '../../../../src/core/user/user'
+import { dummyLog as log } from '../../dummy-log'
+import { expectReject } from '../../controller-error-helper'
 import {
   invalidUserError,
   invalidUserIdError
-} from '../../../src/core/errors'
-import { SignedInUser } from '../../../src/core/user/signed-in-user'
+} from '../../../../src/core/errors'
+import { SignedInUser } from '../../../../src/core/internal/user/signed-in-user'
 
 const validCreateUserRequest: CreateUserType = {
   user: {

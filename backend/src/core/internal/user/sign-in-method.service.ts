@@ -1,6 +1,6 @@
 import * as crypto from 'crypto'
 
-import * as authTokenService from '../internal/auth/auth-token.service'
+import * as authTokenService from '../../internal/auth/auth-token.service'
 import * as userService from '../user/user.service'
 
 import {
@@ -8,8 +8,8 @@ import {
   passwordTooLongError,
   passwordTooWeakError,
   userAlreadyHasSignInMethodError
-} from '../errors'
-import type { log } from '../log'
+} from '../../errors'
+import type { log } from '../../log'
 import type { SignedInUser } from '../user/signed-in-user'
 import type {
   AddPasswordUserIf,
@@ -17,8 +17,8 @@ import type {
   PasswordChange,
   PasswordSignInMethod,
   SignInUsingPasswordIf
-} from './sign-in-method'
-import type { AuthTokenConfig } from '../auth/auth-token'
+} from '../../user/sign-in-method'
+import type { AuthTokenConfig } from '../../auth/auth-token'
 
 export const MIN_PASSWORD_LENGTH = 8
 export const MAX_PASSWORD_LENGTH = 255

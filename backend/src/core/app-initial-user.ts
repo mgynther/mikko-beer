@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 
-import * as userService from './user/user.service'
-import * as signInMethodService from './user/sign-in-method.service'
+import * as userService from './internal/user/user.service'
+import * as signInMethodService from './internal/user/sign-in-method.service'
 
 import type { log } from './log'
 import { Role } from './user/user'
@@ -12,7 +12,7 @@ import type {
   AddPasswordUserIf,
   PasswordSignInMethod
 } from './user/sign-in-method'
-import type { SignedInUser } from './user/signed-in-user'
+import type { SignedInUser } from './internal/user/signed-in-user'
 import type { DbRefreshToken } from './auth/refresh-token'
 
 export async function createInitialUser (

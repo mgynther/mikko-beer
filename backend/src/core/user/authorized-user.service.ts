@@ -1,5 +1,5 @@
 import * as authorizationService from '../internal/auth/authorization.service'
-import * as userService from './validated-user.service'
+import * as userService from '../internal/user/validated-user.service'
 
 import type { IdRequest } from "../request"
 import type { CreateUserIf, User } from "./user"
@@ -10,7 +10,7 @@ import type {
   AuthTokenPayload
 } from '../auth/auth-token'
 import type { DbRefreshToken } from '../auth/refresh-token'
-import type { SignedInUser } from './signed-in-user'
+import type { SignedInUser } from '../internal/user/signed-in-user'
 
 export async function createUser (
   createUserIf: CreateUserIf,

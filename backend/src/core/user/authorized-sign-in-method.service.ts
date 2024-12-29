@@ -1,7 +1,7 @@
 import * as authTokenService from '../internal/auth/auth-token.service'
 import * as authorizationService from '../internal/auth/authorization.service'
-import * as signInMethodService from './sign-in-method.service'
-import * as userService from '../user/user.service'
+import * as signInMethodService from '../internal/user/sign-in-method.service'
+import * as userService from '../internal/user/user.service'
 
 import type { DbRefreshToken, RefreshToken } from '../auth/refresh-token'
 import {
@@ -13,7 +13,7 @@ import type {
   SignInUsingPasswordIf
 } from './sign-in-method'
 import type { IdRequest } from '../request'
-import type { SignedInUser } from './signed-in-user'
+import type { SignedInUser } from '../internal/user/signed-in-user'
 import { validateUserId } from './user'
 import type { User } from './user'
 import type { AuthTokenConfig } from '../auth/auth-token'

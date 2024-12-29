@@ -1,10 +1,10 @@
 import * as userService from '../user/user.service'
 import * as signInMethodService from '../user/sign-in-method.service'
 
-import type { CreateUserIf, CreateUserRequest } from "./user"
+import type { CreateUserIf, CreateUserRequest } from "../../user/user"
 
-import type { log } from '../log'
-import type { AuthTokenConfig } from '../auth/auth-token'
+import type { log } from '../../log'
+import type { AuthTokenConfig } from '../../auth/auth-token'
 import type { SignedInUser } from './signed-in-user'
 
 export async function createUser (
