@@ -3,12 +3,12 @@ import { expect } from 'earl'
 import {
   validateCreateReviewRequest,
   validateUpdateReviewRequest,
-} from '../../../src/core/review/review'
+} from '../../../../src/core/internal/review/validation'
 import {
   invalidReviewError,
   invalidReviewIdError
-} from '../../../src/core/errors'
-import { expectThrow } from '../controller-error-helper'
+} from '../../../../src/core/errors'
+import { expectThrow } from '../../controller-error-helper'
 
 function validRequest (): Record<string, unknown> {
   return {
@@ -23,7 +23,7 @@ function validRequest (): Record<string, unknown> {
   }
 }
 
-describe('review create/update unit tests', () => {
+describe('review create/update validation unit tests', () => {
   const id = '49f208f7-07b2-4fca-bbd3-8a4bc49b9b38';
 
   [

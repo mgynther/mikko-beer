@@ -1,18 +1,15 @@
 import { ajv } from '../internal/ajv'
 
 import type { Container } from '../container/container'
-import type { ListDirection } from '../list'
 import { directionValidation } from '../list'
-import { timePattern } from '../internal/time'
+import type { ListDirection } from '../list'
 
+import type { LockId } from '../db'
 import {
-  invalidReviewError,
-  invalidReviewIdError,
   invalidReviewListQueryBeerNameError,
   invalidReviewListQueryBreweryNameError,
   invalidReviewListQueryOrderError
 } from '../errors'
-import type { LockId } from '../db'
 
 export interface CreateIf {
   createReview: (review: NewReview) => Promise<Review>
@@ -95,46 +92,6 @@ export interface ReviewListOrder {
 export type CreateReviewRequest = ReviewRequest
 export type UpdateReviewRequest = ReviewRequest
 
-const doValidateReviewRequest =
-  ajv.compile<ReviewRequest>({
-    type: 'object',
-    properties: {
-      additionalInfo: {
-        type: 'string'
-      },
-      beer: {
-        type: 'string',
-        minLength: 1
-      },
-      container: {
-        type: 'string',
-        minLength: 1
-      },
-      location: {
-        type: 'string'
-      },
-      rating: {
-        type: 'integer',
-        minimum: 4,
-        maximum: 10
-      },
-      smell: {
-        type: 'string',
-        minLength: 1
-      },
-      taste: {
-        type: 'string',
-        minLength: 1
-      },
-      time: {
-        type: 'string',
-        pattern: timePattern
-      }
-    },
-    required: ['beer', 'container', 'rating', 'smell', 'taste', 'time'],
-    additionalProperties: false
-  })
-
 const doValidateReviewListOrder =
   ajv.compile<ReviewListOrder>({
     type: 'object',
@@ -148,56 +105,6 @@ const doValidateReviewListOrder =
     additionalProperties: false
   })
 
-function isCreateReviewRequestValid (body: unknown): boolean {
-  return doValidateReviewRequest(body)
-}
-
-function isUpdateReviewRequestValid (body: unknown): boolean {
-  return doValidateReviewRequest(body)
-}
-
-export function validateCreateReviewRequest (
-  body: unknown
-): CreateReviewRequest {
-  if (!isCreateReviewRequestValid(body)) {
-    throw invalidReviewError
-  }
-
-  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
-   * Validated using ajv.
-   */
-  const result = body as CreateReviewRequest
-  return result
-}
-
-interface ValidUpdateReviewRequest {
-  id: string,
-  request: UpdateReviewRequest
-}
-
-export function validateUpdateReviewRequest (
-  body: unknown,
-  reviewId: string | undefined
-): ValidUpdateReviewRequest {
-  if (!isUpdateReviewRequestValid(body)) {
-    throw invalidReviewError
-  }
-  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
-   * Validated using ajv.
-   */
-  const result = body as UpdateReviewRequest
-  return {
-    id: validateReviewId(reviewId),
-    request: result
-  }
-}
-
-export function validateReviewId(id: string | undefined): string {
-  if (typeof id !== 'string' || id.length === 0) {
-    throw invalidReviewIdError
-  }
-  return id
-}
 
 function isReviewListOrderValid (body: unknown): boolean {
   return doValidateReviewListOrder(body)

@@ -11,7 +11,7 @@ import {
   validateCreateReviewRequest,
   validateReviewId,
   validateUpdateReviewRequest
-} from "../../review/review";
+} from "./validation";
 import type { log } from '../../log'
 import type { Pagination } from '../../pagination';
 import { validateBeerId } from '../beer/validation';
