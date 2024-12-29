@@ -4,7 +4,7 @@ import {
   validateBreweryId,
   validateCreateBreweryRequest,
   validateUpdateBreweryRequest
-} from "../../brewery/brewery";
+} from "./validation";
 import type { Brewery, NewBrewery } from "../../brewery/brewery";
 import type { log } from '../../log'
 import type { Pagination } from '../../pagination';

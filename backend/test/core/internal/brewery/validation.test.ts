@@ -3,12 +3,12 @@ import { expect } from 'earl'
 import {
   validateCreateBreweryRequest,
   validateUpdateBreweryRequest,
-} from '../../../src/core/brewery/brewery'
+} from '../../../../src/core/internal/brewery/validation'
 import {
   invalidBreweryError,
   invalidBreweryIdError
-} from '../../../src/core/errors'
-import { expectThrow } from '../controller-error-helper'
+} from '../../../../src/core/errors'
+import { expectThrow } from '../../controller-error-helper'
 
 function validRequest (): Record<string, unknown> {
   return {
@@ -16,7 +16,7 @@ function validRequest (): Record<string, unknown> {
   }
 }
 
-describe('brewery unit tests', () => {
+describe('brewery validation unit tests', () => {
   it('valid create brewery request passes validation', () => {
     const input = validRequest()
     const output = validRequest()
