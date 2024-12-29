@@ -3,7 +3,7 @@ import type * as KoaRouter from 'koa-router'
 
 import type { Config } from './config'
 
-import { log } from '../core/log'
+import type { log } from '../core/log'
 import type { Database } from '../data/database'
 
 export interface ContextExtension {
@@ -13,7 +13,6 @@ export interface ContextExtension {
 }
 
 export type Context = Koa.ParameterizedContext<
-any,
-ContextExtension & KoaRouter.IRouterParamContext<any, ContextExtension>,
-any
+unknown,
+ContextExtension & KoaRouter.IRouterParamContext<unknown, ContextExtension>
 >

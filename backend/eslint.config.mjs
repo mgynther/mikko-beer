@@ -48,7 +48,7 @@ export default [
   {
     ...love,
     languageOptions,
-    files: ['src/*.{js,ts,tsx,jsx}'],
+    files: ['src/*.{js,ts,tsx,jsx}', 'src/**/*.{js,ts,tsx,jsx}'],
     plugins,
     rules,
   },

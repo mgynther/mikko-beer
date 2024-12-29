@@ -23,7 +23,8 @@ import {
   createAddPasswordUserIf
 } from './user/sign-in-method/sign-in-method-helper'
 import { ControllerError } from '../core/errors'
-import { Level, log } from '../core/log'
+import type { log } from '../core/log'
+import { Level } from '../core/log'
 import type { AuthTokenConfig } from '../core/auth/auth-token'
 import {
   createInitialUser,
@@ -35,11 +36,11 @@ export interface StartResult {
 }
 
 export class App {
-  #config: Config
-  #log: log
-  #koa: Koa<any, ContextExtension>
-  #router: Router
-  #db: Database
+  readonly #config: Config
+  readonly #log: log
+  readonly #koa: Koa<unknown, ContextExtension>
+  readonly #router: Router
+  readonly #db: Database
   #server?: Server
 
   constructor (config: Config, log: log) {
@@ -53,7 +54,7 @@ export class App {
     this.#koa.use(bodyParser())
     this.#koa.use(json())
 
-    this.#koa.use(this.addHeaders)
+    this.#koa.use(addHeaders)
     this.#koa.use(this.errorHandler)
     this.#koa.use(this.decorateContext)
 
@@ -75,6 +76,9 @@ export class App {
   }
 
   async start (): Promise<StartResult> {
+    /* eslint-disable-next-line promise/avoid-new --
+     * Promisefying would be tedious and it could easily hide errors.
+     */
     return await new Promise<StartResult>((resolve) => {
       const port = this.#config.port
       const db = this.#db
@@ -83,14 +87,14 @@ export class App {
       const startResult: StartResult = {
         authToken: ''
       }
-      function logWithAdminPassword (...args: any[]): void {
+      function logWithAdminPassword (...args: unknown[]): void {
         if (isAdminPasswordNeeded) {
           log(Level.INFO, ...args)
         }
       }
       userRepository.listUsers(db).then((users: User[]) => {
-        let createPromise: Promise<void> | undefined
-        if (users === undefined || users.length === 0) {
+        let createPromise: Promise<void> | undefined = undefined
+        if (users.length === 0) {
           logWithAdminPassword('No users. Creating initial admin')
           const adminUsername = uuidv4()
           const adminPassword = uuidv4()
@@ -100,10 +104,11 @@ export class App {
               expiryDuration: this.#config.authTokenExpiryDuration
             };
             const user = await createInitialUser(
-              (request: CreateAnonymousUserRequest) => {
-                return userRepository.createAnonymousUser(trx, request)
-              },
-              authTokenConfig, this.#log)
+              async (request: CreateAnonymousUserRequest) =>
+                await userRepository.createAnonymousUser(trx, request),
+              authTokenConfig,
+              this.#log
+            )
             startResult.authToken = user.authToken.authToken
             if (isAdminPasswordNeeded) {
               const addPasswordUserIf = createAddPasswordUserIf(trx)
@@ -119,11 +124,17 @@ export class App {
             }
           })
           logWithAdminPassword(
-            // eslint-disable-next-line max-len
-            `Created initial user "${adminUsername}" with password "${adminPassword}". Please change the password a.s.a.p.`
+            `Created initial user "${
+              adminUsername
+            }" with password "${
+              adminPassword
+            }". Please change the password a.s.a.p.`
           )
         }
         logWithAdminPassword('Server starting')
+        /* eslint-disable-next-line promise/avoid-new --
+         * Promisefying would be tedious and it could easily hide errors.
+         */
         const serverPromise = new Promise<void>((resolve) => {
           this.#server = this.#koa.listen(port, resolve)
         })
@@ -134,16 +145,19 @@ export class App {
         Promise.all(promises).then(() => {
           logWithAdminPassword(`Server started in port ${port}`)
           resolve(startResult)
-        }, (error) => {
+        }, (error: unknown) => {
           log(Level.ERROR, 'Error starting', error)
         })
-      }, (error) => {
+      }, (error: unknown) => {
         log(Level.ERROR, 'Error starting', error)
       })
     })
   }
 
   async stop (): Promise<void> {
+    /* eslint-disable-next-line promise/avoid-new --
+     * Promisefying would be tedious and it could easily hide errors.
+     */
     await new Promise<void>((resolve, reject) => {
       this.#server?.close((err) => {
         if (err != null) {
@@ -154,18 +168,7 @@ export class App {
       })
     })
 
-    await this.#db?.destroy()
-  }
-
-  private readonly addHeaders = async (
-    ctx: Context,
-    next: Koa.Next
-  ): Promise<void> => {
-    ctx.set('Access-Control-Allow-Origin', '*')
-    ctx.set('Access-Control-Allow-Headers', 'Authorization, Content-Type')
-    ctx.set('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,DELETE,PATCH')
-    ctx.set('Vary', 'Origin, Accept-Encoding')
-    await next()
+    await this.#db.destroy()
   }
 
   private readonly errorHandler = async (
@@ -200,7 +203,7 @@ function respondError (ctx: Context, error: ControllerError): void {
   ctx.body = error.toJSON()
 }
 
-function isObject (value: unknown): value is Record<string, any> {
+function isObject (value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
 }
 
@@ -218,6 +221,21 @@ function createUnknownError (error: unknown, log: log): ControllerError {
   return new ControllerError(
     500,
     'UnknownError',
-    (isObject(error) ? error.message : undefined) ?? 'unknown error'
+    getUnknownErrorMessage(error)
   )
+}
+
+function getUnknownErrorMessage(error: unknown): string {
+  if (isObject(error) && typeof error.message === 'string') {
+    return error.message
+  }
+  return 'unknown error'
+}
+
+async function addHeaders (ctx: Context, next: Koa.Next): Promise<void> {
+  ctx.set('Access-Control-Allow-Origin', '*')
+  ctx.set('Access-Control-Allow-Headers', 'Authorization, Content-Type')
+  ctx.set('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,DELETE,PATCH')
+  ctx.set('Vary', 'Origin, Accept-Encoding')
+  await next()
 }

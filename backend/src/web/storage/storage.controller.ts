@@ -23,11 +23,9 @@ export function storageController (router: Router): void {
 
       const result = await ctx.db.executeTransaction(async (trx) => {
         const createIf: CreateIf = {
-          insertStorage: (
+          insertStorage: async (
               createStorageRequest: CreateStorageRequest
-          ) => {
-              return storageRepository.insertStorage(trx, createStorageRequest)
-          },
+          ) => await storageRepository.insertStorage(trx, createStorageRequest),
           lockBeer: createBeerLocker(trx),
           lockContainer: createContainerLocker(trx)
         }
@@ -56,11 +54,9 @@ export function storageController (router: Router): void {
 
       const result = await ctx.db.executeTransaction(async (trx) => {
         const updateIf: UpdateIf = {
-          updateStorage: (
+          updateStorage: async (
             storage: Storage
-          ) => {
-            return storageRepository.updateStorage(trx, storage)
-          },
+          ) => await storageRepository.updateStorage(trx, storage),
           lockBeer: createBeerLocker(trx),
           lockContainer: createContainerLocker(trx)
         }
@@ -88,19 +84,17 @@ export function storageController (router: Router): void {
       const storageId: string | undefined = ctx.params.storageId
 
       await ctx.db.executeTransaction(async (trx) => {
-        const deleteStorage: (id: string) => Promise<void> = (
+        const deleteStorage: (id: string) => Promise<void> = async (
           storageId: string
-          ) => {
-            return storageRepository.deleteStorageById(trx, storageId)
-          }
-        return await storageService.deleteStorageById(
+          ) => { await storageRepository.deleteStorageById(trx, storageId); }
+        await storageService.deleteStorageById(
           deleteStorage,
           {
             authTokenPayload,
             id: storageId
           },
           ctx.log
-        )
+        );
       })
 
       ctx.status = 204
@@ -112,11 +106,9 @@ export function storageController (router: Router): void {
     async (ctx) => {
       const authTokenPayload = parseAuthToken(ctx)
       const storageId: string | undefined = ctx.params.storageId
-      const storage = await storageService.findStorageById((
+      const storage = await storageService.findStorageById(async (
         storageId: string,
-      ) => {
-        return storageRepository.findStorageById(ctx.db, storageId)
-      }, {
+      ) => await storageRepository.findStorageById(ctx.db, storageId), {
         authTokenPayload,
         id: storageId
       }, ctx.log)
@@ -130,15 +122,13 @@ export function storageController (router: Router): void {
     async (ctx) => {
       const authTokenPayload = parseAuthToken(ctx)
       const beerId: string | undefined = ctx.params.beerId
-      const storageResult = await storageService.listStoragesByBeer((
+      const storageResult = await storageService.listStoragesByBeer(async (
         beerId: string
-      ) => {
-        return storageRepository.listStoragesByBeer(ctx.db, beerId)
-      }, {
+      ) => await storageRepository.listStoragesByBeer(ctx.db, beerId), {
         authTokenPayload,
         id: beerId
       }, ctx.log)
-      const storages = storageResult ?? []
+      const storages = storageResult
 
       ctx.body = { storages }
     }
@@ -149,15 +139,13 @@ export function storageController (router: Router): void {
     async (ctx) => {
       const authTokenPayload = parseAuthToken(ctx)
       const breweryId: string | undefined = ctx.params.breweryId
-      const storageResult = await storageService.listStoragesByBrewery((
+      const storageResult = await storageService.listStoragesByBrewery(async (
         breweryId: string
-      ) => {
-        return storageRepository.listStoragesByBrewery(ctx.db, breweryId)
-      }, {
+      ) => await storageRepository.listStoragesByBrewery(ctx.db, breweryId), {
         authTokenPayload,
         id: breweryId
       }, ctx.log)
-      const storages = storageResult ?? []
+      const storages = storageResult
 
       ctx.body = { storages }
     }
@@ -168,15 +156,13 @@ export function storageController (router: Router): void {
     async (ctx) => {
       const authTokenPayload = parseAuthToken(ctx)
       const styleId: string | undefined = ctx.params.styleId
-      const storageResult = await storageService.listStoragesByStyle((
+      const storageResult = await storageService.listStoragesByStyle(async (
         styleId: string
-      ) => {
-        return storageRepository.listStoragesByStyle(ctx.db, styleId)
-      }, {
+      ) => await storageRepository.listStoragesByStyle(ctx.db, styleId), {
         authTokenPayload,
         id: styleId
       }, ctx.log)
-      const storages = storageResult ?? []
+      const storages = storageResult
 
       ctx.body = { storages }
     }
@@ -188,11 +174,17 @@ export function storageController (router: Router): void {
       const authTokenPayload = parseAuthToken(ctx)
       const { skip, size } = ctx.request.query
       const pagination = validatePagination({ skip, size })
-      const storages = await storageService.listStorages((
-        pagination: Pagination
-      ) => {
-        return storageRepository.listStorages(ctx.db, pagination)
-      }, authTokenPayload, pagination, ctx.log)
+      const storages = await storageService.listStorages(
+        async (
+          pagination: Pagination
+        ) => await storageRepository.listStorages(
+          ctx.db,
+          pagination
+        ),
+        authTokenPayload,
+        pagination,
+        ctx.log
+      )
       ctx.body = { storages, pagination }
     }
   )
@@ -201,15 +193,15 @@ export function storageController (router: Router): void {
 function createBeerLocker (
   trx: Transaction
 ): (id: string) => Promise<string | undefined> {
-  return function(id: string): Promise<string | undefined> {
-    return beerRepository.lockBeer(trx, id)
+  return async function(id: string): Promise<string | undefined> {
+    return await beerRepository.lockBeer(trx, id)
   }
 }
 
 function createContainerLocker (
   trx: Transaction
 ): (id: string) => Promise<string | undefined> {
-  return function(id: string): Promise<string | undefined> {
-    return containerRepository.lockContainer(trx, id)
+  return async function(id: string): Promise<string | undefined> {
+    return await containerRepository.lockContainer(trx, id)
   }
 }

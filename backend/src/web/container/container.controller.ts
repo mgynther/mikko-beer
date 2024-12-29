@@ -11,16 +11,17 @@ export function containerController (router: Router): void {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const { body } = ctx.request
 
-      const result = await ctx.db.executeTransaction(async (trx) => {
-        return await containerService.createContainer(
-          (
+      const result = await ctx.db.executeTransaction(
+        async (trx) => await containerService.createContainer(
+          async (
             container: NewContainer
-          ) => containerRepository.insertContainer(trx, container),
+          ) => await containerRepository.insertContainer(trx, container),
           {
             authTokenPayload,
             body
-          }, ctx.log)
-      })
+          }, ctx.log
+        )
+      )
 
       ctx.status = 201
       ctx.body = {
@@ -35,15 +36,18 @@ export function containerController (router: Router): void {
       const { body } = ctx.request
       const containerId: string | undefined = ctx.params.containerId
 
-      const result = await ctx.db.executeTransaction(async (trx) => {
-        return await containerService.updateContainer(
-          (container: Container) =>
-            containerRepository.updateContainer(trx, container),
-            {
-              authTokenPayload,
-              id: containerId
-            }, body, ctx.log)
-      })
+      const result = await ctx.db.executeTransaction(
+        async (trx) => await containerService.updateContainer(
+          async (container: Container) =>
+            await containerRepository.updateContainer(trx, container),
+          {
+            authTokenPayload,
+            id: containerId
+          },
+          body,
+          ctx.log
+        )
+      )
 
       ctx.status = 200
       ctx.body = {
@@ -57,12 +61,15 @@ export function containerController (router: Router): void {
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const containerId: string | undefined = ctx.params.containerId
-      const container = await containerService.findContainerById((containerId: string) => {
-        return containerRepository.findContainerById(ctx.db, containerId)
-      }, {
-        authTokenPayload,
-        id: containerId
-      }, ctx.log)
+      const container = await containerService.findContainerById(
+        async (containerId: string) =>
+          await containerRepository.findContainerById(ctx.db, containerId),
+        {
+          authTokenPayload,
+          id: containerId
+        },
+        ctx.log
+      )
 
       ctx.body = { container }
     }
@@ -72,9 +79,12 @@ export function containerController (router: Router): void {
     '/api/v1/container',
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const containers = await containerService.listContainers(() => {
-        return containerRepository.listContainers(ctx.db)
-      }, authTokenPayload, ctx.log)
+      const containers = await containerService.listContainers(
+        async () =>
+          await containerRepository.listContainers(ctx.db),
+        authTokenPayload,
+        ctx.log
+      )
       ctx.body = { containers }
     }
   )

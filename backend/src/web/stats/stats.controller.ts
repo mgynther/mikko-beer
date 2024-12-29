@@ -26,11 +26,17 @@ export function statsController (router: Router): void {
     async (ctx) => {
       const authTokenPayload = parseAuthToken(ctx)
       const statsFilter = validateStatsBreweryStyleFilter(ctx.request.query)
-      const overall = await statsService.getOverall((
-        statsFilter: StatsBreweryStyleFilter
-      ) => {
-        return statsRepository.getOverall(ctx.db, statsFilter)
-      }, authTokenPayload, statsFilter, ctx.log)
+      const overall = await statsService.getOverall(
+        async (
+          statsFilter: StatsBreweryStyleFilter
+        ) => await statsRepository.getOverall(
+          ctx.db,
+          statsFilter
+        ),
+        authTokenPayload,
+        statsFilter,
+        ctx.log
+      )
       ctx.body = { overall }
     }
   )
@@ -39,11 +45,17 @@ export function statsController (router: Router): void {
     async (ctx) => {
       const authTokenPayload = parseAuthToken(ctx)
       const statsFilter = validateStatsBreweryStyleFilter(ctx.request.query)
-      const annual = await statsService.getAnnual((
-        statsFilter: StatsBreweryStyleFilter
-      ) => {
-        return statsRepository.getAnnual(ctx.db, statsFilter)
-      }, authTokenPayload, statsFilter, ctx.log)
+      const annual = await statsService.getAnnual(
+        async (
+          statsFilter: StatsBreweryStyleFilter
+        ) => await statsRepository.getAnnual(
+          ctx.db,
+          statsFilter
+        ),
+        authTokenPayload,
+        statsFilter,
+        ctx.log
+      )
       ctx.body = { annual }
     }
   )
@@ -58,15 +70,13 @@ export function statsController (router: Router): void {
       const breweryStatsOrder = validateBreweryStatsOrder({ order, direction })
       const brewery =
         await statsService.getBrewery(
-          (
+          async (
             pagination: Pagination,
             statsFilter: StatsFilter,
             breweryStatsOrder: BreweryStatsOrder
-          ) => {
-            return statsRepository.getBrewery(
+          ) => await statsRepository.getBrewery(
               ctx.db, pagination, statsFilter, breweryStatsOrder
-            )
-          },
+            ),
           authTokenPayload,
           pagination,
           statsFilter,
@@ -82,11 +92,17 @@ export function statsController (router: Router): void {
     async (ctx) => {
       const authTokenPayload = parseAuthToken(ctx)
       const statsFilter = validateStatsBreweryStyleFilter(ctx.request.query)
-      const rating = await statsService.getRating((
-        statsFilter: StatsBreweryStyleFilter
-      ) => {
-        return statsRepository.getRating(ctx.db, statsFilter)
-      }, authTokenPayload, statsFilter, ctx.log)
+      const rating = await statsService.getRating(
+        async (
+          statsFilter: StatsBreweryStyleFilter
+        ) => await statsRepository.getRating(
+          ctx.db,
+          statsFilter
+        ),
+        authTokenPayload,
+        statsFilter,
+        ctx.log
+      )
       ctx.body = { rating }
     }
   )
@@ -98,15 +114,14 @@ export function statsController (router: Router): void {
       const { order, direction } = ctx.request.query
       const styleStatsOrder = validateStyleStatsOrder({ order, direction })
       const statsFilter = validateStatsFilter(ctx.request.query)
-      const style = await statsService.getStyle((
+      const style = await statsService.getStyle(async (
         statsFilter: StatsFilter,
         styleStatsOrder: StyleStatsOrder
-      ) => {
-        return statsRepository.getStyle(
+      ) => await statsRepository.getStyle(
           ctx.db,
           statsFilter,
           styleStatsOrder
-        )}, authTokenPayload, statsFilter, styleStatsOrder, ctx.log)
+        ), authTokenPayload, statsFilter, styleStatsOrder, ctx.log)
       ctx.body = { style }
     }
   )

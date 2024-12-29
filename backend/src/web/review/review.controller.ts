@@ -33,22 +33,19 @@ export function reviewController (router: Router): void {
         : undefined
       const result = await ctx.db.executeTransaction(async (trx) => {
         const createIf: CreateIf = {
-          createReview: (
+          createReview: async (
             review: NewReview
-          ) => reviewRepository.insertReview(trx, review),
-          deleteFromStorage: (
+          ) => await reviewRepository.insertReview(trx, review),
+          deleteFromStorage: async (
             storageId: string
-          ) => storageRepository.deleteStorageById(
-            trx, storageId),
-          lockBeer: function(id: string): Promise<string | undefined> {
-            return beerRepository.lockBeer(trx, id)
-          },
-          lockContainer: function(id: string): Promise<string | undefined> {
-            return containerRepository.lockContainer(trx, id)
-          },
-          lockStorage: function(id: string): Promise<string | undefined> {
-            return storageRepository.lockStorage(trx, id)
-          }
+          ) => { await storageRepository.deleteStorageById(
+            trx, storageId); },
+          lockBeer: async (id: string): Promise<string | undefined> =>
+            await beerRepository.lockBeer(trx, id),
+          lockContainer: async (id: string): Promise<string | undefined> =>
+            await containerRepository.lockContainer(trx, id),
+          lockStorage: async (id: string): Promise<string | undefined> =>
+            await storageRepository.lockStorage(trx, id)
         }
         return await reviewService.createReview(
           createIf,
@@ -76,15 +73,13 @@ export function reviewController (router: Router): void {
 
       const result = await ctx.db.executeTransaction(async (trx) => {
         const updateIf: UpdateIf = {
-          updateReview: (
+          updateReview: async (
             review: Review
-          ) => reviewRepository.updateReview(trx, review),
-          lockBeer: function(id: string): Promise<string | undefined> {
-            return beerRepository.lockBeer(trx, id)
-          },
-          lockContainer: function(id: string): Promise<string | undefined> {
-            return containerRepository.lockContainer(trx, id)
-          }
+          ) => await reviewRepository.updateReview(trx, review),
+          lockBeer: async (id: string): Promise<string | undefined> =>
+            await beerRepository.lockBeer(trx, id),
+          lockContainer: async (id: string): Promise<string | undefined> =>
+            await containerRepository.lockContainer(trx, id)
         }
         return await reviewService.updateReview(
           updateIf,
@@ -109,12 +104,15 @@ export function reviewController (router: Router): void {
     async (ctx) => {
       const authTokenPayload = parseAuthToken(ctx)
       const reviewId: string | undefined = ctx.params.reviewId
-      const review = await reviewService.findReviewById((reviewId: string) => {
-        return reviewRepository.findReviewById(ctx.db, reviewId)
-      }, {
-        authTokenPayload,
-        id: reviewId
-      }, ctx.log)
+      const review = await reviewService.findReviewById(
+        async (reviewId: string) =>
+          await reviewRepository.findReviewById(ctx.db, reviewId),
+        {
+          authTokenPayload,
+          id: reviewId
+        },
+        ctx.log
+      )
 
       ctx.body = { review }
     }
@@ -127,12 +125,10 @@ export function reviewController (router: Router): void {
       const beerId: string | undefined = ctx.params.beerId
       const reviewListOrder =
         validateFilteredReviewListOrder(ctx.request.query)
-      const reviews = await reviewService.listReviewsByBeer((
+      const reviews = await reviewService.listReviewsByBeer(async (
         beerId: string, reviewListOrder: ReviewListOrder
-      ) => {
-        return reviewRepository.listReviewsByBeer(
-          ctx.db, beerId, reviewListOrder)
-      }, {
+      ) => await reviewRepository.listReviewsByBeer(
+          ctx.db, beerId, reviewListOrder), {
         authTokenPayload,
         id: beerId
       }, reviewListOrder, ctx.log)
@@ -154,10 +150,10 @@ export function reviewController (router: Router): void {
       const breweryId: string | undefined = ctx.params.breweryId
       const reviewListOrder =
         validateFilteredReviewListOrder(ctx.request.query)
-      const reviews = await reviewService.listReviewsByBrewery((
+      const reviews = await reviewService.listReviewsByBrewery(async (
         breweryId: string, reviewListOrder: ReviewListOrder
       ) => (
-        reviewRepository.listReviewsByBrewery(
+        await reviewRepository.listReviewsByBrewery(
           ctx.db, breweryId, reviewListOrder)
       ), {
         authTokenPayload,
@@ -181,10 +177,14 @@ export function reviewController (router: Router): void {
       const styleId: string | undefined = ctx.params.styleId
       const reviewListOrder =
         validateFilteredReviewListOrder(ctx.request.query)
-      const reviews = await reviewService.listReviewsByStyle((
+      const reviews = await reviewService.listReviewsByStyle(async (
         styleId: string, reviewListOrder: ReviewListOrder
       ) => (
-        reviewRepository.listReviewsByStyle(ctx.db, styleId, reviewListOrder)
+        await reviewRepository.listReviewsByStyle(
+          ctx.db,
+          styleId,
+          reviewListOrder
+        )
       ), {
         authTokenPayload,
         id: styleId
@@ -207,10 +207,10 @@ export function reviewController (router: Router): void {
       const { skip, size } = ctx.request.query
       const reviewListOrder = validateFullReviewListOrder(ctx.request.query)
       const pagination = validatePagination({ skip, size })
-      const reviews = await reviewService.listReviews((
+      const reviews = await reviewService.listReviews(async (
         pagination: Pagination, reviewListOrder: ReviewListOrder
       ) => (
-        reviewRepository.listReviews(ctx.db, pagination, reviewListOrder)
+        await reviewRepository.listReviews(ctx.db, pagination, reviewListOrder)
       ), authTokenPayload, pagination, reviewListOrder, ctx.log)
       ctx.body = {
         reviews,

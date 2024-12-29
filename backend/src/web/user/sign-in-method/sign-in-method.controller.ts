@@ -1,8 +1,12 @@
-import * as authorizedAuthTokenService from '../../../core/auth/authorized-auth-token.service'
-import * as signInMethodService from '../../../core/user/authorized-sign-in-method.service'
+import * as authorizedAuthTokenService
+from '../../../core/auth/authorized-auth-token.service'
+import * as signInMethodService
+from '../../../core/user/authorized-sign-in-method.service'
 
-import * as refreshTokenRepository from '../../../data/authentication/refresh-token.repository'
-import * as signInMethodRepository from '../../../data/user/sign-in-method/sign-in-method.repository'
+import * as refreshTokenRepository
+from '../../../data/authentication/refresh-token.repository'
+import * as signInMethodRepository
+from '../../../data/user/sign-in-method/sign-in-method.repository'
 import * as userRepository from '../../../data/user/user.repository'
 import * as authHelper from '../../authentication/authentication-helper'
 
@@ -29,21 +33,20 @@ export function signInMethodController (router: Router): void {
 
     const signedInUser = await ctx.db.executeTransaction(async (trx) => {
       const signInUsingPasswordIf: SignInUsingPasswordIf = {
-        lockUserByUsername: function(
+        lockUserByUsername: async function(
           username: string
         ): Promise<User | undefined> {
-          return userRepository.lockUserByUsername(trx, username)
+          return await userRepository.lockUserByUsername(trx, username)
         },
         findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
-        insertRefreshToken: (
+        insertRefreshToken: async (
             userId: string,
-        ): Promise<DbRefreshToken> => {
-          return refreshTokenRepository.insertRefreshToken(
+        ): Promise<DbRefreshToken> =>
+          await refreshTokenRepository.insertRefreshToken(
             trx,
             userId,
             new Date()
           )
-        }
       }
       return await signInMethodService.signInUsingPassword(
         signInUsingPasswordIf, body, getAuthTokenConfig(ctx)
@@ -69,23 +72,21 @@ export function signInMethodController (router: Router): void {
 
       const tokens = await ctx.db.executeTransaction(async (trx) => {
         const refreshTokensIf: RefreshTokensIf = {
-          lockUserById: (userId: string) => {
-            return userRepository.lockUserById(trx, userId)
-            },
-          deleteRefreshToken: (refreshTokenId: string) => {
-            return refreshTokenRepository.deleteRefreshToken(
+          lockUserById: async (userId: string) =>
+            await userRepository.lockUserById(trx, userId),
+          deleteRefreshToken: async (refreshTokenId: string) => {
+            await refreshTokenRepository.deleteRefreshToken(
               ctx.db, refreshTokenId
-            )
+            );
           },
-          insertRefreshToken: (userId: string) => {
-            return refreshTokenRepository.insertRefreshToken(
+          insertRefreshToken: async (userId: string) =>
+            await refreshTokenRepository.insertRefreshToken(
               trx,
               userId,
               new Date()
             )
-          }
         }
-        return signInMethodService.refreshTokens(
+        return await signInMethodService.refreshTokens(
           refreshTokensIf,
           userId,
           refreshToken,
@@ -109,17 +110,23 @@ export function signInMethodController (router: Router): void {
       const userId: string | undefined = ctx.params.userId
 
       const findRefreshToken = authHelper.createFindRefreshToken(ctx.db)
-      await authorizedAuthTokenService.deleteRefreshToken(findRefreshToken, (
-        refreshTokenId: string
-      ) => {
-        return refreshTokenRepository.deleteRefreshToken(
-          ctx.db,
-          refreshTokenId
-        )
-      }, {
-        authTokenPayload,
-        id: userId
-      }, body, ctx.config.authTokenSecret)
+      await authorizedAuthTokenService.deleteRefreshToken(
+        findRefreshToken,
+        async (
+          refreshTokenId: string
+        ) => {
+          await refreshTokenRepository.deleteRefreshToken(
+            ctx.db,
+            refreshTokenId
+          )
+        },
+        {
+          authTokenPayload,
+          id: userId
+        },
+        body,
+        ctx.config.authTokenSecret
+      )
 
       ctx.status = 200
       ctx.body = { success: true }
@@ -135,14 +142,15 @@ export function signInMethodController (router: Router): void {
 
       await ctx.db.executeTransaction(async (trx) => {
         const changePasswordUserIf: ChangePasswordUserIf = {
-          lockUserById: (userId: string) => userRepository.lockUserById(trx, userId),
+          lockUserById: async (userId: string) =>
+            await userRepository.lockUserById(trx, userId),
           findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
-          updatePassword: function(
+          updatePassword: async function(
             userPasswordHash: UserPasswordHash
           ): Promise<void> {
-            return signInMethodRepository.updatePassword(
+            await signInMethodRepository.updatePassword(
               trx, userPasswordHash
-            ) as Promise<unknown> as Promise<void>
+            )
           }
         }
         const findRefreshToken = authHelper.createFindRefreshToken(ctx.db)
@@ -160,10 +168,10 @@ export function signInMethodController (router: Router): void {
 }
 
 function createFindPasswordSignInMethod(trx: Transaction) {
-  return function(
+  return async function(
     userId: string
   ): Promise<UserPasswordHash | undefined> {
-    return signInMethodRepository.findPasswordSignInMethod(trx, userId)
+    return await signInMethodRepository.findPasswordSignInMethod(trx, userId)
   }
 }
 
