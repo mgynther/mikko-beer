@@ -1,4 +1,4 @@
-import type { StyleRelationship } from '../../style'
+import type { StyleRelationship } from '../../style/style'
 
 import { cyclicRelationshipError } from '../../errors'
 import { contains } from '../../record'

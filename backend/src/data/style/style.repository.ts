@@ -9,7 +9,7 @@ import type {
   StyleRelationship,
   StyleWithParentIds,
   StyleWithParentsAndChildren
-} from '../../core/style'
+} from '../../core/style/style'
 import { contains } from '../../core/record'
 
 export async function insertStyle (

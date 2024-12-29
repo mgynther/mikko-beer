@@ -15,7 +15,7 @@ import type {
   StyleRelationship,
   CreateStyleIf,
   UpdateStyleIf
-} from '../../../../src/core/style'
+} from '../../../../src/core/style/style'
 import * as styleService from '../../../../src/core/internal/style/service'
 
 import { dummyLog as log } from '../../dummy-log'

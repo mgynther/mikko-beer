@@ -6,7 +6,7 @@ import type {
   CreateIf,
   UpdateBeerRequest,
   UpdateIf
-} from '../../../../src/core/beer'
+} from '../../../../src/core/beer/beer'
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
 import {

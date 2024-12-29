@@ -4,7 +4,7 @@ import type {
   CreateBreweryRequest,
   UpdateBreweryRequest,
   NewBrewery
-} from '../../../../src/core/brewery'
+} from '../../../../src/core/brewery/brewery'
 import { breweryNotFoundError } from '../../../../src/core/errors'
 import type { Pagination } from '../../../../src/core/pagination'
 import type { SearchByName } from '../../../../src/core/search'

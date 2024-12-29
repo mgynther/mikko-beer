@@ -5,13 +5,13 @@ import type {
   BeerWithBreweryAndStyleIds,
   CreateIf,
   UpdateIf
-} from "../../beer";
+} from "../../beer/beer";
 
 import {
   validateBeerId,
   validateCreateBeerRequest,
   validateUpdateBeerRequest
-} from "../../beer";
+} from "../../beer/beer";
 import type { SearchByName } from '../../search';
 
 import type { log } from '../../log'

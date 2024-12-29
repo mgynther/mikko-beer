@@ -5,7 +5,7 @@ import type {
   BeerWithBreweriesAndStyles,
   CreateIf,
   UpdateIf,
-} from '../../beer'
+} from '../../beer/beer'
 
 import {
   beerNotFoundError,

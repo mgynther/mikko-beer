@@ -3,7 +3,7 @@ import { expect } from 'earl'
 import {
   validateFilteredReviewListOrder,
   validateFullReviewListOrder
-} from '../../src/core/review'
+} from '../../src/core/review/review'
 import {
   invalidReviewListQueryBeerNameError,
   invalidReviewListQueryBreweryNameError,

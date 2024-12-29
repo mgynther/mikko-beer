@@ -10,7 +10,7 @@ import type {
   StatsFilter,
   StyleStats,
   StyleStatsOrder
-} from '../../stats'
+} from '../../stats/stats'
 
 import type { log } from '../../log'
 import { INFO } from '../../log'

@@ -14,7 +14,7 @@ import type {
   ReviewListOrder,
   UpdateIf,
   UpdateReviewRequest
-} from '../../../../src/core/review'
+} from '../../../../src/core/review/review'
 import type { Pagination } from '../../../../src/core/pagination'
 import * as reviewService from '../../../../src/core/internal/review/service'
 

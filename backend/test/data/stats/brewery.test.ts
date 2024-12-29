@@ -2,11 +2,11 @@ import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
 import type { Pagination } from '../../../src/core/pagination'
-import type { Review } from '../../../src/core/review'
+import type { Review } from '../../../src/core/review/review'
 import type {
   BreweryStatsOrder,
   StatsFilter
-} from '../../../src/core/stats'
+} from '../../../src/core/stats/stats'
 import type { Database } from '../../../src/data/database'
 import * as statsRepository from '../../../src/data/stats/stats.repository'
 import type { InsertedData } from '../review-helpers'

@@ -5,7 +5,7 @@ import type {
   Storage,
   StorageWithDate,
   UpdateIf
-} from '../../storage'
+} from '../../storage/storage'
 
 import {
   referredBeerNotFoundError,

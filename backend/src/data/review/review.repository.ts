@@ -21,7 +21,7 @@ import type {
   NewReview,
   Review,
   ReviewListOrder
-} from '../../core/review'
+} from '../../core/review/review'
 import { contains } from '../../core/record'
 
 export async function insertReview (

@@ -4,7 +4,7 @@ import type {
   Brewery,
   NewBrewery,
   UpdateBreweryRequest
-} from '../../../../src/core/brewery'
+} from '../../../../src/core/brewery/brewery'
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
 import {

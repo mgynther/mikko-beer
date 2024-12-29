@@ -4,7 +4,7 @@ import type {
 } from './container.table'
 import type {
   Container, NewContainer
-} from '../../core/container'
+} from '../../core/container/container'
 
 export async function insertContainer (
   trx: Transaction,

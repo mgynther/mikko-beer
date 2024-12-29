@@ -6,7 +6,7 @@ import type {
   CreateIf,
   UpdateReviewRequest,
   UpdateIf
-} from '../../../../src/core/review'
+} from '../../../../src/core/review/review'
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
 import {

@@ -12,15 +12,15 @@ import type {
   BeerWithBreweriesAndStyles,
   Beer,
   NewBeer
-} from '../../core/beer'
+} from '../../core/beer/beer'
 
 import type { Pagination } from '../../core/pagination'
 import { toRowNumbers } from '../../core/pagination'
 import type { SearchByName } from '../../core/search'
 import { defaultSearchMaxResults, toIlike } from '../../core/search'
 
-import type { Brewery } from '../../core/brewery'
-import type { Style } from '../../core/style'
+import type { Brewery } from '../../core/brewery/brewery'
+import type { Style } from '../../core/style/style'
 import { contains } from '../../core/record'
 
 export async function insertBeer (

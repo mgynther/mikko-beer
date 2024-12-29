@@ -7,7 +7,7 @@ import type {
   CreateIf,
   UpdateIf,
   StorageWithDate
-} from '../../../../src/core/storage'
+} from '../../../../src/core/storage/storage'
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
 import {

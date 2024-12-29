@@ -6,7 +6,7 @@ import type {
   ReviewListOrder,
   CreateIf,
   UpdateIf
-} from '../../review'
+} from '../../review/review'
 
 import {
   referredBeerNotFoundError,

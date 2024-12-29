@@ -8,7 +8,7 @@ import type {
   StyleWithParentIds,
   UpdateStyleRequest,
   UpdateStyleIf
-} from '../../style'
+} from '../../style/style'
 
 import {
   parentStyleNotFoundError,

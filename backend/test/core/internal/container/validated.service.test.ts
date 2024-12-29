@@ -5,7 +5,7 @@ import type {
   CreateContainerRequest,
   NewContainer,
   UpdateContainerRequest
-} from '../../../../src/core/container'
+} from '../../../../src/core/container/container'
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
 import {

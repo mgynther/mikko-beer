@@ -6,17 +6,17 @@ import type {
   Review,
   ReviewListOrder,
   UpdateIf
-} from "../../review";
+} from "../../review/review";
 import {
   validateCreateReviewRequest,
   validateReviewId,
   validateUpdateReviewRequest
-} from "../../review";
+} from "../../review/review";
 import type { log } from '../../log'
 import type { Pagination } from '../../pagination';
-import { validateBeerId } from '../../beer';
-import { validateBreweryId } from '../../brewery';
-import { validateStyleId } from '../../style';
+import { validateBeerId } from '../../beer/beer';
+import { validateBreweryId } from '../../brewery/brewery';
+import { validateStyleId } from '../../style/style';
 
 export async function createReview (
   createIf: CreateIf,

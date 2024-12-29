@@ -1,11 +1,11 @@
 import * as breweryRepository from '../../data/brewery/brewery.repository'
-import * as breweryService from '../../core/brewery.authorized.service'
+import * as breweryService from '../../core/brewery/authorized.service'
 import type { Pagination } from '../../core/pagination'
 import type { SearchByName } from '../../core/search'
 import * as authHelper from '../authentication/authentication-helper'
 
 import type { Router } from '../router'
-import type { Brewery, NewBrewery } from '../../core/brewery'
+import type { Brewery, NewBrewery } from '../../core/brewery/brewery'
 import { validatePagination } from '../../core/pagination'
 
 export function breweryController (router: Router): void {

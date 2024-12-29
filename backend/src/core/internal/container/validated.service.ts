@@ -1,11 +1,11 @@
 import * as containerService from './service'
 
-import type { Container, NewContainer } from '../../container';
+import type { Container, NewContainer } from '../../container/container'
 import {
   validateContainerId,
   validateCreateContainerRequest,
   validateUpdateContainerRequest
-} from '../../container';
+} from '../../container/container'
 import type { log } from '../../log'
 
 export async function createContainer (

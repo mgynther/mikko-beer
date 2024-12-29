@@ -7,7 +7,7 @@ import type {
   JoinedReview,
   Review,
   ReviewListOrder
-} from '../../../src/core/review'
+} from '../../../src/core/review/review'
 import { insertData, insertMultipleReviews } from '../review-helpers'
 
 describe('review tests', () => {

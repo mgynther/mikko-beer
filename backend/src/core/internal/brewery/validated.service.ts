@@ -4,8 +4,8 @@ import {
   validateBreweryId,
   validateCreateBreweryRequest,
   validateUpdateBreweryRequest
-} from "../../brewery";
-import type { Brewery, NewBrewery } from "../../brewery";
+} from "../../brewery/brewery";
+import type { Brewery, NewBrewery } from "../../brewery/brewery";
 import type { log } from '../../log'
 import type { Pagination } from '../../pagination';
 import type { SearchByName } from '../../search';

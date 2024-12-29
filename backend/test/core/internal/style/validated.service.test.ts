@@ -6,7 +6,7 @@ import type {
   CreateStyleIf,
   UpdateStyleRequest,
   UpdateStyleIf
-} from '../../../../src/core/style'
+} from '../../../../src/core/style/style'
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
 import {

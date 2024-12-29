@@ -7,7 +7,7 @@ import type {
   Review,
   ReviewListOrderProperty,
   ReviewRequest
-} from '../../../src/core/review'
+} from '../../../src/core/review/review'
 
 const createNewReviewRequest = (
   beerId: string,

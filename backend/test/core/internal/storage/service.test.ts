@@ -12,7 +12,7 @@ import type {
   JoinedStorage,
   Storage,
   UpdateIf
-} from '../../../../src/core/storage'
+} from '../../../../src/core/storage/storage'
 import * as storageService from '../../../../src/core/internal/storage/service'
 
 import { dummyLog as log } from '../../dummy-log'
