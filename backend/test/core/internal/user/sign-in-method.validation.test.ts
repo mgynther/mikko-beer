@@ -3,15 +3,15 @@ import { expect } from 'earl'
 import {
   validatePasswordSignInMethod,
   validatePasswordChange
-} from '../../../src/core/user/sign-in-method'
+} from '../../../../src/core/internal/user/sign-in-method.validation'
 
 import {
   invalidPasswordChangeError,
   invalidSignInMethodError,
-} from '../../../src/core/errors'
-import { expectThrow } from '../controller-error-helper'
+} from '../../../../src/core/errors'
+import { expectThrow } from '../../controller-error-helper'
 
-describe('password sign-in-method unit tests', () => {
+describe('password sign-in-method validation unit tests', () => {
   function validPasswordSignInMethod () {
     return {
       username: 'user',

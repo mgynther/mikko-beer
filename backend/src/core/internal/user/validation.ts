@@ -1,5 +1,5 @@
 import { ajv } from '../ajv'
-import { validatePasswordSignInMethod } from '../../user/sign-in-method'
+import { validatePasswordSignInMethod } from './sign-in-method.validation'
 
 import { invalidUserError, invalidUserIdError } from '../../errors'
 import type {

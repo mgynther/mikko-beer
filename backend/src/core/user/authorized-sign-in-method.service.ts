@@ -7,7 +7,7 @@ import type { DbRefreshToken, RefreshToken } from '../auth/refresh-token'
 import {
   validatePasswordChange,
   validatePasswordSignInMethod
-} from './sign-in-method'
+} from '../internal/user/sign-in-method.validation'
 import type {
   ChangePasswordUserIf,
   SignInUsingPasswordIf
