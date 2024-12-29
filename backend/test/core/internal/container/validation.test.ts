@@ -3,12 +3,12 @@ import { expect } from 'earl'
 import {
   validateCreateContainerRequest,
   validateUpdateContainerRequest,
-} from '../../../src/core/container/container'
+} from '../../../../src/core/internal/container/validation'
 import {
   invalidContainerError,
   invalidContainerIdError
-} from '../../../src/core/errors'
-import { expectThrow } from '../controller-error-helper'
+} from '../../../../src/core/errors'
+import { expectThrow } from '../../controller-error-helper'
 
 function validRequest (): Record<string, unknown> {
   return {
@@ -17,7 +17,7 @@ function validRequest (): Record<string, unknown> {
   }
 }
 
-describe('container unit tests', () => {
+describe('container validation unit tests', () => {
   it('valid create container request passes validation', () => {
     const input = validRequest()
     const output = validRequest()

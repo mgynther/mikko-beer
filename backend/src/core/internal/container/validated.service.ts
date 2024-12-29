@@ -5,7 +5,7 @@ import {
   validateContainerId,
   validateCreateContainerRequest,
   validateUpdateContainerRequest
-} from '../../container/container'
+} from './validation'
 import type { log } from '../../log'
 
 export async function createContainer (
