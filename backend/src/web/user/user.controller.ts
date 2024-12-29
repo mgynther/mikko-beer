@@ -1,11 +1,15 @@
 import * as userService from '../../core/user/authorized-user.service'
+
 import {
   createAddPasswordUserIf,
 } from './sign-in-method/sign-in-method-helper'
+
 import {
   signInMethodController
 } from './sign-in-method/sign-in-method.controller'
+
 import * as authHelper from '../authentication/authentication-helper'
+
 import * as refreshTokenRepository
 from '../../data/authentication/refresh-token.repository'
 import * as userRepository from '../../data/user/user.repository'

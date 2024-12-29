@@ -10,11 +10,8 @@ from '../../../data/user/sign-in-method/sign-in-method.repository'
 import * as userRepository from '../../../data/user/user.repository'
 import * as authHelper from '../../authentication/authentication-helper'
 
-import type { Transaction } from '../../../data/database'
-
 import type { DbRefreshToken } from '../../../core/auth/refresh-token'
 import { validateRefreshToken } from '../../../core/auth/refresh-token'
-import type { Router } from '../../router'
 import type {
   ChangePasswordUserIf,
   SignInUsingPasswordIf,
@@ -22,10 +19,13 @@ import type {
 } from '../../../core/user/sign-in-method'
 import type { User } from '../../../core/user/user'
 import type { AuthTokenConfig } from '../../../core/auth/auth-token'
-import type { Context } from '../../context'
 import type {
   RefreshTokensIf
 } from '../../../core/user/authorized-sign-in-method.service'
+import type { Context } from '../../context'
+import type { Transaction } from '../../../data/database'
+
+import type { Router } from '../../router'
 
 export function signInMethodController (router: Router): void {
   router.post('/api/v1/user/sign-in', async (ctx) => {

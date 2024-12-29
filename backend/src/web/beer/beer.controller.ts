@@ -1,10 +1,12 @@
-import * as beerRepository from '../../data/beer/beer.repository'
-import * as breweryRepository from '../../data/brewery/brewery.repository'
-import type { Transaction } from '../../data/database'
 import * as beerService from '../../core/beer/authorized.service'
 import type { Pagination } from '../../core/pagination'
 import type { SearchByName } from '../../core/search'
+
+import * as beerRepository from '../../data/beer/beer.repository'
+import * as breweryRepository from '../../data/brewery/brewery.repository'
+import type { Transaction } from '../../data/database'
 import * as styleRepository from '../../data/style/style.repository'
+
 import * as authHelper from '../authentication/authentication-helper'
 
 import type { Router } from '../router'

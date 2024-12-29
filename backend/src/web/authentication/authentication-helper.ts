@@ -1,9 +1,10 @@
 import type { Context } from '../context'
 
 import { parseAuthTokenPayload } from '../../core/auth/authentication'
+import type { AuthTokenPayload } from '../../core/auth/auth-token'
+
 import * as refreshTokenRepository
 from '../../data/authentication/refresh-token.repository'
-import type { AuthTokenPayload } from '../../core/auth/auth-token'
 import type { Database } from '../../data/database'
 
 export function createFindRefreshToken(db: Database) {

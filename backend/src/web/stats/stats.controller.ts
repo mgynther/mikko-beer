@@ -1,5 +1,6 @@
-import * as statsRepository from '../../data/stats/stats.repository'
 import * as statsService from '../../core/stats/authorized.service'
+
+import * as statsRepository from '../../data/stats/stats.repository'
 
 import type { Pagination } from '../../core/pagination'
 import type { Router } from '../router'

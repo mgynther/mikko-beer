@@ -1,10 +1,9 @@
+import * as storageService from '../../core/storage/authorized.service'
+
 import * as beerRepository from '../../data/beer/beer.repository'
 import * as containerRepository from '../../data/container/container.repository'
 import * as storageRepository from '../../data/storage/storage.repository'
-import * as storageService from '../../core/storage/authorized.service'
 
-import type { Transaction } from '../../data/database'
-import type { Router } from '../router'
 import type { Pagination } from '../../core/pagination'
 import type {
   CreateIf,
@@ -13,6 +12,9 @@ import type {
   UpdateIf,
 } from '../../core/storage/storage'
 import { validatePagination } from '../../core/pagination'
+import type { Transaction } from '../../data/database'
+import type { Router } from '../router'
+
 import { parseAuthToken } from '../authentication/authentication-helper'
 
 export function storageController (router: Router): void {

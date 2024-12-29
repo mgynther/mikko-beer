@@ -1,5 +1,7 @@
-import * as containerRepository from '../../data/container/container.repository'
 import * as containerService from '../../core/container/authorized.service'
+
+import * as containerRepository from '../../data/container/container.repository'
+
 import * as authHelper from '../authentication/authentication-helper'
 
 import type { Router } from '../router'

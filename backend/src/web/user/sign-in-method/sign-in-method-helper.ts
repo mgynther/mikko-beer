@@ -2,11 +2,11 @@ import * as signInMethodRepository
 from '../../../data/user/sign-in-method/sign-in-method.repository'
 import * as userRepository from '../../../data/user/user.repository'
 
-import type { Transaction } from "../../../data/database"
 import type {
   AddPasswordUserIf,
   UserPasswordHash
 } from "../../../core/user/sign-in-method"
+import type { Transaction } from "../../../data/database"
 
 export function createAddPasswordUserIf (trx: Transaction): AddPasswordUserIf {
   const addPasswordUserIf: AddPasswordUserIf = {

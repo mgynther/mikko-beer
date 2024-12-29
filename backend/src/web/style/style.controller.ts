@@ -1,8 +1,7 @@
-import * as styleRepository from '../../data/style/style.repository'
-import type { Transaction } from '../../data/database'
 import * as styleService from '../../core/style/authorized.service'
 
-import type { Router } from '../router'
+import * as styleRepository from '../../data/style/style.repository'
+
 import type {
   CreateStyleIf,
   NewStyle,
@@ -10,6 +9,9 @@ import type {
   StyleRelationship,
   UpdateStyleIf,
 } from '../../core/style/style'
+import type { Transaction } from '../../data/database'
+import type { Router } from '../router'
+
 import { parseAuthToken } from '../authentication/authentication-helper'
 
 export function styleController (router: Router): void {

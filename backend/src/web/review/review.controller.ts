@@ -1,8 +1,10 @@
+import * as reviewService from '../../core/review/authorized.service'
+
 import * as beerRepository from '../../data/beer/beer.repository'
 import * as containerRepository from '../../data/container/container.repository'
 import * as reviewRepository from '../../data/review/review.repository'
 import * as storageRepository from '../../data/storage/storage.repository'
-import * as reviewService from '../../core/review/authorized.service'
+
 import { parseAuthToken } from '../authentication/authentication-helper'
 
 import type { Router } from '../router'
