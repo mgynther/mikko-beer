@@ -11,7 +11,7 @@ import {
   validateBeerId,
   validateCreateBeerRequest,
   validateUpdateBeerRequest
-} from "../../beer/beer";
+} from "./validation";
 import type { SearchByName } from '../../search';
 
 import type { log } from '../../log'

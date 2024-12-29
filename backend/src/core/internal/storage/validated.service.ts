@@ -13,7 +13,7 @@ import {
 } from "../../storage/storage";
 import type { log } from '../../log'
 import type { Pagination } from '../../pagination';
-import { validateBeerId } from '../../beer/beer';
+import { validateBeerId } from '../beer/validation';
 import { validateBreweryId } from '../../brewery/brewery';
 import { validateStyleId } from '../../style/style';
 
