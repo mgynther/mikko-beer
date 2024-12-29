@@ -10,7 +10,7 @@ import {
   validateCreateStyleRequest,
   validateStyleId,
   validateUpdateStyleRequest
-} from "../../style/style"
+} from "./validation"
 import type { log } from '../../log'
 
 export async function createStyle (

@@ -1,59 +1,14 @@
 import { expect } from 'earl'
-import { v4 as uuidv4 } from 'uuid'
 
 import {
   validateCreateStyleRequest,
   validateUpdateStyleRequest
-} from '../../../src/core/style/style'
+} from '../../../../src/core/internal/style/validation'
 import {
-  cyclicRelationshipError,
   invalidStyleError,
   invalidStyleIdError,
-} from '../../../src/core/errors'
-import { checkCyclicRelationships } from '../../../src/core/internal/style/style.util'
-import { expectThrow } from '../controller-error-helper'
-
-describe('style relationship unit tests', () => {
-  const ale = {
-    id: uuidv4(),
-    name: 'Ale',
-  }
-  const ipa = {
-    id: uuidv4(),
-    name: 'IPA',
-  }
-  const neipa = {
-    id: uuidv4(),
-    name: 'NEIPA',
-  }
-  const relationships = [
-    {
-      child: neipa.id,
-      parent: ipa.id
-    },
-    {
-      child: ipa.id,
-      parent: ale.id
-    }
-  ]
-
-  it('fail to find cyclic when there is no cycle', () => {
-    expect(() => checkCyclicRelationships(relationships, neipa.id, [ipa.id])).not.toThrow()
-  })
-
-  it('find cyclic when there is a cycle', () => {
-    expectThrow(
-      () => checkCyclicRelationships(relationships, ale.id, [neipa.id])
-    , cyclicRelationshipError)
-  })
-
-  it('valid create request is valid', () => {
-    expect(validateCreateStyleRequest({
-      name: 'name',
-      parents: []
-    })).toEqual({name: 'name', parents: []})
-  })
-})
+} from '../../../../src/core/errors'
+import { expectThrow } from '../../controller-error-helper'
 
 describe('style unit tests', () => {
   const id = 'c8e02862-7fe7-44d5-b0eb-cd23e72faf56'

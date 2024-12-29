@@ -15,7 +15,7 @@ import type { log } from '../../log'
 import type { Pagination } from '../../pagination';
 import { validateBeerId } from '../beer/validation';
 import { validateBreweryId } from '../brewery/validation';
-import { validateStyleId } from '../../style/style';
+import { validateStyleId } from '../style/validation';
 
 export async function createStorage (
   createIf: CreateIf,
