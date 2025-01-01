@@ -4,17 +4,10 @@ export interface Container {
   size: string
 }
 
-export interface NewContainer {
+interface ContainerRequest {
   type: string
   size: string
 }
 
-export interface CreateContainerRequest {
-  type: string
-  size: string
-}
-
-export interface UpdateContainerRequest {
-  type: string
-  size: string
-}
+export type CreateContainerRequest = ContainerRequest
+export type UpdateContainerRequest = ContainerRequest

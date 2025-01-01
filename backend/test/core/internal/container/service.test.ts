@@ -2,8 +2,7 @@ import { expect } from 'earl'
 import type {
   Container,
   CreateContainerRequest,
-  NewContainer,
-  UpdateContainerRequest,
+  UpdateContainerRequest
 } from '../../../../src/core/container/container'
 import * as containerService from '../../../../src/core/internal/container/service'
 import { containerNotFoundError } from '../../../../src/core/errors'
@@ -23,7 +22,7 @@ describe('container service unit tests', () => {
       type: container.type,
       size: container.size,
     }
-    const create = async (newContainer: NewContainer) => {
+    const create = async (newContainer: CreateContainerRequest) => {
       const result = {
         id: container.id,
         type: container.type,

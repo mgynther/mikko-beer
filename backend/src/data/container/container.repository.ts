@@ -3,12 +3,13 @@ import type {
   ContainerRow
 } from './container.table'
 import type {
-  Container, NewContainer
+  Container,
+  CreateContainerRequest
 } from '../../core/container/container'
 
 export async function insertContainer (
   trx: Transaction,
-  container: NewContainer
+  container: CreateContainerRequest
 ): Promise<Container> {
   const insertedContainer = await trx.trx()
     .insertInto('container')

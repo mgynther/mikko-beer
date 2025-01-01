@@ -5,7 +5,6 @@ import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
 import type {
   Container,
   CreateContainerRequest,
-  NewContainer,
   UpdateContainerRequest
 } from '../../../src/core/container/container'
 import { Role } from '../../../src/core/user/user'
@@ -37,7 +36,7 @@ const invalidContainerRequest = {
 }
 
 const create: (
-  container: NewContainer
+  container: CreateContainerRequest
 ) => Promise<Container> = async () => container
 const update: (
   container: Container

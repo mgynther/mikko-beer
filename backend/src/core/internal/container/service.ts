@@ -1,8 +1,7 @@
 import type {
   CreateContainerRequest,
   UpdateContainerRequest,
-  Container,
-  NewContainer
+  Container
 } from '../../container/container'
 
 import { containerNotFoundError } from '../../errors'
@@ -10,7 +9,7 @@ import { INFO } from '../../log'
 import type { log } from '../../log'
 
 export async function createContainer (
-  create: (container: NewContainer) => Promise<Container>,
+  create: (container: CreateContainerRequest) => Promise<Container>,
   request: CreateContainerRequest,
   log: log
 ): Promise<Container> {

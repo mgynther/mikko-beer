@@ -3,7 +3,6 @@ import * as containerService from '../../../../src/core/internal/container/valid
 import type {
   Container,
   CreateContainerRequest,
-  NewContainer,
   UpdateContainerRequest
 } from '../../../../src/core/container/container'
 import { dummyLog as log } from '../../dummy-log'
@@ -34,7 +33,7 @@ const invalidContainerRequest = {
 }
 
 const create: (
-  container: NewContainer
+  container: CreateContainerRequest
 ) => Promise<Container> = async () => container
 const update: (
   container: Container

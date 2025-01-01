@@ -5,7 +5,10 @@ import * as containerRepository from '../../data/container/container.repository'
 import * as authHelper from '../authentication/authentication-helper'
 
 import type { Router } from '../router'
-import type { Container, NewContainer } from '../../core/container/container'
+import type {
+  Container,
+  CreateContainerRequest
+} from '../../core/container/container'
 
 export function containerController (router: Router): void {
   router.post('/api/v1/container',
@@ -16,7 +19,7 @@ export function containerController (router: Router): void {
       const result = await ctx.db.executeTransaction(
         async (trx) => await containerService.createContainer(
           async (
-            container: NewContainer
+            container: CreateContainerRequest
           ) => await containerRepository.insertContainer(trx, container),
           {
             authTokenPayload,
