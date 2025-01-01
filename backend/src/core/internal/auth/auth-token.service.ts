@@ -1,7 +1,7 @@
 import type {
   AuthTokenConfig,
   AuthToken,
-  AuthTokenPayload
+  AuthTokenPayload,
 } from '../../auth/auth-token'
 import type { Tokens } from '../../auth/tokens'
 import type {
@@ -11,6 +11,7 @@ import type {
 import type { User, Role } from '../../user/user'
 import * as jwt from './jwt'
 import { invalidCredentialsTokenError } from '../../errors'
+import type { RefreshTokenPayload } from './jwt'
 
 export async function createTokens (
   insertRefreshToken: (userId: string) => Promise<DbRefreshToken>,
@@ -50,7 +51,12 @@ export async function deleteRefreshToken (
   refreshToken: RefreshToken,
   authTokenSecret: string
 ): Promise<void> {
-  const payload = jwt.verifyRefreshToken(refreshToken, authTokenSecret)
+  let payload: RefreshTokenPayload | undefined = undefined
+  try {
+    payload = jwt.verifyRefreshToken(refreshToken, authTokenSecret)
+  } catch (e) {
+    throw invalidCredentialsTokenError
+  }
 
   if (payload.userId !== userId) {
     throw invalidCredentialsTokenError

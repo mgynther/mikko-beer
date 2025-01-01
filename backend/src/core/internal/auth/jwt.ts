@@ -11,7 +11,7 @@ import {
 
 import type { RefreshToken } from '../../auth/refresh-token'
 
-interface RefreshTokenPayload {
+export interface RefreshTokenPayload {
   userId: string
   refreshTokenId: string
   isRefreshToken: true
