@@ -30,8 +30,6 @@ const doValidatePagination =
     additionalProperties: false
   })
 
-export class PaginationError extends Error { }
-
 export function validatePagination (pagination: PaginationRequest): Pagination {
   if (pagination.size === undefined && pagination.skip === undefined) {
     return { size: 10000, skip: 0 }
