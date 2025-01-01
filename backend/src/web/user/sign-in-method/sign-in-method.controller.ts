@@ -11,7 +11,6 @@ import * as userRepository from '../../../data/user/user.repository'
 import * as authHelper from '../../authentication/authentication-helper'
 
 import type { DbRefreshToken } from '../../../core/auth/refresh-token'
-import { validateRefreshToken } from '../../../core/auth/refresh-token'
 import type {
   ChangePasswordUserIf,
   SignInUsingPasswordIf,
@@ -67,7 +66,6 @@ export function signInMethodController (router: Router): void {
       const { body } = ctx.request
       const userId: string | undefined = ctx.params.userId
 
-      const refreshToken = validateRefreshToken(body)
       const authTokenConfig: AuthTokenConfig = getAuthTokenConfig(ctx)
 
       const tokens = await ctx.db.executeTransaction(async (trx) => {
@@ -89,7 +87,7 @@ export function signInMethodController (router: Router): void {
         return await signInMethodService.refreshTokens(
           refreshTokensIf,
           userId,
-          refreshToken,
+          body,
           authTokenConfig
         )
       })

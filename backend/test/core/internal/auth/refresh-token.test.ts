@@ -1,9 +1,9 @@
 import { expect } from 'earl'
 import {
   validateRefreshToken
-} from '../../../src/core/auth/refresh-token'
-import { invalidRefreshTokenError } from '../../../src/core/errors'
-import { expectThrow } from '../controller-error-helper'
+} from '../../../../src/core/internal/auth/refresh-token'
+import { invalidRefreshTokenError } from '../../../../src/core/errors'
+import { expectThrow } from '../../controller-error-helper'
 
 describe('refresh token unit tests', () => {
 

@@ -1,6 +1,6 @@
 import * as authTokenService from './auth-token.service'
 
-import { validateRefreshToken } from "../../auth/refresh-token";
+import { validateRefreshToken } from "./refresh-token";
 import { validateUserId } from '../user/validation';
 
 export async function deleteRefreshToken (

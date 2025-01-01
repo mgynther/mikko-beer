@@ -3,7 +3,8 @@ import * as authorizationService from '../internal/auth/authorization.service'
 import * as signInMethodService from '../internal/user/sign-in-method.service'
 import * as userService from '../internal/user/user.service'
 
-import type { DbRefreshToken, RefreshToken } from '../auth/refresh-token'
+import type { DbRefreshToken } from '../auth/refresh-token'
+import { validateRefreshToken } from '../internal/auth/refresh-token'
 import {
   validatePasswordChange,
   validatePasswordSignInMethod
@@ -61,9 +62,10 @@ export interface RefreshTokensIf {
 export async function refreshTokens (
   refreshTokensIf: RefreshTokensIf,
   userId: string,
-  refreshToken: RefreshToken,
+  body: unknown,
   authTokenConfig: AuthTokenConfig
 ): Promise<Tokens> {
+  const refreshToken = validateRefreshToken(body)
   // No authorization as refresh provides new tokens based on refresh token
   // only.
   const user = await userService.lockUserById(
