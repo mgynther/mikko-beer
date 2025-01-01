@@ -6,13 +6,13 @@ import type {
   IdRequest,
   PaginationRequest
 } from "../request"
-import type { Brewery, NewBrewery } from "../brewery/brewery"
+import type { Brewery, CreateBreweryRequest } from "../brewery/brewery"
 import type { log } from '../log'
 import type { Pagination } from '../pagination'
 import type { SearchByName } from '../search'
 
 export async function createBrewery (
-  create: (brewery: NewBrewery) => Promise<Brewery>,
+  create: (brewery: CreateBreweryRequest) => Promise<Brewery>,
   request: BodyRequest,
   log: log
 ): Promise<Brewery> {

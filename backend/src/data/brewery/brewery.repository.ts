@@ -5,7 +5,7 @@ import type {
 
 import type {
   Brewery,
-  NewBrewery
+  CreateBreweryRequest
 } from '../../core/brewery/brewery'
 import type {
   Pagination
@@ -15,7 +15,7 @@ import { defaultSearchMaxResults, toIlike } from '../../core/search'
 
 export async function insertBrewery (
   trx: Transaction,
-  brewery: NewBrewery
+  brewery: CreateBreweryRequest
 ): Promise<Brewery> {
   const insertedBrewery = await trx.trx()
     .insertInto('brewery')

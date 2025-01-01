@@ -1,8 +1,7 @@
 import type {
   CreateBreweryRequest,
   UpdateBreweryRequest,
-  Brewery,
-  NewBrewery
+  Brewery
 } from '../../brewery/brewery'
 
 import { breweryNotFoundError } from '../../errors'
@@ -14,7 +13,7 @@ import type {
 import type { SearchByName } from '../../search'
 
 export async function createBrewery (
-  create: (brewery: NewBrewery) => Promise<Brewery>,
+  create: (brewery: CreateBreweryRequest) => Promise<Brewery>,
   request: CreateBreweryRequest,
   log: log
 ): Promise<Brewery> {

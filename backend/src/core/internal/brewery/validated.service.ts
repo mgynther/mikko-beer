@@ -5,14 +5,14 @@ import {
   validateCreateBreweryRequest,
   validateUpdateBreweryRequest
 } from "./validation";
-import type { Brewery, NewBrewery } from "../../brewery/brewery";
+import type { Brewery, CreateBreweryRequest } from "../../brewery/brewery"
 import type { log } from '../../log'
-import type { Pagination } from '../../pagination';
-import type { SearchByName } from '../../search';
-import { validateSearchByName } from '../../search';
+import type { Pagination } from '../../pagination'
+import type { SearchByName } from '../../search'
+import { validateSearchByName } from '../../search'
 
 export async function createBrewery (
-  create: (brewery: NewBrewery) => Promise<Brewery>,
+  create: (brewery: CreateBreweryRequest) => Promise<Brewery>,
   body: unknown,
   log: log
 ): Promise<Brewery> {

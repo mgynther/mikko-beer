@@ -4,7 +4,7 @@ import * as breweryService from '../../../src/core/brewery/authorized.service'
 import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
 import type {
   Brewery,
-  NewBrewery,
+  CreateBreweryRequest,
   UpdateBreweryRequest
 } from '../../../src/core/brewery/brewery'
 import { Role } from '../../../src/core/user/user'
@@ -15,7 +15,7 @@ import {
   noRightsError
 } from '../../../src/core/errors'
 
-const validCreateBreweryRequest: NewBrewery = {
+const validCreateBreweryRequest: CreateBreweryRequest = {
   name: 'Koskipanimo'
 }
 
@@ -32,7 +32,9 @@ const invalidBreweryRequest = {
   unexpectedProperty: 'This is invalid',
 }
 
-const create: (brewery: NewBrewery) => Promise<Brewery> = async () => brewery
+const create: (
+  brewery: CreateBreweryRequest
+) => Promise<Brewery> = async () => brewery
 const update: (brewery: Brewery) => Promise<Brewery> = async () => brewery
 
 const adminAuthToken: AuthTokenPayload = {

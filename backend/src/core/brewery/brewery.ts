@@ -3,14 +3,9 @@ export interface Brewery {
   name: string
 }
 
-export interface NewBrewery {
+interface BreweryRequest {
   name: string
 }
 
-export interface CreateBreweryRequest {
-  name: string
-}
-
-export interface UpdateBreweryRequest {
-  name: string
-}
+export type CreateBreweryRequest = BreweryRequest
+export type UpdateBreweryRequest = BreweryRequest

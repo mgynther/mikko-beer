@@ -7,7 +7,7 @@ import * as breweryRepository from '../../data/brewery/brewery.repository'
 import * as authHelper from '../authentication/authentication-helper'
 
 import type { Router } from '../router'
-import type { Brewery, NewBrewery } from '../../core/brewery/brewery'
+import type { Brewery, CreateBreweryRequest } from '../../core/brewery/brewery'
 import { validatePagination } from '../../core/pagination'
 
 export function breweryController (router: Router): void {
@@ -19,7 +19,7 @@ export function breweryController (router: Router): void {
       const result = await ctx.db.executeTransaction(
         async (trx) => await breweryService.createBrewery(
           async (
-            brewery: NewBrewery
+            brewery: CreateBreweryRequest
           ) => await breweryRepository.insertBrewery(trx, brewery),
           {
             authTokenPayload,

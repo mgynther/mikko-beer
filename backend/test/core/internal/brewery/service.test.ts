@@ -2,8 +2,7 @@ import { expect } from 'earl'
 import type {
   Brewery,
   CreateBreweryRequest,
-  UpdateBreweryRequest,
-  NewBrewery
+  UpdateBreweryRequest
 } from '../../../../src/core/brewery/brewery'
 import { breweryNotFoundError } from '../../../../src/core/errors'
 import type { Pagination } from '../../../../src/core/pagination'
@@ -23,7 +22,7 @@ describe('brewery service unit tests', () => {
     const request: CreateBreweryRequest = {
       name: brewery.name,
     }
-    const create = async (newBrewery: NewBrewery) => {
+    const create = async (newBrewery: CreateBreweryRequest) => {
       const result = {
         id: brewery.id,
         name: brewery.name,

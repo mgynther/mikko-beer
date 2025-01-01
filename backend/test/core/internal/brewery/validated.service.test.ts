@@ -2,7 +2,7 @@ import * as breweryService from '../../../../src/core/internal/brewery/validated
 
 import type {
   Brewery,
-  NewBrewery,
+  CreateBreweryRequest,
   UpdateBreweryRequest
 } from '../../../../src/core/brewery/brewery'
 import { dummyLog as log } from '../../dummy-log'
@@ -12,7 +12,7 @@ import {
   invalidBreweryIdError
 } from '../../../../src/core/errors'
 
-const validCreateBreweryRequest: NewBrewery = {
+const validCreateBreweryRequest: CreateBreweryRequest = {
   name: 'Koskipanimo'
 }
 
@@ -29,7 +29,9 @@ const invalidBreweryRequest = {
   unexpectedProperty: 'This is invalid',
 }
 
-const create: (brewery: NewBrewery) => Promise<Brewery> = async () => brewery
+const create: (
+  brewery: CreateBreweryRequest
+) => Promise<Brewery> = async () => brewery
 const update: (brewery: Brewery) => Promise<Brewery> = async () => brewery
 
 describe('brewery validated service unit tests', () => {
