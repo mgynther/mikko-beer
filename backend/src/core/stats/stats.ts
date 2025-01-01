@@ -6,7 +6,7 @@ import {
   invalidStyleStatsQueryError
 } from '../errors'
 import type { ListDirection } from '../list'
-import { directionValidation } from '../list'
+import { directionValidation } from '../internal/list'
 
 export type AnnualStats = Array<{
   reviewAverage: string

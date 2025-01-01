@@ -1,7 +1,7 @@
 import { ajv } from '../internal/ajv'
 
 import type { Container } from '../container/container'
-import { directionValidation } from '../list'
+import { directionValidation } from '../internal/list'
 import type { ListDirection } from '../list'
 
 import type { LockId } from '../db'
