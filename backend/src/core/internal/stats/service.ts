@@ -4,6 +4,7 @@ import type {
   AnnualStats,
   BreweryStats,
   BreweryStatsOrder,
+  ContainerStats,
   OverallStats,
   RatingStats,
   StatsBreweryStyleFilter,
@@ -44,6 +45,17 @@ export async function getBrewery (
     statsFilter,
     breweryStatsOrder
   )
+}
+
+export async function getContainer (
+  getContainer: (
+    statsFilter: StatsBreweryStyleFilter
+  ) => Promise<ContainerStats>,
+  statsFilter: StatsBreweryStyleFilter,
+  log: log
+): Promise<ContainerStats> {
+  log(INFO, 'get container stats', statsFilter)
+  return await getContainer(statsFilter)
 }
 
 export async function getOverall (

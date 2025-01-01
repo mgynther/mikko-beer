@@ -8,10 +8,12 @@ import Style from './Style'
 
 import TabButton from '../common/TabButton'
 import type { StatsIf } from '../../core/stats/types'
+import Container from './Container'
 
 enum Mode {
   Annual = 'Annual',
   Brewery = 'Brewery',
+  Container = 'Container',
   Overall = 'Overall',
   Rating = 'Rating',
   Style = 'Style',
@@ -40,6 +42,10 @@ const buttons: ModeButton[] = [
   {
     mode: Mode.Brewery,
     title: 'Brewery'
+  },
+  {
+    mode: Mode.Container,
+    title: 'Container'
   },
   {
     mode: Mode.Rating,
@@ -80,6 +86,13 @@ function Stats (props: Props): React.JSX.Element {
       {mode === Mode.Brewery &&
         <Brewery
           getBreweryStatsIf={props.statsIf.brewery}
+          breweryId={props.breweryId}
+          styleId={props.styleId}
+        />
+      }
+      {mode === Mode.Container &&
+        <Container
+          getContainerStatsIf={props.statsIf.container}
           breweryId={props.breweryId}
           styleId={props.styleId}
         />

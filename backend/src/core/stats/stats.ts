@@ -21,6 +21,14 @@ export type BreweryStats = Array<{
   breweryName: string
 }>
 
+export type ContainerStats = Array<{
+  reviewAverage: string
+  reviewCount: string
+  containerId: string
+  containerSize: string
+  containerType: string
+}>
+
 type BreweryStatsOrderProperty = 'average' | 'brewery_name' | 'count'
 
 export interface BreweryStatsOrder {

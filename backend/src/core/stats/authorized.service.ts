@@ -8,6 +8,7 @@ import type {
   AnnualStats,
   BreweryStats,
   BreweryStatsOrder,
+  ContainerStats,
   OverallStats,
   RatingStats,
   StatsBreweryStyleFilter,
@@ -48,6 +49,18 @@ export async function getBrewery (
     breweryStatsOrder,
     log
   )
+}
+
+export async function getContainer (
+  getContainer: (
+    statsFilter: StatsBreweryStyleFilter
+  ) => Promise<ContainerStats>,
+  authTokenPayload: AuthTokenPayload,
+  statsFilter: StatsBreweryStyleFilter,
+  log: log
+): Promise<ContainerStats> {
+  authorizationService.authorizeViewer(authTokenPayload)
+  return await statsService.getContainer(getContainer, statsFilter, log)
 }
 
 export async function getOverall (

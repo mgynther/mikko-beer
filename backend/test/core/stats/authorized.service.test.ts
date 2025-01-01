@@ -7,6 +7,7 @@ import { dummyLog as log } from '../dummy-log'
 import type {
   AnnualStats,
   BreweryStats,
+  ContainerStats,
   OverallStats,
   RatingStats,
   StatsBreweryStyleFilter,
@@ -106,6 +107,32 @@ describe('stats authorized service unit tests', () => {
         log
       )
       expect(result).toEqual([ ...breweryStats ])
+    })
+
+    it(`get container stats as ${token.role}`, async () => {
+      const containerStats: ContainerStats = [
+        {
+          reviewAverage: '8.43',
+          reviewCount: '212',
+          containerId: '95dbb5a8-c814-42ef-a9bf-d3aa220749a1',
+          containerSize: '0.25',
+          containerType: 'draft'
+        },
+        {
+          reviewAverage: '8.11',
+          reviewCount: '201',
+          containerId: '87aa392e-b1af-44d2-8690-460687709f0c',
+          containerSize: '0.33',
+          containerType: 'bottle'
+        }
+      ]
+      const result = await statsService.getContainer(
+        async () => ([ ...containerStats ]),
+        token,
+        statsFilter,
+        log
+      )
+      expect(result).toEqual([ ...containerStats ])
     })
 
     it(`get rating stats as ${token.role}`, async () => {

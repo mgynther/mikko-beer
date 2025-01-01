@@ -1,6 +1,7 @@
 export enum StatsTags {
   Annual = 'Annual',
   Brewery = 'Brewery',
+  Container = 'Container',
   Overall = 'Overall',
   Rating = 'Rating',
   Style = 'Style'
@@ -10,6 +11,7 @@ export function allStatsTagTypes (): string[] {
   return [
     StatsTags.Annual,
     StatsTags.Brewery,
+    StatsTags.Container,
     StatsTags.Overall,
     StatsTags.Rating,
     StatsTags.Style
@@ -25,7 +27,7 @@ export function breweryStatsTagTypes (): string[] {
 }
 
 export function containerStatsTagTypes (): string[] {
-  return [StatsTags.Overall]
+  return [StatsTags.Overall, StatsTags.Container]
 }
 
 export function reviewStatsTagTypes (): string[] {

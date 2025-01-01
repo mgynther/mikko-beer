@@ -7,6 +7,7 @@ import type { Review } from '../../../src/core/review/review'
 import type {
   AnnualStats,
   BreweryStats,
+  ContainerStats,
   OverallStats,
   RatingStats,
   StyleStats
@@ -357,6 +358,60 @@ describe('stats tests', () => {
       {
         count: 2,
         average: '7.50'
+      }
+    ])
+  })
+
+  it('get container stats', async () => {
+    const { containers, reviews } = await createDeps(ctx.adminAuthHeaders())
+
+    const statsRes = await ctx.request.get<{ container: ContainerStats }>(
+      '/api/v1/stats/container',
+      ctx.adminAuthHeaders()
+    )
+    expect(statsRes.status).toEqual(200)
+    const container = containers[0].data.container
+    expect(statsRes.data.container).toEqual([
+      {
+        reviewAverage: `${
+          reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+        }`,
+        reviewCount: `${reviews.length}`,
+        containerId: container.id,
+        containerSize: container.size,
+        containerType: container.type
+      }
+    ])
+  })
+
+  it('get container stats by brewery', async () => {
+    const {
+      breweries,
+      beers,
+      containers,
+      reviews: allReviews
+    } = await createDeps(ctx.adminAuthHeaders())
+    const breweryId = breweries[0].data.brewery.id
+
+    const statsRes = await ctx.request.get<{ container: ContainerStats }>(
+      `/api/v1/stats/container?brewery=${breweryId}`,
+      ctx.adminAuthHeaders()
+    )
+    expect(statsRes.status).toEqual(200)
+    const container = containers[0].data.container
+    const breweryBeers = beers.filter(
+      b => b.breweries.includes(breweryId)
+    ).map(b => b.id)
+    const reviews = allReviews.filter(r => breweryBeers.includes(r.beer))
+    expect(statsRes.data.container).toEqual([
+      {
+        reviewAverage: (
+          reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+        ).toFixed(2),
+        reviewCount: `${reviews.length}`,
+        containerId: container.id,
+        containerSize: container.size,
+        containerType: container.type
       }
     ])
   })

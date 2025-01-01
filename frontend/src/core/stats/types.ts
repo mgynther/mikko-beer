@@ -45,6 +45,18 @@ export interface BreweryStatsSorting {
   direction: ListDirection
 }
 
+export interface OneContainerStats {
+  containerId: string
+  containerSize: string
+  containerType: string
+  reviewAverage: string
+  reviewCount: string
+}
+
+export interface ContainerStats {
+  container: OneContainerStats[]
+}
+
 export interface RatingStats {
   rating: Array<{
     rating: string
@@ -119,6 +131,13 @@ export interface GetBreweryStatsIf {
   infiniteScroll: InfiniteScroll
 }
 
+export interface GetContainerStatsIf {
+  useStats: (params: BreweryStyleParams) => {
+    stats: ContainerStats | undefined
+    isLoading: boolean
+  }
+}
+
 export interface GetOverallStatsIf {
   useStats: (params: BreweryStyleParams) => {
     stats: OverallStats | undefined
@@ -143,6 +162,7 @@ export interface GetStyleStatsIf {
 export interface StatsIf {
   annual: GetAnnualStatsIf
   brewery: GetBreweryStatsIf
+  container: GetContainerStatsIf
   overall: GetOverallStatsIf
   rating: GetRatingStatsIf
   style: GetStyleStatsIf

@@ -3,6 +3,7 @@ import { emptySplitApi } from '../api'
 import type {
   BreweryStatsQueryParams,
   BreweryStyleParams,
+  ContainerStats,
   StyleStatsQueryParams,
   AnnualStats,
   BreweryStats,
@@ -10,7 +11,7 @@ import type {
   OverallStats,
   RatingStats,
   StyleStats,
-  StyleStatsSorting,
+  StyleStatsSorting
 } from '../../core/stats/types'
 
 import { StatsTags } from './types'
@@ -94,6 +95,13 @@ const statsApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [StatsTags.Brewery]
     }),
+    getContainerStats: build.query<ContainerStats, BreweryStyleParams>({
+      query: (params: BreweryStyleParams) => ({
+        url: `/stats/container${onlyBreweryStyleFilter(params)}`,
+        method: 'GET'
+      }),
+      providesTags: [StatsTags.Container]
+    }),
     getOverallStats: build.query<{
       overall: OverallStats
     }, BreweryStyleParams>({
@@ -132,6 +140,7 @@ const statsApi = emptySplitApi.injectEndpoints({
 
 export const {
   useGetAnnualStatsQuery,
+  useGetContainerStatsQuery,
   useGetOverallStatsQuery,
   useGetRatingStatsQuery,
   useGetStyleStatsQuery,

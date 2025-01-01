@@ -81,6 +81,7 @@ const statsIf: StatsIf = {
     }),
     infiniteScroll: dontCall
   },
+  container: noStats,
   overall: noStats,
   rating: noStats,
   style: noStats

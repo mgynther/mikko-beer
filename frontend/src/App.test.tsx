@@ -232,6 +232,9 @@ const storeIf: StoreIf = {
       useStats: dontCall,
       infiniteScroll
     },
+    container: {
+      useStats: dontCall
+    },
     overall: {
       useStats: () => ({
         stats: undefined,

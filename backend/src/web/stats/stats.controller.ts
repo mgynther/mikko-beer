@@ -89,6 +89,26 @@ export function statsController (router: Router): void {
   )
 
   router.get(
+    '/api/v1/stats/container',
+    async (ctx) => {
+      const authTokenPayload = parseAuthToken(ctx)
+      const statsFilter = validateStatsBreweryStyleFilter(ctx.request.query)
+      const container = await statsService.getContainer(
+        async (
+          statsFilter: StatsBreweryStyleFilter
+        ) => await statsRepository.getContainer(
+          ctx.db,
+          statsFilter
+        ),
+        authTokenPayload,
+        statsFilter,
+        ctx.log
+      )
+      ctx.body = { container }
+    }
+  )
+
+  router.get(
     '/api/v1/stats/rating',
     async (ctx) => {
       const authTokenPayload = parseAuthToken(ctx)

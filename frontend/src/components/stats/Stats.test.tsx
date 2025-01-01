@@ -30,6 +30,23 @@ const emptyStatsIf: StatsIf = {
       return () => undefined
     }
   },
+  container: {
+    useStats: () => ({
+        stats: {
+          container: [
+            {
+
+              containerId: 'ea642716-f71a-4c45-be62-2963ab732122',
+              containerSize: '0.33',
+              containerType: 'bottle',
+              reviewAverage: '0.00',
+              reviewCount: '0'
+            }
+          ]
+        },
+        isLoading: false
+      })
+  },
   overall: {
     useStats: () => ({
         stats: {
@@ -182,6 +199,50 @@ test('renders brewery stats', async () => {
   getByText(lehe.breweryName)
   getByText(lehe.reviewAverage)
   getByText(lehe.reviewCount)
+})
+
+test('renders container stats', async () => {
+  const user = userEvent.setup()
+  const { getByRole, getByText } = render(
+    <Stats
+      statsIf={{
+        ...emptyStatsIf,
+        container: {
+          useStats: () => ({
+              stats: {
+                container: [
+                  {
+                    containerId: '751bf3bb-6277-42d3-ab7f-ec568e8059eb',
+                    containerSize: '0.33',
+                    containerType: 'bottle',
+                    reviewAverage: '7.87',
+                    reviewCount: '10'
+                  },
+                  {
+                    containerId: 'dcd91b24-2116-49c5-b27d-ad85517b5407',
+                    containerSize: '0.44',
+                    containerType: 'can',
+                    reviewAverage: '8.23',
+                    reviewCount: '24'
+                  }
+                ]
+              },
+              isLoading: false
+            })
+        }
+      }}
+      breweryId={'ed60c2f7-b799-4b47-834c-d123f92f6eac'}
+      styleId={'3004aece-d2c4-47ae-896c-f2762051a738'}
+    />
+  )
+  const containerButton = getByRole('button', { name: 'Container' })
+  await user.click(containerButton)
+  getByText('7.87')
+  getByText('10')
+  getByText('bottle 0.33')
+  getByText('8.23')
+  getByText('24')
+  getByText('can 0.44')
 })
 
 test('renders rating stats', async () => {

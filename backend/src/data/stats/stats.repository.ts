@@ -8,6 +8,7 @@ import type {
   AnnualStats,
   BreweryStats,
   BreweryStatsOrder,
+  ContainerStats,
   OverallStats,
   RatingStats,
   StatsBreweryStyleFilter,
@@ -90,6 +91,46 @@ export async function getAnnual (
     reviewAverage: round(row.review_average, 2),
     reviewCount: `${row.review_count}`,
     year: `${row.year}`
+  }))
+}
+
+export async function getContainer (
+  db: Database,
+  statsFilter: StatsBreweryStyleFilter
+): Promise<ContainerStats> {
+  const containerQuery = sql`SELECT
+    COUNT(1) as review_count,
+    AVG(review.rating) as review_average,
+    review.container as container_id,
+    container.size as container_size,
+    container.type as container_type FROM review
+    INNER JOIN container ON review.container = container.container_id
+    ${breweryStyleFilter(statsFilter)}
+    GROUP BY review.container, container_size, container_type
+    ORDER BY container_type ASC,
+    container_size ASC
+  `
+
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * Tightly coupled with the string query.
+   */
+  const container = (await containerQuery
+    .execute(db.getDb()) as {
+    rows: Array<{
+      review_average: number
+      review_count: number
+      container_id: number
+      container_size: number
+      container_type: number
+    }>
+  })
+
+  return container.rows.map(row => ({
+    reviewAverage: round(row.review_average, 2),
+    reviewCount: `${row.review_count}`,
+    containerId: `${row.container_id}`,
+    containerSize: `${row.container_size}`,
+    containerType: `${row.container_type}`
   }))
 }
 

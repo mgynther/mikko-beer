@@ -16,6 +16,7 @@ export interface InsertedData {
   brewery: Brewery
   otherBrewery: Brewery
   container: Container,
+  otherContainer: Container,
   style: Style,
   otherStyle: Style
 }
@@ -54,7 +55,22 @@ export async function insertData(trx: Transaction): Promise<InsertedData> {
   }
   const container =
     await containerRepository.insertContainer(trx, containerRequest)
-  return { beer, otherBeer, brewery, otherBrewery, container, style, otherStyle }
+  const otherContainerRequest = {
+    size: '0.44',
+    type: 'can'
+  }
+  const otherContainer =
+    await containerRepository.insertContainer(trx, otherContainerRequest)
+  return {
+    beer,
+    otherBeer,
+    brewery,
+    otherBrewery,
+    container,
+    otherContainer,
+    style,
+    otherStyle
+  }
 }
 
 export async function insertMultipleReviews(
@@ -65,12 +81,12 @@ export async function insertMultipleReviews(
   let data: InsertedData | undefined = undefined
   await db.executeTransaction(async (trx: Transaction) => {
     data = await insertData(trx)
-    const { beer, otherBeer, container } = data
+    const { beer, otherBeer, container, otherContainer } = data
     for (let i = 0; i < count; i++) {
       const reviewRequest = {
         additionalInfo: '',
         beer: (i % 2 === 0) ? otherBeer.id : beer.id,
-        container: container.id,
+        container: (i % 2 === 0) ? otherContainer.id : container.id,
         location: '',
         rating: (i % 7) + 4,
         time: new Date(`2024-0${(i % 3) + 2}-0${(i % 5) + 1}T18:00:00.000Z`),

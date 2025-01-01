@@ -7,6 +7,7 @@ import type {
 import type { InfiniteScroll } from "../core/types"
 import {
   useGetAnnualStatsQuery,
+  useGetContainerStatsQuery,
   useGetOverallStatsQuery,
   useGetRatingStatsQuery,
   useGetStyleStatsQuery,
@@ -41,6 +42,15 @@ const stats: (
         }
       },
       infiniteScroll
+    },
+    container: {
+      useStats: (params: BreweryStyleParams) => {
+        const { data, isLoading } = useGetContainerStatsQuery(params)
+        return {
+          stats: data,
+          isLoading
+        }
+      }
     },
     overall: {
       useStats: (params: BreweryStyleParams) => {
