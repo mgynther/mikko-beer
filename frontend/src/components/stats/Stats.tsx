@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import Annual from './Annual'
 import Brewery from './Brewery'
@@ -9,20 +9,22 @@ import Style from './Style'
 import TabButton from '../common/TabButton'
 import type { StatsIf } from '../../core/stats/types'
 import Container from './Container'
+import type { ParamsIf } from '../util'
 
 enum Mode {
-  Annual = 'Annual',
-  Brewery = 'Brewery',
-  Container = 'Container',
-  Overall = 'Overall',
-  Rating = 'Rating',
-  Style = 'Style',
+  Annual = 'annual',
+  Brewery = 'brewery',
+  Container = 'container',
+  Overall = 'overall',
+  Rating = 'rating',
+  Style = 'style',
 }
 
 interface Props {
   statsIf: StatsIf
   breweryId: string | undefined
   styleId: string | undefined
+  paramsIf: ParamsIf
 }
 
 interface ModeButton {
@@ -57,9 +59,41 @@ const buttons: ModeButton[] = [
   }
 ]
 
+function getStatsMode (stats: string | undefined): Mode {
+  const defaultValue = Mode.Overall
+  if (stats === undefined) {
+    return defaultValue
+  }
+  switch (stats) {
+    case Mode.Overall.toString():
+      return Mode.Overall
+    case Mode.Annual.toString():
+      return Mode.Annual
+    case Mode.Brewery.toString():
+      return Mode.Brewery
+    case Mode.Container.toString():
+      return Mode.Container
+    case Mode.Rating.toString():
+      return Mode.Rating
+    case Mode.Style.toString():
+      return Mode.Style
+  }
+  return defaultValue
+}
+
 function Stats (props: Props): React.JSX.Element {
+  const stats = props.paramsIf.useSearch().get('stats') ?? undefined
   const showFull = props.breweryId === undefined && props.styleId === undefined
-  const [mode, setMode] = useState(Mode.Overall)
+  const [mode, doSetMode] = useState(getStatsMode(stats))
+
+  function setMode (mode: Mode): void {
+    doSetMode(mode)
+    void props.statsIf.setSearch(mode)
+  }
+
+  useEffect(() => {
+    void props.statsIf.setSearch(mode)
+  }, [])
 
   return (
     <div>

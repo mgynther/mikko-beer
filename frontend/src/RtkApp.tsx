@@ -72,6 +72,8 @@ import type {
 import type { SearchIf } from './core/search/types'
 import {
   infiniteScroll,
+  navigateIf,
+  paramsIf,
   useDebounce
 } from './components/util'
 import type { StoreIf } from './store/storeIf'
@@ -218,7 +220,7 @@ function RtkApp (): React.JSX.Element {
     login: getLogin
   }
 
-  const statsIf: StatsIf = stats(infiniteScroll)
+  const statsIf: StatsIf = stats(infiniteScroll, navigateIf)
 
   const searchIf: SearchIf = search(useDebounce)
 
@@ -270,7 +272,10 @@ function RtkApp (): React.JSX.Element {
   }
 
   return (
-    <App storeIf={storeIf}/>
+    <App
+      paramsIf={paramsIf}
+      storeIf={storeIf}
+    />
   )
 }
 

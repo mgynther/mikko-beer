@@ -1,3 +1,4 @@
+import type { NavigateIf } from "../components/util"
 import type {
   BreweryStatsQueryParams,
   BreweryStyleParams,
@@ -15,10 +16,13 @@ import {
 } from "../store/stats/api"
 
 const stats: (
-  infiniteScroll: InfiniteScroll
+  infiniteScroll: InfiniteScroll,
+  navigateIf: NavigateIf
 ) => StatsIf = (
-  infiniteScroll: InfiniteScroll
+  infiniteScroll: InfiniteScroll,
+  navigateIf: NavigateIf
 ) => {
+  const navigate = navigateIf.useNavigate()
   const statsIf: StatsIf = {
     annual: {
       useStats: (params: BreweryStyleParams) => {
@@ -78,6 +82,10 @@ const stats: (
           isLoading
         }
       }
+    },
+    setSearch: async (mode: string) => {
+      const newSearch = `?stats=${mode}`
+      await navigate(newSearch, { replace: true })
     }
   }
   return statsIf

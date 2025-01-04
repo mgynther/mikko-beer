@@ -18,7 +18,7 @@ function SearchBreweryWithNavi (props: Props): React.JSX.Element {
       searchIf={props.searchIf}
       searchBreweryIf={props.searchBreweryIf}
       select={(brewery) => {
-        navigate(`/breweries/${brewery.id}`)
+        void navigate(`/breweries/${brewery.id}`)
       }} />
   )
 }

@@ -131,8 +131,15 @@ const noOpContainerIf = {
   }
 }
 
-const noParamsIf = { useParams: () => ({}) }
-const storageIdParamsIf = { useParams: () => ({ storageId }) }
+const noParamsIf = {
+  useParams: () => ({}),
+  useSearch: () => new URLSearchParams()
+}
+
+const storageIdParamsIf = {
+  useParams: () => ({ storageId }),
+  useSearch: () => new URLSearchParams()
+}
 
 const noSearchIf = { useSearch: dontCall, useDebounce }
 
@@ -301,7 +308,8 @@ test('adds review from storage', async () => {
     paramsIf: {
       useParams: () => ({
         storageId
-      })
+      }),
+      useSearch: () => new URLSearchParams()
     },
     searchIf: {
       useSearch: () => ({

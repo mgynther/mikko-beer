@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 
 import {
   useNavigate as useRouterNavigate,
-  useParams as useRouterParams
+  useParams as useRouterParams,
+  useSearchParams as useRouterSearchParams
 } from 'react-router'
 import type { InfiniteScroll, UseDebounce } from '../core/types'
 import { className as contentEndClassName } from './ContentEnd'
@@ -64,12 +65,17 @@ export const useDebounce: UseDebounce = (
   return debouncedValue
 }
 
-function useNavigate (): (url: string) => (void | Promise<void>) {
+type NavigationFunc = (
+  url: string,
+  options?: { replace: boolean }
+) => (void | Promise<void>)
+
+function useNavigate (): NavigationFunc {
   return useRouterNavigate()
 }
 
 export interface NavigateIf {
-  useNavigate: () => (url: string) => void
+  useNavigate: () => NavigationFunc
 }
 
 export const navigateIf: NavigateIf = {
@@ -80,10 +86,16 @@ function useParams (): Record<string, string | undefined> {
   return useRouterParams()
 }
 
+function useSearch (): URLSearchParams {
+  return useRouterSearchParams()[0]
+}
+
 export interface ParamsIf {
   useParams: () => Record<string, string | undefined>
+  useSearch: () => URLSearchParams
 }
 
 export const paramsIf: ParamsIf = {
-  useParams
+  useParams,
+  useSearch
 }

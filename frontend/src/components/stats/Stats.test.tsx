@@ -1,10 +1,11 @@
 import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { test } from 'vitest'
+import { expect, test, vitest } from 'vitest'
 import Stats from './Stats'
 import type { StatsIf } from '../../core/stats/types'
 import LinkWrapper from '../LinkWrapper'
 import { openFilters } from './filters-test-util'
+import type { ParamsIf } from '../util'
 
 const emptyBreweryStats = { brewery: []}
 
@@ -78,13 +79,22 @@ const emptyStatsIf: StatsIf = {
       },
       isLoading: false
     })
-  }
+  },
+  setSearch: async () => undefined
+}
+
+const paramsIf: ParamsIf = {
+  useParams: () => ({
+  }),
+  useSearch: () => new URLSearchParams()
 }
 
 test('renders overall stats', async () => {
   const user = userEvent.setup()
+  const setSearch = vitest.fn()
   const { getByRole, getByText } = render(
     <Stats
+      paramsIf={paramsIf}
       statsIf={{
         ...emptyStatsIf,
         overall: {
@@ -100,7 +110,8 @@ test('renders overall stats', async () => {
               },
               isLoading: false
             })
-        }
+        },
+        setSearch
       }}
       breweryId={'282844e4-f411-4c6a-95d6-9131b8c0491f'}
       styleId={'1d1bc37a-d5d0-4175-92b2-7d24f961bb20'}
@@ -117,12 +128,19 @@ test('renders overall stats', async () => {
   getByText('110')
   getByText('8.54')
   getByText('29')
+  expect(setSearch.mock.calls).toEqual([
+    ['overall'],
+    ['annual'],
+    ['overall']
+  ])
 })
 
 test('renders annual stats', async () => {
   const user = userEvent.setup()
+  const setSearch = vitest.fn()
   const { getByRole, getByText } = render(
     <Stats
+      paramsIf={paramsIf}
       statsIf={{
         ...emptyStatsIf,
         annual: {
@@ -135,7 +153,8 @@ test('renders annual stats', async () => {
               },
               isLoading: false
             })
-        }
+        },
+        setSearch
       }}
       breweryId={'ed60c2f7-b799-4b47-834c-d123f92f6eac'}
       styleId={'3004aece-d2c4-47ae-896c-f2762051a738'}
@@ -149,10 +168,15 @@ test('renders annual stats', async () => {
   getByText('8.23')
   getByText('24')
   getByText('2021')
+  expect(setSearch.mock.calls).toEqual([
+    ['overall'],
+    ['annual']
+  ])
 })
 
 test('renders brewery stats', async () => {
   const user = userEvent.setup()
+  const setSearch = vitest.fn()
   const koskipanimo = {
     breweryId: '8981fe71-1a4d-48f3-8b4e-9b9b3ddf9d8a',
     breweryName: 'Koskipanimo',
@@ -170,6 +194,7 @@ test('renders brewery stats', async () => {
   const { getByRole, getByText } = render(
     <LinkWrapper>
       <Stats
+        paramsIf={paramsIf}
         statsIf={{
           ...emptyStatsIf,
           brewery: {
@@ -182,7 +207,8 @@ test('renders brewery stats', async () => {
               cb()
               return () => undefined
             }
-          }
+          },
+          setSearch
         }}
         breweryId={'a186917f-0d4c-40d0-bf67-e96227c55528'}
         styleId={'4917d1c7-5439-4e78-a562-242200a236db'}
@@ -199,12 +225,18 @@ test('renders brewery stats', async () => {
   getByText(lehe.breweryName)
   getByText(lehe.reviewAverage)
   getByText(lehe.reviewCount)
+  expect(setSearch.mock.calls).toEqual([
+    ['overall'],
+    ['brewery']
+  ])
 })
 
 test('renders container stats', async () => {
   const user = userEvent.setup()
+  const setSearch = vitest.fn()
   const { getByRole, getByText } = render(
     <Stats
+      paramsIf={paramsIf}
       statsIf={{
         ...emptyStatsIf,
         container: {
@@ -229,7 +261,8 @@ test('renders container stats', async () => {
               },
               isLoading: false
             })
-        }
+        },
+        setSearch
       }}
       breweryId={'ed60c2f7-b799-4b47-834c-d123f92f6eac'}
       styleId={'3004aece-d2c4-47ae-896c-f2762051a738'}
@@ -243,12 +276,18 @@ test('renders container stats', async () => {
   getByText('8.23')
   getByText('24')
   getByText('can 0.44')
+  expect(setSearch.mock.calls).toEqual([
+    ['overall'],
+    ['container']
+  ])
 })
 
 test('renders rating stats', async () => {
   const user = userEvent.setup()
+  const setSearch = vitest.fn()
   const { getByRole, getByText } = render(
     <Stats
+      paramsIf={paramsIf}
       statsIf={{
         ...emptyStatsIf,
         rating: {
@@ -261,7 +300,8 @@ test('renders rating stats', async () => {
               },
               isLoading: false
             })
-        }
+        },
+        setSearch
       }}
       breweryId={'a64a3770-7bc2-46a1-8be6-87d137d0d644'}
       styleId={'c0d9f345-487f-41d0-bcfc-95058ca822fa'}
@@ -273,10 +313,15 @@ test('renders rating stats', async () => {
   getByText('10')
   getByText('8')
   getByText('11')
+  expect(setSearch.mock.calls).toEqual([
+    ['overall'],
+    ['rating']
+  ])
 })
 
 test('renders style stats', async () => {
   const user = userEvent.setup()
+  const setSearch = vitest.fn()
   const pils = {
     styleId: 'e9929659-1d35-4ea4-be15-80b667686384',
     styleName: 'Pils',
@@ -299,11 +344,13 @@ test('renders style stats', async () => {
   const { getByRole, getByText } = render(
     <LinkWrapper>
       <Stats
+        paramsIf={paramsIf}
         statsIf={{
           ...emptyStatsIf,
           style: {
             useStats: () => statsResult
-          }
+          },
+          setSearch
         }}
         breweryId={'482584a6-4ccb-44d6-be37-3458a5c21601'}
         styleId={'449f632a-eb95-4ad1-a1ff-f4338c603584'}
@@ -318,4 +365,71 @@ test('renders style stats', async () => {
   getByText(ipa.styleName)
   getByText(ipa.reviewAverage)
   getByText(ipa.reviewCount)
+  expect(setSearch.mock.calls).toEqual([
+    ['overall'],
+    ['style']
+  ])
 })
+
+interface SearchParamTest {
+  search: string,
+  text: string
+}
+
+const searchParamTests: SearchParamTest[] = [
+  {
+    search: 'overall',
+    text: 'Review rating average'
+  },
+  {
+    search: 'annual',
+    text: 'Year'
+  },
+  {
+    search: 'brewery',
+    text: 'Brewery ▲'
+  },
+  {
+    search: 'container',
+    text: 'Container ▲'
+  },
+  {
+    search: 'rating',
+    text: 'Count'
+  },
+  {
+    search: 'style',
+    text: 'Style ▲'
+  }
+]
+
+searchParamTests.forEach(testCase =>
+  { test(`renders ${testCase.search} stats from search parameter`, async () => {
+    const user = userEvent.setup()
+    const { getByRole, getByText } = render(
+      <LinkWrapper>
+        <Stats
+          paramsIf={{
+            ...paramsIf,
+            useSearch: () => {
+              const urlSearchParams = new URLSearchParams()
+              urlSearchParams.append('stats', testCase.search)
+              return urlSearchParams
+            }
+          }}
+          statsIf={{
+            ...emptyStatsIf
+          }}
+          breweryId={undefined}
+          styleId={undefined}
+        />
+      </LinkWrapper>
+    )
+    if (testCase.search === 'brewery') {
+      // Need to have something async in the test to avoid updates after
+      // finishing.
+      await openFilters(getByRole, user)
+    }
+    getByText(testCase.text)
+  }); }
+)

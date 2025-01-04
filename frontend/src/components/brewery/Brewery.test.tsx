@@ -84,7 +84,8 @@ const statsIf: StatsIf = {
   container: noStats,
   overall: noStats,
   rating: noStats,
-  style: noStats
+  style: noStats,
+  setSearch: async () => undefined
 }
 
 test('updates brewery', async () => {
@@ -108,7 +109,8 @@ test('updates brewery', async () => {
         }
       }}
       paramsIf={{
-        useParams: () => ({ breweryId: id })
+        useParams: () => ({ breweryId: id }),
+        useSearch: () => new URLSearchParams()
       }}
       reviewIf={{
         get: {

@@ -11,6 +11,8 @@ import { Role } from './core/user/types'
 import { type GetLogin, PasswordChangeResult } from './core/login/types'
 import type { UseDebounce } from './core/types'
 import type { DeleteStorageIf } from './core/storage/types'
+import { paramsIf } from './components/util'
+import type { ParamsIf } from './components/util'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -226,7 +228,10 @@ const storeIf: StoreIf = {
   },
   statsIf: {
     annual: {
-      useStats: dontCall
+      useStats: () => ({
+        stats: undefined,
+        isLoading: false
+      })
     },
     brewery: {
       useStats: dontCall,
@@ -246,7 +251,8 @@ const storeIf: StoreIf = {
     },
     style: {
       useStats: dontCall
-    }
+    },
+    setSearch: async () => undefined
   },
   searchIf: {
     useSearch: () => ({
@@ -318,7 +324,10 @@ test('renders app login', () => {
   const { getByRole } = render(
     <Provider store={store}>
       <LinkWrapper>
-        <App storeIf={storeIf} />
+        <App
+          paramsIf={paramsIf}
+          storeIf={storeIf}
+        />
       </LinkWrapper>
     </Provider>
   )
@@ -331,10 +340,12 @@ test('navigates to Beers', async () => {
   const { getByRole } = render(
     <Provider store={store}>
       <LinkWrapper>
-        <App storeIf={{
-          ...storeIf,
-          getLogin: getAdminLogin
-        }} />
+        <App
+          paramsIf={paramsIf}
+          storeIf={{
+            ...storeIf,
+            getLogin: getAdminLogin
+          }} />
       </LinkWrapper>
     </Provider>
   )
@@ -381,10 +392,12 @@ navigationTests.forEach(testCase => {
     const { getByRole } = render(
       <Provider store={store}>
         <LinkWrapper>
-          <App storeIf={{
-            ...storeIf,
-            getLogin: getAdminLogin
-          }} />
+          <App
+            paramsIf={paramsIf}
+            storeIf={{
+              ...storeIf,
+              getLogin: getAdminLogin
+            }} />
         </LinkWrapper>
       </Provider>
     )
@@ -419,10 +432,12 @@ navigationMoreTests.forEach(testCase => {
     const { getByRole } = render(
       <Provider store={store}>
         <LinkWrapper>
-          <App storeIf={{
-            ...storeIf,
-            getLogin: getAdminLogin
-          }} />
+          <App
+            paramsIf={paramsIf}
+            storeIf={{
+              ...storeIf,
+              getLogin: getAdminLogin
+            }} />
         </LinkWrapper>
       </Provider>
     )
@@ -433,4 +448,29 @@ navigationMoreTests.forEach(testCase => {
     await user.click(link)
     getByRole('heading', { name: testCase.heading })
   })
+})
+
+test('loads annual stats directly', async () => {
+  const user = userEvent.setup()
+  const urlSearchParams = new URLSearchParams()
+  urlSearchParams.append('stats', 'annual')
+  const annualParamsIf: ParamsIf = {
+    ...paramsIf,
+    useSearch: () => urlSearchParams
+  }
+  const { getByRole, getByText } = render(
+    <Provider store={store}>
+      <LinkWrapper>
+        <App
+          paramsIf={annualParamsIf}
+          storeIf={{
+            ...storeIf,
+            getLogin: getAdminLogin
+          }} />
+      </LinkWrapper>
+    </Provider>
+  )
+  const link = getByRole('link', { name: 'Statistics' })
+  await user.click(link)
+  getByText('Year')
 })

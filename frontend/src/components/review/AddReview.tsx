@@ -73,7 +73,7 @@ function AddReview (props: Props): React.JSX.Element {
 
   useEffect(() => {
     if (isSuccess && createdReview !== undefined) {
-      navigate(`/beers/${createdReview.beer}`)
+      void navigate(`/beers/${createdReview.beer}`)
     }
   }, [isSuccess, createdReview])
 

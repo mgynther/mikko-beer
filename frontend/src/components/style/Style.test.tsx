@@ -177,7 +177,8 @@ const reviewIf = {
 const paramsIf = {
   useParams: () => ({
     styleId: style.id
-  })
+  }),
+  useSearch: () => new URLSearchParams()
 }
 
 function getListReviewsIf(reviews: JoinedReview[]): ListReviewsByIf {
@@ -228,7 +229,8 @@ const statsIf: StatsIf = {
   container: noStats,
   overall: noStats,
   rating: noStats,
-  style: noStats
+  style: noStats,
+  setSearch: async () => undefined
 }
 
 test('renders style', async () => {

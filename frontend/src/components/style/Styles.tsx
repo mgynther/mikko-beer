@@ -35,7 +35,7 @@ function Styles (props: Props): React.JSX.Element {
         listStylesIf={props.listStylesIf}
         searchIf={props.searchIf}
         select={(style: Style) => {
-          navigate(`/styles/${style.id}`)
+          void navigate(`/styles/${style.id}`)
         }}
       />
       <LoadingIndicator isLoading={isLoading} />

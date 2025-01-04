@@ -21,6 +21,14 @@ test('Annual stats', async ({ page }) => {
   await expect(page.getByText(/2021/i)).toBeVisible()
 })
 
+test('To annual stats with URL', async ({ page }) => {
+  await page.goto(localUrl)
+  await login(page)
+  await page.getByRole('link', { name: /add review/i }).click()
+  await page.goto(`${localUrl}/stats?stats=annual`)
+  await expect(page.getByText(/2021/i)).toBeVisible()
+})
+
 test('Brewery stats', async ({ page }) => {
   await toStats(page)
   await page.getByRole('button', { name: /^brewery/i }).click()

@@ -141,6 +141,7 @@ function Style (props: Props): React.JSX.Element {
       <Stats
         statsIf={props.statsIf}
         breweryId={undefined}
+        paramsIf={props.paramsIf}
         styleId={styleId}
       />
       {(storages?.storages ?? []).length > 0 && (
