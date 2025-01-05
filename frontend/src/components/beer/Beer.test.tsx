@@ -164,7 +164,9 @@ const paramsIf = {
   useParams: () => ({
     beerId: beer.id
   }),
-  useSearch: () => new URLSearchParams()
+  useSearch: () => ({
+    get: () => undefined
+  })
 }
 
 function getListReviewsIf(reviews: JoinedReview[]): ListReviewsByIf {

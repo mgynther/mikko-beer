@@ -86,7 +86,9 @@ const emptyStatsIf: StatsIf = {
 const paramsIf: ParamsIf = {
   useParams: () => ({
   }),
-  useSearch: () => new URLSearchParams()
+  useSearch: () => ({
+    get: () => undefined
+  })
 }
 
 test('renders overall stats', async () => {
@@ -412,9 +414,10 @@ searchParamTests.forEach(testCase =>
           paramsIf={{
             ...paramsIf,
             useSearch: () => {
-              const urlSearchParams = new URLSearchParams()
-              urlSearchParams.append('stats', testCase.search)
-              return urlSearchParams
+              const data: Record<string, string> = { stats: testCase.search }
+              return {
+                get: (name: string) => data[name]
+              }
             }
           }}
           statsIf={{

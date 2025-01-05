@@ -110,7 +110,9 @@ test('updates brewery', async () => {
       }}
       paramsIf={{
         useParams: () => ({ breweryId: id }),
-        useSearch: () => new URLSearchParams()
+        useSearch: () => ({
+          get: () => undefined
+        })
       }}
       reviewIf={{
         get: {

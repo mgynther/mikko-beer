@@ -178,7 +178,9 @@ const paramsIf = {
   useParams: () => ({
     styleId: style.id
   }),
-  useSearch: () => new URLSearchParams()
+  useSearch: () => ({
+    get: () => undefined
+  })
 }
 
 function getListReviewsIf(reviews: JoinedReview[]): ListReviewsByIf {

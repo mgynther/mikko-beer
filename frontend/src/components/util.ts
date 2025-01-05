@@ -86,13 +86,20 @@ function useParams (): Record<string, string | undefined> {
   return useRouterParams()
 }
 
-function useSearch (): URLSearchParams {
-  return useRouterSearchParams()[0]
+export interface SearchParameters {
+  get: (name: string) => string | undefined
+}
+
+function useSearch (): SearchParameters {
+  const searchParams = useRouterSearchParams()[0]
+  return {
+    get: (name: string) => searchParams.get(name) ?? undefined
+  }
 }
 
 export interface ParamsIf {
   useParams: () => Record<string, string | undefined>
-  useSearch: () => URLSearchParams
+  useSearch: () => SearchParameters
 }
 
 export const paramsIf: ParamsIf = {

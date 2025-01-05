@@ -452,11 +452,12 @@ navigationMoreTests.forEach(testCase => {
 
 test('loads annual stats directly', async () => {
   const user = userEvent.setup()
-  const urlSearchParams = new URLSearchParams()
-  urlSearchParams.append('stats', 'annual')
+  const data: Record<string, string> = { stats: 'annual' }
   const annualParamsIf: ParamsIf = {
     ...paramsIf,
-    useSearch: () => urlSearchParams
+    useSearch: () => ({
+      get: (name: string) => data[name]
+    })
   }
   const { getByRole, getByText } = render(
     <Provider store={store}>
