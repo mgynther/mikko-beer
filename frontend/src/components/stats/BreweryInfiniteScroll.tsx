@@ -15,6 +15,8 @@ const pageSize = 30
 interface Props {
   getBreweryStatsIf: GetBreweryStatsIf
   filters: StatsFilters
+  isFiltersOpen: boolean
+  setIsFiltersOpen: (isOpen: boolean) => void
   sortingDirection: ListDirection
   sortingOrder: BreweryStatsSortingOrder
   setSortingOrder: (order: BreweryStatsSortingOrder) => void
@@ -87,6 +89,8 @@ function BreweryInfiniteScroll (props: Props): React.JSX.Element {
     <BreweryStatsTable
       breweries={loadedBreweries ?? []}
       filters={props.filters}
+      isFiltersOpen={props.isFiltersOpen}
+      setIsFiltersOpen={props.setIsFiltersOpen}
       isLoading={isLoading}
       sortingDirection={sortingDirection}
       sortingOrder={sortingOrder}

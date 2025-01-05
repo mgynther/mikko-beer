@@ -23,6 +23,8 @@ import './StatsTable.css'
 interface Props {
   breweries: OneBreweryStats[]
   filters: StatsFilters
+  isFiltersOpen: boolean
+  setIsFiltersOpen: (isOpen: boolean) => void
   isLoading: boolean
   sortingDirection: ListDirection
   sortingOrder: BreweryStatsSortingOrder
@@ -80,6 +82,8 @@ function BreweryStatsTable (props: Props): React.JSX.Element {
             <th colSpan={3}>
               <Filters
                 filters={filters}
+                isOpen={props.isFiltersOpen}
+                setIsOpen={props.setIsFiltersOpen}
               />
             </th>
           </tr>

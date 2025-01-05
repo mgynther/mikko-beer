@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import type { StatsFilters } from '../../core/stats/types'
 
@@ -12,10 +12,12 @@ import './Filters.css'
 
 interface Props {
   filters: StatsFilters
+  isOpen: boolean
+  setIsOpen: (isOpen: boolean) => void
 }
 
 function Filters (props: Props): React.JSX.Element {
-  const [isOpen, setIsOpen] = useState(false)
+  const { isOpen } = props
   function getOpenSymbol (isOpen: boolean): string {
     return isOpen ? '▲' : '▼'
   }
@@ -31,7 +33,7 @@ function Filters (props: Props): React.JSX.Element {
         <TabButton
           isCompact={true}
           isSelected={false}
-          onClick={() => { setIsOpen(!isOpen) }}
+          onClick={() => { props.setIsOpen(!isOpen) }}
           title={`Filters ${getOpenSymbol(isOpen)}`}
         />
       </div>

@@ -30,12 +30,18 @@ const containerStats: OneContainerStats[] = [
 ]
 
 const defaultSearchParams: Record<string, string> = {
+  filters_open: '0',
   sorting_order: 'text',
   list_direction: 'asc',
   min_review_count: '1',
   max_review_count: 'Infinity',
   min_review_average: '4.00',
   max_review_average: '10.00',
+}
+
+const defaultFiltersOpenParams: Record<string, string> = {
+  ...defaultSearchParams,
+  filters_open: '1'
 }
 
 function toSearchParams (record: Record<string, string>): SearchParameters {
@@ -80,12 +86,6 @@ function renderWithStats (
   stats: ReturnType<typeof vitest.fn>
 ): ReturnType<typeof render> {
   return renderContainer(stats, vitest.fn(), getDefaultSearchParameters())
-}
-
-function renderWithSetState (
-  setState: ReturnType<typeof vitest.fn>
-): ReturnType<typeof render> {
-  return renderContainer(vitest.fn(), setState, getDefaultSearchParameters())
 }
 
 function renderFromRecord (
@@ -275,22 +275,33 @@ const sliderChangeTests: SliderChangeTest[] = [
 ]
 
 sliderChangeTests.forEach(testCase => {
-  test(`change ${testCase.property}`, async () => {
-    const user = userEvent.setup()
+  test(`change ${testCase.property}`, () => {
     const setState = vitest.fn()
-    const { getByDisplayValue, getByRole } = renderWithSetState(setState)
-    await openFilters(getByRole, user)
+    const { getByDisplayValue } =
+      renderFromRecordWithSetState(defaultFiltersOpenParams, setState)
     changeSlider(
       getByDisplayValue,
       testCase.fromDisplayValue,
       testCase.toDisplayValue
     )
     const expected = {
-      ...defaultSearchParams,
+      ...defaultFiltersOpenParams,
     }
     expected[testCase.property] = testCase.stateValue
     expect(setState.mock.calls).toEqual([[expected]])
   })
+})
+
+test('opens filters', async () => {
+  const user = userEvent.setup()
+  const setState = vitest.fn()
+  const { getByRole } =
+    renderFromRecordWithSetState(defaultSearchParams, setState)
+  await openFilters(getByRole, user)
+  expect(setState.mock.calls).toEqual([[{
+    ...defaultSearchParams,
+    filters_open: '1'
+  }]])
 })
 
 interface OrderChangeTest {

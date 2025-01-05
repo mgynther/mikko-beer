@@ -18,7 +18,9 @@ import {
   averageStr,
   countStr,
   listDirectionOrDefault,
-  filterNumOrDefault
+  filterNumOrDefault,
+  filtersOpenOrDefault,
+  filtersOpenStr
 } from './filter-util'
 
 interface Props {
@@ -104,14 +106,14 @@ function getSorter (order: SortingOrder, direction: ListDirection): Sorter {
 }
 
 function Container (props: Props): React.JSX.Element {
-  const sortingOrder = defaultSortingOrder(props.search)
-  const sortingDirection = listDirectionOrDefault(props.search)
-  const minReviewCount = filterNumOrDefault('min_review_count', props.search)
-  const maxReviewCount = filterNumOrDefault('max_review_count', props.search)
-  const minReviewAverage =
-    filterNumOrDefault('min_review_average', props.search)
-  const maxReviewAverage =
-    filterNumOrDefault('max_review_average', props.search)
+  const { search } = props
+  const sortingOrder = defaultSortingOrder(search)
+  const sortingDirection = listDirectionOrDefault(search)
+  const minReviewCount = filterNumOrDefault('min_review_count', search)
+  const maxReviewCount = filterNumOrDefault('max_review_count', search)
+  const minReviewAverage = filterNumOrDefault('min_review_average', search)
+  const maxReviewAverage = filterNumOrDefault('max_review_average', search)
+  const isFiltersOpen = filtersOpenOrDefault(search)
 
   const { stats, isLoading } = props.getContainerStatsIf.useStats({
     breweryId: props.breweryId,
@@ -126,6 +128,7 @@ function Container (props: Props): React.JSX.Element {
       max_review_average: averageStr(maxReviewAverage),
       sorting_order: sortingOrder,
       list_direction: sortingDirection,
+      filters_open: filtersOpenStr(isFiltersOpen)
     }
     return currentState
   }
@@ -145,6 +148,12 @@ function Container (props: Props): React.JSX.Element {
   const setMaxReviewCount = getFilterSetter('max_review_count', countStr)
   const setMinReviewAverage = getFilterSetter('min_review_average', averageStr)
   const setMaxReviewAverage = getFilterSetter('max_review_average', averageStr)
+
+  function setIsFiltersOpen (isOpen: boolean): void {
+    const newState: Record<string, string> = getCurrentState()
+    newState.filters_open = filtersOpenStr(isOpen)
+    props.setState(newState)
+  }
 
   function isSelected (property: SortingOrder): boolean {
     return sortingOrder === property
@@ -229,6 +238,8 @@ function Container (props: Props): React.JSX.Element {
                     setValue: setMaxReviewAverage
                   }
                 }}
+                isOpen={isFiltersOpen}
+                setIsOpen={setIsFiltersOpen}
               />
             </th>
           </tr>

@@ -141,37 +141,19 @@ test('renders brewery stats', async () => {
   getByText(lehe.reviewCount)
 })
 
-test('sets minimum review average filter', async () => {
-  const user = userEvent.setup()
-  const setState = vitest.fn()
-  const { getByDisplayValue, getByRole } = render(
-    <LinkWrapper>
-      <Brewery
-        breweryId={undefined}
-        search={emptySearchParameters}
-        setState={setState}
-        styleId={'32a7cffd-1b82-47cb-afea-c66f67663555'}
-        getBreweryStatsIf={usedStats}
-      />
-    </LinkWrapper>
-  )
-  await openFilters(getByRole, user)
-  const slider = getByDisplayValue('4')
-  await act(async() => fireEvent.change(slider, {target: {value: '4.5'}}))
-  const expected = {
-    ...defaultSearchParams,
-    min_review_average: '4.50'
-  }
-  expect(setState.mock.calls).toEqual([[expected]])
-})
-
 const defaultSearchParams: Record<string, string> = {
+  filters_open: '0',
   sorting_order: 'brewery_name',
   list_direction: 'asc',
   min_review_count: '1',
   max_review_count: 'Infinity',
   min_review_average: '4.00',
   max_review_average: '10.00',
+}
+
+const defaultFiltersOpenParams: Record<string, string> = {
+  ...defaultSearchParams,
+  filters_open: '1'
 }
 
 function toSearchParams (record: Record<string, string>): SearchParameters  {
@@ -224,28 +206,26 @@ const sliderChangeTests: SliderChangeTest[] = [
 ]
 
 sliderChangeTests.forEach(testCase => {
-  test(`change ${testCase.property}`, async () => {
-    const user = userEvent.setup()
+  test(`change ${testCase.property}`, () => {
     const setState = vitest.fn()
-    const { getByDisplayValue, getByRole } = render(
+    const { getByDisplayValue } = render(
       <LinkWrapper>
         <Brewery
           breweryId={undefined}
-          search={toSearchParams(defaultSearchParams)}
+          search={toSearchParams(defaultFiltersOpenParams)}
           setState={setState}
           styleId={'dcbc0cd8-337a-4c0c-8ae6-baf97f711680'}
           getBreweryStatsIf={usedStats}
         />
       </LinkWrapper>
     )
-    await openFilters(getByRole, user)
     changeSlider(
       getByDisplayValue,
       testCase.fromDisplayValue,
       testCase.toDisplayValue
     )
     const expected = {
-      ...defaultSearchParams,
+      ...defaultFiltersOpenParams,
     }
     expected[testCase.property] = testCase.stateValue
     expect(setState.mock.calls).toEqual([[expected]])

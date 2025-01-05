@@ -56,6 +56,10 @@ const getRecordingIf = (
   }
 })
 
+const styleStatsIf: GetStyleStatsIf = {
+  useStats: () => statsResult
+}
+
 const emptySearchParameters: SearchParameters = {
   get: () => undefined
 }
@@ -63,12 +67,19 @@ const emptySearchParameters: SearchParameters = {
 const noOpSetState = (): undefined => undefined
 
 const defaultSearchParams: Record<string, string> = {
+  filters_open: '0',
   sorting_order: 'style_name',
   list_direction: 'asc',
   min_review_count: '1',
   max_review_count: 'Infinity',
   min_review_average: '4.00',
   max_review_average: '10.00',
+}
+
+
+const defaultFiltersOpenParams: Record<string, string> = {
+  ...defaultSearchParams,
+  filters_open: '1'
 }
 
 function toSearchParams (record: Record<string, string>): SearchParameters {
@@ -136,6 +147,27 @@ test('applies filters', () => {
   }])
 })
 
+test('opens filters', async () => {
+  const user = userEvent.setup()
+  const setState = vitest.fn()
+  const { getByRole } = render(
+    <LinkWrapper>
+      <Style
+        getStyleStatsIf={styleStatsIf}
+        breweryId={undefined}
+        search={toSearchParams(defaultSearchParams)}
+        setState={setState}
+        styleId={undefined}
+      />
+    </LinkWrapper>
+  )
+  await openFilters(getByRole, user)
+  expect(setState.mock.calls).toEqual([[{
+      ...defaultSearchParams,
+      filters_open: '1'
+  }]])
+})
+
 function changeSlider (
   getByDisplayValue: (str: string) => HTMLElement,
   from: string,
@@ -181,28 +213,25 @@ const sliderChangeTests: SliderChangeTest[] = [
 
 sliderChangeTests.forEach(testCase => {
   test(`change ${testCase.property}`, async () => {
-    const user = userEvent.setup()
-    const statsRequests = vitest.fn()
     const setState = vitest.fn()
-    const { getByDisplayValue, getByRole } = render(
+    const { getByDisplayValue } = render(
       <LinkWrapper>
         <Style
-          getStyleStatsIf={getRecordingIf(statsRequests)}
+          getStyleStatsIf={styleStatsIf}
           breweryId={undefined}
-          search={toSearchParams(defaultSearchParams)}
+          search={toSearchParams(defaultFiltersOpenParams)}
           setState={setState}
           styleId={undefined}
         />
       </LinkWrapper>
     )
-    await openFilters(getByRole, user)
     changeSlider(
       getByDisplayValue,
       testCase.fromDisplayValue,
       testCase.toDisplayValue
     )
     const expected = {
-      ...defaultSearchParams,
+      ...defaultFiltersOpenParams,
     }
     expected[testCase.property] = testCase.stateValue
     expect(setState.mock.calls).toEqual([[expected]])
@@ -310,7 +339,6 @@ orderChangeTests.forEach(testCase => {
     testCase.newOrder} ${testCase.newDirection
   }`, async () => {
     const user = userEvent.setup()
-    const statsRequests = vitest.fn()
     const setState = vitest.fn()
     const searchRecord: Record<string, string> = {
       ...defaultSearchParams,
@@ -320,7 +348,7 @@ orderChangeTests.forEach(testCase => {
     const { getByRole } = render(
       <LinkWrapper>
         <Style
-          getStyleStatsIf={getRecordingIf(statsRequests)}
+          getStyleStatsIf={styleStatsIf}
           breweryId={undefined}
           search={toSearchParams(searchRecord)}
           setState={setState}

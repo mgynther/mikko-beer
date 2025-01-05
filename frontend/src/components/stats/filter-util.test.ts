@@ -4,7 +4,9 @@ import {
   averageStr,
   countStr,
   listDirectionOrDefault,
-  filterNumOrDefault
+  filterNumOrDefault,
+  filtersOpenOrDefault,
+  filtersOpenStr
 } from './filter-util'
 import type { SearchParameters } from '../util'
 
@@ -39,6 +41,39 @@ test('desc list direction', () => {
     list_direction: 'desc'
   }
   expect(listDirectionOrDefault(toSearchParams(search))).toEqual('desc')
+})
+
+test('filters_open default', () => {
+  const search: Record<string, string> = {}
+  expect(
+    filtersOpenOrDefault(toSearchParams(search))
+  ).toEqual(false)
+})
+
+test('filters_open', () => {
+  const search: Record<string, string> = {
+    filters_open: '1'
+  }
+  expect(
+    filtersOpenOrDefault(toSearchParams(search))
+  ).toEqual(true)
+})
+
+test('filters closed', () => {
+  const search: Record<string, string> = {
+    filters_open: '0'
+  }
+  expect(
+    filtersOpenOrDefault(toSearchParams(search))
+  ).toEqual(false)
+})
+
+test('filtersOpenStr open', () => {
+  expect(filtersOpenStr(true)).toEqual('1')
+})
+
+test('filtersOpenStr closed', () => {
+  expect(filtersOpenStr(false)).toEqual('0')
 })
 
 test('min_review_count default', () => {
@@ -103,4 +138,13 @@ test('max_review_average', () => {
   expect(
     filterNumOrDefault('max_review_average', toSearchParams(search))
   ).toEqual(8.50)
+})
+
+test('max_review_count', () => {
+  const search: Record<string, string> = {
+    max_review_count: '21'
+  }
+  expect(
+    filterNumOrDefault('max_review_count', toSearchParams(search))
+  ).toEqual(21)
 })

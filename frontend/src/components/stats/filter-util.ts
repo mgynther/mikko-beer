@@ -22,7 +22,18 @@ export function filterNumOrDefault (
   return value === undefined ? filterNumDefaults[key] : parseFloat(value)
 }
 
-export function listDirectionOrDefault (search: SearchParameters): ListDirection {
+export function filtersOpenOrDefault (search: SearchParameters): boolean {
+  const value = search.get('filters_open')
+  return value === '1'
+}
+
+export function filtersOpenStr (isOpen: boolean): string {
+  return isOpen ? '1' : '0'
+}
+
+export function listDirectionOrDefault (
+  search: SearchParameters
+): ListDirection {
   const value = search.get('list_direction')
   return value === 'asc' || value === 'desc'
     ? value : 'asc'

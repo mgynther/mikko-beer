@@ -15,7 +15,9 @@ import {
   averageStr,
   countStr,
   listDirectionOrDefault,
-  filterNumOrDefault
+  filterNumOrDefault,
+  filtersOpenOrDefault,
+  filtersOpenStr
 } from './filter-util'
 
 interface Props {
@@ -45,6 +47,7 @@ function Brewery (props: Props): React.JSX.Element {
   const maxReviewCount = filterNumOrDefault('max_review_count', search)
   const minReviewAverage = filterNumOrDefault('min_review_average', search)
   const maxReviewAverage = filterNumOrDefault('max_review_average', search)
+  const isFiltersOpen = filtersOpenOrDefault(search)
   const [loadedBreweries, setLoadedBreweries] =
     useState<OneBreweryStats[] | undefined>(undefined)
 
@@ -56,6 +59,7 @@ function Brewery (props: Props): React.JSX.Element {
       max_review_average: averageStr(maxReviewAverage),
       sorting_order: sortingOrder,
       list_direction: sortingDirection,
+      filters_open: filtersOpenStr(isFiltersOpen)
     }
     return currentState
   }
@@ -76,6 +80,12 @@ function Brewery (props: Props): React.JSX.Element {
   const setMaxReviewCount = getFilterSetter('max_review_count', countStr)
   const setMinReviewAverage = getFilterSetter('min_review_average', averageStr)
   const setMaxReviewAverage = getFilterSetter('max_review_average', averageStr)
+
+  function setIsFiltersOpen (isOpen: boolean): void {
+    const newState: Record<string, string> = getCurrentState()
+    newState.filters_open = filtersOpenStr(isOpen)
+    props.setState(newState)
+  }
 
   const filters = {
     minReviewCount: {
@@ -119,6 +129,8 @@ function Brewery (props: Props): React.JSX.Element {
         <BreweryAllAtOnce
           getBreweryStatsIf={props.getBreweryStatsIf}
           filters={filters}
+          isFiltersOpen={isFiltersOpen}
+          setIsFiltersOpen={setIsFiltersOpen}
           loadedBreweries={loadedBreweries}
           setLoadedBreweries={setLoadedBreweries}
           sortingDirection={sortingDirection}
@@ -132,6 +144,8 @@ function Brewery (props: Props): React.JSX.Element {
         <BreweryInfiniteScroll
           getBreweryStatsIf={props.getBreweryStatsIf}
           filters={filters}
+          isFiltersOpen={isFiltersOpen}
+          setIsFiltersOpen={setIsFiltersOpen}
           loadedBreweries={loadedBreweries}
           setLoadedBreweries={setLoadedBreweries}
           sortingDirection={sortingDirection}

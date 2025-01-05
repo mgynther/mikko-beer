@@ -57,6 +57,8 @@ test('renders brewery stats', () => {
         sortingOrder={'brewery_name'}
         setSortingOrder={() => undefined}
         filters={unusedFilters}
+        isFiltersOpen={false}
+        setIsFiltersOpen={dontCall}
       />
     </LinkWrapper>
   )
@@ -66,6 +68,27 @@ test('renders brewery stats', () => {
   getByText(lehe.breweryName)
   getByText(lehe.reviewAverage)
   getByText(lehe.reviewCount)
+})
+
+test('opens filters', async () => {
+  const user = userEvent.setup()
+  const setIsFiltersOpen = vitest.fn()
+  const { getByRole } = render(
+    <LinkWrapper>
+      <BreweryStatsTable
+        breweries={[ koskipanimo, lehe ]}
+        isLoading={false}
+        sortingDirection={'asc'}
+        sortingOrder={'brewery_name'}
+        setSortingOrder={() => undefined}
+        filters={unusedFilters}
+        isFiltersOpen={false}
+        setIsFiltersOpen={setIsFiltersOpen}
+      />
+    </LinkWrapper>
+  )
+  await openFilters(getByRole, user)
+  expect(setIsFiltersOpen.mock.calls).toEqual([[true]])
 })
 
 interface OrderTestData {
@@ -122,6 +145,8 @@ orderTests.forEach(data => {
           sortingOrder={data.order}
           setSortingOrder={setSortingOrder}
           filters={unusedFilters}
+          isFiltersOpen={false}
+          setIsFiltersOpen={dontCall}
         />
       </LinkWrapper>
     )
@@ -131,10 +156,9 @@ orderTests.forEach(data => {
   })
 })
 
-test('sets minimum review count filter', async () => {
-  const user = userEvent.setup()
+test('sets minimum review count filter', () => {
   const setMinimumReviewCount = vitest.fn()
-  const { getByDisplayValue, getByRole } = render(
+  const { getByDisplayValue } = render(
     <LinkWrapper>
       <BreweryStatsTable
         breweries={[
@@ -163,10 +187,11 @@ test('sets minimum review count filter', async () => {
             setValue: dontCall
           }
         }}
+        isFiltersOpen={true}
+        setIsFiltersOpen={dontCall}
       />
     </LinkWrapper>
   )
-  await openFilters(getByRole, user)
   const slider = getByDisplayValue('2')
   fireEvent.change(slider, {target: {value: '3'}})
   expect(setMinimumReviewCount.mock.calls).toEqual([[5]])

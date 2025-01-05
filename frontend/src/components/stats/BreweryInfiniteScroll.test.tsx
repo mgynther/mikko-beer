@@ -86,6 +86,8 @@ test('queries brewery stats', async () => {
         sortingOrder={'brewery_name'}
         setSortingOrder={() => undefined}
         filters={unusedFilters}
+        isFiltersOpen={false}
+        setIsFiltersOpen={() => undefined}
       />
     </LinkWrapper>
   )
@@ -123,6 +125,8 @@ test('renders brewery stats', () => {
         sortingOrder={'brewery_name'}
         setSortingOrder={() => undefined}
         filters={unusedFilters}
+        isFiltersOpen={false}
+        setIsFiltersOpen={dontCall}
       />
     </LinkWrapper>
   )
@@ -134,10 +138,9 @@ test('renders brewery stats', () => {
   getByText(lehe.reviewCount)
 })
 
-test('sets minimum review count filter', async () => {
-  const user = userEvent.setup()
+test('sets minimum review count filter', () => {
   const setMinimumReviewAverage = vitest.fn()
-  const { getByDisplayValue, getByRole } = render(
+  const { getByDisplayValue } = render(
     <LinkWrapper>
       <BreweryInfiniteScroll
         getBreweryStatsIf={unusedStats}
@@ -153,11 +156,34 @@ test('sets minimum review count filter', async () => {
             setValue: setMinimumReviewAverage
           }
         }}
+        isFiltersOpen={true}
+        setIsFiltersOpen={dontCall}
+      />
+    </LinkWrapper>
+  )
+  const slider = getByDisplayValue('4')
+  fireEvent.change(slider, {target: {value: '4.5'}})
+  expect(setMinimumReviewAverage.mock.calls).toEqual([[4.5]])
+})
+
+test('opens filters', async () => {
+  const user = userEvent.setup()
+  const setIsFiltersOpen = vitest.fn()
+  const { getByRole } = render(
+    <LinkWrapper>
+      <BreweryInfiniteScroll
+        getBreweryStatsIf={unusedStats}
+        loadedBreweries={[koskipanimo, lehe]}
+        setLoadedBreweries={() => undefined}
+        sortingDirection={'asc'}
+        sortingOrder={'brewery_name'}
+        setSortingOrder={() => undefined}
+        filters={unusedFilters}
+        isFiltersOpen={false}
+        setIsFiltersOpen={setIsFiltersOpen}
       />
     </LinkWrapper>
   )
   await openFilters(getByRole, user)
-  const slider = getByDisplayValue('4')
-  fireEvent.change(slider, {target: {value: '4.5'}})
-  expect(setMinimumReviewAverage.mock.calls).toEqual([[4.5]])
+  expect(setIsFiltersOpen.mock.calls).toEqual([[true]])
 })
