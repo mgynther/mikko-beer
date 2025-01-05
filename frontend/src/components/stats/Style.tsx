@@ -1,11 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import { formatTitle, invertDirection } from '../list-helpers'
 import type {
   GetStyleStatsIf,
   StyleStatsSortingOrder
 } from '../../core/stats/types'
-import type { ListDirection } from '../../core/types'
 import LoadingIndicator from '../common/LoadingIndicator'
 import TabButton from '../common/TabButton'
 import StyleLink from '../style/StyleLink'
@@ -13,26 +12,38 @@ import StyleLink from '../style/StyleLink'
 import Filters from './Filters'
 
 import './StatsTable.css'
+import type { SearchParameters } from '../util'
+import {
+  averageStr,
+  countStr,
+  listDirectionOrDefault,
+  filterNumOrDefault
+} from './filter-util'
 
 interface Props {
   getStyleStatsIf: GetStyleStatsIf
   breweryId: string | undefined
+  search: SearchParameters
+  setState: (state: Record<string, string>) => void
   styleId: string | undefined
 }
 
+function defaultSortingOrder (
+  search: SearchParameters
+): StyleStatsSortingOrder {
+  const value = search.get('sorting_order')
+  return value === 'style_name' || value === 'count' || value === 'average'
+    ? value : 'style_name'
+}
+
 function Style (props: Props): React.JSX.Element {
-  const [
-    sortingOrder,
-    setSortingOrder
-  ] = useState<StyleStatsSortingOrder>('style_name')
-  const [
-    sortingDirection,
-    setSortingDirection
-  ] = useState<ListDirection>('asc')
-  const [minReviewCount, setMinReviewCount] = useState(1)
-  const [maxReviewCount, setMaxReviewCount] = useState(Infinity)
-  const [minReviewAverage, setMinReviewAverage] = useState(4)
-  const [maxReviewAverage, setMaxReviewAverage] = useState(10)
+  const { search } = props
+  const sortingOrder = defaultSortingOrder(search)
+  const sortingDirection = listDirectionOrDefault(search)
+  const minReviewCount = filterNumOrDefault('min_review_count', search)
+  const maxReviewCount = filterNumOrDefault('max_review_count', search)
+  const minReviewAverage = filterNumOrDefault('min_review_average', search)
+  const maxReviewAverage = filterNumOrDefault('max_review_average', search)
   const { stats, isLoading } = props.getStyleStatsIf.useStats({
     breweryId: props.breweryId,
     styleId: props.styleId,
@@ -46,6 +57,34 @@ function Style (props: Props): React.JSX.Element {
     maxReviewAverage
   })
 
+  function getCurrentState(): Record<string, string> {
+    const currentState: Record<string, string> = {
+      min_review_count: countStr(minReviewCount),
+      max_review_count: countStr(maxReviewCount),
+      min_review_average: averageStr(minReviewAverage),
+      max_review_average: averageStr(maxReviewAverage),
+      sorting_order: sortingOrder,
+      list_direction: sortingDirection,
+    }
+    return currentState
+  }
+
+  function getFilterSetter(
+    key: string,
+    converter: (value: number) => string
+  ) {
+    return (value: number) => {
+      const newState: Record<string, string> = getCurrentState()
+      newState[key] = converter(value)
+      props.setState(newState)
+    }
+  }
+
+  const setMinReviewCount = getFilterSetter('min_review_count', countStr)
+  const setMaxReviewCount = getFilterSetter('max_review_count', countStr)
+  const setMinReviewAverage = getFilterSetter('min_review_average', averageStr)
+  const setMaxReviewAverage = getFilterSetter('max_review_average', averageStr)
+
   function isSelected (property: StyleStatsSortingOrder): boolean {
     return sortingOrder === property
   }
@@ -53,11 +92,18 @@ function Style (props: Props): React.JSX.Element {
   function createClickHandler (property: StyleStatsSortingOrder): () => void {
     return () => {
       if (isSelected(property)) {
-        setSortingDirection(invertDirection(sortingDirection))
+        props.setState({
+          ...getCurrentState(),
+          list_direction: invertDirection(sortingDirection)
+        })
         return
       }
-      setSortingOrder(property)
-      setSortingDirection(property === 'style_name' ? 'asc' : 'desc')
+      const direction = property === 'style_name' ? 'asc' : 'desc'
+      props.setState({
+        ...getCurrentState(),
+        sorting_order: property,
+        list_direction: direction
+      })
     }
   }
 

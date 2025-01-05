@@ -91,58 +91,76 @@ const paramsIf: ParamsIf = {
   })
 }
 
-test('renders overall stats', async () => {
-  const user = userEvent.setup()
-  const setSearch = vitest.fn()
-  const { getByRole, getByText } = render(
-    <Stats
-      paramsIf={paramsIf}
-      statsIf={{
-        ...emptyStatsIf,
-        overall: {
-          useStats: () => ({
-              stats: {
-                beerCount: '123',
-                breweryCount: '54',
-                containerCount: '8',
-                reviewCount: '112',
-                distinctBeerReviewCount: '110',
-                reviewAverage: '8.54',
-                styleCount: '29'
-              },
-              isLoading: false
-            })
-        },
-        setSearch
-      }}
-      breweryId={'282844e4-f411-4c6a-95d6-9131b8c0491f'}
-      styleId={'1d1bc37a-d5d0-4175-92b2-7d24f961bb20'}
-    />
-  )
-  const annualButton = getByRole('button', { name: 'Annual' })
-  await user.click(annualButton)
-  const overallButton = getByRole('button', { name: 'Overall' })
-  await user.click(overallButton)
-  getByText('123')
-  getByText('54')
-  getByText('8')
-  getByText('112')
-  getByText('110')
-  getByText('8.54')
-  getByText('29')
-  expect(setSearch.mock.calls).toEqual([
-    ['overall'],
-    ['annual'],
-    ['overall']
-  ])
+function getStatsParamsIf (
+  stats: string,
+  filters: Record<string, string> = {}
+): ParamsIf {
+  const params: Record<string, string> = { ...filters, stats }
+  return {
+    useParams: () => ({
+    }),
+    useSearch: () => ({
+      get: (name: string) => params[name]
+    })
+  }
+}
+
+interface OverallTestCase {
+  paramsIf: ParamsIf
+  description: string
+}
+
+const overallTestCases: OverallTestCase[] = [
+  {
+    paramsIf,
+    description: 'by default'
+  },
+  {
+    paramsIf: getStatsParamsIf('overall'),
+    description: 'from search param'
+  }
+]
+
+overallTestCases.forEach(testCase => {
+  test(`renders overall stats ${testCase.description}`, () => {
+    const { getByText } = render(
+      <Stats
+        paramsIf={testCase.paramsIf}
+        statsIf={{
+          ...emptyStatsIf,
+          overall: {
+            useStats: () => ({
+                stats: {
+                  beerCount: '123',
+                  breweryCount: '54',
+                  containerCount: '8',
+                  reviewCount: '112',
+                  distinctBeerReviewCount: '110',
+                  reviewAverage: '8.54',
+                  styleCount: '29'
+                },
+                isLoading: false
+              })
+          }
+        }}
+        breweryId={'282844e4-f411-4c6a-95d6-9131b8c0491f'}
+        styleId={'1d1bc37a-d5d0-4175-92b2-7d24f961bb20'}
+      />
+    )
+    getByText('123')
+    getByText('54')
+    getByText('8')
+    getByText('112')
+    getByText('110')
+    getByText('8.54')
+    getByText('29')
+  })
 })
 
-test('renders annual stats', async () => {
-  const user = userEvent.setup()
-  const setSearch = vitest.fn()
-  const { getByRole, getByText } = render(
+test('renders annual stats', () => {
+  const { getByText } = render(
     <Stats
-      paramsIf={paramsIf}
+      paramsIf={getStatsParamsIf('annual')}
       statsIf={{
         ...emptyStatsIf,
         annual: {
@@ -155,30 +173,22 @@ test('renders annual stats', async () => {
               },
               isLoading: false
             })
-        },
-        setSearch
+        }
       }}
       breweryId={'ed60c2f7-b799-4b47-834c-d123f92f6eac'}
       styleId={'3004aece-d2c4-47ae-896c-f2762051a738'}
     />
   )
-  const annualButton = getByRole('button', { name: 'Annual' })
-  await user.click(annualButton)
   getByText('7.87')
   getByText('10')
   getByText('2020')
   getByText('8.23')
   getByText('24')
   getByText('2021')
-  expect(setSearch.mock.calls).toEqual([
-    ['overall'],
-    ['annual']
-  ])
 })
 
 test('renders brewery stats', async () => {
   const user = userEvent.setup()
-  const setSearch = vitest.fn()
   const koskipanimo = {
     breweryId: '8981fe71-1a4d-48f3-8b4e-9b9b3ddf9d8a',
     breweryName: 'Koskipanimo',
@@ -196,7 +206,7 @@ test('renders brewery stats', async () => {
   const { getByRole, getByText } = render(
     <LinkWrapper>
       <Stats
-        paramsIf={paramsIf}
+        paramsIf={getStatsParamsIf('brewery')}
         statsIf={{
           ...emptyStatsIf,
           brewery: {
@@ -209,16 +219,13 @@ test('renders brewery stats', async () => {
               cb()
               return () => undefined
             }
-          },
-          setSearch
+          }
         }}
         breweryId={'a186917f-0d4c-40d0-bf67-e96227c55528'}
         styleId={'4917d1c7-5439-4e78-a562-242200a236db'}
       />
     </LinkWrapper>
   )
-  const breweryButton = getByRole('button', { name: 'Brewery' })
-  await user.click(breweryButton)
   // Need to do something to get breweries set.
   await openFilters(getByRole, user)
   getByText(koskipanimo.breweryName)
@@ -227,18 +234,12 @@ test('renders brewery stats', async () => {
   getByText(lehe.breweryName)
   getByText(lehe.reviewAverage)
   getByText(lehe.reviewCount)
-  expect(setSearch.mock.calls).toEqual([
-    ['overall'],
-    ['brewery']
-  ])
 })
 
-test('renders container stats', async () => {
-  const user = userEvent.setup()
-  const setSearch = vitest.fn()
-  const { getByRole, getByText } = render(
+test('renders container stats', () => {
+  const { getByText } = render(
     <Stats
-      paramsIf={paramsIf}
+      paramsIf={getStatsParamsIf('container')}
       statsIf={{
         ...emptyStatsIf,
         container: {
@@ -264,32 +265,65 @@ test('renders container stats', async () => {
               isLoading: false
             })
         },
-        setSearch
       }}
       breweryId={'ed60c2f7-b799-4b47-834c-d123f92f6eac'}
       styleId={'3004aece-d2c4-47ae-896c-f2762051a738'}
     />
   )
-  const containerButton = getByRole('button', { name: 'Container' })
-  await user.click(containerButton)
   getByText('7.87')
   getByText('10')
   getByText('bottle 0.33')
   getByText('8.23')
   getByText('24')
   getByText('can 0.44')
-  expect(setSearch.mock.calls).toEqual([
-    ['overall'],
-    ['container']
-  ])
 })
 
-test('renders rating stats', async () => {
-  const user = userEvent.setup()
-  const setSearch = vitest.fn()
-  const { getByRole, getByText } = render(
+test('renders filtered container stats', () => {
+  const { getByText, queryByText } = render(
     <Stats
-      paramsIf={paramsIf}
+      paramsIf={getStatsParamsIf('container', { min_review_count: '11' })}
+      statsIf={{
+        ...emptyStatsIf,
+        container: {
+          useStats: () => ({
+              stats: {
+                container: [
+                  {
+                    containerId: '136d1f2c-46b0-4a6b-84ac-e282546f48ee',
+                    containerSize: '0.33',
+                    containerType: 'bottle',
+                    reviewAverage: '7.87',
+                    reviewCount: '10'
+                  },
+                  {
+                    containerId: 'fb60b0b8-b6ea-4c43-a58b-f0a8b661cf9b',
+                    containerSize: '0.44',
+                    containerType: 'can',
+                    reviewAverage: '8.23',
+                    reviewCount: '24'
+                  }
+                ]
+              },
+              isLoading: false
+            })
+        },
+      }}
+      breweryId={'c2b632e8-01fa-416b-bad3-873022a2afd9'}
+      styleId={'c5efc2ba-6b91-4284-8c29-563a872b13a0'}
+    />
+  )
+  expect(queryByText('7.87')).toEqual(null)
+  expect(queryByText('10')).toEqual(null)
+  expect(queryByText('bottle 0.33')).toEqual(null)
+  getByText('8.23')
+  getByText('24')
+  getByText('can 0.44')
+})
+
+test('renders rating stats', () => {
+  const { getByText } = render(
+    <Stats
+      paramsIf={getStatsParamsIf('rating')}
       statsIf={{
         ...emptyStatsIf,
         rating: {
@@ -302,28 +336,19 @@ test('renders rating stats', async () => {
               },
               isLoading: false
             })
-        },
-        setSearch
+        }
       }}
       breweryId={'a64a3770-7bc2-46a1-8be6-87d137d0d644'}
       styleId={'c0d9f345-487f-41d0-bcfc-95058ca822fa'}
     />
   )
-  const ratingButton = getByRole('button', { name: 'Rating' })
-  await user.click(ratingButton)
   getByText('7')
   getByText('10')
   getByText('8')
   getByText('11')
-  expect(setSearch.mock.calls).toEqual([
-    ['overall'],
-    ['rating']
-  ])
 })
 
-test('renders style stats', async () => {
-  const user = userEvent.setup()
-  const setSearch = vitest.fn()
+test('renders style stats', () => {
   const pils = {
     styleId: 'e9929659-1d35-4ea4-be15-80b667686384',
     styleName: 'Pils',
@@ -343,96 +368,91 @@ test('renders style stats', async () => {
     isLoading: false
   }
 
-  const { getByRole, getByText } = render(
+  const { getByText } = render(
     <LinkWrapper>
       <Stats
-        paramsIf={paramsIf}
+        paramsIf={getStatsParamsIf('style')}
         statsIf={{
           ...emptyStatsIf,
           style: {
             useStats: () => statsResult
-          },
-          setSearch
+          }
         }}
         breweryId={'482584a6-4ccb-44d6-be37-3458a5c21601'}
         styleId={'449f632a-eb95-4ad1-a1ff-f4338c603584'}
       />
     </LinkWrapper>
   )
-  const styleButton = getByRole('button', { name: 'Style' })
-  await user.click(styleButton)
   getByText(pils.styleName)
   getByText(pils.reviewAverage)
   getByText(pils.reviewCount)
   getByText(ipa.styleName)
   getByText(ipa.reviewAverage)
   getByText(ipa.reviewCount)
-  expect(setSearch.mock.calls).toEqual([
-    ['overall'],
-    ['style']
-  ])
 })
 
-interface SearchParamTest {
-  search: string,
-  text: string
+interface NavigationTest {
+  originalSearch: string
+  buttonText: string
+  destinationSearch: string
 }
 
-const searchParamTests: SearchParamTest[] = [
+const navigationTests: NavigationTest[] = [
   {
-    search: 'overall',
-    text: 'Review rating average'
+    destinationSearch: 'overall',
+    originalSearch: 'annual',
+    buttonText: 'Overall'
   },
   {
-    search: 'annual',
-    text: 'Year'
+    destinationSearch: 'annual',
+    originalSearch: 'overall',
+    buttonText: 'Annual'
   },
   {
-    search: 'brewery',
-    text: 'Brewery ▲'
+    destinationSearch: 'brewery',
+    originalSearch: 'overall',
+    buttonText: 'Brewery'
   },
   {
-    search: 'container',
-    text: 'Container ▲'
+    destinationSearch: 'container',
+    originalSearch: 'overall',
+    buttonText: 'Container'
   },
   {
-    search: 'rating',
-    text: 'Count'
+    destinationSearch: 'rating',
+    originalSearch: 'overall',
+    buttonText: 'Rating'
   },
   {
-    search: 'style',
-    text: 'Style ▲'
+    destinationSearch: 'style',
+    originalSearch: 'overall',
+    buttonText: 'Style'
   }
 ]
 
-searchParamTests.forEach(testCase =>
-  { test(`renders ${testCase.search} stats from search parameter`, async () => {
+navigationTests.forEach(testCase => {
+  test(`navigates from ${
+    testCase.originalSearch
+  } stats to ${
+    testCase.destinationSearch
+  }`, async () => {
     const user = userEvent.setup()
-    const { getByRole, getByText } = render(
+    const setSearch = vitest.fn()
+    const { getByRole } = render(
       <LinkWrapper>
         <Stats
-          paramsIf={{
-            ...paramsIf,
-            useSearch: () => {
-              const data: Record<string, string> = { stats: testCase.search }
-              return {
-                get: (name: string) => data[name]
-              }
-            }
-          }}
+          paramsIf={getStatsParamsIf(testCase.originalSearch)}
           statsIf={{
-            ...emptyStatsIf
+            ...emptyStatsIf,
+            setSearch
           }}
           breweryId={undefined}
           styleId={undefined}
         />
       </LinkWrapper>
     )
-    if (testCase.search === 'brewery') {
-      // Need to have something async in the test to avoid updates after
-      // finishing.
-      await openFilters(getByRole, user)
-    }
-    getByText(testCase.text)
+    const naviButton = getByRole('button', { name: testCase.buttonText })
+    await user.click(naviButton)
+    expect(setSearch.mock.calls).toEqual([[testCase.destinationSearch, {}]])
   }); }
 )

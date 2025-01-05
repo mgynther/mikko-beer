@@ -166,5 +166,5 @@ export interface StatsIf {
   overall: GetOverallStatsIf
   rating: GetRatingStatsIf
   style: GetStyleStatsIf
-  setSearch: (mode: string) => Promise<void>
+  setSearch: (mode: string, state: Record<string, string>) => Promise<void>
 }

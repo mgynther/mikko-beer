@@ -4,6 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import Brewery from './Brewery'
 import LinkWrapper from '../LinkWrapper'
 import { openFilters } from './filters-test-util'
+import type { SearchParameters } from '../util'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -57,6 +58,12 @@ const usedStats = {
   }
 }
 
+const emptySearchParameters: SearchParameters = {
+  get: () => undefined
+}
+
+const noOpSetState = (): undefined => undefined
+
 test('queries brewery stats', async () => {
   const query = vitest.fn()
   let loadCallback: () => void = () => undefined
@@ -85,6 +92,8 @@ test('queries brewery stats', async () => {
           }
         }}
         breweryId={undefined}
+        search={emptySearchParameters}
+        setState={noOpSetState}
         styleId={undefined}
       />
     </LinkWrapper>
@@ -115,6 +124,8 @@ test('renders brewery stats', async () => {
     <LinkWrapper>
       <Brewery
         breweryId={'5e2f90e7-15f9-499d-baa3-c95f4282c509'}
+        search={emptySearchParameters}
+        setState={noOpSetState}
         styleId={undefined}
         getBreweryStatsIf={usedStats}
       />
@@ -130,12 +141,15 @@ test('renders brewery stats', async () => {
   getByText(lehe.reviewCount)
 })
 
-test('sets minimum review count filter', async () => {
+test('sets minimum review average filter', async () => {
   const user = userEvent.setup()
+  const setState = vitest.fn()
   const { getByDisplayValue, getByRole } = render(
     <LinkWrapper>
       <Brewery
         breweryId={undefined}
+        search={emptySearchParameters}
+        setState={setState}
         styleId={'32a7cffd-1b82-47cb-afea-c66f67663555'}
         getBreweryStatsIf={usedStats}
       />
@@ -144,5 +158,203 @@ test('sets minimum review count filter', async () => {
   await openFilters(getByRole, user)
   const slider = getByDisplayValue('4')
   await act(async() => fireEvent.change(slider, {target: {value: '4.5'}}))
-  getByDisplayValue('4.5')
+  const expected = {
+    ...defaultSearchParams,
+    min_review_average: '4.50'
+  }
+  expect(setState.mock.calls).toEqual([[expected]])
+})
+
+const defaultSearchParams: Record<string, string> = {
+  sorting_order: 'brewery_name',
+  list_direction: 'asc',
+  min_review_count: '1',
+  max_review_count: 'Infinity',
+  min_review_average: '4.00',
+  max_review_average: '10.00',
+}
+
+function toSearchParams (record: Record<string, string>): SearchParameters  {
+  return {
+    get: (name: string) => record[name]
+  }
+}
+
+function changeSlider (
+  getByDisplayValue: (str: string) => HTMLElement,
+  from: string,
+  to: string
+): void {
+  const slider = getByDisplayValue(from)
+  fireEvent.change(slider, {target: { value: to }})
+}
+
+interface SliderChangeTest {
+  fromDisplayValue: string
+  toDisplayValue: string
+  property: string
+  stateValue: string
+}
+
+const sliderChangeTests: SliderChangeTest[] = [
+  {
+    fromDisplayValue: '4',
+    toDisplayValue: '8.1',
+    property: 'min_review_average',
+    stateValue: '8.10'
+  },
+  {
+    fromDisplayValue: '10',
+    toDisplayValue: '8.0',
+    property: 'max_review_average',
+    stateValue: '8.00'
+  },
+  {
+    fromDisplayValue: '0',
+    toDisplayValue: '5',
+    property: 'min_review_count',
+    stateValue: '13'
+  },
+  {
+    fromDisplayValue: '11',
+    toDisplayValue: '5',
+    property: 'max_review_count',
+    stateValue: '13'
+  }
+]
+
+sliderChangeTests.forEach(testCase => {
+  test(`change ${testCase.property}`, async () => {
+    const user = userEvent.setup()
+    const setState = vitest.fn()
+    const { getByDisplayValue, getByRole } = render(
+      <LinkWrapper>
+        <Brewery
+          breweryId={undefined}
+          search={toSearchParams(defaultSearchParams)}
+          setState={setState}
+          styleId={'dcbc0cd8-337a-4c0c-8ae6-baf97f711680'}
+          getBreweryStatsIf={usedStats}
+        />
+      </LinkWrapper>
+    )
+    await openFilters(getByRole, user)
+    changeSlider(
+      getByDisplayValue,
+      testCase.fromDisplayValue,
+      testCase.toDisplayValue
+    )
+    const expected = {
+      ...defaultSearchParams,
+    }
+    expected[testCase.property] = testCase.stateValue
+    expect(setState.mock.calls).toEqual([[expected]])
+  })
+})
+
+interface OrderChangeTest {
+  originalOrder: string
+  originalDirection: string
+  buttonText: string
+  newOrder: string
+  newDirection: string
+}
+
+const orderChangeTests: OrderChangeTest[] = [
+  {
+    originalOrder: 'brewery_name',
+    originalDirection: 'asc',
+    buttonText: 'Brewery ▲',
+    newOrder: 'brewery_name',
+    newDirection: 'desc'
+  },
+  {
+    originalOrder: 'brewery_name',
+    originalDirection: 'desc',
+    buttonText: 'Brewery ▼',
+    newOrder: 'brewery_name',
+    newDirection: 'asc'
+  },
+  {
+    originalOrder: 'count',
+    originalDirection: 'asc',
+    buttonText: 'Reviews ▲',
+    newOrder: 'count',
+    newDirection: 'desc'
+  },
+  {
+    originalOrder: 'count',
+    originalDirection: 'desc',
+    buttonText: 'Reviews ▼',
+    newOrder: 'count',
+    newDirection: 'asc'
+  },
+  {
+    originalOrder: 'average',
+    originalDirection: 'asc',
+    buttonText: 'Average ▲',
+    newOrder: 'average',
+    newDirection: 'desc'
+  },
+  {
+    originalOrder: 'average',
+    originalDirection: 'desc',
+    buttonText: 'Average ▼',
+    newOrder: 'average',
+    newDirection: 'asc'
+  },
+  {
+    originalOrder: 'average',
+    originalDirection: 'desc',
+    buttonText: 'Brewery',
+    newOrder: 'brewery_name',
+    newDirection: 'asc'
+  },
+  {
+    originalOrder: 'average',
+    originalDirection: 'desc',
+    buttonText: 'Reviews',
+    newOrder: 'count',
+    newDirection: 'desc'
+  },
+  {
+    originalOrder: 'brewery_name',
+    originalDirection: 'desc',
+    buttonText: 'Average',
+    newOrder: 'average',
+    newDirection: 'desc'
+  }
+]
+
+orderChangeTests.forEach(testCase => {
+  test(`change ${testCase.originalOrder} ${testCase.originalDirection} to ${
+    testCase.newOrder} ${testCase.newDirection
+  }`, async () => {
+    const user = userEvent.setup()
+    const setState = vitest.fn()
+    const searchRecord: Record<string, string> = {
+      ...defaultSearchParams,
+      sorting_order: testCase.originalOrder,
+      list_direction: testCase.originalDirection
+    }
+    const { getByRole } = render(
+      <LinkWrapper>
+        <Brewery
+          breweryId={undefined}
+          search={toSearchParams(searchRecord)}
+          setState={setState}
+          styleId={'dcbc0cd8-337a-4c0c-8ae6-baf97f711680'}
+          getBreweryStatsIf={usedStats}
+        />
+      </LinkWrapper>
+    )
+    const button = getByRole('button', { name: testCase.buttonText })
+    await user.click(button)
+    const expected = {
+      ...defaultSearchParams,
+      sorting_order: testCase.newOrder,
+      list_direction: testCase.newDirection
+    }
+    expect(setState.mock.calls).toEqual([[expected]])
+  })
 })

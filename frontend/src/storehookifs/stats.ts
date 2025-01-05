@@ -83,8 +83,13 @@ const stats: (
         }
       }
     },
-    setSearch: async (mode: string) => {
-      const newSearch = `?stats=${mode}`
+    setSearch: async (mode: string, state: Record<string, string>) => {
+      const stateParts = Object.keys(state).map(
+        key => `${key}=${state[key]}`
+      )
+      const baseSearch = `?stats=${mode}`
+      const allParts = [baseSearch, ...stateParts]
+      const newSearch = allParts.join('&')
       await navigate(newSearch, { replace: true })
     }
   }

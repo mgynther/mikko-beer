@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
 import Annual from './Annual'
 import Brewery from './Brewery'
@@ -81,19 +81,22 @@ function getStatsMode (stats: string | undefined): Mode {
   return defaultValue
 }
 
-function Stats (props: Props): React.JSX.Element {
-  const stats = props.paramsIf.useSearch().get('stats') ?? undefined
+function Stats (props: Props): React.JSX.Element | null {
+  const search = props.paramsIf.useSearch()
+  const stats = search.get('stats') ?? undefined
   const showFull = props.breweryId === undefined && props.styleId === undefined
-  const [mode, doSetMode] = useState(getStatsMode(stats))
+  const mode = getStatsMode(stats)
 
-  function setMode (mode: Mode): void {
-    doSetMode(mode)
-    void props.statsIf.setSearch(mode)
+  function setMode (newMode: Mode): void {
+    if (mode === newMode) {
+      return
+    }
+    void props.statsIf.setSearch(newMode, {})
   }
 
-  useEffect(() => {
-    void props.statsIf.setSearch(mode)
-  }, [])
+  function setState (state: Record<string, string>): void {
+    void props.statsIf.setSearch(mode, state)
+  }
 
   return (
     <div>
@@ -121,6 +124,8 @@ function Stats (props: Props): React.JSX.Element {
         <Brewery
           getBreweryStatsIf={props.statsIf.brewery}
           breweryId={props.breweryId}
+          search={search}
+          setState={setState}
           styleId={props.styleId}
         />
       }
@@ -128,6 +133,8 @@ function Stats (props: Props): React.JSX.Element {
         <Container
           getContainerStatsIf={props.statsIf.container}
           breweryId={props.breweryId}
+          search={search}
+          setState={setState}
           styleId={props.styleId}
         />
       }
@@ -149,6 +156,8 @@ function Stats (props: Props): React.JSX.Element {
         <Style
           getStyleStatsIf={props.statsIf.style}
           breweryId={props.breweryId}
+          search={search}
+          setState={setState}
           styleId={props.styleId}
         />
       }

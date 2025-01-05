@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import type {
   GetContainerStatsIf,
@@ -13,10 +13,19 @@ import Filters from './Filters'
 import TabButton from '../common/TabButton'
 import type { ListDirection } from '../../core/types'
 import { formatTitle, invertDirection } from '../list-helpers'
+import type { SearchParameters } from '../util'
+import {
+  averageStr,
+  countStr,
+  listDirectionOrDefault,
+  filterNumOrDefault
+} from './filter-util'
 
 interface Props {
   getContainerStatsIf: GetContainerStatsIf
   breweryId: string | undefined
+  search: SearchParameters
+  setState: (state: Record<string, string>) => void
   styleId: string | undefined
 }
 
@@ -25,6 +34,12 @@ function num (str: string): number {
 }
 
 type SortingOrder = 'text' | 'count' | 'average'
+
+function defaultSortingOrder (search: SearchParameters): SortingOrder {
+  const value = search.get('sorting_order')
+  return value === 'text' || value === 'count' || value === 'average'
+    ? value : 'text'
+}
 
 interface NumContainer {
   id: string
@@ -89,19 +104,47 @@ function getSorter (order: SortingOrder, direction: ListDirection): Sorter {
 }
 
 function Container (props: Props): React.JSX.Element {
+  const sortingOrder = defaultSortingOrder(props.search)
+  const sortingDirection = listDirectionOrDefault(props.search)
+  const minReviewCount = filterNumOrDefault('min_review_count', props.search)
+  const maxReviewCount = filterNumOrDefault('max_review_count', props.search)
+  const minReviewAverage =
+    filterNumOrDefault('min_review_average', props.search)
+  const maxReviewAverage =
+    filterNumOrDefault('max_review_average', props.search)
+
   const { stats, isLoading } = props.getContainerStatsIf.useStats({
     breweryId: props.breweryId,
     styleId: props.styleId
   })
 
-  const [
-    sortingOrder,
-    setSortingOrder
-  ] = useState<SortingOrder>('text')
-  const [
-    sortingDirection,
-    setSortingDirection
-  ] = useState<ListDirection>('asc')
+  function getCurrentState(): Record<string, string> {
+    const currentState: Record<string, string> = {
+      min_review_count: countStr(minReviewCount),
+      max_review_count: countStr(maxReviewCount),
+      min_review_average: averageStr(minReviewAverage),
+      max_review_average: averageStr(maxReviewAverage),
+      sorting_order: sortingOrder,
+      list_direction: sortingDirection,
+    }
+    return currentState
+  }
+
+  function getFilterSetter(
+    key: string,
+    converter: (value: number) => string
+  ) {
+    return (value: number) => {
+      const newState: Record<string, string> = getCurrentState()
+      newState[key] = converter(value)
+      props.setState(newState)
+    }
+  }
+
+  const setMinReviewCount = getFilterSetter('min_review_count', countStr)
+  const setMaxReviewCount = getFilterSetter('max_review_count', countStr)
+  const setMinReviewAverage = getFilterSetter('min_review_average', averageStr)
+  const setMaxReviewAverage = getFilterSetter('max_review_average', averageStr)
 
   function isSelected (property: SortingOrder): boolean {
     return sortingOrder === property
@@ -110,18 +153,20 @@ function Container (props: Props): React.JSX.Element {
   function createClickHandler (property: SortingOrder): () => void {
     return () => {
       if (isSelected(property)) {
-        setSortingDirection(invertDirection(sortingDirection))
+        props.setState({
+          ...getCurrentState(),
+          list_direction: invertDirection(sortingDirection)
+        })
         return
       }
-      setSortingOrder(property)
-      setSortingDirection(property === 'text' ? 'asc' : 'desc')
+      const direction = property === 'text' ? 'asc' : 'desc'
+      props.setState({
+        ...getCurrentState(),
+        sorting_order: property,
+        list_direction: direction
+      })
     }
   }
-
-  const [minReviewCount, setMinReviewCount] = useState(1)
-  const [maxReviewCount, setMaxReviewCount] = useState(Infinity)
-  const [minReviewAverage, setMinReviewAverage] = useState(4)
-  const [maxReviewAverage, setMaxReviewAverage] = useState(10)
 
   return (
     <div>

@@ -5,49 +5,77 @@ import type {
   GetBreweryStatsIf,
   OneBreweryStats
 } from '../../core/stats/types'
-import type { ListDirection } from '../../core/types'
 
 import { invertDirection } from '../list-helpers'
 
 import BreweryAllAtOnce from './BreweryAllAtOnce'
 import BreweryInfiniteScroll from './BreweryInfiniteScroll'
+import type { SearchParameters } from '../util'
+import {
+  averageStr,
+  countStr,
+  listDirectionOrDefault,
+  filterNumOrDefault
+} from './filter-util'
 
 interface Props {
   getBreweryStatsIf: GetBreweryStatsIf
   breweryId: string | undefined
+  search: SearchParameters
+  setState: (state: Record<string, string>) => void
   styleId: string | undefined
+}
+
+function sortingOrderOrDefault (
+  search: SearchParameters
+): BreweryStatsSortingOrder {
+  const value = search.get('sorting_order')
+  return value === 'brewery_name' || value === 'count' || value === 'average'
+    ? value : 'brewery_name'
 }
 
 function Brewery (props: Props): React.JSX.Element {
   const isAllAtOnce =
     props.breweryId !== undefined || props.styleId !== undefined
 
-  const [
-    sortingOrder,
-    setSortingOrder
-  ] = useState<BreweryStatsSortingOrder>('brewery_name')
-  const [
-    sortingDirection,
-    setSortingDirection
-  ] = useState<ListDirection>('asc')
-  const [minReviewCount, doSetMinReviewCount] = useState(1)
-  const [maxReviewCount, doSetMaxReviewCount] = useState(Infinity)
-  const [minReviewAverage, doSetMinReviewAverage] = useState(4)
-  const [maxReviewAverage, doSetMaxReviewAverage] = useState(10)
+  const { search } = props
+  const sortingOrder = sortingOrderOrDefault(search)
+  const sortingDirection = listDirectionOrDefault(search)
+  const minReviewCount = filterNumOrDefault('min_review_count', search)
+  const maxReviewCount = filterNumOrDefault('max_review_count', search)
+  const minReviewAverage = filterNumOrDefault('min_review_average', search)
+  const maxReviewAverage = filterNumOrDefault('max_review_average', search)
   const [loadedBreweries, setLoadedBreweries] =
     useState<OneBreweryStats[] | undefined>(undefined)
 
-  function getFilterSetter(setter: (value: number) => void) {
+  function getCurrentState(): Record<string, string> {
+    const currentState: Record<string, string> = {
+      min_review_count: countStr(minReviewCount),
+      max_review_count: countStr(maxReviewCount),
+      min_review_average: averageStr(minReviewAverage),
+      max_review_average: averageStr(maxReviewAverage),
+      sorting_order: sortingOrder,
+      list_direction: sortingDirection,
+    }
+    return currentState
+  }
+
+  function getFilterSetter(
+    key: string,
+    converter: (value: number) => string
+  ) {
     return (value: number) => {
-      setter(value)
       setLoadedBreweries(undefined)
+      const newState: Record<string, string> = getCurrentState()
+      newState[key] = converter(value)
+      props.setState(newState)
     }
   }
 
-  const setMinReviewCount = getFilterSetter(doSetMinReviewCount)
-  const setMaxReviewCount = getFilterSetter(doSetMaxReviewCount)
-  const setMinReviewAverage = getFilterSetter(doSetMinReviewAverage)
-  const setMaxReviewAverage = getFilterSetter(doSetMaxReviewAverage)
+  const setMinReviewCount = getFilterSetter('min_review_count', countStr)
+  const setMaxReviewCount = getFilterSetter('max_review_count', countStr)
+  const setMinReviewAverage = getFilterSetter('min_review_average', averageStr)
+  const setMaxReviewAverage = getFilterSetter('max_review_average', averageStr)
 
   const filters = {
     minReviewCount: {
@@ -71,11 +99,18 @@ function Brewery (props: Props): React.JSX.Element {
   function changeSortingOrder (property: BreweryStatsSortingOrder): void {
     setLoadedBreweries(undefined)
     if (sortingOrder === property) {
-      setSortingDirection(invertDirection(sortingDirection))
+      props.setState({
+        ...getCurrentState(),
+        list_direction: invertDirection(sortingDirection)
+      })
       return
     }
-    setSortingOrder(property)
-    setSortingDirection(property === 'brewery_name' ? 'asc' : 'desc')
+    const direction = property === 'brewery_name' ? 'asc' : 'desc'
+    props.setState({
+      ...getCurrentState(),
+      sorting_order: property,
+      list_direction: direction
+    })
   }
 
   return (
