@@ -22,6 +22,11 @@ type ContainerApiErrors =
   | 'InvalidContainerId'
   | 'ContainerNotFound'
 
+type LocationApiErrors =
+  | 'InvalidLocation'
+  | 'InvalidLocationId'
+  | 'LocationNotFound'
+
 type ReviewApiErrors =
   | 'InvalidReview'
   | 'InvalidReviewId'
@@ -68,6 +73,7 @@ type ErrorCode =
   | BeerApiErrors
   | BreweryApiErrors
   | ContainerApiErrors
+  | LocationApiErrors
   | ReviewApiErrors
   | StatsApiErrors
   | StorageApiErrors
@@ -223,6 +229,27 @@ export const referredContainerNotFoundError = new ControllerError(
   400,
   'ContainerNotFound',
   'container not found'
+)
+
+// Location
+export const locationNotFoundError = (
+  id: string
+): ControllerError => new ControllerError(
+  404,
+  'LocationNotFound',
+  `location with id ${id} was not found`
+)
+
+export const invalidLocationError = new ControllerError(
+  400,
+  'InvalidLocation',
+  'invalid location'
+)
+
+export const invalidLocationIdError = new ControllerError(
+  400,
+  'InvalidLocationId',
+  'invalid location id'
 )
 
 // Pagination
