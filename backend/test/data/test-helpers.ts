@@ -61,6 +61,7 @@ async function clearDb(db: Database) {
   await realDb.deleteFrom('beer_style').execute()
   await realDb.deleteFrom('beer').execute()
   await realDb.deleteFrom('brewery').execute()
+  await realDb.deleteFrom('location').execute()
   await realDb.deleteFrom('container').execute()
   await realDb.deleteFrom('style_relationship').execute()
   await realDb.deleteFrom('style').execute()
