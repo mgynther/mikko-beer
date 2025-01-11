@@ -13,6 +13,7 @@ import { Router } from './router'
 import { beerController } from './beer/beer.controller'
 import { breweryController } from './brewery/brewery.controller'
 import { containerController } from './container/container.controller'
+import { locationController } from './location/location.controller'
 import { reviewController } from './review/review.controller'
 import { storageController } from './storage/storage.controller'
 import { statsController } from './stats/stats.controller'
@@ -61,6 +62,7 @@ export class App {
     beerController(this.#router)
     breweryController(this.#router)
     containerController(this.#router)
+    locationController(this.#router)
     reviewController(this.#router)
     storageController(this.#router)
     statsController(this.#router)
