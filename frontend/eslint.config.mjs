@@ -32,7 +32,8 @@ const rules = {
   '@typescript-eslint/no-magic-numbers': 'off',
   '@typescript-eslint/prefer-destructuring': 'off',
   'max-len': ['error', { 'code': 80, 'ignoreRegExpLiterals': true }],
-  'max-lines': 'off'
+  'max-lines': 'off',
+  'no-console': 'off'
 }
 
 const plugins = {
