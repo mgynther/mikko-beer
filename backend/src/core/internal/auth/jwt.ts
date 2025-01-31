@@ -23,7 +23,11 @@ export function signAuthToken (
 ): AuthToken {
   return {
     authToken: jwt.sign(tokenPayload, authTokenConfig.secret, {
-      expiresIn: authTokenConfig.expiryDuration
+      /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+       * Dirty hack to get upgrade with broken types done. Works assuming actual
+       * values are compatible with ms types. Will be fixed separately later.
+       */
+      expiresIn: authTokenConfig.expiryDuration as '5m'
     })
   }
 }
