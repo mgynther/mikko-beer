@@ -33,7 +33,7 @@ export function userController (router: Router, config: Config): void {
       const result = await ctx.db.executeTransaction(async (trx) => {
         const authTokenConfig: AuthTokenConfig = {
           secret: config.authTokenSecret,
-          expiryDuration: config.authTokenExpiryDuration
+          expiryDurationMin: config.authTokenExpiryDurationMin
         }
         const createUserIf: CreateUserIf = {
           createAnonymousUser: async (

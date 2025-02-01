@@ -59,7 +59,7 @@ const deleteUserById = async () => undefined
 
 const authTokenConfig: AuthTokenConfig = {
   secret: 'this is secret',
-  expiryDuration: '1min'
+  expiryDurationMin: 1
 }
 
 describe('user validated service unit tests', () => {

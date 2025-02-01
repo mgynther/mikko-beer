@@ -10,7 +10,7 @@ export const testConfig: TestConfig = {
   generateInitialAdminPassword: false,
   port: 3001,
   authTokenSecret: '26494cafdd9e008ab95e0fb5d02b47ffe77708ecdf2a7804b6',
-  authTokenExpiryDuration: '2h',
+  authTokenExpiryDurationMin: 120,
   database: testDataConfig,
   adminDatabase: testAdminConfig
 }

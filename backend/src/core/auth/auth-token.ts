@@ -12,7 +12,7 @@ export interface AuthTokenPayload {
 
 export interface AuthTokenConfig {
   secret: string
-  expiryDuration: string
+  expiryDurationMin: number
 }
 
 export class AuthTokenError extends Error {}

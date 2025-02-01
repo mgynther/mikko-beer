@@ -97,7 +97,7 @@ describe('password sign-in-method service unit tests', () => {
 
   const authTokenConfig: AuthTokenConfig = {
     secret: 'this is a secret',
-    expiryDuration: '5min'
+    expiryDurationMin: 5
   }
 
   async function notCalled(): Promise<any> {

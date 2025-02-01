@@ -176,6 +176,6 @@ function createFindPasswordSignInMethod(trx: Transaction) {
 function getAuthTokenConfig(ctx: Context): AuthTokenConfig {
   return {
     secret: ctx.config.authTokenSecret,
-    expiryDuration: ctx.config.authTokenExpiryDuration
+    expiryDurationMin: ctx.config.authTokenExpiryDurationMin
   }
 }

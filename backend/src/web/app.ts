@@ -103,7 +103,7 @@ export class App {
           createPromise = db.executeTransaction(async (trx) => {
             const authTokenConfig: AuthTokenConfig ={
               secret: this.#config.authTokenSecret,
-              expiryDuration: this.#config.authTokenExpiryDuration
+              expiryDurationMin: this.#config.authTokenExpiryDurationMin
             };
             const user = await createInitialUser(
               async (request: CreateAnonymousUserRequest) =>

@@ -75,7 +75,7 @@ const viewerAuthToken: AuthTokenPayload = {
 
 const authTokenConfig: AuthTokenConfig = {
   secret: 'this is secret',
-  expiryDuration: '1min'
+  expiryDurationMin: 1
 }
 
 describe('user authorized service unit tests', () => {

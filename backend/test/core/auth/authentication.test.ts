@@ -20,7 +20,7 @@ import { expectThrow } from '../controller-error-helper'
 
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {
-  expiryDuration: '5m',
+  expiryDurationMin: 5,
   secret: authTokenSecret
 }
 const refreshTokenId = 'f2224f80-b478-43e2-8cc9-d39cf8079524'

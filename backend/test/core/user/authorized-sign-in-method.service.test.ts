@@ -74,7 +74,7 @@ const refreshTokensIf: RefreshTokensIf = {
 
 const authTokenConfig: AuthTokenConfig = {
   secret: authTokenSecret,
-  expiryDuration: '1min'
+  expiryDurationMin: 1
 }
 
 const userPasswordHash: UserPasswordHash = {
