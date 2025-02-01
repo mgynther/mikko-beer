@@ -16,6 +16,12 @@ import type {
   UpdateContainerIf
 } from "../core/container/types"
 import type {
+  GetLocationIf,
+  ListLocationsIf,
+  SearchLocationIf,
+  UpdateLocationIf
+} from "../core/location/types"
+import type {
   ChangePasswordIf,
   GetLogin,
   LoginIf,
@@ -66,6 +72,11 @@ export interface StoreIf {
   listContainersIf: ListContainersIf
   reviewContainerIf: ReviewContainerIf
   updateContainerIf: UpdateContainerIf
+
+  getLocationIf: GetLocationIf
+  listLocationsIf: ListLocationsIf
+  searchLocationIf: SearchLocationIf
+  updateLocationIf: UpdateLocationIf
 
   changePasswordIf: ChangePasswordIf
   loginIf: LoginIf

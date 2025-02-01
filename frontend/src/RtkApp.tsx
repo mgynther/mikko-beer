@@ -26,7 +26,13 @@ import type {
   ListContainersIf,
   UpdateContainerIf
 } from './core/container/types'
-
+import type {
+  CreateLocationIf,
+  GetLocationIf,
+  ListLocationsIf,
+  SearchLocationIf,
+  UpdateLocationIf
+} from './core/location/types'
 import type {
   CreateReviewIf,
   GetReviewIf,
@@ -93,6 +99,12 @@ import updateBrewery from './storehookifs/brewery/update'
 import createContainer from './storehookifs/container/create'
 import listContainers from './storehookifs/container/list'
 import updateContainer from './storehookifs/container/update'
+
+import createLocation from './storehookifs/location/create'
+import getLocation from './storehookifs/location/get'
+import listLocations from './storehookifs/location/list'
+import searchLocation from './storehookifs/location/search'
+import updateLocation from './storehookifs/location/update'
 
 import createReview from './storehookifs/review/create'
 import getReview from './storehookifs/review/get'
@@ -189,6 +201,12 @@ function RtkApp (): React.JSX.Element {
     return login
   }
 
+  const createLocationIf: CreateLocationIf = createLocation()
+  const getLocationIf: GetLocationIf = getLocation()
+  const listLocationsIf: ListLocationsIf = listLocations()
+  const searchLocationIf: SearchLocationIf = searchLocation(createLocationIf)
+  const updateLocationIf: UpdateLocationIf = updateLocation(getLogin)
+
   const createStorageIf: CreateStorageIf = createStorage()
   const getStorageIf: GetStorageIf = getStorage()
   const deleteStorageIf: DeleteStorageIf = deleteStorage()
@@ -237,6 +255,11 @@ function RtkApp (): React.JSX.Element {
     listBreweriesIf,
     searchBreweryIf,
     updateBreweryIf,
+
+    getLocationIf,
+    listLocationsIf,
+    searchLocationIf,
+    updateLocationIf,
 
     listContainersIf,
     reviewContainerIf,

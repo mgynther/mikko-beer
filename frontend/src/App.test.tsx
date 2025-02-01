@@ -8,7 +8,8 @@ import App from './App'
 import { store } from './store/store'
 import type { StoreIf } from './store/storeIf'
 import { Role } from './core/user/types'
-import { type GetLogin, PasswordChangeResult } from './core/login/types'
+import type { GetLogin } from './core/login/types'
+import { PasswordChangeResult } from './core/login/types'
 import type { UseDebounce } from './core/types'
 import type { DeleteStorageIf } from './core/storage/types'
 import { paramsIf } from './components/util'
@@ -50,6 +51,19 @@ const searchBreweryIf = {
     search: dontCall,
     isLoading: false
   })
+}
+
+const searchLocationIf = {
+  useSearch: () => ({
+    search: dontCall,
+    isLoading: false
+  }),
+  create: {
+    useCreate: () => ({
+      create: dontCall,
+      isLoading: false
+    })
+  }
 }
 
 const listStylesIf = {
@@ -165,6 +179,23 @@ const storeIf: StoreIf = {
   reviewContainerIf,
   updateContainerIf: {
     useUpdate: dontCall
+  },
+  getLocationIf: {
+    useGet: dontCall
+  },
+  listLocationsIf: {
+    useList: () => ({
+      list: dontCall,
+      locationList: undefined,
+      isLoading: false,
+      isUninitialized: false
+    }),
+    infiniteScroll
+  },
+  searchLocationIf,
+  updateLocationIf: {
+    useUpdate: dontCall,
+    login: getAdminLogin
   },
   changePasswordIf: {
     useChangePassword: () => ({
@@ -415,6 +446,10 @@ const navigationMoreTests: NavigationTest[] = [
   {
     linkText: 'Containers',
     heading: 'Containers'
+  },
+  {
+    linkText: 'Locations',
+    heading: 'Locations'
   },
   {
     linkText: 'Users',

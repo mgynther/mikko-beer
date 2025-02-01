@@ -79,6 +79,9 @@ function Nav (props: Props): React.JSX.Element {
             <li>
               <Link to="/containers" text="Containers" />
             </li>
+            <li>
+              <Link to="/locations" text="Locations" />
+            </li>
             {props.isAdmin && (
               <li>
                 <Link to="/users" text="Users" />

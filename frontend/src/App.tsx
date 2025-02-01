@@ -16,6 +16,8 @@ import Beers from './components/beer/Beers'
 import Breweries from './components/brewery/Breweries'
 import Brewery from './components/brewery/Brewery'
 import Containers from './components/container/Containers'
+import Locations from './components/location/Locations'
+import Location from './components/location/Location'
 import LoginComponent from './components/login/Login'
 import Reviews from './components/review/Reviews'
 import Stats from './components/stats/Stats'
@@ -67,6 +69,11 @@ function App (props: Props): React.JSX.Element {
     listContainersIf,
     reviewContainerIf,
     updateContainerIf,
+
+    getLocationIf,
+    listLocationsIf,
+    searchLocationIf,
+    updateLocationIf,
 
     changePasswordIf,
     loginIf,
@@ -208,6 +215,22 @@ function App (props: Props): React.JSX.Element {
                     listContainersIf={listContainersIf}
                     updateContainerIf={updateContainerIf}
                     />
+                } />
+                <Route path="locations" element={
+                  <Locations
+                    listLocationsIf={listLocationsIf}
+                    navigateIf={navigateIf}
+                    searchLocationIf={searchLocationIf}
+                    searchIf={searchIf}
+                  />
+                } />
+                <Route path="locations/:locationId" element={
+                  <Location
+                    getLocationIf={getLocationIf}
+                    paramsIf={props.paramsIf}
+                    searchIf={searchIf}
+                    updateLocationIf={updateLocationIf}
+                  />
                 } />
                 <Route path="reviews" element={
                   <Reviews
