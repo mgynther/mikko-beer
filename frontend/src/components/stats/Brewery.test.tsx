@@ -206,7 +206,7 @@ const sliderChangeTests: SliderChangeTest[] = [
 ]
 
 sliderChangeTests.forEach(testCase => {
-  test(`change ${testCase.property}`, () => {
+  test(`change ${testCase.property}`, async () => {
     const setState = vitest.fn()
     const { getByDisplayValue } = render(
       <LinkWrapper>
@@ -219,11 +219,13 @@ sliderChangeTests.forEach(testCase => {
         />
       </LinkWrapper>
     )
-    changeSlider(
-      getByDisplayValue,
-      testCase.fromDisplayValue,
-      testCase.toDisplayValue
-    )
+    await act(async () => {
+      changeSlider(
+        getByDisplayValue,
+        testCase.fromDisplayValue,
+        testCase.toDisplayValue
+      )
+    })
     const expected = {
       ...defaultFiltersOpenParams,
     }
