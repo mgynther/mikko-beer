@@ -108,7 +108,9 @@ export default [
     plugins,
     rules: {
       ...rules,
-      '@typescript-eslint/no-explicit-any': 'off'
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unnecessary-condition': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off'
     }
   }
 ]

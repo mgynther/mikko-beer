@@ -38,7 +38,7 @@ function toInitialReview (
       ...storageData,
       additionalInfo,
       id: '',
-      location: '',
+      location: undefined,
       rating: 7,
       styles: [],
       time
@@ -99,6 +99,7 @@ function AddReview (props: Props): React.JSX.Element {
       {(storageId === undefined || storage !== undefined) && (
         <ReviewEditor
           searchIf={props.searchIf}
+          searchLocationIf={props.createReviewIf.searchLocationIf}
           selectBeerIf={props.createReviewIf.selectBeerIf}
           reviewContainerIf={props.createReviewIf.reviewContainerIf}
           currentDate={currentDate}

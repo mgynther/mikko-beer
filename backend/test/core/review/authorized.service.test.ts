@@ -150,6 +150,7 @@ describe('review authorized service unit tests', () => {
         size: '0.50',
         type: 'draft'
       },
+      location: undefined,
       styles: [{
         id: 'c9ea7133-9392-4c28-b8f5-33c61350809c',
         name: 'Weizenbock'

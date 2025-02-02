@@ -225,10 +225,12 @@ function RtkApp (): React.JSX.Element {
   const listReviewsByStyleIf: ListReviewsByIf = listReviewsByStyle()
   const createReviewIf: CreateReviewIf = createReview(
     () => new Date(),
+    searchLocationIf,
     selectBeerIf,
     reviewContainerIf
   )
   const updateReviewIf: UpdateReviewIf = updateReview(
+    searchLocationIf,
     selectBeerIf,
     reviewContainerIf
   )

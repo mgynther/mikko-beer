@@ -62,6 +62,7 @@ const joinedReview: JoinedReview = {
     type: 'draft',
     size: '0.1',
   },
+  location: undefined,
   styles: [{
     id: '6481c189-dc9a-45c0-b8ab-c7577db72b1c',
     name: 'rauch',

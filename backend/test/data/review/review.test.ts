@@ -42,12 +42,12 @@ describe('review tests', () => {
 
   it('insert a review', async () => {
     await ctx.db.executeTransaction(async (trx) => {
-      const { beer, container } = await insertData(trx)
+      const { beer, container, location } = await insertData(trx)
       const reviewRequest = {
         beer: beer.id,
         additionalInfo: "additional",
         container: container.id,
-        location: "location",
+        location: location.id,
         rating: 8,
         time: new Date(),
         smell: "vanilla",

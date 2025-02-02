@@ -7,6 +7,7 @@ import type { Login } from "../../core/login/types"
 import { Role } from "../../core/user/types"
 import LinkWrapper from "../LinkWrapper"
 import { asText } from "../container/ContainerInfo"
+import type { SearchLocationIf } from "../../core/location/types"
 
 const useDebounce: UseDebounce = str => str
 
@@ -95,12 +96,27 @@ const selectBeerIf = {
   search: beerSearchIf
 }
 
+const searchLocationIf: SearchLocationIf = {
+  useSearch: () => ({
+    search: dontCall,
+    isLoading: false
+  }),
+  create: {
+    useCreate: () => ({
+      create: dontCall,
+      isLoading: false
+    })
+  }
+}
+
 const smellText = 'Very nice, caramel, hops'
 const tasteText = 'Very good, caramel, malt, bitter'
 
 const reviewRating = 10
 
 const reviewContainerId = '2800eea5-e4ab-49fe-84cd-bf320a70383d'
+
+const locationId = '548cfb0b-8212-450f-a5d5-e3dbeb3dc5fb'
 
 const joinedReview = {
   id: 'a2b1bef8-717c-4323-979c-cf220745666c',
@@ -118,7 +134,10 @@ const joinedReview = {
     type: 'bottle',
     size: '0.50'
   },
-  location: '',
+  location: {
+    id: locationId,
+    name: 'Panimoravintola Plevna'
+  },
   rating: 9,
   styles: [{
     id: '30aad2a4-1f46-4f99-be9e-5b4d8bfa9bda',
@@ -131,7 +150,7 @@ const review = {
   additionalInfo: '',
   beer: reviewedBeerId,
   container: reviewContainerId,
-  location: '',
+  location: locationId,
   rating: 9,
   smell: 'Nice',
   taste: 'Roasted malt, bitter, strong',
@@ -196,6 +215,7 @@ test('updates review', async () => {
               update,
               isLoading: false
             }),
+            searchLocationIf,
             selectBeerIf,
             reviewContainerIf
           },
@@ -217,7 +237,7 @@ test('updates review', async () => {
     additionalInfo: '',
     beer: reviewedBeerId,
     container: reviewContainerId,
-    location: '',
+    location: locationId,
     rating: reviewRating,
     smell: smellText,
     taste: tasteText,
@@ -246,6 +266,7 @@ test('cannot update review as viewer', async () => {
               update,
               isLoading: false
             }),
+            searchLocationIf,
             selectBeerIf,
             reviewContainerIf
           },
@@ -264,7 +285,10 @@ test('cannot update review as viewer', async () => {
 test('renders review', async () => {
   const user = userEvent.setup()
   const additionalInfo = 'Additional info'
-  const location = 'Oluthuone'
+  const location = {
+    id: '7170c079-724d-4099-963b-85cd868dfa49',
+    name: 'Oluthuone'
+  }
   const onChanged = vitest.fn()
   const update = vitest.fn()
   const { getByText, getByRole } = render(
@@ -287,6 +311,7 @@ test('renders review', async () => {
               update,
               isLoading: false
             }),
+            searchLocationIf,
             selectBeerIf,
             reviewContainerIf
           },
@@ -305,7 +330,7 @@ test('renders review', async () => {
   getByText(joinedReview.time.split('T')[0])
   getByText(asText(joinedReview.container))
   getByText(additionalInfo)
-  getByText(location)
+  getByText(location.name)
   getByText(review.smell)
   getByText(review.taste)
 })

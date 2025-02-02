@@ -12,6 +12,7 @@ import type {
 import type { ListStoragesByIf, Storage } from '../../core/storage/types'
 import type { UseDebounce } from '../../core/types'
 import { asText } from '../container/ContainerInfo'
+import type { SearchLocationIf } from '../../core/location/types'
 
 const useDebounce: UseDebounce = str => str
 
@@ -48,7 +49,7 @@ const joinedReview: JoinedReview = {
     type: 'bottle',
     size: '0.33'
   },
-  location: '',
+  location: undefined,
   styles: [],
   time: '2024-10-12T15:23:45.000Z',
   rating: 10
@@ -101,8 +102,22 @@ const searchIf = {
   useDebounce
 }
 
+const searchLocationIf: SearchLocationIf = {
+  useSearch: () => ({
+    search: dontCall,
+    isLoading: false
+  }),
+  create: {
+    useCreate: () => ({
+      create: dontCall,
+      isLoading: false
+    })
+  }
+}
+
 const updateReview = {
   useUpdate: dontCall,
+  searchLocationIf,
   selectBeerIf: {
     create: {
       useCreate: dontCall,

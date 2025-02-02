@@ -50,19 +50,22 @@ export interface NewReview {
 
 export interface JoinedReview {
   id: string
-  additionalInfo: string | null
+  additionalInfo: string
   beerId: string
-  beerName: string | null
+  beerName: string
   breweries: Array<{
     id: string
-    name: string | null
+    name: string
   }>
   container: Container
-  location: string | null
-  rating: number | null
+  location: {
+    id: string
+    name: string
+  } | undefined
+  rating: number
   styles: Array<{
     id: string
-    name: string | null
+    name: string
   }>
   time: Date
 }

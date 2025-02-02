@@ -225,6 +225,7 @@ const storeIf: StoreIf = {
       review: undefined
     }),
     getCurrentDate: () => new Date('2024-10-10'),
+    searchLocationIf,
     selectBeerIf,
     reviewContainerIf
   },
@@ -252,6 +253,7 @@ const storeIf: StoreIf = {
     },
     update: {
       useUpdate: dontCall,
+      searchLocationIf,
       selectBeerIf,
       reviewContainerIf
     },

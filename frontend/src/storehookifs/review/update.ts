@@ -1,4 +1,5 @@
 import type { SelectBeerIf } from "../../core/beer/types"
+import type { SearchLocationIf } from "../../core/location/types"
 import type {
   Review,
   ReviewContainerIf,
@@ -7,9 +8,11 @@ import type {
 import { useUpdateReviewMutation } from "../../store/review/api"
 
 const updateReview: (
+  searchLocationIf: SearchLocationIf,
   selectBeerIf: SelectBeerIf,
   reviewContainerIf: ReviewContainerIf
 ) => UpdateReviewIf = (
+  searchLocationIf: SearchLocationIf,
   selectBeerIf: SelectBeerIf,
   reviewContainerIf: ReviewContainerIf
 ) => {
@@ -23,6 +26,7 @@ const updateReview: (
         isLoading
       }
     },
+    searchLocationIf,
     selectBeerIf,
     reviewContainerIf
   }

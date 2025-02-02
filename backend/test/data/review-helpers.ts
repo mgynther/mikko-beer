@@ -1,12 +1,14 @@
 import type { Beer } from '../../src/core/beer/beer'
 import type { Brewery } from '../../src/core/brewery/brewery'
 import type { Container } from '../../src/core/container/container'
+import type { Location } from '../../src/core/location/location'
 import type { Review } from '../../src/core/review/review'
 import type { Style } from '../../src/core/style/style'
 import type { Database, Transaction } from '../../src/data/database'
 import * as beerRepository from '../../src/data/beer/beer.repository'
 import * as breweryRepository from '../../src/data/brewery/brewery.repository'
 import * as containerRepository from '../../src/data/container/container.repository'
+import * as locationRepository from '../../src/data/location/location.repository'
 import * as reviewRepository from '../../src/data/review/review.repository'
 import * as styleRepository from '../../src/data/style/style.repository'
 
@@ -17,6 +19,7 @@ export interface InsertedData {
   otherBrewery: Brewery
   container: Container,
   otherContainer: Container,
+  location: Location,
   style: Style,
   otherStyle: Style
 }
@@ -61,6 +64,11 @@ export async function insertData(trx: Transaction): Promise<InsertedData> {
   }
   const otherContainer =
     await containerRepository.insertContainer(trx, otherContainerRequest)
+  const locationRequest = {
+    name: 'location'
+  }
+  const location =
+    await locationRepository.insertLocation(trx, locationRequest)
   return {
     beer,
     otherBeer,
@@ -68,6 +76,7 @@ export async function insertData(trx: Transaction): Promise<InsertedData> {
     otherBrewery,
     container,
     otherContainer,
+    location,
     style,
     otherStyle
   }
@@ -81,13 +90,13 @@ export async function insertMultipleReviews(
   let data: InsertedData | undefined = undefined
   await db.executeTransaction(async (trx: Transaction) => {
     data = await insertData(trx)
-    const { beer, otherBeer, container, otherContainer } = data
+    const { beer, otherBeer, container, otherContainer, location } = data
     for (let i = 0; i < count; i++) {
       const reviewRequest = {
         additionalInfo: '',
         beer: (i % 2 === 0) ? otherBeer.id : beer.id,
         container: (i % 2 === 0) ? otherContainer.id : container.id,
-        location: '',
+        location: location.id,
         rating: (i % 7) + 4,
         time: new Date(`2024-0${(i % 3) + 2}-0${(i % 5) + 1}T18:00:00.000Z`),
         smell: "vanilla",

@@ -64,7 +64,7 @@ const joinedReview: JoinedReview = {
     type: 'bottle',
     size: '0.33'
   },
-  location: '',
+  location: undefined,
   styles: [],
   time: '2024-10-12T15:23:45.000Z',
   rating: 10
@@ -114,6 +114,15 @@ const searchIf = {
 
 const updateReview: UpdateReviewIf = {
   useUpdate: dontCall,
+  searchLocationIf: {
+    useSearch: () => ({
+      search: dontCall,
+      isLoading: false
+    }),
+    create: {
+      useCreate: dontCall
+    }
+  },
   selectBeerIf: {
     create: {
       useCreate: dontCall,

@@ -47,6 +47,7 @@ function UpdateReview (props: Props): React.JSX.Element {
     <>
       <ReviewEditor
         searchIf={props.searchIf}
+        searchLocationIf={props.updateReviewIf.searchLocationIf}
         selectBeerIf={props.updateReviewIf.selectBeerIf}
         reviewContainerIf={props.updateReviewIf.reviewContainerIf}
         currentDate={currentDate}

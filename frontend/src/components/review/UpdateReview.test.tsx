@@ -106,6 +106,19 @@ const selectBeerIf = {
   search: beerSearchIf
 }
 
+const searchLocationIf = {
+  useSearch: () => ({
+    search: dontCall,
+    isLoading: false
+  }),
+  create: {
+    useCreate: () => ({
+      create: dontCall,
+      isLoading: false
+    })
+  }
+}
+
 const smellText = 'Very nice, caramel, hops'
 const tasteText = 'Very good, caramel, malt, bitter'
 
@@ -124,7 +137,7 @@ const joinedReview = {
     type: 'bottle',
     size: '0.50'
   },
-  location: '',
+  location: undefined,
   rating: 9,
   styles: [],
   time: dateStr
@@ -174,6 +187,7 @@ test('updates review', async () => {
           update,
           isLoading: false
         }),
+        searchLocationIf,
         selectBeerIf,
         reviewContainerIf
       }}
@@ -213,6 +227,7 @@ test('cancels update', async () => {
           update: dontCall,
           isLoading: false
         }),
+        searchLocationIf,
         selectBeerIf,
         reviewContainerIf
       }}

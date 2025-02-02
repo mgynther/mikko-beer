@@ -11,12 +11,13 @@ import type {
 
 const createNewReviewRequest = (
   beerId: string,
-  containerId: string
+  containerId: string,
+  locationId: string
 ): ReviewRequest => ({
   additionalInfo: 'From Belgium',
   beer: beerId,
   container: containerId,
-  location: 'Pikilinna',
+  location: locationId,
   rating: 8,
   smell: 'Cherries',
   taste: 'Cherries, a little sour',
@@ -60,21 +61,30 @@ describe('review tests', () => {
       adminAuthHeaders
     )
 
+    const locationRes = await ctx.request.post(`/api/v1/location`,
+      { name: 'Pikilinna' },
+      adminAuthHeaders
+    )
+    expect(locationRes.status).toEqual(201)
+
     return {
       beerRes,
       breweryRes,
       containerRes,
+      locationRes,
       styleRes,
     }
   }
 
   it('create a review', async () => {
-    const { beerRes, breweryRes, containerRes, styleRes } = await createDeps(ctx.adminAuthHeaders())
+    const { beerRes, breweryRes, containerRes, locationRes, styleRes } =
+      await createDeps(ctx.adminAuthHeaders())
 
     const reviewRes = await ctx.request.post(`/api/v1/review`,
       createNewReviewRequest(
         beerRes.data.beer.id,
-        containerRes.data.container.id
+        containerRes.data.container.id,
+        locationRes.data.location.id
       ),
       ctx.adminAuthHeaders()
     )
@@ -82,7 +92,7 @@ describe('review tests', () => {
     expect(reviewRes.data.review.additionalInfo).toEqual('From Belgium')
     expect(reviewRes.data.review.beer).toEqual(beerRes.data.beer.id)
     expect(reviewRes.data.review.container).toEqual(containerRes.data.container.id)
-    expect(reviewRes.data.review.location).toEqual('Pikilinna')
+    expect(reviewRes.data.review.location).toEqual(locationRes.data.location.id)
     expect(reviewRes.data.review.rating).toEqual(8)
     expect(reviewRes.data.review.smell).toEqual('Cherries')
     expect(reviewRes.data.review.taste).toEqual('Cherries, a little sour')
@@ -98,7 +108,7 @@ describe('review tests', () => {
     expect(getRes.data.review.additionalInfo).toEqual('From Belgium')
     expect(getRes.data.review.beer).toEqual(beerRes.data.beer.id)
     expect(getRes.data.review.container).toEqual(containerRes.data.container.id)
-    expect(getRes.data.review.location).toEqual('Pikilinna')
+    expect(reviewRes.data.review.location).toEqual(locationRes.data.location.id)
     expect(getRes.data.review.rating).toEqual(8)
     expect(getRes.data.review.smell).toEqual('Cherries')
     expect(getRes.data.review.taste).toEqual('Cherries, a little sour')
@@ -157,7 +167,8 @@ describe('review tests', () => {
     const reviewRes = await ctx.request.post(`/api/v1/review`,
       createNewReviewRequest(
         'bc589557-ca7d-4be3-97fb-d9369c7c6c3c',
-        containerRes.data.container.id
+        containerRes.data.container.id,
+        ''
       ),
       ctx.adminAuthHeaders()
     )
@@ -171,6 +182,7 @@ describe('review tests', () => {
       createNewReviewRequest(
         beerRes.data.beer.id,
         '645d27c8-3a7b-416f-8174-3baa68bb4f38',
+        ''
       ),
       ctx.adminAuthHeaders()
     )
@@ -178,7 +190,8 @@ describe('review tests', () => {
   })
 
   it('delete storage when review created from storage', async () => {
-    const { beerRes, containerRes } = await createDeps(ctx.adminAuthHeaders())
+    const { beerRes, containerRes, locationRes } =
+      await createDeps(ctx.adminAuthHeaders())
 
     const bestBefore = '2024-10-01T00:00:00.000Z'
     const storageRes = await ctx.request.post(`/api/v1/storage`,
@@ -196,7 +209,7 @@ describe('review tests', () => {
       {
         beer: beerRes.data.beer.id,
         container: containerRes.data.container.id,
-        location: 'Pikilinna',
+        location: locationRes.data.location.id,
         rating: 8,
         smell: 'Cherries',
         taste: 'Cherries, a little sour',
@@ -221,7 +234,8 @@ describe('review tests', () => {
     const reviewRes = await ctx.request.post(`/api/v1/review?storage=${dummyId}`,
       createNewReviewRequest(
         beerRes.data.beer.id,
-        containerRes.data.container.id
+        containerRes.data.container.id,
+        ''
       ),
       ctx.adminAuthHeaders()
     )
@@ -235,7 +249,7 @@ describe('review tests', () => {
       {
         additionalInfo: 'From Belgium',
         container: containerRes.data.container.id,
-        location: 'Pikilinna',
+        location: '',
         rating: 8,
         smell: 'Cherries',
         taste: 'Cherries, a little sour',
@@ -253,6 +267,7 @@ describe('review tests', () => {
       ...createNewReviewRequest(
         beerRes.data.beer.id,
         containerRes.data.container.id,
+        ''
       ),
       taste: 'Crerries, a little sour'
     }
@@ -289,7 +304,8 @@ describe('review tests', () => {
 
     const requestData = createNewReviewRequest(
       beerRes.data.beer.id,
-      containerRes.data.container.id
+      containerRes.data.container.id,
+      ''
     )
 
     const reviewRes = await ctx.request.post(`/api/v1/review`,
@@ -308,11 +324,13 @@ describe('review tests', () => {
   })
 
   it('fail to update review with invalid container', async () => {
-    const { beerRes, containerRes } = await createDeps(ctx.adminAuthHeaders())
+    const { beerRes, containerRes, locationRes } =
+      await createDeps(ctx.adminAuthHeaders())
 
     const requestData = createNewReviewRequest(
       beerRes.data.beer.id,
-      containerRes.data.container.id
+      containerRes.data.container.id,
+      locationRes.data.location.id
     )
 
     const reviewRes = await ctx.request.post(`/api/v1/review`,
@@ -340,12 +358,14 @@ describe('review tests', () => {
   })
 
   async function createListDeps(adminAuthHeaders: Record<string, unknown>) {
-    const { beerRes, breweryRes, containerRes, styleRes } = await createDeps(adminAuthHeaders)
+    const { beerRes, breweryRes, containerRes, locationRes, styleRes } =
+      await createDeps(adminAuthHeaders)
 
     const reviewRes = await ctx.request.post(`/api/v1/review`,
       {
         beer: beerRes.data.beer.id,
         container: containerRes.data.container.id,
+        location: locationRes.data.location.id,
         rating: 8,
         smell: 'Cherries',
         taste: 'Cherries, a little sour',
@@ -382,6 +402,7 @@ describe('review tests', () => {
       {
         beer: otherBeerRes.data.beer.id,
         container: containerRes.data.container.id,
+        location: locationRes.data.location.id,
         rating: 7,
         smell: 'Grapefruit',
         taste: 'Bitter',
@@ -403,6 +424,7 @@ describe('review tests', () => {
       {
         beer: collabBeerRes.data.beer.id,
         container: containerRes.data.container.id,
+        location: locationRes.data.location.id,
         rating: 6,
         smell: 'Grapefruit, cherries',
         taste: 'Bitter, sour',
@@ -477,11 +499,13 @@ describe('review tests', () => {
   })
 
   it('list reviews by beer', async () => {
-    const { beerRes, containerRes } = await createDeps(ctx.adminAuthHeaders())
+    const { beerRes, containerRes, locationRes } =
+      await createDeps(ctx.adminAuthHeaders())
 
     const reviewBase = {
       beer: beerRes.data.beer.id,
       container: containerRes.data.container.id,
+      location: locationRes.data.location.id,
       smell: 'Cherries',
       taste: 'Cherries, a little sour',
     }

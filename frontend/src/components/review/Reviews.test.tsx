@@ -112,7 +112,7 @@ const joinedReview = {
     type: 'bottle',
     size: '0.50'
   },
-  location: '',
+  location: undefined,
   rating: 9,
   styles: [{
     id: 'f83ac055-90b4-489c-b549-cee985262ef1',
@@ -133,6 +133,19 @@ const review = {
   time: dateStr
 }
 
+const searchLocationIf = {
+  useSearch: () => ({
+    search: dontCall,
+    isLoading: false
+  }),
+  create: {
+    useCreate: () => ({
+      create: dontCall,
+      isLoading: false
+    })
+  }
+}
+
 const dontUpdateReviewIf = {
   get: {
     useGet: () => ({
@@ -144,6 +157,7 @@ const dontUpdateReviewIf = {
       update: dontCall,
       isLoading: false
     }),
+    searchLocationIf,
     selectBeerIf,
     reviewContainerIf
   },
@@ -206,6 +220,7 @@ test('updates review', async () => {
               update,
               isLoading: false
             }),
+            searchLocationIf,
             selectBeerIf,
             reviewContainerIf
           },

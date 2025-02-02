@@ -58,6 +58,7 @@ describe('stats tests', () => {
       {
         beer: beerRes.data.beer.id,
         container: containerRes.data.container.id,
+        location: '',
         rating: 5,
         smell: 'Cherries',
         taste: 'Cherries, a little sour',
@@ -93,6 +94,7 @@ describe('stats tests', () => {
       {
         beer: otherBeerRes.data.beer.id,
         container: containerRes.data.container.id,
+        location: '',
         rating: 7,
         smell: 'Grapefruit',
         taste: 'Bitter',
@@ -122,6 +124,7 @@ describe('stats tests', () => {
       {
         beer: collabBeerRes.data.beer.id,
         container: containerRes.data.container.id,
+        location: '',
         rating: 8,
         smell: 'Grapefruit, cherries',
         taste: 'Bitter, sour',
@@ -136,6 +139,7 @@ describe('stats tests', () => {
         additionalInfo: 'Another one was not quite as good',
         beer: collabBeerRes.data.beer.id,
         container: containerRes.data.container.id,
+        location: '',
         rating: 7,
         smell: 'Grapefruit, cherries',
         taste: 'Bitter, sour',

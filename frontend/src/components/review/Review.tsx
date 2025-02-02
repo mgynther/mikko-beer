@@ -80,7 +80,7 @@ function Review (props: Props): React.JSX.Element {
           </div>
           <div className='Review-secondary-info-row'>
             <ContainerInfo container={review.container} />
-            <div>{review.location}</div>
+            <div>{review.location?.name}</div>
           </div>
           {review.additionalInfo !== '' && (
             <div className='Review-additional-row'>

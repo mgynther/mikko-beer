@@ -16,11 +16,13 @@ function SearchLocationWithNavi (props: Props): React.JSX.Element {
   return (
     <SearchLocation
       isCreateEnabled={false}
+      placeholderText={'Search location'}
       searchIf={props.searchIf}
       searchLocationIf={props.searchLocationIf}
       select={(location) => {
         void navigate(`/locations/${location.id}`)
-      }} />
+      }}
+    />
   )
 }
 

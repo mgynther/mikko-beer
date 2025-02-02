@@ -1,8 +1,10 @@
 import type { SelectBeerIf } from "../beer/types"
 import type {
   CreateContainerIf,
-  ListContainersIf
-, Container } from "../container/types"
+  ListContainersIf,
+  Container
+} from "../container/types"
+import type { Location, SearchLocationIf } from "../location/types"
 
 import type { GetLogin } from "../login/types"
 import type { InfiniteScroll, ListDirection, Pagination } from '../types'
@@ -46,7 +48,7 @@ export interface JoinedReview {
   beerName: string
   breweries: JoinedReviewBrewery[]
   container: Container
-  location: string
+  location: Location | undefined
   rating: number
   styles: JoinedReviewStyle[]
   time: string
@@ -119,6 +121,7 @@ export interface CreateReviewIf {
     review: Review | undefined
   }
   getCurrentDate: () => Date
+  searchLocationIf: SearchLocationIf
   selectBeerIf: SelectBeerIf
   reviewContainerIf: ReviewContainerIf
 }
@@ -128,6 +131,7 @@ export interface UpdateReviewIf {
     update: (request: Review) => Promise<void>
     isLoading: boolean
   }
+  searchLocationIf: SearchLocationIf
   selectBeerIf: SelectBeerIf
   reviewContainerIf: ReviewContainerIf
 }

@@ -46,7 +46,8 @@ export interface DbJoinedReview {
   container_id: string
   container_size: string | null
   container_type: string | null
-  location: string | null
+  location_id: string | null
+  location_name: string | null
   rating: number | null
   styles: Array<{
     style_id: string

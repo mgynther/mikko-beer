@@ -1,4 +1,5 @@
 import type { SelectBeerIf } from "../../core/beer/types"
+import type { SearchLocationIf } from "../../core/location/types"
 import type {
   CreateReviewIf,
   ReviewContainerIf,
@@ -10,10 +11,12 @@ type GetCurrentDate = () => Date
 
 const createReview: (
   getCurrentDate: GetCurrentDate,
+  searchLocationIf: SearchLocationIf,
   selectBeerIf: SelectBeerIf,
   reviewContainerIf: ReviewContainerIf
 ) => CreateReviewIf = (
   getCurrentDate: GetCurrentDate,
+  searchLocationIf: SearchLocationIf,
   selectBeerIf: SelectBeerIf,
   reviewContainerIf: ReviewContainerIf
 ) => {
@@ -31,6 +34,7 @@ const createReview: (
       }
     },
     getCurrentDate,
+    searchLocationIf,
     selectBeerIf,
     reviewContainerIf
   }

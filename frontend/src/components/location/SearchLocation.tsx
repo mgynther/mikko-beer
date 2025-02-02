@@ -10,6 +10,7 @@ import SearchBox, { nameFormatter } from '../common/SearchBox'
 
 export interface Props {
   isCreateEnabled: boolean
+  placeholderText: string
   searchLocationIf: SearchLocationIf
   searchIf: SearchIf
   select: (location: Location) => void
@@ -45,7 +46,9 @@ function SearchLocation (props: Props): React.JSX.Element {
     void doSearch(debouncedFilter)
   }, [debouncedFilter])
 
-  const hasCurrentFilter = results.some(result => result.name === filter)
+  const hasCurrentFilter = results.some(
+    result => result.name.toLowerCase() === filter.toLowerCase()
+  )
   const resultsAndCreate = [...results]
   if (!isLoading &&
       props.isCreateEnabled &&
@@ -73,7 +76,7 @@ function SearchLocation (props: Props): React.JSX.Element {
           }
           props.select(location)
         }}
-        title={'Search location'}
+        title={props.placeholderText}
       />
     </>
   )

@@ -5,6 +5,7 @@ import type {
   SelectBeerIf
 } from '../../core/beer/types'
 import type { Container } from '../../core/container/types'
+import type { Location, SearchLocationIf } from '../../core/location/types'
 import type {
   ReviewContainerIf,
   JoinedReview,
@@ -14,6 +15,7 @@ import type { SearchIf } from '../../core/search/types'
 
 import SelectBeer from '../beer/SelectBeer'
 import SelectContainer from '../container/SelectContainer'
+import SearchLocation from '../location/SearchLocation'
 
 import { pad } from '../util'
 
@@ -33,6 +35,7 @@ interface Props {
   searchIf: SearchIf
   selectBeerIf: SelectBeerIf
   reviewContainerIf: ReviewContainerIf
+  searchLocationIf: SearchLocationIf
   currentDate: Date
   initialReview: InitialReview | undefined
   isFromStorage: boolean
@@ -59,6 +62,14 @@ function ReviewEditor (props: Props): React.JSX.Element {
     }
   }
 
+  function getInitialLocation (): Location | undefined {
+    if (props.initialReview === undefined) return undefined
+    if (props.initialReview.joined.location === undefined) return undefined
+    return {
+      ...props.initialReview.joined.location
+    }
+  }
+
   const [beer, setBeer] = useState<BeerWithIds | undefined>(getInitialBeer())
   const [container, setContainer] = useState<Container | undefined>(
     getInitialContainer()
@@ -71,8 +82,8 @@ function ReviewEditor (props: Props): React.JSX.Element {
   const [additionalInfo, setAdditionalInfo] = useState(
     props.initialReview?.review.additionalInfo ?? ''
   )
-  const [location, setLocation] = useState(
-    props.initialReview?.review.location ?? ''
+  const [location, setLocation] = useState<Location | undefined>(
+    getInitialLocation()
   )
 
   function setRating (rating: number): void {
@@ -114,7 +125,7 @@ function ReviewEditor (props: Props): React.JSX.Element {
       additionalInfo,
       beer: beer.id,
       container: container.id,
-      location,
+      location: location?.id ?? '',
       rating,
       smell,
       taste,
@@ -188,18 +199,28 @@ function ReviewEditor (props: Props): React.JSX.Element {
           <div>
             <input
               type='text'
-              placeholder='Location'
-              value={location}
-              onChange={(e) => { setLocation(e.target.value) }}
-            />
-          </div>
-          <div>
-            <input
-              type='text'
               placeholder='Additional info'
               value={additionalInfo}
               onChange={(e) => { setAdditionalInfo(e.target.value) }}
             />
+          </div>
+          <div>
+            {location === undefined ?
+              <SearchLocation
+                isCreateEnabled={true}
+                placeholderText={'Location'}
+                searchLocationIf={props.searchLocationIf}
+                searchIf={props.searchIf}
+                select={setLocation}
+              />
+            : (
+              <div className='FlexRow'>
+                <div>{location.name}</div>
+                <button onClick={() => { setLocation(undefined); }} >
+                  Remove
+                </button>
+              </div>
+            )}
           </div>
           <div>
             <input

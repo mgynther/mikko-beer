@@ -9,6 +9,8 @@ import type { CreateLocationIf } from '../../core/location/types'
 
 const useDebounce: UseDebounce = str => str
 
+const placeholderText = 'Location'
+
 const dontCall = (): any => {
   throw new Error('must not be called')
 }
@@ -49,6 +51,7 @@ test('selects location', async () => {
   const { getByRole } = render(
     <SearchLocation
       isCreateEnabled={false}
+      placeholderText={placeholderText}
       searchLocationIf={{
         useSearch: () => ({
           search: async () => locations,
@@ -73,12 +76,42 @@ test('selects location', async () => {
   ]])
 })
 
+test('does not show create button with case-insensitive match', async () => {
+  const user = userEvent.setup()
+  const selector = vitest.fn()
+  const { getByRole, queryByRole } = render(
+    <SearchLocation
+      isCreateEnabled={false}
+      placeholderText={placeholderText}
+      searchLocationIf={{
+        useSearch: () => ({
+          search: async () => locations,
+          isLoading: false
+        }),
+        create: dontCreateLocation
+      }}
+      searchIf={activeSearch}
+      select={selector}
+    />
+  )
+
+  const input = getByRole('textbox')
+  expect(input).toBeDefined()
+  await user.type(input, location.name.toLowerCase())
+
+  getByRole('button', { name: location.name })
+  expect(
+    queryByRole('button', { name: `Create "${location.name}"` })
+  ).toEqual(null)
+})
+
 test('shows no results when creating not enabled', async () => {
   const user = userEvent.setup()
   const selector = vitest.fn()
   const { getByRole, getByText } = render(
     <SearchLocation
       isCreateEnabled={false}
+      placeholderText={placeholderText}
       searchLocationIf={{
         useSearch: () => ({
           search: async () => [],
@@ -104,6 +137,7 @@ test('creates location', async () => {
   const { getByRole } = render(
     <SearchLocation
       isCreateEnabled={true}
+      placeholderText={placeholderText}
       searchLocationIf={{
         useSearch: () => ({
           search: async () => [],

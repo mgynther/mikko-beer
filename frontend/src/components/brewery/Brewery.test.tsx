@@ -5,6 +5,7 @@ import Brewery from './Brewery'
 import { Role } from '../../core/user/types'
 import type { UseDebounce } from '../../core/types'
 import type { StatsIf } from '../../core/stats/types'
+import type { SearchLocationIf } from '../../core/location/types'
 
 const useDebounce: UseDebounce = str => str
 
@@ -52,6 +53,19 @@ const dontSelectBeer = {
   },
   search: {
     useSearch: dontCall
+  }
+}
+
+const searchLocationIf: SearchLocationIf = {
+  useSearch: () => ({
+    search: dontCall,
+    isLoading: false
+  }),
+  create: {
+    useCreate: () => ({
+      create: dontCall,
+      isLoading: false
+    })
   }
 }
 
@@ -127,6 +141,7 @@ test('updates brewery', async () => {
             },
             isLoading: false
           }),
+          searchLocationIf,
           selectBeerIf: dontSelectBeer,
           reviewContainerIf: noOpContainerIf
         },

@@ -210,7 +210,9 @@ type ListPossibleColumns =
   'style.name as style_name' |
   'container.container_id as container_id' |
   'container.type as container_type' |
-  'container.size as container_size'
+  'container.size as container_size' |
+  'location.location_id as location_id' |
+  'location.name as location_name'
 
 const listColumns: ListPossibleColumns[] = [
   'review.review_id',
@@ -227,7 +229,9 @@ const listColumns: ListPossibleColumns[] = [
   'style.name as style_name',
   'container.container_id as container_id',
   'container.type as container_type',
-  'container.size as container_size'
+  'container.size as container_size',
+  'location.location_id as location_id',
+  'location.name as location_name',
 ]
 
 export async function listReviews (
@@ -247,6 +251,7 @@ export async function listReviews (
     .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
     .innerJoin('style', 'style.style_id', 'beer_style.style')
     .innerJoin('container', 'review.container', 'container.container_id')
+    .leftJoin('location', 'review.location', 'location.location_id')
     .select(listColumns)
     .where((eb) => eb.between('rn', start, end))
 
@@ -310,6 +315,7 @@ async function joinReviewData (
     .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
     .innerJoin('container', 'container.container_id', 'review.container')
     .innerJoin('style', 'style.style_id', 'beer_style.style')
+    .leftJoin('location', 'review.location', 'location.location_id')
     .select(listColumns)
 
   const reviews = await orderBy(selectQuery)
@@ -331,7 +337,8 @@ interface InternalJoinedReview {
   container_id: string
   container_size: string | null
   container_type: string | null
-  location: string | null
+  location_id: string | null
+  location_name: string | null
   rating: number | null
   time: Date
   created_at: Date
@@ -403,23 +410,26 @@ function toReview (row: ReviewRow): Review {
 function toJoinedReviews (reviewRows: DbJoinedReview[]): JoinedReview[] {
   return reviewRows.map(row => ({
     id: row.review_id,
-    additionalInfo: row.additional_info,
+    additionalInfo: row.additional_info ?? '',
     beerId: row.beer_id,
-    beerName: row.beer_name,
+    beerName: row.beer_name ?? '',
     breweries: row.breweries.map(brewery => ({
       id: brewery.brewery_id,
-      name: brewery.name
+      name: brewery.name ?? ''
     })),
     container: {
       id: row.container_id,
       size: row.container_size ?? '',
       type: row.container_type ?? ''
     },
-    location: row.location,
-    rating: row.rating,
+    location: row.location_id === null ? undefined : {
+      id: row.location_id,
+      name: row.location_name ?? '',
+    },
+    rating: row.rating ?? 4,
     styles: row.styles.map(style => ({
       id: style.style_id,
-      name: style.name
+      name: style.name ?? ''
     })),
     time: row.time
   }))
@@ -430,7 +440,7 @@ function toRow (review: NewReview | Review): ReviewTableContent {
     additional_info: review.additionalInfo,
     beer: review.beer,
     container: review.container,
-    location: review.location,
+    location: review.location.length > 0 ? review.location : null,
     rating: review.rating,
     smell: review.smell,
     taste: review.taste,

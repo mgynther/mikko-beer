@@ -4,6 +4,7 @@ import { expect, test, vitest } from "vitest"
 import AddReview, { type Props as AddReviewProps } from "./AddReview"
 import { loadingIndicatorText } from "../common/LoadingIndicator"
 import type { UseDebounce } from "../../core/types"
+import type { SearchLocationIf } from "../../core/location/types"
 
 const useDebounce: UseDebounce = str => str
 
@@ -122,6 +123,19 @@ const dontSelectBeer = {
   }
 }
 
+const searchLocationIf: SearchLocationIf = {
+  useSearch: () => ({
+    search: dontCall,
+    isLoading: false
+  }),
+  create: {
+    useCreate: () => ({
+      create: dontCall,
+      isLoading: false
+    })
+  }
+}
+
 const noOpContainerIf = {
   createIf: {
     useCreate: dontCall
@@ -184,6 +198,7 @@ test('adds review', async () => {
         review: undefined
       }),
       getCurrentDate,
+      searchLocationIf,
       selectBeerIf: {
         create: dontCreateBeerIf,
         search: beerSearchIf
@@ -252,6 +267,7 @@ test('loads storage', async () => {
           review: undefined
         }),
         getCurrentDate,
+        searchLocationIf,
         selectBeerIf: dontSelectBeer,
         reviewContainerIf: noOpContainerIf
       }}
@@ -284,6 +300,7 @@ test('adds review from storage', async () => {
         review: undefined
       }),
       getCurrentDate,
+      searchLocationIf,
       selectBeerIf: {
         create: dontCreateBeerIf,
         search: beerSearchIf
@@ -370,6 +387,7 @@ test('navigates', async () => {
           }
         }),
         getCurrentDate,
+        searchLocationIf,
         selectBeerIf: dontSelectBeer,
         reviewContainerIf: noOpContainerIf
       }}

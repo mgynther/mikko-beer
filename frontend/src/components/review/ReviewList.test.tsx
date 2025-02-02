@@ -6,7 +6,12 @@ import type { UseDebounce } from "../../core/types"
 import type { Login } from "../../core/login/types"
 import { Role } from "../../core/user/types"
 import LinkWrapper from "../LinkWrapper"
-import type { ReviewSorting, ReviewSortingOrder } from "../../core/review/types"
+import type {
+  ReviewIf,
+  ReviewSorting,
+  ReviewSortingOrder
+} from "../../core/review/types"
+import type { SearchLocationIf } from "../../core/location/types"
 
 const useDebounce: UseDebounce = str => str
 
@@ -111,7 +116,7 @@ const joinedReview = {
     type: 'bottle',
     size: '0.50'
   },
-  location: '',
+  location: undefined,
   rating: 9,
   styles: [{
     id: '30aad2a4-1f46-4f99-be9e-5b4d8bfa9bda',
@@ -144,7 +149,7 @@ const anotherJoinedReview = {
     }
   ],
   container: joinedReview.container,
-  location: '',
+  location: undefined,
   rating: 10,
   styles: [{
     id: '9e67df6d-3bde-4b5b-ba02-b17a9a743b49',
@@ -153,7 +158,20 @@ const anotherJoinedReview = {
   time: dateStr
 }
 
-const dontUpdateReviewIf = {
+const searchLocationIf: SearchLocationIf = {
+  useSearch: () => ({
+    search: dontCall,
+    isLoading: false
+  }),
+  create: {
+    useCreate: () => ({
+      create: dontCall,
+      isLoading: false
+    })
+  }
+}
+
+const dontUpdateReviewIf: ReviewIf = {
   get: {
     useGet: () => ({
       get: async () => review
@@ -164,6 +182,7 @@ const dontUpdateReviewIf = {
       update: dontCall,
       isLoading: false
     }),
+    searchLocationIf,
     selectBeerIf,
     reviewContainerIf
   },
@@ -212,6 +231,7 @@ test('updates review', async () => {
               update,
               isLoading: false
             }),
+            searchLocationIf,
             selectBeerIf,
             reviewContainerIf
           },

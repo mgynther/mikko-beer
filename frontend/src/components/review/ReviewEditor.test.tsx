@@ -3,6 +3,7 @@ import userEvent, { type UserEvent } from "@testing-library/user-event"
 import { expect, test, vitest } from "vitest"
 import ReviewEditor from "./ReviewEditor"
 import type { UseDebounce } from "../../core/types"
+import type { Location, SearchLocationIf } from "../../core/location/types"
 
 const useDebounce: UseDebounce = str => str
 
@@ -107,8 +108,25 @@ const selectBeerIf = {
   search: beerSearchIf
 }
 
+const location: Location = {
+  id: '9d7673a8-131e-4c96-b7b0-0a5ee9a72d2a',
+  name: 'Panimomestari Oluthuone, Tampere, Finland'
+}
+
+const searchLocationIf: SearchLocationIf = {
+  useSearch: () => ({
+    search: async () => [location],
+    isLoading: false
+  }),
+  create: {
+    useCreate: () => ({
+      create: async () => location,
+      isLoading: false
+    })
+  }
+}
+
 const additionalInfoText = 'Very nice atmosphere here'
-const locationText = 'Panimomestari Oluthuone, Tampere, Finland'
 const smellText = 'Very nice, caramel, hops'
 const tasteText = 'Very good, caramel, malt, bitter'
 
@@ -127,7 +145,7 @@ const joinedReview = {
     type: 'bottle',
     size: '0.50'
   },
-  location: '',
+  location: undefined,
   rating: 9,
   styles: [],
   time: dateStr
@@ -153,7 +171,9 @@ async function addReview(getByPlaceholderText: (
   await userEvent.paste(additionalInfoText)
   const locationInput = getByPlaceholderText('Location')
   locationInput.focus()
-  await userEvent.paste(locationText)
+  await userEvent.paste(location.name)
+  const locationButton = getByRole('button', { name: location.name })
+  await user.click(locationButton)
   const smellInput = getByPlaceholderText('Smell')
   smellInput.focus()
   await user.clear(smellInput)
@@ -178,6 +198,7 @@ test('adds review', async () => {
       onChange={onChange}
       reviewContainerIf={reviewContainerIf}
       searchIf={searchIf}
+      searchLocationIf={searchLocationIf}
       selectBeerIf={selectBeerIf}
     />
   )
@@ -207,7 +228,7 @@ test('adds review', async () => {
     additionalInfo: additionalInfoText,
     beer: searchBeerId,
     container: newReviewContainerId,
-    location: locationText,
+    location: location.id,
     rating: reviewRating,
     smell: smellText,
     taste: tasteText,
@@ -229,6 +250,7 @@ test('updates review', async () => {
       onChange={onChange}
       reviewContainerIf={reviewContainerIf}
       searchIf={searchIf}
+      searchLocationIf={searchLocationIf}
       selectBeerIf={selectBeerIf}
     />
   )
@@ -240,11 +262,48 @@ test('updates review', async () => {
     additionalInfo: additionalInfoText,
     beer: reviewedBeerId,
     container: reviewContainerId,
-    location: locationText,
+    location: location.id,
     rating: reviewRating,
     smell: smellText,
     taste: tasteText,
     time: dateStr
+  }])
+})
+
+test('clears location', async () => {
+  const user = userEvent.setup()
+  const onChange = vitest.fn()
+  const location: Location = {
+    id: '3134b9d0-8c2a-4021-b867-5bb992b3f184',
+    name: 'Beer Hunters'
+  }
+  const { getByRole } = render(
+    <ReviewEditor
+      currentDate={currentDate}
+      initialReview={{
+        joined: {
+          ...joinedReview,
+          location
+        },
+        review: {
+          ...review,
+          location: location.id
+        }
+      }}
+      isFromStorage={false}
+      onChange={onChange}
+      reviewContainerIf={reviewContainerIf}
+      searchIf={searchIf}
+      searchLocationIf={searchLocationIf}
+      selectBeerIf={selectBeerIf}
+    />
+  )
+  const removeButton = getByRole('button', { name: 'Remove' })
+  await user.click(removeButton)
+  const finalChange = onChange.mock.calls[onChange.mock.calls.length - 1]
+  expect(finalChange).toEqual([{
+    ...review,
+    location: ''
   }])
 })
 
@@ -260,6 +319,7 @@ test('cannot change beer or container when from storage', () => {
       onChange={() => undefined}
       reviewContainerIf={reviewContainerIf}
       searchIf={searchIf}
+      searchLocationIf={searchLocationIf}
       selectBeerIf={selectBeerIf}
     />
   )
