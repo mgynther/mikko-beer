@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "rm -rf dist && tsc",
-    "eslint": "npx eslint --fix src",
+    "lint": "npx eslint --fix src",
     "start": "node dist/data/migrate-to-latest.js && node dist/index.js",
     "watch": "tsc -w",
     "test:files": "mocha --timeout 5000 -r ts-node/register",

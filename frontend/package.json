@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "VITE_BACKEND_URL=http://localhost:3001 vite",
     "build": "tsc && vite build",
-    "eslint": "npx eslint --fix .",
+    "lint": "npx eslint --fix .",
     "test": "VITE_BACKEND_URL=http://localhost:3001 vitest --environment jsdom",
     "e2e": "npx playwright test",
     "e2e:ui": "npx playwright test --ui",
