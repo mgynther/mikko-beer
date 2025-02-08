@@ -36,6 +36,10 @@ function Overall (props: Props): React.JSX.Element {
               <td>{stats.containerCount}</td>
             </tr>
             <tr>
+              <td>Locations</td>
+              <td>{stats.locationCount}</td>
+            </tr>
+            <tr>
               <td>Reviews</td>
               <td>{stats.reviewCount}</td>
             </tr>

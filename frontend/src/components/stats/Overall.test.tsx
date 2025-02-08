@@ -17,6 +17,7 @@ test('renders overall stats', () => {
               beerCount: '123',
               breweryCount: '54',
               containerCount: '8',
+              locationCount: '5',
               reviewCount: '112',
               distinctBeerReviewCount: '110',
               reviewAverage: '8.54',
@@ -34,6 +35,7 @@ test('renders overall stats', () => {
   getByText('123')
   getByText('54')
   getByText('8')
+  getByText('5')
   getByText('112')
   getByText('110')
   getByText('8.54')

@@ -249,6 +249,7 @@ interface Stats {
   beer_count: number
   brewery_count: number
   container_count: number
+  location_count: number
   style_count: number
 }
 
@@ -265,6 +266,7 @@ async function getFullOverall (
     (SELECT COUNT(1) FROM beer) AS beer_count,
     (SELECT COUNT(1) FROM brewery) AS brewery_count,
     (SELECT COUNT(1) FROM container) AS container_count,
+    (SELECT COUNT(1) FROM location) AS location_count,
     (SELECT COUNT(1) FROM review) AS review_count,
     (SELECT COUNT(DISTINCT beer) FROM review) AS distinct_beer_review_count,
     (SELECT COUNT(1) FROM style) AS style_count,
@@ -282,6 +284,7 @@ async function getFullOverall (
     beerCount: `${stats.beer_count}`,
     breweryCount: `${stats.brewery_count}`,
     containerCount: `${stats.container_count}`,
+    locationCount: `${stats.location_count}`,
     distinctBeerReviewCount: `${stats.distinct_beer_review_count}`,
     reviewAverage: round(stats.review_average, 2),
     reviewCount: `${stats.review_count}`,
@@ -339,6 +342,7 @@ async function getBreweryOverall (
     .selectFrom('beer_brewery')
     .innerJoin('review', 'beer_brewery.beer', 'review.beer')
     .select(({ fn }) => [
+      fn.count<number>('review.location').distinct().as('location_count'),
       fn.count<number>('review.review_id').as('review_count'),
       fn.avg<number>('review.rating').as('review_average'),
       fn.count<number>('review.beer')
@@ -358,6 +362,7 @@ async function getBreweryOverall (
     beerCount: `${beerStatsResults[0].beer_count}`,
     breweryCount: `${beerStatsResults[0].brewery_count}`,
     containerCount: `${containerCount}`,
+    locationCount: `${reviewStats[0].location_count}`,
     distinctBeerReviewCount: `${reviewStats[0].distinct_beer_review_count}`,
     reviewAverage: round(reviewStats[0].review_average, 2),
     reviewCount: `${reviewStats[0].review_count}`,
@@ -395,6 +400,7 @@ async function getStyleOverall (
     .selectFrom('beer_style')
     .innerJoin('review', 'beer_style.beer', 'review.beer')
     .select(({ fn }) => [
+      fn.count<number>('review.location').distinct().as('location_count'),
       fn.count<number>('review.review_id').as('review_count'),
       fn.avg<number>('review.rating').as('review_average'),
       fn.count<number>('review.beer')
@@ -414,6 +420,7 @@ async function getStyleOverall (
     beerCount: `${beerStatsResults[0].beer_count}`,
     breweryCount: `${beerStatsResults[0].brewery_count}`,
     containerCount: `${containerCount}`,
+    locationCount: `${reviewStats[0].location_count}`,
     distinctBeerReviewCount: `${reviewStats[0].distinct_beer_review_count}`,
     reviewAverage: round(reviewStats[0].review_average, 2),
     reviewCount: `${reviewStats[0].review_count}`,

@@ -13,6 +13,7 @@ export interface OverallStats {
   beerCount: string
   breweryCount: string
   containerCount: string
+  locationCount: string
   distinctBeerReviewCount: string
   reviewAverage: string
   reviewCount: string

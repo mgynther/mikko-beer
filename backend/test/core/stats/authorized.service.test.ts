@@ -38,6 +38,7 @@ describe('stats authorized service unit tests', () => {
         beerCount: '123',
         breweryCount: '40',
         containerCount: '8',
+        locationCount: '3',
         reviewCount: '120',
         distinctBeerReviewCount: '119',
         reviewAverage: '8.50',

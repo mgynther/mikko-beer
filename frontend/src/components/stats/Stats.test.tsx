@@ -54,6 +54,7 @@ const emptyStatsIf: StatsIf = {
           beerCount: '0',
           breweryCount: '0',
           containerCount: '0',
+          locationCount: '0',
           reviewCount: '0',
           distinctBeerReviewCount: '0',
           reviewAverage: '0.00',
@@ -134,6 +135,7 @@ overallTestCases.forEach(testCase => {
                   beerCount: '123',
                   breweryCount: '54',
                   containerCount: '8',
+                  locationCount: '17',
                   reviewCount: '112',
                   distinctBeerReviewCount: '110',
                   reviewAverage: '8.54',
@@ -150,6 +152,7 @@ overallTestCases.forEach(testCase => {
     getByText('123')
     getByText('54')
     getByText('8')
+    getByText('17')
     getByText('112')
     getByText('110')
     getByText('8.54')
