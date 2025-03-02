@@ -2,6 +2,7 @@ import { expect } from 'earl'
 
 import {
   validateBreweryStatsOrder,
+  validateLocationStatsOrder,
   validateStatsBreweryStyleFilter,
   validateStatsFilter,
 } from '../../../src/core/stats/stats'
@@ -9,6 +10,7 @@ import type { StatsFilter } from '../../../src/core/stats/stats'
 import {
   invalidBreweryAndStyleFilterError,
   invalidBreweryStatsQueryError,
+  invalidLocationStatsQueryError,
 } from '../../../src/core/errors'
 import { expectThrow } from '../controller-error-helper'
 
@@ -117,7 +119,6 @@ describe('stats filter unit tests', () => {
   })
 })
 
-
 describe('brewery stats order unit tests', () => {
   const defaultOrder = {
     property: 'brewery_name',
@@ -161,5 +162,51 @@ describe('brewery stats order unit tests', () => {
       order: 'beer_name',
       direction: 'invalid'
     }), invalidBreweryStatsQueryError)
+  })
+})
+
+describe('location stats order unit tests', () => {
+  const defaultOrder = {
+    property: 'location_name',
+    direction: 'asc'
+  }
+
+  it('validate empty order', () => {
+    expect(validateLocationStatsOrder({})).toLooseEqual(defaultOrder)
+  })
+
+  it('validate average desc order', () => {
+    expect(validateLocationStatsOrder({
+      order: 'average',
+      direction: 'desc'
+    })).toEqual({ property: 'average', direction: 'desc' })
+  })
+
+  it('validate location name desc order', () => {
+    expect(validateLocationStatsOrder({
+      order: 'location_name',
+      direction: 'desc'
+    })).toEqual({ property: 'location_name', direction: 'desc' })
+  })
+
+  it('validate count asc order', () => {
+    expect(validateLocationStatsOrder({
+      order: 'count',
+      direction: 'asc'
+    })).toEqual({ property: 'count', direction: 'asc' })
+  })
+
+  it('validate invalid asc order', () => {
+    expectThrow(() => validateLocationStatsOrder({
+      order: 'invalid',
+      direction: 'asc'
+    }), invalidLocationStatsQueryError)
+  })
+
+  it('validate beer name invalid order', () => {
+    expectThrow(() => validateLocationStatsOrder({
+      order: 'beer_name',
+      direction: 'invalid'
+    }), invalidLocationStatsQueryError)
   })
 })

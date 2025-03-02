@@ -35,6 +35,7 @@ type ReviewApiErrors =
 
 type StatsApiErrors =
   | 'InvalidBreweryStatsQuery'
+  | 'InvalidLocationStatsQuery'
   | 'InvalidStyleStatsQuery'
   | 'InvalidStatsBreweryAndStyleFilter'
 
@@ -316,6 +317,12 @@ export const invalidBreweryStatsQueryError = new ControllerError(
   400,
   'InvalidBreweryStatsQuery',
   'invalid brewery stats query'
+)
+
+export const invalidLocationStatsQueryError = new ControllerError(
+  400,
+  'InvalidLocationStatsQuery',
+  'invalid location stats query'
 )
 
 export const invalidStyleStatsQueryError = new ControllerError(

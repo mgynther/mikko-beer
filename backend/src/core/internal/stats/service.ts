@@ -5,6 +5,8 @@ import type {
   BreweryStats,
   BreweryStatsOrder,
   ContainerStats,
+  LocationStats,
+  LocationStatsOrder,
   OverallStats,
   RatingStats,
   StatsBreweryStyleFilter,
@@ -56,6 +58,25 @@ export async function getContainer (
 ): Promise<ContainerStats> {
   log(INFO, 'get container stats', statsFilter)
   return await getContainer(statsFilter)
+}
+
+export async function getLocation (
+  getLocation: (
+    pagination: Pagination,
+    statsFilter: StatsFilter,
+    locationStatsOrder: LocationStatsOrder
+  ) => Promise<LocationStats>,
+  pagination: Pagination,
+  statsFilter: StatsFilter,
+  locationStatsOrder: LocationStatsOrder,
+  log: log
+): Promise<LocationStats> {
+  log(INFO, 'get location stats', statsFilter, locationStatsOrder, pagination)
+  return await getLocation(
+    pagination,
+    statsFilter,
+    locationStatsOrder
+  )
 }
 
 export async function getOverall (

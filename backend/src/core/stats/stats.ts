@@ -3,6 +3,7 @@ import { ajv } from '../internal/ajv'
 import {
   invalidBreweryAndStyleFilterError,
   invalidBreweryStatsQueryError,
+  invalidLocationStatsQueryError,
   invalidStyleStatsQueryError
 } from '../errors'
 import type { ListDirection } from '../list'
@@ -29,10 +30,24 @@ export type ContainerStats = Array<{
   containerType: string
 }>
 
+export type LocationStats = Array<{
+  reviewAverage: string
+  reviewCount: string
+  locationId: string
+  locationName: string
+}>
+
 type BreweryStatsOrderProperty = 'average' | 'brewery_name' | 'count'
 
 export interface BreweryStatsOrder {
   property: BreweryStatsOrderProperty
+  direction: ListDirection
+}
+
+type LocationStatsOrderProperty = 'average' | 'location_name' | 'count'
+
+export interface LocationStatsOrder {
+  property: LocationStatsOrderProperty
   direction: ListDirection
 }
 
@@ -188,6 +203,23 @@ function isBreweryStatsOrderValid (body: unknown): boolean {
   return doValidateBreweryStatsOrder(body)
 }
 
+const doValidateLocationStatsOrder =
+  ajv.compile<LocationStatsOrder>({
+    type: 'object',
+    properties: {
+      property: {
+        enum: ['average', 'location_name', 'count']
+      },
+      direction: directionValidation
+    },
+    required: ['property', 'direction'],
+    additionalProperties: false
+  })
+
+function isLocationStatsOrderValid (body: unknown): boolean {
+  return doValidateLocationStatsOrder(body)
+}
+
 const doValidateStyleStatsOrder =
   ajv.compile<StyleStatsOrder>({
     type: 'object',
@@ -240,6 +272,38 @@ export function validateBreweryStatsOrder (
     }
   }
   throw invalidBreweryStatsQueryError
+}
+
+function locationStatsParamsOrDefaults (
+  query: Record<string, unknown>
+): ReviewListOrderParams {
+  let { order, direction } = query
+  if (order === undefined || order === '') {
+    order = 'location_name'
+  }
+  if (direction === undefined || direction === '') {
+    direction = 'asc'
+  }
+  return { property: order, direction }
+}
+
+export function validateLocationStatsOrder (
+  query: Record<string, unknown>
+): LocationStatsOrder {
+  const params = locationStatsParamsOrDefaults(query)
+  if (isLocationStatsOrderValid(params)) {
+    return {
+      /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+       * Validated using ajv.
+       */
+      property: params.property as LocationStatsOrderProperty,
+      /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+       * Validated using ajv.
+       */
+      direction: params.direction as ListDirection
+    }
+  }
+  throw invalidLocationStatsQueryError
 }
 
 function styleStatsParamsOrDefaults (

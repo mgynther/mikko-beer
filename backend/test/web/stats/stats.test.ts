@@ -3,11 +3,13 @@ import { expect } from 'earl'
 import { TestContext } from '../test-context'
 import type { BeerWithBreweryAndStyleIds } from '../../../src/core/beer/beer'
 import type { Brewery } from '../../../src/core/brewery/brewery'
+import type { Location } from '../../../src/core/location/location'
 import type { Review } from '../../../src/core/review/review'
 import type {
   AnnualStats,
   BreweryStats,
   ContainerStats,
+  LocationStats,
   OverallStats,
   RatingStats,
   StyleStats
@@ -54,11 +56,25 @@ describe('stats tests', () => {
     )
     expect(containerRes.status).toEqual(201)
 
+    const locationRes = await ctx.request.post<{ location: Location }>(`/api/v1/location`,
+      { name: 'Kuja' },
+      adminAuthHeaders
+    )
+    expect(locationRes.status).toEqual(201)
+
+    const otherLocationRes = await ctx.request.post<
+      { location: Location }
+    >(`/api/v1/location`,
+      { name: 'Oluthuone' },
+      adminAuthHeaders
+    )
+    expect(otherLocationRes.status).toEqual(201)
+
     const reviewRes = await ctx.request.post<{ review: Review }>(`/api/v1/review`,
       {
         beer: beerRes.data.beer.id,
         container: containerRes.data.container.id,
-        location: '',
+        location: locationRes.data.location.id,
         rating: 5,
         smell: 'Cherries',
         taste: 'Cherries, a little sour',
@@ -94,7 +110,7 @@ describe('stats tests', () => {
       {
         beer: otherBeerRes.data.beer.id,
         container: containerRes.data.container.id,
-        location: '',
+        location: otherLocationRes.data.location.id,
         rating: 7,
         smell: 'Grapefruit',
         taste: 'Bitter',
@@ -124,7 +140,7 @@ describe('stats tests', () => {
       {
         beer: collabBeerRes.data.beer.id,
         container: containerRes.data.container.id,
-        location: '',
+        location: locationRes.data.location.id,
         rating: 8,
         smell: 'Grapefruit, cherries',
         taste: 'Bitter, sour',
@@ -139,7 +155,7 @@ describe('stats tests', () => {
         additionalInfo: 'Another one was not quite as good',
         beer: collabBeerRes.data.beer.id,
         container: containerRes.data.container.id,
-        location: '',
+        location: otherLocationRes.data.location.id,
         rating: 7,
         smell: 'Grapefruit, cherries',
         taste: 'Bitter, sour',
@@ -158,6 +174,10 @@ describe('stats tests', () => {
       breweries: [
         breweryRes,
         otherBreweryRes
+      ],
+      locations: [
+        locationRes,
+        otherLocationRes
       ],
       reviews: [
         collabReviewRes.data.review,
@@ -533,41 +553,121 @@ describe('stats tests', () => {
     )
   })
 
-  it('get brewery stats by brewery and min review count', async () => {
+  interface LocationStatsData {
+    location: Location,
+    count: number,
+    average: string
+  }
+
+  function checkLocationStats (
+    kuja: LocationStatsData,
+    oluthuone: LocationStatsData,
+    reviewRatingsByLocation: (id: string) => number[],
+    locationStats: LocationStats
+  ): void {
+    const kujaRatings = reviewRatingsByLocation(kuja.location.id)
+    const kujaAverage = average(kujaRatings)
+    const oluthuoneRatings = reviewRatingsByLocation(oluthuone.location.id)
+    const oluthuoneAverage = average(oluthuoneRatings)
+    expect(locationStats).toEqual([
+      {
+        reviewCount: `${kujaRatings.length}`,
+        reviewAverage: kujaAverage,
+        locationId: kuja.location.id,
+        locationName: kuja.location.name
+      },
+      {
+        reviewCount: `${oluthuoneRatings.length}`,
+        reviewAverage: oluthuoneAverage,
+        locationId: oluthuone.location.id,
+        locationName: oluthuone.location.name
+      }
+    ])
+    expect(kujaRatings.length).toEqual(kuja.count)
+    expect(kujaAverage).toEqual(kuja.average)
+    expect(oluthuoneRatings.length).toEqual(oluthuone.count)
+    expect(oluthuoneAverage).toEqual(oluthuone.average)
+  }
+
+  function reviewRatingsByLocation(
+      locationId: string,
+      beers: BeerWithBreweryAndStyleIds[],
+      reviews: Review[],
+      filterBreweryId: string | undefined
+    ): number[] {
+    return reviews.filter(review => {
+      if (review.location !== locationId) {
+        return false;
+      }
+      const beer = beers.find(beer => beer.id === review.beer)
+      if (beer === undefined) throw error()
+      return beer.breweries.some(
+        brewery => filterBreweryId === undefined || brewery === filterBreweryId)
+    }).map(review => review.rating) as number[]
+  }
+
+  it('get location stats', async () => {
+    const {
+      beers,
+      locations,
+      reviews
+    } = await createDeps(ctx.adminAuthHeaders())
+
+    const skippedStatsRes = await ctx.request.get<{ location: LocationStats }>(
+      '/api/v1/stats/location?size=30&skip=20',
+      ctx.adminAuthHeaders()
+    )
+    expect(skippedStatsRes.status).toEqual(200)
+    expect(skippedStatsRes.data.location).toEqual([])
+
+    const statsRes = await ctx.request.get<{ location: LocationStats }>(
+      '/api/v1/stats/location?order=average&direction=asc',
+      ctx.adminAuthHeaders()
+    )
+    expect(statsRes.status).toEqual(200)
+    const kujaLocation = locations[0].data.location
+    expect(kujaLocation.name).toEqual('Kuja')
+    const oluthuoneLocation = locations[1].data.location
+    expect(oluthuoneLocation.name).toEqual('Oluthuone')
+    function filter(locationId: string): number[] {
+      return reviewRatingsByLocation(locationId, beers, reviews, undefined)
+    }
+    checkLocationStats(
+      { location: kujaLocation, count: 2, average: '6.50' },
+      { location: oluthuoneLocation, count: 2, average: '7.00' },
+      filter,
+      statsRes.data.location
+    )
+  })
+
+  it('get location stats by brewery', async () => {
     const {
       beers,
       breweries,
+      locations,
       reviews
     } = await createDeps(ctx.adminAuthHeaders())
 
     const filterBreweryId = breweries[0].data.brewery.id
-    const order = '&order=count&direction=asc'
-    const statsRes = await ctx.request.get<{ brewery: BreweryStats }>(
-      `/api/v1/stats/brewery?brewery=${
-        filterBreweryId
-      }${order}&min_review_count=3`,
+    const order = '&order=count&direction=desc'
+    const statsRes = await ctx.request.get<{ location: LocationStats }>(
+      `/api/v1/stats/location?brewery=${filterBreweryId}${order}`,
       ctx.adminAuthHeaders()
     )
     expect(statsRes.status).toEqual(200)
-    const lindemansBrewery = breweries[0].data.brewery
-    expect(lindemansBrewery.name).toEqual('Lindemans')
-    const lindemansRatings = reviewRatingsByBrewery(
-      lindemansBrewery.id,
-      beers,
-      reviews,
-      filterBreweryId
+    const kujaLocation = locations[0].data.location
+    expect(kujaLocation.name).toEqual('Kuja')
+    const oluthuoneLocation = locations[1].data.location
+    expect(oluthuoneLocation.name).toEqual('Oluthuone')
+    function filter(locationId: string): number[] {
+      return reviewRatingsByLocation(locationId, beers, reviews, filterBreweryId)
+    }
+    checkLocationStats(
+      { location: kujaLocation, count: 2, average: '6.50' },
+      { location: oluthuoneLocation, count: 1, average: '7.00' },
+      filter,
+      statsRes.data.location
     )
-    const lindemansAverage = average(lindemansRatings)
-    expect(statsRes.data.brewery).toEqual([
-      {
-        reviewCount: `${lindemansRatings.length}`,
-        reviewAverage: lindemansAverage,
-        breweryId: lindemansBrewery.id,
-        breweryName: lindemansBrewery.name
-      }
-    ])
-    expect(lindemansRatings.length).toEqual(3)
-    expect(lindemansAverage).toEqual('6.67')
   })
 
   type TestRatingStats = Array<{ rating: number,  count: number }>

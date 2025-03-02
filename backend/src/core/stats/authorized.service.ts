@@ -9,6 +9,8 @@ import type {
   BreweryStats,
   BreweryStatsOrder,
   ContainerStats,
+  LocationStats,
+  LocationStatsOrder,
   OverallStats,
   RatingStats,
   StatsBreweryStyleFilter,
@@ -61,6 +63,28 @@ export async function getContainer (
 ): Promise<ContainerStats> {
   authorizationService.authorizeViewer(authTokenPayload)
   return await statsService.getContainer(getContainer, statsFilter, log)
+}
+
+export async function getLocation (
+  getLocation: (
+    pagination: Pagination,
+    statsFilter: StatsFilter,
+    locationStatsOrder: LocationStatsOrder
+  ) => Promise<LocationStats>,
+  authTokenPayload: AuthTokenPayload,
+  pagination: Pagination,
+  statsFilter: StatsFilter,
+  locationStatsOrder: LocationStatsOrder,
+  log: log
+): Promise<LocationStats> {
+  authorizationService.authorizeViewer(authTokenPayload)
+  return await statsService.getLocation(
+    getLocation,
+    pagination,
+    statsFilter,
+    locationStatsOrder,
+    log
+  )
 }
 
 export async function getOverall (

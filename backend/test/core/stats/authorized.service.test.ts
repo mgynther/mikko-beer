@@ -8,6 +8,7 @@ import type {
   AnnualStats,
   BreweryStats,
   ContainerStats,
+  LocationStats,
   OverallStats,
   RatingStats,
   StatsBreweryStyleFilter,
@@ -134,6 +135,41 @@ describe('stats authorized service unit tests', () => {
         log
       )
       expect(result).toEqual([ ...containerStats ])
+    })
+
+    it(`get location stats as ${token.role}`, async () => {
+      const locationStats: LocationStats = [
+        {
+          reviewAverage: '9.08',
+          reviewCount: '64',
+          locationId: '7deae235-e990-4ee7-b445-b19dd7fa5a1f',
+          locationName: 'Kuja Beer Shop & Bar'
+        },
+        {
+          reviewAverage: '9.01',
+          reviewCount: '55',
+          locationId: '8a44ffcd-a647-4903-ab8f-7d98c4c28189',
+          locationName: 'Oluthuone Panimomestari'
+        }
+      ]
+      const result = await statsService.getLocation(
+        async () => ([ ...locationStats ]),
+        token,
+        { skip: 0, size: 20 },
+        {
+          ...statsFilter,
+          maxReviewCount: 66,
+          minReviewCount: 50,
+          maxReviewAverage: 9.87,
+          minReviewAverage: 5.23
+        },
+        {
+          property: 'location_name',
+          direction: 'desc'
+        },
+        log
+      )
+      expect(result).toEqual([ ...locationStats ])
     })
 
     it(`get rating stats as ${token.role}`, async () => {

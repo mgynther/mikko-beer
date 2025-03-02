@@ -9,6 +9,8 @@ import type {
   BreweryStats,
   BreweryStatsOrder,
   ContainerStats,
+  LocationStats,
+  LocationStatsOrder,
   OverallStats,
   RatingStats,
   StatsBreweryStyleFilter,
@@ -132,6 +134,115 @@ export async function getContainer (
     containerSize: `${row.container_size}`,
     containerType: `${row.container_type}`
   }))
+}
+
+interface LocationQuerySelection {
+  review_average: number
+  review_count: number
+  location_id: string
+  location_name: string | null
+}
+
+type LocationQueryBuilder =
+  SelectQueryBuilder<
+  KyselyDatabase,
+  'review' | 'location',
+  LocationQuerySelection
+  >
+
+function locationOrderBy (
+  builder: LocationQueryBuilder,
+  locationStatsOrder: LocationStatsOrder
+): LocationQueryBuilder {
+  switch (locationStatsOrder.property) {
+    case 'average': return builder
+      .orderBy('review_average', locationStatsOrder.direction)
+      .orderBy('review_count', 'desc')
+      .orderBy('location_name', 'asc')
+    case 'location_name':
+      return builder
+        .orderBy('location_name', locationStatsOrder.direction)
+    case 'count':
+      return builder
+        .orderBy('review_count', locationStatsOrder.direction)
+        .orderBy('review_average', 'desc')
+        .orderBy('location_name', 'asc')
+  }
+}
+
+export async function getLocation (
+  db: Database,
+  pagination: Pagination,
+  statsFilter: StatsFilter,
+  locationStatsOrder: LocationStatsOrder
+): Promise<LocationStats> {
+  let tempQuery = db.getDb()
+    .selectFrom('review')
+    .innerJoin('location', 'review.location', 'location.location_id')
+    .innerJoin('beer', 'review.beer', 'beer.beer_id')
+
+  if (statsFilter.style !== undefined) {
+    tempQuery = tempQuery
+      .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
+      .where('beer_style.style', '=', statsFilter.style)
+  }
+
+  let locationQuery = tempQuery.select(({ fn }) => [
+    fn.count<number>('review.review_id').as('review_count'),
+    fn.avg<number>('review.rating').as('review_average'),
+    'location.location_id as location_id',
+    'location.name as location_name'
+  ])
+
+  if (statsFilter.brewery !== undefined) {
+    let query = db.getDb()
+      .selectFrom('beer_brewery as querybrewery')
+      .innerJoin('beer', 'querybrewery.beer', 'beer.beer_id')
+      .innerJoin('review', 'beer.beer_id', 'review.beer')
+      .innerJoin('location', 'review.location', 'location.location_id')
+
+    if (statsFilter.style !== undefined) {
+      query = query
+        .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
+        .where('beer_style.style', '=', statsFilter.style)
+    }
+
+    locationQuery = query
+      .where('querybrewery.brewery', '=', statsFilter.brewery)
+      .select(({ fn }) => [
+        fn.count<number>('review.review_id').as('review_count'),
+        fn.avg<number>('review.rating').as('review_average'),
+        'location.location_id as location_id',
+        'location.name as location_name'
+      ])
+  }
+
+  return (await locationOrderBy(
+    locationQuery
+      .groupBy('location_id')
+      .having((eb) => eb.fn.avg(
+        'review.rating'), '<=', statsFilter.maxReviewAverage
+      )
+      .having((eb) => eb.fn.avg(
+        'review.rating'), '>=', statsFilter.minReviewAverage
+      )
+      .having((eb) => eb.fn.count(
+        'review.review_id'), '<=', noInfinity(statsFilter.maxReviewCount)
+      )
+      .having((eb) => eb.fn.count(
+        'review.review_id'), '>=', noInfinity(statsFilter.minReviewCount)
+      )
+    , locationStatsOrder
+  )
+    .offset(pagination.skip)
+    .limit(pagination.size)
+    .execute())
+    .map(row => ({
+      reviewAverage: round(row.review_average, 2),
+      reviewCount: `${row.review_count}`,
+      locationId: row.location_id,
+      locationName: row.location_name ?? ''
+    }))
 }
 
 interface BreweryQuerySelection {

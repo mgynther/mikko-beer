@@ -20,6 +20,7 @@ export interface InsertedData {
   container: Container,
   otherContainer: Container,
   location: Location,
+  otherLocation: Location,
   style: Style,
   otherStyle: Style
 }
@@ -69,6 +70,11 @@ export async function insertData(trx: Transaction): Promise<InsertedData> {
   }
   const location =
     await locationRepository.insertLocation(trx, locationRequest)
+  const otherLocationRequest = {
+    name: 'other location'
+  }
+  const otherLocation =
+    await locationRepository.insertLocation(trx, otherLocationRequest)
   return {
     beer,
     otherBeer,
@@ -77,6 +83,7 @@ export async function insertData(trx: Transaction): Promise<InsertedData> {
     container,
     otherContainer,
     location,
+    otherLocation,
     style,
     otherStyle
   }
@@ -90,13 +97,20 @@ export async function insertMultipleReviews(
   let data: InsertedData | undefined = undefined
   await db.executeTransaction(async (trx: Transaction) => {
     data = await insertData(trx)
-    const { beer, otherBeer, container, otherContainer, location } = data
+    const {
+      beer,
+      otherBeer,
+      container,
+      otherContainer,
+      location,
+      otherLocation
+    } = data
     for (let i = 0; i < count; i++) {
       const reviewRequest = {
         additionalInfo: '',
         beer: (i % 2 === 0) ? otherBeer.id : beer.id,
         container: (i % 2 === 0) ? otherContainer.id : container.id,
-        location: location.id,
+        location: (i % 2 === 0) ? otherLocation.id : location.id,
         rating: (i % 7) + 4,
         time: new Date(`2024-0${(i % 3) + 2}-0${(i % 5) + 1}T18:00:00.000Z`),
         smell: "vanilla",

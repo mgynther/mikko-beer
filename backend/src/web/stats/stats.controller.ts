@@ -9,12 +9,14 @@ import { validatePagination} from '../../core/pagination'
 
 import type {
   BreweryStatsOrder,
+  LocationStatsOrder,
   StyleStatsOrder,
   StatsBreweryStyleFilter,
   StatsFilter,
 } from '../../core/stats/stats'
 import {
   validateBreweryStatsOrder,
+  validateLocationStatsOrder,
   validateStyleStatsOrder,
   validateStatsBreweryStyleFilter,
   validateStatsFilter
@@ -105,6 +107,35 @@ export function statsController (router: Router): void {
         ctx.log
       )
       ctx.body = { container }
+    }
+  )
+
+  router.get(
+    '/api/v1/stats/location',
+    async (ctx) => {
+      const authTokenPayload = parseAuthToken(ctx)
+      const { skip, size } = ctx.request.query
+      const { order, direction } = ctx.request.query
+      const pagination = validatePagination({ skip, size })
+      const statsFilter = validateStatsFilter(ctx.request.query)
+      const locationStatsOrder =
+        validateLocationStatsOrder({ order, direction })
+      const location =
+        await statsService.getLocation(
+          async (
+            pagination: Pagination,
+            statsFilter: StatsFilter,
+            locationStatsOrder: LocationStatsOrder
+          ) => await statsRepository.getLocation(
+              ctx.db, pagination, statsFilter, locationStatsOrder
+            ),
+          authTokenPayload,
+          pagination,
+          statsFilter,
+          locationStatsOrder,
+          ctx.log
+        )
+      ctx.body = { location }
     }
   )
 

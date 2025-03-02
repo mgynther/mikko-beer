@@ -38,7 +38,7 @@ describe('overall stats tests', () => {
       beerCount: '2',
       breweryCount: '2',
       containerCount: '2',
-      locationCount: '1',
+      locationCount: '2',
       distinctBeerReviewCount: '2',
       reviewAverage: reviewAverage(reviews),
       reviewCount: `${reviews.length}`,
