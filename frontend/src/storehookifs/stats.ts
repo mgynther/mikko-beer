@@ -2,6 +2,7 @@ import type { NavigateIf } from "../components/util"
 import type {
   BreweryStatsQueryParams,
   BreweryStyleParams,
+  LocationStatsQueryParams,
   StatsIf,
   StyleStatsQueryParams
 } from "../core/stats/types"
@@ -12,7 +13,8 @@ import {
   useGetOverallStatsQuery,
   useGetRatingStatsQuery,
   useGetStyleStatsQuery,
-  useLazyGetBreweryStatsQuery
+  useLazyGetBreweryStatsQuery,
+  useLazyGetLocationStatsQuery
 } from "../store/stats/api"
 
 const stats: (
@@ -55,6 +57,20 @@ const stats: (
           isLoading
         }
       }
+    },
+    location: {
+      useStats: () => {
+        const [trigger, { data, isFetching }] =
+          useLazyGetLocationStatsQuery()
+        return {
+          query: async (
+            params: LocationStatsQueryParams
+          ) => (await trigger(params)).data,
+          stats: data,
+          isLoading: isFetching
+        }
+      },
+      infiniteScroll
     },
     overall: {
       useStats: (params: BreweryStyleParams) => {

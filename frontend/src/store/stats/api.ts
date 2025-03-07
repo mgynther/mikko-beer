@@ -4,10 +4,13 @@ import type {
   BreweryStatsQueryParams,
   BreweryStyleParams,
   ContainerStats,
+  LocationStatsQueryParams,
   StyleStatsQueryParams,
   AnnualStats,
   BreweryStats,
   BreweryStatsSorting,
+  LocationStats,
+  LocationStatsSorting,
   OverallStats,
   RatingStats,
   StyleStats,
@@ -45,6 +48,10 @@ function andBreweryStyleFilter (params: BreweryStyleParams
 }
 
 function breweryStatsSorting (sorting: BreweryStatsSorting): string {
+  return `order=${sorting.order}&direction=${sorting.direction}`
+}
+
+function locationStatsSorting (sorting: LocationStatsSorting): string {
   return `order=${sorting.order}&direction=${sorting.direction}`
 }
 
@@ -102,6 +109,25 @@ const statsApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [StatsTags.Container]
     }),
+    getLocationStats: build.query<LocationStats, LocationStatsQueryParams>({
+      query: (params: LocationStatsQueryParams) => ({
+        url: `/stats/location?size=${
+          params.pagination.size
+          }&skip=${
+            params.pagination.skip
+          }${
+          andBreweryStyleFilter(params)
+        }&${locationStatsSorting(params.sorting)}&min_review_count=${
+          params.minReviewCount
+        }${
+          andMaxReviewCount(params.maxReviewCount)
+        }&min_review_average=${
+          params.minReviewAverage
+        }&max_review_average=${params.maxReviewAverage}`,
+        method: 'GET'
+      }),
+      providesTags: [StatsTags.Brewery]
+    }),
     getOverallStats: build.query<{
       overall: OverallStats
     }, BreweryStyleParams>({
@@ -144,7 +170,8 @@ export const {
   useGetOverallStatsQuery,
   useGetRatingStatsQuery,
   useGetStyleStatsQuery,
-  useLazyGetBreweryStatsQuery
+  useLazyGetBreweryStatsQuery,
+  useLazyGetLocationStatsQuery
 } = statsApi
 
 export const { endpoints, reducerPath, reducer, middleware } = statsApi

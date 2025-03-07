@@ -46,6 +46,24 @@ export interface BreweryStatsSorting {
   direction: ListDirection
 }
 
+export interface OneLocationStats {
+  locationId: string
+  locationName: string
+  reviewAverage: string
+  reviewCount: string
+}
+
+export interface LocationStats {
+  location: OneLocationStats[]
+}
+
+export type LocationStatsSortingOrder = 'average' | 'location_name' | 'count'
+
+export interface LocationStatsSorting {
+  order: LocationStatsSortingOrder
+  direction: ListDirection
+}
+
 export interface OneContainerStats {
   containerId: string
   containerSize: string
@@ -70,6 +88,17 @@ export interface BreweryStatsQueryParams {
   styleId: string | undefined
   pagination: Pagination
   sorting: BreweryStatsSorting
+  minReviewCount: number
+  maxReviewCount: number
+  minReviewAverage: number
+  maxReviewAverage: number
+}
+
+export interface LocationStatsQueryParams {
+  breweryId: string | undefined
+  styleId: string | undefined
+  pagination: Pagination
+  sorting: LocationStatsSorting
   minReviewCount: number
   maxReviewCount: number
   minReviewAverage: number
@@ -139,6 +168,17 @@ export interface GetContainerStatsIf {
   }
 }
 
+export interface GetLocationStatsIf {
+  useStats: () => {
+    query: (
+      params: LocationStatsQueryParams
+    ) => Promise<LocationStats | undefined>
+    stats: LocationStats | undefined
+    isLoading: boolean
+  },
+  infiniteScroll: InfiniteScroll
+}
+
 export interface GetOverallStatsIf {
   useStats: (params: BreweryStyleParams) => {
     stats: OverallStats | undefined
@@ -164,6 +204,7 @@ export interface StatsIf {
   annual: GetAnnualStatsIf
   brewery: GetBreweryStatsIf
   container: GetContainerStatsIf
+  location: GetLocationStatsIf
   overall: GetOverallStatsIf
   rating: GetRatingStatsIf
   style: GetStyleStatsIf

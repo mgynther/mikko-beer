@@ -8,6 +8,7 @@ import type {
   CreateLocationRequest
 } from '../../core/location/types'
 import { LocationTags } from './types'
+import { locationStatsTagTypes } from '../stats/types'
 
 const locationApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
@@ -59,6 +60,7 @@ const locationApi = emptySplitApi.injectEndpoints({
       }),
       invalidatesTags: [
         LocationTags.Location,
+        ...locationStatsTagTypes(),
       ]
     })
   })

@@ -8,6 +8,7 @@ import { openFilters } from './filters-test-util'
 import type { ParamsIf } from '../util'
 
 const emptyBreweryStats = { brewery: []}
+const emptyLocationStats = { location: []}
 
 const emptyStatsIf: StatsIf = {
   annual: {
@@ -47,6 +48,17 @@ const emptyStatsIf: StatsIf = {
         },
         isLoading: false
       })
+  },
+  location: {
+    useStats: () => ({
+      query: async () => emptyLocationStats,
+      stats: emptyLocationStats,
+      isLoading: false
+    }),
+    infiniteScroll: (cb: () => void) => {
+      cb()
+      return () => undefined
+    }
   },
   overall: {
     useStats: () => ({

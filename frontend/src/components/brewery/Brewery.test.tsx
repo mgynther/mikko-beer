@@ -85,17 +85,20 @@ const noStats = {
   })
 }
 
+const noInfiniteScrollStats = {
+  useStats: () => ({
+    query: async () => undefined,
+    stats: undefined,
+    isLoading: false
+  }),
+  infiniteScroll: dontCall
+}
+
 const statsIf: StatsIf = {
   annual: noStats,
-  brewery: {
-    useStats: () => ({
-      query: async () => undefined,
-      stats: undefined,
-      isLoading: false
-    }),
-    infiniteScroll: dontCall
-  },
+  brewery: noInfiniteScrollStats,
   container: noStats,
+  location: noInfiniteScrollStats,
   overall: noStats,
   rating: noStats,
   style: noStats,

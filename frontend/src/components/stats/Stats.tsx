@@ -2,6 +2,7 @@ import React from 'react'
 
 import Annual from './Annual'
 import Brewery from './Brewery'
+import Location from './Location'
 import Overall from './Overall'
 import Rating from './Rating'
 import Style from './Style'
@@ -15,6 +16,7 @@ enum Mode {
   Annual = 'annual',
   Brewery = 'brewery',
   Container = 'container',
+  Location = 'location',
   Overall = 'overall',
   Rating = 'rating',
   Style = 'style',
@@ -50,6 +52,10 @@ const buttons: ModeButton[] = [
     title: 'Container'
   },
   {
+    mode: Mode.Location,
+    title: 'Location'
+  },
+  {
     mode: Mode.Rating,
     title: 'Rating'
   },
@@ -73,6 +79,8 @@ function getStatsMode (stats: string | undefined): Mode {
       return Mode.Brewery
     case Mode.Container.toString():
       return Mode.Container
+    case Mode.Location.toString():
+      return Mode.Location
     case Mode.Rating.toString():
       return Mode.Rating
     case Mode.Style.toString():
@@ -132,6 +140,15 @@ function Stats (props: Props): React.JSX.Element | null {
       {mode === Mode.Container &&
         <Container
           getContainerStatsIf={props.statsIf.container}
+          breweryId={props.breweryId}
+          search={search}
+          setState={setState}
+          styleId={props.styleId}
+        />
+      }
+      {mode === Mode.Location &&
+        <Location
+          getLocationStatsIf={props.statsIf.location}
           breweryId={props.breweryId}
           search={search}
           setState={setState}
