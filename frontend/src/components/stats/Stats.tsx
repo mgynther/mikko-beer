@@ -12,6 +12,8 @@ import type { StatsIf } from '../../core/stats/types'
 import Container from './Container'
 import type { ParamsIf } from '../util'
 
+import './StatsModeContainer.css'
+
 enum Mode {
   Annual = 'annual',
   Brewery = 'brewery',

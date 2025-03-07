@@ -13,7 +13,7 @@ function TabButton (props: TabButtonProps): React.JSX.Element {
   const selectedClass = props.isSelected ? 'Selected' : ''
   const compactClass = props.isCompact ? 'Compact' : ''
   const className =
-    `TabButton ${selectedClass} ${compactClass}`
+    `TabButton ${selectedClass} ${compactClass}`.trim()
   return (
     <button
       className={className}
