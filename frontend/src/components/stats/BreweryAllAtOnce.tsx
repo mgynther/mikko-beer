@@ -54,12 +54,6 @@ function BreweryAllAtOnce (props: Props): React.JSX.Element {
   }, [styleId])
 
   useEffect(() => {
-    if (loadedBreweries !== undefined) {
-      return
-    }
-    if (isLoading) {
-      return
-    }
     async function loadAll (): Promise<void> {
       const result = await query({
         breweryId,
@@ -86,8 +80,7 @@ function BreweryAllAtOnce (props: Props): React.JSX.Element {
     minReviewCount,
     maxReviewCount,
     minReviewAverage,
-    maxReviewAverage,
-    loadedBreweries
+    maxReviewAverage
   ])
 
   return (

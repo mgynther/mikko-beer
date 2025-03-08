@@ -54,12 +54,6 @@ function LocationAllAtOnce (props: Props): React.JSX.Element {
   }, [styleId])
 
   useEffect(() => {
-    if (loadedLocations !== undefined) {
-      return
-    }
-    if (isLoading) {
-      return
-    }
     async function loadAll (): Promise<void> {
       const result = await query({
         breweryId,
@@ -86,8 +80,7 @@ function LocationAllAtOnce (props: Props): React.JSX.Element {
     minReviewCount,
     maxReviewCount,
     minReviewAverage,
-    maxReviewAverage,
-    loadedLocations
+    maxReviewAverage
   ])
 
   return (
