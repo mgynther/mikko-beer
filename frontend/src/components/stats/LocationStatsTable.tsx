@@ -14,6 +14,7 @@ import type {
 
 import LoadingIndicator from '../common/LoadingIndicator'
 import TabButton from '../common/TabButton'
+import LocationLink from '../location/LocationLink'
 
 import Filters from './Filters'
 
@@ -91,7 +92,10 @@ function LocationStatsTable (props: Props): React.JSX.Element {
           {props.locations.map(location => (
             <tr key={location.locationId}>
               <td className='StatsNameColumn'>
-                {location.locationName}
+                <LocationLink location={{
+                  id: location.locationId,
+                  name: location.locationName
+                }} />
               </td>
               <td className='StatsNumColumn'>{location.reviewCount}</td>
               <td className='StatsNumColumn'>{location.reviewAverage}</td>

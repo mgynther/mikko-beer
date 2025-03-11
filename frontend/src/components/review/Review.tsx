@@ -11,6 +11,7 @@ import BeerLink from '../beer/BeerLink'
 import BreweryLinks from '../brewery/BreweryLinks'
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'
+import LocationLink from '../location/LocationLink'
 import StyleLinks from '../style/StyleLinks'
 
 import UpdateReview from './UpdateReview'
@@ -80,7 +81,11 @@ function Review (props: Props): React.JSX.Element {
           </div>
           <div className='Review-secondary-info-row'>
             <ContainerInfo container={review.container} />
-            <div>{review.location?.name}</div>
+            <div>
+              {review.location !== undefined &&
+                <LocationLink location={review.location} />
+              }
+            </div>
           </div>
           {review.additionalInfo !== '' && (
             <div className='Review-additional-row'>

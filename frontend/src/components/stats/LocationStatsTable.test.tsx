@@ -44,8 +44,9 @@ const unusedFilters = {
   }
 }
 
-test('renders location stats', () => {
-  const { getByText } = render(
+test('renders location stats', async () => {
+  const user = userEvent.setup()
+  const { getByRole, getByText } = render(
     <LinkWrapper>
       <LocationStatsTable
         locations={[
@@ -62,12 +63,15 @@ test('renders location stats', () => {
       />
     </LinkWrapper>
   )
-  getByText(plevna.locationName)
   getByText(plevna.reviewAverage)
   getByText(plevna.reviewCount)
   getByText(oluthuone.locationName)
   getByText(oluthuone.reviewAverage)
   getByText(oluthuone.reviewCount)
+  const link = getByRole('link', { name: plevna.locationName })
+  await user.click(link)
+  const path = `/locations/${plevna.locationId}`
+  expect(window.location.pathname).toEqual(path)
 })
 
 test('opens filters', async () => {
