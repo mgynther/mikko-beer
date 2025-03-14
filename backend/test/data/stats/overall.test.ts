@@ -1,14 +1,15 @@
 import { expect } from 'earl'
 
 import { TestContext } from '../test-context'
-import type { StatsBreweryStyleFilter } from '../../../src/core/stats/stats'
+import type { StatsIdFilter } from '../../../src/core/stats/stats'
 import * as statsRepository from '../../../src/data/stats/stats.repository'
 
 import { insertMultipleReviews } from '../review-helpers'
 import type { Review } from '../../../src/core/review/review'
 
-const defaultFilter: StatsBreweryStyleFilter = {
+const defaultFilter: StatsIdFilter = {
   brewery: undefined,
+  location: undefined,
   style: undefined
 }
 

@@ -1,7 +1,7 @@
 import { ajv } from '../internal/ajv'
 
 import {
-  invalidBreweryAndStyleFilterError,
+  invalidIdFilterError,
   invalidBreweryStatsQueryError,
   invalidLocationStatsQueryError,
   invalidStyleStatsQueryError
@@ -67,13 +67,15 @@ export type RatingStats = Array<{
   count: string
 }>
 
-export interface StatsBreweryStyleFilter {
+export interface StatsIdFilter {
   brewery: string | undefined
+  location: string | undefined
   style: string | undefined
 }
 
 export interface StatsFilter {
   brewery: string | undefined
+  location: string | undefined
   style: string | undefined
   maxReviewCount: number
   minReviewCount: number
@@ -95,10 +97,10 @@ export interface StyleStatsOrder {
   direction: ListDirection
 }
 
-function validStatsBreweryStyleFilter (
+function validStatsIdFilter (
   query: Record<string, unknown> | undefined
-): StatsBreweryStyleFilter | undefined {
-  const noFilter = { brewery: undefined, style: undefined }
+): StatsIdFilter | undefined {
+  const noFilter = { brewery: undefined, location: undefined, style: undefined }
   if (query === undefined) {
     return noFilter
   }
@@ -116,16 +118,17 @@ function validStatsBreweryStyleFilter (
   }
   return {
     brewery: validBrewery,
+    location: undefined,
     style: validStyle
   }
 }
 
-export function validateStatsBreweryStyleFilter (
+export function validateStatsIdFilter (
   query: Record<string, unknown> | undefined
-): StatsBreweryStyleFilter {
-  const result = validStatsBreweryStyleFilter(query)
+): StatsIdFilter {
+  const result = validStatsIdFilter(query)
   if (result === undefined) {
-    throw invalidBreweryAndStyleFilterError
+    throw invalidIdFilterError
   }
   return result
 }
@@ -135,6 +138,7 @@ export function validateStatsFilter (
 ): StatsFilter {
   const defaultResult: StatsFilter = {
     brewery: undefined,
+    location: undefined,
     style: undefined,
     maxReviewAverage: 10,
     minReviewAverage: 4,
@@ -144,7 +148,7 @@ export function validateStatsFilter (
   if (query === undefined) {
     return defaultResult
   }
-  const breweryFilter = validateStatsBreweryStyleFilter(query)
+  const breweryFilter = validateStatsIdFilter(query)
   const result = {
     ...defaultResult,
     brewery: breweryFilter.brewery,

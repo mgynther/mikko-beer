@@ -9,7 +9,7 @@ import type {
   LocationStatsOrder,
   OverallStats,
   RatingStats,
-  StatsBreweryStyleFilter,
+  StatsIdFilter,
   StatsFilter,
   StyleStats,
   StyleStatsOrder
@@ -22,8 +22,8 @@ import { INFO } from '../../log'
 // of adding the file. However, it is used to enable adding logic later easily.
 
 export async function getAnnual (
-  getAnnual: (statsFilter: StatsBreweryStyleFilter) => Promise<AnnualStats>,
-  statsFilter: StatsBreweryStyleFilter,
+  getAnnual: (statsFilter: StatsIdFilter) => Promise<AnnualStats>,
+  statsFilter: StatsIdFilter,
   log: log
 ): Promise<AnnualStats> {
   log(INFO, 'get annual stats', statsFilter)
@@ -51,9 +51,9 @@ export async function getBrewery (
 
 export async function getContainer (
   getContainer: (
-    statsFilter: StatsBreweryStyleFilter
+    statsFilter: StatsIdFilter
   ) => Promise<ContainerStats>,
-  statsFilter: StatsBreweryStyleFilter,
+  statsFilter: StatsIdFilter,
   log: log
 ): Promise<ContainerStats> {
   log(INFO, 'get container stats', statsFilter)
@@ -80,8 +80,8 @@ export async function getLocation (
 }
 
 export async function getOverall (
-  getOverall: (statsFilter: StatsBreweryStyleFilter) => Promise<OverallStats>,
-  statsFilter: StatsBreweryStyleFilter,
+  getOverall: (statsFilter: StatsIdFilter) => Promise<OverallStats>,
+  statsFilter: StatsIdFilter,
   log: log
 ): Promise<OverallStats> {
   log(INFO, 'get overall stats', statsFilter)
@@ -89,8 +89,8 @@ export async function getOverall (
 }
 
 export async function getRating (
-  getRating: (statsFilter: StatsBreweryStyleFilter) => Promise<RatingStats>,
-  statsFilter: StatsBreweryStyleFilter,
+  getRating: (statsFilter: StatsIdFilter) => Promise<RatingStats>,
+  statsFilter: StatsIdFilter,
   log: log
 ): Promise<RatingStats> {
   log(INFO, 'get rating stats', statsFilter)

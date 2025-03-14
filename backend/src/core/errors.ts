@@ -37,7 +37,7 @@ type StatsApiErrors =
   | 'InvalidBreweryStatsQuery'
   | 'InvalidLocationStatsQuery'
   | 'InvalidStyleStatsQuery'
-  | 'InvalidStatsBreweryAndStyleFilter'
+  | 'InvalidStatsIdFilter'
 
 type StorageApiErrors =
   | 'InvalidStorage'
@@ -307,10 +307,10 @@ export const invalidSearchError = new ControllerError(
 )
 
 // Stats
-export const invalidBreweryAndStyleFilterError = new ControllerError(
+export const invalidIdFilterError = new ControllerError(
   400,
-  'InvalidStatsBreweryAndStyleFilter',
-  'invalid filter with both brewery and style'
+  'InvalidStatsIdFilter',
+  'invalid filter with multiple of brewery, location and style'
 )
 
 export const invalidBreweryStatsQueryError = new ControllerError(

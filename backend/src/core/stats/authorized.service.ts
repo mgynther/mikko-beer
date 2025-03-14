@@ -13,7 +13,7 @@ import type {
   LocationStatsOrder,
   OverallStats,
   RatingStats,
-  StatsBreweryStyleFilter,
+  StatsIdFilter,
   StatsFilter,
   StyleStats,
   StyleStatsOrder
@@ -22,9 +22,9 @@ import type { log } from '../log'
 import type { Pagination } from '../pagination'
 
 export async function getAnnual (
-  getAnnual: (statsFilter: StatsBreweryStyleFilter) => Promise<AnnualStats>,
+  getAnnual: (statsFilter: StatsIdFilter) => Promise<AnnualStats>,
   authTokenPayload: AuthTokenPayload,
-  statsFilter: StatsBreweryStyleFilter,
+  statsFilter: StatsIdFilter,
   log: log
 ): Promise<AnnualStats> {
   authorizationService.authorizeViewer(authTokenPayload)
@@ -55,10 +55,10 @@ export async function getBrewery (
 
 export async function getContainer (
   getContainer: (
-    statsFilter: StatsBreweryStyleFilter
+    statsFilter: StatsIdFilter
   ) => Promise<ContainerStats>,
   authTokenPayload: AuthTokenPayload,
-  statsFilter: StatsBreweryStyleFilter,
+  statsFilter: StatsIdFilter,
   log: log
 ): Promise<ContainerStats> {
   authorizationService.authorizeViewer(authTokenPayload)
@@ -88,9 +88,9 @@ export async function getLocation (
 }
 
 export async function getOverall (
-  getOverall: (statsFilter: StatsBreweryStyleFilter) => Promise<OverallStats>,
+  getOverall: (statsFilter: StatsIdFilter) => Promise<OverallStats>,
   authTokenPayload: AuthTokenPayload,
-  statsFilter: StatsBreweryStyleFilter,
+  statsFilter: StatsIdFilter,
   log: log
 ): Promise<OverallStats> {
   authorizationService.authorizeViewer(authTokenPayload)
@@ -98,9 +98,9 @@ export async function getOverall (
 }
 
 export async function getRating (
-  getRating: (statsFilter: StatsBreweryStyleFilter) => Promise<RatingStats>,
+  getRating: (statsFilter: StatsIdFilter) => Promise<RatingStats>,
   authTokenPayload: AuthTokenPayload,
-  statsFilter: StatsBreweryStyleFilter,
+  statsFilter: StatsIdFilter,
   log: log
 ): Promise<RatingStats> {
   authorizationService.authorizeViewer(authTokenPayload)

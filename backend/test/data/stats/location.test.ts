@@ -14,6 +14,7 @@ import { insertMultipleReviews } from '../review-helpers'
 
 const defaultFilter: StatsFilter = {
   brewery: undefined,
+  location: undefined,
   style: undefined,
   maxReviewAverage: 10,
   minReviewAverage: 4,

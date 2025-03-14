@@ -11,7 +11,7 @@ import type {
   LocationStats,
   OverallStats,
   RatingStats,
-  StatsBreweryStyleFilter,
+  StatsIdFilter,
   StyleStats
 } from '../../../src/core/stats/stats'
 
@@ -29,8 +29,9 @@ const viewerAuthToken: AuthTokenPayload = {
 
 describe('stats authorized service unit tests', () => {
   [adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
-    const statsFilter: StatsBreweryStyleFilter = {
+    const statsFilter: StatsIdFilter = {
       brewery: '94235104-ded1-44ec-a54c-ce972fe35420',
+      location: undefined,
       style: undefined
     }
 

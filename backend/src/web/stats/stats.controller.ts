@@ -11,14 +11,14 @@ import type {
   BreweryStatsOrder,
   LocationStatsOrder,
   StyleStatsOrder,
-  StatsBreweryStyleFilter,
+  StatsIdFilter,
   StatsFilter,
 } from '../../core/stats/stats'
 import {
   validateBreweryStatsOrder,
   validateLocationStatsOrder,
   validateStyleStatsOrder,
-  validateStatsBreweryStyleFilter,
+  validateStatsIdFilter,
   validateStatsFilter
 } from '../../core/stats/stats'
 import { parseAuthToken } from '../authentication/authentication-helper'
@@ -28,10 +28,10 @@ export function statsController (router: Router): void {
     '/api/v1/stats/overall',
     async (ctx) => {
       const authTokenPayload = parseAuthToken(ctx)
-      const statsFilter = validateStatsBreweryStyleFilter(ctx.request.query)
+      const statsFilter = validateStatsIdFilter(ctx.request.query)
       const overall = await statsService.getOverall(
         async (
-          statsFilter: StatsBreweryStyleFilter
+          statsFilter: StatsIdFilter
         ) => await statsRepository.getOverall(
           ctx.db,
           statsFilter
@@ -47,10 +47,10 @@ export function statsController (router: Router): void {
     '/api/v1/stats/annual',
     async (ctx) => {
       const authTokenPayload = parseAuthToken(ctx)
-      const statsFilter = validateStatsBreweryStyleFilter(ctx.request.query)
+      const statsFilter = validateStatsIdFilter(ctx.request.query)
       const annual = await statsService.getAnnual(
         async (
-          statsFilter: StatsBreweryStyleFilter
+          statsFilter: StatsIdFilter
         ) => await statsRepository.getAnnual(
           ctx.db,
           statsFilter
@@ -94,10 +94,10 @@ export function statsController (router: Router): void {
     '/api/v1/stats/container',
     async (ctx) => {
       const authTokenPayload = parseAuthToken(ctx)
-      const statsFilter = validateStatsBreweryStyleFilter(ctx.request.query)
+      const statsFilter = validateStatsIdFilter(ctx.request.query)
       const container = await statsService.getContainer(
         async (
-          statsFilter: StatsBreweryStyleFilter
+          statsFilter: StatsIdFilter
         ) => await statsRepository.getContainer(
           ctx.db,
           statsFilter
@@ -143,10 +143,10 @@ export function statsController (router: Router): void {
     '/api/v1/stats/rating',
     async (ctx) => {
       const authTokenPayload = parseAuthToken(ctx)
-      const statsFilter = validateStatsBreweryStyleFilter(ctx.request.query)
+      const statsFilter = validateStatsIdFilter(ctx.request.query)
       const rating = await statsService.getRating(
         async (
-          statsFilter: StatsBreweryStyleFilter
+          statsFilter: StatsIdFilter
         ) => await statsRepository.getRating(
           ctx.db,
           statsFilter

@@ -35,6 +35,7 @@ describe('container stats tests', () => {
       ctx.db,
       {
         brewery: undefined,
+        location: undefined,
         style: undefined
       }
     )
@@ -63,6 +64,7 @@ describe('container stats tests', () => {
       ctx.db,
       {
         brewery: data.brewery.id,
+        location: undefined,
         style: undefined
       }
     )
@@ -84,6 +86,7 @@ describe('container stats tests', () => {
       ctx.db,
       {
         brewery: undefined,
+        location: undefined,
         style: data.otherStyle.id
       }
     )

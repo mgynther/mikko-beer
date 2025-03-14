@@ -13,7 +13,7 @@ import type {
   LocationStatsOrder,
   OverallStats,
   RatingStats,
-  StatsBreweryStyleFilter,
+  StatsIdFilter,
   StatsFilter,
   StyleStats,
   StyleStatsOrder
@@ -36,7 +36,7 @@ function noInfinity (value: number): number {
 }
 
 function breweryStyleFilter (
-  statsFilter: StatsBreweryStyleFilter
+  statsFilter: StatsIdFilter
 ): RawBuilder<unknown> {
   if (statsFilter.brewery !== undefined && statsFilter.style !== undefined) {
     return sql`
@@ -66,7 +66,7 @@ function breweryStyleFilter (
 
 export async function getAnnual (
   db: Database,
-  statsFilter: StatsBreweryStyleFilter
+  statsFilter: StatsIdFilter
 ): Promise<AnnualStats> {
   const annualQuery = sql`SELECT
     COUNT(1) as review_count,
@@ -98,7 +98,7 @@ export async function getAnnual (
 
 export async function getContainer (
   db: Database,
-  statsFilter: StatsBreweryStyleFilter
+  statsFilter: StatsIdFilter
 ): Promise<ContainerStats> {
   const containerQuery = sql`SELECT
     COUNT(1) as review_count,
@@ -541,7 +541,7 @@ async function getStyleOverall (
 
 export async function getOverall (
   db: Database,
-  statsFilter: StatsBreweryStyleFilter
+  statsFilter: StatsIdFilter
 ): Promise<OverallStats> {
   // NOTE both brewery and style are not supported.
   if (statsFilter.brewery !== undefined) {
@@ -555,7 +555,7 @@ export async function getOverall (
 
 export async function getRating (
   db: Database,
-  statsFilter: StatsBreweryStyleFilter
+  statsFilter: StatsIdFilter
 ): Promise<RatingStats> {
   const styleQuery = sql`SELECT
     review.rating as rating,

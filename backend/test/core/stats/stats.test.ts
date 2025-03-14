@@ -3,12 +3,12 @@ import { expect } from 'earl'
 import {
   validateBreweryStatsOrder,
   validateLocationStatsOrder,
-  validateStatsBreweryStyleFilter,
+  validateStatsIdFilter,
   validateStatsFilter,
 } from '../../../src/core/stats/stats'
 import type { StatsFilter } from '../../../src/core/stats/stats'
 import {
-  invalidBreweryAndStyleFilterError,
+  invalidIdFilterError,
   invalidBreweryStatsQueryError,
   invalidLocationStatsQueryError,
 } from '../../../src/core/errors'
@@ -16,53 +16,55 @@ import { expectThrow } from '../controller-error-helper'
 
 const noFilter = {
   brewery: undefined,
+  location: undefined,
   style: undefined
 }
 
 describe('stats brewery style filter unit tests', () => {
   it('validate undefined filter', () => {
-    expect(validateStatsBreweryStyleFilter(undefined)).toEqual(noFilter)
+    expect(validateStatsIdFilter(undefined)).toEqual(noFilter)
   })
 
   it('validate empty filter', () => {
-    expect(validateStatsBreweryStyleFilter({})).toEqual(noFilter)
+    expect(validateStatsIdFilter({})).toEqual(noFilter)
   })
 
   it('validate brewery filter', () => {
     expect(
-      validateStatsBreweryStyleFilter({ brewery: 'testing' })
-    ).toEqual({ brewery: 'testing', style: undefined })
+      validateStatsIdFilter({ brewery: 'testing' })
+    ).toEqual({ brewery: 'testing', location: undefined, style: undefined })
   })
 
   it('validate style filter', () => {
     expect(
-      validateStatsBreweryStyleFilter({ style: 'testing' })
-    ).toEqual({ brewery: undefined, style: 'testing' })
+      validateStatsIdFilter({ style: 'testing' })
+    ).toEqual({ brewery: undefined, location: undefined, style: 'testing' })
   })
 
   it('validate brewery and style filter', () => {
     expectThrow(
       () =>
-        validateStatsBreweryStyleFilter(
+        validateStatsIdFilter(
           { brewery: 'testing', style: 'testing' }
         )
-    , invalidBreweryAndStyleFilterError)
+    , invalidIdFilterError)
   })
 
   it('validate invalid brewery filter', () => {
     expect(
-      validateStatsBreweryStyleFilter({ brewery: 123 })).toEqual(noFilter)
+      validateStatsIdFilter({ brewery: 123 })).toEqual(noFilter)
   })
 
   it('validate unknown filter', () => {
     expect(
-      validateStatsBreweryStyleFilter({ additional: 'testing' })).toEqual(noFilter)
+      validateStatsIdFilter({ additional: 'testing' })).toEqual(noFilter)
   })
 })
 
 describe('stats filter unit tests', () => {
   const defaultFilter: StatsFilter = {
     brewery: undefined,
+    location: undefined,
     style: undefined,
     maxReviewAverage: 10,
     minReviewAverage: 4,
