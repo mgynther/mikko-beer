@@ -104,21 +104,25 @@ function validStatsIdFilter (
   if (query === undefined) {
     return noFilter
   }
-  const { brewery, style } = query
+  const { brewery, location, style } = query
   const validBrewery = typeof brewery === 'string' && brewery.length > 0
     ? brewery
+    : undefined
+  const validLocation = typeof location === 'string' && location.length > 0
+    ? location
     : undefined
   const validStyle = typeof style === 'string' && style.length > 0
     ? style
     : undefined
-  if (validBrewery !== undefined && validStyle !== undefined) {
-    // Both are not supported as it's currently not a valid use case and
+  const ids = [ validBrewery, validLocation, validStyle ]
+  if (ids.filter(value => value !== undefined).length > 1) {
+    // Multiple are not supported as it's currently not a valid use case and
     // queries are not trivial.
     return undefined
   }
   return {
     brewery: validBrewery,
-    location: undefined,
+    location: validLocation,
     style: validStyle
   }
 }
@@ -148,11 +152,10 @@ export function validateStatsFilter (
   if (query === undefined) {
     return defaultResult
   }
-  const breweryFilter = validateStatsIdFilter(query)
+  const statsIdFilter = validateStatsIdFilter(query)
   const result = {
     ...defaultResult,
-    brewery: breweryFilter.brewery,
-    style: breweryFilter.style
+    ...statsIdFilter
   }
   const {
     min_review_count,

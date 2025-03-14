@@ -35,19 +35,40 @@ describe('stats brewery style filter unit tests', () => {
     ).toEqual({ brewery: 'testing', location: undefined, style: undefined })
   })
 
+  it('validate location filter', () => {
+    expect(
+      validateStatsIdFilter({ location: 'testing' })
+    ).toEqual({ brewery: undefined, location: 'testing', style: undefined })
+  })
+
   it('validate style filter', () => {
     expect(
       validateStatsIdFilter({ style: 'testing' })
     ).toEqual({ brewery: undefined, location: undefined, style: 'testing' })
   })
 
-  it('validate brewery and style filter', () => {
-    expectThrow(
-      () =>
-        validateStatsIdFilter(
-          { brewery: 'testing', style: 'testing' }
-        )
-    , invalidIdFilterError)
+  interface MultipleIdFilters {
+    brewery?: string
+    location?: string
+    style?: string
+  }
+
+  const multipleIdFilterCases: MultipleIdFilters[] = [
+    { brewery: 'testing', location: 'testing', style: undefined },
+    { brewery: 'testing', location: undefined, style: 'testing' },
+    { brewery: undefined, location: 'testing', style: 'testing' },
+    { brewery: 'testing', location: 'testing', style: 'testing' }
+  ]
+
+  multipleIdFilterCases.forEach(test => {
+    it(`validate multiple id filter cases brewery: ${test.brewery} location: ${test.location} style: ${test.style}`, () => {
+      expectThrow(
+        () =>
+          validateStatsIdFilter(
+            { ...test }
+          )
+      , invalidIdFilterError)
+    })
   })
 
   it('validate invalid brewery filter', () => {
