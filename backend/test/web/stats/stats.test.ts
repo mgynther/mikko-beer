@@ -670,6 +670,36 @@ describe('stats tests', () => {
     )
   })
 
+  it('get location stats by location', async () => {
+    const {
+      beers,
+      locations,
+      reviews
+    } = await createDeps(ctx.adminAuthHeaders())
+
+    const kujaLocation = locations[0].data.location
+    expect(kujaLocation.name).toEqual('Kuja')
+    const order = '&order=count&direction=desc'
+    const statsRes = await ctx.request.get<{ location: LocationStats }>(
+      `/api/v1/stats/location?location=${kujaLocation.id}${order}`,
+      ctx.adminAuthHeaders()
+    )
+    expect(statsRes.status).toEqual(200)
+    const kujaRatings =
+      reviewRatingsByLocation(kujaLocation.id, beers, reviews, undefined)
+    const kujaAverage = average(kujaRatings)
+    expect(statsRes.data.location).toEqual([
+      {
+        reviewCount: `${kujaRatings.length}`,
+        reviewAverage: kujaAverage,
+        locationId: kujaLocation.id,
+        locationName: kujaLocation.name
+      }
+    ])
+    expect(kujaRatings.length).toEqual(2)
+    expect(kujaAverage).toEqual('6.50')
+  })
+
   type TestRatingStats = Array<{ rating: number,  count: number }>
 
   function checkRatingStats (

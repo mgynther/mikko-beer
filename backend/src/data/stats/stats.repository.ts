@@ -35,15 +35,22 @@ function noInfinity (value: number): number {
   return value
 }
 
-function breweryStyleFilter (
+function idFilter (
   statsFilter: StatsIdFilter
 ): RawBuilder<unknown> {
+  const locationAndFilter = statsFilter.location === undefined
+    ? sql``
+    : sql`AND review.location = ${statsFilter.location}`
+  const locationWhereFilter = statsFilter.location === undefined
+    ? sql``
+    : sql`WHERE review.location = ${statsFilter.location}`
   if (statsFilter.brewery !== undefined && statsFilter.style !== undefined) {
     return sql`
       INNER JOIN beer ON review.beer = beer.beer_id
       INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer
       INNER JOIN beer_style ON beer.beer_id = beer_style.beer
       WHERE beer_brewery.brewery = ${statsFilter.brewery}
+      ${locationAndFilter}
       AND beer_style.style = ${statsFilter.style}
       `
   }
@@ -52,6 +59,7 @@ function breweryStyleFilter (
       INNER JOIN beer ON review.beer = beer.beer_id
       INNER JOIN beer_brewery ON beer.beer_id = beer_brewery.beer
       WHERE beer_brewery.brewery = ${statsFilter.brewery}
+      ${locationAndFilter}
       `
   }
   if (statsFilter.style !== undefined) {
@@ -59,9 +67,10 @@ function breweryStyleFilter (
       INNER JOIN beer ON review.beer = beer.beer_id
       INNER JOIN beer_style ON beer.beer_id = beer_style.beer
       WHERE beer_style.style = ${statsFilter.style}
+      ${locationAndFilter}
       `
   }
-  return sql``
+  return locationWhereFilter
 }
 
 export async function getAnnual (
@@ -72,7 +81,7 @@ export async function getAnnual (
     COUNT(1) as review_count,
     AVG(rating) as review_average,
     DATE_PART('YEAR', time) as year FROM review
-    ${breweryStyleFilter(statsFilter)}
+    ${idFilter(statsFilter)}
     GROUP BY year
     ORDER BY year ASC
   `
@@ -107,7 +116,7 @@ export async function getContainer (
     container.size as container_size,
     container.type as container_type FROM review
     INNER JOIN container ON review.container = container.container_id
-    ${breweryStyleFilter(statsFilter)}
+    ${idFilter(statsFilter)}
     GROUP BY review.container, container_size, container_type
     ORDER BY container_type ASC,
     container_size ASC
@@ -181,6 +190,10 @@ export async function getLocation (
     .innerJoin('location', 'review.location', 'location.location_id')
     .innerJoin('beer', 'review.beer', 'beer.beer_id')
 
+  if (statsFilter.location !== undefined) {
+    tempQuery = tempQuery.where('review.location', '=', statsFilter.location)
+  }
+
   if (statsFilter.style !== undefined) {
     tempQuery = tempQuery
       .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
@@ -200,6 +213,10 @@ export async function getLocation (
       .innerJoin('beer', 'querybrewery.beer', 'beer.beer_id')
       .innerJoin('review', 'beer.beer_id', 'review.beer')
       .innerJoin('location', 'review.location', 'location.location_id')
+
+    if (statsFilter.location !== undefined) {
+      query = query.where('review.location', '=', statsFilter.location)
+    }
 
     if (statsFilter.style !== undefined) {
       query = query
@@ -291,6 +308,11 @@ export async function getBrewery (
     .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
     .innerJoin('brewery', 'beer_brewery.brewery', 'brewery.brewery_id')
 
+  if (statsFilter.location !== undefined) {
+    tempQuery = tempQuery
+      .where('review.location', '=', statsFilter.location)
+  }
+
   if (statsFilter.style !== undefined) {
     tempQuery = tempQuery
       .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
@@ -311,6 +333,11 @@ export async function getBrewery (
       .innerJoin('review', 'beer.beer_id', 'review.beer')
       .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
       .innerJoin('brewery', 'beer_brewery.brewery', 'brewery.brewery_id')
+
+    if (statsFilter.location !== undefined) {
+      query = query
+        .where('review.location', '=', statsFilter.location)
+    }
 
     if (statsFilter.style !== undefined) {
       query = query
@@ -481,6 +508,40 @@ async function getBreweryOverall (
   }
 }
 
+async function getLocationOverall (
+  db: Database,
+  location: string
+): Promise<OverallStats> {
+  const results = await db.getDb()
+    .selectFrom('review')
+    .innerJoin('beer', 'review.beer', 'beer.beer_id')
+    .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
+    .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
+    .select(({ fn }) => [
+      fn.count<number>('review.beer').distinct().as('beer_count'),
+      fn.count<number>('beer_brewery.brewery').distinct().as('brewery_count'),
+      fn.count<number>('beer_style.style').distinct().as('style_count'),
+      fn.count<number>('review.container').distinct().as('container_count'),
+      fn.count<number>('review.review_id').as('review_count'),
+      fn.avg<number>('review.rating').as('review_average'),
+      fn.count<number>('review.beer')
+        .distinct().as('distinct_beer_review_count')
+    ])
+    .where('review.location', '=', location)
+    .executeTakeFirstOrThrow()
+
+  return {
+    beerCount: `${results.beer_count}`,
+    breweryCount: `${results.brewery_count}`,
+    containerCount: `${results.container_count}`,
+    locationCount: '1',
+    distinctBeerReviewCount: `${results.distinct_beer_review_count}`,
+    reviewAverage: round(results.review_average, 2),
+    reviewCount: `${results.review_count}`,
+    styleCount: `${results.style_count}`
+  }
+}
+
 async function getStyleOverall (
   db: Database,
   style: string
@@ -543,9 +604,17 @@ export async function getOverall (
   db: Database,
   statsFilter: StatsIdFilter
 ): Promise<OverallStats> {
-  // NOTE both brewery and style are not supported.
+  const { brewery, location, style } = statsFilter
+  if ([ brewery, location, style ].filter(id => id !== undefined).length > 1) {
+    throw new Error(
+      'Multiple filters of brewery, location and style not supported'
+    )
+  }
   if (statsFilter.brewery !== undefined) {
     return await getBreweryOverall(db, statsFilter.brewery)
+  }
+  if (statsFilter.location !== undefined) {
+    return await getLocationOverall(db, statsFilter.location)
   }
   if (statsFilter.style !== undefined) {
     return await getStyleOverall(db, statsFilter.style)
@@ -560,7 +629,7 @@ export async function getRating (
   const styleQuery = sql`SELECT
     review.rating as rating,
     COUNT(1) as count
-    FROM review ${breweryStyleFilter(statsFilter)}
+    FROM review ${idFilter(statsFilter)}
     GROUP BY review.rating
     ORDER BY review.rating ASC
   `
@@ -622,6 +691,12 @@ export async function getStyle (
   let beerQuery = db.getDb()
     .selectFrom('review')
     .innerJoin('beer', 'review.beer', 'beer.beer_id')
+
+  if (statsFilter.location !== undefined) {
+    beerQuery = beerQuery
+      .where('review.location', '=', statsFilter.location)
+  }
+
   if (statsFilter.style !== undefined) {
     beerQuery = db.getDb()
       .selectFrom('beer_style as querystyle')

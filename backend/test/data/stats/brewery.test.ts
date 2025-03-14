@@ -68,13 +68,7 @@ describe('brewery stats tests', () => {
       breweryId: data.otherBrewery.id,
       breweryName: data.otherBrewery.name
     }
-    const style = {
-      reviewAverage: avg(reviews, data.style.id),
-      reviewCount: '4',
-      styleId: data.style.id,
-      styleName: data.style.name
-    }
-    return { stats, brewery, otherBrewery, style }
+    return { stats, brewery, otherBrewery }
   }
 
   const allResults: Pagination = { size: 10, skip: 0 }
@@ -146,6 +140,19 @@ describe('brewery stats tests', () => {
       (data: InsertedData) => ({
         ...defaultFilter,
         brewery: data.otherBrewery.id
+      }),
+      { property: 'brewery_name', direction: 'desc' }
+    )
+    expect(stats).toEqual([ otherBrewery ])
+  })
+
+  it('filter by location', async () => {
+    const { stats, otherBrewery } = await getResults(
+      ctx.db,
+      allResults,
+      (data: InsertedData) => ({
+        ...defaultFilter,
+        location: data.otherLocation.id
       }),
       { property: 'brewery_name', direction: 'desc' }
     )

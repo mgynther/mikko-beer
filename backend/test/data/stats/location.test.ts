@@ -139,7 +139,7 @@ describe('location stats tests', () => {
     expect(stats).toEqual([ otherLocation, location ])
   })
 
-  /*it('filter by location', async () => {
+  it('filter by location', async () => {
     const { stats, otherLocation } = await getResults(
       ctx.db,
       allResults,
@@ -150,7 +150,7 @@ describe('location stats tests', () => {
       { property: 'location_name', direction: 'desc' }
     )
     expect(stats).toEqual([ otherLocation ])
-  })*/
+  })
 
   it('filter by style', async () => {
     const { stats, location } = await getResults(

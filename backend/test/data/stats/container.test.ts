@@ -80,6 +80,28 @@ describe('container stats tests', () => {
     ])
   })
 
+  it('filter by location', async () => {
+    const { data, reviews } = await insertMultipleReviews(9, ctx.db)
+    const stats = await statsRepository.getContainer(
+      ctx.db,
+      {
+        brewery: undefined,
+        location: data.location.id,
+        style: undefined
+      }
+    )
+    const { container } = data
+    expect(stats).toEqual([
+      {
+        containerId: container.id,
+        containerSize: '0.50',
+        containerType: 'bottle',
+        reviewAverage: avg(reviews, container.id),
+        reviewCount: `${filterByContainer(reviews, container.id).length}`
+      }
+    ])
+  })
+
   it('filter by style', async () => {
     const { data } = await insertMultipleReviews(9, ctx.db)
     const stats = await statsRepository.getContainer(

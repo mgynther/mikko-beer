@@ -134,6 +134,18 @@ describe('style stats tests', () => {
     expect(stats).toEqual([ otherStyle ])
   })
 
+  it('filter by location', async () => {
+    const { stats, otherStyle } = await getResults(
+      ctx.db,
+      (data: InsertedData) => ({
+        ...defaultFilter,
+        location: data.otherLocation.id
+      }),
+      { property: 'style_name', direction: 'desc' }
+    )
+    expect(stats).toEqual([ otherStyle ])
+  })
+
   it('filter by style', async () => {
     const { stats, style } = await getResults(
       ctx.db,

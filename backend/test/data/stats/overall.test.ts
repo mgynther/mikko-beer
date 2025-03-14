@@ -67,6 +67,26 @@ describe('overall stats tests', () => {
     })
   })
 
+  it('shows overall by location', async () => {
+    const { reviews, data } = await insertMultipleReviews(9, ctx.db)
+
+    const stats = await statsRepository.getOverall(ctx.db, {
+      ...defaultFilter,
+      location: data.location.id
+    })
+    const matchingReviews = reviews.filter((_, index) => index % 2 === 1)
+    expect(stats).toEqual({
+      beerCount: '1',
+      breweryCount: '1',
+      containerCount: '1',
+      locationCount: '1',
+      distinctBeerReviewCount: '1',
+      reviewAverage: reviewAverage(matchingReviews),
+      reviewCount: `${matchingReviews.length}`,
+      styleCount: '1'
+    })
+  })
+
   it('shows overall by style', async () => {
     const { reviews, data } = await insertMultipleReviews(9, ctx.db)
 
