@@ -512,33 +512,42 @@ async function getLocationOverall (
   db: Database,
   location: string
 ): Promise<OverallStats> {
-  const results = await db.getDb()
+  const beerQuery = db.getDb()
     .selectFrom('review')
     .innerJoin('beer', 'review.beer', 'beer.beer_id')
     .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
     .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
     .select(({ fn }) => [
-      fn.count<number>('review.beer').distinct().as('beer_count'),
       fn.count<number>('beer_brewery.brewery').distinct().as('brewery_count'),
       fn.count<number>('beer_style.style').distinct().as('style_count'),
-      fn.count<number>('review.container').distinct().as('container_count'),
-      fn.count<number>('review.review_id').as('review_count'),
-      fn.avg<number>('review.rating').as('review_average'),
-      fn.count<number>('review.beer')
-        .distinct().as('distinct_beer_review_count')
     ])
     .where('review.location', '=', location)
-    .executeTakeFirstOrThrow()
+
+  const reviewQuery = db.getDb()
+    .selectFrom('review')
+    .select(({ fn }) => [
+      fn.count<number>('review.beer').distinct().as('beer_count'),
+      fn.count<number>('review.container').distinct().as('container_count'),
+      fn.count<number>('review.review_id').distinct().as('review_count'),
+      fn.avg<number>('review.rating').as('review_average')
+    ])
+    .where('review.location', '=', location)
+
+  const [beerStats, reviewStats ] =
+    await Promise.all([
+      beerQuery.executeTakeFirstOrThrow(),
+      reviewQuery.executeTakeFirstOrThrow()
+    ])
 
   return {
-    beerCount: `${results.beer_count}`,
-    breweryCount: `${results.brewery_count}`,
-    containerCount: `${results.container_count}`,
+    beerCount: `${reviewStats.beer_count}`,
+    breweryCount: `${beerStats.brewery_count}`,
+    containerCount: `${reviewStats.container_count}`,
     locationCount: '1',
-    distinctBeerReviewCount: `${results.distinct_beer_review_count}`,
-    reviewAverage: round(results.review_average, 2),
-    reviewCount: `${results.review_count}`,
-    styleCount: `${results.style_count}`
+    distinctBeerReviewCount: `${reviewStats.beer_count}`,
+    reviewAverage: round(reviewStats.review_average, 2),
+    reviewCount: `${reviewStats.review_count}`,
+    styleCount: `${beerStats.style_count}`
   }
 }
 
