@@ -35,6 +35,12 @@ test('Brewery stats', async ({ page }) => {
   await expect(page.getByText(/abbaye de scourmont - chimay/i)).toBeVisible()
 })
 
+test('Location stats', async ({ page }) => {
+  await toStats(page)
+  await page.getByRole('button', { name: /^location/i }).click()
+  await expect(page.getByText(/Brewdog, Tampere/i)).toBeVisible()
+})
+
 test('Rating stats', async ({ page }) => {
   await toStats(page)
   await page.getByRole('button', { name: /^rating/i }).click()
