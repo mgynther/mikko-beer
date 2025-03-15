@@ -11,20 +11,13 @@ import type {
 
 import type { SearchIf } from '../../core/search/types'
 import type { StatsIf } from '../../core/stats/types'
-import type {
-  ListReviewsByIf,
-  ReviewIf,
-  ReviewSorting,
-  ReviewSortingOrder
-} from '../../core/review/types'
+import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
 import type { ListStoragesByIf } from '../../core/storage/types'
-import type { ListDirection } from '../../core/types'
 
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'
 
 import LoadingIndicator from '../common/LoadingIndicator'
-import ReviewList from '../review/ReviewList'
 import Stats from '../stats/Stats'
 import StorageList from '../storage/StorageList'
 
@@ -33,6 +26,7 @@ import UpdateStyle from './UpdateStyle'
 
 import '../common/FlexRow.css'
 import NotFound from '../common/NotFound'
+import ReviewsBy from '../review/ReviewsBy'
 
 import './Style.css'
 
@@ -58,8 +52,6 @@ interface Props {
 
 function Style (props: Props): React.JSX.Element {
   const { styleId } = props.paramsIf.useParams()
-  const [order, doSetOrder] = useState<ReviewSortingOrder>('brewery_name')
-  const [direction, doSetDirection] = useState<ListDirection>('asc')
   const [mode, setMode] = useState(EditableMode.View)
   const [initialStyle, setInitialStyle] =
     useState<StyleWithParentIds | undefined>(undefined)
@@ -67,14 +59,6 @@ function Style (props: Props): React.JSX.Element {
     throw new Error('Style component without styleId. Should not happen.')
   }
   const { style, isLoading } = props.getStyleIf.useGet(styleId)
-  const { reviews, isLoading: isLoadingReviews } =
-    props.listReviewsByStyleIf.useList({
-      id: styleId,
-      sorting: {
-        order,
-        direction
-      }
-    })
   const { storages, isLoading: isLoadingStorages } =
     props.listStoragesByStyleIf.useList(styleId)
   if (isLoading) return <LoadingIndicator isLoading={true} />
@@ -154,23 +138,11 @@ function Style (props: Props): React.JSX.Element {
           storages={storages?.storages ?? []}
         />
       )}
-      <ReviewList
+      <ReviewsBy
+        id={styleId}
+        listReviewsByIf={props.listReviewsByStyleIf}
         reviewIf={props.reviewIf}
-        isLoading={isLoadingReviews}
-        isTitleVisible={true}
-        reviews={reviews?.reviews ?? []}
         searchIf={props.searchIf}
-        sorting={reviews?.sorting}
-        setSorting={(sorting: ReviewSorting) => {
-          if (order !== sorting.order) {
-            doSetOrder(sorting.order)
-          }
-          if (direction !== sorting.direction) {
-            doSetDirection(sorting.direction)
-          }
-        }}
-        supportedSorting={['beer_name', 'brewery_name', 'rating', 'time']}
-        onChanged={() => undefined}
       />
     </>
   )

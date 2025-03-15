@@ -20,7 +20,7 @@ import NotFound from '../common/NotFound'
 import type { StatsIf } from '../../core/stats/types'
 import Stats from '../stats/Stats'
 import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
-import LocationReviews from './LocationReviews'
+import ReviewsBy from '../review/ReviewsBy'
 
 interface Props {
   listReviewsByLocationIf: ListReviewsByIf
@@ -84,9 +84,9 @@ function Location (props: Props): React.JSX.Element {
         paramsIf={props.paramsIf}
         styleId={undefined}
       />
-      <LocationReviews
-        locationId={locationId}
-        listReviewsByLocationIf={props.listReviewsByLocationIf}
+      <ReviewsBy
+        id={locationId}
+        listReviewsByIf={props.listReviewsByLocationIf}
         reviewIf={props.reviewIf}
         searchIf={props.searchIf}
       />

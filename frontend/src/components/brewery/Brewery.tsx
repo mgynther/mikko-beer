@@ -25,7 +25,7 @@ import UpdateBrewery from './UpdateBrewery'
 import '../common/FlexRow.css'
 import type { StatsIf } from '../../core/stats/types'
 import BreweryStorages from './BreweryStorages'
-import BreweryReviews from './BreweryReviews'
+import ReviewsBy from '../review/ReviewsBy'
 import NotFound from '../common/NotFound'
 
 interface Props {
@@ -96,9 +96,9 @@ function Brewery (props: Props): React.JSX.Element {
         listStoragesByBreweryIf={props.listStoragesByBreweryIf}
         getLogin={props.reviewIf.login}
       />
-      <BreweryReviews
-        breweryId={breweryId}
-        listReviewsByBreweryIf={props.listReviewsByBreweryIf}
+      <ReviewsBy
+        id={breweryId}
+        listReviewsByIf={props.listReviewsByBreweryIf}
         reviewIf={props.reviewIf}
         searchIf={props.searchIf}
       />

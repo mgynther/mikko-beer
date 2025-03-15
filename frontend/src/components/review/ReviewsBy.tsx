@@ -11,18 +11,18 @@ import type { ListDirection } from '../../core/types'
 import type { SearchIf } from '../../core/search/types'
 
 interface Props {
-  locationId: string
-  listReviewsByLocationIf: ListReviewsByIf
+  id: string
+  listReviewsByIf: ListReviewsByIf
   reviewIf: ReviewIf
   searchIf: SearchIf
 }
 
-const LocationReviews = (props: Props): React.JSX.Element => {
+const ReviewsBy = (props: Props): React.JSX.Element => {
   const [order, doSetOrder] = useState<ReviewSortingOrder>('beer_name')
   const [direction, doSetDirection] = useState<ListDirection>('asc')
   const { reviews, isLoading: isLoadingReviews } =
-    props.listReviewsByLocationIf.useList({
-      id: props.locationId,
+    props.listReviewsByIf.useList({
+      id: props.id,
       sorting: {
         order,
         direction
@@ -48,4 +48,4 @@ const LocationReviews = (props: Props): React.JSX.Element => {
     />
 }
 
-export default LocationReviews
+export default ReviewsBy
