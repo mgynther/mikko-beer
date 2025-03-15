@@ -141,6 +141,7 @@ function Style (props: Props): React.JSX.Element {
       <Stats
         statsIf={props.statsIf}
         breweryId={undefined}
+        locationId={undefined}
         paramsIf={props.paramsIf}
         styleId={styleId}
       />

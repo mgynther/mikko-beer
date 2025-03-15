@@ -11,6 +11,7 @@ import { openFilters } from './filters-test-util'
 import type { SearchParameters } from '../util'
 
 const breweryId = 'd02852f6-8cef-40fd-9dfd-2cf5489de63e'
+const locationId = '1da527ec-5eb7-452b-99dc-d8c3cffcd63f'
 const styleId = '4169b690-b1ab-4385-84ce-2fae277d7dd5'
 
 const pils = {
@@ -36,6 +37,7 @@ const statsResult = {
 
 const defaultParams = {
   breweryId: undefined,
+  locationId: undefined,
   maxReviewAverage: 10,
   maxReviewCount: Infinity,
   minReviewAverage: 4.0,
@@ -96,6 +98,7 @@ test('renders style stats', () => {
           useStats: () => statsResult
         }}
         breweryId={undefined}
+        locationId={undefined}
         search={emptySearchParameters}
         setState={noOpSetState}
         styleId={undefined}
@@ -125,6 +128,7 @@ test('applies filters', () => {
       <Style
         getStyleStatsIf={getRecordingIf(statsRequests)}
         breweryId={breweryId}
+        locationId={locationId}
         search={toSearchParams(searchRecord)}
         setState={noOpSetState}
         styleId={styleId}
@@ -135,6 +139,7 @@ test('applies filters', () => {
   expect(calls.length).toEqual(1)
   expect(calls[0]).toEqual([{
     breweryId,
+    locationId,
     minReviewCount: 5,
     maxReviewCount: 13,
     minReviewAverage: 8.5,
@@ -155,6 +160,7 @@ test('opens filters', async () => {
       <Style
         getStyleStatsIf={styleStatsIf}
         breweryId={undefined}
+        locationId={undefined}
         search={toSearchParams(defaultSearchParams)}
         setState={setState}
         styleId={undefined}
@@ -219,6 +225,7 @@ sliderChangeTests.forEach(testCase => {
         <Style
           getStyleStatsIf={styleStatsIf}
           breweryId={undefined}
+          locationId={undefined}
           search={toSearchParams(defaultFiltersOpenParams)}
           setState={setState}
           styleId={undefined}
@@ -245,6 +252,7 @@ test('uses ids', async () => {
       <Style
         getStyleStatsIf={getRecordingIf(statsRequests)}
         breweryId={breweryId}
+        locationId={locationId}
         search={emptySearchParameters}
         setState={noOpSetState}
         styleId={styleId}
@@ -256,6 +264,7 @@ test('uses ids', async () => {
   expect(calls[0]).toEqual([{
     ...defaultParams,
     breweryId,
+    locationId,
     styleId
   }])
 })
@@ -350,6 +359,7 @@ orderChangeTests.forEach(testCase => {
         <Style
           getStyleStatsIf={styleStatsIf}
           breweryId={undefined}
+          locationId={undefined}
           search={toSearchParams(searchRecord)}
           setState={setState}
           styleId={undefined}

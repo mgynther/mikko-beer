@@ -1,7 +1,7 @@
 import type { NavigateIf } from "../components/util"
 import type {
   BreweryStatsQueryParams,
-  BreweryStyleParams,
+  IdParams,
   LocationStatsQueryParams,
   StatsIf,
   StyleStatsQueryParams
@@ -27,7 +27,7 @@ const stats: (
   const navigate = navigateIf.useNavigate()
   const statsIf: StatsIf = {
     annual: {
-      useStats: (params: BreweryStyleParams) => {
+      useStats: (params: IdParams) => {
         const { data, isLoading } = useGetAnnualStatsQuery(params)
         return {
           stats: data,
@@ -50,7 +50,7 @@ const stats: (
       infiniteScroll
     },
     container: {
-      useStats: (params: BreweryStyleParams) => {
+      useStats: (params: IdParams) => {
         const { data, isLoading } = useGetContainerStatsQuery(params)
         return {
           stats: data,
@@ -73,7 +73,7 @@ const stats: (
       infiniteScroll
     },
     overall: {
-      useStats: (params: BreweryStyleParams) => {
+      useStats: (params: IdParams) => {
         const { data, isLoading } = useGetOverallStatsQuery(params)
         return {
           stats: data?.overall,
@@ -82,7 +82,7 @@ const stats: (
       }
     },
     rating: {
-      useStats: (params: BreweryStyleParams) => {
+      useStats: (params: IdParams) => {
         const { data, isLoading } = useGetRatingStatsQuery(params)
         return {
           stats: data,

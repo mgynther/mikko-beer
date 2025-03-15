@@ -23,6 +23,7 @@ import {
 interface Props {
   getBreweryStatsIf: GetBreweryStatsIf
   breweryId: string | undefined
+  locationId: string | undefined
   search: SearchParameters
   setState: (state: Record<string, string>) => void
   styleId: string | undefined
@@ -37,8 +38,9 @@ function sortingOrderOrDefault (
 }
 
 function Brewery (props: Props): React.JSX.Element {
-  const isAllAtOnce =
-    props.breweryId !== undefined || props.styleId !== undefined
+  const isAllAtOnce = props.breweryId !== undefined
+    || props.locationId !== undefined
+    || props.styleId !== undefined
 
   const { search } = props
   const sortingOrder = sortingOrderOrDefault(search)
@@ -137,6 +139,7 @@ function Brewery (props: Props): React.JSX.Element {
           sortingOrder={sortingOrder}
           setSortingOrder={changeSortingOrder}
           breweryId={props.breweryId}
+          locationId={props.locationId}
           styleId={props.styleId}
         />
       )}

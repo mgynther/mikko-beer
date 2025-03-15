@@ -9,6 +9,8 @@ const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
+const breweryId = '1d92a74e-ea4c-4dc6-9303-88cb66a1be9d'
+const locationId = '575734e1-8bfa-4cd6-b550-0bb9c3f2f095'
 const styleId = '77e4a2e4-b377-45e9-ac21-9a53562eb305'
 
 const plevna = {
@@ -78,7 +80,8 @@ test('queries location stats', async () => {
           }),
           infiniteScroll: dontCall
         }}
-        breweryId={undefined}
+        breweryId={breweryId}
+        locationId={locationId}
         styleId={styleId}
         loadedLocations={undefined}
         setLoadedLocations={setLoadedLocations}
@@ -92,7 +95,8 @@ test('queries location stats', async () => {
     </LinkWrapper>
   )
   expect(query.mock.calls).toEqual([[{
-    locationId: undefined,
+    breweryId,
+    locationId,
     maxReviewAverage: unusedFilters.maxReviewAverage.value,
     maxReviewCount: unusedFilters.maxReviewCount.value,
     minReviewAverage: unusedFilters.minReviewAverage.value,
@@ -122,6 +126,7 @@ test('renders location stats', () => {
       <LocationAllAtOnce
         getLocationStatsIf={unusedStats}
         breweryId={undefined}
+        locationId={undefined}
         styleId={styleId}
         loadedLocations={[plevna, oluthuone]}
         setLoadedLocations={() => undefined}
@@ -149,6 +154,7 @@ test('sets minimum review count filter', () => {
       <LocationAllAtOnce
         getLocationStatsIf={unusedStats}
         breweryId={undefined}
+        locationId={undefined}
         styleId={styleId}
         loadedLocations={[plevna, oluthuone]}
         setLoadedLocations={() => undefined}
@@ -180,6 +186,7 @@ test('opens filter', async () => {
       <LocationAllAtOnce
         getLocationStatsIf={unusedStats}
         breweryId={undefined}
+        locationId={undefined}
         styleId={styleId}
         loadedLocations={[plevna, oluthuone]}
         setLoadedLocations={() => undefined}

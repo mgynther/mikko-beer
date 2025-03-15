@@ -4,8 +4,9 @@ import type {
   Pagination
 } from '../types'
 
-export interface BreweryStyleParams {
+export interface IdParams {
   breweryId: string | undefined
+  locationId: string | undefined
   styleId: string | undefined
 }
 
@@ -85,6 +86,7 @@ export interface RatingStats {
 
 export interface BreweryStatsQueryParams {
   breweryId: string | undefined
+  locationId: string | undefined
   styleId: string | undefined
   pagination: Pagination
   sorting: BreweryStatsSorting
@@ -96,6 +98,7 @@ export interface BreweryStatsQueryParams {
 
 export interface LocationStatsQueryParams {
   breweryId: string | undefined
+  locationId: string | undefined
   styleId: string | undefined
   pagination: Pagination
   sorting: LocationStatsSorting
@@ -107,6 +110,7 @@ export interface LocationStatsQueryParams {
 
 export interface StyleStatsQueryParams {
   breweryId: string | undefined
+  locationId: string | undefined
   styleId: string | undefined
   sorting: StyleStatsSorting
   minReviewCount: number
@@ -144,7 +148,7 @@ export interface StatsFilters {
 }
 
 export interface GetAnnualStatsIf {
-  useStats: (params: BreweryStyleParams) => {
+  useStats: (params: IdParams) => {
     stats: AnnualStats | undefined
     isLoading: boolean
   }
@@ -162,7 +166,7 @@ export interface GetBreweryStatsIf {
 }
 
 export interface GetContainerStatsIf {
-  useStats: (params: BreweryStyleParams) => {
+  useStats: (params: IdParams) => {
     stats: ContainerStats | undefined
     isLoading: boolean
   }
@@ -180,14 +184,14 @@ export interface GetLocationStatsIf {
 }
 
 export interface GetOverallStatsIf {
-  useStats: (params: BreweryStyleParams) => {
+  useStats: (params: IdParams) => {
     stats: OverallStats | undefined
     isLoading: boolean
   }
 }
 
 export interface GetRatingStatsIf {
-  useStats: (params: BreweryStyleParams) => {
+  useStats: (params: IdParams) => {
     stats: RatingStats | undefined
     isLoading: boolean
   }

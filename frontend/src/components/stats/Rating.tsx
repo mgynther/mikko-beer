@@ -9,12 +9,14 @@ import './StatsTable.css'
 interface Props {
   getRatingStatsIf: GetRatingStatsIf
   breweryId: string | undefined
+  locationId: string | undefined
   styleId: string | undefined
 }
 
 function Rating (props: Props): React.JSX.Element {
   const { stats, isLoading } = props.getRatingStatsIf.useStats({
     breweryId: props.breweryId,
+    locationId: props.locationId,
     styleId: props.styleId
   })
   return (

@@ -4,8 +4,13 @@ import { expect, test, vitest } from 'vitest'
 import Location from './Location'
 import { Role } from '../../core/user/types'
 import type { UseDebounce } from '../../core/types'
+import type { StatsIf } from '../../core/stats/types'
 
 const useDebounce: UseDebounce = str => str
+
+const dontCall = (): any => {
+  throw new Error('must not be called')
+}
 
 const id = '88471fe8-0f00-4a37-9b1c-9db78933c0a6'
 const name = 'Oluthuone Pamimomestari'
@@ -21,6 +26,33 @@ function getLogin() {
     authToken: 'auth',
     refreshToken: 'refresh'
   })
+}
+
+const noStats = {
+  useStats: () => ({
+    stats: undefined,
+    isLoading: false
+  })
+}
+
+const noInfiniteScrollStats = {
+  useStats: () => ({
+    query: async () => undefined,
+    stats: undefined,
+    isLoading: false
+  }),
+  infiniteScroll: dontCall
+}
+
+const statsIf: StatsIf = {
+  annual: noStats,
+  brewery: noInfiniteScrollStats,
+  container: noStats,
+  location: noInfiniteScrollStats,
+  overall: noStats,
+  rating: noStats,
+  style: noStats,
+  setSearch: async () => undefined
 }
 
 test('updates location', async () => {
@@ -50,6 +82,7 @@ test('updates location', async () => {
         }),
         login: getLogin()
       }}
+      statsIf={statsIf}
       searchIf={{
         useSearch: () => ({
           activate: () => undefined,

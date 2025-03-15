@@ -1,16 +1,17 @@
 import { render } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
 import Overall from './Overall'
-import type { BreweryStyleParams } from '../../core/stats/types'
+import type { IdParams } from '../../core/stats/types'
 
 test('renders overall stats', () => {
   const stats = vitest.fn()
   const breweryId = '927a5106-1c3a-470f-b5a4-c9cbea05c112'
+  const locationId = '78b2bd9d-d9bb-4e37-adc6-39005bcdcbe5'
   const styleId = '1afa8a5b-186f-40fd-b92f-42b1874091ac'
   const { getByText } = render(
     <Overall
       getOverallStatsIf={{
-        useStats: (params: BreweryStyleParams) => {
+        useStats: (params: IdParams) => {
           stats(params)
           return {
             stats: {
@@ -28,10 +29,11 @@ test('renders overall stats', () => {
         }
       }}
       breweryId={breweryId}
+      locationId={locationId}
       styleId={styleId}
     />
   )
-  expect(stats.mock.calls).toEqual([[{ breweryId, styleId }]])
+  expect(stats.mock.calls).toEqual([[{ breweryId, locationId, styleId }]])
   getByText('123')
   getByText('54')
   getByText('8')

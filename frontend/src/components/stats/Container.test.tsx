@@ -3,13 +3,14 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import Container from './Container'
 import type {
-  BreweryStyleParams,
+  IdParams,
   OneContainerStats
 } from '../../core/stats/types'
 import { openFilters } from './filters-test-util'
 import type { SearchParameters } from '../util'
 
 const breweryId = 'e6887360-78da-49e2-b876-68477c79c776'
+const locationId = '7a2ac8d0-3561-43bd-81ac-b51dd892b9bb'
 const styleId = '2b885977-a2fd-43c2-95f9-6b19f3c8054d'
 
 const containerStats: OneContainerStats[] = [
@@ -64,7 +65,7 @@ function renderContainer (
   return render(
     <Container
       getContainerStatsIf={{
-        useStats: (params: BreweryStyleParams) => {
+        useStats: (params: IdParams) => {
           stats(params)
           return {
             stats: {
@@ -75,6 +76,7 @@ function renderContainer (
         }
       }}
       breweryId={breweryId}
+      locationId={locationId}
       search={searchParams}
       setState={setState}
       styleId={styleId}
@@ -104,7 +106,7 @@ function renderFromRecordWithSetState (
 test('renders container stats', () => {
   const stats = vitest.fn()
   const { getByText } = renderWithStats(stats)
-  expect(stats.mock.calls).toEqual([[{ breweryId, styleId }]])
+  expect(stats.mock.calls).toEqual([[{ breweryId, locationId, styleId }]])
   getByText('7.87')
   getByText('10')
   getByText('draft 0.25')

@@ -92,6 +92,7 @@ test('queries brewery stats', async () => {
           }
         }}
         breweryId={undefined}
+        locationId={undefined}
         search={emptySearchParameters}
         setState={noOpSetState}
         styleId={undefined}
@@ -124,6 +125,7 @@ test('renders brewery stats', async () => {
     <LinkWrapper>
       <Brewery
         breweryId={'5e2f90e7-15f9-499d-baa3-c95f4282c509'}
+        locationId={'15881313-7b69-415b-ad1c-3e4ce3a00fae'}
         search={emptySearchParameters}
         setState={noOpSetState}
         styleId={undefined}
@@ -212,6 +214,7 @@ sliderChangeTests.forEach(testCase => {
       <LinkWrapper>
         <Brewery
           breweryId={undefined}
+          locationId={undefined}
           search={toSearchParams(defaultFiltersOpenParams)}
           setState={setState}
           styleId={'dcbc0cd8-337a-4c0c-8ae6-baf97f711680'}
@@ -323,6 +326,7 @@ orderChangeTests.forEach(testCase => {
       <LinkWrapper>
         <Brewery
           breweryId={undefined}
+          locationId={undefined}
           search={toSearchParams(searchRecord)}
           setState={setState}
           styleId={'dcbc0cd8-337a-4c0c-8ae6-baf97f711680'}

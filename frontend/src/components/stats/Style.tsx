@@ -25,6 +25,7 @@ import {
 interface Props {
   getStyleStatsIf: GetStyleStatsIf
   breweryId: string | undefined
+  locationId: string | undefined
   search: SearchParameters
   setState: (state: Record<string, string>) => void
   styleId: string | undefined
@@ -49,6 +50,7 @@ function Style (props: Props): React.JSX.Element {
   const isFiltersOpen = filtersOpenOrDefault(search)
   const { stats, isLoading } = props.getStyleStatsIf.useStats({
     breweryId: props.breweryId,
+    locationId: props.locationId,
     styleId: props.styleId,
     sorting: {
       order: sortingOrder,

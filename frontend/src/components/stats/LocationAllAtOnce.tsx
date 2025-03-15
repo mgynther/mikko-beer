@@ -19,6 +19,7 @@ interface Props {
   sortingOrder: LocationStatsSortingOrder
   setSortingOrder: (order: LocationStatsSortingOrder) => void
   breweryId: string | undefined
+  locationId: string | undefined
   styleId: string | undefined
   loadedLocations: OneLocationStats[] | undefined
   setLoadedLocations: (locations: OneLocationStats[] | undefined) => void
@@ -42,8 +43,7 @@ function LocationAllAtOnce (props: Props): React.JSX.Element {
     sortingDirection
   } = props
   const { query, isLoading } = props.getLocationStatsIf.useStats()
-  const breweryId = props.breweryId
-  const styleId = props.styleId
+  const { breweryId, locationId, styleId } = props
 
   useEffect(() => {
     setLoadedLocations(undefined)
@@ -57,6 +57,7 @@ function LocationAllAtOnce (props: Props): React.JSX.Element {
     async function loadAll (): Promise<void> {
       const result = await query({
         breweryId,
+        locationId,
         styleId,
         pagination: giantPage,
         sorting: {
@@ -74,6 +75,7 @@ function LocationAllAtOnce (props: Props): React.JSX.Element {
     void loadAll()
   }, [
     breweryId,
+    locationId,
     styleId,
     sortingOrder,
     sortingDirection,

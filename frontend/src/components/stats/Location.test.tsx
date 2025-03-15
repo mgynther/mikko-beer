@@ -92,6 +92,7 @@ test('queries location stats', async () => {
           }
         }}
         breweryId={undefined}
+        locationId={undefined}
         search={emptySearchParameters}
         setState={noOpSetState}
         styleId={undefined}
@@ -102,6 +103,7 @@ test('queries location stats', async () => {
   await act(async() => { loadCallback(); })
   expect(query.mock.calls).toEqual([[{
     breweryId: undefined,
+    locationId: undefined,
     maxReviewAverage: unusedFilters.maxReviewAverage.value,
     maxReviewCount: unusedFilters.maxReviewCount.value,
     minReviewAverage: unusedFilters.minReviewAverage.value,
@@ -118,12 +120,71 @@ test('queries location stats', async () => {
   }]])
 })
 
+test('queries filtered location stats', async () => {
+  const query = vitest.fn()
+  const breweryId = '4737b7ed-6c81-4320-9922-a2e32614f903'
+  const locationId = '434a13d1-63d4-47e2-bb22-ee1cb4bd37df'
+  const styleId = 'e2e4f56d-f433-4c1d-bdbb-c980bc8b3f42'
+  let loadCallback: () => void = () => undefined
+  render(
+    <LinkWrapper>
+      <Location
+        getLocationStatsIf={{
+          useStats: () => ({
+            query: async (params) => {
+              query(params)
+              return {
+                location: [
+                  { ...plevna },
+                  { ...oluthuone }
+                ]
+              }
+            },
+            stats: {
+              location: []
+            },
+            isLoading: false
+          }),
+          infiniteScroll: (cb) => {
+            loadCallback = cb
+            return () => undefined
+          }
+        }}
+        breweryId={breweryId}
+        locationId={locationId}
+        search={emptySearchParameters}
+        setState={noOpSetState}
+        styleId={styleId}
+      />
+    </LinkWrapper>
+  )
+  await act(async() => { loadCallback(); })
+  expect(query.mock.calls).toEqual([[{
+    breweryId,
+    locationId,
+    maxReviewAverage: unusedFilters.maxReviewAverage.value,
+    maxReviewCount: unusedFilters.maxReviewCount.value,
+    minReviewAverage: unusedFilters.minReviewAverage.value,
+    minReviewCount: unusedFilters.minReviewCount.value,
+    pagination: {
+      size: 10000,
+      skip: 0
+    },
+    sorting: {
+      direction: 'asc',
+      order: 'location_name'
+    },
+    styleId
+  }]])
+})
+
 test('renders location stats', async () => {
   const user = userEvent.setup()
   const { getByRole, getByText } = render(
     <LinkWrapper>
       <Location
         breweryId={'b32ac679-982d-41a1-b39a-8cf50c4d768e'}
+        locationId={'6707586e-f94e-4f35-a8f1-1d8586d9c2f3'}
         search={emptySearchParameters}
         setState={noOpSetState}
         styleId={undefined}
@@ -212,6 +273,7 @@ sliderChangeTests.forEach(testCase => {
       <LinkWrapper>
         <Location
           breweryId={undefined}
+          locationId={undefined}
           search={toSearchParams(defaultFiltersOpenParams)}
           setState={setState}
           styleId={'dcbc0cd8-337a-4c0c-8ae6-baf97f711680'}
@@ -323,6 +385,7 @@ orderChangeTests.forEach(testCase => {
       <LinkWrapper>
         <Location
           breweryId={undefined}
+          locationId={undefined}
           search={toSearchParams(searchRecord)}
           setState={setState}
           styleId={'dcbc0cd8-337a-4c0c-8ae6-baf97f711680'}

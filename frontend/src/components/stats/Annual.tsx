@@ -9,12 +9,14 @@ import './StatsTable.css'
 interface Props {
   getAnnualStatsIf: GetAnnualStatsIf
   breweryId: string | undefined
+  locationId: string | undefined
   styleId: string | undefined
 }
 
 function Annual (props: Props): React.JSX.Element {
   const { stats, isLoading } = props.getAnnualStatsIf.useStats({
     breweryId: props.breweryId,
+    locationId: props.locationId,
     styleId: props.styleId
   })
   return (

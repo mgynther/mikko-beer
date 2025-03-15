@@ -158,6 +158,7 @@ overallTestCases.forEach(testCase => {
           }
         }}
         breweryId={'282844e4-f411-4c6a-95d6-9131b8c0491f'}
+        locationId={'b2a53c67-8132-4f93-92eb-e7b0276e6c07'}
         styleId={'1d1bc37a-d5d0-4175-92b2-7d24f961bb20'}
       />
     )
@@ -191,6 +192,7 @@ test('renders annual stats', () => {
         }
       }}
       breweryId={'ed60c2f7-b799-4b47-834c-d123f92f6eac'}
+      locationId={'138ce231-35ed-4dfc-b5e3-0fba1b439877'}
       styleId={'3004aece-d2c4-47ae-896c-f2762051a738'}
     />
   )
@@ -237,6 +239,7 @@ test('renders brewery stats', async () => {
           }
         }}
         breweryId={'a186917f-0d4c-40d0-bf67-e96227c55528'}
+        locationId={'b533d497-8256-4525-8892-180a078060d5'}
         styleId={'4917d1c7-5439-4e78-a562-242200a236db'}
       />
     </LinkWrapper>
@@ -282,6 +285,7 @@ test('renders container stats', () => {
         },
       }}
       breweryId={'ed60c2f7-b799-4b47-834c-d123f92f6eac'}
+      locationId={'632f4196-9738-41d8-b50d-76d839e11a74'}
       styleId={'3004aece-d2c4-47ae-896c-f2762051a738'}
     />
   )
@@ -324,6 +328,7 @@ test('renders filtered container stats', () => {
         },
       }}
       breweryId={'c2b632e8-01fa-416b-bad3-873022a2afd9'}
+      locationId={'e7f2c9bf-c0fb-4deb-a62d-61c5c8d04430'}
       styleId={'c5efc2ba-6b91-4284-8c29-563a872b13a0'}
     />
   )
@@ -354,6 +359,7 @@ test('renders rating stats', () => {
         }
       }}
       breweryId={'a64a3770-7bc2-46a1-8be6-87d137d0d644'}
+      locationId={'c945c251-9335-4da5-9a2d-11eeafcf71cb'}
       styleId={'c0d9f345-487f-41d0-bcfc-95058ca822fa'}
     />
   )
@@ -394,6 +400,7 @@ test('renders style stats', () => {
           }
         }}
         breweryId={'482584a6-4ccb-44d6-be37-3458a5c21601'}
+        locationId={'fef5fbb5-90ae-4c41-a1a7-e87821f620c8'}
         styleId={'449f632a-eb95-4ad1-a1ff-f4338c603584'}
       />
     </LinkWrapper>
@@ -462,6 +469,7 @@ navigationTests.forEach(testCase => {
             setSearch
           }}
           breweryId={undefined}
+          locationId={undefined}
           styleId={undefined}
         />
       </LinkWrapper>

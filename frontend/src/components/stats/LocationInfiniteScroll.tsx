@@ -47,6 +47,7 @@ function LocationInfiniteScroll (props: Props): React.JSX.Element {
     const loadMore = async (): Promise<void> => {
       const result = await query({
         breweryId: undefined,
+        locationId: undefined,
         styleId: undefined,
         pagination: {
           skip: loadedLocations?.length ?? 0,

@@ -87,6 +87,7 @@ function Brewery (props: Props): React.JSX.Element {
       <Stats
         statsIf={props.statsIf}
         breweryId={brewery.id}
+        locationId={undefined}
         paramsIf={props.paramsIf}
         styleId={undefined}
       />

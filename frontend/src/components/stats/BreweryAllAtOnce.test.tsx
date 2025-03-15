@@ -79,6 +79,7 @@ test('queries brewery stats', async () => {
           infiniteScroll: dontCall
         }}
         breweryId={undefined}
+        locationId={undefined}
         styleId={styleId}
         loadedBreweries={undefined}
         setLoadedBreweries={setLoadedBreweries}
@@ -111,7 +112,6 @@ test('queries brewery stats', async () => {
   await openFilters(getByRole, user)
   expect(setLoadedBreweries.mock.calls).toEqual([
     [undefined],
-    [undefined],
     [[koskipanimo, lehe]]
   ])
 })
@@ -122,6 +122,7 @@ test('renders brewery stats', () => {
       <BreweryAllAtOnce
         getBreweryStatsIf={unusedStats}
         breweryId={undefined}
+        locationId={undefined}
         styleId={styleId}
         loadedBreweries={[koskipanimo, lehe]}
         setLoadedBreweries={() => undefined}
@@ -149,6 +150,7 @@ test('sets minimum review count filter', () => {
       <BreweryAllAtOnce
         getBreweryStatsIf={unusedStats}
         breweryId={undefined}
+        locationId={undefined}
         styleId={styleId}
         loadedBreweries={[koskipanimo, lehe]}
         setLoadedBreweries={() => undefined}
@@ -180,6 +182,7 @@ test('opens filter', async () => {
       <BreweryAllAtOnce
         getBreweryStatsIf={unusedStats}
         breweryId={undefined}
+        locationId={undefined}
         styleId={styleId}
         loadedBreweries={[koskipanimo, lehe]}
         setLoadedBreweries={() => undefined}

@@ -229,6 +229,7 @@ function App (props: Props): React.JSX.Element {
                     getLocationIf={getLocationIf}
                     paramsIf={props.paramsIf}
                     searchIf={searchIf}
+                    statsIf={statsIf}
                     updateLocationIf={updateLocationIf}
                   />
                 } />
@@ -271,6 +272,7 @@ function App (props: Props): React.JSX.Element {
                   <Stats
                     statsIf={statsIf}
                     breweryId={undefined}
+                    locationId={undefined}
                     paramsIf={props.paramsIf}
                     styleId={undefined}
                   />

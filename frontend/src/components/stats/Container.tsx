@@ -26,6 +26,7 @@ import {
 interface Props {
   getContainerStatsIf: GetContainerStatsIf
   breweryId: string | undefined
+  locationId: string | undefined
   search: SearchParameters
   setState: (state: Record<string, string>) => void
   styleId: string | undefined
@@ -117,6 +118,7 @@ function Container (props: Props): React.JSX.Element {
 
   const { stats, isLoading } = props.getContainerStatsIf.useStats({
     breweryId: props.breweryId,
+    locationId: props.locationId,
     styleId: props.styleId
   })
 

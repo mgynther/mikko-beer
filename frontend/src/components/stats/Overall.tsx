@@ -9,12 +9,14 @@ import './StatsTable.css'
 interface Props {
   getOverallStatsIf: GetOverallStatsIf
   breweryId: string | undefined
+  locationId: string | undefined
   styleId: string | undefined
 }
 
 function Overall (props: Props): React.JSX.Element {
   const { stats, isLoading } = props.getOverallStatsIf.useStats({
     breweryId: props.breweryId,
+    locationId: props.locationId,
     styleId: props.styleId
   })
   return (

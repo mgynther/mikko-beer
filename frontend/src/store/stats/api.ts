@@ -2,7 +2,7 @@ import { emptySplitApi } from '../api'
 
 import type {
   BreweryStatsQueryParams,
-  BreweryStyleParams,
+  IdParams,
   ContainerStats,
   LocationStatsQueryParams,
   StyleStatsQueryParams,
@@ -23,27 +23,32 @@ function breweryIdFilter (breweryId: string): string {
   return `brewery=${breweryId}`
 }
 
+function locationIdFilter (locationId: string): string {
+  return `location=${locationId}`
+}
+
 function styleIdFilter (styleId: string): string {
   return `style=${styleId}`
 }
 
-function breweryStyleFilter (
-  { breweryId, styleId }: BreweryStyleParams
+function idFilter (
+  { breweryId, locationId, styleId }: IdParams
 ): string {
   if (breweryId !== undefined) return breweryIdFilter(breweryId)
+  if (locationId !== undefined) return locationIdFilter(locationId)
   if (styleId !== undefined) return styleIdFilter(styleId)
   return ''
 }
 
-function onlyBreweryStyleFilter (params: BreweryStyleParams
+function onlyIdFilter (params: IdParams
 ): string {
-  const filter = breweryStyleFilter(params)
+  const filter = idFilter(params)
   return filter.length === 0 ? '' : `?${filter}`
 }
 
-function andBreweryStyleFilter (params: BreweryStyleParams
+function andIdFilter (params: IdParams
 ): string {
-  const filter = breweryStyleFilter(params)
+  const filter = idFilter(params)
   return filter.length === 0 ? '' : `&${filter}`
 }
 
@@ -62,12 +67,13 @@ function andMaxReviewCount (maxReviewCount: number): string {
 
 function styleFilters (
   breweryId: string | undefined,
+  locationId: string | undefined,
   styleId: string | undefined,
   sorting: StyleStatsSorting
 ): string {
   const styleSorting = styleStatsSorting(sorting)
-  const breweryStyleFilter = andBreweryStyleFilter({ breweryId, styleId })
-  return `?${styleSorting}${breweryStyleFilter}`
+  const idFilter = andIdFilter({ breweryId, locationId, styleId })
+  return `?${styleSorting}${idFilter}`
 }
 
 function styleStatsSorting (sorting: StyleStatsSorting): string {
@@ -76,9 +82,9 @@ function styleStatsSorting (sorting: StyleStatsSorting): string {
 
 const statsApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
-    getAnnualStats: build.query<AnnualStats, BreweryStyleParams>({
-      query: (params: BreweryStyleParams) => ({
-        url: `/stats/annual${onlyBreweryStyleFilter(params)}`,
+    getAnnualStats: build.query<AnnualStats, IdParams>({
+      query: (params: IdParams) => ({
+        url: `/stats/annual${onlyIdFilter(params)}`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Annual]
@@ -90,7 +96,7 @@ const statsApi = emptySplitApi.injectEndpoints({
           }&skip=${
             params.pagination.skip
           }${
-          andBreweryStyleFilter(params)
+          andIdFilter(params)
         }&${breweryStatsSorting(params.sorting)}&min_review_count=${
           params.minReviewCount
         }${
@@ -102,9 +108,9 @@ const statsApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [StatsTags.Brewery]
     }),
-    getContainerStats: build.query<ContainerStats, BreweryStyleParams>({
-      query: (params: BreweryStyleParams) => ({
-        url: `/stats/container${onlyBreweryStyleFilter(params)}`,
+    getContainerStats: build.query<ContainerStats, IdParams>({
+      query: (params: IdParams) => ({
+        url: `/stats/container${onlyIdFilter(params)}`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Container]
@@ -116,7 +122,7 @@ const statsApi = emptySplitApi.injectEndpoints({
           }&skip=${
             params.pagination.skip
           }${
-          andBreweryStyleFilter(params)
+          andIdFilter(params)
         }&${locationStatsSorting(params.sorting)}&min_review_count=${
           params.minReviewCount
         }${
@@ -130,16 +136,16 @@ const statsApi = emptySplitApi.injectEndpoints({
     }),
     getOverallStats: build.query<{
       overall: OverallStats
-    }, BreweryStyleParams>({
-      query: (params: BreweryStyleParams) => ({
-        url: `/stats/overall${onlyBreweryStyleFilter(params)}`,
+    }, IdParams>({
+      query: (params: IdParams) => ({
+        url: `/stats/overall${onlyIdFilter(params)}`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Overall]
     }),
-    getRatingStats: build.query<RatingStats, BreweryStyleParams>({
-      query: (params: BreweryStyleParams) => ({
-        url: `/stats/rating${onlyBreweryStyleFilter(params)}`,
+    getRatingStats: build.query<RatingStats, IdParams>({
+      query: (params: IdParams) => ({
+        url: `/stats/rating${onlyIdFilter(params)}`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Rating]
@@ -147,7 +153,12 @@ const statsApi = emptySplitApi.injectEndpoints({
     getStyleStats: build.query<StyleStats, StyleStatsQueryParams>({
       query: (params: StyleStatsQueryParams) => ({
         url: `/stats/style${
-          styleFilters(params.breweryId, params.styleId, params.sorting)
+          styleFilters(
+            params.breweryId,
+            params.locationId,
+            params.styleId,
+            params.sorting
+          )
         }&min_review_count=${
           params.minReviewCount
         }${

@@ -17,11 +17,14 @@ import UpdateLocation from './UpdateLocation'
 
 import '../common/FlexRow.css'
 import NotFound from '../common/NotFound'
+import type { StatsIf } from '../../core/stats/types'
+import Stats from '../stats/Stats'
 
 interface Props {
   paramsIf: ParamsIf
   getLocationIf: GetLocationIf
   searchIf: SearchIf
+  statsIf: StatsIf
   updateLocationIf: UpdateLocationIf
 }
 
@@ -70,6 +73,13 @@ function Location (props: Props): React.JSX.Element {
           }}
         />
       )}
+      <Stats
+        statsIf={props.statsIf}
+        breweryId={undefined}
+        locationId={locationId}
+        paramsIf={props.paramsIf}
+        styleId={undefined}
+      />
     </div>
   )
 }

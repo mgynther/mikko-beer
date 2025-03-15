@@ -27,6 +27,7 @@ enum Mode {
 interface Props {
   statsIf: StatsIf
   breweryId: string | undefined
+  locationId: string | undefined
   styleId: string | undefined
   paramsIf: ParamsIf
 }
@@ -127,6 +128,7 @@ function Stats (props: Props): React.JSX.Element | null {
         <Annual
           getAnnualStatsIf={props.statsIf.annual}
           breweryId={props.breweryId}
+          locationId={props.locationId}
           styleId={props.styleId}
         />
       }
@@ -134,6 +136,7 @@ function Stats (props: Props): React.JSX.Element | null {
         <Brewery
           getBreweryStatsIf={props.statsIf.brewery}
           breweryId={props.breweryId}
+          locationId={props.locationId}
           search={search}
           setState={setState}
           styleId={props.styleId}
@@ -143,6 +146,7 @@ function Stats (props: Props): React.JSX.Element | null {
         <Container
           getContainerStatsIf={props.statsIf.container}
           breweryId={props.breweryId}
+          locationId={props.locationId}
           search={search}
           setState={setState}
           styleId={props.styleId}
@@ -152,6 +156,7 @@ function Stats (props: Props): React.JSX.Element | null {
         <Location
           getLocationStatsIf={props.statsIf.location}
           breweryId={props.breweryId}
+          locationId={props.locationId}
           search={search}
           setState={setState}
           styleId={props.styleId}
@@ -161,6 +166,7 @@ function Stats (props: Props): React.JSX.Element | null {
         <Overall
           getOverallStatsIf={props.statsIf.overall}
           breweryId={props.breweryId}
+          locationId={props.locationId}
           styleId={props.styleId}
         />
       }
@@ -168,6 +174,7 @@ function Stats (props: Props): React.JSX.Element | null {
         <Rating
           getRatingStatsIf={props.statsIf.rating}
           breweryId={props.breweryId}
+          locationId={props.locationId}
           styleId={props.styleId}
         />
       }
@@ -175,6 +182,7 @@ function Stats (props: Props): React.JSX.Element | null {
         <Style
           getStyleStatsIf={props.statsIf.style}
           breweryId={props.breweryId}
+          locationId={props.locationId}
           search={search}
           setState={setState}
           styleId={props.styleId}
