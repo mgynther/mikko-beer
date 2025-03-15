@@ -86,6 +86,7 @@ export interface StoreIf {
   listReviewsIf: ListReviewsIf
   listReviewsByBeerIf: ListReviewsByIf
   listReviewsByBreweryIf: ListReviewsByIf
+  listReviewsByLocationIf: ListReviewsByIf
   listReviewsByStyleIf: ListReviewsByIf
   reviewIf: ReviewIf
 

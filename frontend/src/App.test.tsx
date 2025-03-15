@@ -244,6 +244,9 @@ const storeIf: StoreIf = {
   listReviewsByBreweryIf: {
     useList: dontCall
   },
+  listReviewsByLocationIf: {
+    useList: dontCall
+  },
   listReviewsByStyleIf: {
     useList: dontCall
   },

@@ -19,10 +19,14 @@ import '../common/FlexRow.css'
 import NotFound from '../common/NotFound'
 import type { StatsIf } from '../../core/stats/types'
 import Stats from '../stats/Stats'
+import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
+import LocationReviews from './LocationReviews'
 
 interface Props {
+  listReviewsByLocationIf: ListReviewsByIf
   paramsIf: ParamsIf
   getLocationIf: GetLocationIf
+  reviewIf: ReviewIf
   searchIf: SearchIf
   statsIf: StatsIf
   updateLocationIf: UpdateLocationIf
@@ -79,6 +83,12 @@ function Location (props: Props): React.JSX.Element {
         locationId={locationId}
         paramsIf={props.paramsIf}
         styleId={undefined}
+      />
+      <LocationReviews
+        locationId={locationId}
+        listReviewsByLocationIf={props.listReviewsByLocationIf}
+        reviewIf={props.reviewIf}
+        searchIf={props.searchIf}
       />
     </div>
   )

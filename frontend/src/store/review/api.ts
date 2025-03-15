@@ -69,6 +69,15 @@ const reviewApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [ReviewTags.Review]
     }),
+    listReviewsByLocation: build.query<
+    JoinedReviewList, FilteredListReviewParams
+    >({
+      query: (params: FilteredListReviewParams) => ({
+        url: `/location/${params.id}/review?${getSorting(params.sorting)}`,
+        method: 'GET'
+      }),
+      providesTags: [ReviewTags.Review]
+    }),
     listReviewsByStyle: build.query<
     JoinedReviewList, FilteredListReviewParams
     >({
@@ -119,6 +128,7 @@ export const {
   useLazyListReviewsQuery,
   useListReviewsByBeerQuery,
   useListReviewsByBreweryQuery,
+  useListReviewsByLocationQuery,
   useListReviewsByStyleQuery,
   useUpdateReviewMutation
 } = reviewApi

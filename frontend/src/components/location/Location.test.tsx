@@ -5,6 +5,7 @@ import Location from './Location'
 import { Role } from '../../core/user/types'
 import type { UseDebounce } from '../../core/types'
 import type { StatsIf } from '../../core/stats/types'
+import type { SearchLocationIf } from '../../core/location/types'
 
 const useDebounce: UseDebounce = str => str
 
@@ -26,6 +27,55 @@ function getLogin() {
     authToken: 'auth',
     refreshToken: 'refresh'
   })
+}
+
+const dontSelectBeer = {
+  create: {
+    useCreate: dontCall,
+    editBeerIf: {
+      selectBreweryIf: {
+        create: {
+          useCreate: dontCall
+        },
+        search: {
+          useSearch: dontCall
+        }
+      },
+      selectStyleIf: {
+        create: {
+          useCreate: dontCall
+        },
+        list: {
+          useList: dontCall
+        }
+      }
+    }
+  },
+  search: {
+    useSearch: dontCall
+  }
+}
+
+const searchLocationIf: SearchLocationIf = {
+  useSearch: () => ({
+    search: dontCall,
+    isLoading: false
+  }),
+  create: {
+    useCreate: () => ({
+      create: dontCall,
+      isLoading: false
+    })
+  }
+}
+
+const noOpContainerIf = {
+  createIf: {
+    useCreate: dontCall
+  },
+  listIf: {
+    useList: dontCall
+  }
 }
 
 const noStats = {
@@ -60,11 +110,36 @@ test('updates location', async () => {
   const update = vitest.fn()
   const { getByPlaceholderText, getByRole } = render(
     <Location
+      listReviewsByLocationIf={{
+        useList: () => ({
+          reviews: { reviews: [] },
+          isLoading: false
+        })
+      }}
       paramsIf={{
         useParams: () => ({ locationId: id }),
         useSearch: () => ({
           get: () => undefined
         })
+      }}
+      reviewIf={{
+        get: {
+          useGet: () => ({
+            get: async () => undefined
+          })
+        },
+        update: {
+          useUpdate: () => ({
+            update: async () => {
+              throw new Error('Function not implemented.')
+            },
+            isLoading: false
+          }),
+          searchLocationIf,
+          selectBeerIf: dontSelectBeer,
+          reviewContainerIf: noOpContainerIf
+        },
+        login: getLogin()
       }}
       getLocationIf={{
         useGet: () => ({

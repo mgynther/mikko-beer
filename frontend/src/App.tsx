@@ -83,6 +83,7 @@ function App (props: Props): React.JSX.Element {
     listReviewsIf,
     listReviewsByBeerIf,
     listReviewsByBreweryIf,
+    listReviewsByLocationIf,
     listReviewsByStyleIf,
     reviewIf,
 
@@ -227,7 +228,9 @@ function App (props: Props): React.JSX.Element {
                 <Route path="locations/:locationId" element={
                   <Location
                     getLocationIf={getLocationIf}
+                    listReviewsByLocationIf={listReviewsByLocationIf}
                     paramsIf={props.paramsIf}
+                    reviewIf={reviewIf}
                     searchIf={searchIf}
                     statsIf={statsIf}
                     updateLocationIf={updateLocationIf}

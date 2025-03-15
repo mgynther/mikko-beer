@@ -111,6 +111,7 @@ import getReview from './storehookifs/review/get'
 import listReviews from './storehookifs/review/list'
 import listReviewsByBeer from './storehookifs/review/listByBeer'
 import listReviewsByBrewery from './storehookifs/review/listByBrewery'
+import listReviewsByLocation from './storehookifs/review/listByLocation'
 import listReviewsByStyle from './storehookifs/review/listByStyle'
 import updateReview from './storehookifs/review/update'
 
@@ -222,6 +223,7 @@ function RtkApp (): React.JSX.Element {
   const listReviewsIf: ListReviewsIf = listReviews(infiniteScroll)
   const listReviewsByBeerIf: ListReviewsByIf = listReviewsByBeer()
   const listReviewsByBreweryIf: ListReviewsByIf = listReviewsByBrewery()
+  const listReviewsByLocationIf: ListReviewsByIf = listReviewsByLocation()
   const listReviewsByStyleIf: ListReviewsByIf = listReviewsByStyle()
   const createReviewIf: CreateReviewIf = createReview(
     () => new Date(),
@@ -275,6 +277,7 @@ function RtkApp (): React.JSX.Element {
     listReviewsIf,
     listReviewsByBeerIf,
     listReviewsByBreweryIf,
+    listReviewsByLocationIf,
     listReviewsByStyleIf,
     reviewIf,
 
