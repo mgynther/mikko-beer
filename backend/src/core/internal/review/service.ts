@@ -134,6 +134,19 @@ export async function listReviewsByBrewery (
   return await list(breweryId, reviewListOrder)
 }
 
+export async function listReviewsByLocation (
+  list: (
+    locationId: string,
+    reviewListOrder: ReviewListOrder
+  ) => Promise<JoinedReview[]>,
+  locationId: string,
+  reviewListOrder: ReviewListOrder,
+  log: log
+): Promise<JoinedReview[]> {
+  log(INFO, 'list by location', locationId, reviewListOrder)
+  return await list(locationId, reviewListOrder)
+}
+
 export async function listReviewsByStyle (
   list: (
     styleId: string,

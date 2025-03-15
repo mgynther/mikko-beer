@@ -289,6 +289,54 @@ describe('review tests', () => {
     testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.id)
   })
 
+  async function listReviewsByLocation(
+    db: Database,
+    locationId: string,
+    reviewListOrder: ReviewListOrder
+  ) {
+    return await reviewRepository.listReviewsByLocation(
+      db,
+      locationId,
+      reviewListOrder
+    )
+  }
+
+  it('list reviews by location, beer_name asc', async() => {
+    const db = ctx.db
+    const { reviews, data } = await insertMultipleReviews(10, db)
+    const reviewListOrder: ReviewListOrder =
+      { property: 'beer_name', direction: 'asc' }
+    const list =
+      await listReviewsByLocation(db, data.otherLocation.id, reviewListOrder)
+    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.id)
+  })
+
+  it('list reviews by location, rating desc', async() => {
+    const db = ctx.db
+    const { reviews, data } = await insertMultipleReviews(10, db)
+    const reviewListOrder: ReviewListOrder =
+      { property: 'rating', direction: 'desc' }
+    const list =
+      await listReviewsByLocation(db, data.location.id, reviewListOrder)
+    testFilteredList(
+      reviews,
+      list,
+      toRatingTime,
+      descendingRatings,
+      data.beer.id
+    )
+  })
+
+  it('list reviews by location, time asc', async() => {
+    const db = ctx.db
+    const { reviews, data } = await insertMultipleReviews(10, db)
+    const reviewListOrder: ReviewListOrder =
+      { property: 'time', direction: 'asc' }
+    const list =
+      await listReviewsByLocation(db, data.otherLocation.id, reviewListOrder)
+    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.id)
+  })
+
   async function listReviewsByStyle(db: Database, styleId: string, reviewListOrder: ReviewListOrder) {
     return await reviewRepository.listReviewsByStyle(
       db,

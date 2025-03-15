@@ -424,7 +424,7 @@ describe('review tests', () => {
       {
         beer: collabBeerRes.data.beer.id,
         container: containerRes.data.container.id,
-        location: locationRes.data.location.id,
+        location: '',
         rating: 6,
         smell: 'Grapefruit, cherries',
         taste: 'Bitter, sour',
@@ -435,7 +435,16 @@ describe('review tests', () => {
     expect(collabReviewRes.status).toEqual(201)
     expect(collabReviewRes.data.review.beer).toEqual(collabBeerRes.data.beer.id)
 
-    return { beerRes, breweryRes, containerRes, styleRes, reviewRes, collabReviewRes, otherReviewRes }
+    return {
+      beerRes,
+      breweryRes,
+      containerRes,
+      locationRes,
+      styleRes,
+      reviewRes,
+      collabReviewRes,
+      otherReviewRes
+    }
   }
 
   it('list reviews by brewery', async () => {
@@ -464,6 +473,38 @@ describe('review tests', () => {
     expect(collabReview?.breweries?.length).toEqual(2)
 
     const sorting = breweryListRes.data.sorting
+    expect(sorting.order).toEqual('beer_name')
+    expect(sorting.direction).toEqual('desc')
+  })
+
+  it('list reviews by location', async () => {
+    const { locationRes, reviewRes, otherReviewRes } =
+      await createListDeps(ctx.adminAuthHeaders())
+
+    const locationListRes = await ctx.request.get<{
+      reviews: JoinedReview[],
+      sorting: {
+        order: ReviewListOrderProperty,
+        direction: ListDirection
+      }
+    }>(
+      `/api/v1/location/${
+        locationRes.data.location.id
+      }/review?order=beer_name&direction=desc`,
+      ctx.adminAuthHeaders()
+    )
+    expect(locationListRes.status).toEqual(200)
+    expect(locationListRes.data.reviews.length).toEqual(2)
+
+    const kriekReview = locationListRes.data.reviews[0]
+    expect(kriekReview?.id).toEqual(reviewRes.data.review.id)
+    expect(kriekReview?.beerId).toEqual(reviewRes.data.review.beer)
+
+    const otherReview = locationListRes.data.reviews[1]
+    expect(otherReview?.id).toEqual(otherReviewRes.data.review.id)
+    expect(otherReview?.beerId).toEqual(otherReviewRes.data.review.beer)
+
+    const sorting = locationListRes.data.sorting
     expect(sorting.order).toEqual('beer_name')
     expect(sorting.direction).toEqual('desc')
   })

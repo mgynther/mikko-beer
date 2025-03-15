@@ -289,6 +289,34 @@ export async function listReviewsByBrewery (
   reviewListOrder
   ))
 }
+
+export async function listReviewsByLocation (
+  db: Database,
+  locationId: string,
+  reviewListOrder: ReviewListOrder
+): Promise<JoinedReview[]> {
+  const query = db.getDb()
+    .selectFrom('review')
+    .innerJoin('beer', 'review.beer', 'beer_id')
+    .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
+    .innerJoin('brewery', 'brewery.brewery_id', 'beer_brewery.brewery')
+    .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
+    .innerJoin('style', 'style.style_id', 'beer_style.style')
+    .innerJoin('container', 'review.container', 'container.container_id')
+    .leftJoin('location', 'review.location', 'location.location_id')
+    .select(listColumns)
+    .where('review.location', '=', locationId)
+
+  const reviews = await getOrderBy(reviewListOrder)(query)
+    .execute()
+
+  if (reviews.length === 0) {
+    return []
+  }
+
+  return toJoinedReviews(parseReviewRows(reviews))
+}
+
 export async function listReviewsByStyle (
   db: Database,
   styleId: string,

@@ -111,6 +111,24 @@ export async function listReviewsByBrewery (
   )
 }
 
+export async function listReviewsByLocation (
+  list: (
+    locationId: string,
+    reviewListOrder: ReviewListOrder
+  ) => Promise<JoinedReview[]>,
+  request: IdRequest,
+  reviewListOrder: ReviewListOrder,
+  log: log
+): Promise<JoinedReview[]> {
+  authorizationService.authorizeViewer(request.authTokenPayload)
+  return await reviewService.listReviewsByLocation(
+    list,
+    request.id,
+    reviewListOrder,
+    log
+  )
+}
+
 export async function listReviewsByStyle (
   list: (
     styleId: string,

@@ -16,6 +16,7 @@ import type { log } from '../../log'
 import type { Pagination } from '../../pagination';
 import { validateBeerId } from '../beer/validation';
 import { validateBreweryId } from '../brewery/validation';
+import { validateLocationId } from '../location/validation';
 import { validateStyleId } from '../style/validation';
 
 export async function createReview (
@@ -106,6 +107,23 @@ export async function listReviewsByBrewery (
   return await reviewService.listReviewsByBrewery(
     list,
     validateBreweryId(breweryId),
+    reviewListOrder,
+    log
+  )
+}
+
+export async function listReviewsByLocation (
+  list: (
+    locationId: string,
+    reviewListOrder: ReviewListOrder
+  ) => Promise<JoinedReview[]>,
+  locationId: string | undefined,
+  reviewListOrder: ReviewListOrder,
+  log: log
+): Promise<JoinedReview[]> {
+  return await reviewService.listReviewsByLocation(
+    list,
+    validateLocationId(locationId),
     reviewListOrder,
     log
   )

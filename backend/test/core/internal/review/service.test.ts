@@ -348,6 +348,22 @@ describe('review service unit tests', () => {
     expect(result).toEqual([joinedReview])
   })
 
+  it('list reviews by location', async () => {
+    const locationId = '714b123e-c6c1-4e1a-b6f8-0ce4e076520e'
+    const lister = async (listLocationId: string, listOrder: ReviewListOrder) => {
+      expect(listLocationId).toEqual(locationId)
+      expect(listOrder).toEqual(order)
+      return [joinedReview]
+    }
+    const result = await reviewService.listReviewsByLocation(
+      lister,
+      locationId,
+      order,
+      log
+    )
+    expect(result).toEqual([joinedReview])
+  })
+
   it('list reviews by style', async () => {
     const styleId = 'b265c454-6842-415b-840c-bfdb579aa658'
     const lister = async (listStyleId: string, listOrder: ReviewListOrder) => {

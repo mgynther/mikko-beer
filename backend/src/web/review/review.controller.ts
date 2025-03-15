@@ -173,6 +173,33 @@ export function reviewController (router: Router): void {
   )
 
   router.get(
+    '/api/v1/location/:locationId/review',
+    async (ctx) => {
+      const authTokenPayload = parseAuthToken(ctx)
+      const locationId: string | undefined = ctx.params.locationId
+      const reviewListOrder =
+        validateFilteredReviewListOrder(ctx.request.query)
+      const reviews = await reviewService.listReviewsByLocation(async (
+        locationId: string, reviewListOrder: ReviewListOrder
+      ) => (
+        await reviewRepository.listReviewsByLocation(
+          ctx.db, locationId, reviewListOrder)
+      ), {
+        authTokenPayload,
+        id: locationId
+      }, reviewListOrder, ctx.log)
+
+      ctx.body = {
+        reviews,
+        sorting: {
+          order: reviewListOrder.property,
+          direction: reviewListOrder.direction
+        }
+      }
+    }
+  )
+
+  router.get(
     '/api/v1/style/:styleId/review',
     async (ctx) => {
       const authTokenPayload = parseAuthToken(ctx)
