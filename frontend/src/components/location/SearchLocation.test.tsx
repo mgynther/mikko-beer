@@ -5,7 +5,10 @@ import SearchLocation from './SearchLocation'
 
 import type { SearchIf } from '../../core/search/types'
 import type { UseDebounce } from '../../core/types'
-import type { CreateLocationIf } from '../../core/location/types'
+import type {
+  CreateLocationIf,
+  CreateLocationRequest
+} from '../../core/location/types'
 
 const useDebounce: UseDebounce = str => str
 
@@ -50,6 +53,7 @@ test('selects location', async () => {
   const selector = vitest.fn()
   const { getByRole } = render(
     <SearchLocation
+      getConfirm={() => dontCall}
       isCreateEnabled={false}
       placeholderText={placeholderText}
       searchLocationIf={{
@@ -81,6 +85,7 @@ test('does not show create button with case-insensitive match', async () => {
   const selector = vitest.fn()
   const { getByRole, queryByRole } = render(
     <SearchLocation
+      getConfirm={() => dontCall}
       isCreateEnabled={false}
       placeholderText={placeholderText}
       searchLocationIf={{
@@ -110,6 +115,7 @@ test('shows no results when creating not enabled', async () => {
   const selector = vitest.fn()
   const { getByRole, getByText } = render(
     <SearchLocation
+      getConfirm={() => dontCall}
       isCreateEnabled={false}
       placeholderText={placeholderText}
       searchLocationIf={{
@@ -134,8 +140,10 @@ test('shows no results when creating not enabled', async () => {
 test('creates location', async () => {
   const user = userEvent.setup()
   const create = vitest.fn()
+  const select = vitest.fn()
   const { getByRole } = render(
     <SearchLocation
+      getConfirm={() => dontCall}
       isCreateEnabled={true}
       placeholderText={placeholderText}
       searchLocationIf={{
@@ -145,13 +153,16 @@ test('creates location', async () => {
         }),
         create: {
           useCreate: () => ({
-            create,
+            create: async (locationRequest: CreateLocationRequest) => {
+              create(locationRequest)
+              return location
+            },
             isLoading: false
           })
         }
       }}
       searchIf={activeSearch}
-      select={dontCall}
+      select={select}
     />
   )
 
@@ -166,4 +177,59 @@ test('creates location', async () => {
   expect(create.mock.calls).toEqual([[
     { name: location.name }
   ]])
+  expect(select.mock.calls).toEqual([[location]])
+})
+
+test('confirms creating location when partially matching result exists',
+     async () => {
+  const user = userEvent.setup()
+  const create = vitest.fn()
+  const select = vitest.fn()
+  const confirmCb = vitest.fn()
+  const { getByRole } = render(
+    <SearchLocation
+      getConfirm={() => (text: string) => {
+        confirmCb(text)
+        return true
+      }}
+      isCreateEnabled={true}
+      placeholderText={placeholderText}
+      searchLocationIf={{
+        useSearch: () => ({
+          search: async () => [{
+            id: '28a00180-5f00-4aa3-bd12-8f56b03a2606',
+            name: `${location.name}, Tampere`
+          }],
+          isLoading: false
+        }),
+        create: {
+          useCreate: () => ({
+            create: async (locationRequest: CreateLocationRequest) => {
+              create(locationRequest)
+              return location
+            },
+            isLoading: false
+          })
+        }
+      }}
+      searchIf={activeSearch}
+      select={select}
+    />
+  )
+
+  const input = getByRole('textbox')
+  expect(input).toBeDefined()
+  await user.type(input, location.name)
+
+  const createButton =
+    getByRole('button', { name: `Create "${location.name}"` })
+  expect(createButton).toBeDefined()
+  await user.click(createButton)
+  expect(confirmCb.mock.calls).toEqual([[
+    `Are you sure you want to create ${location.name}?`
+  ]])
+  expect(create.mock.calls).toEqual([[
+    { name: location.name }
+  ]])
+  expect(select.mock.calls).toEqual([[location]])
 })

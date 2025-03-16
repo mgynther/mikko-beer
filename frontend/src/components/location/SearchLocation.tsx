@@ -9,6 +9,7 @@ import type { SearchIf } from '../../core/search/types'
 import SearchBox, { nameFormatter } from '../common/SearchBox'
 
 export interface Props {
+  getConfirm: () => (text: string) => boolean
   isCreateEnabled: boolean
   placeholderText: string
   searchLocationIf: SearchLocationIf
@@ -71,7 +72,19 @@ function SearchLocation (props: Props): React.JSX.Element {
         setFilter={(filter: string) => { setFilter(filter) }}
         select={(location: Location) => {
           if (location.id === createId) {
-            void create({ name: debouncedFilter })
+            const doCreate = async (): Promise<void> => {
+              const createdLocation = await create({ name: debouncedFilter })
+              props.select(createdLocation)
+            }
+            if (resultsAndCreate.length > 1) {
+              const confirmQuestion =
+                `Are you sure you want to create ${debouncedFilter}?`
+              if (props.getConfirm()(confirmQuestion)) {
+                void doCreate()
+              }
+              return
+            }
+            void doCreate()
             return
           }
           props.select(location)
