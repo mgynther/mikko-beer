@@ -233,3 +233,42 @@ test('confirms creating location when partially matching result exists',
   ]])
   expect(select.mock.calls).toEqual([[location]])
 })
+
+test('sorts existing result before create new location', async () => {
+  const user = userEvent.setup()
+  const resultName = `${location.name}, Tampere`
+  const { getAllByRole, getByRole } = render(
+    <SearchLocation
+      getConfirm={() => dontCall}
+      isCreateEnabled={true}
+      placeholderText={placeholderText}
+      searchLocationIf={{
+        useSearch: () => ({
+          search: async () => [{
+            id: '0c6d96c9-7404-40f7-98b6-2400f8c29743',
+            name: resultName
+          }],
+          isLoading: false
+        }),
+        create: {
+          useCreate: () => ({
+            create: dontCall,
+            isLoading: false
+          })
+        }
+      }}
+      searchIf={activeSearch}
+      select={dontCall}
+    />
+  )
+
+  const input = getByRole('textbox')
+  expect(input).toBeDefined()
+  await user.type(input, location.name)
+
+  const resultButtons = getAllByRole('button', { name: /Huurre/ })
+  expect(resultButtons.map(item => item.innerHTML)).toEqual([
+    resultName,
+    `Create "${location.name}"`
+  ])
+})

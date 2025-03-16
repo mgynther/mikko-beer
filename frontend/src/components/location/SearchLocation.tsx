@@ -66,6 +66,11 @@ function SearchLocation (props: Props): React.JSX.Element {
       <SearchBox
         currentFilter={filter}
         currentOptions={resultsAndCreate}
+        customSort={(a: Location, b: Location) => {
+          if (a.id === createId) return 1
+          if (b.id === createId) return -1
+          return 0
+        }}
         formatter={nameFormatter}
         isLoading={isLoading}
         searchIf={props.searchIf}

@@ -45,6 +45,7 @@ function SearchBrewery (props: Props): React.JSX.Element {
       <SearchBox
         currentFilter={filter}
         currentOptions={results}
+        customSort={undefined}
         formatter={nameFormatter}
         isLoading={isLoading}
         searchIf={props.searchIf}

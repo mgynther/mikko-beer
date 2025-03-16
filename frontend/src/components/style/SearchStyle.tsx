@@ -32,6 +32,7 @@ function SearchStyle (props: Props): React.JSX.Element {
       <SearchBox
         currentFilter={filter}
         currentOptions={filteredStyles}
+        customSort={undefined}
         formatter={nameFormatter}
         isLoading={isLoading}
         searchIf={props.searchIf}

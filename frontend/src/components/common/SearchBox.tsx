@@ -16,6 +16,7 @@ export interface Props<T extends SearchBoxItem> {
   searchIf: SearchIf
   currentFilter: string
   currentOptions: T[]
+  customSort: ((a: T, b: T) => number) | undefined
   formatter: (item: T) => string
   isLoading: boolean
   setFilter: (filter: string) => void
@@ -28,6 +29,7 @@ const maxResultCount = 10
 const SearchBox = <T extends SearchBoxItem>({
   currentFilter,
   currentOptions,
+  customSort,
   formatter,
   isLoading,
   searchIf,
@@ -38,6 +40,12 @@ const SearchBox = <T extends SearchBoxItem>({
   const inputRef = useRef<HTMLInputElement>(null)
   const { activate, isActive } = searchIf.useSearch()
   const sortedOptions = [...currentOptions].sort((a, b) => {
+    if (customSort !== undefined) {
+      const result = customSort(a, b)
+      if (result !== 0) {
+        return result
+      }
+    }
     const filter = currentFilter.toLowerCase()
     const aName = a.name.toLowerCase()
     const bName = b.name.toLowerCase()

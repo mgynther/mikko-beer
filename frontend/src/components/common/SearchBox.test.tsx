@@ -8,6 +8,10 @@ import { loadingIndicatorText } from './LoadingIndicator'
 import type { SearchIf } from '../../core/search/types'
 import type { UseDebounce } from '../../core/types'
 
+const dontCall = (): any => {
+  throw new Error('must not be called')
+}
+
 const useDebounce: UseDebounce = str => str
 
 const passiveSearch: SearchIf = {
@@ -30,6 +34,7 @@ const defaultProps: Props<SearchBoxItem> = {
   searchIf: passiveSearch,
   currentFilter: '',
   currentOptions: [],
+  customSort: undefined,
   formatter: (item: SearchBoxItem) => item.name,
   isLoading: false,
   setFilter: () => undefined,
@@ -260,4 +265,54 @@ test('shows loading indicator', async () => {
   )
   const loadingText = getByText(loadingIndicatorText)
   expect(loadingText).toBeDefined()
+})
+
+test('sorts results', async () => {
+  const { getAllByRole } = render(
+    <SearchBox
+      { ...defaultProps }
+      searchIf={activeSearch}
+      currentFilter={'M'}
+      currentOptions={[
+        {
+          id: '1',
+          name: 'item b'
+        },
+        {
+          id: '2',
+          name: 'item a'
+        }
+      ]}
+      select={dontCall}
+    />
+  )
+  const itemButtons = getAllByRole('button', { name: /item/ })
+  expect(itemButtons.map(item => item.innerHTML)).toEqual(['item a', 'item b'])
+})
+
+test('custom sorts results', async () => {
+  const { getAllByRole } = render(
+    <SearchBox
+      { ...defaultProps }
+      customSort={(a: SearchBoxItem, b: SearchBoxItem) =>
+        -1 * a.name.localeCompare(b.name)
+      }
+      searchIf={activeSearch}
+      currentFilter={'M'}
+      currentOptions={[
+        {
+          id: '1',
+          name: 'item b'
+        },
+        {
+          id: '2',
+          name: 'item a'
+        }
+      ]}
+      select={dontCall}
+    />
+  )
+  const itemButtons = getAllByRole('button', { name: /item/ })
+  expect(itemButtons.length).toEqual(2)
+  expect(itemButtons.map(item => item.innerHTML)).toEqual(['item b', 'item a'])
 })

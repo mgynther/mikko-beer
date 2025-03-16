@@ -47,6 +47,7 @@ function SearchBeer (props: Props): React.JSX.Element {
       <SearchBox
         currentFilter={filter}
         currentOptions={results}
+        customSort={undefined}
         formatter={(beer: Beer) => {
           const breweryStr = joinSortedNames(beer.breweries)
           return `${beer.name} (${breweryStr})`
