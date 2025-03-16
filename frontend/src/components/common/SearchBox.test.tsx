@@ -290,6 +290,32 @@ test('sorts results', async () => {
   expect(itemButtons.map(item => item.innerHTML)).toEqual(['item a', 'item b'])
 })
 
+test('sorts results starting with filter', async () => {
+  const { getAllByRole } = render(
+    <SearchBox
+      { ...defaultProps }
+      searchIf={activeSearch}
+      currentFilter={'lag'}
+      currentOptions={[
+        {
+          id: '1',
+          name: 'American lager'
+        },
+        {
+          id: '2',
+          name: 'Lager'
+        }
+      ]}
+      select={dontCall}
+    />
+  )
+  const itemButtons = getAllByRole('button', { name: /lager/i })
+  expect(itemButtons.map(item => item.innerHTML)).toEqual([
+    'Lager',
+    'American lager'
+  ])
+})
+
 test('custom sorts results', async () => {
   const { getAllByRole } = render(
     <SearchBox

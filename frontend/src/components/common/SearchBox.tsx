@@ -52,6 +52,10 @@ const SearchBox = <T extends SearchBoxItem>({
     if (aName === bName) return 0
     if (aName === filter) return -1
     if (bName === filter) return 1
+    const startsWithA = aName.startsWith(filter)
+    const startsWithB = bName.startsWith(filter)
+    if (startsWithA && !startsWithB) return -1
+    if (!startsWithA && startsWithB) return 1
     return aName.localeCompare(bName)
   })
   const visibleOptions = currentFilter.length === 0
