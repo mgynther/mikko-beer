@@ -30,12 +30,10 @@ function Reviews (props: Props): React.JSX.Element {
     props.listReviewsIf.useList()
 
   function setOrder (order: ReviewSortingOrder): void {
-    setLoadedReviews([])
     doSetOrder(order)
   }
 
   function setDirection (direction: ListDirection): void {
-    setLoadedReviews([])
     doSetDirection(direction)
   }
 
@@ -47,6 +45,14 @@ function Reviews (props: Props): React.JSX.Element {
       setDirection(reviewSorting.direction)
     }
   }
+
+  const reloadString = JSON.stringify({
+    direction,
+    order
+  })
+  useEffect(() => {
+    setLoadedReviews([])
+  }, [reloadString])
 
   const reviewArray = reviewList === undefined
     ? []
