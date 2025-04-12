@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import type {
   BreweryStatsSortingOrder,
@@ -71,7 +71,6 @@ function Brewery (props: Props): React.JSX.Element {
     converter: (value: number) => string
   ) {
     return (value: number) => {
-      setLoadedBreweries(undefined)
       const newState: Record<string, string> = getCurrentState()
       newState[key] = converter(value)
       props.setState(newState)
@@ -108,8 +107,16 @@ function Brewery (props: Props): React.JSX.Element {
     }
   }
 
-  function changeSortingOrder (property: BreweryStatsSortingOrder): void {
+  const searchString = JSON.stringify({
+    filters,
+    sortingDirection,
+    sortingOrder
+  })
+  useEffect(() => {
     setLoadedBreweries(undefined)
+  }, [searchString])
+
+  function changeSortingOrder (property: BreweryStatsSortingOrder): void {
     if (sortingOrder === property) {
       props.setState({
         ...getCurrentState(),
