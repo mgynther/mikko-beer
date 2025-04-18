@@ -19,7 +19,7 @@ export function locationController (router: Router): void {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const { body } = ctx.request
 
-      const result = await ctx.db.executeTransaction(
+      const result = await ctx.db.executeReadWriteTransaction(
         async (trx) => await locationService.createLocation(
           async (
             location: CreateLocationRequest
@@ -45,7 +45,7 @@ export function locationController (router: Router): void {
       const { body } = ctx.request
       const locationId: string | undefined = ctx.params.locationId
 
-      const result = await ctx.db.executeTransaction(
+      const result = await ctx.db.executeReadWriteTransaction(
         async (trx) => await locationService.updateLocation(
           async (location: Location) =>
             await locationRepository.updateLocation(trx, location),

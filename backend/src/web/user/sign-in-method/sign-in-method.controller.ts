@@ -30,7 +30,9 @@ export function signInMethodController (router: Router): void {
   router.post('/api/v1/user/sign-in', async (ctx) => {
     const { body } = ctx.request
 
-    const signedInUser = await ctx.db.executeTransaction(async (trx) => {
+    const signedInUser = await ctx.db.executeReadWriteTransaction(async (
+      trx
+    ) => {
       const signInUsingPasswordIf: SignInUsingPasswordIf = {
         lockUserByUsername: async function(
           username: string
@@ -68,7 +70,7 @@ export function signInMethodController (router: Router): void {
 
       const authTokenConfig: AuthTokenConfig = getAuthTokenConfig(ctx)
 
-      const tokens = await ctx.db.executeTransaction(async (trx) => {
+      const tokens = await ctx.db.executeReadWriteTransaction(async (trx) => {
         const refreshTokensIf: RefreshTokensIf = {
           lockUserById: async (userId: string) =>
             await userRepository.lockUserById(trx, userId),
@@ -138,7 +140,7 @@ export function signInMethodController (router: Router): void {
       const { body } = ctx.request
       const userId: string | undefined = ctx.params.userId
 
-      await ctx.db.executeTransaction(async (trx) => {
+      await ctx.db.executeReadWriteTransaction(async (trx) => {
         const changePasswordUserIf: ChangePasswordUserIf = {
           lockUserById: async (userId: string) =>
             await userRepository.lockUserById(trx, userId),

@@ -14,7 +14,9 @@ describe('location tests', () => {
   afterEach(ctx.afterEach)
 
   it('find location by id', async () => {
-    const location = await ctx.db.executeTransaction(async (trx: Transaction) => {
+    const location = await ctx.db.executeReadWriteTransaction(async (
+      trx: Transaction
+    ) => {
       return await locationRepository.insertLocation(
         trx,
         { name: 'Huurre' }
@@ -28,13 +30,17 @@ describe('location tests', () => {
   })
 
   it('update location', async () => {
-    const location = await ctx.db.executeTransaction(async (trx: Transaction) => {
+    const location = await ctx.db.executeReadWriteTransaction(async (
+      trx: Transaction
+    ) => {
       return await locationRepository.insertLocation(
         trx,
         { name: 'Plenva' }
       )
     })
-    const updated = await ctx.db.executeTransaction(async (trx: Transaction) => {
+    const updated = await ctx.db.executeReadWriteTransaction(async (
+      trx: Transaction
+    ) => {
       return await locationRepository.updateLocation(
         trx,
         {
@@ -50,14 +56,16 @@ describe('location tests', () => {
   })
 
   it('lock only location that exists', async () => {
-    const location = await ctx.db.executeTransaction(async (trx: Transaction) => {
+    const location = await ctx.db.executeReadWriteTransaction(async (
+      trx: Transaction
+    ) => {
       return await locationRepository.insertLocation(
         trx,
         { name: 'Oluthuone Panimomestari' }
       )
     })
     const dummyId = '7609cc26-f765-4d7e-983b-bed4a8e67c54'
-    await ctx.db.executeTransaction(async (trx: Transaction) => {
+    await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
       const lockedKeys = await locationRepository.lockLocations(
         trx,
         [location.id, dummyId]
@@ -67,7 +75,7 @@ describe('location tests', () => {
   })
 
   it('list locations', async () => {
-    const location = await ctx.db.executeTransaction(async (
+    const location = await ctx.db.executeReadWriteTransaction(async (
       trx: Transaction
     ) => {
       return await locationRepository.insertLocation(
@@ -86,7 +94,9 @@ describe('location tests', () => {
   })
 
   it('search locations', async () => {
-    const location = await ctx.db.executeTransaction(async (trx: Transaction) => {
+    const location = await ctx.db.executeReadWriteTransaction(async (
+      trx: Transaction
+    ) => {
       return await locationRepository.insertLocation(
         trx,
         { name: 'Kahdet kasvot' }

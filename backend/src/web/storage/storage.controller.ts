@@ -23,7 +23,7 @@ export function storageController (router: Router): void {
       const authTokenPayload = parseAuthToken(ctx)
       const { body } = ctx.request
 
-      const result = await ctx.db.executeTransaction(async (trx) => {
+      const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
         const createIf: CreateIf = {
           insertStorage: async (
               createStorageRequest: CreateStorageRequest
@@ -54,7 +54,7 @@ export function storageController (router: Router): void {
       const { body } = ctx.request
       const storageId: string | undefined = ctx.params.storageId
 
-      const result = await ctx.db.executeTransaction(async (trx) => {
+      const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
         const updateIf: UpdateIf = {
           updateStorage: async (
             storage: Storage
@@ -85,7 +85,7 @@ export function storageController (router: Router): void {
       const authTokenPayload = parseAuthToken(ctx)
       const storageId: string | undefined = ctx.params.storageId
 
-      await ctx.db.executeTransaction(async (trx) => {
+      await ctx.db.executeReadWriteTransaction(async (trx) => {
         const deleteStorage: (id: string) => Promise<void> = async (
           storageId: string
           ) => { await storageRepository.deleteStorageById(trx, storageId); }

@@ -100,7 +100,7 @@ export class App {
           logWithAdminPassword('No users. Creating initial admin')
           const adminUsername = uuidv4()
           const adminPassword = uuidv4()
-          createPromise = db.executeTransaction(async (trx) => {
+          createPromise = db.executeReadWriteTransaction(async (trx) => {
             const authTokenConfig: AuthTokenConfig ={
               secret: this.#config.authTokenSecret,
               expiryDurationMin: this.#config.authTokenExpiryDurationMin

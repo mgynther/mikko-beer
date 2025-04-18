@@ -20,7 +20,7 @@ describe('storage tests', () => {
   afterEach(ctx.afterEach)
 
   async function createStorage(): Promise<StorageWithDate> {
-    return await ctx.db.executeTransaction(async (
+    return await ctx.db.executeReadWriteTransaction(async (
       trx: Transaction
     ): Promise<StorageWithDate> => {
       const brewery = await breweryRepository.insertBrewery(
@@ -69,7 +69,7 @@ describe('storage tests', () => {
 
   it('lock storage that exists', async () => {
     const storage = await createStorage()
-    await ctx.db.executeTransaction(async (trx: Transaction) => {
+    await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
       const lockedKey = await storageRepository.lockStorage(
         trx,
         storage.id
@@ -90,7 +90,7 @@ describe('storage tests', () => {
   it('storages have reviews', async () => {
     const noReviewStorage = await createStorage()
     const { data } = await insertMultipleReviews(5, ctx.db)
-    await ctx.db.executeTransaction(async (trx: Transaction) => {
+    await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
       await storageRepository.insertStorage(
         trx,
         {
@@ -127,7 +127,7 @@ describe('storage tests', () => {
     const createdStorage =
       await storageRepository.findStorageById(ctx.db, storage.id)
     expect(createdStorage).not.toEqual(undefined)
-    await ctx.db.executeTransaction(async (trx: Transaction) => {
+    await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
       await storageRepository.deleteStorageById(
         trx,
         storage.id
@@ -140,7 +140,7 @@ describe('storage tests', () => {
 
   it('do not lock storage that does not exists', async () => {
     const dummyId = 'a3386d9d-cf3f-4ae9-9101-493a117a5458'
-    await ctx.db.executeTransaction(async (trx: Transaction) => {
+    await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
       const lockedKey = await storageRepository.lockStorage(
         trx,
         dummyId

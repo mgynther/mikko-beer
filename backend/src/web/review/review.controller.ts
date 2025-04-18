@@ -33,7 +33,7 @@ export function reviewController (router: Router): void {
         storage.length > 0
         ? storage
         : undefined
-      const result = await ctx.db.executeTransaction(async (trx) => {
+      const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
         const createIf: CreateIf = {
           createReview: async (
             review: NewReview
@@ -73,7 +73,7 @@ export function reviewController (router: Router): void {
       const { body } = ctx.request
       const reviewId: string | undefined = ctx.params.reviewId
 
-      const result = await ctx.db.executeTransaction(async (trx) => {
+      const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
         const updateIf: UpdateIf = {
           updateReview: async (
             review: Review

@@ -43,7 +43,9 @@ export async function insertData(trx: Transaction): Promise<InsertedData> {
     beer: otherBeer.id,
     brewery: otherBrewery.id
   }
-  await beerRepository.insertBeerBreweries(trx, [beerBreweryRequest, otherBeerBreweryRequest])
+  await beerRepository.insertBeerBreweries(
+    trx, [beerBreweryRequest, otherBeerBreweryRequest]
+  )
   const beerStyleRequest = {
     beer: beer.id,
     style: style.id,
@@ -52,7 +54,9 @@ export async function insertData(trx: Transaction): Promise<InsertedData> {
     beer: otherBeer.id,
     style: otherStyle.id,
   }
-  await beerRepository.insertBeerStyles(trx, [beerStyleRequest, otherBeerStyleRequest])
+  await beerRepository.insertBeerStyles(
+    trx, [beerStyleRequest, otherBeerStyleRequest]
+  )
   const containerRequest = {
     size: '0.50',
     type: 'bottle'
@@ -95,7 +99,7 @@ export async function insertMultipleReviews(
 ): Promise<{ reviews: Review[], data: InsertedData }> {
   const reviews: Review[] = []
   let data: InsertedData | undefined = undefined
-  await db.executeTransaction(async (trx: Transaction) => {
+  await db.executeReadWriteTransaction(async (trx: Transaction) => {
     data = await insertData(trx)
     const {
       beer,

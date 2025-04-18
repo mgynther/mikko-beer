@@ -20,7 +20,7 @@ export function styleController (router: Router): void {
       const authTokenPayload = parseAuthToken(ctx)
       const { body } = ctx.request
 
-      const result = await ctx.db.executeTransaction(async (trx) => {
+      const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
         const createIf: CreateStyleIf = {
           create: async (
             style: NewStyle
@@ -49,7 +49,7 @@ export function styleController (router: Router): void {
       const { body } = ctx.request
       const styleId: string | undefined = ctx.params.styleId
 
-      const result = await ctx.db.executeTransaction(async (trx) => {
+      const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
         const updateIf: UpdateStyleIf = {
           update: async (
             style: Style

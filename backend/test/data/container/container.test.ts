@@ -14,7 +14,9 @@ describe('container tests', () => {
   afterEach(ctx.afterEach)
 
   it('lock container that exists', async () => {
-    const container = await ctx.db.executeTransaction(async (trx: Transaction) => {
+    const container = await ctx.db.executeReadWriteTransaction(async (
+      trx: Transaction
+    ) => {
       return await containerRepository.insertContainer(
         trx,
         {
@@ -23,7 +25,7 @@ describe('container tests', () => {
         }
       )
     })
-    await ctx.db.executeTransaction(async (trx: Transaction) => {
+    await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
       const lockedKey = await containerRepository.lockContainer(
         trx,
         container.id
@@ -34,7 +36,7 @@ describe('container tests', () => {
 
   it('do not lock container that does not exists', async () => {
     const dummyId = '296bc6bb-f250-4cb3-9e66-a54257c2e0ab'
-    await ctx.db.executeTransaction(async (trx: Transaction) => {
+    await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
       const lockedKey = await containerRepository.lockContainer(
         trx,
         dummyId

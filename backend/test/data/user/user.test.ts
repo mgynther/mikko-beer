@@ -21,7 +21,7 @@ describe('user tests', () => {
   }
 
   async function insertUser(): Promise<User> {
-    return await ctx.db.executeTransaction(async (trx) => {
+    return await ctx.db.executeReadWriteTransaction(async (trx) => {
       return await userRepository.insertUser(trx, { ...user })
     })
   }
@@ -77,7 +77,7 @@ describe('user tests', () => {
     // slowing the test down. The delay value is multiplied to achieve desired
     // execution order in the setup phase.
     const delayMs = 50
-    const rename1Promise = ctx.db.executeTransaction(async (trx) => {
+    const rename1Promise = ctx.db.executeReadWriteTransaction(async (trx) => {
       expectRenames(false, false)
       const lockedUser = await lockFunc(trx, lockStr)
       // Getting lock before either rename is in progress is essential for the
@@ -96,7 +96,7 @@ describe('user tests', () => {
         }, delayMs * 2);
       });
     })
-    const rename2Promise = ctx.db.executeTransaction(async (trx2) => {
+    const rename2Promise = ctx.db.executeReadWriteTransaction(async (trx2) => {
       return new Promise((resolve) => {
         setTimeout(function() {
           expectRenames(false, false)
@@ -138,7 +138,7 @@ describe('user tests', () => {
   it('set user username', async () => {
     const insertedUser = await insertUser()
     const username = 'another username'
-    await ctx.db.executeTransaction(async (trx) => {
+    await ctx.db.executeReadWriteTransaction(async (trx) => {
       userRepository.setUserUsername(trx, insertedUser.id, username)
     })
     const foundUser = await userRepository.findUserById(
@@ -149,7 +149,7 @@ describe('user tests', () => {
 
   it('delete user', async () => {
     const insertedUser = await insertUser()
-    await ctx.db.executeTransaction(async (trx) => {
+    await ctx.db.executeReadWriteTransaction(async (trx) => {
       userRepository.deleteUserById(trx, insertedUser.id)
     })
     const foundUser = await userRepository.findUserById(

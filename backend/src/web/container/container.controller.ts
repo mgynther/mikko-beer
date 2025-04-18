@@ -16,7 +16,7 @@ export function containerController (router: Router): void {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const { body } = ctx.request
 
-      const result = await ctx.db.executeTransaction(
+      const result = await ctx.db.executeReadWriteTransaction(
         async (trx) => await containerService.createContainer(
           async (
             container: CreateContainerRequest
@@ -41,7 +41,7 @@ export function containerController (router: Router): void {
       const { body } = ctx.request
       const containerId: string | undefined = ctx.params.containerId
 
-      const result = await ctx.db.executeTransaction(
+      const result = await ctx.db.executeReadWriteTransaction(
         async (trx) => await containerService.updateContainer(
           async (container: Container) =>
             await containerRepository.updateContainer(trx, container),

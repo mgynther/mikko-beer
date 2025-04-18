@@ -20,7 +20,7 @@ export function beerController (router: Router): void {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const { body } = ctx.request
 
-      const result = await ctx.db.executeTransaction(async (trx) => {
+      const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
         const createIf: CreateIf = {
           create: async (beer: NewBeer) =>
             await beerRepository.insertBeer(trx, beer),
@@ -52,7 +52,7 @@ export function beerController (router: Router): void {
       const { body } = ctx.request
       const beerId: string | undefined = ctx.params.beerId
 
-      const result = await ctx.db.executeTransaction(async (trx) => {
+      const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
         const updateIf: UpdateIf = {
           update: async (beer: Beer) =>
             await beerRepository.updateBeer(trx, beer),

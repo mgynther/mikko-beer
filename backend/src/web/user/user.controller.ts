@@ -30,7 +30,7 @@ export function userController (router: Router, config: Config): void {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const { body } = ctx.request
 
-      const result = await ctx.db.executeTransaction(async (trx) => {
+      const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
         const authTokenConfig: AuthTokenConfig = {
           secret: config.authTokenSecret,
           expiryDurationMin: config.authTokenExpiryDurationMin
@@ -110,7 +110,7 @@ export function userController (router: Router, config: Config): void {
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const userId: string | undefined = ctx.params.userId
-      await ctx.db.executeTransaction(async (trx) => {
+      await ctx.db.executeReadWriteTransaction(async (trx) => {
         await userService.deleteUserById(
           async (userId: string) => {
             await userRepository.deleteUserById(trx, userId);

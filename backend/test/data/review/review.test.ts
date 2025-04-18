@@ -41,7 +41,7 @@ describe('review tests', () => {
   }
 
   it('insert a review', async () => {
-    await ctx.db.executeTransaction(async (trx) => {
+    await ctx.db.executeReadWriteTransaction(async (trx) => {
       const { beer, container, location } = await insertData(trx)
       const reviewRequest = {
         beer: beer.id,
@@ -200,7 +200,11 @@ describe('review tests', () => {
     )
   })
 
-  async function listReviewsByBeer(db: Database, beerId: string, reviewListOrder: ReviewListOrder) {
+  async function listReviewsByBeer(
+    db: Database,
+    beerId: string,
+    reviewListOrder: ReviewListOrder
+  ) {
     return await reviewRepository.listReviewsByBeer(
       db,
       beerId,
@@ -254,7 +258,11 @@ describe('review tests', () => {
     testFilteredList(reviews, list, toTime, descendingDates, data.otherBeer.id)
   })
 
-  async function listReviewsByBrewery(db: Database, breweryId: string, reviewListOrder: ReviewListOrder) {
+  async function listReviewsByBrewery(
+    db: Database,
+    breweryId: string,
+    reviewListOrder: ReviewListOrder
+  ) {
     return await reviewRepository.listReviewsByBrewery(
       db,
       breweryId,
@@ -337,7 +345,11 @@ describe('review tests', () => {
     testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.id)
   })
 
-  async function listReviewsByStyle(db: Database, styleId: string, reviewListOrder: ReviewListOrder) {
+  async function listReviewsByStyle(
+    db: Database,
+    styleId: string,
+    reviewListOrder: ReviewListOrder
+  ) {
     return await reviewRepository.listReviewsByStyle(
       db,
       styleId,

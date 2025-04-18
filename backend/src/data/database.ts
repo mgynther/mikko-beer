@@ -72,11 +72,11 @@ export class Database {
     await this.internalDb.destroy()
   }
 
-  async executeTransaction<T>(
+  async executeReadWriteTransaction<T>(
     cb: (trx: Transaction) => Promise<T>
   ): Promise<T> {
     const db = this.internalDb
-    return await db.transaction().execute(
+    return await db.transaction().setAccessMode('read write').execute(
       async (trx) => await cb(new Transaction(trx))
     )
   }
