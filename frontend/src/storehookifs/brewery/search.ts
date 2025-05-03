@@ -1,5 +1,6 @@
 import type { SearchBreweryIf } from "../../core/brewery/types"
 import { useLazySearchBreweriesQuery } from "../../store/brewery/api"
+import { validateBreweryList } from "../../validation/brewery"
 
 const searchBrewery: () => SearchBreweryIf = () => {
   const searchBreweryIf: SearchBreweryIf = {
@@ -11,7 +12,7 @@ const searchBrewery: () => SearchBreweryIf = () => {
       return {
         search: async (name: string) => {
           const result = await searchBrewery(name).unwrap()
-          return result.breweries
+          return validateBreweryList(result).breweries
         },
         isLoading: isFetching
       }

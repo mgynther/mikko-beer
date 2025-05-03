@@ -4,6 +4,7 @@ import type {
   CreateBreweryRequest
 } from "../../core/brewery/types"
 import { useCreateBreweryMutation } from "../../store/brewery/api"
+import { validateBrewery } from "../../validation/brewery"
 
 const createBrewery: () => CreateBreweryIf = () => {
   const createBreweryIf: CreateBreweryIf = {
@@ -17,7 +18,7 @@ const createBrewery: () => CreateBreweryIf = () => {
           breweryRequest: CreateBreweryRequest
         ): Promise<Brewery> => {
           const result = await createBrewery(breweryRequest).unwrap()
-          return result.brewery
+          return validateBrewery(result.brewery)
         },
         isLoading
       }
