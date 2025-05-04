@@ -1,5 +1,6 @@
 import type { CreateStyleIf, CreateStyleRequest } from "../../core/style/types"
 import { useCreateStyleMutation } from "../../store/style/api"
+import { validateStyleOrUndefined } from "../../validation/style"
 
 const createStyle: () => CreateStyleIf = () => {
   const createStyleIf: CreateStyleIf = {
@@ -12,7 +13,7 @@ const createStyle: () => CreateStyleIf = () => {
         create: async (style: CreateStyleRequest) => {
           await createStyle(style)
         },
-        createdStyle: data?.style,
+        createdStyle: validateStyleOrUndefined(data?.style),
         hasError: isError,
         isLoading,
         isSuccess
