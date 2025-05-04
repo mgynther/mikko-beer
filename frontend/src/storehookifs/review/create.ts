@@ -6,6 +6,7 @@ import type {
   ReviewRequestWrapper
 } from "../../core/review/types"
 import { useCreateReviewMutation } from "../../store/review/api"
+import { validateReviewOrUndefined } from "../../validation/review"
 
 type GetCurrentDate = () => Date
 
@@ -30,7 +31,7 @@ const createReview: (
         },
         isLoading,
         isSuccess,
-        review: data?.review
+        review: validateReviewOrUndefined(data?.review)
       }
     },
     getCurrentDate,

@@ -4,7 +4,7 @@ import { isLeft } from 'fp-ts/Either'
 import type { Location, LocationList } from '../core/location/types'
 import { formatError } from './format-error'
 
-const ValidatedLocation = t.type({
+export const ValidatedLocation = t.type({
   id: t.string,
   name: t.string
 })

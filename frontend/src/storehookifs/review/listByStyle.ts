@@ -3,13 +3,14 @@ import type {
   ListReviewsByIf
 } from "../../core/review/types"
 import { useListReviewsByStyleQuery } from "../../store/review/api"
+import { validateJoinedReviewListOrUndefined } from "../../validation/review"
 
 const listReviewsByStyle: () => ListReviewsByIf = () => {
   const listReviewsByStyleIf: ListReviewsByIf = {
     useList: (params: FilteredListReviewParams) => {
       const { data, isLoading } = useListReviewsByStyleQuery(params)
       return {
-        reviews: data,
+        reviews: validateJoinedReviewListOrUndefined(data),
         isLoading
       }
     }
