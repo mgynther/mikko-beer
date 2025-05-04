@@ -1,5 +1,6 @@
 import type { CreateUserIf, CreateUserRequest } from "../../core/user/types"
 import { useCreateUserMutation } from "../../store/user/api"
+import { validateUserOrUndefined } from "../../validation/user"
 
 const createUser: () => CreateUserIf = () => {
   const createUserIf: CreateUserIf = {
@@ -16,7 +17,7 @@ const createUser: () => CreateUserIf = () => {
         create: async (user: CreateUserRequest) => {
           await createUser(user)
         },
-        user: createdUserData?.user,
+        user: validateUserOrUndefined(createdUserData?.user),
         hasError: createUserError !== undefined,
         isLoading: isCreatingUser
       }
