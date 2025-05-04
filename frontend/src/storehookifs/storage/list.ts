@@ -1,5 +1,6 @@
 import type { DeleteStorageIf, ListStoragesIf } from "../../core/storage/types"
 import { useListStoragesQuery } from "../../store/storage/api"
+import { validateStorageListOrUndefined } from "../../validation/storage"
 
 const listStorages: (
   deleteStorageIf: DeleteStorageIf
@@ -10,7 +11,7 @@ const listStorages: (
     useList: () => {
       const { data, isLoading } = useListStoragesQuery()
       return {
-        storages: data,
+        storages: validateStorageListOrUndefined(data),
         isLoading
       }
     },

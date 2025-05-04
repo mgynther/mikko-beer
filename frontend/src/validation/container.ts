@@ -4,7 +4,7 @@ import { isLeft } from 'fp-ts/Either'
 import type { Container, ContainerList } from '../core/container/types'
 import { formatError } from './format-error'
 
-const ValidatedContainer = t.type({
+export const ValidatedContainer = t.type({
   id: t.string,
   type: t.string,
   size: t.string

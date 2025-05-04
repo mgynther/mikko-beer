@@ -3,6 +3,7 @@ import type {
   ListStoragesByIf
 } from "../../core/storage/types"
 import { useListStoragesByBreweryQuery } from "../../store/storage/api"
+import { validateStorageListOrUndefined } from "../../validation/storage"
 
 const listStoragesByBrewery: (
   deleteStorageIf: DeleteStorageIf
@@ -13,7 +14,7 @@ const listStoragesByBrewery: (
     useList: (breweryId: string) => {
       const { data, isLoading } = useListStoragesByBreweryQuery(breweryId)
       return {
-        storages: data,
+        storages: validateStorageListOrUndefined(data),
         isLoading
       }
     },
