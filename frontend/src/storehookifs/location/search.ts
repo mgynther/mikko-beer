@@ -3,6 +3,7 @@ import type {
   SearchLocationIf
 } from "../../core/location/types"
 import { useLazySearchLocationsQuery } from "../../store/location/api"
+import { validateLocationList } from "../../validation/location"
 
 const searchLocation: (
   create: CreateLocationIf
@@ -16,7 +17,7 @@ const searchLocation: (
       return {
         search: async (name: string) => {
           const result = await searchLocation(name).unwrap()
-          return result.locations
+          return validateLocationList(result).locations
         },
         isLoading: isFetching
       }

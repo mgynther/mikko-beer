@@ -2,6 +2,10 @@ import { infiniteScroll } from "../../components/util"
 import type { ListLocationsIf } from "../../core/location/types"
 import type { Pagination } from "../../core/types"
 import { useLazyListLocationsQuery } from "../../store/location/api"
+import {
+  validateLocationList,
+  validateLocationListOrUndefined
+} from "../../validation/location"
 
 const listLocations: () => ListLocationsIf = () => {
   const listLocationsIf: ListLocationsIf = {
@@ -9,10 +13,10 @@ const listLocations: () => ListLocationsIf = () => {
       const [trigger, { data, isFetching, isUninitialized } ] =
         useLazyListLocationsQuery()
       return {
-        locationList: data,
+        locationList: validateLocationListOrUndefined(data),
         list: async (pagination: Pagination) => {
           const result = await trigger(pagination).unwrap()
-          return result
+          return validateLocationList(result)
         },
         isLoading: isFetching,
         isUninitialized

@@ -4,6 +4,7 @@ import type {
   CreateLocationRequest
 } from "../../core/location/types"
 import { useCreateLocationMutation } from "../../store/location/api"
+import { validateLocation } from "../../validation/location"
 
 const createLocation: () => CreateLocationIf = () => {
   const createLocationIf: CreateLocationIf = {
@@ -17,7 +18,7 @@ const createLocation: () => CreateLocationIf = () => {
           locationRequest: CreateLocationRequest
         ): Promise<Location> => {
           const result = await createLocation(locationRequest).unwrap()
-          return result.location
+          return validateLocation(result.location)
         },
         isLoading
       }
