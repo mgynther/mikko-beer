@@ -4,7 +4,7 @@ import { isLeft } from 'fp-ts/Either'
 import type { Brewery, BreweryList } from '../core/brewery/types'
 import { formatError } from './format-error'
 
-const ValidatedBrewery = t.type({
+export const ValidatedBrewery = t.type({
   id: t.string,
   name: t.string
 })

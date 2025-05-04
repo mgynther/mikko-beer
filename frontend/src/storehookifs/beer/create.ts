@@ -5,6 +5,7 @@ import type {
   EditBeerIf
 } from "../../core/beer/types"
 import { useCreateBeerMutation } from "../../store/beer/api"
+import { validateBeerWithIds } from "../../validation/beer"
 
 const createBeer: (editBeerIf: EditBeerIf) => CreateBeerIf = (
   editBeerIf: EditBeerIf
@@ -22,7 +23,7 @@ const createBeer: (editBeerIf: EditBeerIf) => CreateBeerIf = (
           const result = await createBeer({
             ...beerRequest
           }).unwrap()
-          return result.beer
+          return validateBeerWithIds(result.beer)
         },
         isLoading
       }

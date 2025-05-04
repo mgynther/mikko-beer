@@ -8,7 +8,7 @@ import type {
 } from '../core/style/types'
 import { formatError } from './format-error'
 
-const ValidatedStyle = t.type({
+export const ValidatedStyle = t.type({
   id: t.string,
   name: t.string
 })
