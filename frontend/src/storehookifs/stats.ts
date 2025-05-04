@@ -16,6 +16,15 @@ import {
   useLazyGetBreweryStatsQuery,
   useLazyGetLocationStatsQuery
 } from "../store/stats/api"
+import {
+  validateAnnualStatsOrUndefined,
+  validateBreweryStatsOrUndefined,
+  validateContainerStatsOrUndefined,
+  validateLocationStatsOrUndefined,
+  validateOverallStatsOrUndefined,
+  validateRatingStatsOrUndefined,
+  validateStyleStatsOrUndefined
+} from "../validation/stats"
 
 const stats: (
   infiniteScroll: InfiniteScroll,
@@ -30,7 +39,7 @@ const stats: (
       useStats: (params: IdParams) => {
         const { data, isLoading } = useGetAnnualStatsQuery(params)
         return {
-          stats: data,
+          stats: validateAnnualStatsOrUndefined(data),
           isLoading
         }
       }
@@ -42,8 +51,11 @@ const stats: (
         return {
           query: async (
             params: BreweryStatsQueryParams
-          ) => (await trigger(params)).data,
-          stats: data,
+          ) => {
+            const result = await trigger(params)
+            return validateBreweryStatsOrUndefined(result.data)
+          },
+          stats: validateBreweryStatsOrUndefined(data),
           isLoading: isFetching
         }
       },
@@ -53,7 +65,7 @@ const stats: (
       useStats: (params: IdParams) => {
         const { data, isLoading } = useGetContainerStatsQuery(params)
         return {
-          stats: data,
+          stats: validateContainerStatsOrUndefined(data),
           isLoading
         }
       }
@@ -65,8 +77,11 @@ const stats: (
         return {
           query: async (
             params: LocationStatsQueryParams
-          ) => (await trigger(params)).data,
-          stats: data,
+          ) => {
+            const result = await trigger(params)
+            return validateLocationStatsOrUndefined(result.data)
+          },
+          stats: validateLocationStatsOrUndefined(data),
           isLoading: isFetching
         }
       },
@@ -76,7 +91,7 @@ const stats: (
       useStats: (params: IdParams) => {
         const { data, isLoading } = useGetOverallStatsQuery(params)
         return {
-          stats: data?.overall,
+          stats: validateOverallStatsOrUndefined(data?.overall),
           isLoading
         }
       }
@@ -85,7 +100,7 @@ const stats: (
       useStats: (params: IdParams) => {
         const { data, isLoading } = useGetRatingStatsQuery(params)
         return {
-          stats: data,
+          stats: validateRatingStatsOrUndefined(data),
           isLoading
         }
       }
@@ -94,7 +109,7 @@ const stats: (
       useStats: (params: StyleStatsQueryParams) => {
         const { data, isLoading } = useGetStyleStatsQuery(params)
         return {
-          stats: data,
+          stats: validateStyleStatsOrUndefined(data),
           isLoading
         }
       }
