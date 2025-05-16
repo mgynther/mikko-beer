@@ -74,19 +74,19 @@ function getStatsMode (stats: string | undefined): Mode {
     return defaultValue
   }
   switch (stats) {
-    case Mode.Overall.toString():
+    case Mode.Overall as string:
       return Mode.Overall
-    case Mode.Annual.toString():
+    case Mode.Annual as string:
       return Mode.Annual
-    case Mode.Brewery.toString():
+    case Mode.Brewery as string:
       return Mode.Brewery
-    case Mode.Container.toString():
+    case Mode.Container as string:
       return Mode.Container
-    case Mode.Location.toString():
+    case Mode.Location as string:
       return Mode.Location
-    case Mode.Rating.toString():
+    case Mode.Rating as string:
       return Mode.Rating
-    case Mode.Style.toString():
+    case Mode.Style as string:
       return Mode.Style
   }
   return defaultValue
