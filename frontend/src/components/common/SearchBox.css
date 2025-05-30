@@ -36,6 +36,10 @@
   margin-bottom: 10px;
 }
 
+.SearchBox li button {
+  box-shadow: none;
+}
+
 .SearchInfo {
   font-style: italic;
   padding-top: 10px;

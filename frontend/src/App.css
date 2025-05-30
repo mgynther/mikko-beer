@@ -36,6 +36,37 @@ body.light .App button.linklike-button {
   color: #61dafb;
 }
 
+button,
+input[type="submit"] {
+  background: #fffe;
+  box-shadow: 1px -1px 3px 1px #333;
+  border-radius: 6px;
+  padding: 1px 6px;
+}
+
+body.light button,
+body.light input[type="submit"] {
+  box-shadow: 1px -1px 3px 1px #ccc;
+  border-color: #666;
+}
+
+button:disabled,
+input[type="submit"]:disabled {
+  background: #fffa;
+}
+
+
+body.light button:disabled,
+body.light input[type="submit"]:disabled {
+  border-color: #999;
+}
+
+body.light button.TabButton,
+button.TabButton {
+  box-shadow: unset;
+  border-color: unset;
+}
+
 nav ul {
   padding-left: 0;
 }
