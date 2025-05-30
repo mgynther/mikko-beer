@@ -20,7 +20,7 @@ body.light {
 
 body.light .App,
 body.light .App button.linklike-button {
-  color: black;
+  color: rgba(0, 0, 0, 0.8);
 }
 
 .AppContent {
@@ -102,7 +102,7 @@ a {
 }
 
 body.light a {
-  color: black;
+  color: rgba(0, 0, 0, 0.8);
 }
 
 .RowLike {

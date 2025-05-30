@@ -22,7 +22,7 @@ button.TabButton.Compact {
 }
 
 body.light button.TabButton {
-  color: black;
+  color: rgba(0, 0, 0, 0.8);
 }
 
 button.TabButton.Selected,
