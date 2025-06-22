@@ -116,7 +116,13 @@ export async function insertMultipleReviews(
         container: (i % 2 === 0) ? otherContainer.id : container.id,
         location: (i % 2 === 0) ? otherLocation.id : location.id,
         rating: (i % 7) + 4,
-        time: new Date(`2024-0${(i % 3) + 2}-0${(i % 5) + 1}T18:00:00.000Z`),
+        time: new Date(`202${
+          i % 2 === 0 ? 3 : 4
+        }-0${
+          (i % 3) + 2
+        }-0${
+          (i % 5) + 1
+        }T18:00:00.000Z`),
         smell: "vanilla",
         taste: "chocolate"
       }

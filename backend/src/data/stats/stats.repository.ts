@@ -5,6 +5,7 @@ import type { Database, KyselyDatabase } from '../database'
 import type { Pagination } from '../../core/pagination'
 
 import type {
+  AnnualContainerStats,
   AnnualStats,
   BreweryStats,
   BreweryStatsOrder,
@@ -99,6 +100,54 @@ export async function getAnnual (
   })
 
   return annual.rows.map(row => ({
+    reviewAverage: round(row.review_average, 2),
+    reviewCount: `${row.review_count}`,
+    year: `${row.year}`
+  }))
+}
+
+export async function getAnnualContainer (
+  db: Database,
+  pagination: Pagination,
+  statsFilter: StatsIdFilter
+) : Promise<AnnualContainerStats> {
+  const annualContainerQuery = sql`SELECT
+    COUNT(1) AS review_count,
+    AVG(review.rating) as review_average,
+    DATE_PART('YEAR', review.time) AS year,
+    review.container AS container_id,
+    container.type AS container_type,
+    container.size AS container_size FROM review
+    JOIN container ON review.container = container.container_id
+    ${idFilter(statsFilter)}
+    GROUP BY year, review.container, container.type, container.size
+    ORDER BY
+      year DESC,
+      container.type ASC,
+      container.size ASC
+    OFFSET ${pagination.skip}
+    LIMIT ${pagination.size}
+  `
+
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * Tightly coupled with the string query.
+   */
+  const annualContainer = (await annualContainerQuery
+    .execute(db.getDb()) as {
+    rows: Array<{
+      container_id: string
+      container_type: string
+      container_size: string
+      review_average: number
+      review_count: number
+      year: number
+    }>
+  })
+
+  return annualContainer.rows.map(row => ({
+    containerId: row.container_id,
+    containerSize: row.container_size,
+    containerType: row.container_type,
     reviewAverage: round(row.review_average, 2),
     reviewCount: `${row.review_count}`,
     year: `${row.year}`

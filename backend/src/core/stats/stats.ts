@@ -15,6 +15,15 @@ export type AnnualStats = Array<{
   year: string
 }>
 
+export type AnnualContainerStats = Array<{
+  containerId: string
+  containerSize: string
+  containerType: string
+  reviewAverage: string
+  reviewCount: string
+  year: string
+}>
+
 export type BreweryStats = Array<{
   reviewAverage: string
   reviewCount: string
