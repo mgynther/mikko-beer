@@ -1,12 +1,13 @@
-import { render } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import Stats from './Stats'
-import type { StatsIf } from '../../core/stats/types'
+import type { OneAnnualContainerStats, StatsIf } from '../../core/stats/types'
 import LinkWrapper from '../LinkWrapper'
 import { openFilters } from './filters-test-util'
 import type { ParamsIf } from '../util'
 
+const emptyAnnualContainerStats = { annualContainer: []}
 const emptyBreweryStats = { brewery: []}
 const emptyLocationStats = { location: []}
 
@@ -20,6 +21,17 @@ const emptyStatsIf: StatsIf = {
         },
         isLoading: false
       })
+  },
+  annualContainer: {
+    useStats: () => ({
+      query: async () => emptyAnnualContainerStats,
+      stats: emptyAnnualContainerStats,
+      isLoading: false
+    }),
+    infiniteScroll: (cb: () => void) => {
+      cb()
+      return () => undefined
+    }
   },
   brewery: {
     useStats: () => ({
@@ -202,6 +214,65 @@ test('renders annual stats', () => {
   getByText('8.23')
   getByText('24')
   getByText('2021')
+})
+
+test('renders annual container stats', async () => {
+  const stats2020: OneAnnualContainerStats = {
+    containerId: 'b049f5be-692b-4c81-a368-6cbad1a58d8a',
+    containerSize: '0.33',
+    containerType: 'bottle',
+    reviewAverage: '7.87',
+    reviewCount: '10',
+    year: '2020'
+  }
+  const stats2021: OneAnnualContainerStats = {
+    containerId: '830a5d16-a3dc-4737-a762-39f78269c490',
+    containerSize: '0.44',
+    containerType: 'can',
+    reviewAverage: '8.23',
+    reviewCount: '24',
+    year: '2021'
+  }
+  const { getByText } = render(
+    <Stats
+      paramsIf={getStatsParamsIf('annual_container')}
+      statsIf={{
+        ...emptyStatsIf,
+        annualContainer: {
+          useStats: () => ({
+            query: async (params) => ({
+              annualContainer:
+                params.pagination.skip === 0 ? [
+                  { ...stats2021 },
+                  { ...stats2020 }
+                ] : []
+              }),
+              stats: {
+                annualContainer: [
+                  { ...stats2021 },
+                  { ...stats2020 }
+                ]
+              },
+              isLoading: false
+          }),
+          infiniteScroll: (cb: () => void) => {
+            cb()
+            return () => undefined
+          }
+        }
+      }}
+      breweryId={'2bc301aa-1cbf-4764-879b-973346fdd2e3'}
+      locationId={'1fc4acba-fc28-4629-b2d9-7b65669fb2a9'}
+      styleId={'bc8aac76-e8dd-4239-8e24-32caa58eb1a9'}
+    />
+  )
+  await waitFor(() => getByText(stats2021.year))
+  getByText(`${stats2021.containerType} ${stats2021.containerSize}`)
+  getByText(stats2021.reviewAverage)
+  getByText(stats2021.reviewCount)
+  getByText(stats2020.year)
+  getByText(stats2020.reviewAverage)
+  getByText(stats2020.reviewCount)
 })
 
 test('renders brewery stats', async () => {
@@ -429,6 +500,11 @@ const navigationTests: NavigationTest[] = [
     destinationSearch: 'annual',
     originalSearch: 'overall',
     buttonText: 'Annual'
+  },
+  {
+    destinationSearch: 'annual_container',
+    originalSearch: 'overall',
+    buttonText: 'Annual & Container'
   },
   {
     destinationSearch: 'brewery',

@@ -1,5 +1,6 @@
 import type { NavigateIf } from "../components/util"
 import type {
+  AnnualContainerStatsQueryParams,
   BreweryStatsQueryParams,
   IdParams,
   LocationStatsQueryParams,
@@ -13,11 +14,13 @@ import {
   useGetOverallStatsQuery,
   useGetRatingStatsQuery,
   useGetStyleStatsQuery,
+  useLazyGetAnnualContainerStatsQuery,
   useLazyGetBreweryStatsQuery,
   useLazyGetLocationStatsQuery
 } from "../store/stats/api"
 import {
   validateAnnualStatsOrUndefined,
+  validateAnnualContainerStatsOrUndefined,
   validateBreweryStatsOrUndefined,
   validateContainerStatsOrUndefined,
   validateLocationStatsOrUndefined,
@@ -43,6 +46,23 @@ const stats: (
           isLoading
         }
       }
+    },
+    annualContainer: {
+      useStats: () => {
+        const [trigger, { data, isFetching }] =
+          useLazyGetAnnualContainerStatsQuery()
+        return {
+          query: async (
+            params: AnnualContainerStatsQueryParams
+          ) => {
+            const result = await trigger(params)
+            return validateAnnualContainerStatsOrUndefined(result.data)
+          },
+          stats: validateAnnualContainerStatsOrUndefined(data),
+          isLoading: isFetching
+        }
+      },
+      infiniteScroll
     },
     brewery: {
       useStats: () => {

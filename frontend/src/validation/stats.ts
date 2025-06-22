@@ -3,6 +3,7 @@ import { isLeft } from 'fp-ts/Either'
 
 import { formatError } from './format-error'
 import type {
+  AnnualContainerStats,
   AnnualStats,
   BreweryStats,
   ContainerStats,
@@ -26,6 +27,18 @@ const ValidatedOverallStats = t.type({
 const ValidatedAnnualStats = t.type({
   annual: t.array(
     t.type({
+      reviewAverage: t.string,
+      reviewCount: t.string,
+      year: t.string
+    }))
+})
+
+const ValidatedAnnualContainerStats = t.type({
+  annualContainer: t.array(
+    t.type({
+      containerId: t.string,
+      containerSize: t.string,
+      containerType: t.string,
       reviewAverage: t.string,
       reviewCount: t.string,
       year: t.string
@@ -104,6 +117,21 @@ export function validateAnnualStatsOrUndefined(
   }
   type StatsT = t.TypeOf<typeof ValidatedAnnualStats>
   const decoded = ValidatedAnnualStats.decode(result)
+  if (isLeft(decoded)) {
+    throw Error(formatError(decoded))
+  }
+  const valid: StatsT = decoded.right
+  return valid
+}
+
+export function validateAnnualContainerStatsOrUndefined(
+  result: unknown
+): AnnualContainerStats | undefined {
+  if (typeof result === 'undefined') {
+    return undefined
+  }
+  type StatsT = t.TypeOf<typeof ValidatedAnnualContainerStats>
+  const decoded = ValidatedAnnualContainerStats.decode(result)
   if (isLeft(decoded)) {
     throw Error(formatError(decoded))
   }

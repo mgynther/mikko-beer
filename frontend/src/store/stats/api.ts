@@ -1,19 +1,21 @@
 import { emptySplitApi } from '../api'
 
 import type {
-  BreweryStatsQueryParams,
-  IdParams,
-  ContainerStats,
-  LocationStatsQueryParams,
-  StyleStatsQueryParams,
+  AnnualContainerStats,
+  AnnualContainerStatsQueryParams,
   AnnualStats,
   BreweryStats,
+  BreweryStatsQueryParams,
   BreweryStatsSorting,
+  ContainerStats,
+  IdParams,
   LocationStats,
+  LocationStatsQueryParams,
   LocationStatsSorting,
   OverallStats,
   RatingStats,
   StyleStats,
+  StyleStatsQueryParams,
   StyleStatsSorting
 } from '../../core/stats/types'
 
@@ -88,6 +90,21 @@ const statsApi = emptySplitApi.injectEndpoints({
         method: 'GET'
       }),
       providesTags: [StatsTags.Annual]
+    }),
+    getAnnualContainerStats: build.query<
+      AnnualContainerStats,
+      AnnualContainerStatsQueryParams
+    >({
+      query: (params: AnnualContainerStatsQueryParams) => ({
+        url: `/stats/annual_container?size=${
+          params.pagination.size
+          }&skip=${
+            params.pagination.skip
+          }${
+          andIdFilter(params)}`,
+        method: 'GET'
+      }),
+      providesTags: [StatsTags.AnnualContainer]
     }),
     getBreweryStats: build.query<BreweryStats, BreweryStatsQueryParams>({
       query: (params: BreweryStatsQueryParams) => ({
@@ -181,6 +198,7 @@ export const {
   useGetOverallStatsQuery,
   useGetRatingStatsQuery,
   useGetStyleStatsQuery,
+  useLazyGetAnnualContainerStatsQuery,
   useLazyGetBreweryStatsQuery,
   useLazyGetLocationStatsQuery
 } = statsApi

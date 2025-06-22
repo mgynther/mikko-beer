@@ -238,6 +238,7 @@ const noInfiniteScrollStats = {
 
 const statsIf: StatsIf = {
   annual: noStats,
+  annualContainer: noInfiniteScrollStats,
   brewery: noInfiniteScrollStats,
   container: noStats,
   location: noInfiniteScrollStats,

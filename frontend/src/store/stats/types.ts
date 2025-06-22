@@ -1,5 +1,6 @@
 export enum StatsTags {
   Annual = 'Annual',
+  AnnualContainer = 'AnnualContainer',
   Brewery = 'Brewery',
   Container = 'Container',
   Location = 'Location',
@@ -11,6 +12,7 @@ export enum StatsTags {
 export function allStatsTagTypes (): string[] {
   return [
     StatsTags.Annual,
+    StatsTags.AnnualContainer,
     StatsTags.Brewery,
     StatsTags.Container,
     StatsTags.Location,

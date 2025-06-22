@@ -269,6 +269,10 @@ const storeIf: StoreIf = {
         isLoading: false
       })
     },
+    annualContainer: {
+      useStats: dontCall,
+      infiniteScroll
+    },
     brewery: {
       useStats: dontCall,
       infiniteScroll

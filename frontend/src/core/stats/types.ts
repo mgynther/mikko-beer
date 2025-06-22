@@ -29,6 +29,26 @@ export interface AnnualStats {
   }>
 }
 
+export interface OneAnnualContainerStats {
+  containerId: string
+  containerSize: string
+  containerType: string
+  reviewAverage: string
+  reviewCount: string
+  year: string
+}
+
+export interface AnnualContainerStats {
+  annualContainer: OneAnnualContainerStats[]
+}
+
+export interface AnnualContainerStatsQueryParams {
+  breweryId: string | undefined
+  locationId: string | undefined
+  styleId: string | undefined
+  pagination: Pagination
+}
+
 export interface OneBreweryStats {
   breweryId: string
   breweryName: string
@@ -154,6 +174,17 @@ export interface GetAnnualStatsIf {
   }
 }
 
+export interface GetAnnualContainerStatsIf {
+  useStats: () => {
+    query: (
+      params: AnnualContainerStatsQueryParams
+    ) => Promise<AnnualContainerStats | undefined>
+    stats: AnnualContainerStats | undefined
+    isLoading: boolean
+  },
+  infiniteScroll: InfiniteScroll
+}
+
 export interface GetBreweryStatsIf {
   useStats: () => {
     query: (
@@ -206,6 +237,7 @@ export interface GetStyleStatsIf {
 
 export interface StatsIf {
   annual: GetAnnualStatsIf
+  annualContainer: GetAnnualContainerStatsIf
   brewery: GetBreweryStatsIf
   container: GetContainerStatsIf
   location: GetLocationStatsIf

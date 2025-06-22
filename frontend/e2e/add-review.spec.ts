@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 import { v4 as uuidv4 } from 'uuid'
 import { login } from './login'
+import { reviewContainer } from './constants'
 
 test('Add review', async ({ page }) => {
   await login(page)
@@ -13,7 +14,7 @@ test('Add review', async ({ page }) => {
   await page.getByRole('textbox', { name: /search style/i }).fill('lag')
   await page.getByRole('button', { name: /^lager$/i }).click()
   await page.getByRole('button', { name: /create beer/i }).click()
-  await page.locator('select').selectOption({ label: 'pullo 0.33' })
+  await page.locator('select').selectOption({ label: reviewContainer })
   await page.getByRole('textbox', { name: /smell/i }).fill('Smells nice')
   await page.getByRole('textbox', { name: /taste/i }).fill('Tastes good')
   await page.getByRole('slider').fill('8')
