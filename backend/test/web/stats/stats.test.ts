@@ -4,8 +4,8 @@ import { TestContext } from '../test-context'
 import type { BeerWithBreweryAndStyleIds } from '../../../src/core/beer/beer'
 import type { Brewery } from '../../../src/core/brewery/brewery'
 import type { Location } from '../../../src/core/location/location'
-import type { Review } from '../../../src/core/review/review'
 import type {
+  AnnualContainerStats,
   AnnualStats,
   BreweryStats,
   ContainerStats,
@@ -15,6 +15,18 @@ import type {
   StyleStats
 } from '../../../src/core/stats/stats'
 import type { Style } from '../../../src/core/style/style'
+
+interface ReviewRes {
+  id: string
+  additionalInfo: string
+  beer: string
+  container: string
+  location: string
+  rating: number
+  time: string
+  smell: string
+  taste: string
+}
 
 // Math is hard. By both hard coding and calculating it is easier to spot an
 // error when it happens.
@@ -70,7 +82,7 @@ describe('stats tests', () => {
     )
     expect(otherLocationRes.status).toEqual(201)
 
-    const reviewRes = await ctx.request.post<{ review: Review }>(`/api/v1/review`,
+    const reviewRes = await ctx.request.post<{ review: ReviewRes }>(`/api/v1/review`,
       {
         beer: beerRes.data.beer.id,
         container: containerRes.data.container.id,
@@ -106,7 +118,7 @@ describe('stats tests', () => {
     )
     expect(otherBeerRes.status).toEqual(201)
 
-    const otherReviewRes = await ctx.request.post<{ review: Review }>(`/api/v1/review`,
+    const otherReviewRes = await ctx.request.post<{ review: ReviewRes }>(`/api/v1/review`,
       {
         beer: otherBeerRes.data.beer.id,
         container: containerRes.data.container.id,
@@ -136,7 +148,7 @@ describe('stats tests', () => {
     )
     expect(collabBeerRes.status).toEqual(201)
 
-    const collabReviewRes = await ctx.request.post<{ review: Review }>(`/api/v1/review`,
+    const collabReviewRes = await ctx.request.post<{ review: ReviewRes }>(`/api/v1/review`,
       {
         beer: collabBeerRes.data.beer.id,
         container: containerRes.data.container.id,
@@ -150,7 +162,7 @@ describe('stats tests', () => {
     )
     expect(collabReviewRes.status).toEqual(201)
 
-    const collabReview2Res = await ctx.request.post<{ review: Review }>(`/api/v1/review`,
+    const collabReview2Res = await ctx.request.post<{ review: ReviewRes }>(`/api/v1/review`,
       {
         additionalInfo: 'Another one was not quite as good',
         beer: collabBeerRes.data.beer.id,
@@ -223,7 +235,7 @@ describe('stats tests', () => {
       .toEqual(`${beers.length}`)
     const ratings = reviews
       .filter(r => r)
-      .map(r => r.rating) as number[]
+      .map(r => r.rating)
     const ratingSum = ratings.reduce((sum: number, rating: number) => sum + rating, 0)
     const countedAverage = ratingSum / reviews.length
     expect(statsRes.data.overall.reviewAverage).toEqual(countedAverage.toFixed(2))
@@ -251,7 +263,7 @@ describe('stats tests', () => {
     expect(statsRes.data.overall.containerCount).toEqual('1')
     expect(statsRes.data.overall.reviewCount).toEqual('3')
     const ratings = reviews
-      .filter((review: Review) => {
+      .filter((review: ReviewRes) => {
         const beerId = review.beer
         const beer = beers.find(beer => beer.id === beerId)
         if (beer === undefined) {
@@ -259,7 +271,7 @@ describe('stats tests', () => {
         }
         return beer.breweries.includes(breweryId)
       })
-      .map(r => r.rating) as number[]
+      .map(r => r.rating)
     const ratingSum = ratings.reduce((sum: number, rating: number) => sum + rating, 0)
     const countedAverage = ratingSum / ratings.length
     expect(statsRes.data.overall.reviewAverage).toEqual(countedAverage.toFixed(2))
@@ -323,10 +335,9 @@ describe('stats tests', () => {
     )
     expect(statsRes.status).toEqual(200)
     function reviewRatingsByYear(year: string): number[] {
-      return reviews.filter((review: any) => {
-        if (typeof review?.time !== 'string') throw error()
-        return (review.time as unknown as string).startsWith(year)
-      }).map((review: Review) => review.rating) as number[]
+      return reviews.filter((review: ReviewRes) => {
+        return review.time.startsWith(year)
+      }).map((review: ReviewRes) => review.rating)
     }
     checkAnnualStats(reviewRatingsByYear, statsRes.data.annual, [
       {
@@ -344,6 +355,27 @@ describe('stats tests', () => {
     ])
   })
 
+  function reviewsByYear (reviews: ReviewRes[], year: string) {
+    return reviews.filter((review: ReviewRes) => {
+      return review.time.startsWith(year)
+    })
+  }
+
+  function reviewsByBrewery (
+    reviews: ReviewRes[],
+    beers: BeerWithBreweryAndStyleIds[],
+    breweryId: string
+  ): ReviewRes[] {
+    return reviews.filter((review: ReviewRes) => {
+      const beerId = review.beer
+      const beer = beers.find(beer => beer.id === beerId)
+      if (beer === undefined) {
+        return false
+      }
+      return beer.breweries.includes(breweryId)
+    })
+  }
+
   it('get annual stats by brewery', async () => {
     const {
       beers,
@@ -358,17 +390,8 @@ describe('stats tests', () => {
     )
     expect(statsRes.status).toEqual(200)
     function reviewRatingsByYear(year: string): number[] {
-      return reviews.filter((review: any) => {
-        if (typeof review?.time !== 'string') throw error()
-        return (review.time as unknown as string).startsWith(year)
-      }).filter((review: Review) => {
-        const beerId = review.beer
-        const beer = beers.find(beer => beer.id === beerId)
-        if (beer === undefined) {
-          return false
-        }
-        return beer.breweries.includes(breweryId)
-      }).map((review: Review) => review.rating) as number[]
+      return reviewsByBrewery(reviewsByYear(reviews, year), beers, breweryId)
+        .map((review: ReviewRes) => review.rating)
     }
     checkAnnualStats(reviewRatingsByYear, statsRes.data.annual, [
       {
@@ -384,6 +407,103 @@ describe('stats tests', () => {
         average: '7.50'
       }
     ])
+  })
+
+  it('get annual container stats', async () => {
+    const { containers, reviews } = await createDeps(ctx.adminAuthHeaders())
+
+    const statsRes = await ctx.request.get<{
+      annualContainer: AnnualContainerStats
+    }>(
+      '/api/v1/stats/annual_container',
+      ctx.adminAuthHeaders()
+    )
+    expect(statsRes.status).toEqual(200)
+    function reviewRatingsByYear(year: string) {
+      return reviewsByYear(reviews, year).map((review: ReviewRes) => review.rating)
+    }
+    const container = containers[0].data.container
+    const years = ['2023', '2022', '2021']
+    expect(statsRes.data.annualContainer).toEqual(
+      years.map(year => {
+        const ratings = reviewRatingsByYear(year)
+        return {
+          containerId: container.id,
+          containerSize: container.size,
+          containerType: container.type,
+          reviewAverage: `${average(ratings)}`,
+          reviewCount: `${ratings.length}`,
+          year
+        }
+      })
+    )
+  })
+
+  it('get annual container stats with pagination', async () => {
+    const { containers, reviews } = await createDeps(ctx.adminAuthHeaders())
+
+    const statsRes = await ctx.request.get<{
+      annualContainer: AnnualContainerStats
+    }>(
+      '/api/v1/stats/annual_container?size=1&skip=1',
+      ctx.adminAuthHeaders()
+    )
+    expect(statsRes.status).toEqual(200)
+    function reviewRatingsByYear(year: string) {
+      return reviewsByYear(reviews, year).map((review: ReviewRes) => review.rating)
+    }
+    const container = containers[0].data.container
+    const years = ['2022']
+    expect(statsRes.data.annualContainer).toEqual(
+      years.map(year => {
+        const ratings = reviewRatingsByYear(year)
+        return {
+          containerId: container.id,
+          containerSize: container.size,
+          containerType: container.type,
+          reviewAverage: `${average(ratings)}`,
+          reviewCount: `${ratings.length}`,
+          year
+        }
+      })
+    )
+  })
+
+  it('get annual container stats by brewery', async () => {
+    const {
+      beers,
+      breweries,
+      containers,
+      reviews
+    } = await createDeps(ctx.adminAuthHeaders())
+    const brewery = breweries[0].data.brewery
+
+    const statsRes = await ctx.request.get<{
+      annualContainer: AnnualContainerStats
+    }>(
+      `/api/v1/stats/annual_container?brewery=${brewery.id}`,
+      ctx.adminAuthHeaders()
+    )
+    expect(statsRes.status).toEqual(200)
+    function reviewRatingsByYear(year: string): number[] {
+      return reviewsByBrewery(reviewsByYear(reviews, year), beers, brewery.id)
+        .map((review: ReviewRes) => review.rating)
+    }
+    const container = containers[0].data.container
+    const years = ['2023', '2022', '2021']
+    expect(statsRes.data.annualContainer).toEqual(
+      years.map(year => {
+        const ratings = reviewRatingsByYear(year)
+        return {
+          containerId: container.id,
+          containerSize: container.size,
+          containerType: container.type,
+          reviewAverage: `${average(ratings)}`,
+          reviewCount: `${ratings.length}`,
+          year
+        }
+      }).filter(stats => stats.reviewCount !== '0')
+    )
   })
 
   it('get container stats', async () => {
@@ -479,7 +599,7 @@ describe('stats tests', () => {
   function reviewRatingsByBrewery(
     breweryId: string,
     beers: BeerWithBreweryAndStyleIds[],
-    reviews: Review[],
+    reviews: ReviewRes[],
     filterBreweryId: string
   ): number[] {
     return reviews.filter(review => {
@@ -487,7 +607,7 @@ describe('stats tests', () => {
       if (beer === undefined) throw error()
       return beer.breweries.some(brewery => brewery === breweryId) &&
         beer.breweries.some(brewery => brewery === filterBreweryId)
-    }).map(review => review.rating) as number[]
+    }).map(review => review.rating)
   }
 
   it('get brewery stats', async () => {
@@ -592,7 +712,7 @@ describe('stats tests', () => {
   function reviewRatingsByLocation(
       locationId: string,
       beers: BeerWithBreweryAndStyleIds[],
-      reviews: Review[],
+      reviews: ReviewRes[],
       filterBreweryId: string | undefined
     ): number[] {
     return reviews.filter(review => {
@@ -603,7 +723,7 @@ describe('stats tests', () => {
       if (beer === undefined) throw error()
       return beer.breweries.some(
         brewery => filterBreweryId === undefined || brewery === filterBreweryId)
-    }).map(review => review.rating) as number[]
+    }).map(review => review.rating)
   }
 
   it('get location stats', async () => {
@@ -726,7 +846,7 @@ describe('stats tests', () => {
     expect(statsRes.status).toEqual(200)
     const stats = reviews
       .reduce((ratingStats: TestRatingStats, review) => {
-      const rating = review.rating as unknown as number
+      const rating = review.rating
       const existing = ratingStats.find(r => r.rating === rating)
       if (existing === undefined) {
         ratingStats.push({ rating, count: 1 })
@@ -766,7 +886,7 @@ describe('stats tests', () => {
       if (!beerRes.breweries.includes(breweryId)) {
         return ratingStats
       }
-      const rating = review.rating as unknown as number
+      const rating = review.rating
       const existing = ratingStats.find(r => r.rating === rating)
       if (existing === undefined) {
         ratingStats.push({ rating, count: 1 })
@@ -820,7 +940,7 @@ describe('stats tests', () => {
   function reviewRatingsByStyle(
       styleId: string,
       beers: BeerWithBreweryAndStyleIds[],
-      reviews: Review[],
+      reviews: ReviewRes[],
       filterBreweryId: string | undefined
     ): number[] {
     return reviews.filter(review => {
@@ -829,7 +949,7 @@ describe('stats tests', () => {
       return beer.styles.some(style => style === styleId) &&
         beer.breweries.some(
           brewery => filterBreweryId === undefined || brewery === filterBreweryId)
-    }).map(review => review.rating) as number[]
+    }).map(review => review.rating)
   }
 
   it('get style stats', async () => {

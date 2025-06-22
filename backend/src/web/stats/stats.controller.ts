@@ -63,6 +63,30 @@ export function statsController (router: Router): void {
     }
   )
   router.get(
+    '/api/v1/stats/annual_container',
+    async (ctx) => {
+      const authTokenPayload = parseAuthToken(ctx)
+      const { skip, size } = ctx.request.query
+      const statsFilter = validateStatsIdFilter(ctx.request.query)
+      const pagination = validatePagination({ skip, size })
+      const annualContainer = await statsService.getAnnualContainer(
+        async (
+          pagination: Pagination,
+          statsFilter: StatsIdFilter
+        ) => await statsRepository.getAnnualContainer(
+          ctx.db,
+          pagination,
+          statsFilter
+        ),
+        authTokenPayload,
+        pagination,
+        statsFilter,
+        ctx.log
+      )
+      ctx.body = { annualContainer }
+    }
+  )
+  router.get(
     '/api/v1/stats/brewery',
     async (ctx) => {
       const authTokenPayload = parseAuthToken(ctx)
