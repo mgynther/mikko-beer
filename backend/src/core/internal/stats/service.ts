@@ -1,6 +1,7 @@
 import type { Pagination } from '../../pagination'
 
 import type {
+  AnnualContainerStats,
   AnnualStats,
   BreweryStats,
   BreweryStatsOrder,
@@ -28,6 +29,19 @@ export async function getAnnual (
 ): Promise<AnnualStats> {
   log(INFO, 'get annual stats', statsFilter)
   return await getAnnual(statsFilter)
+}
+
+export async function getAnnualContainer (
+  getAnnualContainer: (
+    pagination: Pagination,
+    statsFilter: StatsIdFilter
+  ) => Promise<AnnualContainerStats>,
+  pagination: Pagination,
+  statsFilter: StatsIdFilter,
+  log: log
+): Promise<AnnualStats> {
+  log(INFO, 'get annual container stats', statsFilter, pagination)
+  return await getAnnualContainer(pagination, statsFilter)
 }
 
 export async function getBrewery (

@@ -5,6 +5,7 @@ import type { AuthTokenPayload } from "../../../src/core/auth/auth-token"
 import { Role } from "../../../src/core/user/user"
 import { dummyLog as log } from '../dummy-log'
 import type {
+  AnnualContainerStats,
   AnnualStats,
   BreweryStats,
   ContainerStats,
@@ -75,6 +76,35 @@ describe('stats authorized service unit tests', () => {
         log
       )
       expect(result).toEqual([ ...annualStats ])
+    })
+
+    it(`get annual container stats as ${token.role}`, async () => {
+      const annualContainerStats: AnnualContainerStats = [
+        {
+          containerId: '002f40ba-5b47-4d23-a7b1-944ecf237552',
+          containerType: 'bottle',
+          containerSize: '0.33',
+          reviewAverage: '8.23',
+          reviewCount: '234',
+          year: '2023'
+        },
+        {
+          containerId: '86b63fb6-937d-4a4f-b593-dd4db450c5c2',
+          containerType: 'can',
+          containerSize: '0.44',
+          reviewAverage: '8.31',
+          reviewCount: '215',
+          year: '2024'
+        }
+      ]
+      const result = await statsService.getAnnualContainer(
+        async () => ([ ...annualContainerStats ]),
+        token,
+        { skip: 0, size: 20 },
+        statsFilter,
+        log
+      )
+      expect(result).toEqual([ ...annualContainerStats ])
     })
 
     it(`get brewery stats as ${token.role}`, async () => {
