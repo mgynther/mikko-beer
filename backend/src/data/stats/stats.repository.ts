@@ -130,18 +130,18 @@ export async function getContainer (
     rows: Array<{
       review_average: number
       review_count: number
-      container_id: number
-      container_size: number
-      container_type: number
+      container_id: string
+      container_size: string
+      container_type: string
     }>
   })
 
   return container.rows.map(row => ({
     reviewAverage: round(row.review_average, 2),
     reviewCount: `${row.review_count}`,
-    containerId: `${row.container_id}`,
-    containerSize: `${row.container_size}`,
-    containerType: `${row.container_type}`
+    containerId: row.container_id,
+    containerSize: row.container_size,
+    containerType: row.container_type
   }))
 }
 
