@@ -1,9 +1,8 @@
-import { act, fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import Location from './Location'
 import LinkWrapper from '../LinkWrapper'
-import { openFilters } from './filters-test-util'
 import type { SearchParameters } from '../util'
 
 const dontCall = (): any => {
@@ -179,8 +178,7 @@ test('queries filtered location stats', async () => {
 })
 
 test('renders location stats', async () => {
-  const user = userEvent.setup()
-  const { getByRole, getByText } = render(
+  const { getByText } = render(
     <LinkWrapper>
       <Location
         breweryId={'b32ac679-982d-41a1-b39a-8cf50c4d768e'}
@@ -192,9 +190,7 @@ test('renders location stats', async () => {
       />
     </LinkWrapper>
   )
-  // Need to do something to get locations set.
-  await openFilters(getByRole, user)
-  getByText(plevna.locationName)
+  await waitFor(() => getByText(plevna.locationName))
   getByText(plevna.reviewAverage)
   getByText(plevna.reviewCount)
   getByText(oluthuone.locationName)

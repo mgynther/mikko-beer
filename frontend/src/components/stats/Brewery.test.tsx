@@ -1,9 +1,8 @@
-import { act, fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import Brewery from './Brewery'
 import LinkWrapper from '../LinkWrapper'
-import { openFilters } from './filters-test-util'
 import type { SearchParameters } from '../util'
 
 const dontCall = (): any => {
@@ -120,8 +119,7 @@ test('queries brewery stats', async () => {
 })
 
 test('renders brewery stats', async () => {
-  const user = userEvent.setup()
-  const { getByRole, getByText } = render(
+  const { getByText } = render(
     <LinkWrapper>
       <Brewery
         breweryId={'5e2f90e7-15f9-499d-baa3-c95f4282c509'}
@@ -133,9 +131,7 @@ test('renders brewery stats', async () => {
       />
     </LinkWrapper>
   )
-  // Need to do something to get breweries set.
-  await openFilters(getByRole, user)
-  getByText(koskipanimo.breweryName)
+  await waitFor(() => getByText(koskipanimo.breweryName))
   getByText(koskipanimo.reviewAverage)
   getByText(koskipanimo.reviewCount)
   getByText(lehe.breweryName)

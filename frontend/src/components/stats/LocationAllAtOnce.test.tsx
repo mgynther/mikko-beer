@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react'
+import { fireEvent, render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import LocationAllAtOnce from './LocationAllAtOnce'
@@ -56,10 +56,9 @@ const unusedStats = {
 }
 
 test('queries location stats', async () => {
-  const user = userEvent.setup()
   const query = vitest.fn()
   const setLoadedLocations = vitest.fn()
-  const { getByRole } = render(
+  render(
     <LinkWrapper>
       <LocationAllAtOnce
         getLocationStatsIf={{
@@ -111,13 +110,13 @@ test('queries location stats', async () => {
     },
     styleId
   }]])
-  // Need to do something to get locations set.
-  await openFilters(getByRole, user)
-  expect(setLoadedLocations.mock.calls).toEqual([
-    [undefined],
-    [undefined],
-    [[plevna, oluthuone]]
-  ])
+  await waitFor(() =>
+    { expect(setLoadedLocations.mock.calls).toEqual([
+      [undefined],
+      [undefined],
+      [[plevna, oluthuone]]
+    ]); }
+  )
 })
 
 test('renders location stats', () => {

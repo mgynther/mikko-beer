@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react'
+import { fireEvent, render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import BreweryAllAtOnce from './BreweryAllAtOnce'
@@ -54,10 +54,9 @@ const unusedStats = {
 }
 
 test('queries brewery stats', async () => {
-  const user = userEvent.setup()
   const query = vitest.fn()
   const setLoadedBreweries = vitest.fn()
-  const { getByRole } = render(
+  render(
     <LinkWrapper>
       <BreweryAllAtOnce
         getBreweryStatsIf={{
@@ -108,12 +107,12 @@ test('queries brewery stats', async () => {
     },
     styleId
   }]])
-  // Need to do something to get breweries set.
-  await openFilters(getByRole, user)
-  expect(setLoadedBreweries.mock.calls).toEqual([
-    [undefined],
-    [[koskipanimo, lehe]]
-  ])
+  await waitFor(() =>
+    { expect(setLoadedBreweries.mock.calls).toEqual([
+      [undefined],
+      [[koskipanimo, lehe]]
+    ]); }
+  )
 })
 
 test('renders brewery stats', () => {

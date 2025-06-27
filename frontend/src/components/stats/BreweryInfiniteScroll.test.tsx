@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react'
+import { fireEvent, render, waitFor } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
 import userEvent from '@testing-library/user-event'
 import BreweryInfiniteScroll from './BreweryInfiniteScroll'
@@ -52,11 +52,10 @@ const unusedStats = {
 }
 
 test('queries brewery stats', async () => {
-  const user = userEvent.setup()
   const query = vitest.fn()
   const setLoadedBreweries = vitest.fn()
   let loadCallback: () => void = () => undefined
-  const { getByRole } = render(
+  render(
     <LinkWrapper>
       <BreweryInfiniteScroll
         getBreweryStatsIf={{
@@ -109,9 +108,9 @@ test('queries brewery stats', async () => {
     },
     styleId: undefined
   }]])
-  // Need to do something to get breweries set.
-  await openFilters(getByRole, user)
-  expect(setLoadedBreweries.mock.calls).toEqual([[[koskipanimo, lehe]]])
+  await waitFor(() =>
+    { expect(setLoadedBreweries.mock.calls).toEqual([[[koskipanimo, lehe]]]); }
+  )
 })
 
 test('renders brewery stats', () => {

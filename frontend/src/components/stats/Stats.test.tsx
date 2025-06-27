@@ -4,7 +4,6 @@ import { expect, test, vitest } from 'vitest'
 import Stats from './Stats'
 import type { OneAnnualContainerStats, StatsIf } from '../../core/stats/types'
 import LinkWrapper from '../LinkWrapper'
-import { openFilters } from './filters-test-util'
 import type { ParamsIf } from '../util'
 
 const emptyAnnualContainerStats = { annualContainer: []}
@@ -276,7 +275,6 @@ test('renders annual container stats', async () => {
 })
 
 test('renders brewery stats', async () => {
-  const user = userEvent.setup()
   const koskipanimo = {
     breweryId: '8981fe71-1a4d-48f3-8b4e-9b9b3ddf9d8a',
     breweryName: 'Koskipanimo',
@@ -291,7 +289,7 @@ test('renders brewery stats', async () => {
   }
   const breweryStats = { brewery: [{ ...koskipanimo }, { ...lehe }]}
 
-  const { getByRole, getByText } = render(
+  const { getByText } = render(
     <LinkWrapper>
       <Stats
         paramsIf={getStatsParamsIf('brewery')}
@@ -315,9 +313,7 @@ test('renders brewery stats', async () => {
       />
     </LinkWrapper>
   )
-  // Need to do something to get breweries set.
-  await openFilters(getByRole, user)
-  getByText(koskipanimo.breweryName)
+  await waitFor(() => getByText(koskipanimo.breweryName))
   getByText(koskipanimo.reviewAverage)
   getByText(koskipanimo.reviewCount)
   getByText(lehe.breweryName)
