@@ -2,7 +2,7 @@ import * as Koa from 'koa'
 import * as json from 'koa-json'
 import * as compress from 'koa-compress'
 import * as bodyParser from 'koa-bodyparser'
-import type { Server } from 'http'
+import type { Server } from 'node:http'
 import { v4 as uuidv4 } from 'uuid'
 
 import type { Config } from './config'
