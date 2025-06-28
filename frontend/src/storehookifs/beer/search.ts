@@ -1,6 +1,7 @@
 import type { SearchBeerIf } from "../../core/beer/types"
 import { useLazySearchBeersQuery } from "../../store/beer/api"
 import { validateBeerList } from "../../validation/beer"
+import { formatQuery } from "../search-query"
 
 const searchBeer: () => SearchBeerIf = () => {
   const searchBeerIf: SearchBeerIf = {
@@ -8,7 +9,7 @@ const searchBeer: () => SearchBeerIf = () => {
       const [ searchBeers, { isFetching } ] = useLazySearchBeersQuery()
       return {
         search: async (query: string) => {
-          const results = await searchBeers(query).unwrap()
+          const results = await searchBeers(formatQuery(query)).unwrap()
           return validateBeerList(results).beers
         },
         isLoading: isFetching

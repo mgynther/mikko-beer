@@ -4,6 +4,7 @@ import type {
 } from "../../core/location/types"
 import { useLazySearchLocationsQuery } from "../../store/location/api"
 import { validateLocationList } from "../../validation/location"
+import { formatQuery } from "../search-query"
 
 const searchLocation: (
   create: CreateLocationIf
@@ -16,7 +17,7 @@ const searchLocation: (
       ] = useLazySearchLocationsQuery()
       return {
         search: async (name: string) => {
-          const result = await searchLocation(name).unwrap()
+          const result = await searchLocation(formatQuery(name)).unwrap()
           return validateLocationList(result).locations
         },
         isLoading: isFetching
