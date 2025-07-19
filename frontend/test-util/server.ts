@@ -24,7 +24,7 @@ const handler = async (req: IncomingMessage, res: ServerResponse) => {
   const response = requests[url]
   const parsedURL = new URL(req.url ?? '', `http://${req.headers.host}`)
   // TODO access search params like this parsedURL.searchParams.get("keyword")
-  if (response !== undefined && req.method === response.method && parsedURL.pathname === response.pathname) {
+  if (response !== undefined && req.method === response.method && url === response.pathname) {
     res.writeHead(response.status, { 'Content-Type': 'application/json' })
     res.write(JSON.stringify(response.response))
     res.end()
