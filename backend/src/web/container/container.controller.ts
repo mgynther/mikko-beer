@@ -14,7 +14,7 @@ export function containerController (router: Router): void {
   router.post('/api/v1/container',
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const { body } = ctx.request
+      const body: unknown = ctx.request.body
 
       const result = await ctx.db.executeReadWriteTransaction(
         async (trx) => await containerService.createContainer(
@@ -38,7 +38,7 @@ export function containerController (router: Router): void {
   router.put('/api/v1/container/:containerId',
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const { body } = ctx.request
+      const body: unknown = ctx.request.body
       const containerId: string | undefined = ctx.params.containerId
 
       const result = await ctx.db.executeReadWriteTransaction(

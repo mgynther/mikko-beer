@@ -21,7 +21,7 @@ export function storageController (router: Router): void {
   router.post('/api/v1/storage',
     async (ctx) => {
       const authTokenPayload = parseAuthToken(ctx)
-      const { body } = ctx.request
+      const body: unknown = ctx.request.body
 
       const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
         const createIf: CreateIf = {
@@ -51,7 +51,7 @@ export function storageController (router: Router): void {
   router.put('/api/v1/storage/:storageId',
     async (ctx) => {
       const authTokenPayload = parseAuthToken(ctx)
-      const { body } = ctx.request
+      const body: unknown = ctx.request.body
       const storageId: string | undefined = ctx.params.storageId
 
       const result = await ctx.db.executeReadWriteTransaction(async (trx) => {

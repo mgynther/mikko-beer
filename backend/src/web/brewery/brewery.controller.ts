@@ -14,7 +14,7 @@ export function breweryController (router: Router): void {
   router.post('/api/v1/brewery',
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const { body } = ctx.request
+      const body: unknown = ctx.request.body
 
       const result = await ctx.db.executeReadWriteTransaction(
         async (trx) => await breweryService.createBrewery(
@@ -39,7 +39,7 @@ export function breweryController (router: Router): void {
   router.put('/api/v1/brewery/:breweryId',
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const { body } = ctx.request
+      const body: unknown = ctx.request.body
       const breweryId: string | undefined = ctx.params.breweryId
 
       const result = await ctx.db.executeReadWriteTransaction(
@@ -103,7 +103,7 @@ export function breweryController (router: Router): void {
   router.post('/api/v1/brewery/search',
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const { body } = ctx.request
+      const body: unknown = ctx.request.body
 
       const breweries = await breweryService.searchBreweries(
         async (searchRequest: SearchByName) =>

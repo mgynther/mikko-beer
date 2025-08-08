@@ -18,7 +18,7 @@ export function styleController (router: Router): void {
   router.post('/api/v1/style',
     async (ctx) => {
       const authTokenPayload = parseAuthToken(ctx)
-      const { body } = ctx.request
+      const body: unknown = ctx.request.body
 
       const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
         const createIf: CreateStyleIf = {
@@ -46,7 +46,7 @@ export function styleController (router: Router): void {
   router.put('/api/v1/style/:styleId',
     async (ctx) => {
       const authTokenPayload = parseAuthToken(ctx)
-      const { body } = ctx.request
+      const body: unknown = ctx.request.body
       const styleId: string | undefined = ctx.params.styleId
 
       const result = await ctx.db.executeReadWriteTransaction(async (trx) => {

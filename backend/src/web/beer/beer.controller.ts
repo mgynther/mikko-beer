@@ -18,7 +18,7 @@ export function beerController (router: Router): void {
   router.post('/api/v1/beer',
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const { body } = ctx.request
+      const body: unknown = ctx.request.body
 
       const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
         const createIf: CreateIf = {
@@ -49,7 +49,7 @@ export function beerController (router: Router): void {
   router.put('/api/v1/beer/:beerId',
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const { body } = ctx.request
+      const body: unknown = ctx.request.body
       const beerId: string | undefined = ctx.params.beerId
 
       const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
@@ -126,7 +126,7 @@ export function beerController (router: Router): void {
   router.post('/api/v1/beer/search',
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const { body } = ctx.request
+      const body: unknown = ctx.request.body
 
       const searchByName = validateSearchByName(body)
       const beers = await beerService.searchBeers(

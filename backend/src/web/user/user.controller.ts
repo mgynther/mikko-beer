@@ -28,7 +28,7 @@ export function userController (router: Router, config: Config): void {
   router.post('/api/v1/user',
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const { body } = ctx.request
+      const body: unknown = ctx.request.body
 
       const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
         const authTokenConfig: AuthTokenConfig = {

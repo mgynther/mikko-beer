@@ -26,7 +26,7 @@ export function reviewController (router: Router): void {
   router.post('/api/v1/review',
     async (ctx) => {
       const authTokenPayload = parseAuthToken(ctx)
-      const { body } = ctx.request
+      const body: unknown = ctx.request.body
       const { storage } = ctx.request.query
 
       const storageParam = typeof storage === 'string' &&
@@ -70,7 +70,7 @@ export function reviewController (router: Router): void {
   router.put('/api/v1/review/:reviewId',
     async (ctx) => {
       const authTokenPayload = parseAuthToken(ctx)
-      const { body } = ctx.request
+      const body: unknown = ctx.request.body
       const reviewId: string | undefined = ctx.params.reviewId
 
       const result = await ctx.db.executeReadWriteTransaction(async (trx) => {

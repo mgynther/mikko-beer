@@ -28,7 +28,7 @@ import type { Router } from '../../router'
 
 export function signInMethodController (router: Router): void {
   router.post('/api/v1/user/sign-in', async (ctx) => {
-    const { body } = ctx.request
+    const body: unknown = ctx.request.body
 
     const signedInUser = await ctx.db.executeReadWriteTransaction(async (
       trx
@@ -65,7 +65,7 @@ export function signInMethodController (router: Router): void {
   router.post(
     '/api/v1/user/:userId/refresh',
     async (ctx) => {
-      const { body } = ctx.request
+      const body: unknown = ctx.request.body
       const userId: string | undefined = ctx.params.userId
 
       const authTokenConfig: AuthTokenConfig = getAuthTokenConfig(ctx)
@@ -106,7 +106,7 @@ export function signInMethodController (router: Router): void {
     '/api/v1/user/:userId/sign-out',
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const { body } = ctx.request
+      const body: unknown = ctx.request.body
       const userId: string | undefined = ctx.params.userId
 
       const findRefreshToken = authHelper.createFindRefreshToken(ctx.db)
@@ -137,7 +137,7 @@ export function signInMethodController (router: Router): void {
     '/api/v1/user/:userId/change-password',
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const { body } = ctx.request
+      const body: unknown = ctx.request.body
       const userId: string | undefined = ctx.params.userId
 
       await ctx.db.executeReadWriteTransaction(async (trx) => {

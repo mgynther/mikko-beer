@@ -17,7 +17,7 @@ export function locationController (router: Router): void {
   router.post('/api/v1/location',
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const { body } = ctx.request
+      const body: unknown = ctx.request.body
 
       const result = await ctx.db.executeReadWriteTransaction(
         async (trx) => await locationService.createLocation(
@@ -42,7 +42,7 @@ export function locationController (router: Router): void {
   router.put('/api/v1/location/:locationId',
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const { body } = ctx.request
+      const body: unknown = ctx.request.body
       const locationId: string | undefined = ctx.params.locationId
 
       const result = await ctx.db.executeReadWriteTransaction(
@@ -106,7 +106,7 @@ export function locationController (router: Router): void {
   router.post('/api/v1/location/search',
     async (ctx) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const { body } = ctx.request
+      const body: unknown = ctx.request.body
 
       const locations = await locationService.searchLocations(
         async (searchRequest: SearchByName) =>
