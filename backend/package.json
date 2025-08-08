@@ -6,21 +6,18 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "lint": "npx eslint --fix src",
-    "start": "node dist/data/migrate-to-latest.js && node dist/index.js",
-    "watch": "tsc -w",
+    "start": "npm run migrate:latest && node --env-file .env dist/index.js",
     "test:files": "mocha --timeout 5000 -r ts-node/register",
     "test:core": "npm run test:files test/core/*.test.ts test/core/**/*.test.ts test/core/**/**/*.test.ts",
     "test:data": "npm run test:files test/data/*.test.ts test/data/**/*.test.ts",
     "test:web": "npm run test:files test/web/*.test.ts test/web/**/*.test.ts",
     "test": "npm run test:files test/**/*.test.ts test/**/**/*.test.ts test/**/**/**/*.test.ts",
-    "test:watch": "mocha --timeout 5000 --require ts-node/register --watch --watch-files src, test/**/*.test.ts test/**/**/*.test.ts",
-    "migrate:latest": "node dist/data/migrate-to-latest.js"
+    "migrate:latest": "node --env-file .env dist/data/migrate-to-latest.js"
   },
   "dependencies": {
     "@koa/bodyparser": "6.0.0",
     "@koa/router": "14.0.0",
     "ajv": "8.17.1",
-    "dotenv": "17.2.1",
     "jsonwebtoken": "9.0.2",
     "koa": "3.0.1",
     "koa-compress": "5.1.1",

@@ -1,4 +1,4 @@
-import { ConnectionConfig } from 'pg'
+import type { ConnectionConfig } from 'pg'
 
 export const testConfig: ConnectionConfig = {
   host: 'localhost',

@@ -3,7 +3,8 @@ import {
   PostgresDialect,
   sql,
 } from 'kysely'
-import { ConnectionConfig, Pool } from 'pg'
+import type { ConnectionConfig } from 'pg'
+import { Pool } from 'pg'
 import { Database } from '../../src/data/database'
 
 import {

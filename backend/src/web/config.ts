@@ -1,10 +1,8 @@
-import * as dotenv from 'dotenv'
 import type { ConnectionConfig } from 'pg'
 
 import { config as databaseConfig } from '../data/config'
 import { getEnvVariable } from '../env-helper'
-
-dotenv.config()
+import { parseExpiryDurationMin } from './parse'
 
 export interface Config {
   readonly generateInitialAdminPassword: boolean
@@ -24,10 +22,3 @@ export const config: Config = Object.freeze({
   ),
   database: Object.freeze(databaseConfig)
 })
-
-export function parseExpiryDurationMin(strDurationMin: string): number {
-  if (!/^[0-9]+$/.test(strDurationMin)) {
-    throw new Error(`invalid expiry duration ${strDurationMin}`)
-  }
-  return parseInt(strDurationMin)
-}

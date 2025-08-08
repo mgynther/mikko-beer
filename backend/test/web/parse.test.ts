@@ -1,6 +1,6 @@
 import { expect } from 'earl'
 
-import { parseExpiryDurationMin } from '../../src/web/config'
+import { parseExpiryDurationMin } from '../../src/web/parse'
 
 describe('parse expiry duration min', () => {
   it('parses valid number', () => {
