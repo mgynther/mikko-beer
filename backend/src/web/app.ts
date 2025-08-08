@@ -1,5 +1,4 @@
 import * as Koa from 'koa'
-import * as json from 'koa-json'
 import * as compress from 'koa-compress'
 import { bodyParser } from '@koa/bodyparser'
 import type { Server } from 'node:http'
@@ -53,7 +52,6 @@ export class App {
 
     this.#koa.use(compress())
     this.#koa.use(bodyParser())
-    this.#koa.use(json())
 
     this.#koa.use(addHeaders)
     this.#koa.use(this.errorHandler)
