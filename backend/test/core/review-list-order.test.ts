@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import {
   validateFilteredReviewListOrder,
@@ -36,7 +37,7 @@ describe('review list order unit tests', () => {
   .forEach((test: CommonCase) => {
     it(`valid test helper is valid, ${test.title}`, () => {
       const result = test.func(valid())
-      expect(result).toEqual({ property: 'time', direction: 'desc' })
+      assert.deepEqual(result, { property: 'time', direction: 'desc' })
     })
 
     it(`invalid order value, ${test.title}`, () => {
@@ -67,46 +68,46 @@ describe('review list order unit tests', () => {
       const result = test.func(
         { order: 'time', direction: 'desc' }
       )
-      expect(result).toEqual({ property: 'time', direction: 'desc' })
+      assert.deepEqual(result, { property: 'time', direction: 'desc' })
     })
 
     it(`rating asc, ${test.title}`, () => {
       const result = test.func(
         { order: 'rating', direction: 'asc' }
       )
-      expect(result).toEqual({ property: 'rating', direction: 'asc' })
+      assert.deepEqual(result, { property: 'rating', direction: 'asc' })
     })
   })
 
   it('defaults with undefined, full review list order', () => {
     const result = validateFullReviewListOrder({})
-    expect(result).toEqual({ property: 'time', direction: 'desc' })
+    assert.deepEqual(result, { property: 'time', direction: 'desc' })
   })
 
   it('defaults with undefined, filtered review list order', () => {
     const result = validateFilteredReviewListOrder({})
-    expect(result).toEqual({ property: 'beer_name', direction: 'asc' })
+    assert.deepEqual(result, { property: 'beer_name', direction: 'asc' })
   })
 
   it('defaults with empty string, full review list order', () => {
     const result = validateFullReviewListOrder(
       { order: '', direction: '' },
     )
-    expect(result).toEqual({ property: 'time', direction: 'desc' })
+    assert.deepEqual(result, { property: 'time', direction: 'desc' })
   })
 
   it('defaults with empty string, filtered review list order', () => {
     const result = validateFilteredReviewListOrder(
       { order: '', direction: '' }
     )
-    expect(result).toEqual({ property: 'beer_name', direction: 'asc' })
+    assert.deepEqual(result, { property: 'beer_name', direction: 'asc' })
   })
 
   it('defaults with empty string, full review list order', () => {
     const result = validateFullReviewListOrder(
       { order: '', direction: '' },
     )
-    expect(result).toEqual({ property: 'time', direction: 'desc' })
+    assert.deepEqual(result, { property: 'time', direction: 'desc' })
   })
 
   it('beer_name, full review list order', () => {
@@ -121,7 +122,7 @@ describe('review list order unit tests', () => {
     const result = validateFilteredReviewListOrder(
       { order: 'beer_name', direction: 'desc' }
     )
-    expect(result).toEqual({ property: 'beer_name', direction: 'desc' })
+    assert.deepEqual(result, { property: 'beer_name', direction: 'desc' })
   })
 
   it('brewery_name, full review list order', () => {
@@ -136,6 +137,6 @@ describe('review list order unit tests', () => {
     const result = validateFilteredReviewListOrder(
       { order: 'brewery_name', direction: 'asc' }
     )
-    expect(result).toEqual({ property: 'brewery_name', direction: 'asc' })
+    assert.deepEqual(result, { property: 'brewery_name', direction: 'asc' })
   })
 })

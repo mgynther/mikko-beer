@@ -1,3 +1,5 @@
+import { describe, it } from 'node:test'
+
 import * as service
 from '../../../../src/core/internal/user/validated-sign-in-method.service'
 

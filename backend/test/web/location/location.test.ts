@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import { Location } from '../../../src/core/location/location'
@@ -18,36 +19,36 @@ describe('location tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(res.status).toEqual(201)
-    expect(res.data.location.name).toEqual('Oluthuone Panimomestari')
+    assert.deepEqual(res.status, 201)
+    assert.deepEqual(res.data.location.name, 'Oluthuone Panimomestari')
 
     const getRes = await ctx.request.get<{ location: Location }>(
       `/api/v1/location/${res.data.location.id}`,
       ctx.adminAuthHeaders()
     )
 
-    expect(getRes.status).toEqual(200)
-    expect(getRes.data.location).toEqual(res.data.location)
+    assert.deepEqual(getRes.status, 200)
+    assert.deepEqual(getRes.data.location, res.data.location)
 
     const listRes = await ctx.request.get(`/api/v1/location?skip=0&size=100`,
       ctx.adminAuthHeaders()
     )
-    expect(listRes.status).toEqual(200)
-    expect(listRes.data.locations.length).toEqual(1)
+    assert.deepEqual(listRes.status, 200)
+    assert.deepEqual(listRes.data.locations.length, 1)
 
     const searchRes = await ctx.request.post(`/api/v1/location/search`,
       { name: 'luth' },
       ctx.adminAuthHeaders()
     )
-    expect(searchRes.status).toEqual(200)
-    expect(searchRes.data.locations.length).toEqual(1)
+    assert.deepEqual(searchRes.status, 200)
+    assert.deepEqual(searchRes.data.locations.length, 1)
 
     const badSearchRes = await ctx.request.post(`/api/v1/location/search`,
       { name: 'Panimm' },
       ctx.adminAuthHeaders()
     )
-    expect(badSearchRes.status).toEqual(200)
-    expect(badSearchRes.data.locations.length).toEqual(0)
+    assert.deepEqual(badSearchRes.status, 200)
+    assert.deepEqual(badSearchRes.data.locations.length, 0)
   })
 
   it('update a location', async () => {
@@ -56,23 +57,23 @@ describe('location tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(res.status).toEqual(201)
-    expect(res.data.location.name).toEqual('Kuja')
+    assert.deepEqual(res.status, 201)
+    assert.deepEqual(res.data.location.name, 'Kuja')
 
     const updateRes = await ctx.request.put(`/api/v1/location/${res.data.location.id}`,
       { name: 'Kuja Beer Shop & Bar' },
       ctx.adminAuthHeaders()
     )
-    expect(updateRes.status).toEqual(200)
-    expect(updateRes.data.location.name).toEqual('Kuja Beer Shop & Bar')
+    assert.deepEqual(updateRes.status, 200)
+    assert.deepEqual(updateRes.data.location.name, 'Kuja Beer Shop & Bar')
 
     const getRes = await ctx.request.get<{ location: Location }>(
       `/api/v1/location/${res.data.location.id}`,
       ctx.adminAuthHeaders()
     )
 
-    expect(getRes.status).toEqual(200)
-    expect(getRes.data.location).toEqual(updateRes.data.location)
+    assert.deepEqual(getRes.status, 200)
+    assert.deepEqual(getRes.data.location, updateRes.data.location)
   })
 
   it('fail to create a location without name', async () => {
@@ -81,7 +82,7 @@ describe('location tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(res.status).toEqual(400)
+    assert.deepEqual(res.status, 400)
   })
 
   it('get empty location list', async () => {
@@ -89,8 +90,8 @@ describe('location tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(res.status).toEqual(200)
-    expect(res.data.locations.length).toEqual(0)
+    assert.deepEqual(res.status, 200)
+    assert.deepEqual(res.data.locations.length, 0)
   })
 
 })

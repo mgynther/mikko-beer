@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import * as beerService from '../../../src/core/beer/authorized.service'
 
@@ -142,7 +143,7 @@ describe('beer authorized service unit tests', () => {
         },
         log
       )
-      expect(result).toEqual(beerWithBreweriesAndStyles)
+      assert.deepEqual(result, beerWithBreweriesAndStyles)
     })
 
     it(`list beers as ${token.role}`, async () => {
@@ -154,7 +155,7 @@ describe('beer authorized service unit tests', () => {
         },
         log
       )
-      expect(result).toEqual([beerWithBreweriesAndStyles])
+      assert.deepEqual(result, [beerWithBreweriesAndStyles])
     })
 
     it(`searches beers as ${token.role}`, async () => {
@@ -166,7 +167,7 @@ describe('beer authorized service unit tests', () => {
         },
         log
       )
-      expect(result).toEqual([beerWithBreweriesAndStyles])
+      assert.deepEqual(result, [beerWithBreweriesAndStyles])
     })
   })
 

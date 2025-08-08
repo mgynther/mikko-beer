@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import { StyleWithParentsAndChildren } from '../../../src/core/style/style'
@@ -18,20 +19,20 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(res.status).toEqual(201)
-    expect(res.data.style.name).toEqual('Wild')
-    expect(res.data.style.parents).toEqual([])
+    assert.equal(res.status, 201)
+    assert.equal(res.data.style.name, 'Wild')
+    assert.deepEqual(res.data.style.parents, [])
 
     const getRes = await ctx.request.get<{ style: StyleWithParentsAndChildren }>(
       `/api/v1/style/${res.data.style.id}`,
       ctx.adminAuthHeaders()
     )
 
-    expect(getRes.status).toEqual(200)
-    expect(getRes.data.style.id).toEqual(res.data.style.id)
-    expect(getRes.data.style.name).toEqual(res.data.style.name)
-    expect(getRes.data.style.children).toEqual([])
-    expect(getRes.data.style.parents).toEqual([])
+    assert.equal(getRes.status, 200)
+    assert.equal(getRes.data.style.id, res.data.style.id)
+    assert.equal(getRes.data.style.name, res.data.style.name)
+    assert.deepEqual(getRes.data.style.children, [])
+    assert.deepEqual(getRes.data.style.parents, [])
   })
 
   it('create a child style', async () => {
@@ -40,31 +41,31 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(res.status).toEqual(201)
-    expect(res.data.style.name).toEqual('Pale Ale')
-    expect(res.data.style.id).not.toEqual(null)
-    expect(res.data.style.parents).toEqual([])
+    assert.equal(res.status, 201)
+    assert.equal(res.data.style.name, 'Pale Ale')
+    assert.notEqual(res.data.style.id, null)
+    assert.deepEqual(res.data.style.parents, [])
 
     const childRes = await ctx.request.post(`/api/v1/style`,
       { name: 'India Pale Ale', parents: [ res.data.style.id ] },
       ctx.adminAuthHeaders()
     )
 
-    expect(childRes.status).toEqual(201)
-    expect(childRes.data.style.name).toEqual('India Pale Ale')
-    expect(childRes.data.style.parents).not.toEqual(null)
-    expect(childRes.data.style.parents).toEqual([ res.data.style.id ])
+    assert.equal(childRes.status, 201)
+    assert.equal(childRes.data.style.name, 'India Pale Ale')
+    assert.notEqual(childRes.data.style.parents, null)
+    assert.deepEqual(childRes.data.style.parents, [ res.data.style.id ])
 
     const getRes = await ctx.request.get<{ style: StyleWithParentsAndChildren }>(
       `/api/v1/style/${childRes.data.style.id}`,
       ctx.adminAuthHeaders()
     )
 
-    expect(getRes.status).toEqual(200)
-    expect(getRes.data.style.id).toEqual(childRes.data.style.id)
-    expect(getRes.data.style.name).toEqual(childRes.data.style.name)
-    expect(getRes.data.style.children).toEqual([])
-    expect(getRes.data.style.parents).toEqual([{
+    assert.equal(getRes.status, 200)
+    assert.equal(getRes.data.style.id, childRes.data.style.id)
+    assert.equal(getRes.data.style.name, childRes.data.style.name)
+    assert.deepEqual(getRes.data.style.children, [])
+    assert.deepEqual(getRes.data.style.parents, [{
       id: res.data.style.id,
       name: res.data.style.name,
     }])
@@ -74,12 +75,12 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(getParentRes.status).toEqual(200)
-    expect(getParentRes.data.style.children).toEqual([{
+    assert.equal(getParentRes.status, 200)
+    assert.deepEqual(getParentRes.data.style.children, [{
       id: childRes.data.style.id,
       name: childRes.data.style.name,
     }])
-    expect(getParentRes.data.style.parents).toEqual([])
+    assert.deepEqual(getParentRes.data.style.parents, [])
   })
 
   it('create a child style with 2 parents', async () => {
@@ -87,34 +88,34 @@ describe('style tests', () => {
       { name: 'Ale', parents: [] },
       ctx.adminAuthHeaders()
     )
-    expect(parent1Res.status).toEqual(201)
+    assert.equal(parent1Res.status, 201)
 
     const parent2Res = await ctx.request.post(`/api/v1/style`,
       { name: 'Lager', parents: [] },
       ctx.adminAuthHeaders()
     )
-    expect(parent2Res.status).toEqual(201)
+    assert.equal(parent2Res.status, 201)
 
     const childRes = await ctx.request.post(`/api/v1/style`,
       { name: 'Cream Ale', parents: [ parent1Res.data.style.id, parent2Res.data.style.id ] },
       ctx.adminAuthHeaders()
     )
 
-    expect(childRes.status).toEqual(201)
-    expect(childRes.data.style.name).toEqual('Cream Ale')
-    expect(childRes.data.style.parents).not.toEqual(null)
-    expect(childRes.data.style.parents).toEqual([ parent1Res.data.style.id, parent2Res.data.style.id ])
+    assert.equal(childRes.status, 201)
+    assert.equal(childRes.data.style.name, 'Cream Ale')
+    assert.notEqual(childRes.data.style.parents, null)
+    assert.deepEqual(childRes.data.style.parents, [ parent1Res.data.style.id, parent2Res.data.style.id ])
 
     const getRes = await ctx.request.get<{ style: StyleWithParentsAndChildren }>(
       `/api/v1/style/${childRes.data.style.id}`,
       ctx.adminAuthHeaders()
     )
 
-    expect(getRes.status).toEqual(200)
-    expect(getRes.data.style.id).toEqual(childRes.data.style.id)
-    expect(getRes.data.style.name).toEqual('Cream Ale')
-    expect(getRes.data.style.children).toEqual([])
-    expect(getRes.data.style.parents).toEqual([
+    assert.equal(getRes.status, 200)
+    assert.equal(getRes.data.style.id, childRes.data.style.id)
+    assert.equal(getRes.data.style.name, 'Cream Ale')
+    assert.deepEqual(getRes.data.style.children, [])
+    assert.deepEqual(getRes.data.style.parents, [
       {
         id: parent1Res.data.style.id,
         name: parent1Res.data.style.name,
@@ -129,8 +130,8 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(listRes.status).toEqual(200)
-    expect(listRes.data.styles.length).toEqual(3)
+    assert.equal(listRes.status, 200)
+    assert.equal(listRes.data.styles.length, 3)
   })
 
   it('fail to create a child style with invalid parent', async () => {
@@ -139,7 +140,7 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(childRes.status).toEqual(400)
+    assert.equal(childRes.status, 400)
   })
 
   it('fail to create a style without name', async () => {
@@ -148,7 +149,7 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(res.status).toEqual(400)
+    assert.equal(res.status, 400)
   })
 
   it('update a style', async () => {
@@ -162,17 +163,17 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(aleRes.status).toEqual(201)
-    expect(lagerRes.status).toEqual(201)
+    assert.equal(aleRes.status, 201)
+    assert.equal(lagerRes.status, 201)
 
     const createRes = await ctx.request.post(`/api/v1/style`,
       { name: 'India Pale Ale', parents: [ aleRes.data.style.id ] },
       ctx.adminAuthHeaders()
     )
 
-    expect(createRes.status).toEqual(201)
-    expect(createRes.data.style.name).toEqual('India Pale Ale')
-    expect(createRes.data.style.parents).toEqual([ aleRes.data.style.id ])
+    assert.equal(createRes.status, 201)
+    assert.equal(createRes.data.style.name, 'India Pale Ale')
+    assert.deepEqual(createRes.data.style.parents, [ aleRes.data.style.id ])
 
     const updateRes = await ctx.request.put(`/api/v1/style/${createRes.data.style.id}`,
       { name: 'India Pale Lager', parents: [ lagerRes.data.style.id ] },
@@ -184,10 +185,10 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(getRes.status).toEqual(200)
-    expect(getRes.data.style.id).toEqual(updateRes.data.style.id)
-    expect(getRes.data.style.name).toEqual(updateRes.data.style.name)
-    expect(getRes.data.style.parents).toEqual([{
+    assert.equal(getRes.status, 200)
+    assert.equal(getRes.data.style.id, updateRes.data.style.id)
+    assert.equal(getRes.data.style.name, updateRes.data.style.name)
+    assert.deepEqual(getRes.data.style.parents, [{
       id: lagerRes.data.style.id,
       name: lagerRes.data.style.name,
     }])
@@ -198,14 +199,14 @@ describe('style tests', () => {
       { name: 'Gueuze', parents: []},
       ctx.adminAuthHeaders()
     )
-    expect(createRes.status).toEqual(201)
+    assert.equal(createRes.status, 201)
 
     const style = createRes.data.style
     const updateRes = await ctx.request.put(`/api/v1/style/${style.id}`,
       { name: style.name, parents: ['c407a67d-1e4c-48b3-8e46-29e05d834a8f']},
       ctx.adminAuthHeaders()
     )
-    expect(updateRes.status).toEqual(400)
+    assert.equal(updateRes.status, 400)
 
   })
 
@@ -214,8 +215,8 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(res.status).toEqual(200)
-    expect(res.data.styles.length).toEqual(0)
+    assert.equal(res.status, 200)
+    assert.equal(res.data.styles.length, 0)
   })
 
   it('fail to create cyclic relationship', async () => {
@@ -223,25 +224,25 @@ describe('style tests', () => {
       { name: 'Pale Ale', parents: [] },
       ctx.adminAuthHeaders()
     )
-    expect(aleRes.status).toEqual(201)
+    assert.equal(aleRes.status, 201)
 
     const ipaRes = await ctx.request.post(`/api/v1/style`,
       { name: 'IPA', parents: [ aleRes.data.style.id ] },
       ctx.adminAuthHeaders()
     )
-    expect(ipaRes.status).toEqual(201)
+    assert.equal(ipaRes.status, 201)
 
     const neipaRes = await ctx.request.post(`/api/v1/style`,
       { name: 'Neipa', parents: [ ipaRes.data.style.id ] },
       ctx.adminAuthHeaders()
     )
-    expect(neipaRes.status).toEqual(201)
+    assert.equal(neipaRes.status, 201)
 
     const updateRes = await ctx.request.put(`/api/v1/style/${aleRes.data.style.id}`,
       { name: 'Pale Ale', parents: [ neipaRes.data.style.id ] },
       ctx.adminAuthHeaders()
     )
-    expect(updateRes.status).toEqual(400)
+    assert.equal(updateRes.status, 400)
   })
 
 })

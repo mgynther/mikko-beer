@@ -1,3 +1,5 @@
+import { describe, it } from 'node:test'
+
 import * as userService from '../../../../src/core/internal/user/validated-user.service'
 
 import type { AuthTokenConfig } from '../../../../src/core/auth/auth-token'

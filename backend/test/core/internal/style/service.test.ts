@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import {
   cyclicRelationshipError,
@@ -58,12 +59,12 @@ describe('style service unit tests', () => {
       id: style.id,
       name: style.name,
     }
-    expect(newStyle).toEqual({ name: style.name })
+    assert.deepEqual(newStyle, { name: style.name })
     return result
   }
 
   async function lockParent (parents: string[]) {
-    expect(parents).toEqual([parentStyle.id])
+    assert.deepEqual(parents, [parentStyle.id])
     return [parentStyle.id]
   }
 
@@ -84,8 +85,8 @@ describe('style service unit tests', () => {
     styleId: string,
     parents: string[]
   ): Promise<void> {
-    expect(styleId).toEqual(style.id)
-    expect(parents).toEqual([parentStyle.id])
+    assert.equal(styleId, style.id)
+    assert.deepEqual(parents, [parentStyle.id])
   }
 
   it('create style without parents', async () => {
@@ -107,7 +108,7 @@ describe('style service unit tests', () => {
       request,
       log
     )
-    expect(result).toEqual({
+    assert.deepEqual(result, {
       id: style.id,
       name: style.name,
       parents: [],
@@ -126,7 +127,7 @@ describe('style service unit tests', () => {
       createWithParentRequest,
       log
     )
-    expect(result).toEqual({
+    assert.deepEqual(result, {
       id: style.id,
       name: style.name,
       parents: [parentStyle.id],
@@ -175,11 +176,11 @@ describe('style service unit tests', () => {
   })
 
   async function deleteStyleChildRelationships (styleId: string): Promise<void> {
-    expect(styleId).toEqual(style.id)
+    assert.equal(styleId, style.id)
   }
 
   async function update (updateStyle: Style) {
-    expect(updateStyle).toEqual(style)
+    assert.deepEqual(updateStyle, style)
     return updateStyle
   }
 
@@ -201,7 +202,7 @@ describe('style service unit tests', () => {
       request,
       log
     )
-    expect(result).toEqual({
+    assert.deepEqual(result, {
       id: style.id,
       name: style.name,
       parents: [],
@@ -222,7 +223,7 @@ describe('style service unit tests', () => {
       updateWithParentRequest,
       log
     )
-    expect(result).toEqual({
+    assert.deepEqual(result, {
       id: style.id,
       name: style.name,
       parents: [parentStyle.id],
@@ -275,17 +276,17 @@ describe('style service unit tests', () => {
 
   it('find style', async () => {
     const finder = async (styleId: string) => {
-      expect(styleId).toEqual(style.id)
+      assert.equal(styleId, style.id)
       return styleWithParentsAndChildren
     }
     const result = await styleService.findStyleById(finder, style.id, log)
-    expect(result).toEqual(styleWithParentsAndChildren)
+    assert.deepEqual(result, styleWithParentsAndChildren)
   })
 
   it('fail to find style with unknown id', async () => {
     const id = '76cac82a-58a6-4978-8a00-1de381df032f'
     const finder = async (searchId: string) => {
-      expect(searchId).toEqual(id)
+      assert.equal(searchId, id)
       return undefined
     }
     expectReject(async () => {
@@ -298,6 +299,6 @@ describe('style service unit tests', () => {
       return [styleWithParentIds]
     }
     const result = await styleService.listStyles(lister, log)
-    expect(result).toEqual([styleWithParentIds])
+    assert.deepEqual(result, [styleWithParentIds])
   })
 })

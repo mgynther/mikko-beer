@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import * as statsRepository from '../../../src/data/stats/stats.repository'
@@ -40,7 +41,7 @@ describe('container stats tests', () => {
       }
     )
     const { container, otherContainer } = data
-    expect(stats).toEqual([
+    assert.deepEqual(stats, [
       {
         containerId: container.id,
         containerSize: '0.50',
@@ -69,7 +70,7 @@ describe('container stats tests', () => {
       }
     )
     const { container } = data
-    expect(stats).toEqual([
+    assert.deepEqual(stats, [
       {
         containerId: container.id,
         containerSize: '0.50',
@@ -91,7 +92,7 @@ describe('container stats tests', () => {
       }
     )
     const { container } = data
-    expect(stats).toEqual([
+    assert.deepEqual(stats, [
       {
         containerId: container.id,
         containerSize: '0.50',
@@ -112,7 +113,7 @@ describe('container stats tests', () => {
         style: data.otherStyle.id
       }
     )
-    expect(stats).toEqual([
+    assert.deepEqual(stats, [
       {
         containerId: data.otherContainer.id,
         containerSize: '0.44',

@@ -1,17 +1,18 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import { areKeysEqual } from '../../../src/core/internal/key'
 
 describe('key tests', () => {
   it('keys equal', () => {
-    expect(areKeysEqual(['a', 'b'], ['a', 'b'])).toEqual(true)
+    assert.equal(areKeysEqual(['a', 'b'], ['a', 'b']), true)
   })
 
   it('keys different', () => {
-    expect(areKeysEqual(['a', 'b'], ['a', 'c'])).toEqual(false)
+    assert.equal(areKeysEqual(['a', 'b'], ['a', 'c']), false)
   })
 
   it('key count different', () => {
-    expect(areKeysEqual(['a'], ['a', 'c'])).toEqual(false)
+    assert.equal(areKeysEqual(['a'], ['a', 'c']), false)
   })
 })

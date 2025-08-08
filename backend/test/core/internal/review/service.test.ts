@@ -1,4 +1,6 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
+
 import {
   referredBeerNotFoundError,
   referredContainerNotFoundError,
@@ -82,14 +84,14 @@ const pagination: Pagination = {
 const lockBeer = async (
   beerId: string
 ): Promise<string | undefined> => {
-  expect(beerId).toEqual(review.beer)
+  assert.equal(beerId, review.beer)
   return review.beer
 }
 
 const lockContainer = async (
   containerId: string
 ): Promise<string | undefined> => {
-  expect(containerId).toEqual(review.container)
+  assert.equal(containerId, review.container)
   return review.container
 }
 
@@ -98,23 +100,23 @@ const storageId = '1e90c440-73d4-4de4-bc31-c267df3e8d46'
 const lockStorage = async (
   lockStorageId: string
 ): Promise<string | undefined> => {
-  expect(lockStorageId).toEqual(storageId)
+  assert.equal(lockStorageId, storageId)
   return storageId
 }
 
 const createReview = async (newReview: NewReview) => {
-  expect({
+  assert.deepEqual({
     ...newReview,
     time: newReview.time.toISOString()
-  }).toEqual(createReviewRequest)
+  }, createReviewRequest)
   return { ...review }
 }
 
 const updateReview = async (review: Review) => {
-  expect({
+  assert.deepEqual({
     ...review,
     time: review.time.toISOString()
-  }).toLooseEqual(updateReviewRequest)
+  }, updateReviewRequest)
   return { ...review }
 }
 
@@ -137,7 +139,7 @@ describe('review service unit tests', () => {
       undefined,
       log
     )
-    expect(result).toEqual({
+    assert.deepEqual(result, {
       ...createReviewRequest,
       id: review.id,
       time: new Date(createReviewRequest.time)
@@ -183,13 +185,13 @@ describe('review service unit tests', () => {
   it('create review from storage', async () => {
     let deletedFromStorage = false
     const create = async (newReview: NewReview) => {
-      expect(deletedFromStorage).toEqual(false)
+      assert.equal(deletedFromStorage, false)
       return createReview(newReview)
     }
     const deleteFromStorage = async (deleteId: string) => {
-      expect(deletedFromStorage).toEqual(false)
+      assert.equal(deletedFromStorage, false)
       deletedFromStorage = true
-      expect(deleteId).toEqual(storageId)
+      assert.equal(deleteId, storageId)
     }
     const createIf: CreateIf = {
       createReview: create,
@@ -204,12 +206,12 @@ describe('review service unit tests', () => {
       storageId,
       log
     )
-    expect(result).toEqual({
+    assert.deepEqual(result, {
       ...createReviewRequest,
       id: review.id,
       time: new Date(createReviewRequest.time)
     })
-    expect(deletedFromStorage).toEqual(true)
+    assert.equal(deletedFromStorage, true)
   })
 
   it('fail to create review with invalid storage', async () => {
@@ -242,7 +244,7 @@ describe('review service unit tests', () => {
       updateReviewRequest,
       log
     )
-    expect(result).toEqual({
+    assert.deepEqual(result, {
       ...updateReviewRequest,
       id: review.id,
       time: new Date(updateReviewRequest.time)
@@ -283,17 +285,17 @@ describe('review service unit tests', () => {
 
   it('find review', async () => {
     const finder = async (reviewId: string) => {
-      expect(reviewId).toEqual(review.id)
+      assert.equal(reviewId, review.id)
       return review
     }
     const result = await reviewService.findReviewById(finder, review.id, log)
-    expect(result).toEqual(review)
+    assert.deepEqual(result, review)
   })
 
   it('not find review with unknown id', async () => {
     const id = '544369e2-f10b-4799-9b67-527731a78011'
     const finder = async (searchId: string) => {
-      expect(searchId).toEqual(id)
+      assert.equal(searchId, id)
       return undefined
     }
     expectReject(async () => {
@@ -302,9 +304,11 @@ describe('review service unit tests', () => {
   })
 
   it('list reviews', async () => {
-    const lister = async (listPagination: Pagination, listOrder: ReviewListOrder) => {
-      expect(listPagination).toEqual(pagination)
-      expect(listOrder).toEqual(order)
+    const lister = async (
+      listPagination: Pagination, listOrder: ReviewListOrder
+    ) => {
+      assert.deepEqual(listPagination, pagination)
+      assert.deepEqual(listOrder, order)
       return [joinedReview]
     }
     const result = await reviewService.listReviews(
@@ -313,14 +317,14 @@ describe('review service unit tests', () => {
       order,
       log
     )
-    expect(result).toEqual([joinedReview])
+    assert.deepEqual(result, [joinedReview])
   })
 
   it('list reviews by beer', async () => {
     const beerId = 'ff16b2f6-7862-4e55-9ecb-b67d617e8f9c'
     const lister = async (listBeerId: string, listOrder: ReviewListOrder) => {
-      expect(listBeerId).toEqual(beerId)
-      expect(listOrder).toEqual(order)
+      assert.equal(listBeerId, beerId)
+      assert.deepEqual(listOrder, order)
       return [joinedReview]
     }
     const result = await reviewService.listReviewsByBeer(
@@ -329,14 +333,14 @@ describe('review service unit tests', () => {
       order,
       log
     )
-    expect(result).toEqual([joinedReview])
+    assert.deepEqual(result, [joinedReview])
   })
 
   it('list reviews by brewery', async () => {
     const breweryId = 'f7471dfd-9af9-4a9b-b39d-47f4e7199800'
     const lister = async (listBreweryId: string, listOrder: ReviewListOrder) => {
-      expect(listBreweryId).toEqual(breweryId)
-      expect(listOrder).toEqual(order)
+      assert.equal(listBreweryId, breweryId)
+      assert.deepEqual(listOrder, order)
       return [joinedReview]
     }
     const result = await reviewService.listReviewsByBrewery(
@@ -345,14 +349,14 @@ describe('review service unit tests', () => {
       order,
       log
     )
-    expect(result).toEqual([joinedReview])
+    assert.deepEqual(result, [joinedReview])
   })
 
   it('list reviews by location', async () => {
     const locationId = '714b123e-c6c1-4e1a-b6f8-0ce4e076520e'
     const lister = async (listLocationId: string, listOrder: ReviewListOrder) => {
-      expect(listLocationId).toEqual(locationId)
-      expect(listOrder).toEqual(order)
+      assert.equal(listLocationId, locationId)
+      assert.deepEqual(listOrder, order)
       return [joinedReview]
     }
     const result = await reviewService.listReviewsByLocation(
@@ -361,14 +365,14 @@ describe('review service unit tests', () => {
       order,
       log
     )
-    expect(result).toEqual([joinedReview])
+    assert.deepEqual(result, [joinedReview])
   })
 
   it('list reviews by style', async () => {
     const styleId = 'b265c454-6842-415b-840c-bfdb579aa658'
     const lister = async (listStyleId: string, listOrder: ReviewListOrder) => {
-      expect(listStyleId).toEqual(styleId)
-      expect(listOrder).toEqual(order)
+      assert.equal(listStyleId, styleId)
+      assert.deepEqual(listOrder, order)
       return [joinedReview]
     }
     const result = await reviewService.listReviewsByStyle(
@@ -377,6 +381,6 @@ describe('review service unit tests', () => {
       order,
       log
     )
-    expect(result).toEqual([joinedReview])
+    assert.deepEqual(result, [joinedReview])
   })
 })

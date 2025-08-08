@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import type { Transaction } from '../../../src/data/database'
@@ -24,7 +25,7 @@ describe('beer tests', () => {
         trx,
         beer.id
       )
-      expect(lockedKey).toEqual(beer.id)
+      assert.equal(lockedKey, beer.id)
     })
   })
 
@@ -35,7 +36,7 @@ describe('beer tests', () => {
         trx,
         dummyId
       )
-      expect(lockedKey).toEqual(undefined)
+      assert.equal(lockedKey, undefined)
     })
   })
 })

@@ -1,3 +1,5 @@
+import { describe, it } from 'node:test'
+
 import type {
   DbRefreshToken
 } from '../../../../src/core/auth/refresh-token'
@@ -93,7 +95,7 @@ describe('authorization service unit tests', () => {
 
   it('fail to authorize user without user id', async () => {
     const authTokenPayload = await createAuthTokenPayload(admin)
-    expectReject(async () => {
+    await expectReject(async () => {
       await authorizationService.authorizeUser(
         '',
         authTokenPayload,

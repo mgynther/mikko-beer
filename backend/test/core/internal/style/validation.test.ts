@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import {
   validateCreateStyleRequest,
@@ -45,13 +46,13 @@ describe('style unit tests', () => {
     it(title('pass validation'), () => {
       const input = validRequest()
       const output = validRequest()
-      expect(func(input)).toLooseEqual(outFormatter(output))
+      assert.deepEqual(func(input), outFormatter(output))
     })
 
     it(title('pass validation without parents'), () => {
       const input = { name: validRequest().name, parents: [] }
       const output = { ...input }
-      expect(func(input)).toLooseEqual(outFormatter(output))
+      assert.deepEqual(func(input), outFormatter(output))
     })
 
     function fail (style: unknown) {

@@ -1,3 +1,5 @@
+import { describe, it } from 'node:test'
+
 import * as styleService from '../../../../src/core/internal/style/validated.service'
 
 import type {

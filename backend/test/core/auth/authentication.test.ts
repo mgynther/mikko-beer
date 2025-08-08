@@ -1,4 +1,6 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
+
 import type {
   DbRefreshToken
 } from '../../../src/core/auth/refresh-token'
@@ -68,7 +70,7 @@ describe('authentication service unit tests', () => {
       header(tokens.auth),
       authTokenSecret
     )
-    expect(parsed).toLooseEqual({
+    assert.deepEqual(parsed, {
       userId: admin.id,
       role: Role.admin,
       refreshTokenId
@@ -81,7 +83,7 @@ describe('authentication service unit tests', () => {
       header(tokens.auth),
       authTokenSecret
     )
-    expect(parsed).toLooseEqual({
+    assert.deepEqual(parsed, {
       userId: viewer.id,
       role: Role.viewer,
       refreshTokenId

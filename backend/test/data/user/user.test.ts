@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import type { NewUser, User } from '../../../src/core/user/user'
@@ -28,8 +29,8 @@ describe('user tests', () => {
 
   it('insert user', async () => {
     const insertedUser = await insertUser()
-    expect(insertedUser.username).toEqual(user.username)
-    expect(insertedUser.role).toEqual(user.role)
+    assert.equal(insertedUser.username, user.username)
+    assert.equal(insertedUser.role, user.role)
   })
 
   it('find user', async () => {
@@ -37,24 +38,24 @@ describe('user tests', () => {
     const foundUser = await userRepository.findUserById(
       ctx.db, insertedUser.id
     )
-    expect(foundUser).toEqual(insertedUser)
+    assert.deepEqual(foundUser, insertedUser)
   })
 
   it('do not find user that does not exist', async () => {
     const userId = '35370921-5d47-4274-a5cc-9fe0246d74e5'
     const foundUser = await userRepository.findUserById(ctx.db, userId)
-    expect(foundUser).toEqual(undefined)
+    assert.equal(foundUser, undefined)
   })
 
   it('list users', async () => {
     const insertedUser = await insertUser()
     const users = await userRepository.listUsers(ctx.db)
-    expect(users).toEqual([insertedUser])
+    assert.deepEqual(users, [insertedUser])
   })
 
   it('do not list users when there are none', async () => {
     const users = await userRepository.listUsers(ctx.db)
-    expect(users).toEqual([])
+    assert.deepEqual(users, [])
   })
 
   async function testLocking(
@@ -68,8 +69,8 @@ describe('user tests', () => {
     let isFirstRenameStarted = false
     let isSecondRenameStarted = false
     function expectRenames(isFirstStarted: boolean, isSecondStarted: boolean) {
-      expect(isFirstRenameStarted).toEqual(isFirstStarted)
-      expect(isSecondRenameStarted).toEqual(isSecondStarted)
+      assert.equal(isFirstRenameStarted, isFirstStarted)
+      assert.equal(isSecondRenameStarted, isSecondStarted)
     }
     expectRenames(false, false)
     // A delay is needed to control race condition so that test execution is
@@ -83,7 +84,7 @@ describe('user tests', () => {
       // Getting lock before either rename is in progress is essential for the
       // the test to be reliable.
       expectRenames(false, false)
-      expect(lockedUser).toEqual(insertedUser)
+      assert.deepEqual(lockedUser, insertedUser)
       // Second rename may or may not have started here.
       return new Promise(function(resolve) {
         setTimeout(function() {
@@ -114,7 +115,7 @@ describe('user tests', () => {
     const foundUser = await userRepository.findUserById(
       ctx.db, insertedUser.id
     )
-    expect(foundUser?.username).toEqual(remainingName)
+    assert.equal(foundUser?.username, remainingName)
   }
 
   it('lock user by id', async () => {
@@ -144,7 +145,7 @@ describe('user tests', () => {
     const foundUser = await userRepository.findUserById(
       ctx.db, insertedUser.id
     )
-    expect(foundUser?.username).toEqual(username)
+    assert.equal(foundUser?.username, username)
   })
 
   it('delete user', async () => {
@@ -155,6 +156,6 @@ describe('user tests', () => {
     const foundUser = await userRepository.findUserById(
       ctx.db, insertedUser.id
     )
-    expect(foundUser).toEqual(undefined)
+    assert.equal(foundUser, undefined)
   })
 })

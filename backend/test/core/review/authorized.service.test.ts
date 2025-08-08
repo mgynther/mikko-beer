@@ -1,4 +1,6 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
+
 import * as reviewService from '../../../src/core/review/authorized.service'
 
 import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
@@ -168,7 +170,7 @@ describe('review authorized service unit tests', () => {
         },
         log
       )
-      expect(result).toEqual(review)
+      assert.deepEqual(result, review)
     })
 
     it(`list reviews as ${token.role}`, async () => {
@@ -179,7 +181,7 @@ describe('review authorized service unit tests', () => {
         reviewListOrder,
         log
       )
-      expect(result).toEqual([joinedReview])
+      assert.deepEqual(result, [joinedReview])
     })
 
     it(`list reviews by beer as ${token.role}`, async () => {
@@ -192,7 +194,7 @@ describe('review authorized service unit tests', () => {
         reviewListOrder,
         log
       )
-      expect(result).toEqual([joinedReview])
+      assert.deepEqual(result, [joinedReview])
     })
 
     it(`list reviews by brewery as ${token.role}`, async () => {
@@ -205,11 +207,11 @@ describe('review authorized service unit tests', () => {
         reviewListOrder,
         log
       )
-      expect(result).toEqual([joinedReview])
+      assert.deepEqual(result, [joinedReview])
     })
 
     it(`list reviews by location as ${token.role}`, async () => {
-      expect(typeof joinedReview.location?.id).toEqual('string')
+      assert.equal(typeof joinedReview.location?.id, 'string')
       const result = await reviewService.listReviewsByLocation(
         async () => [joinedReview],
         {
@@ -219,7 +221,7 @@ describe('review authorized service unit tests', () => {
         reviewListOrder,
         log
       )
-      expect(result).toEqual([joinedReview])
+      assert.deepEqual(result, [joinedReview])
     })
 
     it(`list reviews by style as ${token.role}`, async () => {
@@ -232,7 +234,7 @@ describe('review authorized service unit tests', () => {
         reviewListOrder,
         log
       )
-      expect(result).toEqual([joinedReview])
+      assert.deepEqual(result, [joinedReview])
     })
   })
 

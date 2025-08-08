@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import type { Pagination } from '../../../src/core/pagination'
@@ -86,7 +87,7 @@ describe('location stats tests', () => {
       undefined,
       { property: 'average', direction: 'asc' }
     )
-    expect(stats).toEqual([ location, otherLocation ])
+    assert.deepEqual(stats, [ location, otherLocation ])
   })
 
   it('by average desc', async () => {
@@ -96,7 +97,7 @@ describe('location stats tests', () => {
       undefined,
       { property: 'average', direction: 'desc' }
     )
-    expect(stats).toEqual([ otherLocation, location ])
+    assert.deepEqual(stats, [ otherLocation, location ])
   })
 
   it('by count asc', async () => {
@@ -106,7 +107,7 @@ describe('location stats tests', () => {
       undefined,
       { property: 'count', direction: 'asc' }
     )
-    expect(stats).toEqual([ location, otherLocation ])
+    assert.deepEqual(stats, [ location, otherLocation ])
   })
 
   it('by count desc', async () => {
@@ -116,7 +117,7 @@ describe('location stats tests', () => {
       undefined,
       { property: 'count', direction: 'desc' }
     )
-    expect(stats).toEqual([ otherLocation, location ])
+    assert.deepEqual(stats, [ otherLocation, location ])
   })
 
   it('by location_name asc', async () => {
@@ -126,7 +127,7 @@ describe('location stats tests', () => {
       undefined,
       { property: 'location_name', direction: 'asc' }
     )
-    expect(stats).toEqual([ location, otherLocation ])
+    assert.deepEqual(stats, [ location, otherLocation ])
   })
 
   it('by location_name desc', async () => {
@@ -136,7 +137,7 @@ describe('location stats tests', () => {
       undefined,
       { property: 'location_name', direction: 'desc' }
     )
-    expect(stats).toEqual([ otherLocation, location ])
+    assert.deepEqual(stats, [ otherLocation, location ])
   })
 
   it('filter by location', async () => {
@@ -149,7 +150,7 @@ describe('location stats tests', () => {
       }),
       { property: 'location_name', direction: 'desc' }
     )
-    expect(stats).toEqual([ otherLocation ])
+    assert.deepEqual(stats, [ otherLocation ])
   })
 
   it('filter by style', async () => {
@@ -162,7 +163,7 @@ describe('location stats tests', () => {
       }),
       { property: 'location_name', direction: 'desc' }
     )
-    expect(stats).toEqual([ location ])
+    assert.deepEqual(stats, [ location ])
   })
 
   it('filter by min review count', async () => {
@@ -175,7 +176,7 @@ describe('location stats tests', () => {
       }),
       { property: 'location_name', direction: 'desc' }
     )
-    expect(stats).toEqual([ otherLocation ])
+    assert.deepEqual(stats, [ otherLocation ])
   })
 
   it('filter by max review count', async () => {
@@ -188,7 +189,7 @@ describe('location stats tests', () => {
       }),
       { property: 'location_name', direction: 'desc' }
     )
-    expect(stats).toEqual([ location ])
+    assert.deepEqual(stats, [ location ])
   })
 
   it('filter by min review average', async () => {
@@ -201,7 +202,7 @@ describe('location stats tests', () => {
       }),
       { property: 'location_name', direction: 'desc' }
     )
-    expect(stats).toEqual([ otherLocation ])
+    assert.deepEqual(stats, [ otherLocation ])
   })
 
   it('filter by max review average', async () => {
@@ -214,7 +215,7 @@ describe('location stats tests', () => {
       }),
       { property: 'location_name', direction: 'desc' }
     )
-    expect(stats).toEqual([ location ])
+    assert.deepEqual(stats, [ location ])
   })
 
 })

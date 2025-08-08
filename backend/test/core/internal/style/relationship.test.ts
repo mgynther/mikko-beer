@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import { cyclicRelationshipError } from '../../../../src/core/errors'
 import {
@@ -31,7 +32,7 @@ describe('style relationship unit tests', () => {
   ]
 
   it('fail to find cyclic when there is no cycle', () => {
-    expect(() => checkCyclicRelationships(relationships, neipa.id, [ipa.id])).not.toThrow()
+    assert.doesNotThrow(() => checkCyclicRelationships(relationships, neipa.id, [ipa.id]))
   })
 
   it('find cyclic when there is a cycle', () => {

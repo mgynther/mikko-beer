@@ -1,3 +1,5 @@
+import { describe, it } from 'node:test'
+
 import * as beerService from '../../../../src/core/internal/beer/validated.service'
 
 import type {

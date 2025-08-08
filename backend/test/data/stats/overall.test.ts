@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import type { StatsIdFilter } from '../../../src/core/stats/stats'
@@ -35,7 +36,7 @@ describe('overall stats tests', () => {
     const { reviews } = await insertMultipleReviews(9, ctx.db)
 
     const stats = await statsRepository.getOverall(ctx.db, defaultFilter)
-    expect(stats).toEqual({
+    assert.deepEqual(stats, {
       beerCount: '2',
       breweryCount: '2',
       containerCount: '2',
@@ -55,7 +56,7 @@ describe('overall stats tests', () => {
       brewery: data.brewery.id
     })
     const matchingReviews = reviews.filter((_, index) => index % 2 === 1)
-    expect(stats).toEqual({
+    assert.deepEqual(stats, {
       beerCount: '1',
       breweryCount: '1',
       containerCount: '1',
@@ -75,7 +76,7 @@ describe('overall stats tests', () => {
       location: data.location.id
     })
     const matchingReviews = reviews.filter((_, index) => index % 2 === 1)
-    expect(stats).toEqual({
+    assert.deepEqual(stats, {
       beerCount: '1',
       breweryCount: '1',
       containerCount: '1',
@@ -95,7 +96,7 @@ describe('overall stats tests', () => {
       style: data.otherStyle.id
     })
     const matchingReviews = reviews.filter((_, index) => index % 2 === 0)
-    expect(stats).toEqual({
+    assert.deepEqual(stats, {
       beerCount: '1',
       breweryCount: '1',
       containerCount: '1',

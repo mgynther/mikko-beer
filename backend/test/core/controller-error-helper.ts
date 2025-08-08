@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import * as assert from 'node:assert/strict'
+
 import { ControllerError } from '../../src/core/errors'
 
 export async function expectReject(
@@ -30,8 +31,11 @@ function assertControllerError(
   receivedError: unknown,
   expectedError: ControllerError
 ) {
-   expect(receivedError).toBeA(ControllerError)
+   assert.equal(
+     receivedError instanceof ControllerError,
+     true,
+     'not a ControllerError instance')
    const error: ControllerError = receivedError as ControllerError
-   expect(error.message).toEqual(expectedError.message)
-   expect(error.status).toEqual(expectedError.status)
+   assert.equal(error.message, expectedError.message)
+   assert.equal(error.status, expectedError.status)
 }

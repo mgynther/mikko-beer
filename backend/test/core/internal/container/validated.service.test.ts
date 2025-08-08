@@ -1,3 +1,5 @@
+import { describe, it } from 'node:test'
+
 import * as containerService from '../../../../src/core/internal/container/validated.service'
 
 import type {

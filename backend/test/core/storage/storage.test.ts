@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import {
   validateCreateStorageRequest,
@@ -22,14 +23,14 @@ describe('storage validation unit tests', () => {
   it('valid create storate request passes validation', () => {
     const input = validRequest()
     const output = validRequest()
-    expect(validateCreateStorageRequest(input)).toLooseEqual(output)
+    assert.deepEqual(validateCreateStorageRequest(input), output)
   })
 
   it('valid update storate request passes validation', () => {
     const input = validRequest()
     const output = validRequest()
     const id = '328ec839-cf21-43b3-8a33-8b69c126eebc'
-    expect(validateUpdateStorageRequest(input, id)).toLooseEqual({
+    assert.deepEqual(validateUpdateStorageRequest(input, id), {
       id,
       request: output
     })

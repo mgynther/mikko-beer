@@ -1,4 +1,6 @@
-import { expect } from 'earl'
+import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import * as assert from 'node:assert/strict'
+import { assertGreaterThan, assertIncludes } from '../assert'
 
 import axios from 'axios'
 
@@ -81,11 +83,11 @@ describe('initial admin', () => {
 
   it('initial admin sign in works', async () => {
     const messages = ctx.logMessages()
-    expect(messages.length).toBeGreaterThan(1)
+    assertGreaterThan(messages.length, 1)
     const parts = messages[1].message.split('"')
-    expect(parts.length).toEqual(5)
-    expect(parts[0]).toInclude('Created initial user')
-    expect(parts[2]).toInclude('with password')
+    assert.equal(parts.length, 5)
+    assertIncludes(parts[0], 'Created initial user')
+    assertIncludes(parts[2], 'with password')
     const adminUsername = parts[1]
     const adminPassword = parts[3]
     const res = await ctx.request.post(`/api/v1/user/sign-in`, {
@@ -93,7 +95,7 @@ describe('initial admin', () => {
       password: adminPassword,
     })
 
-    expect(res.status).toEqual(200)
+    assert.equal(res.status, 200)
     const authToken = res.data.authToken
 
     // The returned auth token is be usable.
@@ -105,7 +107,7 @@ describe('initial admin', () => {
       },
     }
     )
-    expect(getRes.status).toEqual(200)
-    expect(getRes.data.user).toEqual(res.data.user)
+    assert.equal(getRes.status, 200)
+    assert.deepEqual(getRes.data.user, res.data.user)
   })
 })

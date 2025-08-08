@@ -1,3 +1,5 @@
+import { describe, it } from 'node:test'
+
 import * as locationService from '../../../../src/core/internal/location/validated.service'
 
 import type {

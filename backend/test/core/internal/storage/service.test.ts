@@ -1,4 +1,5 @@
-import { expect, mockFn } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import {
   referredBeerNotFoundError,
@@ -60,14 +61,14 @@ const updateRequest: Storage = {
 const lockBeer = async (
   beerId: string
 ): Promise<string | undefined> => {
-  expect(beerId).toEqual(storage.beer)
+  assert.equal(beerId, storage.beer)
   return storage.beer
 }
 
 const lockContainer = async (
   containerId: string
 ): Promise<string | undefined> => {
-  expect(containerId).toEqual(storage.container)
+  assert.equal(containerId, storage.container)
   return storage.container
 }
 
@@ -80,7 +81,7 @@ describe('storage service unit tests', () => {
         bestBefore: storage.bestBefore,
         container: storage.container,
       }
-      expect(newStorage).toEqual(
+      assert.deepEqual(newStorage,
         {
           beer: storage.beer,
           bestBefore: storage.bestBefore,
@@ -97,12 +98,12 @@ describe('storage service unit tests', () => {
     const createIf: CreateIf = {
       insertStorage,
       lockBeer: async (beerId: string) => {
-        expect(isBeerLocked).toEqual(false)
+        assert.equal(isBeerLocked, false)
         isBeerLocked = true
         return lockBeer(beerId)
       },
       lockContainer: async (containerId: string) => {
-        expect(isContainerLocked).toEqual(false)
+        assert.equal(isContainerLocked, false)
         isContainerLocked = true
         return lockContainer(containerId)
       }
@@ -112,13 +113,13 @@ describe('storage service unit tests', () => {
       createRequest,
       log
     )
-    expect(result).toEqual({
+    assert.deepEqual(result, {
       ...createRequest,
       bestBefore: new Date(createRequest.bestBefore),
       id: storage.id
     })
-    expect(isBeerLocked).toEqual(true)
-    expect(isContainerLocked).toEqual(true)
+    assert.equal(isBeerLocked, true)
+    assert.equal(isContainerLocked, true)
   })
 
   it('fail to create storage with invalid beer', async () => {
@@ -167,7 +168,7 @@ describe('storage service unit tests', () => {
         bestBefore: storage.bestBefore,
         container: storage.container,
       }
-      expect(storage).toEqual(result)
+      assert.deepEqual(storage, result)
       return {
         ...result,
         bestBefore: new Date(result.bestBefore)
@@ -176,12 +177,12 @@ describe('storage service unit tests', () => {
     const updateIf: UpdateIf = {
       updateStorage,
       lockBeer: async (beerId: string) => {
-        expect(isBeerLocked).toEqual(false)
+        assert.equal(isBeerLocked, false)
         isBeerLocked = true
         return lockBeer(beerId)
       },
       lockContainer: async (containerId: string) => {
-        expect(isContainerLocked).toEqual(false)
+        assert.equal(isContainerLocked, false)
         isContainerLocked = true
         return lockContainer(containerId)
       }
@@ -191,13 +192,13 @@ describe('storage service unit tests', () => {
       updateRequest,
       log
     )
-    expect(result).toEqual({
+    assert.deepEqual(result, {
       ...updateRequest,
       bestBefore: new Date(updateRequest.bestBefore),
       id: storage.id
     })
-    expect(isBeerLocked).toEqual(true)
-    expect(isContainerLocked).toEqual(true)
+    assert.equal(isBeerLocked, true)
+    assert.equal(isContainerLocked, true)
   })
 
   it('fail to update storage with invalid beer', async () => {
@@ -236,29 +237,31 @@ describe('storage service unit tests', () => {
     }, referredContainerNotFoundError)
   })
 
-  it('delete storage', async () => {
-    const deleter = mockFn(async (id: string) => {
-      id
-    })
+  it('delete storage', async (t) => {
+    const mockImpl = async () => undefined
+    const deleter = t.mock.fn(mockImpl)
     const id = '18801a29-1c4e-40a4-ab3b-1701b4416c6c'
     await storageService.deleteStorageById(deleter, id, log)
-    expect(deleter).toHaveBeenCalledTimes(1)
-    expect(deleter).toHaveBeenLastCalledWith(id)
+    assert.equal(deleter.mock.callCount(), 1)
+    assert.deepEqual(
+      deleter.mock.calls[deleter.mock.callCount() - 1].arguments,
+      [id]
+    )
   })
 
   it('find storage', async () => {
     const finder = async (storageId: string) => {
-      expect(storageId).toEqual(joinedStorage.id)
+      assert.equal(storageId, joinedStorage.id)
       return joinedStorage
     }
     const result = await storageService.findStorageById(finder, storage.id, log)
-    expect(result).toEqual(joinedStorage)
+    assert.deepEqual(result, joinedStorage)
   })
 
   it('not find storage with unknown id', async () => {
     const id = 'd29b2ee6-5d2e-40bf-bb87-c02c00a6628f'
     const finder = async (searchId: string) => {
-      expect(searchId).toEqual(id)
+      assert.equal(searchId, id)
       return undefined
     }
     expectReject(async () => {
@@ -275,7 +278,7 @@ describe('storage service unit tests', () => {
       return [joinedStorage]
     }
     const result = await storageService.listStorages(lister, pagination, log)
-    expect(result).toEqual([joinedStorage])
+    assert.deepEqual(result, [joinedStorage])
   })
 
   it('list storages by beer', async () => {
@@ -287,7 +290,7 @@ describe('storage service unit tests', () => {
       joinedStorage.beerId,
       log
     )
-    expect(result).toEqual([joinedStorage])
+    assert.deepEqual(result, [joinedStorage])
   })
 
   it('list storages by brewery', async () => {
@@ -299,7 +302,7 @@ describe('storage service unit tests', () => {
       joinedStorage.breweries[0].id,
       log
     )
-    expect(result).toEqual([joinedStorage])
+    assert.deepEqual(result, [joinedStorage])
   })
 
   it('list storages by style', async () => {
@@ -311,7 +314,7 @@ describe('storage service unit tests', () => {
       joinedStorage.styles[0].id,
       log
     )
-    expect(result).toEqual([joinedStorage])
+    assert.deepEqual(result, [joinedStorage])
   })
 
 })

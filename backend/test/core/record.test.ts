@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import { contains } from '../../src/core/record'
 
@@ -8,11 +9,11 @@ describe('record', () => {
   }
 
   it('contains existing key', () => {
-    expect(contains(record, 'key')).toEqual(true)
+    assert.deepEqual(contains(record, 'key'), true)
   })
 
   it('does not contains missing key', () => {
-    expect(contains(record, 'ke')).toEqual(false)
+    assert.deepEqual(contains(record, 'ke'), false)
   })
 })
 

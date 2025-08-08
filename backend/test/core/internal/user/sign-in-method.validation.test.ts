@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import {
   validatePasswordSignInMethod,
@@ -22,7 +23,7 @@ describe('password sign-in-method validation unit tests', () => {
   function pass(signInMethod: Record<string, unknown>) {
     const input = { ...signInMethod }
     const output = { ...signInMethod }
-    expect(validatePasswordSignInMethod(input)).toLooseEqual(output)
+    assert.deepEqual(validatePasswordSignInMethod(input), output)
   }
 
   function fail(signInMethod: unknown) {
@@ -93,7 +94,7 @@ describe('password change unit tests', () => {
   function pass(passwordChange: Record<string, unknown>) {
     const input = { ...passwordChange }
     const output = { ...passwordChange }
-    expect(validatePasswordChange(input)).toLooseEqual(output)
+    assert.deepEqual(validatePasswordChange(input), output)
   }
 
   function fail(passwordChange: unknown) {

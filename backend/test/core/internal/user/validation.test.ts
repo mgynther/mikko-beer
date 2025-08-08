@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import {
   validateCreateAnonymousUserRequest,
@@ -14,7 +15,7 @@ describe('create anonymous user validation unit tests', () => {
   function pass(user: Record<string, unknown>) {
     const input = { ...user }
     const output = { ...user }
-    expect(validateCreateAnonymousUserRequest(input)).toLooseEqual(output)
+    assert.deepEqual(validateCreateAnonymousUserRequest(input), output)
   }
 
   function fail(user: unknown) {
@@ -67,7 +68,7 @@ describe('create user validation unit tests', () => {
         ...validRequest.passwordSignInMethod
       }
     }
-    expect(validateCreateUserRequest(validRequest)).toLooseEqual(expected)
+    assert.deepEqual(validateCreateUserRequest(validRequest), expected)
   })
 
   it('fail with invalid user', () => {

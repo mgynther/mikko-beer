@@ -1,4 +1,6 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
+
 import * as statsService from '../../../src/core/stats/authorized.service'
 
 import type { AuthTokenPayload } from "../../../src/core/auth/auth-token"
@@ -53,7 +55,7 @@ describe('stats authorized service unit tests', () => {
         statsFilter,
         log
       )
-      expect(result).toEqual({ ...overallStats })
+      assert.deepEqual(result, { ...overallStats })
     })
 
     it(`get annual stats as ${token.role}`, async () => {
@@ -75,7 +77,7 @@ describe('stats authorized service unit tests', () => {
         statsFilter,
         log
       )
-      expect(result).toEqual([ ...annualStats ])
+      assert.deepEqual(result, [ ...annualStats ])
     })
 
     it(`get annual container stats as ${token.role}`, async () => {
@@ -104,7 +106,7 @@ describe('stats authorized service unit tests', () => {
         statsFilter,
         log
       )
-      expect(result).toEqual([ ...annualContainerStats ])
+      assert.deepEqual(result, [ ...annualContainerStats ])
     })
 
     it(`get brewery stats as ${token.role}`, async () => {
@@ -139,7 +141,7 @@ describe('stats authorized service unit tests', () => {
         },
         log
       )
-      expect(result).toEqual([ ...breweryStats ])
+      assert.deepEqual(result, [ ...breweryStats ])
     })
 
     it(`get container stats as ${token.role}`, async () => {
@@ -165,7 +167,7 @@ describe('stats authorized service unit tests', () => {
         statsFilter,
         log
       )
-      expect(result).toEqual([ ...containerStats ])
+      assert.deepEqual(result, [ ...containerStats ])
     })
 
     it(`get location stats as ${token.role}`, async () => {
@@ -200,7 +202,7 @@ describe('stats authorized service unit tests', () => {
         },
         log
       )
-      expect(result).toEqual([ ...locationStats ])
+      assert.deepEqual(result, [ ...locationStats ])
     })
 
     it(`get rating stats as ${token.role}`, async () => {
@@ -221,7 +223,7 @@ describe('stats authorized service unit tests', () => {
         statsFilter,
         log
       )
-      expect(result).toEqual([ ...ratingStats ])
+      assert.deepEqual(result, [ ...ratingStats ])
     })
 
     it(`get style stats as ${token.role}`, async () => {
@@ -255,7 +257,7 @@ describe('stats authorized service unit tests', () => {
         },
         log
       )
-      expect(result).toEqual([ ...styleStats ])
+      assert.deepEqual(result, [ ...styleStats ])
     })
   })
 })

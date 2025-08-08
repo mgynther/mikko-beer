@@ -1,4 +1,6 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
+import { assertGreaterThan } from '../../../assert'
 
 import * as authTokenService from '../../../../src/core/internal/auth/auth-token.service'
 
@@ -46,16 +48,16 @@ describe('encrypt and verify password', () => {
     const password = 'password'
     const result = await encryptPassword(password)
     // Sanity check format without being specific.
-    expect(result.length).toBeGreaterThan(30)
+    assertGreaterThan(result.length, 30)
     const [salt, hashedPassword] = result.split(':')
-    expect(salt.length).toBeGreaterThan(10)
-    expect(hashedPassword.length).toBeGreaterThan(20)
+    assertGreaterThan(salt.length, 10)
+    assertGreaterThan(hashedPassword.length, 20)
     // There's no trivial way ensure hash is correct without using the same
     // implementation as in the tested code.
-    expect(await verifySecret(password, result)).toEqual(true)
+    assert.equal(await verifySecret(password, result), true)
     // While ensuring correctness is hard, it's trivial to ensure wrong
     // password fails.
-    expect(await verifySecret(`${password}1`, result)).toEqual(false)
+    assert.equal(await verifySecret(`${password}1`, result), false)
   })
 })
 
@@ -107,21 +109,21 @@ describe('password sign-in-method service unit tests', () => {
   async function lockValidUser(
     lockUserId: string
   ): Promise<User | undefined> {
-    expect(lockUserId).toEqual(userId)
+    assert.equal(lockUserId, userId)
     return user
   }
 
   async function lockValidUserByUsername(
     lockUsername: string
   ): Promise<User | undefined> {
-    expect(lockUsername).toEqual(username)
+    assert.equal(lockUsername, username)
     return user
   }
 
   async function lockNoPasswordUser(
     lockUserId: string
   ): Promise<User | undefined> {
-    expect(lockUserId).toEqual(userId)
+    assert.equal(lockUserId, userId)
     return noPasswordUser
   }
 
@@ -132,14 +134,14 @@ describe('password sign-in-method service unit tests', () => {
   async function getUserPasswordHash(
     userId: string
   ): Promise<UserPasswordHash | undefined> {
-    expect(userId).toEqual(user.id)
+    assert.equal(userId, user.id)
     return userPasswordHash
   }
 
   async function getOtherPasswordHash(
     userId: string
   ): Promise<UserPasswordHash | undefined> {
-    expect(userId).toEqual(user.id)
+    assert.equal(userId, user.id)
     return {
       userId,
       passwordHash: otherHash
@@ -149,12 +151,12 @@ describe('password sign-in-method service unit tests', () => {
   async function getMissingPasswordHash(
     userId: string
   ): Promise<UserPasswordHash | undefined> {
-    expect(userId).toEqual(user.id)
+    assert.equal(userId, user.id)
     return undefined
   }
 
   async function insertRefreshToken(userId: string) {
-    expect(userId).toEqual(user.id)
+    assert.equal(userId, user.id)
     return {
       id: 'a8d69fd5-1491-4b63-86ea-6d5e3c7f624d',
       userId
@@ -167,18 +169,19 @@ describe('password sign-in-method service unit tests', () => {
       insertPasswordSignInMethod: async function(
         userPassword: UserPasswordHash
       ): Promise<void> {
-        expect(userPassword.userId).toEqual(user.id)
+        assert.equal(userPassword.userId, user.id)
         // There's no trivial way ensure hash is correct without using the same
         // implementation as in the tested code.
-        expect(
-          await verifySecret(method.password, userPassword.passwordHash)
-        ).toEqual(true)
+        assert.equal(
+          await verifySecret(method.password, userPassword.passwordHash),
+          true
+        )
       },
       setUserUsername: async function(
         userId: string, username: string | null
       ): Promise<void> {
-        expect(userId).toEqual(user.id)
-        expect(username).toEqual(user.username)
+        assert.equal(userId, user.id)
+        assert.equal(username, user.username)
       }
     }
     await addPasswordSignInMethod(addPasswordUserIf, userId, method, log)
@@ -230,14 +233,14 @@ describe('password sign-in-method service unit tests', () => {
       updatePassword: async function(
         userPassword: UserPasswordHash
       ): Promise<void> {
-        expect(userPassword.userId).toEqual(user.id)
+        assert.equal(userPassword.userId, user.id)
         // There's no trivial way ensure hash is correct without using the same
         // implementation as in the tested code.
-        expect(
+        assert.equal(
           await verifySecret(
-            passwordChange.newPassword, userPassword.passwordHash
-          )
-        ).toEqual(true)
+            passwordChange.newPassword, userPassword.passwordHash),
+          true
+        )
       },
     }
     await changePassword(changePasswordUserIf, userId, passwordChange)
@@ -287,14 +290,14 @@ describe('password sign-in-method service unit tests', () => {
       method,
       authTokenConfig
     )
-    expect(result.user).toEqual(user)
+    assert.deepEqual(result.user, user)
     const reference = await authTokenService.createTokens(
       insertRefreshToken,
       user,
       authTokenConfig
     )
-    expect(result.refreshToken).toEqual(reference.refresh)
-    expect(result.authToken).toEqual(reference.auth)
+    assert.deepEqual(result.refreshToken, reference.refresh)
+    assert.deepEqual(result.authToken, reference.auth)
   })
 
   it('fail to sign in using password without user', async () => {

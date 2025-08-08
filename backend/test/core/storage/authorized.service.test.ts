@@ -1,4 +1,6 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
+
 import * as storageService from '../../../src/core/storage/authorized.service'
 
 import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
@@ -174,7 +176,7 @@ describe('storage authorized service unit tests', () => {
         },
         log
       )
-      expect(result).toEqual(joinedStorage)
+      assert.deepEqual(result, joinedStorage)
     })
 
     it(`list storages as ${token.role}`, async () => {
@@ -184,7 +186,7 @@ describe('storage authorized service unit tests', () => {
         { skip: 0, size: 20 },
         log
       )
-      expect(result).toEqual([joinedStorage])
+      assert.deepEqual(result, [joinedStorage])
     })
 
     it(`list storages by beer as ${token.role}`, async () => {
@@ -196,7 +198,7 @@ describe('storage authorized service unit tests', () => {
         },
         log
       )
-      expect(result).toEqual([joinedStorage])
+      assert.deepEqual(result, [joinedStorage])
     })
 
     it(`list storages by brewery as ${token.role}`, async () => {
@@ -208,7 +210,7 @@ describe('storage authorized service unit tests', () => {
         },
         log
       )
-      expect(result).toEqual([joinedStorage])
+      assert.deepEqual(result, [joinedStorage])
     })
 
     it(`list storages by style as ${token.role}`, async () => {
@@ -220,7 +222,7 @@ describe('storage authorized service unit tests', () => {
         },
         log
       )
-      expect(result).toEqual([joinedStorage])
+      assert.deepEqual(result, [joinedStorage])
     })
   })
 

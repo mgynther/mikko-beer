@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import {
   validateCreateReviewRequest,
@@ -48,7 +49,7 @@ describe('review create/update validation unit tests', () => {
     function pass (review: object) {
       const input = { ...review }
       const output = { ...review }
-      expect(func(input)).toLooseEqual(outputFormatter(output))
+      assert.deepEqual(func(input), outputFormatter(output))
     }
 
     it(title('pass validation'), () => {
@@ -103,7 +104,7 @@ describe('review create/update validation unit tests', () => {
         }
         const input = { ...review }
         const output = { ...review }
-        expect(func(input)).toLooseEqual(outputFormatter(output))
+        assert.deepEqual(func(input), outputFormatter(output))
       }))
 
     function fail (review: unknown) {

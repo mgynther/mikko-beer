@@ -1,4 +1,6 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
+
 import * as styleService from '../../../src/core/style/authorized.service'
 
 import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
@@ -134,7 +136,7 @@ describe('style authorized service unit tests', () => {
         },
         log
       )
-      expect(result).toEqual(styleWithParentsAndChilden)
+      assert.deepEqual(result, styleWithParentsAndChilden)
     })
 
     it(`list styles as ${token.role}`, async () => {
@@ -147,7 +149,7 @@ describe('style authorized service unit tests', () => {
         token,
         log
       )
-      expect(result).toEqual([styleWithParentIds])
+      assert.deepEqual(result, [styleWithParentIds])
     })
   })
 

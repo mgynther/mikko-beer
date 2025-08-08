@@ -1,3 +1,5 @@
+import { describe, it } from 'node:test'
+
 import * as jwt from '../../../src/core/internal/auth/jwt'
 
 import * as authTokenService from '../../../src/core/auth/authorized-auth-token.service'

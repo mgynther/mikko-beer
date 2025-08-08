@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import * as statsRepository from '../../../src/data/stats/stats.repository'
@@ -46,7 +47,7 @@ describe('annual stats tests', () => {
         style: undefined
       }
     )
-    expect(stats).toEqual([
+    assert.deepEqual(stats, [
       {
         reviewAverage: avg(reviews, '2023'),
         reviewCount: `${filterByYear(reviews, '2023').length}`,
@@ -70,7 +71,7 @@ describe('annual stats tests', () => {
         style: undefined
       }
     )
-    expect(stats).toEqual([
+    assert.deepEqual(stats, [
       {
         reviewAverage: avg(reviews, '2024'),
         reviewCount: `${filterByYear(reviews, '2024').length}`,
@@ -89,7 +90,7 @@ describe('annual stats tests', () => {
         style: undefined
       }
     )
-    expect(stats).toEqual([
+    assert.deepEqual(stats, [
       {
         reviewAverage: avg(reviews, '2024'),
         reviewCount: `${filterByYear(reviews, '2024').length}`,
@@ -108,7 +109,7 @@ describe('annual stats tests', () => {
         style: data.otherStyle.id
       }
     )
-    expect(stats).toEqual([
+    assert.deepEqual(stats, [
       {
         reviewAverage: '6.60',
         reviewCount: '5',
@@ -150,7 +151,7 @@ describe('annual container stats tests', () => {
       }
     )
     const { container, otherContainer } = data
-    expect(stats).toEqual([
+    assert.deepEqual(stats, [
       {
         containerId: container.id,
         containerSize: '0.50',
@@ -182,7 +183,7 @@ describe('annual container stats tests', () => {
       }
     )
     const { container } = data
-    expect(stats).toEqual([
+    assert.deepEqual(stats, [
       {
         containerId: container.id,
         containerSize: '0.50',
@@ -206,7 +207,7 @@ describe('annual container stats tests', () => {
       }
     )
     const { otherContainer } = data
-    expect(stats).toEqual([
+    assert.deepEqual(stats, [
       {
         containerId: otherContainer.id,
         containerSize: '0.44',
@@ -230,7 +231,7 @@ describe('annual container stats tests', () => {
       }
     )
     const { container } = data
-    expect(stats).toEqual([
+    assert.deepEqual(stats, [
       {
         containerId: container.id,
         containerSize: '0.50',
@@ -254,7 +255,7 @@ describe('annual container stats tests', () => {
       }
     )
     const { container } = data
-    expect(stats).toEqual([
+    assert.deepEqual(stats, [
       {
         containerId: container.id,
         containerSize: '0.50',
@@ -277,7 +278,7 @@ describe('annual container stats tests', () => {
         style: data.otherStyle.id
       }
     )
-    expect(stats).toEqual([
+    assert.deepEqual(stats, [
       {
         containerId: data.otherContainer.id,
         containerSize: '0.44',

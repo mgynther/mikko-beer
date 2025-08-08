@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import { userNotFoundError } from '../../../../src/core/errors'
 import * as userService from '../../../../src/core/internal/user/user.service'
@@ -33,13 +34,13 @@ describe('user service unit tests', () => {
     async function create(
       request: CreateAnonymousUserRequest
     ): Promise<User> {
-      expect(request.role).toEqual(user.role)
+      assert.equal(request.role, user.role)
       return user
     }
     async function insertRefreshToken(
       requestUserId: string
     ): Promise<DbRefreshToken> {
-      expect(requestUserId).toEqual(userId)
+      assert.equal(requestUserId, userId)
       return {
         id: '0586c701-e053-46bf-b599-346093989140',
         userId
@@ -52,9 +53,9 @@ describe('user service unit tests', () => {
       authTokenConfig,
       log
     )
-    expect(signedInUser.user).toEqual(user)
-    expect(signedInUser.refreshToken.refreshToken).not.toEqual('')
-    expect(signedInUser.authToken.authToken).not.toEqual('')
+    assert.deepEqual(signedInUser.user, user)
+    assert.notEqual(signedInUser.refreshToken.refreshToken, '')
+    assert.notEqual(signedInUser.authToken.authToken, '')
   })
 
   it('fail to find user that does not exist', async () => {

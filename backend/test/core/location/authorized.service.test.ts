@@ -1,4 +1,6 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
+
 import * as locationService from '../../../src/core/location/authorized.service'
 
 import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
@@ -111,7 +113,7 @@ describe('location authorized service unit tests', () => {
         },
         log
       )
-      expect(result).toEqual(location)
+      assert.deepEqual(result, location)
     })
 
     it(`list breweries as ${token.role}`, async () => {
@@ -123,7 +125,7 @@ describe('location authorized service unit tests', () => {
         },
         log
       )
-      expect(result).toEqual([location])
+      assert.deepEqual(result, [location])
     })
 
     it(`searches breweries as ${token.role}`, async () => {
@@ -135,7 +137,7 @@ describe('location authorized service unit tests', () => {
         },
         log
       )
-      expect(result).toEqual([location])
+      assert.deepEqual(result, [location])
     })
   })
 })

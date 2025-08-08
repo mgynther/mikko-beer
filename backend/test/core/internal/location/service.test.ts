@@ -1,4 +1,6 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
+
 import type {
   Location,
   CreateLocationRequest,
@@ -27,11 +29,11 @@ describe('location service unit tests', () => {
         id: location.id,
         name: location.name,
       }
-      expect(newLocation).toEqual({ name: location.name })
+      assert.deepEqual(newLocation, { name: location.name })
       return result
     }
     const result = await locationService.createLocation(create, request, log)
-    expect(result).toEqual({
+    assert.deepEqual(result, {
       ...request,
       id: location.id
     })
@@ -46,7 +48,7 @@ describe('location service unit tests', () => {
         id: location.id,
         name: location.name,
       }
-      expect(location).toEqual(result)
+      assert.deepEqual(location, result)
       return result
     }
     const result = await locationService.updateLocation(
@@ -55,7 +57,7 @@ describe('location service unit tests', () => {
       request,
       log
     )
-    expect(result).toEqual({
+    assert.deepEqual(result, {
       ...request,
       id: location.id
     })
@@ -63,17 +65,17 @@ describe('location service unit tests', () => {
 
   it('find location', async () => {
     const finder = async (locationId: string) => {
-      expect(locationId).toEqual(location.id)
+      assert.equal(locationId, location.id)
       return location
     }
     const result = await locationService.findLocationById(finder, location.id, log)
-    expect(result).toEqual(location)
+    assert.equal(result, location)
   })
 
   it('fail to find location with unknown id', async () => {
     const id = 'fe7bd6e4-321a-4614-9ccf-7568491841e3'
     const finder = async (searchId: string) => {
-      expect(searchId).toEqual(id)
+      assert.equal(searchId, id)
       return undefined
     }
     expectReject(async () => {
@@ -87,11 +89,11 @@ describe('location service unit tests', () => {
       skip: 80
     }
     const lister = async (listPagination: Pagination) => {
-      expect(listPagination).toEqual(pagination)
+      assert.deepEqual(listPagination, pagination)
       return [location]
     }
     const result = await locationService.listLocations(lister, pagination, log)
-    expect(result).toEqual([location])
+    assert.deepEqual(result, [location])
   })
 
   it('search locations', async () => {
@@ -99,7 +101,7 @@ describe('location service unit tests', () => {
       name: 'Kuj',
     }
     const searcher = async (search: SearchByName) => {
-      expect(search).toEqual(searchByName)
+      assert.equal(search, searchByName)
       return [location]
     }
     const result = await locationService.searchLocations(
@@ -107,6 +109,6 @@ describe('location service unit tests', () => {
       searchByName,
       log
     )
-    expect(result).toEqual([location])
+    assert.deepEqual(result, [location])
   })
 })

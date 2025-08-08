@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import type { Pagination, PaginationRequest } from '../../src/core/pagination'
 import { validatePagination } from '../../src/core/pagination'
@@ -9,7 +10,7 @@ import { expectThrow } from './controller-error-helper'
 
 describe('pagination unit tests', () => {
   function pass(input: PaginationRequest, output: Pagination) {
-    expect(validatePagination(input)).toEqual(output)
+    assert.deepEqual(validatePagination(input), output)
   }
   function fail(input: PaginationRequest) {
     expectThrow(() => (validatePagination(input)), invalidPaginationError)

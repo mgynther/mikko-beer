@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import { User } from '../../../src/core/user/user'
@@ -23,10 +24,10 @@ describe('user tests', () => {
       }
     }
     const noAuthRes = await ctx.request.post(`/api/v1/user`, params)
-    expect(noAuthRes.status).toEqual(400)
+    assert.equal(noAuthRes.status, 400)
 
     const invalidAuthRes = await ctx.request.post(`/api/v1/user`, params, ctx.createAuthHeaders('invalid token'))
-    expect(invalidAuthRes.status).toEqual(401)
+    assert.equal(invalidAuthRes.status, 401)
   })
 
   it('create a user', async () => {
@@ -42,9 +43,9 @@ describe('user tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(res.status).toEqual(201)
-    expect(res.data.user.username).toEqual('Anon')
-    expect(res.data.user.role).toEqual('admin')
+    assert.equal(res.status, 201)
+    assert.equal(res.data.user.username, 'Anon')
+    assert.equal(res.data.user.role, 'admin')
 
     // The returned auth token is be usable.
     const getRes = await ctx.request.get<{ user: User }>(
@@ -52,8 +53,8 @@ describe('user tests', () => {
       ctx.createAuthHeaders(res.data.authToken)
     )
 
-    expect(getRes.status).toEqual(200)
-    expect(getRes.data.user).toEqual(res.data.user)
+    assert.equal(getRes.status, 200)
+    assert.deepEqual(getRes.data.user, res.data.user)
   })
 
   it('get user by id', async () => {
@@ -64,8 +65,8 @@ describe('user tests', () => {
       ctx.createAuthHeaders(authToken)
     )
 
-    expect(res.status).toEqual(200)
-    expect(res.data).toEqual({ user })
+    assert.equal(res.status, 200)
+    assert.deepEqual(res.data, { user })
   })
 
   it('sign in a user', async () => {
@@ -76,7 +77,7 @@ describe('user tests', () => {
       password: password,
     })
 
-    expect(res.status).toEqual(200)
+    assert.equal(res.status, 200)
 
     // The returned auth token is be usable.
     const getRes = await ctx.request.get<{ user: User }>(
@@ -84,8 +85,8 @@ describe('user tests', () => {
       ctx.createAuthHeaders(authToken)
     )
 
-    expect(getRes.status).toEqual(200)
-    expect(getRes.data.user).toEqual(res.data.user)
+    assert.equal(getRes.status, 200)
+    assert.deepEqual(getRes.data.user, res.data.user)
   })
 
   it('fail to sign in user with the wrong password', async () => {
@@ -96,8 +97,8 @@ describe('user tests', () => {
       password: 'wrong password',
     })
 
-    expect(res.status).toEqual(401)
-    expect(res.data).toEqual({
+    assert.equal(res.status, 401)
+    assert.deepEqual(res.data, {
       error: {
         code: 'InvalidCredentials',
         message: 'wrong username or password',
@@ -105,12 +106,11 @@ describe('user tests', () => {
     })
 
     // Only the one refresh token created for the anonymous user exists.
-    expect(
-      await ctx.db.getDb()
-        .selectFrom('refresh_token')
-        .select('refresh_token.user_id')
-        .execute()
-    ).toHaveLength(1)
+    const results = await ctx.db.getDb()
+      .selectFrom('refresh_token')
+      .select('refresh_token.user_id')
+      .execute()
+    assert.equal(results.length, 1)
   })
 
   it('sign out a user', async () => {
@@ -122,7 +122,7 @@ describe('user tests', () => {
       ctx.createAuthHeaders(authToken)
     )
 
-    expect(res.status).toEqual(200)
+    assert.equal(res.status, 200)
 
     // The auth token is no longer be usable.
     const getRes = await ctx.request.get(
@@ -130,8 +130,8 @@ describe('user tests', () => {
       ctx.createAuthHeaders(authToken)
     )
 
-    expect(getRes.status).toEqual(404)
-    expect(getRes.data.error.code).toEqual('UserOrRefreshTokenNotFound')
+    assert.equal(getRes.status, 404)
+    assert.equal(getRes.data.error.code, 'UserOrRefreshTokenNotFound')
   })
 
   it('refresh auth token', async () => {
@@ -142,9 +142,9 @@ describe('user tests', () => {
       { refreshToken }
     )
 
-    expect(res.status).toEqual(200)
-    expect(res.data.authToken).not.toEqual(authToken)
-    expect(res.data.refreshToken).not.toEqual(refreshToken)
+    assert.equal(res.status, 200)
+    assert.notDeepEqual(res.data.authToken, authToken)
+    assert.notDeepEqual(res.data.refreshToken, refreshToken)
 
     // The old auth token is no longer be usable.
     const failGetRes = await ctx.request.get(
@@ -152,16 +152,16 @@ describe('user tests', () => {
       ctx.createAuthHeaders(authToken)
     )
 
-    expect(failGetRes.status).toEqual(404)
-    expect(failGetRes.data.error.code).toEqual('UserOrRefreshTokenNotFound')
+    assert.equal(failGetRes.status, 404)
+    assert.equal(failGetRes.data.error.code, 'UserOrRefreshTokenNotFound')
 
     const getRes = await ctx.request.get(
       `/api/v1/user/${user.id}`,
       ctx.createAuthHeaders(res.data.authToken)
     )
 
-    expect(getRes.status).toEqual(200)
-    expect(getRes.data.user.username).toEqual(user.username)
+    assert.equal(getRes.status, 200)
+    assert.equal(getRes.data.user.username, user.username)
   })
 
   it('do not change tokens on invalid refresh request', async () => {
@@ -172,14 +172,14 @@ describe('user tests', () => {
       `/api/v1/user/${user.id}/refresh`,
       { refreshToken: anotherUser.refreshToken }
     )
-    expect(res.status).toEqual(401)
+    assert.equal(res.status, 401)
 
     const getRes = await ctx.request.get(
       `/api/v1/user/${user.id}`,
       ctx.createAuthHeaders(authToken)
     )
-    expect(getRes.status).toEqual(200)
-    expect(getRes.data.user.username).toEqual(user.username)
+    assert.equal(getRes.status, 200)
+    assert.equal(getRes.data.user.username, user.username)
   })
 
   it('change password', async () => {
@@ -190,8 +190,8 @@ describe('user tests', () => {
       ctx.createAuthHeaders(authToken)
     )
 
-    expect(getRes.status).toEqual(200)
-    expect(getRes.data.user).toEqual(user)
+    assert.equal(getRes.status, 200)
+    assert.deepEqual(getRes.data.user, user)
 
     const newPassword = 'a different password'
     const wrongPwdChangeRes = await ctx.request.post(
@@ -201,7 +201,7 @@ describe('user tests', () => {
         newPassword
       }, ctx.createAuthHeaders(authToken)
     )
-    expect(wrongPwdChangeRes.status).toEqual(401)
+    assert.equal(wrongPwdChangeRes.status, 401)
 
     const changeRes = await ctx.request.post(
       `/api/v1/user/${getRes.data.user.id}/change-password`,
@@ -210,7 +210,7 @@ describe('user tests', () => {
         newPassword
       }, ctx.createAuthHeaders(authToken)
     )
-    expect(changeRes.status).toEqual(204)
+    assert.equal(changeRes.status, 204)
 
     const oldPwdSignInRes = await ctx.request.post(
       `/api/v1/user/sign-in`, {
@@ -219,7 +219,7 @@ describe('user tests', () => {
       },
       ctx.createAuthHeaders(authToken)
     )
-    expect(oldPwdSignInRes.status).toEqual(401)
+    assert.equal(oldPwdSignInRes.status, 401)
 
     const currentPwdSignInRes = await ctx.request.post(
       `/api/v1/user/sign-in`, {
@@ -227,7 +227,7 @@ describe('user tests', () => {
         password: newPassword,
       }, ctx.createAuthHeaders(authToken)
     )
-    expect(currentPwdSignInRes.status).toEqual(200)
+    assert.equal(currentPwdSignInRes.status, 200)
   })
 
   it('delete user', async () => {
@@ -237,19 +237,19 @@ describe('user tests', () => {
       `/api/v1/user/${user.id}`,
       ctx.createAuthHeaders(authToken)
     )
-    expect(res.status).toEqual(200)
+    assert.equal(res.status, 200)
 
     const deleteRes = await ctx.request.delete(
       `/api/v1/user/${res.data.user.id}`,
       ctx.adminAuthHeaders()
     )
-    expect(deleteRes.status).toEqual(204)
+    assert.equal(deleteRes.status, 204)
 
     const afterDeleteGetRes = await ctx.request.get<{ user: User }>(
       `/api/v1/user/${user.id}`,
       ctx.adminAuthHeaders()
     )
-    expect(afterDeleteGetRes.status).toEqual(404)
+    assert.equal(afterDeleteGetRes.status, 404)
   })
 
 })

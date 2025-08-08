@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import { Review } from '../../../src/core/review/review'
@@ -74,7 +75,7 @@ describe('style stats tests', () => {
       undefined,
       { property: 'average', direction: 'asc' }
     )
-    expect(stats).toEqual([ style, otherStyle ])
+    assert.deepEqual(stats, [ style, otherStyle ])
   })
 
   it('by average desc', async () => {
@@ -83,7 +84,7 @@ describe('style stats tests', () => {
       undefined,
       { property: 'average', direction: 'desc' }
     )
-    expect(stats).toEqual([ otherStyle, style ])
+    assert.deepEqual(stats, [ otherStyle, style ])
   })
 
   it('by count asc', async () => {
@@ -92,7 +93,7 @@ describe('style stats tests', () => {
       undefined,
       { property: 'count', direction: 'asc' }
     )
-    expect(stats).toEqual([ style, otherStyle ])
+    assert.deepEqual(stats, [ style, otherStyle ])
   })
 
   it('by count desc', async () => {
@@ -101,7 +102,7 @@ describe('style stats tests', () => {
       undefined,
       { property: 'count', direction: 'desc' }
     )
-    expect(stats).toEqual([ otherStyle, style ])
+    assert.deepEqual(stats, [ otherStyle, style ])
   })
 
   it('by style_name asc', async () => {
@@ -110,7 +111,7 @@ describe('style stats tests', () => {
       undefined,
       { property: 'style_name', direction: 'asc' }
     )
-    expect(stats).toEqual([ style, otherStyle ])
+    assert.deepEqual(stats, [ style, otherStyle ])
   })
 
   it('by style_name desc', async () => {
@@ -119,7 +120,7 @@ describe('style stats tests', () => {
       undefined,
       { property: 'style_name', direction: 'desc' }
     )
-    expect(stats).toEqual([ otherStyle, style ])
+    assert.deepEqual(stats, [ otherStyle, style ])
   })
 
   it('filter by brewery', async () => {
@@ -131,7 +132,7 @@ describe('style stats tests', () => {
       }),
       { property: 'style_name', direction: 'desc' }
     )
-    expect(stats).toEqual([ otherStyle ])
+    assert.deepEqual(stats, [ otherStyle ])
   })
 
   it('filter by location', async () => {
@@ -143,7 +144,7 @@ describe('style stats tests', () => {
       }),
       { property: 'style_name', direction: 'desc' }
     )
-    expect(stats).toEqual([ otherStyle ])
+    assert.deepEqual(stats, [ otherStyle ])
   })
 
   it('filter by style', async () => {
@@ -155,7 +156,7 @@ describe('style stats tests', () => {
       }),
       { property: 'style_name', direction: 'desc' }
     )
-    expect(stats).toEqual([ style ])
+    assert.deepEqual(stats, [ style ])
   })
 
   it('filter by min review count', async () => {
@@ -167,7 +168,7 @@ describe('style stats tests', () => {
       }),
       { property: 'style_name', direction: 'desc' }
     )
-    expect(stats).toEqual([ otherStyle ])
+    assert.deepEqual(stats, [ otherStyle ])
   })
 
   it('filter by max review count', async () => {
@@ -179,7 +180,7 @@ describe('style stats tests', () => {
       }),
       { property: 'style_name', direction: 'desc' }
     )
-    expect(stats).toEqual([ style ])
+    assert.deepEqual(stats, [ style ])
   })
 
   it('filter by min review average', async () => {
@@ -191,7 +192,7 @@ describe('style stats tests', () => {
       }),
       { property: 'style_name', direction: 'desc' }
     )
-    expect(stats).toEqual([ otherStyle ])
+    assert.deepEqual(stats, [ otherStyle ])
   })
 
   it('filter by max review average', async () => {
@@ -203,7 +204,7 @@ describe('style stats tests', () => {
       }),
       { property: 'style_name', direction: 'desc' }
     )
-    expect(stats).toEqual([ style ])
+    assert.deepEqual(stats, [ style ])
   })
 
 })

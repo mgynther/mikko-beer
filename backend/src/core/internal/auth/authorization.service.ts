@@ -16,7 +16,7 @@ export async function authorizeUser (
     refreshTokenId: string
   ) => Promise<DbRefreshToken | undefined>
 ): Promise<void> {
-  if (userId === undefined) {
+  if (userId === undefined || userId === '') {
     throw noUserIdParameterError
   }
 

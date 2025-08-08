@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import type { BeerWithBreweryAndStyleIds } from '../../../src/core/beer/beer'
@@ -44,13 +45,13 @@ describe('stats tests', () => {
       { name: 'Kriek', parents: [] },
       adminAuthHeaders
     )
-    expect(styleRes.status).toEqual(201)
+    assert.equal(styleRes.status, 201)
 
     const breweryRes = await ctx.request.post<{ brewery: Brewery }>(`/api/v1/brewery`,
       { name: 'Lindemans' },
       adminAuthHeaders
     )
-    expect(breweryRes.status).toEqual(201)
+    assert.equal(breweryRes.status, 201)
 
     const beerRes = await ctx.request.post<{ beer: BeerWithBreweryAndStyleIds }>(`/api/v1/beer`,
       {
@@ -60,19 +61,19 @@ describe('stats tests', () => {
       },
       adminAuthHeaders
     )
-    expect(beerRes.status).toEqual(201)
+    assert.equal(beerRes.status, 201)
 
     const containerRes = await ctx.request.post(`/api/v1/container`,
       { type: 'Bottle', size: '0.25' },
       adminAuthHeaders
     )
-    expect(containerRes.status).toEqual(201)
+    assert.equal(containerRes.status, 201)
 
     const locationRes = await ctx.request.post<{ location: Location }>(`/api/v1/location`,
       { name: 'Kuja' },
       adminAuthHeaders
     )
-    expect(locationRes.status).toEqual(201)
+    assert.equal(locationRes.status, 201)
 
     const otherLocationRes = await ctx.request.post<
       { location: Location }
@@ -80,7 +81,7 @@ describe('stats tests', () => {
       { name: 'Oluthuone' },
       adminAuthHeaders
     )
-    expect(otherLocationRes.status).toEqual(201)
+    assert.equal(otherLocationRes.status, 201)
 
     const reviewRes = await ctx.request.post<{ review: ReviewRes }>(`/api/v1/review`,
       {
@@ -94,19 +95,19 @@ describe('stats tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(reviewRes.status).toEqual(201)
+    assert.equal(reviewRes.status, 201)
 
     const otherStyleRes = await ctx.request.post<{ style: Style }>(`/api/v1/style`,
       { name: 'IPA', parents: [] },
       ctx.adminAuthHeaders()
     )
-    expect(otherStyleRes.status).toEqual(201)
+    assert.equal(otherStyleRes.status, 201)
 
     const otherBreweryRes = await ctx.request.post<{ brewery: Brewery }>(`/api/v1/brewery`,
       { name: 'Nokian Panimo' },
       ctx.adminAuthHeaders()
     )
-    expect(otherBreweryRes.status).toEqual(201)
+    assert.equal(otherBreweryRes.status, 201)
 
     const otherBeerRes = await ctx.request.post<{ beer: BeerWithBreweryAndStyleIds }>(`/api/v1/beer`,
       {
@@ -116,7 +117,7 @@ describe('stats tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(otherBeerRes.status).toEqual(201)
+    assert.equal(otherBeerRes.status, 201)
 
     const otherReviewRes = await ctx.request.post<{ review: ReviewRes }>(`/api/v1/review`,
       {
@@ -130,7 +131,7 @@ describe('stats tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(otherReviewRes.status).toEqual(201)
+    assert.equal(otherReviewRes.status, 201)
 
     const collabBeerRes = await ctx.request.post<{ beer: BeerWithBreweryAndStyleIds }>(`/api/v1/beer`,
       {
@@ -146,7 +147,7 @@ describe('stats tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(collabBeerRes.status).toEqual(201)
+    assert.equal(collabBeerRes.status, 201)
 
     const collabReviewRes = await ctx.request.post<{ review: ReviewRes }>(`/api/v1/review`,
       {
@@ -160,7 +161,7 @@ describe('stats tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(collabReviewRes.status).toEqual(201)
+    assert.equal(collabReviewRes.status, 201)
 
     const collabReview2Res = await ctx.request.post<{ review: ReviewRes }>(`/api/v1/review`,
       {
@@ -175,7 +176,7 @@ describe('stats tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    expect(collabReview2Res.status).toEqual(201)
+    assert.equal(collabReview2Res.status, 201)
 
     return {
       beers: [
@@ -222,26 +223,25 @@ describe('stats tests', () => {
       '/api/v1/stats/overall',
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).toEqual(200)
-    expect(statsRes.data.overall.beerCount).toEqual(`${beers.length}`)
-    expect(beers.length).toEqual(3)
-    expect(statsRes.data.overall.breweryCount).toEqual(`${breweries.length}`)
-    expect(breweries.length).toEqual(2)
-    expect(statsRes.data.overall.containerCount).toEqual(`${containers.length}`)
-    expect(containers.length).toEqual(1)
-    expect(statsRes.data.overall.reviewCount).toEqual(`${reviews.length}`)
-    expect(reviews.length).toEqual(4)
-    expect(statsRes.data.overall.distinctBeerReviewCount)
-      .toEqual(`${beers.length}`)
+    assert.equal(statsRes.status, 200)
+    assert.equal(statsRes.data.overall.beerCount, `${beers.length}`)
+    assert.equal(beers.length, 3)
+    assert.equal(statsRes.data.overall.breweryCount, `${breweries.length}`)
+    assert.equal(breweries.length, 2)
+    assert.equal(statsRes.data.overall.containerCount, `${containers.length}`)
+    assert.equal(containers.length, 1)
+    assert.equal(statsRes.data.overall.reviewCount, `${reviews.length}`)
+    assert.equal(reviews.length, 4)
+    assert.equal(statsRes.data.overall.distinctBeerReviewCount, `${beers.length}`)
     const ratings = reviews
       .filter(r => r)
       .map(r => r.rating)
     const ratingSum = ratings.reduce((sum: number, rating: number) => sum + rating, 0)
     const countedAverage = ratingSum / reviews.length
-    expect(statsRes.data.overall.reviewAverage).toEqual(countedAverage.toFixed(2))
-    expect(countedAverage).toEqual(6.75)
-    expect(statsRes.data.overall.styleCount).toEqual(`${styles.length}`)
-    expect(styles.length).toEqual(2)
+    assert.equal(statsRes.data.overall.reviewAverage, countedAverage.toFixed(2))
+    assert.equal(countedAverage, 6.75)
+    assert.equal(statsRes.data.overall.styleCount, `${styles.length}`)
+    assert.equal(styles.length, 2)
   })
 
   it('get overall stats by brewery', async () => {
@@ -257,11 +257,11 @@ describe('stats tests', () => {
       `/api/v1/stats/overall?brewery=${breweryId}`,
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).toEqual(200)
-    expect(statsRes.data.overall.beerCount).toEqual('2')
-    expect(statsRes.data.overall.breweryCount).toEqual('2')
-    expect(statsRes.data.overall.containerCount).toEqual('1')
-    expect(statsRes.data.overall.reviewCount).toEqual('3')
+    assert.equal(statsRes.status, 200)
+    assert.equal(statsRes.data.overall.beerCount, '2')
+    assert.equal(statsRes.data.overall.breweryCount, '2')
+    assert.equal(statsRes.data.overall.containerCount, '1')
+    assert.equal(statsRes.data.overall.reviewCount, '3')
     const ratings = reviews
       .filter((review: ReviewRes) => {
         const beerId = review.beer
@@ -274,10 +274,10 @@ describe('stats tests', () => {
       .map(r => r.rating)
     const ratingSum = ratings.reduce((sum: number, rating: number) => sum + rating, 0)
     const countedAverage = ratingSum / ratings.length
-    expect(statsRes.data.overall.reviewAverage).toEqual(countedAverage.toFixed(2))
-    expect(countedAverage).toEqual(6 + 2/3)
-    expect(statsRes.data.overall.styleCount).toEqual('2')
-    expect(styles.length).toEqual(2)
+    assert.equal(statsRes.data.overall.reviewAverage, countedAverage.toFixed(2))
+    assert.equal(countedAverage, 6 + 2/3)
+    assert.equal(statsRes.data.overall.styleCount, '2')
+    assert.equal(styles.length, 2)
   })
 
   function average(ratings: number[]): string {
@@ -317,13 +317,13 @@ describe('stats tests', () => {
       }
     }
 
-    expect(annualStats).toEqual(annual.filter(a => a.count > 0).map(
+    assert.deepEqual(annualStats, annual.filter(a => a.count > 0).map(
       annual => stat(annual.count, annual.average, annual.year)
     ))
 
-    expect(annual.map(
+    assert.deepEqual(annual.map(
       annual => ({ average: annual.average, count: annual.count })
-    )).toEqual(expectedAnnual)
+    ), expectedAnnual)
   }
 
   it('get annual stats', async () => {
@@ -333,7 +333,7 @@ describe('stats tests', () => {
       '/api/v1/stats/annual',
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).toEqual(200)
+    assert.equal(statsRes.status, 200)
     function reviewRatingsByYear(year: string): number[] {
       return reviews.filter((review: ReviewRes) => {
         return review.time.startsWith(year)
@@ -388,7 +388,7 @@ describe('stats tests', () => {
       `/api/v1/stats/annual?brewery=${breweryId}`,
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).toEqual(200)
+    assert.equal(statsRes.status, 200)
     function reviewRatingsByYear(year: string): number[] {
       return reviewsByBrewery(reviewsByYear(reviews, year), beers, breweryId)
         .map((review: ReviewRes) => review.rating)
@@ -418,13 +418,13 @@ describe('stats tests', () => {
       '/api/v1/stats/annual_container',
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).toEqual(200)
+    assert.equal(statsRes.status, 200)
     function reviewRatingsByYear(year: string) {
       return reviewsByYear(reviews, year).map((review: ReviewRes) => review.rating)
     }
     const container = containers[0].data.container
     const years = ['2023', '2022', '2021']
-    expect(statsRes.data.annualContainer).toEqual(
+    assert.deepEqual(statsRes.data.annualContainer,
       years.map(year => {
         const ratings = reviewRatingsByYear(year)
         return {
@@ -448,13 +448,13 @@ describe('stats tests', () => {
       '/api/v1/stats/annual_container?size=1&skip=1',
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).toEqual(200)
+    assert.equal(statsRes.status, 200)
     function reviewRatingsByYear(year: string) {
       return reviewsByYear(reviews, year).map((review: ReviewRes) => review.rating)
     }
     const container = containers[0].data.container
     const years = ['2022']
-    expect(statsRes.data.annualContainer).toEqual(
+    assert.deepEqual(statsRes.data.annualContainer,
       years.map(year => {
         const ratings = reviewRatingsByYear(year)
         return {
@@ -484,14 +484,14 @@ describe('stats tests', () => {
       `/api/v1/stats/annual_container?brewery=${brewery.id}`,
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).toEqual(200)
+    assert.equal(statsRes.status, 200)
     function reviewRatingsByYear(year: string): number[] {
       return reviewsByBrewery(reviewsByYear(reviews, year), beers, brewery.id)
         .map((review: ReviewRes) => review.rating)
     }
     const container = containers[0].data.container
     const years = ['2023', '2022', '2021']
-    expect(statsRes.data.annualContainer).toEqual(
+    assert.deepEqual(statsRes.data.annualContainer,
       years.map(year => {
         const ratings = reviewRatingsByYear(year)
         return {
@@ -513,9 +513,9 @@ describe('stats tests', () => {
       '/api/v1/stats/container',
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).toEqual(200)
+    assert.equal(statsRes.status, 200)
     const container = containers[0].data.container
-    expect(statsRes.data.container).toEqual([
+    assert.deepEqual(statsRes.data.container, [
       {
         reviewAverage: `${
           reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
@@ -541,13 +541,13 @@ describe('stats tests', () => {
       `/api/v1/stats/container?brewery=${breweryId}`,
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).toEqual(200)
+    assert.equal(statsRes.status, 200)
     const container = containers[0].data.container
     const breweryBeers = beers.filter(
       b => b.breweries.includes(breweryId)
     ).map(b => b.id)
     const reviews = allReviews.filter(r => breweryBeers.includes(r.beer))
-    expect(statsRes.data.container).toEqual([
+    assert.deepEqual(statsRes.data.container, [
       {
         reviewAverage: (
           reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
@@ -576,7 +576,7 @@ describe('stats tests', () => {
     const nokiaAverage = average(nokiaRatings)
     const lindemansRatings = reviewRatingsByBrewery(lindemans.brewery.id)
     const lindemansAverage = average(lindemansRatings)
-    expect(breweryStats).toEqual([
+    assert.deepEqual(breweryStats, [
       {
         reviewCount: `${nokiaRatings.length}`,
         reviewAverage: nokiaAverage,
@@ -590,10 +590,10 @@ describe('stats tests', () => {
         breweryName: lindemans.brewery.name
       }
     ])
-    expect(nokiaRatings.length).toEqual(nokia.count)
-    expect(nokiaAverage).toEqual(nokia.average)
-    expect(lindemansRatings.length).toEqual(lindemans.count)
-    expect(lindemansAverage).toEqual(lindemans.average)
+    assert.equal(nokiaRatings.length, nokia.count)
+    assert.equal(nokiaAverage, nokia.average)
+    assert.equal(lindemansRatings.length, lindemans.count)
+    assert.equal(lindemansAverage, lindemans.average)
   }
 
   function reviewRatingsByBrewery(
@@ -621,18 +621,18 @@ describe('stats tests', () => {
       '/api/v1/stats/brewery?size=30&skip=20',
       ctx.adminAuthHeaders()
     )
-    expect(skippedStatsRes.status).toEqual(200)
-    expect(skippedStatsRes.data.brewery).toEqual([])
+    assert.equal(skippedStatsRes.status, 200)
+    assert.deepEqual(skippedStatsRes.data.brewery, [])
 
     const statsRes = await ctx.request.get<{ brewery: BreweryStats }>(
       '/api/v1/stats/brewery?order=average&direction=desc',
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).toEqual(200)
+    assert.equal(statsRes.status, 200)
     const lindemansBrewery = breweries[0].data.brewery
-    expect(lindemansBrewery.name).toEqual('Lindemans')
+    assert.equal(lindemansBrewery.name, 'Lindemans')
     const nokiaBrewery = breweries[1].data.brewery
-    expect(nokiaBrewery.name).toEqual('Nokian Panimo')
+    assert.equal(nokiaBrewery.name, 'Nokian Panimo')
     function filter(breweryId: string): number[] {
       return reviewRatingsByBrewery(breweryId, beers, reviews, breweryId)
     }
@@ -657,11 +657,11 @@ describe('stats tests', () => {
       `/api/v1/stats/brewery?brewery=${filterBreweryId}${order}`,
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).toEqual(200)
+    assert.equal(statsRes.status, 200)
     const lindemansBrewery = breweries[0].data.brewery
-    expect(lindemansBrewery.name).toEqual('Lindemans')
+    assert.equal(lindemansBrewery.name, 'Lindemans')
     const nokiaBrewery = breweries[1].data.brewery
-    expect(nokiaBrewery.name).toEqual('Nokian Panimo')
+    assert.equal(nokiaBrewery.name, 'Nokian Panimo')
     function filter(breweryId: string): number[] {
       return reviewRatingsByBrewery(breweryId, beers, reviews, filterBreweryId)
     }
@@ -689,7 +689,7 @@ describe('stats tests', () => {
     const kujaAverage = average(kujaRatings)
     const oluthuoneRatings = reviewRatingsByLocation(oluthuone.location.id)
     const oluthuoneAverage = average(oluthuoneRatings)
-    expect(locationStats).toEqual([
+    assert.deepEqual(locationStats, [
       {
         reviewCount: `${kujaRatings.length}`,
         reviewAverage: kujaAverage,
@@ -703,10 +703,10 @@ describe('stats tests', () => {
         locationName: oluthuone.location.name
       }
     ])
-    expect(kujaRatings.length).toEqual(kuja.count)
-    expect(kujaAverage).toEqual(kuja.average)
-    expect(oluthuoneRatings.length).toEqual(oluthuone.count)
-    expect(oluthuoneAverage).toEqual(oluthuone.average)
+    assert.equal(kujaRatings.length, kuja.count)
+    assert.equal(kujaAverage, kuja.average)
+    assert.equal(oluthuoneRatings.length, oluthuone.count)
+    assert.equal(oluthuoneAverage, oluthuone.average)
   }
 
   function reviewRatingsByLocation(
@@ -737,18 +737,18 @@ describe('stats tests', () => {
       '/api/v1/stats/location?size=30&skip=20',
       ctx.adminAuthHeaders()
     )
-    expect(skippedStatsRes.status).toEqual(200)
-    expect(skippedStatsRes.data.location).toEqual([])
+    assert.equal(skippedStatsRes.status, 200)
+    assert.deepEqual(skippedStatsRes.data.location, [])
 
     const statsRes = await ctx.request.get<{ location: LocationStats }>(
       '/api/v1/stats/location?order=average&direction=asc',
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).toEqual(200)
+    assert.equal(statsRes.status, 200)
     const kujaLocation = locations[0].data.location
-    expect(kujaLocation.name).toEqual('Kuja')
+    assert.equal(kujaLocation.name, 'Kuja')
     const oluthuoneLocation = locations[1].data.location
-    expect(oluthuoneLocation.name).toEqual('Oluthuone')
+    assert.equal(oluthuoneLocation.name, 'Oluthuone')
     function filter(locationId: string): number[] {
       return reviewRatingsByLocation(locationId, beers, reviews, undefined)
     }
@@ -774,11 +774,11 @@ describe('stats tests', () => {
       `/api/v1/stats/location?brewery=${filterBreweryId}${order}`,
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).toEqual(200)
+    assert.equal(statsRes.status, 200)
     const kujaLocation = locations[0].data.location
-    expect(kujaLocation.name).toEqual('Kuja')
+    assert.equal(kujaLocation.name, 'Kuja')
     const oluthuoneLocation = locations[1].data.location
-    expect(oluthuoneLocation.name).toEqual('Oluthuone')
+    assert.equal(oluthuoneLocation.name, 'Oluthuone')
     function filter(locationId: string): number[] {
       return reviewRatingsByLocation(locationId, beers, reviews, filterBreweryId)
     }
@@ -798,17 +798,17 @@ describe('stats tests', () => {
     } = await createDeps(ctx.adminAuthHeaders())
 
     const kujaLocation = locations[0].data.location
-    expect(kujaLocation.name).toEqual('Kuja')
+    assert.equal(kujaLocation.name, 'Kuja')
     const order = '&order=count&direction=desc'
     const statsRes = await ctx.request.get<{ location: LocationStats }>(
       `/api/v1/stats/location?location=${kujaLocation.id}${order}`,
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).toEqual(200)
+    assert.equal(statsRes.status, 200)
     const kujaRatings =
       reviewRatingsByLocation(kujaLocation.id, beers, reviews, undefined)
     const kujaAverage = average(kujaRatings)
-    expect(statsRes.data.location).toEqual([
+    assert.deepEqual(statsRes.data.location, [
       {
         reviewCount: `${kujaRatings.length}`,
         reviewAverage: kujaAverage,
@@ -816,8 +816,8 @@ describe('stats tests', () => {
         locationName: kujaLocation.name
       }
     ])
-    expect(kujaRatings.length).toEqual(2)
-    expect(kujaAverage).toEqual('6.50')
+    assert.equal(kujaRatings.length, 2)
+    assert.equal(kujaAverage, '6.50')
   })
 
   type TestRatingStats = Array<{ rating: number,  count: number }>
@@ -832,8 +832,8 @@ describe('stats tests', () => {
       rating: `${s.rating}`,
       count: `${s.count}`
     }))
-    expect(actualStats).toEqual(convertedStats)
-    expect(actualStats).toEqual(expectedStats)
+    assert.deepEqual(actualStats, convertedStats)
+    assert.deepEqual(actualStats, expectedStats)
   }
 
   it('get rating stats', async () => {
@@ -843,7 +843,7 @@ describe('stats tests', () => {
       '/api/v1/stats/rating',
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).toEqual(200)
+    assert.equal(statsRes.status, 200)
     const stats = reviews
       .reduce((ratingStats: TestRatingStats, review) => {
       const rating = review.rating
@@ -875,7 +875,7 @@ describe('stats tests', () => {
       `/api/v1/stats/rating?brewery=${breweryId}`,
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).toEqual(200)
+    assert.equal(statsRes.status, 200)
     const stats = reviews
       .reduce((ratingStats: Array<{ rating: number,  count: number }>, review) => {
       const beerId = review.beer
@@ -917,7 +917,7 @@ describe('stats tests', () => {
   ) {
     const ipaAverage = average(ipa.ratings)
     const kriekAverage = average(kriek.ratings)
-    expect(styleStats).toEqual([
+    assert.deepEqual(styleStats, [
       {
         reviewCount: `${ipa.ratings.length}`,
         reviewAverage: ipa.average,
@@ -931,10 +931,10 @@ describe('stats tests', () => {
         styleName: kriek.style.name
       }
     ])
-    expect(ipa.ratings.length).toEqual(ipa.count)
-    expect(ipaAverage).toEqual(ipa.average)
-    expect(kriek.ratings.length).toEqual(kriek.count)
-    expect(kriekAverage).toEqual(kriek.average)
+    assert.equal(ipa.ratings.length, ipa.count)
+    assert.equal(ipaAverage, ipa.average)
+    assert.equal(kriek.ratings.length, kriek.count)
+    assert.equal(kriekAverage, kriek.average)
   }
 
   function reviewRatingsByStyle(
@@ -963,11 +963,11 @@ describe('stats tests', () => {
       '/api/v1/stats/style?order=average&direction=desc',
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).toEqual(200)
+    assert.equal(statsRes.status, 200)
     const kriekStyle = styles[0].data.style
-    expect(kriekStyle.name).toEqual('Kriek')
+    assert.equal(kriekStyle.name, 'Kriek')
     const ipaStyle = styles[1].data.style
-    expect(ipaStyle.name).toEqual('IPA')
+    assert.equal(ipaStyle.name, 'IPA')
     const ipaRatings = reviewRatingsByStyle(ipaStyle.id, beers, reviews, undefined)
     const kriekRatings = reviewRatingsByStyle(kriekStyle.id, beers, reviews, undefined)
     checkStyleStats(
@@ -1001,11 +1001,11 @@ describe('stats tests', () => {
       `/api/v1/stats/style?brewery=${breweryId}${order}`,
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).toEqual(200)
+    assert.equal(statsRes.status, 200)
     const kriekStyle = styles[0].data.style
-    expect(kriekStyle.name).toEqual('Kriek')
+    assert.equal(kriekStyle.name, 'Kriek')
     const ipaStyle = styles[1].data.style
-    expect(ipaStyle.name).toEqual('IPA')
+    assert.equal(ipaStyle.name, 'IPA')
     const ipaRatings = reviewRatingsByStyle(
       ipaStyle.id,
       beers,
@@ -1048,15 +1048,15 @@ describe('stats tests', () => {
       `/api/v1/stats/style?brewery=${breweryId}${order}&min_review_count=3`,
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).toEqual(200)
+    assert.equal(statsRes.status, 200)
     const kriekStyle = styles[0].data.style
-    expect(kriekStyle.name).toEqual('Kriek')
+    assert.equal(kriekStyle.name, 'Kriek')
     const ipaStyle = styles[1].data.style
-    expect(ipaStyle.name).toEqual('IPA')
+    assert.equal(ipaStyle.name, 'IPA')
 
     const kriekRatings = reviewRatingsByStyle(kriekStyle.id, beers, reviews, breweryId)
     const kriekAverage = average(kriekRatings)
-    expect(statsRes.data.style).toEqual([
+    assert.deepEqual(statsRes.data.style, [
       {
         reviewCount: '3',
         reviewAverage: kriekAverage,
@@ -1064,8 +1064,8 @@ describe('stats tests', () => {
         styleName: kriekStyle.name
       }
     ])
-    expect(kriekRatings.length).toEqual(3)
-    expect(kriekAverage).toEqual('6.67')
+    assert.equal(kriekRatings.length, 3)
+    assert.equal(kriekAverage, '6.67')
   })
 
   it('get style stats by style', async () => {
@@ -1077,13 +1077,13 @@ describe('stats tests', () => {
       `/api/v1/stats/style?style=${styleId}${order}`,
       ctx.adminAuthHeaders()
     )
-    expect(statsRes.status).toEqual(200)
+    assert.equal(statsRes.status, 200)
     const kriekStyle = styles[0].data.style
-    expect(kriekStyle.name).toEqual('Kriek')
+    assert.equal(kriekStyle.name, 'Kriek')
     const ipaStyle = styles[1].data.style
-    expect(ipaStyle.name).toEqual('IPA')
+    assert.equal(ipaStyle.name, 'IPA')
 
-    expect(statsRes.data.style).toEqual([
+    assert.deepEqual(statsRes.data.style, [
       {
         // Collab reviews only.
         reviewCount: '2',

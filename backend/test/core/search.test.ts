@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import type { SearchByName } from '../../src/core/search'
 import { toIlike, validateSearchByName } from '../../src/core/search'
@@ -8,7 +9,7 @@ import { expectThrow } from './controller-error-helper'
 
 describe('search validation unit tests', () => {
   function pass(input: unknown, output: SearchByName) {
-    expect(validateSearchByName(input)).toEqual(output)
+    assert.deepEqual(validateSearchByName(input), output)
   }
   function fail(input: unknown) {
     expectThrow(() => (validateSearchByName(input)), invalidSearchError)
@@ -32,13 +33,13 @@ describe('search validation unit tests', () => {
 
 describe('search ilike unit tests', () => {
   it('add wildcards', () => {
-    expect(toIlike({ name: 'test' })).toEqual('%test%')
+    assert.equal(toIlike({ name: 'test' }), '%test%')
   })
   it('add wildcards to exact match pattern with whitespace', () => {
-    expect(toIlike({ name: '"test " ' })).toEqual('%"test " %')
+    assert.equal(toIlike({ name: '"test " ' }), '%"test " %')
   })
   it('match exactly', () => {
-    expect(toIlike({ name: '"test"' })).toEqual('test')
+    assert.equal(toIlike({ name: '"test"' }), 'test')
   })
 })
 

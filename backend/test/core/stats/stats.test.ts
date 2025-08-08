@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import {
   validateBreweryStatsOrder,
@@ -22,29 +23,29 @@ const noFilter = {
 
 describe('stats brewery style filter unit tests', () => {
   it('validate undefined filter', () => {
-    expect(validateStatsIdFilter(undefined)).toEqual(noFilter)
+    assert.deepEqual(validateStatsIdFilter(undefined), noFilter)
   })
 
   it('validate empty filter', () => {
-    expect(validateStatsIdFilter({})).toEqual(noFilter)
+    assert.deepEqual(validateStatsIdFilter({}), noFilter)
   })
 
   it('validate brewery filter', () => {
-    expect(
-      validateStatsIdFilter({ brewery: 'testing' })
-    ).toEqual({ brewery: 'testing', location: undefined, style: undefined })
+    assert.deepEqual(
+      validateStatsIdFilter({ brewery: 'testing' }),
+      { brewery: 'testing', location: undefined, style: undefined })
   })
 
   it('validate location filter', () => {
-    expect(
-      validateStatsIdFilter({ location: 'testing' })
-    ).toEqual({ brewery: undefined, location: 'testing', style: undefined })
+    assert.deepEqual(
+      validateStatsIdFilter({ location: 'testing' }),
+      { brewery: undefined, location: 'testing', style: undefined })
   })
 
   it('validate style filter', () => {
-    expect(
-      validateStatsIdFilter({ style: 'testing' })
-    ).toEqual({ brewery: undefined, location: undefined, style: 'testing' })
+    assert.deepEqual(
+      validateStatsIdFilter({ style: 'testing' }),
+      { brewery: undefined, location: undefined, style: 'testing' })
   })
 
   interface MultipleIdFilters {
@@ -72,13 +73,13 @@ describe('stats brewery style filter unit tests', () => {
   })
 
   it('validate invalid brewery filter', () => {
-    expect(
-      validateStatsIdFilter({ brewery: 123 })).toEqual(noFilter)
+    assert.deepEqual(
+      validateStatsIdFilter({ brewery: 123 }), noFilter)
   })
 
   it('validate unknown filter', () => {
-    expect(
-      validateStatsIdFilter({ additional: 'testing' })).toEqual(noFilter)
+    assert.deepEqual(
+      validateStatsIdFilter({ additional: 'testing' }), noFilter)
   })
 })
 
@@ -93,23 +94,22 @@ describe('stats filter unit tests', () => {
     minReviewCount: 1
   }
   it('validate undefined filter', () => {
-    expect(validateStatsFilter(undefined)).toEqual(defaultFilter)
+    assert.deepEqual(validateStatsFilter(undefined), defaultFilter)
   })
 
   it('validate empty filter', () => {
-    expect(validateStatsFilter({})).toEqual(defaultFilter)
+    assert.deepEqual(validateStatsFilter({}), defaultFilter)
   })
 
   it('validate valid filter', () => {
-    expect(
+    assert.deepEqual(
       validateStatsFilter({
         brewery: 'testing',
         max_review_average: '9.54',
         min_review_average: '5',
         max_review_count: '100',
         min_review_count: '4'
-      })
-    ).toEqual({
+      }), {
       ...defaultFilter,
       brewery: 'testing',
       maxReviewAverage: 9.54,
@@ -120,25 +120,25 @@ describe('stats filter unit tests', () => {
   })
 
   it('validate invalid min review count', () => {
-    expect(
-      validateStatsFilter({ brewery: 'testing', min_review_count: 'test' })
-    ).toEqual({ ...defaultFilter, brewery: 'testing' })
+    assert.deepEqual(
+      validateStatsFilter({ brewery: 'testing', min_review_count: 'test' }),
+      { ...defaultFilter, brewery: 'testing' })
   })
 
   it('validate too small', () => {
-    expect(
-      validateStatsFilter({ brewery: 'testing', min_review_count: '-1' })
-    ).toEqual({ ...defaultFilter, brewery: 'testing' })
+    assert.deepEqual(
+      validateStatsFilter({ brewery: 'testing', min_review_count: '-1' }),
+      { ...defaultFilter, brewery: 'testing' })
   })
 
   it('validate invalid brewery filter', () => {
-    expect(
-      validateStatsFilter({ brewery: 123 })).toEqual(defaultFilter)
+    assert.deepEqual(
+      validateStatsFilter({ brewery: 123 }), defaultFilter)
   })
 
   it('validate unknown filter', () => {
-    expect(
-      validateStatsFilter({ additional: 'testing' })).toEqual(defaultFilter)
+    assert.deepEqual(
+      validateStatsFilter({ additional: 'testing' }), defaultFilter)
   })
 })
 
@@ -149,28 +149,28 @@ describe('brewery stats order unit tests', () => {
   }
 
   it('validate empty order', () => {
-    expect(validateBreweryStatsOrder({})).toLooseEqual(defaultOrder)
+    assert.deepEqual(validateBreweryStatsOrder({}), defaultOrder)
   })
 
   it('validate average desc order', () => {
-    expect(validateBreweryStatsOrder({
+    assert.deepEqual(validateBreweryStatsOrder({
       order: 'average',
       direction: 'desc'
-    })).toEqual({ property: 'average', direction: 'desc' })
+    }), { property: 'average', direction: 'desc' })
   })
 
   it('validate brewery name desc order', () => {
-    expect(validateBreweryStatsOrder({
+    assert.deepEqual(validateBreweryStatsOrder({
       order: 'brewery_name',
       direction: 'desc'
-    })).toEqual({ property: 'brewery_name', direction: 'desc' })
+    }), { property: 'brewery_name', direction: 'desc' })
   })
 
   it('validate count asc order', () => {
-    expect(validateBreweryStatsOrder({
+    assert.deepEqual(validateBreweryStatsOrder({
       order: 'count',
       direction: 'asc'
-    })).toEqual({ property: 'count', direction: 'asc' })
+    }), { property: 'count', direction: 'asc' })
   })
 
   it('validate invalid asc order', () => {
@@ -195,28 +195,28 @@ describe('location stats order unit tests', () => {
   }
 
   it('validate empty order', () => {
-    expect(validateLocationStatsOrder({})).toLooseEqual(defaultOrder)
+    assert.deepEqual(validateLocationStatsOrder({}), defaultOrder)
   })
 
   it('validate average desc order', () => {
-    expect(validateLocationStatsOrder({
+    assert.deepEqual(validateLocationStatsOrder({
       order: 'average',
       direction: 'desc'
-    })).toEqual({ property: 'average', direction: 'desc' })
+    }), { property: 'average', direction: 'desc' })
   })
 
   it('validate location name desc order', () => {
-    expect(validateLocationStatsOrder({
+    assert.deepEqual(validateLocationStatsOrder({
       order: 'location_name',
       direction: 'desc'
-    })).toEqual({ property: 'location_name', direction: 'desc' })
+    }), { property: 'location_name', direction: 'desc' })
   })
 
   it('validate count asc order', () => {
-    expect(validateLocationStatsOrder({
+    assert.deepEqual(validateLocationStatsOrder({
       order: 'count',
       direction: 'asc'
-    })).toEqual({ property: 'count', direction: 'asc' })
+    }), { property: 'count', direction: 'asc' })
   })
 
   it('validate invalid asc order', () => {

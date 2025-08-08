@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import { Brewery } from '../../../src/core/brewery/brewery'
@@ -18,36 +19,36 @@ describe('brewery tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(res.status).toEqual(201)
-    expect(res.data.brewery.name).toEqual('Koskipanimo')
+    assert.equal(res.status, 201)
+    assert.equal(res.data.brewery.name, 'Koskipanimo')
 
     const getRes = await ctx.request.get<{ brewery: Brewery }>(
       `/api/v1/brewery/${res.data.brewery.id}`,
       ctx.adminAuthHeaders()
     )
 
-    expect(getRes.status).toEqual(200)
-    expect(getRes.data.brewery).toEqual(res.data.brewery)
+    assert.equal(getRes.status, 200)
+    assert.deepEqual(getRes.data.brewery, res.data.brewery)
 
     const listRes = await ctx.request.get(`/api/v1/brewery?skip=0&size=100`,
       ctx.adminAuthHeaders()
     )
-    expect(listRes.status).toEqual(200)
-    expect(listRes.data.breweries.length).toEqual(1)
+    assert.equal(listRes.status, 200)
+    assert.equal(listRes.data.breweries.length, 1)
 
     const searchRes = await ctx.request.post(`/api/v1/brewery/search`,
       { name: 'oSk' },
       ctx.adminAuthHeaders()
     )
-    expect(searchRes.status).toEqual(200)
-    expect(searchRes.data.breweries.length).toEqual(1)
+    assert.equal(searchRes.status, 200)
+    assert.equal(searchRes.data.breweries.length, 1)
 
     const badSearchRes = await ctx.request.post(`/api/v1/brewery/search`,
       { name: 'oSkJ' },
       ctx.adminAuthHeaders()
     )
-    expect(badSearchRes.status).toEqual(200)
-    expect(badSearchRes.data.breweries.length).toEqual(0)
+    assert.equal(badSearchRes.status, 200)
+    assert.equal(badSearchRes.data.breweries.length, 0)
   })
 
   it('update a brewery', async () => {
@@ -56,23 +57,23 @@ describe('brewery tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(res.status).toEqual(201)
-    expect(res.data.brewery.name).toEqual('Salami Brewing')
+    assert.equal(res.status, 201)
+    assert.equal(res.data.brewery.name, 'Salami Brewing')
 
     const updateRes = await ctx.request.put(`/api/v1/brewery/${res.data.brewery.id}`,
       { name: 'Salama Brewing' },
       ctx.adminAuthHeaders()
     )
-    expect(updateRes.status).toEqual(200)
-    expect(updateRes.data.brewery.name).toEqual('Salama Brewing')
+    assert.equal(updateRes.status, 200)
+    assert.equal(updateRes.data.brewery.name, 'Salama Brewing')
 
     const getRes = await ctx.request.get<{ brewery: Brewery }>(
       `/api/v1/brewery/${res.data.brewery.id}`,
       ctx.adminAuthHeaders()
     )
 
-    expect(getRes.status).toEqual(200)
-    expect(getRes.data.brewery).toEqual(updateRes.data.brewery)
+    assert.equal(getRes.status, 200)
+    assert.deepEqual(getRes.data.brewery, updateRes.data.brewery)
   })
 
   it('fail to create a brewery without name', async () => {
@@ -81,7 +82,7 @@ describe('brewery tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(res.status).toEqual(400)
+    assert.equal(res.status, 400)
   })
 
   it('get empty brewery list', async () => {
@@ -89,8 +90,8 @@ describe('brewery tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    expect(res.status).toEqual(200)
-    expect(res.data.breweries.length).toEqual(0)
+    assert.equal(res.status, 200)
+    assert.equal(res.data.breweries.length, 0)
   })
 
 })

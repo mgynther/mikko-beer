@@ -1,4 +1,6 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
+
 import * as containerService from '../../../src/core/container/authorized.service'
 
 import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
@@ -116,7 +118,7 @@ describe('container authorized service unit tests', () => {
         },
         log
       )
-      expect(result).toEqual(container)
+      assert.deepEqual(result, container)
     })
 
     it(`list containers as ${token.role}`, async () => {
@@ -125,7 +127,7 @@ describe('container authorized service unit tests', () => {
         token,
         log
       )
-      expect(result).toEqual([container])
+      assert.deepEqual(result, [container])
     })
   })
 

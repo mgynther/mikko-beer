@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import type { Database } from '../../../src/data/database'
@@ -36,7 +37,7 @@ describe('review tests', () => {
   ) {
     const { reviews, data } = await insertMultipleReviews(10, db)
     const list = await listReviews(db, reviewListOrder)
-    expect(reviews.length).toEqual(list.length)
+    assert.equal(reviews.length, list.length)
     return { reviews, data, list }
   }
 
@@ -54,7 +55,7 @@ describe('review tests', () => {
         taste: "chocolate"
       }
       const review = await reviewRepository.insertReview(trx, reviewRequest)
-      expect(review).toEqual({
+      assert.deepEqual(review, {
         ...reviewRequest,
         id: review.id,
       })
@@ -67,29 +68,29 @@ describe('review tests', () => {
     const reviewListOrder: ReviewListOrder =
       { property: 'brewery_name', direction: 'desc' }
     const list = await listReviews(db, reviewListOrder)
-    expect(list.length).toEqual(10);
+    assert.equal(list.length, 10);
     const start = new Array(5).fill(1).map(_ => data.brewery.name)
     const end = new Array(5).fill(1).map(_ => data.otherBrewery.name)
     const expectedNames = [...start, ...end]
-    expect(list.map(item => item.breweries[0].name)).toEqual(expectedNames)
+    assert.deepEqual(list.map(item => item.breweries[0].name), expectedNames)
     function reviewToTime(row: JoinedReview): Date {
       return row.time
     }
 
     const breweryReviewTimes = list.slice(0, 5).map(reviewToTime)
-    expect(breweryReviewTimes.length).toEqual(5)
+    assert.equal(breweryReviewTimes.length, 5)
     const expectedBreweryReviewTimes = [...breweryReviewTimes]
     function sortDate(a: Date, b: Date) {
       return a.getTime() - b.getTime()
     }
     expectedBreweryReviewTimes.sort(sortDate)
-    expect(breweryReviewTimes).toEqual(expectedBreweryReviewTimes)
+    assert.deepEqual(breweryReviewTimes, expectedBreweryReviewTimes)
 
     const otherBreweryReviewTimes = list.slice(5, 10).map(reviewToTime)
-    expect(otherBreweryReviewTimes.length).toEqual(5)
+    assert.equal(otherBreweryReviewTimes.length, 5)
     const expectedOtherBreweryReviewTimes = [...otherBreweryReviewTimes]
     expectedOtherBreweryReviewTimes.sort(sortDate)
-    expect(otherBreweryReviewTimes).toEqual(expectedOtherBreweryReviewTimes)
+    assert.deepEqual(otherBreweryReviewTimes, expectedOtherBreweryReviewTimes)
   })
 
   function toTime(review: Review | JoinedReview): Date {
@@ -147,10 +148,10 @@ describe('review tests', () => {
     const listTimes = list.map(toTime)
     const expectedTimes = reviews.map(toTime)
       .sort(sorter)
-    expect(listTimes).toEqual(expectedTimes)
+    assert.deepEqual(listTimes, expectedTimes)
 
     const originalTimes = reviews.map(toTime)
-    expect(listTimes).not.toEqual(originalTimes)
+    assert.notDeepEqual(listTimes, originalTimes)
   }
 
   it('list reviews, time asc', async() => {
@@ -178,10 +179,10 @@ describe('review tests', () => {
     const listRatingTimes = list.map(toRatingTime)
     const expectedRatingTimes = reviews.map(toRatingTime)
       .sort(sorter)
-    expect(listRatingTimes).toEqual(expectedRatingTimes)
+    assert.deepEqual(listRatingTimes, expectedRatingTimes)
 
     const originalRatingTimes = reviews.map(toRatingTime)
-    expect(listRatingTimes).not.toEqual(originalRatingTimes)
+    assert.notDeepEqual(listRatingTimes, originalRatingTimes)
   }
 
   it('list reviews, rating desc', async() => {
@@ -219,16 +220,16 @@ describe('review tests', () => {
     sorter: (a: T, b: T) => number,
     beerId: string
   ) {
-    expect(reviews.length / 2).toEqual(list.length)
+    assert.equal(reviews.length / 2, list.length)
     const listValues = list.map(converter)
     const expectedValues = reviews
       .filter(review => review.beer === beerId)
       .map(converter)
       .sort(sorter)
-    expect(listValues).toEqual(expectedValues)
+    assert.deepEqual(listValues, expectedValues)
 
     const originalValues = reviews.map(converter)
-    expect(listValues).not.toEqual(originalValues)
+    assert.notDeepEqual(listValues, originalValues)
   }
 
   it('list reviews by beer, beer_name desc', async() => {

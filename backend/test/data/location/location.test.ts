@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import type { Transaction } from '../../../src/data/database'
@@ -26,7 +27,7 @@ describe('location tests', () => {
       ctx.db,
       location.id
     )
-    expect(readLocation).toEqual(location)
+    assert.deepEqual(readLocation, location)
   })
 
   it('update location', async () => {
@@ -49,7 +50,7 @@ describe('location tests', () => {
         }
       )
     })
-    expect(updated).toEqual({
+    assert.deepEqual(updated, {
       ...location,
       name: 'Plevna'
     })
@@ -70,7 +71,7 @@ describe('location tests', () => {
         trx,
         [location.id, dummyId]
       )
-      expect(lockedKeys).toEqual([location.id])
+      assert.deepEqual(lockedKeys, [location.id])
     })
   })
 
@@ -90,7 +91,7 @@ describe('location tests', () => {
         skip: 0
       }
     )
-    expect(locations).toEqual([location])
+    assert.deepEqual(locations, [location])
   })
 
   it('search locations', async () => {
@@ -106,6 +107,6 @@ describe('location tests', () => {
       ctx.db,
       { name: 'kahd' }
     )
-    expect(locations).toEqual([location])
+    assert.deepEqual(locations, [location])
   })
 })

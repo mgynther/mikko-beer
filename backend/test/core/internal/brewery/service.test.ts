@@ -1,4 +1,6 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
+
 import type {
   Brewery,
   CreateBreweryRequest,
@@ -27,11 +29,11 @@ describe('brewery service unit tests', () => {
         id: brewery.id,
         name: brewery.name,
       }
-      expect(newBrewery).toEqual({ name: brewery.name })
+      assert.deepEqual(newBrewery, { name: brewery.name })
       return result
     }
     const result = await breweryService.createBrewery(create, request, log)
-    expect(result).toEqual({
+    assert.deepEqual(result, {
       ...request,
       id: brewery.id
     })
@@ -46,7 +48,7 @@ describe('brewery service unit tests', () => {
         id: brewery.id,
         name: brewery.name,
       }
-      expect(brewery).toEqual(result)
+      assert.deepEqual(brewery, result)
       return result
     }
     const result = await breweryService.updateBrewery(
@@ -55,7 +57,7 @@ describe('brewery service unit tests', () => {
       request,
       log
     )
-    expect(result).toEqual({
+    assert.deepEqual(result, {
       ...request,
       id: brewery.id
     })
@@ -63,17 +65,17 @@ describe('brewery service unit tests', () => {
 
   it('find brewery', async () => {
     const finder = async (breweryId: string) => {
-      expect(breweryId).toEqual(brewery.id)
+      assert.equal(breweryId, brewery.id)
       return brewery
     }
     const result = await breweryService.findBreweryById(finder, brewery.id, log)
-    expect(result).toEqual(brewery)
+    assert.deepEqual(result, brewery)
   })
 
   it('fail to find brewery with unknown id', async () => {
     const id = '2f15e28b-ccbf-4afa-aa05-25f43b1e548b'
     const finder = async (searchId: string) => {
-      expect(searchId).toEqual(id)
+      assert.equal(searchId, id)
       return undefined
     }
     expectReject(async () => {
@@ -87,11 +89,11 @@ describe('brewery service unit tests', () => {
       skip: 80
     }
     const lister = async (listPagination: Pagination) => {
-      expect(listPagination).toEqual(pagination)
+      assert.deepEqual(listPagination, pagination)
       return [brewery]
     }
     const result = await breweryService.listBreweries(lister, pagination, log)
-    expect(result).toEqual([brewery])
+    assert.deepEqual(result, [brewery])
   })
 
   it('search brewerys', async () => {
@@ -99,7 +101,7 @@ describe('brewery service unit tests', () => {
       name: 'Sipe',
     }
     const searcher = async (search: SearchByName) => {
-      expect(search).toEqual(searchByName)
+      assert.deepEqual(search, searchByName)
       return [brewery]
     }
     const result = await breweryService.searchBreweries(
@@ -107,6 +109,6 @@ describe('brewery service unit tests', () => {
       searchByName,
       log
     )
-    expect(result).toEqual([brewery])
+    assert.deepEqual(result, [brewery])
   })
 })

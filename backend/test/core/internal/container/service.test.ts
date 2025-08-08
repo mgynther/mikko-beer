@@ -1,4 +1,6 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
+
 import type {
   Container,
   CreateContainerRequest,
@@ -28,13 +30,13 @@ describe('container service unit tests', () => {
         type: container.type,
         size: container.size,
       }
-      expect(newContainer).toEqual(
+      assert.deepEqual(newContainer,
         { type: container.type, size: container.size }
       )
       return result
     }
     const result = await containerService.createContainer(create, request, log)
-    expect(result).toEqual({
+    assert.deepEqual(result, {
       ...request,
       id: container.id
     })
@@ -51,7 +53,7 @@ describe('container service unit tests', () => {
         type: container.type,
         size: container.size,
       }
-      expect(container).toEqual(result)
+      assert.deepEqual(container, result)
       return result
     }
     const result = await containerService.updateContainer(
@@ -60,7 +62,7 @@ describe('container service unit tests', () => {
       request,
       log
     )
-    expect(result).toEqual({
+    assert.deepEqual(result, {
       ...request,
       id: container.id
     })
@@ -68,7 +70,7 @@ describe('container service unit tests', () => {
 
   it('find container', async () => {
     const finder = async (containerId: string) => {
-      expect(containerId).toEqual(container.id)
+      assert.equal(containerId, container.id)
       return container
     }
     const result = await containerService.findContainerById(
@@ -76,13 +78,13 @@ describe('container service unit tests', () => {
       container.id,
       log
     )
-    expect(result).toEqual(container)
+    assert.deepEqual(result, container)
   })
 
   it('fail to find container with unknown id', async () => {
     const id = 'd29b2ee6-5d2e-40bf-bb87-c02c00a6628f'
     const finder = async (searchId: string) => {
-      expect(searchId).toEqual(id)
+      assert.equal(searchId, id)
       return undefined
     }
     expectReject(async () => {
@@ -95,7 +97,7 @@ describe('container service unit tests', () => {
       return [container]
     }
     const result = await containerService.listContainers(lister, log)
-    expect(result).toEqual([container])
+    assert.deepEqual(result, [container])
   })
 
 })

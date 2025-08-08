@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import type { StorageWithDate } from '../../../src/core/storage/storage'
@@ -74,7 +75,7 @@ describe('storage tests', () => {
         trx,
         storage.id
       )
-      expect(lockedKey).toEqual(storage.id)
+      assert.equal(lockedKey, storage.id)
     })
   })
 
@@ -84,7 +85,7 @@ describe('storage tests', () => {
       ctx.db,
       storage.id
     )
-    expect(found?.hasReview).toEqual(false)
+    assert.equal(found?.hasReview, false)
   })
 
   it('storages have reviews', async () => {
@@ -112,21 +113,21 @@ describe('storage tests', () => {
       ctx.db,
       { skip: 0, size: 20 }
     )
-    expect(results.length).toEqual(3)
+    assert.equal(results.length, 3)
     const [ beerResult, otherBeerResult, noReviewResult ] = results
-    expect(beerResult.beerId).toEqual(data.beer.id)
-    expect(beerResult.hasReview).toEqual(true)
-    expect(otherBeerResult.beerId).toEqual(data.otherBeer.id)
-    expect(otherBeerResult.hasReview).toEqual(true)
-    expect(noReviewResult.beerId).toEqual(noReviewStorage.beer)
-    expect(noReviewResult.hasReview).toEqual(false)
+    assert.equal(beerResult.beerId, data.beer.id)
+    assert.equal(beerResult.hasReview, true)
+    assert.equal(otherBeerResult.beerId, data.otherBeer.id)
+    assert.equal(otherBeerResult.hasReview, true)
+    assert.equal(noReviewResult.beerId, noReviewStorage.beer)
+    assert.equal(noReviewResult.hasReview, false)
   })
 
   it('delete storage', async () => {
     const storage = await createStorage()
     const createdStorage =
       await storageRepository.findStorageById(ctx.db, storage.id)
-    expect(createdStorage).not.toEqual(undefined)
+    assert.notEqual(createdStorage, undefined)
     await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
       await storageRepository.deleteStorageById(
         trx,
@@ -135,7 +136,7 @@ describe('storage tests', () => {
     })
     const deletedStorage =
       await storageRepository.findStorageById(ctx.db, storage.id)
-    expect(deletedStorage).toEqual(undefined)
+    assert.equal(deletedStorage, undefined)
   })
 
   it('do not lock storage that does not exists', async () => {
@@ -145,7 +146,7 @@ describe('storage tests', () => {
         trx,
         dummyId
       )
-      expect(lockedKey).toEqual(undefined)
+      assert.equal(lockedKey, undefined)
     })
   })
 })

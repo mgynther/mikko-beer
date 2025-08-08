@@ -1,4 +1,5 @@
-import { expect } from 'earl'
+import { describe, it } from 'node:test'
+import * as assert from 'node:assert/strict'
 
 import {
   validateCreateLocationRequest,
@@ -20,14 +21,14 @@ describe('location validation unit tests', () => {
   it('valid create location request passes validation', () => {
     const input = validRequest()
     const output = validRequest()
-    expect(validateCreateLocationRequest(input)).toLooseEqual(output)
+    assert.deepEqual(validateCreateLocationRequest(input), output)
   })
 
   it('valid update location request passes validation', () => {
     const input = validRequest()
     const output = validRequest()
     const id = '1cd2c9e0-908f-4769-a484-a4f18b20f467'
-    expect(validateUpdateLocationRequest(input, id)).toLooseEqual({
+    assert.deepEqual(validateUpdateLocationRequest(input, id), {
       id,
       request: output
     })
