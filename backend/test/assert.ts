@@ -63,6 +63,10 @@ export function assertThrows<T extends Error>(
   )
 }
 
+export function assertDoesNotThrow(func: () => void) {
+  assert.doesNotThrow(func)
+}
+
 export function assertTruthy(value: object | undefined | string) {
   assert.ok(value)
 }

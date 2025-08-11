@@ -1,11 +1,11 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import { cyclicRelationshipError } from '../../../../src/core/errors'
 import {
   checkCyclicRelationships
 } from '../../../../src/core/internal/style/style.util'
 import { expectThrow } from '../../controller-error-helper'
+import { assertDoesNotThrow } from '../../../assert'
 
 describe('style relationship unit tests', () => {
   const ale = {
@@ -32,7 +32,9 @@ describe('style relationship unit tests', () => {
   ]
 
   it('fail to find cyclic when there is no cycle', () => {
-    assert.doesNotThrow(() => checkCyclicRelationships(relationships, neipa.id, [ipa.id]))
+    assertDoesNotThrow(
+      () => checkCyclicRelationships(relationships, neipa.id, [ipa.id])
+    )
   })
 
   it('find cyclic when there is a cycle', () => {

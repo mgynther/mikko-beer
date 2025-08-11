@@ -3,6 +3,7 @@ import * as assert from 'node:assert/strict'
 
 import {
   assertDeepEqual,
+  assertDoesNotThrow,
   assertGreaterThan,
   assertIncludes,
   assertInstanceOf,
@@ -129,6 +130,17 @@ describe('assertion tests', () => {
         new CustomError('another message'),
         CustomError
       )
+    )
+  })
+
+  it('does not throw', () => {
+    assertDoesNotThrow(() => 1 + 2)
+  })
+
+  it('fails on throwing when not supposed to', () => {
+    assert.throws(() =>
+      assertDoesNotThrow(() => { throw new Error('unexpected failure') }),
+      /unexpected failure/
     )
   })
 })
