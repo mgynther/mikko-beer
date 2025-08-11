@@ -5,7 +5,6 @@ import {
   userMismatchError,
   userOrRefreshTokenNotFoundError
 } from "../../errors"
-import { Role } from "../../user/user"
 import type { DbRefreshToken } from "../../auth/refresh-token"
 
 export async function authorizeUser (
@@ -20,7 +19,7 @@ export async function authorizeUser (
     throw noUserIdParameterError
   }
 
-  if (authTokenPayload.role === Role.admin) {
+  if (authTokenPayload.role === 'admin') {
     return
   }
 
@@ -41,7 +40,7 @@ export async function authorizeUser (
 export function authorizeAdmin (
   payload: AuthTokenPayload
 ): void {
-  if (payload.role !== Role.admin) {
+  if (payload.role !== 'admin') {
     throw noRightsError
   }
 }
@@ -51,7 +50,11 @@ export function authorizeViewer (
 ): void {
   const {role} = payload
   switch (role) {
-    case Role.admin:
-    case Role.viewer:
+    case 'admin':
+    case 'viewer':
   }
+  // Relying on linting as currently there are no roles that would not pass
+  // authorization. On a new role exhaustive switch check will fail, and if
+  // a speculative new role would not be allowed to use the system as viewer
+  // throwing code would no longer be dead.
 }

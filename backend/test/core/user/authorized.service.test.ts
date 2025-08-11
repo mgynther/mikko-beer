@@ -5,7 +5,6 @@ import * as userService from '../../../src/core/user/authorized-user.service'
 
 import type { AuthTokenConfig, AuthTokenPayload } from '../../../src/core/auth/auth-token'
 import type { CreateUserIf, CreateUserType } from '../../../src/core/user/user'
-import { Role } from '../../../src/core/user/user'
 import { dummyLog as log } from '../dummy-log'
 import { expectReject } from '../controller-error-helper'
 import {
@@ -19,7 +18,7 @@ import type { DbRefreshToken } from '../../../src/core/auth/refresh-token'
 
 const validCreateUserRequest: CreateUserType = {
   user: {
-    role: Role.admin
+    role: 'admin'
   },
   passwordSignInMethod: {
     username: 'admin',
@@ -30,7 +29,7 @@ const validCreateUserRequest: CreateUserType = {
 const user: SignedInUser = {
   user: {
     id: '565dc891-0e04-4813-a6c6-dbd5535a80ff',
-    role: Role.admin,
+    role: 'admin',
     username: 'admin'
   },
   refreshToken: {
@@ -65,13 +64,13 @@ const deleteUserById = async () => undefined
 
 const adminAuthToken: AuthTokenPayload = {
   userId: 'e5390bee-7afb-42d6-9f1c-6c04b72d03d1',
-  role: Role.admin,
+  role: 'admin',
   refreshTokenId: 'e72a8f54-f71c-4fb4-8e93-bf65bef4e31e'
 }
 
 const viewerAuthToken: AuthTokenPayload = {
   userId: 'f793fe89-cbb1-41d2-b7fd-fd60de26c6ca',
-  role: Role.viewer,
+  role: 'viewer',
   refreshTokenId: '4e287a07-d115-4e10-b414-f2a106d49765'
 }
 

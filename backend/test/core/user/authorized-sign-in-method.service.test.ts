@@ -17,7 +17,6 @@ import type {
   AuthTokenConfig,
   AuthTokenPayload,
 } from '../../../src/core/auth/auth-token'
-import { Role } from '../../../src/core/user/user'
 import type { User } from '../../../src/core/user/user'
 import {
   invalidCredentialsTokenError,
@@ -36,19 +35,19 @@ const refreshTokenId = 'c6697088-c417-4dee-988d-c018b07527f7'
 
 const user: User = {
   id: userId,
-  role: Role.admin,
+  role: 'admin',
   username: 'admin'
 }
 
 const adminAuthToken: AuthTokenPayload = {
   userId,
-  role: Role.admin,
+  role: 'admin',
   refreshTokenId
 }
 
 const viewerAuthToken: AuthTokenPayload = {
   userId: 'dbf43779-cc8b-4097-bca2-af0b8e6da64b',
-  role: Role.viewer,
+  role: 'viewer',
   refreshTokenId: '0054d008-2a4c-4c84-af92-886df7dd38fe'
 }
 

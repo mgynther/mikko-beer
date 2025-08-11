@@ -5,7 +5,6 @@ import { userNotFoundError } from '../../../../src/core/errors'
 import * as userService from '../../../../src/core/internal/user/user.service'
 import type { AuthTokenConfig } from "../../../../src/core/auth/auth-token"
 import type { DbRefreshToken } from "../../../../src/core/auth/refresh-token"
-import { Role } from "../../../../src/core/user/user"
 import type {
   CreateAnonymousUserRequest,
   User
@@ -24,7 +23,7 @@ const userId = 'f28f87af-106e-46af-8994-6fd9204bf85c'
 
 const user: User = {
   id: userId,
-  role: Role.admin,
+  role: 'admin',
   username: 'user'
 }
 

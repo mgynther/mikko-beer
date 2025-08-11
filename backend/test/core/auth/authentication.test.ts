@@ -6,7 +6,6 @@ import type {
 } from '../../../src/core/auth/refresh-token'
 import * as authTokenService from '../../../src/core/internal/auth/auth-token.service'
 import * as authentication from '../../../src/core/auth/authentication'
-import { Role } from '../../../src/core/user/user'
 import type { User } from '../../../src/core/user/user'
 import type { Tokens } from '../../../src/core/auth/tokens'
 import type {
@@ -29,13 +28,13 @@ const refreshTokenId = 'f2224f80-b478-43e2-8cc9-d39cf8079524'
 
 const admin: User = {
   id: 'f4768755-d692-458f-a311-5aaeb81fd4ec',
-  role: Role.admin,
+  role: 'admin',
   username: 'admin'
 }
 
 const viewer: User = {
   id: 'c232d501-748e-4897-a2b7-4ee3387716e0',
-  role: Role.viewer,
+  role: 'viewer',
   username: 'viewer'
 }
 
@@ -72,7 +71,7 @@ describe('authentication service unit tests', () => {
     )
     assert.deepEqual(parsed, {
       userId: admin.id,
-      role: Role.admin,
+      role: 'admin',
       refreshTokenId
     })
   })
@@ -85,7 +84,7 @@ describe('authentication service unit tests', () => {
     )
     assert.deepEqual(parsed, {
       userId: viewer.id,
-      role: Role.viewer,
+      role: 'viewer',
       refreshTokenId
     })
   })

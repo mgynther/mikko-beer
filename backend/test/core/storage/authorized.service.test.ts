@@ -13,7 +13,6 @@ import type {
   UpdateIf,
   StorageWithDate
 } from '../../../src/core/storage/storage'
-import { Role } from '../../../src/core/user/user'
 import { dummyLog as log } from '../dummy-log'
 import { expectReject } from '../controller-error-helper'
 import {
@@ -66,13 +65,13 @@ const updateIf: UpdateIf = {
 
 const adminAuthToken: AuthTokenPayload = {
   userId: '868fa5ed-6a50-4e9d-80ab-b16a496969e4',
-  role: Role.admin,
+  role: 'admin',
   refreshTokenId: 'dd80f30a-7757-4fd4-bee2-2fcc607f6507'
 }
 
 const viewerAuthToken: AuthTokenPayload = {
   userId: '90c62eb4-3483-402d-979c-fc684da2c595',
-  role: Role.viewer,
+  role: 'viewer',
   refreshTokenId: '5354aaa4-b3d0-45d8-8c81-75d18588b58d'
 }
 

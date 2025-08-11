@@ -4,7 +4,6 @@ import * as userService from './internal/user/user.service'
 import * as signInMethodService from './internal/user/sign-in-method.service'
 
 import type { log } from './log'
-import { Role } from './user/user'
 
 import type { CreateAnonymousUserRequest, User } from "./user/user"
 import type { AuthTokenConfig } from './auth/auth-token'
@@ -34,7 +33,7 @@ export async function createInitialUser (
   const user = await userService.createAnonymousUser(
     createAnonymousUser,
     insertRefreshToken,
-    Role.admin,
+    'admin',
     authTokenConfig,
     log
   )

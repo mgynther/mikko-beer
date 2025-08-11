@@ -9,7 +9,6 @@ import type {
   CreateBreweryRequest,
   UpdateBreweryRequest
 } from '../../../src/core/brewery/brewery'
-import { Role } from '../../../src/core/user/user'
 import { dummyLog as log } from '../dummy-log'
 import { expectReject } from '../controller-error-helper'
 import {
@@ -41,13 +40,13 @@ const update: (brewery: Brewery) => Promise<Brewery> = async () => brewery
 
 const adminAuthToken: AuthTokenPayload = {
   userId: 'fd64b45e-baac-4372-a4ab-9970b8282a1d',
-  role: Role.admin,
+  role: 'admin',
   refreshTokenId: '121b797c-ae9d-4362-817e-6af5674401ae'
 }
 
 const viewerAuthToken: AuthTokenPayload = {
   userId: '73eae8cd-4ef5-42f6-b492-604b1e25dfad',
-  role: Role.viewer,
+  role: 'viewer',
   refreshTokenId: 'deda2185-2814-4943-9f81-d8880ba06ec1'
 }
 

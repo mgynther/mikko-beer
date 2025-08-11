@@ -12,7 +12,6 @@ import type {
   UpdateBeerRequest,
   UpdateIf
 } from '../../../src/core/beer/beer'
-import { Role } from '../../../src/core/user/user'
 import { dummyLog as log } from '../dummy-log'
 import { expectReject } from '../controller-error-helper'
 import {
@@ -71,13 +70,13 @@ const updateIf: UpdateIf = {
 
 const adminAuthToken: AuthTokenPayload = {
   userId: '5b5590e3-3bef-4267-a0f8-fe051fb681a5',
-  role: Role.admin,
+  role: 'admin',
   refreshTokenId: 'd7206329-8ccd-4509-bb5c-61d74798cda8'
 }
 
 const viewerAuthToken: AuthTokenPayload = {
   userId: '6018c984-4e6c-4d17-b814-7511eff902d4',
-  role: Role.viewer,
+  role: 'viewer',
   refreshTokenId: 'db81d9d8-d11e-40f2-83cf-4cddc98504c7'
 }
 

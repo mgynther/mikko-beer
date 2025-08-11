@@ -9,7 +9,6 @@ import type {
   CreateLocationRequest,
   UpdateLocationRequest
 } from '../../../src/core/location/location'
-import { Role } from '../../../src/core/user/user'
 import { dummyLog as log } from '../dummy-log'
 import { expectReject } from '../controller-error-helper'
 import {
@@ -41,13 +40,13 @@ const update: (location: Location) => Promise<Location> = async () => location
 
 const adminAuthToken: AuthTokenPayload = {
   userId: '57b37a59-da27-4290-bd78-634b6c64722e',
-  role: Role.admin,
+  role: 'admin',
   refreshTokenId: '8400cecf-24a5-4e27-b6d2-42e6af054440'
 }
 
 const viewerAuthToken: AuthTokenPayload = {
   userId: '7c02b999-0c7d-4c8b-b4f1-2e3902a9a83f',
-  role: Role.viewer,
+  role: 'viewer',
   refreshTokenId: '3b242dfc-9632-46bc-9985-912d5702a236'
 }
 

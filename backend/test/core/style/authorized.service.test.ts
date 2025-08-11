@@ -13,7 +13,6 @@ import type {
   UpdateStyleRequest,
   UpdateStyleIf
 } from '../../../src/core/style/style'
-import { Role } from '../../../src/core/user/user'
 import { dummyLog as log } from '../dummy-log'
 import { expectReject } from '../controller-error-helper'
 import {
@@ -59,13 +58,13 @@ const updateIf: UpdateStyleIf = {
 
 const adminAuthToken: AuthTokenPayload = {
   userId: 'd60705aa-81c7-41b2-9ea6-552b62de196e',
-  role: Role.admin,
+  role: 'admin',
   refreshTokenId: '561e1675-77a5-4fdb-a92f-29ab58fd02e5'
 }
 
 const viewerAuthToken: AuthTokenPayload = {
   userId: '8bb74120-5d80-4ebd-8597-6de643ee6d63',
-  role: Role.viewer,
+  role: 'viewer',
   refreshTokenId: '2223ec08-40e9-4fda-a5db-c66bafa796cc'
 }
 

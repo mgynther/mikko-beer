@@ -13,7 +13,6 @@ import type {
   UpdateReviewRequest,
   UpdateIf
 } from '../../../src/core/review/review'
-import { Role } from '../../../src/core/user/user'
 import { dummyLog as log } from '../dummy-log'
 import { expectReject } from '../controller-error-helper'
 import {
@@ -72,13 +71,13 @@ const updateIf: UpdateIf = {
 
 const adminAuthToken: AuthTokenPayload = {
   userId: '97bfead4-409a-4989-a2b8-cb2f1cd126a0',
-  role: Role.admin,
+  role: 'admin',
   refreshTokenId: '22404eb4-a865-485a-8be6-01f519d69169'
 }
 
 const viewerAuthToken: AuthTokenPayload = {
   userId: 'a2ed9601-f68d-45a7-ab33-bfc34ee43c24',
-  role: Role.viewer,
+  role: 'viewer',
   refreshTokenId: '35cab924-9f13-4a9c-a204-77d77dca0c5f'
 }
 

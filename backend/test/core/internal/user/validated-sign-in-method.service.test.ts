@@ -10,7 +10,6 @@ import type {
 import type {
   AuthTokenConfig
 } from '../../../../src/core/auth/auth-token'
-import { Role } from '../../../../src/core/user/user'
 import type { User } from '../../../../src/core/user/user'
 import {
   invalidCredentialsError,
@@ -29,7 +28,7 @@ const userId = '2bbcaed7-2b4d-4888-9a32-8573dc19fd56'
 
 const user: User = {
   id: userId,
-  role: Role.admin,
+  role: 'admin',
   username: 'admin'
 }
 

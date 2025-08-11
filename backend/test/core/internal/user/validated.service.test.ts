@@ -4,7 +4,6 @@ import * as userService from '../../../../src/core/internal/user/validated-user.
 
 import type { AuthTokenConfig } from '../../../../src/core/auth/auth-token'
 import type { CreateUserIf, CreateUserType } from '../../../../src/core/user/user'
-import { Role } from '../../../../src/core/user/user'
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
 import {
@@ -15,7 +14,7 @@ import { SignedInUser } from '../../../../src/core/internal/user/signed-in-user'
 
 const validCreateUserRequest: CreateUserType = {
   user: {
-    role: Role.admin
+    role: 'admin'
   },
   passwordSignInMethod: {
     username: 'admin',
@@ -26,7 +25,7 @@ const validCreateUserRequest: CreateUserType = {
 const user: SignedInUser = {
   user: {
     id: 'b69ea671-5adb-4a29-81cd-bfa590ec8eee',
-    role: Role.admin,
+    role: 'admin',
     username: 'admin'
   },
   refreshToken: {

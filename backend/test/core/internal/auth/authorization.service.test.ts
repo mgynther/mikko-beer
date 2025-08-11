@@ -4,7 +4,6 @@ import type {
   DbRefreshToken
 } from '../../../../src/core/auth/refresh-token'
 import * as authorizationService from '../../../../src/core/internal/auth/authorization.service'
-import { Role } from '../../../../src/core/user/user'
 import type { User } from '../../../../src/core/user/user'
 import type { AuthTokenPayload } from '../../../../src/core/auth/auth-token'
 import {
@@ -19,25 +18,25 @@ const refreshTokenId = 'f2224f80-b478-43e2-8cc9-d39cf8079524'
 
 const admin: User = {
   id: '185c5a57-c29f-456f-9dac-db29a7de96c3',
-  role: Role.admin,
+  role: 'admin',
   username: 'admin'
 }
 
 const otherAdmin: User = {
   id: 'e8d718a3-0a85-41f3-9040-b7aff4470987',
-  role: Role.admin,
+  role: 'admin',
   username: 'otheradmin'
 }
 
 const viewer: User = {
   id: '2a036606-c4cc-46b6-8093-4bf3835fff85',
-  role: Role.viewer,
+  role: 'viewer',
   username: 'viewer'
 }
 
 const otherViewer: User = {
   id: 'ca8c2111-db26-472a-bdf5-4c5fa1516425',
-  role: Role.viewer,
+  role: 'viewer',
   username: 'otherviewer'
 }
 

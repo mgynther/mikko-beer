@@ -4,7 +4,6 @@ import * as assert from 'node:assert/strict'
 import * as statsService from '../../../src/core/stats/authorized.service'
 
 import type { AuthTokenPayload } from "../../../src/core/auth/auth-token"
-import { Role } from "../../../src/core/user/user"
 import { dummyLog as log } from '../dummy-log'
 import type {
   AnnualContainerStats,
@@ -20,13 +19,13 @@ import type {
 
 const adminAuthToken: AuthTokenPayload = {
   userId: '2238a6f3-6cc7-44a4-bb91-6369bd9adf56',
-  role: Role.admin,
+  role: 'admin',
   refreshTokenId: '0d3e980c-7d2b-4c73-a439-c55ddaa7a682'
 }
 
 const viewerAuthToken: AuthTokenPayload = {
   userId: '57373ccd-a2ed-480c-beb4-90565da54e2d',
-  role: Role.viewer,
+  role: 'viewer',
   refreshTokenId: 'ddf43e29-7c7f-4246-9e39-88add3375bd6'
 }
 

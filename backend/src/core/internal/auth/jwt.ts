@@ -1,6 +1,6 @@
 // This file wraps jsonwebtoken usage to core types.
 import * as jwt from 'jsonwebtoken'
-import { Role } from '../../user/user'
+import type { Role } from '../../user/user'
 import type {
   AuthToken,
   AuthTokenConfig, AuthTokenPayload
@@ -36,6 +36,15 @@ export function signRefreshToken (
   return { refreshToken: jwt.sign(tokenPayload, authTokenSecret) }
 }
 
+function isRole(role: string): role is Role {
+  switch (role) {
+    case 'admin':
+    case 'viewer':
+      return true
+  }
+  return false
+}
+
 export function verifyAuthToken (
   token: AuthToken,
   authTokenSecret: string
@@ -51,16 +60,13 @@ export function verifyAuthToken (
   }
 
   const {role} = payload
-  /* eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison --
-   * Validation requires unsafe comparison.
-   */
-  if (role !== Role.admin && role !== Role.viewer) {
+  if (!isRole(role)) {
     throw new InvalidAuthTokenError()
   }
 
   return {
     userId: payload.userId,
-    role: role as Role,
+    role,
     refreshTokenId: payload.refreshTokenId
   }
 }

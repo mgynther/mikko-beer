@@ -9,7 +9,6 @@ import type {
   CreateContainerRequest,
   UpdateContainerRequest
 } from '../../../src/core/container/container'
-import { Role } from '../../../src/core/user/user'
 import { dummyLog as log } from '../dummy-log'
 import { expectReject } from '../controller-error-helper'
 import {
@@ -46,13 +45,13 @@ const update: (
 
 const adminAuthToken: AuthTokenPayload = {
   userId: '75c72a6f-95a0-475d-9b50-e926fe59ebc4',
-  role: Role.admin,
+  role: 'admin',
   refreshTokenId: '38d569af-3996-4b6f-9632-5748481cc605'
 }
 
 const viewerAuthToken: AuthTokenPayload = {
   userId: '8460921e-08b1-4ab5-83d2-7fdde2b106fb',
-  role: Role.viewer,
+  role: 'viewer',
   refreshTokenId: 'e820508c-1c47-4676-8812-0ee2ec94c20e'
 }
 

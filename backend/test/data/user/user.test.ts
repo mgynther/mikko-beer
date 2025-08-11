@@ -4,7 +4,6 @@ import * as assert from 'node:assert/strict'
 import { TestContext } from '../test-context'
 import type { NewUser, User } from '../../../src/core/user/user'
 import * as userRepository from '../../../src/data/user/user.repository'
-import { Role } from '../../../src/core/user/user'
 import { Transaction } from '../../../src/data/database'
 
 describe('user tests', () => {
@@ -18,7 +17,7 @@ describe('user tests', () => {
 
   const user: NewUser = {
     username: 'user',
-    role: Role.admin,
+    role: 'admin',
   }
 
   async function insertUser(): Promise<User> {

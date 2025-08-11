@@ -20,7 +20,7 @@ import type {
   SignInUsingPasswordIf,
   UserPasswordHash,
 } from '../../../../src/core/user/sign-in-method'
-import { Role, User } from '../../../../src/core/user/user'
+import { User } from '../../../../src/core/user/user'
 import {
   invalidCredentialsError,
   passwordTooLongError,
@@ -66,13 +66,13 @@ describe('password sign-in-method service unit tests', () => {
   const username = 'user'
   const user: User = {
     id: userId,
-    role: Role.admin,
+    role: 'admin',
     username: username
   }
 
   const noPasswordUser: User = {
     id: userId,
-    role: Role.admin,
+    role: 'admin',
     username: null,
   }
 

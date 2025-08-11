@@ -10,10 +10,7 @@ export interface CreateUserIf {
 
 // A much more detailed usage rights could be added but 2 roles is plenty for
 // the time being.
-export enum Role {
-  admin = 'admin',
-  viewer = 'viewer'
-}
+export type Role = 'admin' | 'viewer'
 
 export interface User {
   id: string

@@ -11,7 +11,6 @@ import {
   InvalidAuthTokenError
 } from '../../../../src/core/auth/auth-token'
 import type { DbRefreshToken } from '../../../../src/core/auth/refresh-token'
-import { Role } from '../../../../src/core/user/user'
 import type { User } from '../../../../src/core/user/user'
 import type { Tokens } from '../../../../src/core/auth/tokens'
 import { invalidCredentialsTokenError } from '../../../../src/core/errors'
@@ -36,7 +35,7 @@ const knownTokens: Tokens = {
 
 const user: User = {
   id: '4b71efe2-42ef-4724-8e67-1bb3e7bc21d3',
-  role: Role.admin,
+  role: 'admin',
   username: 'admin'
 }
 
@@ -89,7 +88,7 @@ describe('auth token service unit tests', () => {
     )
     assert.deepEqual(authTokenPayload, {
       userId: user.id,
-      role: Role.admin,
+      role: 'admin',
       refreshTokenId
     })
 
