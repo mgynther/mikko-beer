@@ -1,5 +1,4 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import type { Database } from '../../../src/data/database'
@@ -10,7 +9,7 @@ import type {
   ReviewListOrder
 } from '../../../src/core/review/review'
 import { insertData, insertMultipleReviews } from '../review-helpers'
-import { assertDeepEqual, assertEqual } from '../../assert'
+import { assertDeepEqual, assertEqual, assertNotDeepEqual } from '../../assert'
 
 describe('review tests', () => {
   const ctx = new TestContext()
@@ -152,7 +151,7 @@ describe('review tests', () => {
     assertDeepEqual(listTimes, expectedTimes)
 
     const originalTimes = reviews.map(toTime)
-    assert.notDeepEqual(listTimes, originalTimes)
+    assertNotDeepEqual(listTimes, originalTimes)
   }
 
   it('list reviews, time asc', async() => {
@@ -183,7 +182,7 @@ describe('review tests', () => {
     assertDeepEqual(listRatingTimes, expectedRatingTimes)
 
     const originalRatingTimes = reviews.map(toRatingTime)
-    assert.notDeepEqual(listRatingTimes, originalRatingTimes)
+    assertNotDeepEqual(listRatingTimes, originalRatingTimes)
   }
 
   it('list reviews, rating desc', async() => {
@@ -230,7 +229,7 @@ describe('review tests', () => {
     assertDeepEqual(listValues, expectedValues)
 
     const originalValues = reviews.map(converter)
-    assert.notDeepEqual(listValues, originalValues)
+    assertNotDeepEqual(listValues, originalValues)
   }
 
   it('list reviews by beer, beer_name desc', async() => {

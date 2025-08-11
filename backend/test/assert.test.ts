@@ -6,6 +6,7 @@ import {
   assertGreaterThan,
   assertIncludes,
   assertInstanceOf,
+  assertNotDeepEqual,
   assertTruthy
 } from './assert'
 import { ControllerError } from '../src/core/errors'
@@ -15,9 +16,19 @@ describe('assertion tests', () => {
     assertDeepEqual({ prop: 'testing' }, { prop: 'testing' })
   })
 
-  it('is not deep equal', () => {
+  it('throws on failing deep equal', () => {
     assert.throws(() =>
       assertDeepEqual({ prop: 'testing' }, { property: 'another' })
+    )
+  })
+
+  it('is not deep equal', () => {
+    assertNotDeepEqual({ prop: 'testing' }, { prop: 'testing', another: 'a' })
+  })
+
+  it('throws on failing not deep equal', () => {
+    assert.throws(() =>
+      assertNotDeepEqual([123, 'test'], [123, 'test'])
     )
   })
 

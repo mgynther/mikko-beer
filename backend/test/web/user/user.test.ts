@@ -1,9 +1,8 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import { User } from '../../../src/core/user/user'
-import { assertDeepEqual, assertEqual } from '../../assert'
+import { assertDeepEqual, assertEqual, assertNotDeepEqual } from '../../assert'
 
 describe('user tests', () => {
   const ctx = new TestContext()
@@ -144,8 +143,8 @@ describe('user tests', () => {
     )
 
     assertEqual(res.status, 200)
-    assert.notDeepEqual(res.data.authToken, authToken)
-    assert.notDeepEqual(res.data.refreshToken, refreshToken)
+    assertNotDeepEqual(res.data.authToken, authToken)
+    assertNotDeepEqual(res.data.refreshToken, refreshToken)
 
     // The old auth token is no longer be usable.
     const failGetRes = await ctx.request.get(

@@ -6,6 +6,12 @@ export function assertDeepEqual<T>(value: T, reference: T): void {
   assert.deepEqual(value, reference)
 }
 
+// Provides type where we know types already match. Finding errors coding time
+// vs run time is quicker.
+export function assertNotDeepEqual<T>(value: T, reference: T): void {
+  assert.notDeepEqual(value, reference)
+}
+
 // Provides better type safety than assert.equal where we know types already
 // match. Finding errors coding time vs run time is quicker.
 export function assertEqual<T>(value: T, reference: T): void {
