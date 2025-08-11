@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import {
   validateFilteredReviewListOrder,
@@ -11,6 +10,7 @@ import {
   invalidReviewListQueryOrderError
 } from '../../src/core/errors'
 import { expectThrow } from './controller-error-helper'
+import { assertDeepEqual } from '../assert'
 
 function valid (): Record<string, unknown> {
   return { order: 'time', direction: 'desc' }
@@ -37,7 +37,7 @@ describe('review list order unit tests', () => {
   .forEach((test: CommonCase) => {
     it(`valid test helper is valid, ${test.title}`, () => {
       const result = test.func(valid())
-      assert.deepEqual(result, { property: 'time', direction: 'desc' })
+      assertDeepEqual(result, { property: 'time', direction: 'desc' })
     })
 
     it(`invalid order value, ${test.title}`, () => {
@@ -68,46 +68,46 @@ describe('review list order unit tests', () => {
       const result = test.func(
         { order: 'time', direction: 'desc' }
       )
-      assert.deepEqual(result, { property: 'time', direction: 'desc' })
+      assertDeepEqual(result, { property: 'time', direction: 'desc' })
     })
 
     it(`rating asc, ${test.title}`, () => {
       const result = test.func(
         { order: 'rating', direction: 'asc' }
       )
-      assert.deepEqual(result, { property: 'rating', direction: 'asc' })
+      assertDeepEqual(result, { property: 'rating', direction: 'asc' })
     })
   })
 
   it('defaults with undefined, full review list order', () => {
     const result = validateFullReviewListOrder({})
-    assert.deepEqual(result, { property: 'time', direction: 'desc' })
+    assertDeepEqual(result, { property: 'time', direction: 'desc' })
   })
 
   it('defaults with undefined, filtered review list order', () => {
     const result = validateFilteredReviewListOrder({})
-    assert.deepEqual(result, { property: 'beer_name', direction: 'asc' })
+    assertDeepEqual(result, { property: 'beer_name', direction: 'asc' })
   })
 
   it('defaults with empty string, full review list order', () => {
     const result = validateFullReviewListOrder(
       { order: '', direction: '' },
     )
-    assert.deepEqual(result, { property: 'time', direction: 'desc' })
+    assertDeepEqual(result, { property: 'time', direction: 'desc' })
   })
 
   it('defaults with empty string, filtered review list order', () => {
     const result = validateFilteredReviewListOrder(
       { order: '', direction: '' }
     )
-    assert.deepEqual(result, { property: 'beer_name', direction: 'asc' })
+    assertDeepEqual(result, { property: 'beer_name', direction: 'asc' })
   })
 
   it('defaults with empty string, full review list order', () => {
     const result = validateFullReviewListOrder(
       { order: '', direction: '' },
     )
-    assert.deepEqual(result, { property: 'time', direction: 'desc' })
+    assertDeepEqual(result, { property: 'time', direction: 'desc' })
   })
 
   it('beer_name, full review list order', () => {
@@ -122,7 +122,7 @@ describe('review list order unit tests', () => {
     const result = validateFilteredReviewListOrder(
       { order: 'beer_name', direction: 'desc' }
     )
-    assert.deepEqual(result, { property: 'beer_name', direction: 'desc' })
+    assertDeepEqual(result, { property: 'beer_name', direction: 'desc' })
   })
 
   it('brewery_name, full review list order', () => {
@@ -137,6 +137,6 @@ describe('review list order unit tests', () => {
     const result = validateFilteredReviewListOrder(
       { order: 'brewery_name', direction: 'asc' }
     )
-    assert.deepEqual(result, { property: 'brewery_name', direction: 'asc' })
+    assertDeepEqual(result, { property: 'brewery_name', direction: 'asc' })
   })
 })

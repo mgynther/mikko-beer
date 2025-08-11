@@ -3,6 +3,7 @@ import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import { User } from '../../../src/core/user/user'
+import { assertDeepEqual } from '../../assert'
 
 describe('user tests', () => {
   const ctx = new TestContext()
@@ -54,7 +55,7 @@ describe('user tests', () => {
     )
 
     assert.equal(getRes.status, 200)
-    assert.deepEqual(getRes.data.user, res.data.user)
+    assertDeepEqual(getRes.data.user, res.data.user)
   })
 
   it('get user by id', async () => {
@@ -66,7 +67,7 @@ describe('user tests', () => {
     )
 
     assert.equal(res.status, 200)
-    assert.deepEqual(res.data, { user })
+    assertDeepEqual(res.data, { user })
   })
 
   it('sign in a user', async () => {
@@ -86,7 +87,7 @@ describe('user tests', () => {
     )
 
     assert.equal(getRes.status, 200)
-    assert.deepEqual(getRes.data.user, res.data.user)
+    assertDeepEqual(getRes.data.user, res.data.user)
   })
 
   it('fail to sign in user with the wrong password', async () => {
@@ -98,7 +99,7 @@ describe('user tests', () => {
     })
 
     assert.equal(res.status, 401)
-    assert.deepEqual(res.data, {
+    assertDeepEqual(res.data, {
       error: {
         code: 'InvalidCredentials',
         message: 'wrong username or password',
@@ -191,7 +192,7 @@ describe('user tests', () => {
     )
 
     assert.equal(getRes.status, 200)
-    assert.deepEqual(getRes.data.user, user)
+    assertDeepEqual(getRes.data.user, user)
 
     const newPassword = 'a different password'
     const wrongPwdChangeRes = await ctx.request.post(

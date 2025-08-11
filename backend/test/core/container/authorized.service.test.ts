@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import * as containerService from '../../../src/core/container/authorized.service'
 
@@ -15,6 +14,7 @@ import {
   invalidContainerError,
   noRightsError
 } from '../../../src/core/errors'
+import { assertDeepEqual } from '../../assert'
 
 const validCreateContainerRequest: CreateContainerRequest = {
   size: '0.33',
@@ -117,7 +117,7 @@ describe('container authorized service unit tests', () => {
         },
         log
       )
-      assert.deepEqual(result, container)
+      assertDeepEqual(result, container)
     })
 
     it(`list containers as ${token.role}`, async () => {
@@ -126,7 +126,7 @@ describe('container authorized service unit tests', () => {
         token,
         log
       )
-      assert.deepEqual(result, [container])
+      assertDeepEqual(result, [container])
     })
   })
 

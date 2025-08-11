@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import {
   validatePasswordSignInMethod,
@@ -11,6 +10,11 @@ import {
   invalidSignInMethodError,
 } from '../../../../src/core/errors'
 import { expectThrow } from '../../controller-error-helper'
+import { assertDeepEqual } from '../../../assert'
+import type {
+  PasswordChange,
+  PasswordSignInMethod
+} from '../../../../src/core/user/sign-in-method'
 
 describe('password sign-in-method validation unit tests', () => {
   function validPasswordSignInMethod () {
@@ -20,10 +24,10 @@ describe('password sign-in-method validation unit tests', () => {
     }
   }
 
-  function pass(signInMethod: Record<string, unknown>) {
+  function pass(signInMethod: PasswordSignInMethod) {
     const input = { ...signInMethod }
     const output = { ...signInMethod }
-    assert.deepEqual(validatePasswordSignInMethod(input), output)
+    assertDeepEqual(validatePasswordSignInMethod(input), output)
   }
 
   function fail(signInMethod: unknown) {
@@ -91,10 +95,10 @@ describe('password change unit tests', () => {
     }
   }
 
-  function pass(passwordChange: Record<string, unknown>) {
+  function pass(passwordChange: PasswordChange) {
     const input = { ...passwordChange }
     const output = { ...passwordChange }
-    assert.deepEqual(validatePasswordChange(input), output)
+    assertDeepEqual(validatePasswordChange(input), output)
   }
 
   function fail(passwordChange: unknown) {

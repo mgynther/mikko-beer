@@ -12,6 +12,7 @@ import type {
 
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
+import { assertDeepEqual } from '../../../assert'
 
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {
@@ -52,7 +53,7 @@ describe('user service unit tests', () => {
       authTokenConfig,
       log
     )
-    assert.deepEqual(signedInUser.user, user)
+    assertDeepEqual(signedInUser.user, user)
     assert.notEqual(signedInUser.refreshToken.refreshToken, '')
     assert.notEqual(signedInUser.authToken.authToken, '')
   })

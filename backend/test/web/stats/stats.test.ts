@@ -16,6 +16,8 @@ import type {
   StyleStats
 } from '../../../src/core/stats/stats'
 import type { Style } from '../../../src/core/style/style'
+import type { CreateReviewRequest } from '../../../src/core/review/review'
+import { assertDeepEqual } from '../../assert'
 
 interface ReviewRes {
   id: string
@@ -83,16 +85,18 @@ describe('stats tests', () => {
     )
     assert.equal(otherLocationRes.status, 201)
 
+    const createRequest: CreateReviewRequest = {
+      additionalInfo: '',
+      beer: beerRes.data.beer.id,
+      container: containerRes.data.container.id,
+      location: locationRes.data.location.id,
+      rating: 5,
+      smell: 'Cherries',
+      taste: 'Cherries, a little sour',
+      time: '2021-03-07T18:31:33.123Z'
+    }
     const reviewRes = await ctx.request.post<{ review: ReviewRes }>(`/api/v1/review`,
-      {
-        beer: beerRes.data.beer.id,
-        container: containerRes.data.container.id,
-        location: locationRes.data.location.id,
-        rating: 5,
-        smell: 'Cherries',
-        taste: 'Cherries, a little sour',
-        time: '2021-03-07T18:31:33.123Z'
-      },
+      createRequest,
       ctx.adminAuthHeaders()
     )
     assert.equal(reviewRes.status, 201)
@@ -119,16 +123,18 @@ describe('stats tests', () => {
     )
     assert.equal(otherBeerRes.status, 201)
 
+    const createReviewRequest: CreateReviewRequest = {
+      additionalInfo: '',
+      beer: otherBeerRes.data.beer.id,
+      container: containerRes.data.container.id,
+      location: otherLocationRes.data.location.id,
+      rating: 7,
+      smell: 'Grapefruit',
+      taste: 'Bitter',
+      time: '2022-03-08T18:31:33.123Z'
+    }
     const otherReviewRes = await ctx.request.post<{ review: ReviewRes }>(`/api/v1/review`,
-      {
-        beer: otherBeerRes.data.beer.id,
-        container: containerRes.data.container.id,
-        location: otherLocationRes.data.location.id,
-        rating: 7,
-        smell: 'Grapefruit',
-        taste: 'Bitter',
-        time: '2022-03-08T18:31:33.123Z'
-      },
+      createReviewRequest,
       ctx.adminAuthHeaders()
     )
     assert.equal(otherReviewRes.status, 201)
@@ -149,16 +155,18 @@ describe('stats tests', () => {
     )
     assert.equal(collabBeerRes.status, 201)
 
+    const collabReviewRequest: CreateReviewRequest = {
+      additionalInfo: '',
+      beer: collabBeerRes.data.beer.id,
+      container: containerRes.data.container.id,
+      location: locationRes.data.location.id,
+      rating: 8,
+      smell: 'Grapefruit, cherries',
+      taste: 'Bitter, sour',
+      time: '2023-03-09T18:31:33.123Z'
+    }
     const collabReviewRes = await ctx.request.post<{ review: ReviewRes }>(`/api/v1/review`,
-      {
-        beer: collabBeerRes.data.beer.id,
-        container: containerRes.data.container.id,
-        location: locationRes.data.location.id,
-        rating: 8,
-        smell: 'Grapefruit, cherries',
-        taste: 'Bitter, sour',
-        time: '2023-03-09T18:31:33.123Z'
-      },
+      collabReviewRequest,
       ctx.adminAuthHeaders()
     )
     assert.equal(collabReviewRes.status, 201)
@@ -317,11 +325,11 @@ describe('stats tests', () => {
       }
     }
 
-    assert.deepEqual(annualStats, annual.filter(a => a.count > 0).map(
+    assertDeepEqual(annualStats, annual.filter(a => a.count > 0).map(
       annual => stat(annual.count, annual.average, annual.year)
     ))
 
-    assert.deepEqual(annual.map(
+    assertDeepEqual(annual.map(
       annual => ({ average: annual.average, count: annual.count })
     ), expectedAnnual)
   }
@@ -424,7 +432,7 @@ describe('stats tests', () => {
     }
     const container = containers[0].data.container
     const years = ['2023', '2022', '2021']
-    assert.deepEqual(statsRes.data.annualContainer,
+    assertDeepEqual(statsRes.data.annualContainer,
       years.map(year => {
         const ratings = reviewRatingsByYear(year)
         return {
@@ -454,7 +462,7 @@ describe('stats tests', () => {
     }
     const container = containers[0].data.container
     const years = ['2022']
-    assert.deepEqual(statsRes.data.annualContainer,
+    assertDeepEqual(statsRes.data.annualContainer,
       years.map(year => {
         const ratings = reviewRatingsByYear(year)
         return {
@@ -491,7 +499,7 @@ describe('stats tests', () => {
     }
     const container = containers[0].data.container
     const years = ['2023', '2022', '2021']
-    assert.deepEqual(statsRes.data.annualContainer,
+    assertDeepEqual(statsRes.data.annualContainer,
       years.map(year => {
         const ratings = reviewRatingsByYear(year)
         return {
@@ -515,7 +523,7 @@ describe('stats tests', () => {
     )
     assert.equal(statsRes.status, 200)
     const container = containers[0].data.container
-    assert.deepEqual(statsRes.data.container, [
+    assertDeepEqual(statsRes.data.container, [
       {
         reviewAverage: `${
           reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
@@ -547,7 +555,7 @@ describe('stats tests', () => {
       b => b.breweries.includes(breweryId)
     ).map(b => b.id)
     const reviews = allReviews.filter(r => breweryBeers.includes(r.beer))
-    assert.deepEqual(statsRes.data.container, [
+    assertDeepEqual(statsRes.data.container, [
       {
         reviewAverage: (
           reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
@@ -576,7 +584,7 @@ describe('stats tests', () => {
     const nokiaAverage = average(nokiaRatings)
     const lindemansRatings = reviewRatingsByBrewery(lindemans.brewery.id)
     const lindemansAverage = average(lindemansRatings)
-    assert.deepEqual(breweryStats, [
+    assertDeepEqual(breweryStats, [
       {
         reviewCount: `${nokiaRatings.length}`,
         reviewAverage: nokiaAverage,
@@ -622,7 +630,7 @@ describe('stats tests', () => {
       ctx.adminAuthHeaders()
     )
     assert.equal(skippedStatsRes.status, 200)
-    assert.deepEqual(skippedStatsRes.data.brewery, [])
+    assertDeepEqual(skippedStatsRes.data.brewery, [])
 
     const statsRes = await ctx.request.get<{ brewery: BreweryStats }>(
       '/api/v1/stats/brewery?order=average&direction=desc',
@@ -689,7 +697,7 @@ describe('stats tests', () => {
     const kujaAverage = average(kujaRatings)
     const oluthuoneRatings = reviewRatingsByLocation(oluthuone.location.id)
     const oluthuoneAverage = average(oluthuoneRatings)
-    assert.deepEqual(locationStats, [
+    assertDeepEqual(locationStats, [
       {
         reviewCount: `${kujaRatings.length}`,
         reviewAverage: kujaAverage,
@@ -738,7 +746,7 @@ describe('stats tests', () => {
       ctx.adminAuthHeaders()
     )
     assert.equal(skippedStatsRes.status, 200)
-    assert.deepEqual(skippedStatsRes.data.location, [])
+    assertDeepEqual(skippedStatsRes.data.location, [])
 
     const statsRes = await ctx.request.get<{ location: LocationStats }>(
       '/api/v1/stats/location?order=average&direction=asc',
@@ -808,7 +816,7 @@ describe('stats tests', () => {
     const kujaRatings =
       reviewRatingsByLocation(kujaLocation.id, beers, reviews, undefined)
     const kujaAverage = average(kujaRatings)
-    assert.deepEqual(statsRes.data.location, [
+    assertDeepEqual(statsRes.data.location, [
       {
         reviewCount: `${kujaRatings.length}`,
         reviewAverage: kujaAverage,
@@ -832,8 +840,8 @@ describe('stats tests', () => {
       rating: `${s.rating}`,
       count: `${s.count}`
     }))
-    assert.deepEqual(actualStats, convertedStats)
-    assert.deepEqual(actualStats, expectedStats)
+    assertDeepEqual(actualStats, convertedStats)
+    assertDeepEqual(actualStats, expectedStats)
   }
 
   it('get rating stats', async () => {
@@ -917,7 +925,7 @@ describe('stats tests', () => {
   ) {
     const ipaAverage = average(ipa.ratings)
     const kriekAverage = average(kriek.ratings)
-    assert.deepEqual(styleStats, [
+    assertDeepEqual(styleStats, [
       {
         reviewCount: `${ipa.ratings.length}`,
         reviewAverage: ipa.average,
@@ -1056,7 +1064,7 @@ describe('stats tests', () => {
 
     const kriekRatings = reviewRatingsByStyle(kriekStyle.id, beers, reviews, breweryId)
     const kriekAverage = average(kriekRatings)
-    assert.deepEqual(statsRes.data.style, [
+    assertDeepEqual(statsRes.data.style, [
       {
         reviewCount: '3',
         reviewAverage: kriekAverage,
@@ -1083,7 +1091,7 @@ describe('stats tests', () => {
     const ipaStyle = styles[1].data.style
     assert.equal(ipaStyle.name, 'IPA')
 
-    assert.deepEqual(statsRes.data.style, [
+    assertDeepEqual(statsRes.data.style, [
       {
         // Collab reviews only.
         reviewCount: '2',

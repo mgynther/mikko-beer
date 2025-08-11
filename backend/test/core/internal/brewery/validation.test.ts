@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import {
   validateCreateBreweryRequest,
@@ -10,8 +9,10 @@ import {
   invalidBreweryIdError
 } from '../../../../src/core/errors'
 import { expectThrow } from '../../controller-error-helper'
+import { assertDeepEqual } from '../../../assert'
+import type { CreateBreweryRequest } from '../../../../src/core/brewery/brewery'
 
-function validRequest (): Record<string, unknown> {
+function validRequest (): CreateBreweryRequest {
   return {
     name: 'Craft Brewery'
   }
@@ -21,14 +22,14 @@ describe('brewery validation unit tests', () => {
   it('valid create brewery request passes validation', () => {
     const input = validRequest()
     const output = validRequest()
-    assert.deepEqual(validateCreateBreweryRequest(input), output)
+    assertDeepEqual(validateCreateBreweryRequest(input), output)
   })
 
   it('valid update brewery request passes validation', () => {
     const input = validRequest()
     const output = validRequest()
     const id = '3e2d9787-4787-4435-8e1e-475e0bb7c525'
-    assert.deepEqual(validateUpdateBreweryRequest(input, id), {
+    assertDeepEqual(validateUpdateBreweryRequest(input, id), {
       id,
       request: output
     })

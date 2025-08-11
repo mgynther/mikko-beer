@@ -1,9 +1,9 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import type { Transaction } from '../../../src/data/database'
 import * as locationRepository from '../../../src/data/location/location.repository'
+import { assertDeepEqual } from '../../assert'
 
 describe('location tests', () => {
   const ctx = new TestContext()
@@ -27,7 +27,7 @@ describe('location tests', () => {
       ctx.db,
       location.id
     )
-    assert.deepEqual(readLocation, location)
+    assertDeepEqual(readLocation, location)
   })
 
   it('update location', async () => {
@@ -50,7 +50,7 @@ describe('location tests', () => {
         }
       )
     })
-    assert.deepEqual(updated, {
+    assertDeepEqual(updated, {
       ...location,
       name: 'Plevna'
     })
@@ -71,7 +71,7 @@ describe('location tests', () => {
         trx,
         [location.id, dummyId]
       )
-      assert.deepEqual(lockedKeys, [location.id])
+      assertDeepEqual(lockedKeys, [location.id])
     })
   })
 
@@ -91,7 +91,7 @@ describe('location tests', () => {
         skip: 0
       }
     )
-    assert.deepEqual(locations, [location])
+    assertDeepEqual(locations, [location])
   })
 
   it('search locations', async () => {
@@ -107,6 +107,6 @@ describe('location tests', () => {
       ctx.db,
       { name: 'kahd' }
     )
-    assert.deepEqual(locations, [location])
+    assertDeepEqual(locations, [location])
   })
 })

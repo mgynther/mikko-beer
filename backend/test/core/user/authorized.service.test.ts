@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import * as userService from '../../../src/core/user/authorized-user.service'
 
@@ -15,6 +14,7 @@ import {
 } from '../../../src/core/errors'
 import type { SignedInUser } from '../../../src/core/internal/user/signed-in-user'
 import type { DbRefreshToken } from '../../../src/core/auth/refresh-token'
+import { assertDeepEqual } from '../../assert'
 
 const validCreateUserRequest: CreateUserType = {
   user: {
@@ -159,7 +159,7 @@ describe('user authorized service unit tests', () => {
       },
       log
     )
-    assert.deepEqual(result, user)
+    assertDeepEqual(result, user)
   })
 
   it('fail to find admin user as viewer', async () => {
@@ -198,7 +198,7 @@ describe('user authorized service unit tests', () => {
         },
         log
       )
-      assert.deepEqual(result, user)
+      assertDeepEqual(result, user)
     })
 
     it(`list user as ${token.role}`, async () => {
@@ -207,7 +207,7 @@ describe('user authorized service unit tests', () => {
         token,
         log
       )
-      assert.deepEqual(result, [user.user])
+      assertDeepEqual(result, [user.user])
     })
   })
 })

@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import type {
   DbRefreshToken
@@ -18,6 +17,7 @@ import {
   invalidAuthorizationHeaderError
 } from '../../../src/core/errors'
 import { expectThrow } from '../controller-error-helper'
+import { assertDeepEqual } from '../../assert'
 
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {
@@ -69,7 +69,7 @@ describe('authentication service unit tests', () => {
       header(tokens.auth),
       authTokenSecret
     )
-    assert.deepEqual(parsed, {
+    assertDeepEqual(parsed, {
       userId: admin.id,
       role: 'admin',
       refreshTokenId
@@ -82,7 +82,7 @@ describe('authentication service unit tests', () => {
       header(tokens.auth),
       authTokenSecret
     )
-    assert.deepEqual(parsed, {
+    assertDeepEqual(parsed, {
       userId: viewer.id,
       role: 'viewer',
       refreshTokenId

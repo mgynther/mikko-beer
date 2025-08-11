@@ -19,6 +19,7 @@ import {
   invalidReviewError,
   noRightsError
 } from '../../../src/core/errors'
+import { assertDeepEqual } from '../../assert'
 
 const storageId = '5e11fcf9-3fa4-402d-90e2-17706e8d78e6'
 
@@ -169,7 +170,7 @@ describe('review authorized service unit tests', () => {
         },
         log
       )
-      assert.deepEqual(result, review)
+      assertDeepEqual(result, review)
     })
 
     it(`list reviews as ${token.role}`, async () => {
@@ -180,7 +181,7 @@ describe('review authorized service unit tests', () => {
         reviewListOrder,
         log
       )
-      assert.deepEqual(result, [joinedReview])
+      assertDeepEqual(result, [joinedReview])
     })
 
     it(`list reviews by beer as ${token.role}`, async () => {
@@ -193,7 +194,7 @@ describe('review authorized service unit tests', () => {
         reviewListOrder,
         log
       )
-      assert.deepEqual(result, [joinedReview])
+      assertDeepEqual(result, [joinedReview])
     })
 
     it(`list reviews by brewery as ${token.role}`, async () => {
@@ -206,7 +207,7 @@ describe('review authorized service unit tests', () => {
         reviewListOrder,
         log
       )
-      assert.deepEqual(result, [joinedReview])
+      assertDeepEqual(result, [joinedReview])
     })
 
     it(`list reviews by location as ${token.role}`, async () => {
@@ -220,7 +221,7 @@ describe('review authorized service unit tests', () => {
         reviewListOrder,
         log
       )
-      assert.deepEqual(result, [joinedReview])
+      assertDeepEqual(result, [joinedReview])
     })
 
     it(`list reviews by style as ${token.role}`, async () => {
@@ -233,7 +234,7 @@ describe('review authorized service unit tests', () => {
         reviewListOrder,
         log
       )
-      assert.deepEqual(result, [joinedReview])
+      assertDeepEqual(result, [joinedReview])
     })
   })
 

@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import * as storageService from '../../../src/core/storage/authorized.service'
 
@@ -19,6 +18,7 @@ import {
   invalidStorageError,
   noRightsError
 } from '../../../src/core/errors'
+import { assertDeepEqual } from '../../assert'
 
 const validCreateStorageRequest: CreateStorageRequest = {
   beer: 'd667bdcb-a26e-4079-b249-c50769129c4c',
@@ -175,7 +175,7 @@ describe('storage authorized service unit tests', () => {
         },
         log
       )
-      assert.deepEqual(result, joinedStorage)
+      assertDeepEqual(result, joinedStorage)
     })
 
     it(`list storages as ${token.role}`, async () => {
@@ -185,7 +185,7 @@ describe('storage authorized service unit tests', () => {
         { skip: 0, size: 20 },
         log
       )
-      assert.deepEqual(result, [joinedStorage])
+      assertDeepEqual(result, [joinedStorage])
     })
 
     it(`list storages by beer as ${token.role}`, async () => {
@@ -197,7 +197,7 @@ describe('storage authorized service unit tests', () => {
         },
         log
       )
-      assert.deepEqual(result, [joinedStorage])
+      assertDeepEqual(result, [joinedStorage])
     })
 
     it(`list storages by brewery as ${token.role}`, async () => {
@@ -209,7 +209,7 @@ describe('storage authorized service unit tests', () => {
         },
         log
       )
-      assert.deepEqual(result, [joinedStorage])
+      assertDeepEqual(result, [joinedStorage])
     })
 
     it(`list storages by style as ${token.role}`, async () => {
@@ -221,7 +221,7 @@ describe('storage authorized service unit tests', () => {
         },
         log
       )
-      assert.deepEqual(result, [joinedStorage])
+      assertDeepEqual(result, [joinedStorage])
     })
   })
 

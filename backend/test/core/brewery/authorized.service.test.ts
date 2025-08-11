@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import * as breweryService from '../../../src/core/brewery/authorized.service'
 
@@ -15,6 +14,7 @@ import {
   invalidBreweryError,
   noRightsError
 } from '../../../src/core/errors'
+import { assertDeepEqual } from '../../assert'
 
 const validCreateBreweryRequest: CreateBreweryRequest = {
   name: 'Koskipanimo'
@@ -112,7 +112,7 @@ describe('brewery authorized service unit tests', () => {
         },
         log
       )
-      assert.deepEqual(result, brewery)
+      assertDeepEqual(result, brewery)
     })
 
     it(`list breweries as ${token.role}`, async () => {
@@ -124,7 +124,7 @@ describe('brewery authorized service unit tests', () => {
         },
         log
       )
-      assert.deepEqual(result, [brewery])
+      assertDeepEqual(result, [brewery])
     })
 
     it(`searches breweries as ${token.role}`, async () => {
@@ -136,7 +136,7 @@ describe('brewery authorized service unit tests', () => {
         },
         log
       )
-      assert.deepEqual(result, [brewery])
+      assertDeepEqual(result, [brewery])
     })
   })
 })

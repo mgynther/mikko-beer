@@ -18,6 +18,7 @@ import * as storageService from '../../../../src/core/internal/storage/service'
 
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
+import { assertDeepEqual } from '../../../assert'
 
 const storage: Storage = {
   id: '8980b34a-d7b7-4e15-8e88-477176f5aee9',
@@ -81,7 +82,7 @@ describe('storage service unit tests', () => {
         bestBefore: storage.bestBefore,
         container: storage.container,
       }
-      assert.deepEqual(newStorage,
+      assertDeepEqual(newStorage,
         {
           beer: storage.beer,
           bestBefore: storage.bestBefore,
@@ -113,7 +114,7 @@ describe('storage service unit tests', () => {
       createRequest,
       log
     )
-    assert.deepEqual(result, {
+    assertDeepEqual(result, {
       ...createRequest,
       bestBefore: new Date(createRequest.bestBefore),
       id: storage.id
@@ -168,7 +169,7 @@ describe('storage service unit tests', () => {
         bestBefore: storage.bestBefore,
         container: storage.container,
       }
-      assert.deepEqual(storage, result)
+      assertDeepEqual(storage, result)
       return {
         ...result,
         bestBefore: new Date(result.bestBefore)
@@ -192,7 +193,7 @@ describe('storage service unit tests', () => {
       updateRequest,
       log
     )
-    assert.deepEqual(result, {
+    assertDeepEqual(result, {
       ...updateRequest,
       bestBefore: new Date(updateRequest.bestBefore),
       id: storage.id
@@ -243,7 +244,7 @@ describe('storage service unit tests', () => {
     const id = '18801a29-1c4e-40a4-ab3b-1701b4416c6c'
     await storageService.deleteStorageById(deleter, id, log)
     assert.equal(deleter.mock.callCount(), 1)
-    assert.deepEqual(
+    assertDeepEqual(
       deleter.mock.calls[deleter.mock.callCount() - 1].arguments,
       [id]
     )
@@ -255,7 +256,7 @@ describe('storage service unit tests', () => {
       return joinedStorage
     }
     const result = await storageService.findStorageById(finder, storage.id, log)
-    assert.deepEqual(result, joinedStorage)
+    assertDeepEqual(result, joinedStorage)
   })
 
   it('not find storage with unknown id', async () => {
@@ -278,7 +279,7 @@ describe('storage service unit tests', () => {
       return [joinedStorage]
     }
     const result = await storageService.listStorages(lister, pagination, log)
-    assert.deepEqual(result, [joinedStorage])
+    assertDeepEqual(result, [joinedStorage])
   })
 
   it('list storages by beer', async () => {
@@ -290,7 +291,7 @@ describe('storage service unit tests', () => {
       joinedStorage.beerId,
       log
     )
-    assert.deepEqual(result, [joinedStorage])
+    assertDeepEqual(result, [joinedStorage])
   })
 
   it('list storages by brewery', async () => {
@@ -302,7 +303,7 @@ describe('storage service unit tests', () => {
       joinedStorage.breweries[0].id,
       log
     )
-    assert.deepEqual(result, [joinedStorage])
+    assertDeepEqual(result, [joinedStorage])
   })
 
   it('list storages by style', async () => {
@@ -314,7 +315,7 @@ describe('storage service unit tests', () => {
       joinedStorage.styles[0].id,
       log
     )
-    assert.deepEqual(result, [joinedStorage])
+    assertDeepEqual(result, [joinedStorage])
   })
 
 })

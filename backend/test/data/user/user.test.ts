@@ -5,6 +5,7 @@ import { TestContext } from '../test-context'
 import type { NewUser, User } from '../../../src/core/user/user'
 import * as userRepository from '../../../src/data/user/user.repository'
 import { Transaction } from '../../../src/data/database'
+import { assertDeepEqual } from '../../assert'
 
 describe('user tests', () => {
   const ctx = new TestContext()
@@ -37,7 +38,7 @@ describe('user tests', () => {
     const foundUser = await userRepository.findUserById(
       ctx.db, insertedUser.id
     )
-    assert.deepEqual(foundUser, insertedUser)
+    assertDeepEqual(foundUser, insertedUser)
   })
 
   it('do not find user that does not exist', async () => {
@@ -49,12 +50,12 @@ describe('user tests', () => {
   it('list users', async () => {
     const insertedUser = await insertUser()
     const users = await userRepository.listUsers(ctx.db)
-    assert.deepEqual(users, [insertedUser])
+    assertDeepEqual(users, [insertedUser])
   })
 
   it('do not list users when there are none', async () => {
     const users = await userRepository.listUsers(ctx.db)
-    assert.deepEqual(users, [])
+    assertDeepEqual(users, [])
   })
 
   async function testLocking(
@@ -83,7 +84,7 @@ describe('user tests', () => {
       // Getting lock before either rename is in progress is essential for the
       // the test to be reliable.
       expectRenames(false, false)
-      assert.deepEqual(lockedUser, insertedUser)
+      assertDeepEqual(lockedUser, insertedUser)
       // Second rename may or may not have started here.
       return new Promise(function(resolve) {
         setTimeout(function() {

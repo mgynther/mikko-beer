@@ -11,6 +11,7 @@ import { containerNotFoundError } from '../../../../src/core/errors'
 
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
+import { assertDeepEqual } from '../../../assert'
 
 const container: Container = {
   id: '1fcbeb9e-1ea1-4c50-8fe5-b0aa18ac7e9a',
@@ -30,13 +31,13 @@ describe('container service unit tests', () => {
         type: container.type,
         size: container.size,
       }
-      assert.deepEqual(newContainer,
+      assertDeepEqual(newContainer,
         { type: container.type, size: container.size }
       )
       return result
     }
     const result = await containerService.createContainer(create, request, log)
-    assert.deepEqual(result, {
+    assertDeepEqual(result, {
       ...request,
       id: container.id
     })
@@ -53,7 +54,7 @@ describe('container service unit tests', () => {
         type: container.type,
         size: container.size,
       }
-      assert.deepEqual(container, result)
+      assertDeepEqual(container, result)
       return result
     }
     const result = await containerService.updateContainer(
@@ -62,7 +63,7 @@ describe('container service unit tests', () => {
       request,
       log
     )
-    assert.deepEqual(result, {
+    assertDeepEqual(result, {
       ...request,
       id: container.id
     })
@@ -78,7 +79,7 @@ describe('container service unit tests', () => {
       container.id,
       log
     )
-    assert.deepEqual(result, container)
+    assertDeepEqual(result, container)
   })
 
   it('fail to find container with unknown id', async () => {
@@ -97,7 +98,7 @@ describe('container service unit tests', () => {
       return [container]
     }
     const result = await containerService.listContainers(lister, log)
-    assert.deepEqual(result, [container])
+    assertDeepEqual(result, [container])
   })
 
 })

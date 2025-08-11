@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import * as styleService from '../../../src/core/style/authorized.service'
 
@@ -19,6 +18,7 @@ import {
   invalidStyleError,
   noRightsError
 } from '../../../src/core/errors'
+import { assertDeepEqual } from '../../assert'
 
 const styleId = '6e68f545-097c-4f1a-af81-23c2f9cdb533'
 
@@ -135,7 +135,7 @@ describe('style authorized service unit tests', () => {
         },
         log
       )
-      assert.deepEqual(result, styleWithParentsAndChilden)
+      assertDeepEqual(result, styleWithParentsAndChilden)
     })
 
     it(`list styles as ${token.role}`, async () => {
@@ -148,7 +148,7 @@ describe('style authorized service unit tests', () => {
         token,
         log
       )
-      assert.deepEqual(result, [styleWithParentIds])
+      assertDeepEqual(result, [styleWithParentIds])
     })
   })
 

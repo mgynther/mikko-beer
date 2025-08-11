@@ -48,7 +48,16 @@ const doValidateReviewRequest =
         pattern: timePattern
       }
     },
-    required: ['beer', 'container', 'rating', 'smell', 'taste', 'time'],
+    required: [
+      'additionalInfo',
+      'beer',
+      'container',
+      'location',
+      'rating',
+      'smell',
+      'taste',
+      'time'
+    ],
     additionalProperties: false
   })
 

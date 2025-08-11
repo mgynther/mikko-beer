@@ -1,5 +1,4 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import { Review } from '../../../src/core/review/review'
@@ -11,6 +10,7 @@ import type { Database } from '../../../src/data/database'
 import * as statsRepository from '../../../src/data/stats/stats.repository'
 import type { InsertedData } from '../review-helpers'
 import { insertMultipleReviews } from '../review-helpers'
+import { assertDeepEqual } from '../../assert'
 
 const defaultFilter: StatsFilter = {
   brewery: undefined,
@@ -75,7 +75,7 @@ describe('style stats tests', () => {
       undefined,
       { property: 'average', direction: 'asc' }
     )
-    assert.deepEqual(stats, [ style, otherStyle ])
+    assertDeepEqual(stats, [ style, otherStyle ])
   })
 
   it('by average desc', async () => {
@@ -84,7 +84,7 @@ describe('style stats tests', () => {
       undefined,
       { property: 'average', direction: 'desc' }
     )
-    assert.deepEqual(stats, [ otherStyle, style ])
+    assertDeepEqual(stats, [ otherStyle, style ])
   })
 
   it('by count asc', async () => {
@@ -93,7 +93,7 @@ describe('style stats tests', () => {
       undefined,
       { property: 'count', direction: 'asc' }
     )
-    assert.deepEqual(stats, [ style, otherStyle ])
+    assertDeepEqual(stats, [ style, otherStyle ])
   })
 
   it('by count desc', async () => {
@@ -102,7 +102,7 @@ describe('style stats tests', () => {
       undefined,
       { property: 'count', direction: 'desc' }
     )
-    assert.deepEqual(stats, [ otherStyle, style ])
+    assertDeepEqual(stats, [ otherStyle, style ])
   })
 
   it('by style_name asc', async () => {
@@ -111,7 +111,7 @@ describe('style stats tests', () => {
       undefined,
       { property: 'style_name', direction: 'asc' }
     )
-    assert.deepEqual(stats, [ style, otherStyle ])
+    assertDeepEqual(stats, [ style, otherStyle ])
   })
 
   it('by style_name desc', async () => {
@@ -120,7 +120,7 @@ describe('style stats tests', () => {
       undefined,
       { property: 'style_name', direction: 'desc' }
     )
-    assert.deepEqual(stats, [ otherStyle, style ])
+    assertDeepEqual(stats, [ otherStyle, style ])
   })
 
   it('filter by brewery', async () => {
@@ -132,7 +132,7 @@ describe('style stats tests', () => {
       }),
       { property: 'style_name', direction: 'desc' }
     )
-    assert.deepEqual(stats, [ otherStyle ])
+    assertDeepEqual(stats, [ otherStyle ])
   })
 
   it('filter by location', async () => {
@@ -144,7 +144,7 @@ describe('style stats tests', () => {
       }),
       { property: 'style_name', direction: 'desc' }
     )
-    assert.deepEqual(stats, [ otherStyle ])
+    assertDeepEqual(stats, [ otherStyle ])
   })
 
   it('filter by style', async () => {
@@ -156,7 +156,7 @@ describe('style stats tests', () => {
       }),
       { property: 'style_name', direction: 'desc' }
     )
-    assert.deepEqual(stats, [ style ])
+    assertDeepEqual(stats, [ style ])
   })
 
   it('filter by min review count', async () => {
@@ -168,7 +168,7 @@ describe('style stats tests', () => {
       }),
       { property: 'style_name', direction: 'desc' }
     )
-    assert.deepEqual(stats, [ otherStyle ])
+    assertDeepEqual(stats, [ otherStyle ])
   })
 
   it('filter by max review count', async () => {
@@ -180,7 +180,7 @@ describe('style stats tests', () => {
       }),
       { property: 'style_name', direction: 'desc' }
     )
-    assert.deepEqual(stats, [ style ])
+    assertDeepEqual(stats, [ style ])
   })
 
   it('filter by min review average', async () => {
@@ -192,7 +192,7 @@ describe('style stats tests', () => {
       }),
       { property: 'style_name', direction: 'desc' }
     )
-    assert.deepEqual(stats, [ otherStyle ])
+    assertDeepEqual(stats, [ otherStyle ])
   })
 
   it('filter by max review average', async () => {
@@ -204,7 +204,7 @@ describe('style stats tests', () => {
       }),
       { property: 'style_name', direction: 'desc' }
     )
-    assert.deepEqual(stats, [ style ])
+    assertDeepEqual(stats, [ style ])
   })
 
 })

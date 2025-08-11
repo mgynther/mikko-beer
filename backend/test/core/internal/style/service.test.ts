@@ -21,6 +21,7 @@ import * as styleService from '../../../../src/core/internal/style/service'
 
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
+import { assertDeepEqual } from '../../../assert'
 
 const style: Style = {
   id: '71dcc323-7e59-4122-9afa-d4ffc484dee6',
@@ -59,12 +60,12 @@ describe('style service unit tests', () => {
       id: style.id,
       name: style.name,
     }
-    assert.deepEqual(newStyle, { name: style.name })
+    assertDeepEqual(newStyle, { name: style.name })
     return result
   }
 
   async function lockParent (parents: string[]) {
-    assert.deepEqual(parents, [parentStyle.id])
+    assertDeepEqual(parents, [parentStyle.id])
     return [parentStyle.id]
   }
 
@@ -86,7 +87,7 @@ describe('style service unit tests', () => {
     parents: string[]
   ): Promise<void> {
     assert.equal(styleId, style.id)
-    assert.deepEqual(parents, [parentStyle.id])
+    assertDeepEqual(parents, [parentStyle.id])
   }
 
   it('create style without parents', async () => {
@@ -108,7 +109,7 @@ describe('style service unit tests', () => {
       request,
       log
     )
-    assert.deepEqual(result, {
+    assertDeepEqual(result, {
       id: style.id,
       name: style.name,
       parents: [],
@@ -127,7 +128,7 @@ describe('style service unit tests', () => {
       createWithParentRequest,
       log
     )
-    assert.deepEqual(result, {
+    assertDeepEqual(result, {
       id: style.id,
       name: style.name,
       parents: [parentStyle.id],
@@ -180,7 +181,7 @@ describe('style service unit tests', () => {
   }
 
   async function update (updateStyle: Style) {
-    assert.deepEqual(updateStyle, style)
+    assertDeepEqual(updateStyle, style)
     return updateStyle
   }
 
@@ -202,7 +203,7 @@ describe('style service unit tests', () => {
       request,
       log
     )
-    assert.deepEqual(result, {
+    assertDeepEqual(result, {
       id: style.id,
       name: style.name,
       parents: [],
@@ -223,7 +224,7 @@ describe('style service unit tests', () => {
       updateWithParentRequest,
       log
     )
-    assert.deepEqual(result, {
+    assertDeepEqual(result, {
       id: style.id,
       name: style.name,
       parents: [parentStyle.id],
@@ -280,7 +281,7 @@ describe('style service unit tests', () => {
       return styleWithParentsAndChildren
     }
     const result = await styleService.findStyleById(finder, style.id, log)
-    assert.deepEqual(result, styleWithParentsAndChildren)
+    assertDeepEqual(result, styleWithParentsAndChildren)
   })
 
   it('fail to find style with unknown id', async () => {
@@ -299,6 +300,6 @@ describe('style service unit tests', () => {
       return [styleWithParentIds]
     }
     const result = await styleService.listStyles(lister, log)
-    assert.deepEqual(result, [styleWithParentIds])
+    assertDeepEqual(result, [styleWithParentIds])
   })
 })

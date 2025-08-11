@@ -1,10 +1,10 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import * as statsRepository from '../../../src/data/stats/stats.repository'
 import { insertMultipleReviews } from '../review-helpers'
 import type { Review } from '../../../src/core/review/review'
+import { assertDeepEqual } from '../../assert'
 
 describe('container stats tests', () => {
   const ctx = new TestContext()
@@ -41,7 +41,7 @@ describe('container stats tests', () => {
       }
     )
     const { container, otherContainer } = data
-    assert.deepEqual(stats, [
+    assertDeepEqual(stats, [
       {
         containerId: container.id,
         containerSize: '0.50',
@@ -70,7 +70,7 @@ describe('container stats tests', () => {
       }
     )
     const { container } = data
-    assert.deepEqual(stats, [
+    assertDeepEqual(stats, [
       {
         containerId: container.id,
         containerSize: '0.50',
@@ -92,7 +92,7 @@ describe('container stats tests', () => {
       }
     )
     const { container } = data
-    assert.deepEqual(stats, [
+    assertDeepEqual(stats, [
       {
         containerId: container.id,
         containerSize: '0.50',
@@ -113,7 +113,7 @@ describe('container stats tests', () => {
         style: data.otherStyle.id
       }
     )
-    assert.deepEqual(stats, [
+    assertDeepEqual(stats, [
       {
         containerId: data.otherContainer.id,
         containerSize: '0.44',

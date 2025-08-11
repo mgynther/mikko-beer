@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import * as statsService from '../../../src/core/stats/authorized.service'
 
@@ -16,6 +15,7 @@ import type {
   StatsIdFilter,
   StyleStats
 } from '../../../src/core/stats/stats'
+import { assertDeepEqual } from '../../assert'
 
 const adminAuthToken: AuthTokenPayload = {
   userId: '2238a6f3-6cc7-44a4-bb91-6369bd9adf56',
@@ -54,7 +54,7 @@ describe('stats authorized service unit tests', () => {
         statsFilter,
         log
       )
-      assert.deepEqual(result, { ...overallStats })
+      assertDeepEqual(result, { ...overallStats })
     })
 
     it(`get annual stats as ${token.role}`, async () => {
@@ -76,7 +76,7 @@ describe('stats authorized service unit tests', () => {
         statsFilter,
         log
       )
-      assert.deepEqual(result, [ ...annualStats ])
+      assertDeepEqual(result, [ ...annualStats ])
     })
 
     it(`get annual container stats as ${token.role}`, async () => {
@@ -105,7 +105,7 @@ describe('stats authorized service unit tests', () => {
         statsFilter,
         log
       )
-      assert.deepEqual(result, [ ...annualContainerStats ])
+      assertDeepEqual(result, [ ...annualContainerStats ])
     })
 
     it(`get brewery stats as ${token.role}`, async () => {
@@ -140,7 +140,7 @@ describe('stats authorized service unit tests', () => {
         },
         log
       )
-      assert.deepEqual(result, [ ...breweryStats ])
+      assertDeepEqual(result, [ ...breweryStats ])
     })
 
     it(`get container stats as ${token.role}`, async () => {
@@ -166,7 +166,7 @@ describe('stats authorized service unit tests', () => {
         statsFilter,
         log
       )
-      assert.deepEqual(result, [ ...containerStats ])
+      assertDeepEqual(result, [ ...containerStats ])
     })
 
     it(`get location stats as ${token.role}`, async () => {
@@ -201,7 +201,7 @@ describe('stats authorized service unit tests', () => {
         },
         log
       )
-      assert.deepEqual(result, [ ...locationStats ])
+      assertDeepEqual(result, [ ...locationStats ])
     })
 
     it(`get rating stats as ${token.role}`, async () => {
@@ -222,7 +222,7 @@ describe('stats authorized service unit tests', () => {
         statsFilter,
         log
       )
-      assert.deepEqual(result, [ ...ratingStats ])
+      assertDeepEqual(result, [ ...ratingStats ])
     })
 
     it(`get style stats as ${token.role}`, async () => {
@@ -256,7 +256,7 @@ describe('stats authorized service unit tests', () => {
         },
         log
       )
-      assert.deepEqual(result, [ ...styleStats ])
+      assertDeepEqual(result, [ ...styleStats ])
     })
   })
 })

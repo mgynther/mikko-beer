@@ -3,6 +3,7 @@ import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import { JoinedStorage, Storage } from '../../../src/core/storage/storage'
+import { assertDeepEqual } from '../../assert'
 
 describe('storage tests', () => {
   const ctx = new TestContext()
@@ -33,8 +34,8 @@ describe('storage tests', () => {
 
     assert.equal(beerRes.status, 201)
     assert.equal(beerRes.data.beer.name, 'Lindemans Kriek')
-    assert.deepEqual(beerRes.data.beer.breweries, [breweryRes.data.brewery.id])
-    assert.deepEqual(beerRes.data.beer.styles, [styleRes.data.style.id])
+    assertDeepEqual(beerRes.data.beer.breweries, [breweryRes.data.brewery.id])
+    assertDeepEqual(beerRes.data.beer.styles, [styleRes.data.style.id])
 
     const containerRes = await ctx.request.post(`/api/v1/container`,
       { type: 'Bottle', size: '0.25' },
@@ -77,7 +78,7 @@ describe('storage tests', () => {
     assert.equal(getRes.data.storage.id, storageRes.data.storage.id)
     assert.equal(getRes.data.storage.bestBefore.toString(), bestBefore)
     assert.equal(getRes.data.storage.beerId, beerRes.data.beer.id)
-    assert.deepEqual(getRes.data.storage.container, containerRes.data.container)
+    assertDeepEqual(getRes.data.storage.container, containerRes.data.container)
 
     const listRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
       '/api/v1/storage/',
@@ -87,11 +88,11 @@ describe('storage tests', () => {
     assert.equal(listRes.data.storages.length, 1)
     assert.equal(listRes.data.storages[0].id, getRes.data.storage.id)
     assert.equal(listRes.data.storages[0].beerId, getRes.data.storage.beerId)
-    assert.deepEqual(listRes.data.storages[0].container, containerRes.data.container)
-    assert.deepEqual(listRes.data.storages[0].breweries[0], breweryRes.data.brewery)
+    assertDeepEqual(listRes.data.storages[0].container, containerRes.data.container)
+    assertDeepEqual(listRes.data.storages[0].breweries[0], breweryRes.data.brewery)
     const parentlessStyle = { ...styleRes.data.style }
     delete parentlessStyle.parents
-    assert.deepEqual(listRes.data.storages[0].styles[0], parentlessStyle)
+    assertDeepEqual(listRes.data.storages[0].styles[0], parentlessStyle)
 
     const skippedListRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
       '/api/v1/storage?size=50&skip=30',
@@ -107,7 +108,7 @@ describe('storage tests', () => {
     assert.equal(breweryListRes.status, 200)
     assert.equal(breweryListRes.data.storages.length, 1)
     assert.equal(breweryListRes.data.storages[0].id, getRes.data.storage.id)
-    assert.deepEqual(breweryListRes.data.storages[0], getRes.data.storage)
+    assertDeepEqual(breweryListRes.data.storages[0], getRes.data.storage)
 
     const styleListRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
       `/api/v1/style/${styleRes.data.style.id}/storage/`,
@@ -116,14 +117,14 @@ describe('storage tests', () => {
     assert.equal(styleListRes.status, 200)
     assert.equal(styleListRes.data.storages.length, 1)
     assert.equal(styleListRes.data.storages[0].id, getRes.data.storage.id)
-    assert.deepEqual(styleListRes.data.storages[0], getRes.data.storage)
+    assertDeepEqual(styleListRes.data.storages[0], getRes.data.storage)
 
     const beerListRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
       `/api/v1/beer/${beerRes.data.beer.id}/storage/`,
       ctx.adminAuthHeaders()
     )
     assert.equal(beerListRes.status, 200)
-    assert.deepEqual(beerListRes.data.storages, breweryListRes.data.storages)
+    assertDeepEqual(beerListRes.data.storages, breweryListRes.data.storages)
   })
 
   it('fail to create a storage without beer', async () => {
@@ -283,8 +284,8 @@ describe('storage tests', () => {
 
     assert.equal(otherBeerRes.status, 201)
     assert.equal(otherBeerRes.data.beer.name, 'IPA')
-    assert.deepEqual(otherBeerRes.data.beer.breweries, [otherBreweryRes.data.brewery.id])
-    assert.deepEqual(otherBeerRes.data.beer.styles, [otherStyleRes.data.style.id])
+    assertDeepEqual(otherBeerRes.data.beer.breweries, [otherBreweryRes.data.brewery.id])
+    assertDeepEqual(otherBeerRes.data.beer.styles, [otherStyleRes.data.style.id])
 
     const otherStorageRes = await ctx.request.post(`/api/v1/storage`,
       {
@@ -340,11 +341,11 @@ describe('storage tests', () => {
     assert.equal(collabStorage.hasReview, false)
     const collabBrewery = collabStorage?.breweries?.find(brewery => brewery.id === breweryRes.data.brewery.id);
     const otherCollabBrewery = collabStorage?.breweries?.find(brewery => brewery.id === otherBreweryRes.data.brewery.id);
-    assert.deepEqual(collabBrewery, { id: breweryRes.data.brewery.id, name: breweryRes.data.brewery.name });
-    assert.deepEqual(otherCollabBrewery, { id: otherBreweryRes.data.brewery.id, name: otherBreweryRes.data.brewery.name });
+    assertDeepEqual(collabBrewery, { id: breweryRes.data.brewery.id, name: breweryRes.data.brewery.name });
+    assertDeepEqual(otherCollabBrewery, { id: otherBreweryRes.data.brewery.id, name: otherBreweryRes.data.brewery.name });
 
     const ids = breweryListRes.data.storages.map(storage => storage.id)
-    assert.deepEqual(ids, [collabStorage?.id, kriekStorage.id])
+    assertDeepEqual(ids, [collabStorage?.id, kriekStorage.id])
   })
 
   it('list storages by style', async () => {
@@ -369,10 +370,10 @@ describe('storage tests', () => {
     assert.equal(collabStorage.hasReview, false)
     const collabStyle = collabStorage.styles?.find(style => style.id === styleRes.data.style.id);
     const otherCollabStyle = collabStorage.styles?.find(style => style.id === otherStyleRes.data.style.id);
-    assert.deepEqual(collabStyle, { id: styleRes.data.style.id, name: styleRes.data.style.name });
-    assert.deepEqual(otherCollabStyle, { id: otherStyleRes.data.style.id, name: otherStyleRes.data.style.name });
+    assertDeepEqual(collabStyle, { id: styleRes.data.style.id, name: styleRes.data.style.name });
+    assertDeepEqual(otherCollabStyle, { id: otherStyleRes.data.style.id, name: otherStyleRes.data.style.name });
 
     const ids = styleListRes.data.storages.map(storage => storage.id)
-    assert.deepEqual(ids, [collabStorage.id, kriekStorage.id])
+    assertDeepEqual(ids, [collabStorage.id, kriekStorage.id])
   })
 })

@@ -1,9 +1,9 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import type { Transaction } from '../../../src/data/database'
 import * as breweryRepository from '../../../src/data/brewery/brewery.repository'
+import { assertDeepEqual } from '../../assert'
 
 describe('brewery tests', () => {
   const ctx = new TestContext()
@@ -29,7 +29,7 @@ describe('brewery tests', () => {
         trx,
         [brewery.id, dummyId]
       )
-      assert.deepEqual(lockedKeys, [brewery.id])
+      assertDeepEqual(lockedKeys, [brewery.id])
     })
   })
 })

@@ -1,9 +1,9 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import type { Transaction } from '../../../src/data/database'
 import * as styleRepository from '../../../src/data/style/style.repository'
+import { assertDeepEqual } from '../../assert'
 
 describe('style tests', () => {
   const ctx = new TestContext()
@@ -26,7 +26,7 @@ describe('style tests', () => {
         trx,
         [style.id, dummyId]
       )
-      assert.deepEqual(lockedKeys, [style.id])
+      assertDeepEqual(lockedKeys, [style.id])
     })
   })
 })

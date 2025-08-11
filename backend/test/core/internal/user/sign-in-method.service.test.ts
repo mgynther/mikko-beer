@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test'
 import * as assert from 'node:assert/strict'
-import { assertGreaterThan } from '../../../assert'
+import { assertDeepEqual, assertGreaterThan } from '../../../assert'
 
 import * as authTokenService from '../../../../src/core/internal/auth/auth-token.service'
 
@@ -290,14 +290,14 @@ describe('password sign-in-method service unit tests', () => {
       method,
       authTokenConfig
     )
-    assert.deepEqual(result.user, user)
+    assertDeepEqual(result.user, user)
     const reference = await authTokenService.createTokens(
       insertRefreshToken,
       user,
       authTokenConfig
     )
-    assert.deepEqual(result.refreshToken, reference.refresh)
-    assert.deepEqual(result.authToken, reference.auth)
+    assertDeepEqual(result.refreshToken, reference.refresh)
+    assertDeepEqual(result.authToken, reference.auth)
   })
 
   it('fail to sign in using password without user', async () => {

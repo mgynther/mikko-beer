@@ -15,6 +15,7 @@ import type { User } from '../../../../src/core/user/user'
 import type { Tokens } from '../../../../src/core/auth/tokens'
 import { invalidCredentialsTokenError } from '../../../../src/core/errors'
 import { expectReject } from '../../controller-error-helper'
+import { assertDeepEqual } from '../../../assert'
 
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {
@@ -86,7 +87,7 @@ describe('auth token service unit tests', () => {
       tokens.auth,
       authTokenSecret
     )
-    assert.deepEqual(authTokenPayload, {
+    assertDeepEqual(authTokenPayload, {
       userId: user.id,
       role: 'admin',
       refreshTokenId

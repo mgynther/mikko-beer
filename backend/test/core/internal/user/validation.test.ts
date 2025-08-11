@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import {
   validateCreateAnonymousUserRequest,
@@ -10,12 +9,14 @@ import {
   invalidUserError
 } from '../../../../src/core/errors'
 import { expectThrow } from '../../controller-error-helper'
+import { assertDeepEqual } from '../../../assert'
+import type { CreateAnonymousUserRequest } from '../../../../src/core/user/user'
 
 describe('create anonymous user validation unit tests', () => {
-  function pass(user: Record<string, unknown>) {
+  function pass(user: CreateAnonymousUserRequest) {
     const input = { ...user }
     const output = { ...user }
-    assert.deepEqual(validateCreateAnonymousUserRequest(input), output)
+    assertDeepEqual(validateCreateAnonymousUserRequest(input), output)
   }
 
   function fail(user: unknown) {
@@ -68,7 +69,7 @@ describe('create user validation unit tests', () => {
         ...validRequest.passwordSignInMethod
       }
     }
-    assert.deepEqual(validateCreateUserRequest(validRequest), expected)
+    assertDeepEqual(validateCreateUserRequest(validRequest), expected)
   })
 
   it('fail with invalid user', () => {

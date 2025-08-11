@@ -1,11 +1,11 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import {
   validateRefreshToken
 } from '../../../../src/core/internal/auth/refresh-token'
 import { invalidRefreshTokenError } from '../../../../src/core/errors'
 import { expectThrow } from '../../controller-error-helper'
+import { assertDeepEqual } from '../../../assert'
 
 describe('refresh token unit tests', () => {
 
@@ -15,7 +15,7 @@ describe('refresh token unit tests', () => {
     }
     const expected = { ...token }
     const result = validateRefreshToken(token)
-    assert.deepEqual(result, expected)
+    assertDeepEqual(result, expected)
   })
 
   function fail(token: Record<string, unknown>) {

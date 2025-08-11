@@ -3,6 +3,7 @@ import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import { Brewery } from '../../../src/core/brewery/brewery'
+import { assertDeepEqual } from '../../assert'
 
 describe('brewery tests', () => {
   const ctx = new TestContext()
@@ -28,7 +29,7 @@ describe('brewery tests', () => {
     )
 
     assert.equal(getRes.status, 200)
-    assert.deepEqual(getRes.data.brewery, res.data.brewery)
+    assertDeepEqual(getRes.data.brewery, res.data.brewery)
 
     const listRes = await ctx.request.get(`/api/v1/brewery?skip=0&size=100`,
       ctx.adminAuthHeaders()
@@ -73,7 +74,7 @@ describe('brewery tests', () => {
     )
 
     assert.equal(getRes.status, 200)
-    assert.deepEqual(getRes.data.brewery, updateRes.data.brewery)
+    assertDeepEqual(getRes.data.brewery, updateRes.data.brewery)
   })
 
   it('fail to create a brewery without name', async () => {

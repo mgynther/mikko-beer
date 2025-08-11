@@ -1,6 +1,6 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 import * as assert from 'node:assert/strict'
-import { assertGreaterThan, assertIncludes } from '../assert'
+import { assertDeepEqual, assertGreaterThan, assertIncludes } from '../assert'
 
 import axios from 'axios'
 
@@ -108,6 +108,6 @@ describe('initial admin', () => {
     }
     )
     assert.equal(getRes.status, 200)
-    assert.deepEqual(getRes.data.user, res.data.user)
+    assertDeepEqual(getRes.data.user, res.data.user)
   })
 })

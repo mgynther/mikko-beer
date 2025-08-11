@@ -1,5 +1,4 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import type { Pagination } from '../../../src/core/pagination'
@@ -12,6 +11,7 @@ import type { Database } from '../../../src/data/database'
 import * as statsRepository from '../../../src/data/stats/stats.repository'
 import type { InsertedData } from '../review-helpers'
 import { insertMultipleReviews } from '../review-helpers'
+import { assertDeepEqual } from '../../assert'
 
 const defaultFilter: StatsFilter = {
   brewery: undefined,
@@ -81,7 +81,7 @@ describe('brewery stats tests', () => {
       undefined,
       { property: 'average', direction: 'asc' }
     )
-    assert.deepEqual(stats, [ brewery, otherBrewery ])
+    assertDeepEqual(stats, [ brewery, otherBrewery ])
   })
 
   it('by average desc', async () => {
@@ -91,7 +91,7 @@ describe('brewery stats tests', () => {
       undefined,
       { property: 'average', direction: 'desc' }
     )
-    assert.deepEqual(stats, [ otherBrewery, brewery ])
+    assertDeepEqual(stats, [ otherBrewery, brewery ])
   })
 
   it('by count asc', async () => {
@@ -101,7 +101,7 @@ describe('brewery stats tests', () => {
       undefined,
       { property: 'count', direction: 'asc' }
     )
-    assert.deepEqual(stats, [ brewery, otherBrewery ])
+    assertDeepEqual(stats, [ brewery, otherBrewery ])
   })
 
   it('by count desc', async () => {
@@ -111,7 +111,7 @@ describe('brewery stats tests', () => {
       undefined,
       { property: 'count', direction: 'desc' }
     )
-    assert.deepEqual(stats, [ otherBrewery, brewery ])
+    assertDeepEqual(stats, [ otherBrewery, brewery ])
   })
 
   it('by brewery_name asc', async () => {
@@ -121,7 +121,7 @@ describe('brewery stats tests', () => {
       undefined,
       { property: 'brewery_name', direction: 'asc' }
     )
-    assert.deepEqual(stats, [ otherBrewery, brewery ])
+    assertDeepEqual(stats, [ otherBrewery, brewery ])
   })
 
   it('by brewery_name desc', async () => {
@@ -131,7 +131,7 @@ describe('brewery stats tests', () => {
       undefined,
       { property: 'brewery_name', direction: 'desc' }
     )
-    assert.deepEqual(stats, [ brewery, otherBrewery ])
+    assertDeepEqual(stats, [ brewery, otherBrewery ])
   })
 
   it('filter by brewery', async () => {
@@ -144,7 +144,7 @@ describe('brewery stats tests', () => {
       }),
       { property: 'brewery_name', direction: 'desc' }
     )
-    assert.deepEqual(stats, [ otherBrewery ])
+    assertDeepEqual(stats, [ otherBrewery ])
   })
 
   it('filter by location', async () => {
@@ -157,7 +157,7 @@ describe('brewery stats tests', () => {
       }),
       { property: 'brewery_name', direction: 'desc' }
     )
-    assert.deepEqual(stats, [ otherBrewery ])
+    assertDeepEqual(stats, [ otherBrewery ])
   })
 
   it('filter by style', async () => {
@@ -170,7 +170,7 @@ describe('brewery stats tests', () => {
       }),
       { property: 'brewery_name', direction: 'desc' }
     )
-    assert.deepEqual(stats, [ brewery ])
+    assertDeepEqual(stats, [ brewery ])
   })
 
   it('filter by min review count', async () => {
@@ -183,7 +183,7 @@ describe('brewery stats tests', () => {
       }),
       { property: 'brewery_name', direction: 'desc' }
     )
-    assert.deepEqual(stats, [ otherBrewery ])
+    assertDeepEqual(stats, [ otherBrewery ])
   })
 
   it('filter by max review count', async () => {
@@ -196,7 +196,7 @@ describe('brewery stats tests', () => {
       }),
       { property: 'brewery_name', direction: 'desc' }
     )
-    assert.deepEqual(stats, [ brewery ])
+    assertDeepEqual(stats, [ brewery ])
   })
 
   it('filter by min review average', async () => {
@@ -209,7 +209,7 @@ describe('brewery stats tests', () => {
       }),
       { property: 'brewery_name', direction: 'desc' }
     )
-    assert.deepEqual(stats, [ otherBrewery ])
+    assertDeepEqual(stats, [ otherBrewery ])
   })
 
   it('filter by max review average', async () => {
@@ -222,7 +222,7 @@ describe('brewery stats tests', () => {
       }),
       { property: 'brewery_name', direction: 'desc' }
     )
-    assert.deepEqual(stats, [ brewery ])
+    assertDeepEqual(stats, [ brewery ])
   })
 
 })

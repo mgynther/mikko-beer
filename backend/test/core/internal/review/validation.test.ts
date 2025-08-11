@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import {
   validateCreateReviewRequest,
@@ -10,8 +9,10 @@ import {
   invalidReviewIdError
 } from '../../../../src/core/errors'
 import { expectThrow } from '../../controller-error-helper'
+import { assertDeepEqual } from '../../../assert'
+import type { ReviewRequest } from '../../../../src/core/review/review'
 
-function validRequest (): Record<string, unknown> {
+function validRequest (): ReviewRequest {
   return {
     additionalInfo: 'Brewed with coffee',
     beer: 'b6a7b38d-3ee3-4a0c-8f6a-97424c6c65e5',
@@ -46,19 +47,14 @@ describe('review create/update validation unit tests', () => {
   ].forEach(validator => {
     const { func, title, outputFormatter } = validator
 
-    function pass (review: object) {
+    function pass (review: ReviewRequest) {
       const input = { ...review }
       const output = { ...review }
-      assert.deepEqual(func(input), outputFormatter(output))
+      assertDeepEqual(func(input), outputFormatter(output))
     }
 
     it(title('pass validation'), () => {
       pass(validRequest())
-    })
-
-    it(title('pass with minimal info'), () => {
-      const { beer, container, rating, time, smell, taste } = validRequest()
-      pass({ beer, container, rating, time, smell, taste })
     })
 
     it(title('pass with empty additional info'), () => {
@@ -104,7 +100,7 @@ describe('review create/update validation unit tests', () => {
         }
         const input = { ...review }
         const output = { ...review }
-        assert.deepEqual(func(input), outputFormatter(output))
+        assertDeepEqual(func(input), outputFormatter(output))
       }))
 
     function fail (review: unknown) {
@@ -119,9 +115,30 @@ describe('review create/update validation unit tests', () => {
       fail(review)
     })
 
+    it(title('fail without additionalInfo'), () => {
+      const {
+        beer,
+        container,
+        location,
+        rating,
+        time,
+        smell,
+        taste
+      } = validRequest()
+      fail({ beer, container, location, rating, time, smell, taste })
+    })
+
     it(title('fail without beer'), () => {
-      const { container, rating, time, smell, taste } = validRequest()
-      fail({ container, rating, time, smell, taste })
+      const {
+        additionalInfo,
+        container,
+        location,
+        rating,
+        time,
+        smell,
+        taste
+      } = validRequest()
+      fail({ additionalInfo, container, location, rating, time, smell, taste })
     })
 
     it(title('fail with empty container'), () => {
@@ -133,8 +150,29 @@ describe('review create/update validation unit tests', () => {
     })
 
     it(title('fail without container'), () => {
-      const { beer, rating, time, smell, taste } = validRequest()
-      fail({ beer, rating, time, smell, taste })
+      const {
+        additionalInfo,
+        beer,
+        location,
+        rating,
+        time,
+        smell,
+        taste
+      } = validRequest()
+      fail({ additionalInfo, beer, location, rating, time, smell, taste })
+    })
+
+    it(title('fail without location'), () => {
+      const {
+        additionalInfo,
+        beer,
+        container,
+        rating,
+        time,
+        smell,
+        taste
+      } = validRequest()
+      fail({ additionalInfo, beer, container, rating, time, smell, taste })
     })
 
     it(title('fail with invalid rating'), () => {
@@ -146,8 +184,16 @@ describe('review create/update validation unit tests', () => {
     })
 
     it(title('fail without rating'), () => {
-      const { beer, container, time, smell, taste } = validRequest()
-      fail({ beer, container, time, smell, taste })
+      const {
+        additionalInfo,
+        beer,
+        container,
+        location,
+        time,
+        smell,
+        taste
+      } = validRequest()
+      fail({  additionalInfo, beer, container, location, time, smell, taste })
     })
 
     it(title('fail with rating below range'), () => {
@@ -183,8 +229,16 @@ describe('review create/update validation unit tests', () => {
     })
 
     it(title('fail without smell'), () => {
-      const { beer, container, rating, time, taste } = validRequest()
-      fail({ beer, container, rating, time, taste })
+      const {
+        additionalInfo,
+        beer,
+        container,
+        location,
+        rating,
+        time,
+        taste
+      } = validRequest()
+      fail({ additionalInfo, beer, container, location, rating, time, taste })
     })
 
     it(title('fail with empty taste'), () => {
@@ -196,8 +250,16 @@ describe('review create/update validation unit tests', () => {
     })
 
     it(title('fail without taste'), () => {
-      const { beer, container, rating, time, smell } = validRequest()
-      fail({ beer, container, rating, time, smell })
+      const {
+        additionalInfo,
+        beer,
+        container,
+        location,
+        rating,
+        time,
+        smell
+      } = validRequest()
+      fail({ additionalInfo, beer, container, location, rating, time, smell })
     })
 
     it(title('fail with additional property'), () => {

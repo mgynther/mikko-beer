@@ -10,6 +10,7 @@ import type {
   ReviewListOrder
 } from '../../../src/core/review/review'
 import { insertData, insertMultipleReviews } from '../review-helpers'
+import { assertDeepEqual } from '../../assert'
 
 describe('review tests', () => {
   const ctx = new TestContext()
@@ -55,7 +56,7 @@ describe('review tests', () => {
         taste: "chocolate"
       }
       const review = await reviewRepository.insertReview(trx, reviewRequest)
-      assert.deepEqual(review, {
+      assertDeepEqual(review, {
         ...reviewRequest,
         id: review.id,
       })
@@ -72,7 +73,7 @@ describe('review tests', () => {
     const start = new Array(5).fill(1).map(_ => data.brewery.name)
     const end = new Array(5).fill(1).map(_ => data.otherBrewery.name)
     const expectedNames = [...start, ...end]
-    assert.deepEqual(list.map(item => item.breweries[0].name), expectedNames)
+    assertDeepEqual(list.map(item => item.breweries[0].name), expectedNames)
     function reviewToTime(row: JoinedReview): Date {
       return row.time
     }
@@ -84,13 +85,13 @@ describe('review tests', () => {
       return a.getTime() - b.getTime()
     }
     expectedBreweryReviewTimes.sort(sortDate)
-    assert.deepEqual(breweryReviewTimes, expectedBreweryReviewTimes)
+    assertDeepEqual(breweryReviewTimes, expectedBreweryReviewTimes)
 
     const otherBreweryReviewTimes = list.slice(5, 10).map(reviewToTime)
     assert.equal(otherBreweryReviewTimes.length, 5)
     const expectedOtherBreweryReviewTimes = [...otherBreweryReviewTimes]
     expectedOtherBreweryReviewTimes.sort(sortDate)
-    assert.deepEqual(otherBreweryReviewTimes, expectedOtherBreweryReviewTimes)
+    assertDeepEqual(otherBreweryReviewTimes, expectedOtherBreweryReviewTimes)
   })
 
   function toTime(review: Review | JoinedReview): Date {
@@ -148,7 +149,7 @@ describe('review tests', () => {
     const listTimes = list.map(toTime)
     const expectedTimes = reviews.map(toTime)
       .sort(sorter)
-    assert.deepEqual(listTimes, expectedTimes)
+    assertDeepEqual(listTimes, expectedTimes)
 
     const originalTimes = reviews.map(toTime)
     assert.notDeepEqual(listTimes, originalTimes)
@@ -179,7 +180,7 @@ describe('review tests', () => {
     const listRatingTimes = list.map(toRatingTime)
     const expectedRatingTimes = reviews.map(toRatingTime)
       .sort(sorter)
-    assert.deepEqual(listRatingTimes, expectedRatingTimes)
+    assertDeepEqual(listRatingTimes, expectedRatingTimes)
 
     const originalRatingTimes = reviews.map(toRatingTime)
     assert.notDeepEqual(listRatingTimes, originalRatingTimes)
@@ -226,7 +227,7 @@ describe('review tests', () => {
       .filter(review => review.beer === beerId)
       .map(converter)
       .sort(sorter)
-    assert.deepEqual(listValues, expectedValues)
+    assertDeepEqual(listValues, expectedValues)
 
     const originalValues = reviews.map(converter)
     assert.notDeepEqual(listValues, originalValues)

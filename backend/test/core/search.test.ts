@@ -6,10 +6,11 @@ import { toIlike, validateSearchByName } from '../../src/core/search'
 
 import { invalidSearchError } from '../../src/core/errors'
 import { expectThrow } from './controller-error-helper'
+import { assertDeepEqual } from '../assert'
 
 describe('search validation unit tests', () => {
   function pass(input: unknown, output: SearchByName) {
-    assert.deepEqual(validateSearchByName(input), output)
+    assertDeepEqual(validateSearchByName(input), output)
   }
   function fail(input: unknown) {
     expectThrow(() => (validateSearchByName(input)), invalidSearchError)

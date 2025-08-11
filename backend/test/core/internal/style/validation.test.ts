@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import {
   validateCreateStyleRequest,
@@ -10,11 +9,16 @@ import {
   invalidStyleIdError,
 } from '../../../../src/core/errors'
 import { expectThrow } from '../../controller-error-helper'
+import type {
+  CreateStyleRequest,
+  UpdateStyleRequest
+} from '../../../../src/core/style/style'
+import { assertDeepEqual } from '../../../assert'
 
 describe('style unit tests', () => {
   const id = 'c8e02862-7fe7-44d5-b0eb-cd23e72faf56'
 
-  function validRequest (): Record<string, unknown> {
+  function validCreateRequest (): CreateStyleRequest {
     return {
       name: 'Cream Ale',
       parents: [
@@ -24,9 +28,20 @@ describe('style unit tests', () => {
     }
   }
 
+  function validUpdateRequest (): UpdateStyleRequest {
+    return {
+      name: 'Wheat IPA',
+      parents: [
+        '64a31dbb-b6e6-4227-aa9d-48ce5a82c4b1',
+        'c4caf207-98f0-4a3b-8297-b898d2a22bb7'
+      ]
+    }
+  }
+
   [
     {
       func: validateCreateStyleRequest,
+      getValid: validCreateRequest,
       title: (base: string) => `${base}: create`,
       outFormatter: (input: object) => input
     },
@@ -34,6 +49,7 @@ describe('style unit tests', () => {
       func: (request: unknown) => {
         return validateUpdateStyleRequest(request, id)
       },
+      getValid: validUpdateRequest,
       title: (base: string) => `${base}: update`,
       outFormatter: (input: object) => ({
         id,
@@ -41,18 +57,18 @@ describe('style unit tests', () => {
       })
     }
   ].forEach(validator => {
-    const { func, outFormatter, title } = validator
+    const { func, getValid, outFormatter, title } = validator
 
     it(title('pass validation'), () => {
-      const input = validRequest()
-      const output = validRequest()
-      assert.deepEqual(func(input), outFormatter(output))
+      const input = getValid()
+      const output = getValid()
+      assertDeepEqual(func(input), outFormatter(output))
     })
 
     it(title('pass validation without parents'), () => {
-      const input = { name: validRequest().name, parents: [] }
+      const input = { name: getValid().name, parents: [] }
       const output = { ...input }
-      assert.deepEqual(func(input), outFormatter(output))
+      assertDeepEqual(func(input), outFormatter(output))
     })
 
     function fail (style: unknown) {
@@ -61,33 +77,33 @@ describe('style unit tests', () => {
 
     it(title('fail with empty name'), () => {
       const style = {
-        ...validRequest(),
+        ...getValid(),
         name: ''
       }
       fail(style)
     })
 
     it(title('fail without name'), () => {
-      const { parents } = validRequest()
+      const { parents } = getValid()
       fail({ parents })
     })
 
     it(title('fail with invalid name'), () => {
       const style = {
-        ...validRequest(),
+        ...getValid(),
         name: 123
       }
       fail(style)
     })
 
     it(title('fail without parents property'), () => {
-      const { name } = validRequest()
+      const { name } = getValid()
       fail({ name })
     })
 
     it(title('fail with invalid parents'), () => {
       const style = {
-        ...validRequest(),
+        ...getValid(),
         parents: [ 123 ]
       }
       fail(style)
@@ -96,14 +112,14 @@ describe('style unit tests', () => {
 
   it('fail update with undefined style id', () => {
     expectThrow(
-      () => validateUpdateStyleRequest(validRequest(), undefined),
+      () => validateUpdateStyleRequest(validUpdateRequest(), undefined),
       invalidStyleIdError
     )
   })
 
   it('fail update with empty style id', () => {
     expectThrow(
-      () => validateUpdateStyleRequest(validRequest(), ''),
+      () => validateUpdateStyleRequest(validUpdateRequest(), ''),
       invalidStyleIdError
     )
   })

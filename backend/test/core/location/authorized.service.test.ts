@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import * as locationService from '../../../src/core/location/authorized.service'
 
@@ -15,6 +14,7 @@ import {
   invalidLocationError,
   noRightsError
 } from '../../../src/core/errors'
+import { assertDeepEqual } from '../../assert'
 
 const validCreateLocationRequest: CreateLocationRequest = {
   name: 'Kuja Beer Shop & Bar'
@@ -112,7 +112,7 @@ describe('location authorized service unit tests', () => {
         },
         log
       )
-      assert.deepEqual(result, location)
+      assertDeepEqual(result, location)
     })
 
     it(`list breweries as ${token.role}`, async () => {
@@ -124,7 +124,7 @@ describe('location authorized service unit tests', () => {
         },
         log
       )
-      assert.deepEqual(result, [location])
+      assertDeepEqual(result, [location])
     })
 
     it(`searches breweries as ${token.role}`, async () => {
@@ -136,7 +136,7 @@ describe('location authorized service unit tests', () => {
         },
         log
       )
-      assert.deepEqual(result, [location])
+      assertDeepEqual(result, [location])
     })
   })
 })

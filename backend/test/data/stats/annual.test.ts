@@ -1,11 +1,11 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import * as statsRepository from '../../../src/data/stats/stats.repository'
 import { insertMultipleReviews } from '../review-helpers'
 import type { Review } from '../../../src/core/review/review'
 import type { Pagination } from '../../../src/core/pagination'
+import { assertDeepEqual } from '../../assert'
 
 const giantPage: Pagination = { size: 10000, skip: 0 }
 
@@ -47,7 +47,7 @@ describe('annual stats tests', () => {
         style: undefined
       }
     )
-    assert.deepEqual(stats, [
+    assertDeepEqual(stats, [
       {
         reviewAverage: avg(reviews, '2023'),
         reviewCount: `${filterByYear(reviews, '2023').length}`,
@@ -71,7 +71,7 @@ describe('annual stats tests', () => {
         style: undefined
       }
     )
-    assert.deepEqual(stats, [
+    assertDeepEqual(stats, [
       {
         reviewAverage: avg(reviews, '2024'),
         reviewCount: `${filterByYear(reviews, '2024').length}`,
@@ -90,7 +90,7 @@ describe('annual stats tests', () => {
         style: undefined
       }
     )
-    assert.deepEqual(stats, [
+    assertDeepEqual(stats, [
       {
         reviewAverage: avg(reviews, '2024'),
         reviewCount: `${filterByYear(reviews, '2024').length}`,
@@ -109,7 +109,7 @@ describe('annual stats tests', () => {
         style: data.otherStyle.id
       }
     )
-    assert.deepEqual(stats, [
+    assertDeepEqual(stats, [
       {
         reviewAverage: '6.60',
         reviewCount: '5',
@@ -151,7 +151,7 @@ describe('annual container stats tests', () => {
       }
     )
     const { container, otherContainer } = data
-    assert.deepEqual(stats, [
+    assertDeepEqual(stats, [
       {
         containerId: container.id,
         containerSize: '0.50',
@@ -183,7 +183,7 @@ describe('annual container stats tests', () => {
       }
     )
     const { container } = data
-    assert.deepEqual(stats, [
+    assertDeepEqual(stats, [
       {
         containerId: container.id,
         containerSize: '0.50',
@@ -207,7 +207,7 @@ describe('annual container stats tests', () => {
       }
     )
     const { otherContainer } = data
-    assert.deepEqual(stats, [
+    assertDeepEqual(stats, [
       {
         containerId: otherContainer.id,
         containerSize: '0.44',
@@ -231,7 +231,7 @@ describe('annual container stats tests', () => {
       }
     )
     const { container } = data
-    assert.deepEqual(stats, [
+    assertDeepEqual(stats, [
       {
         containerId: container.id,
         containerSize: '0.50',
@@ -255,7 +255,7 @@ describe('annual container stats tests', () => {
       }
     )
     const { container } = data
-    assert.deepEqual(stats, [
+    assertDeepEqual(stats, [
       {
         containerId: container.id,
         containerSize: '0.50',
@@ -278,7 +278,7 @@ describe('annual container stats tests', () => {
         style: data.otherStyle.id
       }
     )
-    assert.deepEqual(stats, [
+    assertDeepEqual(stats, [
       {
         containerId: data.otherContainer.id,
         containerSize: '0.44',

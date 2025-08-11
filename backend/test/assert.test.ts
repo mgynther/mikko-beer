@@ -1,9 +1,19 @@
 import { describe, it } from 'node:test'
 import * as assert from 'node:assert/strict'
 
-import { assertGreaterThan, assertIncludes } from './assert'
+import { assertDeepEqual, assertGreaterThan, assertIncludes } from './assert'
 
 describe('assertion tests', () => {
+  it('is deep equal', () => {
+    assertDeepEqual({ prop: 'testing' }, { prop: 'testing' })
+  })
+
+  it('is not deep equal', () => {
+    assert.throws(() =>
+      assertDeepEqual({ prop: 'testing' }, { property: 'another' })
+    )
+  })
+
   it('is greater than', () => {
     assertGreaterThan(2, 1)
   })

@@ -4,6 +4,7 @@ import * as assert from 'node:assert/strict'
 import { TestContext } from '../test-context'
 import { Beer, BeerWithBreweriesAndStyles } from '../../../src/core/beer/beer'
 import { Style } from '../../../src/core/style/style'
+import { assertDeepEqual } from '../../assert'
 
 describe('beer tests', () => {
   const ctx = new TestContext()
@@ -34,8 +35,8 @@ describe('beer tests', () => {
 
     assert.equal(beerRes.status, 201)
     assert.equal(beerRes.data.beer.name, 'Lindemans Kriek')
-    assert.deepEqual(beerRes.data.beer.breweries, [breweryRes.data.brewery.id])
-    assert.deepEqual(beerRes.data.beer.styles, [styleRes.data.style.id])
+    assertDeepEqual(beerRes.data.beer.breweries, [breweryRes.data.brewery.id])
+    assertDeepEqual(beerRes.data.beer.styles, [styleRes.data.style.id])
 
     return { beerRes, breweryRes, styleRes }
   }
@@ -51,8 +52,8 @@ describe('beer tests', () => {
     assert.equal(getRes.status, 200)
     assert.equal(getRes.data.beer.id, beerRes.data.beer.id)
     assert.equal(getRes.data.beer.name, beerRes.data.beer.name)
-    assert.deepEqual(getRes.data.beer.breweries, [breweryRes.data.brewery])
-    assert.deepEqual(getRes.data.beer.styles, [withoutParents(styleRes.data.style)])
+    assertDeepEqual(getRes.data.beer.breweries, [breweryRes.data.brewery])
+    assertDeepEqual(getRes.data.beer.styles, [withoutParents(styleRes.data.style)])
   })
 
   it('fail to find beer that does not exist', async () => {
@@ -142,8 +143,8 @@ describe('beer tests', () => {
 
     assert.equal(beerRes.status, 201)
     assert.equal(beerRes.data.beer.name, 'Imaginary Wild IPA')
-    assert.deepEqual(beerRes.data.beer.styles, [style1Res.data.style.id, style2Res.data.style.id])
-    assert.deepEqual(beerRes.data.beer.breweries, [brewery1Res.data.brewery.id, brewery2Res.data.brewery.id])
+    assertDeepEqual(beerRes.data.beer.styles, [style1Res.data.style.id, style2Res.data.style.id])
+    assertDeepEqual(beerRes.data.beer.breweries, [brewery1Res.data.brewery.id, brewery2Res.data.brewery.id])
 
     const getRes = await ctx.request.get<{ beer: BeerWithBreweriesAndStyles }>(
       `/api/v1/beer/${beerRes.data.beer.id}`,
@@ -153,8 +154,8 @@ describe('beer tests', () => {
     assert.equal(getRes.status, 200)
     assert.equal(getRes.data.beer.id, beerRes.data.beer.id)
     assert.equal(getRes.data.beer.name, beerRes.data.beer.name)
-    assert.deepEqual(getRes.data.beer.breweries, [brewery1Res.data.brewery, brewery2Res.data.brewery])
-    assert.deepEqual(getRes.data.beer.styles, [withoutParents(style1Res.data.style), withoutParents(style2Res.data.style)])
+    assertDeepEqual(getRes.data.beer.breweries, [brewery1Res.data.brewery, brewery2Res.data.brewery])
+    assertDeepEqual(getRes.data.beer.styles, [withoutParents(style1Res.data.style), withoutParents(style2Res.data.style)])
   })
 
   it('list beers', async () => {
@@ -267,8 +268,8 @@ describe('beer tests', () => {
     assert.equal(getRes.status, 200)
     assert.equal(getRes.data.beer.id, updateRes.data.beer.id)
     assert.equal(getRes.data.beer.name, updateRes.data.beer.name)
-    assert.deepEqual(getRes.data.beer.breweries, [brewery2Res.data.brewery])
-    assert.deepEqual(getRes.data.beer.styles, [withoutParents(style2Res.data.style)])
+    assertDeepEqual(getRes.data.beer.breweries, [brewery2Res.data.brewery])
+    assertDeepEqual(getRes.data.beer.styles, [withoutParents(style2Res.data.style)])
   })
 
   it('get empty beer list', async () => {

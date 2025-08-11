@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import {
   validateCreateLocationRequest,
@@ -9,9 +8,20 @@ import {
   invalidLocationError,
   invalidLocationIdError
 } from '../../../../src/core/errors'
+import type {
+  CreateLocationRequest,
+  UpdateLocationRequest
+} from '../../../../src/core/location/location'
 import { expectThrow } from '../../controller-error-helper'
+import { assertDeepEqual } from '../../../assert'
 
-function validRequest (): Record<string, unknown> {
+function validCreateRequest (): CreateLocationRequest {
+  return {
+    name: 'Shady Location'
+  }
+}
+
+function validUpdateRequest (): UpdateLocationRequest {
   return {
     name: 'Shady Location'
   }
@@ -19,16 +29,16 @@ function validRequest (): Record<string, unknown> {
 
 describe('location validation unit tests', () => {
   it('valid create location request passes validation', () => {
-    const input = validRequest()
-    const output = validRequest()
-    assert.deepEqual(validateCreateLocationRequest(input), output)
+    const input = validCreateRequest()
+    const output = validCreateRequest()
+    assertDeepEqual(validateCreateLocationRequest(input), output)
   })
 
   it('valid update location request passes validation', () => {
-    const input = validRequest()
-    const output = validRequest()
+    const input = validUpdateRequest()
+    const output = validUpdateRequest()
     const id = '1cd2c9e0-908f-4769-a484-a4f18b20f467'
-    assert.deepEqual(validateUpdateLocationRequest(input, id), {
+    assertDeepEqual(validateUpdateLocationRequest(input, id), {
       id,
       request: output
     })
@@ -37,6 +47,7 @@ describe('location validation unit tests', () => {
   [
     {
       func: validateCreateLocationRequest,
+      getValid: validCreateRequest,
       title: (base: string) => `${base}: create`
     },
     {
@@ -44,10 +55,11 @@ describe('location validation unit tests', () => {
         const id = '68f64c7d-e0bd-4db5-b7c5-e183da9e12e0'
         return validateUpdateLocationRequest(request, id)
       },
+      getValid: validUpdateRequest,
       title: (base: string) => `${base}: update`
     }
   ].forEach(validator => {
-    const { func, title } = validator
+    const { func, getValid, title } = validator
 
     function fail (location: unknown) {
       expectThrow(() => func(location), invalidLocationError)
@@ -55,7 +67,7 @@ describe('location validation unit tests', () => {
 
     it(title('fail with empty name'), () => {
       const location = {
-        ...validRequest(),
+        ...getValid(),
         name: ''
       }
       fail(location)
@@ -67,7 +79,7 @@ describe('location validation unit tests', () => {
 
     it(title('fail with invalid name'), () => {
       const location = {
-        ...validRequest(),
+        ...getValid(),
         name: [ 'f', 'a', 'i', 'l' ]
       }
       fail(location)
@@ -75,7 +87,7 @@ describe('location validation unit tests', () => {
 
     it(title('fail with additional property'), () => {
       const location = {
-        ...validRequest(),
+        ...getValid(),
         additional: 'will fail'
       }
       fail(location)
@@ -84,7 +96,7 @@ describe('location validation unit tests', () => {
 
   it('fail update with empty id', () => {
     expectThrow(
-      () => validateUpdateLocationRequest(validRequest(), '')
+      () => validateUpdateLocationRequest(validUpdateRequest(), '')
     , invalidLocationIdError)
   })
 })

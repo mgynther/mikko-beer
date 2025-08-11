@@ -3,6 +3,7 @@ import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import { StyleWithParentsAndChildren } from '../../../src/core/style/style'
+import { assertDeepEqual } from '../../assert'
 
 describe('style tests', () => {
   const ctx = new TestContext()
@@ -21,7 +22,7 @@ describe('style tests', () => {
 
     assert.equal(res.status, 201)
     assert.equal(res.data.style.name, 'Wild')
-    assert.deepEqual(res.data.style.parents, [])
+    assertDeepEqual(res.data.style.parents, [])
 
     const getRes = await ctx.request.get<{ style: StyleWithParentsAndChildren }>(
       `/api/v1/style/${res.data.style.id}`,
@@ -31,8 +32,8 @@ describe('style tests', () => {
     assert.equal(getRes.status, 200)
     assert.equal(getRes.data.style.id, res.data.style.id)
     assert.equal(getRes.data.style.name, res.data.style.name)
-    assert.deepEqual(getRes.data.style.children, [])
-    assert.deepEqual(getRes.data.style.parents, [])
+    assertDeepEqual(getRes.data.style.children, [])
+    assertDeepEqual(getRes.data.style.parents, [])
   })
 
   it('create a child style', async () => {
@@ -44,7 +45,7 @@ describe('style tests', () => {
     assert.equal(res.status, 201)
     assert.equal(res.data.style.name, 'Pale Ale')
     assert.notEqual(res.data.style.id, null)
-    assert.deepEqual(res.data.style.parents, [])
+    assertDeepEqual(res.data.style.parents, [])
 
     const childRes = await ctx.request.post(`/api/v1/style`,
       { name: 'India Pale Ale', parents: [ res.data.style.id ] },
@@ -54,7 +55,7 @@ describe('style tests', () => {
     assert.equal(childRes.status, 201)
     assert.equal(childRes.data.style.name, 'India Pale Ale')
     assert.notEqual(childRes.data.style.parents, null)
-    assert.deepEqual(childRes.data.style.parents, [ res.data.style.id ])
+    assertDeepEqual(childRes.data.style.parents, [ res.data.style.id ])
 
     const getRes = await ctx.request.get<{ style: StyleWithParentsAndChildren }>(
       `/api/v1/style/${childRes.data.style.id}`,
@@ -64,8 +65,8 @@ describe('style tests', () => {
     assert.equal(getRes.status, 200)
     assert.equal(getRes.data.style.id, childRes.data.style.id)
     assert.equal(getRes.data.style.name, childRes.data.style.name)
-    assert.deepEqual(getRes.data.style.children, [])
-    assert.deepEqual(getRes.data.style.parents, [{
+    assertDeepEqual(getRes.data.style.children, [])
+    assertDeepEqual(getRes.data.style.parents, [{
       id: res.data.style.id,
       name: res.data.style.name,
     }])
@@ -76,11 +77,11 @@ describe('style tests', () => {
     )
 
     assert.equal(getParentRes.status, 200)
-    assert.deepEqual(getParentRes.data.style.children, [{
+    assertDeepEqual(getParentRes.data.style.children, [{
       id: childRes.data.style.id,
       name: childRes.data.style.name,
     }])
-    assert.deepEqual(getParentRes.data.style.parents, [])
+    assertDeepEqual(getParentRes.data.style.parents, [])
   })
 
   it('create a child style with 2 parents', async () => {
@@ -104,7 +105,7 @@ describe('style tests', () => {
     assert.equal(childRes.status, 201)
     assert.equal(childRes.data.style.name, 'Cream Ale')
     assert.notEqual(childRes.data.style.parents, null)
-    assert.deepEqual(childRes.data.style.parents, [ parent1Res.data.style.id, parent2Res.data.style.id ])
+    assertDeepEqual(childRes.data.style.parents, [ parent1Res.data.style.id, parent2Res.data.style.id ])
 
     const getRes = await ctx.request.get<{ style: StyleWithParentsAndChildren }>(
       `/api/v1/style/${childRes.data.style.id}`,
@@ -114,8 +115,8 @@ describe('style tests', () => {
     assert.equal(getRes.status, 200)
     assert.equal(getRes.data.style.id, childRes.data.style.id)
     assert.equal(getRes.data.style.name, 'Cream Ale')
-    assert.deepEqual(getRes.data.style.children, [])
-    assert.deepEqual(getRes.data.style.parents, [
+    assertDeepEqual(getRes.data.style.children, [])
+    assertDeepEqual(getRes.data.style.parents, [
       {
         id: parent1Res.data.style.id,
         name: parent1Res.data.style.name,
@@ -173,7 +174,7 @@ describe('style tests', () => {
 
     assert.equal(createRes.status, 201)
     assert.equal(createRes.data.style.name, 'India Pale Ale')
-    assert.deepEqual(createRes.data.style.parents, [ aleRes.data.style.id ])
+    assertDeepEqual(createRes.data.style.parents, [ aleRes.data.style.id ])
 
     const updateRes = await ctx.request.put(`/api/v1/style/${createRes.data.style.id}`,
       { name: 'India Pale Lager', parents: [ lagerRes.data.style.id ] },
@@ -188,7 +189,7 @@ describe('style tests', () => {
     assert.equal(getRes.status, 200)
     assert.equal(getRes.data.style.id, updateRes.data.style.id)
     assert.equal(getRes.data.style.name, updateRes.data.style.name)
-    assert.deepEqual(getRes.data.style.parents, [{
+    assertDeepEqual(getRes.data.style.parents, [{
       id: lagerRes.data.style.id,
       name: lagerRes.data.style.name,
     }])
