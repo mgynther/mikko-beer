@@ -1,5 +1,4 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import type { StorageWithDate } from '../../../src/core/storage/storage'
@@ -10,7 +9,7 @@ import * as containerRepository from '../../../src/data/container/container.repo
 import * as storageRepository from '../../../src/data/storage/storage.repository'
 import * as styleRepository from '../../../src/data/style/style.repository'
 import { insertMultipleReviews } from '../review-helpers'
-import { assertEqual } from '../../assert'
+import { assertEqual, assertTruthy } from '../../assert'
 
 describe('storage tests', () => {
   const ctx = new TestContext()
@@ -128,7 +127,7 @@ describe('storage tests', () => {
     const storage = await createStorage()
     const createdStorage =
       await storageRepository.findStorageById(ctx.db, storage.id)
-    assert.notEqual(createdStorage, undefined)
+    assertTruthy(createdStorage)
     await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
       await storageRepository.deleteStorageById(
         trx,

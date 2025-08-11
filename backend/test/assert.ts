@@ -41,3 +41,7 @@ export function assertInstanceOf<T>(instance: T, classType: Class<T>) {
     `not a ${classType.name} instance`
   )
 }
+
+export function assertTruthy(value: object | undefined | string) {
+  assert.ok(value)
+}

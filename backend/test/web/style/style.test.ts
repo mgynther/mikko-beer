@@ -1,9 +1,8 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import type { StyleWithParentsAndChildren } from '../../../src/core/style/style'
-import { assertDeepEqual, assertEqual } from '../../assert'
+import { assertDeepEqual, assertEqual, assertTruthy } from '../../assert'
 
 describe('style tests', () => {
   const ctx = new TestContext()
@@ -44,7 +43,7 @@ describe('style tests', () => {
 
     assertEqual(res.status, 201)
     assertEqual(res.data.style.name, 'Pale Ale')
-    assert.notEqual(res.data.style.id, null)
+    assertTruthy(res.data.style.id)
     assertDeepEqual(res.data.style.parents, [])
 
     const childRes = await ctx.request.post(`/api/v1/style`,
@@ -54,7 +53,6 @@ describe('style tests', () => {
 
     assertEqual(childRes.status, 201)
     assertEqual(childRes.data.style.name, 'India Pale Ale')
-    assert.notEqual(childRes.data.style.parents, null)
     assertDeepEqual(childRes.data.style.parents, [ res.data.style.id ])
 
     const getRes = await ctx.request.get<{ style: StyleWithParentsAndChildren }>(
@@ -104,7 +102,6 @@ describe('style tests', () => {
 
     assertEqual(childRes.status, 201)
     assertEqual(childRes.data.style.name, 'Cream Ale')
-    assert.notEqual(childRes.data.style.parents, null)
     assertDeepEqual(childRes.data.style.parents, [ parent1Res.data.style.id, parent2Res.data.style.id ])
 
     const getRes = await ctx.request.get<{ style: StyleWithParentsAndChildren }>(

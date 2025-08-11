@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import { userNotFoundError } from '../../../../src/core/errors'
 import * as userService from '../../../../src/core/internal/user/user.service'
@@ -12,7 +11,7 @@ import type {
 
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
-import { assertDeepEqual, assertEqual } from '../../../assert'
+import { assertDeepEqual, assertEqual, assertTruthy } from '../../../assert'
 
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {
@@ -54,8 +53,8 @@ describe('user service unit tests', () => {
       log
     )
     assertDeepEqual(signedInUser.user, user)
-    assert.notEqual(signedInUser.refreshToken.refreshToken, '')
-    assert.notEqual(signedInUser.authToken.authToken, '')
+    assertTruthy(signedInUser.refreshToken.refreshToken)
+    assertTruthy(signedInUser.authToken.authToken)
   })
 
   it('fail to find user that does not exist', async () => {

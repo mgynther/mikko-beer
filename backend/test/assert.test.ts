@@ -5,7 +5,8 @@ import {
   assertDeepEqual,
   assertGreaterThan,
   assertIncludes,
-  assertInstanceOf
+  assertInstanceOf,
+  assertTruthy
 } from './assert'
 import { ControllerError } from '../src/core/errors'
 
@@ -59,4 +60,29 @@ describe('assertion tests', () => {
       /value india pale ale is not included in pale ale/
     )
   })
+  ;
+
+  [
+    'india pale ale',
+    { prop: 'some value' },
+    [ 'array' ],
+    [],
+    {}
+  ].forEach(value =>
+    it(`'${value}' is truthy`, () => {
+      assertTruthy(value)
+    })
+  )
+  ;
+
+  [
+    '',
+    undefined
+  ].forEach(value =>
+    it(`'${value}' is not truthy`, () => {
+      assert.throws(() =>
+        assertTruthy(value)
+      )
+    })
+  )
 })
