@@ -623,19 +623,19 @@ describe('review tests', () => {
 
     const kriekReview = listRes.data.reviews[data.kriekIndex]
     assertDeepEqual(kriekReview?.time, reviewRes.data.review.time)
-    assertDeepEqual(kriekReview?.id, reviewRes.data.review.id)
-    assertDeepEqual(kriekReview?.beerId, reviewRes.data.review.beer)
+    assertEqual(kriekReview?.id, reviewRes.data.review.id)
+    assertEqual(kriekReview?.beerId, reviewRes.data.review.beer)
 
     const otherReview = listRes.data.reviews[data.otherIndex]
     assertDeepEqual(otherReview?.time, otherReviewRes.data.review.time)
-    assertDeepEqual(otherReview?.id, otherReviewRes.data.review.id)
-    assertDeepEqual(otherReview?.beerId, otherReviewRes.data.review.beer)
+    assertEqual(otherReview?.id, otherReviewRes.data.review.id)
+    assertEqual(otherReview?.beerId, otherReviewRes.data.review.beer)
 
     const collabReview = listRes.data.reviews[data.collabIndex]
     assertDeepEqual(collabReview?.time, collabReviewRes.data.review.time)
-    assertDeepEqual(collabReview?.id, collabReviewRes.data.review.id)
-    assertDeepEqual(collabReview?.beerId, collabReviewRes.data.review.beer)
-    assertDeepEqual(collabReview?.breweries?.length, 2)
+    assertEqual(collabReview?.id, collabReviewRes.data.review.id)
+    assertEqual(collabReview?.beerId, collabReviewRes.data.review.beer)
+    assertEqual(collabReview?.breweries?.length, 2)
 
     assertDeepEqual(listRes.data.sorting, data.sorting)
   }

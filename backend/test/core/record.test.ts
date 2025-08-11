@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test'
 
 import { contains } from '../../src/core/record'
-import { assertDeepEqual } from '../assert'
+import { assertEqual } from '../assert'
 
 describe('record', () => {
   const record: Record<string, string> = {
@@ -9,11 +9,11 @@ describe('record', () => {
   }
 
   it('contains existing key', () => {
-    assertDeepEqual(contains(record, 'key'), true)
+    assertEqual(contains(record, 'key'), true)
   })
 
   it('does not contains missing key', () => {
-    assertDeepEqual(contains(record, 'ke'), false)
+    assertEqual(contains(record, 'ke'), false)
   })
 })
 
