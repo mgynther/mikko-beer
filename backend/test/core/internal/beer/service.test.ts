@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import type {
   Beer,
@@ -21,7 +20,7 @@ import {
   referredStyleNotFoundError
 } from '../../../../src/core/errors'
 import { expectReject } from '../../controller-error-helper'
-import { assertDeepEqual } from '../../../assert'
+import { assertDeepEqual, assertEqual } from '../../../assert'
 
 const beer: BeerWithBreweriesAndStyles = {
   id: '406a337c-3107-4307-bd84-be3ec7c7d2f6',
@@ -81,25 +80,25 @@ describe('beer service unit tests', () => {
         return result
       },
       lockBreweries: async (breweryIds: string[]) => {
-        assert.equal(breweriesLocked, false)
+        assertEqual(breweriesLocked, false)
         breweriesLocked = true
         return lockBreweries(breweryIds)
       },
       lockStyles: async (styleIds: string[]) => {
-        assert.equal(stylesLocked, false)
+        assertEqual(stylesLocked, false)
         stylesLocked = true
         return lockStyles(styleIds)
       },
       insertBeerBreweries: async (beerId: string, insertBreweries: string[]) => {
-        assert.equal(breweriesInserted, false)
+        assertEqual(breweriesInserted, false)
         breweriesInserted = true
-        assert.equal(beerId, beer.id)
+        assertEqual(beerId, beer.id)
         assertDeepEqual(insertBreweries, breweries)
       },
       insertBeerStyles: async (beerId: string, insertStyles: string[]) => {
-        assert.equal(stylesInserted, false)
+        assertEqual(stylesInserted, false)
         stylesInserted = true
-        assert.equal(beerId, beer.id)
+        assertEqual(beerId, beer.id)
         assertDeepEqual(insertStyles, styles)
       }
     }
@@ -112,10 +111,10 @@ describe('beer service unit tests', () => {
       ...createBeerRequest,
       id: beer.id
     })
-    assert.equal(breweriesInserted, true)
-    assert.equal(breweriesLocked, true)
-    assert.equal(stylesInserted, true)
-    assert.equal(stylesLocked, true)
+    assertEqual(breweriesInserted, true)
+    assertEqual(breweriesLocked, true)
+    assertEqual(stylesInserted, true)
+    assertEqual(stylesLocked, true)
   })
 
   it('fail to create beer with invalid brewery', async () => {
@@ -169,27 +168,27 @@ describe('beer service unit tests', () => {
         return lockStyles(styleIds)
       },
       deleteBeerBreweries: async (beerId: string) => {
-        assert.equal(breweriesDeleted, false)
+        assertEqual(breweriesDeleted, false)
         breweriesDeleted = true
-        assert.equal(beerId, beer.id)
+        assertEqual(beerId, beer.id)
       },
       insertBeerBreweries: async (beerId: string, insertBreweries: string[]) => {
-        assert.equal(breweriesDeleted, true)
-        assert.equal(breweriesInserted, false)
+        assertEqual(breweriesDeleted, true)
+        assertEqual(breweriesInserted, false)
         breweriesInserted = true
-        assert.equal(beerId, beer.id)
+        assertEqual(beerId, beer.id)
         assertDeepEqual(insertBreweries, breweries)
       },
       deleteBeerStyles: async (beerId: string) => {
-        assert.equal(stylesDeleted, false)
+        assertEqual(stylesDeleted, false)
         stylesDeleted = true
-        assert.equal(beerId, beer.id)
+        assertEqual(beerId, beer.id)
       },
       insertBeerStyles: async (beerId: string, insertStyles: string[]) => {
-        assert.equal(stylesDeleted, true)
-        assert.equal(stylesInserted, false)
+        assertEqual(stylesDeleted, true)
+        assertEqual(stylesInserted, false)
         stylesInserted = true
-        assert.equal(beerId, beer.id)
+        assertEqual(beerId, beer.id)
         assertDeepEqual(insertStyles, styles)
       }
     }
@@ -203,12 +202,12 @@ describe('beer service unit tests', () => {
       ...updateBeerRequest,
       id: beer.id
     })
-    assert.equal(breweriesDeleted, true)
-    assert.equal(breweriesInserted, true)
-    assert.equal(breweriesLocked, true)
-    assert.equal(stylesDeleted, true)
-    assert.equal(stylesInserted, true)
-    assert.equal(stylesLocked, true)
+    assertEqual(breweriesDeleted, true)
+    assertEqual(breweriesInserted, true)
+    assertEqual(breweriesLocked, true)
+    assertEqual(stylesDeleted, true)
+    assertEqual(stylesInserted, true)
+    assertEqual(stylesLocked, true)
   })
 
   it('fail to update beer with invalid brewery', async () => {
@@ -253,7 +252,7 @@ describe('beer service unit tests', () => {
 
   it('find beer', async () => {
     const finder = async (beerId: string) => {
-      assert.equal(beerId, beer.id)
+      assertEqual(beerId, beer.id)
       return beer
     }
     const result = await beerService.findBeerById(finder, beer.id, log)
@@ -263,7 +262,7 @@ describe('beer service unit tests', () => {
   it('fail to find beer with unknown id', async () => {
     const id = '7b27cdc4-53cf-493a-be92-07924a9f3399'
     const finder = async (searchId: string) => {
-      assert.equal(searchId, id)
+      assertEqual(searchId, id)
       return undefined
     }
     expectReject(async () => {

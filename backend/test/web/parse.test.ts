@@ -2,10 +2,11 @@ import { describe, it } from 'node:test'
 import * as assert from 'node:assert/strict'
 
 import { parseExpiryDurationMin } from '../../src/web/parse'
+import { assertEqual } from '../assert';
 
 describe('parse expiry duration min', () => {
   it('parses valid number', () => {
-    assert.equal(parseExpiryDurationMin('12'), 12)
+    assertEqual(parseExpiryDurationMin('12'), 12)
   })
   ;
 

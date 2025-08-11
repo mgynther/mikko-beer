@@ -1,9 +1,8 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import { JoinedStorage, Storage } from '../../../src/core/storage/storage'
-import { assertDeepEqual } from '../../assert'
+import { assertDeepEqual, assertEqual } from '../../assert'
 
 describe('storage tests', () => {
   const ctx = new TestContext()
@@ -19,21 +18,21 @@ describe('storage tests', () => {
       { name: 'Kriek', parents: [] },
       adminAuthHeaders
     )
-    assert.equal(styleRes.status, 201)
+    assertEqual(styleRes.status, 201)
 
     const breweryRes = await ctx.request.post(`/api/v1/brewery`,
       { name: 'Lindemans' },
       adminAuthHeaders
     )
-    assert.equal(breweryRes.status, 201)
+    assertEqual(breweryRes.status, 201)
 
     const beerRes = await ctx.request.post(`/api/v1/beer`,
       { name: 'Lindemans Kriek', breweries: [breweryRes.data.brewery.id], styles: [styleRes.data.style.id] },
       adminAuthHeaders
     )
 
-    assert.equal(beerRes.status, 201)
-    assert.equal(beerRes.data.beer.name, 'Lindemans Kriek')
+    assertEqual(beerRes.status, 201)
+    assertEqual(beerRes.data.beer.name, 'Lindemans Kriek')
     assertDeepEqual(beerRes.data.beer.breweries, [breweryRes.data.brewery.id])
     assertDeepEqual(beerRes.data.beer.styles, [styleRes.data.style.id])
 
@@ -64,30 +63,30 @@ describe('storage tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    assert.equal(storageRes.status, 201)
-    assert.equal(storageRes.data.storage.bestBefore, bestBefore)
-    assert.equal(storageRes.data.storage.beer, beerRes.data.beer.id)
-    assert.equal(storageRes.data.storage.container, containerRes.data.container.id)
+    assertEqual(storageRes.status, 201)
+    assertEqual(storageRes.data.storage.bestBefore, bestBefore)
+    assertEqual(storageRes.data.storage.beer, beerRes.data.beer.id)
+    assertEqual(storageRes.data.storage.container, containerRes.data.container.id)
 
     const getRes = await ctx.request.get<{ storage: JoinedStorage }>(
       `/api/v1/storage/${storageRes.data.storage.id}`,
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(getRes.status, 200)
-    assert.equal(getRes.data.storage.id, storageRes.data.storage.id)
-    assert.equal(getRes.data.storage.bestBefore.toString(), bestBefore)
-    assert.equal(getRes.data.storage.beerId, beerRes.data.beer.id)
+    assertEqual(getRes.status, 200)
+    assertEqual(getRes.data.storage.id, storageRes.data.storage.id)
+    assertEqual(getRes.data.storage.bestBefore.toString(), bestBefore)
+    assertEqual(getRes.data.storage.beerId, beerRes.data.beer.id)
     assertDeepEqual(getRes.data.storage.container, containerRes.data.container)
 
     const listRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
       '/api/v1/storage/',
       ctx.adminAuthHeaders()
     )
-    assert.equal(listRes.status, 200)
-    assert.equal(listRes.data.storages.length, 1)
-    assert.equal(listRes.data.storages[0].id, getRes.data.storage.id)
-    assert.equal(listRes.data.storages[0].beerId, getRes.data.storage.beerId)
+    assertEqual(listRes.status, 200)
+    assertEqual(listRes.data.storages.length, 1)
+    assertEqual(listRes.data.storages[0].id, getRes.data.storage.id)
+    assertEqual(listRes.data.storages[0].beerId, getRes.data.storage.beerId)
     assertDeepEqual(listRes.data.storages[0].container, containerRes.data.container)
     assertDeepEqual(listRes.data.storages[0].breweries[0], breweryRes.data.brewery)
     const parentlessStyle = { ...styleRes.data.style }
@@ -98,32 +97,32 @@ describe('storage tests', () => {
       '/api/v1/storage?size=50&skip=30',
       ctx.adminAuthHeaders()
     )
-    assert.equal(skippedListRes.status, 200)
-    assert.equal(skippedListRes.data.storages.length, 0)
+    assertEqual(skippedListRes.status, 200)
+    assertEqual(skippedListRes.data.storages.length, 0)
 
     const breweryListRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
       `/api/v1/brewery/${breweryRes.data.brewery.id}/storage/`,
       ctx.adminAuthHeaders()
     )
-    assert.equal(breweryListRes.status, 200)
-    assert.equal(breweryListRes.data.storages.length, 1)
-    assert.equal(breweryListRes.data.storages[0].id, getRes.data.storage.id)
+    assertEqual(breweryListRes.status, 200)
+    assertEqual(breweryListRes.data.storages.length, 1)
+    assertEqual(breweryListRes.data.storages[0].id, getRes.data.storage.id)
     assertDeepEqual(breweryListRes.data.storages[0], getRes.data.storage)
 
     const styleListRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
       `/api/v1/style/${styleRes.data.style.id}/storage/`,
       ctx.adminAuthHeaders()
     )
-    assert.equal(styleListRes.status, 200)
-    assert.equal(styleListRes.data.storages.length, 1)
-    assert.equal(styleListRes.data.storages[0].id, getRes.data.storage.id)
+    assertEqual(styleListRes.status, 200)
+    assertEqual(styleListRes.data.storages.length, 1)
+    assertEqual(styleListRes.data.storages[0].id, getRes.data.storage.id)
     assertDeepEqual(styleListRes.data.storages[0], getRes.data.storage)
 
     const beerListRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
       `/api/v1/beer/${beerRes.data.beer.id}/storage/`,
       ctx.adminAuthHeaders()
     )
-    assert.equal(beerListRes.status, 200)
+    assertEqual(beerListRes.status, 200)
     assertDeepEqual(beerListRes.data.storages, breweryListRes.data.storages)
   })
 
@@ -137,7 +136,7 @@ describe('storage tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    assert.equal(storageRes.status, 400)
+    assertEqual(storageRes.status, 400)
   })
 
   it('fail to create a storage with invalid beer', async () => {
@@ -151,7 +150,7 @@ describe('storage tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    assert.equal(storageRes.status, 400)
+    assertEqual(storageRes.status, 400)
   })
 
   it('fail to create a storage without container', async () => {
@@ -164,7 +163,7 @@ describe('storage tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    assert.equal(storageRes.status, 400)
+    assertEqual(storageRes.status, 400)
   })
 
   it('fail to create a storage with invalid container', async () => {
@@ -178,7 +177,7 @@ describe('storage tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    assert.equal(storageRes.status, 400)
+    assertEqual(storageRes.status, 400)
   })
 
   it('update a storage', async () => {
@@ -193,7 +192,7 @@ describe('storage tests', () => {
     const storageRes = await ctx.request.post(`/api/v1/storage`,
       requestData, ctx.adminAuthHeaders()
     )
-    assert.equal(storageRes.status, 201)
+    assertEqual(storageRes.status, 201)
 
     const updateRes = await ctx.request.put(
       `/api/v1/storage/${storageRes.data.storage.id}`,
@@ -203,15 +202,15 @@ describe('storage tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    assert.equal(updateRes.status, 200)
+    assertEqual(updateRes.status, 200)
 
     const getRes = await ctx.request.get<{ storage: Storage }>(
       `/api/v1/storage/${storageRes.data.storage.id}`,
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(getRes.status, 200)
-    assert.equal(getRes.data.storage.bestBefore.toString(), bestBeforeLater)
+    assertEqual(getRes.status, 200)
+    assertEqual(getRes.data.storage.bestBefore.toString(), bestBeforeLater)
   })
 
   it('delete a storage', async () => {
@@ -226,20 +225,20 @@ describe('storage tests', () => {
     const storageRes = await ctx.request.post(`/api/v1/storage`,
       requestData, ctx.adminAuthHeaders()
     )
-    assert.equal(storageRes.status, 201)
+    assertEqual(storageRes.status, 201)
     const storageId = storageRes.data.storage.id
 
     const deleteRes = await ctx.request.delete(
       `/api/v1/storage/${storageId}`,
       ctx.adminAuthHeaders()
     )
-    assert.equal(deleteRes.status, 204)
+    assertEqual(deleteRes.status, 204)
 
     const getRes = await ctx.request.get<{ storage: Storage }>(
       `/api/v1/storage/${storageId}`,
       ctx.adminAuthHeaders()
     )
-    assert.equal(getRes.status, 404)
+    assertEqual(getRes.status, 404)
   })
 
   it('get empty storage list', async () => {
@@ -247,8 +246,8 @@ describe('storage tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(res.status, 200)
-    assert.equal(res.data.storages.length, 0)
+    assertEqual(res.status, 200)
+    assertEqual(res.data.storages.length, 0)
   })
 
   async function createListByDeps(adminAuthHeaders: Record<string, unknown>) {
@@ -262,28 +261,28 @@ describe('storage tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    assert.equal(storageRes.status, 201)
-    assert.equal(storageRes.data.storage.beer, beerRes.data.beer.id)
+    assertEqual(storageRes.status, 201)
+    assertEqual(storageRes.data.storage.beer, beerRes.data.beer.id)
 
     const otherStyleRes = await ctx.request.post(`/api/v1/style`,
       { name: 'IPA', parents: [] },
       ctx.adminAuthHeaders()
     )
-    assert.equal(otherStyleRes.status, 201)
+    assertEqual(otherStyleRes.status, 201)
 
     const otherBreweryRes = await ctx.request.post(`/api/v1/brewery`,
       { name: 'Nokian Panimo' },
       ctx.adminAuthHeaders()
     )
-    assert.equal(otherBreweryRes.status, 201)
+    assertEqual(otherBreweryRes.status, 201)
 
     const otherBeerRes = await ctx.request.post(`/api/v1/beer`,
       { name: 'IPA', breweries: [otherBreweryRes.data.brewery.id], styles: [otherStyleRes.data.style.id] },
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(otherBeerRes.status, 201)
-    assert.equal(otherBeerRes.data.beer.name, 'IPA')
+    assertEqual(otherBeerRes.status, 201)
+    assertEqual(otherBeerRes.data.beer.name, 'IPA')
     assertDeepEqual(otherBeerRes.data.beer.breweries, [otherBreweryRes.data.brewery.id])
     assertDeepEqual(otherBeerRes.data.beer.styles, [otherStyleRes.data.style.id])
 
@@ -295,15 +294,15 @@ describe('storage tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    assert.equal(otherStorageRes.status, 201)
-    assert.equal(otherStorageRes.data.storage.beer, otherBeerRes.data.beer.id)
+    assertEqual(otherStorageRes.status, 201)
+    assertEqual(otherStorageRes.data.storage.beer, otherBeerRes.data.beer.id)
 
     const collabBeerRes = await ctx.request.post(`/api/v1/beer`,
       { name: 'Wild Kriek IPA', breweries: [breweryRes.data.brewery.id, otherBreweryRes.data.brewery.id], styles: [styleRes.data.style.id, otherStyleRes.data.style.id] },
       ctx.adminAuthHeaders()
     )
-    assert.equal(collabBeerRes.status, 201)
-    assert.equal(collabBeerRes.data.beer.name, 'Wild Kriek IPA')
+    assertEqual(collabBeerRes.status, 201)
+    assertEqual(collabBeerRes.data.beer.name, 'Wild Kriek IPA')
 
     const collabStorageRes = await ctx.request.post(`/api/v1/storage`,
       {
@@ -313,8 +312,8 @@ describe('storage tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    assert.equal(collabStorageRes.status, 201)
-    assert.equal(collabStorageRes.data.storage.beer, collabBeerRes.data.beer.id)
+    assertEqual(collabStorageRes.status, 201)
+    assertEqual(collabStorageRes.data.storage.beer, collabBeerRes.data.beer.id)
 
     return { beerRes, otherBeerRes, collabBeerRes, breweryRes, otherBreweryRes, styleRes, otherStyleRes, storageRes, otherStorageRes, collabStorageRes }
   }
@@ -326,19 +325,19 @@ describe('storage tests', () => {
       `/api/v1/brewery/${breweryRes.data.brewery.id}/storage/`,
       ctx.adminAuthHeaders()
     )
-    assert.equal(breweryListRes.status, 200)
-    assert.equal(breweryListRes.data.storages.length, 2)
+    assertEqual(breweryListRes.status, 200)
+    assertEqual(breweryListRes.data.storages.length, 2)
     const kriekStorage = breweryListRes.data.storages.find(storage => storage.id === storageRes.data.storage.id)
     if (kriekStorage === undefined) throw new Error('kriekStorage not found')
-    assert.equal(kriekStorage.id, storageRes.data.storage.id)
-    assert.equal(kriekStorage.beerId, storageRes.data.storage.beer)
-    assert.equal(kriekStorage.hasReview, false)
+    assertEqual(kriekStorage.id, storageRes.data.storage.id)
+    assertEqual(kriekStorage.beerId, storageRes.data.storage.beer)
+    assertEqual(kriekStorage.hasReview, false)
     const collabStorage = breweryListRes.data.storages.find(storage => storage.id === collabStorageRes.data.storage.id)
     if (collabStorage === undefined) throw new Error('collabStorage not found')
-    assert.equal(collabStorage.id, collabStorageRes.data.storage.id)
-    assert.equal(collabStorage.beerId, collabStorageRes.data.storage.beer)
-    assert.equal(collabStorage.breweries?.length, 2)
-    assert.equal(collabStorage.hasReview, false)
+    assertEqual(collabStorage.id, collabStorageRes.data.storage.id)
+    assertEqual(collabStorage.beerId, collabStorageRes.data.storage.beer)
+    assertEqual(collabStorage.breweries?.length, 2)
+    assertEqual(collabStorage.hasReview, false)
     const collabBrewery = collabStorage?.breweries?.find(brewery => brewery.id === breweryRes.data.brewery.id);
     const otherCollabBrewery = collabStorage?.breweries?.find(brewery => brewery.id === otherBreweryRes.data.brewery.id);
     assertDeepEqual(collabBrewery, { id: breweryRes.data.brewery.id, name: breweryRes.data.brewery.name });
@@ -355,19 +354,19 @@ describe('storage tests', () => {
       `/api/v1/style/${styleRes.data.style.id}/storage/`,
       ctx.adminAuthHeaders()
     )
-    assert.equal(styleListRes.status, 200)
-    assert.equal(styleListRes.data.storages.length, 2)
+    assertEqual(styleListRes.status, 200)
+    assertEqual(styleListRes.data.storages.length, 2)
     const kriekStorage = styleListRes.data.storages.find(storage => storage.id === storageRes.data.storage.id)
     if (kriekStorage === undefined) throw new Error('kriekStorage not found')
-    assert.equal(kriekStorage.id, storageRes.data.storage.id)
-    assert.equal(kriekStorage.beerId, storageRes.data.storage.beer)
-    assert.equal(kriekStorage.hasReview, false)
+    assertEqual(kriekStorage.id, storageRes.data.storage.id)
+    assertEqual(kriekStorage.beerId, storageRes.data.storage.beer)
+    assertEqual(kriekStorage.hasReview, false)
     const collabStorage = styleListRes.data.storages.find(storage => storage.id === collabStorageRes.data.storage.id)
     if (collabStorage === undefined) throw new Error('collabStorage not found')
-    assert.equal(collabStorage.id, collabStorageRes.data.storage.id)
-    assert.equal(collabStorage.beerId, collabStorageRes.data.storage.beer)
-    assert.equal(collabStorage.breweries?.length, 2)
-    assert.equal(collabStorage.hasReview, false)
+    assertEqual(collabStorage.id, collabStorageRes.data.storage.id)
+    assertEqual(collabStorage.beerId, collabStorageRes.data.storage.beer)
+    assertEqual(collabStorage.breweries?.length, 2)
+    assertEqual(collabStorage.hasReview, false)
     const collabStyle = collabStorage.styles?.find(style => style.id === styleRes.data.style.id);
     const otherCollabStyle = collabStorage.styles?.find(style => style.id === otherStyleRes.data.style.id);
     assertDeepEqual(collabStyle, { id: styleRes.data.style.id, name: styleRes.data.style.name });

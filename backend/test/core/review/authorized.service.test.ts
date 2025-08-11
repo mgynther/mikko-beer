@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import * as reviewService from '../../../src/core/review/authorized.service'
 
@@ -19,7 +18,7 @@ import {
   invalidReviewError,
   noRightsError
 } from '../../../src/core/errors'
-import { assertDeepEqual } from '../../assert'
+import { assertDeepEqual, assertEqual } from '../../assert'
 
 const storageId = '5e11fcf9-3fa4-402d-90e2-17706e8d78e6'
 
@@ -211,7 +210,7 @@ describe('review authorized service unit tests', () => {
     })
 
     it(`list reviews by location as ${token.role}`, async () => {
-      assert.equal(typeof joinedReview.location?.id, 'string')
+      assertEqual(typeof joinedReview.location?.id, 'string')
       const result = await reviewService.listReviewsByLocation(
         async () => [joinedReview],
         {

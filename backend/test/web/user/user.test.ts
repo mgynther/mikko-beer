@@ -3,7 +3,7 @@ import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import { User } from '../../../src/core/user/user'
-import { assertDeepEqual } from '../../assert'
+import { assertDeepEqual, assertEqual } from '../../assert'
 
 describe('user tests', () => {
   const ctx = new TestContext()
@@ -25,10 +25,10 @@ describe('user tests', () => {
       }
     }
     const noAuthRes = await ctx.request.post(`/api/v1/user`, params)
-    assert.equal(noAuthRes.status, 400)
+    assertEqual(noAuthRes.status, 400)
 
     const invalidAuthRes = await ctx.request.post(`/api/v1/user`, params, ctx.createAuthHeaders('invalid token'))
-    assert.equal(invalidAuthRes.status, 401)
+    assertEqual(invalidAuthRes.status, 401)
   })
 
   it('create a user', async () => {
@@ -44,9 +44,9 @@ describe('user tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(res.status, 201)
-    assert.equal(res.data.user.username, 'Anon')
-    assert.equal(res.data.user.role, 'admin')
+    assertEqual(res.status, 201)
+    assertEqual(res.data.user.username, 'Anon')
+    assertEqual(res.data.user.role, 'admin')
 
     // The returned auth token is be usable.
     const getRes = await ctx.request.get<{ user: User }>(
@@ -54,7 +54,7 @@ describe('user tests', () => {
       ctx.createAuthHeaders(res.data.authToken)
     )
 
-    assert.equal(getRes.status, 200)
+    assertEqual(getRes.status, 200)
     assertDeepEqual(getRes.data.user, res.data.user)
   })
 
@@ -66,7 +66,7 @@ describe('user tests', () => {
       ctx.createAuthHeaders(authToken)
     )
 
-    assert.equal(res.status, 200)
+    assertEqual(res.status, 200)
     assertDeepEqual(res.data, { user })
   })
 
@@ -78,7 +78,7 @@ describe('user tests', () => {
       password: password,
     })
 
-    assert.equal(res.status, 200)
+    assertEqual(res.status, 200)
 
     // The returned auth token is be usable.
     const getRes = await ctx.request.get<{ user: User }>(
@@ -86,7 +86,7 @@ describe('user tests', () => {
       ctx.createAuthHeaders(authToken)
     )
 
-    assert.equal(getRes.status, 200)
+    assertEqual(getRes.status, 200)
     assertDeepEqual(getRes.data.user, res.data.user)
   })
 
@@ -98,7 +98,7 @@ describe('user tests', () => {
       password: 'wrong password',
     })
 
-    assert.equal(res.status, 401)
+    assertEqual(res.status, 401)
     assertDeepEqual(res.data, {
       error: {
         code: 'InvalidCredentials',
@@ -111,7 +111,7 @@ describe('user tests', () => {
       .selectFrom('refresh_token')
       .select('refresh_token.user_id')
       .execute()
-    assert.equal(results.length, 1)
+    assertEqual(results.length, 1)
   })
 
   it('sign out a user', async () => {
@@ -123,7 +123,7 @@ describe('user tests', () => {
       ctx.createAuthHeaders(authToken)
     )
 
-    assert.equal(res.status, 200)
+    assertEqual(res.status, 200)
 
     // The auth token is no longer be usable.
     const getRes = await ctx.request.get(
@@ -131,8 +131,8 @@ describe('user tests', () => {
       ctx.createAuthHeaders(authToken)
     )
 
-    assert.equal(getRes.status, 404)
-    assert.equal(getRes.data.error.code, 'UserOrRefreshTokenNotFound')
+    assertEqual(getRes.status, 404)
+    assertEqual(getRes.data.error.code, 'UserOrRefreshTokenNotFound')
   })
 
   it('refresh auth token', async () => {
@@ -143,7 +143,7 @@ describe('user tests', () => {
       { refreshToken }
     )
 
-    assert.equal(res.status, 200)
+    assertEqual(res.status, 200)
     assert.notDeepEqual(res.data.authToken, authToken)
     assert.notDeepEqual(res.data.refreshToken, refreshToken)
 
@@ -153,16 +153,16 @@ describe('user tests', () => {
       ctx.createAuthHeaders(authToken)
     )
 
-    assert.equal(failGetRes.status, 404)
-    assert.equal(failGetRes.data.error.code, 'UserOrRefreshTokenNotFound')
+    assertEqual(failGetRes.status, 404)
+    assertEqual(failGetRes.data.error.code, 'UserOrRefreshTokenNotFound')
 
     const getRes = await ctx.request.get(
       `/api/v1/user/${user.id}`,
       ctx.createAuthHeaders(res.data.authToken)
     )
 
-    assert.equal(getRes.status, 200)
-    assert.equal(getRes.data.user.username, user.username)
+    assertEqual(getRes.status, 200)
+    assertEqual(getRes.data.user.username, user.username)
   })
 
   it('do not change tokens on invalid refresh request', async () => {
@@ -173,14 +173,14 @@ describe('user tests', () => {
       `/api/v1/user/${user.id}/refresh`,
       { refreshToken: anotherUser.refreshToken }
     )
-    assert.equal(res.status, 401)
+    assertEqual(res.status, 401)
 
     const getRes = await ctx.request.get(
       `/api/v1/user/${user.id}`,
       ctx.createAuthHeaders(authToken)
     )
-    assert.equal(getRes.status, 200)
-    assert.equal(getRes.data.user.username, user.username)
+    assertEqual(getRes.status, 200)
+    assertEqual(getRes.data.user.username, user.username)
   })
 
   it('change password', async () => {
@@ -191,7 +191,7 @@ describe('user tests', () => {
       ctx.createAuthHeaders(authToken)
     )
 
-    assert.equal(getRes.status, 200)
+    assertEqual(getRes.status, 200)
     assertDeepEqual(getRes.data.user, user)
 
     const newPassword = 'a different password'
@@ -202,7 +202,7 @@ describe('user tests', () => {
         newPassword
       }, ctx.createAuthHeaders(authToken)
     )
-    assert.equal(wrongPwdChangeRes.status, 401)
+    assertEqual(wrongPwdChangeRes.status, 401)
 
     const changeRes = await ctx.request.post(
       `/api/v1/user/${getRes.data.user.id}/change-password`,
@@ -211,7 +211,7 @@ describe('user tests', () => {
         newPassword
       }, ctx.createAuthHeaders(authToken)
     )
-    assert.equal(changeRes.status, 204)
+    assertEqual(changeRes.status, 204)
 
     const oldPwdSignInRes = await ctx.request.post(
       `/api/v1/user/sign-in`, {
@@ -220,7 +220,7 @@ describe('user tests', () => {
       },
       ctx.createAuthHeaders(authToken)
     )
-    assert.equal(oldPwdSignInRes.status, 401)
+    assertEqual(oldPwdSignInRes.status, 401)
 
     const currentPwdSignInRes = await ctx.request.post(
       `/api/v1/user/sign-in`, {
@@ -228,7 +228,7 @@ describe('user tests', () => {
         password: newPassword,
       }, ctx.createAuthHeaders(authToken)
     )
-    assert.equal(currentPwdSignInRes.status, 200)
+    assertEqual(currentPwdSignInRes.status, 200)
   })
 
   it('delete user', async () => {
@@ -238,19 +238,19 @@ describe('user tests', () => {
       `/api/v1/user/${user.id}`,
       ctx.createAuthHeaders(authToken)
     )
-    assert.equal(res.status, 200)
+    assertEqual(res.status, 200)
 
     const deleteRes = await ctx.request.delete(
       `/api/v1/user/${res.data.user.id}`,
       ctx.adminAuthHeaders()
     )
-    assert.equal(deleteRes.status, 204)
+    assertEqual(deleteRes.status, 204)
 
     const afterDeleteGetRes = await ctx.request.get<{ user: User }>(
       `/api/v1/user/${user.id}`,
       ctx.adminAuthHeaders()
     )
-    assert.equal(afterDeleteGetRes.status, 404)
+    assertEqual(afterDeleteGetRes.status, 404)
   })
 
 })

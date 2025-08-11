@@ -12,7 +12,7 @@ import type {
 
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
-import { assertDeepEqual } from '../../../assert'
+import { assertDeepEqual, assertEqual } from '../../../assert'
 
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {
@@ -34,13 +34,13 @@ describe('user service unit tests', () => {
     async function create(
       request: CreateAnonymousUserRequest
     ): Promise<User> {
-      assert.equal(request.role, user.role)
+      assertEqual(request.role, user.role)
       return user
     }
     async function insertRefreshToken(
       requestUserId: string
     ): Promise<DbRefreshToken> {
-      assert.equal(requestUserId, userId)
+      assertEqual(requestUserId, userId)
       return {
         id: '0586c701-e053-46bf-b599-346093989140',
         userId

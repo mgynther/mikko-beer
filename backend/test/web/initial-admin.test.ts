@@ -1,6 +1,10 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
-import * as assert from 'node:assert/strict'
-import { assertDeepEqual, assertGreaterThan, assertIncludes } from '../assert'
+import {
+  assertDeepEqual,
+  assertEqual,
+  assertGreaterThan,
+  assertIncludes
+} from '../assert'
 
 import axios from 'axios'
 
@@ -85,7 +89,7 @@ describe('initial admin', () => {
     const messages = ctx.logMessages()
     assertGreaterThan(messages.length, 1)
     const parts = messages[1].message.split('"')
-    assert.equal(parts.length, 5)
+    assertEqual(parts.length, 5)
     assertIncludes(parts[0], 'Created initial user')
     assertIncludes(parts[2], 'with password')
     const adminUsername = parts[1]
@@ -95,7 +99,7 @@ describe('initial admin', () => {
       password: adminPassword,
     })
 
-    assert.equal(res.status, 200)
+    assertEqual(res.status, 200)
     const authToken = res.data.authToken
 
     // The returned auth token is be usable.
@@ -107,7 +111,7 @@ describe('initial admin', () => {
       },
     }
     )
-    assert.equal(getRes.status, 200)
+    assertEqual(getRes.status, 200)
     assertDeepEqual(getRes.data.user, res.data.user)
   })
 })

@@ -1,12 +1,11 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import type { SearchByName } from '../../src/core/search'
 import { toIlike, validateSearchByName } from '../../src/core/search'
 
 import { invalidSearchError } from '../../src/core/errors'
 import { expectThrow } from './controller-error-helper'
-import { assertDeepEqual } from '../assert'
+import { assertDeepEqual, assertEqual } from '../assert'
 
 describe('search validation unit tests', () => {
   function pass(input: unknown, output: SearchByName) {
@@ -34,13 +33,13 @@ describe('search validation unit tests', () => {
 
 describe('search ilike unit tests', () => {
   it('add wildcards', () => {
-    assert.equal(toIlike({ name: 'test' }), '%test%')
+    assertEqual(toIlike({ name: 'test' }), '%test%')
   })
   it('add wildcards to exact match pattern with whitespace', () => {
-    assert.equal(toIlike({ name: '"test " ' }), '%"test " %')
+    assertEqual(toIlike({ name: '"test " ' }), '%"test " %')
   })
   it('match exactly', () => {
-    assert.equal(toIlike({ name: '"test"' }), 'test')
+    assertEqual(toIlike({ name: '"test"' }), 'test')
   })
 })
 

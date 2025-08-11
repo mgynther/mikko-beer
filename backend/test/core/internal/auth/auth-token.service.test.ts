@@ -15,7 +15,7 @@ import type { User } from '../../../../src/core/user/user'
 import type { Tokens } from '../../../../src/core/auth/tokens'
 import { invalidCredentialsTokenError } from '../../../../src/core/errors'
 import { expectReject } from '../../controller-error-helper'
-import { assertDeepEqual } from '../../../assert'
+import { assertDeepEqual, assertEqual } from '../../../assert'
 
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {
@@ -44,16 +44,16 @@ function expectKnownTokens(tokens: Tokens) {
   function getStart(token: string) {
     return token.split('.')[0]
   }
-  assert.equal(getStart(tokens.auth.authToken),
+  assertEqual(getStart(tokens.auth.authToken),
     getStart(knownTokens.auth.authToken)
   )
-  assert.equal(getStart(tokens.refresh.refreshToken),
+  assertEqual(getStart(tokens.refresh.refreshToken),
     getStart(knownTokens.refresh.refreshToken)
   )
 }
 
 async function insertAuthToken(userId: string): Promise<DbRefreshToken> {
-  assert.equal(userId, user.id)
+  assertEqual(userId, user.id)
   return {
     id: refreshTokenId,
     userId
@@ -95,8 +95,8 @@ describe('auth token service unit tests', () => {
 
     let wasDeleted = false
     async function deleteToken(deletedRefreshTokenId: string) {
-      assert.equal(deletedRefreshTokenId, refreshTokenId)
-      assert.equal(wasDeleted, false)
+      assertEqual(deletedRefreshTokenId, refreshTokenId)
+      assertEqual(wasDeleted, false)
       wasDeleted = true
     }
 
@@ -106,7 +106,7 @@ describe('auth token service unit tests', () => {
       tokens.refresh,
       authTokenSecret
     )
-    assert.equal(wasDeleted, true)
+    assertEqual(wasDeleted, true)
   })
 
   it('fail to verify auth token with wrong secret', async () => {

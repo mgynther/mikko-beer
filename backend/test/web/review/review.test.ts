@@ -1,5 +1,4 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import type { ListDirection } from '../../../src/core/list'
@@ -10,7 +9,7 @@ import type {
   ReviewListOrderProperty,
   ReviewRequest
 } from '../../../src/core/review/review'
-import { assertDeepEqual } from '../../assert'
+import { assertDeepEqual, assertEqual } from '../../assert'
 
 const createNewReviewRequest = (
   beerId: string,
@@ -41,21 +40,21 @@ describe('review tests', () => {
       { name: 'Kriek', parents: [] },
       adminAuthHeaders
     )
-    assert.equal(styleRes.status, 201)
+    assertEqual(styleRes.status, 201)
 
     const breweryRes = await ctx.request.post(`/api/v1/brewery`,
       { name: 'Lindemans' },
       adminAuthHeaders
     )
-    assert.equal(breweryRes.status, 201)
+    assertEqual(breweryRes.status, 201)
 
     const beerRes = await ctx.request.post(`/api/v1/beer`,
       { name: 'Lindemans Kriek', breweries: [breweryRes.data.brewery.id], styles: [styleRes.data.style.id] },
       adminAuthHeaders
     )
 
-    assert.equal(beerRes.status, 201)
-    assert.equal(beerRes.data.beer.name, 'Lindemans Kriek')
+    assertEqual(beerRes.status, 201)
+    assertEqual(beerRes.data.beer.name, 'Lindemans Kriek')
     assertDeepEqual(beerRes.data.beer.breweries, [breweryRes.data.brewery.id])
     assertDeepEqual(beerRes.data.beer.styles, [styleRes.data.style.id])
 
@@ -68,7 +67,7 @@ describe('review tests', () => {
       { name: 'Pikilinna' },
       adminAuthHeaders
     )
-    assert.equal(locationRes.status, 201)
+    assertEqual(locationRes.status, 201)
 
     return {
       beerRes,
@@ -91,40 +90,40 @@ describe('review tests', () => {
       ),
       ctx.adminAuthHeaders()
     )
-    assert.equal(reviewRes.status, 201)
-    assert.equal(reviewRes.data.review.additionalInfo, 'From Belgium')
-    assert.equal(reviewRes.data.review.beer, beerRes.data.beer.id)
-    assert.equal(reviewRes.data.review.container, containerRes.data.container.id)
-    assert.equal(reviewRes.data.review.location, locationRes.data.location.id)
-    assert.equal(reviewRes.data.review.rating, 8)
-    assert.equal(reviewRes.data.review.smell, 'Cherries')
-    assert.equal(reviewRes.data.review.taste, 'Cherries, a little sour')
-    assert.equal(reviewRes.data.review.time, '2023-03-07T18:31:33.123Z')
+    assertEqual(reviewRes.status, 201)
+    assertEqual(reviewRes.data.review.additionalInfo, 'From Belgium')
+    assertEqual(reviewRes.data.review.beer, beerRes.data.beer.id)
+    assertEqual(reviewRes.data.review.container, containerRes.data.container.id)
+    assertEqual(reviewRes.data.review.location, locationRes.data.location.id)
+    assertEqual(reviewRes.data.review.rating, 8)
+    assertEqual(reviewRes.data.review.smell, 'Cherries')
+    assertEqual(reviewRes.data.review.taste, 'Cherries, a little sour')
+    assertEqual(reviewRes.data.review.time, '2023-03-07T18:31:33.123Z')
 
     const getRes = await ctx.request.get<{ review: Review }>(
       `/api/v1/review/${reviewRes.data.review.id}`,
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(getRes.status, 200)
-    assert.equal(getRes.data.review.id, reviewRes.data.review.id)
-    assert.equal(getRes.data.review.additionalInfo, 'From Belgium')
-    assert.equal(getRes.data.review.beer, beerRes.data.beer.id)
-    assert.equal(getRes.data.review.container, containerRes.data.container.id)
-    assert.equal(reviewRes.data.review.location, locationRes.data.location.id)
-    assert.equal(getRes.data.review.rating, 8)
-    assert.equal(getRes.data.review.smell, 'Cherries')
-    assert.equal(getRes.data.review.taste, 'Cherries, a little sour')
-    assert.equal(getRes.data.review.time.toString(), '2023-03-07T18:31:33.123Z')
+    assertEqual(getRes.status, 200)
+    assertEqual(getRes.data.review.id, reviewRes.data.review.id)
+    assertEqual(getRes.data.review.additionalInfo, 'From Belgium')
+    assertEqual(getRes.data.review.beer, beerRes.data.beer.id)
+    assertEqual(getRes.data.review.container, containerRes.data.container.id)
+    assertEqual(reviewRes.data.review.location, locationRes.data.location.id)
+    assertEqual(getRes.data.review.rating, 8)
+    assertEqual(getRes.data.review.smell, 'Cherries')
+    assertEqual(getRes.data.review.taste, 'Cherries, a little sour')
+    assertEqual(getRes.data.review.time.toString(), '2023-03-07T18:31:33.123Z')
 
     const listRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
       '/api/v1/review/',
       ctx.adminAuthHeaders()
     )
-    assert.equal(listRes.status, 200)
-    assert.equal(listRes.data.reviews.length, 1)
-    assert.equal(listRes.data.reviews[0].id, getRes.data.review.id)
-    assert.equal(listRes.data.reviews[0].beerId, getRes.data.review.beer)
+    assertEqual(listRes.status, 200)
+    assertEqual(listRes.data.reviews.length, 1)
+    assertEqual(listRes.data.reviews[0].id, getRes.data.review.id)
+    assertEqual(listRes.data.reviews[0].beerId, getRes.data.review.beer)
     assertDeepEqual(listRes.data.reviews[0].container, containerRes.data.container)
     assertDeepEqual(listRes.data.reviews[0].breweries[0], breweryRes.data.brewery)
     const parentlessStyle = { ...styleRes.data.style }
@@ -135,32 +134,32 @@ describe('review tests', () => {
       '/api/v1/review?size=50&skip=30',
       ctx.adminAuthHeaders()
     )
-    assert.equal(skippedListRes.status, 200)
-    assert.equal(skippedListRes.data.reviews.length, 0)
+    assertEqual(skippedListRes.status, 200)
+    assertEqual(skippedListRes.data.reviews.length, 0)
 
     const breweryListRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
       `/api/v1/brewery/${breweryRes.data.brewery.id}/review/`,
       ctx.adminAuthHeaders()
     )
-    assert.equal(breweryListRes.status, 200)
-    assert.equal(breweryListRes.data.reviews.length, 1)
-    assert.equal(breweryListRes.data.reviews[0].id, getRes.data.review.id)
-    assert.equal(breweryListRes.data.reviews[0].beerId, getRes.data.review.beer)
+    assertEqual(breweryListRes.status, 200)
+    assertEqual(breweryListRes.data.reviews.length, 1)
+    assertEqual(breweryListRes.data.reviews[0].id, getRes.data.review.id)
+    assertEqual(breweryListRes.data.reviews[0].beerId, getRes.data.review.beer)
 
     const styleListRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
       `/api/v1/style/${styleRes.data.style.id}/review/`,
       ctx.adminAuthHeaders()
     )
-    assert.equal(styleListRes.status, 200)
-    assert.equal(styleListRes.data.reviews.length, 1)
-    assert.equal(styleListRes.data.reviews[0].id, getRes.data.review.id)
-    assert.equal(styleListRes.data.reviews[0].beerId, getRes.data.review.beer)
+    assertEqual(styleListRes.status, 200)
+    assertEqual(styleListRes.data.reviews.length, 1)
+    assertEqual(styleListRes.data.reviews[0].id, getRes.data.review.id)
+    assertEqual(styleListRes.data.reviews[0].beerId, getRes.data.review.beer)
 
     const beerListRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
       `/api/v1/beer/${beerRes.data.beer.id}/review/`,
       ctx.adminAuthHeaders()
     )
-    assert.equal(beerListRes.status, 200)
+    assertEqual(beerListRes.status, 200)
     assertDeepEqual(beerListRes.data.reviews, breweryListRes.data.reviews)
   })
 
@@ -175,7 +174,7 @@ describe('review tests', () => {
       ),
       ctx.adminAuthHeaders()
     )
-    assert.equal(reviewRes.status, 400)
+    assertEqual(reviewRes.status, 400)
   })
 
   it('fail to create a review with invalid container', async () => {
@@ -189,7 +188,7 @@ describe('review tests', () => {
       ),
       ctx.adminAuthHeaders()
     )
-    assert.equal(reviewRes.status, 400)
+    assertEqual(reviewRes.status, 400)
   })
 
   it('delete storage when review created from storage', async () => {
@@ -205,8 +204,8 @@ describe('review tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    assert.equal(storageRes.status, 201)
-    assert.equal(storageRes.data.storage.beer, beerRes.data.beer.id)
+    assertEqual(storageRes.status, 201)
+    assertEqual(storageRes.data.storage.beer, beerRes.data.beer.id)
 
     const createReviewRequest: CreateReviewRequest = {
       additionalInfo: '',
@@ -222,14 +221,14 @@ describe('review tests', () => {
       createReviewRequest,
       ctx.adminAuthHeaders()
     )
-    assert.equal(reviewRes.status, 201)
-    assert.equal(reviewRes.data.review.beer, beerRes.data.beer.id)
+    assertEqual(reviewRes.status, 201)
+    assertEqual(reviewRes.data.review.beer, beerRes.data.beer.id)
 
     const getStorageRes = await ctx.request.get<{ storage: Storage }>(
       `/api/v1/storage/${storageRes.data.storage.id}`,
       ctx.adminAuthHeaders()
     )
-    assert.equal(getStorageRes.status, 404)
+    assertEqual(getStorageRes.status, 404)
   })
 
   it('fail to create review with invalid storage', async () => {
@@ -244,7 +243,7 @@ describe('review tests', () => {
       ),
       ctx.adminAuthHeaders()
     )
-    assert.equal(reviewRes.status, 400)
+    assertEqual(reviewRes.status, 400)
   })
 
   it('fail to create a review without beer', async () => {
@@ -262,7 +261,7 @@ describe('review tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    assert.equal(reviewRes.status, 400)
+    assertEqual(reviewRes.status, 400)
   })
 
   it('update review', async () => {
@@ -280,8 +279,8 @@ describe('review tests', () => {
     const reviewRes = await ctx.request.post(`/api/v1/review`,
       requestData, ctx.adminAuthHeaders()
     )
-    assert.equal(reviewRes.status, 201)
-    assert.equal(reviewRes.data.review.taste, 'Crerries, a little sour')
+    assertEqual(reviewRes.status, 201)
+    assertEqual(reviewRes.data.review.taste, 'Crerries, a little sour')
 
     const updateRes = await ctx.request.put(
       `/api/v1/review/${reviewRes.data.review.id}`,
@@ -292,16 +291,16 @@ describe('review tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    assert.equal(updateRes.status, 200)
+    assertEqual(updateRes.status, 200)
 
     const getRes = await ctx.request.get<{ review: Review }>(
       `/api/v1/review/${reviewRes.data.review.id}`,
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(getRes.status, 200)
-    assert.equal(getRes.data.review.taste, 'Cherries, a little sour')
-    assert.equal(getRes.data.review.time.toString(), '2023-03-07T18:31:33.124Z')
+    assertEqual(getRes.status, 200)
+    assertEqual(getRes.data.review.taste, 'Cherries, a little sour')
+    assertEqual(getRes.data.review.time.toString(), '2023-03-07T18:31:33.124Z')
   })
 
   it('fail to update review with invalid beer', async () => {
@@ -316,7 +315,7 @@ describe('review tests', () => {
     const reviewRes = await ctx.request.post(`/api/v1/review`,
       requestData, ctx.adminAuthHeaders()
     )
-    assert.equal(reviewRes.status, 201)
+    assertEqual(reviewRes.status, 201)
     const updateRes = await ctx.request.put(
       `/api/v1/review/${reviewRes.data.review.id}`,
       {
@@ -325,7 +324,7 @@ describe('review tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    assert.equal(updateRes.status, 400)
+    assertEqual(updateRes.status, 400)
   })
 
   it('fail to update review with invalid container', async () => {
@@ -341,7 +340,7 @@ describe('review tests', () => {
     const reviewRes = await ctx.request.post(`/api/v1/review`,
       requestData, ctx.adminAuthHeaders()
     )
-    assert.equal(reviewRes.status, 201)
+    assertEqual(reviewRes.status, 201)
     const updateRes = await ctx.request.put(
       `/api/v1/review/${reviewRes.data.review.id}`,
       {
@@ -350,7 +349,7 @@ describe('review tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    assert.equal(updateRes.status, 400)
+    assertEqual(updateRes.status, 400)
   })
 
   it('get empty review list', async () => {
@@ -358,8 +357,8 @@ describe('review tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(res.status, 200)
-    assert.equal(res.data.reviews.length, 0)
+    assertEqual(res.status, 200)
+    assertEqual(res.data.reviews.length, 0)
   })
 
   async function createListDeps(adminAuthHeaders: Record<string, unknown>) {
@@ -380,28 +379,28 @@ describe('review tests', () => {
       createReviewRequest,
       ctx.adminAuthHeaders()
     )
-    assert.equal(reviewRes.status, 201)
-    assert.equal(reviewRes.data.review.beer, beerRes.data.beer.id)
+    assertEqual(reviewRes.status, 201)
+    assertEqual(reviewRes.data.review.beer, beerRes.data.beer.id)
 
     const otherStyleRes = await ctx.request.post(`/api/v1/style`,
       { name: 'IPA', parents: [] },
       ctx.adminAuthHeaders()
     )
-    assert.equal(otherStyleRes.status, 201)
+    assertEqual(otherStyleRes.status, 201)
 
     const otherBreweryRes = await ctx.request.post(`/api/v1/brewery`,
       { name: 'Nokian Panimo' },
       ctx.adminAuthHeaders()
     )
-    assert.equal(otherBreweryRes.status, 201)
+    assertEqual(otherBreweryRes.status, 201)
 
     const otherBeerRes = await ctx.request.post(`/api/v1/beer`,
       { name: 'IPA', breweries: [otherBreweryRes.data.brewery.id], styles: [otherStyleRes.data.style.id] },
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(otherBeerRes.status, 201)
-    assert.equal(otherBeerRes.data.beer.name, 'IPA')
+    assertEqual(otherBeerRes.status, 201)
+    assertEqual(otherBeerRes.data.beer.name, 'IPA')
     assertDeepEqual(otherBeerRes.data.beer.breweries, [otherBreweryRes.data.brewery.id])
     assertDeepEqual(otherBeerRes.data.beer.styles, [otherStyleRes.data.style.id])
 
@@ -419,15 +418,15 @@ describe('review tests', () => {
       createOtherReviewRequest,
       ctx.adminAuthHeaders()
     )
-    assert.equal(otherReviewRes.status, 201)
-    assert.equal(otherReviewRes.data.review.beer, otherBeerRes.data.beer.id)
+    assertEqual(otherReviewRes.status, 201)
+    assertEqual(otherReviewRes.data.review.beer, otherBeerRes.data.beer.id)
 
     const collabBeerRes = await ctx.request.post(`/api/v1/beer`,
       { name: 'Wild Kriek IPA', breweries: [breweryRes.data.brewery.id, otherBreweryRes.data.brewery.id], styles: [styleRes.data.style.id, otherStyleRes.data.style.id] },
       ctx.adminAuthHeaders()
     )
-    assert.equal(collabBeerRes.status, 201)
-    assert.equal(collabBeerRes.data.beer.name, 'Wild Kriek IPA')
+    assertEqual(collabBeerRes.status, 201)
+    assertEqual(collabBeerRes.data.beer.name, 'Wild Kriek IPA')
 
     const createCollabReviewRequest: CreateReviewRequest = {
       additionalInfo: '',
@@ -443,8 +442,8 @@ describe('review tests', () => {
       createCollabReviewRequest,
       ctx.adminAuthHeaders()
     )
-    assert.equal(collabReviewRes.status, 201)
-    assert.equal(collabReviewRes.data.review.beer, collabBeerRes.data.beer.id)
+    assertEqual(collabReviewRes.status, 201)
+    assertEqual(collabReviewRes.data.review.beer, collabBeerRes.data.beer.id)
 
     return {
       beerRes,
@@ -471,21 +470,21 @@ describe('review tests', () => {
       `/api/v1/brewery/${breweryRes.data.brewery.id}/review?order=beer_name&direction=desc`,
       ctx.adminAuthHeaders()
     )
-    assert.equal(breweryListRes.status, 200)
-    assert.equal(breweryListRes.data.reviews.length, 2)
+    assertEqual(breweryListRes.status, 200)
+    assertEqual(breweryListRes.data.reviews.length, 2)
 
     const kriekReview = breweryListRes.data.reviews[1]
-    assert.equal(kriekReview?.id, reviewRes.data.review.id)
-    assert.equal(kriekReview?.beerId, reviewRes.data.review.beer)
+    assertEqual(kriekReview?.id, reviewRes.data.review.id)
+    assertEqual(kriekReview?.beerId, reviewRes.data.review.beer)
 
     const collabReview = breweryListRes.data.reviews[0]
-    assert.equal(collabReview?.id, collabReviewRes.data.review.id)
-    assert.equal(collabReview?.beerId, collabReviewRes.data.review.beer)
-    assert.equal(collabReview?.breweries?.length, 2)
+    assertEqual(collabReview?.id, collabReviewRes.data.review.id)
+    assertEqual(collabReview?.beerId, collabReviewRes.data.review.beer)
+    assertEqual(collabReview?.breweries?.length, 2)
 
     const sorting = breweryListRes.data.sorting
-    assert.equal(sorting.order, 'beer_name')
-    assert.equal(sorting.direction, 'desc')
+    assertEqual(sorting.order, 'beer_name')
+    assertEqual(sorting.direction, 'desc')
   })
 
   it('list reviews by location', async () => {
@@ -504,20 +503,20 @@ describe('review tests', () => {
       }/review?order=beer_name&direction=desc`,
       ctx.adminAuthHeaders()
     )
-    assert.equal(locationListRes.status, 200)
-    assert.equal(locationListRes.data.reviews.length, 2)
+    assertEqual(locationListRes.status, 200)
+    assertEqual(locationListRes.data.reviews.length, 2)
 
     const kriekReview = locationListRes.data.reviews[0]
-    assert.equal(kriekReview?.id, reviewRes.data.review.id)
-    assert.equal(kriekReview?.beerId, reviewRes.data.review.beer)
+    assertEqual(kriekReview?.id, reviewRes.data.review.id)
+    assertEqual(kriekReview?.beerId, reviewRes.data.review.beer)
 
     const otherReview = locationListRes.data.reviews[1]
-    assert.equal(otherReview?.id, otherReviewRes.data.review.id)
-    assert.equal(otherReview?.beerId, otherReviewRes.data.review.beer)
+    assertEqual(otherReview?.id, otherReviewRes.data.review.id)
+    assertEqual(otherReview?.beerId, otherReviewRes.data.review.beer)
 
     const sorting = locationListRes.data.sorting
-    assert.equal(sorting.order, 'beer_name')
-    assert.equal(sorting.direction, 'desc')
+    assertEqual(sorting.order, 'beer_name')
+    assertEqual(sorting.direction, 'desc')
   })
 
   it('list reviews by style', async () => {
@@ -533,21 +532,21 @@ describe('review tests', () => {
       `/api/v1/style/${styleRes.data.style.id}/review?order=beer_name&direction=desc`,
       ctx.adminAuthHeaders()
     )
-    assert.equal(styleListRes.status, 200)
-    assert.equal(styleListRes.data.reviews.length, 2)
+    assertEqual(styleListRes.status, 200)
+    assertEqual(styleListRes.data.reviews.length, 2)
 
     const kriekReview = styleListRes.data.reviews[1]
-    assert.equal(kriekReview?.id, reviewRes.data.review.id)
-    assert.equal(kriekReview?.beerId, reviewRes.data.review.beer)
+    assertEqual(kriekReview?.id, reviewRes.data.review.id)
+    assertEqual(kriekReview?.beerId, reviewRes.data.review.beer)
 
     const collabReview = styleListRes.data.reviews[0]
-    assert.equal(collabReview?.id, collabReviewRes.data.review.id)
-    assert.equal(collabReview?.beerId, collabReviewRes.data.review.beer)
-    assert.equal(collabReview?.breweries?.length, 2)
+    assertEqual(collabReview?.id, collabReviewRes.data.review.id)
+    assertEqual(collabReview?.beerId, collabReviewRes.data.review.beer)
+    assertEqual(collabReview?.breweries?.length, 2)
 
     const sorting = styleListRes.data.sorting
-    assert.equal(sorting.order, 'beer_name')
-    assert.equal(sorting.direction, 'desc')
+    assertEqual(sorting.order, 'beer_name')
+    assertEqual(sorting.direction, 'desc')
   })
 
   it('list reviews by beer', async () => {
@@ -573,7 +572,7 @@ describe('review tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    assert.equal(reviewRes.status, 201)
+    assertEqual(reviewRes.status, 201)
 
     const otherReviewRes = await ctx.request.post(`/api/v1/review`,
       {
@@ -583,7 +582,7 @@ describe('review tests', () => {
       },
       ctx.adminAuthHeaders()
     )
-    assert.equal(otherReviewRes.status, 201)
+    assertEqual(otherReviewRes.status, 201)
 
     const beerListRes = await ctx.request.get<{
       reviews: JoinedReview[],
@@ -595,8 +594,8 @@ describe('review tests', () => {
       `/api/v1/beer/${beerRes.data.beer.id}/review?order=rating&direction=asc`,
       ctx.adminAuthHeaders()
     )
-    assert.equal(beerListRes.status, 200)
-    assert.equal(beerListRes.data.reviews.length, 2)
+    assertEqual(beerListRes.status, 200)
+    assertEqual(beerListRes.data.reviews.length, 2)
     assertDeepEqual(beerListRes.data.reviews.map(r => r.rating), [7, 8])
   })
 
@@ -619,8 +618,8 @@ describe('review tests', () => {
       `/api/v1/review${data.query}`,
       ctx.adminAuthHeaders()
     )
-    assert.equal(listRes.status, 200)
-    assert.equal(listRes.data.reviews.length, 3)
+    assertEqual(listRes.status, 200)
+    assertEqual(listRes.data.reviews.length, 3)
 
     const kriekReview = listRes.data.reviews[data.kriekIndex]
     assertDeepEqual(kriekReview?.time, reviewRes.data.review.time)

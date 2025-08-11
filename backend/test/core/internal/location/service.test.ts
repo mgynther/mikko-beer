@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import type {
   Location,
@@ -13,7 +12,7 @@ import * as locationService from '../../../../src/core/internal/location/service
 
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
-import { assertDeepEqual } from '../../../assert'
+import { assertDeepEqual, assertEqual } from '../../../assert'
 
 const location: Location = {
   id: '6512b741-a387-437d-ae97-4131aca72641',
@@ -66,17 +65,17 @@ describe('location service unit tests', () => {
 
   it('find location', async () => {
     const finder = async (locationId: string) => {
-      assert.equal(locationId, location.id)
+      assertEqual(locationId, location.id)
       return location
     }
     const result = await locationService.findLocationById(finder, location.id, log)
-    assert.equal(result, location)
+    assertEqual(result, location)
   })
 
   it('fail to find location with unknown id', async () => {
     const id = 'fe7bd6e4-321a-4614-9ccf-7568491841e3'
     const finder = async (searchId: string) => {
-      assert.equal(searchId, id)
+      assertEqual(searchId, id)
       return undefined
     }
     expectReject(async () => {
@@ -102,7 +101,7 @@ describe('location service unit tests', () => {
       name: 'Kuj',
     }
     const searcher = async (search: SearchByName) => {
-      assert.equal(search, searchByName)
+      assertEqual(search, searchByName)
       return [location]
     }
     const result = await locationService.searchLocations(

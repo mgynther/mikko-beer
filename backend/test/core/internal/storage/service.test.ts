@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import {
   referredBeerNotFoundError,
@@ -18,7 +17,7 @@ import * as storageService from '../../../../src/core/internal/storage/service'
 
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
-import { assertDeepEqual } from '../../../assert'
+import { assertDeepEqual, assertEqual } from '../../../assert'
 
 const storage: Storage = {
   id: '8980b34a-d7b7-4e15-8e88-477176f5aee9',
@@ -62,14 +61,14 @@ const updateRequest: Storage = {
 const lockBeer = async (
   beerId: string
 ): Promise<string | undefined> => {
-  assert.equal(beerId, storage.beer)
+  assertEqual(beerId, storage.beer)
   return storage.beer
 }
 
 const lockContainer = async (
   containerId: string
 ): Promise<string | undefined> => {
-  assert.equal(containerId, storage.container)
+  assertEqual(containerId, storage.container)
   return storage.container
 }
 
@@ -99,12 +98,12 @@ describe('storage service unit tests', () => {
     const createIf: CreateIf = {
       insertStorage,
       lockBeer: async (beerId: string) => {
-        assert.equal(isBeerLocked, false)
+        assertEqual(isBeerLocked, false)
         isBeerLocked = true
         return lockBeer(beerId)
       },
       lockContainer: async (containerId: string) => {
-        assert.equal(isContainerLocked, false)
+        assertEqual(isContainerLocked, false)
         isContainerLocked = true
         return lockContainer(containerId)
       }
@@ -119,8 +118,8 @@ describe('storage service unit tests', () => {
       bestBefore: new Date(createRequest.bestBefore),
       id: storage.id
     })
-    assert.equal(isBeerLocked, true)
-    assert.equal(isContainerLocked, true)
+    assertEqual(isBeerLocked, true)
+    assertEqual(isContainerLocked, true)
   })
 
   it('fail to create storage with invalid beer', async () => {
@@ -178,12 +177,12 @@ describe('storage service unit tests', () => {
     const updateIf: UpdateIf = {
       updateStorage,
       lockBeer: async (beerId: string) => {
-        assert.equal(isBeerLocked, false)
+        assertEqual(isBeerLocked, false)
         isBeerLocked = true
         return lockBeer(beerId)
       },
       lockContainer: async (containerId: string) => {
-        assert.equal(isContainerLocked, false)
+        assertEqual(isContainerLocked, false)
         isContainerLocked = true
         return lockContainer(containerId)
       }
@@ -198,8 +197,8 @@ describe('storage service unit tests', () => {
       bestBefore: new Date(updateRequest.bestBefore),
       id: storage.id
     })
-    assert.equal(isBeerLocked, true)
-    assert.equal(isContainerLocked, true)
+    assertEqual(isBeerLocked, true)
+    assertEqual(isContainerLocked, true)
   })
 
   it('fail to update storage with invalid beer', async () => {
@@ -243,7 +242,7 @@ describe('storage service unit tests', () => {
     const deleter = t.mock.fn(mockImpl)
     const id = '18801a29-1c4e-40a4-ab3b-1701b4416c6c'
     await storageService.deleteStorageById(deleter, id, log)
-    assert.equal(deleter.mock.callCount(), 1)
+    assertEqual(deleter.mock.callCount(), 1)
     assertDeepEqual(
       deleter.mock.calls[deleter.mock.callCount() - 1].arguments,
       [id]
@@ -252,7 +251,7 @@ describe('storage service unit tests', () => {
 
   it('find storage', async () => {
     const finder = async (storageId: string) => {
-      assert.equal(storageId, joinedStorage.id)
+      assertEqual(storageId, joinedStorage.id)
       return joinedStorage
     }
     const result = await storageService.findStorageById(finder, storage.id, log)
@@ -262,7 +261,7 @@ describe('storage service unit tests', () => {
   it('not find storage with unknown id', async () => {
     const id = 'd29b2ee6-5d2e-40bf-bb87-c02c00a6628f'
     const finder = async (searchId: string) => {
-      assert.equal(searchId, id)
+      assertEqual(searchId, id)
       return undefined
     }
     expectReject(async () => {

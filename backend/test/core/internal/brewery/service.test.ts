@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import type {
   Brewery,
@@ -13,7 +12,7 @@ import * as breweryService from '../../../../src/core/internal/brewery/service'
 
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
-import { assertDeepEqual } from '../../../assert'
+import { assertDeepEqual, assertEqual } from '../../../assert'
 
 const brewery: Brewery = {
   id: 'd804c8fe-8d41-4c8b-88d1-95bdfeb558ef',
@@ -66,7 +65,7 @@ describe('brewery service unit tests', () => {
 
   it('find brewery', async () => {
     const finder = async (breweryId: string) => {
-      assert.equal(breweryId, brewery.id)
+      assertEqual(breweryId, brewery.id)
       return brewery
     }
     const result = await breweryService.findBreweryById(finder, brewery.id, log)
@@ -76,7 +75,7 @@ describe('brewery service unit tests', () => {
   it('fail to find brewery with unknown id', async () => {
     const id = '2f15e28b-ccbf-4afa-aa05-25f43b1e548b'
     const finder = async (searchId: string) => {
-      assert.equal(searchId, id)
+      assertEqual(searchId, id)
       return undefined
     }
     expectReject(async () => {

@@ -10,7 +10,7 @@ import type {
   ReviewListOrder
 } from '../../../src/core/review/review'
 import { insertData, insertMultipleReviews } from '../review-helpers'
-import { assertDeepEqual } from '../../assert'
+import { assertDeepEqual, assertEqual } from '../../assert'
 
 describe('review tests', () => {
   const ctx = new TestContext()
@@ -38,7 +38,7 @@ describe('review tests', () => {
   ) {
     const { reviews, data } = await insertMultipleReviews(10, db)
     const list = await listReviews(db, reviewListOrder)
-    assert.equal(reviews.length, list.length)
+    assertEqual(reviews.length, list.length)
     return { reviews, data, list }
   }
 
@@ -69,7 +69,7 @@ describe('review tests', () => {
     const reviewListOrder: ReviewListOrder =
       { property: 'brewery_name', direction: 'desc' }
     const list = await listReviews(db, reviewListOrder)
-    assert.equal(list.length, 10);
+    assertEqual(list.length, 10);
     const start = new Array(5).fill(1).map(_ => data.brewery.name)
     const end = new Array(5).fill(1).map(_ => data.otherBrewery.name)
     const expectedNames = [...start, ...end]
@@ -79,7 +79,7 @@ describe('review tests', () => {
     }
 
     const breweryReviewTimes = list.slice(0, 5).map(reviewToTime)
-    assert.equal(breweryReviewTimes.length, 5)
+    assertEqual(breweryReviewTimes.length, 5)
     const expectedBreweryReviewTimes = [...breweryReviewTimes]
     function sortDate(a: Date, b: Date) {
       return a.getTime() - b.getTime()
@@ -88,7 +88,7 @@ describe('review tests', () => {
     assertDeepEqual(breweryReviewTimes, expectedBreweryReviewTimes)
 
     const otherBreweryReviewTimes = list.slice(5, 10).map(reviewToTime)
-    assert.equal(otherBreweryReviewTimes.length, 5)
+    assertEqual(otherBreweryReviewTimes.length, 5)
     const expectedOtherBreweryReviewTimes = [...otherBreweryReviewTimes]
     expectedOtherBreweryReviewTimes.sort(sortDate)
     assertDeepEqual(otherBreweryReviewTimes, expectedOtherBreweryReviewTimes)
@@ -221,7 +221,7 @@ describe('review tests', () => {
     sorter: (a: T, b: T) => number,
     beerId: string
   ) {
-    assert.equal(reviews.length / 2, list.length)
+    assertEqual(reviews.length / 2, list.length)
     const listValues = list.map(converter)
     const expectedValues = reviews
       .filter(review => review.beer === beerId)

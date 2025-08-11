@@ -2,8 +2,8 @@ import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
-import { StyleWithParentsAndChildren } from '../../../src/core/style/style'
-import { assertDeepEqual } from '../../assert'
+import type { StyleWithParentsAndChildren } from '../../../src/core/style/style'
+import { assertDeepEqual, assertEqual } from '../../assert'
 
 describe('style tests', () => {
   const ctx = new TestContext()
@@ -20,8 +20,8 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(res.status, 201)
-    assert.equal(res.data.style.name, 'Wild')
+    assertEqual(res.status, 201)
+    assertEqual(res.data.style.name, 'Wild')
     assertDeepEqual(res.data.style.parents, [])
 
     const getRes = await ctx.request.get<{ style: StyleWithParentsAndChildren }>(
@@ -29,9 +29,9 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(getRes.status, 200)
-    assert.equal(getRes.data.style.id, res.data.style.id)
-    assert.equal(getRes.data.style.name, res.data.style.name)
+    assertEqual(getRes.status, 200)
+    assertEqual(getRes.data.style.id, res.data.style.id)
+    assertEqual(getRes.data.style.name, res.data.style.name)
     assertDeepEqual(getRes.data.style.children, [])
     assertDeepEqual(getRes.data.style.parents, [])
   })
@@ -42,8 +42,8 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(res.status, 201)
-    assert.equal(res.data.style.name, 'Pale Ale')
+    assertEqual(res.status, 201)
+    assertEqual(res.data.style.name, 'Pale Ale')
     assert.notEqual(res.data.style.id, null)
     assertDeepEqual(res.data.style.parents, [])
 
@@ -52,8 +52,8 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(childRes.status, 201)
-    assert.equal(childRes.data.style.name, 'India Pale Ale')
+    assertEqual(childRes.status, 201)
+    assertEqual(childRes.data.style.name, 'India Pale Ale')
     assert.notEqual(childRes.data.style.parents, null)
     assertDeepEqual(childRes.data.style.parents, [ res.data.style.id ])
 
@@ -62,9 +62,9 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(getRes.status, 200)
-    assert.equal(getRes.data.style.id, childRes.data.style.id)
-    assert.equal(getRes.data.style.name, childRes.data.style.name)
+    assertEqual(getRes.status, 200)
+    assertEqual(getRes.data.style.id, childRes.data.style.id)
+    assertEqual(getRes.data.style.name, childRes.data.style.name)
     assertDeepEqual(getRes.data.style.children, [])
     assertDeepEqual(getRes.data.style.parents, [{
       id: res.data.style.id,
@@ -76,7 +76,7 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(getParentRes.status, 200)
+    assertEqual(getParentRes.status, 200)
     assertDeepEqual(getParentRes.data.style.children, [{
       id: childRes.data.style.id,
       name: childRes.data.style.name,
@@ -89,21 +89,21 @@ describe('style tests', () => {
       { name: 'Ale', parents: [] },
       ctx.adminAuthHeaders()
     )
-    assert.equal(parent1Res.status, 201)
+    assertEqual(parent1Res.status, 201)
 
     const parent2Res = await ctx.request.post(`/api/v1/style`,
       { name: 'Lager', parents: [] },
       ctx.adminAuthHeaders()
     )
-    assert.equal(parent2Res.status, 201)
+    assertEqual(parent2Res.status, 201)
 
     const childRes = await ctx.request.post(`/api/v1/style`,
       { name: 'Cream Ale', parents: [ parent1Res.data.style.id, parent2Res.data.style.id ] },
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(childRes.status, 201)
-    assert.equal(childRes.data.style.name, 'Cream Ale')
+    assertEqual(childRes.status, 201)
+    assertEqual(childRes.data.style.name, 'Cream Ale')
     assert.notEqual(childRes.data.style.parents, null)
     assertDeepEqual(childRes.data.style.parents, [ parent1Res.data.style.id, parent2Res.data.style.id ])
 
@@ -112,9 +112,9 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(getRes.status, 200)
-    assert.equal(getRes.data.style.id, childRes.data.style.id)
-    assert.equal(getRes.data.style.name, 'Cream Ale')
+    assertEqual(getRes.status, 200)
+    assertEqual(getRes.data.style.id, childRes.data.style.id)
+    assertEqual(getRes.data.style.name, 'Cream Ale')
     assertDeepEqual(getRes.data.style.children, [])
     assertDeepEqual(getRes.data.style.parents, [
       {
@@ -131,8 +131,8 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(listRes.status, 200)
-    assert.equal(listRes.data.styles.length, 3)
+    assertEqual(listRes.status, 200)
+    assertEqual(listRes.data.styles.length, 3)
   })
 
   it('fail to create a child style with invalid parent', async () => {
@@ -141,7 +141,7 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(childRes.status, 400)
+    assertEqual(childRes.status, 400)
   })
 
   it('fail to create a style without name', async () => {
@@ -150,7 +150,7 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(res.status, 400)
+    assertEqual(res.status, 400)
   })
 
   it('update a style', async () => {
@@ -164,16 +164,16 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(aleRes.status, 201)
-    assert.equal(lagerRes.status, 201)
+    assertEqual(aleRes.status, 201)
+    assertEqual(lagerRes.status, 201)
 
     const createRes = await ctx.request.post(`/api/v1/style`,
       { name: 'India Pale Ale', parents: [ aleRes.data.style.id ] },
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(createRes.status, 201)
-    assert.equal(createRes.data.style.name, 'India Pale Ale')
+    assertEqual(createRes.status, 201)
+    assertEqual(createRes.data.style.name, 'India Pale Ale')
     assertDeepEqual(createRes.data.style.parents, [ aleRes.data.style.id ])
 
     const updateRes = await ctx.request.put(`/api/v1/style/${createRes.data.style.id}`,
@@ -186,9 +186,9 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(getRes.status, 200)
-    assert.equal(getRes.data.style.id, updateRes.data.style.id)
-    assert.equal(getRes.data.style.name, updateRes.data.style.name)
+    assertEqual(getRes.status, 200)
+    assertEqual(getRes.data.style.id, updateRes.data.style.id)
+    assertEqual(getRes.data.style.name, updateRes.data.style.name)
     assertDeepEqual(getRes.data.style.parents, [{
       id: lagerRes.data.style.id,
       name: lagerRes.data.style.name,
@@ -200,14 +200,14 @@ describe('style tests', () => {
       { name: 'Gueuze', parents: []},
       ctx.adminAuthHeaders()
     )
-    assert.equal(createRes.status, 201)
+    assertEqual(createRes.status, 201)
 
     const style = createRes.data.style
     const updateRes = await ctx.request.put(`/api/v1/style/${style.id}`,
       { name: style.name, parents: ['c407a67d-1e4c-48b3-8e46-29e05d834a8f']},
       ctx.adminAuthHeaders()
     )
-    assert.equal(updateRes.status, 400)
+    assertEqual(updateRes.status, 400)
 
   })
 
@@ -216,8 +216,8 @@ describe('style tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(res.status, 200)
-    assert.equal(res.data.styles.length, 0)
+    assertEqual(res.status, 200)
+    assertEqual(res.data.styles.length, 0)
   })
 
   it('fail to create cyclic relationship', async () => {
@@ -225,25 +225,25 @@ describe('style tests', () => {
       { name: 'Pale Ale', parents: [] },
       ctx.adminAuthHeaders()
     )
-    assert.equal(aleRes.status, 201)
+    assertEqual(aleRes.status, 201)
 
     const ipaRes = await ctx.request.post(`/api/v1/style`,
       { name: 'IPA', parents: [ aleRes.data.style.id ] },
       ctx.adminAuthHeaders()
     )
-    assert.equal(ipaRes.status, 201)
+    assertEqual(ipaRes.status, 201)
 
     const neipaRes = await ctx.request.post(`/api/v1/style`,
       { name: 'Neipa', parents: [ ipaRes.data.style.id ] },
       ctx.adminAuthHeaders()
     )
-    assert.equal(neipaRes.status, 201)
+    assertEqual(neipaRes.status, 201)
 
     const updateRes = await ctx.request.put(`/api/v1/style/${aleRes.data.style.id}`,
       { name: 'Pale Ale', parents: [ neipaRes.data.style.id ] },
       ctx.adminAuthHeaders()
     )
-    assert.equal(updateRes.status, 400)
+    assertEqual(updateRes.status, 400)
   })
 
 })

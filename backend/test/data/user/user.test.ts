@@ -1,11 +1,10 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import type { NewUser, User } from '../../../src/core/user/user'
 import * as userRepository from '../../../src/data/user/user.repository'
 import { Transaction } from '../../../src/data/database'
-import { assertDeepEqual } from '../../assert'
+import { assertDeepEqual, assertEqual } from '../../assert'
 
 describe('user tests', () => {
   const ctx = new TestContext()
@@ -29,8 +28,8 @@ describe('user tests', () => {
 
   it('insert user', async () => {
     const insertedUser = await insertUser()
-    assert.equal(insertedUser.username, user.username)
-    assert.equal(insertedUser.role, user.role)
+    assertEqual(insertedUser.username, user.username)
+    assertEqual(insertedUser.role, user.role)
   })
 
   it('find user', async () => {
@@ -44,7 +43,7 @@ describe('user tests', () => {
   it('do not find user that does not exist', async () => {
     const userId = '35370921-5d47-4274-a5cc-9fe0246d74e5'
     const foundUser = await userRepository.findUserById(ctx.db, userId)
-    assert.equal(foundUser, undefined)
+    assertEqual(foundUser, undefined)
   })
 
   it('list users', async () => {
@@ -69,8 +68,8 @@ describe('user tests', () => {
     let isFirstRenameStarted = false
     let isSecondRenameStarted = false
     function expectRenames(isFirstStarted: boolean, isSecondStarted: boolean) {
-      assert.equal(isFirstRenameStarted, isFirstStarted)
-      assert.equal(isSecondRenameStarted, isSecondStarted)
+      assertEqual(isFirstRenameStarted, isFirstStarted)
+      assertEqual(isSecondRenameStarted, isSecondStarted)
     }
     expectRenames(false, false)
     // A delay is needed to control race condition so that test execution is
@@ -115,7 +114,7 @@ describe('user tests', () => {
     const foundUser = await userRepository.findUserById(
       ctx.db, insertedUser.id
     )
-    assert.equal(foundUser?.username, remainingName)
+    assertEqual(foundUser?.username, remainingName)
   }
 
   it('lock user by id', async () => {
@@ -145,7 +144,7 @@ describe('user tests', () => {
     const foundUser = await userRepository.findUserById(
       ctx.db, insertedUser.id
     )
-    assert.equal(foundUser?.username, username)
+    assertEqual(foundUser?.username, username)
   })
 
   it('delete user', async () => {
@@ -156,6 +155,6 @@ describe('user tests', () => {
     const foundUser = await userRepository.findUserById(
       ctx.db, insertedUser.id
     )
-    assert.equal(foundUser, undefined)
+    assertEqual(foundUser, undefined)
   })
 })

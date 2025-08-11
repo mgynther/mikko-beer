@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import type {
   Container,
@@ -11,7 +10,7 @@ import { containerNotFoundError } from '../../../../src/core/errors'
 
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
-import { assertDeepEqual } from '../../../assert'
+import { assertDeepEqual, assertEqual } from '../../../assert'
 
 const container: Container = {
   id: '1fcbeb9e-1ea1-4c50-8fe5-b0aa18ac7e9a',
@@ -71,7 +70,7 @@ describe('container service unit tests', () => {
 
   it('find container', async () => {
     const finder = async (containerId: string) => {
-      assert.equal(containerId, container.id)
+      assertEqual(containerId, container.id)
       return container
     }
     const result = await containerService.findContainerById(
@@ -85,7 +84,7 @@ describe('container service unit tests', () => {
   it('fail to find container with unknown id', async () => {
     const id = 'd29b2ee6-5d2e-40bf-bb87-c02c00a6628f'
     const finder = async (searchId: string) => {
-      assert.equal(searchId, id)
+      assertEqual(searchId, id)
       return undefined
     }
     expectReject(async () => {

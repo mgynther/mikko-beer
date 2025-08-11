@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import {
   cyclicRelationshipError,
@@ -21,7 +20,7 @@ import * as styleService from '../../../../src/core/internal/style/service'
 
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
-import { assertDeepEqual } from '../../../assert'
+import { assertDeepEqual, assertEqual } from '../../../assert'
 
 const style: Style = {
   id: '71dcc323-7e59-4122-9afa-d4ffc484dee6',
@@ -86,7 +85,7 @@ describe('style service unit tests', () => {
     styleId: string,
     parents: string[]
   ): Promise<void> {
-    assert.equal(styleId, style.id)
+    assertEqual(styleId, style.id)
     assertDeepEqual(parents, [parentStyle.id])
   }
 
@@ -177,7 +176,7 @@ describe('style service unit tests', () => {
   })
 
   async function deleteStyleChildRelationships (styleId: string): Promise<void> {
-    assert.equal(styleId, style.id)
+    assertEqual(styleId, style.id)
   }
 
   async function update (updateStyle: Style) {
@@ -277,7 +276,7 @@ describe('style service unit tests', () => {
 
   it('find style', async () => {
     const finder = async (styleId: string) => {
-      assert.equal(styleId, style.id)
+      assertEqual(styleId, style.id)
       return styleWithParentsAndChildren
     }
     const result = await styleService.findStyleById(finder, style.id, log)
@@ -287,7 +286,7 @@ describe('style service unit tests', () => {
   it('fail to find style with unknown id', async () => {
     const id = '76cac82a-58a6-4978-8a00-1de381df032f'
     const finder = async (searchId: string) => {
-      assert.equal(searchId, id)
+      assertEqual(searchId, id)
       return undefined
     }
     expectReject(async () => {

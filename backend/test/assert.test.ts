@@ -1,7 +1,13 @@
 import { describe, it } from 'node:test'
 import * as assert from 'node:assert/strict'
 
-import { assertDeepEqual, assertGreaterThan, assertIncludes } from './assert'
+import {
+  assertDeepEqual,
+  assertGreaterThan,
+  assertIncludes,
+  assertInstanceOf
+} from './assert'
+import { ControllerError } from '../src/core/errors'
 
 describe('assertion tests', () => {
   it('is deep equal', () => {
@@ -11,6 +17,25 @@ describe('assertion tests', () => {
   it('is not deep equal', () => {
     assert.throws(() =>
       assertDeepEqual({ prop: 'testing' }, { property: 'another' })
+    )
+  })
+
+  it('is instance of', () => {
+    assertInstanceOf(
+      new ControllerError(
+        400,
+        'UnknownError',
+        'This is an error',
+        { info: 'some info here' }
+      ),
+      ControllerError
+    )
+  })
+
+  it('is not instance of', () => {
+    assert.throws(() =>
+      assertInstanceOf(new Error('unknown error'), ControllerError),
+      /not a ControllerError instance/
     )
   })
 

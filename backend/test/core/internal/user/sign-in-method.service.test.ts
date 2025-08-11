@@ -1,6 +1,9 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
-import { assertDeepEqual, assertGreaterThan } from '../../../assert'
+import {
+  assertDeepEqual,
+  assertEqual,
+  assertGreaterThan
+} from '../../../assert'
 
 import * as authTokenService from '../../../../src/core/internal/auth/auth-token.service'
 
@@ -54,10 +57,10 @@ describe('encrypt and verify password', () => {
     assertGreaterThan(hashedPassword.length, 20)
     // There's no trivial way ensure hash is correct without using the same
     // implementation as in the tested code.
-    assert.equal(await verifySecret(password, result), true)
+    assertEqual(await verifySecret(password, result), true)
     // While ensuring correctness is hard, it's trivial to ensure wrong
     // password fails.
-    assert.equal(await verifySecret(`${password}1`, result), false)
+    assertEqual(await verifySecret(`${password}1`, result), false)
   })
 })
 
@@ -109,21 +112,21 @@ describe('password sign-in-method service unit tests', () => {
   async function lockValidUser(
     lockUserId: string
   ): Promise<User | undefined> {
-    assert.equal(lockUserId, userId)
+    assertEqual(lockUserId, userId)
     return user
   }
 
   async function lockValidUserByUsername(
     lockUsername: string
   ): Promise<User | undefined> {
-    assert.equal(lockUsername, username)
+    assertEqual(lockUsername, username)
     return user
   }
 
   async function lockNoPasswordUser(
     lockUserId: string
   ): Promise<User | undefined> {
-    assert.equal(lockUserId, userId)
+    assertEqual(lockUserId, userId)
     return noPasswordUser
   }
 
@@ -134,14 +137,14 @@ describe('password sign-in-method service unit tests', () => {
   async function getUserPasswordHash(
     userId: string
   ): Promise<UserPasswordHash | undefined> {
-    assert.equal(userId, user.id)
+    assertEqual(userId, user.id)
     return userPasswordHash
   }
 
   async function getOtherPasswordHash(
     userId: string
   ): Promise<UserPasswordHash | undefined> {
-    assert.equal(userId, user.id)
+    assertEqual(userId, user.id)
     return {
       userId,
       passwordHash: otherHash
@@ -151,12 +154,12 @@ describe('password sign-in-method service unit tests', () => {
   async function getMissingPasswordHash(
     userId: string
   ): Promise<UserPasswordHash | undefined> {
-    assert.equal(userId, user.id)
+    assertEqual(userId, user.id)
     return undefined
   }
 
   async function insertRefreshToken(userId: string) {
-    assert.equal(userId, user.id)
+    assertEqual(userId, user.id)
     return {
       id: 'a8d69fd5-1491-4b63-86ea-6d5e3c7f624d',
       userId
@@ -169,10 +172,10 @@ describe('password sign-in-method service unit tests', () => {
       insertPasswordSignInMethod: async function(
         userPassword: UserPasswordHash
       ): Promise<void> {
-        assert.equal(userPassword.userId, user.id)
+        assertEqual(userPassword.userId, user.id)
         // There's no trivial way ensure hash is correct without using the same
         // implementation as in the tested code.
-        assert.equal(
+        assertEqual(
           await verifySecret(method.password, userPassword.passwordHash),
           true
         )
@@ -180,8 +183,8 @@ describe('password sign-in-method service unit tests', () => {
       setUserUsername: async function(
         userId: string, username: string | null
       ): Promise<void> {
-        assert.equal(userId, user.id)
-        assert.equal(username, user.username)
+        assertEqual(userId, user.id)
+        assertEqual(username, user.username)
       }
     }
     await addPasswordSignInMethod(addPasswordUserIf, userId, method, log)
@@ -233,10 +236,10 @@ describe('password sign-in-method service unit tests', () => {
       updatePassword: async function(
         userPassword: UserPasswordHash
       ): Promise<void> {
-        assert.equal(userPassword.userId, user.id)
+        assertEqual(userPassword.userId, user.id)
         // There's no trivial way ensure hash is correct without using the same
         // implementation as in the tested code.
-        assert.equal(
+        assertEqual(
           await verifySecret(
             passwordChange.newPassword, userPassword.passwordHash),
           true

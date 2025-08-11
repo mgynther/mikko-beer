@@ -1,9 +1,8 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import { Brewery } from '../../../src/core/brewery/brewery'
-import { assertDeepEqual } from '../../assert'
+import { assertDeepEqual, assertEqual } from '../../assert'
 
 describe('brewery tests', () => {
   const ctx = new TestContext()
@@ -20,36 +19,36 @@ describe('brewery tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(res.status, 201)
-    assert.equal(res.data.brewery.name, 'Koskipanimo')
+    assertEqual(res.status, 201)
+    assertEqual(res.data.brewery.name, 'Koskipanimo')
 
     const getRes = await ctx.request.get<{ brewery: Brewery }>(
       `/api/v1/brewery/${res.data.brewery.id}`,
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(getRes.status, 200)
+    assertEqual(getRes.status, 200)
     assertDeepEqual(getRes.data.brewery, res.data.brewery)
 
     const listRes = await ctx.request.get(`/api/v1/brewery?skip=0&size=100`,
       ctx.adminAuthHeaders()
     )
-    assert.equal(listRes.status, 200)
-    assert.equal(listRes.data.breweries.length, 1)
+    assertEqual(listRes.status, 200)
+    assertEqual(listRes.data.breweries.length, 1)
 
     const searchRes = await ctx.request.post(`/api/v1/brewery/search`,
       { name: 'oSk' },
       ctx.adminAuthHeaders()
     )
-    assert.equal(searchRes.status, 200)
-    assert.equal(searchRes.data.breweries.length, 1)
+    assertEqual(searchRes.status, 200)
+    assertEqual(searchRes.data.breweries.length, 1)
 
     const badSearchRes = await ctx.request.post(`/api/v1/brewery/search`,
       { name: 'oSkJ' },
       ctx.adminAuthHeaders()
     )
-    assert.equal(badSearchRes.status, 200)
-    assert.equal(badSearchRes.data.breweries.length, 0)
+    assertEqual(badSearchRes.status, 200)
+    assertEqual(badSearchRes.data.breweries.length, 0)
   })
 
   it('update a brewery', async () => {
@@ -58,22 +57,22 @@ describe('brewery tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(res.status, 201)
-    assert.equal(res.data.brewery.name, 'Salami Brewing')
+    assertEqual(res.status, 201)
+    assertEqual(res.data.brewery.name, 'Salami Brewing')
 
     const updateRes = await ctx.request.put(`/api/v1/brewery/${res.data.brewery.id}`,
       { name: 'Salama Brewing' },
       ctx.adminAuthHeaders()
     )
-    assert.equal(updateRes.status, 200)
-    assert.equal(updateRes.data.brewery.name, 'Salama Brewing')
+    assertEqual(updateRes.status, 200)
+    assertEqual(updateRes.data.brewery.name, 'Salama Brewing')
 
     const getRes = await ctx.request.get<{ brewery: Brewery }>(
       `/api/v1/brewery/${res.data.brewery.id}`,
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(getRes.status, 200)
+    assertEqual(getRes.status, 200)
     assertDeepEqual(getRes.data.brewery, updateRes.data.brewery)
   })
 
@@ -83,7 +82,7 @@ describe('brewery tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(res.status, 400)
+    assertEqual(res.status, 400)
   })
 
   it('get empty brewery list', async () => {
@@ -91,8 +90,8 @@ describe('brewery tests', () => {
       ctx.adminAuthHeaders()
     )
 
-    assert.equal(res.status, 200)
-    assert.equal(res.data.breweries.length, 0)
+    assertEqual(res.status, 200)
+    assertEqual(res.data.breweries.length, 0)
   })
 
 })

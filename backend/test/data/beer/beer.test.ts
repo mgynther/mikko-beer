@@ -1,9 +1,9 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import { TestContext } from '../test-context'
 import type { Transaction } from '../../../src/data/database'
 import * as beerRepository from '../../../src/data/beer/beer.repository'
+import { assertEqual } from '../../assert'
 
 describe('beer tests', () => {
   const ctx = new TestContext()
@@ -25,7 +25,7 @@ describe('beer tests', () => {
         trx,
         beer.id
       )
-      assert.equal(lockedKey, beer.id)
+      assertEqual(lockedKey, beer.id)
     })
   })
 
@@ -36,7 +36,7 @@ describe('beer tests', () => {
         trx,
         dummyId
       )
-      assert.equal(lockedKey, undefined)
+      assertEqual(lockedKey, undefined)
     })
   })
 })

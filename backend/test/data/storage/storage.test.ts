@@ -10,6 +10,7 @@ import * as containerRepository from '../../../src/data/container/container.repo
 import * as storageRepository from '../../../src/data/storage/storage.repository'
 import * as styleRepository from '../../../src/data/style/style.repository'
 import { insertMultipleReviews } from '../review-helpers'
+import { assertEqual } from '../../assert'
 
 describe('storage tests', () => {
   const ctx = new TestContext()
@@ -75,7 +76,7 @@ describe('storage tests', () => {
         trx,
         storage.id
       )
-      assert.equal(lockedKey, storage.id)
+      assertEqual(lockedKey, storage.id)
     })
   })
 
@@ -85,7 +86,7 @@ describe('storage tests', () => {
       ctx.db,
       storage.id
     )
-    assert.equal(found?.hasReview, false)
+    assertEqual(found?.hasReview, false)
   })
 
   it('storages have reviews', async () => {
@@ -113,14 +114,14 @@ describe('storage tests', () => {
       ctx.db,
       { skip: 0, size: 20 }
     )
-    assert.equal(results.length, 3)
+    assertEqual(results.length, 3)
     const [ beerResult, otherBeerResult, noReviewResult ] = results
-    assert.equal(beerResult.beerId, data.beer.id)
-    assert.equal(beerResult.hasReview, true)
-    assert.equal(otherBeerResult.beerId, data.otherBeer.id)
-    assert.equal(otherBeerResult.hasReview, true)
-    assert.equal(noReviewResult.beerId, noReviewStorage.beer)
-    assert.equal(noReviewResult.hasReview, false)
+    assertEqual(beerResult.beerId, data.beer.id)
+    assertEqual(beerResult.hasReview, true)
+    assertEqual(otherBeerResult.beerId, data.otherBeer.id)
+    assertEqual(otherBeerResult.hasReview, true)
+    assertEqual(noReviewResult.beerId, noReviewStorage.beer)
+    assertEqual(noReviewResult.hasReview, false)
   })
 
   it('delete storage', async () => {
@@ -136,7 +137,7 @@ describe('storage tests', () => {
     })
     const deletedStorage =
       await storageRepository.findStorageById(ctx.db, storage.id)
-    assert.equal(deletedStorage, undefined)
+    assertEqual(deletedStorage, undefined)
   })
 
   it('do not lock storage that does not exists', async () => {
@@ -146,7 +147,7 @@ describe('storage tests', () => {
         trx,
         dummyId
       )
-      assert.equal(lockedKey, undefined)
+      assertEqual(lockedKey, undefined)
     })
   })
 })

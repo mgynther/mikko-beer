@@ -6,6 +6,12 @@ export function assertDeepEqual<T>(value: T, reference: T): void {
   assert.deepEqual(value, reference)
 }
 
+// Provides better type safety than assert.equal where we know types already
+// match. Finding errors coding time vs run time is quicker.
+export function assertEqual<T>(value: T, reference: T): void {
+  assert.equal(value, reference)
+}
+
 export function assertGreaterThan(value: number, reference: number): void {
   assert.equal(
     value > reference,
@@ -22,5 +28,16 @@ export function assertIncludes(
     fullString.includes(includedString),
     true,
     `value ${includedString} is not included in ${fullString}`
+  )
+}
+
+type Class<T> = new (...args: any[]) => T
+// Does not catch classes of wrong type compile time but at least provides a way
+// to have generic class type.
+export function assertInstanceOf<T>(instance: T, classType: Class<T>) {
+  assert.equal(
+    instance instanceof classType,
+    true,
+    `not a ${classType.name} instance`
   )
 }
