@@ -1,5 +1,4 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import * as authTokenService from '../../../../src/core/internal/auth/auth-token.service'
 import type {
@@ -15,7 +14,7 @@ import type { User } from '../../../../src/core/user/user'
 import type { Tokens } from '../../../../src/core/auth/tokens'
 import { invalidCredentialsTokenError } from '../../../../src/core/errors'
 import { expectReject } from '../../controller-error-helper'
-import { assertDeepEqual, assertEqual } from '../../../assert'
+import { assertDeepEqual, assertEqual, assertThrows } from '../../../assert'
 
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {
@@ -69,9 +68,9 @@ describe('auth token service unit tests', () => {
   }
 
   it('fail to verify invalid auth token', () => {
-    assert.throws(() => {
+    assertThrows(() => {
       authTokenService.verifyAuthToken(token('invalid'), authTokenSecret)
-    }, new InvalidAuthTokenError())
+    }, new InvalidAuthTokenError(), InvalidAuthTokenError)
   })
 
   // Tokens are time sensitive so they are difficult to test in isolated steps.
@@ -117,15 +116,15 @@ describe('auth token service unit tests', () => {
     )
     expectKnownTokens(tokens)
 
-    assert.throws(() => {
+    assertThrows(() => {
       authTokenService.verifyAuthToken(tokens.auth, 'ThisIsWrongSecret')
-    }, new InvalidAuthTokenError())
+    }, new InvalidAuthTokenError(), InvalidAuthTokenError)
   })
 
   it('fail to verify expired auth token', async () => {
-    assert.throws(() => {
+    assertThrows(() => {
       authTokenService.verifyAuthToken(knownTokens.auth, authTokenSecret)
-    }, new AuthTokenExpiredError())
+    }, new AuthTokenExpiredError(), AuthTokenExpiredError)
   })
 
   it('fail to delete refresh token on user mismatch', async () => {

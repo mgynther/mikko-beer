@@ -1,5 +1,5 @@
 import { ControllerError } from '../../src/core/errors'
-import { assertEqual, assertInstanceOf } from '../assert'
+import { assertDeepEqual, assertEqual, assertInstanceOf } from '../assert'
 
 export async function expectReject(
   fn: () => Promise<void>,
@@ -34,4 +34,5 @@ function assertControllerError(
    const error: ControllerError = receivedError as ControllerError
    assertEqual(error.message, expectedError.message)
    assertEqual(error.status, expectedError.status)
+   assertDeepEqual(error, expectedError)
 }

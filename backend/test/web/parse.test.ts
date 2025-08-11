@@ -1,8 +1,7 @@
 import { describe, it } from 'node:test'
-import * as assert from 'node:assert/strict'
 
 import { parseExpiryDurationMin } from '../../src/web/parse'
-import { assertEqual } from '../assert';
+import { assertEqual, assertThrows } from '../assert';
 
 describe('parse expiry duration min', () => {
   it('parses valid number', () => {
@@ -17,9 +16,10 @@ describe('parse expiry duration min', () => {
     '',
   ].forEach((value: string) => {
     it(`throws on invalid value "${value}"`, () => {
-      assert.throws(
+      assertThrows(
         () => parseExpiryDurationMin(value),
-        new Error(`invalid expiry duration ${value}`)
+        new Error(`invalid expiry duration ${value}`),
+        Error
       )
     })
   })

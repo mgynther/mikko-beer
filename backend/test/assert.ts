@@ -48,6 +48,21 @@ export function assertInstanceOf<T>(instance: T, classType: Class<T>) {
   )
 }
 
+export function assertThrows<T extends Error>(
+  func: () => void,
+  error: T,
+  classType: Class<T>
+) {
+  assert.throws(
+    func,
+    (err: unknown) => {
+      assertInstanceOf(err, classType)
+      assert.deepEqual(err, error)
+      return true
+    }
+  )
+}
+
 export function assertTruthy(value: object | undefined | string) {
   assert.ok(value)
 }

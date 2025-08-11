@@ -7,6 +7,7 @@ import {
   assertIncludes,
   assertInstanceOf,
   assertNotDeepEqual,
+  assertThrows,
   assertTruthy
 } from './assert'
 import { ControllerError } from '../src/core/errors'
@@ -96,4 +97,38 @@ describe('assertion tests', () => {
       )
     })
   )
+
+  class CustomError extends Error {
+    constructor(message: string) {
+      super(message)
+    }
+  }
+  it('throws', () => {
+    assertThrows(
+      () => { throw new CustomError('test') },
+      new CustomError('test'),
+      CustomError
+    )
+  })
+
+  it('fails on throwing error of wrong type', () => {
+    assert.throws(() =>
+      assertThrows(
+        () => { throw new Error('test') },
+        new CustomError('test'),
+        CustomError
+      ),
+      /not a CustomError instance/
+    )
+  })
+
+  it('fails on throwing error with wrong message', () => {
+    assert.throws(() =>
+      assertThrows(
+        () => { throw new CustomError('test') },
+        new CustomError('another message'),
+        CustomError
+      )
+    )
+  })
 })
