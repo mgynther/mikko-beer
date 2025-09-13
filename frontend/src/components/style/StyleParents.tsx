@@ -6,6 +6,8 @@ import type {
   Style
 } from '../../core/style/types'
 
+import Button from '../common/Button'
+
 import SearchStyle from './SearchStyle'
 
 import '../common/SelectedItem.css'
@@ -41,14 +43,14 @@ function StyleParents (props: Props): React.JSX.Element {
         {parents.map((parent, index) => (
           <div key={parent.id} className='SelectedItem'>
             <div>{parent.name}</div>
-            <button onClick={() => {
-              const newParents = [...parents]
-              newParents.splice(index, 1)
-              setParents(newParents)
-            }}
-            >
-              Remove
-            </button>
+            <Button
+              onClick={() => {
+                const newParents = [...parents]
+                newParents.splice(index, 1)
+                setParents(newParents)
+              }}
+              text='Remove'
+            />
           </div>
         ))}
       </div>

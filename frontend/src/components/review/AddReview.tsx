@@ -10,6 +10,7 @@ import type {
   Storage
 } from '../../core/storage/types'
 
+import Button from '../common/Button'
 import LoadingIndicator from '../common/LoadingIndicator'
 import { formatDateString, type NavigateIf, type ParamsIf } from '../util'
 
@@ -112,16 +113,15 @@ function AddReview (props: Props): React.JSX.Element {
       <br />
 
       <div>
-        <button
+        <Button
           disabled={
             review === undefined ||
             isLoading ||
             createdReview !== undefined
           }
           onClick={() => { doAddReview() }}
-        >
-          Add
-        </button>
+          text='Add'
+        />
         <LoadingIndicator isLoading={isLoading} />
       </div>
     </div>

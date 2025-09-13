@@ -12,6 +12,7 @@ import { formatDateString } from '../util'
 
 import BeerLink from '../beer/BeerLink'
 import BreweryLinks from '../brewery/BreweryLinks'
+import Button from '../common/Button'
 import LinkLikeButton from '../common/LinkLikeButton'
 import StyleLinks from '../style/StyleLinks'
 
@@ -63,13 +64,11 @@ function StorageItem (props: Props): React.JSX.Element {
           {formatDateString(storage.bestBefore)}
         </div>
         <div className='Actions'>
-          <button
-            type='button'
+          <Button
             className='TabButton Compact'
             onClick={() => { setIsOpen(!isOpen); }}
-          >
-            {getOpenSymbol(isOpen)}
-          </button>
+            text={getOpenSymbol(isOpen)}
+          />
         </div>
       </div>
       {isOpen && (

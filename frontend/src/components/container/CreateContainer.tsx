@@ -5,6 +5,7 @@ import type {
   CreateContainerIf
 } from '../../core/container/types'
 
+import Button from '../common/Button'
 import LoadingIndicator from '../common/LoadingIndicator'
 
 import ContainerEditor from './ContainerEditor'
@@ -46,12 +47,11 @@ function CreateContainer (props: Props): React.JSX.Element {
           setContainer(container)
         }}
       />
-      <button
+      <Button
         disabled={container === undefined}
         onClick={() => { void doCreate() }}
-      >
-        Create
-      </button>
+        text='Create'
+      />
       {isLoading && <LoadingIndicator isLoading={isLoading} />}
     </>
   )

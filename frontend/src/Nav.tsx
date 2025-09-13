@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Button from './components/common/Button'
 import Link from './components/common/Link'
 import SearchBeerWithNavi from './components/beer/SearchBeerWithNavi'
 import SearchBreweryWithNavi from './components/brewery/SearchBreweryWithNavi'
@@ -49,9 +50,7 @@ function Nav (props: Props): React.JSX.Element {
           <Link to="/storage" text="Storage" />
         </li>
         <li>
-          <button onClick={toggleMore}>
-            {isMoreOpen ? 'Less' : 'More'}
-          </button>
+          <Button onClick={toggleMore} text={isMoreOpen ? 'Less' : 'More'} />
         </li>
       </ul>
 
@@ -103,7 +102,7 @@ function Nav (props: Props): React.JSX.Element {
                 </label>
             </li>
             <li>
-              <button onClick={() => { props.logout(); }}>Logout</button>
+              <Button onClick={() => { props.logout(); }} text='Logout'/>
             </li>
           </ul>
         </div>

@@ -8,6 +8,7 @@ import type {
 
 import { Mode, SelectCreateRadioBasic } from '../common/SelectCreateRadio'
 
+import Button from '../common/Button'
 import CreateStyle from './CreateStyle'
 import SearchStyle from './SearchStyle'
 
@@ -46,7 +47,7 @@ function SelectStyle (props: Props): React.JSX.Element {
               searchIf={props.searchIf}
               select={props.select}
             />
-            <button onClick={props.remove}>Remove</button>
+            <Button onClick={props.remove} text='Remove' />
           </>
         )}
       </div>

@@ -1,5 +1,7 @@
 import React from 'react'
 
+import Button from './Button'
+
 import './TabButton.css'
 
 interface TabButtonProps {
@@ -15,11 +17,11 @@ function TabButton (props: TabButtonProps): React.JSX.Element {
   const className =
     `TabButton ${selectedClass} ${compactClass}`.trim()
   return (
-    <button
+    <Button
       className={className}
-      onClick={props.onClick}>
-      {props.title}
-    </button>
+      onClick={props.onClick}
+      text={props.title}
+    />
   )
 }
 

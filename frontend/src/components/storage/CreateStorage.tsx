@@ -9,6 +9,7 @@ import type { ReviewContainerIf } from '../../core/review/types'
 import type { SearchIf } from '../../core/search/types'
 import type { CreateStorageIf } from '../../core/storage/types'
 
+import Button from '../common/Button'
 import LoadingIndicator from '../common/LoadingIndicator'
 import SelectBeer from '../beer/SelectBeer'
 import SelectContainer from '../container/SelectContainer'
@@ -73,10 +74,10 @@ function CreateStorage (props: Props): React.JSX.Element {
             : (<div className='FlexRow'>
                   <div>{beer.name}</div>
                   <div>
-                    <button
-                      onClick={() => { setBeer(undefined) }}>
-                      Change
-                    </button>
+                    <Button
+                      onClick={() => { setBeer(undefined) }}
+                      text='Change'
+                    />
                 </div>
               </div>)
           }
@@ -93,10 +94,10 @@ function CreateStorage (props: Props): React.JSX.Element {
               : (<div className='FlexRow'>
                   <ContainerInfo container={container} />
                   <div>
-                    <button
-                      onClick={() => { setContainer(undefined) }}>
-                      Change
-                    </button>
+                    <Button
+                      onClick={() => { setContainer(undefined) }}
+                      text='Change'
+                    />
                   </div>
                 </div>)
             }

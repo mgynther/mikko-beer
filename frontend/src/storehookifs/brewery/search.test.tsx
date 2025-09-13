@@ -8,6 +8,8 @@ import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
 import userEvent from '@testing-library/user-event'
 
+import Button from '../../components/common/Button'
+
 function Helper(): React.JSX.Element {
   const searchIf = searchBreweries()
   const { search } = searchIf.useSearch()
@@ -21,11 +23,10 @@ function Helper(): React.JSX.Element {
       {results.map(brewery =>
         <div key={brewery.id}>{brewery.name}</div>
       )}
-      <button
+      <Button
         onClick={() => { void doSearch() }}
-      >
-        Search
-      </button>
+        text='Search'
+      />
     </div>
   )
 }

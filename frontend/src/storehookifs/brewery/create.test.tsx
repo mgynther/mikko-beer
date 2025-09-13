@@ -7,6 +7,8 @@ import { render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from '../../react-redux-wrapper'
 
+import Button from '../../components/common/Button'
+
 interface HelperProps {
   brewery: CreateBreweryRequest
   handleResponse: (brewery: Brewery) => void
@@ -23,7 +25,7 @@ function Helper(props: HelperProps): React.JSX.Element {
     void doHandle()
   }
   return (
-    <button onClick={handleClick}>Test</button>
+    <Button onClick={handleClick} text='Test' />
   )
 }
 

@@ -7,6 +7,8 @@ import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
 import userEvent from '@testing-library/user-event'
 
+import Button from '../../components/common/Button'
+
 function Helper(): React.JSX.Element {
   const listIf = listBreweries()
   const { list, breweryList } = listIf.useList()
@@ -15,13 +17,12 @@ function Helper(): React.JSX.Element {
       {breweryList?.breweries.map(brewery =>
         <div key={brewery.id}>{brewery.name}</div>
       )}
-      <button
+      <Button
         onClick={() => {
           void list({ skip: 0, size: 10 })
         }}
-      >
-        Load
-      </button>
+        text='Load'
+      />
     </div>
   )
 }

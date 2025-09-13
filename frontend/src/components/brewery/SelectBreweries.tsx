@@ -7,6 +7,7 @@ import type {
 } from '../../core/brewery/types'
 import type { SearchIf } from '../../core/search/types'
 
+import Button from '../common/Button'
 import SelectBrewery from './SelectBrewery'
 
 import '../common/SelectedItem.css'
@@ -50,7 +51,7 @@ function SelectionItem (props: SelectionItemProps): React.JSX.Element {
       {props.brewery !== undefined && (
         <div className='SelectedItem'>
           <div>{props.brewery.name}</div>
-          <button onClick={props.clear}>Change</button>
+          <Button onClick={props.clear} text='Change' />
         </div>
       )}
     </>
@@ -123,7 +124,7 @@ function SelectBreweries (props: Props): React.JSX.Element {
       ))}
       {!hasUndefinedBrewery(selections) && (
         <div className='AddBrewery'>
-          <button
+          <Button
             onClick={() => {
               const newBreweries = [
                 ...selections,
@@ -134,9 +135,8 @@ function SelectBreweries (props: Props): React.JSX.Element {
               ]
               setSelections(newBreweries)
             }}
-          >
-            Add brewery
-          </button>
+            text='Add brewery'
+          />
         </div>
       )}
     </div>

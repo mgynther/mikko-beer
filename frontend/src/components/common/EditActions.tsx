@@ -1,5 +1,6 @@
 import React from 'react'
 
+import Button from './Button'
 import LoadingIndicator from './LoadingIndicator'
 
 import './EditActions.css'
@@ -14,13 +15,12 @@ interface Props {
 function EditActions (props: Props): React.JSX.Element | null {
   return (
     <span className='EditActions'>
-      <button onClick={() => { props.onCancel() }}>Cancel</button>
-      <button
+      <Button onClick={() => { props.onCancel() }} text='Cancel' />
+      <Button
         disabled={props.isSaveDisabled || props.isSaving}
         onClick={() => { props.onSave() }}
-      >
-        Save
-      </button>
+        text='Save'
+      />
       <LoadingIndicator isLoading={props.isSaving} />
     </span>
   )

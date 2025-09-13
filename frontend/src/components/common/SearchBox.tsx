@@ -1,5 +1,6 @@
 import React, { useRef } from 'react'
 
+import Button from './Button'
 import LoadingIndicator from './LoadingIndicator'
 
 import './SearchBox.css'
@@ -79,22 +80,25 @@ const SearchBox = <T extends SearchBoxItem>({
           activate()
         }}
       />
-      <button onClick={() => {
-        setFilter('')
-        inputRef.current?.focus()
-      }}>X</button>
+      <Button
+        onClick={() => {
+          setFilter('')
+          inputRef.current?.focus()
+        }}
+        text='X'
+      />
       {currentFilter.length > 0 && isActive && (
         <div className='SearchResults'>
           <ul>
             {visibleOptions.map(item => (
               <li key={item.id} >
-                <button
+                <Button
                   onClick={() => {
                     select(item)
                     setFilter('')
-                  }} >
-                  {formatter(item)}
-                </button>
+                  }}
+                  text={formatter(item)}
+                />
               </li>
             ))}
             {visibleOptions.length === 0 && (

@@ -6,6 +6,7 @@ import type {
   User
 } from '../../core/user/types'
 
+import Button from '../common/Button'
 import LoadingIndicator from '../common/LoadingIndicator'
 
 interface Props {
@@ -39,10 +40,10 @@ function UserList (props: Props): React.JSX.Element {
         {users.map((user: User) => (
           <li key={user.id}>
             {user.username} ({user.role}){ ' ' }
-            <button
-              onClick={() => { void confirmDeleteUser(user) }}>
-              Delete
-            </button>
+            <Button
+              onClick={() => { void confirmDeleteUser(user) }}
+              text='Delete'
+            />
           </li>
         ))}
       </ul>

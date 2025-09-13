@@ -3,6 +3,8 @@ import React from 'react'
 import { Role } from '../../core/user/types'
 import type { GetLogin, Login } from '../../core/login/types'
 
+import Button from './Button'
+
 interface Props {
   disabled: boolean
   getLogin: GetLogin
@@ -15,13 +17,12 @@ function EditButton (props: Props): React.JSX.Element | null {
     return null
   }
   return (
-    <button
+    <Button
       className='EditButton'
       disabled={props.disabled}
       onClick={() => { props.onClick() }}
-    >
-      Edit
-    </button>
+      text='Edit'
+    />
   )
 }
 

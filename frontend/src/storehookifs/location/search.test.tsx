@@ -8,6 +8,8 @@ import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
 import userEvent from '@testing-library/user-event'
 
+import Button from '../../components/common/Button'
+
 function Helper(): React.JSX.Element {
   const searchIf = searchLocations({
       useCreate: () => ({
@@ -29,11 +31,7 @@ function Helper(): React.JSX.Element {
       {results.map(location =>
         <div key={location.id}>{location.name}</div>
       )}
-      <button
-        onClick={() => { void doSearch() }}
-      >
-        Search
-      </button>
+      <Button onClick={() => { void doSearch() }} text='Search' />
     </div>
   )
 }

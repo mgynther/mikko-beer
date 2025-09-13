@@ -1,5 +1,7 @@
 import React from 'react'
 
+import Button from './Button'
+
 import './LinkLikeButton.css'
 
 interface Props {
@@ -9,13 +11,11 @@ interface Props {
 
 function LinkLikeButton (props: Props): React.JSX.Element {
   return (
-    <button
-      type='button'
+    <Button
       className='linklike-button'
       onClick={() => { props.onClick(); }}
-    >
-      {props.text}
-    </button>
+      text={props.text}
+    />
   )
 }
 

@@ -19,12 +19,14 @@ import SearchLocation from '../location/SearchLocation'
 
 import { pad } from '../util'
 
+import ContainerInfo from '../container/ContainerInfo'
 import Slider from '../common/Slider'
 
 import '../common/FlexRow.css'
 
 import './ReviewEditor.css'
-import ContainerInfo from '../container/ContainerInfo'
+
+import Button from '../common/Button'
 
 export interface InitialReview {
   joined: JoinedReview
@@ -160,10 +162,10 @@ function ReviewEditor (props: Props): React.JSX.Element {
                   <div>{beer.name}</div>
                   {!props.isFromStorage && (
                     <div>
-                      <button
-                        onClick={() => { setBeer(undefined) }}>
-                        Change
-                      </button>
+                      <Button
+                        onClick={() => { setBeer(undefined) }}
+                        text='Change'
+                      />
                     </div>
                   )}
               </div>)
@@ -183,10 +185,10 @@ function ReviewEditor (props: Props): React.JSX.Element {
                 <ContainerInfo container={container} />
                 {!props.isFromStorage && (
                   <div>
-                    <button
-                      onClick={() => { setContainer(undefined) }}>
-                      Change
-                    </button>
+                    <Button
+                      onClick={() => { setContainer(undefined) }}
+                      text='Change'
+                    />
                   </div>
                 )}
               </div>)
@@ -217,9 +219,10 @@ function ReviewEditor (props: Props): React.JSX.Element {
             : (
               <div className='FlexRow'>
                 <div>{location.name}</div>
-                <button onClick={() => { setLocation(undefined); }} >
-                  Remove
-                </button>
+                <Button
+                  onClick={() => { setLocation(undefined); }}
+                  text='Remove'
+                />
               </div>
             )}
           </div>

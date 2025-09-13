@@ -7,6 +7,8 @@ import { render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from '../../react-redux-wrapper'
 
+import Button from '../../components/common/Button'
+
 interface HelperProps {
   style: CreateStyleRequest
   handleResponse: (style: Style) => void
@@ -23,7 +25,7 @@ function Helper(props: HelperProps): React.JSX.Element {
   }
   return (
     <>
-      <button onClick={handleClick}>Test</button>
+      <Button onClick={handleClick} text='Test' />
       <div>{create.createdStyle?.name}</div>
     </>
   )

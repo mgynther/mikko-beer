@@ -5,6 +5,7 @@ import type {
   CreateBreweryIf
 } from '../../core/brewery/types'
 
+import Button from '../common/Button'
 import LoadingIndicator from '../common/LoadingIndicator'
 
 import BreweryEditor from './BreweryEditor'
@@ -49,12 +50,11 @@ function CreateBrewery (props: Props): React.JSX.Element {
           }}
         />
         <div>
-          <button
+          <Button
             disabled={newBrewery === undefined}
             onClick={() => { void doCreate() }}
-          >
-            Create
-          </button>
+            text='Create'
+          />
         </div>
       </div>
       {isLoading && <LoadingIndicator isLoading={isLoading} />}

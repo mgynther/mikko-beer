@@ -6,6 +6,7 @@ import type {
 } from '../../core/beer/types'
 import type { SearchIf } from '../../core/search/types'
 
+import Button from '../common/Button'
 import BeerEditor from './BeerEditor'
 
 import './CreateBeer.css'
@@ -42,10 +43,11 @@ function CreateBeer (props: Props): React.JSX.Element {
         onChange={setBeer}
         searchIf={props.searchIf}
       />
-      <button
+      <Button
         disabled={beer === undefined || isLoading}
         onClick={() => { void doCreate() }}
-      >Create beer</button>
+        text='Create beer'
+      />
     </div>
   )
 }

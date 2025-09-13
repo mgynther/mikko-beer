@@ -7,6 +7,7 @@ import type {
   Style
 } from '../../core/style/types'
 
+import Button from '../common/Button'
 import SelectStyle from './SelectStyle'
 
 import '../common/SelectedItem.css'
@@ -48,7 +49,7 @@ function SelectionItem (props: SelectionItemProps): React.JSX.Element {
       {props.style !== undefined && (
         <div className='SelectedItem'>
           <div>{props.style.name}</div>
-          <button onClick={props.clear}>Change</button>
+          <Button onClick={props.clear} text='Change' />
         </div>
       )}
     </>
@@ -119,7 +120,7 @@ function SelectStyles (props: Props): React.JSX.Element {
       ))}
       {!hasUndefinedStyle(selections) && (
         <div>
-          <button
+          <Button
             onClick={() => {
               const newStyles = [
                 ...selections,
@@ -130,9 +131,8 @@ function SelectStyles (props: Props): React.JSX.Element {
               ]
               setSelections(newStyles)
             }}
-          >
-            Add style
-          </button>
+            text='Add style'
+          />
         </div>
       )}
     </div>

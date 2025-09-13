@@ -7,6 +7,7 @@ import type {
   StyleWithParentIds
 } from '../../core/style/types'
 
+import Button from '../common/Button'
 import LoadingIndicator from '../common/LoadingIndicator'
 
 import StyleEditor from './StyleEditor'
@@ -59,13 +60,12 @@ function CreateStyle (props: Props): React.JSX.Element {
         searchIf={props.searchIf}
       />
       <div className='ButtonContainer'>
-        <button
+        <Button
           disabled={style === undefined}
           onClick={() => { void doCreate() }}
-        >
-          Create
-        </button>
-        <button onClick={() => { props.remove() }}>Remove</button>
+          text='Create'
+        />
+        <Button onClick={() => { props.remove() }} text='Remove' />
       </div>
       <LoadingIndicator isLoading={isLoading} />
     </div>

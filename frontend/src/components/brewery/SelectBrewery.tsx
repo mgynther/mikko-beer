@@ -6,6 +6,7 @@ import type {
 } from '../../core/brewery/types'
 import type { SearchIf } from '../../core/search/types'
 
+import Button from '../common/Button'
 import { Mode, SelectCreateRadioBasic } from '../common/SelectCreateRadio'
 
 import CreateBrewery from './CreateBrewery'
@@ -42,7 +43,7 @@ function SelectBrewery (props: Props): React.JSX.Element {
           />
         )}
         {props.isRemoveVisible && (
-          <button onClick={props.remove}>Remove</button>
+          <Button onClick={props.remove} text='Remove' />
         )}
       </div>
     </div>

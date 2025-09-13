@@ -6,6 +6,7 @@ import type { Container } from '../../core/container/types'
 import { render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from '../../react-redux-wrapper'
+import Button from '../../components/common/Button'
 
 interface HelperProps {
   container: Container
@@ -23,7 +24,7 @@ function Helper(props: HelperProps): React.JSX.Element {
   }
   return (
     <>
-      <button onClick={handleClick}>Test</button>
+      <Button onClick={handleClick} text='Test' />
       {update.isLoading && <div>Loading</div>}
       {!update.isLoading && <div>Not loading</div>}
     </>
