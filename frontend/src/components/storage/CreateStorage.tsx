@@ -35,7 +35,7 @@ function CreateStorage (props: Props): React.JSX.Element {
 
   async function doChange (event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
-    if (beer === undefined || container === undefined) return
+    if (!isValid) return
     const bb = new Date(`${bestBefore}T12:00:00.000`).toISOString()
     await create({
       beer: beer.id,
