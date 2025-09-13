@@ -33,6 +33,15 @@ function CreateStorage (props: Props): React.JSX.Element {
   )
   const [bestBefore, setBestBefore] = useState('')
 
+  // Very crude validation may let garbage pass but assuming date
+  // implementations set invalid or missing input to an empty string or
+  // similar it should be fine.
+  const isBestBeforeValid = /^\d{4}-\d{2}-\d{2}$/.test(bestBefore)
+
+  const isValid = beer !== undefined &&
+    container !== undefined &&
+    isBestBeforeValid
+
   async function doChange (event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     if (!isValid) return
@@ -46,14 +55,6 @@ function CreateStorage (props: Props): React.JSX.Element {
     setContainer(undefined)
     setBestBefore('')
   }
-  // Very crude validation may let garbage pass but assuming date
-  // implementations set invalid or missing input to an empty string or
-  // similar it should be fine.
-  const isBestBeforeValid = /^\d{4}-\d{2}-\d{2}$/.test(bestBefore)
-
-  const isValid = beer !== undefined &&
-    container !== undefined &&
-    isBestBeforeValid
 
   return (
     <div>
