@@ -1,4 +1,5 @@
 import { render } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import EditButton from './EditButton'
 import { Role, type User } from '../../core/user/types'
@@ -46,7 +47,8 @@ test('is disabled for viewer', () => {
   expect(button).toEqual(null)
 })
 
-test('handles click for admin', () => {
+test('handles click for admin', async () => {
+  const user = userEvent.setup()
   const clickCb = vitest.fn()
   const { getByRole } = render(
     <EditButton
@@ -56,11 +58,12 @@ test('handles click for admin', () => {
     />
   )
   const button = getByRole('button')
-  button.click()
+  await user.click(button)
   expect(clickCb).toHaveBeenCalled()
 })
 
-test('does not handle click when disabled', () => {
+test('does not handle click when disabled', async () => {
+  const user = userEvent.setup()
   const clickCb = vitest.fn()
   const { getByRole } = render(
     <EditButton
@@ -70,7 +73,7 @@ test('does not handle click when disabled', () => {
     />
   )
   const button = getByRole('button')
-  button.click()
+  await user.click(button)
   expect(clickCb).not.toHaveBeenCalled()
   expect(button.hasAttribute('disabled')).toEqual(true)
 })
