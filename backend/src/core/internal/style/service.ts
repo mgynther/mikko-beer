@@ -74,12 +74,13 @@ export async function updateStyle (
     name: request.name
   })
 
-  await Promise.all([
+  const promises = [
     updateStyleIf.deleteStyleChildRelationships(styleId),
-    request.parents.length === 0
-      ? () => undefined
-      : updateStyleIf.insertParents(style.id, request.parents)
-  ])
+  ]
+  if (request.parents.length > 0) {
+    promises.push(updateStyleIf.insertParents(style.id, request.parents))
+  }
+  await Promise.all(promises)
 
   log(INFO, 'updated style', style.id)
   return {
