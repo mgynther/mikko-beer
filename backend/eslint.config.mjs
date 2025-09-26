@@ -95,6 +95,8 @@ export default [
     plugins,
     rules: {
       ...rules,
+      // Koa context requires assigning status and body.
+      'no-param-reassign': 'off',
       'no-restricted-imports': ['error',
         { patterns: [{
           regex: 'core/internal/'

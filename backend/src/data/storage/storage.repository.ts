@@ -267,21 +267,7 @@ function parseBreweryStorageRows (
   const storageArray: DbJoinedStorage[] = []
 
   storages.forEach(storage => {
-    if (!contains(storageMap, storage.storage_id)) {
-      storageMap[storage.storage_id] = {
-        ...storage,
-        has_review: storage.review_id !== null,
-        breweries: [{
-          brewery_id: storage.brewery_id,
-          name: storage.brewery_name
-        }],
-        styles: [{
-          style_id: storage.style_id,
-          name: storage.style_name
-        }]
-      }
-      storageArray.push(storageMap[storage.storage_id])
-    } else {
+    if (contains(storageMap, storage.storage_id)) {
       const existing = storageMap[storage.storage_id]
       existing.has_review ||= storage.review_id !== null
       if (existing.breweries.find(
@@ -298,6 +284,20 @@ function parseBreweryStorageRows (
           name: storage.style_name
         })
       }
+    } else {
+      storageMap[storage.storage_id] = {
+        ...storage,
+        has_review: storage.review_id !== null,
+        breweries: [{
+          brewery_id: storage.brewery_id,
+          name: storage.brewery_name
+        }],
+        styles: [{
+          style_id: storage.style_id,
+          name: storage.style_name
+        }]
+      }
+      storageArray.push(storageMap[storage.storage_id])
     }
   })
 

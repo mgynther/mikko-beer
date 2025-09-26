@@ -381,20 +381,7 @@ function parseReviewRows (
   const reviewArray: DbJoinedReview[] = []
 
   reviews.forEach(review => {
-    if (!contains(reviewMap, review.review_id)) {
-      reviewMap[review.review_id] = {
-        ...review,
-        breweries: [{
-          brewery_id: review.brewery_id,
-          name: review.brewery_name
-        }],
-        styles: [{
-          style_id: review.style_id,
-          name: review.style_name
-        }]
-      }
-      reviewArray.push(reviewMap[review.review_id])
-    } else {
+    if (contains(reviewMap, review.review_id)) {
       const existing = reviewMap[review.review_id]
       if (existing.breweries.find(
         brewery => brewery.brewery_id === review.brewery_id) === undefined) {
@@ -410,6 +397,19 @@ function parseReviewRows (
           name: review.style_name
         })
       }
+    } else {
+      reviewMap[review.review_id] = {
+        ...review,
+        breweries: [{
+          brewery_id: review.brewery_id,
+          name: review.brewery_name
+        }],
+        styles: [{
+          style_id: review.style_id,
+          name: review.style_name
+        }]
+      }
+      reviewArray.push(reviewMap[review.review_id])
     }
   })
 

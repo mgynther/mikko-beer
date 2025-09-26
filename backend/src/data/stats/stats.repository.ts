@@ -485,18 +485,21 @@ interface ContainerIds {
 }
 
 function countContainerIds (idRows: ContainerIds[]): number {
-  const containers = idRows.reduce<Record<string, boolean>>((map, row) => {
-    function add (value: string | null): void {
-      if (value !== null && !contains(map, value)) {
-        map[value] = true
-      }
+  const map: Record<string, boolean> = {}
+  function add (value: string | null): void {
+    if (value !== null && !contains(map, value)) {
+      map[value] = true
     }
+  }
+
+  idRows.forEach(row => {
+    const result = { ...map }
     add(row.review_container)
     add(row.storage_container)
-    return map
-  }, {})
+    return result
+  })
 
-  return Object.keys(containers).length
+  return Object.keys(map).length
 }
 
 async function getBreweryOverall (

@@ -160,10 +160,10 @@ export class App {
      */
     await new Promise<void>((resolve, reject) => {
       this.#server?.close((err) => {
-        if (err != null) {
-          reject(err)
-        } else {
+        if (err === undefined) {
           resolve()
+        } else {
+          reject(err)
         }
       })
     })
