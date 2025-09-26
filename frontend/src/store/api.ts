@@ -53,7 +53,10 @@ FetchBaseQueryError
   await mutex.waitForUnlock()
   let result = await baseQuery(args, api, extraOptions)
   if (result.error?.status === 401) {
-    if (!mutex.isLocked()) {
+    if (mutex.isLocked()) {
+      await mutex.waitForUnlock()
+      result = await baseQuery(args, api, extraOptions)
+    } else {
       const release = await mutex.acquire()
       try {
         const {userId, refreshToken} = parseRefreshDetails(api.getState())
@@ -66,21 +69,18 @@ FetchBaseQueryError
           api,
           extraOptions
         )
-        if (refreshResult.data !== undefined) {
+        if (refreshResult.data === undefined) {
+          api.dispatch({ type: 'login/logout' })
+        } else {
           api.dispatch({
             type: 'login/refresh',
             payload: refreshResult.data
           })
           result = await baseQuery(args, api, extraOptions)
-        } else {
-          api.dispatch({ type: 'login/logout' })
         }
       } finally {
         release()
       }
-    } else {
-      await mutex.waitForUnlock()
-      result = await baseQuery(args, api, extraOptions)
     }
   }
   return result

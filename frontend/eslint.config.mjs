@@ -55,6 +55,17 @@ export default [
   {
     ...love,
     languageOptions,
+    files: ['src/store/**/reducer.ts'],
+    plugins,
+    rules: {
+      ...rules,
+      // Slices rely heavily on reassign as per RTK design.
+      'no-param-reassign': 'off'
+    }
+  },
+  {
+    ...love,
+    languageOptions,
     files: ['src/*.test.{js,ts,tsx,jsx}', 'src/**/*.test.{js,ts,tsx,jsx}'],
     plugins,
     rules: {

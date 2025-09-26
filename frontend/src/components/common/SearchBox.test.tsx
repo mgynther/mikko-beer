@@ -69,7 +69,7 @@ test('activates', async () => {
           if (useSearchCount > 0) {
             throw new Error('Multiple calls not allowed')
           }
-          useSearchCount++
+          useSearchCount += 1
           return search
         },
         useDebounce

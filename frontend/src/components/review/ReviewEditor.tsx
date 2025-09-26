@@ -89,9 +89,10 @@ function ReviewEditor (props: Props): React.JSX.Element {
   )
 
   function setRating (rating: number): void {
-    if (rating < 4) rating = 4
-    if (rating > 10) rating = 10
-    doSetRating(rating)
+    let result = rating
+    if (result < 4) result = 4
+    if (result > 10) result = 10
+    doSetRating(result)
   }
 
   function localDateTime (): string {
