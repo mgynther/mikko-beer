@@ -4,7 +4,7 @@ function getTestPortStart(): number {
     if (startPort === undefined || startPort === '') {
       return -1
     }
-    return parseInt(startPort)
+    return parseInt(startPort, 10)
   } catch {
     return -1
   }
@@ -16,7 +16,7 @@ function getVitestId(): number {
     if (workerId === undefined || workerId === '') {
       return -1
     }
-    return parseInt(workerId)
+    return parseInt(workerId, 10)
   } catch {
     return -1
   }
