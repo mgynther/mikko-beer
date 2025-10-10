@@ -43,8 +43,8 @@ export function validatePagination (pagination: PaginationRequest): Pagination {
     throw invalidPaginationError
   }
   const parsed = {
-    size: parseInt(pagination.size),
-    skip: parseInt(pagination.skip)
+    size: parseInt(pagination.size, 10),
+    skip: parseInt(pagination.skip, 10)
   }
   const isValid = doValidatePagination(parsed)
   if (!isValid) {
