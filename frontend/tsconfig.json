@@ -19,7 +19,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "types": ["node", "vite/client"]
+    "types": ["node"]
   },
   "exclude": [
     "./playwright-report/*",
@@ -30,7 +30,8 @@
   "include": [
     "./e2e",
     "./playwright.config.ts",
-    "./src"
+    "./src",
+    "./vite-env.d.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
