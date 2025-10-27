@@ -1,6 +1,6 @@
 function getTestPortStart(): number {
   try {
-    const startPort: string | undefined = process.env.TEST_PORT_START 
+    const startPort: string | undefined = process.env.TEST_PORT_START
     if (startPort === undefined || startPort === '') {
       return -1
     }
