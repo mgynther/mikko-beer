@@ -29,6 +29,7 @@
   ],
   "include": [
     "./e2e",
+    "./environment.d.ts",
     "./playwright.config.ts",
     "./src",
     "./vite-env.d.ts"
