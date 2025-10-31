@@ -58,8 +58,8 @@ function getDefaultSearchParameters (): SearchParameters {
 }
 
 function renderContainer (
-  stats: ReturnType<typeof vitest.fn>,
-  setState: ReturnType<typeof vitest.fn>,
+  stats: (params: IdParams) => void,
+  setState: (state: Record<string, string>) => void,
   searchParams: SearchParameters
 ): ReturnType<typeof render> {
   return render(
@@ -85,7 +85,7 @@ function renderContainer (
 }
 
 function renderWithStats (
-  stats: ReturnType<typeof vitest.fn>
+  stats: (params: IdParams) => void
 ): ReturnType<typeof render> {
   return renderContainer(stats, vitest.fn(), getDefaultSearchParameters())
 }
@@ -98,7 +98,7 @@ function renderFromRecord (
 
 function renderFromRecordWithSetState (
   record: Record<string, string>,
-  setState: ReturnType<typeof vitest.fn>
+  setState: (state: Record<string, string>) => void
 ): ReturnType<typeof render> {
   return renderContainer(vitest.fn(), setState, toSearchParams(record))
 }
