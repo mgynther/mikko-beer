@@ -33,7 +33,7 @@ export const infiniteScroll: InfiniteScroll = (loadMore: () => void) => {
     observer.observe(element)
   }
   return () => {
-    if (element != null) {
+    if (element !== null) {
       observer.unobserve(element)
     }
   }
