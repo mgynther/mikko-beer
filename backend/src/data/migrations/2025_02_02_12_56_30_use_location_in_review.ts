@@ -21,6 +21,10 @@ export async function up (db: Kysely<any>): Promise<void> {
   for (const review of reviews) {
     const locationName: string = review.location
     if (!contains(createdLocations, locationName)) {
+      /* eslint-disable-next-line no-await-in-loop --
+       * Await in loop is needed as migration needs to happen one step at a
+       * time in specific order.
+       */
       const created = await db
         .insertInto('location')
         .values({
@@ -30,6 +34,10 @@ export async function up (db: Kysely<any>): Promise<void> {
         .executeTakeFirstOrThrow()
       createdLocations[locationName] = created.location_id
     }
+    /* eslint-disable-next-line no-await-in-loop --
+     * Await in loop is needed as migration needs to happen one step at a time
+     * in specific order.
+     */
     await db.updateTable('review')
       .set({
         location: createdLocations[locationName]
@@ -96,6 +104,10 @@ export async function down (db: Kysely<any>): Promise<void> {
 
   for (const review of reviews) {
     const locationId: string = review.location
+    /* eslint-disable-next-line no-await-in-loop --
+     * Await in loop is needed as migration needs to happen one step at a time
+     * in specific order.
+     */
     await db.updateTable('review')
       .set({
         location: locationMap[locationId].name

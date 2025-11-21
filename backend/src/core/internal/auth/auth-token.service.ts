@@ -51,18 +51,24 @@ export async function deleteRefreshToken (
   refreshToken: RefreshToken,
   authTokenSecret: string
 ): Promise<void> {
-  let payload: RefreshTokenPayload | undefined = undefined
-  try {
-    payload = jwt.verifyRefreshToken(refreshToken, authTokenSecret)
-  } catch (e) {
-    throw invalidCredentialsTokenError
-  }
-
+  const payload: RefreshTokenPayload =
+    parseRefreshToken(refreshToken, authTokenSecret)
   if (payload.userId !== userId) {
     throw invalidCredentialsTokenError
   }
 
   await deleteRefreshToken(payload.refreshTokenId)
+}
+
+function parseRefreshToken(
+  refreshToken: RefreshToken,
+  authTokenSecret: string
+): RefreshTokenPayload {
+  try {
+    return jwt.verifyRefreshToken(refreshToken, authTokenSecret)
+  } catch (e) {
+    throw invalidCredentialsTokenError
+  }
 }
 
 function createAuthToken (

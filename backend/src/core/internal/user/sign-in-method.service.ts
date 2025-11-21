@@ -150,11 +150,11 @@ async function scrypt (secret: string, salt: string): Promise<string> {
       64,
       { N: 16384, r: 8, p: 1 },
       (err, secretHash) => {
-        if (err != null) {
-          reject(err); return
+        if (err === null) {
+          resolve(secretHash.toString('hex'))
+          return
         }
-
-        resolve(secretHash.toString('hex'))
+        reject(err)
       }
     )
   })
