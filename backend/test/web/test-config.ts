@@ -8,7 +8,7 @@ export interface TestConfig extends Config {
 
 export const testConfig: TestConfig = {
   generateInitialAdminPassword: false,
-  port: 3001,
+  port: 3002,
   authTokenSecret: '26494cafdd9e008ab95e0fb5d02b47ffe77708ecdf2a7804b6',
   authTokenExpiryDurationMin: 120,
   database: testDataConfig,
