@@ -2,5 +2,6 @@ lib
 node_modules
 .vscode
 .env
+.env-test
 dist
 prod_dist

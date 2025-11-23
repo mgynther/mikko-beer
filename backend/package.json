@@ -7,7 +7,7 @@
     "build": "rm -rf dist && tsc",
     "lint": "npx eslint --fix src",
     "start": "npm run migrate:latest && node --env-file .env dist/index.js",
-    "test:files": "NODE_OPTIONS='--import ./register-esm.mjs' node --test -r ts-node/register --test-timeout 5000",
+    "test:files": "NODE_OPTIONS='--import ./register-esm.mjs' node --env-file .env-test --test -r ts-node/register --test-timeout 5000",
     "test:core": "npm run test:files -- --test-isolation=none --test-concurrency 1 test/core/*.test.ts test/core/**/*.test.ts test/core/**/**/*.test.ts",
     "test:data": "npm run test:files -- --test-isolation=none --test-concurrency 1 test/data/*.test.ts test/data/**/*.test.ts",
     "test:web": "npm run test:files -- --test-isolation=none --test-concurrency 1 test/web/*.test.ts test/web/**/*.test.ts",
