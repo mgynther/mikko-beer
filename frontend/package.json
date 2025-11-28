@@ -13,7 +13,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "2.10.1",
+    "@reduxjs/toolkit": "2.11.0",
     "async-mutex": "0.5.0",
     "io-ts": "2.2.22",
     "react": "19.2.0",
@@ -24,14 +24,14 @@
     "uuid": "13.0.0"
   },
   "devDependencies": {
-    "@playwright/test": "1.56.1",
+    "@playwright/test": "1.57.0",
     "@testing-library/react": "16.3.0",
     "@testing-library/user-event": "14.6.1",
     "@types/node": "24.10.1",
-    "@types/react": "19.2.6",
+    "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
-    "@typescript-eslint/eslint-plugin": "8.47.0",
-    "@typescript-eslint/parser": "8.47.0",
+    "@typescript-eslint/eslint-plugin": "8.48.0",
+    "@typescript-eslint/parser": "8.48.0",
     "@vitejs/plugin-react": "5.1.1",
     "eslint": "9.39.1",
     "eslint-config-love": "134.0.0",
@@ -46,7 +46,7 @@
     "ts-node": "10.9.2",
     "typescript": "5.9.3",
     "vite": "7.2.4",
-    "vitest": "4.0.13",
+    "vitest": "4.0.14",
     "web-vitals": "5.1.0"
   },
   "browserslist": {
