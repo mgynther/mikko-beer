@@ -32,7 +32,7 @@
     "@types/koa-compress": "4.0.7",
     "@types/node": "24.10.1",
     "@types/pg": "8.15.6",
-    "@typescript-eslint/eslint-plugin": "8.47.0",
+    "@typescript-eslint/eslint-plugin": "8.48.0",
     "axios": "1.13.2",
     "eslint": "9.39.1",
     "eslint-config-love": "134.0.0",
