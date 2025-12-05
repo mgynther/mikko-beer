@@ -1,5 +1,5 @@
 import type * as Koa from 'koa'
-import type * as KoaRouter from '@koa/router'
+import type { RouterContext } from '@koa/router'
 
 import type { Config } from './config'
 
@@ -16,5 +16,5 @@ type ContextState = object
 
 export type Context = Koa.ParameterizedContext<
 ContextState,
-ContextExtension & KoaRouter.RouterParamContext<ContextState, ContextExtension>
+ContextExtension & RouterContext<ContextState, ContextExtension>
 >
