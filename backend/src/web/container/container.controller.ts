@@ -9,10 +9,11 @@ import type {
   Container,
   CreateContainerRequest
 } from '../../core/container/container'
+import type { Context } from '../context'
 
 export function containerController (router: Router): void {
   router.post('/api/v1/container',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const body: unknown = ctx.request.body
 
@@ -28,15 +29,17 @@ export function containerController (router: Router): void {
         )
       )
 
-      ctx.status = 201
-      ctx.body = {
-        container: result
+      return {
+        status: 201,
+        body: {
+          container: result
+        }
       }
     }
   )
 
   router.put('/api/v1/container/:containerId',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const body: unknown = ctx.request.body
       const containerId: string | undefined = ctx.params.containerId
@@ -54,16 +57,18 @@ export function containerController (router: Router): void {
         )
       )
 
-      ctx.status = 200
-      ctx.body = {
-        container: result
+      return {
+        status: 200,
+        body: {
+          container: result
+        }
       }
     }
   )
 
   router.get(
     '/api/v1/container/:containerId',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const containerId: string | undefined = ctx.params.containerId
       const container = await containerService.findContainerById(
@@ -76,13 +81,16 @@ export function containerController (router: Router): void {
         ctx.log
       )
 
-      ctx.body = { container }
+      return {
+        status: 200,
+        body: { container }
+      }
     }
   )
 
   router.get(
     '/api/v1/container',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const containers = await containerService.listContainers(
         async () =>
@@ -90,7 +98,10 @@ export function containerController (router: Router): void {
         authTokenPayload,
         ctx.log
       )
-      ctx.body = { containers }
+      return {
+        status: 200,
+        body: { containers }
+      }
     }
   )
 }

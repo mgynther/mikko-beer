@@ -22,11 +22,12 @@ import {
   validateStatsFilter
 } from '../../core/stats/stats'
 import { parseAuthToken } from '../authentication/authentication-helper'
+import type { Context } from '../context'
 
 export function statsController (router: Router): void {
   router.get(
     '/api/v1/stats/overall',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const statsFilter = validateStatsIdFilter(ctx.request.query)
       const overall = await statsService.getOverall(
@@ -40,12 +41,15 @@ export function statsController (router: Router): void {
         statsFilter,
         ctx.log
       )
-      ctx.body = { overall }
+      return {
+        status: 200,
+        body: { overall }
+      }
     }
   )
   router.get(
     '/api/v1/stats/annual',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const statsFilter = validateStatsIdFilter(ctx.request.query)
       const annual = await statsService.getAnnual(
@@ -59,12 +63,15 @@ export function statsController (router: Router): void {
         statsFilter,
         ctx.log
       )
-      ctx.body = { annual }
+      return {
+        status: 200,
+        body: { annual }
+      }
     }
   )
   router.get(
     '/api/v1/stats/annual_container',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const { skip, size } = ctx.request.query
       const statsFilter = validateStatsIdFilter(ctx.request.query)
@@ -83,12 +90,15 @@ export function statsController (router: Router): void {
         statsFilter,
         ctx.log
       )
-      ctx.body = { annualContainer }
+      return {
+        status: 200,
+        body: { annualContainer }
+      }
     }
   )
   router.get(
     '/api/v1/stats/brewery',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const { skip, size } = ctx.request.query
       const { order, direction } = ctx.request.query
@@ -110,13 +120,16 @@ export function statsController (router: Router): void {
           breweryStatsOrder,
           ctx.log
         )
-      ctx.body = { brewery }
+      return {
+        status: 200,
+        body: { brewery }
+      }
     }
   )
 
   router.get(
     '/api/v1/stats/container',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const statsFilter = validateStatsIdFilter(ctx.request.query)
       const container = await statsService.getContainer(
@@ -130,13 +143,16 @@ export function statsController (router: Router): void {
         statsFilter,
         ctx.log
       )
-      ctx.body = { container }
+      return {
+        status: 200,
+        body: { container }
+      }
     }
   )
 
   router.get(
     '/api/v1/stats/location',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const { skip, size } = ctx.request.query
       const { order, direction } = ctx.request.query
@@ -159,13 +175,16 @@ export function statsController (router: Router): void {
           locationStatsOrder,
           ctx.log
         )
-      ctx.body = { location }
+      return {
+        status: 200,
+        body: { location }
+      }
     }
   )
 
   router.get(
     '/api/v1/stats/rating',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const statsFilter = validateStatsIdFilter(ctx.request.query)
       const rating = await statsService.getRating(
@@ -179,13 +198,16 @@ export function statsController (router: Router): void {
         statsFilter,
         ctx.log
       )
-      ctx.body = { rating }
+      return {
+        status: 200,
+        body: { rating }
+      }
     }
   )
 
   router.get(
     '/api/v1/stats/style',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const { order, direction } = ctx.request.query
       const styleStatsOrder = validateStyleStatsOrder({ order, direction })
@@ -198,7 +220,10 @@ export function statsController (router: Router): void {
           statsFilter,
           styleStatsOrder
         ), authTokenPayload, statsFilter, styleStatsOrder, ctx.log)
-      ctx.body = { style }
+      return {
+        status: 200,
+        body: { style }
+      }
     }
   )
 }

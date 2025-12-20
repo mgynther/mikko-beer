@@ -1,6 +1,82 @@
 import { Router as KoaRouter } from '@koa/router'
+import type { RouterContext as KoaRouterContext } from '@koa/router'
 
-import type { ContextExtension } from './context'
-import type { DefaultState } from 'koa'
+import type { Context } from './context'
+import type { Database } from '../data/database'
+import type { Config } from './config'
+import type { log } from '../core/log'
 
-export class Router extends KoaRouter<DefaultState, ContextExtension> {}
+export interface Response {
+  status: 200 | 201 | 204
+  body: Record<string, unknown> | undefined
+}
+
+type RequestHandler = (context: Context) => Promise<Response>
+
+export interface Router {
+  get: (path: string, handler: RequestHandler) => void
+  delete: (path: string, handler: RequestHandler) => void
+  post: (path: string, handler: RequestHandler) => void
+  put: (path: string, handler: RequestHandler) => void
+}
+
+interface RouterParams {
+  db: Database
+  config: Config
+  log: log
+}
+
+interface CreatedRouter {
+  koaRouter: KoaRouter
+  router: Router
+}
+
+export function createRouter(routerParams: RouterParams): CreatedRouter {
+  const koaRouter = new KoaRouter();
+
+  const router: Router = {
+    get: (path: string, handler: RequestHandler) => {
+      koaRouter.get(path, async (koaContext) => {
+        await koaHandler(koaContext, handler, routerParams)
+      })
+    },
+    delete: (path: string, handler: RequestHandler) => {
+      koaRouter.delete(path, async (koaContext) => {
+        await koaHandler(koaContext, handler, routerParams)
+      })
+    },
+    post: (path: string, handler: RequestHandler) => {
+      koaRouter.post(path, async (koaContext) => {
+        await koaHandler(koaContext, handler, routerParams)
+      })
+    },
+    put: (path: string, handler: RequestHandler) => {
+      koaRouter.put(path, async (koaContext) => {
+        await koaHandler(koaContext, handler, routerParams)
+      })
+    },
+  }
+
+  return {
+    koaRouter,
+    router
+  }
+}
+
+async function koaHandler (
+  koaContext: KoaRouterContext,
+  handler: RequestHandler,
+  routerParams: RouterParams
+): Promise<void> {
+  const response = await handler({
+    ...routerParams,
+    headers: koaContext.headers,
+    params: koaContext.params,
+    request: {
+      body: koaContext.request.body,
+      query: koaContext.request.query
+    }
+  });
+  koaContext.status = response.status
+  koaContext.body = response.body
+}

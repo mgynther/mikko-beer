@@ -21,10 +21,11 @@ import {
   validateFullReviewListOrder
 } from '../../core/review/review'
 import { validatePagination } from '../../core/pagination'
+import type { Context } from '../context'
 
 export function reviewController (router: Router): void {
   router.post('/api/v1/review',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const body: unknown = ctx.request.body
       const { storage } = ctx.request.query
@@ -60,15 +61,17 @@ export function reviewController (router: Router): void {
         )
       })
 
-      ctx.status = 201
-      ctx.body = {
-        review: result
+      return {
+        status: 201,
+        body: {
+          review: result
+        }
       }
     }
   )
 
   router.put('/api/v1/review/:reviewId',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const body: unknown = ctx.request.body
       const reviewId: string | undefined = ctx.params.reviewId
@@ -94,16 +97,18 @@ export function reviewController (router: Router): void {
         )
       })
 
-      ctx.status = 200
-      ctx.body = {
-        review: result
+      return {
+        status: 200,
+        body: {
+          review: result
+        }
       }
     }
   )
 
   router.get(
     '/api/v1/review/:reviewId',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const reviewId: string | undefined = ctx.params.reviewId
       const review = await reviewService.findReviewById(
@@ -116,13 +121,16 @@ export function reviewController (router: Router): void {
         ctx.log
       )
 
-      ctx.body = { review }
+      return {
+        status: 200,
+        body: { review }
+      }
     }
   )
 
   router.get(
     '/api/v1/beer/:beerId/review',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const beerId: string | undefined = ctx.params.beerId
       const reviewListOrder =
@@ -135,11 +143,14 @@ export function reviewController (router: Router): void {
         id: beerId
       }, reviewListOrder, ctx.log)
 
-      ctx.body = {
-        reviews,
-        sorting: {
-          order: reviewListOrder.property,
-          direction: reviewListOrder.direction
+      return {
+        status: 200,
+        body: {
+          reviews,
+          sorting: {
+            order: reviewListOrder.property,
+            direction: reviewListOrder.direction
+          }
         }
       }
     }
@@ -147,7 +158,7 @@ export function reviewController (router: Router): void {
 
   router.get(
     '/api/v1/brewery/:breweryId/review',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const breweryId: string | undefined = ctx.params.breweryId
       const reviewListOrder =
@@ -162,11 +173,14 @@ export function reviewController (router: Router): void {
         id: breweryId
       }, reviewListOrder, ctx.log)
 
-      ctx.body = {
-        reviews,
-        sorting: {
-          order: reviewListOrder.property,
-          direction: reviewListOrder.direction
+      return {
+        status: 200,
+        body: {
+          reviews,
+          sorting: {
+            order: reviewListOrder.property,
+            direction: reviewListOrder.direction
+          }
         }
       }
     }
@@ -174,7 +188,7 @@ export function reviewController (router: Router): void {
 
   router.get(
     '/api/v1/location/:locationId/review',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const locationId: string | undefined = ctx.params.locationId
       const reviewListOrder =
@@ -189,11 +203,14 @@ export function reviewController (router: Router): void {
         id: locationId
       }, reviewListOrder, ctx.log)
 
-      ctx.body = {
-        reviews,
-        sorting: {
-          order: reviewListOrder.property,
-          direction: reviewListOrder.direction
+      return {
+        status: 200,
+        body: {
+          reviews,
+          sorting: {
+            order: reviewListOrder.property,
+            direction: reviewListOrder.direction
+          }
         }
       }
     }
@@ -201,7 +218,7 @@ export function reviewController (router: Router): void {
 
   router.get(
     '/api/v1/style/:styleId/review',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const styleId: string | undefined = ctx.params.styleId
       const reviewListOrder =
@@ -219,11 +236,14 @@ export function reviewController (router: Router): void {
         id: styleId
       }, reviewListOrder, ctx.log)
 
-      ctx.body = {
-        reviews,
-        sorting: {
-          order: reviewListOrder.property,
-          direction: reviewListOrder.direction
+      return {
+        status: 200,
+        body: {
+          reviews,
+          sorting: {
+            order: reviewListOrder.property,
+            direction: reviewListOrder.direction
+          }
         }
       }
     }
@@ -231,7 +251,7 @@ export function reviewController (router: Router): void {
 
   router.get(
     '/api/v1/review',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const { skip, size } = ctx.request.query
       const reviewListOrder = validateFullReviewListOrder(ctx.request.query)
@@ -241,12 +261,15 @@ export function reviewController (router: Router): void {
       ) => (
         await reviewRepository.listReviews(ctx.db, pagination, reviewListOrder)
       ), authTokenPayload, pagination, reviewListOrder, ctx.log)
-      ctx.body = {
-        reviews,
-        pagination,
-        sorting: {
-          order: reviewListOrder.property,
-          direction: reviewListOrder.direction
+      return {
+        status: 200,
+        body: {
+          reviews,
+          pagination,
+          sorting: {
+            order: reviewListOrder.property,
+            direction: reviewListOrder.direction
+          }
         }
       }
     }

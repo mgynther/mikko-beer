@@ -5,10 +5,11 @@ import type { Server } from 'node:http'
 import { v4 as uuidv4 } from 'uuid'
 
 import type { Config } from './config'
-import type { Context, ContextExtension } from './context'
+import type { Context } from './context'
 import { Database } from '../data/database'
 import * as userRepository from '../data/user/user.repository'
-import { Router } from './router'
+import { createRouter } from './router'
+import type { Router } from './router'
 import { beerController } from './beer/beer.controller'
 import { breweryController } from './brewery/brewery.controller'
 import { containerController } from './container/container.controller'
@@ -38,7 +39,7 @@ export interface StartResult {
 export class App {
   readonly #config: Config
   readonly #log: log
-  readonly #koa: Koa<unknown, ContextExtension>
+  readonly #koa: Koa<unknown, unknown>
   readonly #router: Router
   readonly #db: Database
   #server?: Server
@@ -47,8 +48,13 @@ export class App {
     this.#config = config
     this.#log = log
     this.#koa = new Koa()
-    this.#router = new Router()
     this.#db = new Database(this.#config.database)
+    const routerResult = createRouter({
+      config,
+      db: this.#db,
+      log
+    })
+    this.#router = routerResult.router
 
     this.#koa.use(compress())
     this.#koa.use(bodyParser())
@@ -67,8 +73,8 @@ export class App {
     styleController(this.#router)
     userController(this.#router, this.#config)
 
-    this.#koa.use(this.#router.routes())
-    this.#koa.use(this.#router.allowedMethods())
+    this.#koa.use(routerResult.koaRouter.routes())
+    this.#koa.use(routerResult.koaRouter.allowedMethods())
   }
 
   get db (): Database {
@@ -172,7 +178,7 @@ export class App {
   }
 
   private readonly errorHandler = async (
-    ctx: Context,
+    ctx: Koa.ParameterizedContext,
     next: Koa.Next
   ): Promise<void> => {
     try {
@@ -182,7 +188,7 @@ export class App {
         this.#log(Level.INFO, 'controller error', error.status, error.code)
         respondError(ctx, error)
       } else {
-        respondError(ctx, createUnknownError(error, ctx.log))
+        respondError(ctx, createUnknownError(error, this.#log))
       }
     }
   }
@@ -198,7 +204,10 @@ export class App {
   }
 }
 
-function respondError (ctx: Context, error: ControllerError): void {
+function respondError (
+  ctx: Koa.ParameterizedContext,
+  error: ControllerError
+): void {
   ctx.status = error.status
   ctx.body = error.toJSON()
 }
@@ -232,7 +241,10 @@ function getUnknownErrorMessage(error: unknown): string {
   return 'unknown error'
 }
 
-async function addHeaders (ctx: Context, next: Koa.Next): Promise<void> {
+async function addHeaders (
+  ctx: Koa.ParameterizedContext,
+  next: Koa.Next
+): Promise<void> {
   ctx.set('Access-Control-Allow-Origin', '*')
   ctx.set('Access-Control-Allow-Headers', 'Authorization, Content-Type')
   ctx.set('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,DELETE,PATCH')

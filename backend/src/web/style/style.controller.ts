@@ -13,10 +13,11 @@ import type { Transaction } from '../../data/database'
 import type { Router } from '../router'
 
 import { parseAuthToken } from '../authentication/authentication-helper'
+import type { Context } from '../context'
 
 export function styleController (router: Router): void {
   router.post('/api/v1/style',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const body: unknown = ctx.request.body
 
@@ -36,15 +37,17 @@ export function styleController (router: Router): void {
           }, ctx.log)
       })
 
-      ctx.status = 201
-      ctx.body = {
-        style: result
+      return {
+        status: 201,
+        body: {
+          style: result
+        }
       }
     }
   )
 
   router.put('/api/v1/style/:styleId',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const body: unknown = ctx.request.body
       const styleId: string | undefined = ctx.params.styleId
@@ -70,16 +73,18 @@ export function styleController (router: Router): void {
           }, body, ctx.log)
       })
 
-      ctx.status = 200
-      ctx.body = {
-        style: result
+      return {
+        status: 200,
+        body: {
+          style: result
+        }
       }
     }
   )
 
   router.get(
     '/api/v1/style/:styleId',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const styleId: string | undefined = ctx.params.styleId
       const style = await styleService.findStyleById(async (styleId: string) =>
@@ -90,20 +95,26 @@ export function styleController (router: Router): void {
         ctx.log
       )
 
-      ctx.body = { style }
+      return {
+        status: 200,
+        body: { style }
+      }
     }
   )
 
   router.get(
     '/api/v1/style',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const styles = await styleService.listStyles(
         async () => await styleRepository.listStyles(ctx.db),
         authTokenPayload,
         ctx.log
       )
-      ctx.body = { styles }
+      return {
+        status: 200,
+        body: { styles }
+      }
     }
   )
 }

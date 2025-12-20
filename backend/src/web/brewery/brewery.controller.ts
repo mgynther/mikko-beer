@@ -9,10 +9,11 @@ import * as authHelper from '../authentication/authentication-helper'
 import type { Router } from '../router'
 import type { Brewery, CreateBreweryRequest } from '../../core/brewery/brewery'
 import { validatePagination } from '../../core/pagination'
+import type { Context } from '../context'
 
 export function breweryController (router: Router): void {
   router.post('/api/v1/brewery',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const body: unknown = ctx.request.body
 
@@ -29,15 +30,17 @@ export function breweryController (router: Router): void {
         )
       )
 
-      ctx.status = 201
-      ctx.body = {
-        brewery: result
+      return {
+        status: 201,
+        body: {
+          brewery: result
+        }
       }
     }
   )
 
   router.put('/api/v1/brewery/:breweryId',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const body: unknown = ctx.request.body
       const breweryId: string | undefined = ctx.params.breweryId
@@ -55,16 +58,18 @@ export function breweryController (router: Router): void {
         )
       )
 
-      ctx.status = 200
-      ctx.body = {
-        brewery: result
+      return {
+        status: 200,
+        body: {
+          brewery: result
+        }
       }
     }
   )
 
   router.get(
     '/api/v1/brewery/:breweryId',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const breweryId: string | undefined = ctx.params.breweryId
       const brewery = await breweryService.findBreweryById(
@@ -77,13 +82,16 @@ export function breweryController (router: Router): void {
         ctx.log
       )
 
-      ctx.body = { brewery }
+      return {
+        status: 200,
+        body: { brewery }
+      }
     }
   )
 
   router.get(
     '/api/v1/brewery',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const { skip, size } = ctx.request.query
       const pagination = validatePagination({ skip, size })
@@ -96,12 +104,15 @@ export function breweryController (router: Router): void {
         },
         ctx.log
       )
-      ctx.body = { breweries, pagination }
+      return {
+        status: 200,
+        body: { breweries, pagination }
+      }
     }
   )
 
   router.post('/api/v1/brewery/search',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const body: unknown = ctx.request.body
 
@@ -115,8 +126,10 @@ export function breweryController (router: Router): void {
         ctx.log
       )
 
-      ctx.status = 200
-      ctx.body = { breweries }
+      return {
+        status: 200,
+        body: { breweries }
+      }
     }
   )
 }

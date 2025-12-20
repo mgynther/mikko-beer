@@ -12,10 +12,11 @@ import type {
   CreateLocationRequest
 } from '../../core/location/location'
 import { validatePagination } from '../../core/pagination'
+import type { Context } from '../context'
 
 export function locationController (router: Router): void {
   router.post('/api/v1/location',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const body: unknown = ctx.request.body
 
@@ -32,15 +33,17 @@ export function locationController (router: Router): void {
         )
       )
 
-      ctx.status = 201
-      ctx.body = {
-        location: result
+      return {
+        status: 201,
+        body: {
+          location: result
+        }
       }
     }
   )
 
   router.put('/api/v1/location/:locationId',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const body: unknown = ctx.request.body
       const locationId: string | undefined = ctx.params.locationId
@@ -58,16 +61,18 @@ export function locationController (router: Router): void {
         )
       )
 
-      ctx.status = 200
-      ctx.body = {
-        location: result
+      return {
+        status: 200,
+        body: {
+          location: result
+        }
       }
     }
   )
 
   router.get(
     '/api/v1/location/:locationId',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const locationId: string | undefined = ctx.params.locationId
       const location = await locationService.findLocationById(
@@ -80,13 +85,16 @@ export function locationController (router: Router): void {
         ctx.log
       )
 
-      ctx.body = { location }
+      return {
+        status: 200,
+        body: { location }
+      }
     }
   )
 
   router.get(
     '/api/v1/location',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const { skip, size } = ctx.request.query
       const pagination = validatePagination({ skip, size })
@@ -99,12 +107,15 @@ export function locationController (router: Router): void {
         },
         ctx.log
       )
-      ctx.body = { locations, pagination }
+      return {
+        status: 200,
+        body: { locations, pagination }
+      }
     }
   )
 
   router.post('/api/v1/location/search',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const body: unknown = ctx.request.body
 
@@ -118,8 +129,10 @@ export function locationController (router: Router): void {
         ctx.log
       )
 
-      ctx.status = 200
-      ctx.body = { locations }
+      return {
+        status: 200,
+        body: { locations }
+      }
     }
   )
 }

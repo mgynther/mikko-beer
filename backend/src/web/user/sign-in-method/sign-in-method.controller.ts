@@ -27,7 +27,7 @@ import type { Transaction } from '../../../data/database'
 import type { Router } from '../../router'
 
 export function signInMethodController (router: Router): void {
-  router.post('/api/v1/user/sign-in', async (ctx) => {
+  router.post('/api/v1/user/sign-in', async (ctx: Context) => {
     const body: unknown = ctx.request.body
 
     const signedInUser = await ctx.db.executeReadWriteTransaction(async (
@@ -54,17 +54,19 @@ export function signInMethodController (router: Router): void {
       )
     })
 
-    ctx.status = 200
-    ctx.body = {
-      user: signedInUser.user,
-      authToken: signedInUser.authToken.authToken,
-      refreshToken: signedInUser.refreshToken.refreshToken
+    return {
+      status: 200,
+      body: {
+        user: signedInUser.user,
+        authToken: signedInUser.authToken.authToken,
+        refreshToken: signedInUser.refreshToken.refreshToken
+      }
     }
   })
 
   router.post(
     '/api/v1/user/:userId/refresh',
-    async (ctx) => {
+    async (ctx: Context) => {
       const body: unknown = ctx.request.body
       const userId: string | undefined = ctx.params.userId
 
@@ -94,17 +96,19 @@ export function signInMethodController (router: Router): void {
         )
       })
 
-      ctx.status = 200
-      ctx.body = {
-        authToken: tokens.auth.authToken,
-        refreshToken: tokens.refresh.refreshToken
+      return {
+        status: 200,
+        body: {
+          authToken: tokens.auth.authToken,
+          refreshToken: tokens.refresh.refreshToken
+        }
       }
     }
   )
 
   router.post(
     '/api/v1/user/:userId/sign-out',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const body: unknown = ctx.request.body
       const userId: string | undefined = ctx.params.userId
@@ -128,14 +132,16 @@ export function signInMethodController (router: Router): void {
         ctx.config.authTokenSecret
       )
 
-      ctx.status = 200
-      ctx.body = { success: true }
+      return {
+        status: 200,
+        body: { success: true }
+      }
     }
   )
 
   router.post(
     '/api/v1/user/:userId/change-password',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const body: unknown = ctx.request.body
       const userId: string | undefined = ctx.params.userId
@@ -162,7 +168,10 @@ export function signInMethodController (router: Router): void {
         )
       })
 
-      ctx.status = 204
+      return {
+        status: 204,
+        body: undefined
+      }
     }
   )
 }

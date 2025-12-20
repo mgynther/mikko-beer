@@ -23,10 +23,11 @@ import type {
 } from '../../core/user/user'
 import type { DbRefreshToken } from '../../core/auth/refresh-token'
 import type { AuthTokenConfig } from '../../core/auth/auth-token'
+import type { Context } from '../context'
 
 export function userController (router: Router, config: Config): void {
   router.post('/api/v1/user',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const body: unknown = ctx.request.body
 
@@ -58,18 +59,20 @@ export function userController (router: Router, config: Config): void {
         )
       })
 
-      ctx.status = 201
-      ctx.body = {
-        user: result.user,
-        authToken: result.authToken.authToken,
-        refreshToken: result.refreshToken.refreshToken
+      return {
+        status: 201,
+        body: {
+          user: result.user,
+          authToken: result.authToken.authToken,
+          refreshToken: result.refreshToken.refreshToken
+        }
       }
     }
   )
 
   router.get(
     '/api/v1/user/:userId',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const userId: string | undefined = ctx.params.userId
       const findRefreshToken = authHelper.createFindRefreshToken(ctx.db)
@@ -86,13 +89,16 @@ export function userController (router: Router, config: Config): void {
         ctx.log
       )
 
-      ctx.body = { user }
+      return {
+        status: 200,
+        body: { user }
+      }
     }
   )
 
   router.get(
     '/api/v1/user',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const users = await userService.listUsers(
         async () => await userRepository.listUsers(
@@ -102,12 +108,15 @@ export function userController (router: Router, config: Config): void {
         ctx.log
       )
 
-      ctx.body = { users }
+      return {
+        status: 200,
+        body: { users }
+      }
     }
   )
 
   router.delete('/api/v1/user/:userId',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const userId: string | undefined = ctx.params.userId
       await ctx.db.executeReadWriteTransaction(async (trx) => {
@@ -123,7 +132,10 @@ export function userController (router: Router, config: Config): void {
         )
       })
 
-      ctx.status = 204
+      return {
+        status: 204,
+        body: undefined
+      }
     }
   )
 

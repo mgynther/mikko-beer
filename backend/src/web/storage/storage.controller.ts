@@ -16,10 +16,11 @@ import type { Transaction } from '../../data/database'
 import type { Router } from '../router'
 
 import { parseAuthToken } from '../authentication/authentication-helper'
+import type { Context } from '../context'
 
 export function storageController (router: Router): void {
   router.post('/api/v1/storage',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const body: unknown = ctx.request.body
 
@@ -41,15 +42,17 @@ export function storageController (router: Router): void {
         )
       })
 
-      ctx.status = 201
-      ctx.body = {
-        storage: result
+      return {
+        status: 201,
+        body: {
+          storage: result
+        }
       }
     }
   )
 
   router.put('/api/v1/storage/:storageId',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const body: unknown = ctx.request.body
       const storageId: string | undefined = ctx.params.storageId
@@ -73,15 +76,17 @@ export function storageController (router: Router): void {
         )
       })
 
-      ctx.status = 200
-      ctx.body = {
-        storage: result
+      return {
+        status: 200,
+        body: {
+          storage: result
+        }
       }
     }
   )
 
   router.delete('/api/v1/storage/:storageId',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const storageId: string | undefined = ctx.params.storageId
 
@@ -99,13 +104,16 @@ export function storageController (router: Router): void {
         );
       })
 
-      ctx.status = 204
+      return {
+        status: 204,
+        body: undefined
+      }
     }
   )
 
   router.get(
     '/api/v1/storage/:storageId',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const storageId: string | undefined = ctx.params.storageId
       const storage = await storageService.findStorageById(async (
@@ -115,13 +123,16 @@ export function storageController (router: Router): void {
         id: storageId
       }, ctx.log)
 
-      ctx.body = { storage }
+      return {
+        status: 200,
+        body: { storage }
+      }
     }
   )
 
   router.get(
     '/api/v1/beer/:beerId/storage',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const beerId: string | undefined = ctx.params.beerId
       const storageResult = await storageService.listStoragesByBeer(async (
@@ -132,13 +143,16 @@ export function storageController (router: Router): void {
       }, ctx.log)
       const storages = storageResult
 
-      ctx.body = { storages }
+      return {
+        status: 200,
+        body: { storages }
+      }
     }
   )
 
   router.get(
     '/api/v1/brewery/:breweryId/storage',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const breweryId: string | undefined = ctx.params.breweryId
       const storageResult = await storageService.listStoragesByBrewery(async (
@@ -149,13 +163,16 @@ export function storageController (router: Router): void {
       }, ctx.log)
       const storages = storageResult
 
-      ctx.body = { storages }
+      return {
+        status: 200,
+        body: { storages }
+      }
     }
   )
 
   router.get(
     '/api/v1/style/:styleId/storage',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const styleId: string | undefined = ctx.params.styleId
       const storageResult = await storageService.listStoragesByStyle(async (
@@ -166,13 +183,16 @@ export function storageController (router: Router): void {
       }, ctx.log)
       const storages = storageResult
 
-      ctx.body = { storages }
+      return {
+        status: 200,
+        body: { storages }
+      }
     }
   )
 
   router.get(
     '/api/v1/storage',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
       const { skip, size } = ctx.request.query
       const pagination = validatePagination({ skip, size })
@@ -187,7 +207,10 @@ export function storageController (router: Router): void {
         pagination,
         ctx.log
       )
-      ctx.body = { storages, pagination }
+      return {
+        status: 200,
+        body: { storages, pagination }
+      }
     }
   )
 }

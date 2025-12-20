@@ -1,20 +1,20 @@
-import type * as Koa from 'koa'
-import type { RouterContext } from '@koa/router'
-
 import type { Config } from './config'
 
 import type { log } from '../core/log'
 import type { Database } from '../data/database'
+import type { IncomingHttpHeaders } from 'node:http'
+import type { ParsedUrlQuery } from 'node:querystring'
 
-export interface ContextExtension {
-  db: Database,
-  config: Config,
-  log: log
+interface Request {
+  body: unknown
+  query: ParsedUrlQuery
 }
 
-type ContextState = object
-
-export type Context = Koa.ParameterizedContext<
-ContextState,
-ContextExtension & RouterContext<ContextState, ContextExtension>
->
+export interface Context {
+  db: Database
+  config: Config
+  headers: IncomingHttpHeaders
+  log: log
+  params: Record<string, string>
+  request: Request
+}

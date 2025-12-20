@@ -13,10 +13,11 @@ import type { Router } from '../router'
 import type { Beer, CreateIf, NewBeer, UpdateIf } from '../../core/beer/beer'
 import { validatePagination } from '../../core/pagination'
 import { validateSearchByName } from '../../core/search'
+import type { Context } from '../context'
 
 export function beerController (router: Router): void {
   router.post('/api/v1/beer',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const body: unknown = ctx.request.body
 
@@ -39,15 +40,17 @@ export function beerController (router: Router): void {
         )
       })
 
-      ctx.status = 201
-      ctx.body = {
-        beer: result
+      return {
+        status: 201,
+        body: {
+          beer: result
+        }
       }
     }
   )
 
   router.put('/api/v1/beer/:beerId',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const body: unknown = ctx.request.body
       const beerId: string | undefined = ctx.params.beerId
@@ -78,16 +81,18 @@ export function beerController (router: Router): void {
         )
       })
 
-      ctx.status = 200
-      ctx.body = {
-        beer: result
+      return {
+        status: 200,
+        body: {
+          beer: result
+        }
       }
     }
   )
 
   router.get(
     '/api/v1/beer/:beerId',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const beerId: string | undefined = ctx.params.beerId
       const beer = await beerService.findBeerById(
@@ -100,13 +105,16 @@ export function beerController (router: Router): void {
         ctx.log
       )
 
-      ctx.body = { beer }
+      return {
+        status: 200,
+        body: { beer }
+      }
     }
   )
 
   router.get(
     '/api/v1/beer',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const { skip, size } = ctx.request.query
       const pagination = validatePagination({ skip, size })
@@ -119,12 +127,15 @@ export function beerController (router: Router): void {
         },
         ctx.log
       )
-      ctx.body = { beers, pagination }
+      return {
+        status: 200,
+        body: { beers, pagination }
+      }
     }
   )
 
   router.post('/api/v1/beer/search',
-    async (ctx) => {
+    async (ctx: Context) => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const body: unknown = ctx.request.body
 
@@ -139,8 +150,10 @@ export function beerController (router: Router): void {
         ctx.log
       )
 
-      ctx.status = 200
-      ctx.body = { beers }
+      return {
+        status: 200,
+        body: { beers }
+      }
     }
   )
 }
