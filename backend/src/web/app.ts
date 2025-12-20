@@ -73,8 +73,7 @@ export class App {
     styleController(this.#router)
     userController(this.#router, this.#config)
 
-    this.#koa.use(routerResult.koaRouter.routes())
-    this.#koa.use(routerResult.koaRouter.allowedMethods())
+    routerResult.useRouter(this.#koa)
   }
 
   get db (): Database {

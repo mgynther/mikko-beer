@@ -1,3 +1,4 @@
+import type * as Koa from 'koa'
 import { Router as KoaRouter } from '@koa/router'
 import type { RouterContext as KoaRouterContext } from '@koa/router'
 
@@ -27,7 +28,7 @@ interface RouterParams {
 }
 
 interface CreatedRouter {
-  koaRouter: KoaRouter
+  useRouter: (koa: Koa<unknown, unknown>) => void
   router: Router
 }
 
@@ -58,7 +59,10 @@ export function createRouter(routerParams: RouterParams): CreatedRouter {
   }
 
   return {
-    koaRouter,
+    useRouter: (koa: Koa<unknown, unknown>) => {
+      koa.use(koaRouter.routes())
+      koa.use(koaRouter.allowedMethods())
+    },
     router
   }
 }
