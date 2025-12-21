@@ -1,11 +1,13 @@
 import type * as Koa from 'koa'
 import { Router as KoaRouter } from '@koa/router'
 import type { RouterContext as KoaRouterContext } from '@koa/router'
+import type { ParsedUrlQuery } from 'node:querystring'
 
 import type { Context } from './context'
 import type { Database } from '../data/database'
 import type { Config } from './config'
 import type { log } from '../core/log'
+import { invalidQueryError } from '../core/errors'
 
 export interface Response {
   status: 200 | 201 | 204
@@ -74,13 +76,25 @@ async function koaHandler (
 ): Promise<void> {
   const response = await handler({
     ...routerParams,
-    headers: koaContext.headers,
+    headers: { authorization: koaContext.headers.authorization },
     params: koaContext.params,
     request: {
       body: koaContext.request.body,
-      query: koaContext.request.query
+      query: parseQuery(koaContext.request.query)
     }
   });
   koaContext.status = response.status
   koaContext.body = response.body
+}
+
+function parseQuery(koaQuery: ParsedUrlQuery): Record<string, string> {
+  const result: Record<string, string> = {}
+  Object.keys(koaQuery).forEach(key => {
+    const value = koaQuery[key]
+    if (typeof value !== 'string') {
+      throw invalidQueryError
+    }
+    result[key] = value
+  })
+  return result
 }

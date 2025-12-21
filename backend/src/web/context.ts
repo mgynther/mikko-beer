@@ -2,18 +2,20 @@ import type { Config } from './config'
 
 import type { log } from '../core/log'
 import type { Database } from '../data/database'
-import type { IncomingHttpHeaders } from 'node:http'
-import type { ParsedUrlQuery } from 'node:querystring'
 
 interface Request {
   body: unknown
-  query: ParsedUrlQuery
+  query: Record<string, string>
+}
+
+interface Headers {
+  authorization: string | undefined
 }
 
 export interface Context {
   db: Database
   config: Config
-  headers: IncomingHttpHeaders
+  headers: Headers
   log: log
   params: Record<string, string>
   request: Request

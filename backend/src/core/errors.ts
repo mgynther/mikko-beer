@@ -69,6 +69,7 @@ type SignInMethodApiErros =
 type ErrorCode =
   | 'UnknownError'
   | 'InvalidPagination'
+  | 'InvalidQuery'
   | 'InvalidSearch'
   | AuthenticationErrors
   | BeerApiErrors
@@ -258,6 +259,13 @@ export const invalidPaginationError = new ControllerError(
   400,
   'InvalidPagination',
   'invalid pagination'
+)
+
+// Query
+export const invalidQueryError = new ControllerError(
+  400,
+  'InvalidQuery',
+  'invalid query, most likely duplicate query parameter'
 )
 
 // Review
