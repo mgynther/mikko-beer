@@ -56,9 +56,10 @@ const loginApi = emptySplitApi.injectEndpoints({
       }),
       async onQueryStarted (_, { dispatch, queryFulfilled }) {
         try {
-          dispatch(logout())
           await queryFulfilled
-        } catch {}
+        } finally {
+          dispatch(logout())
+        }
       },
       invalidatesTags: ['Login']
     })
