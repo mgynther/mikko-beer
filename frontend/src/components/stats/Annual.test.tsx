@@ -16,8 +16,8 @@ test('renders annual stats', () => {
           return {
             stats: {
               annual: [
-                { reviewAverage: '7.87', reviewCount: '10', year: '2020' },
-                { reviewAverage: '8.23', reviewCount: '24', year: '2021' }
+                { reviewAverage: '8.23', reviewCount: '24', year: '2021' },
+                { reviewAverage: '7.87', reviewCount: '10', year: '2020' }
               ]
             },
             isLoading: false
@@ -30,10 +30,10 @@ test('renders annual stats', () => {
     />
   )
   expect(stats.mock.calls).toEqual([[{ breweryId, locationId, styleId }]])
-  getByText('7.87')
-  getByText('10')
-  getByText('2020')
   getByText('8.23')
   getByText('24')
   getByText('2021')
+  getByText('7.87')
+  getByText('10')
+  getByText('2020')
 })

@@ -306,7 +306,7 @@ describe('stats tests', () => {
     annualStats: AnnualStats,
     expectedAnnual: Annual[]
   ): void {
-    const annual = ['2021', '2022', '2023'].map(year => {
+    const annual = ['2023', '2022', '2021'].map(year => {
       const ratings = reviewRatingsByYear(year)
       return {
         ratings,
@@ -348,16 +348,16 @@ describe('stats tests', () => {
     }
     checkAnnualStats(reviewRatingsByYear, statsRes.data.annual, [
       {
-        count: 1,
-        average: '5.00'
+        count: 2,
+        average: '7.50'
       },
       {
         count: 1,
         average: '7.00'
       },
       {
-        count: 2,
-        average: '7.50'
+        count: 1,
+        average: '5.00'
       }
     ])
   })
@@ -402,16 +402,16 @@ describe('stats tests', () => {
     }
     checkAnnualStats(reviewRatingsByYear, statsRes.data.annual, [
       {
-        count: 1,
-        average: '5.00'
+        count: 2,
+        average: '7.50'
       },
       {
         count: 0,
         average: '0.00'
       },
       {
-        count: 2,
-        average: '7.50'
+        count: 1,
+        average: '5.00'
       }
     ])
   })

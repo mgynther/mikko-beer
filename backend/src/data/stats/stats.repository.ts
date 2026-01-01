@@ -84,7 +84,7 @@ export async function getAnnual (
     DATE_PART('YEAR', time) as year FROM review
     ${idFilter(statsFilter)}
     GROUP BY year
-    ORDER BY year ASC
+    ORDER BY year DESC
   `
 
   /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --

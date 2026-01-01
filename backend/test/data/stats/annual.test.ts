@@ -49,15 +49,15 @@ describe('annual stats tests', () => {
     )
     assertDeepEqual(stats, [
       {
+        reviewAverage: avg(reviews, '2024'),
+        reviewCount: `${filterByYear(reviews, '2024').length}`,
+        year: '2024'
+      },
+      {
         reviewAverage: avg(reviews, '2023'),
         reviewCount: `${filterByYear(reviews, '2023').length}`,
         year: '2023'
       },
-      {
-        reviewAverage: avg(reviews, '2024'),
-        reviewCount: `${filterByYear(reviews, '2024').length}`,
-        year: '2024'
-      }
     ])
   })
 
