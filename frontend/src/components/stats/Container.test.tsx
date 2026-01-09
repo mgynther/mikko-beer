@@ -162,7 +162,7 @@ test('order container stats by average desc', () => {
     list_direction: 'desc'
   }
   const { getAllByText } = renderFromRecord(searchRecord)
-  const averages = getAllByText(/7.87|8.23/)
+  const averages = getAllByText(/7.87|8.23/v)
   expect(averages.length).toEqual(2)
   expect(averages[0].innerHTML).toEqual('8.23')
   expect(averages[1].innerHTML).toEqual('7.87')
@@ -175,7 +175,7 @@ test('order container stats by average asc', () => {
     list_direction: 'asc'
   }
   const { getAllByText } = renderFromRecord(searchRecord)
-  const averages = getAllByText(/7.87|8.23/)
+  const averages = getAllByText(/7.87|8.23/v)
   expect(averages.length).toEqual(2)
   expect(averages[0].innerHTML).toEqual('7.87')
   expect(averages[1].innerHTML).toEqual('8.23')
@@ -188,7 +188,7 @@ test('order container stats by count desc', () => {
     list_direction: 'desc'
   }
   const { getAllByText } = renderFromRecord(searchRecord)
-  const counts = getAllByText(/10|24/)
+  const counts = getAllByText(/10|24/v)
   expect(counts.length).toEqual(2)
   expect(counts[0].innerHTML).toEqual('24')
   expect(counts[1].innerHTML).toEqual('10')
@@ -201,7 +201,7 @@ test('order container stats by count asc', () => {
     list_direction: 'asc'
   }
   const { getAllByText } = renderFromRecord(searchRecord)
-  const counts = getAllByText(/10|24/)
+  const counts = getAllByText(/10|24/v)
   expect(counts.length).toEqual(2)
   expect(counts[0].innerHTML).toEqual('10')
   expect(counts[1].innerHTML).toEqual('24')
@@ -214,7 +214,7 @@ test('order container stats by container desc', () => {
     list_direction: 'desc'
   }
   const { getAllByText } = renderFromRecord(searchRecord)
-  const containers = getAllByText(/draft 0.25|bottle 0.33/)
+  const containers = getAllByText(/draft 0.25|bottle 0.33/v)
   expect(containers.length).toEqual(2)
   expect(containers[0].innerHTML).toEqual('draft 0.25')
   expect(containers[1].innerHTML).toEqual('bottle 0.33')
@@ -227,7 +227,7 @@ test('order container stats by container asc', () => {
     list_direction: 'asc'
   }
   const { getAllByText } = renderFromRecord(searchRecord)
-  const containers = getAllByText(/draft 0.25|bottle 0.33/)
+  const containers = getAllByText(/draft 0.25|bottle 0.33/v)
   expect(containers.length).toEqual(2)
   expect(containers[0].innerHTML).toEqual('bottle 0.33')
   expect(containers[1].innerHTML).toEqual('draft 0.25')

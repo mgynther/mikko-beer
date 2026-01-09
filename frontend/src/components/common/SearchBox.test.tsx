@@ -286,7 +286,7 @@ test('sorts results', async () => {
       select={dontCall}
     />
   )
-  const itemButtons = getAllByRole('button', { name: /item/ })
+  const itemButtons = getAllByRole('button', { name: /item/v })
   expect(itemButtons.map(item => item.innerHTML)).toEqual(['item a', 'item b'])
 })
 
@@ -309,7 +309,7 @@ test('sorts results starting with filter', async () => {
       select={dontCall}
     />
   )
-  const itemButtons = getAllByRole('button', { name: /lager/i })
+  const itemButtons = getAllByRole('button', { name: /lager/iv })
   expect(itemButtons.map(item => item.innerHTML)).toEqual([
     'Lager',
     'American lager'
@@ -338,7 +338,7 @@ test('custom sorts results', async () => {
       select={dontCall}
     />
   )
-  const itemButtons = getAllByRole('button', { name: /item/ })
+  const itemButtons = getAllByRole('button', { name: /item/v })
   expect(itemButtons.length).toEqual(2)
   expect(itemButtons.map(item => item.innerHTML)).toEqual(['item b', 'item a'])
 })

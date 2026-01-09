@@ -266,7 +266,7 @@ test('sorts existing result before create new location', async () => {
   expect(input).toBeDefined()
   await user.type(input, location.name)
 
-  const resultButtons = getAllByRole('button', { name: /Huurre/ })
+  const resultButtons = getAllByRole('button', { name: /Huurre/v })
   expect(resultButtons.map(item => item.innerHTML)).toEqual([
     resultName,
     `Create "${location.name}"`

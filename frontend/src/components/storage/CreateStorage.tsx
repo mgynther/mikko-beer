@@ -36,7 +36,7 @@ function CreateStorage (props: Props): React.JSX.Element {
   // Very crude validation may let garbage pass but assuming date
   // implementations set invalid or missing input to an empty string or
   // similar it should be fine.
-  const isBestBeforeValid = /^\d{4}-\d{2}-\d{2}$/.test(bestBefore)
+  const isBestBeforeValid = /^\d{4}-\d{2}-\d{2}$/v.test(bestBefore)
 
   const isValid = beer !== undefined &&
     container !== undefined &&
