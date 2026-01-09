@@ -18,7 +18,7 @@ export function toIlike (search: SearchByName): string {
       name.length === 0) {
     throw new Error('must not search with missing or empty name')
   }
-  if (/^".*"$/.test(name)) {
+  if (/^".*"$/v.test(name)) {
     return name.substring(1, name.length - 1)
   }
   return `%${name}%`

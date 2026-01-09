@@ -74,16 +74,28 @@ async function koaHandler (
   handler: RequestHandler,
   routerParams: RouterParams
 ): Promise<void> {
+  const authorization = koaContext.headers.authorization
+  const params = koaContext.params
+  const body: unknown = koaContext.request.body
+  const koaQuery = koaContext.request.query
   const response = await handler({
     ...routerParams,
-    headers: { authorization: koaContext.headers.authorization },
-    params: koaContext.params,
+    headers: { authorization },
+    params,
     request: {
-      body: koaContext.request.body,
-      query: parseQuery(koaContext.request.query)
+      body,
+      query: parseQuery(koaQuery)
     }
   });
+  /* eslint-disable-next-line require-atomic-updates --
+   * koa requires assigning properties and there's no way to do it before
+   * handling the request. Context is not outdated here.
+   */
   koaContext.status = response.status
+  /* eslint-disable-next-line require-atomic-updates --
+   * koa requires assigning properties and there's no way to do it before
+   * handling the request. Context is not outdated here.
+   */
   koaContext.body = response.body
 }
 
