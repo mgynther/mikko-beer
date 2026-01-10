@@ -31,6 +31,13 @@ interface Props {
   setSortingOrder: (order: BreweryStatsSortingOrder) => void
 }
 
+function formatCount (brewery: OneBreweryStats): string {
+  if (brewery.reviewCount === brewery.reviewedBeerCount) {
+    return brewery.reviewCount
+  }
+  return `${brewery.reviewCount} (${brewery.reviewedBeerCount})`
+}
+
 function BreweryStatsTable (props: Props): React.JSX.Element {
   const filters = props.filters
 
@@ -97,7 +104,7 @@ function BreweryStatsTable (props: Props): React.JSX.Element {
                   name: brewery.breweryName
                 }]} />
               </td>
-              <td className='StatsNumColumn'>{brewery.reviewCount}</td>
+              <td className='StatsNumColumn'>{formatCount(brewery)}</td>
               <td className='StatsNumColumn'>{brewery.reviewAverage}</td>
             </tr>
           ))}

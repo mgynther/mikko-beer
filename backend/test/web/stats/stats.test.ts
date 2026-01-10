@@ -570,7 +570,8 @@ describe('stats tests', () => {
   interface BreweryStatsData {
     brewery: Brewery,
     count: number,
-    average: string
+    average: string,
+    reviewedBeerCount: number
   }
 
   function checkBreweryStats (
@@ -587,12 +588,14 @@ describe('stats tests', () => {
       {
         reviewCount: `${nokiaRatings.length}`,
         reviewAverage: nokiaAverage,
+        reviewedBeerCount: `${nokia.reviewedBeerCount}`,
         breweryId: nokia.brewery.id,
         breweryName: nokia.brewery.name
       },
       {
         reviewCount: `${lindemansRatings.length}`,
         reviewAverage: lindemansAverage,
+        reviewedBeerCount: `${lindemans.reviewedBeerCount}`,
         breweryId: lindemans.brewery.id,
         breweryName: lindemans.brewery.name
       }
@@ -644,8 +647,8 @@ describe('stats tests', () => {
       return reviewRatingsByBrewery(breweryId, beers, reviews, breweryId)
     }
     checkBreweryStats(
-      { brewery: nokiaBrewery, count: 3, average: '7.33' },
-      { brewery: lindemansBrewery, count: 3, average: '6.67' },
+      { brewery: nokiaBrewery, count: 3, reviewedBeerCount: 2, average: '7.33' },
+      { brewery: lindemansBrewery, count: 3, reviewedBeerCount: 2, average: '6.67' },
       filter,
       statsRes.data.brewery
     )
@@ -673,8 +676,18 @@ describe('stats tests', () => {
       return reviewRatingsByBrewery(breweryId, beers, reviews, filterBreweryId)
     }
     checkBreweryStats(
-      { brewery: nokiaBrewery, count: 2, average: '7.50' },
-      { brewery: lindemansBrewery, count: 3, average: '6.67' },
+      {
+        brewery: nokiaBrewery,
+        count: 2,
+        reviewedBeerCount: 1,
+        average: '7.50'
+      },
+      {
+        brewery: lindemansBrewery,
+        count: 3,
+        reviewedBeerCount: 2,
+        average: '6.67'
+      },
       filter,
       statsRes.data.brewery
     )

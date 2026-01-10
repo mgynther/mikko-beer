@@ -54,6 +54,7 @@ export interface OneBreweryStats {
   breweryName: string
   reviewAverage: string
   reviewCount: string
+  reviewedBeerCount: string
 }
 
 export interface BreweryStats {

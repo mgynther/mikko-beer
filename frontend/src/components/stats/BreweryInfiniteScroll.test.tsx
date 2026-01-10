@@ -13,14 +13,16 @@ const koskipanimo = {
   breweryId: '59c825c9-b346-420a-9e67-f0ae1af1d962',
   breweryName: 'Koskipanimo',
   reviewAverage: '9.06',
-  reviewCount: '63'
+  reviewCount: '63',
+  reviewedBeerCount: '62'
 }
 
 const lehe = {
   breweryId: '2816d69f-ddf1-449f-be32-3a2a880ac45b',
   breweryName: 'Lehe pruulikoda',
   reviewAverage: '9.71',
-  reviewCount: '24'
+  reviewCount: '24',
+  reviewedBeerCount: '24'
 }
 
 const unusedFilters = {
@@ -131,7 +133,7 @@ test('renders brewery stats', () => {
   )
   getByText(koskipanimo.breweryName)
   getByText(koskipanimo.reviewAverage)
-  getByText(koskipanimo.reviewCount)
+  getByText(`${koskipanimo.reviewCount} (${koskipanimo.reviewedBeerCount})`)
   getByText(lehe.breweryName)
   getByText(lehe.reviewAverage)
   getByText(lehe.reviewCount)

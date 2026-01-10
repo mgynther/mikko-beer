@@ -51,7 +51,8 @@ const ValidatedBreweryStats = t.type({
       breweryId: t.string,
       breweryName: t.string,
       reviewAverage: t.string,
-      reviewCount: t.string
+      reviewCount: t.string,
+      reviewedBeerCount: t.string
     }))
 })
 

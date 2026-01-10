@@ -314,6 +314,7 @@ export async function getLocation (
 interface BreweryQuerySelection {
   review_average: number
   review_count: number
+  reviewed_beer_count: number
   brewery_id: string
   brewery_name: string | null
 }
@@ -370,6 +371,7 @@ export async function getBrewery (
 
   let breweryQuery = tempQuery.select(({ fn }) => [
     fn.count<number>('review.review_id').as('review_count'),
+    fn.count<number>('review.beer').distinct().as('reviewed_beer_count'),
     fn.avg<number>('review.rating').as('review_average'),
     'brewery.brewery_id as brewery_id',
     'brewery.name as brewery_name'
@@ -398,6 +400,7 @@ export async function getBrewery (
       .where('querybrewery.brewery', '=', statsFilter.brewery)
       .select(({ fn }) => [
         fn.count<number>('review.review_id').as('review_count'),
+        fn.count<number>('review.beer').distinct().as('reviewed_beer_count'),
         fn.avg<number>('review.rating').as('review_average'),
         'brewery.brewery_id as brewery_id',
         'brewery.name as brewery_name'
@@ -427,6 +430,7 @@ export async function getBrewery (
     .map(row => ({
       reviewAverage: round(row.review_average, 2),
       reviewCount: `${row.review_count}`,
+      reviewedBeerCount: `${row.reviewed_beer_count}`,
       breweryId: row.brewery_id,
       breweryName: row.brewery_name ?? ''
     }))

@@ -113,12 +113,14 @@ describe('stats authorized service unit tests', () => {
         {
           reviewAverage: '9.08',
           reviewCount: '64',
+          reviewedBeerCount: '63',
           breweryId: 'c1c9948d-2a7a-4b54-9ada-0fbfedfe2121',
           breweryName: 'Koskipanimo'
         },
         {
           reviewAverage: '9.01',
           reviewCount: '55',
+          reviewedBeerCount: '54',
           breweryId: '1c0b32ed-a73a-422d-a14a-e70b0ea28e1d',
           breweryName: 'Mallaskoski'
         }

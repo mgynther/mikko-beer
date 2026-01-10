@@ -27,6 +27,7 @@ export type AnnualContainerStats = Array<{
 export type BreweryStats = Array<{
   reviewAverage: string
   reviewCount: string
+  reviewedBeerCount: string
   breweryId: string
   breweryName: string
 }>

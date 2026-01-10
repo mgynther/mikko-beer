@@ -279,13 +279,15 @@ test('renders brewery stats', async () => {
     breweryId: '8981fe71-1a4d-48f3-8b4e-9b9b3ddf9d8a',
     breweryName: 'Koskipanimo',
     reviewAverage: '9.06',
-    reviewCount: '63'
+    reviewCount: '63',
+    reviewedBeerCount: '62'
   }
   const lehe = {
     breweryId: 'ba44d3d1-5071-41bc-8a05-65ec8914a13e',
     breweryName: 'Lehe pruulikoda',
     reviewAverage: '9.71',
-    reviewCount: '24'
+    reviewCount: '24',
+    reviewedBeerCount: '24'
   }
   const breweryStats = { brewery: [{ ...koskipanimo }, { ...lehe }]}
 
@@ -315,7 +317,7 @@ test('renders brewery stats', async () => {
   )
   await waitFor(() => getByText(koskipanimo.breweryName))
   getByText(koskipanimo.reviewAverage)
-  getByText(koskipanimo.reviewCount)
+  getByText(`${koskipanimo.reviewCount} (${koskipanimo.reviewedBeerCount})`)
   getByText(lehe.breweryName)
   getByText(lehe.reviewAverage)
   getByText(lehe.reviewCount)

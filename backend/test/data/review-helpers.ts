@@ -25,6 +25,9 @@ export interface InsertedData {
   otherStyle: Style
 }
 
+// Common test data initializer intented for generic reviews. Should not be
+// adapted for specific cases that are not already supported. Instead specific
+// test data should be created.
 export async function insertData(trx: Transaction): Promise<InsertedData> {
   const brewery =
     await breweryRepository.insertBrewery(trx, { name: 'Salama' })
@@ -93,6 +96,9 @@ export async function insertData(trx: Transaction): Promise<InsertedData> {
   }
 }
 
+// Common test data initializer for generic reviews. Should not be adapted for
+// specific cases that are not already supported. Instead specific test data
+// should be created.
 export async function insertMultipleReviews(
   count: number,
   db: Database
