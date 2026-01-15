@@ -1,5 +1,5 @@
 import love from 'eslint-config-love'
-import eslintComments from 'eslint-plugin-eslint-comments'
+import eslintComments from '@eslint-community/eslint-plugin-eslint-comments'
 import typescriptEslint from '@typescript-eslint/eslint-plugin'
 import pluginImport from 'eslint-plugin-import'
 import pluginN from 'eslint-plugin-n'
@@ -38,7 +38,7 @@ const rules = {
 
 const plugins = {
   '@typescript-eslint': typescriptEslint,
-  'eslint-comments': eslintComments,
+  '@eslint-community/eslint-comments': eslintComments,
   'import': pluginImport,
   'n': pluginN,
   'promise': pluginPromise
