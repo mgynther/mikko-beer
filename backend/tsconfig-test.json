@@ -3,11 +3,11 @@
     "module": "commonjs",
     "target": "ESNext",
     "declaration": true,
-    "outDir": "./dist",
+    "outDir": "./build-tests",
     "strict": true,
     "noImplicitAny": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/data/migrations/*", "test/**/*"],
   "watchOptions": {
     "watchFile": "useFsEvents",
     "watchDirectory": "useFsEvents",

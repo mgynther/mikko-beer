@@ -5,13 +5,14 @@
   "main": "index.js",
   "scripts": {
     "build": "rm -rf dist && tsc",
+    "build:test": "rm -rf build-tests && tsc -p ./tsconfig-test.json",
     "lint": "npx eslint --fix src",
     "start": "npm run migrate:latest && node --env-file .env dist/index.js",
-    "test:files": "NODE_OPTIONS='--import ./register-esm.mjs' node --env-file .env-test --test -r ts-node/register --test-timeout 5000",
-    "test:core": "npm run test:files -- --test-isolation=none --test-concurrency 1 test/core/*.test.ts test/core/**/*.test.ts test/core/**/**/*.test.ts",
-    "test:data": "npm run test:files -- --test-isolation=none --test-concurrency 1 test/data/*.test.ts test/data/**/*.test.ts",
-    "test:web": "npm run test:files -- --test-isolation=none --test-concurrency 1 test/web/*.test.ts test/web/**/*.test.ts",
-    "test": "npm run test:files -- --test-isolation=none --test-concurrency 1 test/*.test.ts test/**/*.test.ts test/**/**/*.test.ts test/**/**/**/*.test.ts",
+    "test:files": "npm run build:test && node --env-file .env-test --test --test-timeout 5000",
+    "test:core": "npm run test:files -- --test-isolation=none --test-concurrency 1 build-tests/test/core/*.test.js build-tests/test/core/**/*.test.js build-tests/test/core/**/**/*.test.js",
+    "test:data": "npm run test:files -- --test-isolation=none --test-concurrency 1 build-tests/test/data/*.test.js build-tests/test/data/**/*.test.js",
+    "test:web": "npm run test:files -- --test-isolation=none --test-concurrency 1 build-tests/test/web/*.test.js build-tests/test/web/**/*.test.js",
+    "test": "npm run test:files -- --test-isolation=none --test-concurrency 1 build-tests/test/*.test.js build-tests/test/**/*.test.js build-tests/test/**/**/*.test.js buid-tests/test/**/**/**/*.test.js",
     "migrate:latest": "node --env-file .env dist/data/migrate-to-latest.js"
   },
   "dependencies": {
@@ -39,7 +40,6 @@
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-n": "17.23.2",
     "eslint-plugin-promise": "7.2.1",
-    "ts-node": "10.9.2",
     "typescript": "5.9.3"
   }
 }
