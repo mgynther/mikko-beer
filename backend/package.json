@@ -22,7 +22,7 @@
     "jsonwebtoken": "9.0.3",
     "koa": "3.1.1",
     "koa-compress": "5.1.1",
-    "kysely": "0.28.9",
+    "kysely": "0.28.10",
     "pg": "8.17.1",
     "uuid": "13.0.0"
   },
@@ -33,7 +33,7 @@
     "@types/koa-compress": "4.0.7",
     "@types/node": "25.0.9",
     "@types/pg": "8.16.0",
-    "@typescript-eslint/eslint-plugin": "8.53.0",
+    "@typescript-eslint/eslint-plugin": "8.53.1",
     "axios": "1.13.2",
     "eslint": "9.39.2",
     "eslint-config-love": "145.0.0",
