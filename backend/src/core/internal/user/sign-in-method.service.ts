@@ -40,7 +40,8 @@ export async function addPasswordSignInMethod (
 
   await addPasswordUserIf.insertPasswordSignInMethod({
     userId,
-    passwordHash: await encryptPassword(method.password)
+    passwordHash: await encryptPassword(method.password),
+    hashedAt: new Date()
   })
 
   await userService.setUserUsername(
@@ -79,7 +80,8 @@ export async function changePassword (
 
   await changePasswordUserIf.updatePassword({
     userId,
-    passwordHash: await encryptPassword(change.newPassword)
+    passwordHash: await encryptPassword(change.newPassword),
+    hashedAt: new Date()
   })
 }
 
@@ -98,8 +100,19 @@ export async function signInUsingPassword (
     throw invalidCredentialsError
   }
 
-  if (!(await verifyPassword(method.password, signInMethod.passwordHash))) {
+  const password = method.password
+  if (!(await verifyPassword(password, signInMethod.passwordHash))) {
     throw invalidCredentialsError
+  }
+
+  if (signInMethod.hashedAt === undefined) {
+    await signInUsingPasswordIf.updatePassword({
+      userId: user.id,
+      // Cannot apply any validation on the password as the rules may have
+      // changed and login cannot fail permanently for this reason here.
+      passwordHash: await encryptSecret(password),
+      hashedAt: new Date()
+    })
   }
 
   const { refresh, auth } = await authTokenService.createTokens(

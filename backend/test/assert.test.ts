@@ -4,10 +4,12 @@ import * as assert from 'node:assert/strict'
 import {
   assertDeepEqual,
   assertDoesNotThrow,
+  assertEqual,
   assertGreaterThan,
   assertIncludes,
   assertInstanceOf,
   assertNotDeepEqual,
+  assertNotEqual,
   assertThrows,
   assertTruthy
 } from './assert'
@@ -31,6 +33,26 @@ describe('assertion tests', () => {
   it('throws on failing not deep equal', () => {
     assert.throws(() =>
       assertNotDeepEqual([123, 'test'], [123, 'test'])
+    )
+  })
+
+  it('is equal', () => {
+    assertEqual('testing', 'testing')
+  })
+
+  it('throws on failing equal', () => {
+    assert.throws(() =>
+      assertEqual('one', 'another')
+    )
+  })
+
+  it('is not equal', () => {
+    assertNotEqual(1, 2)
+  })
+
+  it('throws on failing not equal', () => {
+    assert.throws(() =>
+      assertNotEqual(123, 123)
     )
   })
 

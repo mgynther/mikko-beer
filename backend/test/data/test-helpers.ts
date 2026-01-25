@@ -16,7 +16,11 @@ import { promises as fs } from 'fs'
 
 export async function beforeTests(
   config: ConnectionConfig,
-  adminConfig: ConnectionConfig
+  adminConfig: ConnectionConfig,
+  // Initializing data here can be relevant only when App needs to start with
+  // specific data. For other purposes getting database from the is more
+  // suitable.
+  dataInitializer?: (db: Database) => Promise<void>
 ) {
   const adminDb = new Kysely<any>({
     dialect: new PostgresDialect({
@@ -41,6 +45,9 @@ export async function beforeTests(
   })
 
   await migrator.migrateToLatest()
+  if (dataInitializer !== undefined) {
+    await dataInitializer(db)
+  }
   await db.destroy()
 }
 

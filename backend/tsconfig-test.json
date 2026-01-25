@@ -7,7 +7,7 @@
     "strict": true,
     "noImplicitAny": true
   },
-  "include": ["src/data/migrations/*", "test/**/*"],
+  "include": ["src/data/*", "src/data/**/*", "test/**/*"],
   "watchOptions": {
     "watchFile": "useFsEvents",
     "watchDirectory": "useFsEvents",

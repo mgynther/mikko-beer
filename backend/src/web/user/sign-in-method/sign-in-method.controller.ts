@@ -47,7 +47,14 @@ export function signInMethodController (router: Router): void {
             trx,
             userId,
             new Date()
+          ),
+        updatePassword: async function(
+          userPasswordHash: UserPasswordHash
+        ): Promise<void> {
+          await signInMethodRepository.updatePassword(
+            trx, userPasswordHash
           )
+        }
       }
       return await signInMethodService.signInUsingPassword(
         signInUsingPasswordIf, body, getAuthTokenConfig(ctx)

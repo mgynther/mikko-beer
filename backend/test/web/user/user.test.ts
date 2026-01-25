@@ -2,7 +2,34 @@ import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context'
 import { User } from '../../../src/core/user/user'
-import { assertDeepEqual, assertEqual, assertNotDeepEqual } from '../../assert'
+import {
+  assertDeepEqual,
+  assertEqual,
+  assertNotDeepEqual,
+  assertNotEqual,
+  assertTruthy
+} from '../../assert'
+
+import {
+  findPasswordSignInMethod,
+  updatePassword
+} from '../../../src/data/user/sign-in-method/sign-in-method.repository'
+import type { UserPasswordHash } from '../../../src/core/user/sign-in-method'
+import type { Database } from '../../../src/data/database'
+
+async function getSignInMethod(
+  db: Database, userId: string
+): Promise<UserPasswordHash> {
+  const signInMethod = await db.executeReadWriteTransaction(
+    async trx => {
+      return await findPasswordSignInMethod(trx, userId)
+    }
+  )
+  if (signInMethod === undefined) {
+    throw new Error('unexpected undefined signInMethod')
+  }
+  return signInMethod
+}
 
 describe('user tests', () => {
   const ctx = new TestContext()
@@ -70,7 +97,9 @@ describe('user tests', () => {
   })
 
   it('sign in a user', async () => {
-    const { authToken, username, password } = await ctx.createUser()
+    const { authToken, user, username, password } = await ctx.createUser()
+
+    const originalSignInMethod = await getSignInMethod(ctx.db, user.id)
 
     const res = await ctx.request.post(`/api/v1/user/sign-in`, {
       username: username,
@@ -78,6 +107,9 @@ describe('user tests', () => {
     })
 
     assertEqual(res.status, 200)
+
+    const postLoginSignInMethod = await getSignInMethod(ctx.db, user.id)
+    assertDeepEqual(postLoginSignInMethod, originalSignInMethod)
 
     // The returned auth token is be usable.
     const getRes = await ctx.request.get<{ user: User }>(
@@ -87,6 +119,43 @@ describe('user tests', () => {
 
     assertEqual(getRes.status, 200)
     assertDeepEqual(getRes.data.user, res.data.user)
+  })
+
+  it('rehash on sign in a user without hashedAt', async () => {
+    const { user, username, password } = await ctx.createUser()
+
+    const originalSignInMethod = await getSignInMethod(ctx.db, user.id)
+    await ctx.db.executeReadWriteTransaction(
+      async trx => {
+        return await updatePassword(trx, {
+          userId: user.id,
+          passwordHash: originalSignInMethod.passwordHash,
+          hashedAt: undefined
+        })
+      }
+    )
+    const preparedSignInMethod = await getSignInMethod(ctx.db, user.id)
+    assertEqual(preparedSignInMethod.hashedAt, undefined)
+
+    const res = await ctx.request.post(`/api/v1/user/sign-in`, {
+      username: username,
+      password: password,
+    })
+    assertEqual(res.status, 200)
+
+    const postLoginSignInMethod = await getSignInMethod(ctx.db, user.id)
+    assertEqual(postLoginSignInMethod.userId, user.id)
+    assertTruthy(postLoginSignInMethod.hashedAt)
+    assertNotEqual(
+      postLoginSignInMethod.passwordHash,
+      preparedSignInMethod.passwordHash
+    )
+
+    const secondRes = await ctx.request.post(`/api/v1/user/sign-in`, {
+      username: username,
+      password: password,
+    })
+    assertEqual(secondRes.status, 200)
   })
 
   it('fail to sign in user with the wrong password', async () => {

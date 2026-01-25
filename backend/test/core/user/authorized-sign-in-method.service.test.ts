@@ -80,13 +80,15 @@ const authTokenConfig: AuthTokenConfig = {
 
 const userPasswordHash: UserPasswordHash = {
   userId,
-  passwordHash: knownHash
+  passwordHash: knownHash,
+  hashedAt: new Date('2022-12-12T10:00:01.023Z')
 }
 
 const signInUsingPasswordIf: SignInUsingPasswordIf = {
   lockUserByUsername: async () => user,
   findPasswordSignInMethod: async () => userPasswordHash,
-  insertRefreshToken: async () => dbRefreshToken
+  insertRefreshToken: async () => dbRefreshToken,
+  updatePassword: async () => undefined
 }
 
 const changePasswordUserIf: ChangePasswordUserIf = {

@@ -21,6 +21,7 @@ import type {
   PasswordChange,
   PasswordSignInMethod,
   SignInUsingPasswordIf,
+  NewUserPasswordHash,
   UserPasswordHash,
 } from '../../../../src/core/user/sign-in-method'
 import { User } from '../../../../src/core/user/user'
@@ -33,6 +34,17 @@ import {
 import { expectReject } from '../../controller-error-helper'
 import { dummyLog as log } from '../../dummy-log'
 import { AuthTokenConfig } from '../../../../src/core/auth/auth-token'
+
+function assertCurrentDateTime(date: Date) {
+  if (date === undefined) {
+    throw new Error('date is undefined')
+  }
+  const currentDate = new Date()
+  // If any more precision is needed it would be better to inverse date access.
+  // Without any time related logic in the implementation sanity checking the
+  // dates is fine.
+  assertGreaterThan(60 * 1000, Math.abs(currentDate.getTime() - date.getTime()))
+}
 
 describe('encrypt and verify password', () => {
   it('fail to encrypt too short password', async () => {
@@ -85,6 +97,8 @@ describe('password sign-in-method service unit tests', () => {
   const otherPassword = 'password1'
   const otherHash = 'c4e457548452abcaf38f97cfce412926:8af0071d2da359277beea4a9c3232d898b975e9ed9170bdea77578667f753f08970144297a5cd9382acbcb9a5341f3e0e0026c1c7d877dcfbce2abd3f528bb9f'
 
+  const hashDate = new Date('2023-03-04T12:12:12.222Z')
+
   const method: PasswordSignInMethod = {
     username,
     password: knownPassword,
@@ -95,9 +109,22 @@ describe('password sign-in-method service unit tests', () => {
     newPassword: otherPassword,
   }
 
-  const userPasswordHash: UserPasswordHash = {
+  const recentUserPasswordHash: UserPasswordHash = {
     userId,
     passwordHash: knownHash,
+    hashedAt: hashDate
+  }
+
+  const nonRecentUserPasswordHash: UserPasswordHash = {
+    userId,
+    passwordHash: knownHash,
+    hashedAt: undefined
+  }
+
+  const otherRecentUserPasswordHash: UserPasswordHash = {
+    userId,
+    passwordHash: otherHash,
+    hashedAt: hashDate
   }
 
   const authTokenConfig: AuthTokenConfig = {
@@ -134,28 +161,13 @@ describe('password sign-in-method service unit tests', () => {
     return undefined
   }
 
-  async function getUserPasswordHash(
-    userId: string
-  ): Promise<UserPasswordHash | undefined> {
-    assertEqual(userId, user.id)
-    return userPasswordHash
-  }
-
-  async function getOtherPasswordHash(
-    userId: string
-  ): Promise<UserPasswordHash | undefined> {
-    assertEqual(userId, user.id)
-    return {
-      userId,
-      passwordHash: otherHash
+  function getUserPasswordHasher(
+    result: UserPasswordHash | undefined
+  ): (userId: string) => Promise<UserPasswordHash | undefined> {
+    return async (userId: string) => {
+      assertEqual(userId, user.id)
+      return result
     }
-  }
-
-  async function getMissingPasswordHash(
-    userId: string
-  ): Promise<UserPasswordHash | undefined> {
-    assertEqual(userId, user.id)
-    return undefined
   }
 
   async function insertRefreshToken(userId: string) {
@@ -170,9 +182,10 @@ describe('password sign-in-method service unit tests', () => {
     const addPasswordUserIf: AddPasswordUserIf = {
       lockUserById: lockNoPasswordUser,
       insertPasswordSignInMethod: async function(
-        userPassword: UserPasswordHash
+        userPassword: NewUserPasswordHash
       ): Promise<void> {
         assertEqual(userPassword.userId, user.id)
+        assertCurrentDateTime(userPassword.hashedAt)
         // There's no trivial way ensure hash is correct without using the same
         // implementation as in the tested code.
         assertEqual(
@@ -232,11 +245,12 @@ describe('password sign-in-method service unit tests', () => {
   it('change password', async () => {
     const changePasswordUserIf: ChangePasswordUserIf = {
       lockUserById: lockValidUser,
-      findPasswordSignInMethod: getUserPasswordHash,
+      findPasswordSignInMethod: getUserPasswordHasher(recentUserPasswordHash),
       updatePassword: async function(
-        userPassword: UserPasswordHash
+        userPassword: NewUserPasswordHash
       ): Promise<void> {
         assertEqual(userPassword.userId, user.id)
+        assertCurrentDateTime(userPassword.hashedAt)
         // There's no trivial way ensure hash is correct without using the same
         // implementation as in the tested code.
         assertEqual(
@@ -263,7 +277,7 @@ describe('password sign-in-method service unit tests', () => {
   it('fail to change password without sign-in-method', async () => {
     const changePasswordUserIf: ChangePasswordUserIf = {
       lockUserById: lockValidUser,
-      findPasswordSignInMethod: getMissingPasswordHash,
+      findPasswordSignInMethod: getUserPasswordHasher(undefined),
       updatePassword: notCalled,
     }
     expectReject(async () => {
@@ -274,7 +288,8 @@ describe('password sign-in-method service unit tests', () => {
   it('fail to change password with wrong old password', async () => {
     const changePasswordUserIf: ChangePasswordUserIf = {
       lockUserById: lockValidUser,
-      findPasswordSignInMethod: getOtherPasswordHash,
+      findPasswordSignInMethod:
+        getUserPasswordHasher(otherRecentUserPasswordHash),
       updatePassword: notCalled,
     }
     expectReject(async () => {
@@ -282,11 +297,12 @@ describe('password sign-in-method service unit tests', () => {
     }, invalidCredentialsError)
   })
 
-  it('sign in using password', async () => {
+  it('sign in using recently hashed password', async () => {
     const signInUsingPasswordIf: SignInUsingPasswordIf = {
       lockUserByUsername: lockValidUserByUsername,
-      findPasswordSignInMethod: getUserPasswordHash,
-      insertRefreshToken
+      findPasswordSignInMethod: getUserPasswordHasher(recentUserPasswordHash),
+      insertRefreshToken,
+      updatePassword: notCalled
     }
     const result = await signInUsingPassword(
       signInUsingPasswordIf,
@@ -303,11 +319,48 @@ describe('password sign-in-method service unit tests', () => {
     assertDeepEqual(result.authToken, reference.auth)
   })
 
+  it('sign in using non-recently hashed password', async () => {
+    const userHashes: NewUserPasswordHash[] = []
+    const updatePassword = async (userPasswordHash: NewUserPasswordHash) => {
+      userHashes.push(userPasswordHash)
+      return undefined
+    }
+    const signInUsingPasswordIf: SignInUsingPasswordIf = {
+      lockUserByUsername: lockValidUserByUsername,
+      findPasswordSignInMethod:
+        getUserPasswordHasher(nonRecentUserPasswordHash),
+      insertRefreshToken,
+      updatePassword
+    }
+    const result = await signInUsingPassword(
+      signInUsingPasswordIf,
+      method,
+      authTokenConfig
+    )
+    assertDeepEqual(result.user, user)
+    const reference = await authTokenService.createTokens(
+      insertRefreshToken,
+      user,
+      authTokenConfig
+    )
+    assertDeepEqual(result.refreshToken, reference.refresh)
+    assertDeepEqual(result.authToken, reference.auth)
+    assertEqual(userHashes.length, 1)
+    const newHash = userHashes[0]
+    assertEqual(newHash.userId, user.id)
+    assertEqual(
+      await verifySecret(knownPassword, newHash.passwordHash),
+      true
+    )
+    assertCurrentDateTime(newHash.hashedAt)
+  })
+
   it('fail to sign in using password without user', async () => {
     const signInUsingPasswordIf: SignInUsingPasswordIf = {
       lockUserByUsername: lockMissingUser,
       findPasswordSignInMethod: notCalled,
-      insertRefreshToken: notCalled
+      insertRefreshToken: notCalled,
+      updatePassword: notCalled
     }
     expectReject(async () => {
       await signInUsingPassword(signInUsingPasswordIf, method, authTokenConfig)
@@ -317,8 +370,9 @@ describe('password sign-in-method service unit tests', () => {
   it('fail to sign in using password without password', async () => {
     const signInUsingPasswordIf: SignInUsingPasswordIf = {
       lockUserByUsername: lockValidUserByUsername,
-      findPasswordSignInMethod: getMissingPasswordHash,
-      insertRefreshToken: notCalled
+      findPasswordSignInMethod: getUserPasswordHasher(undefined),
+      insertRefreshToken: notCalled,
+      updatePassword: notCalled
     }
     expectReject(async () => {
       await signInUsingPassword(signInUsingPasswordIf, method, authTokenConfig)
@@ -328,8 +382,10 @@ describe('password sign-in-method service unit tests', () => {
   it('fail to sign in using password with wrong password', async () => {
     const signInUsingPasswordIf: SignInUsingPasswordIf = {
       lockUserByUsername: lockValidUserByUsername,
-      findPasswordSignInMethod: getOtherPasswordHash,
-      insertRefreshToken: notCalled
+      findPasswordSignInMethod:
+        getUserPasswordHasher(otherRecentUserPasswordHash),
+      insertRefreshToken: notCalled,
+      updatePassword: notCalled
     }
     expectReject(async () => {
       await signInUsingPassword(signInUsingPasswordIf, method, authTokenConfig)

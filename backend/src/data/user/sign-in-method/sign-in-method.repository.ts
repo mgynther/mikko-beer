@@ -19,7 +19,8 @@ export async function findPasswordSignInMethod (
 
   return {
     userId: method.user_id,
-    passwordHash: method.password_hash
+    passwordHash: method.password_hash,
+    hashedAt: method.hashed_at ?? undefined
   }
 }
 
@@ -36,7 +37,8 @@ export async function insertPasswordSignInMethod (
     .insertInto('password_sign_in_method')
     .values({
       user_id: method.userId,
-      password_hash: method.passwordHash
+      password_hash: method.passwordHash,
+      hashed_at: method.hashedAt ?? null
     })
     .execute()
 
@@ -50,7 +52,8 @@ export async function updatePassword (
   const updatedMethod = await trx.trx()
     .updateTable('password_sign_in_method')
     .set({
-      password_hash: userPasswordHash.passwordHash
+      password_hash: userPasswordHash.passwordHash,
+      hashed_at: userPasswordHash.hashedAt ?? null
     })
     .where('user_id', '=', userPasswordHash.userId)
     .returningAll()
@@ -58,6 +61,20 @@ export async function updatePassword (
 
   return {
     userId: updatedMethod.user_id,
-    passwordHash: updatedMethod.password_hash
+    passwordHash: updatedMethod.password_hash,
+    hashedAt: updatedMethod.hashed_at ?? undefined
   }
+}
+
+export async function clearOldHashedAt (
+  trx: Transaction,
+  oldDate: Date
+): Promise<void> {
+  await trx.trx()
+    .updateTable('password_sign_in_method')
+    .set({
+      hashed_at: null
+    })
+    .where('hashed_at', '<', oldDate)
+    .execute()
 }
