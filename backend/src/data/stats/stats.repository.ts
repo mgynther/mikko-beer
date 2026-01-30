@@ -497,10 +497,8 @@ function countContainerIds (idRows: ContainerIds[]): number {
   }
 
   idRows.forEach(row => {
-    const result = { ...map }
     add(row.review_container)
     add(row.storage_container)
-    return result
   })
 
   return Object.keys(map).length
