@@ -71,7 +71,8 @@ export default [
     rules: {
       ...rules,
       '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/require-await': 'off'
+      '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/strict-void-return': 'off'
     }
   },
   {

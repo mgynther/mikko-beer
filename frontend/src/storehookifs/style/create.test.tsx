@@ -1,4 +1,4 @@
-import { expect, test, vitest } from 'vitest'
+import { expect, test } from 'vitest'
 import { store } from '../../store/store'
 import { addTestServerResponse } from '../../../test-util/server'
 import createStyle from './create'
@@ -48,13 +48,12 @@ test('create style', async () => {
     status: 201
   })
 
-  const handler = vitest.fn()
   const { getByRole, getByText } = render(
     <Provider store={store}>
       <Helper
         style={{ parents: [], name: expectedResponse.style.name }}
         handleResponse={
-          handler
+          () => undefined
         }
       />
     </Provider>

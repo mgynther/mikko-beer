@@ -1,4 +1,4 @@
-import React, { type FormEvent, useState } from 'react'
+import React, { type SubmitEvent, useState } from 'react'
 
 import type {
   BeerWithIds,
@@ -42,7 +42,7 @@ function CreateStorage (props: Props): React.JSX.Element {
     container !== undefined &&
     isBestBeforeValid
 
-  async function doChange (event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function doChange (event: SubmitEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     if (!isValid) return
     const bb = new Date(`${bestBefore}T12:00:00.000`).toISOString()

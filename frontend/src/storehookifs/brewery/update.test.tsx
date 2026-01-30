@@ -1,4 +1,4 @@
-import { test, vitest } from 'vitest'
+import { test } from 'vitest'
 import { store } from '../../store/store'
 import { addTestServerResponse } from '../../../test-util/server'
 import updateBrewery from './update'
@@ -49,11 +49,10 @@ test('update brewery', async () => {
     status: 200
   })
 
-  const handler = vitest.fn()
   const { getByRole, getByText } = render(
     <Provider store={store}>
       <Helper brewery={expectedResponse.brewery} handleResponse={
-        handler
+        () => undefined
       } />
     </Provider>
   )

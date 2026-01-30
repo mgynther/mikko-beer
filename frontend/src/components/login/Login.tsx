@@ -1,4 +1,4 @@
-import React, { type FormEvent, useState } from 'react'
+import React, { type SubmitEvent, useState } from 'react'
 
 import type { LoginIf } from '../../core/login/types'
 
@@ -14,7 +14,7 @@ function Login (props: Props): React.JSX.Element {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  async function doLogin (event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function doLogin (event: SubmitEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     await login({
       username,

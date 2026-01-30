@@ -1,4 +1,4 @@
-import React, { type FormEvent, useState } from 'react'
+import React, { type SubmitEvent, useState } from 'react'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
@@ -18,7 +18,7 @@ function CreateUser (props: Props): React.JSX.Element {
   const [role, setRole] = useState('viewer')
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
 
-  async function doChange (event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function doChange (event: SubmitEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     await create({
       passwordSignInMethod: {

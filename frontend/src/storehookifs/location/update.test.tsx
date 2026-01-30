@@ -1,4 +1,4 @@
-import { test, vitest } from 'vitest'
+import { test } from 'vitest'
 import { store } from '../../store/store'
 import { addTestServerResponse } from '../../../test-util/server'
 import updateLocation from './update'
@@ -53,11 +53,10 @@ test('update location', async () => {
     status: 200
   })
 
-  const handler = vitest.fn()
   const { getByRole, getByText } = render(
     <Provider store={store}>
       <Helper location={expectedResponse.location} handleResponse={
-        handler
+        () => undefined
       } />
     </Provider>
   )

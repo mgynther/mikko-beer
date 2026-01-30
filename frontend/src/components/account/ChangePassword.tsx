@@ -1,4 +1,4 @@
-import React, { type FormEvent, useState } from 'react'
+import React, { type SubmitEvent, useState } from 'react'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
@@ -27,7 +27,7 @@ function ChangePassword (props: Props): React.JSX.Element {
   const [newPassword, setNewPassword] = useState('')
   const [newPasswordConfirmation, setNewPasswordConfirmation] = useState('')
 
-  async function doChange (event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function doChange (event: SubmitEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     await changePassword({
       userId: login.user?.id ?? '',
