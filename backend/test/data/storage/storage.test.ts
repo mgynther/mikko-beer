@@ -1,15 +1,18 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context'
-import type { StorageWithDate } from '../../../src/core/storage/storage'
-import type { Transaction } from '../../../src/data/database'
+import type {
+  StorageRequest,
+  StorageWithDate
+} from '../../../src/core/storage/storage'
+import type { Database, Transaction } from '../../../src/data/database'
 import * as beerRepository from '../../../src/data/beer/beer.repository'
 import * as breweryRepository from '../../../src/data/brewery/brewery.repository'
 import * as containerRepository from '../../../src/data/container/container.repository'
 import * as storageRepository from '../../../src/data/storage/storage.repository'
 import * as styleRepository from '../../../src/data/style/style.repository'
 import { insertMultipleReviews } from '../review-helpers'
-import { assertEqual, assertTruthy } from '../../assert'
+import { assertDeepEqual, assertEqual, assertTruthy } from '../../assert'
 
 describe('storage tests', () => {
   const ctx = new TestContext()
@@ -148,5 +151,73 @@ describe('storage tests', () => {
       )
       assertEqual(lockedKey, undefined)
     })
+  })
+
+  async function createStatsData(db: Database): Promise<void> {
+    const { data } = await insertMultipleReviews(5, db)
+    await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
+      const storageRequest: StorageRequest = {
+        beer: data.otherBeer.id,
+        bestBefore: '2023-12-02T12:12:12.000Z',
+        container: data.container.id
+      }
+      async function storageFromBestBefore(bestBefore: string): Promise<void> {
+        await storageRepository.insertStorage(
+          trx,
+          {
+            ...storageRequest,
+            bestBefore
+          }
+        )
+      }
+      await storageFromBestBefore('2023-12-02T12:12:12.000Z')
+      await storageFromBestBefore('2022-12-02T12:12:12.000Z')
+      await storageFromBestBefore('2022-12-02T12:12:12.000Z')
+      await storageFromBestBefore('2023-11-02T12:12:12.000Z')
+      await storageFromBestBefore('2023-11-02T12:12:12.000Z')
+    })
+  }
+
+  it('annual storage stats', async () => {
+    await createStatsData(ctx.db)
+    const results = await storageRepository.getAnnualStorageStats(
+      ctx.db
+    )
+    assertEqual(results.length, 2)
+    assertDeepEqual(results, [
+      {
+        year: '2022',
+        count: '2'
+      },
+      {
+        year: '2023',
+        count: '3'
+      }
+    ])
+  })
+
+  it('monthly storage stats', async () => {
+    await createStatsData(ctx.db)
+    const results = await storageRepository.getMonthlyStorageStats(
+      ctx.db
+    )
+    assertEqual(results.length, 3)
+    assertDeepEqual(results, [
+      {
+        year: '2022',
+        month: '12',
+        count: '2'
+      },
+      {
+        year: '2023',
+        month: '11',
+        count: '2'
+      },
+      {
+        year: '2023',
+        month: '12',
+        count: '1'
+      }
+    ])
   })
 })

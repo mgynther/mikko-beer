@@ -53,3 +53,14 @@ export interface StorageRequest {
 
 export type CreateStorageRequest = StorageRequest
 export type UpdateStorageRequest = StorageRequest
+
+export type AnnualStorageStats = Array<{
+  year: string
+  count: string
+}>
+
+export type MonthlyStorageStats = Array<{
+  year: string
+  month: string
+  count: string
+}>

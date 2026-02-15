@@ -15,7 +15,9 @@ import type {
 import type { Pagination } from '../../core/pagination'
 import { toRowNumbers } from '../../core/pagination'
 import type {
+  AnnualStorageStats,
   JoinedStorage,
+  MonthlyStorageStats,
   Storage,
   StorageRequest,
   StorageWithDate
@@ -242,6 +244,47 @@ export async function joinStorageData (
     return []
   }
   return parseBreweryStorageRows(storages)
+}
+
+export async function getAnnualStorageStats (
+  db: Database
+): Promise<AnnualStorageStats> {
+  const results = await db.getDb()
+    .selectFrom('storage')
+    .select(({fn}) => [
+      sql<number>`extract(year from best_before)`.as('year'),
+      fn.count<number>('storage.storage_id').as('count'),
+    ])
+    .groupBy('year')
+    .orderBy('year', 'asc')
+    .execute()
+
+  return results.map(result => ({
+    year: `${result.year}`,
+    count: `${result.count}`
+  }))
+}
+
+export async function getMonthlyStorageStats (
+  db: Database
+): Promise<MonthlyStorageStats> {
+  const results = await db.getDb()
+    .selectFrom('storage')
+    .select(({fn}) => [
+      sql<number>`extract(year from best_before)`.as('year'),
+      sql<number>`extract(month from best_before)`.as('month'),
+      fn.count<number>('storage.storage_id').as('count'),
+    ])
+    .groupBy(['year', 'month'])
+    .orderBy('year', 'asc')
+    .orderBy('month', 'asc')
+    .execute()
+
+  return results.map(result => ({
+    year: `${result.year}`,
+    month: `${result.month}`,
+    count: `${result.count}`
+  }))
 }
 
 interface InternalJoinedStorage {
