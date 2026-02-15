@@ -102,4 +102,27 @@ describe('storage authorized service unit tests', () => {
     }, invalidStorageIdError)
   })
 
+  it('get annual storage stats', async () => {
+    const getter = async () => {
+      return [
+        { year: '2022', count: '8' }
+      ]
+    }
+    await storageService.getAnnualStorageStats(
+      getter,
+      log
+    )
+  })
+
+  it('get monthly storage stats', async () => {
+    const getter = async () => {
+      return [
+        { year: '2022', month: '10', count: '8' }
+      ]
+    }
+    await storageService.getMonthlyStorageStats(
+      getter,
+      log
+    )
+  })
 })

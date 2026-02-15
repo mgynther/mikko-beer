@@ -317,4 +317,29 @@ describe('storage service unit tests', () => {
     assertDeepEqual(result, [joinedStorage])
   })
 
+  it('get annual storage stats', async () => {
+    const getter = async () => {
+      return [
+        { year: '2022', count: '8' }
+      ]
+    }
+    const result = await storageService.getAnnualStorageStats(
+      getter,
+      log
+    )
+    assertDeepEqual(result, [{ year: '2022', count: '8' }])
+  })
+
+  it('get monthly storage stats', async () => {
+    const getter = async () => {
+      return [
+        { year: '2022', month: '10', count: '8' }
+      ]
+    }
+    const result = await storageService.getMonthlyStorageStats(
+      getter,
+      log
+    )
+    assertDeepEqual(result, [{ year: '2022', month: '10', count: '8' }])
+  })
 })

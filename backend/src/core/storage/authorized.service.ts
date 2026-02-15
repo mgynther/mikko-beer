@@ -2,8 +2,10 @@ import * as authorizationService from '../internal/auth/authorization.service'
 import * as storageService from '../internal/storage/validated.service'
 
 import type {
+  AnnualStorageStats,
   CreateIf,
   JoinedStorage,
+  MonthlyStorageStats,
   StorageWithDate,
   UpdateIf
 } from "./storage";
@@ -112,6 +114,30 @@ export async function listStoragesByStyle (
   return await storageService.listStoragesByStyle(
     listByStyle,
     validateStyleId(request.id),
+    log
+  )
+}
+
+export async function getAnnualStorageStats (
+  get: () => Promise<AnnualStorageStats>,
+  authTokenPayload: AuthTokenPayload,
+  log: log
+): Promise<AnnualStorageStats> {
+  authorizationService.authorizeViewer(authTokenPayload)
+  return await storageService.getAnnualStorageStats(
+    get,
+    log
+  )
+}
+
+export async function getMonthlyStorageStats (
+  get: () => Promise<MonthlyStorageStats>,
+  authTokenPayload: AuthTokenPayload,
+  log: log
+): Promise<MonthlyStorageStats> {
+  authorizationService.authorizeViewer(authTokenPayload)
+  return await storageService.getMonthlyStorageStats(
+    get,
     log
   )
 }

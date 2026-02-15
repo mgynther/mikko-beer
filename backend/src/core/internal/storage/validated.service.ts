@@ -1,8 +1,10 @@
 import * as storageService from './service'
 
 import type {
+  AnnualStorageStats,
   CreateIf,
   JoinedStorage,
+  MonthlyStorageStats,
   StorageWithDate,
   UpdateIf
 } from "../../storage/storage";
@@ -113,4 +115,18 @@ export async function listStoragesByStyle (
     validateStyleId(styleId),
     log
   )
+}
+
+export async function getAnnualStorageStats (
+  getAnnualStats: () => Promise<AnnualStorageStats>,
+  log: log
+): Promise<AnnualStorageStats> {
+  return await storageService.getAnnualStorageStats(getAnnualStats, log)
+}
+
+export async function getMonthlyStorageStats (
+  getMonthlyStats: () => Promise<MonthlyStorageStats>,
+  log: log
+): Promise<MonthlyStorageStats> {
+  return await storageService.getMonthlyStorageStats(getMonthlyStats, log)
 }

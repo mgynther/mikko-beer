@@ -1,7 +1,9 @@
 import type {
+  AnnualStorageStats,
   CreateIf,
   CreateStorageRequest,
   JoinedStorage,
+  MonthlyStorageStats,
   Storage,
   StorageWithDate,
   UpdateIf
@@ -114,6 +116,22 @@ export async function listStoragesByStyle (
 ): Promise<JoinedStorage[]> {
   log(INFO, 'list storages by style', styleId)
   return await listByStyle(styleId)
+}
+
+export async function getAnnualStorageStats (
+  getAnnualStats: () => Promise<AnnualStorageStats>,
+  log: log
+): Promise<AnnualStorageStats> {
+  log(INFO, 'get annual storage stats')
+  return await getAnnualStats()
+}
+
+export async function getMonthlyStorageStats (
+  getMonthlyStats: () => Promise<MonthlyStorageStats>,
+  log: log
+): Promise<MonthlyStorageStats> {
+  log(INFO, 'get monthly storage stats')
+  return await getMonthlyStats()
 }
 
 async function lockId (
