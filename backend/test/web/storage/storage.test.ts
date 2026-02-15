@@ -1,7 +1,12 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context'
-import { JoinedStorage, Storage } from '../../../src/core/storage/storage'
+import {
+  AnnualStorageStats,
+  JoinedStorage,
+  MonthlyStorageStats,
+  Storage
+} from '../../../src/core/storage/storage'
 import { assertDeepEqual, assertEqual } from '../../assert'
 
 describe('storage tests', () => {
@@ -374,5 +379,38 @@ describe('storage tests', () => {
 
     const ids = styleListRes.data.storages.map(storage => storage.id)
     assertDeepEqual(ids, [collabStorage.id, kriekStorage.id])
+  })
+
+  it('get annual storage stats', async () => {
+    await createListByDeps(ctx.adminAuthHeaders())
+
+    const statsRes = await ctx.request.get<{ annual: AnnualStorageStats }>(
+      `/api/v1/storage/annual-stats`,
+      ctx.adminAuthHeaders()
+    )
+    assertEqual(statsRes.status, 200)
+    assertDeepEqual(statsRes.data.annual, [
+      {
+        year: '2024',
+        count: '3'
+      }
+    ])
+  })
+
+  it('get monthly storage stats', async () => {
+    await createListByDeps(ctx.adminAuthHeaders())
+
+    const statsRes = await ctx.request.get<{ monthly: MonthlyStorageStats }>(
+      `/api/v1/storage/monthly-stats`,
+      ctx.adminAuthHeaders()
+    )
+    assertEqual(statsRes.status, 200)
+    assertDeepEqual(statsRes.data.monthly, [
+      {
+        year: '2024',
+        month: '10',
+        count: '3'
+      }
+    ])
   })
 })

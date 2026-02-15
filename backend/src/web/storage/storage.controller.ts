@@ -19,6 +19,40 @@ import { parseAuthToken } from '../authentication/authentication-helper'
 import type { Context } from '../context'
 
 export function storageController (router: Router): void {
+  router.get(
+    '/api/v1/storage/annual-stats',
+    async (ctx: Context) => {
+      const authTokenPayload = parseAuthToken(ctx)
+      const annual = await storageService.getAnnualStorageStats(
+        async (
+        ) => await storageRepository.getAnnualStorageStats(ctx.db),
+        authTokenPayload,
+        ctx.log
+      )
+      return {
+        status: 200,
+        body: { annual }
+      }
+    }
+  )
+
+  router.get(
+    '/api/v1/storage/monthly-stats',
+    async (ctx: Context) => {
+      const authTokenPayload = parseAuthToken(ctx)
+      const monthly = await storageService.getMonthlyStorageStats(
+        async (
+        ) => await storageRepository.getMonthlyStorageStats(ctx.db),
+        authTokenPayload,
+        ctx.log
+      )
+      return {
+        status: 200,
+        body: { monthly }
+      }
+    }
+  )
+
   router.post('/api/v1/storage',
     async (ctx: Context) => {
       const authTokenPayload = parseAuthToken(ctx)
