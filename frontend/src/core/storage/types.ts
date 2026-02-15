@@ -24,6 +24,25 @@ export interface StorageList {
   storages: Storage[]
 }
 
+export interface OneYearStats {
+  year: string
+  count: string
+}
+
+export interface AnnualStats {
+  annual: OneYearStats[]
+}
+
+export interface OneMonthStats {
+  year: string
+  month: string
+  count: string
+}
+
+export interface MonthlyStats {
+  monthly: OneMonthStats[]
+}
+
 export interface CreateStorageIf {
   useCreate: () => {
     create: (request: CreateStorageRequest) => Promise<void>
@@ -59,4 +78,24 @@ export interface ListStoragesByIf {
     isLoading: boolean
   },
   delete: DeleteStorageIf
+}
+
+export interface GetAnnualStorageStatsIf {
+  useAnnualStats: () => {
+    stats: AnnualStats | undefined
+    isLoading: boolean
+  }
+}
+
+export interface GetMonthlyStorageStatsIf {
+  useMonthlyStats: () => {
+    stats: MonthlyStats | undefined
+    isLoading: boolean
+  }
+}
+
+export interface StorageStatsIf {
+  annual: GetAnnualStorageStatsIf
+  monthly: GetMonthlyStorageStatsIf
+  setSearch: (mode: string, state: Record<string, string>) => Promise<void>
 }

@@ -68,9 +68,12 @@ import type {
 import type {
   CreateStorageIf,
   DeleteStorageIf,
+  GetAnnualStorageStatsIf,
+  GetMonthlyStorageStatsIf,
   GetStorageIf,
   ListStoragesByIf,
-  ListStoragesIf
+  ListStoragesIf,
+  StorageStatsIf
 } from './core/storage/types'
 import type {
   StatsIf,
@@ -120,6 +123,8 @@ import search from './storehookifs/search'
 import stats from './storehookifs/stats'
 
 import createStorage from './storehookifs/storage/create'
+import getAnnualStorageStats from './storehookifs/storage/annualStats'
+import getMonthlyStorageStats from './storehookifs/storage/monthlyStats'
 import getStorage from './storehookifs/storage/get'
 import deleteStorage from './storehookifs/storage/delete'
 import listStorages from './storehookifs/storage/list'
@@ -139,6 +144,7 @@ import listUsers from './storehookifs/user/list'
 import changePassword from './storehookifs/login/changePassword'
 import login from './storehookifs/login/login'
 import logout from './storehookifs/login/logout'
+import { createSetSearch } from './storehookifs/set-search.ts'
 
 function RtkApp (): React.JSX.Element {
   const createBreweryIf: CreateBreweryIf = createBrewery()
@@ -209,6 +215,15 @@ function RtkApp (): React.JSX.Element {
   const updateLocationIf: UpdateLocationIf = updateLocation(getLogin)
 
   const createStorageIf: CreateStorageIf = createStorage()
+  const getAnnualStorageStatsIf: GetAnnualStorageStatsIf =
+    getAnnualStorageStats()
+  const getMonthlyStorageStatsIf: GetMonthlyStorageStatsIf =
+    getMonthlyStorageStats()
+  const storageStatsIf: StorageStatsIf = {
+    annual: getAnnualStorageStatsIf,
+    monthly: getMonthlyStorageStatsIf,
+    setSearch: createSetSearch(navigateIf)
+  }
   const getStorageIf: GetStorageIf = getStorage()
   const deleteStorageIf: DeleteStorageIf = deleteStorage()
   const listStoragesIf: ListStoragesIf = listStorages(deleteStorageIf)
@@ -291,6 +306,7 @@ function RtkApp (): React.JSX.Element {
     listStoragesByBeerIf,
     listStoragesByBreweryIf,
     listStoragesByStyleIf,
+    storageStatsIf,
 
     getStyleIf,
     listStylesIf,

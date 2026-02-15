@@ -97,6 +97,7 @@ function App (props: Props): React.JSX.Element {
     listStoragesByBeerIf,
     listStoragesByBreweryIf,
     listStoragesByStyleIf,
+    storageStatsIf,
 
     getStyleIf,
     listStylesIf,
@@ -284,9 +285,11 @@ function App (props: Props): React.JSX.Element {
                   <Storages
                     getLogin={getLogin}
                     listStoragesIf={listStoragesIf}
+                    paramsIf={props.paramsIf}
                     reviewContainerIf={reviewContainerIf}
                     searchIf={searchIf}
                     selectBeerIf={selectBeerIf}
+                    statsIf={storageStatsIf}
                     createStorageIf={createStorageIf}
                   />
                 } />

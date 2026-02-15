@@ -1,7 +1,9 @@
 import { emptySplitApi } from '../api'
 
 import type {
+  AnnualStats,
   CreateStorageRequest,
+  MonthlyStats,
   Storage,
   StorageList
 } from '../../core/storage/types'
@@ -12,6 +14,26 @@ const storageApi = emptySplitApi.injectEndpoints({
     getStorage: build.query<{ storage: Storage }, string>({
       query: (storageId: string) => ({
         url: `/storage/${storageId}`,
+        method: 'GET'
+      }),
+      providesTags: [StorageTags.Storage]
+    }),
+    /* eslint-disable-next-line @typescript-eslint/no-invalid-void-type --
+     * Void required here to generate correct hook.
+     */
+    getAnnualStorageStats: build.query<AnnualStats, void>({
+      query: () => ({
+        url: '/storage/annual-stats',
+        method: 'GET'
+      }),
+      providesTags: [StorageTags.Storage]
+    }),
+    /* eslint-disable-next-line @typescript-eslint/no-invalid-void-type --
+     * Void required here to generate correct hook.
+     */
+    getMonthlyStorageStats: build.query<MonthlyStats, void>({
+      query: () => ({
+        url: '/storage/monthly-stats',
         method: 'GET'
       }),
       providesTags: [StorageTags.Storage]
@@ -74,6 +96,8 @@ const storageApi = emptySplitApi.injectEndpoints({
 export const {
   useCreateStorageMutation,
   useDeleteStorageMutation,
+  useGetAnnualStorageStatsQuery,
+  useGetMonthlyStorageStatsQuery,
   useGetStorageQuery,
   useListStoragesQuery,
   useListStoragesByBeerQuery,

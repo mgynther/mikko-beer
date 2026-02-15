@@ -7,13 +7,16 @@ import type { GetLogin, Login } from '../../core/login/types'
 import type { SearchIf } from '../../core/search/types'
 import type {
   CreateStorageIf,
-  ListStoragesIf
+  ListStoragesIf,
+  StorageStatsIf
 } from '../../core/storage/types'
 import { Role } from '../../core/user/types'
 
 import CreateStorage from './CreateStorage'
 import StorageList from './StorageList'
 import { countText } from './count-text'
+import Stats from './Stats'
+import type { ParamsIf } from '../util'
 
 interface Props {
   getLogin: GetLogin
@@ -22,6 +25,8 @@ interface Props {
   selectBeerIf: SelectBeerIf
   createStorageIf: CreateStorageIf
   reviewContainerIf: ReviewContainerIf
+  paramsIf: ParamsIf
+  statsIf: StorageStatsIf
 }
 
 function Storages (props: Props): React.JSX.Element {
@@ -45,6 +50,10 @@ function Storages (props: Props): React.JSX.Element {
         isLoading={isLoading}
         isTitleVisible={false}
         storages={storageItems}
+      />
+      <Stats
+        statsIf={props.statsIf}
+        paramsIf={props.paramsIf}
       />
       <hr/>
       {isAdmin && (

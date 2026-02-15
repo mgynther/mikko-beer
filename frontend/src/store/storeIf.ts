@@ -44,7 +44,8 @@ import type {
   CreateStorageIf,
   GetStorageIf,
   ListStoragesByIf,
-  ListStoragesIf
+  ListStoragesIf,
+  StorageStatsIf
 } from "../core/storage/types"
 import type {
   GetStyleIf,
@@ -100,6 +101,7 @@ export interface StoreIf {
   listStoragesByBeerIf: ListStoragesByIf
   listStoragesByBreweryIf: ListStoragesByIf
   listStoragesByStyleIf: ListStoragesByIf
+  storageStatsIf: StorageStatsIf
 
   getStyleIf: GetStyleIf
   listStylesIf: ListStylesIf

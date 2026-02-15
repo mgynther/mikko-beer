@@ -2,6 +2,8 @@ import * as t from 'io-ts'
 import { isLeft } from 'fp-ts/Either'
 
 import type {
+  AnnualStats,
+  MonthlyStats,
   Storage,
   StorageList,
 } from '../core/storage/types'
@@ -24,6 +26,21 @@ const ValidatedStorage = t.type({
 
 const ValidatedStorageList = t.type({
   storages: t.array(ValidatedStorage)
+})
+
+const ValidatedAnnualStorageStats = t.type({
+  annual: t.array(t.type({
+    year: t.string,
+    count: t.string
+  }))
+})
+
+const ValidatedMonthlyStorageStats = t.type({
+  monthly: t.array(t.type({
+    year: t.string,
+    month: t.string,
+    count: t.string
+  }))
 })
 
 export function validateStorageOrUndefined(
@@ -61,5 +78,43 @@ function validateStorageList(result: unknown): StorageList {
     throw Error(formatError(decoded))
   }
   const valid: StorageListT = decoded.right
+  return valid
+}
+
+export function validateAnnualStorageStatsOrUndefined(
+  result: unknown
+): AnnualStats | undefined {
+  if (typeof result === 'undefined') {
+    return undefined
+  }
+  return validateAnnualStorageStats(result)
+}
+
+function validateAnnualStorageStats(result: unknown): AnnualStats {
+  type AnnualStatsT = t.TypeOf<typeof ValidatedAnnualStorageStats>
+  const decoded = ValidatedAnnualStorageStats.decode(result)
+  if (isLeft(decoded)) {
+    throw Error(formatError(decoded))
+  }
+  const valid: AnnualStatsT = decoded.right
+  return valid
+}
+
+export function validateMonthlyStorageStatsOrUndefined(
+  result: unknown
+): MonthlyStats | undefined {
+  if (typeof result === 'undefined') {
+    return undefined
+  }
+  return validateMonthlyStorageStats(result)
+}
+
+function validateMonthlyStorageStats(result: unknown): MonthlyStats {
+  type MonthlyStatsT = t.TypeOf<typeof ValidatedMonthlyStorageStats>
+  const decoded = ValidatedMonthlyStorageStats.decode(result)
+  if (isLeft(decoded)) {
+    throw Error(formatError(decoded))
+  }
+  const valid: MonthlyStatsT = decoded.right
   return valid
 }

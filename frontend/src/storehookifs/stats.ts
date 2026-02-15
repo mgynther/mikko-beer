@@ -28,6 +28,7 @@ import {
   validateRatingStatsOrUndefined,
   validateStyleStatsOrUndefined
 } from "../validation/stats"
+import { createSetSearch } from "./set-search"
 
 const stats: (
   infiniteScroll: InfiniteScroll,
@@ -36,7 +37,6 @@ const stats: (
   infiniteScroll: InfiniteScroll,
   navigateIf: NavigateIf
 ) => {
-  const navigate = navigateIf.useNavigate()
   const statsIf: StatsIf = {
     annual: {
       useStats: (params: IdParams) => {
@@ -134,15 +134,7 @@ const stats: (
         }
       }
     },
-    setSearch: async (mode: string, state: Record<string, string>) => {
-      const stateParts = Object.keys(state).map(
-        key => `${key}=${state[key]}`
-      )
-      const baseSearch = `?stats=${mode}`
-      const allParts = [baseSearch, ...stateParts]
-      const newSearch = allParts.join('&')
-      await navigate(newSearch, { replace: true })
-    }
+    setSearch: createSetSearch(navigateIf)
   }
   return statsIf
 }

@@ -334,6 +334,18 @@ const storeIf: StoreIf = {
     useList: dontCall,
     delete: deleteStorageIf
   },
+  storageStatsIf: {
+    annual: {
+      useAnnualStats: () => ({
+        stats: undefined,
+        isLoading: true
+      })
+    },
+    monthly: {
+      useMonthlyStats: dontCall
+    },
+    setSearch: async () => undefined
+  },
   getStyleIf: {
     useGet: dontCall
   },

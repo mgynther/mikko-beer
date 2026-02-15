@@ -128,6 +128,16 @@ test('renders storage', () => {
             })
           }
         }}
+        paramsIf={{
+          useParams: () => ({}),
+          useSearch: () => ({
+            get: (key: string) => {
+              if (key === 'stats') {
+                return 'monthly'
+              }
+            }
+          })
+        }}
         searchIf={{
           useSearch: () => ({
             activate: dontCall,
@@ -138,6 +148,27 @@ test('renders storage', () => {
         selectBeerIf={{
           create: dontCreateBeerIf,
           search: beerSearchIf
+        }}
+        statsIf={{
+          annual: {
+            useAnnualStats: () => ({
+              stats: undefined,
+              isLoading: false
+            })
+          },
+          monthly: {
+            useMonthlyStats: () => ({
+              stats: {
+                monthly: [{
+                  year: '2024',
+                  month: '4',
+                  count: '15'
+                }]
+              },
+              isLoading: false
+            })
+          },
+          setSearch: async () => undefined
         }}
         createStorageIf={{
           useCreate: () => ({
@@ -155,4 +186,6 @@ test('renders storage', () => {
   getByRole('link', { name: style.name })
   getByText(storage.bestBefore)
   getByRole('heading', { name: 'Storage beers (0/1)' })
+  getByText('2024-04')
+  getByText('15')
 })
