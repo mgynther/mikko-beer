@@ -63,7 +63,7 @@ export class Database {
         /* eslint-disable-next-line @typescript-eslint/require-await --
          * async required by interface.
          */
-        pool: async () => new Pool(config)
+        pool: async (): Promise<Pool> => new Pool(config)
       })
     })
   }

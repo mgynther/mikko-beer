@@ -6,9 +6,13 @@ import type { AuthTokenPayload } from '../../core/auth/auth-token'
 import * as refreshTokenRepository
 from '../../data/authentication/refresh-token.repository'
 import type { Database } from '../../data/database'
+import type { DbRefreshToken } from '../../core/auth/refresh-token'
 
 export function createFindRefreshToken(db: Database) {
-  return async (userId: string, refreshTokenId: string) =>
+  return async (
+    userId: string,
+    refreshTokenId: string
+  ): Promise<DbRefreshToken | undefined> =>
     await refreshTokenRepository.findRefreshToken(
       db,
       userId,

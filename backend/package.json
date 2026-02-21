@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "build:test": "rm -rf build-tests && tsc -p ./tsconfig-test.json",
-    "lint": "npx eslint --fix src",
+    "lint": "npx eslint --max-warnings=0 --fix src",
     "start": "npm run migrate:latest && node --env-file .env dist/index.js",
     "test:files": "npm run build:test && node --env-file .env-test --test --test-timeout 5000",
     "test:core": "npm run test:files -- --test-isolation=none --test-concurrency 1 build-tests/test/core/*.test.js build-tests/test/core/**/*.test.js build-tests/test/core/**/**/*.test.js",
@@ -27,19 +27,14 @@
     "uuid": "13.0.0"
   },
   "devDependencies": {
-    "@eslint-community/eslint-plugin-eslint-comments": "4.6.0",
+    "@eslint/js": "10.0.1",
     "@types/jsonwebtoken": "9.0.10",
     "@types/koa": "3.0.1",
     "@types/koa-compress": "4.0.7",
     "@types/node": "25.2.3",
     "@types/pg": "8.16.0",
-    "@typescript-eslint/eslint-plugin": "8.56.0",
     "axios": "1.13.5",
-    "eslint": "10.0.1",
-    "eslint-config-love": "151.0.0",
-    "eslint-plugin-import": "2.32.0",
-    "eslint-plugin-n": "17.23.2",
-    "eslint-plugin-promise": "7.2.1",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.56.0"
   }
 }

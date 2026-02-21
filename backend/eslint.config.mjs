@@ -1,17 +1,41 @@
-import love from 'eslint-config-love'
-import eslintComments from '@eslint-community/eslint-plugin-eslint-comments'
-import typescriptEslint from '@typescript-eslint/eslint-plugin'
-import pluginImport from 'eslint-plugin-import'
-import pluginN from 'eslint-plugin-n'
-import pluginPromise from 'eslint-plugin-promise'
-import typescriptEslintParser from '@typescript-eslint/parser'
+import eslint from '@eslint/js';
+import tsEslint from 'typescript-eslint';
+
+// Leaving below for debugging when recommended especially in typescript-eslint
+// is inevitable broken in the future.
+/*
+console.log('eslint recommended:', JSON.stringify(eslint.configs.recommended, null, 2))
+console.log('typescript eslint keys 0', Object.keys(tsEslint.configs.recommended[0]))
+console.log('typescript eslint keys 1', Object.keys(tsEslint.configs.recommended[1]))
+console.log('typescript eslint keys 2', Object.keys(tsEslint.configs.recommended[2]))
+*/
+
+const tsEslintLanguageOptions = tsEslint.configs.recommended[0].languageOptions
+if (tsEslintLanguageOptions === undefined) {
+  throw new Error(
+    'typescript-eslint recommended languageOptions were not found from where they used to be.'
+  )
+}
+
+const tsEslintPlugins = tsEslint.configs.recommended[0].plugins
+if (tsEslintPlugins === undefined) {
+  throw new Error(
+    'typescript-eslint recommended plugins were not found from where they used to be.'
+  )
+}
+
+const tsEslintRules = tsEslint.configs.recommended.reduce((rules, item) => {
+  if (item.rules === undefined) {
+    return rules
+  }
+  return {
+    ...rules,
+    ...item.rules
+  }
+}, {})
 
 const languageOptions = {
-  globals: {
-    browser: true,
-    es2021: true,
-  },
-  parser: typescriptEslintParser,
+  ...tsEslintLanguageOptions,
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
@@ -19,8 +43,21 @@ const languageOptions = {
   },
 }
 
+const plugins = {
+  ...tsEslintPlugins
+}
+
+const commonRules = {
+  ...eslint.configs.recommended.rules,
+  ...tsEslintRules
+}
+
 const rules = {
-  ...love.rules,
+  ...commonRules,
+
+  'max-len': ['error', { 'code': 80, 'ignoreRegExpLiterals': true }],
+  'no-await-in-loop': 'error',
+  'require-atomic-updates': 'error',
   '@typescript-eslint/naming-convention': [
     'error',
     {
@@ -28,35 +65,42 @@ const rules = {
       'format': ['camelCase', 'PascalCase', 'snake_case', 'UPPER_CASE'],
     },
   ],
+  '@typescript-eslint/explicit-function-return-type': 'error',
+  '@typescript-eslint/no-unsafe-type-assertion': 'error',
+  '@typescript-eslint/no-unused-vars': [
+    'error',
+    {
+      'args': 'all',
+      'argsIgnorePattern': '^_',
+      'caughtErrors': 'all',
+      'caughtErrorsIgnorePattern': '^_',
+      'destructuredArrayIgnorePattern': '^_',
+      'varsIgnorePattern': '^_',
+      'ignoreRestSiblings': true
+    }
+  ],
+  '@typescript-eslint/require-await': 'error',
+
   'complexity': 'off',
+  'max-lines': 'off',
+  'no-console': 'off',
+  'require-await': 'off',
   '@typescript-eslint/no-magic-numbers': 'off',
   '@typescript-eslint/max-params': 'off',
   '@typescript-eslint/prefer-destructuring': 'off',
-  'max-len': ['error', { 'code': 80, 'ignoreRegExpLiterals': true }],
-  'max-lines': 'off',
-  'no-console': 'off'
-}
-
-const plugins = {
-  '@typescript-eslint': typescriptEslint,
-  '@eslint-community/eslint-comments': eslintComments,
-  'import': pluginImport,
-  'n': pluginN,
-  'promise': pluginPromise
 }
 
 export default [
   {
-    ...love,
     languageOptions,
-    files: ['src/*.{js,ts,tsx,jsx}', 'src/**/*.{js,ts,tsx,jsx}'],
     plugins,
+    files: ['src/*.{js,ts,tsx,jsx}', 'src/**/*.{js,ts,tsx,jsx}'],
     rules,
   },
   {
     languageOptions,
-    files: ['src/core/*.ts', 'src/core/**/*.ts'],
     plugins,
+    files: ['src/core/*.ts', 'src/core/**/*.ts'],
     rules: {
       ...rules,
       'no-restricted-imports': ['error',
@@ -73,8 +117,8 @@ export default [
   },
   {
     languageOptions,
-    files: ['src/data/*.ts', 'src/data/**/*.ts'],
     plugins,
+    files: ['src/data/*.ts', 'src/data/**/*.ts'],
     rules: {
       ...rules,
       'no-restricted-imports': ['error',
@@ -91,8 +135,8 @@ export default [
   },
   {
     languageOptions,
-    files: ['src/web/*.ts', 'src/web/**/*.ts'],
     plugins,
+    files: ['src/web/*.ts', 'src/web/**/*.ts'],
     rules: {
       ...rules,
       // Koa context requires assigning status and body.
@@ -106,8 +150,8 @@ export default [
   },
   {
     languageOptions,
-    files: ['src/data/migrations/*.ts'],
     plugins,
+    files: ['src/data/migrations/*.ts'],
     rules: {
       ...rules,
       '@typescript-eslint/no-explicit-any': 'off',

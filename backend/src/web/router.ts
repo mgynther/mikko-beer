@@ -61,7 +61,7 @@ export function createRouter(routerParams: RouterParams): CreatedRouter {
   }
 
   return {
-    useRouter: (koa: Koa<unknown, unknown>) => {
+    useRouter: (koa: Koa<unknown, unknown>): undefined => {
       koa.use(koaRouter.routes())
       koa.use(koaRouter.allowedMethods())
     },

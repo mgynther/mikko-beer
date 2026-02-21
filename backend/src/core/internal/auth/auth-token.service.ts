@@ -66,7 +66,7 @@ function parseRefreshToken(
 ): RefreshTokenPayload {
   try {
     return jwt.verifyRefreshToken(refreshToken, authTokenSecret)
-  } catch (e) {
+  } catch (_) {
     throw invalidCredentialsTokenError
   }
 }

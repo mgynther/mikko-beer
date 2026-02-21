@@ -84,9 +84,6 @@ export class App {
   }
 
   async start (): Promise<StartResult> {
-    /* eslint-disable-next-line promise/avoid-new --
-     * Promisefying would be tedious and it could easily hide errors.
-     */
     return await new Promise<StartResult>((resolve) => {
       const port = this.#config.port
       const db = this.#db
@@ -140,9 +137,6 @@ export class App {
           )
         }
         logWithAdminPassword('Server starting')
-        /* eslint-disable-next-line promise/avoid-new --
-         * Promisefying would be tedious and it could easily hide errors.
-         */
         const serverPromise = new Promise<void>((resolve) => {
           this.#server = this.#koa.listen(port, resolve)
         })
@@ -170,9 +164,6 @@ export class App {
   }
 
   async stop (): Promise<void> {
-    /* eslint-disable-next-line promise/avoid-new --
-     * Promisefying would be tedious and it could easily hide errors.
-     */
     await new Promise<void>((resolve, reject) => {
       this.#server?.close((err) => {
         if (err === undefined) {
