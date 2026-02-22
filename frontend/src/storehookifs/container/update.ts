@@ -7,7 +7,7 @@ const updateContainer: () => UpdateContainerIf = () => {
       const [updateContainer, { isLoading: isUpdatingContainer }] =
         useUpdateContainerMutation()
       return {
-        update: async (container: Container) => {
+        update: async (container: Container): Promise<void> => {
           await updateContainer(container)
         },
         isLoading: isUpdatingContainer

@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import SearchLocationWithNavi from './SearchLocationWithNavi'
 
+import type { Location } from '../../core/location/types'
 import type { SearchIf } from '../../core/search/types'
 import type { UseDebounce } from '../../core/types'
 import type { CreateLocationIf } from '../../core/location/types'
@@ -38,7 +39,7 @@ const anotherLocation = {
   name: 'St. Urho\'s Pub'
 }
 
-const locations = [
+const locations: Location[] = [
   location,
   anotherLocation
 ]
@@ -53,7 +54,7 @@ test('selects location', async () => {
       }}
       searchLocationIf={{
         useSearch: () => ({
-          search: async () => locations,
+          search: async (): Promise<Location[]> => locations,
           isLoading: false
         }),
         create: createLocationIf
@@ -82,7 +83,7 @@ test('shows no results', async () => {
       }}
       searchLocationIf={{
         useSearch: () => ({
-          search: async () => [],
+          search: async (): Promise<Location[]> => [],
           isLoading: false
         }),
         create: createLocationIf

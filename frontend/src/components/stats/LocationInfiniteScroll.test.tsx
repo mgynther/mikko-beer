@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import LocationInfiniteScroll from './LocationInfiniteScroll'
 import LinkWrapper from '../LinkWrapper'
 import { openFilters } from './filters-test-util'
+import type { GetLocationStatsIf, LocationStats } from '../../core/stats/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -42,7 +43,7 @@ const unusedFilters = {
   }
 }
 
-const unusedStats = {
+const unusedStats: GetLocationStatsIf = {
   useStats: () => ({
     query: async () => ({ location: []}),
       stats: { location: [] },
@@ -55,30 +56,31 @@ test('queries location stats', async () => {
   const query = vitest.fn()
   const setLoadedLocations = vitest.fn()
   let loadCallback: () => void = () => undefined
+  const getLocationStatsIf: GetLocationStatsIf = {
+    useStats: () => ({
+      query: async (params): Promise<LocationStats> => {
+        query(params)
+        return {
+          location: [
+            { ...plevna },
+            { ...oluthuone }
+          ]
+        }
+      },
+      stats: {
+        location: []
+      },
+      isLoading: false
+    }),
+    infiniteScroll: (cb) => {
+      loadCallback = cb
+      return () => undefined
+    }
+  }
   render(
     <LinkWrapper>
       <LocationInfiniteScroll
-        getLocationStatsIf={{
-          useStats: () => ({
-            query: async (params) => {
-              query(params)
-              return {
-                location: [
-                  { ...plevna },
-                  { ...oluthuone }
-                ]
-              }
-            },
-            stats: {
-              location: []
-            },
-            isLoading: false
-          }),
-          infiniteScroll: (cb) => {
-            loadCallback = cb
-            return () => undefined
-          }
-        }}
+        getLocationStatsIf={getLocationStatsIf}
         loadedLocations={undefined}
         setLoadedLocations={setLoadedLocations}
         sortingDirection={'asc'}

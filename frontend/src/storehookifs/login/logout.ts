@@ -6,7 +6,7 @@ const logout: () => LogoutIf = () => {
     useLogout: () => {
       const [logout] = useLogoutMutation()
       return {
-        logout: async (params: LogoutParams) => {
+        logout: async (params: LogoutParams): Promise<void> => {
           await logout(params)
         }
       }

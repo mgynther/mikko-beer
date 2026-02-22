@@ -4,6 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import SelectBreweries from './SelectBreweries'
 import type { Brewery, SearchBreweryIf } from '../../core/brewery/types'
 import type { UseDebounce } from '../../core/types'
+import type { SearchIf } from '../../core/search/types'
 
 const brewery: Brewery = {
   id: '69ccb1b1-ee01-446d-b41f-58f57a14148f',
@@ -30,6 +31,16 @@ const search: SearchBreweryIf = {
 
 const useDebounce: UseDebounce = str => str
 
+function getSearchIf(mode: 'active' | 'inactive'): SearchIf {
+  return {
+    useSearch: () => ({
+      activate: (): undefined => undefined,
+      isActive: mode === 'active'
+    }),
+    useDebounce
+  }
+}
+
 test('selects one more brewery', async () => {
   const user = userEvent.setup()
   const onSelect = vitest.fn()
@@ -41,13 +52,7 @@ test('selects one more brewery', async () => {
         create: { useCreate },
         search
       }}
-      searchIf={{
-        useSearch: () => ({
-          activate: () => undefined,
-          isActive: true
-        }),
-        useDebounce
-      }}
+      searchIf={getSearchIf('active')}
     />
   )
 
@@ -74,13 +79,7 @@ test('removes selected brewery', async () => {
         create: { useCreate },
         search
       }}
-      searchIf={{
-        useSearch: () => ({
-          activate: () => undefined,
-          isActive: false
-        }),
-        useDebounce
-      }}
+      searchIf={getSearchIf('inactive')}
     />
   )
   const changeButtons = getAllByRole('button', { name: 'Change' })

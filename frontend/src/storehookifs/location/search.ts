@@ -1,5 +1,6 @@
 import type {
   CreateLocationIf,
+  Location,
   SearchLocationIf
 } from "../../core/location/types"
 import { useLazySearchLocationsQuery } from "../../store/location/api"
@@ -16,7 +17,7 @@ const searchLocation: (
         { isFetching }
       ] = useLazySearchLocationsQuery()
       return {
-        search: async (name: string) => {
+        search: async (name: string): Promise<Location[]> => {
           const result = await searchLocation(formatQuery(name)).unwrap()
           return validateLocationList(result).locations
         },

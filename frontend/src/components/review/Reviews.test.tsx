@@ -6,8 +6,22 @@ import type { UseDebounce } from "../../core/types"
 import type { Login } from "../../core/login/types"
 import { Role } from "../../core/user/types"
 import LinkWrapper from "../LinkWrapper"
-import type { ListReviewParams, ListReviewsIf } from "../../core/review/types"
+import type {
+  JoinedReviewList,
+  ListReviewParams,
+  ListReviewsIf,
+  Review,
+  ReviewContainerIf,
+  ReviewIf
+} from "../../core/review/types"
 import ContentEnd from "../ContentEnd"
+import type {
+  CreateBeerIf,
+  SearchBeerIf,
+  SelectBeerIf
+} from "../../core/beer/types"
+import type { SearchIf } from "../../core/search/types"
+import type { SearchLocationIf } from "../../core/location/types"
 
 const useDebounce: UseDebounce = str => str
 
@@ -22,13 +36,13 @@ const dontCreate = {
 
 const reviewedBeerId = 'a562b38b-b9df-4cf6-be4a-e1179eb4e89a'
 
-const beerSearchIf = {
+const beerSearchIf: SearchBeerIf = {
   useSearch: () => ({
     search: dontCall,
     isLoading: false
   })
 }
-const dontCreateBeerIf = {
+const dontCreateBeerIf: CreateBeerIf = {
   useCreate: () => dontCreate,
   editBeerIf: {
     selectBreweryIf: {
@@ -63,7 +77,7 @@ const dontCreateBeerIf = {
 
 const dateStr ='2022-04-01T12:00:00.000Z'
 
-const reviewContainerIf = {
+const reviewContainerIf: ReviewContainerIf = {
   createIf: {
     useCreate: () => dontCreate
   },
@@ -77,14 +91,14 @@ const reviewContainerIf = {
   }
 }
 
-const searchIf = {
+const searchIf: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
     isActive: true
   }),
   useDebounce
 }
-const selectBeerIf = {
+const selectBeerIf: SelectBeerIf = {
   create: dontCreateBeerIf,
   search: beerSearchIf
 }
@@ -133,7 +147,7 @@ const review = {
   time: dateStr
 }
 
-const searchLocationIf = {
+const searchLocationIf: SearchLocationIf = {
   useSearch: () => ({
     search: dontCall,
     isLoading: false
@@ -146,7 +160,7 @@ const searchLocationIf = {
   }
 }
 
-const dontUpdateReviewIf = {
+const dontUpdateReviewIf: ReviewIf = {
   get: {
     useGet: () => ({
       get: async () => review
@@ -179,7 +193,7 @@ type GetListReviewsIf = (cb: GetListReviewsIfCb) => ListReviewsIf
 
 const getListReviewsIf: GetListReviewsIf = cb => ({
   useList: () => ({
-    list: async (params) => {
+    list: async (params): Promise<JoinedReviewList> => {
       cb(params)
       return {
         reviews: [joinedReview]
@@ -207,12 +221,14 @@ test('updates review', async () => {
       <Reviews
         listReviewsIf={{
           ...getListReviewsIf(() => undefined),
-          infiniteScroll: (cb) => { scrollCb = cb; return () => undefined }
+          infiniteScroll: (
+            cb
+          ): () => undefined => { scrollCb = cb; return () => undefined }
         }}
         reviewIf={{
           get: {
             useGet: () => ({
-              get: async () => review
+              get: async (): Promise<Review> => review
             })
           },
           update: {
@@ -267,7 +283,9 @@ test('sets review sorting', async () => {
       <Reviews
         listReviewsIf={{
           ...getListReviewsIf(listParams),
-          infiniteScroll: (cb) => { scrollCb = cb; return () => undefined }
+          infiniteScroll: (
+            cb
+          ): () => undefined => { scrollCb = cb; return () => undefined }
         }}
         reviewIf={dontUpdateReviewIf}
         searchIf={searchIf}

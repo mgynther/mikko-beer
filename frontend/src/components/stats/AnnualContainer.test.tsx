@@ -2,7 +2,11 @@ import { act, render, waitFor } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
 import AnnualContainer from './AnnualContainer'
 import LinkWrapper from '../LinkWrapper'
-import type { OneAnnualContainerStats } from '../../core/stats/types'
+import type {
+  AnnualContainerStats,
+  GetAnnualContainerStatsIf,
+  OneAnnualContainerStats
+} from '../../core/stats/types'
 
 const stats2023: OneAnnualContainerStats = {
   containerId: '08d61e11-7669-44b1-9252-a45fc99d53a7',
@@ -27,7 +31,7 @@ const annualContainerStats = {
 }
 const emptyStats = { annualContainer: []}
 
-const usedStats = {
+const usedStats: GetAnnualContainerStatsIf = {
   useStats: () => ({
     query: async () => annualContainerStats,
     stats: emptyStats,
@@ -47,7 +51,7 @@ test('queries annualContainer stats', async () => {
       <AnnualContainer
         getAnnualContainerStatsIf={{
           useStats: () => ({
-            query: async (params) => {
+            query: async (params): Promise<AnnualContainerStats> => {
               query(params)
               return {
                 annualContainer: [
@@ -63,7 +67,7 @@ test('queries annualContainer stats', async () => {
           }),
           infiniteScroll: (cb) => {
             loadCallback = cb
-            return () => undefined
+            return (): undefined => undefined
           }
         }}
         breweryId={undefined}
@@ -96,7 +100,7 @@ test('queries filtered annual container stats', async () => {
       <AnnualContainer
         getAnnualContainerStatsIf={{
           useStats: () => ({
-            query: async (params) => {
+            query: async (params): Promise<AnnualContainerStats> => {
               query(params)
               return {
                 annualContainer: [
@@ -112,7 +116,7 @@ test('queries filtered annual container stats', async () => {
           }),
           infiniteScroll: (cb) => {
             loadCallback = cb
-            return () => undefined
+            return (): undefined => undefined
           }
         }}
         breweryId={breweryId}

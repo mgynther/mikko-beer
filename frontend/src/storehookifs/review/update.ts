@@ -20,7 +20,7 @@ const updateReview: (
     useUpdate: () => {
       const [updateReview, { isLoading }] = useUpdateReviewMutation()
       return {
-        update: async (review: Review) => {
+        update: async (review: Review): Promise<void> => {
           await updateReview(review)
         },
         isLoading

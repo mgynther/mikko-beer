@@ -4,6 +4,9 @@ import { expect, test, vitest } from "vitest"
 import ReviewEditor from "./ReviewEditor"
 import type { UseDebounce } from "../../core/types"
 import type { Location, SearchLocationIf } from "../../core/location/types"
+import type { CreateBeerIf, SearchBeerIf } from "../../core/beer/types"
+import type { ReviewContainerIf } from "../../core/review/types"
+import type { SearchIf } from "../../core/search/types"
 
 const useDebounce: UseDebounce = str => str
 
@@ -33,13 +36,13 @@ const beerSearchResult = {
   }]
 }
 
-const beerSearchIf = {
+const beerSearchIf: SearchBeerIf = {
   useSearch: () => ({
     search: async () => [beerSearchResult],
     isLoading: false
   })
 }
-const dontCreateBeerIf = {
+const dontCreateBeerIf: CreateBeerIf = {
   useCreate: () => dontCreate,
   editBeerIf: {
     selectBreweryIf: {
@@ -82,7 +85,7 @@ const containerListResult = {
 const dateStr ='2022-04-01T12:00:00.000Z'
 const currentDate = new Date(dateStr)
 
-const reviewContainerIf = {
+const reviewContainerIf: ReviewContainerIf = {
   createIf: {
     useCreate: () => dontCreate
   },
@@ -96,7 +99,7 @@ const reviewContainerIf = {
   }
 }
 
-const searchIf = {
+const searchIf: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
     isActive: true

@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import StyleParents from './StyleParents'
 import type { UseDebounce } from '../../core/types'
+import type { ListStylesIf } from '../../core/style/types'
+import type { SearchIf } from '../../core/search/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -20,14 +22,14 @@ const otherParent = {
   name: 'Lager'
 }
 
-const noList = {
+const noList: ListStylesIf = {
   useList: () => ({
     styles: [],
     isLoading: false
   })
 }
 
-const dontUseSearch = {
+const dontUseSearch: SearchIf = {
   useSearch: () => ({
     activate: dontCall,
     isActive: false
@@ -74,6 +76,13 @@ test('removes parent', async () => {
 test('adds parent', async () => {
   const user = userEvent.setup()
   const select = vitest.fn()
+  const searchIf: SearchIf = {
+    useSearch: () => ({
+      activate: () => undefined,
+        isActive: true
+    }),
+    useDebounce
+  }
   const { getByPlaceholderText, getByRole } = render(
     <StyleParents
       initialParents={[
@@ -85,13 +94,7 @@ test('adds parent', async () => {
           isLoading: false
         })
       }}
-      searchIf={{
-        useSearch: () => ({
-          activate: () => undefined,
-          isActive: true
-        }),
-        useDebounce
-      }}
+      searchIf={searchIf}
       select={select}
     />
   )

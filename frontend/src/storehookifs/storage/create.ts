@@ -10,7 +10,7 @@ const createStorage: () => CreateStorageIf = () => {
       const [createStorage, { error, isLoading }] =
         useCreateStorageMutation()
       return {
-        create: async (request: CreateStorageRequest) => {
+        create: async (request: CreateStorageRequest): Promise<void> => {
           await createStorage(request)
         },
         hasError: error !== undefined,

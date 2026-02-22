@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import CreateStyle from './CreateStyle'
 import type { UseDebounce } from '../../core/types'
+import type { SearchIf } from '../../core/search/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -22,7 +23,7 @@ const otherParent = {
   parents: []
 }
 
-const useSearch = {
+const useSearch: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
     isActive: true

@@ -1,6 +1,7 @@
 import { act, render } from '@testing-library/react'
 import { expect, test } from 'vitest'
 import Locations from './Locations'
+import type { Location, LocationList } from '../../core/location/types'
 import type { SearchIf } from '../../core/search/types'
 import LinkWrapper from '../LinkWrapper'
 import type { UseDebounce } from '../../core/types'
@@ -35,7 +36,7 @@ const anotherLocation = {
   name: 'Kultainen apina'
 }
 
-const locations = [
+const locations: Location[] = [
   location,
   anotherLocation
 ]
@@ -47,14 +48,16 @@ test('renders locations', async () => {
       <Locations
         listLocationsIf={{
           useList: () => ({
-            list: async () => ({
+            list: async (): Promise<LocationList> => ({
               locations
             }),
             locationList: { locations },
             isLoading: false,
             isUninitialized: false
           }),
-          infiniteScroll: (cb) => { scrollCb = cb; return () => undefined }
+          infiniteScroll: (
+            cb
+          ): () => undefined => { scrollCb = cb; return () => undefined }
         }}
         navigateIf={{
           useNavigate: () => notUsed

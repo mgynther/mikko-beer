@@ -7,11 +7,19 @@ import type { Login } from "../../core/login/types"
 import { Role } from "../../core/user/types"
 import LinkWrapper from "../LinkWrapper"
 import type {
+  Review,
+  ReviewContainerIf,
   ReviewIf,
   ReviewSorting,
   ReviewSortingOrder
 } from "../../core/review/types"
 import type { SearchLocationIf } from "../../core/location/types"
+import type {
+  CreateBeerIf,
+  SearchBeerIf,
+  SelectBeerIf
+} from "../../core/beer/types"
+import type { SearchIf } from "../../core/search/types"
 
 const useDebounce: UseDebounce = str => str
 
@@ -26,13 +34,13 @@ const dontCreate = {
 
 const reviewedBeerId = '6ec1cde8-03aa-4567-bfac-b8509bc030cd'
 
-const beerSearchIf = {
+const beerSearchIf: SearchBeerIf = {
   useSearch: () => ({
     search: dontCall,
     isLoading: false
   })
 }
-const dontCreateBeerIf = {
+const dontCreateBeerIf: CreateBeerIf = {
   useCreate: () => dontCreate,
   editBeerIf: {
     selectBreweryIf: {
@@ -67,7 +75,7 @@ const dontCreateBeerIf = {
 
 const dateStr ='2022-04-01T12:00:00.000Z'
 
-const reviewContainerIf = {
+const reviewContainerIf: ReviewContainerIf = {
   createIf: {
     useCreate: () => dontCreate
   },
@@ -81,14 +89,14 @@ const reviewContainerIf = {
   }
 }
 
-const searchIf = {
+const searchIf: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
     isActive: true
   }),
   useDebounce
 }
-const selectBeerIf = {
+const selectBeerIf: SelectBeerIf = {
   create: dontCreateBeerIf,
   search: beerSearchIf
 }
@@ -223,7 +231,7 @@ test('updates review', async () => {
         reviewIf={{
           get: {
             useGet: () => ({
-              get: async () => review
+              get: async (): Promise<Review> => review
             })
           },
           update: {

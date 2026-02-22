@@ -16,7 +16,7 @@ const search: (
       const id = useId()
       const isActive = activeSearch === id
       return {
-        activate: () => {
+        activate: (): undefined => {
           dispatch(activate(id))
         },
         isActive

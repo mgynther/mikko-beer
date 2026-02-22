@@ -2,8 +2,13 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import UpdateStyle from './UpdateStyle'
-import type { StyleWithParentIds } from '../../core/style/types'
+import type {
+  GetStyleIf,
+  ListStylesIf,
+  StyleWithParentIds
+} from '../../core/style/types'
 import type { UseDebounce } from '../../core/types'
+import type { SearchIf } from '../../core/search/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -32,7 +37,7 @@ const style: StyleWithParentIds = {
   parents: [parent.id]
 }
 
-const getStyle = {
+const getStyle: GetStyleIf = {
   useGet: () => ({
     style: {
       id,
@@ -44,14 +49,14 @@ const getStyle = {
   })
 }
 
-const listStyles = {
+const listStyles: ListStylesIf = {
   useList: () => ({
     styles: [parent, otherParent],
     isLoading: false
   })
 }
 
-const useSearch = {
+const searchIf: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
     isActive: true
@@ -78,7 +83,7 @@ test('updates style', async () => {
       }}
       onCancel={dontCall}
       onSaved={onSaved}
-      searchIf={useSearch}
+      searchIf={searchIf}
       initialStyle={style}
     />
   )
@@ -117,7 +122,7 @@ test('cancels updating style', async () => {
       }}
       onCancel={cancel}
       onSaved={dontCall}
-      searchIf={useSearch}
+      searchIf={searchIf}
       initialStyle={style}
     />
   )

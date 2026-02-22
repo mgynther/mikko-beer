@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import SearchLocation from './SearchLocation'
 
+import type { Location } from '../../core/location/types'
 import type { SearchIf } from '../../core/search/types'
 import type { UseDebounce } from '../../core/types'
 import type {
@@ -43,7 +44,7 @@ const anotherLocation = {
   name: 'Huurupiilo'
 }
 
-const locations = [
+const locations: Location[] = [
   location,
   anotherLocation
 ]
@@ -58,7 +59,7 @@ test('selects location', async () => {
       placeholderText={placeholderText}
       searchLocationIf={{
         useSearch: () => ({
-          search: async () => locations,
+          search: async (): Promise<Location[]> => locations,
           isLoading: false
         }),
         create: dontCreateLocation
@@ -90,7 +91,7 @@ test('does not show create button with case-insensitive match', async () => {
       placeholderText={placeholderText}
       searchLocationIf={{
         useSearch: () => ({
-          search: async () => locations,
+          search: async (): Promise<Location[]> => locations,
           isLoading: false
         }),
         create: dontCreateLocation
@@ -120,7 +121,7 @@ test('shows no results when creating not enabled', async () => {
       placeholderText={placeholderText}
       searchLocationIf={{
         useSearch: () => ({
-          search: async () => [],
+          search: async (): Promise<Location[]> => [],
           isLoading: false
         }),
         create: dontCreateLocation
@@ -148,12 +149,14 @@ test('creates location', async () => {
       placeholderText={placeholderText}
       searchLocationIf={{
         useSearch: () => ({
-          search: async () => [],
+          search: async (): Promise<Location[]> => [],
           isLoading: false
         }),
         create: {
           useCreate: () => ({
-            create: async (locationRequest: CreateLocationRequest) => {
+            create: async (
+              locationRequest: CreateLocationRequest
+            ): Promise<Location> => {
               create(locationRequest)
               return location
             },
@@ -188,7 +191,7 @@ test('confirms creating location when partially matching result exists',
   const confirmCb = vitest.fn()
   const { getByRole } = render(
     <SearchLocation
-      getConfirm={() => (text: string) => {
+      getConfirm={() => (text: string): boolean => {
         confirmCb(text)
         return true
       }}
@@ -196,7 +199,7 @@ test('confirms creating location when partially matching result exists',
       placeholderText={placeholderText}
       searchLocationIf={{
         useSearch: () => ({
-          search: async () => [{
+          search: async (): Promise<Location[]> => [{
             id: '28a00180-5f00-4aa3-bd12-8f56b03a2606',
             name: `${location.name}, Tampere`
           }],
@@ -204,7 +207,9 @@ test('confirms creating location when partially matching result exists',
         }),
         create: {
           useCreate: () => ({
-            create: async (locationRequest: CreateLocationRequest) => {
+            create: async (
+              locationRequest: CreateLocationRequest
+            ): Promise<Location> => {
               create(locationRequest)
               return location
             },
@@ -244,7 +249,7 @@ test('sorts existing result before create new location', async () => {
       placeholderText={placeholderText}
       searchLocationIf={{
         useSearch: () => ({
-          search: async () => [{
+          search: async (): Promise<Location[]> => [{
             id: '0c6d96c9-7404-40f7-98b6-2400f8c29743',
             name: resultName
           }],

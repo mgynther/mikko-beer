@@ -2,8 +2,14 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import SelectBeer from './SelectBeer'
-import type { CreateBeerRequest } from '../../core/beer/types'
+import type {
+  Beer,
+  BeerWithIds,
+  CreateBeerRequest
+} from '../../core/beer/types'
 import type { UseDebounce } from '../../core/types'
+import type { SearchIf } from '../../core/search/types'
+import type { Brewery } from '../../core/brewery/types'
 
 const namePlaceholder = 'Name'
 
@@ -36,7 +42,7 @@ const dontCreate = {
   isLoading: false
 }
 
-const searchIf = {
+const searchIf: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
       isActive: true
@@ -54,7 +60,7 @@ test('selects created beer', async () => {
       selectBeerIf={{
         create: {
           useCreate: () => ({
-            create: async (beer: CreateBeerRequest) => ({
+            create: async (beer: CreateBeerRequest): Promise<BeerWithIds> => ({
               ...beer,
               id
             }),
@@ -67,7 +73,7 @@ test('selects created beer', async () => {
               },
               search: {
                 useSearch: () => ({
-                  search: async () => [brewery],
+                  search: async (): Promise<Brewery[]> => [brewery],
                   isLoading: false
                 })
               }
@@ -169,7 +175,7 @@ test('selects beer', async () => {
         },
         search: {
         useSearch: () => ({
-          search: async () => [beer],
+          search: async (): Promise<Beer[]> => [beer],
           isLoading: false
         })
         }

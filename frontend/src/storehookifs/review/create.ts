@@ -26,7 +26,7 @@ const createReview: (
       const [ createReview, { isLoading, isSuccess, data }] =
         useCreateReviewMutation()
       return {
-        create: async (request: ReviewRequestWrapper) => {
+        create: async (request: ReviewRequestWrapper): Promise<void> => {
           await createReview(request)
         },
         isLoading,

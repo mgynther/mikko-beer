@@ -6,7 +6,7 @@ const deleteUser: () => DeleteUserIf = () => {
     useDelete: () => {
       const [deleteUser] = useDeleteUserMutation()
       return {
-        delete: async (userId: string) => {
+        delete: async (userId: string): Promise<void> => {
           await deleteUser(userId)
         }
       }

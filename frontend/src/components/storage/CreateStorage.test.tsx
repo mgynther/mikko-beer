@@ -3,6 +3,9 @@ import userEvent from "@testing-library/user-event"
 import { expect, test, vitest } from "vitest"
 import CreateStorage from "./CreateStorage"
 import type { UseDebounce } from "../../core/types"
+import type { CreateBeerIf, SearchBeerIf } from "../../core/beer/types"
+import type { ReviewContainerIf } from "../../core/review/types"
+import type { SearchIf } from "../../core/search/types"
 
 const useDebounce: UseDebounce = str => str
 
@@ -29,13 +32,13 @@ const beerSearchResult = {
     name: 'american ipa'
   }]
 }
-const beerSearchIf = {
+const beerSearchIf: SearchBeerIf = {
   useSearch: () => ({
     search: async () => [beerSearchResult],
     isLoading: false
   })
 }
-const dontCreateBeerIf = {
+const dontCreateBeerIf: CreateBeerIf = {
   useCreate: () => dontCreate,
   editBeerIf: {
     selectBreweryIf: {
@@ -75,7 +78,7 @@ const containerListResult = {
   size: '0.33'
 }
 
-const reviewContainerIf = {
+const reviewContainerIf: ReviewContainerIf = {
   createIf: {
     useCreate: () => dontCreate
   },
@@ -92,6 +95,13 @@ const reviewContainerIf = {
 test('creates storage', async () => {
   const user = userEvent.setup()
   const create = vitest.fn()
+  const searchIf: SearchIf = {
+    useSearch: () => ({
+      activate: () => undefined,
+        isActive: true
+    }),
+    useDebounce
+  }
   const {
     findByRole,
     getAllByRole,
@@ -100,13 +110,7 @@ test('creates storage', async () => {
     getByRole
   } = render(
     <CreateStorage
-      searchIf={{
-        useSearch: () => ({
-          activate: () => undefined,
-          isActive: true
-        }),
-        useDebounce
-      }}
+      searchIf={searchIf}
       selectBeerIf={{
         create: dontCreateBeerIf,
         search: beerSearchIf

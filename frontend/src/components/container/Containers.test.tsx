@@ -2,8 +2,10 @@ import { render } from '@testing-library/react'
 import { test } from 'vitest'
 import Containers from './Containers'
 import { Role } from '../../core/user/types'
+import type { GetLogin } from '../../core/login/types'
+import type { UpdateContainerIf } from '../../core/container/types'
 
-function getLogin() {
+function getLogin(): GetLogin {
   return () => ({
     user: {
       id: '05952a9e-1c6f-4974-9c1c-4e5fe473b0f7',
@@ -15,7 +17,7 @@ function getLogin() {
   })
 }
 
-const updateContainerIf = {
+const updateContainerIf: UpdateContainerIf = {
   useUpdate: () => ({
     update: async () => undefined,
       isLoading: false

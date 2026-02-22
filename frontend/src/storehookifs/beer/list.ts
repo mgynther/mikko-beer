@@ -1,5 +1,5 @@
 import { infiniteScroll } from "../../components/util"
-import type { ListBeersIf } from "../../core/beer/types"
+import type { BeerList, ListBeersIf } from "../../core/beer/types"
 import type { Pagination } from "../../core/types"
 import { useLazyListBeersQuery } from "../../store/beer/api"
 import {
@@ -14,7 +14,7 @@ const listBeers: () => ListBeersIf = () => {
         useLazyListBeersQuery()
       return {
         beerList: validateBeerListOrUndefined(data),
-        list: async (pagination: Pagination) => {
+        list: async (pagination: Pagination): Promise<BeerList> => {
           const result = await trigger(pagination).unwrap()
           return validateBeerList(result)
         },

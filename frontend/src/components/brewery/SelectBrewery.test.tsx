@@ -45,7 +45,7 @@ test('selects brewery', async () => {
       }}
       searchIf={{
         useSearch: () => ({
-          activate: () => undefined,
+          activate: (): undefined => undefined,
           isActive: true
         }),
         useDebounce
@@ -83,7 +83,7 @@ test('selects created brewery', async () => {
       }}
       searchIf={{
         useSearch: () => ({
-          activate: () => undefined,
+          activate: (): undefined => undefined,
           isActive: false
         }),
         useDebounce

@@ -2,7 +2,7 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import CreateContainer from './CreateContainer'
-import type { ContainerRequest } from '../../core/container/types'
+import type { Container, ContainerRequest } from '../../core/container/types'
 
 const id = 'bbf9a644-74ad-4947-8335-ff1464f97a20'
 const sizePlaceholder = 'Size, for example 0.25'
@@ -16,7 +16,9 @@ test('creates container', async () => {
       select={selectContainer}
       createContainerIf={{
           useCreate: () => ({
-            create: async (container: ContainerRequest) => ({
+            create: async (
+              container: ContainerRequest
+            ): Promise<Container> => ({
               ...container,
               id
             }),

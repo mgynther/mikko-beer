@@ -5,6 +5,9 @@ import AddReview, { type Props as AddReviewProps } from "./AddReview"
 import { loadingIndicatorText } from "../common/LoadingIndicator"
 import type { UseDebounce } from "../../core/types"
 import type { SearchLocationIf } from "../../core/location/types"
+import type { CreateBeerIf, SearchBeerIf } from "../../core/beer/types"
+import type { ReviewContainerIf } from "../../core/review/types"
+import type { ParamsIf } from "../util"
 
 const useDebounce: UseDebounce = str => str
 
@@ -31,13 +34,13 @@ const beerSearchResult = {
     name: 'american ipa'
   }]
 }
-const beerSearchIf = {
+const beerSearchIf: SearchBeerIf = {
   useSearch: () => ({
     search: async () => [beerSearchResult],
     isLoading: false
   })
 }
-const dontCreateBeerIf = {
+const dontCreateBeerIf: CreateBeerIf = {
   useCreate: () => dontCreate,
   editBeerIf: {
     selectBreweryIf: {
@@ -79,7 +82,7 @@ const containerListResult = {
 
 const dateStr ='2022-04-01T12:00:00.000Z'
 const getCurrentDate = (): Date => new Date(dateStr)
-const reviewContainerIf = {
+const reviewContainerIf: ReviewContainerIf = {
   createIf: {
     useCreate: () => dontCreate
   },
@@ -145,14 +148,14 @@ const noOpContainerIf = {
   }
 }
 
-const noParamsIf = {
+const noParamsIf: ParamsIf = {
   useParams: () => ({}),
   useSearch: () => ({
     get: () => undefined
   })
 }
 
-const storageIdParamsIf = {
+const storageIdParamsIf: ParamsIf = {
   useParams: () => ({ storageId }),
   useSearch: () => ({
     get: () => undefined

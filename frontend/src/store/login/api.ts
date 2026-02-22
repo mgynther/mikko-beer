@@ -29,7 +29,10 @@ const loginApi = emptySplitApi.injectEndpoints({
             authToken: data.authToken,
             refreshToken: data.refreshToken
           }))
-        } catch {}
+        } catch {
+          // Login failure doesn't need any handling but we don't want to
+          // reject.
+        }
       },
       invalidatesTags: ['Login']
     }),
@@ -43,7 +46,7 @@ const loginApi = emptySplitApi.injectEndpoints({
         try {
           await queryFulfilled
           dispatch(passwordChangeResult(PasswordChangeResult.SUCCESS))
-        } catch (e) {
+        } catch (_) {
           dispatch(passwordChangeResult(PasswordChangeResult.ERROR))
         }
       }

@@ -4,6 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import BreweryAllAtOnce from './BreweryAllAtOnce'
 import LinkWrapper from '../LinkWrapper'
 import { openFilters } from './filters-test-util'
+import type { BreweryStats, GetBreweryStatsIf } from '../../core/stats/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -46,7 +47,7 @@ const unusedFilters = {
   }
 }
 
-const unusedStats = {
+const unusedStats: GetBreweryStatsIf = {
   useStats: () => ({
     query: async () => ({ brewery: []}),
       stats: { brewery: [] },
@@ -63,7 +64,7 @@ test('queries brewery stats', async () => {
       <BreweryAllAtOnce
         getBreweryStatsIf={{
           useStats: () => ({
-            query: async (params) => {
+            query: async (params): Promise<BreweryStats> => {
               query(params)
               return {
                 brewery: [

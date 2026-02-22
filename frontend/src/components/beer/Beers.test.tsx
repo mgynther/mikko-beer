@@ -4,6 +4,7 @@ import Beers from './Beers'
 import type { SearchIf } from '../../core/search/types'
 import LinkWrapper from '../LinkWrapper'
 import type { UseDebounce } from '../../core/types'
+import type { ListBeersIf } from '../../core/beer/types'
 
 const useDebounce: UseDebounce = str => str
 
@@ -53,20 +54,21 @@ const beers = [
 
 test('renders breweries', async () => {
   let scrollCb: (() => void) = () => undefined
+  const listBeersIf: ListBeersIf = {
+    useList: () => ({
+      list: async () => ({
+        beers
+      }),
+      beerList: { beers },
+      isLoading: false,
+      isUninitialized: false
+    }),
+    infiniteScroll: (cb) => { scrollCb = cb; return () => undefined }
+  }
   const { getByPlaceholderText, getAllByRole, getByRole } = render(
     <LinkWrapper>
       <Beers
-        listBeersIf={{
-          useList: () => ({
-            list: async () => ({
-              beers
-            }),
-            beerList: { beers },
-            isLoading: false,
-            isUninitialized: false
-          }),
-          infiniteScroll: (cb) => { scrollCb = cb; return () => undefined }
-        }}
+        listBeersIf={listBeersIf}
         navigateIf={{
           useNavigate: () => notUsed
         }}

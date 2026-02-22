@@ -45,7 +45,7 @@ const emptyParamsIf: ParamsIf = {
 const annualStatsParamsIf: ParamsIf = {
   ...emptyParamsIf,
   useSearch: () => ({
-    get: (key: string) => {
+    get: (key: string): string | undefined => {
       if (key === 'stats') {
         return 'annual'
       }
@@ -57,7 +57,7 @@ const annualStatsParamsIf: ParamsIf = {
 const monthlyStatsParamsIf: ParamsIf = {
   ...emptyParamsIf,
   useSearch: () => ({
-    get: (key: string) => {
+    get: (key: string): string | undefined => {
       if (key === 'stats') {
         return 'monthly'
       }

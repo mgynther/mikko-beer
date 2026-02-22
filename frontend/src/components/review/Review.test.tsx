@@ -8,6 +8,12 @@ import { Role } from "../../core/user/types"
 import LinkWrapper from "../LinkWrapper"
 import { asText } from "../container/ContainerInfo"
 import type { SearchLocationIf } from "../../core/location/types"
+import type { CreateBeerIf, SearchBeerIf } from "../../core/beer/types"
+import type {
+  Review as ReviewType,
+  ReviewContainerIf
+} from "../../core/review/types"
+import type { SearchIf } from "../../core/search/types"
 
 const useDebounce: UseDebounce = str => str
 
@@ -22,13 +28,13 @@ const dontCreate = {
 
 const reviewedBeerId = '8c7f4094-09ba-4ba9-aaa5-56099b1f5bbb'
 
-const beerSearchIf = {
+const beerSearchIf: SearchBeerIf = {
   useSearch: () => ({
     search: dontCall,
     isLoading: false
   })
 }
-const dontCreateBeerIf = {
+const dontCreateBeerIf: CreateBeerIf = {
   useCreate: () => dontCreate,
   editBeerIf: {
     selectBreweryIf: {
@@ -70,7 +76,7 @@ const containerListResult = {
 
 const dateStr ='2022-04-01T12:00:00.000Z'
 
-const reviewContainerIf = {
+const reviewContainerIf: ReviewContainerIf = {
   createIf: {
     useCreate: () => dontCreate
   },
@@ -84,7 +90,7 @@ const reviewContainerIf = {
   }
 }
 
-const searchIf = {
+const searchIf: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
     isActive: true
@@ -207,7 +213,7 @@ test('updates review', async () => {
         reviewIf={{
           get: {
             useGet: () => ({
-              get: async () => review
+              get: async (): Promise<ReviewType> => review
             })
           },
           update: {
@@ -258,7 +264,7 @@ test('cannot update review as viewer', async () => {
         reviewIf={{
           get: {
             useGet: () => ({
-              get: async () => review
+              get: async (): Promise<ReviewType> => review
             })
           },
           update: {
@@ -303,7 +309,7 @@ test('renders review', async () => {
         reviewIf={{
           get: {
             useGet: () => ({
-              get: async () => review
+              get: async (): Promise<ReviewType> => review
             })
           },
           update: {

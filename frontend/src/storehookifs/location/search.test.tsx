@@ -13,7 +13,7 @@ import Button from '../../components/common/Button'
 function Helper(): React.JSX.Element {
   const searchIf = searchLocations({
       useCreate: () => ({
-        create: async () => ({
+        create: async (): Promise<Location> => ({
           id: '32f585d2-aeb8-46bb-91b9-ab57bc5e8b11',
           name: 'Fake created location'
         }),

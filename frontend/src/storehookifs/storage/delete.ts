@@ -6,7 +6,7 @@ const deleteStorage: () => DeleteStorageIf = () => {
     useDelete: () => {
       const [deleteStorage] = useDeleteStorageMutation()
       return {
-        delete: async (id: string) => {
+        delete: async (id: string): Promise<void> => {
           await deleteStorage(id)
         }
       }

@@ -21,9 +21,6 @@ export function SelectCreateRadioBasic (props: BasicProps): React.JSX.Element {
   const [id] = useState(uuidv4())
 
   function onRadioChange (e: React.ChangeEvent<HTMLInputElement>): void {
-    /* eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison --
-     * Type is lost in the radio button input.
-     */
     const newMode = e.target.value === Mode.SELECT ? Mode.SELECT : Mode.CREATE
     props.onChange(newMode)
   }

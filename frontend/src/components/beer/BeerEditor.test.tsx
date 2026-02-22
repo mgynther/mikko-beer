@@ -9,11 +9,13 @@ import type {
 } from '../../core/brewery/types'
 import type {
   CreateStyleIf,
+  SelectStyleIf,
   Style,
   StyleWithParentIds
 } from '../../core/style/types'
 import type { UseDebounce } from '../../core/types'
 import type { EditBeerIf } from '../../core/beer/types'
+import type { SearchIf } from '../../core/search/types'
 
 const useDebounce: UseDebounce = str => str
 
@@ -71,7 +73,7 @@ const search: SearchBreweryIf = {
   })
 }
 
-const doSearch = {
+const doSearch: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
       isActive: true
@@ -79,7 +81,7 @@ const doSearch = {
   useDebounce
 }
 
-const dontSearch = {
+const dontSearch: SearchIf = {
   useSearch: () => ({
     activate: dontCall,
     isActive: false
@@ -121,7 +123,7 @@ const dontEditBeer: EditBeerIf = {
   }
 }
 
-const dontSelectStyle = {
+const dontSelectStyle: SelectStyleIf = {
   create: dontCreateStyleIf,
   list: {
     useList: () => ({

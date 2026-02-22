@@ -69,7 +69,7 @@ test('selects created container', async () => {
       reviewContainerIf={{
         createIf: {
           useCreate: () => ({
-            create: async () => newContainer,
+            create: async (): Promise<Container> => newContainer,
             isLoading: false
           })
         },

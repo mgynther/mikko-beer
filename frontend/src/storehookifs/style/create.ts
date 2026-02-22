@@ -10,7 +10,7 @@ const createStyle: () => CreateStyleIf = () => {
         { data, isError, isLoading, isSuccess }
       ] = useCreateStyleMutation()
       return {
-        create: async (style: CreateStyleRequest) => {
+        create: async (style: CreateStyleRequest): Promise<void> => {
           await createStyle(style)
         },
         createdStyle: validateStyleOrUndefined(data?.style),

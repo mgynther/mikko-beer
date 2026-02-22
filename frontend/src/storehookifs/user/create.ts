@@ -14,7 +14,7 @@ const createUser: () => CreateUserIf = () => {
         }
       ] = useCreateUserMutation()
       return {
-        create: async (user: CreateUserRequest) => {
+        create: async (user: CreateUserRequest): Promise<void> => {
           await createUser(user)
         },
         user: validateUserOrUndefined(createdUserData?.user),

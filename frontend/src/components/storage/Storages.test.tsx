@@ -5,6 +5,9 @@ import type { Storage } from '../../core/storage/types'
 import { Role } from '../../core/user/types'
 import LinkWrapper from '../LinkWrapper'
 import type { UseDebounce } from '../../core/types'
+import type { CreateBeerIf, SearchBeerIf } from '../../core/beer/types'
+import type { ReviewContainerIf } from '../../core/review/types'
+import type { SearchParameters } from '../util'
 
 const useDebounce: UseDebounce = str => str
 
@@ -17,14 +20,14 @@ const dontCreate = {
   isLoading: false
 }
 
-const beerSearchIf = {
+const beerSearchIf: SearchBeerIf = {
   useSearch: () => ({
     search: dontCall,
     isLoading: false
   })
 }
 
-const dontCreateBeerIf = {
+const dontCreateBeerIf: CreateBeerIf = {
   useCreate: () => dontCreate,
   editBeerIf: {
     selectBreweryIf: {
@@ -83,7 +86,7 @@ const storage: Storage = {
   styles: [style]
 }
 
-const reviewContainerIf = {
+const reviewContainerIf: ReviewContainerIf = {
   createIf: {
     useCreate: () => dontCreate
   },
@@ -130,13 +133,16 @@ test('renders storage', () => {
         }}
         paramsIf={{
           useParams: () => ({}),
-          useSearch: () => ({
-            get: (key: string) => {
-              if (key === 'stats') {
-                return 'monthly'
+          useSearch: () => {
+            const searchParams: SearchParameters = {
+              get: (key: string) => {
+                if (key === 'stats') {
+                  return 'monthly'
+                }
               }
             }
-          })
+            return searchParams
+          }
         }}
         searchIf={{
           useSearch: () => ({

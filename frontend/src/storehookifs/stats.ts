@@ -1,8 +1,11 @@
 import type { NavigateIf } from "../components/util"
 import type {
+  AnnualContainerStats,
   AnnualContainerStatsQueryParams,
+  BreweryStats,
   BreweryStatsQueryParams,
   IdParams,
+  LocationStats,
   LocationStatsQueryParams,
   StatsIf,
   StyleStatsQueryParams
@@ -54,7 +57,7 @@ const stats: (
         return {
           query: async (
             params: AnnualContainerStatsQueryParams
-          ) => {
+          ): Promise<AnnualContainerStats | undefined> => {
             const result = await trigger(params)
             return validateAnnualContainerStatsOrUndefined(result.data)
           },
@@ -71,7 +74,7 @@ const stats: (
         return {
           query: async (
             params: BreweryStatsQueryParams
-          ) => {
+          ): Promise<BreweryStats | undefined> => {
             const result = await trigger(params)
             return validateBreweryStatsOrUndefined(result.data)
           },
@@ -97,7 +100,7 @@ const stats: (
         return {
           query: async (
             params: LocationStatsQueryParams
-          ) => {
+          ): Promise<LocationStats | undefined> => {
             const result = await trigger(params)
             return validateLocationStatsOrUndefined(result.data)
           },

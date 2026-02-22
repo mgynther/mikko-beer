@@ -2,8 +2,9 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import CreateBeer from './CreateBeer'
-import type { CreateBeerRequest } from '../../core/beer/types'
+import type { CreateBeerIf, CreateBeerRequest } from '../../core/beer/types'
 import type { UseDebounce } from '../../core/types'
+import type { SearchIf } from '../../core/search/types'
 
 const id = 'dbec2360-d6af-45f4-b2a0-cad732a87e20'
 const namePlaceholder = 'Name'
@@ -33,54 +34,56 @@ const dontCreate = {
 test('creates beer', async () => {
   const user = userEvent.setup()
   const selectBeer = vitest.fn()
+  const createBeerIf: CreateBeerIf = {
+    useCreate: () => ({
+      create: async (beer: CreateBeerRequest) => ({
+        ...beer,
+        id
+      }),
+      isLoading: false
+    }),
+    editBeerIf: {
+      selectBreweryIf: {
+        create: {
+          useCreate: () => dontCreate
+        },
+        search: {
+          useSearch: () => ({
+            search: async () => [brewery],
+              isLoading: false
+          })
+        }
+      },
+      selectStyleIf: {
+        create: {
+          useCreate: () => ({
+            ...dontCreate,
+            createdStyle: undefined,
+            hasError: false,
+            isSuccess: false
+          })
+        },
+        list: {
+          useList: () => ({
+            styles: [style],
+            isLoading: false
+          })
+        }
+      }
+    }
+  }
+  const searchIf: SearchIf = {
+    useSearch: () => ({
+      activate: () => undefined,
+        isActive: true
+    }),
+    useDebounce
+  }
   const { getByPlaceholderText, getByRole } = render(
     <CreateBeer
       select={selectBeer}
-      createBeerIf={{
-        useCreate: () => ({
-          create: async (beer: CreateBeerRequest) => ({
-            ...beer,
-            id
-          }),
-          isLoading: false
-        }),
-        editBeerIf: {
-          selectBreweryIf: {
-            create: {
-              useCreate: () => dontCreate
-            },
-            search: {
-              useSearch: () => ({
-                search: async () => [brewery],
-                isLoading: false
-              })
-            }
-          },
-          selectStyleIf: {
-            create: {
-              useCreate: () => ({
-                ...dontCreate,
-                createdStyle: undefined,
-                hasError: false,
-                isSuccess: false
-              })
-            },
-            list: {
-              useList: () => ({
-                styles: [style],
-                isLoading: false
-              })
-            }
-          }
-        }
-      }}
-      searchIf={{
-        useSearch: () => ({
-          activate: () => undefined,
-          isActive: true
-        }),
-        useDebounce
-      }}
+      createBeerIf={createBeerIf}
+      searchIf={searchIf}
     />
   )
   const nameInput = getByPlaceholderText(namePlaceholder)

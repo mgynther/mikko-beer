@@ -30,7 +30,7 @@ test('deletes user', async () => {
   const del = vitest.fn()
   const { getByRole } = render(
     <UserList
-      getConfirm={() => () => true}
+      getConfirm={(): () => boolean => () => true}
       listUsersIf={oneUserListIf(user1)}
       deleteUserIf={{
         useDelete: () => ({
@@ -49,7 +49,7 @@ test('does not delete user when not confirmed', async () => {
   const del = vitest.fn()
   const { getByRole } = render(
     <UserList
-      getConfirm={() => () => false}
+      getConfirm={(): () => boolean => () => false}
       listUsersIf={oneUserListIf(user1)}
       deleteUserIf={{
         useDelete: () => ({
@@ -67,7 +67,7 @@ test('renders users', () => {
   const user2Id = '5689ca51-4384-4cb8-9f5a-a1a7c2d4b974'
   const { getByText } = render(
     <UserList
-      getConfirm={() => () => false}
+      getConfirm={(): () => boolean => () => false}
       listUsersIf={{
         useList: () => ({
           data: {

@@ -1,4 +1,5 @@
 import type {
+  Container,
   ContainerRequest,
   CreateContainerIf
 } from "../../core/container/types"
@@ -13,7 +14,9 @@ const createContainer: () => CreateContainerIf = () => {
         { isLoading: isCreatingContainer }
       ] = useCreateContainerMutation()
       return {
-        create: async (containerRequest: ContainerRequest) => {
+        create: async (
+          containerRequest: ContainerRequest
+        ): Promise<Container> => {
           const result = await createContainer(containerRequest).unwrap()
           return validateContainer(result.container)
         },

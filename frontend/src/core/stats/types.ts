@@ -229,11 +229,13 @@ export interface GetRatingStatsIf {
   }
 }
 
+export interface StatsResult {
+  stats: StyleStats | undefined
+  isLoading: boolean
+}
+
 export interface GetStyleStatsIf {
-  useStats: (params: StyleStatsQueryParams) => {
-    stats: StyleStats | undefined
-    isLoading: boolean
-  }
+  useStats: (params: StyleStatsQueryParams) => StatsResult
 }
 
 export interface StatsIf {

@@ -316,6 +316,12 @@ test('do not show admin features to viewer', async () => {
 test('searches beer', async () => {
   const user = userEvent.setup()
   const navigate = vitest.fn()
+  const searchBeerIf: SearchBeerIf = {
+    useSearch: () => ({
+      search: async () => beers,
+        isLoading: false
+    })
+  }
   const { getByRole, getByPlaceholderText } = render(
     <LinkWrapper>
       <Nav
@@ -324,12 +330,7 @@ test('searches beer', async () => {
         navigateIf={{
           useNavigate: () => navigate
         }}
-        searchBeerIf={{
-          useSearch: () => ({
-            search: async () => beers,
-            isLoading: false
-          })
-        }}
+        searchBeerIf={searchBeerIf}
         searchBreweryIf={dontSearchBrewery}
         searchIf={activeSearch}
         setTheme={dontCall}
@@ -355,6 +356,12 @@ test('searches beer', async () => {
 test('searches brewery', async () => {
   const user = userEvent.setup()
   const navigate = vitest.fn()
+  const searchBreweryIf: SearchBreweryIf = {
+    useSearch: () => ({
+      search: async () => [brewery],
+        isLoading: false
+    })
+  }
   const { getByRole, getByPlaceholderText } = render(
     <LinkWrapper>
       <Nav
@@ -364,12 +371,7 @@ test('searches brewery', async () => {
           useNavigate: () => navigate
         }}
         searchBeerIf={dontSearchBeer}
-        searchBreweryIf={{
-          useSearch: () => ({
-            search: async () => [brewery],
-            isLoading: false
-          })
-        }}
+        searchBreweryIf={searchBreweryIf}
         searchIf={activeSearch}
         setTheme={dontCall}
         theme={Theme.DARK}

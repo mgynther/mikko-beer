@@ -4,6 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import Brewery from './Brewery'
 import LinkWrapper from '../LinkWrapper'
 import type { SearchParameters } from '../util'
+import type { BreweryStats, GetBreweryStatsIf } from '../../core/stats/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -47,7 +48,7 @@ const unusedFilters = {
 const breweryStats = { brewery: [{ ...koskipanimo }, { ...lehe }]}
 const emptyStats = { brewery: []}
 
-const usedStats = {
+const usedStats: GetBreweryStatsIf = {
   useStats: () => ({
     query: async () => breweryStats,
     stats: emptyStats,
@@ -73,7 +74,7 @@ test('queries brewery stats', async () => {
       <Brewery
         getBreweryStatsIf={{
           useStats: () => ({
-            query: async (params) => {
+            query: async (params): Promise<BreweryStats> => {
               query(params)
               return {
                 brewery: [
@@ -89,7 +90,7 @@ test('queries brewery stats', async () => {
           }),
           infiniteScroll: (cb) => {
             loadCallback = cb
-            return () => undefined
+            return (): undefined => undefined
           }
         }}
         breweryId={undefined}

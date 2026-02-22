@@ -5,6 +5,7 @@ import Style from './Style'
 import LinkWrapper from '../LinkWrapper'
 import type {
   GetStyleStatsIf,
+  StatsResult,
   StyleStatsQueryParams
 } from '../../core/stats/types'
 import { openFilters } from './filters-test-util'
@@ -52,7 +53,7 @@ const defaultParams = {
 const getRecordingIf = (
   statsRequests: (params: StyleStatsQueryParams) => void
 ): GetStyleStatsIf => ({
-  useStats: (params: StyleStatsQueryParams) => {
+  useStats: (params: StyleStatsQueryParams): StatsResult => {
     statsRequests(params)
     return statsResult
   }

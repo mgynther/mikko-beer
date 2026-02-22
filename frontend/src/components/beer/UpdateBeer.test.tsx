@@ -3,6 +3,9 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import UpdateBeer from './UpdateBeer'
 import type { UseDebounce } from '../../core/types'
+import type { Brewery, SelectBreweryIf } from '../../core/brewery/types'
+import type { SelectStyleIf } from '../../core/style/types'
+import type { SearchIf } from '../../core/search/types'
 
 const id = 'b3cee2c7-81b8-4b4d-8625-f5a3955258eb'
 const beerName = 'Kukko Pils'
@@ -35,7 +38,7 @@ const dontCall = (): any => {
 
 const useDebounce: UseDebounce = str => str
 
-const dontSelectBrewery = {
+const dontSelectBrewery: SelectBreweryIf = {
   create: {
     useCreate: () => ({
       create: dontCall,
@@ -50,7 +53,7 @@ const dontSelectBrewery = {
   }
 }
 
-const dontSelectStyle = {
+const dontSelectStyle: SelectStyleIf = {
   create: {
     useCreate: () => ({
       create: dontCall,
@@ -68,7 +71,7 @@ const dontSelectStyle = {
   }
 }
 
-const dontSearch = {
+const dontSearch: SearchIf = {
   useSearch: () => ({
     activate: dontCall,
     isActive: false
@@ -76,7 +79,7 @@ const dontSearch = {
   useDebounce
 }
 
-const doSearch = {
+const doSearch: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
       isActive: true
@@ -155,7 +158,7 @@ test('updates beer brewery', async () => {
             },
             search: {
               useSearch: () => ({
-                search: async () => [anotherBrewery],
+                search: async (): Promise<Brewery[]> => [anotherBrewery],
                 isLoading: false
               })
             }

@@ -3,11 +3,12 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import UpdateLocation from './UpdateLocation'
 import { Role } from '../../core/user/types'
+import type { GetLogin } from '../../core/login/types'
 
 const id = 'e00e1994-026c-4be6-93f2-4b247a0f0ce8'
 const newNamePlaceholder = 'New name'
 
-function getLogin() {
+function getLogin(): GetLogin {
   return () => ({
     user: {
       id: '3ae3514d-4fbe-416c-add4-85b6fbc76922',

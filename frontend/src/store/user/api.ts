@@ -9,9 +9,6 @@ import type {
 
 const userApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
-    /* eslint-disable-next-line @typescript-eslint/no-invalid-void-type --
-     * Void required here to generate correct hook.
-     */
     listUsers: build.query<UserList, void>({
       query: () => ({
         url: '/user',

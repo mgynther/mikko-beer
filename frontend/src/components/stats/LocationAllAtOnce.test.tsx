@@ -4,6 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import LocationAllAtOnce from './LocationAllAtOnce'
 import LinkWrapper from '../LinkWrapper'
 import { openFilters } from './filters-test-util'
+import type { GetLocationStatsIf, LocationStats } from '../../core/stats/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -46,7 +47,7 @@ const unusedFilters = {
   }
 }
 
-const unusedStats = {
+const unusedStats: GetLocationStatsIf = {
   useStats: () => ({
     query: async () => ({ location: []}),
       stats: { location: [] },
@@ -63,7 +64,7 @@ test('queries location stats', async () => {
       <LocationAllAtOnce
         getLocationStatsIf={{
           useStats: () => ({
-            query: async (params) => {
+            query: async (params): Promise<LocationStats> => {
               query(params)
               return {
                 location: [

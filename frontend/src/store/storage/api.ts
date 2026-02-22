@@ -18,9 +18,6 @@ const storageApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [StorageTags.Storage]
     }),
-    /* eslint-disable-next-line @typescript-eslint/no-invalid-void-type --
-     * Void required here to generate correct hook.
-     */
     getAnnualStorageStats: build.query<AnnualStats, void>({
       query: () => ({
         url: '/storage/annual-stats',
@@ -28,9 +25,6 @@ const storageApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [StorageTags.Storage]
     }),
-    /* eslint-disable-next-line @typescript-eslint/no-invalid-void-type --
-     * Void required here to generate correct hook.
-     */
     getMonthlyStorageStats: build.query<MonthlyStats, void>({
       query: () => ({
         url: '/storage/monthly-stats',
@@ -38,9 +32,6 @@ const storageApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [StorageTags.Storage]
     }),
-    /* eslint-disable-next-line @typescript-eslint/no-invalid-void-type --
-     * Void required here to generate correct hook.
-     */
     listStorages: build.query<StorageList, void>({
       query: () => ({
         url: '/storage',
@@ -80,9 +71,6 @@ const storageApi = emptySplitApi.injectEndpoints({
       }),
       invalidatesTags: [StorageTags.Storage]
     }),
-    /* eslint-disable-next-line @typescript-eslint/no-invalid-void-type --
-     * Void required here to generate correct hook.
-     */
     deleteStorage: build.mutation<void, string>({
       query: (id: string) => ({
         url: `/storage/${id}`,

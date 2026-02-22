@@ -232,34 +232,35 @@ test('renders annual container stats', async () => {
     reviewCount: '24',
     year: '2021'
   }
+  const statsIf: StatsIf = {
+    ...emptyStatsIf,
+    annualContainer: {
+      useStats: () => ({
+        query: async (params) => ({
+          annualContainer:
+            params.pagination.skip === 0 ? [
+            { ...stats2021 },
+            { ...stats2020 }
+          ] : []
+        }),
+        stats: {
+          annualContainer: [
+            { ...stats2021 },
+            { ...stats2020 }
+          ]
+        },
+        isLoading: false
+      }),
+      infiniteScroll: (cb: () => void) => {
+        cb()
+        return () => undefined
+      }
+    }
+  }
   const { getByText } = render(
     <Stats
       paramsIf={getStatsParamsIf('annual_container')}
-      statsIf={{
-        ...emptyStatsIf,
-        annualContainer: {
-          useStats: () => ({
-            query: async (params) => ({
-              annualContainer:
-                params.pagination.skip === 0 ? [
-                  { ...stats2021 },
-                  { ...stats2020 }
-                ] : []
-              }),
-              stats: {
-                annualContainer: [
-                  { ...stats2021 },
-                  { ...stats2020 }
-                ]
-              },
-              isLoading: false
-          }),
-          infiniteScroll: (cb: () => void) => {
-            cb()
-            return () => undefined
-          }
-        }
-      }}
+      statsIf={statsIf}
       breweryId={'2bc301aa-1cbf-4764-879b-973346fdd2e3'}
       locationId={'1fc4acba-fc28-4629-b2d9-7b65669fb2a9'}
       styleId={'bc8aac76-e8dd-4239-8e24-32caa58eb1a9'}
@@ -290,25 +291,26 @@ test('renders brewery stats', async () => {
     reviewedBeerCount: '24'
   }
   const breweryStats = { brewery: [{ ...koskipanimo }, { ...lehe }]}
+  const statsIf: StatsIf = {
+    ...emptyStatsIf,
+    brewery: {
+      useStats: () => ({
+        query: async () => breweryStats,
+          stats: emptyBreweryStats,
+        isLoading: false
+      }),
+      infiniteScroll: (cb: () => void) => {
+        cb()
+        return () => undefined
+      }
+    }
+  }
 
   const { getByText } = render(
     <LinkWrapper>
       <Stats
         paramsIf={getStatsParamsIf('brewery')}
-        statsIf={{
-          ...emptyStatsIf,
-          brewery: {
-            useStats: () => ({
-              query: async () => breweryStats,
-              stats: emptyBreweryStats,
-              isLoading: false
-            }),
-            infiniteScroll: (cb: () => void) => {
-              cb()
-              return () => undefined
-            }
-          }
-        }}
+        statsIf={statsIf}
         breweryId={'a186917f-0d4c-40d0-bf67-e96227c55528'}
         locationId={'b533d497-8256-4525-8892-180a078060d5'}
         styleId={'4917d1c7-5439-4e78-a562-242200a236db'}

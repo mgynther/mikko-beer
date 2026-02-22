@@ -10,16 +10,21 @@ import type { StoreIf } from './store/storeIf'
 import { Role } from './core/user/types'
 import type { GetLogin } from './core/login/types'
 import { PasswordChangeResult } from './core/login/types'
-import type { UseDebounce } from './core/types'
+import type { InfiniteScroll, UseDebounce } from './core/types'
 import type { DeleteStorageIf } from './core/storage/types'
 import { paramsIf } from './components/util'
 import type { ParamsIf } from './components/util'
+import type { SearchBeerIf, SelectBeerIf } from './core/beer/types'
+import type { SearchBreweryIf } from './core/brewery/types'
+import type { SearchLocationIf } from './core/location/types'
+import type { ListStylesIf } from './core/style/types'
+import type { ReviewContainerIf } from './core/review/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const infiniteScroll = () => () => undefined
+const infiniteScroll: InfiniteScroll = () => () => undefined
 
 const useDebounce: UseDebounce = str => str
 
@@ -39,21 +44,21 @@ const getAdminLogin: GetLogin = () => ({
   refreshToken: 'refresh'
 })
 
-const searchBeerIf = {
+const searchBeerIf: SearchBeerIf = {
   useSearch: () => ({
     search: dontCall,
     isLoading: false
   })
 }
 
-const searchBreweryIf = {
+const searchBreweryIf: SearchBreweryIf = {
   useSearch: () => ({
     search: dontCall,
     isLoading: false
   })
 }
 
-const searchLocationIf = {
+const searchLocationIf: SearchLocationIf = {
   useSearch: () => ({
     search: dontCall,
     isLoading: false
@@ -66,14 +71,14 @@ const searchLocationIf = {
   }
 }
 
-const listStylesIf = {
+const listStylesIf: ListStylesIf = {
   useList: () => ({
     styles: [],
     isLoading: false
   })
 }
 
-const selectBeerIf = {
+const selectBeerIf: SelectBeerIf = {
   create: {
     useCreate: () => ({
       create: dontCall,
@@ -97,7 +102,7 @@ const selectBeerIf = {
   search: searchBeerIf
 }
 
-const reviewContainerIf = {
+const reviewContainerIf: ReviewContainerIf = {
   createIf: {
     useCreate: dontCall
   },

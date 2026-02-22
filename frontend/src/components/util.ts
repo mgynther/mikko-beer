@@ -57,7 +57,7 @@ export const useDebounce: UseDebounce = (
       setDebouncedValue(value)
     }, delay)
 
-    return () => {
+    return (): undefined => {
       clearTimeout(handler)
     }
   }, [value, delay])

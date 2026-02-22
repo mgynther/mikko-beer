@@ -7,12 +7,17 @@ import LinkWrapper from '../LinkWrapper'
 import type {
   JoinedReview,
   ListReviewsByIf,
-  Review
+  Review,
+  ReviewIf,
+  UpdateReviewIf
 } from '../../core/review/types'
 import type { ListStoragesByIf, Storage } from '../../core/storage/types'
 import type { UseDebounce } from '../../core/types'
 import { asText } from '../container/ContainerInfo'
 import type { SearchLocationIf } from '../../core/location/types'
+import type { SearchIf } from '../../core/search/types'
+import type { EditBeerIf, GetBeerIf } from '../../core/beer/types'
+import type { ParamsIf } from '../util'
 
 const useDebounce: UseDebounce = str => str
 
@@ -94,7 +99,7 @@ const dontCreate = {
   isLoading: false
 }
 
-const searchIf = {
+const searchIf: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
     isActive: true
@@ -115,7 +120,7 @@ const searchLocationIf: SearchLocationIf = {
   }
 }
 
-const updateReview = {
+const updateReview: UpdateReviewIf = {
   useUpdate: dontCall,
   searchLocationIf,
   selectBeerIf: {
@@ -157,14 +162,14 @@ const updateReview = {
   }
 }
 
-const getBeerIf = {
+const getBeerIf: GetBeerIf = {
   useGetBeer: () => ({
     beer,
     isLoading: false
   })
 }
 
-const reviewIf = {
+const reviewIf: ReviewIf = {
   get: {
     useGet: () => ({
       review,
@@ -175,7 +180,7 @@ const reviewIf = {
   login: () => login
 }
 
-const paramsIf = {
+const paramsIf: ParamsIf = {
   useParams: () => ({
     beerId: beer.id
   }),
@@ -212,7 +217,7 @@ function getListStoragesByBeerIf(storages: Storage[]): ListStoragesByIf {
   }
 }
 
-const editBeerIf = {
+const editBeerIf: EditBeerIf = {
   selectBreweryIf: {
     create: {
       useCreate: () => dontCreate

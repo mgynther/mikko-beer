@@ -4,8 +4,19 @@ import { expect, test, vitest } from 'vitest'
 import Brewery from './Brewery'
 import { Role } from '../../core/user/types'
 import type { UseDebounce } from '../../core/types'
-import type { StatsIf } from '../../core/stats/types'
+import type {
+  GetAnnualContainerStatsIf,
+  GetAnnualStatsIf,
+  GetBreweryStatsIf,
+  GetContainerStatsIf,
+  GetLocationStatsIf,
+  GetOverallStatsIf,
+  GetRatingStatsIf,
+  GetStyleStatsIf,
+  StatsIf
+} from '../../core/stats/types'
 import type { SearchLocationIf } from '../../core/location/types'
+import type { GetLogin } from '../../core/login/types'
 
 const useDebounce: UseDebounce = str => str
 
@@ -17,7 +28,7 @@ const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-function getLogin() {
+function getLogin(): GetLogin {
   return () => ({
     user: {
       id: 'ada1b9b1-ea66-4e17-bda8-f8ea1e65a020',
@@ -78,14 +89,26 @@ const noOpContainerIf = {
   }
 }
 
-const noStats = {
+type NoStats =
+  GetAnnualStatsIf &
+  GetContainerStatsIf &
+  GetOverallStatsIf &
+  GetRatingStatsIf &
+  GetStyleStatsIf
+
+const noStats: NoStats = {
   useStats: () => ({
     stats: undefined,
     isLoading: false
   })
 }
 
-const noInfiniteScrollStats = {
+type NoInfiniteScrollStats =
+  GetAnnualContainerStatsIf &
+  GetBreweryStatsIf &
+  GetLocationStatsIf
+
+const noInfiniteScrollStats: NoInfiniteScrollStats = {
   useStats: () => ({
     query: async () => undefined,
     stats: undefined,
@@ -129,18 +152,18 @@ test('updates brewery', async () => {
       paramsIf={{
         useParams: () => ({ breweryId: id }),
         useSearch: () => ({
-          get: () => undefined
+          get: (): undefined => undefined
         })
       }}
       reviewIf={{
         get: {
           useGet: () => ({
-            get: async () => undefined
+            get: async (): Promise<undefined> => undefined
           })
         },
         update: {
           useUpdate: () => ({
-            update: async () => {
+            update: async (): Promise<void> => {
               throw new Error('Function not implemented.')
             },
             isLoading: false
@@ -168,7 +191,7 @@ test('updates brewery', async () => {
       }}
       searchIf={{
         useSearch: () => ({
-          activate: () => undefined,
+          activate: (): undefined => undefined,
           isActive: true
         }),
         useDebounce

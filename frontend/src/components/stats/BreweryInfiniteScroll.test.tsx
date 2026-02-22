@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import BreweryInfiniteScroll from './BreweryInfiniteScroll'
 import LinkWrapper from '../LinkWrapper'
 import { openFilters } from './filters-test-util'
+import type { BreweryStats, GetBreweryStatsIf } from '../../core/stats/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -44,7 +45,7 @@ const unusedFilters = {
   }
 }
 
-const unusedStats = {
+const unusedStats: GetBreweryStatsIf = {
   useStats: () => ({
     query: async () => ({ brewery: []}),
       stats: { brewery: [] },
@@ -57,30 +58,31 @@ test('queries brewery stats', async () => {
   const query = vitest.fn()
   const setLoadedBreweries = vitest.fn()
   let loadCallback: () => void = () => undefined
+  const getBreweryStatsIf: GetBreweryStatsIf = {
+    useStats: () => ({
+      query: async (params): Promise<BreweryStats> => {
+        query(params)
+        return {
+          brewery: [
+            { ...koskipanimo },
+            { ...lehe }
+          ]
+        }
+      },
+      stats: {
+        brewery: []
+      },
+      isLoading: false
+    }),
+    infiniteScroll: (cb) => {
+      loadCallback = cb
+      return () => undefined
+    }
+  }
   render(
     <LinkWrapper>
       <BreweryInfiniteScroll
-        getBreweryStatsIf={{
-          useStats: () => ({
-            query: async (params) => {
-              query(params)
-              return {
-                brewery: [
-                  { ...koskipanimo },
-                  { ...lehe }
-                ]
-              }
-            },
-            stats: {
-              brewery: []
-            },
-            isLoading: false
-          }),
-          infiniteScroll: (cb) => {
-            loadCallback = cb
-            return () => undefined
-          }
-        }}
+        getBreweryStatsIf={getBreweryStatsIf}
         loadedBreweries={undefined}
         setLoadedBreweries={setLoadedBreweries}
         sortingDirection={'asc'}

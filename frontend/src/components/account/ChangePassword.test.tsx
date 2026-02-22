@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import ChangePassword from './ChangePassword'
 import { Role } from '../../core/user/types'
+import type { ChangePasswordIf } from '../../core/login/types'
 import { PasswordChangeResult } from '../../core/login/types'
 
 const userId = '8f19eb81-b283-440f-be76-73c1c858150c'
@@ -10,6 +11,15 @@ const userId = '8f19eb81-b283-440f-be76-73c1c858150c'
 test('changes password', async () => {
   const user = userEvent.setup()
   const changePassword = vitest.fn()
+  const changePasswordIf: ChangePasswordIf = {
+    useChangePassword: () => ({
+      changePassword,
+      isLoading: false
+    }),
+    useGetPasswordChangeResult: () => ({
+      getResult: () => PasswordChangeResult.SUCCESS
+    })
+  }
   const { getByRole, getByPlaceholderText } = render(
     <ChangePassword
       getLogin={() => ({
@@ -21,15 +31,7 @@ test('changes password', async () => {
         authToken: 'dummy',
         refreshToken: 'dummy'
       })}
-      changePasswordIf={{
-        useChangePassword: () => ({
-          changePassword,
-          isLoading: false
-        }),
-        useGetPasswordChangeResult: () => ({
-          getResult: () => PasswordChangeResult.SUCCESS
-        })
-      }}
+      changePasswordIf={changePasswordIf}
     />
   )
   const oldPasswordInput = getByPlaceholderText('Old password')

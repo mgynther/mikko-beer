@@ -2,9 +2,19 @@ import { render } from '@testing-library/react'
 import { test } from 'vitest'
 import Account from './Account'
 import { Role } from '../../core/user/types'
+import type { ChangePasswordIf } from '../../core/login/types'
 import { PasswordChangeResult } from '../../core/login/types'
 
 test('renders account', async () => {
+  const changePasswordIf: ChangePasswordIf = {
+    useChangePassword: () => ({
+      changePassword: async () => undefined,
+        isLoading: false
+    }),
+    useGetPasswordChangeResult: () => ({
+      getResult: () => PasswordChangeResult.SUCCESS
+    })
+  }
   const { getByRole, getByText } = render(
     <Account
       getLogin={() => ({
@@ -16,15 +26,7 @@ test('renders account', async () => {
         authToken: 'dummy',
         refreshToken: 'dummy'
       })}
-      changePasswordIf={{
-        useChangePassword: () => ({
-          changePassword: async () => undefined,
-          isLoading: false
-        }),
-        useGetPasswordChangeResult: () => ({
-          getResult: () => PasswordChangeResult.SUCCESS
-        })
-      }}
+      changePasswordIf={changePasswordIf}
     />
   )
   getByRole('heading', { name: 'Account' })

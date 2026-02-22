@@ -6,7 +6,7 @@ const login: () => LoginIf = () => {
     useLogin: () => {
       const [login, { isLoading }] = useLoginMutation()
       return {
-        login: async (loginParams: LoginParams) => {
+        login: async (loginParams: LoginParams): Promise<void> => {
           await login(loginParams)
         },
         isLoading

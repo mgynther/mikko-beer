@@ -5,6 +5,7 @@ import SearchBeer from './SearchBeer'
 
 import type { SearchIf } from '../../core/search/types'
 import type { UseDebounce } from '../../core/types'
+import type { SearchBeerIf } from '../../core/beer/types'
 
 const useDebounce: UseDebounce = str => str
 
@@ -50,14 +51,15 @@ const beers = [
 test('selects beer', async () => {
   const user = userEvent.setup()
   const selector = vitest.fn()
+  const searchBeerIf: SearchBeerIf = {
+    useSearch: () => ({
+      search: async () => beers,
+        isLoading: false
+    })
+  }
   const { getByRole } = render(
     <SearchBeer
-      searchBeerIf={{
-        useSearch: () => ({
-          search: async () => beers,
-          isLoading: false
-        })
-      }}
+      searchBeerIf={searchBeerIf}
       searchIf={activeSearch}
       select={selector}
     />

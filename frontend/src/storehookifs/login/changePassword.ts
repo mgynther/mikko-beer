@@ -13,7 +13,7 @@ const changePassword: () => ChangePasswordIf = () => {
     useChangePassword: () => {
       const [changePassword, { isLoading }] = useChangePasswordMutation()
       return {
-        changePassword: async (params: ChangePasswordParams) => {
+        changePassword: async (params: ChangePasswordParams): Promise<void> => {
           await changePassword(params)
         },
         isLoading,

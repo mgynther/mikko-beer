@@ -8,13 +8,26 @@ import type {
   JoinedReview,
   ListReviewsByIf,
   Review,
+  ReviewIf,
   UpdateReviewIf
 } from '../../core/review/types'
 import type { ListStoragesByIf, Storage } from '../../core/storage/types'
-import type { StatsIf } from '../../core/stats/types'
+import type {
+  GetAnnualContainerStatsIf,
+  GetAnnualStatsIf,
+  GetBreweryStatsIf,
+  GetContainerStatsIf,
+  GetLocationStatsIf,
+  GetOverallStatsIf,
+  GetRatingStatsIf,
+  GetStyleStatsIf,
+  StatsIf
+} from '../../core/stats/types'
 import type { GetStyleIf } from '../../core/style/types'
 import type { UseDebounce } from '../../core/types'
 import { asText } from '../container/ContainerInfo'
+import type { SearchIf } from '../../core/search/types'
+import type { ParamsIf } from '../util'
 
 const useDebounce: UseDebounce = str => str
 
@@ -104,7 +117,7 @@ const login = {
   refreshToken: ''
 }
 
-const searchIf = {
+const searchIf: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
     isActive: true
@@ -172,7 +185,7 @@ const getStyleIf: GetStyleIf = {
   })
 }
 
-const reviewIf = {
+const reviewIf: ReviewIf = {
   get: {
     useGet: () => ({
       review,
@@ -183,7 +196,7 @@ const reviewIf = {
   login: () => login
 }
 
-const paramsIf = {
+const paramsIf: ParamsIf = {
   useParams: () => ({
     styleId: style.id
   }),
@@ -220,14 +233,26 @@ function getListStoragesByStyleIf(storages: Storage[]): ListStoragesByIf {
   }
 }
 
-const noStats = {
+type NoStats =
+  GetAnnualStatsIf &
+  GetContainerStatsIf &
+  GetOverallStatsIf &
+  GetRatingStatsIf &
+  GetStyleStatsIf
+
+const noStats: NoStats = {
   useStats: () => ({
     stats: undefined,
     isLoading: false
   })
 }
 
-const noInfiniteScrollStats = {
+type NoInfiniteScrollStats =
+  GetAnnualContainerStatsIf &
+  GetBreweryStatsIf &
+  GetLocationStatsIf
+
+const noInfiniteScrollStats: NoInfiniteScrollStats = {
   useStats: () => ({
     query: async () => undefined,
     stats: undefined,

@@ -1,6 +1,9 @@
 import { render, waitFor } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
-import type { OneAnnualContainerStats } from '../../core/stats/types'
+import type {
+  AnnualContainerStats,
+  OneAnnualContainerStats
+} from '../../core/stats/types'
 
 import AnnualContainerAllAtOnce from './AnnualContainerAllAtOnce'
 
@@ -37,7 +40,7 @@ test('queries annual container stats', async () => {
     <AnnualContainerAllAtOnce
       getAnnualContainerStatsIf={{
         useStats: () => ({
-          query: async (params) => {
+          query: async (params): Promise<AnnualContainerStats> => {
             query(params)
             return {
               annualContainer: [
@@ -88,7 +91,7 @@ test('renders annual container stats', async () => {
     <AnnualContainerAllAtOnce
       getAnnualContainerStatsIf={{
         useStats: () => ({
-          query: async (params) => {
+          query: async (params): Promise<AnnualContainerStats> => {
             query(params)
             return {
               annualContainer: []

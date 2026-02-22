@@ -2,7 +2,7 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import StorageItem from './StorageItem'
-import type { Storage } from '../../core/storage/types'
+import type { DeleteStorageIf, Storage } from '../../core/storage/types'
 import { Role } from '../../core/user/types'
 import LinkWrapper from '../LinkWrapper'
 
@@ -46,7 +46,7 @@ const adminLogin = {
   refreshToken: 'refresh'
 }
 
-const dontDelete = {
+const dontDelete: DeleteStorageIf = {
   useDelete: () => ({
     delete: dontCall
   })
@@ -106,7 +106,7 @@ test('deletes storage', async () => {
             delete: del
           })
         }}
-        getConfirm={() => () => true}
+        getConfirm={(): () => boolean => () => true}
         getLogin={() => adminLogin}
         storage={storage}
       />
@@ -130,7 +130,7 @@ test('does not delete storage on not confirmed', async () => {
             delete: del
           })
         }}
-        getConfirm={() => () => false}
+        getConfirm={(): () => boolean => () => false}
         getLogin={() => adminLogin}
         storage={storage}
       />

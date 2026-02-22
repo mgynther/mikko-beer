@@ -1,6 +1,9 @@
 import { render, waitFor } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
-import type { OneAnnualContainerStats } from '../../core/stats/types'
+import type {
+  AnnualContainerStats,
+  OneAnnualContainerStats
+} from '../../core/stats/types'
 
 import AnnualContainerInfiniteScroll from './AnnualContainerInfiniteScroll'
 
@@ -30,7 +33,7 @@ test('queries annual container stats', async () => {
     <AnnualContainerInfiniteScroll
       getAnnualContainerStatsIf={{
         useStats: () => ({
-          query: async (params) => {
+          query: async (params): Promise<AnnualContainerStats> => {
             query(params)
             return {
               annualContainer: [
@@ -49,7 +52,7 @@ test('queries annual container stats', async () => {
         }),
         infiniteScroll: (cb) => {
           loadCallback = cb
-          return () => undefined
+          return (): undefined => undefined
         }
       }}
       loadedAnnualContainers={undefined}
@@ -78,7 +81,7 @@ test('renders annual container stats', async () => {
     <AnnualContainerInfiniteScroll
       getAnnualContainerStatsIf={{
         useStats: () => ({
-          query: async (params) => {
+          query: async (params): Promise<AnnualContainerStats> => {
             query(params)
             return {
               annualContainer: []
@@ -89,7 +92,7 @@ test('renders annual container stats', async () => {
           },
           isLoading: false
         }),
-        infiniteScroll: () => () => undefined
+        infiniteScroll: (): () => undefined => () => undefined
       }}
       loadedAnnualContainers={[ stats2023, stats2022 ]}
       setLoadedAnnualContainers={setLoadedAnnualContainers}

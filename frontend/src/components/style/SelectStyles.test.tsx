@@ -4,6 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import SelectStyles from './SelectStyles'
 import type { UseDebounce } from '../../core/types'
 import type { StyleWithParentIds } from '../../core/style/types'
+import type { SearchIf } from '../../core/search/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -23,7 +24,7 @@ const style = {
   parents: []
 }
 
-const useSearch = {
+const useSearch: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
     isActive: true

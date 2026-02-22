@@ -2,8 +2,12 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { test } from 'vitest'
 import Container from './Container'
-import type { Container as ContainerType } from '../../core/container/types'
+import type {
+  Container as ContainerType,
+  UpdateContainerIf
+} from '../../core/container/types'
 import { Role } from '../../core/user/types'
+import type { GetLogin } from '../../core/login/types'
 
 const container: ContainerType = {
   id: '790d587e-b4e4-436f-82d3-6d450daba5d2',
@@ -11,7 +15,7 @@ const container: ContainerType = {
   size: '0.25'
 }
 
-function getLogin(role: Role) {
+function getLogin(role: Role): GetLogin {
   return () => ({
     user: {
       id: '05952a9e-1c6f-4974-9c1c-4e5fe473b0f7',
@@ -23,7 +27,7 @@ function getLogin(role: Role) {
   })
 }
 
-const updateContainerIf = {
+const updateContainerIf: UpdateContainerIf = {
   useUpdate: () => ({
     update: async () => undefined,
       isLoading: false

@@ -4,6 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import Location from './Location'
 import LinkWrapper from '../LinkWrapper'
 import type { SearchParameters } from '../util'
+import { GetLocationStatsIf, LocationStats } from '../../core/stats/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -45,7 +46,7 @@ const unusedFilters = {
 const locationStats = { location: [{ ...plevna }, { ...oluthuone }]}
 const emptyStats = { location: []}
 
-const usedStats = {
+const usedStats: GetLocationStatsIf = {
   useStats: () => ({
     query: async () => locationStats,
     stats: emptyStats,
@@ -66,30 +67,31 @@ const noOpSetState = (): undefined => undefined
 test('queries location stats', async () => {
   const query = vitest.fn()
   let loadCallback: () => void = () => undefined
+  const getLocationStatsIf: GetLocationStatsIf = {
+    useStats: () => ({
+      query: async (params): Promise<LocationStats> => {
+        query(params)
+        return {
+          location: [
+            { ...plevna },
+            { ...oluthuone }
+          ]
+        }
+      },
+      stats: {
+        location: []
+      },
+      isLoading: false
+    }),
+    infiniteScroll: (cb) => {
+      loadCallback = cb
+      return () => undefined
+    }
+  }
   render(
     <LinkWrapper>
       <Location
-        getLocationStatsIf={{
-          useStats: () => ({
-            query: async (params) => {
-              query(params)
-              return {
-                location: [
-                  { ...plevna },
-                  { ...oluthuone }
-                ]
-              }
-            },
-            stats: {
-              location: []
-            },
-            isLoading: false
-          }),
-          infiniteScroll: (cb) => {
-            loadCallback = cb
-            return () => undefined
-          }
-        }}
+        getLocationStatsIf={getLocationStatsIf}
         breweryId={undefined}
         locationId={undefined}
         search={emptySearchParameters}
@@ -125,30 +127,31 @@ test('queries filtered location stats', async () => {
   const locationId = '434a13d1-63d4-47e2-bb22-ee1cb4bd37df'
   const styleId = 'e2e4f56d-f433-4c1d-bdbb-c980bc8b3f42'
   let loadCallback: () => void = () => undefined
+  const getLocationStatsIf: GetLocationStatsIf = {
+    useStats: () => ({
+      query: async (params): Promise<LocationStats> => {
+        query(params)
+        return {
+          location: [
+            { ...plevna },
+            { ...oluthuone }
+          ]
+        }
+      },
+      stats: {
+        location: []
+      },
+      isLoading: false
+    }),
+    infiniteScroll: (cb) => {
+      loadCallback = cb
+      return () => undefined
+    }
+  }
   render(
     <LinkWrapper>
       <Location
-        getLocationStatsIf={{
-          useStats: () => ({
-            query: async (params) => {
-              query(params)
-              return {
-                location: [
-                  { ...plevna },
-                  { ...oluthuone }
-                ]
-              }
-            },
-            stats: {
-              location: []
-            },
-            isLoading: false
-          }),
-          infiniteScroll: (cb) => {
-            loadCallback = cb
-            return () => undefined
-          }
-        }}
+        getLocationStatsIf={getLocationStatsIf}
         breweryId={breweryId}
         locationId={locationId}
         search={emptySearchParameters}

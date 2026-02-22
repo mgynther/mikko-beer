@@ -9,7 +9,7 @@ const updateStyle: () => UpdateStyleIf = () => {
         { isError, isLoading, isSuccess }
       ] = useUpdateStyleMutation()
       return {
-        update: async (style: StyleWithParentIds) => {
+        update: async (style: StyleWithParentIds): Promise<void> => {
           await updateStyle(style)
         },
         hasError: isError,
