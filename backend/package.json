@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@koa/bodyparser": "6.1.0",
-    "@koa/router": "15.3.0",
+    "@koa/router": "15.3.1",
     "ajv": "8.18.0",
     "jsonwebtoken": "9.0.3",
     "koa": "3.1.2",
@@ -31,8 +31,8 @@
     "@types/jsonwebtoken": "9.0.10",
     "@types/koa": "3.0.1",
     "@types/koa-compress": "4.0.7",
-    "@types/node": "25.3.2",
-    "@types/pg": "8.16.0",
+    "@types/node": "25.3.3",
+    "@types/pg": "8.18.0",
     "axios": "1.13.6",
     "typescript": "5.9.3",
     "typescript-eslint": "8.56.1"
