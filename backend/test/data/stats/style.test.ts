@@ -19,7 +19,9 @@ const defaultFilter: StatsFilter = {
   maxReviewAverage: 10,
   minReviewAverage: 4,
   maxReviewCount: Infinity,
-  minReviewCount: 1
+  minReviewCount: 1,
+  timeStart: undefined,
+  timeEnd: undefined,
 }
 
 describe('style stats tests', () => {
@@ -205,6 +207,30 @@ describe('style stats tests', () => {
       { property: 'style_name', direction: 'desc' }
     )
     assertDeepEqual(stats, [ style ])
+  })
+
+  it('filter by start time', async () => {
+    const { stats, style } = await getResults(
+      ctx.db,
+      () => ({
+        ...defaultFilter,
+        timeStart: new Date('2024-01-01T00:00:00.000Z')
+      }),
+      { property: 'style_name', direction: 'desc' }
+    )
+    assertDeepEqual(stats, [ style ])
+  })
+
+  it('filter by end time', async () => {
+    const { stats, otherStyle } = await getResults(
+      ctx.db,
+      () => ({
+        ...defaultFilter,
+        timeEnd: new Date('2024-01-01T00:00:00.000Z')
+      }),
+      { property: 'style_name', direction: 'desc' }
+    )
+    assertDeepEqual(stats, [ otherStyle ])
   })
 
 })

@@ -20,7 +20,9 @@ const defaultFilter: StatsFilter = {
   maxReviewAverage: 10,
   minReviewAverage: 4,
   maxReviewCount: Infinity,
-  minReviewCount: 1
+  minReviewCount: 1,
+  timeStart: undefined,
+  timeEnd: undefined,
 }
 
 describe('location stats tests', () => {
@@ -216,6 +218,32 @@ describe('location stats tests', () => {
       { property: 'location_name', direction: 'desc' }
     )
     assertDeepEqual(stats, [ location ])
+  })
+
+  it('filter by start time', async () => {
+    const { stats, location } = await getResults(
+      ctx.db,
+      allResults,
+      () => ({
+        ...defaultFilter,
+        timeStart: new Date('2024-01-01T00:00:00.000Z')
+      }),
+      { property: 'location_name', direction: 'desc' }
+    )
+    assertDeepEqual(stats, [ location ])
+  })
+
+  it('filter by end time', async () => {
+    const { stats, otherLocation } = await getResults(
+      ctx.db,
+      allResults,
+      () => ({
+        ...defaultFilter,
+        timeEnd: new Date('2024-01-01T00:00:00.000Z')
+      }),
+      { property: 'location_name', direction: 'desc' }
+    )
+    assertDeepEqual(stats, [ otherLocation ])
   })
 
 })

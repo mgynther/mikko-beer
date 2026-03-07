@@ -91,6 +91,8 @@ export interface StatsFilter {
   minReviewCount: number
   maxReviewAverage: number
   minReviewAverage: number
+  timeStart: Date | undefined
+  timeEnd: Date | undefined
 }
 
 export type StyleStats = Array<{
@@ -157,7 +159,9 @@ export function validateStatsFilter (
     maxReviewAverage: 10,
     minReviewAverage: 4,
     maxReviewCount: Infinity,
-    minReviewCount: 1
+    minReviewCount: 1,
+    timeStart: undefined,
+    timeEnd: undefined
   }
   if (query === undefined) {
     return defaultResult
@@ -171,14 +175,16 @@ export function validateStatsFilter (
     min_review_count,
     max_review_count,
     min_review_average,
-    max_review_average
+    max_review_average,
+    time_start,
+    time_end
   } = query
   type NumberKey =
     'maxReviewAverage' |
     'minReviewAverage' |
     'maxReviewCount' |
     'minReviewCount'
-  function assignValid (
+  function assignValidNumber (
     key: NumberKey,
     value: unknown,
     validator: (value: number) => boolean,
@@ -194,12 +200,28 @@ export function validateStatsFilter (
   const validateAverage = (value: number): boolean => value <= 10 && value >= 4
   const validateCount =
     (value: number): boolean => value <= Infinity && value >= 1
-  assignValid(
+  assignValidNumber(
     'maxReviewAverage', max_review_average, validateAverage, parseFloat)
-  assignValid(
+  assignValidNumber(
     'minReviewAverage', min_review_average, validateAverage, parseFloat)
-  assignValid('maxReviewCount', max_review_count, validateCount, parseInt)
-  assignValid('minReviewCount', min_review_count, validateCount, parseInt)
+  assignValidNumber('maxReviewCount', max_review_count, validateCount, parseInt)
+  assignValidNumber('minReviewCount', min_review_count, validateCount, parseInt)
+
+  const validateTimestamp =
+    (value: number): boolean => value <= Infinity && value >= 1
+  function assignValidDate (
+    key: 'timeStart' | 'timeEnd',
+    value: unknown
+  ): void {
+    if (typeof value === 'string' && value.length > 0) {
+      const numValue = parseInt(value)
+      if (!isNaN(numValue) && validateTimestamp(numValue)) {
+        result[key] = new Date(numValue)
+      }
+    }
+  }
+  assignValidDate('timeStart', time_start)
+  assignValidDate('timeEnd', time_end)
   return result
 }
 

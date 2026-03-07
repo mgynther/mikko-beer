@@ -134,7 +134,9 @@ describe('stats authorized service unit tests', () => {
           maxReviewCount: 66,
           minReviewCount: 50,
           maxReviewAverage: 9.87,
-          minReviewAverage: 5.23
+          minReviewAverage: 5.23,
+          timeStart: undefined,
+          timeEnd: undefined,
         },
         {
           property: 'brewery_name',
@@ -195,7 +197,9 @@ describe('stats authorized service unit tests', () => {
           maxReviewCount: 66,
           minReviewCount: 50,
           maxReviewAverage: 9.87,
-          minReviewAverage: 5.23
+          minReviewAverage: 5.23,
+          timeStart: undefined,
+          timeEnd: undefined,
         },
         {
           property: 'location_name',
@@ -250,7 +254,9 @@ describe('stats authorized service unit tests', () => {
           maxReviewCount: 62,
           minReviewCount: 39,
           maxReviewAverage: 9.87,
-          minReviewAverage: 5.23
+          minReviewAverage: 5.23,
+          timeStart: undefined,
+          timeEnd: undefined,
         },
         {
           property: 'average',

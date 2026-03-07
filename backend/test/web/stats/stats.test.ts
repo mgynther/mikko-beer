@@ -1119,4 +1119,28 @@ describe('stats tests', () => {
       }
     ])
   })
+
+  it('get style stats by time', async () => {
+    const { styles } = await createDeps(ctx.adminAuthHeaders())
+
+    const order = '&order=average&direction=desc'
+    const statsRes = await ctx.request.get<{ style: StyleStats }>(
+      `/api/v1/stats/style?time_start=1646092800000&time_end=1648771200000${
+        order
+      }`,
+      ctx.adminAuthHeaders()
+    )
+    assertEqual(statsRes.status, 200)
+    const ipaStyle = styles[1].data.style
+    assertEqual(ipaStyle.name, 'IPA')
+
+    assertDeepEqual(statsRes.data.style, [
+      {
+        reviewCount: '1',
+        reviewAverage: '7.00',
+        styleId: ipaStyle.id,
+        styleName: ipaStyle.name
+      }
+    ])
+  })
 })

@@ -91,7 +91,9 @@ describe('stats filter unit tests', () => {
     maxReviewAverage: 10,
     minReviewAverage: 4,
     maxReviewCount: Infinity,
-    minReviewCount: 1
+    minReviewCount: 1,
+    timeStart: undefined,
+    timeEnd: undefined
   }
   it('validate undefined filter', () => {
     assertDeepEqual(validateStatsFilter(undefined), defaultFilter)
@@ -108,14 +110,18 @@ describe('stats filter unit tests', () => {
         max_review_average: '9.54',
         min_review_average: '5',
         max_review_count: '100',
-        min_review_count: '4'
+        min_review_count: '4',
+        time_start: '1665532800000',
+        time_end: '1734652800000'
       }), {
       ...defaultFilter,
       brewery: 'testing',
       maxReviewAverage: 9.54,
       minReviewAverage: 5,
       maxReviewCount: 100,
-      minReviewCount: 4
+      minReviewCount: 4,
+      timeStart: new Date(1665532800000),
+      timeEnd: new Date(1734652800000)
     })
   })
 
@@ -134,6 +140,16 @@ describe('stats filter unit tests', () => {
   it('validate invalid brewery filter', () => {
     assertDeepEqual(
       validateStatsFilter({ brewery: 123 }), defaultFilter)
+  })
+
+  it('validate invalid start time filter', () => {
+    assertDeepEqual(
+      validateStatsFilter({ time_start: 'abc' }), defaultFilter)
+  })
+
+  it('validate invalid end time filter', () => {
+    assertDeepEqual(
+      validateStatsFilter({ time_end: '-123' }), defaultFilter)
   })
 
   it('validate unknown filter', () => {

@@ -234,20 +234,10 @@ export async function getLocation (
   statsFilter: StatsFilter,
   locationStatsOrder: LocationStatsOrder
 ): Promise<LocationStats> {
-  let tempQuery = db.getDb()
+  const tempQuery = db.getDb()
     .selectFrom('review')
     .innerJoin('location', 'review.location', 'location.location_id')
     .innerJoin('beer', 'review.beer', 'beer.beer_id')
-
-  if (statsFilter.location !== undefined) {
-    tempQuery = tempQuery.where('review.location', '=', statsFilter.location)
-  }
-
-  if (statsFilter.style !== undefined) {
-    tempQuery = tempQuery
-      .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
-      .where('beer_style.style', '=', statsFilter.style)
-  }
 
   let locationQuery = tempQuery.select(({ fn }) => [
     fn.count<number>('review.review_id').as('review_count'),
@@ -257,21 +247,11 @@ export async function getLocation (
   ])
 
   if (statsFilter.brewery !== undefined) {
-    let query = db.getDb()
+    const query = db.getDb()
       .selectFrom('beer_brewery as querybrewery')
       .innerJoin('beer', 'querybrewery.beer', 'beer.beer_id')
       .innerJoin('review', 'beer.beer_id', 'review.beer')
       .innerJoin('location', 'review.location', 'location.location_id')
-
-    if (statsFilter.location !== undefined) {
-      query = query.where('review.location', '=', statsFilter.location)
-    }
-
-    if (statsFilter.style !== undefined) {
-      query = query
-        .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
-        .where('beer_style.style', '=', statsFilter.style)
-    }
 
     locationQuery = query
       .where('querybrewery.brewery', '=', statsFilter.brewery)
@@ -281,6 +261,27 @@ export async function getLocation (
         'location.location_id as location_id',
         'location.name as location_name'
       ])
+  }
+
+  if (statsFilter.timeStart !== undefined) {
+    locationQuery = locationQuery
+      .where('review.time', '>=', statsFilter.timeStart)
+  }
+
+  if (statsFilter.timeEnd !== undefined) {
+    locationQuery = locationQuery
+      .where('review.time', '<=', statsFilter.timeEnd)
+  }
+
+  if (statsFilter.location !== undefined) {
+    locationQuery =
+      locationQuery.where('review.location', '=', statsFilter.location)
+  }
+
+  if (statsFilter.style !== undefined) {
+    locationQuery = locationQuery
+      .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
+      .where('beer_style.style', '=', statsFilter.style)
   }
 
   return (await locationOrderBy(
@@ -352,22 +353,11 @@ export async function getBrewery (
   statsFilter: StatsFilter,
   breweryStatsOrder: BreweryStatsOrder
 ): Promise<BreweryStats> {
-  let tempQuery = db.getDb()
+  const tempQuery = db.getDb()
     .selectFrom('review')
     .innerJoin('beer', 'review.beer', 'beer.beer_id')
     .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
     .innerJoin('brewery', 'beer_brewery.brewery', 'brewery.brewery_id')
-
-  if (statsFilter.location !== undefined) {
-    tempQuery = tempQuery
-      .where('review.location', '=', statsFilter.location)
-  }
-
-  if (statsFilter.style !== undefined) {
-    tempQuery = tempQuery
-      .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
-      .where('beer_style.style', '=', statsFilter.style)
-  }
 
   let breweryQuery = tempQuery.select(({ fn }) => [
     fn.count<number>('review.review_id').as('review_count'),
@@ -378,23 +368,12 @@ export async function getBrewery (
   ])
 
   if (statsFilter.brewery !== undefined) {
-    let query = db.getDb()
+    const query = db.getDb()
       .selectFrom('beer_brewery as querybrewery')
       .innerJoin('beer', 'querybrewery.beer', 'beer.beer_id')
       .innerJoin('review', 'beer.beer_id', 'review.beer')
       .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
       .innerJoin('brewery', 'beer_brewery.brewery', 'brewery.brewery_id')
-
-    if (statsFilter.location !== undefined) {
-      query = query
-        .where('review.location', '=', statsFilter.location)
-    }
-
-    if (statsFilter.style !== undefined) {
-      query = query
-        .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
-        .where('beer_style.style', '=', statsFilter.style)
-    }
 
     breweryQuery = query
       .where('querybrewery.brewery', '=', statsFilter.brewery)
@@ -405,6 +384,27 @@ export async function getBrewery (
         'brewery.brewery_id as brewery_id',
         'brewery.name as brewery_name'
       ])
+  }
+
+  if (statsFilter.timeStart !== undefined) {
+    breweryQuery = breweryQuery
+      .where('review.time', '>=', statsFilter.timeStart)
+  }
+
+  if (statsFilter.timeEnd !== undefined) {
+    breweryQuery = breweryQuery
+      .where('review.time', '<=', statsFilter.timeEnd)
+  }
+
+  if (statsFilter.location !== undefined) {
+    breweryQuery = breweryQuery
+      .where('review.location', '=', statsFilter.location)
+  }
+
+  if (statsFilter.style !== undefined) {
+    breweryQuery = breweryQuery
+      .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
+      .where('beer_style.style', '=', statsFilter.style)
   }
 
   return (await breweryOrderBy(
@@ -754,6 +754,16 @@ export async function getStyle (
   let beerQuery = db.getDb()
     .selectFrom('review')
     .innerJoin('beer', 'review.beer', 'beer.beer_id')
+
+  if (statsFilter.timeStart !== undefined) {
+    beerQuery = beerQuery
+      .where('review.time', '>=', statsFilter.timeStart)
+  }
+
+  if (statsFilter.timeEnd !== undefined) {
+    beerQuery = beerQuery
+      .where('review.time', '<=', statsFilter.timeEnd)
+  }
 
   if (statsFilter.location !== undefined) {
     beerQuery = beerQuery

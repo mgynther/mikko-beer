@@ -25,7 +25,9 @@ const defaultFilter: StatsFilter = {
   maxReviewAverage: 10,
   minReviewAverage: 4,
   maxReviewCount: Infinity,
-  minReviewCount: 1
+  minReviewCount: 1,
+  timeStart: undefined,
+  timeEnd: undefined,
 }
 
 describe('brewery stats tests', () => {
@@ -236,6 +238,32 @@ describe('brewery stats tests', () => {
       { property: 'brewery_name', direction: 'desc' }
     )
     assertDeepEqual(stats, [ brewery ])
+  })
+
+  it('filter by start time', async () => {
+    const { stats, brewery } = await getResults(
+      ctx.db,
+      allResults,
+      () => ({
+        ...defaultFilter,
+        timeStart: new Date('2024-01-01T00:00:00.000Z')
+      }),
+      { property: 'brewery_name', direction: 'desc' }
+    )
+    assertDeepEqual(stats, [ brewery ])
+  })
+
+  it('filter by end time', async () => {
+    const { stats, otherBrewery } = await getResults(
+      ctx.db,
+      allResults,
+      () => ({
+        ...defaultFilter,
+        timeEnd: new Date('2024-01-01T00:00:00.000Z')
+      }),
+      { property: 'brewery_name', direction: 'desc' }
+    )
+    assertDeepEqual(stats, [ otherBrewery ])
   })
 
   it('count reviewed beers', async () => {
