@@ -59,7 +59,9 @@ function Style (props: Props): React.JSX.Element {
     minReviewCount,
     maxReviewCount,
     minReviewAverage,
-    maxReviewAverage
+    maxReviewAverage,
+    timeStart: 0,
+    timeEnd: 4102444800000
   })
 
   function getCurrentState(): Record<string, string> {

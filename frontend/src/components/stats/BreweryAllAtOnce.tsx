@@ -63,7 +63,9 @@ function BreweryAllAtOnce (props: Props): React.JSX.Element {
         minReviewCount,
         maxReviewCount,
         minReviewAverage,
-        maxReviewAverage
+        maxReviewAverage,
+        timeStart: 0,
+        timeEnd: 4102444800000
       })
       if (result === undefined) return
       setLoadedBreweries([...result.brewery])

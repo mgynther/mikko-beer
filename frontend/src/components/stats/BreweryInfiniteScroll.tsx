@@ -60,7 +60,9 @@ function BreweryInfiniteScroll (props: Props): React.JSX.Element {
         minReviewCount,
         maxReviewCount,
         minReviewAverage,
-        maxReviewAverage
+        maxReviewAverage,
+        timeStart: 0,
+        timeEnd: 4102444800000
       })
       if (result === undefined) return
       const newBreweries = [...(loadedBreweries ?? []), ...result.brewery]

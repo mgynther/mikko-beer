@@ -79,7 +79,13 @@ function statsFilters (
     andMaxReviewCount(params.maxReviewCount)
   }&min_review_average=${
     params.minReviewAverage
-  }&max_review_average=${params.maxReviewAverage}`
+  }&max_review_average=${
+    params.maxReviewAverage
+  }&time_start=${
+    params.timeStart
+  }&time_end=${
+    params.timeEnd
+  }`
 }
 
 function styleFilters (

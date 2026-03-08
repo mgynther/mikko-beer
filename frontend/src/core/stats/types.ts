@@ -115,6 +115,8 @@ export interface BreweryStatsQueryParams {
   maxReviewCount: number
   minReviewAverage: number
   maxReviewAverage: number
+  timeStart: number
+  timeEnd: number
 }
 
 export interface LocationStatsQueryParams {
@@ -127,6 +129,8 @@ export interface LocationStatsQueryParams {
   maxReviewCount: number
   minReviewAverage: number
   maxReviewAverage: number
+  timeStart: number
+  timeEnd: number
 }
 
 export interface StyleStatsQueryParams {
@@ -138,6 +142,8 @@ export interface StyleStatsQueryParams {
   maxReviewCount: number
   minReviewAverage: number
   maxReviewAverage: number
+  timeStart: number
+  timeEnd: number
 }
 
 export interface StyleStats {

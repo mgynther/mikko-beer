@@ -109,7 +109,9 @@ test('queries location stats', async () => {
       direction: 'asc',
       order: 'location_name'
     },
-    styleId
+    styleId,
+    timeStart: 0,
+    timeEnd: 4102444800000
   }]])
   await waitFor(() =>
     { expect(setLoadedLocations.mock.calls).toEqual([

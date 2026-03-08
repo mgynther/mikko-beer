@@ -117,7 +117,9 @@ test('queries location stats', async () => {
       direction: 'asc',
       order: 'location_name'
     },
-    styleId: undefined
+    styleId: undefined,
+    timeStart: 0,
+    timeEnd: 4102444800000
   }]])
 })
 
@@ -176,7 +178,9 @@ test('queries filtered location stats', async () => {
       direction: 'asc',
       order: 'location_name'
     },
-    styleId
+    styleId,
+    timeStart: 0,
+    timeEnd: 4102444800000
   }]])
 })
 

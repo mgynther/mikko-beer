@@ -79,7 +79,9 @@ test('brewery stats', async () => {
     minReviewCount: 40,
     maxReviewCount: 80,
     minReviewAverage: 9.00,
-    maxReviewAverage: 9.30
+    maxReviewAverage: 9.30,
+    timeStart: 1646352000000,
+    timeEnd: 1723680000000
   }
 
   addTestServerResponse<BreweryStats>({
@@ -100,6 +102,10 @@ test('brewery stats', async () => {
       queryParams.minReviewAverage
     }&max_review_average=${
       queryParams.maxReviewAverage
+    }&time_start=${
+      queryParams.timeStart
+    }&time_end=${
+      queryParams.timeEnd
     }`,
     response: expectedResponse,
     status: 200
@@ -185,7 +191,9 @@ test('location stats', async () => {
     minReviewCount: 40,
     maxReviewCount: 80,
     minReviewAverage: 9.00,
-    maxReviewAverage: 9.30
+    maxReviewAverage: 9.30,
+    timeStart: 1646352000000,
+    timeEnd: 1723680000000
   }
 
   addTestServerResponse<LocationStats>({
@@ -206,6 +214,10 @@ test('location stats', async () => {
       queryParams.minReviewAverage
     }&max_review_average=${
       queryParams.maxReviewAverage
+    }&time_start=${
+      queryParams.timeStart
+    }&time_end=${
+      queryParams.timeEnd
     }`,
     response: expectedResponse,
     status: 200
@@ -280,7 +292,9 @@ test('style stats', async () => {
     minReviewCount: 40,
     maxReviewCount: 80,
     minReviewAverage: 9.00,
-    maxReviewAverage: 9.30
+    maxReviewAverage: 9.30,
+    timeStart: 1646352000000,
+    timeEnd: 1723680000000
   }
 
   addTestServerResponse<StyleStats>({
@@ -297,6 +311,10 @@ test('style stats', async () => {
       queryParams.minReviewAverage
     }&max_review_average=${
       queryParams.maxReviewAverage
+    }&time_start=${
+      queryParams.timeStart
+    }&time_end=${
+      queryParams.timeEnd
     }`,
     response: expectedResponse,
     status: 200

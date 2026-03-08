@@ -110,7 +110,9 @@ test('queries brewery stats', async () => {
       direction: 'asc',
       order: 'brewery_name'
     },
-    styleId: undefined
+    styleId: undefined,
+    timeStart: 0,
+    timeEnd: 4102444800000
   }]])
   await waitFor(() =>
     { expect(setLoadedBreweries.mock.calls).toEqual([[[koskipanimo, lehe]]]); }

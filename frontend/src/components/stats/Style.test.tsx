@@ -47,7 +47,9 @@ const defaultParams = {
     direction: 'asc',
     order: 'style_name',
   },
-  styleId: undefined
+  styleId: undefined,
+  timeStart: 0,
+  timeEnd: 4102444800000
 }
 
 const getRecordingIf = (
@@ -149,7 +151,9 @@ test('applies filters', () => {
       direction: 'desc',
       order: 'average'
     },
-    styleId
+    styleId,
+    timeStart: 0,
+    timeEnd: 4102444800000
   }])
 })
 
