@@ -67,6 +67,21 @@ function andMaxReviewCount (maxReviewCount: number): string {
   return `&max_review_count=${maxReviewCount}`
 }
 
+function statsFilters (
+  params:
+    BreweryStatsQueryParams |
+    LocationStatsQueryParams |
+    StyleStatsQueryParams
+): string {
+  return `min_review_count=${
+    params.minReviewCount
+  }${
+    andMaxReviewCount(params.maxReviewCount)
+  }&min_review_average=${
+    params.minReviewAverage
+  }&max_review_average=${params.maxReviewAverage}`
+}
+
 function styleFilters (
   breweryId: string | undefined,
   locationId: string | undefined,
@@ -114,13 +129,7 @@ const statsApi = emptySplitApi.injectEndpoints({
             params.pagination.skip
           }${
           andIdFilter(params)
-        }&${breweryStatsSorting(params.sorting)}&min_review_count=${
-          params.minReviewCount
-        }${
-          andMaxReviewCount(params.maxReviewCount)
-        }&min_review_average=${
-          params.minReviewAverage
-        }&max_review_average=${params.maxReviewAverage}`,
+        }&${breweryStatsSorting(params.sorting)}&${statsFilters(params)}`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Brewery]
@@ -140,13 +149,7 @@ const statsApi = emptySplitApi.injectEndpoints({
             params.pagination.skip
           }${
           andIdFilter(params)
-        }&${locationStatsSorting(params.sorting)}&min_review_count=${
-          params.minReviewCount
-        }${
-          andMaxReviewCount(params.maxReviewCount)
-        }&min_review_average=${
-          params.minReviewAverage
-        }&max_review_average=${params.maxReviewAverage}`,
+        }&${locationStatsSorting(params.sorting)}&${statsFilters(params)}`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Brewery]
@@ -176,15 +179,7 @@ const statsApi = emptySplitApi.injectEndpoints({
             params.styleId,
             params.sorting
           )
-        }&min_review_count=${
-          params.minReviewCount
-        }${
-          andMaxReviewCount(params.maxReviewCount)
-        }&min_review_average=${
-          params.minReviewAverage
-        }&max_review_average=${
-          params.maxReviewAverage
-        }`,
+        }&${statsFilters(params)}`,
         method: 'GET'
       }),
       providesTags: [StatsTags.Style]
