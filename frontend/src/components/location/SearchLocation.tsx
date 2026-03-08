@@ -25,7 +25,7 @@ function SearchLocation (props: Props): React.JSX.Element {
     isLoading
   } = props.searchLocationIf.useSearch()
   const [filter, setFilter] = useState('')
-  const debouncedFilter = props.searchIf.useDebounce(filter)
+  const [debouncedFilter] = props.searchIf.useDebounce(filter)
   const [results, setResults] = useState<Location[]>([])
 
   const { create } = props.searchLocationIf.create.useCreate()

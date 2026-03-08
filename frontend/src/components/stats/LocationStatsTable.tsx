@@ -12,13 +12,13 @@ import type {
   ListDirection
 } from '../../core/types'
 
-import LoadingIndicator from '../common/LoadingIndicator'
 import TabButton from '../common/TabButton'
 import LocationLink from '../location/LocationLink'
 
 import AllFilters from './AllFilters'
 
 import './StatsTable.css'
+import TableSkeleton from '../common/TableSkeleton'
 
 interface Props {
   locations: OneLocationStats[]
@@ -40,7 +40,6 @@ function LocationStatsTable (props: Props): React.JSX.Element {
 
   return (
     <div>
-      <LoadingIndicator isLoading={props.isLoading} />
       <table className='StatsTable SortableStats'>
         <thead>
           <tr>
@@ -89,6 +88,11 @@ function LocationStatsTable (props: Props): React.JSX.Element {
           </tr>
         </thead>
         <tbody>
+          <TableSkeleton
+            isLoading={props.isLoading}
+            rowCount={3}
+            columnCount={3}
+          />
           {props.locations.map(location => (
             <tr key={location.locationId}>
               <td className='StatsNameColumn'>

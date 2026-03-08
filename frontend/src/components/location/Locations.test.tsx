@@ -7,7 +7,7 @@ import LinkWrapper from '../LinkWrapper'
 import type { UseDebounce } from '../../core/types'
 import type { CreateLocationIf } from '../../core/location/types'
 
-const useDebounce: UseDebounce = str => str
+const useDebounce: UseDebounce<string> = str => [str, false]
 
 const notUsed = (): any => { throw new Error('Do not call') }
 

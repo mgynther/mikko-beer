@@ -10,7 +10,7 @@ import type { SearchBreweryIf } from './core/brewery/types'
 import type { NavigateIf } from './components/util'
 import { Theme, type UseDebounce } from './core/types'
 
-const useDebounce: UseDebounce = str => str
+const useDebounce: UseDebounce<string> = str => [str, false]
 
 const dontCall = (): any => {
   throw new Error('must not be called')

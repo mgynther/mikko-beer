@@ -1,0 +1,14 @@
+@keyframes fade {
+  0% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.4; }
+}
+
+tr.row {
+  background: transparent;
+}
+
+td.cell {
+  background: rgba(0, 0, 0, 0.3);
+  animation: fade 2s infinite;
+}

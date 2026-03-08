@@ -18,9 +18,14 @@ import type {
   StyleStatsQueryParams,
   YearMonth
 } from '../core/stats/types'
+import type { UseDebounce } from '../core/types'
 
 const minTime: YearMonth = testTimes.min.yearMonth
 const maxTime: YearMonth = testTimes.max.yearMonth
+
+const getUseDebounce = function<T>(): UseDebounce<T> {
+  return (value: T) => [value, false]
+}
 
 function BreweryStatsHelper(
   props: { queryParams: BreweryStatsQueryParams }
@@ -28,7 +33,13 @@ function BreweryStatsHelper(
   const navigateIf: NavigateIf = {
     useNavigate: () => () => undefined
   }
-  const statsIf = statsHook(infiniteScroll, navigateIf, minTime, maxTime)
+  const statsIf = statsHook(
+    infiniteScroll,
+    navigateIf,
+    minTime,
+    maxTime,
+    getUseDebounce
+  )
   const { query, stats } = statsIf.brewery.useStats()
   return (
     <div>
@@ -143,7 +154,13 @@ function LocationStatsHelper(
   const navigateIf: NavigateIf = {
     useNavigate: () => () => undefined
   }
-  const statsIf = statsHook(infiniteScroll, navigateIf, minTime, maxTime)
+  const statsIf = statsHook(
+    infiniteScroll,
+    navigateIf,
+    minTime,
+    maxTime,
+    getUseDebounce
+  )
   const { query, stats } = statsIf.location.useStats()
   return (
     <div>
@@ -253,7 +270,13 @@ function StyleStatsHelper(
   const navigateIf: NavigateIf = {
     useNavigate: () => () => undefined
   }
-  const statsIf = statsHook(infiniteScroll, navigateIf, minTime, maxTime)
+  const statsIf = statsHook(
+    infiniteScroll,
+    navigateIf,
+    minTime,
+    maxTime,
+    getUseDebounce
+  )
   const { stats } = statsIf.style.useStats(props.queryParams)
   return (
     <div>

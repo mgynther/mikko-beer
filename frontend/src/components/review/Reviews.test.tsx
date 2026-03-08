@@ -23,7 +23,7 @@ import type {
 import type { SearchIf } from "../../core/search/types"
 import type { SearchLocationIf } from "../../core/location/types"
 
-const useDebounce: UseDebounce = str => str
+const useDebounce: UseDebounce<string> = str => [str, false]
 
 const dontCall = (): any => {
   throw new Error('must not be called')

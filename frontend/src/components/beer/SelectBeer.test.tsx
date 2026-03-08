@@ -13,7 +13,7 @@ import type { Brewery } from '../../core/brewery/types'
 
 const namePlaceholder = 'Name'
 
-const useDebounce: UseDebounce = str => str
+const useDebounce: UseDebounce<string> = str => [str, false]
 
 const dontCall = (): any => {
   throw new Error('must not be called')

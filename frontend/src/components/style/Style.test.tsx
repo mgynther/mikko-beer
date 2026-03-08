@@ -31,7 +31,11 @@ import { asText } from '../container/ContainerInfo'
 import type { SearchIf } from '../../core/search/types'
 import type { ParamsIf } from '../util'
 
-const useDebounce: UseDebounce = str => str
+const useDebounce: UseDebounce<string> = str => [str, false]
+
+const getUseDebounce = function<T>(): UseDebounce<T> {
+  return (value: T) => [value, false]
+}
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -251,7 +255,8 @@ const noStats: NoStats = {
     isLoading: false
   }),
   minTime,
-  maxTime
+  maxTime,
+  getUseDebounce
 }
 
 type NoInfiniteScrollStats =
@@ -267,7 +272,8 @@ const noInfiniteScrollStats: NoInfiniteScrollStats = {
   }),
   infiniteScroll: dontCall,
   minTime,
-  maxTime
+  maxTime,
+  getUseDebounce
 }
 
 const statsIf: StatsIf = {

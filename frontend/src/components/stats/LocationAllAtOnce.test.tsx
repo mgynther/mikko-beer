@@ -11,6 +11,11 @@ import type {
   StatsFilters,
   YearMonth
 } from '../../core/stats/types'
+import type { UseDebounce } from '../../core/types'
+
+const getUseDebounce = function<T>(): UseDebounce<T> {
+  return (value: T) => [value, false]
+}
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -76,7 +81,8 @@ const unusedStats: GetLocationStatsIf = {
   }),
   infiniteScroll: dontCall,
   minTime,
-  maxTime
+  maxTime,
+  getUseDebounce
 }
 
 test('queries location stats', async () => {
@@ -103,7 +109,8 @@ test('queries location stats', async () => {
           }),
           infiniteScroll: dontCall,
           minTime,
-          maxTime
+          maxTime,
+          getUseDebounce
         }}
         breweryId={breweryId}
         locationId={locationId}
@@ -116,6 +123,7 @@ test('queries location stats', async () => {
         filters={unusedFilters}
         isFiltersOpen={false}
         setIsFiltersOpen={() => undefined}
+        isFilterChangePending={false}
       />
     </LinkWrapper>
   )
@@ -141,7 +149,6 @@ test('queries location stats', async () => {
   await waitFor(() =>
     { expect(setLoadedLocations.mock.calls).toEqual([
       [undefined],
-      [undefined],
       [[plevna, oluthuone]]
     ]); }
   )
@@ -163,6 +170,7 @@ test('renders location stats', () => {
         filters={unusedFilters}
         isFiltersOpen={false}
         setIsFiltersOpen={dontCall}
+        isFilterChangePending={false}
       />
     </LinkWrapper>
   )
@@ -197,6 +205,7 @@ test('sets minimum review count filter', () => {
         }}
         isFiltersOpen={true}
         setIsFiltersOpen={dontCall}
+        isFilterChangePending={false}
       />
     </LinkWrapper>
   )
@@ -223,6 +232,7 @@ test('opens filter', async () => {
         filters={unusedFilters}
         isFiltersOpen={false}
         setIsFiltersOpen={setIsFiltersOpen}
+        isFilterChangePending={false}
       />
     </LinkWrapper>
   )

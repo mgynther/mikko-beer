@@ -18,6 +18,7 @@ interface Props {
   filters: StatsFilters
   isFiltersOpen: boolean
   setIsFiltersOpen: (isOpen: boolean) => void
+  isFilterChangePending: boolean
   sortingDirection: ListDirection
   sortingOrder: LocationStatsSortingOrder
   setSortingOrder: (order: LocationStatsSortingOrder) => void
@@ -33,18 +34,27 @@ function LocationInfiniteScroll (props: Props): React.JSX.Element {
   const timeStart = props.filters.timeStart.value
   const timeEnd = props.filters.timeEnd.value
   const {
+    isFilterChangePending,
     loadedLocations,
     setLoadedLocations,
     sortingOrder,
     setSortingOrder,
     sortingDirection
   } = props
-  const { query, stats, isLoading } = props.getLocationStatsIf.useStats()
+  const { query, stats, isLoading: isLoadingStats } =
+    props.getLocationStatsIf.useStats()
+  const isLoading = isFilterChangePending || isLoadingStats
 
   const lastPageArray = stats?.location === undefined
     ? []
     : [...stats.location]
   const hasMore = lastPageArray.length > 0 || loadedLocations === undefined
+
+  useEffect(() => {
+    if (isFilterChangePending) {
+      setLoadedLocations(undefined)
+    }
+  }, [isFilterChangePending])
 
   useEffect(() => {
     const loadMore = async (): Promise<void> => {
@@ -97,7 +107,7 @@ function LocationInfiniteScroll (props: Props): React.JSX.Element {
       filters={props.filters}
       isFiltersOpen={props.isFiltersOpen}
       setIsFiltersOpen={props.setIsFiltersOpen}
-      isLoading={isLoading}
+      isLoading={loadedLocations === undefined}
       sortingDirection={sortingDirection}
       sortingOrder={sortingOrder}
       setSortingOrder={setSortingOrder}

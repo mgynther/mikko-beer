@@ -11,7 +11,7 @@ import type {
   CreateLocationRequest
 } from '../../core/location/types'
 
-const useDebounce: UseDebounce = str => str
+const useDebounce: UseDebounce<string> = str => [str, false]
 
 const placeholderText = 'Location'
 

@@ -18,6 +18,7 @@ interface Props {
   filters: StatsFilters
   isFiltersOpen: boolean
   setIsFiltersOpen: (isOpen: boolean) => void
+  isFilterChangePending: boolean
   sortingDirection: ListDirection
   sortingOrder: BreweryStatsSortingOrder
   setSortingOrder: (order: BreweryStatsSortingOrder) => void
@@ -33,18 +34,27 @@ function BreweryInfiniteScroll (props: Props): React.JSX.Element {
   const timeStart = props.filters.timeStart.value
   const timeEnd = props.filters.timeEnd.value
   const {
+    isFilterChangePending,
     loadedBreweries,
     setLoadedBreweries,
     sortingOrder,
     setSortingOrder,
     sortingDirection
   } = props
-  const { query, stats, isLoading } = props.getBreweryStatsIf.useStats()
+  const { query, stats, isLoading: isLoadingStats } =
+    props.getBreweryStatsIf.useStats()
+  const isLoading = isFilterChangePending || isLoadingStats
 
   const lastPageArray = stats?.brewery === undefined
     ? []
     : [...stats.brewery]
   const hasMore = lastPageArray.length > 0 || loadedBreweries === undefined
+
+  useEffect(() => {
+    if (isFilterChangePending) {
+      setLoadedBreweries(undefined)
+    }
+  }, [isFilterChangePending])
 
   useEffect(() => {
     const loadMore = async (): Promise<void> => {
@@ -97,7 +107,7 @@ function BreweryInfiniteScroll (props: Props): React.JSX.Element {
       filters={props.filters}
       isFiltersOpen={props.isFiltersOpen}
       setIsFiltersOpen={props.setIsFiltersOpen}
-      isLoading={isLoading}
+      isLoading={loadedBreweries === undefined}
       sortingDirection={sortingDirection}
       sortingOrder={sortingOrder}
       setSortingOrder={setSortingOrder}

@@ -9,7 +9,7 @@ import type { SearchIf } from '../../core/search/types'
 const id = 'dbec2360-d6af-45f4-b2a0-cad732a87e20'
 const namePlaceholder = 'Name'
 
-const useDebounce: UseDebounce = str => str
+const useDebounce: UseDebounce<string> = str => [str, false]
 
 const dontCall = (): any => {
   throw new Error('must not be called')

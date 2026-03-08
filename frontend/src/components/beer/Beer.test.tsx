@@ -19,7 +19,7 @@ import type { SearchIf } from '../../core/search/types'
 import type { EditBeerIf, GetBeerIf } from '../../core/beer/types'
 import type { ParamsIf } from '../util'
 
-const useDebounce: UseDebounce = str => str
+const useDebounce: UseDebounce<string> = str => [str, false]
 
 const dontCall = (): any => {
   throw new Error('must not be called')

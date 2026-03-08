@@ -16,6 +16,7 @@ interface Props {
   filters: StatsFilters
   isFiltersOpen: boolean
   setIsFiltersOpen: (isOpen: boolean) => void
+  isFilterChangePending: boolean
   sortingDirection: ListDirection
   sortingOrder: LocationStatsSortingOrder
   setSortingOrder: (order: LocationStatsSortingOrder) => void
@@ -39,22 +40,28 @@ function LocationAllAtOnce (props: Props): React.JSX.Element {
   const timeStart = props.filters.timeStart.value
   const timeEnd = props.filters.timeEnd.value
   const {
+    isFilterChangePending,
     loadedLocations,
     setLoadedLocations,
     sortingOrder,
     setSortingOrder,
     sortingDirection
   } = props
-  const { query, isLoading } = props.getLocationStatsIf.useStats()
+  const { query, isLoading: isLoadingStats } =
+    props.getLocationStatsIf.useStats()
+  const isLoading =
+    isFilterChangePending || isLoadingStats || loadedLocations === undefined
   const { breweryId, locationId, styleId } = props
 
   useEffect(() => {
     setLoadedLocations(undefined)
-  }, [breweryId])
+  }, [breweryId, locationId, styleId])
 
   useEffect(() => {
-    setLoadedLocations(undefined)
-  }, [styleId])
+    if (isFilterChangePending) {
+      setLoadedLocations(undefined)
+    }
+  }, [isFilterChangePending])
 
   useEffect(() => {
     async function loadAll (): Promise<void> {
@@ -94,7 +101,7 @@ function LocationAllAtOnce (props: Props): React.JSX.Element {
 
   return (
     <LocationStatsTable
-      locations={loadedLocations ?? []}
+      locations={isLoading ? [] : loadedLocations ?? []}
       filters={props.filters}
       isFiltersOpen={props.isFiltersOpen}
       setIsFiltersOpen={props.setIsFiltersOpen}

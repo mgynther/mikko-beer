@@ -5,9 +5,9 @@ import { useDispatch, useSelector } from "../react-redux-wrapper"
 import { activate, selectActiveSearch } from "../store/search/reducer"
 
 const search: (
-  useDebounce: UseDebounce
+  useDebounce: UseDebounce<string>
 ) => SearchIf = (
-  useDebounce: UseDebounce
+  useDebounce: UseDebounce<string>
 ) => {
   const searchIf: SearchIf = {
     useSearch: () => {

@@ -10,7 +10,7 @@ const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const useDebounce: UseDebounce = str => str
+const useDebounce: UseDebounce<string> = str => [str, false]
 
 const id = '17d234da-032d-41a3-b526-b3dc63ba019a'
 const name = 'IPA'

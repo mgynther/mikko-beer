@@ -11,9 +11,14 @@ import type {
   StatsFilters,
   YearMonth
 } from '../../core/stats/types'
+import type { UseDebounce } from '../../core/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
+}
+
+const getUseDebounce = function<T>(): UseDebounce<T> {
+  return (value: T) => [value, false]
 }
 
 const koskipanimo = {
@@ -80,7 +85,8 @@ const usedStats: GetBreweryStatsIf = {
     return () => undefined
   },
   minTime,
-  maxTime
+  maxTime,
+  getUseDebounce
 }
 
 const emptySearchParameters: SearchParameters = {
@@ -116,7 +122,8 @@ test('queries brewery stats', async () => {
             return (): undefined => undefined
           },
           minTime,
-          maxTime
+          maxTime,
+          getUseDebounce
         }}
         breweryId={undefined}
         locationId={undefined}

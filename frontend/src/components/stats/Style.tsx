@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { formatTitle, invertDirection } from '../list-helpers'
 import type {
@@ -6,7 +6,6 @@ import type {
   StyleStatsSortingOrder,
   YearMonth
 } from '../../core/stats/types'
-import LoadingIndicator from '../common/LoadingIndicator'
 import TabButton from '../common/TabButton'
 import StyleLink from '../style/StyleLink'
 
@@ -45,6 +44,11 @@ function defaultSortingOrder (
 
 function Style (props: Props): React.JSX.Element {
   const { search } = props
+  const [searchMap, setSearchMap] = useState<Record<string, string>>({})
+  const [debouncedSearchMap] =
+    props.getStyleStatsIf.getUseDebounce<Record<string, string>>()(
+      searchMap
+    )
   const sortingOrder = defaultSortingOrder(search)
   const sortingDirection = listDirectionOrDefault(search)
   const minReviewCount = filterNumOrDefault('min_review_count', search)
@@ -60,7 +64,7 @@ function Style (props: Props): React.JSX.Element {
     props.getStyleStatsIf.maxTime
   )
   const isFiltersOpen = filtersOpenOrDefault(search)
-  const { stats, isLoading } = props.getStyleStatsIf.useStats({
+  const { stats } = props.getStyleStatsIf.useStats({
     breweryId: props.breweryId,
     locationId: props.locationId,
     styleId: props.styleId,
@@ -98,7 +102,7 @@ function Style (props: Props): React.JSX.Element {
     return (value: number) => {
       const newState: Record<string, string> = getCurrentState()
       newState[key] = converter(value)
-      props.setState(newState)
+      setSearchMap(newState)
     }
   }
 
@@ -109,7 +113,7 @@ function Style (props: Props): React.JSX.Element {
     return (yearMonth: YearMonth) => {
       const newState: Record<string, string> = getCurrentState()
       newState[key] = converter(yearMonth)
-      props.setState(newState)
+      setSearchMap(newState)
     }
   }
 
@@ -148,9 +152,14 @@ function Style (props: Props): React.JSX.Element {
     }
   }
 
+  useEffect(() => {
+    if (Object.keys(debouncedSearchMap).length > 0) {
+      props.setState(debouncedSearchMap)
+    }
+  }, [JSON.stringify(debouncedSearchMap)])
+
   return (
     <div>
-      <LoadingIndicator isLoading={isLoading} />
       <table className='StatsTable SortableStats'>
         <thead>
           <tr>

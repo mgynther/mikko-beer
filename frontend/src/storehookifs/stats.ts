@@ -11,7 +11,7 @@ import type {
   StyleStatsQueryParams,
   YearMonth
 } from "../core/stats/types"
-import type { InfiniteScroll } from "../core/types"
+import type { InfiniteScroll, UseDebounce } from "../core/types"
 import {
   useGetAnnualStatsQuery,
   useGetContainerStatsQuery,
@@ -38,12 +38,14 @@ const stats: (
   infiniteScroll: InfiniteScroll,
   navigateIf: NavigateIf,
   minTime: YearMonth,
-  maxTime: YearMonth
+  maxTime: YearMonth,
+  getUseDebounce: <T>() => UseDebounce<T>
 ) => StatsIf = (
   infiniteScroll: InfiniteScroll,
   navigateIf: NavigateIf,
   minTime: YearMonth,
-  maxTime: YearMonth
+  maxTime: YearMonth,
+  getUseDebounce: <T>() => UseDebounce<T>
 ) => {
   const statsIf: StatsIf = {
     annual: {
@@ -89,7 +91,8 @@ const stats: (
       },
       infiniteScroll,
       minTime,
-      maxTime
+      maxTime,
+      getUseDebounce
     },
     container: {
       useStats: (params: IdParams) => {
@@ -117,7 +120,8 @@ const stats: (
       },
       infiniteScroll,
       minTime,
-      maxTime
+      maxTime,
+      getUseDebounce
     },
     overall: {
       useStats: (params: IdParams) => {
@@ -139,14 +143,15 @@ const stats: (
     },
     style: {
       useStats: (params: StyleStatsQueryParams) => {
-        const { data, isLoading } = useGetStyleStatsQuery(params)
+        const { data, isFetching } = useGetStyleStatsQuery(params)
         return {
           stats: validateStyleStatsOrUndefined(data),
-          isLoading
+          isLoading: isFetching
         }
       },
       minTime,
-      maxTime
+      maxTime,
+      getUseDebounce
     },
     setSearch: createSetSearch(navigateIf)
   }

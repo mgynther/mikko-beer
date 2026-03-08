@@ -146,6 +146,7 @@ import changePassword from './storehookifs/login/changePassword'
 import login from './storehookifs/login/login'
 import logout from './storehookifs/login/logout'
 import { createSetSearch } from './storehookifs/set-search.ts'
+import { UseDebounce } from './core/types.ts'
 
 function getNextMonthDate (): Date {
   const now = new Date()
@@ -272,14 +273,16 @@ function RtkApp (): React.JSX.Element {
     year: nextMonthDate.getFullYear(),
     month: nextMonthDate.getMonth() + 1
   }
+  const getUseDebounce = function<T>(): UseDebounce<T> { return useDebounce<T> }
   const statsIf: StatsIf = stats(
     infiniteScroll,
     navigateIf,
     minTime,
-    maxTime
+    maxTime,
+    getUseDebounce
   )
 
-  const searchIf: SearchIf = search(useDebounce)
+  const searchIf: SearchIf = search(useDebounce<string>)
 
   const storeIf: StoreIf = {
     getLogin,

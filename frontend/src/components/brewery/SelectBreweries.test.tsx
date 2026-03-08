@@ -29,7 +29,7 @@ const search: SearchBreweryIf = {
   })
 }
 
-const useDebounce: UseDebounce = str => str
+const useDebounce: UseDebounce<string> = str => [str, false]
 
 function getSearchIf(mode: 'active' | 'inactive'): SearchIf {
   return {

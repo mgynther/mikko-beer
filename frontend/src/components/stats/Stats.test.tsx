@@ -10,6 +10,11 @@ import type {
 } from '../../core/stats/types'
 import LinkWrapper from '../LinkWrapper'
 import type { ParamsIf } from '../util'
+import type { UseDebounce } from '../../core/types'
+
+const getUseDebounce = function<T>(): UseDebounce<T> {
+  return (value: T) => [value, false]
+}
 
 const emptyAnnualContainerStats = { annualContainer: []}
 const emptyBreweryStats = { brewery: []}
@@ -51,7 +56,8 @@ const emptyStatsIf: StatsIf = {
       return () => undefined
     },
     minTime,
-    maxTime
+    maxTime,
+    getUseDebounce
   },
   container: {
     useStats: () => ({
@@ -81,7 +87,8 @@ const emptyStatsIf: StatsIf = {
       return () => undefined
     },
     minTime,
-    maxTime
+    maxTime,
+    getUseDebounce
   },
   overall: {
     useStats: () => ({
@@ -116,7 +123,8 @@ const emptyStatsIf: StatsIf = {
       isLoading: false
     }),
     minTime,
-    maxTime
+    maxTime,
+    getUseDebounce
   },
   setSearch: async () => undefined
 }
@@ -318,7 +326,8 @@ test('renders brewery stats', async () => {
         return () => undefined
       },
       minTime,
-      maxTime
+      maxTime,
+      getUseDebounce
     }
   }
 
@@ -485,7 +494,8 @@ test('renders style stats', () => {
           style: {
             useStats: () => statsResult,
             minTime,
-            maxTime
+            maxTime,
+            getUseDebounce
           }
         }}
         breweryId={'482584a6-4ccb-44d6-be37-3458a5c21601'}

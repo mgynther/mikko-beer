@@ -16,6 +16,7 @@ interface Props {
   filters: StatsFilters
   isFiltersOpen: boolean
   setIsFiltersOpen: (isOpen: boolean) => void
+  isFilterChangePending: boolean
   sortingDirection: ListDirection
   sortingOrder: BreweryStatsSortingOrder
   setSortingOrder: (order: BreweryStatsSortingOrder) => void
@@ -39,18 +40,28 @@ function BreweryAllAtOnce (props: Props): React.JSX.Element {
   const timeStart = props.filters.timeStart.value
   const timeEnd = props.filters.timeEnd.value
   const {
+    isFilterChangePending,
     loadedBreweries,
     setLoadedBreweries,
     sortingOrder,
     setSortingOrder,
     sortingDirection
   } = props
-  const { query, isLoading } = props.getBreweryStatsIf.useStats()
+  const { query, isLoading: isLoadingStats } =
+    props.getBreweryStatsIf.useStats()
+  const isLoading =
+    isFilterChangePending || isLoadingStats || loadedBreweries === undefined
   const { breweryId, locationId, styleId } = props
 
   useEffect(() => {
     setLoadedBreweries(undefined)
   }, [breweryId, locationId, styleId])
+
+  useEffect(() => {
+    if (isFilterChangePending) {
+      setLoadedBreweries(undefined)
+    }
+  }, [isFilterChangePending])
 
   useEffect(() => {
     async function loadAll (): Promise<void> {
@@ -90,7 +101,7 @@ function BreweryAllAtOnce (props: Props): React.JSX.Element {
 
   return (
     <BreweryStatsTable
-      breweries={loadedBreweries ?? []}
+      breweries={isLoading ? [] : loadedBreweries ?? []}
       filters={props.filters}
       isFiltersOpen={props.isFiltersOpen}
       setIsFiltersOpen={props.setIsFiltersOpen}

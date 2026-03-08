@@ -28,7 +28,10 @@ const dontCall = (): any => {
 
 const infiniteScroll: InfiniteScroll = () => () => undefined
 
-const useDebounce: UseDebounce = str => str
+const useDebounce: UseDebounce<string> = str => [str, false]
+const getUseDebounce = function<T>(): UseDebounce<T> {
+  return (value: T) => [value, false]
+}
 
 const getUndefinedLogin: GetLogin = () => ({
   user: undefined,
@@ -287,7 +290,8 @@ const storeIf: StoreIf = {
       useStats: dontCall,
       infiniteScroll,
       minTime,
-      maxTime
+      maxTime,
+      getUseDebounce
     },
     container: {
       useStats: dontCall
@@ -296,7 +300,8 @@ const storeIf: StoreIf = {
       useStats: dontCall,
       infiniteScroll,
       minTime,
-      maxTime
+      maxTime,
+      getUseDebounce
     },
     overall: {
       useStats: () => ({
@@ -310,7 +315,8 @@ const storeIf: StoreIf = {
     style: {
       useStats: dontCall,
       minTime,
-      maxTime
+      maxTime,
+      getUseDebounce
     },
     setSearch: async () => undefined
   },

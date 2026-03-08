@@ -12,4 +12,4 @@ export type InfiniteScroll = (loadMore: () => void) => () => void
 
 export type ListDirection = 'asc' | 'desc'
 
-export type UseDebounce = (value: string, delay?: number) => string
+export type UseDebounce<T> = (value: T, delay?: number) => [T, boolean]

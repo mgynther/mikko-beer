@@ -13,7 +13,7 @@ import type {
 } from '../../core/types'
 
 import BreweryLinks from '../brewery/BreweryLinks'
-import LoadingIndicator from '../common/LoadingIndicator'
+import TableSkeleton from '../common/TableSkeleton'
 import TabButton from '../common/TabButton'
 
 import AllFilters from './AllFilters'
@@ -47,7 +47,6 @@ function BreweryStatsTable (props: Props): React.JSX.Element {
 
   return (
     <div>
-      <LoadingIndicator isLoading={props.isLoading} />
       <table className='StatsTable SortableStats'>
         <thead>
           <tr>
@@ -96,6 +95,11 @@ function BreweryStatsTable (props: Props): React.JSX.Element {
           </tr>
         </thead>
         <tbody>
+          <TableSkeleton
+            isLoading={props.isLoading}
+            rowCount={3}
+            columnCount={3}
+          />
           {props.breweries.map(brewery => (
             <tr key={brewery.breweryId}>
               <td className='StatsNameColumn'>

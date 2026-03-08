@@ -20,7 +20,11 @@ import type {
 import type { SearchLocationIf } from '../../core/location/types'
 import type { GetLogin } from '../../core/login/types'
 
-const useDebounce: UseDebounce = str => str
+const useDebounce: UseDebounce<string> = str => [str, false]
+
+const getUseDebounce = function<T>(): UseDebounce<T> {
+  return (value: T) => [value, false]
+}
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -107,7 +111,8 @@ const noStats: NoStats = {
     isLoading: false
   }),
   minTime,
-  maxTime
+  maxTime,
+  getUseDebounce
 }
 
 type NoInfiniteScrollStats =
@@ -123,7 +128,8 @@ const noInfiniteScrollStats: NoInfiniteScrollStats = {
   }),
   infiniteScroll: dontCall,
   minTime,
-  maxTime
+  maxTime,
+  getUseDebounce
 }
 
 const statsIf: StatsIf = {

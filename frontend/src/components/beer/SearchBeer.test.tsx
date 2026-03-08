@@ -7,7 +7,7 @@ import type { SearchIf } from '../../core/search/types'
 import type { UseDebounce } from '../../core/types'
 import type { SearchBeerIf } from '../../core/beer/types'
 
-const useDebounce: UseDebounce = str => str
+const useDebounce: UseDebounce<string> = str => [str, false]
 
 const activeSearch: SearchIf = {
   useSearch: () => ({

@@ -5,5 +5,5 @@ export interface SearchIf {
     activate: () => void
     isActive: boolean
   }
-  useDebounce: UseDebounce
+  useDebounce: UseDebounce<string>
 }

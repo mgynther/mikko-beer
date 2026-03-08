@@ -6,7 +6,7 @@ import LinkWrapper from '../LinkWrapper'
 import type { UseDebounce } from '../../core/types'
 import type { ListBreweriesIf } from '../../core/brewery/types'
 
-const useDebounce: UseDebounce = str => str
+const useDebounce: UseDebounce<string> = str => [str, false]
 
 const notUsed = (): any => { throw new Error('Do not call') }
 

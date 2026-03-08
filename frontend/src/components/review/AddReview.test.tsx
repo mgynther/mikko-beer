@@ -9,7 +9,7 @@ import type { CreateBeerIf, SearchBeerIf } from "../../core/beer/types"
 import type { ReviewContainerIf } from "../../core/review/types"
 import type { ParamsIf } from "../util"
 
-const useDebounce: UseDebounce = str => str
+const useDebounce: UseDebounce<string> = str => [str, false]
 
 const dontCall = (): any => {
   throw new Error('must not be called')

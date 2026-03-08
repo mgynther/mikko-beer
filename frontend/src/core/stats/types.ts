@@ -1,7 +1,8 @@
 import type {
   InfiniteScroll,
   ListDirection,
-  Pagination
+  Pagination,
+  UseDebounce
 } from '../types'
 
 export interface IdParams {
@@ -224,6 +225,7 @@ export interface GetBreweryStatsIf {
   infiniteScroll: InfiniteScroll
   minTime: YearMonth
   maxTime: YearMonth
+  getUseDebounce: <T>() => UseDebounce<T>
 }
 
 export interface GetContainerStatsIf {
@@ -244,6 +246,7 @@ export interface GetLocationStatsIf {
   infiniteScroll: InfiniteScroll
   minTime: YearMonth
   maxTime: YearMonth
+  getUseDebounce: <T>() => UseDebounce<T>
 }
 
 export interface GetOverallStatsIf {
@@ -269,6 +272,7 @@ export interface GetStyleStatsIf {
   useStats: (params: StyleStatsQueryParams) => StatsResult
   minTime: YearMonth
   maxTime: YearMonth
+  getUseDebounce: <T>() => UseDebounce<T>
 }
 
 export interface StatsIf {

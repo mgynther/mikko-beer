@@ -10,9 +10,14 @@ import {
   LocationStats,
   YearMonth
 } from '../../core/stats/types'
+import type { UseDebounce } from '../../core/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
+}
+
+const getUseDebounce = function<T>(): UseDebounce<T> {
+  return (value: T) => [value, false]
 }
 
 const plevna = {
@@ -77,7 +82,8 @@ const usedStats: GetLocationStatsIf = {
     return () => undefined
   },
   minTime,
-  maxTime
+  maxTime,
+  getUseDebounce
 }
 
 const emptySearchParameters: SearchParameters = {
@@ -110,7 +116,8 @@ test('queries location stats', async () => {
       return () => undefined
     },
     minTime,
-    maxTime
+    maxTime,
+    getUseDebounce
   }
   render(
     <LinkWrapper>
@@ -174,7 +181,8 @@ test('queries filtered location stats', async () => {
       return () => undefined
     },
     minTime,
-    maxTime
+    maxTime,
+    getUseDebounce
   }
   render(
     <LinkWrapper>

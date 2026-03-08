@@ -12,6 +12,11 @@ import type {
 } from '../../core/stats/types'
 import { openFilters } from './filters-test-util'
 import type { SearchParameters } from '../util'
+import type { UseDebounce } from '../../core/types'
+
+const getUseDebounce = function<T>(): UseDebounce<T> {
+  return (value: T) => [value, false]
+}
 
 const breweryId = 'd02852f6-8cef-40fd-9dfd-2cf5489de63e'
 const locationId = '1da527ec-5eb7-452b-99dc-d8c3cffcd63f'
@@ -65,13 +70,15 @@ const getRecordingIf = (
     return statsResult
   },
   minTime,
-  maxTime
+  maxTime,
+  getUseDebounce
 })
 
 const styleStatsIf: GetStyleStatsIf = {
   useStats: () => statsResult,
   minTime,
-  maxTime
+  maxTime,
+  getUseDebounce
 }
 
 const emptySearchParameters: SearchParameters = {
@@ -111,7 +118,8 @@ test('renders style stats', () => {
         getStyleStatsIf={{
           useStats: () => statsResult,
           minTime,
-          maxTime
+          maxTime,
+          getUseDebounce
         }}
         breweryId={undefined}
         locationId={undefined}

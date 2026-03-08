@@ -20,7 +20,7 @@ function SearchBrewery (props: Props): React.JSX.Element {
     isLoading
   } = props.searchBreweryIf.useSearch()
   const [filter, setFilter] = useState('')
-  const debouncedFilter = props.searchIf.useDebounce(filter)
+  const [debouncedFilter] = props.searchIf.useDebounce(filter)
   const [results, setResults] = useState<Brewery[]>([])
 
   async function doSearch (filter: string): Promise<void> {

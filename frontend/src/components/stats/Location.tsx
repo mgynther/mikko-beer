@@ -47,6 +47,11 @@ function Location (props: Props): React.JSX.Element {
     || props.styleId !== undefined
 
   const { search } = props
+  const [searchMap, setSearchMap] = useState<Record<string, string>>({})
+  const [debouncedSearchMap, isFilterChangePending] =
+    props.getLocationStatsIf.getUseDebounce<Record<string, string>>()(
+      searchMap
+    )
   const sortingOrder = sortingOrderOrDefault(search)
   const sortingDirection = listDirectionOrDefault(search)
   const minReviewCount = filterNumOrDefault('min_review_count', search)
@@ -87,7 +92,7 @@ function Location (props: Props): React.JSX.Element {
     return (value: number) => {
       const newState: Record<string, string> = getCurrentState()
       newState[key] = converter(value)
-      props.setState(newState)
+      setSearchMap(newState)
     }
   }
 
@@ -98,7 +103,7 @@ function Location (props: Props): React.JSX.Element {
     return (yearMonth: YearMonth) => {
       const newState: Record<string, string> = getCurrentState()
       newState[key] = converter(yearMonth)
-      props.setState(newState)
+      setSearchMap(newState)
     }
   }
 
@@ -154,6 +159,11 @@ function Location (props: Props): React.JSX.Element {
   useEffect(() => {
     setLoadedLocations(undefined)
   }, [searchString])
+  useEffect(() => {
+    if (Object.keys(debouncedSearchMap).length > 0) {
+      props.setState(debouncedSearchMap)
+    }
+  }, [JSON.stringify(debouncedSearchMap)])
 
   function changeSortingOrder (property: LocationStatsSortingOrder): void {
     if (sortingOrder === property) {
@@ -179,6 +189,7 @@ function Location (props: Props): React.JSX.Element {
           filters={filters}
           isFiltersOpen={isFiltersOpen}
           setIsFiltersOpen={setIsFiltersOpen}
+          isFilterChangePending={isFilterChangePending}
           loadedLocations={loadedLocations}
           setLoadedLocations={setLoadedLocations}
           sortingDirection={sortingDirection}
@@ -195,6 +206,7 @@ function Location (props: Props): React.JSX.Element {
           filters={filters}
           isFiltersOpen={isFiltersOpen}
           setIsFiltersOpen={setIsFiltersOpen}
+          isFilterChangePending={isFilterChangePending}
           loadedLocations={loadedLocations}
           setLoadedLocations={setLoadedLocations}
           sortingDirection={sortingDirection}

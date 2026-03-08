@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import type {
+  StatsFilter,
   StatsNoTimeFilters,
+  YearMonth,
   YearMonthFilter
 } from '../../core/stats/types'
 
@@ -34,6 +36,38 @@ function Filters (props: Props): React.JSX.Element {
     maxReviewAverage,
   } = props.filters
   const { timeStart, timeEnd } = props
+  function wrapStatsFilter (
+    statsFilter: StatsFilter
+  ): [number, (value: number) => void] {
+    const [valueRt, setValueRt] = useState(statsFilter.value)
+    const setValue = (count: number): void => {
+      setValueRt(count)
+      statsFilter.setValue(count)
+    }
+    return [valueRt, setValue]
+  }
+  const [minReviewCountValue, setMinReviewCount] =
+    wrapStatsFilter(minReviewCount)
+  const [maxReviewCountValue, setMaxReviewCount] =
+    wrapStatsFilter(maxReviewCount)
+  const [minReviewAverageValue, setMinReviewAverage] =
+    wrapStatsFilter(minReviewAverage)
+  const [maxReviewAverageValue, setMaxReviewAverage] =
+    wrapStatsFilter(maxReviewAverage)
+
+  function wrapYearMonthFilter (
+    filter: YearMonthFilter | undefined
+  ): [YearMonth, (value: YearMonth) => void] {
+    const [valueRt, setValueRt] =
+      useState(filter?.value ?? { year: 2020, month: 1 })
+    const setValue = (value: YearMonth): void => {
+      setValueRt(value)
+      filter?.setValue(value)
+    }
+    return [valueRt, setValue]
+  }
+  const [timeStartValue, setTimeStart] = wrapYearMonthFilter(timeStart)
+  const [timeEndValue, setTimeEnd] = wrapYearMonthFilter(timeEnd)
   return (
     <div>
       <div className='Toggle'>
@@ -47,42 +81,42 @@ function Filters (props: Props): React.JSX.Element {
       {isOpen && (
         <div className='FilterControls'>
           <MinimumReviewCount
-            minReviewCount={minReviewCount.value}
-            setMinReviewCount={minReviewCount.setValue}
+            minReviewCount={minReviewCountValue}
+            setMinReviewCount={setMinReviewCount}
           />
           <MaximumReviewCount
-            maxReviewCount={maxReviewCount.value}
-            setMaxReviewCount={maxReviewCount.setValue}
+            maxReviewCount={maxReviewCountValue}
+            setMaxReviewCount={setMaxReviewCount}
           />
           <StepFilterSlider
-            title={`Minimum review average: ${minReviewAverage.value}`}
+            title={`Minimum review average: ${minReviewAverageValue}`}
             min={4}
             max={10}
             step={0.1}
-            value={minReviewAverage.value}
-            setValue={minReviewAverage.setValue}
+            value={minReviewAverageValue}
+            setValue={setMinReviewAverage}
           />
           <StepFilterSlider
-            title={`Maximum review average: ${maxReviewAverage.value}`}
+            title={`Maximum review average: ${maxReviewAverageValue}`}
             min={4}
             max={10}
             step={0.1}
-            value={maxReviewAverage.value}
-            setValue={maxReviewAverage.setValue}
+            value={maxReviewAverageValue}
+            setValue={setMaxReviewAverage}
           />
           {timeStart && <TimeFilterSlider
             title={'Minimum time'}
             minTime={timeStart.min}
             maxTime={timeStart.max}
-            setTime={timeStart.setValue}
-            time={timeStart.value}
+            setTime={setTimeStart}
+            time={timeStartValue}
           />}
           {timeEnd && <TimeFilterSlider
             title={'Maximum time'}
             minTime={timeEnd.min}
             maxTime={timeEnd.max}
-            setTime={timeEnd.setValue}
-            time={timeEnd.value}
+            setTime={setTimeEnd}
+            time={timeEndValue}
           />}
         </div>
       )}

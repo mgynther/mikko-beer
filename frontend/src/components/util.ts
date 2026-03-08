@@ -47,9 +47,10 @@ export function joinSortedNames (array: NamedItem[]): string {
   return array.map(i => i.name).sort().join(', ')
 }
 
-export const useDebounce: UseDebounce = (
-  value: string, delay = 300
-): string => {
+// Didn't find a way to add type to this while keeping it generic.
+export const useDebounce = <T>(
+  value: T, delay = 300
+): [T, boolean] => {
   const [debouncedValue, setDebouncedValue] = useState(value)
 
   useEffect(() => {
@@ -62,8 +63,12 @@ export const useDebounce: UseDebounce = (
     }
   }, [value, delay])
 
-  return debouncedValue
+  return [debouncedValue, value !== debouncedValue]
 }
+// Use a function wrapper to ensure correct type and keep it generic.
+const getUseDebounce =
+  function<T>(): UseDebounce<T> { return useDebounce<T> }
+getUseDebounce()
 
 type NavigationFunc = (
   url: string,

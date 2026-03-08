@@ -10,6 +10,11 @@ import type {
   GetBreweryStatsIf,
   YearMonth
 } from '../../core/stats/types'
+import type { UseDebounce } from '../../core/types'
+
+const getUseDebounce = function<T>(): UseDebounce<T> {
+  return (value: T) => [value, false]
+}
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -75,7 +80,8 @@ const unusedStats: GetBreweryStatsIf = {
   }),
   infiniteScroll: dontCall,
   minTime,
-  maxTime
+  maxTime,
+  getUseDebounce
 }
 
 test('queries brewery stats', async () => {
@@ -102,7 +108,8 @@ test('queries brewery stats', async () => {
           }),
           infiniteScroll: dontCall,
           minTime,
-          maxTime
+          maxTime,
+          getUseDebounce
         }}
         breweryId={undefined}
         locationId={undefined}
@@ -114,6 +121,7 @@ test('queries brewery stats', async () => {
         setSortingOrder={() => undefined}
         filters={unusedFilters}
         isFiltersOpen={false}
+        isFilterChangePending={false}
         setIsFiltersOpen={() => undefined}
       />
     </LinkWrapper>
@@ -159,6 +167,7 @@ test('renders brewery stats', () => {
         setSortingOrder={() => undefined}
         filters={unusedFilters}
         isFiltersOpen={false}
+        isFilterChangePending={false}
         setIsFiltersOpen={dontCall}
       />
     </LinkWrapper>
@@ -193,6 +202,7 @@ test('sets minimum review count filter', () => {
           }
         }}
         isFiltersOpen={true}
+        isFilterChangePending={false}
         setIsFiltersOpen={dontCall}
       />
     </LinkWrapper>
@@ -219,6 +229,7 @@ test('opens filter', async () => {
         setSortingOrder={() => undefined}
         filters={unusedFilters}
         isFiltersOpen={false}
+        isFilterChangePending={false}
         setIsFiltersOpen={setIsFiltersOpen}
       />
     </LinkWrapper>

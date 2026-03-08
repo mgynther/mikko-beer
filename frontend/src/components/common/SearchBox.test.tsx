@@ -12,7 +12,7 @@ const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const useDebounce: UseDebounce = str => str
+const useDebounce: UseDebounce<string> = str => [str, false]
 
 const passiveSearch: SearchIf = {
   useSearch: () => ({
