@@ -74,7 +74,7 @@ const storage: Storage = {
   id: '3c3478f6-c754-4fee-a2b1-a63b59ae6b77',
   beerId: '1c7ba165-a001-41a0-b8bb-bc52435df0c0',
   beerName: 'Severin',
-  bestBefore: '2023-12-10',
+  bestBefore: '2023-12-10T12:00:00.000',
   breweries: [brewery],
   container: {
     id: '3b7871b5-0016-4330-a134-23ef3aaee3eb',
@@ -190,7 +190,7 @@ test('renders storage', () => {
   getByRole('link', { name: brewery.name })
   getByRole('link', { name: storage.beerName })
   getByRole('link', { name: style.name })
-  getByText(storage.bestBefore)
+  getByText(storage.bestBefore.split('T')[0])
   getByRole('heading', { name: 'Storage beers (0/1)' })
   getByText('2024-04')
   getByText('15')

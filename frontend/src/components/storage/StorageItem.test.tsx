@@ -24,7 +24,7 @@ const storage: Storage = {
   id: 'd02c5fb5-a993-447d-824a-93bfeb85949a',
   beerId: '14167707-87d1-49f1-b6b1-0a95ebfb5afb',
   beerName: 'Severin',
-  bestBefore: '2023-12-10',
+  bestBefore: '2023-12-10T12:00:00.000',
   breweries: [brewery],
   container: {
     id: 'a5bc2c5b-50ae-4f47-b374-63bc2be4f524',
@@ -67,7 +67,7 @@ test('renders storage', async () => {
   getByRole('link', { name: brewery.name })
   getByRole('link', { name: storage.beerName })
   getByRole('link', { name: style.name })
-  getByText(storage.bestBefore)
+  getByText(storage.bestBefore.split('T')[0])
   const openButton = getByRole('button', { name: 'Open ▼' })
   await user.click(openButton)
   const reviewLink = getByRole('link', { name: 'Review' })

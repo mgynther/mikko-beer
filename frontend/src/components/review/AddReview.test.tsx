@@ -316,7 +316,7 @@ test('adds review from storage', async () => {
           id: storageId,
           beerId,
           beerName,
-          bestBefore: '2024-07-31T12:00:00.000Z',
+          bestBefore: '2024-07-31T12:00:00.000',
           breweries: beerSearchResult.breweries,
           container: containerListResult,
           createdAt: '2022-03-30T18:00:00.000Z',

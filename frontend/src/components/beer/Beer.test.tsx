@@ -76,7 +76,7 @@ const storage: Storage = {
   id: 'd8022f91-5ec0-4836-a5cf-6fd4e7ca1b14',
   beerId: beer.id,
   beerName: beer.name,
-  bestBefore: '2025-01-30',
+  bestBefore: '2025-01-30T12:00:00.000',
   breweries: joinedReview.breweries,
   container: joinedReview.container,
   createdAt: '2019-09-29T09:00:00.000Z',
@@ -273,7 +273,7 @@ test('renders beer', async () => {
   getByRole('link', { name: style.name })
   getByText(joinedReview.additionalInfo)
   getByText(asText(joinedReview.container))
-  getByText(storage.bestBefore)
+  getByText(storage.bestBefore.split('T')[0])
 })
 
 test('updates beer', async () => {

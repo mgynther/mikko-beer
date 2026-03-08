@@ -7,7 +7,7 @@ const ipaStorage: Storage = {
   id: 'e90dd689-c5c0-4972-a795-ce45d56c925b',
   beerId: '40c87723-616d-4911-ac92-1a99b5853722',
   beerName: 'CCCCC IPA',
-  bestBefore: '2024-12-31T12:00:00.000Z',
+  bestBefore: '2024-12-31T12:00:00.000',
   breweries: [{
     id: '7afad577-9d35-438b-8819-3fb6a17072d1',
     name: 'Beer Hunters'
@@ -29,7 +29,7 @@ const stoutOneStorage: Storage = {
   id: '3bbdf1cc-4092-4401-ab1c-5e06477fda06',
   beerId: 'b4b6e37e-40b4-4cca-9345-09f73898f601',
   beerName: 'Ukontuli',
-  bestBefore: '2023-09-25T12:00:00.000Z',
+  bestBefore: '2023-09-25T12:00:00.000',
   breweries: [{
     id: 'a1230a9b-52b1-41eb-9759-e0023e25aa95',
     name: 'Iso-Kallan Panimo'
@@ -51,7 +51,7 @@ const stoutTwoStorage: Storage = {
   id: 'ce7191be-8556-479b-b3d1-48c11641ed97',
   beerId: '4ccacd6b-e736-4243-9a2f-35f901fc64da',
   beerName: 'Põlev Jõgi Whiskey Barrel Aged',
-  bestBefore: '2024-12-31T12:00:00.000Z',
+  bestBefore: '2024-12-31T12:00:00.000',
   breweries: [
     {
       id: 'c40d72d1-4c93-4bdd-8ec8-012dc0f95582',
