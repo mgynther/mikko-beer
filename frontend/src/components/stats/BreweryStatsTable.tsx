@@ -16,7 +16,7 @@ import BreweryLinks from '../brewery/BreweryLinks'
 import LoadingIndicator from '../common/LoadingIndicator'
 import TabButton from '../common/TabButton'
 
-import Filters from './Filters'
+import AllFilters from './AllFilters'
 
 import './StatsTable.css'
 
@@ -87,7 +87,7 @@ function BreweryStatsTable (props: Props): React.JSX.Element {
           </tr>
           <tr>
             <th colSpan={3}>
-              <Filters
+              <AllFilters
                 filters={filters}
                 isOpen={props.isFiltersOpen}
                 setIsOpen={props.setIsFiltersOpen}

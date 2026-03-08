@@ -1,10 +1,16 @@
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
+import { testTimes } from '../../../test-util/filter-time'
 import LocationAllAtOnce from './LocationAllAtOnce'
 import LinkWrapper from '../LinkWrapper'
 import { openFilters } from './filters-test-util'
-import type { GetLocationStatsIf, LocationStats } from '../../core/stats/types'
+import type {
+  GetLocationStatsIf,
+  LocationStats,
+  StatsFilters,
+  YearMonth
+} from '../../core/stats/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -28,7 +34,10 @@ const oluthuone = {
   reviewCount: '24'
 }
 
-const unusedFilters = {
+const minTime: YearMonth = testTimes.min.yearMonth
+const maxTime: YearMonth = testTimes.max.yearMonth
+
+const unusedFilters: StatsFilters = {
   minReviewCount: {
     value: 1,
     setValue: dontCall
@@ -44,6 +53,18 @@ const unusedFilters = {
   maxReviewAverage: {
     value: 10.0,
     setValue: dontCall
+  },
+  timeStart: {
+    min: minTime,
+    max: maxTime,
+    value: minTime,
+    setValue: dontCall
+  },
+  timeEnd: {
+    min: minTime,
+    max: maxTime,
+    value: maxTime,
+    setValue: dontCall
   }
 }
 
@@ -53,7 +74,9 @@ const unusedStats: GetLocationStatsIf = {
       stats: { location: [] },
     isLoading: false
   }),
-  infiniteScroll: dontCall
+  infiniteScroll: dontCall,
+  minTime,
+  maxTime
 }
 
 test('queries location stats', async () => {
@@ -78,7 +101,9 @@ test('queries location stats', async () => {
             },
             isLoading: false
           }),
-          infiniteScroll: dontCall
+          infiniteScroll: dontCall,
+          minTime,
+          maxTime
         }}
         breweryId={breweryId}
         locationId={locationId}
@@ -110,8 +135,8 @@ test('queries location stats', async () => {
       order: 'location_name'
     },
     styleId,
-    timeStart: 0,
-    timeEnd: 4102444800000
+    timeStart: testTimes.min.utcTimestamp,
+    timeEnd: testTimes.max.utcTimestamp
   }]])
   await waitFor(() =>
     { expect(setLoadedLocations.mock.calls).toEqual([

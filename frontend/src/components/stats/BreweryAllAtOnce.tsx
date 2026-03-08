@@ -9,6 +9,7 @@ import type {
 import type { ListDirection } from '../../core/types'
 
 import BreweryStatsTable from './BreweryStatsTable'
+import { formatYearMonth, toTimestamp } from './filter-util'
 
 interface Props {
   getBreweryStatsIf: GetBreweryStatsIf
@@ -35,6 +36,8 @@ function BreweryAllAtOnce (props: Props): React.JSX.Element {
   const maxReviewCount = props.filters.maxReviewCount.value
   const minReviewAverage = props.filters.minReviewAverage.value
   const maxReviewAverage = props.filters.maxReviewAverage.value
+  const timeStart = props.filters.timeStart.value
+  const timeEnd = props.filters.timeEnd.value
   const {
     loadedBreweries,
     setLoadedBreweries,
@@ -64,8 +67,8 @@ function BreweryAllAtOnce (props: Props): React.JSX.Element {
         maxReviewCount,
         minReviewAverage,
         maxReviewAverage,
-        timeStart: 0,
-        timeEnd: 4102444800000
+        timeStart: toTimestamp(timeStart, 'start'),
+        timeEnd: toTimestamp(timeEnd, 'end')
       })
       if (result === undefined) return
       setLoadedBreweries([...result.brewery])
@@ -80,7 +83,9 @@ function BreweryAllAtOnce (props: Props): React.JSX.Element {
     minReviewCount,
     maxReviewCount,
     minReviewAverage,
-    maxReviewAverage
+    maxReviewAverage,
+    formatYearMonth(timeStart),
+    formatYearMonth(timeEnd)
   ])
 
   return (

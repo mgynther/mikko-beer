@@ -1,6 +1,9 @@
 import React from 'react'
 
-import type { StatsFilters } from '../../core/stats/types'
+import type {
+  StatsNoTimeFilters,
+  YearMonthFilter
+} from '../../core/stats/types'
 
 import MaximumReviewCount from './MaximumReviewCount'
 import MinimumReviewCount from './MinimumReviewCount'
@@ -9,9 +12,12 @@ import StepFilterSlider from './StepFilterSlider'
 import TabButton from '../common/TabButton'
 
 import './Filters.css'
+import TimeFilterSlider from './TimeFilterSlider'
 
 interface Props {
-  filters: StatsFilters
+  filters: StatsNoTimeFilters
+  timeStart: YearMonthFilter | undefined
+  timeEnd: YearMonthFilter | undefined
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
 }
@@ -25,8 +31,9 @@ function Filters (props: Props): React.JSX.Element {
     minReviewCount,
     maxReviewCount,
     minReviewAverage,
-    maxReviewAverage
+    maxReviewAverage,
   } = props.filters
+  const { timeStart, timeEnd } = props
   return (
     <div>
       <div className='Toggle'>
@@ -63,6 +70,20 @@ function Filters (props: Props): React.JSX.Element {
             value={maxReviewAverage.value}
             setValue={maxReviewAverage.setValue}
           />
+          {timeStart && <TimeFilterSlider
+            title={'Minimum time'}
+            minTime={timeStart.min}
+            maxTime={timeStart.max}
+            setTime={timeStart.setValue}
+            time={timeStart.value}
+          />}
+          {timeEnd && <TimeFilterSlider
+            title={'Maximum time'}
+            minTime={timeEnd.min}
+            maxTime={timeEnd.max}
+            setTime={timeEnd.setValue}
+            time={timeEnd.value}
+          />}
         </div>
       )}
     </div>

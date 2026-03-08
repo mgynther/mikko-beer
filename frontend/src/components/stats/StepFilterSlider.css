@@ -3,6 +3,6 @@ input.StepFilterSlider {
   height: 40px;
 }
 
-div.StepFilterSliderLabel {
+label.StepFilterSliderLabel {
   font-size: 12px;
 }

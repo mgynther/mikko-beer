@@ -3,13 +3,14 @@ import React from 'react'
 import { formatTitle, invertDirection } from '../list-helpers'
 import type {
   GetStyleStatsIf,
-  StyleStatsSortingOrder
+  StyleStatsSortingOrder,
+  YearMonth
 } from '../../core/stats/types'
 import LoadingIndicator from '../common/LoadingIndicator'
 import TabButton from '../common/TabButton'
 import StyleLink from '../style/StyleLink'
 
-import Filters from './Filters'
+import AllFilters from './AllFilters'
 
 import './StatsTable.css'
 import type { SearchParameters } from '../util'
@@ -19,7 +20,10 @@ import {
   listDirectionOrDefault,
   filterNumOrDefault,
   filtersOpenOrDefault,
-  filtersOpenStr
+  filtersOpenStr,
+  formatYearMonth,
+  parseYearMonth,
+  toTimestamp
 } from './filter-util'
 
 interface Props {
@@ -47,6 +51,14 @@ function Style (props: Props): React.JSX.Element {
   const maxReviewCount = filterNumOrDefault('max_review_count', search)
   const minReviewAverage = filterNumOrDefault('min_review_average', search)
   const maxReviewAverage = filterNumOrDefault('max_review_average', search)
+  const timeStart = parseYearMonth(
+    search.get('time_start'),
+    props.getStyleStatsIf.minTime
+  )
+  const timeEnd = parseYearMonth(
+    search.get('time_end'),
+    props.getStyleStatsIf.maxTime
+  )
   const isFiltersOpen = filtersOpenOrDefault(search)
   const { stats, isLoading } = props.getStyleStatsIf.useStats({
     breweryId: props.breweryId,
@@ -60,8 +72,8 @@ function Style (props: Props): React.JSX.Element {
     maxReviewCount,
     minReviewAverage,
     maxReviewAverage,
-    timeStart: 0,
-    timeEnd: 4102444800000
+    timeStart: toTimestamp(timeStart, 'start'),
+    timeEnd: toTimestamp(timeEnd, 'end')
   })
 
   function getCurrentState(): Record<string, string> {
@@ -70,6 +82,8 @@ function Style (props: Props): React.JSX.Element {
       max_review_count: countStr(maxReviewCount),
       min_review_average: averageStr(minReviewAverage),
       max_review_average: averageStr(maxReviewAverage),
+      time_start: formatYearMonth(timeStart),
+      time_end: formatYearMonth(timeEnd),
       sorting_order: sortingOrder,
       list_direction: sortingDirection,
       filters_open: filtersOpenStr(isFiltersOpen)
@@ -88,10 +102,23 @@ function Style (props: Props): React.JSX.Element {
     }
   }
 
+  function getYearMonthSetter(
+    key: string,
+    converter: (yearMonth: YearMonth) => string
+  ) {
+    return (yearMonth: YearMonth) => {
+      const newState: Record<string, string> = getCurrentState()
+      newState[key] = converter(yearMonth)
+      props.setState(newState)
+    }
+  }
+
   const setMinReviewCount = getFilterSetter('min_review_count', countStr)
   const setMaxReviewCount = getFilterSetter('max_review_count', countStr)
   const setMinReviewAverage = getFilterSetter('min_review_average', averageStr)
   const setMaxReviewAverage = getFilterSetter('max_review_average', averageStr)
+  const setTimeStart = getYearMonthSetter('time_start', formatYearMonth)
+  const setTimeEnd = getYearMonthSetter('time_end', formatYearMonth)
 
   function setIsFiltersOpen (isOpen: boolean): void {
     const newState: Record<string, string> = getCurrentState()
@@ -163,7 +190,7 @@ function Style (props: Props): React.JSX.Element {
           </tr>
           <tr>
             <th colSpan={3}>
-              <Filters
+              <AllFilters
                 filters={{
                   minReviewCount: {
                     value: minReviewCount,
@@ -180,6 +207,18 @@ function Style (props: Props): React.JSX.Element {
                   maxReviewAverage: {
                     value: maxReviewAverage,
                     setValue: setMaxReviewAverage
+                  },
+                  timeStart: {
+                    min: props.getStyleStatsIf.minTime,
+                    max: props.getStyleStatsIf.maxTime,
+                    value: timeStart,
+                    setValue: setTimeStart
+                  },
+                  timeEnd: {
+                    min: props.getStyleStatsIf.minTime,
+                    max: props.getStyleStatsIf.maxTime,
+                    value: timeEnd,
+                    setValue: setTimeEnd
                   }
                 }}
                 isOpen={isFiltersOpen}

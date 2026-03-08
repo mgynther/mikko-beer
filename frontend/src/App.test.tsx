@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test } from 'vitest'
+import { testTimes } from '../test-util/filter-time'
 import LinkWrapper from './components/LinkWrapper'
 
 import { Provider } from './react-redux-wrapper'
@@ -19,6 +20,7 @@ import type { SearchBreweryIf } from './core/brewery/types'
 import type { SearchLocationIf } from './core/location/types'
 import type { ListStylesIf } from './core/style/types'
 import type { ReviewContainerIf } from './core/review/types'
+import type { YearMonth } from './core/stats/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -119,6 +121,9 @@ const deleteStorageIf: DeleteStorageIf = {
     delete: dontCall
   })
 }
+
+const minTime: YearMonth = testTimes.min.yearMonth
+const maxTime: YearMonth = testTimes.max.yearMonth
 
 const storeIf: StoreIf = {
   getLogin: getUndefinedLogin,
@@ -280,14 +285,18 @@ const storeIf: StoreIf = {
     },
     brewery: {
       useStats: dontCall,
-      infiniteScroll
+      infiniteScroll,
+      minTime,
+      maxTime
     },
     container: {
       useStats: dontCall
     },
     location: {
       useStats: dontCall,
-      infiniteScroll
+      infiniteScroll,
+      minTime,
+      maxTime
     },
     overall: {
       useStats: () => ({
@@ -299,7 +308,9 @@ const storeIf: StoreIf = {
       useStats: dontCall
     },
     style: {
-      useStats: dontCall
+      useStats: dontCall,
+      minTime,
+      maxTime
     },
     setSearch: async () => undefined
   },

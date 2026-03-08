@@ -1,10 +1,16 @@
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
+import { testTimes } from '../../../test-util/filter-time'
 import Brewery from './Brewery'
 import LinkWrapper from '../LinkWrapper'
 import type { SearchParameters } from '../util'
-import type { BreweryStats, GetBreweryStatsIf } from '../../core/stats/types'
+import type {
+  BreweryStats,
+  GetBreweryStatsIf,
+  StatsFilters,
+  YearMonth
+} from '../../core/stats/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -26,7 +32,10 @@ const lehe = {
   reviewedBeerCount: '24'
 }
 
-const unusedFilters = {
+const minTime: YearMonth = testTimes.min.yearMonth
+const maxTime: YearMonth = testTimes.max.yearMonth
+
+const unusedFilters: StatsFilters = {
   minReviewCount: {
     value: 1,
     setValue: dontCall
@@ -41,6 +50,18 @@ const unusedFilters = {
   },
   maxReviewAverage: {
     value: 10.0,
+    setValue: dontCall
+  },
+  timeStart: {
+    min: minTime,
+    max: maxTime,
+    value: minTime,
+    setValue: dontCall
+  },
+  timeEnd: {
+    min: minTime,
+    max: maxTime,
+    value: maxTime,
     setValue: dontCall
   }
 }
@@ -57,7 +78,9 @@ const usedStats: GetBreweryStatsIf = {
   infiniteScroll: (cb: () => void) => {
     cb()
     return () => undefined
-  }
+  },
+  minTime,
+  maxTime
 }
 
 const emptySearchParameters: SearchParameters = {
@@ -91,7 +114,9 @@ test('queries brewery stats', async () => {
           infiniteScroll: (cb) => {
             loadCallback = cb
             return (): undefined => undefined
-          }
+          },
+          minTime,
+          maxTime
         }}
         breweryId={undefined}
         locationId={undefined}
@@ -118,8 +143,8 @@ test('queries brewery stats', async () => {
       order: 'brewery_name'
     },
     styleId: undefined,
-    timeStart: 0,
-    timeEnd: 4102444800000
+    timeStart: testTimes.min.utcTimestamp,
+    timeEnd: testTimes.max.utcTimestamp
   }]])
 })
 
@@ -152,6 +177,8 @@ const defaultSearchParams: Record<string, string> = {
   max_review_count: 'Infinity',
   min_review_average: '4.00',
   max_review_average: '10.00',
+  time_start: testTimes.min.text,
+  time_end: testTimes.max.text
 }
 
 const defaultFiltersOpenParams: Record<string, string> = {
@@ -166,16 +193,16 @@ function toSearchParams (record: Record<string, string>): SearchParameters  {
 }
 
 function changeSlider (
-  getByDisplayValue: (str: string) => HTMLElement,
+  getByLabelText: (str: string) => HTMLElement,
   from: string,
   to: string
 ): void {
-  const slider = getByDisplayValue(from)
+  const slider = getByLabelText(from)
   fireEvent.change(slider, {target: { value: to }})
 }
 
 interface SliderChangeTest {
-  fromDisplayValue: string
+  label: string
   toDisplayValue: string
   property: string
   stateValue: string
@@ -183,35 +210,47 @@ interface SliderChangeTest {
 
 const sliderChangeTests: SliderChangeTest[] = [
   {
-    fromDisplayValue: '4',
+    label: 'Minimum review average: 4',
     toDisplayValue: '8.1',
     property: 'min_review_average',
     stateValue: '8.10'
   },
   {
-    fromDisplayValue: '10',
+    label: 'Maximum review average: 10',
     toDisplayValue: '8.0',
     property: 'max_review_average',
     stateValue: '8.00'
   },
   {
-    fromDisplayValue: '0',
+    label: 'Minimum review count: 1',
     toDisplayValue: '5',
     property: 'min_review_count',
     stateValue: '13'
   },
   {
-    fromDisplayValue: '11',
+    label: 'Maximum review count: ∞',
     toDisplayValue: '5',
     property: 'max_review_count',
     stateValue: '13'
+  },
+  {
+    label: 'Minimum time: 2017-12',
+    toDisplayValue: '5',
+    property: 'time_start',
+    stateValue: '2018-05'
+  },
+  {
+    label: 'Maximum time: 2024-12',
+    toDisplayValue: '8',
+    property: 'time_end',
+    stateValue: '2018-08'
   }
 ]
 
 sliderChangeTests.forEach(testCase => {
   test(`change ${testCase.property}`, async () => {
     const setState = vitest.fn()
-    const { getByDisplayValue } = render(
+    const { getByLabelText } = render(
       <LinkWrapper>
         <Brewery
           breweryId={undefined}
@@ -225,8 +264,8 @@ sliderChangeTests.forEach(testCase => {
     )
     await act(async () => {
       changeSlider(
-        getByDisplayValue,
-        testCase.fromDisplayValue,
+        getByLabelText,
+        testCase.label,
         testCase.toDisplayValue
       )
     })

@@ -264,6 +264,7 @@ function ReviewEditor (props: Props): React.JSX.Element {
         <div className='ReviewContent'>
           <div className='RatingNumber'>{ `${rating}` }</div>
           <Slider
+            id='rating'
             className='RatingSlider'
             min={4}
             max={10}

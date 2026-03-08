@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
+import { testTimes } from '../../../test-util/filter-time'
 import Brewery from './Brewery'
 import { Role } from '../../core/user/types'
 import type { UseDebounce } from '../../core/types'
@@ -13,7 +14,8 @@ import type {
   GetOverallStatsIf,
   GetRatingStatsIf,
   GetStyleStatsIf,
-  StatsIf
+  StatsIf,
+  YearMonth
 } from '../../core/stats/types'
 import type { SearchLocationIf } from '../../core/location/types'
 import type { GetLogin } from '../../core/login/types'
@@ -96,11 +98,16 @@ type NoStats =
   GetRatingStatsIf &
   GetStyleStatsIf
 
+const minTime: YearMonth = testTimes.min.yearMonth
+const maxTime: YearMonth = testTimes.max.yearMonth
+
 const noStats: NoStats = {
   useStats: () => ({
     stats: undefined,
     isLoading: false
-  })
+  }),
+  minTime,
+  maxTime
 }
 
 type NoInfiniteScrollStats =
@@ -114,7 +121,9 @@ const noInfiniteScrollStats: NoInfiniteScrollStats = {
     stats: undefined,
     isLoading: false
   }),
-  infiniteScroll: dontCall
+  infiniteScroll: dontCall,
+  minTime,
+  maxTime
 }
 
 const statsIf: StatsIf = {

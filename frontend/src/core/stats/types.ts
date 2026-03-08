@@ -167,7 +167,28 @@ export interface StatsFilter {
   setValue: (value: number) => void
 }
 
+export interface YearMonth {
+  year: number
+  month: number
+}
+
+export interface YearMonthFilter {
+  min: YearMonth
+  max: YearMonth
+  value: YearMonth
+  setValue: (yearMonth: YearMonth) => void
+}
+
 export interface StatsFilters {
+  minReviewCount: StatsFilter
+  maxReviewCount: StatsFilter
+  minReviewAverage: StatsFilter
+  maxReviewAverage: StatsFilter
+  timeStart: YearMonthFilter
+  timeEnd: YearMonthFilter
+}
+
+export interface StatsNoTimeFilters {
   minReviewCount: StatsFilter
   maxReviewCount: StatsFilter
   minReviewAverage: StatsFilter
@@ -201,6 +222,8 @@ export interface GetBreweryStatsIf {
     isLoading: boolean
   },
   infiniteScroll: InfiniteScroll
+  minTime: YearMonth
+  maxTime: YearMonth
 }
 
 export interface GetContainerStatsIf {
@@ -219,6 +242,8 @@ export interface GetLocationStatsIf {
     isLoading: boolean
   },
   infiniteScroll: InfiniteScroll
+  minTime: YearMonth
+  maxTime: YearMonth
 }
 
 export interface GetOverallStatsIf {
@@ -242,6 +267,8 @@ export interface StatsResult {
 
 export interface GetStyleStatsIf {
   useStats: (params: StyleStatsQueryParams) => StatsResult
+  minTime: YearMonth
+  maxTime: YearMonth
 }
 
 export interface StatsIf {

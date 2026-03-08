@@ -1,4 +1,5 @@
 import { expect, test } from 'vitest'
+import { testTimes } from '../../test-util/filter-time'
 import { infiniteScroll, NavigateIf } from "../components/util"
 import { store } from '../store/store'
 import { addTestServerResponse } from '../../test-util/server'
@@ -14,8 +15,12 @@ import type {
   LocationStats,
   LocationStatsQueryParams,
   StyleStats,
-  StyleStatsQueryParams
+  StyleStatsQueryParams,
+  YearMonth
 } from '../core/stats/types'
+
+const minTime: YearMonth = testTimes.min.yearMonth
+const maxTime: YearMonth = testTimes.max.yearMonth
 
 function BreweryStatsHelper(
   props: { queryParams: BreweryStatsQueryParams }
@@ -23,7 +28,7 @@ function BreweryStatsHelper(
   const navigateIf: NavigateIf = {
     useNavigate: () => () => undefined
   }
-  const statsIf = statsHook(infiniteScroll, navigateIf)
+  const statsIf = statsHook(infiniteScroll, navigateIf, minTime, maxTime)
   const { query, stats } = statsIf.brewery.useStats()
   return (
     <div>
@@ -80,8 +85,8 @@ test('brewery stats', async () => {
     maxReviewCount: 80,
     minReviewAverage: 9.00,
     maxReviewAverage: 9.30,
-    timeStart: 1646352000000,
-    timeEnd: 1723680000000
+    timeStart: testTimes.min.utcTimestamp,
+    timeEnd: testTimes.max.utcTimestamp
   }
 
   addTestServerResponse<BreweryStats>({
@@ -138,7 +143,7 @@ function LocationStatsHelper(
   const navigateIf: NavigateIf = {
     useNavigate: () => () => undefined
   }
-  const statsIf = statsHook(infiniteScroll, navigateIf)
+  const statsIf = statsHook(infiniteScroll, navigateIf, minTime, maxTime)
   const { query, stats } = statsIf.location.useStats()
   return (
     <div>
@@ -192,8 +197,8 @@ test('location stats', async () => {
     maxReviewCount: 80,
     minReviewAverage: 9.00,
     maxReviewAverage: 9.30,
-    timeStart: 1646352000000,
-    timeEnd: 1723680000000
+    timeStart: testTimes.min.utcTimestamp,
+    timeEnd: testTimes.max.utcTimestamp
   }
 
   addTestServerResponse<LocationStats>({
@@ -248,7 +253,7 @@ function StyleStatsHelper(
   const navigateIf: NavigateIf = {
     useNavigate: () => () => undefined
   }
-  const statsIf = statsHook(infiniteScroll, navigateIf)
+  const statsIf = statsHook(infiniteScroll, navigateIf, minTime, maxTime)
   const { stats } = statsIf.style.useStats(props.queryParams)
   return (
     <div>
@@ -293,8 +298,8 @@ test('style stats', async () => {
     maxReviewCount: 80,
     minReviewAverage: 9.00,
     maxReviewAverage: 9.30,
-    timeStart: 1646352000000,
-    timeEnd: 1723680000000
+    timeStart: testTimes.min.utcTimestamp,
+    timeEnd: testTimes.max.utcTimestamp
   }
 
   addTestServerResponse<StyleStats>({

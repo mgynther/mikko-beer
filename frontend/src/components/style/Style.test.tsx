@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
+import { testTimes } from '../../../test-util/filter-time'
 import Style from './Style'
 import { Role } from '../../core/user/types'
 import LinkWrapper from '../LinkWrapper'
@@ -21,7 +22,8 @@ import type {
   GetOverallStatsIf,
   GetRatingStatsIf,
   GetStyleStatsIf,
-  StatsIf
+  StatsIf,
+  YearMonth
 } from '../../core/stats/types'
 import type { GetStyleIf } from '../../core/style/types'
 import type { UseDebounce } from '../../core/types'
@@ -240,11 +242,16 @@ type NoStats =
   GetRatingStatsIf &
   GetStyleStatsIf
 
+const minTime: YearMonth = testTimes.min.yearMonth
+const maxTime: YearMonth = testTimes.max.yearMonth
+
 const noStats: NoStats = {
   useStats: () => ({
     stats: undefined,
     isLoading: false
-  })
+  }),
+  minTime,
+  maxTime
 }
 
 type NoInfiniteScrollStats =
@@ -258,7 +265,9 @@ const noInfiniteScrollStats: NoInfiniteScrollStats = {
     stats: undefined,
     isLoading: false
   }),
-  infiniteScroll: dontCall
+  infiniteScroll: dontCall,
+  minTime,
+  maxTime
 }
 
 const statsIf: StatsIf = {

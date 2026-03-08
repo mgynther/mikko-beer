@@ -1,10 +1,16 @@
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
 import userEvent from '@testing-library/user-event'
+import { testTimes } from '../../../test-util/filter-time'
 import BreweryInfiniteScroll from './BreweryInfiniteScroll'
 import LinkWrapper from '../LinkWrapper'
 import { openFilters } from './filters-test-util'
-import type { BreweryStats, GetBreweryStatsIf } from '../../core/stats/types'
+import type {
+  BreweryStats,
+  GetBreweryStatsIf,
+  StatsFilters,
+  YearMonth
+} from '../../core/stats/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -26,7 +32,10 @@ const lehe = {
   reviewedBeerCount: '24'
 }
 
-const unusedFilters = {
+const minTime: YearMonth = testTimes.min.yearMonth
+const maxTime: YearMonth = testTimes.max.yearMonth
+
+const unusedFilters: StatsFilters = {
   minReviewCount: {
     value: 1,
     setValue: dontCall
@@ -42,6 +51,18 @@ const unusedFilters = {
   maxReviewAverage: {
     value: 10.0,
     setValue: dontCall
+  },
+  timeStart: {
+    min: minTime,
+    max: maxTime,
+    value: minTime,
+    setValue: dontCall
+  },
+  timeEnd: {
+    min: minTime,
+    max: maxTime,
+    value: maxTime,
+    setValue: dontCall
   }
 }
 
@@ -51,7 +72,9 @@ const unusedStats: GetBreweryStatsIf = {
       stats: { brewery: [] },
     isLoading: false
   }),
-  infiniteScroll: () => () => undefined
+  infiniteScroll: () => () => undefined,
+  minTime,
+  maxTime
 }
 
 test('queries brewery stats', async () => {
@@ -77,7 +100,9 @@ test('queries brewery stats', async () => {
     infiniteScroll: (cb) => {
       loadCallback = cb
       return () => undefined
-    }
+    },
+    minTime,
+    maxTime
   }
   render(
     <LinkWrapper>
@@ -111,8 +136,8 @@ test('queries brewery stats', async () => {
       order: 'brewery_name'
     },
     styleId: undefined,
-    timeStart: 0,
-    timeEnd: 4102444800000
+    timeStart: testTimes.min.utcTimestamp,
+    timeEnd: testTimes.max.utcTimestamp
   }]])
   await waitFor(() =>
     { expect(setLoadedBreweries.mock.calls).toEqual([[[koskipanimo, lehe]]]); }

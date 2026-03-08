@@ -1,9 +1,14 @@
 import { fireEvent, render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
+import { testTimes } from '../../../test-util/filter-time'
 import LocationStatsTable from './LocationStatsTable'
 import LinkWrapper from '../LinkWrapper'
-import type { LocationStatsSortingOrder } from '../../core/stats/types'
+import type {
+  LocationStatsSortingOrder,
+  StatsFilters,
+  YearMonth
+} from '../../core/stats/types'
 import type { ListDirection } from '../../core/types'
 import { openFilters } from './filters-test-util'
 
@@ -25,7 +30,10 @@ const oluthuone = {
   reviewCount: '24'
 }
 
-const unusedFilters = {
+const minTime: YearMonth = testTimes.min.yearMonth
+const maxTime: YearMonth = testTimes.max.yearMonth
+
+const unusedFilters: StatsFilters = {
   minReviewCount: {
     value: 1,
     setValue: dontCall
@@ -40,6 +48,18 @@ const unusedFilters = {
   },
   maxReviewAverage: {
     value: 10.0,
+    setValue: dontCall
+  },
+  timeStart: {
+    min: minTime,
+    max: maxTime,
+    value: minTime,
+    setValue: dontCall
+  },
+  timeEnd: {
+    min: minTime,
+    max: maxTime,
+    value: maxTime,
     setValue: dontCall
   }
 }
@@ -188,6 +208,18 @@ test('sets minimum review count filter', () => {
           },
           maxReviewAverage: {
             value: 10.0,
+            setValue: dontCall
+          },
+          timeStart: {
+            min: minTime,
+            max: maxTime,
+            value: minTime,
+            setValue: dontCall
+          },
+          timeEnd: {
+            min: minTime,
+            max: maxTime,
+            value: maxTime,
             setValue: dontCall
           }
         }}

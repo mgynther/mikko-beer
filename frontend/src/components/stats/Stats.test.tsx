@@ -1,14 +1,22 @@
 import { render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
+import { testTimes } from '../../../test-util/filter-time'
 import Stats from './Stats'
-import type { OneAnnualContainerStats, StatsIf } from '../../core/stats/types'
+import type {
+  OneAnnualContainerStats,
+  StatsIf,
+  YearMonth
+} from '../../core/stats/types'
 import LinkWrapper from '../LinkWrapper'
 import type { ParamsIf } from '../util'
 
 const emptyAnnualContainerStats = { annualContainer: []}
 const emptyBreweryStats = { brewery: []}
 const emptyLocationStats = { location: []}
+
+const minTime: YearMonth = testTimes.min.yearMonth
+const maxTime: YearMonth = testTimes.max.yearMonth
 
 const emptyStatsIf: StatsIf = {
   annual: {
@@ -41,7 +49,9 @@ const emptyStatsIf: StatsIf = {
     infiniteScroll: (cb: () => void) => {
       cb()
       return () => undefined
-    }
+    },
+    minTime,
+    maxTime
   },
   container: {
     useStats: () => ({
@@ -69,7 +79,9 @@ const emptyStatsIf: StatsIf = {
     infiniteScroll: (cb: () => void) => {
       cb()
       return () => undefined
-    }
+    },
+    minTime,
+    maxTime
   },
   overall: {
     useStats: () => ({
@@ -102,7 +114,9 @@ const emptyStatsIf: StatsIf = {
         style: []
       },
       isLoading: false
-    })
+    }),
+    minTime,
+    maxTime
   },
   setSearch: async () => undefined
 }
@@ -302,7 +316,9 @@ test('renders brewery stats', async () => {
       infiniteScroll: (cb: () => void) => {
         cb()
         return () => undefined
-      }
+      },
+      minTime,
+      maxTime
     }
   }
 
@@ -467,7 +483,9 @@ test('renders style stats', () => {
         statsIf={{
           ...emptyStatsIf,
           style: {
-            useStats: () => statsResult
+            useStats: () => statsResult,
+            minTime,
+            maxTime
           }
         }}
         breweryId={'482584a6-4ccb-44d6-be37-3458a5c21601'}

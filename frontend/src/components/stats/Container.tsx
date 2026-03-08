@@ -238,10 +238,12 @@ function Container (props: Props): React.JSX.Element {
                   maxReviewAverage: {
                     value: maxReviewAverage,
                     setValue: setMaxReviewAverage
-                  }
+                  },
                 }}
                 isOpen={isFiltersOpen}
                 setIsOpen={setIsFiltersOpen}
+                timeStart={undefined}
+                timeEnd={undefined}
               />
             </th>
           </tr>

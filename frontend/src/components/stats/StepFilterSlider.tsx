@@ -14,12 +14,14 @@ interface Props {
 }
 
 function StepFilterSlider (props: Props): React.JSX.Element {
+  const id = props.title.split(':')[0]
   return (
     <div>
-      <div className='StepFilterSliderLabel'>
+      <label htmlFor={id} className='StepFilterSliderLabel'>
         {props.title}
-      </div>
+      </label>
       <Slider
+        id={id}
         className='StepFilterSlider'
         min={props.min}
         max={props.max}

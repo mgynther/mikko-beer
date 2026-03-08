@@ -9,6 +9,7 @@ import type {
 import type { ListDirection } from '../../core/types'
 
 import LocationStatsTable from './LocationStatsTable'
+import { toTimestamp } from './filter-util'
 
 const pageSize = 30
 
@@ -29,6 +30,8 @@ function LocationInfiniteScroll (props: Props): React.JSX.Element {
   const maxReviewCount = props.filters.maxReviewCount.value
   const minReviewAverage = props.filters.minReviewAverage.value
   const maxReviewAverage = props.filters.maxReviewAverage.value
+  const timeStart = props.filters.timeStart.value
+  const timeEnd = props.filters.timeEnd.value
   const {
     loadedLocations,
     setLoadedLocations,
@@ -61,8 +64,8 @@ function LocationInfiniteScroll (props: Props): React.JSX.Element {
         maxReviewCount,
         minReviewAverage,
         maxReviewAverage,
-        timeStart: 0,
-        timeEnd: 4102444800000
+        timeStart: toTimestamp(timeStart, 'start'),
+        timeEnd: toTimestamp(timeEnd, 'end')
       })
       if (result === undefined) return
       const newLocations = [...(loadedLocations ?? []), ...result.location]

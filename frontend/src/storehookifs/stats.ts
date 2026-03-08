@@ -8,7 +8,8 @@ import type {
   LocationStats,
   LocationStatsQueryParams,
   StatsIf,
-  StyleStatsQueryParams
+  StyleStatsQueryParams,
+  YearMonth
 } from "../core/stats/types"
 import type { InfiniteScroll } from "../core/types"
 import {
@@ -35,10 +36,14 @@ import { createSetSearch } from "./set-search"
 
 const stats: (
   infiniteScroll: InfiniteScroll,
-  navigateIf: NavigateIf
+  navigateIf: NavigateIf,
+  minTime: YearMonth,
+  maxTime: YearMonth
 ) => StatsIf = (
   infiniteScroll: InfiniteScroll,
-  navigateIf: NavigateIf
+  navigateIf: NavigateIf,
+  minTime: YearMonth,
+  maxTime: YearMonth
 ) => {
   const statsIf: StatsIf = {
     annual: {
@@ -82,7 +87,9 @@ const stats: (
           isLoading: isFetching
         }
       },
-      infiniteScroll
+      infiniteScroll,
+      minTime,
+      maxTime
     },
     container: {
       useStats: (params: IdParams) => {
@@ -108,7 +115,9 @@ const stats: (
           isLoading: isFetching
         }
       },
-      infiniteScroll
+      infiniteScroll,
+      minTime,
+      maxTime
     },
     overall: {
       useStats: (params: IdParams) => {
@@ -135,7 +144,9 @@ const stats: (
           stats: validateStyleStatsOrUndefined(data),
           isLoading
         }
-      }
+      },
+      minTime,
+      maxTime
     },
     setSearch: createSetSearch(navigateIf)
   }

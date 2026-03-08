@@ -9,6 +9,7 @@ const dontCall = (): any => {
 test('renders value', () => {
   const { getByDisplayValue } = render(
     <Slider
+      id='slider'
       className={undefined}
       value={5}
       min={4}
@@ -24,6 +25,7 @@ test('changes value', async () => {
   const setValue = vitest.fn()
   const { getByDisplayValue } = render(
     <Slider
+      id='slider'
       className={undefined}
       value={5}
       min={4}

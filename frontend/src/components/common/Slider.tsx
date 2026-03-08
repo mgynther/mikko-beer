@@ -1,6 +1,7 @@
 import React from 'react'
 
 interface Props {
+  id: string
   className: string | undefined
   value: number
   min: number
@@ -12,6 +13,7 @@ interface Props {
 function Slider (props: Props): React.JSX.Element {
   return (
     <input
+      id={props.id}
       className={props.className ?? ''}
       type='range'
       min={props.min}

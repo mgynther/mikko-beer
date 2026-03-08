@@ -77,6 +77,7 @@ import type {
 } from './core/storage/types'
 import type {
   StatsIf,
+  YearMonth,
 } from './core/stats/types'
 import type { SearchIf } from './core/search/types'
 import {
@@ -145,6 +146,11 @@ import changePassword from './storehookifs/login/changePassword'
 import login from './storehookifs/login/login'
 import logout from './storehookifs/login/logout'
 import { createSetSearch } from './storehookifs/set-search.ts'
+
+function getNextMonthDate (): Date {
+  const now = new Date()
+  return new Date(now.getFullYear(), now.getMonth() + 1, 1)
+}
 
 function RtkApp (): React.JSX.Element {
   const createBreweryIf: CreateBreweryIf = createBrewery()
@@ -257,7 +263,21 @@ function RtkApp (): React.JSX.Element {
     login: getLogin
   }
 
-  const statsIf: StatsIf = stats(infiniteScroll, navigateIf)
+  const minTime: YearMonth = {
+    year: 2017,
+    month: 12
+  }
+  const [nextMonthDate] = React.useState(getNextMonthDate())
+  const maxTime: YearMonth = {
+    year: nextMonthDate.getFullYear(),
+    month: nextMonthDate.getMonth() + 1
+  }
+  const statsIf: StatsIf = stats(
+    infiniteScroll,
+    navigateIf,
+    minTime,
+    maxTime
+  )
 
   const searchIf: SearchIf = search(useDebounce)
 

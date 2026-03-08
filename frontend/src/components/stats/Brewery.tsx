@@ -3,7 +3,9 @@ import React, { useEffect, useState } from 'react'
 import type {
   BreweryStatsSortingOrder,
   GetBreweryStatsIf,
-  OneBreweryStats
+  OneBreweryStats,
+  StatsFilters,
+  YearMonth
 } from '../../core/stats/types'
 
 import { invertDirection } from '../list-helpers'
@@ -17,7 +19,9 @@ import {
   listDirectionOrDefault,
   filterNumOrDefault,
   filtersOpenOrDefault,
-  filtersOpenStr
+  filtersOpenStr,
+  parseYearMonth,
+  formatYearMonth
 } from './filter-util'
 
 interface Props {
@@ -49,6 +53,14 @@ function Brewery (props: Props): React.JSX.Element {
   const maxReviewCount = filterNumOrDefault('max_review_count', search)
   const minReviewAverage = filterNumOrDefault('min_review_average', search)
   const maxReviewAverage = filterNumOrDefault('max_review_average', search)
+  const timeStart = parseYearMonth(
+    search.get('time_start'),
+    props.getBreweryStatsIf.minTime
+  )
+  const timeEnd = parseYearMonth(
+    search.get('time_end'),
+    props.getBreweryStatsIf.maxTime
+  )
   const isFiltersOpen = filtersOpenOrDefault(search)
   const [loadedBreweries, setLoadedBreweries] =
     useState<OneBreweryStats[] | undefined>(undefined)
@@ -59,6 +71,8 @@ function Brewery (props: Props): React.JSX.Element {
       max_review_count: countStr(maxReviewCount),
       min_review_average: averageStr(minReviewAverage),
       max_review_average: averageStr(maxReviewAverage),
+      time_start: formatYearMonth(timeStart),
+      time_end: formatYearMonth(timeEnd),
       sorting_order: sortingOrder,
       list_direction: sortingDirection,
       filters_open: filtersOpenStr(isFiltersOpen)
@@ -77,10 +91,23 @@ function Brewery (props: Props): React.JSX.Element {
     }
   }
 
+  function getYearMonthSetter(
+    key: string,
+    converter: (yearMonth: YearMonth) => string
+  ) {
+    return (yearMonth: YearMonth) => {
+      const newState: Record<string, string> = getCurrentState()
+      newState[key] = converter(yearMonth)
+      props.setState(newState)
+    }
+  }
+
   const setMinReviewCount = getFilterSetter('min_review_count', countStr)
   const setMaxReviewCount = getFilterSetter('max_review_count', countStr)
   const setMinReviewAverage = getFilterSetter('min_review_average', averageStr)
   const setMaxReviewAverage = getFilterSetter('max_review_average', averageStr)
+  const setTimeStart = getYearMonthSetter('time_start', formatYearMonth)
+  const setTimeEnd = getYearMonthSetter('time_end', formatYearMonth)
 
   function setIsFiltersOpen (isOpen: boolean): void {
     const newState: Record<string, string> = getCurrentState()
@@ -88,7 +115,7 @@ function Brewery (props: Props): React.JSX.Element {
     props.setState(newState)
   }
 
-  const filters = {
+  const filters: StatsFilters = {
     minReviewCount: {
       value: minReviewCount,
       setValue: setMinReviewCount
@@ -104,6 +131,18 @@ function Brewery (props: Props): React.JSX.Element {
     maxReviewAverage: {
       value: maxReviewAverage,
       setValue: setMaxReviewAverage
+    },
+    timeStart: {
+      min: props.getBreweryStatsIf.minTime,
+      max: props.getBreweryStatsIf.maxTime,
+      value: timeStart,
+      setValue: setTimeStart
+    },
+    timeEnd: {
+      min: props.getBreweryStatsIf.minTime,
+      max: props.getBreweryStatsIf.maxTime,
+      value: timeEnd,
+      setValue: setTimeEnd
     }
   }
 
