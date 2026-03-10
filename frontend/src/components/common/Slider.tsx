@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 interface Props {
   id: string
@@ -8,9 +8,17 @@ interface Props {
   max: number
   step: number
   setValue: (value: number) => void
+  setDisplayValue: (value: number) => void
 }
 
 function Slider (props: Props): React.JSX.Element {
+  const [isTouching, setIsTouching] = useState<boolean>()
+  const [pendingValue, setPendingValue] = useState(props.value)
+  useEffect(() => {
+    if (isTouching === false) {
+      props.setValue(pendingValue)
+    }
+  }, [isTouching])
   return (
     <input
       id={props.id}
@@ -19,8 +27,21 @@ function Slider (props: Props): React.JSX.Element {
       min={props.min}
       max={props.max}
       step={props.step}
-      value={props.value}
-      onChange={e => { props.setValue(parseFloat(e.target.value)) }}
+      value={pendingValue}
+      onTouchStart={() => {
+        setIsTouching(true)
+      }}
+      onTouchEnd={() => {
+        setIsTouching(false)
+      }}
+      onChange={e => {
+        const value = parseFloat(e.target.value)
+        setPendingValue(value)
+        props.setDisplayValue(value)
+        if (!isTouching) {
+          props.setValue(value)
+        }
+      }}
     />
   )
 }

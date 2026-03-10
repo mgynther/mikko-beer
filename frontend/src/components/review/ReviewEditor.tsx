@@ -270,6 +270,7 @@ function ReviewEditor (props: Props): React.JSX.Element {
             max={10}
             step={1}
             value={rating}
+            setDisplayValue={(value: number) => { setRating(value); } }
             setValue={(value: number) => { setRating(value); } }
           />
         </div>

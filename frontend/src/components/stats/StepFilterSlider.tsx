@@ -10,6 +10,7 @@ interface Props {
   min: number
   max: number
   step: number
+  setDisplayValue: (value: number) => void
   setValue: (value: number) => void
 }
 
@@ -27,6 +28,7 @@ function StepFilterSlider (props: Props): React.JSX.Element {
         max={props.max}
         step={props.step}
         value={props.value}
+        setDisplayValue={props.setDisplayValue}
         setValue={props.setValue}
       />
     </div>

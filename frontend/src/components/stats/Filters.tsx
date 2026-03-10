@@ -52,8 +52,12 @@ function Filters (props: Props): React.JSX.Element {
     wrapStatsFilter(maxReviewCount)
   const [minReviewAverageValue, setMinReviewAverage] =
     wrapStatsFilter(minReviewAverage)
+  const [minReviewAverageDisplayValue, setMinReviewAverageDisplayValue]
+    = useState(minReviewAverageValue)
   const [maxReviewAverageValue, setMaxReviewAverage] =
     wrapStatsFilter(maxReviewAverage)
+  const [maxReviewAverageDisplayValue, setMaxReviewAverageDisplayValue]
+    = useState(maxReviewAverageValue)
 
   function wrapYearMonthFilter (
     filter: YearMonthFilter | undefined
@@ -89,19 +93,21 @@ function Filters (props: Props): React.JSX.Element {
             setMaxReviewCount={setMaxReviewCount}
           />
           <StepFilterSlider
-            title={`Minimum review average: ${minReviewAverageValue}`}
+            title={`Minimum review average: ${minReviewAverageDisplayValue}`}
             min={4}
             max={10}
             step={0.1}
             value={minReviewAverageValue}
+            setDisplayValue={setMinReviewAverageDisplayValue}
             setValue={setMinReviewAverage}
           />
           <StepFilterSlider
-            title={`Maximum review average: ${maxReviewAverageValue}`}
+            title={`Maximum review average: ${maxReviewAverageDisplayValue}`}
             min={4}
             max={10}
             step={0.1}
             value={maxReviewAverageValue}
+            setDisplayValue={setMaxReviewAverageDisplayValue}
             setValue={setMaxReviewAverage}
           />
           {timeStart && <TimeFilterSlider

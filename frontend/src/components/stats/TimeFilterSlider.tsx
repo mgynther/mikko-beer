@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import StepFilterSlider from './StepFilterSlider'
 import type { YearMonth } from '../../core/stats/types'
@@ -57,13 +57,15 @@ function TimeFilterSlider (props: Props): React.JSX.Element {
     }
     return 0
   }
+  const [displayValue, setDisplayValue] = useState(props.time)
   return (
     <StepFilterSlider
-      title={`${props.title}: ${getFormattedTime(props.time)}`}
+      title={`${props.title}: ${getFormattedTime(displayValue)}`}
       min={0}
       max={sliderValues.length - 1}
       step={1}
       value={findIndex(props.time)}
+      setDisplayValue={(value: number) => setDisplayValue(sliderValues[value])}
       setValue={(value: number) => props.setTime(sliderValues[value])}
     />
   )

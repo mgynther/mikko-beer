@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import ValueFilterSlider from './ValueFilterSlider'
 
@@ -8,6 +8,7 @@ interface Props {
 }
 
 function MaximumReviewCount (props: Props): React.JSX.Element {
+  const [displayValue, setDisplayValue] = useState(props.maxReviewCount)
   const sliderValues = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, Infinity]
   function getCountSymbol (count: number): string {
     if (!isFinite(count)) return '∞'
@@ -15,9 +16,10 @@ function MaximumReviewCount (props: Props): React.JSX.Element {
   }
   return (
     <ValueFilterSlider
-      title={`Maximum review count: ${getCountSymbol(props.maxReviewCount)}`}
+      title={`Maximum review count: ${getCountSymbol(displayValue)}`}
       value={props.maxReviewCount}
       values={sliderValues}
+      setDisplayValue={setDisplayValue}
       setValue={props.setMaxReviewCount}
     />
   )
