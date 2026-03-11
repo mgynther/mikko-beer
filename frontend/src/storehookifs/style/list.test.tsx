@@ -19,7 +19,7 @@ function Helper(): React.JSX.Element {
 }
 
 test('list styles', async () => {
-  const expectedResponse = {
+  const expectedResponse: StyleList = {
     styles: [
       {
         id: '00e6b36b-f430-4fc9-9f13-0b8888987038',

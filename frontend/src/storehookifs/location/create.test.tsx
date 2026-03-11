@@ -32,7 +32,7 @@ function Helper(props: HelperProps): React.JSX.Element {
 test('create location', async () => {
   const user = userEvent.setup()
 
-  const expectedResponse = {
+  const expectedResponse: { location: Location } = {
     location: {
       id: 'c053e116-53e3-4de4-8273-e35158d776b7',
       name: 'Test location'

@@ -19,7 +19,7 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('get location', async () => {
-  const expectedResponse = {
+  const expectedResponse: { location: Location } = {
     location: {
       id: '38ba5e94-5807-4fe5-ba85-f2580895a4fc',
       name: 'Test location'

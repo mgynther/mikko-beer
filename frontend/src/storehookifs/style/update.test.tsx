@@ -35,7 +35,7 @@ function Helper(props: HelperProps): React.JSX.Element {
 test('update style', async () => {
   const user = userEvent.setup()
 
-  const expectedResponse = {
+  const expectedResponse: { style: StyleWithParentIds } = {
     style: {
       id: '8cc5fe99-8f76-4a53-933f-86494dc77e1e',
       name: 'Test style',

@@ -24,7 +24,7 @@ function Helper(): React.JSX.Element {
 }
 
 test('get annual stats', async () => {
-  const expectedResponse = {
+  const expectedResponse: AnnualStats = {
     annual: [{
       year: '2024',
       count: '5'

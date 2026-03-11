@@ -24,7 +24,7 @@ function Helper(): React.JSX.Element {
 }
 
 test('get monthly stats', async () => {
-  const expectedResponse = {
+  const expectedResponse: MonthlyStats = {
     monthly: [{
       year: '2024',
       month: '8',

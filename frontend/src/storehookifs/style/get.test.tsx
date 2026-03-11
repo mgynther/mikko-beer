@@ -19,7 +19,7 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('get style', async () => {
-  const expectedResponse = {
+  const expectedResponse: { style: StyleWithParentsAndChildren } = {
     style: {
       id: 'bb6a57f4-f26e-4512-9235-4991ebc00ba9',
       name: 'Test style',

@@ -19,7 +19,7 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('get brewery', async () => {
-  const expectedResponse = {
+  const expectedResponse: { brewery: Brewery } = {
     brewery: {
       id: 'ef20147e-c396-48c6-a314-ceef15a42ca5',
       name: 'Test brewery'

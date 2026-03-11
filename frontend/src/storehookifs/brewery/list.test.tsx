@@ -30,7 +30,7 @@ function Helper(): React.JSX.Element {
 test('list breweries', async () => {
   const user = userEvent.setup()
 
-  const expectedResponse = {
+  const expectedResponse: BreweryList = {
     breweries: [
       {
         id: 'eadee3b4-5b47-49a2-a2f6-6719c83b1a0e',

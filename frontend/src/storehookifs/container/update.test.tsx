@@ -34,7 +34,7 @@ function Helper(props: HelperProps): React.JSX.Element {
 test('update container', async () => {
   const user = userEvent.setup()
 
-  const expectedResponse = {
+  const expectedResponse: { container: Container } = {
     container: {
       id: 'ed8cfcd6-549e-45e5-901e-db2f9925856c',
       type: 'bottle',

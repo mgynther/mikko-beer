@@ -32,7 +32,7 @@ function Helper(props: HelperProps): React.JSX.Element {
 test('create container', async () => {
   const user = userEvent.setup()
 
-  const expectedResponse = {
+  const expectedResponse: { container: Container } = {
     container: {
       id: 'e1ed6014-3653-4792-a7d5-711b40f4c70f',
       type: 'bottle',

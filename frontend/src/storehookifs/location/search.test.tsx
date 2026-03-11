@@ -39,7 +39,7 @@ function Helper(): React.JSX.Element {
 test('search locations', async () => {
   const user = userEvent.setup()
 
-  const expectedResponse = {
+  const expectedResponse: LocationList = {
     locations: [
       {
         id: 'b8acbeae-ba8c-4088-a352-db6dd365bea8',

@@ -19,7 +19,7 @@ function Helper(): React.JSX.Element {
 }
 
 test('list containers', async () => {
-  const expectedResponse = {
+  const expectedResponse: ContainerList = {
     containers: [
       {
         id: '655a8095-5dc5-4e7e-a461-b543d6d3fbaa',

@@ -32,7 +32,7 @@ function Helper(props: HelperProps): React.JSX.Element {
 test('create brewery', async () => {
   const user = userEvent.setup()
 
-  const expectedResponse = {
+  const expectedResponse: { brewery: Brewery } = {
     brewery: {
       id: '2e92c7c4-d1ee-41d3-acf5-18fd29e94233',
       name: 'Test brewery'
