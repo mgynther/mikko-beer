@@ -1,2 +1,4 @@
 *.swp
 private/*
+backend/*.md
+frontend/*.md
