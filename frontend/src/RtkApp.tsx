@@ -146,7 +146,7 @@ import changePassword from './storehookifs/login/changePassword'
 import login from './storehookifs/login/login'
 import logout from './storehookifs/login/logout'
 import { createSetSearch } from './storehookifs/set-search.ts'
-import { UseDebounce } from './core/types.ts'
+import type { UseDebounce } from './core/types.ts'
 
 function getNextMonthDate (): Date {
   const now = new Date()

@@ -5,7 +5,7 @@ import { testTimes } from '../../../test-util/filter-time'
 import Location from './Location'
 import LinkWrapper from '../LinkWrapper'
 import type { SearchParameters } from '../util'
-import {
+import type {
   GetLocationStatsIf,
   LocationStats,
   YearMonth

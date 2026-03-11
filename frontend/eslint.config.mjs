@@ -65,6 +65,13 @@ const rules = {
       'format': ['camelCase', 'PascalCase', 'snake_case', 'UPPER_CASE'],
     },
   ],
+  '@typescript-eslint/consistent-type-imports': [
+    'error',
+    {
+      'fixStyle': 'separate-type-imports',
+      'prefer': 'type-imports'
+    }
+  ],
   '@typescript-eslint/explicit-function-return-type': 'error',
   '@typescript-eslint/no-unsafe-type-assertion': 'error',
   '@typescript-eslint/no-unused-vars': [

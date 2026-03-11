@@ -1,6 +1,7 @@
 import { expect, test } from 'vitest'
 import { testTimes } from '../../test-util/filter-time'
-import { infiniteScroll, NavigateIf } from "../components/util"
+import { infiniteScroll } from "../components/util"
+import type { NavigateIf } from "../components/util";
 import { store } from '../store/store'
 import { addTestServerResponse } from '../../test-util/server'
 import statsHook from './stats'
