@@ -58,10 +58,10 @@ test('logout', async () => {
   )
   expect(getByText(username)).toBeDefined()
 
-  addTestServerResponse<Record<string, never>>({
+  addTestServerResponse<{ success: true }>({
     method: 'POST',
     pathname: `/api/v1/user/${userId}/sign-out`,
-    response: {},
+    response: { success: true },
     status: 200
   })
 

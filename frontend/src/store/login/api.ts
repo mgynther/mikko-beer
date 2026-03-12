@@ -51,7 +51,7 @@ const loginApi = emptySplitApi.injectEndpoints({
         }
       }
     }),
-    logout: build.mutation<Login, Partial<LogoutParams>>({
+    logout: build.mutation<{ success: true }, Partial<LogoutParams>>({
       query: (params: LogoutParams) => ({
         url: `/user/${params.userId}/sign-out`,
         method: 'POST',
