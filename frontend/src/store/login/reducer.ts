@@ -1,10 +1,8 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
+import type { PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
-import {
-  type Login,
-  type Refresh,
-  PasswordChangeResult
-} from '../../core/login/types'
+import { PasswordChangeResult } from '../../core/login/types'
+import type { Login, Refresh } from '../../core/login/types'
 
 export interface LoginState {
   login: Login
