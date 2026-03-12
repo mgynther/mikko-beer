@@ -3,6 +3,7 @@ import type {
   CreateStorageRequest
 } from "../../core/storage/types"
 import { useCreateStorageMutation } from "../../store/storage/api"
+import { validateStorage } from "../../validation/storage"
 
 const createStorage: () => CreateStorageIf = () => {
   const createStorageIf: CreateStorageIf = {
@@ -11,7 +12,8 @@ const createStorage: () => CreateStorageIf = () => {
         useCreateStorageMutation()
       return {
         create: async (request: CreateStorageRequest): Promise<void> => {
-          await createStorage(request)
+          const result = await createStorage(request).unwrap()
+          validateStorage(result.storage)
         },
         hasError: error !== undefined,
         isLoading

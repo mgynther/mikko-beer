@@ -1,5 +1,6 @@
 import type { StyleWithParentIds, UpdateStyleIf } from "../../core/style/types"
 import { useUpdateStyleMutation } from "../../store/style/api"
+import { validateStyle } from "../../validation/style"
 
 const updateStyle: () => UpdateStyleIf = () => {
   const updateStyleIf: UpdateStyleIf = {
@@ -10,7 +11,8 @@ const updateStyle: () => UpdateStyleIf = () => {
       ] = useUpdateStyleMutation()
       return {
         update: async (style: StyleWithParentIds): Promise<void> => {
-          await updateStyle(style)
+          const result = await updateStyle(style).unwrap()
+          validateStyle(result.style)
         },
         hasError: isError,
         isLoading,

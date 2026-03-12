@@ -1,6 +1,7 @@
 import type { Location, UpdateLocationIf } from "../../core/location/types"
 import type { GetLogin } from "../../core/login/types"
 import { useUpdateLocationMutation } from "../../store/location/api"
+import { validateLocation } from "../../validation/location"
 
 const updateLocation: (
   login: GetLogin
@@ -15,7 +16,8 @@ const updateLocation: (
         update: async (
           locationRequest: Location
         ): Promise<void> => {
-          await updateLocation(locationRequest)
+          const result = await updateLocation(locationRequest).unwrap()
+          validateLocation(result.location)
         },
         isLoading
       }

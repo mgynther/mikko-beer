@@ -6,6 +6,7 @@ import type {
   UpdateReviewIf
 } from "../../core/review/types"
 import { useUpdateReviewMutation } from "../../store/review/api"
+import { validateReview } from "../../validation/review"
 
 const updateReview: (
   searchLocationIf: SearchLocationIf,
@@ -21,7 +22,8 @@ const updateReview: (
       const [updateReview, { isLoading }] = useUpdateReviewMutation()
       return {
         update: async (review: Review): Promise<void> => {
-          await updateReview(review)
+          const result = await updateReview(review).unwrap()
+          validateReview(result.review)
         },
         isLoading
       }

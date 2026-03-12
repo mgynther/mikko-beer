@@ -52,7 +52,7 @@ export function validateStorageOrUndefined(
   return validateStorage(result)
 }
 
-function validateStorage(result: unknown): Storage {
+export function validateStorage(result: unknown): Storage {
   type StorageT = t.TypeOf<typeof ValidatedStorage>
   const decoded = ValidatedStorage.decode(result)
   if (isLeft(decoded)) {

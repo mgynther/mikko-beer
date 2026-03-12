@@ -57,7 +57,7 @@ export function validateReviewOrUndefined(
   return validateReview(result)
 }
 
-function validateReview(result: unknown): Review {
+export function validateReview(result: unknown): Review {
   type ReviewT = t.TypeOf<typeof ValidatedReview>
   const decoded = ValidatedReview.decode(result)
   if (isLeft(decoded)) {

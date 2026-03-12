@@ -1,5 +1,6 @@
 import type { Brewery, UpdateBreweryIf } from "../../core/brewery/types"
 import { useUpdateBreweryMutation } from "../../store/brewery/api"
+import { validateBrewery } from "../../validation/brewery"
 
 const updateBrewery: () => UpdateBreweryIf = () => {
   const updateBreweryIf: UpdateBreweryIf = {
@@ -12,7 +13,8 @@ const updateBrewery: () => UpdateBreweryIf = () => {
         update: async (
           breweryRequest: Brewery
         ): Promise<void> => {
-          await updateBrewery(breweryRequest)
+          const result = await updateBrewery(breweryRequest).unwrap()
+          validateBrewery(result.brewery)
         },
         isLoading
       }
