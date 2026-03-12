@@ -45,7 +45,7 @@ export interface MonthlyStats {
 
 export interface CreateStorageIf {
   useCreate: () => {
-    create: (request: CreateStorageRequest) => Promise<void>
+    create: (request: CreateStorageRequest) => Promise<Storage>
     hasError: boolean
     isLoading: boolean
   }
