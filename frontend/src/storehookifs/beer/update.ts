@@ -4,6 +4,7 @@ import type {
   UpdateBeerIf
 } from "../../core/beer/types"
 import { useUpdateBeerMutation } from "../../store/beer/api"
+import { validateBeerWithIds } from "../../validation/beer"
 
 const updateBeer: (editBeerIf: EditBeerIf) => UpdateBeerIf = (
   editBeerIf: EditBeerIf
@@ -14,7 +15,8 @@ const updateBeer: (editBeerIf: EditBeerIf) => UpdateBeerIf = (
         useUpdateBeerMutation()
       return {
         update: async (beer: BeerWithIds): Promise<void> => {
-          await updateBeer({ ...beer })
+          const result = await updateBeer({ ...beer }).unwrap()
+          validateBeerWithIds(result.beer)
         },
         isLoading
       }

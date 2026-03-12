@@ -60,7 +60,7 @@ const beerApi = emptySplitApi.injectEndpoints({
         StorageTags.Storage
       ]
     }),
-    updateBeer: build.mutation<{ beer: Beer }, BeerWithIds>({
+    updateBeer: build.mutation<{ beer: BeerWithIds }, BeerWithIds>({
       query: (beer: BeerWithIds) => ({
         url: `/beer/${beer.id}`,
         method: 'PUT',
