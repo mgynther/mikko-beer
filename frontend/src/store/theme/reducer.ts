@@ -6,7 +6,7 @@ export interface ThemeState {
   theme: Theme
 }
 
-const initialState: ThemeState = {
+export const initialState: ThemeState = {
   theme: 'LIGHT'
 }
 

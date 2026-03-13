@@ -6,7 +6,7 @@ export interface NavStateState {
   navState: NavState
 }
 
-const initialState: NavStateState = {
+export const initialState: NavStateState = {
   navState: 'COLLAPSED'
 }
 

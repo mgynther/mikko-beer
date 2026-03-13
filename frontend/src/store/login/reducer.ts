@@ -9,7 +9,7 @@ export interface LoginState {
   passwordChangeResult: PasswordChangeResult
 }
 
-const initialState: LoginState = {
+export const initialState: LoginState = {
   login: {
     user: undefined,
     authToken: '',
