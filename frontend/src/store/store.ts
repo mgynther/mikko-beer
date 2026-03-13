@@ -14,16 +14,18 @@ import {
 import * as emptySplitApi from './api'
 import loginReducer from './login/reducer'
 import searchReducer from './search/reducer'
+import navStateReducer from './nav-state/reducer'
 import themeReducer from './theme/reducer'
 
 const persistConfig = {
   key: 'login',
   storage,
-  whitelist: ['login', 'theme']
+  whitelist: ['login', 'navState', 'theme']
 }
 
 export const rootReducers = combineReducers({
   login: loginReducer,
+  navState: navStateReducer,
   search: searchReducer,
   theme: themeReducer,
   [emptySplitApi.reducerPath]: emptySplitApi.reducer

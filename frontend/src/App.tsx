@@ -26,13 +26,17 @@ import Style from './components/style/Style'
 import Styles from './components/style/Styles'
 import Users from './components/user/Users'
 
+import {
+  selectNavState,
+  setNavState
+} from './store/nav-state/reducer'
 import { selectTheme, setTheme } from './store/theme/reducer'
 
 import { navigateIf } from './components/util'
 import type { ParamsIf } from './components/util'
 import type { StoreIf } from './store/storeIf'
 import ContentEnd from './components/ContentEnd'
-import type { Theme } from './core/types'
+import type { NavState, Theme } from './core/types'
 import Layout from './Layout'
 
 interface Props {
@@ -41,6 +45,7 @@ interface Props {
 }
 
 function App (props: Props): React.JSX.Element {
+  const navState: NavState = useSelector(selectNavState)
   const theme: Theme = useSelector(selectTheme)
   useEffect(() => {
     const bodyElements = document.getElementsByTagName('body')
@@ -132,6 +137,12 @@ function App (props: Props): React.JSX.Element {
                       refreshToken: login.refreshToken
                     }
                   })
+                }}
+                navState={{
+                  navState,
+                  setNavState: (navState: NavState) => {
+                    dispatch(setNavState(navState))
+                  }
                 }}
                 theme={{
                   theme,

@@ -4,12 +4,12 @@ import { expect, test, vitest } from 'vitest'
 import LinkWrapper from './components/LinkWrapper'
 
 import Nav from './Nav'
-import type { ThemeProps } from './Nav'
+import type { NavStateProps, ThemeProps } from './Nav'
 import type { SearchBeerIf } from './core/beer/types'
 import type { SearchIf } from './core/search/types'
 import type { SearchBreweryIf } from './core/brewery/types'
 import type { NavigateIf } from './components/util'
-import type { Theme, UseDebounce } from './core/types'
+import type { NavState, Theme, UseDebounce } from './core/types'
 
 const useDebounce: UseDebounce<string> = str => [str, false]
 
@@ -82,6 +82,16 @@ const beers = [
   anotherBeer
 ]
 
+const defaultNavStateProps: NavStateProps = {
+  setNavState: dontCall,
+  navState: 'COLLAPSED'
+}
+
+const expandedNavStateProps: NavStateProps = {
+  setNavState: dontCall,
+  navState: 'EXPANDED'
+}
+
 const defaultThemeProps: ThemeProps = {
   setTheme: dontCall,
   theme: 'DARK'
@@ -127,6 +137,7 @@ navigationTests.forEach(testCase => {
         <Nav
           isAdmin={true}
           logout={dontCall}
+          navState={defaultNavStateProps}
           navigateIf={dontNavigate}
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
@@ -168,6 +179,7 @@ navigationMoreTests.forEach(testCase => {
         <Nav
           isAdmin={true}
           logout={dontCall}
+          navState={expandedNavStateProps}
           navigateIf={dontNavigate}
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
@@ -176,8 +188,6 @@ navigationMoreTests.forEach(testCase => {
         />
       </LinkWrapper>
     )
-    const moreButton = getByRole('button', { name: 'More' })
-    await user.click(moreButton)
     const link = getByRole('link', { name: testCase.linkText })
     await user.click(link)
     expect(window.location.pathname).toEqual(testCase.pathname)
@@ -191,6 +201,7 @@ navigationMoreTests.forEach(testCase => {
         <Nav
           isAdmin={true}
           logout={dontCall}
+          navState={defaultNavStateProps}
           navigateIf={dontNavigate}
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
@@ -210,6 +221,7 @@ test('do not find text fields without more open', async () => {
       <Nav
         isAdmin={true}
         logout={dontCall}
+        navState={defaultNavStateProps}
         navigateIf={dontNavigate}
         searchBeerIf={dontSearchBeer}
         searchBreweryIf={dontSearchBrewery}
@@ -247,6 +259,7 @@ themeTests.forEach(testCase => {
         <Nav
           isAdmin={true}
           logout={dontCall}
+          navState={expandedNavStateProps}
           navigateIf={dontNavigate}
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
@@ -258,8 +271,6 @@ themeTests.forEach(testCase => {
         />
       </LinkWrapper>
     )
-    const moreButton = getByRole('button', { name: 'More' })
-    await user.click(moreButton)
     const checkbox = getByRole('checkbox', { name: 'Dark' })
     await user.click(checkbox)
     expect(setTheme.mock.calls).toEqual([[testCase.new]])
@@ -274,6 +285,7 @@ test('logs out', async () => {
       <Nav
         isAdmin={true}
         logout={logout}
+        navState={expandedNavStateProps}
         navigateIf={dontNavigate}
         searchBeerIf={dontSearchBeer}
         searchBreweryIf={dontSearchBrewery}
@@ -282,21 +294,19 @@ test('logs out', async () => {
       />
     </LinkWrapper>
   )
-  const moreButton = getByRole('button', { name: 'More' })
-  await user.click(moreButton)
   const logoutButton = getByRole('button', { name: 'Logout' })
   await user.click(logoutButton)
   expect(logout.mock.calls).toEqual([[]])
 })
 
 test('do not show admin features to viewer', async () => {
-  const user = userEvent.setup()
   const logout = vitest.fn()
-  const { getByRole, queryByRole } = render(
+  const { queryByRole } = render(
     <LinkWrapper>
       <Nav
         isAdmin={false}
         logout={logout}
+        navState={expandedNavStateProps}
         navigateIf={dontNavigate}
         searchBeerIf={dontSearchBeer}
         searchBreweryIf={dontSearchBrewery}
@@ -305,8 +315,6 @@ test('do not show admin features to viewer', async () => {
       />
     </LinkWrapper>
   )
-  const moreButton = getByRole('button', { name: 'More' })
-  await user.click(moreButton)
 
   const addReviewLink = queryByRole('link', { name: 'Add review' })
   expect(addReviewLink).toEqual(null)
@@ -329,6 +337,7 @@ test('searches beer', async () => {
       <Nav
         isAdmin={false}
         logout={dontCall}
+        navState={expandedNavStateProps}
         navigateIf={{
           useNavigate: () => navigate
         }}
@@ -339,8 +348,6 @@ test('searches beer', async () => {
       />
     </LinkWrapper>
   )
-  const moreButton = getByRole('button', { name: 'More' })
-  await user.click(moreButton)
 
   const input = getByPlaceholderText('Search beer')
   expect(input).toBeDefined()
@@ -368,6 +375,7 @@ test('searches brewery', async () => {
       <Nav
         isAdmin={false}
         logout={dontCall}
+        navState={expandedNavStateProps}
         navigateIf={{
           useNavigate: () => navigate
         }}
@@ -378,8 +386,6 @@ test('searches brewery', async () => {
       />
     </LinkWrapper>
   )
-  const moreButton = getByRole('button', { name: 'More' })
-  await user.click(moreButton)
 
   const input = getByPlaceholderText('Search brewery')
   expect(input).toBeDefined()
@@ -391,4 +397,52 @@ test('searches brewery', async () => {
   )
   await user.click(itemButton)
   expect(navigate.mock.calls).toEqual([[`/breweries/${brewery.id}`]])
+})
+
+interface NavStateTest {
+  original: NavState,
+  new: NavState,
+  buttonText: string
+}
+
+const navStateTests: NavStateTest[] = [
+  {
+    original: 'COLLAPSED',
+    new: 'EXPANDED',
+    buttonText: 'More'
+  },
+  {
+    original: 'EXPANDED',
+    new: 'COLLAPSED',
+    buttonText: 'Less'
+  }
+]
+
+navStateTests.forEach(testCase => {
+  test(`set nav state from ${testCase.original} to ${testCase.new}`,
+    async () => {
+      const user = userEvent.setup()
+      const setNavState = vitest.fn()
+      const { getByRole } = render(
+        <LinkWrapper>
+          <Nav
+            isAdmin={true}
+            logout={dontCall}
+            navState={{
+              setNavState: setNavState,
+              navState: testCase.original
+            }}
+            navigateIf={dontNavigate}
+            searchBeerIf={dontSearchBeer}
+            searchBreweryIf={dontSearchBrewery}
+            searchIf={noSearch}
+            theme={defaultThemeProps}
+          />
+        </LinkWrapper>
+      )
+      const button = getByRole('button', { name: testCase.buttonText })
+      await user.click(button)
+      expect(setNavState.mock.calls)
+        .toEqual([[testCase.new]])
+    })
 })

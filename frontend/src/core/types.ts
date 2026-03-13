@@ -3,6 +3,8 @@ export interface Pagination {
   skip: number
 }
 
+export type NavState = 'COLLAPSED' | 'EXPANDED'
+
 export type Theme = 'LIGHT' | 'DARK'
 
 export type InfiniteScroll = (loadMore: () => void) => () => void

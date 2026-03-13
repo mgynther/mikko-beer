@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Button from './components/common/Button'
 import Link from './components/common/Link'
 import SearchBeerWithNavi from './components/beer/SearchBeerWithNavi'
@@ -8,7 +8,12 @@ import type { NavigateIf } from './components/util'
 import type { SearchBeerIf } from './core/beer/types'
 import type { SearchBreweryIf } from './core/brewery/types'
 import type { SearchIf } from './core/search/types'
-import type { Theme } from './core/types'
+import type { NavState, Theme } from './core/types'
+
+export interface NavStateProps {
+  navState: NavState
+  setNavState: (navState: NavState) => void
+}
 
 export interface ThemeProps {
   theme: Theme
@@ -18,6 +23,7 @@ export interface ThemeProps {
 interface Props {
   isAdmin: boolean
   logout: () => void
+  navState: NavStateProps
   navigateIf: NavigateIf
   searchBeerIf: SearchBeerIf
   searchBreweryIf: SearchBreweryIf
@@ -26,10 +32,8 @@ interface Props {
 }
 
 function Nav (props: Props): React.JSX.Element {
-  const [isMoreOpen, setIsMoreOpen] = useState(false)
-  function toggleMore (): void {
-    setIsMoreOpen(!isMoreOpen)
-  }
+  const isMoreOpen =
+    props.navState.navState === 'EXPANDED'
   return (
     <nav>
       <ul>
@@ -54,7 +58,11 @@ function Nav (props: Props): React.JSX.Element {
           <Link to="/storage" text="Storage" />
         </li>
         <li>
-          <Button onClick={toggleMore} text={isMoreOpen ? 'Less' : 'More'} />
+          <Button onClick={() => {
+            props.navState.setNavState(
+              isMoreOpen ? 'COLLAPSED' : 'EXPANDED'
+            )
+          }} text={isMoreOpen ? 'Less' : 'More'} />
         </li>
       </ul>
 

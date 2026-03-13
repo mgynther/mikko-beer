@@ -1,11 +1,12 @@
 import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { expect, test } from 'vitest'
+import { beforeEach, expect, test } from 'vitest'
 import { testTimes } from '../test-util/filter-time'
 import LinkWrapper from './components/LinkWrapper'
 
 import { Provider } from './react-redux-wrapper'
 import App from './App'
+import { setNavState } from './store/nav-state/reducer'
 import { store } from './store/store'
 import type { StoreIf } from './store/storeIf'
 import { Role } from './core/user/types'
@@ -21,6 +22,10 @@ import type { SearchLocationIf } from './core/location/types'
 import type { ListStylesIf } from './core/style/types'
 import type { ReviewContainerIf } from './core/review/types'
 import type { YearMonth } from './core/stats/types'
+
+beforeEach(() => {
+  store.dispatch(setNavState('COLLAPSED'))
+})
 
 const dontCall = (): any => {
   throw new Error('must not be called')
