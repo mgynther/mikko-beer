@@ -9,7 +9,7 @@ import type { SearchBeerIf } from './core/beer/types'
 import type { SearchIf } from './core/search/types'
 import type { SearchBreweryIf } from './core/brewery/types'
 import type { NavigateIf } from './components/util'
-import { Theme, type UseDebounce } from './core/types'
+import type { Theme, UseDebounce } from './core/types'
 
 const useDebounce: UseDebounce<string> = str => [str, false]
 
@@ -84,7 +84,7 @@ const beers = [
 
 const defaultThemeProps: ThemeProps = {
   setTheme: dontCall,
-  theme: Theme.DARK
+  theme: 'DARK'
 }
 
 interface NavigationTest {
@@ -229,12 +229,12 @@ interface ThemeTest {
 
 const themeTests: ThemeTest[] = [
   {
-    original: Theme.DARK,
-    new: Theme.LIGHT
+    original: 'DARK',
+    new: 'LIGHT'
   },
   {
-    original: Theme.LIGHT,
-    new: Theme.DARK
+    original: 'LIGHT',
+    new: 'DARK'
   }
 ]
 

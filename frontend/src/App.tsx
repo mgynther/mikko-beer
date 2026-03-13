@@ -32,7 +32,7 @@ import { navigateIf } from './components/util'
 import type { ParamsIf } from './components/util'
 import type { StoreIf } from './store/storeIf'
 import ContentEnd from './components/ContentEnd'
-import { Theme } from './core/types'
+import type { Theme } from './core/types'
 import Layout from './Layout'
 
 interface Props {
@@ -44,7 +44,7 @@ function App (props: Props): React.JSX.Element {
   const theme: Theme = useSelector(selectTheme)
   useEffect(() => {
     const bodyElements = document.getElementsByTagName('body')
-    if (theme === Theme.DARK) {
+    if (theme === 'DARK') {
       bodyElements[0].removeAttribute('class')
     } else {
       bodyElements[0].setAttribute('class', 'light')
