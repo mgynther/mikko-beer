@@ -1,6 +1,6 @@
 export interface CreateUserRequest {
   user: {
-    role: string
+    role: Role
   }
   passwordSignInMethod: {
     username: string

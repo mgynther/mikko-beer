@@ -3,6 +3,7 @@ import React, { type SubmitEvent, useState } from 'react'
 import LoadingIndicator from '../common/LoadingIndicator'
 
 import './CreateUser.css'
+import { Role } from '../../core/user/types'
 import type { CreateUserIf } from '../../core/user/types'
 
 interface Props {
@@ -15,7 +16,7 @@ function CreateUser (props: Props): React.JSX.Element {
   const [isMismatch, setIsMismatch] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [role, setRole] = useState('viewer')
+  const [role, setRole] = useState<Role>(Role.viewer)
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
 
   async function doChange (event: SubmitEvent<HTMLFormElement>): Promise<void> {
@@ -31,7 +32,7 @@ function CreateUser (props: Props): React.JSX.Element {
     })
     setUsername('')
     setPassword('')
-    setRole('viewer')
+    setRole(Role.viewer)
     setPasswordConfirmation('')
   }
 
@@ -83,11 +84,11 @@ function CreateUser (props: Props): React.JSX.Element {
             value={role}
             id='role'
             onChange={(e) => {
-              setRole(e.target.value)
+              setRole(e.target.value === Role.admin ? Role.admin : Role.viewer)
             }}
           >
-            <option value={'admin'}>Admin</option>
-            <option value={'viewer'}>Viewer</option>
+            <option value={Role.admin}>Admin</option>
+            <option value={Role.viewer}>Viewer</option>
           </select>
         </div>
         <div>
