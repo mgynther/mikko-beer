@@ -13,7 +13,7 @@ interface Response<T> {
 interface InternalResponse {
   method: 'GET' | 'POST' | 'PUT' | 'DELETE'
   pathname: string
-  response: Record<string, unknown>
+  response: Record<string, unknown> | undefined
   status: number
 }
 
@@ -26,7 +26,7 @@ const handler = async (req: IncomingMessage, res: ServerResponse) => {
   // TODO access search params like this parsedURL.searchParams.get("keyword")
   if (response !== undefined && req.method === response.method && url === response.pathname) {
     res.writeHead(response.status, { 'Content-Type': 'application/json' })
-    res.write(JSON.stringify(response.response))
+    res.write(response.response ? JSON.stringify(response.response) : '')
     res.end()
     delete requests[url]
     return
@@ -51,7 +51,9 @@ export function addTestServerResponse<T>(response: Response<T>): void {
   requests[response.pathname] = {
     method: response.method,
     pathname: response.pathname,
-    response: JSON.parse(JSON.stringify(response.response)),
+    response: response.response
+      ? JSON.parse(JSON.stringify(response.response))
+      : undefined,
     status: response.status
   }
 }
