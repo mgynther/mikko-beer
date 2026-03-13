@@ -10,6 +10,11 @@ import type { SearchBreweryIf } from './core/brewery/types'
 import type { SearchIf } from './core/search/types'
 import { Theme } from './core/types'
 
+export interface ThemeProps {
+  theme: Theme
+  setTheme: (theme: Theme) => void
+}
+
 interface Props {
   isAdmin: boolean
   logout: () => void
@@ -17,8 +22,7 @@ interface Props {
   searchBeerIf: SearchBeerIf
   searchBreweryIf: SearchBreweryIf
   searchIf: SearchIf
-  setTheme: (theme: Theme) => void
-  theme: Theme
+  theme: ThemeProps
 }
 
 function Nav (props: Props): React.JSX.Element {
@@ -93,9 +97,9 @@ function Nav (props: Props): React.JSX.Element {
               <label>
                 <input
                   type='checkbox'
-                  checked={props.theme === Theme.DARK}
+                  checked={props.theme.theme === Theme.DARK}
                   onChange={(e) => {
-                    props.setTheme(
+                    props.theme.setTheme(
                       e.target.checked ? Theme.DARK : Theme.LIGHT)
                   }} />
                 Dark

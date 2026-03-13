@@ -4,6 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import LinkWrapper from './components/LinkWrapper'
 
 import Nav from './Nav'
+import type { ThemeProps } from './Nav'
 import type { SearchBeerIf } from './core/beer/types'
 import type { SearchIf } from './core/search/types'
 import type { SearchBreweryIf } from './core/brewery/types'
@@ -81,6 +82,11 @@ const beers = [
   anotherBeer
 ]
 
+const defaultThemeProps: ThemeProps = {
+  setTheme: dontCall,
+  theme: Theme.DARK
+}
+
 interface NavigationTest {
   linkText: string
   pathname: string
@@ -125,8 +131,7 @@ navigationTests.forEach(testCase => {
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
           searchIf={noSearch}
-          setTheme={dontCall}
-          theme={Theme.DARK}
+          theme={defaultThemeProps}
         />
       </LinkWrapper>
     )
@@ -167,8 +172,7 @@ navigationMoreTests.forEach(testCase => {
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
           searchIf={noSearch}
-          setTheme={dontCall}
-          theme={Theme.DARK}
+          theme={defaultThemeProps}
         />
       </LinkWrapper>
     )
@@ -191,8 +195,7 @@ navigationMoreTests.forEach(testCase => {
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
           searchIf={noSearch}
-          setTheme={dontCall}
-          theme={Theme.DARK}
+          theme={defaultThemeProps}
         />
       </LinkWrapper>
     )
@@ -211,8 +214,7 @@ test('do not find text fields without more open', async () => {
         searchBeerIf={dontSearchBeer}
         searchBreweryIf={dontSearchBrewery}
         searchIf={noSearch}
-        setTheme={dontCall}
-        theme={Theme.DARK}
+        theme={defaultThemeProps}
       />
     </LinkWrapper>
   )
@@ -249,8 +251,10 @@ themeTests.forEach(testCase => {
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
           searchIf={noSearch}
-          setTheme={setTheme}
-          theme={testCase.original}
+          theme={{
+            setTheme: setTheme,
+            theme: testCase.original
+          }}
         />
       </LinkWrapper>
     )
@@ -274,8 +278,7 @@ test('logs out', async () => {
         searchBeerIf={dontSearchBeer}
         searchBreweryIf={dontSearchBrewery}
         searchIf={noSearch}
-        setTheme={dontCall}
-        theme={Theme.DARK}
+        theme={defaultThemeProps}
       />
     </LinkWrapper>
   )
@@ -298,8 +301,7 @@ test('do not show admin features to viewer', async () => {
         searchBeerIf={dontSearchBeer}
         searchBreweryIf={dontSearchBrewery}
         searchIf={noSearch}
-        setTheme={dontCall}
-        theme={Theme.DARK}
+        theme={defaultThemeProps}
       />
     </LinkWrapper>
   )
@@ -333,8 +335,7 @@ test('searches beer', async () => {
         searchBeerIf={searchBeerIf}
         searchBreweryIf={dontSearchBrewery}
         searchIf={activeSearch}
-        setTheme={dontCall}
-        theme={Theme.DARK}
+        theme={defaultThemeProps}
       />
     </LinkWrapper>
   )
@@ -373,8 +374,7 @@ test('searches brewery', async () => {
         searchBeerIf={dontSearchBeer}
         searchBreweryIf={searchBreweryIf}
         searchIf={activeSearch}
-        setTheme={dontCall}
-        theme={Theme.DARK}
+        theme={defaultThemeProps}
       />
     </LinkWrapper>
   )

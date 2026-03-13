@@ -133,9 +133,11 @@ function App (props: Props): React.JSX.Element {
                     }
                   })
                 }}
-                theme={theme}
-                setTheme={(theme: Theme) => {
-                  dispatch(setTheme(theme))
+                theme={{
+                  theme,
+                  setTheme: (theme: Theme) => {
+                    dispatch(setTheme(theme))
+                  }
                 }}
               >
                 <Outlet/>

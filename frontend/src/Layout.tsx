@@ -6,6 +6,11 @@ import type { SearchIf } from "./core/search/types"
 import type { Theme } from "./core/types"
 import Nav from "./Nav"
 
+export interface ThemeProps {
+  theme: Theme
+  setTheme: (theme: Theme) => void
+}
+
 interface LayoutProps {
   navigateIf: NavigateIf
   searchBeerIf: SearchBeerIf
@@ -14,8 +19,7 @@ interface LayoutProps {
   isAdmin: boolean
   isLoggedIn: boolean
   logout: () => void
-  theme: Theme
-  setTheme: (theme: Theme) => void
+  theme: ThemeProps
   children: ReactNode
 }
 
@@ -32,7 +36,6 @@ function Layout (props: LayoutProps): React.JSX.Element {
               searchBeerIf={props.searchBeerIf}
               searchBreweryIf={props.searchBreweryIf}
               searchIf={props.searchIf}
-              setTheme={props.setTheme}
               theme={props.theme}
             />
           </header>
