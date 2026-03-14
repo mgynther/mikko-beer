@@ -51,12 +51,6 @@ function LocationInfiniteScroll (props: Props): React.JSX.Element {
   const hasMore = lastPageArray.length > 0 || loadedLocations === undefined
 
   useEffect(() => {
-    if (isFilterChangePending) {
-      setLoadedLocations(undefined)
-    }
-  }, [isFilterChangePending])
-
-  useEffect(() => {
     const loadMore = async (): Promise<void> => {
       const result = await query({
         breweryId: undefined,
