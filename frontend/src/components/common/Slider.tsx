@@ -28,6 +28,12 @@ function Slider (props: Props): React.JSX.Element {
       max={props.max}
       step={props.step}
       value={pendingValue}
+      onMouseDown={() => {
+        setIsTouching(true)
+      }}
+      onMouseUp={() => {
+        setIsTouching(false)
+      }}
       onTouchStart={() => {
         setIsTouching(true)
       }}
