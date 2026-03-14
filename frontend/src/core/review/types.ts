@@ -92,7 +92,7 @@ export interface JoinedReviewList {
 
 export interface GetReviewIf {
   useGet: () => {
-    get: (reviewId: string) => Promise<Review | undefined>
+    get: (reviewId: string) => Promise<Review>
   }
 }
 

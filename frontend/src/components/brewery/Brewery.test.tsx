@@ -172,17 +172,10 @@ test('updates brewery', async () => {
       }}
       reviewIf={{
         get: {
-          useGet: () => ({
-            get: async (): Promise<undefined> => undefined
-          })
+          useGet: dontCall
         },
         update: {
-          useUpdate: () => ({
-            update: async (): Promise<void> => {
-              throw new Error('Function not implemented.')
-            },
-            isLoading: false
-          }),
+          useUpdate: dontCall,
           searchLocationIf,
           selectBeerIf: dontSelectBeer,
           reviewContainerIf: noOpContainerIf
