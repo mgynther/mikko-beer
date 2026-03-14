@@ -23,10 +23,6 @@ function asObject(value: unknown): object {
   if (typeof value === 'object') {
     return value
   }
-  // Once all clients have persisted state once this can be removed.
-  if (typeof value === 'string') {
-    return JSON.parse(value)
-  }
   return {}
 }
 
