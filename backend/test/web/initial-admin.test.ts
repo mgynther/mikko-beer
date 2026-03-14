@@ -16,10 +16,10 @@ import {
   beforeTests
 } from '../data/test-helpers'
 import { App } from '../../src/web/app'
-import { Database } from '../../src/data/database'
+import type { Database } from '../../src/data/database'
 import type { User } from '../../src/core/user/user'
 
-import { Level } from '../../src/core/log'
+import type { Level } from '../../src/core/log'
 import type { log } from '../../src/core/log'
 
 interface LogEntry {
@@ -56,7 +56,7 @@ export class TestContext {
     const log: log = (level: Level, ...args: unknown[]) => {
       this.#logMessages.push({
         level,
-        message: args.map((a: unknown) => (a as any).toString()).join()
+        message: args.map((a: unknown) => `${a}`).join()
       })
     }
     this.#app = new App(config, log)

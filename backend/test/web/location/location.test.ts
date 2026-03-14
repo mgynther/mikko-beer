@@ -1,7 +1,7 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context'
-import { Location } from '../../../src/core/location/location'
+import type { Location } from '../../../src/core/location/location'
 import { assertDeepEqual, assertEqual } from '../../assert'
 
 describe('location tests', () => {
@@ -60,7 +60,8 @@ describe('location tests', () => {
     assertEqual(res.status, 201)
     assertEqual(res.data.location.name, 'Kuja')
 
-    const updateRes = await ctx.request.put(`/api/v1/location/${res.data.location.id}`,
+    const updateRes = await ctx.request.put(
+      `/api/v1/location/${res.data.location.id}`,
       { name: 'Kuja Beer Shop & Bar' },
       ctx.adminAuthHeaders()
     )

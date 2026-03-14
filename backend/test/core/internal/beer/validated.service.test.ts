@@ -1,6 +1,7 @@
 import { describe, it } from 'node:test'
 
-import * as beerService from '../../../../src/core/internal/beer/validated.service'
+import * as
+beerService from '../../../../src/core/internal/beer/validated.service'
 
 import type {
   Beer,
@@ -82,7 +83,12 @@ describe('beer validated service unit tests', () => {
 
   it('fail to update beer with undefined id', async () => {
     await expectReject(async () => {
-      await beerService.updateBeer(updateIf, undefined, validUpdateBeerRequest, log)
+      await beerService.updateBeer(
+        updateIf,
+        undefined,
+        validUpdateBeerRequest,
+        log
+      )
     }, invalidBeerIdError)
   })
 

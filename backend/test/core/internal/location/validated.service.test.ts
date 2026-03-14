@@ -1,6 +1,7 @@
 import { describe, it } from 'node:test'
 
-import * as locationService from '../../../../src/core/internal/location/validated.service'
+import * as
+locationService from '../../../../src/core/internal/location/validated.service'
 
 import type {
   Location,
@@ -38,7 +39,11 @@ const update: (location: Location) => Promise<Location> = async () => location
 
 describe('location validated service unit tests', () => {
   it('create location', async () => {
-    await locationService.createLocation(create, validCreateLocationRequest, log)
+    await locationService.createLocation(
+      create,
+      validCreateLocationRequest,
+      log
+    )
   })
 
   it('fail to create invalid location', async () => {

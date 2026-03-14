@@ -1,7 +1,7 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context'
-import { Container } from '../../../src/core/container/container'
+import type { Container } from '../../../src/core/container/container'
 import { assertEqual } from '../../assert'
 
 describe('container tests', () => {
@@ -62,7 +62,8 @@ describe('container tests', () => {
     assertEqual(createRes.data.container.type, 'Draught')
     assertEqual(createRes.data.container.size, '1.00')
 
-    const updateRes = await ctx.request.put(`/api/v1/container/${createRes.data.container.id}`,
+    const updateRes = await ctx.request.put(
+      `/api/v1/container/${createRes.data.container.id}`,
       { type: 'Draught', size: '0.10' },
       ctx.adminAuthHeaders()
     )

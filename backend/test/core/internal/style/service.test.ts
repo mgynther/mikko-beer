@@ -175,7 +175,9 @@ describe('style service unit tests', () => {
     }, cyclicRelationshipError)
   })
 
-  async function deleteStyleChildRelationships (styleId: string): Promise<void> {
+  async function deleteStyleChildRelationships (
+    styleId: string
+  ): Promise<void> {
     assertEqual(styleId, style.id)
   }
 

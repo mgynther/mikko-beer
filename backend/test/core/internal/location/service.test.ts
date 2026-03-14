@@ -8,7 +8,8 @@ import type {
 import { locationNotFoundError } from '../../../../src/core/errors'
 import type { Pagination } from '../../../../src/core/pagination'
 import type { SearchByName } from '../../../../src/core/search'
-import * as locationService from '../../../../src/core/internal/location/service'
+import * as
+locationService from '../../../../src/core/internal/location/service'
 
 import { dummyLog as log } from '../../dummy-log'
 import { expectReject } from '../../controller-error-helper'
@@ -68,7 +69,8 @@ describe('location service unit tests', () => {
       assertEqual(locationId, location.id)
       return location
     }
-    const result = await locationService.findLocationById(finder, location.id, log)
+    const result =
+      await locationService.findLocationById(finder, location.id, log)
     assertEqual(result, location)
   })
 

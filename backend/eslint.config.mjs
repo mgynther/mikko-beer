@@ -55,7 +55,14 @@ const commonRules = {
 const rules = {
   ...commonRules,
 
-  'max-len': ['error', { 'code': 80, 'ignoreRegExpLiterals': true }],
+  'max-len': [
+    'error',
+    {
+      'code': 80,
+      'ignoreRegExpLiterals': true,
+      'ignoreStrings': true
+    }
+  ],
   'no-await-in-loop': 'error',
   'require-atomic-updates': 'error',
   '@typescript-eslint/naming-convention': [
@@ -165,5 +172,22 @@ export default [
       '@typescript-eslint/no-unnecessary-condition': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off'
     }
-  }
+  },
+  {
+    languageOptions: {
+      ...languageOptions,
+      parserOptions: {
+        project: ["./tsconfig-test.json"],
+      }
+    },
+    files: ['test/*.test.ts', 'test/**/*.test.ts'],
+    plugins,
+    rules: {
+      ...rules,
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/strict-void-return': 'off'
+    }
+  },
 ]

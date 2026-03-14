@@ -6,7 +6,9 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "build:test": "rm -rf build-tests && tsc -p ./tsconfig-test.json",
-    "lint": "npx eslint --max-warnings=0 --fix src",
+    "lint": "npm run lint:src && npm run lint:test",
+    "lint:src": "npx eslint --max-warnings=0 --fix src",
+    "lint:test": "npx eslint --max-warnings=0 --fix test",
     "start": "npm run migrate:latest && node --env-file .env dist/index.js",
     "test:files": "npm run build:test && node --env-file .env-test --test --test-timeout 5000",
     "test:core": "npm run test:files -- --test-isolation=none --test-concurrency 1 build-tests/test/core/*.test.js build-tests/test/core/**/*.test.js build-tests/test/core/**/**/*.test.js",

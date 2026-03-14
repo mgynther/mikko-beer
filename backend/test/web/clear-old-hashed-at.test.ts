@@ -9,7 +9,7 @@ import {
   beforeTests
 } from '../data/test-helpers'
 import { App } from '../../src/web/app'
-import { Database } from '../../src/data/database'
+import type { Database } from '../../src/data/database'
 import { insertUser } from '../../src/data/user/user.repository'
 import {
   findPasswordSignInMethod,
@@ -71,7 +71,11 @@ export class TestContext {
         clearedHashedAtUserId = secondUserPassword.userId
       })
     }
-    await beforeTests(testConfig.database, testConfig.adminDatabase, initializeData)
+    await beforeTests(
+      testConfig.database,
+      testConfig.adminDatabase,
+      initializeData
+    )
     this.#remainingHashedAtUserId =
       validateUserId(remainingHashedAtUserId, 'remainingHashedAtUserId')
     this.#clearedHashedAtUserId =
@@ -98,7 +102,10 @@ export class TestContext {
   }
 
   remainingHashedAtUserId = (): string => {
-    return validateUserId(this.#remainingHashedAtUserId, 'remainingHashedAtUserId')
+    return validateUserId(
+      this.#remainingHashedAtUserId,
+      'remainingHashedAtUserId'
+    )
   }
 
   clearedHashedAtUserId = (): string => {
@@ -119,9 +126,11 @@ describe('clear old hashed at', () => {
     const remainingHashedAtUserId = ctx.remainingHashedAtUserId()
     const clearedHashedAtUserId = ctx.clearedHashedAtUserId()
     await ctx.db.executeReadWriteTransaction(async trx => {
-      const remainingHashedAtHash = await findPasswordSignInMethod(trx, remainingHashedAtUserId)
+      const remainingHashedAtHash =
+        await findPasswordSignInMethod(trx, remainingHashedAtUserId)
       assertDeepEqual(remainingHashedAtHash?.hashedAt, validDate)
-      const clearedHashedAtHash = await findPasswordSignInMethod(trx, clearedHashedAtUserId)
+      const clearedHashedAtHash =
+        await findPasswordSignInMethod(trx, clearedHashedAtUserId)
       assertDeepEqual(clearedHashedAtHash?.hashedAt, undefined)
     })
   })

@@ -1,7 +1,7 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context'
-import { Review } from '../../../src/core/review/review'
+import type { Review } from '../../../src/core/review/review'
 import type {
   StyleStatsOrder,
   StatsFilter

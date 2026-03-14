@@ -89,7 +89,10 @@ describe('beer service unit tests', () => {
         stylesLocked = true
         return lockStyles(styleIds)
       },
-      insertBeerBreweries: async (beerId: string, insertBreweries: string[]) => {
+      insertBeerBreweries: async (
+        beerId: string,
+        insertBreweries: string[]
+      ) => {
         assertEqual(breweriesInserted, false)
         breweriesInserted = true
         assertEqual(beerId, beer.id)
@@ -172,7 +175,10 @@ describe('beer service unit tests', () => {
         breweriesDeleted = true
         assertEqual(beerId, beer.id)
       },
-      insertBeerBreweries: async (beerId: string, insertBreweries: string[]) => {
+      insertBeerBreweries: async (
+        beerId: string,
+        insertBreweries: string[]
+      ) => {
         assertEqual(breweriesDeleted, true)
         assertEqual(breweriesInserted, false)
         breweriesInserted = true

@@ -1,7 +1,7 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context'
-import { User } from '../../../src/core/user/user'
+import type { User } from '../../../src/core/user/user'
 import {
   assertDeepEqual,
   assertEqual,
@@ -53,7 +53,11 @@ describe('user tests', () => {
     const noAuthRes = await ctx.request.post(`/api/v1/user`, params)
     assertEqual(noAuthRes.status, 400)
 
-    const invalidAuthRes = await ctx.request.post(`/api/v1/user`, params, ctx.createAuthHeaders('invalid token'))
+    const invalidAuthRes = await ctx.request.post(
+      `/api/v1/user`,
+      params,
+      ctx.createAuthHeaders('invalid token')
+    )
     assertEqual(invalidAuthRes.status, 401)
   })
 

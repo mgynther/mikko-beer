@@ -23,7 +23,9 @@ describe('style tests', () => {
     assertEqual(res.data.style.name, 'Wild')
     assertDeepEqual(res.data.style.parents, [])
 
-    const getRes = await ctx.request.get<{ style: StyleWithParentsAndChildren }>(
+    const getRes = await ctx.request.get<{
+      style: StyleWithParentsAndChildren
+    }>(
       `/api/v1/style/${res.data.style.id}`,
       ctx.adminAuthHeaders()
     )
@@ -55,7 +57,9 @@ describe('style tests', () => {
     assertEqual(childRes.data.style.name, 'India Pale Ale')
     assertDeepEqual(childRes.data.style.parents, [ res.data.style.id ])
 
-    const getRes = await ctx.request.get<{ style: StyleWithParentsAndChildren }>(
+    const getRes = await ctx.request.get<{
+      style: StyleWithParentsAndChildren
+    }>(
       `/api/v1/style/${childRes.data.style.id}`,
       ctx.adminAuthHeaders()
     )
@@ -69,7 +73,9 @@ describe('style tests', () => {
       name: res.data.style.name,
     }])
 
-    const getParentRes = await ctx.request.get<{ style: StyleWithParentsAndChildren }>(
+    const getParentRes = await ctx.request.get<{
+      style: StyleWithParentsAndChildren
+    }>(
       `/api/v1/style/${res.data.style.id}`,
       ctx.adminAuthHeaders()
     )
@@ -95,16 +101,23 @@ describe('style tests', () => {
     )
     assertEqual(parent2Res.status, 201)
 
-    const childRes = await ctx.request.post(`/api/v1/style`,
-      { name: 'Cream Ale', parents: [ parent1Res.data.style.id, parent2Res.data.style.id ] },
+    const childRes = await ctx.request.post(`/api/v1/style`, {
+      name: 'Cream Ale',
+      parents: [ parent1Res.data.style.id, parent2Res.data.style.id ]
+    },
       ctx.adminAuthHeaders()
     )
 
     assertEqual(childRes.status, 201)
     assertEqual(childRes.data.style.name, 'Cream Ale')
-    assertDeepEqual(childRes.data.style.parents, [ parent1Res.data.style.id, parent2Res.data.style.id ])
+    assertDeepEqual(
+      childRes.data.style.parents,
+      [ parent1Res.data.style.id, parent2Res.data.style.id ]
+    )
 
-    const getRes = await ctx.request.get<{ style: StyleWithParentsAndChildren }>(
+    const getRes = await ctx.request.get<{
+      style: StyleWithParentsAndChildren
+    }>(
       `/api/v1/style/${childRes.data.style.id}`,
       ctx.adminAuthHeaders()
     )
@@ -173,12 +186,15 @@ describe('style tests', () => {
     assertEqual(createRes.data.style.name, 'India Pale Ale')
     assertDeepEqual(createRes.data.style.parents, [ aleRes.data.style.id ])
 
-    const updateRes = await ctx.request.put(`/api/v1/style/${createRes.data.style.id}`,
+    const updateRes = await ctx.request.put(
+      `/api/v1/style/${createRes.data.style.id}`,
       { name: 'India Pale Lager', parents: [ lagerRes.data.style.id ] },
       ctx.adminAuthHeaders()
     )
 
-    const getRes = await ctx.request.get<{ style: StyleWithParentsAndChildren }>(
+    const getRes = await ctx.request.get<{
+      style: StyleWithParentsAndChildren
+    }>(
       `/api/v1/style/${createRes.data.style.id}`,
       ctx.adminAuthHeaders()
     )
@@ -236,7 +252,8 @@ describe('style tests', () => {
     )
     assertEqual(neipaRes.status, 201)
 
-    const updateRes = await ctx.request.put(`/api/v1/style/${aleRes.data.style.id}`,
+    const updateRes = await ctx.request.put(
+      `/api/v1/style/${aleRes.data.style.id}`,
       { name: 'Pale Ale', parents: [ neipaRes.data.style.id ] },
       ctx.adminAuthHeaders()
     )

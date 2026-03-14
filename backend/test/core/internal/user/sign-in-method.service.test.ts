@@ -24,7 +24,7 @@ import type {
   NewUserPasswordHash,
   UserPasswordHash,
 } from '../../../../src/core/user/sign-in-method'
-import { User } from '../../../../src/core/user/user'
+import type { User } from '../../../../src/core/user/user'
 import {
   invalidCredentialsError,
   passwordTooLongError,
@@ -33,7 +33,7 @@ import {
 } from '../../../../src/core/errors'
 import { expectReject } from '../../controller-error-helper'
 import { dummyLog as log } from '../../dummy-log'
-import { AuthTokenConfig } from '../../../../src/core/auth/auth-token'
+import type { AuthTokenConfig } from '../../../../src/core/auth/auth-token'
 
 function assertCurrentDateTime(date: Date) {
   if (date === undefined) {

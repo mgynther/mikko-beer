@@ -3,7 +3,7 @@ import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 import { TestContext } from '../test-context'
 import type { NewUser, User } from '../../../src/core/user/user'
 import * as userRepository from '../../../src/data/user/user.repository'
-import { Transaction } from '../../../src/data/database'
+import type { Transaction } from '../../../src/data/database'
 import { assertDeepEqual, assertEqual } from '../../assert'
 
 describe('user tests', () => {

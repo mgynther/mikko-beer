@@ -30,8 +30,11 @@ describe('beer tests', () => {
     )
     assertEqual(breweryRes.status, 201)
 
-    const beerRes = await ctx.request.post(`/api/v1/beer`,
-      { name: 'Lindemans Kriek', breweries: [breweryRes.data.brewery.id], styles: [styleRes.data.style.id] },
+    const beerRes = await ctx.request.post(`/api/v1/beer`, {
+      name: 'Lindemans Kriek',
+      breweries: [breweryRes.data.brewery.id],
+      styles: [styleRes.data.style.id]
+    },
       ctx.adminAuthHeaders()
     )
 
@@ -55,7 +58,10 @@ describe('beer tests', () => {
     assertEqual(getRes.data.beer.id, beerRes.data.beer.id)
     assertEqual(getRes.data.beer.name, beerRes.data.beer.name)
     assertDeepEqual(getRes.data.beer.breweries, [breweryRes.data.brewery])
-    assertDeepEqual(getRes.data.beer.styles, [withoutParents(styleRes.data.style)])
+    assertDeepEqual(
+      getRes.data.beer.styles,
+      [withoutParents(styleRes.data.style)]
+    )
   })
 
   it('fail to find beer that does not exist', async () => {
@@ -138,15 +144,24 @@ describe('beer tests', () => {
     )
     assertEqual(brewery2Res.status, 201)
 
-    const beerRes = await ctx.request.post(`/api/v1/beer`,
-      { name: 'Imaginary Wild IPA', breweries: [brewery1Res.data.brewery.id, brewery2Res.data.brewery.id], styles: [style1Res.data.style.id, style2Res.data.style.id] },
+    const beerRes = await ctx.request.post(`/api/v1/beer`, {
+      name: 'Imaginary Wild IPA',
+      breweries: [brewery1Res.data.brewery.id, brewery2Res.data.brewery.id],
+      styles: [style1Res.data.style.id, style2Res.data.style.id]
+    },
       ctx.adminAuthHeaders()
     )
 
     assertEqual(beerRes.status, 201)
     assertEqual(beerRes.data.beer.name, 'Imaginary Wild IPA')
-    assertDeepEqual(beerRes.data.beer.styles, [style1Res.data.style.id, style2Res.data.style.id])
-    assertDeepEqual(beerRes.data.beer.breweries, [brewery1Res.data.brewery.id, brewery2Res.data.brewery.id])
+    assertDeepEqual(
+      beerRes.data.beer.styles,
+      [style1Res.data.style.id, style2Res.data.style.id]
+    )
+    assertDeepEqual(
+      beerRes.data.beer.breweries,
+      [brewery1Res.data.brewery.id, brewery2Res.data.brewery.id]
+    )
 
     const getRes = await ctx.request.get<{ beer: BeerWithBreweriesAndStyles }>(
       `/api/v1/beer/${beerRes.data.beer.id}`,
@@ -156,8 +171,17 @@ describe('beer tests', () => {
     assertEqual(getRes.status, 200)
     assertEqual(getRes.data.beer.id, beerRes.data.beer.id)
     assertEqual(getRes.data.beer.name, beerRes.data.beer.name)
-    assertDeepEqual(getRes.data.beer.breweries, [brewery1Res.data.brewery, brewery2Res.data.brewery])
-    assertDeepEqual(getRes.data.beer.styles, [withoutParents(style1Res.data.style), withoutParents(style2Res.data.style)])
+    assertDeepEqual(
+      getRes.data.beer.breweries,
+      [brewery1Res.data.brewery, brewery2Res.data.brewery]
+    )
+    assertDeepEqual(
+      getRes.data.beer.styles,
+      [
+        withoutParents(style1Res.data.style),
+        withoutParents(style2Res.data.style)
+      ]
+    )
   })
 
   it('list beers', async () => {
@@ -184,8 +208,11 @@ describe('beer tests', () => {
     )
     assertEqual(breweryRes.status, 201)
 
-    const beerRes = await ctx.request.post(`/api/v1/beer`,
-      { name: 'Random IPA', breweries: [breweryRes.data.brewery.id], styles: ['35454d45-9deb-46f2-935a-be7a7c9c9b99']},
+    const beerRes = await ctx.request.post(`/api/v1/beer`, {
+      name: 'Random IPA',
+      breweries: [breweryRes.data.brewery.id],
+      styles: ['35454d45-9deb-46f2-935a-be7a7c9c9b99']
+    },
       ctx.adminAuthHeaders()
     )
 
@@ -199,8 +226,11 @@ describe('beer tests', () => {
     )
     assertEqual(styleRes.status, 201)
 
-    const beerRes = await ctx.request.post(`/api/v1/beer`,
-      { name: 'Random IPA', breweries: ['4f0acbb2-4c91-4a31-a665-6b3d345bc83d'], styles: [styleRes.data.style.id]},
+    const beerRes = await ctx.request.post(`/api/v1/beer`, {
+      name: 'Random IPA',
+      breweries: ['4f0acbb2-4c91-4a31-a665-6b3d345bc83d'],
+      styles: [styleRes.data.style.id]
+    },
       ctx.adminAuthHeaders()
     )
 
@@ -220,8 +250,10 @@ describe('beer tests', () => {
     )
     assertEqual(breweryRes.status, 201)
 
-    const beerRes = await ctx.request.post(`/api/v1/beer`,
-      { breweries: [breweryRes.data.brewery.id], styles: [styleRes.data.style.id] },
+    const beerRes = await ctx.request.post(`/api/v1/beer`, {
+      breweries: [breweryRes.data.brewery.id],
+      styles: [styleRes.data.style.id]
+    },
       ctx.adminAuthHeaders()
     )
     assertEqual(beerRes.status, 400)
@@ -250,14 +282,22 @@ describe('beer tests', () => {
     )
     assertEqual(brewery2Res.status, 201)
 
-    const createRes = await ctx.request.post(`/api/v1/beer`,
-      { name: 'Lindemasn Kriek', breweries: [brewery1Res.data.brewery.id], styles: [style1Res.data.style.id] },
+    const createRes = await ctx.request.post(`/api/v1/beer`, {
+      name: 'Lindemasn Kriek',
+      breweries: [brewery1Res.data.brewery.id],
+      styles: [style1Res.data.style.id]
+    },
       ctx.adminAuthHeaders()
     )
     assertEqual(createRes.status, 201)
 
-    const updateRes = await ctx.request.put(`/api/v1/beer/${createRes.data.beer.id}`,
-      { name: 'Torpedo', breweries: [brewery2Res.data.brewery.id], styles: [style2Res.data.style.id] },
+    const updateRes = await ctx.request.put(
+      `/api/v1/beer/${createRes.data.beer.id}`,
+      {
+        name: 'Torpedo',
+        breweries: [brewery2Res.data.brewery.id],
+        styles: [style2Res.data.style.id]
+      },
       ctx.adminAuthHeaders()
     )
     assertEqual(updateRes.status, 200)
@@ -271,7 +311,10 @@ describe('beer tests', () => {
     assertEqual(getRes.data.beer.id, updateRes.data.beer.id)
     assertEqual(getRes.data.beer.name, updateRes.data.beer.name)
     assertDeepEqual(getRes.data.beer.breweries, [brewery2Res.data.brewery])
-    assertDeepEqual(getRes.data.beer.styles, [withoutParents(style2Res.data.style)])
+    assertDeepEqual(
+      getRes.data.beer.styles,
+      [withoutParents(style2Res.data.style)]
+    )
   })
 
   it('get empty beer list', async () => {

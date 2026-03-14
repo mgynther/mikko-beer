@@ -338,7 +338,10 @@ describe('review service unit tests', () => {
 
   it('list reviews by brewery', async () => {
     const breweryId = 'f7471dfd-9af9-4a9b-b39d-47f4e7199800'
-    const lister = async (listBreweryId: string, listOrder: ReviewListOrder) => {
+    const lister = async (
+      listBreweryId: string,
+      listOrder: ReviewListOrder
+    ) => {
       assertEqual(listBreweryId, breweryId)
       assertDeepEqual(listOrder, order)
       return [joinedReview]
@@ -354,7 +357,10 @@ describe('review service unit tests', () => {
 
   it('list reviews by location', async () => {
     const locationId = '714b123e-c6c1-4e1a-b6f8-0ce4e076520e'
-    const lister = async (listLocationId: string, listOrder: ReviewListOrder) => {
+    const lister = async (
+      listLocationId: string,
+      listOrder: ReviewListOrder
+    ) => {
       assertEqual(listLocationId, locationId)
       assertDeepEqual(listOrder, order)
       return [joinedReview]

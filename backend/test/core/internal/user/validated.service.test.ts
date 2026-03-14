@@ -10,7 +10,7 @@ import {
   invalidUserError,
   invalidUserIdError
 } from '../../../../src/core/errors'
-import { SignedInUser } from '../../../../src/core/internal/user/signed-in-user'
+import type { SignedInUser } from '../../../../src/core/internal/user/signed-in-user'
 
 const validCreateUserRequest: CreateUserType = {
   user: {

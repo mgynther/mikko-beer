@@ -62,7 +62,14 @@ describe('stats brewery style filter unit tests', () => {
   ]
 
   multipleIdFilterCases.forEach(test => {
-    it(`validate multiple id filter cases brewery: ${test.brewery} location: ${test.location} style: ${test.style}`, () => {
+    it(
+      `validate multiple id filter cases brewery: ${
+        test.brewery
+      } location: ${
+        test.location
+      } style: ${
+        test.style
+      }`, () => {
       expectThrow(
         () =>
           validateStatsIdFilter(

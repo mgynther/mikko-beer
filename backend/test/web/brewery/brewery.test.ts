@@ -1,7 +1,7 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context'
-import { Brewery } from '../../../src/core/brewery/brewery'
+import type { Brewery } from '../../../src/core/brewery/brewery'
 import { assertDeepEqual, assertEqual } from '../../assert'
 
 describe('brewery tests', () => {
@@ -60,7 +60,8 @@ describe('brewery tests', () => {
     assertEqual(res.status, 201)
     assertEqual(res.data.brewery.name, 'Salami Brewing')
 
-    const updateRes = await ctx.request.put(`/api/v1/brewery/${res.data.brewery.id}`,
+    const updateRes = await ctx.request.put(
+      `/api/v1/brewery/${res.data.brewery.id}`,
       { name: 'Salama Brewing' },
       ctx.adminAuthHeaders()
     )

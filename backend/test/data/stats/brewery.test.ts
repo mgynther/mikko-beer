@@ -2,15 +2,17 @@ import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context'
 import type { Pagination } from '../../../src/core/pagination'
-import type { Review } from '../../../src/core/review/review'
+import type { NewReview, Review } from '../../../src/core/review/review'
 import type {
   BreweryStatsOrder,
   StatsFilter
 } from '../../../src/core/stats/stats'
 import type { Database, Transaction } from '../../../src/data/database'
 import * as beerRepository from '../../../src/data/beer/beer.repository'
-import * as breweryRepository from '../../../src/data/brewery/brewery.repository'
-import * as containerRepository from '../../../src/data/container/container.repository'
+import * as
+breweryRepository from '../../../src/data/brewery/brewery.repository'
+import * as
+containerRepository from '../../../src/data/container/container.repository'
 import * as reviewRepository from '../../../src/data/review/review.repository'
 import * as statsRepository from '../../../src/data/stats/stats.repository'
 import * as styleRepository from '../../../src/data/style/style.repository'
@@ -293,7 +295,12 @@ describe('brewery stats tests', () => {
         brewery: otherBrewery.id
       }
       await beerRepository.insertBeerBreweries(
-        trx, [beerBreweryRequest, otherBeerBreweryRequest, otherBeerOtherBreweryRequest]
+        trx,
+        [
+          beerBreweryRequest,
+          otherBeerBreweryRequest,
+          otherBeerOtherBreweryRequest
+        ]
       )
       const beerStyleRequest = {
         beer: beer.id,
@@ -312,8 +319,9 @@ describe('brewery stats tests', () => {
       }
       const container =
         await containerRepository.insertContainer(trx, containerRequest)
-      for (let i = 0; i < 9; i++) {
-        const reviewRequest = {
+      const indices: Array<number> = Array.from(Array(9).keys())
+      const newReviews: NewReview[] = indices.map( i => {
+        const reviewRequest: NewReview = {
           additionalInfo: '',
           beer: (i % 2 === 0) ? otherBeer.id : beer.id,
           container: container.id,
@@ -329,8 +337,13 @@ describe('brewery stats tests', () => {
           smell: "vanilla",
           taste: "chocolate"
         }
-        reviews.push(await reviewRepository.insertReview(trx, reviewRequest))
-      }
+        return reviewRequest
+      })
+      const requests = newReviews.map(
+        reviewRequest => reviewRepository.insertReview(trx, reviewRequest)
+      )
+      const createdReviews = await Promise.all(requests)
+      createdReviews.forEach(review => reviews.push(review))
       return { brewery, otherBeer, otherBrewery }
     })
 
