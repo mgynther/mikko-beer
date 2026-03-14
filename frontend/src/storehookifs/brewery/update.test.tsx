@@ -1,4 +1,4 @@
-import { test } from 'vitest'
+import { expect, test, vitest } from 'vitest'
 import { store } from '../../store/store'
 import { addTestServerResponse } from '../../../test-util/server'
 import updateBrewery from './update'
@@ -11,7 +11,7 @@ import Button from '../../components/common/Button'
 
 interface HelperProps {
   brewery: Brewery
-  handleResponse: (brewery: Brewery) => void
+  handler: () => void
 }
 
 function Helper(props: HelperProps): React.JSX.Element {
@@ -20,6 +20,7 @@ function Helper(props: HelperProps): React.JSX.Element {
   const handleClick = (): void => {
     async function doHandle(): Promise<void> {
       await update.update(props.brewery)
+      props.handler()
     }
     void doHandle()
   }
@@ -49,19 +50,19 @@ test('update brewery', async () => {
     status: 200
   })
 
+  const handler = vitest.fn()
   const { getByRole, getByText } = render(
     <Provider store={store}>
-      <Helper brewery={expectedResponse.brewery} handleResponse={
-        () => undefined
-      } />
+      <Helper
+        brewery={expectedResponse.brewery}
+        handler={handler}
+      />
     </Provider>
   )
   const testButton = getByRole('button', { name: 'Test' })
   await user.click(testButton)
   await waitFor(() => {
-    getByText('Loading')
+    expect(handler).toHaveBeenCalled()
   })
-  await waitFor(() => {
-    getByText('Not loading')
-  })
+  expect(getByText('Not loading')).toBeDefined()
 })
