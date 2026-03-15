@@ -3,12 +3,12 @@ import type { NavigateIf } from "./components/util"
 import type { SearchBeerIf } from "./core/beer/types"
 import type { SearchBreweryIf } from "./core/brewery/types"
 import type { SearchIf } from "./core/search/types"
-import type { NavState, Theme } from "./core/types"
+import type { NavMenuState, Theme } from "./core/types"
 import Nav from "./Nav"
 
-export interface NavStateProps {
-  navState: NavState
-  setNavState: (navState: NavState) => void
+export interface NavMenuProps {
+  navMenuState: NavMenuState
+  setNavMenuState: (navState: NavMenuState) => void
 }
 
 export interface ThemeProps {
@@ -24,7 +24,7 @@ interface LayoutProps {
   isAdmin: boolean
   isLoggedIn: boolean
   logout: () => void
-  navState: NavStateProps
+  navMenuState: NavMenuProps
   theme: ThemeProps
   children: ReactNode
 }
@@ -38,7 +38,7 @@ function Layout (props: LayoutProps): React.JSX.Element {
             <Nav
               isAdmin={props.isAdmin}
               logout={props.logout}
-              navState={props.navState}
+              navMenuState={props.navMenuState}
               navigateIf={props.navigateIf}
               searchBeerIf={props.searchBeerIf}
               searchBreweryIf={props.searchBreweryIf}

@@ -6,7 +6,7 @@ import LinkWrapper from './components/LinkWrapper'
 
 import { Provider } from './react-redux-wrapper'
 import App from './App'
-import { setNavState } from './store/nav-state/reducer'
+import { setState } from './store/nav-menu/reducer'
 import { store } from './store/store'
 import type { StoreIf } from './store/storeIf'
 import { Role } from './core/user/types'
@@ -24,7 +24,7 @@ import type { ReviewContainerIf } from './core/review/types'
 import type { YearMonth } from './core/stats/types'
 
 beforeEach(() => {
-  store.dispatch(setNavState('COLLAPSED'))
+  store.dispatch(setState('COLLAPSED'))
 })
 
 const dontCall = (): any => {

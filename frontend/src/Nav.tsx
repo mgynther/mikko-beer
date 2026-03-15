@@ -8,11 +8,11 @@ import type { NavigateIf } from './components/util'
 import type { SearchBeerIf } from './core/beer/types'
 import type { SearchBreweryIf } from './core/brewery/types'
 import type { SearchIf } from './core/search/types'
-import type { NavState, Theme } from './core/types'
+import type { NavMenuState, Theme } from './core/types'
 
-export interface NavStateProps {
-  navState: NavState
-  setNavState: (navState: NavState) => void
+export interface NavMenuStateProps {
+  navMenuState: NavMenuState
+  setNavMenuState: (navState: NavMenuState) => void
 }
 
 export interface ThemeProps {
@@ -23,7 +23,7 @@ export interface ThemeProps {
 interface Props {
   isAdmin: boolean
   logout: () => void
-  navState: NavStateProps
+  navMenuState: NavMenuStateProps
   navigateIf: NavigateIf
   searchBeerIf: SearchBeerIf
   searchBreweryIf: SearchBreweryIf
@@ -33,7 +33,7 @@ interface Props {
 
 function Nav (props: Props): React.JSX.Element {
   const isMoreOpen =
-    props.navState.navState === 'EXPANDED'
+    props.navMenuState.navMenuState === 'EXPANDED'
   return (
     <nav>
       <ul>
@@ -59,7 +59,7 @@ function Nav (props: Props): React.JSX.Element {
         </li>
         <li>
           <Button onClick={() => {
-            props.navState.setNavState(
+            props.navMenuState.setNavMenuState(
               isMoreOpen ? 'COLLAPSED' : 'EXPANDED'
             )
           }} text={isMoreOpen ? 'Less' : 'More'} />

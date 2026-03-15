@@ -4,12 +4,12 @@ import { expect, test, vitest } from 'vitest'
 import LinkWrapper from './components/LinkWrapper'
 
 import Nav from './Nav'
-import type { NavStateProps, ThemeProps } from './Nav'
+import type { NavMenuStateProps, ThemeProps } from './Nav'
 import type { SearchBeerIf } from './core/beer/types'
 import type { SearchIf } from './core/search/types'
 import type { SearchBreweryIf } from './core/brewery/types'
 import type { NavigateIf } from './components/util'
-import type { NavState, Theme, UseDebounce } from './core/types'
+import type { NavMenuState, Theme, UseDebounce } from './core/types'
 
 const useDebounce: UseDebounce<string> = str => [str, false]
 
@@ -82,14 +82,14 @@ const beers = [
   anotherBeer
 ]
 
-const defaultNavStateProps: NavStateProps = {
-  setNavState: dontCall,
-  navState: 'COLLAPSED'
+const defaultNavStateProps: NavMenuStateProps = {
+  setNavMenuState: dontCall,
+  navMenuState: 'COLLAPSED'
 }
 
-const expandedNavStateProps: NavStateProps = {
-  setNavState: dontCall,
-  navState: 'EXPANDED'
+const expandedNavStateProps: NavMenuStateProps = {
+  setNavMenuState: dontCall,
+  navMenuState: 'EXPANDED'
 }
 
 const defaultThemeProps: ThemeProps = {
@@ -137,7 +137,7 @@ navigationTests.forEach(testCase => {
         <Nav
           isAdmin={true}
           logout={dontCall}
-          navState={defaultNavStateProps}
+          navMenuState={defaultNavStateProps}
           navigateIf={dontNavigate}
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
@@ -179,7 +179,7 @@ navigationMoreTests.forEach(testCase => {
         <Nav
           isAdmin={true}
           logout={dontCall}
-          navState={expandedNavStateProps}
+          navMenuState={expandedNavStateProps}
           navigateIf={dontNavigate}
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
@@ -201,7 +201,7 @@ navigationMoreTests.forEach(testCase => {
         <Nav
           isAdmin={true}
           logout={dontCall}
-          navState={defaultNavStateProps}
+          navMenuState={defaultNavStateProps}
           navigateIf={dontNavigate}
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
@@ -221,7 +221,7 @@ test('do not find text fields without more open', async () => {
       <Nav
         isAdmin={true}
         logout={dontCall}
-        navState={defaultNavStateProps}
+        navMenuState={defaultNavStateProps}
         navigateIf={dontNavigate}
         searchBeerIf={dontSearchBeer}
         searchBreweryIf={dontSearchBrewery}
@@ -259,7 +259,7 @@ themeTests.forEach(testCase => {
         <Nav
           isAdmin={true}
           logout={dontCall}
-          navState={expandedNavStateProps}
+          navMenuState={expandedNavStateProps}
           navigateIf={dontNavigate}
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
@@ -285,7 +285,7 @@ test('logs out', async () => {
       <Nav
         isAdmin={true}
         logout={logout}
-        navState={expandedNavStateProps}
+        navMenuState={expandedNavStateProps}
         navigateIf={dontNavigate}
         searchBeerIf={dontSearchBeer}
         searchBreweryIf={dontSearchBrewery}
@@ -306,7 +306,7 @@ test('do not show admin features to viewer', async () => {
       <Nav
         isAdmin={false}
         logout={logout}
-        navState={expandedNavStateProps}
+        navMenuState={expandedNavStateProps}
         navigateIf={dontNavigate}
         searchBeerIf={dontSearchBeer}
         searchBreweryIf={dontSearchBrewery}
@@ -337,7 +337,7 @@ test('searches beer', async () => {
       <Nav
         isAdmin={false}
         logout={dontCall}
-        navState={expandedNavStateProps}
+        navMenuState={expandedNavStateProps}
         navigateIf={{
           useNavigate: () => navigate
         }}
@@ -375,7 +375,7 @@ test('searches brewery', async () => {
       <Nav
         isAdmin={false}
         logout={dontCall}
-        navState={expandedNavStateProps}
+        navMenuState={expandedNavStateProps}
         navigateIf={{
           useNavigate: () => navigate
         }}
@@ -400,8 +400,8 @@ test('searches brewery', async () => {
 })
 
 interface NavStateTest {
-  original: NavState,
-  new: NavState,
+  original: NavMenuState,
+  new: NavMenuState,
   buttonText: string
 }
 
@@ -428,9 +428,9 @@ navStateTests.forEach(testCase => {
           <Nav
             isAdmin={true}
             logout={dontCall}
-            navState={{
-              setNavState: setNavState,
-              navState: testCase.original
+            navMenuState={{
+              setNavMenuState: setNavState,
+              navMenuState: testCase.original
             }}
             navigateIf={dontNavigate}
             searchBeerIf={dontSearchBeer}

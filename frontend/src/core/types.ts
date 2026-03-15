@@ -3,7 +3,7 @@ export interface Pagination {
   skip: number
 }
 
-export type NavState = 'COLLAPSED' | 'EXPANDED'
+export type NavMenuState = 'COLLAPSED' | 'EXPANDED'
 
 export type Theme = 'LIGHT' | 'DARK'
 

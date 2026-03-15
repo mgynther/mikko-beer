@@ -5,9 +5,9 @@ import loginReducer, {
   initialState as initialLoginState
 } from './login/reducer'
 import searchReducer from './search/reducer'
-import navStateReducer, {
-  initialState as initialNavStateState
-} from './nav-state/reducer'
+import navMenuReducer, {
+  initialState as initialNavMenuState
+} from './nav-menu/reducer'
 import themeReducer, {
   initialState as initialThemeState
 } from './theme/reducer'
@@ -31,9 +31,9 @@ const persisted = {
     ...initialLoginState,
     ...asObject(fullStore.login)
   },
-  navState: {
-    ...initialNavStateState,
-    ...asObject(fullStore.navState)
+  navMenu: {
+    ...initialNavMenuState,
+    ...asObject(fullStore.navMenu)
   },
   theme: {
     ...initialThemeState,
@@ -43,7 +43,7 @@ const persisted = {
 
 export const rootReducers = combineReducers({
   login: loginReducer,
-  navState: navStateReducer,
+  navMenu: navMenuReducer,
   search: searchReducer,
   theme: themeReducer,
   [emptySplitApi.reducerPath]: emptySplitApi.reducer
@@ -60,7 +60,7 @@ store.subscribe(() => {
   localStorage.setItem(localStoreKey, JSON.stringify(
     {
       login: fullState.login,
-      navState: fullState.navState,
+      navMenu: fullState.navMenu,
       theme: fullState.theme
     }
   ))
