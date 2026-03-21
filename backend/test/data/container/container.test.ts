@@ -3,7 +3,7 @@ import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 import { TestContext } from '../test-context'
 import type { Transaction } from '../../../src/data/database'
 import * as containerRepository from '../../../src/data/container/container.repository'
-import { assertEqual } from '../../assert'
+import { assertDeepEqual, assertEqual } from '../../assert'
 
 describe('container tests', () => {
   const ctx = new TestContext()
@@ -13,6 +13,50 @@ describe('container tests', () => {
 
   after(ctx.after)
   afterEach(ctx.afterEach)
+
+  it('find container by id', async () => {
+    const container = await ctx.db.executeReadWriteTransaction(async (
+      trx: Transaction
+    ) => {
+      return await containerRepository.insertContainer(
+        trx,
+        { size: '0.33', type: 'can' }
+      )
+    })
+    const readContainer = await containerRepository.findContainerById(
+      ctx.db,
+      container.id
+    )
+    assertDeepEqual(readContainer, container)
+  })
+
+  it('update container', async () => {
+    const container = await ctx.db.executeReadWriteTransaction(async (
+      trx: Transaction
+    ) => {
+      return await containerRepository.insertContainer(
+        trx,
+        { size: '0.43', type: 'can' }
+      )
+    })
+    const updated = await ctx.db.executeReadWriteTransaction(async (
+      trx: Transaction
+    ) => {
+      return await containerRepository.updateContainer(
+        trx,
+        {
+          ...container,
+          size: '0.44',
+          type: 'can'
+        }
+      )
+    })
+    assertDeepEqual(updated, {
+      ...container,
+      size: '0.44',
+      type: 'can'
+    })
+  })
 
   it('lock container that exists', async () => {
     const container = await ctx.db.executeReadWriteTransaction(async (
@@ -45,4 +89,18 @@ describe('container tests', () => {
       assertEqual(lockedKey, undefined)
     })
   })
+
+  it('list containers', async () => {
+    const container = await ctx.db.executeReadWriteTransaction(async (
+      trx: Transaction
+    ) => {
+      return await containerRepository.insertContainer(
+        trx,
+        { size: '0.43', type: 'can' }
+      )
+    })
+    const containers = await containerRepository.listContainers(ctx.db)
+    assertDeepEqual(containers, [container])
+  })
+
 })
