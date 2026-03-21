@@ -74,11 +74,17 @@ function idFilter (
   return locationWhereFilter
 }
 
+interface AnnualQueryResult {
+  review_average: number
+  review_count: number
+  year: number
+}
+
 export async function getAnnual (
   db: Database,
   statsFilter: StatsIdFilter
 ): Promise<AnnualStats> {
-  const annualQuery = sql`SELECT
+  const annualQuery = sql<AnnualQueryResult>`SELECT
     COUNT(1) as review_count,
     AVG(rating) as review_average,
     DATE_PART('YEAR', time) as year FROM review
@@ -87,17 +93,7 @@ export async function getAnnual (
     ORDER BY year DESC
   `
 
-  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
-   * Tightly coupled with the string query.
-   */
-  const annual = (await annualQuery
-    .execute(db.getDb()) as {
-    rows: Array<{
-      review_average: number
-      review_count: number
-      year: number
-    }>
-  })
+  const annual = await annualQuery.execute(db.getDb())
 
   return annual.rows.map(row => ({
     reviewAverage: round(row.review_average, 2),
@@ -106,12 +102,21 @@ export async function getAnnual (
   }))
 }
 
+interface AnnualContainerQueryResult {
+  container_id: string
+  container_type: string
+  container_size: string
+  review_average: number
+  review_count: number
+  year: number
+}
+
 export async function getAnnualContainer (
   db: Database,
   pagination: Pagination,
   statsFilter: StatsIdFilter
 ) : Promise<AnnualContainerStats> {
-  const annualContainerQuery = sql`SELECT
+  const annualContainerQuery = sql<AnnualContainerQueryResult>`SELECT
     COUNT(1) AS review_count,
     AVG(review.rating) as review_average,
     DATE_PART('YEAR', review.time) AS year,
@@ -129,20 +134,7 @@ export async function getAnnualContainer (
     LIMIT ${pagination.size}
   `
 
-  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
-   * Tightly coupled with the string query.
-   */
-  const annualContainer = (await annualContainerQuery
-    .execute(db.getDb()) as {
-    rows: Array<{
-      container_id: string
-      container_type: string
-      container_size: string
-      review_average: number
-      review_count: number
-      year: number
-    }>
-  })
+  const annualContainer = await annualContainerQuery.execute(db.getDb())
 
   return annualContainer.rows.map(row => ({
     containerId: row.container_id,
@@ -154,11 +146,19 @@ export async function getAnnualContainer (
   }))
 }
 
+interface ContainerQueryResult {
+  review_average: number
+  review_count: number
+  container_id: string
+  container_size: string
+  container_type: string
+}
+
 export async function getContainer (
   db: Database,
   statsFilter: StatsIdFilter
 ): Promise<ContainerStats> {
-  const containerQuery = sql`SELECT
+  const containerQuery = sql<ContainerQueryResult>`SELECT
     COUNT(1) as review_count,
     AVG(review.rating) as review_average,
     review.container as container_id,
@@ -171,19 +171,7 @@ export async function getContainer (
     container_size ASC
   `
 
-  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
-   * Tightly coupled with the string query.
-   */
-  const container = (await containerQuery
-    .execute(db.getDb()) as {
-    rows: Array<{
-      review_average: number
-      review_count: number
-      container_id: string
-      container_size: string
-      container_type: string
-    }>
-  })
+  const container = await containerQuery.execute(db.getDb())
 
   return container.rows.map(row => ({
     reviewAverage: round(row.review_average, 2),
@@ -453,7 +441,7 @@ interface ReviewStats {
 async function getFullOverall (
   db: Database
 ): Promise<OverallStats> {
-  const statsQuery = sql`SELECT
+  const statsQuery = sql<Stats & ReviewStats>`SELECT
     (SELECT COUNT(1) FROM beer) AS beer_count,
     (SELECT COUNT(1) FROM brewery) AS brewery_count,
     (SELECT COUNT(1) FROM container) AS container_count,
@@ -463,13 +451,7 @@ async function getFullOverall (
     (SELECT COUNT(1) FROM style) AS style_count,
     (SELECT AVG(rating) FROM review) AS review_average
   `
-  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
-   * Tightly coupled with the string query.
-   */
-  const stats = (await statsQuery
-    .execute(db.getDb()) as {
-    rows: Array<Stats & ReviewStats>
-  }).rows[0]
+  const stats = (await statsQuery.execute(db.getDb())).rows[0]
 
   return {
     beerCount: `${stats.beer_count}`,
@@ -685,11 +667,16 @@ export async function getOverall (
   return await getFullOverall(db)
 }
 
+interface RatingQueryResult {
+  rating: number
+  count: number
+}
+
 export async function getRating (
   db: Database,
   statsFilter: StatsIdFilter
 ): Promise<RatingStats> {
-  const styleQuery = sql`SELECT
+  const ratingQuery = sql<RatingQueryResult>`SELECT
     review.rating as rating,
     COUNT(1) as count
     FROM review ${idFilter(statsFilter)}
@@ -697,18 +684,9 @@ export async function getRating (
     ORDER BY review.rating ASC
   `
 
-  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
-   * Tightly coupled with the string query.
-   */
-  const style = (await styleQuery
-    .execute(db.getDb()) as {
-    rows: Array<{
-      rating: number
-      count: number
-    }>
-  })
+  const rating = await ratingQuery.execute(db.getDb())
 
-  return style.rows.map(row => ({
+  return rating.rows.map(row => ({
     rating: `${row.rating}`,
     count: `${row.count}`
   }))
