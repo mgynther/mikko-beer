@@ -29,22 +29,25 @@ export async function insertStyleRelationships (
   trx: Transaction,
   styleRelationships: StyleRelationship[]
 ): Promise<StyleRelationship[]> {
-  const insertedStyles = await trx.trx()
+  const insertedStyleRelationships = await trx.trx()
     .insertInto('style_relationship')
     .values(styleRelationships)
     .returningAll()
     .execute()
 
-  return insertedStyles
+  return insertedStyleRelationships.map(relationship => ({
+    parent: relationship.parent,
+    child: relationship.child
+  }))
 }
 
 export async function deleteStyleChildRelationships (
   trx: Transaction,
-  styleId: string
+  childStyleId: string
 ): Promise<void> {
   await trx.trx()
     .deleteFrom('style_relationship')
-    .where('style_relationship.child', '=', styleId)
+    .where('style_relationship.child', '=', childStyleId)
     .execute()
 }
 
@@ -53,7 +56,7 @@ export async function listStyleRelationships (
 ): Promise<StyleRelationshipRow[]> {
   return await trx.trx()
     .selectFrom('style_relationship')
-    .selectAll()
+    .select(['parent', 'child'])
     .execute()
 }
 
@@ -146,6 +149,7 @@ export async function listStyles (
       'style.created_at',
       'style_relationship.parent as parent'
     ])
+    .orderBy('name')
     .execute()
 
   const styleMap: Record<string, StyleWithParentIds> = {}
