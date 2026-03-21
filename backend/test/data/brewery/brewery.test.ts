@@ -14,6 +14,48 @@ describe('brewery tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
+  it('find brewery by id', async () => {
+    const brewery = await ctx.db.executeReadWriteTransaction(async (
+      trx: Transaction
+    ) => {
+      return await breweryRepository.insertBrewery(
+        trx,
+        { name: 'Koskipanimo' }
+      )
+    })
+    const readBrewery = await breweryRepository.findBreweryById(
+      ctx.db,
+      brewery.id
+    )
+    assertDeepEqual(readBrewery, brewery)
+  })
+
+  it('update brewery', async () => {
+    const brewery = await ctx.db.executeReadWriteTransaction(async (
+      trx: Transaction
+    ) => {
+      return await breweryRepository.insertBrewery(
+        trx,
+        { name: 'Beer unters' }
+      )
+    })
+    const updated = await ctx.db.executeReadWriteTransaction(async (
+      trx: Transaction
+    ) => {
+      return await breweryRepository.updateBrewery(
+        trx,
+        {
+          ...brewery,
+          name: 'Beer Hunters'
+        }
+      )
+    })
+    assertDeepEqual(updated, {
+      ...brewery,
+      name: 'Beer Hunters'
+    })
+  })
+
   it('lock only brewery that exists', async () => {
     const brewery = await ctx.db.executeReadWriteTransaction(async (
       trx: Transaction
@@ -31,5 +73,40 @@ describe('brewery tests', () => {
       )
       assertDeepEqual(lockedKeys, [brewery.id])
     })
+  })
+
+  it('list breweries', async () => {
+    const brewery = await ctx.db.executeReadWriteTransaction(async (
+      trx: Transaction
+    ) => {
+      return await breweryRepository.insertBrewery(
+        trx,
+        { name: 'Panimo Himo' }
+      )
+    })
+    const breweries = await breweryRepository.listBreweries(
+      ctx.db,
+      {
+        size: 20,
+        skip: 0
+      }
+    )
+    assertDeepEqual(breweries, [brewery])
+  })
+
+  it('search breweries', async () => {
+    const brewery = await ctx.db.executeReadWriteTransaction(async (
+      trx: Transaction
+    ) => {
+      return await breweryRepository.insertBrewery(
+        trx,
+        { name: 'Atmos Brewing' }
+      )
+    })
+    const breweries = await breweryRepository.searchBreweries(
+      ctx.db,
+      { name: 'atmo' }
+    )
+    assertDeepEqual(breweries, [brewery])
   })
 })
