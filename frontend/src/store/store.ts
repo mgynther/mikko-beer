@@ -13,15 +13,7 @@ import themeReducer, {
 } from './theme/reducer'
 
 const localStoreKey = 'mikkobeer-persisted'
-const deprecatedLocalStoreKey = 'persist:login'
-function getStore(): string | null {
-  const currentStore = localStorage.getItem(localStoreKey)
-  if (currentStore !== null) {
-    return currentStore
-  }
-  return localStorage.getItem(deprecatedLocalStoreKey)
-}
-const fullStore = JSON.parse(getStore() ?? '{}')
+const fullStore = JSON.parse(localStorage.getItem(localStoreKey) ?? '{}')
 
 function asObject(value: unknown): object {
   if (value === null) {
@@ -71,7 +63,6 @@ store.subscribe(() => {
       theme: fullState.theme
     }
   ))
-  localStorage.removeItem(deprecatedLocalStoreKey)
 });
 
 export type RootState = ReturnType<typeof store.getState>
