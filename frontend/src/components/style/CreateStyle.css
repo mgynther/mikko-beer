@@ -1,5 +1,10 @@
+.ButtonContainer {
+  margin-top: 5px;
+}
+
 .ButtonContainer button {
   margin-right: 30px;
+  vertical-align: middle;
 }
 
 .NameContainer {
