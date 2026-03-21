@@ -12,9 +12,16 @@ import themeReducer, {
   initialState as initialThemeState
 } from './theme/reducer'
 
-// Very awkward legacy from redux-persist and poor judgment on selecting key.
-const localStoreKey = 'persist:login'
-const fullStore = JSON.parse(localStorage.getItem(localStoreKey) ?? '{}')
+const localStoreKey = 'mikkobeer-persisted'
+const deprecatedLocalStoreKey = 'persist:login'
+function getStore(): string | null {
+  const currentStore = localStorage.getItem(localStoreKey)
+  if (currentStore !== null) {
+    return currentStore
+  }
+  return localStorage.getItem(deprecatedLocalStoreKey)
+}
+const fullStore = JSON.parse(getStore() ?? '{}')
 
 function asObject(value: unknown): object {
   if (value === null) {
@@ -64,6 +71,7 @@ store.subscribe(() => {
       theme: fullState.theme
     }
   ))
+  localStorage.removeItem(deprecatedLocalStoreKey)
 });
 
 export type RootState = ReturnType<typeof store.getState>
