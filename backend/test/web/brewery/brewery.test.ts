@@ -95,4 +95,12 @@ describe('brewery tests', () => {
     assertEqual(res.data.breweries.length, 0)
   })
 
+  it('fail on duplicate search parameter', async () => {
+    const res = await ctx.request.get(`/api/v1/brewery?size=10&size=11`,
+      ctx.adminAuthHeaders()
+    )
+
+    assertEqual(res.status, 400)
+  })
+
 })
