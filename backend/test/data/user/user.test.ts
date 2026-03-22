@@ -124,6 +124,16 @@ describe('user tests', () => {
     )
   })
 
+  it('lock user that does not exist by id', async () => {
+    const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
+      await userRepository.lockUserById(
+        trx,
+        '93ef3418-e560-46a2-85ec-eb89927ac605'
+      )
+    })
+    assertEqual(result, undefined)
+  })
+
   it('lock user by username', async () => {
     await testLocking(
       userRepository.lockUserByUsername,
