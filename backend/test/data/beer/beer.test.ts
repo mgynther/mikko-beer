@@ -138,24 +138,29 @@ describe('beer tests', () => {
     ) => {
       return await beerRepository.insertBeer(trx, { name: 'Weizenbock' })
     })
-    await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
+    const lockedKey = await ctx.db.executeReadWriteTransaction(async (
+      trx: Transaction
+    ) => {
       const lockedKey = await beerRepository.lockBeer(
         trx,
         beer.id
       )
-      assertEqual(lockedKey, beer.id)
+      return lockedKey
     })
+    assertEqual(lockedKey, beer.id)
   })
 
   it('do not lock beer that does not exists', async () => {
     const dummyId = '48c92e78-f24b-44bb-901e-02116ca9214e'
-    await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
-      const lockedKey = await beerRepository.lockBeer(
+    const lockedKey = await ctx.db.executeReadWriteTransaction(async (
+      trx: Transaction
+    ) => {
+      return await beerRepository.lockBeer(
         trx,
         dummyId
       )
-      assertEqual(lockedKey, undefined)
     })
+    assertEqual(lockedKey, undefined)
   })
 
   it('empty beer list', async () => {
