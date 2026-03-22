@@ -7,7 +7,7 @@ import type {
 
 export interface BeerTable {
   beer_id: Generated<string>
-  name: string | null
+  name: string
   created_at: Generated<Date>
 }
 

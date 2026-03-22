@@ -35,7 +35,7 @@ export async function insertBeer (
 
   return {
     id: insertedBeer.beer_id,
-    name: insertedBeer.name ?? ''
+    name: insertedBeer.name,
   }
 }
 
@@ -100,7 +100,7 @@ export async function updateBeer (
 
   return {
     id: updatedBeer.beer_id,
-    name: updatedBeer.name ?? ''
+    name: updatedBeer.name
   }
 }
 
@@ -151,7 +151,7 @@ export async function findBeerById (
 
   return {
     id: beer_id,
-    name: name ?? '',
+    name: name,
     breweries,
     styles
   }
@@ -159,7 +159,7 @@ export async function findBeerById (
 
 interface JoinedBeerRow {
   beer_id: string
-  name: string | null
+  name: string
   created_at: Date
   brewery_id: string
   brewery_name: string
@@ -251,7 +251,7 @@ function toBeersWithBreweriesAndStyles (
     if (!contains(beerMap, beer.beer_id)) {
       beerMap[beer.beer_id] = {
         id: beer.beer_id,
-        name: beer.name ?? '',
+        name: beer.name,
         breweries: [],
         styles: []
       }
@@ -261,7 +261,7 @@ function toBeersWithBreweriesAndStyles (
       .some((brewery) => brewery.id === beer.brewery_id)) {
       beerMap[beer.beer_id].breweries.push({
         id: beer.brewery_id,
-        name: beer.brewery_name ?? ''
+        name: beer.brewery_name
       })
     }
     if (!beerMap[beer.beer_id].styles

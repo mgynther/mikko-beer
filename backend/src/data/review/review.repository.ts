@@ -359,7 +359,7 @@ interface InternalJoinedReview {
   review_id: string
   additional_info: string | null
   beer_id: string
-  beer_name: string | null
+  beer_name: string
   brewery_id: string
   brewery_name: string
   container_id: string
@@ -440,7 +440,7 @@ function toJoinedReviews (reviewRows: DbJoinedReview[]): JoinedReview[] {
     id: row.review_id,
     additionalInfo: row.additional_info ?? '',
     beerId: row.beer_id,
-    beerName: row.beer_name ?? '',
+    beerName: row.beer_name,
     breweries: row.breweries.map(brewery => ({
       id: brewery.brewery_id,
       name: brewery.name

@@ -284,7 +284,7 @@ interface InternalJoinedStorage {
   storage_id: string
   best_before: Date
   beer_id: string
-  beer_name: string | null
+  beer_name: string
   brewery_id: string
   brewery_name: string
   container_id: string
@@ -358,7 +358,7 @@ function toJoinedStorages (storageRows: DbJoinedStorage[]): JoinedStorage[] {
   return storageRows.map(row => ({
     id: row.storage_id,
     beerId: row.beer_id,
-    beerName: row.beer_name ?? '',
+    beerName: row.beer_name,
     bestBefore: row.best_before,
     breweries: row.breweries.map(brewery => ({
       id: brewery.brewery_id,

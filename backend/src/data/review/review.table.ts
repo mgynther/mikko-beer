@@ -37,7 +37,7 @@ export type UpdateableReviewRow = Updateable<ReviewTable>
 export interface DbJoinedReview {
   review_id: string
   beer_id: string
-  beer_name: string | null
+  beer_name: string
   breweries: Array<{
     brewery_id: string
     name: string

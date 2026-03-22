@@ -21,7 +21,7 @@ export type UpdateableStorageRow = Updateable<StorageTable>
 export interface DbJoinedStorage {
   storage_id: string
   beer_id: string
-  beer_name: string | null
+  beer_name: string
   breweries: Array<{
     brewery_id: string
     name: string

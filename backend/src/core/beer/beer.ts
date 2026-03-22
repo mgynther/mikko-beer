@@ -34,7 +34,7 @@ export interface UpdateIf {
 
 export interface BeerWithBreweryAndStyleIds {
   id: string
-  name: string | null
+  name: string
   breweries: string[]
   styles: string[]
 }
