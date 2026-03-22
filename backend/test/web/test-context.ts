@@ -18,6 +18,11 @@ export class TestContext {
   #adminAuthToken: string = ''
   #adminUserId: string = ''
   #app?: App
+  #userLogger?: log
+
+  constructor (userLogger?: log) {
+    this.#userLogger = userLogger
+  }
 
   request = axios.create({
     baseURL: `http://localhost:${testConfig.port}`,
@@ -38,10 +43,11 @@ export class TestContext {
 
   beforeEach = async (): Promise<void> => {
     const logMessages: string[] = []
-    const log: log = (_: Level, ...args: unknown[]) => {
+    const log: log = (level: Level, ...args: unknown[]) => {
       logMessages.push(
         args.map((a: unknown) => (a as any).toString()).join()
       )
+      this.#userLogger?.(level, ...args)
     }
     this.#app = new App(testConfig, log)
 
