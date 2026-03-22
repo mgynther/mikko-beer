@@ -5,7 +5,7 @@ import { toIlike, validateSearchByName } from '../../src/core/search'
 
 import { invalidSearchError } from '../../src/core/errors'
 import { expectThrow } from './controller-error-helper'
-import { assertDeepEqual, assertEqual } from '../assert'
+import { assertDeepEqual, assertEqual, assertThrows } from '../assert'
 
 describe('search validation unit tests', () => {
   function pass(input: unknown, output: SearchByName) {
@@ -40,6 +40,13 @@ describe('search ilike unit tests', () => {
   })
   it('match exactly', () => {
     assertEqual(toIlike({ name: '"test"' }), 'test')
+  })
+  it('throws on empty string', () => {
+    assertThrows(
+      () => toIlike({ name: '' }),
+      new Error('must not search with missing or empty name'),
+      Error
+    )
   })
 })
 

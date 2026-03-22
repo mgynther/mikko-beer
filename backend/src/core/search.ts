@@ -13,9 +13,7 @@ export function toIlike (search: SearchByName): string {
   // unexpected values ending up in queries we do run-time validation here.
   const nameStr: string = search.name
   const name: string | null | undefined = nameStr as string | null | undefined
-  if (name === null ||
-      name === undefined ||
-      name.length === 0) {
+  if (!name) {
     throw new Error('must not search with missing or empty name')
   }
   if (/^".*"$/v.test(name)) {
