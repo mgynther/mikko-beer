@@ -98,6 +98,14 @@ describe('beer tests', () => {
     )
   })
 
+  it('find beer that does not exist', async () => {
+    const readBeer = await beerRepository.findBeerById(
+      ctx.db,
+      'fda99507-46d0-4f6f-a3fe-85cffecd8762'
+    )
+    assertDeepEqual(readBeer, undefined)
+  })
+
   it('update beer', async () => {
     const beer = await ctx.db.executeReadWriteTransaction(async (
       trx: Transaction
@@ -148,6 +156,17 @@ describe('beer tests', () => {
       )
       assertEqual(lockedKey, undefined)
     })
+  })
+
+  it('empty beer list', async () => {
+    const beers = await beerRepository.listBeers(
+      ctx.db,
+      {
+        size: 20,
+        skip: 0
+      }
+    )
+    assertDeepEqual(beers, [])
   })
 
   it('list beers', async () => {
