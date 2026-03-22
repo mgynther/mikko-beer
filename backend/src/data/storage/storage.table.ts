@@ -24,7 +24,7 @@ export interface DbJoinedStorage {
   beer_name: string | null
   breweries: Array<{
     brewery_id: string
-    name: string | null
+    name: string
   }>
   best_before: Date
   container_id: string

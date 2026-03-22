@@ -293,7 +293,7 @@ interface InternalJoinedStorage {
   beer_id: string
   beer_name: string | null
   brewery_id: string
-  brewery_name: string | null
+  brewery_name: string
   container_id: string
   container_size: string | null
   container_type: string | null
@@ -345,7 +345,7 @@ function parseBreweryStorageRows (
   })
 
   storageArray.forEach(storage => {
-    storage.breweries.sort((a, b) => a.name?.localeCompare(b.name ?? '') ?? 0)
+    storage.breweries.sort((a, b) => a.name.localeCompare(b.name))
     storage.styles.sort((a, b) => a.name.localeCompare(b.name))
   })
 
@@ -369,7 +369,7 @@ function toJoinedStorages (storageRows: DbJoinedStorage[]): JoinedStorage[] {
     bestBefore: row.best_before,
     breweries: row.breweries.map(brewery => ({
       id: brewery.brewery_id,
-      name: brewery.name ?? ''
+      name: brewery.name
     })),
     container: {
       id: row.container_id,

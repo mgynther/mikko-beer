@@ -361,7 +361,7 @@ interface InternalJoinedReview {
   beer_id: string
   beer_name: string | null
   brewery_id: string
-  brewery_name: string | null
+  brewery_name: string
   container_id: string
   container_size: string | null
   container_type: string | null
@@ -414,7 +414,7 @@ function parseReviewRows (
   })
 
   reviewArray.forEach(review => {
-    review.breweries.sort((a, b) => a.name?.localeCompare(b.name ?? '') ?? 0)
+    review.breweries.sort((a, b) => a.name.localeCompare(b.name))
     review.styles.sort((a, b) => a.name.localeCompare(b.name))
   })
 
@@ -443,7 +443,7 @@ function toJoinedReviews (reviewRows: DbJoinedReview[]): JoinedReview[] {
     beerName: row.beer_name ?? '',
     breweries: row.breweries.map(brewery => ({
       id: brewery.brewery_id,
-      name: brewery.name ?? ''
+      name: brewery.name
     })),
     container: {
       id: row.container_id,

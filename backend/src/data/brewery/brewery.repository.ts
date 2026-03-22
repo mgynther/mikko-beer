@@ -108,6 +108,6 @@ export async function searchBreweries (
 function rowToBrewery (row: BreweryRow): Brewery {
   return {
     id: row.brewery_id,
-    name: row.name ?? ''
+    name: row.name
   }
 }

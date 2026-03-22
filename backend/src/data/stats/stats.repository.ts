@@ -305,7 +305,7 @@ interface BreweryQuerySelection {
   review_count: number
   reviewed_beer_count: number
   brewery_id: string
-  brewery_name: string | null
+  brewery_name: string
 }
 
 type BreweryQueryBuilder =
@@ -420,7 +420,7 @@ export async function getBrewery (
       reviewCount: `${row.review_count}`,
       reviewedBeerCount: `${row.reviewed_beer_count}`,
       breweryId: row.brewery_id,
-      breweryName: row.brewery_name ?? ''
+      breweryName: row.brewery_name
     }))
 }
 

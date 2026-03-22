@@ -40,7 +40,7 @@ export interface DbJoinedReview {
   beer_name: string | null
   breweries: Array<{
     brewery_id: string
-    name: string | null
+    name: string
   }>
   additional_info: string | null
   container_id: string

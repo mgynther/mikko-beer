@@ -141,7 +141,7 @@ export async function findBeerById (
   beerRows.forEach(row => {
     if (!breweryIds[row.brewery_id]) {
       breweryIds[row.brewery_id] = true
-      breweries.push({ id: row.brewery_id, name: row.brewery_name ?? '' })
+      breweries.push({ id: row.brewery_id, name: row.brewery_name })
     }
     if (!styleIds[row.style_id]) {
       styleIds[row.style_id] = true
@@ -162,7 +162,7 @@ interface JoinedBeerRow {
   name: string | null
   created_at: Date
   brewery_id: string
-  brewery_name: string | null
+  brewery_name: string
   style_id: string
   style_name: string
 }
