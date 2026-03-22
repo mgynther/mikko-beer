@@ -107,14 +107,14 @@ export async function findStyleById (
 
   return {
     id: style.style_id,
-    name: style.name ?? '',
+    name: style.name,
     children: children.map(child => ({
       id: child.style_id,
-      name: child.name ?? ''
+      name: child.name,
     })),
     parents: parents.map(parent => ({
       id: parent.style_id,
-      name: parent.name ?? ''
+      name: parent.name,
     }))
   }
 }
@@ -166,7 +166,7 @@ export async function listStyles (
     } else {
       styleMap[style.style_id] = {
         id: style.style_id,
-        name: style.name ?? '',
+        name: style.name,
         parents: parent === null ? [] : [parent]
       }
       styleArray.push(styleMap[style.style_id])
@@ -180,6 +180,6 @@ export async function listStyles (
 function toStyle (row: StyleRow): Style {
   return {
     id: row.style_id,
-    name: row.name ?? ''
+    name: row.name,
   }
 }

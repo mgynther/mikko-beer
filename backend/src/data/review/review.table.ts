@@ -51,7 +51,7 @@ export interface DbJoinedReview {
   rating: number | null
   styles: Array<{
     style_id: string
-    name: string | null
+    name: string
   }>
   time: Date
   created_at: Date

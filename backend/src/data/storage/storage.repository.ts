@@ -300,7 +300,7 @@ interface InternalJoinedStorage {
   created_at: Date
   review_id: string | null
   style_id: string
-  style_name: string | null
+  style_name: string
 }
 
 function parseBreweryStorageRows (
@@ -346,7 +346,7 @@ function parseBreweryStorageRows (
 
   storageArray.forEach(storage => {
     storage.breweries.sort((a, b) => a.name?.localeCompare(b.name ?? '') ?? 0)
-    storage.styles.sort((a, b) => a.name?.localeCompare(b.name ?? '') ?? 0)
+    storage.styles.sort((a, b) => a.name.localeCompare(b.name))
   })
 
   return storageArray
@@ -380,7 +380,7 @@ function toJoinedStorages (storageRows: DbJoinedStorage[]): JoinedStorage[] {
     hasReview: row.has_review,
     styles: row.styles.map(style => ({
       id: style.style_id,
-      name: style.name ?? ''
+      name: style.name
     }))
   }))
 }

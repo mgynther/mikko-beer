@@ -696,7 +696,7 @@ interface StyleQuerySelection {
   review_average: number
   review_count: number
   style_id: string
-  style_name: string | null
+  style_name: string
 }
 
 type StyleQueryBuilder =
@@ -794,6 +794,6 @@ export async function getStyle (
       reviewAverage: round(row.review_average, 2),
       reviewCount: `${row.review_count}`,
       styleId: row.style_id,
-      styleName: row.style_name ?? ''
+      styleName: row.style_name
     }))
 }

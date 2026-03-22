@@ -33,7 +33,7 @@ export interface DbJoinedStorage {
   has_review: boolean
   styles: Array<{
     style_id: string
-    name: string | null
+    name: string
   }>
   created_at: Date
 }

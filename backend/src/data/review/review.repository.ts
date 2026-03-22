@@ -371,7 +371,7 @@ interface InternalJoinedReview {
   time: Date
   created_at: Date
   style_id: string
-  style_name: string | null
+  style_name: string
 }
 
 function parseReviewRows (
@@ -415,7 +415,7 @@ function parseReviewRows (
 
   reviewArray.forEach(review => {
     review.breweries.sort((a, b) => a.name?.localeCompare(b.name ?? '') ?? 0)
-    review.styles.sort((a, b) => a.name?.localeCompare(b.name ?? '') ?? 0)
+    review.styles.sort((a, b) => a.name.localeCompare(b.name))
   })
 
   return reviewArray
@@ -457,7 +457,7 @@ function toJoinedReviews (reviewRows: DbJoinedReview[]): JoinedReview[] {
     rating: row.rating ?? 4,
     styles: row.styles.map(style => ({
       id: style.style_id,
-      name: style.name ?? ''
+      name: style.name
     })),
     time: row.time
   }))
