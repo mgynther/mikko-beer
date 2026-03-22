@@ -23,56 +23,61 @@ describe('storage tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  async function createStorage(): Promise<StorageWithDate> {
-    return await ctx.db.executeReadWriteTransaction(async (
+  async function createStorage(db: Database): Promise<StorageWithDate> {
+    return await db.executeReadWriteTransaction(async (
       trx: Transaction
     ): Promise<StorageWithDate> => {
-      const brewery = await breweryRepository.insertBrewery(
-        trx,
-        {
-          name: 'Koskipanimo'
-        }
-      )
-      const style = await styleRepository.insertStyle(
-        trx,
-        {
-          name: 'Pils'
-        }
-      )
-      const beer = await beerRepository.insertBeer(
-        trx,
-        {
-          name: 'Pils'
-        }
-      )
-      await beerRepository.insertBeerBreweries(
-        trx,
-        [{ beer: beer.id, brewery: brewery.id }]
-      )
-      await beerRepository.insertBeerStyles(
-        trx,
-        [{ beer: beer.id, style: style.id }]
-      )
-      const container = await containerRepository.insertContainer(
-        trx,
-        {
-          type: 'Can',
-          size: '0.25'
-        }
-      )
-      return await storageRepository.insertStorage(
-        trx,
-        {
-          beer: beer.id,
-          bestBefore: '2024-12-02T12:12:12.000Z',
-          container: container.id
-        }
-      )
+      const [brewery, style, beer, container] = await Promise.all([
+        breweryRepository.insertBrewery(
+          trx,
+          {
+            name: 'Koskipanimo'
+          }
+        ),
+        styleRepository.insertStyle(
+          trx,
+          {
+            name: 'Pils'
+          }
+        ),
+        beerRepository.insertBeer(
+          trx,
+          {
+            name: 'Pils'
+          }
+        ),
+        containerRepository.insertContainer(
+          trx,
+          {
+            type: 'Can',
+            size: '0.25'
+          }
+        )
+      ])
+      const [storage] = await Promise.all([
+        storageRepository.insertStorage(
+          trx,
+          {
+            beer: beer.id,
+            bestBefore: '2024-12-02T12:12:12.000Z',
+            container: container.id
+          }
+        ),
+        beerRepository.insertBeerBreweries(
+          trx,
+          [{ beer: beer.id, brewery: brewery.id }]
+        ),
+        beerRepository.insertBeerStyles(
+          trx,
+          [{ beer: beer.id, style: style.id }]
+        )
+      ])
+      return storage
     })
   }
 
   it('lock storage that exists', async () => {
-    const storage = await createStorage()
+    const storage = await createStorage(ctx.db)
     await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
       const lockedKey = await storageRepository.lockStorage(
         trx,
@@ -83,7 +88,7 @@ describe('storage tests', () => {
   })
 
   it('storage does not have review', async () => {
-    const storage = await createStorage()
+    const storage = await createStorage(ctx.db)
     const found = await storageRepository.findStorageById(
       ctx.db,
       storage.id
@@ -92,7 +97,7 @@ describe('storage tests', () => {
   })
 
   it('storages have reviews', async () => {
-    const noReviewStorage = await createStorage()
+    const noReviewStorage = await createStorage(ctx.db)
     const { data } = await insertMultipleReviews(5, ctx.db)
     await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
       await storageRepository.insertStorage(
@@ -127,7 +132,7 @@ describe('storage tests', () => {
   })
 
   it('delete storage', async () => {
-    const storage = await createStorage()
+    const storage = await createStorage(ctx.db)
     const createdStorage =
       await storageRepository.findStorageById(ctx.db, storage.id)
     assertTruthy(createdStorage)
