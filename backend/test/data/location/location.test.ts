@@ -3,7 +3,7 @@ import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 import { TestContext } from '../test-context'
 import type { Transaction } from '../../../src/data/database'
 import * as locationRepository from '../../../src/data/location/location.repository'
-import { assertDeepEqual } from '../../assert'
+import { assertDeepEqual, assertEqual } from '../../assert'
 
 describe('location tests', () => {
   const ctx = new TestContext()
@@ -28,6 +28,14 @@ describe('location tests', () => {
       location.id
     )
     assertDeepEqual(readLocation, location)
+  })
+
+  it('find location that does not exist', async () => {
+    const readLocation = await locationRepository.findLocationById(
+      ctx.db,
+      'b33cd516-02ab-4659-9b2c-8f7e891ba219'
+    )
+    assertEqual(readLocation, undefined)
   })
 
   it('update location', async () => {
