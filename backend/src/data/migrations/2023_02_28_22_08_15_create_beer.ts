@@ -33,5 +33,7 @@ export async function up (db: Kysely<any>): Promise<void> {
 }
 
 export async function down (db: Kysely<any>): Promise<void> {
+  await db.schema.dropTable('beer_brewery').execute()
+  await db.schema.dropTable('beer_style').execute()
   await db.schema.dropTable('beer').execute()
 }
