@@ -7,8 +7,8 @@ import type {
 
 export interface ContainerTable {
   container_id: Generated<string>
-  type: string | null
-  size: string | null
+  type: string
+  size: string
   created_at: Generated<Date>
 }
 

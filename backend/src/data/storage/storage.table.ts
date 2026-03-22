@@ -28,8 +28,8 @@ export interface DbJoinedStorage {
   }>
   best_before: Date
   container_id: string
-  container_size: string | null
-  container_type: string | null
+  container_size: string
+  container_type: string
   has_review: boolean
   styles: Array<{
     style_id: string

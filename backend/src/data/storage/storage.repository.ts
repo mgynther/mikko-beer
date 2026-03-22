@@ -288,8 +288,8 @@ interface InternalJoinedStorage {
   brewery_id: string
   brewery_name: string
   container_id: string
-  container_size: string | null
-  container_type: string | null
+  container_size: string
+  container_type: string
   created_at: Date
   review_id: string | null
   style_id: string
@@ -366,8 +366,8 @@ function toJoinedStorages (storageRows: DbJoinedStorage[]): JoinedStorage[] {
     })),
     container: {
       id: row.container_id,
-      size: row.container_size ?? '',
-      type: row.container_type ?? ''
+      size: row.container_size,
+      type: row.container_type
     },
     createdAt: row.created_at,
     hasReview: row.has_review,

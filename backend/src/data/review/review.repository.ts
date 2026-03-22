@@ -363,8 +363,8 @@ interface InternalJoinedReview {
   brewery_id: string
   brewery_name: string
   container_id: string
-  container_size: string | null
-  container_type: string | null
+  container_size: string
+  container_type: string
   location_id: string | null
   location_name: string | null
   rating: number | null
@@ -451,8 +451,8 @@ function toJoinedReviews (reviewRows: DbJoinedReview[]): JoinedReview[] {
     })),
     container: {
       id: row.container_id,
-      size: row.container_size ?? '',
-      type: row.container_type ?? ''
+      size: row.container_size,
+      type: row.container_type
     },
     location: row.location === null ? undefined : {
       id: row.location.location_id,

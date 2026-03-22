@@ -88,7 +88,7 @@ export async function listContainers (
 function toContainer (row: ContainerRow): Container {
   return {
     id: row.container_id,
-    type: row.type ?? '',
-    size: row.size ?? ''
+    type: row.type,
+    size: row.size
   }
 }
