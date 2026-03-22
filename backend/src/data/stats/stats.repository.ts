@@ -21,7 +21,6 @@ import type {
 } from '../../core/stats/stats'
 import { contains } from '../../core/record'
 
-// TODO try converting raw sql queries to Kysely for automatic types.
 function round (value: number | null | undefined, decimals: number): string {
   if (value === undefined || value === null) return ''
   return Number(
