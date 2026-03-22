@@ -258,15 +258,19 @@ function toBeersWithBreweriesAndStyles (
       }
       beerArray.push(beerMap[beer.beer_id])
     }
-    if (!beerMap[beer.beer_id].breweries
-      .some((brewery) => brewery.id === beer.brewery_id)) {
+    function isMatchingBrewery(brewery: Brewery): boolean {
+      return brewery.id === beer.brewery_id
+    }
+    if (!beerMap[beer.beer_id].breweries.some(isMatchingBrewery)) {
       beerMap[beer.beer_id].breweries.push({
         id: beer.brewery_id,
         name: beer.brewery_name
       })
     }
-    if (!beerMap[beer.beer_id].styles
-      .some((style) => style.id === beer.style_id)) {
+    function isMatchingStyle(style: Style): boolean {
+      return style.id === beer.style_id
+    }
+    if (!beerMap[beer.beer_id].styles.some(isMatchingStyle)) {
       beerMap[beer.beer_id].styles.push({
         id: beer.style_id,
         name: beer.style_name

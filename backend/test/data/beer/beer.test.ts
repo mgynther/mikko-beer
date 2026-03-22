@@ -22,7 +22,7 @@ describe('beer tests', () => {
 
   interface CreateBeersResult {
     beers: Beer[],
-    brewery: Brewery,
+    breweries: Brewery[],
     style: Style
   }
 
@@ -30,7 +30,13 @@ describe('beer tests', () => {
     return await db.executeReadWriteTransaction(async (
       trx: Transaction
     ): Promise<CreateBeersResult> => {
-      const [severinBeer, smörreBeer, brewery, style] = await Promise.all([
+      const [
+        severinBeer,
+        smörreBeer,
+        koskipanimoBrewery,
+        fabrikenBrewery,
+        style
+      ] = await Promise.all([
         beerRepository.insertBeer(
           trx,
           {
@@ -49,6 +55,12 @@ describe('beer tests', () => {
             name: 'Koskipanimo'
           }
         ),
+        breweryRepository.insertBrewery(
+          trx,
+          {
+            name: 'Ölfabrikenin'
+          }
+        ),
         styleRepository.insertStyle(
           trx,
           {
@@ -59,7 +71,7 @@ describe('beer tests', () => {
       await Promise.all([
         beerRepository.insertBeerBreweries(
           trx,
-          [{ beer: severinBeer.id, brewery: brewery.id }]
+          [{ beer: severinBeer.id, brewery: koskipanimoBrewery.id }]
         ),
         beerRepository.insertBeerStyles(
           trx,
@@ -67,7 +79,10 @@ describe('beer tests', () => {
         ),
         beerRepository.insertBeerBreweries(
           trx,
-          [{ beer: smörreBeer.id, brewery: brewery.id }]
+          [
+            { beer: smörreBeer.id, brewery: koskipanimoBrewery.id },
+            { beer: smörreBeer.id, brewery: fabrikenBrewery.id },
+          ]
         ),
         beerRepository.insertBeerStyles(
           trx,
@@ -76,7 +91,7 @@ describe('beer tests', () => {
       ])
       return {
         beers: [ severinBeer, smörreBeer ],
-        brewery,
+        breweries: [koskipanimoBrewery, fabrikenBrewery],
         style
       }
     })
@@ -92,7 +107,7 @@ describe('beer tests', () => {
       readBeer,
       {
         ...result.beers[0],
-        breweries: [result.brewery],
+        breweries: [result.breweries[0]],
         styles: [result.style]
       }
     )
@@ -186,12 +201,12 @@ describe('beer tests', () => {
     assertDeepEqual(beers, [
       {
         ...result.beers[0],
-        breweries: [result.brewery],
+        breweries: [result.breweries[0]],
         styles: [result.style]
       },
       {
         ...result.beers[1],
-        breweries: [result.brewery],
+        breweries: result.breweries,
         styles: [result.style]
       }
     ])
@@ -214,7 +229,7 @@ describe('beer tests', () => {
     assertDeepEqual(beers, [
       {
         ...result.beers[1],
-        breweries: [result.brewery],
+        breweries: result.breweries,
         styles: [result.style]
       }
     ])
@@ -237,7 +252,7 @@ describe('beer tests', () => {
     assertDeepEqual(beers, [
       {
         ...result.beers[0],
-        breweries: [result.brewery],
+        breweries: [result.breweries[0]],
         styles: [result.style]
       }
     ])
@@ -251,7 +266,7 @@ describe('beer tests', () => {
     )
     assertDeepEqual(beers, [{
       ...result.beers[0],
-      breweries: [result.brewery],
+      breweries: [result.breweries[0]],
       styles: [result.style]
     }])
   })
