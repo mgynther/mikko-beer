@@ -14,7 +14,7 @@
     "test:core": "npm run test:files -- --test-isolation=none --test-concurrency 1 build-tests/test/core/*.test.js build-tests/test/core/**/*.test.js build-tests/test/core/**/**/*.test.js",
     "test:data": "npm run test:files -- --test-isolation=none --test-concurrency 1 build-tests/test/data/*.test.js build-tests/test/data/**/*.test.js",
     "test:web": "npm run test:files -- --test-isolation=none --test-concurrency 1 build-tests/test/web/*.test.js build-tests/test/web/**/*.test.js",
-    "test": "npm run test:files -- --test-isolation=none --test-concurrency 1 build-tests/test/*.test.js build-tests/test/**/*.test.js build-tests/test/**/**/*.test.js buid-tests/test/**/**/**/*.test.js",
+    "test": "npm run test:files -- --test-isolation=none --test-concurrency 1 build-tests/test/*.test.js build-tests/test/**/*.test.js build-tests/test/**/**/*.test.js build-tests/test/**/**/**/*.test.js",
     "test:coverage": "npm run test:files -- --experimental-test-coverage --test-isolation=none --test-concurrency 1 build-tests/test/*.test.js build-tests/test/**/*.test.js build-tests/test/**/**/*.test.js buid-tests/test/**/**/**/*.test.js",
     "migrate:latest": "node --env-file .env dist/data/migrate-to-latest.js"
   },
