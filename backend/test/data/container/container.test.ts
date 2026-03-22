@@ -30,6 +30,14 @@ describe('container tests', () => {
     assertDeepEqual(readContainer, container)
   })
 
+  it('find container that does not exist', async () => {
+    const readContainer = await containerRepository.findContainerById(
+      ctx.db,
+      'e1480b16-477c-49a7-b0ae-e1940b183966'
+    )
+    assertEqual(readContainer, undefined)
+  })
+
   it('update container', async () => {
     const container = await ctx.db.executeReadWriteTransaction(async (
       trx: Transaction

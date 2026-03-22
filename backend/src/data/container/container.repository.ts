@@ -41,17 +41,11 @@ export async function findContainerById (
   db: Database,
   id: string
 ): Promise<Container | undefined> {
-  const containers = await db.getDb()
+  const container = await db.getDb()
     .selectFrom('container')
     .where('container.container_id', '=', id)
     .select(['container_id', 'type', 'size', 'container.created_at'])
-    .execute()
-
-  if (containers.length === 0) {
-    return undefined
-  }
-
-  const container = containers.find(container => container.container_id === id)
+    .executeTakeFirst()
 
   if (container === undefined) return undefined
 
