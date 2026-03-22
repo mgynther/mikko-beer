@@ -98,17 +98,17 @@ describe('beer tests', () => {
   }
 
   it('find beer by id', async () => {
-    const result = await createBeers(ctx.db)
+    const createResult = await createBeers(ctx.db)
     const readBeer = await beerRepository.findBeerById(
       ctx.db,
-      result.beers[0].id
+      createResult.beers[0].id
     )
     assertDeepEqual(
       readBeer,
       {
-        ...result.beers[0],
-        breweries: [result.breweries[0]],
-        styles: [result.style]
+        ...createResult.beers[0],
+        breweries: [createResult.breweries[0]],
+        styles: [createResult.style]
       }
     )
   })
@@ -190,7 +190,7 @@ describe('beer tests', () => {
   })
 
   it('list beers', async () => {
-    const result = await createBeers(ctx.db)
+    const createResult = await createBeers(ctx.db)
     const beers = await beerRepository.listBeers(
       ctx.db,
       {
@@ -200,24 +200,24 @@ describe('beer tests', () => {
     )
     assertDeepEqual(beers, [
       {
-        ...result.beers[0],
-        breweries: [result.breweries[0]],
-        styles: [result.style]
+        ...createResult.beers[0],
+        breweries: [createResult.breweries[0]],
+        styles: [createResult.style]
       },
       {
-        ...result.beers[1],
-        breweries: result.breweries,
-        styles: [result.style]
+        ...createResult.beers[1],
+        breweries: createResult.breweries,
+        styles: [createResult.style]
       }
     ])
   })
 
   it('delete beer breweries', async () => {
-    const result = await createBeers(ctx.db)
+    const createResult = await createBeers(ctx.db)
     await ctx.db.executeReadWriteTransaction(async (
       trx: Transaction
     ): Promise<void> => {
-      await beerRepository.deleteBeerBreweries(trx, result.beers[0].id)
+      await beerRepository.deleteBeerBreweries(trx, createResult.beers[0].id)
     })
     const beers = await beerRepository.listBeers(
       ctx.db,
@@ -228,19 +228,19 @@ describe('beer tests', () => {
     )
     assertDeepEqual(beers, [
       {
-        ...result.beers[1],
-        breweries: result.breweries,
-        styles: [result.style]
+        ...createResult.beers[1],
+        breweries: createResult.breweries,
+        styles: [createResult.style]
       }
     ])
   })
 
   it('delete beer styles', async () => {
-    const result = await createBeers(ctx.db)
+    const createResult = await createBeers(ctx.db)
     await ctx.db.executeReadWriteTransaction(async (
       trx: Transaction
     ): Promise<void> => {
-      await beerRepository.deleteBeerStyles(trx, result.beers[1].id)
+      await beerRepository.deleteBeerStyles(trx, createResult.beers[1].id)
     })
     const beers = await beerRepository.listBeers(
       ctx.db,
@@ -251,23 +251,23 @@ describe('beer tests', () => {
     )
     assertDeepEqual(beers, [
       {
-        ...result.beers[0],
-        breweries: [result.breweries[0]],
-        styles: [result.style]
+        ...createResult.beers[0],
+        breweries: [createResult.breweries[0]],
+        styles: [createResult.style]
       }
     ])
   })
 
   it('search beers', async () => {
-    const result = await createBeers(ctx.db)
+    const createResult = await createBeers(ctx.db)
     const beers = await beerRepository.searchBeers(
       ctx.db,
-      { name: result.beers[0].name.substring(2, 6) }
+      { name: createResult.beers[0].name.substring(2, 6) }
     )
     assertDeepEqual(beers, [{
-      ...result.beers[0],
-      breweries: [result.breweries[0]],
-      styles: [result.style]
+      ...createResult.beers[0],
+      breweries: [createResult.breweries[0]],
+      styles: [createResult.style]
     }])
   })
 })
