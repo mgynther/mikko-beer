@@ -5,9 +5,6 @@ function contains(
   record: Record<string, string>,
   key: any
 ): boolean {
-  if (typeof key !== 'string') {
-    return false
-  }
   return record[key] !== undefined
 }
 
