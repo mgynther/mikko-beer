@@ -1,4 +1,5 @@
 import { sql } from 'kysely'
+import type { RawBuilder } from 'kysely'
 
 import type { Database, Transaction } from '../database'
 import type {
@@ -171,7 +172,7 @@ interface BeerTableRn extends BeerTable {
   rn: number
 }
 
-const listByNameAsc = sql<BeerTableRn>`(
+const listByNameAsc: RawBuilder<BeerTableRn> = sql<BeerTableRn>`(
   SELECT
     beer.*,
     ROW_NUMBER() OVER(ORDER BY beer.name ASC) rn
@@ -200,7 +201,7 @@ const beerListColumns: BeerListPossibleColumns[] = [
  * Kysely types are complicated and it's easier to rely on the implicit type
  * here.
  */
-function getSelectListQuery (db: Database, fromQuery: typeof listByNameAsc) {
+function getSelectListQuery (db: Database, fromQuery: RawBuilder<BeerTableRn>) {
   return db.getDb()
     .selectFrom(fromQuery.as('beer'))
     .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
@@ -281,7 +282,7 @@ export async function searchBeers (
   searchRequest: SearchByName
 ): Promise<BeerWithBreweriesAndStyles[]> {
   const nameIlike = toIlike(searchRequest)
-  const beerNameLike = sql<BeerTableRn>`(
+  const beerNameLike: RawBuilder<BeerTableRn> = sql<BeerTableRn>`(
     SELECT beer.*, DENSE_RANK() OVER(ORDER BY name) rn
           FROM beer
           WHERE beer.name ILIKE ${nameIlike}
