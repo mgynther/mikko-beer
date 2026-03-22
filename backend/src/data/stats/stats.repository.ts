@@ -21,8 +21,7 @@ import type {
 } from '../../core/stats/stats'
 import { contains } from '../../core/record'
 
-function round (value: number | null | undefined, decimals: number): string {
-  if (value === undefined || value === null) return ''
+function round (value: number, decimals: number): string {
   return Number(
     `${Math.round(parseFloat(`${value}e${decimals}`))}e-${decimals}`
   ).toFixed(decimals)
@@ -38,12 +37,24 @@ function noInfinity (value: number): number {
 function idFilter (
   statsFilter: StatsIdFilter
 ): RawBuilder<unknown> {
-  const locationAndFilter = statsFilter.location === undefined
-    ? sql``
-    : sql`AND review.location = ${statsFilter.location}`
-  const locationWhereFilter = statsFilter.location === undefined
-    ? sql``
-    : sql`WHERE review.location = ${statsFilter.location}`
+  function getLocationAndFilter(
+    location: string | undefined
+  ): RawBuilder<unknown> {
+    if (location === undefined) {
+      return sql``
+    }
+    return sql`AND review.location = ${statsFilter.location}`
+  }
+  function getLocationWhereFilter(
+    location: string | undefined
+  ): RawBuilder<unknown> {
+    if (location === undefined) {
+      return sql``
+    }
+    return sql`WHERE review.location = ${statsFilter.location}`
+  }
+  const locationAndFilter = getLocationAndFilter(statsFilter.location)
+  const locationWhereFilter = getLocationWhereFilter(statsFilter.location)
   if (statsFilter.brewery !== undefined && statsFilter.style !== undefined) {
     return sql`
       INNER JOIN beer ON review.beer = beer.beer_id
@@ -472,7 +483,10 @@ interface ContainerIds {
 function countContainerIds (idRows: ContainerIds[]): number {
   const map: Record<string, boolean> = {}
   function add (value: string | null): void {
-    if (value !== null && !contains(map, value)) {
+    if (value === null) {
+      return
+    }
+    if (!contains(map, value)) {
       map[value] = true
     }
   }
@@ -732,6 +746,14 @@ export async function getStyle (
     .selectFrom('review')
     .innerJoin('beer', 'review.beer', 'beer.beer_id')
 
+  if (statsFilter.style !== undefined) {
+    beerQuery = db.getDb()
+      .selectFrom('beer_style as querystyle')
+      .where('querystyle.style', '=', statsFilter.style)
+      .innerJoin('beer', 'querystyle.beer', 'beer.beer_id')
+      .innerJoin('review', 'beer.beer_id', 'review.beer')
+  }
+
   if (statsFilter.timeStart !== undefined) {
     beerQuery = beerQuery
       .where('review.time', '>=', statsFilter.timeStart)
@@ -747,13 +769,6 @@ export async function getStyle (
       .where('review.location', '=', statsFilter.location)
   }
 
-  if (statsFilter.style !== undefined) {
-    beerQuery = db.getDb()
-      .selectFrom('beer_style as querystyle')
-      .where('querystyle.style', '=', statsFilter.style)
-      .innerJoin('beer', 'querystyle.beer', 'beer.beer_id')
-      .innerJoin('review', 'beer.beer_id', 'review.beer')
-  }
   if (statsFilter.brewery !== undefined) {
     beerQuery = beerQuery
       .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')

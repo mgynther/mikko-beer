@@ -10,6 +10,7 @@ import {
   assertInstanceOf,
   assertNotDeepEqual,
   assertNotEqual,
+  assertRejects,
   assertThrows,
   assertTruthy
 } from './assert'
@@ -129,6 +130,14 @@ describe('assertion tests', () => {
   it('throws', () => {
     assertThrows(
       () => { throw new CustomError('test') },
+      new CustomError('test'),
+      CustomError
+    )
+  })
+
+  it('rejects', () => {
+    assertRejects(
+      async () => { throw new CustomError('test') },
       new CustomError('test'),
       CustomError
     )

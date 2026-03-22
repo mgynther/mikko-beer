@@ -6,7 +6,7 @@ import * as statsRepository from '../../../src/data/stats/stats.repository'
 
 import { insertMultipleReviews } from '../review-helpers'
 import type { Review } from '../../../src/core/review/review'
-import { assertDeepEqual } from '../../assert'
+import { assertDeepEqual, assertRejects } from '../../assert'
 
 const defaultFilter: StatsIdFilter = {
   brewery: undefined,
@@ -66,6 +66,21 @@ describe('overall stats tests', () => {
       reviewCount: `${matchingReviews.length}`,
       styleCount: '1'
     })
+  })
+
+  it('throws on overall by multiple filters', async () => {
+    const { data } = await insertMultipleReviews(9, ctx.db)
+    await assertRejects(
+      async () => {
+        await statsRepository.getOverall(ctx.db, {
+          ...defaultFilter,
+          brewery: data.brewery.id,
+          style: data.style.id,
+        })
+      },
+      new Error('Multiple filters of brewery, location and style not supported'),
+      Error
+    )
   })
 
   it('shows overall by location', async () => {

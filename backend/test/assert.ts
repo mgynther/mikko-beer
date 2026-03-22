@@ -69,6 +69,21 @@ export function assertThrows<T extends Error>(
   )
 }
 
+export async function assertRejects<T extends Error>(
+  func: () => Promise<void>,
+  error: T,
+  classType: Class<T>
+): Promise<void> {
+  await assert.rejects(
+    func,
+    (err: unknown) => {
+      assertInstanceOf(err, classType)
+      assert.deepEqual(err, error)
+      return true
+    }
+  )
+}
+
 export function assertDoesNotThrow(func: () => void) {
   assert.doesNotThrow(func)
 }

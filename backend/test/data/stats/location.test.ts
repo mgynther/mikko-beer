@@ -142,6 +142,19 @@ describe('location stats tests', () => {
     assertDeepEqual(stats, [ otherLocation, location ])
   })
 
+  it('filter by brewery', async () => {
+    const { stats, location } = await getResults(
+      ctx.db,
+      allResults,
+      (data: InsertedData) => ({
+        ...defaultFilter,
+        brewery: data.brewery.id
+      }),
+      { property: 'location_name', direction: 'asc' }
+    )
+    assertDeepEqual(stats, [ location ])
+  })
+
   it('filter by location', async () => {
     const { stats, otherLocation } = await getResults(
       ctx.db,

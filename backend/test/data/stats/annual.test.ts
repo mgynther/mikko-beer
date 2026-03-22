@@ -61,6 +61,18 @@ describe('annual stats tests', () => {
     ])
   })
 
+  it('no filters & no reviews', async () => {
+    const stats = await statsRepository.getAnnual(
+      ctx.db,
+      {
+        brewery: undefined,
+        location: undefined,
+        style: undefined
+      }
+    )
+    assertDeepEqual(stats, [])
+  })
+
   it('filter by brewery', async () => {
     const { data, reviews } = await insertMultipleReviews(9, ctx.db)
     const stats = await statsRepository.getAnnual(
@@ -69,6 +81,25 @@ describe('annual stats tests', () => {
         brewery: data.brewery.id,
         location: undefined,
         style: undefined
+      }
+    )
+    assertDeepEqual(stats, [
+      {
+        reviewAverage: avg(reviews, '2024'),
+        reviewCount: `${filterByYear(reviews, '2024').length}`,
+        year: '2024'
+      }
+    ])
+  })
+
+  it('filter by brewery, location & style', async () => {
+    const { data, reviews } = await insertMultipleReviews(9, ctx.db)
+    const stats = await statsRepository.getAnnual(
+      ctx.db,
+      {
+        brewery: data.brewery.id,
+        location: data.location.id,
+        style: data.style.id
       }
     )
     assertDeepEqual(stats, [
