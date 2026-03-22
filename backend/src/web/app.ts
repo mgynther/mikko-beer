@@ -136,7 +136,7 @@ export class App {
             }". Please change the password a.s.a.p.`
           )
         }
-        logWithAdminPassword('Server starting')
+        log(Level.INFO, 'Server starting')
         const serverPromise = new Promise<void>((resolve) => {
           this.#server = this.#koa.listen(port, resolve)
         })
@@ -152,7 +152,7 @@ export class App {
           )
         promises.push(oldPasswordHashedAtCleanupPromise)
         Promise.all(promises).then(() => {
-          logWithAdminPassword(`Server started in port ${port}`)
+          log(Level.INFO, `Server started in port ${port}`)
           resolve(startResult)
         }, (error: unknown) => {
           log(Level.ERROR, 'Error starting', error)
