@@ -36,7 +36,8 @@ import {
 } from '../core/app-initial-user'
 
 export interface StartResult {
-  authToken: string
+  authToken: string,
+  userId: string
 }
 
 export class App {
@@ -90,7 +91,8 @@ export class App {
       const log = this.#log
       const isAdminPasswordNeeded = this.#config.generateInitialAdminPassword
       const startResult: StartResult = {
-        authToken: ''
+        authToken: '',
+        userId: ''
       }
       function logWithAdminPassword (...args: unknown[]): void {
         if (isAdminPasswordNeeded) {
@@ -115,6 +117,7 @@ export class App {
               this.#log
             )
             startResult.authToken = user.authToken.authToken
+            startResult.userId = user.user.id
             if (isAdminPasswordNeeded) {
               const addPasswordUserIf = createAddPasswordUserIf(trx)
               await addPasswordForInitialUser(

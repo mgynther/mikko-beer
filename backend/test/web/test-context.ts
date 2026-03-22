@@ -16,6 +16,7 @@ import { Level, type log } from '../../src/core/log'
 
 export class TestContext {
   #adminAuthToken: string = ''
+  #adminUserId: string = ''
   #app?: App
 
   request = axios.create({
@@ -54,6 +55,7 @@ export class TestContext {
     }
 
     this.#adminAuthToken = result.authToken
+    this.#adminUserId = result.userId
   }
 
   afterEach = async (): Promise<void> => {
@@ -64,6 +66,10 @@ export class TestContext {
 
   adminAuthHeaders = () => {
     return this.createAuthHeaders(this.#adminAuthToken)
+  }
+
+  adminUserId = (): string => {
+    return this.#adminUserId
   }
 
   createUser = async (): Promise<{

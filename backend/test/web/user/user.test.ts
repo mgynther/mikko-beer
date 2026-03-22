@@ -100,6 +100,32 @@ describe('user tests', () => {
     assertDeepEqual(res.data, { user })
   })
 
+  it('list users', async () => {
+    const { user, authToken } = await ctx.createUser()
+
+    interface Response { users: User[] }
+    const res = await ctx.request.get<Response>(
+      `/api/v1/user`,
+      ctx.createAuthHeaders(authToken)
+    )
+
+    assertEqual(res.status, 200)
+    const expectedResponse: Response = {
+      users: [
+        {
+          id: ctx.adminUserId(),
+          role: 'admin',
+          username: null
+        },
+        user
+      ]
+    }
+    assertDeepEqual(
+      res.data,
+      expectedResponse
+    )
+  })
+
   it('sign in a user', async () => {
     const { authToken, user, username, password } = await ctx.createUser()
 
