@@ -30,6 +30,14 @@ describe('brewery tests', () => {
     assertDeepEqual(readBrewery, brewery)
   })
 
+  it('find brewery that does not exist', async () => {
+    const readBrewery = await breweryRepository.findBreweryById(
+      ctx.db,
+      'a3047606-807c-4550-8b14-8ec13dd03cdb'
+    )
+    assertDeepEqual(readBrewery, undefined)
+  })
+
   it('update brewery', async () => {
     const brewery = await ctx.db.executeReadWriteTransaction(async (
       trx: Transaction
