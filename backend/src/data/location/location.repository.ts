@@ -108,6 +108,6 @@ export async function searchLocations (
 function rowToLocation (row: LocationRow): Location {
   return {
     id: row.location_id,
-    name: row.name ?? ''
+    name: row.name
   }
 }

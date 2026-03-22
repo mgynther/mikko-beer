@@ -186,7 +186,7 @@ interface LocationQuerySelection {
   review_average: number
   review_count: number
   location_id: string
-  location_name: string | null
+  location_name: string
 }
 
 type LocationQueryBuilder =
@@ -296,7 +296,7 @@ export async function getLocation (
       reviewAverage: round(row.review_average, 2),
       reviewCount: `${row.review_count}`,
       locationId: row.location_id,
-      locationName: row.location_name ?? ''
+      locationName: row.location_name
     }))
 }
 

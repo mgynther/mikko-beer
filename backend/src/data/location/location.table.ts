@@ -7,7 +7,7 @@ import type {
 
 export interface LocationTable {
   location_id: Generated<string>
-  name: string | null
+  name: string
   created_at: Generated<Date>
 }
 

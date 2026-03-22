@@ -400,6 +400,10 @@ function parseReviewRows (
     } else {
       reviewMap[review.review_id] = {
         ...review,
+        location: review.location_id && review.location_name ? {
+          location_id: review.location_id,
+          name: review.location_name
+        } : null,
         breweries: [{
           brewery_id: review.brewery_id,
           name: review.brewery_name
@@ -450,9 +454,9 @@ function toJoinedReviews (reviewRows: DbJoinedReview[]): JoinedReview[] {
       size: row.container_size ?? '',
       type: row.container_type ?? ''
     },
-    location: row.location_id === null ? undefined : {
-      id: row.location_id,
-      name: row.location_name ?? '',
+    location: row.location === null ? undefined : {
+      id: row.location.location_id,
+      name: row.location.name,
     },
     rating: row.rating ?? 4,
     styles: row.styles.map(style => ({
