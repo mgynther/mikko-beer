@@ -185,10 +185,6 @@ export async function listStorages (
     .orderBy('beer_name', 'asc')
     .execute()
 
-  if (storages.length === 0) {
-    return []
-  }
-
   return toJoinedStorages(parseBreweryStorageRows(storages))
 }
 
@@ -240,9 +236,6 @@ export async function joinStorageData (
     .orderBy('beer_name')
     .execute()
 
-  if (storages.length === 0) {
-    return []
-  }
   return parseBreweryStorageRows(storages)
 }
 
