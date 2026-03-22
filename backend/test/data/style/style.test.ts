@@ -3,7 +3,7 @@ import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 import { TestContext } from '../test-context'
 import type { Database, Transaction } from '../../../src/data/database'
 import * as styleRepository from '../../../src/data/style/style.repository'
-import { assertDeepEqual } from '../../assert'
+import { assertDeepEqual, assertEqual } from '../../assert'
 import type { Style, StyleRelationship } from '../../../src/core/style/style'
 
 describe('style tests', () => {
@@ -14,6 +14,17 @@ describe('style tests', () => {
 
   after(ctx.after)
   afterEach(ctx.afterEach)
+
+  it('return undefined on style that does not exist', async () => {
+    const readStyle = await styleRepository.findStyleById(
+      ctx.db,
+      'e58a370e-7526-47e3-9c3d-da6a2c0ec5bd'
+    )
+    assertEqual(
+      readStyle,
+      undefined
+    )
+  })
 
   it('find style by id', async () => {
     const style = await ctx.db.executeReadWriteTransaction(async (
