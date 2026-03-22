@@ -1,6 +1,14 @@
 import type { UserPasswordHash } from '../../../core/user/sign-in-method'
 import type { Transaction } from '../../database'
 
+function defaultToNull(date: Date | undefined): Date | null {
+  return date ?? null
+}
+
+function defaultToUndefined(date: Date | null): Date | undefined {
+  return date ?? undefined
+}
+
 export async function findPasswordSignInMethod (
   trx: Transaction,
   userId: string
@@ -20,7 +28,7 @@ export async function findPasswordSignInMethod (
   return {
     userId: method.user_id,
     passwordHash: method.password_hash,
-    hashedAt: method.hashed_at ?? undefined
+    hashedAt: defaultToUndefined(method.hashed_at)
   }
 }
 
@@ -28,7 +36,7 @@ export async function insertPasswordSignInMethod (
   trx: Transaction,
   method: UserPasswordHash
 ): Promise<UserPasswordHash> {
-  await trx.trx()
+  const result = await trx.trx()
     .with('sim', (trx) =>
       trx
         .insertInto('sign_in_method')
@@ -38,11 +46,16 @@ export async function insertPasswordSignInMethod (
     .values({
       user_id: method.userId,
       password_hash: method.passwordHash,
-      hashed_at: method.hashedAt ?? null
+      hashed_at: defaultToNull(method.hashedAt)
     })
-    .execute()
+    .returningAll()
+    .executeTakeFirstOrThrow()
 
-  return method
+  return {
+    userId: result.user_id,
+    passwordHash: result.password_hash,
+    hashedAt: defaultToUndefined(result.hashed_at)
+  }
 }
 
 export async function updatePassword (
@@ -53,7 +66,7 @@ export async function updatePassword (
     .updateTable('password_sign_in_method')
     .set({
       password_hash: userPasswordHash.passwordHash,
-      hashed_at: userPasswordHash.hashedAt ?? null
+      hashed_at: defaultToNull(userPasswordHash.hashedAt)
     })
     .where('user_id', '=', userPasswordHash.userId)
     .returningAll()
@@ -62,7 +75,7 @@ export async function updatePassword (
   return {
     userId: updatedMethod.user_id,
     passwordHash: updatedMethod.password_hash,
-    hashedAt: updatedMethod.hashed_at ?? undefined
+    hashedAt: defaultToUndefined(updatedMethod.hashed_at)
   }
 }
 
