@@ -44,18 +44,6 @@ export async function findRefreshToken (
   }
 }
 
-export async function updateRefreshToken (
-  trx: Transaction,
-  refreshTokenId: string,
-  refreshTime: Date
-): Promise<void> {
-  await trx.trx()
-    .updateTable('refresh_token')
-    .set({ last_refreshed_at: refreshTime })
-    .where('refresh_token_id', '=', refreshTokenId)
-    .execute()
-}
-
 export async function deleteRefreshToken (
   db: Database,
   refreshTokenId: string
