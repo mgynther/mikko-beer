@@ -1,6 +1,5 @@
 // This file wraps jsonwebtoken usage to core types.
 import * as jwt from 'jsonwebtoken'
-import type { Role } from '../../user/user'
 import type {
   AuthToken,
   AuthTokenConfig, AuthTokenPayload
@@ -10,6 +9,7 @@ import {
 } from '../../auth/auth-token'
 
 import type { RefreshToken } from '../../auth/refresh-token'
+import { parseAuthTokenPayload, parseRefreshTokenPayload } from './jwt-parser'
 
 export interface RefreshTokenPayload {
   userId: string
@@ -36,39 +36,15 @@ export function signRefreshToken (
   return { refreshToken: jwt.sign(tokenPayload, authTokenSecret) }
 }
 
-function isRole(role: string): role is Role {
-  switch (role) {
-    case 'admin':
-    case 'viewer':
-      return true
-  }
-  return false
-}
-
 export function verifyAuthToken (
   token: AuthToken,
   authTokenSecret: string
 ): AuthTokenPayload {
   const payload = verifyToken(token.authToken, authTokenSecret)
-  if (
-    typeof payload === 'string' ||
-    typeof payload.userId !== 'string' ||
-    typeof payload.role !== 'string' ||
-    typeof payload.refreshTokenId !== 'string'
-  ) {
+  if (typeof payload === 'string') {
     throw new InvalidAuthTokenError()
   }
-
-  const {role} = payload
-  if (!isRole(role)) {
-    throw new InvalidAuthTokenError()
-  }
-
-  return {
-    userId: payload.userId,
-    role,
-    refreshTokenId: payload.refreshTokenId
-  }
+  return parseAuthTokenPayload(payload)
 }
 
 export function verifyRefreshToken (
@@ -76,21 +52,10 @@ export function verifyRefreshToken (
   authTokenSecret: string
 ): RefreshTokenPayload {
   const payload = verifyToken(token.refreshToken, authTokenSecret)
-
-  if (
-    typeof payload === 'string' ||
-    typeof payload.userId !== 'string' ||
-    typeof payload.refreshTokenId !== 'string' ||
-    payload.isRefreshToken !== true
-  ) {
+  if (typeof payload === 'string') {
     throw new InvalidAuthTokenError()
   }
-
-  return {
-    userId: payload.userId,
-    refreshTokenId: payload.refreshTokenId,
-    isRefreshToken: true
-  }
+  return parseRefreshTokenPayload(payload)
 }
 
 function verifyToken (
