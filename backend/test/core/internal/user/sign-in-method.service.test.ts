@@ -263,6 +263,38 @@ describe('password sign-in-method service unit tests', () => {
     await changePassword(changePasswordUserIf, userId, passwordChange)
   })
 
+  it('fail to change password with null username', async () => {
+    const changePasswordUserIf: ChangePasswordUserIf = {
+      lockUserById: async () => {
+        return {
+          ...user,
+          username: null
+        }
+      },
+      findPasswordSignInMethod: notCalled,
+      updatePassword: notCalled,
+    }
+    expectReject(async () => {
+      await changePassword(changePasswordUserIf, userId, passwordChange)
+    }, invalidCredentialsError)
+  })
+
+  it('fail to change password with empty username', async () => {
+    const changePasswordUserIf: ChangePasswordUserIf = {
+      lockUserById: async () => {
+        return {
+          ...user,
+          username: ''
+        }
+      },
+      findPasswordSignInMethod: notCalled,
+      updatePassword: notCalled,
+    }
+    expectReject(async () => {
+      await changePassword(changePasswordUserIf, userId, passwordChange)
+    }, invalidCredentialsError)
+  })
+
   it('fail to change password without user', async () => {
     const changePasswordUserIf: ChangePasswordUserIf = {
       lockUserById: lockMissingUser,
