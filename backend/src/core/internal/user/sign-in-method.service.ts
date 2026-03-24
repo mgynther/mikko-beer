@@ -19,6 +19,7 @@ import type {
   SignInUsingPasswordIf
 } from '../../user/sign-in-method'
 import type { AuthTokenConfig } from '../../auth/auth-token'
+import { scrypt } from './crypto'
 
 export const MIN_PASSWORD_LENGTH = 8
 export const MAX_PASSWORD_LENGTH = 255
@@ -150,24 +151,6 @@ export async function verifySecret (
 ): Promise<boolean> {
   const [salt, secretHash] = hash.split(':')
   return (await scrypt(secret, salt)) === secretHash
-}
-
-async function scrypt (secret: string, salt: string): Promise<string> {
-  return await new Promise((resolve, reject) => {
-    crypto.scrypt(
-      secret,
-      salt,
-      64,
-      { N: 16384, r: 8, p: 1 },
-      (err, secretHash) => {
-        if (err === null) {
-          resolve(secretHash.toString('hex'))
-          return
-        }
-        reject(err)
-      }
-    )
-  })
 }
 
 async function verifyPassword (
