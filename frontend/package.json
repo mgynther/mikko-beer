@@ -8,6 +8,7 @@
     "build": "tsc && vite build",
     "lint": "npx eslint --max-warnings=0 --fix .",
     "test": "VITE_BACKEND_URL=http://localhost:3001 TEST_PORT_START=30000 vitest --environment jsdom",
+    "test:ci": "CI=true npm run test",
     "e2e": "npx playwright test",
     "e2e:ui": "npx playwright test --ui",
     "preview": "vite preview"
