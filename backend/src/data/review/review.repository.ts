@@ -258,10 +258,6 @@ export async function listReviews (
   const reviews = await queryHelper.orderBy(query)
     .execute()
 
-  if (reviews.length === 0) {
-    return []
-  }
-
   return toJoinedReviews(parseReviewRows(reviews))
 }
 
@@ -310,10 +306,6 @@ export async function listReviewsByLocation (
   const reviews = await getOrderBy(reviewListOrder)(query)
     .execute()
 
-  if (reviews.length === 0) {
-    return []
-  }
-
   return toJoinedReviews(parseReviewRows(reviews))
 }
 
@@ -349,9 +341,6 @@ async function joinReviewData (
   const reviews = await orderBy(selectQuery)
     .execute()
 
-  if (reviews.length === 0) {
-    return []
-  }
   return parseReviewRows(reviews)
 }
 

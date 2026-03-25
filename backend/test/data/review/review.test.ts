@@ -93,6 +93,37 @@ describe('review tests', () => {
     assertDeepEqual(otherBreweryReviewTimes, expectedOtherBreweryReviewTimes)
   })
 
+  it('list reviews, beer_name asc', async() => {
+    const db = ctx.db
+    const { data } = await insertMultipleReviews(10, db)
+    const reviewListOrder: ReviewListOrder =
+      { property: 'beer_name', direction: 'asc' }
+    const list = await listReviews(db, reviewListOrder)
+    assertEqual(list.length, 10);
+    const start = new Array(5).fill(1).map(_ => data.beer.name)
+    const end = new Array(5).fill(1).map(_ => data.otherBeer.name)
+    const expectedNames = [...start, ...end]
+    assertDeepEqual(list.map(item => item.beerName), expectedNames)
+    function reviewToTime(row: JoinedReview): Date {
+      return row.time
+    }
+
+    const beerReviewTimes = list.slice(0, 5).map(reviewToTime)
+    assertEqual(beerReviewTimes.length, 5)
+    const expectedBeerReviewTimes = [...beerReviewTimes]
+    function sortDate(a: Date, b: Date) {
+      return a.getTime() - b.getTime()
+    }
+    expectedBeerReviewTimes.sort(sortDate)
+    assertDeepEqual(beerReviewTimes, expectedBeerReviewTimes)
+
+    const otherBeerReviewTimes = list.slice(5, 10).map(reviewToTime)
+    assertEqual(otherBeerReviewTimes.length, 5)
+    const expectedOtherBeerReviewTimes = [...otherBeerReviewTimes]
+    expectedOtherBeerReviewTimes.sort(sortDate)
+    assertDeepEqual(otherBeerReviewTimes, expectedOtherBeerReviewTimes)
+  })
+
   function toTime(review: Review | JoinedReview): Date {
     return review.time
   }
@@ -330,6 +361,16 @@ describe('review tests', () => {
     const { reviews, data } = await insertMultipleReviews(10, db)
     const reviewListOrder: ReviewListOrder =
       { property: 'beer_name', direction: 'asc' }
+    const list =
+      await listReviewsByLocation(db, data.otherLocation.id, reviewListOrder)
+    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.id)
+  })
+
+  it('list reviews by location, brewery_name asc', async() => {
+    const db = ctx.db
+    const { reviews, data } = await insertMultipleReviews(10, db)
+    const reviewListOrder: ReviewListOrder =
+      { property: 'brewery_name', direction: 'asc' }
     const list =
       await listReviewsByLocation(db, data.otherLocation.id, reviewListOrder)
     testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.id)
