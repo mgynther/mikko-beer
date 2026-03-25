@@ -49,19 +49,19 @@ function assertCurrentDateTime(date: Date) {
 describe('encrypt and verify password', () => {
   it('fail to encrypt too short password', async () => {
     expectReject(async () => {
-      await encryptPassword('passwor')
+      await encryptPassword(log, 'passwor')
     }, passwordTooWeakError)
   })
 
   it('fail to encrypt too long password', async () => {
     expectReject(async () => {
-      await encryptPassword('password'.repeat(100))
+      await encryptPassword(log, 'password'.repeat(100))
     }, passwordTooLongError)
   })
 
   it('encrypt password and verify password', async () => {
     const password = 'password'
-    const result = await encryptPassword(password)
+    const result = await encryptPassword(log, password)
     // Sanity check format without being specific.
     assertGreaterThan(result.length, 30)
     const [salt, hashedPassword] = result.split(':')
@@ -69,10 +69,10 @@ describe('encrypt and verify password', () => {
     assertGreaterThan(hashedPassword.length, 20)
     // There's no trivial way ensure hash is correct without using the same
     // implementation as in the tested code.
-    assertEqual(await verifySecret(password, result), true)
+    assertEqual(await verifySecret(password, result, log), true)
     // While ensuring correctness is hard, it's trivial to ensure wrong
     // password fails.
-    assertEqual(await verifySecret(`${password}1`, result), false)
+    assertEqual(await verifySecret(`${password}1`, result, log), false)
   })
 })
 
@@ -189,7 +189,7 @@ describe('password sign-in-method service unit tests', () => {
         // There's no trivial way ensure hash is correct without using the same
         // implementation as in the tested code.
         assertEqual(
-          await verifySecret(method.password, userPassword.passwordHash),
+          await verifySecret(method.password, userPassword.passwordHash, log),
           true
         )
       },
@@ -255,12 +255,12 @@ describe('password sign-in-method service unit tests', () => {
         // implementation as in the tested code.
         assertEqual(
           await verifySecret(
-            passwordChange.newPassword, userPassword.passwordHash),
+            passwordChange.newPassword, userPassword.passwordHash, log),
           true
         )
       },
     }
-    await changePassword(changePasswordUserIf, userId, passwordChange)
+    await changePassword(changePasswordUserIf, userId, passwordChange, log)
   })
 
   it('fail to change password with null username', async () => {
@@ -275,7 +275,7 @@ describe('password sign-in-method service unit tests', () => {
       updatePassword: notCalled,
     }
     expectReject(async () => {
-      await changePassword(changePasswordUserIf, userId, passwordChange)
+      await changePassword(changePasswordUserIf, userId, passwordChange, log)
     }, invalidCredentialsError)
   })
 
@@ -291,7 +291,7 @@ describe('password sign-in-method service unit tests', () => {
       updatePassword: notCalled,
     }
     expectReject(async () => {
-      await changePassword(changePasswordUserIf, userId, passwordChange)
+      await changePassword(changePasswordUserIf, userId, passwordChange, log)
     }, invalidCredentialsError)
   })
 
@@ -302,7 +302,7 @@ describe('password sign-in-method service unit tests', () => {
       updatePassword: notCalled,
     }
     expectReject(async () => {
-      await changePassword(changePasswordUserIf, userId, passwordChange)
+      await changePassword(changePasswordUserIf, userId, passwordChange, log)
     }, invalidCredentialsError)
   })
 
@@ -313,7 +313,7 @@ describe('password sign-in-method service unit tests', () => {
       updatePassword: notCalled,
     }
     expectReject(async () => {
-      await changePassword(changePasswordUserIf, userId, passwordChange)
+      await changePassword(changePasswordUserIf, userId, passwordChange, log)
     }, invalidCredentialsError)
   })
 
@@ -325,7 +325,7 @@ describe('password sign-in-method service unit tests', () => {
       updatePassword: notCalled,
     }
     expectReject(async () => {
-      await changePassword(changePasswordUserIf, userId, passwordChange)
+      await changePassword(changePasswordUserIf, userId, passwordChange, log)
     }, invalidCredentialsError)
   })
 
@@ -339,7 +339,8 @@ describe('password sign-in-method service unit tests', () => {
     const result = await signInUsingPassword(
       signInUsingPasswordIf,
       method,
-      authTokenConfig
+      authTokenConfig,
+      log
     )
     assertDeepEqual(result.user, user)
     const reference = await authTokenService.createTokens(
@@ -367,7 +368,8 @@ describe('password sign-in-method service unit tests', () => {
     const result = await signInUsingPassword(
       signInUsingPasswordIf,
       method,
-      authTokenConfig
+      authTokenConfig,
+      log
     )
     assertDeepEqual(result.user, user)
     const reference = await authTokenService.createTokens(
@@ -381,7 +383,7 @@ describe('password sign-in-method service unit tests', () => {
     const newHash = userHashes[0]
     assertEqual(newHash.userId, user.id)
     assertEqual(
-      await verifySecret(knownPassword, newHash.passwordHash),
+      await verifySecret(knownPassword, newHash.passwordHash, log),
       true
     )
     assertCurrentDateTime(newHash.hashedAt)
@@ -395,7 +397,12 @@ describe('password sign-in-method service unit tests', () => {
       updatePassword: notCalled
     }
     expectReject(async () => {
-      await signInUsingPassword(signInUsingPasswordIf, method, authTokenConfig)
+      await signInUsingPassword(
+        signInUsingPasswordIf,
+        method,
+        authTokenConfig,
+        log
+      )
     }, invalidCredentialsError)
   })
 
@@ -407,7 +414,12 @@ describe('password sign-in-method service unit tests', () => {
       updatePassword: notCalled
     }
     expectReject(async () => {
-      await signInUsingPassword(signInUsingPasswordIf, method, authTokenConfig)
+      await signInUsingPassword(
+        signInUsingPasswordIf,
+        method,
+        authTokenConfig,
+        log
+      )
     }, invalidCredentialsError)
   })
 
@@ -420,7 +432,12 @@ describe('password sign-in-method service unit tests', () => {
       updatePassword: notCalled
     }
     expectReject(async () => {
-      await signInUsingPassword(signInUsingPasswordIf, method, authTokenConfig)
+      await signInUsingPassword(
+        signInUsingPasswordIf,
+        method,
+        authTokenConfig,
+        log
+      )
     }, invalidCredentialsError)
   })
 })

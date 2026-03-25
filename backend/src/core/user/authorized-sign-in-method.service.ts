@@ -6,6 +6,7 @@ import * as userService from '../internal/user/user.service'
 
 import type { DbRefreshToken } from '../auth/refresh-token'
 import { validateRefreshToken } from '../internal/auth/refresh-token'
+import type { log } from '../log'
 import type {
   ChangePasswordUserIf,
   SignInUsingPasswordIf
@@ -19,13 +20,15 @@ import type { Tokens } from '../auth/tokens'
 export async function signInUsingPassword (
   signInUsingPasswordIf: SignInUsingPasswordIf,
   body: unknown,
-  authTokenConfig: AuthTokenConfig
+  authTokenConfig: AuthTokenConfig,
+  log: log
 ): Promise<SignedInUser> {
   // No authorization as sign in takes place here.
   return await signInMethodService.signInUsingPassword(
     signInUsingPasswordIf,
     body,
-    authTokenConfig
+    authTokenConfig,
+    log
   )
 }
 
@@ -36,14 +39,16 @@ export async function changePassword (
     refreshTokenId: string
   ) => Promise<DbRefreshToken | undefined>,
   request: IdRequest,
-  body: unknown
+  body: unknown,
+  log: log
 ): Promise<void> {
   await authorizationService.authorizeUser(
     request.id, request.authTokenPayload, findRefreshToken)
   await signInMethodService.changePassword(
     changePasswordUserIf,
     request.id,
-    body
+    body,
+    log
   );
 }
 

@@ -57,7 +57,7 @@ export function signInMethodController (router: Router): void {
         }
       }
       return await signInMethodService.signInUsingPassword(
-        signInUsingPasswordIf, body, getAuthTokenConfig(ctx)
+        signInUsingPasswordIf, body, getAuthTokenConfig(ctx), ctx.log
       )
     })
 
@@ -171,7 +171,7 @@ export function signInMethodController (router: Router): void {
           changePasswordUserIf, findRefreshToken, {
             authTokenPayload,
             id: userId
-          }, body
+          }, body, ctx.log
         )
       })
 

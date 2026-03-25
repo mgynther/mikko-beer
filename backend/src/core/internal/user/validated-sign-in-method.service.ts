@@ -1,5 +1,6 @@
 import * as signInMethodService from '../user/sign-in-method.service'
 
+import type { log } from '../../log'
 import {
   validatePasswordChange,
   validatePasswordSignInMethod
@@ -15,25 +16,29 @@ import type { AuthTokenConfig } from '../../auth/auth-token'
 export async function signInUsingPassword (
   signInUsingPasswordIf: SignInUsingPasswordIf,
   body: unknown,
-  authTokenConfig: AuthTokenConfig
+  authTokenConfig: AuthTokenConfig,
+  log: log
 ): Promise<SignedInUser> {
   const method = validatePasswordSignInMethod(body)
   return await signInMethodService.signInUsingPassword(
     signInUsingPasswordIf,
     method,
-    authTokenConfig
+    authTokenConfig,
+    log
   )
 }
 
 export async function changePassword (
   changePasswordUserIf: ChangePasswordUserIf,
   id: string | undefined,
-  body: unknown
+  body: unknown,
+  log: log
 ): Promise<void> {
   const change = validatePasswordChange(body)
   await signInMethodService.changePassword(
     changePasswordUserIf,
     validateUserId(id),
-    change
+    change,
+    log
   );
 }

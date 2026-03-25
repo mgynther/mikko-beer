@@ -24,6 +24,8 @@ import type {
   UserPasswordHash
 } from '../../../../src/core/user/sign-in-method'
 
+import { dummyLog as log } from '../../dummy-log'
+
 const userId = '2bbcaed7-2b4d-4888-9a32-8573dc19fd56'
 
 const user: User = {
@@ -79,7 +81,8 @@ describe('validated sign in method service unit tests', () => {
         username: 'admin',
         password: knownPassword
       },
-      authTokenConfig
+      authTokenConfig,
+      log
     )
   })
 
@@ -90,7 +93,8 @@ describe('validated sign in method service unit tests', () => {
         {
           username: 'admin'
         },
-        authTokenConfig
+        authTokenConfig,
+        log
       )
     }, invalidSignInMethodError)
   })
@@ -103,7 +107,8 @@ describe('validated sign in method service unit tests', () => {
           username: 'admin',
           password: 'wrong password'
         },
-        authTokenConfig
+        authTokenConfig,
+        log
       )
     }, invalidCredentialsError)
   })
@@ -112,7 +117,8 @@ describe('validated sign in method service unit tests', () => {
     await service.changePassword(
       changePasswordUserIf,
       userId,
-      passwordChange
+      passwordChange,
+      log
     )
   })
 
@@ -124,7 +130,8 @@ describe('validated sign in method service unit tests', () => {
         {
           ...passwordChange,
           oldPassword: 'wrong password'
-        }
+        },
+        log
       )
     }, invalidCredentialsError)
   })
@@ -136,7 +143,8 @@ describe('validated sign in method service unit tests', () => {
         userId,
         {
           oldPassword: knownPassword
-        }
+        },
+        log
       )
     }, invalidPasswordChangeError)
   })

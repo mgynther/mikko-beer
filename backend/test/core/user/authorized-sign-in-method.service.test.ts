@@ -30,6 +30,8 @@ import type {
   UserPasswordHash
 } from '../../../src/core/user/sign-in-method'
 
+import { dummyLog as log } from '../dummy-log'
+
 const userId = '589e0cf9-7a2d-4c7e-8d62-6e67f32cb3ce'
 const refreshTokenId = 'c6697088-c417-4dee-988d-c018b07527f7'
 
@@ -110,7 +112,8 @@ describe('authorized sign in method service unit tests', () => {
         username: 'admin',
         password: knownPassword
       },
-      authTokenConfig
+      authTokenConfig,
+      log
     )
   })
 
@@ -122,7 +125,8 @@ describe('authorized sign in method service unit tests', () => {
         id: userId,
         authTokenPayload: adminAuthToken
       },
-      passwordChange
+      passwordChange,
+      log
     )
   })
 
@@ -135,7 +139,8 @@ describe('authorized sign in method service unit tests', () => {
           id: userId,
           authTokenPayload: viewerAuthToken
         },
-        passwordChange
+        passwordChange,
+        log
       )
     }, userMismatchError)
   })

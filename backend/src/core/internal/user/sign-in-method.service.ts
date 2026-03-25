@@ -41,7 +41,7 @@ export async function addPasswordSignInMethod (
 
   await addPasswordUserIf.insertPasswordSignInMethod({
     userId,
-    passwordHash: await encryptPassword(method.password),
+    passwordHash: await encryptPassword(log, method.password),
     hashedAt: new Date()
   })
 
@@ -56,7 +56,8 @@ export async function addPasswordSignInMethod (
 export async function changePassword (
   changePasswordUserIf: ChangePasswordUserIf,
   userId: string,
-  change: PasswordChange
+  change: PasswordChange,
+  log: log
 ): Promise<void> {
   const user = await userService.lockUserById(
     changePasswordUserIf.lockUserById,
@@ -75,13 +76,17 @@ export async function changePassword (
     throw invalidCredentialsError
   }
 
-  if (!(await verifyPassword(change.oldPassword, signInMethod.passwordHash))) {
+  if (!(await verifyPassword(
+    change.oldPassword,
+    signInMethod.passwordHash,
+    log
+  ))) {
     throw invalidCredentialsError
   }
 
   await changePasswordUserIf.updatePassword({
     userId,
-    passwordHash: await encryptPassword(change.newPassword),
+    passwordHash: await encryptPassword(log, change.newPassword),
     hashedAt: new Date()
   })
 }
@@ -89,7 +94,8 @@ export async function changePassword (
 export async function signInUsingPassword (
   signInUsingPasswordIf: SignInUsingPasswordIf,
   method: PasswordSignInMethod,
-  authTokenConfig: AuthTokenConfig
+  authTokenConfig: AuthTokenConfig,
+  log: log
 ): Promise<SignedInUser> {
   const user = await userService.lockUserByUsername(
     signInUsingPasswordIf.lockUserByUsername, method.username);
@@ -102,7 +108,7 @@ export async function signInUsingPassword (
   }
 
   const password = method.password
-  if (!(await verifyPassword(password, signInMethod.passwordHash))) {
+  if (!(await verifyPassword(password, signInMethod.passwordHash, log))) {
     throw invalidCredentialsError
   }
 
@@ -111,7 +117,7 @@ export async function signInUsingPassword (
       userId: user.id,
       // Cannot apply any validation on the password as the rules may have
       // changed and login cannot fail permanently for this reason here.
-      passwordHash: await encryptSecret(password),
+      passwordHash: await encryptSecret(log, password),
       hashedAt: new Date()
     })
   }
@@ -129,7 +135,10 @@ export async function signInUsingPassword (
   }
 }
 
-export async function encryptPassword (password: string): Promise<string> {
+export async function encryptPassword (
+  log: log,
+  password: string
+): Promise<string> {
   if (password.length < MIN_PASSWORD_LENGTH) {
     throw passwordTooWeakError
   }
@@ -138,24 +147,27 @@ export async function encryptPassword (password: string): Promise<string> {
     throw passwordTooLongError
   }
 
-  return await encryptSecret(password)
+  return await encryptSecret(log, password)
 }
 
-async function encryptSecret (secret: string): Promise<string> {
+async function encryptSecret (log: log, secret: string): Promise<string> {
   const salt = crypto.randomBytes(16).toString('hex')
-  return `${salt}:${await scrypt(secret, salt)}`
+  return `${salt}:${await scrypt(log, secret, salt)}`
 }
 
 export async function verifySecret (
-  secret: string, hash: string
+  secret: string,
+  hash: string,
+  log: log
 ): Promise<boolean> {
   const [salt, secretHash] = hash.split(':')
-  return (await scrypt(secret, salt)) === secretHash
+  return (await scrypt(log, secret, salt)) === secretHash
 }
 
 async function verifyPassword (
   password: string,
-  hash: string
+  hash: string,
+  log: log
 ): Promise<boolean> {
-  return await verifySecret(password, hash)
+  return await verifySecret(password, hash, log)
 }
