@@ -7,26 +7,26 @@ import type {
 
 export interface ReviewTableContent {
   beer: string
-  additional_info: string | null
+  additional_info: string
   container: string
   location: string | null
-  rating: number | null
+  rating: number
   time: Date
-  smell: string | null
-  taste: string | null
+  smell: string
+  taste: string
 }
 
 export interface ReviewTable {
   review_id: Generated<string>
   beer: Generated<string>
-  additional_info: string | null
+  additional_info: string
   container: Generated<string>
   location: string | null
-  rating: number | null
+  rating: number
   time: Date
   created_at: Generated<Date>
-  smell: string | null
-  taste: string | null
+  smell: string
+  taste: string
 }
 
 export type ReviewRow = Selectable<ReviewTable>
@@ -42,7 +42,7 @@ export interface DbJoinedReview {
     brewery_id: string
     name: string
   }>
-  additional_info: string | null
+  additional_info: string
   container_id: string
   container_size: string
   container_type: string
@@ -50,7 +50,7 @@ export interface DbJoinedReview {
     location_id: string
     name: string
   } | null
-  rating: number | null
+  rating: number
   styles: Array<{
     style_id: string
     name: string

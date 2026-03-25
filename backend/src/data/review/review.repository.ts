@@ -346,7 +346,7 @@ async function joinReviewData (
 
 interface InternalJoinedReview {
   review_id: string
-  additional_info: string | null
+  additional_info: string
   beer_id: string
   beer_name: string
   brewery_id: string
@@ -356,7 +356,7 @@ interface InternalJoinedReview {
   container_type: string
   location_id: string | null
   location_name: string | null
-  rating: number | null
+  rating: number
   time: Date
   created_at: Date
   style_id: string
@@ -417,21 +417,21 @@ function parseReviewRows (
 function toReview (row: ReviewRow): Review {
   return {
     id: row.review_id,
-    additionalInfo: row.additional_info ?? '',
+    additionalInfo: row.additional_info,
     beer: row.beer,
     container: row.container,
     location: row.location ?? '',
-    rating: row.rating ?? 4,
+    rating: row.rating,
     time: row.time,
-    smell: row.smell ?? '',
-    taste: row.taste ?? ''
+    smell: row.smell,
+    taste: row.taste
   }
 }
 
 function toJoinedReviews (reviewRows: DbJoinedReview[]): JoinedReview[] {
   return reviewRows.map(row => ({
     id: row.review_id,
-    additionalInfo: row.additional_info ?? '',
+    additionalInfo: row.additional_info,
     beerId: row.beer_id,
     beerName: row.beer_name,
     breweries: row.breweries.map(brewery => ({
@@ -447,7 +447,7 @@ function toJoinedReviews (reviewRows: DbJoinedReview[]): JoinedReview[] {
       id: row.location.location_id,
       name: row.location.name,
     },
-    rating: row.rating ?? 4,
+    rating: row.rating,
     styles: row.styles.map(style => ({
       id: style.style_id,
       name: style.name
