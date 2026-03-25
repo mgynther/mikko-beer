@@ -34,6 +34,7 @@ import {
   createInitialUser,
   addPasswordForInitialUser
 } from '../core/app-initial-user'
+import { createStopHandler } from './app-stop-handler'
 
 export interface StartResult {
   authToken: string,
@@ -85,96 +86,94 @@ export class App {
   }
 
   async start (): Promise<StartResult> {
-    return await new Promise<StartResult>((resolve) => {
-      const port = this.#config.port
-      const db = this.#db
-      const log = this.#log
-      const isAdminPasswordNeeded = this.#config.generateInitialAdminPassword
-      const startResult: StartResult = {
-        authToken: '',
-        userId: ''
-      }
-      function logWithAdminPassword (...args: unknown[]): void {
-        if (isAdminPasswordNeeded) {
-          log(Level.INFO, ...args)
+    return await new Promise<StartResult>((resolve, reject) => {
+        const port = this.#config.port
+        const db = this.#db
+        const log = this.#log
+        const isAdminPasswordNeeded = this.#config.generateInitialAdminPassword
+        const startResult: StartResult = {
+          authToken: '',
+          userId: ''
         }
-      }
-      userRepository.listUsers(db).then((users: User[]) => {
-        let createPromise: Promise<void> | undefined = undefined
-        if (users.length === 0) {
-          logWithAdminPassword('No users. Creating initial admin')
-          const adminUsername = uuidv4()
-          const adminPassword = uuidv4()
-          createPromise = db.executeReadWriteTransaction(async (trx) => {
-            const authTokenConfig: AuthTokenConfig ={
-              secret: this.#config.authTokenSecret,
-              expiryDurationMin: this.#config.authTokenExpiryDurationMin
-            };
-            const user = await createInitialUser(
-              async (request: CreateAnonymousUserRequest) =>
-                await userRepository.createAnonymousUser(trx, request),
-              authTokenConfig,
-              this.#log
-            )
-            startResult.authToken = user.authToken.authToken
-            startResult.userId = user.user.id
-            if (isAdminPasswordNeeded) {
-              const addPasswordUserIf = createAddPasswordUserIf(trx)
-              await addPasswordForInitialUser(
-                addPasswordUserIf,
-                user.user.id,
-                {
-                  username: adminUsername,
-                  password: adminPassword
-                },
+        function logWithAdminPassword (...args: unknown[]): void {
+          if (isAdminPasswordNeeded) {
+            log(Level.INFO, ...args)
+          }
+        }
+        userRepository.listUsers(db).then((users: User[]) => {
+          let createPromise: Promise<void> | undefined = undefined
+          if (users.length === 0) {
+            logWithAdminPassword('No users. Creating initial admin')
+            const adminUsername = uuidv4()
+            const adminPassword = uuidv4()
+            createPromise = db.executeReadWriteTransaction(async (trx) => {
+              const authTokenConfig: AuthTokenConfig ={
+                secret: this.#config.authTokenSecret,
+                expiryDurationMin: this.#config.authTokenExpiryDurationMin
+              };
+              const user = await createInitialUser(
+                async (request: CreateAnonymousUserRequest) =>
+                  await userRepository.createAnonymousUser(trx, request),
+                authTokenConfig,
                 this.#log
               )
-            }
+              startResult.authToken = user.authToken.authToken
+              startResult.userId = user.user.id
+              if (isAdminPasswordNeeded) {
+                const addPasswordUserIf = createAddPasswordUserIf(trx)
+                await addPasswordForInitialUser(
+                  addPasswordUserIf,
+                  user.user.id,
+                  {
+                    username: adminUsername,
+                    password: adminPassword
+                  },
+                  this.#log
+                )
+              }
+            })
+            logWithAdminPassword(
+              `Created initial user "${
+                adminUsername
+              }" with password "${
+                adminPassword
+              }". Please change the password a.s.a.p.`
+            )
+          }
+          log(Level.INFO, 'Server starting')
+          const serverPromise = new Promise<void>((resolve) => {
+            this.#server = this.#koa.listen(port, resolve)
           })
-          logWithAdminPassword(
-            `Created initial user "${
-              adminUsername
-            }" with password "${
-              adminPassword
-            }". Please change the password a.s.a.p.`
-          )
-        }
-        log(Level.INFO, 'Server starting')
-        const serverPromise = new Promise<void>((resolve) => {
-          this.#server = this.#koa.listen(port, resolve)
-        })
-        const promises = [serverPromise]
-        if (createPromise !== undefined) {
-          promises.push(createPromise)
-        }
-        const oldDate = new Date()
-        oldDate.setDate(oldDate.getDate() - 14)
-        const oldPasswordHashedAtCleanupPromise =
-          db.executeReadWriteTransaction(
-            async (trx) => { await clearOldHashedAt(trx, oldDate); }
-          )
-        promises.push(oldPasswordHashedAtCleanupPromise)
-        Promise.all(promises).then(() => {
-          log(Level.INFO, `Server started in port ${port}`)
-          resolve(startResult)
-        }, (error: unknown) => {
+          const promises = [serverPromise]
+          if (createPromise !== undefined) {
+            promises.push(createPromise)
+          }
+          const oldDate = new Date()
+          oldDate.setDate(oldDate.getDate() - 14)
+          const oldPasswordHashedAtCleanupPromise =
+            db.executeReadWriteTransaction(
+              async (trx) => { await clearOldHashedAt(trx, oldDate); }
+            )
+          promises.push(oldPasswordHashedAtCleanupPromise)
+          Promise.all(promises).then(() => {
+            log(Level.INFO, `Server started in port ${port}`)
+            resolve(startResult)
+          })
+        }).catch((error: unknown) => {
           log(Level.ERROR, 'Error starting', error)
+          reject(error)
         })
-      }, (error: unknown) => {
-        log(Level.ERROR, 'Error starting', error)
-      })
     })
   }
 
   async stop (): Promise<void> {
     await new Promise<void>((resolve, reject) => {
-      this.#server?.close((err) => {
-        if (err === undefined) {
-          resolve()
-        } else {
-          reject(err)
-        }
-      })
+      const server = this.#server
+      if (server === undefined) {
+        resolve()
+      } else {
+        server.close(createStopHandler(resolve, reject))
+      }
     })
 
     await this.#db.destroy()
