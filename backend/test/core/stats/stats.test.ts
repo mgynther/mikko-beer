@@ -3,6 +3,7 @@ import { describe, it } from 'node:test'
 import {
   validateBreweryStatsOrder,
   validateLocationStatsOrder,
+  validateStyleStatsOrder,
   validateStatsIdFilter,
   validateStatsFilter,
 } from '../../../src/core/stats/stats'
@@ -11,6 +12,7 @@ import {
   invalidIdFilterError,
   invalidBreweryStatsQueryError,
   invalidLocationStatsQueryError,
+  invalidStyleStatsQueryError
 } from '../../../src/core/errors'
 import { expectThrow } from '../controller-error-helper'
 import { assertDeepEqual } from '../../assert'
@@ -254,5 +256,51 @@ describe('location stats order unit tests', () => {
       order: 'beer_name',
       direction: 'invalid'
     }), invalidLocationStatsQueryError)
+  })
+})
+
+describe('style stats order unit tests', () => {
+  const defaultOrder = {
+    property: 'style_name',
+    direction: 'asc'
+  }
+
+  it('validate empty order', () => {
+    assertDeepEqual(validateStyleStatsOrder({}), defaultOrder)
+  })
+
+  it('validate average desc order', () => {
+    assertDeepEqual(validateStyleStatsOrder({
+      order: 'average',
+      direction: 'desc'
+    }), { property: 'average', direction: 'desc' })
+  })
+
+  it('validate style name desc order', () => {
+    assertDeepEqual(validateStyleStatsOrder({
+      order: 'style_name',
+      direction: 'desc'
+    }), { property: 'style_name', direction: 'desc' })
+  })
+
+  it('validate count asc order', () => {
+    assertDeepEqual(validateStyleStatsOrder({
+      order: 'count',
+      direction: 'asc'
+    }), { property: 'count', direction: 'asc' })
+  })
+
+  it('validate invalid asc order', () => {
+    expectThrow(() => validateStyleStatsOrder({
+      order: 'invalid',
+      direction: 'asc'
+    }), invalidStyleStatsQueryError)
+  })
+
+  it('validate beer name invalid order', () => {
+    expectThrow(() => validateStyleStatsOrder({
+      order: 'beer_name',
+      direction: 'invalid'
+    }), invalidStyleStatsQueryError)
   })
 })
