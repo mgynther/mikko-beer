@@ -7,8 +7,8 @@
     "dev": "VITE_BACKEND_URL=http://localhost:3001 vite",
     "build": "tsc && vite build",
     "lint": "npx eslint --max-warnings=0 --fix .",
-    "test": "VITE_BACKEND_URL=http://localhost:3001 TEST_PORT_START=30000 vitest --environment jsdom",
-    "test:ci": "CI=true npm run test",
+    "test": "VITE_BACKEND_URL=http://localhost:3001 TEST_PORT_START=30000 vitest --coverage.enabled false --environment jsdom",
+    "test:ci": "CI=true VITE_BACKEND_URL=http://localhost:3001 TEST_PORT_START=30000 vitest --coverage.enabled true --environment jsdom",
     "e2e": "npx playwright test",
     "e2e:ui": "npx playwright test --ui",
     "preview": "vite preview"
@@ -32,6 +32,7 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.1",
+    "@vitest/coverage-v8": "4.1.1",
     "jsdom": "29.0.1",
     "react-test-renderer": "19.2.4",
     "typescript": "5.9.3",
