@@ -62,6 +62,15 @@ describe('review tests', () => {
     })
   })
 
+  function sortDates(dates: Date[]): Date[] {
+    const sorted = [...dates]
+    function sortDate(a: Date, b: Date) {
+      return a.getTime() - b.getTime()
+    }
+    sorted.sort(sortDate)
+    return sorted
+  }
+
   it('list reviews, brewery_name desc', async() => {
     const db = ctx.db
     const { data } = await insertMultipleReviews(10, db)
@@ -79,17 +88,13 @@ describe('review tests', () => {
 
     const breweryReviewTimes = list.slice(0, 5).map(reviewToTime)
     assertEqual(breweryReviewTimes.length, 5)
-    const expectedBreweryReviewTimes = [...breweryReviewTimes]
-    function sortDate(a: Date, b: Date) {
-      return a.getTime() - b.getTime()
-    }
-    expectedBreweryReviewTimes.sort(sortDate)
+    const expectedBreweryReviewTimes = sortDates([...breweryReviewTimes])
     assertDeepEqual(breweryReviewTimes, expectedBreweryReviewTimes)
 
     const otherBreweryReviewTimes = list.slice(5, 10).map(reviewToTime)
     assertEqual(otherBreweryReviewTimes.length, 5)
-    const expectedOtherBreweryReviewTimes = [...otherBreweryReviewTimes]
-    expectedOtherBreweryReviewTimes.sort(sortDate)
+    const expectedOtherBreweryReviewTimes =
+      sortDates([...otherBreweryReviewTimes])
     assertDeepEqual(otherBreweryReviewTimes, expectedOtherBreweryReviewTimes)
   })
 
@@ -110,17 +115,12 @@ describe('review tests', () => {
 
     const beerReviewTimes = list.slice(0, 5).map(reviewToTime)
     assertEqual(beerReviewTimes.length, 5)
-    const expectedBeerReviewTimes = [...beerReviewTimes]
-    function sortDate(a: Date, b: Date) {
-      return a.getTime() - b.getTime()
-    }
-    expectedBeerReviewTimes.sort(sortDate)
+    const expectedBeerReviewTimes = sortDates([...beerReviewTimes])
     assertDeepEqual(beerReviewTimes, expectedBeerReviewTimes)
 
     const otherBeerReviewTimes = list.slice(5, 10).map(reviewToTime)
     assertEqual(otherBeerReviewTimes.length, 5)
-    const expectedOtherBeerReviewTimes = [...otherBeerReviewTimes]
-    expectedOtherBeerReviewTimes.sort(sortDate)
+    const expectedOtherBeerReviewTimes = sortDates([...otherBeerReviewTimes])
     assertDeepEqual(otherBeerReviewTimes, expectedOtherBeerReviewTimes)
   })
 
