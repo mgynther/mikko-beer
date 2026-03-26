@@ -8,6 +8,7 @@ export default defineConfig({
       enabled: true,
       provider: 'v8',
       reporter: ['text', 'html'],
+      exclude: ['src/**/*.css'],
     }
   },
 })
