@@ -3,10 +3,20 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import ChangePassword from './ChangePassword'
 import { Role } from '../../core/user/types'
-import type { ChangePasswordIf } from '../../core/login/types'
+import type { ChangePasswordIf, GetLogin } from '../../core/login/types'
 import { PasswordChangeResult } from '../../core/login/types'
 
 const userId = '8f19eb81-b283-440f-be76-73c1c858150c'
+
+const getLogin: GetLogin = () => ({
+  user: {
+    id: userId,
+    username: 'admin',
+    role: Role.admin
+  },
+  authToken: 'dummy',
+  refreshToken: 'dummy'
+})
 
 test('changes password', async () => {
   const user = userEvent.setup()
@@ -22,15 +32,7 @@ test('changes password', async () => {
   }
   const { getByRole, getByPlaceholderText } = render(
     <ChangePassword
-      getLogin={() => ({
-        user: {
-          id: userId,
-          username: 'admin',
-          role: Role.admin
-        },
-        authToken: 'dummy',
-        refreshToken: 'dummy'
-      })}
+      getLogin={getLogin}
       changePasswordIf={changePasswordIf}
     />
   )
@@ -53,4 +55,23 @@ test('changes password', async () => {
       newPassword
     }
   }]])
+})
+
+test('password change has failed', async () => {
+  const changePasswordIf: ChangePasswordIf = {
+    useChangePassword: () => ({
+      changePassword: async () => undefined,
+      isLoading: false
+    }),
+    useGetPasswordChangeResult: () => ({
+      getResult: () => PasswordChangeResult.ERROR
+    })
+  }
+  const { getByText } = render(
+    <ChangePassword
+      getLogin={getLogin}
+      changePasswordIf={changePasswordIf}
+    />
+  )
+  getByText('Change failed. Please check your old and new passwords.')
 })
