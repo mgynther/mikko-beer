@@ -15,7 +15,7 @@ interface Props {
   changePasswordIf: ChangePasswordIf
 }
 
-function ChangePassword (props: Props): React.JSX.Element {
+function ChangePassword (props: Props): React.JSX.Element | null {
   const login: Login = props.getLogin()
   const { changePassword, isLoading } =
     props.changePasswordIf.useChangePassword()
@@ -27,10 +27,17 @@ function ChangePassword (props: Props): React.JSX.Element {
   const [newPassword, setNewPassword] = useState('')
   const [newPasswordConfirmation, setNewPasswordConfirmation] = useState('')
 
+  // Enabled by types but should not be possible.
+  if (login.user === undefined) {
+    return null
+  }
+
+  const userId = login.user.id
+
   async function doChange (event: SubmitEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     await changePassword({
-      userId: login.user?.id ?? '',
+      userId: userId,
       body: {
         oldPassword,
         newPassword

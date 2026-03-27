@@ -27,7 +27,7 @@ test('changes password', async () => {
       isLoading: false
     }),
     useGetPasswordChangeResult: () => ({
-      getResult: () => PasswordChangeResult.SUCCESS
+      getResult: () => PasswordChangeResult.UNDEFINED
     })
   }
   const { getByRole, getByPlaceholderText } = render(
@@ -57,6 +57,25 @@ test('changes password', async () => {
   }]])
 })
 
+test('shows password change result', async () => {
+  const changePasswordIf: ChangePasswordIf = {
+    useChangePassword: () => ({
+      changePassword: async () => undefined,
+      isLoading: false
+    }),
+    useGetPasswordChangeResult: () => ({
+      getResult: () => PasswordChangeResult.SUCCESS
+    })
+  }
+  const { getByText } = render(
+    <ChangePassword
+      getLogin={getLogin}
+      changePasswordIf={changePasswordIf}
+    />
+  )
+  getByText('Password changed!')
+})
+
 test('password change has failed', async () => {
   const changePasswordIf: ChangePasswordIf = {
     useChangePassword: () => ({
@@ -74,4 +93,27 @@ test('password change has failed', async () => {
     />
   )
   getByText('Change failed. Please check your old and new passwords.')
+})
+
+test('does not render on missing user', async () => {
+  const changePasswordIf: ChangePasswordIf = {
+    useChangePassword: () => ({
+      changePassword: async () => undefined,
+      isLoading: false
+    }),
+    useGetPasswordChangeResult: () => ({
+      getResult: () => PasswordChangeResult.UNDEFINED
+    })
+  }
+  const { container } = render(
+    <ChangePassword
+      getLogin={() => ({
+        user: undefined,
+        authToken: '',
+        refreshToken: ''
+      })}
+      changePasswordIf={changePasswordIf}
+    />
+  )
+  expect(container.childElementCount).toEqual(0);
 })
