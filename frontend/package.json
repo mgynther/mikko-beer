@@ -32,13 +32,13 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.1",
-    "@vitest/coverage-v8": "4.1.1",
+    "@vitest/coverage-v8": "4.1.2",
     "jsdom": "29.0.1",
     "react-test-renderer": "19.2.4",
     "typescript": "5.9.3",
     "typescript-eslint": "8.57.2",
-    "vite": "8.0.2",
-    "vitest": "4.1.1",
+    "vite": "8.0.3",
+    "vitest": "4.1.2",
     "web-vitals": "5.2.0"
   },
   "browserslist": {
