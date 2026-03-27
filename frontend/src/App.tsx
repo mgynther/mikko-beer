@@ -38,6 +38,7 @@ import type { StoreIf } from './store/storeIf'
 import ContentEnd from './components/ContentEnd'
 import type { NavMenuState, Theme } from './core/types'
 import Layout from './Layout'
+import { applyTheme } from './theme-applier'
 
 interface Props {
   paramsIf: ParamsIf,
@@ -48,12 +49,7 @@ function App (props: Props): React.JSX.Element {
   const navState: NavMenuState = useSelector(selectState)
   const theme: Theme = useSelector(selectTheme)
   useEffect(() => {
-    const bodyElements = document.getElementsByTagName('body')
-    if (theme === 'DARK') {
-      bodyElements[0].removeAttribute('class')
-    } else {
-      bodyElements[0].setAttribute('class', 'light')
-    }
+    applyTheme(theme)
   }, [theme])
   const dispatch = useAppDispatch()
 
