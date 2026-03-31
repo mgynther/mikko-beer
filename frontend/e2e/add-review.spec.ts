@@ -18,6 +18,6 @@ test('Add review', async ({ page }) => {
   await page.getByRole('textbox', { name: /smell/i }).fill('Smells nice')
   await page.getByRole('textbox', { name: /taste/i }).fill('Tastes good')
   await page.getByRole('slider').fill('8')
-  await page.getByRole('button', { name: /add/i }).click()
+  await page.getByRole('button', { name: 'Add', exact: true }).click()
   await expect(page.getByRole('heading', { name: beerName })).toBeVisible()
 })
