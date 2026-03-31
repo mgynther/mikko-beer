@@ -6,8 +6,7 @@ import {
   assertIncludes
 } from '../assert'
 
-import axios from 'axios'
-
+import { createClient } from './client'
 import { testConfig } from './test-config'
 import {
   afterTest,
@@ -31,10 +30,9 @@ export class TestContext {
   #app?: App
   #logMessages: LogEntry[] = []
 
-  request = axios.create({
-    baseURL: `http://localhost:${testConfig.port}`,
-    validateStatus: () => true,
-  })
+  request = createClient(
+    `http://localhost:${testConfig.port}`
+  )
 
   get db(): Database {
     return this.#app!.db
@@ -106,10 +104,8 @@ describe('initial admin', () => {
     const getRes = await ctx.request.get<{ user: User }>(
       `/api/v1/user/${res.data.user.id}`,
       {
-      headers: {
         Authorization: `Bearer ${authToken}`,
-      },
-    }
+      }
     )
     assertEqual(getRes.status, 200)
     assertDeepEqual(getRes.data.user, res.data.user)

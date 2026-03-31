@@ -18,7 +18,7 @@ describe('storage tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  async function createDeps(adminAuthHeaders: Record<string, unknown>) {
+  async function createDeps(adminAuthHeaders: Record<string, string>) {
     const styleRes = await ctx.request.post(`/api/v1/style`,
       { name: 'Kriek', parents: [] },
       adminAuthHeaders
@@ -268,7 +268,7 @@ describe('storage tests', () => {
     assertEqual(res.data.storages.length, 0)
   })
 
-  async function createListByDeps(adminAuthHeaders: Record<string, unknown>) {
+  async function createListByDeps(adminAuthHeaders: Record<string, string>) {
     const { beerRes, breweryRes, containerRes, styleRes } =
       await createDeps(adminAuthHeaders)
 

@@ -41,7 +41,7 @@ describe('stats tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  async function createDeps(adminAuthHeaders: Record<string, unknown>) {
+  async function createDeps(adminAuthHeaders: Record<string, string>) {
     const styleRes = await ctx.request.post<{ style: Style }>(`/api/v1/style`,
       { name: 'Kriek', parents: [] },
       adminAuthHeaders

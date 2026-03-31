@@ -1,6 +1,7 @@
-import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 
+import { createClient } from './client'
+import type { RequestHeaders } from './client'
 import { testConfig } from './test-config'
 import {
   afterTest,
@@ -24,10 +25,9 @@ export class TestContext {
     this.#userLogger = userLogger
   }
 
-  request = axios.create({
-    baseURL: `http://localhost:${testConfig.port}`,
-    validateStatus: () => true,
-  })
+  request = createClient(
+    `http://localhost:${testConfig.port}`
+  )
 
   get db(): Database {
     return this.#app!.db
@@ -106,11 +106,9 @@ export class TestContext {
     }
   }
 
-  createAuthHeaders = (authToken: string) => {
+  createAuthHeaders = (authToken: string): RequestHeaders => {
     return {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
+      Authorization: `Bearer ${authToken}`,
     }
   }
 }
