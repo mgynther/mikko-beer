@@ -121,7 +121,7 @@ import updateReview from './storehookifs/review/update'
 
 import search from './storehookifs/search'
 
-import stats from './storehookifs/stats'
+import stats from './storehookifs/stats/stats'
 
 import createStorage from './storehookifs/storage/create'
 import getAnnualStorageStats from './storehookifs/storage/annualStats'

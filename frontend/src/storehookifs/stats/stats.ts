@@ -1,4 +1,4 @@
-import type { NavigateIf } from "../components/util"
+import type { NavigateIf } from "../../components/util"
 import type {
   AnnualContainerStats,
   AnnualContainerStatsQueryParams,
@@ -10,8 +10,8 @@ import type {
   StatsIf,
   StyleStatsQueryParams,
   YearMonth
-} from "../core/stats/types"
-import type { InfiniteScroll, UseDebounce } from "../core/types"
+} from "../../core/stats/types"
+import type { InfiniteScroll, UseDebounce } from "../../core/types"
 import {
   useGetAnnualStatsQuery,
   useGetContainerStatsQuery,
@@ -21,7 +21,7 @@ import {
   useLazyGetAnnualContainerStatsQuery,
   useLazyGetBreweryStatsQuery,
   useLazyGetLocationStatsQuery
-} from "../store/stats/api"
+} from "../../store/stats/api"
 import {
   validateAnnualStatsOrUndefined,
   validateAnnualContainerStatsOrUndefined,
@@ -31,8 +31,8 @@ import {
   validateOverallStatsOrUndefined,
   validateRatingStatsOrUndefined,
   validateStyleStatsOrUndefined
-} from "../validation/stats"
-import { createSetSearch } from "./set-search"
+} from "../../validation/stats"
+import { createSetSearch } from ".././set-search"
 
 const stats: (
   infiniteScroll: InfiniteScroll,
