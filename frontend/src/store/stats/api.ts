@@ -45,13 +45,19 @@ function idFilter (
 function onlyIdFilter (params: IdParams
 ): string {
   const filter = idFilter(params)
-  return filter.length === 0 ? '' : `?${filter}`
+  if (filter.length === 0) {
+    return ''
+  }
+  return `?${filter}`
 }
 
 function andIdFilter (params: IdParams
 ): string {
   const filter = idFilter(params)
-  return filter.length === 0 ? '' : `&${filter}`
+  if (filter.length === 0) {
+    return ''
+  }
+  return `&${filter}`
 }
 
 function breweryStatsSorting (sorting: BreweryStatsSorting): string {
@@ -63,7 +69,9 @@ function locationStatsSorting (sorting: LocationStatsSorting): string {
 }
 
 function andMaxReviewCount (maxReviewCount: number): string {
-  if (!isFinite(maxReviewCount)) return ''
+  if (!isFinite(maxReviewCount)) {
+    return ''
+  }
   return `&max_review_count=${maxReviewCount}`
 }
 

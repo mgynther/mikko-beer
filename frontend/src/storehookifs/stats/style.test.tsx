@@ -76,7 +76,7 @@ test('style stats', async () => {
       direction: 'desc'
     },
     minReviewCount: 40,
-    maxReviewCount: 80,
+    maxReviewCount: Infinity,
     minReviewAverage: 9.00,
     maxReviewAverage: 9.30,
     timeStart: testTimes.min.utcTimestamp,
@@ -91,8 +91,6 @@ test('style stats', async () => {
       queryParams.sorting.direction
     }&min_review_count=${
       queryParams.minReviewCount
-    }&max_review_count=${
-      queryParams.maxReviewCount
     }&min_review_average=${
       queryParams.minReviewAverage
     }&max_review_average=${

@@ -80,7 +80,7 @@ test('annual container stats', async () => {
   const queryParams: AnnualContainerStatsQueryParams = {
     breweryId: undefined,
     locationId: undefined,
-    styleId: undefined,
+    styleId: 'c186ac2d-021b-4653-a84e-7d041de47d3e',
     pagination: { skip: 0, size: 10 }
   }
 
@@ -90,6 +90,8 @@ test('annual container stats', async () => {
       queryParams.pagination.size
     }&skip=${
       queryParams.pagination.skip
+    }&style=${
+      queryParams.styleId
     }`,
     response: expectedResponse,
     status: 200
