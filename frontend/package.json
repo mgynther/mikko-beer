@@ -5,7 +5,7 @@
   "author": "Mikko Gynther",
   "scripts": {
     "dev": "VITE_BACKEND_URL=http://localhost:3001 vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && mv dist/manifest.json dist/assets/manifest*.json",
     "lint": "npx eslint --max-warnings=0 --fix .",
     "test": "VITE_BACKEND_URL=http://localhost:3001 TEST_PORT_START=30000 vitest --coverage.enabled false --environment jsdom",
     "test:ci": "CI=true VITE_BACKEND_URL=http://localhost:3001 TEST_PORT_START=30000 vitest --coverage.enabled true --environment jsdom",
