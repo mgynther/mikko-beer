@@ -20,6 +20,7 @@ import { userTagTypes } from './user/types'
 import type { RootState } from './store'
 
 import { backendUrl } from '../constants'
+import { waitForTurn } from './request-blocker'
 
 function mergeTags (): string[] {
   return [
@@ -57,35 +58,27 @@ FetchBaseQueryError
   await mutex.waitForUnlock()
   let result = await baseQuery(args, api, extraOptions)
   if (result.error?.status === 401) {
-    if (mutex.isLocked()) {
-      await mutex.waitForUnlock()
-      result = await baseQuery(args, api, extraOptions)
-    } else {
-      const release = await mutex.acquire()
-      try {
-        const {userId, refreshToken} = parseRefreshDetails(api.getState())
-        const refreshResult = await baseQuery(
-          {
-            method: 'POST',
-            url: `/user/${userId}/refresh`,
-            body: { refreshToken }
-          },
-          api,
-          extraOptions
-        )
-        if (refreshResult.data === undefined) {
-          api.dispatch({ type: 'login/logout' })
-        } else {
-          api.dispatch({
-            type: 'login/refresh',
-            payload: refreshResult.data
-          })
-          result = await baseQuery(args, api, extraOptions)
-        }
-      } finally {
-        release()
+    await waitForTurn(mutex, async () => {
+      const {userId, refreshToken} = parseRefreshDetails(api.getState())
+      const refreshResult = await baseQuery(
+        {
+          method: 'POST',
+          url: `/user/${userId}/refresh`,
+          body: { refreshToken }
+        },
+        api,
+        extraOptions
+      )
+      if (refreshResult.data === undefined) {
+        api.dispatch({ type: 'login/logout' })
+      } else {
+        api.dispatch({
+          type: 'login/refresh',
+          payload: refreshResult.data
+        })
+        result = await baseQuery(args, api, extraOptions)
       }
-    }
+    })
   }
   return result
 }
