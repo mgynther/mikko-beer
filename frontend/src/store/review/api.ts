@@ -11,7 +11,7 @@ import type {
   ReviewSorting,
 } from '../../core/review/types'
 
-import { ReviewTags } from './types'
+import { reviewTagTypes } from './types'
 
 
 function getStorageGetParam (storageId: string | undefined): string {
@@ -58,7 +58,7 @@ const reviewApi = emptySplitApi.injectEndpoints({
         url: `/beer/${params.id}/review?${getSorting(params.sorting)}`,
         method: 'GET'
       }),
-      providesTags: [ReviewTags.Review]
+      providesTags: [...reviewTagTypes()]
     }),
     listReviewsByBrewery: build.query<
     JoinedReviewList, FilteredListReviewParams
@@ -67,7 +67,7 @@ const reviewApi = emptySplitApi.injectEndpoints({
         url: `/brewery/${params.id}/review?${getSorting(params.sorting)}`,
         method: 'GET'
       }),
-      providesTags: [ReviewTags.Review]
+      providesTags: [...reviewTagTypes()]
     }),
     listReviewsByLocation: build.query<
     JoinedReviewList, FilteredListReviewParams
@@ -76,7 +76,7 @@ const reviewApi = emptySplitApi.injectEndpoints({
         url: `/location/${params.id}/review?${getSorting(params.sorting)}`,
         method: 'GET'
       }),
-      providesTags: [ReviewTags.Review]
+      providesTags: [...reviewTagTypes()]
     }),
     listReviewsByStyle: build.query<
     JoinedReviewList, FilteredListReviewParams
@@ -85,7 +85,7 @@ const reviewApi = emptySplitApi.injectEndpoints({
         url: `/style/${params.id}/review?${getSorting(params.sorting)}`,
         method: 'GET'
       }),
-      providesTags: [ReviewTags.Review]
+      providesTags: [...reviewTagTypes()]
     }),
     createReview: build.mutation<
     { review: Review },
@@ -97,7 +97,7 @@ const reviewApi = emptySplitApi.injectEndpoints({
         body: wrapper.body
       }),
       invalidatesTags: [
-        ReviewTags.Review,
+        ...reviewTagTypes(),
         ...storageTagTypes(),
         ...reviewStatsTagTypes()
       ]
@@ -117,7 +117,7 @@ const reviewApi = emptySplitApi.injectEndpoints({
           time: review.time
         }
       }),
-      invalidatesTags: [ReviewTags.Review, ...reviewStatsTagTypes()]
+      invalidatesTags: [...reviewTagTypes(), ...reviewStatsTagTypes()]
     })
   })
 })

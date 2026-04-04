@@ -10,7 +10,9 @@ import { Mutex } from 'async-mutex'
 import { beerTagTypes } from './beer/types'
 import { breweryTagTypes } from './brewery/types'
 import { containerTagTypes } from './container/types'
+import { locationTagTypes } from './location/types'
 import { loginTagTypes } from './login/types'
+import { reviewTagTypes } from './review/types'
 import { allStatsTagTypes } from './stats/types'
 import { styleTagTypes } from './style/types'
 import { userTagTypes } from './user/types'
@@ -25,7 +27,9 @@ function mergeTags (): string[] {
     ...beerTagTypes(),
     ...breweryTagTypes(),
     ...containerTagTypes(),
+    ...locationTagTypes(),
     ...loginTagTypes(),
+    ...reviewTagTypes(),
     ...styleTagTypes(),
     ...userTagTypes()
   ]
