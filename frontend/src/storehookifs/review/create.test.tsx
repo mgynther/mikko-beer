@@ -14,7 +14,8 @@ const dontCall = (): any => {
 }
 
 interface HelperProps {
-  review: Review
+  review: Review,
+  storageId: string
 }
 
 function Helper(props: HelperProps): React.JSX.Element {
@@ -66,7 +67,7 @@ function Helper(props: HelperProps): React.JSX.Element {
     async function doHandle(): Promise<void> {
       await create({
         body: props.review,
-        storageId: undefined
+        storageId: props.storageId
       })
     }
     void doHandle()
@@ -79,38 +80,64 @@ function Helper(props: HelperProps): React.JSX.Element {
   )
 }
 
-test('create review', async () => {
-  const user = userEvent.setup()
+interface CreateTest {
+  name: string
+  storageId: string
+  uriSearch: string
+}
 
-  const expectedResponse: { review: Review } = {
-    review: {
-      id: '5853fbbb-aa6b-4710-ae42-36aca1c750de',
-      beer: '71f4f237-42e7-4738-b015-3ebc09bdd99f',
-      additionalInfo: 'additional',
-      container: '44b0ee1a-fedd-4ebc-b301-f369fdf22d5b',
-      location: '0a7fed33-db58-441d-8e28-33d00d2c1a9d',
-      rating: 10,
-      smell: 'Citrusy, pine',
-      taste: 'Bitter, clean, delicious',
-      time: '2025-10-10T12:00:00.000Z'
-    }
+const storageId = '27ca65f2-bd6b-492e-81a2-57768cf0c23c'
+
+const createTestCases: CreateTest[] = [
+  {
+    name: 'without storage',
+    storageId: '',
+    uriSearch: ''
+  },
+  {
+    name: 'from storage',
+    storageId,
+    uriSearch: `?storage=${storageId}`
   }
+]
 
-  addTestServerResponse<{ review: Review }>({
-    method: 'POST',
-    pathname: '/api/v1/review',
-    response: expectedResponse,
-    status: 201
-  })
+createTestCases.forEach(testCase => {
+  test(`create review ${testCase.name}`, async () => {
+    const user = userEvent.setup()
 
-  const { getByRole, getByText } = render(
-    <Provider store={store}>
-      <Helper review={expectedResponse.review} />
-    </Provider>
-  )
-  const testButton = getByRole('button', { name: 'Test' })
-  await user.click(testButton)
-  await waitFor(() => {
-    expect(getByText(expectedResponse.review.taste)).toBeDefined()
+    const expectedResponse: { review: Review } = {
+      review: {
+        id: '5853fbbb-aa6b-4710-ae42-36aca1c750de',
+        beer: '71f4f237-42e7-4738-b015-3ebc09bdd99f',
+        additionalInfo: 'additional',
+        container: '44b0ee1a-fedd-4ebc-b301-f369fdf22d5b',
+        location: '0a7fed33-db58-441d-8e28-33d00d2c1a9d',
+        rating: 10,
+        smell: 'Citrusy, pine',
+        taste: 'Bitter, clean, delicious',
+        time: '2025-10-10T12:00:00.000Z'
+      }
+    }
+
+    addTestServerResponse<{ review: Review }>({
+      method: 'POST',
+      pathname: `/api/v1/review${testCase.uriSearch}`,
+      response: expectedResponse,
+      status: 201
+    })
+
+    const { getByRole, getByText } = render(
+      <Provider store={store}>
+        <Helper
+          review={expectedResponse.review}
+          storageId={testCase.storageId}
+          />
+      </Provider>
+    )
+    const testButton = getByRole('button', { name: 'Test' })
+    await user.click(testButton)
+    await waitFor(() => {
+      expect(getByText(expectedResponse.review.taste)).toBeDefined()
+    })
   })
 })

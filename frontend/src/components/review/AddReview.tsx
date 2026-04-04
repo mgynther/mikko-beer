@@ -57,7 +57,8 @@ export interface Props {
 
 function AddReview (props: Props): React.JSX.Element {
   const navigate = props.navigateIf.useNavigate()
-  const { storageId } = props.paramsIf.useParams()
+  const { storageId: paramsStorageId } = props.paramsIf.useParams()
+  const storageId = paramsStorageId ?? ''
   const [review, setReview] = useState<ReviewRequest | undefined>(undefined)
   const {
     create,
@@ -68,7 +69,7 @@ function AddReview (props: Props): React.JSX.Element {
     props.createReviewIf.useCreate()
   const [currentDate] = useState<Date>(props.createReviewIf.getCurrentDate())
   const { storage, isLoading: isLoadingStorage } =
-    storageId === undefined
+    storageId === ''
       ? { storage: undefined, isLoading: false }
       : props.getStorageIf.useGet(storageId)
 
@@ -84,7 +85,7 @@ function AddReview (props: Props): React.JSX.Element {
   }
 
   function getInitialReview (currentDate: Date): InitialReview | undefined {
-    if (storageId === undefined) {
+    if (storageId === '') {
       return undefined
     }
     if (storage === undefined) {
@@ -97,7 +98,7 @@ function AddReview (props: Props): React.JSX.Element {
     <div>
       <h3>Add review</h3>
       <LoadingIndicator isLoading={isLoadingStorage} />
-      {(storageId === undefined || storage !== undefined) && (
+      {(storageId === '' || storage !== undefined) && (
         <ReviewEditor
           searchIf={props.searchIf}
           searchLocationIf={props.createReviewIf.searchLocationIf}
@@ -105,7 +106,7 @@ function AddReview (props: Props): React.JSX.Element {
           reviewContainerIf={props.createReviewIf.reviewContainerIf}
           currentDate={currentDate}
           initialReview={getInitialReview(currentDate)}
-          isFromStorage={storageId !== undefined}
+          isFromStorage={storageId !== ''}
           onChange={review => { setReview(review) }}
         />
       )}

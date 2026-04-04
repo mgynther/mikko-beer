@@ -14,8 +14,8 @@ import type {
 import { reviewTagTypes } from './types'
 
 
-function getStorageGetParam (storageId: string | undefined): string {
-  if (storageId === undefined || storageId.length === 0) {
+function getStorageGetParam (storageId: string): string {
+  if (storageId.length === 0) {
     return ''
   }
   return `?storage=${storageId}`

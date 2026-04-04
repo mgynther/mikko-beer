@@ -256,7 +256,7 @@ test('adds review', async () => {
       taste: tasteText,
       time: dateStr
     },
-    storageId: undefined
+    storageId: ''
   }]])
 })
 

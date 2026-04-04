@@ -67,7 +67,7 @@ export interface ReviewRequest {
 
 export interface ReviewRequestWrapper {
   body: ReviewRequest
-  storageId: string | undefined
+  storageId: string
 }
 
 export interface ReviewList {
