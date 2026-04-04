@@ -221,7 +221,13 @@ test('adds review', async () => {
       useDebounce
     }
   }
-  const { findByRole, getAllByRole, getByPlaceholderText, getByRole } = render(
+  const {
+    findByRole,
+    getAllByRole,
+    getByPlaceholderText,
+    getByRole,
+    queryAllByRole
+  } = render(
     <AddReview
       {...props}
     />
@@ -239,11 +245,14 @@ test('adds review', async () => {
   )
   expect(beerButton).toBeDefined()
   await user.click(beerButton)
+  getByRole('button', { name: /change/i })
   const containerSelect = getByRole('combobox')
   await user.click(containerSelect)
   const bottle = getByRole('option', { name: 'bottle 0.33' })
   await userEvent.selectOptions(containerSelect, bottle)
   await user.click(bottle)
+  const changeButtons = queryAllByRole('button', { name: /change/i })
+  expect(changeButtons.length).toEqual(2)
   await addReview(getByPlaceholderText, getByRole, user)
   expect(create.mock.calls).toEqual([[{
     body: {
@@ -377,11 +386,13 @@ test('adds review from storage', async () => {
     }
   }
 
-  const { getByPlaceholderText, getByRole } = render(
+  const { getByPlaceholderText, getByRole, queryAllByRole } = render(
     <AddReview
       {...props}
     />
   )
+  const changeButtons = queryAllByRole('button', { name: /change/i })
+  expect(changeButtons.length).toEqual(0)
   await addReview(getByPlaceholderText, getByRole, user)
 
   expect(create.mock.calls).toEqual([[{
