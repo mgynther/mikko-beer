@@ -38,26 +38,48 @@ function Helper({ userId }: Props): React.JSX.Element {
   )
 }
 
-test('change password', async () => {
-  const user = userEvent.setup()
+interface PasswordChangeTest {
+  name: string
+  status: number
+  result: PasswordChangeResult
+}
 
-  const userId = '00448764-b114-4c54-a409-05b23d14de14'
+const passwordChangeTests: PasswordChangeTest[] = [
+  {
+    name: 'success',
+    status: 200,
+    result: PasswordChangeResult.SUCCESS
+  },
+  {
+    name: 'fail',
+    status: 400,
+    result: PasswordChangeResult.ERROR
+  }
+]
 
-  addTestServerResponse<{ success: true }>({
-    method: 'POST',
-    pathname: `/api/v1/user/${userId}/change-password`,
-    response: { success: true },
-    status: 200
-  })
+passwordChangeTests.forEach(testCase => {
+  test(`change password: ${testCase.name}`, async () => {
+    const user = userEvent.setup()
 
-  const { getByRole, getByText } = render(
-    <Provider store={store}>
-      <Helper userId={userId} />
-    </Provider>
-  )
-  const changePasswordButton = getByRole('button', { name: 'Change password' })
-  await user.click(changePasswordButton)
-  await waitFor(() => {
-    expect(getByText(PasswordChangeResult.SUCCESS)).toBeDefined()
+    const userId = '00448764-b114-4c54-a409-05b23d14de14'
+
+    addTestServerResponse<{ success: true }>({
+      method: 'POST',
+      pathname: `/api/v1/user/${userId}/change-password`,
+      response: { success: true },
+      status: testCase.status
+    })
+
+    const { getByRole, getByText } = render(
+      <Provider store={store}>
+        <Helper userId={userId} />
+      </Provider>
+    )
+    const changePasswordButton =
+      getByRole('button', { name: 'Change password' })
+    await user.click(changePasswordButton)
+    await waitFor(() => {
+      expect(getByText(testCase.result)).toBeDefined()
+    })
   })
 })
