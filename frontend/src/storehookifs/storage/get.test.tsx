@@ -12,9 +12,14 @@ interface HelperProps {
 
 function Helper(props: HelperProps): React.JSX.Element {
   const getIf = getStorage()
-  const { storage } = getIf.useGet(props.storageId)
+  const { isLoading, storage } = getIf.useGet(props.storageId)
   return (
-    <div>{storage?.beerName}</div>
+    <>
+      <div>{storage?.beerName}</div>
+      {!isLoading && storage === undefined &&
+        <div>Failed</div>
+      }
+    </>
   )
 }
 
@@ -57,5 +62,32 @@ test('get storage', async () => {
   )
   await waitFor(() => {
     expect(getByText(expectedResponse.storage.beerName)).toBeDefined()
+  })
+})
+
+test('try to get storage that does not exist', async () => {
+  const storageId = '251dcae3-865f-4cf5-84b3-88009f002f71'
+  type ErrorResponse = { error: { code: string, message: string } }
+  const expectedResponse: ErrorResponse = {
+    error: {
+      code: `StorageNotFound`,
+      message: `storage with id ${storageId}`
+    }
+  }
+
+  addTestServerResponse<ErrorResponse>({
+    method: 'GET',
+    pathname: `/api/v1/storage/${storageId}`,
+    response: expectedResponse,
+    status: 404
+  })
+
+  const { getByText } = render(
+    <Provider store={store}>
+      <Helper storageId={storageId} />
+    </Provider>
+  )
+  await waitFor(() => {
+    expect(getByText('Failed')).toBeDefined()
   })
 })

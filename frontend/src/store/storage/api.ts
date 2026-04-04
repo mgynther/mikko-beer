@@ -16,7 +16,10 @@ const storageApi = emptySplitApi.injectEndpoints({
         url: `/storage/${storageId}`,
         method: 'GET'
       }),
-      providesTags: [StorageTags.Storage]
+      providesTags: (result) =>
+        result === undefined
+          ? [StorageTags.Storage]
+          : [{ type: StorageTags.Storage, id: result.storage.id }]
     }),
     getAnnualStorageStats: build.query<AnnualStats, void>({
       query: () => ({

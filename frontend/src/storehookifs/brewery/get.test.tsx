@@ -12,9 +12,14 @@ interface HelperProps {
 
 function Helper(props: HelperProps): React.JSX.Element {
   const getIf = getBrewery()
-  const { brewery } = getIf.useGet(props.breweryId)
+  const { brewery, isLoading } = getIf.useGet(props.breweryId)
   return (
-    <div>{brewery?.name}</div>
+    <>
+      <div>{brewery?.name}</div>
+      {!isLoading && brewery === undefined &&
+        <div>Failed</div>
+      }
+    </>
   )
 }
 
@@ -40,5 +45,32 @@ test('get brewery', async () => {
   )
   await waitFor(() => {
     expect(getByText(expectedResponse.brewery.name)).toBeDefined()
+  })
+})
+
+test('try to get brewery that does not exist', async () => {
+  const breweryId = '1feb30df-06db-4b6c-b7b0-e3244d89f1b7'
+  type ErrorResponse = { error: { code: string, message: string } }
+  const expectedResponse: ErrorResponse = {
+    error: {
+      code: `BreweryNotFound`,
+      message: `brewery with id ${breweryId}`
+    }
+  }
+
+  addTestServerResponse<ErrorResponse>({
+    method: 'GET',
+    pathname: `/api/v1/brewery/${breweryId}`,
+    response: expectedResponse,
+    status: 404
+  })
+
+  const { getByText } = render(
+    <Provider store={store}>
+      <Helper breweryId={breweryId} />
+    </Provider>
+  )
+  await waitFor(() => {
+    expect(getByText('Failed')).toBeDefined()
   })
 })
