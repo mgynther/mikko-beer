@@ -64,5 +64,7 @@ test('update brewery', async () => {
   await waitFor(() => {
     expect(handler).toHaveBeenCalled()
   })
-  expect(getByText('Not loading')).toBeDefined()
+  await waitFor(() => {
+    expect(getByText('Not loading')).toBeDefined()
+  })
 })
