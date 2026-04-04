@@ -11,19 +11,10 @@ import navMenuReducer, {
 import themeReducer, {
   initialState as initialThemeState
 } from './theme/reducer'
+import { asObject } from './localstorage-member-parser'
 
 const localStoreKey = 'mikkobeer-persisted'
 const fullStore = JSON.parse(localStorage.getItem(localStoreKey) ?? '{}')
-
-function asObject(value: unknown): object {
-  if (value === null) {
-    return {}
-  }
-  if (typeof value === 'object') {
-    return value
-  }
-  return {}
-}
 
 const persisted = {
   login: {
