@@ -34,3 +34,15 @@ test('does not handle click when disabled', async () => {
   expect(clickCb).not.toHaveBeenCalled()
   expect(button.hasAttribute('disabled')).toEqual(true)
 })
+
+test('does not enable button when onClick is missing', async () => {
+  const { getByRole } = render(
+    <Button
+      disabled={false}
+      onClick={undefined}
+      text='Click me'
+    />
+  )
+  const button = getByRole('button', { name: 'Click me' })
+  expect(button.hasAttribute('disabled')).toEqual(true)
+})

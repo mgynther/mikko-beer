@@ -291,6 +291,37 @@ test('loads storage', async () => {
   expect(text).toBeDefined()
 })
 
+test('shows storage loading error', async () => {
+  const { getByText } = render(
+    <AddReview
+      createReviewIf={{
+        useCreate: () => ({
+          ...dontCreate,
+          isSuccess: false,
+          review: undefined
+        }),
+        getCurrentDate,
+        searchLocationIf,
+        selectBeerIf: dontSelectBeer,
+        reviewContainerIf: noOpContainerIf
+      }}
+      getStorageIf={{
+        useGet: () => ({
+          storage: undefined,
+          isLoading: false
+        })
+      }}
+      navigateIf={{
+        useNavigate: () => dontCall
+      }}
+      paramsIf={storageIdParamsIf}
+      searchIf={noSearchIf}
+    />
+  )
+  const text = getByText('Error, storage does not exist.')
+  expect(text).toBeDefined()
+})
+
 test('adds review from storage', async () => {
   const user = userEvent.setup()
   const create = vitest.fn()

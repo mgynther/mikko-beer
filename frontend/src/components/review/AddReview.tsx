@@ -79,34 +79,43 @@ function AddReview (props: Props): React.JSX.Element {
     }
   }, [isSuccess, createdReview])
 
-  function doAddReview (): void {
-    if (review === undefined) return
+  function doAddReview (review: ReviewRequest): void {
     void create({ body: review, storageId })
   }
 
-  function getInitialReview (currentDate: Date): InitialReview | undefined {
-    if (storageId === '') {
-      return undefined
-    }
-    if (storage === undefined) {
-      throw new Error('must not be called without storageData')
-    }
-    return toInitialReview(storage, currentDate)
+  if (storageId !== '' && !isLoadingStorage && storage === undefined) {
+    return <div>Error, storage does not exist.</div>
   }
+
+  const clickHandler = review
+    ? (): void => { doAddReview(review) }
+    : undefined
 
   return (
     <div>
       <h3>Add review</h3>
       <LoadingIndicator isLoading={isLoadingStorage} />
-      {(storageId === '' || storage !== undefined) && (
+      {storageId === '' && (
         <ReviewEditor
           searchIf={props.searchIf}
           searchLocationIf={props.createReviewIf.searchLocationIf}
           selectBeerIf={props.createReviewIf.selectBeerIf}
           reviewContainerIf={props.createReviewIf.reviewContainerIf}
           currentDate={currentDate}
-          initialReview={getInitialReview(currentDate)}
-          isFromStorage={storageId !== ''}
+          initialReview={undefined}
+          isFromStorage={false}
+          onChange={review => { setReview(review) }}
+        />
+      )}
+      {storage !== undefined && (
+        <ReviewEditor
+          searchIf={props.searchIf}
+          searchLocationIf={props.createReviewIf.searchLocationIf}
+          selectBeerIf={props.createReviewIf.selectBeerIf}
+          reviewContainerIf={props.createReviewIf.reviewContainerIf}
+          currentDate={currentDate}
+          initialReview={toInitialReview(storage, currentDate)}
+          isFromStorage={true}
           onChange={review => { setReview(review) }}
         />
       )}
@@ -120,7 +129,7 @@ function AddReview (props: Props): React.JSX.Element {
             isLoading ||
             createdReview !== undefined
           }
-          onClick={() => { doAddReview() }}
+          onClick={clickHandler}
           text='Add'
         />
         <LoadingIndicator isLoading={isLoading} />
