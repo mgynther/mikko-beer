@@ -562,3 +562,29 @@ test('loads annual stats directly', async () => {
   await user.click(link)
   getByText('Year')
 })
+
+test('sets theme to dark', async () => {
+  const user = userEvent.setup()
+  const { getByRole } = render(
+    <Provider store={store}>
+    <LinkWrapper>
+    <App
+    paramsIf={paramsIf}
+    storeIf={{
+      ...storeIf,
+      getLogin: getAdminLogin
+    }} />
+    </LinkWrapper>
+    </Provider>
+  )
+  const moreButton = getByRole('button', { name: 'More' })
+  await user.click(moreButton)
+
+  const bodyLight = document.getElementsByTagName('body')
+  expect(bodyLight[0].getAttribute('class')).toEqual('light')
+
+  const darkCheckbox = getByRole('checkbox', { name: 'Dark' })
+  await user.click(darkCheckbox)
+  const bodyDark = document.getElementsByTagName('body')
+  expect(bodyDark[0].getAttribute('class')).toEqual(null)
+})
