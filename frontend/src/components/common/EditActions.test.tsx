@@ -32,6 +32,19 @@ test('disables save button while saving', () => {
   expect(saveCb).not.toHaveBeenCalled()
 })
 
+test('disables save button without onSave', () => {
+  const { getByRole } = render(
+    <EditActions
+      isSaving={true}
+      isSaveDisabled={false}
+      onCancel={() => undefined}
+      onSave={undefined}
+    />
+  )
+  const saveButton = getByRole('button', { name: 'Save' })
+  expect(saveButton.hasAttribute('disabled')).toEqual(true)
+})
+
 test('disables save button while saving disabled', () => {
   const saveCb = vitest.fn()
   const { getByRole } = render(

@@ -9,6 +9,7 @@ import type {
 } from '../../core/style/types'
 import type { UseDebounce } from '../../core/types'
 import type { SearchIf } from '../../core/search/types'
+import { loadingIndicatorText } from '../common/LoadingIndicator'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -104,6 +105,34 @@ test('updates style', async () => {
     parents: [parent, otherParent].map(p => p.id)
   }]])
   expect(onSaved.mock.calls).toEqual([[]])
+})
+
+test('shows loading indicator', async () => {
+  const { getByText } = render(
+    <UpdateStyle
+      getStyleIf={{
+        useGet: () => ({
+          style: undefined,
+          isLoading: true
+        })
+      }}
+      listStylesIf={listStyles}
+      updateStyleIf={{
+        useUpdate: () => ({
+          update: dontCall,
+          hasError: false,
+          isLoading: false,
+          isSuccess: false
+        })
+      }}
+      onCancel={dontCall}
+      onSaved={dontCall}
+      searchIf={searchIf}
+      initialStyle={style}
+    />
+  )
+  const loadingText = getByText(loadingIndicatorText)
+  expect(loadingText).toBeDefined()
 })
 
 test('cancels updating style', async () => {

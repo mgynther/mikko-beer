@@ -38,19 +38,14 @@ function UpdateStyle (props: Props): React.JSX.Element {
     }
   }, [isSuccess, onSaved])
 
-  async function doUpdate (): Promise<void> {
-    if (newStyle === undefined) {
-      throw new Error('style must not be undefined when updating')
-    }
-    try {
-      await update({ ...newStyle })
-    } catch (e) {
-      console.warn('Failed to update style', e)
-    }
+  async function doUpdate (style: StyleWithParentIds): Promise<void> {
+    await update({ ...style })
   }
   return (
     <>
-      {styleWithParents === undefined && <LoadingIndicator isLoading={true} />}
+      {styleWithParents === undefined &&
+        <LoadingIndicator isLoading={true} />
+      }
       {styleWithParents !== undefined &&
         <StyleEditor
           initialStyle={styleWithParents}
@@ -69,7 +64,11 @@ function UpdateStyle (props: Props): React.JSX.Element {
           setNewStyle(undefined)
           props.onCancel()
         }}
-        onSave={() => { void doUpdate() }}
+        onSave={
+          newStyle === undefined
+            ? undefined
+            : (): void => { void doUpdate(newStyle) }
+        }
       />
     </>
   )
