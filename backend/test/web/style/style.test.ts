@@ -1,8 +1,8 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../test-context'
-import type { StyleWithParentsAndChildren } from '../../../src/core/style/style'
-import { assertDeepEqual, assertEqual, assertTruthy } from '../../assert'
+import { TestContext } from '../test-context.js'
+import type { StyleWithParentsAndChildren } from '../../../src/core/style/style.js'
+import { assertDeepEqual, assertEqual, assertTruthy } from '../../assert.js'
 
 describe('style tests', () => {
   const ctx = new TestContext()

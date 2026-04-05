@@ -4,13 +4,13 @@ import type {
   Container,
   CreateContainerRequest,
   UpdateContainerRequest
-} from '../../../../src/core/container/container'
-import * as containerService from '../../../../src/core/internal/container/service'
-import { containerNotFoundError } from '../../../../src/core/errors'
+} from '../../../../src/core/container/container.js'
+import * as containerService from '../../../../src/core/internal/container/service.js'
+import { containerNotFoundError } from '../../../../src/core/errors.js'
 
-import { dummyLog as log } from '../../dummy-log'
-import { expectReject } from '../../controller-error-helper'
-import { assertDeepEqual, assertEqual } from '../../../assert'
+import { dummyLog as log } from '../../dummy-log.js'
+import { expectReject } from '../../controller-error-helper.js'
+import { assertDeepEqual, assertEqual } from '../../../assert.js'
 
 const container: Container = {
   id: '1fcbeb9e-1ea1-4c50-8fe5-b0aa18ac7e9a',

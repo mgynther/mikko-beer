@@ -1,11 +1,11 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../test-context'
-import * as statsRepository from '../../../src/data/stats/stats.repository'
-import { insertMultipleReviews } from '../review-helpers'
-import type { Review } from '../../../src/core/review/review'
-import type { Pagination } from '../../../src/core/pagination'
-import { assertDeepEqual } from '../../assert'
+import { TestContext } from '../test-context.js'
+import * as statsRepository from '../../../src/data/stats/stats.repository.js'
+import { insertMultipleReviews } from '../review-helpers.js'
+import type { Review } from '../../../src/core/review/review.js'
+import type { Pagination } from '../../../src/core/pagination.js'
+import { assertDeepEqual } from '../../assert.js'
 
 const giantPage: Pagination = { size: 10000, skip: 0 }
 

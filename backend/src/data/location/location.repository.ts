@@ -1,17 +1,17 @@
-import type { Database, Transaction } from '../database'
+import type { Database, Transaction } from '../database.js'
 import type {
   LocationRow
-} from './location.table'
+} from './location.table.js'
 
 import type {
   Location,
   CreateLocationRequest
-} from '../../core/location/location'
+} from '../../core/location/location.js'
 import type {
   Pagination
-} from '../../core/pagination'
-import type { SearchByName } from '../../core/search'
-import { defaultSearchMaxResults, toIlike } from '../../core/search'
+} from '../../core/pagination.js'
+import type { SearchByName } from '../../core/search.js'
+import { defaultSearchMaxResults, toIlike } from '../../core/search.js'
 
 export async function insertLocation (
   trx: Transaction,

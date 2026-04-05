@@ -3,9 +3,9 @@ import {
   assertDeepEqual,
   assertEqual,
   assertGreaterThan
-} from '../../../assert'
+} from '../../../assert.js'
 
-import * as authTokenService from '../../../../src/core/internal/auth/auth-token.service'
+import * as authTokenService from '../../../../src/core/internal/auth/auth-token.service.js'
 
 import {
   addPasswordSignInMethod,
@@ -13,7 +13,7 @@ import {
   encryptPassword,
   signInUsingPassword,
   verifySecret
-} from '../../../../src/core/internal/user/sign-in-method.service'
+} from '../../../../src/core/internal/user/sign-in-method.service.js'
 
 import type {
   AddPasswordUserIf,
@@ -23,17 +23,17 @@ import type {
   SignInUsingPasswordIf,
   NewUserPasswordHash,
   UserPasswordHash,
-} from '../../../../src/core/user/sign-in-method'
-import type { User } from '../../../../src/core/user/user'
+} from '../../../../src/core/user/sign-in-method.js'
+import type { User } from '../../../../src/core/user/user.js'
 import {
   invalidCredentialsError,
   passwordTooLongError,
   passwordTooWeakError,
   userAlreadyHasSignInMethodError
-} from '../../../../src/core/errors'
-import { expectReject } from '../../controller-error-helper'
-import { dummyLog as log } from '../../dummy-log'
-import type { AuthTokenConfig } from '../../../../src/core/auth/auth-token'
+} from '../../../../src/core/errors.js'
+import { expectReject } from '../../controller-error-helper.js'
+import { dummyLog as log } from '../../dummy-log.js'
+import type { AuthTokenConfig } from '../../../../src/core/auth/auth-token.js'
 
 function assertCurrentDateTime(date: Date) {
   if (date === undefined) {

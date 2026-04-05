@@ -1,14 +1,15 @@
 import { describe, it } from 'node:test'
-import * as jsonwebtoken from 'jsonwebtoken'
-import * as jwt from '../../../../src/core/internal/auth/jwt'
-import type { AuthToken } from '../../../../src/core/auth/auth-token'
-import { InvalidAuthTokenError } from '../../../../src/core/auth/auth-token'
-import { assertThrows } from '../../../assert'
-import type { RefreshToken } from '../../../../src/core/auth/refresh-token'
+import jsonwebtoken from 'jsonwebtoken'
+const { sign } = jsonwebtoken
+import * as jwt from '../../../../src/core/internal/auth/jwt.js'
+import type { AuthToken } from '../../../../src/core/auth/auth-token.js'
+import { InvalidAuthTokenError } from '../../../../src/core/auth/auth-token.js'
+import { assertThrows } from '../../../assert.js'
+import type { RefreshToken } from '../../../../src/core/auth/refresh-token.js'
 
 const secret = 'thisissecret'
 
-const token = jsonwebtoken.sign(
+const token = sign(
   'hacking',
   secret
 )

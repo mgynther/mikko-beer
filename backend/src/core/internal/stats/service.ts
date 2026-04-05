@@ -1,4 +1,4 @@
-import type { Pagination } from '../../pagination'
+import type { Pagination } from '../../pagination.js'
 
 import type {
   AnnualContainerStats,
@@ -14,10 +14,10 @@ import type {
   StatsFilter,
   StyleStats,
   StyleStatsOrder
-} from '../../stats/stats'
+} from '../../stats/stats.js'
 
-import type { log } from '../../log'
-import { INFO } from '../../log'
+import type { log } from '../../log.js'
+import { INFO } from '../../log.js'
 
 // Test functionality if added. Left untested as there was no logic at the time
 // of adding the file. However, it is used to enable adding logic later easily.

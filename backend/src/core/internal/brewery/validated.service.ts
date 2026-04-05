@@ -1,15 +1,15 @@
-import * as breweryService from './service'
+import * as breweryService from './service.js'
 
 import {
   validateBreweryId,
   validateCreateBreweryRequest,
   validateUpdateBreweryRequest
-} from "./validation";
-import type { Brewery, CreateBreweryRequest } from "../../brewery/brewery"
-import type { log } from '../../log'
-import type { Pagination } from '../../pagination'
-import type { SearchByName } from '../../search'
-import { validateSearchByName } from '../../search'
+} from './validation.js'
+import type { Brewery, CreateBreweryRequest } from '../../brewery/brewery.js'
+import type { log } from '../../log.js'
+import type { Pagination } from '../../pagination.js'
+import type { SearchByName } from '../../search.js'
+import { validateSearchByName } from '../../search.js'
 
 export async function createBrewery (
   create: (brewery: CreateBreweryRequest) => Promise<Brewery>,

@@ -1,20 +1,20 @@
-import * as authTokenService from '../internal/auth/auth-token.service'
-import * as authorizationService from '../internal/auth/authorization.service'
+import * as authTokenService from '../internal/auth/auth-token.service.js'
+import * as authorizationService from '../internal/auth/authorization.service.js'
 import * as signInMethodService
-from '../internal/user/validated-sign-in-method.service'
-import * as userService from '../internal/user/user.service'
+from '../internal/user/validated-sign-in-method.service.js'
+import * as userService from '../internal/user/user.service.js'
 
-import type { DbRefreshToken } from '../auth/refresh-token'
-import { validateRefreshToken } from '../internal/auth/refresh-token'
-import type { log } from '../log'
+import type { DbRefreshToken } from '../auth/refresh-token.js'
+import { validateRefreshToken } from '../internal/auth/refresh-token.js'
+import type { log } from '../log.js'
 import type {
   ChangePasswordUserIf,
   SignInUsingPasswordIf
-} from './sign-in-method'
-import type { IdRequest } from '../request'
-import type { SignedInUser } from '../internal/user/signed-in-user'
-import type { User } from './user'
-import type { AuthTokenConfig } from '../auth/auth-token'
+} from './sign-in-method.js'
+import type { IdRequest } from '../request.js'
+import type { SignedInUser } from '../internal/user/signed-in-user.js'
+import type { User } from './user.js'
+import type { AuthTokenConfig } from '../auth/auth-token.js'
 import type { Tokens } from '../auth/tokens'
 
 export async function signInUsingPassword (

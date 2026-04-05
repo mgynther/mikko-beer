@@ -1,13 +1,13 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../test-context'
+import { TestContext } from '../test-context.js'
 import type {
   AnnualStorageStats,
   JoinedStorage,
   MonthlyStorageStats,
   Storage
-} from '../../../src/core/storage/storage'
-import { assertDeepEqual, assertEqual } from '../../assert'
+} from '../../../src/core/storage/storage.js'
+import { assertDeepEqual, assertEqual } from '../../assert.js'
 
 describe('storage tests', () => {
   const ctx = new TestContext()

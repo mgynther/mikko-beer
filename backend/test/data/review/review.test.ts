@@ -1,15 +1,15 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../test-context'
-import type { Database } from '../../../src/data/database'
-import * as reviewRepository from '../../../src/data/review/review.repository'
+import { TestContext } from '../test-context.js'
+import type { Database } from '../../../src/data/database.js'
+import * as reviewRepository from '../../../src/data/review/review.repository.js'
 import type {
   JoinedReview,
   Review,
   ReviewListOrder
-} from '../../../src/core/review/review'
-import { insertData, insertMultipleReviews } from '../review-helpers'
-import { assertDeepEqual, assertEqual, assertNotDeepEqual } from '../../assert'
+} from '../../../src/core/review/review.js'
+import { insertData, insertMultipleReviews } from '../review-helpers.js'
+import { assertDeepEqual, assertEqual, assertNotDeepEqual } from '../../assert.js'
 
 describe('review tests', () => {
   const ctx = new TestContext()

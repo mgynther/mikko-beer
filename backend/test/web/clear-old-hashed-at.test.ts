@@ -1,20 +1,20 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
-import { assertDeepEqual } from '../assert'
+import { assertDeepEqual } from '../assert.js'
 
-import { dummyLog as log } from '../core/dummy-log'
-import { testConfig } from './test-config'
+import { dummyLog as log } from '../core/dummy-log.js'
+import { testConfig } from './test-config.js'
 import {
   afterTest,
   afterTests,
   beforeTests
-} from '../data/test-helpers'
-import { App } from '../../src/web/app'
-import type { Database } from '../../src/data/database'
-import { insertUser } from '../../src/data/user/user.repository'
+} from '../data/test-helpers.js'
+import { App } from '../../src/web/app.js'
+import type { Database } from '../../src/data/database.js'
+import { insertUser } from '../../src/data/user/user.repository.js'
 import {
   findPasswordSignInMethod,
   insertPasswordSignInMethod
-} from '../../src/data/user/sign-in-method/sign-in-method.repository'
+} from '../../src/data/user/sign-in-method/sign-in-method.repository.js'
 
 const validDate = new Date()
 validDate.setDate(validDate.getDate() - 10)

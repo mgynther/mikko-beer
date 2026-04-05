@@ -1,12 +1,12 @@
-import * as authTokenService from '../internal/auth/auth-token.service'
+import * as authTokenService from '../internal/auth/auth-token.service.js'
 
-import type { AuthTokenPayload } from './auth-token'
-import { AuthTokenExpiredError } from './auth-token'
+import type { AuthTokenPayload } from './auth-token.js'
+import { AuthTokenExpiredError } from './auth-token.js'
 import {
   expiredAuthTokenError,
   invalidAuthTokenError,
   invalidAuthorizationHeaderError,
-} from '../errors'
+} from '../errors.js'
 
 export function parseAuthTokenPayload (
   authorizationHeader: string | undefined,

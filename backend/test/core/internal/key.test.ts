@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test'
 
-import { areKeysEqual } from '../../../src/core/internal/key'
-import { assertEqual } from '../../assert'
+import { areKeysEqual } from '../../../src/core/internal/key.js'
+import { assertEqual } from '../../assert.js'
 
 describe('key tests', () => {
   it('keys equal', () => {

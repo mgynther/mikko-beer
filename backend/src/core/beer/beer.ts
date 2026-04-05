@@ -1,6 +1,6 @@
-import type { Brewery } from '../brewery/brewery'
-import type { Style } from '../style/style'
-import type { LockIds } from '../db'
+import type { Brewery } from '../brewery/brewery.js'
+import type { Style } from '../style/style.js'
+import type { LockIds } from '../db.js'
 
 export interface NewBeer {
   name: string

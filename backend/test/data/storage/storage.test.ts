@@ -1,18 +1,18 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../test-context'
+import { TestContext } from '../test-context.js'
 import type {
   StorageRequest,
   StorageWithDate
-} from '../../../src/core/storage/storage'
-import type { Database, Transaction } from '../../../src/data/database'
-import * as beerRepository from '../../../src/data/beer/beer.repository'
-import * as breweryRepository from '../../../src/data/brewery/brewery.repository'
-import * as containerRepository from '../../../src/data/container/container.repository'
-import * as storageRepository from '../../../src/data/storage/storage.repository'
-import * as styleRepository from '../../../src/data/style/style.repository'
-import { insertMultipleReviews } from '../review-helpers'
-import { assertDeepEqual, assertEqual, assertTruthy } from '../../assert'
+} from '../../../src/core/storage/storage.js'
+import type { Database, Transaction } from '../../../src/data/database.js'
+import * as beerRepository from '../../../src/data/beer/beer.repository.js'
+import * as breweryRepository from '../../../src/data/brewery/brewery.repository.js'
+import * as containerRepository from '../../../src/data/container/container.repository.js'
+import * as storageRepository from '../../../src/data/storage/storage.repository.js'
+import * as styleRepository from '../../../src/data/style/style.repository.js'
+import { insertMultipleReviews } from '../review-helpers.js'
+import { assertDeepEqual, assertEqual, assertTruthy } from '../../assert.js'
 
 describe('storage tests', () => {
   const ctx = new TestContext()

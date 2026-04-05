@@ -1,19 +1,19 @@
 import { describe, it } from 'node:test'
 
 import * as
-locationService from '../../../../src/core/internal/location/validated.service'
+locationService from '../../../../src/core/internal/location/validated.service.js'
 
 import type {
   Location,
   CreateLocationRequest,
   UpdateLocationRequest
-} from '../../../../src/core/location/location'
-import { dummyLog as log } from '../../dummy-log'
-import { expectReject } from '../../controller-error-helper'
+} from '../../../../src/core/location/location.js'
+import { dummyLog as log } from '../../dummy-log.js'
+import { expectReject } from '../../controller-error-helper.js'
 import {
   invalidLocationError,
   invalidLocationIdError
-} from '../../../../src/core/errors'
+} from '../../../../src/core/errors.js'
 
 const validCreateLocationRequest: CreateLocationRequest = {
   name: 'Kuja Beer Shop & Bar'

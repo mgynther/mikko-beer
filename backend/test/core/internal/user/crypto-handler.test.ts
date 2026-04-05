@@ -1,8 +1,8 @@
 import { describe, it } from 'node:test'
-import { assertDeepEqual, assertEqual } from '../../../assert'
+import { assertDeepEqual, assertEqual } from '../../../assert.js'
 import { createHandler }
-from '../../../../src/core/internal/user/crypto-handler'
-import { Level } from '../../../../src/core/log'
+from '../../../../src/core/internal/user/crypto-handler.js'
+import { Level } from '../../../../src/core/log.js'
 
 describe('crypto handler', () => {
   it('resolve without error', (t) => {

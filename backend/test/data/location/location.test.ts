@@ -1,9 +1,9 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../test-context'
-import type { Transaction } from '../../../src/data/database'
-import * as locationRepository from '../../../src/data/location/location.repository'
-import { assertDeepEqual, assertEqual } from '../../assert'
+import { TestContext } from '../test-context.js'
+import type { Transaction } from '../../../src/data/database.js'
+import * as locationRepository from '../../../src/data/location/location.repository.js'
+import { assertDeepEqual, assertEqual } from '../../assert.js'
 
 describe('location tests', () => {
   const ctx = new TestContext()

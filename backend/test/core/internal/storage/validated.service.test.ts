@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test'
 
-import * as storageService from '../../../../src/core/internal/storage/validated.service'
+import * as storageService from '../../../../src/core/internal/storage/validated.service.js'
 
 import type {
   Storage,
@@ -9,13 +9,13 @@ import type {
   CreateIf,
   UpdateIf,
   StorageWithDate
-} from '../../../../src/core/storage/storage'
-import { dummyLog as log } from '../../dummy-log'
-import { expectReject } from '../../controller-error-helper'
+} from '../../../../src/core/storage/storage.js'
+import { dummyLog as log } from '../../dummy-log.js'
+import { expectReject } from '../../controller-error-helper.js'
 import {
   invalidStorageError,
   invalidStorageIdError
-} from '../../../../src/core/errors'
+} from '../../../../src/core/errors.js'
 
 const validCreateStorageRequest: CreateStorageRequest = {
   beer: '9fda06b4-ddda-428b-965c-cfa16f77c010',

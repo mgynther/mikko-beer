@@ -1,17 +1,17 @@
-import * as signInMethodService from '../user/sign-in-method.service'
+import * as signInMethodService from '../user/sign-in-method.service.js'
 
-import type { log } from '../../log'
+import type { log } from '../../log.js'
 import {
   validatePasswordChange,
   validatePasswordSignInMethod
-} from './sign-in-method.validation'
+} from './sign-in-method.validation.js'
 import type {
   ChangePasswordUserIf,
   SignInUsingPasswordIf
-} from '../../user/sign-in-method'
-import type { SignedInUser } from './signed-in-user'
-import { validateUserId } from '../user/validation'
-import type { AuthTokenConfig } from '../../auth/auth-token'
+} from '../../user/sign-in-method.js'
+import type { SignedInUser } from './signed-in-user.js'
+import { validateUserId } from '../user/validation.js'
+import type { AuthTokenConfig } from '../../auth/auth-token.js'
 
 export async function signInUsingPassword (
   signInUsingPasswordIf: SignInUsingPasswordIf,

@@ -3,11 +3,11 @@ import { Router as KoaRouter } from '@koa/router'
 import type { RouterContext as KoaRouterContext } from '@koa/router'
 import type { ParsedUrlQuery } from 'node:querystring'
 
-import type { Context } from './context'
-import type { Database } from '../data/database'
-import type { Config } from './config'
-import type { log } from '../core/log'
-import { invalidQueryError } from '../core/errors'
+import type { Context } from './context.js'
+import type { Database } from '../data/database.js'
+import type { Config } from './config.js'
+import type { log } from '../core/log.js'
+import { invalidQueryError } from '../core/errors.js'
 
 export interface Response {
   status: 200 | 201 | 204

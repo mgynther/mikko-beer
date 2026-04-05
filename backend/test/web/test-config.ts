@@ -1,6 +1,6 @@
 import type { ConnectionConfig } from 'pg'
-import { testConfig as testDataConfig, testAdminConfig } from '../data/test-config'
-import type { Config } from '../../src/web/config'
+import { testConfig as testDataConfig, testAdminConfig } from '../data/test-config.js'
+import type { Config } from '../../src/web/config.js'
 
 export interface TestConfig extends Config {
   readonly adminDatabase: ConnectionConfig

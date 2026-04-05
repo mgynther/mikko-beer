@@ -1,30 +1,30 @@
 import * as authorizedAuthTokenService
-from '../../../core/auth/authorized-auth-token.service'
+from '../../../core/auth/authorized-auth-token.service.js'
 import * as signInMethodService
-from '../../../core/user/authorized-sign-in-method.service'
+from '../../../core/user/authorized-sign-in-method.service.js'
 
 import * as refreshTokenRepository
-from '../../../data/authentication/refresh-token.repository'
+from '../../../data/authentication/refresh-token.repository.js'
 import * as signInMethodRepository
-from '../../../data/user/sign-in-method/sign-in-method.repository'
-import * as userRepository from '../../../data/user/user.repository'
-import * as authHelper from '../../authentication/authentication-helper'
+from '../../../data/user/sign-in-method/sign-in-method.repository.js'
+import * as userRepository from '../../../data/user/user.repository.js'
+import * as authHelper from '../../authentication/authentication-helper.js'
 
-import type { DbRefreshToken } from '../../../core/auth/refresh-token'
+import type { DbRefreshToken } from '../../../core/auth/refresh-token.js'
 import type {
   ChangePasswordUserIf,
   SignInUsingPasswordIf,
   UserPasswordHash
-} from '../../../core/user/sign-in-method'
-import type { User } from '../../../core/user/user'
-import type { AuthTokenConfig } from '../../../core/auth/auth-token'
+} from '../../../core/user/sign-in-method.js'
+import type { User } from '../../../core/user/user.js'
+import type { AuthTokenConfig } from '../../../core/auth/auth-token.js'
 import type {
   RefreshTokensIf
-} from '../../../core/user/authorized-sign-in-method.service'
-import type { Context } from '../../context'
-import type { Transaction } from '../../../data/database'
+} from '../../../core/user/authorized-sign-in-method.service.js'
+import type { Context } from '../../context.js'
+import type { Transaction } from '../../../data/database.js'
 
-import type { Router } from '../../router'
+import type { Router } from '../../router.js'
 
 export function signInMethodController (router: Router): void {
   router.post('/api/v1/user/sign-in', async (ctx: Context) => {

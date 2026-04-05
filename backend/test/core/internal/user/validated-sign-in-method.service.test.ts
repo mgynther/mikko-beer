@@ -1,30 +1,30 @@
 import { describe, it } from 'node:test'
 
 import * as service
-from '../../../../src/core/internal/user/validated-sign-in-method.service'
+from '../../../../src/core/internal/user/validated-sign-in-method.service.js'
 
 import type {
   DbRefreshToken
-} from '../../../../src/core/auth/refresh-token'
+} from '../../../../src/core/auth/refresh-token.js'
 
 import type {
   AuthTokenConfig
-} from '../../../../src/core/auth/auth-token'
-import type { User } from '../../../../src/core/user/user'
+} from '../../../../src/core/auth/auth-token.js'
+import type { User } from '../../../../src/core/user/user.js'
 import {
   invalidCredentialsError,
   invalidPasswordChangeError,
   invalidSignInMethodError
-} from '../../../../src/core/errors'
-import { expectReject } from '../../controller-error-helper'
+} from '../../../../src/core/errors.js'
+import { expectReject } from '../../controller-error-helper.js'
 import type {
   ChangePasswordUserIf,
   PasswordChange,
   SignInUsingPasswordIf,
   UserPasswordHash
-} from '../../../../src/core/user/sign-in-method'
+} from '../../../../src/core/user/sign-in-method.js'
 
-import { dummyLog as log } from '../../dummy-log'
+import { dummyLog as log } from '../../dummy-log.js'
 
 const userId = '2bbcaed7-2b4d-4888-9a32-8573dc19fd56'
 

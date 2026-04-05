@@ -1,29 +1,29 @@
-import * as userService from '../../core/user/authorized-user.service'
+import * as userService from '../../core/user/authorized-user.service.js'
 
 import {
   createAddPasswordUserIf,
-} from './sign-in-method/sign-in-method-helper'
+} from './sign-in-method/sign-in-method-helper.js'
 
 import {
   signInMethodController
-} from './sign-in-method/sign-in-method.controller'
+} from './sign-in-method/sign-in-method.controller.js'
 
-import * as authHelper from '../authentication/authentication-helper'
+import * as authHelper from '../authentication/authentication-helper.js'
 
 import * as refreshTokenRepository
-from '../../data/authentication/refresh-token.repository'
-import * as userRepository from '../../data/user/user.repository'
+from '../../data/authentication/refresh-token.repository.js'
+import * as userRepository from '../../data/user/user.repository.js'
 
-import type { Config } from '../config'
+import type { Config } from '../config.js'
 
-import type { Router } from '../router'
+import type { Router } from '../router.js'
 import type {
   CreateAnonymousUserRequest,
   CreateUserIf
-} from '../../core/user/user'
-import type { DbRefreshToken } from '../../core/auth/refresh-token'
-import type { AuthTokenConfig } from '../../core/auth/auth-token'
-import type { Context } from '../context'
+} from '../../core/user/user.js'
+import type { DbRefreshToken } from '../../core/auth/refresh-token.js'
+import type { AuthTokenConfig } from '../../core/auth/auth-token.js'
+import type { Context } from '../context.js'
 
 export function userController (router: Router, config: Config): void {
   router.post('/api/v1/user',

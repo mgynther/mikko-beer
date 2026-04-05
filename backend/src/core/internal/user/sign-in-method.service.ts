@@ -1,25 +1,25 @@
 import * as crypto from 'node:crypto'
 
-import * as authTokenService from '../../internal/auth/auth-token.service'
-import * as userService from '../user/user.service'
+import * as authTokenService from '../../internal/auth/auth-token.service.js'
+import * as userService from '../user/user.service.js'
 
 import {
   invalidCredentialsError,
   passwordTooLongError,
   passwordTooWeakError,
   userAlreadyHasSignInMethodError
-} from '../../errors'
-import type { log } from '../../log'
-import type { SignedInUser } from '../user/signed-in-user'
+} from '../../errors.js'
+import type { log } from '../../log.js'
+import type { SignedInUser } from '../user/signed-in-user.js'
 import type {
   AddPasswordUserIf,
   ChangePasswordUserIf,
   PasswordChange,
   PasswordSignInMethod,
   SignInUsingPasswordIf
-} from '../../user/sign-in-method'
-import type { AuthTokenConfig } from '../../auth/auth-token'
-import { scrypt } from './crypto'
+} from '../../user/sign-in-method.js'
+import type { AuthTokenConfig } from '../../auth/auth-token.js'
+import { scrypt } from './crypto.js'
 
 export const MIN_PASSWORD_LENGTH = 8
 export const MAX_PASSWORD_LENGTH = 255

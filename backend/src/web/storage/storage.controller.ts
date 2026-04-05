@@ -1,22 +1,22 @@
-import * as storageService from '../../core/storage/authorized.service'
+import * as storageService from '../../core/storage/authorized.service.js'
 
-import * as beerRepository from '../../data/beer/beer.repository'
-import * as containerRepository from '../../data/container/container.repository'
-import * as storageRepository from '../../data/storage/storage.repository'
+import * as beerRepository from '../../data/beer/beer.repository.js'
+import * as containerRepository from '../../data/container/container.repository.js'
+import * as storageRepository from '../../data/storage/storage.repository.js'
 
-import type { Pagination } from '../../core/pagination'
+import type { Pagination } from '../../core/pagination.js'
 import type {
   CreateIf,
   CreateStorageRequest,
   Storage,
   UpdateIf,
-} from '../../core/storage/storage'
-import { validatePagination } from '../../core/pagination'
-import type { Transaction } from '../../data/database'
-import type { Router } from '../router'
+} from '../../core/storage/storage.js'
+import { validatePagination } from '../../core/pagination.js'
+import type { Transaction } from '../../data/database.js'
+import type { Router } from '../router.js'
 
-import { parseAuthToken } from '../authentication/authentication-helper'
-import type { Context } from '../context'
+import { parseAuthToken } from '../authentication/authentication-helper.js'
+import type { Context } from '../context.js'
 
 export function storageController (router: Router): void {
   router.get(

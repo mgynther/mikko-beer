@@ -6,20 +6,20 @@ import type {
   ReviewListOrder,
   CreateIf,
   UpdateIf
-} from '../../review/review'
+} from '../../review/review.js'
 
 import {
   referredBeerNotFoundError,
   referredContainerNotFoundError,
   referredStorageNotFoundError,
   reviewNotFoundError
-} from '../../errors'
-import type { log } from '../../log'
-import { INFO } from '../../log'
+} from '../../errors.js'
+import type { log } from '../../log.js'
+import { INFO } from '../../log.js'
 import type {
   Pagination
-} from '../../pagination'
-import type { LockId } from '../../db'
+} from '../../pagination.js'
+import type { LockId } from '../../db.js'
 
 export async function createReview (
   createIf: CreateIf,

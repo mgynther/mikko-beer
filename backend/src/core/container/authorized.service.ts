@@ -1,13 +1,13 @@
-import * as authorizationService from '../internal/auth/authorization.service'
-import * as containerService from '../internal/container/validated.service'
+import * as authorizationService from '../internal/auth/authorization.service.js'
+import * as containerService from '../internal/container/validated.service.js'
 
 import type { BodyRequest, IdRequest } from '../request';
 import type {
   Container,
   CreateContainerRequest
-} from './container';
-import type { log } from '../log'
-import type { AuthTokenPayload } from '../auth/auth-token';
+} from './container.js'
+import type { log } from '../log.js'
+import type { AuthTokenPayload } from '../auth/auth-token.js'
 
 export async function createContainer (
   create: (container: CreateContainerRequest) => Promise<Container>,

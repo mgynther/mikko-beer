@@ -1,13 +1,13 @@
-import { ajv } from '../ajv'
+import { ajv } from '../ajv.js'
 
 import {
   invalidBreweryError,
   invalidBreweryIdError
-} from '../../errors'
+} from '../../errors.js'
 import type {
   CreateBreweryRequest,
   UpdateBreweryRequest
-} from '../../brewery/brewery'
+} from '../../brewery/brewery.js'
 
 const doValidateBreweryRequest =
   ajv.compile<CreateBreweryRequest>({

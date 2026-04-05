@@ -1,14 +1,17 @@
+import path, { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import { promises as fs } from 'fs'
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../test-context'
+import { TestContext } from '../test-context.js'
 import * as locationRepository
-from '../../../src/data/location/location.repository'
-import * as reviewRepository from '../../../src/data/review/review.repository'
-import { insertData } from '../review-helpers'
-import { assertDeepEqual, assertEqual } from '../../assert'
+from '../../../src/data/location/location.repository.js'
+import * as reviewRepository from '../../../src/data/review/review.repository.js'
+import { insertData } from '../review-helpers.js'
+import { assertDeepEqual, assertEqual } from '../../assert.js'
 import { FileMigrationProvider, Migrator } from 'kysely'
-import * as path from 'path'
-import { promises as fs } from 'fs'
+
+const directory = dirname(fileURLToPath(import.meta.url));
 
 describe('review tests', () => {
   const ctx = new TestContext()
@@ -26,7 +29,7 @@ describe('review tests', () => {
       provider: new FileMigrationProvider({
         fs,
         path,
-        migrationFolder: path.join(__dirname, '../../../src/data/migrations'),
+        migrationFolder: path.join(directory, '../../../src/data/migrations'),
       }),
     })
     await migrator.migrateTo('2025_01_10_23_48_20_add_location')

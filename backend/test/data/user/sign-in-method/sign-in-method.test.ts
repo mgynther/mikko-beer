@@ -1,9 +1,9 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../../test-context'
+import { TestContext } from '../../test-context.js'
 import * as signInMethodRepository
-from '../../../../src/data/user/sign-in-method/sign-in-method.repository'
-import { assertEqual } from '../../../assert'
+from '../../../../src/data/user/sign-in-method/sign-in-method.repository.js'
+import { assertEqual } from '../../../assert.js'
 
 describe('sign-in-method tests', () => {
   const ctx = new TestContext()

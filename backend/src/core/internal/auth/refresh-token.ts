@@ -1,7 +1,7 @@
-import { ajv } from '../ajv'
+import { ajv } from '../ajv.js'
 
-import { invalidRefreshTokenError } from '../../errors'
-import type { RefreshToken } from '../../auth/refresh-token'
+import { invalidRefreshTokenError } from '../../errors.js'
+import type { RefreshToken } from '../../auth/refresh-token.js'
 
 const isRefreshTokenValid = ajv.compile<RefreshToken>({
   type: 'object',

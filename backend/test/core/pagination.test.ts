@@ -1,12 +1,12 @@
 import { describe, it } from 'node:test'
 
-import type { Pagination, PaginationRequest } from '../../src/core/pagination'
-import { toRowNumbers, validatePagination } from '../../src/core/pagination'
+import type { Pagination, PaginationRequest } from '../../src/core/pagination.js'
+import { toRowNumbers, validatePagination } from '../../src/core/pagination.js'
 
 
-import { invalidPaginationError } from '../../src/core/errors'
-import { expectThrow } from './controller-error-helper'
-import { assertDeepEqual } from '../assert'
+import { invalidPaginationError } from '../../src/core/errors.js'
+import { expectThrow } from './controller-error-helper.js'
+import { assertDeepEqual } from '../assert.js'
 
 describe('pagination unit tests', () => {
   function pass(input: PaginationRequest, output: Pagination) {

@@ -3,17 +3,17 @@ import { describe, it } from 'node:test'
 import {
   validateCreateLocationRequest,
   validateUpdateLocationRequest,
-} from '../../../../src/core/internal/location/validation'
+} from '../../../../src/core/internal/location/validation.js'
 import {
   invalidLocationError,
   invalidLocationIdError
-} from '../../../../src/core/errors'
+} from '../../../../src/core/errors.js'
 import type {
   CreateLocationRequest,
   UpdateLocationRequest
-} from '../../../../src/core/location/location'
-import { expectThrow } from '../../controller-error-helper'
-import { assertDeepEqual } from '../../../assert'
+} from '../../../../src/core/location/location.js'
+import { expectThrow } from '../../controller-error-helper.js'
+import { assertDeepEqual } from '../../../assert.js'
 
 function validCreateRequest (): CreateLocationRequest {
   return {

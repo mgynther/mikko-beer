@@ -5,24 +5,24 @@ import type {
   Database,
   KyselyDatabase,
   Transaction
-} from '../database'
+} from '../database.js'
 import type {
   DbJoinedReview,
   ReviewRow,
   ReviewTable,
   ReviewTableContent
-} from './review.table'
+} from './review.table.js'
 
-import type { ListDirection } from '../../core/list'
-import type { Pagination } from '../../core/pagination'
-import { toRowNumbers } from '../../core/pagination'
+import type { ListDirection } from '../../core/list.js'
+import type { Pagination } from '../../core/pagination.js'
+import { toRowNumbers } from '../../core/pagination.js'
 import type {
   JoinedReview,
   NewReview,
   Review,
   ReviewListOrder
-} from '../../core/review/review'
-import { contains } from '../../core/record'
+} from '../../core/review/review.js'
+import { contains } from '../../core/record.js'
 
 export async function insertReview (
   trx: Transaction,

@@ -4,15 +4,15 @@ import type {
   Brewery,
   CreateBreweryRequest,
   UpdateBreweryRequest
-} from '../../../../src/core/brewery/brewery'
-import { breweryNotFoundError } from '../../../../src/core/errors'
-import type { Pagination } from '../../../../src/core/pagination'
-import type { SearchByName } from '../../../../src/core/search'
-import * as breweryService from '../../../../src/core/internal/brewery/service'
+} from '../../../../src/core/brewery/brewery.js'
+import { breweryNotFoundError } from '../../../../src/core/errors.js'
+import type { Pagination } from '../../../../src/core/pagination.js'
+import type { SearchByName } from '../../../../src/core/search.js'
+import * as breweryService from '../../../../src/core/internal/brewery/service.js'
 
-import { dummyLog as log } from '../../dummy-log'
-import { expectReject } from '../../controller-error-helper'
-import { assertDeepEqual, assertEqual } from '../../../assert'
+import { dummyLog as log } from '../../dummy-log.js'
+import { expectReject } from '../../controller-error-helper.js'
+import { assertDeepEqual, assertEqual } from '../../../assert.js'
 
 const brewery: Brewery = {
   id: 'd804c8fe-8d41-4c8b-88d1-95bdfeb558ef',

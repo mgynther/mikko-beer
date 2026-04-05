@@ -1,5 +1,5 @@
-import * as authorizationService from '../internal/auth/authorization.service'
-import * as statsService from '../internal/stats/service'
+import * as authorizationService from '../internal/auth/authorization.service.js'
+import * as statsService from '../internal/stats/service.js'
 
 import type {
   AuthTokenPayload
@@ -19,8 +19,8 @@ import type {
   StyleStats,
   StyleStatsOrder
 } from "./stats"
-import type { log } from '../log'
-import type { Pagination } from '../pagination'
+import type { log } from '../log.js'
+import type { Pagination } from '../pagination.js'
 
 export async function getAnnual (
   getAnnual: (statsFilter: StatsIdFilter) => Promise<AnnualStats>,

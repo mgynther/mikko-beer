@@ -3,17 +3,17 @@ import { describe, it } from 'node:test'
 import {
   validateCreateStorageRequest,
   validateUpdateStorageRequest,
-} from '../../../src/core/internal/storage/validation'
+} from '../../../src/core/internal/storage/validation.js'
 import {
   invalidStorageError,
   invalidStorageIdError
-} from '../../../src/core/errors'
-import { expectThrow } from '../controller-error-helper'
-import { assertDeepEqual } from '../../assert'
+} from '../../../src/core/errors.js'
+import { expectThrow } from '../controller-error-helper.js'
+import { assertDeepEqual } from '../../assert.js'
 import type {
   CreateStorageRequest,
   UpdateStorageRequest
-} from '../../../src/core/storage/storage'
+} from '../../../src/core/storage/storage.js'
 
 function validCreateRequest (): CreateStorageRequest {
   return {

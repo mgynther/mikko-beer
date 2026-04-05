@@ -1,21 +1,21 @@
-import * as beerService from './service'
+import * as beerService from './service.js'
 
 import type {
   BeerWithBreweriesAndStyles,
   BeerWithBreweryAndStyleIds,
   CreateIf,
   UpdateIf
-} from "../../beer/beer";
+} from '../../beer/beer.js'
 
 import {
   validateBeerId,
   validateCreateBeerRequest,
   validateUpdateBeerRequest
-} from "./validation";
-import type { SearchByName } from '../../search';
+} from './validation.js'
+import type { SearchByName } from '../../search.js'
 
-import type { log } from '../../log'
-import type { Pagination } from '../../pagination';
+import type { log } from '../../log.js'
+import type { Pagination } from '../../pagination.js'
 
 export async function createBeer (
   createIf: CreateIf,

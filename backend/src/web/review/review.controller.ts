@@ -1,27 +1,27 @@
-import * as reviewService from '../../core/review/authorized.service'
+import * as reviewService from '../../core/review/authorized.service.js'
 
-import * as beerRepository from '../../data/beer/beer.repository'
-import * as containerRepository from '../../data/container/container.repository'
-import * as reviewRepository from '../../data/review/review.repository'
-import * as storageRepository from '../../data/storage/storage.repository'
+import * as beerRepository from '../../data/beer/beer.repository.js'
+import * as containerRepository from '../../data/container/container.repository.js'
+import * as reviewRepository from '../../data/review/review.repository.js'
+import * as storageRepository from '../../data/storage/storage.repository.js'
 
-import { parseAuthToken } from '../authentication/authentication-helper'
+import { parseAuthToken } from '../authentication/authentication-helper.js'
 
-import type { Router } from '../router'
-import type { Pagination } from '../../core/pagination'
+import type { Router } from '../router.js'
+import type { Pagination } from '../../core/pagination.js'
 import type {
   CreateIf,
   NewReview,
   Review,
   ReviewListOrder,
   UpdateIf
-} from '../../core/review/review'
+} from '../../core/review/review.js'
 import {
   validateFilteredReviewListOrder,
   validateFullReviewListOrder
-} from '../../core/review/review'
-import { validatePagination } from '../../core/pagination'
-import type { Context } from '../context'
+} from '../../core/review/review.js'
+import { validatePagination } from '../../core/pagination.js'
+import type { Context } from '../context.js'
 
 export function reviewController (router: Router): void {
   router.post('/api/v1/review',

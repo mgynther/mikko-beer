@@ -1,16 +1,16 @@
-import * as authorizationService from '../internal/auth/authorization.service'
-import * as userService from '../internal/user/validated-user.service'
+import * as authorizationService from '../internal/auth/authorization.service.js'
+import * as userService from '../internal/user/validated-user.service.js'
 
 import type { IdRequest } from "../request"
 import type { CreateUserIf, User } from "./user"
 
-import type { log } from '../log'
+import type { log } from '../log.js'
 import type {
   AuthTokenConfig,
   AuthTokenPayload
-} from '../auth/auth-token'
-import type { DbRefreshToken } from '../auth/refresh-token'
-import type { SignedInUser } from '../internal/user/signed-in-user'
+} from '../auth/auth-token.js'
+import type { DbRefreshToken } from '../auth/refresh-token.js'
+import type { SignedInUser } from '../internal/user/signed-in-user.js'
 
 export async function createUser (
   createUserIf: CreateUserIf,

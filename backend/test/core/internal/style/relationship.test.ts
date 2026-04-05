@@ -1,11 +1,11 @@
 import { describe, it } from 'node:test'
 
-import { cyclicRelationshipError } from '../../../../src/core/errors'
+import { cyclicRelationshipError } from '../../../../src/core/errors.js'
 import {
   checkCyclicRelationships
-} from '../../../../src/core/internal/style/style.util'
-import { expectThrow } from '../../controller-error-helper'
-import { assertDoesNotThrow } from '../../../assert'
+} from '../../../../src/core/internal/style/style.util.js'
+import { expectThrow } from '../../controller-error-helper.js'
+import { assertDoesNotThrow } from '../../../assert.js'
 
 describe('style relationship unit tests', () => {
   const ale = {

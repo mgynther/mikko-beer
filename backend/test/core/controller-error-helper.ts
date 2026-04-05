@@ -1,5 +1,5 @@
-import { ControllerError } from '../../src/core/errors'
-import { assertDeepEqual, assertEqual, assertInstanceOf } from '../assert'
+import { ControllerError } from '../../src/core/errors.js'
+import { assertDeepEqual, assertEqual, assertInstanceOf } from '../assert.js'
 
 export async function expectReject(
   fn: () => Promise<void>,

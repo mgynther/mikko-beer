@@ -1,5 +1,5 @@
-import { Level } from './log'
-import type { log } from './log'
+import { Level } from './log.js'
+import type { log } from './log.js'
 
 export const consoleLog: log = (level: Level, ...args: unknown[]): void => {
   const timestamp = new Date().toISOString()

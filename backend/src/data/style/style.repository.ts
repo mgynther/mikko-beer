@@ -1,16 +1,16 @@
-import type { Database, Transaction } from '../database'
+import type { Database, Transaction } from '../database.js'
 import type {
   StyleRow,
   StyleRelationshipRow
-} from './style.table'
+} from './style.table.js'
 import type {
   NewStyle,
   Style,
   StyleRelationship,
   StyleWithParentIds,
   StyleWithParentsAndChildren
-} from '../../core/style/style'
-import { contains } from '../../core/record'
+} from '../../core/style/style.js'
+import { contains } from '../../core/record.js'
 
 export async function insertStyle (
   trx: Transaction,

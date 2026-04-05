@@ -1,8 +1,8 @@
 import type { SelectQueryBuilder, RawBuilder } from 'kysely'
 import { sql } from 'kysely'
 
-import type { Database, KyselyDatabase } from '../database'
-import type { Pagination } from '../../core/pagination'
+import type { Database, KyselyDatabase } from '../database.js'
+import type { Pagination } from '../../core/pagination.js'
 
 import type {
   AnnualContainerStats,
@@ -18,8 +18,8 @@ import type {
   StatsFilter,
   StyleStats,
   StyleStatsOrder
-} from '../../core/stats/stats'
-import { contains } from '../../core/record'
+} from '../../core/stats/stats.js'
+import { contains } from '../../core/record.js'
 
 function round (value: number, decimals: number): string {
   return Number(

@@ -1,16 +1,16 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../test-context'
-import type { Review } from '../../../src/core/review/review'
+import { TestContext } from '../test-context.js'
+import type { Review } from '../../../src/core/review/review.js'
 import type {
   StyleStatsOrder,
   StatsFilter
-} from '../../../src/core/stats/stats'
-import type { Database } from '../../../src/data/database'
-import * as statsRepository from '../../../src/data/stats/stats.repository'
-import type { InsertedData } from '../review-helpers'
-import { insertMultipleReviews } from '../review-helpers'
-import { assertDeepEqual } from '../../assert'
+} from '../../../src/core/stats/stats.js'
+import type { Database } from '../../../src/data/database.js'
+import * as statsRepository from '../../../src/data/stats/stats.repository.js'
+import type { InsertedData } from '../review-helpers.js'
+import { insertMultipleReviews } from '../review-helpers.js'
+import { assertDeepEqual } from '../../assert.js'
 
 const defaultFilter: StatsFilter = {
   brewery: undefined,

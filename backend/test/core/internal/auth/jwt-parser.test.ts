@@ -1,10 +1,10 @@
 import { describe, it } from 'node:test'
 
-import type { AuthTokenPayload } from '../../../../src/core/auth/auth-token'
-import { parseAuthTokenPayload, parseRefreshTokenPayload } from '../../../../src/core/internal/auth/jwt-parser'
-import { InvalidAuthTokenError } from '../../../../src/core/auth/auth-token'
-import { assertDeepEqual, assertThrows } from '../../../assert'
-import type { RefreshTokenPayload } from '../../../../src/core/internal/auth/jwt'
+import type { AuthTokenPayload } from '../../../../src/core/auth/auth-token.js'
+import { parseAuthTokenPayload, parseRefreshTokenPayload } from '../../../../src/core/internal/auth/jwt-parser.js'
+import { InvalidAuthTokenError } from '../../../../src/core/auth/auth-token.js'
+import { assertDeepEqual, assertThrows } from '../../../assert.js'
+import type { RefreshTokenPayload } from '../../../../src/core/internal/auth/jwt.js'
 
 describe('jwt parser auth token unit tests', () => {
   it('parse valid ', async () => {

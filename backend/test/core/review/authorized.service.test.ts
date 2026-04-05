@@ -1,8 +1,8 @@
 import { describe, it } from 'node:test'
 
-import * as reviewService from '../../../src/core/review/authorized.service'
+import * as reviewService from '../../../src/core/review/authorized.service.js'
 
-import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
+import type { AuthTokenPayload } from '../../../src/core/auth/auth-token.js'
 import type {
   Review,
   CreateReviewRequest,
@@ -11,14 +11,14 @@ import type {
   ReviewListOrder,
   UpdateReviewRequest,
   UpdateIf
-} from '../../../src/core/review/review'
-import { dummyLog as log } from '../dummy-log'
-import { expectReject } from '../controller-error-helper'
+} from '../../../src/core/review/review.js'
+import { dummyLog as log } from '../dummy-log.js'
+import { expectReject } from '../controller-error-helper.js'
 import {
   invalidReviewError,
   noRightsError
-} from '../../../src/core/errors'
-import { assertDeepEqual, assertEqual } from '../../assert'
+} from '../../../src/core/errors.js'
+import { assertDeepEqual, assertEqual } from '../../assert.js'
 
 const storageId = '5e11fcf9-3fa4-402d-90e2-17706e8d78e6'
 

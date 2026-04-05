@@ -3,14 +3,14 @@ import { describe, it } from 'node:test'
 import {
   validateFilteredReviewListOrder,
   validateFullReviewListOrder
-} from '../../src/core/review/review'
+} from '../../src/core/review/review.js'
 import {
   invalidReviewListQueryBeerNameError,
   invalidReviewListQueryBreweryNameError,
   invalidReviewListQueryOrderError
-} from '../../src/core/errors'
-import { expectThrow } from './controller-error-helper'
-import { assertDeepEqual } from '../assert'
+} from '../../src/core/errors.js'
+import { expectThrow } from './controller-error-helper.js'
+import { assertDeepEqual } from '../assert.js'
 
 function valid (): Record<string, unknown> {
   return { order: 'time', direction: 'desc' }

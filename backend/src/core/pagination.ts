@@ -1,6 +1,6 @@
-import { ajv } from './internal/ajv'
+import { ajv } from './internal/ajv.js'
 
-import { invalidPaginationError } from './errors'
+import { invalidPaginationError } from './errors.js'
 
 export interface Pagination {
   size: number

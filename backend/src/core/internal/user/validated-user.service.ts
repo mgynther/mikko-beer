@@ -1,12 +1,12 @@
-import * as userService from '../user/user.service'
-import * as signInMethodUserService from '../user/sign-in-method-user.service'
+import * as userService from '../user/user.service.js'
+import * as signInMethodUserService from '../user/sign-in-method-user.service.js'
 
-import type { CreateUserIf, User } from "../../user/user"
-import { validateCreateUserRequest, validateUserId } from "./validation"
+import type { CreateUserIf, User } from '../../user/user.js'
+import { validateCreateUserRequest, validateUserId } from './validation.js'
 
-import type { log } from '../../log'
-import type { AuthTokenConfig } from '../../auth/auth-token'
-import type { SignedInUser } from './signed-in-user'
+import type { log } from '../../log.js'
+import type { AuthTokenConfig } from '../../auth/auth-token.js'
+import type { SignedInUser } from './signed-in-user.js'
 
 export async function createUser (
   createUserIf: CreateUserIf,

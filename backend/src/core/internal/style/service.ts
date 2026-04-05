@@ -8,17 +8,17 @@ import type {
   StyleWithParentIds,
   UpdateStyleRequest,
   UpdateStyleIf
-} from '../../style/style'
+} from '../../style/style.js'
 
 import {
   parentStyleNotFoundError,
   styleNotFoundError
-} from '../../errors'
-import type { log } from '../../log'
-import { INFO, } from '../../log'
-import { checkCyclicRelationships } from './style.util'
-import { areKeysEqual } from '../../internal/key'
-import type { LockIds } from '../../db'
+} from '../../errors.js'
+import type { log } from '../../log.js'
+import { INFO, } from '../../log.js'
+import { checkCyclicRelationships } from './style.util.js'
+import { areKeysEqual } from '../../internal/key.js'
+import type { LockIds } from '../../db.js'
 
 export async function createStyle (
   createStyleIf: CreateStyleIf,

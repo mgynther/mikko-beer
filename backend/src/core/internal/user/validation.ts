@@ -1,13 +1,13 @@
-import { ajv } from '../ajv'
-import { validatePasswordSignInMethod } from './sign-in-method.validation'
+import { ajv } from '../ajv.js'
+import { validatePasswordSignInMethod } from './sign-in-method.validation.js'
 
-import { invalidUserError, invalidUserIdError } from '../../errors'
+import { invalidUserError, invalidUserIdError } from '../../errors.js'
 import type {
   CreateAnonymousUserRequest,
   CreateUserRequest,
   CreateUserType,
   Role
-} from '../../user/user'
+} from '../../user/user.js'
 
 const doValidateCreateAnonymousUserRequest =
   ajv.compile<CreateAnonymousUserRequest>({

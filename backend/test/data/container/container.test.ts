@@ -1,9 +1,9 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../test-context'
-import type { Transaction } from '../../../src/data/database'
-import * as containerRepository from '../../../src/data/container/container.repository'
-import { assertDeepEqual, assertEqual } from '../../assert'
+import { TestContext } from '../test-context.js'
+import type { Transaction } from '../../../src/data/database.js'
+import * as containerRepository from '../../../src/data/container/container.repository.js'
+import { assertDeepEqual, assertEqual } from '../../assert.js'
 
 describe('container tests', () => {
   const ctx = new TestContext()

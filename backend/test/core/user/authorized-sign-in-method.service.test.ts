@@ -1,36 +1,36 @@
 import { describe, it } from 'node:test'
 
-import * as jwt from '../../../src/core/internal/auth/jwt'
+import * as jwt from '../../../src/core/internal/auth/jwt.js'
 
 import * as service
-from '../../../src/core/user/authorized-sign-in-method.service'
+from '../../../src/core/user/authorized-sign-in-method.service.js'
 
 import type {
   DbRefreshToken,
   RefreshToken
-} from '../../../src/core/auth/refresh-token'
+} from '../../../src/core/auth/refresh-token.js'
 
 import type {
   RefreshTokensIf
-} from '../../../src/core/user/authorized-sign-in-method.service'
+} from '../../../src/core/user/authorized-sign-in-method.service.js'
 import type {
   AuthTokenConfig,
   AuthTokenPayload,
-} from '../../../src/core/auth/auth-token'
-import type { User } from '../../../src/core/user/user'
+} from '../../../src/core/auth/auth-token.js'
+import type { User } from '../../../src/core/user/user.js'
 import {
   invalidCredentialsTokenError,
   userMismatchError
-} from '../../../src/core/errors'
-import { expectReject } from '../controller-error-helper'
+} from '../../../src/core/errors.js'
+import { expectReject } from '../controller-error-helper.js'
 import type {
   ChangePasswordUserIf,
   PasswordChange,
   SignInUsingPasswordIf,
   UserPasswordHash
-} from '../../../src/core/user/sign-in-method'
+} from '../../../src/core/user/sign-in-method.js'
 
-import { dummyLog as log } from '../dummy-log'
+import { dummyLog as log } from '../dummy-log.js'
 
 const userId = '589e0cf9-7a2d-4c7e-8d62-6e67f32cb3ce'
 const refreshTokenId = 'c6697088-c417-4dee-988d-c018b07527f7'

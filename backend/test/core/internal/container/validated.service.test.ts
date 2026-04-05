@@ -1,18 +1,18 @@
 import { describe, it } from 'node:test'
 
-import * as containerService from '../../../../src/core/internal/container/validated.service'
+import * as containerService from '../../../../src/core/internal/container/validated.service.js'
 
 import type {
   Container,
   CreateContainerRequest,
   UpdateContainerRequest
-} from '../../../../src/core/container/container'
-import { dummyLog as log } from '../../dummy-log'
-import { expectReject } from '../../controller-error-helper'
+} from '../../../../src/core/container/container.js'
+import { dummyLog as log } from '../../dummy-log.js'
+import { expectReject } from '../../controller-error-helper.js'
 import {
   invalidContainerError,
   invalidContainerIdError,
-} from '../../../../src/core/errors'
+} from '../../../../src/core/errors.js'
 
 const validCreateContainerRequest: CreateContainerRequest = {
   size: '0.33',

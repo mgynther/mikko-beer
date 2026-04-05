@@ -1,6 +1,6 @@
-import { ajv } from './internal/ajv'
+import { ajv } from './internal/ajv.js'
 
-import { invalidSearchError } from './errors'
+import { invalidSearchError } from './errors.js'
 
 export const defaultSearchMaxResults = 20
 

@@ -2,15 +2,15 @@ import type {
   CreateBreweryRequest,
   UpdateBreweryRequest,
   Brewery
-} from '../../brewery/brewery'
+} from '../../brewery/brewery.js'
 
-import { breweryNotFoundError } from '../../errors'
-import type { log } from '../../log'
-import { INFO } from '../../log'
+import { breweryNotFoundError } from '../../errors.js'
+import type { log } from '../../log.js'
+import { INFO } from '../../log.js'
 import type {
   Pagination
-} from '../../pagination'
-import type { SearchByName } from '../../search'
+} from '../../pagination.js'
+import type { SearchByName } from '../../search.js'
 
 export async function createBrewery (
   create: (brewery: CreateBreweryRequest) => Promise<Brewery>,

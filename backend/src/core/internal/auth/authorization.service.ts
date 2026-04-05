@@ -1,11 +1,11 @@
-import type { AuthTokenPayload } from "../../auth/auth-token"
+import type { AuthTokenPayload } from '../../auth/auth-token.js'
 import {
   noRightsError,
   noUserIdParameterError,
   userMismatchError,
   userOrRefreshTokenNotFoundError
-} from "../../errors"
-import type { DbRefreshToken } from "../../auth/refresh-token"
+} from '../../errors.js'
+import type { DbRefreshToken } from '../../auth/refresh-token.js'
 
 export async function authorizeUser (
   userId: string | undefined,

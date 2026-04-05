@@ -1,15 +1,15 @@
-import { ajv } from '../ajv'
+import { ajv } from '../ajv.js'
 
 import {
   invalidBeerError,
   invalidBeerIdError
-} from '../../errors'
+} from '../../errors.js'
 
 import type {
   BeerRequest,
   CreateBeerRequest,
   UpdateBeerRequest
-} from '../../beer/beer'
+} from '../../beer/beer.js'
 
 const doValidateBeerRequest =
   ajv.compile<BeerRequest>({

@@ -3,17 +3,17 @@ import { describe, it } from 'node:test'
 import {
   validateCreateBeerRequest,
   validateUpdateBeerRequest,
-} from '../../../../src/core/internal/beer/validation'
+} from '../../../../src/core/internal/beer/validation.js'
 import {
   invalidBeerError,
   invalidBeerIdError
-} from '../../../../src/core/errors'
-import { expectThrow } from '../../controller-error-helper'
-import { assertDeepEqual } from '../../../assert'
+} from '../../../../src/core/errors.js'
+import { expectThrow } from '../../controller-error-helper.js'
+import { assertDeepEqual } from '../../../assert.js'
 import type {
   CreateBeerRequest,
   UpdateBeerRequest
-} from '../../../../src/core/beer/beer'
+} from '../../../../src/core/beer/beer.js'
 
 function validCreateRequest (): CreateBeerRequest {
   return {

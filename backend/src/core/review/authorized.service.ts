@@ -1,5 +1,5 @@
-import * as authorizationService from '../internal/auth/authorization.service'
-import * as reviewService from '../internal/review/validated.service'
+import * as authorizationService from '../internal/auth/authorization.service.js'
+import * as reviewService from '../internal/review/validated.service.js'
 
 import type {
   CreateIf,
@@ -8,7 +8,7 @@ import type {
   ReviewListOrder,
   UpdateIf
 } from "./review";
-import type { log } from '../log'
+import type { log } from '../log.js'
 import type { BodyRequest, IdRequest } from '../request';
 import type { Pagination } from '../pagination';
 import type { AuthTokenPayload } from '../auth/auth-token';

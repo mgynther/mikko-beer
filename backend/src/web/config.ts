@@ -1,8 +1,8 @@
 import type { ConnectionConfig } from 'pg'
 
-import { config as databaseConfig } from '../data/config'
-import { getEnvVariable } from '../env-helper'
-import { parseExpiryDurationMin } from './parse'
+import { config as databaseConfig } from '../data/config.js'
+import { getEnvVariable } from '../env-helper.js'
+import { parseExpiryDurationMin } from './parse.js'
 
 export interface Config {
   readonly generateInitialAdminPassword: boolean

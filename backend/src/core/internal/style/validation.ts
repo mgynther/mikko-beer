@@ -1,10 +1,10 @@
-import { ajv } from '../ajv'
+import { ajv } from '../ajv.js'
 
 import {
   invalidStyleError,
   invalidStyleIdError
-} from '../../errors'
-import type { CreateStyleRequest, UpdateStyleRequest } from '../../style/style'
+} from '../../errors.js'
+import type { CreateStyleRequest, UpdateStyleRequest } from '../../style/style.js'
 
 const doValidateStyleRequest =
   ajv.compile<CreateStyleRequest>({

@@ -1,10 +1,10 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../test-context'
-import type { NewUser, User } from '../../../src/core/user/user'
-import * as userRepository from '../../../src/data/user/user.repository'
-import type { Transaction } from '../../../src/data/database'
-import { assertDeepEqual, assertEqual } from '../../assert'
+import { TestContext } from '../test-context.js'
+import type { NewUser, User } from '../../../src/core/user/user.js'
+import * as userRepository from '../../../src/data/user/user.repository.js'
+import type { Transaction } from '../../../src/data/database.js'
+import { assertDeepEqual, assertEqual } from '../../assert.js'
 
 describe('user tests', () => {
   const ctx = new TestContext()

@@ -1,20 +1,20 @@
 import { describe, it } from 'node:test'
 
-import * as containerService from '../../../src/core/container/authorized.service'
+import * as containerService from '../../../src/core/container/authorized.service.js'
 
-import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
+import type { AuthTokenPayload } from '../../../src/core/auth/auth-token.js'
 import type {
   Container,
   CreateContainerRequest,
   UpdateContainerRequest
-} from '../../../src/core/container/container'
-import { dummyLog as log } from '../dummy-log'
-import { expectReject } from '../controller-error-helper'
+} from '../../../src/core/container/container.js'
+import { dummyLog as log } from '../dummy-log.js'
+import { expectReject } from '../controller-error-helper.js'
 import {
   invalidContainerError,
   noRightsError
-} from '../../../src/core/errors'
-import { assertDeepEqual } from '../../assert'
+} from '../../../src/core/errors.js'
+import { assertDeepEqual } from '../../assert.js'
 
 const validCreateContainerRequest: CreateContainerRequest = {
   size: '0.33',

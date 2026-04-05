@@ -5,7 +5,7 @@ import {
   referredContainerNotFoundError,
   referredStorageNotFoundError,
   reviewNotFoundError
-} from '../../../../src/core/errors'
+} from '../../../../src/core/errors.js'
 import type {
   CreateIf,
   CreateReviewRequest,
@@ -15,13 +15,13 @@ import type {
   ReviewListOrder,
   UpdateIf,
   UpdateReviewRequest
-} from '../../../../src/core/review/review'
-import type { Pagination } from '../../../../src/core/pagination'
-import * as reviewService from '../../../../src/core/internal/review/service'
+} from '../../../../src/core/review/review.js'
+import type { Pagination } from '../../../../src/core/pagination.js'
+import * as reviewService from '../../../../src/core/internal/review/service.js'
 
-import { dummyLog as log } from '../../dummy-log'
-import { expectReject } from '../../controller-error-helper'
-import { assertDeepEqual, assertEqual } from '../../../assert'
+import { dummyLog as log } from '../../dummy-log.js'
+import { expectReject } from '../../controller-error-helper.js'
+import { assertDeepEqual, assertEqual } from '../../../assert.js'
 
 const time = '2024-07-06T19:36:38.182Z'
 

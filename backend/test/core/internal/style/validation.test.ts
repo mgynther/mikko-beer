@@ -3,17 +3,17 @@ import { describe, it } from 'node:test'
 import {
   validateCreateStyleRequest,
   validateUpdateStyleRequest
-} from '../../../../src/core/internal/style/validation'
+} from '../../../../src/core/internal/style/validation.js'
 import {
   invalidStyleError,
   invalidStyleIdError,
-} from '../../../../src/core/errors'
-import { expectThrow } from '../../controller-error-helper'
+} from '../../../../src/core/errors.js'
+import { expectThrow } from '../../controller-error-helper.js'
 import type {
   CreateStyleRequest,
   UpdateStyleRequest
-} from '../../../../src/core/style/style'
-import { assertDeepEqual } from '../../../assert'
+} from '../../../../src/core/style/style.js'
+import { assertDeepEqual } from '../../../assert.js'
 
 describe('style unit tests', () => {
   const id = 'c8e02862-7fe7-44d5-b0eb-cd23e72faf56'

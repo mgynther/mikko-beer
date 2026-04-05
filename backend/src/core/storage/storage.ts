@@ -1,5 +1,5 @@
-import type { Container } from '../container/container'
-import type { LockId } from '../db'
+import type { Container } from '../container/container.js'
+import type { LockId } from '../db.js'
 
 export interface CreateIf {
   insertStorage: (request: CreateStorageRequest) => Promise<StorageWithDate>

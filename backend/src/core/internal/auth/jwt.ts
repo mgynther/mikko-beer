@@ -1,15 +1,17 @@
 // This file wraps jsonwebtoken usage to core types.
-import * as jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
+const { sign, verify, TokenExpiredError } = jwt
+import type { JwtPayload } from 'jsonwebtoken'
 import type {
   AuthToken,
   AuthTokenConfig, AuthTokenPayload
-} from '../../auth/auth-token'
+} from '../../auth/auth-token.js'
 import {
   AuthTokenExpiredError, InvalidAuthTokenError
-} from '../../auth/auth-token'
+} from '../../auth/auth-token.js'
 
-import type { RefreshToken } from '../../auth/refresh-token'
-import { parseAuthTokenPayload, parseRefreshTokenPayload } from './jwt-parser'
+import type { RefreshToken } from '../../auth/refresh-token.js'
+import { parseAuthTokenPayload, parseRefreshTokenPayload } from './jwt-parser.js'
 
 export interface RefreshTokenPayload {
   userId: string
@@ -22,7 +24,7 @@ export function signAuthToken (
   authTokenConfig: AuthTokenConfig
 ): AuthToken {
   return {
-    authToken: jwt.sign(tokenPayload, authTokenConfig.secret, {
+    authToken: sign(tokenPayload, authTokenConfig.secret, {
       expiresIn: `${authTokenConfig.expiryDurationMin}m`
     })
   }
@@ -33,7 +35,7 @@ export function signRefreshToken (
   authTokenSecret: string
 ): RefreshToken {
   // Refresh tokens never expire.
-  return { refreshToken: jwt.sign(tokenPayload, authTokenSecret) }
+  return { refreshToken: sign(tokenPayload, authTokenSecret) }
 }
 
 export function verifyAuthToken (
@@ -61,11 +63,11 @@ export function verifyRefreshToken (
 function verifyToken (
   token: string,
   authTokenSecret: string
-): string | jwt.JwtPayload {
+): string | JwtPayload {
   try {
-    return jwt.verify(token, authTokenSecret)
+    return verify(token, authTokenSecret)
   } catch (error) {
-    if (error instanceof jwt.TokenExpiredError) {
+    if (error instanceof TokenExpiredError) {
       throw new AuthTokenExpiredError()
     }
 

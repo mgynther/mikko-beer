@@ -2,22 +2,22 @@ import { describe, it } from 'node:test'
 
 import type {
   DbRefreshToken
-} from '../../../src/core/auth/refresh-token'
-import * as authTokenService from '../../../src/core/internal/auth/auth-token.service'
-import * as authentication from '../../../src/core/auth/authentication'
-import type { User } from '../../../src/core/user/user'
+} from '../../../src/core/auth/refresh-token.js'
+import * as authTokenService from '../../../src/core/internal/auth/auth-token.service.js'
+import * as authentication from '../../../src/core/auth/authentication.js'
+import type { User } from '../../../src/core/user/user.js'
 import type { Tokens } from '../../../src/core/auth/tokens'
 import type {
   AuthToken,
   AuthTokenConfig
-} from '../../../src/core/auth/auth-token'
+} from '../../../src/core/auth/auth-token.js'
 import {
   expiredAuthTokenError,
   invalidAuthTokenError,
   invalidAuthorizationHeaderError
-} from '../../../src/core/errors'
-import { expectThrow } from '../controller-error-helper'
-import { assertDeepEqual } from '../../assert'
+} from '../../../src/core/errors.js'
+import { expectThrow } from '../controller-error-helper.js'
+import { assertDeepEqual } from '../../assert.js'
 
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {

@@ -3,17 +3,17 @@ import { describe, it } from 'node:test'
 import {
   validateCreateContainerRequest,
   validateUpdateContainerRequest,
-} from '../../../../src/core/internal/container/validation'
+} from '../../../../src/core/internal/container/validation.js'
 import {
   invalidContainerError,
   invalidContainerIdError
-} from '../../../../src/core/errors'
-import { expectThrow } from '../../controller-error-helper'
-import { assertDeepEqual } from '../../../assert'
+} from '../../../../src/core/errors.js'
+import { expectThrow } from '../../controller-error-helper.js'
+import { assertDeepEqual } from '../../../assert.js'
 import type {
   CreateContainerRequest,
   UpdateContainerRequest
-} from '../../../../src/core/container/container'
+} from '../../../../src/core/container/container.js'
 
 function validCreateRequest (): CreateContainerRequest {
   return {

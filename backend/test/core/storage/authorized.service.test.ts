@@ -1,8 +1,8 @@
 import { describe, it } from 'node:test'
 
-import * as storageService from '../../../src/core/storage/authorized.service'
+import * as storageService from '../../../src/core/storage/authorized.service.js'
 
-import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
+import type { AuthTokenPayload } from '../../../src/core/auth/auth-token.js'
 import type {
   JoinedStorage,
   Storage,
@@ -11,14 +11,14 @@ import type {
   CreateIf,
   UpdateIf,
   StorageWithDate
-} from '../../../src/core/storage/storage'
-import { dummyLog as log } from '../dummy-log'
-import { expectReject } from '../controller-error-helper'
+} from '../../../src/core/storage/storage.js'
+import { dummyLog as log } from '../dummy-log.js'
+import { expectReject } from '../controller-error-helper.js'
 import {
   invalidStorageError,
   noRightsError
-} from '../../../src/core/errors'
-import { assertDeepEqual } from '../../assert'
+} from '../../../src/core/errors.js'
+import { assertDeepEqual } from '../../assert.js'
 
 const validCreateStorageRequest: CreateStorageRequest = {
   beer: 'd667bdcb-a26e-4079-b249-c50769129c4c',

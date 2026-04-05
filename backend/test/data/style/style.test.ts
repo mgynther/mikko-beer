@@ -1,10 +1,10 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../test-context'
-import type { Database, Transaction } from '../../../src/data/database'
-import * as styleRepository from '../../../src/data/style/style.repository'
-import { assertDeepEqual, assertEqual } from '../../assert'
-import type { Style, StyleRelationship } from '../../../src/core/style/style'
+import { TestContext } from '../test-context.js'
+import type { Database, Transaction } from '../../../src/data/database.js'
+import * as styleRepository from '../../../src/data/style/style.repository.js'
+import { assertDeepEqual, assertEqual } from '../../assert.js'
+import type { Style, StyleRelationship } from '../../../src/core/style/style.js'
 
 describe('style tests', () => {
   const ctx = new TestContext()

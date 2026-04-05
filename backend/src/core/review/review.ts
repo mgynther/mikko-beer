@@ -1,15 +1,15 @@
-import { ajv } from '../internal/ajv'
+import { ajv } from '../internal/ajv.js'
 
-import type { Container } from '../container/container'
-import { directionValidation } from '../internal/list'
-import type { ListDirection } from '../list'
+import type { Container } from '../container/container.js'
+import { directionValidation } from '../internal/list.js'
+import type { ListDirection } from '../list.js'
 
-import type { LockId } from '../db'
+import type { LockId } from '../db.js'
 import {
   invalidReviewListQueryBeerNameError,
   invalidReviewListQueryBreweryNameError,
   invalidReviewListQueryOrderError
-} from '../errors'
+} from '../errors.js'
 
 export interface CreateIf {
   createReview: (review: NewReview) => Promise<Review>

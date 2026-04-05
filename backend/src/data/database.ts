@@ -3,28 +3,28 @@ import { Kysely, PostgresDialect, } from 'kysely'
 import type { ConnectionConfig } from 'pg'
 import { Pool } from 'pg'
 
-import type { RefreshTokenTable } from './authentication/refresh-token.table'
+import type { RefreshTokenTable } from './authentication/refresh-token.table.js'
 import type {
   PasswordSignInMethodTable
-} from './user/sign-in-method/password-sign-in-method.table'
+} from './user/sign-in-method/password-sign-in-method.table.js'
 import type {
   SignInMethodTable
-} from './user/sign-in-method/sign-in-method.table'
+} from './user/sign-in-method/sign-in-method.table.js'
 import type {
   BeerTable,
   BeerBreweryTable,
   BeerStyleTable
-} from './beer/beer.table'
-import type { BreweryTable } from './brewery/brewery.table'
-import type { ContainerTable } from './container/container.table'
-import type { LocationTable } from './location/location.table'
-import type { ReviewTable } from './review/review.table'
-import type { StorageTable } from './storage/storage.table'
+} from './beer/beer.table.js'
+import type { BreweryTable } from './brewery/brewery.table.js'
+import type { ContainerTable } from './container/container.table.js'
+import type { LocationTable } from './location/location.table.js'
+import type { ReviewTable } from './review/review.table.js'
+import type { StorageTable } from './storage/storage.table.js'
 import type {
   StyleTable,
   StyleRelationshipTable
-} from './style/style.table'
-import type { UserTable } from './user/user.table'
+} from './style/style.table.js'
+import type { UserTable } from './user/user.table.js'
 
 export interface KyselyDatabase {
   beer: BeerTable

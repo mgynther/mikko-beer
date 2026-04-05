@@ -1,5 +1,5 @@
-import * as authorizationService from '../internal/auth/authorization.service'
-import * as locationService from '../internal/location/validated.service'
+import * as authorizationService from '../internal/auth/authorization.service.js'
+import * as locationService from '../internal/location/validated.service.js'
 
 import type {
   BodyRequest,
@@ -7,9 +7,9 @@ import type {
   PaginationRequest
 } from "../request"
 import type { Location, CreateLocationRequest } from "../location/location"
-import type { log } from '../log'
-import type { Pagination } from '../pagination'
-import type { SearchByName } from '../search'
+import type { log } from '../log.js'
+import type { Pagination } from '../pagination.js'
+import type { SearchByName } from '../search.js'
 
 export async function createLocation (
   create: (location: CreateLocationRequest) => Promise<Location>,

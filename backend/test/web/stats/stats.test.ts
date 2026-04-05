@@ -1,9 +1,9 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../test-context'
-import type { BeerWithBreweryAndStyleIds } from '../../../src/core/beer/beer'
-import type { Brewery } from '../../../src/core/brewery/brewery'
-import type { Location } from '../../../src/core/location/location'
+import { TestContext } from '../test-context.js'
+import type { BeerWithBreweryAndStyleIds } from '../../../src/core/beer/beer.js'
+import type { Brewery } from '../../../src/core/brewery/brewery.js'
+import type { Location } from '../../../src/core/location/location.js'
 import type {
   AnnualContainerStats,
   AnnualStats,
@@ -13,10 +13,10 @@ import type {
   OverallStats,
   RatingStats,
   StyleStats
-} from '../../../src/core/stats/stats'
-import type { Style } from '../../../src/core/style/style'
-import type { CreateReviewRequest } from '../../../src/core/review/review'
-import { assertDeepEqual, assertEqual } from '../../assert'
+} from '../../../src/core/stats/stats.js'
+import type { Style } from '../../../src/core/style/style.js'
+import type { CreateReviewRequest } from '../../../src/core/review/review.js'
+import { assertDeepEqual, assertEqual } from '../../assert.js'
 
 interface ReviewRes {
   id: string

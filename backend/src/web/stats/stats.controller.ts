@@ -1,11 +1,11 @@
-import * as statsService from '../../core/stats/authorized.service'
+import * as statsService from '../../core/stats/authorized.service.js'
 
-import * as statsRepository from '../../data/stats/stats.repository'
+import * as statsRepository from '../../data/stats/stats.repository.js'
 
-import type { Pagination } from '../../core/pagination'
-import type { Router } from '../router'
+import type { Pagination } from '../../core/pagination.js'
+import type { Router } from '../router.js'
 
-import { validatePagination} from '../../core/pagination'
+import { validatePagination} from '../../core/pagination.js'
 
 import type {
   BreweryStatsOrder,
@@ -13,16 +13,16 @@ import type {
   StyleStatsOrder,
   StatsIdFilter,
   StatsFilter,
-} from '../../core/stats/stats'
+} from '../../core/stats/stats.js'
 import {
   validateBreweryStatsOrder,
   validateLocationStatsOrder,
   validateStyleStatsOrder,
   validateStatsIdFilter,
   validateStatsFilter
-} from '../../core/stats/stats'
-import { parseAuthToken } from '../authentication/authentication-helper'
-import type { Context } from '../context'
+} from '../../core/stats/stats.js'
+import { parseAuthToken } from '../authentication/authentication-helper.js'
+import type { Context } from '../context.js'
 
 export function statsController (router: Router): void {
   router.get(

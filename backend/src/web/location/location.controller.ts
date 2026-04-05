@@ -1,18 +1,18 @@
-import * as locationService from '../../core/location/authorized.service'
-import type { Pagination } from '../../core/pagination'
-import type { SearchByName } from '../../core/search'
+import * as locationService from '../../core/location/authorized.service.js'
+import type { Pagination } from '../../core/pagination.js'
+import type { SearchByName } from '../../core/search.js'
 
-import * as locationRepository from '../../data/location/location.repository'
+import * as locationRepository from '../../data/location/location.repository.js'
 
-import * as authHelper from '../authentication/authentication-helper'
+import * as authHelper from '../authentication/authentication-helper.js'
 
-import type { Router } from '../router'
+import type { Router } from '../router.js'
 import type {
   Location,
   CreateLocationRequest
-} from '../../core/location/location'
-import { validatePagination } from '../../core/pagination'
-import type { Context } from '../context'
+} from '../../core/location/location.js'
+import { validatePagination } from '../../core/pagination.js'
+import type { Context } from '../context.js'
 
 export function locationController (router: Router): void {
   router.post('/api/v1/location',

@@ -1,6 +1,6 @@
-import type { AddPasswordUserIf, PasswordSignInMethod } from './sign-in-method'
+import type { AddPasswordUserIf, PasswordSignInMethod } from './sign-in-method.js'
 
-import type { DbRefreshToken } from '../auth/refresh-token'
+import type { DbRefreshToken } from '../auth/refresh-token.js'
 
 export interface CreateUserIf {
   createAnonymousUser: (request: CreateAnonymousUserRequest) => Promise<User>

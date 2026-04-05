@@ -2,15 +2,15 @@ import type {
   CreateLocationRequest,
   UpdateLocationRequest,
   Location
-} from '../../location/location'
+} from '../../location/location.js'
 
-import { locationNotFoundError } from '../../errors'
-import type { log } from '../../log'
-import { INFO } from '../../log'
+import { locationNotFoundError } from '../../errors.js'
+import type { log } from '../../log.js'
+import { INFO } from '../../log.js'
 import type {
   Pagination
-} from '../../pagination'
-import type { SearchByName } from '../../search'
+} from '../../pagination.js'
+import type { SearchByName } from '../../search.js'
 
 export async function createLocation (
   create: (location: CreateLocationRequest) => Promise<Location>,

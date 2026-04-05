@@ -1,11 +1,11 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../test-context'
-import type { StatsIdFilter } from '../../../src/core/stats/stats'
-import * as statsRepository from '../../../src/data/stats/stats.repository'
+import { TestContext } from '../test-context.js'
+import type { StatsIdFilter } from '../../../src/core/stats/stats.js'
+import * as statsRepository from '../../../src/data/stats/stats.repository.js'
 
-import { insertMultipleReviews } from '../review-helpers'
-import { assertDeepEqual } from '../../assert'
+import { insertMultipleReviews } from '../review-helpers.js'
+import { assertDeepEqual } from '../../assert.js'
 
 const defaultFilter: StatsIdFilter = {
   brewery: undefined,

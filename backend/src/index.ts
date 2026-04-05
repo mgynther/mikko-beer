@@ -1,7 +1,7 @@
-import { App } from './web/app'
-import { config } from './web/config'
-import { consoleLog as log } from './core/console-log'
-import { Level } from './core/log'
+import { App } from './web/app.js'
+import { config } from './web/config.js'
+import { consoleLog as log } from './core/console-log.js'
+import { Level } from './core/log.js'
 
 const app = new App(config, log)
 

@@ -1,15 +1,15 @@
-import { ajv } from '../ajv'
+import { ajv } from '../ajv.js'
 
 import {
   invalidStorageError,
   invalidStorageIdError
-} from '../../errors'
-import { timePattern } from '../../internal/time'
+} from '../../errors.js'
+import { timePattern } from '../../internal/time.js'
 import type {
   CreateStorageRequest,
   StorageRequest,
   UpdateStorageRequest
-} from '../../storage/storage'
+} from '../../storage/storage.js'
 
 const doValidateStorageRequest =
   ajv.compile<StorageRequest>({

@@ -1,9 +1,9 @@
 import { describe, it } from 'node:test'
 
-import * as statsService from '../../../src/core/stats/authorized.service'
+import * as statsService from '../../../src/core/stats/authorized.service.js'
 
 import type { AuthTokenPayload } from "../../../src/core/auth/auth-token"
-import { dummyLog as log } from '../dummy-log'
+import { dummyLog as log } from '../dummy-log.js'
 import type {
   AnnualContainerStats,
   AnnualStats,
@@ -14,8 +14,8 @@ import type {
   RatingStats,
   StatsIdFilter,
   StyleStats
-} from '../../../src/core/stats/stats'
-import { assertDeepEqual } from '../../assert'
+} from '../../../src/core/stats/stats.js'
+import { assertDeepEqual } from '../../assert.js'
 
 const adminAuthToken: AuthTokenPayload = {
   userId: '2238a6f3-6cc7-44a4-bb91-6369bd9adf56',

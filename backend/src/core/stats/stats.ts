@@ -1,13 +1,13 @@
-import { ajv } from '../internal/ajv'
+import { ajv } from '../internal/ajv.js'
 
 import {
   invalidIdFilterError,
   invalidBreweryStatsQueryError,
   invalidLocationStatsQueryError,
   invalidStyleStatsQueryError
-} from '../errors'
-import type { ListDirection } from '../list'
-import { directionValidation } from '../internal/list'
+} from '../errors.js'
+import type { ListDirection } from '../list.js'
+import { directionValidation } from '../internal/list.js'
 
 export type AnnualStats = Array<{
   reviewAverage: string

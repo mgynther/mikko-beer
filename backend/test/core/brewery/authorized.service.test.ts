@@ -1,20 +1,20 @@
 import { describe, it } from 'node:test'
 
-import * as breweryService from '../../../src/core/brewery/authorized.service'
+import * as breweryService from '../../../src/core/brewery/authorized.service.js'
 
-import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
+import type { AuthTokenPayload } from '../../../src/core/auth/auth-token.js'
 import type {
   Brewery,
   CreateBreweryRequest,
   UpdateBreweryRequest
-} from '../../../src/core/brewery/brewery'
-import { dummyLog as log } from '../dummy-log'
-import { expectReject } from '../controller-error-helper'
+} from '../../../src/core/brewery/brewery.js'
+import { dummyLog as log } from '../dummy-log.js'
+import { expectReject } from '../controller-error-helper.js'
 import {
   invalidBreweryError,
   noRightsError
-} from '../../../src/core/errors'
-import { assertDeepEqual } from '../../assert'
+} from '../../../src/core/errors.js'
+import { assertDeepEqual } from '../../assert.js'
 
 const validCreateBreweryRequest: CreateBreweryRequest = {
   name: 'Koskipanimo'

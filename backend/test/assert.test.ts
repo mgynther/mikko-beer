@@ -13,8 +13,8 @@ import {
   assertRejects,
   assertThrows,
   assertTruthy
-} from './assert'
-import { ControllerError } from '../src/core/errors'
+} from './assert.js'
+import { ControllerError } from '../src/core/errors.js'
 
 describe('assertion tests', () => {
   it('is deep equal', () => {

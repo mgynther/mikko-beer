@@ -4,16 +4,16 @@ import type {
   Location,
   CreateLocationRequest,
   UpdateLocationRequest
-} from '../../../../src/core/location/location'
-import { locationNotFoundError } from '../../../../src/core/errors'
-import type { Pagination } from '../../../../src/core/pagination'
-import type { SearchByName } from '../../../../src/core/search'
+} from '../../../../src/core/location/location.js'
+import { locationNotFoundError } from '../../../../src/core/errors.js'
+import type { Pagination } from '../../../../src/core/pagination.js'
+import type { SearchByName } from '../../../../src/core/search.js'
 import * as
-locationService from '../../../../src/core/internal/location/service'
+locationService from '../../../../src/core/internal/location/service.js'
 
-import { dummyLog as log } from '../../dummy-log'
-import { expectReject } from '../../controller-error-helper'
-import { assertDeepEqual, assertEqual } from '../../../assert'
+import { dummyLog as log } from '../../dummy-log.js'
+import { expectReject } from '../../controller-error-helper.js'
+import { assertDeepEqual, assertEqual } from '../../../assert.js'
 
 const location: Location = {
   id: '6512b741-a387-437d-ae97-4131aca72641',

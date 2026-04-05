@@ -1,4 +1,4 @@
-import * as storageService from './service'
+import * as storageService from './service.js'
 
 import type {
   AnnualStorageStats,
@@ -7,17 +7,17 @@ import type {
   MonthlyStorageStats,
   StorageWithDate,
   UpdateIf
-} from "../../storage/storage";
+} from '../../storage/storage.js'
 import {
   validateCreateStorageRequest,
   validateStorageId,
   validateUpdateStorageRequest
-} from "./validation";
-import type { log } from '../../log'
-import type { Pagination } from '../../pagination';
-import { validateBeerId } from '../beer/validation';
-import { validateBreweryId } from '../brewery/validation';
-import { validateStyleId } from '../style/validation';
+} from './validation.js'
+import type { log } from '../../log.js'
+import type { Pagination } from '../../pagination.js'
+import { validateBeerId } from '../beer/validation.js'
+import { validateBreweryId } from '../brewery/validation.js'
+import { validateStyleId } from '../style/validation.js'
 
 export async function createStorage (
   createIf: CreateIf,

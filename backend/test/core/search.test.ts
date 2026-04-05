@@ -1,11 +1,11 @@
 import { describe, it } from 'node:test'
 
-import type { SearchByName } from '../../src/core/search'
-import { toIlike, validateSearchByName } from '../../src/core/search'
+import type { SearchByName } from '../../src/core/search.js'
+import { toIlike, validateSearchByName } from '../../src/core/search.js'
 
-import { invalidSearchError } from '../../src/core/errors'
-import { expectThrow } from './controller-error-helper'
-import { assertDeepEqual, assertEqual, assertThrows } from '../assert'
+import { invalidSearchError } from '../../src/core/errors.js'
+import { expectThrow } from './controller-error-helper.js'
+import { assertDeepEqual, assertEqual, assertThrows } from '../assert.js'
 
 describe('search validation unit tests', () => {
   function pass(input: unknown, output: SearchByName) {

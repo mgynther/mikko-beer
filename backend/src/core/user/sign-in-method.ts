@@ -1,6 +1,6 @@
-import type { DbRefreshToken } from '../auth/refresh-token'
+import type { DbRefreshToken } from '../auth/refresh-token.js'
 
-import type { User } from './user'
+import type { User } from './user.js'
 
 export interface AddPasswordUserIf {
   lockUserById: LockUserById

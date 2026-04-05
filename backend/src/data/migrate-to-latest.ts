@@ -1,9 +1,10 @@
-import * as path from 'node:path'
+import path, { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import { promises as fs } from 'node:fs'
-import type { Database } from './database'
-import { config } from './config'
-import { consoleLog as log } from '../core/console-log'
-import { Level } from '../core/log'
+import type { Database } from './database.js'
+import { config } from './config.js'
+import { consoleLog as log } from '../core/console-log.js'
+import { Level } from '../core/log.js'
 import {
   Kysely,
   Migrator,
@@ -11,6 +12,8 @@ import {
   FileMigrationProvider
 } from 'kysely'
 import { Pool } from 'pg'
+
+const directory = dirname(fileURLToPath(import.meta.url));
 
 async function migrateToLatest (): Promise<void> {
   const db = new Kysely<Database>({
@@ -24,7 +27,7 @@ async function migrateToLatest (): Promise<void> {
     provider: new FileMigrationProvider({
       fs,
       path,
-      migrationFolder: path.join(__dirname, 'migrations')
+      migrationFolder: path.join(directory, 'migrations')
     })
   })
 

@@ -1,16 +1,16 @@
-import { ajv } from '../ajv'
+import { ajv } from '../ajv.js'
 
 import type {
   CreateReviewRequest,
   ReviewRequest,
   UpdateReviewRequest
-} from '../../review/review'
-import { timePattern } from '../time'
+} from '../../review/review.js'
+import { timePattern } from '../time.js'
 
 import {
   invalidReviewError,
   invalidReviewIdError
-} from '../../errors'
+} from '../../errors.js'
 
 const doValidateReviewRequest =
   ajv.compile<ReviewRequest>({

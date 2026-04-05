@@ -8,19 +8,19 @@ import type {
   NewBeer,
   CreateIf,
   UpdateIf
-} from '../../../../src/core/beer/beer'
-import type { Pagination } from '../../../../src/core/pagination'
-import type { SearchByName } from '../../../../src/core/search'
-import * as beerService from '../../../../src/core/internal/beer/service'
+} from '../../../../src/core/beer/beer.js'
+import type { Pagination } from '../../../../src/core/pagination.js'
+import type { SearchByName } from '../../../../src/core/search.js'
+import * as beerService from '../../../../src/core/internal/beer/service.js'
 
-import { dummyLog as log } from '../../dummy-log'
+import { dummyLog as log } from '../../dummy-log.js'
 import {
   beerNotFoundError,
   referredBreweryNotFoundError,
   referredStyleNotFoundError
-} from '../../../../src/core/errors'
-import { expectReject } from '../../controller-error-helper'
-import { assertDeepEqual, assertEqual } from '../../../assert'
+} from '../../../../src/core/errors.js'
+import { expectReject } from '../../controller-error-helper.js'
+import { assertDeepEqual, assertEqual } from '../../../assert.js'
 
 const beer: BeerWithBreweriesAndStyles = {
   id: '406a337c-3107-4307-bd84-be3ec7c7d2f6',

@@ -1,21 +1,21 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../test-context'
-import type { User } from '../../../src/core/user/user'
+import { TestContext } from '../test-context.js'
+import type { User } from '../../../src/core/user/user.js'
 import {
   assertDeepEqual,
   assertEqual,
   assertNotDeepEqual,
   assertNotEqual,
   assertTruthy
-} from '../../assert'
+} from '../../assert.js'
 
 import {
   findPasswordSignInMethod,
   updatePassword
-} from '../../../src/data/user/sign-in-method/sign-in-method.repository'
-import type { UserPasswordHash } from '../../../src/core/user/sign-in-method'
-import type { Database } from '../../../src/data/database'
+} from '../../../src/data/user/sign-in-method/sign-in-method.repository.js'
+import type { UserPasswordHash } from '../../../src/core/user/sign-in-method.js'
+import type { Database } from '../../../src/data/database.js'
 
 async function getSignInMethod(
   db: Database, userId: string

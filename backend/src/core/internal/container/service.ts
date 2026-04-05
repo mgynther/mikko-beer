@@ -2,11 +2,11 @@ import type {
   CreateContainerRequest,
   UpdateContainerRequest,
   Container
-} from '../../container/container'
+} from '../../container/container.js'
 
-import { containerNotFoundError } from '../../errors'
-import { INFO } from '../../log'
-import type { log } from '../../log'
+import { containerNotFoundError } from '../../errors.js'
+import { INFO } from '../../log.js'
+import type { log } from '../../log.js'
 
 export async function createContainer (
   create: (container: CreateContainerRequest) => Promise<Container>,

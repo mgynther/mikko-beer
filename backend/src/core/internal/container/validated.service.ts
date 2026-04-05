@@ -1,15 +1,15 @@
-import * as containerService from './service'
+import * as containerService from './service.js'
 
 import type {
   Container,
   CreateContainerRequest
-} from '../../container/container'
+} from '../../container/container.js'
 import {
   validateContainerId,
   validateCreateContainerRequest,
   validateUpdateContainerRequest
-} from './validation'
-import type { log } from '../../log'
+} from './validation.js'
+import type { log } from '../../log.js'
 
 export async function createContainer (
   create: (container: CreateContainerRequest) => Promise<Container>,

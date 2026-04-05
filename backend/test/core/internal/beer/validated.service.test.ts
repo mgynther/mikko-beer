@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test'
 
 import * as
-beerService from '../../../../src/core/internal/beer/validated.service'
+beerService from '../../../../src/core/internal/beer/validated.service.js'
 
 import type {
   Beer,
@@ -9,13 +9,13 @@ import type {
   CreateIf,
   UpdateBeerRequest,
   UpdateIf
-} from '../../../../src/core/beer/beer'
-import { dummyLog as log } from '../../dummy-log'
-import { expectReject } from '../../controller-error-helper'
+} from '../../../../src/core/beer/beer.js'
+import { dummyLog as log } from '../../dummy-log.js'
+import { expectReject } from '../../controller-error-helper.js'
 import {
   invalidBeerError,
   invalidBeerIdError,
-} from '../../../../src/core/errors'
+} from '../../../../src/core/errors.js'
 
 const breweryId = 'b1f4cffb-7dbe-4c67-a64a-1f411771ef29'
 const styleId = 'a6cc685a-11e3-408f-ad75-487e821a68d0'

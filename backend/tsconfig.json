@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "esnext",
     "target": "ESNext",
     "declaration": true,
     "rootDir": "./src",

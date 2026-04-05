@@ -4,7 +4,7 @@ import {
   cyclicRelationshipError,
   parentStyleNotFoundError,
   styleNotFoundError
-} from '../../../../src/core/errors'
+} from '../../../../src/core/errors.js'
 import type {
   Style,
   StyleWithParentIds,
@@ -15,12 +15,12 @@ import type {
   StyleRelationship,
   CreateStyleIf,
   UpdateStyleIf
-} from '../../../../src/core/style/style'
-import * as styleService from '../../../../src/core/internal/style/service'
+} from '../../../../src/core/style/style.js'
+import * as styleService from '../../../../src/core/internal/style/service.js'
 
-import { dummyLog as log } from '../../dummy-log'
-import { expectReject } from '../../controller-error-helper'
-import { assertDeepEqual, assertEqual } from '../../../assert'
+import { dummyLog as log } from '../../dummy-log.js'
+import { expectReject } from '../../controller-error-helper.js'
+import { assertDeepEqual, assertEqual } from '../../../assert.js'
 
 const style: Style = {
   id: '71dcc323-7e59-4122-9afa-d4ffc484dee6',

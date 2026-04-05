@@ -5,21 +5,21 @@ import type {
   BeerWithBreweriesAndStyles,
   CreateIf,
   UpdateIf,
-} from '../../beer/beer'
+} from '../../beer/beer.js'
 
 import {
   beerNotFoundError,
   referredBreweryNotFoundError,
   referredStyleNotFoundError
-} from '../../errors'
-import type { log } from '../../log'
-import { INFO } from '../../log'
+} from '../../errors.js'
+import type { log } from '../../log.js'
+import { INFO } from '../../log.js'
 import type {
   Pagination
-} from '../../pagination'
-import type { SearchByName } from '../../search'
-import { areKeysEqual } from '../../internal/key'
-import type { LockIds } from '../../db'
+} from '../../pagination.js'
+import type { SearchByName } from '../../search.js'
+import { areKeysEqual } from '../../internal/key.js'
+import type { LockIds } from '../../db.js'
 
 export async function createBeer (
   createIf: CreateIf,

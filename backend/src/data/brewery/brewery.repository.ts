@@ -1,17 +1,17 @@
-import type { Database, Transaction } from '../database'
+import type { Database, Transaction } from '../database.js'
 import type {
   BreweryRow
-} from './brewery.table'
+} from './brewery.table.js'
 
 import type {
   Brewery,
   CreateBreweryRequest
-} from '../../core/brewery/brewery'
+} from '../../core/brewery/brewery.js'
 import type {
   Pagination
-} from '../../core/pagination'
-import type { SearchByName } from '../../core/search'
-import { defaultSearchMaxResults, toIlike } from '../../core/search'
+} from '../../core/pagination.js'
+import type { SearchByName } from '../../core/search.js'
+import { defaultSearchMaxResults, toIlike } from '../../core/search.js'
 
 export async function insertBrewery (
   trx: Transaction,

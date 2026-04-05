@@ -1,18 +1,18 @@
 import { describe, it } from 'node:test'
 
-import * as breweryService from '../../../../src/core/internal/brewery/validated.service'
+import * as breweryService from '../../../../src/core/internal/brewery/validated.service.js'
 
 import type {
   Brewery,
   CreateBreweryRequest,
   UpdateBreweryRequest
-} from '../../../../src/core/brewery/brewery'
-import { dummyLog as log } from '../../dummy-log'
-import { expectReject } from '../../controller-error-helper'
+} from '../../../../src/core/brewery/brewery.js'
+import { dummyLog as log } from '../../dummy-log.js'
+import { expectReject } from '../../controller-error-helper.js'
 import {
   invalidBreweryError,
   invalidBreweryIdError
-} from '../../../../src/core/errors'
+} from '../../../../src/core/errors.js'
 
 const validCreateBreweryRequest: CreateBreweryRequest = {
   name: 'Koskipanimo'

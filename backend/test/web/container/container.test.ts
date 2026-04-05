@@ -1,8 +1,8 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../test-context'
-import type { Container } from '../../../src/core/container/container'
-import { assertEqual } from '../../assert'
+import { TestContext } from '../test-context.js'
+import type { Container } from '../../../src/core/container/container.js'
+import { assertEqual } from '../../assert.js'
 
 describe('container tests', () => {
   const ctx = new TestContext()

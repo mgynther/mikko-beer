@@ -1,8 +1,8 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../test-context'
-import type { Brewery } from '../../../src/core/brewery/brewery'
-import { assertDeepEqual, assertEqual } from '../../assert'
+import { TestContext } from '../test-context.js'
+import type { Brewery } from '../../../src/core/brewery/brewery.js'
+import { assertDeepEqual, assertEqual } from '../../assert.js'
 
 describe('brewery tests', () => {
   const ctx = new TestContext()

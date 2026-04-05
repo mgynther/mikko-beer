@@ -1,17 +1,17 @@
 import { describe, it } from 'node:test'
 
-import * as jwt from '../../../src/core/internal/auth/jwt'
+import * as jwt from '../../../src/core/internal/auth/jwt.js'
 
-import * as authTokenService from '../../../src/core/auth/authorized-auth-token.service'
+import * as authTokenService from '../../../src/core/auth/authorized-auth-token.service.js'
 
-import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
+import type { AuthTokenPayload } from '../../../src/core/auth/auth-token.js'
 
-import { expectReject } from '../controller-error-helper'
+import { expectReject } from '../controller-error-helper.js'
 import type {
   DbRefreshToken,
   RefreshToken
-} from '../../../src/core/auth/refresh-token'
-import { userMismatchError } from '../../../src/core/errors'
+} from '../../../src/core/auth/refresh-token.js'
+import { userMismatchError } from '../../../src/core/errors.js'
 
 const adminAuthToken: AuthTokenPayload = {
   userId: '75c72a6f-95a0-475d-9b50-e926fe59ebc4',

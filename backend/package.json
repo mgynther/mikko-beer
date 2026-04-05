@@ -1,5 +1,6 @@
 {
   "name": "mikko-beer-backend",
+  "type": "module",
   "author": "Mikko Gynther",
   "version": "0.0.0",
   "main": "index.js",
@@ -34,9 +35,9 @@
     "@types/jsonwebtoken": "9.0.10",
     "@types/koa": "3.0.2",
     "@types/koa-compress": "4.0.7",
-    "@types/node": "25.5.0",
+    "@types/node": "25.5.2",
     "@types/pg": "8.20.0",
-    "typescript": "5.9.3",
+    "typescript": "6.0.2",
     "typescript-eslint": "8.58.0"
   }
 }

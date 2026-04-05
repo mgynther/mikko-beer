@@ -5,15 +5,15 @@ import type {
   Database,
   KyselyDatabase,
   Transaction
-} from '../database'
+} from '../database.js'
 import type {
   DbJoinedStorage,
   StorageRow,
   StorageTable
-} from './storage.table'
+} from './storage.table.js'
 
-import type { Pagination } from '../../core/pagination'
-import { toRowNumbers } from '../../core/pagination'
+import type { Pagination } from '../../core/pagination.js'
+import { toRowNumbers } from '../../core/pagination.js'
 import type {
   AnnualStorageStats,
   JoinedStorage,
@@ -21,8 +21,8 @@ import type {
   Storage,
   StorageRequest,
   StorageWithDate
-} from '../../core/storage/storage'
-import { contains } from '../../core/record'
+} from '../../core/storage/storage.js'
+import { contains } from '../../core/record.js'
 
 export async function insertStorage (
   trx: Transaction,

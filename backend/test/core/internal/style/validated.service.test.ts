@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test'
 
-import * as styleService from '../../../../src/core/internal/style/validated.service'
+import * as styleService from '../../../../src/core/internal/style/validated.service.js'
 
 import type {
   Style,
@@ -8,13 +8,13 @@ import type {
   CreateStyleIf,
   UpdateStyleRequest,
   UpdateStyleIf
-} from '../../../../src/core/style/style'
-import { dummyLog as log } from '../../dummy-log'
-import { expectReject } from '../../controller-error-helper'
+} from '../../../../src/core/style/style.js'
+import { dummyLog as log } from '../../dummy-log.js'
+import { expectReject } from '../../controller-error-helper.js'
 import {
   invalidStyleError,
   invalidStyleIdError,
-} from '../../../../src/core/errors'
+} from '../../../../src/core/errors.js'
 
 const styleId = 'af011f79-7e68-4f64-87dd-4b45c8e175dc'
 

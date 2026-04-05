@@ -1,4 +1,4 @@
-import * as reviewService from './service'
+import * as reviewService from './service.js'
 
 import type {
   CreateIf,
@@ -6,18 +6,18 @@ import type {
   Review,
   ReviewListOrder,
   UpdateIf
-} from "../../review/review";
+} from '../../review/review.js'
 import {
   validateCreateReviewRequest,
   validateReviewId,
   validateUpdateReviewRequest
-} from "./validation";
-import type { log } from '../../log'
-import type { Pagination } from '../../pagination';
-import { validateBeerId } from '../beer/validation';
-import { validateBreweryId } from '../brewery/validation';
-import { validateLocationId } from '../location/validation';
-import { validateStyleId } from '../style/validation';
+} from './validation.js'
+import type { log } from '../../log.js'
+import type { Pagination } from '../../pagination.js'
+import { validateBeerId } from '../beer/validation.js'
+import { validateBreweryId } from '../brewery/validation.js'
+import { validateLocationId } from '../location/validation.js'
+import { validateStyleId } from '../style/validation.js'
 
 export async function createReview (
   createIf: CreateIf,

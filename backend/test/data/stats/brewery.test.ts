@@ -1,24 +1,24 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../test-context'
-import type { Pagination } from '../../../src/core/pagination'
-import type { NewReview, Review } from '../../../src/core/review/review'
+import { TestContext } from '../test-context.js'
+import type { Pagination } from '../../../src/core/pagination.js'
+import type { NewReview, Review } from '../../../src/core/review/review.js'
 import type {
   BreweryStatsOrder,
   StatsFilter
-} from '../../../src/core/stats/stats'
-import type { Database, Transaction } from '../../../src/data/database'
-import * as beerRepository from '../../../src/data/beer/beer.repository'
+} from '../../../src/core/stats/stats.js'
+import type { Database, Transaction } from '../../../src/data/database.js'
+import * as beerRepository from '../../../src/data/beer/beer.repository.js'
 import * as
-breweryRepository from '../../../src/data/brewery/brewery.repository'
+breweryRepository from '../../../src/data/brewery/brewery.repository.js'
 import * as
-containerRepository from '../../../src/data/container/container.repository'
-import * as reviewRepository from '../../../src/data/review/review.repository'
-import * as statsRepository from '../../../src/data/stats/stats.repository'
-import * as styleRepository from '../../../src/data/style/style.repository'
-import type { InsertedData } from '../review-helpers'
-import { insertMultipleReviews } from '../review-helpers'
-import { assertDeepEqual } from '../../assert'
+containerRepository from '../../../src/data/container/container.repository.js'
+import * as reviewRepository from '../../../src/data/review/review.repository.js'
+import * as statsRepository from '../../../src/data/stats/stats.repository.js'
+import * as styleRepository from '../../../src/data/style/style.repository.js'
+import type { InsertedData } from '../review-helpers.js'
+import { insertMultipleReviews } from '../review-helpers.js'
+import { assertDeepEqual } from '../../assert.js'
 
 const defaultFilter: StatsFilter = {
   brewery: undefined,

@@ -2,17 +2,17 @@ import { describe, it } from 'node:test'
 
 import type {
   DbRefreshToken
-} from '../../../../src/core/auth/refresh-token'
-import * as authorizationService from '../../../../src/core/internal/auth/authorization.service'
-import type { User } from '../../../../src/core/user/user'
-import type { AuthTokenPayload } from '../../../../src/core/auth/auth-token'
+} from '../../../../src/core/auth/refresh-token.js'
+import * as authorizationService from '../../../../src/core/internal/auth/authorization.service.js'
+import type { User } from '../../../../src/core/user/user.js'
+import type { AuthTokenPayload } from '../../../../src/core/auth/auth-token.js'
 import {
   noRightsError,
   noUserIdParameterError,
   userMismatchError,
   userOrRefreshTokenNotFoundError
-} from '../../../../src/core/errors'
-import { expectReject, expectThrow } from '../../controller-error-helper'
+} from '../../../../src/core/errors.js'
+import { expectReject, expectThrow } from '../../controller-error-helper.js'
 
 const refreshTokenId = 'f2224f80-b478-43e2-8cc9-d39cf8079524'
 

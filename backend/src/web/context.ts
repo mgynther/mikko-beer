@@ -1,7 +1,7 @@
-import type { Config } from './config'
+import type { Config } from './config.js'
 
-import type { log } from '../core/log'
-import type { Database } from '../data/database'
+import type { log } from '../core/log.js'
+import type { Database } from '../data/database.js'
 
 interface Request {
   body: unknown

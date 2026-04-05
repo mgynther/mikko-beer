@@ -1,15 +1,15 @@
-import * as containerService from '../../core/container/authorized.service'
+import * as containerService from '../../core/container/authorized.service.js'
 
-import * as containerRepository from '../../data/container/container.repository'
+import * as containerRepository from '../../data/container/container.repository.js'
 
-import * as authHelper from '../authentication/authentication-helper'
+import * as authHelper from '../authentication/authentication-helper.js'
 
-import type { Router } from '../router'
+import type { Router } from '../router.js'
 import type {
   Container,
   CreateContainerRequest
-} from '../../core/container/container'
-import type { Context } from '../context'
+} from '../../core/container/container.js'
+import type { Context } from '../context.js'
 
 export function containerController (router: Router): void {
   router.post('/api/v1/container',

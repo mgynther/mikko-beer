@@ -1,4 +1,4 @@
-import type { LockIds } from '../db'
+import type { LockIds } from '../db.js'
 
 export interface CreateStyleIf {
   create: (style: NewStyle) => Promise<Style>

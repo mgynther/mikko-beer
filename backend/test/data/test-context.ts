@@ -1,11 +1,11 @@
-import { testConfig, testAdminConfig } from './test-config'
+import { testConfig, testAdminConfig } from './test-config.js'
 import {
   afterTest,
   afterTests,
   beforeTest,
   beforeTests
-} from './test-helpers'
-import { Database } from '../../src/data/database'
+} from './test-helpers.js'
+import { Database } from '../../src/data/database.js'
 
 export class TestContext {
   #db?: Database

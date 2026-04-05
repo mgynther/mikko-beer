@@ -1,15 +1,15 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../test-context'
-import type { Beer } from '../../../src/core/beer/beer'
-import type { Brewery } from '../../../src/core/brewery/brewery'
-import type { Style } from '../../../src/core/style/style'
-import type { Database, Transaction } from '../../../src/data/database'
-import * as beerRepository from '../../../src/data/beer/beer.repository'
+import { TestContext } from '../test-context.js'
+import type { Beer } from '../../../src/core/beer/beer.js'
+import type { Brewery } from '../../../src/core/brewery/brewery.js'
+import type { Style } from '../../../src/core/style/style.js'
+import type { Database, Transaction } from '../../../src/data/database.js'
+import * as beerRepository from '../../../src/data/beer/beer.repository.js'
 import * as breweryRepository
-from '../../../src/data/brewery/brewery.repository'
-import * as styleRepository from '../../../src/data/style/style.repository'
-import { assertDeepEqual, assertEqual } from '../../assert'
+from '../../../src/data/brewery/brewery.repository.js'
+import * as styleRepository from '../../../src/data/style/style.repository.js'
+import { assertDeepEqual, assertEqual } from '../../assert.js'
 
 describe('beer tests', () => {
   const ctx = new TestContext()

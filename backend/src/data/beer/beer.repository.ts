@@ -1,28 +1,28 @@
 import { sql } from 'kysely'
 import type { RawBuilder } from 'kysely'
 
-import type { Database, Transaction } from '../database'
+import type { Database, Transaction } from '../database.js'
 import type {
   BeerBreweryRow,
   BeerStyleRow,
   BeerTable,
   InsertableBeerBreweryRow,
   InsertableBeerStyleRow
-} from './beer.table'
+} from './beer.table.js'
 import type {
   BeerWithBreweriesAndStyles,
   Beer,
   NewBeer
-} from '../../core/beer/beer'
+} from '../../core/beer/beer.js'
 
-import type { Pagination } from '../../core/pagination'
-import { toRowNumbers } from '../../core/pagination'
-import type { SearchByName } from '../../core/search'
-import { defaultSearchMaxResults, toIlike } from '../../core/search'
+import type { Pagination } from '../../core/pagination.js'
+import { toRowNumbers } from '../../core/pagination.js'
+import type { SearchByName } from '../../core/search.js'
+import { defaultSearchMaxResults, toIlike } from '../../core/search.js'
 
-import type { Brewery } from '../../core/brewery/brewery'
-import type { Style } from '../../core/style/style'
-import { contains } from '../../core/record'
+import type { Brewery } from '../../core/brewery/brewery.js'
+import type { Style } from '../../core/style/style.js'
+import { contains } from '../../core/record.js'
 
 export async function insertBeer (
   trx: Transaction,

@@ -1,5 +1,5 @@
-import * as authorizationService from '../internal/auth/authorization.service'
-import * as storageService from '../internal/storage/validated.service'
+import * as authorizationService from '../internal/auth/authorization.service.js'
+import * as storageService from '../internal/storage/validated.service.js'
 
 import type {
   AnnualStorageStats,
@@ -8,12 +8,12 @@ import type {
   MonthlyStorageStats,
   StorageWithDate,
   UpdateIf
-} from "./storage";
-import type { log } from '../log'
-import type { BodyRequest, IdRequest } from '../request';
-import type { Pagination } from '../pagination';
-import type { AuthTokenPayload } from '../auth/auth-token';
-import { validateStyleId } from '../internal/style/validation';
+} from './storage.js'
+import type { log } from '../log.js'
+import type { BodyRequest, IdRequest } from '../request.js'
+import type { Pagination } from '../pagination.js'
+import type { AuthTokenPayload } from '../auth/auth-token.js'
+import { validateStyleId } from '../internal/style/validation.js'
 
 export async function createStorage (
   createIf: CreateIf,

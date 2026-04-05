@@ -1,8 +1,8 @@
 import { describe, it } from 'node:test'
 
-import * as beerService from '../../../src/core/beer/authorized.service'
+import * as beerService from '../../../src/core/beer/authorized.service.js'
 
-import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
+import type { AuthTokenPayload } from '../../../src/core/auth/auth-token.js'
 import type {
   Beer,
   BeerWithBreweriesAndStyles,
@@ -10,14 +10,14 @@ import type {
   CreateIf,
   UpdateBeerRequest,
   UpdateIf
-} from '../../../src/core/beer/beer'
-import { dummyLog as log } from '../dummy-log'
-import { expectReject } from '../controller-error-helper'
+} from '../../../src/core/beer/beer.js'
+import { dummyLog as log } from '../dummy-log.js'
+import { expectReject } from '../controller-error-helper.js'
 import {
   invalidBeerError,
   noRightsError
-} from '../../../src/core/errors'
-import { assertDeepEqual } from '../../assert'
+} from '../../../src/core/errors.js'
+import { assertDeepEqual } from '../../assert.js'
 
 const breweryId = '25eb0361-ed50-4de7-aec5-74fe4e7fe011'
 const styleId = '0716f9c8-a419-4c36-af3d-425ed1a3a306'

@@ -1,6 +1,6 @@
 import * as signInMethodRepository
-from '../../../data/user/sign-in-method/sign-in-method.repository'
-import * as userRepository from '../../../data/user/user.repository'
+from '../../../data/user/sign-in-method/sign-in-method.repository.js'
+import * as userRepository from '../../../data/user/user.repository.js'
 
 import type {
   AddPasswordUserIf,

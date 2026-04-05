@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test'
 
-import * as reviewService from '../../../../src/core/internal/review/validated.service'
+import * as reviewService from '../../../../src/core/internal/review/validated.service.js'
 
 import type {
   Review,
@@ -8,13 +8,13 @@ import type {
   CreateIf,
   UpdateReviewRequest,
   UpdateIf
-} from '../../../../src/core/review/review'
-import { dummyLog as log } from '../../dummy-log'
-import { expectReject } from '../../controller-error-helper'
+} from '../../../../src/core/review/review.js'
+import { dummyLog as log } from '../../dummy-log.js'
+import { expectReject } from '../../controller-error-helper.js'
 import {
   invalidReviewError,
   invalidReviewIdError
-} from '../../../../src/core/errors'
+} from '../../../../src/core/errors.js'
 
 const storageId = '970c40b2-94ad-4825-b683-c3f5e9046063'
 

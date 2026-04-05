@@ -1,8 +1,8 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../test-context'
-import type { Location } from '../../../src/core/location/location'
-import { assertDeepEqual, assertEqual } from '../../assert'
+import { TestContext } from '../test-context.js'
+import type { Location } from '../../../src/core/location/location.js'
+import { assertDeepEqual, assertEqual } from '../../assert.js'
 
 describe('location tests', () => {
   const ctx = new TestContext()

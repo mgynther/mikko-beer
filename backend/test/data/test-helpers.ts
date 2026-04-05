@@ -1,3 +1,6 @@
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
 import {
   Kysely,
   PostgresDialect,
@@ -5,7 +8,7 @@ import {
 } from 'kysely'
 import type { ConnectionConfig } from 'pg'
 import { Pool } from 'pg'
-import { Database } from '../../src/data/database'
+import { Database } from '../../src/data/database.js'
 
 import {
   FileMigrationProvider,
@@ -13,6 +16,8 @@ import {
 } from 'kysely'
 import * as path from 'path'
 import { promises as fs } from 'fs'
+
+const directory = dirname(fileURLToPath(import.meta.url));
 
 export async function beforeTests(
   config: ConnectionConfig,
@@ -40,7 +45,7 @@ export async function beforeTests(
     provider: new FileMigrationProvider({
       fs,
       path,
-      migrationFolder: path.join(__dirname, '../../src/data/migrations'),
+      migrationFolder: path.join(directory, '../../src/data/migrations'),
     }),
   })
 

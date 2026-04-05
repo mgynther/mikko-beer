@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test'
 
-import { parseExpiryDurationMin } from '../../src/web/parse'
-import { assertEqual, assertThrows } from '../assert';
+import { parseExpiryDurationMin } from '../../src/web/parse.js'
+import { assertEqual, assertThrows } from '../assert.js'
 
 describe('parse expiry duration min', () => {
   it('parses valid number', () => {

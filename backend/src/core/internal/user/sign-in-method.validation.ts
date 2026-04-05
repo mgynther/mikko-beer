@@ -1,13 +1,13 @@
-import { ajv } from '../ajv'
+import { ajv } from '../ajv.js'
 
 import {
   invalidPasswordChangeError,
   invalidSignInMethodError
-} from '../../errors'
+} from '../../errors.js'
 import type {
   PasswordChange,
   PasswordSignInMethod
-} from '../../user/sign-in-method'
+} from '../../user/sign-in-method.js'
 
 const isPasswordSignInMethodValid = ajv.compile<PasswordSignInMethod>({
   type: 'object',

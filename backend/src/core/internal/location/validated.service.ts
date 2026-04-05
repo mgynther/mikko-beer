@@ -1,15 +1,15 @@
-import * as locationService from './service'
+import * as locationService from './service.js'
 
 import {
   validateLocationId,
   validateCreateLocationRequest,
   validateUpdateLocationRequest
-} from "./validation";
-import type { Location, CreateLocationRequest } from "../../location/location"
-import type { log } from '../../log'
-import type { Pagination } from '../../pagination'
-import type { SearchByName } from '../../search'
-import { validateSearchByName } from '../../search'
+} from './validation.js'
+import type { Location, CreateLocationRequest } from '../../location/location.js'
+import type { log } from '../../log.js'
+import type { Pagination } from '../../pagination.js'
+import type { SearchByName } from '../../search.js'
+import { validateSearchByName } from '../../search.js'
 
 export async function createLocation (
   create: (location: CreateLocationRequest) => Promise<Location>,

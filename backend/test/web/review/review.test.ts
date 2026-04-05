@@ -1,15 +1,15 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../test-context'
-import type { ListDirection } from '../../../src/core/list'
+import { TestContext } from '../test-context.js'
+import type { ListDirection } from '../../../src/core/list.js'
 import type {
   CreateReviewRequest,
   JoinedReview,
   Review,
   ReviewListOrderProperty,
   ReviewRequest
-} from '../../../src/core/review/review'
-import { assertDeepEqual, assertEqual } from '../../assert'
+} from '../../../src/core/review/review.js'
+import { assertDeepEqual, assertEqual } from '../../assert.js'
 
 const createNewReviewRequest = (
   beerId: string,

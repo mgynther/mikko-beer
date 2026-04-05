@@ -1,6 +1,6 @@
-import * as styleService from '../../core/style/authorized.service'
+import * as styleService from '../../core/style/authorized.service.js'
 
-import * as styleRepository from '../../data/style/style.repository'
+import * as styleRepository from '../../data/style/style.repository.js'
 
 import type {
   CreateStyleIf,
@@ -8,12 +8,12 @@ import type {
   Style,
   StyleRelationship,
   UpdateStyleIf,
-} from '../../core/style/style'
-import type { Transaction } from '../../data/database'
-import type { Router } from '../router'
+} from '../../core/style/style.js'
+import type { Transaction } from '../../data/database.js'
+import type { Router } from '../router.js'
 
-import { parseAuthToken } from '../authentication/authentication-helper'
-import type { Context } from '../context'
+import { parseAuthToken } from '../authentication/authentication-helper.js'
+import type { Context } from '../context.js'
 
 export function styleController (router: Router): void {
   router.post('/api/v1/style',

@@ -1,22 +1,22 @@
-import * as authorizationService from '../internal/auth/authorization.service'
-import * as beerService from '../internal/beer/validated.service'
+import * as authorizationService from '../internal/auth/authorization.service.js'
+import * as beerService from '../internal/beer/validated.service.js'
 
 import type {
   BeerWithBreweriesAndStyles,
   BeerWithBreweryAndStyleIds,
   CreateIf,
   UpdateIf
-} from "./beer";
+} from './beer.js'
 
-import type { log } from '../log'
-import type { Pagination } from '../pagination';
-import type { SearchByName } from '../search';
+import type { log } from '../log.js'
+import type { Pagination } from '../pagination.js'
+import type { SearchByName } from '../search.js'
 import type {
   BodyRequest,
   IdRequest,
   PaginationRequest,
   SearchByNameRequest
-} from '../request';
+} from '../request.js'
 
 export async function createBeer (
   createIf: CreateIf,

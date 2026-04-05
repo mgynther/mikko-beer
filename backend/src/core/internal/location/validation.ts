@@ -1,13 +1,13 @@
-import { ajv } from '../ajv'
+import { ajv } from '../ajv.js'
 
 import {
   invalidLocationError,
   invalidLocationIdError
-} from '../../errors'
+} from '../../errors.js'
 import type {
   CreateLocationRequest,
   UpdateLocationRequest
-} from '../../location/location'
+} from '../../location/location.js'
 
 const doValidateLocationRequest =
   ajv.compile<CreateLocationRequest>({

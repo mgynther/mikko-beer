@@ -4,22 +4,22 @@ import {
   assertEqual,
   assertGreaterThan,
   assertIncludes
-} from '../assert'
+} from '../assert.js'
 
-import { createClient } from './client'
-import { testConfig } from './test-config'
+import { createClient } from './client.js'
+import { testConfig } from './test-config.js'
 import {
   afterTest,
   afterTests,
   beforeTest,
   beforeTests
-} from '../data/test-helpers'
-import { App } from '../../src/web/app'
-import type { Database } from '../../src/data/database'
-import type { User } from '../../src/core/user/user'
+} from '../data/test-helpers.js'
+import { App } from '../../src/web/app.js'
+import type { Database } from '../../src/data/database.js'
+import type { User } from '../../src/core/user/user.js'
 
-import type { Level } from '../../src/core/log'
-import type { log } from '../../src/core/log'
+import type { Level } from '../../src/core/log.js'
+import type { log } from '../../src/core/log.js'
 
 interface LogEntry {
   level: Level

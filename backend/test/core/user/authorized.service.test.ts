@@ -1,20 +1,20 @@
 import { describe, it } from 'node:test'
 
-import * as userService from '../../../src/core/user/authorized-user.service'
+import * as userService from '../../../src/core/user/authorized-user.service.js'
 
-import type { AuthTokenConfig, AuthTokenPayload } from '../../../src/core/auth/auth-token'
-import type { CreateUserIf, CreateUserType } from '../../../src/core/user/user'
-import { dummyLog as log } from '../dummy-log'
-import { expectReject } from '../controller-error-helper'
+import type { AuthTokenConfig, AuthTokenPayload } from '../../../src/core/auth/auth-token.js'
+import type { CreateUserIf, CreateUserType } from '../../../src/core/user/user.js'
+import { dummyLog as log } from '../dummy-log.js'
+import { expectReject } from '../controller-error-helper.js'
 import {
   invalidUserError,
   invalidUserIdError,
   noRightsError,
   userMismatchError
-} from '../../../src/core/errors'
-import type { SignedInUser } from '../../../src/core/internal/user/signed-in-user'
-import type { DbRefreshToken } from '../../../src/core/auth/refresh-token'
-import { assertDeepEqual } from '../../assert'
+} from '../../../src/core/errors.js'
+import type { SignedInUser } from '../../../src/core/internal/user/signed-in-user.js'
+import type { DbRefreshToken } from '../../../src/core/auth/refresh-token.js'
+import { assertDeepEqual } from '../../assert.js'
 
 const validCreateUserRequest: CreateUserType = {
   user: {

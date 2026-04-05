@@ -1,17 +1,17 @@
-import * as styleService from './service'
+import * as styleService from './service.js'
 
 import type {
   CreateStyleIf,
   StyleWithParentIds,
   StyleWithParentsAndChildren,
   UpdateStyleIf
-} from "../../style/style"
+} from '../../style/style.js'
 import {
   validateCreateStyleRequest,
   validateStyleId,
   validateUpdateStyleRequest
-} from "./validation"
-import type { log } from '../../log'
+} from './validation.js'
+import type { log } from '../../log.js'
 
 export async function createStyle (
   createStyleIf: CreateStyleIf,

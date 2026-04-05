@@ -3,14 +3,14 @@ import { describe, it } from 'node:test'
 import {
   validateCreateReviewRequest,
   validateUpdateReviewRequest,
-} from '../../../../src/core/internal/review/validation'
+} from '../../../../src/core/internal/review/validation.js'
 import {
   invalidReviewError,
   invalidReviewIdError
-} from '../../../../src/core/errors'
-import { expectThrow } from '../../controller-error-helper'
-import { assertDeepEqual } from '../../../assert'
-import type { ReviewRequest } from '../../../../src/core/review/review'
+} from '../../../../src/core/errors.js'
+import { expectThrow } from '../../controller-error-helper.js'
+import { assertDeepEqual } from '../../../assert.js'
+import type { ReviewRequest } from '../../../../src/core/review/review.js'
 
 function validRequest (): ReviewRequest {
   return {

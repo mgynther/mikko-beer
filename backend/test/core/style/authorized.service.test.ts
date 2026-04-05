@@ -1,8 +1,8 @@
 import { describe, it } from 'node:test'
 
-import * as styleService from '../../../src/core/style/authorized.service'
+import * as styleService from '../../../src/core/style/authorized.service.js'
 
-import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
+import type { AuthTokenPayload } from '../../../src/core/auth/auth-token.js'
 import type {
   Style,
   StyleWithParentIds,
@@ -11,14 +11,14 @@ import type {
   CreateStyleIf,
   UpdateStyleRequest,
   UpdateStyleIf
-} from '../../../src/core/style/style'
-import { dummyLog as log } from '../dummy-log'
-import { expectReject } from '../controller-error-helper'
+} from '../../../src/core/style/style.js'
+import { dummyLog as log } from '../dummy-log.js'
+import { expectReject } from '../controller-error-helper.js'
 import {
   invalidStyleError,
   noRightsError
-} from '../../../src/core/errors'
-import { assertDeepEqual } from '../../assert'
+} from '../../../src/core/errors.js'
+import { assertDeepEqual } from '../../assert.js'
 
 const styleId = '6e68f545-097c-4f1a-af81-23c2f9cdb533'
 

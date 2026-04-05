@@ -2,10 +2,10 @@ import { describe, it } from 'node:test'
 
 import {
   validateRefreshToken
-} from '../../../../src/core/internal/auth/refresh-token'
-import { invalidRefreshTokenError } from '../../../../src/core/errors'
-import { expectThrow } from '../../controller-error-helper'
-import { assertDeepEqual } from '../../../assert'
+} from '../../../../src/core/internal/auth/refresh-token.js'
+import { invalidRefreshTokenError } from '../../../../src/core/errors.js'
+import { expectThrow } from '../../controller-error-helper.js'
+import { assertDeepEqual } from '../../../assert.js'
 
 describe('refresh token unit tests', () => {
 

@@ -3,18 +3,18 @@ import { describe, it } from 'node:test'
 import {
   validatePasswordSignInMethod,
   validatePasswordChange
-} from '../../../../src/core/internal/user/sign-in-method.validation'
+} from '../../../../src/core/internal/user/sign-in-method.validation.js'
 
 import {
   invalidPasswordChangeError,
   invalidSignInMethodError,
-} from '../../../../src/core/errors'
-import { expectThrow } from '../../controller-error-helper'
-import { assertDeepEqual } from '../../../assert'
+} from '../../../../src/core/errors.js'
+import { expectThrow } from '../../controller-error-helper.js'
+import { assertDeepEqual } from '../../../assert.js'
 import type {
   PasswordChange,
   PasswordSignInMethod
-} from '../../../../src/core/user/sign-in-method'
+} from '../../../../src/core/user/sign-in-method.js'
 
 describe('password sign-in-method validation unit tests', () => {
   function validPasswordSignInMethod () {

@@ -1,19 +1,19 @@
-import * as beerService from '../../core/beer/authorized.service'
-import type { Pagination } from '../../core/pagination'
-import type { SearchByName } from '../../core/search'
+import * as beerService from '../../core/beer/authorized.service.js'
+import type { Pagination } from '../../core/pagination.js'
+import type { SearchByName } from '../../core/search.js'
 
-import * as beerRepository from '../../data/beer/beer.repository'
-import * as breweryRepository from '../../data/brewery/brewery.repository'
-import type { Transaction } from '../../data/database'
-import * as styleRepository from '../../data/style/style.repository'
+import * as beerRepository from '../../data/beer/beer.repository.js'
+import * as breweryRepository from '../../data/brewery/brewery.repository.js'
+import type { Transaction } from '../../data/database.js'
+import * as styleRepository from '../../data/style/style.repository.js'
 
-import * as authHelper from '../authentication/authentication-helper'
+import * as authHelper from '../authentication/authentication-helper.js'
 
-import type { Router } from '../router'
-import type { Beer, CreateIf, NewBeer, UpdateIf } from '../../core/beer/beer'
-import { validatePagination } from '../../core/pagination'
-import { validateSearchByName } from '../../core/search'
-import type { Context } from '../context'
+import type { Router } from '../router.js'
+import type { Beer, CreateIf, NewBeer, UpdateIf } from '../../core/beer/beer.js'
+import { validatePagination } from '../../core/pagination.js'
+import { validateSearchByName } from '../../core/search.js'
+import type { Context } from '../context.js'
 
 export function beerController (router: Router): void {
   router.post('/api/v1/beer',

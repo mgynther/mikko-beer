@@ -3,14 +3,14 @@ import { describe, it } from 'node:test'
 import {
   validateCreateAnonymousUserRequest,
   validateCreateUserRequest
-} from '../../../../src/core/internal/user/validation'
+} from '../../../../src/core/internal/user/validation.js'
 import {
   invalidSignInMethodError,
   invalidUserError
-} from '../../../../src/core/errors'
-import { expectThrow } from '../../controller-error-helper'
-import { assertDeepEqual } from '../../../assert'
-import type { CreateAnonymousUserRequest } from '../../../../src/core/user/user'
+} from '../../../../src/core/errors.js'
+import { expectThrow } from '../../controller-error-helper.js'
+import { assertDeepEqual } from '../../../assert.js'
+import type { CreateAnonymousUserRequest } from '../../../../src/core/user/user.js'
 
 describe('create anonymous user validation unit tests', () => {
   function pass(user: CreateAnonymousUserRequest) {

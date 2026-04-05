@@ -5,7 +5,7 @@ import type {
   Updateable
 } from 'kysely'
 
-import type { Role } from '../../core/user/user'
+import type { Role } from '../../core/user/user.js'
 
 // Here we could have user information such as name if it was needed.
 // In this application is is not.

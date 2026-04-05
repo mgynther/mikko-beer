@@ -1,16 +1,16 @@
 import { describe, it } from 'node:test'
 
-import * as userService from '../../../../src/core/internal/user/validated-user.service'
+import * as userService from '../../../../src/core/internal/user/validated-user.service.js'
 
-import type { AuthTokenConfig } from '../../../../src/core/auth/auth-token'
-import type { CreateUserIf, CreateUserType } from '../../../../src/core/user/user'
-import { dummyLog as log } from '../../dummy-log'
-import { expectReject } from '../../controller-error-helper'
+import type { AuthTokenConfig } from '../../../../src/core/auth/auth-token.js'
+import type { CreateUserIf, CreateUserType } from '../../../../src/core/user/user.js'
+import { dummyLog as log } from '../../dummy-log.js'
+import { expectReject } from '../../controller-error-helper.js'
 import {
   invalidUserError,
   invalidUserIdError
-} from '../../../../src/core/errors'
-import type { SignedInUser } from '../../../../src/core/internal/user/signed-in-user'
+} from '../../../../src/core/errors.js'
+import type { SignedInUser } from '../../../../src/core/internal/user/signed-in-user.js'
 
 const validCreateUserRequest: CreateUserType = {
   user: {

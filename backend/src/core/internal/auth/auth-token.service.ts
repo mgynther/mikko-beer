@@ -2,16 +2,16 @@ import type {
   AuthTokenConfig,
   AuthToken,
   AuthTokenPayload,
-} from '../../auth/auth-token'
+} from '../../auth/auth-token.js'
 import type { Tokens } from '../../auth/tokens'
 import type {
   DbRefreshToken,
   RefreshToken
-} from '../../auth/refresh-token'
-import type { User, Role } from '../../user/user'
-import * as jwt from './jwt'
-import { invalidCredentialsTokenError } from '../../errors'
-import type { RefreshTokenPayload } from './jwt'
+} from '../../auth/refresh-token.js'
+import type { User, Role } from '../../user/user.js'
+import * as jwt from './jwt.js'
+import { invalidCredentialsTokenError } from '../../errors.js'
+import type { RefreshTokenPayload } from './jwt.js'
 
 export async function createTokens (
   insertRefreshToken: (userId: string) => Promise<DbRefreshToken>,

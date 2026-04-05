@@ -1,13 +1,13 @@
-import { ajv } from '../ajv'
+import { ajv } from '../ajv.js'
 
 import {
   invalidContainerError,
   invalidContainerIdError
-} from '../../errors'
+} from '../../errors.js'
 import type {
   CreateContainerRequest,
   UpdateContainerRequest
-} from '../../container/container'
+} from '../../container/container.js'
 
 const doValidateContainerRequest =
   ajv.compile<CreateContainerRequest>({

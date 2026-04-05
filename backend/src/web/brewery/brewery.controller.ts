@@ -1,15 +1,15 @@
-import * as breweryService from '../../core/brewery/authorized.service'
-import type { Pagination } from '../../core/pagination'
-import type { SearchByName } from '../../core/search'
+import * as breweryService from '../../core/brewery/authorized.service.js'
+import type { Pagination } from '../../core/pagination.js'
+import type { SearchByName } from '../../core/search.js'
 
-import * as breweryRepository from '../../data/brewery/brewery.repository'
+import * as breweryRepository from '../../data/brewery/brewery.repository.js'
 
-import * as authHelper from '../authentication/authentication-helper'
+import * as authHelper from '../authentication/authentication-helper.js'
 
-import type { Router } from '../router'
-import type { Brewery, CreateBreweryRequest } from '../../core/brewery/brewery'
-import { validatePagination } from '../../core/pagination'
-import type { Context } from '../context'
+import type { Router } from '../router.js'
+import type { Brewery, CreateBreweryRequest } from '../../core/brewery/brewery.js'
+import { validatePagination } from '../../core/pagination.js'
+import type { Context } from '../context.js'
 
 export function breweryController (router: Router): void {
   router.post('/api/v1/brewery',

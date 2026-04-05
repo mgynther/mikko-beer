@@ -1,18 +1,18 @@
 import { v4 as uuidv4 } from 'uuid'
 
-import * as userService from './internal/user/user.service'
-import * as signInMethodService from './internal/user/sign-in-method.service'
+import * as userService from './internal/user/user.service.js'
+import * as signInMethodService from './internal/user/sign-in-method.service.js'
 
-import type { log } from './log'
+import type { log } from './log.js'
 
 import type { CreateAnonymousUserRequest, User } from "./user/user"
-import type { AuthTokenConfig } from './auth/auth-token'
+import type { AuthTokenConfig } from './auth/auth-token.js'
 import type {
   AddPasswordUserIf,
   PasswordSignInMethod
-} from './user/sign-in-method'
-import type { SignedInUser } from './internal/user/signed-in-user'
-import type { DbRefreshToken } from './auth/refresh-token'
+} from './user/sign-in-method.js'
+import type { SignedInUser } from './internal/user/signed-in-user.js'
+import type { DbRefreshToken } from './auth/refresh-token.js'
 
 export async function createInitialUser (
   createAnonymousUser: (request: CreateAnonymousUserRequest) => Promise<User>,

@@ -1,12 +1,12 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
-import { TestContext } from '../test-context'
+import { TestContext } from '../test-context.js'
 import type {
   Beer,
   BeerWithBreweriesAndStyles
-} from '../../../src/core/beer/beer'
-import type { Style } from '../../../src/core/style/style'
-import { assertDeepEqual, assertEqual } from '../../assert'
+} from '../../../src/core/beer/beer.js'
+import type { Style } from '../../../src/core/style/style.js'
+import { assertDeepEqual, assertEqual } from '../../assert.js'
 
 describe('beer tests', () => {
   const ctx = new TestContext()

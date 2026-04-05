@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test'
 
-import { userNotFoundError } from '../../../../src/core/errors'
-import * as userService from '../../../../src/core/internal/user/user.service'
+import { userNotFoundError } from '../../../../src/core/errors.js'
+import * as userService from '../../../../src/core/internal/user/user.service.js'
 import type { AuthTokenConfig } from "../../../../src/core/auth/auth-token"
 import type { DbRefreshToken } from "../../../../src/core/auth/refresh-token"
 import type {
@@ -9,9 +9,9 @@ import type {
   User
 } from "../../../../src/core/user/user"
 
-import { dummyLog as log } from '../../dummy-log'
-import { expectReject } from '../../controller-error-helper'
-import { assertDeepEqual, assertEqual, assertTruthy } from '../../../assert'
+import { dummyLog as log } from '../../dummy-log.js'
+import { expectReject } from '../../controller-error-helper.js'
+import { assertDeepEqual, assertEqual, assertTruthy } from '../../../assert.js'
 
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {

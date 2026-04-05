@@ -1,19 +1,19 @@
 import { v4 as uuidv4 } from 'uuid'
 
-import { createClient } from './client'
-import type { RequestHeaders } from './client'
-import { testConfig } from './test-config'
+import { createClient } from './client.js'
+import type { RequestHeaders } from './client.js'
+import { testConfig } from './test-config.js'
 import {
   afterTest,
   afterTests,
   beforeTest,
   beforeTests
-} from '../data/test-helpers'
-import { App } from '../../src/web/app'
-import { Database } from '../../src/data/database'
-import { User } from '../../src/core/user/user'
+} from '../data/test-helpers.js'
+import { App } from '../../src/web/app.js'
+import { Database } from '../../src/data/database.js'
+import { User } from '../../src/core/user/user.js'
 
-import { Level, type log } from '../../src/core/log'
+import { Level, type log } from '../../src/core/log.js'
 
 export class TestContext {
   #adminAuthToken: string = ''

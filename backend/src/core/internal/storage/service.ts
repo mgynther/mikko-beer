@@ -7,18 +7,18 @@ import type {
   Storage,
   StorageWithDate,
   UpdateIf
-} from '../../storage/storage'
+} from '../../storage/storage.js'
 
 import {
   referredBeerNotFoundError,
   referredContainerNotFoundError,
   storageNotFoundError
-} from '../../errors'
-import type { log } from '../../log'
-import { INFO, } from '../../log'
+} from '../../errors.js'
+import type { log } from '../../log.js'
+import { INFO, } from '../../log.js'
 
-import type { Pagination } from '../../pagination'
-import type { LockId } from '../../db'
+import type { Pagination } from '../../pagination.js'
+import type { LockId } from '../../db.js'
 
 export async function createStorage (
   createIf: CreateIf,

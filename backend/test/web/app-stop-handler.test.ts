@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test'
-import { assertDeepEqual, assertEqual } from '../assert'
-import { createStopHandler } from '../../src/web/app-stop-handler'
+import { assertDeepEqual, assertEqual } from '../assert.js'
+import { createStopHandler } from '../../src/web/app-stop-handler.js'
 
 describe('app stopHandler', () => {
   it('resolve without error', (t) => {

@@ -1,20 +1,20 @@
 import { describe, it } from 'node:test'
 
-import * as locationService from '../../../src/core/location/authorized.service'
+import * as locationService from '../../../src/core/location/authorized.service.js'
 
-import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
+import type { AuthTokenPayload } from '../../../src/core/auth/auth-token.js'
 import type {
   Location,
   CreateLocationRequest,
   UpdateLocationRequest
-} from '../../../src/core/location/location'
-import { dummyLog as log } from '../dummy-log'
-import { expectReject } from '../controller-error-helper'
+} from '../../../src/core/location/location.js'
+import { dummyLog as log } from '../dummy-log.js'
+import { expectReject } from '../controller-error-helper.js'
 import {
   invalidLocationError,
   noRightsError
-} from '../../../src/core/errors'
-import { assertDeepEqual } from '../../assert'
+} from '../../../src/core/errors.js'
+import { assertDeepEqual } from '../../assert.js'
 
 const validCreateLocationRequest: CreateLocationRequest = {
   name: 'Kuja Beer Shop & Bar'
