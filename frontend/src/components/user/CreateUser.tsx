@@ -84,7 +84,10 @@ function CreateUser (props: Props): React.JSX.Element {
             value={role}
             id='role'
             onChange={(e) => {
-              setRole(e.target.value === Role.admin ? Role.admin : Role.viewer)
+              const role = e.target.value === Role.admin
+                ? Role.admin
+                : Role.viewer
+              setRole(role)
             }}
           >
             <option value={Role.admin}>Admin</option>
