@@ -14,7 +14,7 @@ function Users (props: Props): React.JSX.Element {
     <div>
       <h3>Users</h3>
       <UserList
-        getConfirm={() => confirm}
+        confirm={confirm}
         deleteUserIf={props.userIf.delete}
         listUsersIf={props.userIf.list}
       />

@@ -54,7 +54,7 @@ test('selects location', async () => {
   const selector = vitest.fn()
   const { getByRole } = render(
     <SearchLocation
-      getConfirm={() => dontCall}
+      confirm={dontCall}
       isCreateEnabled={false}
       placeholderText={placeholderText}
       searchLocationIf={{
@@ -86,7 +86,7 @@ test('does not show create button with case-insensitive match', async () => {
   const selector = vitest.fn()
   const { getByRole, queryByRole } = render(
     <SearchLocation
-      getConfirm={() => dontCall}
+      confirm={dontCall}
       isCreateEnabled={false}
       placeholderText={placeholderText}
       searchLocationIf={{
@@ -116,7 +116,7 @@ test('shows no results when creating not enabled', async () => {
   const selector = vitest.fn()
   const { getByRole, getByText } = render(
     <SearchLocation
-      getConfirm={() => dontCall}
+      confirm={dontCall}
       isCreateEnabled={false}
       placeholderText={placeholderText}
       searchLocationIf={{
@@ -144,7 +144,7 @@ test('creates location', async () => {
   const select = vitest.fn()
   const { getByRole } = render(
     <SearchLocation
-      getConfirm={() => dontCall}
+      confirm={dontCall}
       isCreateEnabled={true}
       placeholderText={placeholderText}
       searchLocationIf={{
@@ -191,7 +191,7 @@ test('confirms creating location when partially matching result exists',
   const confirmCb = vitest.fn()
   const { getByRole } = render(
     <SearchLocation
-      getConfirm={() => (text: string): boolean => {
+      confirm={(text: string): boolean => {
         confirmCb(text)
         return true
       }}
@@ -244,7 +244,7 @@ test('sorts existing result before create new location', async () => {
   const resultName = `${location.name}, Tampere`
   const { getAllByRole, getByRole } = render(
     <SearchLocation
-      getConfirm={() => dontCall}
+      confirm={dontCall}
       isCreateEnabled={true}
       placeholderText={placeholderText}
       searchLocationIf={{

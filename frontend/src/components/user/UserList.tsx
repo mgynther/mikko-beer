@@ -11,7 +11,7 @@ import LoadingIndicator from '../common/LoadingIndicator'
 
 interface Props {
   // Giving confirm loses context and results in illegal invocation when used.
-  getConfirm: () => (text: string) => boolean
+  confirm: (text: string) => boolean
   deleteUserIf: DeleteUserIf
   listUsersIf: ListUsersIf
 }
@@ -22,7 +22,7 @@ function UserList (props: Props): React.JSX.Element {
 
   async function confirmDeleteUser (user: User): Promise<void> {
     const confirmText = `Are you sure you want to delete "${user.username}"?`
-    if (props.getConfirm()(confirmText)) {
+    if (props.confirm(confirmText)) {
       await del(user.id)
     }
   }

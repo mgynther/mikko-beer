@@ -58,7 +58,7 @@ test('renders storage', async () => {
     <LinkWrapper>
       <StorageItem
         deleteStorageIf={dontDelete}
-        getConfirm={dontCall}
+        confirm={dontCall}
         getLogin={() => adminLogin}
         storage={storage}
       />
@@ -82,7 +82,7 @@ test('renders storage with review', async () => {
     <LinkWrapper>
       <StorageItem
         deleteStorageIf={dontDelete}
-        getConfirm={dontCall}
+        confirm={dontCall}
         getLogin={() => adminLogin}
         storage={{
           ...storage,
@@ -106,7 +106,7 @@ test('deletes storage', async () => {
             delete: del
           })
         }}
-        getConfirm={(): () => boolean => () => true}
+        confirm={(): boolean => true}
         getLogin={() => adminLogin}
         storage={storage}
       />
@@ -130,7 +130,7 @@ test('does not delete storage on not confirmed', async () => {
             delete: del
           })
         }}
-        getConfirm={(): () => boolean => () => false}
+        confirm={(): boolean => false}
         getLogin={() => adminLogin}
         storage={storage}
       />

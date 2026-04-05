@@ -35,7 +35,7 @@ function StorageList (props: Props): React.JSX.Element {
         <StorageItem
           key={storage.id}
           deleteStorageIf={props.deleteStorageIf}
-          getConfirm={() => confirm}
+          confirm={confirm}
           getLogin={props.getLogin}
           storage={storage}
         />

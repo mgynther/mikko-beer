@@ -210,7 +210,7 @@ function ReviewEditor (props: Props): React.JSX.Element {
           <div>
             {location === undefined ?
               <SearchLocation
-                getConfirm={() => confirm}
+                confirm={confirm}
                 isCreateEnabled={true}
                 placeholderText={'Location'}
                 searchLocationIf={props.searchLocationIf}

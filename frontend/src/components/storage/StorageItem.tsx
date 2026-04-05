@@ -22,7 +22,7 @@ import ContainerInfo from '../container/ContainerInfo'
 interface Props {
   deleteStorageIf: DeleteStorageIf
   // Giving confirm loses context and results in illegal invocation when used.
-  getConfirm: () => (text: string) => boolean
+  confirm: (text: string) => boolean
   getLogin: GetLogin
   storage: Storage
 }
@@ -40,7 +40,7 @@ function StorageItem (props: Props): React.JSX.Element {
 
   async function confirmDeleteStorage (storage: Storage): Promise<void> {
     const confirmText = `Are you sure you want to delete "${storage.beerName}"?`
-    if (props.getConfirm()(confirmText)) {
+    if (props.confirm(confirmText)) {
       await del(storage.id)
     }
   }

@@ -15,7 +15,7 @@ function SearchLocationWithNavi (props: Props): React.JSX.Element {
   const navigate = props.navigateIf.useNavigate()
   return (
     <SearchLocation
-      getConfirm={() => confirm}
+      confirm={confirm}
       isCreateEnabled={false}
       placeholderText={'Search location'}
       searchIf={props.searchIf}

@@ -9,7 +9,7 @@ import type { SearchIf } from '../../core/search/types'
 import SearchBox, { nameFormatter } from '../common/SearchBox'
 
 export interface Props {
-  getConfirm: () => (text: string) => boolean
+  confirm: (text: string) => boolean
   isCreateEnabled: boolean
   placeholderText: string
   searchLocationIf: SearchLocationIf
@@ -84,7 +84,7 @@ function SearchLocation (props: Props): React.JSX.Element {
             if (resultsAndCreate.length > 1) {
               const confirmQuestion =
                 `Are you sure you want to create ${debouncedFilter}?`
-              if (props.getConfirm()(confirmQuestion)) {
+              if (props.confirm(confirmQuestion)) {
                 void doCreate()
               }
               return
