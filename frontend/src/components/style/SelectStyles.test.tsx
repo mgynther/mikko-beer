@@ -99,6 +99,37 @@ test('selects style', async () => {
   ])
 })
 
+test('adds new style', async () => {
+  const user = userEvent.setup()
+  const select = vitest.fn()
+  const { getByRole } = render(
+    <SelectStyles
+      select={select}
+      initialStyles={[style]}
+      selectStyleIf={{
+        create: {
+          useCreate: dontCall
+        },
+        list: {
+          useList: () => ({
+            styles: [style],
+            isLoading: false
+          })
+        }
+      }}
+      searchIf={useSearch}
+    />
+  )
+  const addButton = getByRole('button', { name: 'Add style' })
+  await user.click(addButton)
+
+  const calls = select.mock.calls
+  expect(calls.length).toEqual(1)
+  expect(calls[calls.length - 1]).toEqual([ [] ])
+  getByRole('radio', { name: 'Create' })
+  getByRole('radio', { name: 'Select' })
+})
+
 test('selects created style', async () => {
   const user = userEvent.setup()
   const create = vitest.fn()
