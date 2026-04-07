@@ -63,6 +63,7 @@ function Style (props: Props): React.JSX.Element {
     props.listStoragesByStyleIf.useList(styleId)
   if (isLoading) return <LoadingIndicator isLoading={true} />
   if (style === undefined) return <NotFound />
+  const storageItems = storages?.storages ?? []
   return (
     <>
       {mode === EditableMode.View && (
@@ -129,13 +130,13 @@ function Style (props: Props): React.JSX.Element {
         paramsIf={props.paramsIf}
         styleId={styleId}
       />
-      {(storages?.storages ?? []).length > 0 && (
+      {storageItems.length > 0 && (
         <StorageList
           deleteStorageIf={props.listStoragesByStyleIf.delete}
           getLogin={props.reviewIf.login}
           isLoading={isLoadingStorages}
           isTitleVisible={true}
-          storages={storages?.storages ?? []}
+          storages={storageItems}
         />
       )}
       <ReviewsBy

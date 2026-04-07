@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
@@ -25,11 +25,13 @@ import type {
   StatsIf,
   YearMonth
 } from '../../core/stats/types'
-import type { GetStyleIf } from '../../core/style/types'
+import type { GetStyleIf, UpdateStyleIf } from '../../core/style/types'
 import type { UseDebounce } from '../../core/types'
 import { asText } from '../container/ContainerInfo'
 import type { SearchIf } from '../../core/search/types'
 import type { ParamsIf } from '../util'
+import type { ReactNode } from 'react'
+import { loadingIndicatorText } from '../common/LoadingIndicator'
 
 const useDebounce: UseDebounce<string> = str => [str, false]
 
@@ -223,13 +225,15 @@ function getListReviewsIf(reviews: JoinedReview[]): ListReviewsByIf {
   }
 }
 
-function getListStoragesByStyleIf(storages: Storage[]): ListStoragesByIf {
+function getListStoragesByStyleIf(
+  storages: Storage[] | undefined
+): ListStoragesByIf {
   return {
     useList: () => ({
-      storages: {
+      storages: storages ? {
         storages
-      },
-      isLoading: false
+      } : undefined,
+      isLoading: storages !== undefined
     }),
     delete: {
       useDelete: () => ({
@@ -288,21 +292,23 @@ const statsIf: StatsIf = {
   setSearch: async () => undefined
 }
 
+const dontUpdate: UpdateStyleIf = {
+  useUpdate: () => ({
+    update: dontCall,
+    hasError: false,
+    isLoading: false,
+    isSuccess: false
+  }),
+}
+
 test('renders style', async () => {
-  const { getByRole, getByText } = render(
+  const { getByRole } = render(
     <LinkWrapper>
       <Style
-        updateStyleIf={{
-          useUpdate: () => ({
-            update: dontCall,
-            hasError: false,
-            isLoading: false,
-            isSuccess: false
-          }),
-        }}
+        updateStyleIf={dontUpdate}
         searchIf={searchIf}
         listReviewsByStyleIf={getListReviewsIf([joinedReview])}
-        listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
+        listStoragesByStyleIf={getListStoragesByStyleIf(undefined)}
         paramsIf={paramsIf}
         reviewIf={reviewIf}
         getStyleIf={getStyleIf}
@@ -314,15 +320,162 @@ test('renders style', async () => {
   getByRole('heading', { name: style.name })
   getByRole('link', { name: parent.name })
   getByRole('link', { name: child.name })
+})
+
+test('renders storages', async () => {
+  const { getByRole, getByText } = render(
+    <LinkWrapper>
+      <Style
+        updateStyleIf={dontUpdate}
+        searchIf={searchIf}
+        listReviewsByStyleIf={getListReviewsIf([joinedReview])}
+        listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
+        paramsIf={paramsIf}
+        reviewIf={reviewIf}
+        getStyleIf={getStyleIf}
+        statsIf={statsIf}
+      />
+    </LinkWrapper>
+  )
+  getByRole('heading', { name: style.name })
   getByText(joinedReview.additionalInfo)
   getByText(asText(joinedReview.container))
   getByText(storage.bestBefore.split('T')[0])
 })
 
+test('renders loading when loading', async () => {
+  const { getByText } = render(
+    <LinkWrapper>
+      <Style
+        updateStyleIf={dontUpdate}
+        searchIf={searchIf}
+        listReviewsByStyleIf={getListReviewsIf([joinedReview])}
+        listStoragesByStyleIf={getListStoragesByStyleIf(undefined)}
+        paramsIf={paramsIf}
+        reviewIf={reviewIf}
+        getStyleIf={{
+          useGet: () => ({
+            style: undefined,
+            isLoading: true
+          })
+        }}
+        statsIf={statsIf}
+      />
+    </LinkWrapper>
+  )
+  getByText(loadingIndicatorText)
+})
+
+test('renders not found when not found', async () => {
+  const { getByText } = render(
+    <LinkWrapper>
+      <Style
+        updateStyleIf={dontUpdate}
+        searchIf={searchIf}
+        listReviewsByStyleIf={getListReviewsIf([joinedReview])}
+        listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
+        paramsIf={paramsIf}
+        reviewIf={reviewIf}
+        getStyleIf={{
+          useGet: () => ({
+            style: undefined,
+            isLoading: false
+          })
+        }}
+        statsIf={statsIf}
+      />
+    </LinkWrapper>
+  )
+  getByText('Not found')
+})
+
+test('throw without style id', async () => {
+  expect(() =>
+    render(
+    <LinkWrapper>
+      <Style
+        updateStyleIf={dontUpdate}
+        searchIf={searchIf}
+        listReviewsByStyleIf={getListReviewsIf([joinedReview])}
+        listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
+        paramsIf={{
+          ...paramsIf,
+          useParams: () => ({})
+        }}
+        reviewIf={reviewIf}
+        getStyleIf={getStyleIf}
+        statsIf={statsIf}
+      />
+    </LinkWrapper>
+    )).toThrow()
+})
+
 test('updates style', async () => {
   const user = userEvent.setup()
   const update = vitest.fn()
-  const { getByRole, getByPlaceholderText } = render(
+  const styleName = 'Rye IPA'
+  const getNode: () => ReactNode = () =>
+    <LinkWrapper>
+      <Style
+        updateStyleIf={{
+          useUpdate: () => ({
+            update,
+            hasError: false,
+            isLoading: false,
+            isSuccess: update.mock.calls.length > 0
+          })
+        }}
+        searchIf={searchIf}
+        listReviewsByStyleIf={getListReviewsIf([])}
+        listStoragesByStyleIf={getListStoragesByStyleIf([])}
+        paramsIf={paramsIf}
+        reviewIf={reviewIf}
+        getStyleIf={{
+          useGet: () => {
+            const hasUpdate = update.mock.calls.length > 0
+            return {
+              style: {
+                ...style,
+                name: hasUpdate
+                  ? styleName
+                  : style.name,
+                parents: hasUpdate ? [] : style.parents
+              },
+              isLoading: false
+            }}
+        }}
+        statsIf={statsIf}
+      />
+    </LinkWrapper>
+  const { getByRole, getByPlaceholderText, getByText, rerender } = render(
+    getNode()
+  )
+
+  const editButton = getByRole('button', { name: 'Edit' })
+  await user.click(editButton)
+  const nameInput = getByPlaceholderText('Name')
+  await user.clear(nameInput)
+  await user.type(nameInput, styleName)
+  const removeParentButton = getByRole('button', { name: 'Remove' })
+  await user.click(removeParentButton)
+  const saveButton = getByRole('button', { name: 'Save' })
+  await user.click(saveButton)
+  expect(update.mock.calls).toEqual([[{
+    id: style.id,
+    name: styleName,
+    parents: []
+  }]])
+  rerender(getNode())
+  await waitFor(() => {
+    expect(getByRole('heading', { name: styleName }))
+  })
+  expect(getByText('-')).toBeDefined()
+})
+
+test('cancels update', async () => {
+  const user = userEvent.setup()
+  const update = vitest.fn()
+  const { getByRole } = render(
     <LinkWrapper>
       <Style
         updateStyleIf={{
@@ -346,17 +499,7 @@ test('updates style', async () => {
 
   const editButton = getByRole('button', { name: 'Edit' })
   await user.click(editButton)
-  const nameInput = getByPlaceholderText('Name')
-  await user.clear(nameInput)
-  const styleName = 'Rye IPA'
-  await user.type(nameInput, styleName)
-  const removeParentButton = getByRole('button', { name: 'Remove' })
-  await user.click(removeParentButton)
-  const saveButton = getByRole('button', { name: 'Save' })
-  await user.click(saveButton)
-  expect(update.mock.calls).toEqual([[{
-    id: style.id,
-    name: styleName,
-    parents: []
-  }]])
+  const cancelButton = getByRole('button', { name: 'Cancel' })
+  await user.click(cancelButton)
+  getByRole('heading', { name: style.name })
 })
