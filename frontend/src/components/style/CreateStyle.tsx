@@ -34,16 +34,11 @@ function CreateStyle (props: Props): React.JSX.Element {
     }
   }, [isSuccess, select, createdStyle])
 
-  async function doCreate (): Promise<void> {
-    if (style === undefined) return
-    try {
-      await create({
-        name: style.name,
-        parents: style.parents
-      })
-    } catch (e) {
-      console.warn('Failed to create style', e)
-    }
+  async function doCreate (style: StyleWithParentIds): Promise<void> {
+    await create({
+      name: style.name,
+      parents: style.parents
+    })
   }
 
   return (
@@ -62,7 +57,7 @@ function CreateStyle (props: Props): React.JSX.Element {
       <div className='ButtonContainer'>
         <Button
           disabled={style === undefined}
-          onClick={() => { void doCreate() }}
+          onClick={style ? (): void => { void doCreate(style) } : undefined}
           text='Create'
         />
         <Button onClick={() => { props.remove() }} text='Remove' />
