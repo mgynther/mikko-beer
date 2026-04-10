@@ -26,7 +26,7 @@
     "jsonwebtoken": "9.0.3",
     "koa": "3.2.0",
     "koa-compress": "5.2.1",
-    "kysely": "0.28.15",
+    "kysely": "0.28.16",
     "pg": "8.20.0",
     "uuid": "13.0.0"
   },
@@ -38,6 +38,6 @@
     "@types/node": "25.5.2",
     "@types/pg": "8.20.0",
     "typescript": "6.0.2",
-    "typescript-eslint": "8.58.0"
+    "typescript-eslint": "8.58.1"
   }
 }
