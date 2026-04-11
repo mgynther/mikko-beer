@@ -6,6 +6,7 @@ import type { UseDebounce } from "../../core/types"
 import type { CreateBeerIf, SearchBeerIf } from "../../core/beer/types"
 import type { ReviewContainerIf } from "../../core/review/types"
 import type { SearchIf } from "../../core/search/types"
+import type { CreateStorageIf } from "../../core/storage/types"
 
 const useDebounce: UseDebounce<string> = str => [str, false]
 
@@ -92,16 +93,25 @@ const reviewContainerIf: ReviewContainerIf = {
   }
 }
 
+const searchIf: SearchIf = {
+  useSearch: () => ({
+    activate: () => undefined,
+      isActive: true
+  }),
+  useDebounce
+}
+
+const dontCreateStorageIf: CreateStorageIf = {
+  useCreate: () => ({
+    create: dontCall,
+    hasError: true,
+    isLoading: false
+  })
+}
+
 test('creates storage', async () => {
   const user = userEvent.setup()
   const create = vitest.fn()
-  const searchIf: SearchIf = {
-    useSearch: () => ({
-      activate: () => undefined,
-        isActive: true
-    }),
-    useDebounce
-  }
   const {
     findByRole,
     getAllByRole,
@@ -155,4 +165,81 @@ test('creates storage', async () => {
     container: containerId,
     bestBefore: new Date(`${date}T12:00:00.000`).toISOString()
   }]])
+})
+
+test('clears beer', async () => {
+  const user = userEvent.setup()
+  const {
+    findByRole,
+    getAllByRole,
+    getByPlaceholderText,
+    getByRole
+  } = render(
+    <CreateStorage
+      searchIf={searchIf}
+      selectBeerIf={{
+        create: dontCreateBeerIf,
+        search: beerSearchIf
+      }}
+      createStorageIf={dontCreateStorageIf}
+      reviewContainerIf={reviewContainerIf}
+    />
+  )
+
+  const selects = getAllByRole('radio', { name: 'Select' })
+  await user.click(selects[0])
+  const beerSearch = getByPlaceholderText('Search beer')
+  expect(beerSearch).toBeDefined()
+  beerSearch.focus()
+  await user.paste('Seve')
+  const beerButton = await findByRole(
+    'button',
+    { name: 'Severin (Koskipanimo)' }
+  )
+  expect(beerButton).toBeDefined()
+  await user.click(beerButton)
+
+  const changeButton = getByRole('button', { name: 'Change' })
+  await user.click(changeButton)
+  getByPlaceholderText('Name')
+})
+
+test('clears container', async () => {
+  const user = userEvent.setup()
+  const { getByRole } = render(
+    <CreateStorage
+      searchIf={searchIf}
+      selectBeerIf={{
+        create: dontCreateBeerIf,
+        search: beerSearchIf
+      }}
+      createStorageIf={dontCreateStorageIf}
+      reviewContainerIf={reviewContainerIf}
+    />
+  )
+
+  const containerSelect = getByRole('combobox')
+  await user.click(containerSelect)
+  const bottle = getByRole('option', { name: 'bottle 0.33' })
+  await userEvent.selectOptions(containerSelect, bottle)
+
+  const changeButton = getByRole('button', { name: 'Change' })
+  await user.click(changeButton)
+  getByRole('combobox')
+})
+
+test('shows error', async () => {
+  const { getByText } = render(
+    <CreateStorage
+      searchIf={searchIf}
+      selectBeerIf={{
+        create: dontCreateBeerIf,
+        search: beerSearchIf
+      }}
+      createStorageIf={dontCreateStorageIf}
+      reviewContainerIf={reviewContainerIf}
+    />
+  )
+
+  getByText(/Creating failed. Please check data/)
 })

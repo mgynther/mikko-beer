@@ -42,9 +42,12 @@ function CreateStorage (props: Props): React.JSX.Element {
     container !== undefined &&
     isBestBeforeValid
 
-  async function doChange (event: SubmitEvent<HTMLFormElement>): Promise<void> {
+  async function doChange (
+    event: SubmitEvent<HTMLFormElement>,
+    beer: BeerWithIds,
+    container: Container
+  ): Promise<void> {
     event.preventDefault()
-    if (!isValid) return
     const bb = new Date(`${bestBefore}T12:00:00.000`).toISOString()
     await create({
       beer: beer.id,
@@ -61,7 +64,9 @@ function CreateStorage (props: Props): React.JSX.Element {
       <h4>Create storage beer</h4>
       <form
         className="CreateStorageForm"
-        onSubmit={(e) => { void doChange(e) }}>
+        onSubmit={isValid ? (e): void => {
+          void doChange(e, beer, container)
+        } : undefined}>
         <h5>Beer</h5>
         <div className='CreateStorageContent'>
           {beer === undefined
