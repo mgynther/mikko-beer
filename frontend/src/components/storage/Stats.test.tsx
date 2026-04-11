@@ -42,35 +42,42 @@ const emptyParamsIf: ParamsIf = {
   })
 }
 
-const annualStatsParamsIf: ParamsIf = {
-  ...emptyParamsIf,
-  useSearch: () => ({
-    get: (key: string): string | undefined => {
-      if (key === 'stats') {
-        return 'annual'
+function getStatsParamsIf (mode: string): ParamsIf {
+  return {
+    ...emptyParamsIf,
+    useSearch: () => ({
+      get: (key: string): string | undefined => {
+        if (key === 'stats') {
+          return mode
+        }
+        return undefined
       }
-      return undefined
-    }
-  })
+    })
+  }
 }
 
-const monthlyStatsParamsIf: ParamsIf = {
-  ...emptyParamsIf,
-  useSearch: () => ({
-    get: (key: string): string | undefined => {
-      if (key === 'stats') {
-        return 'monthly'
-      }
-      return undefined
-    }
-  })
-}
+const annualStatsParamsIf: ParamsIf = getStatsParamsIf('annual')
 
-test('renders default annual storage stats', () => {
+const monthlyStatsParamsIf: ParamsIf = getStatsParamsIf('monthly')
+
+test('renders default annual storage stats on no search parameter', () => {
   const { getByText } = render(
     <Stats
       statsIf={statsIf}
       paramsIf={emptyParamsIf}
+    />
+  )
+  getByText('2021')
+  getByText('8')
+  getByText('2024')
+  getByText('15')
+})
+
+test('renders default annual storage stats on unknown search parameter', () => {
+  const { getByText } = render(
+    <Stats
+      statsIf={statsIf}
+      paramsIf={getStatsParamsIf('unknown')}
     />
   )
   getByText('2021')
@@ -122,7 +129,7 @@ test('switch to annual storage stats', async () => {
   await waitFor(() => {
     expect(setSearch).toHaveBeenCalledWith('annual', {})
   })
-  expect(setSearch).toBeCalledTimes(1)
+  expect(setSearch).toHaveBeenCalledTimes(1)
 })
 
 test('switch to monthly storage stats', async () => {
@@ -142,5 +149,5 @@ test('switch to monthly storage stats', async () => {
   await waitFor(() => {
     expect(setSearch).toHaveBeenCalledWith('monthly', {})
   })
-  expect(setSearch).toBeCalledTimes(1)
+  expect(setSearch).toHaveBeenCalledTimes(1)
 })
