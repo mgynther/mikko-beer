@@ -11,6 +11,7 @@ import type {
   YearMonth
 } from '../../core/stats/types'
 import type { UseDebounce } from '../../core/types'
+import { openFilters } from './filters-test-util'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -453,4 +454,25 @@ orderChangeTests.forEach(testCase => {
     }
     expect(setState.mock.calls).toEqual([[expected]])
   })
+})
+
+test('opens filters', async () => {
+  const user = userEvent.setup()
+  const setState = vitest.fn()
+  const { getByRole } = render(
+    <LinkWrapper>
+      <Location
+        breweryId={undefined}
+        locationId={undefined}
+        search={emptySearchParameters}
+        setState={setState}
+        styleId={'55942ddd-e942-4359-bf34-26cb70a8929c'}
+        getLocationStatsIf={usedStats}
+      />
+    </LinkWrapper>
+  )
+  await openFilters(getByRole, user)
+  expect(setState).toHaveBeenCalledTimes(1)
+  const filtersOpen = setState.mock.calls[0][0].filters_open
+  expect(filtersOpen).toEqual('1')
 })
