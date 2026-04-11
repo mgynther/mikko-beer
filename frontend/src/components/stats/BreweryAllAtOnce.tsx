@@ -81,7 +81,6 @@ function BreweryAllAtOnce (props: Props): React.JSX.Element {
         timeStart: toTimestamp(timeStart, 'start'),
         timeEnd: toTimestamp(timeEnd, 'end')
       })
-      if (result === undefined) return
       setLoadedBreweries([...result.brewery])
     }
     void loadAll()
@@ -99,9 +98,18 @@ function BreweryAllAtOnce (props: Props): React.JSX.Element {
     formatYearMonth(timeEnd)
   ])
 
+  function getBreweries(): OneBreweryStats[] {
+    if (loadedBreweries === undefined) {
+      return []
+    }
+    if (isLoading) {
+      return []
+    }
+    return loadedBreweries
+  }
   return (
     <BreweryStatsTable
-      breweries={isLoading ? [] : loadedBreweries ?? []}
+      breweries={getBreweries()}
       filters={props.filters}
       isFiltersOpen={props.isFiltersOpen}
       setIsFiltersOpen={props.setIsFiltersOpen}

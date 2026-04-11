@@ -180,6 +180,64 @@ test('renders brewery stats', () => {
   getByText(lehe.reviewCount)
 })
 
+test('clears loaded breweries on filter change pending', () => {
+  const setLoadedBreweries = vitest.fn()
+  render(
+    <LinkWrapper>
+      <BreweryAllAtOnce
+        getBreweryStatsIf={unusedStats}
+        breweryId={undefined}
+        locationId={undefined}
+        styleId={styleId}
+        loadedBreweries={[koskipanimo, lehe]}
+        setLoadedBreweries={setLoadedBreweries}
+        sortingDirection={'asc'}
+        sortingOrder={'brewery_name'}
+        setSortingOrder={() => undefined}
+        filters={unusedFilters}
+        isFiltersOpen={false}
+        setIsFiltersOpen={dontCall}
+        isFilterChangePending={true}
+      />
+    </LinkWrapper>
+  )
+  expect(setLoadedBreweries.mock.calls).toEqual([[undefined], [undefined]])
+})
+
+test('renders loading', () => {
+  const { getAllByRole } = render(
+    <LinkWrapper>
+      <BreweryAllAtOnce
+        getBreweryStatsIf={{
+          useStats: () => ({
+            query: async (): Promise<BreweryStats> => ({ brewery: [] }),
+            stats: undefined,
+            isLoading: true
+          }),
+          infiniteScroll: dontCall,
+          minTime,
+          maxTime,
+          getUseDebounce
+        }}
+        breweryId={undefined}
+        locationId={undefined}
+        styleId={styleId}
+        loadedBreweries={undefined}
+        setLoadedBreweries={() => undefined}
+        sortingDirection={'asc'}
+        sortingOrder={'brewery_name'}
+        setSortingOrder={() => undefined}
+        filters={unusedFilters}
+        isFiltersOpen={false}
+        setIsFiltersOpen={dontCall}
+        isFilterChangePending={false}
+      />
+    </LinkWrapper>
+  )
+  const cells = getAllByRole('cell')
+  expect(cells.length).toEqual(9)
+})
+
 test('sets minimum review count filter', () => {
   const setMinimumReviewAverage = vitest.fn()
   const { getByDisplayValue } = render(
