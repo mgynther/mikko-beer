@@ -40,3 +40,16 @@ test('sets value on mobile', () => {
   expect(setDisplayValue.mock.calls).toEqual([[21], [194]])
   expect(setValue.mock.calls).toEqual([[194]])
 })
+
+test('defaults to first value on invalid', () => {
+  const { getByDisplayValue } = render(
+    <ValueFilterSlider
+      title={'Title'}
+      value={1}
+      values={[5, 21, 194]}
+      setDisplayValue={vitest.fn()}
+      setValue={vitest.fn()}
+    />
+  )
+  getByDisplayValue(0)
+})
