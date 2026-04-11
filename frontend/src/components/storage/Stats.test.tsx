@@ -151,3 +151,20 @@ test('switch to monthly storage stats', async () => {
   })
   expect(setSearch).toHaveBeenCalledTimes(1)
 })
+
+test('ignore selecting current storage stats mode', async () => {
+  const user = userEvent.setup()
+  const setSearch = vitest.fn()
+  const { getByRole } = render(
+    <Stats
+      statsIf={{
+        ...statsIf,
+        setSearch
+      }}
+      paramsIf={annualStatsParamsIf}
+    />
+  )
+  const monthlyButton = getByRole('button', { name: 'Annual' })
+  await user.click(monthlyButton)
+  expect(setSearch).not.toHaveBeenCalled()
+})
