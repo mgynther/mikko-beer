@@ -27,6 +27,13 @@ function isEarlierOrEqual (a: YearMonth, b: YearMonth): boolean {
 }
 
 function getSliderValues (minTime: YearMonth, maxTime: YearMonth): YearMonth[] {
+  if (!isEarlierOrEqual(minTime, maxTime)) {
+    const formattedMax = getFormattedTime(maxTime)
+    const formattedMin = getFormattedTime(minTime)
+    throw new Error(
+      `maxTime ${formattedMax} cannot be before minTime ${formattedMin}`
+    )
+  }
   const result: YearMonth[] = []
   const yearMonth: YearMonth = {
     ...minTime
@@ -57,7 +64,8 @@ function TimeFilterSlider (props: Props): React.JSX.Element {
     }
     return 0
   }
-  const [displayValue, setDisplayValue] = useState(props.time)
+  const [displayValue, setDisplayValue] =
+    useState(sliderValues[findIndex(props.time)])
   return (
     <StepFilterSlider
       title={`${props.title}: ${getFormattedTime(displayValue)}`}
