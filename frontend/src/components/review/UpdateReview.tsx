@@ -29,19 +29,12 @@ function UpdateReview (props: Props): React.JSX.Element {
     undefined
   )
   const { update, isLoading } = props.updateReviewIf.useUpdate()
-  async function doUpdate (): Promise<void> {
-    if (newReview === undefined) {
-      throw new Error('review must not be undefined when updating')
-    }
-    try {
-      await update({
-        ...newReview,
-        id: props.initialReview.joined.id
-      })
-      props.onSaved()
-    } catch (e) {
-      console.warn('Failed to update review', e)
-    }
+  async function doUpdate (newReview: ReviewRequest): Promise<void> {
+    await update({
+      ...newReview,
+      id: props.initialReview.joined.id
+    })
+    props.onSaved()
   }
   return (
     <>
@@ -64,7 +57,9 @@ function UpdateReview (props: Props): React.JSX.Element {
           setNewReview(undefined)
           props.onCancel()
         }}
-        onSave={() => { void doUpdate() }}
+        onSave={newReview
+          ? (): void => { void doUpdate(newReview) }
+          : undefined}
       />
     </>
   )
