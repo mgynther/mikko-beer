@@ -47,7 +47,6 @@ function AnnualContainerAllAtOnce (props: Props): React.JSX.Element {
         styleId,
         pagination: giantPage
       })
-      if (result === undefined) return
       setLoadedAnnualContainers([...result.annualContainer])
     }
     void loadAll()
