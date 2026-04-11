@@ -177,6 +177,106 @@ test('renders brewery stats', () => {
   getByText(lehe.reviewCount)
 })
 
+test('renders loading', () => {
+  const { getAllByRole } = render(
+    <LinkWrapper>
+      <BreweryInfiniteScroll
+        getBreweryStatsIf={{
+          ...unusedStats,
+          useStats: () => ({
+            query: dontCall,
+            stats: undefined,
+            isLoading: true
+          })
+        }}
+        loadedBreweries={undefined}
+        setLoadedBreweries={() => undefined}
+        sortingDirection={'asc'}
+        sortingOrder={'brewery_name'}
+        setSortingOrder={() => undefined}
+        filters={unusedFilters}
+        isFiltersOpen={false}
+        setIsFiltersOpen={dontCall}
+        isFilterChangePending={false}
+      />
+    </LinkWrapper>
+  )
+  const cells = getAllByRole('cell')
+  expect(cells.length).toEqual(9)
+})
+
+test('does not try to load more when there is no more', () => {
+  let loadCallback: () => void = () => undefined
+  const query = vitest.fn()
+  render(
+    <LinkWrapper>
+      <BreweryInfiniteScroll
+        getBreweryStatsIf={{
+          ...unusedStats,
+          useStats: () => ({
+            query: query,
+            stats: {
+              brewery: []
+            },
+            isLoading: false
+          }),
+          infiniteScroll: (cb) => {
+            loadCallback = cb
+            return (): void => undefined
+          }
+        }}
+        loadedBreweries={[]}
+        setLoadedBreweries={() => undefined}
+        sortingDirection={'asc'}
+        sortingOrder={'brewery_name'}
+        setSortingOrder={() => undefined}
+        filters={unusedFilters}
+        isFiltersOpen={false}
+        setIsFiltersOpen={dontCall}
+        isFilterChangePending={false}
+      />
+    </LinkWrapper>
+  )
+  loadCallback()
+  expect(query.mock.calls).toEqual([])
+})
+
+test('does not try to load more when loading', () => {
+  let loadCallback: () => void = () => undefined
+  const query = vitest.fn()
+  render(
+    <LinkWrapper>
+      <BreweryInfiniteScroll
+        getBreweryStatsIf={{
+          ...unusedStats,
+          useStats: () => ({
+            query: query,
+            stats: {
+              brewery: []
+            },
+            isLoading: true
+          }),
+          infiniteScroll: (cb) => {
+            loadCallback = cb
+            return (): void => undefined
+          }
+        }}
+        loadedBreweries={undefined}
+        setLoadedBreweries={() => undefined}
+        sortingDirection={'asc'}
+        sortingOrder={'brewery_name'}
+        setSortingOrder={() => undefined}
+        filters={unusedFilters}
+        isFiltersOpen={false}
+        setIsFiltersOpen={dontCall}
+        isFilterChangePending={false}
+      />
+    </LinkWrapper>
+  )
+  loadCallback()
+  expect(query.mock.calls).toEqual([])
+})
+
 test('sets minimum review count filter', () => {
   const setMinimumReviewAverage = vitest.fn()
   const { getByDisplayValue } = render(

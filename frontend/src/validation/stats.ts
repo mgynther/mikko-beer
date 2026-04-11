@@ -146,6 +146,12 @@ export function validateBreweryStatsOrUndefined(
   if (typeof result === 'undefined') {
     return undefined
   }
+  return validateBreweryStats(result)
+}
+
+export function validateBreweryStats(
+  result: unknown
+): BreweryStats {
   type StatsT = t.TypeOf<typeof ValidatedBreweryStats>
   const decoded = ValidatedBreweryStats.decode(result)
   if (isLeft(decoded)) {

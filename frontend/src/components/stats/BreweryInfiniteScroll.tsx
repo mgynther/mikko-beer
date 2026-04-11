@@ -71,14 +71,17 @@ function BreweryInfiniteScroll (props: Props): React.JSX.Element {
         timeStart: toTimestamp(timeStart, 'start'),
         timeEnd: toTimestamp(timeEnd, 'end')
       })
-      if (result === undefined) return
       const newBreweries = [...(loadedBreweries ?? []), ...result.brewery]
       setLoadedBreweries(newBreweries)
     }
     function checkLoad (): void {
-      if (!isLoading && hasMore) {
-        void loadMore()
+      if (isLoading) {
+        return
       }
+      if (!hasMore) {
+        return
+      }
+      void loadMore()
     }
     return props.getBreweryStatsIf.infiniteScroll(checkLoad)
   }, [

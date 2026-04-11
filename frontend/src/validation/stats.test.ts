@@ -14,6 +14,7 @@ import type {
 import {
   validateAnnualContainerStatsOrUndefined,
   validateAnnualStatsOrUndefined,
+  validateBreweryStats,
   validateBreweryStatsOrUndefined,
   validateContainerStatsOrUndefined,
   validateLocationStats,
@@ -127,6 +128,17 @@ test('validateBreweryStatsOrUndefined passes valid', () => {
 
 test('validateBreweryStatsOrUndefined throws invalid', () => {
   expect(() => validateBreweryStatsOrUndefined({
+    brewery: [{ breweryId: 123 }]
+  })).toThrow()
+})
+
+test('validateBreweryStats passes valid', () => {
+  const result = validateBreweryStats(validBrewery)
+  expect(result).toEqual(validBrewery)
+})
+
+test('validateBreweryStats throws invalid', () => {
+  expect(() => validateBreweryStats({
     brewery: [{ breweryId: 123 }]
   })).toThrow()
 })

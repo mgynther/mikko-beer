@@ -25,6 +25,7 @@ import {
 import {
   validateAnnualStatsOrUndefined,
   validateAnnualContainerStatsOrUndefined,
+  validateBreweryStats,
   validateBreweryStatsOrUndefined,
   validateContainerStatsOrUndefined,
   validateLocationStats,
@@ -82,9 +83,9 @@ const stats: (
         return {
           query: async (
             params: BreweryStatsQueryParams
-          ): Promise<BreweryStats | undefined> => {
+          ): Promise<BreweryStats> => {
             const result = await trigger(params)
-            return validateBreweryStatsOrUndefined(result.data)
+            return validateBreweryStats(result.data)
           },
           stats: validateBreweryStatsOrUndefined(data),
           isLoading: isFetching

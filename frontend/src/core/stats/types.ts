@@ -218,7 +218,7 @@ export interface GetBreweryStatsIf {
   useStats: () => {
     query: (
       params: BreweryStatsQueryParams
-    ) => Promise<BreweryStats | undefined>
+    ) => Promise<BreweryStats>
     stats: BreweryStats | undefined
     isLoading: boolean
   },
