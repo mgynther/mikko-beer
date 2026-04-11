@@ -4,13 +4,16 @@ import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import Stats from './Stats'
 import type {
+  LocationStats,
   OneAnnualContainerStats,
+  OneLocationStats,
   StatsIf,
   YearMonth
 } from '../../core/stats/types'
 import LinkWrapper from '../LinkWrapper'
 import type { ParamsIf } from '../util'
 import type { UseDebounce } from '../../core/types'
+import { openFilters } from './filters-test-util'
 
 const getUseDebounce = function<T>(): UseDebounce<T> {
   return (value: T) => [value, false]
@@ -164,6 +167,10 @@ const overallTestCases: OverallTestCase[] = [
   {
     paramsIf: getStatsParamsIf('overall'),
     description: 'from search param'
+  },
+  {
+    paramsIf: getStatsParamsIf('unknown'),
+    description: 'from unknown search param'
   }
 ]
 
@@ -350,6 +357,31 @@ test('renders brewery stats', async () => {
   getByText(lehe.reviewCount)
 })
 
+test('sets state', async () => {
+  const user = userEvent.setup()
+  const setSearch = vitest.fn()
+  const statsIf: StatsIf = {
+    ...emptyStatsIf,
+    setSearch
+  }
+
+  const { getByRole } = render(
+    <LinkWrapper>
+      <Stats
+        paramsIf={getStatsParamsIf('brewery')}
+        statsIf={statsIf}
+        breweryId={undefined}
+        locationId={undefined}
+        styleId={undefined}
+      />
+    </LinkWrapper>
+  )
+  await openFilters(getByRole, user)
+  expect(setSearch).toHaveBeenCalledTimes(1)
+  const filtersOpen = setSearch.mock.calls[0][1].filters_open
+  expect(filtersOpen).toEqual('1')
+})
+
 test('renders container stats', () => {
   const { getByText } = render(
     <Stats
@@ -434,6 +466,58 @@ test('renders filtered container stats', () => {
   getByText('8.23')
   getByText('24')
   getByText('can 0.44')
+})
+
+test('renders location stats', async () => {
+  const oluthuone: OneLocationStats = {
+    locationId: '3b8d95f2-a6a7-4f6b-b347-50328b689a10',
+    locationName: 'Oluthuone Panimomestari',
+    reviewAverage: '9.06',
+    reviewCount: '35'
+  }
+  const kuja: OneLocationStats = {
+    locationId: 'eb247a3c-0b80-4efa-954a-1582115dd0a0',
+    locationName: 'Kuja Beer Shop & Bar',
+    reviewAverage: '9.71',
+    reviewCount: '24'
+  }
+  const locationStats: LocationStats =
+    { location: [{ ...oluthuone }, { ...kuja }]}
+  const statsIf: StatsIf = {
+    ...emptyStatsIf,
+    location: {
+      useStats: () => ({
+        query: async () => locationStats,
+        stats: emptyLocationStats,
+        isLoading: false
+      }),
+      infiniteScroll: (cb: () => void) => {
+        cb()
+        return () => undefined
+      },
+      minTime,
+      maxTime,
+      getUseDebounce
+    }
+  }
+
+  const { getByText } = render(
+    <LinkWrapper>
+      <Stats
+        paramsIf={getStatsParamsIf('location')}
+        statsIf={statsIf}
+        breweryId={'8e13fb83-6793-4c5b-a53a-9d867f07dfe4'}
+        locationId={'e3da0a72-c0fc-43dc-95ca-2019406c40fb'}
+        styleId={'6ad84abe-06e7-4a76-8c38-e57c072c7c2e'}
+      />
+    </LinkWrapper>
+  )
+  await waitFor(() => getByText(oluthuone.locationName))
+  getByText(oluthuone.reviewAverage)
+  getByText(oluthuone.reviewCount)
+  getByText(kuja.locationName)
+  getByText(kuja.reviewAverage)
+  getByText(kuja.reviewCount)
 })
 
 test('renders rating stats', () => {
@@ -583,3 +667,25 @@ navigationTests.forEach(testCase => {
     expect(setSearch.mock.calls).toEqual([[testCase.destinationSearch, {}]])
   }); }
 )
+
+test('navigates from overall to overall', async () => {
+  const user = userEvent.setup()
+  const setSearch = vitest.fn()
+  const { getByRole } = render(
+    <LinkWrapper>
+    <Stats
+    paramsIf={getStatsParamsIf('overall')}
+    statsIf={{
+      ...emptyStatsIf,
+      setSearch
+    }}
+    breweryId={undefined}
+    locationId={undefined}
+    styleId={undefined}
+    />
+    </LinkWrapper>
+  )
+  const naviButton = getByRole('button', { name: 'Overall' })
+  await user.click(naviButton)
+  expect(setSearch).not.toHaveBeenCalled()
+})
