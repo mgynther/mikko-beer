@@ -6,6 +6,7 @@ import type {
 } from '../../core/stats/types'
 
 import AnnualContainerInfiniteScroll from './AnnualContainerInfiniteScroll'
+import { loadingIndicatorText } from '../common/LoadingIndicator'
 
 const stats2023: OneAnnualContainerStats = {
   containerId: 'c585a736-2880-47bf-a185-bf0f167cc804',
@@ -106,4 +107,73 @@ test('renders annual container stats', async () => {
   getByText('67')
   getByText('9.12')
   getByText('2022')
+})
+
+test('renders loading', () => {
+  const { getByText } = render(
+    <AnnualContainerInfiniteScroll
+      getAnnualContainerStatsIf={{
+        useStats: () => ({
+          query: async (
+          ): Promise<AnnualContainerStats> => ({ annualContainer: [] }),
+          stats: undefined,
+          isLoading: true
+        }),
+        infiniteScroll: (): () => undefined => () => undefined
+      }}
+      loadedAnnualContainers={undefined}
+      setLoadedAnnualContainers={() => undefined}
+    />
+  )
+  getByText(loadingIndicatorText)
+})
+
+test('does not try to load more when there is no more', () => {
+  let loadCallback: () => void = () => undefined
+  const query = vitest.fn()
+  render(
+    <AnnualContainerInfiniteScroll
+      getAnnualContainerStatsIf={{
+        useStats: () => ({
+          query: query,
+          stats: {
+            annualContainer: []
+          },
+          isLoading: false
+        }),
+        infiniteScroll: (cb) => {
+          loadCallback = cb
+          return (): void => undefined
+        }
+      }}
+      loadedAnnualContainers={[]}
+      setLoadedAnnualContainers={() => undefined}
+    />
+  )
+  loadCallback()
+  expect(query.mock.calls).toEqual([])
+})
+
+test('does not try to load more when loading', () => {
+  let loadCallback: () => void = () => undefined
+  const query = vitest.fn()
+  render(
+    <AnnualContainerInfiniteScroll
+      getAnnualContainerStatsIf={{
+        useStats: () => ({
+          query: query,
+          stats: undefined,
+          isLoading: true
+        }),
+        infiniteScroll: (cb) => {
+          loadCallback = cb
+          return (): void => undefined
+        }
+      }}
+      loadedAnnualContainers={undefined}
+      setLoadedAnnualContainers={() => undefined}
+    />
+  )
+  loadCallback()
+  expect(query.mock.calls).toEqual([])
 })

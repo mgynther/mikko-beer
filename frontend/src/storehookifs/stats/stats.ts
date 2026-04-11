@@ -24,6 +24,7 @@ import {
 } from "../../store/stats/api"
 import {
   validateAnnualStatsOrUndefined,
+  validateAnnualContainerStats,
   validateAnnualContainerStatsOrUndefined,
   validateBreweryStats,
   validateBreweryStatsOrUndefined,
@@ -66,9 +67,9 @@ const stats: (
         return {
           query: async (
             params: AnnualContainerStatsQueryParams
-          ): Promise<AnnualContainerStats | undefined> => {
+          ): Promise<AnnualContainerStats> => {
             const result = await trigger(params)
-            return validateAnnualContainerStatsOrUndefined(result.data)
+            return validateAnnualContainerStats(result.data)
           },
           stats: validateAnnualContainerStatsOrUndefined(data),
           isLoading: isFetching

@@ -207,7 +207,7 @@ export interface GetAnnualContainerStatsIf {
   useStats: () => {
     query: (
       params: AnnualContainerStatsQueryParams
-    ) => Promise<AnnualContainerStats | undefined>
+    ) => Promise<AnnualContainerStats>
     stats: AnnualContainerStats | undefined
     isLoading: boolean
   },

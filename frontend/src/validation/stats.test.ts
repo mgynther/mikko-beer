@@ -12,6 +12,7 @@ import type {
 } from '../core/stats/types'
 
 import {
+  validateAnnualContainerStats,
   validateAnnualContainerStatsOrUndefined,
   validateAnnualStatsOrUndefined,
   validateBreweryStats,
@@ -101,6 +102,17 @@ test('validateAnnualContainerStatsOrUndefined passes valid', () => {
 
 test('validateAnnualContainerStatsOrUndefined throws invalid', () => {
   expect(() => validateAnnualContainerStatsOrUndefined({
+    annualContainer: [{ containerId: 123 }]
+  })).toThrow()
+})
+
+test('validateAnnualContainerStats passes valid', () => {
+  const result = validateAnnualContainerStats(validAnnualContainer)
+  expect(result).toEqual(validAnnualContainer)
+})
+
+test('validateAnnualContainerStats throws invalid', () => {
+  expect(() => validateAnnualContainerStats({
     annualContainer: [{ containerId: 123 }]
   })).toThrow()
 })

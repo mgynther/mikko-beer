@@ -131,6 +131,12 @@ export function validateAnnualContainerStatsOrUndefined(
   if (typeof result === 'undefined') {
     return undefined
   }
+  return validateAnnualContainerStats(result)
+}
+
+export function validateAnnualContainerStats(
+  result: unknown
+): AnnualContainerStats {
   type StatsT = t.TypeOf<typeof ValidatedAnnualContainerStats>
   const decoded = ValidatedAnnualContainerStats.decode(result)
   if (isLeft(decoded)) {

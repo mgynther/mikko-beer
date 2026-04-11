@@ -36,7 +36,6 @@ function AnnualContainerInfiniteScroll (props: Props): React.JSX.Element {
           size: 30
         }
       })
-      if (result === undefined) return
       const newAnnualContainers = [
         ...(loadedAnnualContainers ?? []),
         ...result.annualContainer
@@ -44,9 +43,13 @@ function AnnualContainerInfiniteScroll (props: Props): React.JSX.Element {
       setLoadedAnnualContainers(newAnnualContainers)
     }
     function checkLoad (): void {
-      if (!isLoading && hasMore) {
-        void loadMore()
+      if (isLoading) {
+        return
       }
+      if (!hasMore) {
+        return
+      }
+      void loadMore()
     }
     return props.getAnnualContainerStatsIf.infiniteScroll(checkLoad)
   }, [
