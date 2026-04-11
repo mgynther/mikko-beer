@@ -239,7 +239,7 @@ export interface GetLocationStatsIf {
   useStats: () => {
     query: (
       params: LocationStatsQueryParams
-    ) => Promise<LocationStats | undefined>
+    ) => Promise<LocationStats>
     stats: LocationStats | undefined
     isLoading: boolean
   },

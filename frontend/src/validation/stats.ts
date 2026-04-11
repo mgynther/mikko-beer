@@ -170,12 +170,9 @@ export function validateContainerStatsOrUndefined(
   return valid
 }
 
-export function validateLocationStatsOrUndefined(
+export function validateLocationStats(
   result: unknown
-): LocationStats | undefined {
-  if (typeof result === 'undefined') {
-    return undefined
-  }
+): LocationStats {
   type StatsT = t.TypeOf<typeof ValidatedLocationStats>
   const decoded = ValidatedLocationStats.decode(result)
   if (isLeft(decoded)) {
@@ -183,6 +180,15 @@ export function validateLocationStatsOrUndefined(
   }
   const valid: StatsT = decoded.right
   return valid
+}
+
+export function validateLocationStatsOrUndefined(
+  result: unknown
+): LocationStats | undefined {
+  if (typeof result === 'undefined') {
+    return undefined
+  }
+  return validateLocationStats(result)
 }
 
 export function validateRatingStatsOrUndefined(

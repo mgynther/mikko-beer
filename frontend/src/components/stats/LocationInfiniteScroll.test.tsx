@@ -72,7 +72,7 @@ const getUseDebounce = function<T>(): UseDebounce<T> {
 const unusedStats: GetLocationStatsIf = {
   useStats: () => ({
     query: async () => ({ location: []}),
-      stats: { location: [] },
+    stats: { location: [] },
     isLoading: false
   }),
   infiniteScroll: () => () => undefined,
@@ -173,6 +173,106 @@ test('renders location stats', () => {
   getByText(oluthuone.locationName)
   getByText(oluthuone.reviewAverage)
   getByText(oluthuone.reviewCount)
+})
+
+test('renders loading', () => {
+  const { getAllByRole } = render(
+    <LinkWrapper>
+      <LocationInfiniteScroll
+        getLocationStatsIf={{
+          ...unusedStats,
+          useStats: () => ({
+            query: dontCall,
+            stats: undefined,
+            isLoading: true
+          })
+        }}
+        loadedLocations={undefined}
+        setLoadedLocations={() => undefined}
+        sortingDirection={'asc'}
+        sortingOrder={'location_name'}
+        setSortingOrder={() => undefined}
+        filters={unusedFilters}
+        isFiltersOpen={false}
+        setIsFiltersOpen={dontCall}
+        isFilterChangePending={false}
+      />
+    </LinkWrapper>
+  )
+  const cells = getAllByRole('cell')
+  expect(cells.length).toEqual(9)
+})
+
+test('does not try to load more when there is no more', () => {
+  let loadCallback: () => void = () => undefined
+  const query = vitest.fn()
+  render(
+    <LinkWrapper>
+      <LocationInfiniteScroll
+        getLocationStatsIf={{
+          ...unusedStats,
+          useStats: () => ({
+            query: query,
+            stats: {
+              location: []
+            },
+            isLoading: false
+          }),
+          infiniteScroll: (cb) => {
+            loadCallback = cb
+            return (): void => undefined
+          }
+        }}
+        loadedLocations={[]}
+        setLoadedLocations={() => undefined}
+        sortingDirection={'asc'}
+        sortingOrder={'location_name'}
+        setSortingOrder={() => undefined}
+        filters={unusedFilters}
+        isFiltersOpen={false}
+        setIsFiltersOpen={dontCall}
+        isFilterChangePending={false}
+      />
+    </LinkWrapper>
+  )
+  loadCallback()
+  expect(query.mock.calls).toEqual([])
+})
+
+test('does not try to load more when loading', () => {
+  let loadCallback: () => void = () => undefined
+  const query = vitest.fn()
+  render(
+    <LinkWrapper>
+      <LocationInfiniteScroll
+        getLocationStatsIf={{
+          ...unusedStats,
+          useStats: () => ({
+            query: query,
+            stats: {
+              location: []
+            },
+            isLoading: true
+          }),
+          infiniteScroll: (cb) => {
+            loadCallback = cb
+            return (): void => undefined
+          }
+        }}
+        loadedLocations={undefined}
+        setLoadedLocations={() => undefined}
+        sortingDirection={'asc'}
+        sortingOrder={'location_name'}
+        setSortingOrder={() => undefined}
+        filters={unusedFilters}
+        isFiltersOpen={false}
+        setIsFiltersOpen={dontCall}
+        isFilterChangePending={false}
+      />
+    </LinkWrapper>
+  )
+  loadCallback()
+  expect(query.mock.calls).toEqual([])
 })
 
 test('sets minimum review count filter', () => {

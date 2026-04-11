@@ -16,6 +16,7 @@ import {
   validateAnnualStatsOrUndefined,
   validateBreweryStatsOrUndefined,
   validateContainerStatsOrUndefined,
+  validateLocationStats,
   validateLocationStatsOrUndefined,
   validateOverallStatsOrUndefined,
   validateRatingStatsOrUndefined,
@@ -166,6 +167,17 @@ const validLocation: LocationStats = {
     reviewCount: '156'
   }]
 }
+
+test('validateLocationStats passes valid', () => {
+  const result = validateLocationStats(validLocation)
+  expect(result).toEqual(validLocation)
+})
+
+test('validateLocationStats throws invalid', () => {
+  expect(() => validateLocationStats({
+    location: [{ locationId: 123 }]
+  })).toThrow()
+})
 
 test('validateLocationStatsOrUndefined passes undefined', () => {
   const result = validateLocationStatsOrUndefined(undefined)

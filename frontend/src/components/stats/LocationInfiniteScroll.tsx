@@ -71,14 +71,17 @@ function LocationInfiniteScroll (props: Props): React.JSX.Element {
         timeStart: toTimestamp(timeStart, 'start'),
         timeEnd: toTimestamp(timeEnd, 'end')
       })
-      if (result === undefined) return
       const newLocations = [...(loadedLocations ?? []), ...result.location]
       setLoadedLocations(newLocations)
     }
     function checkLoad (): void {
-      if (!isLoading && hasMore) {
-        void loadMore()
+      if (isLoading) {
+        return
       }
+      if (!hasMore) {
+        return
+      }
+      void loadMore()
     }
     return props.getLocationStatsIf.infiniteScroll(checkLoad)
   }, [

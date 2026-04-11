@@ -122,7 +122,7 @@ type NoInfiniteScrollStats =
 
 const noInfiniteScrollStats: NoInfiniteScrollStats = {
   useStats: () => ({
-    query: async () => undefined,
+    query: dontCall,
     stats: undefined,
     isLoading: false
   }),
