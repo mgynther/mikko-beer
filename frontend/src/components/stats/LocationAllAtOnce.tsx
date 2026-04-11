@@ -81,7 +81,6 @@ function LocationAllAtOnce (props: Props): React.JSX.Element {
         timeStart: toTimestamp(timeStart, 'start'),
         timeEnd: toTimestamp(timeEnd, 'end')
       })
-      if (result === undefined) return
       setLoadedLocations([...result.location])
     }
     void loadAll()
@@ -99,9 +98,18 @@ function LocationAllAtOnce (props: Props): React.JSX.Element {
     formatYearMonth(timeEnd)
   ])
 
+  function getLocations(): OneLocationStats[] {
+    if (loadedLocations === undefined) {
+      return []
+    }
+    if (isLoading) {
+      return []
+    }
+    return loadedLocations
+  }
   return (
     <LocationStatsTable
-      locations={isLoading ? [] : loadedLocations ?? []}
+      locations={getLocations()}
       filters={props.filters}
       isFiltersOpen={props.isFiltersOpen}
       setIsFiltersOpen={props.setIsFiltersOpen}

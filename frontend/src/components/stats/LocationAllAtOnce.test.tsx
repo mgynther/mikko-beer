@@ -182,6 +182,64 @@ test('renders location stats', () => {
   getByText(oluthuone.reviewCount)
 })
 
+test('clears loaded locations on filter change pending', () => {
+  const setLoadedLocations = vitest.fn()
+  render(
+    <LinkWrapper>
+      <LocationAllAtOnce
+        getLocationStatsIf={unusedStats}
+        breweryId={undefined}
+        locationId={undefined}
+        styleId={styleId}
+        loadedLocations={[plevna, oluthuone]}
+        setLoadedLocations={setLoadedLocations}
+        sortingDirection={'asc'}
+        sortingOrder={'location_name'}
+        setSortingOrder={() => undefined}
+        filters={unusedFilters}
+        isFiltersOpen={false}
+        setIsFiltersOpen={dontCall}
+        isFilterChangePending={true}
+      />
+    </LinkWrapper>
+  )
+  expect(setLoadedLocations.mock.calls).toEqual([[undefined], [undefined]])
+})
+
+test('renders loading', () => {
+  const { getAllByRole } = render(
+    <LinkWrapper>
+      <LocationAllAtOnce
+        getLocationStatsIf={{
+          useStats: () => ({
+            query: async (): Promise<LocationStats> => ({ location: [] }),
+            stats: undefined,
+            isLoading: true
+          }),
+          infiniteScroll: dontCall,
+          minTime,
+          maxTime,
+          getUseDebounce
+        }}
+        breweryId={undefined}
+        locationId={undefined}
+        styleId={styleId}
+        loadedLocations={undefined}
+        setLoadedLocations={() => undefined}
+        sortingDirection={'asc'}
+        sortingOrder={'location_name'}
+        setSortingOrder={() => undefined}
+        filters={unusedFilters}
+        isFiltersOpen={false}
+        setIsFiltersOpen={dontCall}
+        isFilterChangePending={false}
+      />
+    </LinkWrapper>
+  )
+  const cells = getAllByRole('cell')
+  expect(cells.length).toEqual(9)
+})
+
 test('sets minimum review count filter', () => {
   const setMinimumReviewAverage = vitest.fn()
   const { getByDisplayValue } = render(
