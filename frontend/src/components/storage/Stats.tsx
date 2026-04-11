@@ -5,10 +5,7 @@ import TabButton from '../common/TabButton'
 import AnnualStats from './AnnualStats'
 import MonthlyStats from './MonthlyStats'
 
-enum Mode {
-  Annual = 'annual',
-  Monthly = 'monthly'
-}
+type Mode = 'annual' | 'monthly'
 
 interface Props {
   statsIf: StorageStatsIf
@@ -22,25 +19,25 @@ interface ModeButton {
 
 const buttons: ModeButton[] = [
   {
-    mode: Mode.Annual,
+    mode: 'annual',
     title: 'Annual'
   },
   {
-    mode: Mode.Monthly,
+    mode: 'monthly',
     title: 'Monthly'
   }
 ]
 
 function getStatsMode (stats: string | undefined): Mode {
-  const defaultValue = Mode.Annual
+  const defaultValue: Mode = 'annual'
   if (stats === undefined) {
     return defaultValue
   }
   switch (stats) {
-    case Mode.Annual as string:
-      return Mode.Annual
-    case Mode.Monthly as string:
-      return Mode.Monthly
+    case 'annual':
+      return 'annual'
+    case 'monthly':
+      return 'monthly'
   }
   return defaultValue
 }
@@ -71,12 +68,12 @@ function Stats (props: Props): React.JSX.Element | null {
           />
         ))}
       </div>
-      {mode === Mode.Annual &&
+      {mode === 'annual' &&
         <AnnualStats
           annualStatsIf={props.statsIf.annual}
         />
       }
-      {mode === Mode.Monthly &&
+      {mode === 'monthly' &&
         <MonthlyStats
           monthlyStatsIf={props.statsIf.monthly}
         />
