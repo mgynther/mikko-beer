@@ -98,7 +98,7 @@ export interface GetReviewIf {
 
 export interface ListReviewsIf {
   useList: () => {
-    list: (params: ListReviewParams) => Promise<JoinedReviewList | undefined>
+    list: (params: ListReviewParams) => Promise<JoinedReviewList>
     reviewList: JoinedReviewList | undefined
     isLoading: boolean
     isUninitialized: boolean

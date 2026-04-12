@@ -1,4 +1,4 @@
-import { act, render } from "@testing-library/react"
+import { act, render, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { expect, test, vitest } from "vitest"
 import Reviews from "./Reviews"
@@ -22,6 +22,7 @@ import type {
 } from "../../core/beer/types"
 import type { SearchIf } from "../../core/search/types"
 import type { SearchLocationIf } from "../../core/location/types"
+import { loadingIndicatorText } from "../common/LoadingIndicator"
 
 const useDebounce: UseDebounce<string> = str => [str, false]
 
@@ -308,4 +309,122 @@ test('sets review sorting', async () => {
       order: 'time'
     }
   }]])
+})
+
+test('renders loading', async () => {
+  let scrollCb: (() => void) = () => undefined
+  const { getByText } = render(
+    <LinkWrapper>
+      <Reviews
+        listReviewsIf={{
+          useList: () => ({
+            list: async (): Promise<JoinedReviewList> => ({
+              reviews: [],
+              sorting: {
+                order: 'beer_name',
+                direction: 'asc'
+              }
+            }),
+            reviewList: undefined,
+            isLoading: true,
+            isUninitialized: true
+          }),
+          infiniteScroll: (
+            cb
+          ): () => undefined => { scrollCb = cb; return () => undefined }
+        }}
+        reviewIf={dontUpdateReviewIf}
+        searchIf={searchIf}
+      />
+      <ContentEnd/>
+    </LinkWrapper>
+  )
+  scrollCb()
+  getByText(loadingIndicatorText)
+})
+
+test('stops loading more', async () => {
+  const listMore = vitest.fn()
+  let scrollCb: (() => void) = () => undefined
+  function getListRequestCount(): number {
+    return listMore.mock.calls.length
+  }
+  const { getByText } = render(
+    <LinkWrapper>
+      <Reviews
+        listReviewsIf={{
+          useList: () => {
+            return {
+              list: async (params): Promise<JoinedReviewList> => {
+                listMore(params)
+                if (getListRequestCount() > 1) {
+                  return {
+                    reviews: [],
+                    sorting: {
+                      order: 'beer_name',
+                      direction: 'asc'
+                    }
+                  }
+                }
+                return {
+                  reviews: [joinedReview],
+                  sorting: {
+                    order: 'beer_name',
+                    direction: 'asc'
+                  }
+                }
+              },
+              reviewList: {
+                reviews: getListRequestCount() > 1 ? [] : [joinedReview],
+                sorting: {
+                  order: 'beer_name',
+                  direction: 'asc'
+                }
+              },
+              isLoading: false,
+              isUninitialized: false
+            }
+          },
+          infiniteScroll: (
+            cb
+          ): () => undefined => { scrollCb = cb; return () => undefined }
+        }}
+        reviewIf={dontUpdateReviewIf}
+        searchIf={searchIf}
+      />
+      <ContentEnd/>
+    </LinkWrapper>
+  )
+  scrollCb()
+  await waitFor(() => getByText(joinedReview.beerName))
+  // No more visible changes on UI so act is needed.
+  await act(async () => { scrollCb(); })
+  expect(listMore.mock.calls).toEqual([
+    [
+      {
+        pagination: {
+          size: 20,
+          skip: 0
+        },
+        sorting: {
+          direction: 'desc',
+          order: 'time'
+        },
+      }
+    ],
+    [
+      {
+        pagination: {
+          size: 20,
+          skip: 1
+        },
+        sorting: {
+          direction: 'desc',
+          order: 'time'
+        },
+      }
+    ]
+  ])
+  await act(async () => { scrollCb(); })
+  expect(listMore).toHaveBeenCalledTimes(2)
 })

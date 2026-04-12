@@ -23,27 +23,15 @@ interface Props {
 }
 
 function Reviews (props: Props): React.JSX.Element {
-  const [order, doSetOrder] = useState<ReviewSortingOrder>('time')
-  const [direction, doSetDirection] = useState<ListDirection>('desc')
+  const [order, setOrder] = useState<ReviewSortingOrder>('time')
+  const [direction, setDirection] = useState<ListDirection>('desc')
   const [loadedReviews, setLoadedReviews] = useState<JoinedReview[]>([])
   const { list, reviewList, isLoading, isUninitialized } =
     props.listReviewsIf.useList()
 
-  function setOrder (order: ReviewSortingOrder): void {
-    doSetOrder(order)
-  }
-
-  function setDirection (direction: ListDirection): void {
-    doSetDirection(direction)
-  }
-
   function setSorting (reviewSorting: ReviewSorting): void {
-    if (reviewSorting.order !== order) {
-      setOrder(reviewSorting.order)
-    }
-    if (reviewSorting.direction !== direction) {
-      setDirection(reviewSorting.direction)
-    }
+    setOrder(reviewSorting.order)
+    setDirection(reviewSorting.direction)
   }
 
   const reloadString = JSON.stringify({
@@ -68,13 +56,16 @@ function Reviews (props: Props): React.JSX.Element {
         },
         sorting: { order, direction }
       })
-      if (result === undefined) return
       setLoadedReviews([...loadedReviews, ...result.reviews])
     }
     function checkLoad (): void {
-      if (!isLoading && hasMore) {
-        void loadMore()
+      if (isLoading) {
+        return
       }
+      if (!hasMore) {
+        return
+      }
+      void loadMore()
     }
     return props.listReviewsIf.infiniteScroll(checkLoad)
   }, [

@@ -5,7 +5,10 @@ import type {
 } from "../../core/review/types"
 import type { InfiniteScroll } from "../../core/types"
 import { useLazyListReviewsQuery } from "../../store/review/api"
-import { validateJoinedReviewListOrUndefined } from "../../validation/review"
+import {
+  validateJoinedReviewList,
+  validateJoinedReviewListOrUndefined
+} from "../../validation/review"
 
 const listReviews: (infiniteScroll: InfiniteScroll) => ListReviewsIf = (
   infiniteScroll: InfiniteScroll
@@ -18,9 +21,9 @@ const listReviews: (infiniteScroll: InfiniteScroll) => ListReviewsIf = (
         reviewList: validateJoinedReviewListOrUndefined(data),
         list: async (
           params: ListReviewParams
-        ): Promise<JoinedReviewList | undefined> => {
+        ): Promise<JoinedReviewList> => {
           const result = await trigger(params).unwrap()
-          return validateJoinedReviewListOrUndefined(result)
+          return validateJoinedReviewList(result)
         },
         isLoading: isFetching,
         isUninitialized

@@ -73,10 +73,10 @@ export function validateJoinedReviewListOrUndefined(
   if (typeof result === 'undefined') {
     return undefined
   }
-  return validateReviewList(result)
+  return validateJoinedReviewList(result)
 }
 
-function validateReviewList(result: unknown): JoinedReviewList {
+export function validateJoinedReviewList(result: unknown): JoinedReviewList {
   type ReviewListT = t.TypeOf<typeof ValidatedJoinedReviewList>
   const decoded = ValidatedJoinedReviewList.decode(result)
   if (isLeft(decoded)) {

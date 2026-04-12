@@ -9,6 +9,7 @@ import type {
 import {
   validateReview,
   validateReviewOrUndefined,
+  validateJoinedReviewList,
   validateJoinedReviewListOrUndefined
 } from './review'
 
@@ -97,6 +98,20 @@ test('validateJoinedReviewListOrUndefined returns list for valid input', () => {
 
 test('validateJoinedReviewListOrUndefined throws for invalid input', () => {
   expect(() => validateJoinedReviewListOrUndefined({
+    reviews: [{ id: 123 }]
+  })).toThrow()
+})
+
+test('validateJoinedReviewList returns list for valid input', () => {
+  const list: JoinedReviewList = {
+    reviews: [validJoinedReview]
+  }
+  expect(validateJoinedReviewList(list))
+  .toEqual(list)
+})
+
+test('validateJoinedReviewList throws for invalid input', () => {
+  expect(() => validateJoinedReviewList({
     reviews: [{ id: 123 }]
   })).toThrow()
 })
