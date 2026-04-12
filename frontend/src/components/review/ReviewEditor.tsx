@@ -76,7 +76,7 @@ function ReviewEditor (props: Props): React.JSX.Element {
   const [container, setContainer] = useState<Container | undefined>(
     getInitialContainer()
   )
-  const [rating, doSetRating] = useState<number>(
+  const [rating, setRating] = useState<number>(
     props.initialReview?.review.rating ?? 7
   )
   const [smell, setSmell] = useState(props.initialReview?.review.smell ?? '')
@@ -87,13 +87,6 @@ function ReviewEditor (props: Props): React.JSX.Element {
   const [location, setLocation] = useState<Location | undefined>(
     getInitialLocation()
   )
-
-  function setRating (rating: number): void {
-    let result = rating
-    if (result < 4) result = 4
-    if (result > 10) result = 10
-    doSetRating(result)
-  }
 
   function localDateTime (): string {
     const date = props.initialReview === undefined
@@ -231,6 +224,7 @@ function ReviewEditor (props: Props): React.JSX.Element {
             <input
               type='datetime-local'
               id='time'
+              aria-label='Time input'
               value={time}
               onChange={e => { setTime(e.target.value) }}
             />

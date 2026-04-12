@@ -5,7 +5,7 @@ import ReviewEditor from "./ReviewEditor"
 import type { UseDebounce } from "../../core/types"
 import type { Location, SearchLocationIf } from "../../core/location/types"
 import type { CreateBeerIf, SearchBeerIf } from "../../core/beer/types"
-import type { ReviewContainerIf } from "../../core/review/types"
+import type { JoinedReview, ReviewContainerIf } from "../../core/review/types"
 import type { SearchIf } from "../../core/search/types"
 
 const useDebounce: UseDebounce<string> = str => [str, false]
@@ -137,12 +137,15 @@ const reviewRating = 10
 
 const reviewContainerId = 'b2cd8c37-cfab-4978-95c4-24898364ada4'
 
-const joinedReview = {
+const joinedReview: JoinedReview = {
   id: '4f5f97ae-a5a0-4ff6-9106-6a5cf8301fa1',
   additionalInfo: '',
   beerId: reviewedBeerId,
   beerName: 'Siperia',
-  breweries: [],
+  breweries: [{
+    id: '38da2abb-c7ff-4128-804a-a49030342ae2',
+    name: 'Koskipanimo'
+  }],
   container: {
     id: reviewContainerId,
     type: 'bottle',
@@ -150,7 +153,10 @@ const joinedReview = {
   },
   location: undefined,
   rating: 9,
-  styles: [],
+  styles: [{
+    id: '45d0330a-7aca-44e1-a254-538675699287',
+    name: 'Imperial Stout'
+  }],
   time: dateStr
 }
 const review = {
@@ -164,8 +170,8 @@ const review = {
   time: dateStr
 }
 
-async function addReview(getByPlaceholderText: (
-  text: string) => HTMLElement,
+async function addReview(
+  getByPlaceholderText: (text: string) => HTMLElement,
   getByRole: (text: string, props?: Record<string, unknown>) => HTMLElement,
   user: UserEvent
 ): Promise<void> {
@@ -190,6 +196,38 @@ async function addReview(getByPlaceholderText: (
   await user.paste(tasteText)
 }
 
+async function selectBeer (
+  findByRole: (text: string, props: { name: string }) => Promise<HTMLElement>,
+  getAllByRole: (text: string, props: { name: string }) => HTMLElement[],
+  getByRole: (text: string, props: { name: string }) => HTMLElement,
+  getByPlaceholderText: (text: string) => HTMLElement,
+  user: UserEvent
+): Promise<void> {
+  const selects = getAllByRole('radio', { name: 'Select' })
+  await user.click(selects[0])
+  const beerSearch = getByPlaceholderText('Search beer')
+  expect(beerSearch).toBeDefined()
+  beerSearch.focus()
+  await user.paste('Seve')
+  const beerButton = await findByRole(
+    'button',
+    { name: 'Severin (Koskipanimo)' }
+  )
+  await user.click(beerButton)
+  getByRole('button', { name: 'Change' })
+}
+
+async function selectContainer (
+  getByRole: (text: string, props?: { name: string }) => HTMLElement,
+  user: UserEvent
+): Promise<void> {
+  const containerSelect = getByRole('combobox')
+  await user.click(containerSelect)
+  const draft = getByRole('option', { name: 'draft 0.25' })
+  await userEvent.selectOptions(containerSelect, draft)
+  await user.click(draft)
+}
+
 test('adds review', async () => {
   const user = userEvent.setup()
   const onChange = vitest.fn()
@@ -206,24 +244,14 @@ test('adds review', async () => {
     />
   )
 
-  const selects = getAllByRole('radio', { name: 'Select' })
-  await user.click(selects[0])
-  const beerSearch = getByPlaceholderText('Search beer')
-  expect(beerSearch).toBeDefined()
-  beerSearch.focus()
-  await user.paste('Seve')
-  const beerButton = await findByRole(
-    'button',
-    { name: 'Severin (Koskipanimo)' }
+  await selectBeer(
+    findByRole,
+    getAllByRole,
+    getByRole,
+    getByPlaceholderText,
+    user
   )
-  expect(beerButton).toBeDefined()
-  await user.click(beerButton)
-  getByRole('button', { name: 'Change' })
-  const containerSelect = getByRole('combobox')
-  await user.click(containerSelect)
-  const draft = getByRole('option', { name: 'draft 0.25' })
-  await userEvent.selectOptions(containerSelect, draft)
-  await user.click(draft)
+  await selectContainer(getByRole, user)
   await addReview(getByPlaceholderText, getByRole, user)
   const filteredChanged =
     onChange.mock.calls.filter(params => params[0] !== undefined)
@@ -237,6 +265,109 @@ test('adds review', async () => {
     taste: tasteText,
     time: dateStr
   }]])
+})
+
+test('adds review with custom time', async () => {
+  const user = userEvent.setup()
+  const onChange = vitest.fn()
+  const {
+    findByRole,
+    getAllByRole,
+    getByLabelText,
+    getByPlaceholderText,
+    getByRole
+  } = render(
+    <ReviewEditor
+      currentDate={currentDate}
+      initialReview={undefined}
+      isFromStorage={false}
+      onChange={onChange}
+      reviewContainerIf={reviewContainerIf}
+      searchIf={searchIf}
+      searchLocationIf={searchLocationIf}
+      selectBeerIf={selectBeerIf}
+    />
+  )
+
+  await selectBeer(
+    findByRole,
+    getAllByRole,
+    getByRole,
+    getByPlaceholderText,
+    user
+  )
+  await selectContainer(getByRole, user)
+
+  const customDateTime = '2023-10-31T12:00'
+  const customDateTimeFull = `${customDateTime}:00.000Z`
+
+  const dateInput = getByLabelText('Time input')
+  fireEvent.change(dateInput, {target: {value: `${customDateTime}`}})
+
+  await addReview(getByPlaceholderText, getByRole, user)
+  const filteredChanged =
+    onChange.mock.calls.filter(params => params[0] !== undefined)
+
+  expect(filteredChanged).toEqual([[{
+    additionalInfo: additionalInfoText,
+    beer: searchBeerId,
+    container: newReviewContainerId,
+    location: location.id,
+    rating: reviewRating,
+    smell: smellText,
+    taste: tasteText,
+    time: customDateTimeFull
+  }]])
+})
+
+test('change beer', async () => {
+  const user = userEvent.setup()
+  const onChange = vitest.fn()
+  const { findByRole, getAllByRole, getByPlaceholderText, getByRole } = render(
+    <ReviewEditor
+      currentDate={currentDate}
+      initialReview={undefined}
+      isFromStorage={false}
+      onChange={onChange}
+      reviewContainerIf={reviewContainerIf}
+      searchIf={searchIf}
+      searchLocationIf={searchLocationIf}
+      selectBeerIf={selectBeerIf}
+    />
+  )
+
+  await selectBeer(
+    findByRole,
+    getAllByRole,
+    getByRole,
+    getByPlaceholderText,
+    user
+  )
+  const changeButton = getByRole('button', { name: 'Change' })
+  await user.click(changeButton)
+  getByPlaceholderText('Name')
+})
+
+test('change container', async () => {
+  const user = userEvent.setup()
+  const onChange = vitest.fn()
+  const { getByRole } = render(
+    <ReviewEditor
+      currentDate={currentDate}
+      initialReview={undefined}
+      isFromStorage={false}
+      onChange={onChange}
+      reviewContainerIf={reviewContainerIf}
+      searchIf={searchIf}
+      searchLocationIf={searchLocationIf}
+      selectBeerIf={selectBeerIf}
+    />
+  )
+
+  await selectContainer(getByRole, user)
+  const changeButton = getByRole('button', { name: 'Change' })
+  await user.click(changeButton)
+  getByRole('combobox')
 })
 
 test('updates review', async () => {
