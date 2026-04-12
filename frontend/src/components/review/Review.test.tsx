@@ -252,6 +252,94 @@ test('updates review', async () => {
   expect(onChanged.mock.calls).toEqual([[]])
 })
 
+test('update review without onChanged callback', async () => {
+  const user = userEvent.setup()
+  const update = vitest.fn()
+  const { getByPlaceholderText, getByRole, getByText } = render(
+    <LinkWrapper>
+      <Review
+        review={joinedReview}
+        onChanged={undefined}
+        reviewIf={{
+          get: {
+            useGet: () => ({
+              get: async (): Promise<ReviewType> => review
+            })
+          },
+          update: {
+            useUpdate: () => ({
+              update,
+              isLoading: false
+            }),
+            searchLocationIf,
+            selectBeerIf,
+            reviewContainerIf
+          },
+          login: () => adminLogin
+        }}
+        searchIf={searchIf}
+      />
+    </LinkWrapper>
+  )
+  const beerName = getByText(joinedReview.beerName)
+  await user.click(beerName)
+  const editButton = getByRole('button', { name: 'Edit' })
+  await user.click(editButton)
+  await addReview(getByPlaceholderText, getByRole, user)
+  const saveButton = getByRole('button', { name: 'Save' })
+  await user.click(saveButton)
+  expect(update.mock.calls).toEqual([[{
+    id: joinedReview.id,
+    additionalInfo: '',
+    beer: reviewedBeerId,
+    container: reviewContainerId,
+    location: locationId,
+    rating: reviewRating,
+    smell: smellText,
+    taste: tasteText,
+    time: dateStr
+  }]])
+})
+
+test('cancel editing', async () => {
+  const user = userEvent.setup()
+  const onChanged = vitest.fn()
+  const update = vitest.fn()
+  const { getByRole, getByText } = render(
+    <LinkWrapper>
+      <Review
+        review={joinedReview}
+        onChanged={onChanged}
+        reviewIf={{
+          get: {
+            useGet: () => ({
+              get: async (): Promise<ReviewType> => review
+            })
+          },
+          update: {
+            useUpdate: () => ({
+              update,
+              isLoading: false
+            }),
+            searchLocationIf,
+            selectBeerIf,
+            reviewContainerIf
+          },
+          login: () => adminLogin
+        }}
+        searchIf={searchIf}
+      />
+    </LinkWrapper>
+  )
+  const beerName = getByText(joinedReview.beerName)
+  await user.click(beerName)
+  const editButton = getByRole('button', { name: 'Edit' })
+  await user.click(editButton)
+  const cancelButton = getByRole('button', { name: 'Cancel' })
+  await user.click(cancelButton)
+  getByText('imperial stout')
+})
+
 test('cannot update review as viewer', async () => {
   const user = userEvent.setup()
   const onChanged = vitest.fn()

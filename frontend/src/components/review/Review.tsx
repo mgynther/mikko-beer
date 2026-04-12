@@ -39,9 +39,7 @@ function Review (props: Props): React.JSX.Element {
   async function fetchReview (id: string): Promise<void> {
     setIsOpen(true)
     const review = await get(id)
-    if (review !== undefined) {
-      setFullReview(review)
-    }
+    setFullReview(review)
   }
 
   function formatDate (date: Date): string {
