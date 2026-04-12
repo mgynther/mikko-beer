@@ -22,7 +22,7 @@ interface Props {
   reviews: JoinedReview[]
   searchIf: SearchIf
   sorting: ReviewSorting | undefined
-  setSorting: ((sorting: ReviewSorting) => void) | undefined
+  setSorting: (sorting: ReviewSorting) => void
   supportedSorting: ReviewSortingOrder[]
   onChanged: (() => void) | undefined
 }

@@ -13,7 +13,7 @@ import './ReviewHeading.css'
 
 interface HeadingProps {
   sorting: ReviewSorting | undefined
-  setSorting: ((sorting: ReviewSorting) => void) | undefined
+  setSorting: (sorting: ReviewSorting) => void
   supportedSorting: ReviewSortingOrder[]
 }
 
@@ -31,7 +31,6 @@ export function ReviewHeading (
   const timeTitle = formatTitle('Time', isSelected('time'), direction)
   function createClickHandler (property: ReviewSortingOrder): () => void {
     return () => {
-      if (props.setSorting === undefined) return
       if (isSelected(property)) {
         props.setSorting({
           order: property,
