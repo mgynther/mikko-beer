@@ -3,6 +3,11 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import CreateContainer from './CreateContainer'
 import type { Container, ContainerRequest } from '../../core/container/types'
+import { loadingIndicatorText } from '../common/LoadingIndicator'
+
+const dontCall = (): any => {
+  throw new Error('must not be called')
+}
 
 const id = 'bbf9a644-74ad-4947-8335-ff1464f97a20'
 const sizePlaceholder = 'Size, for example 0.25'
@@ -41,4 +46,20 @@ test('creates container', async () => {
     type: 'Bottle',
     size: '0.33'
   }]])
+})
+
+test('render loading', async () => {
+  const selectContainer = vitest.fn()
+  const { getByText } = render(
+    <CreateContainer
+      select={selectContainer}
+      createContainerIf={{
+          useCreate: () => ({
+            create: dontCall,
+            isLoading: true
+          })
+      }}
+    />
+  )
+  getByText(loadingIndicatorText)
 })

@@ -24,19 +24,12 @@ function CreateContainer (props: Props): React.JSX.Element {
     size: ''
   })
 
-  async function doCreate (): Promise<void> {
-    if (container === undefined) {
-      throw new Error('container must not be undefined')
-    }
-    try {
-      const result = await create({
-        type: container.type.trim(),
-        size: container.size.trim()
-      })
-      props.select(result)
-    } catch (e) {
-      console.warn('Failed to create container', e)
-    }
+  async function doCreate (container: Container): Promise<void> {
+    const result = await create({
+      type: container.type.trim(),
+      size: container.size.trim()
+    })
+    props.select(result)
   }
 
   return (
@@ -49,7 +42,11 @@ function CreateContainer (props: Props): React.JSX.Element {
       />
       <Button
         disabled={container === undefined}
-        onClick={() => { void doCreate() }}
+        onClick={
+          container
+            ? (): void => { void doCreate(container) }
+            : undefined
+        }
         text='Create'
       />
       {isLoading && <LoadingIndicator isLoading={isLoading} />}
