@@ -44,9 +44,13 @@ function Locations (props: Props): React.JSX.Element {
       setLoadedLocations(newLocations)
     }
     function checkLoad (): void {
-      if (!isLoading && hasMore) {
-        void loadMore()
+      if (isLoading) {
+        return
       }
+      if (!hasMore) {
+        return
+      }
+      void loadMore()
     }
     return props.listLocationsIf.infiniteScroll(checkLoad)
   }, [loadedLocations, setLoadedLocations, isLoading, hasMore, list])
@@ -54,7 +58,6 @@ function Locations (props: Props): React.JSX.Element {
   return (
     <div>
       <h3>Locations</h3>
-      <LoadingIndicator isLoading={isLoading} />
       <SearchLocationWithNavi
         navigateIf={props.navigateIf}
         searchLocationIf={props.searchLocationIf}
