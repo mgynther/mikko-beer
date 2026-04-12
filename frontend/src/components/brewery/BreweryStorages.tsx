@@ -13,14 +13,15 @@ interface Props {
 const BreweryStorages = (props: Props): React.JSX.Element => {
   const { storages, isLoading } =
     props.listStoragesByBreweryIf.useList(props.breweryId)
+  const storageList = storages?.storages ?? []
   return <>
-    {(storages?.storages ?? []).length > 0 && (
+    {storageList.length > 0 && (
       <StorageList
         deleteStorageIf={props.listStoragesByBreweryIf.delete}
         getLogin={props.getLogin}
         isLoading={isLoading}
         isTitleVisible={true}
-        storages={storages?.storages ?? []}
+        storages={storageList}
       />
     )}
   </>
