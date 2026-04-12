@@ -19,6 +19,12 @@ import type {
 } from '../../core/stats/types'
 import type { SearchLocationIf } from '../../core/location/types'
 import type { GetLogin } from '../../core/login/types'
+import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
+import type { ListStoragesByIf } from '../../core/storage/types'
+import type { GetBreweryIf, UpdateBreweryIf } from '../../core/brewery/types'
+import type { SearchIf } from '../../core/search/types'
+import type { ParamsIf } from '../util'
+import { loadingIndicatorText } from '../common/LoadingIndicator'
 
 const useDebounce: UseDebounce<string> = str => [str, false]
 
@@ -144,66 +150,78 @@ const statsIf: StatsIf = {
   setSearch: async () => undefined
 }
 
+const listReviewsByBreweryIf: ListReviewsByIf = {
+  useList: () => ({
+    reviews: { reviews: [] },
+    isLoading: false
+  })
+}
+
+const listStoragesByBreweryIf: ListStoragesByIf = {
+  useList: () => ({
+    storages: { storages: [] },
+    isLoading: false
+  }),
+  delete: {
+    useDelete: dontCall
+  }
+}
+
+const reviewIf: ReviewIf = {
+  get: {
+    useGet: dontCall
+  },
+  update: {
+    useUpdate: dontCall,
+    searchLocationIf,
+    selectBeerIf: dontSelectBeer,
+    reviewContainerIf: noOpContainerIf
+  },
+  login: getLogin()
+}
+
+const getBreweryIf: GetBreweryIf = {
+  useGet: () => ({
+    brewery: {
+      id,
+      name
+    },
+    isLoading: false
+  })
+}
+
+const searchIf: SearchIf = {
+  useSearch: () => ({
+    activate: dontCall,
+    isActive: true
+  }),
+  useDebounce
+}
+
+const paramsIf: ParamsIf = {
+  useParams: () => ({ breweryId: id }),
+    useSearch: () => ({
+    get: (): undefined => undefined
+  })
+}
+
 test('updates brewery', async () => {
   const user = userEvent.setup()
   const update = vitest.fn()
   const { getByPlaceholderText, getByRole } = render(
     <Brewery
-      listReviewsByBreweryIf={{
-        useList: () => ({
-          reviews: { reviews: [] },
-          isLoading: false
-        })
-      }}
-      listStoragesByBreweryIf={{
-        useList: () => ({
-          storages: { storages: [] },
-          isLoading: false
-        }),
-        delete: {
-          useDelete: dontCall
-        }
-      }}
-      paramsIf={{
-        useParams: () => ({ breweryId: id }),
-        useSearch: () => ({
-          get: (): undefined => undefined
-        })
-      }}
-      reviewIf={{
-        get: {
-          useGet: dontCall
-        },
-        update: {
-          useUpdate: dontCall,
-          searchLocationIf,
-          selectBeerIf: dontSelectBeer,
-          reviewContainerIf: noOpContainerIf
-        },
-        login: getLogin()
-      }}
-      getBreweryIf={{
-        useGet: () => ({
-          brewery: {
-            id,
-            name
-          },
-          isLoading: false
-        })
-      }}
+      listReviewsByBreweryIf={listReviewsByBreweryIf}
+      listStoragesByBreweryIf={listStoragesByBreweryIf}
+      paramsIf={paramsIf}
+      reviewIf={reviewIf}
+      getBreweryIf={getBreweryIf}
       updateBreweryIf={{
         useUpdate: () => ({
           update,
           isLoading: false
         })
       }}
-      searchIf={{
-        useSearch: () => ({
-          activate: (): undefined => undefined,
-          isActive: true
-        }),
-        useDebounce
-      }}
+      searchIf={searchIf}
       statsIf={statsIf}
     />
   )
@@ -224,4 +242,98 @@ test('updates brewery', async () => {
     id,
     name: newName
   }]])
+})
+
+const dontUpdateBreweryIf: UpdateBreweryIf = {
+  useUpdate: () => ({
+    update: dontCall,
+    isLoading: false
+  })
+}
+
+test('cancel update', async () => {
+  const user = userEvent.setup()
+  const { getByRole } = render(
+    <Brewery
+      listReviewsByBreweryIf={listReviewsByBreweryIf}
+      listStoragesByBreweryIf={listStoragesByBreweryIf}
+      paramsIf={paramsIf}
+      reviewIf={reviewIf}
+      getBreweryIf={getBreweryIf}
+      updateBreweryIf={dontUpdateBreweryIf}
+      searchIf={searchIf}
+      statsIf={statsIf}
+    />
+  )
+  getByRole('heading', { name })
+
+  const editButton = getByRole('button', { name: 'Edit' })
+  await user.click(editButton)
+
+  const cancelButton = getByRole('button', { name: 'Cancel' })
+  await user.click(cancelButton)
+
+  getByRole('button', { name: 'Edit' })
+})
+
+test('render loading', async () => {
+  const { getByText } = render(
+    <Brewery
+      listReviewsByBreweryIf={listReviewsByBreweryIf}
+      listStoragesByBreweryIf={listStoragesByBreweryIf}
+      paramsIf={paramsIf}
+      reviewIf={reviewIf}
+      getBreweryIf={{
+        useGet: () => ({
+          brewery: undefined,
+          isLoading: true
+        })
+      }}
+      updateBreweryIf={dontUpdateBreweryIf}
+      searchIf={searchIf}
+      statsIf={statsIf}
+    />
+  )
+  getByText(loadingIndicatorText)
+})
+
+test('render not found', async () => {
+  const { getByText } = render(
+    <Brewery
+      listReviewsByBreweryIf={listReviewsByBreweryIf}
+      listStoragesByBreweryIf={listStoragesByBreweryIf}
+      paramsIf={paramsIf}
+      reviewIf={reviewIf}
+      getBreweryIf={{
+        useGet: () => ({
+          brewery: undefined,
+          isLoading: false
+        })
+      }}
+      updateBreweryIf={dontUpdateBreweryIf}
+      searchIf={searchIf}
+      statsIf={statsIf}
+    />
+  )
+  getByText('Not found')
+})
+
+test('throw on missing id', async () => {
+  expect(() => render(
+    <Brewery
+      listReviewsByBreweryIf={listReviewsByBreweryIf}
+      listStoragesByBreweryIf={listStoragesByBreweryIf}
+      paramsIf={{
+        useParams: () => ({}),
+        useSearch: () => ({
+          get: (): undefined => undefined
+        })
+      }}
+      reviewIf={reviewIf}
+      getBreweryIf={getBreweryIf}
+      updateBreweryIf={dontUpdateBreweryIf}
+      searchIf={searchIf}
+      statsIf={statsIf}
+    />
+  )).toThrow('Brewery component without breweryId. Should not happen.')
 })
