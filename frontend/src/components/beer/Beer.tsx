@@ -25,12 +25,12 @@ import BreweryLinks from '../brewery/BreweryLinks'
 import LoadingIndicator from '../common/LoadingIndicator'
 import NotFound from '../common/NotFound'
 import ReviewList from '../review/ReviewList'
-import StorageList from '../storage/StorageList'
 import StyleLinks from '../style/StyleLinks'
 
 import UpdateBeer from './UpdateBeer'
 
 import './Beer.css'
+import BeerStorages from './BeerStorages'
 
 interface Props {
   listReviewsByBeerIf: ListReviewsByIf
@@ -61,8 +61,6 @@ function Beer (props: Props): React.JSX.Element {
         direction
       }
     })
-  const { storages, isLoading: isLoadingStorages } =
-    props.listStoragesByBeerIf.useList(beerId)
   if (isLoading) return <LoadingIndicator isLoading={true} />
   if (beer === undefined) return <NotFound />
   return (
@@ -112,15 +110,11 @@ function Beer (props: Props): React.JSX.Element {
           }}
         />
       )}
-      {(storages?.storages ?? []).length > 0 && (
-        <StorageList
-          deleteStorageIf={props.listStoragesByBeerIf.delete}
-          getLogin={props.reviewIf.login}
-          isLoading={isLoadingStorages}
-          isTitleVisible={true}
-          storages={storages?.storages ?? []}
-        />
-      )}
+      <BeerStorages
+        beerId={beerId}
+        listStoragesByBeerIf={props.listStoragesByBeerIf}
+        getLogin={props.reviewIf.login}
+      />
       <ReviewList
         reviewIf={props.reviewIf}
         searchIf={props.searchIf}
@@ -129,15 +123,11 @@ function Beer (props: Props): React.JSX.Element {
         reviews={reviews?.reviews ?? []}
         sorting={reviews?.sorting}
         setSorting={(sorting: ReviewSorting) => {
-          if (order !== sorting.order) {
-            doSetOrder(sorting.order)
-          }
-          if (direction !== sorting.direction) {
-            doSetDirection(sorting.direction)
-          }
+          doSetOrder(sorting.order)
+          doSetDirection(sorting.direction)
         }}
         supportedSorting={['beer_name', 'brewery_name', 'rating', 'time']}
-        onChanged={() => undefined}
+        onChanged={undefined}
       />
     </div>
   )

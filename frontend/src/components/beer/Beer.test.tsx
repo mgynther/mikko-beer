@@ -5,19 +5,21 @@ import Beer from './Beer'
 import { Role } from '../../core/user/types'
 import LinkWrapper from '../LinkWrapper'
 import type {
+  FilteredListReviewParams,
   JoinedReview,
   ListReviewsByIf,
   Review,
   ReviewIf,
   UpdateReviewIf
 } from '../../core/review/types'
-import type { ListStoragesByIf, Storage } from '../../core/storage/types'
+import type { ListStoragesByIf } from '../../core/storage/types'
 import type { UseDebounce } from '../../core/types'
 import { asText } from '../container/ContainerInfo'
 import type { SearchLocationIf } from '../../core/location/types'
 import type { SearchIf } from '../../core/search/types'
-import type { EditBeerIf, GetBeerIf } from '../../core/beer/types'
+import type { EditBeerIf, GetBeerIf, UpdateBeerIf } from '../../core/beer/types'
 import type { ParamsIf } from '../util'
+import { loadingIndicatorText } from '../common/LoadingIndicator'
 
 const useDebounce: UseDebounce<string> = str => [str, false]
 
@@ -70,18 +72,6 @@ const review: Review = {
   rating: 10,
   smell: '',
   taste: ''
-}
-
-const storage: Storage = {
-  id: 'd8022f91-5ec0-4836-a5cf-6fd4e7ca1b14',
-  beerId: beer.id,
-  beerName: beer.name,
-  bestBefore: '2025-01-30T12:00:00.000',
-  breweries: joinedReview.breweries,
-  container: joinedReview.container,
-  createdAt: '2019-09-29T09:00:00.000Z',
-  hasReview: false,
-  styles: joinedReview.styles
 }
 
 const login = {
@@ -194,26 +184,27 @@ function getListReviewsIf(reviews: JoinedReview[]): ListReviewsByIf {
     useList: () => ({
       reviews: {
         reviews,
-        sorting: undefined
+        sorting: {
+          order: 'time',
+          direction: 'asc'
+        }
       },
-      isLoading: false
+      isLoading: reviews.length === 0
     })
   }
 }
 
-function getListStoragesByBeerIf(storages: Storage[]): ListStoragesByIf {
-  return {
-    useList: () => ({
-      storages: {
-        storages
-      },
-      isLoading: false
-    }),
-    delete: {
-      useDelete: () => ({
-        delete: dontCall
-      })
-    }
+const listStoragesByBeerIf: ListStoragesByIf = {
+  useList: () => ({
+    storages: {
+      storages: []
+    },
+    isLoading: false
+  }),
+  delete: {
+    useDelete: () => ({
+      delete: dontCall
+    })
   }
 }
 
@@ -247,20 +238,22 @@ const editBeerIf: EditBeerIf = {
   }
 }
 
+const dontUpdateBeerIf: UpdateBeerIf = {
+  useUpdate: () => ({
+    update: dontCall,
+    isLoading: false
+  }),
+  editBeerIf
+}
+
 test('renders beer', async () => {
   const { getByRole, getByText } = render(
     <LinkWrapper>
       <Beer
-        updateBeerIf={{
-          useUpdate: () => ({
-            update: dontCall,
-            isLoading: false
-          }),
-          editBeerIf
-        }}
+        updateBeerIf={dontUpdateBeerIf}
         searchIf={searchIf}
         listReviewsByBeerIf={getListReviewsIf([joinedReview])}
-        listStoragesByBeerIf={getListStoragesByBeerIf([storage])}
+        listStoragesByBeerIf={listStoragesByBeerIf}
         paramsIf={paramsIf}
         reviewIf={reviewIf}
         getBeerIf={getBeerIf}
@@ -273,7 +266,25 @@ test('renders beer', async () => {
   getByRole('link', { name: style.name })
   getByText(joinedReview.additionalInfo)
   getByText(asText(joinedReview.container))
-  getByText(storage.bestBefore.split('T')[0])
+})
+
+test('throw on missing id', async () => {
+  expect(() => render(
+    <LinkWrapper>
+      <Beer
+        updateBeerIf={dontUpdateBeerIf}
+        searchIf={searchIf}
+        listReviewsByBeerIf={getListReviewsIf([joinedReview])}
+        listStoragesByBeerIf={listStoragesByBeerIf}
+        paramsIf={{
+          ...paramsIf,
+          useParams: () => ({}),
+        }}
+        reviewIf={reviewIf}
+        getBeerIf={getBeerIf}
+      />
+    </LinkWrapper>
+  )).toThrow('Beer component without beerId. Should not happen.')
 })
 
 test('updates beer', async () => {
@@ -291,7 +302,7 @@ test('updates beer', async () => {
         }}
         searchIf={searchIf}
         listReviewsByBeerIf={getListReviewsIf([])}
-        listStoragesByBeerIf={getListStoragesByBeerIf([])}
+        listStoragesByBeerIf={listStoragesByBeerIf}
         paramsIf={paramsIf}
         reviewIf={reviewIf}
         getBeerIf={getBeerIf}
@@ -313,4 +324,133 @@ test('updates beer', async () => {
     breweries: [brewery.id],
     styles: [style.id],
   }]])
+})
+
+test('cancel update', async () => {
+  const user = userEvent.setup()
+  const { getByRole } = render(
+    <LinkWrapper>
+      <Beer
+        updateBeerIf={dontUpdateBeerIf}
+        searchIf={searchIf}
+        listReviewsByBeerIf={getListReviewsIf([])}
+        listStoragesByBeerIf={listStoragesByBeerIf}
+        paramsIf={paramsIf}
+        reviewIf={reviewIf}
+        getBeerIf={getBeerIf}
+      />
+    </LinkWrapper>
+  )
+
+  const editButton = getByRole('button', { name: 'Edit' })
+  await user.click(editButton)
+  const cancelButton = getByRole('button', { name: 'Cancel' })
+  await user.click(cancelButton)
+  getByRole('button', { name: 'Edit' })
+})
+
+test('render loading', async () => {
+  const { getByText } = render(
+    <LinkWrapper>
+      <Beer
+        updateBeerIf={dontUpdateBeerIf}
+        searchIf={searchIf}
+        listReviewsByBeerIf={getListReviewsIf([])}
+        listStoragesByBeerIf={listStoragesByBeerIf}
+        paramsIf={paramsIf}
+        reviewIf={reviewIf}
+        getBeerIf={{
+          useGetBeer: () => ({
+            beer: undefined,
+            isLoading: true
+          })
+        }}
+      />
+    </LinkWrapper>
+  )
+  getByText(loadingIndicatorText)
+})
+
+test('render not found', async () => {
+  const { getByText } = render(
+    <LinkWrapper>
+      <Beer
+        updateBeerIf={dontUpdateBeerIf}
+        searchIf={searchIf}
+        listReviewsByBeerIf={getListReviewsIf([])}
+        listStoragesByBeerIf={listStoragesByBeerIf}
+        paramsIf={paramsIf}
+        reviewIf={reviewIf}
+        getBeerIf={{
+          useGetBeer: () => ({
+            beer: undefined,
+            isLoading: false
+          })
+        }}
+      />
+    </LinkWrapper>
+  )
+  getByText('Not found')
+})
+
+test('sort reviews', async () => {
+  const user = userEvent.setup()
+  const useList = vitest.fn()
+  const { getByRole } = render(
+    <LinkWrapper>
+      <Beer
+        updateBeerIf={dontUpdateBeerIf}
+        searchIf={searchIf}
+        listReviewsByBeerIf={{
+          useList: (params: FilteredListReviewParams) => {
+            useList(params)
+            return {
+              reviews: {
+                reviews: [joinedReview],
+                sorting: {
+                  order: 'time',
+                  direction: 'asc'
+                }
+              },
+              isLoading: false
+            }
+          },
+        }}
+        listStoragesByBeerIf={listStoragesByBeerIf}
+        paramsIf={paramsIf}
+        reviewIf={reviewIf}
+        getBeerIf={getBeerIf}
+      />
+    </LinkWrapper>
+  )
+  const ratingButton = getByRole('button', { name: 'Rating' })
+  await user.click(ratingButton)
+  expect(useList.mock.calls).toEqual([
+    [ { id: beer.id, sorting: { direction: 'asc', order: 'beer_name' } } ],
+    [ { id: beer.id, sorting: { direction: 'desc', order: 'rating' } } ]
+  ])
+})
+
+test('load reviews', async () => {
+  const { getByText } = render(
+    <LinkWrapper>
+      <Beer
+        updateBeerIf={dontUpdateBeerIf}
+        searchIf={searchIf}
+        listReviewsByBeerIf={{
+          useList: () => {
+            return {
+              reviews: undefined,
+              isLoading: true
+            }
+          },
+        }}
+        listStoragesByBeerIf={listStoragesByBeerIf}
+        paramsIf={paramsIf}
+        reviewIf={reviewIf}
+        getBeerIf={getBeerIf}
+      />
+    </LinkWrapper>
+  )
+  getByText(loadingIndicatorText)
 })
