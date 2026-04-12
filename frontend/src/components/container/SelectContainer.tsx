@@ -18,11 +18,12 @@ function SelectContainer (props: Props): React.JSX.Element {
   const { data: containerData, isLoading } =
     props.reviewContainerIf.listIf.useList()
 
+  const containers = containerData?.containers ?? []
+
   function selectContainerById (containerId: string): void {
-    const container = containerData?.containers
-      .find((container) => container.id === containerId)
-    if (container === undefined) return
-    props.select(container)
+    containers
+      .filter((container) => container.id === containerId)
+      .forEach((container: Container) => props.select(container))
   }
 
   return (
@@ -43,7 +44,7 @@ function SelectContainer (props: Props): React.JSX.Element {
               onChange={(e) => { selectContainerById(e.target.value) }}
             >
               <option value={''} disabled={true} />
-              {containerData?.containers.map((container: Container) => (
+              {containers.map((container: Container) => (
                 <option key={container.id} value={container.id}>
                   {asText(container)}
                 </option>

@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import SelectContainer from './SelectContainer'
 import type { Container, ListContainersData } from '../../core/container/types'
+import type { ReviewContainerIf } from '../../core/review/types'
+import { loadingIndicatorText } from '../common/LoadingIndicator'
 
 const sizePlaceholder = 'Size, for example 0.25'
 const typePlaceholder = 'Type'
@@ -29,30 +31,52 @@ const useList = (): ListContainersData => ({
   isLoading: false
 })
 
+const dontCreateIf: ReviewContainerIf = {
+  createIf: {
+    useCreate: () => {
+      throw new Error('do not call')
+    }
+  },
+  listIf: {
+    useList
+  }
+}
+
 test('selects container', async () => {
   const user = userEvent.setup()
   const onSelect = vitest.fn()
   const { getByRole } = render(
     <SelectContainer
       select={onSelect}
-      reviewContainerIf={{
-        createIf: {
-          useCreate: () => {
-            throw new Error('do not call')
-          }
-        },
-        listIf: {
-          useList
-        }
-      }}
+      reviewContainerIf={dontCreateIf}
     />
   )
   const containerSelect = getByRole('combobox')
   await user.click(containerSelect)
   const bottle = getByRole('option', { name: 'bottle 0.33' })
+  expect(onSelect.mock.calls).toEqual([])
   await user.selectOptions(containerSelect, bottle)
   const selectCalls = onSelect.mock.calls
   expect(selectCalls).toEqual([[bottleContainer]])
+})
+
+test('render loading', async () => {
+  const onSelect = vitest.fn()
+  const { getByText } = render(
+    <SelectContainer
+      select={onSelect}
+      reviewContainerIf={{
+        ...dontCreateIf,
+        listIf: {
+          useList: () => ({
+            data: undefined,
+            isLoading: true
+          })
+        }
+      }}
+    />
+  )
+  getByText(loadingIndicatorText)
 })
 
 test('selects created container', async () => {
