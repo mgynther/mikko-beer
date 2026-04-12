@@ -21,6 +21,8 @@ export function formatDateString (dateString: string): string {
   return `${year}-${month}-${dayOfMonth}`
 }
 
+/* v8 ignore start */
+// IntersectionObserver does not exist on Node or jsdom so it can't be tested.
 export const infiniteScroll: InfiniteScroll = (loadMore: () => void) => {
   const observer = new IntersectionObserver(entries => {
     const intersecting = entries[0].isIntersecting
@@ -38,6 +40,7 @@ export const infiniteScroll: InfiniteScroll = (loadMore: () => void) => {
     }
   }
 }
+/* v8 ignore end */
 
 interface NamedItem {
   name: string
