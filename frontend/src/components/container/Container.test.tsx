@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { test } from 'vitest'
+import { expect, test, vitest } from 'vitest'
 import Container from './Container'
 import type {
   Container as ContainerType,
@@ -59,5 +59,38 @@ test('renders editable container as admin', async () => {
   await user.click(editButton)
   const cancelButton = getByRole('button', { name: 'Cancel' })
   await user.click(cancelButton)
+  getByRole('button', { name: 'Edit' })
+})
+
+test('update container', async () => {
+  const user = userEvent.setup()
+  const update = vitest.fn()
+  const { getByPlaceholderText, getByRole, getByText } = render(
+    <Container
+      container={container}
+      getLogin={getLogin(Role.admin)}
+      updateContainerIf={{
+        useUpdate: () => ({
+          update,
+          isLoading: false
+        })
+      }}
+    />
+  )
+  getByText('bottle 0.25')
+  const editButton = getByRole('button', { name: 'Edit' })
+  await user.click(editButton)
+  const typeInput = getByPlaceholderText('Type')
+  typeInput.focus()
+  await user.clear(typeInput)
+  await user.paste('can')
+  const saveButton = getByRole('button', { name: 'Save' })
+  await user.click(saveButton)
+  expect(update.mock.calls).toEqual([[
+    {
+      ...container,
+      type: 'can'
+    }
+  ]])
   getByRole('button', { name: 'Edit' })
 })
