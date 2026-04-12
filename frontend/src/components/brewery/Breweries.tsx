@@ -45,9 +45,13 @@ function Breweries (props: Props): React.JSX.Element {
       setLoadedBreweries(newBreweries)
     }
     function checkLoad (): void {
-      if (!isLoading && hasMore) {
-        void loadMore()
+      if (isLoading) {
+        return
       }
+      if (!hasMore) {
+        return
+      }
+      void loadMore()
     }
     return props.listBreweriesIf.infiniteScroll(checkLoad)
   }, [loadedBreweries, setLoadedBreweries, isLoading, hasMore, list])
@@ -55,7 +59,6 @@ function Breweries (props: Props): React.JSX.Element {
   return (
     <div>
       <h3>Breweries</h3>
-      <LoadingIndicator isLoading={isLoading} />
       <SearchBreweryWithNavi
         navigateIf={props.navigateIf}
         searchBreweryIf={props.searchBreweryIf}
