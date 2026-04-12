@@ -22,16 +22,9 @@ interface Props {
 function UpdateBeer (props: Props): React.JSX.Element {
   const [newBeer, setNewBeer] = useState<BeerWithIds | undefined>(undefined)
   const { update, isLoading } = props.updateBeerIf.useUpdate()
-  async function doUpdate (): Promise<void> {
-    if (newBeer === undefined) {
-      throw new Error('beer must not be undefined when updating')
-    }
-    try {
-      await update({ ...newBeer })
-      props.onSaved()
-    } catch (e) {
-      console.warn('Failed to update beer', e)
-    }
+  async function doUpdate (newBeer: BeerWithIds): Promise<void> {
+    await update({ ...newBeer })
+    props.onSaved()
   }
   return (
     <>
@@ -50,7 +43,7 @@ function UpdateBeer (props: Props): React.JSX.Element {
           setNewBeer(undefined)
           props.onCancel()
         }}
-        onSave={() => { void doUpdate() }}
+        onSave={newBeer ? (): void => { void doUpdate(newBeer) } : undefined}
       />
     </>
   )
