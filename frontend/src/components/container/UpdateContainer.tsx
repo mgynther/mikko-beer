@@ -20,16 +20,9 @@ function UpdateContainer (props: Props): React.JSX.Element {
   const { update, isLoading } = props.updateContainerIf.useUpdate()
   const [newContainer, setNewContainer] =
     useState<Container | undefined>(undefined)
-  async function doUpdate (): Promise<void> {
-    if (newContainer === undefined) {
-      throw new Error('container must not be undefined when updating')
-    }
-    try {
-      await update({ ...newContainer })
-      props.onSaved()
-    } catch (e) {
-      console.warn('Failed to update container', e)
-    }
+  async function doUpdate (newContainer: Container): Promise<void> {
+    await update({ ...newContainer })
+    props.onSaved()
   }
   return (
     <>
@@ -46,7 +39,11 @@ function UpdateContainer (props: Props): React.JSX.Element {
           setNewContainer(undefined)
           props.onCancel()
         }}
-        onSave={() => { void doUpdate() }}
+        onSave={
+          newContainer
+            ? (): void => { void doUpdate(newContainer) }
+            : undefined
+        }
       />
     </>
   )
