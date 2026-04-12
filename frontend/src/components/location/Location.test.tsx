@@ -17,8 +17,16 @@ import type {
   StatsIf,
   YearMonth
 } from '../../core/stats/types'
-import type { SearchLocationIf } from '../../core/location/types'
+import type {
+  GetLocationIf,
+  SearchLocationIf,
+  UpdateLocationIf
+} from '../../core/location/types'
 import type { GetLogin } from '../../core/login/types'
+import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
+import type { ParamsIf } from '../util'
+import type { SearchIf } from '../../core/search/types'
+import { loadingIndicatorText } from '../common/LoadingIndicator'
 
 const useDebounce: UseDebounce<string> = str => [str, false]
 
@@ -144,44 +152,60 @@ const statsIf: StatsIf = {
   setSearch: async () => undefined
 }
 
+const listReviewsByLocationIf: ListReviewsByIf = {
+  useList: () => ({
+    reviews: { reviews: [] },
+    isLoading: false
+  })
+}
+
+const paramsIf: ParamsIf = {
+  useParams: () => ({ locationId: id }),
+    useSearch: () => ({
+    get: (): undefined => undefined
+  })
+}
+
+const reviewIf: ReviewIf = {
+  get: {
+    useGet: dontCall
+  },
+  update: {
+    useUpdate: dontCall,
+    searchLocationIf,
+    selectBeerIf: dontSelectBeer,
+    reviewContainerIf: noOpContainerIf
+  },
+  login: getLogin()
+}
+
+const getLocationIf: GetLocationIf = {
+  useGet: () => ({
+    location: {
+      id,
+      name
+    },
+    isLoading: false
+  })
+}
+
+const searchIf: SearchIf = {
+  useSearch: () => ({
+    activate: (): undefined => undefined,
+      isActive: true
+  }),
+  useDebounce
+}
+
 test('updates location', async () => {
   const user = userEvent.setup()
   const update = vitest.fn()
   const { getByPlaceholderText, getByRole } = render(
     <Location
-      listReviewsByLocationIf={{
-        useList: () => ({
-          reviews: { reviews: [] },
-          isLoading: false
-        })
-      }}
-      paramsIf={{
-        useParams: () => ({ locationId: id }),
-        useSearch: () => ({
-          get: (): undefined => undefined
-        })
-      }}
-      reviewIf={{
-        get: {
-          useGet: dontCall
-        },
-        update: {
-          useUpdate: dontCall,
-          searchLocationIf,
-          selectBeerIf: dontSelectBeer,
-          reviewContainerIf: noOpContainerIf
-        },
-        login: getLogin()
-      }}
-      getLocationIf={{
-        useGet: () => ({
-          location: {
-            id,
-            name
-          },
-          isLoading: false
-        })
-      }}
+      listReviewsByLocationIf={listReviewsByLocationIf}
+      paramsIf={paramsIf}
+      reviewIf={reviewIf}
+      getLocationIf={getLocationIf}
       updateLocationIf={{
         useUpdate: () => ({
           update,
@@ -190,13 +214,7 @@ test('updates location', async () => {
         login: getLogin()
       }}
       statsIf={statsIf}
-      searchIf={{
-        useSearch: () => ({
-          activate: (): undefined => undefined,
-          isActive: true
-        }),
-        useDebounce
-      }}
+      searchIf={searchIf}
     />
   )
   getByRole('heading', { name })
@@ -216,4 +234,93 @@ test('updates location', async () => {
     id,
     name: newName
   }]])
+})
+
+const dontUpdateLocationIf: UpdateLocationIf = {
+  useUpdate: () => ({
+    update: dontCall,
+    isLoading: false
+  }),
+  login: getLogin()
+}
+
+test('cancel editing', async () => {
+  const user = userEvent.setup()
+  const { getByRole } = render(
+    <Location
+      listReviewsByLocationIf={listReviewsByLocationIf}
+      paramsIf={paramsIf}
+      reviewIf={reviewIf}
+      getLocationIf={getLocationIf}
+      updateLocationIf={dontUpdateLocationIf}
+      statsIf={statsIf}
+      searchIf={searchIf}
+    />
+  )
+  getByRole('heading', { name })
+
+  const editButton = getByRole('button', { name: 'Edit' })
+  await user.click(editButton)
+
+  const cancelButton = getByRole('button', { name: 'Cancel' })
+  await user.click(cancelButton)
+
+  getByRole('button', { name: 'Edit' })
+})
+
+test('throw on missing id', async () => {
+  expect(() => render(
+    <Location
+      listReviewsByLocationIf={listReviewsByLocationIf}
+      paramsIf={{
+        ...paramsIf,
+        useParams: () => ({}),
+      }}
+      reviewIf={reviewIf}
+      getLocationIf={getLocationIf}
+      updateLocationIf={dontUpdateLocationIf}
+      statsIf={statsIf}
+      searchIf={searchIf}
+    />
+  )).toThrow('Location component without locationId. Should not happen.')
+})
+
+test('render loading', async () => {
+  const { getByText } = render(
+    <Location
+      listReviewsByLocationIf={listReviewsByLocationIf}
+      paramsIf={paramsIf}
+      reviewIf={reviewIf}
+      getLocationIf={{
+        useGet: () => ({
+          location: undefined,
+          isLoading: true
+        })
+      }}
+      updateLocationIf={dontUpdateLocationIf}
+      statsIf={statsIf}
+      searchIf={searchIf}
+    />
+  )
+  getByText(loadingIndicatorText)
+})
+
+test('render not found', async () => {
+  const { getByText } = render(
+    <Location
+      listReviewsByLocationIf={listReviewsByLocationIf}
+      paramsIf={paramsIf}
+      reviewIf={reviewIf}
+      getLocationIf={{
+        useGet: () => ({
+          location: undefined,
+          isLoading: false
+        })
+      }}
+      updateLocationIf={dontUpdateLocationIf}
+      statsIf={statsIf}
+      searchIf={searchIf}
+    />
+  )
+  getByText('Not found')
 })
