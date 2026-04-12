@@ -316,6 +316,47 @@ test('sorts results starting with filter', async () => {
   ])
 })
 
+test('sorts results with edge cases', async () => {
+  const { getAllByRole } = render(
+    <SearchBox
+      { ...defaultProps }
+      searchIf={activeSearch}
+      currentFilter={'item'}
+      currentOptions={[
+        {
+          id: '1',
+          name: 'abc item 123'
+        },
+        {
+          id: '2',
+          name: 'item'
+        },
+        {
+          id: '4',
+          name: 'item'
+        },
+        {
+          id: '5',
+          name: 'item 321'
+        },
+        {
+          id: '3',
+          name: 'testing item'
+        }
+      ]}
+      select={dontCall}
+    />
+  )
+  const itemButtons = getAllByRole('button', { name: /item/iv })
+  expect(itemButtons.map(item => item.innerHTML)).toEqual([
+    'item',
+    'item',
+    'item 321',
+    'abc item 123',
+    'testing item'
+  ])
+})
+
 test('custom sorts results', async () => {
   const { getAllByRole } = render(
     <SearchBox
@@ -333,12 +374,18 @@ test('custom sorts results', async () => {
         {
           id: '2',
           name: 'item a'
+        },
+        {
+          id: '3',
+          name: 'item a'
         }
       ]}
       select={dontCall}
     />
   )
   const itemButtons = getAllByRole('button', { name: /item/v })
-  expect(itemButtons.length).toEqual(2)
-  expect(itemButtons.map(item => item.innerHTML)).toEqual(['item b', 'item a'])
+  expect(itemButtons.length).toEqual(3)
+  expect(itemButtons.map(
+    item => item.innerHTML
+  )).toEqual(['item b', 'item a', 'item a'])
 })
