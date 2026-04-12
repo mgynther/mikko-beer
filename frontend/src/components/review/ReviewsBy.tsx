@@ -36,15 +36,11 @@ const ReviewsBy = (props: Props): React.JSX.Element => {
     reviews={reviews?.reviews ?? []}
     sorting={reviews?.sorting}
     setSorting={(sorting: ReviewSorting) => {
-      if (order !== sorting.order) {
-        doSetOrder(sorting.order)
-      }
-      if (direction !== sorting.direction) {
-        doSetDirection(sorting.direction)
-      }
+      doSetOrder(sorting.order)
+      doSetDirection(sorting.direction)
     }}
     supportedSorting={['beer_name', 'brewery_name', 'rating', 'time']}
-    onChanged={() => undefined}
+    onChanged={undefined}
     />
 }
 

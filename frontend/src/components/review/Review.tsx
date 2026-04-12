@@ -23,7 +23,7 @@ interface Props {
   reviewIf: ReviewIf
   review: JoinedReview
   searchIf: SearchIf
-  onChanged: () => void
+  onChanged: (() => void) | undefined
 }
 
 function Review (props: Props): React.JSX.Element {
@@ -128,7 +128,9 @@ function Review (props: Props): React.JSX.Element {
             onSaved={() => {
               setMode(EditableMode.View)
               void fetchReview(review.id)
-              props.onChanged()
+              if (props.onChanged !== undefined) {
+                props.onChanged()
+              }
             }}
           />
         </>

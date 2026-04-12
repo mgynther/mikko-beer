@@ -24,20 +24,20 @@ interface Props {
   sorting: ReviewSorting | undefined
   setSorting: ((sorting: ReviewSorting) => void) | undefined
   supportedSorting: ReviewSortingOrder[]
-  onChanged: () => void
+  onChanged: (() => void) | undefined
 }
 
 function ReviewList (props: Props): React.JSX.Element {
   return (
     <div>
       {props.isTitleVisible && <h4>Reviews</h4>}
-      <LoadingIndicator isLoading={props.isLoading} />
       <div className="Review-content">
         <ReviewHeading
           sorting={props.sorting}
           setSorting={props.setSorting}
           supportedSorting={props.supportedSorting}
         />
+        <LoadingIndicator isLoading={props.isLoading} />
         <div>
           {props.reviews.map((review) => (
               <Review
