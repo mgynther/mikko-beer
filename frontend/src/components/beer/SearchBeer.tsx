@@ -26,12 +26,8 @@ function SearchBeer (props: Props): React.JSX.Element {
   const [results, setResults] = useState<Beer[]>([])
 
   async function doSearch (filter: string): Promise<void> {
-    try {
-      const result = await search(filter)
-      setResults(result)
-    } catch (e) {
-      console.warn('Failed to search beers', e)
-    }
+    const result = await search(filter)
+    setResults(result)
   }
 
   useEffect(() => {
