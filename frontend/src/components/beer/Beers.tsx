@@ -45,9 +45,13 @@ function Beers (props: Props): React.JSX.Element {
       setLoadedBeers(newBeers)
     }
     function checkLoad (): void {
-      if (!isLoading && hasMore) {
-        void loadMore()
+      if (isLoading) {
+        return
       }
+      if (!hasMore) {
+        return
+      }
+      void loadMore()
     }
     return props.listBeersIf.infiniteScroll(checkLoad)
   }, [loadedBeers, setLoadedBeers, isLoading, hasMore, list])

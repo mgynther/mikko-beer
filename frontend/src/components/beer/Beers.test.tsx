@@ -1,10 +1,12 @@
-import { act, render } from '@testing-library/react'
-import { expect, test } from 'vitest'
+import { act, render, waitFor } from '@testing-library/react'
+import { expect, test, vitest } from 'vitest'
 import Beers from './Beers'
 import type { SearchIf } from '../../core/search/types'
 import LinkWrapper from '../LinkWrapper'
 import type { UseDebounce } from '../../core/types'
-import type { ListBeersIf } from '../../core/beer/types'
+import type { BeerList, ListBeersIf, SearchBeerIf } from '../../core/beer/types'
+import type { NavigateIf } from '../util'
+import { loadingIndicatorText } from '../common/LoadingIndicator'
 
 const useDebounce: UseDebounce<string> = str => [str, false]
 
@@ -52,7 +54,18 @@ const beers = [
   anotherBeer
 ]
 
-test('renders breweries', async () => {
+const navigateIf: NavigateIf = {
+  useNavigate: () => notUsed
+}
+
+const searchBeerIf: SearchBeerIf = {
+  useSearch: () => ({
+    search: notUsed,
+    isLoading: false
+  })
+}
+
+test('render beers', async () => {
   let scrollCb: (() => void) = () => undefined
   const listBeersIf: ListBeersIf = {
     useList: () => ({
@@ -69,15 +82,8 @@ test('renders breweries', async () => {
     <LinkWrapper>
       <Beers
         listBeersIf={listBeersIf}
-        navigateIf={{
-          useNavigate: () => notUsed
-        }}
-        searchBeerIf={{
-          useSearch: () => ({
-            search: notUsed,
-            isLoading: false
-          })
-        }}
+        navigateIf={navigateIf}
+        searchBeerIf={searchBeerIf}
         searchIf={activeSearch}
       />
     </LinkWrapper>
@@ -90,4 +96,90 @@ test('renders breweries', async () => {
   getAllByRole('link', { name: style.name })
   getByRole('textbox')
   getByPlaceholderText('Search beer')
+})
+
+test('render loading', async () => {
+  let scrollCb: (() => void) = () => undefined
+  const listBeersIf: ListBeersIf = {
+    useList: () => ({
+      list: async () => ({
+        beers
+      }),
+      beerList: undefined,
+      isLoading: true,
+      isUninitialized: true
+    }),
+    infiniteScroll: (cb) => { scrollCb = cb; return () => undefined }
+  }
+  const { getByText } = render(
+    <LinkWrapper>
+      <Beers
+        listBeersIf={listBeersIf}
+        navigateIf={navigateIf}
+        searchBeerIf={searchBeerIf}
+        searchIf={activeSearch}
+      />
+    </LinkWrapper>
+  )
+  await act(async () => { scrollCb(); })
+  getByText(loadingIndicatorText)
+})
+
+test('stops loading more', async () => {
+  const listMore = vitest.fn()
+  let scrollCb: (() => void) = () => undefined
+  function getListRequestCount(): number {
+    return listMore.mock.calls.length
+  }
+  const listBeersIf: ListBeersIf = {
+    useList: () => ({
+      list: async (params): Promise<BeerList> => {
+        listMore(params)
+        if (getListRequestCount() > 1) {
+          return {
+            beers: []
+          }
+        }
+        return {
+          beers
+        }
+      },
+      beerList: {
+        beers: getListRequestCount() > 1 ? [] : [beer]
+      },
+      isLoading: false,
+      isUninitialized: false
+    }),
+    infiniteScroll: (cb) => { scrollCb = cb; return () => undefined }
+  }
+  const { getByText } = render(
+    <LinkWrapper>
+      <Beers
+        listBeersIf={listBeersIf}
+        navigateIf={navigateIf}
+        searchBeerIf={searchBeerIf}
+        searchIf={activeSearch}
+      />
+    </LinkWrapper>
+  )
+  scrollCb()
+  await waitFor(() => getByText(beer.name))
+  // No more visible changes on UI so act is needed.
+  await act(async () => { scrollCb(); })
+  expect(listMore.mock.calls).toEqual([
+    [
+      {
+        size: 20,
+        skip: 0
+      }
+    ],
+    [
+      {
+        size: 20,
+        skip: 2
+      }
+    ]
+  ])
+  await act(async () => { scrollCb(); })
+  expect(listMore).toHaveBeenCalledTimes(2)
 })
