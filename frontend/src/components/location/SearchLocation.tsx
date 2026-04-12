@@ -31,12 +31,8 @@ function SearchLocation (props: Props): React.JSX.Element {
   const { create } = props.searchLocationIf.create.useCreate()
 
   async function doSearch (filter: string): Promise<void> {
-    try {
-      const results = await search(filter)
-      setResults(results)
-    } catch (e) {
-      console.warn('Failed to search locations', e)
-    }
+    const results = await search(filter)
+    setResults(results)
   }
 
   useEffect(() => {
