@@ -55,3 +55,29 @@ test('updates location', async () => {
   const saveCalls = onSaved.mock.calls
   expect(saveCalls).toEqual([[]])
 })
+
+test('cancel update', async () => {
+  const user = userEvent.setup()
+  const onCancel = vitest.fn()
+  const { getByRole } = render(
+    <UpdateLocation
+      initialLocation={{
+        id,
+        name: 'Panimoarvintola Plevna'
+      }}
+      updateLocationIf={{
+        useUpdate: () => ({
+          update: async (): Promise<void> => undefined,
+          isLoading: false
+        }),
+        login: getLogin()
+      }}
+      onCancel={onCancel}
+      onSaved={() => undefined}
+    />
+  )
+  const cancelButton = getByRole('button', { name: 'Cancel' })
+  await user.click(cancelButton)
+  const cancelCalls = onCancel.mock.calls
+  expect(cancelCalls).toEqual([[]])
+})
