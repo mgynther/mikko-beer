@@ -19,16 +19,9 @@ interface Props {
 function UpdateBrewery (props: Props): React.JSX.Element {
   const [newBrewery, setNewBrewery] = useState<Brewery | undefined>(undefined)
   const { update, isLoading } = props.updateBreweryIf.useUpdate()
-  async function doUpdate (): Promise<void> {
-    if (newBrewery === undefined) {
-      throw new Error('brewery must not be undefined when updating')
-    }
-    try {
-      await update({ ...newBrewery })
-      props.onSaved()
-    } catch (e) {
-      console.warn('Failed to update brewery', e)
-    }
+  async function doUpdate (newBrewery: Brewery): Promise<void> {
+    await update({ ...newBrewery })
+    props.onSaved()
   }
   return (
     <>
@@ -46,7 +39,11 @@ function UpdateBrewery (props: Props): React.JSX.Element {
           setNewBrewery(undefined)
           props.onCancel()
         }}
-        onSave={() => { void doUpdate() }}
+        onSave={
+          newBrewery
+            ? (): void => { void doUpdate(newBrewery) }
+            : undefined
+        }
       />
     </>
   )
