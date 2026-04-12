@@ -6,6 +6,11 @@ import type {
   CreateBreweryIf,
   CreateBreweryRequest
 } from '../../core/brewery/types'
+import { loadingIndicatorText } from '../common/LoadingIndicator'
+
+const dontCall = (): any => {
+  throw new Error('must not be called')
+}
 
 const id = '37e1e052-f558-40e1-ae50-4719d2d5f3cc'
 const namePlaceholder = 'Create brewery'
@@ -38,4 +43,20 @@ test('creates brewery', async () => {
     id,
     name: 'Salama Brewing'
   }]])
+})
+
+test('render loading', async () => {
+  const createBreweryIf: CreateBreweryIf = {
+    useCreate: () => ({
+      create: dontCall,
+      isLoading: true
+    })
+  }
+  const { getByText } = render(
+    <CreateBrewery
+      select={dontCall}
+      createBreweryIf={createBreweryIf}
+    />
+  )
+  getByText(loadingIndicatorText)
 })

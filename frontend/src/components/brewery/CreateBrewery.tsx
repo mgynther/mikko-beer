@@ -25,18 +25,11 @@ function CreateBrewery (props: Props): React.JSX.Element {
   const [newBrewery, setNewBrewery] = useState<Brewery | undefined>(undefined)
   const { create, isLoading } = props.createBreweryIf.useCreate()
 
-  async function doCreate (): Promise<void> {
-    if (newBrewery === undefined) {
-      throw new Error('brewery must not be undefined when creating')
-    }
-    try {
-      const result = await create({
-        name: newBrewery.name
-      })
-      props.select(result)
-    } catch (e) {
-      console.warn('Failed to create brewery', e)
-    }
+  async function doCreate (newBrewery: Brewery): Promise<void> {
+    const result = await create({
+      name: newBrewery.name
+    })
+    props.select(result)
   }
 
   return (
@@ -52,7 +45,11 @@ function CreateBrewery (props: Props): React.JSX.Element {
         <div>
           <Button
             disabled={newBrewery === undefined}
-            onClick={() => { void doCreate() }}
+            onClick={
+              newBrewery
+                ? (): void => { void doCreate(newBrewery) }
+                : undefined
+            }
             text='Create'
           />
         </div>
