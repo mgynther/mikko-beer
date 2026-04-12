@@ -239,6 +239,54 @@ test('confirms creating location when partially matching result exists',
   expect(select.mock.calls).toEqual([[location]])
 })
 
+test('does not create location on reject', async () => {
+  const user = userEvent.setup()
+  const create = vitest.fn()
+  const select = vitest.fn()
+  const confirmCb = vitest.fn()
+  const { getByRole } = render(
+    <SearchLocation
+      confirm={(text: string): boolean => {
+        confirmCb(text)
+        return false
+      }}
+      isCreateEnabled={true}
+      placeholderText={placeholderText}
+      searchLocationIf={{
+        useSearch: () => ({
+          search: async (): Promise<Location[]> => [{
+            id: '18047635-1cd9-4c5e-b5fd-379f58d80f6d',
+            name: `${location.name}, Tampere`
+          }],
+          isLoading: false
+        }),
+        create: {
+          useCreate: () => ({
+            create: dontCall,
+            isLoading: false
+          })
+        }
+      }}
+      searchIf={activeSearch}
+      select={select}
+    />
+  )
+
+  const input = getByRole('textbox')
+  expect(input).toBeDefined()
+  await user.type(input, location.name)
+
+  const createButton =
+    getByRole('button', { name: `Create "${location.name}"` })
+  expect(createButton).toBeDefined()
+  await user.click(createButton)
+  expect(confirmCb.mock.calls).toEqual([[
+    `Are you sure you want to create ${location.name}?`
+  ]])
+  expect(create.mock.calls).toEqual([])
+  expect(select.mock.calls).toEqual([])
+})
+
 test('sorts existing result before create new location', async () => {
   const user = userEvent.setup()
   const resultName = `${location.name}, Tampere`

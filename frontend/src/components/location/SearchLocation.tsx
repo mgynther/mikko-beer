@@ -7,6 +7,7 @@ import type {
 import type { SearchIf } from '../../core/search/types'
 
 import SearchBox, { nameFormatter } from '../common/SearchBox'
+import { createLocationSort } from './create-location-sort'
 
 export interface Props {
   confirm: (text: string) => boolean
@@ -62,11 +63,7 @@ function SearchLocation (props: Props): React.JSX.Element {
       <SearchBox
         currentFilter={filter}
         currentOptions={resultsAndCreate}
-        customSort={(a: Location, b: Location) => {
-          if (a.id === createId) return 1
-          if (b.id === createId) return -1
-          return 0
-        }}
+        customSort={createLocationSort}
         formatter={nameFormatter}
         isLoading={isLoading}
         searchIf={props.searchIf}
