@@ -147,6 +147,7 @@ import login from './storehookifs/login/login'
 import logout from './storehookifs/login/logout'
 import { createSetSearch } from './storehookifs/set-search.ts'
 import type { UseDebounce } from './core/types.ts'
+import { getDate } from './date-getter.ts'
 
 function getNextMonthDate (): Date {
   const now = new Date()
@@ -248,7 +249,7 @@ function RtkApp (): React.JSX.Element {
   const listReviewsByLocationIf: ListReviewsByIf = listReviewsByLocation()
   const listReviewsByStyleIf: ListReviewsByIf = listReviewsByStyle()
   const createReviewIf: CreateReviewIf = createReview(
-    () => new Date(),
+    getDate,
     searchLocationIf,
     selectBeerIf,
     reviewContainerIf
