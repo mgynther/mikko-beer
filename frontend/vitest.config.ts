@@ -8,7 +8,13 @@ export default defineConfig({
       enabled: true,
       provider: 'v8',
       reporter: ['text', 'html'],
-      exclude: ['src/**/*.css'],
+      exclude: ['src/**/*.css', 'src/react-redux-wrapper.ts'],
+      thresholds: {
+        statements: 100,
+        functions: 100,
+        branches: 100,
+        lines: 100
+      }
     }
   },
 })
