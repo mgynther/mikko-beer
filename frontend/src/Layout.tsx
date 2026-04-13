@@ -23,7 +23,7 @@ interface LayoutProps {
   searchIf: SearchIf
   isAdmin: boolean
   isLoggedIn: boolean
-  logout: () => void
+  logout: (() => void) | undefined
   navMenuState: NavMenuProps
   theme: ThemeProps
   children: ReactNode

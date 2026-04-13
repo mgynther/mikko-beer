@@ -136,7 +136,7 @@ navigationTests.forEach(testCase => {
       <LinkWrapper>
         <Nav
           isAdmin={true}
-          logout={dontCall}
+          logout={undefined}
           navMenuState={defaultNavStateProps}
           navigateIf={dontNavigate}
           searchBeerIf={dontSearchBeer}
@@ -427,7 +427,7 @@ navStateTests.forEach(testCase => {
         <LinkWrapper>
           <Nav
             isAdmin={true}
-            logout={dontCall}
+            logout={undefined}
             navMenuState={{
               setNavMenuState: setNavState,
               navMenuState: testCase.original

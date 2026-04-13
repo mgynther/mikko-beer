@@ -2,9 +2,8 @@ import React, { useEffect } from 'react'
 import { Routes, Route, Outlet } from 'react-router'
 
 import { useSelector } from './react-redux-wrapper'
-import {
-  Role,
-} from './core/user/types'
+import { Role } from './core/user/types'
+import type { User } from './core/user/types'
 import { useAppDispatch } from './store/hooks'
 
 import './App.css'
@@ -114,6 +113,16 @@ function App (props: Props): React.JSX.Element {
 
   const { logout } = logoutIf.useLogout()
 
+  function doLogout (user: User): void {
+    void logout({
+      userId: user.id,
+      body: {
+        refreshToken: login.refreshToken
+      }
+    })
+  }
+  const user: User | undefined = login.user
+
   return (
     <div className="App">
       <div className="AppContent">
@@ -126,14 +135,9 @@ function App (props: Props): React.JSX.Element {
                 searchIf={searchIf}
                 isAdmin={isAdmin}
                 isLoggedIn={isLoggedIn}
-                logout={() => {
-                  void logout({
-                    userId: login.user?.id ?? '',
-                    body: {
-                      refreshToken: login.refreshToken
-                    }
-                  })
-                }}
+                logout={
+                  user ? (): void => { doLogout(user) } : undefined
+                }
                 navMenuState={{
                   navMenuState: navState,
                   setNavMenuState: (navMenuState: NavMenuState) => {

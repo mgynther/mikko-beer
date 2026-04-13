@@ -22,7 +22,7 @@ export interface ThemeProps {
 
 interface Props {
   isAdmin: boolean
-  logout: () => void
+  logout: (() => void) | undefined
   navMenuState: NavMenuStateProps
   navigateIf: NavigateIf
   searchBeerIf: SearchBeerIf
@@ -34,6 +34,7 @@ interface Props {
 function Nav (props: Props): React.JSX.Element {
   const isMoreOpen =
     props.navMenuState.navMenuState === 'EXPANDED'
+  const { logout } = props
   return (
     <nav>
       <ul>
@@ -114,7 +115,11 @@ function Nav (props: Props): React.JSX.Element {
                 </label>
             </li>
             <li>
-              <Button onClick={() => { props.logout(); }} text='Logout'/>
+              <Button onClick={
+                logout
+                  ? (): void => { logout(); }
+                  : undefined
+              } text='Logout'/>
             </li>
           </ul>
         </div>
