@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, expect, test } from 'vitest'
+import { beforeEach, expect, test, vitest } from 'vitest'
 import { testTimes } from '../test-util/filter-time'
 import LinkWrapper from './components/LinkWrapper'
 
@@ -10,7 +10,7 @@ import { setState } from './store/nav-menu/reducer'
 import { store } from './store/store'
 import type { StoreIf } from './store/storeIf'
 import { Role } from './core/user/types'
-import type { GetLogin } from './core/login/types'
+import type { GetLogin, LogoutParams } from './core/login/types'
 import { PasswordChangeResult } from './core/login/types'
 import type { InfiniteScroll, UseDebounce } from './core/types'
 import type { DeleteStorageIf } from './core/storage/types'
@@ -587,4 +587,33 @@ test('sets theme to dark', async () => {
   await user.click(darkCheckbox)
   const bodyDark = document.getElementsByTagName('body')
   expect(bodyDark[0].getAttribute('class')).toEqual(null)
+})
+
+test('logout', async () => {
+  const user = userEvent.setup()
+  const logout = vitest.fn()
+  const { getByRole } = render(
+    <Provider store={store}>
+      <LinkWrapper>
+        <App
+          paramsIf={paramsIf}
+          storeIf={{
+            ...storeIf,
+            getLogin: getAdminLogin,
+            logoutIf: {
+              useLogout: () => ({
+                logout
+              })
+            }
+          }} />
+      </LinkWrapper>
+    </Provider>
+  )
+  const moreButton = getByRole('button', { name: 'More' })
+  await user.click(moreButton)
+
+  const logoutButton = getByRole('button', { name: 'Logout' })
+  await user.click(logoutButton)
+
+  expect(logout).toHaveBeenCalledTimes(1)
 })
