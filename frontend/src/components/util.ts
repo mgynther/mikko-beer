@@ -68,10 +68,9 @@ export const useDebounce = <T>(
 
   return [debouncedValue, value !== debouncedValue]
 }
-// Use a function wrapper to ensure correct type and keep it generic.
-const getUseDebounce =
+
+export const getUseDebounce =
   function<T>(): UseDebounce<T> { return useDebounce<T> }
-getUseDebounce()
 
 type NavigationFunc = (
   url: string,

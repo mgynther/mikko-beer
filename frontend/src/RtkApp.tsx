@@ -81,6 +81,7 @@ import type {
 } from './core/stats/types'
 import type { SearchIf } from './core/search/types'
 import {
+  getUseDebounce,
   infiniteScroll,
   navigateIf,
   paramsIf,
@@ -146,7 +147,6 @@ import changePassword from './storehookifs/login/changePassword'
 import login from './storehookifs/login/login'
 import logout from './storehookifs/login/logout'
 import { createSetSearch } from './storehookifs/set-search.ts'
-import type { UseDebounce } from './core/types.ts'
 import { getDate } from './date-getter.ts'
 
 function getNextMonthDate (): Date {
@@ -274,7 +274,6 @@ function RtkApp (): React.JSX.Element {
     year: nextMonthDate.getFullYear(),
     month: nextMonthDate.getMonth() + 1
   }
-  const getUseDebounce = function<T>(): UseDebounce<T> { return useDebounce<T> }
   const statsIf: StatsIf = stats(
     infiniteScroll,
     navigateIf,
