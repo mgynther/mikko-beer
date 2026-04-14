@@ -9,6 +9,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'html'],
       exclude: ['src/**/*.css', 'src/react-redux-wrapper.ts'],
+      skipFull: true,
       thresholds: {
         statements: 100,
         functions: 100,
