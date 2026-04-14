@@ -44,8 +44,19 @@ const ValidatedJoinedReview = t.type({
   time: t.string
 })
 
+const ValidatedSorting = t.type({
+  order: t.union([
+    t.literal('beer_name'),
+    t.literal('brewery_name'),
+    t.literal('rating'),
+    t.literal('time')
+  ]),
+  direction: t.union([t.literal('asc'), t.literal('desc')])
+})
+
 const ValidatedJoinedReviewList = t.type({
-  reviews: t.array(ValidatedJoinedReview)
+  reviews: t.array(ValidatedJoinedReview),
+  sorting: ValidatedSorting
 })
 
 export function validateReviewOrUndefined(
@@ -83,5 +94,8 @@ export function validateJoinedReviewList(result: unknown): JoinedReviewList {
     throw Error(formatError(decoded))
   }
   const valid: ReviewListT = decoded.right
-  return valid
+  return {
+    reviews: valid.reviews,
+    sorting: valid.sorting
+  }
 }

@@ -90,7 +90,11 @@ const validJoinedReview: JoinedReview = {
 
 test('validateJoinedReviewListOrUndefined returns list for valid input', () => {
   const list: JoinedReviewList = {
-    reviews: [validJoinedReview]
+    reviews: [validJoinedReview],
+    sorting: {
+      order: 'beer_name',
+      direction: 'asc'
+    }
   }
   expect(validateJoinedReviewListOrUndefined(list))
   .toEqual(list)
@@ -104,7 +108,11 @@ test('validateJoinedReviewListOrUndefined throws for invalid input', () => {
 
 test('validateJoinedReviewList returns list for valid input', () => {
   const list: JoinedReviewList = {
-    reviews: [validJoinedReview]
+    reviews: [validJoinedReview],
+    sorting: {
+      order: 'brewery_name',
+      direction: 'desc'
+    }
   }
   expect(validateJoinedReviewList(list))
   .toEqual(list)

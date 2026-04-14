@@ -152,7 +152,13 @@ const statsIf: StatsIf = {
 
 const listReviewsByBreweryIf: ListReviewsByIf = {
   useList: () => ({
-    reviews: { reviews: [] },
+    reviews: {
+      reviews: [],
+      sorting: {
+        order: 'time',
+        direction: 'desc'
+      }
+    },
     isLoading: false
   })
 }

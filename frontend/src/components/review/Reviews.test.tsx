@@ -197,7 +197,11 @@ const getListReviewsIf: GetListReviewsIf = cb => ({
     list: async (params): Promise<JoinedReviewList> => {
       cb(params)
       return {
-        reviews: [joinedReview]
+        reviews: [joinedReview],
+        sorting: {
+          order: 'rating',
+          direction: 'desc'
+        }
       }
     },
     reviewList: {

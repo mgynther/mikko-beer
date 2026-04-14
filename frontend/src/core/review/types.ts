@@ -87,7 +87,7 @@ export interface ReviewSorting {
 
 export interface JoinedReviewList {
   reviews: JoinedReview[]
-  sorting?: ReviewSorting
+  sorting: ReviewSorting
 }
 
 export interface GetReviewIf {

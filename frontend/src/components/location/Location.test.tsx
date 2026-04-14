@@ -154,7 +154,13 @@ const statsIf: StatsIf = {
 
 const listReviewsByLocationIf: ListReviewsByIf = {
   useList: () => ({
-    reviews: { reviews: [] },
+    reviews: {
+      reviews: [],
+      sorting: {
+        order: 'rating',
+        direction: 'asc'
+      }
+    },
     isLoading: false
   })
 }

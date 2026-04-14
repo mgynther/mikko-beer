@@ -60,7 +60,11 @@ test('list reviews by style', async () => {
         ],
         time: '2026-03-12T00:00:00.000Z'
       }
-    ]
+    ],
+    sorting: {
+      order: 'brewery_name',
+      direction: 'asc'
+    }
   }
 
   addTestServerResponse<JoinedReviewList>({

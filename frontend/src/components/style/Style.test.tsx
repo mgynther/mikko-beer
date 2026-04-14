@@ -218,7 +218,10 @@ function getListReviewsIf(reviews: JoinedReview[]): ListReviewsByIf {
     useList: () => ({
       reviews: {
         reviews,
-        sorting: undefined
+        sorting: {
+          order: 'brewery_name',
+          direction: 'asc'
+        }
       },
       isLoading: false
     })

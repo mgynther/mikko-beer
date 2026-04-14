@@ -60,7 +60,11 @@ test('list reviews by beer', async () => {
         ],
         time: '2026-03-12T00:00:00.000Z'
       }
-    ]
+    ],
+    sorting: {
+      order: 'rating',
+      direction: 'asc'
+    }
   }
 
   addTestServerResponse<JoinedReviewList>({
