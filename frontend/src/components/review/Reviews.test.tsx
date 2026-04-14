@@ -399,9 +399,11 @@ test('stops loading more', async () => {
       <ContentEnd/>
     </LinkWrapper>
   )
-  scrollCb()
+  // act is important to ensure changes have been fully applied. loading is not
+  // toggled between renders so without act there would be a race condition in
+  // the test execution.
+  await act(async () => { scrollCb(); })
   await waitFor(() => getByText(joinedReview.beerName))
-  // No more visible changes on UI so act is needed.
   await act(async () => { scrollCb(); })
   expect(listMore.mock.calls).toEqual([
     [

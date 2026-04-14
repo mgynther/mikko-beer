@@ -53,8 +53,6 @@ function AnnualContainerInfiniteScroll (props: Props): React.JSX.Element {
     }
     return props.getAnnualContainerStatsIf.infiniteScroll(checkLoad)
   }, [
-    loadedAnnualContainers,
-    setLoadedAnnualContainers,
     isLoading,
     hasMore,
     query

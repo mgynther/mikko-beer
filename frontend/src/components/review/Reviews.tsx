@@ -69,8 +69,6 @@ function Reviews (props: Props): React.JSX.Element {
     }
     return props.listReviewsIf.infiniteScroll(checkLoad)
   }, [
-    loadedReviews,
-    setLoadedReviews,
     isLoading,
     hasMore,
     list,

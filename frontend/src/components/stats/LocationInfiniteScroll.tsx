@@ -85,8 +85,6 @@ function LocationInfiniteScroll (props: Props): React.JSX.Element {
     }
     return props.getLocationStatsIf.infiniteScroll(checkLoad)
   }, [
-    loadedLocations,
-    setLoadedLocations,
     isLoading,
     hasMore,
     minReviewCount,

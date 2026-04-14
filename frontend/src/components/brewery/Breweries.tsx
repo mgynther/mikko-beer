@@ -34,11 +34,12 @@ function Breweries (props: Props): React.JSX.Element {
     : [...breweryList.breweries]
 
   const hasMore = breweryArray.length > 0 || isUninitialized
+  const loadedCount = loadedBreweries.length
 
   useEffect(() => {
     const loadMore = async (): Promise<void> => {
       const result = await list({
-        skip: loadedBreweries.length,
+        skip: loadedCount,
         size: pageSize
       })
       const newBreweries = [...loadedBreweries, ...result.breweries]
@@ -54,7 +55,7 @@ function Breweries (props: Props): React.JSX.Element {
       void loadMore()
     }
     return props.listBreweriesIf.infiniteScroll(checkLoad)
-  }, [loadedBreweries, setLoadedBreweries, isLoading, hasMore, list])
+  }, [loadedCount, isLoading, hasMore])
 
   return (
     <div>

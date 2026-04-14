@@ -33,11 +33,12 @@ function Locations (props: Props): React.JSX.Element {
     : [...locationList.locations]
 
   const hasMore = locationArray.length > 0 || isUninitialized
+  const loadedCount = loadedLocations.length
 
   useEffect(() => {
     const loadMore = async (): Promise<void> => {
       const result = await list({
-        skip: loadedLocations.length,
+        skip: loadedCount,
         size: pageSize
       })
       const newLocations = [...loadedLocations, ...result.locations]
@@ -53,7 +54,7 @@ function Locations (props: Props): React.JSX.Element {
       void loadMore()
     }
     return props.listLocationsIf.infiniteScroll(checkLoad)
-  }, [loadedLocations, setLoadedLocations, isLoading, hasMore, list])
+  }, [loadedCount, isLoading, hasMore])
 
   return (
     <div>

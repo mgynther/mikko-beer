@@ -85,8 +85,6 @@ function BreweryInfiniteScroll (props: Props): React.JSX.Element {
     }
     return props.getBreweryStatsIf.infiniteScroll(checkLoad)
   }, [
-    loadedBreweries,
-    setLoadedBreweries,
     isLoading,
     hasMore,
     minReviewCount,
