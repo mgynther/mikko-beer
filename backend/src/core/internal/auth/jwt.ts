@@ -4,14 +4,19 @@ const { sign, verify, TokenExpiredError } = jwt
 import type { JwtPayload } from 'jsonwebtoken'
 import type {
   AuthToken,
-  AuthTokenConfig, AuthTokenPayload
+  AuthTokenConfig,
+  AuthTokenPayload,
 } from '../../auth/auth-token.js'
 import {
-  AuthTokenExpiredError, InvalidAuthTokenError
+  AuthTokenExpiredError,
+  InvalidAuthTokenError,
 } from '../../auth/auth-token.js'
 
 import type { RefreshToken } from '../../auth/refresh-token.js'
-import { parseAuthTokenPayload, parseRefreshTokenPayload } from './jwt-parser.js'
+import {
+  parseAuthTokenPayload,
+  parseRefreshTokenPayload,
+} from './jwt-parser.js'
 
 export interface RefreshTokenPayload {
   userId: string
@@ -19,28 +24,28 @@ export interface RefreshTokenPayload {
   isRefreshToken: true
 }
 
-export function signAuthToken (
+export function signAuthToken(
   tokenPayload: AuthTokenPayload,
-  authTokenConfig: AuthTokenConfig
+  authTokenConfig: AuthTokenConfig,
 ): AuthToken {
   return {
     authToken: sign(tokenPayload, authTokenConfig.secret, {
-      expiresIn: `${authTokenConfig.expiryDurationMin}m`
-    })
+      expiresIn: `${authTokenConfig.expiryDurationMin}m`,
+    }),
   }
 }
 
-export function signRefreshToken (
+export function signRefreshToken(
   tokenPayload: RefreshTokenPayload,
-  authTokenSecret: string
+  authTokenSecret: string,
 ): RefreshToken {
   // Refresh tokens never expire.
   return { refreshToken: sign(tokenPayload, authTokenSecret) }
 }
 
-export function verifyAuthToken (
+export function verifyAuthToken(
   token: AuthToken,
-  authTokenSecret: string
+  authTokenSecret: string,
 ): AuthTokenPayload {
   const payload = verifyToken(token.authToken, authTokenSecret)
   if (typeof payload === 'string') {
@@ -49,9 +54,9 @@ export function verifyAuthToken (
   return parseAuthTokenPayload(payload)
 }
 
-export function verifyRefreshToken (
+export function verifyRefreshToken(
   token: RefreshToken,
-  authTokenSecret: string
+  authTokenSecret: string,
 ): RefreshTokenPayload {
   const payload = verifyToken(token.refreshToken, authTokenSecret)
   if (typeof payload === 'string') {
@@ -60,9 +65,9 @@ export function verifyRefreshToken (
   return parseRefreshTokenPayload(payload)
 }
 
-function verifyToken (
+function verifyToken(
   token: string,
-  authTokenSecret: string
+  authTokenSecret: string,
 ): string | JwtPayload {
   try {
     return verify(token, authTokenSecret)

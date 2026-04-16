@@ -7,101 +7,92 @@ import * as authHelper from '../authentication/authentication-helper.js'
 import type { Router } from '../router.js'
 import type {
   Container,
-  CreateContainerRequest
+  CreateContainerRequest,
 } from '../../core/container/container.js'
 import type { Context } from '../context.js'
 
-export function containerController (router: Router): void {
-  router.post('/api/v1/container',
-    async (ctx: Context) => {
-      const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const body: unknown = ctx.request.body
+export function containerController(router: Router): void {
+  router.post('/api/v1/container', async (ctx: Context) => {
+    const authTokenPayload = authHelper.parseAuthToken(ctx)
+    const body: unknown = ctx.request.body
 
-      const result = await ctx.db.executeReadWriteTransaction(
-        async (trx) => await containerService.createContainer(
-          async (
-            container: CreateContainerRequest
-          ) => await containerRepository.insertContainer(trx, container),
+    const result = await ctx.db.executeReadWriteTransaction(
+      async (trx) =>
+        await containerService.createContainer(
+          async (container: CreateContainerRequest) =>
+            await containerRepository.insertContainer(trx, container),
           {
             authTokenPayload,
-            body
-          }, ctx.log
-        )
-      )
+            body,
+          },
+          ctx.log,
+        ),
+    )
 
-      return {
-        status: 201,
-        body: {
-          container: result
-        }
-      }
+    return {
+      status: 201,
+      body: {
+        container: result,
+      },
     }
-  )
+  })
 
-  router.put('/api/v1/container/:containerId',
-    async (ctx: Context) => {
-      const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const body: unknown = ctx.request.body
-      const containerId: string | undefined = ctx.params.containerId
+  router.put('/api/v1/container/:containerId', async (ctx: Context) => {
+    const authTokenPayload = authHelper.parseAuthToken(ctx)
+    const body: unknown = ctx.request.body
+    const containerId: string | undefined = ctx.params.containerId
 
-      const result = await ctx.db.executeReadWriteTransaction(
-        async (trx) => await containerService.updateContainer(
+    const result = await ctx.db.executeReadWriteTransaction(
+      async (trx) =>
+        await containerService.updateContainer(
           async (container: Container) =>
             await containerRepository.updateContainer(trx, container),
           {
             authTokenPayload,
-            id: containerId
+            id: containerId,
           },
           body,
-          ctx.log
-        )
-      )
+          ctx.log,
+        ),
+    )
 
-      return {
-        status: 200,
-        body: {
-          container: result
-        }
-      }
+    return {
+      status: 200,
+      body: {
+        container: result,
+      },
     }
-  )
+  })
 
-  router.get(
-    '/api/v1/container/:containerId',
-    async (ctx: Context) => {
-      const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const containerId: string | undefined = ctx.params.containerId
-      const container = await containerService.findContainerById(
-        async (containerId: string) =>
-          await containerRepository.findContainerById(ctx.db, containerId),
-        {
-          authTokenPayload,
-          id: containerId
-        },
-        ctx.log
-      )
-
-      return {
-        status: 200,
-        body: { container }
-      }
-    }
-  )
-
-  router.get(
-    '/api/v1/container',
-    async (ctx: Context) => {
-      const authTokenPayload = authHelper.parseAuthToken(ctx)
-      const containers = await containerService.listContainers(
-        async () =>
-          await containerRepository.listContainers(ctx.db),
+  router.get('/api/v1/container/:containerId', async (ctx: Context) => {
+    const authTokenPayload = authHelper.parseAuthToken(ctx)
+    const containerId: string | undefined = ctx.params.containerId
+    const container = await containerService.findContainerById(
+      async (containerId: string) =>
+        await containerRepository.findContainerById(ctx.db, containerId),
+      {
         authTokenPayload,
-        ctx.log
-      )
-      return {
-        status: 200,
-        body: { containers }
-      }
+        id: containerId,
+      },
+      ctx.log,
+    )
+
+    return {
+      status: 200,
+      body: { container },
     }
-  )
+  })
+
+  router.get('/api/v1/container', async (ctx: Context) => {
+    const authTokenPayload = authHelper.parseAuthToken(ctx)
+    const containers = await containerService.listContainers(
+      async () => await containerRepository.listContainers(ctx.db),
+      authTokenPayload,
+      ctx.log,
+    )
+    return {
+      status: 200,
+      body: { containers },
+    }
+  })
 }

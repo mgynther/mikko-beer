@@ -7,9 +7,7 @@ import { v4 as uuidv4 } from 'uuid'
 import type { Config } from './config.js'
 import type { Context } from './context.js'
 import { Database } from '../data/database.js'
-import {
-  clearOldHashedAt
-} from '../data/user/sign-in-method/sign-in-method.repository.js'
+import { clearOldHashedAt } from '../data/user/sign-in-method/sign-in-method.repository.js'
 import * as userRepository from '../data/user/user.repository.js'
 import { createRouter } from './router.js'
 import type { Router } from './router.js'
@@ -23,21 +21,19 @@ import { statsController } from './stats/stats.controller.js'
 import { styleController } from './style/style.controller.js'
 import { userController } from './user/user.controller.js'
 import type { CreateAnonymousUserRequest, User } from '../core/user/user.js'
-import {
-  createAddPasswordUserIf
-} from './user/sign-in-method/sign-in-method-helper.js'
+import { createAddPasswordUserIf } from './user/sign-in-method/sign-in-method-helper.js'
 import { ControllerError } from '../core/errors.js'
 import type { log } from '../core/log.js'
 import { Level } from '../core/log.js'
 import type { AuthTokenConfig } from '../core/auth/auth-token.js'
 import {
   createInitialUser,
-  addPasswordForInitialUser
+  addPasswordForInitialUser,
 } from '../core/app-initial-user.js'
 import { createStopHandler } from './app-stop-handler.js'
 
 export interface StartResult {
-  authToken: string,
+  authToken: string
   userId: string
 }
 
@@ -49,7 +45,7 @@ export class App {
   readonly #db: Database
   #server?: Server
 
-  constructor (config: Config, log: log) {
+  constructor(config: Config, log: log) {
     this.#config = config
     this.#log = log
     this.#koa = new Koa()
@@ -57,7 +53,7 @@ export class App {
     const routerResult = createRouter({
       config,
       db: this.#db,
-      log
+      log,
     })
     this.#router = routerResult.router
 
@@ -81,41 +77,43 @@ export class App {
     routerResult.useRouter(this.#koa)
   }
 
-  get db (): Database {
+  get db(): Database {
     return this.#db
   }
 
-  async start (): Promise<StartResult> {
+  async start(): Promise<StartResult> {
     return await new Promise<StartResult>((resolve, reject) => {
-        const port = this.#config.port
-        const db = this.#db
-        const log = this.#log
-        const isAdminPasswordNeeded = this.#config.generateInitialAdminPassword
-        const startResult: StartResult = {
-          authToken: '',
-          userId: ''
+      const port = this.#config.port
+      const db = this.#db
+      const log = this.#log
+      const isAdminPasswordNeeded = this.#config.generateInitialAdminPassword
+      const startResult: StartResult = {
+        authToken: '',
+        userId: '',
+      }
+      function logWithAdminPassword(...args: unknown[]): void {
+        if (isAdminPasswordNeeded) {
+          log(Level.INFO, ...args)
         }
-        function logWithAdminPassword (...args: unknown[]): void {
-          if (isAdminPasswordNeeded) {
-            log(Level.INFO, ...args)
-          }
-        }
-        userRepository.listUsers(db).then((users: User[]) => {
+      }
+      userRepository
+        .listUsers(db)
+        .then((users: User[]) => {
           let createPromise: Promise<void> | undefined = undefined
           if (users.length === 0) {
             logWithAdminPassword('No users. Creating initial admin')
             const adminUsername = uuidv4()
             const adminPassword = uuidv4()
             createPromise = db.executeReadWriteTransaction(async (trx) => {
-              const authTokenConfig: AuthTokenConfig ={
+              const authTokenConfig: AuthTokenConfig = {
                 secret: this.#config.authTokenSecret,
-                expiryDurationMin: this.#config.authTokenExpiryDurationMin
-              };
+                expiryDurationMin: this.#config.authTokenExpiryDurationMin,
+              }
               const user = await createInitialUser(
                 async (request: CreateAnonymousUserRequest) =>
                   await userRepository.createAnonymousUser(trx, request),
                 authTokenConfig,
-                this.#log
+                this.#log,
               )
               startResult.authToken = user.authToken.authToken
               startResult.userId = user.user.id
@@ -126,18 +124,16 @@ export class App {
                   user.user.id,
                   {
                     username: adminUsername,
-                    password: adminPassword
+                    password: adminPassword,
                   },
-                  this.#log
+                  this.#log,
                 )
               }
             })
             logWithAdminPassword(
-              `Created initial user "${
-                adminUsername
-              }" with password "${
+              `Created initial user "${adminUsername}" with password "${
                 adminPassword
-              }". Please change the password a.s.a.p.`
+              }". Please change the password a.s.a.p.`,
             )
           }
           log(Level.INFO, 'Server starting')
@@ -151,22 +147,23 @@ export class App {
           const oldDate = new Date()
           oldDate.setDate(oldDate.getDate() - 14)
           const oldPasswordHashedAtCleanupPromise =
-            db.executeReadWriteTransaction(
-              async (trx) => { await clearOldHashedAt(trx, oldDate); }
-            )
+            db.executeReadWriteTransaction(async (trx) => {
+              await clearOldHashedAt(trx, oldDate)
+            })
           promises.push(oldPasswordHashedAtCleanupPromise)
           Promise.all(promises).then(() => {
             log(Level.INFO, `Server started in port ${port}`)
             resolve(startResult)
           })
-        }).catch((error: unknown) => {
+        })
+        .catch((error: unknown) => {
           log(Level.ERROR, 'Error starting', error)
           reject(error)
         })
     })
   }
 
-  async stop (): Promise<void> {
+  async stop(): Promise<void> {
     await new Promise<void>((resolve, reject) => {
       const server = this.#server
       if (server === undefined) {
@@ -181,7 +178,7 @@ export class App {
 
   private readonly errorHandler = async (
     ctx: Koa.ParameterizedContext,
-    next: Koa.Next
+    next: Koa.Next,
   ): Promise<void> => {
     try {
       await next()
@@ -197,7 +194,7 @@ export class App {
 
   private readonly decorateContext = async (
     ctx: Context,
-    next: Koa.Next
+    next: Koa.Next,
   ): Promise<void> => {
     ctx.db = this.#db
     ctx.config = this.#config
@@ -206,34 +203,30 @@ export class App {
   }
 }
 
-function respondError (
+function respondError(
   ctx: Koa.ParameterizedContext,
-  error: ControllerError
+  error: ControllerError,
 ): void {
   ctx.status = error.status
   ctx.body = error.toJSON()
 }
 
-function isObject (value: unknown): value is Record<string, unknown> {
+function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
 }
 
-function createUnknownError (error: unknown, log: log): ControllerError {
+function createUnknownError(error: unknown, log: log): ControllerError {
   if (error instanceof Error) {
     log(
       Level.ERROR,
       'unknown error, name:',
       `${error.name}, message:`,
-      error.message
+      error.message,
     )
   } else {
     log(Level.ERROR, 'unknown error:', error)
   }
-  return new ControllerError(
-    500,
-    'UnknownError',
-    getUnknownErrorMessage(error)
-  )
+  return new ControllerError(500, 'UnknownError', getUnknownErrorMessage(error))
 }
 
 function getUnknownErrorMessage(error: unknown): string {
@@ -243,9 +236,9 @@ function getUnknownErrorMessage(error: unknown): string {
   return 'unknown error'
 }
 
-async function addHeaders (
+async function addHeaders(
   ctx: Koa.ParameterizedContext,
-  next: Koa.Next
+  next: Koa.Next,
 ): Promise<void> {
   ctx.set('Access-Control-Allow-Origin', '*')
   ctx.set('Access-Control-Allow-Headers', 'Authorization, Content-Type')

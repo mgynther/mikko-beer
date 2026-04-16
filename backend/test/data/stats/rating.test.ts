@@ -10,7 +10,7 @@ import { assertDeepEqual } from '../../assert.js'
 const defaultFilter: StatsIdFilter = {
   brewery: undefined,
   location: undefined,
-  style: undefined
+  style: undefined,
 }
 
 describe('rating stats tests', () => {
@@ -28,39 +28,39 @@ describe('rating stats tests', () => {
     const stats = await statsRepository.getRating(ctx.db, defaultFilter)
     function getCount(rating: string): string {
       const count = reviews.filter(
-        review => `${review.rating}` === rating
+        (review) => `${review.rating}` === rating,
       ).length
       return `${count}`
     }
     assertDeepEqual(stats, [
       {
         count: getCount('4'),
-        rating: '4'
+        rating: '4',
       },
       {
         count: getCount('5'),
-        rating: '5'
+        rating: '5',
       },
       {
         count: getCount('6'),
-        rating: '6'
+        rating: '6',
       },
       {
         count: getCount('7'),
-        rating: '7'
+        rating: '7',
       },
       {
         count: getCount('8'),
-        rating: '8'
+        rating: '8',
       },
       {
         count: getCount('9'),
-        rating: '9'
+        rating: '9',
       },
       {
         count: getCount('10'),
-        rating: '10'
-      }
+        rating: '10',
+      },
     ])
   })
 })

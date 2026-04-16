@@ -1,37 +1,33 @@
 import { ajv } from '../ajv.js'
 
-import {
-  invalidLocationError,
-  invalidLocationIdError
-} from '../../errors.js'
+import { invalidLocationError, invalidLocationIdError } from '../../errors.js'
 import type {
   CreateLocationRequest,
-  UpdateLocationRequest
+  UpdateLocationRequest,
 } from '../../location/location.js'
 
-const doValidateLocationRequest =
-  ajv.compile<CreateLocationRequest>({
-    type: 'object',
-    properties: {
-      name: {
-        type: 'string',
-        minLength: 1
-      }
+const doValidateLocationRequest = ajv.compile<CreateLocationRequest>({
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      minLength: 1,
     },
-    required: ['name'],
-    additionalProperties: false
-  })
+  },
+  required: ['name'],
+  additionalProperties: false,
+})
 
-function isCreateLocationRequestValid (body: unknown): boolean {
+function isCreateLocationRequestValid(body: unknown): boolean {
   return doValidateLocationRequest(body)
 }
 
-function isUpdateLocationRequestValid (body: unknown): boolean {
+function isUpdateLocationRequestValid(body: unknown): boolean {
   return doValidateLocationRequest(body)
 }
 
-export function validateCreateLocationRequest (
-  body: unknown
+export function validateCreateLocationRequest(
+  body: unknown,
 ): CreateLocationRequest {
   if (!isCreateLocationRequestValid(body)) {
     throw invalidLocationError
@@ -49,9 +45,9 @@ interface ValidUpdateLocationRequest {
   id: string
 }
 
-export function validateUpdateLocationRequest (
+export function validateUpdateLocationRequest(
   body: unknown,
-  locationId: string | undefined
+  locationId: string | undefined,
 ): ValidUpdateLocationRequest {
   if (!isUpdateLocationRequestValid(body)) {
     throw invalidLocationError
@@ -62,11 +58,11 @@ export function validateUpdateLocationRequest (
   const result = body as UpdateLocationRequest
   return {
     id: validateLocationId(locationId),
-    request: result
+    request: result,
   }
 }
 
-export function validateLocationId (id: string | undefined): string {
+export function validateLocationId(id: string | undefined): string {
   if (typeof id !== 'string' || id.length === 0) {
     throw invalidLocationIdError
   }

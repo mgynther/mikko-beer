@@ -1,22 +1,20 @@
 import type { Database, Transaction } from '../database.js'
-import type {
-  StyleRow,
-  StyleRelationshipRow
-} from './style.table.js'
+import type { StyleRow, StyleRelationshipRow } from './style.table.js'
 import type {
   NewStyle,
   Style,
   StyleRelationship,
   StyleWithParentIds,
-  StyleWithParentsAndChildren
+  StyleWithParentsAndChildren,
 } from '../../core/style/style.js'
 import { contains } from '../../core/record.js'
 
-export async function insertStyle (
+export async function insertStyle(
   trx: Transaction,
-  style: NewStyle
+  style: NewStyle,
 ): Promise<Style> {
-  const insertedStyle = await trx.trx()
+  const insertedStyle = await trx
+    .trx()
     .insertInto('style')
     .values(style)
     .returningAll()
@@ -25,49 +23,53 @@ export async function insertStyle (
   return toStyle(insertedStyle)
 }
 
-export async function insertStyleRelationships (
+export async function insertStyleRelationships(
   trx: Transaction,
-  styleRelationships: StyleRelationship[]
+  styleRelationships: StyleRelationship[],
 ): Promise<StyleRelationship[]> {
-  const insertedStyleRelationships = await trx.trx()
+  const insertedStyleRelationships = await trx
+    .trx()
     .insertInto('style_relationship')
     .values(styleRelationships)
     .returningAll()
     .execute()
 
-  return insertedStyleRelationships.map(relationship => ({
+  return insertedStyleRelationships.map((relationship) => ({
     parent: relationship.parent,
-    child: relationship.child
+    child: relationship.child,
   }))
 }
 
-export async function deleteStyleChildRelationships (
+export async function deleteStyleChildRelationships(
   trx: Transaction,
-  childStyleId: string
+  childStyleId: string,
 ): Promise<void> {
-  await trx.trx()
+  await trx
+    .trx()
     .deleteFrom('style_relationship')
     .where('style_relationship.child', '=', childStyleId)
     .execute()
 }
 
-export async function listStyleRelationships (
-  trx: Transaction
+export async function listStyleRelationships(
+  trx: Transaction,
 ): Promise<StyleRelationshipRow[]> {
-  return await trx.trx()
+  return await trx
+    .trx()
     .selectFrom('style_relationship')
     .select(['parent', 'child'])
     .execute()
 }
 
-export async function updateStyle (
+export async function updateStyle(
   trx: Transaction,
-  style: Style
+  style: Style,
 ): Promise<Style> {
-  const updatedStyle = await trx.trx()
+  const updatedStyle = await trx
+    .trx()
     .updateTable('style')
     .set({
-      name: style.name
+      name: style.name,
     })
     .where('style_id', '=', style.id)
     .returningAll()
@@ -76,108 +78,113 @@ export async function updateStyle (
   return toStyle(updatedStyle)
 }
 
-export async function findStyleById (
+export async function findStyleById(
   db: Database,
-  id: string
+  id: string,
 ): Promise<StyleWithParentsAndChildren | undefined> {
-  const stylePromise = db.getDb()
+  const stylePromise = db
+    .getDb()
     .selectFrom('style')
     .where('style_id', '=', id)
     .selectAll('style')
     .executeTakeFirst()
 
-  const childrenPromise = db.getDb()
+  const childrenPromise = db
+    .getDb()
     .selectFrom('style_relationship')
     .innerJoin('style', 'style_relationship.child', 'style.style_id')
     .where('style_relationship.parent', '=', id)
     .selectAll('style')
     .execute()
 
-  const parentsPromise = db.getDb()
+  const parentsPromise = db
+    .getDb()
     .selectFrom('style_relationship')
     .innerJoin('style', 'style_relationship.parent', 'style.style_id')
     .where('style_relationship.child', '=', id)
     .selectAll('style')
     .execute()
 
-  const [style, children, parents] =
-    await Promise.all([stylePromise, childrenPromise, parentsPromise])
+  const [style, children, parents] = await Promise.all([
+    stylePromise,
+    childrenPromise,
+    parentsPromise,
+  ])
 
   if (style === undefined) return undefined
 
   return {
     id: style.style_id,
     name: style.name,
-    children: children.map(child => ({
+    children: children.map((child) => ({
       id: child.style_id,
       name: child.name,
     })),
-    parents: parents.map(parent => ({
+    parents: parents.map((parent) => ({
       id: parent.style_id,
       name: parent.name,
-    }))
+    })),
   }
 }
 
-export async function lockStyles (
+export async function lockStyles(
   trx: Transaction,
-  keys: string[]
+  keys: string[],
 ): Promise<string[]> {
-  const styles = await trx.trx()
+  const styles = await trx
+    .trx()
     .selectFrom('style')
     .where('style_id', 'in', keys)
     .select('style_id')
     .forUpdate()
     .execute()
 
-  return styles.map(style => style.style_id)
+  return styles.map((style) => style.style_id)
 }
 
-export async function listStyles (
-  db: Database
-): Promise<StyleWithParentIds[]> {
-  const styles = await db.getDb()
+export async function listStyles(db: Database): Promise<StyleWithParentIds[]> {
+  const styles = await db
+    .getDb()
     .selectFrom('style')
     .leftJoin(
       'style_relationship',
       'style.style_id',
-      'style_relationship.child'
+      'style_relationship.child',
     )
     .select([
       'style_id',
       'name',
       'style.created_at',
-      'style_relationship.parent as parent'
+      'style_relationship.parent as parent',
     ])
     .orderBy('name')
     .execute()
 
   const styleMap: Record<string, StyleWithParentIds> = {}
   const styleArray: StyleWithParentIds[] = []
-  styles.forEach(style => {
+  styles.forEach((style) => {
     const parent: string | null = style.parent
     if (contains(styleMap, style.style_id)) {
       if (parent !== null) {
         styleMap[style.style_id].parents = [
           ...styleMap[style.style_id].parents,
-          parent
+          parent,
         ]
       }
     } else {
       styleMap[style.style_id] = {
         id: style.style_id,
         name: style.name,
-        parents: parent === null ? [] : [parent]
+        parents: parent === null ? [] : [parent],
       }
       styleArray.push(styleMap[style.style_id])
-
     }
   })
 
   return styleArray
 }
 
-function toStyle (row: StyleRow): Style {
+function toStyle(row: StyleRow): Style {
   return {
     id: row.style_id,
     name: row.name,

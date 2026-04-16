@@ -5,7 +5,7 @@ import type { Pagination } from '../../../src/core/pagination.js'
 import type { Review } from '../../../src/core/review/review.js'
 import type {
   LocationStatsOrder,
-  StatsFilter
+  StatsFilter,
 } from '../../../src/core/stats/stats.js'
 import type { Database } from '../../../src/data/database.js'
 import * as statsRepository from '../../../src/data/stats/stats.repository.js'
@@ -36,10 +36,9 @@ describe('location stats tests', () => {
 
   function avg(reviews: Review[], beerId: string) {
     if (reviews === null) throw new Error('must not be null')
-    const filteredReviews = reviews
-      .filter(r => r.beer === beerId)
+    const filteredReviews = reviews.filter((r) => r.beer === beerId)
     const sum = filteredReviews
-      .map(r => r.rating)
+      .map((r) => r.rating)
       .reduce<number>((sum, rating) => sum + (rating ?? 0), 0)
 
     const numValue = sum / filteredReviews.length
@@ -50,32 +49,32 @@ describe('location stats tests', () => {
     db: Database,
     pagination: Pagination,
     statsFilter: ((data: InsertedData) => StatsFilter) | undefined,
-    locationStatsOrder: LocationStatsOrder
+    locationStatsOrder: LocationStatsOrder,
   ) {
     const { reviews, data } = await insertMultipleReviews(9, db)
     const stats = await statsRepository.getLocation(
       db,
       pagination,
       statsFilter?.(data) ?? defaultFilter,
-      locationStatsOrder
+      locationStatsOrder,
     )
     const location = {
       reviewAverage: avg(reviews, data.beer.id),
       reviewCount: '4',
       locationId: data.location.id,
-      locationName: data.location.name
+      locationName: data.location.name,
     }
     const otherLocation = {
       reviewAverage: avg(reviews, data.otherBeer.id),
       reviewCount: '5',
       locationId: data.otherLocation.id,
-      locationName: data.otherLocation.name
+      locationName: data.otherLocation.name,
     }
     const style = {
       reviewAverage: avg(reviews, data.style.id),
       reviewCount: '4',
       styleId: data.style.id,
-      styleName: data.style.name
+      styleName: data.style.name,
     }
     return { stats, location, otherLocation, style }
   }
@@ -87,9 +86,9 @@ describe('location stats tests', () => {
       ctx.db,
       allResults,
       undefined,
-      { property: 'average', direction: 'asc' }
+      { property: 'average', direction: 'asc' },
     )
-    assertDeepEqual(stats, [ location, otherLocation ])
+    assertDeepEqual(stats, [location, otherLocation])
   })
 
   it('by average desc', async () => {
@@ -97,9 +96,9 @@ describe('location stats tests', () => {
       ctx.db,
       allResults,
       undefined,
-      { property: 'average', direction: 'desc' }
+      { property: 'average', direction: 'desc' },
     )
-    assertDeepEqual(stats, [ otherLocation, location ])
+    assertDeepEqual(stats, [otherLocation, location])
   })
 
   it('by count asc', async () => {
@@ -107,9 +106,9 @@ describe('location stats tests', () => {
       ctx.db,
       allResults,
       undefined,
-      { property: 'count', direction: 'asc' }
+      { property: 'count', direction: 'asc' },
     )
-    assertDeepEqual(stats, [ location, otherLocation ])
+    assertDeepEqual(stats, [location, otherLocation])
   })
 
   it('by count desc', async () => {
@@ -117,9 +116,9 @@ describe('location stats tests', () => {
       ctx.db,
       allResults,
       undefined,
-      { property: 'count', direction: 'desc' }
+      { property: 'count', direction: 'desc' },
     )
-    assertDeepEqual(stats, [ otherLocation, location ])
+    assertDeepEqual(stats, [otherLocation, location])
   })
 
   it('by location_name asc', async () => {
@@ -127,9 +126,9 @@ describe('location stats tests', () => {
       ctx.db,
       allResults,
       undefined,
-      { property: 'location_name', direction: 'asc' }
+      { property: 'location_name', direction: 'asc' },
     )
-    assertDeepEqual(stats, [ location, otherLocation ])
+    assertDeepEqual(stats, [location, otherLocation])
   })
 
   it('by location_name desc', async () => {
@@ -137,9 +136,9 @@ describe('location stats tests', () => {
       ctx.db,
       allResults,
       undefined,
-      { property: 'location_name', direction: 'desc' }
+      { property: 'location_name', direction: 'desc' },
     )
-    assertDeepEqual(stats, [ otherLocation, location ])
+    assertDeepEqual(stats, [otherLocation, location])
   })
 
   it('filter by brewery', async () => {
@@ -148,11 +147,11 @@ describe('location stats tests', () => {
       allResults,
       (data: InsertedData) => ({
         ...defaultFilter,
-        brewery: data.brewery.id
+        brewery: data.brewery.id,
       }),
-      { property: 'location_name', direction: 'asc' }
+      { property: 'location_name', direction: 'asc' },
     )
-    assertDeepEqual(stats, [ location ])
+    assertDeepEqual(stats, [location])
   })
 
   it('filter by location', async () => {
@@ -161,11 +160,11 @@ describe('location stats tests', () => {
       allResults,
       (data: InsertedData) => ({
         ...defaultFilter,
-        location: data.otherLocation.id
+        location: data.otherLocation.id,
       }),
-      { property: 'location_name', direction: 'desc' }
+      { property: 'location_name', direction: 'desc' },
     )
-    assertDeepEqual(stats, [ otherLocation ])
+    assertDeepEqual(stats, [otherLocation])
   })
 
   it('filter by style', async () => {
@@ -174,11 +173,11 @@ describe('location stats tests', () => {
       allResults,
       (data: InsertedData) => ({
         ...defaultFilter,
-        style: data.style.id
+        style: data.style.id,
       }),
-      { property: 'location_name', direction: 'desc' }
+      { property: 'location_name', direction: 'desc' },
     )
-    assertDeepEqual(stats, [ location ])
+    assertDeepEqual(stats, [location])
   })
 
   it('filter by min review count', async () => {
@@ -187,11 +186,11 @@ describe('location stats tests', () => {
       allResults,
       () => ({
         ...defaultFilter,
-        minReviewCount: 5
+        minReviewCount: 5,
       }),
-      { property: 'location_name', direction: 'desc' }
+      { property: 'location_name', direction: 'desc' },
     )
-    assertDeepEqual(stats, [ otherLocation ])
+    assertDeepEqual(stats, [otherLocation])
   })
 
   it('filter by max review count', async () => {
@@ -200,11 +199,11 @@ describe('location stats tests', () => {
       allResults,
       () => ({
         ...defaultFilter,
-        maxReviewCount: 4
+        maxReviewCount: 4,
       }),
-      { property: 'location_name', direction: 'desc' }
+      { property: 'location_name', direction: 'desc' },
     )
-    assertDeepEqual(stats, [ location ])
+    assertDeepEqual(stats, [location])
   })
 
   it('filter by min review average', async () => {
@@ -213,11 +212,11 @@ describe('location stats tests', () => {
       allResults,
       () => ({
         ...defaultFilter,
-        minReviewAverage: 6.3
+        minReviewAverage: 6.3,
       }),
-      { property: 'location_name', direction: 'desc' }
+      { property: 'location_name', direction: 'desc' },
     )
-    assertDeepEqual(stats, [ otherLocation ])
+    assertDeepEqual(stats, [otherLocation])
   })
 
   it('filter by max review average', async () => {
@@ -226,11 +225,11 @@ describe('location stats tests', () => {
       allResults,
       () => ({
         ...defaultFilter,
-        maxReviewAverage: 6.3
+        maxReviewAverage: 6.3,
       }),
-      { property: 'location_name', direction: 'desc' }
+      { property: 'location_name', direction: 'desc' },
     )
-    assertDeepEqual(stats, [ location ])
+    assertDeepEqual(stats, [location])
   })
 
   it('filter by start time', async () => {
@@ -239,11 +238,11 @@ describe('location stats tests', () => {
       allResults,
       () => ({
         ...defaultFilter,
-        timeStart: new Date('2024-01-01T00:00:00.000Z')
+        timeStart: new Date('2024-01-01T00:00:00.000Z'),
       }),
-      { property: 'location_name', direction: 'desc' }
+      { property: 'location_name', direction: 'desc' },
     )
-    assertDeepEqual(stats, [ location ])
+    assertDeepEqual(stats, [location])
   })
 
   it('filter by end time', async () => {
@@ -252,11 +251,10 @@ describe('location stats tests', () => {
       allResults,
       () => ({
         ...defaultFilter,
-        timeEnd: new Date('2024-01-01T00:00:00.000Z')
+        timeEnd: new Date('2024-01-01T00:00:00.000Z'),
       }),
-      { property: 'location_name', direction: 'desc' }
+      { property: 'location_name', direction: 'desc' },
     )
-    assertDeepEqual(stats, [ otherLocation ])
+    assertDeepEqual(stats, [otherLocation])
   })
-
 })

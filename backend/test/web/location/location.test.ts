@@ -14,9 +14,10 @@ describe('location tests', () => {
   afterEach(ctx.afterEach)
 
   it('create a location', async () => {
-    const res = await ctx.request.post(`/api/v1/location`,
+    const res = await ctx.request.post(
+      `/api/v1/location`,
       { name: 'Oluthuone Panimomestari' },
-      ctx.adminAuthHeaders()
+      ctx.adminAuthHeaders(),
     )
 
     assertEqual(res.status, 201)
@@ -24,37 +25,41 @@ describe('location tests', () => {
 
     const getRes = await ctx.request.get<{ location: Location }>(
       `/api/v1/location/${res.data.location.id}`,
-      ctx.adminAuthHeaders()
+      ctx.adminAuthHeaders(),
     )
 
     assertEqual(getRes.status, 200)
     assertDeepEqual(getRes.data.location, res.data.location)
 
-    const listRes = await ctx.request.get(`/api/v1/location?skip=0&size=100`,
-      ctx.adminAuthHeaders()
+    const listRes = await ctx.request.get(
+      `/api/v1/location?skip=0&size=100`,
+      ctx.adminAuthHeaders(),
     )
     assertEqual(listRes.status, 200)
     assertEqual(listRes.data.locations.length, 1)
 
-    const searchRes = await ctx.request.post(`/api/v1/location/search`,
+    const searchRes = await ctx.request.post(
+      `/api/v1/location/search`,
       { name: 'luth' },
-      ctx.adminAuthHeaders()
+      ctx.adminAuthHeaders(),
     )
     assertEqual(searchRes.status, 200)
     assertEqual(searchRes.data.locations.length, 1)
 
-    const badSearchRes = await ctx.request.post(`/api/v1/location/search`,
+    const badSearchRes = await ctx.request.post(
+      `/api/v1/location/search`,
       { name: 'Panimm' },
-      ctx.adminAuthHeaders()
+      ctx.adminAuthHeaders(),
     )
     assertEqual(badSearchRes.status, 200)
     assertEqual(badSearchRes.data.locations.length, 0)
   })
 
   it('update a location', async () => {
-    const res = await ctx.request.post(`/api/v1/location`,
+    const res = await ctx.request.post(
+      `/api/v1/location`,
       { name: 'Kuja' },
-      ctx.adminAuthHeaders()
+      ctx.adminAuthHeaders(),
     )
 
     assertEqual(res.status, 201)
@@ -63,14 +68,14 @@ describe('location tests', () => {
     const updateRes = await ctx.request.put(
       `/api/v1/location/${res.data.location.id}`,
       { name: 'Kuja Beer Shop & Bar' },
-      ctx.adminAuthHeaders()
+      ctx.adminAuthHeaders(),
     )
     assertEqual(updateRes.status, 200)
     assertEqual(updateRes.data.location.name, 'Kuja Beer Shop & Bar')
 
     const getRes = await ctx.request.get<{ location: Location }>(
       `/api/v1/location/${res.data.location.id}`,
-      ctx.adminAuthHeaders()
+      ctx.adminAuthHeaders(),
     )
 
     assertEqual(getRes.status, 200)
@@ -78,21 +83,22 @@ describe('location tests', () => {
   })
 
   it('fail to create a location without name', async () => {
-    const res = await ctx.request.post(`/api/v1/location`,
+    const res = await ctx.request.post(
+      `/api/v1/location`,
       {},
-      ctx.adminAuthHeaders()
+      ctx.adminAuthHeaders(),
     )
 
     assertEqual(res.status, 400)
   })
 
   it('get empty location list', async () => {
-    const res = await ctx.request.get(`/api/v1/location`,
-      ctx.adminAuthHeaders()
+    const res = await ctx.request.get(
+      `/api/v1/location`,
+      ctx.adminAuthHeaders(),
     )
 
     assertEqual(res.status, 200)
     assertEqual(res.data.locations.length, 0)
   })
-
 })

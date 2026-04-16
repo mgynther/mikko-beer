@@ -2,17 +2,14 @@ import { describe, it } from 'node:test'
 
 import * as jwt from '../../../src/core/internal/auth/jwt.js'
 
-import * as service
-from '../../../src/core/user/authorized-sign-in-method.service.js'
+import * as service from '../../../src/core/user/authorized-sign-in-method.service.js'
 
 import type {
   DbRefreshToken,
-  RefreshToken
+  RefreshToken,
 } from '../../../src/core/auth/refresh-token.js'
 
-import type {
-  RefreshTokensIf
-} from '../../../src/core/user/authorized-sign-in-method.service.js'
+import type { RefreshTokensIf } from '../../../src/core/user/authorized-sign-in-method.service.js'
 import type {
   AuthTokenConfig,
   AuthTokenPayload,
@@ -20,14 +17,14 @@ import type {
 import type { User } from '../../../src/core/user/user.js'
 import {
   invalidCredentialsTokenError,
-  userMismatchError
+  userMismatchError,
 } from '../../../src/core/errors.js'
 import { expectReject } from '../controller-error-helper.js'
 import type {
   ChangePasswordUserIf,
   PasswordChange,
   SignInUsingPasswordIf,
-  UserPasswordHash
+  UserPasswordHash,
 } from '../../../src/core/user/sign-in-method.js'
 
 import { dummyLog as log } from '../dummy-log.js'
@@ -38,70 +35,74 @@ const refreshTokenId = 'c6697088-c417-4dee-988d-c018b07527f7'
 const user: User = {
   id: userId,
   role: 'admin',
-  username: 'admin'
+  username: 'admin',
 }
 
 const adminAuthToken: AuthTokenPayload = {
   userId,
   role: 'admin',
-  refreshTokenId
+  refreshTokenId,
 }
 
 const viewerAuthToken: AuthTokenPayload = {
   userId: 'dbf43779-cc8b-4097-bca2-af0b8e6da64b',
   role: 'viewer',
-  refreshTokenId: '0054d008-2a4c-4c84-af92-886df7dd38fe'
+  refreshTokenId: '0054d008-2a4c-4c84-af92-886df7dd38fe',
 }
 
 const authTokenSecret: string = 'this is secret'
 
 const knownPassword = 'password'
-const knownHash = '3571471e876241089e4e29130fd96cf0:6b26a82522532fca44ba7fef2f6b6f5d930fb2e2179f7cdcd682470d15a4cc4296b7f77c59bf317fa7281900626cf7b4499948d9d0f4718ae1170d4a63e35f36'
+const knownHash =
+  '3571471e876241089e4e29130fd96cf0:6b26a82522532fca44ba7fef2f6b6f5d930fb2e2179f7cdcd682470d15a4cc4296b7f77c59bf317fa7281900626cf7b4499948d9d0f4718ae1170d4a63e35f36'
 
-const validRefreshToken: RefreshToken = jwt.signRefreshToken({
-  userId,
-  refreshTokenId,
-  isRefreshToken: true
-}, authTokenSecret)
+const validRefreshToken: RefreshToken = jwt.signRefreshToken(
+  {
+    userId,
+    refreshTokenId,
+    isRefreshToken: true,
+  },
+  authTokenSecret,
+)
 
 const dbRefreshToken: DbRefreshToken = {
   id: 'e6190cc2-630e-4f23-bc70-aa76254ef28b',
-  userId
+  userId,
 }
 
 const refreshTokensIf: RefreshTokensIf = {
   deleteRefreshToken: async () => undefined,
   insertRefreshToken: async () => dbRefreshToken,
-  lockUserById: async () => user
+  lockUserById: async () => user,
 }
 
 const authTokenConfig: AuthTokenConfig = {
   secret: authTokenSecret,
-  expiryDurationMin: 1
+  expiryDurationMin: 1,
 }
 
 const userPasswordHash: UserPasswordHash = {
   userId,
   passwordHash: knownHash,
-  hashedAt: new Date('2022-12-12T10:00:01.023Z')
+  hashedAt: new Date('2022-12-12T10:00:01.023Z'),
 }
 
 const signInUsingPasswordIf: SignInUsingPasswordIf = {
   lockUserByUsername: async () => user,
   findPasswordSignInMethod: async () => userPasswordHash,
   insertRefreshToken: async () => dbRefreshToken,
-  updatePassword: async () => undefined
+  updatePassword: async () => undefined,
 }
 
 const changePasswordUserIf: ChangePasswordUserIf = {
   lockUserById: async () => user,
   findPasswordSignInMethod: async () => userPasswordHash,
-  updatePassword: async () => undefined
+  updatePassword: async () => undefined,
 }
 
 const passwordChange: PasswordChange = {
   oldPassword: knownPassword,
-  newPassword: 'this is new password'
+  newPassword: 'this is new password',
 }
 
 describe('authorized sign in method service unit tests', () => {
@@ -110,10 +111,10 @@ describe('authorized sign in method service unit tests', () => {
       signInUsingPasswordIf,
       {
         username: 'admin',
-        password: knownPassword
+        password: knownPassword,
       },
       authTokenConfig,
-      log
+      log,
     )
   })
 
@@ -123,10 +124,10 @@ describe('authorized sign in method service unit tests', () => {
       async () => dbRefreshToken,
       {
         id: userId,
-        authTokenPayload: adminAuthToken
+        authTokenPayload: adminAuthToken,
       },
       passwordChange,
-      log
+      log,
     )
   })
 
@@ -137,10 +138,10 @@ describe('authorized sign in method service unit tests', () => {
         async () => dbRefreshToken,
         {
           id: userId,
-          authTokenPayload: viewerAuthToken
+          authTokenPayload: viewerAuthToken,
         },
         passwordChange,
-        log
+        log,
       )
     }, userMismatchError)
   })
@@ -150,7 +151,7 @@ describe('authorized sign in method service unit tests', () => {
       refreshTokensIf,
       userId,
       validRefreshToken,
-      authTokenConfig
+      authTokenConfig,
     )
   })
 
@@ -160,7 +161,7 @@ describe('authorized sign in method service unit tests', () => {
         refreshTokensIf,
         userId,
         { refreshToken: 'this is invalid' },
-        authTokenConfig
+        authTokenConfig,
       )
     }, invalidCredentialsTokenError)
   })

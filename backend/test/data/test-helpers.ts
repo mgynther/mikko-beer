@@ -1,23 +1,16 @@
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-import {
-  Kysely,
-  PostgresDialect,
-  sql,
-} from 'kysely'
+import { Kysely, PostgresDialect, sql } from 'kysely'
 import type { ConnectionConfig } from 'pg'
 import { Pool } from 'pg'
 import { Database } from '../../src/data/database.js'
 
-import {
-  FileMigrationProvider,
-  Migrator,
-} from 'kysely'
+import { FileMigrationProvider, Migrator } from 'kysely'
 import * as path from 'path'
 import { promises as fs } from 'fs'
 
-const directory = dirname(fileURLToPath(import.meta.url));
+const directory = dirname(fileURLToPath(import.meta.url))
 
 export async function beforeTests(
   config: ConnectionConfig,
@@ -25,7 +18,7 @@ export async function beforeTests(
   // Initializing data here can be relevant only when App needs to start with
   // specific data. For other purposes getting database from the is more
   // suitable.
-  dataInitializer?: (db: Database) => Promise<void>
+  dataInitializer?: (db: Database) => Promise<void>,
 ) {
   const adminDb = new Kysely<any>({
     dialect: new PostgresDialect({
@@ -56,15 +49,13 @@ export async function beforeTests(
   await db.destroy()
 }
 
-export async function afterTests() {
-}
+export async function afterTests() {}
 
 export async function beforeTest(db: Database) {
   await clearDb(db)
 }
 
-export async function afterTest() {
-}
+export async function afterTest() {}
 
 async function clearDb(db: Database) {
   const realDb = db.getDb()

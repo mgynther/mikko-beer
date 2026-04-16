@@ -1,8 +1,10 @@
 import { describe, it } from 'node:test'
 
-import type { Pagination, PaginationRequest } from '../../src/core/pagination.js'
+import type {
+  Pagination,
+  PaginationRequest,
+} from '../../src/core/pagination.js'
 import { toRowNumbers, validatePagination } from '../../src/core/pagination.js'
-
 
 import { invalidPaginationError } from '../../src/core/errors.js'
 import { expectThrow } from './controller-error-helper.js'
@@ -13,7 +15,7 @@ describe('pagination unit tests', () => {
     assertDeepEqual(validatePagination(input), output)
   }
   function fail(input: PaginationRequest) {
-    expectThrow(() => (validatePagination(input)), invalidPaginationError)
+    expectThrow(() => validatePagination(input), invalidPaginationError)
   }
   it('pass validation', () => {
     pass({ size: '30', skip: '8' }, { size: 30, skip: 8 })

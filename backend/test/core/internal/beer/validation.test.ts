@@ -6,34 +6,34 @@ import {
 } from '../../../../src/core/internal/beer/validation.js'
 import {
   invalidBeerError,
-  invalidBeerIdError
+  invalidBeerIdError,
 } from '../../../../src/core/errors.js'
 import { expectThrow } from '../../controller-error-helper.js'
 import { assertDeepEqual } from '../../../assert.js'
 import type {
   CreateBeerRequest,
-  UpdateBeerRequest
+  UpdateBeerRequest,
 } from '../../../../src/core/beer/beer.js'
 
-function validCreateRequest (): CreateBeerRequest {
+function validCreateRequest(): CreateBeerRequest {
   return {
     name: 'Craft lager',
     breweries: [
       'b672f77e-4e70-40a8-9218-bbecce0ad9ff',
-      '040d3ce2-4cc4-46e5-9a4e-8315d552599a'
+      '040d3ce2-4cc4-46e5-9a4e-8315d552599a',
     ],
-    styles: ['93d01fef-3097-49c9-8594-caba487b79f1']
+    styles: ['93d01fef-3097-49c9-8594-caba487b79f1'],
   }
 }
 
-function validUpdateRequest (): UpdateBeerRequest {
+function validUpdateRequest(): UpdateBeerRequest {
   return {
     name: 'Craft session pale ale',
     breweries: [
       '1c079278-4bdd-4b0c-bb16-291f8c304424',
-      '39c59017-020c-4083-a84d-e1563ca7522f'
+      '39c59017-020c-4083-a84d-e1563ca7522f',
     ],
-    styles: ['623cbc9a-8953-4772-af90-6da8d3344bf4']
+    styles: ['623cbc9a-8953-4772-af90-6da8d3344bf4'],
   }
 }
 
@@ -50,15 +50,14 @@ describe('beer validation unit tests', () => {
     const id = '4924c26e-5d7b-44a4-92e1-97454fb2e5e1'
     assertDeepEqual(validateUpdateBeerRequest(input, id), {
       id,
-      request: output
+      request: output,
     })
-  });
-
-  [
+  })
+  ;[
     {
       func: validateCreateBeerRequest,
       getValid: validCreateRequest,
-      title: (base: string) => `${base}: create`
+      title: (base: string) => `${base}: create`,
     },
     {
       func: (request: unknown) => {
@@ -66,19 +65,19 @@ describe('beer validation unit tests', () => {
         return validateUpdateBeerRequest(request, id)
       },
       getValid: validUpdateRequest,
-      title: (base: string) => `${base}: update`
-    }
-  ].forEach(validator => {
+      title: (base: string) => `${base}: update`,
+    },
+  ].forEach((validator) => {
     const { func, getValid, title } = validator
 
-    function fail (beer: unknown) {
+    function fail(beer: unknown) {
       expectThrow(() => func(beer), invalidBeerError)
     }
 
     it(title('fail with empty name'), () => {
       const beer = {
         ...getValid(),
-        name: ''
+        name: '',
       }
       fail(beer)
     })
@@ -101,7 +100,7 @@ describe('beer validation unit tests', () => {
     it(title('fail with 0 breweries'), () => {
       const beer = {
         ...getValid(),
-        breweries: []
+        breweries: [],
       }
       fail(beer)
     })
@@ -109,7 +108,7 @@ describe('beer validation unit tests', () => {
     it(title('fail with 0 styles'), () => {
       const beer = {
         ...getValid(),
-        styles: []
+        styles: [],
       }
       fail(beer)
     })
@@ -117,7 +116,7 @@ describe('beer validation unit tests', () => {
     it(title('fail with invalid breweries'), () => {
       const beer = {
         ...getValid(),
-        breweries: [9]
+        breweries: [9],
       }
       fail(beer)
     })
@@ -125,7 +124,7 @@ describe('beer validation unit tests', () => {
     it(title('fail with invalid styles'), () => {
       const beer = {
         ...getValid(),
-        styles: [ { testing: 'will fail' } ]
+        styles: [{ testing: 'will fail' }],
       }
       fail(beer)
     })
@@ -133,7 +132,7 @@ describe('beer validation unit tests', () => {
     it(title('fail with invalid name'), () => {
       const beer = {
         ...getValid(),
-        name: [ 'f', 'a', 'i', 'l' ]
+        name: ['f', 'a', 'i', 'l'],
       }
       fail(beer)
     })
@@ -141,7 +140,7 @@ describe('beer validation unit tests', () => {
     it(title('fail with additional property'), () => {
       const beer = {
         ...getValid(),
-        additional: 'will fail'
+        additional: 'will fail',
       }
       fail(beer)
     })
@@ -149,7 +148,8 @@ describe('beer validation unit tests', () => {
 
   it('fail update with empty id', () => {
     expectThrow(
-      () => validateUpdateBeerRequest(validUpdateRequest(), '')
-    , invalidBeerIdError)
+      () => validateUpdateBeerRequest(validUpdateRequest(), ''),
+      invalidBeerIdError,
+    )
   })
 })

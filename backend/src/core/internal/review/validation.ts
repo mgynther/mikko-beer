@@ -3,74 +3,70 @@ import { ajv } from '../ajv.js'
 import type {
   CreateReviewRequest,
   ReviewRequest,
-  UpdateReviewRequest
+  UpdateReviewRequest,
 } from '../../review/review.js'
 import { timePattern } from '../time.js'
 
-import {
-  invalidReviewError,
-  invalidReviewIdError
-} from '../../errors.js'
+import { invalidReviewError, invalidReviewIdError } from '../../errors.js'
 
-const doValidateReviewRequest =
-  ajv.compile<ReviewRequest>({
-    type: 'object',
-    properties: {
-      additionalInfo: {
-        type: 'string'
-      },
-      beer: {
-        type: 'string',
-        minLength: 1
-      },
-      container: {
-        type: 'string',
-        minLength: 1
-      },
-      location: {
-        type: 'string'
-      },
-      rating: {
-        type: 'integer',
-        minimum: 4,
-        maximum: 10
-      },
-      smell: {
-        type: 'string',
-        minLength: 1
-      },
-      taste: {
-        type: 'string',
-        minLength: 1
-      },
-      time: {
-        type: 'string',
-        pattern: timePattern
-      }
+const doValidateReviewRequest = ajv.compile<ReviewRequest>({
+  type: 'object',
+  properties: {
+    additionalInfo: {
+      type: 'string',
     },
-    required: [
-      'additionalInfo',
-      'beer',
-      'container',
-      'location',
-      'rating',
-      'smell',
-      'taste',
-      'time'
-    ],
-    additionalProperties: false
-  })
+    beer: {
+      type: 'string',
+      minLength: 1,
+    },
+    container: {
+      type: 'string',
+      minLength: 1,
+    },
+    location: {
+      type: 'string',
+    },
+    rating: {
+      type: 'integer',
+      minimum: 4,
+      maximum: 10,
+    },
+    smell: {
+      type: 'string',
+      minLength: 1,
+    },
+    taste: {
+      type: 'string',
+      minLength: 1,
+    },
+    time: {
+      type: 'string',
+      pattern: timePattern,
+    },
+  },
+  required: [
+    'additionalInfo',
+    'beer',
+    'container',
+    'location',
+    'rating',
+    'smell',
+    'taste',
+    'time',
+  ],
+  additionalProperties: false,
+})
 
-function isCreateReviewRequestValid (body: unknown): boolean {
+function isCreateReviewRequestValid(body: unknown): boolean {
   return doValidateReviewRequest(body)
 }
 
-function isUpdateReviewRequestValid (body: unknown): boolean {
+function isUpdateReviewRequestValid(body: unknown): boolean {
   return doValidateReviewRequest(body)
 }
 
-export function validateCreateReviewRequest (
-  body: unknown
+export function validateCreateReviewRequest(
+  body: unknown,
 ): CreateReviewRequest {
   if (!isCreateReviewRequestValid(body)) {
     throw invalidReviewError
@@ -84,13 +80,13 @@ export function validateCreateReviewRequest (
 }
 
 interface ValidUpdateReviewRequest {
-  id: string,
+  id: string
   request: UpdateReviewRequest
 }
 
-export function validateUpdateReviewRequest (
+export function validateUpdateReviewRequest(
   body: unknown,
-  reviewId: string | undefined
+  reviewId: string | undefined,
 ): ValidUpdateReviewRequest {
   if (!isUpdateReviewRequestValid(body)) {
     throw invalidReviewError
@@ -101,7 +97,7 @@ export function validateUpdateReviewRequest (
   const result = body as UpdateReviewRequest
   return {
     id: validateReviewId(reviewId),
-    request: result
+    request: result,
   }
 }
 

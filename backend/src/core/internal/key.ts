@@ -1,4 +1,4 @@
-export function areKeysEqual (a: string[], b: string[]): boolean {
+export function areKeysEqual(a: string[], b: string[]): boolean {
   if (a.length !== b.length) {
     return false
   }

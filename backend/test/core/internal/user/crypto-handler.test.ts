@@ -1,7 +1,6 @@
 import { describe, it } from 'node:test'
 import { assertDeepEqual, assertEqual } from '../../../assert.js'
-import { createHandler }
-from '../../../../src/core/internal/user/crypto-handler.js'
+import { createHandler } from '../../../../src/core/internal/user/crypto-handler.js'
 import { Level } from '../../../../src/core/log.js'
 
 describe('crypto handler', () => {
@@ -15,10 +14,7 @@ describe('crypto handler', () => {
     handler(null, resolveValue)
     assertEqual(reject.mock.callCount(), 0)
     assertEqual(resolve.mock.callCount(), 1)
-    assertDeepEqual(
-      resolve.mock.calls[0].arguments,
-      [resolveValue]
-    )
+    assertDeepEqual(resolve.mock.calls[0].arguments, [resolveValue])
   })
 
   it('reject with error', (t) => {
@@ -33,13 +29,12 @@ describe('crypto handler', () => {
     assertEqual(resolve.mock.callCount(), 0)
     assertEqual(reject.mock.callCount(), 1)
     assertEqual(log.mock.callCount(), 1)
-    assertDeepEqual(
-      reject.mock.calls[0].arguments,
-      [new Error('unknown error')]
-    )
-    assertDeepEqual(
-      log.mock.calls[0].arguments,
-      [Level.ERROR, `crypt failed: ${errorMessage}`]
-    )
+    assertDeepEqual(reject.mock.calls[0].arguments, [
+      new Error('unknown error'),
+    ])
+    assertDeepEqual(log.mock.calls[0].arguments, [
+      Level.ERROR,
+      `crypt failed: ${errorMessage}`,
+    ])
   })
 })

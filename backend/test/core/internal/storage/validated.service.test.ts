@@ -8,45 +8,44 @@ import type {
   UpdateStorageRequest,
   CreateIf,
   UpdateIf,
-  StorageWithDate
+  StorageWithDate,
 } from '../../../../src/core/storage/storage.js'
 import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
 import {
   invalidStorageError,
-  invalidStorageIdError
+  invalidStorageIdError,
 } from '../../../../src/core/errors.js'
 
 const validCreateStorageRequest: CreateStorageRequest = {
   beer: '9fda06b4-ddda-428b-965c-cfa16f77c010',
   bestBefore: '2024-12-12T12:12:12.000Z',
-  container: '2ea4c01b-0f86-4331-8a5b-807abb662385'
+  container: '2ea4c01b-0f86-4331-8a5b-807abb662385',
 }
 
 const validUpdateStorageRequest: UpdateStorageRequest = {
   beer: '00707241-77e7-455a-bd24-bddd76836c1f',
   bestBefore: '2024-12-13T12:12:12.000Z',
-  container: 'e5a2d533-5886-4bdd-883a-46a14cb51d87'
+  container: 'e5a2d533-5886-4bdd-883a-46a14cb51d87',
 }
 
 const storage: StorageWithDate = {
   id: 'c3959cec-9a26-4e03-87b9-4325fe01d3c1',
   beer: 'd5af5383-381c-4e58-8745-76c06ec00449',
   bestBefore: new Date('2024-12-11T12:12:12.000Z'),
-  container: '5d9bb066-bbf2-4102-beba-66dbecfd10ce'
+  container: '5d9bb066-bbf2-4102-beba-66dbecfd10ce',
 }
 
 const invalidStorageRequest = {
   bestBefore: '2024-12-13T12:12:12.000Z',
-  container: '3a785635-e43d-48b7-a4e0-9b17c3c31260'
+  container: '3a785635-e43d-48b7-a4e0-9b17c3c31260',
 }
 
 const create: (
-  storage: CreateStorageRequest
+  storage: CreateStorageRequest,
 ) => Promise<StorageWithDate> = async () => storage
-const update: (
-  storage: Storage
-) => Promise<StorageWithDate> = async () => storage
+const update: (storage: Storage) => Promise<StorageWithDate> = async () =>
+  storage
 
 const createIf: CreateIf = {
   insertStorage: create,
@@ -76,7 +75,7 @@ describe('storage authorized service unit tests', () => {
       updateIf,
       storage.id,
       validUpdateStorageRequest,
-      log
+      log,
     )
   })
 
@@ -86,7 +85,7 @@ describe('storage authorized service unit tests', () => {
         updateIf,
         storage.id,
         invalidStorageRequest,
-        log
+        log,
       )
     }, invalidStorageError)
   })
@@ -97,32 +96,22 @@ describe('storage authorized service unit tests', () => {
         updateIf,
         undefined,
         validUpdateStorageRequest,
-        log
+        log,
       )
     }, invalidStorageIdError)
   })
 
   it('get annual storage stats', async () => {
     const getter = async () => {
-      return [
-        { year: '2022', count: '8' }
-      ]
+      return [{ year: '2022', count: '8' }]
     }
-    await storageService.getAnnualStorageStats(
-      getter,
-      log
-    )
+    await storageService.getAnnualStorageStats(getter, log)
   })
 
   it('get monthly storage stats', async () => {
     const getter = async () => {
-      return [
-        { year: '2022', month: '10', count: '8' }
-      ]
+      return [{ year: '2022', month: '10', count: '8' }]
     }
-    await storageService.getMonthlyStorageStats(
-      getter,
-      log
-    )
+    await storageService.getMonthlyStorageStats(getter, log)
   })
 })

@@ -7,10 +7,7 @@ type AuthenticationErrors =
   | 'UserMismatch'
   | 'UserOrRefreshTokenNotFound'
 
-type BeerApiErrors =
-  | 'InvalidBeer'
-  | 'InvalidBeerId'
-  | 'BeerNotFound'
+type BeerApiErrors = 'InvalidBeer' | 'InvalidBeerId' | 'BeerNotFound'
 
 type BreweryApiErrors =
   | 'InvalidBrewery'
@@ -51,10 +48,7 @@ type StyleApiErrors =
   | 'InvalidStyleId'
   | 'StyleNotFound'
 
-type UserApiErrors =
-  | 'InvalidUser'
-  | 'InvalidUserId'
-  | 'UserNotFound'
+type UserApiErrors = 'InvalidUser' | 'InvalidUserId' | 'UserNotFound'
 
 type SignInMethodApiErros =
   | 'InvalidPasswordChange'
@@ -90,11 +84,11 @@ export class ControllerError extends Error {
   readonly code: ErrorCode
   readonly data?: unknown
 
-  constructor (
+  constructor(
     status: ErrorStatus,
     code: ErrorCode,
     message: string,
-    data?: unknown
+    data?: unknown,
   ) {
     super(message)
     this.status = status
@@ -102,9 +96,9 @@ export class ControllerError extends Error {
     this.data = data
   }
 
-  toJSON (): Record<string, unknown> {
+  toJSON(): Record<string, unknown> {
     return {
-      error: { code: this.code, message: this.message }
+      error: { code: this.code, message: this.message },
     }
   }
 }
@@ -113,370 +107,350 @@ export class ControllerError extends Error {
 export const expiredAuthTokenError = new ControllerError(
   401,
   'ExpiredAuthToken',
-  'the auth token has expired'
+  'the auth token has expired',
 )
 
 export const invalidAuthorizationHeaderError = new ControllerError(
   400,
   'InvalidAuthorizationHeader',
-  'missing or invalid Authorization header'
+  'missing or invalid Authorization header',
 )
 
 export const invalidAuthTokenError = new ControllerError(
   401,
   'InvalidAuthToken',
-  'invalid auth token'
+  'invalid auth token',
 )
 
 export const noUserIdParameterError = new ControllerError(
   400,
   'NoUserIdParameter',
-  'no user id parameter found in the route'
+  'no user id parameter found in the route',
 )
 
-export const noRightsError = new ControllerError(
-  403,
-  'Forbidden',
-  'no rights'
-)
+export const noRightsError = new ControllerError(403, 'Forbidden', 'no rights')
 
 export const userMismatchError = new ControllerError(
   403,
   'UserMismatch',
-  "wrong user's auth token"
+  "wrong user's auth token",
 )
 
 export const userOrRefreshTokenNotFoundError = new ControllerError(
   404,
   'UserOrRefreshTokenNotFound',
-  'either the user or the refresh token has been deleted'
+  'either the user or the refresh token has been deleted',
 )
 
 // Beer
-export const beerNotFoundError = (
-  beerId: string
-): ControllerError => new ControllerError(
-  404,
-  'BeerNotFound',
-  `beer with id ${beerId} was not found`
-)
+export const beerNotFoundError = (beerId: string): ControllerError =>
+  new ControllerError(
+    404,
+    'BeerNotFound',
+    `beer with id ${beerId} was not found`,
+  )
 
 export const invalidBeerError = new ControllerError(
   400,
   'InvalidBeer',
-  'invalid beer'
+  'invalid beer',
 )
 
 export const invalidBeerIdError = new ControllerError(
   400,
   'InvalidBeerId',
-  'invalid beer id'
+  'invalid beer id',
 )
 
 export const referredBeerNotFoundError = new ControllerError(
   400,
   'BeerNotFound',
-  'beer not found'
+  'beer not found',
 )
 
 // Brewery
-export const breweryNotFoundError = (
-  id: string
-): ControllerError => new ControllerError(
-  404,
-  'BreweryNotFound',
-  `brewery with id ${id} was not found`
-)
+export const breweryNotFoundError = (id: string): ControllerError =>
+  new ControllerError(
+    404,
+    'BreweryNotFound',
+    `brewery with id ${id} was not found`,
+  )
 
 export const invalidBreweryError = new ControllerError(
   400,
   'InvalidBrewery',
-  'invalid brewery'
+  'invalid brewery',
 )
 
 export const invalidBreweryIdError = new ControllerError(
   400,
   'InvalidBreweryId',
-  'invalid brewery id'
+  'invalid brewery id',
 )
 
 export const referredBreweryNotFoundError = new ControllerError(
   400,
   'BreweryNotFound',
-  'brewery not found'
+  'brewery not found',
 )
 
 // Container
-export const containerNotFoundError = (
-  id: string
-): ControllerError => new ControllerError(
-  404,
-  'ContainerNotFound',
-  `container with id ${id} was not found`
-)
+export const containerNotFoundError = (id: string): ControllerError =>
+  new ControllerError(
+    404,
+    'ContainerNotFound',
+    `container with id ${id} was not found`,
+  )
 
 export const invalidContainerError = new ControllerError(
   400,
   'InvalidContainer',
-  'invalid container'
+  'invalid container',
 )
 
 export const invalidContainerIdError = new ControllerError(
   400,
   'InvalidContainerId',
-  'invalid container id'
+  'invalid container id',
 )
 
 export const referredContainerNotFoundError = new ControllerError(
   400,
   'ContainerNotFound',
-  'container not found'
+  'container not found',
 )
 
 // Location
-export const locationNotFoundError = (
-  id: string
-): ControllerError => new ControllerError(
-  404,
-  'LocationNotFound',
-  `location with id ${id} was not found`
-)
+export const locationNotFoundError = (id: string): ControllerError =>
+  new ControllerError(
+    404,
+    'LocationNotFound',
+    `location with id ${id} was not found`,
+  )
 
 export const invalidLocationError = new ControllerError(
   400,
   'InvalidLocation',
-  'invalid location'
+  'invalid location',
 )
 
 export const invalidLocationIdError = new ControllerError(
   400,
   'InvalidLocationId',
-  'invalid location id'
+  'invalid location id',
 )
 
 // Pagination
 export const invalidPaginationError = new ControllerError(
   400,
   'InvalidPagination',
-  'invalid pagination'
+  'invalid pagination',
 )
 
 // Query
 export const invalidQueryError = new ControllerError(
   400,
   'InvalidQuery',
-  'invalid query, most likely duplicate query parameter'
+  'invalid query, most likely duplicate query parameter',
 )
 
 // Review
 export const invalidReviewError = new ControllerError(
   400,
   'InvalidReview',
-  'invalid review'
+  'invalid review',
 )
 
 export const invalidReviewIdError = new ControllerError(
   400,
   'InvalidReviewId',
-  'invalid review id'
+  'invalid review id',
 )
 
 export const invalidReviewListQueryBeerNameError = new ControllerError(
   400,
   'InvalidReviewListQuery',
-  'invalid use of beer_name order'
+  'invalid use of beer_name order',
 )
 
 export const invalidReviewListQueryBreweryNameError = new ControllerError(
   400,
   'InvalidReviewListQuery',
-  'invalid use of brewery order'
+  'invalid use of brewery order',
 )
 
 export const invalidReviewListQueryOrderError = new ControllerError(
   400,
   'InvalidReviewListQuery',
-  'invalid review list query'
+  'invalid review list query',
 )
 
-export const reviewNotFoundError = (
-  id: string
-): ControllerError => new ControllerError(
-  404,
-  'ReviewNotFound',
-  `review with id ${id} was not found`
-)
+export const reviewNotFoundError = (id: string): ControllerError =>
+  new ControllerError(
+    404,
+    'ReviewNotFound',
+    `review with id ${id} was not found`,
+  )
 
 // Search
 export const invalidSearchError = new ControllerError(
   400,
   'InvalidSearch',
-  'invalid search'
+  'invalid search',
 )
 
 // Stats
 export const invalidIdFilterError = new ControllerError(
   400,
   'InvalidStatsIdFilter',
-  'invalid filter with multiple of brewery, location and style'
+  'invalid filter with multiple of brewery, location and style',
 )
 
 export const invalidBreweryStatsQueryError = new ControllerError(
   400,
   'InvalidBreweryStatsQuery',
-  'invalid brewery stats query'
+  'invalid brewery stats query',
 )
 
 export const invalidLocationStatsQueryError = new ControllerError(
   400,
   'InvalidLocationStatsQuery',
-  'invalid location stats query'
+  'invalid location stats query',
 )
 
 export const invalidStyleStatsQueryError = new ControllerError(
   400,
   'InvalidStyleStatsQuery',
-  'invalid style stats query'
+  'invalid style stats query',
 )
 
 // Storage
 export const invalidStorageError = new ControllerError(
   400,
   'InvalidStorage',
-  'invalid storage'
+  'invalid storage',
 )
 
 export const invalidStorageIdError = new ControllerError(
   400,
   'InvalidStorageId',
-  'invalid storage id'
+  'invalid storage id',
 )
 
 export const referredStorageNotFoundError = new ControllerError(
   400,
   'StorageNotFound',
-  'storage not found'
+  'storage not found',
 )
 
-export const storageNotFoundError = (
-  id: string
-): ControllerError => new ControllerError(
-  404,
-  'StorageNotFound',
-  `storage with id ${id} was not found`
-)
+export const storageNotFoundError = (id: string): ControllerError =>
+  new ControllerError(
+    404,
+    'StorageNotFound',
+    `storage with id ${id} was not found`,
+  )
 
 // Style
 export const cyclicRelationshipError = new ControllerError(
   400,
   'CyclicStyleRelationship',
-  'cyclic style relationships are not allowed'
+  'cyclic style relationships are not allowed',
 )
 
 export const invalidStyleError = new ControllerError(
   400,
   'InvalidStyle',
-  'invalid style'
+  'invalid style',
 )
 
 export const invalidStyleIdError = new ControllerError(
   400,
   'InvalidStyleId',
-  'invalid style id'
+  'invalid style id',
 )
 
 export const parentStyleNotFoundError = new ControllerError(
   400,
   'ParentStyleNotFound',
-  'parent style was not found'
+  'parent style was not found',
 )
 
 export const referredStyleNotFoundError = new ControllerError(
   400,
   'StyleNotFound',
-  'style not found'
+  'style not found',
 )
 
-export const styleNotFoundError = (
-  id: string
-): ControllerError => new ControllerError(
-  404,
-  'StyleNotFound',
-  `style with id ${id} was not found`
-)
+export const styleNotFoundError = (id: string): ControllerError =>
+  new ControllerError(404, 'StyleNotFound', `style with id ${id} was not found`)
 
 // User
 export const invalidUserError = new ControllerError(
   400,
   'InvalidUser',
-  'invalid user'
+  'invalid user',
 )
 
 export const invalidUserIdError = new ControllerError(
   400,
   'InvalidUserId',
-  'invalid user id'
+  'invalid user id',
 )
 
 export const invalidUserSignInMethodError = new ControllerError(
   400,
   'InvalidUser',
-  'invalid sign in method'
+  'invalid sign in method',
 )
 
-export const userNotFoundError = (
-  id: string
-): ControllerError => new ControllerError(
-  404,
-  'UserNotFound',
-  `user with id ${id} was not found`
-)
+export const userNotFoundError = (id: string): ControllerError =>
+  new ControllerError(404, 'UserNotFound', `user with id ${id} was not found`)
 
 // User - sign in method
 export const invalidCredentialsError = new ControllerError(
   401,
   'InvalidCredentials',
-  'wrong username or password'
+  'wrong username or password',
 )
 
 export const invalidCredentialsTokenError = new ControllerError(
   401,
   'InvalidCredentials',
-  'invalid token'
+  'invalid token',
 )
 
 export const invalidPasswordChangeError = new ControllerError(
   400,
   'InvalidPasswordChange',
-  'invalid password change'
+  'invalid password change',
 )
 
 export const invalidSignInMethodError = new ControllerError(
   400,
   'InvalidSignInMethod',
-  'invalid sign in method'
+  'invalid sign in method',
 )
 
 export const invalidRefreshTokenError = new ControllerError(
   400,
   'InvalidRefreshToken',
-  'the body must contain a valid refresh token'
+  'the body must contain a valid refresh token',
 )
 
 export const passwordTooLongError = new ControllerError(
   400,
   'PasswordTooLong',
-  'password is too long'
+  'password is too long',
 )
 
 export const passwordTooWeakError = new ControllerError(
   400,
   'PasswordTooWeak',
-  'password is too weak'
+  'password is too weak',
 )
 
 export const userAlreadyHasSignInMethodError = new ControllerError(
   409,
   'UserAlreadyHasSignInMethod',
-  'the user already has a sign in method'
+  'the user already has a sign in method',
 )

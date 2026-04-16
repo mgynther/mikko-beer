@@ -1,67 +1,58 @@
 import * as authorizationService from '../internal/auth/authorization.service.js'
 import * as breweryService from '../internal/brewery/validated.service.js'
 
-import type {
-  BodyRequest,
-  IdRequest,
-  PaginationRequest
-} from "../request"
-import type { Brewery, CreateBreweryRequest } from "../brewery/brewery"
+import type { BodyRequest, IdRequest, PaginationRequest } from '../request'
+import type { Brewery, CreateBreweryRequest } from '../brewery/brewery'
 import type { log } from '../log.js'
 import type { Pagination } from '../pagination.js'
 import type { SearchByName } from '../search.js'
 
-export async function createBrewery (
+export async function createBrewery(
   create: (brewery: CreateBreweryRequest) => Promise<Brewery>,
   request: BodyRequest,
-  log: log
+  log: log,
 ): Promise<Brewery> {
   authorizationService.authorizeAdmin(request.authTokenPayload)
   return await breweryService.createBrewery(create, request.body, log)
 }
 
-export async function updateBrewery (
+export async function updateBrewery(
   update: (brewery: Brewery) => Promise<Brewery>,
   breweryId: string | undefined,
   request: BodyRequest,
-  log: log
+  log: log,
 ): Promise<Brewery> {
   authorizationService.authorizeAdmin(request.authTokenPayload)
   return await breweryService.updateBrewery(
     update,
     breweryId,
     request.body,
-    log
+    log,
   )
 }
 
-export async function findBreweryById (
+export async function findBreweryById(
   find: (id: string) => Promise<Brewery | undefined>,
   request: IdRequest,
-  log: log
+  log: log,
 ): Promise<Brewery> {
   authorizationService.authorizeViewer(request.authTokenPayload)
-  return await breweryService.findBreweryById(
-    find,
-    request.id,
-    log
-  )
+  return await breweryService.findBreweryById(find, request.id, log)
 }
 
-export async function listBreweries (
+export async function listBreweries(
   list: (pagination: Pagination) => Promise<Brewery[]>,
   request: PaginationRequest,
-  log: log
+  log: log,
 ): Promise<Brewery[]> {
   authorizationService.authorizeViewer(request.authTokenPayload)
   return await breweryService.listBreweries(list, request.pagination, log)
 }
 
-export async function searchBreweries (
-  search: (searchRequest: SearchByName) =>
-  Promise<Brewery[]>,
+export async function searchBreweries(
+  search: (searchRequest: SearchByName) => Promise<Brewery[]>,
   request: BodyRequest,
-  log: log
+  log: log,
 ): Promise<Brewery[]> {
   authorizationService.authorizeViewer(request.authTokenPayload)
   return await breweryService.searchBreweries(search, request.body, log)

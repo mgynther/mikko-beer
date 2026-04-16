@@ -1,4 +1,4 @@
-export function getEnvVariable (name: string): string {
+export function getEnvVariable(name: string): string {
   if (process.env[name] === undefined) {
     throw new Error(`environment variable ${name} not found`)
   }

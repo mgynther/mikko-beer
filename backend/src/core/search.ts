@@ -8,7 +8,7 @@ export interface SearchByName {
   name: string
 }
 
-export function toIlike (search: SearchByName): string {
+export function toIlike(search: SearchByName): string {
   // To be absolutely sure type assertions or other bad practices do not cause
   // unexpected values ending up in queries we do run-time validation here.
   const nameStr: string = search.name
@@ -22,21 +22,20 @@ export function toIlike (search: SearchByName): string {
   return `%${name}%`
 }
 
-const doValidateSearchByNameRequest =
-  ajv.compile<SearchByName>({
-    type: 'object',
-    properties: {
-      name: {
-        type: 'string',
-        minLength: 1
-      }
+const doValidateSearchByNameRequest = ajv.compile<SearchByName>({
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      minLength: 1,
     },
-    required: ['name'],
-    additionalProperties: false
-  })
+  },
+  required: ['name'],
+  additionalProperties: false,
+})
 
-export function validateSearchByName (body: unknown): SearchByName {
-  if (!(doValidateSearchByNameRequest(body))) {
+export function validateSearchByName(body: unknown): SearchByName {
+  if (!doValidateSearchByNameRequest(body)) {
     throw invalidSearchError
   }
   const name: string = (body as { name: string }).name

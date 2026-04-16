@@ -1,40 +1,39 @@
 import { ajv } from '../ajv.js'
 
-import {
-  invalidStyleError,
-  invalidStyleIdError
-} from '../../errors.js'
-import type { CreateStyleRequest, UpdateStyleRequest } from '../../style/style.js'
+import { invalidStyleError, invalidStyleIdError } from '../../errors.js'
+import type {
+  CreateStyleRequest,
+  UpdateStyleRequest,
+} from '../../style/style.js'
 
-const doValidateStyleRequest =
-  ajv.compile<CreateStyleRequest>({
-    type: 'object',
-    properties: {
-      name: {
-        type: 'string',
-        minLength: 1
-      },
-      parents: {
-        type: 'array',
-        items: {
-          type: 'string',
-          minLength: 1
-        }
-      }
+const doValidateStyleRequest = ajv.compile<CreateStyleRequest>({
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      minLength: 1,
     },
-    required: ['name', 'parents'],
-    additionalProperties: false
-  })
+    parents: {
+      type: 'array',
+      items: {
+        type: 'string',
+        minLength: 1,
+      },
+    },
+  },
+  required: ['name', 'parents'],
+  additionalProperties: false,
+})
 
-function isCreateStyleRequestValid (body: unknown): boolean {
+function isCreateStyleRequestValid(body: unknown): boolean {
   return doValidateStyleRequest(body)
 }
 
-function isUpdateStyleRequestValid (body: unknown): boolean {
+function isUpdateStyleRequestValid(body: unknown): boolean {
   return doValidateStyleRequest(body)
 }
 
-export function validateCreateStyleRequest (body: unknown): CreateStyleRequest {
+export function validateCreateStyleRequest(body: unknown): CreateStyleRequest {
   if (!isCreateStyleRequestValid(body)) {
     throw invalidStyleError
   }
@@ -51,9 +50,9 @@ interface ValidUpdateStyleRequest {
   request: UpdateStyleRequest
 }
 
-export function validateUpdateStyleRequest (
+export function validateUpdateStyleRequest(
   body: unknown,
-  styleId: string | undefined
+  styleId: string | undefined,
 ): ValidUpdateStyleRequest {
   if (!isUpdateStyleRequestValid(body)) {
     throw invalidStyleError
@@ -64,11 +63,11 @@ export function validateUpdateStyleRequest (
   const result = body as UpdateStyleRequest
   return {
     id: validateStyleId(styleId),
-    request: result
+    request: result,
   }
 }
 
-export function validateStyleId (id: string | undefined): string {
+export function validateStyleId(id: string | undefined): string {
   if (id === undefined || id.length === 0) {
     throw invalidStyleIdError
   }

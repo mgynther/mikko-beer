@@ -1,11 +1,11 @@
 import type { Kysely } from 'kysely'
 import { sql } from 'kysely'
 
-export async function up (db: Kysely<any>): Promise<void> {
+export async function up(db: Kysely<any>): Promise<void> {
   await db.schema
     .createTable('user')
     .addColumn('user_id', 'uuid', (col) =>
-      col.primaryKey().defaultTo(sql`gen_random_uuid()`)
+      col.primaryKey().defaultTo(sql`gen_random_uuid()`),
     )
     .addColumn('first_name', 'text')
     .addColumn('last_name', 'text')
@@ -14,6 +14,6 @@ export async function up (db: Kysely<any>): Promise<void> {
     .execute()
 }
 
-export async function down (db: Kysely<any>): Promise<void> {
+export async function down(db: Kysely<any>): Promise<void> {
   await db.schema.dropTable('user').execute()
 }

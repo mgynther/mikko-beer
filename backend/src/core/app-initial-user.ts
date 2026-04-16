@@ -5,29 +5,29 @@ import * as signInMethodService from './internal/user/sign-in-method.service.js'
 
 import type { log } from './log.js'
 
-import type { CreateAnonymousUserRequest, User } from "./user/user"
+import type { CreateAnonymousUserRequest, User } from './user/user'
 import type { AuthTokenConfig } from './auth/auth-token.js'
 import type {
   AddPasswordUserIf,
-  PasswordSignInMethod
+  PasswordSignInMethod,
 } from './user/sign-in-method.js'
 import type { SignedInUser } from './internal/user/signed-in-user.js'
 import type { DbRefreshToken } from './auth/refresh-token.js'
 
-export async function createInitialUser (
+export async function createInitialUser(
   createAnonymousUser: (request: CreateAnonymousUserRequest) => Promise<User>,
   authTokenConfig: AuthTokenConfig,
-  log: log
+  log: log,
 ): Promise<SignedInUser> {
   /* eslint-disable-next-line @typescript-eslint/require-await --
    * async required by interface.
    */
-  const insertRefreshToken = async (userId: string): Promise<DbRefreshToken> => 
+  const insertRefreshToken = async (userId: string): Promise<DbRefreshToken> =>
     // Here we don't need a refresh token in db. One will be created
     // when admin user logs in.
-     ({
+    ({
       id: uuidv4(),
-      userId
+      userId,
     })
 
   const user = await userService.createAnonymousUser(
@@ -35,21 +35,21 @@ export async function createInitialUser (
     insertRefreshToken,
     'admin',
     authTokenConfig,
-    log
+    log,
   )
   return user
 }
 
-export async function addPasswordForInitialUser (
+export async function addPasswordForInitialUser(
   addPasswordUserIf: AddPasswordUserIf,
   userId: string,
   passwordSignInMethod: PasswordSignInMethod,
-  log: log
+  log: log,
 ): Promise<void> {
   await signInMethodService.addPasswordSignInMethod(
     addPasswordUserIf,
     userId,
     passwordSignInMethod,
-    log
+    log,
   )
 }

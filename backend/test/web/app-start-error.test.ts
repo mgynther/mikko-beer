@@ -1,15 +1,12 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
-import {
-  assertDeepEqual,
-  assertRejects
-} from '../assert.js'
+import { assertDeepEqual, assertRejects } from '../assert.js'
 
 import { testConfig } from './test-config.js'
 import {
   afterTest,
   afterTests,
   beforeTest,
-  beforeTests
+  beforeTests,
 } from '../data/test-helpers.js'
 import { App } from '../../src/web/app.js'
 import type { Database } from '../../src/data/database.js'
@@ -51,13 +48,13 @@ export class TestContext {
   beforeEach = async (): Promise<void> => {
     const config = {
       ...testConfig,
-      generateInitialAdminPassword: true
+      generateInitialAdminPassword: true,
     }
     const log: log = (level: Level, ...args: unknown[]) => {
       const message = args.map((a: unknown) => `${a}`).join()
       this.#logMessages.push({
         level,
-        message
+        message,
       })
       if (message.startsWith('Created initial user')) {
         throw new Error(errorMessage)
@@ -88,12 +85,12 @@ describe('start error', () => {
         await ctx.app()!.start()
       },
       new Error(errorMessage),
-      Error
+      Error,
     )
     const logMessages = ctx.logMessages()
     assertDeepEqual(logMessages[logMessages.length - 1], {
       level: Level.ERROR,
-      message: 'Error starting,Error: this is error'
+      message: 'Error starting,Error: this is error',
     })
   })
 })

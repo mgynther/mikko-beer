@@ -12,30 +12,31 @@ export interface PaginationRequest {
   skip: string | string[] | undefined
 }
 
-const doValidatePagination =
-  ajv.compile<PaginationRequest>({
-    type: 'object',
-    properties: {
-      size: {
-        type: 'integer',
-        maximum: 10000,
-        minimum: 1
-      },
-      skip: {
-        type: 'integer',
-        minimum: 0
-      }
+const doValidatePagination = ajv.compile<PaginationRequest>({
+  type: 'object',
+  properties: {
+    size: {
+      type: 'integer',
+      maximum: 10000,
+      minimum: 1,
     },
-    required: ['size', 'skip'],
-    additionalProperties: false
-  })
+    skip: {
+      type: 'integer',
+      minimum: 0,
+    },
+  },
+  required: ['size', 'skip'],
+  additionalProperties: false,
+})
 
-export function validatePagination (pagination: PaginationRequest): Pagination {
+export function validatePagination(pagination: PaginationRequest): Pagination {
   if (pagination.size === undefined && pagination.skip === undefined) {
     return { size: 10000, skip: 0 }
   }
-  if (typeof pagination.size !== 'string' ||
-      typeof pagination.skip !== 'string') {
+  if (
+    typeof pagination.size !== 'string' ||
+    typeof pagination.skip !== 'string'
+  ) {
     throw invalidPaginationError
   }
   const regex = /^[0-9]+$/v
@@ -44,7 +45,7 @@ export function validatePagination (pagination: PaginationRequest): Pagination {
   }
   const parsed = {
     size: parseInt(pagination.size, 10),
-    skip: parseInt(pagination.skip, 10)
+    skip: parseInt(pagination.skip, 10),
   }
   const isValid = doValidatePagination(parsed)
   if (!isValid) {
@@ -58,7 +59,7 @@ interface RowNumbers {
   end: number
 }
 
-export function toRowNumbers (pagination: Pagination): RowNumbers {
+export function toRowNumbers(pagination: Pagination): RowNumbers {
   const start = pagination.skip + 1
   const end = pagination.skip + pagination.size
   return { start, end }

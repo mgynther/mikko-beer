@@ -3,17 +3,17 @@ import {
   noRightsError,
   noUserIdParameterError,
   userMismatchError,
-  userOrRefreshTokenNotFoundError
+  userOrRefreshTokenNotFoundError,
 } from '../../errors.js'
 import type { DbRefreshToken } from '../../auth/refresh-token.js'
 
-export async function authorizeUser (
+export async function authorizeUser(
   userId: string | undefined,
   authTokenPayload: AuthTokenPayload,
   findRefreshToken: (
     userId: string,
-    refreshTokenId: string
-  ) => Promise<DbRefreshToken | undefined>
+    refreshTokenId: string,
+  ) => Promise<DbRefreshToken | undefined>,
 ): Promise<void> {
   if (userId === undefined || userId === '') {
     throw noUserIdParameterError
@@ -29,7 +29,7 @@ export async function authorizeUser (
 
   const refreshToken = await findRefreshToken(
     authTokenPayload.userId,
-    authTokenPayload.refreshTokenId
+    authTokenPayload.refreshTokenId,
   )
 
   if (refreshToken === undefined) {
@@ -37,18 +37,14 @@ export async function authorizeUser (
   }
 }
 
-export function authorizeAdmin (
-  payload: AuthTokenPayload
-): void {
+export function authorizeAdmin(payload: AuthTokenPayload): void {
   if (payload.role !== 'admin') {
     throw noRightsError
   }
 }
 
-export function authorizeViewer (
-  payload: AuthTokenPayload
-): void {
-  const {role} = payload
+export function authorizeViewer(payload: AuthTokenPayload): void {
+  const { role } = payload
   switch (role) {
     case 'admin':
     case 'viewer':

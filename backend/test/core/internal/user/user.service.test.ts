@@ -2,12 +2,12 @@ import { describe, it } from 'node:test'
 
 import { userNotFoundError } from '../../../../src/core/errors.js'
 import * as userService from '../../../../src/core/internal/user/user.service.js'
-import type { AuthTokenConfig } from "../../../../src/core/auth/auth-token"
-import type { DbRefreshToken } from "../../../../src/core/auth/refresh-token"
+import type { AuthTokenConfig } from '../../../../src/core/auth/auth-token'
+import type { DbRefreshToken } from '../../../../src/core/auth/refresh-token'
 import type {
   CreateAnonymousUserRequest,
-  User
-} from "../../../../src/core/user/user"
+  User,
+} from '../../../../src/core/user/user'
 
 import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
@@ -16,7 +16,7 @@ import { assertDeepEqual, assertEqual, assertTruthy } from '../../../assert.js'
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {
   expiryDurationMin: 5,
-  secret: authTokenSecret
+  secret: authTokenSecret,
 }
 
 const userId = 'f28f87af-106e-46af-8994-6fd9204bf85c'
@@ -24,25 +24,22 @@ const userId = 'f28f87af-106e-46af-8994-6fd9204bf85c'
 const user: User = {
   id: userId,
   role: 'admin',
-  username: 'user'
+  username: 'user',
 }
 
 describe('user service unit tests', () => {
-
   it('create anonymous user', async () => {
-    async function create(
-      request: CreateAnonymousUserRequest
-    ): Promise<User> {
+    async function create(request: CreateAnonymousUserRequest): Promise<User> {
       assertEqual(request.role, user.role)
       return user
     }
     async function insertRefreshToken(
-      requestUserId: string
+      requestUserId: string,
     ): Promise<DbRefreshToken> {
       assertEqual(requestUserId, userId)
       return {
         id: '0586c701-e053-46bf-b599-346093989140',
-        userId
+        userId,
       }
     }
     const signedInUser = await userService.createAnonymousUser(
@@ -50,7 +47,7 @@ describe('user service unit tests', () => {
       insertRefreshToken,
       user.role,
       authTokenConfig,
-      log
+      log,
     )
     assertDeepEqual(signedInUser.user, user)
     assertTruthy(signedInUser.refreshToken.refreshToken)
@@ -63,5 +60,4 @@ describe('user service unit tests', () => {
       await userService.findUserById(async () => undefined, id, log)
     }, userNotFoundError(id))
   })
-
 })

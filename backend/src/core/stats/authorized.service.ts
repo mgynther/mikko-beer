@@ -1,9 +1,7 @@
 import * as authorizationService from '../internal/auth/authorization.service.js'
 import * as statsService from '../internal/stats/service.js'
 
-import type {
-  AuthTokenPayload
-} from "../auth/auth-token"
+import type { AuthTokenPayload } from '../auth/auth-token'
 import type {
   AnnualContainerStats,
   AnnualStats,
@@ -17,51 +15,51 @@ import type {
   StatsIdFilter,
   StatsFilter,
   StyleStats,
-  StyleStatsOrder
-} from "./stats"
+  StyleStatsOrder,
+} from './stats'
 import type { log } from '../log.js'
 import type { Pagination } from '../pagination.js'
 
-export async function getAnnual (
+export async function getAnnual(
   getAnnual: (statsFilter: StatsIdFilter) => Promise<AnnualStats>,
   authTokenPayload: AuthTokenPayload,
   statsFilter: StatsIdFilter,
-  log: log
+  log: log,
 ): Promise<AnnualStats> {
   authorizationService.authorizeViewer(authTokenPayload)
   return await statsService.getAnnual(getAnnual, statsFilter, log)
 }
 
-export async function getAnnualContainer (
+export async function getAnnualContainer(
   getAnnualContainer: (
     pagination: Pagination,
-    statsFilter: StatsIdFilter
+    statsFilter: StatsIdFilter,
   ) => Promise<AnnualContainerStats>,
   authTokenPayload: AuthTokenPayload,
   pagination: Pagination,
   statsFilter: StatsIdFilter,
-  log: log
+  log: log,
 ): Promise<AnnualStats> {
   authorizationService.authorizeViewer(authTokenPayload)
   return await statsService.getAnnualContainer(
     getAnnualContainer,
     pagination,
     statsFilter,
-    log
+    log,
   )
 }
 
-export async function getBrewery (
+export async function getBrewery(
   getBrewery: (
     pagination: Pagination,
     statsFilter: StatsFilter,
-    breweryStatsOrder: BreweryStatsOrder
+    breweryStatsOrder: BreweryStatsOrder,
   ) => Promise<BreweryStats>,
   authTokenPayload: AuthTokenPayload,
   pagination: Pagination,
   statsFilter: StatsFilter,
   breweryStatsOrder: BreweryStatsOrder,
-  log: log
+  log: log,
 ): Promise<BreweryStats> {
   authorizationService.authorizeViewer(authTokenPayload)
   return await statsService.getBrewery(
@@ -69,33 +67,31 @@ export async function getBrewery (
     pagination,
     statsFilter,
     breweryStatsOrder,
-    log
+    log,
   )
 }
 
-export async function getContainer (
-  getContainer: (
-    statsFilter: StatsIdFilter
-  ) => Promise<ContainerStats>,
+export async function getContainer(
+  getContainer: (statsFilter: StatsIdFilter) => Promise<ContainerStats>,
   authTokenPayload: AuthTokenPayload,
   statsFilter: StatsIdFilter,
-  log: log
+  log: log,
 ): Promise<ContainerStats> {
   authorizationService.authorizeViewer(authTokenPayload)
   return await statsService.getContainer(getContainer, statsFilter, log)
 }
 
-export async function getLocation (
+export async function getLocation(
   getLocation: (
     pagination: Pagination,
     statsFilter: StatsFilter,
-    locationStatsOrder: LocationStatsOrder
+    locationStatsOrder: LocationStatsOrder,
   ) => Promise<LocationStats>,
   authTokenPayload: AuthTokenPayload,
   pagination: Pagination,
   statsFilter: StatsFilter,
   locationStatsOrder: LocationStatsOrder,
-  log: log
+  log: log,
 ): Promise<LocationStats> {
   authorizationService.authorizeViewer(authTokenPayload)
   return await statsService.getLocation(
@@ -103,45 +99,45 @@ export async function getLocation (
     pagination,
     statsFilter,
     locationStatsOrder,
-    log
+    log,
   )
 }
 
-export async function getOverall (
+export async function getOverall(
   getOverall: (statsFilter: StatsIdFilter) => Promise<OverallStats>,
   authTokenPayload: AuthTokenPayload,
   statsFilter: StatsIdFilter,
-  log: log
+  log: log,
 ): Promise<OverallStats> {
   authorizationService.authorizeViewer(authTokenPayload)
   return await statsService.getOverall(getOverall, statsFilter, log)
 }
 
-export async function getRating (
+export async function getRating(
   getRating: (statsFilter: StatsIdFilter) => Promise<RatingStats>,
   authTokenPayload: AuthTokenPayload,
   statsFilter: StatsIdFilter,
-  log: log
+  log: log,
 ): Promise<RatingStats> {
   authorizationService.authorizeViewer(authTokenPayload)
   return await statsService.getRating(getRating, statsFilter, log)
 }
 
-export async function getStyle (
+export async function getStyle(
   getStyle: (
     statsFilter: StatsFilter,
-    styleStatsOrder: StyleStatsOrder
+    styleStatsOrder: StyleStatsOrder,
   ) => Promise<StyleStats>,
   authTokenPayload: AuthTokenPayload,
   statsFilter: StatsFilter,
   styleStatsOrder: StyleStatsOrder,
-  log: log
+  log: log,
 ): Promise<StyleStats> {
   authorizationService.authorizeViewer(authTokenPayload)
   return await statsService.getStyle(
     getStyle,
     statsFilter,
     styleStatsOrder,
-    log
+    log,
   )
 }

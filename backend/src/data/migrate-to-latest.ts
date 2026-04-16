@@ -1,5 +1,5 @@
-import path, { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import path, { dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { promises as fs } from 'node:fs'
 import type { Database } from './database.js'
 import { config } from './config.js'
@@ -9,17 +9,17 @@ import {
   Kysely,
   Migrator,
   PostgresDialect,
-  FileMigrationProvider
+  FileMigrationProvider,
 } from 'kysely'
 import { Pool } from 'pg'
 
-const directory = dirname(fileURLToPath(import.meta.url));
+const directory = dirname(fileURLToPath(import.meta.url))
 
-async function migrateToLatest (): Promise<void> {
+async function migrateToLatest(): Promise<void> {
   const db = new Kysely<Database>({
     dialect: new PostgresDialect({
-      pool: new Pool(config)
-    })
+      pool: new Pool(config),
+    }),
   })
 
   const migrator = new Migrator({
@@ -27,8 +27,8 @@ async function migrateToLatest (): Promise<void> {
     provider: new FileMigrationProvider({
       fs,
       path,
-      migrationFolder: path.join(directory, 'migrations')
-    })
+      migrationFolder: path.join(directory, 'migrations'),
+    }),
   })
 
   const { error, results } = await migrator.migrateToLatest()
@@ -37,7 +37,7 @@ async function migrateToLatest (): Promise<void> {
     if (it.status === 'Success') {
       log(
         Level.INFO,
-        `migration "${it.migrationName}" was executed successfully`
+        `migration "${it.migrationName}" was executed successfully`,
       )
     } else if (it.status === 'Error') {
       log(Level.ERROR, `failed to execute migration "${it.migrationName}"`)
@@ -54,9 +54,14 @@ async function migrateToLatest (): Promise<void> {
 }
 
 try {
-  migrateToLatest().then(() => {
-    log(Level.INFO, 'migration done')
-  }, () => { log(Level.WARN, 'migration promise rejected') })
+  migrateToLatest().then(
+    () => {
+      log(Level.INFO, 'migration done')
+    },
+    () => {
+      log(Level.WARN, 'migration promise rejected')
+    },
+  )
 } catch (e) {
   log(Level.WARN, 'error running migration', e)
 }

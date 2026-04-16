@@ -7,12 +7,12 @@ import type {
   BeerStyleRow,
   BeerTable,
   InsertableBeerBreweryRow,
-  InsertableBeerStyleRow
+  InsertableBeerStyleRow,
 } from './beer.table.js'
 import type {
   BeerWithBreweriesAndStyles,
   Beer,
-  NewBeer
+  NewBeer,
 } from '../../core/beer/beer.js'
 
 import type { Pagination } from '../../core/pagination.js'
@@ -24,11 +24,12 @@ import type { Brewery } from '../../core/brewery/brewery.js'
 import type { Style } from '../../core/style/style.js'
 import { contains } from '../../core/record.js'
 
-export async function insertBeer (
+export async function insertBeer(
   trx: Transaction,
-  beer: NewBeer
+  beer: NewBeer,
 ): Promise<Beer> {
-  const insertedBeer = await trx.trx()
+  const insertedBeer = await trx
+    .trx()
     .insertInto('beer')
     .values(beer)
     .returningAll()
@@ -40,11 +41,12 @@ export async function insertBeer (
   }
 }
 
-export async function insertBeerBreweries (
+export async function insertBeerBreweries(
   trx: Transaction,
-  beerBreweries: InsertableBeerBreweryRow[]
+  beerBreweries: InsertableBeerBreweryRow[],
 ): Promise<BeerBreweryRow> {
-  const insertedBeerBreweries = await trx.trx()
+  const insertedBeerBreweries = await trx
+    .trx()
     .insertInto('beer_brewery')
     .values(beerBreweries)
     .returningAll()
@@ -53,11 +55,12 @@ export async function insertBeerBreweries (
   return insertedBeerBreweries
 }
 
-export async function insertBeerStyles (
+export async function insertBeerStyles(
   trx: Transaction,
-  beerStyles: InsertableBeerStyleRow[]
+  beerStyles: InsertableBeerStyleRow[],
 ): Promise<BeerStyleRow> {
-  const insertedBeerStyles = await trx.trx()
+  const insertedBeerStyles = await trx
+    .trx()
     .insertInto('beer_style')
     .values(beerStyles)
     .returningAll()
@@ -66,34 +69,34 @@ export async function insertBeerStyles (
   return insertedBeerStyles
 }
 
-export async function deleteBeerBreweries (
+export async function deleteBeerBreweries(
   trx: Transaction,
-  beerId: string
+  beerId: string,
 ): Promise<void> {
-  await trx.trx()
+  await trx
+    .trx()
     .deleteFrom('beer_brewery')
     .where('beer_brewery.beer', '=', beerId)
     .execute()
 }
 
-export async function deleteBeerStyles (
+export async function deleteBeerStyles(
   trx: Transaction,
-  beerId: string
+  beerId: string,
 ): Promise<void> {
-  await trx.trx()
+  await trx
+    .trx()
     .deleteFrom('beer_style')
     .where('beer_style.beer', '=', beerId)
     .execute()
 }
 
-export async function updateBeer (
-  trx: Transaction,
-  beer: Beer
-): Promise<Beer> {
-  const updatedBeer = await trx.trx()
+export async function updateBeer(trx: Transaction, beer: Beer): Promise<Beer> {
+  const updatedBeer = await trx
+    .trx()
     .updateTable('beer')
     .set({
-      name: beer.name
+      name: beer.name,
     })
     .where('beer_id', '=', beer.id)
     .returningAll()
@@ -101,15 +104,16 @@ export async function updateBeer (
 
   return {
     id: updatedBeer.beer_id,
-    name: updatedBeer.name
+    name: updatedBeer.name,
   }
 }
 
-export async function findBeerById (
+export async function findBeerById(
   db: Database,
-  id: string
+  id: string,
 ): Promise<BeerWithBreweriesAndStyles | undefined> {
-  const beerRows = await db.getDb()
+  const beerRows = await db
+    .getDb()
     .selectFrom('beer')
     .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
     .innerJoin('brewery', 'brewery.brewery_id', 'beer_brewery.brewery')
@@ -123,7 +127,7 @@ export async function findBeerById (
       'brewery.brewery_id as brewery_id',
       'brewery.name as brewery_name',
       'style.style_id as style_id',
-      'style.name as style_name'
+      'style.name as style_name',
     ])
     .execute()
 
@@ -131,7 +135,7 @@ export async function findBeerById (
     return undefined
   }
 
-  const {beer_id, name} = beerRows[0]
+  const { beer_id, name } = beerRows[0]
 
   const breweryIds: Record<string, boolean> = {}
   const styleIds: Record<string, boolean> = {}
@@ -139,7 +143,7 @@ export async function findBeerById (
   const breweries: Brewery[] = []
   const styles: Style[] = []
 
-  beerRows.forEach(row => {
+  beerRows.forEach((row) => {
     if (!breweryIds[row.brewery_id]) {
       breweryIds[row.brewery_id] = true
       breweries.push({ id: row.brewery_id, name: row.brewery_name })
@@ -154,7 +158,7 @@ export async function findBeerById (
     id: beer_id,
     name: name,
     breweries,
-    styles
+    styles,
   }
 }
 
@@ -179,13 +183,14 @@ const listByNameAsc: RawBuilder<BeerTableRn> = sql<BeerTableRn>`(
   FROM beer
   )`
 
-type BeerListPossibleColumns = 'beer.beer_id' |
-'beer.name' |
-'beer.created_at' |
-'brewery.brewery_id as brewery_id' |
-'brewery.name as brewery_name' |
-'style.style_id as style_id' |
-'style.name as style_name'
+type BeerListPossibleColumns =
+  | 'beer.beer_id'
+  | 'beer.name'
+  | 'beer.created_at'
+  | 'brewery.brewery_id as brewery_id'
+  | 'brewery.name as brewery_name'
+  | 'style.style_id as style_id'
+  | 'style.name as style_name'
 
 const beerListColumns: BeerListPossibleColumns[] = [
   'beer.beer_id',
@@ -194,15 +199,16 @@ const beerListColumns: BeerListPossibleColumns[] = [
   'brewery.brewery_id as brewery_id',
   'brewery.name as brewery_name',
   'style.style_id as style_id',
-  'style.name as style_name'
+  'style.name as style_name',
 ]
 
 /* eslint-disable-next-line @typescript-eslint/explicit-function-return-type --
  * Kysely types are complicated and it's easier to rely on the implicit type
  * here.
  */
-function getSelectListQuery (db: Database, fromQuery: RawBuilder<BeerTableRn>) {
-  return db.getDb()
+function getSelectListQuery(db: Database, fromQuery: RawBuilder<BeerTableRn>) {
+  return db
+    .getDb()
     .selectFrom(fromQuery.as('beer'))
     .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
     .innerJoin('brewery', 'beer_brewery.brewery', 'brewery.brewery_id')
@@ -211,11 +217,12 @@ function getSelectListQuery (db: Database, fromQuery: RawBuilder<BeerTableRn>) {
     .select(beerListColumns)
 }
 
-export async function lockBeer (
+export async function lockBeer(
   trx: Transaction,
-  key: string
+  key: string,
 ): Promise<string | undefined> {
-  const beer = await trx.trx()
+  const beer = await trx
+    .trx()
     .selectFrom('beer')
     .where('beer_id', '=', key)
     .select('beer_id')
@@ -225,9 +232,9 @@ export async function lockBeer (
   return beer?.beer_id
 }
 
-export async function listBeers (
+export async function listBeers(
   db: Database,
-  pagination: Pagination
+  pagination: Pagination,
 ): Promise<BeerWithBreweriesAndStyles[]> {
   const { start, end } = toRowNumbers(pagination)
   const beers = await getSelectListQuery(db, listByNameAsc)
@@ -238,8 +245,8 @@ export async function listBeers (
   return toBeersWithBreweriesAndStyles(beers)
 }
 
-function toBeersWithBreweriesAndStyles (
-  beers: JoinedBeerRow[]
+function toBeersWithBreweriesAndStyles(
+  beers: JoinedBeerRow[],
 ): BeerWithBreweriesAndStyles[] {
   if (beers.length === 0) {
     return []
@@ -248,13 +255,13 @@ function toBeersWithBreweriesAndStyles (
   const beerMap: Record<string, BeerWithBreweriesAndStyles> = {}
   const beerArray: BeerWithBreweriesAndStyles[] = []
 
-  beers.forEach(beer => {
+  beers.forEach((beer) => {
     if (!contains(beerMap, beer.beer_id)) {
       beerMap[beer.beer_id] = {
         id: beer.beer_id,
         name: beer.name,
         breweries: [],
-        styles: []
+        styles: [],
       }
       beerArray.push(beerMap[beer.beer_id])
     }
@@ -264,7 +271,7 @@ function toBeersWithBreweriesAndStyles (
     if (!beerMap[beer.beer_id].breweries.some(isMatchingBrewery)) {
       beerMap[beer.beer_id].breweries.push({
         id: beer.brewery_id,
-        name: beer.brewery_name
+        name: beer.brewery_name,
       })
     }
     function isMatchingStyle(style: Style): boolean {
@@ -273,7 +280,7 @@ function toBeersWithBreweriesAndStyles (
     if (!beerMap[beer.beer_id].styles.some(isMatchingStyle)) {
       beerMap[beer.beer_id].styles.push({
         id: beer.style_id,
-        name: beer.style_name
+        name: beer.style_name,
       })
     }
   })
@@ -281,9 +288,9 @@ function toBeersWithBreweriesAndStyles (
   return beerArray
 }
 
-export async function searchBeers (
+export async function searchBeers(
   db: Database,
-  searchRequest: SearchByName
+  searchRequest: SearchByName,
 ): Promise<BeerWithBreweriesAndStyles[]> {
   const nameIlike = toIlike(searchRequest)
   const beerNameLike: RawBuilder<BeerTableRn> = sql<BeerTableRn>`(

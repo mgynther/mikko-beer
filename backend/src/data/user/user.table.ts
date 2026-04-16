@@ -1,9 +1,4 @@
-import type {
-  Generated,
-  Insertable,
-  Selectable,
-  Updateable
-} from 'kysely'
+import type { Generated, Insertable, Selectable, Updateable } from 'kysely'
 
 import type { Role } from '../../core/user/user.js'
 

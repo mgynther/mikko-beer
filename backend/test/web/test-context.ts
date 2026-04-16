@@ -7,7 +7,7 @@ import {
   afterTest,
   afterTests,
   beforeTest,
-  beforeTests
+  beforeTests,
 } from '../data/test-helpers.js'
 import { App } from '../../src/web/app.js'
 import { Database } from '../../src/data/database.js'
@@ -21,13 +21,11 @@ export class TestContext {
   #app?: App
   #userLogger?: log
 
-  constructor (userLogger?: log) {
+  constructor(userLogger?: log) {
     this.#userLogger = userLogger
   }
 
-  request = createClient(
-    `http://localhost:${testConfig.port}`
-  )
+  request = createClient(`http://localhost:${testConfig.port}`)
 
   get db(): Database {
     return this.#app!.db
@@ -44,9 +42,7 @@ export class TestContext {
   beforeEach = async (): Promise<void> => {
     const logMessages: string[] = []
     const log: log = (level: Level, ...args: unknown[]) => {
-      logMessages.push(
-        args.map((a: unknown) => (a as any).toString()).join()
-      )
+      logMessages.push(args.map((a: unknown) => (a as any).toString()).join())
       this.#userLogger?.(level, ...args)
     }
     this.#app = new App(testConfig, log)
@@ -56,7 +52,7 @@ export class TestContext {
     const result = await this.#app.start()
     if (logMessages.some((m: string) => m.toLowerCase().includes('password'))) {
       throw new Error(
-        'initial admin password was created although not supposed to'
+        'initial admin password was created although not supposed to',
       )
     }
 
@@ -87,22 +83,24 @@ export class TestContext {
   }> => {
     const userUsername = `testerson_${uuidv4()}`
     const userPassword = uuidv4()
-    const res = await this.request.post(`/api/v1/user`, {
-      user: {
-        role: 'viewer'
+    const res = await this.request.post(
+      `/api/v1/user`,
+      {
+        user: {
+          role: 'viewer',
+        },
+        passwordSignInMethod: {
+          username: userUsername,
+          password: userPassword,
+        },
       },
-      passwordSignInMethod: {
-        username: userUsername,
-        password: userPassword
-      },
-    },
-      this.adminAuthHeaders()
+      this.adminAuthHeaders(),
     )
 
     return {
       ...res.data,
       username: userUsername,
-      password: userPassword
+      password: userPassword,
     }
   }
 

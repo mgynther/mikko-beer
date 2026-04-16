@@ -1,9 +1,7 @@
 import { describe, it } from 'node:test'
 
 import { cyclicRelationshipError } from '../../../../src/core/errors.js'
-import {
-  checkCyclicRelationships
-} from '../../../../src/core/internal/style/style.util.js'
+import { checkCyclicRelationships } from '../../../../src/core/internal/style/style.util.js'
 import { expectThrow } from '../../controller-error-helper.js'
 import { assertDoesNotThrow } from '../../../assert.js'
 
@@ -23,23 +21,24 @@ describe('style relationship unit tests', () => {
   const relationships = [
     {
       child: neipa.id,
-      parent: ipa.id
+      parent: ipa.id,
     },
     {
       child: ipa.id,
-      parent: ale.id
-    }
+      parent: ale.id,
+    },
   ]
 
   it('fail to find cyclic when there is no cycle', () => {
-    assertDoesNotThrow(
-      () => checkCyclicRelationships(relationships, neipa.id, [ipa.id])
+    assertDoesNotThrow(() =>
+      checkCyclicRelationships(relationships, neipa.id, [ipa.id]),
     )
   })
 
   it('find cyclic when there is a cycle', () => {
     expectThrow(
-      () => checkCyclicRelationships(relationships, ale.id, [neipa.id])
-    , cyclicRelationshipError)
+      () => checkCyclicRelationships(relationships, ale.id, [neipa.id]),
+      cyclicRelationshipError,
+    )
   })
 })

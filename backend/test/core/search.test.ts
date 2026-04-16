@@ -12,7 +12,7 @@ describe('search validation unit tests', () => {
     assertDeepEqual(validateSearchByName(input), output)
   }
   function fail(input: unknown) {
-    expectThrow(() => (validateSearchByName(input)), invalidSearchError)
+    expectThrow(() => validateSearchByName(input), invalidSearchError)
   }
   it('pass validation', () => {
     pass({ name: 'testing' }, { name: 'testing' })
@@ -45,8 +45,7 @@ describe('search ilike unit tests', () => {
     assertThrows(
       () => toIlike({ name: '' }),
       new Error('must not search with missing or empty name'),
-      Error
+      Error,
     )
   })
 })
-

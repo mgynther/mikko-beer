@@ -2,54 +2,54 @@ import * as containerService from './service.js'
 
 import type {
   Container,
-  CreateContainerRequest
+  CreateContainerRequest,
 } from '../../container/container.js'
 import {
   validateContainerId,
   validateCreateContainerRequest,
-  validateUpdateContainerRequest
+  validateUpdateContainerRequest,
 } from './validation.js'
 import type { log } from '../../log.js'
 
-export async function createContainer (
+export async function createContainer(
   create: (container: CreateContainerRequest) => Promise<Container>,
   body: unknown,
-  log: log
+  log: log,
 ): Promise<Container> {
   const createRequest = validateCreateContainerRequest(body)
   return await containerService.createContainer(create, createRequest, log)
 }
 
-export async function updateContainer (
+export async function updateContainer(
   update: (container: Container) => Promise<Container>,
   id: string | undefined,
   body: unknown,
-  log: log
+  log: log,
 ): Promise<Container> {
   const validRequest = validateUpdateContainerRequest(body, id)
   return await containerService.updateContainer(
     update,
     validRequest.id,
     validRequest.request,
-    log
+    log,
   )
 }
 
-export async function findContainerById (
+export async function findContainerById(
   find: (id: string) => Promise<Container | undefined>,
   id: string | undefined,
-  log: log
+  log: log,
 ): Promise<Container> {
   return await containerService.findContainerById(
     find,
     validateContainerId(id),
-    log
+    log,
   )
 }
 
-export async function listContainers (
+export async function listContainers(
   list: () => Promise<Container[]>,
-  log: log
+  log: log,
 ): Promise<Container[]> {
   return await containerService.listContainers(list, log)
 }

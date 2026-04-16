@@ -1,6 +1,6 @@
-import type { AuthTokenPayload } from "./auth/auth-token"
-import type { Pagination } from "./pagination"
-import type { SearchByName } from "./search"
+import type { AuthTokenPayload } from './auth/auth-token'
+import type { Pagination } from './pagination'
+import type { SearchByName } from './search'
 
 export interface BodyRequest {
   authTokenPayload: AuthTokenPayload

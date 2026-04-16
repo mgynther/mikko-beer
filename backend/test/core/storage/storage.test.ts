@@ -6,28 +6,28 @@ import {
 } from '../../../src/core/internal/storage/validation.js'
 import {
   invalidStorageError,
-  invalidStorageIdError
+  invalidStorageIdError,
 } from '../../../src/core/errors.js'
 import { expectThrow } from '../controller-error-helper.js'
 import { assertDeepEqual } from '../../assert.js'
 import type {
   CreateStorageRequest,
-  UpdateStorageRequest
+  UpdateStorageRequest,
 } from '../../../src/core/storage/storage.js'
 
-function validCreateRequest (): CreateStorageRequest {
+function validCreateRequest(): CreateStorageRequest {
   return {
     beer: 'b939ba08-6afb-41ce-8419-9a1bb31ab7b7',
     bestBefore: '2023-12-08T22:55:50.111+02:00',
-    container: '3769c509-d6e5-4906-99cd-fcf1e80bbc10'
+    container: '3769c509-d6e5-4906-99cd-fcf1e80bbc10',
   }
 }
 
-function validUpdateRequest (): UpdateStorageRequest {
+function validUpdateRequest(): UpdateStorageRequest {
   return {
     beer: '8cdb1968-2392-4361-8bde-ce4e266a3bc7',
     bestBefore: '2023-12-08T22:55:50.111+02:00',
-    container: 'd446881c-4cd3-4684-96c8-687acf7f9266'
+    container: 'd446881c-4cd3-4684-96c8-687acf7f9266',
   }
 }
 
@@ -44,15 +44,14 @@ describe('storage validation unit tests', () => {
     const id = '328ec839-cf21-43b3-8a33-8b69c126eebc'
     assertDeepEqual(validateUpdateStorageRequest(input, id), {
       id,
-      request: output
+      request: output,
     })
-  });
-
-  [
+  })
+  ;[
     {
       func: validateCreateStorageRequest,
       getValid: validCreateRequest,
-      title: (base: string) => `${base}: create`
+      title: (base: string) => `${base}: create`,
     },
     {
       func: (request: unknown) => {
@@ -60,19 +59,19 @@ describe('storage validation unit tests', () => {
         return validateUpdateStorageRequest(request, id)
       },
       getValid: validUpdateRequest,
-      title: (base: string) => `${base}: update`
-    }
-  ].forEach(validator => {
+      title: (base: string) => `${base}: update`,
+    },
+  ].forEach((validator) => {
     const { func, getValid, title } = validator
 
-    function fail (storage: unknown) {
+    function fail(storage: unknown) {
       expectThrow(() => func(storage), invalidStorageError)
     }
 
     it(title('fail with empty beer'), () => {
       const storage = {
         ...getValid(),
-        beer: ''
+        beer: '',
       }
       fail(storage)
     })
@@ -80,7 +79,7 @@ describe('storage validation unit tests', () => {
     it(title('fail with invalid beer'), () => {
       const storage = {
         ...getValid(),
-        beer: {}
+        beer: {},
       }
       fail(storage)
     })
@@ -93,7 +92,7 @@ describe('storage validation unit tests', () => {
     it(title('fail with empty best before'), () => {
       const storage = {
         ...getValid(),
-        bestBefore: ''
+        bestBefore: '',
       }
       fail(storage)
     })
@@ -101,7 +100,7 @@ describe('storage validation unit tests', () => {
     it(title('fail with invalid best before'), () => {
       const storage = {
         ...getValid(),
-        bestBefore: 123
+        bestBefore: 123,
       }
       fail(storage)
     })
@@ -114,7 +113,7 @@ describe('storage validation unit tests', () => {
     it(title('fail with empty container'), () => {
       const storage = {
         ...getValid(),
-        container: ''
+        container: '',
       }
       fail(storage)
     })
@@ -122,7 +121,7 @@ describe('storage validation unit tests', () => {
     it(title('fail with invalid container'), () => {
       const storage = {
         ...getValid(),
-        container: [ null ]
+        container: [null],
       }
       fail(storage)
     })
@@ -135,7 +134,7 @@ describe('storage validation unit tests', () => {
     it(title('fail with additional property'), () => {
       const storage = {
         ...getValid(),
-        additional: 'will fail'
+        additional: 'will fail',
       }
       fail(storage)
     })
@@ -143,7 +142,8 @@ describe('storage validation unit tests', () => {
 
   it('fail update with empty id', () => {
     expectThrow(
-      () => validateUpdateStorageRequest(validUpdateRequest(), '')
-    , invalidStorageIdError)
+      () => validateUpdateStorageRequest(validUpdateRequest(), ''),
+      invalidStorageIdError,
+    )
   })
 })

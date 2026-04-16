@@ -3,7 +3,7 @@ import {
   afterTest,
   afterTests,
   beforeTest,
-  beforeTests
+  beforeTests,
 } from './test-helpers.js'
 import { Database } from '../../src/data/database.js'
 

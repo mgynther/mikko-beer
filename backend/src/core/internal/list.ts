@@ -1,3 +1,3 @@
 export const directionValidation = {
-  enum: ['asc', 'desc']
+  enum: ['asc', 'desc'],
 }

@@ -2,17 +2,17 @@ import { describe, it } from 'node:test'
 
 import {
   validateFilteredReviewListOrder,
-  validateFullReviewListOrder
+  validateFullReviewListOrder,
 } from '../../src/core/review/review.js'
 import {
   invalidReviewListQueryBeerNameError,
   invalidReviewListQueryBreweryNameError,
-  invalidReviewListQueryOrderError
+  invalidReviewListQueryOrderError,
 } from '../../src/core/errors.js'
 import { expectThrow } from './controller-error-helper.js'
 import { assertDeepEqual } from '../assert.js'
 
-function valid (): Record<string, unknown> {
+function valid(): Record<string, unknown> {
   return { order: 'time', direction: 'desc' }
 }
 
@@ -24,17 +24,16 @@ interface CommonCase {
 }
 
 describe('review list order unit tests', () => {
-  [
+  ;[
     {
       title: 'full review list order',
-      func: validateFullReviewListOrder
+      func: validateFullReviewListOrder,
     },
     {
       title: 'filtered review list order',
-      func: validateFilteredReviewListOrder
-    }
-  ]
-  .forEach((test: CommonCase) => {
+      func: validateFilteredReviewListOrder,
+    },
+  ].forEach((test: CommonCase) => {
     it(`valid test helper is valid, ${test.title}`, () => {
       const result = test.func(valid())
       assertDeepEqual(result, { property: 'time', direction: 'desc' })
@@ -42,39 +41,39 @@ describe('review list order unit tests', () => {
 
     it(`invalid order value, ${test.title}`, () => {
       expectThrow(
-        () => test.func({ ...valid(), order: 'testing' })
-      , invalidReviewListQueryOrderError)
+        () => test.func({ ...valid(), order: 'testing' }),
+        invalidReviewListQueryOrderError,
+      )
     })
 
     it(`invalid order type, ${test.title}`, () => {
       expectThrow(
-        () => test.func( { ...valid(), order: 123 })
-      , invalidReviewListQueryOrderError)
+        () => test.func({ ...valid(), order: 123 }),
+        invalidReviewListQueryOrderError,
+      )
     })
 
     it(`invalid direction value, ${test.title}`, () => {
       expectThrow(
-        () => test.func({ ...valid(), direction: 'testing' })
-      , invalidReviewListQueryOrderError)
+        () => test.func({ ...valid(), direction: 'testing' }),
+        invalidReviewListQueryOrderError,
+      )
     })
 
     it(`invalid direction type, ${test.title}`, () => {
       expectThrow(
-        () => test.func({ ...valid(), direction: [] })
-      , invalidReviewListQueryOrderError)
+        () => test.func({ ...valid(), direction: [] }),
+        invalidReviewListQueryOrderError,
+      )
     })
 
     it(`time desc, ${test.title}`, () => {
-      const result = test.func(
-        { order: 'time', direction: 'desc' }
-      )
+      const result = test.func({ order: 'time', direction: 'desc' })
       assertDeepEqual(result, { property: 'time', direction: 'desc' })
     })
 
     it(`rating asc, ${test.title}`, () => {
-      const result = test.func(
-        { order: 'rating', direction: 'asc' }
-      )
+      const result = test.func({ order: 'rating', direction: 'asc' })
       assertDeepEqual(result, { property: 'rating', direction: 'asc' })
     })
   })
@@ -90,53 +89,52 @@ describe('review list order unit tests', () => {
   })
 
   it('defaults with empty string, full review list order', () => {
-    const result = validateFullReviewListOrder(
-      { order: '', direction: '' },
-    )
+    const result = validateFullReviewListOrder({ order: '', direction: '' })
     assertDeepEqual(result, { property: 'time', direction: 'desc' })
   })
 
   it('defaults with empty string, filtered review list order', () => {
-    const result = validateFilteredReviewListOrder(
-      { order: '', direction: '' }
-    )
+    const result = validateFilteredReviewListOrder({ order: '', direction: '' })
     assertDeepEqual(result, { property: 'beer_name', direction: 'asc' })
   })
 
   it('defaults with empty string, full review list order', () => {
-    const result = validateFullReviewListOrder(
-      { order: '', direction: '' },
-    )
+    const result = validateFullReviewListOrder({ order: '', direction: '' })
     assertDeepEqual(result, { property: 'time', direction: 'desc' })
   })
 
   it('beer_name, full review list order', () => {
     expectThrow(
-      () => validateFullReviewListOrder(
-        { order: 'beer_name', direction: 'desc' }
-      )
-    , invalidReviewListQueryBeerNameError)
+      () =>
+        validateFullReviewListOrder({ order: 'beer_name', direction: 'desc' }),
+      invalidReviewListQueryBeerNameError,
+    )
   })
 
   it('beer_name desc, filtered review list order', () => {
-    const result = validateFilteredReviewListOrder(
-      { order: 'beer_name', direction: 'desc' }
-    )
+    const result = validateFilteredReviewListOrder({
+      order: 'beer_name',
+      direction: 'desc',
+    })
     assertDeepEqual(result, { property: 'beer_name', direction: 'desc' })
   })
 
   it('brewery_name, full review list order', () => {
     expectThrow(
-      () => validateFullReviewListOrder(
-        { order: 'brewery_name', direction: 'desc' }
-      )
-    , invalidReviewListQueryBreweryNameError)
+      () =>
+        validateFullReviewListOrder({
+          order: 'brewery_name',
+          direction: 'desc',
+        }),
+      invalidReviewListQueryBreweryNameError,
+    )
   })
 
   it('brewery_name asc, filtered review list order', () => {
-    const result = validateFilteredReviewListOrder(
-      { order: 'brewery_name', direction: 'asc' }
-    )
+    const result = validateFilteredReviewListOrder({
+      order: 'brewery_name',
+      direction: 'asc',
+    })
     assertDeepEqual(result, { property: 'brewery_name', direction: 'asc' })
   })
 })

@@ -5,17 +5,17 @@ import * as breweryService from '../../../../src/core/internal/brewery/validated
 import type {
   Brewery,
   CreateBreweryRequest,
-  UpdateBreweryRequest
+  UpdateBreweryRequest,
 } from '../../../../src/core/brewery/brewery.js'
 import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
 import {
   invalidBreweryError,
-  invalidBreweryIdError
+  invalidBreweryIdError,
 } from '../../../../src/core/errors.js'
 
 const validCreateBreweryRequest: CreateBreweryRequest = {
-  name: 'Koskipanimo'
+  name: 'Koskipanimo',
 }
 
 const validUpdateBreweryRequest: UpdateBreweryRequest = {
@@ -24,16 +24,15 @@ const validUpdateBreweryRequest: UpdateBreweryRequest = {
 
 const brewery: Brewery = {
   id: 'cac161f5-2792-4fbb-a251-4305ee39f350',
-  name: validCreateBreweryRequest.name
+  name: validCreateBreweryRequest.name,
 }
 
 const invalidBreweryRequest = {
   unexpectedProperty: 'This is invalid',
 }
 
-const create: (
-  brewery: CreateBreweryRequest
-) => Promise<Brewery> = async () => brewery
+const create: (brewery: CreateBreweryRequest) => Promise<Brewery> = async () =>
+  brewery
 const update: (brewery: Brewery) => Promise<Brewery> = async () => brewery
 
 describe('brewery validated service unit tests', () => {
@@ -52,7 +51,7 @@ describe('brewery validated service unit tests', () => {
       update,
       brewery.id,
       validUpdateBreweryRequest,
-      log
+      log,
     )
   })
 
@@ -62,7 +61,7 @@ describe('brewery validated service unit tests', () => {
         update,
         brewery.id,
         invalidBreweryRequest,
-        log
+        log,
       )
     }, invalidBreweryError)
   })
@@ -73,9 +72,8 @@ describe('brewery validated service unit tests', () => {
         update,
         undefined,
         validUpdateBreweryRequest,
-        log
+        log,
       )
     }, invalidBreweryIdError)
   })
-
 })

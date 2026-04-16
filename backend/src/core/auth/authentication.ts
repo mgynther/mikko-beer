@@ -8,15 +8,15 @@ import {
   invalidAuthorizationHeaderError,
 } from '../errors.js'
 
-export function parseAuthTokenPayload (
+export function parseAuthTokenPayload(
   authorizationHeader: string | undefined,
-  authTokenSecret: string
+  authTokenSecret: string,
 ): AuthTokenPayload {
   const authorization = validAuthorizationOrThrow(authorizationHeader)
   return validAuthTokenPayload(authorization, authTokenSecret)
 }
 
-function validAuthorizationOrThrow (authorization: string | undefined): string {
+function validAuthorizationOrThrow(authorization: string | undefined): string {
   const error = invalidAuthorizationHeaderError
   if (authorization === undefined) {
     throw error
@@ -27,15 +27,15 @@ function validAuthorizationOrThrow (authorization: string | undefined): string {
   return authorization
 }
 
-function validAuthTokenPayload (
+function validAuthTokenPayload(
   authorization: string,
-  authTokenSecret: string
+  authTokenSecret: string,
 ): AuthTokenPayload {
   const authToken = authorization.substring('Bearer '.length)
   try {
     const authTokenPayload: AuthTokenPayload = authTokenService.verifyAuthToken(
       { authToken },
-      authTokenSecret
+      authTokenSecret,
     )
     return authTokenPayload
   } catch (error) {

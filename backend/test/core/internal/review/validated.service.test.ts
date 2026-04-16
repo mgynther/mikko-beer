@@ -7,13 +7,13 @@ import type {
   CreateReviewRequest,
   CreateIf,
   UpdateReviewRequest,
-  UpdateIf
+  UpdateIf,
 } from '../../../../src/core/review/review.js'
 import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
 import {
   invalidReviewError,
-  invalidReviewIdError
+  invalidReviewIdError,
 } from '../../../../src/core/errors.js'
 
 const storageId = '970c40b2-94ad-4825-b683-c3f5e9046063'
@@ -26,7 +26,7 @@ const validCreateReviewRequest: CreateReviewRequest = {
   rating: 9,
   smell: 'quite nice',
   taste: 'fruity, pleasant citrus',
-  time: '2024-06-02T12:00:00.000Z'
+  time: '2024-06-02T12:00:00.000Z',
 }
 
 const validUpdateReviewRequest: UpdateReviewRequest = {
@@ -37,18 +37,18 @@ const validUpdateReviewRequest: UpdateReviewRequest = {
   rating: 9,
   smell: 'quite nice',
   taste: 'fruity, pleasant citrus',
-  time: '2024-06-02T12:00:00.000Z'
+  time: '2024-06-02T12:00:00.000Z',
 }
 
 const review: Review = {
   ...validCreateReviewRequest,
   id: '9acc327d-3cbc-4bcc-b3ce-59aeff45ad33',
-  time: new Date(validCreateReviewRequest.time)
+  time: new Date(validCreateReviewRequest.time),
 }
 
 const invalidReviewRequest = {
   smell: 'quite nice',
-  taste: 'fruity, pleasant citrus'
+  taste: 'fruity, pleasant citrus',
 }
 
 const createIf: CreateIf = {
@@ -56,13 +56,13 @@ const createIf: CreateIf = {
   deleteFromStorage: async () => undefined,
   lockBeer: async () => validCreateReviewRequest.beer,
   lockContainer: async () => validCreateReviewRequest.container,
-  lockStorage: async () => '754dcf3d-a93c-4ba3-af25-fb3f0a5d2153'
+  lockStorage: async () => '754dcf3d-a93c-4ba3-af25-fb3f0a5d2153',
 }
 
 const updateIf: UpdateIf = {
   updateReview: async () => review,
   lockBeer: async () => validCreateReviewRequest.beer,
-  lockContainer: async () => validCreateReviewRequest.container
+  lockContainer: async () => validCreateReviewRequest.container,
 }
 
 describe('review validated service unit tests', () => {
@@ -71,7 +71,7 @@ describe('review validated service unit tests', () => {
       createIf,
       validCreateReviewRequest,
       storageId,
-      log
+      log,
     )
   })
 
@@ -81,7 +81,7 @@ describe('review validated service unit tests', () => {
         createIf,
         invalidReviewRequest,
         storageId,
-        log
+        log,
       )
     }, invalidReviewError)
   })
@@ -91,7 +91,7 @@ describe('review validated service unit tests', () => {
       updateIf,
       review.id,
       validUpdateReviewRequest,
-      log
+      log,
     )
   })
 
@@ -101,7 +101,7 @@ describe('review validated service unit tests', () => {
         updateIf,
         review.id,
         invalidReviewRequest,
-        log
+        log,
       )
     }, invalidReviewError)
   })
@@ -112,9 +112,8 @@ describe('review validated service unit tests', () => {
         updateIf,
         undefined,
         validUpdateReviewRequest,
-        log
+        log,
       )
     }, invalidReviewIdError)
   })
-
 })

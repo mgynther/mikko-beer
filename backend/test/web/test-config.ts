@@ -1,5 +1,8 @@
 import type { ConnectionConfig } from 'pg'
-import { testConfig as testDataConfig, testAdminConfig } from '../data/test-config.js'
+import {
+  testConfig as testDataConfig,
+  testAdminConfig,
+} from '../data/test-config.js'
 import type { Config } from '../../src/web/config.js'
 
 export interface TestConfig extends Config {
@@ -12,5 +15,5 @@ export const testConfig: TestConfig = {
   authTokenSecret: '26494cafdd9e008ab95e0fb5d02b47ffe77708ecdf2a7804b6',
   authTokenExpiryDurationMin: 120,
   database: testDataConfig,
-  adminDatabase: testAdminConfig
+  adminDatabase: testAdminConfig,
 }

@@ -10,7 +10,7 @@ import { assertDeepEqual } from '../../assert.js'
 const giantPage: Pagination = { size: 10000, skip: 0 }
 
 function filterByContainer(reviews: Review[], containerId: string): Review[] {
-  return reviews.filter(r => r.container === containerId)
+  return reviews.filter((r) => r.container === containerId)
 }
 
 describe('annual stats tests', () => {
@@ -23,14 +23,16 @@ describe('annual stats tests', () => {
   afterEach(ctx.afterEach)
 
   function filterByYear(reviews: Review[], year: string): Review[] {
-    return reviews.filter(r => `${new Date(r.time).getUTCFullYear()}` === year)
+    return reviews.filter(
+      (r) => `${new Date(r.time).getUTCFullYear()}` === year,
+    )
   }
 
   function avg(reviews: Review[], year: string) {
     if (reviews === null) throw new Error('must not be null')
     const filteredReviews = filterByYear(reviews, year)
     const sum = filteredReviews
-      .map(r => r.rating)
+      .map((r) => r.rating)
       .reduce<number>((sum, rating) => sum + (rating ?? 0), 0)
 
     const numValue = sum / filteredReviews.length
@@ -39,113 +41,95 @@ describe('annual stats tests', () => {
 
   it('no filters', async () => {
     const { reviews } = await insertMultipleReviews(9, ctx.db)
-    const stats = await statsRepository.getAnnual(
-      ctx.db,
-      {
-        brewery: undefined,
-        location: undefined,
-        style: undefined
-      }
-    )
+    const stats = await statsRepository.getAnnual(ctx.db, {
+      brewery: undefined,
+      location: undefined,
+      style: undefined,
+    })
     assertDeepEqual(stats, [
       {
         reviewAverage: avg(reviews, '2024'),
         reviewCount: `${filterByYear(reviews, '2024').length}`,
-        year: '2024'
+        year: '2024',
       },
       {
         reviewAverage: avg(reviews, '2023'),
         reviewCount: `${filterByYear(reviews, '2023').length}`,
-        year: '2023'
+        year: '2023',
       },
     ])
   })
 
   it('no filters & no reviews', async () => {
-    const stats = await statsRepository.getAnnual(
-      ctx.db,
-      {
-        brewery: undefined,
-        location: undefined,
-        style: undefined
-      }
-    )
+    const stats = await statsRepository.getAnnual(ctx.db, {
+      brewery: undefined,
+      location: undefined,
+      style: undefined,
+    })
     assertDeepEqual(stats, [])
   })
 
   it('filter by brewery', async () => {
     const { data, reviews } = await insertMultipleReviews(9, ctx.db)
-    const stats = await statsRepository.getAnnual(
-      ctx.db,
-      {
-        brewery: data.brewery.id,
-        location: undefined,
-        style: undefined
-      }
-    )
+    const stats = await statsRepository.getAnnual(ctx.db, {
+      brewery: data.brewery.id,
+      location: undefined,
+      style: undefined,
+    })
     assertDeepEqual(stats, [
       {
         reviewAverage: avg(reviews, '2024'),
         reviewCount: `${filterByYear(reviews, '2024').length}`,
-        year: '2024'
-      }
+        year: '2024',
+      },
     ])
   })
 
   it('filter by brewery, location & style', async () => {
     const { data, reviews } = await insertMultipleReviews(9, ctx.db)
-    const stats = await statsRepository.getAnnual(
-      ctx.db,
-      {
-        brewery: data.brewery.id,
-        location: data.location.id,
-        style: data.style.id
-      }
-    )
+    const stats = await statsRepository.getAnnual(ctx.db, {
+      brewery: data.brewery.id,
+      location: data.location.id,
+      style: data.style.id,
+    })
     assertDeepEqual(stats, [
       {
         reviewAverage: avg(reviews, '2024'),
         reviewCount: `${filterByYear(reviews, '2024').length}`,
-        year: '2024'
-      }
+        year: '2024',
+      },
     ])
   })
 
   it('filter by location', async () => {
     const { data, reviews } = await insertMultipleReviews(9, ctx.db)
-    const stats = await statsRepository.getAnnual(
-      ctx.db,
-      {
-        brewery: undefined,
-        location: data.location.id,
-        style: undefined
-      }
-    )
+    const stats = await statsRepository.getAnnual(ctx.db, {
+      brewery: undefined,
+      location: data.location.id,
+      style: undefined,
+    })
     assertDeepEqual(stats, [
       {
         reviewAverage: avg(reviews, '2024'),
         reviewCount: `${filterByYear(reviews, '2024').length}`,
-        year: '2024'
-      }
+        year: '2024',
+      },
     ])
   })
 
   it('filter by style', async () => {
     const { data } = await insertMultipleReviews(9, ctx.db)
-    const stats = await statsRepository.getAnnual(
-      ctx.db,
-      {
-        brewery: undefined,
-        location: undefined,
-        style: data.otherStyle.id
-      }
-    )
+    const stats = await statsRepository.getAnnual(ctx.db, {
+      brewery: undefined,
+      location: undefined,
+      style: data.otherStyle.id,
+    })
     assertDeepEqual(stats, [
       {
         reviewAverage: '6.60',
         reviewCount: '5',
-        year: '2023'
-      }
+        year: '2023',
+      },
     ])
   })
 })
@@ -163,7 +147,7 @@ describe('annual container stats tests', () => {
     if (reviews === null) throw new Error('must not be null')
     const filteredReviews = filterByContainer(reviews, containerId)
     const sum = filteredReviews
-      .map(r => r.rating)
+      .map((r) => r.rating)
       .reduce<number>((sum, rating) => sum + (rating ?? 0), 0)
 
     const numValue = sum / filteredReviews.length
@@ -172,15 +156,11 @@ describe('annual container stats tests', () => {
 
   it('no filters', async () => {
     const { data, reviews } = await insertMultipleReviews(9, ctx.db)
-    const stats = await statsRepository.getAnnualContainer(
-      ctx.db,
-      giantPage,
-      {
-        brewery: undefined,
-        location: undefined,
-        style: undefined
-      }
-    )
+    const stats = await statsRepository.getAnnualContainer(ctx.db, giantPage, {
+      brewery: undefined,
+      location: undefined,
+      style: undefined,
+    })
     const { container, otherContainer } = data
     assertDeepEqual(stats, [
       {
@@ -189,7 +169,7 @@ describe('annual container stats tests', () => {
         containerType: 'bottle',
         reviewAverage: avg(reviews, container.id),
         reviewCount: `${filterByContainer(reviews, container.id).length}`,
-        year: '2024'
+        year: '2024',
       },
       {
         containerId: otherContainer.id,
@@ -197,8 +177,8 @@ describe('annual container stats tests', () => {
         containerType: 'can',
         reviewAverage: avg(reviews, otherContainer.id),
         reviewCount: `${filterByContainer(reviews, otherContainer.id).length}`,
-        year: '2023'
-      }
+        year: '2023',
+      },
     ])
   })
 
@@ -210,8 +190,8 @@ describe('annual container stats tests', () => {
       {
         brewery: undefined,
         location: undefined,
-        style: undefined
-      }
+        style: undefined,
+      },
     )
     const { container } = data
     assertDeepEqual(stats, [
@@ -221,8 +201,8 @@ describe('annual container stats tests', () => {
         containerType: 'bottle',
         reviewAverage: avg(reviews, container.id),
         reviewCount: `${filterByContainer(reviews, container.id).length}`,
-        year: '2024'
-      }
+        year: '2024',
+      },
     ])
   })
 
@@ -234,8 +214,8 @@ describe('annual container stats tests', () => {
       {
         brewery: undefined,
         location: undefined,
-        style: undefined
-      }
+        style: undefined,
+      },
     )
     const { otherContainer } = data
     assertDeepEqual(stats, [
@@ -245,22 +225,18 @@ describe('annual container stats tests', () => {
         containerType: 'can',
         reviewAverage: avg(reviews, otherContainer.id),
         reviewCount: `${filterByContainer(reviews, otherContainer.id).length}`,
-        year: '2023'
-      }
+        year: '2023',
+      },
     ])
   })
 
   it('filter by brewery', async () => {
     const { data, reviews } = await insertMultipleReviews(9, ctx.db)
-    const stats = await statsRepository.getAnnualContainer(
-      ctx.db,
-      giantPage,
-      {
-        brewery: data.brewery.id,
-        location: undefined,
-        style: undefined
-      }
-    )
+    const stats = await statsRepository.getAnnualContainer(ctx.db, giantPage, {
+      brewery: data.brewery.id,
+      location: undefined,
+      style: undefined,
+    })
     const { container } = data
     assertDeepEqual(stats, [
       {
@@ -269,22 +245,18 @@ describe('annual container stats tests', () => {
         containerType: 'bottle',
         reviewAverage: avg(reviews, container.id),
         reviewCount: `${filterByContainer(reviews, container.id).length}`,
-        year: '2024'
-      }
+        year: '2024',
+      },
     ])
   })
 
   it('filter by location', async () => {
     const { data, reviews } = await insertMultipleReviews(9, ctx.db)
-    const stats = await statsRepository.getAnnualContainer(
-      ctx.db,
-      giantPage,
-      {
-        brewery: undefined,
-        location: data.location.id,
-        style: undefined
-      }
-    )
+    const stats = await statsRepository.getAnnualContainer(ctx.db, giantPage, {
+      brewery: undefined,
+      location: data.location.id,
+      style: undefined,
+    })
     const { container } = data
     assertDeepEqual(stats, [
       {
@@ -293,22 +265,18 @@ describe('annual container stats tests', () => {
         containerType: 'bottle',
         reviewAverage: avg(reviews, container.id),
         reviewCount: `${filterByContainer(reviews, container.id).length}`,
-        year: '2024'
-      }
+        year: '2024',
+      },
     ])
   })
 
   it('filter by style', async () => {
     const { data } = await insertMultipleReviews(9, ctx.db)
-    const stats = await statsRepository.getAnnualContainer(
-      ctx.db,
-      giantPage,
-      {
-        brewery: undefined,
-        location: undefined,
-        style: data.otherStyle.id
-      }
-    )
+    const stats = await statsRepository.getAnnualContainer(ctx.db, giantPage, {
+      brewery: undefined,
+      location: undefined,
+      style: data.otherStyle.id,
+    })
     assertDeepEqual(stats, [
       {
         containerId: data.otherContainer.id,
@@ -316,8 +284,8 @@ describe('annual container stats tests', () => {
         containerType: 'can',
         reviewAverage: '6.60',
         reviewCount: '5',
-        year: '2023'
-      }
+        year: '2023',
+      },
     ])
   })
 })

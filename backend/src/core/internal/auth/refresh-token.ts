@@ -10,16 +10,16 @@ const isRefreshTokenValid = ajv.compile<RefreshToken>({
   properties: {
     refreshToken: {
       type: 'string',
-      minLength: 1
-    }
-  }
+      minLength: 1,
+    },
+  },
 })
 
-export function validateRefreshToken (request: unknown): RefreshToken {
+export function validateRefreshToken(request: unknown): RefreshToken {
   if (!isRefreshTokenValid(request)) {
     throw invalidRefreshTokenError
   }
   return {
-    refreshToken: request.refreshToken
+    refreshToken: request.refreshToken,
   }
 }

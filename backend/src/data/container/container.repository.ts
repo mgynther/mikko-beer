@@ -1,17 +1,16 @@
 import type { Database, Transaction } from '../database.js'
-import type {
-  ContainerRow
-} from './container.table.js'
+import type { ContainerRow } from './container.table.js'
 import type {
   Container,
-  CreateContainerRequest
+  CreateContainerRequest,
 } from '../../core/container/container.js'
 
-export async function insertContainer (
+export async function insertContainer(
   trx: Transaction,
-  container: CreateContainerRequest
+  container: CreateContainerRequest,
 ): Promise<Container> {
-  const insertedContainer = await trx.trx()
+  const insertedContainer = await trx
+    .trx()
     .insertInto('container')
     .values(container)
     .returningAll()
@@ -20,15 +19,16 @@ export async function insertContainer (
   return toContainer(insertedContainer)
 }
 
-export async function updateContainer (
+export async function updateContainer(
   trx: Transaction,
-  container: Container
+  container: Container,
 ): Promise<Container> {
-  const updatedContainer = await trx.trx()
+  const updatedContainer = await trx
+    .trx()
     .updateTable('container')
     .set({
       type: container.type,
-      size: container.size
+      size: container.size,
     })
     .where('container_id', '=', container.id)
     .returningAll()
@@ -37,11 +37,12 @@ export async function updateContainer (
   return toContainer(updatedContainer)
 }
 
-export async function findContainerById (
+export async function findContainerById(
   db: Database,
-  id: string
+  id: string,
 ): Promise<Container | undefined> {
-  const container = await db.getDb()
+  const container = await db
+    .getDb()
     .selectFrom('container')
     .where('container.container_id', '=', id)
     .select(['container_id', 'type', 'size', 'container.created_at'])
@@ -52,11 +53,12 @@ export async function findContainerById (
   return toContainer(container)
 }
 
-export async function lockContainer (
+export async function lockContainer(
   trx: Transaction,
-  key: string
+  key: string,
 ): Promise<string | undefined> {
-  const container = await trx.trx()
+  const container = await trx
+    .trx()
     .selectFrom('container')
     .where('container_id', '=', key)
     .select('container_id')
@@ -66,10 +68,9 @@ export async function lockContainer (
   return container?.container_id
 }
 
-export async function listContainers (
-  db: Database
-): Promise<Container[]> {
-  const containers = await db.getDb()
+export async function listContainers(db: Database): Promise<Container[]> {
+  const containers = await db
+    .getDb()
     .selectFrom('container')
     .select(['container_id', 'type', 'size', 'container.created_at'])
     .orderBy('type', 'asc')
@@ -79,10 +80,10 @@ export async function listContainers (
   return containers.map(toContainer)
 }
 
-function toContainer (row: ContainerRow): Container {
+function toContainer(row: ContainerRow): Container {
   return {
     id: row.container_id,
     type: row.type,
-    size: row.size
+    size: row.size,
   }
 }

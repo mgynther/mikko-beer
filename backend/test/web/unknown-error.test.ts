@@ -24,36 +24,29 @@ describe('log unknown error', () => {
   afterEach(ctx.afterEach)
 
   it('log unknown error object when it happens', async () => {
-    const res = await ctx.request.get(`/api/v1/brewery`,
-      ctx.adminAuthHeaders()
-    )
+    const res = await ctx.request.get(`/api/v1/brewery`, ctx.adminAuthHeaders())
 
     assertEqual(res.status, 500)
-    assertDeepEqual(
-      res.data,
-      {
-        error: {
-          code: 'UnknownError',
-          message: errorMessage
-        }
-      }
-    )
+    assertDeepEqual(res.data, {
+      error: {
+        code: 'UnknownError',
+        message: errorMessage,
+      },
+    })
   })
 
   it('log unknown error when it happens', async () => {
-    const res = await ctx.request.get(`/api/v1/location`,
-      ctx.adminAuthHeaders()
+    const res = await ctx.request.get(
+      `/api/v1/location`,
+      ctx.adminAuthHeaders(),
     )
 
     assertEqual(res.status, 500)
-    assertDeepEqual(
-      res.data,
-      {
-        error: {
-          code: 'UnknownError',
-          message: 'unknown error'
-        }
-      }
-    )
+    assertDeepEqual(res.data, {
+      error: {
+        code: 'UnknownError',
+        message: 'unknown error',
+      },
+    })
   })
 })

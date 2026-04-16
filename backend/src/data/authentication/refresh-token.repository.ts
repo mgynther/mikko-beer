@@ -1,32 +1,34 @@
 import type { DbRefreshToken } from '../../core/auth/refresh-token.js'
 import type { Database, Transaction } from '../database.js'
 
-export async function insertRefreshToken (
+export async function insertRefreshToken(
   trx: Transaction,
   userId: string,
-  date: Date
+  date: Date,
 ): Promise<DbRefreshToken> {
-  const [refreshToken] = await trx.trx()
+  const [refreshToken] = await trx
+    .trx()
     .insertInto('refresh_token')
     .values({
       user_id: userId,
-      last_refreshed_at: date
+      last_refreshed_at: date,
     })
     .returningAll()
     .execute()
 
   return {
     id: refreshToken.refresh_token_id,
-    userId: refreshToken.user_id
+    userId: refreshToken.user_id,
   }
 }
 
-export async function findRefreshToken (
+export async function findRefreshToken(
   db: Database,
   userId: string,
-  refreshTokenId: string
+  refreshTokenId: string,
 ): Promise<DbRefreshToken | undefined> {
-  const token = await db.getDb()
+  const token = await db
+    .getDb()
     .selectFrom('refresh_token as rt')
     .selectAll('rt')
     .innerJoin('user as u', 'rt.user_id', 'u.user_id')
@@ -40,15 +42,16 @@ export async function findRefreshToken (
 
   return {
     id: token.refresh_token_id,
-    userId: token.user_id
+    userId: token.user_id,
   }
 }
 
-export async function deleteRefreshToken (
+export async function deleteRefreshToken(
   db: Database,
-  refreshTokenId: string
+  refreshTokenId: string,
 ): Promise<void> {
-  await db.getDb()
+  await db
+    .getDb()
     .deleteFrom('refresh_token')
     .where('refresh_token_id', '=', refreshTokenId)
     .execute()

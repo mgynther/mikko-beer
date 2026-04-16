@@ -10,36 +10,34 @@ import type {
 import {
   beerNotFoundError,
   referredBreweryNotFoundError,
-  referredStyleNotFoundError
+  referredStyleNotFoundError,
 } from '../../errors.js'
 import type { log } from '../../log.js'
 import { INFO } from '../../log.js'
-import type {
-  Pagination
-} from '../../pagination.js'
+import type { Pagination } from '../../pagination.js'
 import type { SearchByName } from '../../search.js'
 import { areKeysEqual } from '../../internal/key.js'
 import type { LockIds } from '../../db.js'
 
-export async function createBeer (
+export async function createBeer(
   createIf: CreateIf,
   request: CreateBeerRequest,
-  log: log
+  log: log,
 ): Promise<BeerWithBreweryAndStyleIds> {
   log(INFO, 'create beer with name', request.name)
   await lockIds(
     createIf.lockBreweries,
     request.breweries,
-    referredBreweryNotFoundError
+    referredBreweryNotFoundError,
   )
   await lockIds(createIf.lockStyles, request.styles, referredStyleNotFoundError)
   const beer = await createIf.create({
-    name: request.name
+    name: request.name,
   })
 
   await Promise.all([
     createIf.insertBeerBreweries(beer.id, request.breweries),
-    createIf.insertBeerStyles(beer.id, request.styles)
+    createIf.insertBeerStyles(beer.id, request.styles),
   ])
 
   log(INFO, 'created beer with name', beer.name, 'and id', beer.id)
@@ -47,32 +45,32 @@ export async function createBeer (
     id: beer.id,
     name: beer.name,
     breweries: request.breweries,
-    styles: request.styles
+    styles: request.styles,
   }
 }
 
-export async function updateBeer (
+export async function updateBeer(
   updateIf: UpdateIf,
   beerId: string,
   request: UpdateBeerRequest,
-  log: log
+  log: log,
 ): Promise<BeerWithBreweryAndStyleIds> {
   log(INFO, 'update beer with id', beerId)
   await lockIds(
     updateIf.lockBreweries,
     request.breweries,
-    referredBreweryNotFoundError
+    referredBreweryNotFoundError,
   )
   await lockIds(updateIf.lockStyles, request.styles, referredStyleNotFoundError)
   await Promise.all([
     updateIf.update({
       id: beerId,
-      name: request.name
+      name: request.name,
     }),
     updateIf.deleteBeerBreweries(beerId),
     updateIf.deleteBeerStyles(beerId),
     updateIf.insertBeerBreweries(beerId, request.breweries),
-    updateIf.insertBeerStyles(beerId, request.styles)
+    updateIf.insertBeerStyles(beerId, request.styles),
   ])
 
   log(INFO, 'updated beer with id', beerId)
@@ -80,14 +78,14 @@ export async function updateBeer (
     id: beerId,
     name: request.name,
     breweries: request.breweries,
-    styles: request.styles
+    styles: request.styles,
   }
 }
 
-export async function findBeerById (
+export async function findBeerById(
   find: (id: string) => Promise<BeerWithBreweriesAndStyles | undefined>,
   beerId: string,
-  log: log
+  log: log,
 ): Promise<BeerWithBreweriesAndStyles> {
   log(INFO, 'find beer with id', beerId)
   const beer = await find(beerId)
@@ -97,29 +95,30 @@ export async function findBeerById (
   return beer
 }
 
-export async function listBeers (
+export async function listBeers(
   list: (pagination: Pagination) => Promise<BeerWithBreweriesAndStyles[]>,
   pagination: Pagination,
-  log: log
+  log: log,
 ): Promise<BeerWithBreweriesAndStyles[]> {
   log(INFO, 'list beers', pagination)
   return await list(pagination)
 }
 
-export async function searchBeers (
-  search: (searchRequest: SearchByName) =>
-  Promise<BeerWithBreweriesAndStyles[]>,
+export async function searchBeers(
+  search: (
+    searchRequest: SearchByName,
+  ) => Promise<BeerWithBreweriesAndStyles[]>,
   searchRequest: SearchByName,
-  log: log
+  log: log,
 ): Promise<BeerWithBreweriesAndStyles[]> {
   log(INFO, 'search beers', searchRequest)
   return await search(searchRequest)
 }
 
-async function lockIds (
+async function lockIds(
   lockIds: LockIds,
   keys: string[],
-  error: Error
+  error: Error,
 ): Promise<void> {
   const lockedIds = await lockIds(keys)
   if (!areKeysEqual(lockedIds, keys)) {

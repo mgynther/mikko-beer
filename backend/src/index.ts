@@ -5,8 +5,11 @@ import { Level } from './core/log.js'
 
 const app = new App(config, log)
 
-app.start().then(() => {
-  log(Level.INFO, 'App started')
-}, () => {
-  log(Level.ERROR, 'App promise rejected')
-})
+app.start().then(
+  () => {
+    log(Level.INFO, 'App started')
+  },
+  () => {
+    log(Level.ERROR, 'App promise rejected')
+  },
+)

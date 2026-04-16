@@ -7,7 +7,7 @@ import {
   invalidCredentialsError,
   passwordTooLongError,
   passwordTooWeakError,
-  userAlreadyHasSignInMethodError
+  userAlreadyHasSignInMethodError,
 } from '../../errors.js'
 import type { log } from '../../log.js'
 import type { SignedInUser } from '../user/signed-in-user.js'
@@ -16,7 +16,7 @@ import type {
   ChangePasswordUserIf,
   PasswordChange,
   PasswordSignInMethod,
-  SignInUsingPasswordIf
+  SignInUsingPasswordIf,
 } from '../../user/sign-in-method.js'
 import type { AuthTokenConfig } from '../../auth/auth-token.js'
 import { scrypt } from './crypto.js'
@@ -24,15 +24,15 @@ import { scrypt } from './crypto.js'
 export const MIN_PASSWORD_LENGTH = 8
 export const MAX_PASSWORD_LENGTH = 255
 
-export async function addPasswordSignInMethod (
+export async function addPasswordSignInMethod(
   addPasswordUserIf: AddPasswordUserIf,
   userId: string,
   method: PasswordSignInMethod,
-  log: log
+  log: log,
 ): Promise<void> {
   const user = await userService.lockUserById(
     addPasswordUserIf.lockUserById,
-    userId
+    userId,
   )
 
   if (user.username?.length !== undefined && user.username.length > 0) {
@@ -42,26 +42,26 @@ export async function addPasswordSignInMethod (
   await addPasswordUserIf.insertPasswordSignInMethod({
     userId,
     passwordHash: await encryptPassword(log, method.password),
-    hashedAt: new Date()
+    hashedAt: new Date(),
   })
 
   await userService.setUserUsername(
     addPasswordUserIf.setUserUsername,
     userId,
     method.username,
-    log
+    log,
   )
 }
 
-export async function changePassword (
+export async function changePassword(
   changePasswordUserIf: ChangePasswordUserIf,
   userId: string,
   change: PasswordChange,
-  log: log
+  log: log,
 ): Promise<void> {
   const user = await userService.lockUserById(
     changePasswordUserIf.lockUserById,
-    userId
+    userId,
   )
 
   if (user.username === null || user.username.length === 0) {
@@ -69,38 +69,38 @@ export async function changePassword (
   }
 
   const signInMethod = await changePasswordUserIf.findPasswordSignInMethod(
-    user.id
+    user.id,
   )
 
   if (signInMethod === undefined) {
     throw invalidCredentialsError
   }
 
-  if (!(await verifyPassword(
-    change.oldPassword,
-    signInMethod.passwordHash,
-    log
-  ))) {
+  if (
+    !(await verifyPassword(change.oldPassword, signInMethod.passwordHash, log))
+  ) {
     throw invalidCredentialsError
   }
 
   await changePasswordUserIf.updatePassword({
     userId,
     passwordHash: await encryptPassword(log, change.newPassword),
-    hashedAt: new Date()
+    hashedAt: new Date(),
   })
 }
 
-export async function signInUsingPassword (
+export async function signInUsingPassword(
   signInUsingPasswordIf: SignInUsingPasswordIf,
   method: PasswordSignInMethod,
   authTokenConfig: AuthTokenConfig,
-  log: log
+  log: log,
 ): Promise<SignedInUser> {
   const user = await userService.lockUserByUsername(
-    signInUsingPasswordIf.lockUserByUsername, method.username);
+    signInUsingPasswordIf.lockUserByUsername,
+    method.username,
+  )
   const signInMethod = await signInUsingPasswordIf.findPasswordSignInMethod(
-    user.id
+    user.id,
   )
 
   if (signInMethod === undefined) {
@@ -118,26 +118,26 @@ export async function signInUsingPassword (
       // Cannot apply any validation on the password as the rules may have
       // changed and login cannot fail permanently for this reason here.
       passwordHash: await encryptSecret(log, password),
-      hashedAt: new Date()
+      hashedAt: new Date(),
     })
   }
 
   const { refresh, auth } = await authTokenService.createTokens(
     signInUsingPasswordIf.insertRefreshToken,
     user,
-    authTokenConfig
+    authTokenConfig,
   )
 
   return {
     user,
     authToken: auth,
-    refreshToken: refresh
+    refreshToken: refresh,
   }
 }
 
-export async function encryptPassword (
+export async function encryptPassword(
   log: log,
-  password: string
+  password: string,
 ): Promise<string> {
   if (password.length < MIN_PASSWORD_LENGTH) {
     throw passwordTooWeakError
@@ -150,24 +150,24 @@ export async function encryptPassword (
   return await encryptSecret(log, password)
 }
 
-async function encryptSecret (log: log, secret: string): Promise<string> {
+async function encryptSecret(log: log, secret: string): Promise<string> {
   const salt = crypto.randomBytes(16).toString('hex')
   return `${salt}:${await scrypt(log, secret, salt)}`
 }
 
-export async function verifySecret (
+export async function verifySecret(
   secret: string,
   hash: string,
-  log: log
+  log: log,
 ): Promise<boolean> {
   const [salt, secretHash] = hash.split(':')
   return (await scrypt(log, secret, salt)) === secretHash
 }
 
-async function verifyPassword (
+async function verifyPassword(
   password: string,
   hash: string,
-  log: log
+  log: log,
 ): Promise<boolean> {
   return await verifySecret(password, hash, log)
 }

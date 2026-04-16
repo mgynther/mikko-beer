@@ -17,28 +17,26 @@ import type {
   StatsIdFilter,
   StatsFilter,
   StyleStats,
-  StyleStatsOrder
+  StyleStatsOrder,
 } from '../../core/stats/stats.js'
 import { contains } from '../../core/record.js'
 
-function round (value: number, decimals: number): string {
+function round(value: number, decimals: number): string {
   return Number(
-    `${Math.round(parseFloat(`${value}e${decimals}`))}e-${decimals}`
+    `${Math.round(parseFloat(`${value}e${decimals}`))}e-${decimals}`,
   ).toFixed(decimals)
 }
 
-function noInfinity (value: number): number {
+function noInfinity(value: number): number {
   if (value > 0 && !Number.isFinite(value)) {
     return 10000000
   }
   return value
 }
 
-function idFilter (
-  statsFilter: StatsIdFilter
-): RawBuilder<unknown> {
+function idFilter(statsFilter: StatsIdFilter): RawBuilder<unknown> {
   function getLocationAndFilter(
-    location: string | undefined
+    location: string | undefined,
   ): RawBuilder<unknown> {
     if (location === undefined) {
       return sql``
@@ -46,7 +44,7 @@ function idFilter (
     return sql`AND review.location = ${statsFilter.location}`
   }
   function getLocationWhereFilter(
-    location: string | undefined
+    location: string | undefined,
   ): RawBuilder<unknown> {
     if (location === undefined) {
       return sql``
@@ -90,9 +88,9 @@ interface AnnualQueryResult {
   year: number
 }
 
-export async function getAnnual (
+export async function getAnnual(
   db: Database,
-  statsFilter: StatsIdFilter
+  statsFilter: StatsIdFilter,
 ): Promise<AnnualStats> {
   const annualQuery = sql<AnnualQueryResult>`SELECT
     COUNT(1) as review_count,
@@ -105,10 +103,10 @@ export async function getAnnual (
 
   const annual = await annualQuery.execute(db.getDb())
 
-  return annual.rows.map(row => ({
+  return annual.rows.map((row) => ({
     reviewAverage: round(row.review_average, 2),
     reviewCount: `${row.review_count}`,
-    year: `${row.year}`
+    year: `${row.year}`,
   }))
 }
 
@@ -121,11 +119,11 @@ interface AnnualContainerQueryResult {
   year: number
 }
 
-export async function getAnnualContainer (
+export async function getAnnualContainer(
   db: Database,
   pagination: Pagination,
-  statsFilter: StatsIdFilter
-) : Promise<AnnualContainerStats> {
+  statsFilter: StatsIdFilter,
+): Promise<AnnualContainerStats> {
   const annualContainerQuery = sql<AnnualContainerQueryResult>`SELECT
     COUNT(1) AS review_count,
     AVG(review.rating) as review_average,
@@ -146,13 +144,13 @@ export async function getAnnualContainer (
 
   const annualContainer = await annualContainerQuery.execute(db.getDb())
 
-  return annualContainer.rows.map(row => ({
+  return annualContainer.rows.map((row) => ({
     containerId: row.container_id,
     containerSize: row.container_size,
     containerType: row.container_type,
     reviewAverage: round(row.review_average, 2),
     reviewCount: `${row.review_count}`,
-    year: `${row.year}`
+    year: `${row.year}`,
   }))
 }
 
@@ -164,9 +162,9 @@ interface ContainerQueryResult {
   container_type: string
 }
 
-export async function getContainer (
+export async function getContainer(
   db: Database,
-  statsFilter: StatsIdFilter
+  statsFilter: StatsIdFilter,
 ): Promise<ContainerStats> {
   const containerQuery = sql<ContainerQueryResult>`SELECT
     COUNT(1) as review_count,
@@ -183,12 +181,12 @@ export async function getContainer (
 
   const container = await containerQuery.execute(db.getDb())
 
-  return container.rows.map(row => ({
+  return container.rows.map((row) => ({
     reviewAverage: round(row.review_average, 2),
     reviewCount: `${row.review_count}`,
     containerId: row.container_id,
     containerSize: row.container_size,
-    containerType: row.container_type
+    containerType: row.container_type,
   }))
 }
 
@@ -199,25 +197,24 @@ interface LocationQuerySelection {
   location_name: string
 }
 
-type LocationQueryBuilder =
-  SelectQueryBuilder<
+type LocationQueryBuilder = SelectQueryBuilder<
   KyselyDatabase,
   'review' | 'location',
   LocationQuerySelection
-  >
+>
 
-function locationOrderBy (
+function locationOrderBy(
   builder: LocationQueryBuilder,
-  locationStatsOrder: LocationStatsOrder
+  locationStatsOrder: LocationStatsOrder,
 ): LocationQueryBuilder {
   switch (locationStatsOrder.property) {
-    case 'average': return builder
-      .orderBy('review_average', locationStatsOrder.direction)
-      .orderBy('review_count', 'desc')
-      .orderBy('location_name', 'asc')
-    case 'location_name':
+    case 'average':
       return builder
-        .orderBy('location_name', locationStatsOrder.direction)
+        .orderBy('review_average', locationStatsOrder.direction)
+        .orderBy('review_count', 'desc')
+        .orderBy('location_name', 'asc')
+    case 'location_name':
+      return builder.orderBy('location_name', locationStatsOrder.direction)
     case 'count':
       return builder
         .orderBy('review_count', locationStatsOrder.direction)
@@ -226,13 +223,14 @@ function locationOrderBy (
   }
 }
 
-export async function getLocation (
+export async function getLocation(
   db: Database,
   pagination: Pagination,
   statsFilter: StatsFilter,
-  locationStatsOrder: LocationStatsOrder
+  locationStatsOrder: LocationStatsOrder,
 ): Promise<LocationStats> {
-  const tempQuery = db.getDb()
+  const tempQuery = db
+    .getDb()
     .selectFrom('review')
     .innerJoin('location', 'review.location', 'location.location_id')
     .innerJoin('beer', 'review.beer', 'beer.beer_id')
@@ -241,11 +239,12 @@ export async function getLocation (
     fn.count<number>('review.review_id').as('review_count'),
     fn.avg<number>('review.rating').as('review_average'),
     'location.location_id as location_id',
-    'location.name as location_name'
+    'location.name as location_name',
   ])
 
   if (statsFilter.brewery !== undefined) {
-    const query = db.getDb()
+    const query = db
+      .getDb()
       .selectFrom('beer_brewery as querybrewery')
       .innerJoin('beer', 'querybrewery.beer', 'beer.beer_id')
       .innerJoin('review', 'beer.beer_id', 'review.beer')
@@ -257,23 +256,32 @@ export async function getLocation (
         fn.count<number>('review.review_id').as('review_count'),
         fn.avg<number>('review.rating').as('review_average'),
         'location.location_id as location_id',
-        'location.name as location_name'
+        'location.name as location_name',
       ])
   }
 
   if (statsFilter.timeStart !== undefined) {
-    locationQuery = locationQuery
-      .where('review.time', '>=', statsFilter.timeStart)
+    locationQuery = locationQuery.where(
+      'review.time',
+      '>=',
+      statsFilter.timeStart,
+    )
   }
 
   if (statsFilter.timeEnd !== undefined) {
-    locationQuery = locationQuery
-      .where('review.time', '<=', statsFilter.timeEnd)
+    locationQuery = locationQuery.where(
+      'review.time',
+      '<=',
+      statsFilter.timeEnd,
+    )
   }
 
   if (statsFilter.location !== undefined) {
-    locationQuery =
-      locationQuery.where('review.location', '=', statsFilter.location)
+    locationQuery = locationQuery.where(
+      'review.location',
+      '=',
+      statsFilter.location,
+    )
   }
 
   if (statsFilter.style !== undefined) {
@@ -282,32 +290,41 @@ export async function getLocation (
       .where('beer_style.style', '=', statsFilter.style)
   }
 
-  return (await locationOrderBy(
-    locationQuery
-      .groupBy('location_id')
-      .having((eb) => eb.fn.avg(
-        'review.rating'), '<=', statsFilter.maxReviewAverage
-      )
-      .having((eb) => eb.fn.avg(
-        'review.rating'), '>=', statsFilter.minReviewAverage
-      )
-      .having((eb) => eb.fn.count(
-        'review.review_id'), '<=', noInfinity(statsFilter.maxReviewCount)
-      )
-      .having((eb) => eb.fn.count(
-        'review.review_id'), '>=', noInfinity(statsFilter.minReviewCount)
-      )
-    , locationStatsOrder
-  )
-    .offset(pagination.skip)
-    .limit(pagination.size)
-    .execute())
-    .map(row => ({
-      reviewAverage: round(row.review_average, 2),
-      reviewCount: `${row.review_count}`,
-      locationId: row.location_id,
-      locationName: row.location_name
-    }))
+  return (
+    await locationOrderBy(
+      locationQuery
+        .groupBy('location_id')
+        .having(
+          (eb) => eb.fn.avg('review.rating'),
+          '<=',
+          statsFilter.maxReviewAverage,
+        )
+        .having(
+          (eb) => eb.fn.avg('review.rating'),
+          '>=',
+          statsFilter.minReviewAverage,
+        )
+        .having(
+          (eb) => eb.fn.count('review.review_id'),
+          '<=',
+          noInfinity(statsFilter.maxReviewCount),
+        )
+        .having(
+          (eb) => eb.fn.count('review.review_id'),
+          '>=',
+          noInfinity(statsFilter.minReviewCount),
+        ),
+      locationStatsOrder,
+    )
+      .offset(pagination.skip)
+      .limit(pagination.size)
+      .execute()
+  ).map((row) => ({
+    reviewAverage: round(row.review_average, 2),
+    reviewCount: `${row.review_count}`,
+    locationId: row.location_id,
+    locationName: row.location_name,
+  }))
 }
 
 interface BreweryQuerySelection {
@@ -318,25 +335,24 @@ interface BreweryQuerySelection {
   brewery_name: string
 }
 
-type BreweryQueryBuilder =
-  SelectQueryBuilder<
+type BreweryQueryBuilder = SelectQueryBuilder<
   KyselyDatabase,
   'review' | 'brewery' | 'beer' | 'beer_brewery',
   BreweryQuerySelection
-  >
+>
 
-function breweryOrderBy (
+function breweryOrderBy(
   builder: BreweryQueryBuilder,
-  breweryStatsOrder: BreweryStatsOrder
+  breweryStatsOrder: BreweryStatsOrder,
 ): BreweryQueryBuilder {
   switch (breweryStatsOrder.property) {
-    case 'average': return builder
-      .orderBy('review_average', breweryStatsOrder.direction)
-      .orderBy('review_count', 'desc')
-      .orderBy('brewery_name', 'asc')
-    case 'brewery_name':
+    case 'average':
       return builder
-        .orderBy('brewery_name', breweryStatsOrder.direction)
+        .orderBy('review_average', breweryStatsOrder.direction)
+        .orderBy('review_count', 'desc')
+        .orderBy('brewery_name', 'asc')
+    case 'brewery_name':
+      return builder.orderBy('brewery_name', breweryStatsOrder.direction)
     case 'count':
       return builder
         .orderBy('review_count', breweryStatsOrder.direction)
@@ -345,13 +361,14 @@ function breweryOrderBy (
   }
 }
 
-export async function getBrewery (
+export async function getBrewery(
   db: Database,
   pagination: Pagination,
   statsFilter: StatsFilter,
-  breweryStatsOrder: BreweryStatsOrder
+  breweryStatsOrder: BreweryStatsOrder,
 ): Promise<BreweryStats> {
-  const tempQuery = db.getDb()
+  const tempQuery = db
+    .getDb()
     .selectFrom('review')
     .innerJoin('beer', 'review.beer', 'beer.beer_id')
     .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
@@ -362,11 +379,12 @@ export async function getBrewery (
     fn.count<number>('review.beer').distinct().as('reviewed_beer_count'),
     fn.avg<number>('review.rating').as('review_average'),
     'brewery.brewery_id as brewery_id',
-    'brewery.name as brewery_name'
+    'brewery.name as brewery_name',
   ])
 
   if (statsFilter.brewery !== undefined) {
-    const query = db.getDb()
+    const query = db
+      .getDb()
       .selectFrom('beer_brewery as querybrewery')
       .innerJoin('beer', 'querybrewery.beer', 'beer.beer_id')
       .innerJoin('review', 'beer.beer_id', 'review.beer')
@@ -380,23 +398,28 @@ export async function getBrewery (
         fn.count<number>('review.beer').distinct().as('reviewed_beer_count'),
         fn.avg<number>('review.rating').as('review_average'),
         'brewery.brewery_id as brewery_id',
-        'brewery.name as brewery_name'
+        'brewery.name as brewery_name',
       ])
   }
 
   if (statsFilter.timeStart !== undefined) {
-    breweryQuery = breweryQuery
-      .where('review.time', '>=', statsFilter.timeStart)
+    breweryQuery = breweryQuery.where(
+      'review.time',
+      '>=',
+      statsFilter.timeStart,
+    )
   }
 
   if (statsFilter.timeEnd !== undefined) {
-    breweryQuery = breweryQuery
-      .where('review.time', '<=', statsFilter.timeEnd)
+    breweryQuery = breweryQuery.where('review.time', '<=', statsFilter.timeEnd)
   }
 
   if (statsFilter.location !== undefined) {
-    breweryQuery = breweryQuery
-      .where('review.location', '=', statsFilter.location)
+    breweryQuery = breweryQuery.where(
+      'review.location',
+      '=',
+      statsFilter.location,
+    )
   }
 
   if (statsFilter.style !== undefined) {
@@ -405,33 +428,42 @@ export async function getBrewery (
       .where('beer_style.style', '=', statsFilter.style)
   }
 
-  return (await breweryOrderBy(
-    breweryQuery
-      .groupBy('brewery_id')
-      .having((eb) => eb.fn.avg(
-        'review.rating'), '<=', statsFilter.maxReviewAverage
-      )
-      .having((eb) => eb.fn.avg(
-        'review.rating'), '>=', statsFilter.minReviewAverage
-      )
-      .having((eb) => eb.fn.count(
-        'review.review_id'), '<=', noInfinity(statsFilter.maxReviewCount)
-      )
-      .having((eb) => eb.fn.count(
-        'review.review_id'), '>=', noInfinity(statsFilter.minReviewCount)
-      )
-    , breweryStatsOrder
-  )
-    .offset(pagination.skip)
-    .limit(pagination.size)
-    .execute())
-    .map(row => ({
-      reviewAverage: round(row.review_average, 2),
-      reviewCount: `${row.review_count}`,
-      reviewedBeerCount: `${row.reviewed_beer_count}`,
-      breweryId: row.brewery_id,
-      breweryName: row.brewery_name
-    }))
+  return (
+    await breweryOrderBy(
+      breweryQuery
+        .groupBy('brewery_id')
+        .having(
+          (eb) => eb.fn.avg('review.rating'),
+          '<=',
+          statsFilter.maxReviewAverage,
+        )
+        .having(
+          (eb) => eb.fn.avg('review.rating'),
+          '>=',
+          statsFilter.minReviewAverage,
+        )
+        .having(
+          (eb) => eb.fn.count('review.review_id'),
+          '<=',
+          noInfinity(statsFilter.maxReviewCount),
+        )
+        .having(
+          (eb) => eb.fn.count('review.review_id'),
+          '>=',
+          noInfinity(statsFilter.minReviewCount),
+        ),
+      breweryStatsOrder,
+    )
+      .offset(pagination.skip)
+      .limit(pagination.size)
+      .execute()
+  ).map((row) => ({
+    reviewAverage: round(row.review_average, 2),
+    reviewCount: `${row.review_count}`,
+    reviewedBeerCount: `${row.reviewed_beer_count}`,
+    breweryId: row.brewery_id,
+    breweryName: row.brewery_name,
+  }))
 }
 
 interface Stats {
@@ -448,9 +480,7 @@ interface ReviewStats {
   review_average: number
 }
 
-async function getFullOverall (
-  db: Database
-): Promise<OverallStats> {
+async function getFullOverall(db: Database): Promise<OverallStats> {
   const statsQuery = sql<Stats & ReviewStats>`SELECT
     (SELECT COUNT(1) FROM beer) AS beer_count,
     (SELECT COUNT(1) FROM brewery) AS brewery_count,
@@ -471,7 +501,7 @@ async function getFullOverall (
     distinctBeerReviewCount: `${stats.distinct_beer_review_count}`,
     reviewAverage: round(stats.review_average, 2),
     reviewCount: `${stats.review_count}`,
-    styleCount: `${stats.style_count}`
+    styleCount: `${stats.style_count}`,
   }
 }
 
@@ -480,9 +510,9 @@ interface ContainerIds {
   storage_container: string | null
 }
 
-function countContainerIds (idRows: ContainerIds[]): number {
+function countContainerIds(idRows: ContainerIds[]): number {
   const map: Record<string, boolean> = {}
-  function add (value: string | null): void {
+  function add(value: string | null): void {
     if (value === null) {
       return
     }
@@ -491,7 +521,7 @@ function countContainerIds (idRows: ContainerIds[]): number {
     }
   }
 
-  idRows.forEach(row => {
+  idRows.forEach((row) => {
     add(row.review_container)
     add(row.storage_container)
   })
@@ -499,12 +529,11 @@ function countContainerIds (idRows: ContainerIds[]): number {
   return Object.keys(map).length
 }
 
-async function getBreweryOverall (
+async function getBreweryOverall(
   db: Database,
-  brewery: string
+  brewery: string,
 ): Promise<OverallStats> {
-  const beerQuery = db.getDb()
-    .selectFrom('beer_brewery as querybrewery')
+  const beerQuery = db.getDb().selectFrom('beer_brewery as querybrewery')
 
   const beerStatsQuery = beerQuery
     .innerJoin('beer_style', 'querybrewery.beer', 'beer_style.beer')
@@ -512,7 +541,7 @@ async function getBreweryOverall (
     .select(({ fn }) => [
       fn.count<number>('querybrewery.beer').distinct().as('beer_count'),
       fn.count<number>('beer_brewery.brewery').distinct().as('brewery_count'),
-      fn.count<number>('beer_style.style').distinct().as('style_count')
+      fn.count<number>('beer_style.style').distinct().as('style_count'),
     ])
     .where('querybrewery.brewery', '=', brewery)
 
@@ -521,28 +550,30 @@ async function getBreweryOverall (
     .leftJoin('storage', 'querybrewery.beer', 'storage.beer')
     .select([
       'review.container as review_container',
-      'storage.container as storage_container'
+      'storage.container as storage_container',
     ])
     .where('querybrewery.brewery', '=', brewery)
 
-  const reviewQuery = db.getDb()
+  const reviewQuery = db
+    .getDb()
     .selectFrom('beer_brewery')
     .innerJoin('review', 'beer_brewery.beer', 'review.beer')
     .select(({ fn }) => [
       fn.count<number>('review.location').distinct().as('location_count'),
       fn.count<number>('review.review_id').as('review_count'),
       fn.avg<number>('review.rating').as('review_average'),
-      fn.count<number>('review.beer')
-        .distinct().as('distinct_beer_review_count')
+      fn
+        .count<number>('review.beer')
+        .distinct()
+        .as('distinct_beer_review_count'),
     ])
     .where('beer_brewery.brewery', '=', brewery)
 
-  const [beerStatsResults, containerResults, reviewStats] =
-    await Promise.all([
-      beerStatsQuery.execute(),
-      containerQuery.execute(),
-      reviewQuery.execute()
-    ])
+  const [beerStatsResults, containerResults, reviewStats] = await Promise.all([
+    beerStatsQuery.execute(),
+    containerQuery.execute(),
+    reviewQuery.execute(),
+  ])
   const containerCount = countContainerIds(containerResults)
 
   return {
@@ -553,15 +584,16 @@ async function getBreweryOverall (
     distinctBeerReviewCount: `${reviewStats[0].distinct_beer_review_count}`,
     reviewAverage: round(reviewStats[0].review_average, 2),
     reviewCount: `${reviewStats[0].review_count}`,
-    styleCount: `${beerStatsResults[0].style_count}`
+    styleCount: `${beerStatsResults[0].style_count}`,
   }
 }
 
-async function getLocationOverall (
+async function getLocationOverall(
   db: Database,
-  location: string
+  location: string,
 ): Promise<OverallStats> {
-  const beerQuery = db.getDb()
+  const beerQuery = db
+    .getDb()
     .selectFrom('review')
     .innerJoin('beer', 'review.beer', 'beer.beer_id')
     .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
@@ -572,21 +604,21 @@ async function getLocationOverall (
     ])
     .where('review.location', '=', location)
 
-  const reviewQuery = db.getDb()
+  const reviewQuery = db
+    .getDb()
     .selectFrom('review')
     .select(({ fn }) => [
       fn.count<number>('review.beer').distinct().as('beer_count'),
       fn.count<number>('review.container').distinct().as('container_count'),
       fn.count<number>('review.review_id').distinct().as('review_count'),
-      fn.avg<number>('review.rating').as('review_average')
+      fn.avg<number>('review.rating').as('review_average'),
     ])
     .where('review.location', '=', location)
 
-  const [beerStats, reviewStats ] =
-    await Promise.all([
-      beerQuery.executeTakeFirstOrThrow(),
-      reviewQuery.executeTakeFirstOrThrow()
-    ])
+  const [beerStats, reviewStats] = await Promise.all([
+    beerQuery.executeTakeFirstOrThrow(),
+    reviewQuery.executeTakeFirstOrThrow(),
+  ])
 
   return {
     beerCount: `${reviewStats.beer_count}`,
@@ -596,16 +628,15 @@ async function getLocationOverall (
     distinctBeerReviewCount: `${reviewStats.beer_count}`,
     reviewAverage: round(reviewStats.review_average, 2),
     reviewCount: `${reviewStats.review_count}`,
-    styleCount: `${beerStats.style_count}`
+    styleCount: `${beerStats.style_count}`,
   }
 }
 
-async function getStyleOverall (
+async function getStyleOverall(
   db: Database,
-  style: string
+  style: string,
 ): Promise<OverallStats> {
-  const beerQuery = db.getDb()
-    .selectFrom('beer_style as querystyle')
+  const beerQuery = db.getDb().selectFrom('beer_style as querystyle')
 
   const beerStatsQuery = beerQuery
     .innerJoin('beer_style', 'querystyle.beer', 'beer_style.beer')
@@ -613,7 +644,7 @@ async function getStyleOverall (
     .select(({ fn }) => [
       fn.count<number>('querystyle.beer').distinct().as('beer_count'),
       fn.count<number>('beer_brewery.brewery').distinct().as('brewery_count'),
-      fn.count<number>('beer_style.style').distinct().as('style_count')
+      fn.count<number>('beer_style.style').distinct().as('style_count'),
     ])
     .where('querystyle.style', '=', style)
 
@@ -622,28 +653,30 @@ async function getStyleOverall (
     .leftJoin('storage', 'querystyle.beer', 'storage.beer')
     .select([
       'review.container as review_container',
-      'storage.container as storage_container'
+      'storage.container as storage_container',
     ])
     .where('querystyle.style', '=', style)
 
-  const reviewQuery = db.getDb()
+  const reviewQuery = db
+    .getDb()
     .selectFrom('beer_style')
     .innerJoin('review', 'beer_style.beer', 'review.beer')
     .select(({ fn }) => [
       fn.count<number>('review.location').distinct().as('location_count'),
       fn.count<number>('review.review_id').as('review_count'),
       fn.avg<number>('review.rating').as('review_average'),
-      fn.count<number>('review.beer')
-        .distinct().as('distinct_beer_review_count')
+      fn
+        .count<number>('review.beer')
+        .distinct()
+        .as('distinct_beer_review_count'),
     ])
     .where('beer_style.style', '=', style)
 
-  const [beerStatsResults, containerResults, reviewStats] =
-    await Promise.all([
-      beerStatsQuery.execute(),
-      containerQuery.execute(),
-      reviewQuery.execute()
-    ])
+  const [beerStatsResults, containerResults, reviewStats] = await Promise.all([
+    beerStatsQuery.execute(),
+    containerQuery.execute(),
+    reviewQuery.execute(),
+  ])
   const containerCount = countContainerIds(containerResults)
 
   return {
@@ -654,18 +687,18 @@ async function getStyleOverall (
     distinctBeerReviewCount: `${reviewStats[0].distinct_beer_review_count}`,
     reviewAverage: round(reviewStats[0].review_average, 2),
     reviewCount: `${reviewStats[0].review_count}`,
-    styleCount: `${beerStatsResults[0].style_count}`
+    styleCount: `${beerStatsResults[0].style_count}`,
   }
 }
 
-export async function getOverall (
+export async function getOverall(
   db: Database,
-  statsFilter: StatsIdFilter
+  statsFilter: StatsIdFilter,
 ): Promise<OverallStats> {
   const { brewery, location, style } = statsFilter
-  if ([ brewery, location, style ].filter(id => id !== undefined).length > 1) {
+  if ([brewery, location, style].filter((id) => id !== undefined).length > 1) {
     throw new Error(
-      'Multiple filters of brewery, location and style not supported'
+      'Multiple filters of brewery, location and style not supported',
     )
   }
   if (statsFilter.brewery !== undefined) {
@@ -685,9 +718,9 @@ interface RatingQueryResult {
   count: number
 }
 
-export async function getRating (
+export async function getRating(
   db: Database,
-  statsFilter: StatsIdFilter
+  statsFilter: StatsIdFilter,
 ): Promise<RatingStats> {
   const ratingQuery = sql<RatingQueryResult>`SELECT
     review.rating as rating,
@@ -699,9 +732,9 @@ export async function getRating (
 
   const rating = await ratingQuery.execute(db.getDb())
 
-  return rating.rows.map(row => ({
+  return rating.rows.map((row) => ({
     rating: `${row.rating}`,
-    count: `${row.count}`
+    count: `${row.count}`,
   }))
 }
 
@@ -712,42 +745,45 @@ interface StyleQuerySelection {
   style_name: string
 }
 
-type StyleQueryBuilder =
-  SelectQueryBuilder<
+type StyleQueryBuilder = SelectQueryBuilder<
   KyselyDatabase,
   'review' | 'style' | 'beer' | 'beer_style',
   StyleQuerySelection
-  >
+>
 
-function styleOrderBy (
+function styleOrderBy(
   builder: StyleQueryBuilder,
-  styleStatsOrder: StyleStatsOrder
+  styleStatsOrder: StyleStatsOrder,
 ): StyleQueryBuilder {
   switch (styleStatsOrder.property) {
-    case 'average': return builder
-      .orderBy('review_average', styleStatsOrder.direction)
-      .orderBy('review_count', 'desc')
-      .orderBy('style_name', 'asc')
-    case 'style_name': return builder
-      .orderBy('style_name', styleStatsOrder.direction)
-    case 'count': return builder
-      .orderBy('review_count', styleStatsOrder.direction)
-      .orderBy('review_average', 'desc')
-      .orderBy('style_name', 'asc')
+    case 'average':
+      return builder
+        .orderBy('review_average', styleStatsOrder.direction)
+        .orderBy('review_count', 'desc')
+        .orderBy('style_name', 'asc')
+    case 'style_name':
+      return builder.orderBy('style_name', styleStatsOrder.direction)
+    case 'count':
+      return builder
+        .orderBy('review_count', styleStatsOrder.direction)
+        .orderBy('review_average', 'desc')
+        .orderBy('style_name', 'asc')
   }
 }
 
-export async function getStyle (
+export async function getStyle(
   db: Database,
   statsFilter: StatsFilter,
-  styleStatsOrder: StyleStatsOrder
+  styleStatsOrder: StyleStatsOrder,
 ): Promise<StyleStats> {
-  let beerQuery = db.getDb()
+  let beerQuery = db
+    .getDb()
     .selectFrom('review')
     .innerJoin('beer', 'review.beer', 'beer.beer_id')
 
   if (statsFilter.style !== undefined) {
-    beerQuery = db.getDb()
+    beerQuery = db
+      .getDb()
       .selectFrom('beer_style as querystyle')
       .where('querystyle.style', '=', statsFilter.style)
       .innerJoin('beer', 'querystyle.beer', 'beer.beer_id')
@@ -755,18 +791,15 @@ export async function getStyle (
   }
 
   if (statsFilter.timeStart !== undefined) {
-    beerQuery = beerQuery
-      .where('review.time', '>=', statsFilter.timeStart)
+    beerQuery = beerQuery.where('review.time', '>=', statsFilter.timeStart)
   }
 
   if (statsFilter.timeEnd !== undefined) {
-    beerQuery = beerQuery
-      .where('review.time', '<=', statsFilter.timeEnd)
+    beerQuery = beerQuery.where('review.time', '<=', statsFilter.timeEnd)
   }
 
   if (statsFilter.location !== undefined) {
-    beerQuery = beerQuery
-      .where('review.location', '=', statsFilter.location)
+    beerQuery = beerQuery.where('review.location', '=', statsFilter.location)
   }
 
   if (statsFilter.brewery !== undefined) {
@@ -778,36 +811,43 @@ export async function getStyle (
     .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
     .innerJoin('style', 'beer_style.style', 'style.style_id')
 
-  const statsQuery = styleQuery
-    .select(({ fn }) => [
-      fn.count<number>('review.review_id').as('review_count'),
-      fn.avg<number>('review.rating').as('review_average'),
-      'style.style_id as style_id',
-      'style.name as style_name'
-    ])
+  const statsQuery = styleQuery.select(({ fn }) => [
+    fn.count<number>('review.review_id').as('review_count'),
+    fn.avg<number>('review.rating').as('review_average'),
+    'style.style_id as style_id',
+    'style.name as style_name',
+  ])
 
-  return (await styleOrderBy(
-    statsQuery
-      .groupBy('style_id')
-      .having((eb) => eb.fn.avg(
-        'review.rating'), '<=', statsFilter.maxReviewAverage
-      )
-      .having((eb) => eb.fn.avg(
-        'review.rating'), '>=', statsFilter.minReviewAverage
-      )
-      .having((eb) => eb.fn.count(
-        'review.review_id'), '<=', noInfinity(statsFilter.maxReviewCount)
-      )
-      .having((eb) => eb.fn.count(
-        'review.review_id'), '>=', noInfinity(statsFilter.minReviewCount)
-      )
-    , styleStatsOrder
-  )
-    .execute())
-    .map(row => ({
-      reviewAverage: round(row.review_average, 2),
-      reviewCount: `${row.review_count}`,
-      styleId: row.style_id,
-      styleName: row.style_name
-    }))
+  return (
+    await styleOrderBy(
+      statsQuery
+        .groupBy('style_id')
+        .having(
+          (eb) => eb.fn.avg('review.rating'),
+          '<=',
+          statsFilter.maxReviewAverage,
+        )
+        .having(
+          (eb) => eb.fn.avg('review.rating'),
+          '>=',
+          statsFilter.minReviewAverage,
+        )
+        .having(
+          (eb) => eb.fn.count('review.review_id'),
+          '<=',
+          noInfinity(statsFilter.maxReviewCount),
+        )
+        .having(
+          (eb) => eb.fn.count('review.review_id'),
+          '>=',
+          noInfinity(statsFilter.minReviewCount),
+        ),
+      styleStatsOrder,
+    ).execute()
+  ).map((row) => ({
+    reviewAverage: round(row.review_average, 2),
+    reviewCount: `${row.review_count}`,
+    styleId: row.style_id,
+    styleName: row.style_name,
+  }))
 }

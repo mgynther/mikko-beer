@@ -35,7 +35,7 @@ interface CreatedRouter {
 }
 
 export function createRouter(routerParams: RouterParams): CreatedRouter {
-  const koaRouter = new KoaRouter();
+  const koaRouter = new KoaRouter()
 
   const router: Router = {
     get: (path: string, handler: RequestHandler) => {
@@ -65,14 +65,14 @@ export function createRouter(routerParams: RouterParams): CreatedRouter {
       koa.use(koaRouter.routes())
       koa.use(koaRouter.allowedMethods())
     },
-    router
+    router,
   }
 }
 
-async function koaHandler (
+async function koaHandler(
   koaContext: KoaRouterContext,
   handler: RequestHandler,
-  routerParams: RouterParams
+  routerParams: RouterParams,
 ): Promise<void> {
   const authorization = koaContext.headers.authorization
   const params = koaContext.params
@@ -84,9 +84,9 @@ async function koaHandler (
     params,
     request: {
       body,
-      query: parseQuery(koaQuery)
-    }
-  });
+      query: parseQuery(koaQuery),
+    },
+  })
   /* eslint-disable-next-line require-atomic-updates --
    * koa requires assigning properties and there's no way to do it before
    * handling the request. Context is not outdated here.
@@ -101,7 +101,7 @@ async function koaHandler (
 
 function parseQuery(koaQuery: ParsedUrlQuery): Record<string, string> {
   const result: Record<string, string> = {}
-  Object.keys(koaQuery).forEach(key => {
+  Object.keys(koaQuery).forEach((key) => {
     const value = koaQuery[key]
     if (typeof value !== 'string') {
       throw invalidQueryError

@@ -14,9 +14,10 @@ describe('brewery tests', () => {
   afterEach(ctx.afterEach)
 
   it('create a brewery', async () => {
-    const res = await ctx.request.post(`/api/v1/brewery`,
+    const res = await ctx.request.post(
+      `/api/v1/brewery`,
       { name: 'Koskipanimo' },
-      ctx.adminAuthHeaders()
+      ctx.adminAuthHeaders(),
     )
 
     assertEqual(res.status, 201)
@@ -24,37 +25,41 @@ describe('brewery tests', () => {
 
     const getRes = await ctx.request.get<{ brewery: Brewery }>(
       `/api/v1/brewery/${res.data.brewery.id}`,
-      ctx.adminAuthHeaders()
+      ctx.adminAuthHeaders(),
     )
 
     assertEqual(getRes.status, 200)
     assertDeepEqual(getRes.data.brewery, res.data.brewery)
 
-    const listRes = await ctx.request.get(`/api/v1/brewery?skip=0&size=100`,
-      ctx.adminAuthHeaders()
+    const listRes = await ctx.request.get(
+      `/api/v1/brewery?skip=0&size=100`,
+      ctx.adminAuthHeaders(),
     )
     assertEqual(listRes.status, 200)
     assertEqual(listRes.data.breweries.length, 1)
 
-    const searchRes = await ctx.request.post(`/api/v1/brewery/search`,
+    const searchRes = await ctx.request.post(
+      `/api/v1/brewery/search`,
       { name: 'oSk' },
-      ctx.adminAuthHeaders()
+      ctx.adminAuthHeaders(),
     )
     assertEqual(searchRes.status, 200)
     assertEqual(searchRes.data.breweries.length, 1)
 
-    const badSearchRes = await ctx.request.post(`/api/v1/brewery/search`,
+    const badSearchRes = await ctx.request.post(
+      `/api/v1/brewery/search`,
       { name: 'oSkJ' },
-      ctx.adminAuthHeaders()
+      ctx.adminAuthHeaders(),
     )
     assertEqual(badSearchRes.status, 200)
     assertEqual(badSearchRes.data.breweries.length, 0)
   })
 
   it('update a brewery', async () => {
-    const res = await ctx.request.post(`/api/v1/brewery`,
+    const res = await ctx.request.post(
+      `/api/v1/brewery`,
       { name: 'Salami Brewing' },
-      ctx.adminAuthHeaders()
+      ctx.adminAuthHeaders(),
     )
 
     assertEqual(res.status, 201)
@@ -63,14 +68,14 @@ describe('brewery tests', () => {
     const updateRes = await ctx.request.put(
       `/api/v1/brewery/${res.data.brewery.id}`,
       { name: 'Salama Brewing' },
-      ctx.adminAuthHeaders()
+      ctx.adminAuthHeaders(),
     )
     assertEqual(updateRes.status, 200)
     assertEqual(updateRes.data.brewery.name, 'Salama Brewing')
 
     const getRes = await ctx.request.get<{ brewery: Brewery }>(
       `/api/v1/brewery/${res.data.brewery.id}`,
-      ctx.adminAuthHeaders()
+      ctx.adminAuthHeaders(),
     )
 
     assertEqual(getRes.status, 200)
@@ -78,29 +83,28 @@ describe('brewery tests', () => {
   })
 
   it('fail to create a brewery without name', async () => {
-    const res = await ctx.request.post(`/api/v1/brewery`,
+    const res = await ctx.request.post(
+      `/api/v1/brewery`,
       {},
-      ctx.adminAuthHeaders()
+      ctx.adminAuthHeaders(),
     )
 
     assertEqual(res.status, 400)
   })
 
   it('get empty brewery list', async () => {
-    const res = await ctx.request.get(`/api/v1/brewery`,
-      ctx.adminAuthHeaders()
-    )
+    const res = await ctx.request.get(`/api/v1/brewery`, ctx.adminAuthHeaders())
 
     assertEqual(res.status, 200)
     assertEqual(res.data.breweries.length, 0)
   })
 
   it('fail on duplicate search parameter', async () => {
-    const res = await ctx.request.get(`/api/v1/brewery?size=10&size=11`,
-      ctx.adminAuthHeaders()
+    const res = await ctx.request.get(
+      `/api/v1/brewery?size=10&size=11`,
+      ctx.adminAuthHeaders(),
     )
 
     assertEqual(res.status, 400)
   })
-
 })

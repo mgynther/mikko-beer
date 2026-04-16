@@ -1,15 +1,11 @@
 import type { SelectQueryBuilder } from 'kysely'
 import { sql } from 'kysely'
 
-import type {
-  Database,
-  KyselyDatabase,
-  Transaction
-} from '../database.js'
+import type { Database, KyselyDatabase, Transaction } from '../database.js'
 import type {
   DbJoinedStorage,
   StorageRow,
-  StorageTable
+  StorageTable,
 } from './storage.table.js'
 
 import type { Pagination } from '../../core/pagination.js'
@@ -20,20 +16,21 @@ import type {
   MonthlyStorageStats,
   Storage,
   StorageRequest,
-  StorageWithDate
+  StorageWithDate,
 } from '../../core/storage/storage.js'
 import { contains } from '../../core/record.js'
 
-export async function insertStorage (
+export async function insertStorage(
   trx: Transaction,
-  storage: StorageRequest
+  storage: StorageRequest,
 ): Promise<StorageWithDate> {
-  const insertedStorage = await trx.trx()
+  const insertedStorage = await trx
+    .trx()
     .insertInto('storage')
     .values({
       beer: storage.beer,
       best_before: new Date(storage.bestBefore),
-      container: storage.container
+      container: storage.container,
     })
     .returningAll()
     .executeTakeFirstOrThrow()
@@ -41,16 +38,17 @@ export async function insertStorage (
   return toStorage(insertedStorage)
 }
 
-export async function updateStorage (
+export async function updateStorage(
   trx: Transaction,
-  storage: Storage
+  storage: Storage,
 ): Promise<StorageWithDate> {
-  const updatedStorage = await trx.trx()
+  const updatedStorage = await trx
+    .trx()
     .updateTable('storage')
     .set({
       best_before: new Date(storage.bestBefore),
       beer: storage.beer,
-      container: storage.container
+      container: storage.container,
     })
     .where('storage_id', '=', storage.id)
     .returningAll()
@@ -59,11 +57,12 @@ export async function updateStorage (
   return toStorage(updatedStorage)
 }
 
-export async function findStorageById (
+export async function findStorageById(
   db: Database,
-  id: string
+  id: string,
 ): Promise<JoinedStorage | undefined> {
-  const storageRows = await db.getDb()
+  const storageRows = await db
+    .getDb()
     .selectFrom('storage')
     .innerJoin('beer', 'storage.beer', 'beer.beer_id')
     .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
@@ -86,7 +85,7 @@ export async function findStorageById (
       'container.type as container_type',
       'style.style_id as style_id',
       'style.name as style_name',
-      'review.review_id as review_id'
+      'review.review_id as review_id',
     ])
     .execute()
 
@@ -98,14 +97,11 @@ export async function findStorageById (
   return toJoinedStorages(parsed)[0]
 }
 
-export async function deleteStorageById (
+export async function deleteStorageById(
   trx: Transaction,
-  id: string
+  id: string,
 ): Promise<void> {
-  await trx.trx()
-    .deleteFrom('storage')
-    .where('storage_id', '=', id)
-    .execute()
+  await trx.trx().deleteFrom('storage').where('storage_id', '=', id).execute()
 }
 
 interface StorageTableRn extends StorageTable {
@@ -120,19 +116,19 @@ const listByBestBeforeDesc = sql<StorageTableRn>`(
   )`
 
 type PossibleListColumns =
-  'storage.storage_id' |
-  'storage.best_before' |
-  'storage.created_at' |
-  'beer.beer_id as beer_id' |
-  'beer.name as beer_name' |
-  'brewery.brewery_id as brewery_id' |
-  'brewery.name as brewery_name' |
-  'style.style_id as style_id' |
-  'style.name as style_name' |
-  'container.container_id as container_id' |
-  'container.type as container_type' |
-  'container.size as container_size' |
-  'review.review_id as review_id'
+  | 'storage.storage_id'
+  | 'storage.best_before'
+  | 'storage.created_at'
+  | 'beer.beer_id as beer_id'
+  | 'beer.name as beer_name'
+  | 'brewery.brewery_id as brewery_id'
+  | 'brewery.name as brewery_name'
+  | 'style.style_id as style_id'
+  | 'style.name as style_name'
+  | 'container.container_id as container_id'
+  | 'container.type as container_type'
+  | 'container.size as container_size'
+  | 'review.review_id as review_id'
 
 const listColumns: PossibleListColumns[] = [
   'storage.storage_id',
@@ -147,14 +143,15 @@ const listColumns: PossibleListColumns[] = [
   'container.container_id as container_id',
   'container.type as container_type',
   'container.size as container_size',
-  'review.review_id as review_id'
+  'review.review_id as review_id',
 ]
 
-export async function lockStorage (
+export async function lockStorage(
   trx: Transaction,
-  key: string
+  key: string,
 ): Promise<string | undefined> {
-  const storage = await trx.trx()
+  const storage = await trx
+    .trx()
     .selectFrom('storage')
     .where('storage_id', '=', key)
     .select('storage_id')
@@ -164,13 +161,14 @@ export async function lockStorage (
   return storage?.storage_id
 }
 
-export async function listStorages (
+export async function listStorages(
   db: Database,
-  pagination: Pagination
+  pagination: Pagination,
 ): Promise<JoinedStorage[]> {
   const { start, end } = toRowNumbers(pagination)
 
-  const storages = await db.getDb()
+  const storages = await db
+    .getDb()
     .selectFrom(listByBestBeforeDesc.as('storage'))
     .innerJoin('beer', 'storage.beer', 'beer.beer_id')
     .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
@@ -188,40 +186,49 @@ export async function listStorages (
   return toJoinedStorages(parseBreweryStorageRows(storages))
 }
 
-export async function listStoragesByBeer (
+export async function listStoragesByBeer(
   db: Database,
-  beerId: string
+  beerId: string,
 ): Promise<JoinedStorage[]> {
-  return toJoinedStorages(await joinStorageData(db.getDb()
-    .selectFrom('beer')
-    .where('beer.beer_id', '=', beerId)
-  ))
+  return toJoinedStorages(
+    await joinStorageData(
+      db.getDb().selectFrom('beer').where('beer.beer_id', '=', beerId),
+    ),
+  )
 }
 
-export async function listStoragesByBrewery (
+export async function listStoragesByBrewery(
   db: Database,
-  breweryId: string
+  breweryId: string,
 ): Promise<JoinedStorage[]> {
-  return toJoinedStorages(await joinStorageData(db.getDb()
-    .selectFrom('beer_brewery as querybrewery')
-    .innerJoin('beer', 'querybrewery.beer', 'beer.beer_id')
-    .where('querybrewery.brewery', '=', breweryId)
-  ))
+  return toJoinedStorages(
+    await joinStorageData(
+      db
+        .getDb()
+        .selectFrom('beer_brewery as querybrewery')
+        .innerJoin('beer', 'querybrewery.beer', 'beer.beer_id')
+        .where('querybrewery.brewery', '=', breweryId),
+    ),
+  )
 }
 
-export async function listStoragesByStyle (
+export async function listStoragesByStyle(
   db: Database,
-  styleId: string
+  styleId: string,
 ): Promise<JoinedStorage[]> {
-  return toJoinedStorages(await joinStorageData(db.getDb()
-    .selectFrom('beer_style as querystyle')
-    .innerJoin('beer', 'querystyle.beer', 'beer.beer_id')
-    .where('querystyle.style', '=', styleId)
-  ))
+  return toJoinedStorages(
+    await joinStorageData(
+      db
+        .getDb()
+        .selectFrom('beer_style as querystyle')
+        .innerJoin('beer', 'querystyle.beer', 'beer.beer_id')
+        .where('querystyle.style', '=', styleId),
+    ),
+  )
 }
 
-export async function joinStorageData (
-  query: SelectQueryBuilder<KyselyDatabase, 'beer', unknown>
+export async function joinStorageData(
+  query: SelectQueryBuilder<KyselyDatabase, 'beer', unknown>,
 ): Promise<DbJoinedStorage[]> {
   const storages = await query
     .innerJoin('storage', 'beer.beer_id', 'storage.beer')
@@ -239,12 +246,13 @@ export async function joinStorageData (
   return parseBreweryStorageRows(storages)
 }
 
-export async function getAnnualStorageStats (
-  db: Database
+export async function getAnnualStorageStats(
+  db: Database,
 ): Promise<AnnualStorageStats> {
-  const results = await db.getDb()
+  const results = await db
+    .getDb()
     .selectFrom('storage')
-    .select(({fn}) => [
+    .select(({ fn }) => [
       sql<number>`extract(year from best_before)`.as('year'),
       fn.count<number>('storage.storage_id').as('count'),
     ])
@@ -252,18 +260,19 @@ export async function getAnnualStorageStats (
     .orderBy('year', 'asc')
     .execute()
 
-  return results.map(result => ({
+  return results.map((result) => ({
     year: `${result.year}`,
-    count: `${result.count}`
+    count: `${result.count}`,
   }))
 }
 
-export async function getMonthlyStorageStats (
-  db: Database
+export async function getMonthlyStorageStats(
+  db: Database,
 ): Promise<MonthlyStorageStats> {
-  const results = await db.getDb()
+  const results = await db
+    .getDb()
     .selectFrom('storage')
-    .select(({fn}) => [
+    .select(({ fn }) => [
       sql<number>`extract(year from best_before)`.as('year'),
       sql<number>`extract(month from best_before)`.as('month'),
       fn.count<number>('storage.storage_id').as('count'),
@@ -273,10 +282,10 @@ export async function getMonthlyStorageStats (
     .orderBy('month', 'asc')
     .execute()
 
-  return results.map(result => ({
+  return results.map((result) => ({
     year: `${result.year}`,
     month: `${result.month}`,
-    count: `${result.count}`
+    count: `${result.count}`,
   }))
 }
 
@@ -296,48 +305,58 @@ interface InternalJoinedStorage {
   style_name: string
 }
 
-function parseBreweryStorageRows (
-  storages: InternalJoinedStorage[]
+function parseBreweryStorageRows(
+  storages: InternalJoinedStorage[],
 ): DbJoinedStorage[] {
   const storageMap: Record<string, DbJoinedStorage> = {}
   const storageArray: DbJoinedStorage[] = []
 
-  storages.forEach(storage => {
+  storages.forEach((storage) => {
     if (contains(storageMap, storage.storage_id)) {
       const existing = storageMap[storage.storage_id]
       existing.has_review ||= storage.review_id !== null
-      if (existing.breweries.find(
-        brewery => brewery.brewery_id === storage.brewery_id) === undefined) {
+      if (
+        existing.breweries.find(
+          (brewery) => brewery.brewery_id === storage.brewery_id,
+        ) === undefined
+      ) {
         existing.breweries.push({
           brewery_id: storage.brewery_id,
-          name: storage.brewery_name
+          name: storage.brewery_name,
         })
       }
-      if (existing.styles.find(
-        styles => styles.style_id === storage.style_id) === undefined) {
+      if (
+        existing.styles.find(
+          (styles) => styles.style_id === storage.style_id,
+        ) === undefined
+      ) {
         existing.styles.push({
           style_id: storage.style_id,
-          name: storage.style_name
+          name: storage.style_name,
         })
       }
     } else {
       storageMap[storage.storage_id] = {
         ...storage,
         has_review: storage.review_id !== null,
-        breweries: [{
-          brewery_id: storage.brewery_id,
-          name: storage.brewery_name
-        }],
-        styles: [{
-          style_id: storage.style_id,
-          name: storage.style_name
-        }]
+        breweries: [
+          {
+            brewery_id: storage.brewery_id,
+            name: storage.brewery_name,
+          },
+        ],
+        styles: [
+          {
+            style_id: storage.style_id,
+            name: storage.style_name,
+          },
+        ],
       }
       storageArray.push(storageMap[storage.storage_id])
     }
   })
 
-  storageArray.forEach(storage => {
+  storageArray.forEach((storage) => {
     storage.breweries.sort((a, b) => a.name.localeCompare(b.name))
     storage.styles.sort((a, b) => a.name.localeCompare(b.name))
   })
@@ -345,35 +364,35 @@ function parseBreweryStorageRows (
   return storageArray
 }
 
-export function toStorage (storage: StorageRow): StorageWithDate {
+export function toStorage(storage: StorageRow): StorageWithDate {
   return {
     id: storage.storage_id,
     beer: storage.beer,
     bestBefore: storage.best_before,
-    container: storage.container
+    container: storage.container,
   }
 }
 
-function toJoinedStorages (storageRows: DbJoinedStorage[]): JoinedStorage[] {
-  return storageRows.map(row => ({
+function toJoinedStorages(storageRows: DbJoinedStorage[]): JoinedStorage[] {
+  return storageRows.map((row) => ({
     id: row.storage_id,
     beerId: row.beer_id,
     beerName: row.beer_name,
     bestBefore: row.best_before,
-    breweries: row.breweries.map(brewery => ({
+    breweries: row.breweries.map((brewery) => ({
       id: brewery.brewery_id,
-      name: brewery.name
+      name: brewery.name,
     })),
     container: {
       id: row.container_id,
       size: row.container_size,
-      type: row.container_type
+      type: row.container_type,
     },
     createdAt: row.created_at,
     hasReview: row.has_review,
-    styles: row.styles.map(style => ({
+    styles: row.styles.map((style) => ({
       id: style.style_id,
-      name: style.name
-    }))
+      name: style.name,
+    })),
   }))
 }

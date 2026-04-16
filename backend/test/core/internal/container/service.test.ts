@@ -3,7 +3,7 @@ import { describe, it } from 'node:test'
 import type {
   Container,
   CreateContainerRequest,
-  UpdateContainerRequest
+  UpdateContainerRequest,
 } from '../../../../src/core/container/container.js'
 import * as containerService from '../../../../src/core/internal/container/service.js'
 import { containerNotFoundError } from '../../../../src/core/errors.js'
@@ -30,15 +30,16 @@ describe('container service unit tests', () => {
         type: container.type,
         size: container.size,
       }
-      assertDeepEqual(newContainer,
-        { type: container.type, size: container.size }
-      )
+      assertDeepEqual(newContainer, {
+        type: container.type,
+        size: container.size,
+      })
       return result
     }
     const result = await containerService.createContainer(create, request, log)
     assertDeepEqual(result, {
       ...request,
-      id: container.id
+      id: container.id,
     })
   })
 
@@ -60,11 +61,11 @@ describe('container service unit tests', () => {
       update,
       container.id,
       request,
-      log
+      log,
     )
     assertDeepEqual(result, {
       ...request,
-      id: container.id
+      id: container.id,
     })
   })
 
@@ -76,7 +77,7 @@ describe('container service unit tests', () => {
     const result = await containerService.findContainerById(
       finder,
       container.id,
-      log
+      log,
     )
     assertDeepEqual(result, container)
   })
@@ -99,5 +100,4 @@ describe('container service unit tests', () => {
     const result = await containerService.listContainers(lister, log)
     assertDeepEqual(result, [container])
   })
-
 })

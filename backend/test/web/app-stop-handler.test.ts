@@ -22,9 +22,6 @@ describe('app stopHandler', () => {
     handler(error)
     assertEqual(resolve.mock.callCount(), 0)
     assertEqual(reject.mock.callCount(), 1)
-    assertDeepEqual(
-      reject.mock.calls[0].arguments,
-      [error]
-    )
+    assertDeepEqual(reject.mock.calls[0].arguments, [error])
   })
 })

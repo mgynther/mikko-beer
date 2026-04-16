@@ -7,7 +7,7 @@ import type {
   UpdateBeerRequest,
   NewBeer,
   CreateIf,
-  UpdateIf
+  UpdateIf,
 } from '../../../../src/core/beer/beer.js'
 import type { Pagination } from '../../../../src/core/pagination.js'
 import type { SearchByName } from '../../../../src/core/search.js'
@@ -17,7 +17,7 @@ import { dummyLog as log } from '../../dummy-log.js'
 import {
   beerNotFoundError,
   referredBreweryNotFoundError,
-  referredStyleNotFoundError
+  referredStyleNotFoundError,
 } from '../../../../src/core/errors.js'
 import { expectReject } from '../../controller-error-helper.js'
 import { assertDeepEqual, assertEqual } from '../../../assert.js'
@@ -25,18 +25,22 @@ import { assertDeepEqual, assertEqual } from '../../../assert.js'
 const beer: BeerWithBreweriesAndStyles = {
   id: '406a337c-3107-4307-bd84-be3ec7c7d2f6',
   name: 'Siperia',
-  breweries: [{
-    id: '67a4565b-1bfa-456f-9025-ab687615c6d3',
-    name: 'Koskipanimo'
-  }],
-  styles: [{
-    id: '439bf543-13b7-4de7-a429-e0cb3d372acb',
-    name: 'imperial stout'
-  }]
+  breweries: [
+    {
+      id: '67a4565b-1bfa-456f-9025-ab687615c6d3',
+      name: 'Koskipanimo',
+    },
+  ],
+  styles: [
+    {
+      id: '439bf543-13b7-4de7-a429-e0cb3d372acb',
+      name: 'imperial stout',
+    },
+  ],
 }
 
-const breweries = beer.breweries.map(brewery => brewery.id)
-const styles = beer.styles.map(style => style.id)
+const breweries = beer.breweries.map((brewery) => brewery.id)
+const styles = beer.styles.map((style) => style.id)
 
 const lockBreweries = async (lockBreweryIds: string[]) => {
   assertDeepEqual(lockBreweryIds, breweries)
@@ -91,7 +95,7 @@ describe('beer service unit tests', () => {
       },
       insertBeerBreweries: async (
         beerId: string,
-        insertBreweries: string[]
+        insertBreweries: string[],
       ) => {
         assertEqual(breweriesInserted, false)
         breweriesInserted = true
@@ -103,16 +107,16 @@ describe('beer service unit tests', () => {
         stylesInserted = true
         assertEqual(beerId, beer.id)
         assertDeepEqual(insertStyles, styles)
-      }
+      },
     }
     const result = await beerService.createBeer(
       createIf,
       createBeerRequest,
-      log
+      log,
     )
     assertDeepEqual(result, {
       ...createBeerRequest,
-      id: beer.id
+      id: beer.id,
     })
     assertEqual(breweriesInserted, true)
     assertEqual(breweriesLocked, true)
@@ -126,7 +130,7 @@ describe('beer service unit tests', () => {
       lockBreweries: async () => [],
       lockStyles,
       insertBeerBreweries: async () => {},
-      insertBeerStyles: async () => {}
+      insertBeerStyles: async () => {},
     }
     expectReject(async () => {
       await beerService.createBeer(createIf, createBeerRequest, log)
@@ -139,7 +143,7 @@ describe('beer service unit tests', () => {
       lockBreweries,
       lockStyles: async () => [],
       insertBeerBreweries: async () => {},
-      insertBeerStyles: async () => {}
+      insertBeerStyles: async () => {},
     }
     expectReject(async () => {
       await beerService.createBeer(createIf, createBeerRequest, log)
@@ -177,7 +181,7 @@ describe('beer service unit tests', () => {
       },
       insertBeerBreweries: async (
         beerId: string,
-        insertBreweries: string[]
+        insertBreweries: string[],
       ) => {
         assertEqual(breweriesDeleted, true)
         assertEqual(breweriesInserted, false)
@@ -196,17 +200,17 @@ describe('beer service unit tests', () => {
         stylesInserted = true
         assertEqual(beerId, beer.id)
         assertDeepEqual(insertStyles, styles)
-      }
+      },
     }
     const result = await beerService.updateBeer(
       updateIf,
       beer.id,
       updateBeerRequest,
-      log
+      log,
     )
     assertDeepEqual(result, {
       ...updateBeerRequest,
-      id: beer.id
+      id: beer.id,
     })
     assertEqual(breweriesDeleted, true)
     assertEqual(breweriesInserted, true)
@@ -224,15 +228,10 @@ describe('beer service unit tests', () => {
       deleteBeerBreweries: notCalled,
       insertBeerBreweries: notCalled,
       deleteBeerStyles: notCalled,
-      insertBeerStyles: notCalled
+      insertBeerStyles: notCalled,
     }
     expectReject(async () => {
-      await beerService.updateBeer(
-        updateIf,
-        beer.id,
-        updateBeerRequest,
-        log
-      )
+      await beerService.updateBeer(updateIf, beer.id, updateBeerRequest, log)
     }, referredBreweryNotFoundError)
   })
 
@@ -244,15 +243,10 @@ describe('beer service unit tests', () => {
       deleteBeerBreweries: notCalled,
       insertBeerBreweries: notCalled,
       deleteBeerStyles: notCalled,
-      insertBeerStyles: notCalled
+      insertBeerStyles: notCalled,
     }
     expectReject(async () => {
-      await beerService.updateBeer(
-        updateIf,
-        beer.id,
-        updateBeerRequest,
-        log
-      )
+      await beerService.updateBeer(updateIf, beer.id, updateBeerRequest, log)
     }, referredStyleNotFoundError)
   })
 
@@ -279,7 +273,7 @@ describe('beer service unit tests', () => {
   it('list beers', async () => {
     const pagination: Pagination = {
       size: 10,
-      skip: 80
+      skip: 80,
     }
     const lister = async (listPagination: Pagination) => {
       assertDeepEqual(listPagination, pagination)

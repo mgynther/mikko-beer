@@ -2,7 +2,7 @@ import { describe, it } from 'node:test'
 
 import {
   validatePasswordSignInMethod,
-  validatePasswordChange
+  validatePasswordChange,
 } from '../../../../src/core/internal/user/sign-in-method.validation.js'
 
 import {
@@ -13,14 +13,14 @@ import { expectThrow } from '../../controller-error-helper.js'
 import { assertDeepEqual } from '../../../assert.js'
 import type {
   PasswordChange,
-  PasswordSignInMethod
+  PasswordSignInMethod,
 } from '../../../../src/core/user/sign-in-method.js'
 
 describe('password sign-in-method validation unit tests', () => {
-  function validPasswordSignInMethod () {
+  function validPasswordSignInMethod() {
     return {
       username: 'user',
-      password: 'pwd'
+      password: 'pwd',
     }
   }
 
@@ -32,8 +32,9 @@ describe('password sign-in-method validation unit tests', () => {
 
   function fail(signInMethod: unknown) {
     expectThrow(
-      () => validatePasswordSignInMethod(signInMethod)
-    , invalidSignInMethodError)
+      () => validatePasswordSignInMethod(signInMethod),
+      invalidSignInMethodError,
+    )
   }
 
   it('pass validation', () => {
@@ -43,7 +44,7 @@ describe('password sign-in-method validation unit tests', () => {
   it('fail with empty username', () => {
     const request = {
       ...validPasswordSignInMethod(),
-      username: ''
+      username: '',
     }
     fail(request)
   })
@@ -51,7 +52,7 @@ describe('password sign-in-method validation unit tests', () => {
   it('fail with invalid username', () => {
     const request = {
       ...validPasswordSignInMethod(),
-      username: 1
+      username: 1,
     }
     fail(request)
   })
@@ -64,7 +65,7 @@ describe('password sign-in-method validation unit tests', () => {
   it('fail with empty password', () => {
     const request = {
       ...validPasswordSignInMethod(),
-      password: ''
+      password: '',
     }
     fail(request)
   })
@@ -72,7 +73,7 @@ describe('password sign-in-method validation unit tests', () => {
   it('fail with invalid password', () => {
     const request = {
       ...validPasswordSignInMethod(),
-      password: {}
+      password: {},
     }
     fail(request)
   })
@@ -88,10 +89,10 @@ describe('password sign-in-method validation unit tests', () => {
 })
 
 describe('password change unit tests', () => {
-  function validPasswordChange () {
+  function validPasswordChange() {
     return {
       oldPassword: 'pwd1',
-      newPassword: 'pwd2'
+      newPassword: 'pwd2',
     }
   }
 
@@ -103,8 +104,9 @@ describe('password change unit tests', () => {
 
   function fail(passwordChange: unknown) {
     expectThrow(
-      () => validatePasswordChange(passwordChange)
-    , invalidPasswordChangeError)
+      () => validatePasswordChange(passwordChange),
+      invalidPasswordChangeError,
+    )
   }
 
   it('pass validation', () => {
@@ -114,7 +116,7 @@ describe('password change unit tests', () => {
   it('fail with empty old password', () => {
     const request = {
       ...validPasswordChange(),
-      oldPassword: ''
+      oldPassword: '',
     }
     fail(request)
   })
@@ -122,7 +124,7 @@ describe('password change unit tests', () => {
   it('fail with invalid old password', () => {
     const request = {
       ...validPasswordChange(),
-      oldPassword: 1
+      oldPassword: 1,
     }
     fail(request)
   })
@@ -135,7 +137,7 @@ describe('password change unit tests', () => {
   it('fail with empty new password', () => {
     const request = {
       ...validPasswordChange(),
-      newPassword: ''
+      newPassword: '',
     }
     fail(request)
   })
@@ -143,7 +145,7 @@ describe('password change unit tests', () => {
   it('fail with invalid new password', () => {
     const request = {
       ...validPasswordChange(),
-      newPassword: {}
+      newPassword: {},
     }
     fail(request)
   })

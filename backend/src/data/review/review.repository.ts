@@ -1,16 +1,12 @@
 import type { SelectQueryBuilder } from 'kysely'
 import { sql } from 'kysely'
 
-import type {
-  Database,
-  KyselyDatabase,
-  Transaction
-} from '../database.js'
+import type { Database, KyselyDatabase, Transaction } from '../database.js'
 import type {
   DbJoinedReview,
   ReviewRow,
   ReviewTable,
-  ReviewTableContent
+  ReviewTableContent,
 } from './review.table.js'
 
 import type { ListDirection } from '../../core/list.js'
@@ -20,15 +16,16 @@ import type {
   JoinedReview,
   NewReview,
   Review,
-  ReviewListOrder
+  ReviewListOrder,
 } from '../../core/review/review.js'
 import { contains } from '../../core/record.js'
 
-export async function insertReview (
+export async function insertReview(
   trx: Transaction,
-  review: NewReview
+  review: NewReview,
 ): Promise<Review> {
-  const insertedReview = await trx.trx()
+  const insertedReview = await trx
+    .trx()
     .insertInto('review')
     .values(toRow(review))
     .returningAll()
@@ -37,11 +34,12 @@ export async function insertReview (
   return toReview(insertedReview)
 }
 
-export async function updateReview (
+export async function updateReview(
   trx: Transaction,
-  review: Review
+  review: Review,
 ): Promise<Review> {
-  const updatedReview = await trx.trx()
+  const updatedReview = await trx
+    .trx()
     .updateTable('review')
     .set(toRow(review))
     .where('review_id', '=', review.id)
@@ -51,11 +49,12 @@ export async function updateReview (
   return toReview(updatedReview)
 }
 
-export async function findReviewById (
+export async function findReviewById(
   db: Database,
-  id: string
+  id: string,
 ): Promise<Review> {
-  const reviewRow = await db.getDb()
+  const reviewRow = await db
+    .getDb()
     .selectFrom('review')
     .where('review_id', '=', id)
     .selectAll('review')
@@ -68,24 +67,22 @@ interface ReviewTableRn extends ReviewTable {
   rn: number
 }
 
-const listByRatingAsc =
-  sql<ReviewTableRn>`(
+const listByRatingAsc = sql<ReviewTableRn>`(
     SELECT
       review.*,
       ROW_NUMBER() OVER(ORDER BY review.rating ASC, review.time DESC) rn
     FROM review
   )`
 
-const listByRatingDesc =
-  sql<ReviewTableRn>`(
+const listByRatingDesc = sql<ReviewTableRn>`(
     SELECT
       review.*,
       ROW_NUMBER() OVER(ORDER BY review.rating DESC, review.time DESC) rn
     FROM review
   )`
 
-function getListQueryByRating (
-  direction: ListDirection
+function getListQueryByRating(
+  direction: ListDirection,
 ): typeof listByRatingAsc {
   if (direction === 'asc') {
     return listByRatingAsc
@@ -107,17 +104,18 @@ const listByTimeDesc = sql<ReviewTableRn>`(
   FROM review
   )`
 
-function getListQueryByTime (
-  direction: ListDirection
-): typeof listByRatingAsc {
+function getListQueryByTime(direction: ListDirection): typeof listByRatingAsc {
   if (direction === 'asc') {
     return listByTimeAsc
   }
   return listByTimeDesc
 }
 
-type ListQueryBuilder =
-  SelectQueryBuilder<KyselyDatabase, 'review', InternalJoinedReview>
+type ListQueryBuilder = SelectQueryBuilder<
+  KyselyDatabase,
+  'review',
+  InternalJoinedReview
+>
 
 type OrderByGetter = (query: ListQueryBuilder) => ListQueryBuilder
 
@@ -126,63 +124,58 @@ interface ListQueryHelper {
   orderBy: OrderByGetter
 }
 
-function getOrderByBeerName (direction: ListDirection) {
-  return (query: ListQueryBuilder): ListQueryBuilder => query
-      .orderBy('beer_name', direction)
-      .orderBy('review.time', 'asc')
+function getOrderByBeerName(direction: ListDirection) {
+  return (query: ListQueryBuilder): ListQueryBuilder =>
+    query.orderBy('beer_name', direction).orderBy('review.time', 'asc')
 }
 
 // Note that this completely ignores collaborations. If name sorting is wanted
 // to take the brewery list name into account, it needs to be done in combining
 // the rows.
-function getOrderByBreweryName (direction: ListDirection) {
-  return (query: ListQueryBuilder): ListQueryBuilder => query
+function getOrderByBreweryName(direction: ListDirection) {
+  return (query: ListQueryBuilder): ListQueryBuilder =>
+    query
       .orderBy('brewery_name', direction)
       .orderBy('beer_name', 'asc')
       .orderBy('review.time', 'asc')
 }
 
-function getOrderByRating (direction: ListDirection) {
-  return (query: ListQueryBuilder): ListQueryBuilder => query
-      .orderBy('review.rating', direction)
-      .orderBy('review.time', 'desc')
+function getOrderByRating(direction: ListDirection) {
+  return (query: ListQueryBuilder): ListQueryBuilder =>
+    query.orderBy('review.rating', direction).orderBy('review.time', 'desc')
 }
 
-function getOrderByTime (direction: ListDirection) {
+function getOrderByTime(direction: ListDirection) {
   return (query: ListQueryBuilder): ListQueryBuilder =>
     query.orderBy('review.time', direction)
 }
 
-function getListQueryHelper (
-  reviewListOrder: ReviewListOrder
-): ListQueryHelper {
+function getListQueryHelper(reviewListOrder: ReviewListOrder): ListQueryHelper {
   if (reviewListOrder.property === 'beer_name') {
     return {
       selectQuery: getListQueryByRating(reviewListOrder.direction),
-      orderBy: getOrderByBeerName(reviewListOrder.direction)
+      orderBy: getOrderByBeerName(reviewListOrder.direction),
     }
   }
   if (reviewListOrder.property === 'brewery_name') {
     return {
       selectQuery: getListQueryByRating(reviewListOrder.direction),
-      orderBy: getOrderByBreweryName(reviewListOrder.direction)
+      orderBy: getOrderByBreweryName(reviewListOrder.direction),
     }
   }
   if (reviewListOrder.property === 'rating') {
     return {
       selectQuery: getListQueryByRating(reviewListOrder.direction),
-      orderBy: getOrderByRating(reviewListOrder.direction)
+      orderBy: getOrderByRating(reviewListOrder.direction),
     }
   }
   return {
     selectQuery: getListQueryByTime(reviewListOrder.direction),
-    orderBy: getOrderByTime(reviewListOrder.direction)
+    orderBy: getOrderByTime(reviewListOrder.direction),
   }
 }
 
-function getOrderBy (
-  reviewListOrder: ReviewListOrder
-): OrderByGetter {
+function getOrderBy(reviewListOrder: ReviewListOrder): OrderByGetter {
   if (reviewListOrder.property === 'beer_name') {
     return getOrderByBeerName(reviewListOrder.direction)
   }
@@ -196,23 +189,23 @@ function getOrderBy (
 }
 
 type ListPossibleColumns =
-  'review.review_id' |
-  'review.additional_info' |
-  'review.location' |
-  'review.rating' |
-  'review.time' |
-  'review.created_at' |
-  'beer.beer_id as beer_id' |
-  'beer.name as beer_name' |
-  'brewery.brewery_id as brewery_id' |
-  'brewery.name as brewery_name' |
-  'style.style_id as style_id' |
-  'style.name as style_name' |
-  'container.container_id as container_id' |
-  'container.type as container_type' |
-  'container.size as container_size' |
-  'location.location_id as location_id' |
-  'location.name as location_name'
+  | 'review.review_id'
+  | 'review.additional_info'
+  | 'review.location'
+  | 'review.rating'
+  | 'review.time'
+  | 'review.created_at'
+  | 'beer.beer_id as beer_id'
+  | 'beer.name as beer_name'
+  | 'brewery.brewery_id as brewery_id'
+  | 'brewery.name as brewery_name'
+  | 'style.style_id as style_id'
+  | 'style.name as style_name'
+  | 'container.container_id as container_id'
+  | 'container.type as container_type'
+  | 'container.size as container_size'
+  | 'location.location_id as location_id'
+  | 'location.name as location_name'
 
 const listColumns: ListPossibleColumns[] = [
   'review.review_id',
@@ -234,16 +227,17 @@ const listColumns: ListPossibleColumns[] = [
   'location.name as location_name',
 ]
 
-export async function listReviews (
+export async function listReviews(
   db: Database,
   pagination: Pagination,
-  reviewListOrder: ReviewListOrder
+  reviewListOrder: ReviewListOrder,
 ): Promise<JoinedReview[]> {
   const { start, end } = toRowNumbers(pagination)
 
   const queryHelper = getListQueryHelper(reviewListOrder)
 
-  const query = db.getDb()
+  const query = db
+    .getDb()
     .selectFrom(queryHelper.selectQuery.as('review'))
     .innerJoin('beer', 'review.beer', 'beer_id')
     .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
@@ -255,43 +249,48 @@ export async function listReviews (
     .select(listColumns)
     .where((eb) => eb.between('rn', start, end))
 
-  const reviews = await queryHelper.orderBy(query)
-    .execute()
+  const reviews = await queryHelper.orderBy(query).execute()
 
   return toJoinedReviews(parseReviewRows(reviews))
 }
 
-export async function listReviewsByBeer (
+export async function listReviewsByBeer(
   db: Database,
   beerId: string,
-  reviewListOrder: ReviewListOrder
+  reviewListOrder: ReviewListOrder,
 ): Promise<JoinedReview[]> {
-  return toJoinedReviews(await joinReviewData(db.getDb()
-    .selectFrom('beer')
-    .where('beer.beer_id', '=', beerId),
-  reviewListOrder
-  ))
+  return toJoinedReviews(
+    await joinReviewData(
+      db.getDb().selectFrom('beer').where('beer.beer_id', '=', beerId),
+      reviewListOrder,
+    ),
+  )
 }
 
-export async function listReviewsByBrewery (
+export async function listReviewsByBrewery(
   db: Database,
   breweryId: string,
-  reviewListOrder: ReviewListOrder
+  reviewListOrder: ReviewListOrder,
 ): Promise<JoinedReview[]> {
-  return toJoinedReviews(await joinReviewData(db.getDb()
-    .selectFrom('beer_brewery as querybrewery')
-    .innerJoin('beer', 'querybrewery.beer', 'beer.beer_id')
-    .where('querybrewery.brewery', '=', breweryId),
-  reviewListOrder
-  ))
+  return toJoinedReviews(
+    await joinReviewData(
+      db
+        .getDb()
+        .selectFrom('beer_brewery as querybrewery')
+        .innerJoin('beer', 'querybrewery.beer', 'beer.beer_id')
+        .where('querybrewery.brewery', '=', breweryId),
+      reviewListOrder,
+    ),
+  )
 }
 
-export async function listReviewsByLocation (
+export async function listReviewsByLocation(
   db: Database,
   locationId: string,
-  reviewListOrder: ReviewListOrder
+  reviewListOrder: ReviewListOrder,
 ): Promise<JoinedReview[]> {
-  const query = db.getDb()
+  const query = db
+    .getDb()
     .selectFrom('review')
     .innerJoin('beer', 'review.beer', 'beer_id')
     .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
@@ -303,28 +302,31 @@ export async function listReviewsByLocation (
     .select(listColumns)
     .where('review.location', '=', locationId)
 
-  const reviews = await getOrderBy(reviewListOrder)(query)
-    .execute()
+  const reviews = await getOrderBy(reviewListOrder)(query).execute()
 
   return toJoinedReviews(parseReviewRows(reviews))
 }
 
-export async function listReviewsByStyle (
+export async function listReviewsByStyle(
   db: Database,
   styleId: string,
-  reviewListOrder: ReviewListOrder
+  reviewListOrder: ReviewListOrder,
 ): Promise<JoinedReview[]> {
-  return toJoinedReviews(await joinReviewData(db.getDb()
-    .selectFrom('beer_style as querystyle')
-    .innerJoin('beer', 'querystyle.beer', 'beer.beer_id')
-    .where('querystyle.style', '=', styleId),
-  reviewListOrder
-  ))
+  return toJoinedReviews(
+    await joinReviewData(
+      db
+        .getDb()
+        .selectFrom('beer_style as querystyle')
+        .innerJoin('beer', 'querystyle.beer', 'beer.beer_id')
+        .where('querystyle.style', '=', styleId),
+      reviewListOrder,
+    ),
+  )
 }
 
-async function joinReviewData (
+async function joinReviewData(
   query: SelectQueryBuilder<KyselyDatabase, 'beer', unknown>,
-  reviewListOrder: ReviewListOrder
+  reviewListOrder: ReviewListOrder,
 ): Promise<DbJoinedReview[]> {
   const orderBy = getOrderBy(reviewListOrder)
 
@@ -338,8 +340,7 @@ async function joinReviewData (
     .leftJoin('location', 'review.location', 'location.location_id')
     .select(listColumns)
 
-  const reviews = await orderBy(selectQuery)
-    .execute()
+  const reviews = await orderBy(selectQuery).execute()
 
   return parseReviewRows(reviews)
 }
@@ -363,50 +364,61 @@ interface InternalJoinedReview {
   style_name: string
 }
 
-function parseReviewRows (
-  reviews: InternalJoinedReview[]
-): DbJoinedReview[] {
+function parseReviewRows(reviews: InternalJoinedReview[]): DbJoinedReview[] {
   const reviewMap: Record<string, DbJoinedReview> = {}
   const reviewArray: DbJoinedReview[] = []
 
-  reviews.forEach(review => {
+  reviews.forEach((review) => {
     if (contains(reviewMap, review.review_id)) {
       const existing = reviewMap[review.review_id]
-      if (existing.breweries.find(
-        brewery => brewery.brewery_id === review.brewery_id) === undefined) {
+      if (
+        existing.breweries.find(
+          (brewery) => brewery.brewery_id === review.brewery_id,
+        ) === undefined
+      ) {
         existing.breweries.push({
           brewery_id: review.brewery_id,
-          name: review.brewery_name
+          name: review.brewery_name,
         })
       }
-      if (existing.styles.find(
-        styles => styles.style_id === review.style_id) === undefined) {
+      if (
+        existing.styles.find(
+          (styles) => styles.style_id === review.style_id,
+        ) === undefined
+      ) {
         existing.styles.push({
           style_id: review.style_id,
-          name: review.style_name
+          name: review.style_name,
         })
       }
     } else {
       reviewMap[review.review_id] = {
         ...review,
-        location: review.location_id && review.location_name ? {
-          location_id: review.location_id,
-          name: review.location_name
-        } : null,
-        breweries: [{
-          brewery_id: review.brewery_id,
-          name: review.brewery_name
-        }],
-        styles: [{
-          style_id: review.style_id,
-          name: review.style_name
-        }]
+        location:
+          review.location_id && review.location_name
+            ? {
+                location_id: review.location_id,
+                name: review.location_name,
+              }
+            : null,
+        breweries: [
+          {
+            brewery_id: review.brewery_id,
+            name: review.brewery_name,
+          },
+        ],
+        styles: [
+          {
+            style_id: review.style_id,
+            name: review.style_name,
+          },
+        ],
       }
       reviewArray.push(reviewMap[review.review_id])
     }
   })
 
-  reviewArray.forEach(review => {
+  reviewArray.forEach((review) => {
     review.breweries.sort((a, b) => a.name.localeCompare(b.name))
     review.styles.sort((a, b) => a.name.localeCompare(b.name))
   })
@@ -414,7 +426,7 @@ function parseReviewRows (
   return reviewArray
 }
 
-function toReview (row: ReviewRow): Review {
+function toReview(row: ReviewRow): Review {
   return {
     id: row.review_id,
     additionalInfo: row.additional_info,
@@ -424,39 +436,42 @@ function toReview (row: ReviewRow): Review {
     rating: row.rating,
     time: row.time,
     smell: row.smell,
-    taste: row.taste
+    taste: row.taste,
   }
 }
 
-function toJoinedReviews (reviewRows: DbJoinedReview[]): JoinedReview[] {
-  return reviewRows.map(row => ({
+function toJoinedReviews(reviewRows: DbJoinedReview[]): JoinedReview[] {
+  return reviewRows.map((row) => ({
     id: row.review_id,
     additionalInfo: row.additional_info,
     beerId: row.beer_id,
     beerName: row.beer_name,
-    breweries: row.breweries.map(brewery => ({
+    breweries: row.breweries.map((brewery) => ({
       id: brewery.brewery_id,
-      name: brewery.name
+      name: brewery.name,
     })),
     container: {
       id: row.container_id,
       size: row.container_size,
-      type: row.container_type
+      type: row.container_type,
     },
-    location: row.location === null ? undefined : {
-      id: row.location.location_id,
-      name: row.location.name,
-    },
+    location:
+      row.location === null
+        ? undefined
+        : {
+            id: row.location.location_id,
+            name: row.location.name,
+          },
     rating: row.rating,
-    styles: row.styles.map(style => ({
+    styles: row.styles.map((style) => ({
       id: style.style_id,
-      name: style.name
+      name: style.name,
     })),
-    time: row.time
+    time: row.time,
   }))
 }
 
-function toRow (review: NewReview | Review): ReviewTableContent {
+function toRow(review: NewReview | Review): ReviewTableContent {
   return {
     additional_info: review.additionalInfo,
     beer: review.beer,
@@ -465,6 +480,6 @@ function toRow (review: NewReview | Review): ReviewTableContent {
     rating: review.rating,
     smell: review.smell,
     taste: review.taste,
-    time: review.time
+    time: review.time,
   }
 }

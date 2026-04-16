@@ -4,54 +4,50 @@ import type {
   CreateStyleIf,
   StyleWithParentIds,
   StyleWithParentsAndChildren,
-  UpdateStyleIf
+  UpdateStyleIf,
 } from '../../style/style.js'
 import {
   validateCreateStyleRequest,
   validateStyleId,
-  validateUpdateStyleRequest
+  validateUpdateStyleRequest,
 } from './validation.js'
 import type { log } from '../../log.js'
 
-export async function createStyle (
+export async function createStyle(
   createStyleIf: CreateStyleIf,
   body: unknown,
-  log: log
+  log: log,
 ): Promise<StyleWithParentIds> {
   const createStyleRequest = validateCreateStyleRequest(body)
   return await styleService.createStyle(createStyleIf, createStyleRequest, log)
 }
 
-export async function updateStyle (
+export async function updateStyle(
   updateStyleIf: UpdateStyleIf,
   id: string | undefined,
   body: unknown,
-  log: log
+  log: log,
 ): Promise<StyleWithParentIds> {
   const validRequest = validateUpdateStyleRequest(body, id)
   return await styleService.updateStyle(
     updateStyleIf,
     validRequest.id,
     validRequest.request,
-    log
+    log,
   )
 }
 
-export async function findStyleById (
+export async function findStyleById(
   find: (id: string) => Promise<StyleWithParentsAndChildren | undefined>,
   id: string | undefined,
-  log: log
+  log: log,
 ): Promise<StyleWithParentsAndChildren> {
-  return await styleService.findStyleById(
-    find,
-    validateStyleId(id),
-    log
-  )
+  return await styleService.findStyleById(find, validateStyleId(id), log)
 }
 
-export async function listStyles (
+export async function listStyles(
   list: () => Promise<StyleWithParentIds[]>,
-  log: log
+  log: log,
 ): Promise<StyleWithParentIds[]> {
   return await styleService.listStyles(list, log)
 }

@@ -18,161 +18,125 @@ describe('style tests', () => {
   it('return undefined on style that does not exist', async () => {
     const readStyle = await styleRepository.findStyleById(
       ctx.db,
-      'e58a370e-7526-47e3-9c3d-da6a2c0ec5bd'
+      'e58a370e-7526-47e3-9c3d-da6a2c0ec5bd',
     )
-    assertEqual(
-      readStyle,
-      undefined
-    )
+    assertEqual(readStyle, undefined)
   })
 
   it('find style by id', async () => {
-    const style = await ctx.db.executeReadWriteTransaction(async (
-      trx: Transaction
-    ) => {
-      return await styleRepository.insertStyle(
-        trx,
-        { name: 'Imperial Stout' }
-      )
+    const style = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) => {
+        return await styleRepository.insertStyle(trx, {
+          name: 'Imperial Stout',
+        })
+      },
+    )
+    const readStyle = await styleRepository.findStyleById(ctx.db, style.id)
+    assertDeepEqual(readStyle, {
+      ...style,
+      children: [],
+      parents: [],
     })
-    const readStyle = await styleRepository.findStyleById(
-      ctx.db,
-      style.id
-    )
-    assertDeepEqual(
-      readStyle,
-      {
-        ...style,
-        children: [],
-        parents: []
-      }
-    )
   })
 
   interface CreatedStyles {
-    parent: Style,
-    child: Style,
+    parent: Style
+    child: Style
     relationships: StyleRelationship[]
   }
 
   async function createStyles(db: Database): Promise<CreatedStyles> {
-    const insertedStyles = await db.executeReadWriteTransaction(async (
-      trx: Transaction
-    ) => {
-      return await Promise.all([
-        styleRepository.insertStyle(
-          trx,
-          { name: 'Imperial Stout' }
-        ),
-        styleRepository.insertStyle(
-          trx,
-          { name: 'Stout' }
-        )
-      ])
-    })
-    const relationships = await ctx.db.executeReadWriteTransaction(async (
-      trx: Transaction
-    ) => {
-      return await styleRepository.insertStyleRelationships(
-        trx,
-        [
+    const insertedStyles = await db.executeReadWriteTransaction(
+      async (trx: Transaction) => {
+        return await Promise.all([
+          styleRepository.insertStyle(trx, { name: 'Imperial Stout' }),
+          styleRepository.insertStyle(trx, { name: 'Stout' }),
+        ])
+      },
+    )
+    const relationships = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) => {
+        return await styleRepository.insertStyleRelationships(trx, [
           {
             parent: insertedStyles[1].id,
-            child: insertedStyles[0].id
-          }
-        ]
-      )
-    })
+            child: insertedStyles[0].id,
+          },
+        ])
+      },
+    )
     return {
       parent: insertedStyles[1],
       child: insertedStyles[0],
-      relationships: relationships
+      relationships: relationships,
     }
   }
 
   it('list style relationships', async () => {
     const styles = await createStyles(ctx.db)
-    assertDeepEqual(
-      styles.relationships,
-      [
-        {
-          parent: styles.parent.id,
-          child: styles.child.id
-        }
-      ]
+    assertDeepEqual(styles.relationships, [
+      {
+        parent: styles.parent.id,
+        child: styles.child.id,
+      },
+    ])
+    const styleRelationships = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) => {
+        return styleRepository.listStyleRelationships(trx)
+      },
     )
-    const styleRelationships = await ctx.db.executeReadWriteTransaction(async (
-      trx: Transaction
-    ) => {
-      return styleRepository.listStyleRelationships(trx)
-    })
-    assertDeepEqual(
-      styleRelationships,
-      [
-        {
-          parent: styles.parent.id,
-          child: styles.child.id
-        }
-      ]
-    )
+    assertDeepEqual(styleRelationships, [
+      {
+        parent: styles.parent.id,
+        child: styles.child.id,
+      },
+    ])
   })
 
   it('delete style relationships', async () => {
     const styles = await createStyles(ctx.db)
-    await ctx.db.executeReadWriteTransaction(async (
-      trx: Transaction
-    ) => {
+    await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
       await styleRepository.deleteStyleChildRelationships(trx, styles.child.id)
     })
-    const styleRelationships = await ctx.db.executeReadWriteTransaction(async (
-      trx: Transaction
-    ) => {
-      return styleRepository.listStyleRelationships(trx)
-    })
-    assertDeepEqual(
-      styleRelationships,
-      []
+    const styleRelationships = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) => {
+        return styleRepository.listStyleRelationships(trx)
+      },
     )
+    assertDeepEqual(styleRelationships, [])
   })
 
   it('update style', async () => {
-    const style = await ctx.db.executeReadWriteTransaction(async (
-      trx: Transaction
-    ) => {
-      return await styleRepository.insertStyle(
-        trx,
-        { name: 'IAP' }
-      )
-    })
-    const updated = await ctx.db.executeReadWriteTransaction(async (
-      trx: Transaction
-    ) => {
-      return await styleRepository.updateStyle(
-        trx,
-        {
+    const style = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) => {
+        return await styleRepository.insertStyle(trx, { name: 'IAP' })
+      },
+    )
+    const updated = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) => {
+        return await styleRepository.updateStyle(trx, {
           ...style,
-          name: 'IPA'
-        }
-      )
-    })
+          name: 'IPA',
+        })
+      },
+    )
     assertDeepEqual(updated, {
       ...style,
-      name: 'IPA'
+      name: 'IPA',
     })
   })
 
   it('lock only style that exists', async () => {
-    const style = await ctx.db.executeReadWriteTransaction(async (
-      trx: Transaction
-    ) => {
-      return await styleRepository.insertStyle(trx, { name: 'Helles' })
-    })
+    const style = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) => {
+        return await styleRepository.insertStyle(trx, { name: 'Helles' })
+      },
+    )
     const dummyId = '778fd028-62a4-4a8a-a636-3e5db5475df2'
     await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
-      const lockedKeys = await styleRepository.lockStyles(
-        trx,
-        [style.id, dummyId]
-      )
+      const lockedKeys = await styleRepository.lockStyles(trx, [
+        style.id,
+        dummyId,
+      ])
       assertDeepEqual(lockedKeys, [style.id])
     })
   })
@@ -180,18 +144,15 @@ describe('style tests', () => {
   it('list styles', async () => {
     const insertedStyles = await createStyles(ctx.db)
     const styles = await styleRepository.listStyles(ctx.db)
-    assertDeepEqual(
-      styles,
-      [
-
-        {
-          ...insertedStyles.child,
-          parents: [insertedStyles.parent.id]
-        },
-        {
-          ...insertedStyles.parent,
-          parents: []
-        }
-      ])
+    assertDeepEqual(styles, [
+      {
+        ...insertedStyles.child,
+        parents: [insertedStyles.parent.id],
+      },
+      {
+        ...insertedStyles.parent,
+        parents: [],
+      },
+    ])
   })
 })

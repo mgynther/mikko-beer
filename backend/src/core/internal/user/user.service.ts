@@ -1,10 +1,6 @@
 import * as authTokenService from '../../internal/auth/auth-token.service.js'
 import type { SignedInUser } from './signed-in-user.js'
-import type {
-  CreateAnonymousUserRequest,
-  Role,
-  User
-} from '../../user/user.js'
+import type { CreateAnonymousUserRequest, Role, User } from '../../user/user.js'
 
 import { invalidCredentialsError, userNotFoundError } from '../../errors.js'
 import { INFO } from '../../log.js'
@@ -12,12 +8,12 @@ import type { log } from '../../log.js'
 import type { DbRefreshToken } from '../../auth/refresh-token.js'
 import type { AuthTokenConfig } from '../../auth/auth-token.js'
 
-export async function createAnonymousUser (
+export async function createAnonymousUser(
   createAnonymousUser: (request: CreateAnonymousUserRequest) => Promise<User>,
   insertRefreshToken: (userId: string) => Promise<DbRefreshToken>,
   role: Role,
   authTokenConfig: AuthTokenConfig,
-  log: log
+  log: log,
 ): Promise<SignedInUser> {
   log(INFO, 'create user with role', role)
   const user = await createAnonymousUser({ role })
@@ -25,20 +21,20 @@ export async function createAnonymousUser (
   const { refresh, auth } = await authTokenService.createTokens(
     insertRefreshToken,
     user,
-    authTokenConfig
+    authTokenConfig,
   )
   log(INFO, 'created user', user.id)
   return {
     refreshToken: refresh,
     authToken: auth,
-    user
+    user,
   }
 }
 
-export async function findUserById (
+export async function findUserById(
   findUserById: (userId: string) => Promise<User | undefined>,
   userId: string,
-  log: log
+  log: log,
 ): Promise<User> {
   log(INFO, 'find user', userId)
   const user = await findUserById(userId)
@@ -48,17 +44,17 @@ export async function findUserById (
   return user
 }
 
-export async function listUsers (
+export async function listUsers(
   listUsers: () => Promise<User[]>,
-  log: log
+  log: log,
 ): Promise<User[]> {
   log(INFO, 'list users')
   return await listUsers()
 }
 
-export async function lockUserById (
+export async function lockUserById(
   lockUserById: (id: string) => Promise<User | undefined>,
-  id: string
+  id: string,
 ): Promise<User> {
   const user = await lockUserById(id)
   if (user === undefined) {
@@ -67,9 +63,9 @@ export async function lockUserById (
   return user
 }
 
-export async function lockUserByUsername (
+export async function lockUserByUsername(
   lockUserByUsername: (username: string) => Promise<User | undefined>,
-  username: string
+  username: string,
 ): Promise<User> {
   const user = await lockUserByUsername(username)
   if (user === undefined) {
@@ -78,20 +74,20 @@ export async function lockUserByUsername (
   return user
 }
 
-export async function setUserUsername (
+export async function setUserUsername(
   setUserUsername: (userId: string, username: string) => Promise<void>,
   userId: string,
   username: string,
-  log: log
+  log: log,
 ): Promise<void> {
   log(INFO, 'set user username', userId, username)
   await setUserUsername(userId, username)
 }
 
-export async function deleteUserById (
+export async function deleteUserById(
   deleteUserById: (id: string) => Promise<void>,
   id: string,
-  log: log
+  log: log,
 ): Promise<void> {
   log(INFO, 'delete user', id)
   await deleteUserById(id)

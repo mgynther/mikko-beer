@@ -1,41 +1,37 @@
 import { ajv } from '../ajv.js'
 
-import {
-  invalidContainerError,
-  invalidContainerIdError
-} from '../../errors.js'
+import { invalidContainerError, invalidContainerIdError } from '../../errors.js'
 import type {
   CreateContainerRequest,
-  UpdateContainerRequest
+  UpdateContainerRequest,
 } from '../../container/container.js'
 
-const doValidateContainerRequest =
-  ajv.compile<CreateContainerRequest>({
-    type: 'object',
-    properties: {
-      type: {
-        type: 'string',
-        minLength: 1
-      },
-      size: {
-        type: 'string',
-        pattern: '^[1-9]{0,1}[0-9].[0-9]{2}$'
-      }
+const doValidateContainerRequest = ajv.compile<CreateContainerRequest>({
+  type: 'object',
+  properties: {
+    type: {
+      type: 'string',
+      minLength: 1,
     },
-    required: ['type', 'size'],
-    additionalProperties: false
-  })
+    size: {
+      type: 'string',
+      pattern: '^[1-9]{0,1}[0-9].[0-9]{2}$',
+    },
+  },
+  required: ['type', 'size'],
+  additionalProperties: false,
+})
 
-function isCreateContainerRequestValid (body: unknown): boolean {
+function isCreateContainerRequestValid(body: unknown): boolean {
   return doValidateContainerRequest(body)
 }
 
-function isUpdateContainerRequestValid (body: unknown): boolean {
+function isUpdateContainerRequestValid(body: unknown): boolean {
   return doValidateContainerRequest(body)
 }
 
-export function validateCreateContainerRequest (
-  body: unknown
+export function validateCreateContainerRequest(
+  body: unknown,
 ): CreateContainerRequest {
   if (!isCreateContainerRequestValid(body)) {
     throw invalidContainerError
@@ -49,13 +45,13 @@ export function validateCreateContainerRequest (
 }
 
 interface ValidUpdateContainerRequest {
-  id: string,
+  id: string
   request: UpdateContainerRequest
 }
 
-export function validateUpdateContainerRequest (
+export function validateUpdateContainerRequest(
   body: unknown,
-  containerId: string | undefined
+  containerId: string | undefined,
 ): ValidUpdateContainerRequest {
   if (!isUpdateContainerRequestValid(body)) {
     throw invalidContainerError
@@ -66,11 +62,11 @@ export function validateUpdateContainerRequest (
   const result = body as UpdateContainerRequest
   return {
     id: validateContainerId(containerId),
-    request: result
+    request: result,
   }
 }
 
-export function validateContainerId (id: string | undefined): string {
+export function validateContainerId(id: string | undefined): string {
   if (id === undefined || id.length === 0) {
     throw invalidContainerIdError
   }

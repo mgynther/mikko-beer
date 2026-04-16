@@ -4,7 +4,7 @@ import {
   referredBeerNotFoundError,
   referredContainerNotFoundError,
   referredStorageNotFoundError,
-  reviewNotFoundError
+  reviewNotFoundError,
 } from '../../../../src/core/errors.js'
 import type {
   CreateIf,
@@ -14,7 +14,7 @@ import type {
   Review,
   ReviewListOrder,
   UpdateIf,
-  UpdateReviewRequest
+  UpdateReviewRequest,
 } from '../../../../src/core/review/review.js'
 import type { Pagination } from '../../../../src/core/pagination.js'
 import * as reviewService from '../../../../src/core/internal/review/service.js'
@@ -33,12 +33,12 @@ const newReview: NewReview = {
   rating: 8,
   time: new Date(time),
   smell: 'good',
-  taste: 'tasty'
+  taste: 'tasty',
 }
 
 const createReviewRequest: CreateReviewRequest = {
   ...newReview,
-  time: new Date(time).toISOString()
+  time: new Date(time).toISOString(),
 }
 
 const review: Review = {
@@ -48,48 +48,50 @@ const review: Review = {
 
 const updateReviewRequest: UpdateReviewRequest = {
   ...review,
-  time: new Date(time).toISOString()
+  time: new Date(time).toISOString(),
 }
 
 const joinedReview: JoinedReview = {
   ...review,
   beerId: '9ac340c5-795e-4b4a-828e-47feb2868fc8',
   beerName: 'Smoky Road',
-  breweries: [{
-    id: 'dfa48fab-3f6a-417c-9026-ca50ed4f5f8c',
-    name: 'Mallassepät',
-  }],
+  breweries: [
+    {
+      id: 'dfa48fab-3f6a-417c-9026-ca50ed4f5f8c',
+      name: 'Mallassepät',
+    },
+  ],
   container: {
     id: '65c44eda-b072-450e-a032-04c024d8b405',
     type: 'draft',
     size: '0.1',
   },
   location: undefined,
-  styles: [{
-    id: '6481c189-dc9a-45c0-b8ab-c7577db72b1c',
-    name: 'rauch',
-  }],
+  styles: [
+    {
+      id: '6481c189-dc9a-45c0-b8ab-c7577db72b1c',
+      name: 'rauch',
+    },
+  ],
 }
 
 const order: ReviewListOrder = {
   property: 'rating',
-  direction: 'desc'
+  direction: 'desc',
 }
 
 const pagination: Pagination = {
   size: 10,
-  skip: 80
+  skip: 80,
 }
 
-const lockBeer = async (
-  beerId: string
-): Promise<string | undefined> => {
+const lockBeer = async (beerId: string): Promise<string | undefined> => {
   assertEqual(beerId, review.beer)
   return review.beer
 }
 
 const lockContainer = async (
-  containerId: string
+  containerId: string,
 ): Promise<string | undefined> => {
   assertEqual(containerId, review.container)
   return review.container
@@ -98,25 +100,31 @@ const lockContainer = async (
 const storageId = '1e90c440-73d4-4de4-bc31-c267df3e8d46'
 
 const lockStorage = async (
-  lockStorageId: string
+  lockStorageId: string,
 ): Promise<string | undefined> => {
   assertEqual(lockStorageId, storageId)
   return storageId
 }
 
 const createReview = async (newReview: NewReview) => {
-  assertDeepEqual({
-    ...newReview,
-    time: newReview.time.toISOString()
-  }, createReviewRequest)
+  assertDeepEqual(
+    {
+      ...newReview,
+      time: newReview.time.toISOString(),
+    },
+    createReviewRequest,
+  )
   return { ...review }
 }
 
 const updateReview = async (review: Review) => {
-  assertDeepEqual({
-    ...review,
-    time: review.time.toISOString()
-  }, updateReviewRequest)
+  assertDeepEqual(
+    {
+      ...review,
+      time: review.time.toISOString(),
+    },
+    updateReviewRequest,
+  )
   return { ...review }
 }
 
@@ -131,18 +139,18 @@ describe('review service unit tests', () => {
       deleteFromStorage: notCalled,
       lockBeer,
       lockContainer,
-      lockStorage: notCalled
+      lockStorage: notCalled,
     }
     const result = await reviewService.createReview(
       createIf,
       createReviewRequest,
       undefined,
-      log
+      log,
     )
     assertDeepEqual(result, {
       ...createReviewRequest,
       id: review.id,
-      time: new Date(createReviewRequest.time)
+      time: new Date(createReviewRequest.time),
     })
   })
 
@@ -152,14 +160,14 @@ describe('review service unit tests', () => {
       deleteFromStorage: notCalled,
       lockBeer: async () => undefined,
       lockContainer,
-      lockStorage: notCalled
+      lockStorage: notCalled,
     }
     expectReject(async () => {
       await reviewService.createReview(
         createIf,
         createReviewRequest,
         undefined,
-        log
+        log,
       )
     }, referredBeerNotFoundError)
   })
@@ -170,14 +178,14 @@ describe('review service unit tests', () => {
       deleteFromStorage: notCalled,
       lockBeer,
       lockContainer: async () => undefined,
-      lockStorage: notCalled
+      lockStorage: notCalled,
     }
     expectReject(async () => {
       await reviewService.createReview(
         createIf,
         createReviewRequest,
         undefined,
-        log
+        log,
       )
     }, referredContainerNotFoundError)
   })
@@ -204,12 +212,12 @@ describe('review service unit tests', () => {
       createIf,
       createReviewRequest,
       storageId,
-      log
+      log,
     )
     assertDeepEqual(result, {
       ...createReviewRequest,
       id: review.id,
-      time: new Date(createReviewRequest.time)
+      time: new Date(createReviewRequest.time),
     })
     assertEqual(deletedFromStorage, true)
   })
@@ -220,14 +228,14 @@ describe('review service unit tests', () => {
       deleteFromStorage: notCalled,
       lockBeer,
       lockContainer,
-      lockStorage: async () => undefined
+      lockStorage: async () => undefined,
     }
     expectReject(async () => {
       await reviewService.createReview(
         createIf,
         createReviewRequest,
         storageId,
-        log
+        log,
       )
     }, referredStorageNotFoundError)
   })
@@ -242,12 +250,12 @@ describe('review service unit tests', () => {
       updateIf,
       review.id,
       updateReviewRequest,
-      log
+      log,
     )
     assertDeepEqual(result, {
       ...updateReviewRequest,
       id: review.id,
-      time: new Date(updateReviewRequest.time)
+      time: new Date(updateReviewRequest.time),
     })
   })
 
@@ -262,7 +270,7 @@ describe('review service unit tests', () => {
         updateIf,
         review.id,
         updateReviewRequest,
-        log
+        log,
       )
     }, referredBeerNotFoundError)
   })
@@ -278,7 +286,7 @@ describe('review service unit tests', () => {
         updateIf,
         review.id,
         updateReviewRequest,
-        log
+        log,
       )
     }, referredContainerNotFoundError)
   })
@@ -305,7 +313,8 @@ describe('review service unit tests', () => {
 
   it('list reviews', async () => {
     const lister = async (
-      listPagination: Pagination, listOrder: ReviewListOrder
+      listPagination: Pagination,
+      listOrder: ReviewListOrder,
     ) => {
       assertDeepEqual(listPagination, pagination)
       assertDeepEqual(listOrder, order)
@@ -315,7 +324,7 @@ describe('review service unit tests', () => {
       lister,
       pagination,
       order,
-      log
+      log,
     )
     assertDeepEqual(result, [joinedReview])
   })
@@ -331,7 +340,7 @@ describe('review service unit tests', () => {
       lister,
       beerId,
       order,
-      log
+      log,
     )
     assertDeepEqual(result, [joinedReview])
   })
@@ -340,7 +349,7 @@ describe('review service unit tests', () => {
     const breweryId = 'f7471dfd-9af9-4a9b-b39d-47f4e7199800'
     const lister = async (
       listBreweryId: string,
-      listOrder: ReviewListOrder
+      listOrder: ReviewListOrder,
     ) => {
       assertEqual(listBreweryId, breweryId)
       assertDeepEqual(listOrder, order)
@@ -350,7 +359,7 @@ describe('review service unit tests', () => {
       lister,
       breweryId,
       order,
-      log
+      log,
     )
     assertDeepEqual(result, [joinedReview])
   })
@@ -359,7 +368,7 @@ describe('review service unit tests', () => {
     const locationId = '714b123e-c6c1-4e1a-b6f8-0ce4e076520e'
     const lister = async (
       listLocationId: string,
-      listOrder: ReviewListOrder
+      listOrder: ReviewListOrder,
     ) => {
       assertEqual(listLocationId, locationId)
       assertDeepEqual(listOrder, order)
@@ -369,7 +378,7 @@ describe('review service unit tests', () => {
       lister,
       locationId,
       order,
-      log
+      log,
     )
     assertDeepEqual(result, [joinedReview])
   })
@@ -385,7 +394,7 @@ describe('review service unit tests', () => {
       lister,
       styleId,
       order,
-      log
+      log,
     )
     assertDeepEqual(result, [joinedReview])
   })

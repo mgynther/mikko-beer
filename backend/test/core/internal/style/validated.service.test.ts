@@ -7,7 +7,7 @@ import type {
   CreateStyleRequest,
   CreateStyleIf,
   UpdateStyleRequest,
-  UpdateStyleIf
+  UpdateStyleIf,
 } from '../../../../src/core/style/style.js'
 import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
@@ -20,28 +20,28 @@ const styleId = 'af011f79-7e68-4f64-87dd-4b45c8e175dc'
 
 const validCreateStyleRequest: CreateStyleRequest = {
   name: 'American IPA',
-  parents: []
+  parents: [],
 }
 
 const validUpdateStyleRequest: UpdateStyleRequest = {
   name: 'American IPA',
-  parents: []
+  parents: [],
 }
 
 const style: Style = {
   id: '3db5f19b-fa63-4296-bb18-891c2bbfa80d',
-  name: validCreateStyleRequest.name
+  name: validCreateStyleRequest.name,
 }
 
 const invalidStyleRequest = {
-  name: 'This is invalid'
+  name: 'This is invalid',
 }
 
 const createIf: CreateStyleIf = {
   create: async () => style,
   lockStyles: async () => [styleId],
   insertParents: async () => {},
-  listAllRelationships: async () => []
+  listAllRelationships: async () => [],
 }
 
 const updateIf: UpdateStyleIf = {
@@ -49,7 +49,7 @@ const updateIf: UpdateStyleIf = {
   lockStyles: async () => [styleId],
   insertParents: async () => {},
   listAllRelationships: async () => [],
-  deleteStyleChildRelationships: async () => {}
+  deleteStyleChildRelationships: async () => {},
 }
 
 describe('style authorized service unit tests', () => {
@@ -68,7 +68,7 @@ describe('style authorized service unit tests', () => {
       updateIf,
       style.id,
       validUpdateStyleRequest,
-      log
+      log,
     )
   })
 
@@ -78,7 +78,7 @@ describe('style authorized service unit tests', () => {
         updateIf,
         style.id,
         invalidStyleRequest,
-        log
+        log,
       )
     }, invalidStyleError)
   })
@@ -89,7 +89,7 @@ describe('style authorized service unit tests', () => {
         updateIf,
         undefined,
         validUpdateStyleRequest,
-        log
+        log,
       )
     }, invalidStyleIdError)
   })

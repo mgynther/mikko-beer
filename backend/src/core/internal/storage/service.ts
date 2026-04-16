@@ -6,73 +6,73 @@ import type {
   MonthlyStorageStats,
   Storage,
   StorageWithDate,
-  UpdateIf
+  UpdateIf,
 } from '../../storage/storage.js'
 
 import {
   referredBeerNotFoundError,
   referredContainerNotFoundError,
-  storageNotFoundError
+  storageNotFoundError,
 } from '../../errors.js'
 import type { log } from '../../log.js'
-import { INFO, } from '../../log.js'
+import { INFO } from '../../log.js'
 
 import type { Pagination } from '../../pagination.js'
 import type { LockId } from '../../db.js'
 
-export async function createStorage (
+export async function createStorage(
   createIf: CreateIf,
   request: CreateStorageRequest,
-  log: log
+  log: log,
 ): Promise<StorageWithDate> {
   log(INFO, 'create storage for beer', request.beer)
   await lockId(createIf.lockBeer, request.beer, referredBeerNotFoundError)
   await lockId(
     createIf.lockContainer,
     request.container,
-    referredContainerNotFoundError
+    referredContainerNotFoundError,
   )
   const storage = await createIf.insertStorage(request)
 
   log(INFO, 'created storage for beer', request.beer)
   return {
-    ...storage
+    ...storage,
   }
 }
 
-export async function updateStorage (
+export async function updateStorage(
   updateIf: UpdateIf,
   request: Storage,
-  log: log
+  log: log,
 ): Promise<StorageWithDate> {
   log(INFO, 'update storage', request.id)
   await lockId(updateIf.lockBeer, request.beer, referredBeerNotFoundError)
   await lockId(
     updateIf.lockContainer,
     request.container,
-    referredContainerNotFoundError
+    referredContainerNotFoundError,
   )
   const storage = await updateIf.updateStorage(request)
 
   log(INFO, 'updated storage', request.id)
   return {
-    ...storage
+    ...storage,
   }
 }
 
-export async function deleteStorageById (
+export async function deleteStorageById(
   deleteStorageById: (id: string) => Promise<void>,
   id: string,
-  log: log
+  log: log,
 ): Promise<void> {
   log(INFO, 'delete storage', id)
   await deleteStorageById(id)
 }
 
-export async function findStorageById (
+export async function findStorageById(
   findById: (id: string) => Promise<JoinedStorage | undefined>,
   storageId: string,
-  log: log
+  log: log,
 ): Promise<JoinedStorage | undefined> {
   log(INFO, 'find storage', storageId)
   const storage = await findById(storageId)
@@ -82,62 +82,62 @@ export async function findStorageById (
   return storage
 }
 
-export async function listStorages (
+export async function listStorages(
   list: (pagination: Pagination) => Promise<JoinedStorage[]>,
   pagination: Pagination,
-  log: log
+  log: log,
 ): Promise<JoinedStorage[]> {
   log(INFO, 'list storages', pagination)
   return await list(pagination)
 }
 
-export async function listStoragesByBeer (
+export async function listStoragesByBeer(
   listByBeer: (beerId: string) => Promise<JoinedStorage[]>,
   beerId: string,
-  log: log
+  log: log,
 ): Promise<JoinedStorage[]> {
   log(INFO, 'list storages by beer', beerId)
   return await listByBeer(beerId)
 }
 
-export async function listStoragesByBrewery (
+export async function listStoragesByBrewery(
   listByBrewery: (breweryId: string) => Promise<JoinedStorage[]>,
   breweryId: string,
-  log: log
+  log: log,
 ): Promise<JoinedStorage[]> {
   log(INFO, 'list storages by brewery', breweryId)
   return await listByBrewery(breweryId)
 }
 
-export async function listStoragesByStyle (
+export async function listStoragesByStyle(
   listByStyle: (styleId: string) => Promise<JoinedStorage[]>,
   styleId: string,
-  log: log
+  log: log,
 ): Promise<JoinedStorage[]> {
   log(INFO, 'list storages by style', styleId)
   return await listByStyle(styleId)
 }
 
-export async function getAnnualStorageStats (
+export async function getAnnualStorageStats(
   getAnnualStats: () => Promise<AnnualStorageStats>,
-  log: log
+  log: log,
 ): Promise<AnnualStorageStats> {
   log(INFO, 'get annual storage stats')
   return await getAnnualStats()
 }
 
-export async function getMonthlyStorageStats (
+export async function getMonthlyStorageStats(
   getMonthlyStats: () => Promise<MonthlyStorageStats>,
-  log: log
+  log: log,
 ): Promise<MonthlyStorageStats> {
   log(INFO, 'get monthly storage stats')
   return await getMonthlyStats()
 }
 
-async function lockId (
+async function lockId(
   lockId: LockId,
   key: string,
-  error: Error
+  error: Error,
 ): Promise<void> {
   const lockedId = await lockId(key)
   if (lockedId === undefined) {

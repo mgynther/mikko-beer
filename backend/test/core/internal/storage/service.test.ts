@@ -3,7 +3,7 @@ import { describe, it } from 'node:test'
 import {
   referredBeerNotFoundError,
   referredContainerNotFoundError,
-  storageNotFoundError
+  storageNotFoundError,
 } from '../../../../src/core/errors.js'
 import type { Pagination } from '../../../../src/core/pagination.js'
 import type {
@@ -11,7 +11,7 @@ import type {
   CreateStorageRequest,
   JoinedStorage,
   Storage,
-  UpdateIf
+  UpdateIf,
 } from '../../../../src/core/storage/storage.js'
 import * as storageService from '../../../../src/core/internal/storage/service.js'
 
@@ -31,10 +31,12 @@ const joinedStorage: JoinedStorage = {
   beerId: storage.beer,
   beerName: 'Severin',
   bestBefore: new Date(storage.bestBefore),
-  breweries: [{
-    id: 'cbc84989-ad82-4a46-b9ee-c6be16ef5e46',
-    name: 'Koskipanimo',
-  }],
+  breweries: [
+    {
+      id: 'cbc84989-ad82-4a46-b9ee-c6be16ef5e46',
+      name: 'Koskipanimo',
+    },
+  ],
   container: {
     id: storage.container,
     type: 'draft',
@@ -42,10 +44,12 @@ const joinedStorage: JoinedStorage = {
   },
   createdAt: new Date('2021-02-03T11:12:13.456Z'),
   hasReview: true,
-  styles: [{
-    id: '1c753e76-1231-4ced-8fb0-94c2031283f8',
-    name: 'IPA',
-  }],
+  styles: [
+    {
+      id: '1c753e76-1231-4ced-8fb0-94c2031283f8',
+      name: 'IPA',
+    },
+  ],
 }
 
 const createRequest: CreateStorageRequest = {
@@ -58,15 +62,13 @@ const updateRequest: Storage = {
   ...storage,
 }
 
-const lockBeer = async (
-  beerId: string
-): Promise<string | undefined> => {
+const lockBeer = async (beerId: string): Promise<string | undefined> => {
   assertEqual(beerId, storage.beer)
   return storage.beer
 }
 
 const lockContainer = async (
-  containerId: string
+  containerId: string,
 ): Promise<string | undefined> => {
   assertEqual(containerId, storage.container)
   return storage.container
@@ -81,16 +83,14 @@ describe('storage service unit tests', () => {
         bestBefore: storage.bestBefore,
         container: storage.container,
       }
-      assertDeepEqual(newStorage,
-        {
-          beer: storage.beer,
-          bestBefore: storage.bestBefore,
-          container: storage.container,
-        }
-      )
+      assertDeepEqual(newStorage, {
+        beer: storage.beer,
+        bestBefore: storage.bestBefore,
+        container: storage.container,
+      })
       return {
         ...result,
-        bestBefore: new Date(result.bestBefore)
+        bestBefore: new Date(result.bestBefore),
       }
     }
     let isBeerLocked = false
@@ -106,17 +106,17 @@ describe('storage service unit tests', () => {
         assertEqual(isContainerLocked, false)
         isContainerLocked = true
         return lockContainer(containerId)
-      }
+      },
     }
     const result = await storageService.createStorage(
       createIf,
       createRequest,
-      log
+      log,
     )
     assertDeepEqual(result, {
       ...createRequest,
       bestBefore: new Date(createRequest.bestBefore),
-      id: storage.id
+      id: storage.id,
     })
     assertEqual(isBeerLocked, true)
     assertEqual(isContainerLocked, true)
@@ -133,7 +133,7 @@ describe('storage service unit tests', () => {
       },
       lockContainer: async (id: string) => {
         return id
-      }
+      },
     }
     expectReject(async () => {
       await storageService.createStorage(createIf, createRequest, log)
@@ -151,7 +151,7 @@ describe('storage service unit tests', () => {
       },
       lockContainer: async () => {
         return undefined
-      }
+      },
     }
     expectReject(async () => {
       await storageService.createStorage(createIf, createRequest, log)
@@ -171,7 +171,7 @@ describe('storage service unit tests', () => {
       assertDeepEqual(storage, result)
       return {
         ...result,
-        bestBefore: new Date(result.bestBefore)
+        bestBefore: new Date(result.bestBefore),
       }
     }
     const updateIf: UpdateIf = {
@@ -185,17 +185,17 @@ describe('storage service unit tests', () => {
         assertEqual(isContainerLocked, false)
         isContainerLocked = true
         return lockContainer(containerId)
-      }
+      },
     }
     const result = await storageService.updateStorage(
       updateIf,
       updateRequest,
-      log
+      log,
     )
     assertDeepEqual(result, {
       ...updateRequest,
       bestBefore: new Date(updateRequest.bestBefore),
-      id: storage.id
+      id: storage.id,
     })
     assertEqual(isBeerLocked, true)
     assertEqual(isContainerLocked, true)
@@ -212,7 +212,7 @@ describe('storage service unit tests', () => {
       },
       lockContainer: async (id: string) => {
         return id
-      }
+      },
     }
     expectReject(async () => {
       await storageService.updateStorage(updateIf, updateRequest, log)
@@ -245,7 +245,7 @@ describe('storage service unit tests', () => {
     assertEqual(deleter.mock.callCount(), 1)
     assertDeepEqual(
       deleter.mock.calls[deleter.mock.callCount() - 1].arguments,
-      [id]
+      [id],
     )
   })
 
@@ -272,7 +272,7 @@ describe('storage service unit tests', () => {
   it('list storages', async () => {
     const pagination: Pagination = {
       size: 10,
-      skip: 80
+      skip: 80,
     }
     const lister = async () => {
       return [joinedStorage]
@@ -288,7 +288,7 @@ describe('storage service unit tests', () => {
     const result = await storageService.listStoragesByBeer(
       lister,
       joinedStorage.beerId,
-      log
+      log,
     )
     assertDeepEqual(result, [joinedStorage])
   })
@@ -300,7 +300,7 @@ describe('storage service unit tests', () => {
     const result = await storageService.listStoragesByBeer(
       lister,
       joinedStorage.breweries[0].id,
-      log
+      log,
     )
     assertDeepEqual(result, [joinedStorage])
   })
@@ -312,34 +312,24 @@ describe('storage service unit tests', () => {
     const result = await storageService.listStoragesByStyle(
       lister,
       joinedStorage.styles[0].id,
-      log
+      log,
     )
     assertDeepEqual(result, [joinedStorage])
   })
 
   it('get annual storage stats', async () => {
     const getter = async () => {
-      return [
-        { year: '2022', count: '8' }
-      ]
+      return [{ year: '2022', count: '8' }]
     }
-    const result = await storageService.getAnnualStorageStats(
-      getter,
-      log
-    )
+    const result = await storageService.getAnnualStorageStats(getter, log)
     assertDeepEqual(result, [{ year: '2022', count: '8' }])
   })
 
   it('get monthly storage stats', async () => {
     const getter = async () => {
-      return [
-        { year: '2022', month: '10', count: '8' }
-      ]
+      return [{ year: '2022', month: '10', count: '8' }]
     }
-    const result = await storageService.getMonthlyStorageStats(
-      getter,
-      log
-    )
+    const result = await storageService.getMonthlyStorageStats(getter, log)
     assertDeepEqual(result, [{ year: '2022', month: '10', count: '8' }])
   })
 })

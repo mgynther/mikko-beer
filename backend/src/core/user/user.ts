@@ -1,4 +1,7 @@
-import type { AddPasswordUserIf, PasswordSignInMethod } from './sign-in-method.js'
+import type {
+  AddPasswordUserIf,
+  PasswordSignInMethod,
+} from './sign-in-method.js'
 
 import type { DbRefreshToken } from '../auth/refresh-token.js'
 
@@ -33,6 +36,6 @@ export interface CreateUserRequest {
 }
 
 export interface CreateUserType {
-  user?: unknown,
+  user?: unknown
   passwordSignInMethod?: unknown
 }

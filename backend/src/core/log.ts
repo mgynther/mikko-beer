@@ -1,7 +1,7 @@
 export enum Level {
   INFO = 'INFO',
   WARN = 'WARN',
-  ERROR = 'ERROR'
+  ERROR = 'ERROR',
 }
 export const INFO = Level.INFO
 export const WARN = Level.WARN

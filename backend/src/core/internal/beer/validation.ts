@@ -1,53 +1,48 @@
 import { ajv } from '../ajv.js'
 
-import {
-  invalidBeerError,
-  invalidBeerIdError
-} from '../../errors.js'
+import { invalidBeerError, invalidBeerIdError } from '../../errors.js'
 
 import type {
   BeerRequest,
   CreateBeerRequest,
-  UpdateBeerRequest
+  UpdateBeerRequest,
 } from '../../beer/beer.js'
 
-const doValidateBeerRequest =
-  ajv.compile<BeerRequest>({
-    type: 'object',
-    properties: {
-      name: {
-        type: 'string',
-        minLength: 1
-      },
-      breweries: {
-        type: 'array',
-        items: {
-          type: 'string'
-        },
-        minItems: 1
-      },
-      styles: {
-        type: 'array',
-        items: {
-          type: 'string'
-        },
-        minItems: 1
-      }
-
+const doValidateBeerRequest = ajv.compile<BeerRequest>({
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      minLength: 1,
     },
-    required: ['name', 'breweries', 'styles'],
-    additionalProperties: false
-  })
+    breweries: {
+      type: 'array',
+      items: {
+        type: 'string',
+      },
+      minItems: 1,
+    },
+    styles: {
+      type: 'array',
+      items: {
+        type: 'string',
+      },
+      minItems: 1,
+    },
+  },
+  required: ['name', 'breweries', 'styles'],
+  additionalProperties: false,
+})
 
-function isCreateBeerRequestValid (body: unknown): boolean {
+function isCreateBeerRequestValid(body: unknown): boolean {
   return doValidateBeerRequest(body)
 }
 
-function isUpdateBeerRequestValid (body: unknown): boolean {
+function isUpdateBeerRequestValid(body: unknown): boolean {
   return doValidateBeerRequest(body)
 }
 
-export function validateCreateBeerRequest (body: unknown): CreateBeerRequest {
+export function validateCreateBeerRequest(body: unknown): CreateBeerRequest {
   if (!isCreateBeerRequestValid(body)) {
     throw invalidBeerError
   }
@@ -64,9 +59,9 @@ interface ValidUpdateBeerRequest {
   id: string
 }
 
-export function validateUpdateBeerRequest (
+export function validateUpdateBeerRequest(
   body: unknown,
-  beerId: string | undefined
+  beerId: string | undefined,
 ): ValidUpdateBeerRequest {
   if (!isUpdateBeerRequestValid(body)) {
     throw invalidBeerError
@@ -77,11 +72,11 @@ export function validateUpdateBeerRequest (
   const result = body as UpdateBeerRequest
   return {
     id: validateBeerId(beerId),
-    request: result
+    request: result,
   }
 }
 
-export function validateBeerId (id: string | undefined): string {
+export function validateBeerId(id: string | undefined): string {
   if (typeof id !== 'string' || id.length === 0) {
     throw invalidBeerIdError
   }

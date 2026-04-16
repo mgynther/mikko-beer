@@ -3,7 +3,7 @@ import { describe, it } from 'node:test'
 import {
   cyclicRelationshipError,
   parentStyleNotFoundError,
-  styleNotFoundError
+  styleNotFoundError,
 } from '../../../../src/core/errors.js'
 import type {
   Style,
@@ -14,7 +14,7 @@ import type {
   NewStyle,
   StyleRelationship,
   CreateStyleIf,
-  UpdateStyleIf
+  UpdateStyleIf,
 } from '../../../../src/core/style/style.js'
 import * as styleService from '../../../../src/core/internal/style/service.js'
 
@@ -29,32 +29,32 @@ const style: Style = {
 
 const parentStyle: Style = {
   id: '0ba08b98-44af-46ea-b88d-35f01764b638',
-  name: 'gose'
+  name: 'gose',
 }
 
 const styleWithParentIds: StyleWithParentIds = {
   ...style,
-  parents: [parentStyle.id]
+  parents: [parentStyle.id],
 }
 
 const styleWithParentsAndChildren: StyleWithParentsAndChildren = {
   ...style,
   children: [],
-  parents: [parentStyle]
+  parents: [parentStyle],
 }
 
 const createWithParentRequest: CreateStyleRequest = {
   name: style.name,
-  parents: [parentStyle.id]
+  parents: [parentStyle.id],
 }
 
 const updateWithParentRequest: UpdateStyleRequest = {
   name: style.name,
-  parents: [parentStyle.id]
+  parents: [parentStyle.id],
 }
 
 describe('style service unit tests', () => {
-  async function create (newStyle: NewStyle) {
+  async function create(newStyle: NewStyle) {
     const result = {
       id: style.id,
       name: style.name,
@@ -63,17 +63,17 @@ describe('style service unit tests', () => {
     return result
   }
 
-  async function lockParent (parents: string[]) {
+  async function lockParent(parents: string[]) {
     assertDeepEqual(parents, [parentStyle.id])
     return [parentStyle.id]
   }
 
-  async function noParentLocking () {
+  async function noParentLocking() {
     await notCalled()
     return []
   }
 
-  async function noRelationships (): Promise<StyleRelationship[]> {
+  async function noRelationships(): Promise<StyleRelationship[]> {
     return []
   }
 
@@ -81,9 +81,9 @@ describe('style service unit tests', () => {
     throw new Error('not to be called')
   }
 
-  async function insertRelationship (
+  async function insertRelationship(
     styleId: string,
-    parents: string[]
+    parents: string[],
   ): Promise<void> {
     assertEqual(styleId, style.id)
     assertDeepEqual(parents, [parentStyle.id])
@@ -92,22 +92,18 @@ describe('style service unit tests', () => {
   it('create style without parents', async () => {
     const request: CreateStyleRequest = {
       name: style.name,
-      parents: []
+      parents: [],
     }
     const createStyleIf: CreateStyleIf = {
       create,
       insertParents: notCalled,
       listAllRelationships: noRelationships,
-      lockStyles: async function(): Promise<string[]> {
+      lockStyles: async function (): Promise<string[]> {
         await notCalled()
         return []
-      }
+      },
     }
-    const result = await styleService.createStyle(
-      createStyleIf,
-      request,
-      log
-    )
+    const result = await styleService.createStyle(createStyleIf, request, log)
     assertDeepEqual(result, {
       id: style.id,
       name: style.name,
@@ -120,12 +116,12 @@ describe('style service unit tests', () => {
       create,
       lockStyles: lockParent,
       insertParents: insertRelationship,
-      listAllRelationships: noRelationships
+      listAllRelationships: noRelationships,
     }
     const result = await styleService.createStyle(
       createIf,
       createWithParentRequest,
-      log
+      log,
     )
     assertDeepEqual(result, {
       id: style.id,
@@ -141,47 +137,41 @@ describe('style service unit tests', () => {
         return []
       },
       insertParents: insertRelationship,
-      listAllRelationships: noRelationships
+      listAllRelationships: noRelationships,
     }
     expectReject(async () => {
-      await styleService.createStyle(
-        createIf,
-        createWithParentRequest,
-        log
-      )
+      await styleService.createStyle(createIf, createWithParentRequest, log)
     }, parentStyleNotFoundError)
   })
 
   it('fail to create with existing cyclic relationship', async () => {
     const request: CreateStyleRequest = {
       name: style.name,
-      parents: [parentStyle.id]
+      parents: [parentStyle.id],
     }
     const createIf: CreateStyleIf = {
       create,
       lockStyles: lockParent,
       insertParents: notCalled,
-      listAllRelationships: async function(): Promise<StyleRelationship[]> {
+      listAllRelationships: async function (): Promise<StyleRelationship[]> {
         const id1 = '22f915bc-2202-4b16-b39f-cceff957833d'
         const id2 = '60e3102f-c333-49a8-b956-10095e963ccc'
         return [
           { child: id1, parent: id2 },
           { child: id2, parent: id1 },
         ]
-      }
+      },
     }
     expectReject(async () => {
       await styleService.createStyle(createIf, request, log)
     }, cyclicRelationshipError)
   })
 
-  async function deleteStyleChildRelationships (
-    styleId: string
-  ): Promise<void> {
+  async function deleteStyleChildRelationships(styleId: string): Promise<void> {
     assertEqual(styleId, style.id)
   }
 
-  async function update (updateStyle: Style) {
+  async function update(updateStyle: Style) {
     assertDeepEqual(updateStyle, style)
     return updateStyle
   }
@@ -189,20 +179,20 @@ describe('style service unit tests', () => {
   it('update without parents', async () => {
     const request: UpdateStyleRequest = {
       name: style.name,
-      parents: []
+      parents: [],
     }
     const updateIf: UpdateStyleIf = {
       update,
       lockStyles: noParentLocking,
       insertParents: notCalled,
       deleteStyleChildRelationships,
-      listAllRelationships: noRelationships
+      listAllRelationships: noRelationships,
     }
     const result = await styleService.updateStyle(
       updateIf,
       style.id,
       request,
-      log
+      log,
     )
     assertDeepEqual(result, {
       id: style.id,
@@ -217,13 +207,13 @@ describe('style service unit tests', () => {
       lockStyles: lockParent,
       insertParents: insertRelationship,
       deleteStyleChildRelationships,
-      listAllRelationships: noRelationships
+      listAllRelationships: noRelationships,
     }
     const result = await styleService.updateStyle(
       updateIf,
       style.id,
       updateWithParentRequest,
-      log
+      log,
     )
     assertDeepEqual(result, {
       id: style.id,
@@ -240,14 +230,14 @@ describe('style service unit tests', () => {
       },
       insertParents: insertRelationship,
       deleteStyleChildRelationships,
-      listAllRelationships: noRelationships
+      listAllRelationships: noRelationships,
     }
     expectReject(async () => {
       await styleService.updateStyle(
         updateIf,
         style.id,
         updateWithParentRequest,
-        log
+        log,
       )
     }, parentStyleNotFoundError)
   })
@@ -255,21 +245,21 @@ describe('style service unit tests', () => {
   it('fail to update with existing cyclic relationship', async () => {
     const request: UpdateStyleRequest = {
       name: style.name,
-      parents: [parentStyle.id]
+      parents: [parentStyle.id],
     }
     const updateIf: UpdateStyleIf = {
       update,
       lockStyles: lockParent,
       insertParents: notCalled,
       deleteStyleChildRelationships: notCalled,
-      listAllRelationships: async function(): Promise<StyleRelationship[]> {
+      listAllRelationships: async function (): Promise<StyleRelationship[]> {
         const id1 = '22f915bc-2202-4b16-b39f-cceff957833d'
         const id2 = '60e3102f-c333-49a8-b956-10095e963ccc'
         return [
           { child: id1, parent: id2 },
           { child: id2, parent: id1 },
         ]
-      }
+      },
     }
     expectReject(async () => {
       await styleService.updateStyle(updateIf, style.id, request, log)

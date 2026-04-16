@@ -18,7 +18,7 @@ export const config: Config = Object.freeze({
   port: parseInt(getEnvVariable('PORT'), 10),
   authTokenSecret: getEnvVariable('AUTH_TOKEN_SECRET'),
   authTokenExpiryDurationMin: parseExpiryDurationMin(
-    getEnvVariable('AUTH_TOKEN_EXPIRY_DURATION_MIN')
+    getEnvVariable('AUTH_TOKEN_EXPIRY_DURATION_MIN'),
   ),
-  database: Object.freeze(databaseConfig)
+  database: Object.freeze(databaseConfig),
 })

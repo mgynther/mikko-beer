@@ -10,14 +10,11 @@ import type {
   JoinedReview,
   ReviewListOrder,
   UpdateReviewRequest,
-  UpdateIf
+  UpdateIf,
 } from '../../../src/core/review/review.js'
 import { dummyLog as log } from '../dummy-log.js'
 import { expectReject } from '../controller-error-helper.js'
-import {
-  invalidReviewError,
-  noRightsError
-} from '../../../src/core/errors.js'
+import { invalidReviewError, noRightsError } from '../../../src/core/errors.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
 
 const storageId = '5e11fcf9-3fa4-402d-90e2-17706e8d78e6'
@@ -30,7 +27,7 @@ const validCreateReviewRequest: CreateReviewRequest = {
   rating: 9,
   smell: 'quite nice',
   taste: 'fruity, pleasant citrus',
-  time: '2024-06-02T12:00:00.000Z'
+  time: '2024-06-02T12:00:00.000Z',
 }
 
 const validUpdateReviewRequest: UpdateReviewRequest = {
@@ -41,18 +38,18 @@ const validUpdateReviewRequest: UpdateReviewRequest = {
   rating: 9,
   smell: 'quite nice',
   taste: 'fruity, pleasant citrus',
-  time: '2024-06-02T12:00:00.000Z'
+  time: '2024-06-02T12:00:00.000Z',
 }
 
 const review: Review = {
   ...validCreateReviewRequest,
   id: '1d8f6ba2-8813-4a6f-b520-ecd56cb3c646',
-  time: new Date(validCreateReviewRequest.time)
+  time: new Date(validCreateReviewRequest.time),
 }
 
 const invalidReviewRequest = {
   smell: 'quite nice',
-  taste: 'fruity, pleasant citrus'
+  taste: 'fruity, pleasant citrus',
 }
 
 const createIf: CreateIf = {
@@ -60,114 +57,146 @@ const createIf: CreateIf = {
   deleteFromStorage: async () => undefined,
   lockBeer: async () => validCreateReviewRequest.beer,
   lockContainer: async () => validCreateReviewRequest.container,
-  lockStorage: async () => 'a48879ea-8249-4c08-8118-cea63beca4cf'
+  lockStorage: async () => 'a48879ea-8249-4c08-8118-cea63beca4cf',
 }
 
 const updateIf: UpdateIf = {
   updateReview: async () => review,
   lockBeer: async () => validCreateReviewRequest.beer,
-  lockContainer: async () => validCreateReviewRequest.container
+  lockContainer: async () => validCreateReviewRequest.container,
 }
 
 const adminAuthToken: AuthTokenPayload = {
   userId: '97bfead4-409a-4989-a2b8-cb2f1cd126a0',
   role: 'admin',
-  refreshTokenId: '22404eb4-a865-485a-8be6-01f519d69169'
+  refreshTokenId: '22404eb4-a865-485a-8be6-01f519d69169',
 }
 
 const viewerAuthToken: AuthTokenPayload = {
   userId: 'a2ed9601-f68d-45a7-ab33-bfc34ee43c24',
   role: 'viewer',
-  refreshTokenId: '35cab924-9f13-4a9c-a204-77d77dca0c5f'
+  refreshTokenId: '35cab924-9f13-4a9c-a204-77d77dca0c5f',
 }
 
 describe('review authorized service unit tests', () => {
   it('create review as admin', async () => {
-    await reviewService.createReview(createIf, {
-      authTokenPayload: adminAuthToken,
-      body: validCreateReviewRequest
-    }, storageId, log)
+    await reviewService.createReview(
+      createIf,
+      {
+        authTokenPayload: adminAuthToken,
+        body: validCreateReviewRequest,
+      },
+      storageId,
+      log,
+    )
   })
 
   it('fail to create review as viewer', async () => {
     await expectReject(async () => {
-      await reviewService.createReview(createIf, {
-        authTokenPayload: viewerAuthToken,
-        body: validCreateReviewRequest
-      }, storageId, log)
+      await reviewService.createReview(
+        createIf,
+        {
+          authTokenPayload: viewerAuthToken,
+          body: validCreateReviewRequest,
+        },
+        storageId,
+        log,
+      )
     }, noRightsError)
   })
 
   it('fail to create invalid review as admin', async () => {
     await expectReject(async () => {
-      await reviewService.createReview(createIf, {
-        authTokenPayload: adminAuthToken,
-        body: invalidReviewRequest
-      }, storageId, log)
+      await reviewService.createReview(
+        createIf,
+        {
+          authTokenPayload: adminAuthToken,
+          body: invalidReviewRequest,
+        },
+        storageId,
+        log,
+      )
     }, invalidReviewError)
   })
 
   it('update review as admin', async () => {
-    await reviewService.updateReview(updateIf, {
-      authTokenPayload: adminAuthToken,
-      id: review.id
-    }, validUpdateReviewRequest, log)
+    await reviewService.updateReview(
+      updateIf,
+      {
+        authTokenPayload: adminAuthToken,
+        id: review.id,
+      },
+      validUpdateReviewRequest,
+      log,
+    )
   })
 
   it('fail to update review as viewer', async () => {
     await expectReject(async () => {
-      await reviewService.updateReview(updateIf, {
-        authTokenPayload: viewerAuthToken,
-        id: review.id
-      }, validUpdateReviewRequest, log)
+      await reviewService.updateReview(
+        updateIf,
+        {
+          authTokenPayload: viewerAuthToken,
+          id: review.id,
+        },
+        validUpdateReviewRequest,
+        log,
+      )
     }, noRightsError)
   })
 
   it('fail to update invalid review as admin', async () => {
     await expectReject(async () => {
-      await reviewService.updateReview(updateIf, {
-        authTokenPayload: adminAuthToken,
-        id: review.id
-      }, invalidReviewRequest, log)
+      await reviewService.updateReview(
+        updateIf,
+        {
+          authTokenPayload: adminAuthToken,
+          id: review.id,
+        },
+        invalidReviewRequest,
+        log,
+      )
     }, invalidReviewError)
   })
-  ;
-
-  [adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
+  ;[adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
     const reviewListOrder: ReviewListOrder = {
       property: 'beer_name',
-      direction: 'asc'
+      direction: 'asc',
     }
     const joinedReview: JoinedReview = {
       ...review,
       beerId: review.beer,
       beerName: 'Weizenbock',
-      breweries: [{
-        id: '10a7f306-5cf8-480e-aa52-9d85a421c7c0',
-        name: 'Koskipanimo'
-      }],
+      breweries: [
+        {
+          id: '10a7f306-5cf8-480e-aa52-9d85a421c7c0',
+          name: 'Koskipanimo',
+        },
+      ],
       container: {
         id: '30f66fe6-4f2c-4b76-a03e-e9ebead65a14',
         size: '0.50',
-        type: 'draft'
+        type: 'draft',
       },
       location: {
         id: '70c3f124-d0d2-46ad-be9d-b74664894fab',
-        name: 'Pub Pikilinna'
+        name: 'Pub Pikilinna',
       },
-      styles: [{
-        id: 'c9ea7133-9392-4c28-b8f5-33c61350809c',
-        name: 'Weizenbock'
-      }]
+      styles: [
+        {
+          id: 'c9ea7133-9392-4c28-b8f5-33c61350809c',
+          name: 'Weizenbock',
+        },
+      ],
     }
     it(`find review as ${token.role}`, async () => {
       const result = await reviewService.findReviewById(
         async () => review,
         {
           authTokenPayload: token,
-          id: review.id
+          id: review.id,
         },
-        log
+        log,
       )
       assertDeepEqual(result, review)
     })
@@ -178,7 +207,7 @@ describe('review authorized service unit tests', () => {
         token,
         { skip: 0, size: 20 },
         reviewListOrder,
-        log
+        log,
       )
       assertDeepEqual(result, [joinedReview])
     })
@@ -188,10 +217,10 @@ describe('review authorized service unit tests', () => {
         async () => [joinedReview],
         {
           authTokenPayload: token,
-          id: joinedReview.beerId
+          id: joinedReview.beerId,
         },
         reviewListOrder,
-        log
+        log,
       )
       assertDeepEqual(result, [joinedReview])
     })
@@ -201,10 +230,10 @@ describe('review authorized service unit tests', () => {
         async () => [joinedReview],
         {
           authTokenPayload: token,
-          id: joinedReview.breweries[0].id
+          id: joinedReview.breweries[0].id,
         },
         reviewListOrder,
-        log
+        log,
       )
       assertDeepEqual(result, [joinedReview])
     })
@@ -215,10 +244,10 @@ describe('review authorized service unit tests', () => {
         async () => [joinedReview],
         {
           authTokenPayload: token,
-          id: joinedReview.location?.id
+          id: joinedReview.location?.id,
         },
         reviewListOrder,
-        log
+        log,
       )
       assertDeepEqual(result, [joinedReview])
     })
@@ -228,13 +257,12 @@ describe('review authorized service unit tests', () => {
         async () => [joinedReview],
         {
           authTokenPayload: token,
-          id: joinedReview.styles[0].id
+          id: joinedReview.styles[0].id,
         },
         reviewListOrder,
-        log
+        log,
       )
       assertDeepEqual(result, [joinedReview])
     })
   })
-
 })

@@ -1,14 +1,13 @@
 import { describe, it } from 'node:test'
 
-import * as
-beerService from '../../../../src/core/internal/beer/validated.service.js'
+import * as beerService from '../../../../src/core/internal/beer/validated.service.js'
 
 import type {
   Beer,
   CreateBeerRequest,
   CreateIf,
   UpdateBeerRequest,
-  UpdateIf
+  UpdateIf,
 } from '../../../../src/core/beer/beer.js'
 import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
@@ -34,12 +33,12 @@ const validUpdateBeerRequest: UpdateBeerRequest = {
 
 const beer: Beer = {
   id: '52bd60b0-afaf-480d-a0f5-3d3c02f06989',
-  name: validCreateBeerRequest.name
+  name: validCreateBeerRequest.name,
 }
 
 const invalidBeerRequest = {
   name: 'This is invalid',
-  breweries: [breweryId]
+  breweries: [breweryId],
 }
 
 const createIf: CreateIf = {
@@ -47,7 +46,7 @@ const createIf: CreateIf = {
   lockBreweries: async () => [breweryId],
   lockStyles: async () => [styleId],
   insertBeerBreweries: async () => {},
-  insertBeerStyles: async () => {}
+  insertBeerStyles: async () => {},
 }
 
 const updateIf: UpdateIf = {
@@ -57,12 +56,12 @@ const updateIf: UpdateIf = {
   deleteBeerBreweries: async () => {},
   deleteBeerStyles: async () => {},
   insertBeerBreweries: async () => {},
-  insertBeerStyles: async () => {}
+  insertBeerStyles: async () => {},
 }
 
 describe('beer validated service unit tests', () => {
   it('create beer', async () => {
-    await beerService.createBeer(createIf, validCreateBeerRequest , log)
+    await beerService.createBeer(createIf, validCreateBeerRequest, log)
   })
 
   it('fail to create invalid beer', async () => {
@@ -87,9 +86,8 @@ describe('beer validated service unit tests', () => {
         updateIf,
         undefined,
         validUpdateBeerRequest,
-        log
+        log,
       )
     }, invalidBeerIdError)
   })
-
 })

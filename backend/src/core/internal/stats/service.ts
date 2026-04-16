@@ -13,7 +13,7 @@ import type {
   StatsIdFilter,
   StatsFilter,
   StyleStats,
-  StyleStatsOrder
+  StyleStatsOrder,
 } from '../../stats/stats.js'
 
 import type { log } from '../../log.js'
@@ -22,103 +22,93 @@ import { INFO } from '../../log.js'
 // Test functionality if added. Left untested as there was no logic at the time
 // of adding the file. However, it is used to enable adding logic later easily.
 
-export async function getAnnual (
+export async function getAnnual(
   getAnnual: (statsFilter: StatsIdFilter) => Promise<AnnualStats>,
   statsFilter: StatsIdFilter,
-  log: log
+  log: log,
 ): Promise<AnnualStats> {
   log(INFO, 'get annual stats', statsFilter)
   return await getAnnual(statsFilter)
 }
 
-export async function getAnnualContainer (
+export async function getAnnualContainer(
   getAnnualContainer: (
     pagination: Pagination,
-    statsFilter: StatsIdFilter
+    statsFilter: StatsIdFilter,
   ) => Promise<AnnualContainerStats>,
   pagination: Pagination,
   statsFilter: StatsIdFilter,
-  log: log
+  log: log,
 ): Promise<AnnualStats> {
   log(INFO, 'get annual container stats', statsFilter, pagination)
   return await getAnnualContainer(pagination, statsFilter)
 }
 
-export async function getBrewery (
+export async function getBrewery(
   getBrewery: (
     pagination: Pagination,
     statsFilter: StatsFilter,
-    breweryStatsOrder: BreweryStatsOrder
+    breweryStatsOrder: BreweryStatsOrder,
   ) => Promise<BreweryStats>,
   pagination: Pagination,
   statsFilter: StatsFilter,
   breweryStatsOrder: BreweryStatsOrder,
-  log: log
+  log: log,
 ): Promise<BreweryStats> {
   log(INFO, 'get brewery stats', statsFilter, breweryStatsOrder, pagination)
-  return await getBrewery(
-    pagination,
-    statsFilter,
-    breweryStatsOrder
-  )
+  return await getBrewery(pagination, statsFilter, breweryStatsOrder)
 }
 
-export async function getContainer (
-  getContainer: (
-    statsFilter: StatsIdFilter
-  ) => Promise<ContainerStats>,
+export async function getContainer(
+  getContainer: (statsFilter: StatsIdFilter) => Promise<ContainerStats>,
   statsFilter: StatsIdFilter,
-  log: log
+  log: log,
 ): Promise<ContainerStats> {
   log(INFO, 'get container stats', statsFilter)
   return await getContainer(statsFilter)
 }
 
-export async function getLocation (
+export async function getLocation(
   getLocation: (
     pagination: Pagination,
     statsFilter: StatsFilter,
-    locationStatsOrder: LocationStatsOrder
+    locationStatsOrder: LocationStatsOrder,
   ) => Promise<LocationStats>,
   pagination: Pagination,
   statsFilter: StatsFilter,
   locationStatsOrder: LocationStatsOrder,
-  log: log
+  log: log,
 ): Promise<LocationStats> {
   log(INFO, 'get location stats', statsFilter, locationStatsOrder, pagination)
-  return await getLocation(
-    pagination,
-    statsFilter,
-    locationStatsOrder
-  )
+  return await getLocation(pagination, statsFilter, locationStatsOrder)
 }
 
-export async function getOverall (
+export async function getOverall(
   getOverall: (statsFilter: StatsIdFilter) => Promise<OverallStats>,
   statsFilter: StatsIdFilter,
-  log: log
+  log: log,
 ): Promise<OverallStats> {
   log(INFO, 'get overall stats', statsFilter)
   return await getOverall(statsFilter)
 }
 
-export async function getRating (
+export async function getRating(
   getRating: (statsFilter: StatsIdFilter) => Promise<RatingStats>,
   statsFilter: StatsIdFilter,
-  log: log
+  log: log,
 ): Promise<RatingStats> {
   log(INFO, 'get rating stats', statsFilter)
   return await getRating(statsFilter)
 }
 
-export async function getStyle (
+export async function getStyle(
   getStyle: (
     statsFilter: StatsFilter,
-    styleStatsOrder: StyleStatsOrder
+    styleStatsOrder: StyleStatsOrder,
   ) => Promise<StyleStats>,
   statsFilter: StatsFilter,
   styleStatsOrder: StyleStatsOrder,
-  log: log
+  log: log,
 ): Promise<StyleStats> {
   log(INFO, 'get style stats', statsFilter)
   return await getStyle(statsFilter, styleStatsOrder)

@@ -7,30 +7,27 @@ import type {
   StyleWithParentsAndChildren,
   StyleWithParentIds,
   UpdateStyleRequest,
-  UpdateStyleIf
+  UpdateStyleIf,
 } from '../../style/style.js'
 
-import {
-  parentStyleNotFoundError,
-  styleNotFoundError
-} from '../../errors.js'
+import { parentStyleNotFoundError, styleNotFoundError } from '../../errors.js'
 import type { log } from '../../log.js'
-import { INFO, } from '../../log.js'
+import { INFO } from '../../log.js'
 import { checkCyclicRelationships } from './style.util.js'
 import { areKeysEqual } from '../../internal/key.js'
 import type { LockIds } from '../../db.js'
 
-export async function createStyle (
+export async function createStyle(
   createStyleIf: CreateStyleIf,
   request: CreateStyleRequest,
-  log: log
+  log: log,
 ): Promise<StyleWithParentIds> {
   log(
     INFO,
     'create style with name',
     request.name,
     'and parents',
-    request.parents
+    request.parents,
   )
   const styleId = uuidv4()
 
@@ -42,7 +39,7 @@ export async function createStyle (
   validateRelationships(allRelationships, styleId, request.parents)
 
   const style = await createStyleIf.create({
-    name: request.name
+    name: request.name,
   })
 
   if (request.parents.length > 0) {
@@ -52,15 +49,15 @@ export async function createStyle (
   log(INFO, 'created style', style.id)
   return {
     ...style,
-    parents: request.parents
+    parents: request.parents,
   }
 }
 
-export async function updateStyle (
+export async function updateStyle(
   updateStyleIf: UpdateStyleIf,
   styleId: string,
   request: UpdateStyleRequest,
-  log: log
+  log: log,
 ): Promise<StyleWithParentIds> {
   log(INFO, 'update style', styleId)
   if (request.parents.length > 0) {
@@ -71,12 +68,10 @@ export async function updateStyle (
 
   const style = await updateStyleIf.update({
     id: styleId,
-    name: request.name
+    name: request.name,
   })
 
-  const promises = [
-    updateStyleIf.deleteStyleChildRelationships(styleId),
-  ]
+  const promises = [updateStyleIf.deleteStyleChildRelationships(styleId)]
   if (request.parents.length > 0) {
     promises.push(updateStyleIf.insertParents(style.id, request.parents))
   }
@@ -85,14 +80,14 @@ export async function updateStyle (
   log(INFO, 'updated style', style.id)
   return {
     ...style,
-    parents: request.parents
+    parents: request.parents,
   }
 }
 
-export async function findStyleById (
+export async function findStyleById(
   find: (id: string) => Promise<StyleWithParentsAndChildren | undefined>,
   styleId: string,
-  log: log
+  log: log,
 ): Promise<StyleWithParentsAndChildren> {
   log(INFO, 'find style', styleId)
   const style = await find(styleId)
@@ -102,25 +97,25 @@ export async function findStyleById (
   return style
 }
 
-export async function listStyles (
+export async function listStyles(
   list: () => Promise<StyleWithParentIds[]>,
-  log: log
+  log: log,
 ): Promise<StyleWithParentIds[]> {
   log(INFO, 'list styles')
   return await list()
 }
 
-function validateRelationships (
+function validateRelationships(
   allRelationships: StyleRelationship[],
   styleId: string,
-  parents: string[]
+  parents: string[],
 ): void {
   checkCyclicRelationships(allRelationships, styleId, parents)
 }
 
-async function lockParents (
+async function lockParents(
   lockStyles: LockIds,
-  parentKeys: string[]
+  parentKeys: string[],
 ): Promise<void> {
   const lockedParents = await lockStyles(parentKeys)
   if (!areKeysEqual(lockedParents, parentKeys)) {

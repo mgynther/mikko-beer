@@ -34,9 +34,7 @@ describe('user tests', () => {
 
   it('find user', async () => {
     const insertedUser = await insertUser()
-    const foundUser = await userRepository.findUserById(
-      ctx.db, insertedUser.id
-    )
+    const foundUser = await userRepository.findUserById(ctx.db, insertedUser.id)
     assertDeepEqual(foundUser, insertedUser)
   })
 
@@ -59,7 +57,7 @@ describe('user tests', () => {
 
   async function testLocking(
     lockFunc: (trx: Transaction, str: string) => Promise<User | undefined>,
-    lockStrGetter: (user: User) => string
+    lockStrGetter: (user: User) => string,
   ) {
     const insertedUser = await insertUser()
     const lockStr = lockStrGetter(insertedUser)
@@ -85,23 +83,27 @@ describe('user tests', () => {
       expectRenames(false, false)
       assertDeepEqual(lockedUser, insertedUser)
       // Second rename may or may not have started here.
-      return new Promise(function(resolve) {
-        setTimeout(function() {
+      return new Promise(function (resolve) {
+        setTimeout(function () {
           expectRenames(false, true)
           const promise = userRepository.setUserUsername(
-            trx, insertedUser.id, temporaryName
+            trx,
+            insertedUser.id,
+            temporaryName,
           )
           isFirstRenameStarted = true
           resolve(promise)
-        }, delayMs * 2);
-      });
+        }, delayMs * 2)
+      })
     })
     const rename2Promise = ctx.db.executeReadWriteTransaction(async (trx2) => {
       return new Promise((resolve) => {
-        setTimeout(function() {
+        setTimeout(function () {
           expectRenames(false, false)
           const promise = userRepository.setUserUsername(
-            trx2, insertedUser.id, remainingName
+            trx2,
+            insertedUser.id,
+            remainingName,
           )
           isSecondRenameStarted = true
           return resolve(promise)
@@ -111,33 +113,26 @@ describe('user tests', () => {
     await Promise.all([rename2Promise, rename1Promise])
     expectRenames(true, true)
 
-    const foundUser = await userRepository.findUserById(
-      ctx.db, insertedUser.id
-    )
+    const foundUser = await userRepository.findUserById(ctx.db, insertedUser.id)
     assertEqual(foundUser?.username, remainingName)
   }
 
   it('lock user by id', async () => {
-    await testLocking(
-      userRepository.lockUserById,
-      (user: User) => user.id
-    )
+    await testLocking(userRepository.lockUserById, (user: User) => user.id)
   })
 
   it('lock user that does not exist by id', async () => {
     const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
       await userRepository.lockUserById(
         trx,
-        '93ef3418-e560-46a2-85ec-eb89927ac605'
+        '93ef3418-e560-46a2-85ec-eb89927ac605',
       )
     })
     assertEqual(result, undefined)
   })
 
   it('lock user by username', async () => {
-    await testLocking(
-      userRepository.lockUserByUsername,
-      (user: User) => {
+    await testLocking(userRepository.lockUserByUsername, (user: User) => {
       if (user.username === null) {
         throw new Error('username must not be null')
       }
@@ -151,9 +146,7 @@ describe('user tests', () => {
     await ctx.db.executeReadWriteTransaction(async (trx) => {
       userRepository.setUserUsername(trx, insertedUser.id, username)
     })
-    const foundUser = await userRepository.findUserById(
-      ctx.db, insertedUser.id
-    )
+    const foundUser = await userRepository.findUserById(ctx.db, insertedUser.id)
     assertEqual(foundUser?.username, username)
   })
 
@@ -162,9 +155,7 @@ describe('user tests', () => {
     await ctx.db.executeReadWriteTransaction(async (trx) => {
       userRepository.deleteUserById(trx, insertedUser.id)
     })
-    const foundUser = await userRepository.findUserById(
-      ctx.db, insertedUser.id
-    )
+    const foundUser = await userRepository.findUserById(ctx.db, insertedUser.id)
     assertEqual(foundUser, undefined)
   })
 })

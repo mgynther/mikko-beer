@@ -6,12 +6,12 @@ import type {
   JoinedStorage,
   MonthlyStorageStats,
   StorageWithDate,
-  UpdateIf
+  UpdateIf,
 } from '../../storage/storage.js'
 import {
   validateCreateStorageRequest,
   validateStorageId,
-  validateUpdateStorageRequest
+  validateUpdateStorageRequest,
 } from './validation.js'
 import type { log } from '../../log.js'
 import type { Pagination } from '../../pagination.js'
@@ -19,20 +19,20 @@ import { validateBeerId } from '../beer/validation.js'
 import { validateBreweryId } from '../brewery/validation.js'
 import { validateStyleId } from '../style/validation.js'
 
-export async function createStorage (
+export async function createStorage(
   createIf: CreateIf,
   body: unknown,
-  log: log
+  log: log,
 ): Promise<StorageWithDate> {
   const createRequest = validateCreateStorageRequest(body)
   return await storageService.createStorage(createIf, createRequest, log)
 }
 
-export async function updateStorage (
+export async function updateStorage(
   updateIf: UpdateIf,
   id: string | undefined,
   body: unknown,
-  log: log
+  log: log,
 ): Promise<StorageWithDate> {
   const updateRequest = validateUpdateStorageRequest(body, id)
   return await storageService.updateStorage(
@@ -41,92 +41,88 @@ export async function updateStorage (
       ...updateRequest.request,
       id: updateRequest.id,
     },
-    log
+    log,
   )
 }
 
-export async function deleteStorageById (
+export async function deleteStorageById(
   deleteStorageById: (id: string) => Promise<void>,
   id: string | undefined,
-  log: log
+  log: log,
 ): Promise<void> {
   await storageService.deleteStorageById(
     deleteStorageById,
     validateStorageId(id),
-    log
-  );
+    log,
+  )
 }
 
-export async function findStorageById (
+export async function findStorageById(
   findById: (id: string) => Promise<JoinedStorage | undefined>,
   id: string | undefined,
-  log: log
+  log: log,
 ): Promise<JoinedStorage | undefined> {
   return await storageService.findStorageById(
     findById,
     validateStorageId(id),
-    log
+    log,
   )
 }
 
-export async function listStorages (
+export async function listStorages(
   list: (pagination: Pagination) => Promise<JoinedStorage[]>,
   pagination: Pagination,
-  log: log
+  log: log,
 ): Promise<JoinedStorage[]> {
-  return await storageService.listStorages(
-    list,
-    pagination,
-    log
-  )
+  return await storageService.listStorages(list, pagination, log)
 }
 
-export async function listStoragesByBeer (
+export async function listStoragesByBeer(
   listByBeer: (beerId: string) => Promise<JoinedStorage[]>,
   beerId: string | undefined,
-  log: log
+  log: log,
 ): Promise<JoinedStorage[]> {
   return await storageService.listStoragesByBeer(
     listByBeer,
     validateBeerId(beerId),
-    log
+    log,
   )
 }
 
-export async function listStoragesByBrewery (
+export async function listStoragesByBrewery(
   listByBrewery: (beerId: string) => Promise<JoinedStorage[]>,
   breweryId: string | undefined,
-  log: log
+  log: log,
 ): Promise<JoinedStorage[]> {
   return await storageService.listStoragesByBrewery(
     listByBrewery,
     validateBreweryId(breweryId),
-    log
+    log,
   )
 }
 
-export async function listStoragesByStyle (
+export async function listStoragesByStyle(
   listByStyle: (beerId: string) => Promise<JoinedStorage[]>,
   styleId: string | undefined,
-  log: log
+  log: log,
 ): Promise<JoinedStorage[]> {
   return await storageService.listStoragesByStyle(
     listByStyle,
     validateStyleId(styleId),
-    log
+    log,
   )
 }
 
-export async function getAnnualStorageStats (
+export async function getAnnualStorageStats(
   getAnnualStats: () => Promise<AnnualStorageStats>,
-  log: log
+  log: log,
 ): Promise<AnnualStorageStats> {
   return await storageService.getAnnualStorageStats(getAnnualStats, log)
 }
 
-export async function getMonthlyStorageStats (
+export async function getMonthlyStorageStats(
   getMonthlyStats: () => Promise<MonthlyStorageStats>,
-  log: log
+  log: log,
 ): Promise<MonthlyStorageStats> {
   return await storageService.getMonthlyStorageStats(getMonthlyStats, log)
 }

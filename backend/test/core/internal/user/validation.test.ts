@@ -2,11 +2,11 @@ import { describe, it } from 'node:test'
 
 import {
   validateCreateAnonymousUserRequest,
-  validateCreateUserRequest
+  validateCreateUserRequest,
 } from '../../../../src/core/internal/user/validation.js'
 import {
   invalidSignInMethodError,
-  invalidUserError
+  invalidUserError,
 } from '../../../../src/core/errors.js'
 import { expectThrow } from '../../controller-error-helper.js'
 import { assertDeepEqual } from '../../../assert.js'
@@ -21,8 +21,9 @@ describe('create anonymous user validation unit tests', () => {
 
   function fail(user: unknown) {
     expectThrow(
-      () => validateCreateAnonymousUserRequest(user)
-    , invalidUserError)
+      () => validateCreateAnonymousUserRequest(user),
+      invalidUserError,
+    )
   }
 
   it('pass as admin', () => {
@@ -50,24 +51,23 @@ describe('create anonymous user validation unit tests', () => {
   })
 })
 
-
 describe('create user validation unit tests', () => {
   const validRequest = {
     user: {
-      role: 'admin'
+      role: 'admin',
     },
     passwordSignInMethod: {
       username: 'admin',
-      password: 'admin'
-    }
+      password: 'admin',
+    },
   }
 
   it('pass with valid request', () => {
     const expected = {
       role: 'admin',
       passwordSignInMethod: {
-        ...validRequest.passwordSignInMethod
-      }
+        ...validRequest.passwordSignInMethod,
+      },
     }
     assertDeepEqual(validateCreateUserRequest(validRequest), expected)
   })
@@ -75,20 +75,19 @@ describe('create user validation unit tests', () => {
   it('fail with invalid user', () => {
     const request = {
       user: {},
-      passwordSignInMethod: { ...validRequest.passwordSignInMethod }
+      passwordSignInMethod: { ...validRequest.passwordSignInMethod },
     }
-    expectThrow(
-      () => validateCreateUserRequest(request)
-    , invalidUserError)
+    expectThrow(() => validateCreateUserRequest(request), invalidUserError)
   })
 
   it('fail with invalid password change method', () => {
     const request = {
       user: { ...validRequest.user },
-      passwordSignInMethod: { }
+      passwordSignInMethod: {},
     }
     expectThrow(
-      () => validateCreateUserRequest(request)
-    , invalidSignInMethodError)
+      () => validateCreateUserRequest(request),
+      invalidSignInMethodError,
+    )
   })
 })

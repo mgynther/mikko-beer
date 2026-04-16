@@ -1,37 +1,33 @@
 import { ajv } from '../ajv.js'
 
-import {
-  invalidBreweryError,
-  invalidBreweryIdError
-} from '../../errors.js'
+import { invalidBreweryError, invalidBreweryIdError } from '../../errors.js'
 import type {
   CreateBreweryRequest,
-  UpdateBreweryRequest
+  UpdateBreweryRequest,
 } from '../../brewery/brewery.js'
 
-const doValidateBreweryRequest =
-  ajv.compile<CreateBreweryRequest>({
-    type: 'object',
-    properties: {
-      name: {
-        type: 'string',
-        minLength: 1
-      }
+const doValidateBreweryRequest = ajv.compile<CreateBreweryRequest>({
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      minLength: 1,
     },
-    required: ['name'],
-    additionalProperties: false
-  })
+  },
+  required: ['name'],
+  additionalProperties: false,
+})
 
-function isCreateBreweryRequestValid (body: unknown): boolean {
+function isCreateBreweryRequestValid(body: unknown): boolean {
   return doValidateBreweryRequest(body)
 }
 
-function isUpdateBreweryRequestValid (body: unknown): boolean {
+function isUpdateBreweryRequestValid(body: unknown): boolean {
   return doValidateBreweryRequest(body)
 }
 
-export function validateCreateBreweryRequest (
-  body: unknown
+export function validateCreateBreweryRequest(
+  body: unknown,
 ): CreateBreweryRequest {
   if (!isCreateBreweryRequestValid(body)) {
     throw invalidBreweryError
@@ -49,9 +45,9 @@ interface ValidUpdateBreweryRequest {
   id: string
 }
 
-export function validateUpdateBreweryRequest (
+export function validateUpdateBreweryRequest(
   body: unknown,
-  breweryId: string | undefined
+  breweryId: string | undefined,
 ): ValidUpdateBreweryRequest {
   if (!isUpdateBreweryRequestValid(body)) {
     throw invalidBreweryError
@@ -62,11 +58,11 @@ export function validateUpdateBreweryRequest (
   const result = body as UpdateBreweryRequest
   return {
     id: validateBreweryId(breweryId),
-    request: result
+    request: result,
   }
 }
 
-export function validateBreweryId (id: string | undefined): string {
+export function validateBreweryId(id: string | undefined): string {
   if (typeof id !== 'string' || id.length === 0) {
     throw invalidBreweryIdError
   }

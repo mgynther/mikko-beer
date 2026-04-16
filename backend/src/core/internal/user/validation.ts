@@ -6,7 +6,7 @@ import type {
   CreateAnonymousUserRequest,
   CreateUserRequest,
   CreateUserType,
-  Role
+  Role,
 } from '../../user/user.js'
 
 const doValidateCreateAnonymousUserRequest =
@@ -16,17 +16,17 @@ const doValidateCreateAnonymousUserRequest =
     additionalProperties: false,
     properties: {
       role: {
-        enum: ['admin', 'viewer']
-      }
-    }
+        enum: ['admin', 'viewer'],
+      },
+    },
   })
 
 interface RoleContainer {
   role: Role
 }
 
-export function validateCreateAnonymousUserRequest (
-  body: unknown
+export function validateCreateAnonymousUserRequest(
+  body: unknown,
 ): CreateAnonymousUserRequest {
   if (!doValidateCreateAnonymousUserRequest(body)) {
     throw invalidUserError
@@ -34,29 +34,29 @@ export function validateCreateAnonymousUserRequest (
   const roleContainer = body as RoleContainer
 
   return {
-    role: roleContainer.role
+    role: roleContainer.role,
   }
 }
 
-export function validateCreateUserRequest (body: unknown): CreateUserRequest {
+export function validateCreateUserRequest(body: unknown): CreateUserRequest {
   /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
    * Using a helper type for validation. Contents being right is not assumed
    * yet.
    */
   const typedBody: CreateUserType = body as CreateUserType
   const anonymousUserRequest = validateCreateAnonymousUserRequest(
-    typedBody.user
+    typedBody.user,
   )
   const passwordSignInMethod = validatePasswordSignInMethod(
-    typedBody.passwordSignInMethod
+    typedBody.passwordSignInMethod,
   )
   return {
     role: anonymousUserRequest.role,
-    passwordSignInMethod
+    passwordSignInMethod,
   }
 }
 
-export function validateUserId (id: string | undefined): string {
+export function validateUserId(id: string | undefined): string {
   if (id === undefined || id.length === 0) {
     throw invalidUserIdError
   }

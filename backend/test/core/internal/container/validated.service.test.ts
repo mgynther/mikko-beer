@@ -5,7 +5,7 @@ import * as containerService from '../../../../src/core/internal/container/valid
 import type {
   Container,
   CreateContainerRequest,
-  UpdateContainerRequest
+  UpdateContainerRequest,
 } from '../../../../src/core/container/container.js'
 import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
@@ -16,37 +16,36 @@ import {
 
 const validCreateContainerRequest: CreateContainerRequest = {
   size: '0.33',
-  type: 'bottle'
+  type: 'bottle',
 }
 
 const validUpdateContainerRequest: UpdateContainerRequest = {
   size: '0.44',
-  type: 'can'
+  type: 'can',
 }
 
 const container: Container = {
   id: '48310f6a-1637-467f-9bc5-3b6406bd403e',
   size: validCreateContainerRequest.size,
-  type: validCreateContainerRequest.type
+  type: validCreateContainerRequest.type,
 }
 
 const invalidContainerRequest = {
-  size: '0.44'
+  size: '0.44',
 }
 
 const create: (
-  container: CreateContainerRequest
+  container: CreateContainerRequest,
 ) => Promise<Container> = async () => container
-const update: (
-  container: Container
-) => Promise<Container> = async () => container
+const update: (container: Container) => Promise<Container> = async () =>
+  container
 
 describe('container authorized service unit tests', () => {
   it('create container', async () => {
     await containerService.createContainer(
       create,
       validCreateContainerRequest,
-      log
+      log,
     )
   })
 
@@ -55,7 +54,7 @@ describe('container authorized service unit tests', () => {
       await containerService.createContainer(
         create,
         invalidContainerRequest,
-        log
+        log,
       )
     }, invalidContainerError)
   })
@@ -65,7 +64,7 @@ describe('container authorized service unit tests', () => {
       update,
       container.id,
       validUpdateContainerRequest,
-      log
+      log,
     )
   })
 
@@ -75,7 +74,7 @@ describe('container authorized service unit tests', () => {
         update,
         container.id,
         invalidContainerRequest,
-        log
+        log,
       )
     }, invalidContainerError)
   })
@@ -86,9 +85,8 @@ describe('container authorized service unit tests', () => {
         update,
         undefined,
         validUpdateContainerRequest,
-        log
+        log,
       )
     }, invalidContainerIdError)
   })
-
 })

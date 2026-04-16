@@ -1,8 +1,6 @@
 import { describe, it } from 'node:test'
 
-import type {
-  DbRefreshToken
-} from '../../../../src/core/auth/refresh-token.js'
+import type { DbRefreshToken } from '../../../../src/core/auth/refresh-token.js'
 import * as authorizationService from '../../../../src/core/internal/auth/authorization.service.js'
 import type { User } from '../../../../src/core/user/user.js'
 import type { AuthTokenPayload } from '../../../../src/core/auth/auth-token.js'
@@ -10,7 +8,7 @@ import {
   noRightsError,
   noUserIdParameterError,
   userMismatchError,
-  userOrRefreshTokenNotFoundError
+  userOrRefreshTokenNotFoundError,
 } from '../../../../src/core/errors.js'
 import { expectReject, expectThrow } from '../../controller-error-helper.js'
 
@@ -19,44 +17,44 @@ const refreshTokenId = 'f2224f80-b478-43e2-8cc9-d39cf8079524'
 const admin: User = {
   id: '185c5a57-c29f-456f-9dac-db29a7de96c3',
   role: 'admin',
-  username: 'admin'
+  username: 'admin',
 }
 
 const otherAdmin: User = {
   id: 'e8d718a3-0a85-41f3-9040-b7aff4470987',
   role: 'admin',
-  username: 'otheradmin'
+  username: 'otheradmin',
 }
 
 const viewer: User = {
   id: '2a036606-c4cc-46b6-8093-4bf3835fff85',
   role: 'viewer',
-  username: 'viewer'
+  username: 'viewer',
 }
 
 const otherViewer: User = {
   id: 'ca8c2111-db26-472a-bdf5-4c5fa1516425',
   role: 'viewer',
-  username: 'otherviewer'
+  username: 'otherviewer',
 }
 
 async function findRefreshToken(
   userId: string,
-  refreshTokenId: string
+  refreshTokenId: string,
 ): Promise<DbRefreshToken> {
   return {
     id: refreshTokenId,
-    userId
+    userId,
   }
 }
 
-async function notCalledFindRefreshToken(
-): Promise<DbRefreshToken | undefined> {
+async function notCalledFindRefreshToken(): Promise<
+  DbRefreshToken | undefined
+> {
   throw new Error('must not be called')
 }
 
-async function dontFindRefresToken(
-): Promise<undefined> {
+async function dontFindRefresToken(): Promise<undefined> {
   return undefined
 }
 
@@ -64,12 +62,11 @@ async function createAuthTokenPayload(user: User): Promise<AuthTokenPayload> {
   return {
     userId: user.id,
     role: user.role,
-    refreshTokenId
+    refreshTokenId,
   }
 }
 
 describe('authorization service unit tests', () => {
-
   it('authorize admin', async () => {
     const payload = await createAuthTokenPayload(admin)
     authorizationService.authorizeAdmin(payload)
@@ -98,7 +95,7 @@ describe('authorization service unit tests', () => {
       await authorizationService.authorizeUser(
         '',
         authTokenPayload,
-        notCalledFindRefreshToken
+        notCalledFindRefreshToken,
       )
     }, noUserIdParameterError)
   })
@@ -108,7 +105,7 @@ describe('authorization service unit tests', () => {
     await authorizationService.authorizeUser(
       admin.id,
       authTokenPayload,
-      notCalledFindRefreshToken
+      notCalledFindRefreshToken,
     )
   })
 
@@ -117,7 +114,7 @@ describe('authorization service unit tests', () => {
     await authorizationService.authorizeUser(
       otherAdmin.id,
       authTokenPayload,
-      notCalledFindRefreshToken
+      notCalledFindRefreshToken,
     )
   })
 
@@ -126,7 +123,7 @@ describe('authorization service unit tests', () => {
     await authorizationService.authorizeUser(
       viewer.id,
       authTokenPayload,
-      notCalledFindRefreshToken
+      notCalledFindRefreshToken,
     )
   })
 
@@ -135,7 +132,7 @@ describe('authorization service unit tests', () => {
     await authorizationService.authorizeUser(
       viewer.id,
       authTokenPayload,
-      findRefreshToken
+      findRefreshToken,
     )
   })
 
@@ -145,7 +142,7 @@ describe('authorization service unit tests', () => {
       await authorizationService.authorizeUser(
         admin.id,
         authTokenPayload,
-        notCalledFindRefreshToken
+        notCalledFindRefreshToken,
       )
     }, userMismatchError)
   })
@@ -156,7 +153,7 @@ describe('authorization service unit tests', () => {
       await authorizationService.authorizeUser(
         otherViewer.id,
         authTokenPayload,
-        notCalledFindRefreshToken
+        notCalledFindRefreshToken,
       )
     }, userMismatchError)
   })
@@ -167,7 +164,7 @@ describe('authorization service unit tests', () => {
       await authorizationService.authorizeUser(
         viewer.id,
         authTokenPayload,
-        dontFindRefresToken
+        dontFindRefresToken,
       )
     }, userOrRefreshTokenNotFoundError)
   })

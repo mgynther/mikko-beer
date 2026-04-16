@@ -1,23 +1,20 @@
 import type { Database, Transaction } from '../database.js'
-import type {
-  LocationRow
-} from './location.table.js'
+import type { LocationRow } from './location.table.js'
 
 import type {
   Location,
-  CreateLocationRequest
+  CreateLocationRequest,
 } from '../../core/location/location.js'
-import type {
-  Pagination
-} from '../../core/pagination.js'
+import type { Pagination } from '../../core/pagination.js'
 import type { SearchByName } from '../../core/search.js'
 import { defaultSearchMaxResults, toIlike } from '../../core/search.js'
 
-export async function insertLocation (
+export async function insertLocation(
   trx: Transaction,
-  location: CreateLocationRequest
+  location: CreateLocationRequest,
 ): Promise<Location> {
-  const insertedLocation = await trx.trx()
+  const insertedLocation = await trx
+    .trx()
     .insertInto('location')
     .values(location)
     .returningAll()
@@ -26,14 +23,15 @@ export async function insertLocation (
   return rowToLocation(insertedLocation)
 }
 
-export async function updateLocation (
+export async function updateLocation(
   trx: Transaction,
-  location: Location
+  location: Location,
 ): Promise<Location> {
-  const updatedLocation = await trx.trx()
+  const updatedLocation = await trx
+    .trx()
     .updateTable('location')
     .set({
-      name: location.name
+      name: location.name,
     })
     .where('location_id', '=', location.id)
     .returningAll()
@@ -42,11 +40,12 @@ export async function updateLocation (
   return rowToLocation(updatedLocation)
 }
 
-export async function findLocationById (
+export async function findLocationById(
   db: Database,
-  id: string
+  id: string,
 ): Promise<Location | undefined> {
-  const locationRow = await db.getDb()
+  const locationRow = await db
+    .getDb()
     .selectFrom('location')
     .where('location_id', '=', id)
     .selectAll('location')
@@ -59,25 +58,27 @@ export async function findLocationById (
   return rowToLocation(locationRow)
 }
 
-export async function lockLocations (
+export async function lockLocations(
   trx: Transaction,
-  keys: string[]
+  keys: string[],
 ): Promise<string[]> {
-  const locations = await trx.trx()
+  const locations = await trx
+    .trx()
     .selectFrom('location')
     .where('location_id', 'in', keys)
     .select('location_id')
     .forUpdate()
     .execute()
 
-  return locations.map(location => location.location_id)
+  return locations.map((location) => location.location_id)
 }
 
-export async function listLocations (
+export async function listLocations(
   db: Database,
-  pagination: Pagination
+  pagination: Pagination,
 ): Promise<Location[]> {
-  const locations = await db.getDb()
+  const locations = await db
+    .getDb()
     .selectFrom('location')
     .selectAll('location')
     .orderBy('location.name')
@@ -88,26 +89,25 @@ export async function listLocations (
   return locations.map(rowToLocation)
 }
 
-export async function searchLocations (
+export async function searchLocations(
   db: Database,
-  searchRequest: SearchByName
+  searchRequest: SearchByName,
 ): Promise<Location[]> {
   const nameIlike = toIlike(searchRequest)
-  const locations = await db.getDb()
+  const locations = await db
+    .getDb()
     .selectFrom('location')
     .selectAll('location')
-    .where(
-      'location.name', 'ilike', nameIlike
-    )
+    .where('location.name', 'ilike', nameIlike)
     .limit(defaultSearchMaxResults)
     .execute()
 
   return locations.map(rowToLocation)
 }
 
-function rowToLocation (row: LocationRow): Location {
+function rowToLocation(row: LocationRow): Location {
   return {
     id: row.location_id,
-    name: row.name
+    name: row.name,
   }
 }

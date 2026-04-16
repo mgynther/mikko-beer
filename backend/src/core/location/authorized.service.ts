@@ -1,67 +1,58 @@
 import * as authorizationService from '../internal/auth/authorization.service.js'
 import * as locationService from '../internal/location/validated.service.js'
 
-import type {
-  BodyRequest,
-  IdRequest,
-  PaginationRequest
-} from "../request"
-import type { Location, CreateLocationRequest } from "../location/location"
+import type { BodyRequest, IdRequest, PaginationRequest } from '../request'
+import type { Location, CreateLocationRequest } from '../location/location'
 import type { log } from '../log.js'
 import type { Pagination } from '../pagination.js'
 import type { SearchByName } from '../search.js'
 
-export async function createLocation (
+export async function createLocation(
   create: (location: CreateLocationRequest) => Promise<Location>,
   request: BodyRequest,
-  log: log
+  log: log,
 ): Promise<Location> {
   authorizationService.authorizeAdmin(request.authTokenPayload)
   return await locationService.createLocation(create, request.body, log)
 }
 
-export async function updateLocation (
+export async function updateLocation(
   update: (location: Location) => Promise<Location>,
   locationId: string | undefined,
   request: BodyRequest,
-  log: log
+  log: log,
 ): Promise<Location> {
   authorizationService.authorizeAdmin(request.authTokenPayload)
   return await locationService.updateLocation(
     update,
     locationId,
     request.body,
-    log
+    log,
   )
 }
 
-export async function findLocationById (
+export async function findLocationById(
   find: (id: string) => Promise<Location | undefined>,
   request: IdRequest,
-  log: log
+  log: log,
 ): Promise<Location> {
   authorizationService.authorizeViewer(request.authTokenPayload)
-  return await locationService.findLocationById(
-    find,
-    request.id,
-    log
-  )
+  return await locationService.findLocationById(find, request.id, log)
 }
 
-export async function listLocations (
+export async function listLocations(
   list: (pagination: Pagination) => Promise<Location[]>,
   request: PaginationRequest,
-  log: log
+  log: log,
 ): Promise<Location[]> {
   authorizationService.authorizeViewer(request.authTokenPayload)
   return await locationService.listLocations(list, request.pagination, log)
 }
 
-export async function searchLocations (
-  search: (searchRequest: SearchByName) =>
-  Promise<Location[]>,
+export async function searchLocations(
+  search: (searchRequest: SearchByName) => Promise<Location[]>,
   request: BodyRequest,
-  log: log
+  log: log,
 ): Promise<Location[]> {
   authorizationService.authorizeViewer(request.authTokenPayload)
   return await locationService.searchLocations(search, request.body, log)

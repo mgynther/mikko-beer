@@ -4,8 +4,9 @@ import type { User } from './user.js'
 
 export interface AddPasswordUserIf {
   lockUserById: LockUserById
-  insertPasswordSignInMethod:
-    (userPassword: NewUserPasswordHash) => Promise<void>
+  insertPasswordSignInMethod: (
+    userPassword: NewUserPasswordHash,
+  ) => Promise<void>
   setUserUsername: (userId: string, username: string) => Promise<void>
 }
 
@@ -19,7 +20,7 @@ export interface PasswordSignInMethod {
 export interface SignInUsingPasswordIf {
   lockUserByUsername: (userName: string) => Promise<User | undefined>
   findPasswordSignInMethod: (
-    userId: string
+    userId: string,
   ) => Promise<UserPasswordHash | undefined>
   insertRefreshToken: (userId: string) => Promise<DbRefreshToken>
   updatePassword: (userPasswordHash: NewUserPasswordHash) => Promise<void>
@@ -30,7 +31,7 @@ type LockUserById = (userId: string) => Promise<User | undefined>
 export interface ChangePasswordUserIf {
   lockUserById: LockUserById
   findPasswordSignInMethod: (
-    userId: string
+    userId: string,
   ) => Promise<UserPasswordHash | undefined>
   updatePassword: (userPasswordHash: NewUserPasswordHash) => Promise<void>
 }

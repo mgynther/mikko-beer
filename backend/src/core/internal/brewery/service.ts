@@ -1,51 +1,49 @@
 import type {
   CreateBreweryRequest,
   UpdateBreweryRequest,
-  Brewery
+  Brewery,
 } from '../../brewery/brewery.js'
 
 import { breweryNotFoundError } from '../../errors.js'
 import type { log } from '../../log.js'
 import { INFO } from '../../log.js'
-import type {
-  Pagination
-} from '../../pagination.js'
+import type { Pagination } from '../../pagination.js'
 import type { SearchByName } from '../../search.js'
 
-export async function createBrewery (
+export async function createBrewery(
   create: (brewery: CreateBreweryRequest) => Promise<Brewery>,
   request: CreateBreweryRequest,
-  log: log
+  log: log,
 ): Promise<Brewery> {
   log(INFO, 'create brewery with name', request.name)
   const brewery = await create({
-    name: request.name
+    name: request.name,
   })
 
   log(INFO, 'created brewery with name', brewery.name, 'and id', brewery.id)
   return { ...brewery }
 }
 
-export async function updateBrewery (
+export async function updateBrewery(
   update: (brewery: Brewery) => Promise<Brewery>,
   breweryId: string,
   request: UpdateBreweryRequest,
-  log: log
+  log: log,
 ): Promise<Brewery> {
   log(INFO, 'update brewery with id', breweryId)
   const brewery = await update({
     id: breweryId,
-    name: request.name
+    name: request.name,
   })
 
   log(INFO, 'updated brewery with id', breweryId)
   return { ...brewery }
 }
 
-export async function findBreweryById (
+export async function findBreweryById(
   find: (id: string) => Promise<Brewery | undefined>,
   breweryId: string,
-  log: log
+  log: log,
 ): Promise<Brewery> {
   log(INFO, 'find brewery with id', breweryId)
   const brewery = await find(breweryId)
@@ -55,20 +53,19 @@ export async function findBreweryById (
   return brewery
 }
 
-export async function listBreweries (
+export async function listBreweries(
   list: (pagination: Pagination) => Promise<Brewery[]>,
   pagination: Pagination,
-  log: log
+  log: log,
 ): Promise<Brewery[]> {
   log(INFO, 'list breweries', pagination)
   return await list(pagination)
 }
 
-export async function searchBreweries (
-  search: (searchRequest: SearchByName) =>
-  Promise<Brewery[]>,
+export async function searchBreweries(
+  search: (searchRequest: SearchByName) => Promise<Brewery[]>,
   searchRequest: SearchByName,
-  log: log
+  log: log,
 ): Promise<Brewery[]> {
   log(INFO, 'search breweries', searchRequest)
   return await search(searchRequest)

@@ -7,6 +7,8 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "build:test": "rm -rf build-tests && tsc -p ./tsconfig-test.json",
+    "format": "npx prettier --write .",
+    "format:check": "npx prettier --check .",
     "lint": "npm run lint:src && npm run lint:test",
     "lint:src": "npx eslint --max-warnings=0 --fix src",
     "lint:test": "npx eslint --max-warnings=0 --fix test",
@@ -37,6 +39,7 @@
     "@types/koa-compress": "4.0.7",
     "@types/node": "25.6.0",
     "@types/pg": "8.20.0",
+    "prettier": "3.8.3",
     "typescript": "6.0.2",
     "typescript-eslint": "8.58.2"
   }

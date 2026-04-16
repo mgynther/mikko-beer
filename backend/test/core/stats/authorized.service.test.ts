@@ -2,7 +2,7 @@ import { describe, it } from 'node:test'
 
 import * as statsService from '../../../src/core/stats/authorized.service.js'
 
-import type { AuthTokenPayload } from "../../../src/core/auth/auth-token"
+import type { AuthTokenPayload } from '../../../src/core/auth/auth-token'
 import { dummyLog as log } from '../dummy-log.js'
 import type {
   AnnualContainerStats,
@@ -13,28 +13,28 @@ import type {
   OverallStats,
   RatingStats,
   StatsIdFilter,
-  StyleStats
+  StyleStats,
 } from '../../../src/core/stats/stats.js'
 import { assertDeepEqual } from '../../assert.js'
 
 const adminAuthToken: AuthTokenPayload = {
   userId: '2238a6f3-6cc7-44a4-bb91-6369bd9adf56',
   role: 'admin',
-  refreshTokenId: '0d3e980c-7d2b-4c73-a439-c55ddaa7a682'
+  refreshTokenId: '0d3e980c-7d2b-4c73-a439-c55ddaa7a682',
 }
 
 const viewerAuthToken: AuthTokenPayload = {
   userId: '57373ccd-a2ed-480c-beb4-90565da54e2d',
   role: 'viewer',
-  refreshTokenId: 'ddf43e29-7c7f-4246-9e39-88add3375bd6'
+  refreshTokenId: 'ddf43e29-7c7f-4246-9e39-88add3375bd6',
 }
 
 describe('stats authorized service unit tests', () => {
-  [adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
+  ;[adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
     const statsFilter: StatsIdFilter = {
       brewery: '94235104-ded1-44ec-a54c-ce972fe35420',
       location: undefined,
-      style: undefined
+      style: undefined,
     }
 
     it(`get overall stats as ${token.role}`, async () => {
@@ -46,13 +46,13 @@ describe('stats authorized service unit tests', () => {
         reviewCount: '120',
         distinctBeerReviewCount: '119',
         reviewAverage: '8.50',
-        styleCount: '28'
+        styleCount: '28',
       }
       const result = await statsService.getOverall(
         async () => ({ ...overallStats }),
         token,
         statsFilter,
-        log
+        log,
       )
       assertDeepEqual(result, { ...overallStats })
     })
@@ -62,21 +62,21 @@ describe('stats authorized service unit tests', () => {
         {
           reviewAverage: '8.23',
           reviewCount: '234',
-          year: '2023'
+          year: '2023',
         },
         {
           reviewAverage: '8.31',
           reviewCount: '215',
-          year: '2024'
-        }
+          year: '2024',
+        },
       ]
       const result = await statsService.getAnnual(
-        async () => ([ ...annualStats ]),
+        async () => [...annualStats],
         token,
         statsFilter,
-        log
+        log,
       )
-      assertDeepEqual(result, [ ...annualStats ])
+      assertDeepEqual(result, [...annualStats])
     })
 
     it(`get annual container stats as ${token.role}`, async () => {
@@ -87,7 +87,7 @@ describe('stats authorized service unit tests', () => {
           containerSize: '0.33',
           reviewAverage: '8.23',
           reviewCount: '234',
-          year: '2023'
+          year: '2023',
         },
         {
           containerId: '86b63fb6-937d-4a4f-b593-dd4db450c5c2',
@@ -95,17 +95,17 @@ describe('stats authorized service unit tests', () => {
           containerSize: '0.44',
           reviewAverage: '8.31',
           reviewCount: '215',
-          year: '2024'
-        }
+          year: '2024',
+        },
       ]
       const result = await statsService.getAnnualContainer(
-        async () => ([ ...annualContainerStats ]),
+        async () => [...annualContainerStats],
         token,
         { skip: 0, size: 20 },
         statsFilter,
-        log
+        log,
       )
-      assertDeepEqual(result, [ ...annualContainerStats ])
+      assertDeepEqual(result, [...annualContainerStats])
     })
 
     it(`get brewery stats as ${token.role}`, async () => {
@@ -115,18 +115,18 @@ describe('stats authorized service unit tests', () => {
           reviewCount: '64',
           reviewedBeerCount: '63',
           breweryId: 'c1c9948d-2a7a-4b54-9ada-0fbfedfe2121',
-          breweryName: 'Koskipanimo'
+          breweryName: 'Koskipanimo',
         },
         {
           reviewAverage: '9.01',
           reviewCount: '55',
           reviewedBeerCount: '54',
           breweryId: '1c0b32ed-a73a-422d-a14a-e70b0ea28e1d',
-          breweryName: 'Mallaskoski'
-        }
+          breweryName: 'Mallaskoski',
+        },
       ]
       const result = await statsService.getBrewery(
-        async () => ([ ...breweryStats ]),
+        async () => [...breweryStats],
         token,
         { skip: 0, size: 20 },
         {
@@ -140,11 +140,11 @@ describe('stats authorized service unit tests', () => {
         },
         {
           property: 'brewery_name',
-          direction: 'desc'
+          direction: 'desc',
         },
-        log
+        log,
       )
-      assertDeepEqual(result, [ ...breweryStats ])
+      assertDeepEqual(result, [...breweryStats])
     })
 
     it(`get container stats as ${token.role}`, async () => {
@@ -154,23 +154,23 @@ describe('stats authorized service unit tests', () => {
           reviewCount: '212',
           containerId: '95dbb5a8-c814-42ef-a9bf-d3aa220749a1',
           containerSize: '0.25',
-          containerType: 'draft'
+          containerType: 'draft',
         },
         {
           reviewAverage: '8.11',
           reviewCount: '201',
           containerId: '87aa392e-b1af-44d2-8690-460687709f0c',
           containerSize: '0.33',
-          containerType: 'bottle'
-        }
+          containerType: 'bottle',
+        },
       ]
       const result = await statsService.getContainer(
-        async () => ([ ...containerStats ]),
+        async () => [...containerStats],
         token,
         statsFilter,
-        log
+        log,
       )
-      assertDeepEqual(result, [ ...containerStats ])
+      assertDeepEqual(result, [...containerStats])
     })
 
     it(`get location stats as ${token.role}`, async () => {
@@ -179,17 +179,17 @@ describe('stats authorized service unit tests', () => {
           reviewAverage: '9.08',
           reviewCount: '64',
           locationId: '7deae235-e990-4ee7-b445-b19dd7fa5a1f',
-          locationName: 'Kuja Beer Shop & Bar'
+          locationName: 'Kuja Beer Shop & Bar',
         },
         {
           reviewAverage: '9.01',
           reviewCount: '55',
           locationId: '8a44ffcd-a647-4903-ab8f-7d98c4c28189',
-          locationName: 'Oluthuone Panimomestari'
-        }
+          locationName: 'Oluthuone Panimomestari',
+        },
       ]
       const result = await statsService.getLocation(
-        async () => ([ ...locationStats ]),
+        async () => [...locationStats],
         token,
         { skip: 0, size: 20 },
         {
@@ -203,32 +203,32 @@ describe('stats authorized service unit tests', () => {
         },
         {
           property: 'location_name',
-          direction: 'desc'
+          direction: 'desc',
         },
-        log
+        log,
       )
-      assertDeepEqual(result, [ ...locationStats ])
+      assertDeepEqual(result, [...locationStats])
     })
 
     it(`get rating stats as ${token.role}`, async () => {
       const ratingStats: RatingStats = [
         {
           rating: '9',
-          count: '5'
+          count: '5',
         },
         {
           rating: '8',
-          count: '15'
-        }
+          count: '15',
+        },
       ]
 
       const result = await statsService.getRating(
-        async () => ([ ...ratingStats ]),
+        async () => [...ratingStats],
         token,
         statsFilter,
-        log
+        log,
       )
-      assertDeepEqual(result, [ ...ratingStats ])
+      assertDeepEqual(result, [...ratingStats])
     })
 
     it(`get style stats as ${token.role}`, async () => {
@@ -237,17 +237,17 @@ describe('stats authorized service unit tests', () => {
           reviewAverage: '9.12',
           reviewCount: '58',
           styleId: 'c1c9948d-2a7a-4b54-9ada-0fbfedfe2121',
-          styleName: 'American IPA'
+          styleName: 'American IPA',
         },
         {
           reviewAverage: '9.69',
           reviewCount: '40',
           styleId: '2a0f8f10-297f-4bfa-81af-98c529b6dfbe',
-          styleName: 'Imperial Stout'
-        }
+          styleName: 'Imperial Stout',
+        },
       ]
       const result = await statsService.getStyle(
-        async () => ([ ...styleStats ]),
+        async () => [...styleStats],
         token,
         {
           ...statsFilter,
@@ -260,11 +260,11 @@ describe('stats authorized service unit tests', () => {
         },
         {
           property: 'average',
-          direction: 'desc'
+          direction: 'desc',
         },
-        log
+        log,
       )
-      assertDeepEqual(result, [ ...styleStats ])
+      assertDeepEqual(result, [...styleStats])
     })
   })
 })

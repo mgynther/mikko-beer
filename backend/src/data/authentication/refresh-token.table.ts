@@ -1,9 +1,4 @@
-import type {
-  Generated,
-  Insertable,
-  Selectable,
-  Updateable
-} from 'kysely'
+import type { Generated, Insertable, Selectable, Updateable } from 'kysely'
 
 export interface RefreshTokenTable {
   refresh_token_id: Generated<string>

@@ -3,7 +3,7 @@ import { describe, it } from 'node:test'
 import type {
   Brewery,
   CreateBreweryRequest,
-  UpdateBreweryRequest
+  UpdateBreweryRequest,
 } from '../../../../src/core/brewery/brewery.js'
 import { breweryNotFoundError } from '../../../../src/core/errors.js'
 import type { Pagination } from '../../../../src/core/pagination.js'
@@ -35,7 +35,7 @@ describe('brewery service unit tests', () => {
     const result = await breweryService.createBrewery(create, request, log)
     assertDeepEqual(result, {
       ...request,
-      id: brewery.id
+      id: brewery.id,
     })
   })
 
@@ -55,11 +55,11 @@ describe('brewery service unit tests', () => {
       update,
       brewery.id,
       request,
-      log
+      log,
     )
     assertDeepEqual(result, {
       ...request,
-      id: brewery.id
+      id: brewery.id,
     })
   })
 
@@ -86,7 +86,7 @@ describe('brewery service unit tests', () => {
   it('list brewerys', async () => {
     const pagination: Pagination = {
       size: 10,
-      skip: 80
+      skip: 80,
     }
     const lister = async (listPagination: Pagination) => {
       assertDeepEqual(listPagination, pagination)
@@ -107,7 +107,7 @@ describe('brewery service unit tests', () => {
     const result = await breweryService.searchBreweries(
       searcher,
       searchByName,
-      log
+      log,
     )
     assertDeepEqual(result, [brewery])
   })

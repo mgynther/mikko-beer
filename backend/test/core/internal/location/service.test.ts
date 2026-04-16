@@ -3,13 +3,12 @@ import { describe, it } from 'node:test'
 import type {
   Location,
   CreateLocationRequest,
-  UpdateLocationRequest
+  UpdateLocationRequest,
 } from '../../../../src/core/location/location.js'
 import { locationNotFoundError } from '../../../../src/core/errors.js'
 import type { Pagination } from '../../../../src/core/pagination.js'
 import type { SearchByName } from '../../../../src/core/search.js'
-import * as
-locationService from '../../../../src/core/internal/location/service.js'
+import * as locationService from '../../../../src/core/internal/location/service.js'
 
 import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
@@ -36,7 +35,7 @@ describe('location service unit tests', () => {
     const result = await locationService.createLocation(create, request, log)
     assertDeepEqual(result, {
       ...request,
-      id: location.id
+      id: location.id,
     })
   })
 
@@ -56,11 +55,11 @@ describe('location service unit tests', () => {
       update,
       location.id,
       request,
-      log
+      log,
     )
     assertDeepEqual(result, {
       ...request,
-      id: location.id
+      id: location.id,
     })
   })
 
@@ -69,8 +68,11 @@ describe('location service unit tests', () => {
       assertEqual(locationId, location.id)
       return location
     }
-    const result =
-      await locationService.findLocationById(finder, location.id, log)
+    const result = await locationService.findLocationById(
+      finder,
+      location.id,
+      log,
+    )
     assertEqual(result, location)
   })
 
@@ -88,7 +90,7 @@ describe('location service unit tests', () => {
   it('list locations', async () => {
     const pagination: Pagination = {
       size: 10,
-      skip: 80
+      skip: 80,
     }
     const lister = async (listPagination: Pagination) => {
       assertDeepEqual(listPagination, pagination)
@@ -109,7 +111,7 @@ describe('location service unit tests', () => {
     const result = await locationService.searchLocations(
       searcher,
       searchByName,
-      log
+      log,
     )
     assertDeepEqual(result, [location])
   })

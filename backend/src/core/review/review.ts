@@ -8,7 +8,7 @@ import type { LockId } from '../db.js'
 import {
   invalidReviewListQueryBeerNameError,
   invalidReviewListQueryBreweryNameError,
-  invalidReviewListQueryOrderError
+  invalidReviewListQueryOrderError,
 } from '../errors.js'
 
 export interface CreateIf {
@@ -58,10 +58,12 @@ export interface JoinedReview {
     name: string
   }>
   container: Container
-  location: {
-    id: string
-    name: string
-  } | undefined
+  location:
+    | {
+        id: string
+        name: string
+      }
+    | undefined
   rating: number
   styles: Array<{
     id: string
@@ -95,21 +97,19 @@ export interface ReviewListOrder {
 export type CreateReviewRequest = ReviewRequest
 export type UpdateReviewRequest = ReviewRequest
 
-const doValidateReviewListOrder =
-  ajv.compile<ReviewListOrder>({
-    type: 'object',
-    properties: {
-      property: {
-        enum: ['beer_name', 'brewery_name', 'rating', 'time']
-      },
-      direction: directionValidation
+const doValidateReviewListOrder = ajv.compile<ReviewListOrder>({
+  type: 'object',
+  properties: {
+    property: {
+      enum: ['beer_name', 'brewery_name', 'rating', 'time'],
     },
-    required: ['property', 'direction'],
-    additionalProperties: false
-  })
+    direction: directionValidation,
+  },
+  required: ['property', 'direction'],
+  additionalProperties: false,
+})
 
-
-function isReviewListOrderValid (body: unknown): boolean {
+function isReviewListOrderValid(body: unknown): boolean {
   return doValidateReviewListOrder(body)
 }
 
@@ -118,10 +118,10 @@ interface ReviewListOrderParams {
   direction: unknown
 }
 
-function reviewListOrderParamsOrDefaults (
+function reviewListOrderParamsOrDefaults(
   query: Record<string, unknown>,
   defaultProperty: ReviewListOrderProperty,
-  defaultDirection: ListDirection
+  defaultDirection: ListDirection,
 ): ReviewListOrderParams {
   let { order, direction } = query
   if (order === undefined || order === '') {
@@ -133,13 +133,16 @@ function reviewListOrderParamsOrDefaults (
   return { property: order, direction }
 }
 
-function validReviewListOrder (
+function validReviewListOrder(
   query: Record<string, unknown>,
   defaultProperty: ReviewListOrderProperty,
-  defaultDirection: ListDirection
+  defaultDirection: ListDirection,
 ): ReviewListOrder | undefined {
-  const params =
-    reviewListOrderParamsOrDefaults(query, defaultProperty, defaultDirection)
+  const params = reviewListOrderParamsOrDefaults(
+    query,
+    defaultProperty,
+    defaultDirection,
+  )
   if (isReviewListOrderValid(params)) {
     return {
       /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
@@ -149,14 +152,14 @@ function validReviewListOrder (
       /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
        * Validated using ajv.
        */
-      direction: params.direction as ListDirection
+      direction: params.direction as ListDirection,
     }
   }
   return undefined
 }
 
-export function validateFullReviewListOrder (
-  query: Record<string, unknown>
+export function validateFullReviewListOrder(
+  query: Record<string, unknown>,
 ): ReviewListOrder {
   const reviewListOrder = validReviewListOrder(query, 'time', 'desc')
   const validated = validateReviewListOrder(reviewListOrder)
@@ -170,15 +173,15 @@ export function validateFullReviewListOrder (
   return validated
 }
 
-export function validateFilteredReviewListOrder (
-  query: Record<string, unknown>
+export function validateFilteredReviewListOrder(
+  query: Record<string, unknown>,
 ): ReviewListOrder {
   const reviewListOrder = validReviewListOrder(query, 'beer_name', 'asc')
   return validateReviewListOrder(reviewListOrder)
 }
 
-function validateReviewListOrder (
-  reviewListOrder: ReviewListOrder | undefined
+function validateReviewListOrder(
+  reviewListOrder: ReviewListOrder | undefined,
 ): ReviewListOrder {
   if (reviewListOrder === undefined) {
     throw invalidReviewListQueryOrderError

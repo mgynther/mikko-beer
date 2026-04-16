@@ -17,11 +17,11 @@ export interface InsertedData {
   otherBeer: Beer
   brewery: Brewery
   otherBrewery: Brewery
-  container: Container,
-  otherContainer: Container,
-  location: Location,
-  otherLocation: Location,
-  style: Style,
+  container: Container
+  otherContainer: Container
+  location: Location
+  otherLocation: Location
+  style: Style
   otherStyle: Style
 }
 
@@ -29,26 +29,26 @@ export interface InsertedData {
 // adapted for specific cases that are not already supported. Instead specific
 // test data should be created.
 export async function insertData(trx: Transaction): Promise<InsertedData> {
-  const brewery =
-    await breweryRepository.insertBrewery(trx, { name: 'Salama' })
-  const otherBrewery =
-    await breweryRepository.insertBrewery(trx, { name: 'Brewdog' })
+  const brewery = await breweryRepository.insertBrewery(trx, { name: 'Salama' })
+  const otherBrewery = await breweryRepository.insertBrewery(trx, {
+    name: 'Brewdog',
+  })
   const style = await styleRepository.insertStyle(trx, { name: 'Helles' })
   const otherStyle = await styleRepository.insertStyle(trx, { name: 'Lager' })
   const beer = await beerRepository.insertBeer(trx, { name: 'Brainzilla' })
-  const otherBeer =
-    await beerRepository.insertBeer(trx, { name: 'Lost Lager' })
+  const otherBeer = await beerRepository.insertBeer(trx, { name: 'Lost Lager' })
   const beerBreweryRequest = {
     beer: beer.id,
-    brewery: brewery.id
+    brewery: brewery.id,
   }
   const otherBeerBreweryRequest = {
     beer: otherBeer.id,
-    brewery: otherBrewery.id
+    brewery: otherBrewery.id,
   }
-  await beerRepository.insertBeerBreweries(
-    trx, [beerBreweryRequest, otherBeerBreweryRequest]
-  )
+  await beerRepository.insertBeerBreweries(trx, [
+    beerBreweryRequest,
+    otherBeerBreweryRequest,
+  ])
   const beerStyleRequest = {
     beer: beer.id,
     style: style.id,
@@ -57,31 +57,37 @@ export async function insertData(trx: Transaction): Promise<InsertedData> {
     beer: otherBeer.id,
     style: otherStyle.id,
   }
-  await beerRepository.insertBeerStyles(
-    trx, [beerStyleRequest, otherBeerStyleRequest]
-  )
+  await beerRepository.insertBeerStyles(trx, [
+    beerStyleRequest,
+    otherBeerStyleRequest,
+  ])
   const containerRequest = {
     size: '0.50',
-    type: 'bottle'
+    type: 'bottle',
   }
-  const container =
-    await containerRepository.insertContainer(trx, containerRequest)
+  const container = await containerRepository.insertContainer(
+    trx,
+    containerRequest,
+  )
   const otherContainerRequest = {
     size: '0.44',
-    type: 'can'
+    type: 'can',
   }
-  const otherContainer =
-    await containerRepository.insertContainer(trx, otherContainerRequest)
+  const otherContainer = await containerRepository.insertContainer(
+    trx,
+    otherContainerRequest,
+  )
   const locationRequest = {
-    name: 'location'
+    name: 'location',
   }
-  const location =
-    await locationRepository.insertLocation(trx, locationRequest)
+  const location = await locationRepository.insertLocation(trx, locationRequest)
   const otherLocationRequest = {
-    name: 'other location'
+    name: 'other location',
   }
-  const otherLocation =
-    await locationRepository.insertLocation(trx, otherLocationRequest)
+  const otherLocation = await locationRepository.insertLocation(
+    trx,
+    otherLocationRequest,
+  )
   return {
     beer,
     otherBeer,
@@ -92,7 +98,7 @@ export async function insertData(trx: Transaction): Promise<InsertedData> {
     location,
     otherLocation,
     style,
-    otherStyle
+    otherStyle,
   }
 }
 
@@ -101,8 +107,8 @@ export async function insertData(trx: Transaction): Promise<InsertedData> {
 // should be created.
 export async function insertMultipleReviews(
   count: number,
-  db: Database
-): Promise<{ reviews: Review[], data: InsertedData }> {
+  db: Database,
+): Promise<{ reviews: Review[]; data: InsertedData }> {
   const reviews: Review[] = []
   let data: InsertedData | undefined = undefined
   await db.executeReadWriteTransaction(async (trx: Transaction) => {
@@ -113,28 +119,26 @@ export async function insertMultipleReviews(
       container,
       otherContainer,
       location,
-      otherLocation
+      otherLocation,
     } = data
     for (let i = 0; i < count; i++) {
       const reviewRequest = {
         additionalInfo: '',
-        beer: (i % 2 === 0) ? otherBeer.id : beer.id,
-        container: (i % 2 === 0) ? otherContainer.id : container.id,
-        location: (i % 2 === 0) ? otherLocation.id : location.id,
+        beer: i % 2 === 0 ? otherBeer.id : beer.id,
+        container: i % 2 === 0 ? otherContainer.id : container.id,
+        location: i % 2 === 0 ? otherLocation.id : location.id,
         rating: (i % 7) + 4,
-        time: new Date(`202${
-          i % 2 === 0 ? 3 : 4
-        }-0${
-          (i % 3) + 2
-        }-0${
-          (i % 5) + 1
-        }T18:00:00.000Z`),
-        smell: "vanilla",
-        taste: "chocolate"
+        time: new Date(
+          `202${i % 2 === 0 ? 3 : 4}-0${(i % 3) + 2}-0${
+            (i % 5) + 1
+          }T18:00:00.000Z`,
+        ),
+        smell: 'vanilla',
+        taste: 'chocolate',
       }
       reviews.push(await reviewRepository.insertReview(trx, reviewRequest))
     }
   })
-  if (data === undefined) throw new Error('data must not be undefined');
+  if (data === undefined) throw new Error('data must not be undefined')
   return { reviews, data }
 }

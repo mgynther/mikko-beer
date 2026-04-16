@@ -3,7 +3,7 @@ import {
   assertDeepEqual,
   assertEqual,
   assertGreaterThan,
-  assertIncludes
+  assertIncludes,
 } from '../assert.js'
 
 import { createClient } from './client.js'
@@ -12,7 +12,7 @@ import {
   afterTest,
   afterTests,
   beforeTest,
-  beforeTests
+  beforeTests,
 } from '../data/test-helpers.js'
 import { App } from '../../src/web/app.js'
 import type { Database } from '../../src/data/database.js'
@@ -30,9 +30,7 @@ export class TestContext {
   #app?: App
   #logMessages: LogEntry[] = []
 
-  request = createClient(
-    `http://localhost:${testConfig.port}`
-  )
+  request = createClient(`http://localhost:${testConfig.port}`)
 
   get db(): Database {
     return this.#app!.db
@@ -49,12 +47,12 @@ export class TestContext {
   beforeEach = async (): Promise<void> => {
     const config = {
       ...testConfig,
-      generateInitialAdminPassword: true
+      generateInitialAdminPassword: true,
     }
     const log: log = (level: Level, ...args: unknown[]) => {
       this.#logMessages.push({
         level,
-        message: args.map((a: unknown) => `${a}`).join()
+        message: args.map((a: unknown) => `${a}`).join(),
       })
     }
     this.#app = new App(config, log)
@@ -105,7 +103,7 @@ describe('initial admin', () => {
       `/api/v1/user/${res.data.user.id}`,
       {
         Authorization: `Bearer ${authToken}`,
-      }
+      },
     )
     assertEqual(getRes.status, 200)
     assertDeepEqual(getRes.data.user, res.data.user)

@@ -11,15 +11,13 @@ import { assertDeepEqual, assertRejects } from '../../assert.js'
 const defaultFilter: StatsIdFilter = {
   brewery: undefined,
   location: undefined,
-  style: undefined
+  style: undefined,
 }
 
 function reviewAverage(reviews: Review[]): string {
   return (
-    reviews
-      .map(r => r.rating)
-      .reduce((sum, rating) => sum + rating, 0)
-      / reviews.length
+    reviews.map((r) => r.rating).reduce((sum, rating) => sum + rating, 0) /
+    reviews.length
   ).toFixed(2)
 }
 
@@ -44,7 +42,7 @@ describe('overall stats tests', () => {
       distinctBeerReviewCount: '2',
       reviewAverage: reviewAverage(reviews),
       reviewCount: `${reviews.length}`,
-      styleCount: '2'
+      styleCount: '2',
     })
   })
 
@@ -53,7 +51,7 @@ describe('overall stats tests', () => {
 
     const stats = await statsRepository.getOverall(ctx.db, {
       ...defaultFilter,
-      brewery: data.brewery.id
+      brewery: data.brewery.id,
     })
     const matchingReviews = reviews.filter((_, index) => index % 2 === 1)
     assertDeepEqual(stats, {
@@ -64,7 +62,7 @@ describe('overall stats tests', () => {
       distinctBeerReviewCount: '1',
       reviewAverage: reviewAverage(matchingReviews),
       reviewCount: `${matchingReviews.length}`,
-      styleCount: '1'
+      styleCount: '1',
     })
   })
 
@@ -78,8 +76,10 @@ describe('overall stats tests', () => {
           style: data.style.id,
         })
       },
-      new Error('Multiple filters of brewery, location and style not supported'),
-      Error
+      new Error(
+        'Multiple filters of brewery, location and style not supported',
+      ),
+      Error,
     )
   })
 
@@ -88,7 +88,7 @@ describe('overall stats tests', () => {
 
     const stats = await statsRepository.getOverall(ctx.db, {
       ...defaultFilter,
-      location: data.location.id
+      location: data.location.id,
     })
     const matchingReviews = reviews.filter((_, index) => index % 2 === 1)
     assertDeepEqual(stats, {
@@ -99,7 +99,7 @@ describe('overall stats tests', () => {
       distinctBeerReviewCount: '1',
       reviewAverage: reviewAverage(matchingReviews),
       reviewCount: `${matchingReviews.length}`,
-      styleCount: '1'
+      styleCount: '1',
     })
   })
 
@@ -108,7 +108,7 @@ describe('overall stats tests', () => {
 
     const stats = await statsRepository.getOverall(ctx.db, {
       ...defaultFilter,
-      style: data.otherStyle.id
+      style: data.otherStyle.id,
     })
     const matchingReviews = reviews.filter((_, index) => index % 2 === 0)
     assertDeepEqual(stats, {
@@ -119,7 +119,7 @@ describe('overall stats tests', () => {
       distinctBeerReviewCount: '1',
       reviewAverage: reviewAverage(matchingReviews),
       reviewCount: `${matchingReviews.length}`,
-      styleCount: '1'
+      styleCount: '1',
     })
   })
 })

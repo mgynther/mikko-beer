@@ -16,14 +16,14 @@ describe('container stats tests', () => {
   afterEach(ctx.afterEach)
 
   function filterByContainer(reviews: Review[], containerId: string): Review[] {
-    return reviews.filter(r => r.container === containerId)
+    return reviews.filter((r) => r.container === containerId)
   }
 
   function avg(reviews: Review[], containerId: string) {
     if (reviews === null) throw new Error('must not be null')
     const filteredReviews = filterByContainer(reviews, containerId)
     const sum = filteredReviews
-      .map(r => r.rating)
+      .map((r) => r.rating)
       .reduce<number>((sum, rating) => sum + (rating ?? 0), 0)
 
     const numValue = sum / filteredReviews.length
@@ -32,14 +32,11 @@ describe('container stats tests', () => {
 
   it('no filters', async () => {
     const { data, reviews } = await insertMultipleReviews(9, ctx.db)
-    const stats = await statsRepository.getContainer(
-      ctx.db,
-      {
-        brewery: undefined,
-        location: undefined,
-        style: undefined
-      }
-    )
+    const stats = await statsRepository.getContainer(ctx.db, {
+      brewery: undefined,
+      location: undefined,
+      style: undefined,
+    })
     const { container, otherContainer } = data
     assertDeepEqual(stats, [
       {
@@ -47,28 +44,25 @@ describe('container stats tests', () => {
         containerSize: '0.50',
         containerType: 'bottle',
         reviewAverage: avg(reviews, container.id),
-        reviewCount: `${filterByContainer(reviews, container.id).length}`
+        reviewCount: `${filterByContainer(reviews, container.id).length}`,
       },
       {
         containerId: otherContainer.id,
         containerSize: '0.44',
         containerType: 'can',
         reviewAverage: avg(reviews, otherContainer.id),
-        reviewCount: `${filterByContainer(reviews, otherContainer.id).length}`
-      }
+        reviewCount: `${filterByContainer(reviews, otherContainer.id).length}`,
+      },
     ])
   })
 
   it('filter by brewery', async () => {
     const { data, reviews } = await insertMultipleReviews(9, ctx.db)
-    const stats = await statsRepository.getContainer(
-      ctx.db,
-      {
-        brewery: data.brewery.id,
-        location: undefined,
-        style: undefined
-      }
-    )
+    const stats = await statsRepository.getContainer(ctx.db, {
+      brewery: data.brewery.id,
+      location: undefined,
+      style: undefined,
+    })
     const { container } = data
     assertDeepEqual(stats, [
       {
@@ -76,21 +70,18 @@ describe('container stats tests', () => {
         containerSize: '0.50',
         containerType: 'bottle',
         reviewAverage: avg(reviews, container.id),
-        reviewCount: `${filterByContainer(reviews, container.id).length}`
-      }
+        reviewCount: `${filterByContainer(reviews, container.id).length}`,
+      },
     ])
   })
 
   it('filter by location', async () => {
     const { data, reviews } = await insertMultipleReviews(9, ctx.db)
-    const stats = await statsRepository.getContainer(
-      ctx.db,
-      {
-        brewery: undefined,
-        location: data.location.id,
-        style: undefined
-      }
-    )
+    const stats = await statsRepository.getContainer(ctx.db, {
+      brewery: undefined,
+      location: data.location.id,
+      style: undefined,
+    })
     const { container } = data
     assertDeepEqual(stats, [
       {
@@ -98,29 +89,26 @@ describe('container stats tests', () => {
         containerSize: '0.50',
         containerType: 'bottle',
         reviewAverage: avg(reviews, container.id),
-        reviewCount: `${filterByContainer(reviews, container.id).length}`
-      }
+        reviewCount: `${filterByContainer(reviews, container.id).length}`,
+      },
     ])
   })
 
   it('filter by style', async () => {
     const { data } = await insertMultipleReviews(9, ctx.db)
-    const stats = await statsRepository.getContainer(
-      ctx.db,
-      {
-        brewery: undefined,
-        location: undefined,
-        style: data.otherStyle.id
-      }
-    )
+    const stats = await statsRepository.getContainer(ctx.db, {
+      brewery: undefined,
+      location: undefined,
+      style: data.otherStyle.id,
+    })
     assertDeepEqual(stats, [
       {
         containerId: data.otherContainer.id,
         containerSize: '0.44',
         containerType: 'can',
         reviewAverage: '6.60',
-        reviewCount: '5'
-      }
+        reviewCount: '5',
+      },
     ])
   })
 })

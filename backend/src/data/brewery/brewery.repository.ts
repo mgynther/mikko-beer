@@ -1,23 +1,20 @@
 import type { Database, Transaction } from '../database.js'
-import type {
-  BreweryRow
-} from './brewery.table.js'
+import type { BreweryRow } from './brewery.table.js'
 
 import type {
   Brewery,
-  CreateBreweryRequest
+  CreateBreweryRequest,
 } from '../../core/brewery/brewery.js'
-import type {
-  Pagination
-} from '../../core/pagination.js'
+import type { Pagination } from '../../core/pagination.js'
 import type { SearchByName } from '../../core/search.js'
 import { defaultSearchMaxResults, toIlike } from '../../core/search.js'
 
-export async function insertBrewery (
+export async function insertBrewery(
   trx: Transaction,
-  brewery: CreateBreweryRequest
+  brewery: CreateBreweryRequest,
 ): Promise<Brewery> {
-  const insertedBrewery = await trx.trx()
+  const insertedBrewery = await trx
+    .trx()
     .insertInto('brewery')
     .values(brewery)
     .returningAll()
@@ -26,14 +23,15 @@ export async function insertBrewery (
   return rowToBrewery(insertedBrewery)
 }
 
-export async function updateBrewery (
+export async function updateBrewery(
   trx: Transaction,
-  brewery: Brewery
+  brewery: Brewery,
 ): Promise<Brewery> {
-  const updatedBrewery = await trx.trx()
+  const updatedBrewery = await trx
+    .trx()
     .updateTable('brewery')
     .set({
-      name: brewery.name
+      name: brewery.name,
     })
     .where('brewery_id', '=', brewery.id)
     .returningAll()
@@ -42,11 +40,12 @@ export async function updateBrewery (
   return rowToBrewery(updatedBrewery)
 }
 
-export async function findBreweryById (
+export async function findBreweryById(
   db: Database,
-  id: string
+  id: string,
 ): Promise<Brewery | undefined> {
-  const breweryRow = await db.getDb()
+  const breweryRow = await db
+    .getDb()
     .selectFrom('brewery')
     .where('brewery_id', '=', id)
     .selectAll('brewery')
@@ -59,25 +58,27 @@ export async function findBreweryById (
   return rowToBrewery(breweryRow)
 }
 
-export async function lockBreweries (
+export async function lockBreweries(
   trx: Transaction,
-  keys: string[]
+  keys: string[],
 ): Promise<string[]> {
-  const breweries = await trx.trx()
+  const breweries = await trx
+    .trx()
     .selectFrom('brewery')
     .where('brewery_id', 'in', keys)
     .select('brewery_id')
     .forUpdate()
     .execute()
 
-  return breweries.map(brewery => brewery.brewery_id)
+  return breweries.map((brewery) => brewery.brewery_id)
 }
 
-export async function listBreweries (
+export async function listBreweries(
   db: Database,
-  pagination: Pagination
+  pagination: Pagination,
 ): Promise<Brewery[]> {
-  const breweries = await db.getDb()
+  const breweries = await db
+    .getDb()
     .selectFrom('brewery')
     .selectAll('brewery')
     .orderBy('brewery.name')
@@ -88,26 +89,25 @@ export async function listBreweries (
   return breweries.map(rowToBrewery)
 }
 
-export async function searchBreweries (
+export async function searchBreweries(
   db: Database,
-  searchRequest: SearchByName
+  searchRequest: SearchByName,
 ): Promise<Brewery[]> {
   const nameIlike = toIlike(searchRequest)
-  const breweries = await db.getDb()
+  const breweries = await db
+    .getDb()
     .selectFrom('brewery')
     .selectAll('brewery')
-    .where(
-      'brewery.name', 'ilike', nameIlike
-    )
+    .where('brewery.name', 'ilike', nameIlike)
     .limit(defaultSearchMaxResults)
     .execute()
 
   return breweries.map(rowToBrewery)
 }
 
-function rowToBrewery (row: BreweryRow): Brewery {
+function rowToBrewery(row: BreweryRow): Brewery {
   return {
     id: row.brewery_id,
-    name: row.name
+    name: row.name,
   }
 }

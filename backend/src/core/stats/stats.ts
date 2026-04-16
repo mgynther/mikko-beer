@@ -4,7 +4,7 @@ import {
   invalidIdFilterError,
   invalidBreweryStatsQueryError,
   invalidLocationStatsQueryError,
-  invalidStyleStatsQueryError
+  invalidStyleStatsQueryError,
 } from '../errors.js'
 import type { ListDirection } from '../list.js'
 import { directionValidation } from '../internal/list.js'
@@ -109,25 +109,22 @@ export interface StyleStatsOrder {
   direction: ListDirection
 }
 
-function validStatsIdFilter (
-  query: Record<string, unknown> | undefined
+function validStatsIdFilter(
+  query: Record<string, unknown> | undefined,
 ): StatsIdFilter | undefined {
   const noFilter = { brewery: undefined, location: undefined, style: undefined }
   if (query === undefined) {
     return noFilter
   }
   const { brewery, location, style } = query
-  const validBrewery = typeof brewery === 'string' && brewery.length > 0
-    ? brewery
-    : undefined
-  const validLocation = typeof location === 'string' && location.length > 0
-    ? location
-    : undefined
-  const validStyle = typeof style === 'string' && style.length > 0
-    ? style
-    : undefined
-  const ids = [ validBrewery, validLocation, validStyle ]
-  if (ids.filter(value => value !== undefined).length > 1) {
+  const validBrewery =
+    typeof brewery === 'string' && brewery.length > 0 ? brewery : undefined
+  const validLocation =
+    typeof location === 'string' && location.length > 0 ? location : undefined
+  const validStyle =
+    typeof style === 'string' && style.length > 0 ? style : undefined
+  const ids = [validBrewery, validLocation, validStyle]
+  if (ids.filter((value) => value !== undefined).length > 1) {
     // Multiple are not supported as it's currently not a valid use case and
     // queries are not trivial.
     return undefined
@@ -135,12 +132,12 @@ function validStatsIdFilter (
   return {
     brewery: validBrewery,
     location: validLocation,
-    style: validStyle
+    style: validStyle,
   }
 }
 
-export function validateStatsIdFilter (
-  query: Record<string, unknown> | undefined
+export function validateStatsIdFilter(
+  query: Record<string, unknown> | undefined,
 ): StatsIdFilter {
   const result = validStatsIdFilter(query)
   if (result === undefined) {
@@ -149,8 +146,8 @@ export function validateStatsIdFilter (
   return result
 }
 
-export function validateStatsFilter (
-  query: Record<string, unknown> | undefined
+export function validateStatsFilter(
+  query: Record<string, unknown> | undefined,
 ): StatsFilter {
   const defaultResult: StatsFilter = {
     brewery: undefined,
@@ -161,7 +158,7 @@ export function validateStatsFilter (
     maxReviewCount: Infinity,
     minReviewCount: 1,
     timeStart: undefined,
-    timeEnd: undefined
+    timeEnd: undefined,
   }
   if (query === undefined) {
     return defaultResult
@@ -169,7 +166,7 @@ export function validateStatsFilter (
   const statsIdFilter = validateStatsIdFilter(query)
   const result = {
     ...defaultResult,
-    ...statsIdFilter
+    ...statsIdFilter,
   }
   const {
     min_review_count,
@@ -177,18 +174,18 @@ export function validateStatsFilter (
     min_review_average,
     max_review_average,
     time_start,
-    time_end
+    time_end,
   } = query
   type NumberKey =
-    'maxReviewAverage' |
-    'minReviewAverage' |
-    'maxReviewCount' |
-    'minReviewCount'
-  function assignValidNumber (
+    | 'maxReviewAverage'
+    | 'minReviewAverage'
+    | 'maxReviewCount'
+    | 'minReviewCount'
+  function assignValidNumber(
     key: NumberKey,
     value: unknown,
     validator: (value: number) => boolean,
-    parser: (valud: string) => number
+    parser: (valud: string) => number,
   ): void {
     if (typeof value === 'string' && value.length > 0) {
       const numValue = parser(value)
@@ -198,21 +195,26 @@ export function validateStatsFilter (
     }
   }
   const validateAverage = (value: number): boolean => value <= 10 && value >= 4
-  const validateCount =
-    (value: number): boolean => value <= Infinity && value >= 1
+  const validateCount = (value: number): boolean =>
+    value <= Infinity && value >= 1
   assignValidNumber(
-    'maxReviewAverage', max_review_average, validateAverage, parseFloat)
+    'maxReviewAverage',
+    max_review_average,
+    validateAverage,
+    parseFloat,
+  )
   assignValidNumber(
-    'minReviewAverage', min_review_average, validateAverage, parseFloat)
+    'minReviewAverage',
+    min_review_average,
+    validateAverage,
+    parseFloat,
+  )
   assignValidNumber('maxReviewCount', max_review_count, validateCount, parseInt)
   assignValidNumber('minReviewCount', min_review_count, validateCount, parseInt)
 
-  const validateTimestamp =
-    (value: number): boolean => value <= Infinity && value >= 1
-  function assignValidDate (
-    key: 'timeStart' | 'timeEnd',
-    value: unknown
-  ): void {
+  const validateTimestamp = (value: number): boolean =>
+    value <= Infinity && value >= 1
+  function assignValidDate(key: 'timeStart' | 'timeEnd', value: unknown): void {
     if (typeof value === 'string' && value.length > 0) {
       const numValue = parseInt(value)
       if (!isNaN(numValue) && validateTimestamp(numValue)) {
@@ -225,54 +227,51 @@ export function validateStatsFilter (
   return result
 }
 
-const doValidateBreweryStatsOrder =
-  ajv.compile<BreweryStatsOrder>({
-    type: 'object',
-    properties: {
-      property: {
-        enum: ['average', 'brewery_name', 'count']
-      },
-      direction: directionValidation
+const doValidateBreweryStatsOrder = ajv.compile<BreweryStatsOrder>({
+  type: 'object',
+  properties: {
+    property: {
+      enum: ['average', 'brewery_name', 'count'],
     },
-    required: ['property', 'direction'],
-    additionalProperties: false
-  })
+    direction: directionValidation,
+  },
+  required: ['property', 'direction'],
+  additionalProperties: false,
+})
 
-function isBreweryStatsOrderValid (body: unknown): boolean {
+function isBreweryStatsOrderValid(body: unknown): boolean {
   return doValidateBreweryStatsOrder(body)
 }
 
-const doValidateLocationStatsOrder =
-  ajv.compile<LocationStatsOrder>({
-    type: 'object',
-    properties: {
-      property: {
-        enum: ['average', 'location_name', 'count']
-      },
-      direction: directionValidation
+const doValidateLocationStatsOrder = ajv.compile<LocationStatsOrder>({
+  type: 'object',
+  properties: {
+    property: {
+      enum: ['average', 'location_name', 'count'],
     },
-    required: ['property', 'direction'],
-    additionalProperties: false
-  })
+    direction: directionValidation,
+  },
+  required: ['property', 'direction'],
+  additionalProperties: false,
+})
 
-function isLocationStatsOrderValid (body: unknown): boolean {
+function isLocationStatsOrderValid(body: unknown): boolean {
   return doValidateLocationStatsOrder(body)
 }
 
-const doValidateStyleStatsOrder =
-  ajv.compile<StyleStatsOrder>({
-    type: 'object',
-    properties: {
-      property: {
-        enum: ['average', 'style_name', 'count']
-      },
-      direction: directionValidation
+const doValidateStyleStatsOrder = ajv.compile<StyleStatsOrder>({
+  type: 'object',
+  properties: {
+    property: {
+      enum: ['average', 'style_name', 'count'],
     },
-    required: ['property', 'direction'],
-    additionalProperties: false
-  })
+    direction: directionValidation,
+  },
+  required: ['property', 'direction'],
+  additionalProperties: false,
+})
 
-function isStyleStatsOrderValid (body: unknown): boolean {
+function isStyleStatsOrderValid(body: unknown): boolean {
   return doValidateStyleStatsOrder(body)
 }
 
@@ -281,8 +280,8 @@ interface ReviewListOrderParams {
   direction: unknown
 }
 
-function breweryStatsParamsOrDefaults (
-  query: Record<string, unknown>
+function breweryStatsParamsOrDefaults(
+  query: Record<string, unknown>,
 ): ReviewListOrderParams {
   let { order, direction } = query
   if (order === undefined || order === '') {
@@ -294,8 +293,8 @@ function breweryStatsParamsOrDefaults (
   return { property: order, direction }
 }
 
-export function validateBreweryStatsOrder (
-  query: Record<string, unknown>
+export function validateBreweryStatsOrder(
+  query: Record<string, unknown>,
 ): BreweryStatsOrder {
   const params = breweryStatsParamsOrDefaults(query)
   if (isBreweryStatsOrderValid(params)) {
@@ -307,14 +306,14 @@ export function validateBreweryStatsOrder (
       /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
        * Validated using ajv.
        */
-      direction: params.direction as ListDirection
+      direction: params.direction as ListDirection,
     }
   }
   throw invalidBreweryStatsQueryError
 }
 
-function locationStatsParamsOrDefaults (
-  query: Record<string, unknown>
+function locationStatsParamsOrDefaults(
+  query: Record<string, unknown>,
 ): ReviewListOrderParams {
   let { order, direction } = query
   if (order === undefined || order === '') {
@@ -326,8 +325,8 @@ function locationStatsParamsOrDefaults (
   return { property: order, direction }
 }
 
-export function validateLocationStatsOrder (
-  query: Record<string, unknown>
+export function validateLocationStatsOrder(
+  query: Record<string, unknown>,
 ): LocationStatsOrder {
   const params = locationStatsParamsOrDefaults(query)
   if (isLocationStatsOrderValid(params)) {
@@ -339,14 +338,14 @@ export function validateLocationStatsOrder (
       /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
        * Validated using ajv.
        */
-      direction: params.direction as ListDirection
+      direction: params.direction as ListDirection,
     }
   }
   throw invalidLocationStatsQueryError
 }
 
-function styleStatsParamsOrDefaults (
-  query: Record<string, unknown>
+function styleStatsParamsOrDefaults(
+  query: Record<string, unknown>,
 ): ReviewListOrderParams {
   let { order, direction } = query
   if (order === undefined || order === '') {
@@ -358,8 +357,8 @@ function styleStatsParamsOrDefaults (
   return { property: order, direction }
 }
 
-export function validateStyleStatsOrder (
-  query: Record<string, unknown>
+export function validateStyleStatsOrder(
+  query: Record<string, unknown>,
 ): StyleStatsOrder {
   const params = styleStatsParamsOrDefaults(query)
   if (isStyleStatsOrderValid(params)) {
@@ -371,7 +370,7 @@ export function validateStyleStatsOrder (
       /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
        * Validated using ajv.
        */
-      direction: params.direction as ListDirection
+      direction: params.direction as ListDirection,
     }
   }
   throw invalidStyleStatsQueryError

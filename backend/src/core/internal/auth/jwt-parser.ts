@@ -12,7 +12,7 @@ function isRole(role: string): role is Role {
   return false
 }
 
-export function parseAuthTokenPayload (payload: unknown): AuthTokenPayload {
+export function parseAuthTokenPayload(payload: unknown): AuthTokenPayload {
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any,
      @typescript-eslint/no-unsafe-type-assertion --
    * Validated using in the code below.
@@ -33,12 +33,12 @@ export function parseAuthTokenPayload (payload: unknown): AuthTokenPayload {
   return {
     userId,
     role,
-    refreshTokenId
+    refreshTokenId,
   }
 }
 
-export function parseRefreshTokenPayload (
-  payload: unknown
+export function parseRefreshTokenPayload(
+  payload: unknown,
 ): RefreshTokenPayload {
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any,
      @typescript-eslint/no-unsafe-type-assertion --
@@ -56,6 +56,6 @@ export function parseRefreshTokenPayload (
   return {
     userId: userId,
     refreshTokenId: refreshTokenId,
-    isRefreshToken: true
+    isRefreshToken: true,
   }
 }

@@ -6,24 +6,24 @@ import {
 } from '../../../../src/core/internal/location/validation.js'
 import {
   invalidLocationError,
-  invalidLocationIdError
+  invalidLocationIdError,
 } from '../../../../src/core/errors.js'
 import type {
   CreateLocationRequest,
-  UpdateLocationRequest
+  UpdateLocationRequest,
 } from '../../../../src/core/location/location.js'
 import { expectThrow } from '../../controller-error-helper.js'
 import { assertDeepEqual } from '../../../assert.js'
 
-function validCreateRequest (): CreateLocationRequest {
+function validCreateRequest(): CreateLocationRequest {
   return {
-    name: 'Shady Location'
+    name: 'Shady Location',
   }
 }
 
-function validUpdateRequest (): UpdateLocationRequest {
+function validUpdateRequest(): UpdateLocationRequest {
   return {
-    name: 'Shady Location'
+    name: 'Shady Location',
   }
 }
 
@@ -40,15 +40,14 @@ describe('location validation unit tests', () => {
     const id = '1cd2c9e0-908f-4769-a484-a4f18b20f467'
     assertDeepEqual(validateUpdateLocationRequest(input, id), {
       id,
-      request: output
+      request: output,
     })
-  });
-
-  [
+  })
+  ;[
     {
       func: validateCreateLocationRequest,
       getValid: validCreateRequest,
-      title: (base: string) => `${base}: create`
+      title: (base: string) => `${base}: create`,
     },
     {
       func: (request: unknown) => {
@@ -56,19 +55,19 @@ describe('location validation unit tests', () => {
         return validateUpdateLocationRequest(request, id)
       },
       getValid: validUpdateRequest,
-      title: (base: string) => `${base}: update`
-    }
-  ].forEach(validator => {
+      title: (base: string) => `${base}: update`,
+    },
+  ].forEach((validator) => {
     const { func, getValid, title } = validator
 
-    function fail (location: unknown) {
+    function fail(location: unknown) {
       expectThrow(() => func(location), invalidLocationError)
     }
 
     it(title('fail with empty name'), () => {
       const location = {
         ...getValid(),
-        name: ''
+        name: '',
       }
       fail(location)
     })
@@ -80,7 +79,7 @@ describe('location validation unit tests', () => {
     it(title('fail with invalid name'), () => {
       const location = {
         ...getValid(),
-        name: [ 'f', 'a', 'i', 'l' ]
+        name: ['f', 'a', 'i', 'l'],
       }
       fail(location)
     })
@@ -88,7 +87,7 @@ describe('location validation unit tests', () => {
     it(title('fail with additional property'), () => {
       const location = {
         ...getValid(),
-        additional: 'will fail'
+        additional: 'will fail',
       }
       fail(location)
     })
@@ -96,7 +95,8 @@ describe('location validation unit tests', () => {
 
   it('fail update with empty id', () => {
     expectThrow(
-      () => validateUpdateLocationRequest(validUpdateRequest(), '')
-    , invalidLocationIdError)
+      () => validateUpdateLocationRequest(validUpdateRequest(), ''),
+      invalidLocationIdError,
+    )
   })
 })

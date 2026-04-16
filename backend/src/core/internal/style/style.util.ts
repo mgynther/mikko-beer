@@ -8,25 +8,26 @@ interface Style {
   parents: string[]
 }
 
-export function checkCyclicRelationships (
+export function checkCyclicRelationships(
   currentRelationships: StyleRelationship[],
   styleId: string,
-  parents: string[]
+  parents: string[],
 ): void {
   const relationships = currentRelationships.filter(
-    (row: StyleRelationship) => row.child !== styleId)
+    (row: StyleRelationship) => row.child !== styleId,
+  )
 
-  parents.forEach(parent => {
+  parents.forEach((parent) => {
     relationships.push({
       child: styleId,
-      parent
+      parent,
     })
   })
 
-  function newStyleFromId (id: string): Style {
+  function newStyleFromId(id: string): Style {
     return {
       id,
-      parents: []
+      parents: [],
     }
   }
 
@@ -48,7 +49,7 @@ export function checkCyclicRelationships (
         throw cyclicRelationshipError
       }
       styles[style.id] = true
-      style.parents.forEach(parentId => {
+      style.parents.forEach((parentId) => {
         checkStyle(relationshipMap[parentId])
       })
     }

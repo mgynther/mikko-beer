@@ -1,15 +1,13 @@
 import type { Kysely } from 'kysely'
 import { sql } from 'kysely'
 
-function contains(
-  record: Record<string, string>,
-  key: any
-): boolean {
+function contains(record: Record<string, string>, key: any): boolean {
   return record[key] !== undefined
 }
 
-export async function up (db: Kysely<any>): Promise<void> {
-  const reviews = await db.selectFrom('review')
+export async function up(db: Kysely<any>): Promise<void> {
+  const reviews = await db
+    .selectFrom('review')
     .select(['review_id', 'location'])
     .where('location', 'not like', '')
     .execute()
@@ -25,7 +23,7 @@ export async function up (db: Kysely<any>): Promise<void> {
       const created = await db
         .insertInto('location')
         .values({
-          name: locationName
+          name: locationName,
         })
         .returningAll()
         .executeTakeFirstOrThrow()
@@ -35,16 +33,18 @@ export async function up (db: Kysely<any>): Promise<void> {
      * Await in loop is needed as migration needs to happen one step at a time
      * in specific order.
      */
-    await db.updateTable('review')
+    await db
+      .updateTable('review')
       .set({
-        location: createdLocations[locationName]
+        location: createdLocations[locationName],
       })
       .where('review_id', '=', review.review_id)
       .execute()
   }
-  await db.updateTable('review')
+  await db
+    .updateTable('review')
     .set({
-      location: null
+      location: null,
     })
     .where('location', 'like', '')
     .execute()
@@ -52,18 +52,15 @@ export async function up (db: Kysely<any>): Promise<void> {
   await db.schema
     .alterTable('review')
     .alterColumn('location', (ac) =>
-      ac.setDataType(sql`uuid using location::uuid`)
+      ac.setDataType(sql`uuid using location::uuid`),
     )
     .execute()
 
-   await db.schema
+  await db.schema
     .alterTable('review')
-    .addForeignKeyConstraint(
-      'review_location_fkey',
-      ['location'],
-      'location',
-      ['location_id']
-    )
+    .addForeignKeyConstraint('review_location_fkey', ['location'], 'location', [
+      'location_id',
+    ])
     .execute()
 }
 
@@ -72,29 +69,27 @@ interface LocationRow {
   name: string
 }
 
-export async function down (db: Kysely<any>): Promise<void> {
+export async function down(db: Kysely<any>): Promise<void> {
   await db.schema
     .alterTable('review')
-    .dropConstraint(
-      'review_location_fkey'
-    )
+    .dropConstraint('review_location_fkey')
     .execute()
   await db.schema
     .alterTable('review')
-    .alterColumn('location', (ac) =>
-      ac.setDataType('text')
-    )
+    .alterColumn('location', (ac) => ac.setDataType('text'))
     .execute()
 
-  const locations: LocationRow[] = await db.selectFrom('location')
+  const locations: LocationRow[] = await db
+    .selectFrom('location')
     .select(['location_id', 'name'])
     .execute()
   const locationMap: Record<string, LocationRow> = {}
-  locations.forEach(location => {
+  locations.forEach((location) => {
     locationMap[location.location_id] = location
   })
 
-  const reviews = await db.selectFrom('review')
+  const reviews = await db
+    .selectFrom('review')
     .select(['review_id', 'location'])
     .where('location', 'not like', '')
     .execute()
@@ -105,9 +100,10 @@ export async function down (db: Kysely<any>): Promise<void> {
      * Await in loop is needed as migration needs to happen one step at a time
      * in specific order.
      */
-    await db.updateTable('review')
+    await db
+      .updateTable('review')
       .set({
-        location: locationMap[locationId].name
+        location: locationMap[locationId].name,
       })
       .where('review_id', '=', review.review_id)
       .execute()

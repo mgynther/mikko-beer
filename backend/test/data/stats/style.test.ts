@@ -4,7 +4,7 @@ import { TestContext } from '../test-context.js'
 import type { Review } from '../../../src/core/review/review.js'
 import type {
   StyleStatsOrder,
-  StatsFilter
+  StatsFilter,
 } from '../../../src/core/stats/stats.js'
 import type { Database } from '../../../src/data/database.js'
 import * as statsRepository from '../../../src/data/stats/stats.repository.js'
@@ -35,10 +35,9 @@ describe('style stats tests', () => {
 
   function avg(reviews: Review[], beerId: string) {
     if (reviews === null) throw new Error('must not be null')
-    const filteredReviews = reviews
-      .filter(r => r.beer === beerId)
+    const filteredReviews = reviews.filter((r) => r.beer === beerId)
     const sum = filteredReviews
-      .map(r => r.rating)
+      .map((r) => r.rating)
       .reduce<number>((sum, rating) => sum + (rating ?? 0), 0)
 
     const numValue = sum / filteredReviews.length
@@ -48,81 +47,75 @@ describe('style stats tests', () => {
   async function getResults(
     db: Database,
     statsFilter: ((data: InsertedData) => StatsFilter) | undefined,
-    styleStatsOrder: StyleStatsOrder
+    styleStatsOrder: StyleStatsOrder,
   ) {
     const { reviews, data } = await insertMultipleReviews(9, db)
     const stats = await statsRepository.getStyle(
       db,
       statsFilter?.(data) ?? defaultFilter,
-      styleStatsOrder
+      styleStatsOrder,
     )
     const style = {
       reviewAverage: avg(reviews, data.beer.id),
       reviewCount: '4',
       styleId: data.style.id,
-      styleName: data.style.name
+      styleName: data.style.name,
     }
     const otherStyle = {
       reviewAverage: avg(reviews, data.otherBeer.id),
       reviewCount: '5',
       styleId: data.otherStyle.id,
-      styleName: data.otherStyle.name
+      styleName: data.otherStyle.name,
     }
     return { stats, style, otherStyle }
   }
 
   it('by average asc', async () => {
-    const { stats, style, otherStyle } = await getResults(
-      ctx.db,
-      undefined,
-      { property: 'average', direction: 'asc' }
-    )
-    assertDeepEqual(stats, [ style, otherStyle ])
+    const { stats, style, otherStyle } = await getResults(ctx.db, undefined, {
+      property: 'average',
+      direction: 'asc',
+    })
+    assertDeepEqual(stats, [style, otherStyle])
   })
 
   it('by average desc', async () => {
-    const { stats, style, otherStyle } = await getResults(
-      ctx.db,
-      undefined,
-      { property: 'average', direction: 'desc' }
-    )
-    assertDeepEqual(stats, [ otherStyle, style ])
+    const { stats, style, otherStyle } = await getResults(ctx.db, undefined, {
+      property: 'average',
+      direction: 'desc',
+    })
+    assertDeepEqual(stats, [otherStyle, style])
   })
 
   it('by count asc', async () => {
-    const { stats, style, otherStyle } = await getResults(
-      ctx.db,
-      undefined,
-      { property: 'count', direction: 'asc' }
-    )
-    assertDeepEqual(stats, [ style, otherStyle ])
+    const { stats, style, otherStyle } = await getResults(ctx.db, undefined, {
+      property: 'count',
+      direction: 'asc',
+    })
+    assertDeepEqual(stats, [style, otherStyle])
   })
 
   it('by count desc', async () => {
-    const { stats, style, otherStyle } = await getResults(
-      ctx.db,
-      undefined,
-      { property: 'count', direction: 'desc' }
-    )
-    assertDeepEqual(stats, [ otherStyle, style ])
+    const { stats, style, otherStyle } = await getResults(ctx.db, undefined, {
+      property: 'count',
+      direction: 'desc',
+    })
+    assertDeepEqual(stats, [otherStyle, style])
   })
 
   it('by style_name asc', async () => {
-    const { stats, style, otherStyle } = await getResults(
-      ctx.db,
-      undefined,
-      { property: 'style_name', direction: 'asc' }
-    )
-    assertDeepEqual(stats, [ style, otherStyle ])
+    const { stats, style, otherStyle } = await getResults(ctx.db, undefined, {
+      property: 'style_name',
+      direction: 'asc',
+    })
+    assertDeepEqual(stats, [style, otherStyle])
   })
 
   it('by style_name desc', async () => {
-    const { stats, style, otherStyle } = await getResults(
-      ctx.db,
-      undefined,
-      { property: 'style_name', direction: 'desc' }
-    )
-    assertDeepEqual(stats, [ otherStyle, style ])
+    const { stats, style, otherStyle } = await getResults(ctx.db, undefined, {
+      property: 'style_name',
+      direction: 'desc',
+    })
+    assertDeepEqual(stats, [otherStyle, style])
   })
 
   it('filter by brewery', async () => {
@@ -130,11 +123,11 @@ describe('style stats tests', () => {
       ctx.db,
       (data: InsertedData) => ({
         ...defaultFilter,
-        brewery: data.otherBrewery.id
+        brewery: data.otherBrewery.id,
       }),
-      { property: 'style_name', direction: 'desc' }
+      { property: 'style_name', direction: 'desc' },
     )
-    assertDeepEqual(stats, [ otherStyle ])
+    assertDeepEqual(stats, [otherStyle])
   })
 
   it('filter by location', async () => {
@@ -142,11 +135,11 @@ describe('style stats tests', () => {
       ctx.db,
       (data: InsertedData) => ({
         ...defaultFilter,
-        location: data.otherLocation.id
+        location: data.otherLocation.id,
       }),
-      { property: 'style_name', direction: 'desc' }
+      { property: 'style_name', direction: 'desc' },
     )
-    assertDeepEqual(stats, [ otherStyle ])
+    assertDeepEqual(stats, [otherStyle])
   })
 
   it('filter by style', async () => {
@@ -154,11 +147,11 @@ describe('style stats tests', () => {
       ctx.db,
       (data: InsertedData) => ({
         ...defaultFilter,
-        style: data.style.id
+        style: data.style.id,
       }),
-      { property: 'style_name', direction: 'desc' }
+      { property: 'style_name', direction: 'desc' },
     )
-    assertDeepEqual(stats, [ style ])
+    assertDeepEqual(stats, [style])
   })
 
   it('filter by min review count', async () => {
@@ -166,11 +159,11 @@ describe('style stats tests', () => {
       ctx.db,
       () => ({
         ...defaultFilter,
-        minReviewCount: 5
+        minReviewCount: 5,
       }),
-      { property: 'style_name', direction: 'desc' }
+      { property: 'style_name', direction: 'desc' },
     )
-    assertDeepEqual(stats, [ otherStyle ])
+    assertDeepEqual(stats, [otherStyle])
   })
 
   it('filter by max review count', async () => {
@@ -178,11 +171,11 @@ describe('style stats tests', () => {
       ctx.db,
       () => ({
         ...defaultFilter,
-        maxReviewCount: 4
+        maxReviewCount: 4,
       }),
-      { property: 'style_name', direction: 'desc' }
+      { property: 'style_name', direction: 'desc' },
     )
-    assertDeepEqual(stats, [ style ])
+    assertDeepEqual(stats, [style])
   })
 
   it('filter by min review average', async () => {
@@ -190,11 +183,11 @@ describe('style stats tests', () => {
       ctx.db,
       () => ({
         ...defaultFilter,
-        minReviewAverage: 6.3
+        minReviewAverage: 6.3,
       }),
-      { property: 'style_name', direction: 'desc' }
+      { property: 'style_name', direction: 'desc' },
     )
-    assertDeepEqual(stats, [ otherStyle ])
+    assertDeepEqual(stats, [otherStyle])
   })
 
   it('filter by max review average', async () => {
@@ -202,11 +195,11 @@ describe('style stats tests', () => {
       ctx.db,
       () => ({
         ...defaultFilter,
-        maxReviewAverage: 6.3
+        maxReviewAverage: 6.3,
       }),
-      { property: 'style_name', direction: 'desc' }
+      { property: 'style_name', direction: 'desc' },
     )
-    assertDeepEqual(stats, [ style ])
+    assertDeepEqual(stats, [style])
   })
 
   it('filter by start time', async () => {
@@ -214,11 +207,11 @@ describe('style stats tests', () => {
       ctx.db,
       () => ({
         ...defaultFilter,
-        timeStart: new Date('2024-01-01T00:00:00.000Z')
+        timeStart: new Date('2024-01-01T00:00:00.000Z'),
       }),
-      { property: 'style_name', direction: 'desc' }
+      { property: 'style_name', direction: 'desc' },
     )
-    assertDeepEqual(stats, [ style ])
+    assertDeepEqual(stats, [style])
   })
 
   it('filter by end time', async () => {
@@ -226,11 +219,10 @@ describe('style stats tests', () => {
       ctx.db,
       () => ({
         ...defaultFilter,
-        timeEnd: new Date('2024-01-01T00:00:00.000Z')
+        timeEnd: new Date('2024-01-01T00:00:00.000Z'),
       }),
-      { property: 'style_name', direction: 'desc' }
+      { property: 'style_name', direction: 'desc' },
     )
-    assertDeepEqual(stats, [ otherStyle ])
+    assertDeepEqual(stats, [otherStyle])
   })
-
 })

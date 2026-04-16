@@ -5,7 +5,7 @@ import { assertEqual } from '../assert.js'
 
 describe('record', () => {
   const record: Record<string, string> = {
-    key: 'value'
+    key: 'value',
   }
 
   it('contains existing key', () => {
@@ -16,4 +16,3 @@ describe('record', () => {
     assertEqual(contains(record, 'ke'), false)
   })
 })
-

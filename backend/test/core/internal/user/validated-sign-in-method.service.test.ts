@@ -1,27 +1,22 @@
 import { describe, it } from 'node:test'
 
-import * as service
-from '../../../../src/core/internal/user/validated-sign-in-method.service.js'
+import * as service from '../../../../src/core/internal/user/validated-sign-in-method.service.js'
 
-import type {
-  DbRefreshToken
-} from '../../../../src/core/auth/refresh-token.js'
+import type { DbRefreshToken } from '../../../../src/core/auth/refresh-token.js'
 
-import type {
-  AuthTokenConfig
-} from '../../../../src/core/auth/auth-token.js'
+import type { AuthTokenConfig } from '../../../../src/core/auth/auth-token.js'
 import type { User } from '../../../../src/core/user/user.js'
 import {
   invalidCredentialsError,
   invalidPasswordChangeError,
-  invalidSignInMethodError
+  invalidSignInMethodError,
 } from '../../../../src/core/errors.js'
 import { expectReject } from '../../controller-error-helper.js'
 import type {
   ChangePasswordUserIf,
   PasswordChange,
   SignInUsingPasswordIf,
-  UserPasswordHash
+  UserPasswordHash,
 } from '../../../../src/core/user/sign-in-method.js'
 
 import { dummyLog as log } from '../../dummy-log.js'
@@ -31,46 +26,47 @@ const userId = '2bbcaed7-2b4d-4888-9a32-8573dc19fd56'
 const user: User = {
   id: userId,
   role: 'admin',
-  username: 'admin'
+  username: 'admin',
 }
 
 const authTokenSecret: string = 'this is secret'
 
 const knownPassword = 'password'
-const knownHash = '3571471e876241089e4e29130fd96cf0:6b26a82522532fca44ba7fef2f6b6f5d930fb2e2179f7cdcd682470d15a4cc4296b7f77c59bf317fa7281900626cf7b4499948d9d0f4718ae1170d4a63e35f36'
+const knownHash =
+  '3571471e876241089e4e29130fd96cf0:6b26a82522532fca44ba7fef2f6b6f5d930fb2e2179f7cdcd682470d15a4cc4296b7f77c59bf317fa7281900626cf7b4499948d9d0f4718ae1170d4a63e35f36'
 
 const dbRefreshToken: DbRefreshToken = {
   id: '187d17b9-0063-4257-af64-0710907679ba',
-  userId
+  userId,
 }
 
 const authTokenConfig: AuthTokenConfig = {
   secret: authTokenSecret,
-  expiryDurationMin: 1
+  expiryDurationMin: 1,
 }
 
 const userPasswordHash: UserPasswordHash = {
   userId,
   passwordHash: knownHash,
-  hashedAt: undefined
+  hashedAt: undefined,
 }
 
 const signInUsingPasswordIf: SignInUsingPasswordIf = {
   lockUserByUsername: async () => user,
   findPasswordSignInMethod: async () => userPasswordHash,
   insertRefreshToken: async () => dbRefreshToken,
-  updatePassword: async () => undefined
+  updatePassword: async () => undefined,
 }
 
 const changePasswordUserIf: ChangePasswordUserIf = {
   lockUserById: async () => user,
   findPasswordSignInMethod: async () => userPasswordHash,
-  updatePassword: async () => undefined
+  updatePassword: async () => undefined,
 }
 
 const passwordChange: PasswordChange = {
   oldPassword: knownPassword,
-  newPassword: 'this is new password'
+  newPassword: 'this is new password',
 }
 
 describe('validated sign in method service unit tests', () => {
@@ -79,10 +75,10 @@ describe('validated sign in method service unit tests', () => {
       signInUsingPasswordIf,
       {
         username: 'admin',
-        password: knownPassword
+        password: knownPassword,
       },
       authTokenConfig,
-      log
+      log,
     )
   })
 
@@ -91,10 +87,10 @@ describe('validated sign in method service unit tests', () => {
       await service.signInUsingPassword(
         signInUsingPasswordIf,
         {
-          username: 'admin'
+          username: 'admin',
         },
         authTokenConfig,
-        log
+        log,
       )
     }, invalidSignInMethodError)
   })
@@ -105,10 +101,10 @@ describe('validated sign in method service unit tests', () => {
         signInUsingPasswordIf,
         {
           username: 'admin',
-          password: 'wrong password'
+          password: 'wrong password',
         },
         authTokenConfig,
-        log
+        log,
       )
     }, invalidCredentialsError)
   })
@@ -118,7 +114,7 @@ describe('validated sign in method service unit tests', () => {
       changePasswordUserIf,
       userId,
       passwordChange,
-      log
+      log,
     )
   })
 
@@ -129,9 +125,9 @@ describe('validated sign in method service unit tests', () => {
         userId,
         {
           ...passwordChange,
-          oldPassword: 'wrong password'
+          oldPassword: 'wrong password',
         },
-        log
+        log,
       )
     }, invalidCredentialsError)
   })
@@ -142,9 +138,9 @@ describe('validated sign in method service unit tests', () => {
         changePasswordUserIf,
         userId,
         {
-          oldPassword: knownPassword
+          oldPassword: knownPassword,
         },
-        log
+        log,
       )
     }, invalidPasswordChangeError)
   })

@@ -2,7 +2,7 @@ import { describe, it } from 'node:test'
 import {
   assertDeepEqual,
   assertEqual,
-  assertGreaterThan
+  assertGreaterThan,
 } from '../../../assert.js'
 
 import * as authTokenService from '../../../../src/core/internal/auth/auth-token.service.js'
@@ -12,7 +12,7 @@ import {
   changePassword,
   encryptPassword,
   signInUsingPassword,
-  verifySecret
+  verifySecret,
 } from '../../../../src/core/internal/user/sign-in-method.service.js'
 
 import type {
@@ -29,7 +29,7 @@ import {
   invalidCredentialsError,
   passwordTooLongError,
   passwordTooWeakError,
-  userAlreadyHasSignInMethodError
+  userAlreadyHasSignInMethodError,
 } from '../../../../src/core/errors.js'
 import { expectReject } from '../../controller-error-helper.js'
 import { dummyLog as log } from '../../dummy-log.js'
@@ -82,7 +82,7 @@ describe('password sign-in-method service unit tests', () => {
   const user: User = {
     id: userId,
     role: 'admin',
-    username: username
+    username: username,
   }
 
   const noPasswordUser: User = {
@@ -92,10 +92,12 @@ describe('password sign-in-method service unit tests', () => {
   }
 
   const knownPassword = 'password'
-  const knownHash = '3571471e876241089e4e29130fd96cf0:6b26a82522532fca44ba7fef2f6b6f5d930fb2e2179f7cdcd682470d15a4cc4296b7f77c59bf317fa7281900626cf7b4499948d9d0f4718ae1170d4a63e35f36'
+  const knownHash =
+    '3571471e876241089e4e29130fd96cf0:6b26a82522532fca44ba7fef2f6b6f5d930fb2e2179f7cdcd682470d15a4cc4296b7f77c59bf317fa7281900626cf7b4499948d9d0f4718ae1170d4a63e35f36'
 
   const otherPassword = 'password1'
-  const otherHash = 'c4e457548452abcaf38f97cfce412926:8af0071d2da359277beea4a9c3232d898b975e9ed9170bdea77578667f753f08970144297a5cd9382acbcb9a5341f3e0e0026c1c7d877dcfbce2abd3f528bb9f'
+  const otherHash =
+    'c4e457548452abcaf38f97cfce412926:8af0071d2da359277beea4a9c3232d898b975e9ed9170bdea77578667f753f08970144297a5cd9382acbcb9a5341f3e0e0026c1c7d877dcfbce2abd3f528bb9f'
 
   const hashDate = new Date('2023-03-04T12:12:12.222Z')
 
@@ -112,46 +114,44 @@ describe('password sign-in-method service unit tests', () => {
   const recentUserPasswordHash: UserPasswordHash = {
     userId,
     passwordHash: knownHash,
-    hashedAt: hashDate
+    hashedAt: hashDate,
   }
 
   const nonRecentUserPasswordHash: UserPasswordHash = {
     userId,
     passwordHash: knownHash,
-    hashedAt: undefined
+    hashedAt: undefined,
   }
 
   const otherRecentUserPasswordHash: UserPasswordHash = {
     userId,
     passwordHash: otherHash,
-    hashedAt: hashDate
+    hashedAt: hashDate,
   }
 
   const authTokenConfig: AuthTokenConfig = {
     secret: 'this is a secret',
-    expiryDurationMin: 5
+    expiryDurationMin: 5,
   }
 
   async function notCalled(): Promise<any> {
     throw new Error('not to be called')
   }
 
-  async function lockValidUser(
-    lockUserId: string
-  ): Promise<User | undefined> {
+  async function lockValidUser(lockUserId: string): Promise<User | undefined> {
     assertEqual(lockUserId, userId)
     return user
   }
 
   async function lockValidUserByUsername(
-    lockUsername: string
+    lockUsername: string,
   ): Promise<User | undefined> {
     assertEqual(lockUsername, username)
     return user
   }
 
   async function lockNoPasswordUser(
-    lockUserId: string
+    lockUserId: string,
   ): Promise<User | undefined> {
     assertEqual(lockUserId, userId)
     return noPasswordUser
@@ -162,7 +162,7 @@ describe('password sign-in-method service unit tests', () => {
   }
 
   function getUserPasswordHasher(
-    result: UserPasswordHash | undefined
+    result: UserPasswordHash | undefined,
   ): (userId: string) => Promise<UserPasswordHash | undefined> {
     return async (userId: string) => {
       assertEqual(userId, user.id)
@@ -174,15 +174,15 @@ describe('password sign-in-method service unit tests', () => {
     assertEqual(userId, user.id)
     return {
       id: 'a8d69fd5-1491-4b63-86ea-6d5e3c7f624d',
-      userId
+      userId,
     }
   }
 
   it('add password sign-in-method', async () => {
     const addPasswordUserIf: AddPasswordUserIf = {
       lockUserById: lockNoPasswordUser,
-      insertPasswordSignInMethod: async function(
-        userPassword: NewUserPasswordHash
+      insertPasswordSignInMethod: async function (
+        userPassword: NewUserPasswordHash,
       ): Promise<void> {
         assertEqual(userPassword.userId, user.id)
         assertCurrentDateTime(userPassword.hashedAt)
@@ -190,15 +190,16 @@ describe('password sign-in-method service unit tests', () => {
         // implementation as in the tested code.
         assertEqual(
           await verifySecret(method.password, userPassword.passwordHash, log),
-          true
+          true,
         )
       },
-      setUserUsername: async function(
-        userId: string, username: string | null
+      setUserUsername: async function (
+        userId: string,
+        username: string | null,
       ): Promise<void> {
         assertEqual(userId, user.id)
         assertEqual(username, user.username)
-      }
+      },
     }
     await addPasswordSignInMethod(addPasswordUserIf, userId, method, log)
   })
@@ -246,8 +247,8 @@ describe('password sign-in-method service unit tests', () => {
     const changePasswordUserIf: ChangePasswordUserIf = {
       lockUserById: lockValidUser,
       findPasswordSignInMethod: getUserPasswordHasher(recentUserPasswordHash),
-      updatePassword: async function(
-        userPassword: NewUserPasswordHash
+      updatePassword: async function (
+        userPassword: NewUserPasswordHash,
       ): Promise<void> {
         assertEqual(userPassword.userId, user.id)
         assertCurrentDateTime(userPassword.hashedAt)
@@ -255,8 +256,11 @@ describe('password sign-in-method service unit tests', () => {
         // implementation as in the tested code.
         assertEqual(
           await verifySecret(
-            passwordChange.newPassword, userPassword.passwordHash, log),
-          true
+            passwordChange.newPassword,
+            userPassword.passwordHash,
+            log,
+          ),
+          true,
         )
       },
     }
@@ -268,7 +272,7 @@ describe('password sign-in-method service unit tests', () => {
       lockUserById: async () => {
         return {
           ...user,
-          username: null
+          username: null,
         }
       },
       findPasswordSignInMethod: notCalled,
@@ -284,7 +288,7 @@ describe('password sign-in-method service unit tests', () => {
       lockUserById: async () => {
         return {
           ...user,
-          username: ''
+          username: '',
         }
       },
       findPasswordSignInMethod: notCalled,
@@ -320,8 +324,9 @@ describe('password sign-in-method service unit tests', () => {
   it('fail to change password with wrong old password', async () => {
     const changePasswordUserIf: ChangePasswordUserIf = {
       lockUserById: lockValidUser,
-      findPasswordSignInMethod:
-        getUserPasswordHasher(otherRecentUserPasswordHash),
+      findPasswordSignInMethod: getUserPasswordHasher(
+        otherRecentUserPasswordHash,
+      ),
       updatePassword: notCalled,
     }
     expectReject(async () => {
@@ -334,19 +339,19 @@ describe('password sign-in-method service unit tests', () => {
       lockUserByUsername: lockValidUserByUsername,
       findPasswordSignInMethod: getUserPasswordHasher(recentUserPasswordHash),
       insertRefreshToken,
-      updatePassword: notCalled
+      updatePassword: notCalled,
     }
     const result = await signInUsingPassword(
       signInUsingPasswordIf,
       method,
       authTokenConfig,
-      log
+      log,
     )
     assertDeepEqual(result.user, user)
     const reference = await authTokenService.createTokens(
       insertRefreshToken,
       user,
-      authTokenConfig
+      authTokenConfig,
     )
     assertDeepEqual(result.refreshToken, reference.refresh)
     assertDeepEqual(result.authToken, reference.auth)
@@ -360,22 +365,23 @@ describe('password sign-in-method service unit tests', () => {
     }
     const signInUsingPasswordIf: SignInUsingPasswordIf = {
       lockUserByUsername: lockValidUserByUsername,
-      findPasswordSignInMethod:
-        getUserPasswordHasher(nonRecentUserPasswordHash),
+      findPasswordSignInMethod: getUserPasswordHasher(
+        nonRecentUserPasswordHash,
+      ),
       insertRefreshToken,
-      updatePassword
+      updatePassword,
     }
     const result = await signInUsingPassword(
       signInUsingPasswordIf,
       method,
       authTokenConfig,
-      log
+      log,
     )
     assertDeepEqual(result.user, user)
     const reference = await authTokenService.createTokens(
       insertRefreshToken,
       user,
-      authTokenConfig
+      authTokenConfig,
     )
     assertDeepEqual(result.refreshToken, reference.refresh)
     assertDeepEqual(result.authToken, reference.auth)
@@ -384,7 +390,7 @@ describe('password sign-in-method service unit tests', () => {
     assertEqual(newHash.userId, user.id)
     assertEqual(
       await verifySecret(knownPassword, newHash.passwordHash, log),
-      true
+      true,
     )
     assertCurrentDateTime(newHash.hashedAt)
   })
@@ -394,14 +400,14 @@ describe('password sign-in-method service unit tests', () => {
       lockUserByUsername: lockMissingUser,
       findPasswordSignInMethod: notCalled,
       insertRefreshToken: notCalled,
-      updatePassword: notCalled
+      updatePassword: notCalled,
     }
     expectReject(async () => {
       await signInUsingPassword(
         signInUsingPasswordIf,
         method,
         authTokenConfig,
-        log
+        log,
       )
     }, invalidCredentialsError)
   })
@@ -411,14 +417,14 @@ describe('password sign-in-method service unit tests', () => {
       lockUserByUsername: lockValidUserByUsername,
       findPasswordSignInMethod: getUserPasswordHasher(undefined),
       insertRefreshToken: notCalled,
-      updatePassword: notCalled
+      updatePassword: notCalled,
     }
     expectReject(async () => {
       await signInUsingPassword(
         signInUsingPasswordIf,
         method,
         authTokenConfig,
-        log
+        log,
       )
     }, invalidCredentialsError)
   })
@@ -426,17 +432,18 @@ describe('password sign-in-method service unit tests', () => {
   it('fail to sign in using password with wrong password', async () => {
     const signInUsingPasswordIf: SignInUsingPasswordIf = {
       lockUserByUsername: lockValidUserByUsername,
-      findPasswordSignInMethod:
-        getUserPasswordHasher(otherRecentUserPasswordHash),
+      findPasswordSignInMethod: getUserPasswordHasher(
+        otherRecentUserPasswordHash,
+      ),
       insertRefreshToken: notCalled,
-      updatePassword: notCalled
+      updatePassword: notCalled,
     }
     expectReject(async () => {
       await signInUsingPassword(
         signInUsingPasswordIf,
         method,
         authTokenConfig,
-        log
+        log,
       )
     }, invalidCredentialsError)
   })

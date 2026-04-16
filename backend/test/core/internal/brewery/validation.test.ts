@@ -6,15 +6,15 @@ import {
 } from '../../../../src/core/internal/brewery/validation.js'
 import {
   invalidBreweryError,
-  invalidBreweryIdError
+  invalidBreweryIdError,
 } from '../../../../src/core/errors.js'
 import { expectThrow } from '../../controller-error-helper.js'
 import { assertDeepEqual } from '../../../assert.js'
 import type { CreateBreweryRequest } from '../../../../src/core/brewery/brewery.js'
 
-function validRequest (): CreateBreweryRequest {
+function validRequest(): CreateBreweryRequest {
   return {
-    name: 'Craft Brewery'
+    name: 'Craft Brewery',
   }
 }
 
@@ -31,33 +31,32 @@ describe('brewery validation unit tests', () => {
     const id = '3e2d9787-4787-4435-8e1e-475e0bb7c525'
     assertDeepEqual(validateUpdateBreweryRequest(input, id), {
       id,
-      request: output
+      request: output,
     })
-  });
-
-  [
+  })
+  ;[
     {
       func: validateCreateBreweryRequest,
-      title: (base: string) => `${base}: create`
+      title: (base: string) => `${base}: create`,
     },
     {
       func: (request: unknown) => {
         const id = '87cab4b2-8932-4d8d-a78f-4d63702e4251'
         return validateUpdateBreweryRequest(request, id)
       },
-      title: (base: string) => `${base}: update`
-    }
-  ].forEach(validator => {
+      title: (base: string) => `${base}: update`,
+    },
+  ].forEach((validator) => {
     const { func, title } = validator
 
-    function fail (brewery: unknown) {
+    function fail(brewery: unknown) {
       expectThrow(() => func(brewery), invalidBreweryError)
     }
 
     it(title('fail with empty name'), () => {
       const brewery = {
         ...validRequest(),
-        name: ''
+        name: '',
       }
       fail(brewery)
     })
@@ -69,7 +68,7 @@ describe('brewery validation unit tests', () => {
     it(title('fail with invalid name'), () => {
       const brewery = {
         ...validRequest(),
-        name: [ 'f', 'a', 'i', 'l' ]
+        name: ['f', 'a', 'i', 'l'],
       }
       fail(brewery)
     })
@@ -77,7 +76,7 @@ describe('brewery validation unit tests', () => {
     it(title('fail with additional property'), () => {
       const brewery = {
         ...validRequest(),
-        additional: 'will fail'
+        additional: 'will fail',
       }
       fail(brewery)
     })
@@ -85,7 +84,8 @@ describe('brewery validation unit tests', () => {
 
   it('fail update with empty id', () => {
     expectThrow(
-      () => validateUpdateBreweryRequest(validRequest(), '')
-    , invalidBreweryIdError)
+      () => validateUpdateBreweryRequest(validRequest(), ''),
+      invalidBreweryIdError,
+    )
   })
 })

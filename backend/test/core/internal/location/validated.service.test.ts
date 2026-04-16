@@ -1,22 +1,21 @@
 import { describe, it } from 'node:test'
 
-import * as
-locationService from '../../../../src/core/internal/location/validated.service.js'
+import * as locationService from '../../../../src/core/internal/location/validated.service.js'
 
 import type {
   Location,
   CreateLocationRequest,
-  UpdateLocationRequest
+  UpdateLocationRequest,
 } from '../../../../src/core/location/location.js'
 import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
 import {
   invalidLocationError,
-  invalidLocationIdError
+  invalidLocationIdError,
 } from '../../../../src/core/errors.js'
 
 const validCreateLocationRequest: CreateLocationRequest = {
-  name: 'Kuja Beer Shop & Bar'
+  name: 'Kuja Beer Shop & Bar',
 }
 
 const validUpdateLocationRequest: UpdateLocationRequest = {
@@ -25,7 +24,7 @@ const validUpdateLocationRequest: UpdateLocationRequest = {
 
 const location: Location = {
   id: '8348dbfa-c68b-4c00-8593-f2be2be3002c',
-  name: validCreateLocationRequest.name
+  name: validCreateLocationRequest.name,
 }
 
 const invalidLocationRequest = {
@@ -33,7 +32,7 @@ const invalidLocationRequest = {
 }
 
 const create: (
-  location: CreateLocationRequest
+  location: CreateLocationRequest,
 ) => Promise<Location> = async () => location
 const update: (location: Location) => Promise<Location> = async () => location
 
@@ -42,7 +41,7 @@ describe('location validated service unit tests', () => {
     await locationService.createLocation(
       create,
       validCreateLocationRequest,
-      log
+      log,
     )
   })
 
@@ -57,7 +56,7 @@ describe('location validated service unit tests', () => {
       update,
       location.id,
       validUpdateLocationRequest,
-      log
+      log,
     )
   })
 
@@ -67,7 +66,7 @@ describe('location validated service unit tests', () => {
         update,
         location.id,
         invalidLocationRequest,
-        log
+        log,
       )
     }, invalidLocationError)
   })
@@ -78,9 +77,8 @@ describe('location validated service unit tests', () => {
         update,
         undefined,
         validUpdateLocationRequest,
-        log
+        log,
       )
     }, invalidLocationIdError)
   })
-
 })

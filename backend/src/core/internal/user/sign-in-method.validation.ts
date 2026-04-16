@@ -2,11 +2,11 @@ import { ajv } from '../ajv.js'
 
 import {
   invalidPasswordChangeError,
-  invalidSignInMethodError
+  invalidSignInMethodError,
 } from '../../errors.js'
 import type {
   PasswordChange,
-  PasswordSignInMethod
+  PasswordSignInMethod,
 } from '../../user/sign-in-method.js'
 
 const isPasswordSignInMethodValid = ajv.compile<PasswordSignInMethod>({
@@ -16,24 +16,24 @@ const isPasswordSignInMethodValid = ajv.compile<PasswordSignInMethod>({
   properties: {
     username: {
       type: 'string',
-      minLength: 1
+      minLength: 1,
     },
     password: {
       type: 'string',
-      minLength: 1
-    }
-  }
+      minLength: 1,
+    },
+  },
 })
 
-export function validatePasswordSignInMethod (
-  request: unknown
+export function validatePasswordSignInMethod(
+  request: unknown,
 ): PasswordSignInMethod {
   if (!isPasswordSignInMethodValid(request)) {
     throw invalidSignInMethodError
   }
   return {
     username: request.username,
-    password: request.password
+    password: request.password,
   }
 }
 
@@ -44,21 +44,21 @@ const isPasswordChangeValid = ajv.compile<PasswordChange>({
   properties: {
     oldPassword: {
       type: 'string',
-      minLength: 1
+      minLength: 1,
     },
     newPassword: {
       type: 'string',
-      minLength: 1
-    }
-  }
+      minLength: 1,
+    },
+  },
 })
 
-export function validatePasswordChange (request: unknown): PasswordChange {
+export function validatePasswordChange(request: unknown): PasswordChange {
   if (!isPasswordChangeValid(request)) {
     throw invalidPasswordChangeError
   }
   return {
     oldPassword: request.oldPassword,
-    newPassword: request.newPassword
+    newPassword: request.newPassword,
   }
 }

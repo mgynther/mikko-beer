@@ -1,47 +1,43 @@
 import { ajv } from '../ajv.js'
 
-import {
-  invalidStorageError,
-  invalidStorageIdError
-} from '../../errors.js'
+import { invalidStorageError, invalidStorageIdError } from '../../errors.js'
 import { timePattern } from '../../internal/time.js'
 import type {
   CreateStorageRequest,
   StorageRequest,
-  UpdateStorageRequest
+  UpdateStorageRequest,
 } from '../../storage/storage.js'
 
-const doValidateStorageRequest =
-  ajv.compile<StorageRequest>({
-    type: 'object',
-    properties: {
-      bestBefore: {
-        type: 'string',
-        pattern: timePattern
-      },
-      beer: {
-        type: 'string',
-        minLength: 1
-      },
-      container: {
-        type: 'string',
-        minLength: 1
-      }
+const doValidateStorageRequest = ajv.compile<StorageRequest>({
+  type: 'object',
+  properties: {
+    bestBefore: {
+      type: 'string',
+      pattern: timePattern,
     },
-    required: ['beer', 'bestBefore', 'container'],
-    additionalProperties: false
-  })
+    beer: {
+      type: 'string',
+      minLength: 1,
+    },
+    container: {
+      type: 'string',
+      minLength: 1,
+    },
+  },
+  required: ['beer', 'bestBefore', 'container'],
+  additionalProperties: false,
+})
 
-function isCreateStorageRequestValid (body: unknown): boolean {
+function isCreateStorageRequestValid(body: unknown): boolean {
   return doValidateStorageRequest(body)
 }
 
-export function isUpdateStorageRequestValid (body: unknown): boolean {
+export function isUpdateStorageRequestValid(body: unknown): boolean {
   return doValidateStorageRequest(body)
 }
 
-export function validateCreateStorageRequest (
-  body: unknown
+export function validateCreateStorageRequest(
+  body: unknown,
 ): CreateStorageRequest {
   if (!isCreateStorageRequestValid(body)) {
     throw invalidStorageError
@@ -59,9 +55,9 @@ interface ValidUpdateStorageRequest {
   request: UpdateStorageRequest
 }
 
-export function validateUpdateStorageRequest (
+export function validateUpdateStorageRequest(
   body: unknown,
-  storageId: string | undefined
+  storageId: string | undefined,
 ): ValidUpdateStorageRequest {
   if (!isUpdateStorageRequestValid(body)) {
     throw invalidStorageError
@@ -72,7 +68,7 @@ export function validateUpdateStorageRequest (
   const result = body as UpdateStorageRequest
   return {
     id: validateStorageId(storageId),
-    request: result
+    request: result,
   }
 }
 

@@ -9,35 +9,28 @@ import type { RefreshToken } from '../../../../src/core/auth/refresh-token.js'
 
 const secret = 'thisissecret'
 
-const token = sign(
-  'hacking',
-  secret
-)
+const token = sign('hacking', secret)
 
 describe('jwt unit tests', () => {
   it('fail verify invalid string auth token', async () => {
     const authToken: AuthToken = {
-      authToken: token
+      authToken: token,
     }
     assertThrows(
-      () => jwt.verifyAuthToken(
-        authToken,
-        secret,
-      ),
-      new InvalidAuthTokenError(), InvalidAuthTokenError
+      () => jwt.verifyAuthToken(authToken, secret),
+      new InvalidAuthTokenError(),
+      InvalidAuthTokenError,
     )
   })
 
   it('fail verify invalid string refresh token', async () => {
     const refreshToken: RefreshToken = {
-      refreshToken: token
+      refreshToken: token,
     }
     assertThrows(
-      () => jwt.verifyRefreshToken(
-        refreshToken,
-        secret,
-      ),
-      new InvalidAuthTokenError(), InvalidAuthTokenError
+      () => jwt.verifyRefreshToken(refreshToken, secret),
+      new InvalidAuthTokenError(),
+      InvalidAuthTokenError,
     )
   })
 })

@@ -28,18 +28,18 @@ export function assertGreaterThan(value: number, reference: number): void {
   assert.equal(
     value > reference,
     true,
-    `value ${value} is not greater than ${reference}`
+    `value ${value} is not greater than ${reference}`,
   )
 }
 
 export function assertIncludes(
   fullString: string,
-  includedString: string
+  includedString: string,
 ): void {
   assert.equal(
     fullString.includes(includedString),
     true,
-    `value ${includedString} is not included in ${fullString}`
+    `value ${includedString} is not included in ${fullString}`,
   )
 }
 
@@ -50,38 +50,32 @@ export function assertInstanceOf<T>(instance: T, classType: Class<T>) {
   assert.equal(
     instance instanceof classType,
     true,
-    `not a ${classType.name} instance`
+    `not a ${classType.name} instance`,
   )
 }
 
 export function assertThrows<T extends Error>(
   func: () => void,
   error: T,
-  classType: Class<T>
+  classType: Class<T>,
 ) {
-  assert.throws(
-    func,
-    (err: unknown) => {
-      assertInstanceOf(err, classType)
-      assert.deepEqual(err, error)
-      return true
-    }
-  )
+  assert.throws(func, (err: unknown) => {
+    assertInstanceOf(err, classType)
+    assert.deepEqual(err, error)
+    return true
+  })
 }
 
 export async function assertRejects<T extends Error>(
   func: () => Promise<void>,
   error: T,
-  classType: Class<T>
+  classType: Class<T>,
 ): Promise<void> {
-  await assert.rejects(
-    func,
-    (err: unknown) => {
-      assertInstanceOf(err, classType)
-      assert.deepEqual(err, error)
-      return true
-    }
-  )
+  await assert.rejects(func, (err: unknown) => {
+    assertInstanceOf(err, classType)
+    assert.deepEqual(err, error)
+    return true
+  })
 }
 
 export function assertDoesNotThrow(func: () => void) {
