@@ -1,30 +1,30 @@
-import { act, render, waitFor } from "@testing-library/react"
-import userEvent from "@testing-library/user-event"
-import { expect, test, vitest } from "vitest"
-import Reviews from "./Reviews"
-import type { UseDebounce } from "../../core/types"
-import type { Login } from "../../core/login/types"
-import { Role } from "../../core/user/types"
-import LinkWrapper from "../LinkWrapper"
+import { act, render, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { expect, test, vitest } from 'vitest'
+import Reviews from './Reviews'
+import type { UseDebounce } from '../../core/types'
+import type { Login } from '../../core/login/types'
+import { Role } from '../../core/user/types'
+import LinkWrapper from '../LinkWrapper'
 import type {
   JoinedReviewList,
   ListReviewParams,
   ListReviewsIf,
   Review,
   ReviewContainerIf,
-  ReviewIf
-} from "../../core/review/types"
-import ContentEnd from "../ContentEnd"
+  ReviewIf,
+} from '../../core/review/types'
+import ContentEnd from '../ContentEnd'
 import type {
   CreateBeerIf,
   SearchBeerIf,
-  SelectBeerIf
-} from "../../core/beer/types"
-import type { SearchIf } from "../../core/search/types"
-import type { SearchLocationIf } from "../../core/location/types"
-import { loadingIndicatorText } from "../common/LoadingIndicator"
+  SelectBeerIf,
+} from '../../core/beer/types'
+import type { SearchIf } from '../../core/search/types'
+import type { SearchLocationIf } from '../../core/location/types'
+import { loadingIndicatorText } from '../common/LoadingIndicator'
 
-const useDebounce: UseDebounce<string> = str => [str, false]
+const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -32,7 +32,7 @@ const dontCall = (): any => {
 
 const dontCreate = {
   create: dontCall,
-  isLoading: false
+  isLoading: false,
 }
 
 const reviewedBeerId = 'a562b38b-b9df-4cf6-be4a-e1179eb4e89a'
@@ -40,22 +40,22 @@ const reviewedBeerId = 'a562b38b-b9df-4cf6-be4a-e1179eb4e89a'
 const beerSearchIf: SearchBeerIf = {
   useSearch: () => ({
     search: dontCall,
-    isLoading: false
-  })
+    isLoading: false,
+  }),
 }
 const dontCreateBeerIf: CreateBeerIf = {
   useCreate: () => dontCreate,
   editBeerIf: {
     selectBreweryIf: {
       create: {
-        useCreate: () => dontCreate
+        useCreate: () => dontCreate,
       },
       search: {
         useSearch: () => ({
           search: dontCall,
-          isLoading: false
-        })
-      }
+          isLoading: false,
+        }),
+      },
     },
     selectStyleIf: {
       create: {
@@ -63,45 +63,45 @@ const dontCreateBeerIf: CreateBeerIf = {
           ...dontCreate,
           createdStyle: undefined,
           hasError: false,
-          isSuccess: false
-        })
+          isSuccess: false,
+        }),
       },
       list: {
         useList: () => ({
           styles: undefined,
           isLoading: false,
-        })
-      }
-    }
-  }
+        }),
+      },
+    },
+  },
 }
 
-const dateStr ='2022-04-01T12:00:00.000Z'
+const dateStr = '2022-04-01T12:00:00.000Z'
 
 const reviewContainerIf: ReviewContainerIf = {
   createIf: {
-    useCreate: () => dontCreate
+    useCreate: () => dontCreate,
   },
   listIf: {
     useList: () => ({
       data: {
-        containers: []
+        containers: [],
       },
-      isLoading: false
-    })
-  }
+      isLoading: false,
+    }),
+  },
 }
 
 const searchIf: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
-    isActive: true
+    isActive: true,
   }),
-  useDebounce
+  useDebounce,
 }
 const selectBeerIf: SelectBeerIf = {
   create: dontCreateBeerIf,
-  search: beerSearchIf
+  search: beerSearchIf,
 }
 
 const smellText = 'Very nice, caramel, hops'
@@ -119,21 +119,23 @@ const joinedReview = {
   breweries: [
     {
       id: '54d41335-6ebb-4e07-8992-4c8e756850e4',
-      name: 'Koskipanimo'
-    }
+      name: 'Koskipanimo',
+    },
   ],
   container: {
     id: reviewContainerId,
     type: 'bottle',
-    size: '0.50'
+    size: '0.50',
   },
   location: undefined,
   rating: 9,
-  styles: [{
-    id: 'f83ac055-90b4-489c-b549-cee985262ef1',
-    name: 'imperial stout'
-  }],
-  time: dateStr
+  styles: [
+    {
+      id: 'f83ac055-90b4-489c-b549-cee985262ef1',
+      name: 'imperial stout',
+    },
+  ],
+  time: dateStr,
 }
 
 const review = {
@@ -145,54 +147,54 @@ const review = {
   rating: reviewRating,
   smell: smellText,
   taste: 'Roasted malt, bitter, strong',
-  time: dateStr
+  time: dateStr,
 }
 
 const searchLocationIf: SearchLocationIf = {
   useSearch: () => ({
     search: dontCall,
-    isLoading: false
+    isLoading: false,
   }),
   create: {
     useCreate: () => ({
       create: dontCall,
-      isLoading: false
-    })
-  }
+      isLoading: false,
+    }),
+  },
 }
 
 const dontUpdateReviewIf: ReviewIf = {
   get: {
     useGet: () => ({
-      get: async () => review
-    })
+      get: async () => review,
+    }),
   },
   update: {
     useUpdate: () => ({
       update: dontCall,
-      isLoading: false
+      isLoading: false,
     }),
     searchLocationIf,
     selectBeerIf,
-    reviewContainerIf
+    reviewContainerIf,
   },
-  login: () => adminLogin
+  login: () => adminLogin,
 }
 
 const adminLogin: Login = {
   user: {
     id: 'cae333fe-8247-4b31-93af-f2218b20f63e',
     username: 'admin',
-    role: Role.admin
+    role: Role.admin,
   },
-  authToken: "",
-  refreshToken: ""
+  authToken: '',
+  refreshToken: '',
 }
 
 type GetListReviewsIfCb = (params: ListReviewParams) => void
 type GetListReviewsIf = (cb: GetListReviewsIfCb) => ListReviewsIf
 
-const getListReviewsIf: GetListReviewsIf = cb => ({
+const getListReviewsIf: GetListReviewsIf = (cb) => ({
   useList: () => ({
     list: async (params): Promise<JoinedReviewList> => {
       cb(params)
@@ -200,60 +202,63 @@ const getListReviewsIf: GetListReviewsIf = cb => ({
         reviews: [joinedReview],
         sorting: {
           order: 'rating',
-          direction: 'desc'
-        }
+          direction: 'desc',
+        },
       }
     },
     reviewList: {
       reviews: [joinedReview],
       sorting: {
         order: 'rating',
-        direction: 'desc'
-      }
+        direction: 'desc',
+      },
     },
     isLoading: false,
-    isUninitialized: true
+    isUninitialized: true,
   }),
-  infiniteScroll: dontCall
+  infiniteScroll: dontCall,
 })
 
 test('updates review', async () => {
   const user = userEvent.setup()
   const update = vitest.fn()
-  let scrollCb: (() => void) = () => undefined
+  let scrollCb: () => void = () => undefined
   const { getByPlaceholderText, getByRole, getByText } = render(
     <LinkWrapper>
       <Reviews
         listReviewsIf={{
           ...getListReviewsIf(() => undefined),
-          infiniteScroll: (
-            cb
-          ): () => undefined => { scrollCb = cb; return () => undefined }
+          infiniteScroll: (cb): (() => undefined) => {
+            scrollCb = cb
+            return () => undefined
+          },
         }}
         reviewIf={{
           get: {
             useGet: () => ({
-              get: async (): Promise<Review> => review
-            })
+              get: async (): Promise<Review> => review,
+            }),
           },
           update: {
             useUpdate: () => ({
               update,
-              isLoading: false
+              isLoading: false,
             }),
             searchLocationIf,
             selectBeerIf,
-            reviewContainerIf
+            reviewContainerIf,
           },
-          login: () => adminLogin
+          login: () => adminLogin,
         }}
         searchIf={searchIf}
       />
-      <ContentEnd/>
-    </LinkWrapper>
+      <ContentEnd />
+    </LinkWrapper>,
   )
   expect(scrollCb).not.toEqual(undefined)
-  await act(async () => { scrollCb(); })
+  await act(async () => {
+    scrollCb()
+  })
   const beerName = getByText(joinedReview.beerName)
   await user.click(beerName)
   const editButton = getByRole('button', { name: 'Edit' })
@@ -266,57 +271,68 @@ test('updates review', async () => {
 
   const saveButton = getByRole('button', { name: 'Save' })
   await user.click(saveButton)
-  expect(update.mock.calls).toEqual([[{
-    id: joinedReview.id,
-    additionalInfo: '',
-    beer: reviewedBeerId,
-    container: reviewContainerId,
-    location: '',
-    rating: reviewRating,
-    smell: smellText,
-    taste: newTasteText,
-    time: dateStr
-  }]])
+  expect(update.mock.calls).toEqual([
+    [
+      {
+        id: joinedReview.id,
+        additionalInfo: '',
+        beer: reviewedBeerId,
+        container: reviewContainerId,
+        location: '',
+        rating: reviewRating,
+        smell: smellText,
+        taste: newTasteText,
+        time: dateStr,
+      },
+    ],
+  ])
 })
 
 test('sets review sorting', async () => {
   const user = userEvent.setup()
   const listParams = vitest.fn()
-  let scrollCb: (() => void) = () => undefined
+  let scrollCb: () => void = () => undefined
   const { getByRole } = render(
     <LinkWrapper>
       <Reviews
         listReviewsIf={{
           ...getListReviewsIf(listParams),
-          infiniteScroll: (
-            cb
-          ): () => undefined => { scrollCb = cb; return () => undefined }
+          infiniteScroll: (cb): (() => undefined) => {
+            scrollCb = cb
+            return () => undefined
+          },
         }}
         reviewIf={dontUpdateReviewIf}
         searchIf={searchIf}
       />
-      <ContentEnd/>
-    </LinkWrapper>
+      <ContentEnd />
+    </LinkWrapper>,
   )
   expect(scrollCb).not.toEqual(undefined)
-  await act(async () => { scrollCb(); })
+  await act(async () => {
+    scrollCb()
+  })
   getByRole('button', { name: 'Rating ▼' })
   const timeButton = getByRole('button', { name: 'Time' })
   await user.click(timeButton)
-  expect(listParams.mock.calls).toEqual([[{
-    pagination: {
-      size: 20,
-      skip: 0,
-    },
-    sorting: {
-      direction: 'desc',
-      order: 'time'
-    }
-  }]])
+  expect(listParams.mock.calls).toEqual([
+    [
+      {
+        pagination: {
+          size: 20,
+          skip: 0,
+        },
+        sorting: {
+          direction: 'desc',
+          order: 'time',
+        },
+      },
+    ],
+  ])
 })
 
 test('renders loading', async () => {
-  let scrollCb: (() => void) = () => undefined
+  let scrollCb: () => void = () => undefined
   const { getByText } = render(
     <LinkWrapper>
       <Reviews
@@ -326,22 +342,23 @@ test('renders loading', async () => {
               reviews: [],
               sorting: {
                 order: 'beer_name',
-                direction: 'asc'
-              }
+                direction: 'asc',
+              },
             }),
             reviewList: undefined,
             isLoading: true,
-            isUninitialized: true
+            isUninitialized: true,
           }),
-          infiniteScroll: (
-            cb
-          ): () => undefined => { scrollCb = cb; return () => undefined }
+          infiniteScroll: (cb): (() => undefined) => {
+            scrollCb = cb
+            return () => undefined
+          },
         }}
         reviewIf={dontUpdateReviewIf}
         searchIf={searchIf}
       />
-      <ContentEnd/>
-    </LinkWrapper>
+      <ContentEnd />
+    </LinkWrapper>,
   )
   scrollCb()
   getByText(loadingIndicatorText)
@@ -349,7 +366,7 @@ test('renders loading', async () => {
 
 test('stops loading more', async () => {
   const listMore = vitest.fn()
-  let scrollCb: (() => void) = () => undefined
+  let scrollCb: () => void = () => undefined
   function getListRequestCount(): number {
     return listMore.mock.calls.length
   }
@@ -366,71 +383,78 @@ test('stops loading more', async () => {
                     reviews: [],
                     sorting: {
                       order: 'beer_name',
-                      direction: 'asc'
-                    }
+                      direction: 'asc',
+                    },
                   }
                 }
                 return {
                   reviews: [joinedReview],
                   sorting: {
                     order: 'beer_name',
-                    direction: 'asc'
-                  }
+                    direction: 'asc',
+                  },
                 }
               },
               reviewList: {
                 reviews: getListRequestCount() > 1 ? [] : [joinedReview],
                 sorting: {
                   order: 'beer_name',
-                  direction: 'asc'
-                }
+                  direction: 'asc',
+                },
               },
               isLoading: false,
-              isUninitialized: false
+              isUninitialized: false,
             }
           },
-          infiniteScroll: (
-            cb
-          ): () => undefined => { scrollCb = cb; return () => undefined }
+          infiniteScroll: (cb): (() => undefined) => {
+            scrollCb = cb
+            return () => undefined
+          },
         }}
         reviewIf={dontUpdateReviewIf}
         searchIf={searchIf}
       />
-      <ContentEnd/>
-    </LinkWrapper>
+      <ContentEnd />
+    </LinkWrapper>,
   )
   // act is important to ensure changes have been fully applied. loading is not
   // toggled between renders so without act there would be a race condition in
   // the test execution.
-  await act(async () => { scrollCb(); })
+  await act(async () => {
+    scrollCb()
+  })
   await waitFor(() => getByText(joinedReview.beerName))
-  await act(async () => { scrollCb(); })
+  await act(async () => {
+    scrollCb()
+  })
   expect(listMore.mock.calls).toEqual([
     [
       {
         pagination: {
           size: 20,
-          skip: 0
+          skip: 0,
         },
         sorting: {
           direction: 'desc',
-          order: 'time'
+          order: 'time',
         },
-      }
+      },
     ],
     [
       {
         pagination: {
           size: 20,
-          skip: 1
+          skip: 1,
         },
         sorting: {
           direction: 'desc',
-          order: 'time'
+          order: 'time',
         },
-      }
-    ]
+      },
+    ],
   ])
-  await act(async () => { scrollCb(); })
+  await act(async () => {
+    scrollCb()
+  })
   expect(listMore).toHaveBeenCalledTimes(2)
 })

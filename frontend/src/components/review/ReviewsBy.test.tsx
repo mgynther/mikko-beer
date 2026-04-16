@@ -1,26 +1,26 @@
-import { render } from "@testing-library/react"
-import userEvent from "@testing-library/user-event"
-import { expect, test, vitest } from "vitest"
-import ReviewsBy from "./ReviewsBy"
-import type { UseDebounce } from "../../core/types"
-import type { Login } from "../../core/login/types"
-import { Role } from "../../core/user/types"
-import LinkWrapper from "../LinkWrapper"
+import { render } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { expect, test, vitest } from 'vitest'
+import ReviewsBy from './ReviewsBy'
+import type { UseDebounce } from '../../core/types'
+import type { Login } from '../../core/login/types'
+import { Role } from '../../core/user/types'
+import LinkWrapper from '../LinkWrapper'
 import type {
   FilteredListReviewParams,
   ReviewContainerIf,
-  ReviewIf
-} from "../../core/review/types"
+  ReviewIf,
+} from '../../core/review/types'
 import type {
   CreateBeerIf,
   SearchBeerIf,
-  SelectBeerIf
-} from "../../core/beer/types"
-import type { SearchIf } from "../../core/search/types"
-import type { SearchLocationIf } from "../../core/location/types"
-import { loadingIndicatorText } from "../common/LoadingIndicator"
+  SelectBeerIf,
+} from '../../core/beer/types'
+import type { SearchIf } from '../../core/search/types'
+import type { SearchLocationIf } from '../../core/location/types'
+import { loadingIndicatorText } from '../common/LoadingIndicator'
 
-const useDebounce: UseDebounce<string> = str => [str, false]
+const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -28,28 +28,28 @@ const dontCall = (): any => {
 
 const dontCreate = {
   create: dontCall,
-  isLoading: false
+  isLoading: false,
 }
 
 const beerSearchIf: SearchBeerIf = {
   useSearch: () => ({
     search: dontCall,
-    isLoading: false
-  })
+    isLoading: false,
+  }),
 }
 const dontCreateBeerIf: CreateBeerIf = {
   useCreate: () => dontCreate,
   editBeerIf: {
     selectBreweryIf: {
       create: {
-        useCreate: () => dontCreate
+        useCreate: () => dontCreate,
       },
       search: {
         useSearch: () => ({
           search: dontCall,
-          isLoading: false
-        })
-      }
+          isLoading: false,
+        }),
+      },
     },
     selectStyleIf: {
       create: {
@@ -57,44 +57,44 @@ const dontCreateBeerIf: CreateBeerIf = {
           ...dontCreate,
           createdStyle: undefined,
           hasError: false,
-          isSuccess: false
-        })
+          isSuccess: false,
+        }),
       },
       list: {
         useList: () => ({
           styles: undefined,
           isLoading: false,
-        })
-      }
-    }
-  }
+        }),
+      },
+    },
+  },
 }
 
 const reviewContainerIf: ReviewContainerIf = {
   createIf: {
-    useCreate: () => dontCreate
+    useCreate: () => dontCreate,
   },
   listIf: {
     useList: () => ({
       data: {
-        containers: []
+        containers: [],
       },
-      isLoading: false
-    })
-  }
+      isLoading: false,
+    }),
+  },
 }
 
 const searchIf: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
-    isActive: true
+    isActive: true,
   }),
-  useDebounce
+  useDebounce,
 }
 
 const selectBeerIf: SelectBeerIf = {
   create: dontCreateBeerIf,
-  search: beerSearchIf
+  search: beerSearchIf,
 }
 
 const joinedReview = {
@@ -105,62 +105,64 @@ const joinedReview = {
   breweries: [
     {
       id: 'f00effc4-ddca-4100-95f6-9f2f3456256b',
-      name: 'Panimo Hiisi'
-    }
+      name: 'Panimo Hiisi',
+    },
   ],
   container: {
     id: '705c2235-e957-4b2a-8994-a0c026c09bd3',
     type: 'bottle',
-    size: '0.33'
+    size: '0.33',
   },
   location: undefined,
   rating: 9,
-  styles: [{
-    id: '65550e97-9d64-4692-804b-5b82131a71ff',
-    name: 'imperial stout'
-  }],
-  time: '2023-08-15T12:00:00.000Z'
+  styles: [
+    {
+      id: '65550e97-9d64-4692-804b-5b82131a71ff',
+      name: 'imperial stout',
+    },
+  ],
+  time: '2023-08-15T12:00:00.000Z',
 }
 
 const searchLocationIf: SearchLocationIf = {
   useSearch: () => ({
     search: dontCall,
-    isLoading: false
+    isLoading: false,
   }),
   create: {
     useCreate: () => ({
       create: dontCall,
-      isLoading: false
-    })
-  }
+      isLoading: false,
+    }),
+  },
 }
 
 const dontUpdateReviewIf: ReviewIf = {
   get: {
     useGet: () => ({
-      get: dontCall
-    })
+      get: dontCall,
+    }),
   },
   update: {
     useUpdate: () => ({
       update: dontCall,
-      isLoading: false
+      isLoading: false,
     }),
     searchLocationIf,
     selectBeerIf,
-    reviewContainerIf
+    reviewContainerIf,
   },
-  login: () => adminLogin
+  login: () => adminLogin,
 }
 
 const adminLogin: Login = {
   user: {
     id: '4b07d278-b705-4ea2-bc43-20ab95a5fba3',
     username: 'admin',
-    role: Role.admin
+    role: Role.admin,
   },
-  authToken: "",
-  refreshToken: ""
+  authToken: '',
+  refreshToken: '',
 }
 
 test('lists reviews', async () => {
@@ -179,36 +181,40 @@ test('lists reviews', async () => {
                 reviews: [joinedReview],
                 sorting: {
                   order: 'time',
-                  direction: 'desc'
-                }
+                  direction: 'desc',
+                },
               },
               isLoading: false,
             }
-          }
+          },
         }}
         reviewIf={dontUpdateReviewIf}
         searchIf={searchIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
 
   const ratingButton = getByRole('button', { name: 'Rating' })
   await user.click(ratingButton)
   expect(list.mock.calls).toEqual([
-    [{
-      id,
-      sorting: {
-        direction: 'asc',
-        order: 'beer_name'
-      }
-    }],
-    [{
-      id,
-      sorting: {
-        direction: 'desc',
-        order: 'rating'
-      }
-    }]
+    [
+      {
+        id,
+        sorting: {
+          direction: 'asc',
+          order: 'beer_name',
+        },
+      },
+    ],
+    [
+      {
+        id,
+        sorting: {
+          direction: 'desc',
+          order: 'rating',
+        },
+      },
+    ],
   ])
 })
 
@@ -226,12 +232,12 @@ test('renders loading', async () => {
               reviews: undefined,
               isLoading: true,
             }
-          }
+          },
         }}
         reviewIf={dontUpdateReviewIf}
         searchIf={searchIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   getByText(loadingIndicatorText)
 })

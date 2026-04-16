@@ -1,7 +1,7 @@
 export enum BreweryTags {
-  Brewery = 'Brewery'
+  Brewery = 'Brewery',
 }
 
-export function breweryTagTypes (): string[] {
+export function breweryTagTypes(): string[] {
   return [BreweryTags.Brewery]
 }

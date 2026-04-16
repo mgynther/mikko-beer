@@ -25,9 +25,7 @@ function Helper(props: HelperProps): React.JSX.Element {
   }
   return (
     <div>
-      {create.user !== undefined &&
-        <div>{create.user.username}</div>
-      }
+      {create.user !== undefined && <div>{create.user.username}</div>}
       <Button onClick={handleClick} text='Test' />
     </div>
   )
@@ -40,33 +38,33 @@ test('create user', async () => {
     user: {
       id: '999d495a-7b8e-4e44-a870-9f6e7d12254e',
       username: 'testuser',
-      role: Role.viewer
-    }
+      role: Role.viewer,
+    },
   }
 
   addTestServerResponse<{ user: User }>({
     method: 'POST',
     pathname: '/api/v1/user',
     response: expectedResponse,
-    status: 201
+    status: 201,
   })
 
   const { getByRole, getByText } = render(
     <Provider store={store}>
-      <Helper request={{
-        user: { role: Role.viewer },
-        passwordSignInMethod: {
-          username: expectedResponse.user.username,
-          password: 'testpassword'
-        }
-      }} />
-    </Provider>
+      <Helper
+        request={{
+          user: { role: Role.viewer },
+          passwordSignInMethod: {
+            username: expectedResponse.user.username,
+            password: 'testpassword',
+          },
+        }}
+      />
+    </Provider>,
   )
   const testButton = getByRole('button', { name: 'Test' })
   await user.click(testButton)
   await waitFor(() => {
-    expect(
-      getByText(expectedResponse.user.username)
-    ).toBeDefined()
+    expect(getByText(expectedResponse.user.username)).toBeDefined()
   })
 })

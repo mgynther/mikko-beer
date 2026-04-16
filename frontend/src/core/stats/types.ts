@@ -2,7 +2,7 @@ import type {
   InfiniteScroll,
   ListDirection,
   Pagination,
-  UseDebounce
+  UseDebounce,
 } from '../types'
 
 export interface IdParams {
@@ -206,22 +206,20 @@ export interface GetAnnualStatsIf {
 export interface GetAnnualContainerStatsIf {
   useStats: () => {
     query: (
-      params: AnnualContainerStatsQueryParams
+      params: AnnualContainerStatsQueryParams,
     ) => Promise<AnnualContainerStats>
     stats: AnnualContainerStats | undefined
     isLoading: boolean
-  },
+  }
   infiniteScroll: InfiniteScroll
 }
 
 export interface GetBreweryStatsIf {
   useStats: () => {
-    query: (
-      params: BreweryStatsQueryParams
-    ) => Promise<BreweryStats>
+    query: (params: BreweryStatsQueryParams) => Promise<BreweryStats>
     stats: BreweryStats | undefined
     isLoading: boolean
-  },
+  }
   infiniteScroll: InfiniteScroll
   minTime: YearMonth
   maxTime: YearMonth
@@ -237,12 +235,10 @@ export interface GetContainerStatsIf {
 
 export interface GetLocationStatsIf {
   useStats: () => {
-    query: (
-      params: LocationStatsQueryParams
-    ) => Promise<LocationStats>
+    query: (params: LocationStatsQueryParams) => Promise<LocationStats>
     stats: LocationStats | undefined
     isLoading: boolean
-  },
+  }
   infiniteScroll: InfiniteScroll
   minTime: YearMonth
   maxTime: YearMonth

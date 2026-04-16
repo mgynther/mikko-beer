@@ -1,28 +1,26 @@
 import type {
   Container,
   ContainerRequest,
-  CreateContainerIf
-} from "../../core/container/types"
-import { useCreateContainerMutation } from "../../store/container/api"
-import { validateContainer } from "../../validation/container"
+  CreateContainerIf,
+} from '../../core/container/types'
+import { useCreateContainerMutation } from '../../store/container/api'
+import { validateContainer } from '../../validation/container'
 
 const createContainer: () => CreateContainerIf = () => {
   const createContainerIf: CreateContainerIf = {
     useCreate: () => {
-      const [
-        createContainer,
-        { isLoading: isCreatingContainer }
-      ] = useCreateContainerMutation()
+      const [createContainer, { isLoading: isCreatingContainer }] =
+        useCreateContainerMutation()
       return {
         create: async (
-          containerRequest: ContainerRequest
+          containerRequest: ContainerRequest,
         ): Promise<Container> => {
           const result = await createContainer(containerRequest).unwrap()
           return validateContainer(result.container)
         },
-        isLoading: isCreatingContainer
+        isLoading: isCreatingContainer,
       }
-    }
+    },
   }
   return createContainerIf
 }

@@ -22,20 +22,20 @@ function Helper(props: HelperProps): React.JSX.Element {
   const updateIf = updateBeer({
     selectBreweryIf: {
       create: {
-        useCreate: dontCall
+        useCreate: dontCall,
       },
       search: {
-        useSearch: dontCall
-      }
+        useSearch: dontCall,
+      },
     },
     selectStyleIf: {
       create: {
-        useCreate: dontCall
+        useCreate: dontCall,
       },
       list: {
-        useList: dontCall
-      }
-    }
+        useList: dontCall,
+      },
+    },
   })
   const update = updateIf.useUpdate()
   const handleClick = (): void => {
@@ -62,25 +62,22 @@ test('update beer', async () => {
       id: '6a3c37df-8aa8-4590-a779-5ae37f2867b9',
       name: 'Test beer',
       breweries: ['599585b2-e62d-4898-a373-9253ce99903a'],
-      styles: ['2436c303-57c9-477f-ae8f-9005e7b66b7b']
-    }
+      styles: ['2436c303-57c9-477f-ae8f-9005e7b66b7b'],
+    },
   }
 
-  addTestServerResponse<{beer: BeerWithIds}>({
+  addTestServerResponse<{ beer: BeerWithIds }>({
     method: 'PUT',
     pathname: `/api/v1/beer/${expectedResponse.beer.id}`,
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const handler = vitest.fn()
   const { getByRole, getByText } = render(
     <Provider store={store}>
-      <Helper
-        beer={expectedResponse.beer}
-        handleResponse={handler}
-      />
-    </Provider>
+      <Helper beer={expectedResponse.beer} handleResponse={handler} />
+    </Provider>,
   )
   const testButton = getByRole('button', { name: 'Test' })
   await user.click(testButton)

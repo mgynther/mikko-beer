@@ -14,7 +14,7 @@ const dontCall = (): any => {
 }
 
 interface HelperProps {
-  review: Review,
+  review: Review
   storageId: string
 }
 
@@ -24,8 +24,8 @@ function Helper(props: HelperProps): React.JSX.Element {
     {
       useSearch: dontCall,
       create: {
-        useCreate: dontCall
-      }
+        useCreate: dontCall,
+      },
     },
     {
       create: {
@@ -33,41 +33,41 @@ function Helper(props: HelperProps): React.JSX.Element {
         editBeerIf: {
           selectBreweryIf: {
             create: {
-              useCreate: dontCall
+              useCreate: dontCall,
             },
             search: {
-              useSearch: dontCall
-            }
+              useSearch: dontCall,
+            },
           },
           selectStyleIf: {
             create: {
-              useCreate: dontCall
+              useCreate: dontCall,
             },
             list: {
-              useList: dontCall
-            }
-          }
-        }
+              useList: dontCall,
+            },
+          },
+        },
       },
       search: {
-        useSearch: dontCall
-      }
+        useSearch: dontCall,
+      },
     },
     {
       createIf: {
-        useCreate: dontCall
+        useCreate: dontCall,
       },
       listIf: {
-        useList: dontCall
-      }
-    }
+        useList: dontCall,
+      },
+    },
   )
   const { create, review } = createIf.useCreate()
   const handleClick = (): void => {
     async function doHandle(): Promise<void> {
       await create({
         body: props.review,
-        storageId: props.storageId
+        storageId: props.storageId,
       })
     }
     void doHandle()
@@ -92,16 +92,16 @@ const createTestCases: CreateTest[] = [
   {
     name: 'without storage',
     storageId: '',
-    uriSearch: ''
+    uriSearch: '',
   },
   {
     name: 'from storage',
     storageId,
-    uriSearch: `?storage=${storageId}`
-  }
+    uriSearch: `?storage=${storageId}`,
+  },
 ]
 
-createTestCases.forEach(testCase => {
+createTestCases.forEach((testCase) => {
   test(`create review ${testCase.name}`, async () => {
     const user = userEvent.setup()
 
@@ -115,15 +115,15 @@ createTestCases.forEach(testCase => {
         rating: 10,
         smell: 'Citrusy, pine',
         taste: 'Bitter, clean, delicious',
-        time: '2025-10-10T12:00:00.000Z'
-      }
+        time: '2025-10-10T12:00:00.000Z',
+      },
     }
 
     addTestServerResponse<{ review: Review }>({
       method: 'POST',
       pathname: `/api/v1/review${testCase.uriSearch}`,
       response: expectedResponse,
-      status: 201
+      status: 201,
     })
 
     const { getByRole, getByText } = render(
@@ -131,8 +131,8 @@ createTestCases.forEach(testCase => {
         <Helper
           review={expectedResponse.review}
           storageId={testCase.storageId}
-          />
-      </Provider>
+        />
+      </Provider>,
     )
     const testButton = getByRole('button', { name: 'Test' })
     await user.click(testButton)

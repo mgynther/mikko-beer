@@ -1,5 +1,5 @@
-import { expect, test } from "vitest"
-import { asObject } from "./localstorage-member-parser"
+import { expect, test } from 'vitest'
+import { asObject } from './localstorage-member-parser'
 
 test('defaults to empty object on null', () => {
   const result = asObject(null)

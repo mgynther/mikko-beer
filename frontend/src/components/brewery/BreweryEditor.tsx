@@ -8,7 +8,7 @@ interface Props {
   onChange: (brewery: Brewery | undefined) => void
 }
 
-function BreweryEditor (props: Props): React.JSX.Element {
+function BreweryEditor(props: Props): React.JSX.Element {
   const [name, setName] = useState(props.brewery.name)
   return (
     <div>
@@ -16,7 +16,7 @@ function BreweryEditor (props: Props): React.JSX.Element {
         type='text'
         placeholder={props.placeholder}
         value={name}
-        onChange={e => {
+        onChange={(e) => {
           const fullNewName = e.target.value.trimStart()
           setName(fullNewName)
           const newName = fullNewName.trim()
@@ -26,7 +26,7 @@ function BreweryEditor (props: Props): React.JSX.Element {
           }
           props.onChange({
             ...props.brewery,
-            name: newName
+            name: newName,
           })
         }}
       />

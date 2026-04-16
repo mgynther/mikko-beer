@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
 import { test } from 'vitest'
 
-import AnnualContainerStatsTable from "./AnnualContainerStatsTable"
+import AnnualContainerStatsTable from './AnnualContainerStatsTable'
 
 test('renders annual container stats', async () => {
   const { getByText } = render(
@@ -13,7 +13,7 @@ test('renders annual container stats', async () => {
           containerType: 'draft',
           reviewAverage: '9.12',
           reviewCount: '83',
-          year: '2023'
+          year: '2023',
         },
         {
           containerId: 'b1c8789d-0c00-4cac-aff5-5fe70708404b',
@@ -21,11 +21,11 @@ test('renders annual container stats', async () => {
           containerType: 'bottle',
           reviewAverage: '8.92',
           reviewCount: '64',
-          year: '2022'
-        }
+          year: '2022',
+        },
       ]}
       isLoading={false}
-    />
+    />,
   )
   getByText('2023')
   getByText('draft 0.25')

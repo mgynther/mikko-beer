@@ -1,10 +1,6 @@
 import React, { useState } from 'react'
 
-import type {
-  Beer,
-  BeerWithIds,
-  UpdateBeerIf
-} from '../../core/beer/types'
+import type { Beer, BeerWithIds, UpdateBeerIf } from '../../core/beer/types'
 import type { SearchIf } from '../../core/search/types'
 
 import EditActions from '../common/EditActions'
@@ -19,10 +15,10 @@ interface Props {
   onSaved: () => void
 }
 
-function UpdateBeer (props: Props): React.JSX.Element {
+function UpdateBeer(props: Props): React.JSX.Element {
   const [newBeer, setNewBeer] = useState<BeerWithIds | undefined>(undefined)
   const { update, isLoading } = props.updateBeerIf.useUpdate()
-  async function doUpdate (newBeer: BeerWithIds): Promise<void> {
+  async function doUpdate(newBeer: BeerWithIds): Promise<void> {
     await update({ ...newBeer })
     props.onSaved()
   }
@@ -43,7 +39,13 @@ function UpdateBeer (props: Props): React.JSX.Element {
           setNewBeer(undefined)
           props.onCancel()
         }}
-        onSave={newBeer ? (): void => { void doUpdate(newBeer) } : undefined}
+        onSave={
+          newBeer
+            ? (): void => {
+                void doUpdate(newBeer)
+              }
+            : undefined
+        }
       />
     </>
   )

@@ -5,7 +5,7 @@ import SelectBeer from './SelectBeer'
 import type {
   Beer,
   BeerWithIds,
-  CreateBeerRequest
+  CreateBeerRequest,
 } from '../../core/beer/types'
 import type { UseDebounce } from '../../core/types'
 import type { SearchIf } from '../../core/search/types'
@@ -13,7 +13,7 @@ import type { Brewery } from '../../core/brewery/types'
 
 const namePlaceholder = 'Name'
 
-const useDebounce: UseDebounce<string> = str => [str, false]
+const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -21,33 +21,33 @@ const dontCall = (): any => {
 
 const brewery = {
   id: 'a5a8968d-4556-4f66-8351-21f724cc8316',
-  name: 'Koskipanimo'
+  name: 'Koskipanimo',
 }
 
 const style = {
   id: '0344f996-1475-45b6-aa84-ac7e0da47c7c',
   name: 'IPA',
-  parents: []
+  parents: [],
 }
 
 const beer = {
   id: '60b1745f-0d7e-48c2-a993-90f127dd81ff',
   name: 'Smörre',
   breweries: [brewery],
-  styles: [style]
+  styles: [style],
 }
 
 const dontCreate = {
   create: dontCall,
-  isLoading: false
+  isLoading: false,
 }
 
 const searchIf: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
-      isActive: true
+    isActive: true,
   }),
-  useDebounce
+  useDebounce,
 }
 
 test('selects created beer', async () => {
@@ -62,21 +62,21 @@ test('selects created beer', async () => {
           useCreate: () => ({
             create: async (beer: CreateBeerRequest): Promise<BeerWithIds> => ({
               ...beer,
-              id
+              id,
             }),
-            isLoading: false
+            isLoading: false,
           }),
           editBeerIf: {
             selectBreweryIf: {
               create: {
-                useCreate: () => dontCreate
+                useCreate: () => dontCreate,
               },
               search: {
                 useSearch: () => ({
                   search: async (): Promise<Brewery[]> => [brewery],
-                  isLoading: false
-                })
-              }
+                  isLoading: false,
+                }),
+              },
             },
             selectStyleIf: {
               create: {
@@ -84,27 +84,27 @@ test('selects created beer', async () => {
                   ...dontCreate,
                   createdStyle: undefined,
                   hasError: false,
-                  isSuccess: false
-                })
+                  isSuccess: false,
+                }),
               },
               list: {
                 useList: () => ({
                   styles: [style],
-                  isLoading: false
-                })
-              }
-            }
-          }
+                  isLoading: false,
+                }),
+              },
+            },
+          },
         },
         search: {
-        useSearch: () => ({
-          search: dontCall,
-          isLoading: false
-        })
-        }
+          useSearch: () => ({
+            search: dontCall,
+            isLoading: false,
+          }),
+        },
       }}
       searchIf={searchIf}
-    />
+    />,
   )
   const nameInput = getByPlaceholderText(namePlaceholder)
   await user.type(nameInput, 'Severin')
@@ -123,12 +123,16 @@ test('selects created beer', async () => {
   expect(createButton.hasAttribute('disabled')).toEqual(false)
   await user.click(createButton)
   const createCalls = selectBeer.mock.calls
-  expect(createCalls).toEqual([[{
-    id,
-    breweries: [brewery.id],
-    name: 'Severin',
-    styles: [style.id]
-  }]])
+  expect(createCalls).toEqual([
+    [
+      {
+        id,
+        breweries: [brewery.id],
+        name: 'Severin',
+        styles: [style.id],
+      },
+    ],
+  ])
 })
 
 test('selects beer', async () => {
@@ -141,19 +145,19 @@ test('selects beer', async () => {
         create: {
           useCreate: () => ({
             create: dontCall,
-            isLoading: false
+            isLoading: false,
           }),
           editBeerIf: {
             selectBreweryIf: {
               create: {
-                useCreate: () => dontCreate
+                useCreate: () => dontCreate,
               },
               search: {
                 useSearch: () => ({
                   search: dontCall,
-                  isLoading: false
-                })
-              }
+                  isLoading: false,
+                }),
+              },
             },
             selectStyleIf: {
               create: {
@@ -161,27 +165,27 @@ test('selects beer', async () => {
                   ...dontCreate,
                   createdStyle: undefined,
                   hasError: false,
-                  isSuccess: false
-                })
+                  isSuccess: false,
+                }),
               },
               list: {
                 useList: () => ({
                   styles: [],
-                  isLoading: false
-                })
-              }
-            }
-          }
+                  isLoading: false,
+                }),
+              },
+            },
+          },
         },
         search: {
-        useSearch: () => ({
-          search: async (): Promise<Beer[]> => [beer],
-          isLoading: false
-        })
-        }
+          useSearch: () => ({
+            search: async (): Promise<Beer[]> => [beer],
+            isLoading: false,
+          }),
+        },
       }}
       searchIf={searchIf}
-    />
+    />,
   )
 
   const selectRadio = getAllByRole('radio', { name: 'Select' })[0]
@@ -191,16 +195,19 @@ test('selects beer', async () => {
   expect(input).toBeDefined()
   await user.type(input, 'Do')
 
-  const itemButton = getByRole(
-    'button',
-    { name: `${beer.name} (${brewery.name})` }
-  )
+  const itemButton = getByRole('button', {
+    name: `${beer.name} (${brewery.name})`,
+  })
   expect(itemButton).toBeDefined()
   await user.click(itemButton)
-  expect(selectBeer.mock.calls).toEqual([[ {
-    breweries: [brewery.id],
-    id: beer.id,
-    name: beer.name,
-    styles: [style.id]
-  } ]])
+  expect(selectBeer.mock.calls).toEqual([
+    [
+      {
+        breweries: [brewery.id],
+        id: beer.id,
+        name: beer.name,
+        styles: [style.id],
+      },
+    ],
+  ])
 })

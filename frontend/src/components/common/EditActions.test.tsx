@@ -10,7 +10,7 @@ test('renders loading text', () => {
       isSaveDisabled={false}
       onCancel={() => undefined}
       onSave={() => undefined}
-    />
+    />,
   )
   const text = getByText(loadingIndicatorText)
   expect(text).toBeDefined()
@@ -24,7 +24,7 @@ test('disables save button while saving', () => {
       isSaveDisabled={false}
       onCancel={() => undefined}
       onSave={saveCb}
-    />
+    />,
   )
   const saveButton = getByRole('button', { name: 'Save' })
   expect(saveButton.hasAttribute('disabled')).toEqual(true)
@@ -39,7 +39,7 @@ test('disables save button without onSave', () => {
       isSaveDisabled={false}
       onCancel={() => undefined}
       onSave={undefined}
-    />
+    />,
   )
   const saveButton = getByRole('button', { name: 'Save' })
   expect(saveButton.hasAttribute('disabled')).toEqual(true)
@@ -53,7 +53,7 @@ test('disables save button while saving disabled', () => {
       isSaveDisabled={true}
       onCancel={() => undefined}
       onSave={saveCb}
-    />
+    />,
   )
   const saveButton = getByRole('button', { name: 'Save' })
   expect(saveButton.hasAttribute('disabled')).toEqual(true)
@@ -69,7 +69,7 @@ test('cancels', () => {
       isSaveDisabled={false}
       onCancel={cancelCb}
       onSave={() => undefined}
-    />
+    />,
   )
   const cancelButton = getByRole('button', { name: 'Cancel' })
   expect(cancelButton.hasAttribute('disabled')).toEqual(false)
@@ -85,7 +85,7 @@ test('saves', () => {
       isSaveDisabled={false}
       onCancel={() => undefined}
       onSave={saveCb}
-    />
+    />,
   )
   const saveButton = getByRole('button', { name: 'Save' })
   expect(saveButton.hasAttribute('disabled')).toEqual(false)

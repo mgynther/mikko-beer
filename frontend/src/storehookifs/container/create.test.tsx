@@ -24,9 +24,7 @@ function Helper(props: HelperProps): React.JSX.Element {
     }
     void doHandle()
   }
-  return (
-    <Button onClick={handleClick} text='Test' />
-  )
+  return <Button onClick={handleClick} text='Test' />
 }
 
 test('create container', async () => {
@@ -36,15 +34,15 @@ test('create container', async () => {
     container: {
       id: 'e1ed6014-3653-4792-a7d5-711b40f4c70f',
       type: 'bottle',
-      size: '0.33'
-    }
+      size: '0.33',
+    },
   }
 
-  addTestServerResponse<{container: Container}>({
+  addTestServerResponse<{ container: Container }>({
     method: 'POST',
     pathname: '/api/v1/container',
     response: expectedResponse,
-    status: 201
+    status: 201,
   })
 
   const handler = vitest.fn()
@@ -53,13 +51,11 @@ test('create container', async () => {
       <Helper
         container={{
           type: expectedResponse.container.type,
-          size: expectedResponse.container.size
+          size: expectedResponse.container.size,
         }}
-        handleResponse={
-          handler
-        }
+        handleResponse={handler}
       />
-    </Provider>
+    </Provider>,
   )
   const testButton = getByRole('button', { name: 'Test' })
   await user.click(testButton)

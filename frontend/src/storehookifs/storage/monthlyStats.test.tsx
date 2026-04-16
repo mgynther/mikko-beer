@@ -12,12 +12,12 @@ function Helper(): React.JSX.Element {
   return (
     <table>
       <tbody>
-        {stats?.monthly.map(oneYear =>
+        {stats?.monthly.map((oneYear) => (
           <tr key={oneYear.year}>
             <td>{oneYear.year}</td>
             <td>{oneYear.count}</td>
           </tr>
-        )}
+        ))}
       </tbody>
     </table>
   )
@@ -25,23 +25,25 @@ function Helper(): React.JSX.Element {
 
 test('get monthly stats', async () => {
   const expectedResponse: MonthlyStats = {
-    monthly: [{
-      year: '2024',
-      month: '8',
-      count: '5'
-    }]
+    monthly: [
+      {
+        year: '2024',
+        month: '8',
+        count: '5',
+      },
+    ],
   }
   addTestServerResponse<MonthlyStats>({
     method: 'GET',
     pathname: `/api/v1/storage/monthly-stats`,
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const { getByText } = render(
     <Provider store={store}>
       <Helper />
-    </Provider>
+    </Provider>,
   )
   await waitFor(() => {
     expect(getByText(expectedResponse.monthly[0].year)).toBeDefined()

@@ -8,13 +8,8 @@ interface Props {
   styles: Style[]
 }
 
-export function StyleLinks (props: Props): React.JSX.Element {
-  return (
-    <Links
-      items={props.styles}
-      linkFormatter={(id) => `/styles/${id}`}
-    />
-  )
+export function StyleLinks(props: Props): React.JSX.Element {
+  return <Links items={props.styles} linkFormatter={(id) => `/styles/${id}`} />
 }
 
 export default StyleLinks

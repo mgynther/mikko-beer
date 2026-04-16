@@ -1,5 +1,5 @@
-import type { DeleteStorageIf } from "../../core/storage/types"
-import { useDeleteStorageMutation } from "../../store/storage/api"
+import type { DeleteStorageIf } from '../../core/storage/types'
+import { useDeleteStorageMutation } from '../../store/storage/api'
 
 const deleteStorage: () => DeleteStorageIf = () => {
   const deleteStorageIf: DeleteStorageIf = {
@@ -8,9 +8,9 @@ const deleteStorage: () => DeleteStorageIf = () => {
       return {
         delete: async (id: string): Promise<void> => {
           await deleteStorage(id)
-        }
+        },
       }
-    }
+    },
   }
   return deleteStorageIf
 }

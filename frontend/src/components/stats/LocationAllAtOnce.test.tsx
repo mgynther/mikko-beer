@@ -9,11 +9,11 @@ import type {
   GetLocationStatsIf,
   LocationStats,
   StatsFilters,
-  YearMonth
+  YearMonth,
 } from '../../core/stats/types'
 import type { UseDebounce } from '../../core/types'
 
-const getUseDebounce = function<T>(): UseDebounce<T> {
+const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
 }
 
@@ -29,14 +29,14 @@ const plevna = {
   locationId: '256997df-206d-4d6b-aed8-2e5448e97a09',
   locationName: 'Plevna',
   reviewAverage: '9.06',
-  reviewCount: '63'
+  reviewCount: '63',
 }
 
 const oluthuone = {
   locationId: '62853cb5-a23a-4aaa-9c03-6c2c17bb2013',
   locationName: 'Oluthuone Panimomestari',
   reviewAverage: '9.71',
-  reviewCount: '24'
+  reviewCount: '24',
 }
 
 const minTime: YearMonth = testTimes.min.yearMonth
@@ -45,44 +45,44 @@ const maxTime: YearMonth = testTimes.max.yearMonth
 const unusedFilters: StatsFilters = {
   minReviewCount: {
     value: 1,
-    setValue: dontCall
+    setValue: dontCall,
   },
   maxReviewCount: {
     value: Infinity,
-    setValue: dontCall
+    setValue: dontCall,
   },
   minReviewAverage: {
     value: 4.0,
-    setValue: dontCall
+    setValue: dontCall,
   },
   maxReviewAverage: {
     value: 10.0,
-    setValue: dontCall
+    setValue: dontCall,
   },
   timeStart: {
     min: minTime,
     max: maxTime,
     value: minTime,
-    setValue: dontCall
+    setValue: dontCall,
   },
   timeEnd: {
     min: minTime,
     max: maxTime,
     value: maxTime,
-    setValue: dontCall
-  }
+    setValue: dontCall,
+  },
 }
 
 const unusedStats: GetLocationStatsIf = {
   useStats: () => ({
-    query: async () => ({ location: []}),
-      stats: { location: [] },
-    isLoading: false
+    query: async () => ({ location: [] }),
+    stats: { location: [] },
+    isLoading: false,
   }),
   infiniteScroll: dontCall,
   minTime,
   maxTime,
-  getUseDebounce
+  getUseDebounce,
 }
 
 test('queries location stats', async () => {
@@ -96,21 +96,18 @@ test('queries location stats', async () => {
             query: async (params): Promise<LocationStats> => {
               query(params)
               return {
-                location: [
-                  { ...plevna },
-                  { ...oluthuone }
-                ]
+                location: [{ ...plevna }, { ...oluthuone }],
               }
             },
             stats: {
-              location: []
+              location: [],
             },
-            isLoading: false
+            isLoading: false,
           }),
           infiniteScroll: dontCall,
           minTime,
           maxTime,
-          getUseDebounce
+          getUseDebounce,
         }}
         breweryId={breweryId}
         locationId={locationId}
@@ -125,33 +122,37 @@ test('queries location stats', async () => {
         setIsFiltersOpen={() => undefined}
         isFilterChangePending={false}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
-  expect(query.mock.calls).toEqual([[{
-    breweryId,
-    locationId,
-    maxReviewAverage: unusedFilters.maxReviewAverage.value,
-    maxReviewCount: unusedFilters.maxReviewCount.value,
-    minReviewAverage: unusedFilters.minReviewAverage.value,
-    minReviewCount: unusedFilters.minReviewCount.value,
-    pagination: {
-      size: 10000,
-      skip: 0
-    },
-    sorting: {
-      direction: 'asc',
-      order: 'location_name'
-    },
-    styleId,
-    timeStart: testTimes.min.utcTimestamp,
-    timeEnd: testTimes.max.utcTimestamp
-  }]])
-  await waitFor(() =>
-    { expect(setLoadedLocations.mock.calls).toEqual([
+  expect(query.mock.calls).toEqual([
+    [
+      {
+        breweryId,
+        locationId,
+        maxReviewAverage: unusedFilters.maxReviewAverage.value,
+        maxReviewCount: unusedFilters.maxReviewCount.value,
+        minReviewAverage: unusedFilters.minReviewAverage.value,
+        minReviewCount: unusedFilters.minReviewCount.value,
+        pagination: {
+          size: 10000,
+          skip: 0,
+        },
+        sorting: {
+          direction: 'asc',
+          order: 'location_name',
+        },
+        styleId,
+        timeStart: testTimes.min.utcTimestamp,
+        timeEnd: testTimes.max.utcTimestamp,
+      },
+    ],
+  ])
+  await waitFor(() => {
+    expect(setLoadedLocations.mock.calls).toEqual([
       [undefined],
-      [[plevna, oluthuone]]
-    ]); }
-  )
+      [[plevna, oluthuone]],
+    ])
+  })
 })
 
 test('renders location stats', () => {
@@ -172,7 +173,7 @@ test('renders location stats', () => {
         setIsFiltersOpen={dontCall}
         isFilterChangePending={false}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   getByText(plevna.locationName)
   getByText(plevna.reviewAverage)
@@ -201,7 +202,7 @@ test('clears loaded locations on filter change pending', () => {
         setIsFiltersOpen={dontCall}
         isFilterChangePending={true}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   expect(setLoadedLocations.mock.calls).toEqual([[undefined], [undefined]])
 })
@@ -214,12 +215,12 @@ test('renders loading', () => {
           useStats: () => ({
             query: async (): Promise<LocationStats> => ({ location: [] }),
             stats: undefined,
-            isLoading: true
+            isLoading: true,
           }),
           infiniteScroll: dontCall,
           minTime,
           maxTime,
-          getUseDebounce
+          getUseDebounce,
         }}
         breweryId={undefined}
         locationId={undefined}
@@ -234,7 +235,7 @@ test('renders loading', () => {
         setIsFiltersOpen={dontCall}
         isFilterChangePending={false}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   const cells = getAllByRole('cell')
   expect(cells.length).toEqual(9)
@@ -258,17 +259,17 @@ test('sets minimum review count filter', () => {
           ...unusedFilters,
           minReviewAverage: {
             value: 4.0,
-            setValue: setMinimumReviewAverage
-          }
+            setValue: setMinimumReviewAverage,
+          },
         }}
         isFiltersOpen={true}
         setIsFiltersOpen={dontCall}
         isFilterChangePending={false}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   const slider = getByDisplayValue('4')
-  fireEvent.change(slider, {target: {value: '4.5'}})
+  fireEvent.change(slider, { target: { value: '4.5' } })
   expect(setMinimumReviewAverage.mock.calls).toEqual([[4.5]])
 })
 
@@ -292,7 +293,7 @@ test('opens filter', async () => {
         setIsFiltersOpen={setIsFiltersOpen}
         isFilterChangePending={false}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   await openFilters(getByRole, user)
   expect(setIsFiltersOpen.mock.calls).toEqual([[true]])

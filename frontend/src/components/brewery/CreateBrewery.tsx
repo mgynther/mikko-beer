@@ -1,9 +1,6 @@
 import React, { useState } from 'react'
 
-import type {
-  Brewery,
-  CreateBreweryIf
-} from '../../core/brewery/types'
+import type { Brewery, CreateBreweryIf } from '../../core/brewery/types'
 
 import Button from '../common/Button'
 import LoadingIndicator from '../common/LoadingIndicator'
@@ -17,17 +14,17 @@ export interface Props {
   select: (brewery: Brewery) => void
 }
 
-function CreateBrewery (props: Props): React.JSX.Element {
+function CreateBrewery(props: Props): React.JSX.Element {
   const [initialBrewery] = useState<Brewery>({
     id: 'newbrewery',
-    name: ''
+    name: '',
   })
   const [newBrewery, setNewBrewery] = useState<Brewery | undefined>(undefined)
   const { create, isLoading } = props.createBreweryIf.useCreate()
 
-  async function doCreate (newBrewery: Brewery): Promise<void> {
+  async function doCreate(newBrewery: Brewery): Promise<void> {
     const result = await create({
-      name: newBrewery.name
+      name: newBrewery.name,
     })
     props.select(result)
   }
@@ -47,7 +44,9 @@ function CreateBrewery (props: Props): React.JSX.Element {
             disabled={newBrewery === undefined}
             onClick={
               newBrewery
-                ? (): void => { void doCreate(newBrewery) }
+                ? (): void => {
+                    void doCreate(newBrewery)
+                  }
                 : undefined
             }
             text='Create'

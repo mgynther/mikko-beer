@@ -11,16 +11,16 @@ import { asText } from './ContainerInfo'
 
 export interface Props {
   select: (container: Container) => void
-  reviewContainerIf: ReviewContainerIf,
+  reviewContainerIf: ReviewContainerIf
 }
 
-function SelectContainer (props: Props): React.JSX.Element {
+function SelectContainer(props: Props): React.JSX.Element {
   const { data: containerData, isLoading } =
     props.reviewContainerIf.listIf.useList()
 
   const containers = containerData?.containers ?? []
 
-  function selectContainerById (containerId: string): void {
+  function selectContainerById(containerId: string): void {
     containers
       .filter((container) => container.id === containerId)
       .forEach((container: Container) => props.select(container))
@@ -41,7 +41,9 @@ function SelectContainer (props: Props): React.JSX.Element {
             <LoadingIndicator isLoading={isLoading} />
             <select
               defaultValue={''}
-              onChange={(e) => { selectContainerById(e.target.value) }}
+              onChange={(e) => {
+                selectContainerById(e.target.value)
+              }}
             >
               <option value={''} disabled={true} />
               {containers.map((container: Container) => (

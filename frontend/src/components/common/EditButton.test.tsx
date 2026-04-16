@@ -8,14 +8,14 @@ import type { Login } from '../../core/login/types'
 const admin: User = {
   id: '123',
   username: 'test',
-  role: Role.admin
+  role: Role.admin,
 }
 
 function getLogin(user: User | undefined): Login {
   return {
     user,
     authToken: '',
-    refreshToken: ''
+    refreshToken: '',
   }
 }
 
@@ -25,7 +25,7 @@ test('is disabled without user', () => {
       disabled={false}
       getLogin={() => getLogin(undefined)}
       onClick={() => undefined}
-    />
+    />,
   )
   const button = queryByRole('button')
   expect(button).toEqual(null)
@@ -35,13 +35,15 @@ test('is disabled for viewer', () => {
   const { queryByRole } = render(
     <EditButton
       disabled={false}
-      getLogin={() => getLogin({
-        id: '123',
-        username: 'test',
-        role: Role.viewer
-      })}
+      getLogin={() =>
+        getLogin({
+          id: '123',
+          username: 'test',
+          role: Role.viewer,
+        })
+      }
       onClick={() => undefined}
-    />
+    />,
   )
   const button = queryByRole('button')
   expect(button).toEqual(null)
@@ -55,7 +57,7 @@ test('handles click for admin', async () => {
       disabled={false}
       getLogin={() => getLogin(admin)}
       onClick={clickCb}
-    />
+    />,
   )
   const button = getByRole('button')
   await user.click(button)
@@ -70,7 +72,7 @@ test('does not handle click when disabled', async () => {
       disabled={true}
       getLogin={() => getLogin(admin)}
       onClick={clickCb}
-    />
+    />,
   )
   const button = getByRole('button')
   await user.click(button)

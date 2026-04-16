@@ -1,10 +1,10 @@
-import type { ReactNode } from "react"
-import type { NavigateIf } from "./components/util"
-import type { SearchBeerIf } from "./core/beer/types"
-import type { SearchBreweryIf } from "./core/brewery/types"
-import type { SearchIf } from "./core/search/types"
-import type { NavMenuState, Theme } from "./core/types"
-import Nav from "./Nav"
+import type { ReactNode } from 'react'
+import type { NavigateIf } from './components/util'
+import type { SearchBeerIf } from './core/beer/types'
+import type { SearchBreweryIf } from './core/brewery/types'
+import type { SearchIf } from './core/search/types'
+import type { NavMenuState, Theme } from './core/types'
+import Nav from './Nav'
 
 export interface NavMenuProps {
   navMenuState: NavMenuState
@@ -29,7 +29,7 @@ interface LayoutProps {
   children: ReactNode
 }
 
-function Layout (props: LayoutProps): React.JSX.Element {
+function Layout(props: LayoutProps): React.JSX.Element {
   return (
     <div>
       {props.isLoggedIn && (

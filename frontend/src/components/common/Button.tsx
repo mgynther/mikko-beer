@@ -13,14 +13,14 @@ interface Props {
 
 // A trivial wrapper for HTML button mainly to ensure the type is set so that
 // there's no quirky behavior inside forms.
-function Button (props: Props): React.JSX.Element {
+function Button(props: Props): React.JSX.Element {
   return (
     <button
       className={props.className}
       disabled={props.disabled === true || props.onClick === undefined}
       onClick={props.onClick}
       type='button'
-     >
+    >
       {props.text}
     </button>
   )

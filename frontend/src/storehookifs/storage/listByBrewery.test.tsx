@@ -16,14 +16,14 @@ interface Props {
 
 function Helper(props: Props): React.JSX.Element {
   const listIf = listStoragesByBrewery({
-    useDelete: dontCall
+    useDelete: dontCall,
   })
   const { storages } = listIf.useList(props.breweryId)
   return (
     <div>
-      {storages?.storages.map(storage =>
+      {storages?.storages.map((storage) => (
         <div key={storage.id}>{storage.beerName}</div>
-      )}
+      ))}
     </div>
   )
 }
@@ -41,37 +41,37 @@ test('list storages by brewery', async () => {
         breweries: [
           {
             id: breweryId,
-            name: 'Test brewery'
-          }
+            name: 'Test brewery',
+          },
         ],
         container: {
           id: '329439c4-faac-43dc-8b0b-9f0bcfeb51e8',
           type: 'bottle',
-          size: '0.33'
+          size: '0.33',
         },
         createdAt: '2024-09-28T10:00:00.000Z',
         hasReview: false,
         styles: [
           {
             id: 'febaf66f-f9e0-4042-94ac-280d4b29b83a',
-            name: 'Imperial Stout'
-          }
-        ]
-      }
-    ]
+            name: 'Imperial Stout',
+          },
+        ],
+      },
+    ],
   }
 
   addTestServerResponse<StorageList>({
     method: 'GET',
     pathname: `/api/v1/brewery/${breweryId}/storage`,
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const { getByText } = render(
     <Provider store={store}>
       <Helper breweryId={breweryId} />
-    </Provider>
+    </Provider>,
   )
   await waitFor(() => {
     expect(getByText(expectedResponse.storages[0].beerName)).toBeDefined()

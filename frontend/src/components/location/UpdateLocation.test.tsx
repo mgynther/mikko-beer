@@ -13,10 +13,10 @@ function getLogin(): GetLogin {
     user: {
       id: '3ae3514d-4fbe-416c-add4-85b6fbc76922',
       username: 'admin',
-      role: Role.admin
+      role: Role.admin,
     },
     authToken: 'auth',
-    refreshToken: 'refresh'
+    refreshToken: 'refresh',
   })
 }
 
@@ -28,18 +28,18 @@ test('updates location', async () => {
     <UpdateLocation
       initialLocation={{
         id,
-        name: 'Panimoarvintola Plevna'
+        name: 'Panimoarvintola Plevna',
       }}
       updateLocationIf={{
         useUpdate: () => ({
           update,
-          isLoading: false
+          isLoading: false,
         }),
-        login: getLogin()
+        login: getLogin(),
       }}
       onCancel={() => undefined}
       onSaved={onSaved}
-    />
+    />,
   )
   const saveButton = getByRole('button', { name: 'Save' })
   const nameInput = getByPlaceholderText(newNamePlaceholder)
@@ -48,10 +48,14 @@ test('updates location', async () => {
   expect(saveButton.hasAttribute('disabled')).toEqual(false)
   await user.click(saveButton)
   const updateCalls = update.mock.calls
-  expect(updateCalls).toEqual([[{
-    id,
-    name: 'Panimoravintola Plevna'
-  }]])
+  expect(updateCalls).toEqual([
+    [
+      {
+        id,
+        name: 'Panimoravintola Plevna',
+      },
+    ],
+  ])
   const saveCalls = onSaved.mock.calls
   expect(saveCalls).toEqual([[]])
 })
@@ -63,18 +67,18 @@ test('cancel update', async () => {
     <UpdateLocation
       initialLocation={{
         id,
-        name: 'Panimoarvintola Plevna'
+        name: 'Panimoarvintola Plevna',
       }}
       updateLocationIf={{
         useUpdate: () => ({
           update: async (): Promise<void> => undefined,
-          isLoading: false
+          isLoading: false,
         }),
-        login: getLogin()
+        login: getLogin(),
       }}
       onCancel={onCancel}
       onSaved={() => undefined}
-    />
+    />,
   )
   const cancelButton = getByRole('button', { name: 'Cancel' })
   await user.click(cancelButton)

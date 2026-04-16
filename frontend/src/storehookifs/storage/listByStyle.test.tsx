@@ -16,14 +16,14 @@ interface Props {
 
 function Helper(props: Props): React.JSX.Element {
   const listIf = listStoragesByStyle({
-    useDelete: dontCall
+    useDelete: dontCall,
   })
   const { storages } = listIf.useList(props.styleId)
   return (
     <div>
-      {storages?.storages.map(storage =>
+      {storages?.storages.map((storage) => (
         <div key={storage.id}>{storage.beerName}</div>
-      )}
+      ))}
     </div>
   )
 }
@@ -41,37 +41,37 @@ test('list storages by style', async () => {
         breweries: [
           {
             id: 'd182f232-0f72-4615-963a-bbb6c448ea4f',
-            name: 'Test brewery'
-          }
+            name: 'Test brewery',
+          },
         ],
         container: {
           id: '53892c47-3017-4694-8b70-df029dd4b2da',
           type: 'bottle',
-          size: '0.50'
+          size: '0.50',
         },
         createdAt: '2026-03-13T10:00:00.000Z',
         hasReview: false,
         styles: [
           {
             id: styleId,
-            name: 'Imperial Sour'
-          }
-        ]
-      }
-    ]
+            name: 'Imperial Sour',
+          },
+        ],
+      },
+    ],
   }
 
   addTestServerResponse<StorageList>({
     method: 'GET',
     pathname: `/api/v1/style/${styleId}/storage`,
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const { getByText } = render(
     <Provider store={store}>
       <Helper styleId={styleId} />
-    </Provider>
+    </Provider>,
   )
   await waitFor(() => {
     expect(getByText(expectedResponse.storages[0].beerName)).toBeDefined()

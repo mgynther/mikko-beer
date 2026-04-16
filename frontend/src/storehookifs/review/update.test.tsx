@@ -23,43 +23,43 @@ function Helper(props: HelperProps): React.JSX.Element {
     {
       useSearch: dontCall,
       create: {
-        useCreate: dontCall
-      }
+        useCreate: dontCall,
+      },
     },
     {
       search: {
-        useSearch: dontCall
+        useSearch: dontCall,
       },
       create: {
         useCreate: dontCall,
         editBeerIf: {
           selectBreweryIf: {
             create: {
-              useCreate: dontCall
+              useCreate: dontCall,
             },
             search: {
-              useSearch: dontCall
-            }
+              useSearch: dontCall,
+            },
           },
           selectStyleIf: {
             create: {
-              useCreate: dontCall
+              useCreate: dontCall,
             },
             list: {
-              useList: dontCall
-            }
-          }
-        }
-      }
+              useList: dontCall,
+            },
+          },
+        },
+      },
     },
     {
       createIf: {
-        useCreate: dontCall
+        useCreate: dontCall,
       },
       listIf: {
-        useList: dontCall
-      }
-    }
+        useList: dontCall,
+      },
+    },
   )
   const update = updateIf.useUpdate()
   const handleClick = (): void => {
@@ -91,25 +91,22 @@ test('update review', async () => {
       rating: 8,
       smell: 'Test smell',
       taste: 'Test taste',
-      time: '2026-03-12T00:00:00.000Z'
-    }
+      time: '2026-03-12T00:00:00.000Z',
+    },
   }
 
   addTestServerResponse<{ review: Review }>({
     method: 'PUT',
     pathname: `/api/v1/review/${expectedResponse.review.id}`,
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const handler = vitest.fn()
   const { getByRole, getByText } = render(
     <Provider store={store}>
-      <Helper
-        handler={handler}
-        review={expectedResponse.review}
-      />
-    </Provider>
+      <Helper handler={handler} review={expectedResponse.review} />
+    </Provider>,
   )
   const testButton = getByRole('button', { name: 'Test' })
   await user.click(testButton)

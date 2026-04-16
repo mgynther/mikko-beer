@@ -24,9 +24,7 @@ function Helper(props: HelperProps): React.JSX.Element {
     }
     void doHandle()
   }
-  return (
-    <Button onClick={handleClick} text='Test' />
-  )
+  return <Button onClick={handleClick} text='Test' />
 }
 
 test('get review', async () => {
@@ -42,23 +40,22 @@ test('get review', async () => {
       rating: 8,
       smell: 'Test smell',
       taste: 'Test taste',
-      time: '2026-03-12T00:00:00.000Z'
-    }
+      time: '2026-03-12T00:00:00.000Z',
+    },
   }
 
   addTestServerResponse<{ review: Review }>({
     method: 'GET',
     pathname: `/api/v1/review/${expectedResponse.review.id}`,
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const handler = vitest.fn()
   const { getByRole } = render(
     <Provider store={store}>
-      <Helper reviewId={expectedResponse.review.id}
-        handleResponse={handler} />
-    </Provider>
+      <Helper reviewId={expectedResponse.review.id} handleResponse={handler} />
+    </Provider>,
   )
   const testButton = getByRole('button', { name: 'Test' })
   await user.click(testButton)

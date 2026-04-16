@@ -1,16 +1,16 @@
-import { infiniteScroll } from "../../components/util"
-import type { BeerList, ListBeersIf } from "../../core/beer/types"
-import type { Pagination } from "../../core/types"
-import { useLazyListBeersQuery } from "../../store/beer/api"
+import { infiniteScroll } from '../../components/util'
+import type { BeerList, ListBeersIf } from '../../core/beer/types'
+import type { Pagination } from '../../core/types'
+import { useLazyListBeersQuery } from '../../store/beer/api'
 import {
   validateBeerList,
-  validateBeerListOrUndefined
-} from "../../validation/beer"
+  validateBeerListOrUndefined,
+} from '../../validation/beer'
 
 const listBeers: () => ListBeersIf = () => {
   const listBeersIf: ListBeersIf = {
     useList: () => {
-      const [trigger, { data, isFetching, isUninitialized } ] =
+      const [trigger, { data, isFetching, isUninitialized }] =
         useLazyListBeersQuery()
       return {
         beerList: validateBeerListOrUndefined(data),
@@ -19,10 +19,10 @@ const listBeers: () => ListBeersIf = () => {
           return validateBeerList(result)
         },
         isLoading: isFetching,
-        isUninitialized
+        isUninitialized,
       }
     },
-    infiniteScroll
+    infiniteScroll,
   }
   return listBeersIf
 }

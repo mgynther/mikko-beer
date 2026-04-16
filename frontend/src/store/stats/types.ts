@@ -6,10 +6,10 @@ export enum StatsTags {
   Location = 'Location',
   Overall = 'Overall',
   Rating = 'Rating',
-  Style = 'Style'
+  Style = 'Style',
 }
 
-export function allStatsTagTypes (): string[] {
+export function allStatsTagTypes(): string[] {
   return [
     StatsTags.Annual,
     StatsTags.AnnualContainer,
@@ -18,30 +18,30 @@ export function allStatsTagTypes (): string[] {
     StatsTags.Location,
     StatsTags.Overall,
     StatsTags.Rating,
-    StatsTags.Style
+    StatsTags.Style,
   ]
 }
 
-export function beerStatsTagTypes (): string[] {
+export function beerStatsTagTypes(): string[] {
   return [StatsTags.Overall, StatsTags.Brewery, StatsTags.Style]
 }
 
-export function breweryStatsTagTypes (): string[] {
+export function breweryStatsTagTypes(): string[] {
   return [StatsTags.Overall, StatsTags.Brewery]
 }
 
-export function containerStatsTagTypes (): string[] {
+export function containerStatsTagTypes(): string[] {
   return [StatsTags.Overall, StatsTags.Container]
 }
 
-export function locationStatsTagTypes (): string[] {
+export function locationStatsTagTypes(): string[] {
   return [StatsTags.Location, StatsTags.Overall]
 }
 
-export function reviewStatsTagTypes (): string[] {
+export function reviewStatsTagTypes(): string[] {
   return allStatsTagTypes()
 }
 
-export function styleStatsTagTypes (): string[] {
+export function styleStatsTagTypes(): string[] {
   return [StatsTags.Overall, StatsTags.Style]
 }

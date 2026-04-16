@@ -3,7 +3,7 @@ import React from 'react'
 import type {
   Container as ContainerType,
   ListContainersIf,
-  UpdateContainerIf
+  UpdateContainerIf,
 } from '../../core/container/types'
 import type { GetLogin } from '../../core/login/types'
 
@@ -17,12 +17,11 @@ interface Props {
   updateContainerIf: UpdateContainerIf
 }
 
-function Containers (props: Props): React.JSX.Element {
+function Containers(props: Props): React.JSX.Element {
   const { data: containerData, isLoading } = props.listContainersIf.useList()
 
-  const containerArray = containerData?.containers === undefined
-    ? []
-    : [...containerData.containers]
+  const containerArray =
+    containerData?.containers === undefined ? [] : [...containerData.containers]
   const containers = containerArray.sort((a, b) => {
     if (a.type === b.type) {
       return parseFloat(a.size) - parseFloat(b.size)
@@ -41,7 +40,7 @@ function Containers (props: Props): React.JSX.Element {
               container={container}
               getLogin={props.getLogin}
               updateContainerIf={props.updateContainerIf}
-              />
+            />
           </li>
         ))}
       </ul>

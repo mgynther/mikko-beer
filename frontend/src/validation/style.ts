@@ -4,35 +4,33 @@ import { isLeft } from 'fp-ts/Either'
 import type {
   Style,
   StyleList,
-  StyleWithParentsAndChildren
+  StyleWithParentsAndChildren,
 } from '../core/style/types'
 import { formatError } from './format-error'
 
 export const ValidatedStyle = t.type({
   id: t.string,
-  name: t.string
+  name: t.string,
 })
 
 const ValidatedStyleWithParentIds = t.type({
   id: t.string,
   name: t.string,
-  parents: t.array(t.string)
+  parents: t.array(t.string),
 })
 
 const ValidatedStyleWithParentsAndChildren = t.type({
   id: t.string,
   name: t.string,
   children: t.array(ValidatedStyle),
-  parents: t.array(ValidatedStyle)
+  parents: t.array(ValidatedStyle),
 })
 
 const ValidatedStyleList = t.type({
-  styles: t.array(ValidatedStyleWithParentIds)
+  styles: t.array(ValidatedStyleWithParentIds),
 })
 
-export function validateStyleOrUndefined(
-  result: unknown
-): Style | undefined {
+export function validateStyleOrUndefined(result: unknown): Style | undefined {
   if (typeof result === 'undefined') {
     return undefined
   }
@@ -50,7 +48,7 @@ export function validateStyle(result: unknown): Style {
 }
 
 export function validateStyleWithParentsAndChildrenOrUndefined(
-  result: unknown
+  result: unknown,
 ): StyleWithParentsAndChildren | undefined {
   if (typeof result === 'undefined') {
     return undefined
@@ -59,7 +57,7 @@ export function validateStyleWithParentsAndChildrenOrUndefined(
 }
 
 export function validateStyleWithParentsAndChildren(
-  result: unknown
+  result: unknown,
 ): StyleWithParentsAndChildren {
   type StyleT = t.TypeOf<typeof ValidatedStyleWithParentsAndChildren>
   const decoded = ValidatedStyleWithParentsAndChildren.decode(result)
@@ -71,7 +69,7 @@ export function validateStyleWithParentsAndChildren(
 }
 
 export function validateStyleListOrUndefined(
-  result: unknown
+  result: unknown,
 ): StyleList | undefined {
   if (typeof result === 'undefined') {
     return undefined

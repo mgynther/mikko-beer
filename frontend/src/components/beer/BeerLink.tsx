@@ -11,13 +11,8 @@ interface Props {
   beer: BasicBeer
 }
 
-export function BeerLink (props: Props): React.JSX.Element {
-  return (
-    <Link
-      to={`/beers/${props.beer.id}`}
-      text={props.beer.name}
-    />
-  )
+export function BeerLink(props: Props): React.JSX.Element {
+  return <Link to={`/beers/${props.beer.id}`} text={props.beer.name} />
 }
 
 export default BeerLink

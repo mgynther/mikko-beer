@@ -14,13 +14,13 @@ function Helper(props: HelperProps): React.JSX.Element {
   const listIf = listReviewsByLocation()
   const { reviews } = listIf.useList({
     id: props.locationId,
-    sorting: { order: 'time', direction: 'desc' }
+    sorting: { order: 'time', direction: 'desc' },
   })
   return (
     <div>
-      {reviews?.reviews.map(review =>
+      {reviews?.reviews.map((review) => (
         <div key={review.id}>{review.location?.name}</div>
-      )}
+      ))}
     </div>
   )
 }
@@ -39,46 +39,45 @@ test('list reviews by location', async () => {
         breweries: [
           {
             id: 'c502aafe-1d1b-47f7-bd4a-ddfd30289033',
-            name: 'Test brewery'
-          }
+            name: 'Test brewery',
+          },
         ],
         container: {
           id: '62892557-aae3-4bf1-80e2-f996552423f3',
           type: 'bottle',
-          size: '0.33'
+          size: '0.33',
         },
         location: {
           id: locationId,
-          name: locationName
+          name: locationName,
         },
         rating: 8,
         styles: [
           {
             id: '1290be01-54f5-4e93-9cd0-2636293d4afb',
-            name: 'Test style'
-          }
+            name: 'Test style',
+          },
         ],
-        time: '2026-03-12T00:00:00.000Z'
-      }
+        time: '2026-03-12T00:00:00.000Z',
+      },
     ],
     sorting: {
       order: 'beer_name',
-      direction: 'desc'
-    }
+      direction: 'desc',
+    },
   }
 
   addTestServerResponse<JoinedReviewList>({
     method: 'GET',
-    pathname:
-      `/api/v1/location/${locationId}/review?order=time&direction=desc`,
+    pathname: `/api/v1/location/${locationId}/review?order=time&direction=desc`,
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const { getByText } = render(
     <Provider store={store}>
       <Helper locationId={locationId} />
-    </Provider>
+    </Provider>,
   )
 
   await waitFor(() => {

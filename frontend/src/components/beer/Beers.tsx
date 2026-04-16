@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import type {
-  Beer,
-  ListBeersIf,
-  SearchBeerIf
-} from '../../core/beer/types'
+import type { Beer, ListBeersIf, SearchBeerIf } from '../../core/beer/types'
 import type { SearchIf } from '../../core/search/types'
 import type { NavigateIf } from '../util'
 
@@ -25,14 +21,12 @@ interface Props {
   searchIf: SearchIf
 }
 
-function Beers (props: Props): React.JSX.Element {
+function Beers(props: Props): React.JSX.Element {
   const [loadedBeers, setLoadedBeers] = useState<Beer[]>([])
   const { beerList, list, isLoading, isUninitialized } =
     props.listBeersIf.useList()
 
-  const beerArray = beerList?.beers === undefined
-    ? []
-    : [...beerList.beers]
+  const beerArray = beerList?.beers === undefined ? [] : [...beerList.beers]
   const hasMore = beerArray.length > 0 || isUninitialized
   const loadedCount = loadedBeers.length
 
@@ -40,12 +34,12 @@ function Beers (props: Props): React.JSX.Element {
     const loadMore = async (): Promise<void> => {
       const result = await list({
         skip: loadedCount,
-        size: pageSize
+        size: pageSize,
       })
       const newBeers = [...loadedBeers, ...result.beers]
       setLoadedBeers(newBeers)
     }
-    function checkLoad (): void {
+    function checkLoad(): void {
       if (isLoading) {
         return
       }
@@ -65,11 +59,11 @@ function Beers (props: Props): React.JSX.Element {
         searchIf={props.searchIf}
         searchBeerIf={props.searchBeerIf}
       />
-      {isLoading && (<div>Loading...</div>)}
+      {isLoading && <div>Loading...</div>}
       <div className='BeerHeading'>
-          <div className='BeerName'>Name</div>
-          <div className='BeerBreweries'>Breweries</div>
-          <div className='BeerStyles'>Styles</div>
+        <div className='BeerName'>Name</div>
+        <div className='BeerBreweries'>Breweries</div>
+        <div className='BeerStyles'>Styles</div>
       </div>
       <div>
         {loadedBeers.map((beer: Beer) => (

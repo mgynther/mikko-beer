@@ -39,24 +39,22 @@ test('update container', async () => {
     container: {
       id: 'ed8cfcd6-549e-45e5-901e-db2f9925856c',
       type: 'bottle',
-      size: '0.50'
-    }
+      size: '0.50',
+    },
   }
 
-  addTestServerResponse<{container: Container}>({
+  addTestServerResponse<{ container: Container }>({
     method: 'PUT',
     pathname: `/api/v1/container/${expectedResponse.container.id}`,
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const handler = vitest.fn()
   const { getByRole, getByText } = render(
     <Provider store={store}>
-      <Helper
-        container={expectedResponse.container}
-        handler={handler} />
-    </Provider>
+      <Helper container={expectedResponse.container} handler={handler} />
+    </Provider>,
   )
   const testButton = getByRole('button', { name: 'Test' })
   await user.click(testButton)

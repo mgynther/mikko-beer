@@ -6,7 +6,7 @@ export interface SearchState {
 }
 
 const initialState: SearchState = {
-  activeSearchId: ''
+  activeSearchId: '',
 }
 
 export const searchSlice = createSlice({
@@ -15,15 +15,13 @@ export const searchSlice = createSlice({
   reducers: {
     activate: (state, action: PayloadAction<string>) => {
       state.activeSearchId = action.payload
-    }
-  }
+    },
+  },
 })
 
-export const {
-  activate
-} = searchSlice.actions
+export const { activate } = searchSlice.actions
 
-export const selectActiveSearch = (state: RootState):
-string => state.search.activeSearchId
+export const selectActiveSearch = (state: RootState): string =>
+  state.search.activeSearchId
 
 export default searchSlice.reducer

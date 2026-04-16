@@ -1,6 +1,6 @@
-import type { CreateUserIf, CreateUserRequest } from "../../core/user/types"
-import { useCreateUserMutation } from "../../store/user/api"
-import { validateUserOrUndefined } from "../../validation/user"
+import type { CreateUserIf, CreateUserRequest } from '../../core/user/types'
+import { useCreateUserMutation } from '../../store/user/api'
+import { validateUserOrUndefined } from '../../validation/user'
 
 const createUser: () => CreateUserIf = () => {
   const createUserIf: CreateUserIf = {
@@ -10,8 +10,8 @@ const createUser: () => CreateUserIf = () => {
         {
           data: createdUserData,
           error: createUserError,
-          isLoading: isCreatingUser
-        }
+          isLoading: isCreatingUser,
+        },
       ] = useCreateUserMutation()
       return {
         create: async (user: CreateUserRequest): Promise<void> => {
@@ -19,9 +19,9 @@ const createUser: () => CreateUserIf = () => {
         },
         user: validateUserOrUndefined(createdUserData?.user),
         hasError: createUserError !== undefined,
-        isLoading: isCreatingUser
+        isLoading: isCreatingUser,
       }
-    }
+    },
   }
   return createUserIf
 }

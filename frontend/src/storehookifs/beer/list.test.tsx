@@ -14,9 +14,9 @@ function Helper(): React.JSX.Element {
   const { list, beerList } = listIf.useList()
   return (
     <div>
-      {beerList?.beers.map(beer =>
+      {beerList?.beers.map((beer) => (
         <div key={beer.id}>{beer.name}</div>
-      )}
+      ))}
       <Button
         onClick={() => {
           void list({ skip: 0, size: 10 })
@@ -38,15 +38,15 @@ test('list beers', async () => {
         breweries: [
           {
             id: '0481b29e-748a-42ba-a237-57fb27e897ed',
-            name: 'Test brewery'
-          }
+            name: 'Test brewery',
+          },
         ],
         styles: [
           {
             id: 'dd7e3569-4cb8-4508-b75f-53c03d7e3369',
-            name: 'Test style'
-          }
-        ]
+            name: 'Test style',
+          },
+        ],
       },
       {
         id: 'e9414263-9006-4288-80bf-6430182a04c9',
@@ -54,30 +54,30 @@ test('list beers', async () => {
         breweries: [
           {
             id: 'af8c2762-d14c-449d-87c7-a1e52f2abdfb',
-            name: 'Another brewery'
-          }
+            name: 'Another brewery',
+          },
         ],
         styles: [
           {
             id: 'ca3f4ed1-b598-41ad-ab1c-6f7a5c968f28',
-            name: 'Another style'
-          }
-        ]
-      }
-    ]
+            name: 'Another style',
+          },
+        ],
+      },
+    ],
   }
 
   addTestServerResponse<BeerList>({
     method: 'GET',
     pathname: `/api/v1/beer?size=10&skip=0`,
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const { getByRole, getByText } = render(
     <Provider store={store}>
       <Helper />
-    </Provider>
+    </Provider>,
   )
   const loadButton = getByRole('button', { name: 'Load' })
   await user.click(loadButton)

@@ -5,7 +5,7 @@ import type {
   JoinedReview,
   ReviewIf,
   ReviewSorting,
-  ReviewSortingOrder
+  ReviewSortingOrder,
 } from '../../core/review/types'
 import type { SearchIf } from '../../core/search/types'
 import type { ListDirection } from '../../core/types'
@@ -22,29 +22,27 @@ interface Props {
   searchIf: SearchIf
 }
 
-function Reviews (props: Props): React.JSX.Element {
+function Reviews(props: Props): React.JSX.Element {
   const [order, setOrder] = useState<ReviewSortingOrder>('time')
   const [direction, setDirection] = useState<ListDirection>('desc')
   const [loadedReviews, setLoadedReviews] = useState<JoinedReview[]>([])
   const { list, reviewList, isLoading, isUninitialized } =
     props.listReviewsIf.useList()
 
-  function setSorting (reviewSorting: ReviewSorting): void {
+  function setSorting(reviewSorting: ReviewSorting): void {
     setOrder(reviewSorting.order)
     setDirection(reviewSorting.direction)
   }
 
   const reloadString = JSON.stringify({
     direction,
-    order
+    order,
   })
   useEffect(() => {
     setLoadedReviews([])
   }, [reloadString])
 
-  const reviewArray = reviewList === undefined
-    ? []
-    : [...reviewList.reviews]
+  const reviewArray = reviewList === undefined ? [] : [...reviewList.reviews]
   const hasMore = reviewArray.length > 0 || isUninitialized
 
   useEffect(() => {
@@ -52,13 +50,13 @@ function Reviews (props: Props): React.JSX.Element {
       const result = await list({
         pagination: {
           skip: loadedReviews.length,
-          size: pageSize
+          size: pageSize,
         },
-        sorting: { order, direction }
+        sorting: { order, direction },
       })
       setLoadedReviews([...loadedReviews, ...result.reviews])
     }
-    function checkLoad (): void {
+    function checkLoad(): void {
       if (isLoading) {
         return
       }
@@ -68,13 +66,7 @@ function Reviews (props: Props): React.JSX.Element {
       void loadMore()
     }
     return props.listReviewsIf.infiniteScroll(checkLoad)
-  }, [
-    isLoading,
-    hasMore,
-    list,
-    order,
-    direction
-  ])
+  }, [isLoading, hasMore, list, order, direction])
 
   return (
     <div>

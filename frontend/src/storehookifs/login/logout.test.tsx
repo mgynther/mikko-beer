@@ -21,9 +21,7 @@ function Helper({ userId, refreshToken }: Props): React.JSX.Element {
   const loginState = useSelector(selectLogin)
   return (
     <div>
-      {loginState.user !== undefined && (
-        <div>{loginState.user.username}</div>
-      )}
+      {loginState.user !== undefined && <div>{loginState.user.username}</div>}
       <Button
         onClick={() => {
           void doLogout({ userId, body: { refreshToken } })
@@ -41,20 +39,22 @@ test('logout', async () => {
   const username = 'user1'
   const refreshToken = 'refreshtoken'
 
-  store.dispatch(success({
-    authToken: 'authtoken',
-    refreshToken,
-    user: {
-      id: userId,
-      username,
-      role: Role.admin
-    }
-  }))
+  store.dispatch(
+    success({
+      authToken: 'authtoken',
+      refreshToken,
+      user: {
+        id: userId,
+        username,
+        role: Role.admin,
+      },
+    }),
+  )
 
   const { getByRole, getByText, queryByText } = render(
     <Provider store={store}>
       <Helper userId={userId} refreshToken={refreshToken} />
-    </Provider>
+    </Provider>,
   )
   expect(getByText(username)).toBeDefined()
 
@@ -62,7 +62,7 @@ test('logout', async () => {
     method: 'POST',
     pathname: `/api/v1/user/${userId}/sign-out`,
     response: { success: true },
-    status: 200
+    status: 200,
   })
 
   const logoutButton = getByRole('button', { name: 'Logout' })

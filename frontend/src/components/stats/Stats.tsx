@@ -42,39 +42,39 @@ interface ModeButton {
 const buttons: ModeButton[] = [
   {
     mode: Mode.Overall,
-    title: 'Overall'
+    title: 'Overall',
   },
   {
     mode: Mode.Annual,
-    title: 'Annual'
+    title: 'Annual',
   },
   {
     mode: Mode.AnnualContainer,
-    title: 'Annual & Container'
+    title: 'Annual & Container',
   },
   {
     mode: Mode.Brewery,
-    title: 'Brewery'
+    title: 'Brewery',
   },
   {
     mode: Mode.Container,
-    title: 'Container'
+    title: 'Container',
   },
   {
     mode: Mode.Location,
-    title: 'Location'
+    title: 'Location',
   },
   {
     mode: Mode.Rating,
-    title: 'Rating'
+    title: 'Rating',
   },
   {
     mode: Mode.Style,
-    title: 'Style'
-  }
+    title: 'Style',
+  },
 ]
 
-function getStatsMode (stats: string | undefined): Mode {
+function getStatsMode(stats: string | undefined): Mode {
   const defaultValue = Mode.Overall
   if (stats === undefined) {
     return defaultValue
@@ -100,20 +100,20 @@ function getStatsMode (stats: string | undefined): Mode {
   return defaultValue
 }
 
-function Stats (props: Props): React.JSX.Element | null {
+function Stats(props: Props): React.JSX.Element | null {
   const search = props.paramsIf.useSearch()
   const stats = search.get('stats') ?? undefined
   const showFull = props.breweryId === undefined && props.styleId === undefined
   const mode = getStatsMode(stats)
 
-  function setMode (newMode: Mode): void {
+  function setMode(newMode: Mode): void {
     if (mode === newMode) {
       return
     }
     void props.statsIf.setSearch(newMode, {})
   }
 
-  function setState (state: Record<string, string>): void {
+  function setState(state: Record<string, string>): void {
     void props.statsIf.setSearch(mode, state)
   }
 
@@ -122,33 +122,35 @@ function Stats (props: Props): React.JSX.Element | null {
       {!showFull && <h4>Statistics</h4>}
       {showFull && <h3>Statistics</h3>}
       <div className='StatsModeContainer'>
-        {buttons.map(model => (
+        {buttons.map((model) => (
           <TabButton
             key={model.title}
             isCompact={false}
             isSelected={mode === model.mode}
-            onClick={() => { setMode(model.mode) }}
+            onClick={() => {
+              setMode(model.mode)
+            }}
             title={model.title}
           />
         ))}
       </div>
-      {mode === Mode.Annual &&
+      {mode === Mode.Annual && (
         <Annual
           getAnnualStatsIf={props.statsIf.annual}
           breweryId={props.breweryId}
           locationId={props.locationId}
           styleId={props.styleId}
         />
-      }
-      {mode === Mode.AnnualContainer &&
+      )}
+      {mode === Mode.AnnualContainer && (
         <AnnualContainerInfiniteScroll
           getAnnualContainerStatsIf={props.statsIf.annualContainer}
           breweryId={props.breweryId}
           locationId={props.locationId}
           styleId={props.styleId}
         />
-      }
-      {mode === Mode.Brewery &&
+      )}
+      {mode === Mode.Brewery && (
         <Brewery
           getBreweryStatsIf={props.statsIf.brewery}
           breweryId={props.breweryId}
@@ -157,8 +159,8 @@ function Stats (props: Props): React.JSX.Element | null {
           setState={setState}
           styleId={props.styleId}
         />
-      }
-      {mode === Mode.Container &&
+      )}
+      {mode === Mode.Container && (
         <Container
           getContainerStatsIf={props.statsIf.container}
           breweryId={props.breweryId}
@@ -167,8 +169,8 @@ function Stats (props: Props): React.JSX.Element | null {
           setState={setState}
           styleId={props.styleId}
         />
-      }
-      {mode === Mode.Location &&
+      )}
+      {mode === Mode.Location && (
         <Location
           getLocationStatsIf={props.statsIf.location}
           breweryId={props.breweryId}
@@ -177,24 +179,24 @@ function Stats (props: Props): React.JSX.Element | null {
           setState={setState}
           styleId={props.styleId}
         />
-      }
-      {mode === Mode.Overall &&
+      )}
+      {mode === Mode.Overall && (
         <Overall
           getOverallStatsIf={props.statsIf.overall}
           breweryId={props.breweryId}
           locationId={props.locationId}
           styleId={props.styleId}
         />
-      }
-      {mode === Mode.Rating &&
+      )}
+      {mode === Mode.Rating && (
         <Rating
           getRatingStatsIf={props.statsIf.rating}
           breweryId={props.breweryId}
           locationId={props.locationId}
           styleId={props.styleId}
         />
-      }
-      {mode === Mode.Style &&
+      )}
+      {mode === Mode.Style && (
         <Style
           getStyleStatsIf={props.statsIf.style}
           breweryId={props.breweryId}
@@ -203,7 +205,7 @@ function Stats (props: Props): React.JSX.Element | null {
           setState={setState}
           styleId={props.styleId}
         />
-      }
+      )}
     </div>
   )
 }

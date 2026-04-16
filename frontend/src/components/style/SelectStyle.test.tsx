@@ -10,26 +10,26 @@ const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const useDebounce: UseDebounce<string> = str => [str, false]
+const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 const parent = {
   id: '1771b86d-236f-40e8-a4ce-cb464cdce2d1',
   name: 'Ale',
-  parents: []
+  parents: [],
 }
 
 const style = {
   id: 'e98a6062-2ba4-480d-b8ce-af5220401022',
   name: 'Session Pale Ale',
-  parents: [parent.id]
+  parents: [parent.id],
 }
 
 const useSearch: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
-    isActive: true
+    isActive: true,
   }),
-  useDebounce
+  useDebounce,
 }
 
 test('selects style', async () => {
@@ -41,26 +41,30 @@ test('selects style', async () => {
       select={select}
       selectStyleIf={{
         create: {
-          useCreate: dontCall
+          useCreate: dontCall,
         },
         list: {
           useList: () => ({
             styles: [parent, style],
-            isLoading: false
-          })
-        }
+            isLoading: false,
+          }),
+        },
       }}
       searchIf={useSearch}
-    />
+    />,
   )
   const searchInput = getByPlaceholderText('Search style')
   await user.type(searchInput, 'Ses')
   const styleButton = getByRole('button', { name: style.name })
   await user.click(styleButton)
 
-  expect(select.mock.calls).toEqual([[{
-    ...style
-  }]])
+  expect(select.mock.calls).toEqual([
+    [
+      {
+        ...style,
+      },
+    ],
+  ])
 })
 
 test('selects created style', async () => {
@@ -70,9 +74,9 @@ test('selects created style', async () => {
   const newStyle: StyleWithParentIds = {
     id: 'ed6921a0-ae9e-46f1-9e96-677032b6c7db',
     name: 'IPA',
-    parents: [parent.id]
+    parents: [parent.id],
   }
-  const { getByPlaceholderText, getByRole, } = render(
+  const { getByPlaceholderText, getByRole } = render(
     <SelectStyle
       remove={() => undefined}
       select={select}
@@ -83,18 +87,18 @@ test('selects created style', async () => {
             createdStyle: create.mock.calls.length === 1 ? newStyle : undefined,
             hasError: false,
             isLoading: false,
-            isSuccess: true
-          })
+            isSuccess: true,
+          }),
         },
         list: {
           useList: () => ({
             styles: [parent, style],
-            isLoading: false
-          })
-        }
+            isLoading: false,
+          }),
+        },
       }}
       searchIf={useSearch}
-    />
+    />,
   )
   const createRadio = getByRole('radio', { name: 'Create' })
   await user.click(createRadio)
@@ -110,15 +114,23 @@ test('selects created style', async () => {
 
   const createButton = getByRole('button', { name: 'Create' })
   await user.click(createButton)
-  expect(create.mock.calls).toEqual([[{
-    name: newStyle.name,
-    parents: [parent].map(p => p.id)
-  }]])
+  expect(create.mock.calls).toEqual([
+    [
+      {
+        name: newStyle.name,
+        parents: [parent].map((p) => p.id),
+      },
+    ],
+  ])
 
   // Something is needed here to trigger rendering. In the full application it
   // happens on its own.
   await user.clear(nameInput)
-  expect(select.mock.calls).toEqual([[{
-    ...newStyle
-  }]])
+  expect(select.mock.calls).toEqual([
+    [
+      {
+        ...newStyle,
+      },
+    ],
+  ])
 })

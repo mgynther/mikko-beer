@@ -10,11 +10,8 @@ test('renders link', async () => {
   const path = '/testing'
   const { getByRole } = render(
     <LinkWrapper>
-      <Link
-        to={path}
-        text="Link text"
-      />
-    </LinkWrapper>
+      <Link to={path} text='Link text' />
+    </LinkWrapper>,
   )
   const link = getByRole('link', { name: 'Link text' })
   expect(link.getAttribute('href')).toEqual(path)

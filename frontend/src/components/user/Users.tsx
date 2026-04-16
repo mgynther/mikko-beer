@@ -9,7 +9,7 @@ interface Props {
   userIf: UserIf
 }
 
-function Users (props: Props): React.JSX.Element {
+function Users(props: Props): React.JSX.Element {
   return (
     <div>
       <h3>Users</h3>
@@ -18,9 +18,9 @@ function Users (props: Props): React.JSX.Element {
         deleteUserIf={props.userIf.delete}
         listUsersIf={props.userIf.list}
       />
-      <hr/>
+      <hr />
       <div>
-        <CreateUser createUserIf={props.userIf.create}/>
+        <CreateUser createUserIf={props.userIf.create} />
       </div>
     </div>
   )

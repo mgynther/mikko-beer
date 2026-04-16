@@ -4,7 +4,7 @@ import { formatTitle, invertDirection } from '../list-helpers'
 import type {
   GetStyleStatsIf,
   StyleStatsSortingOrder,
-  YearMonth
+  YearMonth,
 } from '../../core/stats/types'
 import TabButton from '../common/TabButton'
 import StyleLink from '../style/StyleLink'
@@ -22,7 +22,7 @@ import {
   filtersOpenStr,
   formatYearMonth,
   parseYearMonth,
-  toTimestamp
+  toTimestamp,
 } from './filter-util'
 
 interface Props {
@@ -34,21 +34,18 @@ interface Props {
   styleId: string | undefined
 }
 
-function defaultSortingOrder (
-  search: SearchParameters
-): StyleStatsSortingOrder {
+function defaultSortingOrder(search: SearchParameters): StyleStatsSortingOrder {
   const value = search.get('sorting_order')
   return value === 'style_name' || value === 'count' || value === 'average'
-    ? value : 'style_name'
+    ? value
+    : 'style_name'
 }
 
-function Style (props: Props): React.JSX.Element {
+function Style(props: Props): React.JSX.Element {
   const { search } = props
   const [searchMap, setSearchMap] = useState<Record<string, string>>({})
   const [debouncedSearchMap] =
-    props.getStyleStatsIf.getUseDebounce<Record<string, string>>()(
-      searchMap
-    )
+    props.getStyleStatsIf.getUseDebounce<Record<string, string>>()(searchMap)
   const sortingOrder = defaultSortingOrder(search)
   const sortingDirection = listDirectionOrDefault(search)
   const minReviewCount = filterNumOrDefault('min_review_count', search)
@@ -57,11 +54,11 @@ function Style (props: Props): React.JSX.Element {
   const maxReviewAverage = filterNumOrDefault('max_review_average', search)
   const timeStart = parseYearMonth(
     search.get('time_start'),
-    props.getStyleStatsIf.minTime
+    props.getStyleStatsIf.minTime,
   )
   const timeEnd = parseYearMonth(
     search.get('time_end'),
-    props.getStyleStatsIf.maxTime
+    props.getStyleStatsIf.maxTime,
   )
   const isFiltersOpen = filtersOpenOrDefault(search)
   const { stats } = props.getStyleStatsIf.useStats({
@@ -70,14 +67,14 @@ function Style (props: Props): React.JSX.Element {
     styleId: props.styleId,
     sorting: {
       order: sortingOrder,
-      direction: sortingDirection
+      direction: sortingDirection,
     },
     minReviewCount,
     maxReviewCount,
     minReviewAverage,
     maxReviewAverage,
     timeStart: toTimestamp(timeStart, 'start'),
-    timeEnd: toTimestamp(timeEnd, 'end')
+    timeEnd: toTimestamp(timeEnd, 'end'),
   })
 
   function getCurrentState(): Record<string, string> {
@@ -90,15 +87,12 @@ function Style (props: Props): React.JSX.Element {
       time_end: formatYearMonth(timeEnd),
       sorting_order: sortingOrder,
       list_direction: sortingDirection,
-      filters_open: filtersOpenStr(isFiltersOpen)
+      filters_open: filtersOpenStr(isFiltersOpen),
     }
     return currentState
   }
 
-  function getFilterSetter(
-    key: string,
-    converter: (value: number) => string
-  ) {
+  function getFilterSetter(key: string, converter: (value: number) => string) {
     return (value: number) => {
       const newState: Record<string, string> = getCurrentState()
       newState[key] = converter(value)
@@ -108,7 +102,7 @@ function Style (props: Props): React.JSX.Element {
 
   function getYearMonthSetter(
     key: string,
-    converter: (yearMonth: YearMonth) => string
+    converter: (yearMonth: YearMonth) => string,
   ) {
     return (yearMonth: YearMonth) => {
       const newState: Record<string, string> = getCurrentState()
@@ -124,22 +118,22 @@ function Style (props: Props): React.JSX.Element {
   const setTimeStart = getYearMonthSetter('time_start', formatYearMonth)
   const setTimeEnd = getYearMonthSetter('time_end', formatYearMonth)
 
-  function setIsFiltersOpen (isOpen: boolean): void {
+  function setIsFiltersOpen(isOpen: boolean): void {
     const newState: Record<string, string> = getCurrentState()
     newState.filters_open = filtersOpenStr(isOpen)
     props.setState(newState)
   }
 
-  function isSelected (property: StyleStatsSortingOrder): boolean {
+  function isSelected(property: StyleStatsSortingOrder): boolean {
     return sortingOrder === property
   }
 
-  function createClickHandler (property: StyleStatsSortingOrder): () => void {
+  function createClickHandler(property: StyleStatsSortingOrder): () => void {
     return () => {
       if (isSelected(property)) {
         props.setState({
           ...getCurrentState(),
-          list_direction: invertDirection(sortingDirection)
+          list_direction: invertDirection(sortingDirection),
         })
         return
       }
@@ -147,7 +141,7 @@ function Style (props: Props): React.JSX.Element {
       props.setState({
         ...getCurrentState(),
         sorting_order: property,
-        list_direction: direction
+        list_direction: direction,
       })
     }
   }
@@ -170,9 +164,10 @@ function Style (props: Props): React.JSX.Element {
                 title={formatTitle(
                   'Style',
                   isSelected('style_name'),
-                  sortingDirection
+                  sortingDirection,
                 )}
-                onClick={createClickHandler('style_name')} />
+                onClick={createClickHandler('style_name')}
+              />
             </th>
             <th className='StatsNumColumn'>
               <TabButton
@@ -181,9 +176,10 @@ function Style (props: Props): React.JSX.Element {
                 title={formatTitle(
                   'Reviews',
                   isSelected('count'),
-                  sortingDirection
+                  sortingDirection,
                 )}
-                onClick={createClickHandler('count')} />
+                onClick={createClickHandler('count')}
+              />
             </th>
             <th className='StatsNumColumn'>
               <TabButton
@@ -192,9 +188,10 @@ function Style (props: Props): React.JSX.Element {
                 title={formatTitle(
                   'Average',
                   isSelected('average'),
-                  sortingDirection
+                  sortingDirection,
                 )}
-                onClick={createClickHandler('average')} />
+                onClick={createClickHandler('average')}
+              />
             </th>
           </tr>
           <tr>
@@ -203,32 +200,32 @@ function Style (props: Props): React.JSX.Element {
                 filters={{
                   minReviewCount: {
                     value: minReviewCount,
-                    setValue: setMinReviewCount
+                    setValue: setMinReviewCount,
                   },
                   maxReviewCount: {
                     value: maxReviewCount,
-                    setValue: setMaxReviewCount
+                    setValue: setMaxReviewCount,
                   },
                   minReviewAverage: {
                     value: minReviewAverage,
-                    setValue: setMinReviewAverage
+                    setValue: setMinReviewAverage,
                   },
                   maxReviewAverage: {
                     value: maxReviewAverage,
-                    setValue: setMaxReviewAverage
+                    setValue: setMaxReviewAverage,
                   },
                   timeStart: {
                     min: props.getStyleStatsIf.minTime,
                     max: props.getStyleStatsIf.maxTime,
                     value: timeStart,
-                    setValue: setTimeStart
+                    setValue: setTimeStart,
                   },
                   timeEnd: {
                     min: props.getStyleStatsIf.minTime,
                     max: props.getStyleStatsIf.maxTime,
                     value: timeEnd,
-                    setValue: setTimeEnd
-                  }
+                    setValue: setTimeEnd,
+                  },
                 }}
                 isOpen={isFiltersOpen}
                 setIsOpen={setIsFiltersOpen}
@@ -237,13 +234,15 @@ function Style (props: Props): React.JSX.Element {
           </tr>
         </thead>
         <tbody>
-          {stats?.style.map(style => (
+          {stats?.style.map((style) => (
             <tr key={style.styleId}>
               <td className='StatsNameColumn'>
-                <StyleLink style={{
-                  id: style.styleId,
-                  name: style.styleName
-                }} />
+                <StyleLink
+                  style={{
+                    id: style.styleId,
+                    name: style.styleName,
+                  }}
+                />
               </td>
               <td className='StatsNumColumn'>{style.reviewCount}</td>
               <td className='StatsNumColumn'>{style.reviewAverage}</td>

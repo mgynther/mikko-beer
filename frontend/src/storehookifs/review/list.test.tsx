@@ -9,21 +9,21 @@ import userEvent from '@testing-library/user-event'
 
 import Button from '../../components/common/Button'
 
-const infiniteScroll = (): () => void => () => undefined
+const infiniteScroll = (): (() => void) => () => undefined
 
 function Helper(): React.JSX.Element {
   const listIf = listReviews(infiniteScroll)
   const { list, reviewList } = listIf.useList()
   return (
     <div>
-      {reviewList?.reviews.map(review =>
+      {reviewList?.reviews.map((review) => (
         <div key={review.id}>{review.beerName}</div>
-      )}
+      ))}
       <Button
         onClick={() => {
           void list({
             pagination: { skip: 0, size: 10 },
-            sorting: { order: 'time', direction: 'desc' }
+            sorting: { order: 'time', direction: 'desc' },
           })
         }}
         text='Load'
@@ -45,26 +45,26 @@ test('list reviews', async () => {
         breweries: [
           {
             id: '35392e18-c564-4fbb-9644-be8074ca43c2',
-            name: 'Test brewery'
-          }
+            name: 'Test brewery',
+          },
         ],
         container: {
           id: 'faca8ac0-bfbf-4f46-a482-1067dee9b965',
           type: 'bottle',
-          size: '0.33'
+          size: '0.33',
         },
         location: {
           id: 'a16535bf-4a55-476d-942e-d1b70d15df02',
-          name: 'Test location'
+          name: 'Test location',
         },
         rating: 8,
         styles: [
           {
             id: 'a8f08a1e-3403-451e-9246-fb61878aee35',
-            name: 'Test style'
-          }
+            name: 'Test style',
+          },
         ],
-        time: '2026-03-12T00:00:00.000Z'
+        time: '2026-03-12T00:00:00.000Z',
       },
       {
         id: '8850bdeb-5852-4b5c-8312-9608f5f82bbb',
@@ -74,53 +74,50 @@ test('list reviews', async () => {
         breweries: [
           {
             id: '27c21507-bd4e-45f9-8241-492db8bbf525',
-            name: 'Another brewery'
-          }
+            name: 'Another brewery',
+          },
         ],
         container: {
           id: '45e49deb-af1b-4884-8d59-31b990a4b1d7',
           type: 'can',
-          size: '0.50'
+          size: '0.50',
         },
         location: {
           id: '63bab146-ab44-4f43-8ab0-33493a16738f',
-          name: 'Another location'
+          name: 'Another location',
         },
         rating: 7,
         styles: [
           {
             id: 'da0b36c4-f209-4865-932b-e2841314ea56',
-            name: 'Another style'
-          }
+            name: 'Another style',
+          },
         ],
-        time: '2026-03-11T00:00:00.000Z'
-      }
+        time: '2026-03-11T00:00:00.000Z',
+      },
     ],
     sorting: {
       order: 'rating',
-      direction: 'desc'
-    }
+      direction: 'desc',
+    },
   }
 
   addTestServerResponse<JoinedReviewList>({
     method: 'GET',
-    pathname:
-      '/api/v1/review?size=10&skip=0&order=time&direction=desc',
+    pathname: '/api/v1/review?size=10&skip=0&order=time&direction=desc',
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const { getByRole, getByText } = render(
     <Provider store={store}>
       <Helper />
-    </Provider>
+    </Provider>,
   )
   const loadButton = getByRole('button', { name: 'Load' })
   await user.click(loadButton)
   await waitFor(() => {
-    expect(getByText(expectedResponse.reviews[0].beerName))
-      .toBeDefined()
-    expect(getByText(expectedResponse.reviews[1].beerName))
-      .toBeDefined()
+    expect(getByText(expectedResponse.reviews[0].beerName)).toBeDefined()
+    expect(getByText(expectedResponse.reviews[1].beerName)).toBeDefined()
   })
 })

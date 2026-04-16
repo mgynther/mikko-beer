@@ -5,12 +5,10 @@ import { formatTitle } from '../list-helpers'
 import type {
   BreweryStatsSortingOrder,
   OneBreweryStats,
-  StatsFilters
+  StatsFilters,
 } from '../../core/stats/types'
 
-import type {
-  ListDirection
-} from '../../core/types'
+import type { ListDirection } from '../../core/types'
 
 import BreweryLinks from '../brewery/BreweryLinks'
 import TableSkeleton from '../common/TableSkeleton'
@@ -31,17 +29,17 @@ interface Props {
   setSortingOrder: (order: BreweryStatsSortingOrder) => void
 }
 
-function formatCount (brewery: OneBreweryStats): string {
+function formatCount(brewery: OneBreweryStats): string {
   if (brewery.reviewCount === brewery.reviewedBeerCount) {
     return brewery.reviewCount
   }
   return `${brewery.reviewCount} (${brewery.reviewedBeerCount})`
 }
 
-function BreweryStatsTable (props: Props): React.JSX.Element {
+function BreweryStatsTable(props: Props): React.JSX.Element {
   const filters = props.filters
 
-  function isSelected (property: BreweryStatsSortingOrder): boolean {
+  function isSelected(property: BreweryStatsSortingOrder): boolean {
     return props.sortingOrder === property
   }
 
@@ -57,9 +55,12 @@ function BreweryStatsTable (props: Props): React.JSX.Element {
                 title={formatTitle(
                   'Brewery',
                   isSelected('brewery_name'),
-                  props.sortingDirection
+                  props.sortingDirection,
                 )}
-                onClick={() => { props.setSortingOrder('brewery_name'); }} />
+                onClick={() => {
+                  props.setSortingOrder('brewery_name')
+                }}
+              />
             </th>
             <th className='StatsNumColumn'>
               <TabButton
@@ -68,9 +69,12 @@ function BreweryStatsTable (props: Props): React.JSX.Element {
                 title={formatTitle(
                   'Reviews',
                   isSelected('count'),
-                  props.sortingDirection
+                  props.sortingDirection,
                 )}
-                onClick={() => { props.setSortingOrder('count'); }} />
+                onClick={() => {
+                  props.setSortingOrder('count')
+                }}
+              />
             </th>
             <th className='StatsNumColumn'>
               <TabButton
@@ -79,9 +83,12 @@ function BreweryStatsTable (props: Props): React.JSX.Element {
                 title={formatTitle(
                   'Average',
                   isSelected('average'),
-                  props.sortingDirection
+                  props.sortingDirection,
                 )}
-                onClick={() => { props.setSortingOrder('average'); }} />
+                onClick={() => {
+                  props.setSortingOrder('average')
+                }}
+              />
             </th>
           </tr>
           <tr>
@@ -100,13 +107,17 @@ function BreweryStatsTable (props: Props): React.JSX.Element {
             rowCount={3}
             columnCount={3}
           />
-          {props.breweries.map(brewery => (
+          {props.breweries.map((brewery) => (
             <tr key={brewery.breweryId}>
               <td className='StatsNameColumn'>
-                <BreweryLinks breweries={[{
-                  id: brewery.breweryId,
-                  name: brewery.breweryName
-                }]} />
+                <BreweryLinks
+                  breweries={[
+                    {
+                      id: brewery.breweryId,
+                      name: brewery.breweryName,
+                    },
+                  ]}
+                />
               </td>
               <td className='StatsNumColumn'>{formatCount(brewery)}</td>
               <td className='StatsNumColumn'>{brewery.reviewAverage}</td>

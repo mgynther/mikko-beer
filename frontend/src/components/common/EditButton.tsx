@@ -11,7 +11,7 @@ interface Props {
   onClick: () => void
 }
 
-function EditButton (props: Props): React.JSX.Element | null {
+function EditButton(props: Props): React.JSX.Element | null {
   const login: Login = props.getLogin()
   if (login.user?.role !== Role.admin) {
     return null
@@ -20,7 +20,9 @@ function EditButton (props: Props): React.JSX.Element | null {
     <Button
       className='EditButton'
       disabled={props.disabled}
-      onClick={() => { props.onClick() }}
+      onClick={() => {
+        props.onClick()
+      }}
       text='Edit'
     />
   )

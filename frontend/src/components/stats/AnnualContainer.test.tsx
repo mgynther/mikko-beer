@@ -5,7 +5,7 @@ import LinkWrapper from '../LinkWrapper'
 import type {
   AnnualContainerStats,
   GetAnnualContainerStatsIf,
-  OneAnnualContainerStats
+  OneAnnualContainerStats,
 } from '../../core/stats/types'
 
 const stats2023: OneAnnualContainerStats = {
@@ -14,7 +14,7 @@ const stats2023: OneAnnualContainerStats = {
   containerType: 'bottle',
   reviewAverage: '9.06',
   reviewCount: '63',
-  year: '2023'
+  year: '2023',
 }
 
 const stats2022: OneAnnualContainerStats = {
@@ -23,24 +23,24 @@ const stats2022: OneAnnualContainerStats = {
   containerType: 'can',
   reviewAverage: '9.12',
   reviewCount: '67',
-  year: '2022'
+  year: '2022',
 }
 
 const annualContainerStats = {
-  annualContainer: [{ ...stats2023 }, { ...stats2022 }]
+  annualContainer: [{ ...stats2023 }, { ...stats2022 }],
 }
-const emptyStats = { annualContainer: []}
+const emptyStats = { annualContainer: [] }
 
 const usedStats: GetAnnualContainerStatsIf = {
   useStats: () => ({
     query: async () => annualContainerStats,
     stats: emptyStats,
-    isLoading: false
+    isLoading: false,
   }),
   infiniteScroll: (cb: () => void) => {
     cb()
     return () => undefined
-  }
+  },
 }
 
 test('queries annualContainer stats', async () => {
@@ -54,39 +54,42 @@ test('queries annualContainer stats', async () => {
             query: async (params): Promise<AnnualContainerStats> => {
               query(params)
               return {
-                annualContainer: [
-                  { ...stats2023 },
-                  { ...stats2022 }
-                ]
+                annualContainer: [{ ...stats2023 }, { ...stats2022 }],
               }
             },
             stats: {
-              annualContainer: []
+              annualContainer: [],
             },
-            isLoading: false
+            isLoading: false,
           }),
           infiniteScroll: (cb) => {
             loadCallback = cb
             return (): undefined => undefined
-          }
+          },
         }}
         breweryId={undefined}
         locationId={undefined}
         styleId={undefined}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   expect(query.mock.calls).toEqual([])
-  await act(async() => { loadCallback(); })
-  expect(query.mock.calls).toEqual([[{
-    breweryId: undefined,
-    locationId: undefined,
-    pagination: {
-      size: 30,
-      skip: 0
-    },
-    styleId: undefined
-  }]])
+  await act(async () => {
+    loadCallback()
+  })
+  expect(query.mock.calls).toEqual([
+    [
+      {
+        breweryId: undefined,
+        locationId: undefined,
+        pagination: {
+          size: 30,
+          skip: 0,
+        },
+        styleId: undefined,
+      },
+    ],
+  ])
 })
 
 test('queries filtered annual container stats', async () => {
@@ -103,38 +106,41 @@ test('queries filtered annual container stats', async () => {
             query: async (params): Promise<AnnualContainerStats> => {
               query(params)
               return {
-                annualContainer: [
-                  { ...stats2023 },
-                  { ...stats2022 }
-                ]
+                annualContainer: [{ ...stats2023 }, { ...stats2022 }],
               }
             },
             stats: {
-              annualContainer: []
+              annualContainer: [],
             },
-            isLoading: false
+            isLoading: false,
           }),
           infiniteScroll: (cb) => {
             loadCallback = cb
             return (): undefined => undefined
-          }
+          },
         }}
         breweryId={breweryId}
         locationId={locationId}
         styleId={styleId}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
-  await act(async() => { loadCallback(); })
-  expect(query.mock.calls).toEqual([[{
-    breweryId,
-    locationId,
-    pagination: {
-      size: 10000,
-      skip: 0
-    },
-    styleId
-  }]])
+  await act(async () => {
+    loadCallback()
+  })
+  expect(query.mock.calls).toEqual([
+    [
+      {
+        breweryId,
+        locationId,
+        pagination: {
+          size: 10000,
+          skip: 0,
+        },
+        styleId,
+      },
+    ],
+  ])
 })
 
 test('renders annual container stats', async () => {
@@ -146,7 +152,7 @@ test('renders annual container stats', async () => {
         styleId={undefined}
         getAnnualContainerStatsIf={usedStats}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   await waitFor(() => getByText(stats2023.year))
   getByText(stats2023.reviewAverage)

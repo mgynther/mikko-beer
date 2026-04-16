@@ -1,6 +1,6 @@
-import type { ListContainersIf } from "../../core/container/types"
-import { useListContainersQuery } from "../../store/container/api"
-import { validateContainerListOrUndefined } from "../../validation/container"
+import type { ListContainersIf } from '../../core/container/types'
+import { useListContainersQuery } from '../../store/container/api'
+import { validateContainerListOrUndefined } from '../../validation/container'
 
 const listContainers: () => ListContainersIf = () => {
   const listContainersIf: ListContainersIf = {
@@ -8,9 +8,9 @@ const listContainers: () => ListContainersIf = () => {
       const { data, isLoading } = useListContainersQuery()
       return {
         data: validateContainerListOrUndefined(data),
-        isLoading
+        isLoading,
       }
-    }
+    },
   }
   return listContainersIf
 }

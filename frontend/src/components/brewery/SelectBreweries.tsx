@@ -1,10 +1,7 @@
 import React, { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
-import type {
-  Brewery,
-  SelectBreweryIf
-} from '../../core/brewery/types'
+import type { Brewery, SelectBreweryIf } from '../../core/brewery/types'
 import type { SearchIf } from '../../core/search/types'
 
 import Button from '../common/Button'
@@ -36,7 +33,7 @@ interface SelectionItemProps {
   clear: () => void
 }
 
-function SelectionItem (props: SelectionItemProps): React.JSX.Element {
+function SelectionItem(props: SelectionItemProps): React.JSX.Element {
   return (
     <>
       {props.brewery === undefined && (
@@ -58,41 +55,42 @@ function SelectionItem (props: SelectionItemProps): React.JSX.Element {
   )
 }
 
-function SelectBreweries (props: Props): React.JSX.Element {
-  function getInitialBrewerySelections (): BrewerySelection[] {
+function SelectBreweries(props: Props): React.JSX.Element {
+  function getInitialBrewerySelections(): BrewerySelection[] {
     if (props.initialBreweries.length === 0) {
       return [
         {
           brewery: undefined,
-          id: uuidv4()
-        }
+          id: uuidv4(),
+        },
       ]
     }
-    return props.initialBreweries.map(brewery => ({
-        id: brewery.id,
-        brewery
-      }))
+    return props.initialBreweries.map((brewery) => ({
+      id: brewery.id,
+      brewery,
+    }))
   }
   const [selections, doSetSelections] = useState<BrewerySelection[]>(
-    getInitialBrewerySelections()
+    getInitialBrewerySelections(),
   )
 
-  function setSelections (selections: BrewerySelection[]): void {
+  function setSelections(selections: BrewerySelection[]): void {
     props.select([])
     doSetSelections(selections)
     if (hasUndefinedBrewery(selections)) return
     const breweries = selections
-      .map(selections => selections.brewery)
-      .filter(brewery => brewery !== undefined)
-    const breweryIds = breweries.map(brewery => brewery.id)
+      .map((selections) => selections.brewery)
+      .filter((brewery) => brewery !== undefined)
+    const breweryIds = breweries.map((brewery) => brewery.id)
     props.select(breweryIds)
   }
 
-  function hasUndefinedBrewery (selections: BrewerySelection[]): boolean {
+  function hasUndefinedBrewery(selections: BrewerySelection[]): boolean {
     return selections.reduce(
       (hasUndefined, selection: BrewerySelection) =>
-        hasUndefined || selection.brewery === undefined
-      , false)
+        hasUndefined || selection.brewery === undefined,
+      false,
+    )
   }
 
   return (
@@ -130,8 +128,8 @@ function SelectBreweries (props: Props): React.JSX.Element {
                 ...selections,
                 {
                   brewery: undefined,
-                  id: uuidv4()
-                }
+                  id: uuidv4(),
+                },
               ]
               setSelections(newBreweries)
             }}

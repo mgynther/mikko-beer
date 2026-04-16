@@ -4,7 +4,7 @@ import type {
   GetLocationStatsIf,
   LocationStatsSortingOrder,
   OneLocationStats,
-  StatsFilters
+  StatsFilters,
 } from '../../core/stats/types'
 import type { ListDirection } from '../../core/types'
 
@@ -29,10 +29,10 @@ interface Props {
 
 const giantPage = {
   skip: 0,
-  size: 10000
+  size: 10000,
 }
 
-function LocationAllAtOnce (props: Props): React.JSX.Element {
+function LocationAllAtOnce(props: Props): React.JSX.Element {
   const minReviewCount = props.filters.minReviewCount.value
   const maxReviewCount = props.filters.maxReviewCount.value
   const minReviewAverage = props.filters.minReviewAverage.value
@@ -45,7 +45,7 @@ function LocationAllAtOnce (props: Props): React.JSX.Element {
     setLoadedLocations,
     sortingOrder,
     setSortingOrder,
-    sortingDirection
+    sortingDirection,
   } = props
   const { query, isLoading: isLoadingStats } =
     props.getLocationStatsIf.useStats()
@@ -64,7 +64,7 @@ function LocationAllAtOnce (props: Props): React.JSX.Element {
   }, [isFilterChangePending])
 
   useEffect(() => {
-    async function loadAll (): Promise<void> {
+    async function loadAll(): Promise<void> {
       const result = await query({
         breweryId,
         locationId,
@@ -72,14 +72,14 @@ function LocationAllAtOnce (props: Props): React.JSX.Element {
         pagination: giantPage,
         sorting: {
           order: sortingOrder,
-          direction: sortingDirection
+          direction: sortingDirection,
         },
         minReviewCount,
         maxReviewCount,
         minReviewAverage,
         maxReviewAverage,
         timeStart: toTimestamp(timeStart, 'start'),
-        timeEnd: toTimestamp(timeEnd, 'end')
+        timeEnd: toTimestamp(timeEnd, 'end'),
       })
       setLoadedLocations([...result.location])
     }
@@ -95,7 +95,7 @@ function LocationAllAtOnce (props: Props): React.JSX.Element {
     minReviewAverage,
     maxReviewAverage,
     formatYearMonth(timeStart),
-    formatYearMonth(timeEnd)
+    formatYearMonth(timeEnd),
   ])
 
   function getLocations(): OneLocationStats[] {

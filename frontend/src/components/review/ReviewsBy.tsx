@@ -4,9 +4,9 @@ import type {
   ListReviewsByIf,
   ReviewIf,
   ReviewSorting,
-  ReviewSortingOrder
-} from "../../core/review/types"
-import ReviewList from "../review/ReviewList"
+  ReviewSortingOrder,
+} from '../../core/review/types'
+import ReviewList from '../review/ReviewList'
 import type { ListDirection } from '../../core/types'
 import type { SearchIf } from '../../core/search/types'
 
@@ -25,23 +25,25 @@ const ReviewsBy = (props: Props): React.JSX.Element => {
       id: props.id,
       sorting: {
         order,
-        direction
-      }
+        direction,
+      },
     })
-  return <ReviewList
-    reviewIf={props.reviewIf}
-    searchIf={props.searchIf}
-    isLoading={isLoadingReviews}
-    isTitleVisible={true}
-    reviews={reviews?.reviews ?? []}
-    sorting={reviews?.sorting}
-    setSorting={(sorting: ReviewSorting) => {
-      doSetOrder(sorting.order)
-      doSetDirection(sorting.direction)
-    }}
-    supportedSorting={['beer_name', 'brewery_name', 'rating', 'time']}
-    onChanged={undefined}
+  return (
+    <ReviewList
+      reviewIf={props.reviewIf}
+      searchIf={props.searchIf}
+      isLoading={isLoadingReviews}
+      isTitleVisible={true}
+      reviews={reviews?.reviews ?? []}
+      sorting={reviews?.sorting}
+      setSorting={(sorting: ReviewSorting) => {
+        doSetOrder(sorting.order)
+        doSetDirection(sorting.direction)
+      }}
+      supportedSorting={['beer_name', 'brewery_name', 'rating', 'time']}
+      onChanged={undefined}
     />
+  )
 }
 
 export default ReviewsBy

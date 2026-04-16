@@ -16,13 +16,13 @@ test('renders user', () => {
             create: dontCall,
             user: undefined,
             hasError: false,
-            isLoading: false
-          })
+            isLoading: false,
+          }),
         },
         delete: {
           useDelete: () => ({
-            delete: dontCall
-          })
+            delete: dontCall,
+          }),
         },
         list: {
           useList: () => ({
@@ -31,15 +31,15 @@ test('renders user', () => {
                 {
                   id: '117f9597-5b2a-4d40-ba3d-e996c7a1fb18',
                   username: 'User 1',
-                  role: Role.viewer
-                }
+                  role: Role.viewer,
+                },
               ],
             },
-            isLoading: false
-          })
-        }
+            isLoading: false,
+          }),
+        },
       }}
-    />
+    />,
   )
   getByText('User 1 (viewer)')
 })

@@ -11,7 +11,7 @@ export interface Props {
   searchBreweryIf: SearchBreweryIf
 }
 
-function SearchBreweryWithNavi (props: Props): React.JSX.Element {
+function SearchBreweryWithNavi(props: Props): React.JSX.Element {
   const navigate = props.navigateIf.useNavigate()
   return (
     <SearchBrewery
@@ -19,7 +19,8 @@ function SearchBreweryWithNavi (props: Props): React.JSX.Element {
       searchBreweryIf={props.searchBreweryIf}
       select={(brewery) => {
         void navigate(`/breweries/${brewery.id}`)
-      }} />
+      }}
+    />
   )
 }
 

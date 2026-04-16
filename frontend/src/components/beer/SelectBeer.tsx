@@ -1,9 +1,6 @@
 import React from 'react'
 
-import type {
-  BeerWithIds,
-  SelectBeerIf
-} from '../../core/beer/types'
+import type { BeerWithIds, SelectBeerIf } from '../../core/beer/types'
 import type { SearchIf } from '../../core/search/types'
 
 import SelectCreateRadio, { Mode } from '../common/SelectCreateRadio'
@@ -19,9 +16,9 @@ export interface Props {
   select: (beer: BeerWithIds) => void
 }
 
-function SelectBeer (props: Props): React.JSX.Element {
+function SelectBeer(props: Props): React.JSX.Element {
   return (
-    <div className="SelectBeer">
+    <div className='SelectBeer'>
       <SelectCreateRadio
         defaultMode={Mode.CREATE}
         createElement={

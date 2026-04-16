@@ -8,7 +8,7 @@ import type { SearchIf } from '../../core/search/types'
 import type {
   CreateStorageIf,
   ListStoragesIf,
-  StorageStatsIf
+  StorageStatsIf,
 } from '../../core/storage/types'
 import { Role } from '../../core/user/types'
 
@@ -29,17 +29,16 @@ interface Props {
   statsIf: StorageStatsIf
 }
 
-function Storages (props: Props): React.JSX.Element {
+function Storages(props: Props): React.JSX.Element {
   const { storages, isLoading } = props.listStoragesIf.useList()
   const login: Login = props.getLogin()
   const isAdmin = login.user?.role === Role.admin
 
-  const storageItems = storages === undefined
-    ? []
-    : [...storages.storages]
-  const title = storages === undefined
-    ? 'Storage beers'
-    : `Storage beers (${countText(storageItems)})`
+  const storageItems = storages === undefined ? [] : [...storages.storages]
+  const title =
+    storages === undefined
+      ? 'Storage beers'
+      : `Storage beers (${countText(storageItems)})`
 
   return (
     <div>
@@ -51,11 +50,8 @@ function Storages (props: Props): React.JSX.Element {
         isTitleVisible={false}
         storages={storageItems}
       />
-      <Stats
-        statsIf={props.statsIf}
-        paramsIf={props.paramsIf}
-      />
-      <hr/>
+      <Stats statsIf={props.statsIf} paramsIf={props.paramsIf} />
+      <hr />
       {isAdmin && (
         <div>
           <CreateStorage

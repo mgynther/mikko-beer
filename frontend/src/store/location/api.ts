@@ -5,7 +5,7 @@ import type { Pagination } from '../../core/types'
 import type {
   Location,
   LocationList,
-  CreateLocationRequest
+  CreateLocationRequest,
 } from '../../core/location/types'
 import { LocationTags } from './types'
 import { locationStatsTagTypes } from '../stats/types'
@@ -15,55 +15,55 @@ const locationApi = emptySplitApi.injectEndpoints({
     getLocation: build.query<{ location: Location }, string>({
       query: (locationId: string) => ({
         url: `/location/${locationId}`,
-        method: 'GET'
+        method: 'GET',
       }),
       providesTags: (result) =>
         result === undefined
           ? [LocationTags.Location]
-          : [{ type: LocationTags.Location, id: result.location.id }]
+          : [{ type: LocationTags.Location, id: result.location.id }],
     }),
     listLocations: build.query<LocationList, Pagination>({
       query: (pagination: Pagination) => ({
         url: `/location?size=${pagination.size}&skip=${pagination.skip}`,
-        method: 'GET'
+        method: 'GET',
       }),
-      providesTags: [LocationTags.Location]
+      providesTags: [LocationTags.Location],
     }),
     searchLocations: build.query<LocationList, string>({
       query: (name: string) => ({
         url: '/location/search',
         method: 'POST',
         body: {
-          name
-        }
-      })
+          name,
+        },
+      }),
     }),
-    createLocation: build.mutation<{
-      location: Location
-    }, Partial<CreateLocationRequest>>({
+    createLocation: build.mutation<
+      {
+        location: Location
+      },
+      Partial<CreateLocationRequest>
+    >({
       query: (location: CreateLocationRequest) => ({
         url: '/location',
         method: 'POST',
         body: {
-          ...location
-        }
+          ...location,
+        },
       }),
-      invalidatesTags: [LocationTags.Location]
+      invalidatesTags: [LocationTags.Location],
     }),
     updateLocation: build.mutation<{ location: Location }, Location>({
       query: (location: Location) => ({
         url: `/location/${location.id}`,
         method: 'PUT',
         body: {
-          name: location.name
-        }
+          name: location.name,
+        },
       }),
-      invalidatesTags: [
-        LocationTags.Location,
-        ...locationStatsTagTypes(),
-      ]
-    })
-  })
+      invalidatesTags: [LocationTags.Location, ...locationStatsTagTypes()],
+    }),
+  }),
 })
 
 export const {
@@ -72,7 +72,7 @@ export const {
   useLazyListLocationsQuery,
   useLazySearchLocationsQuery,
   useListLocationsQuery,
-  useUpdateLocationMutation
+  useUpdateLocationMutation,
 } = locationApi
 
 export const { endpoints, reducerPath, reducer, middleware } = locationApi

@@ -2,7 +2,7 @@ import {
   getBackendUrl,
   getUniqueTestServerPort,
   parseTestPortStart,
-  parseVitestId
+  parseVitestId,
 } from './constant-helper'
 
 function getTestPortStart(): number {
@@ -27,12 +27,9 @@ const vitestId = getVitestId()
 const testPortStart = getTestPortStart()
 const uniqueTestServerPort = getUniqueTestServerPort(vitestId, testPortStart)
 
-function getUrl (): string {
+function getUrl(): string {
   return getBackendUrl(vitestId, uniqueTestServerPort)
 }
 const backendUrl: string = getUrl()
 
-export {
-  backendUrl,
-  uniqueTestServerPort
-}
+export { backendUrl, uniqueTestServerPort }

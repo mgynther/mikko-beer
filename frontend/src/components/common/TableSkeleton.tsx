@@ -6,7 +6,7 @@ interface Props {
   columnCount: number
 }
 
-function TableSkeleton (props: Props): React.JSX.Element | null {
+function TableSkeleton(props: Props): React.JSX.Element | null {
   if (!props.isLoading) {
     return null
   }
@@ -14,22 +14,18 @@ function TableSkeleton (props: Props): React.JSX.Element | null {
   const columnArray = Array.from(Array(props.columnCount).keys())
   return (
     <>
-      {
-        rowArray.map((_, rowIndex) =>
+      {rowArray.map((_, rowIndex) => (
         <tr className='row' key={`skeleton-row-${rowIndex}`}>
-          {
-            columnArray.map((_, cellIndex) =>
-              <td
-                className='cell'
-                key={`skeleton-row-${rowIndex}-cell-${cellIndex}`}
-              >
-                &nbsp;
-              </td>
-            )
-          }
+          {columnArray.map((_, cellIndex) => (
+            <td
+              className='cell'
+              key={`skeleton-row-${rowIndex}-cell-${cellIndex}`}
+            >
+              &nbsp;
+            </td>
+          ))}
         </tr>
-        )
-      }
+      ))}
     </>
   )
 }

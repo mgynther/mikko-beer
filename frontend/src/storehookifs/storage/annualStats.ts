@@ -1,6 +1,6 @@
-import type { GetAnnualStorageStatsIf } from "../../core/storage/types"
-import { useGetAnnualStorageStatsQuery } from "../../store/storage/api"
-import { validateAnnualStorageStatsOrUndefined } from "../../validation/storage"
+import type { GetAnnualStorageStatsIf } from '../../core/storage/types'
+import { useGetAnnualStorageStatsQuery } from '../../store/storage/api'
+import { validateAnnualStorageStatsOrUndefined } from '../../validation/storage'
 
 const getAnnualStorageStats: () => GetAnnualStorageStatsIf = () => {
   const getAnnualStorageStatsIf: GetAnnualStorageStatsIf = {
@@ -8,7 +8,7 @@ const getAnnualStorageStats: () => GetAnnualStorageStatsIf = () => {
       const { data, isLoading } = useGetAnnualStorageStatsQuery()
       return {
         stats: validateAnnualStorageStatsOrUndefined(data),
-        isLoading
+        isLoading,
       }
     },
   }

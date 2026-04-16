@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react'
 
-import type {
-  BeerWithIds,
-  SelectBeerIf
-} from '../../core/beer/types'
+import type { BeerWithIds, SelectBeerIf } from '../../core/beer/types'
 import type { Container } from '../../core/container/types'
 import type { Location, SearchLocationIf } from '../../core/location/types'
 import type {
   ReviewContainerIf,
   JoinedReview,
-  ReviewRequest
+  ReviewRequest,
 } from '../../core/review/types'
 import type { SearchIf } from '../../core/search/types'
 
@@ -44,54 +41,55 @@ interface Props {
   onChange: (review: ReviewRequest | undefined) => void
 }
 
-function ReviewEditor (props: Props): React.JSX.Element {
-  function getInitialBeer (): BeerWithIds | undefined {
+function ReviewEditor(props: Props): React.JSX.Element {
+  function getInitialBeer(): BeerWithIds | undefined {
     if (props.initialReview === undefined) return undefined
     return {
       id: props.initialReview.joined.beerId,
       name: props.initialReview.joined.beerName,
       breweries: props.initialReview.joined.breweries.map(
-        brewery => brewery.id
+        (brewery) => brewery.id,
       ),
-      styles: props.initialReview.joined.styles.map(style => style.id)
+      styles: props.initialReview.joined.styles.map((style) => style.id),
     }
   }
 
-  function getInitialContainer (): Container | undefined {
+  function getInitialContainer(): Container | undefined {
     if (props.initialReview === undefined) return undefined
     return {
-      ...props.initialReview.joined.container
+      ...props.initialReview.joined.container,
     }
   }
 
-  function getInitialLocation (): Location | undefined {
+  function getInitialLocation(): Location | undefined {
     if (props.initialReview === undefined) return undefined
     if (props.initialReview.joined.location === undefined) return undefined
     return {
-      ...props.initialReview.joined.location
+      ...props.initialReview.joined.location,
     }
   }
 
   const [beer, setBeer] = useState<BeerWithIds | undefined>(getInitialBeer())
   const [container, setContainer] = useState<Container | undefined>(
-    getInitialContainer()
+    getInitialContainer(),
   )
   const [rating, setRating] = useState<number>(
-    props.initialReview?.review.rating ?? 7
+    props.initialReview?.review.rating ?? 7,
   )
   const [smell, setSmell] = useState(props.initialReview?.review.smell ?? '')
   const [taste, setTaste] = useState(props.initialReview?.review.taste ?? '')
   const [additionalInfo, setAdditionalInfo] = useState(
-    props.initialReview?.review.additionalInfo ?? ''
+    props.initialReview?.review.additionalInfo ?? '',
   )
   const [location, setLocation] = useState<Location | undefined>(
-    getInitialLocation()
+    getInitialLocation(),
   )
 
-  function localDateTime (): string {
-    const date = props.initialReview === undefined
-      ? props.currentDate
-      : new Date(props.initialReview.review.time)
+  function localDateTime(): string {
+    const date =
+      props.initialReview === undefined
+        ? props.currentDate
+        : new Date(props.initialReview.review.time)
     const y = date.getFullYear()
     const mo = date.getMonth() + 1
     const d = date.getDate()
@@ -125,7 +123,7 @@ function ReviewEditor (props: Props): React.JSX.Element {
       rating,
       smell,
       taste,
-      time: new Date(time).toISOString()
+      time: new Date(time).toISOString(),
     })
   }, [
     isMissingData,
@@ -136,7 +134,7 @@ function ReviewEditor (props: Props): React.JSX.Element {
     rating,
     smell,
     taste,
-    time
+    time,
   ])
 
   return (
@@ -144,49 +142,56 @@ function ReviewEditor (props: Props): React.JSX.Element {
       <div>
         <h5>Beer</h5>
         <div className='ReviewContent'>
-          {beer === undefined
-            ? <SelectBeer
-                searchIf={props.searchIf}
-                select={(beer: BeerWithIds) => {
-                  setBeer(beer)
-                }}
-                selectBeerIf={props.selectBeerIf}
-              />
-            : (<div className='FlexRow'>
-                  <div>{beer.name}</div>
-                  {!props.isFromStorage && (
-                    <div>
-                      <Button
-                        onClick={() => { setBeer(undefined) }}
-                        text='Change'
-                      />
-                    </div>
-                  )}
-              </div>)
-          }
+          {beer === undefined ? (
+            <SelectBeer
+              searchIf={props.searchIf}
+              select={(beer: BeerWithIds) => {
+                setBeer(beer)
+              }}
+              selectBeerIf={props.selectBeerIf}
+            />
+          ) : (
+            <div className='FlexRow'>
+              <div>{beer.name}</div>
+              {!props.isFromStorage && (
+                <div>
+                  <Button
+                    onClick={() => {
+                      setBeer(undefined)
+                    }}
+                    text='Change'
+                  />
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
       <div>
         <h5>Container</h5>
         <div className='ReviewContent'>
-          {container === undefined
-            ? <SelectContainer
+          {container === undefined ? (
+            <SelectContainer
               reviewContainerIf={props.reviewContainerIf}
               select={(container: Container) => {
                 setContainer(container)
-              }} />
-            : (<div className='FlexRow'>
-                <ContainerInfo container={container} />
-                {!props.isFromStorage && (
-                  <div>
-                    <Button
-                      onClick={() => { setContainer(undefined) }}
-                      text='Change'
-                    />
-                  </div>
-                )}
-              </div>)
-          }
+              }}
+            />
+          ) : (
+            <div className='FlexRow'>
+              <ContainerInfo container={container} />
+              {!props.isFromStorage && (
+                <div>
+                  <Button
+                    onClick={() => {
+                      setContainer(undefined)
+                    }}
+                    text='Change'
+                  />
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
       <div>
@@ -197,11 +202,13 @@ function ReviewEditor (props: Props): React.JSX.Element {
               type='text'
               placeholder='Additional info'
               value={additionalInfo}
-              onChange={(e) => { setAdditionalInfo(e.target.value) }}
+              onChange={(e) => {
+                setAdditionalInfo(e.target.value)
+              }}
             />
           </div>
           <div>
-            {location === undefined ?
+            {location === undefined ? (
               <SearchLocation
                 confirm={confirm}
                 isCreateEnabled={true}
@@ -210,11 +217,13 @@ function ReviewEditor (props: Props): React.JSX.Element {
                 searchIf={props.searchIf}
                 select={setLocation}
               />
-            : (
+            ) : (
               <div className='FlexRow'>
                 <div>{location.name}</div>
                 <Button
-                  onClick={() => { setLocation(undefined); }}
+                  onClick={() => {
+                    setLocation(undefined)
+                  }}
                   text='Remove'
                 />
               </div>
@@ -226,7 +235,9 @@ function ReviewEditor (props: Props): React.JSX.Element {
               id='time'
               aria-label='Time input'
               value={time}
-              onChange={e => { setTime(e.target.value) }}
+              onChange={(e) => {
+                setTime(e.target.value)
+              }}
             />
           </div>
         </div>
@@ -238,7 +249,9 @@ function ReviewEditor (props: Props): React.JSX.Element {
             className='ReviewArea'
             placeholder='Smell'
             value={smell}
-            onChange={e => { setSmell(e.target.value) }}
+            onChange={(e) => {
+              setSmell(e.target.value)
+            }}
           />
         </div>
       </div>
@@ -249,14 +262,16 @@ function ReviewEditor (props: Props): React.JSX.Element {
             className='ReviewArea'
             placeholder='Taste'
             value={taste}
-            onChange={e => { setTaste(e.target.value) }}
+            onChange={(e) => {
+              setTaste(e.target.value)
+            }}
           />
         </div>
       </div>
       <div>
         <h5>Rating</h5>
         <div className='ReviewContent'>
-          <div className='RatingNumber'>{ `${rating}` }</div>
+          <div className='RatingNumber'>{`${rating}`}</div>
           <Slider
             id='rating'
             className='RatingSlider'
@@ -264,8 +279,12 @@ function ReviewEditor (props: Props): React.JSX.Element {
             max={10}
             step={1}
             value={rating}
-            setDisplayValue={(value: number) => { setRating(value); } }
-            setValue={(value: number) => { setRating(value); } }
+            setDisplayValue={(value: number) => {
+              setRating(value)
+            }}
+            setValue={(value: number) => {
+              setRating(value)
+            }}
           />
         </div>
       </div>

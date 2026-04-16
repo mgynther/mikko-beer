@@ -1,16 +1,16 @@
-import { infiniteScroll } from "../../components/util"
-import type { BreweryList, ListBreweriesIf } from "../../core/brewery/types"
-import type { Pagination } from "../../core/types"
-import { useLazyListBreweriesQuery } from "../../store/brewery/api"
+import { infiniteScroll } from '../../components/util'
+import type { BreweryList, ListBreweriesIf } from '../../core/brewery/types'
+import type { Pagination } from '../../core/types'
+import { useLazyListBreweriesQuery } from '../../store/brewery/api'
 import {
   validateBreweryList,
-  validateBreweryListOrUndefined
-} from "../../validation/brewery"
+  validateBreweryListOrUndefined,
+} from '../../validation/brewery'
 
 const listBreweries: () => ListBreweriesIf = () => {
   const listBreweriesIf: ListBreweriesIf = {
     useList: () => {
-      const [trigger, { data, isFetching, isUninitialized } ] =
+      const [trigger, { data, isFetching, isUninitialized }] =
         useLazyListBreweriesQuery()
       return {
         breweryList: validateBreweryListOrUndefined(data),
@@ -19,10 +19,10 @@ const listBreweries: () => ListBreweriesIf = () => {
           return validateBreweryList(result)
         },
         isLoading: isFetching,
-        isUninitialized
+        isUninitialized,
       }
     },
-    infiniteScroll
+    infiniteScroll,
   }
   return listBreweriesIf
 }

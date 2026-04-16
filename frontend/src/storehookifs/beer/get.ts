@@ -1,6 +1,6 @@
-import type { GetBeerIf } from "../../core/beer/types"
-import { useGetBeerQuery } from "../../store/beer/api"
-import { validateBeerOrUndefined } from "../../validation/beer"
+import type { GetBeerIf } from '../../core/beer/types'
+import { useGetBeerQuery } from '../../store/beer/api'
+import { validateBeerOrUndefined } from '../../validation/beer'
 
 const getBeer: () => GetBeerIf = () => {
   const getBeerIf: GetBeerIf = {
@@ -8,9 +8,9 @@ const getBeer: () => GetBeerIf = () => {
       const { data, isLoading } = useGetBeerQuery(beerId)
       return {
         beer: validateBeerOrUndefined(data?.beer),
-        isLoading
+        isLoading,
       }
-    }
+    },
   }
   return getBeerIf
 }

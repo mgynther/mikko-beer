@@ -1,7 +1,7 @@
 export enum ReviewTags {
-  Review = 'Review'
+  Review = 'Review',
 }
 
-export function reviewTagTypes (): string[] {
+export function reviewTagTypes(): string[] {
   return [ReviewTags.Review]
 }

@@ -1,6 +1,6 @@
-import type { ListUsersIf } from "../../core/user/types"
-import { useListUsersQuery } from "../../store/user/api"
-import { validateUserListOrUndefined } from "../../validation/user"
+import type { ListUsersIf } from '../../core/user/types'
+import { useListUsersQuery } from '../../store/user/api'
+import { validateUserListOrUndefined } from '../../validation/user'
 
 const listUsers: () => ListUsersIf = () => {
   const listUsersIf: ListUsersIf = {
@@ -8,9 +8,9 @@ const listUsers: () => ListUsersIf = () => {
       const { data, isLoading } = useListUsersQuery()
       return {
         data: validateUserListOrUndefined(data),
-        isLoading
+        isLoading,
       }
-    }
+    },
   }
   return listUsersIf
 }

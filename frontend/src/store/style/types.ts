@@ -1,7 +1,7 @@
 export enum StyleTags {
-  Style = 'Style'
+  Style = 'Style',
 }
 
-export function styleTagTypes (): string[] {
+export function styleTagTypes(): string[] {
   return [StyleTags.Style]
 }

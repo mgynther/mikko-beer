@@ -1,12 +1,12 @@
-import type { SelectBeerIf } from "../beer/types"
+import type { SelectBeerIf } from '../beer/types'
 import type {
   CreateContainerIf,
   ListContainersIf,
-  Container
-} from "../container/types"
-import type { Location, SearchLocationIf } from "../location/types"
+  Container,
+} from '../container/types'
+import type { Location, SearchLocationIf } from '../location/types'
 
-import type { GetLogin } from "../login/types"
+import type { GetLogin } from '../login/types'
 import type { InfiniteScroll, ListDirection, Pagination } from '../types'
 
 export interface FilteredListReviewParams {
@@ -102,7 +102,7 @@ export interface ListReviewsIf {
     reviewList: JoinedReviewList | undefined
     isLoading: boolean
     isUninitialized: boolean
-  },
+  }
   infiniteScroll: InfiniteScroll
 }
 

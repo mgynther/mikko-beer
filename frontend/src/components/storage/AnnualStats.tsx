@@ -1,13 +1,13 @@
 import React from 'react'
 
-import type { GetAnnualStorageStatsIf } from "../../core/storage/types"
+import type { GetAnnualStorageStatsIf } from '../../core/storage/types'
 import LoadingIndicator from '../common/LoadingIndicator'
 
 interface Props {
   annualStatsIf: GetAnnualStorageStatsIf
 }
 
-function AnnualStats (props: Props): React.JSX.Element | null {
+function AnnualStats(props: Props): React.JSX.Element | null {
   const { stats, isLoading } = props.annualStatsIf.useAnnualStats()
   return (
     <div>
@@ -20,7 +20,7 @@ function AnnualStats (props: Props): React.JSX.Element | null {
           </tr>
         </thead>
         <tbody>
-          {stats?.annual.map(month => (
+          {stats?.annual.map((month) => (
             <tr key={month.year}>
               <td>{month.year}</td>
               <td>{month.count}</td>

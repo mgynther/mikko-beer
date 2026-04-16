@@ -13,20 +13,22 @@ test('edits valid location', async () => {
     <LocationEditor
       location={{
         id,
-        name: ''
+        name: '',
       }}
       placeholder={namePlaceholder}
       onChange={onChange}
-    />
+    />,
   )
   const nameInput = getByPlaceholderText(namePlaceholder)
   await user.type(nameInput, 'Viisi Penniä')
   const calls = onChange.mock.calls
   expect(calls.length).toEqual(12)
-  expect(calls[calls.length - 1]).toEqual([{
-    id,
-    name: 'Viisi Penniä'
-  }])
+  expect(calls[calls.length - 1]).toEqual([
+    {
+      id,
+      name: 'Viisi Penniä',
+    },
+  ])
 })
 
 test('edits invalid location by empty name', async () => {
@@ -40,7 +42,7 @@ test('edits invalid location by empty name', async () => {
       }}
       placeholder={namePlaceholder}
       onChange={onChange}
-    />
+    />,
   )
   const nameInput = getByPlaceholderText(namePlaceholder)
   await user.type(nameInput, 'S')
@@ -56,11 +58,11 @@ test('renders values', async () => {
     <LocationEditor
       location={{
         id,
-        name: 'Panimoravintola Plevna'
+        name: 'Panimoravintola Plevna',
       }}
       placeholder={namePlaceholder}
       onChange={onChange}
-    />
+    />,
   )
   getByDisplayValue('Panimoravintola Plevna')
 })

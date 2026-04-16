@@ -8,11 +8,7 @@ test('handles click', async () => {
   const user = userEvent.setup()
   const clickCb = vitest.fn()
   const { getByRole } = render(
-    <Button
-      disabled={false}
-      onClick={clickCb}
-      text='Click me'
-    />
+    <Button disabled={false} onClick={clickCb} text='Click me' />,
   )
   const button = getByRole('button', { name: 'Click me' })
   await user.click(button)
@@ -23,11 +19,7 @@ test('does not handle click when disabled', async () => {
   const user = userEvent.setup()
   const clickCb = vitest.fn()
   const { getByRole } = render(
-    <Button
-      disabled={true}
-      onClick={clickCb}
-      text='Click me'
-    />
+    <Button disabled={true} onClick={clickCb} text='Click me' />,
   )
   const button = getByRole('button', { name: 'Click me' })
   await user.click(button)
@@ -37,11 +29,7 @@ test('does not handle click when disabled', async () => {
 
 test('does not enable button when onClick is missing', async () => {
   const { getByRole } = render(
-    <Button
-      disabled={false}
-      onClick={undefined}
-      text='Click me'
-    />
+    <Button disabled={false} onClick={undefined} text='Click me' />,
   )
   const button = getByRole('button', { name: 'Click me' })
   expect(button.hasAttribute('disabled')).toEqual(true)

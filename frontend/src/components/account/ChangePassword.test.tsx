@@ -12,10 +12,10 @@ const getLogin: GetLogin = () => ({
   user: {
     id: userId,
     username: 'admin',
-    role: Role.admin
+    role: Role.admin,
   },
   authToken: 'dummy',
-  refreshToken: 'dummy'
+  refreshToken: 'dummy',
 })
 
 test('changes password', async () => {
@@ -24,17 +24,14 @@ test('changes password', async () => {
   const changePasswordIf: ChangePasswordIf = {
     useChangePassword: () => ({
       changePassword,
-      isLoading: false
+      isLoading: false,
     }),
     useGetPasswordChangeResult: () => ({
-      getResult: () => PasswordChangeResult.UNDEFINED
-    })
+      getResult: () => PasswordChangeResult.UNDEFINED,
+    }),
   }
   const { getByRole, getByPlaceholderText } = render(
-    <ChangePassword
-      getLogin={getLogin}
-      changePasswordIf={changePasswordIf}
-    />
+    <ChangePassword getLogin={getLogin} changePasswordIf={changePasswordIf} />,
   )
   const oldPasswordInput = getByPlaceholderText('Old password')
   const oldPassword = 'old password'
@@ -42,36 +39,38 @@ test('changes password', async () => {
   const newPasswordInput = getByPlaceholderText('New password')
   const newPassword = 'new password'
   await user.type(newPasswordInput, newPassword)
-  const passwordConfirmationInput =
-    getByPlaceholderText('New password confirmation')
+  const passwordConfirmationInput = getByPlaceholderText(
+    'New password confirmation',
+  )
   await user.type(passwordConfirmationInput, newPassword)
   const submit = getByRole('button', { name: 'Change' })
   expect(submit.hasAttribute('disabled')).toEqual(false)
   await user.click(submit)
-  expect(changePassword.mock.calls).toEqual([[{
-    userId,
-    body: {
-      oldPassword,
-      newPassword
-    }
-  }]])
+  expect(changePassword.mock.calls).toEqual([
+    [
+      {
+        userId,
+        body: {
+          oldPassword,
+          newPassword,
+        },
+      },
+    ],
+  ])
 })
 
 test('shows password change result', async () => {
   const changePasswordIf: ChangePasswordIf = {
     useChangePassword: () => ({
       changePassword: async () => undefined,
-      isLoading: false
+      isLoading: false,
     }),
     useGetPasswordChangeResult: () => ({
-      getResult: () => PasswordChangeResult.SUCCESS
-    })
+      getResult: () => PasswordChangeResult.SUCCESS,
+    }),
   }
   const { getByText } = render(
-    <ChangePassword
-      getLogin={getLogin}
-      changePasswordIf={changePasswordIf}
-    />
+    <ChangePassword getLogin={getLogin} changePasswordIf={changePasswordIf} />,
   )
   getByText('Password changed!')
 })
@@ -80,17 +79,14 @@ test('password change has failed', async () => {
   const changePasswordIf: ChangePasswordIf = {
     useChangePassword: () => ({
       changePassword: async () => undefined,
-      isLoading: false
+      isLoading: false,
     }),
     useGetPasswordChangeResult: () => ({
-      getResult: () => PasswordChangeResult.ERROR
-    })
+      getResult: () => PasswordChangeResult.ERROR,
+    }),
   }
   const { getByText } = render(
-    <ChangePassword
-      getLogin={getLogin}
-      changePasswordIf={changePasswordIf}
-    />
+    <ChangePassword getLogin={getLogin} changePasswordIf={changePasswordIf} />,
   )
   getByText('Change failed. Please check your old and new passwords.')
 })
@@ -99,21 +95,21 @@ test('does not render on missing user', async () => {
   const changePasswordIf: ChangePasswordIf = {
     useChangePassword: () => ({
       changePassword: async () => undefined,
-      isLoading: false
+      isLoading: false,
     }),
     useGetPasswordChangeResult: () => ({
-      getResult: () => PasswordChangeResult.UNDEFINED
-    })
+      getResult: () => PasswordChangeResult.UNDEFINED,
+    }),
   }
   const { container } = render(
     <ChangePassword
       getLogin={() => ({
         user: undefined,
         authToken: '',
-        refreshToken: ''
+        refreshToken: '',
       })}
       changePasswordIf={changePasswordIf}
-    />
+    />,
   )
-  expect(container.childElementCount).toEqual(0);
+  expect(container.childElementCount).toEqual(0)
 })

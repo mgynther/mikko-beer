@@ -6,9 +6,9 @@ interface Props {
 
 export const loadingIndicatorText = 'Loading...'
 
-function LoadingIndicator (props: Props): React.JSX.Element {
+function LoadingIndicator(props: Props): React.JSX.Element {
   if (props.isLoading) return <div>{loadingIndicatorText}</div>
-  return <div/>
+  return <div />
 }
 
 export default LoadingIndicator

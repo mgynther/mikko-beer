@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import type {
   Location,
   ListLocationsIf,
-  SearchLocationIf
+  SearchLocationIf,
 } from '../../core/location/types'
 import type { SearchIf } from '../../core/search/types'
 
@@ -23,14 +23,13 @@ export interface Props {
   searchIf: SearchIf
 }
 
-function Locations (props: Props): React.JSX.Element {
+function Locations(props: Props): React.JSX.Element {
   const [loadedLocations, setLoadedLocations] = useState<Location[]>([])
   const { locationList, list, isLoading, isUninitialized } =
     props.listLocationsIf.useList()
 
-  const locationArray = locationList?.locations === undefined
-    ? []
-    : [...locationList.locations]
+  const locationArray =
+    locationList?.locations === undefined ? [] : [...locationList.locations]
 
   const hasMore = locationArray.length > 0 || isUninitialized
   const loadedCount = loadedLocations.length
@@ -39,12 +38,12 @@ function Locations (props: Props): React.JSX.Element {
     const loadMore = async (): Promise<void> => {
       const result = await list({
         skip: loadedCount,
-        size: pageSize
+        size: pageSize,
       })
       const newLocations = [...loadedLocations, ...result.locations]
       setLoadedLocations(newLocations)
     }
-    function checkLoad (): void {
+    function checkLoad(): void {
       if (isLoading) {
         return
       }
@@ -67,9 +66,7 @@ function Locations (props: Props): React.JSX.Element {
       <ul>
         {loadedLocations.map((location: Location) => (
           <li key={location.id}>
-            <LocationLink
-              location={location}
-            />
+            <LocationLink location={location} />
           </li>
         ))}
       </ul>

@@ -1,7 +1,7 @@
-import type { YearMonth } from "../../core/stats/types"
-import type { ListDirection } from "../../core/types"
-import { pad } from "../util"
-import type { SearchParameters } from "../util"
+import type { YearMonth } from '../../core/stats/types'
+import type { ListDirection } from '../../core/types'
+import { pad } from '../util'
+import type { SearchParameters } from '../util'
 
 export type FilterNumKey =
   | 'min_review_count'
@@ -13,24 +13,24 @@ const filterNumDefaults: Record<FilterNumKey, number> = {
   min_review_count: 1,
   max_review_count: Infinity,
   min_review_average: 4,
-  max_review_average: 10
+  max_review_average: 10,
 }
 
-export function filterNumOrDefault (
+export function filterNumOrDefault(
   key: FilterNumKey,
-  search: SearchParameters
+  search: SearchParameters,
 ): number {
   const value = search.get(key)
   return value === undefined ? filterNumDefaults[key] : parseFloat(value)
 }
 
-export function formatYearMonth (yearMonth: YearMonth): string {
+export function formatYearMonth(yearMonth: YearMonth): string {
   return `${yearMonth.year}-${pad(yearMonth.month)}`
 }
 
-export function toTimestamp (
+export function toTimestamp(
   yearMonth: YearMonth,
-  mode: 'start' | 'end'
+  mode: 'start' | 'end',
 ): number {
   if (mode === 'start') {
     return new Date(yearMonth.year, yearMonth.month - 1, 1).getTime()
@@ -39,9 +39,9 @@ export function toTimestamp (
   return endDate.getTime()
 }
 
-export function parseYearMonth (
+export function parseYearMonth(
   str: string | undefined,
-  defaultValue: YearMonth
+  defaultValue: YearMonth,
 ): YearMonth {
   const fallback = { ...defaultValue }
   if (str === undefined) {
@@ -61,31 +61,30 @@ export function parseYearMonth (
   }
   return {
     year: parsedYear,
-    month: parsedMonth
+    month: parsedMonth,
   }
 }
 
-export function filtersOpenOrDefault (search: SearchParameters): boolean {
+export function filtersOpenOrDefault(search: SearchParameters): boolean {
   const value = search.get('filters_open')
   return value === '1'
 }
 
-export function filtersOpenStr (isOpen: boolean): string {
+export function filtersOpenStr(isOpen: boolean): string {
   return isOpen ? '1' : '0'
 }
 
-export function listDirectionOrDefault (
-  search: SearchParameters
+export function listDirectionOrDefault(
+  search: SearchParameters,
 ): ListDirection {
   const value = search.get('list_direction')
-  return value === 'asc' || value === 'desc'
-    ? value : 'asc'
+  return value === 'asc' || value === 'desc' ? value : 'asc'
 }
 
-export function averageStr (num: number): string {
+export function averageStr(num: number): string {
   return num.toFixed(2)
 }
 
-export function countStr (num: number): string {
+export function countStr(num: number): string {
   return num.toFixed(0)
 }

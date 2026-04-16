@@ -23,9 +23,7 @@ function Helper(props: HelperProps): React.JSX.Element {
     }
     void doHandle()
   }
-  return (
-    <Button onClick={handleClick} text='Test' />
-  )
+  return <Button onClick={handleClick} text='Test' />
 }
 
 test('delete storage', async () => {
@@ -37,14 +35,14 @@ test('delete storage', async () => {
     method: 'DELETE',
     pathname: `/api/v1/storage/${storageId}`,
     response: undefined,
-    status: 200
+    status: 200,
   })
 
   const handler = vitest.fn()
   const { getByRole } = render(
     <Provider store={store}>
       <Helper storageId={storageId} handleResponse={handler} />
-    </Provider>
+    </Provider>,
   )
   const testButton = getByRole('button', { name: 'Test' })
   await user.click(testButton)

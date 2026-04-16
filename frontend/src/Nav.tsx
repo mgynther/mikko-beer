@@ -31,39 +31,41 @@ interface Props {
   theme: ThemeProps
 }
 
-function Nav (props: Props): React.JSX.Element {
-  const isMoreOpen =
-    props.navMenuState.navMenuState === 'EXPANDED'
+function Nav(props: Props): React.JSX.Element {
+  const isMoreOpen = props.navMenuState.navMenuState === 'EXPANDED'
   const { logout } = props
   return (
     <nav>
       <ul>
         {props.isAdmin && (
           <li>
-            <Link to="/addreview" text="Add review" />
+            <Link to='/addreview' text='Add review' />
           </li>
         )}
         <li>
-          <Link to="/beers" text="Beers" />
+          <Link to='/beers' text='Beers' />
         </li>
         <li>
-          <Link to="/breweries" text="Breweries" />
+          <Link to='/breweries' text='Breweries' />
         </li>
         <li>
-          <Link to="/reviews" text="Reviews" />
+          <Link to='/reviews' text='Reviews' />
         </li>
         <li>
-          <Link to="/stats" text="Statistics" />
+          <Link to='/stats' text='Statistics' />
         </li>
         <li>
-          <Link to="/storage" text="Storage" />
+          <Link to='/storage' text='Storage' />
         </li>
         <li>
-          <Button onClick={() => {
-            props.navMenuState.setNavMenuState(
-              isMoreOpen ? 'COLLAPSED' : 'EXPANDED'
-            )
-          }} text={isMoreOpen ? 'Less' : 'More'} />
+          <Button
+            onClick={() => {
+              props.navMenuState.setNavMenuState(
+                isMoreOpen ? 'COLLAPSED' : 'EXPANDED',
+              )
+            }}
+            text={isMoreOpen ? 'Less' : 'More'}
+          />
         </li>
       </ul>
 
@@ -86,21 +88,21 @@ function Nav (props: Props): React.JSX.Element {
 
           <ul>
             <li>
-              <Link to="/styles" text="Styles" />
+              <Link to='/styles' text='Styles' />
             </li>
             <li>
-              <Link to="/containers" text="Containers" />
+              <Link to='/containers' text='Containers' />
             </li>
             <li>
-              <Link to="/locations" text="Locations" />
+              <Link to='/locations' text='Locations' />
             </li>
             {props.isAdmin && (
               <li>
-                <Link to="/users" text="Users" />
+                <Link to='/users' text='Users' />
               </li>
             )}
             <li>
-              <Link to="/account" text="Account" />
+              <Link to='/account' text='Account' />
             </li>
             <li>
               <label>
@@ -108,18 +110,23 @@ function Nav (props: Props): React.JSX.Element {
                   type='checkbox'
                   checked={props.theme.theme === 'DARK'}
                   onChange={(e) => {
-                    props.theme.setTheme(
-                      e.target.checked ? 'DARK' : 'LIGHT')
-                  }} />
+                    props.theme.setTheme(e.target.checked ? 'DARK' : 'LIGHT')
+                  }}
+                />
                 Dark
-                </label>
+              </label>
             </li>
             <li>
-              <Button onClick={
-                logout
-                  ? (): void => { logout(); }
-                  : undefined
-              } text='Logout'/>
+              <Button
+                onClick={
+                  logout
+                    ? (): void => {
+                        logout()
+                      }
+                    : undefined
+                }
+                text='Logout'
+              />
             </li>
           </ul>
         </div>

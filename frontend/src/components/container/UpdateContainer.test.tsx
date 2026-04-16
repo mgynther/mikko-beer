@@ -13,7 +13,7 @@ const typePlaceholder = 'Type'
 const container: Container = {
   id,
   size,
-  type
+  type,
 }
 
 test('updates container', async () => {
@@ -26,12 +26,12 @@ test('updates container', async () => {
       updateContainerIf={{
         useUpdate: () => ({
           update,
-          isLoading: false
-        })
+          isLoading: false,
+        }),
       }}
       onCancel={() => undefined}
       onSaved={onSaved}
-    />
+    />,
   )
   const saveButton = getByRole('button', { name: 'Save' })
   const typeInput = getByPlaceholderText(typePlaceholder)
@@ -43,11 +43,15 @@ test('updates container', async () => {
   expect(saveButton.hasAttribute('disabled')).toEqual(false)
   await user.click(saveButton)
   const updateCalls = update.mock.calls
-  expect(updateCalls).toEqual([[{
-    id,
-    size: '0.33',
-    type: 'Draft'
-  }]])
+  expect(updateCalls).toEqual([
+    [
+      {
+        id,
+        size: '0.33',
+        type: 'Draft',
+      },
+    ],
+  ])
   const saveCalls = onSaved.mock.calls
   expect(saveCalls).toEqual([[]])
 })
@@ -61,12 +65,12 @@ test('cancel update', async () => {
       updateContainerIf={{
         useUpdate: () => ({
           update: async (): Promise<void> => undefined,
-          isLoading: false
-        })
+          isLoading: false,
+        }),
       }}
       onCancel={onCancel}
       onSaved={() => undefined}
-    />
+    />,
   )
   const cancelButton = getByRole('button', { name: 'Cancel' })
   await user.click(cancelButton)

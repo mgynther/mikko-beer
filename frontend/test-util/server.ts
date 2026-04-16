@@ -1,7 +1,7 @@
-import { createServer } from "http"
-import type { IncomingMessage, ServerResponse } from "http"
-import type { AddressInfo } from "net"
-import { uniqueTestServerPort } from "../src/constants"
+import { createServer } from 'http'
+import type { IncomingMessage, ServerResponse } from 'http'
+import type { AddressInfo } from 'net'
+import { uniqueTestServerPort } from '../src/constants'
 
 interface Response<T> {
   method: 'GET' | 'POST' | 'PUT' | 'DELETE'
@@ -29,7 +29,11 @@ const handler = async (req: IncomingMessage, res: ServerResponse) => {
   const response = requests[url]
   const parsedURL = new URL(url, `http://${req.headers.host}`)
   // TODO access search params like this parsedURL.searchParams.get("keyword")
-  if (response !== undefined && req.method === response.method && url === response.pathname) {
+  if (
+    response !== undefined &&
+    req.method === response.method &&
+    url === response.pathname
+  ) {
     res.writeHead(response.status, { 'Content-Type': 'application/json' })
     res.write(response.response ? JSON.stringify(response.response) : '')
     res.end()
@@ -37,7 +41,11 @@ const handler = async (req: IncomingMessage, res: ServerResponse) => {
     return
   }
   res.writeHead(500, { 'Content-Type': 'application/json' })
-  res.write(JSON.stringify({ errorMessage: `Unexpected request with method ${req.method} to path ${parsedURL.pathname}` }))
+  res.write(
+    JSON.stringify({
+      errorMessage: `Unexpected request with method ${req.method} to path ${parsedURL.pathname}`,
+    }),
+  )
   res.end()
 }
 
@@ -63,6 +71,6 @@ export function addTestServerResponse<T>(response: Response<T>): void {
     response: response.response
       ? JSON.parse(JSON.stringify(response.response))
       : undefined,
-    status: response.status
+    status: response.status,
   }
 }

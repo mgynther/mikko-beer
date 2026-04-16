@@ -18,17 +18,17 @@ test('updates brewery', async () => {
     <UpdateBrewery
       initialBrewery={{
         id,
-        name: 'Koksipanimo'
+        name: 'Koksipanimo',
       }}
       updateBreweryIf={{
         useUpdate: () => ({
           update,
-          isLoading: false
-        })
+          isLoading: false,
+        }),
       }}
       onCancel={() => undefined}
       onSaved={onSaved}
-    />
+    />,
   )
   const saveButton = getByRole('button', { name: 'Save' })
   const nameInput = getByPlaceholderText(newNamePlaceholder)
@@ -37,10 +37,14 @@ test('updates brewery', async () => {
   expect(saveButton.hasAttribute('disabled')).toEqual(false)
   await user.click(saveButton)
   const updateCalls = update.mock.calls
-  expect(updateCalls).toEqual([[{
-    id,
-    name: 'Koskipanimo'
-  }]])
+  expect(updateCalls).toEqual([
+    [
+      {
+        id,
+        name: 'Koskipanimo',
+      },
+    ],
+  ])
   const saveCalls = onSaved.mock.calls
   expect(saveCalls).toEqual([[]])
 })
@@ -52,17 +56,17 @@ test('cancel update', async () => {
     <UpdateBrewery
       initialBrewery={{
         id,
-        name: 'Koskipanimo'
+        name: 'Koskipanimo',
       }}
       updateBreweryIf={{
         useUpdate: () => ({
           update: dontCall,
-          isLoading: false
-        })
+          isLoading: false,
+        }),
       }}
       onCancel={onCancel}
       onSaved={dontCall}
-    />
+    />,
   )
   const cancelButton = getByRole('button', { name: 'Cancel' })
   await user.click(cancelButton)

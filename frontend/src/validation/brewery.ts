@@ -6,15 +6,15 @@ import { formatError } from './format-error'
 
 export const ValidatedBrewery = t.type({
   id: t.string,
-  name: t.string
+  name: t.string,
 })
 
 const ValidatedBreweryList = t.type({
-  breweries: t.array(ValidatedBrewery)
+  breweries: t.array(ValidatedBrewery),
 })
 
 export function validateBreweryOrUndefined(
-  result: unknown
+  result: unknown,
 ): Brewery | undefined {
   if (typeof result === 'undefined') {
     return undefined
@@ -33,7 +33,7 @@ export function validateBrewery(result: unknown): Brewery {
 }
 
 export function validateBreweryListOrUndefined(
-  result: unknown
+  result: unknown,
 ): BreweryList | undefined {
   if (typeof result === 'undefined') {
     return undefined

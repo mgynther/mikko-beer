@@ -12,10 +12,10 @@ test('sets value', () => {
       values={[5, 21, 194]}
       setDisplayValue={setDisplayValue}
       setValue={setValue}
-    />
+    />,
   )
   const slider = getByDisplayValue(0)
-  fireEvent.change(slider, {target: {value: '2'}})
+  fireEvent.change(slider, { target: { value: '2' } })
   expect(setDisplayValue.mock.calls).toEqual([[194]])
   expect(setValue.mock.calls).toEqual([[194]])
 })
@@ -30,12 +30,12 @@ test('sets value on mobile', () => {
       values={[5, 21, 194]}
       setDisplayValue={setDisplayValue}
       setValue={setValue}
-    />
+    />,
   )
   const slider = getByDisplayValue(0)
   fireEvent.touchStart(slider)
-  fireEvent.change(slider, {target: {value: '1'}})
-  fireEvent.change(slider, {target: {value: '2'}})
+  fireEvent.change(slider, { target: { value: '1' } })
+  fireEvent.change(slider, { target: { value: '2' } })
   fireEvent.touchEnd(slider)
   expect(setDisplayValue.mock.calls).toEqual([[21], [194]])
   expect(setValue.mock.calls).toEqual([[194]])
@@ -49,7 +49,7 @@ test('defaults to first value on invalid', () => {
       values={[5, 21, 194]}
       setDisplayValue={vitest.fn()}
       setValue={vitest.fn()}
-    />
+    />,
   )
   getByDisplayValue(0)
 })

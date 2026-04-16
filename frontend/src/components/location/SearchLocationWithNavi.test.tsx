@@ -8,7 +8,7 @@ import type { SearchIf } from '../../core/search/types'
 import type { UseDebounce } from '../../core/types'
 import type { CreateLocationIf } from '../../core/location/types'
 
-const useDebounce: UseDebounce<string> = str => [str, false]
+const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -17,32 +17,29 @@ const dontCall = (): any => {
 const activeSearch: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
-    isActive: true
+    isActive: true,
   }),
-  useDebounce
+  useDebounce,
 }
 
 const createLocationIf: CreateLocationIf = {
   useCreate: () => ({
     create: dontCall,
-    isLoading: false
-  })
+    isLoading: false,
+  }),
 }
 
 const location = {
   id: '8c8bd0e8-1f40-443b-bfcb-3fe5d9f6d343',
-  name: 'Oluthuone Kaisla'
+  name: 'Oluthuone Kaisla',
 }
 
 const anotherLocation = {
   id: '0314d1fc-0892-4bbf-8c78-6bfc7dcbc734',
-  name: 'St. Urho\'s Pub'
+  name: "St. Urho's Pub",
 }
 
-const locations: Location[] = [
-  location,
-  anotherLocation
-]
+const locations: Location[] = [location, anotherLocation]
 
 test('selects location', async () => {
   const user = userEvent.setup()
@@ -50,17 +47,17 @@ test('selects location', async () => {
   const { getByRole } = render(
     <SearchLocationWithNavi
       navigateIf={{
-        useNavigate: () => selector
+        useNavigate: () => selector,
       }}
       searchLocationIf={{
         useSearch: () => ({
           search: async (): Promise<Location[]> => locations,
-          isLoading: false
+          isLoading: false,
         }),
-        create: createLocationIf
+        create: createLocationIf,
       }}
       searchIf={activeSearch}
-    />
+    />,
   )
 
   const input = getByRole('textbox')
@@ -70,7 +67,7 @@ test('selects location', async () => {
   const itemButton = getByRole('button', { name: location.name })
   expect(itemButton).toBeDefined()
   await user.click(itemButton)
-  expect(selector.mock.calls).toEqual([[ `/locations/${location.id}` ]])
+  expect(selector.mock.calls).toEqual([[`/locations/${location.id}`]])
 })
 
 test('shows no results', async () => {
@@ -79,17 +76,17 @@ test('shows no results', async () => {
   const { getByRole, getByText } = render(
     <SearchLocationWithNavi
       navigateIf={{
-        useNavigate: () => selector
+        useNavigate: () => selector,
       }}
       searchLocationIf={{
         useSearch: () => ({
           search: async (): Promise<Location[]> => [],
-          isLoading: false
+          isLoading: false,
         }),
-        create: createLocationIf
+        create: createLocationIf,
       }}
       searchIf={activeSearch}
-    />
+    />,
   )
 
   const input = getByRole('textbox')

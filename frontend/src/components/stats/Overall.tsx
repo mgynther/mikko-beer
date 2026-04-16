@@ -13,11 +13,11 @@ interface Props {
   styleId: string | undefined
 }
 
-function Overall (props: Props): React.JSX.Element {
+function Overall(props: Props): React.JSX.Element {
   const { stats, isLoading } = props.getOverallStatsIf.useStats({
     breweryId: props.breweryId,
     locationId: props.locationId,
-    styleId: props.styleId
+    styleId: props.styleId,
   })
   return (
     <div>

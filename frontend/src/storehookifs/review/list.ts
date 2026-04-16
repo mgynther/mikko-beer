@@ -1,17 +1,17 @@
 import type {
   JoinedReviewList,
   ListReviewParams,
-  ListReviewsIf
-} from "../../core/review/types"
-import type { InfiniteScroll } from "../../core/types"
-import { useLazyListReviewsQuery } from "../../store/review/api"
+  ListReviewsIf,
+} from '../../core/review/types'
+import type { InfiniteScroll } from '../../core/types'
+import { useLazyListReviewsQuery } from '../../store/review/api'
 import {
   validateJoinedReviewList,
-  validateJoinedReviewListOrUndefined
-} from "../../validation/review"
+  validateJoinedReviewListOrUndefined,
+} from '../../validation/review'
 
 const listReviews: (infiniteScroll: InfiniteScroll) => ListReviewsIf = (
-  infiniteScroll: InfiniteScroll
+  infiniteScroll: InfiniteScroll,
 ) => {
   const listReviewsIf: ListReviewsIf = {
     useList: () => {
@@ -19,17 +19,15 @@ const listReviews: (infiniteScroll: InfiniteScroll) => ListReviewsIf = (
         useLazyListReviewsQuery()
       return {
         reviewList: validateJoinedReviewListOrUndefined(data),
-        list: async (
-          params: ListReviewParams
-        ): Promise<JoinedReviewList> => {
+        list: async (params: ListReviewParams): Promise<JoinedReviewList> => {
           const result = await trigger(params).unwrap()
           return validateJoinedReviewList(result)
         },
         isLoading: isFetching,
-        isUninitialized
+        isUninitialized,
       }
     },
-    infiniteScroll
+    infiniteScroll,
   }
   return listReviewsIf
 }

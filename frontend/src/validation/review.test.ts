@@ -10,7 +10,7 @@ import {
   validateReview,
   validateReviewOrUndefined,
   validateJoinedReviewList,
-  validateJoinedReviewListOrUndefined
+  validateJoinedReviewListOrUndefined,
 } from './review'
 
 const validReview: Review = {
@@ -22,7 +22,7 @@ const validReview: Review = {
   rating: 9,
   smell: 'Citrusy hops',
   taste: 'Refreshing with mild bitterness',
-  time: '2024-06-15T18:30:00.000Z'
+  time: '2024-06-15T18:30:00.000Z',
 }
 
 test('validateReview returns review for valid input', () => {
@@ -30,10 +30,12 @@ test('validateReview returns review for valid input', () => {
 })
 
 test('validateReview throws for invalid input', () => {
-  expect(() => validateReview({
-    id: 'e5f6a7b8-c9d0-1234-efab-345678901234',
-    rating: 'not a number'
-  })).toThrow()
+  expect(() =>
+    validateReview({
+      id: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+      rating: 'not a number',
+    }),
+  ).toThrow()
 })
 
 test('validateReviewOrUndefined returns undefined for undefined', () => {
@@ -41,22 +43,20 @@ test('validateReviewOrUndefined returns undefined for undefined', () => {
 })
 
 test('validateReviewOrUndefined returns review for valid input', () => {
-  expect(validateReviewOrUndefined(validReview))
-  .toEqual(validReview)
+  expect(validateReviewOrUndefined(validReview)).toEqual(validReview)
 })
 
 test('validateReviewOrUndefined throws for invalid input', () => {
-  expect(() => validateReviewOrUndefined({
-    id: 'f6a7b8c9-d0e1-2345-fabc-456789012345'
-  })).toThrow()
+  expect(() =>
+    validateReviewOrUndefined({
+      id: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+    }),
+  ).toThrow()
 })
 
-test(
-  'validateJoinedReviewListOrUndefined returns undefined for undefined', () => {
-    expect(validateJoinedReviewListOrUndefined(undefined))
-      .toEqual(undefined)
-  }
-)
+test('validateJoinedReviewListOrUndefined returns undefined', () => {
+  expect(validateJoinedReviewListOrUndefined(undefined)).toEqual(undefined)
+})
 
 const validJoinedReview: JoinedReview = {
   id: '11223344-5566-7788-99aa-bbccddeeff00',
@@ -66,26 +66,26 @@ const validJoinedReview: JoinedReview = {
   breweries: [
     {
       id: '33445566-7788-99aa-bbcc-ddeeff001122',
-      name: 'Kansen Brewing'
-    }
+      name: 'Kansen Brewing',
+    },
   ],
   container: {
     id: '44556677-8899-aabb-ccdd-eeff00112233',
     type: 'bottle',
-    size: '0.33'
+    size: '0.33',
   },
   location: {
     id: '55667788-99aa-bbcc-ddee-ff0011223344',
-    name: 'Kuja Beer Shop & Bar'
+    name: 'Kuja Beer Shop & Bar',
   },
   rating: 8,
   styles: [
     {
       id: '66778899-aabb-ccdd-eeff-001122334455',
-      name: 'IPA'
-    }
+      name: 'IPA',
+    },
   ],
-  time: '2024-07-20T19:00:00.000Z'
+  time: '2024-07-20T19:00:00.000Z',
 }
 
 test('validateJoinedReviewListOrUndefined returns list for valid input', () => {
@@ -93,17 +93,18 @@ test('validateJoinedReviewListOrUndefined returns list for valid input', () => {
     reviews: [validJoinedReview],
     sorting: {
       order: 'beer_name',
-      direction: 'asc'
-    }
+      direction: 'asc',
+    },
   }
-  expect(validateJoinedReviewListOrUndefined(list))
-  .toEqual(list)
+  expect(validateJoinedReviewListOrUndefined(list)).toEqual(list)
 })
 
 test('validateJoinedReviewListOrUndefined throws for invalid input', () => {
-  expect(() => validateJoinedReviewListOrUndefined({
-    reviews: [{ id: 123 }]
-  })).toThrow()
+  expect(() =>
+    validateJoinedReviewListOrUndefined({
+      reviews: [{ id: 123 }],
+    }),
+  ).toThrow()
 })
 
 test('validateJoinedReviewList returns list for valid input', () => {
@@ -111,15 +112,16 @@ test('validateJoinedReviewList returns list for valid input', () => {
     reviews: [validJoinedReview],
     sorting: {
       order: 'brewery_name',
-      direction: 'desc'
-    }
+      direction: 'desc',
+    },
   }
-  expect(validateJoinedReviewList(list))
-  .toEqual(list)
+  expect(validateJoinedReviewList(list)).toEqual(list)
 })
 
 test('validateJoinedReviewList throws for invalid input', () => {
-  expect(() => validateJoinedReviewList({
-    reviews: [{ id: 123 }]
-  })).toThrow()
+  expect(() =>
+    validateJoinedReviewList({
+      reviews: [{ id: 123 }],
+    }),
+  ).toThrow()
 })

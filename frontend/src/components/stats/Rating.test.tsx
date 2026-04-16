@@ -17,17 +17,17 @@ test('renders rating stats', () => {
             stats: {
               rating: [
                 { rating: '7', count: '10' },
-                { rating: '8', count: '11' }
-              ]
+                { rating: '8', count: '11' },
+              ],
             },
-            isLoading: false
+            isLoading: false,
           }
-        }
+        },
       }}
       breweryId={breweryId}
       locationId={locationId}
       styleId={styleId}
-    />
+    />,
   )
   expect(stats.mock.calls).toEqual([[{ breweryId, locationId, styleId }]])
   getByText('7')

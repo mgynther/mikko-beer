@@ -4,7 +4,7 @@ import type { SearchIf } from '../../core/search/types'
 import type {
   SelectStyleIf,
   Style,
-  StyleWithParentIds
+  StyleWithParentIds,
 } from '../../core/style/types'
 
 import Button from '../common/Button'
@@ -21,7 +21,7 @@ export interface Props {
   remove: () => void
 }
 
-function CreateStyle (props: Props): React.JSX.Element {
+function CreateStyle(props: Props): React.JSX.Element {
   const [style, setStyle] = useState<StyleWithParentIds | undefined>(undefined)
   const { create, createdStyle, hasError, isLoading, isSuccess } =
     props.selectStyleIf.create.useCreate()
@@ -34,21 +34,23 @@ function CreateStyle (props: Props): React.JSX.Element {
     }
   }, [isSuccess, select, createdStyle])
 
-  async function doCreate (style: StyleWithParentIds): Promise<void> {
+  async function doCreate(style: StyleWithParentIds): Promise<void> {
     await create({
       name: style.name,
-      parents: style.parents
+      parents: style.parents,
     })
   }
 
   return (
     <div>
       <StyleEditor
-        onChange={(style) => { setStyle(style) }}
+        onChange={(style) => {
+          setStyle(style)
+        }}
         initialStyle={{
           id: 'newStyle',
           name: '',
-          parents: []
+          parents: [],
         }}
         listStylesIf={props.selectStyleIf.list}
         hasError={hasError}
@@ -57,10 +59,21 @@ function CreateStyle (props: Props): React.JSX.Element {
       <div className='ButtonContainer'>
         <Button
           disabled={style === undefined}
-          onClick={style ? (): void => { void doCreate(style) } : undefined}
+          onClick={
+            style
+              ? (): void => {
+                  void doCreate(style)
+                }
+              : undefined
+          }
           text='Create'
         />
-        <Button onClick={() => { props.remove() }} text='Remove' />
+        <Button
+          onClick={() => {
+            props.remove()
+          }}
+          text='Remove'
+        />
       </div>
       <LoadingIndicator isLoading={isLoading} />
     </div>

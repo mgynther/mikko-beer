@@ -33,7 +33,7 @@ export interface CreateUserIf {
 }
 
 interface ListUsersData {
-  data: UserList | undefined,
+  data: UserList | undefined
   isLoading: boolean
 }
 

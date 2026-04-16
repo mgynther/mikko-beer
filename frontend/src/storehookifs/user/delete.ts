@@ -1,5 +1,5 @@
-import type { DeleteUserIf } from "../../core/user/types"
-import { useDeleteUserMutation } from "../../store/user/api"
+import type { DeleteUserIf } from '../../core/user/types'
+import { useDeleteUserMutation } from '../../store/user/api'
 
 const deleteUser: () => DeleteUserIf = () => {
   const deleteUserIf: DeleteUserIf = {
@@ -8,9 +8,9 @@ const deleteUser: () => DeleteUserIf = () => {
       return {
         delete: async (userId: string): Promise<void> => {
           await deleteUser(userId)
-        }
+        },
       }
-    }
+    },
   }
   return deleteUserIf
 }

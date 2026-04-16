@@ -5,19 +5,19 @@ import BeerEditor from './BeerEditor'
 import type {
   Brewery,
   SearchBreweryIf,
-  SelectBreweryIf
+  SelectBreweryIf,
 } from '../../core/brewery/types'
 import type {
   CreateStyleIf,
   SelectStyleIf,
   Style,
-  StyleWithParentIds
+  StyleWithParentIds,
 } from '../../core/style/types'
 import type { UseDebounce } from '../../core/types'
 import type { EditBeerIf } from '../../core/beer/types'
 import type { SearchIf } from '../../core/search/types'
 
-const useDebounce: UseDebounce<string> = str => [str, false]
+const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -25,7 +25,7 @@ const dontCall = (): any => {
 
 const dontCreate = {
   create: dontCall,
-  isLoading: false
+  isLoading: false,
 }
 
 const id = '70fea6bb-ab07-4054-8125-f07157ae6b66'
@@ -34,59 +34,49 @@ const namePlaceholder = 'Name'
 
 const brewery: Brewery = {
   id: '9a145362-452f-4a21-b17d-7529fc2caa4b',
-  name: 'Panimo Himo'
+  name: 'Panimo Himo',
 }
 
 const anotherBrewery: Brewery = {
   id: '4566c772-9de8-4edc-89fe-32c358b3dc23',
-  name: 'Tuju'
+  name: 'Tuju',
 }
 
-const breweries: Brewery[] = [
-  brewery,
-  anotherBrewery
-]
+const breweries: Brewery[] = [brewery, anotherBrewery]
 
 const style: Style = {
   id: '7d105898-3ae2-4095-bf76-84ff2f9493d9',
-  name: 'barley wine'
+  name: 'barley wine',
 }
 
 const styleWithParentIds: StyleWithParentIds = {
   ...style,
-  parents: [
-    '3ef62437-196b-463d-8e10-acf70e28af54'
-  ]
+  parents: ['3ef62437-196b-463d-8e10-acf70e28af54'],
 }
 
-const styles: Style[] = [
-  style
-]
+const styles: Style[] = [style]
 
 const search: SearchBreweryIf = {
   useSearch: () => ({
-    search: async () => ([
-      brewery,
-      anotherBrewery
-    ]),
-    isLoading: false
-  })
+    search: async () => [brewery, anotherBrewery],
+    isLoading: false,
+  }),
 }
 
 const doSearch: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
-      isActive: true
+    isActive: true,
   }),
-  useDebounce
+  useDebounce,
 }
 
 const dontSearch: SearchIf = {
   useSearch: () => ({
     activate: dontCall,
-    isActive: false
+    isActive: false,
   }),
-  useDebounce
+  useDebounce,
 }
 
 const dontSelectBrewery: SelectBreweryIf = {
@@ -96,9 +86,9 @@ const dontSelectBrewery: SelectBreweryIf = {
   search: {
     useSearch: () => ({
       search: dontCall,
-      isLoading: false
-    })
-  }
+      isLoading: false,
+    }),
+  },
 }
 
 const dontCreateStyleIf: CreateStyleIf = {
@@ -106,8 +96,8 @@ const dontCreateStyleIf: CreateStyleIf = {
     ...dontCreate,
     createdStyle: undefined,
     hasError: false,
-    isSuccess: false
-  })
+    isSuccess: false,
+  }),
 }
 
 const dontEditBeer: EditBeerIf = {
@@ -118,9 +108,9 @@ const dontEditBeer: EditBeerIf = {
       useList: () => ({
         styles: [],
         isLoading: false,
-      })
-    }
-  }
+      }),
+    },
+  },
 }
 
 const dontSelectStyle: SelectStyleIf = {
@@ -129,15 +119,15 @@ const dontSelectStyle: SelectStyleIf = {
     useList: () => ({
       styles: undefined,
       isLoading: false,
-    })
-  }
+    }),
+  },
 }
 
 const initialBeer = {
   id,
   breweries,
   name: beerName,
-  styles
+  styles,
 }
 
 test('edits beer name', async () => {
@@ -147,26 +137,28 @@ test('edits beer name', async () => {
     <BeerEditor
       initialBeer={{
         ...initialBeer,
-        name: ''
+        name: '',
       }}
       searchIf={dontSearch}
       onChange={onChange}
       editBeerIf={{
         selectBreweryIf: dontSelectBrewery,
-        selectStyleIf: dontSelectStyle
+        selectStyleIf: dontSelectStyle,
       }}
-    />
+    />,
   )
   const nameInput = getByPlaceholderText(namePlaceholder)
   await user.clear(nameInput)
   await user.type(nameInput, beerName)
   const calls = onChange.mock.calls
-  expect(calls[calls.length - 1]).toEqual([{
-    id,
-    breweries: breweries.map(b => b.id),
-    styles: styles.map(s => s.id),
-    name: beerName
-  }])
+  expect(calls[calls.length - 1]).toEqual([
+    {
+      id,
+      breweries: breweries.map((b) => b.id),
+      styles: styles.map((s) => s.id),
+      name: beerName,
+    },
+  ])
 })
 
 test('edits beer breweries', async () => {
@@ -176,7 +168,7 @@ test('edits beer breweries', async () => {
     <BeerEditor
       initialBeer={{
         ...initialBeer,
-        breweries: []
+        breweries: [],
       }}
       searchIf={doSearch}
       onChange={onChange}
@@ -185,23 +177,25 @@ test('edits beer breweries', async () => {
           create: {
             useCreate: () => dontCreate,
           },
-          search
+          search,
         },
-        selectStyleIf: dontSelectStyle
+        selectStyleIf: dontSelectStyle,
       }}
-    />
+    />,
   )
   const brewerySearch = getByPlaceholderText('Search brewery')
   await user.type(brewerySearch, brewery.name)
   const breweryButton = getByRole('button', { name: brewery.name })
   await user.click(breweryButton)
   const calls = onChange.mock.calls
-  expect(calls[calls.length - 1]).toEqual([{
-    id,
-    breweries: [brewery.id],
-    styles: styles.map(s => s.id),
-    name: beerName
-  }])
+  expect(calls[calls.length - 1]).toEqual([
+    {
+      id,
+      breweries: [brewery.id],
+      styles: styles.map((s) => s.id),
+      name: beerName,
+    },
+  ])
 })
 
 test('edits beer styles', async () => {
@@ -211,7 +205,7 @@ test('edits beer styles', async () => {
     <BeerEditor
       initialBeer={{
         ...initialBeer,
-        styles: []
+        styles: [],
       }}
       searchIf={doSearch}
       onChange={onChange}
@@ -221,25 +215,27 @@ test('edits beer styles', async () => {
           create: dontCreateStyleIf,
           list: {
             useList: () => ({
-              styles: [ styleWithParentIds ],
+              styles: [styleWithParentIds],
               isLoading: false,
-            })
-          }
-        }
+            }),
+          },
+        },
       }}
-    />
+    />,
   )
   const styleSearch = getByPlaceholderText('Search style')
   await user.type(styleSearch, style.name)
   const styleButton = getByRole('button', { name: style.name })
   await user.click(styleButton)
   const calls = onChange.mock.calls
-  expect(calls[calls.length - 1]).toEqual([{
-    id,
-    breweries: breweries.map(b => b.id),
-    styles: [ style.id ],
-    name: beerName
-  }])
+  expect(calls[calls.length - 1]).toEqual([
+    {
+      id,
+      breweries: breweries.map((b) => b.id),
+      styles: [style.id],
+      name: beerName,
+    },
+  ])
 })
 
 test('edits invalid beer by empty name', async () => {
@@ -250,11 +246,11 @@ test('edits invalid beer by empty name', async () => {
       editBeerIf={dontEditBeer}
       initialBeer={{
         ...initialBeer,
-        name: ''
+        name: '',
       }}
       onChange={onChange}
       searchIf={dontSearch}
-    />
+    />,
   )
   const nameInput = getByPlaceholderText(namePlaceholder)
   await user.type(nameInput, 'S')
@@ -271,7 +267,7 @@ test('renders values', async () => {
       initialBeer={initialBeer}
       onChange={onChange}
       searchIf={dontSearch}
-    />
+    />,
   )
   getByText(brewery.name)
   getByText(style.name)

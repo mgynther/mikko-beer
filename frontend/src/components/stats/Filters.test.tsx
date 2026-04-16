@@ -16,20 +16,20 @@ const maxTime: YearMonth = testTimes.max.yearMonth
 const defaultFilters: StatsNoTimeFilters = {
   minReviewCount: {
     value: 1,
-    setValue: dontCall
+    setValue: dontCall,
   },
   maxReviewCount: {
     value: Infinity,
-    setValue: dontCall
+    setValue: dontCall,
   },
   minReviewAverage: {
     value: 4.0,
-    setValue: dontCall
+    setValue: dontCall,
   },
   maxReviewAverage: {
     value: 10.0,
-    setValue: dontCall
-  }
+    setValue: dontCall,
+  },
 }
 
 test('opens filters', async () => {
@@ -44,20 +44,18 @@ test('opens filters', async () => {
         min: minTime,
         max: maxTime,
         value: minTime,
-        setValue: dontCall
+        setValue: dontCall,
       }}
       timeEnd={{
         min: minTime,
         max: maxTime,
         value: maxTime,
-        setValue: dontCall
+        setValue: dontCall,
       }}
-    />
+    />,
   )
   await openFilters(getByRole, user)
-  expect(setIsOpen.mock.calls).toEqual([[
-    true
-  ]])
+  expect(setIsOpen.mock.calls).toEqual([[true]])
 })
 
 test('closes filters', async () => {
@@ -72,21 +70,19 @@ test('closes filters', async () => {
         min: minTime,
         max: maxTime,
         value: minTime,
-        setValue: dontCall
+        setValue: dontCall,
       }}
       timeEnd={{
         min: minTime,
         max: maxTime,
         value: maxTime,
-        setValue: dontCall
+        setValue: dontCall,
       }}
-    />
+    />,
   )
   const toggleButton = getByRole('button', { name: 'Filters ▲' })
   await user.click(toggleButton)
-  expect(setIsOpen.mock.calls).toEqual([[
-    false
-  ]])
+  expect(setIsOpen.mock.calls).toEqual([[false]])
 })
 
 test('renders values when open', () => {
@@ -95,20 +91,20 @@ test('renders values when open', () => {
       filters={{
         minReviewCount: {
           value: 3,
-          setValue: dontCall
+          setValue: dontCall,
         },
         maxReviewCount: {
           value: 13,
-          setValue: dontCall
+          setValue: dontCall,
         },
         minReviewAverage: {
           value: 6.8,
-          setValue: dontCall
+          setValue: dontCall,
         },
         maxReviewAverage: {
           value: 9.2,
-          setValue: dontCall
-        }
+          setValue: dontCall,
+        },
       }}
       isOpen={true}
       setIsOpen={() => undefined}
@@ -116,15 +112,15 @@ test('renders values when open', () => {
         min: minTime,
         max: maxTime,
         value: minTime,
-        setValue: dontCall
+        setValue: dontCall,
       }}
       timeEnd={{
         min: minTime,
         max: maxTime,
         value: maxTime,
-        setValue: dontCall
+        setValue: dontCall,
       }}
-    />
+    />,
   )
   getByRole('button', { name: 'Filters ▲' })
   getByText('Minimum review count: 3')
@@ -141,26 +137,26 @@ test('does not render time', () => {
       filters={{
         minReviewCount: {
           value: 3,
-          setValue: dontCall
+          setValue: dontCall,
         },
         maxReviewCount: {
           value: 13,
-          setValue: dontCall
+          setValue: dontCall,
         },
         minReviewAverage: {
           value: 6.8,
-          setValue: dontCall
+          setValue: dontCall,
         },
         maxReviewAverage: {
           value: 9.2,
-          setValue: dontCall
-        }
+          setValue: dontCall,
+        },
       }}
       isOpen={true}
       setIsOpen={() => undefined}
       timeStart={undefined}
       timeEnd={undefined}
-    />
+    />,
   )
   expect(queryByText('Minimum time:')).toBeNull()
   expect(queryByText('Maximum time:')).toBeNull()
@@ -173,20 +169,20 @@ test('sets minimum review count', () => {
       filters={{
         minReviewCount: {
           value: 3,
-          setValue: setMinimumReviewCount
+          setValue: setMinimumReviewCount,
         },
         maxReviewCount: {
           value: 13,
-          setValue: dontCall
+          setValue: dontCall,
         },
         minReviewAverage: {
           value: 6.8,
-          setValue: dontCall
+          setValue: dontCall,
         },
         maxReviewAverage: {
           value: 9.2,
-          setValue: dontCall
-        }
+          setValue: dontCall,
+        },
       }}
       isOpen={true}
       setIsOpen={() => undefined}
@@ -194,18 +190,18 @@ test('sets minimum review count', () => {
         min: minTime,
         max: maxTime,
         value: minTime,
-        setValue: dontCall
+        setValue: dontCall,
       }}
       timeEnd={{
         min: minTime,
         max: maxTime,
         value: maxTime,
-        setValue: dontCall
+        setValue: dontCall,
       }}
-    />
+    />,
   )
   const slider = getByDisplayValue('2')
-  fireEvent.change(slider, {target: {value: '3'}})
+  fireEvent.change(slider, { target: { value: '3' } })
   expect(setMinimumReviewCount.mock.calls).toEqual([[5]])
 })
 
@@ -216,20 +212,20 @@ test('sets maximum review count', () => {
       filters={{
         minReviewCount: {
           value: 3,
-          setValue: dontCall
+          setValue: dontCall,
         },
         maxReviewCount: {
           value: 13,
-          setValue: setMaximumReviewCount
+          setValue: setMaximumReviewCount,
         },
         minReviewAverage: {
           value: 6.8,
-          setValue: dontCall
+          setValue: dontCall,
         },
         maxReviewAverage: {
           value: 9.2,
-          setValue: dontCall
-        }
+          setValue: dontCall,
+        },
       }}
       isOpen={true}
       setIsOpen={() => undefined}
@@ -237,18 +233,18 @@ test('sets maximum review count', () => {
         min: minTime,
         max: maxTime,
         value: minTime,
-        setValue: dontCall
+        setValue: dontCall,
       }}
       timeEnd={{
         min: minTime,
         max: maxTime,
         value: maxTime,
-        setValue: dontCall
+        setValue: dontCall,
       }}
-    />
+    />,
   )
   const slider = getByDisplayValue('5')
-  fireEvent.change(slider, {target: {value: '6'}})
+  fireEvent.change(slider, { target: { value: '6' } })
   expect(setMaximumReviewCount.mock.calls).toEqual([[21]])
 })
 
@@ -259,20 +255,20 @@ test('sets minimum review average', () => {
       filters={{
         minReviewCount: {
           value: 3,
-          setValue: dontCall
+          setValue: dontCall,
         },
         maxReviewCount: {
           value: 13,
-          setValue: dontCall
+          setValue: dontCall,
         },
         minReviewAverage: {
           value: 6.8,
-          setValue: setMinimumReviewAverage
+          setValue: setMinimumReviewAverage,
         },
         maxReviewAverage: {
           value: 9.2,
-          setValue: dontCall
-        }
+          setValue: dontCall,
+        },
       }}
       isOpen={true}
       setIsOpen={() => undefined}
@@ -280,18 +276,18 @@ test('sets minimum review average', () => {
         min: minTime,
         max: maxTime,
         value: minTime,
-        setValue: dontCall
+        setValue: dontCall,
       }}
       timeEnd={{
         min: minTime,
         max: maxTime,
         value: maxTime,
-        setValue: dontCall
+        setValue: dontCall,
       }}
-    />
+    />,
   )
   const slider = getByDisplayValue('6.8')
-  fireEvent.change(slider, {target: {value: '6.9'}})
+  fireEvent.change(slider, { target: { value: '6.9' } })
   expect(setMinimumReviewAverage.mock.calls).toEqual([[6.9]])
 })
 
@@ -302,20 +298,20 @@ test('sets maximum review average', () => {
       filters={{
         minReviewCount: {
           value: 3,
-          setValue: dontCall
+          setValue: dontCall,
         },
         maxReviewCount: {
           value: 13,
-          setValue: dontCall
+          setValue: dontCall,
         },
         minReviewAverage: {
           value: 6.8,
-          setValue: dontCall
+          setValue: dontCall,
         },
         maxReviewAverage: {
           value: 9.2,
-          setValue: setMaximumReviewAverage
-        }
+          setValue: setMaximumReviewAverage,
+        },
       }}
       isOpen={true}
       setIsOpen={() => undefined}
@@ -323,18 +319,18 @@ test('sets maximum review average', () => {
         min: minTime,
         max: maxTime,
         value: minTime,
-        setValue: dontCall
+        setValue: dontCall,
       }}
       timeEnd={{
         min: minTime,
         max: maxTime,
         value: maxTime,
-        setValue: dontCall
+        setValue: dontCall,
       }}
-    />
+    />,
   )
   const slider = getByDisplayValue('9.2')
-  fireEvent.change(slider, {target: {value: '9.1'}})
+  fireEvent.change(slider, { target: { value: '9.1' } })
   expect(setMaximumReviewAverage.mock.calls).toEqual([[9.1]])
 })
 
@@ -345,20 +341,20 @@ test('sets minimum time', () => {
       filters={{
         minReviewCount: {
           value: 3,
-          setValue: dontCall
+          setValue: dontCall,
         },
         maxReviewCount: {
           value: 13,
-          setValue: dontCall
+          setValue: dontCall,
         },
         minReviewAverage: {
           value: 6.8,
-          setValue: dontCall
+          setValue: dontCall,
         },
         maxReviewAverage: {
           value: 9.2,
-          setValue: dontCall
-        }
+          setValue: dontCall,
+        },
       }}
       isOpen={true}
       setIsOpen={() => undefined}
@@ -367,24 +363,28 @@ test('sets minimum time', () => {
         max: maxTime,
         value: {
           year: 2018,
-          month: 1
+          month: 1,
         },
-        setValue: setMinimumTime
+        setValue: setMinimumTime,
       }}
       timeEnd={{
         min: minTime,
         max: maxTime,
         value: maxTime,
-        setValue: dontCall
+        setValue: dontCall,
       }}
-    />
+    />,
   )
   const slider = getByDisplayValue('1')
-  fireEvent.change(slider, {target: {value: '3'}})
-  expect(setMinimumTime.mock.calls).toEqual([[{
-    year: 2018,
-    month: 3
-  }]])
+  fireEvent.change(slider, { target: { value: '3' } })
+  expect(setMinimumTime.mock.calls).toEqual([
+    [
+      {
+        year: 2018,
+        month: 3,
+      },
+    ],
+  ])
 })
 
 test('sets maximum time', () => {
@@ -394,20 +394,20 @@ test('sets maximum time', () => {
       filters={{
         minReviewCount: {
           value: 3,
-          setValue: dontCall
+          setValue: dontCall,
         },
         maxReviewCount: {
           value: 13,
-          setValue: dontCall
+          setValue: dontCall,
         },
         minReviewAverage: {
           value: 6.8,
-          setValue: dontCall
+          setValue: dontCall,
         },
         maxReviewAverage: {
           value: 9.2,
-          setValue: dontCall
-        }
+          setValue: dontCall,
+        },
       }}
       isOpen={true}
       setIsOpen={() => undefined}
@@ -415,23 +415,27 @@ test('sets maximum time', () => {
         min: minTime,
         max: maxTime,
         value: minTime,
-        setValue: dontCall
+        setValue: dontCall,
       }}
       timeEnd={{
         min: minTime,
         max: maxTime,
         value: {
           year: 2018,
-          month: 4
+          month: 4,
         },
-        setValue: setMaximumTime
+        setValue: setMaximumTime,
       }}
-    />
+    />,
   )
   const slider = getByDisplayValue('4')
-  fireEvent.change(slider, {target: {value: '5'}})
-  expect(setMaximumTime.mock.calls).toEqual([[{
-    year: 2018,
-    month: 5
-  }]])
+  fireEvent.change(slider, { target: { value: '5' } })
+  expect(setMaximumTime.mock.calls).toEqual([
+    [
+      {
+        year: 2018,
+        month: 5,
+      },
+    ],
+  ])
 })

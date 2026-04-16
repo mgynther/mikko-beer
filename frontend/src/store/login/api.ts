@@ -1,16 +1,12 @@
 import { emptySplitApi } from '../api'
 
-import {
-  logout,
-  passwordChangeResult,
-  success
-} from './reducer'
+import { logout, passwordChangeResult, success } from './reducer'
 import {
   type Login,
   type ChangePasswordParams,
   type LoginParams,
   type LogoutParams,
-  PasswordChangeResult
+  PasswordChangeResult,
 } from '../../core/login/types'
 
 const loginApi = emptySplitApi.injectEndpoints({
@@ -19,61 +15,63 @@ const loginApi = emptySplitApi.injectEndpoints({
       query: (body: LoginParams) => ({
         url: '/user/sign-in',
         method: 'POST',
-        body
+        body,
       }),
-      async onQueryStarted (_, { dispatch, queryFulfilled }) {
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled
-          dispatch(success({
-            user: data.user,
-            authToken: data.authToken,
-            refreshToken: data.refreshToken
-          }))
+          dispatch(
+            success({
+              user: data.user,
+              authToken: data.authToken,
+              refreshToken: data.refreshToken,
+            }),
+          )
         } catch {
           // Login failure doesn't need any handling but we don't want to
           // reject.
         }
       },
-      invalidatesTags: ['Login']
+      invalidatesTags: ['Login'],
     }),
     changePassword: build.mutation<undefined, Partial<ChangePasswordParams>>({
       query: (params: ChangePasswordParams) => ({
         url: `/user/${params.userId}/change-password`,
         method: 'POST',
-        body: params.body
+        body: params.body,
       }),
-      async onQueryStarted (_, { dispatch, queryFulfilled }) {
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled
           dispatch(passwordChangeResult(PasswordChangeResult.SUCCESS))
         } catch (_) {
           dispatch(passwordChangeResult(PasswordChangeResult.ERROR))
         }
-      }
+      },
     }),
     logout: build.mutation<{ success: true }, Partial<LogoutParams>>({
       query: (params: LogoutParams) => ({
         url: `/user/${params.userId}/sign-out`,
         method: 'POST',
-        body: params.body
+        body: params.body,
       }),
-      async onQueryStarted (_, { dispatch, queryFulfilled }) {
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled
         } finally {
           dispatch(logout())
         }
       },
-      invalidatesTags: ['Login']
-    })
+      invalidatesTags: ['Login'],
+    }),
   }),
-  overrideExisting: false
+  overrideExisting: false,
 })
 
 export const {
   useChangePasswordMutation,
   useLoginMutation,
-  useLogoutMutation
+  useLogoutMutation,
 } = loginApi
 
 export const { endpoints, reducerPath, reducer, middleware } = loginApi

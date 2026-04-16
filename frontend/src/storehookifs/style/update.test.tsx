@@ -40,25 +40,22 @@ test('update style', async () => {
     style: {
       id: '8cc5fe99-8f76-4a53-933f-86494dc77e1e',
       name: 'Test style',
-      parents: []
-    }
+      parents: [],
+    },
   }
 
-  addTestServerResponse<{style: StyleWithParentIds}>({
+  addTestServerResponse<{ style: StyleWithParentIds }>({
     method: 'PUT',
     pathname: `/api/v1/style/${expectedResponse.style.id}`,
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const handler = vitest.fn()
   const { getByRole, getByText } = render(
     <Provider store={store}>
-      <Helper
-        style={expectedResponse.style}
-        handler={handler}
-      />
-    </Provider>
+      <Helper style={expectedResponse.style} handler={handler} />
+    </Provider>,
   )
   const testButton = getByRole('button', { name: 'Test' })
   await user.click(testButton)

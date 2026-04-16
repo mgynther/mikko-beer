@@ -1,13 +1,11 @@
-import { useId } from "react"
-import type { SearchIf } from "../core/search/types"
-import type { UseDebounce } from "../core/types"
-import { useDispatch, useSelector } from "../react-redux-wrapper"
-import { activate, selectActiveSearch } from "../store/search/reducer"
+import { useId } from 'react'
+import type { SearchIf } from '../core/search/types'
+import type { UseDebounce } from '../core/types'
+import { useDispatch, useSelector } from '../react-redux-wrapper'
+import { activate, selectActiveSearch } from '../store/search/reducer'
 
-const search: (
-  useDebounce: UseDebounce<string>
-) => SearchIf = (
-  useDebounce: UseDebounce<string>
+const search: (useDebounce: UseDebounce<string>) => SearchIf = (
+  useDebounce: UseDebounce<string>,
 ) => {
   const searchIf: SearchIf = {
     useSearch: () => {
@@ -19,10 +17,10 @@ const search: (
         activate: (): undefined => {
           dispatch(activate(id))
         },
-        isActive
+        isActive,
       }
     },
-    useDebounce
+    useDebounce,
   }
   return searchIf
 }

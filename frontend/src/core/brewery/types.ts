@@ -1,4 +1,4 @@
-import type { Pagination , InfiniteScroll } from "../types"
+import type { Pagination, InfiniteScroll } from '../types'
 
 export interface CreateBreweryRequest {
   name: string
@@ -33,7 +33,7 @@ export interface ListBreweriesIf {
     breweryList: BreweryList | undefined
     isLoading: boolean
     isUninitialized: boolean
-  },
+  }
   infiniteScroll: InfiniteScroll
 }
 
@@ -46,12 +46,12 @@ export interface UpdateBreweryIf {
 
 export interface SearchBreweryIf {
   useSearch: () => {
-    search: (name: string) => Promise<Brewery[]>,
+    search: (name: string) => Promise<Brewery[]>
     isLoading: boolean
   }
 }
 
 export interface SelectBreweryIf {
-  create: CreateBreweryIf,
+  create: CreateBreweryIf
   search: SearchBreweryIf
 }

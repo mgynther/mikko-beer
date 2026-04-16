@@ -7,7 +7,7 @@ import LinkWrapper from '../LinkWrapper'
 import type {
   BreweryStatsSortingOrder,
   StatsFilters,
-  YearMonth
+  YearMonth,
 } from '../../core/stats/types'
 import type { ListDirection } from '../../core/types'
 import { openFilters } from './filters-test-util'
@@ -21,7 +21,7 @@ const koskipanimo = {
   breweryName: 'Koskipanimo',
   reviewAverage: '9.06',
   reviewCount: '63',
-  reviewedBeerCount: '62'
+  reviewedBeerCount: '62',
 }
 
 const lehe = {
@@ -29,7 +29,7 @@ const lehe = {
   breweryName: 'Lehe pruulikoda',
   reviewAverage: '9.71',
   reviewCount: '24',
-  reviewedBeerCount: '24'
+  reviewedBeerCount: '24',
 }
 
 const minTime: YearMonth = testTimes.min.yearMonth
@@ -38,42 +38,39 @@ const maxTime: YearMonth = testTimes.max.yearMonth
 const unusedFilters: StatsFilters = {
   minReviewCount: {
     value: 1,
-    setValue: dontCall
+    setValue: dontCall,
   },
   maxReviewCount: {
     value: Infinity,
-    setValue: dontCall
+    setValue: dontCall,
   },
   minReviewAverage: {
     value: 4.0,
-    setValue: dontCall
+    setValue: dontCall,
   },
   maxReviewAverage: {
     value: 10.0,
-    setValue: dontCall
+    setValue: dontCall,
   },
   timeStart: {
     min: minTime,
     max: maxTime,
     value: minTime,
-    setValue: dontCall
+    setValue: dontCall,
   },
   timeEnd: {
     min: minTime,
     max: maxTime,
     value: maxTime,
-    setValue: dontCall
-  }
+    setValue: dontCall,
+  },
 }
 
 test('renders brewery stats', () => {
   const { getByText } = render(
     <LinkWrapper>
       <BreweryStatsTable
-        breweries={[
-          koskipanimo,
-          lehe
-        ]}
+        breweries={[koskipanimo, lehe]}
         isLoading={false}
         sortingDirection={'asc'}
         sortingOrder={'brewery_name'}
@@ -82,7 +79,7 @@ test('renders brewery stats', () => {
         isFiltersOpen={false}
         setIsFiltersOpen={dontCall}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   getByText(koskipanimo.breweryName)
   getByText(koskipanimo.reviewAverage)
@@ -98,7 +95,7 @@ test('opens filters', async () => {
   const { getByRole } = render(
     <LinkWrapper>
       <BreweryStatsTable
-        breweries={[ koskipanimo, lehe ]}
+        breweries={[koskipanimo, lehe]}
         isLoading={false}
         sortingDirection={'asc'}
         sortingOrder={'brewery_name'}
@@ -107,17 +104,17 @@ test('opens filters', async () => {
         isFiltersOpen={false}
         setIsFiltersOpen={setIsFiltersOpen}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   await openFilters(getByRole, user)
   expect(setIsFiltersOpen.mock.calls).toEqual([[true]])
 })
 
 interface OrderTestData {
-  buttonText: string,
+  buttonText: string
   expectedOrder: BreweryStatsSortingOrder
-  order: BreweryStatsSortingOrder,
-  sortingDirection: ListDirection,
+  order: BreweryStatsSortingOrder
+  sortingDirection: ListDirection
   testName: string
 }
 
@@ -127,41 +124,38 @@ const orderTests: OrderTestData[] = [
     expectedOrder: 'brewery_name',
     order: 'brewery_name',
     sortingDirection: 'asc',
-    testName: 'brewery name, flip order'
+    testName: 'brewery name, flip order',
   },
   {
     buttonText: 'Brewery ▼',
     expectedOrder: 'brewery_name',
     order: 'brewery_name',
     sortingDirection: 'desc',
-    testName: 'brewery name desc, flip order'
+    testName: 'brewery name desc, flip order',
   },
   {
     buttonText: 'Reviews',
     expectedOrder: 'count',
     order: 'brewery_name',
     sortingDirection: 'asc',
-    testName: 'reviews'
+    testName: 'reviews',
   },
   {
     buttonText: 'Average',
     expectedOrder: 'average',
     order: 'brewery_name',
     sortingDirection: 'asc',
-    testName: 'average'
-  }
+    testName: 'average',
+  },
 ]
 
-orderTests.forEach(data => {
+orderTests.forEach((data) => {
   test(`set order to ${data.testName}`, () => {
     const setSortingOrder = vitest.fn()
     const { getByRole } = render(
       <LinkWrapper>
         <BreweryStatsTable
-          breweries={[
-            koskipanimo,
-            lehe
-          ]}
+          breweries={[koskipanimo, lehe]}
           isLoading={false}
           sortingDirection={data.sortingDirection}
           sortingOrder={data.order}
@@ -170,7 +164,7 @@ orderTests.forEach(data => {
           isFiltersOpen={false}
           setIsFiltersOpen={dontCall}
         />
-      </LinkWrapper>
+      </LinkWrapper>,
     )
     const orderButton = getByRole('button', { name: data.buttonText })
     orderButton.click()
@@ -183,10 +177,7 @@ test('sets minimum review count filter', () => {
   const { getByDisplayValue } = render(
     <LinkWrapper>
       <BreweryStatsTable
-        breweries={[
-          koskipanimo,
-          lehe
-        ]}
+        breweries={[koskipanimo, lehe]}
         isLoading={false}
         sortingDirection={'asc'}
         sortingOrder={'brewery_name'}
@@ -194,39 +185,39 @@ test('sets minimum review count filter', () => {
         filters={{
           minReviewCount: {
             value: 3,
-            setValue: setMinimumReviewCount
+            setValue: setMinimumReviewCount,
           },
           maxReviewCount: {
             value: Infinity,
-            setValue: dontCall
+            setValue: dontCall,
           },
           minReviewAverage: {
             value: 4.0,
-            setValue: dontCall
+            setValue: dontCall,
           },
           maxReviewAverage: {
             value: 10.0,
-            setValue: dontCall
+            setValue: dontCall,
           },
           timeStart: {
             min: minTime,
             max: maxTime,
             value: minTime,
-            setValue: dontCall
+            setValue: dontCall,
           },
           timeEnd: {
             min: minTime,
             max: maxTime,
             value: maxTime,
-            setValue: dontCall
-          }
+            setValue: dontCall,
+          },
         }}
         isFiltersOpen={true}
         setIsFiltersOpen={dontCall}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   const slider = getByDisplayValue('2')
-  fireEvent.change(slider, {target: {value: '3'}})
+  fireEvent.change(slider, { target: { value: '3' } })
   expect(setMinimumReviewCount.mock.calls).toEqual([[5]])
 })

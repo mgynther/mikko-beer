@@ -1,4 +1,4 @@
-import type { User } from "../user/types"
+import type { User } from '../user/types'
 
 export interface ChangePasswordParams {
   userId: string
@@ -32,7 +32,7 @@ export interface Login extends Refresh {
 export enum PasswordChangeResult {
   ERROR = 'ERROR',
   SUCCESS = 'SUCCESS',
-  UNDEFINED = 'UNDEFINED'
+  UNDEFINED = 'UNDEFINED',
 }
 
 export interface LoginIf {
@@ -55,7 +55,7 @@ export interface ChangePasswordIf {
   useChangePassword: () => {
     changePassword: (params: ChangePasswordParams) => Promise<void>
     isLoading: boolean
-  },
+  }
   useGetPasswordChangeResult: () => {
     getResult: GetPasswordChangeResult
   }

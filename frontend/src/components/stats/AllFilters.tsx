@@ -11,7 +11,7 @@ interface Props {
   setIsOpen: (isOpen: boolean) => void
 }
 
-function AllFilters (props: Props): React.JSX.Element {
+function AllFilters(props: Props): React.JSX.Element {
   return (
     <Filters
       filters={props.filters}

@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import type {
   JoinedReview,
   Review as ReviewType,
-  ReviewIf
+  ReviewIf,
 } from '../../core/review/types'
 import type { SearchIf } from '../../core/search/types'
 
@@ -26,63 +26,69 @@ interface Props {
   onChanged: (() => void) | undefined
 }
 
-function Review (props: Props): React.JSX.Element {
+function Review(props: Props): React.JSX.Element {
   const [mode, setMode] = useState(EditableMode.View)
   const { get } = props.reviewIf.get.useGet()
   const review = props.review
 
   const [isOpen, setIsOpen] = useState(false)
 
-  const [fullReview, setFullReview] =
-    useState<ReviewType | undefined>(undefined)
+  const [fullReview, setFullReview] = useState<ReviewType | undefined>(
+    undefined,
+  )
 
-  async function fetchReview (id: string): Promise<void> {
+  async function fetchReview(id: string): Promise<void> {
     setIsOpen(true)
     const review = await get(id)
     setFullReview(review)
   }
 
-  function formatDate (date: Date): string {
+  function formatDate(date: Date): string {
     return date.toISOString().substring(0, 10)
   }
 
   return (
     <>
       {mode === EditableMode.View && (
-        <div className='Review RowLike' key={review.id} onClick={() => {
-          if (fullReview === undefined) {
-            void fetchReview(review.id)
-            return
-          }
-          setIsOpen(!isOpen)
-        }}>
+        <div
+          className='Review RowLike'
+          key={review.id}
+          onClick={() => {
+            if (fullReview === undefined) {
+              void fetchReview(review.id)
+              return
+            }
+            setIsOpen(!isOpen)
+          }}
+        >
           <div className='Review-primary-info-row'>
             <div>
               <BreweryLinks breweries={review.breweries} />
             </div>
             <div>
-              <BeerLink beer={{
-                id: review.beerId,
-                name: review.beerName
-              }} />
+              <BeerLink
+                beer={{
+                  id: review.beerId,
+                  name: review.beerName,
+                }}
+              />
             </div>
             <div>
               <StyleLinks styles={review.styles} />
             </div>
-            <div
-              className={`Review-rating Review-rating-${review.rating}`}>
+            <div className={`Review-rating Review-rating-${review.rating}`}>
               <div>{review.rating}</div>
             </div>
-            <div className='Review-time'>{
-              formatDate(new Date(review.time))
-            }</div>
+            <div className='Review-time'>
+              {formatDate(new Date(review.time))}
+            </div>
           </div>
           <div className='Review-secondary-info-row'>
             <ContainerInfo container={review.container} />
             <div>
-              {review.location !== undefined &&
+              {review.location !== undefined && (
                 <LocationLink location={review.location} />
-              }
+              )}
             </div>
           </div>
           {review.additionalInfo !== '' && (
@@ -118,7 +124,7 @@ function Review (props: Props): React.JSX.Element {
             updateReviewIf={props.reviewIf.update}
             initialReview={{
               joined: review,
-              review: fullReview
+              review: fullReview,
             }}
             onCancel={() => {
               setMode(EditableMode.View)

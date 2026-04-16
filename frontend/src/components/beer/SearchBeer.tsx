@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import type {
-  Beer,
-  BeerWithIds,
-  SearchBeerIf
-} from '../../core/beer/types'
+import type { Beer, BeerWithIds, SearchBeerIf } from '../../core/beer/types'
 import type { SearchIf } from '../../core/search/types'
 
 import SearchBox from '../common/SearchBox'
@@ -19,13 +15,13 @@ export interface Props {
   select: (beer: BeerWithIds) => void
 }
 
-function SearchBeer (props: Props): React.JSX.Element {
+function SearchBeer(props: Props): React.JSX.Element {
   const { search, isLoading } = props.searchBeerIf.useSearch()
   const [filter, setFilter] = useState('')
   const [debouncedFilter] = props.searchIf.useDebounce(filter)
   const [results, setResults] = useState<Beer[]>([])
 
-  async function doSearch (filter: string): Promise<void> {
+  async function doSearch(filter: string): Promise<void> {
     const result = await search(filter)
     setResults(result)
   }
@@ -50,13 +46,15 @@ function SearchBeer (props: Props): React.JSX.Element {
         }}
         isLoading={isLoading}
         searchIf={props.searchIf}
-        setFilter={(filter: string) => { setFilter(filter) }}
+        setFilter={(filter: string) => {
+          setFilter(filter)
+        }}
         select={(beer: Beer) => {
           props.select({
             id: beer.id,
             name: beer.name,
-            breweries: beer.breweries.map(b => b.id),
-            styles: beer.styles.map(s => s.id)
+            breweries: beer.breweries.map((b) => b.id),
+            styles: beer.styles.map((s) => s.id),
           })
         }}
         title={'Search beer'}

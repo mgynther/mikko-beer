@@ -20,17 +20,15 @@ test('creates container', async () => {
     <CreateContainer
       select={selectContainer}
       createContainerIf={{
-          useCreate: () => ({
-            create: async (
-              container: ContainerRequest
-            ): Promise<Container> => ({
-              ...container,
-              id
-            }),
-            isLoading: false
-          })
+        useCreate: () => ({
+          create: async (container: ContainerRequest): Promise<Container> => ({
+            ...container,
+            id,
+          }),
+          isLoading: false,
+        }),
       }}
-    />
+    />,
   )
   const createButton = getByRole('button', { name: 'Create' })
   const typeInput = getByPlaceholderText(typePlaceholder)
@@ -41,11 +39,15 @@ test('creates container', async () => {
   expect(createButton.hasAttribute('disabled')).toEqual(false)
   await user.click(createButton)
   const createCalls = selectContainer.mock.calls
-  expect(createCalls).toEqual([[{
-    id,
-    type: 'Bottle',
-    size: '0.33'
-  }]])
+  expect(createCalls).toEqual([
+    [
+      {
+        id,
+        type: 'Bottle',
+        size: '0.33',
+      },
+    ],
+  ])
 })
 
 test('render loading', async () => {
@@ -54,12 +56,12 @@ test('render loading', async () => {
     <CreateContainer
       select={selectContainer}
       createContainerIf={{
-          useCreate: () => ({
-            create: dontCall,
-            isLoading: true
-          })
+        useCreate: () => ({
+          create: dontCall,
+          isLoading: true,
+        }),
       }}
-    />
+    />,
   )
   getByText(loadingIndicatorText)
 })

@@ -11,9 +11,11 @@ function Helper(): React.JSX.Element {
   const { data } = listIf.useList()
   return (
     <div>
-      {data?.containers.map(container =>
-        <div key={container.id}>{container.type} {container.size}</div>
-      )}
+      {data?.containers.map((container) => (
+        <div key={container.id}>
+          {container.type} {container.size}
+        </div>
+      ))}
     </div>
   )
 }
@@ -24,35 +26,35 @@ test('list containers', async () => {
       {
         id: '655a8095-5dc5-4e7e-a461-b543d6d3fbaa',
         type: 'draft',
-        size: '0.10'
+        size: '0.10',
       },
       {
         id: 'f70e0233-6ca9-4899-8a88-fa0c0e718a49',
         type: 'can',
-        size: '0.44'
-      }
-    ]
+        size: '0.44',
+      },
+    ],
   }
 
   addTestServerResponse<ContainerList>({
     method: 'GET',
     pathname: `/api/v1/container`,
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const { getByText } = render(
     <Provider store={store}>
       <Helper />
-    </Provider>
+    </Provider>,
   )
   await waitFor(() => {
-    const [ firstContainer, secondContainer ] = expectedResponse.containers
+    const [firstContainer, secondContainer] = expectedResponse.containers
     expect(
-      getByText(`${firstContainer.type} ${firstContainer.size}`)
+      getByText(`${firstContainer.type} ${firstContainer.size}`),
     ).toBeDefined()
     expect(
-      getByText(`${secondContainer.type} ${secondContainer.size}`)
+      getByText(`${secondContainer.type} ${secondContainer.size}`),
     ).toBeDefined()
   })
 })

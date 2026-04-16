@@ -7,16 +7,16 @@ test('renders monthly storage stats', () => {
     <MonthlyStats
       monthlyStatsIf={{
         useMonthlyStats: () => ({
-            stats: {
-              monthly: [
-                { year: '2021', month: '4', count: '8' },
-                { year: '2024', month: '10', count: '15' },
-              ]
-            },
-            isLoading: false
-          })
+          stats: {
+            monthly: [
+              { year: '2021', month: '4', count: '8' },
+              { year: '2024', month: '10', count: '15' },
+            ],
+          },
+          isLoading: false,
+        }),
       }}
-    />
+    />,
   )
   getByText('2021-04')
   getByText('8')

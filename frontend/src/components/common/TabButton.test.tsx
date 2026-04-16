@@ -11,7 +11,7 @@ test('clicks button', () => {
       isSelected={false}
       onClick={onClick}
       title={title}
-    />
+    />,
   )
   const saveButton = getByRole('button', { name: title })
   saveButton.click()

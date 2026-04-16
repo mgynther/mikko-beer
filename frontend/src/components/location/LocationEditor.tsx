@@ -8,7 +8,7 @@ interface Props {
   onChange: (location: Location | undefined) => void
 }
 
-function LocationEditor (props: Props): React.JSX.Element {
+function LocationEditor(props: Props): React.JSX.Element {
   const [name, setName] = useState(props.location.name)
   return (
     <div>
@@ -16,7 +16,7 @@ function LocationEditor (props: Props): React.JSX.Element {
         type='text'
         placeholder={props.placeholder}
         value={name}
-        onChange={e => {
+        onChange={(e) => {
           const fullNewName = e.target.value.trimStart()
           setName(fullNewName)
           const newName = fullNewName.trim()
@@ -26,7 +26,7 @@ function LocationEditor (props: Props): React.JSX.Element {
           }
           props.onChange({
             ...props.location,
-            name: newName
+            name: newName,
           })
         }}
       />

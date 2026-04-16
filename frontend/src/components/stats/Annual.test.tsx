@@ -17,17 +17,17 @@ test('renders annual stats', () => {
             stats: {
               annual: [
                 { reviewAverage: '8.23', reviewCount: '24', year: '2021' },
-                { reviewAverage: '7.87', reviewCount: '10', year: '2020' }
-              ]
+                { reviewAverage: '7.87', reviewCount: '10', year: '2020' },
+              ],
             },
-            isLoading: false
+            isLoading: false,
           }
-        }
+        },
       }}
       breweryId={breweryId}
       locationId={locationId}
       styleId={styleId}
-    />
+    />,
   )
   expect(stats.mock.calls).toEqual([[{ breweryId, locationId, styleId }]])
   getByText('8.23')

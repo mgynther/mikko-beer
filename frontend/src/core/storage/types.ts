@@ -53,7 +53,7 @@ export interface CreateStorageIf {
 
 export interface GetStorageIf {
   useGet: (storageId: string) => {
-    storage: Storage | undefined,
+    storage: Storage | undefined
     isLoading: boolean
   }
 }
@@ -68,7 +68,7 @@ export interface ListStoragesIf {
   useList: () => {
     storages: StorageList | undefined
     isLoading: boolean
-  },
+  }
   delete: DeleteStorageIf
 }
 
@@ -76,7 +76,7 @@ export interface ListStoragesByIf {
   useList: (id: string) => {
     storages: StorageList | undefined
     isLoading: boolean
-  },
+  }
   delete: DeleteStorageIf
 }
 

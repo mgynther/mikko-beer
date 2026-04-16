@@ -1,11 +1,5 @@
-import type {
-  Brewery,
-  SelectBreweryIf
-} from '../brewery/types'
-import type {
-  SelectStyleIf,
-  Style
-} from '../style/types'
+import type { Brewery, SelectBreweryIf } from '../brewery/types'
+import type { SelectStyleIf, Style } from '../style/types'
 import type { InfiniteScroll, Pagination } from '../types'
 
 export interface CreateBeerRequest {
@@ -36,7 +30,7 @@ export interface CreateBeerIf {
   useCreate: () => {
     create: (request: CreateBeerRequest) => Promise<BeerWithIds>
     isLoading: boolean
-  },
+  }
   editBeerIf: EditBeerIf
 }
 
@@ -44,7 +38,7 @@ export interface UpdateBeerIf {
   useUpdate: () => {
     update: (request: BeerWithIds) => Promise<void>
     isLoading: boolean
-  },
+  }
   editBeerIf: EditBeerIf
 }
 
@@ -61,7 +55,7 @@ export interface ListBeersIf {
     beerList: BeerList | undefined
     isLoading: boolean
     isUninitialized: boolean
-  },
+  }
   infiniteScroll: InfiniteScroll
 }
 

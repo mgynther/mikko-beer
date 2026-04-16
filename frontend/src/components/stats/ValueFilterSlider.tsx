@@ -10,14 +10,14 @@ interface Props {
   setValue: (index: number) => void
 }
 
-function ValueFilterSlider (props: Props): React.JSX.Element {
-  function getSliderValue (index: number): number {
+function ValueFilterSlider(props: Props): React.JSX.Element {
+  function getSliderValue(index: number): number {
     return props.values[index]
   }
-  function setSliderDisplayValue (index: number): void {
+  function setSliderDisplayValue(index: number): void {
     props.setDisplayValue(getSliderValue(index))
   }
-  function setSliderValue (index: number): void {
+  function setSliderValue(index: number): void {
     props.setValue(getSliderValue(index))
   }
   const index = props.values.indexOf(props.value)

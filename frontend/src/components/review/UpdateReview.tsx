@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import type {
   UpdateReviewIf,
   JoinedReview,
-  ReviewRequest
+  ReviewRequest,
 } from '../../core/review/types'
 
 import type { SearchIf } from '../../core/search/types'
@@ -23,16 +23,16 @@ interface Props {
   onSaved: () => void
 }
 
-function UpdateReview (props: Props): React.JSX.Element {
+function UpdateReview(props: Props): React.JSX.Element {
   const [currentDate] = useState<Date>(new Date())
   const [newReview, setNewReview] = useState<ReviewRequest | undefined>(
-    undefined
+    undefined,
   )
   const { update, isLoading } = props.updateReviewIf.useUpdate()
-  async function doUpdate (newReview: ReviewRequest): Promise<void> {
+  async function doUpdate(newReview: ReviewRequest): Promise<void> {
     await update({
       ...newReview,
-      id: props.initialReview.joined.id
+      id: props.initialReview.joined.id,
     })
     props.onSaved()
   }
@@ -57,9 +57,13 @@ function UpdateReview (props: Props): React.JSX.Element {
           setNewReview(undefined)
           props.onCancel()
         }}
-        onSave={newReview
-          ? (): void => { void doUpdate(newReview) }
-          : undefined}
+        onSave={
+          newReview
+            ? (): void => {
+                void doUpdate(newReview)
+              }
+            : undefined
+        }
       />
     </>
   )

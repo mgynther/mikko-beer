@@ -9,26 +9,26 @@ const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const useDebounce: UseDebounce<string> = str => [str, false]
+const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 const parent = {
   id: '1771b86d-236f-40e8-a4ce-cb464cdce2d1',
   name: 'Ale',
-  parents: []
+  parents: [],
 }
 
 const otherParent = {
   id: '6ebda485-2b36-4ec6-8793-3579066eecca',
   name: 'Lager',
-  parents: []
+  parents: [],
 }
 
 const useSearch: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
-    isActive: true
+    isActive: true,
   }),
-  useDebounce
+  useDebounce,
 }
 
 test('creates style', async () => {
@@ -46,20 +46,20 @@ test('creates style', async () => {
             createdStyle: { id: createdId, name },
             hasError: false,
             isLoading: false,
-            isSuccess: create.mock.calls.length === 1
-          })
+            isSuccess: create.mock.calls.length === 1,
+          }),
         },
         list: {
           useList: () => ({
             styles: [parent, otherParent],
-            isLoading: false
-          })
-        }
+            isLoading: false,
+          }),
+        },
       }}
       remove={dontCall}
       searchIf={useSearch}
       select={select}
-    />
+    />,
   )
   const nameInput = getByPlaceholderText('Name')
   await user.clear(nameInput)
@@ -79,18 +79,26 @@ test('creates style', async () => {
 
   const createButton = getByRole('button', { name: 'Create' })
   await user.click(createButton)
-  expect(create.mock.calls).toEqual([[{
-    name,
-    parents: [parent, otherParent].map(p => p.id)
-  }]])
+  expect(create.mock.calls).toEqual([
+    [
+      {
+        name,
+        parents: [parent, otherParent].map((p) => p.id),
+      },
+    ],
+  ])
 
   // Something is needed here to trigger rendering. In the full application it
   // happens on its own.
   await user.clear(nameInput)
-  expect(select.mock.calls).toEqual([[{
-    id: createdId,
-    name
-  }]])
+  expect(select.mock.calls).toEqual([
+    [
+      {
+        id: createdId,
+        name,
+      },
+    ],
+  ])
 })
 
 test('removes style', async () => {
@@ -104,20 +112,20 @@ test('removes style', async () => {
             createdStyle: undefined,
             hasError: false,
             isLoading: false,
-            isSuccess: false
-          })
+            isSuccess: false,
+          }),
         },
         list: {
           useList: () => ({
             styles: [parent, otherParent],
-            isLoading: false
-          })
-        }
+            isLoading: false,
+          }),
+        },
       }}
       remove={remove}
       searchIf={useSearch}
       select={dontCall}
-    />
+    />,
   )
   const removeButton = getByRole('button', { name: 'Remove' })
   removeButton.click()

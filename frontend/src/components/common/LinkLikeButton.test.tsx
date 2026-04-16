@@ -8,10 +8,7 @@ test('handles click', async () => {
   const user = userEvent.setup()
   const click = vitest.fn()
   const { getByRole } = render(
-    <LinkLikeButton
-      onClick={click}
-      text="Button text"
-    />
+    <LinkLikeButton onClick={click} text='Button text' />,
   )
   const button = getByRole('button', { name: 'Button text' })
   await user.click(button)

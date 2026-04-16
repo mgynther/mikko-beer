@@ -1,7 +1,7 @@
 export enum LocationTags {
-  Location = 'Location'
+  Location = 'Location',
 }
 
-export function locationTagTypes (): string[] {
+export function locationTagTypes(): string[] {
   return [LocationTags.Location]
 }

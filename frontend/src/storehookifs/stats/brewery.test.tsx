@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
-import { infiniteScroll } from "../../components/util"
-import type { NavigateIf } from "../../components/util";
+import { infiniteScroll } from '../../components/util'
+import type { NavigateIf } from '../../components/util'
 import { store } from '../../store/store'
 import { addTestServerResponse } from '../../../test-util/server'
 import statsHook from './stats'
@@ -13,41 +13,41 @@ import Button from '../../components/common/Button'
 import type {
   BreweryStats,
   BreweryStatsQueryParams,
-  YearMonth
+  YearMonth,
 } from '../../core/stats/types'
 import type { UseDebounce } from '../../core/types'
 
 const minTime: YearMonth = testTimes.min.yearMonth
 const maxTime: YearMonth = testTimes.max.yearMonth
 
-const getUseDebounce = function<T>(): UseDebounce<T> {
+const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
 }
 
-function BreweryStatsHelper(
-  props: { queryParams: BreweryStatsQueryParams }
-): React.JSX.Element {
+function BreweryStatsHelper(props: {
+  queryParams: BreweryStatsQueryParams
+}): React.JSX.Element {
   const navigateIf: NavigateIf = {
-    useNavigate: () => () => undefined
+    useNavigate: () => () => undefined,
   }
   const statsIf = statsHook(
     infiniteScroll,
     navigateIf,
     minTime,
     maxTime,
-    getUseDebounce
+    getUseDebounce,
   )
   const { query, stats } = statsIf.brewery.useStats()
   return (
     <div>
-      {stats?.brewery.map(brewery =>
+      {stats?.brewery.map((brewery) => (
         <div key={brewery.breweryId}>
           <div>{brewery.breweryName}</div>
           <div>{brewery.reviewAverage}</div>
           <div>{brewery.reviewCount}</div>
           <div>{brewery.reviewedBeerCount}</div>
         </div>
-      )}
+      ))}
       <Button
         onClick={() => {
           void query(props.queryParams)
@@ -68,16 +68,16 @@ test('brewery stats', async () => {
         breweryName: 'Koskipanimo',
         reviewAverage: '9.08',
         reviewCount: '77',
-        reviewedBeerCount: '72'
+        reviewedBeerCount: '72',
       },
       {
         breweryId: 'f78d663c-7ed2-4109-9070-5133887ee0d8',
         breweryName: 'Mallassepät',
         reviewAverage: '9.23',
         reviewCount: '61',
-        reviewedBeerCount: '60'
-      }
-    ]
+        reviewedBeerCount: '60',
+      },
+    ],
   }
 
   const queryParams: BreweryStatsQueryParams = {
@@ -87,47 +87,35 @@ test('brewery stats', async () => {
     pagination: { skip: 0, size: 10 },
     sorting: {
       order: 'average',
-      direction: 'asc'
+      direction: 'asc',
     },
     minReviewCount: 40,
     maxReviewCount: 80,
-    minReviewAverage: 9.00,
-    maxReviewAverage: 9.30,
+    minReviewAverage: 9.0,
+    maxReviewAverage: 9.3,
     timeStart: testTimes.min.utcTimestamp,
-    timeEnd: testTimes.max.utcTimestamp
+    timeEnd: testTimes.max.utcTimestamp,
   }
 
   addTestServerResponse<BreweryStats>({
     method: 'GET',
-    pathname: `/api/v1/stats/brewery?size=${
-      queryParams.pagination.size
-    }&skip=${
+    pathname: `/api/v1/stats/brewery?size=${queryParams.pagination.size}&skip=${
       queryParams.pagination.skip
-    }&order=${
-      queryParams.sorting.order
-    }&direction=${
+    }&order=${queryParams.sorting.order}&direction=${
       queryParams.sorting.direction
-    }&min_review_count=${
-      queryParams.minReviewCount
-    }&max_review_count=${
+    }&min_review_count=${queryParams.minReviewCount}&max_review_count=${
       queryParams.maxReviewCount
-    }&min_review_average=${
-      queryParams.minReviewAverage
-    }&max_review_average=${
+    }&min_review_average=${queryParams.minReviewAverage}&max_review_average=${
       queryParams.maxReviewAverage
-    }&time_start=${
-      queryParams.timeStart
-    }&time_end=${
-      queryParams.timeEnd
-    }`,
+    }&time_start=${queryParams.timeStart}&time_end=${queryParams.timeEnd}`,
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const { getByRole, getByText } = render(
     <Provider store={store}>
       <BreweryStatsHelper queryParams={queryParams} />
-    </Provider>
+    </Provider>,
   )
   const loadButton = getByRole('button', { name: 'Load' })
   await user.click(loadButton)

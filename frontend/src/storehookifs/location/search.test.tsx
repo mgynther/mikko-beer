@@ -12,13 +12,13 @@ import Button from '../../components/common/Button'
 
 function Helper(): React.JSX.Element {
   const searchIf = searchLocations({
-      useCreate: () => ({
-        create: async (): Promise<Location> => ({
-          id: '32f585d2-aeb8-46bb-91b9-ab57bc5e8b11',
-          name: 'Fake created location'
-        }),
-        isLoading: false
-      })
+    useCreate: () => ({
+      create: async (): Promise<Location> => ({
+        id: '32f585d2-aeb8-46bb-91b9-ab57bc5e8b11',
+        name: 'Fake created location',
+      }),
+      isLoading: false,
+    }),
   })
   const { search } = searchIf.useSearch()
   const [results, setResults] = useState<Location[]>([])
@@ -28,10 +28,15 @@ function Helper(): React.JSX.Element {
   }
   return (
     <div>
-      {results.map(location =>
+      {results.map((location) => (
         <div key={location.id}>{location.name}</div>
-      )}
-      <Button onClick={() => { void doSearch() }} text='Search' />
+      ))}
+      <Button
+        onClick={() => {
+          void doSearch()
+        }}
+        text='Search'
+      />
     </div>
   )
 }
@@ -43,26 +48,26 @@ test('search locations', async () => {
     locations: [
       {
         id: 'b8acbeae-ba8c-4088-a352-db6dd365bea8',
-        name: 'Test location'
+        name: 'Test location',
       },
       {
         id: 'e28d2550-67bc-40cf-8f12-b405d324376e',
-        name: 'Another location'
-      }
-    ]
+        name: 'Another location',
+      },
+    ],
   }
 
   addTestServerResponse<LocationList>({
     method: 'POST',
     pathname: `/api/v1/location/search`,
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const { getByRole, getByText } = render(
     <Provider store={store}>
       <Helper />
-    </Provider>
+    </Provider>,
   )
   const loadButton = getByRole('button', { name: 'Search' })
   await user.click(loadButton)

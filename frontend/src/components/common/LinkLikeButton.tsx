@@ -9,11 +9,13 @@ interface Props {
   text: string
 }
 
-function LinkLikeButton (props: Props): React.JSX.Element {
+function LinkLikeButton(props: Props): React.JSX.Element {
   return (
     <Button
       className='linklike-button'
-      onClick={() => { props.onClick(); }}
+      onClick={() => {
+        props.onClick()
+      }}
       text={props.text}
     />
   )

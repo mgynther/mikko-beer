@@ -5,7 +5,7 @@ import type { ParamsIf } from '../util'
 import type {
   Location as LocationType,
   GetLocationIf,
-  UpdateLocationIf
+  UpdateLocationIf,
 } from '../../core/location/types'
 import type { SearchIf } from '../../core/search/types'
 
@@ -32,11 +32,12 @@ interface Props {
   updateLocationIf: UpdateLocationIf
 }
 
-function Location (props: Props): React.JSX.Element {
+function Location(props: Props): React.JSX.Element {
   const { locationId } = props.paramsIf.useParams()
   const [mode, setMode] = useState(EditableMode.View)
-  const [initialLocation, setInitialLocation] =
-    useState<LocationType | undefined>(undefined)
+  const [initialLocation, setInitialLocation] = useState<
+    LocationType | undefined
+  >(undefined)
   if (locationId === undefined) {
     throw new Error('Location component without locationId. Should not happen.')
   }
@@ -48,9 +49,7 @@ function Location (props: Props): React.JSX.Element {
       {mode === EditableMode.View && (
         <div className='FlexRow'>
           <div>
-            <h3>
-              { location.name }
-            </h3>
+            <h3>{location.name}</h3>
           </div>
           <div>
             <EditButton

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { GetMonthlyStorageStatsIf } from "../../core/storage/types"
+import type { GetMonthlyStorageStatsIf } from '../../core/storage/types'
 import LoadingIndicator from '../common/LoadingIndicator'
 
 interface Props {
@@ -14,7 +14,7 @@ function prefix(month: string): string {
   return `0${month}`
 }
 
-function MonthlyStats (props: Props): React.JSX.Element | null {
+function MonthlyStats(props: Props): React.JSX.Element | null {
   const { stats, isLoading } = props.monthlyStatsIf.useMonthlyStats()
   return (
     <div>
@@ -27,7 +27,7 @@ function MonthlyStats (props: Props): React.JSX.Element | null {
           </tr>
         </thead>
         <tbody>
-          {stats?.monthly.map(month => (
+          {stats?.monthly.map((month) => (
             <tr key={`${month.year}-${month.month}`}>
               <td>{`${month.year}-${prefix(month.month)}`}</td>
               <td>{month.count}</td>

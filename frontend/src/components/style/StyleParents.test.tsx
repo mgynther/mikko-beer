@@ -10,44 +10,41 @@ const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const useDebounce: UseDebounce<string> = str => [str, false]
+const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 const parent = {
   id: 'aa9d0ed0-ceb5-4d22-80a3-adbb9a526b6b',
-  name: 'Ale'
+  name: 'Ale',
 }
 
 const otherParent = {
   id: 'df5e6906-1674-40de-aaaa-9c8909bb6a30',
-  name: 'Lager'
+  name: 'Lager',
 }
 
 const noList: ListStylesIf = {
   useList: () => ({
     styles: [],
-    isLoading: false
-  })
+    isLoading: false,
+  }),
 }
 
 const dontUseSearch: SearchIf = {
   useSearch: () => ({
     activate: dontCall,
-    isActive: false
+    isActive: false,
   }),
-  useDebounce
+  useDebounce,
 }
 
 test('renders parents', async () => {
   const { getByText } = render(
     <StyleParents
-      initialParents={[
-        parent,
-        otherParent
-      ]}
+      initialParents={[parent, otherParent]}
       listStylesIf={noList}
       searchIf={dontUseSearch}
       select={dontCall}
-    />
+    />,
   )
   getByText(parent.name)
   getByText(otherParent.name)
@@ -58,14 +55,11 @@ test('removes parent', async () => {
   const select = vitest.fn()
   const { getAllByRole } = render(
     <StyleParents
-      initialParents={[
-        parent,
-        otherParent
-      ]}
+      initialParents={[parent, otherParent]}
       listStylesIf={noList}
       searchIf={dontUseSearch}
       select={select}
-    />
+    />,
   )
   const removeButtons = getAllByRole('button', { name: 'Remove' })
   expect(removeButtons.length).toEqual(2)
@@ -79,24 +73,22 @@ test('adds parent', async () => {
   const searchIf: SearchIf = {
     useSearch: () => ({
       activate: () => undefined,
-        isActive: true
+      isActive: true,
     }),
-    useDebounce
+    useDebounce,
   }
   const { getByPlaceholderText, getByRole } = render(
     <StyleParents
-      initialParents={[
-        otherParent
-      ]}
+      initialParents={[otherParent]}
       listStylesIf={{
         useList: () => ({
           styles: [{ ...parent, parents: [] }],
-          isLoading: false
-        })
+          isLoading: false,
+        }),
       }}
       searchIf={searchIf}
       select={select}
-    />
+    />,
   )
   const searchField = getByPlaceholderText('Search style')
   await user.type(searchField, parent.name)

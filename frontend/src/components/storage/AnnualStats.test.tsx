@@ -7,16 +7,16 @@ test('renders annual storage stats', () => {
     <AnnualStats
       annualStatsIf={{
         useAnnualStats: () => ({
-            stats: {
-              annual: [
-                { year: '2021', count: '8' },
-                { year: '2024', count: '15' },
-              ]
-            },
-            isLoading: false
-          })
+          stats: {
+            annual: [
+              { year: '2021', count: '8' },
+              { year: '2024', count: '15' },
+            ],
+          },
+          isLoading: false,
+        }),
       }}
-    />
+    />,
   )
   getByText('2021')
   getByText('8')

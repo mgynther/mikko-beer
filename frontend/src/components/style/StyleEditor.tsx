@@ -4,7 +4,7 @@ import type { SearchIf } from '../../core/search/types'
 import type {
   ListStylesIf,
   StyleWithParents,
-  StyleWithParentIds
+  StyleWithParentIds,
 } from '../../core/style/types'
 
 import StyleParents from './StyleParents'
@@ -17,18 +17,18 @@ interface Props {
   searchIf: SearchIf
 }
 
-function StyleEditor (props: Props): React.JSX.Element {
+function StyleEditor(props: Props): React.JSX.Element {
   const [name, setName] = useState(props.initialStyle.name)
   const [parents, setParents] = useState<string[]>(
-    props.initialStyle.parents.map(style => style.id)
+    props.initialStyle.parents.map((style) => style.id),
   )
 
-  function onChange (name: string, parents: string[]): void {
+  function onChange(name: string, parents: string[]): void {
     if (name.length > 0) {
       props.onChange({
         id: props.initialStyle.id,
         name,
-        parents
+        parents,
       })
       return
     }
@@ -42,7 +42,7 @@ function StyleEditor (props: Props): React.JSX.Element {
           type='text'
           placeholder='Name'
           value={name}
-          onChange={e => {
+          onChange={(e) => {
             const name = e.target.value
             setName(name)
             onChange(name, parents)
@@ -56,10 +56,11 @@ function StyleEditor (props: Props): React.JSX.Element {
         select={(parents) => {
           setParents(parents)
           onChange(name, parents)
-        }} />
-      {props.hasError &&
+        }}
+      />
+      {props.hasError && (
         <div>Error saving. Please check parents and try again</div>
-      }
+      )}
     </>
   )
 }

@@ -9,7 +9,7 @@ import type {
   BreweryStats,
   GetBreweryStatsIf,
   StatsFilters,
-  YearMonth
+  YearMonth,
 } from '../../core/stats/types'
 import type { UseDebounce } from '../../core/types'
 
@@ -17,7 +17,7 @@ const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const getUseDebounce = function<T>(): UseDebounce<T> {
+const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
 }
 
@@ -26,7 +26,7 @@ const koskipanimo = {
   breweryName: 'Koskipanimo',
   reviewAverage: '9.06',
   reviewCount: '63',
-  reviewedBeerCount: '62'
+  reviewedBeerCount: '62',
 }
 
 const lehe = {
@@ -34,7 +34,7 @@ const lehe = {
   breweryName: 'Lehe pruulikoda',
   reviewAverage: '9.71',
   reviewCount: '24',
-  reviewedBeerCount: '24'
+  reviewedBeerCount: '24',
 }
 
 const minTime: YearMonth = testTimes.min.yearMonth
@@ -43,42 +43,42 @@ const maxTime: YearMonth = testTimes.max.yearMonth
 const unusedFilters: StatsFilters = {
   minReviewCount: {
     value: 1,
-    setValue: dontCall
+    setValue: dontCall,
   },
   maxReviewCount: {
     value: Infinity,
-    setValue: dontCall
+    setValue: dontCall,
   },
   minReviewAverage: {
     value: 4.0,
-    setValue: dontCall
+    setValue: dontCall,
   },
   maxReviewAverage: {
     value: 10.0,
-    setValue: dontCall
+    setValue: dontCall,
   },
   timeStart: {
     min: minTime,
     max: maxTime,
     value: minTime,
-    setValue: dontCall
+    setValue: dontCall,
   },
   timeEnd: {
     min: minTime,
     max: maxTime,
     value: maxTime,
-    setValue: dontCall
-  }
+    setValue: dontCall,
+  },
 }
 
-const breweryStats = { brewery: [{ ...koskipanimo }, { ...lehe }]}
-const emptyStats = { brewery: []}
+const breweryStats = { brewery: [{ ...koskipanimo }, { ...lehe }] }
+const emptyStats = { brewery: [] }
 
 const usedStats: GetBreweryStatsIf = {
   useStats: () => ({
     query: async () => breweryStats,
     stats: emptyStats,
-    isLoading: false
+    isLoading: false,
   }),
   infiniteScroll: (cb: () => void) => {
     cb()
@@ -86,11 +86,11 @@ const usedStats: GetBreweryStatsIf = {
   },
   minTime,
   maxTime,
-  getUseDebounce
+  getUseDebounce,
 }
 
 const emptySearchParameters: SearchParameters = {
-  get: () => undefined
+  get: () => undefined,
 }
 
 const noOpSetState = (): undefined => undefined
@@ -106,16 +106,13 @@ test('queries brewery stats', async () => {
             query: async (params): Promise<BreweryStats> => {
               query(params)
               return {
-                brewery: [
-                  { ...koskipanimo },
-                  { ...lehe }
-                ]
+                brewery: [{ ...koskipanimo }, { ...lehe }],
               }
             },
             stats: {
-              brewery: []
+              brewery: [],
             },
-            isLoading: false
+            isLoading: false,
           }),
           infiniteScroll: (cb) => {
             loadCallback = cb
@@ -123,7 +120,7 @@ test('queries brewery stats', async () => {
           },
           minTime,
           maxTime,
-          getUseDebounce
+          getUseDebounce,
         }}
         breweryId={undefined}
         locationId={undefined}
@@ -131,28 +128,34 @@ test('queries brewery stats', async () => {
         setState={noOpSetState}
         styleId={undefined}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   expect(query.mock.calls).toEqual([])
-  await act(async() => { loadCallback(); })
-  expect(query.mock.calls).toEqual([[{
-    breweryId: undefined,
-    maxReviewAverage: unusedFilters.maxReviewAverage.value,
-    maxReviewCount: unusedFilters.maxReviewCount.value,
-    minReviewAverage: unusedFilters.minReviewAverage.value,
-    minReviewCount: unusedFilters.minReviewCount.value,
-    pagination: {
-      size: 30,
-      skip: 0
-    },
-    sorting: {
-      direction: 'asc',
-      order: 'brewery_name'
-    },
-    styleId: undefined,
-    timeStart: testTimes.min.utcTimestamp,
-    timeEnd: testTimes.max.utcTimestamp
-  }]])
+  await act(async () => {
+    loadCallback()
+  })
+  expect(query.mock.calls).toEqual([
+    [
+      {
+        breweryId: undefined,
+        maxReviewAverage: unusedFilters.maxReviewAverage.value,
+        maxReviewCount: unusedFilters.maxReviewCount.value,
+        minReviewAverage: unusedFilters.minReviewAverage.value,
+        minReviewCount: unusedFilters.minReviewCount.value,
+        pagination: {
+          size: 30,
+          skip: 0,
+        },
+        sorting: {
+          direction: 'asc',
+          order: 'brewery_name',
+        },
+        styleId: undefined,
+        timeStart: testTimes.min.utcTimestamp,
+        timeEnd: testTimes.max.utcTimestamp,
+      },
+    ],
+  ])
 })
 
 test('renders brewery stats', async () => {
@@ -166,7 +169,7 @@ test('renders brewery stats', async () => {
         styleId={undefined}
         getBreweryStatsIf={usedStats}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   await waitFor(() => getByText(koskipanimo.breweryName))
   getByText(koskipanimo.reviewAverage)
@@ -185,27 +188,27 @@ const defaultSearchParams: Record<string, string> = {
   min_review_average: '4.00',
   max_review_average: '10.00',
   time_start: testTimes.min.text,
-  time_end: testTimes.max.text
+  time_end: testTimes.max.text,
 }
 
 const defaultFiltersOpenParams: Record<string, string> = {
   ...defaultSearchParams,
-  filters_open: '1'
+  filters_open: '1',
 }
 
-function toSearchParams (record: Record<string, string>): SearchParameters  {
+function toSearchParams(record: Record<string, string>): SearchParameters {
   return {
-    get: (name: string) => record[name]
+    get: (name: string) => record[name],
   }
 }
 
-function changeSlider (
+function changeSlider(
   getByLabelText: (str: string) => HTMLElement,
   from: string,
-  to: string
+  to: string,
 ): void {
   const slider = getByLabelText(from)
-  fireEvent.change(slider, {target: { value: to }})
+  fireEvent.change(slider, { target: { value: to } })
 }
 
 interface SliderChangeTest {
@@ -220,41 +223,41 @@ const sliderChangeTests: SliderChangeTest[] = [
     label: 'Minimum review average: 4',
     toDisplayValue: '8.1',
     property: 'min_review_average',
-    stateValue: '8.10'
+    stateValue: '8.10',
   },
   {
     label: 'Maximum review average: 10',
     toDisplayValue: '8.0',
     property: 'max_review_average',
-    stateValue: '8.00'
+    stateValue: '8.00',
   },
   {
     label: 'Minimum review count: 1',
     toDisplayValue: '5',
     property: 'min_review_count',
-    stateValue: '13'
+    stateValue: '13',
   },
   {
     label: 'Maximum review count: ∞',
     toDisplayValue: '5',
     property: 'max_review_count',
-    stateValue: '13'
+    stateValue: '13',
   },
   {
     label: 'Minimum time: 2017-12',
     toDisplayValue: '5',
     property: 'time_start',
-    stateValue: '2018-05'
+    stateValue: '2018-05',
   },
   {
     label: 'Maximum time: 2024-12',
     toDisplayValue: '8',
     property: 'time_end',
-    stateValue: '2018-08'
-  }
+    stateValue: '2018-08',
+  },
 ]
 
-sliderChangeTests.forEach(testCase => {
+sliderChangeTests.forEach((testCase) => {
   test(`change ${testCase.property}`, async () => {
     const setState = vitest.fn()
     const { getByLabelText } = render(
@@ -267,14 +270,10 @@ sliderChangeTests.forEach(testCase => {
           styleId={'dcbc0cd8-337a-4c0c-8ae6-baf97f711680'}
           getBreweryStatsIf={usedStats}
         />
-      </LinkWrapper>
+      </LinkWrapper>,
     )
     await act(async () => {
-      changeSlider(
-        getByLabelText,
-        testCase.label,
-        testCase.toDisplayValue
-      )
+      changeSlider(getByLabelText, testCase.label, testCase.toDisplayValue)
     })
     const expected = {
       ...defaultFiltersOpenParams,
@@ -298,76 +297,76 @@ const orderChangeTests: OrderChangeTest[] = [
     originalDirection: 'asc',
     buttonText: 'Brewery ▲',
     newOrder: 'brewery_name',
-    newDirection: 'desc'
+    newDirection: 'desc',
   },
   {
     originalOrder: 'brewery_name',
     originalDirection: 'desc',
     buttonText: 'Brewery ▼',
     newOrder: 'brewery_name',
-    newDirection: 'asc'
+    newDirection: 'asc',
   },
   {
     originalOrder: 'count',
     originalDirection: 'asc',
     buttonText: 'Reviews ▲',
     newOrder: 'count',
-    newDirection: 'desc'
+    newDirection: 'desc',
   },
   {
     originalOrder: 'count',
     originalDirection: 'desc',
     buttonText: 'Reviews ▼',
     newOrder: 'count',
-    newDirection: 'asc'
+    newDirection: 'asc',
   },
   {
     originalOrder: 'average',
     originalDirection: 'asc',
     buttonText: 'Average ▲',
     newOrder: 'average',
-    newDirection: 'desc'
+    newDirection: 'desc',
   },
   {
     originalOrder: 'average',
     originalDirection: 'desc',
     buttonText: 'Average ▼',
     newOrder: 'average',
-    newDirection: 'asc'
+    newDirection: 'asc',
   },
   {
     originalOrder: 'average',
     originalDirection: 'desc',
     buttonText: 'Brewery',
     newOrder: 'brewery_name',
-    newDirection: 'asc'
+    newDirection: 'asc',
   },
   {
     originalOrder: 'average',
     originalDirection: 'desc',
     buttonText: 'Reviews',
     newOrder: 'count',
-    newDirection: 'desc'
+    newDirection: 'desc',
   },
   {
     originalOrder: 'brewery_name',
     originalDirection: 'desc',
     buttonText: 'Average',
     newOrder: 'average',
-    newDirection: 'desc'
-  }
+    newDirection: 'desc',
+  },
 ]
 
-orderChangeTests.forEach(testCase => {
+orderChangeTests.forEach((testCase) => {
   test(`change ${testCase.originalOrder} ${testCase.originalDirection} to ${
-    testCase.newOrder} ${testCase.newDirection
-  }`, async () => {
+    testCase.newOrder
+  } ${testCase.newDirection}`, async () => {
     const user = userEvent.setup()
     const setState = vitest.fn()
     const searchRecord: Record<string, string> = {
       ...defaultSearchParams,
       sorting_order: testCase.originalOrder,
-      list_direction: testCase.originalDirection
+      list_direction: testCase.originalDirection,
     }
     const { getByRole } = render(
       <LinkWrapper>
@@ -379,14 +378,14 @@ orderChangeTests.forEach(testCase => {
           styleId={'dcbc0cd8-337a-4c0c-8ae6-baf97f711680'}
           getBreweryStatsIf={usedStats}
         />
-      </LinkWrapper>
+      </LinkWrapper>,
     )
     const button = getByRole('button', { name: testCase.buttonText })
     await user.click(button)
     const expected = {
       ...defaultSearchParams,
       sorting_order: testCase.newOrder,
-      list_direction: testCase.newDirection
+      list_direction: testCase.newDirection,
     }
     expect(setState.mock.calls).toEqual([[expected]])
   })

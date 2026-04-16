@@ -1,3 +1,3 @@
-export function getDate (): Date {
+export function getDate(): Date {
   return new Date()
 }

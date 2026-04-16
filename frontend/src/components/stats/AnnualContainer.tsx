@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import type {
   GetAnnualContainerStatsIf,
-  OneAnnualContainerStats
+  OneAnnualContainerStats,
 } from '../../core/stats/types'
 
 import AnnualContainerAllAtOnce from './AnnualContainerAllAtOnce'
@@ -15,13 +15,15 @@ interface Props {
   styleId: string | undefined
 }
 
-function AnnualContainer (props: Props): React.JSX.Element {
-  const isAllAtOnce = props.breweryId !== undefined
-    || props.locationId !== undefined
-    || props.styleId !== undefined
+function AnnualContainer(props: Props): React.JSX.Element {
+  const isAllAtOnce =
+    props.breweryId !== undefined ||
+    props.locationId !== undefined ||
+    props.styleId !== undefined
 
-  const [loadedAnnualContainers, setLoadedAnnualContainers] =
-    useState<OneAnnualContainerStats[] | undefined>(undefined)
+  const [loadedAnnualContainers, setLoadedAnnualContainers] = useState<
+    OneAnnualContainerStats[] | undefined
+  >(undefined)
 
   return (
     <>

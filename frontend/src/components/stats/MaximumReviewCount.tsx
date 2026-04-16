@@ -7,10 +7,10 @@ interface Props {
   setMaxReviewCount: (maximumReviewCount: number) => void
 }
 
-function MaximumReviewCount (props: Props): React.JSX.Element {
+function MaximumReviewCount(props: Props): React.JSX.Element {
   const [displayValue, setDisplayValue] = useState(props.maxReviewCount)
   const sliderValues = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, Infinity]
-  function getCountSymbol (count: number): string {
+  function getCountSymbol(count: number): string {
     if (!isFinite(count)) return '∞'
     return `${count}`
   }

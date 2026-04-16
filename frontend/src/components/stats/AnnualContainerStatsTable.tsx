@@ -12,7 +12,7 @@ interface Props {
   isLoading: boolean
 }
 
-function AnnualContainerStatsTable (props: Props): React.JSX.Element {
+function AnnualContainerStatsTable(props: Props): React.JSX.Element {
   return (
     <div>
       <LoadingIndicator isLoading={props.isLoading} />
@@ -26,14 +26,16 @@ function AnnualContainerStatsTable (props: Props): React.JSX.Element {
           </tr>
         </thead>
         <tbody>
-          {props.annualContainers.map(annualContainer => (
+          {props.annualContainers.map((annualContainer) => (
             <tr key={`${annualContainer.year}-${annualContainer.containerId}`}>
               <td>{annualContainer.year}</td>
-              <td>{asText({
-                id: annualContainer.containerId,
-                size: annualContainer.containerSize,
-                type: annualContainer.containerType
-              })}</td>
+              <td>
+                {asText({
+                  id: annualContainer.containerId,
+                  size: annualContainer.containerSize,
+                  type: annualContainer.containerType,
+                })}
+              </td>
               <td>{annualContainer.reviewCount}</td>
               <td>{annualContainer.reviewAverage}</td>
             </tr>

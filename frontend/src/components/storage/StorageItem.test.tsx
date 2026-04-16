@@ -12,12 +12,12 @@ const dontCall = (): any => {
 
 const brewery = {
   id: 'b5639203-8448-40ff-84c1-cc9b9b50909c',
-  name: 'Koskipanimo'
+  name: 'Koskipanimo',
 }
 
 const style = {
   id: '26713c2b-07a1-4072-a6bf-32196bea1919',
-  name: 'American IPA'
+  name: 'American IPA',
 }
 
 const storage: Storage = {
@@ -29,27 +29,27 @@ const storage: Storage = {
   container: {
     id: 'a5bc2c5b-50ae-4f47-b374-63bc2be4f524',
     type: 'bottle',
-    size: '0.33'
+    size: '0.33',
   },
   createdAt: '2020-09-12T12:00:00.000Z',
   hasReview: false,
-  styles: [style]
+  styles: [style],
 }
 
 const adminLogin = {
   user: {
     id: 'ce26ca10-9238-4b84-a0e6-6ac3a2890449',
     username: 'admin',
-    role: Role.admin
+    role: Role.admin,
   },
   authToken: 'auth',
-  refreshToken: 'refresh'
+  refreshToken: 'refresh',
 }
 
 const dontDelete: DeleteStorageIf = {
   useDelete: () => ({
-    delete: dontCall
-  })
+    delete: dontCall,
+  }),
 }
 
 test('renders storage', async () => {
@@ -62,7 +62,7 @@ test('renders storage', async () => {
         getLogin={() => adminLogin}
         storage={storage}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   getByRole('link', { name: brewery.name })
   getByRole('link', { name: storage.beerName })
@@ -86,10 +86,10 @@ test('renders storage with review', async () => {
         getLogin={() => adminLogin}
         storage={{
           ...storage,
-          hasReview: true
+          hasReview: true,
         }}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   getByRole('link', { name: storage.beerName })
   getByText('*')
@@ -103,14 +103,14 @@ test('deletes storage', async () => {
       <StorageItem
         deleteStorageIf={{
           useDelete: () => ({
-            delete: del
-          })
+            delete: del,
+          }),
         }}
         confirm={(): boolean => true}
         getLogin={() => adminLogin}
         storage={storage}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   const openButton = getByRole('button', { name: 'Open ▼' })
   await user.click(openButton)
@@ -127,14 +127,14 @@ test('does not delete storage on not confirmed', async () => {
       <StorageItem
         deleteStorageIf={{
           useDelete: () => ({
-            delete: del
-          })
+            delete: del,
+          }),
         }}
         confirm={(): boolean => false}
         getLogin={() => adminLogin}
         storage={storage}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   const openButton = getByRole('button', { name: 'Open ▼' })
   await user.click(openButton)

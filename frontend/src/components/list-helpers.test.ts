@@ -4,7 +4,7 @@ import type { ListDirection } from '../core/types'
 import {
   formatTitle,
   getDirectionSymbol,
-  invertDirection
+  invertDirection,
 } from './list-helpers'
 
 interface InvertTest {
@@ -15,10 +15,10 @@ interface InvertTest {
 const invertTests: InvertTest[] = [
   { input: 'asc', output: 'desc' },
   { input: 'desc', output: 'asc' },
-  { input: undefined, output: 'desc' }
+  { input: undefined, output: 'desc' },
 ]
 
-invertTests.forEach(testData => {
+invertTests.forEach((testData) => {
   test(`invert direction ${testData.input}`, () => {
     expect(invertDirection(testData.input)).toEqual(testData.output)
   })
@@ -32,10 +32,10 @@ interface DirectionSymbolTest {
 const directionSymbolTests: DirectionSymbolTest[] = [
   { input: 'asc', output: '▲' },
   { input: 'desc', output: '▼' },
-  { input: undefined, output: '' }
+  { input: undefined, output: '' },
 ]
 
-directionSymbolTests.forEach(testData => {
+directionSymbolTests.forEach((testData) => {
   test(`get direction symbol ${testData.input}`, () => {
     expect(getDirectionSymbol(testData.input)).toEqual(testData.output)
   })
@@ -54,13 +54,11 @@ const formatTitleTests: FormatTitleTest[] = [
   { base: 'Test', isSelected: true, direction: 'asc', output: 'Test ▲' },
   { base: 'Test', isSelected: true, direction: 'desc', output: 'Test ▼' },
   { base: 'Test', isSelected: false, direction: 'asc', output: 'Test' },
-  { base: 'Test', isSelected: false, direction: 'desc', output: 'Test' }
+  { base: 'Test', isSelected: false, direction: 'desc', output: 'Test' },
 ]
 
 formatTitleTests.forEach(({ base, isSelected, direction, output }) => {
-  test(`format title ${
-    base
-  } isSelected ${
+  test(`format title ${base} isSelected ${
     isSelected
   } direction ${direction}`, () => {
     expect(formatTitle(base, isSelected, direction)).toEqual(output)

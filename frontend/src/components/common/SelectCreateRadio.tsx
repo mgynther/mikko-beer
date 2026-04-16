@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 export enum Mode {
   SELECT = 'SELECT',
-  CREATE = 'CREATE'
+  CREATE = 'CREATE',
 }
 
 export interface Props {
@@ -17,10 +17,10 @@ interface BasicProps {
   onChange: (mode: Mode) => void
 }
 
-export function SelectCreateRadioBasic (props: BasicProps): React.JSX.Element {
+export function SelectCreateRadioBasic(props: BasicProps): React.JSX.Element {
   const [id] = useState(uuidv4())
 
-  function onRadioChange (e: React.ChangeEvent<HTMLInputElement>): void {
+  function onRadioChange(e: React.ChangeEvent<HTMLInputElement>): void {
     const newMode = e.target.value === Mode.SELECT ? Mode.SELECT : Mode.CREATE
     props.onChange(newMode)
   }
@@ -28,20 +28,20 @@ export function SelectCreateRadioBasic (props: BasicProps): React.JSX.Element {
   const modes = [
     {
       name: 'Create',
-      value: Mode.CREATE
+      value: Mode.CREATE,
     },
     {
       name: 'Select',
-      value: Mode.SELECT
-    }
+      value: Mode.SELECT,
+    },
   ]
 
   return (
     <div>
-      {modes.map(modeOption => (
+      {modes.map((modeOption) => (
         <label key={modeOption.value}>
           <input
-            type="radio"
+            type='radio'
             name={`mode_${id}`}
             value={modeOption.value}
             onChange={onRadioChange}
@@ -54,22 +54,20 @@ export function SelectCreateRadioBasic (props: BasicProps): React.JSX.Element {
   )
 }
 
-function SelectCreateRadio (props: Props): React.JSX.Element {
+function SelectCreateRadio(props: Props): React.JSX.Element {
   const [mode, setMode] = useState(props.defaultMode)
 
   return (
     <span>
       <SelectCreateRadioBasic
         mode={mode}
-        onChange={(mode: Mode) => { setMode(mode) }}
+        onChange={(mode: Mode) => {
+          setMode(mode)
+        }}
       />
 
-      {mode === Mode.SELECT && (
-        <span>{props.selectElement}</span>
-      )}
-      {mode === Mode.CREATE && (
-        <span>{props.createElement}</span>
-      )}
+      {mode === Mode.SELECT && <span>{props.selectElement}</span>}
+      {mode === Mode.CREATE && <span>{props.createElement}</span>}
     </span>
   )
 }

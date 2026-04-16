@@ -6,7 +6,7 @@ import type {
   GetStyleIf,
   Style as StyleType,
   StyleWithParentIds,
-  UpdateStyleIf
+  UpdateStyleIf,
 } from '../../core/style/types'
 
 import type { SearchIf } from '../../core/search/types'
@@ -34,7 +34,7 @@ interface NoLinksProps {
   styles: StyleType[]
 }
 
-function NoLinks (props: NoLinksProps): React.JSX.Element | null {
+function NoLinks(props: NoLinksProps): React.JSX.Element | null {
   if (props.styles.length > 0) return null
   return <>-</>
 }
@@ -50,11 +50,12 @@ interface Props {
   updateStyleIf: UpdateStyleIf
 }
 
-function Style (props: Props): React.JSX.Element {
+function Style(props: Props): React.JSX.Element {
   const { styleId } = props.paramsIf.useParams()
   const [mode, setMode] = useState(EditableMode.View)
-  const [initialStyle, setInitialStyle] =
-    useState<StyleWithParentIds | undefined>(undefined)
+  const [initialStyle, setInitialStyle] = useState<
+    StyleWithParentIds | undefined
+  >(undefined)
   if (styleId === undefined) {
     throw new Error('Style component without styleId. Should not happen.')
   }
@@ -70,7 +71,7 @@ function Style (props: Props): React.JSX.Element {
         <>
           <div className='FlexRow'>
             <div>
-              <h3>{ style.name }</h3>
+              <h3>{style.name}</h3>
             </div>
             <div>
               <EditButton
@@ -80,7 +81,7 @@ function Style (props: Props): React.JSX.Element {
                   setMode(EditableMode.Edit)
                   setInitialStyle({
                     ...style,
-                    parents: style.parents.map(parent => parent.id)
+                    parents: style.parents.map((parent) => parent.id),
                   })
                 }}
               />

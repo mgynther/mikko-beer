@@ -11,9 +11,9 @@ function Helper(): React.JSX.Element {
   const { styles } = listIf.useList()
   return (
     <div>
-      {styles?.map(style =>
+      {styles?.map((style) => (
         <div key={style.id}>{style.name}</div>
-      )}
+      ))}
     </div>
   )
 }
@@ -24,27 +24,27 @@ test('list styles', async () => {
       {
         id: '00e6b36b-f430-4fc9-9f13-0b8888987038',
         name: 'Test style',
-        parents: []
+        parents: [],
       },
       {
         id: '859e872a-07b8-40ca-845c-1feddda59c2a',
         name: 'Another style',
-        parents: []
-      }
-    ]
+        parents: [],
+      },
+    ],
   }
 
   addTestServerResponse<StyleList>({
     method: 'GET',
     pathname: `/api/v1/style`,
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const { getByText } = render(
     <Provider store={store}>
       <Helper />
-    </Provider>
+    </Provider>,
   )
   await waitFor(() => {
     const [firstStyle, secondStyle] = expectedResponse.styles

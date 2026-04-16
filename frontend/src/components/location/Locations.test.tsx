@@ -8,74 +8,76 @@ import type { UseDebounce } from '../../core/types'
 import type { CreateLocationIf } from '../../core/location/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 
-const useDebounce: UseDebounce<string> = str => [str, false]
+const useDebounce: UseDebounce<string> = (str) => [str, false]
 
-const notUsed = (): any => { throw new Error('Do not call') }
+const notUsed = (): any => {
+  throw new Error('Do not call')
+}
 
 const activeSearch: SearchIf = {
   useSearch: () => ({
     activate: notUsed,
-    isActive: false
+    isActive: false,
   }),
-  useDebounce
+  useDebounce,
 }
 
 const createLocationIf: CreateLocationIf = {
   useCreate: () => ({
     create: notUsed,
-    isLoading: false
-  })
+    isLoading: false,
+  }),
 }
 
 const location = {
   id: 'e9d33373-596a-4a32-9878-098365b4fd62',
-  name: 'Kahdet kasvot'
+  name: 'Kahdet kasvot',
 }
 
 const anotherLocation = {
   id: 'c4c4f10c-0ce0-48b1-b366-e57d7fb3c9c9',
-  name: 'Kultainen apina'
+  name: 'Kultainen apina',
 }
 
-const locations: Location[] = [
-  location,
-  anotherLocation
-]
+const locations: Location[] = [location, anotherLocation]
 
 test('renders locations', async () => {
-  let scrollCb: (() => void) = () => undefined
+  let scrollCb: () => void = () => undefined
   const { getByPlaceholderText, getByRole } = render(
     <LinkWrapper>
       <Locations
         listLocationsIf={{
           useList: () => ({
             list: async (): Promise<LocationList> => ({
-              locations
+              locations,
             }),
             locationList: { locations },
             isLoading: false,
-            isUninitialized: false
+            isUninitialized: false,
           }),
-          infiniteScroll: (
-            cb
-          ): () => undefined => { scrollCb = cb; return () => undefined }
+          infiniteScroll: (cb): (() => undefined) => {
+            scrollCb = cb
+            return () => undefined
+          },
         }}
         navigateIf={{
-          useNavigate: () => notUsed
+          useNavigate: () => notUsed,
         }}
         searchLocationIf={{
           useSearch: () => ({
             search: notUsed,
-            isLoading: false
+            isLoading: false,
           }),
-          create: createLocationIf
+          create: createLocationIf,
         }}
         searchIf={activeSearch}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   expect(scrollCb).not.toEqual(undefined)
-  await act(async () => { scrollCb(); })
+  await act(async () => {
+    scrollCb()
+  })
   getByRole('link', { name: location.name })
   getByRole('link', { name: anotherLocation.name })
   getByRole('textbox')
@@ -83,7 +85,7 @@ test('renders locations', async () => {
 })
 
 test('renders loading', async () => {
-  let scrollCb: (() => void) = () => undefined
+  let scrollCb: () => void = () => undefined
   const { getByText } = render(
     <LinkWrapper>
       <Locations
@@ -92,25 +94,26 @@ test('renders loading', async () => {
             list: notUsed,
             locationList: undefined,
             isLoading: true,
-            isUninitialized: true
+            isUninitialized: true,
           }),
-          infiniteScroll: (
-            cb
-          ): () => undefined => { scrollCb = cb; return () => undefined }
+          infiniteScroll: (cb): (() => undefined) => {
+            scrollCb = cb
+            return () => undefined
+          },
         }}
         navigateIf={{
-          useNavigate: () => notUsed
+          useNavigate: () => notUsed,
         }}
         searchLocationIf={{
           useSearch: () => ({
             search: notUsed,
-            isLoading: false
+            isLoading: false,
           }),
-          create: createLocationIf
+          create: createLocationIf,
         }}
         searchIf={activeSearch}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   scrollCb()
   await waitFor(() => getByText(loadingIndicatorText))
@@ -118,7 +121,7 @@ test('renders loading', async () => {
 
 test('stops loading more', async () => {
   const listMore = vitest.fn()
-  let scrollCb: (() => void) = () => undefined
+  let scrollCb: () => void = () => undefined
   function getListRequestCount(): number {
     return listMore.mock.calls.length
   }
@@ -131,57 +134,64 @@ test('stops loading more', async () => {
               listMore(params)
               if (getListRequestCount() > 1) {
                 return {
-                  locations: []
+                  locations: [],
                 }
               }
               return {
-                locations
+                locations,
               }
             },
             locationList: {
-              locations: getListRequestCount() > 1 ? [] : [location]
+              locations: getListRequestCount() > 1 ? [] : [location],
             },
             isLoading: false,
-            isUninitialized: false
+            isUninitialized: false,
           }),
-          infiniteScroll: (
-            cb
-          ): () => undefined => { scrollCb = cb; return () => undefined }
+          infiniteScroll: (cb): (() => undefined) => {
+            scrollCb = cb
+            return () => undefined
+          },
         }}
         navigateIf={{
-          useNavigate: () => notUsed
+          useNavigate: () => notUsed,
         }}
         searchLocationIf={{
           useSearch: () => ({
             search: notUsed,
-            isLoading: false
+            isLoading: false,
           }),
-          create: createLocationIf
+          create: createLocationIf,
         }}
         searchIf={activeSearch}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   // act is important to ensure changes have been fully applied. loading is not
   // toggled between renders so without act there would be a race condition in
   // the test execution.
-  await act(async () => { scrollCb(); })
+  await act(async () => {
+    scrollCb()
+  })
   await waitFor(() => getByText(location.name))
-  await act(async () => { scrollCb(); })
+  await act(async () => {
+    scrollCb()
+  })
   expect(listMore.mock.calls).toEqual([
     [
       {
         size: 20,
-        skip: 0
-      }
+        skip: 0,
+      },
     ],
     [
       {
         size: 20,
-        skip: 2
-      }
-    ]
+        skip: 2,
+      },
+    ],
   ])
-  await act(async () => { scrollCb(); })
+  await act(async () => {
+    scrollCb()
+  })
   expect(listMore).toHaveBeenCalledTimes(2)
 })

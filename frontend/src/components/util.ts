@@ -3,17 +3,17 @@ import { useEffect, useState } from 'react'
 import {
   useNavigate as useRouterNavigate,
   useParams as useRouterParams,
-  useSearchParams as useRouterSearchParams
+  useSearchParams as useRouterSearchParams,
 } from 'react-router'
 import type { InfiniteScroll, UseDebounce } from '../core/types'
 import { className as contentEndClassName } from './ContentEnd'
 
-export function pad (number: number): string {
+export function pad(number: number): string {
   if (number < 10) return `0${number}`
   return `${number}`
 }
 
-export function formatDateString (dateString: string): string {
+export function formatDateString(dateString: string): string {
   const date = new Date(dateString)
   const year = date.getFullYear()
   const month = pad(date.getMonth() + 1)
@@ -24,7 +24,7 @@ export function formatDateString (dateString: string): string {
 /* v8 ignore start */
 // IntersectionObserver does not exist on Node or jsdom so it can't be tested.
 export const infiniteScroll: InfiniteScroll = (loadMore: () => void) => {
-  const observer = new IntersectionObserver(entries => {
+  const observer = new IntersectionObserver((entries) => {
     const intersecting = entries[0].isIntersecting
     if (intersecting) {
       loadMore()
@@ -46,14 +46,15 @@ interface NamedItem {
   name: string
 }
 
-export function joinSortedNames (array: NamedItem[]): string {
-  return array.map(i => i.name).sort().join(', ')
+export function joinSortedNames(array: NamedItem[]): string {
+  return array
+    .map((i) => i.name)
+    .sort()
+    .join(', ')
 }
 
 // Didn't find a way to add type to this while keeping it generic.
-export const useDebounce = <T>(
-  value: T, delay = 300
-): [T, boolean] => {
+export const useDebounce = <T>(value: T, delay = 300): [T, boolean] => {
   const [debouncedValue, setDebouncedValue] = useState(value)
 
   useEffect(() => {
@@ -69,15 +70,16 @@ export const useDebounce = <T>(
   return [debouncedValue, value !== debouncedValue]
 }
 
-export const getUseDebounce =
-  function<T>(): UseDebounce<T> { return useDebounce<T> }
+export const getUseDebounce = function <T>(): UseDebounce<T> {
+  return useDebounce<T>
+}
 
 type NavigationFunc = (
   url: string,
-  options?: { replace: boolean }
-) => (void | Promise<void>)
+  options?: { replace: boolean },
+) => void | Promise<void>
 
-function useNavigate (): NavigationFunc {
+function useNavigate(): NavigationFunc {
   return useRouterNavigate()
 }
 
@@ -86,10 +88,10 @@ export interface NavigateIf {
 }
 
 export const navigateIf: NavigateIf = {
-  useNavigate
+  useNavigate,
 }
 
-function useParams (): Record<string, string | undefined> {
+function useParams(): Record<string, string | undefined> {
   return useRouterParams()
 }
 
@@ -97,10 +99,10 @@ export interface SearchParameters {
   get: (name: string) => string | undefined
 }
 
-function useSearch (): SearchParameters {
+function useSearch(): SearchParameters {
   const searchParams = useRouterSearchParams()[0]
   return {
-    get: (name: string) => searchParams.get(name) ?? undefined
+    get: (name: string) => searchParams.get(name) ?? undefined,
   }
 }
 
@@ -111,5 +113,5 @@ export interface ParamsIf {
 
 export const paramsIf: ParamsIf = {
   useParams,
-  useSearch
+  useSearch,
 }

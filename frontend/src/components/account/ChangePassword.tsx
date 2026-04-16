@@ -7,7 +7,7 @@ import {
   type ChangePasswordIf,
   type GetLogin,
   type Login,
-  PasswordChangeResult
+  PasswordChangeResult,
 } from '../../core/login/types'
 
 interface Props {
@@ -15,12 +15,13 @@ interface Props {
   changePasswordIf: ChangePasswordIf
 }
 
-function ChangePassword (props: Props): React.JSX.Element | null {
+function ChangePassword(props: Props): React.JSX.Element | null {
   const login: Login = props.getLogin()
   const { changePassword, isLoading } =
     props.changePasswordIf.useChangePassword()
-  const passwordChangeResult: PasswordChangeResult =
-    props.changePasswordIf.useGetPasswordChangeResult().getResult()
+  const passwordChangeResult: PasswordChangeResult = props.changePasswordIf
+    .useGetPasswordChangeResult()
+    .getResult()
 
   const [isMismatch, setIsMismatch] = useState(false)
   const [oldPassword, setOldPassword] = useState('')
@@ -34,14 +35,14 @@ function ChangePassword (props: Props): React.JSX.Element | null {
 
   const userId = login.user.id
 
-  async function doChange (event: SubmitEvent<HTMLFormElement>): Promise<void> {
+  async function doChange(event: SubmitEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     await changePassword({
       userId: userId,
       body: {
         oldPassword,
-        newPassword
-      }
+        newPassword,
+      },
     })
     setIsMismatch(false)
     setOldPassword('')
@@ -49,8 +50,8 @@ function ChangePassword (props: Props): React.JSX.Element | null {
     setNewPasswordConfirmation('')
   }
 
-  function formatPasswordChangeResult (
-    passwordChangeResult: PasswordChangeResult
+  function formatPasswordChangeResult(
+    passwordChangeResult: PasswordChangeResult,
   ): string | null {
     if (passwordChangeResult === PasswordChangeResult.UNDEFINED) {
       return null
@@ -65,15 +66,20 @@ function ChangePassword (props: Props): React.JSX.Element | null {
     <div>
       <h4>Change password</h4>
       <form
-        className="ChangePasswordForm"
-        onSubmit={(e) => { void doChange(e) }}>
+        className='ChangePasswordForm'
+        onSubmit={(e) => {
+          void doChange(e)
+        }}
+      >
         <div>
           <input
             type='password'
             placeholder='Old password'
             id='oldPassword'
             value={oldPassword}
-            onChange={e => { setOldPassword(e.target.value); }}
+            onChange={(e) => {
+              setOldPassword(e.target.value)
+            }}
           />
         </div>
         <div>
@@ -105,14 +111,15 @@ function ChangePassword (props: Props): React.JSX.Element | null {
           />
         </div>
         <div>
-          <input type='submit'
+          <input
+            type='submit'
             value='Change'
             disabled={isLoading || isMismatch}
           />
         </div>
         <div>
           <LoadingIndicator isLoading={isLoading} />
-          {!isLoading && formatPasswordChangeResult(passwordChangeResult) }
+          {!isLoading && formatPasswordChangeResult(passwordChangeResult)}
         </div>
       </form>
     </div>

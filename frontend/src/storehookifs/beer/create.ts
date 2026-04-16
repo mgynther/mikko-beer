@@ -2,33 +2,30 @@ import type {
   BeerWithIds,
   CreateBeerIf,
   CreateBeerRequest,
-  EditBeerIf
-} from "../../core/beer/types"
-import { useCreateBeerMutation } from "../../store/beer/api"
-import { validateBeerWithIds } from "../../validation/beer"
+  EditBeerIf,
+} from '../../core/beer/types'
+import { useCreateBeerMutation } from '../../store/beer/api'
+import { validateBeerWithIds } from '../../validation/beer'
 
 const createBeer: (editBeerIf: EditBeerIf) => CreateBeerIf = (
-  editBeerIf: EditBeerIf
+  editBeerIf: EditBeerIf,
 ) => {
   const createBeerIf: CreateBeerIf = {
     useCreate: () => {
-      const [
-        createBeer,
-        { isLoading }
-      ] = useCreateBeerMutation()
+      const [createBeer, { isLoading }] = useCreateBeerMutation()
       return {
         create: async (
-          beerRequest: CreateBeerRequest
+          beerRequest: CreateBeerRequest,
         ): Promise<BeerWithIds> => {
           const result = await createBeer({
-            ...beerRequest
+            ...beerRequest,
           }).unwrap()
           return validateBeerWithIds(result.beer)
         },
-        isLoading
+        isLoading,
       }
     },
-    editBeerIf
+    editBeerIf,
   }
   return createBeerIf
 }

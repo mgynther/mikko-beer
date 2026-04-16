@@ -1,7 +1,7 @@
 export enum UserTags {
-  User = 'User'
+  User = 'User',
 }
 
-export function userTagTypes (): string[] {
+export function userTagTypes(): string[] {
   return [UserTags.User]
 }

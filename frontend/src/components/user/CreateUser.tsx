@@ -10,8 +10,8 @@ interface Props {
   createUserIf: CreateUserIf
 }
 
-function CreateUser (props: Props): React.JSX.Element {
-  const {create, user, hasError, isLoading } = props.createUserIf.useCreate()
+function CreateUser(props: Props): React.JSX.Element {
+  const { create, user, hasError, isLoading } = props.createUserIf.useCreate()
 
   const [isMismatch, setIsMismatch] = useState(false)
   const [username, setUsername] = useState('')
@@ -19,16 +19,16 @@ function CreateUser (props: Props): React.JSX.Element {
   const [role, setRole] = useState<Role>(Role.viewer)
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
 
-  async function doChange (event: SubmitEvent<HTMLFormElement>): Promise<void> {
+  async function doChange(event: SubmitEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     await create({
       passwordSignInMethod: {
         username,
-        password
+        password,
       },
       user: {
-        role
-      }
+        role,
+      },
     })
     setUsername('')
     setPassword('')
@@ -40,8 +40,11 @@ function CreateUser (props: Props): React.JSX.Element {
     <div>
       <h4>Create user</h4>
       <form
-        className="CreateUserForm"
-        onSubmit={(e) => { void doChange(e) }}>
+        className='CreateUserForm'
+        onSubmit={(e) => {
+          void doChange(e)
+        }}
+      >
         <div>
           <input
             type='text'
@@ -84,9 +87,8 @@ function CreateUser (props: Props): React.JSX.Element {
             value={role}
             id='role'
             onChange={(e) => {
-              const role = e.target.value === Role.admin
-                ? Role.admin
-                : Role.viewer
+              const role =
+                e.target.value === Role.admin ? Role.admin : Role.viewer
               setRole(role)
             }}
           >
@@ -95,16 +97,18 @@ function CreateUser (props: Props): React.JSX.Element {
           </select>
         </div>
         <div>
-          <input type='submit'
+          <input
+            type='submit'
             value='Create'
             disabled={isLoading || isMismatch}
           />
         </div>
         <div>
           <LoadingIndicator isLoading={isLoading} />
-          {!isLoading && user !== undefined && 'Created!' }
-          {!isLoading && hasError &&
-            'Creating failed. Please check the username and passwords.' }
+          {!isLoading && user !== undefined && 'Created!'}
+          {!isLoading &&
+            hasError &&
+            'Creating failed. Please check the username and passwords.'}
         </div>
       </form>
     </div>

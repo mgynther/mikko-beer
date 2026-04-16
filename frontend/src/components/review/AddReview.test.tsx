@@ -1,15 +1,15 @@
-import { render, fireEvent } from "@testing-library/react"
-import userEvent, { type UserEvent } from "@testing-library/user-event"
-import { expect, test, vitest } from "vitest"
-import AddReview, { type Props as AddReviewProps } from "./AddReview"
-import { loadingIndicatorText } from "../common/LoadingIndicator"
-import type { UseDebounce } from "../../core/types"
-import type { SearchLocationIf } from "../../core/location/types"
-import type { CreateBeerIf, SearchBeerIf } from "../../core/beer/types"
-import type { ReviewContainerIf } from "../../core/review/types"
-import type { ParamsIf } from "../util"
+import { render, fireEvent } from '@testing-library/react'
+import userEvent, { type UserEvent } from '@testing-library/user-event'
+import { expect, test, vitest } from 'vitest'
+import AddReview, { type Props as AddReviewProps } from './AddReview'
+import { loadingIndicatorText } from '../common/LoadingIndicator'
+import type { UseDebounce } from '../../core/types'
+import type { SearchLocationIf } from '../../core/location/types'
+import type { CreateBeerIf, SearchBeerIf } from '../../core/beer/types'
+import type { ReviewContainerIf } from '../../core/review/types'
+import type { ParamsIf } from '../util'
 
-const useDebounce: UseDebounce<string> = str => [str, false]
+const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -17,7 +17,7 @@ const dontCall = (): any => {
 
 const dontCreate = {
   create: dontCall,
-  isLoading: false
+  isLoading: false,
 }
 
 const beerId = '0372fdc8-faa5-443c-bacc-4b68b9e4ebf8'
@@ -25,34 +25,38 @@ const beerName = 'Severin'
 const beerSearchResult = {
   id: beerId,
   name: beerName,
-  breweries: [{
-    id: '2eaa6fcc-60b5-4516-9dd8-4828c45efb03',
-    name: 'Koskipanimo'
-  }],
-  styles: [{
-    id: '47cc4475-d9ff-40f0-9ca2-32cd5b978a46',
-    name: 'american ipa'
-  }]
+  breweries: [
+    {
+      id: '2eaa6fcc-60b5-4516-9dd8-4828c45efb03',
+      name: 'Koskipanimo',
+    },
+  ],
+  styles: [
+    {
+      id: '47cc4475-d9ff-40f0-9ca2-32cd5b978a46',
+      name: 'american ipa',
+    },
+  ],
 }
 const beerSearchIf: SearchBeerIf = {
   useSearch: () => ({
     search: async () => [beerSearchResult],
-    isLoading: false
-  })
+    isLoading: false,
+  }),
 }
 const dontCreateBeerIf: CreateBeerIf = {
   useCreate: () => dontCreate,
   editBeerIf: {
     selectBreweryIf: {
       create: {
-        useCreate: () => dontCreate
+        useCreate: () => dontCreate,
       },
       search: {
         useSearch: () => ({
           search: dontCall,
-          isLoading: false
-        })
-      }
+          isLoading: false,
+        }),
+      },
     },
     selectStyleIf: {
       create: {
@@ -60,40 +64,40 @@ const dontCreateBeerIf: CreateBeerIf = {
           ...dontCreate,
           createdStyle: undefined,
           hasError: false,
-          isSuccess: false
-        })
+          isSuccess: false,
+        }),
       },
       list: {
         useList: () => ({
           styles: undefined,
           isLoading: false,
-        })
-      }
-    }
-  }
+        }),
+      },
+    },
+  },
 }
 
 const containerId = '50d565d4-49b5-4900-a747-2512e83afe76'
 const containerListResult = {
   id: containerId,
   type: 'bottle',
-  size: '0.33'
+  size: '0.33',
 }
 
-const dateStr ='2022-04-01T12:00:00.000Z'
+const dateStr = '2022-04-01T12:00:00.000Z'
 const getCurrentDate = (): Date => new Date(dateStr)
 const reviewContainerIf: ReviewContainerIf = {
   createIf: {
-    useCreate: () => dontCreate
+    useCreate: () => dontCreate,
   },
   listIf: {
     useList: () => ({
       data: {
-        containers: [containerListResult]
+        containers: [containerListResult],
       },
-      isLoading: false
-    })
-  }
+      isLoading: false,
+    }),
+  },
 }
 const storageId = 'be233d3f-b0cc-4d30-8b52-4e1e7fa4fdf9'
 const smellText = 'Very nice, caramel, hops'
@@ -105,75 +109,75 @@ const dontSelectBeer = {
     editBeerIf: {
       selectBreweryIf: {
         create: {
-          useCreate: dontCall
+          useCreate: dontCall,
         },
         search: {
-          useSearch: dontCall
-        }
+          useSearch: dontCall,
+        },
       },
       selectStyleIf: {
         create: {
-          useCreate: dontCall
+          useCreate: dontCall,
         },
         list: {
-          useList: dontCall
-        }
-      }
-    }
+          useList: dontCall,
+        },
+      },
+    },
   },
   search: {
-    useSearch: dontCall
-  }
+    useSearch: dontCall,
+  },
 }
 
 const searchLocationIf: SearchLocationIf = {
   useSearch: () => ({
     search: dontCall,
-    isLoading: false
+    isLoading: false,
   }),
   create: {
     useCreate: () => ({
       create: dontCall,
-      isLoading: false
-    })
-  }
+      isLoading: false,
+    }),
+  },
 }
 
 const noOpContainerIf = {
   createIf: {
-    useCreate: dontCall
+    useCreate: dontCall,
   },
   listIf: {
-    useList: dontCall
-  }
+    useList: dontCall,
+  },
 }
 
 const noParamsIf: ParamsIf = {
   useParams: () => ({}),
   useSearch: () => ({
-    get: () => undefined
-  })
+    get: () => undefined,
+  }),
 }
 
 const storageIdParamsIf: ParamsIf = {
   useParams: () => ({ storageId }),
   useSearch: () => ({
-    get: () => undefined
-  })
+    get: () => undefined,
+  }),
 }
 
 const noSearchIf = { useSearch: dontCall, useDebounce }
 
 const unusedStorageIf = {
-  useGet: dontCall
+  useGet: dontCall,
 }
 
 const reviewRating = 8
 
-async function addReview(getByPlaceholderText: (
-  text: string) => HTMLElement,
+async function addReview(
+  getByPlaceholderText: (text: string) => HTMLElement,
   getByRole: (text: string, props?: Record<string, unknown>) => HTMLElement,
-  user: UserEvent
+  user: UserEvent,
 ): Promise<void> {
   const smellInput = getByPlaceholderText('Smell')
   smellInput.focus()
@@ -183,7 +187,7 @@ async function addReview(getByPlaceholderText: (
   await user.paste(tasteText)
   const ratingInput = getByRole('slider')
   ratingInput.click()
-  fireEvent.change(ratingInput, {target: {value: `${reviewRating}`}})
+  fireEvent.change(ratingInput, { target: { value: `${reviewRating}` } })
   const addButton = getByRole('button', { name: 'Add' })
   expect(addButton.hasAttribute('disabled')).toEqual(false)
   addButton.click()
@@ -198,40 +202,36 @@ test('adds review', async () => {
         create,
         isLoading: false,
         isSuccess: false,
-        review: undefined
+        review: undefined,
       }),
       getCurrentDate,
       searchLocationIf,
       selectBeerIf: {
         create: dontCreateBeerIf,
-        search: beerSearchIf
+        search: beerSearchIf,
       },
-      reviewContainerIf
+      reviewContainerIf,
     },
     getStorageIf: unusedStorageIf,
     navigateIf: {
-      useNavigate: () => dontCall
+      useNavigate: () => dontCall,
     },
     paramsIf: noParamsIf,
     searchIf: {
       useSearch: () => ({
         activate: () => undefined,
-        isActive: true
+        isActive: true,
       }),
-      useDebounce
-    }
+      useDebounce,
+    },
   }
   const {
     findByRole,
     getAllByRole,
     getByPlaceholderText,
     getByRole,
-    queryAllByRole
-  } = render(
-    <AddReview
-      {...props}
-    />
-  )
+    queryAllByRole,
+  } = render(<AddReview {...props} />)
 
   const selects = getAllByRole('radio', { name: 'Select' })
   await user.click(selects[0])
@@ -239,10 +239,9 @@ test('adds review', async () => {
   expect(beerSearch).toBeDefined()
   beerSearch.focus()
   await user.paste('Seve')
-  const beerButton = await findByRole(
-    'button',
-    { name: 'Severin (Koskipanimo)' }
-  )
+  const beerButton = await findByRole('button', {
+    name: 'Severin (Koskipanimo)',
+  })
   expect(beerButton).toBeDefined()
   await user.click(beerButton)
   getByRole('button', { name: /change/i })
@@ -254,19 +253,23 @@ test('adds review', async () => {
   const changeButtons = queryAllByRole('button', { name: /change/i })
   expect(changeButtons.length).toEqual(2)
   await addReview(getByPlaceholderText, getByRole, user)
-  expect(create.mock.calls).toEqual([[{
-    body: {
-      additionalInfo: '',
-      beer: beerId,
-      container: containerId,
-      location: '',
-      rating: reviewRating,
-      smell: smellText,
-      taste: tasteText,
-      time: dateStr
-    },
-    storageId: ''
-  }]])
+  expect(create.mock.calls).toEqual([
+    [
+      {
+        body: {
+          additionalInfo: '',
+          beer: beerId,
+          container: containerId,
+          location: '',
+          rating: reviewRating,
+          smell: smellText,
+          taste: tasteText,
+          time: dateStr,
+        },
+        storageId: '',
+      },
+    ],
+  ])
 })
 
 test('loads storage', async () => {
@@ -276,25 +279,25 @@ test('loads storage', async () => {
         useCreate: () => ({
           ...dontCreate,
           isSuccess: false,
-          review: undefined
+          review: undefined,
         }),
         getCurrentDate,
         searchLocationIf,
         selectBeerIf: dontSelectBeer,
-        reviewContainerIf: noOpContainerIf
+        reviewContainerIf: noOpContainerIf,
       }}
       getStorageIf={{
         useGet: () => ({
           storage: undefined,
-          isLoading: true
-        })
+          isLoading: true,
+        }),
       }}
       navigateIf={{
-        useNavigate: () => dontCall
+        useNavigate: () => dontCall,
       }}
       paramsIf={storageIdParamsIf}
       searchIf={noSearchIf}
-    />
+    />,
   )
   const text = getByText(loadingIndicatorText)
   expect(text).toBeDefined()
@@ -307,25 +310,25 @@ test('shows storage loading error', async () => {
         useCreate: () => ({
           ...dontCreate,
           isSuccess: false,
-          review: undefined
+          review: undefined,
         }),
         getCurrentDate,
         searchLocationIf,
         selectBeerIf: dontSelectBeer,
-        reviewContainerIf: noOpContainerIf
+        reviewContainerIf: noOpContainerIf,
       }}
       getStorageIf={{
         useGet: () => ({
           storage: undefined,
-          isLoading: false
-        })
+          isLoading: false,
+        }),
       }}
       navigateIf={{
-        useNavigate: () => dontCall
+        useNavigate: () => dontCall,
       }}
       paramsIf={storageIdParamsIf}
       searchIf={noSearchIf}
-    />
+    />,
   )
   const text = getByText('Error, storage does not exist.')
   expect(text).toBeDefined()
@@ -340,15 +343,15 @@ test('adds review from storage', async () => {
         create,
         isLoading: false,
         isSuccess: false,
-        review: undefined
+        review: undefined,
       }),
       getCurrentDate,
       searchLocationIf,
       selectBeerIf: {
         create: dontCreateBeerIf,
-        search: beerSearchIf
+        search: beerSearchIf,
       },
-      reviewContainerIf
+      reviewContainerIf,
     },
     getStorageIf: {
       useGet: (storageId: string) => ({
@@ -361,53 +364,55 @@ test('adds review from storage', async () => {
           container: containerListResult,
           createdAt: '2022-03-30T18:00:00.000Z',
           hasReview: false,
-          styles: beerSearchResult.styles
+          styles: beerSearchResult.styles,
         },
-        isLoading: false
-      })
+        isLoading: false,
+      }),
     },
     navigateIf: {
-      useNavigate: () => dontCall
+      useNavigate: () => dontCall,
     },
     paramsIf: {
       useParams: () => ({
-        storageId
+        storageId,
       }),
       useSearch: () => ({
-        get: () => undefined
-      })
+        get: () => undefined,
+      }),
     },
     searchIf: {
       useSearch: () => ({
         activate: () => undefined,
-        isActive: true
+        isActive: true,
       }),
-      useDebounce
-    }
+      useDebounce,
+    },
   }
 
   const { getByPlaceholderText, getByRole, queryAllByRole } = render(
-    <AddReview
-      {...props}
-    />
+    <AddReview {...props} />,
   )
   const changeButtons = queryAllByRole('button', { name: /change/i })
   expect(changeButtons.length).toEqual(0)
   await addReview(getByPlaceholderText, getByRole, user)
 
-  expect(create.mock.calls).toEqual([[{
-    body: {
-      additionalInfo: 'From storage, BB 2024-07-31',
-      beer: beerId,
-      container: containerId,
-      location: '',
-      rating: reviewRating,
-      smell: smellText,
-      taste: tasteText,
-      time: dateStr
-    },
-    storageId
-  }]])
+  expect(create.mock.calls).toEqual([
+    [
+      {
+        body: {
+          additionalInfo: 'From storage, BB 2024-07-31',
+          beer: beerId,
+          container: containerId,
+          location: '',
+          rating: reviewRating,
+          smell: smellText,
+          taste: tasteText,
+          time: dateStr,
+        },
+        storageId,
+      },
+    ],
+  ])
 })
 
 test('navigates', async () => {
@@ -428,26 +433,26 @@ test('navigates', async () => {
             rating: 10,
             smell: '',
             taste: '',
-            time: dateStr
-          }
+            time: dateStr,
+          },
         }),
         getCurrentDate,
         searchLocationIf,
         selectBeerIf: dontSelectBeer,
-        reviewContainerIf: noOpContainerIf
+        reviewContainerIf: noOpContainerIf,
       }}
       getStorageIf={{
         useGet: () => ({
           storage: undefined,
-          isLoading: false
-        })
+          isLoading: false,
+        }),
       }}
       navigateIf={{
-        useNavigate: () => navigate
+        useNavigate: () => navigate,
       }}
       paramsIf={storageIdParamsIf}
       searchIf={noSearchIf}
-    />
+    />,
   )
   expect(navigate.mock.calls).toEqual([[`/beers/${beerId}`]])
 })

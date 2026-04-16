@@ -4,7 +4,7 @@ import { Link } from '../common/Link'
 import type {
   Brewery,
   ListBreweriesIf,
-  SearchBreweryIf
+  SearchBreweryIf,
 } from '../../core/brewery/types'
 import type { SearchIf } from '../../core/search/types'
 
@@ -24,14 +24,13 @@ export interface Props {
   searchIf: SearchIf
 }
 
-function Breweries (props: Props): React.JSX.Element {
+function Breweries(props: Props): React.JSX.Element {
   const [loadedBreweries, setLoadedBreweries] = useState<Brewery[]>([])
   const { breweryList, list, isLoading, isUninitialized } =
     props.listBreweriesIf.useList()
 
-  const breweryArray = breweryList?.breweries === undefined
-    ? []
-    : [...breweryList.breweries]
+  const breweryArray =
+    breweryList?.breweries === undefined ? [] : [...breweryList.breweries]
 
   const hasMore = breweryArray.length > 0 || isUninitialized
   const loadedCount = loadedBreweries.length
@@ -40,12 +39,12 @@ function Breweries (props: Props): React.JSX.Element {
     const loadMore = async (): Promise<void> => {
       const result = await list({
         skip: loadedCount,
-        size: pageSize
+        size: pageSize,
       })
       const newBreweries = [...loadedBreweries, ...result.breweries]
       setLoadedBreweries(newBreweries)
     }
-    function checkLoad (): void {
+    function checkLoad(): void {
       if (isLoading) {
         return
       }
@@ -68,10 +67,7 @@ function Breweries (props: Props): React.JSX.Element {
       <ul>
         {loadedBreweries.map((brewery: Brewery) => (
           <li key={brewery.id}>
-            <Link
-              to={breweryLinkFormatter(brewery.id)}
-              text={brewery.name}
-            />
+            <Link to={breweryLinkFormatter(brewery.id)} text={brewery.name} />
           </li>
         ))}
       </ul>

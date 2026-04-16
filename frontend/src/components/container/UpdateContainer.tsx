@@ -1,9 +1,6 @@
 import React, { useState } from 'react'
 
-import type {
-  Container,
-  UpdateContainerIf
-} from '../../core/container/types'
+import type { Container, UpdateContainerIf } from '../../core/container/types'
 
 import EditActions from '../common/EditActions'
 
@@ -16,11 +13,12 @@ interface Props {
   onSaved: () => void
 }
 
-function UpdateContainer (props: Props): React.JSX.Element {
+function UpdateContainer(props: Props): React.JSX.Element {
   const { update, isLoading } = props.updateContainerIf.useUpdate()
-  const [newContainer, setNewContainer] =
-    useState<Container | undefined>(undefined)
-  async function doUpdate (newContainer: Container): Promise<void> {
+  const [newContainer, setNewContainer] = useState<Container | undefined>(
+    undefined,
+  )
+  async function doUpdate(newContainer: Container): Promise<void> {
     await update({ ...newContainer })
     props.onSaved()
   }
@@ -41,7 +39,9 @@ function UpdateContainer (props: Props): React.JSX.Element {
         }}
         onSave={
           newContainer
-            ? (): void => { void doUpdate(newContainer) }
+            ? (): void => {
+                void doUpdate(newContainer)
+              }
             : undefined
         }
       />

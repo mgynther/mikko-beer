@@ -1,4 +1,4 @@
-import type { UseDebounce } from "../types"
+import type { UseDebounce } from '../types'
 
 export interface SearchIf {
   useSearch: () => {

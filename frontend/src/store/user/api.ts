@@ -1,43 +1,39 @@
 import { emptySplitApi } from '../api'
 
 import { UserTags } from './types'
-import type {
-  CreateUserRequest,
-  User,
-  UserList
-} from '../../core/user/types'
+import type { CreateUserRequest, User, UserList } from '../../core/user/types'
 
 const userApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
     listUsers: build.query<UserList, void>({
       query: () => ({
         url: '/user',
-        method: 'GET'
+        method: 'GET',
       }),
-      providesTags: [UserTags.User]
+      providesTags: [UserTags.User],
     }),
     createUser: build.mutation<{ user: User }, Partial<CreateUserRequest>>({
       query: (params: CreateUserRequest) => ({
         url: '/user',
         method: 'POST',
-        body: params
+        body: params,
       }),
-      invalidatesTags: [UserTags.User]
+      invalidatesTags: [UserTags.User],
     }),
     deleteUser: build.mutation<undefined, Partial<string>>({
       query: (userId) => ({
         url: `/user/${userId}`,
-        method: 'DELETE'
+        method: 'DELETE',
       }),
-      invalidatesTags: [UserTags.User]
-    })
-  })
+      invalidatesTags: [UserTags.User],
+    }),
+  }),
 })
 
 export const {
   useCreateUserMutation,
   useDeleteUserMutation,
-  useListUsersQuery
+  useListUsersQuery,
 } = userApi
 
 export const { endpoints, reducerPath, reducer, middleware } = userApi

@@ -15,21 +15,25 @@ test('edits valid container', async () => {
       initialContainer={{
         id,
         type: '',
-        size: ''
+        size: '',
       }}
       onChange={onChange}
-    />
+    />,
   )
   const typeInput = getByPlaceholderText(typePlaceholder)
   await user.type(typeInput, 'Bottle')
   const sizeInput = getByPlaceholderText(sizePlaceholder)
   await user.type(sizeInput, '0.33')
-  const validCalls = onChange.mock.calls.filter(args => args[0] !== undefined)
-  expect(validCalls).toEqual([[{
-    id,
-    type: 'Bottle',
-    size: '0.33'
-  }]])
+  const validCalls = onChange.mock.calls.filter((args) => args[0] !== undefined)
+  expect(validCalls).toEqual([
+    [
+      {
+        id,
+        type: 'Bottle',
+        size: '0.33',
+      },
+    ],
+  ])
 })
 
 test('edits invalid container by empty type', async () => {
@@ -40,14 +44,14 @@ test('edits invalid container by empty type', async () => {
       initialContainer={{
         id,
         type: '',
-        size: ''
+        size: '',
       }}
       onChange={onChange}
-    />
+    />,
   )
   const sizeInput = getByPlaceholderText(sizePlaceholder)
   await user.type(sizeInput, '0.33')
-  const validCalls = onChange.mock.calls.filter(args => args[0] !== undefined)
+  const validCalls = onChange.mock.calls.filter((args) => args[0] !== undefined)
   expect(validCalls.length).toEqual(0)
 })
 
@@ -59,16 +63,16 @@ test('edits invalid container by invalid size', async () => {
       initialContainer={{
         id,
         type: '',
-        size: ''
+        size: '',
       }}
       onChange={onChange}
-    />
+    />,
   )
   const typeInput = getByPlaceholderText(typePlaceholder)
   await user.type(typeInput, 'Bottle')
   const sizeInput = getByPlaceholderText(sizePlaceholder)
   await user.type(sizeInput, '0.3')
-  const validCalls = onChange.mock.calls.filter(args => args[0] !== undefined)
+  const validCalls = onChange.mock.calls.filter((args) => args[0] !== undefined)
   expect(validCalls.length).toEqual(0)
 })
 
@@ -79,10 +83,10 @@ test('renders values', async () => {
       initialContainer={{
         id,
         type: 'Draft',
-        size: '1.01'
+        size: '1.01',
       }}
       onChange={onChange}
-    />
+    />,
   )
   getByDisplayValue('Draft')
   getByDisplayValue('1.01')

@@ -14,9 +14,9 @@ function Helper(): React.JSX.Element {
   const { list, breweryList } = listIf.useList()
   return (
     <div>
-      {breweryList?.breweries.map(brewery =>
+      {breweryList?.breweries.map((brewery) => (
         <div key={brewery.id}>{brewery.name}</div>
-      )}
+      ))}
       <Button
         onClick={() => {
           void list({ skip: 0, size: 10 })
@@ -34,26 +34,26 @@ test('list breweries', async () => {
     breweries: [
       {
         id: 'eadee3b4-5b47-49a2-a2f6-6719c83b1a0e',
-        name: 'Test brewery'
+        name: 'Test brewery',
       },
       {
         id: '7326edd5-b1e8-489a-b5fc-902de0095bd5',
-        name: 'Another brewery'
-      }
-    ]
+        name: 'Another brewery',
+      },
+    ],
   }
 
   addTestServerResponse<BreweryList>({
     method: 'GET',
     pathname: `/api/v1/brewery?size=10&skip=0`,
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const { getByRole, getByText } = render(
     <Provider store={store}>
       <Helper />
-    </Provider>
+    </Provider>,
   )
   const loadButton = getByRole('button', { name: 'Load' })
   await user.click(loadButton)

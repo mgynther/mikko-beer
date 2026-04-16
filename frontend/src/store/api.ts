@@ -3,7 +3,7 @@ import {
   type FetchArgs,
   type FetchBaseQueryError,
   createApi,
-  fetchBaseQuery
+  fetchBaseQuery,
 } from '@reduxjs/toolkit/query/react'
 import { Mutex } from 'async-mutex'
 
@@ -23,7 +23,7 @@ import { backendUrl } from '../constants'
 import { waitForTurn } from './request-blocker'
 import { parseRefreshDetails } from './refresh-details-parser'
 
-function mergeTags (): string[] {
+function mergeTags(): string[] {
   return [
     ...allStatsTagTypes(),
     ...beerTagTypes(),
@@ -33,7 +33,7 @@ function mergeTags (): string[] {
     ...loginTagTypes(),
     ...reviewTagTypes(),
     ...styleTagTypes(),
-    ...userTagTypes()
+    ...userTagTypes(),
   ]
 }
 
@@ -45,37 +45,37 @@ const baseQuery = fetchBaseQuery({
       /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
        * Unknown in the rtk types.
        */
-      (api.getState() as (RootState | undefined))?.login.login.authToken ?? ''
+      (api.getState() as RootState | undefined)?.login.login.authToken ?? ''
     if (authToken.length > 0) {
       headers.set('Authorization', `Bearer ${authToken}`)
     }
-  }
+  },
 })
 const baseQueryWithReauth: BaseQueryFn<
-string | FetchArgs,
-unknown,
-FetchBaseQueryError
+  string | FetchArgs,
+  unknown,
+  FetchBaseQueryError
 > = async (args, api, extraOptions) => {
   await mutex.waitForUnlock()
   let result = await baseQuery(args, api, extraOptions)
   if (result.error?.status === 401) {
     await waitForTurn(mutex, async () => {
-      const {userId, refreshToken} = parseRefreshDetails(api.getState())
+      const { userId, refreshToken } = parseRefreshDetails(api.getState())
       const refreshResult = await baseQuery(
         {
           method: 'POST',
           url: `/user/${userId}/refresh`,
-          body: { refreshToken }
+          body: { refreshToken },
         },
         api,
-        extraOptions
+        extraOptions,
       )
       if (refreshResult.data === undefined) {
         api.dispatch({ type: 'login/logout' })
       } else {
         api.dispatch({
           type: 'login/refresh',
-          payload: refreshResult.data
+          payload: refreshResult.data,
         })
         result = await baseQuery(args, api, extraOptions)
       }
@@ -87,7 +87,7 @@ FetchBaseQueryError
 export const emptySplitApi = createApi({
   baseQuery: baseQueryWithReauth,
   tagTypes: mergeTags(),
-  endpoints: () => ({})
+  endpoints: () => ({}),
 })
 
 export const { reducerPath, reducer, middleware } = emptySplitApi

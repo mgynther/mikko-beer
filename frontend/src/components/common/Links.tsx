@@ -12,21 +12,17 @@ interface Props {
   linkFormatter: (id: string) => string
 }
 
-export function Links (props: Props): React.JSX.Element {
+export function Links(props: Props): React.JSX.Element {
   return (
     <>
-    {[...props.items]
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map((item, index) => (
-        <span key={item.id}>
-          <Link
-            to={props.linkFormatter(item.id)}
-            text={item.name}
-          />
-          {index < props.items.length - 1 ? ', ' : ''}
-        </span>
-      ))
-    }
+      {[...props.items]
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((item, index) => (
+          <span key={item.id}>
+            <Link to={props.linkFormatter(item.id)} text={item.name} />
+            {index < props.items.length - 1 ? ', ' : ''}
+          </span>
+        ))}
     </>
   )
 }

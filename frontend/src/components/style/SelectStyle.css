@@ -16,6 +16,6 @@
   flex-grow: 1;
 }
 
-.SelectStyle input[type=text] {
+.SelectStyle input[type='text'] {
   flex-grow: 1;
 }

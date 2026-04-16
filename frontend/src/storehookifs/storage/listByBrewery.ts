@@ -1,24 +1,22 @@
 import type {
   DeleteStorageIf,
-  ListStoragesByIf
-} from "../../core/storage/types"
-import { useListStoragesByBreweryQuery } from "../../store/storage/api"
-import { validateStorageListOrUndefined } from "../../validation/storage"
+  ListStoragesByIf,
+} from '../../core/storage/types'
+import { useListStoragesByBreweryQuery } from '../../store/storage/api'
+import { validateStorageListOrUndefined } from '../../validation/storage'
 
 const listStoragesByBrewery: (
-  deleteStorageIf: DeleteStorageIf
-) => ListStoragesByIf = (
-  deleteStorageIf: DeleteStorageIf
-) => {
+  deleteStorageIf: DeleteStorageIf,
+) => ListStoragesByIf = (deleteStorageIf: DeleteStorageIf) => {
   const listStoragesByBreweryIf: ListStoragesByIf = {
     useList: (breweryId: string) => {
       const { data, isLoading } = useListStoragesByBreweryQuery(breweryId)
       return {
         storages: validateStorageListOrUndefined(data),
-        isLoading
+        isLoading,
       }
     },
-    delete: deleteStorageIf
+    delete: deleteStorageIf,
   }
   return listStoragesByBreweryIf
 }

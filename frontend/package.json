@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "VITE_BACKEND_URL=http://localhost:3001 vite",
     "build": "tsc && vite build && mv dist/manifest.json dist/assets/manifest*.json",
+    "format": "npx prettier --write .",
+    "format:check": "npx prettier --check .",
     "lint": "npx eslint --max-warnings=0 --fix .",
     "test": "VITE_BACKEND_URL=http://localhost:3001 TEST_PORT_START=35000 vitest --coverage.enabled false --environment jsdom",
     "test:ci": "CI=true VITE_BACKEND_URL=http://localhost:3001 TEST_PORT_START=30000 vitest --coverage.enabled true --environment jsdom",
@@ -34,6 +36,7 @@
     "@vitejs/plugin-react": "6.0.1",
     "@vitest/coverage-v8": "4.1.4",
     "jsdom": "29.0.2",
+    "prettier": "3.8.3",
     "react-test-renderer": "19.2.5",
     "typescript": "6.0.2",
     "typescript-eslint": "8.58.2",

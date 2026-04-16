@@ -11,7 +11,7 @@ interface Props {
   searchIf: SearchIf
 }
 
-function SearchBeerWithNavi (props: Props): React.JSX.Element {
+function SearchBeerWithNavi(props: Props): React.JSX.Element {
   const navigate = props.navigateIf.useNavigate()
   return (
     <SearchBeer
@@ -19,8 +19,8 @@ function SearchBeerWithNavi (props: Props): React.JSX.Element {
       searchBeerIf={props.searchBeerIf}
       select={(beer) => {
         void navigate(`/beers/${beer.id}`)
-      }
-    } />
+      }}
+    />
   )
 }
 

@@ -5,12 +5,10 @@ import { formatTitle } from '../list-helpers'
 import type {
   LocationStatsSortingOrder,
   OneLocationStats,
-  StatsFilters
+  StatsFilters,
 } from '../../core/stats/types'
 
-import type {
-  ListDirection
-} from '../../core/types'
+import type { ListDirection } from '../../core/types'
 
 import TabButton from '../common/TabButton'
 import LocationLink from '../location/LocationLink'
@@ -31,10 +29,10 @@ interface Props {
   setSortingOrder: (order: LocationStatsSortingOrder) => void
 }
 
-function LocationStatsTable (props: Props): React.JSX.Element {
+function LocationStatsTable(props: Props): React.JSX.Element {
   const filters = props.filters
 
-  function isSelected (property: LocationStatsSortingOrder): boolean {
+  function isSelected(property: LocationStatsSortingOrder): boolean {
     return props.sortingOrder === property
   }
 
@@ -50,9 +48,12 @@ function LocationStatsTable (props: Props): React.JSX.Element {
                 title={formatTitle(
                   'Location',
                   isSelected('location_name'),
-                  props.sortingDirection
+                  props.sortingDirection,
                 )}
-                onClick={() => { props.setSortingOrder('location_name'); }} />
+                onClick={() => {
+                  props.setSortingOrder('location_name')
+                }}
+              />
             </th>
             <th className='StatsNumColumn'>
               <TabButton
@@ -61,9 +62,12 @@ function LocationStatsTable (props: Props): React.JSX.Element {
                 title={formatTitle(
                   'Reviews',
                   isSelected('count'),
-                  props.sortingDirection
+                  props.sortingDirection,
                 )}
-                onClick={() => { props.setSortingOrder('count'); }} />
+                onClick={() => {
+                  props.setSortingOrder('count')
+                }}
+              />
             </th>
             <th className='StatsNumColumn'>
               <TabButton
@@ -72,9 +76,12 @@ function LocationStatsTable (props: Props): React.JSX.Element {
                 title={formatTitle(
                   'Average',
                   isSelected('average'),
-                  props.sortingDirection
+                  props.sortingDirection,
                 )}
-                onClick={() => { props.setSortingOrder('average'); }} />
+                onClick={() => {
+                  props.setSortingOrder('average')
+                }}
+              />
             </th>
           </tr>
           <tr>
@@ -93,13 +100,15 @@ function LocationStatsTable (props: Props): React.JSX.Element {
             rowCount={3}
             columnCount={3}
           />
-          {props.locations.map(location => (
+          {props.locations.map((location) => (
             <tr key={location.locationId}>
               <td className='StatsNameColumn'>
-                <LocationLink location={{
-                  id: location.locationId,
-                  name: location.locationName
-                }} />
+                <LocationLink
+                  location={{
+                    id: location.locationId,
+                    name: location.locationName,
+                  }}
+                />
               </td>
               <td className='StatsNumColumn'>{location.reviewCount}</td>
               <td className='StatsNumColumn'>{location.reviewAverage}</td>

@@ -14,7 +14,7 @@ interface Props {
   setValue: (value: number) => void
 }
 
-function StepFilterSlider (props: Props): React.JSX.Element {
+function StepFilterSlider(props: Props): React.JSX.Element {
   const id = props.title.split(':')[0]
   return (
     <div>

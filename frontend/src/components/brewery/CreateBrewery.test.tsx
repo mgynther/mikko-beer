@@ -4,7 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import CreateBrewery from './CreateBrewery'
 import type {
   CreateBreweryIf,
-  CreateBreweryRequest
+  CreateBreweryRequest,
 } from '../../core/brewery/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 
@@ -22,16 +22,13 @@ test('creates brewery', async () => {
     useCreate: () => ({
       create: async (brewery: CreateBreweryRequest) => ({
         ...brewery,
-        id
+        id,
       }),
-      isLoading: false
-    })
+      isLoading: false,
+    }),
   }
   const { getByPlaceholderText, getByRole } = render(
-    <CreateBrewery
-      select={selectBrewery}
-      createBreweryIf={createBreweryIf}
-    />
+    <CreateBrewery select={selectBrewery} createBreweryIf={createBreweryIf} />,
   )
   const createButton = getByRole('button', { name: 'Create' })
   const nameInput = getByPlaceholderText(namePlaceholder)
@@ -39,24 +36,25 @@ test('creates brewery', async () => {
   expect(createButton.hasAttribute('disabled')).toEqual(false)
   await user.click(createButton)
   const createCalls = selectBrewery.mock.calls
-  expect(createCalls).toEqual([[{
-    id,
-    name: 'Salama Brewing'
-  }]])
+  expect(createCalls).toEqual([
+    [
+      {
+        id,
+        name: 'Salama Brewing',
+      },
+    ],
+  ])
 })
 
 test('render loading', async () => {
   const createBreweryIf: CreateBreweryIf = {
     useCreate: () => ({
       create: dontCall,
-      isLoading: true
-    })
+      isLoading: true,
+    }),
   }
   const { getByText } = render(
-    <CreateBrewery
-      select={dontCall}
-      createBreweryIf={createBreweryIf}
-    />
+    <CreateBrewery select={dontCall} createBreweryIf={createBreweryIf} />,
   )
   getByText(loadingIndicatorText)
 })

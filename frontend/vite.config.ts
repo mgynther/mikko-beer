@@ -8,6 +8,6 @@ export default defineConfig({
   },
   plugins: [react()],
   server: {
-    forwardConsole: true
-  }
+    forwardConsole: true,
+  },
 })

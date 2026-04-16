@@ -1,6 +1,6 @@
-import type { GetLocationIf } from "../../core/location/types"
-import { useGetLocationQuery } from "../../store/location/api"
-import { validateLocationOrUndefined } from "../../validation/location"
+import type { GetLocationIf } from '../../core/location/types'
+import { useGetLocationQuery } from '../../store/location/api'
+import { validateLocationOrUndefined } from '../../validation/location'
 
 const getLocation: () => GetLocationIf = () => {
   const getLocationIf: GetLocationIf = {
@@ -8,9 +8,9 @@ const getLocation: () => GetLocationIf = () => {
       const { data, isLoading } = useGetLocationQuery(locationId)
       return {
         location: validateLocationOrUndefined(data?.location),
-        isLoading
+        isLoading,
       }
-    }
+    },
   }
   return getLocationIf
 }

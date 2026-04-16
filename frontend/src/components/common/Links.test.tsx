@@ -14,19 +14,19 @@ test('renders links', () => {
         items={[
           {
             id: id1,
-            name: '1'
+            name: '1',
           },
           {
             id: id2,
-            name: '2'
-          }
+            name: '2',
+          },
         ]}
         linkFormatter={(id: string) => {
           linkFormattingRequests(id)
           return `/testing/${id}`
         }}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   expect(linkFormattingRequests.mock.calls).toEqual([[id1], [id2]])
   getByRole('link', { name: '1' })

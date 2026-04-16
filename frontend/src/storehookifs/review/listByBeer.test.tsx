@@ -14,13 +14,13 @@ function Helper(props: HelperProps): React.JSX.Element {
   const listIf = listReviewsByBeer()
   const { reviews } = listIf.useList({
     id: props.beerId,
-    sorting: { order: 'time', direction: 'desc' }
+    sorting: { order: 'time', direction: 'desc' },
   })
   return (
     <div>
-      {reviews?.reviews.map(review =>
+      {reviews?.reviews.map((review) => (
         <div key={review.id}>{review.beerName}</div>
-      )}
+      ))}
     </div>
   )
 }
@@ -39,46 +39,45 @@ test('list reviews by beer', async () => {
         breweries: [
           {
             id: 'b709ecff-d6a0-4590-bb5f-508e14ac54f3',
-            name: 'Test brewery'
-          }
+            name: 'Test brewery',
+          },
         ],
         container: {
           id: '3dc7cae4-a196-41ac-942c-ce9c1a6cd639',
           type: 'bottle',
-          size: '0.33'
+          size: '0.33',
         },
         location: {
           id: '7aad6a35-cab0-45d3-b7c7-8842dba8bbfa',
-          name: 'Test location'
+          name: 'Test location',
         },
         rating: 8,
         styles: [
           {
             id: 'b355e97b-6fb4-4787-97d5-5852547b250b',
-            name: 'Test style'
-          }
+            name: 'Test style',
+          },
         ],
-        time: '2026-03-12T00:00:00.000Z'
-      }
+        time: '2026-03-12T00:00:00.000Z',
+      },
     ],
     sorting: {
       order: 'rating',
-      direction: 'asc'
-    }
+      direction: 'asc',
+    },
   }
 
   addTestServerResponse<JoinedReviewList>({
     method: 'GET',
-    pathname:
-      `/api/v1/beer/${beerId}/review?order=time&direction=desc`,
+    pathname: `/api/v1/beer/${beerId}/review?order=time&direction=desc`,
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const { getByText } = render(
     <Provider store={store}>
       <Helper beerId={beerId} />
-    </Provider>
+    </Provider>,
   )
   await waitFor(() => {
     expect(getByText(beerName)).toBeDefined()

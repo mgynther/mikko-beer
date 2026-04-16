@@ -22,16 +22,16 @@ test('renders overall stats', () => {
               reviewCount: '112',
               distinctBeerReviewCount: '110',
               reviewAverage: '8.54',
-              styleCount: '29'
+              styleCount: '29',
             },
-            isLoading: false
+            isLoading: false,
           }
-        }
+        },
       }}
       breweryId={breweryId}
       locationId={locationId}
       styleId={styleId}
-    />
+    />,
   )
   expect(stats.mock.calls).toEqual([[{ breweryId, locationId, styleId }]])
   getByText('123')

@@ -5,12 +5,9 @@ import type { ParamsIf } from '../util'
 import type {
   Brewery as BreweryType,
   GetBreweryIf,
-  UpdateBreweryIf
+  UpdateBreweryIf,
 } from '../../core/brewery/types'
-import type {
-  ListReviewsByIf,
-  ReviewIf
-} from '../../core/review/types'
+import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
 import type { SearchIf } from '../../core/search/types'
 import type { ListStoragesByIf } from '../../core/storage/types'
 
@@ -39,11 +36,12 @@ interface Props {
   statsIf: StatsIf
 }
 
-function Brewery (props: Props): React.JSX.Element {
+function Brewery(props: Props): React.JSX.Element {
   const { breweryId } = props.paramsIf.useParams()
   const [mode, setMode] = useState(EditableMode.View)
-  const [initialBrewery, setInitialBrewery] =
-    useState<BreweryType | undefined>(undefined)
+  const [initialBrewery, setInitialBrewery] = useState<BreweryType | undefined>(
+    undefined,
+  )
   if (breweryId === undefined) {
     throw new Error('Brewery component without breweryId. Should not happen.')
   }
@@ -55,9 +53,7 @@ function Brewery (props: Props): React.JSX.Element {
       {mode === EditableMode.View && (
         <div className='FlexRow'>
           <div>
-            <h3>
-              { brewery.name }
-            </h3>
+            <h3>{brewery.name}</h3>
           </div>
           <div>
             <EditButton

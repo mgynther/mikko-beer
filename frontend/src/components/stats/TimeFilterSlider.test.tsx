@@ -13,18 +13,18 @@ test('renders contents', () => {
       title={title}
       time={{
         year: 2024,
-        month: 12
+        month: 12,
       }}
       minTime={{
         year: 2024,
-        month: 11
+        month: 11,
       }}
       maxTime={{
         year: 2025,
-        month: 1
+        month: 1,
       }}
       setTime={dontCall}
-    />
+    />,
   )
   getByText(`${title}: 2024-12`)
   getByDisplayValue('1')
@@ -37,18 +37,18 @@ test('defaults to min time', () => {
       title={title}
       time={{
         year: 2024,
-        month: 10
+        month: 10,
       }}
       minTime={{
         year: 2024,
-        month: 11
+        month: 11,
       }}
       maxTime={{
         year: 2025,
-        month: 1
+        month: 1,
       }}
       setTime={dontCall}
-    />
+    />,
   )
   getByText(`${title}: 2024-11`)
   getByDisplayValue('0')
@@ -56,24 +56,26 @@ test('defaults to min time', () => {
 
 test('throws on invalid range', () => {
   const title = 'Time'
-  expect(() => render(
-    <TimeFilterSlider
-      title={title}
-      time={{
-        year: 2024,
-        month: 12
-      }}
-      minTime={{
-        year: 2025,
-        month: 1
-      }}
-      maxTime={{
-        year: 2024,
-        month: 11
-      }}
-      setTime={dontCall}
-    />
-  )).toThrow(`maxTime 2024-11 cannot be before minTime 2025-01`)
+  expect(() =>
+    render(
+      <TimeFilterSlider
+        title={title}
+        time={{
+          year: 2024,
+          month: 12,
+        }}
+        minTime={{
+          year: 2025,
+          month: 1,
+        }}
+        maxTime={{
+          year: 2024,
+          month: 11,
+        }}
+        setTime={dontCall}
+      />,
+    ),
+  ).toThrow(`maxTime 2024-11 cannot be before minTime 2025-01`)
 })
 
 test('changes value', async () => {
@@ -83,20 +85,20 @@ test('changes value', async () => {
       title={'title'}
       time={{
         year: 2024,
-        month: 2
+        month: 2,
       }}
       minTime={{
         year: 2024,
-        month: 1
+        month: 1,
       }}
       maxTime={{
         year: 2024,
-        month: 3
+        month: 3,
       }}
       setTime={setTime}
-    />
+    />,
   )
   const slider = getByDisplayValue(1)
-  fireEvent.change(slider, {target: {value: '2'}})
+  fireEvent.change(slider, { target: { value: '2' } })
   expect(setTime.mock.calls).toEqual([[{ year: 2024, month: 3 }]])
 })

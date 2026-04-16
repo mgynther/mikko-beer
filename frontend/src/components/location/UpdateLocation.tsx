@@ -1,9 +1,6 @@
 import React, { useState } from 'react'
 
-import type {
-  UpdateLocationIf,
-  Location
-} from '../../core/location/types'
+import type { UpdateLocationIf, Location } from '../../core/location/types'
 
 import EditActions from '../common/EditActions'
 
@@ -16,11 +13,12 @@ interface Props {
   onSaved: () => void
 }
 
-function UpdateLocation (props: Props): React.JSX.Element {
-  const [newLocation, setNewLocation] =
-    useState<Location | undefined>(undefined)
+function UpdateLocation(props: Props): React.JSX.Element {
+  const [newLocation, setNewLocation] = useState<Location | undefined>(
+    undefined,
+  )
   const { update, isLoading } = props.updateLocationIf.useUpdate()
-  async function doUpdate (newLocation: Location): Promise<void> {
+  async function doUpdate(newLocation: Location): Promise<void> {
     await update({ ...newLocation })
     props.onSaved()
   }
@@ -42,7 +40,9 @@ function UpdateLocation (props: Props): React.JSX.Element {
         }}
         onSave={
           newLocation
-            ? (): void => { void doUpdate(newLocation) }
+            ? (): void => {
+                void doUpdate(newLocation)
+              }
             : undefined
         }
       />

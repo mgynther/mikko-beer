@@ -14,17 +14,22 @@ interface Props {
   onSave: (() => void) | undefined
 }
 
-function EditActions (props: Props): React.JSX.Element | null {
+function EditActions(props: Props): React.JSX.Element | null {
   return (
     <span className='EditActions'>
-      <Button onClick={() => { props.onCancel() }} text='Cancel' />
+      <Button
+        onClick={() => {
+          props.onCancel()
+        }}
+        text='Cancel'
+      />
       <Button
         disabled={
-          props.isSaveDisabled ||
-          props.isSaving ||
-          props.onSave === undefined
+          props.isSaveDisabled || props.isSaving || props.onSave === undefined
         }
-        onClick={() => { props.onSave?.() }}
+        onClick={() => {
+          props.onSave?.()
+        }}
         text='Save'
       />
       <LoadingIndicator isLoading={props.isSaving} />

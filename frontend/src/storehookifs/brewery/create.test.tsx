@@ -24,9 +24,7 @@ function Helper(props: HelperProps): React.JSX.Element {
     }
     void doHandle()
   }
-  return (
-    <Button onClick={handleClick} text='Test' />
-  )
+  return <Button onClick={handleClick} text='Test' />
 }
 
 test('create brewery', async () => {
@@ -35,24 +33,25 @@ test('create brewery', async () => {
   const expectedResponse: { brewery: Brewery } = {
     brewery: {
       id: '2e92c7c4-d1ee-41d3-acf5-18fd29e94233',
-      name: 'Test brewery'
-    }
+      name: 'Test brewery',
+    },
   }
 
-  addTestServerResponse<{brewery: Brewery}>({
+  addTestServerResponse<{ brewery: Brewery }>({
     method: 'POST',
     pathname: '/api/v1/brewery',
     response: expectedResponse,
-    status: 201
+    status: 201,
   })
 
   const handler = vitest.fn()
   const { getByRole } = render(
     <Provider store={store}>
-      <Helper brewery={{ name: expectedResponse.brewery.name }} handleResponse={
-        handler
-      } />
-    </Provider>
+      <Helper
+        brewery={{ name: expectedResponse.brewery.name }}
+        handleResponse={handler}
+      />
+    </Provider>,
   )
   const testButton = getByRole('button', { name: 'Test' })
   await user.click(testButton)

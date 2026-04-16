@@ -5,14 +5,14 @@ import type { ParamsIf } from '../util'
 import type {
   GetBeerIf,
   Beer as BeerType,
-  UpdateBeerIf
+  UpdateBeerIf,
 } from '../../core/beer/types'
 
 import type {
   ListReviewsByIf,
   ReviewIf,
   ReviewSorting,
-  ReviewSortingOrder
+  ReviewSortingOrder,
 } from '../../core/review/types'
 import type { SearchIf } from '../../core/search/types'
 import type { ListStoragesByIf } from '../../core/storage/types'
@@ -42,13 +42,14 @@ interface Props {
   getBeerIf: GetBeerIf
 }
 
-function Beer (props: Props): React.JSX.Element {
+function Beer(props: Props): React.JSX.Element {
   const { beerId } = props.paramsIf.useParams()
   const [order, doSetOrder] = useState<ReviewSortingOrder>('beer_name')
   const [direction, doSetDirection] = useState<ListDirection>('asc')
   const [mode, setMode] = useState(EditableMode.View)
-  const [initialBeer, setInitialBeer] =
-    useState<BeerType | undefined>(undefined)
+  const [initialBeer, setInitialBeer] = useState<BeerType | undefined>(
+    undefined,
+  )
   if (beerId === undefined) {
     throw new Error('Beer component without beerId. Should not happen.')
   }
@@ -58,8 +59,8 @@ function Beer (props: Props): React.JSX.Element {
       id: beerId,
       sorting: {
         order,
-        direction
-      }
+        direction,
+      },
     })
   if (isLoading) return <LoadingIndicator isLoading={true} />
   if (beer === undefined) return <NotFound />
@@ -69,7 +70,7 @@ function Beer (props: Props): React.JSX.Element {
         <>
           <div className='FlexRow'>
             <div>
-              <h3>{ beer.name }</h3>
+              <h3>{beer.name}</h3>
             </div>
             <div>
               <EditButton

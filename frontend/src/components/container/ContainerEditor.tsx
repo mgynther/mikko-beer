@@ -8,14 +8,14 @@ interface Props {
   onChange: (container: Container | undefined) => void
 }
 
-function ContainerEditor (props: Props): React.JSX.Element {
+function ContainerEditor(props: Props): React.JSX.Element {
   const [container, setContainer] = useState(props.initialContainer)
 
-  function onChange (type: string, size: string): void {
+  function onChange(type: string, size: string): void {
     const newContainer = {
       ...container,
       type,
-      size
+      size,
     }
     setContainer(newContainer)
     if (newContainer.type.length > 0 && isSizeValid(newContainer.size)) {
@@ -31,7 +31,7 @@ function ContainerEditor (props: Props): React.JSX.Element {
         type='text'
         placeholder='Type'
         value={container.type}
-        onChange={e => {
+        onChange={(e) => {
           onChange(e.target.value, container.size)
         }}
       />
@@ -39,7 +39,7 @@ function ContainerEditor (props: Props): React.JSX.Element {
         type='text'
         placeholder='Size, for example 0.25'
         value={container.size}
-        onChange={e => {
+        onChange={(e) => {
           onChange(container.type, e.target.value)
         }}
       />

@@ -1,8 +1,9 @@
-import type { GetStyleIf } from "../../core/style/types"
-import { useGetStyleQuery } from "../../store/style/api"
+import type { GetStyleIf } from '../../core/style/types'
+import { useGetStyleQuery } from '../../store/style/api'
+// prettier-ignore
 import {
   validateStyleWithParentsAndChildrenOrUndefined
-} from "../../validation/style"
+} from '../../validation/style'
 
 const getStyle: () => GetStyleIf = () => {
   const getStyleIf: GetStyleIf = {
@@ -10,9 +11,9 @@ const getStyle: () => GetStyleIf = () => {
       const { data, isLoading } = useGetStyleQuery(styleId)
       return {
         style: validateStyleWithParentsAndChildrenOrUndefined(data?.style),
-        isLoading
+        isLoading,
       }
-    }
+    },
   }
   return getStyleIf
 }

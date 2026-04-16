@@ -1,6 +1,6 @@
-import type { Container, UpdateContainerIf } from "../../core/container/types"
-import { useUpdateContainerMutation } from "../../store/container/api"
-import { validateContainer } from "../../validation/container"
+import type { Container, UpdateContainerIf } from '../../core/container/types'
+import { useUpdateContainerMutation } from '../../store/container/api'
+import { validateContainer } from '../../validation/container'
 
 const updateContainer: () => UpdateContainerIf = () => {
   const updateContainerIf: UpdateContainerIf = {
@@ -12,9 +12,9 @@ const updateContainer: () => UpdateContainerIf = () => {
           const result = await updateContainer(container).unwrap()
           validateContainer(result.container)
         },
-        isLoading: isUpdatingContainer
+        isLoading: isUpdatingContainer,
       }
-    }
+    },
   }
   return updateContainerIf
 }

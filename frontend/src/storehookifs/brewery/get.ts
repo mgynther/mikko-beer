@@ -1,6 +1,6 @@
-import type { GetBreweryIf } from "../../core/brewery/types"
-import { useGetBreweryQuery } from "../../store/brewery/api"
-import { validateBreweryOrUndefined } from "../../validation/brewery"
+import type { GetBreweryIf } from '../../core/brewery/types'
+import { useGetBreweryQuery } from '../../store/brewery/api'
+import { validateBreweryOrUndefined } from '../../validation/brewery'
 
 const getBrewery: () => GetBreweryIf = () => {
   const getBreweryIf: GetBreweryIf = {
@@ -9,9 +9,9 @@ const getBrewery: () => GetBreweryIf = () => {
       const validBrewery = validateBreweryOrUndefined(data?.brewery)
       return {
         brewery: validBrewery,
-        isLoading
+        isLoading,
       }
-    }
+    },
   }
   return getBreweryIf
 }

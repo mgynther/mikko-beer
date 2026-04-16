@@ -11,10 +11,10 @@ test('renders style link', () => {
       <StyleLink
         style={{
           id: 'abee1577-6ecb-4144-8d09-20e13b479ec3',
-          name: styleName
+          name: styleName,
         }}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   getByRole('link', { name: styleName })
 })

@@ -12,15 +12,15 @@ interface CreateTest {
 const createTests: CreateTest[] = [
   {
     role: Role.admin,
-    label: 'Admin'
+    label: 'Admin',
   },
   {
     role: Role.viewer,
-    label: 'Viewer'
-  }
+    label: 'Viewer',
+  },
 ]
 
-createTests.forEach(testCase => {
+createTests.forEach((testCase) => {
   test('creates user', async () => {
     const user = userEvent.setup()
     const create = vitest.fn()
@@ -31,10 +31,10 @@ createTests.forEach(testCase => {
             create,
             user: undefined,
             hasError: false,
-            isLoading: false
-          })
+            isLoading: false,
+          }),
         }}
-      />
+      />,
     )
     const usernameInput = getByPlaceholderText('Username')
     const username = 'username'
@@ -42,8 +42,9 @@ createTests.forEach(testCase => {
     const passwordInput = getByPlaceholderText('Password')
     const password = 'password'
     await user.type(passwordInput, password)
-    const passwordConfirmationInput =
-      getByPlaceholderText('Password confirmation')
+    const passwordConfirmationInput = getByPlaceholderText(
+      'Password confirmation',
+    )
     await user.type(passwordConfirmationInput, password)
     const roleSelect = getByRole('combobox')
     await user.click(roleSelect)
@@ -53,15 +54,19 @@ createTests.forEach(testCase => {
     const createButton = getByRole('button', { name: 'Create' })
     expect(createButton.hasAttribute('disabled')).toEqual(false)
     await user.click(createButton)
-    expect(create.mock.calls).toEqual([[{
-      passwordSignInMethod: {
-        username,
-        password
-      },
-      user: {
-        role: testCase.role
-      }
-    }]])
+    expect(create.mock.calls).toEqual([
+      [
+        {
+          passwordSignInMethod: {
+            username,
+            password,
+          },
+          user: {
+            role: testCase.role,
+          },
+        },
+      ],
+    ])
   })
 })
 
@@ -74,10 +79,10 @@ test('shows error', async () => {
           create,
           user: undefined,
           hasError: true,
-          isLoading: false
-        })
+          isLoading: false,
+        }),
       }}
-    />
+    />,
   )
   getByText('Creating failed. Please check the username and passwords.')
 })
@@ -92,13 +97,13 @@ test('shows created text', async () => {
           user: {
             id: '2d793bca-0989-4caa-8e7b-7bd72ddcadcc',
             username: 'admin',
-            role: 'admin'
+            role: 'admin',
           },
           hasError: false,
-          isLoading: false
-        })
+          isLoading: false,
+        }),
       }}
-    />
+    />,
   )
   getByText('Created!')
 })

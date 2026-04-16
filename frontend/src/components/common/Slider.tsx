@@ -11,7 +11,7 @@ interface Props {
   setDisplayValue: (value: number) => void
 }
 
-function Slider (props: Props): React.JSX.Element {
+function Slider(props: Props): React.JSX.Element {
   const [isTouching, setIsTouching] = useState<boolean>()
   const [pendingValue, setPendingValue] = useState(props.value)
   useEffect(() => {
@@ -40,7 +40,7 @@ function Slider (props: Props): React.JSX.Element {
       onTouchEnd={() => {
         setIsTouching(false)
       }}
-      onChange={e => {
+      onChange={(e) => {
         const value = parseFloat(e.target.value)
         setPendingValue(value)
         props.setDisplayValue(value)

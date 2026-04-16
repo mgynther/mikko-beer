@@ -7,11 +7,11 @@ import { formatError } from './format-error'
 const ValidatedUser = t.type({
   id: t.string,
   username: t.string,
-  role: t.string
+  role: t.string,
 })
 
 const ValidatedUserList = t.type({
-  users: t.array(ValidatedUser)
+  users: t.array(ValidatedUser),
 })
 
 export function validateUserOrUndefined(result: unknown): User | undefined {
@@ -28,7 +28,7 @@ export function validateUserOrUndefined(result: unknown): User | undefined {
 }
 
 export function validateUserListOrUndefined(
-  result: unknown
+  result: unknown,
 ): UserList | undefined {
   if (typeof result === 'undefined') {
     return undefined

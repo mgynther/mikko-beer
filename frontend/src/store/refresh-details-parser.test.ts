@@ -1,11 +1,11 @@
-import { expect, test } from "vitest"
-import { parseRefreshDetails } from "./refresh-details-parser"
+import { expect, test } from 'vitest'
+import { parseRefreshDetails } from './refresh-details-parser'
 
 test('defaults refresh details to empty strings on store missing', () => {
   const result = parseRefreshDetails(undefined)
   expect(result).toEqual({
     userId: '',
-    refreshToken: ''
+    refreshToken: '',
   })
 })
 
@@ -14,14 +14,14 @@ test('defaults refresh details to empty string on user missing', () => {
     login: {
       login: {
         user: undefined,
-        refreshToken: 'refresh'
-      }
-    }
+        refreshToken: 'refresh',
+      },
+    },
   }
   const result = parseRefreshDetails(state)
   expect(result).toEqual({
     userId: '',
-    refreshToken: 'refresh'
+    refreshToken: 'refresh',
   })
 })
 
@@ -33,15 +33,15 @@ test('returns userId and refresh token when found', () => {
         user: {
           id: userId,
           username: 'admin',
-          role: 'admin'
+          role: 'admin',
         },
-        refreshToken: 'refresh'
-      }
-    }
+        refreshToken: 'refresh',
+      },
+    },
   }
   const result = parseRefreshDetails(state)
   expect(result).toEqual({
     userId,
-    refreshToken: 'refresh'
+    refreshToken: 'refresh',
   })
 })

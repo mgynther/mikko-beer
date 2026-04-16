@@ -20,15 +20,15 @@ interface ModeButton {
 const buttons: ModeButton[] = [
   {
     mode: 'annual',
-    title: 'Annual'
+    title: 'Annual',
   },
   {
     mode: 'monthly',
-    title: 'Monthly'
-  }
+    title: 'Monthly',
+  },
 ]
 
-function getStatsMode (stats: string | undefined): Mode {
+function getStatsMode(stats: string | undefined): Mode {
   const defaultValue: Mode = 'annual'
   if (stats === undefined) {
     return defaultValue
@@ -42,12 +42,12 @@ function getStatsMode (stats: string | undefined): Mode {
   return defaultValue
 }
 
-function Stats (props: Props): React.JSX.Element | null {
+function Stats(props: Props): React.JSX.Element | null {
   const search = props.paramsIf.useSearch()
   const stats = search.get('stats') ?? undefined
   const mode = getStatsMode(stats)
 
-  function setMode (newMode: Mode): void {
+  function setMode(newMode: Mode): void {
     if (mode === newMode) {
       return
     }
@@ -58,26 +58,24 @@ function Stats (props: Props): React.JSX.Element | null {
     <div>
       <h3>Statistics</h3>
       <div className='StatsModeContainer'>
-        {buttons.map(model => (
+        {buttons.map((model) => (
           <TabButton
             key={model.title}
             isCompact={false}
             isSelected={mode === model.mode}
-            onClick={() => { setMode(model.mode) }}
+            onClick={() => {
+              setMode(model.mode)
+            }}
             title={model.title}
           />
         ))}
       </div>
-      {mode === 'annual' &&
-        <AnnualStats
-          annualStatsIf={props.statsIf.annual}
-        />
-      }
-      {mode === 'monthly' &&
-        <MonthlyStats
-          monthlyStatsIf={props.statsIf.monthly}
-        />
-      }
+      {mode === 'annual' && (
+        <AnnualStats annualStatsIf={props.statsIf.annual} />
+      )}
+      {mode === 'monthly' && (
+        <MonthlyStats monthlyStatsIf={props.statsIf.monthly} />
+      )}
     </div>
   )
 }

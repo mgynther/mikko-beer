@@ -13,20 +13,22 @@ test('edits valid brewery', async () => {
     <BreweryEditor
       brewery={{
         id,
-        name: ''
+        name: '',
       }}
       placeholder={namePlaceholder}
       onChange={onChange}
-    />
+    />,
   )
   const nameInput = getByPlaceholderText(namePlaceholder)
   await user.type(nameInput, 'Salama')
   const calls = onChange.mock.calls
   expect(calls.length).toEqual(6)
-  expect(calls[calls.length - 1]).toEqual([{
-    id,
-    name: 'Salama'
-  }])
+  expect(calls[calls.length - 1]).toEqual([
+    {
+      id,
+      name: 'Salama',
+    },
+  ])
 })
 
 test('edits invalid brewery by empty name', async () => {
@@ -40,7 +42,7 @@ test('edits invalid brewery by empty name', async () => {
       }}
       placeholder={namePlaceholder}
       onChange={onChange}
-    />
+    />,
   )
   const nameInput = getByPlaceholderText(namePlaceholder)
   await user.type(nameInput, 'S')
@@ -56,11 +58,11 @@ test('renders values', async () => {
     <BreweryEditor
       brewery={{
         id,
-        name: 'Koskipanimo'
+        name: 'Koskipanimo',
       }}
       placeholder={namePlaceholder}
       onChange={onChange}
-    />
+    />,
   )
   getByDisplayValue('Koskipanimo')
 })

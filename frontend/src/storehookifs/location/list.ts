@@ -1,16 +1,16 @@
-import { infiniteScroll } from "../../components/util"
-import type { ListLocationsIf, LocationList } from "../../core/location/types"
-import type { Pagination } from "../../core/types"
-import { useLazyListLocationsQuery } from "../../store/location/api"
+import { infiniteScroll } from '../../components/util'
+import type { ListLocationsIf, LocationList } from '../../core/location/types'
+import type { Pagination } from '../../core/types'
+import { useLazyListLocationsQuery } from '../../store/location/api'
 import {
   validateLocationList,
-  validateLocationListOrUndefined
-} from "../../validation/location"
+  validateLocationListOrUndefined,
+} from '../../validation/location'
 
 const listLocations: () => ListLocationsIf = () => {
   const listLocationsIf: ListLocationsIf = {
     useList: () => {
-      const [trigger, { data, isFetching, isUninitialized } ] =
+      const [trigger, { data, isFetching, isUninitialized }] =
         useLazyListLocationsQuery()
       return {
         locationList: validateLocationListOrUndefined(data),
@@ -19,10 +19,10 @@ const listLocations: () => ListLocationsIf = () => {
           return validateLocationList(result)
         },
         isLoading: isFetching,
-        isUninitialized
+        isUninitialized,
       }
     },
-    infiniteScroll
+    infiniteScroll,
   }
   return listLocationsIf
 }

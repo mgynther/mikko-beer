@@ -6,15 +6,15 @@ import { formatError } from './format-error'
 
 export const ValidatedLocation = t.type({
   id: t.string,
-  name: t.string
+  name: t.string,
 })
 
 const ValidatedLocationList = t.type({
-  locations: t.array(ValidatedLocation)
+  locations: t.array(ValidatedLocation),
 })
 
 export function validateLocationOrUndefined(
-  result: unknown
+  result: unknown,
 ): Location | undefined {
   if (typeof result === 'undefined') {
     return undefined
@@ -33,7 +33,7 @@ export function validateLocation(result: unknown): Location {
 }
 
 export function validateLocationListOrUndefined(
-  result: unknown
+  result: unknown,
 ): LocationList | undefined {
   if (typeof result === 'undefined') {
     return undefined

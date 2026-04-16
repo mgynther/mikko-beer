@@ -7,11 +7,11 @@ import { formatError } from './format-error'
 export const ValidatedContainer = t.type({
   id: t.string,
   type: t.string,
-  size: t.string
+  size: t.string,
 })
 
 const ValidatedContainerList = t.type({
-  containers: t.array(ValidatedContainer)
+  containers: t.array(ValidatedContainer),
 })
 
 export function validateContainer(result: unknown): Container {
@@ -25,7 +25,7 @@ export function validateContainer(result: unknown): Container {
 }
 
 export function validateContainerListOrUndefined(
-  result: unknown
+  result: unknown,
 ): ContainerList | undefined {
   if (typeof result === 'undefined') {
     return undefined

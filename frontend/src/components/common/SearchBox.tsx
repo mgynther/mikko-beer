@@ -36,7 +36,7 @@ const SearchBox = <T extends SearchBoxItem>({
   searchIf,
   setFilter,
   select,
-  title
+  title,
 }: Props<T>): React.JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null)
   const { activate, isActive } = searchIf.useSearch()
@@ -59,9 +59,8 @@ const SearchBox = <T extends SearchBoxItem>({
     if (!startsWithA && startsWithB) return 1
     return aName.localeCompare(bName)
   })
-  const visibleOptions = currentFilter.length === 0
-    ? []
-    : sortedOptions.slice(0, maxResultCount)
+  const visibleOptions =
+    currentFilter.length === 0 ? [] : sortedOptions.slice(0, maxResultCount)
   const areAllShown = visibleOptions.length === sortedOptions.length
   const hasMoreResults = !isLoading && !areAllShown
   const hasNoResults = !isLoading && visibleOptions.length === 0
@@ -72,7 +71,7 @@ const SearchBox = <T extends SearchBoxItem>({
         type='text'
         value={currentFilter}
         ref={inputRef}
-        onChange={e => {
+        onChange={(e) => {
           setFilter(e.target.value)
           activate()
         }}
@@ -90,8 +89,8 @@ const SearchBox = <T extends SearchBoxItem>({
       {currentFilter.length > 0 && isActive && (
         <div className='SearchResults'>
           <ul>
-            {visibleOptions.map(item => (
-              <li key={item.id} >
+            {visibleOptions.map((item) => (
+              <li key={item.id}>
                 <Button
                   onClick={() => {
                     select(item)
@@ -102,25 +101,22 @@ const SearchBox = <T extends SearchBoxItem>({
               </li>
             ))}
             {visibleOptions.length === 0 && (
-              <div className="SearchInfo">
-                {hasNoResults &&
-                  <div>No results</div>
-                }
+              <div className='SearchInfo'>
+                {hasNoResults && <div>No results</div>}
                 <LoadingIndicator isLoading={isLoading} />
               </div>
             )}
             {visibleOptions.length > 0 && (
-              <div className={`SearchInfoContainer ${
-                    hasMoreResults || isLoading
-                      ? 'shown'
-                      : ''}`}>
-                <hr/>
-                <div className="SearchInfo">
-                  {hasMoreResults &&
-                    <div>
-                      There are more results. Refine search...
-                    </div>
-                  }
+              <div
+                className={`SearchInfoContainer ${
+                  hasMoreResults || isLoading ? 'shown' : ''
+                }`}
+              >
+                <hr />
+                <div className='SearchInfo'>
+                  {hasMoreResults && (
+                    <div>There are more results. Refine search...</div>
+                  )}
                   <LoadingIndicator isLoading={isLoading} />
                 </div>
               </div>

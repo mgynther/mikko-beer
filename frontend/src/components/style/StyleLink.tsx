@@ -11,13 +11,8 @@ interface Props {
   style: BasicStyle
 }
 
-export function StyleLink (props: Props): React.JSX.Element {
-  return (
-    <Link
-      to={`/styles/${props.style.id}`}
-      text={props.style.name}
-    />
-  )
+export function StyleLink(props: Props): React.JSX.Element {
+  return <Link to={`/styles/${props.style.id}`} text={props.style.name} />
 }
 
 export default StyleLink

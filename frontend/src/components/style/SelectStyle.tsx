@@ -1,10 +1,7 @@
 import React, { useState } from 'react'
 
 import type { SearchIf } from '../../core/search/types'
-import type {
-  SelectStyleIf,
-  Style
-} from '../../core/style/types'
+import type { SelectStyleIf, Style } from '../../core/style/types'
 
 import { Mode, SelectCreateRadioBasic } from '../common/SelectCreateRadio'
 
@@ -21,13 +18,15 @@ export interface Props {
   remove: () => void
 }
 
-function SelectStyle (props: Props): React.JSX.Element {
+function SelectStyle(props: Props): React.JSX.Element {
   const [mode, setMode] = useState(Mode.SELECT)
   return (
-    <div className="SelectStyle">
+    <div className='SelectStyle'>
       <SelectCreateRadioBasic
         mode={mode}
-        onChange={(mode: Mode) => { setMode(mode) }}
+        onChange={(mode: Mode) => {
+          setMode(mode)
+        }}
       />
       <div className='SelectStyleContent'>
         {mode === Mode.CREATE && (

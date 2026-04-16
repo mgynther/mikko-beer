@@ -1,7 +1,7 @@
 export enum StorageTags {
-  Storage = 'Storage'
+  Storage = 'Storage',
 }
 
-export function storageTagTypes (): string[] {
+export function storageTagTypes(): string[] {
   return [StorageTags.Storage]
 }

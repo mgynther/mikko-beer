@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import LinkWrapper from './components/LinkWrapper'
 import './index.css'
 import RtkApp from './RtkApp'
-import {onCLS, onINP, onLCP} from 'web-vitals'
+import { onCLS, onINP, onLCP } from 'web-vitals'
 
 import { Provider } from './react-redux-wrapper'
 import { store } from './store/store'
@@ -18,7 +18,7 @@ root.render(
         <RtkApp />
       </LinkWrapper>
     </React.StrictMode>
-  </Provider>
+  </Provider>,
 )
 
 onCLS(console.log)

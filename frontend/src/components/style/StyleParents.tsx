@@ -1,10 +1,7 @@
 import React, { useState } from 'react'
 
 import type { SearchIf } from '../../core/search/types'
-import type {
-  ListStylesIf,
-  Style
-} from '../../core/style/types'
+import type { ListStylesIf, Style } from '../../core/style/types'
 
 import Button from '../common/Button'
 
@@ -19,10 +16,10 @@ export interface Props {
   select: (parents: string[]) => void
 }
 
-function StyleParents (props: Props): React.JSX.Element {
+function StyleParents(props: Props): React.JSX.Element {
   const [parents, doSetParents] = useState<Style[]>(props.initialParents)
 
-  function setParents (parents: Style[]): void {
+  function setParents(parents: Style[]): void {
     props.select(parents.map((parent) => parent.id))
     doSetParents(parents)
   }

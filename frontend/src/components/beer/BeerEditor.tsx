@@ -1,10 +1,6 @@
 import React, { useState } from 'react'
 
-import type {
-  Beer,
-  BeerWithIds,
-  EditBeerIf
-} from '../../core/beer/types'
+import type { Beer, BeerWithIds, EditBeerIf } from '../../core/beer/types'
 import type { SearchIf } from '../../core/search/types'
 
 import SelectBreweries from '../brewery/SelectBreweries'
@@ -17,22 +13,17 @@ interface Props {
   searchIf: SearchIf
 }
 
-function BeerEditor (props: Props): React.JSX.Element {
+function BeerEditor(props: Props): React.JSX.Element {
   const [name, setName] = useState(props.initialBeer?.name ?? '')
   const [breweryIds, setBreweryIds] = useState<string[]>(
-    props.initialBeer?.breweries.map(brewery => brewery.id) ?? []
+    props.initialBeer?.breweries.map((brewery) => brewery.id) ?? [],
   )
   const [styleIds, setStyleIds] = useState<string[]>(
-    props.initialBeer?.styles.map(style => style.id) ?? []
+    props.initialBeer?.styles.map((style) => style.id) ?? [],
   )
 
-  function onChange (
-    name: string,
-    breweries: string[],
-    styles: string[]): void {
-    if (name === '' ||
-      breweries.length === 0 ||
-      styles.length === 0) {
+  function onChange(name: string, breweries: string[], styles: string[]): void {
+    if (name === '' || breweries.length === 0 || styles.length === 0) {
       props.onChange(undefined)
       return
     }
@@ -40,7 +31,7 @@ function BeerEditor (props: Props): React.JSX.Element {
       id: props.initialBeer?.id ?? '',
       name,
       breweries,
-      styles
+      styles,
     })
   }
 
@@ -49,7 +40,7 @@ function BeerEditor (props: Props): React.JSX.Element {
       <div className={'Section'}>
         <input
           placeholder='Name'
-          type="text"
+          type='text'
           value={name}
           onChange={(e) => {
             const name = e.target.value

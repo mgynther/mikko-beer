@@ -7,7 +7,7 @@ export interface NavMenuState {
 }
 
 export const initialState: NavMenuState = {
-  state: 'COLLAPSED'
+  state: 'COLLAPSED',
 }
 
 export const navMenuSlice = createSlice({
@@ -16,13 +16,13 @@ export const navMenuSlice = createSlice({
   reducers: {
     setState: (state, action: PayloadAction<NavMenuExpandedState>) => {
       state.state = action.payload
-    }
-  }
+    },
+  },
 })
 
 export const { setState } = navMenuSlice.actions
 
-export const selectState =
-  (state: RootState): NavMenuExpandedState => state.navMenu.state
+export const selectState = (state: RootState): NavMenuExpandedState =>
+  state.navMenu.state
 
 export default navMenuSlice.reducer

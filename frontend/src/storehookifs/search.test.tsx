@@ -6,7 +6,7 @@ import { store } from '../store/store'
 import { Provider } from '../react-redux-wrapper'
 import search from './search'
 
-const useDebounce: UseDebounce<string> = str => [str, false]
+const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 function Helper(): React.JSX.Element {
   const searchIf = search(useDebounce)
@@ -24,7 +24,7 @@ test('activate search', async () => {
   const { getByText } = render(
     <Provider store={store}>
       <Helper />
-    </Provider>
+    </Provider>,
   )
   expect(getByText('Passive')).toBeDefined()
   await user.click(getByText('Activate'))

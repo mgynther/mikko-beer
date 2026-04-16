@@ -18,7 +18,7 @@ function Helper(props: HelperProps): React.JSX.Element {
   const updateIf = updateLocation(() => ({
     user: undefined,
     authToken: '',
-    refreshToken: ''
+    refreshToken: '',
   }))
   const update = updateIf.useUpdate()
   const handleClick = (): void => {
@@ -43,25 +43,22 @@ test('update location', async () => {
   const expectedResponse: { location: Location } = {
     location: {
       id: '640ced88-a5b4-498e-9007-a045e0cc1797',
-      name: 'Test location'
-    }
+      name: 'Test location',
+    },
   }
 
-  addTestServerResponse<{location: Location}>({
+  addTestServerResponse<{ location: Location }>({
     method: 'PUT',
     pathname: `/api/v1/location/${expectedResponse.location.id}`,
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const handler = vitest.fn()
   const { getByRole, getByText } = render(
     <Provider store={store}>
-      <Helper
-        location={expectedResponse.location}
-        handler={handler}
-      />
-    </Provider>
+      <Helper location={expectedResponse.location} handler={handler} />
+    </Provider>,
   )
   const testButton = getByRole('button', { name: 'Test' })
   await user.click(testButton)

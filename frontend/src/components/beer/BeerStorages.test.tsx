@@ -1,11 +1,11 @@
 import { render } from '@testing-library/react'
-import { expect, test } from "vitest"
-import LinkWrapper from "../LinkWrapper"
-import BeerStorages from "./BeerStorages"
-import type { ListStoragesByIf, Storage } from "../../core/storage/types"
-import type { Beer } from "../../core/beer/types"
-import type { Container } from "../../core/container/types"
-import { Role } from "../../core/user/types"
+import { expect, test } from 'vitest'
+import LinkWrapper from '../LinkWrapper'
+import BeerStorages from './BeerStorages'
+import type { ListStoragesByIf, Storage } from '../../core/storage/types'
+import type { Beer } from '../../core/beer/types'
+import type { Container } from '../../core/container/types'
+import { Role } from '../../core/user/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -13,27 +13,27 @@ const dontCall = (): any => {
 
 const brewery = {
   id: 'd23d7310-98af-4ea4-ac19-06a19c745e9a',
-  name: 'Koskipanimo'
+  name: 'Koskipanimo',
 }
 
 const style = {
   id: 'cb490c9c-58a8-4281-af22-fcd3ae695f6b',
   name: 'IPA',
   parents: [],
-  children: []
+  children: [],
 }
 
 const beer: Beer = {
   id: '1ea6cacf-d840-4fdd-ad3a-8baa30a6da68',
   name: 'Smörre',
   breweries: [brewery],
-  styles: [style]
+  styles: [style],
 }
 
 const container: Container = {
   id: '1e2624b0-08f9-4713-8cd4-a4242e58c6a5',
   type: 'bottle',
-  size: '0.33'
+  size: '0.33',
 }
 
 const storage: Storage = {
@@ -45,34 +45,36 @@ const storage: Storage = {
   container,
   createdAt: '2023-02-02T12:00:00.000Z',
   hasReview: false,
-  styles: [style]
+  styles: [style],
 }
 
 const login = {
   user: {
     id: 'dc39260f-b459-4688-9103-08ef7ad903b0',
     username: 'mikko',
-    role: Role.admin
+    role: Role.admin,
   },
   authToken: '',
-  refreshToken: ''
+  refreshToken: '',
 }
 
 function getListStoragesByBeerIf(
-  storages: Storage[] | undefined
+  storages: Storage[] | undefined,
 ): ListStoragesByIf {
   return {
     useList: () => ({
-      storages: storages ? {
-        storages
-      } : undefined,
-      isLoading: storages !== undefined
+      storages: storages
+        ? {
+            storages,
+          }
+        : undefined,
+      isLoading: storages !== undefined,
     }),
     delete: {
       useDelete: () => ({
-        delete: dontCall
-      })
-    }
+        delete: dontCall,
+      }),
+    },
   }
 }
 
@@ -84,7 +86,7 @@ test('render storages', async () => {
         listStoragesByBeerIf={getListStoragesByBeerIf([storage])}
         getLogin={() => login}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   getByText(brewery.name)
   getByText(beer.name)
@@ -100,7 +102,7 @@ test('render nothing on loading', async () => {
         listStoragesByBeerIf={getListStoragesByBeerIf(undefined)}
         getLogin={() => login}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   expect(container.children.length).toEqual(0)
 })

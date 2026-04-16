@@ -12,37 +12,37 @@ const dontCall = (): any => {
 const statsIf: StorageStatsIf = {
   annual: {
     useAnnualStats: () => ({
-        stats: {
-          annual: [
-            { year: '2021', count: '8' },
-            { year: '2024', count: '15' },
-          ]
-        },
-        isLoading: false
-      })
+      stats: {
+        annual: [
+          { year: '2021', count: '8' },
+          { year: '2024', count: '15' },
+        ],
+      },
+      isLoading: false,
+    }),
   },
   monthly: {
     useMonthlyStats: () => ({
-        stats: {
-          monthly: [
-            { year: '2021', month: '4', count: '8' },
-            { year: '2024', month: '10', count: '15' },
-          ]
-        },
-        isLoading: false
-      })
+      stats: {
+        monthly: [
+          { year: '2021', month: '4', count: '8' },
+          { year: '2024', month: '10', count: '15' },
+        ],
+      },
+      isLoading: false,
+    }),
   },
-  setSearch: dontCall
+  setSearch: dontCall,
 }
 
 const emptyParamsIf: ParamsIf = {
   useParams: dontCall,
   useSearch: () => ({
-    get: () => undefined
-  })
+    get: () => undefined,
+  }),
 }
 
-function getStatsParamsIf (mode: string): ParamsIf {
+function getStatsParamsIf(mode: string): ParamsIf {
   return {
     ...emptyParamsIf,
     useSearch: () => ({
@@ -51,8 +51,8 @@ function getStatsParamsIf (mode: string): ParamsIf {
           return mode
         }
         return undefined
-      }
-    })
+      },
+    }),
   }
 }
 
@@ -62,10 +62,7 @@ const monthlyStatsParamsIf: ParamsIf = getStatsParamsIf('monthly')
 
 test('renders default annual storage stats on no search parameter', () => {
   const { getByText } = render(
-    <Stats
-      statsIf={statsIf}
-      paramsIf={emptyParamsIf}
-    />
+    <Stats statsIf={statsIf} paramsIf={emptyParamsIf} />,
   )
   getByText('2021')
   getByText('8')
@@ -75,10 +72,7 @@ test('renders default annual storage stats on no search parameter', () => {
 
 test('renders default annual storage stats on unknown search parameter', () => {
   const { getByText } = render(
-    <Stats
-      statsIf={statsIf}
-      paramsIf={getStatsParamsIf('unknown')}
-    />
+    <Stats statsIf={statsIf} paramsIf={getStatsParamsIf('unknown')} />,
   )
   getByText('2021')
   getByText('8')
@@ -88,10 +82,7 @@ test('renders default annual storage stats on unknown search parameter', () => {
 
 test('renders annual storage stats', () => {
   const { getByText } = render(
-    <Stats
-      statsIf={statsIf}
-      paramsIf={annualStatsParamsIf}
-    />
+    <Stats statsIf={statsIf} paramsIf={annualStatsParamsIf} />,
   )
   getByText('2021')
   getByText('8')
@@ -101,10 +92,7 @@ test('renders annual storage stats', () => {
 
 test('renders monthly storage stats', () => {
   const { getByText } = render(
-    <Stats
-      statsIf={statsIf}
-      paramsIf={monthlyStatsParamsIf}
-    />
+    <Stats statsIf={statsIf} paramsIf={monthlyStatsParamsIf} />,
   )
   getByText('2021-04')
   getByText('8')
@@ -119,10 +107,10 @@ test('switch to annual storage stats', async () => {
     <Stats
       statsIf={{
         ...statsIf,
-        setSearch
+        setSearch,
       }}
       paramsIf={monthlyStatsParamsIf}
-    />
+    />,
   )
   const monthlyButton = getByRole('button', { name: 'Annual' })
   await user.click(monthlyButton)
@@ -139,10 +127,10 @@ test('switch to monthly storage stats', async () => {
     <Stats
       statsIf={{
         ...statsIf,
-        setSearch
+        setSearch,
       }}
       paramsIf={annualStatsParamsIf}
-    />
+    />,
   )
   const monthlyButton = getByRole('button', { name: 'Monthly' })
   await user.click(monthlyButton)
@@ -159,10 +147,10 @@ test('ignore selecting current storage stats mode', async () => {
     <Stats
       statsIf={{
         ...statsIf,
-        setSearch
+        setSearch,
       }}
       paramsIf={annualStatsParamsIf}
-    />
+    />,
   )
   const monthlyButton = getByRole('button', { name: 'Annual' })
   await user.click(monthlyButton)

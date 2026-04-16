@@ -20,9 +20,7 @@ function Helper({ username }: Props): React.JSX.Element {
   const loginState = useSelector(selectLogin)
   return (
     <div>
-      {loginState.user !== undefined && (
-        <div>{loginState.user.username}</div>
-      )}
+      {loginState.user !== undefined && <div>{loginState.user.username}</div>}
       <Button
         onClick={() => {
           void doLogin({ username, password: 'password1' })
@@ -43,21 +41,21 @@ test('login', async () => {
     user: {
       id: 'dcdafbc9-3fe6-485f-9821-05bd4a8b7eb3',
       username,
-      role: 'admin'
-    }
+      role: 'admin',
+    },
   }
 
   addTestServerResponse<Login>({
     method: 'POST',
     pathname: `/api/v1/user/sign-in`,
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const { getByRole, getByText } = render(
     <Provider store={store}>
       <Helper username={username} />
-    </Provider>
+    </Provider>,
   )
   const loginButton = getByRole('button', { name: 'Login' })
   await user.click(loginButton)

@@ -33,101 +33,101 @@ const dontCall = (): any => {
 
 const infiniteScroll: InfiniteScroll = () => () => undefined
 
-const useDebounce: UseDebounce<string> = str => [str, false]
-const getUseDebounce = function<T>(): UseDebounce<T> {
+const useDebounce: UseDebounce<string> = (str) => [str, false]
+const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
 }
 
 const getUndefinedLogin: GetLogin = () => ({
   user: undefined,
   authToken: '',
-  refreshToken: ''
+  refreshToken: '',
 })
 
 const getAdminLogin: GetLogin = () => ({
   user: {
     id: '98e1693b-cd1d-46e7-a738-db8f089a5244',
     username: 'admin',
-    role: Role.admin
+    role: Role.admin,
   },
   authToken: 'auth',
-  refreshToken: 'refresh'
+  refreshToken: 'refresh',
 })
 
 const searchBeerIf: SearchBeerIf = {
   useSearch: () => ({
     search: dontCall,
-    isLoading: false
-  })
+    isLoading: false,
+  }),
 }
 
 const searchBreweryIf: SearchBreweryIf = {
   useSearch: () => ({
     search: dontCall,
-    isLoading: false
-  })
+    isLoading: false,
+  }),
 }
 
 const searchLocationIf: SearchLocationIf = {
   useSearch: () => ({
     search: dontCall,
-    isLoading: false
+    isLoading: false,
   }),
   create: {
     useCreate: () => ({
       create: dontCall,
-      isLoading: false
-    })
-  }
+      isLoading: false,
+    }),
+  },
 }
 
 const listStylesIf: ListStylesIf = {
   useList: () => ({
     styles: [],
-    isLoading: false
-  })
+    isLoading: false,
+  }),
 }
 
 const selectBeerIf: SelectBeerIf = {
   create: {
     useCreate: () => ({
       create: dontCall,
-      isLoading: false
+      isLoading: false,
     }),
     editBeerIf: {
       selectBreweryIf: {
         create: {
-          useCreate: dontCall
+          useCreate: dontCall,
         },
-        search: searchBreweryIf
+        search: searchBreweryIf,
       },
       selectStyleIf: {
         create: {
-          useCreate: dontCall
+          useCreate: dontCall,
         },
-        list: listStylesIf
-      }
-    }
+        list: listStylesIf,
+      },
+    },
   },
-  search: searchBeerIf
+  search: searchBeerIf,
 }
 
 const reviewContainerIf: ReviewContainerIf = {
   createIf: {
-    useCreate: dontCall
+    useCreate: dontCall,
   },
   listIf: {
     useList: () => ({
       data: undefined,
-      isLoading: false
-    })
-  }
+      isLoading: false,
+    }),
+  },
 }
 
 const deleteStorageIf: DeleteStorageIf = {
   useDelete: () => ({
-    delete: dontCall
-  })
+    delete: dontCall,
+  }),
 }
 
 const minTime: YearMonth = testTimes.min.yearMonth
@@ -136,20 +136,20 @@ const maxTime: YearMonth = testTimes.max.yearMonth
 const storeIf: StoreIf = {
   getLogin: getUndefinedLogin,
   getBeerIf: {
-    useGetBeer: dontCall
+    useGetBeer: dontCall,
   },
   listBeersIf: {
     useList: () => ({
       list: async () => ({
-        beers: []
+        beers: [],
       }),
       beerList: {
-        beers: []
+        beers: [],
       },
       isLoading: false,
-      isUninitialized: false
+      isUninitialized: false,
     }),
-    infiniteScroll
+    infiniteScroll,
   },
   searchBeerIf,
   selectBeerIf,
@@ -158,227 +158,227 @@ const storeIf: StoreIf = {
     editBeerIf: {
       selectBreweryIf: {
         create: {
-          useCreate: dontCall
+          useCreate: dontCall,
         },
         search: {
-          useSearch: dontCall
-        }
+          useSearch: dontCall,
+        },
       },
       selectStyleIf: {
         create: {
-          useCreate: dontCall
+          useCreate: dontCall,
         },
-        list: listStylesIf
-      }
-    }
+        list: listStylesIf,
+      },
+    },
   },
   getBreweryIf: {
-    useGet: dontCall
+    useGet: dontCall,
   },
   listBreweriesIf: {
     useList: () => ({
       list: dontCall,
       breweryList: undefined,
       isLoading: false,
-      isUninitialized: false
+      isUninitialized: false,
     }),
-    infiniteScroll
+    infiniteScroll,
   },
   searchBreweryIf,
   updateBreweryIf: {
-    useUpdate: dontCall
+    useUpdate: dontCall,
   },
   listContainersIf: {
     useList: () => ({
       data: undefined,
-      isLoading: false
-    })
+      isLoading: false,
+    }),
   },
   reviewContainerIf,
   updateContainerIf: {
-    useUpdate: dontCall
+    useUpdate: dontCall,
   },
   getLocationIf: {
-    useGet: dontCall
+    useGet: dontCall,
   },
   listLocationsIf: {
     useList: () => ({
       list: dontCall,
       locationList: undefined,
       isLoading: false,
-      isUninitialized: false
+      isUninitialized: false,
     }),
-    infiniteScroll
+    infiniteScroll,
   },
   searchLocationIf,
   updateLocationIf: {
     useUpdate: dontCall,
-    login: getAdminLogin
+    login: getAdminLogin,
   },
   changePasswordIf: {
     useChangePassword: () => ({
       changePassword: dontCall,
-      isLoading: false
+      isLoading: false,
     }),
     useGetPasswordChangeResult: () => ({
-      getResult: () => PasswordChangeResult.UNDEFINED
-    })
+      getResult: () => PasswordChangeResult.UNDEFINED,
+    }),
   },
   loginIf: {
     useLogin: () => ({
       login: dontCall,
-      isLoading: false
-    })
+      isLoading: false,
+    }),
   },
   logoutIf: {
     useLogout: () => ({
-      logout: dontCall
-    })
+      logout: dontCall,
+    }),
   },
   createReviewIf: {
     useCreate: () => ({
       create: dontCall,
       isLoading: false,
       isSuccess: false,
-      review: undefined
+      review: undefined,
     }),
     getCurrentDate: () => new Date('2024-10-10'),
     searchLocationIf,
     selectBeerIf,
-    reviewContainerIf
+    reviewContainerIf,
   },
   listReviewsIf: {
     useList: () => ({
       list: dontCall,
       reviewList: undefined,
       isLoading: false,
-      isUninitialized: false
+      isUninitialized: false,
     }),
-    infiniteScroll
+    infiniteScroll,
   },
   listReviewsByBeerIf: {
-    useList: dontCall
+    useList: dontCall,
   },
   listReviewsByBreweryIf: {
-    useList: dontCall
+    useList: dontCall,
   },
   listReviewsByLocationIf: {
-    useList: dontCall
+    useList: dontCall,
   },
   listReviewsByStyleIf: {
-    useList: dontCall
+    useList: dontCall,
   },
   reviewIf: {
     get: {
-      useGet: dontCall
+      useGet: dontCall,
     },
     update: {
       useUpdate: dontCall,
       searchLocationIf,
       selectBeerIf,
-      reviewContainerIf
+      reviewContainerIf,
     },
-    login: getUndefinedLogin
+    login: getUndefinedLogin,
   },
   statsIf: {
     annual: {
       useStats: () => ({
         stats: undefined,
-        isLoading: false
-      })
+        isLoading: false,
+      }),
     },
     annualContainer: {
       useStats: dontCall,
-      infiniteScroll
+      infiniteScroll,
     },
     brewery: {
       useStats: dontCall,
       infiniteScroll,
       minTime,
       maxTime,
-      getUseDebounce
+      getUseDebounce,
     },
     container: {
-      useStats: dontCall
+      useStats: dontCall,
     },
     location: {
       useStats: dontCall,
       infiniteScroll,
       minTime,
       maxTime,
-      getUseDebounce
+      getUseDebounce,
     },
     overall: {
       useStats: () => ({
         stats: undefined,
-        isLoading: false
-      })
+        isLoading: false,
+      }),
     },
     rating: {
-      useStats: dontCall
+      useStats: dontCall,
     },
     style: {
       useStats: dontCall,
       minTime,
       maxTime,
-      getUseDebounce
+      getUseDebounce,
     },
-    setSearch: async () => undefined
+    setSearch: async () => undefined,
   },
   searchIf: {
     useSearch: () => ({
       activate: dontCall,
-      isActive: false
+      isActive: false,
     }),
-    useDebounce
+    useDebounce,
   },
   createStorageIf: {
     useCreate: () => ({
       create: dontCall,
       hasError: false,
-      isLoading: false
-    })
+      isLoading: false,
+    }),
   },
   getStorageIf: {
-    useGet: dontCall
+    useGet: dontCall,
   },
   listStoragesIf: {
     useList: () => ({
       storages: undefined,
-      isLoading: false
+      isLoading: false,
     }),
-    delete: deleteStorageIf
+    delete: deleteStorageIf,
   },
   listStoragesByBeerIf: {
     useList: dontCall,
-    delete: deleteStorageIf
+    delete: deleteStorageIf,
   },
   listStoragesByBreweryIf: {
     useList: dontCall,
-    delete: deleteStorageIf
+    delete: deleteStorageIf,
   },
   listStoragesByStyleIf: {
     useList: dontCall,
-    delete: deleteStorageIf
+    delete: deleteStorageIf,
   },
   storageStatsIf: {
     annual: {
       useAnnualStats: () => ({
         stats: undefined,
-        isLoading: true
-      })
+        isLoading: true,
+      }),
     },
     monthly: {
-      useMonthlyStats: dontCall
+      useMonthlyStats: dontCall,
     },
-    setSearch: async () => undefined
+    setSearch: async () => undefined,
   },
   getStyleIf: {
-    useGet: dontCall
+    useGet: dontCall,
   },
   listStylesIf,
   updateStyleIf: {
-    useUpdate: dontCall
+    useUpdate: dontCall,
   },
   userIf: {
     create: {
@@ -386,33 +386,30 @@ const storeIf: StoreIf = {
         create: dontCall,
         user: undefined,
         hasError: false,
-        isLoading: false
-      })
+        isLoading: false,
+      }),
     },
     list: {
       useList: () => ({
         data: undefined,
-        isLoading: false
-      })
+        isLoading: false,
+      }),
     },
     delete: {
       useDelete: () => ({
-        delete: dontCall
-      })
-    }
-  }
+        delete: dontCall,
+      }),
+    },
+  },
 }
 
 test('renders app login', () => {
   const { getByRole } = render(
     <Provider store={store}>
       <LinkWrapper>
-        <App
-          paramsIf={paramsIf}
-          storeIf={storeIf}
-        />
+        <App paramsIf={paramsIf} storeIf={storeIf} />
       </LinkWrapper>
-    </Provider>
+    </Provider>,
   )
   const loginButton = getByRole('button', { name: 'Login' })
   expect(loginButton).toBeDefined()
@@ -427,10 +424,11 @@ test('navigates to Beers', async () => {
           paramsIf={paramsIf}
           storeIf={{
             ...storeIf,
-            getLogin: getAdminLogin
-          }} />
+            getLogin: getAdminLogin,
+          }}
+        />
       </LinkWrapper>
-    </Provider>
+    </Provider>,
   )
   const addReviewLink = getByRole('link', { name: 'Add review' })
   await user.click(addReviewLink)
@@ -442,34 +440,34 @@ test('navigates to Beers', async () => {
 })
 
 interface NavigationTest {
-  linkText: string,
+  linkText: string
   heading: string
 }
 
 const navigationTests: NavigationTest[] = [
   {
     linkText: 'Add review',
-    heading: 'Add review'
+    heading: 'Add review',
   },
   {
     linkText: 'Breweries',
-    heading: 'Breweries'
+    heading: 'Breweries',
   },
   {
     linkText: 'Reviews',
-    heading: 'Reviews'
+    heading: 'Reviews',
   },
   {
     linkText: 'Statistics',
-    heading: 'Statistics'
+    heading: 'Statistics',
   },
   {
     linkText: 'Storage',
-    heading: 'Storage beers'
+    heading: 'Storage beers',
   },
 ]
 
-navigationTests.forEach(testCase => {
+navigationTests.forEach((testCase) => {
   test(`navigates to ${testCase.heading}`, async () => {
     const user = userEvent.setup()
     const { getByRole } = render(
@@ -479,10 +477,11 @@ navigationTests.forEach(testCase => {
             paramsIf={paramsIf}
             storeIf={{
               ...storeIf,
-              getLogin: getAdminLogin
-            }} />
+              getLogin: getAdminLogin,
+            }}
+          />
         </LinkWrapper>
-      </Provider>
+      </Provider>,
     )
     const link = getByRole('link', { name: testCase.linkText })
     await user.click(link)
@@ -493,27 +492,27 @@ navigationTests.forEach(testCase => {
 const navigationMoreTests: NavigationTest[] = [
   {
     linkText: 'Styles',
-    heading: 'Styles'
+    heading: 'Styles',
   },
   {
     linkText: 'Containers',
-    heading: 'Containers'
+    heading: 'Containers',
   },
   {
     linkText: 'Locations',
-    heading: 'Locations'
+    heading: 'Locations',
   },
   {
     linkText: 'Users',
-    heading: 'Users'
+    heading: 'Users',
   },
   {
     linkText: 'Account',
-    heading: 'Account'
-  }
+    heading: 'Account',
+  },
 ]
 
-navigationMoreTests.forEach(testCase => {
+navigationMoreTests.forEach((testCase) => {
   test(`navigates to ${testCase.heading}`, async () => {
     const user = userEvent.setup()
     const { getByRole } = render(
@@ -523,10 +522,11 @@ navigationMoreTests.forEach(testCase => {
             paramsIf={paramsIf}
             storeIf={{
               ...storeIf,
-              getLogin: getAdminLogin
-            }} />
+              getLogin: getAdminLogin,
+            }}
+          />
         </LinkWrapper>
-      </Provider>
+      </Provider>,
     )
     const moreButton = getByRole('button', { name: 'More' })
     await user.click(moreButton)
@@ -543,8 +543,8 @@ test('loads annual stats directly', async () => {
   const annualParamsIf: ParamsIf = {
     ...paramsIf,
     useSearch: () => ({
-      get: (name: string) => data[name]
-    })
+      get: (name: string) => data[name],
+    }),
   }
   const { getByRole, getByText } = render(
     <Provider store={store}>
@@ -553,10 +553,11 @@ test('loads annual stats directly', async () => {
           paramsIf={annualParamsIf}
           storeIf={{
             ...storeIf,
-            getLogin: getAdminLogin
-          }} />
+            getLogin: getAdminLogin,
+          }}
+        />
       </LinkWrapper>
-    </Provider>
+    </Provider>,
   )
   const link = getByRole('link', { name: 'Statistics' })
   await user.click(link)
@@ -567,15 +568,16 @@ test('sets theme to dark', async () => {
   const user = userEvent.setup()
   const { getByRole } = render(
     <Provider store={store}>
-    <LinkWrapper>
-    <App
-    paramsIf={paramsIf}
-    storeIf={{
-      ...storeIf,
-      getLogin: getAdminLogin
-    }} />
-    </LinkWrapper>
-    </Provider>
+      <LinkWrapper>
+        <App
+          paramsIf={paramsIf}
+          storeIf={{
+            ...storeIf,
+            getLogin: getAdminLogin,
+          }}
+        />
+      </LinkWrapper>
+    </Provider>,
   )
   const moreButton = getByRole('button', { name: 'More' })
   await user.click(moreButton)
@@ -602,12 +604,13 @@ test('logout', async () => {
             getLogin: getAdminLogin,
             logoutIf: {
               useLogout: () => ({
-                logout
-              })
-            }
-          }} />
+                logout,
+              }),
+            },
+          }}
+        />
       </LinkWrapper>
-    </Provider>
+    </Provider>,
   )
   const moreButton = getByRole('button', { name: 'More' })
   await user.click(moreButton)

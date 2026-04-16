@@ -1,4 +1,4 @@
 export enum EditableMode {
   View = 'View',
-  Edit = 'Edit'
+  Edit = 'Edit',
 }

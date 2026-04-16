@@ -1,12 +1,8 @@
 import { type Page } from '@playwright/test'
 
-import {
-  localUrl,
-  testUsername,
-  testPassword
-} from './constants'
+import { localUrl, testUsername, testPassword } from './constants'
 
-export async function login (page: Page): Promise<void> {
+export async function login(page: Page): Promise<void> {
   await page.goto(localUrl)
 
   await page.getByRole('textbox', { name: /username/i }).fill(testUsername)

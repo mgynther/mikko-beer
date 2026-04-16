@@ -2,7 +2,7 @@ import React from 'react'
 
 import type {
   GetContainerStatsIf,
-  OneContainerStats
+  OneContainerStats,
 } from '../../core/stats/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
@@ -20,7 +20,7 @@ import {
   listDirectionOrDefault,
   filterNumOrDefault,
   filtersOpenOrDefault,
-  filtersOpenStr
+  filtersOpenStr,
 } from './filter-util'
 
 interface Props {
@@ -32,16 +32,17 @@ interface Props {
   styleId: string | undefined
 }
 
-function num (str: string): number {
+function num(str: string): number {
   return parseFloat(str)
 }
 
 type SortingOrder = 'text' | 'count' | 'average'
 
-function defaultSortingOrder (search: SearchParameters): SortingOrder {
+function defaultSortingOrder(search: SearchParameters): SortingOrder {
   const value = search.get('sorting_order')
   return value === 'text' || value === 'count' || value === 'average'
-    ? value : 'text'
+    ? value
+    : 'text'
 }
 
 interface NumContainer {
@@ -58,25 +59,25 @@ interface VisualContainer {
   average: string
 }
 
-function toNum (container: OneContainerStats): NumContainer {
+function toNum(container: OneContainerStats): NumContainer {
   return {
     id: container.containerId,
     text: asText({
       id: container.containerId,
       size: container.containerSize,
-      type: container.containerType
+      type: container.containerType,
     }),
     count: num(container.reviewCount),
-    average: num(container.reviewAverage)
+    average: num(container.reviewAverage),
   }
 }
 
-function toVisual (container: NumContainer): VisualContainer {
+function toVisual(container: NumContainer): VisualContainer {
   return {
     id: container.id,
     text: container.text,
     count: container.count.toFixed(0),
-    average: container.average.toFixed(2)
+    average: container.average.toFixed(2),
   }
 }
 
@@ -95,18 +96,18 @@ const countAscSorter: Sorter = (a: NumContainer, b: NumContainer) =>
 const countDescSorter: Sorter = (a: NumContainer, b: NumContainer) =>
   b.count - a.count
 
-function getSorter (order: SortingOrder, direction: ListDirection): Sorter {
+function getSorter(order: SortingOrder, direction: ListDirection): Sorter {
   switch (order) {
-  case 'text':
-    return direction === 'asc' ? textAscSorter : textDescSorter
-  case 'average':
-    return direction === 'asc' ? averageAscSorter : averageDescSorter
-  case 'count':
-    return direction === 'asc' ? countAscSorter : countDescSorter
+    case 'text':
+      return direction === 'asc' ? textAscSorter : textDescSorter
+    case 'average':
+      return direction === 'asc' ? averageAscSorter : averageDescSorter
+    case 'count':
+      return direction === 'asc' ? countAscSorter : countDescSorter
   }
 }
 
-function Container (props: Props): React.JSX.Element {
+function Container(props: Props): React.JSX.Element {
   const { search } = props
   const sortingOrder = defaultSortingOrder(search)
   const sortingDirection = listDirectionOrDefault(search)
@@ -119,7 +120,7 @@ function Container (props: Props): React.JSX.Element {
   const { stats, isLoading } = props.getContainerStatsIf.useStats({
     breweryId: props.breweryId,
     locationId: props.locationId,
-    styleId: props.styleId
+    styleId: props.styleId,
   })
 
   function getCurrentState(): Record<string, string> {
@@ -130,15 +131,12 @@ function Container (props: Props): React.JSX.Element {
       max_review_average: averageStr(maxReviewAverage),
       sorting_order: sortingOrder,
       list_direction: sortingDirection,
-      filters_open: filtersOpenStr(isFiltersOpen)
+      filters_open: filtersOpenStr(isFiltersOpen),
     }
     return currentState
   }
 
-  function getFilterSetter(
-    key: string,
-    converter: (value: number) => string
-  ) {
+  function getFilterSetter(key: string, converter: (value: number) => string) {
     return (value: number) => {
       const newState: Record<string, string> = getCurrentState()
       newState[key] = converter(value)
@@ -151,22 +149,22 @@ function Container (props: Props): React.JSX.Element {
   const setMinReviewAverage = getFilterSetter('min_review_average', averageStr)
   const setMaxReviewAverage = getFilterSetter('max_review_average', averageStr)
 
-  function setIsFiltersOpen (isOpen: boolean): void {
+  function setIsFiltersOpen(isOpen: boolean): void {
     const newState: Record<string, string> = getCurrentState()
     newState.filters_open = filtersOpenStr(isOpen)
     props.setState(newState)
   }
 
-  function isSelected (property: SortingOrder): boolean {
+  function isSelected(property: SortingOrder): boolean {
     return sortingOrder === property
   }
 
-  function createClickHandler (property: SortingOrder): () => void {
+  function createClickHandler(property: SortingOrder): () => void {
     return () => {
       if (isSelected(property)) {
         props.setState({
           ...getCurrentState(),
-          list_direction: invertDirection(sortingDirection)
+          list_direction: invertDirection(sortingDirection),
         })
         return
       }
@@ -174,7 +172,7 @@ function Container (props: Props): React.JSX.Element {
       props.setState({
         ...getCurrentState(),
         sorting_order: property,
-        list_direction: direction
+        list_direction: direction,
       })
     }
   }
@@ -192,9 +190,10 @@ function Container (props: Props): React.JSX.Element {
                 title={formatTitle(
                   'Container',
                   isSelected('text'),
-                  sortingDirection
+                  sortingDirection,
                 )}
-                onClick={createClickHandler('text')} />
+                onClick={createClickHandler('text')}
+              />
             </th>
             <th className='StatsNumColumn'>
               <TabButton
@@ -203,9 +202,10 @@ function Container (props: Props): React.JSX.Element {
                 title={formatTitle(
                   'Reviews',
                   isSelected('count'),
-                  sortingDirection
+                  sortingDirection,
                 )}
-                onClick={createClickHandler('count')} />
+                onClick={createClickHandler('count')}
+              />
             </th>
             <th className='StatsNumColumn'>
               <TabButton
@@ -214,9 +214,10 @@ function Container (props: Props): React.JSX.Element {
                 title={formatTitle(
                   'Average',
                   isSelected('average'),
-                  sortingDirection
+                  sortingDirection,
                 )}
-                onClick={createClickHandler('average')} />
+                onClick={createClickHandler('average')}
+              />
             </th>
           </tr>
           <tr>
@@ -225,19 +226,19 @@ function Container (props: Props): React.JSX.Element {
                 filters={{
                   minReviewCount: {
                     value: minReviewCount,
-                    setValue: setMinReviewCount
+                    setValue: setMinReviewCount,
                   },
                   maxReviewCount: {
                     value: maxReviewCount,
-                    setValue: setMaxReviewCount
+                    setValue: setMaxReviewCount,
                   },
                   minReviewAverage: {
                     value: minReviewAverage,
-                    setValue: setMinReviewAverage
+                    setValue: setMinReviewAverage,
                   },
                   maxReviewAverage: {
                     value: maxReviewAverage,
-                    setValue: setMaxReviewAverage
+                    setValue: setMaxReviewAverage,
                   },
                 }}
                 isOpen={isFiltersOpen}
@@ -249,18 +250,18 @@ function Container (props: Props): React.JSX.Element {
           </tr>
         </thead>
         <tbody>
-          {stats?.container.map(toNum)
+          {stats?.container
+            .map(toNum)
             .filter(
-              container =>
-                container.average >= minReviewAverage
-                && container.average <= maxReviewAverage
-                && container.count >= minReviewCount
-                && container.count <= maxReviewCount
-            ).sort(
-              getSorter(sortingOrder, sortingDirection)
-            ).map(
-              toVisual
-            ).map(container => (
+              (container) =>
+                container.average >= minReviewAverage &&
+                container.average <= maxReviewAverage &&
+                container.count >= minReviewCount &&
+                container.count <= maxReviewCount,
+            )
+            .sort(getSorter(sortingOrder, sortingDirection))
+            .map(toVisual)
+            .map((container) => (
               <tr key={container.id}>
                 <td>{container.text}</td>
                 <td>{container.count}</td>

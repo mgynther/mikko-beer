@@ -11,10 +11,10 @@ test('renders beer link', () => {
       <BeerLink
         beer={{
           id: 'b71b0c12-0538-48ca-9c82-75e84caca818',
-          name: beerName
+          name: beerName,
         }}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   getByRole('link', { name: beerName })
 })

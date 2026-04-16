@@ -13,9 +13,9 @@ export const initialState: LoginState = {
   login: {
     user: undefined,
     authToken: '',
-    refreshToken: ''
+    refreshToken: '',
   },
-  passwordChangeResult: PasswordChangeResult.UNDEFINED
+  passwordChangeResult: PasswordChangeResult.UNDEFINED,
 }
 
 export const loginSlice = createSlice({
@@ -37,23 +37,20 @@ export const loginSlice = createSlice({
       state.passwordChangeResult = PasswordChangeResult.UNDEFINED
     },
     passwordChangeResult: (
-      state, action: PayloadAction<PasswordChangeResult>
+      state,
+      action: PayloadAction<PasswordChangeResult>,
     ) => {
       state.passwordChangeResult = action.payload
-    }
-  }
+    },
+  },
 })
 
-export const {
-  logout,
-  passwordChangeResult,
-  refresh,
-  success
-} = loginSlice.actions
+export const { logout, passwordChangeResult, refresh, success } =
+  loginSlice.actions
 
 export const selectLogin = (state: RootState): Login => state.login.login
-export const selectPasswordChangeResult =
-  (state: RootState): PasswordChangeResult =>
-    state.login.passwordChangeResult
+export const selectPasswordChangeResult = (
+  state: RootState,
+): PasswordChangeResult => state.login.passwordChangeResult
 
 export default loginSlice.reducer

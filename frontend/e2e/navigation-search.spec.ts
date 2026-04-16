@@ -8,10 +8,7 @@ test('Search beer from navigation menu', async ({ page }) => {
     .getByRole('navigation')
     .getByRole('textbox', { name: /search beer/i })
     .fill('severi')
-  await page.getByRole(
-    'button',
-    { name: /^severin \(koskipanimo\)$/i }
-  ).click()
+  await page.getByRole('button', { name: /^severin \(koskipanimo\)$/i }).click()
   await expect(page.getByRole('heading', { name: 'Severin' })).toBeVisible()
 })
 

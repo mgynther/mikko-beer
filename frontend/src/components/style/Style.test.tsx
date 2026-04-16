@@ -10,7 +10,7 @@ import type {
   ListReviewsByIf,
   Review,
   ReviewIf,
-  UpdateReviewIf
+  UpdateReviewIf,
 } from '../../core/review/types'
 import type { ListStoragesByIf, Storage } from '../../core/storage/types'
 import type {
@@ -23,7 +23,7 @@ import type {
   GetRatingStatsIf,
   GetStyleStatsIf,
   StatsIf,
-  YearMonth
+  YearMonth,
 } from '../../core/stats/types'
 import type { GetStyleIf, UpdateStyleIf } from '../../core/style/types'
 import type { UseDebounce } from '../../core/types'
@@ -33,9 +33,9 @@ import type { ParamsIf } from '../util'
 import type { ReactNode } from 'react'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 
-const useDebounce: UseDebounce<string> = str => [str, false]
+const useDebounce: UseDebounce<string> = (str) => [str, false]
 
-const getUseDebounce = function<T>(): UseDebounce<T> {
+const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
 }
 
@@ -45,33 +45,33 @@ const dontCall = (): any => {
 
 const brewery = {
   id: '6290fa39-3515-4682-a69c-51d18b2b03b1',
-  name: 'Koskipanimo'
+  name: 'Koskipanimo',
 }
 
 const parent = {
   id: '97dfdc08-67bb-4ba1-a29e-2f7dfdea4875',
   name: 'Pale Ale',
-  parents: []
+  parents: [],
 }
 
 const child = {
   id: '7217469e-4e16-45a1-9873-83ba81b21a37',
   name: 'NEIPA',
-  parents: []
+  parents: [],
 }
 
 const style = {
   id: 'd34ef4ef-87ac-4eeb-b08a-ad0d6d00f38d',
   name: 'IPA',
   parents: [parent],
-  children: [child]
+  children: [child],
 }
 
 const beer = {
   id: '4eee87d3-a451-46bf-a8dc-16778bc108af',
   name: 'Smörre',
   breweries: [brewery],
-  styles: [style]
+  styles: [style],
 }
 
 const joinedReview: JoinedReview = {
@@ -83,12 +83,12 @@ const joinedReview: JoinedReview = {
   container: {
     id: '345a65ed-3bb2-4be3-a370-5610e5d0edd0',
     type: 'bottle',
-    size: '0.33'
+    size: '0.33',
   },
   location: undefined,
   styles: [],
   time: '2024-10-12T15:23:45.000Z',
-  rating: 10
+  rating: 10,
 }
 
 const review: Review = {
@@ -100,7 +100,7 @@ const review: Review = {
   time: joinedReview.time,
   rating: 10,
   smell: '',
-  taste: ''
+  taste: '',
 }
 
 const storage: Storage = {
@@ -112,25 +112,25 @@ const storage: Storage = {
   container: joinedReview.container,
   createdAt: '2023-02-02T12:00:00.000Z',
   hasReview: false,
-  styles: joinedReview.styles
+  styles: joinedReview.styles,
 }
 
 const login = {
   user: {
     id: 'dc39260f-b459-4688-9103-08ef7ad903b0',
     username: 'mikko',
-    role: Role.admin
+    role: Role.admin,
   },
   authToken: '',
-  refreshToken: ''
+  refreshToken: '',
 }
 
 const searchIf: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
-    isActive: true
+    isActive: true,
   }),
-  useDebounce
+  useDebounce,
 }
 
 const updateReview: UpdateReviewIf = {
@@ -138,11 +138,11 @@ const updateReview: UpdateReviewIf = {
   searchLocationIf: {
     useSearch: () => ({
       search: dontCall,
-      isLoading: false
+      isLoading: false,
     }),
     create: {
-      useCreate: dontCall
-    }
+      useCreate: dontCall,
+    },
   },
   selectBeerIf: {
     create: {
@@ -152,65 +152,65 @@ const updateReview: UpdateReviewIf = {
           create: {
             useCreate: () => ({
               create: dontCall,
-              isLoading: false
-            })
+              isLoading: false,
+            }),
           },
           search: {
-            useSearch: dontCall
-          }
+            useSearch: dontCall,
+          },
         },
         selectStyleIf: {
           create: {
-            useCreate: dontCall
+            useCreate: dontCall,
           },
           list: {
             useList: () => ({
               styles: [],
-              isLoading: false
-            })
-          }
-        }
-      }
+              isLoading: false,
+            }),
+          },
+        },
+      },
     },
     search: {
-      useSearch: dontCall
-    }
+      useSearch: dontCall,
+    },
   },
   reviewContainerIf: {
     createIf: {
-      useCreate: dontCall
+      useCreate: dontCall,
     },
     listIf: {
-      useList: dontCall
-    }
-  }
+      useList: dontCall,
+    },
+  },
 }
 
 const getStyleIf: GetStyleIf = {
   useGet: () => ({
     style,
-    isLoading: false
-  })
+    isLoading: false,
+  }),
 }
 
 const reviewIf: ReviewIf = {
   get: {
     useGet: () => ({
       review,
-      get: async () => review
-    })
+      get: async () => review,
+    }),
   },
   update: updateReview,
-  login: () => login
+  login: () => login,
 }
 
 const paramsIf: ParamsIf = {
   useParams: () => ({
-    styleId: style.id
+    styleId: style.id,
   }),
   useSearch: () => ({
-    get: () => undefined
-  })
+    get: () => undefined,
+  }),
 }
 
 function getListReviewsIf(reviews: JoinedReview[]): ListReviewsByIf {
@@ -220,34 +220,35 @@ function getListReviewsIf(reviews: JoinedReview[]): ListReviewsByIf {
         reviews,
         sorting: {
           order: 'brewery_name',
-          direction: 'asc'
-        }
+          direction: 'asc',
+        },
       },
-      isLoading: false
-    })
+      isLoading: false,
+    }),
   }
 }
 
 function getListStoragesByStyleIf(
-  storages: Storage[] | undefined
+  storages: Storage[] | undefined,
 ): ListStoragesByIf {
   return {
     useList: () => ({
-      storages: storages ? {
-        storages
-      } : undefined,
-      isLoading: storages !== undefined
+      storages: storages
+        ? {
+            storages,
+          }
+        : undefined,
+      isLoading: storages !== undefined,
     }),
     delete: {
       useDelete: () => ({
-        delete: dontCall
-      })
-    }
+        delete: dontCall,
+      }),
+    },
   }
 }
 
-type NoStats =
-  GetAnnualStatsIf &
+type NoStats = GetAnnualStatsIf &
   GetContainerStatsIf &
   GetOverallStatsIf &
   GetRatingStatsIf &
@@ -259,15 +260,14 @@ const maxTime: YearMonth = testTimes.max.yearMonth
 const noStats: NoStats = {
   useStats: () => ({
     stats: undefined,
-    isLoading: false
+    isLoading: false,
   }),
   minTime,
   maxTime,
-  getUseDebounce
+  getUseDebounce,
 }
 
-type NoInfiniteScrollStats =
-  GetAnnualContainerStatsIf &
+type NoInfiniteScrollStats = GetAnnualContainerStatsIf &
   GetBreweryStatsIf &
   GetLocationStatsIf
 
@@ -275,12 +275,12 @@ const noInfiniteScrollStats: NoInfiniteScrollStats = {
   useStats: () => ({
     query: dontCall,
     stats: undefined,
-    isLoading: false
+    isLoading: false,
   }),
   infiniteScroll: dontCall,
   minTime,
   maxTime,
-  getUseDebounce
+  getUseDebounce,
 }
 
 const statsIf: StatsIf = {
@@ -292,7 +292,7 @@ const statsIf: StatsIf = {
   overall: noStats,
   rating: noStats,
   style: noStats,
-  setSearch: async () => undefined
+  setSearch: async () => undefined,
 }
 
 const dontUpdate: UpdateStyleIf = {
@@ -300,7 +300,7 @@ const dontUpdate: UpdateStyleIf = {
     update: dontCall,
     hasError: false,
     isLoading: false,
-    isSuccess: false
+    isSuccess: false,
   }),
 }
 
@@ -317,7 +317,7 @@ test('renders style', async () => {
         getStyleIf={getStyleIf}
         statsIf={statsIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
 
   getByRole('heading', { name: style.name })
@@ -338,7 +338,7 @@ test('renders storages', async () => {
         getStyleIf={getStyleIf}
         statsIf={statsIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   getByRole('heading', { name: style.name })
   getByText(joinedReview.additionalInfo)
@@ -359,12 +359,12 @@ test('renders loading when loading', async () => {
         getStyleIf={{
           useGet: () => ({
             style: undefined,
-            isLoading: true
-          })
+            isLoading: true,
+          }),
         }}
         statsIf={statsIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   getByText(loadingIndicatorText)
 })
@@ -382,12 +382,12 @@ test('renders not found when not found', async () => {
         getStyleIf={{
           useGet: () => ({
             style: undefined,
-            isLoading: false
-          })
+            isLoading: false,
+          }),
         }}
         statsIf={statsIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   getByText('Not found')
 })
@@ -395,29 +395,30 @@ test('renders not found when not found', async () => {
 test('throw without style id', async () => {
   expect(() =>
     render(
-    <LinkWrapper>
-      <Style
-        updateStyleIf={dontUpdate}
-        searchIf={searchIf}
-        listReviewsByStyleIf={getListReviewsIf([joinedReview])}
-        listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
-        paramsIf={{
-          ...paramsIf,
-          useParams: () => ({})
-        }}
-        reviewIf={reviewIf}
-        getStyleIf={getStyleIf}
-        statsIf={statsIf}
-      />
-    </LinkWrapper>
-    )).toThrow()
+      <LinkWrapper>
+        <Style
+          updateStyleIf={dontUpdate}
+          searchIf={searchIf}
+          listReviewsByStyleIf={getListReviewsIf([joinedReview])}
+          listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
+          paramsIf={{
+            ...paramsIf,
+            useParams: () => ({}),
+          }}
+          reviewIf={reviewIf}
+          getStyleIf={getStyleIf}
+          statsIf={statsIf}
+        />
+      </LinkWrapper>,
+    ),
+  ).toThrow()
 })
 
 test('updates style', async () => {
   const user = userEvent.setup()
   const update = vitest.fn()
   const styleName = 'Rye IPA'
-  const getNode: () => ReactNode = () =>
+  const getNode: () => ReactNode = () => (
     <LinkWrapper>
       <Style
         updateStyleIf={{
@@ -425,8 +426,8 @@ test('updates style', async () => {
             update,
             hasError: false,
             isLoading: false,
-            isSuccess: update.mock.calls.length > 0
-          })
+            isSuccess: update.mock.calls.length > 0,
+          }),
         }}
         searchIf={searchIf}
         listReviewsByStyleIf={getListReviewsIf([])}
@@ -439,20 +440,19 @@ test('updates style', async () => {
             return {
               style: {
                 ...style,
-                name: hasUpdate
-                  ? styleName
-                  : style.name,
-                parents: hasUpdate ? [] : style.parents
+                name: hasUpdate ? styleName : style.name,
+                parents: hasUpdate ? [] : style.parents,
               },
-              isLoading: false
-            }}
+              isLoading: false,
+            }
+          },
         }}
         statsIf={statsIf}
       />
     </LinkWrapper>
-  const { getByRole, getByPlaceholderText, getByText, rerender } = render(
-    getNode()
   )
+  const { getByRole, getByPlaceholderText, getByText, rerender } =
+    render(getNode())
 
   const editButton = getByRole('button', { name: 'Edit' })
   await user.click(editButton)
@@ -463,11 +463,15 @@ test('updates style', async () => {
   await user.click(removeParentButton)
   const saveButton = getByRole('button', { name: 'Save' })
   await user.click(saveButton)
-  expect(update.mock.calls).toEqual([[{
-    id: style.id,
-    name: styleName,
-    parents: []
-  }]])
+  expect(update.mock.calls).toEqual([
+    [
+      {
+        id: style.id,
+        name: styleName,
+        parents: [],
+      },
+    ],
+  ])
   rerender(getNode())
   await waitFor(() => {
     expect(getByRole('heading', { name: styleName }))
@@ -486,8 +490,8 @@ test('cancels update', async () => {
             update,
             hasError: false,
             isLoading: false,
-            isSuccess: false
-          })
+            isSuccess: false,
+          }),
         }}
         searchIf={searchIf}
         listReviewsByStyleIf={getListReviewsIf([])}
@@ -497,7 +501,7 @@ test('cancels update', async () => {
         getStyleIf={getStyleIf}
         statsIf={statsIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
 
   const editButton = getByRole('button', { name: 'Edit' })

@@ -5,7 +5,7 @@ import type {
   GetStyleIf,
   ListStylesIf,
   StyleWithParentIds,
-  UpdateStyleIf
+  UpdateStyleIf,
 } from '../../core/style/types'
 
 import EditActions from '../common/EditActions'
@@ -23,11 +23,13 @@ interface Props {
   searchIf: SearchIf
 }
 
-function UpdateStyle (props: Props): React.JSX.Element {
-  const { style: styleWithParents } =
-    props.getStyleIf.useGet(props.initialStyle.id)
-  const [newStyle, setNewStyle] =
-    useState<StyleWithParentIds | undefined>(undefined)
+function UpdateStyle(props: Props): React.JSX.Element {
+  const { style: styleWithParents } = props.getStyleIf.useGet(
+    props.initialStyle.id,
+  )
+  const [newStyle, setNewStyle] = useState<StyleWithParentIds | undefined>(
+    undefined,
+  )
   const { update, hasError, isLoading, isSuccess } =
     props.updateStyleIf.useUpdate()
   const onSaved = props.onSaved
@@ -38,15 +40,13 @@ function UpdateStyle (props: Props): React.JSX.Element {
     }
   }, [isSuccess, onSaved])
 
-  async function doUpdate (style: StyleWithParentIds): Promise<void> {
+  async function doUpdate(style: StyleWithParentIds): Promise<void> {
     await update({ ...style })
   }
   return (
     <>
-      {styleWithParents === undefined &&
-        <LoadingIndicator isLoading={true} />
-      }
-      {styleWithParents !== undefined &&
+      {styleWithParents === undefined && <LoadingIndicator isLoading={true} />}
+      {styleWithParents !== undefined && (
         <StyleEditor
           initialStyle={styleWithParents}
           listStylesIf={props.listStylesIf}
@@ -56,7 +56,7 @@ function UpdateStyle (props: Props): React.JSX.Element {
             setNewStyle(style)
           }}
         />
-      }
+      )}
       <EditActions
         isSaveDisabled={newStyle === undefined}
         isSaving={isLoading}
@@ -67,7 +67,9 @@ function UpdateStyle (props: Props): React.JSX.Element {
         onSave={
           newStyle === undefined
             ? undefined
-            : (): void => { void doUpdate(newStyle) }
+            : (): void => {
+                void doUpdate(newStyle)
+              }
         }
       />
     </>

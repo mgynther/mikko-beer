@@ -3,7 +3,7 @@ import {
   getBackendUrl,
   getUniqueTestServerPort,
   parseTestPortStart,
-  parseVitestId
+  parseVitestId,
 } from './constant-helper'
 
 test('parse number test port start', () => {

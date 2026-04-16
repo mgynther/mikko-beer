@@ -1,6 +1,6 @@
-import { expect, test } from "vitest";
-import { waitForTurn } from "./request-blocker";
-import { Mutex } from "async-mutex";
+import { expect, test } from 'vitest'
+import { waitForTurn } from './request-blocker'
+import { Mutex } from 'async-mutex'
 
 test('waits for turn', async () => {
   const mutex = new Mutex()
@@ -8,7 +8,7 @@ test('waits for turn', async () => {
   const results: string[] = []
 
   const delayed = async (): Promise<void> => {
-    const promise = new Promise(resolve => {
+    const promise = new Promise((resolve) => {
       const callback = (): void => {
         results.push('delayed')
         resolve(undefined)
@@ -24,6 +24,6 @@ test('waits for turn', async () => {
 
   const promise1 = waitForTurn(mutex, delayed)
   const promise2 = waitForTurn(mutex, immediate)
-  await Promise.all([ promise1, promise2 ])
+  await Promise.all([promise1, promise2])
   expect(results).toEqual(expected)
 })

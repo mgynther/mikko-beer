@@ -10,7 +10,7 @@ import { breweryStatsTagTypes } from '../stats/types'
 import type {
   Brewery,
   BreweryList,
-  CreateBreweryRequest
+  CreateBreweryRequest,
 } from '../../core/brewery/types'
 import { BreweryTags } from './types'
 
@@ -19,58 +19,61 @@ const breweryApi = emptySplitApi.injectEndpoints({
     getBrewery: build.query<{ brewery: Brewery }, string>({
       query: (breweryId: string) => ({
         url: `/brewery/${breweryId}`,
-        method: 'GET'
+        method: 'GET',
       }),
       providesTags: (result) =>
         result === undefined
           ? [BreweryTags.Brewery]
-          : [{ type: BreweryTags.Brewery, id: result.brewery.id }]
+          : [{ type: BreweryTags.Brewery, id: result.brewery.id }],
     }),
     listBreweries: build.query<BreweryList, Pagination>({
       query: (pagination: Pagination) => ({
         url: `/brewery?size=${pagination.size}&skip=${pagination.skip}`,
-        method: 'GET'
+        method: 'GET',
       }),
-      providesTags: [BreweryTags.Brewery]
+      providesTags: [BreweryTags.Brewery],
     }),
     searchBreweries: build.query<BreweryList, string>({
       query: (name: string) => ({
         url: '/brewery/search',
         method: 'POST',
         body: {
-          name
-        }
-      })
+          name,
+        },
+      }),
     }),
-    createBrewery: build.mutation<{
-      brewery: Brewery
-    }, Partial<CreateBreweryRequest>>({
+    createBrewery: build.mutation<
+      {
+        brewery: Brewery
+      },
+      Partial<CreateBreweryRequest>
+    >({
       query: (brewery: CreateBreweryRequest) => ({
         url: '/brewery',
         method: 'POST',
         body: {
-          ...brewery
-        }
+          ...brewery,
+        },
       }),
-      invalidatesTags: [BreweryTags.Brewery]
+      invalidatesTags: [BreweryTags.Brewery],
     }),
     updateBrewery: build.mutation<{ brewery: Brewery }, Brewery>({
       query: (brewery: Brewery) => ({
         url: `/brewery/${brewery.id}`,
         method: 'PUT',
         body: {
-          name: brewery.name
-        }
+          name: brewery.name,
+        },
       }),
       invalidatesTags: [
         BeerTags.Beer,
         BreweryTags.Brewery,
         ...breweryStatsTagTypes(),
         ReviewTags.Review,
-        StorageTags.Storage
-      ]
-    })
-  })
+        StorageTags.Storage,
+      ],
+    }),
+  }),
 })
 
 export const {
@@ -79,7 +82,7 @@ export const {
   useLazyListBreweriesQuery,
   useLazySearchBreweriesQuery,
   useListBreweriesQuery,
-  useUpdateBreweryMutation
+  useUpdateBreweryMutation,
 } = breweryApi
 
 export const { endpoints, reducerPath, reducer, middleware } = breweryApi

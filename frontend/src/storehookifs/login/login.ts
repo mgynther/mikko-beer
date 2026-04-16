@@ -1,5 +1,5 @@
-import type { LoginIf, LoginParams } from "../../core/login/types"
-import { useLoginMutation } from "../../store/login/api"
+import type { LoginIf, LoginParams } from '../../core/login/types'
+import { useLoginMutation } from '../../store/login/api'
 
 const login: () => LoginIf = () => {
   const loginIf: LoginIf = {
@@ -9,9 +9,9 @@ const login: () => LoginIf = () => {
         login: async (loginParams: LoginParams): Promise<void> => {
           await login(loginParams)
         },
-        isLoading
+        isLoading,
       }
-    }
+    },
   }
   return loginIf
 }

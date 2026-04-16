@@ -20,11 +20,13 @@ function Helper(): React.JSX.Element {
   }
   return (
     <div>
-      {results.map(beer =>
+      {results.map((beer) => (
         <div key={beer.id}>{beer.name}</div>
-      )}
+      ))}
       <Button
-        onClick={() => { void doSearch() }}
+        onClick={() => {
+          void doSearch()
+        }}
         text='Search'
       />
     </div>
@@ -42,15 +44,15 @@ test('search beers', async () => {
         breweries: [
           {
             id: '5b9d875f-24ec-4907-8747-ca78dddab48b',
-            name: 'Test brewery'
-          }
+            name: 'Test brewery',
+          },
         ],
         styles: [
           {
             id: 'c16f1a4c-d14d-497c-a5af-580f02f38531',
-            name: 'Test style'
-          }
-        ]
+            name: 'Test style',
+          },
+        ],
       },
       {
         id: 'e0d1e625-069a-437f-aa0e-900ebcc7ff1d',
@@ -58,30 +60,30 @@ test('search beers', async () => {
         breweries: [
           {
             id: '13418552-4985-4c72-ae00-912632585763',
-            name: 'Another brewery'
-          }
+            name: 'Another brewery',
+          },
         ],
         styles: [
           {
             id: '5e65701b-59f9-4da2-90f5-71284c323db3',
-            name: 'Another style'
-          }
-        ]
-      }
-    ]
+            name: 'Another style',
+          },
+        ],
+      },
+    ],
   }
 
   addTestServerResponse<BeerList>({
     method: 'POST',
     pathname: `/api/v1/beer/search`,
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const { getByRole, getByText } = render(
     <Provider store={store}>
       <Helper />
-    </Provider>
+    </Provider>,
   )
   const loadButton = getByRole('button', { name: 'Search' })
   await user.click(loadButton)

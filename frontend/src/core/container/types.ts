@@ -21,7 +21,7 @@ export interface CreateContainerIf {
 }
 
 export interface ListContainersData {
-  data: ContainerList | undefined,
+  data: ContainerList | undefined
   isLoading: boolean
 }
 

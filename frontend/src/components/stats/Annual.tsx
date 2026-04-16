@@ -13,11 +13,11 @@ interface Props {
   styleId: string | undefined
 }
 
-function Annual (props: Props): React.JSX.Element {
+function Annual(props: Props): React.JSX.Element {
   const { stats, isLoading } = props.getAnnualStatsIf.useStats({
     breweryId: props.breweryId,
     locationId: props.locationId,
-    styleId: props.styleId
+    styleId: props.styleId,
   })
   return (
     <div>
@@ -31,7 +31,7 @@ function Annual (props: Props): React.JSX.Element {
           </tr>
         </thead>
         <tbody>
-          {stats?.annual.map(year => (
+          {stats?.annual.map((year) => (
             <tr key={year.year}>
               <td>{year.year}</td>
               <td>{year.reviewCount}</td>

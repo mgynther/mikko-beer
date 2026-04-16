@@ -50,7 +50,7 @@ export interface ListStylesIf {
 }
 
 export interface SelectStyleIf {
-  create: CreateStyleIf,
+  create: CreateStyleIf
   list: ListStylesIf
 }
 

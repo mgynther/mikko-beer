@@ -21,30 +21,34 @@ const ValidatedStorage = t.type({
   container: ValidatedContainer,
   createdAt: t.string,
   hasReview: t.boolean,
-  styles: t.array(ValidatedStyle)
+  styles: t.array(ValidatedStyle),
 })
 
 const ValidatedStorageList = t.type({
-  storages: t.array(ValidatedStorage)
+  storages: t.array(ValidatedStorage),
 })
 
 const ValidatedAnnualStorageStats = t.type({
-  annual: t.array(t.type({
-    year: t.string,
-    count: t.string
-  }))
+  annual: t.array(
+    t.type({
+      year: t.string,
+      count: t.string,
+    }),
+  ),
 })
 
 const ValidatedMonthlyStorageStats = t.type({
-  monthly: t.array(t.type({
-    year: t.string,
-    month: t.string,
-    count: t.string
-  }))
+  monthly: t.array(
+    t.type({
+      year: t.string,
+      month: t.string,
+      count: t.string,
+    }),
+  ),
 })
 
 export function validateStorageOrUndefined(
-  result: unknown
+  result: unknown,
 ): Storage | undefined {
   if (typeof result === 'undefined') {
     return undefined
@@ -63,7 +67,7 @@ export function validateStorage(result: unknown): Storage {
 }
 
 export function validateStorageListOrUndefined(
-  result: unknown
+  result: unknown,
 ): StorageList | undefined {
   if (typeof result === 'undefined') {
     return undefined
@@ -82,7 +86,7 @@ function validateStorageList(result: unknown): StorageList {
 }
 
 export function validateAnnualStorageStatsOrUndefined(
-  result: unknown
+  result: unknown,
 ): AnnualStats | undefined {
   if (typeof result === 'undefined') {
     return undefined
@@ -101,7 +105,7 @@ function validateAnnualStorageStats(result: unknown): AnnualStats {
 }
 
 export function validateMonthlyStorageStatsOrUndefined(
-  result: unknown
+  result: unknown,
 ): MonthlyStats | undefined {
   if (typeof result === 'undefined') {
     return undefined

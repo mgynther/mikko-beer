@@ -13,11 +13,11 @@ interface Props {
   styleId: string | undefined
 }
 
-function Rating (props: Props): React.JSX.Element {
+function Rating(props: Props): React.JSX.Element {
   const { stats, isLoading } = props.getRatingStatsIf.useStats({
     breweryId: props.breweryId,
     locationId: props.locationId,
-    styleId: props.styleId
+    styleId: props.styleId,
   })
   return (
     <div>
@@ -30,7 +30,7 @@ function Rating (props: Props): React.JSX.Element {
           </tr>
         </thead>
         <tbody>
-          {stats?.rating.map(rating => (
+          {stats?.rating.map((rating) => (
             <tr key={rating.rating}>
               <td>{rating.rating}</td>
               <td>{rating.count}</td>

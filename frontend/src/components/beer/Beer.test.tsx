@@ -10,7 +10,7 @@ import type {
   ListReviewsByIf,
   Review,
   ReviewIf,
-  UpdateReviewIf
+  UpdateReviewIf,
 } from '../../core/review/types'
 import type { ListStoragesByIf } from '../../core/storage/types'
 import type { UseDebounce } from '../../core/types'
@@ -21,7 +21,7 @@ import type { EditBeerIf, GetBeerIf, UpdateBeerIf } from '../../core/beer/types'
 import type { ParamsIf } from '../util'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 
-const useDebounce: UseDebounce<string> = str => [str, false]
+const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -29,20 +29,20 @@ const dontCall = (): any => {
 
 const brewery = {
   id: 'a5a8968d-4556-4f66-8351-21f724cc8316',
-  name: 'Koskipanimo'
+  name: 'Koskipanimo',
 }
 
 const style = {
   id: '0344f996-1475-45b6-aa84-ac7e0da47c7c',
   name: 'IPA',
-  parents: []
+  parents: [],
 }
 
 const beer = {
   id: '60b1745f-0d7e-48c2-a993-90f127dd81ff',
   name: 'Smörre',
   breweries: [brewery],
-  styles: [style]
+  styles: [style],
 }
 
 const joinedReview: JoinedReview = {
@@ -54,12 +54,12 @@ const joinedReview: JoinedReview = {
   container: {
     id: '27a356d5-128a-4eab-83eb-00f8043288a3',
     type: 'bottle',
-    size: '0.33'
+    size: '0.33',
   },
   location: undefined,
   styles: [],
   time: '2024-10-12T15:23:45.000Z',
-  rating: 10
+  rating: 10,
 }
 
 const review: Review = {
@@ -71,43 +71,43 @@ const review: Review = {
   time: joinedReview.time,
   rating: 10,
   smell: '',
-  taste: ''
+  taste: '',
 }
 
 const login = {
   user: {
     id: '5046343b-5a39-40db-83fa-6833e7216d42',
     username: 'mikko',
-    role: Role.admin
+    role: Role.admin,
   },
   authToken: '',
-  refreshToken: ''
+  refreshToken: '',
 }
 
 const dontCreate = {
   create: dontCall,
-  isLoading: false
+  isLoading: false,
 }
 
 const searchIf: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
-    isActive: true
+    isActive: true,
   }),
-  useDebounce
+  useDebounce,
 }
 
 const searchLocationIf: SearchLocationIf = {
   useSearch: () => ({
     search: dontCall,
-    isLoading: false
+    isLoading: false,
   }),
   create: {
     useCreate: () => ({
       create: dontCall,
-      isLoading: false
-    })
-  }
+      isLoading: false,
+    }),
+  },
 }
 
 const updateReview: UpdateReviewIf = {
@@ -121,62 +121,62 @@ const updateReview: UpdateReviewIf = {
           create: {
             useCreate: () => ({
               create: dontCall,
-              isLoading: false
-            })
+              isLoading: false,
+            }),
           },
           search: {
-            useSearch: dontCall
-          }
+            useSearch: dontCall,
+          },
         },
         selectStyleIf: {
           create: {
-            useCreate: dontCall
+            useCreate: dontCall,
           },
           list: {
-            useList: dontCall
-          }
-        }
-      }
+            useList: dontCall,
+          },
+        },
+      },
     },
     search: {
-      useSearch: dontCall
-    }
+      useSearch: dontCall,
+    },
   },
   reviewContainerIf: {
     createIf: {
-      useCreate: dontCall
+      useCreate: dontCall,
     },
     listIf: {
-      useList: dontCall
-    }
-  }
+      useList: dontCall,
+    },
+  },
 }
 
 const getBeerIf: GetBeerIf = {
   useGetBeer: () => ({
     beer,
-    isLoading: false
-  })
+    isLoading: false,
+  }),
 }
 
 const reviewIf: ReviewIf = {
   get: {
     useGet: () => ({
       review,
-      get: async () => review
-    })
+      get: async () => review,
+    }),
   },
   update: updateReview,
-  login: () => login
+  login: () => login,
 }
 
 const paramsIf: ParamsIf = {
   useParams: () => ({
-    beerId: beer.id
+    beerId: beer.id,
   }),
   useSearch: () => ({
-    get: () => undefined
-  })
+    get: () => undefined,
+  }),
 }
 
 function getListReviewsIf(reviews: JoinedReview[]): ListReviewsByIf {
@@ -186,39 +186,39 @@ function getListReviewsIf(reviews: JoinedReview[]): ListReviewsByIf {
         reviews,
         sorting: {
           order: 'time',
-          direction: 'asc'
-        }
+          direction: 'asc',
+        },
       },
-      isLoading: reviews.length === 0
-    })
+      isLoading: reviews.length === 0,
+    }),
   }
 }
 
 const listStoragesByBeerIf: ListStoragesByIf = {
   useList: () => ({
     storages: {
-      storages: []
+      storages: [],
     },
-    isLoading: false
+    isLoading: false,
   }),
   delete: {
     useDelete: () => ({
-      delete: dontCall
-    })
-  }
+      delete: dontCall,
+    }),
+  },
 }
 
 const editBeerIf: EditBeerIf = {
   selectBreweryIf: {
     create: {
-      useCreate: () => dontCreate
+      useCreate: () => dontCreate,
     },
     search: {
       useSearch: () => ({
         search: dontCall,
-        isLoading: false
-      })
-    }
+        isLoading: false,
+      }),
+    },
   },
   selectStyleIf: {
     create: {
@@ -226,24 +226,24 @@ const editBeerIf: EditBeerIf = {
         ...dontCreate,
         createdStyle: undefined,
         hasError: false,
-        isSuccess: false
-      })
+        isSuccess: false,
+      }),
     },
     list: {
       useList: () => ({
         styles: [],
-        isLoading: false
-      })
-    }
-  }
+        isLoading: false,
+      }),
+    },
+  },
 }
 
 const dontUpdateBeerIf: UpdateBeerIf = {
   useUpdate: () => ({
     update: dontCall,
-    isLoading: false
+    isLoading: false,
   }),
-  editBeerIf
+  editBeerIf,
 }
 
 test('renders beer', async () => {
@@ -258,7 +258,7 @@ test('renders beer', async () => {
         reviewIf={reviewIf}
         getBeerIf={getBeerIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
 
   getByRole('heading', { name: beer.name })
@@ -269,22 +269,24 @@ test('renders beer', async () => {
 })
 
 test('throw on missing id', async () => {
-  expect(() => render(
-    <LinkWrapper>
-      <Beer
-        updateBeerIf={dontUpdateBeerIf}
-        searchIf={searchIf}
-        listReviewsByBeerIf={getListReviewsIf([joinedReview])}
-        listStoragesByBeerIf={listStoragesByBeerIf}
-        paramsIf={{
-          ...paramsIf,
-          useParams: () => ({}),
-        }}
-        reviewIf={reviewIf}
-        getBeerIf={getBeerIf}
-      />
-    </LinkWrapper>
-  )).toThrow('Beer component without beerId. Should not happen.')
+  expect(() =>
+    render(
+      <LinkWrapper>
+        <Beer
+          updateBeerIf={dontUpdateBeerIf}
+          searchIf={searchIf}
+          listReviewsByBeerIf={getListReviewsIf([joinedReview])}
+          listStoragesByBeerIf={listStoragesByBeerIf}
+          paramsIf={{
+            ...paramsIf,
+            useParams: () => ({}),
+          }}
+          reviewIf={reviewIf}
+          getBeerIf={getBeerIf}
+        />
+      </LinkWrapper>,
+    ),
+  ).toThrow('Beer component without beerId. Should not happen.')
 })
 
 test('updates beer', async () => {
@@ -296,9 +298,9 @@ test('updates beer', async () => {
         updateBeerIf={{
           useUpdate: () => ({
             update,
-            isLoading: false
+            isLoading: false,
           }),
-          editBeerIf
+          editBeerIf,
         }}
         searchIf={searchIf}
         listReviewsByBeerIf={getListReviewsIf([])}
@@ -307,7 +309,7 @@ test('updates beer', async () => {
         reviewIf={reviewIf}
         getBeerIf={getBeerIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
 
   const editButton = getByRole('button', { name: 'Edit' })
@@ -318,12 +320,16 @@ test('updates beer', async () => {
   await user.type(nameInput, beerName)
   const saveButton = getByRole('button', { name: 'Save' })
   await user.click(saveButton)
-  expect(update.mock.calls).toEqual([[{
-    ...beer,
-    name: beerName,
-    breweries: [brewery.id],
-    styles: [style.id],
-  }]])
+  expect(update.mock.calls).toEqual([
+    [
+      {
+        ...beer,
+        name: beerName,
+        breweries: [brewery.id],
+        styles: [style.id],
+      },
+    ],
+  ])
 })
 
 test('cancel update', async () => {
@@ -339,7 +345,7 @@ test('cancel update', async () => {
         reviewIf={reviewIf}
         getBeerIf={getBeerIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
 
   const editButton = getByRole('button', { name: 'Edit' })
@@ -362,11 +368,11 @@ test('render loading', async () => {
         getBeerIf={{
           useGetBeer: () => ({
             beer: undefined,
-            isLoading: true
-          })
+            isLoading: true,
+          }),
         }}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   getByText(loadingIndicatorText)
 })
@@ -384,11 +390,11 @@ test('render not found', async () => {
         getBeerIf={{
           useGetBeer: () => ({
             beer: undefined,
-            isLoading: false
-          })
+            isLoading: false,
+          }),
         }}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   getByText('Not found')
 })
@@ -409,10 +415,10 @@ test('sort reviews', async () => {
                 reviews: [joinedReview],
                 sorting: {
                   order: 'time',
-                  direction: 'asc'
-                }
+                  direction: 'asc',
+                },
               },
-              isLoading: false
+              isLoading: false,
             }
           },
         }}
@@ -421,13 +427,13 @@ test('sort reviews', async () => {
         reviewIf={reviewIf}
         getBeerIf={getBeerIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   const ratingButton = getByRole('button', { name: 'Rating' })
   await user.click(ratingButton)
   expect(useList.mock.calls).toEqual([
-    [ { id: beer.id, sorting: { direction: 'asc', order: 'beer_name' } } ],
-    [ { id: beer.id, sorting: { direction: 'desc', order: 'rating' } } ]
+    [{ id: beer.id, sorting: { direction: 'asc', order: 'beer_name' } }],
+    [{ id: beer.id, sorting: { direction: 'desc', order: 'rating' } }],
   ])
 })
 
@@ -441,7 +447,7 @@ test('load reviews', async () => {
           useList: () => {
             return {
               reviews: undefined,
-              isLoading: true
+              isLoading: true,
             }
           },
         }}
@@ -450,7 +456,7 @@ test('load reviews', async () => {
         reviewIf={reviewIf}
         getBeerIf={getBeerIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   getByText(loadingIndicatorText)
 })

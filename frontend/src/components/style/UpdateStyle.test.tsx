@@ -5,7 +5,7 @@ import UpdateStyle from './UpdateStyle'
 import type {
   GetStyleIf,
   ListStylesIf,
-  StyleWithParentIds
+  StyleWithParentIds,
 } from '../../core/style/types'
 import type { UseDebounce } from '../../core/types'
 import type { SearchIf } from '../../core/search/types'
@@ -15,7 +15,7 @@ const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const useDebounce: UseDebounce<string> = str => [str, false]
+const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 const id = '5a416374-4940-44a3-aa85-016b052e4310'
 const name = 'Pale Ale'
@@ -23,19 +23,19 @@ const name = 'Pale Ale'
 const parent = {
   id: '9e059dff-4069-4187-9427-8c4134be2a2a',
   name: 'Ale',
-  parents: []
+  parents: [],
 }
 
 const otherParent = {
   id: '7d0e6fb2-67df-47a5-92fe-bc814bf7c78c',
   name: 'Lager',
-  parents: []
+  parents: [],
 }
 
 const style: StyleWithParentIds = {
   id,
   name,
-  parents: [parent.id]
+  parents: [parent.id],
 }
 
 const getStyle: GetStyleIf = {
@@ -44,25 +44,25 @@ const getStyle: GetStyleIf = {
       id,
       name,
       parents: [parent],
-      children: []
+      children: [],
     },
-    isLoading: false
-  })
+    isLoading: false,
+  }),
 }
 
 const listStyles: ListStylesIf = {
   useList: () => ({
     styles: [parent, otherParent],
-    isLoading: false
-  })
+    isLoading: false,
+  }),
 }
 
 const searchIf: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
-    isActive: true
+    isActive: true,
   }),
-  useDebounce
+  useDebounce,
 }
 
 test('updates style', async () => {
@@ -79,14 +79,14 @@ test('updates style', async () => {
           update,
           hasError: false,
           isLoading: false,
-          isSuccess: true
-        })
+          isSuccess: true,
+        }),
       }}
       onCancel={dontCall}
       onSaved={onSaved}
       searchIf={searchIf}
       initialStyle={style}
-    />
+    />,
   )
   const nameInput = getByPlaceholderText('Name')
   await user.clear(nameInput)
@@ -99,11 +99,15 @@ test('updates style', async () => {
 
   const saveButton = getByRole('button', { name: 'Save' })
   await user.click(saveButton)
-  expect(update.mock.calls).toEqual([[{
-    id,
-    name: newName,
-    parents: [parent, otherParent].map(p => p.id)
-  }]])
+  expect(update.mock.calls).toEqual([
+    [
+      {
+        id,
+        name: newName,
+        parents: [parent, otherParent].map((p) => p.id),
+      },
+    ],
+  ])
   expect(onSaved.mock.calls).toEqual([[]])
 })
 
@@ -113,8 +117,8 @@ test('shows loading indicator', async () => {
       getStyleIf={{
         useGet: () => ({
           style: undefined,
-          isLoading: true
-        })
+          isLoading: true,
+        }),
       }}
       listStylesIf={listStyles}
       updateStyleIf={{
@@ -122,14 +126,14 @@ test('shows loading indicator', async () => {
           update: dontCall,
           hasError: false,
           isLoading: false,
-          isSuccess: false
-        })
+          isSuccess: false,
+        }),
       }}
       onCancel={dontCall}
       onSaved={dontCall}
       searchIf={searchIf}
       initialStyle={style}
-    />
+    />,
   )
   const loadingText = getByText(loadingIndicatorText)
   expect(loadingText).toBeDefined()
@@ -146,14 +150,14 @@ test('cancels updating style', async () => {
           update: dontCall,
           hasError: false,
           isLoading: false,
-          isSuccess: false
-        })
+          isSuccess: false,
+        }),
       }}
       onCancel={cancel}
       onSaved={dontCall}
       searchIf={searchIf}
       initialStyle={style}
-    />
+    />,
   )
   const cancelButton = getByRole('button', { name: 'Cancel' })
   cancelButton.click()

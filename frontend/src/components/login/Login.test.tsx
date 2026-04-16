@@ -11,10 +11,10 @@ test('logs in', async () => {
       loginIf={{
         useLogin: () => ({
           login,
-          isLoading: false
-        })
+          isLoading: false,
+        }),
       }}
-    />
+    />,
   )
   const usernameInput = getByPlaceholderText('Username')
   const username = 'username'
@@ -25,8 +25,12 @@ test('logs in', async () => {
   const submit = getByRole('button', { name: 'Login' })
   expect(submit.hasAttribute('disabled')).toEqual(false)
   await user.click(submit)
-  expect(login.mock.calls).toEqual([[{
-    username,
-    password
-  }]])
+  expect(login.mock.calls).toEqual([
+    [
+      {
+        username,
+        password,
+      },
+    ],
+  ])
 })

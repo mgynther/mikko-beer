@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import type {
   Container as ContainerType,
-  UpdateContainerIf
+  UpdateContainerIf,
 } from '../../core/container/types'
 
 import { EditableMode } from '../common/EditableMode'
@@ -20,10 +20,11 @@ interface Props {
   updateContainerIf: UpdateContainerIf
 }
 
-function Container (props: Props): React.JSX.Element {
+function Container(props: Props): React.JSX.Element {
   const [mode, setMode] = useState(EditableMode.View)
-  const [initialContainer, setInitialContainer] =
-    useState<ContainerType | undefined>(undefined)
+  const [initialContainer, setInitialContainer] = useState<
+    ContainerType | undefined
+  >(undefined)
   return (
     <>
       {mode === EditableMode.View && (

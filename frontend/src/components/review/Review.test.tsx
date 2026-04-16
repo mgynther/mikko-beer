@@ -1,21 +1,21 @@
-import { render, fireEvent } from "@testing-library/react"
-import userEvent, { type UserEvent } from "@testing-library/user-event"
-import { expect, test, vitest } from "vitest"
-import Review from "./Review"
-import type { UseDebounce } from "../../core/types"
-import type { Login } from "../../core/login/types"
-import { Role } from "../../core/user/types"
-import LinkWrapper from "../LinkWrapper"
-import { asText } from "../container/ContainerInfo"
-import type { SearchLocationIf } from "../../core/location/types"
-import type { CreateBeerIf, SearchBeerIf } from "../../core/beer/types"
+import { render, fireEvent } from '@testing-library/react'
+import userEvent, { type UserEvent } from '@testing-library/user-event'
+import { expect, test, vitest } from 'vitest'
+import Review from './Review'
+import type { UseDebounce } from '../../core/types'
+import type { Login } from '../../core/login/types'
+import { Role } from '../../core/user/types'
+import LinkWrapper from '../LinkWrapper'
+import { asText } from '../container/ContainerInfo'
+import type { SearchLocationIf } from '../../core/location/types'
+import type { CreateBeerIf, SearchBeerIf } from '../../core/beer/types'
 import type {
   Review as ReviewType,
-  ReviewContainerIf
-} from "../../core/review/types"
-import type { SearchIf } from "../../core/search/types"
+  ReviewContainerIf,
+} from '../../core/review/types'
+import type { SearchIf } from '../../core/search/types'
 
-const useDebounce: UseDebounce<string> = str => [str, false]
+const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -23,7 +23,7 @@ const dontCall = (): any => {
 
 const dontCreate = {
   create: dontCall,
-  isLoading: false
+  isLoading: false,
 }
 
 const reviewedBeerId = '8c7f4094-09ba-4ba9-aaa5-56099b1f5bbb'
@@ -31,22 +31,22 @@ const reviewedBeerId = '8c7f4094-09ba-4ba9-aaa5-56099b1f5bbb'
 const beerSearchIf: SearchBeerIf = {
   useSearch: () => ({
     search: dontCall,
-    isLoading: false
-  })
+    isLoading: false,
+  }),
 }
 const dontCreateBeerIf: CreateBeerIf = {
   useCreate: () => dontCreate,
   editBeerIf: {
     selectBreweryIf: {
       create: {
-        useCreate: () => dontCreate
+        useCreate: () => dontCreate,
       },
       search: {
         useSearch: () => ({
           search: dontCall,
-          isLoading: false
-        })
-      }
+          isLoading: false,
+        }),
+      },
     },
     selectStyleIf: {
       create: {
@@ -54,65 +54,65 @@ const dontCreateBeerIf: CreateBeerIf = {
           ...dontCreate,
           createdStyle: undefined,
           hasError: false,
-          isSuccess: false
-        })
+          isSuccess: false,
+        }),
       },
       list: {
         useList: () => ({
           styles: undefined,
           isLoading: false,
-        })
-      }
-    }
-  }
+        }),
+      },
+    },
+  },
 }
 
 const newReviewContainerId = '90c1bbac-3b19-42f9-9e49-e0ab4f7f9bb8'
 const containerListResult = {
   id: newReviewContainerId,
   type: 'draft',
-  size: '0.25'
+  size: '0.25',
 }
 
-const dateStr ='2022-04-01T12:00:00.000Z'
+const dateStr = '2022-04-01T12:00:00.000Z'
 
 const reviewContainerIf: ReviewContainerIf = {
   createIf: {
-    useCreate: () => dontCreate
+    useCreate: () => dontCreate,
   },
   listIf: {
     useList: () => ({
       data: {
-        containers: [containerListResult]
+        containers: [containerListResult],
       },
-      isLoading: false
-    })
-  }
+      isLoading: false,
+    }),
+  },
 }
 
 const searchIf: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
-    isActive: true
+    isActive: true,
   }),
-  useDebounce
+  useDebounce,
 }
 const selectBeerIf = {
   create: dontCreateBeerIf,
-  search: beerSearchIf
+  search: beerSearchIf,
 }
 
 const searchLocationIf: SearchLocationIf = {
   useSearch: () => ({
     search: dontCall,
-    isLoading: false
+    isLoading: false,
   }),
   create: {
     useCreate: () => ({
       create: dontCall,
-      isLoading: false
-    })
-  }
+      isLoading: false,
+    }),
+  },
 }
 
 const smellText = 'Very nice, caramel, hops'
@@ -132,24 +132,26 @@ const joinedReview = {
   breweries: [
     {
       id: 'dd236932-aba3-488e-a685-e99a8e7c8972',
-      name: 'Koskipanimo'
-    }
+      name: 'Koskipanimo',
+    },
   ],
   container: {
     id: reviewContainerId,
     type: 'bottle',
-    size: '0.50'
+    size: '0.50',
   },
   location: {
     id: locationId,
-    name: 'Panimoravintola Plevna'
+    name: 'Panimoravintola Plevna',
   },
   rating: 9,
-  styles: [{
-    id: '30aad2a4-1f46-4f99-be9e-5b4d8bfa9bda',
-    name: 'imperial stout'
-  }],
-  time: dateStr
+  styles: [
+    {
+      id: '30aad2a4-1f46-4f99-be9e-5b4d8bfa9bda',
+      name: 'imperial stout',
+    },
+  ],
+  time: dateStr,
 }
 const review = {
   id: joinedReview.id,
@@ -160,33 +162,33 @@ const review = {
   rating: 9,
   smell: 'Nice',
   taste: 'Roasted malt, bitter, strong',
-  time: dateStr
+  time: dateStr,
 }
 
 const adminLogin: Login = {
   user: {
     id: 'cae333fe-8247-4b31-93af-f2218b20f63e',
     username: 'admin',
-    role: Role.admin
+    role: Role.admin,
   },
-  authToken: "",
-  refreshToken: ""
+  authToken: '',
+  refreshToken: '',
 }
 
 const viewerLogin: Login = {
   user: {
     id: 'cae333fe-8247-4b31-93af-f2218b20f63e',
     username: 'viewer',
-    role: Role.viewer
+    role: Role.viewer,
   },
-  authToken: "",
-  refreshToken: ""
+  authToken: '',
+  refreshToken: '',
 }
 
-async function addReview(getByPlaceholderText: (
-  text: string) => HTMLElement,
+async function addReview(
+  getByPlaceholderText: (text: string) => HTMLElement,
   getByRole: (text: string, props?: Record<string, unknown>) => HTMLElement,
-  user: UserEvent
+  user: UserEvent,
 ): Promise<void> {
   const smellInput = getByPlaceholderText('Smell')
   smellInput.focus()
@@ -194,7 +196,7 @@ async function addReview(getByPlaceholderText: (
   await userEvent.paste(smellText)
   const ratingInput = getByRole('slider')
   ratingInput.click()
-  fireEvent.change(ratingInput, {target: {value: `${reviewRating}`}})
+  fireEvent.change(ratingInput, { target: { value: `${reviewRating}` } })
   const tasteInput = getByPlaceholderText('Taste')
   tasteInput.focus()
   await user.clear(tasteInput)
@@ -213,23 +215,23 @@ test('updates review', async () => {
         reviewIf={{
           get: {
             useGet: () => ({
-              get: async (): Promise<ReviewType> => review
-            })
+              get: async (): Promise<ReviewType> => review,
+            }),
           },
           update: {
             useUpdate: () => ({
               update,
-              isLoading: false
+              isLoading: false,
             }),
             searchLocationIf,
             selectBeerIf,
-            reviewContainerIf
+            reviewContainerIf,
           },
-          login: () => adminLogin
+          login: () => adminLogin,
         }}
         searchIf={searchIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   const beerName = getByText(joinedReview.beerName)
   await user.click(beerName)
@@ -238,17 +240,21 @@ test('updates review', async () => {
   await addReview(getByPlaceholderText, getByRole, user)
   const saveButton = getByRole('button', { name: 'Save' })
   await user.click(saveButton)
-  expect(update.mock.calls).toEqual([[{
-    id: joinedReview.id,
-    additionalInfo: '',
-    beer: reviewedBeerId,
-    container: reviewContainerId,
-    location: locationId,
-    rating: reviewRating,
-    smell: smellText,
-    taste: tasteText,
-    time: dateStr
-  }]])
+  expect(update.mock.calls).toEqual([
+    [
+      {
+        id: joinedReview.id,
+        additionalInfo: '',
+        beer: reviewedBeerId,
+        container: reviewContainerId,
+        location: locationId,
+        rating: reviewRating,
+        smell: smellText,
+        taste: tasteText,
+        time: dateStr,
+      },
+    ],
+  ])
   expect(onChanged.mock.calls).toEqual([[]])
 })
 
@@ -263,23 +269,23 @@ test('update review without onChanged callback', async () => {
         reviewIf={{
           get: {
             useGet: () => ({
-              get: async (): Promise<ReviewType> => review
-            })
+              get: async (): Promise<ReviewType> => review,
+            }),
           },
           update: {
             useUpdate: () => ({
               update,
-              isLoading: false
+              isLoading: false,
             }),
             searchLocationIf,
             selectBeerIf,
-            reviewContainerIf
+            reviewContainerIf,
           },
-          login: () => adminLogin
+          login: () => adminLogin,
         }}
         searchIf={searchIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   const beerName = getByText(joinedReview.beerName)
   await user.click(beerName)
@@ -288,17 +294,21 @@ test('update review without onChanged callback', async () => {
   await addReview(getByPlaceholderText, getByRole, user)
   const saveButton = getByRole('button', { name: 'Save' })
   await user.click(saveButton)
-  expect(update.mock.calls).toEqual([[{
-    id: joinedReview.id,
-    additionalInfo: '',
-    beer: reviewedBeerId,
-    container: reviewContainerId,
-    location: locationId,
-    rating: reviewRating,
-    smell: smellText,
-    taste: tasteText,
-    time: dateStr
-  }]])
+  expect(update.mock.calls).toEqual([
+    [
+      {
+        id: joinedReview.id,
+        additionalInfo: '',
+        beer: reviewedBeerId,
+        container: reviewContainerId,
+        location: locationId,
+        rating: reviewRating,
+        smell: smellText,
+        taste: tasteText,
+        time: dateStr,
+      },
+    ],
+  ])
 })
 
 test('cancel editing', async () => {
@@ -313,23 +323,23 @@ test('cancel editing', async () => {
         reviewIf={{
           get: {
             useGet: () => ({
-              get: async (): Promise<ReviewType> => review
-            })
+              get: async (): Promise<ReviewType> => review,
+            }),
           },
           update: {
             useUpdate: () => ({
               update,
-              isLoading: false
+              isLoading: false,
             }),
             searchLocationIf,
             selectBeerIf,
-            reviewContainerIf
+            reviewContainerIf,
           },
-          login: () => adminLogin
+          login: () => adminLogin,
         }}
         searchIf={searchIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   const beerName = getByText(joinedReview.beerName)
   await user.click(beerName)
@@ -352,23 +362,23 @@ test('cannot update review as viewer', async () => {
         reviewIf={{
           get: {
             useGet: () => ({
-              get: async (): Promise<ReviewType> => review
-            })
+              get: async (): Promise<ReviewType> => review,
+            }),
           },
           update: {
             useUpdate: () => ({
               update,
-              isLoading: false
+              isLoading: false,
             }),
             searchLocationIf,
             selectBeerIf,
-            reviewContainerIf
+            reviewContainerIf,
           },
-          login: () => viewerLogin
+          login: () => viewerLogin,
         }}
         searchIf={searchIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   const beerName = getByText(joinedReview.beerName)
   await user.click(beerName)
@@ -381,7 +391,7 @@ test('renders review', async () => {
   const additionalInfo = 'Additional info'
   const location = {
     id: '7170c079-724d-4099-963b-85cd868dfa49',
-    name: 'Oluthuone'
+    name: 'Oluthuone',
   }
   const onChanged = vitest.fn()
   const update = vitest.fn()
@@ -391,29 +401,29 @@ test('renders review', async () => {
         review={{
           ...joinedReview,
           additionalInfo,
-          location
+          location,
         }}
         onChanged={onChanged}
         reviewIf={{
           get: {
             useGet: () => ({
-              get: async (): Promise<ReviewType> => review
-            })
+              get: async (): Promise<ReviewType> => review,
+            }),
           },
           update: {
             useUpdate: () => ({
               update,
-              isLoading: false
+              isLoading: false,
             }),
             searchLocationIf,
             selectBeerIf,
-            reviewContainerIf
+            reviewContainerIf,
           },
-          login: () => viewerLogin
+          login: () => viewerLogin,
         }}
         searchIf={searchIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   const beerName = getByText(joinedReview.beerName)
   await user.click(beerName)

@@ -9,7 +9,7 @@ import type { CreateBeerIf, SearchBeerIf } from '../../core/beer/types'
 import type { ReviewContainerIf } from '../../core/review/types'
 import type { SearchParameters } from '../util'
 
-const useDebounce: UseDebounce<string> = str => [str, false]
+const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -17,14 +17,14 @@ const dontCall = (): any => {
 
 const dontCreate = {
   create: dontCall,
-  isLoading: false
+  isLoading: false,
 }
 
 const beerSearchIf: SearchBeerIf = {
   useSearch: () => ({
     search: dontCall,
-    isLoading: false
-  })
+    isLoading: false,
+  }),
 }
 
 const dontCreateBeerIf: CreateBeerIf = {
@@ -32,14 +32,14 @@ const dontCreateBeerIf: CreateBeerIf = {
   editBeerIf: {
     selectBreweryIf: {
       create: {
-        useCreate: () => dontCreate
+        useCreate: () => dontCreate,
       },
       search: {
         useSearch: () => ({
           search: dontCall,
-          isLoading: false
-        })
-      }
+          isLoading: false,
+        }),
+      },
     },
     selectStyleIf: {
       create: {
@@ -47,27 +47,27 @@ const dontCreateBeerIf: CreateBeerIf = {
           ...dontCreate,
           createdStyle: undefined,
           hasError: false,
-          isSuccess: false
-        })
+          isSuccess: false,
+        }),
       },
       list: {
         useList: () => ({
           styles: undefined,
           isLoading: false,
-        })
-      }
-    }
-  }
+        }),
+      },
+    },
+  },
 }
 
 const brewery = {
   id: '9eaf401e-58fc-467f-b400-693d4dda4cf9',
-  name: 'Koskipanimo'
+  name: 'Koskipanimo',
 }
 
 const style = {
   id: '8300d869-affc-4cd4-9d92-ad3f0540b462',
-  name: 'American IPA'
+  name: 'American IPA',
 }
 
 const storage: Storage = {
@@ -79,25 +79,25 @@ const storage: Storage = {
   container: {
     id: '3b7871b5-0016-4330-a134-23ef3aaee3eb',
     type: 'bottle',
-    size: '0.33'
+    size: '0.33',
   },
   createdAt: '2021-05-05T10:00:00.000Z',
   hasReview: true,
-  styles: [style]
+  styles: [style],
 }
 
 const reviewContainerIf: ReviewContainerIf = {
   createIf: {
-    useCreate: () => dontCreate
+    useCreate: () => dontCreate,
   },
   listIf: {
     useList: () => ({
       data: {
-        containers: []
+        containers: [],
       },
-      isLoading: false
-    })
-  }
+      isLoading: false,
+    }),
+  },
 }
 
 test('renders storage', () => {
@@ -108,28 +108,26 @@ test('renders storage', () => {
           user: {
             id: '9d157897-7787-4139-98bf-867300a3605c',
             username: 'viewer',
-            role: Role.viewer
+            role: Role.viewer,
           },
           authToken: 'auth',
-          refreshToken: 'refresh'
+          refreshToken: 'refresh',
         })}
         listStoragesIf={{
           useList: () => ({
             data: {
-              storages: [
-                storage
-              ]
+              storages: [storage],
             },
             storages: {
-              storages: [storage]
+              storages: [storage],
             },
-            isLoading: false
+            isLoading: false,
           }),
           delete: {
             useDelete: () => ({
-              delete: dontCall
-            })
-          }
+              delete: dontCall,
+            }),
+          },
         }}
         paramsIf={{
           useParams: () => ({}),
@@ -139,53 +137,55 @@ test('renders storage', () => {
                 if (key === 'stats') {
                   return 'monthly'
                 }
-              }
+              },
             }
             return searchParams
-          }
+          },
         }}
         searchIf={{
           useSearch: () => ({
             activate: dontCall,
-            isActive: true
+            isActive: true,
           }),
-          useDebounce
+          useDebounce,
         }}
         selectBeerIf={{
           create: dontCreateBeerIf,
-          search: beerSearchIf
+          search: beerSearchIf,
         }}
         statsIf={{
           annual: {
             useAnnualStats: () => ({
               stats: undefined,
-              isLoading: false
-            })
+              isLoading: false,
+            }),
           },
           monthly: {
             useMonthlyStats: () => ({
               stats: {
-                monthly: [{
-                  year: '2024',
-                  month: '4',
-                  count: '15'
-                }]
+                monthly: [
+                  {
+                    year: '2024',
+                    month: '4',
+                    count: '15',
+                  },
+                ],
               },
-              isLoading: false
-            })
+              isLoading: false,
+            }),
           },
-          setSearch: async () => undefined
+          setSearch: async () => undefined,
         }}
         createStorageIf={{
           useCreate: () => ({
             create: dontCall,
             hasError: false,
-            isLoading: false
-          })
+            isLoading: false,
+          }),
         }}
         reviewContainerIf={reviewContainerIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   getByRole('link', { name: brewery.name })
   getByRole('link', { name: storage.beerName })

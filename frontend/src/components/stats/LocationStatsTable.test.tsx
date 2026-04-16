@@ -7,7 +7,7 @@ import LinkWrapper from '../LinkWrapper'
 import type {
   LocationStatsSortingOrder,
   StatsFilters,
-  YearMonth
+  YearMonth,
 } from '../../core/stats/types'
 import type { ListDirection } from '../../core/types'
 import { openFilters } from './filters-test-util'
@@ -20,14 +20,14 @@ const plevna = {
   locationId: '2aad4052-1f8a-4088-87d8-c079f40d74b9',
   locationName: 'Plevna',
   reviewAverage: '9.06',
-  reviewCount: '63'
+  reviewCount: '63',
 }
 
 const oluthuone = {
   locationId: '0a1c8153-5dfb-42d8-9410-827d7c53bee3',
   locationName: 'Oluthuone Panimomestari',
   reviewAverage: '9.71',
-  reviewCount: '24'
+  reviewCount: '24',
 }
 
 const minTime: YearMonth = testTimes.min.yearMonth
@@ -36,32 +36,32 @@ const maxTime: YearMonth = testTimes.max.yearMonth
 const unusedFilters: StatsFilters = {
   minReviewCount: {
     value: 1,
-    setValue: dontCall
+    setValue: dontCall,
   },
   maxReviewCount: {
     value: Infinity,
-    setValue: dontCall
+    setValue: dontCall,
   },
   minReviewAverage: {
     value: 4.0,
-    setValue: dontCall
+    setValue: dontCall,
   },
   maxReviewAverage: {
     value: 10.0,
-    setValue: dontCall
+    setValue: dontCall,
   },
   timeStart: {
     min: minTime,
     max: maxTime,
     value: minTime,
-    setValue: dontCall
+    setValue: dontCall,
   },
   timeEnd: {
     min: minTime,
     max: maxTime,
     value: maxTime,
-    setValue: dontCall
-  }
+    setValue: dontCall,
+  },
 }
 
 test('renders location stats', async () => {
@@ -69,10 +69,7 @@ test('renders location stats', async () => {
   const { getByRole, getByText } = render(
     <LinkWrapper>
       <LocationStatsTable
-        locations={[
-          plevna,
-          oluthuone
-        ]}
+        locations={[plevna, oluthuone]}
         isLoading={false}
         sortingDirection={'asc'}
         sortingOrder={'location_name'}
@@ -81,7 +78,7 @@ test('renders location stats', async () => {
         isFiltersOpen={false}
         setIsFiltersOpen={dontCall}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   getByText(plevna.reviewAverage)
   getByText(plevna.reviewCount)
@@ -100,7 +97,7 @@ test('opens filters', async () => {
   const { getByRole } = render(
     <LinkWrapper>
       <LocationStatsTable
-        locations={[ plevna, oluthuone ]}
+        locations={[plevna, oluthuone]}
         isLoading={false}
         sortingDirection={'asc'}
         sortingOrder={'location_name'}
@@ -109,17 +106,17 @@ test('opens filters', async () => {
         isFiltersOpen={false}
         setIsFiltersOpen={setIsFiltersOpen}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   await openFilters(getByRole, user)
   expect(setIsFiltersOpen.mock.calls).toEqual([[true]])
 })
 
 interface OrderTestData {
-  buttonText: string,
+  buttonText: string
   expectedOrder: LocationStatsSortingOrder
-  order: LocationStatsSortingOrder,
-  sortingDirection: ListDirection,
+  order: LocationStatsSortingOrder
+  sortingDirection: ListDirection
   testName: string
 }
 
@@ -129,41 +126,38 @@ const orderTests: OrderTestData[] = [
     expectedOrder: 'location_name',
     order: 'location_name',
     sortingDirection: 'asc',
-    testName: 'location name, flip order'
+    testName: 'location name, flip order',
   },
   {
     buttonText: 'Location ▼',
     expectedOrder: 'location_name',
     order: 'location_name',
     sortingDirection: 'desc',
-    testName: 'location name desc, flip order'
+    testName: 'location name desc, flip order',
   },
   {
     buttonText: 'Reviews',
     expectedOrder: 'count',
     order: 'location_name',
     sortingDirection: 'asc',
-    testName: 'reviews'
+    testName: 'reviews',
   },
   {
     buttonText: 'Average',
     expectedOrder: 'average',
     order: 'location_name',
     sortingDirection: 'asc',
-    testName: 'average'
-  }
+    testName: 'average',
+  },
 ]
 
-orderTests.forEach(data => {
+orderTests.forEach((data) => {
   test(`set order to ${data.testName}`, () => {
     const setSortingOrder = vitest.fn()
     const { getByRole } = render(
       <LinkWrapper>
         <LocationStatsTable
-          locations={[
-            plevna,
-            oluthuone
-          ]}
+          locations={[plevna, oluthuone]}
           isLoading={false}
           sortingDirection={data.sortingDirection}
           sortingOrder={data.order}
@@ -172,7 +166,7 @@ orderTests.forEach(data => {
           isFiltersOpen={false}
           setIsFiltersOpen={dontCall}
         />
-      </LinkWrapper>
+      </LinkWrapper>,
     )
     const orderButton = getByRole('button', { name: data.buttonText })
     orderButton.click()
@@ -185,10 +179,7 @@ test('sets minimum review count filter', () => {
   const { getByDisplayValue } = render(
     <LinkWrapper>
       <LocationStatsTable
-        locations={[
-          plevna,
-          oluthuone
-        ]}
+        locations={[plevna, oluthuone]}
         isLoading={false}
         sortingDirection={'asc'}
         sortingOrder={'location_name'}
@@ -196,39 +187,39 @@ test('sets minimum review count filter', () => {
         filters={{
           minReviewCount: {
             value: 3,
-            setValue: setMinimumReviewCount
+            setValue: setMinimumReviewCount,
           },
           maxReviewCount: {
             value: Infinity,
-            setValue: dontCall
+            setValue: dontCall,
           },
           minReviewAverage: {
             value: 4.0,
-            setValue: dontCall
+            setValue: dontCall,
           },
           maxReviewAverage: {
             value: 10.0,
-            setValue: dontCall
+            setValue: dontCall,
           },
           timeStart: {
             min: minTime,
             max: maxTime,
             value: minTime,
-            setValue: dontCall
+            setValue: dontCall,
           },
           timeEnd: {
             min: minTime,
             max: maxTime,
             value: maxTime,
-            setValue: dontCall
-          }
+            setValue: dontCall,
+          },
         }}
         isFiltersOpen={true}
         setIsFiltersOpen={dontCall}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   const slider = getByDisplayValue('2')
-  fireEvent.change(slider, {target: {value: '3'}})
+  fireEvent.change(slider, { target: { value: '3' } })
   expect(setMinimumReviewCount.mock.calls).toEqual([[5]])
 })

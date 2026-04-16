@@ -1,9 +1,6 @@
 import React, { useState } from 'react'
 
-import type {
-  Brewery,
-  SelectBreweryIf
-} from '../../core/brewery/types'
+import type { Brewery, SelectBreweryIf } from '../../core/brewery/types'
 import type { SearchIf } from '../../core/search/types'
 
 import Button from '../common/Button'
@@ -20,13 +17,15 @@ export interface Props {
   remove: () => void
 }
 
-function SelectBrewery (props: Props): React.JSX.Element {
+function SelectBrewery(props: Props): React.JSX.Element {
   const [mode, setMode] = useState(Mode.SELECT)
   return (
-    <div className="SelectBrewery">
+    <div className='SelectBrewery'>
       <SelectCreateRadioBasic
         mode={mode}
-        onChange={(mode: Mode) => { setMode(mode) }}
+        onChange={(mode: Mode) => {
+          setMode(mode)
+        }}
       />
       <div className='SelectBreweryContent'>
         {mode === Mode.CREATE && (

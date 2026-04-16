@@ -7,7 +7,7 @@ interface Props {
   setMinReviewCount: (minimumReviewCount: number) => void
 }
 
-function MinimumReviewCount (props: Props): React.JSX.Element {
+function MinimumReviewCount(props: Props): React.JSX.Element {
   const [displayValue, setDisplayValue] = useState(props.minReviewCount)
   const sliderValues = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
   return (

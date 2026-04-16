@@ -5,7 +5,7 @@ import type {
   CreateStorageRequest,
   MonthlyStats,
   Storage,
-  StorageList
+  StorageList,
 } from '../../core/storage/types'
 import { StorageTags } from './types'
 
@@ -14,74 +14,71 @@ const storageApi = emptySplitApi.injectEndpoints({
     getStorage: build.query<{ storage: Storage }, string>({
       query: (storageId: string) => ({
         url: `/storage/${storageId}`,
-        method: 'GET'
+        method: 'GET',
       }),
       providesTags: (result) =>
         result === undefined
           ? [StorageTags.Storage]
-          : [{ type: StorageTags.Storage, id: result.storage.id }]
+          : [{ type: StorageTags.Storage, id: result.storage.id }],
     }),
     getAnnualStorageStats: build.query<AnnualStats, void>({
       query: () => ({
         url: '/storage/annual-stats',
-        method: 'GET'
+        method: 'GET',
       }),
-      providesTags: [StorageTags.Storage]
+      providesTags: [StorageTags.Storage],
     }),
     getMonthlyStorageStats: build.query<MonthlyStats, void>({
       query: () => ({
         url: '/storage/monthly-stats',
-        method: 'GET'
+        method: 'GET',
       }),
-      providesTags: [StorageTags.Storage]
+      providesTags: [StorageTags.Storage],
     }),
     listStorages: build.query<StorageList, void>({
       query: () => ({
         url: '/storage',
-        method: 'GET'
+        method: 'GET',
       }),
-      providesTags: [StorageTags.Storage]
+      providesTags: [StorageTags.Storage],
     }),
     listStoragesByBeer: build.query<StorageList, string>({
       query: (beerId: string) => ({
         url: `/beer/${beerId}/storage`,
-        method: 'GET'
+        method: 'GET',
       }),
-      providesTags: [StorageTags.Storage]
+      providesTags: [StorageTags.Storage],
     }),
     listStoragesByBrewery: build.query<StorageList, string>({
       query: (breweryId: string) => ({
         url: `/brewery/${breweryId}/storage`,
-        method: 'GET'
+        method: 'GET',
       }),
-      providesTags: [StorageTags.Storage]
+      providesTags: [StorageTags.Storage],
     }),
     listStoragesByStyle: build.query<StorageList, string>({
       query: (styleId: string) => ({
         url: `/style/${styleId}/storage`,
-        method: 'GET'
+        method: 'GET',
       }),
-      providesTags: [StorageTags.Storage]
+      providesTags: [StorageTags.Storage],
     }),
-    createStorage: build.mutation<
-    { storage: Storage },
-    CreateStorageRequest
-    >({
+    createStorage: build.mutation<{ storage: Storage }, CreateStorageRequest>({
       query: (params: CreateStorageRequest) => ({
         url: '/storage',
         method: 'POST',
-        body: params
+        body: params,
       }),
-      invalidatesTags: [StorageTags.Storage]
+      invalidatesTags: [StorageTags.Storage],
     }),
     deleteStorage: build.mutation<void, string>({
       query: (id: string) => ({
         url: `/storage/${id}`,
-        method: 'DELETE'
+        method: 'DELETE',
       }),
-      invalidatesTags: [StorageTags.Storage]
-    })
-  })
+      invalidatesTags: [StorageTags.Storage],
+    }),
+  }),
 })
 
 export const {
@@ -93,7 +90,7 @@ export const {
   useListStoragesQuery,
   useListStoragesByBeerQuery,
   useListStoragesByBreweryQuery,
-  useListStoragesByStyleQuery
+  useListStoragesByStyleQuery,
 } = storageApi
 
 export const { endpoints, reducerPath, reducer, middleware } = storageApi

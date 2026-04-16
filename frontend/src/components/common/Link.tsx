@@ -7,12 +7,8 @@ interface Props {
   text: string
 }
 
-export function Link (props: Props): React.JSX.Element {
-  return (
-    <RouterLink
-      to={props.to}>{props.text}
-    </RouterLink>
-  )
+export function Link(props: Props): React.JSX.Element {
+  return <RouterLink to={props.to}>{props.text}</RouterLink>
 }
 
 export default Link

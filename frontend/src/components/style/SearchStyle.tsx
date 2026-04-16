@@ -1,9 +1,6 @@
 import React, { useState } from 'react'
 
-import type {
-  ListStylesIf,
-  Style
-} from '../../core/style/types'
+import type { ListStylesIf, Style } from '../../core/style/types'
 
 import SearchBox, { nameFormatter } from '../common/SearchBox'
 import type { SearchIf } from '../../core/search/types'
@@ -14,18 +11,19 @@ export interface Props {
   select: (style: Style) => void
 }
 
-function SearchStyle (props: Props): React.JSX.Element {
+function SearchStyle(props: Props): React.JSX.Element {
   const { styles, isLoading } = props.listStylesIf.useList()
   const [filter, setFilter] = useState('')
 
   const filterParts = filter.trim().toLowerCase().split(' ')
-  const filteredStyles = styles?.filter(style => {
-    const name = style.name.toLowerCase()
-    for (const part of filterParts) {
-      if (!name.includes(part)) return false
-    }
-    return true
-  }) ?? []
+  const filteredStyles =
+    styles?.filter((style) => {
+      const name = style.name.toLowerCase()
+      for (const part of filterParts) {
+        if (!name.includes(part)) return false
+      }
+      return true
+    }) ?? []
 
   return (
     <>
@@ -36,7 +34,9 @@ function SearchStyle (props: Props): React.JSX.Element {
         formatter={nameFormatter}
         isLoading={isLoading}
         searchIf={props.searchIf}
-        setFilter={(filter: string) => { setFilter(filter) }}
+        setFilter={(filter: string) => {
+          setFilter(filter)
+        }}
         select={(style: Style) => {
           props.select(style)
         }}

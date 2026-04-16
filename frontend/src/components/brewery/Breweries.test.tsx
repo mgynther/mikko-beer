@@ -7,65 +7,69 @@ import type { UseDebounce } from '../../core/types'
 import type { BreweryList, ListBreweriesIf } from '../../core/brewery/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 
-const useDebounce: UseDebounce<string> = str => [str, false]
+const useDebounce: UseDebounce<string> = (str) => [str, false]
 
-const notUsed = (): any => { throw new Error('Do not call') }
+const notUsed = (): any => {
+  throw new Error('Do not call')
+}
 
 const activeSearch: SearchIf = {
   useSearch: () => ({
     activate: notUsed,
-    isActive: false
+    isActive: false,
   }),
-  useDebounce
+  useDebounce,
 }
 
 const brewery = {
   id: 'e3fad94c-2408-4f8f-8e3f-2b2c30ae6bfb',
-  name: 'Lehe pruulikoda'
+  name: 'Lehe pruulikoda',
 }
 
 const anotherBrewery = {
   id: 'b56107e2-9e92-4cbd-a0f1-bae25e44caa2',
-  name: 'Purtse pruulikoda'
+  name: 'Purtse pruulikoda',
 }
 
-const breweries = [
-  brewery,
-  anotherBrewery
-]
+const breweries = [brewery, anotherBrewery]
 
 test('renders breweries', async () => {
-  let scrollCb: (() => void) = () => undefined
+  let scrollCb: () => void = () => undefined
   const listBreweriesIf: ListBreweriesIf = {
     useList: () => ({
       list: async () => ({
-        breweries
+        breweries,
       }),
       breweryList: { breweries },
       isLoading: false,
-      isUninitialized: false
+      isUninitialized: false,
     }),
-    infiniteScroll: (cb) => { scrollCb = cb; return () => undefined }
+    infiniteScroll: (cb) => {
+      scrollCb = cb
+      return () => undefined
+    },
   }
   const { getByPlaceholderText, getByRole } = render(
     <LinkWrapper>
       <Breweries
         listBreweriesIf={listBreweriesIf}
         navigateIf={{
-          useNavigate: () => notUsed
+          useNavigate: () => notUsed,
         }}
         searchBreweryIf={{
           useSearch: () => ({
             search: notUsed,
-            isLoading: false
-          })
+            isLoading: false,
+          }),
         }}
         searchIf={activeSearch}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   expect(scrollCb).not.toEqual(undefined)
-  await act(async () => { scrollCb(); })
+  await act(async () => {
+    scrollCb()
+  })
   getByRole('link', { name: brewery.name })
   getByRole('link', { name: anotherBrewery.name })
   getByRole('textbox')
@@ -73,40 +77,45 @@ test('renders breweries', async () => {
 })
 
 test('render loading', async () => {
-  let scrollCb: (() => void) = () => undefined
+  let scrollCb: () => void = () => undefined
   const listBreweriesIf: ListBreweriesIf = {
     useList: () => ({
       list: notUsed,
       breweryList: undefined,
       isLoading: true,
-      isUninitialized: true
+      isUninitialized: true,
     }),
-    infiniteScroll: (cb) => { scrollCb = cb; return () => undefined }
+    infiniteScroll: (cb) => {
+      scrollCb = cb
+      return () => undefined
+    },
   }
   const { getByText } = render(
     <LinkWrapper>
       <Breweries
         listBreweriesIf={listBreweriesIf}
         navigateIf={{
-          useNavigate: () => notUsed
+          useNavigate: () => notUsed,
         }}
         searchBreweryIf={{
           useSearch: () => ({
             search: notUsed,
-            isLoading: false
-          })
+            isLoading: false,
+          }),
         }}
         searchIf={activeSearch}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
-  await act(async () => { scrollCb(); })
+  await act(async () => {
+    scrollCb()
+  })
   getByText(loadingIndicatorText)
 })
 
 test('stops loading more', async () => {
   const listMore = vitest.fn()
-  let scrollCb: (() => void) = () => undefined
+  let scrollCb: () => void = () => undefined
   function getListRequestCount(): number {
     return listMore.mock.calls.length
   }
@@ -116,58 +125,67 @@ test('stops loading more', async () => {
         listMore(params)
         if (getListRequestCount() > 1) {
           return {
-            breweries: []
+            breweries: [],
           }
         }
         return {
-          breweries
+          breweries,
         }
       },
       breweryList: {
-        breweries: getListRequestCount() > 1 ? [] : [brewery]
+        breweries: getListRequestCount() > 1 ? [] : [brewery],
       },
       isLoading: false,
-      isUninitialized: false
+      isUninitialized: false,
     }),
-    infiniteScroll: (cb) => { scrollCb = cb; return () => undefined }
+    infiniteScroll: (cb) => {
+      scrollCb = cb
+      return () => undefined
+    },
   }
   const { getByText } = render(
     <LinkWrapper>
       <Breweries
         listBreweriesIf={listBreweriesIf}
         navigateIf={{
-          useNavigate: () => notUsed
+          useNavigate: () => notUsed,
         }}
         searchBreweryIf={{
           useSearch: () => ({
             search: notUsed,
-            isLoading: false
-          })
+            isLoading: false,
+          }),
         }}
         searchIf={activeSearch}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   // act is important to ensure changes have been fully applied. loading is not
   // toggled between renders so without act there would be a race condition in
   // the test execution.
-  await act(async () => { scrollCb(); })
+  await act(async () => {
+    scrollCb()
+  })
   await waitFor(() => getByText(brewery.name))
-  await act(async () => { scrollCb(); })
+  await act(async () => {
+    scrollCb()
+  })
   expect(listMore.mock.calls).toEqual([
     [
       {
         size: 20,
-        skip: 0
-      }
+        skip: 0,
+      },
     ],
     [
       {
         size: 20,
-        skip: 2
-      }
-    ]
+        skip: 2,
+      },
+    ],
   ])
-  await act(async () => { scrollCb(); })
+  await act(async () => {
+    scrollCb()
+  })
   expect(listMore).toHaveBeenCalledTimes(2)
 })

@@ -8,11 +8,11 @@ import { openFilters } from './filters-test-util'
 import type {
   BreweryStats,
   GetBreweryStatsIf,
-  YearMonth
+  YearMonth,
 } from '../../core/stats/types'
 import type { UseDebounce } from '../../core/types'
 
-const getUseDebounce = function<T>(): UseDebounce<T> {
+const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
 }
 
@@ -27,7 +27,7 @@ const koskipanimo = {
   breweryName: 'Koskipanimo',
   reviewAverage: '9.06',
   reviewCount: '63',
-  reviewedBeerCount: '62'
+  reviewedBeerCount: '62',
 }
 
 const lehe = {
@@ -35,7 +35,7 @@ const lehe = {
   breweryName: 'Lehe pruulikoda',
   reviewAverage: '9.71',
   reviewCount: '24',
-  reviewedBeerCount: '24'
+  reviewedBeerCount: '24',
 }
 
 const minTime: YearMonth = testTimes.min.yearMonth
@@ -44,44 +44,44 @@ const maxTime: YearMonth = testTimes.max.yearMonth
 const unusedFilters = {
   minReviewCount: {
     value: 1,
-    setValue: dontCall
+    setValue: dontCall,
   },
   maxReviewCount: {
     value: Infinity,
-    setValue: dontCall
+    setValue: dontCall,
   },
   minReviewAverage: {
     value: 4.0,
-    setValue: dontCall
+    setValue: dontCall,
   },
   maxReviewAverage: {
     value: 10.0,
-    setValue: dontCall
+    setValue: dontCall,
   },
   timeStart: {
     min: minTime,
     max: maxTime,
     value: minTime,
-    setValue: dontCall
+    setValue: dontCall,
   },
   timeEnd: {
     min: minTime,
     max: maxTime,
     value: maxTime,
-    setValue: dontCall
-  }
+    setValue: dontCall,
+  },
 }
 
 const unusedStats: GetBreweryStatsIf = {
   useStats: () => ({
-    query: async () => ({ brewery: []}),
-      stats: { brewery: [] },
-    isLoading: false
+    query: async () => ({ brewery: [] }),
+    stats: { brewery: [] },
+    isLoading: false,
   }),
   infiniteScroll: dontCall,
   minTime,
   maxTime,
-  getUseDebounce
+  getUseDebounce,
 }
 
 test('queries brewery stats', async () => {
@@ -95,21 +95,18 @@ test('queries brewery stats', async () => {
             query: async (params): Promise<BreweryStats> => {
               query(params)
               return {
-                brewery: [
-                  { ...koskipanimo },
-                  { ...lehe }
-                ]
+                brewery: [{ ...koskipanimo }, { ...lehe }],
               }
             },
             stats: {
-              brewery: []
+              brewery: [],
             },
-            isLoading: false
+            isLoading: false,
           }),
           infiniteScroll: dontCall,
           minTime,
           maxTime,
-          getUseDebounce
+          getUseDebounce,
         }}
         breweryId={undefined}
         locationId={undefined}
@@ -124,32 +121,36 @@ test('queries brewery stats', async () => {
         isFilterChangePending={false}
         setIsFiltersOpen={() => undefined}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
-  expect(query.mock.calls).toEqual([[{
-    breweryId: undefined,
-    maxReviewAverage: unusedFilters.maxReviewAverage.value,
-    maxReviewCount: unusedFilters.maxReviewCount.value,
-    minReviewAverage: unusedFilters.minReviewAverage.value,
-    minReviewCount: unusedFilters.minReviewCount.value,
-    pagination: {
-      size: 10000,
-      skip: 0
-    },
-    sorting: {
-      direction: 'asc',
-      order: 'brewery_name'
-    },
-    styleId,
-    timeStart: testTimes.min.utcTimestamp,
-    timeEnd: testTimes.max.utcTimestamp
-  }]])
-  await waitFor(() =>
-    { expect(setLoadedBreweries.mock.calls).toEqual([
+  expect(query.mock.calls).toEqual([
+    [
+      {
+        breweryId: undefined,
+        maxReviewAverage: unusedFilters.maxReviewAverage.value,
+        maxReviewCount: unusedFilters.maxReviewCount.value,
+        minReviewAverage: unusedFilters.minReviewAverage.value,
+        minReviewCount: unusedFilters.minReviewCount.value,
+        pagination: {
+          size: 10000,
+          skip: 0,
+        },
+        sorting: {
+          direction: 'asc',
+          order: 'brewery_name',
+        },
+        styleId,
+        timeStart: testTimes.min.utcTimestamp,
+        timeEnd: testTimes.max.utcTimestamp,
+      },
+    ],
+  ])
+  await waitFor(() => {
+    expect(setLoadedBreweries.mock.calls).toEqual([
       [undefined],
-      [[koskipanimo, lehe]]
-    ]); }
-  )
+      [[koskipanimo, lehe]],
+    ])
+  })
 })
 
 test('renders brewery stats', () => {
@@ -170,7 +171,7 @@ test('renders brewery stats', () => {
         isFilterChangePending={false}
         setIsFiltersOpen={dontCall}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   getByText(koskipanimo.breweryName)
   getByText(koskipanimo.reviewAverage)
@@ -199,7 +200,7 @@ test('clears loaded breweries on filter change pending', () => {
         setIsFiltersOpen={dontCall}
         isFilterChangePending={true}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   expect(setLoadedBreweries.mock.calls).toEqual([[undefined], [undefined]])
 })
@@ -212,12 +213,12 @@ test('renders loading', () => {
           useStats: () => ({
             query: async (): Promise<BreweryStats> => ({ brewery: [] }),
             stats: undefined,
-            isLoading: true
+            isLoading: true,
           }),
           infiniteScroll: dontCall,
           minTime,
           maxTime,
-          getUseDebounce
+          getUseDebounce,
         }}
         breweryId={undefined}
         locationId={undefined}
@@ -232,7 +233,7 @@ test('renders loading', () => {
         setIsFiltersOpen={dontCall}
         isFilterChangePending={false}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   const cells = getAllByRole('cell')
   expect(cells.length).toEqual(9)
@@ -256,17 +257,17 @@ test('sets minimum review count filter', () => {
           ...unusedFilters,
           minReviewAverage: {
             value: 4.0,
-            setValue: setMinimumReviewAverage
-          }
+            setValue: setMinimumReviewAverage,
+          },
         }}
         isFiltersOpen={true}
         isFilterChangePending={false}
         setIsFiltersOpen={dontCall}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   const slider = getByDisplayValue('4')
-  fireEvent.change(slider, {target: {value: '4.5'}})
+  fireEvent.change(slider, { target: { value: '4.5' } })
   expect(setMinimumReviewAverage.mock.calls).toEqual([[4.5]])
 })
 
@@ -290,7 +291,7 @@ test('opens filter', async () => {
         isFilterChangePending={false}
         setIsFiltersOpen={setIsFiltersOpen}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   await openFilters(getByRole, user)
   expect(setIsFiltersOpen.mock.calls).toEqual([[true]])

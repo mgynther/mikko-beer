@@ -4,7 +4,7 @@ import type {
   StatsFilter,
   StatsNoTimeFilters,
   YearMonth,
-  YearMonthFilter
+  YearMonthFilter,
 } from '../../core/stats/types'
 
 import MaximumReviewCount from './MaximumReviewCount'
@@ -24,20 +24,16 @@ interface Props {
   setIsOpen: (isOpen: boolean) => void
 }
 
-function Filters (props: Props): React.JSX.Element {
+function Filters(props: Props): React.JSX.Element {
   const { isOpen } = props
-  function getOpenSymbol (isOpen: boolean): string {
+  function getOpenSymbol(isOpen: boolean): string {
     return isOpen ? '▲' : '▼'
   }
-  const {
-    minReviewCount,
-    maxReviewCount,
-    minReviewAverage,
-    maxReviewAverage,
-  } = props.filters
+  const { minReviewCount, maxReviewCount, minReviewAverage, maxReviewAverage } =
+    props.filters
   const { timeStart, timeEnd } = props
-  function wrapStatsFilter (
-    statsFilter: StatsFilter
+  function wrapStatsFilter(
+    statsFilter: StatsFilter,
   ): [number, (value: number) => void] {
     const [valueRt, setValueRt] = useState(statsFilter.value)
     const setValue = (count: number): void => {
@@ -52,18 +48,19 @@ function Filters (props: Props): React.JSX.Element {
     wrapStatsFilter(maxReviewCount)
   const [minReviewAverageValue, setMinReviewAverage] =
     wrapStatsFilter(minReviewAverage)
-  const [minReviewAverageDisplayValue, setMinReviewAverageDisplayValue]
-    = useState(minReviewAverageValue)
+  const [minReviewAverageDisplayValue, setMinReviewAverageDisplayValue] =
+    useState(minReviewAverageValue)
   const [maxReviewAverageValue, setMaxReviewAverage] =
     wrapStatsFilter(maxReviewAverage)
-  const [maxReviewAverageDisplayValue, setMaxReviewAverageDisplayValue]
-    = useState(maxReviewAverageValue)
+  const [maxReviewAverageDisplayValue, setMaxReviewAverageDisplayValue] =
+    useState(maxReviewAverageValue)
 
-  function wrapYearMonthFilter (
-    filter: YearMonthFilter | undefined
+  function wrapYearMonthFilter(
+    filter: YearMonthFilter | undefined,
   ): [YearMonth, (value: YearMonth) => void] {
-    const [valueRt, setValueRt] =
-      useState(filter?.value ?? { year: 2020, month: 1 })
+    const [valueRt, setValueRt] = useState(
+      filter?.value ?? { year: 2020, month: 1 },
+    )
     const setValue = (value: YearMonth): void => {
       setValueRt(value)
       filter?.setValue(value)
@@ -78,7 +75,9 @@ function Filters (props: Props): React.JSX.Element {
         <TabButton
           isCompact={true}
           isSelected={false}
-          onClick={() => { props.setIsOpen(!isOpen) }}
+          onClick={() => {
+            props.setIsOpen(!isOpen)
+          }}
           title={`Filters ${getOpenSymbol(isOpen)}`}
         />
       </div>
@@ -110,20 +109,24 @@ function Filters (props: Props): React.JSX.Element {
             setDisplayValue={setMaxReviewAverageDisplayValue}
             setValue={setMaxReviewAverage}
           />
-          {timeStart && <TimeFilterSlider
-            title={'Minimum time'}
-            minTime={timeStart.min}
-            maxTime={timeStart.max}
-            setTime={setTimeStart}
-            time={timeStartValue}
-          />}
-          {timeEnd && <TimeFilterSlider
-            title={'Maximum time'}
-            minTime={timeEnd.min}
-            maxTime={timeEnd.max}
-            setTime={setTimeEnd}
-            time={timeEndValue}
-          />}
+          {timeStart && (
+            <TimeFilterSlider
+              title={'Minimum time'}
+              minTime={timeStart.min}
+              maxTime={timeStart.max}
+              setTime={setTimeStart}
+              time={timeStartValue}
+            />
+          )}
+          {timeEnd && (
+            <TimeFilterSlider
+              title={'Maximum time'}
+              minTime={timeEnd.min}
+              maxTime={timeEnd.max}
+              setTime={setTimeEnd}
+              time={timeEndValue}
+            />
+          )}
         </div>
       )}
     </div>

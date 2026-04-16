@@ -11,17 +11,12 @@ interface TabButtonProps {
   title: string
 }
 
-function TabButton (props: TabButtonProps): React.JSX.Element {
+function TabButton(props: TabButtonProps): React.JSX.Element {
   const selectedClass = props.isSelected ? 'Selected' : ''
   const compactClass = props.isCompact ? 'Compact' : ''
-  const className =
-    `TabButton ${selectedClass} ${compactClass}`.trim()
+  const className = `TabButton ${selectedClass} ${compactClass}`.trim()
   return (
-    <Button
-      className={className}
-      onClick={props.onClick}
-      text={props.title}
-    />
+    <Button className={className} onClick={props.onClick} text={props.title} />
   )
 }
 

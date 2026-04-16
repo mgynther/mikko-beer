@@ -1,44 +1,37 @@
 import { expect, test } from 'vitest'
-import { infiniteScroll } from "../../components/util"
-import type { NavigateIf } from "../../components/util";
+import { infiniteScroll } from '../../components/util'
+import type { NavigateIf } from '../../components/util'
 import { store } from '../../store/store'
 import { addTestServerResponse } from '../../../test-util/server'
 import statsHook from './stats'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
 
-import type {
-  IdParams,
-  OverallStats,
-  YearMonth
-} from '../../core/stats/types'
+import type { IdParams, OverallStats, YearMonth } from '../../core/stats/types'
 import type { UseDebounce } from '../../core/types'
 
 const minTime: YearMonth = { year: 2017, month: 12 }
 const maxTime: YearMonth = { year: 2024, month: 12 }
 
-const getUseDebounce = function<T>(): UseDebounce<T> {
+const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
 }
 
-function OverallStatsHelper(
-  props: { params: IdParams }
-): React.JSX.Element {
+function OverallStatsHelper(props: { params: IdParams }): React.JSX.Element {
   const navigateIf: NavigateIf = {
-    useNavigate: () => () => undefined
+    useNavigate: () => () => undefined,
   }
   const statsIf = statsHook(
     infiniteScroll,
     navigateIf,
     minTime,
     maxTime,
-    getUseDebounce
+    getUseDebounce,
   )
-  const { stats } =
-    statsIf.overall.useStats(props.params)
+  const { stats } = statsIf.overall.useStats(props.params)
   return (
     <div>
-      {stats !== undefined &&
+      {stats !== undefined && (
         <>
           <div>{stats.beerCount}</div>
           <div>{stats.breweryCount}</div>
@@ -49,7 +42,7 @@ function OverallStatsHelper(
           <div>{stats.reviewCount}</div>
           <div>{stats.styleCount}</div>
         </>
-      }
+      )}
     </div>
   )
 }
@@ -63,26 +56,26 @@ test('overall stats', async () => {
     distinctBeerReviewCount: '401',
     reviewAverage: '8.25',
     reviewCount: '512',
-    styleCount: '33'
+    styleCount: '33',
   }
 
   const params: IdParams = {
     breweryId: undefined,
     locationId: undefined,
-    styleId: '1d922ad8-5dc2-46f7-b240-3c4168f9a36c'
+    styleId: '1d922ad8-5dc2-46f7-b240-3c4168f9a36c',
   }
 
   addTestServerResponse<{ overall: OverallStats }>({
     method: 'GET',
     pathname: `/api/v1/stats/overall?style=${params.styleId}`,
     response: { overall: overallStats },
-    status: 200
+    status: 200,
   })
 
   const { getByText } = render(
     <Provider store={store}>
       <OverallStatsHelper params={params} />
-    </Provider>
+    </Provider>,
   )
   await waitFor(() => {
     expect(getByText(overallStats.beerCount)).toBeDefined()

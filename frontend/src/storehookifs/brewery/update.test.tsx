@@ -39,25 +39,22 @@ test('update brewery', async () => {
   const expectedResponse: { brewery: Brewery } = {
     brewery: {
       id: 'b20edb3f-ff2f-4303-9ed9-01b025dc3c49',
-      name: 'Test brewery'
-    }
+      name: 'Test brewery',
+    },
   }
 
-  addTestServerResponse<{brewery: Brewery}>({
+  addTestServerResponse<{ brewery: Brewery }>({
     method: 'PUT',
     pathname: `/api/v1/brewery/${expectedResponse.brewery.id}`,
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const handler = vitest.fn()
   const { getByRole, getByText } = render(
     <Provider store={store}>
-      <Helper
-        brewery={expectedResponse.brewery}
-        handler={handler}
-      />
-    </Provider>
+      <Helper brewery={expectedResponse.brewery} handler={handler} />
+    </Provider>,
   )
   const testButton = getByRole('button', { name: 'Test' })
   await user.click(testButton)

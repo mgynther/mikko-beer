@@ -1,11 +1,7 @@
 import * as t from 'io-ts'
 import { isLeft } from 'fp-ts/Either'
 
-import type {
-  Beer,
-  BeerList,
-  BeerWithIds
-} from '../core/beer/types'
+import type { Beer, BeerList, BeerWithIds } from '../core/beer/types'
 import { formatError } from './format-error'
 import { ValidatedBrewery } from './brewery'
 import { ValidatedStyle } from './style'
@@ -14,23 +10,21 @@ const ValidatedBeer = t.type({
   id: t.string,
   name: t.string,
   breweries: t.array(ValidatedBrewery),
-  styles: t.array(ValidatedStyle)
+  styles: t.array(ValidatedStyle),
 })
 
 const ValidatedBeerWithIds = t.type({
   id: t.string,
   name: t.string,
   breweries: t.array(t.string),
-  styles: t.array(t.string)
+  styles: t.array(t.string),
 })
 
 const ValidatedBeerList = t.type({
-  beers: t.array(ValidatedBeer)
+  beers: t.array(ValidatedBeer),
 })
 
-export function validateBeerOrUndefined(
-  result: unknown
-): Beer | undefined {
+export function validateBeerOrUndefined(result: unknown): Beer | undefined {
   if (typeof result === 'undefined') {
     return undefined
   }
@@ -47,9 +41,7 @@ function validateBeer(result: unknown): Beer {
   return valid
 }
 
-export function validateBeerWithIds(
-  result: unknown
-): BeerWithIds {
+export function validateBeerWithIds(result: unknown): BeerWithIds {
   type BeerT = t.TypeOf<typeof ValidatedBeerWithIds>
   const decoded = ValidatedBeerWithIds.decode(result)
   if (isLeft(decoded)) {
@@ -60,7 +52,7 @@ export function validateBeerWithIds(
 }
 
 export function validateBeerListOrUndefined(
-  result: unknown
+  result: unknown,
 ): BeerList | undefined {
   if (typeof result === 'undefined') {
     return undefined

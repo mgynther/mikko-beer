@@ -15,12 +15,12 @@ import type {
   GetRatingStatsIf,
   GetStyleStatsIf,
   StatsIf,
-  YearMonth
+  YearMonth,
 } from '../../core/stats/types'
 import type {
   GetLocationIf,
   SearchLocationIf,
-  UpdateLocationIf
+  UpdateLocationIf,
 } from '../../core/location/types'
 import type { GetLogin } from '../../core/login/types'
 import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
@@ -28,9 +28,9 @@ import type { ParamsIf } from '../util'
 import type { SearchIf } from '../../core/search/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 
-const useDebounce: UseDebounce<string> = str => [str, false]
+const useDebounce: UseDebounce<string> = (str) => [str, false]
 
-const getUseDebounce = function<T>(): UseDebounce<T> {
+const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
 }
 
@@ -47,10 +47,10 @@ function getLogin(): GetLogin {
     user: {
       id: 'ada1b9b1-ea66-4e17-bda8-f8ea1e65a020',
       username: 'admin',
-      role: Role.admin
+      role: Role.admin,
     },
     authToken: 'auth',
-    refreshToken: 'refresh'
+    refreshToken: 'refresh',
   })
 }
 
@@ -60,54 +60,53 @@ const dontSelectBeer = {
     editBeerIf: {
       selectBreweryIf: {
         create: {
-          useCreate: dontCall
+          useCreate: dontCall,
         },
         search: {
-          useSearch: dontCall
-        }
+          useSearch: dontCall,
+        },
       },
       selectStyleIf: {
         create: {
-          useCreate: dontCall
+          useCreate: dontCall,
         },
         list: {
-          useList: dontCall
-        }
-      }
-    }
+          useList: dontCall,
+        },
+      },
+    },
   },
   search: {
-    useSearch: dontCall
-  }
+    useSearch: dontCall,
+  },
 }
 
 const searchLocationIf: SearchLocationIf = {
   useSearch: () => ({
     search: dontCall,
-    isLoading: false
+    isLoading: false,
   }),
   create: {
     useCreate: () => ({
       create: dontCall,
-      isLoading: false
-    })
-  }
+      isLoading: false,
+    }),
+  },
 }
 
 const noOpContainerIf = {
   createIf: {
-    useCreate: dontCall
+    useCreate: dontCall,
   },
   listIf: {
-    useList: dontCall
-  }
+    useList: dontCall,
+  },
 }
 
 const minTime: YearMonth = testTimes.min.yearMonth
 const maxTime: YearMonth = testTimes.max.yearMonth
 
-type NoStats =
-  GetAnnualStatsIf &
+type NoStats = GetAnnualStatsIf &
   GetContainerStatsIf &
   GetOverallStatsIf &
   GetRatingStatsIf &
@@ -116,15 +115,14 @@ type NoStats =
 const noStats: NoStats = {
   useStats: () => ({
     stats: undefined,
-    isLoading: false
+    isLoading: false,
   }),
   minTime,
   maxTime,
-  getUseDebounce
+  getUseDebounce,
 }
 
-type NoInfiniteScrollStats =
-  GetAnnualContainerStatsIf &
+type NoInfiniteScrollStats = GetAnnualContainerStatsIf &
   GetBreweryStatsIf &
   GetLocationStatsIf
 
@@ -132,12 +130,12 @@ const noInfiniteScrollStats: NoInfiniteScrollStats = {
   useStats: () => ({
     query: dontCall,
     stats: undefined,
-    isLoading: false
+    isLoading: false,
   }),
   infiniteScroll: dontCall,
   minTime,
   maxTime,
-  getUseDebounce
+  getUseDebounce,
 }
 
 const statsIf: StatsIf = {
@@ -149,7 +147,7 @@ const statsIf: StatsIf = {
   overall: noStats,
   rating: noStats,
   style: noStats,
-  setSearch: async () => undefined
+  setSearch: async () => undefined,
 }
 
 const listReviewsByLocationIf: ListReviewsByIf = {
@@ -158,49 +156,49 @@ const listReviewsByLocationIf: ListReviewsByIf = {
       reviews: [],
       sorting: {
         order: 'rating',
-        direction: 'asc'
-      }
+        direction: 'asc',
+      },
     },
-    isLoading: false
-  })
+    isLoading: false,
+  }),
 }
 
 const paramsIf: ParamsIf = {
   useParams: () => ({ locationId: id }),
-    useSearch: () => ({
-    get: (): undefined => undefined
-  })
+  useSearch: () => ({
+    get: (): undefined => undefined,
+  }),
 }
 
 const reviewIf: ReviewIf = {
   get: {
-    useGet: dontCall
+    useGet: dontCall,
   },
   update: {
     useUpdate: dontCall,
     searchLocationIf,
     selectBeerIf: dontSelectBeer,
-    reviewContainerIf: noOpContainerIf
+    reviewContainerIf: noOpContainerIf,
   },
-  login: getLogin()
+  login: getLogin(),
 }
 
 const getLocationIf: GetLocationIf = {
   useGet: () => ({
     location: {
       id,
-      name
+      name,
     },
-    isLoading: false
-  })
+    isLoading: false,
+  }),
 }
 
 const searchIf: SearchIf = {
   useSearch: () => ({
     activate: (): undefined => undefined,
-      isActive: true
+    isActive: true,
   }),
-  useDebounce
+  useDebounce,
 }
 
 test('updates location', async () => {
@@ -215,13 +213,13 @@ test('updates location', async () => {
       updateLocationIf={{
         useUpdate: () => ({
           update,
-          isLoading: false
+          isLoading: false,
         }),
-        login: getLogin()
+        login: getLogin(),
       }}
       statsIf={statsIf}
       searchIf={searchIf}
-    />
+    />,
   )
   getByRole('heading', { name })
 
@@ -236,18 +234,22 @@ test('updates location', async () => {
   expect(saveButton.hasAttribute('disabled')).toEqual(false)
   await user.click(saveButton)
   const updateCalls = update.mock.calls
-  expect(updateCalls).toEqual([[{
-    id,
-    name: newName
-  }]])
+  expect(updateCalls).toEqual([
+    [
+      {
+        id,
+        name: newName,
+      },
+    ],
+  ])
 })
 
 const dontUpdateLocationIf: UpdateLocationIf = {
   useUpdate: () => ({
     update: dontCall,
-    isLoading: false
+    isLoading: false,
   }),
-  login: getLogin()
+  login: getLogin(),
 }
 
 test('cancel editing', async () => {
@@ -261,7 +263,7 @@ test('cancel editing', async () => {
       updateLocationIf={dontUpdateLocationIf}
       statsIf={statsIf}
       searchIf={searchIf}
-    />
+    />,
   )
   getByRole('heading', { name })
 
@@ -275,20 +277,22 @@ test('cancel editing', async () => {
 })
 
 test('throw on missing id', async () => {
-  expect(() => render(
-    <Location
-      listReviewsByLocationIf={listReviewsByLocationIf}
-      paramsIf={{
-        ...paramsIf,
-        useParams: () => ({}),
-      }}
-      reviewIf={reviewIf}
-      getLocationIf={getLocationIf}
-      updateLocationIf={dontUpdateLocationIf}
-      statsIf={statsIf}
-      searchIf={searchIf}
-    />
-  )).toThrow('Location component without locationId. Should not happen.')
+  expect(() =>
+    render(
+      <Location
+        listReviewsByLocationIf={listReviewsByLocationIf}
+        paramsIf={{
+          ...paramsIf,
+          useParams: () => ({}),
+        }}
+        reviewIf={reviewIf}
+        getLocationIf={getLocationIf}
+        updateLocationIf={dontUpdateLocationIf}
+        statsIf={statsIf}
+        searchIf={searchIf}
+      />,
+    ),
+  ).toThrow('Location component without locationId. Should not happen.')
 })
 
 test('render loading', async () => {
@@ -300,13 +304,13 @@ test('render loading', async () => {
       getLocationIf={{
         useGet: () => ({
           location: undefined,
-          isLoading: true
-        })
+          isLoading: true,
+        }),
       }}
       updateLocationIf={dontUpdateLocationIf}
       statsIf={statsIf}
       searchIf={searchIf}
-    />
+    />,
   )
   getByText(loadingIndicatorText)
 })
@@ -320,13 +324,13 @@ test('render not found', async () => {
       getLocationIf={{
         useGet: () => ({
           location: undefined,
-          isLoading: false
-        })
+          isLoading: false,
+        }),
       }}
       updateLocationIf={dontUpdateLocationIf}
       statsIf={statsIf}
       searchIf={searchIf}
-    />
+    />,
   )
   getByText('Not found')
 })

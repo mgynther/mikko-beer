@@ -4,7 +4,7 @@ import type { SearchIf } from '../../core/search/types'
 import type {
   ListStylesIf,
   Style,
-  StyleWithParentIds
+  StyleWithParentIds,
 } from '../../core/style/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
@@ -18,15 +18,12 @@ interface Props {
   searchIf: SearchIf
 }
 
-function Styles (props: Props): React.JSX.Element {
+function Styles(props: Props): React.JSX.Element {
   const navigate = props.navigateIf.useNavigate()
   const { styles, isLoading } = props.listStylesIf.useList()
 
-  const styleArray = styles === undefined
-    ? []
-    : [...styles]
-  const sortedStyles = styleArray
-    .sort((a, b) => a.name.localeCompare(b.name))
+  const styleArray = styles === undefined ? [] : [...styles]
+  const sortedStyles = styleArray.sort((a, b) => a.name.localeCompare(b.name))
 
   return (
     <div>

@@ -10,7 +10,7 @@ import type {
   LocationStats,
   RatingStats,
   OverallStats,
-  StyleStats
+  StyleStats,
 } from '../core/stats/types'
 
 const ValidatedOverallStats = t.type({
@@ -21,7 +21,7 @@ const ValidatedOverallStats = t.type({
   distinctBeerReviewCount: t.string,
   reviewAverage: t.string,
   reviewCount: t.string,
-  styleCount: t.string
+  styleCount: t.string,
 })
 
 const ValidatedAnnualStats = t.type({
@@ -29,8 +29,9 @@ const ValidatedAnnualStats = t.type({
     t.type({
       reviewAverage: t.string,
       reviewCount: t.string,
-      year: t.string
-    }))
+      year: t.string,
+    }),
+  ),
 })
 
 const ValidatedAnnualContainerStats = t.type({
@@ -41,8 +42,9 @@ const ValidatedAnnualContainerStats = t.type({
       containerType: t.string,
       reviewAverage: t.string,
       reviewCount: t.string,
-      year: t.string
-    }))
+      year: t.string,
+    }),
+  ),
 })
 
 const ValidatedBreweryStats = t.type({
@@ -52,8 +54,9 @@ const ValidatedBreweryStats = t.type({
       breweryName: t.string,
       reviewAverage: t.string,
       reviewCount: t.string,
-      reviewedBeerCount: t.string
-    }))
+      reviewedBeerCount: t.string,
+    }),
+  ),
 })
 
 const ValidatedContainerStats = t.type({
@@ -63,8 +66,9 @@ const ValidatedContainerStats = t.type({
       containerSize: t.string,
       containerType: t.string,
       reviewAverage: t.string,
-      reviewCount: t.string
-    }))
+      reviewCount: t.string,
+    }),
+  ),
 })
 
 const ValidatedLocationStats = t.type({
@@ -73,16 +77,18 @@ const ValidatedLocationStats = t.type({
       locationId: t.string,
       locationName: t.string,
       reviewAverage: t.string,
-      reviewCount: t.string
-    }))
+      reviewCount: t.string,
+    }),
+  ),
 })
 
 const ValidatedRatingStats = t.type({
   rating: t.array(
     t.type({
       rating: t.string,
-      count: t.string
-    }))
+      count: t.string,
+    }),
+  ),
 })
 
 const ValidatedStyleStats = t.type({
@@ -91,12 +97,13 @@ const ValidatedStyleStats = t.type({
       reviewAverage: t.string,
       reviewCount: t.string,
       styleId: t.string,
-      styleName: t.string
-    }))
+      styleName: t.string,
+    }),
+  ),
 })
 
 export function validateOverallStatsOrUndefined(
-  result: unknown
+  result: unknown,
 ): OverallStats | undefined {
   if (typeof result === 'undefined') {
     return undefined
@@ -111,7 +118,7 @@ export function validateOverallStatsOrUndefined(
 }
 
 export function validateAnnualStatsOrUndefined(
-  result: unknown
+  result: unknown,
 ): AnnualStats | undefined {
   if (typeof result === 'undefined') {
     return undefined
@@ -126,7 +133,7 @@ export function validateAnnualStatsOrUndefined(
 }
 
 export function validateAnnualContainerStatsOrUndefined(
-  result: unknown
+  result: unknown,
 ): AnnualContainerStats | undefined {
   if (typeof result === 'undefined') {
     return undefined
@@ -135,7 +142,7 @@ export function validateAnnualContainerStatsOrUndefined(
 }
 
 export function validateAnnualContainerStats(
-  result: unknown
+  result: unknown,
 ): AnnualContainerStats {
   type StatsT = t.TypeOf<typeof ValidatedAnnualContainerStats>
   const decoded = ValidatedAnnualContainerStats.decode(result)
@@ -147,7 +154,7 @@ export function validateAnnualContainerStats(
 }
 
 export function validateBreweryStatsOrUndefined(
-  result: unknown
+  result: unknown,
 ): BreweryStats | undefined {
   if (typeof result === 'undefined') {
     return undefined
@@ -155,9 +162,7 @@ export function validateBreweryStatsOrUndefined(
   return validateBreweryStats(result)
 }
 
-export function validateBreweryStats(
-  result: unknown
-): BreweryStats {
+export function validateBreweryStats(result: unknown): BreweryStats {
   type StatsT = t.TypeOf<typeof ValidatedBreweryStats>
   const decoded = ValidatedBreweryStats.decode(result)
   if (isLeft(decoded)) {
@@ -168,7 +173,7 @@ export function validateBreweryStats(
 }
 
 export function validateContainerStatsOrUndefined(
-  result: unknown
+  result: unknown,
 ): ContainerStats | undefined {
   if (typeof result === 'undefined') {
     return undefined
@@ -182,9 +187,7 @@ export function validateContainerStatsOrUndefined(
   return valid
 }
 
-export function validateLocationStats(
-  result: unknown
-): LocationStats {
+export function validateLocationStats(result: unknown): LocationStats {
   type StatsT = t.TypeOf<typeof ValidatedLocationStats>
   const decoded = ValidatedLocationStats.decode(result)
   if (isLeft(decoded)) {
@@ -195,7 +198,7 @@ export function validateLocationStats(
 }
 
 export function validateLocationStatsOrUndefined(
-  result: unknown
+  result: unknown,
 ): LocationStats | undefined {
   if (typeof result === 'undefined') {
     return undefined
@@ -204,7 +207,7 @@ export function validateLocationStatsOrUndefined(
 }
 
 export function validateRatingStatsOrUndefined(
-  result: unknown
+  result: unknown,
 ): RatingStats | undefined {
   if (typeof result === 'undefined') {
     return undefined
@@ -219,7 +222,7 @@ export function validateRatingStatsOrUndefined(
 }
 
 export function validateStyleStatsOrUndefined(
-  result: unknown
+  result: unknown,
 ): StyleStats | undefined {
   if (typeof result === 'undefined') {
     return undefined

@@ -20,11 +20,13 @@ function Helper(): React.JSX.Element {
   }
   return (
     <div>
-      {results.map(brewery =>
+      {results.map((brewery) => (
         <div key={brewery.id}>{brewery.name}</div>
-      )}
+      ))}
       <Button
-        onClick={() => { void doSearch() }}
+        onClick={() => {
+          void doSearch()
+        }}
         text='Search'
       />
     </div>
@@ -38,26 +40,26 @@ test('search breweries', async () => {
     breweries: [
       {
         id: '4104837d-e583-4acf-a731-5517ae0f910b',
-        name: 'Test brewery'
+        name: 'Test brewery',
       },
       {
         id: 'f8ab1ed0-0afa-4509-a826-aa0613e4e8e8',
-        name: 'Another brewery'
-      }
-    ]
+        name: 'Another brewery',
+      },
+    ],
   }
 
   addTestServerResponse<BreweryList>({
     method: 'POST',
     pathname: `/api/v1/brewery/search`,
     response: expectedResponse,
-    status: 200
+    status: 200,
   })
 
   const { getByRole, getByText } = render(
     <Provider store={store}>
       <Helper />
-    </Provider>
+    </Provider>,
   )
   const loadButton = getByRole('button', { name: 'Search' })
   await user.click(loadButton)

@@ -11,22 +11,22 @@ const dontCall = (): any => {
 
 const breweryOne = {
   id: 'a2725b45-e4d8-4892-a54b-e610f5b72aa9',
-  name: 'Koskipanimo'
+  name: 'Koskipanimo',
 }
 
 const breweryTwo = {
   id: 'cb968974-3471-4c2c-8553-10dfd7236404',
-  name: 'Mallaskoski'
+  name: 'Mallaskoski',
 }
 
 const styleOne = {
   id: '3839e4d6-7bf7-4289-86b2-96b95737beaa',
-  name: 'American IPA'
+  name: 'American IPA',
 }
 
 const styleTwo = {
   id: 'f97b4276-e140-404e-a2c8-ae276d5ff88b',
-  name: 'Doppelbock'
+  name: 'Doppelbock',
 }
 
 const storageOne: Storage = {
@@ -38,11 +38,11 @@ const storageOne: Storage = {
   container: {
     id: '498a18ff-3c07-496c-9e20-6aa7edcae59d',
     type: 'bottle',
-    size: '0.33'
+    size: '0.33',
   },
   createdAt: '2020-09-12T12:00:00.000Z',
   hasReview: false,
-  styles: [styleOne]
+  styles: [styleOne],
 }
 
 const storageTwo: Storage = {
@@ -54,21 +54,21 @@ const storageTwo: Storage = {
   container: {
     id: 'b912de3d-48c3-471a-a0c0-82b94e2d3da2',
     type: 'bottle',
-    size: '0.33'
+    size: '0.33',
   },
   createdAt: '2021-08-11T11:00:00.000Z',
   hasReview: true,
-  styles: [styleTwo]
+  styles: [styleTwo],
 }
 
 const adminLogin = {
   user: {
     id: 'e809902c-f056-4c73-8929-31c87d164d85',
     username: 'admin',
-    role: Role.admin
+    role: Role.admin,
   },
   authToken: 'auth',
-  refreshToken: 'refresh'
+  refreshToken: 'refresh',
 }
 
 test('renders storage list', async () => {
@@ -77,18 +77,15 @@ test('renders storage list', async () => {
       <StorageList
         deleteStorageIf={{
           useDelete: () => ({
-            delete: dontCall
-          })
+            delete: dontCall,
+          }),
         }}
         getLogin={() => adminLogin}
         isLoading={false}
         isTitleVisible={true}
-        storages={[
-          storageOne,
-          storageTwo
-        ]}
+        storages={[storageOne, storageTwo]}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   getByRole('link', { name: breweryOne.name })
   getByRole('link', { name: storageOne.beerName })

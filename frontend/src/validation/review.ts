@@ -1,10 +1,7 @@
 import * as t from 'io-ts'
 import { isLeft } from 'fp-ts/Either'
 
-import type {
-  JoinedReviewList,
-  Review,
-} from '../core/review/types'
+import type { JoinedReviewList, Review } from '../core/review/types'
 import { formatError } from './format-error'
 import { ValidatedContainer } from './container'
 import { ValidatedLocation } from './location'
@@ -18,17 +15,17 @@ const ValidatedReview = t.type({
   rating: t.number,
   smell: t.string,
   taste: t.string,
-  time: t.string
+  time: t.string,
 })
 
 const ValidatedJoinedReviewBrewery = t.type({
   id: t.string,
-  name: t.string
+  name: t.string,
 })
 
 const ValidatedJoinedReviewStyle = t.type({
   id: t.string,
-  name: t.string
+  name: t.string,
 })
 
 const ValidatedJoinedReview = t.type({
@@ -41,7 +38,7 @@ const ValidatedJoinedReview = t.type({
   location: t.union([ValidatedLocation, t.undefined]),
   rating: t.number,
   styles: t.array(ValidatedJoinedReviewStyle),
-  time: t.string
+  time: t.string,
 })
 
 const ValidatedSorting = t.type({
@@ -49,19 +46,17 @@ const ValidatedSorting = t.type({
     t.literal('beer_name'),
     t.literal('brewery_name'),
     t.literal('rating'),
-    t.literal('time')
+    t.literal('time'),
   ]),
-  direction: t.union([t.literal('asc'), t.literal('desc')])
+  direction: t.union([t.literal('asc'), t.literal('desc')]),
 })
 
 const ValidatedJoinedReviewList = t.type({
   reviews: t.array(ValidatedJoinedReview),
-  sorting: ValidatedSorting
+  sorting: ValidatedSorting,
 })
 
-export function validateReviewOrUndefined(
-  result: unknown
-): Review | undefined {
+export function validateReviewOrUndefined(result: unknown): Review | undefined {
   if (typeof result === 'undefined') {
     return undefined
   }
@@ -79,7 +74,7 @@ export function validateReview(result: unknown): Review {
 }
 
 export function validateJoinedReviewListOrUndefined(
-  result: unknown
+  result: unknown,
 ): JoinedReviewList | undefined {
   if (typeof result === 'undefined') {
     return undefined
@@ -96,6 +91,6 @@ export function validateJoinedReviewList(result: unknown): JoinedReviewList {
   const valid: ReviewListT = decoded.right
   return {
     reviews: valid.reviews,
-    sorting: valid.sorting
+    sorting: valid.sorting,
   }
 }

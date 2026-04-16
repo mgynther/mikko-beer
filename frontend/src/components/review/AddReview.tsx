@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from 'react'
 
-import type {
-  CreateReviewIf,
-  ReviewRequest
-} from '../../core/review/types'
+import type { CreateReviewIf, ReviewRequest } from '../../core/review/types'
 import type { SearchIf } from '../../core/search/types'
-import type {
-  GetStorageIf,
-  Storage
-} from '../../core/storage/types'
+import type { GetStorageIf, Storage } from '../../core/storage/types'
 
 import Button from '../common/Button'
 import LoadingIndicator from '../common/LoadingIndicator'
@@ -16,11 +10,12 @@ import { formatDateString, type NavigateIf, type ParamsIf } from '../util'
 
 import ReviewEditor, { type InitialReview } from './ReviewEditor'
 
-function toInitialReview (
+function toInitialReview(
   storageData: Storage,
-  currentDate: Date
+  currentDate: Date,
 ): InitialReview {
   // TODO add user editable template and save it to localStorage.
+  // prettier-ignore
   const additionalInfo =
     `From storage, BB ${formatDateString(storageData.bestBefore)}`
   const time = currentDate.toISOString()
@@ -33,7 +28,7 @@ function toInitialReview (
       rating: 7,
       smell: '',
       taste: '',
-      time
+      time,
     },
     joined: {
       ...storageData,
@@ -42,8 +37,8 @@ function toInitialReview (
       location: undefined,
       rating: 7,
       styles: [],
-      time
-    }
+      time,
+    },
   }
 }
 
@@ -55,7 +50,7 @@ export interface Props {
   searchIf: SearchIf
 }
 
-function AddReview (props: Props): React.JSX.Element {
+function AddReview(props: Props): React.JSX.Element {
   const navigate = props.navigateIf.useNavigate()
   const { storageId: paramsStorageId } = props.paramsIf.useParams()
   const storageId = paramsStorageId ?? ''
@@ -65,8 +60,7 @@ function AddReview (props: Props): React.JSX.Element {
     isLoading,
     isSuccess,
     review: createdReview,
-  } =
-    props.createReviewIf.useCreate()
+  } = props.createReviewIf.useCreate()
   const [currentDate] = useState<Date>(props.createReviewIf.getCurrentDate())
   const { storage, isLoading: isLoadingStorage } =
     storageId === ''
@@ -79,7 +73,7 @@ function AddReview (props: Props): React.JSX.Element {
     }
   }, [isSuccess, createdReview])
 
-  function doAddReview (review: ReviewRequest): void {
+  function doAddReview(review: ReviewRequest): void {
     void create({ body: review, storageId })
   }
 
@@ -88,7 +82,9 @@ function AddReview (props: Props): React.JSX.Element {
   }
 
   const clickHandler = review
-    ? (): void => { doAddReview(review) }
+    ? (): void => {
+        doAddReview(review)
+      }
     : undefined
 
   return (
@@ -104,7 +100,9 @@ function AddReview (props: Props): React.JSX.Element {
           currentDate={currentDate}
           initialReview={undefined}
           isFromStorage={false}
-          onChange={review => { setReview(review) }}
+          onChange={(review) => {
+            setReview(review)
+          }}
         />
       )}
       {storage !== undefined && (
@@ -116,7 +114,9 @@ function AddReview (props: Props): React.JSX.Element {
           currentDate={currentDate}
           initialReview={toInitialReview(storage, currentDate)}
           isFromStorage={true}
-          onChange={review => { setReview(review) }}
+          onChange={(review) => {
+            setReview(review)
+          }}
         />
       )}
 
@@ -125,9 +125,7 @@ function AddReview (props: Props): React.JSX.Element {
       <div>
         <Button
           disabled={
-            review === undefined ||
-            isLoading ||
-            createdReview !== undefined
+            review === undefined || isLoading || createdReview !== undefined
           }
           onClick={clickHandler}
           text='Add'

@@ -12,45 +12,45 @@ const beerName = 'Kukko Pils'
 
 const brewery = {
   id: 'ddc2da9d-1d79-472a-86e3-2636a573e96b',
-  name: 'Laitilan Wirvoitusjuomatehdas'
+  name: 'Laitilan Wirvoitusjuomatehdas',
 }
 
 const anotherBrewery = {
   id: '8098ccd8-8fcc-42d2-8057-d55884d6e424',
-  name: 'Laitilan'
+  name: 'Laitilan',
 }
 
 const style = {
   id: 'ef25990d-04fe-4937-8ca0-4da18c2e31d7',
   name: 'pils',
-  parents: ['1f1eb9e4-8925-45a5-9dd5-7b34bba11418']
+  parents: ['1f1eb9e4-8925-45a5-9dd5-7b34bba11418'],
 }
 
 const anotherStyle = {
   id: 'f90f89cf-7967-4097-9f92-06ac0ec649d7',
   name: 'lager',
-  parents: ['1f1eb9e4-8925-45a5-9dd5-7b34bba11418']
+  parents: ['1f1eb9e4-8925-45a5-9dd5-7b34bba11418'],
 }
 
 const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const useDebounce: UseDebounce<string> = str => [str, false]
+const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 const dontSelectBrewery: SelectBreweryIf = {
   create: {
     useCreate: () => ({
       create: dontCall,
-      isLoading: false
-    })
+      isLoading: false,
+    }),
   },
   search: {
     useSearch: () => ({
       search: dontCall,
-      isLoading: false
-    })
-  }
+      isLoading: false,
+    }),
+  },
 }
 
 const dontSelectStyle: SelectStyleIf = {
@@ -60,31 +60,31 @@ const dontSelectStyle: SelectStyleIf = {
       createdStyle: undefined,
       hasError: false,
       isLoading: false,
-      isSuccess: false
-    })
+      isSuccess: false,
+    }),
   },
   list: {
     useList: () => ({
       styles: undefined,
-      isLoading: false
-    })
-  }
+      isLoading: false,
+    }),
+  },
 }
 
 const dontSearch: SearchIf = {
   useSearch: () => ({
     activate: dontCall,
-    isActive: false
+    isActive: false,
   }),
-  useDebounce
+  useDebounce,
 }
 
 const doSearch: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
-      isActive: true
+    isActive: true,
   }),
-  useDebounce
+  useDebounce,
 }
 
 test('updates beer name', async () => {
@@ -97,22 +97,22 @@ test('updates beer name', async () => {
         breweries: [brewery],
         id,
         name: 'Kukko pils',
-        styles: [style]
+        styles: [style],
       }}
       updateBeerIf={{
         useUpdate: () => ({
           update,
-          isLoading: false
+          isLoading: false,
         }),
         editBeerIf: {
           selectBreweryIf: dontSelectBrewery,
-          selectStyleIf: dontSelectStyle
-        }
+          selectStyleIf: dontSelectStyle,
+        },
       }}
       searchIf={dontSearch}
       onCancel={dontCall}
       onSaved={onSaved}
-    />
+    />,
   )
   const nameInput = getByPlaceholderText('Name')
   await user.clear(nameInput)
@@ -121,12 +121,16 @@ test('updates beer name', async () => {
   expect(saveButton.hasAttribute('disabled')).toEqual(false)
   await user.click(saveButton)
   const updateCalls = update.mock.calls
-  expect(updateCalls).toEqual([[{
-    id,
-    breweries: [brewery.id],
-    name: beerName,
-    styles: [style.id],
-  }]])
+  expect(updateCalls).toEqual([
+    [
+      {
+        id,
+        breweries: [brewery.id],
+        name: beerName,
+        styles: [style.id],
+      },
+    ],
+  ])
   const saveCalls = onSaved.mock.calls
   expect(saveCalls).toEqual([[]])
 })
@@ -141,35 +145,35 @@ test('updates beer brewery', async () => {
         breweries: [brewery],
         id,
         name: beerName,
-        styles: [style]
+        styles: [style],
       }}
       updateBeerIf={{
         useUpdate: () => ({
           update,
-          isLoading: false
+          isLoading: false,
         }),
         editBeerIf: {
           selectBreweryIf: {
             create: {
               useCreate: () => ({
                 create: dontCall,
-                isLoading: false
-              })
+                isLoading: false,
+              }),
             },
             search: {
               useSearch: () => ({
                 search: async (): Promise<Brewery[]> => [anotherBrewery],
-                isLoading: false
-              })
-            }
+                isLoading: false,
+              }),
+            },
           },
-          selectStyleIf: dontSelectStyle
-        }
+          selectStyleIf: dontSelectStyle,
+        },
       }}
       searchIf={doSearch}
       onCancel={dontCall}
       onSaved={onSaved}
-    />
+    />,
   )
   const changeButton = getAllByRole('button', { name: 'Change' })
   await user.click(changeButton[0])
@@ -181,12 +185,16 @@ test('updates beer brewery', async () => {
   expect(saveButton.hasAttribute('disabled')).toEqual(false)
   await user.click(saveButton)
   const updateCalls = update.mock.calls
-  expect(updateCalls).toEqual([[{
-    id,
-    breweries: [anotherBrewery.id],
-    name: beerName,
-    styles: [style.id],
-  }]])
+  expect(updateCalls).toEqual([
+    [
+      {
+        id,
+        breweries: [anotherBrewery.id],
+        name: beerName,
+        styles: [style.id],
+      },
+    ],
+  ])
   const saveCalls = onSaved.mock.calls
   expect(saveCalls).toEqual([[]])
 })
@@ -201,12 +209,12 @@ test('updates beer style', async () => {
         breweries: [brewery],
         id,
         name: beerName,
-        styles: [style]
+        styles: [style],
       }}
       updateBeerIf={{
         useUpdate: () => ({
           update,
-          isLoading: false
+          isLoading: false,
         }),
         editBeerIf: {
           selectBreweryIf: dontSelectBrewery,
@@ -217,22 +225,22 @@ test('updates beer style', async () => {
                 createdStyle: undefined,
                 hasError: false,
                 isLoading: false,
-                isSuccess: false
-              })
+                isSuccess: false,
+              }),
             },
             list: {
               useList: () => ({
                 styles: [anotherStyle],
-                isLoading: false
-              })
-            }
-          }
-        }
+                isLoading: false,
+              }),
+            },
+          },
+        },
       }}
       searchIf={doSearch}
       onCancel={dontCall}
       onSaved={onSaved}
-    />
+    />,
   )
   const changeButton = getAllByRole('button', { name: 'Change' })
   await user.click(changeButton[1])
@@ -244,12 +252,16 @@ test('updates beer style', async () => {
   expect(saveButton.hasAttribute('disabled')).toEqual(false)
   await user.click(saveButton)
   const updateCalls = update.mock.calls
-  expect(updateCalls).toEqual([[{
-    id,
-    breweries: [brewery.id],
-    name: beerName,
-    styles: [anotherStyle.id],
-  }]])
+  expect(updateCalls).toEqual([
+    [
+      {
+        id,
+        breweries: [brewery.id],
+        name: beerName,
+        styles: [anotherStyle.id],
+      },
+    ],
+  ])
   const saveCalls = onSaved.mock.calls
   expect(saveCalls).toEqual([[]])
 })
@@ -262,22 +274,22 @@ test('cancels update', async () => {
         breweries: [brewery],
         id,
         name: beerName,
-        styles: [style]
+        styles: [style],
       }}
       updateBeerIf={{
         useUpdate: () => ({
           update: dontCall,
-          isLoading: false
+          isLoading: false,
         }),
         editBeerIf: {
           selectBreweryIf: dontSelectBrewery,
-          selectStyleIf: dontSelectStyle
-        }
+          selectStyleIf: dontSelectStyle,
+        },
       }}
       searchIf={dontSearch}
       onCancel={onCanceled}
       onSaved={dontCall}
-    />
+    />,
   )
   const cancelButton = getByRole('button', { name: 'Cancel' })
   expect(cancelButton.hasAttribute('disabled')).toEqual(false)

@@ -1,8 +1,8 @@
-import { expect, test } from "vitest"
-import { formatDateString, joinSortedNames, pad, useDebounce } from "./util"
-import { render, waitFor } from "@testing-library/react"
-import React from "react"
-import userEvent from "@testing-library/user-event"
+import { expect, test } from 'vitest'
+import { formatDateString, joinSortedNames, pad, useDebounce } from './util'
+import { render, waitFor } from '@testing-library/react'
+import React from 'react'
+import userEvent from '@testing-library/user-event'
 
 test('pad under 10', () => {
   expect(pad(1)).toEqual('01')
@@ -17,22 +17,28 @@ test('formatDateString', () => {
 })
 
 test('joinSortedNames', () => {
-  expect(joinSortedNames([
-    {
-      name: 'one'
-    },
-    {
-      name: 'two'
-    }
-  ])).toEqual('one, two')
+  expect(
+    joinSortedNames([
+      {
+        name: 'one',
+      },
+      {
+        name: 'two',
+      },
+    ]),
+  ).toEqual('one, two')
 })
 
-function DebounceHelper (): React.JSX.Element {
+function DebounceHelper(): React.JSX.Element {
   const [text, setText] = React.useState('')
   const [debounced] = useDebounce(text, 10)
   return (
     <div>
-      <input type='text' value={text} onChange={e => setText(e.target.value)} />
+      <input
+        type='text'
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
       {debounced}
     </div>
   )
@@ -40,9 +46,7 @@ function DebounceHelper (): React.JSX.Element {
 
 test('debounce', async () => {
   const user = userEvent.setup()
-  const { getByRole, getByText } = render(
-    <DebounceHelper />
-  )
+  const { getByRole, getByText } = render(<DebounceHelper />)
   const input = getByRole('textbox')
   input.focus()
   await user.paste('testing')

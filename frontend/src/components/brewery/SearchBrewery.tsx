@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import type {
-  Brewery,
-  SearchBreweryIf
-} from '../../core/brewery/types'
+import type { Brewery, SearchBreweryIf } from '../../core/brewery/types'
 import type { SearchIf } from '../../core/search/types'
 
 import SearchBox, { nameFormatter } from '../common/SearchBox'
@@ -14,16 +11,13 @@ export interface Props {
   select: (brewery: Brewery) => void
 }
 
-function SearchBrewery (props: Props): React.JSX.Element {
-  const {
-    search,
-    isLoading
-  } = props.searchBreweryIf.useSearch()
+function SearchBrewery(props: Props): React.JSX.Element {
+  const { search, isLoading } = props.searchBreweryIf.useSearch()
   const [filter, setFilter] = useState('')
   const [debouncedFilter] = props.searchIf.useDebounce(filter)
   const [results, setResults] = useState<Brewery[]>([])
 
-  async function doSearch (filter: string): Promise<void> {
+  async function doSearch(filter: string): Promise<void> {
     const results = await search(filter)
     setResults(results)
   }
@@ -45,7 +39,9 @@ function SearchBrewery (props: Props): React.JSX.Element {
         formatter={nameFormatter}
         isLoading={isLoading}
         searchIf={props.searchIf}
-        setFilter={(filter: string) => { setFilter(filter) }}
+        setFilter={(filter: string) => {
+          setFilter(filter)
+        }}
         select={(brewery: Brewery) => {
           props.select(brewery)
         }}

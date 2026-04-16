@@ -2,7 +2,7 @@ import { render, waitFor } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
 import type {
   AnnualContainerStats,
-  OneAnnualContainerStats
+  OneAnnualContainerStats,
 } from '../../core/stats/types'
 
 import AnnualContainerAllAtOnce from './AnnualContainerAllAtOnce'
@@ -21,7 +21,7 @@ const stats2023: OneAnnualContainerStats = {
   containerType: 'bottle',
   reviewAverage: '9.06',
   reviewCount: '63',
-  year: '2023'
+  year: '2023',
 }
 
 const stats2022: OneAnnualContainerStats = {
@@ -30,7 +30,7 @@ const stats2022: OneAnnualContainerStats = {
   containerType: 'can',
   reviewAverage: '9.12',
   reviewCount: '67',
-  year: '2022'
+  year: '2022',
 }
 
 test('queries annual container stats', async () => {
@@ -43,45 +43,43 @@ test('queries annual container stats', async () => {
           query: async (params): Promise<AnnualContainerStats> => {
             query(params)
             return {
-              annualContainer: [
-                { ...stats2023 },
-                { ...stats2022 }
-              ]
+              annualContainer: [{ ...stats2023 }, { ...stats2022 }],
             }
           },
           stats: {
-            annualContainer: [
-              { ...stats2023 },
-              { ...stats2022 }
-            ]
+            annualContainer: [{ ...stats2023 }, { ...stats2022 }],
           },
-          isLoading: false
+          isLoading: false,
         }),
-        infiniteScroll: dontCall
+        infiniteScroll: dontCall,
       }}
       breweryId={breweryId}
       locationId={locationId}
       styleId={styleId}
       loadedAnnualContainers={undefined}
       setLoadedAnnualContainers={setLoadedAnnualContainers}
-    />
+    />,
   )
-  expect(query.mock.calls).toEqual([[{
-    breweryId,
-    locationId,
-    pagination: {
-      size: 10000,
-      skip: 0
-    },
-    styleId
-  }]])
-  await waitFor(() =>
-    { expect(setLoadedAnnualContainers.mock.calls).toEqual([
+  expect(query.mock.calls).toEqual([
+    [
+      {
+        breweryId,
+        locationId,
+        pagination: {
+          size: 10000,
+          skip: 0,
+        },
+        styleId,
+      },
+    ],
+  ])
+  await waitFor(() => {
+    expect(setLoadedAnnualContainers.mock.calls).toEqual([
       [undefined],
       [undefined],
-      [[stats2023, stats2022]]
-    ]); }
-  )
+      [[stats2023, stats2022]],
+    ])
+  })
 })
 
 test('renders annual container stats', async () => {
@@ -94,22 +92,22 @@ test('renders annual container stats', async () => {
           query: async (params): Promise<AnnualContainerStats> => {
             query(params)
             return {
-              annualContainer: []
+              annualContainer: [],
             }
           },
           stats: {
-            annualContainer: []
+            annualContainer: [],
           },
-          isLoading: false
+          isLoading: false,
         }),
-        infiniteScroll: dontCall
+        infiniteScroll: dontCall,
       }}
       breweryId={breweryId}
       locationId={locationId}
       styleId={styleId}
-      loadedAnnualContainers={[ stats2023, stats2022 ]}
+      loadedAnnualContainers={[stats2023, stats2022]}
       setLoadedAnnualContainers={setLoadedAnnualContainers}
-    />
+    />,
   )
   await waitFor(() => getByText('bottle 0.33'))
   getByText('63')

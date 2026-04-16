@@ -1,6 +1,6 @@
-import type { GetStorageIf } from "../../core/storage/types"
-import { useGetStorageQuery } from "../../store/storage/api"
-import { validateStorageOrUndefined } from "../../validation/storage"
+import type { GetStorageIf } from '../../core/storage/types'
+import { useGetStorageQuery } from '../../store/storage/api'
+import { validateStorageOrUndefined } from '../../validation/storage'
 
 const getStorage: () => GetStorageIf = () => {
   const getStorageIf: GetStorageIf = {
@@ -8,9 +8,9 @@ const getStorage: () => GetStorageIf = () => {
       const { data, isLoading } = useGetStorageQuery(storageId)
       return {
         storage: validateStorageOrUndefined(data?.storage),
-        isLoading
+        isLoading,
       }
-    }
+    },
   }
   return getStorageIf
 }

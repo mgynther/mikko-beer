@@ -1,7 +1,7 @@
 export enum ContainerTags {
-  Container = 'Container'
+  Container = 'Container',
 }
 
-export function containerTagTypes (): string[] {
+export function containerTagTypes(): string[] {
   return [ContainerTags.Container]
 }

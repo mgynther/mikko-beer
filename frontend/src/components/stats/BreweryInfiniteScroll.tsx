@@ -4,7 +4,7 @@ import type {
   GetBreweryStatsIf,
   BreweryStatsSortingOrder,
   OneBreweryStats,
-  StatsFilters
+  StatsFilters,
 } from '../../core/stats/types'
 import type { ListDirection } from '../../core/types'
 
@@ -26,7 +26,7 @@ interface Props {
   setLoadedBreweries: (breweries: OneBreweryStats[] | undefined) => void
 }
 
-function BreweryInfiniteScroll (props: Props): React.JSX.Element {
+function BreweryInfiniteScroll(props: Props): React.JSX.Element {
   const minReviewCount = props.filters.minReviewCount.value
   const maxReviewCount = props.filters.maxReviewCount.value
   const minReviewAverage = props.filters.minReviewAverage.value
@@ -39,15 +39,16 @@ function BreweryInfiniteScroll (props: Props): React.JSX.Element {
     setLoadedBreweries,
     sortingOrder,
     setSortingOrder,
-    sortingDirection
+    sortingDirection,
   } = props
-  const { query, stats, isLoading: isLoadingStats } =
-    props.getBreweryStatsIf.useStats()
+  const {
+    query,
+    stats,
+    isLoading: isLoadingStats,
+  } = props.getBreweryStatsIf.useStats()
   const isLoading = isFilterChangePending || isLoadingStats
 
-  const lastPageArray = stats?.brewery === undefined
-    ? []
-    : [...stats.brewery]
+  const lastPageArray = stats?.brewery === undefined ? [] : [...stats.brewery]
   const hasMore = lastPageArray.length > 0 || loadedBreweries === undefined
 
   useEffect(() => {
@@ -58,23 +59,23 @@ function BreweryInfiniteScroll (props: Props): React.JSX.Element {
         styleId: undefined,
         pagination: {
           skip: loadedBreweries?.length ?? 0,
-          size: pageSize
+          size: pageSize,
         },
         sorting: {
           order: sortingOrder,
-          direction: sortingDirection
+          direction: sortingDirection,
         },
         minReviewCount,
         maxReviewCount,
         minReviewAverage,
         maxReviewAverage,
         timeStart: toTimestamp(timeStart, 'start'),
-        timeEnd: toTimestamp(timeEnd, 'end')
+        timeEnd: toTimestamp(timeEnd, 'end'),
       })
       const newBreweries = [...(loadedBreweries ?? []), ...result.brewery]
       setLoadedBreweries(newBreweries)
     }
-    function checkLoad (): void {
+    function checkLoad(): void {
       if (isLoading) {
         return
       }
@@ -93,7 +94,7 @@ function BreweryInfiniteScroll (props: Props): React.JSX.Element {
     maxReviewAverage,
     sortingOrder,
     sortingDirection,
-    query
+    query,
   ])
 
   return (

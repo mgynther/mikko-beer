@@ -37,7 +37,7 @@ body.light .App button.linklike-button {
 }
 
 button,
-input[type="submit"] {
+input[type='submit'] {
   background: #fffe;
   box-shadow: 1px -1px 3px 1px #333;
   border-radius: 6px;
@@ -45,19 +45,18 @@ input[type="submit"] {
 }
 
 body.light button,
-body.light input[type="submit"] {
+body.light input[type='submit'] {
   box-shadow: 1px -1px 3px 1px #ccc;
   border-color: #666;
 }
 
 button:disabled,
-input[type="submit"]:disabled {
+input[type='submit']:disabled {
   background: #fffa;
 }
 
-
 body.light button:disabled,
-body.light input[type="submit"]:disabled {
+body.light input[type='submit']:disabled {
   border-color: #999;
 }
 
@@ -112,27 +111,27 @@ body.light a {
 
 .RowLike:nth-child(odd),
 tr:nth-child(odd) {
-  background: rgba(0,0,0,0.2)
+  background: rgba(0, 0, 0, 0.2);
 }
 
 body.light .RowLike:nth-child(odd),
 body.light tr:nth-child(odd) {
-  background: rgba(0,0,0,0.05)
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .RowLike:nth-child(even),
 tr:nth-child(even) {
-  background: rgba(0,0,0,0.3)
+  background: rgba(0, 0, 0, 0.3);
 }
 
 body.light .RowLike:nth-child(even),
 body.light tr:nth-child(even) {
-  background: rgba(0,0,0,0.1)
+  background: rgba(0, 0, 0, 0.1);
 }
 
-input[type=text],
-input[type=password],
-input[type=datetime-local],
+input[type='text'],
+input[type='password'],
+input[type='datetime-local'],
 select {
   padding: 1px 2px;
   width: calc(100% - 8px);
@@ -144,8 +143,8 @@ select {
   min-height: 5px;
 }
 
-input[type=checkbox],
-input[type=radio],
-input[type=range] {
+input[type='checkbox'],
+input[type='radio'],
+input[type='range'] {
   accent-color: hsl(200, 50%, 50%);
 }

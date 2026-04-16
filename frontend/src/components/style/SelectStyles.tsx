@@ -2,10 +2,7 @@ import React, { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
 import type { SearchIf } from '../../core/search/types'
-import type {
-  SelectStyleIf,
-  Style
-} from '../../core/style/types'
+import type { SelectStyleIf, Style } from '../../core/style/types'
 
 import Button from '../common/Button'
 import SelectStyle from './SelectStyle'
@@ -35,7 +32,7 @@ interface SelectionItemProps {
   clear: () => void
 }
 
-function SelectionItem (props: SelectionItemProps): React.JSX.Element {
+function SelectionItem(props: SelectionItemProps): React.JSX.Element {
   return (
     <>
       {props.style === undefined && (
@@ -56,41 +53,42 @@ function SelectionItem (props: SelectionItemProps): React.JSX.Element {
   )
 }
 
-function SelectStyles (props: Props): React.JSX.Element {
-  function getInitialStyleSelections (): StyleSelection[] {
+function SelectStyles(props: Props): React.JSX.Element {
+  function getInitialStyleSelections(): StyleSelection[] {
     if (props.initialStyles.length === 0) {
       return [
         {
           style: undefined,
-          id: uuidv4()
-        }
+          id: uuidv4(),
+        },
       ]
     }
-    return props.initialStyles.map(style => ({
-        id: style.id,
-        style
-      }))
+    return props.initialStyles.map((style) => ({
+      id: style.id,
+      style,
+    }))
   }
   const [selections, doSetSelections] = useState<StyleSelection[]>(
-    getInitialStyleSelections()
+    getInitialStyleSelections(),
   )
 
-  function setSelections (selections: StyleSelection[]): void {
+  function setSelections(selections: StyleSelection[]): void {
     props.select([])
     doSetSelections(selections)
     if (hasUndefinedStyle(selections)) return
     const styles = selections
-      .map(selections => selections.style)
-      .filter(style => style !== undefined)
-    const styleIds = styles.map(style => style.id)
+      .map((selections) => selections.style)
+      .filter((style) => style !== undefined)
+    const styleIds = styles.map((style) => style.id)
     props.select(styleIds)
   }
 
-  function hasUndefinedStyle (selections: StyleSelection[]): boolean {
+  function hasUndefinedStyle(selections: StyleSelection[]): boolean {
     return selections.reduce(
       (hasUndefined, selection: StyleSelection) =>
-        hasUndefined || selection.style === undefined
-      , false)
+        hasUndefined || selection.style === undefined,
+      false,
+    )
   }
   return (
     <div>
@@ -126,8 +124,8 @@ function SelectStyles (props: Props): React.JSX.Element {
                 ...selections,
                 {
                   style: undefined,
-                  id: uuidv4()
-                }
+                  id: uuidv4(),
+                },
               ]
               setSelections(newStyles)
             }}

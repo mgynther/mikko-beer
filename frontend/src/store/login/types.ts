@@ -1,7 +1,7 @@
 export enum LoginTags {
-  Login = 'Login'
+  Login = 'Login',
 }
 
-export function loginTagTypes (): string[] {
+export function loginTagTypes(): string[] {
   return [LoginTags.Login]
 }

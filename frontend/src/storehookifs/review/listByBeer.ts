@@ -1,9 +1,9 @@
 import type {
   FilteredListReviewParams,
-  ListReviewsByIf
-} from "../../core/review/types"
-import { useListReviewsByBeerQuery } from "../../store/review/api"
-import { validateJoinedReviewListOrUndefined } from "../../validation/review"
+  ListReviewsByIf,
+} from '../../core/review/types'
+import { useListReviewsByBeerQuery } from '../../store/review/api'
+import { validateJoinedReviewListOrUndefined } from '../../validation/review'
 
 const listReviewsByBeer: () => ListReviewsByIf = () => {
   const listReviewsByBeerIf: ListReviewsByIf = {
@@ -11,9 +11,9 @@ const listReviewsByBeer: () => ListReviewsByIf = () => {
       const { data, isLoading } = useListReviewsByBeerQuery(params)
       return {
         reviews: validateJoinedReviewListOrUndefined(data),
-        isLoading
+        isLoading,
       }
-    }
+    },
   }
   return listReviewsByBeerIf
 }

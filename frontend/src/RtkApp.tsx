@@ -5,7 +5,7 @@ import type {
   CreateUserIf,
   DeleteUserIf,
   ListUsersIf,
-  UserIf
+  UserIf,
 } from './core/user/types'
 
 import './App.css'
@@ -19,19 +19,19 @@ import type {
   GetBreweryIf,
   ListBreweriesIf,
   SearchBreweryIf,
-  UpdateBreweryIf
+  UpdateBreweryIf,
 } from './core/brewery/types'
 import type {
   CreateContainerIf,
   ListContainersIf,
-  UpdateContainerIf
+  UpdateContainerIf,
 } from './core/container/types'
 import type {
   CreateLocationIf,
   GetLocationIf,
   ListLocationsIf,
   SearchLocationIf,
-  UpdateLocationIf
+  UpdateLocationIf,
 } from './core/location/types'
 import type {
   CreateReviewIf,
@@ -40,14 +40,14 @@ import type {
   ListReviewsIf,
   ReviewContainerIf,
   UpdateReviewIf,
-  ReviewIf
+  ReviewIf,
 } from './core/review/types'
 import type {
   CreateStyleIf,
   GetStyleIf,
   ListStylesIf,
   SelectStyleIf,
-  UpdateStyleIf
+  UpdateStyleIf,
 } from './core/style/types'
 import type {
   ChangePasswordIf,
@@ -63,7 +63,7 @@ import type {
   ListBeersIf,
   SearchBeerIf,
   SelectBeerIf,
-  UpdateBeerIf
+  UpdateBeerIf,
 } from './core/beer/types'
 import type {
   CreateStorageIf,
@@ -73,19 +73,16 @@ import type {
   GetStorageIf,
   ListStoragesByIf,
   ListStoragesIf,
-  StorageStatsIf
+  StorageStatsIf,
 } from './core/storage/types'
-import type {
-  StatsIf,
-  YearMonth,
-} from './core/stats/types'
+import type { StatsIf, YearMonth } from './core/stats/types'
 import type { SearchIf } from './core/search/types'
 import {
   getUseDebounce,
   infiniteScroll,
   navigateIf,
   paramsIf,
-  useDebounce
+  useDebounce,
 } from './components/util'
 import type { StoreIf } from './store/storeIf'
 
@@ -149,12 +146,12 @@ import logout from './storehookifs/login/logout'
 import { createSetSearch } from './storehookifs/set-search.ts'
 import { getDate } from './date-getter.ts'
 
-function getNextMonthDate (): Date {
+function getNextMonthDate(): Date {
   const now = new Date()
   return new Date(now.getFullYear(), now.getMonth() + 1, 1)
 }
 
-function RtkApp (): React.JSX.Element {
+function RtkApp(): React.JSX.Element {
   const createBreweryIf: CreateBreweryIf = createBrewery()
   const getBreweryIf: GetBreweryIf = getBrewery()
   const listBreweriesIf: ListBreweriesIf = listBreweries()
@@ -162,7 +159,7 @@ function RtkApp (): React.JSX.Element {
   const updateBreweryIf: UpdateBreweryIf = updateBrewery()
   const selectBreweryIf: SelectBreweryIf = {
     create: createBreweryIf,
-    search: searchBreweryIf
+    search: searchBreweryIf,
   }
 
   const createContainerIf: CreateContainerIf = createContainer()
@@ -170,7 +167,7 @@ function RtkApp (): React.JSX.Element {
   const updateContainerIf: UpdateContainerIf = updateContainer()
   const reviewContainerIf: ReviewContainerIf = {
     createIf: createContainerIf,
-    listIf: listContainersIf
+    listIf: listContainersIf,
   }
 
   const createUserIf: CreateUserIf = createUser()
@@ -180,7 +177,7 @@ function RtkApp (): React.JSX.Element {
   const userIf: UserIf = {
     create: createUserIf,
     delete: deleteUserIf,
-    list: listUsersIf
+    list: listUsersIf,
   }
 
   const createStyleIf: CreateStyleIf = createStyle()
@@ -189,7 +186,7 @@ function RtkApp (): React.JSX.Element {
   const updateStyleIf: UpdateStyleIf = updateStyle()
   const selectStyleIf: SelectStyleIf = {
     create: createStyleIf,
-    list: listStylesIf
+    list: listStylesIf,
   }
 
   const getBeerIf: GetBeerIf = getBeer()
@@ -197,7 +194,7 @@ function RtkApp (): React.JSX.Element {
 
   const editBeerIf: EditBeerIf = {
     selectBreweryIf,
-    selectStyleIf
+    selectStyleIf,
   }
 
   const createBeerIf: CreateBeerIf = createBeer(editBeerIf)
@@ -205,7 +202,7 @@ function RtkApp (): React.JSX.Element {
   const updateBeerIf: UpdateBeerIf = updateBeer(editBeerIf)
   const selectBeerIf: SelectBeerIf = {
     create: createBeerIf,
-    search: searchBeerIf
+    search: searchBeerIf,
   }
 
   const changePasswordIf: ChangePasswordIf = changePassword()
@@ -230,7 +227,7 @@ function RtkApp (): React.JSX.Element {
   const storageStatsIf: StorageStatsIf = {
     annual: getAnnualStorageStatsIf,
     monthly: getMonthlyStorageStatsIf,
-    setSearch: createSetSearch(navigateIf)
+    setSearch: createSetSearch(navigateIf),
   }
   const getStorageIf: GetStorageIf = getStorage()
   const deleteStorageIf: DeleteStorageIf = deleteStorage()
@@ -252,34 +249,34 @@ function RtkApp (): React.JSX.Element {
     getDate,
     searchLocationIf,
     selectBeerIf,
-    reviewContainerIf
+    reviewContainerIf,
   )
   const updateReviewIf: UpdateReviewIf = updateReview(
     searchLocationIf,
     selectBeerIf,
-    reviewContainerIf
+    reviewContainerIf,
   )
   const reviewIf: ReviewIf = {
     get: getReviewIf,
     update: updateReviewIf,
-    login: getLogin
+    login: getLogin,
   }
 
   const minTime: YearMonth = {
     year: 2017,
-    month: 12
+    month: 12,
   }
   const [nextMonthDate] = React.useState(getNextMonthDate())
   const maxTime: YearMonth = {
     year: nextMonthDate.getFullYear(),
-    month: nextMonthDate.getMonth() + 1
+    month: nextMonthDate.getMonth() + 1,
   }
   const statsIf: StatsIf = stats(
     infiniteScroll,
     navigateIf,
     minTime,
     maxTime,
-    getUseDebounce
+    getUseDebounce,
   )
 
   const searchIf: SearchIf = search(useDebounce<string>)
@@ -338,12 +335,7 @@ function RtkApp (): React.JSX.Element {
     userIf,
   }
 
-  return (
-    <App
-      paramsIf={paramsIf}
-      storeIf={storeIf}
-    />
-  )
+  return <App paramsIf={paramsIf} storeIf={storeIf} />
 }
 
 export default RtkApp

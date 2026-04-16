@@ -7,7 +7,7 @@ export interface ThemeState {
 }
 
 export const initialState: ThemeState = {
-  theme: 'LIGHT'
+  theme: 'LIGHT',
 }
 
 export const themeSlice = createSlice({
@@ -16,8 +16,8 @@ export const themeSlice = createSlice({
   reducers: {
     setTheme: (state, action: PayloadAction<Theme>) => {
       state.theme = action.payload
-    }
-  }
+    },
+  },
 })
 
 export const { setTheme } = themeSlice.actions

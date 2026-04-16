@@ -1,5 +1,5 @@
-import eslint from '@eslint/js';
-import tsEslint from 'typescript-eslint';
+import eslint from '@eslint/js'
+import tsEslint from 'typescript-eslint'
 
 // Leaving below for debugging when recommended especially in typescript-eslint
 // is inevitable broken in the future.
@@ -13,14 +13,14 @@ console.log('typescript eslint keys 2', Object.keys(tsEslint.configs.recommended
 const tsEslintLanguageOptions = tsEslint.configs.recommended[0].languageOptions
 if (tsEslintLanguageOptions === undefined) {
   throw new Error(
-    'typescript-eslint recommended languageOptions were not found from where they used to be.'
+    'typescript-eslint recommended languageOptions were not found from where they used to be.',
   )
 }
 
 const tsEslintPlugins = tsEslint.configs.recommended[0].plugins
 if (tsEslintPlugins === undefined) {
   throw new Error(
-    'typescript-eslint recommended plugins were not found from where they used to be.'
+    'typescript-eslint recommended plugins were not found from where they used to be.',
   )
 }
 
@@ -30,7 +30,7 @@ const tsEslintRules = tsEslint.configs.recommended.reduce((rules, item) => {
   }
   return {
     ...rules,
-    ...item.rules
+    ...item.rules,
   }
 }, {})
 
@@ -44,51 +44,51 @@ const languageOptions = {
 }
 
 const plugins = {
-  ...tsEslintPlugins
+  ...tsEslintPlugins,
 }
 
 const commonRules = {
   ...eslint.configs.recommended.rules,
-  ...tsEslintRules
+  ...tsEslintRules,
 }
 
 const rules = {
   ...commonRules,
 
-  'max-len': ['error', { 'code': 80, 'ignoreRegExpLiterals': true }],
+  'max-len': ['error', { code: 80, ignoreRegExpLiterals: true }],
   'no-await-in-loop': 'error',
   'require-atomic-updates': 'error',
   '@typescript-eslint/naming-convention': [
     'error',
     {
-      'selector': 'variable',
-      'format': ['camelCase', 'PascalCase', 'snake_case', 'UPPER_CASE'],
+      selector: 'variable',
+      format: ['camelCase', 'PascalCase', 'snake_case', 'UPPER_CASE'],
     },
   ],
   '@typescript-eslint/consistent-type-imports': [
     'error',
     {
-      'fixStyle': 'separate-type-imports',
-      'prefer': 'type-imports'
-    }
+      fixStyle: 'separate-type-imports',
+      prefer: 'type-imports',
+    },
   ],
   '@typescript-eslint/explicit-function-return-type': 'error',
   '@typescript-eslint/no-unsafe-type-assertion': 'error',
   '@typescript-eslint/no-unused-vars': [
     'error',
     {
-      'args': 'all',
-      'argsIgnorePattern': '^_',
-      'caughtErrors': 'all',
-      'caughtErrorsIgnorePattern': '^_',
-      'destructuredArrayIgnorePattern': '^_',
-      'varsIgnorePattern': '^_',
-      'ignoreRestSiblings': true
-    }
+      args: 'all',
+      argsIgnorePattern: '^_',
+      caughtErrors: 'all',
+      caughtErrorsIgnorePattern: '^_',
+      destructuredArrayIgnorePattern: '^_',
+      varsIgnorePattern: '^_',
+      ignoreRestSiblings: true,
+    },
   ],
   '@typescript-eslint/require-await': 'error',
 
-  'complexity': 'off',
+  complexity: 'off',
   'max-lines': 'off',
   'no-console': 'off',
   'require-await': 'off',
@@ -111,8 +111,8 @@ export default [
     rules: {
       ...rules,
       // Slices rely heavily on reassign as per RTK design.
-      'no-param-reassign': 'off'
-    }
+      'no-param-reassign': 'off',
+    },
   },
   {
     languageOptions,
@@ -122,16 +122,10 @@ export default [
       ...rules,
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/require-await': 'off',
-      '@typescript-eslint/strict-void-return': 'off'
-    }
+      '@typescript-eslint/strict-void-return': 'off',
+    },
   },
   {
-    ignores: [
-      '*.css',
-      '*.svg',
-      '*.json',
-      'vite.config.ts',
-      'vitest.config.ts'
-    ]
-  }
+    ignores: ['*.css', '*.svg', '*.json', 'vite.config.ts', 'vitest.config.ts'],
+  },
 ]

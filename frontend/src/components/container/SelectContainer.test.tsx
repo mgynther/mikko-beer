@@ -12,44 +12,38 @@ const typePlaceholder = 'Type'
 const draftContainer: Container = {
   id: '17cc9e00-37a0-4807-9969-5730c4635a3c',
   type: 'draft',
-  size: '0.33'
+  size: '0.33',
 }
 
 const bottleContainer: Container = {
   id: '96ba66cd-1a85-4e33-bbed-8e660da8f4d8',
   type: 'bottle',
-  size: '0.33'
+  size: '0.33',
 }
 
 const useList = (): ListContainersData => ({
   data: {
-    containers: [
-      draftContainer,
-      bottleContainer
-    ],
+    containers: [draftContainer, bottleContainer],
   },
-  isLoading: false
+  isLoading: false,
 })
 
 const dontCreateIf: ReviewContainerIf = {
   createIf: {
     useCreate: () => {
       throw new Error('do not call')
-    }
+    },
   },
   listIf: {
-    useList
-  }
+    useList,
+  },
 }
 
 test('selects container', async () => {
   const user = userEvent.setup()
   const onSelect = vitest.fn()
   const { getByRole } = render(
-    <SelectContainer
-      select={onSelect}
-      reviewContainerIf={dontCreateIf}
-    />
+    <SelectContainer select={onSelect} reviewContainerIf={dontCreateIf} />,
   )
   const containerSelect = getByRole('combobox')
   await user.click(containerSelect)
@@ -70,11 +64,11 @@ test('render loading', async () => {
         listIf: {
           useList: () => ({
             data: undefined,
-            isLoading: true
-          })
-        }
+            isLoading: true,
+          }),
+        },
       }}
-    />
+    />,
   )
   getByText(loadingIndicatorText)
 })
@@ -85,23 +79,23 @@ test('selects created container', async () => {
   const newContainer: Container = {
     id: '13d3e36c-e1db-4c6e-b4f8-d28e45209882',
     type: 'bottle',
-    size: '0.50'
+    size: '0.50',
   }
-  const { getByPlaceholderText, getByRole, } = render(
+  const { getByPlaceholderText, getByRole } = render(
     <SelectContainer
       select={onSelect}
       reviewContainerIf={{
         createIf: {
           useCreate: () => ({
             create: async (): Promise<Container> => newContainer,
-            isLoading: false
-          })
+            isLoading: false,
+          }),
         },
         listIf: {
-          useList
-        }
+          useList,
+        },
       }}
-    />
+    />,
   )
   const createRadio = getByRole('radio', { name: 'Create' })
   await user.click(createRadio)

@@ -25,10 +25,7 @@ import Style from './components/style/Style'
 import Styles from './components/style/Styles'
 import Users from './components/user/Users'
 
-import {
-  selectState,
-  setState
-} from './store/nav-menu/reducer'
+import { selectState, setState } from './store/nav-menu/reducer'
 import { selectTheme, setTheme } from './store/theme/reducer'
 
 import { navigateIf } from './components/util'
@@ -40,11 +37,11 @@ import Layout from './Layout'
 import { applyTheme } from './theme-applier'
 
 interface Props {
-  paramsIf: ParamsIf,
+  paramsIf: ParamsIf
   storeIf: StoreIf
 }
 
-function App (props: Props): React.JSX.Element {
+function App(props: Props): React.JSX.Element {
   const navState: NavMenuState = useSelector(selectState)
   const theme: Theme = useSelector(selectTheme)
   useEffect(() => {
@@ -104,7 +101,6 @@ function App (props: Props): React.JSX.Element {
     updateStyleIf,
 
     userIf,
-
   } = props.storeIf
 
   const login = getLogin()
@@ -113,21 +109,23 @@ function App (props: Props): React.JSX.Element {
 
   const { logout } = logoutIf.useLogout()
 
-  function doLogout (user: User): void {
+  function doLogout(user: User): void {
     void logout({
       userId: user.id,
       body: {
-        refreshToken: login.refreshToken
-      }
+        refreshToken: login.refreshToken,
+      },
     })
   }
   const user: User | undefined = login.user
 
   return (
-    <div className="App">
-      <div className="AppContent">
+    <div className='App'>
+      <div className='AppContent'>
         <Routes>
-          <Route path="/" element={
+          <Route
+            path='/'
+            element={
               <Layout
                 navigateIf={navigateIf}
                 searchBeerIf={searchBeerIf}
@@ -136,191 +134,254 @@ function App (props: Props): React.JSX.Element {
                 isAdmin={isAdmin}
                 isLoggedIn={isLoggedIn}
                 logout={
-                  user ? (): void => { doLogout(user) } : undefined
+                  user
+                    ? (): void => {
+                        doLogout(user)
+                      }
+                    : undefined
                 }
                 navMenuState={{
                   navMenuState: navState,
                   setNavMenuState: (navMenuState: NavMenuState) => {
                     dispatch(setState(navMenuState))
-                  }
+                  },
                 }}
                 theme={{
                   theme,
                   setTheme: (theme: Theme) => {
                     dispatch(setTheme(theme))
-                  }
+                  },
                 }}
               >
-                <Outlet/>
+                <Outlet />
               </Layout>
-            }>
-            <Route index element={isLoggedIn
-              ? <Beers
-                  listBeersIf={listBeersIf}
-                  navigateIf={navigateIf}
-                  searchBeerIf={searchBeerIf}
-                  searchIf={searchIf}
-                />
-              : <LoginComponent loginIf={loginIf} />}
-            />
-            {isLoggedIn && (
-              <>
-                {isAdmin && <Route path="addreview" element={
-                  <AddReview
-                    createReviewIf={createReviewIf}
-                    getStorageIf={getStorageIf}
-                    navigateIf={navigateIf}
-                    paramsIf={props.paramsIf}
-                    searchIf={searchIf}
-                  />
-                } />}
-                {isAdmin &&
-                  <Route path="addreview/:storageId" element={
-                    <AddReview
-                      createReviewIf={createReviewIf}
-                      getStorageIf={getStorageIf}
-                      navigateIf={navigateIf}
-                      paramsIf={props.paramsIf}
-                      searchIf={searchIf}
-                    />
-                } />
-                }
-                <Route path="beers" element={
+            }
+          >
+            <Route
+              index
+              element={
+                isLoggedIn ? (
                   <Beers
                     listBeersIf={listBeersIf}
                     navigateIf={navigateIf}
                     searchBeerIf={searchBeerIf}
                     searchIf={searchIf}
                   />
-                } />
-                <Route path="beers/:beerId" element={
-                  <Beer
-                    getBeerIf={getBeerIf}
-                    listReviewsByBeerIf={listReviewsByBeerIf}
-                    listStoragesByBeerIf={listStoragesByBeerIf}
-                    paramsIf={props.paramsIf}
-                    reviewIf={reviewIf}
-                    searchIf={searchIf}
-                    updateBeerIf={updateBeerIf}
+                ) : (
+                  <LoginComponent loginIf={loginIf} />
+                )
+              }
+            />
+            {isLoggedIn && (
+              <>
+                {isAdmin && (
+                  <Route
+                    path='addreview'
+                    element={
+                      <AddReview
+                        createReviewIf={createReviewIf}
+                        getStorageIf={getStorageIf}
+                        navigateIf={navigateIf}
+                        paramsIf={props.paramsIf}
+                        searchIf={searchIf}
+                      />
+                    }
                   />
-                } />
-                <Route path="breweries" element={
-                  <Breweries
-                    listBreweriesIf={listBreweriesIf}
-                    navigateIf={navigateIf}
-                    searchBreweryIf={searchBreweryIf}
-                    searchIf={searchIf}
+                )}
+                {isAdmin && (
+                  <Route
+                    path='addreview/:storageId'
+                    element={
+                      <AddReview
+                        createReviewIf={createReviewIf}
+                        getStorageIf={getStorageIf}
+                        navigateIf={navigateIf}
+                        paramsIf={props.paramsIf}
+                        searchIf={searchIf}
+                      />
+                    }
                   />
-                } />
-                <Route path="breweries/:breweryId" element={
-                  <Brewery
-                    getBreweryIf={getBreweryIf}
-                    listReviewsByBreweryIf={listReviewsByBreweryIf}
-                    listStoragesByBreweryIf={listStoragesByBreweryIf}
-                    paramsIf={props.paramsIf}
-                    reviewIf={reviewIf}
-                    searchIf={searchIf}
-                    statsIf={statsIf}
-                    updateBreweryIf={updateBreweryIf}
-                  />
-                } />
-                <Route path="containers" element={
-                  <Containers
-                    getLogin={getLogin}
-                    listContainersIf={listContainersIf}
-                    updateContainerIf={updateContainerIf}
+                )}
+                <Route
+                  path='beers'
+                  element={
+                    <Beers
+                      listBeersIf={listBeersIf}
+                      navigateIf={navigateIf}
+                      searchBeerIf={searchBeerIf}
+                      searchIf={searchIf}
                     />
-                } />
-                <Route path="locations" element={
-                  <Locations
-                    listLocationsIf={listLocationsIf}
-                    navigateIf={navigateIf}
-                    searchLocationIf={searchLocationIf}
-                    searchIf={searchIf}
-                  />
-                } />
-                <Route path="locations/:locationId" element={
-                  <Location
-                    getLocationIf={getLocationIf}
-                    listReviewsByLocationIf={listReviewsByLocationIf}
-                    paramsIf={props.paramsIf}
-                    reviewIf={reviewIf}
-                    searchIf={searchIf}
-                    statsIf={statsIf}
-                    updateLocationIf={updateLocationIf}
-                  />
-                } />
-                <Route path="reviews" element={
-                  <Reviews
-                    listReviewsIf={listReviewsIf}
-                    reviewIf={reviewIf}
-                    searchIf={searchIf}
-                  />
-                } />
-                <Route path="styles" element={
-                  <Styles
-                    listStylesIf={listStylesIf}
-                    navigateIf={navigateIf}
-                    searchIf={searchIf}
-                  />
-                } />
-                <Route path="styles/:styleId" element={
-                  <Style
-                    listReviewsByStyleIf={listReviewsByStyleIf}
-                    listStoragesByStyleIf={listStoragesByStyleIf}
-                    paramsIf={props.paramsIf}
-                    reviewIf={reviewIf}
-                    getStyleIf={getStyleIf}
-                    statsIf={statsIf}
-                    searchIf={searchIf}
-                    updateStyleIf={updateStyleIf}
-                  />
-                } />
-                {isAdmin && <Route path="users" element={
-                  <Users userIf={userIf}/>} />
-                }
-                <Route path="account" element={
-                  <Account
-                    changePasswordIf={changePasswordIf}
-                    getLogin={getLogin}
-                  />
-                } />
-                <Route path="stats" element={
-                  <Stats
-                    statsIf={statsIf}
-                    breweryId={undefined}
-                    locationId={undefined}
-                    paramsIf={props.paramsIf}
-                    styleId={undefined}
-                  />
-                } />
-                <Route path="storage" element={
-                  <Storages
-                    getLogin={getLogin}
-                    listStoragesIf={listStoragesIf}
-                    paramsIf={props.paramsIf}
-                    reviewContainerIf={reviewContainerIf}
-                    searchIf={searchIf}
-                    selectBeerIf={selectBeerIf}
-                    statsIf={storageStatsIf}
-                    createStorageIf={createStorageIf}
-                  />
-                } />
+                  }
+                />
+                <Route
+                  path='beers/:beerId'
+                  element={
+                    <Beer
+                      getBeerIf={getBeerIf}
+                      listReviewsByBeerIf={listReviewsByBeerIf}
+                      listStoragesByBeerIf={listStoragesByBeerIf}
+                      paramsIf={props.paramsIf}
+                      reviewIf={reviewIf}
+                      searchIf={searchIf}
+                      updateBeerIf={updateBeerIf}
+                    />
+                  }
+                />
+                <Route
+                  path='breweries'
+                  element={
+                    <Breweries
+                      listBreweriesIf={listBreweriesIf}
+                      navigateIf={navigateIf}
+                      searchBreweryIf={searchBreweryIf}
+                      searchIf={searchIf}
+                    />
+                  }
+                />
+                <Route
+                  path='breweries/:breweryId'
+                  element={
+                    <Brewery
+                      getBreweryIf={getBreweryIf}
+                      listReviewsByBreweryIf={listReviewsByBreweryIf}
+                      listStoragesByBreweryIf={listStoragesByBreweryIf}
+                      paramsIf={props.paramsIf}
+                      reviewIf={reviewIf}
+                      searchIf={searchIf}
+                      statsIf={statsIf}
+                      updateBreweryIf={updateBreweryIf}
+                    />
+                  }
+                />
+                <Route
+                  path='containers'
+                  element={
+                    <Containers
+                      getLogin={getLogin}
+                      listContainersIf={listContainersIf}
+                      updateContainerIf={updateContainerIf}
+                    />
+                  }
+                />
+                <Route
+                  path='locations'
+                  element={
+                    <Locations
+                      listLocationsIf={listLocationsIf}
+                      navigateIf={navigateIf}
+                      searchLocationIf={searchLocationIf}
+                      searchIf={searchIf}
+                    />
+                  }
+                />
+                <Route
+                  path='locations/:locationId'
+                  element={
+                    <Location
+                      getLocationIf={getLocationIf}
+                      listReviewsByLocationIf={listReviewsByLocationIf}
+                      paramsIf={props.paramsIf}
+                      reviewIf={reviewIf}
+                      searchIf={searchIf}
+                      statsIf={statsIf}
+                      updateLocationIf={updateLocationIf}
+                    />
+                  }
+                />
+                <Route
+                  path='reviews'
+                  element={
+                    <Reviews
+                      listReviewsIf={listReviewsIf}
+                      reviewIf={reviewIf}
+                      searchIf={searchIf}
+                    />
+                  }
+                />
+                <Route
+                  path='styles'
+                  element={
+                    <Styles
+                      listStylesIf={listStylesIf}
+                      navigateIf={navigateIf}
+                      searchIf={searchIf}
+                    />
+                  }
+                />
+                <Route
+                  path='styles/:styleId'
+                  element={
+                    <Style
+                      listReviewsByStyleIf={listReviewsByStyleIf}
+                      listStoragesByStyleIf={listStoragesByStyleIf}
+                      paramsIf={props.paramsIf}
+                      reviewIf={reviewIf}
+                      getStyleIf={getStyleIf}
+                      statsIf={statsIf}
+                      searchIf={searchIf}
+                      updateStyleIf={updateStyleIf}
+                    />
+                  }
+                />
+                {isAdmin && (
+                  <Route path='users' element={<Users userIf={userIf} />} />
+                )}
+                <Route
+                  path='account'
+                  element={
+                    <Account
+                      changePasswordIf={changePasswordIf}
+                      getLogin={getLogin}
+                    />
+                  }
+                />
+                <Route
+                  path='stats'
+                  element={
+                    <Stats
+                      statsIf={statsIf}
+                      breweryId={undefined}
+                      locationId={undefined}
+                      paramsIf={props.paramsIf}
+                      styleId={undefined}
+                    />
+                  }
+                />
+                <Route
+                  path='storage'
+                  element={
+                    <Storages
+                      getLogin={getLogin}
+                      listStoragesIf={listStoragesIf}
+                      paramsIf={props.paramsIf}
+                      reviewContainerIf={reviewContainerIf}
+                      searchIf={searchIf}
+                      selectBeerIf={selectBeerIf}
+                      statsIf={storageStatsIf}
+                      createStorageIf={createStorageIf}
+                    />
+                  }
+                />
               </>
             )}
             <Route
-              path="*"
-              element={isLoggedIn
-                ? <Beers
+              path='*'
+              element={
+                isLoggedIn ? (
+                  <Beers
                     listBeersIf={listBeersIf}
                     navigateIf={navigateIf}
                     searchBeerIf={searchBeerIf}
                     searchIf={searchIf}
                   />
-                : <LoginComponent loginIf={loginIf}/>} />
+                ) : (
+                  <LoginComponent loginIf={loginIf} />
+                )
+              }
+            />
           </Route>
         </Routes>
-        <ContentEnd/>
+        <ContentEnd />
       </div>
     </div>
   )

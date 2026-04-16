@@ -13,23 +13,23 @@ import type {
 
 import { reviewTagTypes } from './types'
 
-
-function getStorageGetParam (storageId: string): string {
+function getStorageGetParam(storageId: string): string {
   if (storageId.length === 0) {
     return ''
   }
   return `?storage=${storageId}`
 }
 
-function getListUrl (params: ListReviewParams): string {
+function getListUrl(params: ListReviewParams): string {
   const { size, skip } = params.pagination
   const { order, direction } = params.sorting
+  // prettier-ignore
   const url =
     `/review?size=${size}&skip=${skip}&order=${order}&direction=${direction}`
   return url
 }
 
-function getSorting (sorting: ReviewSorting): string {
+function getSorting(sorting: ReviewSorting): string {
   const { order, direction } = sorting
   return `order=${order}&direction=${direction}`
 }
@@ -44,63 +44,65 @@ const reviewApi = emptySplitApi.injectEndpoints({
     getReview: build.query<{ review: Review }, string>({
       query: (id: string) => ({
         url: `/review/${id}`,
-        method: 'GET'
-      })
+        method: 'GET',
+      }),
     }),
     listReviews: build.query<JoinedReviewList, ListReviewParams>({
       query: (params: ListReviewParams) => ({
         url: getListUrl(params),
-        method: 'GET'
-      })
+        method: 'GET',
+      }),
     }),
     listReviewsByBeer: build.query<JoinedReviewList, FilteredListReviewParams>({
       query: (params: FilteredListReviewParams) => ({
         url: `/beer/${params.id}/review?${getSorting(params.sorting)}`,
-        method: 'GET'
+        method: 'GET',
       }),
-      providesTags: [...reviewTagTypes()]
+      providesTags: [...reviewTagTypes()],
     }),
     listReviewsByBrewery: build.query<
-    JoinedReviewList, FilteredListReviewParams
+      JoinedReviewList,
+      FilteredListReviewParams
     >({
       query: (params: FilteredListReviewParams) => ({
         url: `/brewery/${params.id}/review?${getSorting(params.sorting)}`,
-        method: 'GET'
+        method: 'GET',
       }),
-      providesTags: [...reviewTagTypes()]
+      providesTags: [...reviewTagTypes()],
     }),
     listReviewsByLocation: build.query<
-    JoinedReviewList, FilteredListReviewParams
+      JoinedReviewList,
+      FilteredListReviewParams
     >({
       query: (params: FilteredListReviewParams) => ({
         url: `/location/${params.id}/review?${getSorting(params.sorting)}`,
-        method: 'GET'
+        method: 'GET',
       }),
-      providesTags: [...reviewTagTypes()]
+      providesTags: [...reviewTagTypes()],
     }),
-    listReviewsByStyle: build.query<
-    JoinedReviewList, FilteredListReviewParams
-    >({
-      query: (params: FilteredListReviewParams) => ({
-        url: `/style/${params.id}/review?${getSorting(params.sorting)}`,
-        method: 'GET'
-      }),
-      providesTags: [...reviewTagTypes()]
-    }),
+    listReviewsByStyle: build.query<JoinedReviewList, FilteredListReviewParams>(
+      {
+        query: (params: FilteredListReviewParams) => ({
+          url: `/style/${params.id}/review?${getSorting(params.sorting)}`,
+          method: 'GET',
+        }),
+        providesTags: [...reviewTagTypes()],
+      },
+    ),
     createReview: build.mutation<
-    { review: Review },
-    Partial<ReviewRequestWrapper>
+      { review: Review },
+      Partial<ReviewRequestWrapper>
     >({
       query: (wrapper: ReviewRequestWrapper) => ({
         url: `/review${getStorageGetParam(wrapper.storageId)}`,
         method: 'POST',
-        body: wrapper.body
+        body: wrapper.body,
       }),
       invalidatesTags: [
         ...reviewTagTypes(),
         ...storageTagTypes(),
-        ...reviewStatsTagTypes()
-      ]
+        ...reviewStatsTagTypes(),
+      ],
     }),
     updateReview: build.mutation<{ review: Review }, Partial<Review>>({
       query: (review: Review) => ({
@@ -114,12 +116,12 @@ const reviewApi = emptySplitApi.injectEndpoints({
           rating: review.rating,
           smell: review.smell,
           taste: review.taste,
-          time: review.time
-        }
+          time: review.time,
+        },
       }),
-      invalidatesTags: [...reviewTagTypes(), ...reviewStatsTagTypes()]
-    })
-  })
+      invalidatesTags: [...reviewTagTypes(), ...reviewStatsTagTypes()],
+    }),
+  }),
 })
 
 export const {
@@ -130,7 +132,7 @@ export const {
   useListReviewsByBreweryQuery,
   useListReviewsByLocationQuery,
   useListReviewsByStyleQuery,
-  useUpdateReviewMutation
+  useUpdateReviewMutation,
 } = reviewApi
 
 export const { endpoints, reducerPath, reducer, middleware } = reviewApi

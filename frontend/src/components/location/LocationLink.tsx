@@ -8,11 +8,11 @@ interface Props {
   location: Location
 }
 
-export function locationLinkFormatter (id: string): string {
+export function locationLinkFormatter(id: string): string {
   return `/locations/${id}`
 }
 
-export function LocationLink (props: Props): React.JSX.Element {
+export function LocationLink(props: Props): React.JSX.Element {
   return (
     <Link
       text={props.location.name}

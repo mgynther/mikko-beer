@@ -7,30 +7,27 @@ import type { SearchIf } from '../../core/search/types'
 import type { UseDebounce } from '../../core/types'
 import type { SearchBreweryIf } from '../../core/brewery/types'
 
-const useDebounce: UseDebounce<string> = str => [str, false]
+const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 const activeSearch: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
-    isActive: true
+    isActive: true,
   }),
-  useDebounce
+  useDebounce,
 }
 
 const brewery = {
   id: 'ecdc80a8-e634-4d96-98af-ebf08fe6bf4e',
-  name: 'Coolhead'
+  name: 'Coolhead',
 }
 
 const anotherBrewery = {
   id: 'f0fecf5b-a627-46e4-96c1-c9e327606f8f',
-  name: 'Salama'
+  name: 'Salama',
 }
 
-const breweries = [
-  brewery,
-  anotherBrewery
-]
+const breweries = [brewery, anotherBrewery]
 
 test('selects brewery', async () => {
   const user = userEvent.setup()
@@ -38,17 +35,17 @@ test('selects brewery', async () => {
   const searchBreweryIf: SearchBreweryIf = {
     useSearch: () => ({
       search: async () => breweries,
-        isLoading: false
-    })
+      isLoading: false,
+    }),
   }
   const { getByRole } = render(
     <SearchBreweryWithNavi
       navigateIf={{
-        useNavigate: () => selector
+        useNavigate: () => selector,
       }}
       searchBreweryIf={searchBreweryIf}
       searchIf={activeSearch}
-    />
+    />,
   )
 
   const input = getByRole('textbox')
@@ -58,5 +55,5 @@ test('selects brewery', async () => {
   const itemButton = getByRole('button', { name: brewery.name })
   expect(itemButton).toBeDefined()
   await user.click(itemButton)
-  expect(selector.mock.calls).toEqual([[ `/breweries/${brewery.id}` ]])
+  expect(selector.mock.calls).toEqual([[`/breweries/${brewery.id}`]])
 })

@@ -1,27 +1,27 @@
-import { render } from "@testing-library/react"
-import userEvent from "@testing-library/user-event"
-import { expect, test, vitest } from "vitest"
-import ReviewList from "./ReviewList"
-import type { UseDebounce } from "../../core/types"
-import type { Login } from "../../core/login/types"
-import { Role } from "../../core/user/types"
-import LinkWrapper from "../LinkWrapper"
+import { render } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { expect, test, vitest } from 'vitest'
+import ReviewList from './ReviewList'
+import type { UseDebounce } from '../../core/types'
+import type { Login } from '../../core/login/types'
+import { Role } from '../../core/user/types'
+import LinkWrapper from '../LinkWrapper'
 import type {
   Review,
   ReviewContainerIf,
   ReviewIf,
   ReviewSorting,
-  ReviewSortingOrder
-} from "../../core/review/types"
-import type { SearchLocationIf } from "../../core/location/types"
+  ReviewSortingOrder,
+} from '../../core/review/types'
+import type { SearchLocationIf } from '../../core/location/types'
 import type {
   CreateBeerIf,
   SearchBeerIf,
-  SelectBeerIf
-} from "../../core/beer/types"
-import type { SearchIf } from "../../core/search/types"
+  SelectBeerIf,
+} from '../../core/beer/types'
+import type { SearchIf } from '../../core/search/types'
 
-const useDebounce: UseDebounce<string> = str => [str, false]
+const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -29,7 +29,7 @@ const dontCall = (): any => {
 
 const dontCreate = {
   create: dontCall,
-  isLoading: false
+  isLoading: false,
 }
 
 const reviewedBeerId = '6ec1cde8-03aa-4567-bfac-b8509bc030cd'
@@ -37,22 +37,22 @@ const reviewedBeerId = '6ec1cde8-03aa-4567-bfac-b8509bc030cd'
 const beerSearchIf: SearchBeerIf = {
   useSearch: () => ({
     search: dontCall,
-    isLoading: false
-  })
+    isLoading: false,
+  }),
 }
 const dontCreateBeerIf: CreateBeerIf = {
   useCreate: () => dontCreate,
   editBeerIf: {
     selectBreweryIf: {
       create: {
-        useCreate: () => dontCreate
+        useCreate: () => dontCreate,
       },
       search: {
         useSearch: () => ({
           search: dontCall,
-          isLoading: false
-        })
-      }
+          isLoading: false,
+        }),
+      },
     },
     selectStyleIf: {
       create: {
@@ -60,45 +60,45 @@ const dontCreateBeerIf: CreateBeerIf = {
           ...dontCreate,
           createdStyle: undefined,
           hasError: false,
-          isSuccess: false
-        })
+          isSuccess: false,
+        }),
       },
       list: {
         useList: () => ({
           styles: undefined,
           isLoading: false,
-        })
-      }
-    }
-  }
+        }),
+      },
+    },
+  },
 }
 
-const dateStr ='2022-04-01T12:00:00.000Z'
+const dateStr = '2022-04-01T12:00:00.000Z'
 
 const reviewContainerIf: ReviewContainerIf = {
   createIf: {
-    useCreate: () => dontCreate
+    useCreate: () => dontCreate,
   },
   listIf: {
     useList: () => ({
       data: {
-        containers: []
+        containers: [],
       },
-      isLoading: false
-    })
-  }
+      isLoading: false,
+    }),
+  },
 }
 
 const searchIf: SearchIf = {
   useSearch: () => ({
     activate: () => undefined,
-    isActive: true
+    isActive: true,
   }),
-  useDebounce
+  useDebounce,
 }
 const selectBeerIf: SelectBeerIf = {
   create: dontCreateBeerIf,
-  search: beerSearchIf
+  search: beerSearchIf,
 }
 
 const smellText = 'Very nice, caramel, hops'
@@ -116,21 +116,23 @@ const joinedReview = {
   breweries: [
     {
       id: 'dd236932-aba3-488e-a685-e99a8e7c8972',
-      name: 'Koskipanimo'
-    }
+      name: 'Koskipanimo',
+    },
   ],
   container: {
     id: reviewContainerId,
     type: 'bottle',
-    size: '0.50'
+    size: '0.50',
   },
   location: undefined,
   rating: 9,
-  styles: [{
-    id: '30aad2a4-1f46-4f99-be9e-5b4d8bfa9bda',
-    name: 'imperial stout'
-  }],
-  time: dateStr
+  styles: [
+    {
+      id: '30aad2a4-1f46-4f99-be9e-5b4d8bfa9bda',
+      name: 'imperial stout',
+    },
+  ],
+  time: dateStr,
 }
 
 const review = {
@@ -142,7 +144,7 @@ const review = {
   rating: reviewRating,
   smell: smellText,
   taste: 'Roasted malt, bitter, strong',
-  time: dateStr
+  time: dateStr,
 }
 
 const anotherJoinedReview = {
@@ -153,63 +155,65 @@ const anotherJoinedReview = {
   breweries: [
     {
       id: 'fddab316-81a6-4d49-abc1-3e96e2b37442',
-      name: 'Beer Hunters'
-    }
+      name: 'Beer Hunters',
+    },
   ],
   container: joinedReview.container,
   location: undefined,
   rating: 10,
-  styles: [{
-    id: '9e67df6d-3bde-4b5b-ba02-b17a9a743b49',
-    name: 'american ipa'
-  }],
-  time: dateStr
+  styles: [
+    {
+      id: '9e67df6d-3bde-4b5b-ba02-b17a9a743b49',
+      name: 'american ipa',
+    },
+  ],
+  time: dateStr,
 }
 
 const searchLocationIf: SearchLocationIf = {
   useSearch: () => ({
     search: dontCall,
-    isLoading: false
+    isLoading: false,
   }),
   create: {
     useCreate: () => ({
       create: dontCall,
-      isLoading: false
-    })
-  }
+      isLoading: false,
+    }),
+  },
 }
 
 const dontUpdateReviewIf: ReviewIf = {
   get: {
     useGet: () => ({
-      get: async () => review
-    })
+      get: async () => review,
+    }),
   },
   update: {
     useUpdate: () => ({
       update: dontCall,
-      isLoading: false
+      isLoading: false,
     }),
     searchLocationIf,
     selectBeerIf,
-    reviewContainerIf
+    reviewContainerIf,
   },
-  login: () => adminLogin
+  login: () => adminLogin,
 }
 
 const adminLogin: Login = {
   user: {
     id: 'cae333fe-8247-4b31-93af-f2218b20f63e',
     username: 'admin',
-    role: Role.admin
+    role: Role.admin,
   },
-  authToken: "",
-  refreshToken: ""
+  authToken: '',
+  refreshToken: '',
 }
 
 const irrelevantSorting: ReviewSorting = {
   order: 'beer_name',
-  direction: 'asc'
+  direction: 'asc',
 }
 
 const irrelevantSupportedSorting: ReviewSortingOrder[] = ['beer_name']
@@ -231,23 +235,23 @@ test('updates review', async () => {
         reviewIf={{
           get: {
             useGet: () => ({
-              get: async (): Promise<Review> => review
-            })
+              get: async (): Promise<Review> => review,
+            }),
           },
           update: {
             useUpdate: () => ({
               update,
-              isLoading: false
+              isLoading: false,
             }),
             searchLocationIf,
             selectBeerIf,
-            reviewContainerIf
+            reviewContainerIf,
           },
-          login: () => adminLogin
+          login: () => adminLogin,
         }}
         searchIf={searchIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   const beerName = getByText(joinedReview.beerName)
   await user.click(beerName)
@@ -261,17 +265,21 @@ test('updates review', async () => {
 
   const saveButton = getByRole('button', { name: 'Save' })
   await user.click(saveButton)
-  expect(update.mock.calls).toEqual([[{
-    id: joinedReview.id,
-    additionalInfo: '',
-    beer: reviewedBeerId,
-    container: reviewContainerId,
-    location: '',
-    rating: reviewRating,
-    smell: smellText,
-    taste: newTasteText,
-    time: dateStr
-  }]])
+  expect(update.mock.calls).toEqual([
+    [
+      {
+        id: joinedReview.id,
+        additionalInfo: '',
+        beer: reviewedBeerId,
+        container: reviewContainerId,
+        location: '',
+        rating: reviewRating,
+        smell: smellText,
+        taste: newTasteText,
+        time: dateStr,
+      },
+    ],
+  ])
   expect(onChanged.mock.calls).toEqual([[]])
 })
 
@@ -285,7 +293,7 @@ test('sets review sorting', async () => {
         isTitleVisible={true}
         sorting={{
           order: 'beer_name',
-          direction: 'desc'
+          direction: 'desc',
         }}
         setSorting={setSorting}
         supportedSorting={['beer_name', 'brewery_name']}
@@ -294,15 +302,19 @@ test('sets review sorting', async () => {
         reviewIf={dontUpdateReviewIf}
         searchIf={searchIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   getByRole('button', { name: 'Name ▼' })
   const breweriesButton = getByRole('button', { name: 'Breweries' })
   await user.click(breweriesButton)
-  expect(setSorting.mock.calls).toEqual([[{
-    order: 'brewery_name',
-    direction: 'desc'
-  }]])
+  expect(setSorting.mock.calls).toEqual([
+    [
+      {
+        order: 'brewery_name',
+        direction: 'desc',
+      },
+    ],
+  ])
 })
 
 test('renders reviews', async () => {
@@ -320,7 +332,7 @@ test('renders reviews', async () => {
         reviewIf={dontUpdateReviewIf}
         searchIf={searchIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   const beerName = getByText(joinedReview.beerName)
   await user.click(beerName)
@@ -350,7 +362,7 @@ test('renders title', async () => {
         reviewIf={dontUpdateReviewIf}
         searchIf={searchIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   getByRole('heading', { name: 'Reviews' })
 })
@@ -369,7 +381,7 @@ test('does not render title', async () => {
         reviewIf={dontUpdateReviewIf}
         searchIf={searchIf}
       />
-    </LinkWrapper>
+    </LinkWrapper>,
   )
   const heading = queryByRole('heading', { name: 'Reviews' })
   expect(heading).toEqual(null)

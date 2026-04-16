@@ -2,19 +2,16 @@ import { expect, test, vitest } from 'vitest'
 import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import
-  SelectCreateRadio,
-  { Mode, SelectCreateRadioBasic }
-from './SelectCreateRadio'
+import SelectCreateRadio, {
+  Mode,
+  SelectCreateRadioBasic,
+} from './SelectCreateRadio'
 
 test('basic, clicks create when already selected', async () => {
   const user = userEvent.setup()
   const onChange = vitest.fn()
   const { getByRole } = render(
-    <SelectCreateRadioBasic
-      mode={Mode.CREATE}
-      onChange={onChange}
-    />
+    <SelectCreateRadioBasic mode={Mode.CREATE} onChange={onChange} />,
   )
   const create = getByRole('radio', { name: 'Create' })
   expect(create).toBeDefined()
@@ -27,10 +24,7 @@ test('basic, clicks select when already selected', async () => {
   const user = userEvent.setup()
   const onChange = vitest.fn()
   const { getByRole } = render(
-    <SelectCreateRadioBasic
-      mode={Mode.SELECT}
-      onChange={onChange}
-    />
+    <SelectCreateRadioBasic mode={Mode.SELECT} onChange={onChange} />,
   )
   const select = getByRole('radio', { name: 'Select' })
   expect(asInput(select).checked).toEqual(true)
@@ -43,10 +37,7 @@ test('basic, clicks create', async () => {
   const user = userEvent.setup()
   const onChange = vitest.fn()
   const { getByRole } = render(
-    <SelectCreateRadioBasic
-      mode={Mode.SELECT}
-      onChange={onChange}
-    />
+    <SelectCreateRadioBasic mode={Mode.SELECT} onChange={onChange} />,
   )
   const create = getByRole('radio', { name: 'Create' })
   expect(create).toBeDefined()
@@ -59,10 +50,7 @@ test('basic, clicks select', async () => {
   const user = userEvent.setup()
   const onChange = vitest.fn()
   const { getByRole } = render(
-    <SelectCreateRadioBasic
-      mode={Mode.CREATE}
-      onChange={onChange}
-    />
+    <SelectCreateRadioBasic mode={Mode.CREATE} onChange={onChange} />,
   )
   const select = getByRole('radio', { name: 'Select' })
   expect(select).toBeDefined()
@@ -80,7 +68,7 @@ test('full, changes mode', async () => {
       defaultMode={Mode.SELECT}
       createElement={<div>{createTextValue}</div>}
       selectElement={<div>{selectTextValue}</div>}
-    />
+    />,
   )
   expect(queryByText(createTextValue)).toBeNull()
   expect(getByText(selectTextValue)).toBeDefined()

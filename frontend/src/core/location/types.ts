@@ -1,6 +1,6 @@
-import type { Pagination , InfiniteScroll } from "../types"
+import type { Pagination, InfiniteScroll } from '../types'
 
-import type { GetLogin } from "../login/types"
+import type { GetLogin } from '../login/types'
 
 export interface CreateLocationRequest {
   name: string
@@ -35,7 +35,7 @@ export interface ListLocationsIf {
     locationList: LocationList | undefined
     isLoading: boolean
     isUninitialized: boolean
-  },
+  }
   infiniteScroll: InfiniteScroll
 }
 
@@ -43,14 +43,14 @@ export interface UpdateLocationIf {
   useUpdate: () => {
     update: (locationRequest: Location) => Promise<void>
     isLoading: boolean
-  },
+  }
   login: GetLogin
 }
 
 export interface SearchLocationIf {
   useSearch: () => {
-    search: (name: string) => Promise<Location[]>,
+    search: (name: string) => Promise<Location[]>
     isLoading: boolean
-  },
+  }
   create: CreateLocationIf
 }

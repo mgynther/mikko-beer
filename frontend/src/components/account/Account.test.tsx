@@ -9,11 +9,11 @@ test('renders account', async () => {
   const changePasswordIf: ChangePasswordIf = {
     useChangePassword: () => ({
       changePassword: async () => undefined,
-        isLoading: false
+      isLoading: false,
     }),
     useGetPasswordChangeResult: () => ({
-      getResult: () => PasswordChangeResult.SUCCESS
-    })
+      getResult: () => PasswordChangeResult.SUCCESS,
+    }),
   }
   const { getByRole, getByText } = render(
     <Account
@@ -21,13 +21,13 @@ test('renders account', async () => {
         user: {
           id: '7b8a119b-5233-4c36-a483-1b10a97bbc1c',
           username: 'admin',
-          role: Role.admin
+          role: Role.admin,
         },
         authToken: 'dummy',
-        refreshToken: 'dummy'
+        refreshToken: 'dummy',
       })}
       changePasswordIf={changePasswordIf}
-    />
+    />,
   )
   getByRole('heading', { name: 'Account' })
   getByText('Username: admin')

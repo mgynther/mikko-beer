@@ -11,7 +11,7 @@ export interface Props {
   searchLocationIf: SearchLocationIf
 }
 
-function SearchLocationWithNavi (props: Props): React.JSX.Element {
+function SearchLocationWithNavi(props: Props): React.JSX.Element {
   const navigate = props.navigateIf.useNavigate()
   return (
     <SearchLocation

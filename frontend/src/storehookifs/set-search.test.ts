@@ -5,14 +5,14 @@ import { createSetSearch } from './set-search'
 test('set search', async () => {
   const navigate = vitest.fn()
   const setSearch = createSetSearch({
-    useNavigate: () => navigate
+    useNavigate: () => navigate,
   })
   await setSearch('annual', {
     property: 'value',
-    'another-property': 'another-value'
+    'another-property': 'another-value',
   })
   expect(navigate).toHaveBeenCalledWith(
     '?stats=annual&property=value&another-property=another-value',
-    { replace: true }
+    { replace: true },
   )
 })

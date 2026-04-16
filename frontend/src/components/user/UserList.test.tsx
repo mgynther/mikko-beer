@@ -13,7 +13,7 @@ const user1Id = 'b45e51cd-7acd-4f3b-8092-56f526ad9956'
 const user1 = {
   id: user1Id,
   username: 'User 1',
-  role: Role.viewer
+  role: Role.viewer,
 }
 
 const oneUserListIf = (user: User): ListUsersIf => ({
@@ -21,8 +21,8 @@ const oneUserListIf = (user: User): ListUsersIf => ({
     data: {
       users: [user],
     },
-    isLoading: false
-  })
+    isLoading: false,
+  }),
 })
 
 test('deletes user', async () => {
@@ -34,10 +34,10 @@ test('deletes user', async () => {
       listUsersIf={oneUserListIf(user1)}
       deleteUserIf={{
         useDelete: () => ({
-          delete: del
-        })
+          delete: del,
+        }),
       }}
-    />
+    />,
   )
   const deleteButton = getByRole('button', { name: 'Delete' })
   await user.click(deleteButton)
@@ -53,10 +53,10 @@ test('does not delete user when not confirmed', async () => {
       listUsersIf={oneUserListIf(user1)}
       deleteUserIf={{
         useDelete: () => ({
-          delete: del
-        })
+          delete: del,
+        }),
       }}
-    />
+    />,
   )
   const deleteButton = getByRole('button', { name: 'Delete' })
   await user.click(deleteButton)
@@ -76,19 +76,19 @@ test('renders users', () => {
               {
                 id: user2Id,
                 username: 'User 2',
-                role: Role.admin
+                role: Role.admin,
               },
             ],
           },
-          isLoading: false
-        })
+          isLoading: false,
+        }),
       }}
       deleteUserIf={{
         useDelete: () => ({
-          delete: dontCall
-        })
+          delete: dontCall,
+        }),
       }}
-    />
+    />,
   )
   getByText('User 1 (viewer)')
   getByText('User 2 (admin)')

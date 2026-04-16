@@ -37,26 +37,24 @@ test('create style', async () => {
   const expectedResponse: { style: Style } = {
     style: {
       id: '31c67c1d-58e3-4c26-b91e-6d1738757475',
-      name: 'Test style'
-    }
+      name: 'Test style',
+    },
   }
 
-  addTestServerResponse<{style: Style}>({
+  addTestServerResponse<{ style: Style }>({
     method: 'POST',
     pathname: '/api/v1/style',
     response: expectedResponse,
-    status: 201
+    status: 201,
   })
 
   const { getByRole, getByText } = render(
     <Provider store={store}>
       <Helper
         style={{ parents: [], name: expectedResponse.style.name }}
-        handleResponse={
-          () => undefined
-        }
+        handleResponse={() => undefined}
       />
-    </Provider>
+    </Provider>,
   )
   const testButton = getByRole('button', { name: 'Test' })
   await user.click(testButton)

@@ -17,161 +17,161 @@ const sortingTests: SortingTest[] = [
     name: 'sets breweries sorting',
     originalSorting: {
       order: 'beer_name',
-      direction: 'asc'
+      direction: 'asc',
     },
     supportedSorting: ['brewery_name'],
     sortButtonText: 'Breweries',
     expectedSorting: {
       order: 'brewery_name',
-      direction: 'desc'
-    }
+      direction: 'desc',
+    },
   },
   {
     name: 'reverses breweries sorting asc',
     originalSorting: {
       order: 'brewery_name',
-      direction: 'asc'
+      direction: 'asc',
     },
     supportedSorting: ['brewery_name'],
     sortButtonText: 'Breweries ▲',
     expectedSorting: {
       order: 'brewery_name',
-      direction: 'desc'
-    }
+      direction: 'desc',
+    },
   },
   {
     name: 'reverses breweries sorting desc',
     originalSorting: {
       order: 'brewery_name',
-      direction: 'desc'
+      direction: 'desc',
     },
     supportedSorting: ['brewery_name'],
     sortButtonText: 'Breweries ▼',
     expectedSorting: {
       order: 'brewery_name',
-      direction: 'asc'
-    }
+      direction: 'asc',
+    },
   },
   {
     name: 'sets beer name sorting',
     originalSorting: {
       order: 'brewery_name',
-      direction: 'asc'
+      direction: 'asc',
     },
     supportedSorting: ['beer_name'],
     sortButtonText: 'Name',
     expectedSorting: {
       order: 'beer_name',
-      direction: 'desc'
-    }
+      direction: 'desc',
+    },
   },
   {
     name: 'reverses beer sorting asc',
     originalSorting: {
       order: 'beer_name',
-      direction: 'asc'
+      direction: 'asc',
     },
     supportedSorting: ['beer_name'],
     sortButtonText: 'Name ▲',
     expectedSorting: {
       order: 'beer_name',
-      direction: 'desc'
-    }
+      direction: 'desc',
+    },
   },
   {
     name: 'reverses beer sorting desc',
     originalSorting: {
       order: 'beer_name',
-      direction: 'desc'
+      direction: 'desc',
     },
     supportedSorting: ['beer_name'],
     sortButtonText: 'Name ▼',
     expectedSorting: {
       order: 'beer_name',
-      direction: 'asc'
-    }
+      direction: 'asc',
+    },
   },
   {
     name: 'sets rating sorting',
     originalSorting: {
       order: 'brewery_name',
-      direction: 'asc'
+      direction: 'asc',
     },
     supportedSorting: ['rating'],
     sortButtonText: 'Rating',
     expectedSorting: {
       order: 'rating',
-      direction: 'desc'
-    }
+      direction: 'desc',
+    },
   },
   {
     name: 'reverses rating sorting asc',
     originalSorting: {
       order: 'rating',
-      direction: 'asc'
+      direction: 'asc',
     },
     supportedSorting: ['rating'],
     sortButtonText: 'Rating ▲',
     expectedSorting: {
       order: 'rating',
-      direction: 'desc'
-    }
+      direction: 'desc',
+    },
   },
   {
     name: 'reverses rating sorting desc',
     originalSorting: {
       order: 'rating',
-      direction: 'desc'
+      direction: 'desc',
     },
     supportedSorting: ['rating'],
     sortButtonText: 'Rating ▼',
     expectedSorting: {
       order: 'rating',
-      direction: 'asc'
-    }
+      direction: 'asc',
+    },
   },
   {
     name: 'sets time sorting',
     originalSorting: {
       order: 'brewery_name',
-      direction: 'asc'
+      direction: 'asc',
     },
     supportedSorting: ['time'],
     sortButtonText: 'Time',
     expectedSorting: {
       order: 'time',
-      direction: 'desc'
-    }
+      direction: 'desc',
+    },
   },
   {
     name: 'reverses time sorting asc',
     originalSorting: {
       order: 'time',
-      direction: 'asc'
+      direction: 'asc',
     },
     supportedSorting: ['time'],
     sortButtonText: 'Time ▲',
     expectedSorting: {
       order: 'time',
-      direction: 'desc'
-    }
+      direction: 'desc',
+    },
   },
   {
     name: 'reverses time sorting desc',
     originalSorting: {
       order: 'time',
-      direction: 'desc'
+      direction: 'desc',
     },
     supportedSorting: ['time'],
     sortButtonText: 'Time ▼',
     expectedSorting: {
       order: 'time',
-      direction: 'asc'
-    }
+      direction: 'asc',
+    },
   },
 ]
 
-sortingTests.forEach(testCase => {
+sortingTests.forEach((testCase) => {
   test(testCase.name, async () => {
     const user = userEvent.setup()
     const setSorting = vitest.fn()
@@ -180,7 +180,7 @@ sortingTests.forEach(testCase => {
         sorting={testCase.originalSorting}
         setSorting={setSorting}
         supportedSorting={testCase.supportedSorting}
-      />
+      />,
     )
     const sortButton = getByRole('button', { name: testCase.sortButtonText })
     await user.click(sortButton)
@@ -192,13 +192,13 @@ test('no sorting buttons when not supported', () => {
   const setSorting = vitest.fn()
   const { queryAllByRole } = render(
     <ReviewHeading
-    sorting={{
-      order: 'beer_name',
-      direction: 'asc'
-    }}
-    setSorting={setSorting}
-    supportedSorting={[]}
-    />
+      sorting={{
+        order: 'beer_name',
+        direction: 'asc',
+      }}
+      setSorting={setSorting}
+      supportedSorting={[]}
+    />,
   )
   const sortButtons = queryAllByRole('button')
   expect(sortButtons).toEqual([])

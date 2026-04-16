@@ -3,10 +3,7 @@ import { useState } from 'react'
 import { Link } from '../common/Link'
 
 import type { DeleteStorageIf, Storage } from '../../core/storage/types'
-import type {
-  GetLogin,
-  Login
-} from '../../core/login/types'
+import type { GetLogin, Login } from '../../core/login/types'
 import { Role } from '../../core/user/types'
 import { formatDateString } from '../util'
 
@@ -27,18 +24,18 @@ interface Props {
   storage: Storage
 }
 
-function StorageItem (props: Props): React.JSX.Element {
+function StorageItem(props: Props): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false)
   const login: Login = props.getLogin()
   const isAdmin = login.user?.role === Role.admin
   const { storage } = props
   const del = props.deleteStorageIf.useDelete().delete
 
-  function getOpenSymbol (isOpen: boolean): string {
+  function getOpenSymbol(isOpen: boolean): string {
     return isOpen ? 'Close ▲' : 'Open ▼'
   }
 
-  async function confirmDeleteStorage (storage: Storage): Promise<void> {
+  async function confirmDeleteStorage(storage: Storage): Promise<void> {
     const confirmText = `Are you sure you want to delete "${storage.beerName}"?`
     if (props.confirm(confirmText)) {
       await del(storage.id)
@@ -52,21 +49,24 @@ function StorageItem (props: Props): React.JSX.Element {
           <BreweryLinks breweries={storage.breweries} />
         </div>
         <div className='BeerName'>
-          <BeerLink beer={{
-            id: storage.beerId,
-            name: storage.beerName
-          }}/ >{storage.hasReview ? ' *' : null}
+          <BeerLink
+            beer={{
+              id: storage.beerId,
+              name: storage.beerName,
+            }}
+          />
+          {storage.hasReview ? ' *' : null}
         </div>
         <div className='BeerStyles'>
           <StyleLinks styles={storage.styles} />
         </div>
-        <div className='BestBefore'>
-          {formatDateString(storage.bestBefore)}
-        </div>
+        <div className='BestBefore'>{formatDateString(storage.bestBefore)}</div>
         <div className='Actions'>
           <Button
             className='TabButton Compact'
-            onClick={() => { setIsOpen(!isOpen); }}
+            onClick={() => {
+              setIsOpen(!isOpen)
+            }}
             text={getOpenSymbol(isOpen)}
           />
         </div>
@@ -74,20 +74,17 @@ function StorageItem (props: Props): React.JSX.Element {
       {isOpen && (
         <div className='StorageItem-secondary-row'>
           <ContainerInfo container={storage.container} />
-          <div>
-            Added on {formatDateString(storage.createdAt)}
-          </div>
+          <div>Added on {formatDateString(storage.createdAt)}</div>
           {isAdmin && (
             <>
               <div>
-                <Link
-                  to={`/addreview/${storage.id}`}
-                  text="Review"
-                />
+                <Link to={`/addreview/${storage.id}`} text='Review' />
               </div>
               <div>
                 <LinkLikeButton
-                  onClick={() => { void confirmDeleteStorage(storage); }}
+                  onClick={() => {
+                    void confirmDeleteStorage(storage)
+                  }}
                   text='Delete'
                 />
               </div>
