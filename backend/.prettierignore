@@ -1,2 +1,4 @@
 build-tests
 dist
+package-lock.json
+prod_dist
