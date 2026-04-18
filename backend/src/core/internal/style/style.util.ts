@@ -1,12 +1,7 @@
 import type { StyleRelationship } from '../../style/style.js'
 
 import { cyclicRelationshipError } from '../../errors.js'
-import { contains } from '../../record.js'
-
-interface Style {
-  id: string
-  parents: string[]
-}
+import { hasCycleDfs } from './style-tree-dfs.js'
 
 export function checkCyclicRelationships(
   currentRelationships: StyleRelationship[],
@@ -24,35 +19,7 @@ export function checkCyclicRelationships(
     })
   })
 
-  function newStyleFromId(id: string): Style {
-    return {
-      id,
-      parents: [],
-    }
+  if (hasCycleDfs(relationships)) {
+    throw cyclicRelationshipError
   }
-
-  const relationshipMap: Record<string, Style> = {}
-  relationships.forEach((relationship: StyleRelationship) => {
-    if (!contains(relationshipMap, relationship.child)) {
-      relationshipMap[relationship.child] = newStyleFromId(relationship.child)
-    }
-    relationshipMap[relationship.child].parents.push(relationship.parent)
-    if (!contains(relationshipMap, relationship.parent)) {
-      relationshipMap[relationship.parent] = newStyleFromId(relationship.parent)
-    }
-  })
-
-  Object.keys(relationshipMap).forEach((id: string) => {
-    const styles: Record<string, boolean> = {}
-    const checkStyle = (style: Style): void => {
-      if (styles[style.id]) {
-        throw cyclicRelationshipError
-      }
-      styles[style.id] = true
-      style.parents.forEach((parentId) => {
-        checkStyle(relationshipMap[parentId])
-      })
-    }
-    checkStyle(relationshipMap[id])
-  })
 }
