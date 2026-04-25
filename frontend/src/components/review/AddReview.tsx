@@ -10,6 +10,8 @@ import { formatDateString, type NavigateIf, type ParamsIf } from '../util'
 
 import ReviewEditor, { type InitialReview } from './ReviewEditor'
 
+import './AddReview.css'
+
 function toInitialReview(
   storageData: Storage,
   currentDate: Date,
@@ -124,6 +126,7 @@ function AddReview(props: Props): React.JSX.Element {
 
       <div>
         <Button
+          className='AddReview-add-button'
           disabled={
             review === undefined || isLoading || createdReview !== undefined
           }
