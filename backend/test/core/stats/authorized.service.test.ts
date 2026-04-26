@@ -46,6 +46,9 @@ describe('stats authorized service unit tests', () => {
         reviewCount: '120',
         distinctBeerReviewCount: '119',
         reviewAverage: '8.50',
+        reviewStandardDeviation: '0.74',
+        reviewMedian: '8.50',
+        reviewMode: '9',
         styleCount: '28',
       }
       const result = await statsService.getOverall(
@@ -62,11 +65,17 @@ describe('stats authorized service unit tests', () => {
         {
           reviewAverage: '8.23',
           reviewCount: '234',
+          reviewStandardDeviation: '0.91',
+          reviewMedian: '8.00',
+          reviewMode: '8',
           year: '2023',
         },
         {
           reviewAverage: '8.31',
           reviewCount: '215',
+          reviewStandardDeviation: '0.88',
+          reviewMedian: '8.00',
+          reviewMode: '8',
           year: '2024',
         },
       ]
@@ -87,6 +96,9 @@ describe('stats authorized service unit tests', () => {
           containerSize: '0.33',
           reviewAverage: '8.23',
           reviewCount: '234',
+          reviewStandardDeviation: '0.91',
+          reviewMedian: '8.00',
+          reviewMode: '8',
           year: '2023',
         },
         {
@@ -95,6 +107,9 @@ describe('stats authorized service unit tests', () => {
           containerSize: '0.44',
           reviewAverage: '8.31',
           reviewCount: '215',
+          reviewStandardDeviation: '0.88',
+          reviewMedian: '8.00',
+          reviewMode: '8',
           year: '2024',
         },
       ]
@@ -113,6 +128,9 @@ describe('stats authorized service unit tests', () => {
         {
           reviewAverage: '9.08',
           reviewCount: '64',
+          reviewStandardDeviation: '0.62',
+          reviewMedian: '9.00',
+          reviewMode: '9',
           reviewedBeerCount: '63',
           breweryId: 'c1c9948d-2a7a-4b54-9ada-0fbfedfe2121',
           breweryName: 'Koskipanimo',
@@ -120,6 +138,9 @@ describe('stats authorized service unit tests', () => {
         {
           reviewAverage: '9.01',
           reviewCount: '55',
+          reviewStandardDeviation: '0.71',
+          reviewMedian: '9.00',
+          reviewMode: '9',
           reviewedBeerCount: '54',
           breweryId: '1c0b32ed-a73a-422d-a14a-e70b0ea28e1d',
           breweryName: 'Mallaskoski',
@@ -152,6 +173,9 @@ describe('stats authorized service unit tests', () => {
         {
           reviewAverage: '8.43',
           reviewCount: '212',
+          reviewStandardDeviation: '0.82',
+          reviewMedian: '8.50',
+          reviewMode: '8',
           containerId: '95dbb5a8-c814-42ef-a9bf-d3aa220749a1',
           containerSize: '0.25',
           containerType: 'draft',
@@ -159,6 +183,9 @@ describe('stats authorized service unit tests', () => {
         {
           reviewAverage: '8.11',
           reviewCount: '201',
+          reviewStandardDeviation: '0.94',
+          reviewMedian: '8.00',
+          reviewMode: '8',
           containerId: '87aa392e-b1af-44d2-8690-460687709f0c',
           containerSize: '0.33',
           containerType: 'bottle',
@@ -178,12 +205,18 @@ describe('stats authorized service unit tests', () => {
         {
           reviewAverage: '9.08',
           reviewCount: '64',
+          reviewStandardDeviation: '0.62',
+          reviewMedian: '9.00',
+          reviewMode: '9',
           locationId: '7deae235-e990-4ee7-b445-b19dd7fa5a1f',
           locationName: 'Kuja Beer Shop & Bar',
         },
         {
           reviewAverage: '9.01',
           reviewCount: '55',
+          reviewStandardDeviation: '0.71',
+          reviewMedian: '9.00',
+          reviewMode: '9',
           locationId: '8a44ffcd-a647-4903-ab8f-7d98c4c28189',
           locationName: 'Oluthuone Panimomestari',
         },
@@ -236,12 +269,18 @@ describe('stats authorized service unit tests', () => {
         {
           reviewAverage: '9.12',
           reviewCount: '58',
+          reviewStandardDeviation: '0.58',
+          reviewMedian: '9.00',
+          reviewMode: '9',
           styleId: 'c1c9948d-2a7a-4b54-9ada-0fbfedfe2121',
           styleName: 'American IPA',
         },
         {
           reviewAverage: '9.69',
           reviewCount: '40',
+          reviewStandardDeviation: '0.46',
+          reviewMedian: '10.00',
+          reviewMode: '10',
           styleId: '2a0f8f10-297f-4bfa-81af-98c529b6dfbe',
           styleName: 'Imperial Stout',
         },

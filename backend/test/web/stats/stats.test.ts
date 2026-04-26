@@ -1,6 +1,12 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
+import {
+  avgRatings,
+  medianRatings,
+  modeRatings,
+  stdDevRatings,
+} from '../../data/stats/stats-helpers.js'
 import type { BeerWithBreweryAndStyleIds } from '../../../src/core/beer/beer.js'
 import type { Brewery } from '../../../src/core/brewery/brewery.js'
 import type { Location } from '../../../src/core/location/location.js'
@@ -281,13 +287,18 @@ describe('stats tests', () => {
     assertEqual(styles.length, 2)
   })
 
-  function average(ratings: number[]): string {
-    if (ratings.length === 0) {
-      const zero = 0
-      return zero.toFixed(2)
+  interface DistributionStats {
+    reviewStandardDeviation: string
+    reviewMedian: string
+    reviewMode: string
+  }
+
+  function distributionStats(ratings: number[]): DistributionStats {
+    return {
+      reviewStandardDeviation: stdDevRatings(ratings),
+      reviewMedian: medianRatings(ratings),
+      reviewMode: modeRatings(ratings),
     }
-    const sumReducer = (sum: number, rating: number) => sum + rating
-    return (ratings.reduce(sumReducer, 0) / ratings.length).toFixed(2)
   }
 
   interface Annual {
@@ -304,16 +315,22 @@ describe('stats tests', () => {
       const ratings = reviewRatingsByYear(year)
       return {
         ratings,
-        average: average(ratings),
+        average: avgRatings(ratings),
         count: ratings.length,
         year,
       }
     })
 
-    function stat(count: number, average: string, year: string) {
+    function stat(
+      count: number,
+      average: string,
+      ratings: number[],
+      year: string,
+    ) {
       return {
         reviewCount: `${count}`,
         reviewAverage: average,
+        ...distributionStats(ratings),
         year,
       }
     }
@@ -322,7 +339,9 @@ describe('stats tests', () => {
       annualStats,
       annual
         .filter((a) => a.count > 0)
-        .map((annual) => stat(annual.count, annual.average, annual.year)),
+        .map((annual) =>
+          stat(annual.count, annual.average, annual.ratings, annual.year),
+        ),
     )
 
     assertDeepEqual(
@@ -411,7 +430,7 @@ describe('stats tests', () => {
       },
       {
         count: 0,
-        average: '0.00',
+        average: '-',
       },
       {
         count: 1,
@@ -442,8 +461,9 @@ describe('stats tests', () => {
           containerId: container.id,
           containerSize: container.size,
           containerType: container.type,
-          reviewAverage: `${average(ratings)}`,
+          reviewAverage: `${avgRatings(ratings)}`,
           reviewCount: `${ratings.length}`,
+          ...distributionStats(ratings),
           year,
         }
       }),
@@ -472,8 +492,9 @@ describe('stats tests', () => {
           containerId: container.id,
           containerSize: container.size,
           containerType: container.type,
-          reviewAverage: `${average(ratings)}`,
+          reviewAverage: `${avgRatings(ratings)}`,
           reviewCount: `${ratings.length}`,
+          ...distributionStats(ratings),
           year,
         }
       }),
@@ -511,8 +532,9 @@ describe('stats tests', () => {
             containerId: container.id,
             containerSize: container.size,
             containerType: container.type,
-            reviewAverage: `${average(ratings)}`,
+            reviewAverage: `${avgRatings(ratings)}`,
             reviewCount: `${ratings.length}`,
+            ...distributionStats(ratings),
             year,
           }
         })
@@ -529,12 +551,12 @@ describe('stats tests', () => {
     )
     assertEqual(statsRes.status, 200)
     const container = containers[0].data.container
+    const containerRatings = reviews.map((r) => r.rating)
     assertDeepEqual(statsRes.data.container, [
       {
-        reviewAverage: `${
-          reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
-        }`,
+        reviewAverage: avgRatings(containerRatings),
         reviewCount: `${reviews.length}`,
+        ...distributionStats(containerRatings),
         containerId: container.id,
         containerSize: container.size,
         containerType: container.type,
@@ -561,12 +583,12 @@ describe('stats tests', () => {
       .filter((b) => b.breweries.includes(breweryId))
       .map((b) => b.id)
     const reviews = allReviews.filter((r) => breweryBeers.includes(r.beer))
+    const containerRatings = reviews.map((r) => r.rating)
     assertDeepEqual(statsRes.data.container, [
       {
-        reviewAverage: (
-          reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
-        ).toFixed(2),
+        reviewAverage: avgRatings(containerRatings),
         reviewCount: `${reviews.length}`,
+        ...distributionStats(containerRatings),
         containerId: container.id,
         containerSize: container.size,
         containerType: container.type,
@@ -588,13 +610,14 @@ describe('stats tests', () => {
     breweryStats: BreweryStats,
   ): void {
     const nokiaRatings = reviewRatingsByBrewery(nokia.brewery.id)
-    const nokiaAverage = average(nokiaRatings)
+    const nokiaAverage = avgRatings(nokiaRatings)
     const lindemansRatings = reviewRatingsByBrewery(lindemans.brewery.id)
-    const lindemansAverage = average(lindemansRatings)
+    const lindemansAverage = avgRatings(lindemansRatings)
     assertDeepEqual(breweryStats, [
       {
         reviewCount: `${nokiaRatings.length}`,
         reviewAverage: nokiaAverage,
+        ...distributionStats(nokiaRatings),
         reviewedBeerCount: `${nokia.reviewedBeerCount}`,
         breweryId: nokia.brewery.id,
         breweryName: nokia.brewery.name,
@@ -602,6 +625,7 @@ describe('stats tests', () => {
       {
         reviewCount: `${lindemansRatings.length}`,
         reviewAverage: lindemansAverage,
+        ...distributionStats(lindemansRatings),
         reviewedBeerCount: `${lindemans.reviewedBeerCount}`,
         breweryId: lindemans.brewery.id,
         breweryName: lindemans.brewery.name,
@@ -723,19 +747,21 @@ describe('stats tests', () => {
     locationStats: LocationStats,
   ): void {
     const kujaRatings = reviewRatingsByLocation(kuja.location.id)
-    const kujaAverage = average(kujaRatings)
+    const kujaAverage = avgRatings(kujaRatings)
     const oluthuoneRatings = reviewRatingsByLocation(oluthuone.location.id)
-    const oluthuoneAverage = average(oluthuoneRatings)
+    const oluthuoneAverage = avgRatings(oluthuoneRatings)
     assertDeepEqual(locationStats, [
       {
         reviewCount: `${kujaRatings.length}`,
         reviewAverage: kujaAverage,
+        ...distributionStats(kujaRatings),
         locationId: kuja.location.id,
         locationName: kuja.location.name,
       },
       {
         reviewCount: `${oluthuoneRatings.length}`,
         reviewAverage: oluthuoneAverage,
+        ...distributionStats(oluthuoneRatings),
         locationId: oluthuone.location.id,
         locationName: oluthuone.location.name,
       },
@@ -850,11 +876,12 @@ describe('stats tests', () => {
       reviews,
       undefined,
     )
-    const kujaAverage = average(kujaRatings)
+    const kujaAverage = avgRatings(kujaRatings)
     assertDeepEqual(statsRes.data.location, [
       {
         reviewCount: `${kujaRatings.length}`,
         reviewAverage: kujaAverage,
+        ...distributionStats(kujaRatings),
         locationId: kujaLocation.id,
         locationName: kujaLocation.name,
       },
@@ -963,18 +990,20 @@ describe('stats tests', () => {
     kriek: StyleStatData,
     styleStats: StyleStats,
   ) {
-    const ipaAverage = average(ipa.ratings)
-    const kriekAverage = average(kriek.ratings)
+    const ipaAverage = avgRatings(ipa.ratings)
+    const kriekAverage = avgRatings(kriek.ratings)
     assertDeepEqual(styleStats, [
       {
         reviewCount: `${ipa.ratings.length}`,
         reviewAverage: ipa.average,
+        ...distributionStats(ipa.ratings),
         styleId: ipa.style.id,
         styleName: ipa.style.name,
       },
       {
         reviewCount: `${kriek.ratings.length}`,
         reviewAverage: kriek.average,
+        ...distributionStats(kriek.ratings),
         styleId: kriek.style.id,
         styleName: kriek.style.name,
       },
@@ -1115,11 +1144,12 @@ describe('stats tests', () => {
       reviews,
       breweryId,
     )
-    const kriekAverage = average(kriekRatings)
+    const kriekAverage = avgRatings(kriekRatings)
     assertDeepEqual(statsRes.data.style, [
       {
         reviewCount: '3',
         reviewAverage: kriekAverage,
+        ...distributionStats(kriekRatings),
         styleId: kriekStyle.id,
         styleName: kriekStyle.name,
       },
@@ -1148,12 +1178,14 @@ describe('stats tests', () => {
         // Collab reviews only.
         reviewCount: '2',
         reviewAverage: '7.50',
+        ...distributionStats([8, 7]),
         styleId: ipaStyle.id,
         styleName: ipaStyle.name,
       },
       {
         reviewCount: '3',
         reviewAverage: '6.67',
+        ...distributionStats([5, 8, 7]),
         styleId: kriekStyle.id,
         styleName: kriekStyle.name,
       },
@@ -1178,6 +1210,7 @@ describe('stats tests', () => {
       {
         reviewCount: '1',
         reviewAverage: '7.00',
+        ...distributionStats([7]),
         styleId: ipaStyle.id,
         styleName: ipaStyle.name,
       },

@@ -20,12 +20,11 @@ import type {
   StyleStatsOrder,
 } from '../../core/stats/stats.js'
 import { contains } from '../../core/record.js'
+import { round, formatInteger } from './format.js'
 
-function round(value: number, decimals: number): string {
-  return Number(
-    `${Math.round(parseFloat(`${value}e${decimals}`))}e-${decimals}`,
-  ).toFixed(decimals)
-}
+// MODE() WITHIN GROUP (ORDER BY review.rating ASC): on ties, Postgres
+// returns the lowest tied rating. This invariant must be replicated in
+// the test helpers.
 
 function noInfinity(value: number): number {
   if (value > 0 && !Number.isFinite(value)) {
@@ -85,6 +84,9 @@ function idFilter(statsFilter: StatsIdFilter): RawBuilder<unknown> {
 interface AnnualQueryResult {
   review_average: number
   review_count: number
+  stddev_pop: number
+  percentile_cont: number
+  mode: number
   year: number
 }
 
@@ -95,6 +97,9 @@ export async function getAnnual(
   const annualQuery = sql<AnnualQueryResult>`SELECT
     COUNT(1) as review_count,
     AVG(rating) as review_average,
+    STDDEV_POP(rating) as stddev_pop,
+    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY rating) as percentile_cont,
+    MODE() WITHIN GROUP (ORDER BY rating ASC) as mode,
     DATE_PART('YEAR', time) as year FROM review
     ${idFilter(statsFilter)}
     GROUP BY year
@@ -104,8 +109,11 @@ export async function getAnnual(
   const annual = await annualQuery.execute(db.getDb())
 
   return annual.rows.map((row) => ({
-    reviewAverage: round(row.review_average, 2),
+    reviewAverage: round(row.review_average),
     reviewCount: `${row.review_count}`,
+    reviewStandardDeviation: round(row.stddev_pop),
+    reviewMedian: round(row.percentile_cont),
+    reviewMode: formatInteger(row.mode),
     year: `${row.year}`,
   }))
 }
@@ -116,6 +124,9 @@ interface AnnualContainerQueryResult {
   container_size: string
   review_average: number
   review_count: number
+  stddev_pop: number
+  percentile_cont: number
+  mode: number
   year: number
 }
 
@@ -127,6 +138,10 @@ export async function getAnnualContainer(
   const annualContainerQuery = sql<AnnualContainerQueryResult>`SELECT
     COUNT(1) AS review_count,
     AVG(review.rating) as review_average,
+    STDDEV_POP(review.rating) as stddev_pop,
+    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY review.rating)
+      as percentile_cont,
+    MODE() WITHIN GROUP (ORDER BY review.rating ASC) as mode,
     DATE_PART('YEAR', review.time) AS year,
     review.container AS container_id,
     container.type AS container_type,
@@ -148,8 +163,11 @@ export async function getAnnualContainer(
     containerId: row.container_id,
     containerSize: row.container_size,
     containerType: row.container_type,
-    reviewAverage: round(row.review_average, 2),
+    reviewAverage: round(row.review_average),
     reviewCount: `${row.review_count}`,
+    reviewStandardDeviation: round(row.stddev_pop),
+    reviewMedian: round(row.percentile_cont),
+    reviewMode: formatInteger(row.mode),
     year: `${row.year}`,
   }))
 }
@@ -157,6 +175,9 @@ export async function getAnnualContainer(
 interface ContainerQueryResult {
   review_average: number
   review_count: number
+  stddev_pop: number
+  percentile_cont: number
+  mode: number
   container_id: string
   container_size: string
   container_type: string
@@ -169,6 +190,10 @@ export async function getContainer(
   const containerQuery = sql<ContainerQueryResult>`SELECT
     COUNT(1) as review_count,
     AVG(review.rating) as review_average,
+    STDDEV_POP(review.rating) as stddev_pop,
+    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY review.rating)
+      as percentile_cont,
+    MODE() WITHIN GROUP (ORDER BY review.rating ASC) as mode,
     review.container as container_id,
     container.size as container_size,
     container.type as container_type FROM review
@@ -182,8 +207,11 @@ export async function getContainer(
   const container = await containerQuery.execute(db.getDb())
 
   return container.rows.map((row) => ({
-    reviewAverage: round(row.review_average, 2),
+    reviewAverage: round(row.review_average),
     reviewCount: `${row.review_count}`,
+    reviewStandardDeviation: round(row.stddev_pop),
+    reviewMedian: round(row.percentile_cont),
+    reviewMode: formatInteger(row.mode),
     containerId: row.container_id,
     containerSize: row.container_size,
     containerType: row.container_type,
@@ -193,6 +221,9 @@ export async function getContainer(
 interface LocationQuerySelection {
   review_average: number
   review_count: number
+  stddev_pop: number
+  percentile_cont: number
+  mode: number
   location_id: string
   location_name: string
 }
@@ -238,6 +269,11 @@ export async function getLocation(
   let locationQuery = tempQuery.select(({ fn }) => [
     fn.count<number>('review.review_id').as('review_count'),
     fn.avg<number>('review.rating').as('review_average'),
+    sql<number>`STDDEV_POP(review.rating)`.as('stddev_pop'),
+    sql<number>`PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY review.rating)`.as(
+      'percentile_cont',
+    ),
+    sql<number>`MODE() WITHIN GROUP (ORDER BY review.rating ASC)`.as('mode'),
     'location.location_id as location_id',
     'location.name as location_name',
   ])
@@ -255,6 +291,12 @@ export async function getLocation(
       .select(({ fn }) => [
         fn.count<number>('review.review_id').as('review_count'),
         fn.avg<number>('review.rating').as('review_average'),
+        sql<number>`STDDEV_POP(review.rating)`.as('stddev_pop'),
+        sql<number>`PERCENTILE_CONT(0.5)
+          WITHIN GROUP (ORDER BY review.rating)`.as('percentile_cont'),
+        sql<number>`MODE() WITHIN GROUP (ORDER BY review.rating ASC)`.as(
+          'mode',
+        ),
         'location.location_id as location_id',
         'location.name as location_name',
       ])
@@ -320,8 +362,11 @@ export async function getLocation(
       .limit(pagination.size)
       .execute()
   ).map((row) => ({
-    reviewAverage: round(row.review_average, 2),
+    reviewAverage: round(row.review_average),
     reviewCount: `${row.review_count}`,
+    reviewStandardDeviation: round(row.stddev_pop),
+    reviewMedian: round(row.percentile_cont),
+    reviewMode: formatInteger(row.mode),
     locationId: row.location_id,
     locationName: row.location_name,
   }))
@@ -330,6 +375,9 @@ export async function getLocation(
 interface BreweryQuerySelection {
   review_average: number
   review_count: number
+  stddev_pop: number
+  percentile_cont: number
+  mode: number
   reviewed_beer_count: number
   brewery_id: string
   brewery_name: string
@@ -378,6 +426,11 @@ export async function getBrewery(
     fn.count<number>('review.review_id').as('review_count'),
     fn.count<number>('review.beer').distinct().as('reviewed_beer_count'),
     fn.avg<number>('review.rating').as('review_average'),
+    sql<number>`STDDEV_POP(review.rating)`.as('stddev_pop'),
+    sql<number>`PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY review.rating)`.as(
+      'percentile_cont',
+    ),
+    sql<number>`MODE() WITHIN GROUP (ORDER BY review.rating ASC)`.as('mode'),
     'brewery.brewery_id as brewery_id',
     'brewery.name as brewery_name',
   ])
@@ -397,6 +450,12 @@ export async function getBrewery(
         fn.count<number>('review.review_id').as('review_count'),
         fn.count<number>('review.beer').distinct().as('reviewed_beer_count'),
         fn.avg<number>('review.rating').as('review_average'),
+        sql<number>`STDDEV_POP(review.rating)`.as('stddev_pop'),
+        sql<number>`PERCENTILE_CONT(0.5)
+          WITHIN GROUP (ORDER BY review.rating)`.as('percentile_cont'),
+        sql<number>`MODE() WITHIN GROUP (ORDER BY review.rating ASC)`.as(
+          'mode',
+        ),
         'brewery.brewery_id as brewery_id',
         'brewery.name as brewery_name',
       ])
@@ -458,8 +517,11 @@ export async function getBrewery(
       .limit(pagination.size)
       .execute()
   ).map((row) => ({
-    reviewAverage: round(row.review_average, 2),
+    reviewAverage: round(row.review_average),
     reviewCount: `${row.review_count}`,
+    reviewStandardDeviation: round(row.stddev_pop),
+    reviewMedian: round(row.percentile_cont),
+    reviewMode: formatInteger(row.mode),
     reviewedBeerCount: `${row.reviewed_beer_count}`,
     breweryId: row.brewery_id,
     breweryName: row.brewery_name,
@@ -478,6 +540,9 @@ interface ReviewStats {
   distinct_beer_review_count: number
   review_count: number
   review_average: number
+  stddev_pop: number
+  percentile_cont: number
+  mode: number
 }
 
 async function getFullOverall(db: Database): Promise<OverallStats> {
@@ -489,7 +554,11 @@ async function getFullOverall(db: Database): Promise<OverallStats> {
     (SELECT COUNT(1) FROM review) AS review_count,
     (SELECT COUNT(DISTINCT beer) FROM review) AS distinct_beer_review_count,
     (SELECT COUNT(1) FROM style) AS style_count,
-    (SELECT AVG(rating) FROM review) AS review_average
+    (SELECT AVG(rating) FROM review) AS review_average,
+    (SELECT STDDEV_POP(rating) FROM review) AS stddev_pop,
+    (SELECT PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY rating) FROM review)
+      AS percentile_cont,
+    (SELECT MODE() WITHIN GROUP (ORDER BY rating ASC) FROM review) AS mode
   `
   const stats = (await statsQuery.execute(db.getDb())).rows[0]
 
@@ -499,8 +568,11 @@ async function getFullOverall(db: Database): Promise<OverallStats> {
     containerCount: `${stats.container_count}`,
     locationCount: `${stats.location_count}`,
     distinctBeerReviewCount: `${stats.distinct_beer_review_count}`,
-    reviewAverage: round(stats.review_average, 2),
+    reviewAverage: round(stats.review_average),
     reviewCount: `${stats.review_count}`,
+    reviewStandardDeviation: round(stats.stddev_pop),
+    reviewMedian: round(stats.percentile_cont),
+    reviewMode: formatInteger(stats.mode),
     styleCount: `${stats.style_count}`,
   }
 }
@@ -562,6 +634,10 @@ async function getBreweryOverall(
       fn.count<number>('review.location').distinct().as('location_count'),
       fn.count<number>('review.review_id').as('review_count'),
       fn.avg<number>('review.rating').as('review_average'),
+      sql<number>`STDDEV_POP(review.rating)`.as('stddev_pop'),
+      sql<number>`PERCENTILE_CONT(0.5)
+        WITHIN GROUP (ORDER BY review.rating)`.as('percentile_cont'),
+      sql<number>`MODE() WITHIN GROUP (ORDER BY review.rating ASC)`.as('mode'),
       fn
         .count<number>('review.beer')
         .distinct()
@@ -582,8 +658,11 @@ async function getBreweryOverall(
     containerCount: `${containerCount}`,
     locationCount: `${reviewStats[0].location_count}`,
     distinctBeerReviewCount: `${reviewStats[0].distinct_beer_review_count}`,
-    reviewAverage: round(reviewStats[0].review_average, 2),
+    reviewAverage: round(reviewStats[0].review_average),
     reviewCount: `${reviewStats[0].review_count}`,
+    reviewStandardDeviation: round(reviewStats[0].stddev_pop),
+    reviewMedian: round(reviewStats[0].percentile_cont),
+    reviewMode: formatInteger(reviewStats[0].mode),
     styleCount: `${beerStatsResults[0].style_count}`,
   }
 }
@@ -612,6 +691,10 @@ async function getLocationOverall(
       fn.count<number>('review.container').distinct().as('container_count'),
       fn.count<number>('review.review_id').distinct().as('review_count'),
       fn.avg<number>('review.rating').as('review_average'),
+      sql<number>`STDDEV_POP(review.rating)`.as('stddev_pop'),
+      sql<number>`PERCENTILE_CONT(0.5)
+        WITHIN GROUP (ORDER BY review.rating)`.as('percentile_cont'),
+      sql<number>`MODE() WITHIN GROUP (ORDER BY review.rating ASC)`.as('mode'),
     ])
     .where('review.location', '=', location)
 
@@ -626,8 +709,11 @@ async function getLocationOverall(
     containerCount: `${reviewStats.container_count}`,
     locationCount: '1',
     distinctBeerReviewCount: `${reviewStats.beer_count}`,
-    reviewAverage: round(reviewStats.review_average, 2),
+    reviewAverage: round(reviewStats.review_average),
     reviewCount: `${reviewStats.review_count}`,
+    reviewStandardDeviation: round(reviewStats.stddev_pop),
+    reviewMedian: round(reviewStats.percentile_cont),
+    reviewMode: formatInteger(reviewStats.mode),
     styleCount: `${beerStats.style_count}`,
   }
 }
@@ -665,6 +751,10 @@ async function getStyleOverall(
       fn.count<number>('review.location').distinct().as('location_count'),
       fn.count<number>('review.review_id').as('review_count'),
       fn.avg<number>('review.rating').as('review_average'),
+      sql<number>`STDDEV_POP(review.rating)`.as('stddev_pop'),
+      sql<number>`PERCENTILE_CONT(0.5)
+        WITHIN GROUP (ORDER BY review.rating)`.as('percentile_cont'),
+      sql<number>`MODE() WITHIN GROUP (ORDER BY review.rating ASC)`.as('mode'),
       fn
         .count<number>('review.beer')
         .distinct()
@@ -685,8 +775,11 @@ async function getStyleOverall(
     containerCount: `${containerCount}`,
     locationCount: `${reviewStats[0].location_count}`,
     distinctBeerReviewCount: `${reviewStats[0].distinct_beer_review_count}`,
-    reviewAverage: round(reviewStats[0].review_average, 2),
+    reviewAverage: round(reviewStats[0].review_average),
     reviewCount: `${reviewStats[0].review_count}`,
+    reviewStandardDeviation: round(reviewStats[0].stddev_pop),
+    reviewMedian: round(reviewStats[0].percentile_cont),
+    reviewMode: formatInteger(reviewStats[0].mode),
     styleCount: `${beerStatsResults[0].style_count}`,
   }
 }
@@ -741,6 +834,9 @@ export async function getRating(
 interface StyleQuerySelection {
   review_average: number
   review_count: number
+  stddev_pop: number
+  percentile_cont: number
+  mode: number
   style_id: string
   style_name: string
 }
@@ -814,6 +910,11 @@ export async function getStyle(
   const statsQuery = styleQuery.select(({ fn }) => [
     fn.count<number>('review.review_id').as('review_count'),
     fn.avg<number>('review.rating').as('review_average'),
+    sql<number>`STDDEV_POP(review.rating)`.as('stddev_pop'),
+    sql<number>`PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY review.rating)`.as(
+      'percentile_cont',
+    ),
+    sql<number>`MODE() WITHIN GROUP (ORDER BY review.rating ASC)`.as('mode'),
     'style.style_id as style_id',
     'style.name as style_name',
   ])
@@ -845,8 +946,11 @@ export async function getStyle(
       styleStatsOrder,
     ).execute()
   ).map((row) => ({
-    reviewAverage: round(row.review_average, 2),
+    reviewAverage: round(row.review_average),
     reviewCount: `${row.review_count}`,
+    reviewStandardDeviation: round(row.stddev_pop),
+    reviewMedian: round(row.percentile_cont),
+    reviewMode: formatInteger(row.mode),
     styleId: row.style_id,
     styleName: row.style_name,
   }))

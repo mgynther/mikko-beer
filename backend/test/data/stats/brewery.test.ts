@@ -17,6 +17,7 @@ import * as styleRepository from '../../../src/data/style/style.repository.js'
 import type { InsertedData } from '../review-helpers.js'
 import { insertMultipleReviews } from '../review-helpers.js'
 import { assertDeepEqual } from '../../assert.js'
+import { avg, median, mode, stdDev } from './stats-helpers.js'
 
 const defaultFilter: StatsFilter = {
   brewery: undefined,
@@ -30,6 +31,10 @@ const defaultFilter: StatsFilter = {
   timeEnd: undefined,
 }
 
+function filterByBeer(reviews: Review[], beerId: string): Review[] {
+  return reviews.filter((r) => r.beer === beerId)
+}
+
 describe('brewery stats tests', () => {
   const ctx = new TestContext()
 
@@ -38,23 +43,6 @@ describe('brewery stats tests', () => {
 
   after(ctx.after)
   afterEach(ctx.afterEach)
-
-  function filterByBeer(reviews: Review[], beerId: string) {
-    return reviews.filter((r) => r.beer === beerId)
-  }
-
-  function avgByBeer(reviews: Review[], beerId: string) {
-    return avg(filterByBeer(reviews, beerId))
-  }
-
-  function avg(reviews: Review[]) {
-    const sum = reviews
-      .map((r) => r.rating)
-      .reduce<number>((sum, rating) => sum + (rating ?? 0), 0)
-
-    const numValue = sum / reviews.length
-    return numValue.toFixed(2)
-  }
 
   async function getResults(
     db: Database,
@@ -69,16 +57,24 @@ describe('brewery stats tests', () => {
       statsFilter?.(data) ?? defaultFilter,
       breweryStatsOrder,
     )
+    const breweryReviews = filterByBeer(reviews, data.beer.id)
+    const otherBreweryReviews = filterByBeer(reviews, data.otherBeer.id)
     const brewery = {
-      reviewAverage: avgByBeer(reviews, data.beer.id),
-      reviewCount: '4',
+      reviewAverage: avg(breweryReviews),
+      reviewCount: `${breweryReviews.length}`,
+      reviewStandardDeviation: stdDev(breweryReviews),
+      reviewMedian: median(breweryReviews),
+      reviewMode: mode(breweryReviews),
       reviewedBeerCount: '1',
       breweryId: data.brewery.id,
       breweryName: data.brewery.name,
     }
     const otherBrewery = {
-      reviewAverage: avgByBeer(reviews, data.otherBeer.id),
-      reviewCount: '5',
+      reviewAverage: avg(otherBreweryReviews),
+      reviewCount: `${otherBreweryReviews.length}`,
+      reviewStandardDeviation: stdDev(otherBreweryReviews),
+      reviewMedian: median(otherBreweryReviews),
+      reviewMode: mode(otherBreweryReviews),
       reviewedBeerCount: '1',
       breweryId: data.otherBrewery.id,
       breweryName: data.otherBrewery.name,
@@ -351,16 +347,23 @@ describe('brewery stats tests', () => {
       defaultFilter,
       { property: 'brewery_name', direction: 'asc' },
     )
+    const otherBeerReviews = filterByBeer(reviews, otherBeer.id)
     const breweryStats = {
       reviewAverage: avg(reviews),
       reviewCount: `${reviews.length}`,
+      reviewStandardDeviation: stdDev(reviews),
+      reviewMedian: median(reviews),
+      reviewMode: mode(reviews),
       reviewedBeerCount: '2',
       breweryId: brewery.id,
       breweryName: brewery.name,
     }
     const otherBreweryStats = {
-      reviewAverage: avgByBeer(reviews, otherBeer.id),
-      reviewCount: `${filterByBeer(reviews, otherBeer.id).length}`,
+      reviewAverage: avg(otherBeerReviews),
+      reviewCount: `${otherBeerReviews.length}`,
+      reviewStandardDeviation: stdDev(otherBeerReviews),
+      reviewMedian: median(otherBeerReviews),
+      reviewMode: mode(otherBeerReviews),
       reviewedBeerCount: '1',
       breweryId: otherBrewery.id,
       breweryName: otherBrewery.name,

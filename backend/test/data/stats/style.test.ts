@@ -11,6 +11,7 @@ import * as statsRepository from '../../../src/data/stats/stats.repository.js'
 import type { InsertedData } from '../review-helpers.js'
 import { insertMultipleReviews } from '../review-helpers.js'
 import { assertDeepEqual } from '../../assert.js'
+import { avg, median, mode, stdDev } from './stats-helpers.js'
 
 const defaultFilter: StatsFilter = {
   brewery: undefined,
@@ -33,15 +34,8 @@ describe('style stats tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  function avg(reviews: Review[], beerId: string) {
-    if (reviews === null) throw new Error('must not be null')
-    const filteredReviews = reviews.filter((r) => r.beer === beerId)
-    const sum = filteredReviews
-      .map((r) => r.rating)
-      .reduce<number>((sum, rating) => sum + (rating ?? 0), 0)
-
-    const numValue = sum / filteredReviews.length
-    return numValue.toFixed(2)
+  function filterByBeer(reviews: Review[], beerId: string): Review[] {
+    return reviews.filter((r) => r.beer === beerId)
   }
 
   async function getResults(
@@ -55,15 +49,23 @@ describe('style stats tests', () => {
       statsFilter?.(data) ?? defaultFilter,
       styleStatsOrder,
     )
+    const styleReviews = filterByBeer(reviews, data.beer.id)
+    const otherStyleReviews = filterByBeer(reviews, data.otherBeer.id)
     const style = {
-      reviewAverage: avg(reviews, data.beer.id),
-      reviewCount: '4',
+      reviewAverage: avg(styleReviews),
+      reviewCount: `${styleReviews.length}`,
+      reviewStandardDeviation: stdDev(styleReviews),
+      reviewMedian: median(styleReviews),
+      reviewMode: mode(styleReviews),
       styleId: data.style.id,
       styleName: data.style.name,
     }
     const otherStyle = {
-      reviewAverage: avg(reviews, data.otherBeer.id),
-      reviewCount: '5',
+      reviewAverage: avg(otherStyleReviews),
+      reviewCount: `${otherStyleReviews.length}`,
+      reviewStandardDeviation: stdDev(otherStyleReviews),
+      reviewMedian: median(otherStyleReviews),
+      reviewMode: mode(otherStyleReviews),
       styleId: data.otherStyle.id,
       styleName: data.otherStyle.name,
     }

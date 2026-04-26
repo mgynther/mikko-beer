@@ -12,6 +12,9 @@ import { directionValidation } from '../internal/list.js'
 export type AnnualStats = Array<{
   reviewAverage: string
   reviewCount: string
+  reviewStandardDeviation: string
+  reviewMedian: string
+  reviewMode: string
   year: string
 }>
 
@@ -21,12 +24,18 @@ export type AnnualContainerStats = Array<{
   containerType: string
   reviewAverage: string
   reviewCount: string
+  reviewStandardDeviation: string
+  reviewMedian: string
+  reviewMode: string
   year: string
 }>
 
 export type BreweryStats = Array<{
   reviewAverage: string
   reviewCount: string
+  reviewStandardDeviation: string
+  reviewMedian: string
+  reviewMode: string
   reviewedBeerCount: string
   breweryId: string
   breweryName: string
@@ -35,6 +44,9 @@ export type BreweryStats = Array<{
 export type ContainerStats = Array<{
   reviewAverage: string
   reviewCount: string
+  reviewStandardDeviation: string
+  reviewMedian: string
+  reviewMode: string
   containerId: string
   containerSize: string
   containerType: string
@@ -43,6 +55,9 @@ export type ContainerStats = Array<{
 export type LocationStats = Array<{
   reviewAverage: string
   reviewCount: string
+  reviewStandardDeviation: string
+  reviewMedian: string
+  reviewMode: string
   locationId: string
   locationName: string
 }>
@@ -69,6 +84,9 @@ export interface OverallStats {
   distinctBeerReviewCount: string
   reviewAverage: string
   reviewCount: string
+  reviewStandardDeviation: string
+  reviewMedian: string
+  reviewMode: string
   styleCount: string
 }
 
@@ -98,6 +116,9 @@ export interface StatsFilter {
 export type StyleStats = Array<{
   reviewAverage: string
   reviewCount: string
+  reviewStandardDeviation: string
+  reviewMedian: string
+  reviewMode: string
   styleId: string
   styleName: string
 }>

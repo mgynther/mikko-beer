@@ -5,6 +5,7 @@ import * as statsRepository from '../../../src/data/stats/stats.repository.js'
 import { insertMultipleReviews } from '../review-helpers.js'
 import type { Review } from '../../../src/core/review/review.js'
 import { assertDeepEqual } from '../../assert.js'
+import { avg, median, mode, stdDev } from './stats-helpers.js'
 
 describe('container stats tests', () => {
   const ctx = new TestContext()
@@ -19,15 +20,23 @@ describe('container stats tests', () => {
     return reviews.filter((r) => r.container === containerId)
   }
 
-  function avg(reviews: Review[], containerId: string) {
-    if (reviews === null) throw new Error('must not be null')
-    const filteredReviews = filterByContainer(reviews, containerId)
-    const sum = filteredReviews
-      .map((r) => r.rating)
-      .reduce<number>((sum, rating) => sum + (rating ?? 0), 0)
-
-    const numValue = sum / filteredReviews.length
-    return numValue.toFixed(2)
+  function containerStats(
+    reviews: Review[],
+    containerId: string,
+    containerSize: string,
+    containerType: string,
+  ) {
+    const matching = filterByContainer(reviews, containerId)
+    return {
+      containerId,
+      containerSize,
+      containerType,
+      reviewAverage: avg(matching),
+      reviewCount: `${matching.length}`,
+      reviewStandardDeviation: stdDev(matching),
+      reviewMedian: median(matching),
+      reviewMode: mode(matching),
+    }
   }
 
   it('no filters', async () => {
@@ -39,20 +48,8 @@ describe('container stats tests', () => {
     })
     const { container, otherContainer } = data
     assertDeepEqual(stats, [
-      {
-        containerId: container.id,
-        containerSize: '0.50',
-        containerType: 'bottle',
-        reviewAverage: avg(reviews, container.id),
-        reviewCount: `${filterByContainer(reviews, container.id).length}`,
-      },
-      {
-        containerId: otherContainer.id,
-        containerSize: '0.44',
-        containerType: 'can',
-        reviewAverage: avg(reviews, otherContainer.id),
-        reviewCount: `${filterByContainer(reviews, otherContainer.id).length}`,
-      },
+      containerStats(reviews, container.id, '0.50', 'bottle'),
+      containerStats(reviews, otherContainer.id, '0.44', 'can'),
     ])
   })
 
@@ -65,13 +62,7 @@ describe('container stats tests', () => {
     })
     const { container } = data
     assertDeepEqual(stats, [
-      {
-        containerId: container.id,
-        containerSize: '0.50',
-        containerType: 'bottle',
-        reviewAverage: avg(reviews, container.id),
-        reviewCount: `${filterByContainer(reviews, container.id).length}`,
-      },
+      containerStats(reviews, container.id, '0.50', 'bottle'),
     ])
   })
 
@@ -84,31 +75,19 @@ describe('container stats tests', () => {
     })
     const { container } = data
     assertDeepEqual(stats, [
-      {
-        containerId: container.id,
-        containerSize: '0.50',
-        containerType: 'bottle',
-        reviewAverage: avg(reviews, container.id),
-        reviewCount: `${filterByContainer(reviews, container.id).length}`,
-      },
+      containerStats(reviews, container.id, '0.50', 'bottle'),
     ])
   })
 
   it('filter by style', async () => {
-    const { data } = await insertMultipleReviews(9, ctx.db)
+    const { data, reviews } = await insertMultipleReviews(9, ctx.db)
     const stats = await statsRepository.getContainer(ctx.db, {
       brewery: undefined,
       location: undefined,
       style: data.otherStyle.id,
     })
     assertDeepEqual(stats, [
-      {
-        containerId: data.otherContainer.id,
-        containerSize: '0.44',
-        containerType: 'can',
-        reviewAverage: '6.60',
-        reviewCount: '5',
-      },
+      containerStats(reviews, data.otherContainer.id, '0.44', 'can'),
     ])
   })
 })

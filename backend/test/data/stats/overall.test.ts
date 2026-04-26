@@ -7,6 +7,7 @@ import * as statsRepository from '../../../src/data/stats/stats.repository.js'
 import { insertMultipleReviews } from '../review-helpers.js'
 import type { Review } from '../../../src/core/review/review.js'
 import { assertDeepEqual, assertRejects } from '../../assert.js'
+import { avg, median, mode, stdDev } from './stats-helpers.js'
 
 const defaultFilter: StatsIdFilter = {
   brewery: undefined,
@@ -14,11 +15,14 @@ const defaultFilter: StatsIdFilter = {
   style: undefined,
 }
 
-function reviewAverage(reviews: Review[]): string {
-  return (
-    reviews.map((r) => r.rating).reduce((sum, rating) => sum + rating, 0) /
-    reviews.length
-  ).toFixed(2)
+function expectedStats(reviews: Review[]) {
+  return {
+    reviewAverage: avg(reviews),
+    reviewCount: `${reviews.length}`,
+    reviewStandardDeviation: stdDev(reviews),
+    reviewMedian: median(reviews),
+    reviewMode: mode(reviews),
+  }
 }
 
 describe('overall stats tests', () => {
@@ -40,8 +44,7 @@ describe('overall stats tests', () => {
       containerCount: '2',
       locationCount: '2',
       distinctBeerReviewCount: '2',
-      reviewAverage: reviewAverage(reviews),
-      reviewCount: `${reviews.length}`,
+      ...expectedStats(reviews),
       styleCount: '2',
     })
   })
@@ -60,8 +63,7 @@ describe('overall stats tests', () => {
       containerCount: '1',
       locationCount: '1',
       distinctBeerReviewCount: '1',
-      reviewAverage: reviewAverage(matchingReviews),
-      reviewCount: `${matchingReviews.length}`,
+      ...expectedStats(matchingReviews),
       styleCount: '1',
     })
   })
@@ -97,8 +99,7 @@ describe('overall stats tests', () => {
       containerCount: '1',
       locationCount: '1',
       distinctBeerReviewCount: '1',
-      reviewAverage: reviewAverage(matchingReviews),
-      reviewCount: `${matchingReviews.length}`,
+      ...expectedStats(matchingReviews),
       styleCount: '1',
     })
   })
@@ -117,8 +118,7 @@ describe('overall stats tests', () => {
       containerCount: '1',
       locationCount: '1',
       distinctBeerReviewCount: '1',
-      reviewAverage: reviewAverage(matchingReviews),
-      reviewCount: `${matchingReviews.length}`,
+      ...expectedStats(matchingReviews),
       styleCount: '1',
     })
   })
