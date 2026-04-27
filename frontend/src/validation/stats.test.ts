@@ -34,6 +34,9 @@ const validOverall: OverallStats = {
   distinctBeerReviewCount: '401',
   reviewAverage: '8.25',
   reviewCount: '512',
+  reviewMedian: '8.50',
+  reviewMode: '9',
+  reviewStandardDeviation: '0.57',
   styleCount: '33',
 }
 

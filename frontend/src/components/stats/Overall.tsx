@@ -54,6 +54,18 @@ function Overall(props: Props): React.JSX.Element {
               <td>{stats.reviewAverage}</td>
             </tr>
             <tr>
+              <td>Review rating median</td>
+              <td>{stats.reviewMedian}</td>
+            </tr>
+            <tr>
+              <td>Review rating mode</td>
+              <td>{stats.reviewMode}</td>
+            </tr>
+            <tr>
+              <td>Review rating std dev</td>
+              <td>{stats.reviewStandardDeviation}</td>
+            </tr>
+            <tr>
               <td>Styles</td>
               <td>{stats.styleCount}</td>
             </tr>

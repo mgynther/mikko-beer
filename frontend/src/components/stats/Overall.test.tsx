@@ -22,6 +22,9 @@ test('renders overall stats', () => {
               reviewCount: '112',
               distinctBeerReviewCount: '110',
               reviewAverage: '8.54',
+              reviewMedian: '8.50',
+              reviewMode: '9',
+              reviewStandardDeviation: '0.71',
               styleCount: '29',
             },
             isLoading: false,
@@ -41,5 +44,8 @@ test('renders overall stats', () => {
   getByText('112')
   getByText('110')
   getByText('8.54')
+  getByText('8.50')
+  getByText('9')
+  getByText('0.71')
   getByText('29')
 })

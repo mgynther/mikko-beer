@@ -100,6 +100,9 @@ const emptyStatsIf: StatsIf = {
         reviewCount: '0',
         distinctBeerReviewCount: '0',
         reviewAverage: '0.00',
+        reviewMedian: '0.00',
+        reviewMode: '0',
+        reviewStandardDeviation: '0.00',
         styleCount: '0',
       },
       isLoading: false,
@@ -184,6 +187,9 @@ overallTestCases.forEach((testCase) => {
                 reviewCount: '112',
                 distinctBeerReviewCount: '110',
                 reviewAverage: '8.54',
+                reviewMedian: '9.00',
+                reviewMode: '9',
+                reviewStandardDeviation: '1.13',
                 styleCount: '29',
               },
               isLoading: false,
@@ -202,6 +208,9 @@ overallTestCases.forEach((testCase) => {
     getByText('112')
     getByText('110')
     getByText('8.54')
+    getByText('9.00')
+    getByText('9')
+    getByText('1.13')
     getByText('29')
   })
 })

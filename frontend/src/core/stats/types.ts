@@ -19,6 +19,9 @@ export interface OverallStats {
   distinctBeerReviewCount: string
   reviewAverage: string
   reviewCount: string
+  reviewMedian: string
+  reviewMode: string
+  reviewStandardDeviation: string
   styleCount: string
 }
 
