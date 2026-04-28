@@ -253,6 +253,9 @@ test('renders annual container stats', async () => {
     containerType: 'bottle',
     reviewAverage: '7.87',
     reviewCount: '10',
+    reviewMedian: '8.00',
+    reviewMode: '8',
+    reviewStandardDeviation: '0.85',
     year: '2020',
   }
   const stats2021: OneAnnualContainerStats = {
@@ -261,6 +264,9 @@ test('renders annual container stats', async () => {
     containerType: 'can',
     reviewAverage: '8.23',
     reviewCount: '24',
+    reviewMedian: '9.00',
+    reviewMode: '9',
+    reviewStandardDeviation: '0.94',
     year: '2021',
   }
   const statsIf: StatsIf = {
@@ -297,9 +303,15 @@ test('renders annual container stats', async () => {
   getByText(`${stats2021.containerType} ${stats2021.containerSize}`)
   getByText(stats2021.reviewAverage)
   getByText(stats2021.reviewCount)
+  getByText(stats2021.reviewMedian)
+  getByText(stats2021.reviewMode)
+  getByText(stats2021.reviewStandardDeviation)
   getByText(stats2020.year)
   getByText(stats2020.reviewAverage)
   getByText(stats2020.reviewCount)
+  getByText(stats2020.reviewMedian)
+  getByText(stats2020.reviewMode)
+  getByText(stats2020.reviewStandardDeviation)
 })
 
 test('renders brewery stats', async () => {

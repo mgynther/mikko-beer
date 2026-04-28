@@ -45,6 +45,9 @@ function AnnualContainerStatsHelper(props: {
           <div>{ac.containerSize}</div>
           <div>{ac.reviewAverage}</div>
           <div>{ac.reviewCount}</div>
+          <div>{ac.reviewMedian}</div>
+          <div>{ac.reviewMode}</div>
+          <div>{ac.reviewStandardDeviation}</div>
           <div>{ac.year}</div>
         </div>
       ))}
@@ -69,6 +72,9 @@ test('annual container stats', async () => {
         containerType: 'bottle',
         reviewAverage: '8.12',
         reviewCount: '42',
+        reviewMedian: '8.00',
+        reviewMode: '8',
+        reviewStandardDeviation: '0.84',
         year: '2024',
       },
     ],
@@ -104,5 +110,8 @@ test('annual container stats', async () => {
   expect(getByText(annualContainer.containerSize)).toBeDefined()
   expect(getByText(annualContainer.reviewAverage)).toBeDefined()
   expect(getByText(annualContainer.reviewCount)).toBeDefined()
+  expect(getByText(annualContainer.reviewMedian)).toBeDefined()
+  expect(getByText(annualContainer.reviewMode)).toBeDefined()
+  expect(getByText(annualContainer.reviewStandardDeviation)).toBeDefined()
   expect(getByText(annualContainer.year)).toBeDefined()
 })

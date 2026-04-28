@@ -21,8 +21,11 @@ function AnnualContainerStatsTable(props: Props): React.JSX.Element {
           <tr>
             <th>Year</th>
             <th>Container</th>
-            <th>Reviews</th>
-            <th>Review rating average</th>
+            <th>n</th>
+            <th>Avg</th>
+            <th>Med</th>
+            <th>Mod</th>
+            <th>σ</th>
           </tr>
         </thead>
         <tbody>
@@ -38,6 +41,9 @@ function AnnualContainerStatsTable(props: Props): React.JSX.Element {
               </td>
               <td>{annualContainer.reviewCount}</td>
               <td>{annualContainer.reviewAverage}</td>
+              <td>{annualContainer.reviewMedian}</td>
+              <td>{annualContainer.reviewMode}</td>
+              <td>{annualContainer.reviewStandardDeviation}</td>
             </tr>
           ))}
         </tbody>

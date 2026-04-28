@@ -13,6 +13,9 @@ test('renders annual container stats', async () => {
           containerType: 'draft',
           reviewAverage: '9.12',
           reviewCount: '83',
+          reviewMedian: '9.00',
+          reviewMode: '9',
+          reviewStandardDeviation: '0.35',
           year: '2023',
         },
         {
@@ -21,6 +24,9 @@ test('renders annual container stats', async () => {
           containerType: 'bottle',
           reviewAverage: '8.92',
           reviewCount: '64',
+          reviewMedian: '8.50',
+          reviewMode: '8',
+          reviewStandardDeviation: '0.66',
           year: '2022',
         },
       ]}
@@ -31,8 +37,14 @@ test('renders annual container stats', async () => {
   getByText('draft 0.25')
   getByText('83')
   getByText('9.12')
+  getByText('9.00')
+  getByText('9')
+  getByText('0.35')
   getByText('2022')
   getByText('bottle 0.33')
   getByText('64')
   getByText('8.92')
+  getByText('8.50')
+  getByText('8')
+  getByText('0.66')
 })

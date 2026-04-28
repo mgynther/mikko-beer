@@ -38,6 +38,9 @@ export interface OneAnnualContainerStats {
   containerSize: string
   containerType: string
   reviewAverage: string
+  reviewMedian: string
+  reviewMode: string
+  reviewStandardDeviation: string
   reviewCount: string
   year: string
 }

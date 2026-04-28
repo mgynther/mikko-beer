@@ -1,5 +1,7 @@
 table.StatsTable {
+  font-size: calc(10px + 1vmin);
   margin-top: 10px;
+  text-align: center;
   width: 100%;
 }
 

@@ -21,6 +21,9 @@ const stats2023: OneAnnualContainerStats = {
   containerType: 'bottle',
   reviewAverage: '9.06',
   reviewCount: '63',
+  reviewMedian: '9.00',
+  reviewMode: '9',
+  reviewStandardDeviation: '0.32',
   year: '2023',
 }
 
@@ -28,8 +31,11 @@ const stats2022: OneAnnualContainerStats = {
   containerId: 'a14e52fd-6f9b-41eb-b2c5-8e2a85284865',
   containerSize: '0.44',
   containerType: 'can',
-  reviewAverage: '9.12',
+  reviewAverage: '8.12',
   reviewCount: '67',
+  reviewMedian: '8.00',
+  reviewMode: '8',
+  reviewStandardDeviation: '0.45',
   year: '2022',
 }
 
@@ -115,6 +121,9 @@ test('renders annual container stats', async () => {
   getByText('2023')
   getByText('can 0.44')
   getByText('67')
-  getByText('9.12')
+  getByText('8.12')
+  getByText('8.00')
+  getByText('8')
+  getByText('0.45')
   getByText('2022')
 })
