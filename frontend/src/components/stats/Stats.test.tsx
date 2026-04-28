@@ -31,7 +31,16 @@ const emptyStatsIf: StatsIf = {
   annual: {
     useStats: () => ({
       stats: {
-        annual: [{ reviewAverage: '0.00', reviewCount: '0', year: '2020' }],
+        annual: [
+          {
+            reviewAverage: '0.00',
+            reviewCount: '0',
+            reviewMedian: '-',
+            reviewMode: '-',
+            reviewStandardDeviation: '-',
+            year: '2020',
+          },
+        ],
       },
       isLoading: false,
     }),
@@ -226,8 +235,22 @@ test('renders annual stats', () => {
           useStats: () => ({
             stats: {
               annual: [
-                { reviewAverage: '7.87', reviewCount: '10', year: '2020' },
-                { reviewAverage: '8.23', reviewCount: '24', year: '2021' },
+                {
+                  reviewAverage: '7.87',
+                  reviewCount: '10',
+                  reviewMedian: '8.00',
+                  reviewMode: '8',
+                  reviewStandardDeviation: '0.56',
+                  year: '2020',
+                },
+                {
+                  reviewAverage: '8.23',
+                  reviewCount: '24',
+                  reviewMedian: '8.50',
+                  reviewMode: '9',
+                  reviewStandardDeviation: '0.87',
+                  year: '2021',
+                },
               ],
             },
             isLoading: false,
@@ -240,9 +263,15 @@ test('renders annual stats', () => {
     />,
   )
   getByText('7.87')
+  getByText('8.00')
+  getByText('8')
+  getByText('0.56')
   getByText('10')
   getByText('2020')
   getByText('8.23')
+  getByText('8.50')
+  getByText('9')
+  getByText('0.87')
   getByText('24')
   getByText('2021')
 })

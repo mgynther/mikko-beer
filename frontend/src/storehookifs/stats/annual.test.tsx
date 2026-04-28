@@ -36,6 +36,9 @@ function AnnualStatsHelper(props: { params: IdParams }): React.JSX.Element {
           <div>{annual.year}</div>
           <div>{annual.reviewAverage}</div>
           <div>{annual.reviewCount}</div>
+          <div>{annual.reviewMedian}</div>
+          <div>{annual.reviewMode}</div>
+          <div>{annual.reviewStandardDeviation}</div>
         </div>
       ))}
     </div>
@@ -48,6 +51,9 @@ test('annual stats', async () => {
       {
         reviewAverage: '8.45',
         reviewCount: '132',
+        reviewMedian: '8.00',
+        reviewMode: '8',
+        reviewStandardDeviation: '0.84',
         year: '2023',
       },
     ],

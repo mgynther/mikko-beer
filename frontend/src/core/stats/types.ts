@@ -29,6 +29,9 @@ export interface AnnualStats {
   annual: Array<{
     reviewAverage: string
     reviewCount: string
+    reviewMedian: string
+    reviewMode: string
+    reviewStandardDeviation: string
     year: string
   }>
 }

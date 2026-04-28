@@ -64,6 +64,9 @@ const validAnnual: AnnualStats = {
     {
       reviewAverage: '7.89',
       reviewCount: '105',
+      reviewMedian: '9.00',
+      reviewMode: '9',
+      reviewStandardDeviation: '0.47',
       year: '2023',
     },
   ],

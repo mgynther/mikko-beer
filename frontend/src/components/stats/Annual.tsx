@@ -26,8 +26,11 @@ function Annual(props: Props): React.JSX.Element {
         <thead>
           <tr>
             <th>Year</th>
-            <th>Reviews</th>
-            <th>Review rating average</th>
+            <th>n</th>
+            <th>Avg</th>
+            <th>Med</th>
+            <th>Mod</th>
+            <th>σ</th>
           </tr>
         </thead>
         <tbody>
@@ -36,6 +39,9 @@ function Annual(props: Props): React.JSX.Element {
               <td>{year.year}</td>
               <td>{year.reviewCount}</td>
               <td>{year.reviewAverage}</td>
+              <td>{year.reviewMedian}</td>
+              <td>{year.reviewMode}</td>
+              <td>{year.reviewStandardDeviation}</td>
             </tr>
           ))}
         </tbody>
