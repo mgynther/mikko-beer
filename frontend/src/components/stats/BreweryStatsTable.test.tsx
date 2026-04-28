@@ -6,6 +6,7 @@ import BreweryStatsTable from './BreweryStatsTable'
 import LinkWrapper from '../LinkWrapper'
 import type {
   BreweryStatsSortingOrder,
+  OneBreweryStats,
   StatsFilters,
   YearMonth,
 } from '../../core/stats/types'
@@ -16,19 +17,25 @@ const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const koskipanimo = {
+const koskipanimo: OneBreweryStats = {
   breweryId: '9c761e23-0113-4eeb-b2d5-819f1f5345b5',
   breweryName: 'Koskipanimo',
   reviewAverage: '9.06',
   reviewCount: '63',
+  reviewMedian: '9.00',
+  reviewMode: '9',
+  reviewStandardDeviation: '0.35',
   reviewedBeerCount: '62',
 }
 
-const lehe = {
+const lehe: OneBreweryStats = {
   breweryId: 'a65d5e2a-7c00-48bb-80f2-14bc89940839',
   breweryName: 'Lehe pruulikoda',
   reviewAverage: '9.71',
   reviewCount: '24',
+  reviewMedian: '9.50',
+  reviewMode: '10',
+  reviewStandardDeviation: '0.67',
   reviewedBeerCount: '24',
 }
 
@@ -84,9 +91,15 @@ test('renders brewery stats', () => {
   getByText(koskipanimo.breweryName)
   getByText(koskipanimo.reviewAverage)
   getByText(`${koskipanimo.reviewCount} (${koskipanimo.reviewedBeerCount})`)
+  getByText(koskipanimo.reviewMedian)
+  getByText(koskipanimo.reviewMode)
+  getByText(koskipanimo.reviewStandardDeviation)
   getByText(lehe.breweryName)
   getByText(lehe.reviewAverage)
   getByText(lehe.reviewCount)
+  getByText(lehe.reviewMedian)
+  getByText(lehe.reviewMode)
+  getByText(lehe.reviewStandardDeviation)
 })
 
 test('opens filters', async () => {
@@ -134,14 +147,14 @@ const orderTests: OrderTestData[] = [
     testName: 'brewery name desc, flip order',
   },
   {
-    buttonText: 'Reviews',
+    buttonText: 'n',
     expectedOrder: 'count',
     order: 'brewery_name',
     sortingDirection: 'asc',
     testName: 'reviews',
   },
   {
-    buttonText: 'Average',
+    buttonText: 'Avg',
     expectedOrder: 'average',
     order: 'brewery_name',
     sortingDirection: 'asc',

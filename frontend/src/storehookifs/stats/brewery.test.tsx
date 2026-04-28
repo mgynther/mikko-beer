@@ -45,6 +45,9 @@ function BreweryStatsHelper(props: {
           <div>{brewery.breweryName}</div>
           <div>{brewery.reviewAverage}</div>
           <div>{brewery.reviewCount}</div>
+          <div>{brewery.reviewMedian}</div>
+          <div>{brewery.reviewMode}</div>
+          <div>{brewery.reviewStandardDeviation}</div>
           <div>{brewery.reviewedBeerCount}</div>
         </div>
       ))}
@@ -68,6 +71,9 @@ test('brewery stats', async () => {
         breweryName: 'Koskipanimo',
         reviewAverage: '9.08',
         reviewCount: '77',
+        reviewMedian: '9.00',
+        reviewMode: '9',
+        reviewStandardDeviation: '0.55',
         reviewedBeerCount: '72',
       },
       {
@@ -75,6 +81,9 @@ test('brewery stats', async () => {
         breweryName: 'Mallassepät',
         reviewAverage: '9.23',
         reviewCount: '61',
+        reviewMedian: '9.50',
+        reviewMode: '10',
+        reviewStandardDeviation: '0.54',
         reviewedBeerCount: '60',
       },
     ],
@@ -125,10 +134,16 @@ test('brewery stats', async () => {
     expect(getByText(koskipanimo.breweryName)).toBeDefined()
     expect(getByText(koskipanimo.reviewAverage)).toBeDefined()
     expect(getByText(koskipanimo.reviewCount)).toBeDefined()
+    expect(getByText(koskipanimo.reviewMedian)).toBeDefined()
+    expect(getByText(koskipanimo.reviewMode)).toBeDefined()
+    expect(getByText(koskipanimo.reviewStandardDeviation)).toBeDefined()
     expect(getByText(koskipanimo.reviewedBeerCount)).toBeDefined()
     expect(getByText(mallassepat.breweryName)).toBeDefined()
     expect(getByText(mallassepat.reviewAverage)).toBeDefined()
     expect(getByText(mallassepat.reviewCount)).toBeDefined()
+    expect(getByText(mallassepat.reviewMedian)).toBeDefined()
+    expect(getByText(mallassepat.reviewMode)).toBeDefined()
+    expect(getByText(mallassepat.reviewStandardDeviation)).toBeDefined()
     expect(getByText(mallassepat.reviewedBeerCount)).toBeDefined()
   })
 })

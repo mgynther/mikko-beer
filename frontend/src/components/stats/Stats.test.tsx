@@ -6,6 +6,7 @@ import Stats from './Stats'
 import type {
   LocationStats,
   OneAnnualContainerStats,
+  OneBreweryStats,
   OneLocationStats,
   StatsIf,
   YearMonth,
@@ -315,18 +316,24 @@ test('renders annual container stats', async () => {
 })
 
 test('renders brewery stats', async () => {
-  const koskipanimo = {
+  const koskipanimo: OneBreweryStats = {
     breweryId: '8981fe71-1a4d-48f3-8b4e-9b9b3ddf9d8a',
     breweryName: 'Koskipanimo',
     reviewAverage: '9.06',
     reviewCount: '63',
+    reviewMedian: '9.00',
+    reviewMode: '9',
+    reviewStandardDeviation: '0.35',
     reviewedBeerCount: '62',
   }
-  const lehe = {
+  const lehe: OneBreweryStats = {
     breweryId: 'ba44d3d1-5071-41bc-8a05-65ec8914a13e',
     breweryName: 'Lehe pruulikoda',
     reviewAverage: '9.71',
     reviewCount: '24',
+    reviewMedian: '9.50',
+    reviewMode: '10',
+    reviewStandardDeviation: '0.67',
     reviewedBeerCount: '24',
   }
   const breweryStats = { brewery: [{ ...koskipanimo }, { ...lehe }] }
@@ -362,9 +369,15 @@ test('renders brewery stats', async () => {
   await waitFor(() => getByText(koskipanimo.breweryName))
   getByText(koskipanimo.reviewAverage)
   getByText(`${koskipanimo.reviewCount} (${koskipanimo.reviewedBeerCount})`)
+  getByText(koskipanimo.reviewMedian)
+  getByText(koskipanimo.reviewMode)
+  getByText(koskipanimo.reviewStandardDeviation)
   getByText(lehe.breweryName)
   getByText(lehe.reviewAverage)
   getByText(lehe.reviewCount)
+  getByText(lehe.reviewMedian)
+  getByText(lehe.reviewMode)
+  getByText(lehe.reviewStandardDeviation)
 })
 
 test('sets state', async () => {

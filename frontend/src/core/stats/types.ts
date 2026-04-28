@@ -61,6 +61,9 @@ export interface OneBreweryStats {
   breweryName: string
   reviewAverage: string
   reviewCount: string
+  reviewMedian: string
+  reviewMode: string
+  reviewStandardDeviation: string
   reviewedBeerCount: string
 }
 

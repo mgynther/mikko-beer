@@ -8,6 +8,7 @@ import { openFilters } from './filters-test-util'
 import type {
   BreweryStats,
   GetBreweryStatsIf,
+  OneBreweryStats,
   YearMonth,
 } from '../../core/stats/types'
 import type { UseDebounce } from '../../core/types'
@@ -22,19 +23,25 @@ const dontCall = (): any => {
 
 const styleId = 'b345a181-3709-4e12-b255-6fea3baf9f71'
 
-const koskipanimo = {
+const koskipanimo: OneBreweryStats = {
   breweryId: '9bf16009-53f2-42e9-86f2-7dc80211aa63',
   breweryName: 'Koskipanimo',
   reviewAverage: '9.06',
   reviewCount: '63',
+  reviewMedian: '9.00',
+  reviewMode: '9',
+  reviewStandardDeviation: '0.35',
   reviewedBeerCount: '62',
 }
 
-const lehe = {
+const lehe: OneBreweryStats = {
   breweryId: '1db4ef0e-f9a1-441f-b803-6b9b80d971ce',
   breweryName: 'Lehe pruulikoda',
   reviewAverage: '9.71',
   reviewCount: '24',
+  reviewMedian: '9.50',
+  reviewMode: '10',
+  reviewStandardDeviation: '0.67',
   reviewedBeerCount: '24',
 }
 
@@ -176,9 +183,15 @@ test('renders brewery stats', () => {
   getByText(koskipanimo.breweryName)
   getByText(koskipanimo.reviewAverage)
   getByText(`${koskipanimo.reviewCount} (${koskipanimo.reviewedBeerCount})`)
+  getByText(koskipanimo.reviewMedian)
+  getByText(koskipanimo.reviewMode)
+  getByText(koskipanimo.reviewStandardDeviation)
   getByText(lehe.breweryName)
   getByText(lehe.reviewAverage)
   getByText(lehe.reviewCount)
+  getByText(lehe.reviewMedian)
+  getByText(lehe.reviewMode)
+  getByText(lehe.reviewStandardDeviation)
 })
 
 test('clears loaded breweries on filter change pending', () => {
@@ -236,7 +249,7 @@ test('renders loading', () => {
     </LinkWrapper>,
   )
   const cells = getAllByRole('cell')
-  expect(cells.length).toEqual(9)
+  expect(cells.length).toEqual(6 * 3)
 })
 
 test('sets minimum review count filter', () => {

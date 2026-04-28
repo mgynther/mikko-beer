@@ -8,6 +8,7 @@ import type { SearchParameters } from '../util'
 import type {
   BreweryStats,
   GetBreweryStatsIf,
+  OneBreweryStats,
   StatsFilters,
   YearMonth,
 } from '../../core/stats/types'
@@ -21,19 +22,25 @@ const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
 }
 
-const koskipanimo = {
+const koskipanimo: OneBreweryStats = {
   breweryId: 'ad11fad9-951a-473f-9c2e-88084589c4f7',
   breweryName: 'Koskipanimo',
   reviewAverage: '9.06',
   reviewCount: '63',
+  reviewMedian: '9.00',
+  reviewMode: '9',
+  reviewStandardDeviation: '0.35',
   reviewedBeerCount: '62',
 }
 
-const lehe = {
+const lehe: OneBreweryStats = {
   breweryId: '1d6505ea-9cbd-4215-bc5c-bd80b2a27af8',
   breweryName: 'Lehe pruulikoda',
   reviewAverage: '9.71',
   reviewCount: '24',
+  reviewMedian: '9.50',
+  reviewMode: '10',
+  reviewStandardDeviation: '0.67',
   reviewedBeerCount: '24',
 }
 
@@ -174,9 +181,15 @@ test('renders brewery stats', async () => {
   await waitFor(() => getByText(koskipanimo.breweryName))
   getByText(koskipanimo.reviewAverage)
   getByText(`${koskipanimo.reviewCount} (${koskipanimo.reviewedBeerCount})`)
+  getByText(koskipanimo.reviewMedian)
+  getByText(koskipanimo.reviewMode)
+  getByText(koskipanimo.reviewStandardDeviation)
   getByText(lehe.breweryName)
   getByText(lehe.reviewAverage)
   getByText(lehe.reviewCount)
+  getByText(lehe.reviewMedian)
+  getByText(lehe.reviewMode)
+  getByText(lehe.reviewStandardDeviation)
 })
 
 const defaultSearchParams: Record<string, string> = {
@@ -309,28 +322,28 @@ const orderChangeTests: OrderChangeTest[] = [
   {
     originalOrder: 'count',
     originalDirection: 'asc',
-    buttonText: 'Reviews ▲',
+    buttonText: 'n ▲',
     newOrder: 'count',
     newDirection: 'desc',
   },
   {
     originalOrder: 'count',
     originalDirection: 'desc',
-    buttonText: 'Reviews ▼',
+    buttonText: 'n ▼',
     newOrder: 'count',
     newDirection: 'asc',
   },
   {
     originalOrder: 'average',
     originalDirection: 'asc',
-    buttonText: 'Average ▲',
+    buttonText: 'Avg ▲',
     newOrder: 'average',
     newDirection: 'desc',
   },
   {
     originalOrder: 'average',
     originalDirection: 'desc',
-    buttonText: 'Average ▼',
+    buttonText: 'Avg ▼',
     newOrder: 'average',
     newDirection: 'asc',
   },
@@ -344,14 +357,14 @@ const orderChangeTests: OrderChangeTest[] = [
   {
     originalOrder: 'average',
     originalDirection: 'desc',
-    buttonText: 'Reviews',
+    buttonText: 'n',
     newOrder: 'count',
     newDirection: 'desc',
   },
   {
     originalOrder: 'brewery_name',
     originalDirection: 'desc',
-    buttonText: 'Average',
+    buttonText: 'Avg',
     newOrder: 'average',
     newDirection: 'desc',
   },

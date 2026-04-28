@@ -67,7 +67,7 @@ function BreweryStatsTable(props: Props): React.JSX.Element {
                 isCompact={false}
                 isSelected={isSelected('count')}
                 title={formatTitle(
-                  'Reviews',
+                  'n',
                   isSelected('count'),
                   props.sortingDirection,
                 )}
@@ -81,7 +81,7 @@ function BreweryStatsTable(props: Props): React.JSX.Element {
                 isCompact={false}
                 isSelected={isSelected('average')}
                 title={formatTitle(
-                  'Average',
+                  'Avg',
                   isSelected('average'),
                   props.sortingDirection,
                 )}
@@ -90,9 +90,12 @@ function BreweryStatsTable(props: Props): React.JSX.Element {
                 }}
               />
             </th>
+            <th className='StatsNumColumn'>Med</th>
+            <th className='StatsNumColumn'>Mod</th>
+            <th className='StatsNumColumn'>σ</th>
           </tr>
           <tr>
-            <th colSpan={3}>
+            <th colSpan={6}>
               <AllFilters
                 filters={filters}
                 isOpen={props.isFiltersOpen}
@@ -105,7 +108,7 @@ function BreweryStatsTable(props: Props): React.JSX.Element {
           <TableSkeleton
             isLoading={props.isLoading}
             rowCount={3}
-            columnCount={3}
+            columnCount={6}
           />
           {props.breweries.map((brewery) => (
             <tr key={brewery.breweryId}>
@@ -121,6 +124,11 @@ function BreweryStatsTable(props: Props): React.JSX.Element {
               </td>
               <td className='StatsNumColumn'>{formatCount(brewery)}</td>
               <td className='StatsNumColumn'>{brewery.reviewAverage}</td>
+              <td className='StatsNumColumn'>{brewery.reviewMedian}</td>
+              <td className='StatsNumColumn'>{brewery.reviewMode}</td>
+              <td className='StatsNumColumn'>
+                {brewery.reviewStandardDeviation}
+              </td>
             </tr>
           ))}
         </tbody>
