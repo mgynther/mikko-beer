@@ -16,10 +16,6 @@ td.StatsNameColumn {
   min-width: 125px;
 }
 
-th.StatsNumColumn,
-th.StatsNumColumn {
-}
-
 th.StatsNameColumn button.TabButton,
 th.StatsNumColumn button.TabButton {
   margin: 0;
