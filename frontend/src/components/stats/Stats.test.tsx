@@ -8,7 +8,9 @@ import type {
   OneAnnualContainerStats,
   OneBreweryStats,
   OneLocationStats,
+  OneStyleStats,
   StatsIf,
+  StatsResult,
   YearMonth,
 } from '../../core/stats/types'
 import LinkWrapper from '../LinkWrapper'
@@ -639,19 +641,25 @@ test('renders rating stats', () => {
 })
 
 test('renders style stats', () => {
-  const pils = {
+  const pils: OneStyleStats = {
     styleId: 'e9929659-1d35-4ea4-be15-80b667686384',
     styleName: 'Pils',
     reviewAverage: '8.73',
     reviewCount: '72',
+    reviewMedian: '8.00',
+    reviewMode: '8',
+    reviewStandardDeviation: '0.38',
   }
-  const ipa = {
+  const ipa: OneStyleStats = {
     styleId: '5c27dff3-6053-4a4b-8fa5-e84939134056',
     styleName: 'IPA',
     reviewAverage: '8.91',
     reviewCount: '92',
+    reviewMedian: '8.50',
+    reviewMode: '9',
+    reviewStandardDeviation: '0.54',
   }
-  const statsResult = {
+  const statsResult: StatsResult = {
     stats: {
       style: [ipa, pils],
     },
@@ -680,9 +688,15 @@ test('renders style stats', () => {
   getByText(pils.styleName)
   getByText(pils.reviewAverage)
   getByText(pils.reviewCount)
+  getByText(pils.reviewMedian)
+  getByText(pils.reviewMode)
+  getByText(pils.reviewStandardDeviation)
   getByText(ipa.styleName)
   getByText(ipa.reviewAverage)
   getByText(ipa.reviewCount)
+  getByText(ipa.reviewMedian)
+  getByText(ipa.reviewMode)
+  getByText(ipa.reviewStandardDeviation)
 })
 
 interface NavigationTest {

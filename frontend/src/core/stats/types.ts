@@ -165,13 +165,18 @@ export interface StyleStatsQueryParams {
   timeEnd: number
 }
 
+export interface OneStyleStats {
+  reviewAverage: string
+  reviewCount: string
+  reviewMedian: string
+  reviewMode: string
+  reviewStandardDeviation: string
+  styleId: string
+  styleName: string
+}
+
 export interface StyleStats {
-  style: Array<{
-    reviewAverage: string
-    reviewCount: string
-    styleId: string
-    styleName: string
-  }>
+  style: Array<OneStyleStats>
 }
 
 export type StyleStatsSortingOrder = 'average' | 'style_name' | 'count'

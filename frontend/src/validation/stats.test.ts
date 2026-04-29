@@ -299,6 +299,9 @@ const validStyle: StyleStats = {
     {
       reviewAverage: '8.77',
       reviewCount: '39',
+      reviewMedian: '8.50',
+      reviewMode: '9',
+      reviewStandardDeviation: '0.66',
       styleId: 'e5f6a7b8-c9d0-1234-efab-345678901234',
       styleName: 'IPA',
     },

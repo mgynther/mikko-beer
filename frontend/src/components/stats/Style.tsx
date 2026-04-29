@@ -174,12 +174,8 @@ function Style(props: Props): React.JSX.Element {
               <TabButton
                 isCompact={false}
                 isSelected={isSelected('count')}
-                isUpperCase={true}
-                title={formatTitle(
-                  'Reviews',
-                  isSelected('count'),
-                  sortingDirection,
-                )}
+                isUpperCase={false}
+                title={formatTitle('n', isSelected('count'), sortingDirection)}
                 onClick={createClickHandler('count')}
               />
             </th>
@@ -189,16 +185,19 @@ function Style(props: Props): React.JSX.Element {
                 isSelected={isSelected('average')}
                 isUpperCase={true}
                 title={formatTitle(
-                  'Average',
+                  'Avg',
                   isSelected('average'),
                   sortingDirection,
                 )}
                 onClick={createClickHandler('average')}
               />
             </th>
+            <th className='StatsNumColumn'>Med</th>
+            <th className='StatsNumColumn'>Mod</th>
+            <th className='StatsNumColumn'>σ</th>
           </tr>
           <tr>
-            <th colSpan={3}>
+            <th colSpan={6}>
               <AllFilters
                 filters={{
                   minReviewCount: {
@@ -249,6 +248,11 @@ function Style(props: Props): React.JSX.Element {
               </td>
               <td className='StatsNumColumn'>{style.reviewCount}</td>
               <td className='StatsNumColumn'>{style.reviewAverage}</td>
+              <td className='StatsNumColumn'>{style.reviewMedian}</td>
+              <td className='StatsNumColumn'>{style.reviewMode}</td>
+              <td className='StatsNumColumn'>
+                {style.reviewStandardDeviation}
+              </td>
             </tr>
           ))}
         </tbody>

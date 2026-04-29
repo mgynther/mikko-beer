@@ -43,6 +43,9 @@ function StyleStatsHelper(props: {
           <div>{style.styleName}</div>
           <div>{style.reviewAverage}</div>
           <div>{style.reviewCount}</div>
+          <div>{style.reviewMedian}</div>
+          <div>{style.reviewMode}</div>
+          <div>{style.reviewStandardDeviation}</div>
         </div>
       ))}
     </div>
@@ -57,12 +60,18 @@ test('style stats', async () => {
         styleName: 'IPA',
         reviewAverage: '9.18',
         reviewCount: '302',
+        reviewMedian: '8.50',
+        reviewMode: '9',
+        reviewStandardDeviation: '0.45',
       },
       {
         styleId: '69aca5b4-4bfd-45bd-b68d-006f4b725c2b',
         styleName: 'Pils',
         reviewAverage: '9.03',
         reviewCount: '199',
+        reviewMedian: '8.00',
+        reviewMode: '8',
+        reviewStandardDeviation: '0.56',
       },
     ],
   }
@@ -107,8 +116,14 @@ test('style stats', async () => {
     expect(getByText(ipa.styleName)).toBeDefined()
     expect(getByText(ipa.reviewAverage)).toBeDefined()
     expect(getByText(ipa.reviewCount)).toBeDefined()
+    expect(getByText(ipa.reviewMedian)).toBeDefined()
+    expect(getByText(ipa.reviewMode)).toBeDefined()
+    expect(getByText(ipa.reviewStandardDeviation)).toBeDefined()
     expect(getByText(pils.styleName)).toBeDefined()
     expect(getByText(pils.reviewAverage)).toBeDefined()
     expect(getByText(pils.reviewCount)).toBeDefined()
+    expect(getByText(pils.reviewMedian)).toBeDefined()
+    expect(getByText(pils.reviewMode)).toBeDefined()
+    expect(getByText(pils.reviewStandardDeviation)).toBeDefined()
   })
 })

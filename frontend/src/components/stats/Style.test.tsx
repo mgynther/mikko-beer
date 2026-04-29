@@ -6,6 +6,7 @@ import Style from './Style'
 import LinkWrapper from '../LinkWrapper'
 import type {
   GetStyleStatsIf,
+  OneStyleStats,
   StatsResult,
   StyleStatsQueryParams,
   YearMonth,
@@ -22,18 +23,24 @@ const breweryId = 'd02852f6-8cef-40fd-9dfd-2cf5489de63e'
 const locationId = '1da527ec-5eb7-452b-99dc-d8c3cffcd63f'
 const styleId = '4169b690-b1ab-4385-84ce-2fae277d7dd5'
 
-const pils = {
+const pils: OneStyleStats = {
   styleId: '14142347-762b-4b4b-b657-731a19ec5eb8',
   styleName: 'Pils',
   reviewAverage: '8.73',
   reviewCount: '72',
+  reviewMedian: '8.00',
+  reviewMode: '8',
+  reviewStandardDeviation: '0.38',
 }
 
-const ipa = {
+const ipa: OneStyleStats = {
   styleId: '6cf37273-2f07-47a2-b987-b5a54e292e60',
   styleName: 'IPA',
   reviewAverage: '8.91',
   reviewCount: '92',
+  reviewMedian: '8.50',
+  reviewMode: '9',
+  reviewStandardDeviation: '0.54',
 }
 
 const statsResult = {
@@ -131,9 +138,15 @@ test('renders style stats', () => {
   getByText(pils.styleName)
   getByText(pils.reviewAverage)
   getByText(pils.reviewCount)
+  getByText(pils.reviewMedian)
+  getByText(pils.reviewMode)
+  getByText(pils.reviewStandardDeviation)
   getByText(ipa.styleName)
   getByText(ipa.reviewAverage)
   getByText(ipa.reviewCount)
+  getByText(ipa.reviewMedian)
+  getByText(ipa.reviewMode)
+  getByText(ipa.reviewStandardDeviation)
 })
 
 test('applies filters', () => {
@@ -336,28 +349,28 @@ const orderChangeTests: OrderChangeTest[] = [
   {
     originalOrder: 'count',
     originalDirection: 'asc',
-    buttonText: 'Reviews ▲',
+    buttonText: 'n ▲',
     newOrder: 'count',
     newDirection: 'desc',
   },
   {
     originalOrder: 'count',
     originalDirection: 'desc',
-    buttonText: 'Reviews ▼',
+    buttonText: 'n ▼',
     newOrder: 'count',
     newDirection: 'asc',
   },
   {
     originalOrder: 'average',
     originalDirection: 'asc',
-    buttonText: 'Average ▲',
+    buttonText: 'Avg ▲',
     newOrder: 'average',
     newDirection: 'desc',
   },
   {
     originalOrder: 'average',
     originalDirection: 'desc',
-    buttonText: 'Average ▼',
+    buttonText: 'Avg ▼',
     newOrder: 'average',
     newDirection: 'asc',
   },
@@ -371,14 +384,14 @@ const orderChangeTests: OrderChangeTest[] = [
   {
     originalOrder: 'average',
     originalDirection: 'desc',
-    buttonText: 'Reviews',
+    buttonText: 'n',
     newOrder: 'count',
     newDirection: 'desc',
   },
   {
     originalOrder: 'style_name',
     originalDirection: 'desc',
-    buttonText: 'Average',
+    buttonText: 'Avg',
     newOrder: 'average',
     newDirection: 'desc',
   },

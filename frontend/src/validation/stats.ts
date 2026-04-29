@@ -114,6 +114,9 @@ const ValidatedStyleStats = t.type({
     t.type({
       reviewAverage: t.string,
       reviewCount: t.string,
+      reviewMedian: t.string,
+      reviewMode: t.string,
+      reviewStandardDeviation: t.string,
       styleId: t.string,
       styleName: t.string,
     }),
