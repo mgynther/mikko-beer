@@ -20,7 +20,7 @@ th.StatsNumColumn,
 th.StatsNumColumn {
 }
 
-th.StatsNameColumn,
+th.StatsNameColumn button.TabButton,
 th.StatsNumColumn button.TabButton {
   margin: 0;
 }
