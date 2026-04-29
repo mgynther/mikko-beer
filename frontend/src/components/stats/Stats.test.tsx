@@ -526,12 +526,18 @@ test('renders location stats', async () => {
     locationName: 'Oluthuone Panimomestari',
     reviewAverage: '9.06',
     reviewCount: '35',
+    reviewMedian: '9.00',
+    reviewMode: '9',
+    reviewStandardDeviation: '0.54',
   }
   const kuja: OneLocationStats = {
     locationId: 'eb247a3c-0b80-4efa-954a-1582115dd0a0',
     locationName: 'Kuja Beer Shop & Bar',
     reviewAverage: '9.71',
     reviewCount: '24',
+    reviewMedian: '9.50',
+    reviewMode: '10',
+    reviewStandardDeviation: '0.89',
   }
   const locationStats: LocationStats = {
     location: [{ ...oluthuone }, { ...kuja }],
@@ -568,9 +574,15 @@ test('renders location stats', async () => {
   await waitFor(() => getByText(oluthuone.locationName))
   getByText(oluthuone.reviewAverage)
   getByText(oluthuone.reviewCount)
+  getByText(oluthuone.reviewMedian)
+  getByText(oluthuone.reviewMode)
+  getByText(oluthuone.reviewStandardDeviation)
   getByText(kuja.locationName)
   getByText(kuja.reviewAverage)
   getByText(kuja.reviewCount)
+  getByText(kuja.reviewMedian)
+  getByText(kuja.reviewMode)
+  getByText(kuja.reviewStandardDeviation)
 })
 
 test('renders rating stats', () => {

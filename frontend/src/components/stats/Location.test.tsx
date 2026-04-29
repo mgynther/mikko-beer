@@ -8,6 +8,7 @@ import type { SearchParameters } from '../util'
 import type {
   GetLocationStatsIf,
   LocationStats,
+  OneLocationStats,
   YearMonth,
 } from '../../core/stats/types'
 import type { UseDebounce } from '../../core/types'
@@ -21,18 +22,24 @@ const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
 }
 
-const plevna = {
+const plevna: OneLocationStats = {
   locationId: '18d3ffce-1b24-47c5-9174-8a8b002822de',
   locationName: 'Plevna',
   reviewAverage: '9.06',
   reviewCount: '63',
+  reviewMedian: '9.50',
+  reviewMode: '10',
+  reviewStandardDeviation: '0.78',
 }
 
-const oluthuone = {
+const oluthuone: OneLocationStats = {
   locationId: 'bdf26fa0-6af4-44f0-b9fa-4f39d5ed8a46',
   locationName: 'Oluthuone Panimomestari',
   reviewAverage: '9.71',
   reviewCount: '24',
+  reviewMedian: '9.00',
+  reviewMode: '9',
+  reviewStandardDeviation: '0.44',
 }
 
 const minTime: YearMonth = testTimes.min.yearMonth
@@ -241,9 +248,15 @@ test('renders location stats', async () => {
   await waitFor(() => getByText(plevna.locationName))
   getByText(plevna.reviewAverage)
   getByText(plevna.reviewCount)
+  getByText(plevna.reviewMedian)
+  getByText(plevna.reviewMode)
+  getByText(plevna.reviewStandardDeviation)
   getByText(oluthuone.locationName)
   getByText(oluthuone.reviewAverage)
   getByText(oluthuone.reviewCount)
+  getByText(oluthuone.reviewMedian)
+  getByText(oluthuone.reviewMode)
+  getByText(oluthuone.reviewStandardDeviation)
 })
 
 const defaultSearchParams: Record<string, string> = {
@@ -376,28 +389,28 @@ const orderChangeTests: OrderChangeTest[] = [
   {
     originalOrder: 'count',
     originalDirection: 'asc',
-    buttonText: 'Reviews ▲',
+    buttonText: 'n ▲',
     newOrder: 'count',
     newDirection: 'desc',
   },
   {
     originalOrder: 'count',
     originalDirection: 'desc',
-    buttonText: 'Reviews ▼',
+    buttonText: 'n ▼',
     newOrder: 'count',
     newDirection: 'asc',
   },
   {
     originalOrder: 'average',
     originalDirection: 'asc',
-    buttonText: 'Average ▲',
+    buttonText: 'Avg ▲',
     newOrder: 'average',
     newDirection: 'desc',
   },
   {
     originalOrder: 'average',
     originalDirection: 'desc',
-    buttonText: 'Average ▼',
+    buttonText: 'Avg ▼',
     newOrder: 'average',
     newDirection: 'asc',
   },
@@ -411,14 +424,14 @@ const orderChangeTests: OrderChangeTest[] = [
   {
     originalOrder: 'average',
     originalDirection: 'desc',
-    buttonText: 'Reviews',
+    buttonText: 'n',
     newOrder: 'count',
     newDirection: 'desc',
   },
   {
     originalOrder: 'location_name',
     originalDirection: 'desc',
-    buttonText: 'Average',
+    buttonText: 'Avg',
     newOrder: 'average',
     newDirection: 'desc',
   },

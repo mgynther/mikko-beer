@@ -6,6 +6,7 @@ import LocationStatsTable from './LocationStatsTable'
 import LinkWrapper from '../LinkWrapper'
 import type {
   LocationStatsSortingOrder,
+  OneLocationStats,
   StatsFilters,
   YearMonth,
 } from '../../core/stats/types'
@@ -16,18 +17,24 @@ const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const plevna = {
+const plevna: OneLocationStats = {
   locationId: '2aad4052-1f8a-4088-87d8-c079f40d74b9',
   locationName: 'Plevna',
   reviewAverage: '9.06',
   reviewCount: '63',
+  reviewMedian: '9.50',
+  reviewMode: '10',
+  reviewStandardDeviation: '0.85',
 }
 
-const oluthuone = {
+const oluthuone: OneLocationStats = {
   locationId: '0a1c8153-5dfb-42d8-9410-827d7c53bee3',
   locationName: 'Oluthuone Panimomestari',
   reviewAverage: '9.71',
   reviewCount: '24',
+  reviewMedian: '9.00',
+  reviewMode: '9',
+  reviewStandardDeviation: '0.68',
 }
 
 const minTime: YearMonth = testTimes.min.yearMonth
@@ -82,9 +89,15 @@ test('renders location stats', async () => {
   )
   getByText(plevna.reviewAverage)
   getByText(plevna.reviewCount)
+  getByText(plevna.reviewMedian)
+  getByText(plevna.reviewMode)
+  getByText(plevna.reviewStandardDeviation)
   getByText(oluthuone.locationName)
   getByText(oluthuone.reviewAverage)
   getByText(oluthuone.reviewCount)
+  getByText(oluthuone.reviewMedian)
+  getByText(oluthuone.reviewMode)
+  getByText(oluthuone.reviewStandardDeviation)
   const link = getByRole('link', { name: plevna.locationName })
   await user.click(link)
   const path = `/locations/${plevna.locationId}`
@@ -136,14 +149,14 @@ const orderTests: OrderTestData[] = [
     testName: 'location name desc, flip order',
   },
   {
-    buttonText: 'Reviews',
+    buttonText: 'n',
     expectedOrder: 'count',
     order: 'location_name',
     sortingDirection: 'asc',
     testName: 'reviews',
   },
   {
-    buttonText: 'Average',
+    buttonText: 'Avg',
     expectedOrder: 'average',
     order: 'location_name',
     sortingDirection: 'asc',

@@ -90,6 +90,9 @@ const ValidatedLocationStats = t.type({
       locationName: t.string,
       reviewAverage: t.string,
       reviewCount: t.string,
+      reviewMedian: t.string,
+      reviewMode: t.string,
+      reviewStandardDeviation: t.string,
     }),
   ),
 })

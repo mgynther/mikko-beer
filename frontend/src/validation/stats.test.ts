@@ -224,6 +224,9 @@ const validLocation: LocationStats = {
       locationName: 'Pub Kultainen Apina',
       reviewAverage: '8.44',
       reviewCount: '156',
+      reviewMedian: '8.00',
+      reviewMode: '8',
+      reviewStandardDeviation: '0.89',
     },
   ],
 }

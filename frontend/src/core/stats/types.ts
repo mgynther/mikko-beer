@@ -86,6 +86,9 @@ export interface OneLocationStats {
   locationName: string
   reviewAverage: string
   reviewCount: string
+  reviewMedian: string
+  reviewMode: string
+  reviewStandardDeviation: string
 }
 
 export interface LocationStats {

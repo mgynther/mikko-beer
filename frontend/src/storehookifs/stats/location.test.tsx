@@ -67,12 +67,18 @@ test('location stats', async () => {
         locationName: 'Kuja Beer Shop & Bar',
         reviewAverage: '9.25',
         reviewCount: '202',
+        reviewMedian: '9.50',
+        reviewMode: '10',
+        reviewStandardDeviation: '0.75',
       },
       {
         locationId: '616e52b4-78c2-4a60-8a11-173c97632294',
         locationName: 'Oluthuone Panimomestari',
         reviewAverage: '9.05',
         reviewCount: '35',
+        reviewMedian: '9.00',
+        reviewMode: '9',
+        reviewStandardDeviation: '0.68',
       },
     ],
   }

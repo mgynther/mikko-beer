@@ -8,6 +8,7 @@ import { openFilters } from './filters-test-util'
 import type {
   GetLocationStatsIf,
   LocationStats,
+  OneLocationStats,
   StatsFilters,
   YearMonth,
 } from '../../core/stats/types'
@@ -17,18 +18,24 @@ const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const plevna = {
+const plevna: OneLocationStats = {
   locationId: 'd25daf1d-6586-4d9d-81fb-ae27f07b5fba',
   locationName: 'Plevna',
   reviewAverage: '9.06',
   reviewCount: '63',
+  reviewMedian: '9.00',
+  reviewMode: '9',
+  reviewStandardDeviation: '0.35',
 }
 
-const oluthuone = {
+const oluthuone: OneLocationStats = {
   locationId: 'ff17d099-a959-45f8-bdbb-5fc3b325930e',
   locationName: 'Oluthuone Panimomestari',
   reviewAverage: '9.71',
   reviewCount: '24',
+  reviewMedian: '9.50',
+  reviewMode: '10',
+  reviewStandardDeviation: '0.84',
 }
 
 const minTime: YearMonth = testTimes.min.yearMonth
@@ -171,9 +178,15 @@ test('renders location stats', () => {
   getByText(plevna.locationName)
   getByText(plevna.reviewAverage)
   getByText(plevna.reviewCount)
+  getByText(plevna.reviewMedian)
+  getByText(plevna.reviewMode)
+  getByText(plevna.reviewStandardDeviation)
   getByText(oluthuone.locationName)
   getByText(oluthuone.reviewAverage)
   getByText(oluthuone.reviewCount)
+  getByText(oluthuone.reviewMedian)
+  getByText(oluthuone.reviewMode)
+  getByText(oluthuone.reviewStandardDeviation)
 })
 
 test('renders loading', () => {

@@ -60,7 +60,7 @@ function LocationStatsTable(props: Props): React.JSX.Element {
                 isCompact={false}
                 isSelected={isSelected('count')}
                 title={formatTitle(
-                  'Reviews',
+                  'n',
                   isSelected('count'),
                   props.sortingDirection,
                 )}
@@ -74,7 +74,7 @@ function LocationStatsTable(props: Props): React.JSX.Element {
                 isCompact={false}
                 isSelected={isSelected('average')}
                 title={formatTitle(
-                  'Average',
+                  'Avg',
                   isSelected('average'),
                   props.sortingDirection,
                 )}
@@ -83,9 +83,12 @@ function LocationStatsTable(props: Props): React.JSX.Element {
                 }}
               />
             </th>
+            <th className='StatsNumColumn'>Med</th>
+            <th className='StatsNumColumn'>Mod</th>
+            <th className='StatsNumColumn'>σ</th>
           </tr>
           <tr>
-            <th colSpan={3}>
+            <th colSpan={6}>
               <AllFilters
                 filters={filters}
                 isOpen={props.isFiltersOpen}
@@ -112,6 +115,11 @@ function LocationStatsTable(props: Props): React.JSX.Element {
               </td>
               <td className='StatsNumColumn'>{location.reviewCount}</td>
               <td className='StatsNumColumn'>{location.reviewAverage}</td>
+              <td className='StatsNumColumn'>{location.reviewMedian}</td>
+              <td className='StatsNumColumn'>{location.reviewMode}</td>
+              <td className='StatsNumColumn'>
+                {location.reviewStandardDeviation}
+              </td>
             </tr>
           ))}
         </tbody>
