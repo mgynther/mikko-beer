@@ -36,13 +36,27 @@ function num(str: string): number {
   return parseFloat(str)
 }
 
-type SortingOrder = 'text' | 'count' | 'average'
+function toFixed(number: number): string {
+  return number.toFixed(2)
+}
+
+type SortingOrder = 'text' | 'count' | 'average' | 'stddev'
 
 function defaultSortingOrder(search: SearchParameters): SortingOrder {
   const value = search.get('sorting_order')
-  return value === 'text' || value === 'count' || value === 'average'
-    ? value
-    : 'text'
+  if (value === 'text') {
+    return value
+  }
+  if (value === 'count') {
+    return value
+  }
+  if (value === 'average') {
+    return value
+  }
+  if (value === 'stddev') {
+    return value
+  }
+  return 'text'
 }
 
 interface NumContainer {
@@ -50,6 +64,9 @@ interface NumContainer {
   text: string
   count: number
   average: number
+  median: string
+  mode: string
+  standardDeviation: number
 }
 
 interface VisualContainer {
@@ -57,6 +74,9 @@ interface VisualContainer {
   text: string
   count: string
   average: string
+  median: string
+  mode: string
+  standardDeviation: string
 }
 
 function toNum(container: OneContainerStats): NumContainer {
@@ -69,6 +89,9 @@ function toNum(container: OneContainerStats): NumContainer {
     }),
     count: num(container.reviewCount),
     average: num(container.reviewAverage),
+    median: container.reviewMedian,
+    mode: container.reviewMode,
+    standardDeviation: num(container.reviewStandardDeviation),
   }
 }
 
@@ -77,7 +100,10 @@ function toVisual(container: NumContainer): VisualContainer {
     id: container.id,
     text: container.text,
     count: container.count.toFixed(0),
-    average: container.average.toFixed(2),
+    average: toFixed(container.average),
+    median: container.median,
+    mode: container.mode,
+    standardDeviation: toFixed(container.standardDeviation),
   }
 }
 
@@ -95,6 +121,10 @@ const countAscSorter: Sorter = (a: NumContainer, b: NumContainer) =>
   a.count - b.count
 const countDescSorter: Sorter = (a: NumContainer, b: NumContainer) =>
   b.count - a.count
+const stddevAscSorter: Sorter = (a: NumContainer, b: NumContainer) =>
+  a.standardDeviation - b.standardDeviation
+const stddevDescSorter: Sorter = (a: NumContainer, b: NumContainer) =>
+  b.standardDeviation - a.standardDeviation
 
 function getSorter(order: SortingOrder, direction: ListDirection): Sorter {
   switch (order) {
@@ -104,6 +134,8 @@ function getSorter(order: SortingOrder, direction: ListDirection): Sorter {
       return direction === 'asc' ? averageAscSorter : averageDescSorter
     case 'count':
       return direction === 'asc' ? countAscSorter : countDescSorter
+    case 'stddev':
+      return direction === 'asc' ? stddevAscSorter : stddevDescSorter
   }
 }
 
@@ -187,6 +219,7 @@ function Container(props: Props): React.JSX.Element {
               <TabButton
                 isCompact={false}
                 isSelected={isSelected('text')}
+                isUpperCase={true}
                 title={formatTitle(
                   'Container',
                   isSelected('text'),
@@ -199,11 +232,8 @@ function Container(props: Props): React.JSX.Element {
               <TabButton
                 isCompact={false}
                 isSelected={isSelected('count')}
-                title={formatTitle(
-                  'Reviews',
-                  isSelected('count'),
-                  sortingDirection,
-                )}
+                isUpperCase={false}
+                title={formatTitle('n', isSelected('count'), sortingDirection)}
                 onClick={createClickHandler('count')}
               />
             </th>
@@ -211,17 +241,29 @@ function Container(props: Props): React.JSX.Element {
               <TabButton
                 isCompact={false}
                 isSelected={isSelected('average')}
+                isUpperCase={true}
                 title={formatTitle(
-                  'Average',
+                  'Avg',
                   isSelected('average'),
                   sortingDirection,
                 )}
                 onClick={createClickHandler('average')}
               />
             </th>
+            <th className='StatsNumColumn'>Med</th>
+            <th className='StatsNumColumn'>Mod</th>
+            <th className='StatsNumColumn'>
+              <TabButton
+                isCompact={false}
+                isSelected={isSelected('stddev')}
+                isUpperCase={false}
+                title={formatTitle('σ', isSelected('stddev'), sortingDirection)}
+                onClick={createClickHandler('stddev')}
+              />
+            </th>
           </tr>
           <tr>
-            <th colSpan={3}>
+            <th colSpan={6}>
               <Filters
                 filters={{
                   minReviewCount: {
@@ -266,6 +308,9 @@ function Container(props: Props): React.JSX.Element {
                 <td>{container.text}</td>
                 <td>{container.count}</td>
                 <td>{container.average}</td>
+                <td>{container.median}</td>
+                <td>{container.mode}</td>
+                <td>{container.standardDeviation}</td>
               </tr>
             ))}
         </tbody>

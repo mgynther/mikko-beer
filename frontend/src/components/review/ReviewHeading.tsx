@@ -53,6 +53,7 @@ export function ReviewHeading(props: HeadingProps): React.JSX.Element {
           onClick={createClickHandler('brewery_name')}
           isCompact={true}
           isSelected={props.sorting?.order === 'brewery_name'}
+          isUpperCase={false}
         />
       )}
       {!isSortingSupported('beer_name') && <div>Name</div>}
@@ -62,6 +63,7 @@ export function ReviewHeading(props: HeadingProps): React.JSX.Element {
           onClick={createClickHandler('beer_name')}
           isCompact={true}
           isSelected={props.sorting?.order === 'beer_name'}
+          isUpperCase={false}
         />
       )}
       <div>Styles</div>
@@ -75,6 +77,7 @@ export function ReviewHeading(props: HeadingProps): React.JSX.Element {
             onClick={createClickHandler('rating')}
             isCompact={true}
             isSelected={props.sorting?.order === 'rating'}
+            isUpperCase={false}
           />
         </div>
       )}
@@ -88,6 +91,7 @@ export function ReviewHeading(props: HeadingProps): React.JSX.Element {
             onClick={createClickHandler('time')}
             isCompact={true}
             isSelected={props.sorting?.order === 'time'}
+            isUpperCase={false}
           />
         </div>
       )}

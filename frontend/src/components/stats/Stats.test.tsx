@@ -80,6 +80,9 @@ const emptyStatsIf: StatsIf = {
             containerType: 'bottle',
             reviewAverage: '0.00',
             reviewCount: '0',
+            reviewMedian: '-',
+            reviewMode: '-',
+            reviewStandardDeviation: '-',
           },
         ],
       },
@@ -450,6 +453,9 @@ test('renders container stats', () => {
                   containerType: 'bottle',
                   reviewAverage: '7.87',
                   reviewCount: '10',
+                  reviewMedian: '8.00',
+                  reviewMode: '8',
+                  reviewStandardDeviation: '0.38',
                 },
                 {
                   containerId: 'dcd91b24-2116-49c5-b27d-ad85517b5407',
@@ -457,6 +463,9 @@ test('renders container stats', () => {
                   containerType: 'can',
                   reviewAverage: '8.23',
                   reviewCount: '24',
+                  reviewMedian: '8.50',
+                  reviewMode: '9',
+                  reviewStandardDeviation: '0.54',
                 },
               ],
             },
@@ -470,9 +479,15 @@ test('renders container stats', () => {
     />,
   )
   getByText('7.87')
+  getByText('8.00')
+  getByText('8')
+  getByText('0.38')
   getByText('10')
   getByText('bottle 0.33')
   getByText('8.23')
+  getByText('8.50')
+  getByText('9')
+  getByText('0.54')
   getByText('24')
   getByText('can 0.44')
 })
@@ -493,6 +508,9 @@ test('renders filtered container stats', () => {
                   containerType: 'bottle',
                   reviewAverage: '7.87',
                   reviewCount: '10',
+                  reviewMedian: '8.00',
+                  reviewMode: '8',
+                  reviewStandardDeviation: '0.38',
                 },
                 {
                   containerId: 'fb60b0b8-b6ea-4c43-a58b-f0a8b661cf9b',
@@ -500,6 +518,9 @@ test('renders filtered container stats', () => {
                   containerType: 'can',
                   reviewAverage: '8.23',
                   reviewCount: '24',
+                  reviewMedian: '8.50',
+                  reviewMode: '9',
+                  reviewStandardDeviation: '0.54',
                 },
               ],
             },
@@ -516,6 +537,9 @@ test('renders filtered container stats', () => {
   expect(queryByText('10')).toEqual(null)
   expect(queryByText('bottle 0.33')).toEqual(null)
   getByText('8.23')
+  getByText('8.50')
+  getByText('9')
+  getByText('0.54')
   getByText('24')
   getByText('can 0.44')
 })

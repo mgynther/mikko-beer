@@ -41,6 +41,9 @@ function ContainerStatsHelper(props: { params: IdParams }): React.JSX.Element {
           <div>{container.containerSize}</div>
           <div>{container.reviewAverage}</div>
           <div>{container.reviewCount}</div>
+          <div>{container.reviewMedian}</div>
+          <div>{container.reviewMode}</div>
+          <div>{container.reviewStandardDeviation}</div>
         </div>
       ))}
     </div>
@@ -56,6 +59,9 @@ test('container stats', async () => {
         containerType: 'can',
         reviewAverage: '7.55',
         reviewCount: '88',
+        reviewMedian: '8.00',
+        reviewMode: '8',
+        reviewStandardDeviation: '0.86',
       },
     ],
   }
@@ -85,4 +91,7 @@ test('container stats', async () => {
   expect(getByText(container.containerSize)).toBeDefined()
   expect(getByText(container.reviewAverage)).toBeDefined()
   expect(getByText(container.reviewCount)).toBeDefined()
+  expect(getByText(container.reviewMedian)).toBeDefined()
+  expect(getByText(container.reviewMode)).toBeDefined()
+  expect(getByText(container.reviewStandardDeviation)).toBeDefined()
 })

@@ -63,6 +63,7 @@ function Stats(props: Props): React.JSX.Element | null {
             key={model.title}
             isCompact={false}
             isSelected={mode === model.mode}
+            isUpperCase={true}
             onClick={() => {
               setMode(model.mode)
             }}

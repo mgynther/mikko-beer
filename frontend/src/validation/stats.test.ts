@@ -194,6 +194,9 @@ const validContainer: ContainerStats = {
       containerType: 'can',
       reviewAverage: '7.55',
       reviewCount: '88',
+      reviewMedian: '7.50',
+      reviewMode: '8',
+      reviewStandardDeviation: '0.68',
     },
   ],
 }

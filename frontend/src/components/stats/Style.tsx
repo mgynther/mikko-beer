@@ -161,6 +161,7 @@ function Style(props: Props): React.JSX.Element {
               <TabButton
                 isCompact={false}
                 isSelected={isSelected('style_name')}
+                isUpperCase={true}
                 title={formatTitle(
                   'Style',
                   isSelected('style_name'),
@@ -173,6 +174,7 @@ function Style(props: Props): React.JSX.Element {
               <TabButton
                 isCompact={false}
                 isSelected={isSelected('count')}
+                isUpperCase={true}
                 title={formatTitle(
                   'Reviews',
                   isSelected('count'),
@@ -185,6 +187,7 @@ function Style(props: Props): React.JSX.Element {
               <TabButton
                 isCompact={false}
                 isSelected={isSelected('average')}
+                isUpperCase={true}
                 title={formatTitle(
                   'Average',
                   isSelected('average'),

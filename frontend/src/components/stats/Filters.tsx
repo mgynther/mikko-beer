@@ -75,6 +75,7 @@ function Filters(props: Props): React.JSX.Element {
         <TabButton
           isCompact={true}
           isSelected={false}
+          isUpperCase={false}
           onClick={() => {
             props.setIsOpen(!isOpen)
           }}

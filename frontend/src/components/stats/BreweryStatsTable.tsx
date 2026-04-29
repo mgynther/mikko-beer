@@ -52,6 +52,7 @@ function BreweryStatsTable(props: Props): React.JSX.Element {
               <TabButton
                 isCompact={false}
                 isSelected={isSelected('brewery_name')}
+                isUpperCase={true}
                 title={formatTitle(
                   'Brewery',
                   isSelected('brewery_name'),
@@ -66,6 +67,7 @@ function BreweryStatsTable(props: Props): React.JSX.Element {
               <TabButton
                 isCompact={false}
                 isSelected={isSelected('count')}
+                isUpperCase={false}
                 title={formatTitle(
                   'n',
                   isSelected('count'),
@@ -80,6 +82,7 @@ function BreweryStatsTable(props: Props): React.JSX.Element {
               <TabButton
                 isCompact={false}
                 isSelected={isSelected('average')}
+                isUpperCase={true}
                 title={formatTitle(
                   'Avg',
                   isSelected('average'),

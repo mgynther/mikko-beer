@@ -6,6 +6,7 @@ import './TabButton.css'
 
 interface TabButtonProps {
   isCompact: boolean
+  isUpperCase: boolean
   isSelected: boolean
   onClick: () => void
   title: string
@@ -14,7 +15,9 @@ interface TabButtonProps {
 function TabButton(props: TabButtonProps): React.JSX.Element {
   const selectedClass = props.isSelected ? 'Selected' : ''
   const compactClass = props.isCompact ? 'Compact' : ''
-  const className = `TabButton ${selectedClass} ${compactClass}`.trim()
+  const upperCaseClass = props.isUpperCase ? 'UpperCase' : ''
+  const className =
+    `TabButton ${selectedClass} ${compactClass} ${upperCaseClass}`.trim()
   return (
     <Button className={className} onClick={props.onClick} text={props.title} />
   )

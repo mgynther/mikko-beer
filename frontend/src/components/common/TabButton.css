@@ -8,7 +8,6 @@ button.TabButton {
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
   color: white;
   font-weight: 600;
-  text-transform: uppercase;
   cursor: pointer;
 }
 
@@ -17,8 +16,11 @@ button.TabButton.Compact {
   padding: 0;
   font-size: 12px;
   font-weight: 400;
-  text-transform: unset;
   width: 100%;
+}
+
+button.TabButton.UpperCase {
+  text-transform: uppercase;
 }
 
 body.light button.TabButton {

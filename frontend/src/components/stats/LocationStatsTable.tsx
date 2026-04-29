@@ -45,6 +45,7 @@ function LocationStatsTable(props: Props): React.JSX.Element {
               <TabButton
                 isCompact={false}
                 isSelected={isSelected('location_name')}
+                isUpperCase={true}
                 title={formatTitle(
                   'Location',
                   isSelected('location_name'),
@@ -59,6 +60,7 @@ function LocationStatsTable(props: Props): React.JSX.Element {
               <TabButton
                 isCompact={false}
                 isSelected={isSelected('count')}
+                isUpperCase={false}
                 title={formatTitle(
                   'n',
                   isSelected('count'),
@@ -73,6 +75,7 @@ function LocationStatsTable(props: Props): React.JSX.Element {
               <TabButton
                 isCompact={false}
                 isSelected={isSelected('average')}
+                isUpperCase={true}
                 title={formatTitle(
                   'Avg',
                   isSelected('average'),

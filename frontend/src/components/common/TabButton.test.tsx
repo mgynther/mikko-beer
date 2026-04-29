@@ -9,6 +9,7 @@ test('clicks button', () => {
     <TabButton
       isCompact={false}
       isSelected={false}
+      isUpperCase={true}
       onClick={onClick}
       title={title}
     />,
@@ -16,4 +17,18 @@ test('clicks button', () => {
   const saveButton = getByRole('button', { name: title })
   saveButton.click()
   expect(onClick).toHaveBeenCalled()
+})
+
+test('renders compact selected non-uppercase', () => {
+  const title = 'This is title'
+  const { getByText } = render(
+    <TabButton
+      isCompact={true}
+      isSelected={true}
+      isUpperCase={false}
+      onClick={vitest.fn()}
+      title={title}
+    />,
+  )
+  getByText(title)
 })

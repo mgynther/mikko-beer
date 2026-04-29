@@ -17,6 +17,9 @@ const containerStats: OneContainerStats[] = [
     containerType: 'draft',
     reviewAverage: '7.87',
     reviewCount: '24',
+    reviewMedian: '8.00',
+    reviewMode: '8',
+    reviewStandardDeviation: '0.38',
   },
   {
     containerId: 'f908dc6a-3ed7-49e1-8caf-6ae1b9aac4ff',
@@ -24,6 +27,9 @@ const containerStats: OneContainerStats[] = [
     containerType: 'bottle',
     reviewAverage: '8.23',
     reviewCount: '10',
+    reviewMedian: '8.50',
+    reviewMode: '9',
+    reviewStandardDeviation: '0.54',
   },
 ]
 
@@ -105,10 +111,23 @@ test('renders container stats', () => {
   const { getByText } = renderWithStats(stats)
   expect(stats.mock.calls).toEqual([[{ breweryId, locationId, styleId }]])
   getByText('7.87')
+  getByText('8.00')
+  getByText('8')
+  getByText('0.38')
   getByText('10')
   getByText('draft 0.25')
   getByText('8.23')
+  getByText('8.50')
+  getByText('9')
+  getByText('0.54')
   getByText('24')
+  getByText('bottle 0.33')
+})
+
+test('renders container stats with default search', () => {
+  const searchRecord: Record<string, string> = {}
+  const { getByText } = renderFromRecord(searchRecord)
+  getByText('draft 0.25')
   getByText('bottle 0.33')
 })
 
@@ -230,6 +249,32 @@ test('order container stats by container asc', () => {
   expect(containers[1].innerHTML).toEqual('draft 0.25')
 })
 
+test('order container stats by stddev desc', () => {
+  const searchRecord: Record<string, string> = {
+    ...defaultSearchParams,
+    sorting_order: 'stddev',
+    list_direction: 'desc',
+  }
+  const { getAllByText } = renderFromRecord(searchRecord)
+  const counts = getAllByText(/0.38|0.54/v)
+  expect(counts.length).toEqual(2)
+  expect(counts[0].innerHTML).toEqual('0.54')
+  expect(counts[1].innerHTML).toEqual('0.38')
+})
+
+test('order container stats by stddev asc', () => {
+  const searchRecord: Record<string, string> = {
+    ...defaultSearchParams,
+    sorting_order: 'stddev',
+    list_direction: 'asc',
+  }
+  const { getAllByText } = renderFromRecord(searchRecord)
+  const counts = getAllByText(/0.38|0.54/v)
+  expect(counts.length).toEqual(2)
+  expect(counts[0].innerHTML).toEqual('0.38')
+  expect(counts[1].innerHTML).toEqual('0.54')
+})
+
 function changeSlider(
   getByDisplayValue: (str: string) => HTMLElement,
   from: string,
@@ -337,29 +382,43 @@ const orderChangeTests: OrderChangeTest[] = [
   {
     originalOrder: 'count',
     originalDirection: 'asc',
-    buttonText: 'Reviews ▲',
+    buttonText: 'n ▲',
     newOrder: 'count',
     newDirection: 'desc',
   },
   {
     originalOrder: 'count',
     originalDirection: 'desc',
-    buttonText: 'Reviews ▼',
+    buttonText: 'n ▼',
     newOrder: 'count',
     newDirection: 'asc',
   },
   {
     originalOrder: 'average',
     originalDirection: 'asc',
-    buttonText: 'Average ▲',
+    buttonText: 'Avg ▲',
     newOrder: 'average',
     newDirection: 'desc',
   },
   {
     originalOrder: 'average',
     originalDirection: 'desc',
-    buttonText: 'Average ▼',
+    buttonText: 'Avg ▼',
     newOrder: 'average',
+    newDirection: 'asc',
+  },
+  {
+    originalOrder: 'stddev',
+    originalDirection: 'asc',
+    buttonText: 'σ ▲',
+    newOrder: 'stddev',
+    newDirection: 'desc',
+  },
+  {
+    originalOrder: 'stddev',
+    originalDirection: 'desc',
+    buttonText: 'σ ▼',
+    newOrder: 'stddev',
     newDirection: 'asc',
   },
   {
@@ -372,15 +431,22 @@ const orderChangeTests: OrderChangeTest[] = [
   {
     originalOrder: 'average',
     originalDirection: 'desc',
-    buttonText: 'Reviews',
+    buttonText: 'n',
     newOrder: 'count',
     newDirection: 'desc',
   },
   {
     originalOrder: 'text',
     originalDirection: 'desc',
-    buttonText: 'Average',
+    buttonText: 'Avg',
     newOrder: 'average',
+    newDirection: 'desc',
+  },
+  {
+    originalOrder: 'text',
+    originalDirection: 'desc',
+    buttonText: 'σ',
+    newOrder: 'stddev',
     newDirection: 'desc',
   },
 ]
