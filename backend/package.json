@@ -24,7 +24,7 @@
   "dependencies": {
     "@koa/bodyparser": "6.1.0",
     "@koa/router": "15.4.0",
-    "ajv": "8.18.0",
+    "ajv": "8.20.0",
     "jsonwebtoken": "9.0.3",
     "koa": "3.2.0",
     "koa-compress": "5.2.1",
@@ -41,6 +41,6 @@
     "@types/pg": "8.20.0",
     "prettier": "3.8.3",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.59.0"
+    "typescript-eslint": "8.59.1"
   }
 }
