@@ -207,6 +207,16 @@ describe('brewery stats order unit tests', () => {
     )
   })
 
+  it('validate std dev desc order', () => {
+    assertDeepEqual(
+      validateBreweryStatsOrder({
+        order: 'std_dev',
+        direction: 'desc',
+      }),
+      { property: 'std_dev', direction: 'desc' },
+    )
+  })
+
   it('validate invalid asc order', () => {
     expectThrow(
       () =>
@@ -270,6 +280,16 @@ describe('location stats order unit tests', () => {
     )
   })
 
+  it('validate std dev desc order', () => {
+    assertDeepEqual(
+      validateLocationStatsOrder({
+        order: 'std_dev',
+        direction: 'desc',
+      }),
+      { property: 'std_dev', direction: 'desc' },
+    )
+  })
+
   it('validate invalid asc order', () => {
     expectThrow(
       () =>
@@ -330,6 +350,16 @@ describe('style stats order unit tests', () => {
         direction: 'asc',
       }),
       { property: 'count', direction: 'asc' },
+    )
+  })
+
+  it('validate std dev desc order', () => {
+    assertDeepEqual(
+      validateStyleStatsOrder({
+        order: 'std_dev',
+        direction: 'desc',
+      }),
+      { property: 'std_dev', direction: 'desc' },
     )
   })
 

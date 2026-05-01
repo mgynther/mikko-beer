@@ -144,6 +144,26 @@ describe('brewery stats tests', () => {
     assertDeepEqual(stats, [brewery, otherBrewery])
   })
 
+  it('by std_dev asc', async () => {
+    const { stats, brewery, otherBrewery } = await getResults(
+      ctx.db,
+      allResults,
+      undefined,
+      { property: 'std_dev', direction: 'asc' },
+    )
+    assertDeepEqual(stats, [brewery, otherBrewery])
+  })
+
+  it('by std_dev desc', async () => {
+    const { stats, brewery, otherBrewery } = await getResults(
+      ctx.db,
+      allResults,
+      undefined,
+      { property: 'std_dev', direction: 'desc' },
+    )
+    assertDeepEqual(stats, [otherBrewery, brewery])
+  })
+
   it('filter by brewery', async () => {
     const { stats, otherBrewery } = await getResults(
       ctx.db,

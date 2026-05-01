@@ -37,7 +37,10 @@ function sortingOrderOrDefault(
   search: SearchParameters,
 ): LocationStatsSortingOrder {
   const value = search.get('sorting_order')
-  return value === 'location_name' || value === 'count' || value === 'average'
+  return value === 'location_name' ||
+    value === 'count' ||
+    value === 'average' ||
+    value === 'std_dev'
     ? value
     : 'location_name'
 }

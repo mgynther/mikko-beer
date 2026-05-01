@@ -162,6 +162,13 @@ const orderTests: OrderTestData[] = [
     sortingDirection: 'asc',
     testName: 'average',
   },
+  {
+    buttonText: 'σ',
+    expectedOrder: 'std_dev',
+    order: 'location_name',
+    sortingDirection: 'asc',
+    testName: 'std_dev',
+  },
 ]
 
 orderTests.forEach((data) => {

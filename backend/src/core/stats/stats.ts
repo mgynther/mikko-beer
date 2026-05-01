@@ -62,14 +62,22 @@ export type LocationStats = Array<{
   locationName: string
 }>
 
-type BreweryStatsOrderProperty = 'average' | 'brewery_name' | 'count'
+type BreweryStatsOrderProperty =
+  | 'average'
+  | 'brewery_name'
+  | 'count'
+  | 'std_dev'
 
 export interface BreweryStatsOrder {
   property: BreweryStatsOrderProperty
   direction: ListDirection
 }
 
-type LocationStatsOrderProperty = 'average' | 'location_name' | 'count'
+type LocationStatsOrderProperty =
+  | 'average'
+  | 'location_name'
+  | 'count'
+  | 'std_dev'
 
 export interface LocationStatsOrder {
   property: LocationStatsOrderProperty
@@ -123,7 +131,7 @@ export type StyleStats = Array<{
   styleName: string
 }>
 
-type StyleStatsOrderProperty = 'average' | 'style_name' | 'count'
+type StyleStatsOrderProperty = 'average' | 'style_name' | 'count' | 'std_dev'
 
 export interface StyleStatsOrder {
   property: StyleStatsOrderProperty
@@ -252,7 +260,7 @@ const doValidateBreweryStatsOrder = ajv.compile<BreweryStatsOrder>({
   type: 'object',
   properties: {
     property: {
-      enum: ['average', 'brewery_name', 'count'],
+      enum: ['average', 'brewery_name', 'count', 'std_dev'],
     },
     direction: directionValidation,
   },
@@ -268,7 +276,7 @@ const doValidateLocationStatsOrder = ajv.compile<LocationStatsOrder>({
   type: 'object',
   properties: {
     property: {
-      enum: ['average', 'location_name', 'count'],
+      enum: ['average', 'location_name', 'count', 'std_dev'],
     },
     direction: directionValidation,
   },
@@ -284,7 +292,7 @@ const doValidateStyleStatsOrder = ajv.compile<StyleStatsOrder>({
   type: 'object',
   properties: {
     property: {
-      enum: ['average', 'style_name', 'count'],
+      enum: ['average', 'style_name', 'count', 'std_dev'],
     },
     direction: directionValidation,
   },

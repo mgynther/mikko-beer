@@ -95,7 +95,21 @@ function BreweryStatsTable(props: Props): React.JSX.Element {
             </th>
             <th className='StatsNumColumn'>Med</th>
             <th className='StatsNumColumn'>Mod</th>
-            <th className='StatsNumColumn'>σ</th>
+            <th className='StatsNumColumn'>
+              <TabButton
+                isCompact={false}
+                isSelected={isSelected('std_dev')}
+                isUpperCase={false}
+                title={formatTitle(
+                  'σ',
+                  isSelected('std_dev'),
+                  props.sortingDirection,
+                )}
+                onClick={() => {
+                  props.setSortingOrder('std_dev')
+                }}
+              />
+            </th>
           </tr>
           <tr>
             <th colSpan={6}>

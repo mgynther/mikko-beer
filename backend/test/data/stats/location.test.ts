@@ -137,6 +137,26 @@ describe('location stats tests', () => {
     assertDeepEqual(stats, [otherLocation, location])
   })
 
+  it('by std_dev asc', async () => {
+    const { stats, location, otherLocation } = await getResults(
+      ctx.db,
+      allResults,
+      undefined,
+      { property: 'std_dev', direction: 'asc' },
+    )
+    assertDeepEqual(stats, [location, otherLocation])
+  })
+
+  it('by std_dev desc', async () => {
+    const { stats, location, otherLocation } = await getResults(
+      ctx.db,
+      allResults,
+      undefined,
+      { property: 'std_dev', direction: 'desc' },
+    )
+    assertDeepEqual(stats, [otherLocation, location])
+  })
+
   it('filter by brewery', async () => {
     const { stats, location } = await getResults(
       ctx.db,

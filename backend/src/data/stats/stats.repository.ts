@@ -251,6 +251,12 @@ function locationOrderBy(
         .orderBy('review_count', locationStatsOrder.direction)
         .orderBy('review_average', 'desc')
         .orderBy('location_name', 'asc')
+    case 'std_dev':
+      return builder
+        .orderBy('stddev_pop', locationStatsOrder.direction)
+        .orderBy('review_count', 'desc')
+        .orderBy('review_average', 'desc')
+        .orderBy('location_name', 'asc')
   }
 }
 
@@ -404,6 +410,12 @@ function breweryOrderBy(
     case 'count':
       return builder
         .orderBy('review_count', breweryStatsOrder.direction)
+        .orderBy('review_average', 'desc')
+        .orderBy('brewery_name', 'asc')
+    case 'std_dev':
+      return builder
+        .orderBy('stddev_pop', breweryStatsOrder.direction)
+        .orderBy('review_count', 'desc')
         .orderBy('review_average', 'desc')
         .orderBy('brewery_name', 'asc')
   }
@@ -862,6 +874,12 @@ function styleOrderBy(
     case 'count':
       return builder
         .orderBy('review_count', styleStatsOrder.direction)
+        .orderBy('review_average', 'desc')
+        .orderBy('style_name', 'asc')
+    case 'std_dev':
+      return builder
+        .orderBy('stddev_pop', styleStatsOrder.direction)
+        .orderBy('review_count', 'desc')
         .orderBy('review_average', 'desc')
         .orderBy('style_name', 'asc')
   }

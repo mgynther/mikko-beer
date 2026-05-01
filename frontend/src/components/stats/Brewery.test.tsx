@@ -348,6 +348,20 @@ const orderChangeTests: OrderChangeTest[] = [
     newDirection: 'asc',
   },
   {
+    originalOrder: 'std_dev',
+    originalDirection: 'asc',
+    buttonText: 'σ ▲',
+    newOrder: 'std_dev',
+    newDirection: 'desc',
+  },
+  {
+    originalOrder: 'std_dev',
+    originalDirection: 'desc',
+    buttonText: 'σ ▼',
+    newOrder: 'std_dev',
+    newDirection: 'asc',
+  },
+  {
     originalOrder: 'average',
     originalDirection: 'desc',
     buttonText: 'Brewery',
@@ -366,6 +380,13 @@ const orderChangeTests: OrderChangeTest[] = [
     originalDirection: 'desc',
     buttonText: 'Avg',
     newOrder: 'average',
+    newDirection: 'desc',
+  },
+  {
+    originalOrder: 'brewery_name',
+    originalDirection: 'desc',
+    buttonText: 'σ',
+    newOrder: 'std_dev',
     newDirection: 'desc',
   },
 ]

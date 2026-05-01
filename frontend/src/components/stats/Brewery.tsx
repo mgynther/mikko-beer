@@ -37,7 +37,10 @@ function sortingOrderOrDefault(
   search: SearchParameters,
 ): BreweryStatsSortingOrder {
   const value = search.get('sorting_order')
-  return value === 'brewery_name' || value === 'count' || value === 'average'
+  return value === 'brewery_name' ||
+    value === 'count' ||
+    value === 'average' ||
+    value === 'std_dev'
     ? value
     : 'brewery_name'
 }

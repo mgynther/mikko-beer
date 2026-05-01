@@ -120,6 +120,22 @@ describe('style stats tests', () => {
     assertDeepEqual(stats, [otherStyle, style])
   })
 
+  it('by std_dev asc', async () => {
+    const { stats, style, otherStyle } = await getResults(ctx.db, undefined, {
+      property: 'std_dev',
+      direction: 'asc',
+    })
+    assertDeepEqual(stats, [style, otherStyle])
+  })
+
+  it('by std_dev desc', async () => {
+    const { stats, style, otherStyle } = await getResults(ctx.db, undefined, {
+      property: 'std_dev',
+      direction: 'desc',
+    })
+    assertDeepEqual(stats, [otherStyle, style])
+  })
+
   it('filter by brewery', async () => {
     const { stats, otherStyle } = await getResults(
       ctx.db,
