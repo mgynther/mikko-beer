@@ -4,6 +4,7 @@ export default defineConfig({
   test: {
     exclude: ['e2e', 'node_modules'],
     globals: true,
+    pool: 'threads',
     coverage: {
       enabled: true,
       provider: 'v8',
