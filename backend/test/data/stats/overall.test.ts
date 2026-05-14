@@ -2,12 +2,14 @@ import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
 import type { StatsIdFilter } from '../../../src/core/stats/stats.js'
+import * as reviewRepository from '../../../src/data/review/review.repository.js'
 import * as statsRepository from '../../../src/data/stats/stats.repository.js'
 
 import { insertMultipleReviews } from '../review-helpers.js'
-import type { Review } from '../../../src/core/review/review.js'
+import type { NewReview, Review } from '../../../src/core/review/review.js'
 import { assertDeepEqual, assertRejects } from '../../assert.js'
 import { avg, median, mode, stdDev } from './stats-helpers.js'
+import type { Database, Transaction } from '../../../src/data/database.js'
 
 const defaultFilter: StatsIdFilter = {
   brewery: undefined,
@@ -22,6 +24,12 @@ function expectedStats(reviews: Review[]) {
     reviewStandardDeviation: stdDev(reviews),
     reviewMedian: median(reviews),
     reviewMode: mode(reviews),
+    reviewWithLocationCount: `${
+      reviews.filter((review) => review.location.length > 0).length
+    }`,
+    reviewWithoutLocationCount: `${
+      reviews.filter((review) => review.location.length === 0).length
+    }`,
   }
 }
 
@@ -34,8 +42,31 @@ describe('overall stats tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
+  async function insertReviews(
+    db: Database,
+  ): ReturnType<typeof insertMultipleReviews> {
+    const { reviews, data } = await insertMultipleReviews(9, db)
+    const newReview = await db.executeReadWriteTransaction(
+      async (trx: Transaction) => {
+        const reviewRequest: NewReview = {
+          additionalInfo: '',
+          beer: data.beer.id,
+          container: data.container.id,
+          location: '',
+          rating: 6,
+          time: new Date('2024-05-09T12:00:00.000Z'),
+          smell: 'Smells funky, might be from a bad batch',
+          taste: "Yes, it's not alright but still drinkable",
+        }
+        return await reviewRepository.insertReview(trx, reviewRequest)
+      },
+    )
+    const allReviews = [...reviews, newReview]
+    return { reviews: allReviews, data }
+  }
+
   it('shows overall stats', async () => {
-    const { reviews } = await insertMultipleReviews(9, ctx.db)
+    const { reviews } = await insertReviews(ctx.db)
 
     const stats = await statsRepository.getOverall(ctx.db, defaultFilter)
     assertDeepEqual(stats, {
@@ -50,13 +81,15 @@ describe('overall stats tests', () => {
   })
 
   it('shows overall by brewery', async () => {
-    const { reviews, data } = await insertMultipleReviews(9, ctx.db)
+    const { reviews, data } = await insertReviews(ctx.db)
 
     const stats = await statsRepository.getOverall(ctx.db, {
       ...defaultFilter,
       brewery: data.brewery.id,
     })
-    const matchingReviews = reviews.filter((_, index) => index % 2 === 1)
+    const matchingReviews = reviews.filter(
+      (review) => review.beer === data.beer.id,
+    )
     assertDeepEqual(stats, {
       beerCount: '1',
       breweryCount: '1',
@@ -86,13 +119,15 @@ describe('overall stats tests', () => {
   })
 
   it('shows overall by location', async () => {
-    const { reviews, data } = await insertMultipleReviews(9, ctx.db)
+    const { reviews, data } = await insertReviews(ctx.db)
 
     const stats = await statsRepository.getOverall(ctx.db, {
       ...defaultFilter,
       location: data.location.id,
     })
-    const matchingReviews = reviews.filter((_, index) => index % 2 === 1)
+    const matchingReviews = reviews.filter(
+      (review) => review.location === data.location.id,
+    )
     assertDeepEqual(stats, {
       beerCount: '1',
       breweryCount: '1',
@@ -105,13 +140,15 @@ describe('overall stats tests', () => {
   })
 
   it('shows overall by style', async () => {
-    const { reviews, data } = await insertMultipleReviews(9, ctx.db)
+    const { reviews, data } = await insertReviews(ctx.db)
 
     const stats = await statsRepository.getOverall(ctx.db, {
       ...defaultFilter,
       style: data.otherStyle.id,
     })
-    const matchingReviews = reviews.filter((_, index) => index % 2 === 0)
+    const matchingReviews = reviews.filter(
+      (review) => review.beer === data.otherBeer.id,
+    )
     assertDeepEqual(stats, {
       beerCount: '1',
       breweryCount: '1',

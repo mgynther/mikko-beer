@@ -217,10 +217,41 @@ describe('stats tests', () => {
     return new Error('must not happen')
   }
 
+  async function addNoLocationReview(
+    beerId: string,
+    containerId: string,
+    rating: number,
+    time: string,
+  ): Promise<ReviewRes> {
+    const res = await ctx.request.post<{ review: ReviewRes }>(
+      `/api/v1/review`,
+      {
+        additionalInfo: '',
+        beer: beerId,
+        container: containerId,
+        location: '',
+        rating,
+        smell: 'Plain',
+        taste: 'Plain',
+        time,
+      },
+      ctx.adminAuthHeaders(),
+    )
+    assertEqual(res.status, 201)
+    return res.data.review
+  }
+
   it('get overall stats', async () => {
     const { beers, breweries, reviews, containers, styles } = await createDeps(
       ctx.adminAuthHeaders(),
     )
+    const noLocationReview = await addNoLocationReview(
+      beers[0].id,
+      containers[0].data.container.id,
+      6,
+      '2023-04-01T18:31:33.123Z',
+    )
+    const allReviews = [...reviews, noLocationReview]
 
     const statsRes = await ctx.request.get<{ overall: OverallStats }>(
       '/api/v1/stats/overall',
@@ -233,28 +264,37 @@ describe('stats tests', () => {
     assertEqual(breweries.length, 2)
     assertEqual(statsRes.data.overall.containerCount, `${containers.length}`)
     assertEqual(containers.length, 1)
-    assertEqual(statsRes.data.overall.reviewCount, `${reviews.length}`)
-    assertEqual(reviews.length, 4)
+    assertEqual(statsRes.data.overall.reviewCount, `${allReviews.length}`)
+    assertEqual(allReviews.length, 5)
     assertEqual(
       statsRes.data.overall.distinctBeerReviewCount,
       `${beers.length}`,
     )
-    const ratings = reviews.filter((r) => r).map((r) => r.rating)
+    const ratings = allReviews.filter((r) => r).map((r) => r.rating)
     const ratingSum = ratings.reduce(
       (sum: number, rating: number) => sum + rating,
       0,
     )
-    const countedAverage = ratingSum / reviews.length
+    const countedAverage = ratingSum / allReviews.length
     assertEqual(statsRes.data.overall.reviewAverage, countedAverage.toFixed(2))
-    assertEqual(countedAverage, 6.75)
+    assertEqual(countedAverage, 6.6)
+    assertEqual(statsRes.data.overall.reviewWithLocationCount, '4')
+    assertEqual(statsRes.data.overall.reviewWithoutLocationCount, '1')
     assertEqual(statsRes.data.overall.styleCount, `${styles.length}`)
     assertEqual(styles.length, 2)
   })
 
   it('get overall stats by brewery', async () => {
-    const { beers, breweries, reviews, styles } = await createDeps(
+    const { beers, breweries, reviews, containers, styles } = await createDeps(
       ctx.adminAuthHeaders(),
     )
+    const noLocationReview = await addNoLocationReview(
+      beers[0].id,
+      containers[0].data.container.id,
+      6,
+      '2023-04-02T18:31:33.123Z',
+    )
+    const allReviews = [...reviews, noLocationReview]
 
     const breweryId = breweries[0].data.brewery.id
     const statsRes = await ctx.request.get<{ overall: OverallStats }>(
@@ -265,8 +305,8 @@ describe('stats tests', () => {
     assertEqual(statsRes.data.overall.beerCount, '2')
     assertEqual(statsRes.data.overall.breweryCount, '2')
     assertEqual(statsRes.data.overall.containerCount, '1')
-    assertEqual(statsRes.data.overall.reviewCount, '3')
-    const ratings = reviews
+    assertEqual(statsRes.data.overall.reviewCount, '4')
+    const ratings = allReviews
       .filter((review: ReviewRes) => {
         const beerId = review.beer
         const beer = beers.find((beer) => beer.id === beerId)
@@ -282,7 +322,9 @@ describe('stats tests', () => {
     )
     const countedAverage = ratingSum / ratings.length
     assertEqual(statsRes.data.overall.reviewAverage, countedAverage.toFixed(2))
-    assertEqual(countedAverage, 6 + 2 / 3)
+    assertEqual(countedAverage, 6.5)
+    assertEqual(statsRes.data.overall.reviewWithLocationCount, '3')
+    assertEqual(statsRes.data.overall.reviewWithoutLocationCount, '1')
     assertEqual(statsRes.data.overall.styleCount, '2')
     assertEqual(styles.length, 2)
   })

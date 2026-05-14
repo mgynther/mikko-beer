@@ -118,6 +118,8 @@ const emptyStatsIf: StatsIf = {
         reviewMedian: '0.00',
         reviewMode: '0',
         reviewStandardDeviation: '0.00',
+        reviewWithLocationCount: '0',
+        reviewWithoutLocationCount: '0',
         styleCount: '0',
       },
       isLoading: false,
@@ -205,6 +207,8 @@ overallTestCases.forEach((testCase) => {
                 reviewMedian: '9.00',
                 reviewMode: '9',
                 reviewStandardDeviation: '1.13',
+                reviewWithLocationCount: '78',
+                reviewWithoutLocationCount: '34',
                 styleCount: '29',
               },
               isLoading: false,
@@ -212,7 +216,7 @@ overallTestCases.forEach((testCase) => {
           },
         }}
         breweryId={'282844e4-f411-4c6a-95d6-9131b8c0491f'}
-        locationId={'b2a53c67-8132-4f93-92eb-e7b0276e6c07'}
+        locationId={undefined}
         styleId={'1d1bc37a-d5d0-4175-92b2-7d24f961bb20'}
       />,
     )
@@ -226,6 +230,8 @@ overallTestCases.forEach((testCase) => {
     getByText('9.00')
     getByText('9')
     getByText('1.13')
+    getByText('78')
+    getByText('34')
     getByText('29')
   })
 })

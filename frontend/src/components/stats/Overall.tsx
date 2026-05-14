@@ -37,14 +37,28 @@ function Overall(props: Props): React.JSX.Element {
               <td>Containers</td>
               <td>{stats.containerCount}</td>
             </tr>
-            <tr>
-              <td>Locations</td>
-              <td>{stats.locationCount}</td>
-            </tr>
+            {props.locationId === undefined && (
+              <tr>
+                <td>Locations</td>
+                <td>{stats.locationCount}</td>
+              </tr>
+            )}
             <tr>
               <td>Reviews</td>
               <td>{stats.reviewCount}</td>
             </tr>
+            {props.locationId === undefined && (
+              <>
+                <tr>
+                  <td>Reviews with location</td>
+                  <td>{stats.reviewWithLocationCount}</td>
+                </tr>
+                <tr>
+                  <td>Reviews without location</td>
+                  <td>{stats.reviewWithoutLocationCount}</td>
+                </tr>
+              </>
+            )}
             <tr>
               <td>Beers reviewed</td>
               <td>{stats.distinctBeerReviewCount}</td>

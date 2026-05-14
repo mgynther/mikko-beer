@@ -24,6 +24,8 @@ const ValidatedOverallStats = t.type({
   reviewMedian: t.string,
   reviewMode: t.string,
   reviewStandardDeviation: t.string,
+  reviewWithLocationCount: t.string,
+  reviewWithoutLocationCount: t.string,
   styleCount: t.string,
 })
 

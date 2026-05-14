@@ -43,6 +43,8 @@ function OverallStatsHelper(props: { params: IdParams }): React.JSX.Element {
           <div>{stats.reviewMedian}</div>
           <div>{stats.reviewMode}</div>
           <div>{stats.reviewStandardDeviation}</div>
+          <div>{stats.reviewWithLocationCount}</div>
+          <div>{stats.reviewWithoutLocationCount}</div>
           <div>{stats.styleCount}</div>
         </>
       )}
@@ -62,6 +64,8 @@ test('overall stats', async () => {
     reviewMedian: '8.00',
     reviewMode: '8',
     reviewStandardDeviation: '0.86',
+    reviewWithLocationCount: '198',
+    reviewWithoutLocationCount: '314',
     styleCount: '33',
   }
 
@@ -95,5 +99,7 @@ test('overall stats', async () => {
   expect(getByText(overallStats.reviewMedian)).toBeDefined()
   expect(getByText(overallStats.reviewMode)).toBeDefined()
   expect(getByText(overallStats.reviewStandardDeviation)).toBeDefined()
+  expect(getByText(overallStats.reviewWithLocationCount)).toBeDefined()
+  expect(getByText(overallStats.reviewWithoutLocationCount)).toBeDefined()
   expect(getByText(overallStats.styleCount)).toBeDefined()
 })

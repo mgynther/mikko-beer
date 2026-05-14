@@ -37,6 +37,8 @@ const validOverall: OverallStats = {
   reviewMedian: '8.50',
   reviewMode: '9',
   reviewStandardDeviation: '0.57',
+  reviewWithLocationCount: '198',
+  reviewWithoutLocationCount: '314',
   styleCount: '33',
 }
 

@@ -22,6 +22,8 @@ export interface OverallStats {
   reviewMedian: string
   reviewMode: string
   reviewStandardDeviation: string
+  reviewWithLocationCount: string
+  reviewWithoutLocationCount: string
   styleCount: string
 }
 

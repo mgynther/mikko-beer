@@ -49,6 +49,8 @@ describe('stats authorized service unit tests', () => {
         reviewStandardDeviation: '0.74',
         reviewMedian: '8.50',
         reviewMode: '9',
+        reviewWithLocationCount: '45',
+        reviewWithoutLocationCount: '75',
         styleCount: '28',
       }
       const result = await statsService.getOverall(

@@ -552,6 +552,8 @@ interface ReviewStats {
   distinct_beer_review_count: number
   review_count: number
   review_average: number
+  review_with_location_count: number
+  review_without_location_count: number
   stddev_pop: number
   percentile_cont: number
   mode: number
@@ -565,6 +567,10 @@ async function getFullOverall(db: Database): Promise<OverallStats> {
     (SELECT COUNT(1) FROM location) AS location_count,
     (SELECT COUNT(1) FROM review) AS review_count,
     (SELECT COUNT(DISTINCT beer) FROM review) AS distinct_beer_review_count,
+    (SELECT COUNT(1) FROM review WHERE location IS NOT null)
+      AS review_with_location_count,
+    (SELECT COUNT(1) FROM review WHERE location IS null)
+      AS review_without_location_count,
     (SELECT COUNT(1) FROM style) AS style_count,
     (SELECT AVG(rating) FROM review) AS review_average,
     (SELECT STDDEV_POP(rating) FROM review) AS stddev_pop,
@@ -585,6 +591,10 @@ async function getFullOverall(db: Database): Promise<OverallStats> {
     reviewStandardDeviation: round(stats.stddev_pop),
     reviewMedian: round(stats.percentile_cont),
     reviewMode: formatInteger(stats.mode),
+    reviewWithLocationCount: formatInteger(stats.review_with_location_count),
+    reviewWithoutLocationCount: formatInteger(
+      stats.review_without_location_count,
+    ),
     styleCount: `${stats.style_count}`,
   }
 }
@@ -646,6 +656,12 @@ async function getBreweryOverall(
       fn.count<number>('review.location').distinct().as('location_count'),
       fn.count<number>('review.review_id').as('review_count'),
       fn.avg<number>('review.rating').as('review_average'),
+      sql<number>`COUNT(CASE WHEN review.location IS NOT NULL THEN 1 END)`.as(
+        'review_with_location_count',
+      ),
+      sql<number>`COUNT(CASE WHEN review.location IS NULL THEN 1 END)`.as(
+        'review_without_location_count',
+      ),
       sql<number>`STDDEV_POP(review.rating)`.as('stddev_pop'),
       sql<number>`PERCENTILE_CONT(0.5)
         WITHIN GROUP (ORDER BY review.rating)`.as('percentile_cont'),
@@ -658,24 +674,30 @@ async function getBreweryOverall(
     .where('beer_brewery.brewery', '=', brewery)
 
   const [beerStatsResults, containerResults, reviewStats] = await Promise.all([
-    beerStatsQuery.execute(),
+    beerStatsQuery.executeTakeFirstOrThrow(),
     containerQuery.execute(),
-    reviewQuery.execute(),
+    reviewQuery.executeTakeFirstOrThrow(),
   ])
   const containerCount = countContainerIds(containerResults)
 
   return {
-    beerCount: `${beerStatsResults[0].beer_count}`,
-    breweryCount: `${beerStatsResults[0].brewery_count}`,
+    beerCount: `${beerStatsResults.beer_count}`,
+    breweryCount: `${beerStatsResults.brewery_count}`,
     containerCount: `${containerCount}`,
-    locationCount: `${reviewStats[0].location_count}`,
-    distinctBeerReviewCount: `${reviewStats[0].distinct_beer_review_count}`,
-    reviewAverage: round(reviewStats[0].review_average),
-    reviewCount: `${reviewStats[0].review_count}`,
-    reviewStandardDeviation: round(reviewStats[0].stddev_pop),
-    reviewMedian: round(reviewStats[0].percentile_cont),
-    reviewMode: formatInteger(reviewStats[0].mode),
-    styleCount: `${beerStatsResults[0].style_count}`,
+    locationCount: `${reviewStats.location_count}`,
+    distinctBeerReviewCount: `${reviewStats.distinct_beer_review_count}`,
+    reviewAverage: round(reviewStats.review_average),
+    reviewCount: `${reviewStats.review_count}`,
+    reviewStandardDeviation: round(reviewStats.stddev_pop),
+    reviewMedian: round(reviewStats.percentile_cont),
+    reviewMode: formatInteger(reviewStats.mode),
+    reviewWithLocationCount: formatInteger(
+      reviewStats.review_with_location_count,
+    ),
+    reviewWithoutLocationCount: formatInteger(
+      reviewStats.review_without_location_count,
+    ),
+    styleCount: `${beerStatsResults.style_count}`,
   }
 }
 
@@ -726,6 +748,8 @@ async function getLocationOverall(
     reviewStandardDeviation: round(reviewStats.stddev_pop),
     reviewMedian: round(reviewStats.percentile_cont),
     reviewMode: formatInteger(reviewStats.mode),
+    reviewWithLocationCount: `${reviewStats.review_count}`,
+    reviewWithoutLocationCount: formatInteger(0),
     styleCount: `${beerStats.style_count}`,
   }
 }
@@ -763,6 +787,12 @@ async function getStyleOverall(
       fn.count<number>('review.location').distinct().as('location_count'),
       fn.count<number>('review.review_id').as('review_count'),
       fn.avg<number>('review.rating').as('review_average'),
+      sql<number>`COUNT(CASE WHEN review.location IS NOT NULL THEN 1 END)`.as(
+        'review_with_location_count',
+      ),
+      sql<number>`COUNT(CASE WHEN review.location IS NULL THEN 1 END)`.as(
+        'review_without_location_count',
+      ),
       sql<number>`STDDEV_POP(review.rating)`.as('stddev_pop'),
       sql<number>`PERCENTILE_CONT(0.5)
         WITHIN GROUP (ORDER BY review.rating)`.as('percentile_cont'),
@@ -775,24 +805,30 @@ async function getStyleOverall(
     .where('beer_style.style', '=', style)
 
   const [beerStatsResults, containerResults, reviewStats] = await Promise.all([
-    beerStatsQuery.execute(),
+    beerStatsQuery.executeTakeFirstOrThrow(),
     containerQuery.execute(),
-    reviewQuery.execute(),
+    reviewQuery.executeTakeFirstOrThrow(),
   ])
   const containerCount = countContainerIds(containerResults)
 
   return {
-    beerCount: `${beerStatsResults[0].beer_count}`,
-    breweryCount: `${beerStatsResults[0].brewery_count}`,
+    beerCount: `${beerStatsResults.beer_count}`,
+    breweryCount: `${beerStatsResults.brewery_count}`,
     containerCount: `${containerCount}`,
-    locationCount: `${reviewStats[0].location_count}`,
-    distinctBeerReviewCount: `${reviewStats[0].distinct_beer_review_count}`,
-    reviewAverage: round(reviewStats[0].review_average),
-    reviewCount: `${reviewStats[0].review_count}`,
-    reviewStandardDeviation: round(reviewStats[0].stddev_pop),
-    reviewMedian: round(reviewStats[0].percentile_cont),
-    reviewMode: formatInteger(reviewStats[0].mode),
-    styleCount: `${beerStatsResults[0].style_count}`,
+    locationCount: `${reviewStats.location_count}`,
+    distinctBeerReviewCount: `${reviewStats.distinct_beer_review_count}`,
+    reviewAverage: round(reviewStats.review_average),
+    reviewCount: `${reviewStats.review_count}`,
+    reviewStandardDeviation: round(reviewStats.stddev_pop),
+    reviewMedian: round(reviewStats.percentile_cont),
+    reviewMode: formatInteger(reviewStats.mode),
+    reviewWithLocationCount: formatInteger(
+      reviewStats.review_with_location_count,
+    ),
+    reviewWithoutLocationCount: formatInteger(
+      reviewStats.review_without_location_count,
+    ),
+    styleCount: `${beerStatsResults.style_count}`,
   }
 }
 
