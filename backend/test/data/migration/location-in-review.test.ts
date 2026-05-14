@@ -8,7 +8,7 @@ import * as locationRepository from '../../../src/data/location/location.reposit
 import * as reviewRepository from '../../../src/data/review/review.repository.js'
 import { insertData } from '../review-helpers.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
-import { FileMigrationProvider, Migrator } from 'kysely'
+import { FileMigrationProvider, Migrator } from 'kysely/migration'
 
 const directory = dirname(fileURLToPath(import.meta.url))
 

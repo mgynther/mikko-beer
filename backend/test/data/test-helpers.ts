@@ -6,7 +6,7 @@ import type { ConnectionConfig } from 'pg'
 import { Pool } from 'pg'
 import { Database } from '../../src/data/database.js'
 
-import { FileMigrationProvider, Migrator } from 'kysely'
+import { FileMigrationProvider, Migrator } from 'kysely/migration'
 import * as path from 'path'
 import { promises as fs } from 'fs'
 

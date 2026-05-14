@@ -5,12 +5,8 @@ import type { Database } from './database.js'
 import { config } from './config.js'
 import { consoleLog as log } from '../core/console-log.js'
 import { Level } from '../core/log.js'
-import {
-  Kysely,
-  Migrator,
-  PostgresDialect,
-  FileMigrationProvider,
-} from 'kysely'
+import { Kysely, PostgresDialect } from 'kysely'
+import { Migrator, FileMigrationProvider } from 'kysely/migration'
 import { Pool } from 'pg'
 
 const directory = dirname(fileURLToPath(import.meta.url))
