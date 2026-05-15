@@ -8,6 +8,13 @@ export interface CreateStorageRequest {
   container: string
 }
 
+export interface CreatedStorage {
+  id: string
+  beer: string
+  bestBefore: string
+  container: string
+}
+
 export interface Storage {
   id: string
   beerId: string
@@ -45,7 +52,7 @@ export interface MonthlyStats {
 
 export interface CreateStorageIf {
   useCreate: () => {
-    create: (request: CreateStorageRequest) => Promise<Storage>
+    create: (request: CreateStorageRequest) => Promise<CreatedStorage>
     hasError: boolean
     isLoading: boolean
   }

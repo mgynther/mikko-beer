@@ -2,7 +2,10 @@ import { expect, test, vitest } from 'vitest'
 import { store } from '../../store/store'
 import { addTestServerResponse } from '../../../test-util/server'
 import createStorage from './create'
-import type { CreateStorageRequest, Storage } from '../../core/storage/types'
+import type {
+  CreatedStorage,
+  CreateStorageRequest,
+} from '../../core/storage/types'
 import { render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from '../../react-redux-wrapper'
@@ -11,7 +14,7 @@ import Button from '../../components/common/Button'
 
 interface HelperProps {
   storage: CreateStorageRequest
-  handleResponse: (storage: Storage) => void
+  handleResponse: (storage: CreatedStorage) => void
 }
 
 function Helper(props: HelperProps): React.JSX.Element {
@@ -30,35 +33,16 @@ function Helper(props: HelperProps): React.JSX.Element {
 test('create storage', async () => {
   const user = userEvent.setup()
 
-  const expectedResponse: { storage: Storage } = {
+  const expectedResponse: { storage: CreatedStorage } = {
     storage: {
       id: '16a507d9-e6c7-4405-8bb7-a4bb0cbe97a4',
-      beerId: '30111f34-eceb-44ea-9b21-6c5b50b91a79',
-      beerName: 'Test beer',
+      beer: '30111f34-eceb-44ea-9b21-6c5b50b91a79',
       bestBefore: '2027-01-01T00:00:00.000Z',
-      breweries: [
-        {
-          id: 'f4f2ec3d-f686-468d-a811-dbc3a495571a',
-          name: 'Test brewery',
-        },
-      ],
-      container: {
-        id: '4ced8689-13f2-48de-aaa7-749ee509336d',
-        type: 'bottle',
-        size: '0.33',
-      },
-      createdAt: '2026-03-12T00:00:00.000Z',
-      hasReview: false,
-      styles: [
-        {
-          id: '5e3cf039-9f9e-4587-bf92-cbdf90cf5ca7',
-          name: 'Test style',
-        },
-      ],
+      container: '997aa7c3-199a-40a9-a962-d9d5371557e3',
     },
   }
 
-  addTestServerResponse<{ storage: Storage }>({
+  addTestServerResponse<{ storage: CreatedStorage }>({
     method: 'POST',
     pathname: '/api/v1/storage',
     response: expectedResponse,
@@ -70,9 +54,9 @@ test('create storage', async () => {
     <Provider store={store}>
       <Helper
         storage={{
-          beer: expectedResponse.storage.beerId,
+          beer: expectedResponse.storage.beer,
           bestBefore: expectedResponse.storage.bestBefore,
-          container: expectedResponse.storage.container.id,
+          container: expectedResponse.storage.container,
         }}
         handleResponse={handler}
       />

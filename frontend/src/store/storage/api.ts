@@ -2,6 +2,7 @@ import { emptySplitApi } from '../api'
 
 import type {
   AnnualStats,
+  CreatedStorage,
   CreateStorageRequest,
   MonthlyStats,
   Storage,
@@ -63,7 +64,10 @@ const storageApi = emptySplitApi.injectEndpoints({
       }),
       providesTags: [StorageTags.Storage],
     }),
-    createStorage: build.mutation<{ storage: Storage }, CreateStorageRequest>({
+    createStorage: build.mutation<
+      { storage: CreatedStorage },
+      CreateStorageRequest
+    >({
       query: (params: CreateStorageRequest) => ({
         url: '/storage',
         method: 'POST',

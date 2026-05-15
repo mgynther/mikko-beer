@@ -3,6 +3,7 @@ import { isLeft } from 'fp-ts/Either'
 
 import type {
   AnnualStats,
+  CreatedStorage,
   MonthlyStats,
   Storage,
   StorageList,
@@ -11,6 +12,13 @@ import { formatError } from './format-error'
 import { ValidatedBrewery } from './brewery'
 import { ValidatedStyle } from './style'
 import { ValidatedContainer } from './container'
+
+const ValidatedCreatedStorage = t.type({
+  id: t.string,
+  beer: t.string,
+  bestBefore: t.string,
+  container: t.string,
+})
 
 const ValidatedStorage = t.type({
   id: t.string,
@@ -46,6 +54,16 @@ const ValidatedMonthlyStorageStats = t.type({
     }),
   ),
 })
+
+export function validateCreatedStorage(result: unknown): CreatedStorage {
+  type CreatedStorageT = t.TypeOf<typeof ValidatedCreatedStorage>
+  const decoded = ValidatedCreatedStorage.decode(result)
+  if (isLeft(decoded)) {
+    throw Error(formatError(decoded))
+  }
+  const valid: CreatedStorageT = decoded.right
+  return valid
+}
 
 export function validateStorageOrUndefined(
   result: unknown,

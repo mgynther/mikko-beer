@@ -2,6 +2,7 @@ import { expect, test } from 'vitest'
 
 import type {
   AnnualStats,
+  CreatedStorage,
   MonthlyStats,
   Storage,
   StorageList,
@@ -13,7 +14,30 @@ import {
   validateStorageListOrUndefined,
   validateAnnualStorageStatsOrUndefined,
   validateMonthlyStorageStatsOrUndefined,
+  validateCreatedStorage,
 } from './storage'
+
+const validCreatedStorage: CreatedStorage = {
+  id: '7dc5ea67-5b55-4fa7-a285-74f6e6ebbe30',
+  beer: 'a58e2a8b-b3fc-464c-a473-ac6b10c3a0f5',
+  bestBefore: '2025-12-31T12:00:00.000Z',
+  container: '0f760db2-7af9-4783-adc9-f61a0f2717a1',
+}
+
+test('validateCreatedStorage returns storage for valid input', () => {
+  expect(validateCreatedStorage(validCreatedStorage)).toEqual(
+    validCreatedStorage,
+  )
+})
+
+test('validateCreatedStorage throws for invalid input', () => {
+  expect(() =>
+    validateCreatedStorage({
+      id: '8bf994a7-412f-4fce-9729-d1ff436fa83d',
+      beer: '01f15bff-d95f-464f-8a89-df0d761950f5',
+    }),
+  ).toThrow()
+})
 
 const validStorage: Storage = {
   id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
