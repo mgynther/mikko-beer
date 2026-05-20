@@ -28,19 +28,19 @@
     "jsonwebtoken": "9.0.3",
     "koa": "3.2.0",
     "koa-compress": "5.2.1",
-    "kysely": "0.29.0",
-    "pg": "8.20.0",
+    "kysely": "0.29.2",
+    "pg": "8.21.0",
     "uuid": "14.0.0"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "@types/jsonwebtoken": "9.0.10",
-    "@types/koa": "3.0.2",
+    "@types/koa": "3.0.3",
     "@types/koa-compress": "4.0.7",
-    "@types/node": "25.7.0",
+    "@types/node": "25.9.1",
     "@types/pg": "8.20.0",
     "prettier": "3.8.3",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.59.3"
+    "typescript-eslint": "8.59.4"
   }
 }
