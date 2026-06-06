@@ -5,7 +5,7 @@ import type {
   CreateIf,
   JoinedReview,
   Review,
-  ReviewListOrder,
+  ReviewListRequest,
   UpdateIf,
 } from './review'
 import type { log } from '../log.js'
@@ -50,31 +50,36 @@ export async function findReviewById(
 export async function listReviews(
   list: (
     pagination: Pagination,
-    reviewListOrder: ReviewListOrder,
+    reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
   authTokenPayload: AuthTokenPayload,
   pagination: Pagination,
-  reviewListOrder: ReviewListOrder,
+  reviewListRequest: ReviewListRequest,
   log: log,
 ): Promise<JoinedReview[]> {
   authorizationService.authorizeViewer(authTokenPayload)
-  return await reviewService.listReviews(list, pagination, reviewListOrder, log)
+  return await reviewService.listReviews(
+    list,
+    pagination,
+    reviewListRequest,
+    log,
+  )
 }
 
 export async function listReviewsByBeer(
   list: (
     beerId: string,
-    reviewListOrder: ReviewListOrder,
+    reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
   request: IdRequest,
-  reviewListOrder: ReviewListOrder,
+  reviewListRequest: ReviewListRequest,
   log: log,
 ): Promise<JoinedReview[]> {
   authorizationService.authorizeViewer(request.authTokenPayload)
   return await reviewService.listReviewsByBeer(
     list,
     request.id,
-    reviewListOrder,
+    reviewListRequest,
     log,
   )
 }
@@ -82,17 +87,17 @@ export async function listReviewsByBeer(
 export async function listReviewsByBrewery(
   list: (
     breweryId: string,
-    reviewListOrder: ReviewListOrder,
+    reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
   request: IdRequest,
-  reviewListOrder: ReviewListOrder,
+  reviewListRequest: ReviewListRequest,
   log: log,
 ): Promise<JoinedReview[]> {
   authorizationService.authorizeViewer(request.authTokenPayload)
   return await reviewService.listReviewsByBrewery(
     list,
     request.id,
-    reviewListOrder,
+    reviewListRequest,
     log,
   )
 }
@@ -100,17 +105,17 @@ export async function listReviewsByBrewery(
 export async function listReviewsByLocation(
   list: (
     locationId: string,
-    reviewListOrder: ReviewListOrder,
+    reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
   request: IdRequest,
-  reviewListOrder: ReviewListOrder,
+  reviewListRequest: ReviewListRequest,
   log: log,
 ): Promise<JoinedReview[]> {
   authorizationService.authorizeViewer(request.authTokenPayload)
   return await reviewService.listReviewsByLocation(
     list,
     request.id,
-    reviewListOrder,
+    reviewListRequest,
     log,
   )
 }
@@ -118,17 +123,17 @@ export async function listReviewsByLocation(
 export async function listReviewsByStyle(
   list: (
     styleId: string,
-    reviewListOrder: ReviewListOrder,
+    reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
   request: IdRequest,
-  reviewListOrder: ReviewListOrder,
+  reviewListRequest: ReviewListRequest,
   log: log,
 ): Promise<JoinedReview[]> {
   authorizationService.authorizeViewer(request.authTokenPayload)
   return await reviewService.listReviewsByStyle(
     list,
     request.id,
-    reviewListOrder,
+    reviewListRequest,
     log,
   )
 }

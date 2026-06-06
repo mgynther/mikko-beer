@@ -541,6 +541,41 @@ describe('review tests', () => {
     assertEqual(sorting.direction, 'desc')
   })
 
+  it('list reviews by brewery filtered by rating and time', async () => {
+    const { breweryRes, collabReviewRes } = await createListDeps(
+      ctx.adminAuthHeaders(),
+    )
+
+    const minTime = new Date('2023-03-09T17:31:33.123Z').getTime()
+    const maxTime = new Date('2023-03-09T19:31:33.123Z').getTime()
+    const filter = `min_rating=5&max_rating=6&min_time=${minTime}&max_time=${
+      maxTime
+    }`
+    const breweryListRes = await ctx.request.get<{
+      reviews: JoinedReview[]
+      sorting: {
+        order: ReviewListOrderProperty
+        direction: ListDirection
+      }
+    }>(
+      `/api/v1/brewery/${
+        breweryRes.data.brewery.id
+      }/review?order=beer_name&direction=desc&${filter}`,
+      ctx.adminAuthHeaders(),
+    )
+    assertEqual(breweryListRes.status, 200)
+    assertEqual(breweryListRes.data.reviews.length, 1)
+
+    const collabReview = breweryListRes.data.reviews[0]
+    assertEqual(collabReview?.id, collabReviewRes.data.review.id)
+    assertEqual(collabReview?.beerId, collabReviewRes.data.review.beer)
+    assertEqual(collabReview?.breweries?.length, 2)
+
+    const sorting = breweryListRes.data.sorting
+    assertEqual(sorting.order, 'beer_name')
+    assertEqual(sorting.direction, 'desc')
+  })
+
   it('list reviews by location', async () => {
     const { locationRes, reviewRes, otherReviewRes } = await createListDeps(
       ctx.adminAuthHeaders(),
@@ -566,6 +601,40 @@ describe('review tests', () => {
     assertEqual(kriekReview?.beerId, reviewRes.data.review.beer)
 
     const otherReview = locationListRes.data.reviews[1]
+    assertEqual(otherReview?.id, otherReviewRes.data.review.id)
+    assertEqual(otherReview?.beerId, otherReviewRes.data.review.beer)
+
+    const sorting = locationListRes.data.sorting
+    assertEqual(sorting.order, 'beer_name')
+    assertEqual(sorting.direction, 'desc')
+  })
+
+  it('list reviews by location filtered by rating and time', async () => {
+    const { locationRes, otherReviewRes } = await createListDeps(
+      ctx.adminAuthHeaders(),
+    )
+
+    const minTime = new Date('2023-03-10T17:31:33.123Z').getTime()
+    const maxTime = new Date('2023-03-10T19:31:33.123Z').getTime()
+    const filter = `min_rating=5&max_rating=7&min_time=${minTime}&max_time=${
+      maxTime
+    }`
+    const locationListRes = await ctx.request.get<{
+      reviews: JoinedReview[]
+      sorting: {
+        order: ReviewListOrderProperty
+        direction: ListDirection
+      }
+    }>(
+      `/api/v1/location/${
+        locationRes.data.location.id
+      }/review?order=beer_name&direction=desc&${filter}`,
+      ctx.adminAuthHeaders(),
+    )
+    assertEqual(locationListRes.status, 200)
+    assertEqual(locationListRes.data.reviews.length, 1)
+
+    const otherReview = locationListRes.data.reviews[0]
     assertEqual(otherReview?.id, otherReviewRes.data.review.id)
     assertEqual(otherReview?.beerId, otherReviewRes.data.review.beer)
 
@@ -602,6 +671,38 @@ describe('review tests', () => {
     assertEqual(collabReview?.id, collabReviewRes.data.review.id)
     assertEqual(collabReview?.beerId, collabReviewRes.data.review.beer)
     assertEqual(collabReview?.breweries?.length, 2)
+
+    const sorting = styleListRes.data.sorting
+    assertEqual(sorting.order, 'beer_name')
+    assertEqual(sorting.direction, 'desc')
+  })
+
+  it('list reviews by style filtered by rating and time', async () => {
+    const { styleRes, reviewRes } = await createListDeps(ctx.adminAuthHeaders())
+
+    const minTime = new Date('2023-03-07T17:31:33.123Z').getTime()
+    const maxTime = new Date('2023-03-07T19:31:33.123Z').getTime()
+    const filter = `min_rating=7&max_rating=8&min_time=${minTime}&max_time=${
+      maxTime
+    }`
+    const styleListRes = await ctx.request.get<{
+      reviews: JoinedReview[]
+      sorting: {
+        order: ReviewListOrderProperty
+        direction: ListDirection
+      }
+    }>(
+      `/api/v1/style/${
+        styleRes.data.style.id
+      }/review?order=beer_name&direction=desc&${filter}`,
+      ctx.adminAuthHeaders(),
+    )
+    assertEqual(styleListRes.status, 200)
+    assertEqual(styleListRes.data.reviews.length, 1)
+
+    const kriekReview = styleListRes.data.reviews[0]
+    assertEqual(kriekReview?.id, reviewRes.data.review.id)
+    assertEqual(kriekReview?.beerId, reviewRes.data.review.beer)
 
     const sorting = styleListRes.data.sorting
     assertEqual(sorting.order, 'beer_name')
@@ -662,6 +763,38 @@ describe('review tests', () => {
       beerListRes.data.reviews.map((r) => r.rating),
       [7, 8],
     )
+  })
+
+  it('list reviews by beer filtered by rating and time', async () => {
+    const { beerRes, reviewRes } = await createListDeps(ctx.adminAuthHeaders())
+
+    const minTime = new Date('2023-03-07T17:31:33.123Z').getTime()
+    const maxTime = new Date('2023-03-07T19:31:33.123Z').getTime()
+    const filter = `min_rating=7&max_rating=8&min_time=${minTime}&max_time=${
+      maxTime
+    }`
+    const beerListRes = await ctx.request.get<{
+      reviews: JoinedReview[]
+      sorting: {
+        order: ReviewListOrderProperty
+        direction: ListDirection
+      }
+    }>(
+      `/api/v1/beer/${
+        beerRes.data.beer.id
+      }/review?order=beer_name&direction=desc&${filter}`,
+      ctx.adminAuthHeaders(),
+    )
+    assertEqual(beerListRes.status, 200)
+    assertEqual(beerListRes.data.reviews.length, 1)
+
+    const kriekReview = beerListRes.data.reviews[0]
+    assertEqual(kriekReview?.id, reviewRes.data.review.id)
+    assertEqual(kriekReview?.beerId, reviewRes.data.review.beer)
+
+    const sorting = beerListRes.data.sorting
+    assertEqual(sorting.order, 'beer_name')
+    assertEqual(sorting.direction, 'desc')
   })
 
   interface Sorting {
@@ -757,5 +890,35 @@ describe('review tests', () => {
       otherIndex: 1,
       collabIndex: 0,
     })
+  })
+
+  it('list reviews filtered by rating and time', async () => {
+    const { reviewRes } = await createListDeps(ctx.adminAuthHeaders())
+
+    const minTime = new Date('2023-03-07T17:31:33.123Z').getTime()
+    const maxTime = new Date('2023-03-07T19:31:33.123Z').getTime()
+    const filter = `min_rating=7&max_rating=8&min_time=${minTime}&max_time=${
+      maxTime
+    }`
+    const beerListRes = await ctx.request.get<{
+      reviews: JoinedReview[]
+      sorting: {
+        order: ReviewListOrderProperty
+        direction: ListDirection
+      }
+    }>(
+      `/api/v1/review?order=rating&direction=asc&${filter}`,
+      ctx.adminAuthHeaders(),
+    )
+    assertEqual(beerListRes.status, 200)
+    assertEqual(beerListRes.data.reviews.length, 1)
+
+    const kriekReview = beerListRes.data.reviews[0]
+    assertEqual(kriekReview?.id, reviewRes.data.review.id)
+    assertEqual(kriekReview?.beerId, reviewRes.data.review.beer)
+
+    const sorting = beerListRes.data.sorting
+    assertEqual(sorting.order, 'rating')
+    assertEqual(sorting.direction, 'asc')
   })
 })

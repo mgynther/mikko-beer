@@ -12,7 +12,9 @@ import type {
   JoinedReview,
   NewReview,
   Review,
+  ReviewListFilter,
   ReviewListOrder,
+  ReviewListRequest,
   UpdateIf,
   UpdateReviewRequest,
 } from '../../../../src/core/review/review.js'
@@ -24,6 +26,13 @@ import { expectReject } from '../../controller-error-helper.js'
 import { assertDeepEqual, assertEqual } from '../../../assert.js'
 
 const time = '2024-07-06T19:36:38.182Z'
+
+const reviewListFilter: ReviewListFilter = {
+  minRating: 4,
+  maxRating: 10,
+  minTime: new Date('1970-01-01'),
+  maxTime: new Date('9999-01-01'),
+}
 
 const newReview: NewReview = {
   additionalInfo: 'something interesting',
@@ -314,16 +323,20 @@ describe('review service unit tests', () => {
   it('list reviews', async () => {
     const lister = async (
       listPagination: Pagination,
-      listOrder: ReviewListOrder,
+      listRequest: ReviewListRequest,
     ) => {
       assertDeepEqual(listPagination, pagination)
-      assertDeepEqual(listOrder, order)
+      assertDeepEqual(listRequest.filter, reviewListFilter)
+      assertDeepEqual(listRequest.order, order)
       return [joinedReview]
     }
     const result = await reviewService.listReviews(
       lister,
       pagination,
-      order,
+      {
+        filter: reviewListFilter,
+        order: order,
+      },
       log,
     )
     assertDeepEqual(result, [joinedReview])
@@ -331,15 +344,22 @@ describe('review service unit tests', () => {
 
   it('list reviews by beer', async () => {
     const beerId = 'ff16b2f6-7862-4e55-9ecb-b67d617e8f9c'
-    const lister = async (listBeerId: string, listOrder: ReviewListOrder) => {
+    const lister = async (
+      listBeerId: string,
+      listRequest: ReviewListRequest,
+    ) => {
       assertEqual(listBeerId, beerId)
-      assertDeepEqual(listOrder, order)
+      assertDeepEqual(listRequest.filter, reviewListFilter)
+      assertDeepEqual(listRequest.order, order)
       return [joinedReview]
     }
     const result = await reviewService.listReviewsByBeer(
       lister,
       beerId,
-      order,
+      {
+        filter: reviewListFilter,
+        order: order,
+      },
       log,
     )
     assertDeepEqual(result, [joinedReview])
@@ -349,16 +369,20 @@ describe('review service unit tests', () => {
     const breweryId = 'f7471dfd-9af9-4a9b-b39d-47f4e7199800'
     const lister = async (
       listBreweryId: string,
-      listOrder: ReviewListOrder,
+      listRequest: ReviewListRequest,
     ) => {
       assertEqual(listBreweryId, breweryId)
-      assertDeepEqual(listOrder, order)
+      assertDeepEqual(listRequest.filter, reviewListFilter)
+      assertDeepEqual(listRequest.order, order)
       return [joinedReview]
     }
     const result = await reviewService.listReviewsByBrewery(
       lister,
       breweryId,
-      order,
+      {
+        filter: reviewListFilter,
+        order: order,
+      },
       log,
     )
     assertDeepEqual(result, [joinedReview])
@@ -368,16 +392,20 @@ describe('review service unit tests', () => {
     const locationId = '714b123e-c6c1-4e1a-b6f8-0ce4e076520e'
     const lister = async (
       listLocationId: string,
-      listOrder: ReviewListOrder,
+      listRequest: ReviewListRequest,
     ) => {
       assertEqual(listLocationId, locationId)
-      assertDeepEqual(listOrder, order)
+      assertDeepEqual(listRequest.filter, reviewListFilter)
+      assertDeepEqual(listRequest.order, order)
       return [joinedReview]
     }
     const result = await reviewService.listReviewsByLocation(
       lister,
       locationId,
-      order,
+      {
+        filter: reviewListFilter,
+        order: order,
+      },
       log,
     )
     assertDeepEqual(result, [joinedReview])
@@ -385,15 +413,22 @@ describe('review service unit tests', () => {
 
   it('list reviews by style', async () => {
     const styleId = 'b265c454-6842-415b-840c-bfdb579aa658'
-    const lister = async (listStyleId: string, listOrder: ReviewListOrder) => {
+    const lister = async (
+      listStyleId: string,
+      listRequest: ReviewListRequest,
+    ) => {
       assertEqual(listStyleId, styleId)
-      assertDeepEqual(listOrder, order)
+      assertDeepEqual(listRequest.filter, reviewListFilter)
+      assertDeepEqual(listRequest.order, order)
       return [joinedReview]
     }
     const result = await reviewService.listReviewsByStyle(
       lister,
       styleId,
-      order,
+      {
+        filter: reviewListFilter,
+        order: order,
+      },
       log,
     )
     assertDeepEqual(result, [joinedReview])

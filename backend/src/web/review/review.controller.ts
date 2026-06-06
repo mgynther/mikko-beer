@@ -13,12 +13,13 @@ import type {
   CreateIf,
   NewReview,
   Review,
-  ReviewListOrder,
+  ReviewListRequest,
   UpdateIf,
 } from '../../core/review/review.js'
 import {
   validateFilteredReviewListOrder,
   validateFullReviewListOrder,
+  validateReviewListFilter,
 } from '../../core/review/review.js'
 import { validatePagination } from '../../core/pagination.js'
 import type { Context } from '../context.js'
@@ -119,19 +120,19 @@ export function reviewController(router: Router): void {
   router.get('/api/v1/beer/:beerId/review', async (ctx: Context) => {
     const authTokenPayload = parseAuthToken(ctx)
     const beerId: string | undefined = ctx.params.beerId
-    const reviewListOrder = validateFilteredReviewListOrder(ctx.request.query)
+    const reviewListRequest = parseFilteredReviewListRequest(ctx.request.query)
     const reviews = await reviewService.listReviewsByBeer(
-      async (beerId: string, reviewListOrder: ReviewListOrder) =>
+      async (beerId: string, reviewListRequest: ReviewListRequest) =>
         await reviewRepository.listReviewsByBeer(
           ctx.db,
           beerId,
-          reviewListOrder,
+          reviewListRequest,
         ),
       {
         authTokenPayload,
         id: beerId,
       },
-      reviewListOrder,
+      reviewListRequest,
       ctx.log,
     )
 
@@ -140,8 +141,8 @@ export function reviewController(router: Router): void {
       body: {
         reviews,
         sorting: {
-          order: reviewListOrder.property,
-          direction: reviewListOrder.direction,
+          order: reviewListRequest.order.property,
+          direction: reviewListRequest.order.direction,
         },
       },
     }
@@ -150,19 +151,19 @@ export function reviewController(router: Router): void {
   router.get('/api/v1/brewery/:breweryId/review', async (ctx: Context) => {
     const authTokenPayload = parseAuthToken(ctx)
     const breweryId: string | undefined = ctx.params.breweryId
-    const reviewListOrder = validateFilteredReviewListOrder(ctx.request.query)
+    const reviewListRequest = parseFilteredReviewListRequest(ctx.request.query)
     const reviews = await reviewService.listReviewsByBrewery(
-      async (breweryId: string, reviewListOrder: ReviewListOrder) =>
+      async (breweryId: string, reviewListRequest: ReviewListRequest) =>
         await reviewRepository.listReviewsByBrewery(
           ctx.db,
           breweryId,
-          reviewListOrder,
+          reviewListRequest,
         ),
       {
         authTokenPayload,
         id: breweryId,
       },
-      reviewListOrder,
+      reviewListRequest,
       ctx.log,
     )
 
@@ -171,8 +172,8 @@ export function reviewController(router: Router): void {
       body: {
         reviews,
         sorting: {
-          order: reviewListOrder.property,
-          direction: reviewListOrder.direction,
+          order: reviewListRequest.order.property,
+          direction: reviewListRequest.order.direction,
         },
       },
     }
@@ -181,19 +182,19 @@ export function reviewController(router: Router): void {
   router.get('/api/v1/location/:locationId/review', async (ctx: Context) => {
     const authTokenPayload = parseAuthToken(ctx)
     const locationId: string | undefined = ctx.params.locationId
-    const reviewListOrder = validateFilteredReviewListOrder(ctx.request.query)
+    const reviewListRequest = parseFilteredReviewListRequest(ctx.request.query)
     const reviews = await reviewService.listReviewsByLocation(
-      async (locationId: string, reviewListOrder: ReviewListOrder) =>
+      async (locationId: string, reviewListRequest: ReviewListRequest) =>
         await reviewRepository.listReviewsByLocation(
           ctx.db,
           locationId,
-          reviewListOrder,
+          reviewListRequest,
         ),
       {
         authTokenPayload,
         id: locationId,
       },
-      reviewListOrder,
+      reviewListRequest,
       ctx.log,
     )
 
@@ -202,8 +203,8 @@ export function reviewController(router: Router): void {
       body: {
         reviews,
         sorting: {
-          order: reviewListOrder.property,
-          direction: reviewListOrder.direction,
+          order: reviewListRequest.order.property,
+          direction: reviewListRequest.order.direction,
         },
       },
     }
@@ -212,19 +213,19 @@ export function reviewController(router: Router): void {
   router.get('/api/v1/style/:styleId/review', async (ctx: Context) => {
     const authTokenPayload = parseAuthToken(ctx)
     const styleId: string | undefined = ctx.params.styleId
-    const reviewListOrder = validateFilteredReviewListOrder(ctx.request.query)
+    const reviewListRequest = parseFilteredReviewListRequest(ctx.request.query)
     const reviews = await reviewService.listReviewsByStyle(
-      async (styleId: string, reviewListOrder: ReviewListOrder) =>
+      async (styleId: string, reviewListRequest: ReviewListRequest) =>
         await reviewRepository.listReviewsByStyle(
           ctx.db,
           styleId,
-          reviewListOrder,
+          reviewListRequest,
         ),
       {
         authTokenPayload,
         id: styleId,
       },
-      reviewListOrder,
+      reviewListRequest,
       ctx.log,
     )
 
@@ -233,8 +234,8 @@ export function reviewController(router: Router): void {
       body: {
         reviews,
         sorting: {
-          order: reviewListOrder.property,
-          direction: reviewListOrder.direction,
+          order: reviewListRequest.order.property,
+          direction: reviewListRequest.order.direction,
         },
       },
     }
@@ -243,14 +244,22 @@ export function reviewController(router: Router): void {
   router.get('/api/v1/review', async (ctx: Context) => {
     const authTokenPayload = parseAuthToken(ctx)
     const { skip, size } = ctx.request.query
+    const reviewListFilter = validateReviewListFilter(ctx.request.query)
     const reviewListOrder = validateFullReviewListOrder(ctx.request.query)
     const pagination = validatePagination({ skip, size })
     const reviews = await reviewService.listReviews(
-      async (pagination: Pagination, reviewListOrder: ReviewListOrder) =>
-        await reviewRepository.listReviews(ctx.db, pagination, reviewListOrder),
+      async (pagination: Pagination, reviewListRequest: ReviewListRequest) =>
+        await reviewRepository.listReviews(
+          ctx.db,
+          pagination,
+          reviewListRequest,
+        ),
       authTokenPayload,
       pagination,
-      reviewListOrder,
+      {
+        filter: reviewListFilter,
+        order: reviewListOrder,
+      },
       ctx.log,
     )
     return {
@@ -265,4 +274,15 @@ export function reviewController(router: Router): void {
       },
     }
   })
+}
+
+function parseFilteredReviewListRequest(
+  query: Record<string, unknown>,
+): ReviewListRequest {
+  const reviewListOrder = validateFilteredReviewListOrder(query)
+  const reviewListFilter = validateReviewListFilter(query)
+  return {
+    filter: reviewListFilter,
+    order: reviewListOrder,
+  }
 }

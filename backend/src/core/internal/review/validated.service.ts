@@ -4,7 +4,7 @@ import type {
   CreateIf,
   JoinedReview,
   Review,
-  ReviewListOrder,
+  ReviewListRequest,
   UpdateIf,
 } from '../../review/review.js'
 import {
@@ -60,28 +60,33 @@ export async function findReviewById(
 export async function listReviews(
   list: (
     pagination: Pagination,
-    reviewListOrder: ReviewListOrder,
+    reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
   pagination: Pagination,
-  reviewListOrder: ReviewListOrder,
+  reviewListRequest: ReviewListRequest,
   log: log,
 ): Promise<JoinedReview[]> {
-  return await reviewService.listReviews(list, pagination, reviewListOrder, log)
+  return await reviewService.listReviews(
+    list,
+    pagination,
+    reviewListRequest,
+    log,
+  )
 }
 
 export async function listReviewsByBeer(
   list: (
     beerId: string,
-    reviewListOrder: ReviewListOrder,
+    reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
   beerId: string | undefined,
-  reviewListOrder: ReviewListOrder,
+  reviewListRequest: ReviewListRequest,
   log: log,
 ): Promise<JoinedReview[]> {
   return await reviewService.listReviewsByBeer(
     list,
     validateBeerId(beerId),
-    reviewListOrder,
+    reviewListRequest,
     log,
   )
 }
@@ -89,16 +94,16 @@ export async function listReviewsByBeer(
 export async function listReviewsByBrewery(
   list: (
     breweryId: string,
-    reviewListOrder: ReviewListOrder,
+    reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
   breweryId: string | undefined,
-  reviewListOrder: ReviewListOrder,
+  reviewListRequest: ReviewListRequest,
   log: log,
 ): Promise<JoinedReview[]> {
   return await reviewService.listReviewsByBrewery(
     list,
     validateBreweryId(breweryId),
-    reviewListOrder,
+    reviewListRequest,
     log,
   )
 }
@@ -106,16 +111,16 @@ export async function listReviewsByBrewery(
 export async function listReviewsByLocation(
   list: (
     locationId: string,
-    reviewListOrder: ReviewListOrder,
+    reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
   locationId: string | undefined,
-  reviewListOrder: ReviewListOrder,
+  reviewListRequest: ReviewListRequest,
   log: log,
 ): Promise<JoinedReview[]> {
   return await reviewService.listReviewsByLocation(
     list,
     validateLocationId(locationId),
-    reviewListOrder,
+    reviewListRequest,
     log,
   )
 }
@@ -123,16 +128,16 @@ export async function listReviewsByLocation(
 export async function listReviewsByStyle(
   list: (
     styleId: string,
-    reviewListOrder: ReviewListOrder,
+    reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
   styleId: string | undefined,
-  reviewListOrder: ReviewListOrder,
+  reviewListRequest: ReviewListRequest,
   log: log,
 ): Promise<JoinedReview[]> {
   return await reviewService.listReviewsByStyle(
     list,
     validateStyleId(styleId),
-    reviewListOrder,
+    reviewListRequest,
     log,
   )
 }

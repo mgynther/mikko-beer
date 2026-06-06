@@ -1,4 +1,4 @@
-import type { SelectQueryBuilder } from 'kysely'
+import type { RawBuilder, SelectQueryBuilder } from 'kysely'
 import { sql } from 'kysely'
 
 import type { Database, KyselyDatabase, Transaction } from '../database.js'
@@ -16,7 +16,9 @@ import type {
   JoinedReview,
   NewReview,
   Review,
+  ReviewListFilter,
   ReviewListOrder,
+  ReviewListRequest,
 } from '../../core/review/review.js'
 import { contains } from '../../core/record.js'
 
@@ -67,48 +69,80 @@ interface ReviewTableRn extends ReviewTable {
   rn: number
 }
 
-const listByRatingAsc = sql<ReviewTableRn>`(
+const listByRatingAsc = (
+  reviewListFilter: ReviewListFilter,
+): RawBuilder<ReviewTableRn> => sql<ReviewTableRn>`(
     SELECT
       review.*,
       ROW_NUMBER() OVER(ORDER BY review.rating ASC, review.time DESC) rn
     FROM review
+    WHERE review.rating >= ${reviewListFilter.minRating} AND review.rating <= ${
+      reviewListFilter.maxRating
+    } AND review.time >= ${reviewListFilter.minTime} AND review.time <= ${
+      reviewListFilter.maxTime
+    }
   )`
 
-const listByRatingDesc = sql<ReviewTableRn>`(
+const listByRatingDesc = (
+  reviewListFilter: ReviewListFilter,
+): RawBuilder<ReviewTableRn> => sql<ReviewTableRn>`(
     SELECT
       review.*,
       ROW_NUMBER() OVER(ORDER BY review.rating DESC, review.time DESC) rn
     FROM review
+    WHERE review.rating >= ${reviewListFilter.minRating} AND review.rating <= ${
+      reviewListFilter.maxRating
+    } AND review.time >= ${reviewListFilter.minTime} AND review.time <= ${
+      reviewListFilter.maxTime
+    }
   )`
 
 function getListQueryByRating(
+  reviewListFilter: ReviewListFilter,
   direction: ListDirection,
-): typeof listByRatingAsc {
+): ReturnType<typeof listByRatingAsc> {
   if (direction === 'asc') {
-    return listByRatingAsc
+    return listByRatingAsc(reviewListFilter)
   }
-  return listByRatingDesc
+  return listByRatingDesc(reviewListFilter)
 }
 
-const listByTimeAsc = sql<ReviewTableRn>`(
+const listByTimeAsc = (
+  reviewListFilter: ReviewListFilter,
+): RawBuilder<ReviewTableRn> => sql<ReviewTableRn>`(
   SELECT
     review.*,
     ROW_NUMBER() OVER(ORDER BY review.time ASC) rn
   FROM review
+  WHERE review.rating >= ${reviewListFilter.minRating} AND review.rating <= ${
+    reviewListFilter.maxRating
+  } AND review.time >= ${reviewListFilter.minTime} AND review.time <= ${
+    reviewListFilter.maxTime
+  }
   )`
 
-const listByTimeDesc = sql<ReviewTableRn>`(
+const listByTimeDesc = (
+  reviewListFilter: ReviewListFilter,
+): RawBuilder<ReviewTableRn> => sql<ReviewTableRn>`(
   SELECT
     review.*,
     ROW_NUMBER() OVER(ORDER BY review.time DESC) rn
   FROM review
+  WHERE review.rating >= ${reviewListFilter.minRating} AND review.rating <= ${
+    reviewListFilter.maxRating
+  } AND review.time >= ${reviewListFilter.minTime} AND review.time <= ${
+    reviewListFilter.maxTime
+  }
   )`
 
-function getListQueryByTime(direction: ListDirection): typeof listByRatingAsc {
+function getListQueryByTime(
+  reviewListFilter: ReviewListFilter,
+  direction: ListDirection,
+): ReturnType<typeof listByRatingAsc> {
   if (direction === 'asc') {
-    return listByTimeAsc
+    return listByTimeAsc(reviewListFilter)
   }
-  return listByTimeDesc
+  return listByTimeDesc(reviewListFilter)
 }
 
 type ListQueryBuilder = SelectQueryBuilder<
@@ -120,7 +154,7 @@ type ListQueryBuilder = SelectQueryBuilder<
 type OrderByGetter = (query: ListQueryBuilder) => ListQueryBuilder
 
 interface ListQueryHelper {
-  selectQuery: typeof listByRatingAsc
+  selectQuery: ReturnType<typeof listByRatingAsc>
   orderBy: OrderByGetter
 }
 
@@ -150,28 +184,42 @@ function getOrderByTime(direction: ListDirection) {
     query.orderBy('review.time', direction)
 }
 
-function getListQueryHelper(reviewListOrder: ReviewListOrder): ListQueryHelper {
-  if (reviewListOrder.property === 'beer_name') {
+function getListQueryHelper(
+  reviewListRequest: ReviewListRequest,
+): ListQueryHelper {
+  if (reviewListRequest.order.property === 'beer_name') {
     return {
-      selectQuery: getListQueryByRating(reviewListOrder.direction),
-      orderBy: getOrderByBeerName(reviewListOrder.direction),
+      selectQuery: getListQueryByRating(
+        reviewListRequest.filter,
+        reviewListRequest.order.direction,
+      ),
+      orderBy: getOrderByBeerName(reviewListRequest.order.direction),
     }
   }
-  if (reviewListOrder.property === 'brewery_name') {
+  if (reviewListRequest.order.property === 'brewery_name') {
     return {
-      selectQuery: getListQueryByRating(reviewListOrder.direction),
-      orderBy: getOrderByBreweryName(reviewListOrder.direction),
+      selectQuery: getListQueryByRating(
+        reviewListRequest.filter,
+        reviewListRequest.order.direction,
+      ),
+      orderBy: getOrderByBreweryName(reviewListRequest.order.direction),
     }
   }
-  if (reviewListOrder.property === 'rating') {
+  if (reviewListRequest.order.property === 'rating') {
     return {
-      selectQuery: getListQueryByRating(reviewListOrder.direction),
-      orderBy: getOrderByRating(reviewListOrder.direction),
+      selectQuery: getListQueryByRating(
+        reviewListRequest.filter,
+        reviewListRequest.order.direction,
+      ),
+      orderBy: getOrderByRating(reviewListRequest.order.direction),
     }
   }
   return {
-    selectQuery: getListQueryByTime(reviewListOrder.direction),
-    orderBy: getOrderByTime(reviewListOrder.direction),
+    selectQuery: getListQueryByTime(
+      reviewListRequest.filter,
+      reviewListRequest.order.direction,
+    ),
+    orderBy: getOrderByTime(reviewListRequest.order.direction),
   }
 }
 
@@ -230,11 +278,11 @@ const listColumns: ListPossibleColumns[] = [
 export async function listReviews(
   db: Database,
   pagination: Pagination,
-  reviewListOrder: ReviewListOrder,
+  reviewListRequest: ReviewListRequest,
 ): Promise<JoinedReview[]> {
   const { start, end } = toRowNumbers(pagination)
 
-  const queryHelper = getListQueryHelper(reviewListOrder)
+  const queryHelper = getListQueryHelper(reviewListRequest)
 
   const query = db
     .getDb()
@@ -257,12 +305,12 @@ export async function listReviews(
 export async function listReviewsByBeer(
   db: Database,
   beerId: string,
-  reviewListOrder: ReviewListOrder,
+  reviewListRequest: ReviewListRequest,
 ): Promise<JoinedReview[]> {
   return toJoinedReviews(
     await joinReviewData(
       db.getDb().selectFrom('beer').where('beer.beer_id', '=', beerId),
-      reviewListOrder,
+      reviewListRequest,
     ),
   )
 }
@@ -270,7 +318,7 @@ export async function listReviewsByBeer(
 export async function listReviewsByBrewery(
   db: Database,
   breweryId: string,
-  reviewListOrder: ReviewListOrder,
+  reviewListRequest: ReviewListRequest,
 ): Promise<JoinedReview[]> {
   return toJoinedReviews(
     await joinReviewData(
@@ -279,7 +327,7 @@ export async function listReviewsByBrewery(
         .selectFrom('beer_brewery as querybrewery')
         .innerJoin('beer', 'querybrewery.beer', 'beer.beer_id')
         .where('querybrewery.brewery', '=', breweryId),
-      reviewListOrder,
+      reviewListRequest,
     ),
   )
 }
@@ -287,7 +335,7 @@ export async function listReviewsByBrewery(
 export async function listReviewsByLocation(
   db: Database,
   locationId: string,
-  reviewListOrder: ReviewListOrder,
+  reviewListRequest: ReviewListRequest,
 ): Promise<JoinedReview[]> {
   const query = db
     .getDb()
@@ -300,9 +348,13 @@ export async function listReviewsByLocation(
     .innerJoin('container', 'review.container', 'container.container_id')
     .leftJoin('location', 'review.location', 'location.location_id')
     .select(listColumns)
+    .where('review.time', '>=', reviewListRequest.filter.minTime)
+    .where('review.time', '<=', reviewListRequest.filter.maxTime)
+    .where('review.rating', '>=', reviewListRequest.filter.minRating)
+    .where('review.rating', '<=', reviewListRequest.filter.maxRating)
     .where('review.location', '=', locationId)
 
-  const reviews = await getOrderBy(reviewListOrder)(query).execute()
+  const reviews = await getOrderBy(reviewListRequest.order)(query).execute()
 
   return toJoinedReviews(parseReviewRows(reviews))
 }
@@ -310,7 +362,7 @@ export async function listReviewsByLocation(
 export async function listReviewsByStyle(
   db: Database,
   styleId: string,
-  reviewListOrder: ReviewListOrder,
+  reviewListRequest: ReviewListRequest,
 ): Promise<JoinedReview[]> {
   return toJoinedReviews(
     await joinReviewData(
@@ -319,16 +371,16 @@ export async function listReviewsByStyle(
         .selectFrom('beer_style as querystyle')
         .innerJoin('beer', 'querystyle.beer', 'beer.beer_id')
         .where('querystyle.style', '=', styleId),
-      reviewListOrder,
+      reviewListRequest,
     ),
   )
 }
 
 async function joinReviewData(
   query: SelectQueryBuilder<KyselyDatabase, 'beer', unknown>,
-  reviewListOrder: ReviewListOrder,
+  reviewListRequest: ReviewListRequest,
 ): Promise<DbJoinedReview[]> {
-  const orderBy = getOrderBy(reviewListOrder)
+  const orderBy = getOrderBy(reviewListRequest.order)
 
   const selectQuery = query
     .innerJoin('review', 'beer.beer_id', 'review.beer')
@@ -339,6 +391,10 @@ async function joinReviewData(
     .innerJoin('style', 'style.style_id', 'beer_style.style')
     .leftJoin('location', 'review.location', 'location.location_id')
     .select(listColumns)
+    .where('review.time', '>=', reviewListRequest.filter.minTime)
+    .where('review.time', '<=', reviewListRequest.filter.maxTime)
+    .where('review.rating', '>=', reviewListRequest.filter.minRating)
+    .where('review.rating', '<=', reviewListRequest.filter.maxRating)
 
   const reviews = await orderBy(selectQuery).execute()
 

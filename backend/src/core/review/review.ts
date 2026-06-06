@@ -5,9 +5,11 @@ import { directionValidation } from '../internal/list.js'
 import type { ListDirection } from '../list.js'
 
 import type { LockId } from '../db.js'
+import { parseDate } from '../date-parser.js'
 import {
   invalidReviewListQueryBeerNameError,
   invalidReviewListQueryBreweryNameError,
+  invalidReviewListQueryFilterError,
   invalidReviewListQueryOrderError,
 } from '../errors.js'
 
@@ -92,6 +94,18 @@ export type ReviewListOrderProperty =
 export interface ReviewListOrder {
   property: ReviewListOrderProperty
   direction: ListDirection
+}
+
+export interface ReviewListFilter {
+  minRating: number
+  maxRating: number
+  minTime: Date
+  maxTime: Date
+}
+
+export interface ReviewListRequest {
+  filter: ReviewListFilter
+  order: ReviewListOrder
 }
 
 export type CreateReviewRequest = ReviewRequest
@@ -187,4 +201,63 @@ function validateReviewListOrder(
     throw invalidReviewListQueryOrderError
   }
   return reviewListOrder
+}
+
+const defaultReviewListFilter: ReviewListFilter = {
+  minRating: 4,
+  maxRating: 10,
+  minTime: new Date('1970-01-01T00:00:00.000Z'),
+  maxTime: new Date('2100-01-01T00:00:00.000Z'),
+}
+
+interface ReviewListFilterRatings {
+  minRating: number
+  maxRating: number
+}
+
+const doValidateRatingFilter = ajv.compile<ReviewListFilterRatings>({
+  type: 'object',
+  properties: {
+    minRating: { type: 'integer', minimum: 4, maximum: 10 },
+    maxRating: { type: 'integer', minimum: 4, maximum: 10 },
+  },
+  required: ['minRating', 'maxRating'],
+  additionalProperties: false,
+})
+
+function ratingOrDefault(value: unknown, defaultValue: number): number {
+  if (typeof value !== 'string' || value === '') {
+    return defaultValue
+  }
+  return parseInt(value)
+}
+
+function timeOrDefault(value: unknown, defaultValue: Date): Date {
+  if (value === undefined || value === '') {
+    return defaultValue
+  }
+  const date = parseDate(value)
+  if (date === undefined) {
+    throw invalidReviewListQueryFilterError
+  }
+  return date
+}
+
+export function validateReviewListFilter(
+  query: Record<string, unknown>,
+): ReviewListFilter {
+  const { min_rating, max_rating, min_time, max_time } = query
+  const ratings = {
+    minRating: ratingOrDefault(min_rating, defaultReviewListFilter.minRating),
+    maxRating: ratingOrDefault(max_rating, defaultReviewListFilter.maxRating),
+  }
+  if (!doValidateRatingFilter(ratings)) {
+    throw invalidReviewListQueryFilterError
+  }
+  return {
+    minRating: ratings.minRating,
+    maxRating: ratings.maxRating,
+    minTime: timeOrDefault(min_time, defaultReviewListFilter.minTime),
+    maxTime: timeOrDefault(max_time, defaultReviewListFilter.maxTime),
+  }
 }

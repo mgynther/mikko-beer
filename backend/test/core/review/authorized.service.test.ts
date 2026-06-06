@@ -11,6 +11,8 @@ import type {
   ReviewListOrder,
   UpdateReviewRequest,
   UpdateIf,
+  ReviewListFilter,
+  ReviewListRequest,
 } from '../../../src/core/review/review.js'
 import { dummyLog as log } from '../dummy-log.js'
 import { expectReject } from '../controller-error-helper.js'
@@ -18,6 +20,13 @@ import { invalidReviewError, noRightsError } from '../../../src/core/errors.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
 
 const storageId = '5e11fcf9-3fa4-402d-90e2-17706e8d78e6'
+
+const reviewListFilter: ReviewListFilter = {
+  minRating: 4,
+  maxRating: 10,
+  minTime: new Date('1970-01-01'),
+  maxTime: new Date('9999-01-01'),
+}
 
 const validCreateReviewRequest: CreateReviewRequest = {
   additionalInfo: '',
@@ -163,6 +172,10 @@ describe('review authorized service unit tests', () => {
       property: 'beer_name',
       direction: 'asc',
     }
+    const reviewListRequest: ReviewListRequest = {
+      filter: reviewListFilter,
+      order: reviewListOrder,
+    }
     const joinedReview: JoinedReview = {
       ...review,
       beerId: review.beer,
@@ -206,7 +219,7 @@ describe('review authorized service unit tests', () => {
         async () => [joinedReview],
         token,
         { skip: 0, size: 20 },
-        reviewListOrder,
+        reviewListRequest,
         log,
       )
       assertDeepEqual(result, [joinedReview])
@@ -219,7 +232,7 @@ describe('review authorized service unit tests', () => {
           authTokenPayload: token,
           id: joinedReview.beerId,
         },
-        reviewListOrder,
+        reviewListRequest,
         log,
       )
       assertDeepEqual(result, [joinedReview])
@@ -232,7 +245,7 @@ describe('review authorized service unit tests', () => {
           authTokenPayload: token,
           id: joinedReview.breweries[0].id,
         },
-        reviewListOrder,
+        reviewListRequest,
         log,
       )
       assertDeepEqual(result, [joinedReview])
@@ -246,7 +259,7 @@ describe('review authorized service unit tests', () => {
           authTokenPayload: token,
           id: joinedReview.location?.id,
         },
-        reviewListOrder,
+        reviewListRequest,
         log,
       )
       assertDeepEqual(result, [joinedReview])
@@ -259,7 +272,7 @@ describe('review authorized service unit tests', () => {
           authTokenPayload: token,
           id: joinedReview.styles[0].id,
         },
-        reviewListOrder,
+        reviewListRequest,
         log,
       )
       assertDeepEqual(result, [joinedReview])

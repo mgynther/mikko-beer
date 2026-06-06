@@ -6,7 +6,9 @@ import * as reviewRepository from '../../../src/data/review/review.repository.js
 import type {
   JoinedReview,
   Review,
+  ReviewListFilter,
   ReviewListOrder,
+  ReviewListRequest,
 } from '../../../src/core/review/review.js'
 import { insertData, insertMultipleReviews } from '../review-helpers.js'
 import {
@@ -14,6 +16,13 @@ import {
   assertEqual,
   assertNotDeepEqual,
 } from '../../assert.js'
+
+const noOpReviewListFilter: ReviewListFilter = {
+  minRating: 4,
+  maxRating: 10,
+  minTime: new Date('1970-01-01'),
+  maxTime: new Date('9999-01-01'),
+}
 
 describe('review tests', () => {
   const ctx = new TestContext()
@@ -26,22 +35,21 @@ describe('review tests', () => {
 
   async function listReviews(
     db: Database,
-    reviewListOrder: ReviewListOrder,
+    reviewListRequest: ReviewListRequest,
   ): Promise<JoinedReview[]> {
     return await reviewRepository.listReviews(
       db,
       { size: 50, skip: 0 },
-      reviewListOrder,
+      reviewListRequest,
     )
   }
 
   async function prepareListTest(
     db: Database,
-    reviewListOrder: ReviewListOrder,
+    reviewListRequest: ReviewListRequest,
   ) {
     const { reviews, data } = await insertMultipleReviews(10, db)
-    const list = await listReviews(db, reviewListOrder)
-    assertEqual(reviews.length, list.length)
+    const list = await listReviews(db, reviewListRequest)
     return { reviews, data, list }
   }
 
@@ -82,7 +90,10 @@ describe('review tests', () => {
       property: 'brewery_name',
       direction: 'desc',
     }
-    const list = await listReviews(db, reviewListOrder)
+    const list = await listReviews(db, {
+      filter: noOpReviewListFilter,
+      order: reviewListOrder,
+    })
     assertEqual(list.length, 10)
     const start = new Array(5).fill(1).map((_) => data.brewery.name)
     const end = new Array(5).fill(1).map((_) => data.otherBrewery.name)
@@ -115,7 +126,10 @@ describe('review tests', () => {
       property: 'beer_name',
       direction: 'asc',
     }
-    const list = await listReviews(db, reviewListOrder)
+    const list = await listReviews(db, {
+      filter: noOpReviewListFilter,
+      order: reviewListOrder,
+    })
     assertEqual(list.length, 10)
     const start = new Array(5).fill(1).map((_) => data.beer.name)
     const end = new Array(5).fill(1).map((_) => data.otherBeer.name)
@@ -187,40 +201,112 @@ describe('review tests', () => {
 
   async function testTime(
     db: Database,
-    reviewListOrder: ReviewListOrder,
+    reviewListRequest: ReviewListRequest,
     sorter: TimeSorter,
+    expectedReviewsFilter: (review: Review) => boolean,
   ) {
-    const { reviews, list } = await prepareListTest(db, reviewListOrder)
+    const { reviews, list } = await prepareListTest(db, reviewListRequest)
     const listTimes = list.map(toTime)
-    const expectedTimes = reviews.map(toTime).sort(sorter)
+    const filteredReviews = reviews.filter(expectedReviewsFilter)
+    const expectedTimes = filteredReviews.map(toTime).sort(sorter)
     assertDeepEqual(listTimes, expectedTimes)
 
-    const originalTimes = reviews.map(toTime)
+    const originalTimes = filteredReviews.map(toTime)
     assertNotDeepEqual(listTimes, originalTimes)
   }
 
   it('list reviews, time asc', async () => {
     await testTime(
       ctx.db,
-      { property: 'time', direction: 'asc' },
+      {
+        filter: noOpReviewListFilter,
+        order: { property: 'time', direction: 'asc' },
+      },
       ascendingDates,
+      () => true,
+    )
+  })
+
+  it('list reviews filtered by min rating, time asc', async () => {
+    await testTime(
+      ctx.db,
+      {
+        filter: {
+          ...noOpReviewListFilter,
+          minRating: 6,
+        },
+        order: { property: 'time', direction: 'asc' },
+      },
+      ascendingDates,
+      (review: Review) => review.rating >= 6,
+    )
+  })
+
+  it('list reviews filtered by max rating, time asc', async () => {
+    await testTime(
+      ctx.db,
+      {
+        filter: {
+          ...noOpReviewListFilter,
+          maxRating: 7,
+        },
+        order: { property: 'time', direction: 'asc' },
+      },
+      ascendingDates,
+      (review: Review) => review.rating <= 7,
+    )
+  })
+
+  it('list reviews filtered by min time, time asc', async () => {
+    const date = new Date('2023-12-31T23:59:59.000Z')
+    await testTime(
+      ctx.db,
+      {
+        filter: {
+          ...noOpReviewListFilter,
+          minTime: date,
+        },
+        order: { property: 'time', direction: 'asc' },
+      },
+      ascendingDates,
+      (review: Review) => review.time >= date,
+    )
+  })
+
+  it('list reviews filtered by max time, time asc', async () => {
+    const date = new Date('2023-12-31T23:59:59.000Z')
+    await testTime(
+      ctx.db,
+      {
+        filter: {
+          ...noOpReviewListFilter,
+          maxTime: date,
+        },
+        order: { property: 'time', direction: 'asc' },
+      },
+      ascendingDates,
+      (review: Review) => review.time <= date,
     )
   })
 
   it('list reviews, time desc', async () => {
     await testTime(
       ctx.db,
-      { property: 'time', direction: 'desc' },
+      {
+        filter: noOpReviewListFilter,
+        order: { property: 'time', direction: 'desc' },
+      },
       descendingDates,
+      () => true,
     )
   })
 
   async function testRatingTime(
     db: Database,
-    reviewListOrder: ReviewListOrder,
+    reviewListRequest: ReviewListRequest,
     sorter: RatingSorter,
   ) {
-    const { reviews, list } = await prepareListTest(db, reviewListOrder)
+    const { reviews, list } = await prepareListTest(db, reviewListRequest)
     const listRatingTimes = list.map(toRatingTime)
     const expectedRatingTimes = reviews.map(toRatingTime).sort(sorter)
     assertDeepEqual(listRatingTimes, expectedRatingTimes)
@@ -232,7 +318,10 @@ describe('review tests', () => {
   it('list reviews, rating desc', async () => {
     await testRatingTime(
       ctx.db,
-      { property: 'rating', direction: 'desc' },
+      {
+        filter: noOpReviewListFilter,
+        order: { property: 'rating', direction: 'desc' },
+      },
       descendingRatings,
     )
   })
@@ -240,7 +329,10 @@ describe('review tests', () => {
   it('list reviews, rating asc', async () => {
     await testRatingTime(
       ctx.db,
-      { property: 'rating', direction: 'asc' },
+      {
+        filter: noOpReviewListFilter,
+        order: { property: 'rating', direction: 'asc' },
+      },
       ascendingRatings,
     )
   })
@@ -248,19 +340,22 @@ describe('review tests', () => {
   async function listReviewsByBeer(
     db: Database,
     beerId: string,
-    reviewListOrder: ReviewListOrder,
+    reviewListRequest: ReviewListRequest,
   ) {
-    return await reviewRepository.listReviewsByBeer(db, beerId, reviewListOrder)
+    return await reviewRepository.listReviewsByBeer(
+      db,
+      beerId,
+      reviewListRequest,
+    )
   }
 
-  function testFilteredList<T>(
+  function testBeerIdFilteredList<T>(
     reviews: Review[],
     list: JoinedReview[],
     converter: (review: Review | JoinedReview) => T,
     sorter: (a: T, b: T) => number,
     beerId: string,
   ) {
-    assertEqual(reviews.length / 2, list.length)
     const listValues = list.map(converter)
     const expectedValues = reviews
       .filter((review) => review.beer === beerId)
@@ -279,9 +374,85 @@ describe('review tests', () => {
       property: 'beer_name',
       direction: 'desc',
     }
-    const list = await listReviewsByBeer(db, data.otherBeer.id, reviewListOrder)
-    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.id)
+    const list = await listReviewsByBeer(db, data.otherBeer.id, {
+      filter: noOpReviewListFilter,
+      order: reviewListOrder,
+    })
+    testBeerIdFilteredList(
+      reviews,
+      list,
+      toTime,
+      ascendingDates,
+      data.otherBeer.id,
+    )
   })
+
+  interface ReviewFilterTest {
+    name: string
+    filter: ReviewListFilter
+    reviewFilterFunction: (review: Review) => boolean
+  }
+
+  const beerFilterMinTestDate = new Date('2023-03-01T23:59:59.000Z')
+  const beerFilterMaxTestDate = new Date('2023-04-01T23:59:59.000Z')
+  const beerReviewFilterTests: ReviewFilterTest[] = [
+    {
+      name: 'min rating',
+      filter: {
+        ...noOpReviewListFilter,
+        minRating: 6,
+      },
+      reviewFilterFunction: (review) => review.rating >= 6,
+    },
+    {
+      name: 'max rating',
+      filter: {
+        ...noOpReviewListFilter,
+        maxRating: 8,
+      },
+      reviewFilterFunction: (review) => review.rating <= 8,
+    },
+    {
+      name: 'min time',
+      filter: {
+        ...noOpReviewListFilter,
+        minTime: beerFilterMinTestDate,
+      },
+      reviewFilterFunction: (review) => review.time >= beerFilterMinTestDate,
+    },
+    {
+      name: 'max time',
+      filter: {
+        ...noOpReviewListFilter,
+        maxTime: beerFilterMaxTestDate,
+      },
+      reviewFilterFunction: (review) => review.time <= beerFilterMaxTestDate,
+    },
+  ]
+
+  beerReviewFilterTests.forEach((testCase) =>
+    it(`list reviews by beer and ${
+      testCase.name
+    }, beer_name desc`, async () => {
+      const db = ctx.db
+      const { reviews, data } = await insertMultipleReviews(10, db)
+      const reviewListOrder: ReviewListOrder = {
+        property: 'beer_name',
+        direction: 'desc',
+      }
+      const list = await listReviewsByBeer(db, data.otherBeer.id, {
+        filter: testCase.filter,
+        order: reviewListOrder,
+      })
+      testBeerIdFilteredList(
+        reviews.filter(testCase.reviewFilterFunction),
+        list,
+        toTime,
+        ascendingDates,
+        data.otherBeer.id,
+      )
+    }),
+  )
 
   it('list reviews by beer, rating asc', async () => {
     const db = ctx.db
@@ -290,8 +461,11 @@ describe('review tests', () => {
       property: 'rating',
       direction: 'asc',
     }
-    const list = await listReviewsByBeer(db, data.beer.id, reviewListOrder)
-    testFilteredList(
+    const list = await listReviewsByBeer(db, data.beer.id, {
+      filter: noOpReviewListFilter,
+      order: reviewListOrder,
+    })
+    testBeerIdFilteredList(
       reviews,
       list,
       toRatingTime,
@@ -307,19 +481,28 @@ describe('review tests', () => {
       property: 'time',
       direction: 'desc',
     }
-    const list = await listReviewsByBeer(db, data.otherBeer.id, reviewListOrder)
-    testFilteredList(reviews, list, toTime, descendingDates, data.otherBeer.id)
+    const list = await listReviewsByBeer(db, data.otherBeer.id, {
+      filter: noOpReviewListFilter,
+      order: reviewListOrder,
+    })
+    testBeerIdFilteredList(
+      reviews,
+      list,
+      toTime,
+      descendingDates,
+      data.otherBeer.id,
+    )
   })
 
   async function listReviewsByBrewery(
     db: Database,
     breweryId: string,
-    reviewListOrder: ReviewListOrder,
+    reviewListRequest: ReviewListRequest,
   ) {
     return await reviewRepository.listReviewsByBrewery(
       db,
       breweryId,
-      reviewListOrder,
+      reviewListRequest,
     )
   }
 
@@ -330,12 +513,17 @@ describe('review tests', () => {
       property: 'beer_name',
       direction: 'asc',
     }
-    const list = await listReviewsByBrewery(
-      db,
-      data.otherBrewery.id,
-      reviewListOrder,
+    const list = await listReviewsByBrewery(db, data.otherBrewery.id, {
+      filter: noOpReviewListFilter,
+      order: reviewListOrder,
+    })
+    testBeerIdFilteredList(
+      reviews,
+      list,
+      toTime,
+      ascendingDates,
+      data.otherBeer.id,
     )
-    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.id)
   })
 
   it('list reviews by brewery, rating desc', async () => {
@@ -345,12 +533,11 @@ describe('review tests', () => {
       property: 'rating',
       direction: 'desc',
     }
-    const list = await listReviewsByBrewery(
-      db,
-      data.brewery.id,
-      reviewListOrder,
-    )
-    testFilteredList(
+    const list = await listReviewsByBrewery(db, data.brewery.id, {
+      filter: noOpReviewListFilter,
+      order: reviewListOrder,
+    })
+    testBeerIdFilteredList(
       reviews,
       list,
       toRatingTime,
@@ -366,23 +553,87 @@ describe('review tests', () => {
       property: 'time',
       direction: 'asc',
     }
-    const list = await listReviewsByBrewery(
-      db,
-      data.otherBrewery.id,
-      reviewListOrder,
+    const list = await listReviewsByBrewery(db, data.otherBrewery.id, {
+      filter: noOpReviewListFilter,
+      order: reviewListOrder,
+    })
+    testBeerIdFilteredList(
+      reviews,
+      list,
+      toTime,
+      ascendingDates,
+      data.otherBeer.id,
     )
-    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.id)
   })
+
+  const breweryFilterMinTestDate = new Date('2023-03-01T23:59:59.000Z')
+  const breweryFilterMaxTestDate = new Date('2023-05-01T23:59:59.000Z')
+  const breweryReviewFilterTests: ReviewFilterTest[] = [
+    {
+      name: 'min rating',
+      filter: {
+        ...noOpReviewListFilter,
+        minRating: 7,
+      },
+      reviewFilterFunction: (review) => review.rating >= 7,
+    },
+    {
+      name: 'max rating',
+      filter: {
+        ...noOpReviewListFilter,
+        maxRating: 7,
+      },
+      reviewFilterFunction: (review) => review.rating <= 7,
+    },
+    {
+      name: 'min time',
+      filter: {
+        ...noOpReviewListFilter,
+        minTime: breweryFilterMinTestDate,
+      },
+      reviewFilterFunction: (review) => review.time >= breweryFilterMinTestDate,
+    },
+    {
+      name: 'max time',
+      filter: {
+        ...noOpReviewListFilter,
+        maxTime: breweryFilterMaxTestDate,
+      },
+      reviewFilterFunction: (review) => review.time <= breweryFilterMaxTestDate,
+    },
+  ]
+
+  breweryReviewFilterTests.forEach((testCase) =>
+    it(`list reviews by brewery and ${testCase.name}, time asc`, async () => {
+      const db = ctx.db
+      const { reviews, data } = await insertMultipleReviews(10, db)
+      const reviewListOrder: ReviewListOrder = {
+        property: 'time',
+        direction: 'asc',
+      }
+      const list = await listReviewsByBrewery(db, data.otherBrewery.id, {
+        filter: testCase.filter,
+        order: reviewListOrder,
+      })
+      testBeerIdFilteredList(
+        reviews.filter(testCase.reviewFilterFunction),
+        list,
+        toTime,
+        ascendingDates,
+        data.otherBeer.id,
+      )
+    }),
+  )
 
   async function listReviewsByLocation(
     db: Database,
     locationId: string,
-    reviewListOrder: ReviewListOrder,
+    reviewListRequest: ReviewListRequest,
   ) {
     return await reviewRepository.listReviewsByLocation(
       db,
       locationId,
-      reviewListOrder,
+      reviewListRequest,
     )
   }
 
@@ -393,12 +644,17 @@ describe('review tests', () => {
       property: 'beer_name',
       direction: 'asc',
     }
-    const list = await listReviewsByLocation(
-      db,
-      data.otherLocation.id,
-      reviewListOrder,
+    const list = await listReviewsByLocation(db, data.otherLocation.id, {
+      filter: noOpReviewListFilter,
+      order: reviewListOrder,
+    })
+    testBeerIdFilteredList(
+      reviews,
+      list,
+      toTime,
+      ascendingDates,
+      data.otherBeer.id,
     )
-    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.id)
   })
 
   it('list reviews by location, brewery_name asc', async () => {
@@ -408,12 +664,17 @@ describe('review tests', () => {
       property: 'brewery_name',
       direction: 'asc',
     }
-    const list = await listReviewsByLocation(
-      db,
-      data.otherLocation.id,
-      reviewListOrder,
+    const list = await listReviewsByLocation(db, data.otherLocation.id, {
+      filter: noOpReviewListFilter,
+      order: reviewListOrder,
+    })
+    testBeerIdFilteredList(
+      reviews,
+      list,
+      toTime,
+      ascendingDates,
+      data.otherBeer.id,
     )
-    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.id)
   })
 
   it('list reviews by location, rating desc', async () => {
@@ -423,12 +684,11 @@ describe('review tests', () => {
       property: 'rating',
       direction: 'desc',
     }
-    const list = await listReviewsByLocation(
-      db,
-      data.location.id,
-      reviewListOrder,
-    )
-    testFilteredList(
+    const list = await listReviewsByLocation(db, data.location.id, {
+      filter: noOpReviewListFilter,
+      order: reviewListOrder,
+    })
+    testBeerIdFilteredList(
       reviews,
       list,
       toRatingTime,
@@ -444,23 +704,89 @@ describe('review tests', () => {
       property: 'time',
       direction: 'asc',
     }
-    const list = await listReviewsByLocation(
-      db,
-      data.otherLocation.id,
-      reviewListOrder,
+    const list = await listReviewsByLocation(db, data.otherLocation.id, {
+      filter: noOpReviewListFilter,
+      order: reviewListOrder,
+    })
+    testBeerIdFilteredList(
+      reviews,
+      list,
+      toTime,
+      ascendingDates,
+      data.otherBeer.id,
     )
-    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.id)
   })
+
+  const locationFilterMinTestDate = new Date('2023-03-01T23:59:59.000Z')
+  const locationFilterMaxTestDate = new Date('2023-05-01T23:59:59.000Z')
+  const locationReviewFilterTests: ReviewFilterTest[] = [
+    {
+      name: 'min rating',
+      filter: {
+        ...noOpReviewListFilter,
+        minRating: 7,
+      },
+      reviewFilterFunction: (review) => review.rating >= 7,
+    },
+    {
+      name: 'max rating',
+      filter: {
+        ...noOpReviewListFilter,
+        maxRating: 7,
+      },
+      reviewFilterFunction: (review) => review.rating <= 7,
+    },
+    {
+      name: 'min time',
+      filter: {
+        ...noOpReviewListFilter,
+        minTime: locationFilterMinTestDate,
+      },
+      reviewFilterFunction: (review) =>
+        review.time >= locationFilterMinTestDate,
+    },
+    {
+      name: 'max time',
+      filter: {
+        ...noOpReviewListFilter,
+        maxTime: locationFilterMaxTestDate,
+      },
+      reviewFilterFunction: (review) =>
+        review.time <= locationFilterMaxTestDate,
+    },
+  ]
+
+  locationReviewFilterTests.forEach((testCase) =>
+    it(`list reviews by location and ${testCase.name}, time desc`, async () => {
+      const db = ctx.db
+      const { reviews, data } = await insertMultipleReviews(10, db)
+      const reviewListOrder: ReviewListOrder = {
+        property: 'time',
+        direction: 'desc',
+      }
+      const list = await listReviewsByLocation(db, data.otherLocation.id, {
+        filter: testCase.filter,
+        order: reviewListOrder,
+      })
+      testBeerIdFilteredList(
+        reviews.filter(testCase.reviewFilterFunction),
+        list,
+        toTime,
+        descendingDates,
+        data.otherBeer.id,
+      )
+    }),
+  )
 
   async function listReviewsByStyle(
     db: Database,
     styleId: string,
-    reviewListOrder: ReviewListOrder,
+    reviewListRequest: ReviewListRequest,
   ) {
     return await reviewRepository.listReviewsByStyle(
       db,
       styleId,
-      reviewListOrder,
+      reviewListRequest,
     )
   }
 
@@ -471,12 +797,17 @@ describe('review tests', () => {
       property: 'beer_name',
       direction: 'asc',
     }
-    const list = await listReviewsByStyle(
-      db,
-      data.otherStyle.id,
-      reviewListOrder,
+    const list = await listReviewsByStyle(db, data.otherStyle.id, {
+      filter: noOpReviewListFilter,
+      order: reviewListOrder,
+    })
+    testBeerIdFilteredList(
+      reviews,
+      list,
+      toTime,
+      ascendingDates,
+      data.otherBeer.id,
     )
-    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.id)
   })
 
   it('list reviews by style, rating desc', async () => {
@@ -486,8 +817,11 @@ describe('review tests', () => {
       property: 'rating',
       direction: 'desc',
     }
-    const list = await listReviewsByStyle(db, data.style.id, reviewListOrder)
-    testFilteredList(
+    const list = await listReviewsByStyle(db, data.style.id, {
+      filter: noOpReviewListFilter,
+      order: reviewListOrder,
+    })
+    testBeerIdFilteredList(
       reviews,
       list,
       toRatingTime,
@@ -496,6 +830,65 @@ describe('review tests', () => {
     )
   })
 
+  const styleFilterMinTestDate = new Date('2023-03-01T23:59:59.000Z')
+  const styleFilterMaxTestDate = new Date('2023-05-01T23:59:59.000Z')
+  const styleReviewFilterTests: ReviewFilterTest[] = [
+    {
+      name: 'min rating',
+      filter: {
+        ...noOpReviewListFilter,
+        minRating: 7,
+      },
+      reviewFilterFunction: (review) => review.rating >= 7,
+    },
+    {
+      name: 'max rating',
+      filter: {
+        ...noOpReviewListFilter,
+        maxRating: 7,
+      },
+      reviewFilterFunction: (review) => review.rating <= 7,
+    },
+    {
+      name: 'min time',
+      filter: {
+        ...noOpReviewListFilter,
+        minTime: styleFilterMinTestDate,
+      },
+      reviewFilterFunction: (review) => review.time >= styleFilterMinTestDate,
+    },
+    {
+      name: 'max time',
+      filter: {
+        ...noOpReviewListFilter,
+        maxTime: styleFilterMaxTestDate,
+      },
+      reviewFilterFunction: (review) => review.time <= styleFilterMaxTestDate,
+    },
+  ]
+
+  styleReviewFilterTests.forEach((testCase) =>
+    it(`list reviews by style and ${testCase.name}, rating asc`, async () => {
+      const db = ctx.db
+      const { reviews, data } = await insertMultipleReviews(10, db)
+      const reviewListOrder: ReviewListOrder = {
+        property: 'rating',
+        direction: 'asc',
+      }
+      const list = await listReviewsByStyle(db, data.style.id, {
+        filter: testCase.filter,
+        order: reviewListOrder,
+      })
+      testBeerIdFilteredList(
+        reviews.filter(testCase.reviewFilterFunction),
+        list,
+        toRatingTime,
+        ascendingRatings,
+        data.beer.id,
+      )
+    }),
+  )
+
   it('list reviews by style, time asc', async () => {
     const db = ctx.db
     const { reviews, data } = await insertMultipleReviews(10, db)
@@ -503,11 +896,16 @@ describe('review tests', () => {
       property: 'time',
       direction: 'asc',
     }
-    const list = await listReviewsByStyle(
-      db,
-      data.otherStyle.id,
-      reviewListOrder,
+    const list = await listReviewsByStyle(db, data.otherStyle.id, {
+      filter: noOpReviewListFilter,
+      order: reviewListOrder,
+    })
+    testBeerIdFilteredList(
+      reviews,
+      list,
+      toTime,
+      ascendingDates,
+      data.otherBeer.id,
     )
-    testFilteredList(reviews, list, toTime, ascendingDates, data.otherBeer.id)
   })
 })

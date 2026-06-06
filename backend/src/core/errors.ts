@@ -282,7 +282,13 @@ export const invalidReviewListQueryBreweryNameError = new ControllerError(
 export const invalidReviewListQueryOrderError = new ControllerError(
   400,
   'InvalidReviewListQuery',
-  'invalid review list query',
+  'invalid review list query order',
+)
+
+export const invalidReviewListQueryFilterError = new ControllerError(
+  400,
+  'InvalidReviewListQuery',
+  'invalid review list query filter',
 )
 
 export const reviewNotFoundError = (id: string): ControllerError =>

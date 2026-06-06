@@ -3,10 +3,12 @@ import { describe, it } from 'node:test'
 import {
   validateFullReviewListOrder,
   validateFilteredReviewListOrder,
+  validateReviewListFilter,
 } from '../../../src/core/review/review.js'
 import {
   invalidReviewListQueryBeerNameError,
   invalidReviewListQueryBreweryNameError,
+  invalidReviewListQueryFilterError,
   invalidReviewListQueryOrderError,
 } from '../../../src/core/errors.js'
 import { expectThrow } from '../controller-error-helper.js'
@@ -146,6 +148,66 @@ describe('filtered review list order unit tests', () => {
       expectThrow(
         () => validateFilteredReviewListOrder({ ...test }),
         invalidReviewListQueryOrderError,
+      )
+    })
+  })
+})
+
+interface ReviewListFilterQuery {
+  min_rating: string
+  max_rating: string
+  min_time: string
+  max_time: string
+}
+
+describe('review list filter unit tests', () => {
+  it('defaults to the full range when all properties are missing', () => {
+    assertDeepEqual(validateReviewListFilter({}), {
+      minRating: 4,
+      maxRating: 10,
+      minTime: new Date('1970-01-01T00:00:00.000Z'),
+      maxTime: new Date('2100-01-01T00:00:00.000Z'),
+    })
+  })
+
+  it('returns values matching the input when all properties are valid', () => {
+    const minTime = 1678334400000
+    const maxTime = 1746792000000
+    const validQuery: ReviewListFilterQuery = {
+      min_rating: '5',
+      max_rating: '9',
+      min_time: `${minTime}`,
+      max_time: `${maxTime}`,
+    }
+    assertDeepEqual(validateReviewListFilter({ ...validQuery }), {
+      minRating: 5,
+      maxRating: 9,
+      minTime: new Date(minTime),
+      maxTime: new Date(maxTime),
+    })
+  })
+
+  const validFilterQuery: ReviewListFilterQuery = {
+    min_rating: '5',
+    max_rating: '9',
+    min_time: '1678334400000',
+    max_time: '253370764800000',
+  }
+
+  const invalidFilterCases: ReviewListFilterQuery[] = [
+    { ...validFilterQuery, min_rating: 'invalid' },
+    { ...validFilterQuery, max_rating: 'invalid' },
+    { ...validFilterQuery, min_time: 'invalid' },
+    { ...validFilterQuery, max_time: 'invalid' },
+  ]
+
+  invalidFilterCases.forEach((test) => {
+    it(`throws a filter error with min_rating ${test.min_rating} max_rating ${
+      test.max_rating
+    } min_time ${test.min_time} max_time ${test.max_time}`, () => {
+      expectThrow(
+        () => validateReviewListFilter({ ...test }),
+        invalidReviewListQueryFilterError,
       )
     })
   })
