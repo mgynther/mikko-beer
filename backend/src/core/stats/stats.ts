@@ -8,6 +8,7 @@ import {
 } from '../errors.js'
 import type { ListDirection } from '../list.js'
 import { directionValidation } from '../internal/list.js'
+import { parseDate } from '../date-parser.js'
 
 export type AnnualStats = Array<{
   reviewAverage: string
@@ -243,14 +244,10 @@ export function validateStatsFilter(
   assignValidNumber('maxReviewCount', max_review_count, validateCount, parseInt)
   assignValidNumber('minReviewCount', min_review_count, validateCount, parseInt)
 
-  const validateTimestamp = (value: number): boolean =>
-    value <= Infinity && value >= 1
   function assignValidDate(key: 'timeStart' | 'timeEnd', value: unknown): void {
-    if (typeof value === 'string' && value.length > 0) {
-      const numValue = parseInt(value)
-      if (!isNaN(numValue) && validateTimestamp(numValue)) {
-        result[key] = new Date(numValue)
-      }
+    const dateOrUndefined = parseDate(value)
+    if (dateOrUndefined !== undefined) {
+      result[key] = dateOrUndefined
     }
   }
   assignValidDate('timeStart', time_start)
