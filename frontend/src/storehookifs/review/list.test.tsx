@@ -2,7 +2,11 @@ import { expect, test } from 'vitest'
 import { store } from '../../store/store'
 import { addTestServerResponse } from '../../../test-util/server'
 import listReviews from './list'
-import type { JoinedReviewList } from '../../core/review/types'
+import type {
+  JoinedReviewList,
+  ReviewListFilter,
+  ReviewSorting,
+} from '../../core/review/types'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
 import userEvent from '@testing-library/user-event'
@@ -10,6 +14,18 @@ import userEvent from '@testing-library/user-event'
 import Button from '../../components/common/Button'
 
 const infiniteScroll = (): (() => void) => () => undefined
+
+const sorting: ReviewSorting = {
+  order: 'time',
+  direction: 'desc',
+}
+
+const filter: ReviewListFilter = {
+  minRating: 4,
+  maxRating: 10,
+  minTime: 1701518400000,
+  maxTime: 1749816000000,
+}
 
 function Helper(): React.JSX.Element {
   const listIf = listReviews(infiniteScroll)
@@ -23,13 +39,8 @@ function Helper(): React.JSX.Element {
         onClick={() => {
           void list({
             pagination: { skip: 0, size: 10 },
-            sorting: { order: 'time', direction: 'desc' },
-            filter: {
-              minRating: 4,
-              maxRating: 10,
-              minTime: 1701518400000,
-              maxTime: 1749816000000,
-            },
+            sorting,
+            filter,
           })
         }}
         text='Load'
@@ -110,7 +121,20 @@ test('list reviews', async () => {
 
   addTestServerResponse<JoinedReviewList>({
     method: 'GET',
-    pathname: '/api/v1/review?size=10&skip=0&order=time&direction=desc',
+    // prettier-ignore
+    pathname: `/api/v1/review?size=10&skip=0&order=${
+      sorting.order
+    }&direction=${
+      sorting.direction
+    }&min_rating=${
+      filter.minRating
+    }&max_rating=${
+      filter.maxRating
+    }&min_time=${
+      filter.minTime
+    }&max_time=${
+      filter.maxTime
+    }`,
     response: expectedResponse,
     status: 200,
   })

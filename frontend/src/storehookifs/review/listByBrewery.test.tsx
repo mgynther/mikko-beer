@@ -2,7 +2,11 @@ import { expect, test } from 'vitest'
 import { store } from '../../store/store'
 import { addTestServerResponse } from '../../../test-util/server'
 import listReviewsByBrewery from './listByBrewery'
-import type { JoinedReviewList } from '../../core/review/types'
+import type {
+  JoinedReviewList,
+  ReviewListFilter,
+  ReviewSorting,
+} from '../../core/review/types'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
 
@@ -10,17 +14,24 @@ interface HelperProps {
   breweryId: string
 }
 
+const sorting: ReviewSorting = {
+  order: 'time',
+  direction: 'desc',
+}
+
+const filter: ReviewListFilter = {
+  minRating: 4,
+  maxRating: 10,
+  minTime: 1701518400000,
+  maxTime: 1749816000000,
+}
+
 function Helper(props: HelperProps): React.JSX.Element {
   const listIf = listReviewsByBrewery()
   const { reviews } = listIf.useList({
     id: props.breweryId,
-    sorting: { order: 'time', direction: 'desc' },
-    filter: {
-      minRating: 4,
-      maxRating: 10,
-      minTime: 1701518400000,
-      maxTime: 1749816000000,
-    },
+    sorting,
+    filter,
   })
   return (
     <div>
@@ -67,15 +78,27 @@ test('list reviews by brewery', async () => {
         time: '2026-03-12T00:00:00.000Z',
       },
     ],
-    sorting: {
-      order: 'time',
-      direction: 'desc',
-    },
+    sorting,
   }
 
   addTestServerResponse<JoinedReviewList>({
     method: 'GET',
-    pathname: `/api/v1/brewery/${breweryId}/review?order=time&direction=desc`,
+    // prettier-ignore
+    pathname: `/api/v1/brewery/${
+      breweryId
+    }/review?order=${
+      sorting.order
+    }&direction=${
+      sorting.direction
+    }&min_rating=${
+      filter.minRating
+    }&max_rating=${
+      filter.maxRating
+    }&min_time=${
+      filter.minTime
+    }&max_time=${
+      filter.maxTime
+    }`,
     response: expectedResponse,
     status: 200,
   })

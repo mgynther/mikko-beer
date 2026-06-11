@@ -2,7 +2,11 @@ import { expect, test } from 'vitest'
 import { store } from '../../store/store'
 import { addTestServerResponse } from '../../../test-util/server'
 import listReviewsByLocation from './listByLocation'
-import type { JoinedReviewList } from '../../core/review/types'
+import type {
+  JoinedReviewList,
+  ReviewListFilter,
+  ReviewSorting,
+} from '../../core/review/types'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
 
@@ -10,17 +14,24 @@ interface HelperProps {
   locationId: string
 }
 
+const sorting: ReviewSorting = {
+  order: 'beer_name',
+  direction: 'desc',
+}
+
+const filter: ReviewListFilter = {
+  minRating: 4,
+  maxRating: 10,
+  minTime: 1701518400000,
+  maxTime: 1749816000000,
+}
+
 function Helper(props: HelperProps): React.JSX.Element {
   const listIf = listReviewsByLocation()
   const { reviews } = listIf.useList({
     id: props.locationId,
-    sorting: { order: 'time', direction: 'desc' },
-    filter: {
-      minRating: 4,
-      maxRating: 10,
-      minTime: 1701518400000,
-      maxTime: 1749816000000,
-    },
+    sorting,
+    filter,
   })
   return (
     <div>
@@ -67,15 +78,27 @@ test('list reviews by location', async () => {
         time: '2026-03-12T00:00:00.000Z',
       },
     ],
-    sorting: {
-      order: 'beer_name',
-      direction: 'desc',
-    },
+    sorting,
   }
 
   addTestServerResponse<JoinedReviewList>({
     method: 'GET',
-    pathname: `/api/v1/location/${locationId}/review?order=time&direction=desc`,
+    // prettier-ignore
+    pathname: `/api/v1/location/${
+      locationId
+    }/review?order=${
+      sorting.order
+    }&direction=${
+      sorting.direction
+    }&min_rating=${
+      filter.minRating
+    }&max_rating=${
+      filter.maxRating
+    }&min_time=${
+      filter.minTime
+    }&max_time=${
+      filter.maxTime
+    }`,
     response: expectedResponse,
     status: 200,
   })

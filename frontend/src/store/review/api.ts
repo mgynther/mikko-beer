@@ -9,6 +9,7 @@ import type {
   Review,
   ReviewRequestWrapper,
   ReviewSorting,
+  ReviewListFilter,
 } from '../../core/review/types'
 
 import { reviewTagTypes } from './types'
@@ -22,10 +23,17 @@ function getStorageGetParam(storageId: string): string {
 
 function getListUrl(params: ListReviewParams): string {
   const { size, skip } = params.pagination
-  const { order, direction } = params.sorting
   // prettier-ignore
   const url =
-    `/review?size=${size}&skip=${skip}&order=${order}&direction=${direction}`
+    `/review?size=${
+    size
+  }&skip=${
+    skip
+  }&${
+    getSorting(params.sorting)
+  }&${
+    getFilter(params.filter)
+  }`
   return url
 }
 
@@ -34,9 +42,16 @@ function getSorting(sorting: ReviewSorting): string {
   return `order=${order}&direction=${direction}`
 }
 
+function getFilter(filter: ReviewListFilter): string {
+  return `min_rating=${filter.minRating}&max_rating=${
+    filter.maxRating
+  }&min_time=${filter.minTime}&max_time=${filter.maxTime}`
+}
+
 interface IdFilteredListReviewParams {
   id: string
   sorting: ReviewSorting
+  filter: ReviewListFilter
 }
 
 const reviewApi = emptySplitApi.injectEndpoints({
@@ -58,7 +73,14 @@ const reviewApi = emptySplitApi.injectEndpoints({
       IdFilteredListReviewParams
     >({
       query: (params: IdFilteredListReviewParams) => ({
-        url: `/beer/${params.id}/review?${getSorting(params.sorting)}`,
+        // prettier-ignore
+        url: `/beer/${
+          params.id
+        }/review?${
+          getSorting(params.sorting)
+        }&${
+          getFilter(params.filter)
+        }`,
         method: 'GET',
       }),
       providesTags: [...reviewTagTypes()],
@@ -68,7 +90,14 @@ const reviewApi = emptySplitApi.injectEndpoints({
       IdFilteredListReviewParams
     >({
       query: (params: IdFilteredListReviewParams) => ({
-        url: `/brewery/${params.id}/review?${getSorting(params.sorting)}`,
+        // prettier-ignore
+        url: `/brewery/${
+          params.id
+        }/review?${
+          getSorting(params.sorting)
+        }&${
+          getFilter(params.filter)
+        }`,
         method: 'GET',
       }),
       providesTags: [...reviewTagTypes()],
@@ -78,7 +107,14 @@ const reviewApi = emptySplitApi.injectEndpoints({
       IdFilteredListReviewParams
     >({
       query: (params: IdFilteredListReviewParams) => ({
-        url: `/location/${params.id}/review?${getSorting(params.sorting)}`,
+        // prettier-ignore
+        url: `/location/${
+          params.id
+        }/review?${
+          getSorting(params.sorting)
+        }&${
+          getFilter(params.filter)
+        }`,
         method: 'GET',
       }),
       providesTags: [...reviewTagTypes()],
@@ -88,7 +124,14 @@ const reviewApi = emptySplitApi.injectEndpoints({
       IdFilteredListReviewParams
     >({
       query: (params: IdFilteredListReviewParams) => ({
-        url: `/style/${params.id}/review?${getSorting(params.sorting)}`,
+        // prettier-ignore
+        url: `/style/${
+          params.id
+        }/review?${
+          getSorting(params.sorting)
+        }&${
+          getFilter(params.filter)
+        }`,
         method: 'GET',
       }),
       providesTags: [...reviewTagTypes()],
