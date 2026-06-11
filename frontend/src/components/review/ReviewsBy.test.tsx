@@ -204,6 +204,12 @@ test('lists reviews', async () => {
           direction: 'asc',
           order: 'beer_name',
         },
+        filter: {
+          minRating: 4,
+          maxRating: 10,
+          minTime: 0,
+          maxTime: 4133937600000,
+        },
       },
     ],
     [
@@ -212,6 +218,12 @@ test('lists reviews', async () => {
         sorting: {
           direction: 'desc',
           order: 'rating',
+        },
+        filter: {
+          minRating: 4,
+          maxRating: 10,
+          minTime: 0,
+          maxTime: 4133937600000,
         },
       },
     ],

@@ -15,6 +15,12 @@ function Helper(props: HelperProps): React.JSX.Element {
   const { reviews } = listIf.useList({
     id: props.locationId,
     sorting: { order: 'time', direction: 'desc' },
+    filter: {
+      minRating: 4,
+      maxRating: 10,
+      minTime: 1701518400000,
+      maxTime: 1749816000000,
+    },
   })
   return (
     <div>

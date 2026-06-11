@@ -24,6 +24,12 @@ function Helper(): React.JSX.Element {
           void list({
             pagination: { skip: 0, size: 10 },
             sorting: { order: 'time', direction: 'desc' },
+            filter: {
+              minRating: 4,
+              maxRating: 10,
+              minTime: 1701518400000,
+              maxTime: 1749816000000,
+            },
           })
         }}
         text='Load'

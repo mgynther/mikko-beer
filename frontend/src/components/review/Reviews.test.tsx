@@ -326,6 +326,12 @@ test('sets review sorting', async () => {
           direction: 'desc',
           order: 'time',
         },
+        filter: {
+          minRating: 4,
+          maxRating: 10,
+          minTime: 0,
+          maxTime: 4133937600000,
+        },
       },
     ],
   ])
@@ -438,6 +444,12 @@ test('stops loading more', async () => {
           direction: 'desc',
           order: 'time',
         },
+        filter: {
+          minRating: 4,
+          maxRating: 10,
+          minTime: 0,
+          maxTime: 4133937600000,
+        },
       },
     ],
     [
@@ -449,6 +461,12 @@ test('stops loading more', async () => {
         sorting: {
           direction: 'desc',
           order: 'time',
+        },
+        filter: {
+          minRating: 4,
+          maxRating: 10,
+          minTime: 0,
+          maxTime: 4133937600000,
         },
       },
     ],

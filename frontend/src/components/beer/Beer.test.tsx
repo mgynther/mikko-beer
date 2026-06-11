@@ -432,8 +432,30 @@ test('sort reviews', async () => {
   const ratingButton = getByRole('button', { name: 'Rating' })
   await user.click(ratingButton)
   expect(useList.mock.calls).toEqual([
-    [{ id: beer.id, sorting: { direction: 'asc', order: 'beer_name' } }],
-    [{ id: beer.id, sorting: { direction: 'desc', order: 'rating' } }],
+    [
+      {
+        id: beer.id,
+        sorting: { direction: 'asc', order: 'beer_name' },
+        filter: {
+          minRating: 4,
+          maxRating: 10,
+          minTime: 0,
+          maxTime: 4133937600000,
+        },
+      },
+    ],
+    [
+      {
+        id: beer.id,
+        sorting: { direction: 'desc', order: 'rating' },
+        filter: {
+          minRating: 4,
+          maxRating: 10,
+          minTime: 0,
+          maxTime: 4133937600000,
+        },
+      },
+    ],
   ])
 })
 

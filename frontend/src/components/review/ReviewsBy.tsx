@@ -27,6 +27,12 @@ const ReviewsBy = (props: Props): React.JSX.Element => {
         order,
         direction,
       },
+      filter: {
+        minRating: 4,
+        maxRating: 10,
+        minTime: 0,
+        maxTime: 4133937600000,
+      },
     })
   return (
     <ReviewList

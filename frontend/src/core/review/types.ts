@@ -9,12 +9,21 @@ import type { Location, SearchLocationIf } from '../location/types'
 import type { GetLogin } from '../login/types'
 import type { InfiniteScroll, ListDirection, Pagination } from '../types'
 
+export interface ReviewListFilter {
+  minRating: number
+  maxRating: number
+  minTime: number
+  maxTime: number
+}
+
 export interface IdFilteredListReviewParams {
+  filter: ReviewListFilter
   id: string
   sorting: ReviewSorting
 }
 
 export interface ListReviewParams {
+  filter: ReviewListFilter
   pagination: Pagination
   sorting: ReviewSorting
 }
