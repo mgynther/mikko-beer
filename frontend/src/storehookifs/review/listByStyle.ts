@@ -1,5 +1,5 @@
 import type {
-  FilteredListReviewParams,
+  IdFilteredListReviewParams,
   ListReviewsByIf,
 } from '../../core/review/types'
 import { useListReviewsByStyleQuery } from '../../store/review/api'
@@ -7,7 +7,7 @@ import { validateJoinedReviewListOrUndefined } from '../../validation/review'
 
 const listReviewsByStyle: () => ListReviewsByIf = () => {
   const listReviewsByStyleIf: ListReviewsByIf = {
-    useList: (params: FilteredListReviewParams) => {
+    useList: (params: IdFilteredListReviewParams) => {
       const { data, isLoading } = useListReviewsByStyleQuery(params)
       return {
         reviews: validateJoinedReviewListOrUndefined(data),

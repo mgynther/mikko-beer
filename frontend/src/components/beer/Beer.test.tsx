@@ -5,7 +5,7 @@ import Beer from './Beer'
 import { Role } from '../../core/user/types'
 import LinkWrapper from '../LinkWrapper'
 import type {
-  FilteredListReviewParams,
+  IdFilteredListReviewParams,
   JoinedReview,
   ListReviewsByIf,
   Review,
@@ -408,7 +408,7 @@ test('sort reviews', async () => {
         updateBeerIf={dontUpdateBeerIf}
         searchIf={searchIf}
         listReviewsByBeerIf={{
-          useList: (params: FilteredListReviewParams) => {
+          useList: (params: IdFilteredListReviewParams) => {
             useList(params)
             return {
               reviews: {

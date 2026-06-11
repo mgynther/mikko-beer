@@ -9,7 +9,7 @@ import type { Location, SearchLocationIf } from '../location/types'
 import type { GetLogin } from '../login/types'
 import type { InfiniteScroll, ListDirection, Pagination } from '../types'
 
-export interface FilteredListReviewParams {
+export interface IdFilteredListReviewParams {
   id: string
   sorting: ReviewSorting
 }
@@ -107,7 +107,7 @@ export interface ListReviewsIf {
 }
 
 export interface ListReviewsByIf {
-  useList: (params: FilteredListReviewParams) => {
+  useList: (params: IdFilteredListReviewParams) => {
     reviews: JoinedReviewList | undefined
     isLoading: boolean
   }

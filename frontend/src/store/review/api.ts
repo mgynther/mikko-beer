@@ -34,7 +34,7 @@ function getSorting(sorting: ReviewSorting): string {
   return `order=${order}&direction=${direction}`
 }
 
-interface FilteredListReviewParams {
+interface IdFilteredListReviewParams {
   id: string
   sorting: ReviewSorting
 }
@@ -53,8 +53,11 @@ const reviewApi = emptySplitApi.injectEndpoints({
         method: 'GET',
       }),
     }),
-    listReviewsByBeer: build.query<JoinedReviewList, FilteredListReviewParams>({
-      query: (params: FilteredListReviewParams) => ({
+    listReviewsByBeer: build.query<
+      JoinedReviewList,
+      IdFilteredListReviewParams
+    >({
+      query: (params: IdFilteredListReviewParams) => ({
         url: `/beer/${params.id}/review?${getSorting(params.sorting)}`,
         method: 'GET',
       }),
@@ -62,9 +65,9 @@ const reviewApi = emptySplitApi.injectEndpoints({
     }),
     listReviewsByBrewery: build.query<
       JoinedReviewList,
-      FilteredListReviewParams
+      IdFilteredListReviewParams
     >({
-      query: (params: FilteredListReviewParams) => ({
+      query: (params: IdFilteredListReviewParams) => ({
         url: `/brewery/${params.id}/review?${getSorting(params.sorting)}`,
         method: 'GET',
       }),
@@ -72,23 +75,24 @@ const reviewApi = emptySplitApi.injectEndpoints({
     }),
     listReviewsByLocation: build.query<
       JoinedReviewList,
-      FilteredListReviewParams
+      IdFilteredListReviewParams
     >({
-      query: (params: FilteredListReviewParams) => ({
+      query: (params: IdFilteredListReviewParams) => ({
         url: `/location/${params.id}/review?${getSorting(params.sorting)}`,
         method: 'GET',
       }),
       providesTags: [...reviewTagTypes()],
     }),
-    listReviewsByStyle: build.query<JoinedReviewList, FilteredListReviewParams>(
-      {
-        query: (params: FilteredListReviewParams) => ({
-          url: `/style/${params.id}/review?${getSorting(params.sorting)}`,
-          method: 'GET',
-        }),
-        providesTags: [...reviewTagTypes()],
-      },
-    ),
+    listReviewsByStyle: build.query<
+      JoinedReviewList,
+      IdFilteredListReviewParams
+    >({
+      query: (params: IdFilteredListReviewParams) => ({
+        url: `/style/${params.id}/review?${getSorting(params.sorting)}`,
+        method: 'GET',
+      }),
+      providesTags: [...reviewTagTypes()],
+    }),
     createReview: build.mutation<
       { review: Review },
       Partial<ReviewRequestWrapper>

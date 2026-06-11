@@ -7,7 +7,7 @@ import type { Login } from '../../core/login/types'
 import { Role } from '../../core/user/types'
 import LinkWrapper from '../LinkWrapper'
 import type {
-  FilteredListReviewParams,
+  IdFilteredListReviewParams,
   ReviewContainerIf,
   ReviewIf,
 } from '../../core/review/types'
@@ -174,7 +174,7 @@ test('lists reviews', async () => {
       <ReviewsBy
         id={id}
         listReviewsByIf={{
-          useList: (params: FilteredListReviewParams) => {
+          useList: (params: IdFilteredListReviewParams) => {
             list(params)
             return {
               reviews: {
@@ -226,7 +226,7 @@ test('renders loading', async () => {
       <ReviewsBy
         id={id}
         listReviewsByIf={{
-          useList: (params: FilteredListReviewParams) => {
+          useList: (params: IdFilteredListReviewParams) => {
             list(params)
             return {
               reviews: undefined,
