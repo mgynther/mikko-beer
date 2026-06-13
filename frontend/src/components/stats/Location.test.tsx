@@ -260,20 +260,20 @@ test('renders location stats', async () => {
 })
 
 const defaultSearchParams: Record<string, string> = {
-  filters_open: '0',
-  sorting_order: 'location_name',
-  list_direction: 'asc',
-  min_review_count: '1',
-  max_review_count: 'Infinity',
-  min_review_average: '4.00',
-  max_review_average: '10.00',
-  time_start: testTimes.min.text,
-  time_end: testTimes.max.text,
+  s_filters: '0',
+  s_order: 'location_name',
+  s_direction: 'asc',
+  s_min_count: '1',
+  s_max_count: 'Infinity',
+  s_min_avg: '4.00',
+  s_max_avg: '10.00',
+  s_time_start: testTimes.min.text,
+  s_time_end: testTimes.max.text,
 }
 
 const defaultFiltersOpenParams: Record<string, string> = {
   ...defaultSearchParams,
-  filters_open: '1',
+  s_filters: '1',
 }
 
 function toSearchParams(record: Record<string, string>): SearchParameters {
@@ -302,37 +302,37 @@ const sliderChangeTests: SliderChangeTest[] = [
   {
     label: 'Minimum review average: 4',
     toDisplayValue: '8.1',
-    property: 'min_review_average',
+    property: 's_min_avg',
     stateValue: '8.10',
   },
   {
     label: 'Maximum review average: 10',
     toDisplayValue: '8.0',
-    property: 'max_review_average',
+    property: 's_max_avg',
     stateValue: '8.00',
   },
   {
     label: 'Minimum review count: 1',
     toDisplayValue: '5',
-    property: 'min_review_count',
+    property: 's_min_count',
     stateValue: '13',
   },
   {
     label: 'Maximum review count: ∞',
     toDisplayValue: '5',
-    property: 'max_review_count',
+    property: 's_max_count',
     stateValue: '13',
   },
   {
     label: 'Minimum time: 2017-12',
     toDisplayValue: '5',
-    property: 'time_start',
+    property: 's_time_start',
     stateValue: '2018-05',
   },
   {
     label: 'Maximum time: 2024-12',
     toDisplayValue: '8',
-    property: 'time_end',
+    property: 's_time_end',
     stateValue: '2018-08',
   },
 ]
@@ -466,8 +466,8 @@ orderChangeTests.forEach((testCase) => {
     const setState = vitest.fn()
     const searchRecord: Record<string, string> = {
       ...defaultSearchParams,
-      sorting_order: testCase.originalOrder,
-      list_direction: testCase.originalDirection,
+      s_order: testCase.originalOrder,
+      s_direction: testCase.originalDirection,
     }
     const { getByRole } = render(
       <LinkWrapper>
@@ -485,8 +485,8 @@ orderChangeTests.forEach((testCase) => {
     await user.click(button)
     const expected = {
       ...defaultSearchParams,
-      sorting_order: testCase.newOrder,
-      list_direction: testCase.newDirection,
+      s_order: testCase.newOrder,
+      s_direction: testCase.newDirection,
     }
     expect(setState.mock.calls).toEqual([[expected]])
   })
@@ -509,6 +509,6 @@ test('opens filters', async () => {
   )
   await openFilters(getByRole, user)
   expect(setState).toHaveBeenCalledTimes(1)
-  const filtersOpen = setState.mock.calls[0][0].filters_open
+  const filtersOpen = setState.mock.calls[0][0].s_filters
   expect(filtersOpen).toEqual('1')
 })

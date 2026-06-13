@@ -73,16 +73,16 @@ export function searchParams<T extends string>(props: Props<T>): Result<T> {
     }
   }
 
-  const setMinReviewCount = getFilterSetter('min_review_count', countStr)
-  const setMaxReviewCount = getFilterSetter('max_review_count', countStr)
-  const setMinReviewAverage = getFilterSetter('min_review_average', averageStr)
-  const setMaxReviewAverage = getFilterSetter('max_review_average', averageStr)
-  const setTimeStart = getYearMonthSetter('time_start', formatYearMonth)
-  const setTimeEnd = getYearMonthSetter('time_end', formatYearMonth)
+  const setMinReviewCount = getFilterSetter('s_min_count', countStr)
+  const setMaxReviewCount = getFilterSetter('s_max_count', countStr)
+  const setMinReviewAverage = getFilterSetter('s_min_avg', averageStr)
+  const setMaxReviewAverage = getFilterSetter('s_max_avg', averageStr)
+  const setTimeStart = getYearMonthSetter('s_time_start', formatYearMonth)
+  const setTimeEnd = getYearMonthSetter('s_time_end', formatYearMonth)
 
   function setIsFiltersOpen(isOpen: boolean): void {
     const newState: SearchRecord = getCurrentState()
-    newState.filters_open = filtersOpenStr(isOpen)
+    newState.s_filters = filtersOpenStr(isOpen)
     props.setState(newState)
   }
 
@@ -132,15 +132,15 @@ export function searchParams<T extends string>(props: Props<T>): Result<T> {
     if (statsParams.sortingOrder === property) {
       props.setState({
         ...getCurrentState(),
-        list_direction: invertDirection(statsParams.sortingDirection),
+        s_direction: invertDirection(statsParams.sortingDirection),
       })
       return
     }
     const direction = property === props.nameProperty ? 'asc' : 'desc'
     props.setState({
       ...getCurrentState(),
-      sorting_order: property,
-      list_direction: direction,
+      s_order: property,
+      s_direction: direction,
     })
   }
 

@@ -95,20 +95,20 @@ const emptySearchParameters: SearchParameters = {
 const noOpSetState = (): undefined => undefined
 
 const defaultSearchParams: Record<string, string> = {
-  filters_open: '0',
-  sorting_order: 'style_name',
-  list_direction: 'asc',
-  min_review_count: '1',
-  max_review_count: 'Infinity',
-  min_review_average: '4.00',
-  max_review_average: '10.00',
-  time_start: testTimes.min.text,
-  time_end: testTimes.max.text,
+  s_filters: '0',
+  s_order: 'style_name',
+  s_direction: 'asc',
+  s_min_count: '1',
+  s_max_count: 'Infinity',
+  s_min_avg: '4.00',
+  s_max_avg: '10.00',
+  s_time_start: testTimes.min.text,
+  s_time_end: testTimes.max.text,
 }
 
 const defaultFiltersOpenParams: Record<string, string> = {
   ...defaultSearchParams,
-  filters_open: '1',
+  s_filters: '1',
 }
 
 function toSearchParams(record: Record<string, string>): SearchParameters {
@@ -152,12 +152,12 @@ test('renders style stats', () => {
 test('applies filters', () => {
   const statsRequests = vitest.fn()
   const searchRecord: Record<string, string> = {
-    sorting_order: 'average',
-    list_direction: 'desc',
-    min_review_count: '5',
-    max_review_count: '13',
-    min_review_average: '8.50',
-    max_review_average: '8.90',
+    s_order: 'average',
+    s_direction: 'desc',
+    s_min_count: '5',
+    s_max_count: '13',
+    s_min_avg: '8.50',
+    s_max_avg: '8.90',
   }
   render(
     <LinkWrapper>
@@ -212,7 +212,7 @@ test('opens filters', async () => {
     [
       {
         ...defaultSearchParams,
-        filters_open: '1',
+        s_filters: '1',
       },
     ],
   ])
@@ -238,37 +238,37 @@ const sliderChangeTests: SliderChangeTest[] = [
   {
     label: 'Minimum review average: 4',
     toDisplayValue: '8.1',
-    property: 'min_review_average',
+    property: 's_min_avg',
     stateValue: '8.10',
   },
   {
     label: 'Maximum review average: 10',
     toDisplayValue: '8.0',
-    property: 'max_review_average',
+    property: 's_max_avg',
     stateValue: '8.00',
   },
   {
     label: 'Minimum review count: 1',
     toDisplayValue: '5',
-    property: 'min_review_count',
+    property: 's_min_count',
     stateValue: '13',
   },
   {
     label: 'Maximum review count: ∞',
     toDisplayValue: '5',
-    property: 'max_review_count',
+    property: 's_max_count',
     stateValue: '13',
   },
   {
     label: 'Minimum time: 2017-12',
     toDisplayValue: '5',
-    property: 'time_start',
+    property: 's_time_start',
     stateValue: '2018-05',
   },
   {
     label: 'Maximum time: 2024-12',
     toDisplayValue: '8',
-    property: 'time_end',
+    property: 's_time_end',
     stateValue: '2018-08',
   },
 ]
@@ -426,8 +426,8 @@ orderChangeTests.forEach((testCase) => {
     const setState = vitest.fn()
     const searchRecord: Record<string, string> = {
       ...defaultSearchParams,
-      sorting_order: testCase.originalOrder,
-      list_direction: testCase.originalDirection,
+      s_order: testCase.originalOrder,
+      s_direction: testCase.originalDirection,
     }
     const { getByRole } = render(
       <LinkWrapper>
@@ -448,8 +448,8 @@ orderChangeTests.forEach((testCase) => {
     expect(calls[0]).toEqual([
       {
         ...defaultSearchParams,
-        sorting_order: testCase.newOrder,
-        list_direction: testCase.newDirection,
+        s_order: testCase.newOrder,
+        s_direction: testCase.newDirection,
       },
     ])
   })

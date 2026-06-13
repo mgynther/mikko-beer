@@ -39,7 +39,7 @@ type SortingOrder = 'text' | 'count' | 'average' | 'std_dev'
 function sortingOrderOrDefault(
   search: SearchParameters | undefined,
 ): SortingOrder {
-  const value = search?.get('sorting_order')
+  const value = search?.get('s_order')
   if (value === 'text') {
     return value
   }
@@ -156,13 +156,13 @@ function Container(props: Props): React.JSX.Element {
     sortingOrderParser: sortingOrderOrDefault,
     setState: (state: SearchRecord) => {
       props.setState({
-        sorting_order: state.sorting_order,
-        list_direction: state.list_direction,
-        min_review_count: state.min_review_count,
-        max_review_count: state.max_review_count,
-        min_review_average: state.min_review_average,
-        max_review_average: state.max_review_average,
-        filters_open: state.filters_open,
+        s_order: state.s_order,
+        s_direction: state.s_direction,
+        s_min_count: state.s_min_count,
+        s_max_count: state.s_max_count,
+        s_min_avg: state.s_min_avg,
+        s_max_avg: state.s_max_avg,
+        s_filters: state.s_filters,
       })
     },
   })

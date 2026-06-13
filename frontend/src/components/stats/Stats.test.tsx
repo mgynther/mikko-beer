@@ -441,7 +441,7 @@ test('sets state', async () => {
   )
   await openFilters(getByRole, user)
   expect(setSearch).toHaveBeenCalledTimes(1)
-  const filtersOpen = setSearch.mock.calls[0][1].filters_open
+  const filtersOpen = setSearch.mock.calls[0][1].s_filters
   expect(filtersOpen).toEqual('1')
 })
 
@@ -503,7 +503,7 @@ test('renders container stats', () => {
 test('renders filtered container stats', () => {
   const { getByText, queryByText } = render(
     <Stats
-      paramsIf={getStatsParamsIf('container', { min_review_count: '11' })}
+      paramsIf={getStatsParamsIf('container', { s_min_count: '11' })}
       statsIf={{
         ...emptyStatsIf,
         container: {

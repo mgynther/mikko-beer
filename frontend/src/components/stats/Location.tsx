@@ -23,7 +23,7 @@ interface Props {
 function sortingOrderOrDefault(
   search: SearchParameters | undefined,
 ): LocationStatsSortingOrder {
-  const value = search?.get('sorting_order')
+  const value = search?.get('s_order')
   return value === 'location_name' ||
     value === 'count' ||
     value === 'average' ||

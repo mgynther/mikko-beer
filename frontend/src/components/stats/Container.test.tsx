@@ -34,18 +34,18 @@ const containerStats: OneContainerStats[] = [
 ]
 
 const defaultSearchParams: Record<string, string> = {
-  filters_open: '0',
-  sorting_order: 'text',
-  list_direction: 'asc',
-  min_review_count: '1',
-  max_review_count: 'Infinity',
-  min_review_average: '4.00',
-  max_review_average: '10.00',
+  s_filters: '0',
+  s_order: 'text',
+  s_direction: 'asc',
+  s_min_count: '1',
+  s_max_count: 'Infinity',
+  s_min_avg: '4.00',
+  s_max_avg: '10.00',
 }
 
 const defaultFiltersOpenParams: Record<string, string> = {
   ...defaultSearchParams,
-  filters_open: '1',
+  s_filters: '1',
 }
 
 function toSearchParams(record: Record<string, string>): SearchParameters {
@@ -134,7 +134,7 @@ test('renders container stats with default search', () => {
 test('filter container stats by min average', () => {
   const searchRecord: Record<string, string> = {
     ...defaultSearchParams,
-    min_review_average: '8.10',
+    s_min_avg: '8.10',
   }
   const { getByText, queryByText } = renderFromRecord(searchRecord)
   expect(queryByText('7.87')).toEqual(null)
@@ -144,7 +144,7 @@ test('filter container stats by min average', () => {
 test('filter container stats by max average', () => {
   const searchRecord: Record<string, string> = {
     ...defaultSearchParams,
-    max_review_average: '8.00',
+    s_max_avg: '8.00',
   }
   const { getByText, queryByText } = renderFromRecord(searchRecord)
   getByText('7.87')
@@ -154,7 +154,7 @@ test('filter container stats by max average', () => {
 test('filter container stats by min count', () => {
   const searchRecord: Record<string, string> = {
     ...defaultSearchParams,
-    min_review_count: '13',
+    s_min_count: '13',
   }
   const { getByText, queryByText } = renderFromRecord(searchRecord)
   expect(queryByText('10')).toEqual(null)
@@ -164,7 +164,7 @@ test('filter container stats by min count', () => {
 test('filter container stats by max count', () => {
   const searchRecord: Record<string, string> = {
     ...defaultSearchParams,
-    max_review_count: '13',
+    s_max_count: '13',
   }
   const { getByText, queryByText } = renderFromRecord(searchRecord)
   getByText('10')
@@ -174,8 +174,8 @@ test('filter container stats by max count', () => {
 test('order container stats by average desc', () => {
   const searchRecord: Record<string, string> = {
     ...defaultSearchParams,
-    sorting_order: 'average',
-    list_direction: 'desc',
+    s_order: 'average',
+    s_direction: 'desc',
   }
   const { getAllByText } = renderFromRecord(searchRecord)
   const averages = getAllByText(/7.87|8.23/v)
@@ -187,8 +187,8 @@ test('order container stats by average desc', () => {
 test('order container stats by average asc', () => {
   const searchRecord: Record<string, string> = {
     ...defaultSearchParams,
-    sorting_order: 'average',
-    list_direction: 'asc',
+    s_order: 'average',
+    s_direction: 'asc',
   }
   const { getAllByText } = renderFromRecord(searchRecord)
   const averages = getAllByText(/7.87|8.23/v)
@@ -200,8 +200,8 @@ test('order container stats by average asc', () => {
 test('order container stats by count desc', () => {
   const searchRecord: Record<string, string> = {
     ...defaultSearchParams,
-    sorting_order: 'count',
-    list_direction: 'desc',
+    s_order: 'count',
+    s_direction: 'desc',
   }
   const { getAllByText } = renderFromRecord(searchRecord)
   const counts = getAllByText(/10|24/v)
@@ -213,8 +213,8 @@ test('order container stats by count desc', () => {
 test('order container stats by count asc', () => {
   const searchRecord: Record<string, string> = {
     ...defaultSearchParams,
-    sorting_order: 'count',
-    list_direction: 'asc',
+    s_order: 'count',
+    s_direction: 'asc',
   }
   const { getAllByText } = renderFromRecord(searchRecord)
   const counts = getAllByText(/10|24/v)
@@ -226,8 +226,8 @@ test('order container stats by count asc', () => {
 test('order container stats by container desc', () => {
   const searchRecord: Record<string, string> = {
     ...defaultSearchParams,
-    sorting_order: 'text',
-    list_direction: 'desc',
+    s_order: 'text',
+    s_direction: 'desc',
   }
   const { getAllByText } = renderFromRecord(searchRecord)
   const containers = getAllByText(/draft 0.25|bottle 0.33/v)
@@ -239,8 +239,8 @@ test('order container stats by container desc', () => {
 test('order container stats by container asc', () => {
   const searchRecord: Record<string, string> = {
     ...defaultSearchParams,
-    sorting_order: 'text',
-    list_direction: 'asc',
+    s_order: 'text',
+    s_direction: 'asc',
   }
   const { getAllByText } = renderFromRecord(searchRecord)
   const containers = getAllByText(/draft 0.25|bottle 0.33/v)
@@ -252,8 +252,8 @@ test('order container stats by container asc', () => {
 test('order container stats by std_dev desc', () => {
   const searchRecord: Record<string, string> = {
     ...defaultSearchParams,
-    sorting_order: 'std_dev',
-    list_direction: 'desc',
+    s_order: 'std_dev',
+    s_direction: 'desc',
   }
   const { getAllByText } = renderFromRecord(searchRecord)
   const counts = getAllByText(/0.38|0.54/v)
@@ -265,8 +265,8 @@ test('order container stats by std_dev desc', () => {
 test('order container stats by std_dev asc', () => {
   const searchRecord: Record<string, string> = {
     ...defaultSearchParams,
-    sorting_order: 'std_dev',
-    list_direction: 'asc',
+    s_order: 'std_dev',
+    s_direction: 'asc',
   }
   const { getAllByText } = renderFromRecord(searchRecord)
   const counts = getAllByText(/0.38|0.54/v)
@@ -295,25 +295,25 @@ const sliderChangeTests: SliderChangeTest[] = [
   {
     fromDisplayValue: '4',
     toDisplayValue: '8.1',
-    property: 'min_review_average',
+    property: 's_min_avg',
     stateValue: '8.10',
   },
   {
     fromDisplayValue: '10',
     toDisplayValue: '8.0',
-    property: 'max_review_average',
+    property: 's_max_avg',
     stateValue: '8.00',
   },
   {
     fromDisplayValue: '0',
     toDisplayValue: '5',
-    property: 'min_review_count',
+    property: 's_min_count',
     stateValue: '13',
   },
   {
     fromDisplayValue: '11',
     toDisplayValue: '5',
-    property: 'max_review_count',
+    property: 's_max_count',
     stateValue: '13',
   },
 ]
@@ -350,7 +350,7 @@ test('opens filters', async () => {
     [
       {
         ...defaultSearchParams,
-        filters_open: '1',
+        s_filters: '1',
       },
     ],
   ])
@@ -459,16 +459,16 @@ orderChangeTests.forEach((testCase) => {
     const setState = vitest.fn()
     const searchRecord: Record<string, string> = {
       ...defaultSearchParams,
-      sorting_order: testCase.originalOrder,
-      list_direction: testCase.originalDirection,
+      s_order: testCase.originalOrder,
+      s_direction: testCase.originalDirection,
     }
     const { getByRole } = renderFromRecordWithSetState(searchRecord, setState)
     const button = getByRole('button', { name: testCase.buttonText })
     await user.click(button)
     const expected = {
       ...defaultSearchParams,
-      sorting_order: testCase.newOrder,
-      list_direction: testCase.newDirection,
+      s_order: testCase.newOrder,
+      s_direction: testCase.newDirection,
     }
     expect(setState.mock.calls).toEqual([[expected]])
   })

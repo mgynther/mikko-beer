@@ -27,7 +27,7 @@ interface Props {
 function sortingOrderOrDefault(
   search: SearchParameters | undefined,
 ): StyleStatsSortingOrder {
-  const value = search?.get('sorting_order')
+  const value = search?.get('s_order')
   return value === 'style_name' ||
     value === 'count' ||
     value === 'average' ||
