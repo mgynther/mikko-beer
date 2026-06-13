@@ -4,12 +4,12 @@ import type { YearMonth, YearMonthFilter } from '../../core/stats/types'
 
 import MaximumReviewCount from './MaximumReviewCount'
 import MinimumReviewCount from './MinimumReviewCount'
-import StepFilterSlider from './StepFilterSlider'
+import StepFilterSlider from '../common/StepFilterSlider'
 
 import TabButton from '../common/TabButton'
 
 import './Filters.css'
-import TimeFilterSlider from './TimeFilterSlider'
+import TimeFilterSlider from '../common/TimeFilterSlider'
 import type { StatsFilter, StatsNoTimeFilters } from './filter-types'
 
 interface Props {

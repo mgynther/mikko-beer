@@ -1,6 +1,6 @@
 import React from 'react'
 
-import StepFilterSlider from './StepFilterSlider'
+import StepFilterSlider from '../common/StepFilterSlider'
 
 interface Props {
   title: string
