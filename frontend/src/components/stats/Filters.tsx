@@ -1,11 +1,6 @@
 import React, { useState } from 'react'
 
-import type {
-  StatsFilter,
-  StatsNoTimeFilters,
-  YearMonth,
-  YearMonthFilter,
-} from '../../core/stats/types'
+import type { YearMonth, YearMonthFilter } from '../../core/stats/types'
 
 import MaximumReviewCount from './MaximumReviewCount'
 import MinimumReviewCount from './MinimumReviewCount'
@@ -15,6 +10,7 @@ import TabButton from '../common/TabButton'
 
 import './Filters.css'
 import TimeFilterSlider from './TimeFilterSlider'
+import type { StatsFilter, StatsNoTimeFilters } from './filter-types'
 
 interface Props {
   filters: StatsNoTimeFilters

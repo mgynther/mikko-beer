@@ -4,12 +4,12 @@ import type {
   GetBreweryStatsIf,
   BreweryStatsSortingOrder,
   OneBreweryStats,
-  StatsFilters,
 } from '../../core/stats/types'
 import type { ListDirection } from '../../core/types'
 
 import BreweryStatsTable from './BreweryStatsTable'
 import { formatYearMonth, toTimestamp } from './filter-util'
+import type { StatsFilters } from './filter-types'
 
 interface Props {
   getBreweryStatsIf: GetBreweryStatsIf

@@ -5,7 +5,6 @@ import { formatTitle } from '../list-helpers'
 import type {
   BreweryStatsSortingOrder,
   OneBreweryStats,
-  StatsFilters,
 } from '../../core/stats/types'
 
 import type { ListDirection } from '../../core/types'
@@ -17,6 +16,7 @@ import TabButton from '../common/TabButton'
 import AllFilters from './AllFilters'
 
 import './StatsTable.css'
+import type { StatsFilters } from './filter-types'
 
 interface Props {
   breweries: OneBreweryStats[]

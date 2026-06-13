@@ -7,11 +7,11 @@ import LinkWrapper from '../LinkWrapper'
 import type {
   LocationStatsSortingOrder,
   OneLocationStats,
-  StatsFilters,
   YearMonth,
 } from '../../core/stats/types'
 import type { ListDirection } from '../../core/types'
 import { openFilters } from './filters-test-util'
+import type { StatsFilters } from './filter-types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')

@@ -4,12 +4,12 @@ import type {
   GetLocationStatsIf,
   LocationStatsSortingOrder,
   OneLocationStats,
-  StatsFilters,
 } from '../../core/stats/types'
 import type { ListDirection } from '../../core/types'
 
 import LocationStatsTable from './LocationStatsTable'
 import { toTimestamp } from './filter-util'
+import type { StatsFilters } from './filter-types'
 
 const pageSize = 30
 

@@ -5,7 +5,6 @@ import { formatTitle } from '../list-helpers'
 import type {
   LocationStatsSortingOrder,
   OneLocationStats,
-  StatsFilters,
 } from '../../core/stats/types'
 
 import type { ListDirection } from '../../core/types'
@@ -17,6 +16,7 @@ import AllFilters from './AllFilters'
 
 import './StatsTable.css'
 import TableSkeleton from '../common/TableSkeleton'
+import type { StatsFilters } from './filter-types'
 
 interface Props {
   locations: OneLocationStats[]

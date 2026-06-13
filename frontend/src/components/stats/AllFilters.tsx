@@ -1,9 +1,8 @@
 import React from 'react'
 
-import type { StatsFilters } from '../../core/stats/types'
-
 import './Filters.css'
 import Filters from './Filters'
+import type { StatsFilters } from './filter-types'
 
 interface Props {
   filters: StatsFilters

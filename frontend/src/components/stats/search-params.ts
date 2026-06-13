@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { SearchParameters } from '../util'
-import type { StatsFilters, YearMonth } from '../../core/stats/types'
+import type { YearMonth } from '../../core/stats/types'
 import type { UseDebounce } from '../../core/types'
 import type { ParsedStatsParams, SearchRecord } from './filter-util'
 import {
@@ -12,6 +12,7 @@ import {
   parseFromSearch,
 } from './filter-util'
 import { invertDirection } from '../list-helpers'
+import type { StatsFilters } from './filter-types'
 
 interface Props<T extends string> {
   nameProperty: string

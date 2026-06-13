@@ -9,10 +9,10 @@ import type {
   GetLocationStatsIf,
   LocationStats,
   OneLocationStats,
-  StatsFilters,
   YearMonth,
 } from '../../core/stats/types'
 import type { UseDebounce } from '../../core/types'
+import type { StatsFilters } from './filter-types'
 
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
