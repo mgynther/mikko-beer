@@ -6,11 +6,10 @@ import MaximumReviewCount from './MaximumReviewCount'
 import MinimumReviewCount from './MinimumReviewCount'
 import StepFilterSlider from '../common/StepFilterSlider'
 
-import TabButton from '../common/TabButton'
-
 import './Filters.css'
 import TimeFilterSlider from '../common/TimeFilterSlider'
 import type { StatsFilter, StatsNoTimeFilters } from './filter-types'
+import OpenFiltersButton from '../common/OpenFiltersButton'
 
 interface Props {
   filters: StatsNoTimeFilters
@@ -22,9 +21,6 @@ interface Props {
 
 function Filters(props: Props): React.JSX.Element {
   const { isOpen } = props
-  function getOpenSymbol(isOpen: boolean): string {
-    return isOpen ? '▲' : '▼'
-  }
   const { minReviewCount, maxReviewCount, minReviewAverage, maxReviewAverage } =
     props.filters
   const { timeStart, timeEnd } = props
@@ -67,17 +63,7 @@ function Filters(props: Props): React.JSX.Element {
   const [timeEndValue, setTimeEnd] = wrapYearMonthFilter(timeEnd)
   return (
     <div>
-      <div className='Toggle'>
-        <TabButton
-          isCompact={true}
-          isSelected={false}
-          isUpperCase={false}
-          onClick={() => {
-            props.setIsOpen(!isOpen)
-          }}
-          title={`Filters ${getOpenSymbol(isOpen)}`}
-        />
-      </div>
+      <OpenFiltersButton isOpen={isOpen} setIsOpen={props.setIsOpen} />
       {isOpen && (
         <div className='FilterControls'>
           <MinimumReviewCount
