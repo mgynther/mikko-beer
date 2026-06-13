@@ -11,7 +11,7 @@ import type {
   StyleStatsQueryParams,
   YearMonth,
 } from '../../core/stats/types'
-import { openFilters } from './filters-test-util'
+import { openFilters } from '../common/filters-test-util'
 import type { SearchParameters } from '../util'
 import type { UseDebounce } from '../../core/types'
 

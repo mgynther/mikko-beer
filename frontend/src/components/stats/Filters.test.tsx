@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import Filters from './Filters'
-import { openFilters } from './filters-test-util'
+import { openFilters } from '../common/filters-test-util'
 import type { YearMonth } from '../../core/stats/types'
 import type { StatsNoTimeFilters } from './filter-types'
 

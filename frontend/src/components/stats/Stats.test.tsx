@@ -16,7 +16,7 @@ import type {
 import LinkWrapper from '../LinkWrapper'
 import type { ParamsIf } from '../util'
 import type { UseDebounce } from '../../core/types'
-import { openFilters } from './filters-test-util'
+import { openFilters } from '../common/filters-test-util'
 
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]

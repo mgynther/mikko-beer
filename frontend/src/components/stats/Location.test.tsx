@@ -12,7 +12,7 @@ import type {
   YearMonth,
 } from '../../core/stats/types'
 import type { UseDebounce } from '../../core/types'
-import { openFilters } from './filters-test-util'
+import { openFilters } from '../common/filters-test-util'
 
 const dontCall = (): any => {
   throw new Error('must not be called')

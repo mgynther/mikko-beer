@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { testTimes } from '../../../test-util/filter-time'
 import LocationInfiniteScroll from './LocationInfiniteScroll'
 import LinkWrapper from '../LinkWrapper'
-import { openFilters } from './filters-test-util'
+import { openFilters } from '../common/filters-test-util'
 import type {
   GetLocationStatsIf,
   LocationStats,

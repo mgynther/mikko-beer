@@ -4,7 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import BreweryAllAtOnce from './BreweryAllAtOnce'
 import LinkWrapper from '../LinkWrapper'
-import { openFilters } from './filters-test-util'
+import { openFilters } from '../common/filters-test-util'
 import type {
   BreweryStats,
   GetBreweryStatsIf,
