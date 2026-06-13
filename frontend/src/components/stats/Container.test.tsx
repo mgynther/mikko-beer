@@ -249,10 +249,10 @@ test('order container stats by container asc', () => {
   expect(containers[1].innerHTML).toEqual('draft 0.25')
 })
 
-test('order container stats by stddev desc', () => {
+test('order container stats by std_dev desc', () => {
   const searchRecord: Record<string, string> = {
     ...defaultSearchParams,
-    sorting_order: 'stddev',
+    sorting_order: 'std_dev',
     list_direction: 'desc',
   }
   const { getAllByText } = renderFromRecord(searchRecord)
@@ -262,10 +262,10 @@ test('order container stats by stddev desc', () => {
   expect(counts[1].innerHTML).toEqual('0.38')
 })
 
-test('order container stats by stddev asc', () => {
+test('order container stats by std_dev asc', () => {
   const searchRecord: Record<string, string> = {
     ...defaultSearchParams,
-    sorting_order: 'stddev',
+    sorting_order: 'std_dev',
     list_direction: 'asc',
   }
   const { getAllByText } = renderFromRecord(searchRecord)
@@ -408,17 +408,17 @@ const orderChangeTests: OrderChangeTest[] = [
     newDirection: 'asc',
   },
   {
-    originalOrder: 'stddev',
+    originalOrder: 'std_dev',
     originalDirection: 'asc',
     buttonText: 'σ ▲',
-    newOrder: 'stddev',
+    newOrder: 'std_dev',
     newDirection: 'desc',
   },
   {
-    originalOrder: 'stddev',
+    originalOrder: 'std_dev',
     originalDirection: 'desc',
     buttonText: 'σ ▼',
-    newOrder: 'stddev',
+    newOrder: 'std_dev',
     newDirection: 'asc',
   },
   {
@@ -446,7 +446,7 @@ const orderChangeTests: OrderChangeTest[] = [
     originalOrder: 'text',
     originalDirection: 'desc',
     buttonText: 'σ',
-    newOrder: 'stddev',
+    newOrder: 'std_dev',
     newDirection: 'desc',
   },
 ]

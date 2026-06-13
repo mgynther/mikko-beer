@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
-import { formatTitle, invertDirection } from '../list-helpers'
+import { formatTitle } from '../list-helpers'
 import type {
   GetStyleStatsIf,
   StyleStatsSortingOrder,
-  YearMonth,
 } from '../../core/stats/types'
 import TabButton from '../common/TabButton'
 import StyleLink from '../style/StyleLink'
@@ -13,17 +12,8 @@ import AllFilters from './AllFilters'
 
 import './StatsTable.css'
 import type { SearchParameters } from '../util'
-import {
-  averageStr,
-  countStr,
-  listDirectionOrDefault,
-  filterNumOrDefault,
-  filtersOpenOrDefault,
-  filtersOpenStr,
-  formatYearMonth,
-  parseYearMonth,
-  toTimestamp,
-} from './filter-util'
+import { toTimestamp } from './filter-util'
+import { searchParams } from './search-params'
 
 interface Props {
   getStyleStatsIf: GetStyleStatsIf
@@ -34,8 +24,10 @@ interface Props {
   styleId: string | undefined
 }
 
-function defaultSortingOrder(search: SearchParameters): StyleStatsSortingOrder {
-  const value = search.get('sorting_order')
+function sortingOrderOrDefault(
+  search: SearchParameters | undefined,
+): StyleStatsSortingOrder {
+  const value = search?.get('sorting_order')
   return value === 'style_name' ||
     value === 'count' ||
     value === 'average' ||
@@ -46,114 +38,34 @@ function defaultSortingOrder(search: SearchParameters): StyleStatsSortingOrder {
 
 function Style(props: Props): React.JSX.Element {
   const { search } = props
-  const [searchMap, setSearchMap] = useState<Record<string, string>>({})
-  const [debouncedSearchMap] =
-    props.getStyleStatsIf.getUseDebounce<Record<string, string>>()(searchMap)
-  const sortingOrder = defaultSortingOrder(search)
-  const sortingDirection = listDirectionOrDefault(search)
-  const minReviewCount = filterNumOrDefault('min_review_count', search)
-  const maxReviewCount = filterNumOrDefault('max_review_count', search)
-  const minReviewAverage = filterNumOrDefault('min_review_average', search)
-  const maxReviewAverage = filterNumOrDefault('max_review_average', search)
-  const timeStart = parseYearMonth(
-    search.get('time_start'),
-    props.getStyleStatsIf.minTime,
-  )
-  const timeEnd = parseYearMonth(
-    search.get('time_end'),
-    props.getStyleStatsIf.maxTime,
-  )
-  const isFiltersOpen = filtersOpenOrDefault(search)
+  const parsedSearchParams = searchParams({
+    nameProperty: 'style_name',
+    search,
+    minTime: props.getStyleStatsIf.minTime,
+    maxTime: props.getStyleStatsIf.maxTime,
+    getUseDebounce: props.getStyleStatsIf.getUseDebounce,
+    sortingOrderParser: sortingOrderOrDefault,
+    setState: (state) => props.setState({ ...state }),
+  })
   const { stats } = props.getStyleStatsIf.useStats({
     breweryId: props.breweryId,
     locationId: props.locationId,
     styleId: props.styleId,
     sorting: {
-      order: sortingOrder,
-      direction: sortingDirection,
+      order: parsedSearchParams.statsParams.sortingOrder,
+      direction: parsedSearchParams.statsParams.sortingDirection,
     },
-    minReviewCount,
-    maxReviewCount,
-    minReviewAverage,
-    maxReviewAverage,
-    timeStart: toTimestamp(timeStart, 'start'),
-    timeEnd: toTimestamp(timeEnd, 'end'),
+    minReviewCount: parsedSearchParams.statsParams.minReviewCount,
+    maxReviewCount: parsedSearchParams.statsParams.maxReviewCount,
+    minReviewAverage: parsedSearchParams.statsParams.minReviewAverage,
+    maxReviewAverage: parsedSearchParams.statsParams.maxReviewAverage,
+    timeStart: toTimestamp(parsedSearchParams.statsParams.timeStart, 'start'),
+    timeEnd: toTimestamp(parsedSearchParams.statsParams.timeEnd, 'end'),
   })
 
-  function getCurrentState(): Record<string, string> {
-    const currentState: Record<string, string> = {
-      min_review_count: countStr(minReviewCount),
-      max_review_count: countStr(maxReviewCount),
-      min_review_average: averageStr(minReviewAverage),
-      max_review_average: averageStr(maxReviewAverage),
-      time_start: formatYearMonth(timeStart),
-      time_end: formatYearMonth(timeEnd),
-      sorting_order: sortingOrder,
-      list_direction: sortingDirection,
-      filters_open: filtersOpenStr(isFiltersOpen),
-    }
-    return currentState
-  }
-
-  function getFilterSetter(key: string, converter: (value: number) => string) {
-    return (value: number) => {
-      const newState: Record<string, string> = getCurrentState()
-      newState[key] = converter(value)
-      setSearchMap(newState)
-    }
-  }
-
-  function getYearMonthSetter(
-    key: string,
-    converter: (yearMonth: YearMonth) => string,
-  ) {
-    return (yearMonth: YearMonth) => {
-      const newState: Record<string, string> = getCurrentState()
-      newState[key] = converter(yearMonth)
-      setSearchMap(newState)
-    }
-  }
-
-  const setMinReviewCount = getFilterSetter('min_review_count', countStr)
-  const setMaxReviewCount = getFilterSetter('max_review_count', countStr)
-  const setMinReviewAverage = getFilterSetter('min_review_average', averageStr)
-  const setMaxReviewAverage = getFilterSetter('max_review_average', averageStr)
-  const setTimeStart = getYearMonthSetter('time_start', formatYearMonth)
-  const setTimeEnd = getYearMonthSetter('time_end', formatYearMonth)
-
-  function setIsFiltersOpen(isOpen: boolean): void {
-    const newState: Record<string, string> = getCurrentState()
-    newState.filters_open = filtersOpenStr(isOpen)
-    props.setState(newState)
-  }
-
   function isSelected(property: StyleStatsSortingOrder): boolean {
-    return sortingOrder === property
+    return parsedSearchParams.statsParams.sortingOrder === property
   }
-
-  function createClickHandler(property: StyleStatsSortingOrder): () => void {
-    return () => {
-      if (isSelected(property)) {
-        props.setState({
-          ...getCurrentState(),
-          list_direction: invertDirection(sortingDirection),
-        })
-        return
-      }
-      const direction = property === 'style_name' ? 'asc' : 'desc'
-      props.setState({
-        ...getCurrentState(),
-        sorting_order: property,
-        list_direction: direction,
-      })
-    }
-  }
-
-  useEffect(() => {
-    if (Object.keys(debouncedSearchMap).length > 0) {
-      props.setState(debouncedSearchMap)
-    }
-  }, [JSON.stringify(debouncedSearchMap)])
 
   return (
     <div>
@@ -168,9 +80,11 @@ function Style(props: Props): React.JSX.Element {
                 title={formatTitle(
                   'Style',
                   isSelected('style_name'),
-                  sortingDirection,
+                  parsedSearchParams.statsParams.sortingDirection,
                 )}
-                onClick={createClickHandler('style_name')}
+                onClick={() =>
+                  parsedSearchParams.changeSortingOrder('style_name')
+                }
               />
             </th>
             <th className='StatsNumColumn'>
@@ -178,8 +92,12 @@ function Style(props: Props): React.JSX.Element {
                 isCompact={false}
                 isSelected={isSelected('count')}
                 isUpperCase={false}
-                title={formatTitle('n', isSelected('count'), sortingDirection)}
-                onClick={createClickHandler('count')}
+                title={formatTitle(
+                  'n',
+                  isSelected('count'),
+                  parsedSearchParams.statsParams.sortingDirection,
+                )}
+                onClick={() => parsedSearchParams.changeSortingOrder('count')}
               />
             </th>
             <th className='StatsNumColumn'>
@@ -190,9 +108,9 @@ function Style(props: Props): React.JSX.Element {
                 title={formatTitle(
                   'Avg',
                   isSelected('average'),
-                  sortingDirection,
+                  parsedSearchParams.statsParams.sortingDirection,
                 )}
-                onClick={createClickHandler('average')}
+                onClick={() => parsedSearchParams.changeSortingOrder('average')}
               />
             </th>
             <th className='StatsNumColumn'>Med</th>
@@ -205,47 +123,18 @@ function Style(props: Props): React.JSX.Element {
                 title={formatTitle(
                   'σ',
                   isSelected('std_dev'),
-                  sortingDirection,
+                  parsedSearchParams.statsParams.sortingDirection,
                 )}
-                onClick={createClickHandler('std_dev')}
+                onClick={() => parsedSearchParams.changeSortingOrder('std_dev')}
               />
             </th>
           </tr>
           <tr>
             <th colSpan={6}>
               <AllFilters
-                filters={{
-                  minReviewCount: {
-                    value: minReviewCount,
-                    setValue: setMinReviewCount,
-                  },
-                  maxReviewCount: {
-                    value: maxReviewCount,
-                    setValue: setMaxReviewCount,
-                  },
-                  minReviewAverage: {
-                    value: minReviewAverage,
-                    setValue: setMinReviewAverage,
-                  },
-                  maxReviewAverage: {
-                    value: maxReviewAverage,
-                    setValue: setMaxReviewAverage,
-                  },
-                  timeStart: {
-                    min: props.getStyleStatsIf.minTime,
-                    max: props.getStyleStatsIf.maxTime,
-                    value: timeStart,
-                    setValue: setTimeStart,
-                  },
-                  timeEnd: {
-                    min: props.getStyleStatsIf.minTime,
-                    max: props.getStyleStatsIf.maxTime,
-                    value: timeEnd,
-                    setValue: setTimeEnd,
-                  },
-                }}
-                isOpen={isFiltersOpen}
-                setIsOpen={setIsFiltersOpen}
+                filters={parsedSearchParams.filters}
+                isOpen={parsedSearchParams.statsParams.isFiltersOpen}
+                setIsOpen={parsedSearchParams.setIsFiltersOpen}
               />
             </th>
           </tr>

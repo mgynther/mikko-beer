@@ -18,9 +18,9 @@ const filterNumDefaults: Record<FilterNumKey, number> = {
 
 export function filterNumOrDefault(
   key: FilterNumKey,
-  search: SearchParameters,
+  search: SearchParameters | undefined,
 ): number {
-  const value = search.get(key)
+  const value = search?.get(key)
   return value === undefined ? filterNumDefaults[key] : parseFloat(value)
 }
 
@@ -65,8 +65,10 @@ export function parseYearMonth(
   }
 }
 
-export function filtersOpenOrDefault(search: SearchParameters): boolean {
-  const value = search.get('filters_open')
+export function filtersOpenOrDefault(
+  search: SearchParameters | undefined,
+): boolean {
+  const value = search?.get('filters_open')
   return value === '1'
 }
 
@@ -75,9 +77,9 @@ export function filtersOpenStr(isOpen: boolean): string {
 }
 
 export function listDirectionOrDefault(
-  search: SearchParameters,
+  search: SearchParameters | undefined,
 ): ListDirection {
-  const value = search.get('list_direction')
+  const value = search?.get('list_direction')
   return value === 'asc' || value === 'desc' ? value : 'asc'
 }
 
@@ -87,4 +89,63 @@ export function averageStr(num: number): string {
 
 export function countStr(num: number): string {
   return num.toFixed(0)
+}
+
+export interface ParsedStatsParams<T extends string> {
+  sortingOrder: T
+  sortingDirection: ListDirection
+  minReviewCount: number
+  maxReviewCount: number
+  minReviewAverage: number
+  maxReviewAverage: number
+  timeStart: YearMonth
+  timeEnd: YearMonth
+  isFiltersOpen: boolean
+}
+
+export function parseFromSearch<T extends string>(
+  search: SearchParameters | undefined,
+  minTime: YearMonth,
+  maxTime: YearMonth,
+  sortingOrderParser: (search: SearchParameters | undefined) => T,
+): ParsedStatsParams<T> {
+  return {
+    sortingOrder: sortingOrderParser(search),
+    sortingDirection: listDirectionOrDefault(search),
+    minReviewCount: filterNumOrDefault('min_review_count', search),
+    maxReviewCount: filterNumOrDefault('max_review_count', search),
+    minReviewAverage: filterNumOrDefault('min_review_average', search),
+    maxReviewAverage: filterNumOrDefault('max_review_average', search),
+    timeStart: parseYearMonth(search?.get('time_start'), minTime),
+    timeEnd: parseYearMonth(search?.get('time_end'), maxTime),
+    isFiltersOpen: filtersOpenOrDefault(search),
+  }
+}
+
+export interface SearchRecord {
+  min_review_count: string
+  max_review_count: string
+  min_review_average: string
+  max_review_average: string
+  time_start: string
+  time_end: string
+  sorting_order: string
+  list_direction: string
+  filters_open: string
+}
+
+export function formatToSearch<T extends string>(
+  statsParams: ParsedStatsParams<T>,
+): SearchRecord {
+  return {
+    min_review_count: countStr(statsParams.minReviewCount),
+    max_review_count: countStr(statsParams.maxReviewCount),
+    min_review_average: averageStr(statsParams.minReviewAverage),
+    max_review_average: averageStr(statsParams.maxReviewAverage),
+    time_start: formatYearMonth(statsParams.timeStart),
+    time_end: formatYearMonth(statsParams.timeEnd),
+    sorting_order: statsParams.sortingOrder,
+    list_direction: statsParams.sortingDirection,
+    filters_open: filtersOpenStr(statsParams.isFiltersOpen),
+  }
 }

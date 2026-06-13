@@ -4,25 +4,12 @@ import type {
   BreweryStatsSortingOrder,
   GetBreweryStatsIf,
   OneBreweryStats,
-  StatsFilters,
-  YearMonth,
 } from '../../core/stats/types'
-
-import { invertDirection } from '../list-helpers'
 
 import BreweryAllAtOnce from './BreweryAllAtOnce'
 import BreweryInfiniteScroll from './BreweryInfiniteScroll'
 import type { SearchParameters } from '../util'
-import {
-  averageStr,
-  countStr,
-  listDirectionOrDefault,
-  filterNumOrDefault,
-  filtersOpenOrDefault,
-  filtersOpenStr,
-  parseYearMonth,
-  formatYearMonth,
-} from './filter-util'
+import { searchParams } from './search-params'
 
 interface Props {
   getBreweryStatsIf: GetBreweryStatsIf
@@ -34,9 +21,9 @@ interface Props {
 }
 
 function sortingOrderOrDefault(
-  search: SearchParameters,
+  search: SearchParameters | undefined,
 ): BreweryStatsSortingOrder {
-  const value = search.get('sorting_order')
+  const value = search?.get('sorting_order')
   return value === 'brewery_name' ||
     value === 'count' ||
     value === 'average' ||
@@ -52,150 +39,37 @@ function Brewery(props: Props): React.JSX.Element {
     props.styleId !== undefined
 
   const { search } = props
-  const [searchMap, setSearchMap] = useState<Record<string, string>>({})
-  const [debouncedSearchMap, isFilterChangePending] =
-    props.getBreweryStatsIf.getUseDebounce<Record<string, string>>()(searchMap)
-  const sortingOrder = sortingOrderOrDefault(search)
-  const sortingDirection = listDirectionOrDefault(search)
-  const minReviewCount = filterNumOrDefault('min_review_count', search)
-  const maxReviewCount = filterNumOrDefault('max_review_count', search)
-  const minReviewAverage = filterNumOrDefault('min_review_average', search)
-  const maxReviewAverage = filterNumOrDefault('max_review_average', search)
-  const timeStart = parseYearMonth(
-    search.get('time_start'),
-    props.getBreweryStatsIf.minTime,
-  )
-  const timeEnd = parseYearMonth(
-    search.get('time_end'),
-    props.getBreweryStatsIf.maxTime,
-  )
-  const isFiltersOpen = filtersOpenOrDefault(search)
+  const parsedSearchParams = searchParams({
+    nameProperty: 'brewery_name',
+    search,
+    minTime: props.getBreweryStatsIf.minTime,
+    maxTime: props.getBreweryStatsIf.maxTime,
+    getUseDebounce: props.getBreweryStatsIf.getUseDebounce,
+    sortingOrderParser: sortingOrderOrDefault,
+    setState: (state) => props.setState({ ...state }),
+  })
   const [loadedBreweries, setLoadedBreweries] = useState<
     OneBreweryStats[] | undefined
   >(undefined)
 
-  function getCurrentState(): Record<string, string> {
-    const currentState: Record<string, string> = {
-      min_review_count: countStr(minReviewCount),
-      max_review_count: countStr(maxReviewCount),
-      min_review_average: averageStr(minReviewAverage),
-      max_review_average: averageStr(maxReviewAverage),
-      time_start: formatYearMonth(timeStart),
-      time_end: formatYearMonth(timeEnd),
-      sorting_order: sortingOrder,
-      list_direction: sortingDirection,
-      filters_open: filtersOpenStr(isFiltersOpen),
-    }
-    return currentState
-  }
-
-  function getFilterSetter(key: string, converter: (value: number) => string) {
-    return (value: number) => {
-      const newState: Record<string, string> = getCurrentState()
-      newState[key] = converter(value)
-      setSearchMap(newState)
-    }
-  }
-
-  function getYearMonthSetter(
-    key: string,
-    converter: (yearMonth: YearMonth) => string,
-  ) {
-    return (yearMonth: YearMonth) => {
-      const newState: Record<string, string> = getCurrentState()
-      newState[key] = converter(yearMonth)
-      setSearchMap(newState)
-    }
-  }
-
-  const setMinReviewCount = getFilterSetter('min_review_count', countStr)
-  const setMaxReviewCount = getFilterSetter('max_review_count', countStr)
-  const setMinReviewAverage = getFilterSetter('min_review_average', averageStr)
-  const setMaxReviewAverage = getFilterSetter('max_review_average', averageStr)
-  const setTimeStart = getYearMonthSetter('time_start', formatYearMonth)
-  const setTimeEnd = getYearMonthSetter('time_end', formatYearMonth)
-
-  function setIsFiltersOpen(isOpen: boolean): void {
-    const newState: Record<string, string> = getCurrentState()
-    newState.filters_open = filtersOpenStr(isOpen)
-    props.setState(newState)
-  }
-
-  const filters: StatsFilters = {
-    minReviewCount: {
-      value: minReviewCount,
-      setValue: setMinReviewCount,
-    },
-    maxReviewCount: {
-      value: maxReviewCount,
-      setValue: setMaxReviewCount,
-    },
-    minReviewAverage: {
-      value: minReviewAverage,
-      setValue: setMinReviewAverage,
-    },
-    maxReviewAverage: {
-      value: maxReviewAverage,
-      setValue: setMaxReviewAverage,
-    },
-    timeStart: {
-      min: props.getBreweryStatsIf.minTime,
-      max: props.getBreweryStatsIf.maxTime,
-      value: timeStart,
-      setValue: setTimeStart,
-    },
-    timeEnd: {
-      min: props.getBreweryStatsIf.minTime,
-      max: props.getBreweryStatsIf.maxTime,
-      value: timeEnd,
-      setValue: setTimeEnd,
-    },
-  }
-
-  const searchString = JSON.stringify({
-    filters,
-    sortingDirection,
-    sortingOrder,
-  })
   useEffect(() => {
     setLoadedBreweries(undefined)
-  }, [searchString])
-  useEffect(() => {
-    if (Object.keys(debouncedSearchMap).length > 0) {
-      props.setState(debouncedSearchMap)
-    }
-  }, [JSON.stringify(debouncedSearchMap)])
-
-  function changeSortingOrder(property: BreweryStatsSortingOrder): void {
-    if (sortingOrder === property) {
-      props.setState({
-        ...getCurrentState(),
-        list_direction: invertDirection(sortingDirection),
-      })
-      return
-    }
-    const direction = property === 'brewery_name' ? 'asc' : 'desc'
-    props.setState({
-      ...getCurrentState(),
-      sorting_order: property,
-      list_direction: direction,
-    })
-  }
+  }, [parsedSearchParams.searchString])
 
   return (
     <>
       {isAllAtOnce && (
         <BreweryAllAtOnce
           getBreweryStatsIf={props.getBreweryStatsIf}
-          filters={filters}
-          isFiltersOpen={isFiltersOpen}
-          setIsFiltersOpen={setIsFiltersOpen}
-          isFilterChangePending={isFilterChangePending}
+          filters={parsedSearchParams.filters}
+          isFiltersOpen={parsedSearchParams.statsParams.isFiltersOpen}
+          setIsFiltersOpen={parsedSearchParams.setIsFiltersOpen}
+          isFilterChangePending={parsedSearchParams.isFilterChangePending}
           loadedBreweries={loadedBreweries}
           setLoadedBreweries={setLoadedBreweries}
-          sortingDirection={sortingDirection}
-          sortingOrder={sortingOrder}
-          setSortingOrder={changeSortingOrder}
+          sortingDirection={parsedSearchParams.statsParams.sortingDirection}
+          sortingOrder={parsedSearchParams.statsParams.sortingOrder}
+          setSortingOrder={parsedSearchParams.changeSortingOrder}
           breweryId={props.breweryId}
           locationId={props.locationId}
           styleId={props.styleId}
@@ -204,15 +78,15 @@ function Brewery(props: Props): React.JSX.Element {
       {!isAllAtOnce && (
         <BreweryInfiniteScroll
           getBreweryStatsIf={props.getBreweryStatsIf}
-          filters={filters}
-          isFiltersOpen={isFiltersOpen}
-          isFilterChangePending={isFilterChangePending}
-          setIsFiltersOpen={setIsFiltersOpen}
+          filters={parsedSearchParams.filters}
+          isFiltersOpen={parsedSearchParams.statsParams.isFiltersOpen}
+          isFilterChangePending={parsedSearchParams.isFilterChangePending}
+          setIsFiltersOpen={parsedSearchParams.setIsFiltersOpen}
           loadedBreweries={loadedBreweries}
           setLoadedBreweries={setLoadedBreweries}
-          sortingDirection={sortingDirection}
-          sortingOrder={sortingOrder}
-          setSortingOrder={changeSortingOrder}
+          sortingDirection={parsedSearchParams.statsParams.sortingDirection}
+          sortingOrder={parsedSearchParams.statsParams.sortingOrder}
+          setSortingOrder={parsedSearchParams.changeSortingOrder}
         />
       )}
     </>
