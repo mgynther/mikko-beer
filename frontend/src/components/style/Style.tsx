@@ -143,6 +143,7 @@ function Style(props: Props): React.JSX.Element {
       <ReviewsBy
         id={styleId}
         listReviewsByIf={props.listReviewsByStyleIf}
+        paramsIf={props.paramsIf}
         reviewIf={props.reviewIf}
         searchIf={props.searchIf}
       />

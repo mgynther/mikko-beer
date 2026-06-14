@@ -334,7 +334,10 @@ sliderChangeTests.forEach((testCase) => {
       ...defaultFiltersOpenParams,
     }
     expected[testCase.property] = testCase.stateValue
-    expect(setState.mock.calls).toEqual([[expected]])
+    expect(setState.mock.calls).toEqual([
+      [defaultFiltersOpenParams],
+      [expected],
+    ])
   })
 })
 
@@ -347,6 +350,11 @@ test('opens filters', async () => {
   )
   await openFilters(getByRole, user)
   expect(setState.mock.calls).toEqual([
+    [
+      {
+        ...defaultSearchParams,
+      },
+    ],
     [
       {
         ...defaultSearchParams,
@@ -470,6 +478,15 @@ orderChangeTests.forEach((testCase) => {
       s_order: testCase.newOrder,
       s_direction: testCase.newDirection,
     }
-    expect(setState.mock.calls).toEqual([[expected]])
+    expect(setState.mock.calls).toEqual([
+      [
+        {
+          ...defaultSearchParams,
+          s_order: testCase.originalOrder,
+          s_direction: testCase.originalDirection,
+        },
+      ],
+      [expected],
+    ])
   })
 })

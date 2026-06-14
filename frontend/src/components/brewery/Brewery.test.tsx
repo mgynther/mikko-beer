@@ -18,7 +18,12 @@ import type {
 } from '../../core/stats/types'
 import type { SearchLocationIf } from '../../core/location/types'
 import type { GetLogin } from '../../core/login/types'
-import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
+import type {
+  ListFilterIf,
+  ListReviewsByIf,
+  ReviewIf,
+  SetSearch,
+} from '../../core/review/types'
 import type { ListStoragesByIf } from '../../core/storage/types'
 import type { GetBreweryIf, UpdateBreweryIf } from '../../core/brewery/types'
 import type { SearchIf } from '../../core/search/types'
@@ -147,6 +152,15 @@ const statsIf: StatsIf = {
   setSearch: () => undefined,
 }
 
+const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
+  setSearch: SetSearch,
+) => ({
+  getUseDebounce,
+  minTime,
+  maxTime,
+  setSearch,
+})
+
 const listReviewsByBreweryIf: ListReviewsByIf = {
   useList: () => ({
     reviews: {
@@ -158,6 +172,7 @@ const listReviewsByBreweryIf: ListReviewsByIf = {
     },
     isLoading: false,
   }),
+  filterIf: listFilterIf(() => undefined),
 }
 
 const listStoragesByBreweryIf: ListStoragesByIf = {

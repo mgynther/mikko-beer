@@ -95,6 +95,7 @@ function Brewery(props: Props): React.JSX.Element {
       <ReviewsBy
         id={breweryId}
         listReviewsByIf={props.listReviewsByBreweryIf}
+        paramsIf={props.paramsIf}
         reviewIf={props.reviewIf}
         searchIf={props.searchIf}
       />

@@ -20,7 +20,11 @@ import type { SearchBeerIf, SelectBeerIf } from './core/beer/types'
 import type { SearchBreweryIf } from './core/brewery/types'
 import type { SearchLocationIf } from './core/location/types'
 import type { ListStylesIf } from './core/style/types'
-import type { ReviewContainerIf } from './core/review/types'
+import type {
+  ListFilterIf,
+  ReviewContainerIf,
+  SetSearch,
+} from './core/review/types'
 
 beforeEach(() => {
   store.dispatch(setState('COLLAPSED'))
@@ -131,6 +135,15 @@ const deleteStorageIf: DeleteStorageIf = {
 
 const minTime: YearMonth = testTimes.min.yearMonth
 const maxTime: YearMonth = testTimes.max.yearMonth
+
+const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
+  setSearch: SetSearch,
+) => ({
+  getUseDebounce,
+  minTime,
+  maxTime,
+  setSearch,
+})
 
 const storeIf: StoreIf = {
   getLogin: getUndefinedLogin,
@@ -254,18 +267,23 @@ const storeIf: StoreIf = {
       isUninitialized: false,
     }),
     infiniteScroll,
+    filterIf: listFilterIf(() => undefined),
   },
   listReviewsByBeerIf: {
     useList: dontCall,
+    filterIf: listFilterIf(dontCall),
   },
   listReviewsByBreweryIf: {
     useList: dontCall,
+    filterIf: listFilterIf(dontCall),
   },
   listReviewsByLocationIf: {
     useList: dontCall,
+    filterIf: listFilterIf(dontCall),
   },
   listReviewsByStyleIf: {
     useList: dontCall,
+    filterIf: listFilterIf(dontCall),
   },
   reviewIf: {
     get: {

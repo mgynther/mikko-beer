@@ -41,6 +41,7 @@ import type {
   ReviewContainerIf,
   UpdateReviewIf,
   ReviewIf,
+  ListFilterIf,
 } from './core/review/types'
 import type {
   CreateStyleIf,
@@ -225,11 +226,11 @@ function RtkApp(): React.JSX.Element {
     getAnnualStorageStats()
   const getMonthlyStorageStatsIf: GetMonthlyStorageStatsIf =
     getMonthlyStorageStats()
-  const setSearch = createSetSearch(window.location.pathname, navigateIf).stats
+  const setSearch = createSetSearch(window.location.pathname, navigateIf)
   const storageStatsIf: StorageStatsIf = {
     annual: getAnnualStorageStatsIf,
     monthly: getMonthlyStorageStatsIf,
-    setSearch,
+    setSearch: setSearch.stats,
   }
   const getStorageIf: GetStorageIf = getStorage()
   const deleteStorageIf: DeleteStorageIf = deleteStorage()
@@ -241,12 +242,35 @@ function RtkApp(): React.JSX.Element {
   const listStoragesByStyleIf: ListStoragesByIf =
     listStoragesByStyle(deleteStorageIf)
 
+  const minTime: YearMonth = {
+    year: 2017,
+    month: 12,
+  }
+  const [nextMonthDate] = React.useState(getNextMonthDate())
+  const maxTime: YearMonth = {
+    year: nextMonthDate.getFullYear(),
+    month: nextMonthDate.getMonth() + 1,
+  }
+
   const getReviewIf: GetReviewIf = getReview()
-  const listReviewsIf: ListReviewsIf = listReviews(infiniteScroll)
-  const listReviewsByBeerIf: ListReviewsByIf = listReviewsByBeer()
-  const listReviewsByBreweryIf: ListReviewsByIf = listReviewsByBrewery()
-  const listReviewsByLocationIf: ListReviewsByIf = listReviewsByLocation()
-  const listReviewsByStyleIf: ListReviewsByIf = listReviewsByStyle()
+  const listReviewsFilterIf: ListFilterIf = {
+    getUseDebounce,
+    minTime,
+    maxTime,
+    setSearch: setSearch.reviewList,
+  }
+  const listReviewsIf: ListReviewsIf = listReviews(
+    infiniteScroll,
+    listReviewsFilterIf,
+  )
+  const listReviewsByBeerIf: ListReviewsByIf =
+    listReviewsByBeer(listReviewsFilterIf)
+  const listReviewsByBreweryIf: ListReviewsByIf =
+    listReviewsByBrewery(listReviewsFilterIf)
+  const listReviewsByLocationIf: ListReviewsByIf =
+    listReviewsByLocation(listReviewsFilterIf)
+  const listReviewsByStyleIf: ListReviewsByIf =
+    listReviewsByStyle(listReviewsFilterIf)
   const createReviewIf: CreateReviewIf = createReview(
     getDate,
     searchLocationIf,
@@ -264,20 +288,11 @@ function RtkApp(): React.JSX.Element {
     login: getLogin,
   }
 
-  const minTime: YearMonth = {
-    year: 2017,
-    month: 12,
-  }
-  const [nextMonthDate] = React.useState(getNextMonthDate())
-  const maxTime: YearMonth = {
-    year: nextMonthDate.getFullYear(),
-    month: nextMonthDate.getMonth() + 1,
-  }
   const statsIf: StatsIf = stats(
     infiniteScroll,
     minTime,
     maxTime,
-    setSearch,
+    setSearch.stats,
     getUseDebounce,
   )
 

@@ -7,9 +7,11 @@ import { Role } from '../../core/user/types'
 import LinkWrapper from '../LinkWrapper'
 import type {
   JoinedReview,
+  ListFilterIf,
   ListReviewsByIf,
   Review,
   ReviewIf,
+  SetSearch,
   UpdateReviewIf,
 } from '../../core/review/types'
 import type { ListStoragesByIf, Storage } from '../../core/storage/types'
@@ -23,10 +25,9 @@ import type {
   GetRatingStatsIf,
   GetStyleStatsIf,
   StatsIf,
-  YearMonth,
 } from '../../core/stats/types'
 import type { GetStyleIf, UpdateStyleIf } from '../../core/style/types'
-import type { UseDebounce } from '../../core/types'
+import type { UseDebounce, YearMonth } from '../../core/types'
 import { asText } from '../container/ContainerInfo'
 import type { SearchIf } from '../../core/search/types'
 import type { ParamsIf } from '../util'
@@ -213,6 +214,15 @@ const paramsIf: ParamsIf = {
   }),
 }
 
+const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
+  setSearch: SetSearch,
+) => ({
+  getUseDebounce,
+  minTime,
+  maxTime,
+  setSearch,
+})
+
 function getListReviewsIf(reviews: JoinedReview[]): ListReviewsByIf {
   return {
     useList: () => ({
@@ -225,6 +235,7 @@ function getListReviewsIf(reviews: JoinedReview[]): ListReviewsByIf {
       },
       isLoading: false,
     }),
+    filterIf: listFilterIf(() => undefined),
   }
 }
 

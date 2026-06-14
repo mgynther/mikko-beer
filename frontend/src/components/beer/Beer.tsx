@@ -8,15 +8,9 @@ import type {
   UpdateBeerIf,
 } from '../../core/beer/types'
 
-import type {
-  ListReviewsByIf,
-  ReviewIf,
-  ReviewSorting,
-  ReviewSortingOrder,
-} from '../../core/review/types'
+import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
 import type { SearchIf } from '../../core/search/types'
 import type { ListStoragesByIf } from '../../core/storage/types'
-import type { ListDirection } from '../../core/types'
 
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'
@@ -24,13 +18,13 @@ import EditButton from '../common/EditButton'
 import BreweryLinks from '../brewery/BreweryLinks'
 import LoadingIndicator from '../common/LoadingIndicator'
 import NotFound from '../common/NotFound'
-import ReviewList from '../review/ReviewList'
 import StyleLinks from '../style/StyleLinks'
 
 import UpdateBeer from './UpdateBeer'
 
 import './Beer.css'
 import BeerStorages from './BeerStorages'
+import ReviewsBy from '../review/ReviewsBy'
 
 interface Props {
   listReviewsByBeerIf: ListReviewsByIf
@@ -44,8 +38,6 @@ interface Props {
 
 function Beer(props: Props): React.JSX.Element {
   const { beerId } = props.paramsIf.useParams()
-  const [order, doSetOrder] = useState<ReviewSortingOrder>('beer_name')
-  const [direction, doSetDirection] = useState<ListDirection>('asc')
   const [mode, setMode] = useState(EditableMode.View)
   const [initialBeer, setInitialBeer] = useState<BeerType | undefined>(
     undefined,
@@ -54,20 +46,6 @@ function Beer(props: Props): React.JSX.Element {
     throw new Error('Beer component without beerId. Should not happen.')
   }
   const { beer, isLoading } = props.getBeerIf.useGetBeer(beerId)
-  const { reviews, isLoading: isLoadingReviews } =
-    props.listReviewsByBeerIf.useList({
-      id: beerId,
-      sorting: {
-        order,
-        direction,
-      },
-      filter: {
-        minRating: 4,
-        maxRating: 10,
-        minTime: 0,
-        maxTime: 4133937600000,
-      },
-    })
   if (isLoading) return <LoadingIndicator isLoading={true} />
   if (beer === undefined) return <NotFound />
   return (
@@ -122,19 +100,12 @@ function Beer(props: Props): React.JSX.Element {
         listStoragesByBeerIf={props.listStoragesByBeerIf}
         getLogin={props.reviewIf.login}
       />
-      <ReviewList
+      <ReviewsBy
+        id={beerId}
+        listReviewsByIf={props.listReviewsByBeerIf}
+        paramsIf={props.paramsIf}
         reviewIf={props.reviewIf}
         searchIf={props.searchIf}
-        isLoading={isLoadingReviews}
-        isTitleVisible={true}
-        reviews={reviews?.reviews ?? []}
-        sorting={reviews?.sorting}
-        setSorting={(sorting: ReviewSorting) => {
-          doSetOrder(sorting.order)
-          doSetDirection(sorting.direction)
-        }}
-        supportedSorting={['beer_name', 'brewery_name', 'rating', 'time']}
-        onChanged={undefined}
       />
     </div>
   )

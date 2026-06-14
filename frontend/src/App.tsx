@@ -293,6 +293,7 @@ function App(props: Props): React.JSX.Element {
                   element={
                     <Reviews
                       listReviewsIf={listReviewsIf}
+                      paramsIf={props.paramsIf}
                       reviewIf={reviewIf}
                       searchIf={searchIf}
                     />

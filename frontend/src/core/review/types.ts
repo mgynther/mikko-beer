@@ -7,7 +7,13 @@ import type {
 import type { Location, SearchLocationIf } from '../location/types'
 
 import type { GetLogin } from '../login/types'
-import type { InfiniteScroll, ListDirection, Pagination } from '../types'
+import type {
+  InfiniteScroll,
+  ListDirection,
+  Pagination,
+  UseDebounce,
+  YearMonth,
+} from '../types'
 
 export interface ReviewListFilter {
   minRating: number
@@ -105,6 +111,15 @@ export interface GetReviewIf {
   }
 }
 
+export type SetSearch = (state: Record<string, string>) => void
+
+export interface ListFilterIf {
+  getUseDebounce: <T>() => UseDebounce<T>
+  minTime: YearMonth
+  maxTime: YearMonth
+  setSearch: SetSearch
+}
+
 export interface ListReviewsIf {
   useList: () => {
     list: (params: ListReviewParams) => Promise<JoinedReviewList>
@@ -113,6 +128,7 @@ export interface ListReviewsIf {
     isUninitialized: boolean
   }
   infiniteScroll: InfiniteScroll
+  filterIf: ListFilterIf
 }
 
 export interface ListReviewsByIf {
@@ -120,6 +136,7 @@ export interface ListReviewsByIf {
     reviews: JoinedReviewList | undefined
     isLoading: boolean
   }
+  filterIf: ListFilterIf
 }
 
 export interface CreateReviewIf {

@@ -1,5 +1,6 @@
 import type {
   JoinedReviewList,
+  ListFilterIf,
   ListReviewParams,
   ListReviewsIf,
 } from '../../core/review/types'
@@ -10,8 +11,12 @@ import {
   validateJoinedReviewListOrUndefined,
 } from '../../validation/review'
 
-const listReviews: (infiniteScroll: InfiniteScroll) => ListReviewsIf = (
+const listReviews: (
   infiniteScroll: InfiniteScroll,
+  filterIf: ListFilterIf,
+) => ListReviewsIf = (
+  infiniteScroll: InfiniteScroll,
+  filterIf: ListFilterIf,
 ) => {
   const listReviewsIf: ListReviewsIf = {
     useList: () => {
@@ -28,6 +33,7 @@ const listReviews: (infiniteScroll: InfiniteScroll) => ListReviewsIf = (
       }
     },
     infiniteScroll,
+    filterIf,
   }
   return listReviewsIf
 }

@@ -86,6 +86,7 @@ function Location(props: Props): React.JSX.Element {
       <ReviewsBy
         id={locationId}
         listReviewsByIf={props.listReviewsByLocationIf}
+        paramsIf={props.paramsIf}
         reviewIf={props.reviewIf}
         searchIf={props.searchIf}
       />

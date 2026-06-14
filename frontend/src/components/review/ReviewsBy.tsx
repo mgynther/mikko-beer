@@ -1,25 +1,42 @@
-import React, { useState } from 'react'
+import React from 'react'
 
-import type {
-  ListReviewsByIf,
-  ReviewIf,
-  ReviewSorting,
-  ReviewSortingOrder,
-} from '../../core/review/types'
+import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
 import ReviewList from '../review/ReviewList'
-import type { ListDirection } from '../../core/types'
 import type { SearchIf } from '../../core/search/types'
+import type { ParamsIf } from '../util'
+import { searchParams } from './search-params'
+import { toTimestamp } from '../common/filter-util'
 
 interface Props {
   id: string
   listReviewsByIf: ListReviewsByIf
+  paramsIf: ParamsIf
   reviewIf: ReviewIf
   searchIf: SearchIf
 }
 
 const ReviewsBy = (props: Props): React.JSX.Element => {
-  const [order, doSetOrder] = useState<ReviewSortingOrder>('beer_name')
-  const [direction, doSetDirection] = useState<ListDirection>('asc')
+  const search = props.paramsIf.useSearch()
+
+  const parsedSearchParams = searchParams({
+    initialSorting: {
+      order: 'beer_name',
+      direction: 'asc',
+    },
+    search,
+    minTime: props.listReviewsByIf.filterIf.minTime,
+    maxTime: props.listReviewsByIf.filterIf.maxTime,
+    getUseDebounce: props.listReviewsByIf.filterIf.getUseDebounce,
+    setState: (state) => props.listReviewsByIf.filterIf.setSearch({ ...state }),
+  })
+  const order = parsedSearchParams.reviewListParams.sortingOrder
+  const direction = parsedSearchParams.reviewListParams.sortingDirection
+  const { minRating, maxRating, minTime, maxTime } = parsedSearchParams.filters
+  const minRatingValue = minRating.value
+  const maxRatingValue = maxRating.value
+  const minTimeValue = toTimestamp(minTime.value, 'start')
+  const maxTimeValue = toTimestamp(maxTime.value, 'end')
+
   const { reviews, isLoading: isLoadingReviews } =
     props.listReviewsByIf.useList({
       id: props.id,
@@ -28,24 +45,25 @@ const ReviewsBy = (props: Props): React.JSX.Element => {
         direction,
       },
       filter: {
-        minRating: 4,
-        maxRating: 10,
-        minTime: 0,
-        maxTime: 4133937600000,
+        minRating: minRatingValue,
+        maxRating: maxRatingValue,
+        minTime: minTimeValue,
+        maxTime: maxTimeValue,
       },
     })
+
   return (
     <ReviewList
+      isFiltersOpen={parsedSearchParams.reviewListParams.isFiltersOpen}
+      setIsFiltersOpen={parsedSearchParams.setIsFiltersOpen}
+      reviewFilters={parsedSearchParams.filters}
       reviewIf={props.reviewIf}
       searchIf={props.searchIf}
       isLoading={isLoadingReviews}
       isTitleVisible={true}
       reviews={reviews?.reviews ?? []}
       sorting={reviews?.sorting}
-      setSorting={(sorting: ReviewSorting) => {
-        doSetOrder(sorting.order)
-        doSetDirection(sorting.direction)
-      }}
+      setSorting={parsedSearchParams.changeSortingOrder}
       supportedSorting={['beer_name', 'brewery_name', 'rating', 'time']}
       onChanged={undefined}
     />

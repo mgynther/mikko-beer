@@ -22,7 +22,12 @@ import type {
   UpdateLocationIf,
 } from '../../core/location/types'
 import type { GetLogin } from '../../core/login/types'
-import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
+import type {
+  ListFilterIf,
+  ListReviewsByIf,
+  ReviewIf,
+  SetSearch,
+} from '../../core/review/types'
 import type { ParamsIf } from '../util'
 import type { SearchIf } from '../../core/search/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
@@ -149,6 +154,15 @@ const statsIf: StatsIf = {
   setSearch: () => undefined,
 }
 
+const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
+  setSearch: SetSearch,
+) => ({
+  getUseDebounce,
+  minTime,
+  maxTime,
+  setSearch,
+})
+
 const listReviewsByLocationIf: ListReviewsByIf = {
   useList: () => ({
     reviews: {
@@ -160,6 +174,7 @@ const listReviewsByLocationIf: ListReviewsByIf = {
     },
     isLoading: false,
   }),
+  filterIf: listFilterIf(() => undefined),
 }
 
 const paramsIf: ParamsIf = {

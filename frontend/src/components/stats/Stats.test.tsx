@@ -439,9 +439,9 @@ test('sets state', async () => {
     </LinkWrapper>,
   )
   await openFilters(getByRole, user)
-  expect(setSearch).toHaveBeenCalledTimes(1)
-  const filtersOpen = setSearch.mock.calls[0][1].s_filters
-  expect(filtersOpen).toEqual('1')
+  expect(setSearch).toHaveBeenCalledTimes(2)
+  const filtersOpen = setSearch.mock.calls.map((args) => args[1].s_filters)
+  expect(filtersOpen).toEqual(['0', '1'])
 })
 
 test('renders container stats', () => {

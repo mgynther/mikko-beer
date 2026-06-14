@@ -7,21 +7,28 @@ import LinkWrapper from '../LinkWrapper'
 import type {
   IdFilteredListReviewParams,
   JoinedReview,
+  ListFilterIf,
   ListReviewsByIf,
   Review,
   ReviewIf,
+  SetSearch,
   UpdateReviewIf,
 } from '../../core/review/types'
 import type { ListStoragesByIf } from '../../core/storage/types'
-import type { UseDebounce } from '../../core/types'
+import type { UseDebounce, YearMonth } from '../../core/types'
 import { asText } from '../container/ContainerInfo'
 import type { SearchLocationIf } from '../../core/location/types'
 import type { SearchIf } from '../../core/search/types'
 import type { EditBeerIf, GetBeerIf, UpdateBeerIf } from '../../core/beer/types'
 import type { ParamsIf } from '../util'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
+import { testTimes } from '../../../test-util/filter-time'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
+
+const getUseDebounce = function <T>(): UseDebounce<T> {
+  return (value: T) => [value, false]
+}
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -179,6 +186,18 @@ const paramsIf: ParamsIf = {
   }),
 }
 
+const minTime: YearMonth = testTimes.min.yearMonth
+const maxTime: YearMonth = testTimes.max.yearMonth
+
+const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
+  setSearch: SetSearch,
+) => ({
+  getUseDebounce,
+  minTime,
+  maxTime,
+  setSearch,
+})
+
 function getListReviewsIf(reviews: JoinedReview[]): ListReviewsByIf {
   return {
     useList: () => ({
@@ -191,6 +210,7 @@ function getListReviewsIf(reviews: JoinedReview[]): ListReviewsByIf {
       },
       isLoading: reviews.length === 0,
     }),
+    filterIf: listFilterIf(() => undefined),
   }
 }
 
@@ -399,10 +419,9 @@ test('render not found', async () => {
   getByText('Not found')
 })
 
-test('sort reviews', async () => {
-  const user = userEvent.setup()
+test('load reviews', async () => {
   const useList = vitest.fn()
-  const { getByRole } = render(
+  render(
     <LinkWrapper>
       <Beer
         updateBeerIf={dontUpdateBeerIf}
@@ -421,6 +440,53 @@ test('sort reviews', async () => {
               isLoading: false,
             }
           },
+          filterIf: listFilterIf(() => undefined),
+        }}
+        listStoragesByBeerIf={listStoragesByBeerIf}
+        paramsIf={paramsIf}
+        reviewIf={reviewIf}
+        getBeerIf={getBeerIf}
+      />
+    </LinkWrapper>,
+  )
+  expect(useList.mock.calls).toEqual([
+    [
+      {
+        id: beer.id,
+        sorting: { direction: 'asc', order: 'beer_name' },
+        filter: {
+          minRating: 4,
+          maxRating: 10,
+          minTime: testTimes.min.utcTimestamp,
+          maxTime: testTimes.max.utcTimestamp,
+        },
+      },
+    ],
+  ])
+})
+
+test('sort reviews', async () => {
+  const user = userEvent.setup()
+  const setSearch = vitest.fn()
+  const { getByRole } = render(
+    <LinkWrapper>
+      <Beer
+        updateBeerIf={dontUpdateBeerIf}
+        searchIf={searchIf}
+        listReviewsByBeerIf={{
+          useList: () => {
+            return {
+              reviews: {
+                reviews: [joinedReview],
+                sorting: {
+                  order: 'time',
+                  direction: 'asc',
+                },
+              },
+              isLoading: false,
+            }
+          },
+          filterIf: listFilterIf(setSearch),
         }}
         listStoragesByBeerIf={listStoragesByBeerIf}
         paramsIf={paramsIf}
@@ -431,35 +497,33 @@ test('sort reviews', async () => {
   )
   const ratingButton = getByRole('button', { name: 'Rating' })
   await user.click(ratingButton)
-  expect(useList.mock.calls).toEqual([
+  expect(setSearch.mock.calls).toEqual([
     [
       {
-        id: beer.id,
-        sorting: { direction: 'asc', order: 'beer_name' },
-        filter: {
-          minRating: 4,
-          maxRating: 10,
-          minTime: 0,
-          maxTime: 4133937600000,
-        },
+        r_direction: 'asc',
+        r_filters: '0',
+        r_max_rating: '10',
+        r_max_time: '2024-12',
+        r_min_rating: '4',
+        r_min_time: '2017-12',
+        r_order: 'beer_name',
       },
     ],
     [
       {
-        id: beer.id,
-        sorting: { direction: 'desc', order: 'rating' },
-        filter: {
-          minRating: 4,
-          maxRating: 10,
-          minTime: 0,
-          maxTime: 4133937600000,
-        },
+        r_direction: 'desc',
+        r_filters: '0',
+        r_max_rating: '10',
+        r_max_time: '2024-12',
+        r_min_rating: '4',
+        r_min_time: '2017-12',
+        r_order: 'rating',
       },
     ],
   ])
 })
 
-test('load reviews', async () => {
+test('show loading indicator', async () => {
   const { getByText } = render(
     <LinkWrapper>
       <Beer
@@ -472,6 +536,7 @@ test('load reviews', async () => {
               isLoading: true,
             }
           },
+          filterIf: listFilterIf(() => undefined),
         }}
         listStoragesByBeerIf={listStoragesByBeerIf}
         paramsIf={paramsIf}

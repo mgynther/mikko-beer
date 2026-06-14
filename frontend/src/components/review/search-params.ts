@@ -1,38 +1,37 @@
 import { useEffect, useState } from 'react'
 import type { SearchParameters } from '../util'
 import type { UseDebounce, YearMonth } from '../../core/types'
-import type { ParsedStatsParams, SearchRecord } from './filter-util'
+import type { ParsedReviewListParams, SearchRecord } from './filter-util'
 import {
-  averageStr,
-  countStr,
+  ratingStr,
   filtersOpenStr,
   formatToSearch,
   parseFromSearch,
 } from './filter-util'
 import { invertDirection } from '../list-helpers'
-import type { StatsFilters } from './filter-types'
+import type { ReviewFilters } from './filter-types'
 import { formatYearMonth } from '../common/filter-util'
+import type { ReviewSorting, ReviewSortingOrder } from '../../core/review/types'
 
-interface Props<T extends string> {
-  nameProperty: string
+interface Props {
+  initialSorting: ReviewSorting
   search: SearchParameters
   minTime: YearMonth
   maxTime: YearMonth
   getUseDebounce: <T>() => UseDebounce<T>
-  sortingOrderParser: (search: SearchParameters | undefined) => T
   setState: (state: SearchRecord) => void
 }
 
-interface Result<T extends string> {
+interface Result {
   searchString: string
-  changeSortingOrder: (order: T) => void
+  changeSortingOrder: (order: ReviewSortingOrder) => void
   isFilterChangePending: boolean
   setIsFiltersOpen: (isOpen: boolean) => void
-  statsParams: ParsedStatsParams<T>
-  filters: StatsFilters
+  reviewListParams: ParsedReviewListParams
+  filters: ReviewFilters
 }
 
-export function searchParams<T extends string>(props: Props<T>): Result<T> {
+export function searchParams(props: Props): Result {
   const { search } = props
   const [searchMap, setSearchMap] = useState<SearchRecord | undefined>(
     undefined,
@@ -40,15 +39,15 @@ export function searchParams<T extends string>(props: Props<T>): Result<T> {
   const [debouncedSearchMap, isFilterChangePending] = props.getUseDebounce<
     SearchRecord | undefined
   >()(searchMap)
-  const statsParams = parseFromSearch(
+  const reviewListParams = parseFromSearch(
     search,
+    props.initialSorting,
     props.minTime,
     props.maxTime,
-    props.sortingOrderParser,
   )
 
   function getCurrentState(): SearchRecord {
-    return formatToSearch(statsParams)
+    return formatToSearch(reviewListParams)
   }
 
   useEffect(() => {
@@ -79,54 +78,44 @@ export function searchParams<T extends string>(props: Props<T>): Result<T> {
     }
   }
 
-  const setMinReviewCount = getFilterSetter('s_min_count', countStr)
-  const setMaxReviewCount = getFilterSetter('s_max_count', countStr)
-  const setMinReviewAverage = getFilterSetter('s_min_avg', averageStr)
-  const setMaxReviewAverage = getFilterSetter('s_max_avg', averageStr)
-  const setTimeStart = getYearMonthSetter('s_time_start', formatYearMonth)
-  const setTimeEnd = getYearMonthSetter('s_time_end', formatYearMonth)
+  const setMinRating = getFilterSetter('r_min_rating', ratingStr)
+  const setMaxRating = getFilterSetter('r_max_rating', ratingStr)
+  const setMinTime = getYearMonthSetter('r_min_time', formatYearMonth)
+  const setMaxTime = getYearMonthSetter('r_max_time', formatYearMonth)
 
   function setIsFiltersOpen(isOpen: boolean): void {
     const newState: SearchRecord = getCurrentState()
-    newState.s_filters = filtersOpenStr(isOpen)
+    newState.r_filters = filtersOpenStr(isOpen)
     props.setState(newState)
   }
 
-  const filters: StatsFilters = {
-    minReviewCount: {
-      value: statsParams.minReviewCount,
-      setValue: setMinReviewCount,
+  const filters: ReviewFilters = {
+    minRating: {
+      value: reviewListParams.minReviewRating,
+      setValue: setMinRating,
     },
-    maxReviewCount: {
-      value: statsParams.maxReviewCount,
-      setValue: setMaxReviewCount,
+    maxRating: {
+      value: reviewListParams.maxReviewRating,
+      setValue: setMaxRating,
     },
-    minReviewAverage: {
-      value: statsParams.minReviewAverage,
-      setValue: setMinReviewAverage,
-    },
-    maxReviewAverage: {
-      value: statsParams.maxReviewAverage,
-      setValue: setMaxReviewAverage,
-    },
-    timeStart: {
+    minTime: {
       min: props.minTime,
       max: props.maxTime,
-      value: statsParams.timeStart,
-      setValue: setTimeStart,
+      value: reviewListParams.minTime,
+      setValue: setMinTime,
     },
-    timeEnd: {
+    maxTime: {
       min: props.minTime,
       max: props.maxTime,
-      value: statsParams.timeEnd,
-      setValue: setTimeEnd,
+      value: reviewListParams.maxTime,
+      setValue: setMaxTime,
     },
   }
 
   const searchString = JSON.stringify({
     filters,
-    sortingDirection: statsParams.sortingDirection,
-    sortingOrder: statsParams.sortingOrder,
+    sortingDirection: reviewListParams.sortingDirection,
+    sortingOrder: reviewListParams.sortingOrder,
   })
   useEffect(() => {
     if (debouncedSearchMap) {
@@ -134,19 +123,19 @@ export function searchParams<T extends string>(props: Props<T>): Result<T> {
     }
   }, [JSON.stringify(debouncedSearchMap)])
 
-  function changeSortingOrder(property: T): void {
-    if (statsParams.sortingOrder === property) {
+  function changeSortingOrder(property: ReviewSortingOrder): void {
+    if (reviewListParams.sortingOrder === property) {
       props.setState({
         ...getCurrentState(),
-        s_direction: invertDirection(statsParams.sortingDirection),
+        r_direction: invertDirection(reviewListParams.sortingDirection),
       })
       return
     }
-    const direction = property === props.nameProperty ? 'asc' : 'desc'
+    const direction = property === 'beer_name' ? 'asc' : 'desc'
     props.setState({
       ...getCurrentState(),
-      s_order: property,
-      s_direction: direction,
+      r_order: property,
+      r_direction: direction,
     })
   }
 
@@ -155,7 +144,7 @@ export function searchParams<T extends string>(props: Props<T>): Result<T> {
     changeSortingOrder,
     isFilterChangePending,
     setIsFiltersOpen,
-    statsParams,
+    reviewListParams,
     filters,
   }
 }

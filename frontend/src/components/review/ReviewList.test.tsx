@@ -2,7 +2,7 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import ReviewList from './ReviewList'
-import type { UseDebounce } from '../../core/types'
+import type { UseDebounce, YearMonth } from '../../core/types'
 import type { Login } from '../../core/login/types'
 import { Role } from '../../core/user/types'
 import LinkWrapper from '../LinkWrapper'
@@ -20,6 +20,8 @@ import type {
   SelectBeerIf,
 } from '../../core/beer/types'
 import type { SearchIf } from '../../core/search/types'
+import type { ReviewFilters } from './filter-types'
+import { testTimes } from '../../../test-util/filter-time'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -218,6 +220,32 @@ const irrelevantSorting: ReviewSorting = {
 
 const irrelevantSupportedSorting: ReviewSortingOrder[] = ['beer_name']
 
+const minTime: YearMonth = testTimes.min.yearMonth
+const maxTime: YearMonth = testTimes.max.yearMonth
+
+const reviewFilters: ReviewFilters = {
+  minRating: {
+    value: 4,
+    setValue: dontCall,
+  },
+  maxRating: {
+    value: 10,
+    setValue: dontCall,
+  },
+  minTime: {
+    min: minTime,
+    max: maxTime,
+    value: minTime,
+    setValue: dontCall,
+  },
+  maxTime: {
+    min: minTime,
+    max: maxTime,
+    value: maxTime,
+    setValue: dontCall,
+  },
+}
+
 test('updates review', async () => {
   const user = userEvent.setup()
   const onChanged = vitest.fn()
@@ -225,6 +253,9 @@ test('updates review', async () => {
   const { getByPlaceholderText, getByRole, getByText } = render(
     <LinkWrapper>
       <ReviewList
+        isFiltersOpen={false}
+        setIsFiltersOpen={dontCall}
+        reviewFilters={reviewFilters}
         isLoading={false}
         isTitleVisible={true}
         sorting={irrelevantSorting}
@@ -289,6 +320,9 @@ test('sets review sorting', async () => {
   const { getByRole } = render(
     <LinkWrapper>
       <ReviewList
+        isFiltersOpen={false}
+        setIsFiltersOpen={dontCall}
+        reviewFilters={reviewFilters}
         isLoading={false}
         isTitleVisible={true}
         sorting={{
@@ -307,14 +341,7 @@ test('sets review sorting', async () => {
   getByRole('button', { name: 'Name ▼' })
   const breweriesButton = getByRole('button', { name: 'Breweries' })
   await user.click(breweriesButton)
-  expect(setSorting.mock.calls).toEqual([
-    [
-      {
-        order: 'brewery_name',
-        direction: 'desc',
-      },
-    ],
-  ])
+  expect(setSorting.mock.calls).toEqual([['brewery_name']])
 })
 
 test('renders reviews', async () => {
@@ -322,6 +349,9 @@ test('renders reviews', async () => {
   const { getByText, getByRole } = render(
     <LinkWrapper>
       <ReviewList
+        isFiltersOpen={false}
+        setIsFiltersOpen={dontCall}
+        reviewFilters={reviewFilters}
         isLoading={false}
         isTitleVisible={true}
         sorting={irrelevantSorting}
@@ -352,6 +382,9 @@ test('renders title', async () => {
   const { getByRole } = render(
     <LinkWrapper>
       <ReviewList
+        isFiltersOpen={false}
+        setIsFiltersOpen={dontCall}
+        reviewFilters={reviewFilters}
         isLoading={false}
         isTitleVisible={true}
         sorting={irrelevantSorting}
@@ -371,6 +404,9 @@ test('does not render title', async () => {
   const { queryByRole } = render(
     <LinkWrapper>
       <ReviewList
+        isFiltersOpen={false}
+        setIsFiltersOpen={dontCall}
+        reviewFilters={reviewFilters}
         isLoading={false}
         isTitleVisible={false}
         sorting={irrelevantSorting}

@@ -4,63 +4,77 @@ import type {
   ListReviewsIf,
   JoinedReview,
   ReviewIf,
-  ReviewSorting,
-  ReviewSortingOrder,
 } from '../../core/review/types'
 import type { SearchIf } from '../../core/search/types'
-import type { ListDirection } from '../../core/types'
 
 import ReviewList from './ReviewList'
 
 import './Review.css'
+import { searchParams } from './search-params'
+import type { ParamsIf } from '../util'
+import { toTimestamp } from '../common/filter-util'
 
 const pageSize = 20
 
 interface Props {
   listReviewsIf: ListReviewsIf
+  paramsIf: ParamsIf
   reviewIf: ReviewIf
   searchIf: SearchIf
 }
 
 function Reviews(props: Props): React.JSX.Element {
-  const [order, setOrder] = useState<ReviewSortingOrder>('time')
-  const [direction, setDirection] = useState<ListDirection>('desc')
-  const [loadedReviews, setLoadedReviews] = useState<JoinedReview[]>([])
+  const [loadedReviews, setLoadedReviews] = useState<
+    JoinedReview[] | undefined
+  >(undefined)
   const { list, reviewList, isLoading, isUninitialized } =
     props.listReviewsIf.useList()
 
-  function setSorting(reviewSorting: ReviewSorting): void {
-    setOrder(reviewSorting.order)
-    setDirection(reviewSorting.direction)
-  }
-
-  const reloadString = JSON.stringify({
-    direction,
-    order,
+  const search = props.paramsIf.useSearch()
+  const parsedSearchParams = searchParams({
+    initialSorting: {
+      order: 'time',
+      direction: 'desc',
+    },
+    search,
+    minTime: props.listReviewsIf.filterIf.minTime,
+    maxTime: props.listReviewsIf.filterIf.maxTime,
+    getUseDebounce: props.listReviewsIf.filterIf.getUseDebounce,
+    setState: (state) => props.listReviewsIf.filterIf.setSearch({ ...state }),
   })
+  const order = parsedSearchParams.reviewListParams.sortingOrder
+  const direction = parsedSearchParams.reviewListParams.sortingDirection
+
   useEffect(() => {
-    setLoadedReviews([])
-  }, [reloadString])
+    setLoadedReviews(undefined)
+  }, [parsedSearchParams.searchString])
 
   const reviewArray = reviewList === undefined ? [] : [...reviewList.reviews]
-  const hasMore = reviewArray.length > 0 || isUninitialized
+  const hasMore =
+    reviewArray.length > 0 || isUninitialized || loadedReviews === undefined
+
+  const { minRating, maxRating, minTime, maxTime } = parsedSearchParams.filters
+  const minRatingValue = minRating.value
+  const maxRatingValue = maxRating.value
+  const minTimeValue = toTimestamp(minTime.value, 'start')
+  const maxTimeValue = toTimestamp(maxTime.value, 'end')
 
   useEffect(() => {
     const loadMore = async (): Promise<void> => {
       const result = await list({
         pagination: {
-          skip: loadedReviews.length,
+          skip: loadedReviews?.length ?? 0,
           size: pageSize,
         },
         sorting: { order, direction },
         filter: {
-          minRating: 4,
-          maxRating: 10,
-          minTime: 0,
-          maxTime: 4133937600000,
+          minRating: minRatingValue,
+          maxRating: maxRatingValue,
+          minTime: minTimeValue,
+          maxTime: maxTimeValue,
         },
       })
-      setLoadedReviews([...loadedReviews, ...result.reviews])
+      setLoadedReviews([...(loadedReviews ?? []), ...result.reviews])
     }
     function checkLoad(): void {
       if (isLoading) {
@@ -72,19 +86,32 @@ function Reviews(props: Props): React.JSX.Element {
       void loadMore()
     }
     return props.listReviewsIf.infiniteScroll(checkLoad)
-  }, [isLoading, hasMore, list, order, direction])
+  }, [
+    isLoading,
+    hasMore,
+    list,
+    order,
+    direction,
+    minRatingValue,
+    maxRatingValue,
+    minTimeValue,
+    maxTimeValue,
+  ])
 
   return (
     <div>
       <h3>Reviews</h3>
       <ReviewList
+        isFiltersOpen={parsedSearchParams.reviewListParams.isFiltersOpen}
+        setIsFiltersOpen={parsedSearchParams.setIsFiltersOpen}
+        reviewFilters={parsedSearchParams.filters}
         reviewIf={props.reviewIf}
         isLoading={isLoading}
         isTitleVisible={false}
-        reviews={loadedReviews}
+        reviews={loadedReviews ?? []}
         searchIf={props.searchIf}
         sorting={reviewList?.sorting}
-        setSorting={setSorting}
+        setSorting={parsedSearchParams.changeSortingOrder}
         supportedSorting={['rating', 'time']}
         onChanged={() => {
           setLoadedReviews([])

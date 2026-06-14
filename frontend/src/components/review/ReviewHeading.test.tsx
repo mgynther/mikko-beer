@@ -3,13 +3,46 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import ReviewHeading from './ReviewHeading'
 import type { ReviewSorting, ReviewSortingOrder } from '../../core/review/types'
+import type { ReviewFilters } from './filter-types'
+import type { YearMonth } from '../../core/types'
+import { testTimes } from '../../../test-util/filter-time'
+
+const dontCall = (): any => {
+  throw new Error('must not be called')
+}
+
+const minTime: YearMonth = testTimes.min.yearMonth
+const maxTime: YearMonth = testTimes.max.yearMonth
+
+const reviewFilters: ReviewFilters = {
+  minRating: {
+    value: 4,
+    setValue: dontCall,
+  },
+  maxRating: {
+    value: 10,
+    setValue: dontCall,
+  },
+  minTime: {
+    min: minTime,
+    max: maxTime,
+    value: minTime,
+    setValue: dontCall,
+  },
+  maxTime: {
+    min: minTime,
+    max: maxTime,
+    value: maxTime,
+    setValue: dontCall,
+  },
+}
 
 interface SortingTest {
   name: string
   originalSorting: ReviewSorting
   supportedSorting: ReviewSortingOrder[]
   sortButtonText: string
-  expectedSorting: ReviewSorting
+  expectedSorting: ReviewSortingOrder
 }
 
 const sortingTests: SortingTest[] = [
@@ -21,10 +54,7 @@ const sortingTests: SortingTest[] = [
     },
     supportedSorting: ['brewery_name'],
     sortButtonText: 'Breweries',
-    expectedSorting: {
-      order: 'brewery_name',
-      direction: 'desc',
-    },
+    expectedSorting: 'brewery_name',
   },
   {
     name: 'reverses breweries sorting asc',
@@ -34,10 +64,7 @@ const sortingTests: SortingTest[] = [
     },
     supportedSorting: ['brewery_name'],
     sortButtonText: 'Breweries ▲',
-    expectedSorting: {
-      order: 'brewery_name',
-      direction: 'desc',
-    },
+    expectedSorting: 'brewery_name',
   },
   {
     name: 'reverses breweries sorting desc',
@@ -47,10 +74,7 @@ const sortingTests: SortingTest[] = [
     },
     supportedSorting: ['brewery_name'],
     sortButtonText: 'Breweries ▼',
-    expectedSorting: {
-      order: 'brewery_name',
-      direction: 'asc',
-    },
+    expectedSorting: 'brewery_name',
   },
   {
     name: 'sets beer name sorting',
@@ -60,10 +84,7 @@ const sortingTests: SortingTest[] = [
     },
     supportedSorting: ['beer_name'],
     sortButtonText: 'Name',
-    expectedSorting: {
-      order: 'beer_name',
-      direction: 'desc',
-    },
+    expectedSorting: 'beer_name',
   },
   {
     name: 'reverses beer sorting asc',
@@ -73,10 +94,7 @@ const sortingTests: SortingTest[] = [
     },
     supportedSorting: ['beer_name'],
     sortButtonText: 'Name ▲',
-    expectedSorting: {
-      order: 'beer_name',
-      direction: 'desc',
-    },
+    expectedSorting: 'beer_name',
   },
   {
     name: 'reverses beer sorting desc',
@@ -86,10 +104,7 @@ const sortingTests: SortingTest[] = [
     },
     supportedSorting: ['beer_name'],
     sortButtonText: 'Name ▼',
-    expectedSorting: {
-      order: 'beer_name',
-      direction: 'asc',
-    },
+    expectedSorting: 'beer_name',
   },
   {
     name: 'sets rating sorting',
@@ -99,10 +114,7 @@ const sortingTests: SortingTest[] = [
     },
     supportedSorting: ['rating'],
     sortButtonText: 'Rating',
-    expectedSorting: {
-      order: 'rating',
-      direction: 'desc',
-    },
+    expectedSorting: 'rating',
   },
   {
     name: 'reverses rating sorting asc',
@@ -112,10 +124,7 @@ const sortingTests: SortingTest[] = [
     },
     supportedSorting: ['rating'],
     sortButtonText: 'Rating ▲',
-    expectedSorting: {
-      order: 'rating',
-      direction: 'desc',
-    },
+    expectedSorting: 'rating',
   },
   {
     name: 'reverses rating sorting desc',
@@ -125,10 +134,7 @@ const sortingTests: SortingTest[] = [
     },
     supportedSorting: ['rating'],
     sortButtonText: 'Rating ▼',
-    expectedSorting: {
-      order: 'rating',
-      direction: 'asc',
-    },
+    expectedSorting: 'rating',
   },
   {
     name: 'sets time sorting',
@@ -138,10 +144,7 @@ const sortingTests: SortingTest[] = [
     },
     supportedSorting: ['time'],
     sortButtonText: 'Time',
-    expectedSorting: {
-      order: 'time',
-      direction: 'desc',
-    },
+    expectedSorting: 'time',
   },
   {
     name: 'reverses time sorting asc',
@@ -151,10 +154,7 @@ const sortingTests: SortingTest[] = [
     },
     supportedSorting: ['time'],
     sortButtonText: 'Time ▲',
-    expectedSorting: {
-      order: 'time',
-      direction: 'desc',
-    },
+    expectedSorting: 'time',
   },
   {
     name: 'reverses time sorting desc',
@@ -164,10 +164,7 @@ const sortingTests: SortingTest[] = [
     },
     supportedSorting: ['time'],
     sortButtonText: 'Time ▼',
-    expectedSorting: {
-      order: 'time',
-      direction: 'asc',
-    },
+    expectedSorting: 'time',
   },
 ]
 
@@ -177,6 +174,9 @@ sortingTests.forEach((testCase) => {
     const setSorting = vitest.fn()
     const { getByRole } = render(
       <ReviewHeading
+        isFiltersOpen={false}
+        setIsFiltersOpen={dontCall}
+        reviewFilters={reviewFilters}
         sorting={testCase.originalSorting}
         setSorting={setSorting}
         supportedSorting={testCase.supportedSorting}
@@ -190,8 +190,11 @@ sortingTests.forEach((testCase) => {
 
 test('no sorting buttons when not supported', () => {
   const setSorting = vitest.fn()
-  const { queryAllByRole } = render(
+  const { getByRole, queryAllByRole } = render(
     <ReviewHeading
+      isFiltersOpen={false}
+      setIsFiltersOpen={dontCall}
+      reviewFilters={reviewFilters}
       sorting={{
         order: 'beer_name',
         direction: 'asc',
@@ -200,6 +203,7 @@ test('no sorting buttons when not supported', () => {
       supportedSorting={[]}
     />,
   )
+  const filtersButton = getByRole('button', { name: 'Filters ▼' })
   const sortButtons = queryAllByRole('button')
-  expect(sortButtons).toEqual([])
+  expect(sortButtons).toEqual([filtersButton])
 })

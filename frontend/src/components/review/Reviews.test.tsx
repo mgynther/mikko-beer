@@ -1,18 +1,20 @@
-import { act, render, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import Reviews from './Reviews'
-import type { UseDebounce } from '../../core/types'
+import type { UseDebounce, YearMonth } from '../../core/types'
 import type { Login } from '../../core/login/types'
 import { Role } from '../../core/user/types'
 import LinkWrapper from '../LinkWrapper'
 import type {
   JoinedReviewList,
+  ListFilterIf,
   ListReviewParams,
   ListReviewsIf,
   Review,
   ReviewContainerIf,
   ReviewIf,
+  SetSearch,
 } from '../../core/review/types'
 import ContentEnd from '../ContentEnd'
 import type {
@@ -23,8 +25,15 @@ import type {
 import type { SearchIf } from '../../core/search/types'
 import type { SearchLocationIf } from '../../core/location/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
+import { testTimes } from '../../../test-util/filter-time'
+import type { ParamsIf } from '../util'
+import { openFilters } from '../common/filters-test-util'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
+
+const getUseDebounce = function <T>(): UseDebounce<T> {
+  return (value: T) => [value, false]
+}
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -192,9 +201,24 @@ const adminLogin: Login = {
 }
 
 type GetListReviewsIfCb = (params: ListReviewParams) => void
-type GetListReviewsIf = (cb: GetListReviewsIfCb) => ListReviewsIf
+type GetListReviewsIf = (
+  cb: GetListReviewsIfCb,
+  setSearch: SetSearch,
+) => ListReviewsIf
 
-const getListReviewsIf: GetListReviewsIf = (cb) => ({
+const minTime: YearMonth = testTimes.min.yearMonth
+const maxTime: YearMonth = testTimes.max.yearMonth
+
+const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
+  setSearch: SetSearch,
+) => ({
+  getUseDebounce,
+  minTime,
+  maxTime,
+  setSearch,
+})
+
+const getListReviewsIf: GetListReviewsIf = (cb, setSearch) => ({
   useList: () => ({
     list: async (params): Promise<JoinedReviewList> => {
       cb(params)
@@ -217,7 +241,15 @@ const getListReviewsIf: GetListReviewsIf = (cb) => ({
     isUninitialized: true,
   }),
   infiniteScroll: dontCall,
+  filterIf: listFilterIf(setSearch),
 })
+
+const paramsIf: ParamsIf = {
+  useParams: () => ({}),
+  useSearch: () => ({
+    get: (): undefined => undefined,
+  }),
+}
 
 test('updates review', async () => {
   const user = userEvent.setup()
@@ -227,12 +259,16 @@ test('updates review', async () => {
     <LinkWrapper>
       <Reviews
         listReviewsIf={{
-          ...getListReviewsIf(() => undefined),
+          ...getListReviewsIf(
+            () => undefined,
+            () => undefined,
+          ),
           infiniteScroll: (cb): (() => undefined) => {
             scrollCb = cb
             return () => undefined
           },
         }}
+        paramsIf={paramsIf}
         reviewIf={{
           get: {
             useGet: () => ({
@@ -288,19 +324,38 @@ test('updates review', async () => {
   ])
 })
 
-test('sets review sorting', async () => {
+const defaultSearchParams: Record<string, string> = {
+  r_direction: 'desc',
+  r_filters: '0',
+  r_max_rating: '10',
+  r_max_time: '2024-12',
+  r_min_rating: '4',
+  r_min_time: '2017-12',
+  r_order: 'rating',
+}
+
+test('sets review sorting to rating asc', async () => {
   const user = userEvent.setup()
   const listParams = vitest.fn()
+  const setSearch = vitest.fn()
   let scrollCb: () => void = () => undefined
   const { getByRole } = render(
     <LinkWrapper>
       <Reviews
         listReviewsIf={{
-          ...getListReviewsIf(listParams),
+          ...getListReviewsIf(listParams, setSearch),
           infiniteScroll: (cb): (() => undefined) => {
             scrollCb = cb
             return () => undefined
           },
+        }}
+        paramsIf={{
+          useParams: () => ({
+            ...defaultSearchParams,
+          }),
+          useSearch: () => ({
+            get: (key: string): string | undefined => defaultSearchParams[key],
+          }),
         }}
         reviewIf={dontUpdateReviewIf}
         searchIf={searchIf}
@@ -312,26 +367,15 @@ test('sets review sorting', async () => {
   await act(async () => {
     scrollCb()
   })
-  getByRole('button', { name: 'Rating ▼' })
-  const timeButton = getByRole('button', { name: 'Time' })
-  await user.click(timeButton)
-  expect(listParams.mock.calls).toEqual([
+  const ratingButton = getByRole('button', { name: 'Rating ▼' })
+  await user.click(ratingButton)
+  expect(setSearch.mock.calls).toEqual([
+    [defaultSearchParams],
     [
       {
-        pagination: {
-          size: 20,
-          skip: 0,
-        },
-        sorting: {
-          direction: 'desc',
-          order: 'time',
-        },
-        filter: {
-          minRating: 4,
-          maxRating: 10,
-          minTime: 0,
-          maxTime: 4133937600000,
-        },
+        ...defaultSearchParams,
+        r_order: 'rating',
+        r_direction: 'asc',
       },
     ],
   ])
@@ -359,7 +403,9 @@ test('renders loading', async () => {
             scrollCb = cb
             return () => undefined
           },
+          filterIf: listFilterIf(() => undefined),
         }}
+        paramsIf={paramsIf}
         reviewIf={dontUpdateReviewIf}
         searchIf={searchIf}
       />
@@ -416,7 +462,9 @@ test('stops loading more', async () => {
             scrollCb = cb
             return () => undefined
           },
+          filterIf: listFilterIf(() => undefined),
         }}
+        paramsIf={paramsIf}
         reviewIf={dontUpdateReviewIf}
         searchIf={searchIf}
       />
@@ -447,8 +495,8 @@ test('stops loading more', async () => {
         filter: {
           minRating: 4,
           maxRating: 10,
-          minTime: 0,
-          maxTime: 4133937600000,
+          minTime: testTimes.min.utcTimestamp,
+          maxTime: testTimes.max.utcTimestamp,
         },
       },
     ],
@@ -465,8 +513,8 @@ test('stops loading more', async () => {
         filter: {
           minRating: 4,
           maxRating: 10,
-          minTime: 0,
-          maxTime: 4133937600000,
+          minTime: testTimes.min.utcTimestamp,
+          maxTime: testTimes.max.utcTimestamp,
         },
       },
     ],
@@ -475,4 +523,118 @@ test('stops loading more', async () => {
     scrollCb()
   })
   expect(listMore).toHaveBeenCalledTimes(2)
+})
+
+test('opens filters', async () => {
+  const user = userEvent.setup()
+  const setSearch = vitest.fn()
+  const listParams = vitest.fn()
+  const { getByRole } = render(
+    <LinkWrapper>
+      <Reviews
+        listReviewsIf={{
+          ...getListReviewsIf(listParams, setSearch),
+          infiniteScroll: (): (() => undefined) => {
+            return () => undefined
+          },
+        }}
+        paramsIf={paramsIf}
+        reviewIf={dontUpdateReviewIf}
+        searchIf={searchIf}
+      />
+      <ContentEnd />
+    </LinkWrapper>,
+  )
+  await openFilters(getByRole, user)
+  expect(setSearch).toHaveBeenCalledTimes(2)
+  const filtersOpen = setSearch.mock.calls.map((args) => args[0].r_filters)
+  expect(filtersOpen).toEqual(['0', '1'])
+})
+
+function changeSlider(
+  getByLabelText: (str: string) => HTMLElement,
+  from: string,
+  to: string,
+): void {
+  const slider = getByLabelText(from)
+  fireEvent.change(slider, { target: { value: to } })
+}
+
+interface SliderChangeTest {
+  label: string
+  toDisplayValue: string
+  property: string
+  stateValue: string
+}
+
+const sliderChangeTests: SliderChangeTest[] = [
+  {
+    label: 'Minimum rating: 4',
+    toDisplayValue: '5',
+    property: 'r_min_rating',
+    stateValue: '5',
+  },
+  {
+    label: 'Maximum rating: 10',
+    toDisplayValue: '9',
+    property: 'r_max_rating',
+    stateValue: '9',
+  },
+  {
+    label: 'Minimum time: 2017-12',
+    toDisplayValue: '5',
+    property: 'r_min_time',
+    stateValue: '2018-05',
+  },
+  {
+    label: 'Maximum time: 2024-12',
+    toDisplayValue: '8',
+    property: 'r_max_time',
+    stateValue: '2018-08',
+  },
+]
+
+const defaultFiltersOpenParams: Record<string, string> = {
+  ...defaultSearchParams,
+  r_filters: '1',
+}
+
+sliderChangeTests.forEach((testCase) => {
+  test(`change ${testCase.property}`, async () => {
+    const listParams = vitest.fn()
+    const setSearch = vitest.fn()
+    const { getByLabelText } = render(
+      <LinkWrapper>
+        <Reviews
+          listReviewsIf={{
+            ...getListReviewsIf(listParams, setSearch),
+            infiniteScroll: (): (() => undefined) => {
+              return () => undefined
+            },
+          }}
+          paramsIf={{
+            useParams: () => ({ ...defaultFiltersOpenParams }),
+            useSearch: () => ({
+              get: (key: string): string | undefined =>
+                defaultFiltersOpenParams[key],
+            }),
+          }}
+          reviewIf={dontUpdateReviewIf}
+          searchIf={searchIf}
+        />
+        <ContentEnd />
+      </LinkWrapper>,
+    )
+    await act(async () => {
+      changeSlider(getByLabelText, testCase.label, testCase.toDisplayValue)
+    })
+    const expected = {
+      ...defaultFiltersOpenParams,
+    }
+    expected[testCase.property] = testCase.stateValue
+    expect(setSearch.mock.calls).toEqual([
+      [defaultFiltersOpenParams],
+      [expected],
+    ])
+  })
 })
