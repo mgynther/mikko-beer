@@ -287,6 +287,11 @@ export interface GetStyleStatsIf {
   getUseDebounce: <T>() => UseDebounce<T>
 }
 
+export type SetSearch = (
+  mode: string,
+  state: Record<string, string>,
+) => Promise<void>
+
 export interface StatsIf {
   annual: GetAnnualStatsIf
   annualContainer: GetAnnualContainerStatsIf
@@ -296,5 +301,5 @@ export interface StatsIf {
   overall: GetOverallStatsIf
   rating: GetRatingStatsIf
   style: GetStyleStatsIf
-  setSearch: (mode: string, state: Record<string, string>) => Promise<void>
+  setSearch: SetSearch
 }

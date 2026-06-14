@@ -1,7 +1,6 @@
-import { expect, test } from 'vitest'
+import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import { infiniteScroll } from '../../components/util'
-import type { NavigateIf } from '../../components/util'
 import { store } from '../../store/store'
 import { addTestServerResponse } from '../../../test-util/server'
 import statsHook from './stats'
@@ -25,14 +24,12 @@ const getUseDebounce = function <T>(): UseDebounce<T> {
 function StyleStatsHelper(props: {
   queryParams: StyleStatsQueryParams
 }): React.JSX.Element {
-  const navigateIf: NavigateIf = {
-    useNavigate: () => () => undefined,
-  }
+  const setSearch = vitest.fn()
   const statsIf = statsHook(
     infiniteScroll,
-    navigateIf,
     minTime,
     maxTime,
+    setSearch,
     getUseDebounce,
   )
   const { stats } = statsIf.style.useStats(props.queryParams)

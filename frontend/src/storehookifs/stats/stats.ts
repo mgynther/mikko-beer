@@ -1,4 +1,3 @@
-import type { NavigateIf } from '../../components/util'
 import type {
   AnnualContainerStats,
   AnnualContainerStatsQueryParams,
@@ -7,6 +6,7 @@ import type {
   IdParams,
   LocationStats,
   LocationStatsQueryParams,
+  SetSearch,
   StatsIf,
   StyleStatsQueryParams,
   YearMonth,
@@ -35,19 +35,18 @@ import {
   validateRatingStatsOrUndefined,
   validateStyleStatsOrUndefined,
 } from '../../validation/stats'
-import { createSetSearch } from '.././set-search'
 
 const stats: (
   infiniteScroll: InfiniteScroll,
-  navigateIf: NavigateIf,
   minTime: YearMonth,
   maxTime: YearMonth,
+  setSearch: SetSearch,
   getUseDebounce: <T>() => UseDebounce<T>,
 ) => StatsIf = (
   infiniteScroll: InfiniteScroll,
-  navigateIf: NavigateIf,
   minTime: YearMonth,
   maxTime: YearMonth,
+  setSearch: SetSearch,
   getUseDebounce: <T>() => UseDebounce<T>,
 ) => {
   const statsIf: StatsIf = {
@@ -154,7 +153,7 @@ const stats: (
       maxTime,
       getUseDebounce,
     },
-    setSearch: createSetSearch(navigateIf),
+    setSearch,
   }
   return statsIf
 }

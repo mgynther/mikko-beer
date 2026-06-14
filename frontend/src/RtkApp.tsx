@@ -224,10 +224,11 @@ function RtkApp(): React.JSX.Element {
     getAnnualStorageStats()
   const getMonthlyStorageStatsIf: GetMonthlyStorageStatsIf =
     getMonthlyStorageStats()
+  const setSearch = createSetSearch(navigateIf)
   const storageStatsIf: StorageStatsIf = {
     annual: getAnnualStorageStatsIf,
     monthly: getMonthlyStorageStatsIf,
-    setSearch: createSetSearch(navigateIf),
+    setSearch,
   }
   const getStorageIf: GetStorageIf = getStorage()
   const deleteStorageIf: DeleteStorageIf = deleteStorage()
@@ -273,9 +274,9 @@ function RtkApp(): React.JSX.Element {
   }
   const statsIf: StatsIf = stats(
     infiniteScroll,
-    navigateIf,
     minTime,
     maxTime,
+    setSearch,
     getUseDebounce,
   )
 
