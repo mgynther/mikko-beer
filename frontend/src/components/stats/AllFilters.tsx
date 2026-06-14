@@ -1,6 +1,5 @@
 import React from 'react'
 
-import './Filters.css'
 import Filters from './Filters'
 import type { StatsFilters } from './filter-types'
 

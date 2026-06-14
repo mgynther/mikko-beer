@@ -6,10 +6,10 @@ import MaximumReviewCount from './MaximumReviewCount'
 import MinimumReviewCount from './MinimumReviewCount'
 import StepFilterSlider from '../common/StepFilterSlider'
 
-import './Filters.css'
 import TimeFilterSlider from '../common/TimeFilterSlider'
 import type { StatsFilter, StatsNoTimeFilters } from './filter-types'
 import OpenFiltersButton from '../common/OpenFiltersButton'
+import FilterControls from '../common/FilterControls'
 
 interface Props {
   filters: StatsNoTimeFilters
@@ -65,7 +65,7 @@ function Filters(props: Props): React.JSX.Element {
     <div>
       <OpenFiltersButton isOpen={isOpen} setIsOpen={props.setIsOpen} />
       {isOpen && (
-        <div className='FilterControls'>
+        <FilterControls>
           <MinimumReviewCount
             minReviewCount={minReviewCountValue}
             setMinReviewCount={setMinReviewCount}
@@ -110,7 +110,7 @@ function Filters(props: Props): React.JSX.Element {
               time={timeEndValue}
             />
           )}
-        </div>
+        </FilterControls>
       )}
     </div>
   )
