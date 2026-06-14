@@ -8,11 +8,11 @@ import {
   countStr,
   filtersOpenStr,
   formatToSearch,
-  formatYearMonth,
   parseFromSearch,
 } from './filter-util'
 import { invertDirection } from '../list-helpers'
 import type { StatsFilters } from './filter-types'
+import { formatYearMonth } from '../common/filter-util'
 
 interface Props<T extends string> {
   nameProperty: string

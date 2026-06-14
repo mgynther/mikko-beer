@@ -8,7 +8,7 @@ import type {
 import type { ListDirection } from '../../core/types'
 
 import BreweryStatsTable from './BreweryStatsTable'
-import { formatYearMonth, toTimestamp } from './filter-util'
+import { formatYearMonth, toTimestamp } from '../common/filter-util'
 import type { StatsFilters } from './filter-types'
 
 interface Props {

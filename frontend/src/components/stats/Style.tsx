@@ -12,7 +12,7 @@ import AllFilters from './AllFilters'
 
 import './StatsTable.css'
 import type { SearchParameters } from '../util'
-import { toTimestamp } from './filter-util'
+import { toTimestamp } from '../common/filter-util'
 import { searchParams } from './search-params'
 
 interface Props {

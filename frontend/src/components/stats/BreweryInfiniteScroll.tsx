@@ -8,7 +8,7 @@ import type {
 import type { ListDirection } from '../../core/types'
 
 import BreweryStatsTable from './BreweryStatsTable'
-import { toTimestamp } from './filter-util'
+import { toTimestamp } from '../common/filter-util'
 import type { StatsFilters } from './filter-types'
 
 const pageSize = 30
