@@ -74,7 +74,7 @@ export const getUseDebounce = function <T>(): UseDebounce<T> {
   return useDebounce<T>
 }
 
-type NavigationFunc = (
+export type NavigationFunc = (
   url: string,
   options?: { replace: boolean },
 ) => void | Promise<void>

@@ -110,11 +110,11 @@ function Stats(props: Props): React.JSX.Element | null {
     if (mode === newMode) {
       return
     }
-    void props.statsIf.setSearch(newMode, {})
+    props.statsIf.setSearch(newMode, {})
   }
 
   function setState(state: Record<string, string>): void {
-    void props.statsIf.setSearch(mode, state)
+    props.statsIf.setSearch(mode, state)
   }
 
   return (

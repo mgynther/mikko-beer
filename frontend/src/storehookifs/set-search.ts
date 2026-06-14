@@ -1,14 +1,42 @@
+import React, { useEffect } from 'react'
 import type { NavigateIf } from '../components/util'
 
-type Result = (mode: string, state: Record<string, string>) => Promise<void>
+type Stats = (mode: string, state: Record<string, string>) => void
 
-export function createSetSearch(navigateIf: NavigateIf): Result {
+interface Result {
+  stats: Stats
+}
+
+export function createSetSearch(
+  pathname: string,
+  navigateIf: NavigateIf,
+): Result {
   const navigate = navigateIf.useNavigate()
-  return async (mode: string, state: Record<string, string>) => {
-    const stateParts = Object.keys(state).map((key) => `${key}=${state[key]}`)
-    const baseSearch = `?stats=${mode}`
+  const [storedMode, setStoredMode] = React.useState('')
+  const [storedState, setStoredState] = React.useState<Record<string, string>>(
+    {},
+  )
+  async function doNavigate(): Promise<void> {
+    if (storedMode === '') {
+      return
+    }
+    const stateParts = Object.keys(storedState).map(
+      (key) => `${key}=${storedState[key]}`,
+    )
+    const baseSearch = `?stats=${storedMode}`
     const allParts = [baseSearch, ...stateParts]
     const newSearch = allParts.join('&')
     await navigate(newSearch, { replace: true })
+  }
+  useEffect(() => {
+    setStoredMode('')
+    setStoredState({})
+  }, [pathname])
+  useEffect(() => void doNavigate(), [storedMode, JSON.stringify(storedState)])
+  return {
+    stats: (mode: string, state: Record<string, string>): void => {
+      setStoredMode(mode)
+      setStoredState(state)
+    },
   }
 }

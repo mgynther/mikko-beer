@@ -224,7 +224,7 @@ function RtkApp(): React.JSX.Element {
     getAnnualStorageStats()
   const getMonthlyStorageStatsIf: GetMonthlyStorageStatsIf =
     getMonthlyStorageStats()
-  const setSearch = createSetSearch(navigateIf)
+  const setSearch = createSetSearch(window.location.pathname, navigateIf).stats
   const storageStatsIf: StorageStatsIf = {
     annual: getAnnualStorageStatsIf,
     monthly: getMonthlyStorageStatsIf,

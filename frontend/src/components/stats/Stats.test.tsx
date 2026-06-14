@@ -144,7 +144,7 @@ const emptyStatsIf: StatsIf = {
     maxTime,
     getUseDebounce,
   },
-  setSearch: async () => undefined,
+  setSearch: () => undefined,
 }
 
 const paramsIf: ParamsIf = {

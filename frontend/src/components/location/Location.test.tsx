@@ -147,7 +147,7 @@ const statsIf: StatsIf = {
   overall: noStats,
   rating: noStats,
   style: noStats,
-  setSearch: async () => undefined,
+  setSearch: () => undefined,
 }
 
 const listReviewsByLocationIf: ListReviewsByIf = {

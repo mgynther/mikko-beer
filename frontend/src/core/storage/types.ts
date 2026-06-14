@@ -104,5 +104,5 @@ export interface GetMonthlyStorageStatsIf {
 export interface StorageStatsIf {
   annual: GetAnnualStorageStatsIf
   monthly: GetMonthlyStorageStatsIf
-  setSearch: (mode: string, state: Record<string, string>) => Promise<void>
+  setSearch: (mode: string, state: Record<string, string>) => void
 }
