@@ -11,11 +11,10 @@ import type {
   OneStyleStats,
   StatsIf,
   StatsResult,
-  YearMonth,
 } from '../../core/stats/types'
 import LinkWrapper from '../LinkWrapper'
 import type { ParamsIf } from '../util'
-import type { UseDebounce } from '../../core/types'
+import type { UseDebounce, YearMonth } from '../../core/types'
 import { openFilters } from '../common/filters-test-util'
 
 const getUseDebounce = function <T>(): UseDebounce<T> {

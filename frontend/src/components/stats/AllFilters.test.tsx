@@ -4,8 +4,8 @@ import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import AllFilters from './AllFilters'
 import { openFilters } from '../common/filters-test-util'
-import type { YearMonth } from '../../core/stats/types'
 import type { StatsFilters } from './filter-types'
+import type { YearMonth } from '../../core/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')

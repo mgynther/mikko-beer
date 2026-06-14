@@ -6,8 +6,8 @@ import statsHook from './stats'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
 
-import type { IdParams, OverallStats, YearMonth } from '../../core/stats/types'
-import type { UseDebounce } from '../../core/types'
+import type { IdParams, OverallStats } from '../../core/stats/types'
+import type { UseDebounce, YearMonth } from '../../core/types'
 
 const minTime: YearMonth = { year: 2017, month: 12 }
 const maxTime: YearMonth = { year: 2024, month: 12 }

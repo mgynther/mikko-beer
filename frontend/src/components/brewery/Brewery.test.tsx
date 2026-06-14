@@ -4,7 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import Brewery from './Brewery'
 import { Role } from '../../core/user/types'
-import type { UseDebounce } from '../../core/types'
+import type { UseDebounce, YearMonth } from '../../core/types'
 import type {
   GetAnnualContainerStatsIf,
   GetAnnualStatsIf,
@@ -15,7 +15,6 @@ import type {
   GetRatingStatsIf,
   GetStyleStatsIf,
   StatsIf,
-  YearMonth,
 } from '../../core/stats/types'
 import type { SearchLocationIf } from '../../core/location/types'
 import type { GetLogin } from '../../core/login/types'

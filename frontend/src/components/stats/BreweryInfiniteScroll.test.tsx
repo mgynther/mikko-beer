@@ -9,9 +9,8 @@ import type {
   BreweryStats,
   GetBreweryStatsIf,
   OneBreweryStats,
-  YearMonth,
 } from '../../core/stats/types'
-import type { UseDebounce } from '../../core/types'
+import type { UseDebounce, YearMonth } from '../../core/types'
 import type { StatsFilters } from './filter-types'
 
 const dontCall = (): any => {

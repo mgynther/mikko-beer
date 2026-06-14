@@ -1,4 +1,4 @@
-import type { YearMonth } from '../../core/stats/types'
+import type { YearMonth } from '../../core/types'
 import { pad } from '../util'
 
 export function formatYearMonth(yearMonth: YearMonth): string {

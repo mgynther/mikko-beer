@@ -1,4 +1,4 @@
-import type { YearMonth } from '../src/core/stats/types'
+import type { YearMonth } from '../src/core/types'
 
 export interface Times {
   min: {

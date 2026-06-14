@@ -12,9 +12,8 @@ import Button from '../../components/common/Button'
 import type {
   BreweryStats,
   BreweryStatsQueryParams,
-  YearMonth,
 } from '../../core/stats/types'
-import type { UseDebounce } from '../../core/types'
+import type { UseDebounce, YearMonth } from '../../core/types'
 
 const minTime: YearMonth = testTimes.min.yearMonth
 const maxTime: YearMonth = testTimes.max.yearMonth

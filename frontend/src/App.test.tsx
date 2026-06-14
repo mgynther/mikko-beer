@@ -12,7 +12,7 @@ import type { StoreIf } from './store/storeIf'
 import { Role } from './core/user/types'
 import type { GetLogin } from './core/login/types'
 import { PasswordChangeResult } from './core/login/types'
-import type { InfiniteScroll, UseDebounce } from './core/types'
+import type { InfiniteScroll, UseDebounce, YearMonth } from './core/types'
 import type { DeleteStorageIf } from './core/storage/types'
 import { paramsIf } from './components/util'
 import type { ParamsIf } from './components/util'
@@ -21,7 +21,6 @@ import type { SearchBreweryIf } from './core/brewery/types'
 import type { SearchLocationIf } from './core/location/types'
 import type { ListStylesIf } from './core/style/types'
 import type { ReviewContainerIf } from './core/review/types'
-import type { YearMonth } from './core/stats/types'
 
 beforeEach(() => {
   store.dispatch(setState('COLLAPSED'))

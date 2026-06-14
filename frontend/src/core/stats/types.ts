@@ -3,6 +3,7 @@ import type {
   ListDirection,
   Pagination,
   UseDebounce,
+  YearMonth,
 } from '../types'
 
 export interface IdParams {
@@ -198,18 +199,6 @@ export type StyleStatsSortingOrder =
 export interface StyleStatsSorting {
   order: StyleStatsSortingOrder
   direction: ListDirection
-}
-
-export interface YearMonth {
-  year: number
-  month: number
-}
-
-export interface YearMonthFilter {
-  min: YearMonth
-  max: YearMonth
-  value: YearMonth
-  setValue: (yearMonth: YearMonth) => void
 }
 
 export interface GetAnnualStatsIf {

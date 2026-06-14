@@ -9,9 +9,8 @@ import type {
   GetLocationStatsIf,
   LocationStats,
   OneLocationStats,
-  YearMonth,
 } from '../../core/stats/types'
-import type { UseDebounce } from '../../core/types'
+import type { UseDebounce, YearMonth } from '../../core/types'
 import { openFilters } from '../common/filters-test-util'
 
 const dontCall = (): any => {

@@ -9,9 +9,8 @@ import type {
   SetSearch,
   StatsIf,
   StyleStatsQueryParams,
-  YearMonth,
 } from '../../core/stats/types'
-import type { InfiniteScroll, UseDebounce } from '../../core/types'
+import type { InfiniteScroll, UseDebounce, YearMonth } from '../../core/types'
 import {
   useGetAnnualStatsQuery,
   useGetContainerStatsQuery,

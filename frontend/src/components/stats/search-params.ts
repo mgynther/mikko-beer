@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { SearchParameters } from '../util'
-import type { YearMonth } from '../../core/stats/types'
-import type { UseDebounce } from '../../core/types'
+import type { UseDebounce, YearMonth } from '../../core/types'
 import type { ParsedStatsParams, SearchRecord } from './filter-util'
 import {
   averageStr,

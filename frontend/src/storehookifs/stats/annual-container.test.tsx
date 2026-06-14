@@ -11,9 +11,8 @@ import Button from '../../components/common/Button'
 import type {
   AnnualContainerStats,
   AnnualContainerStatsQueryParams,
-  YearMonth,
 } from '../../core/stats/types'
-import type { UseDebounce } from '../../core/types'
+import type { UseDebounce, YearMonth } from '../../core/types'
 
 const minTime: YearMonth = { year: 2017, month: 12 }
 const maxTime: YearMonth = { year: 2024, month: 12 }

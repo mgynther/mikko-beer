@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 import StepFilterSlider from './StepFilterSlider'
-import type { YearMonth } from '../../core/stats/types'
+import type { YearMonth } from '../../core/types'
 import { pad } from '../util'
 
 interface Props {

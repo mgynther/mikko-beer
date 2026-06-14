@@ -9,11 +9,10 @@ import type {
   OneStyleStats,
   StatsResult,
   StyleStatsQueryParams,
-  YearMonth,
 } from '../../core/stats/types'
 import { openFilters } from '../common/filters-test-util'
 import type { SearchParameters } from '../util'
-import type { UseDebounce } from '../../core/types'
+import type { UseDebounce, YearMonth } from '../../core/types'
 
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]

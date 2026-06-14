@@ -7,9 +7,8 @@ import LinkWrapper from '../LinkWrapper'
 import type {
   BreweryStatsSortingOrder,
   OneBreweryStats,
-  YearMonth,
 } from '../../core/stats/types'
-import type { ListDirection } from '../../core/types'
+import type { ListDirection, YearMonth } from '../../core/types'
 import { openFilters } from '../common/filters-test-util'
 import type { StatsFilters } from './filter-types'
 

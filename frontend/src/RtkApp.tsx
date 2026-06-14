@@ -75,7 +75,7 @@ import type {
   ListStoragesIf,
   StorageStatsIf,
 } from './core/storage/types'
-import type { StatsIf, YearMonth } from './core/stats/types'
+import type { StatsIf } from './core/stats/types'
 import type { SearchIf } from './core/search/types'
 import {
   getUseDebounce,
@@ -145,6 +145,7 @@ import login from './storehookifs/login/login'
 import logout from './storehookifs/login/logout'
 import { createSetSearch } from './set-search.ts'
 import { getDate } from './date-getter.ts'
+import type { YearMonth } from './core/types.ts'
 
 function getNextMonthDate(): Date {
   const now = new Date()

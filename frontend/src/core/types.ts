@@ -12,3 +12,15 @@ export type InfiniteScroll = (loadMore: () => void) => () => void
 export type ListDirection = 'asc' | 'desc'
 
 export type UseDebounce<T> = (value: T, delay?: number) => [T, boolean]
+
+export interface YearMonth {
+  year: number
+  month: number
+}
+
+export interface YearMonthFilter {
+  min: YearMonth
+  max: YearMonth
+  value: YearMonth
+  setValue: (yearMonth: YearMonth) => void
+}
