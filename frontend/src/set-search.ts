@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import type { NavigateIf } from '../components/util'
+import type { NavigateIf } from './navigation'
 
 type Stats = (mode: string, state: Record<string, string>) => void
 

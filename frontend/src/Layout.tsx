@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import type { NavigateIf } from './components/util'
+import type { NavigateIf } from './navigation'
 import type { SearchBeerIf } from './core/beer/types'
 import type { SearchBreweryIf } from './core/brewery/types'
 import type { SearchIf } from './core/search/types'

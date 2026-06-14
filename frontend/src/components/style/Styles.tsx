@@ -10,7 +10,7 @@ import type {
 import LoadingIndicator from '../common/LoadingIndicator'
 import SearchStyle from './SearchStyle'
 import StyleLink from './StyleLink'
-import type { NavigateIf } from '../util'
+import type { NavigateIf } from '../../navigation'
 
 interface Props {
   listStylesIf: ListStylesIf

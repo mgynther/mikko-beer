@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 
 import {
-  useNavigate as useRouterNavigate,
   useParams as useRouterParams,
   useSearchParams as useRouterSearchParams,
 } from 'react-router'
@@ -72,23 +71,6 @@ export const useDebounce = <T>(value: T, delay = 300): [T, boolean] => {
 
 export const getUseDebounce = function <T>(): UseDebounce<T> {
   return useDebounce<T>
-}
-
-export type NavigationFunc = (
-  url: string,
-  options?: { replace: boolean },
-) => void | Promise<void>
-
-function useNavigate(): NavigationFunc {
-  return useRouterNavigate()
-}
-
-export interface NavigateIf {
-  useNavigate: () => NavigationFunc
-}
-
-export const navigateIf: NavigateIf = {
-  useNavigate,
 }
 
 function useParams(): Record<string, string | undefined> {

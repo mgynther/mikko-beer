@@ -28,7 +28,7 @@ import Users from './components/user/Users'
 import { selectState, setState } from './store/nav-menu/reducer'
 import { selectTheme, setTheme } from './store/theme/reducer'
 
-import { navigateIf } from './components/util'
+import { navigateIf } from './navigation'
 import type { ParamsIf } from './components/util'
 import type { StoreIf } from './store/storeIf'
 import ContentEnd from './components/ContentEnd'

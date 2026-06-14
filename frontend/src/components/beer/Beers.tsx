@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 
 import type { Beer, ListBeersIf, SearchBeerIf } from '../../core/beer/types'
 import type { SearchIf } from '../../core/search/types'
-import type { NavigateIf } from '../util'
+import type { NavigateIf } from '../../navigation'
 
 import BreweryLinks from '../brewery/BreweryLinks'
 import StyleLinks from '../style/StyleLinks'

@@ -1,11 +1,11 @@
 import { expect, test, vitest } from 'vitest'
 
 import { createSetSearch } from './set-search'
-import type { NavigationFunc } from '../components/util'
+import type { NavigationFunc } from './navigation'
 import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import Button from '../components/common/Button'
+import Button from './components/common/Button'
 
 interface HelperProps {
   navigate: NavigationFunc

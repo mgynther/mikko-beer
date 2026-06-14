@@ -80,10 +80,10 @@ import type { SearchIf } from './core/search/types'
 import {
   getUseDebounce,
   infiniteScroll,
-  navigateIf,
   paramsIf,
   useDebounce,
 } from './components/util'
+import { navigateIf } from './navigation'
 import type { StoreIf } from './store/storeIf'
 
 import createBeer from './storehookifs/beer/create'
@@ -143,7 +143,7 @@ import listUsers from './storehookifs/user/list'
 import changePassword from './storehookifs/login/changePassword'
 import login from './storehookifs/login/login'
 import logout from './storehookifs/login/logout'
-import { createSetSearch } from './storehookifs/set-search.ts'
+import { createSetSearch } from './set-search.ts'
 import { getDate } from './date-getter.ts'
 
 function getNextMonthDate(): Date {

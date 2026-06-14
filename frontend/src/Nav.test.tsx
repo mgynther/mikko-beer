@@ -8,7 +8,7 @@ import type { NavMenuStateProps, ThemeProps } from './Nav'
 import type { SearchBeerIf } from './core/beer/types'
 import type { SearchIf } from './core/search/types'
 import type { SearchBreweryIf } from './core/brewery/types'
-import type { NavigateIf } from './components/util'
+import type { NavigateIf } from './navigation'
 import type { NavMenuState, Theme, UseDebounce } from './core/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]

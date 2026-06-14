@@ -6,7 +6,9 @@ import type { GetStorageIf, Storage } from '../../core/storage/types'
 
 import Button from '../common/Button'
 import LoadingIndicator from '../common/LoadingIndicator'
-import { formatDateString, type NavigateIf, type ParamsIf } from '../util'
+import { formatDateString } from '../util'
+import type { ParamsIf } from '../util'
+import type { NavigateIf } from '../../navigation'
 
 import ReviewEditor, { type InitialReview } from './ReviewEditor'
 

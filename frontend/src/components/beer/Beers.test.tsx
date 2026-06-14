@@ -5,7 +5,7 @@ import type { SearchIf } from '../../core/search/types'
 import LinkWrapper from '../LinkWrapper'
 import type { UseDebounce } from '../../core/types'
 import type { BeerList, ListBeersIf, SearchBeerIf } from '../../core/beer/types'
-import type { NavigateIf } from '../util'
+import type { NavigateIf } from '../../navigation'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]

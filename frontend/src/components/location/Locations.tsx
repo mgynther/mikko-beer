@@ -7,7 +7,7 @@ import type {
 } from '../../core/location/types'
 import type { SearchIf } from '../../core/search/types'
 
-import type { NavigateIf } from '../util'
+import type { NavigateIf } from '../../navigation'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 

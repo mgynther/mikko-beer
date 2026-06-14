@@ -3,7 +3,7 @@ import React from 'react'
 import SearchBrewery from './SearchBrewery'
 import type { SearchBreweryIf } from '../../core/brewery/types'
 import type { SearchIf } from '../../core/search/types'
-import type { NavigateIf } from '../util'
+import type { NavigateIf } from '../../navigation'
 
 export interface Props {
   navigateIf: NavigateIf
