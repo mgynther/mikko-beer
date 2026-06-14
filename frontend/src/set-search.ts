@@ -1,10 +1,16 @@
 import React, { useEffect } from 'react'
 import type { NavigateIf } from './navigation'
 
+type ReviewList = (state: Record<string, string>) => void
 type Stats = (mode: string, state: Record<string, string>) => void
 
 interface Result {
+  reviewList: ReviewList
   stats: Stats
+}
+
+function formatRecord(record: Record<string, string>): string[] {
+  return Object.keys(record).map((key) => `${key}=${record[key]}`)
 }
 
 export function createSetSearch(
@@ -12,31 +18,56 @@ export function createSetSearch(
   navigateIf: NavigateIf,
 ): Result {
   const navigate = navigateIf.useNavigate()
-  const [storedMode, setStoredMode] = React.useState('')
-  const [storedState, setStoredState] = React.useState<Record<string, string>>(
-    {},
-  )
+  const [storedStatsMode, setStoredStatsMode] = React.useState('')
+  const [storedStatsState, setStoredStatsState] = React.useState<
+    Record<string, string>
+  >({})
+  const [storedReviewListState, setStoredReviewListState] = React.useState<
+    Record<string, string>
+  >({})
+
+  function getStatsSearch(): string[] {
+    if (storedStatsMode === '') {
+      return []
+    }
+    const stateParts = formatRecord(storedStatsState)
+    const baseSearch = `stats=${storedStatsMode}`
+    return [baseSearch, ...stateParts]
+  }
+
   async function doNavigate(): Promise<void> {
-    if (storedMode === '') {
+    const statsSearch = getStatsSearch()
+    const reviewListSearch = formatRecord(storedReviewListState)
+    const allParts = [...statsSearch, ...reviewListSearch]
+    const search = allParts.join('&')
+    if (search === '') {
       return
     }
-    const stateParts = Object.keys(storedState).map(
-      (key) => `${key}=${storedState[key]}`,
-    )
-    const baseSearch = `?stats=${storedMode}`
-    const allParts = [baseSearch, ...stateParts]
-    const newSearch = allParts.join('&')
-    await navigate(newSearch, { replace: true })
+    await navigate(`?${search}`, { replace: true })
   }
+
   useEffect(() => {
-    setStoredMode('')
-    setStoredState({})
+    setStoredReviewListState({})
+    setStoredStatsMode('')
+    setStoredStatsState({})
   }, [pathname])
-  useEffect(() => void doNavigate(), [storedMode, JSON.stringify(storedState)])
+
+  useEffect(
+    () => void doNavigate(),
+    [
+      JSON.stringify(storedReviewListState),
+      storedStatsMode,
+      JSON.stringify(storedStatsState),
+    ],
+  )
+
   return {
+    reviewList: (state: Record<string, string>): void => {
+      setStoredReviewListState(state)
+    },
     stats: (mode: string, state: Record<string, string>): void => {
-      setStoredMode(mode)
-      setStoredState(state)
+      setStoredStatsMode(mode)
+      setStoredStatsState(state)
     },
   }
 }
