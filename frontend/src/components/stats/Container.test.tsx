@@ -90,13 +90,17 @@ function renderContainer(
 function renderWithStats(
   stats: (params: IdParams) => void,
 ): ReturnType<typeof render> {
-  return renderContainer(stats, vitest.fn(), getDefaultSearchParameters())
+  return renderContainer(stats, () => undefined, getDefaultSearchParameters())
 }
 
 function renderFromRecord(
   record: Record<string, string>,
 ): ReturnType<typeof render> {
-  return renderContainer(vitest.fn(), vitest.fn(), toSearchParams(record))
+  return renderContainer(
+    () => undefined,
+    () => undefined,
+    toSearchParams(record),
+  )
 }
 
 function renderFromRecordWithSetState(
