@@ -241,9 +241,11 @@ function Container(props: Props): React.JSX.Element {
           <tr>
             <th colSpan={6}>
               <Filters
-                filters={parsedSearchParams.filters}
-                isOpen={parsedSearchParams.statsParams.isFiltersOpen}
-                setIsOpen={parsedSearchParams.setIsFiltersOpen}
+                filterState={{
+                  isOpen: parsedSearchParams.statsParams.isFiltersOpen,
+                  setIsOpen: parsedSearchParams.setIsFiltersOpen,
+                  filters: parsedSearchParams.filters,
+                }}
                 timeStart={undefined}
                 timeEnd={undefined}
               />

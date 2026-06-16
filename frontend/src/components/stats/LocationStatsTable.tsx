@@ -16,13 +16,11 @@ import AllFilters from './AllFilters'
 
 import './StatsTable.css'
 import TableSkeleton from '../common/TableSkeleton'
-import type { StatsFilters } from './filter-types'
+import type { StatsFilterState } from './filter-types'
 
 interface Props {
   locations: OneLocationStats[]
-  filters: StatsFilters
-  isFiltersOpen: boolean
-  setIsFiltersOpen: (isOpen: boolean) => void
+  filterState: StatsFilterState
   isLoading: boolean
   sortingDirection: ListDirection
   sortingOrder: LocationStatsSortingOrder
@@ -30,8 +28,6 @@ interface Props {
 }
 
 function LocationStatsTable(props: Props): React.JSX.Element {
-  const filters = props.filters
-
   function isSelected(property: LocationStatsSortingOrder): boolean {
     return props.sortingOrder === property
   }
@@ -106,11 +102,7 @@ function LocationStatsTable(props: Props): React.JSX.Element {
           </tr>
           <tr>
             <th colSpan={6}>
-              <AllFilters
-                filters={filters}
-                isOpen={props.isFiltersOpen}
-                setIsOpen={props.setIsFiltersOpen}
-              />
+              <AllFilters filterState={props.filterState} />
             </th>
           </tr>
         </thead>

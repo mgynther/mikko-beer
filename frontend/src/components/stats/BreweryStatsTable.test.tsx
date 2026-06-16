@@ -81,9 +81,11 @@ test('renders brewery stats', () => {
         sortingDirection={'asc'}
         sortingOrder={'brewery_name'}
         setSortingOrder={() => undefined}
-        filters={unusedFilters}
-        isFiltersOpen={false}
-        setIsFiltersOpen={dontCall}
+        filterState={{
+          filters: unusedFilters,
+          isOpen: false,
+          setIsOpen: dontCall,
+        }}
       />
     </LinkWrapper>,
   )
@@ -112,9 +114,11 @@ test('opens filters', async () => {
         sortingDirection={'asc'}
         sortingOrder={'brewery_name'}
         setSortingOrder={() => undefined}
-        filters={unusedFilters}
-        isFiltersOpen={false}
-        setIsFiltersOpen={setIsFiltersOpen}
+        filterState={{
+          filters: unusedFilters,
+          isOpen: false,
+          setIsOpen: setIsFiltersOpen,
+        }}
       />
     </LinkWrapper>,
   )
@@ -179,9 +183,11 @@ orderTests.forEach((data) => {
           sortingDirection={data.sortingDirection}
           sortingOrder={data.order}
           setSortingOrder={setSortingOrder}
-          filters={unusedFilters}
-          isFiltersOpen={false}
-          setIsFiltersOpen={dontCall}
+          filterState={{
+            filters: unusedFilters,
+            isOpen: false,
+            setIsOpen: dontCall,
+          }}
         />
       </LinkWrapper>,
     )
@@ -201,38 +207,40 @@ test('sets minimum review count filter', () => {
         sortingDirection={'asc'}
         sortingOrder={'brewery_name'}
         setSortingOrder={() => undefined}
-        filters={{
-          minReviewCount: {
-            value: 3,
-            setValue: setMinimumReviewCount,
+        filterState={{
+          filters: {
+            minReviewCount: {
+              value: 3,
+              setValue: setMinimumReviewCount,
+            },
+            maxReviewCount: {
+              value: Infinity,
+              setValue: dontCall,
+            },
+            minReviewAverage: {
+              value: 4.0,
+              setValue: dontCall,
+            },
+            maxReviewAverage: {
+              value: 10.0,
+              setValue: dontCall,
+            },
+            timeStart: {
+              min: minTime,
+              max: maxTime,
+              value: minTime,
+              setValue: dontCall,
+            },
+            timeEnd: {
+              min: minTime,
+              max: maxTime,
+              value: maxTime,
+              setValue: dontCall,
+            },
           },
-          maxReviewCount: {
-            value: Infinity,
-            setValue: dontCall,
-          },
-          minReviewAverage: {
-            value: 4.0,
-            setValue: dontCall,
-          },
-          maxReviewAverage: {
-            value: 10.0,
-            setValue: dontCall,
-          },
-          timeStart: {
-            min: minTime,
-            max: maxTime,
-            value: minTime,
-            setValue: dontCall,
-          },
-          timeEnd: {
-            min: minTime,
-            max: maxTime,
-            value: maxTime,
-            setValue: dontCall,
-          },
+          isOpen: true,
+          setIsOpen: dontCall,
         }}
-        isFiltersOpen={true}
-        setIsFiltersOpen={dontCall}
       />
     </LinkWrapper>,
   )

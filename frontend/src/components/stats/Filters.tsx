@@ -5,23 +5,21 @@ import MinimumReviewCount from './MinimumReviewCount'
 import StepFilterSlider from '../common/StepFilterSlider'
 
 import TimeFilterSlider from '../common/TimeFilterSlider'
-import type { StatsFilter, StatsNoTimeFilters } from './filter-types'
+import type { StatsFilter, StatsNoTimeFilterState } from './filter-types'
 import OpenFiltersButton from '../common/OpenFiltersButton'
 import FilterControls from '../common/FilterControls'
 import type { YearMonth, YearMonthFilter } from '../../core/types'
 
 interface Props {
-  filters: StatsNoTimeFilters
+  filterState: StatsNoTimeFilterState
   timeStart: YearMonthFilter | undefined
   timeEnd: YearMonthFilter | undefined
-  isOpen: boolean
-  setIsOpen: (isOpen: boolean) => void
 }
 
 function Filters(props: Props): React.JSX.Element {
-  const { isOpen } = props
+  const { isOpen } = props.filterState
   const { minReviewCount, maxReviewCount, minReviewAverage, maxReviewAverage } =
-    props.filters
+    props.filterState.filters
   const { timeStart, timeEnd } = props
   function wrapStatsFilter(
     statsFilter: StatsFilter,
@@ -62,7 +60,10 @@ function Filters(props: Props): React.JSX.Element {
   const [timeEndValue, setTimeEnd] = wrapYearMonthFilter(timeEnd)
   return (
     <div>
-      <OpenFiltersButton isOpen={isOpen} setIsOpen={props.setIsOpen} />
+      <OpenFiltersButton
+        isOpen={isOpen}
+        setIsOpen={props.filterState.setIsOpen}
+      />
       {isOpen && (
         <FilterControls>
           <MinimumReviewCount

@@ -122,10 +122,12 @@ test('queries brewery stats', async () => {
         sortingDirection={'asc'}
         sortingOrder={'brewery_name'}
         setSortingOrder={() => undefined}
-        filters={unusedFilters}
-        isFiltersOpen={false}
+        filterState={{
+          filters: unusedFilters,
+          isOpen: false,
+          setIsOpen: () => undefined,
+        }}
         isFilterChangePending={false}
-        setIsFiltersOpen={() => undefined}
       />
     </LinkWrapper>,
   )
@@ -172,10 +174,12 @@ test('renders brewery stats', () => {
         sortingDirection={'asc'}
         sortingOrder={'brewery_name'}
         setSortingOrder={() => undefined}
-        filters={unusedFilters}
-        isFiltersOpen={false}
+        filterState={{
+          filters: unusedFilters,
+          isOpen: false,
+          setIsOpen: dontCall,
+        }}
         isFilterChangePending={false}
-        setIsFiltersOpen={dontCall}
       />
     </LinkWrapper>,
   )
@@ -207,9 +211,11 @@ test('clears loaded breweries on filter change pending', () => {
         sortingDirection={'asc'}
         sortingOrder={'brewery_name'}
         setSortingOrder={() => undefined}
-        filters={unusedFilters}
-        isFiltersOpen={false}
-        setIsFiltersOpen={dontCall}
+        filterState={{
+          filters: unusedFilters,
+          isOpen: false,
+          setIsOpen: dontCall,
+        }}
         isFilterChangePending={true}
       />
     </LinkWrapper>,
@@ -240,9 +246,11 @@ test('renders loading', () => {
         sortingDirection={'asc'}
         sortingOrder={'brewery_name'}
         setSortingOrder={() => undefined}
-        filters={unusedFilters}
-        isFiltersOpen={false}
-        setIsFiltersOpen={dontCall}
+        filterState={{
+          filters: unusedFilters,
+          isOpen: false,
+          setIsOpen: dontCall,
+        }}
         isFilterChangePending={false}
       />
     </LinkWrapper>,
@@ -265,16 +273,18 @@ test('sets minimum review count filter', () => {
         sortingDirection={'asc'}
         sortingOrder={'brewery_name'}
         setSortingOrder={() => undefined}
-        filters={{
-          ...unusedFilters,
-          minReviewAverage: {
-            value: 4.0,
-            setValue: setMinimumReviewAverage,
+        filterState={{
+          filters: {
+            ...unusedFilters,
+            minReviewAverage: {
+              value: 4.0,
+              setValue: setMinimumReviewAverage,
+            },
           },
+          isOpen: true,
+          setIsOpen: dontCall,
         }}
-        isFiltersOpen={true}
         isFilterChangePending={false}
-        setIsFiltersOpen={dontCall}
       />
     </LinkWrapper>,
   )
@@ -298,10 +308,12 @@ test('opens filter', async () => {
         sortingDirection={'asc'}
         sortingOrder={'brewery_name'}
         setSortingOrder={() => undefined}
-        filters={unusedFilters}
-        isFiltersOpen={false}
+        filterState={{
+          filters: unusedFilters,
+          isOpen: false,
+          setIsOpen: setIsFiltersOpen,
+        }}
         isFilterChangePending={false}
-        setIsFiltersOpen={setIsFiltersOpen}
       />
     </LinkWrapper>,
   )

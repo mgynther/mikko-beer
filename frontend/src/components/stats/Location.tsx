@@ -10,6 +10,7 @@ import LocationAllAtOnce from './LocationAllAtOnce'
 import LocationInfiniteScroll from './LocationInfiniteScroll'
 import type { SearchParameters } from '../util'
 import { searchParams } from './search-params'
+import type { StatsFilterState } from './filter-types'
 
 interface Props {
   getLocationStatsIf: GetLocationStatsIf
@@ -56,14 +57,18 @@ function Location(props: Props): React.JSX.Element {
     setLoadedLocations(undefined)
   }, [parsedSearchParams.searchString])
 
+  const filterState: StatsFilterState = {
+    filters: parsedSearchParams.filters,
+    isOpen: parsedSearchParams.statsParams.isFiltersOpen,
+    setIsOpen: parsedSearchParams.setIsFiltersOpen,
+  }
+
   return (
     <>
       {isAllAtOnce && (
         <LocationAllAtOnce
           getLocationStatsIf={props.getLocationStatsIf}
-          filters={parsedSearchParams.filters}
-          isFiltersOpen={parsedSearchParams.statsParams.isFiltersOpen}
-          setIsFiltersOpen={parsedSearchParams.setIsFiltersOpen}
+          filterState={filterState}
           isFilterChangePending={parsedSearchParams.isFilterChangePending}
           loadedLocations={loadedLocations}
           setLoadedLocations={setLoadedLocations}
@@ -78,9 +83,7 @@ function Location(props: Props): React.JSX.Element {
       {!isAllAtOnce && (
         <LocationInfiniteScroll
           getLocationStatsIf={props.getLocationStatsIf}
-          filters={parsedSearchParams.filters}
-          isFiltersOpen={parsedSearchParams.statsParams.isFiltersOpen}
-          setIsFiltersOpen={parsedSearchParams.setIsFiltersOpen}
+          filterState={filterState}
           isFilterChangePending={parsedSearchParams.isFilterChangePending}
           loadedLocations={loadedLocations}
           setLoadedLocations={setLoadedLocations}

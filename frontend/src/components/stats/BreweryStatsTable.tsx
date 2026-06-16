@@ -16,13 +16,11 @@ import TabButton from '../common/TabButton'
 import AllFilters from './AllFilters'
 
 import './StatsTable.css'
-import type { StatsFilters } from './filter-types'
+import type { StatsFilterState } from './filter-types'
 
 interface Props {
   breweries: OneBreweryStats[]
-  filters: StatsFilters
-  isFiltersOpen: boolean
-  setIsFiltersOpen: (isOpen: boolean) => void
+  filterState: StatsFilterState
   isLoading: boolean
   sortingDirection: ListDirection
   sortingOrder: BreweryStatsSortingOrder
@@ -37,8 +35,6 @@ function formatCount(brewery: OneBreweryStats): string {
 }
 
 function BreweryStatsTable(props: Props): React.JSX.Element {
-  const filters = props.filters
-
   function isSelected(property: BreweryStatsSortingOrder): boolean {
     return props.sortingOrder === property
   }
@@ -113,11 +109,7 @@ function BreweryStatsTable(props: Props): React.JSX.Element {
           </tr>
           <tr>
             <th colSpan={6}>
-              <AllFilters
-                filters={filters}
-                isOpen={props.isFiltersOpen}
-                setIsOpen={props.setIsFiltersOpen}
-              />
+              <AllFilters filterState={props.filterState} />
             </th>
           </tr>
         </thead>

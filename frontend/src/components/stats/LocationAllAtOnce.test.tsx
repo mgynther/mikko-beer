@@ -123,9 +123,11 @@ test('queries location stats', async () => {
         sortingDirection={'asc'}
         sortingOrder={'location_name'}
         setSortingOrder={() => undefined}
-        filters={unusedFilters}
-        isFiltersOpen={false}
-        setIsFiltersOpen={() => undefined}
+        filterState={{
+          filters: unusedFilters,
+          isOpen: false,
+          setIsOpen: () => undefined,
+        }}
         isFilterChangePending={false}
       />
     </LinkWrapper>,
@@ -174,9 +176,11 @@ test('renders location stats', () => {
         sortingDirection={'asc'}
         sortingOrder={'location_name'}
         setSortingOrder={() => undefined}
-        filters={unusedFilters}
-        isFiltersOpen={false}
-        setIsFiltersOpen={dontCall}
+        filterState={{
+          filters: unusedFilters,
+          isOpen: false,
+          setIsOpen: dontCall,
+        }}
         isFilterChangePending={false}
       />
     </LinkWrapper>,
@@ -209,9 +213,11 @@ test('clears loaded locations on filter change pending', () => {
         sortingDirection={'asc'}
         sortingOrder={'location_name'}
         setSortingOrder={() => undefined}
-        filters={unusedFilters}
-        isFiltersOpen={false}
-        setIsFiltersOpen={dontCall}
+        filterState={{
+          filters: unusedFilters,
+          isOpen: false,
+          setIsOpen: dontCall,
+        }}
         isFilterChangePending={true}
       />
     </LinkWrapper>,
@@ -242,9 +248,11 @@ test('renders loading', () => {
         sortingDirection={'asc'}
         sortingOrder={'location_name'}
         setSortingOrder={() => undefined}
-        filters={unusedFilters}
-        isFiltersOpen={false}
-        setIsFiltersOpen={dontCall}
+        filterState={{
+          filters: unusedFilters,
+          isOpen: false,
+          setIsOpen: dontCall,
+        }}
         isFilterChangePending={false}
       />
     </LinkWrapper>,
@@ -267,15 +275,17 @@ test('sets minimum review count filter', () => {
         sortingDirection={'asc'}
         sortingOrder={'location_name'}
         setSortingOrder={() => undefined}
-        filters={{
-          ...unusedFilters,
-          minReviewAverage: {
-            value: 4.0,
-            setValue: setMinimumReviewAverage,
+        filterState={{
+          filters: {
+            ...unusedFilters,
+            minReviewAverage: {
+              value: 4.0,
+              setValue: setMinimumReviewAverage,
+            },
           },
+          isOpen: true,
+          setIsOpen: dontCall,
         }}
-        isFiltersOpen={true}
-        setIsFiltersOpen={dontCall}
         isFilterChangePending={false}
       />
     </LinkWrapper>,
@@ -300,9 +310,11 @@ test('opens filter', async () => {
         sortingDirection={'asc'}
         sortingOrder={'location_name'}
         setSortingOrder={() => undefined}
-        filters={unusedFilters}
-        isFiltersOpen={false}
-        setIsFiltersOpen={setIsFiltersOpen}
+        filterState={{
+          filters: unusedFilters,
+          isOpen: false,
+          setIsOpen: setIsFiltersOpen,
+        }}
         isFilterChangePending={false}
       />
     </LinkWrapper>,

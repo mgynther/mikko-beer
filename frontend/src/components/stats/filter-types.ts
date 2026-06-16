@@ -20,3 +20,15 @@ export interface StatsNoTimeFilters {
   minReviewAverage: StatsFilter
   maxReviewAverage: StatsFilter
 }
+
+export interface StatsFilterState {
+  isOpen: boolean
+  setIsOpen: (isOpen: boolean) => void
+  filters: StatsFilters
+}
+
+export interface StatsNoTimeFilterState {
+  isOpen: boolean
+  setIsOpen: (isOpen: boolean) => void
+  filters: StatsNoTimeFilters
+}

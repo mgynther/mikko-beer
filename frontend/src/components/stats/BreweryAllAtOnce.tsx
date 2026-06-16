@@ -9,13 +9,11 @@ import type { ListDirection } from '../../core/types'
 
 import BreweryStatsTable from './BreweryStatsTable'
 import { formatYearMonth, toTimestamp } from '../common/filter-util'
-import type { StatsFilters } from './filter-types'
+import type { StatsFilterState } from './filter-types'
 
 interface Props {
   getBreweryStatsIf: GetBreweryStatsIf
-  filters: StatsFilters
-  isFiltersOpen: boolean
-  setIsFiltersOpen: (isOpen: boolean) => void
+  filterState: StatsFilterState
   isFilterChangePending: boolean
   sortingDirection: ListDirection
   sortingOrder: BreweryStatsSortingOrder
@@ -33,12 +31,13 @@ const giantPage = {
 }
 
 function BreweryAllAtOnce(props: Props): React.JSX.Element {
-  const minReviewCount = props.filters.minReviewCount.value
-  const maxReviewCount = props.filters.maxReviewCount.value
-  const minReviewAverage = props.filters.minReviewAverage.value
-  const maxReviewAverage = props.filters.maxReviewAverage.value
-  const timeStart = props.filters.timeStart.value
-  const timeEnd = props.filters.timeEnd.value
+  const { filters } = props.filterState
+  const minReviewCount = filters.minReviewCount.value
+  const maxReviewCount = filters.maxReviewCount.value
+  const minReviewAverage = filters.minReviewAverage.value
+  const maxReviewAverage = filters.maxReviewAverage.value
+  const timeStart = filters.timeStart.value
+  const timeEnd = filters.timeEnd.value
   const {
     isFilterChangePending,
     loadedBreweries,
@@ -110,9 +109,7 @@ function BreweryAllAtOnce(props: Props): React.JSX.Element {
   return (
     <BreweryStatsTable
       breweries={getBreweries()}
-      filters={props.filters}
-      isFiltersOpen={props.isFiltersOpen}
-      setIsFiltersOpen={props.setIsFiltersOpen}
+      filterState={props.filterState}
       isLoading={isLoading}
       sortingDirection={props.sortingDirection}
       sortingOrder={props.sortingOrder}

@@ -132,9 +132,11 @@ function Style(props: Props): React.JSX.Element {
           <tr>
             <th colSpan={6}>
               <AllFilters
-                filters={parsedSearchParams.filters}
-                isOpen={parsedSearchParams.statsParams.isFiltersOpen}
-                setIsOpen={parsedSearchParams.setIsFiltersOpen}
+                filterState={{
+                  filters: parsedSearchParams.filters,
+                  isOpen: parsedSearchParams.statsParams.isFiltersOpen,
+                  setIsOpen: parsedSearchParams.setIsFiltersOpen,
+                }}
               />
             </th>
           </tr>

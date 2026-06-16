@@ -9,15 +9,13 @@ import type { ListDirection } from '../../core/types'
 
 import LocationStatsTable from './LocationStatsTable'
 import { toTimestamp } from '../common/filter-util'
-import type { StatsFilters } from './filter-types'
+import type { StatsFilterState } from './filter-types'
 
 const pageSize = 30
 
 interface Props {
   getLocationStatsIf: GetLocationStatsIf
-  filters: StatsFilters
-  isFiltersOpen: boolean
-  setIsFiltersOpen: (isOpen: boolean) => void
+  filterState: StatsFilterState
   isFilterChangePending: boolean
   sortingDirection: ListDirection
   sortingOrder: LocationStatsSortingOrder
@@ -27,12 +25,13 @@ interface Props {
 }
 
 function LocationInfiniteScroll(props: Props): React.JSX.Element {
-  const minReviewCount = props.filters.minReviewCount.value
-  const maxReviewCount = props.filters.maxReviewCount.value
-  const minReviewAverage = props.filters.minReviewAverage.value
-  const maxReviewAverage = props.filters.maxReviewAverage.value
-  const timeStart = props.filters.timeStart.value
-  const timeEnd = props.filters.timeEnd.value
+  const { filters } = props.filterState
+  const minReviewCount = filters.minReviewCount.value
+  const maxReviewCount = filters.maxReviewCount.value
+  const minReviewAverage = filters.minReviewAverage.value
+  const maxReviewAverage = filters.maxReviewAverage.value
+  const timeStart = filters.timeStart.value
+  const timeEnd = filters.timeEnd.value
   const {
     isFilterChangePending,
     loadedLocations,
@@ -100,9 +99,7 @@ function LocationInfiniteScroll(props: Props): React.JSX.Element {
   return (
     <LocationStatsTable
       locations={loadedLocations ?? []}
-      filters={props.filters}
-      isFiltersOpen={props.isFiltersOpen}
-      setIsFiltersOpen={props.setIsFiltersOpen}
+      filterState={props.filterState}
       isLoading={loadedLocations === undefined}
       sortingDirection={sortingDirection}
       sortingOrder={sortingOrder}

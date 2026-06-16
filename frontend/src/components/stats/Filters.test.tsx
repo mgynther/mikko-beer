@@ -38,9 +38,11 @@ test('opens filters', async () => {
   const setIsOpen = vitest.fn()
   const { getByRole } = render(
     <Filters
-      filters={defaultFilters}
-      isOpen={false}
-      setIsOpen={setIsOpen}
+      filterState={{
+        filters: defaultFilters,
+        isOpen: false,
+        setIsOpen,
+      }}
       timeStart={{
         min: minTime,
         max: maxTime,
@@ -64,9 +66,11 @@ test('closes filters', async () => {
   const setIsOpen = vitest.fn()
   const { getByRole } = render(
     <Filters
-      filters={defaultFilters}
-      isOpen={true}
-      setIsOpen={setIsOpen}
+      filterState={{
+        filters: defaultFilters,
+        isOpen: true,
+        setIsOpen,
+      }}
       timeStart={{
         min: minTime,
         max: maxTime,
@@ -89,26 +93,28 @@ test('closes filters', async () => {
 test('renders values when open', () => {
   const { getByRole, getByText } = render(
     <Filters
-      filters={{
-        minReviewCount: {
-          value: 3,
-          setValue: dontCall,
+      filterState={{
+        filters: {
+          minReviewCount: {
+            value: 3,
+            setValue: dontCall,
+          },
+          maxReviewCount: {
+            value: 13,
+            setValue: dontCall,
+          },
+          minReviewAverage: {
+            value: 6.8,
+            setValue: dontCall,
+          },
+          maxReviewAverage: {
+            value: 9.2,
+            setValue: dontCall,
+          },
         },
-        maxReviewCount: {
-          value: 13,
-          setValue: dontCall,
-        },
-        minReviewAverage: {
-          value: 6.8,
-          setValue: dontCall,
-        },
-        maxReviewAverage: {
-          value: 9.2,
-          setValue: dontCall,
-        },
+        isOpen: true,
+        setIsOpen: () => undefined,
       }}
-      isOpen={true}
-      setIsOpen={() => undefined}
       timeStart={{
         min: minTime,
         max: maxTime,
@@ -135,26 +141,28 @@ test('renders values when open', () => {
 test('does not render time', () => {
   const { queryByText } = render(
     <Filters
-      filters={{
-        minReviewCount: {
-          value: 3,
-          setValue: dontCall,
+      filterState={{
+        filters: {
+          minReviewCount: {
+            value: 3,
+            setValue: dontCall,
+          },
+          maxReviewCount: {
+            value: 13,
+            setValue: dontCall,
+          },
+          minReviewAverage: {
+            value: 6.8,
+            setValue: dontCall,
+          },
+          maxReviewAverage: {
+            value: 9.2,
+            setValue: dontCall,
+          },
         },
-        maxReviewCount: {
-          value: 13,
-          setValue: dontCall,
-        },
-        minReviewAverage: {
-          value: 6.8,
-          setValue: dontCall,
-        },
-        maxReviewAverage: {
-          value: 9.2,
-          setValue: dontCall,
-        },
+        isOpen: true,
+        setIsOpen: () => undefined,
       }}
-      isOpen={true}
-      setIsOpen={() => undefined}
       timeStart={undefined}
       timeEnd={undefined}
     />,
@@ -167,26 +175,28 @@ test('sets minimum review count', () => {
   const setMinimumReviewCount = vitest.fn()
   const { getByDisplayValue } = render(
     <Filters
-      filters={{
-        minReviewCount: {
-          value: 3,
-          setValue: setMinimumReviewCount,
+      filterState={{
+        filters: {
+          minReviewCount: {
+            value: 3,
+            setValue: setMinimumReviewCount,
+          },
+          maxReviewCount: {
+            value: 13,
+            setValue: dontCall,
+          },
+          minReviewAverage: {
+            value: 6.8,
+            setValue: dontCall,
+          },
+          maxReviewAverage: {
+            value: 9.2,
+            setValue: dontCall,
+          },
         },
-        maxReviewCount: {
-          value: 13,
-          setValue: dontCall,
-        },
-        minReviewAverage: {
-          value: 6.8,
-          setValue: dontCall,
-        },
-        maxReviewAverage: {
-          value: 9.2,
-          setValue: dontCall,
-        },
+        isOpen: true,
+        setIsOpen: () => undefined,
       }}
-      isOpen={true}
-      setIsOpen={() => undefined}
       timeStart={{
         min: minTime,
         max: maxTime,
@@ -210,26 +220,28 @@ test('sets maximum review count', () => {
   const setMaximumReviewCount = vitest.fn()
   const { getByDisplayValue } = render(
     <Filters
-      filters={{
-        minReviewCount: {
-          value: 3,
-          setValue: dontCall,
+      filterState={{
+        filters: {
+          minReviewCount: {
+            value: 3,
+            setValue: dontCall,
+          },
+          maxReviewCount: {
+            value: 13,
+            setValue: setMaximumReviewCount,
+          },
+          minReviewAverage: {
+            value: 6.8,
+            setValue: dontCall,
+          },
+          maxReviewAverage: {
+            value: 9.2,
+            setValue: dontCall,
+          },
         },
-        maxReviewCount: {
-          value: 13,
-          setValue: setMaximumReviewCount,
-        },
-        minReviewAverage: {
-          value: 6.8,
-          setValue: dontCall,
-        },
-        maxReviewAverage: {
-          value: 9.2,
-          setValue: dontCall,
-        },
+        isOpen: true,
+        setIsOpen: () => undefined,
       }}
-      isOpen={true}
-      setIsOpen={() => undefined}
       timeStart={{
         min: minTime,
         max: maxTime,
@@ -253,26 +265,28 @@ test('sets minimum review average', () => {
   const setMinimumReviewAverage = vitest.fn()
   const { getByDisplayValue } = render(
     <Filters
-      filters={{
-        minReviewCount: {
-          value: 3,
-          setValue: dontCall,
+      filterState={{
+        filters: {
+          minReviewCount: {
+            value: 3,
+            setValue: dontCall,
+          },
+          maxReviewCount: {
+            value: 13,
+            setValue: dontCall,
+          },
+          minReviewAverage: {
+            value: 6.8,
+            setValue: setMinimumReviewAverage,
+          },
+          maxReviewAverage: {
+            value: 9.2,
+            setValue: dontCall,
+          },
         },
-        maxReviewCount: {
-          value: 13,
-          setValue: dontCall,
-        },
-        minReviewAverage: {
-          value: 6.8,
-          setValue: setMinimumReviewAverage,
-        },
-        maxReviewAverage: {
-          value: 9.2,
-          setValue: dontCall,
-        },
+        isOpen: true,
+        setIsOpen: () => undefined,
       }}
-      isOpen={true}
-      setIsOpen={() => undefined}
       timeStart={{
         min: minTime,
         max: maxTime,
@@ -296,26 +310,28 @@ test('sets maximum review average', () => {
   const setMaximumReviewAverage = vitest.fn()
   const { getByDisplayValue } = render(
     <Filters
-      filters={{
-        minReviewCount: {
-          value: 3,
-          setValue: dontCall,
+      filterState={{
+        filters: {
+          minReviewCount: {
+            value: 3,
+            setValue: dontCall,
+          },
+          maxReviewCount: {
+            value: 13,
+            setValue: dontCall,
+          },
+          minReviewAverage: {
+            value: 6.8,
+            setValue: dontCall,
+          },
+          maxReviewAverage: {
+            value: 9.2,
+            setValue: setMaximumReviewAverage,
+          },
         },
-        maxReviewCount: {
-          value: 13,
-          setValue: dontCall,
-        },
-        minReviewAverage: {
-          value: 6.8,
-          setValue: dontCall,
-        },
-        maxReviewAverage: {
-          value: 9.2,
-          setValue: setMaximumReviewAverage,
-        },
+        isOpen: true,
+        setIsOpen: () => undefined,
       }}
-      isOpen={true}
-      setIsOpen={() => undefined}
       timeStart={{
         min: minTime,
         max: maxTime,
@@ -339,26 +355,28 @@ test('sets minimum time', () => {
   const setMinimumTime = vitest.fn()
   const { getByDisplayValue } = render(
     <Filters
-      filters={{
-        minReviewCount: {
-          value: 3,
-          setValue: dontCall,
+      filterState={{
+        filters: {
+          minReviewCount: {
+            value: 3,
+            setValue: dontCall,
+          },
+          maxReviewCount: {
+            value: 13,
+            setValue: dontCall,
+          },
+          minReviewAverage: {
+            value: 6.8,
+            setValue: dontCall,
+          },
+          maxReviewAverage: {
+            value: 9.2,
+            setValue: dontCall,
+          },
         },
-        maxReviewCount: {
-          value: 13,
-          setValue: dontCall,
-        },
-        minReviewAverage: {
-          value: 6.8,
-          setValue: dontCall,
-        },
-        maxReviewAverage: {
-          value: 9.2,
-          setValue: dontCall,
-        },
+        isOpen: true,
+        setIsOpen: () => undefined,
       }}
-      isOpen={true}
-      setIsOpen={() => undefined}
       timeStart={{
         min: minTime,
         max: maxTime,
@@ -392,26 +410,28 @@ test('sets maximum time', () => {
   const setMaximumTime = vitest.fn()
   const { getByDisplayValue } = render(
     <Filters
-      filters={{
-        minReviewCount: {
-          value: 3,
-          setValue: dontCall,
+      filterState={{
+        filters: {
+          minReviewCount: {
+            value: 3,
+            setValue: dontCall,
+          },
+          maxReviewCount: {
+            value: 13,
+            setValue: dontCall,
+          },
+          minReviewAverage: {
+            value: 6.8,
+            setValue: dontCall,
+          },
+          maxReviewAverage: {
+            value: 9.2,
+            setValue: dontCall,
+          },
         },
-        maxReviewCount: {
-          value: 13,
-          setValue: dontCall,
-        },
-        minReviewAverage: {
-          value: 6.8,
-          setValue: dontCall,
-        },
-        maxReviewAverage: {
-          value: 9.2,
-          setValue: dontCall,
-        },
+        isOpen: true,
+        setIsOpen: () => undefined,
       }}
-      isOpen={true}
-      setIsOpen={() => undefined}
       timeStart={{
         min: minTime,
         max: maxTime,

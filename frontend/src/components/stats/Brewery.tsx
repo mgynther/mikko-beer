@@ -10,6 +10,7 @@ import BreweryAllAtOnce from './BreweryAllAtOnce'
 import BreweryInfiniteScroll from './BreweryInfiniteScroll'
 import type { SearchParameters } from '../util'
 import { searchParams } from './search-params'
+import type { StatsFilterState } from './filter-types'
 
 interface Props {
   getBreweryStatsIf: GetBreweryStatsIf
@@ -56,14 +57,18 @@ function Brewery(props: Props): React.JSX.Element {
     setLoadedBreweries(undefined)
   }, [parsedSearchParams.searchString])
 
+  const filterState: StatsFilterState = {
+    filters: parsedSearchParams.filters,
+    isOpen: parsedSearchParams.statsParams.isFiltersOpen,
+    setIsOpen: parsedSearchParams.setIsFiltersOpen,
+  }
+
   return (
     <>
       {isAllAtOnce && (
         <BreweryAllAtOnce
           getBreweryStatsIf={props.getBreweryStatsIf}
-          filters={parsedSearchParams.filters}
-          isFiltersOpen={parsedSearchParams.statsParams.isFiltersOpen}
-          setIsFiltersOpen={parsedSearchParams.setIsFiltersOpen}
+          filterState={filterState}
           isFilterChangePending={parsedSearchParams.isFilterChangePending}
           loadedBreweries={loadedBreweries}
           setLoadedBreweries={setLoadedBreweries}
@@ -78,10 +83,8 @@ function Brewery(props: Props): React.JSX.Element {
       {!isAllAtOnce && (
         <BreweryInfiniteScroll
           getBreweryStatsIf={props.getBreweryStatsIf}
-          filters={parsedSearchParams.filters}
-          isFiltersOpen={parsedSearchParams.statsParams.isFiltersOpen}
+          filterState={filterState}
           isFilterChangePending={parsedSearchParams.isFilterChangePending}
-          setIsFiltersOpen={parsedSearchParams.setIsFiltersOpen}
           loadedBreweries={loadedBreweries}
           setLoadedBreweries={setLoadedBreweries}
           sortingDirection={parsedSearchParams.statsParams.sortingDirection}
