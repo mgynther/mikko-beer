@@ -129,9 +129,9 @@ test('renders storage', () => {
             }),
           },
         }}
-        paramsIf={{
-          useParams: () => ({}),
-          useSearch: () => {
+        urlParamsIf={{
+          usePathParams: () => ({}),
+          useSearchParams: () => {
             const searchParams: SearchParameters = {
               get: (key: string) => {
                 if (key === 'stats') {

@@ -26,7 +26,7 @@ import type { SearchIf } from '../../core/search/types'
 import type { SearchLocationIf } from '../../core/location/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 import { testTimes } from '../../../test-util/filter-time'
-import type { ParamsIf } from '../util'
+import type { UrlParamsIf } from '../util'
 import { openFilters } from '../common/filters-test-util'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
@@ -244,9 +244,9 @@ const getListReviewsIf: GetListReviewsIf = (cb, setSearch) => ({
   filterIf: listFilterIf(setSearch),
 })
 
-const paramsIf: ParamsIf = {
-  useParams: () => ({}),
-  useSearch: () => ({
+const urlParamsIf: UrlParamsIf = {
+  usePathParams: () => ({}),
+  useSearchParams: () => ({
     get: (): undefined => undefined,
   }),
 }
@@ -268,7 +268,7 @@ test('updates review', async () => {
             return () => undefined
           },
         }}
-        paramsIf={paramsIf}
+        urlParamsIf={urlParamsIf}
         reviewIf={{
           get: {
             useGet: () => ({
@@ -349,11 +349,11 @@ test('sets review sorting to rating asc', async () => {
             return () => undefined
           },
         }}
-        paramsIf={{
-          useParams: () => ({
+        urlParamsIf={{
+          usePathParams: () => ({
             ...defaultSearchParams,
           }),
-          useSearch: () => ({
+          useSearchParams: () => ({
             get: (key: string): string | undefined => defaultSearchParams[key],
           }),
         }}
@@ -405,7 +405,7 @@ test('renders loading', async () => {
           },
           filterIf: listFilterIf(() => undefined),
         }}
-        paramsIf={paramsIf}
+        urlParamsIf={urlParamsIf}
         reviewIf={dontUpdateReviewIf}
         searchIf={searchIf}
       />
@@ -464,7 +464,7 @@ test('stops loading more', async () => {
           },
           filterIf: listFilterIf(() => undefined),
         }}
-        paramsIf={paramsIf}
+        urlParamsIf={urlParamsIf}
         reviewIf={dontUpdateReviewIf}
         searchIf={searchIf}
       />
@@ -538,7 +538,7 @@ test('opens filters', async () => {
             return () => undefined
           },
         }}
-        paramsIf={paramsIf}
+        urlParamsIf={urlParamsIf}
         reviewIf={dontUpdateReviewIf}
         searchIf={searchIf}
       />
@@ -612,9 +612,9 @@ sliderChangeTests.forEach((testCase) => {
               return () => undefined
             },
           }}
-          paramsIf={{
-            useParams: () => ({ ...defaultFiltersOpenParams }),
-            useSearch: () => ({
+          urlParamsIf={{
+            usePathParams: () => ({ ...defaultFiltersOpenParams }),
+            useSearchParams: () => ({
               get: (key: string): string | undefined =>
                 defaultFiltersOpenParams[key],
             }),

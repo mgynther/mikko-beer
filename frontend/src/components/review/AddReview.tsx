@@ -7,7 +7,7 @@ import type { GetStorageIf, Storage } from '../../core/storage/types'
 import Button from '../common/Button'
 import LoadingIndicator from '../common/LoadingIndicator'
 import { formatDateString } from '../util'
-import type { ParamsIf } from '../util'
+import type { UrlParamsIf } from '../util'
 import type { NavigateIf } from '../../navigation'
 
 import ReviewEditor, { type InitialReview } from './ReviewEditor'
@@ -50,13 +50,13 @@ export interface Props {
   createReviewIf: CreateReviewIf
   getStorageIf: GetStorageIf
   navigateIf: NavigateIf
-  paramsIf: ParamsIf
+  urlParamsIf: UrlParamsIf
   searchIf: SearchIf
 }
 
 function AddReview(props: Props): React.JSX.Element {
   const navigate = props.navigateIf.useNavigate()
-  const { storageId: paramsStorageId } = props.paramsIf.useParams()
+  const { storageId: paramsStorageId } = props.urlParamsIf.usePathParams()
   const storageId = paramsStorageId ?? ''
   const [review, setReview] = useState<ReviewRequest | undefined>(undefined)
   const {

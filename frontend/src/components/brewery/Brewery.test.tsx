@@ -27,7 +27,7 @@ import type {
 import type { ListStoragesByIf } from '../../core/storage/types'
 import type { GetBreweryIf, UpdateBreweryIf } from '../../core/brewery/types'
 import type { SearchIf } from '../../core/search/types'
-import type { ParamsIf } from '../util'
+import type { UrlParamsIf } from '../util'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
@@ -216,9 +216,9 @@ const searchIf: SearchIf = {
   useDebounce,
 }
 
-const paramsIf: ParamsIf = {
-  useParams: () => ({ breweryId: id }),
-  useSearch: () => ({
+const urlParamsIf: UrlParamsIf = {
+  usePathParams: () => ({ breweryId: id }),
+  useSearchParams: () => ({
     get: (): undefined => undefined,
   }),
 }
@@ -230,7 +230,7 @@ test('updates brewery', async () => {
     <Brewery
       listReviewsByBreweryIf={listReviewsByBreweryIf}
       listStoragesByBreweryIf={listStoragesByBreweryIf}
-      paramsIf={paramsIf}
+      urlParamsIf={urlParamsIf}
       reviewIf={reviewIf}
       getBreweryIf={getBreweryIf}
       updateBreweryIf={{
@@ -279,7 +279,7 @@ test('cancel update', async () => {
     <Brewery
       listReviewsByBreweryIf={listReviewsByBreweryIf}
       listStoragesByBreweryIf={listStoragesByBreweryIf}
-      paramsIf={paramsIf}
+      urlParamsIf={urlParamsIf}
       reviewIf={reviewIf}
       getBreweryIf={getBreweryIf}
       updateBreweryIf={dontUpdateBreweryIf}
@@ -303,7 +303,7 @@ test('render loading', async () => {
     <Brewery
       listReviewsByBreweryIf={listReviewsByBreweryIf}
       listStoragesByBreweryIf={listStoragesByBreweryIf}
-      paramsIf={paramsIf}
+      urlParamsIf={urlParamsIf}
       reviewIf={reviewIf}
       getBreweryIf={{
         useGet: () => ({
@@ -324,7 +324,7 @@ test('render not found', async () => {
     <Brewery
       listReviewsByBreweryIf={listReviewsByBreweryIf}
       listStoragesByBreweryIf={listStoragesByBreweryIf}
-      paramsIf={paramsIf}
+      urlParamsIf={urlParamsIf}
       reviewIf={reviewIf}
       getBreweryIf={{
         useGet: () => ({
@@ -346,9 +346,9 @@ test('throw on missing id', async () => {
       <Brewery
         listReviewsByBreweryIf={listReviewsByBreweryIf}
         listStoragesByBreweryIf={listStoragesByBreweryIf}
-        paramsIf={{
-          useParams: () => ({}),
-          useSearch: () => ({
+        urlParamsIf={{
+          usePathParams: () => ({}),
+          useSearchParams: () => ({
             get: (): undefined => undefined,
           }),
         }}

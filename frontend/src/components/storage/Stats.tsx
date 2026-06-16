@@ -1,6 +1,6 @@
 import React from 'react'
 import type { StorageStatsIf } from '../../core/storage/types'
-import type { ParamsIf } from '../util'
+import type { UrlParamsIf } from '../util'
 import TabButton from '../common/TabButton'
 import AnnualStats from './AnnualStats'
 import MonthlyStats from './MonthlyStats'
@@ -9,7 +9,7 @@ type Mode = 'annual' | 'monthly'
 
 interface Props {
   statsIf: StorageStatsIf
-  paramsIf: ParamsIf
+  urlParamsIf: UrlParamsIf
 }
 
 interface ModeButton {
@@ -43,7 +43,7 @@ function getStatsMode(stats: string | undefined): Mode {
 }
 
 function Stats(props: Props): React.JSX.Element | null {
-  const search = props.paramsIf.useSearch()
+  const search = props.urlParamsIf.useSearchParams()
   const stats = search.get('stats') ?? undefined
   const mode = getStatsMode(stats)
 

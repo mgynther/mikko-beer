@@ -29,7 +29,7 @@ import { selectState, setState } from './store/nav-menu/reducer'
 import { selectTheme, setTheme } from './store/theme/reducer'
 
 import { navigateIf } from './navigation'
-import type { ParamsIf } from './components/util'
+import type { UrlParamsIf } from './components/util'
 import type { StoreIf } from './store/storeIf'
 import ContentEnd from './components/ContentEnd'
 import type { NavMenuState, Theme } from './core/types'
@@ -37,7 +37,7 @@ import Layout from './Layout'
 import { applyTheme } from './theme-applier'
 
 interface Props {
-  paramsIf: ParamsIf
+  urlParamsIf: UrlParamsIf
   storeIf: StoreIf
 }
 
@@ -182,7 +182,7 @@ function App(props: Props): React.JSX.Element {
                         createReviewIf={createReviewIf}
                         getStorageIf={getStorageIf}
                         navigateIf={navigateIf}
-                        paramsIf={props.paramsIf}
+                        urlParamsIf={props.urlParamsIf}
                         searchIf={searchIf}
                       />
                     }
@@ -196,7 +196,7 @@ function App(props: Props): React.JSX.Element {
                         createReviewIf={createReviewIf}
                         getStorageIf={getStorageIf}
                         navigateIf={navigateIf}
-                        paramsIf={props.paramsIf}
+                        urlParamsIf={props.urlParamsIf}
                         searchIf={searchIf}
                       />
                     }
@@ -220,7 +220,7 @@ function App(props: Props): React.JSX.Element {
                       getBeerIf={getBeerIf}
                       listReviewsByBeerIf={listReviewsByBeerIf}
                       listStoragesByBeerIf={listStoragesByBeerIf}
-                      paramsIf={props.paramsIf}
+                      urlParamsIf={props.urlParamsIf}
                       reviewIf={reviewIf}
                       searchIf={searchIf}
                       updateBeerIf={updateBeerIf}
@@ -245,7 +245,7 @@ function App(props: Props): React.JSX.Element {
                       getBreweryIf={getBreweryIf}
                       listReviewsByBreweryIf={listReviewsByBreweryIf}
                       listStoragesByBreweryIf={listStoragesByBreweryIf}
-                      paramsIf={props.paramsIf}
+                      urlParamsIf={props.urlParamsIf}
                       reviewIf={reviewIf}
                       searchIf={searchIf}
                       statsIf={statsIf}
@@ -280,7 +280,7 @@ function App(props: Props): React.JSX.Element {
                     <Location
                       getLocationIf={getLocationIf}
                       listReviewsByLocationIf={listReviewsByLocationIf}
-                      paramsIf={props.paramsIf}
+                      urlParamsIf={props.urlParamsIf}
                       reviewIf={reviewIf}
                       searchIf={searchIf}
                       statsIf={statsIf}
@@ -293,7 +293,7 @@ function App(props: Props): React.JSX.Element {
                   element={
                     <Reviews
                       listReviewsIf={listReviewsIf}
-                      paramsIf={props.paramsIf}
+                      urlParamsIf={props.urlParamsIf}
                       reviewIf={reviewIf}
                       searchIf={searchIf}
                     />
@@ -315,7 +315,7 @@ function App(props: Props): React.JSX.Element {
                     <Style
                       listReviewsByStyleIf={listReviewsByStyleIf}
                       listStoragesByStyleIf={listStoragesByStyleIf}
-                      paramsIf={props.paramsIf}
+                      urlParamsIf={props.urlParamsIf}
                       reviewIf={reviewIf}
                       getStyleIf={getStyleIf}
                       statsIf={statsIf}
@@ -343,7 +343,7 @@ function App(props: Props): React.JSX.Element {
                       statsIf={statsIf}
                       breweryId={undefined}
                       locationId={undefined}
-                      paramsIf={props.paramsIf}
+                      urlParamsIf={props.urlParamsIf}
                       styleId={undefined}
                     />
                   }
@@ -354,7 +354,7 @@ function App(props: Props): React.JSX.Element {
                     <Storages
                       getLogin={getLogin}
                       listStoragesIf={listStoragesIf}
-                      paramsIf={props.paramsIf}
+                      urlParamsIf={props.urlParamsIf}
                       reviewContainerIf={reviewContainerIf}
                       searchIf={searchIf}
                       selectBeerIf={selectBeerIf}

@@ -30,7 +30,7 @@ import type { GetStyleIf, UpdateStyleIf } from '../../core/style/types'
 import type { UseDebounce, YearMonth } from '../../core/types'
 import { asText } from '../container/ContainerInfo'
 import type { SearchIf } from '../../core/search/types'
-import type { ParamsIf } from '../util'
+import type { UrlParamsIf } from '../util'
 import type { ReactNode } from 'react'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 
@@ -205,11 +205,11 @@ const reviewIf: ReviewIf = {
   login: () => login,
 }
 
-const paramsIf: ParamsIf = {
-  useParams: () => ({
+const urlParamsIf: UrlParamsIf = {
+  usePathParams: () => ({
     styleId: style.id,
   }),
-  useSearch: () => ({
+  useSearchParams: () => ({
     get: () => undefined,
   }),
 }
@@ -323,7 +323,7 @@ test('renders style', async () => {
         searchIf={searchIf}
         listReviewsByStyleIf={getListReviewsIf([joinedReview])}
         listStoragesByStyleIf={getListStoragesByStyleIf(undefined)}
-        paramsIf={paramsIf}
+        urlParamsIf={urlParamsIf}
         reviewIf={reviewIf}
         getStyleIf={getStyleIf}
         statsIf={statsIf}
@@ -344,7 +344,7 @@ test('renders storages', async () => {
         searchIf={searchIf}
         listReviewsByStyleIf={getListReviewsIf([joinedReview])}
         listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
-        paramsIf={paramsIf}
+        urlParamsIf={urlParamsIf}
         reviewIf={reviewIf}
         getStyleIf={getStyleIf}
         statsIf={statsIf}
@@ -365,7 +365,7 @@ test('renders loading when loading', async () => {
         searchIf={searchIf}
         listReviewsByStyleIf={getListReviewsIf([joinedReview])}
         listStoragesByStyleIf={getListStoragesByStyleIf(undefined)}
-        paramsIf={paramsIf}
+        urlParamsIf={urlParamsIf}
         reviewIf={reviewIf}
         getStyleIf={{
           useGet: () => ({
@@ -388,7 +388,7 @@ test('renders not found when not found', async () => {
         searchIf={searchIf}
         listReviewsByStyleIf={getListReviewsIf([joinedReview])}
         listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
-        paramsIf={paramsIf}
+        urlParamsIf={urlParamsIf}
         reviewIf={reviewIf}
         getStyleIf={{
           useGet: () => ({
@@ -412,9 +412,9 @@ test('throw without style id', async () => {
           searchIf={searchIf}
           listReviewsByStyleIf={getListReviewsIf([joinedReview])}
           listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
-          paramsIf={{
-            ...paramsIf,
-            useParams: () => ({}),
+          urlParamsIf={{
+            ...urlParamsIf,
+            usePathParams: () => ({}),
           }}
           reviewIf={reviewIf}
           getStyleIf={getStyleIf}
@@ -443,7 +443,7 @@ test('updates style', async () => {
         searchIf={searchIf}
         listReviewsByStyleIf={getListReviewsIf([])}
         listStoragesByStyleIf={getListStoragesByStyleIf([])}
-        paramsIf={paramsIf}
+        urlParamsIf={urlParamsIf}
         reviewIf={reviewIf}
         getStyleIf={{
           useGet: () => {
@@ -507,7 +507,7 @@ test('cancels update', async () => {
         searchIf={searchIf}
         listReviewsByStyleIf={getListReviewsIf([])}
         listStoragesByStyleIf={getListStoragesByStyleIf([])}
-        paramsIf={paramsIf}
+        urlParamsIf={urlParamsIf}
         reviewIf={reviewIf}
         getStyleIf={getStyleIf}
         statsIf={statsIf}

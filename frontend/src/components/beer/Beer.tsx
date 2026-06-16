@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import type { ParamsIf } from '../util'
+import type { UrlParamsIf } from '../util'
 
 import type {
   GetBeerIf,
@@ -29,7 +29,7 @@ import ReviewsBy from '../review/ReviewsBy'
 interface Props {
   listReviewsByBeerIf: ListReviewsByIf
   listStoragesByBeerIf: ListStoragesByIf
-  paramsIf: ParamsIf
+  urlParamsIf: UrlParamsIf
   reviewIf: ReviewIf
   searchIf: SearchIf
   updateBeerIf: UpdateBeerIf
@@ -37,7 +37,7 @@ interface Props {
 }
 
 function Beer(props: Props): React.JSX.Element {
-  const { beerId } = props.paramsIf.useParams()
+  const { beerId } = props.urlParamsIf.usePathParams()
   const [mode, setMode] = useState(EditableMode.View)
   const [initialBeer, setInitialBeer] = useState<BeerType | undefined>(
     undefined,
@@ -103,7 +103,7 @@ function Beer(props: Props): React.JSX.Element {
       <ReviewsBy
         id={beerId}
         listReviewsByIf={props.listReviewsByBeerIf}
-        paramsIf={props.paramsIf}
+        urlParamsIf={props.urlParamsIf}
         reviewIf={props.reviewIf}
         searchIf={props.searchIf}
       />

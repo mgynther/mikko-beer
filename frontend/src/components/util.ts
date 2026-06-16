@@ -88,12 +88,12 @@ function useSearch(): SearchParameters {
   }
 }
 
-export interface ParamsIf {
-  useParams: () => Record<string, string | undefined>
-  useSearch: () => SearchParameters
+export interface UrlParamsIf {
+  usePathParams: () => Record<string, string | undefined>
+  useSearchParams: () => SearchParameters
 }
 
-export const paramsIf: ParamsIf = {
-  useParams,
-  useSearch,
+export const urlParamsIf: UrlParamsIf = {
+  usePathParams: useParams,
+  useSearchParams: useSearch,
 }

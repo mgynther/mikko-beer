@@ -81,7 +81,7 @@ import type { SearchIf } from './core/search/types'
 import {
   getUseDebounce,
   infiniteScroll,
-  paramsIf,
+  urlParamsIf,
   useDebounce,
 } from './components/util'
 import { navigateIf } from './navigation'
@@ -352,7 +352,7 @@ function RtkApp(): React.JSX.Element {
     userIf,
   }
 
-  return <App paramsIf={paramsIf} storeIf={storeIf} />
+  return <App urlParamsIf={urlParamsIf} storeIf={storeIf} />
 }
 
 export default RtkApp

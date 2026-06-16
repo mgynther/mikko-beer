@@ -24,7 +24,7 @@ import type { SearchIf } from '../../core/search/types'
 import type { SearchLocationIf } from '../../core/location/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 import { testTimes } from '../../../test-util/filter-time'
-import type { ParamsIf } from '../util'
+import type { UrlParamsIf } from '../util'
 import { openFilters } from '../common/filters-test-util'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
@@ -188,9 +188,9 @@ const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
   setSearch,
 })
 
-const paramsIf: ParamsIf = {
-  useParams: () => ({}),
-  useSearch: () => ({
+const urlParamsIf: UrlParamsIf = {
+  usePathParams: () => ({}),
+  useSearchParams: () => ({
     get: (): undefined => undefined,
   }),
 }
@@ -219,7 +219,7 @@ test('lists reviews', async () => {
           },
           filterIf: listFilterIf(setSearch),
         }}
-        paramsIf={paramsIf}
+        urlParamsIf={urlParamsIf}
         reviewIf={dontUpdateReviewIf}
         searchIf={searchIf}
       />
@@ -319,9 +319,9 @@ orderChangeTests.forEach((testCase) => {
         <ReviewsBy
           id={id}
           listReviewsByIf={getListReviewsByIf(setSearch)}
-          paramsIf={{
-            useParams: () => ({ ...searchParams }),
-            useSearch: () => ({
+          urlParamsIf={{
+            usePathParams: () => ({ ...searchParams }),
+            useSearchParams: () => ({
               get: (key: string): string | undefined => searchParams[key],
             }),
           }}
@@ -375,7 +375,7 @@ test('renders loading', async () => {
           },
           filterIf: listFilterIf(() => undefined),
         }}
-        paramsIf={paramsIf}
+        urlParamsIf={urlParamsIf}
         reviewIf={dontUpdateReviewIf}
         searchIf={searchIf}
       />
@@ -406,7 +406,7 @@ test('opens filters', async () => {
           },
           filterIf: listFilterIf(setSearch),
         }}
-        paramsIf={paramsIf}
+        urlParamsIf={urlParamsIf}
         reviewIf={dontUpdateReviewIf}
         searchIf={searchIf}
       />
@@ -488,9 +488,9 @@ sliderChangeTests.forEach((testCase) => {
             },
             filterIf: listFilterIf(setSearch),
           }}
-          paramsIf={{
-            useParams: () => ({ ...defaultFiltersOpenParams }),
-            useSearch: () => ({
+          urlParamsIf={{
+            usePathParams: () => ({ ...defaultFiltersOpenParams }),
+            useSearchParams: () => ({
               get: (key: string): string | undefined =>
                 defaultFiltersOpenParams[key],
             }),

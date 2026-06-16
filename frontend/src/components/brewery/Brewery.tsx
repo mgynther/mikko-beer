@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import type { ParamsIf } from '../util'
+import type { UrlParamsIf } from '../util'
 
 import type {
   Brewery as BreweryType,
@@ -28,7 +28,7 @@ import NotFound from '../common/NotFound'
 interface Props {
   listReviewsByBreweryIf: ListReviewsByIf
   listStoragesByBreweryIf: ListStoragesByIf
-  paramsIf: ParamsIf
+  urlParamsIf: UrlParamsIf
   reviewIf: ReviewIf
   getBreweryIf: GetBreweryIf
   searchIf: SearchIf
@@ -37,7 +37,7 @@ interface Props {
 }
 
 function Brewery(props: Props): React.JSX.Element {
-  const { breweryId } = props.paramsIf.useParams()
+  const { breweryId } = props.urlParamsIf.usePathParams()
   const [mode, setMode] = useState(EditableMode.View)
   const [initialBrewery, setInitialBrewery] = useState<BreweryType | undefined>(
     undefined,
@@ -84,7 +84,7 @@ function Brewery(props: Props): React.JSX.Element {
         statsIf={props.statsIf}
         breweryId={brewery.id}
         locationId={undefined}
-        paramsIf={props.paramsIf}
+        urlParamsIf={props.urlParamsIf}
         styleId={undefined}
       />
       <BreweryStorages
@@ -95,7 +95,7 @@ function Brewery(props: Props): React.JSX.Element {
       <ReviewsBy
         id={breweryId}
         listReviewsByIf={props.listReviewsByBreweryIf}
-        paramsIf={props.paramsIf}
+        urlParamsIf={props.urlParamsIf}
         reviewIf={props.reviewIf}
         searchIf={props.searchIf}
       />

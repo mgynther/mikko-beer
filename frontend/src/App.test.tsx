@@ -14,8 +14,8 @@ import type { GetLogin } from './core/login/types'
 import { PasswordChangeResult } from './core/login/types'
 import type { InfiniteScroll, UseDebounce, YearMonth } from './core/types'
 import type { DeleteStorageIf } from './core/storage/types'
-import { paramsIf } from './components/util'
-import type { ParamsIf } from './components/util'
+import { urlParamsIf } from './components/util'
+import type { UrlParamsIf } from './components/util'
 import type { SearchBeerIf, SelectBeerIf } from './core/beer/types'
 import type { SearchBreweryIf } from './core/brewery/types'
 import type { SearchLocationIf } from './core/location/types'
@@ -424,7 +424,7 @@ test('renders app login', () => {
   const { getByRole } = render(
     <Provider store={store}>
       <LinkWrapper>
-        <App paramsIf={paramsIf} storeIf={storeIf} />
+        <App urlParamsIf={urlParamsIf} storeIf={storeIf} />
       </LinkWrapper>
     </Provider>,
   )
@@ -438,7 +438,7 @@ test('navigates to Beers', async () => {
     <Provider store={store}>
       <LinkWrapper>
         <App
-          paramsIf={paramsIf}
+          urlParamsIf={urlParamsIf}
           storeIf={{
             ...storeIf,
             getLogin: getAdminLogin,
@@ -491,7 +491,7 @@ navigationTests.forEach((testCase) => {
       <Provider store={store}>
         <LinkWrapper>
           <App
-            paramsIf={paramsIf}
+            urlParamsIf={urlParamsIf}
             storeIf={{
               ...storeIf,
               getLogin: getAdminLogin,
@@ -536,7 +536,7 @@ navigationMoreTests.forEach((testCase) => {
       <Provider store={store}>
         <LinkWrapper>
           <App
-            paramsIf={paramsIf}
+            urlParamsIf={urlParamsIf}
             storeIf={{
               ...storeIf,
               getLogin: getAdminLogin,
@@ -557,9 +557,9 @@ navigationMoreTests.forEach((testCase) => {
 test('loads annual stats directly', async () => {
   const user = userEvent.setup()
   const data: Record<string, string> = { stats: 'annual' }
-  const annualParamsIf: ParamsIf = {
-    ...paramsIf,
-    useSearch: () => ({
+  const annualParamsIf: UrlParamsIf = {
+    ...urlParamsIf,
+    useSearchParams: () => ({
       get: (name: string) => data[name],
     }),
   }
@@ -567,7 +567,7 @@ test('loads annual stats directly', async () => {
     <Provider store={store}>
       <LinkWrapper>
         <App
-          paramsIf={annualParamsIf}
+          urlParamsIf={annualParamsIf}
           storeIf={{
             ...storeIf,
             getLogin: getAdminLogin,
@@ -587,7 +587,7 @@ test('sets theme to dark', async () => {
     <Provider store={store}>
       <LinkWrapper>
         <App
-          paramsIf={paramsIf}
+          urlParamsIf={urlParamsIf}
           storeIf={{
             ...storeIf,
             getLogin: getAdminLogin,
@@ -615,7 +615,7 @@ test('logout', async () => {
     <Provider store={store}>
       <LinkWrapper>
         <App
-          paramsIf={paramsIf}
+          urlParamsIf={urlParamsIf}
           storeIf={{
             ...storeIf,
             getLogin: getAdminLogin,

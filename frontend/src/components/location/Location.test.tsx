@@ -28,7 +28,7 @@ import type {
   ReviewIf,
   SetSearch,
 } from '../../core/review/types'
-import type { ParamsIf } from '../util'
+import type { UrlParamsIf } from '../util'
 import type { SearchIf } from '../../core/search/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 
@@ -177,9 +177,9 @@ const listReviewsByLocationIf: ListReviewsByIf = {
   filterIf: listFilterIf(() => undefined),
 }
 
-const paramsIf: ParamsIf = {
-  useParams: () => ({ locationId: id }),
-  useSearch: () => ({
+const urlParamsIf: UrlParamsIf = {
+  usePathParams: () => ({ locationId: id }),
+  useSearchParams: () => ({
     get: (): undefined => undefined,
   }),
 }
@@ -221,7 +221,7 @@ test('updates location', async () => {
   const { getByPlaceholderText, getByRole } = render(
     <Location
       listReviewsByLocationIf={listReviewsByLocationIf}
-      paramsIf={paramsIf}
+      urlParamsIf={urlParamsIf}
       reviewIf={reviewIf}
       getLocationIf={getLocationIf}
       updateLocationIf={{
@@ -271,7 +271,7 @@ test('cancel editing', async () => {
   const { getByRole } = render(
     <Location
       listReviewsByLocationIf={listReviewsByLocationIf}
-      paramsIf={paramsIf}
+      urlParamsIf={urlParamsIf}
       reviewIf={reviewIf}
       getLocationIf={getLocationIf}
       updateLocationIf={dontUpdateLocationIf}
@@ -295,9 +295,9 @@ test('throw on missing id', async () => {
     render(
       <Location
         listReviewsByLocationIf={listReviewsByLocationIf}
-        paramsIf={{
-          ...paramsIf,
-          useParams: () => ({}),
+        urlParamsIf={{
+          ...urlParamsIf,
+          usePathParams: () => ({}),
         }}
         reviewIf={reviewIf}
         getLocationIf={getLocationIf}
@@ -313,7 +313,7 @@ test('render loading', async () => {
   const { getByText } = render(
     <Location
       listReviewsByLocationIf={listReviewsByLocationIf}
-      paramsIf={paramsIf}
+      urlParamsIf={urlParamsIf}
       reviewIf={reviewIf}
       getLocationIf={{
         useGet: () => ({
@@ -333,7 +333,7 @@ test('render not found', async () => {
   const { getByText } = render(
     <Location
       listReviewsByLocationIf={listReviewsByLocationIf}
-      paramsIf={paramsIf}
+      urlParamsIf={urlParamsIf}
       reviewIf={reviewIf}
       getLocationIf={{
         useGet: () => ({

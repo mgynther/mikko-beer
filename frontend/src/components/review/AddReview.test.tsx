@@ -7,7 +7,7 @@ import type { UseDebounce } from '../../core/types'
 import type { SearchLocationIf } from '../../core/location/types'
 import type { CreateBeerIf, SearchBeerIf } from '../../core/beer/types'
 import type { ReviewContainerIf } from '../../core/review/types'
-import type { ParamsIf } from '../util'
+import type { UrlParamsIf } from '../util'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -152,16 +152,16 @@ const noOpContainerIf = {
   },
 }
 
-const noParamsIf: ParamsIf = {
-  useParams: () => ({}),
-  useSearch: () => ({
+const noParamsIf: UrlParamsIf = {
+  usePathParams: () => ({}),
+  useSearchParams: () => ({
     get: () => undefined,
   }),
 }
 
-const storageIdParamsIf: ParamsIf = {
-  useParams: () => ({ storageId }),
-  useSearch: () => ({
+const storageIdParamsIf: UrlParamsIf = {
+  usePathParams: () => ({ storageId }),
+  useSearchParams: () => ({
     get: () => undefined,
   }),
 }
@@ -216,7 +216,7 @@ test('adds review', async () => {
     navigateIf: {
       useNavigate: () => dontCall,
     },
-    paramsIf: noParamsIf,
+    urlParamsIf: noParamsIf,
     searchIf: {
       useSearch: () => ({
         activate: () => undefined,
@@ -295,7 +295,7 @@ test('loads storage', async () => {
       navigateIf={{
         useNavigate: () => dontCall,
       }}
-      paramsIf={storageIdParamsIf}
+      urlParamsIf={storageIdParamsIf}
       searchIf={noSearchIf}
     />,
   )
@@ -326,7 +326,7 @@ test('shows storage loading error', async () => {
       navigateIf={{
         useNavigate: () => dontCall,
       }}
-      paramsIf={storageIdParamsIf}
+      urlParamsIf={storageIdParamsIf}
       searchIf={noSearchIf}
     />,
   )
@@ -372,11 +372,11 @@ test('adds review from storage', async () => {
     navigateIf: {
       useNavigate: () => dontCall,
     },
-    paramsIf: {
-      useParams: () => ({
+    urlParamsIf: {
+      usePathParams: () => ({
         storageId,
       }),
-      useSearch: () => ({
+      useSearchParams: () => ({
         get: () => undefined,
       }),
     },
@@ -450,7 +450,7 @@ test('navigates', async () => {
       navigateIf={{
         useNavigate: () => navigate,
       }}
-      paramsIf={storageIdParamsIf}
+      urlParamsIf={storageIdParamsIf}
       searchIf={noSearchIf}
     />,
   )

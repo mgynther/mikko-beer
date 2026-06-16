@@ -15,7 +15,7 @@ import type { ReviewSorting, ReviewSortingOrder } from '../../core/review/types'
 
 interface Props {
   initialSorting: ReviewSorting
-  search: SearchParameters
+  searchParams: SearchParameters
   minTime: YearMonth
   maxTime: YearMonth
   getUseDebounce: <T>() => UseDebounce<T>
@@ -31,8 +31,8 @@ interface Result {
   filters: ReviewFilters
 }
 
-export function searchParams(props: Props): Result {
-  const { search } = props
+export function parseSearchParams(props: Props): Result {
+  const { searchParams: searchParameters } = props
   const [searchMap, setSearchMap] = useState<SearchRecord | undefined>(
     undefined,
   )
@@ -40,7 +40,7 @@ export function searchParams(props: Props): Result {
     SearchRecord | undefined
   >()(searchMap)
   const reviewListParams = parseFromSearch(
-    search,
+    searchParameters,
     props.initialSorting,
     props.minTime,
     props.maxTime,
