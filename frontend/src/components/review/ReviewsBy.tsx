@@ -54,9 +54,11 @@ const ReviewsBy = (props: Props): React.JSX.Element => {
 
   return (
     <ReviewList
-      isFiltersOpen={parsedSearchParams.reviewListParams.isFiltersOpen}
-      setIsFiltersOpen={parsedSearchParams.setIsFiltersOpen}
-      reviewFilters={parsedSearchParams.filters}
+      filterState={{
+        isOpen: parsedSearchParams.reviewListParams.isFiltersOpen,
+        setIsOpen: parsedSearchParams.setIsFiltersOpen,
+        filters: parsedSearchParams.filters,
+      }}
       reviewIf={props.reviewIf}
       searchFieldIf={props.searchFieldIf}
       isLoading={isLoadingReviews}

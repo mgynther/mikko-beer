@@ -8,12 +8,10 @@ import TabButton from '../common/TabButton'
 import './Review.css'
 import './ReviewHeading.css'
 import Filters from './Filters'
-import type { ReviewFilters } from './filter-types'
+import type { ReviewFilterState } from './filter-types'
 
 interface HeadingProps {
-  isFiltersOpen: boolean
-  setIsFiltersOpen: (isOpen: boolean) => void
-  reviewFilters: ReviewFilters
+  filterState: ReviewFilterState
   sorting: ReviewSorting | undefined
   setSorting: (sorting: ReviewSortingOrder) => void
   supportedSorting: ReviewSortingOrder[]
@@ -93,11 +91,7 @@ export function ReviewHeading(props: HeadingProps): React.JSX.Element {
           </div>
         )}
       </div>
-      <Filters
-        filters={props.reviewFilters}
-        isOpen={props.isFiltersOpen}
-        setIsOpen={props.setIsFiltersOpen}
-      />
+      <Filters filterState={props.filterState} />
     </>
   )
 }

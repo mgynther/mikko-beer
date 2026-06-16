@@ -54,7 +54,13 @@ test('opens filters', async () => {
   const user = userEvent.setup()
   const setIsOpen = vitest.fn()
   const { getByRole } = render(
-    <Filters filters={defaultFilters} isOpen={false} setIsOpen={setIsOpen} />,
+    <Filters
+      filterState={{
+        filters: defaultFilters,
+        isOpen: false,
+        setIsOpen: setIsOpen,
+      }}
+    />,
   )
   await openFilters(getByRole, user)
   expect(setIsOpen.mock.calls).toEqual([[true]])
@@ -64,7 +70,13 @@ test('closes filters', async () => {
   const user = userEvent.setup()
   const setIsOpen = vitest.fn()
   const { getByRole } = render(
-    <Filters filters={defaultFilters} isOpen={true} setIsOpen={setIsOpen} />,
+    <Filters
+      filterState={{
+        filters: defaultFilters,
+        isOpen: true,
+        setIsOpen: setIsOpen,
+      }}
+    />,
   )
   const toggleButton = getByRole('button', { name: 'Filters ▲' })
   await user.click(toggleButton)
@@ -74,48 +86,50 @@ test('closes filters', async () => {
 test('renders values when open', () => {
   const { getByRole, getByText } = render(
     <Filters
-      filters={{
-        minRating: {
-          value: 5,
-          setValue: dontCall,
+      filterState={{
+        filters: {
+          minRating: {
+            value: 5,
+            setValue: dontCall,
+          },
+          maxRating: {
+            value: 9,
+            setValue: dontCall,
+          },
+          minTime: {
+            min: {
+              year: 2021,
+              month: 12,
+            },
+            max: {
+              year: 2023,
+              month: 12,
+            },
+            value: {
+              year: 2022,
+              month: 4,
+            },
+            setValue: dontCall,
+          },
+          maxTime: {
+            min: {
+              year: 2021,
+              month: 12,
+            },
+            max: {
+              year: 2023,
+              month: 12,
+            },
+            value: {
+              year: 2022,
+              month: 10,
+            },
+            setValue: dontCall,
+          },
         },
-        maxRating: {
-          value: 9,
-          setValue: dontCall,
-        },
-        minTime: {
-          min: {
-            year: 2021,
-            month: 12,
-          },
-          max: {
-            year: 2023,
-            month: 12,
-          },
-          value: {
-            year: 2022,
-            month: 4,
-          },
-          setValue: dontCall,
-        },
-        maxTime: {
-          min: {
-            year: 2021,
-            month: 12,
-          },
-          max: {
-            year: 2023,
-            month: 12,
-          },
-          value: {
-            year: 2022,
-            month: 10,
-          },
-          setValue: dontCall,
-        },
+        isOpen: true,
+        setIsOpen: () => undefined,
       }}
-      isOpen={true}
-      setIsOpen={() => undefined}
     />,
   )
   getByRole('button', { name: 'Filters ▲' })
@@ -129,15 +143,17 @@ test('sets minimum rating', () => {
   const setMinimumRating = vitest.fn()
   const { getByDisplayValue } = render(
     <Filters
-      filters={{
-        ...defaultFilters,
-        minRating: {
-          value: 5,
-          setValue: setMinimumRating,
+      filterState={{
+        filters: {
+          ...defaultFilters,
+          minRating: {
+            value: 5,
+            setValue: setMinimumRating,
+          },
         },
+        isOpen: true,
+        setIsOpen: () => undefined,
       }}
-      isOpen={true}
-      setIsOpen={() => undefined}
     />,
   )
   const slider = getByDisplayValue('5')
@@ -149,15 +165,17 @@ test('sets maximum rating', () => {
   const setMaximumRating = vitest.fn()
   const { getByDisplayValue } = render(
     <Filters
-      filters={{
-        ...defaultFilters,
-        minRating: {
-          value: 9,
-          setValue: setMaximumRating,
+      filterState={{
+        filters: {
+          ...defaultFilters,
+          minRating: {
+            value: 9,
+            setValue: setMaximumRating,
+          },
         },
+        isOpen: true,
+        setIsOpen: () => undefined,
       }}
-      isOpen={true}
-      setIsOpen={() => undefined}
     />,
   )
   const slider = getByDisplayValue('9')
@@ -169,19 +187,21 @@ test('sets minimum time', () => {
   const setMinimumTime = vitest.fn()
   const { getByDisplayValue } = render(
     <Filters
-      filters={{
-        ...defaultFilters,
-        minTime: {
-          ...defaultFilters.minTime,
-          value: {
-            year: 2022,
-            month: 6,
+      filterState={{
+        filters: {
+          ...defaultFilters,
+          minTime: {
+            ...defaultFilters.minTime,
+            value: {
+              year: 2022,
+              month: 6,
+            },
+            setValue: setMinimumTime,
           },
-          setValue: setMinimumTime,
         },
+        isOpen: true,
+        setIsOpen: () => undefined,
       }}
-      isOpen={true}
-      setIsOpen={() => undefined}
     />,
   )
   const slider = getByDisplayValue('6')
@@ -200,19 +220,21 @@ test('sets maximum time', () => {
   const setMaximumTime = vitest.fn()
   const { getByDisplayValue } = render(
     <Filters
-      filters={{
-        ...defaultFilters,
-        maxTime: {
-          ...defaultFilters.maxTime,
-          value: {
-            year: 2022,
-            month: 9,
+      filterState={{
+        filters: {
+          ...defaultFilters,
+          maxTime: {
+            ...defaultFilters.maxTime,
+            value: {
+              year: 2022,
+              month: 9,
+            },
+            setValue: setMaximumTime,
           },
-          setValue: setMaximumTime,
         },
+        isOpen: true,
+        setIsOpen: () => undefined,
       }}
-      isOpen={true}
-      setIsOpen={() => undefined}
     />,
   )
   const slider = getByDisplayValue('9')

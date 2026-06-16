@@ -174,9 +174,11 @@ sortingTests.forEach((testCase) => {
     const setSorting = vitest.fn()
     const { getByRole } = render(
       <ReviewHeading
-        isFiltersOpen={false}
-        setIsFiltersOpen={dontCall}
-        reviewFilters={reviewFilters}
+        filterState={{
+          isOpen: false,
+          setIsOpen: dontCall,
+          filters: reviewFilters,
+        }}
         sorting={testCase.originalSorting}
         setSorting={setSorting}
         supportedSorting={testCase.supportedSorting}
@@ -192,9 +194,11 @@ test('no sorting buttons when not supported', () => {
   const setSorting = vitest.fn()
   const { getByRole, queryAllByRole } = render(
     <ReviewHeading
-      isFiltersOpen={false}
-      setIsFiltersOpen={dontCall}
-      reviewFilters={reviewFilters}
+      filterState={{
+        isOpen: false,
+        setIsOpen: dontCall,
+        filters: reviewFilters,
+      }}
       sorting={{
         order: 'beer_name',
         direction: 'asc',

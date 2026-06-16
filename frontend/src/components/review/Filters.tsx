@@ -3,20 +3,18 @@ import React, { useState } from 'react'
 import StepFilterSlider from '../common/StepFilterSlider'
 
 import TimeFilterSlider from '../common/TimeFilterSlider'
-import type { ReviewFilter, ReviewFilters } from './filter-types'
+import type { ReviewFilter, ReviewFilterState } from './filter-types'
 import OpenFiltersButton from '../common/OpenFiltersButton'
 import FilterControls from '../common/FilterControls'
 import type { YearMonth, YearMonthFilter } from '../../core/types'
 
 interface Props {
-  filters: ReviewFilters
-  isOpen: boolean
-  setIsOpen: (isOpen: boolean) => void
+  filterState: ReviewFilterState
 }
 
 function Filters(props: Props): React.JSX.Element {
-  const { isOpen } = props
-  const { minRating, maxRating, minTime, maxTime } = props.filters
+  const { filters, isOpen, setIsOpen } = props.filterState
+  const { minRating, maxRating, minTime, maxTime } = filters
   function wrapStatsFilter(
     reviewFilter: ReviewFilter,
   ): [number, (value: number) => void] {
@@ -50,7 +48,7 @@ function Filters(props: Props): React.JSX.Element {
   const [maxTimeValue, setMaxTimeValue] = wrapYearMonthFilter(maxTime)
   return (
     <div>
-      <OpenFiltersButton isOpen={isOpen} setIsOpen={props.setIsOpen} />
+      <OpenFiltersButton isOpen={isOpen} setIsOpen={setIsOpen} />
       {isOpen && (
         <FilterControls>
           <StepFilterSlider

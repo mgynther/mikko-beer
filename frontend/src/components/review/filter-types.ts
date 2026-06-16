@@ -11,3 +11,9 @@ export interface ReviewFilters {
   minTime: YearMonthFilter
   maxTime: YearMonthFilter
 }
+
+export interface ReviewFilterState {
+  isOpen: boolean
+  setIsOpen: (isOpen: boolean) => void
+  filters: ReviewFilters
+}

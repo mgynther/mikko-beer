@@ -253,9 +253,11 @@ test('updates review', async () => {
   const { getByPlaceholderText, getByRole, getByText } = render(
     <LinkWrapper>
       <ReviewList
-        isFiltersOpen={false}
-        setIsFiltersOpen={dontCall}
-        reviewFilters={reviewFilters}
+        filterState={{
+          isOpen: false,
+          setIsOpen: dontCall,
+          filters: reviewFilters,
+        }}
         isLoading={false}
         isTitleVisible={true}
         sorting={irrelevantSorting}
@@ -320,9 +322,11 @@ test('sets review sorting', async () => {
   const { getByRole } = render(
     <LinkWrapper>
       <ReviewList
-        isFiltersOpen={false}
-        setIsFiltersOpen={dontCall}
-        reviewFilters={reviewFilters}
+        filterState={{
+          isOpen: false,
+          setIsOpen: dontCall,
+          filters: reviewFilters,
+        }}
         isLoading={false}
         isTitleVisible={true}
         sorting={{
@@ -349,9 +353,11 @@ test('renders reviews', async () => {
   const { getByText, getByRole } = render(
     <LinkWrapper>
       <ReviewList
-        isFiltersOpen={false}
-        setIsFiltersOpen={dontCall}
-        reviewFilters={reviewFilters}
+        filterState={{
+          isOpen: false,
+          setIsOpen: dontCall,
+          filters: reviewFilters,
+        }}
         isLoading={false}
         isTitleVisible={true}
         sorting={irrelevantSorting}
@@ -382,9 +388,11 @@ test('renders title', async () => {
   const { getByRole } = render(
     <LinkWrapper>
       <ReviewList
-        isFiltersOpen={false}
-        setIsFiltersOpen={dontCall}
-        reviewFilters={reviewFilters}
+        filterState={{
+          isOpen: false,
+          setIsOpen: dontCall,
+          filters: reviewFilters,
+        }}
         isLoading={false}
         isTitleVisible={true}
         sorting={irrelevantSorting}
@@ -404,9 +412,11 @@ test('does not render title', async () => {
   const { queryByRole } = render(
     <LinkWrapper>
       <ReviewList
-        isFiltersOpen={false}
-        setIsFiltersOpen={dontCall}
-        reviewFilters={reviewFilters}
+        filterState={{
+          isOpen: false,
+          setIsOpen: dontCall,
+          filters: reviewFilters,
+        }}
         isLoading={false}
         isTitleVisible={false}
         sorting={irrelevantSorting}

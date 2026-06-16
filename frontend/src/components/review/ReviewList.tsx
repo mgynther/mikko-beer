@@ -14,12 +14,10 @@ import Review from './Review'
 import ReviewHeading from './ReviewHeading'
 
 import './ReviewList.css'
-import type { ReviewFilters } from './filter-types'
+import type { ReviewFilterState } from './filter-types'
 
 interface Props {
-  isFiltersOpen: boolean
-  setIsFiltersOpen: (isOpen: boolean) => void
-  reviewFilters: ReviewFilters
+  filterState: ReviewFilterState
   reviewIf: ReviewIf
   isLoading: boolean
   isTitleVisible: boolean
@@ -37,9 +35,7 @@ function ReviewList(props: Props): React.JSX.Element {
       {props.isTitleVisible && <h4>Reviews</h4>}
       <div className='Review-content'>
         <ReviewHeading
-          isFiltersOpen={props.isFiltersOpen}
-          setIsFiltersOpen={props.setIsFiltersOpen}
-          reviewFilters={props.reviewFilters}
+          filterState={props.filterState}
           sorting={props.sorting}
           setSorting={props.setSorting}
           supportedSorting={props.supportedSorting}

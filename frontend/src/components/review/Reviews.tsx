@@ -102,9 +102,11 @@ function Reviews(props: Props): React.JSX.Element {
     <div>
       <h3>Reviews</h3>
       <ReviewList
-        isFiltersOpen={parsedSearchParams.reviewListParams.isFiltersOpen}
-        setIsFiltersOpen={parsedSearchParams.setIsFiltersOpen}
-        reviewFilters={parsedSearchParams.filters}
+        filterState={{
+          isOpen: parsedSearchParams.reviewListParams.isFiltersOpen,
+          setIsOpen: parsedSearchParams.setIsFiltersOpen,
+          filters: parsedSearchParams.filters,
+        }}
         reviewIf={props.reviewIf}
         isLoading={isLoading}
         isTitleVisible={false}
