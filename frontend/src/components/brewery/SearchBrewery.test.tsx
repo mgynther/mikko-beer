@@ -3,14 +3,14 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import SearchBrewery from './SearchBrewery'
 
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import type { UseDebounce } from '../../core/types'
 import type { SearchBreweryIf } from '../../core/brewery/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
-const activeSearch: SearchIf = {
-  useSearch: () => ({
+const activeSearch: SearchFieldIf = {
+  useSearchField: () => ({
     activate: () => undefined,
     isActive: true,
   }),
@@ -41,7 +41,7 @@ test('selects brewery', async () => {
   const { getByRole } = render(
     <SearchBrewery
       searchBreweryIf={searchBreweryIf}
-      searchIf={activeSearch}
+      searchFieldIf={activeSearch}
       select={selector}
     />,
   )

@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import CreateStyle from './CreateStyle'
 import type { UseDebounce } from '../../core/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -23,8 +23,8 @@ const otherParent = {
   parents: [],
 }
 
-const useSearch: SearchIf = {
-  useSearch: () => ({
+const useSearch: SearchFieldIf = {
+  useSearchField: () => ({
     activate: () => undefined,
     isActive: true,
   }),
@@ -57,7 +57,7 @@ test('creates style', async () => {
         },
       }}
       remove={dontCall}
-      searchIf={useSearch}
+      searchFieldIf={useSearch}
       select={select}
     />,
   )
@@ -123,7 +123,7 @@ test('removes style', async () => {
         },
       }}
       remove={remove}
-      searchIf={useSearch}
+      searchFieldIf={useSearch}
       select={dontCall}
     />,
   )

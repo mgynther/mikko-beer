@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import type { ListStylesIf, Style } from '../../core/style/types'
 
 import Button from '../common/Button'
@@ -12,7 +12,7 @@ import '../common/SelectedItem.css'
 export interface Props {
   listStylesIf: ListStylesIf
   initialParents: Style[]
-  searchIf: SearchIf
+  searchFieldIf: SearchFieldIf
   select: (parents: string[]) => void
 }
 
@@ -29,7 +29,7 @@ function StyleParents(props: Props): React.JSX.Element {
       <h6>Parents</h6>
       <SearchStyle
         listStylesIf={props.listStylesIf}
-        searchIf={props.searchIf}
+        searchFieldIf={props.searchFieldIf}
         select={(style) => {
           const newParents = [...parents]
           newParents.push(style)

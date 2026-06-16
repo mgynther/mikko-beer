@@ -4,7 +4,7 @@ import Button from './Button'
 import LoadingIndicator from './LoadingIndicator'
 
 import './SearchBox.css'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 
 export interface SearchBoxItem {
   id: string
@@ -14,7 +14,7 @@ export interface SearchBoxItem {
 export const nameFormatter = (item: SearchBoxItem): string => item.name
 
 export interface Props<T extends SearchBoxItem> {
-  searchIf: SearchIf
+  searchFieldIf: SearchFieldIf
   currentFilter: string
   currentOptions: T[]
   customSort: ((a: T, b: T) => number) | undefined
@@ -33,13 +33,13 @@ const SearchBox = <T extends SearchBoxItem>({
   customSort,
   formatter,
   isLoading,
-  searchIf,
+  searchFieldIf,
   setFilter,
   select,
   title,
 }: Props<T>): React.JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null)
-  const { activate, isActive } = searchIf.useSearch()
+  const { activate, isActive } = searchFieldIf.useSearchField()
   const sortedOptions = [...currentOptions].sort((a, b) => {
     if (customSort !== undefined) {
       const result = customSort(a, b)

@@ -1,7 +1,7 @@
 import type { UseDebounce } from '../types'
 
-export interface SearchIf {
-  useSearch: () => {
+export interface SearchFieldIf {
+  useSearchField: () => {
     activate: () => void
     isActive: boolean
   }

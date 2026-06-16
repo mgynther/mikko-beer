@@ -4,7 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import StyleParents from './StyleParents'
 import type { UseDebounce } from '../../core/types'
 import type { ListStylesIf } from '../../core/style/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -29,8 +29,8 @@ const noList: ListStylesIf = {
   }),
 }
 
-const dontUseSearch: SearchIf = {
-  useSearch: () => ({
+const dontUseSearch: SearchFieldIf = {
+  useSearchField: () => ({
     activate: dontCall,
     isActive: false,
   }),
@@ -42,7 +42,7 @@ test('renders parents', async () => {
     <StyleParents
       initialParents={[parent, otherParent]}
       listStylesIf={noList}
-      searchIf={dontUseSearch}
+      searchFieldIf={dontUseSearch}
       select={dontCall}
     />,
   )
@@ -57,7 +57,7 @@ test('removes parent', async () => {
     <StyleParents
       initialParents={[parent, otherParent]}
       listStylesIf={noList}
-      searchIf={dontUseSearch}
+      searchFieldIf={dontUseSearch}
       select={select}
     />,
   )
@@ -70,8 +70,8 @@ test('removes parent', async () => {
 test('adds parent', async () => {
   const user = userEvent.setup()
   const select = vitest.fn()
-  const searchIf: SearchIf = {
-    useSearch: () => ({
+  const searchFieldIf: SearchFieldIf = {
+    useSearchField: () => ({
       activate: () => undefined,
       isActive: true,
     }),
@@ -86,7 +86,7 @@ test('adds parent', async () => {
           isLoading: false,
         }),
       }}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
       select={select}
     />,
   )

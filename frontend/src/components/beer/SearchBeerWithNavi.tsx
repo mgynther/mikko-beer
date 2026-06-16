@@ -2,20 +2,20 @@ import React from 'react'
 
 import SearchBeer from './SearchBeer'
 import type { SearchBeerIf } from '../../core/beer/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import type { NavigateIf } from '../../navigation'
 
 interface Props {
   navigateIf: NavigateIf
   searchBeerIf: SearchBeerIf
-  searchIf: SearchIf
+  searchFieldIf: SearchFieldIf
 }
 
 function SearchBeerWithNavi(props: Props): React.JSX.Element {
   const navigate = props.navigateIf.useNavigate()
   return (
     <SearchBeer
-      searchIf={props.searchIf}
+      searchFieldIf={props.searchFieldIf}
       searchBeerIf={props.searchBeerIf}
       select={(beer) => {
         void navigate(`/beers/${beer.id}`)

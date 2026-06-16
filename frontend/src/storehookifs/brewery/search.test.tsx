@@ -11,8 +11,8 @@ import userEvent from '@testing-library/user-event'
 import Button from '../../components/common/Button'
 
 function Helper(): React.JSX.Element {
-  const searchIf = searchBreweries()
-  const { search } = searchIf.useSearch()
+  const searchBreweryIf = searchBreweries()
+  const { search } = searchBreweryIf.useSearch()
   const [results, setResults] = useState<Brewery[]>([])
   const doSearch = async (): Promise<void> => {
     const result = await search('brewery')

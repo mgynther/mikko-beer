@@ -6,7 +6,7 @@ import type { UseDebounce } from '../../core/types'
 import type { Location, SearchLocationIf } from '../../core/location/types'
 import type { CreateBeerIf, SearchBeerIf } from '../../core/beer/types'
 import type { JoinedReview, ReviewContainerIf } from '../../core/review/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -103,8 +103,8 @@ const reviewContainerIf: ReviewContainerIf = {
   },
 }
 
-const searchIf: SearchIf = {
-  useSearch: () => ({
+const searchFieldIf: SearchFieldIf = {
+  useSearchField: () => ({
     activate: () => undefined,
     isActive: true,
   }),
@@ -245,7 +245,7 @@ test('adds review', async () => {
       isFromStorage={false}
       onChange={onChange}
       reviewContainerIf={reviewContainerIf}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
       searchLocationIf={searchLocationIf}
       selectBeerIf={selectBeerIf}
     />,
@@ -295,7 +295,7 @@ test('adds review with custom time', async () => {
       isFromStorage={false}
       onChange={onChange}
       reviewContainerIf={reviewContainerIf}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
       searchLocationIf={searchLocationIf}
       selectBeerIf={selectBeerIf}
     />,
@@ -347,7 +347,7 @@ test('change beer', async () => {
       isFromStorage={false}
       onChange={onChange}
       reviewContainerIf={reviewContainerIf}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
       searchLocationIf={searchLocationIf}
       selectBeerIf={selectBeerIf}
     />,
@@ -375,7 +375,7 @@ test('change container', async () => {
       isFromStorage={false}
       onChange={onChange}
       reviewContainerIf={reviewContainerIf}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
       searchLocationIf={searchLocationIf}
       selectBeerIf={selectBeerIf}
     />,
@@ -400,7 +400,7 @@ test('updates review', async () => {
       isFromStorage={false}
       onChange={onChange}
       reviewContainerIf={reviewContainerIf}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
       searchLocationIf={searchLocationIf}
       selectBeerIf={selectBeerIf}
     />,
@@ -446,7 +446,7 @@ test('clears location', async () => {
       isFromStorage={false}
       onChange={onChange}
       reviewContainerIf={reviewContainerIf}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
       searchLocationIf={searchLocationIf}
       selectBeerIf={selectBeerIf}
     />,
@@ -473,7 +473,7 @@ test('cannot change beer or container when from storage', () => {
       isFromStorage={true}
       onChange={() => undefined}
       reviewContainerIf={reviewContainerIf}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
       searchLocationIf={searchLocationIf}
       selectBeerIf={selectBeerIf}
     />,

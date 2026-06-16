@@ -4,7 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import SearchLocationWithNavi from './SearchLocationWithNavi'
 
 import type { Location } from '../../core/location/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import type { UseDebounce } from '../../core/types'
 import type { CreateLocationIf } from '../../core/location/types'
 
@@ -14,8 +14,8 @@ const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const activeSearch: SearchIf = {
-  useSearch: () => ({
+const activeSearch: SearchFieldIf = {
+  useSearchField: () => ({
     activate: () => undefined,
     isActive: true,
   }),
@@ -56,7 +56,7 @@ test('selects location', async () => {
         }),
         create: createLocationIf,
       }}
-      searchIf={activeSearch}
+      searchFieldIf={activeSearch}
     />,
   )
 
@@ -85,7 +85,7 @@ test('shows no results', async () => {
         }),
         create: createLocationIf,
       }}
-      searchIf={activeSearch}
+      searchFieldIf={activeSearch}
     />,
   )
 

@@ -4,7 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import SearchLocation from './SearchLocation'
 
 import type { Location } from '../../core/location/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import type { UseDebounce } from '../../core/types'
 import type {
   CreateLocationIf,
@@ -19,8 +19,8 @@ const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const activeSearch: SearchIf = {
-  useSearch: () => ({
+const activeSearch: SearchFieldIf = {
+  useSearchField: () => ({
     activate: () => undefined,
     isActive: true,
   }),
@@ -61,7 +61,7 @@ test('selects location', async () => {
         }),
         create: dontCreateLocation,
       }}
-      searchIf={activeSearch}
+      searchFieldIf={activeSearch}
       select={selector}
     />,
   )
@@ -93,7 +93,7 @@ test('does not show create button with case-insensitive match', async () => {
         }),
         create: dontCreateLocation,
       }}
-      searchIf={activeSearch}
+      searchFieldIf={activeSearch}
       select={selector}
     />,
   )
@@ -123,7 +123,7 @@ test('shows no results when creating not enabled', async () => {
         }),
         create: dontCreateLocation,
       }}
-      searchIf={activeSearch}
+      searchFieldIf={activeSearch}
       select={selector}
     />,
   )
@@ -161,7 +161,7 @@ test('creates location', async () => {
           }),
         },
       }}
-      searchIf={activeSearch}
+      searchFieldIf={activeSearch}
       select={select}
     />,
   )
@@ -214,7 +214,7 @@ test('confirms creating location with partially matching result', async () => {
           }),
         },
       }}
-      searchIf={activeSearch}
+      searchFieldIf={activeSearch}
       select={select}
     />,
   )
@@ -265,7 +265,7 @@ test('does not create location on reject', async () => {
           }),
         },
       }}
-      searchIf={activeSearch}
+      searchFieldIf={activeSearch}
       select={select}
     />,
   )
@@ -311,7 +311,7 @@ test('sorts existing result before create new location', async () => {
           }),
         },
       }}
-      searchIf={activeSearch}
+      searchFieldIf={activeSearch}
       select={dontCall}
     />,
   )

@@ -6,7 +6,7 @@ import LinkWrapper from './components/LinkWrapper'
 import Nav from './Nav'
 import type { NavMenuStateProps, ThemeProps } from './Nav'
 import type { SearchBeerIf } from './core/beer/types'
-import type { SearchIf } from './core/search/types'
+import type { SearchFieldIf } from './core/search/types'
 import type { SearchBreweryIf } from './core/brewery/types'
 import type { NavigateIf } from './navigation'
 import type { NavMenuState, Theme, UseDebounce } from './core/types'
@@ -24,16 +24,16 @@ const dontSearchBeer: SearchBeerIf = {
   }),
 }
 
-const noSearch: SearchIf = {
-  useSearch: () => ({
+const noSearch: SearchFieldIf = {
+  useSearchField: () => ({
     activate: dontCall,
     isActive: false,
   }),
   useDebounce,
 }
 
-const activeSearch: SearchIf = {
-  useSearch: () => ({
+const activeSearch: SearchFieldIf = {
+  useSearchField: () => ({
     activate: () => undefined,
     isActive: true,
   }),
@@ -140,7 +140,7 @@ navigationTests.forEach((testCase) => {
           navigateIf={dontNavigate}
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
-          searchIf={noSearch}
+          searchFieldIf={noSearch}
           theme={defaultThemeProps}
         />
       </LinkWrapper>,
@@ -182,7 +182,7 @@ navigationMoreTests.forEach((testCase) => {
           navigateIf={dontNavigate}
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
-          searchIf={noSearch}
+          searchFieldIf={noSearch}
           theme={defaultThemeProps}
         />
       </LinkWrapper>,
@@ -204,7 +204,7 @@ navigationMoreTests.forEach((testCase) => {
           navigateIf={dontNavigate}
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
-          searchIf={noSearch}
+          searchFieldIf={noSearch}
           theme={defaultThemeProps}
         />
       </LinkWrapper>,
@@ -224,7 +224,7 @@ test('do not find text fields without more open', async () => {
         navigateIf={dontNavigate}
         searchBeerIf={dontSearchBeer}
         searchBreweryIf={dontSearchBrewery}
-        searchIf={noSearch}
+        searchFieldIf={noSearch}
         theme={defaultThemeProps}
       />
     </LinkWrapper>,
@@ -262,7 +262,7 @@ themeTests.forEach((testCase) => {
           navigateIf={dontNavigate}
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
-          searchIf={noSearch}
+          searchFieldIf={noSearch}
           theme={{
             setTheme: setTheme,
             theme: testCase.original,
@@ -288,7 +288,7 @@ test('logs out', async () => {
         navigateIf={dontNavigate}
         searchBeerIf={dontSearchBeer}
         searchBreweryIf={dontSearchBrewery}
-        searchIf={noSearch}
+        searchFieldIf={noSearch}
         theme={defaultThemeProps}
       />
     </LinkWrapper>,
@@ -309,7 +309,7 @@ test('do not show admin features to viewer', async () => {
         navigateIf={dontNavigate}
         searchBeerIf={dontSearchBeer}
         searchBreweryIf={dontSearchBrewery}
-        searchIf={noSearch}
+        searchFieldIf={noSearch}
         theme={defaultThemeProps}
       />
     </LinkWrapper>,
@@ -342,7 +342,7 @@ test('searches beer', async () => {
         }}
         searchBeerIf={searchBeerIf}
         searchBreweryIf={dontSearchBrewery}
-        searchIf={activeSearch}
+        searchFieldIf={activeSearch}
         theme={defaultThemeProps}
       />
     </LinkWrapper>,
@@ -379,7 +379,7 @@ test('searches brewery', async () => {
         }}
         searchBeerIf={dontSearchBeer}
         searchBreweryIf={searchBreweryIf}
-        searchIf={activeSearch}
+        searchFieldIf={activeSearch}
         theme={defaultThemeProps}
       />
     </LinkWrapper>,
@@ -434,7 +434,7 @@ navStateTests.forEach((testCase) => {
           navigateIf={dontNavigate}
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
-          searchIf={noSearch}
+          searchFieldIf={noSearch}
           theme={defaultThemeProps}
         />
       </LinkWrapper>,

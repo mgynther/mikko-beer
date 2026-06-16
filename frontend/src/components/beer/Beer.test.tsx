@@ -18,7 +18,7 @@ import type { ListStoragesByIf } from '../../core/storage/types'
 import type { UseDebounce, YearMonth } from '../../core/types'
 import { asText } from '../container/ContainerInfo'
 import type { SearchLocationIf } from '../../core/location/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import type { EditBeerIf, GetBeerIf, UpdateBeerIf } from '../../core/beer/types'
 import type { UrlParamsIf } from '../util'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
@@ -96,8 +96,8 @@ const dontCreate = {
   isLoading: false,
 }
 
-const searchIf: SearchIf = {
-  useSearch: () => ({
+const searchFieldIf: SearchFieldIf = {
+  useSearchField: () => ({
     activate: () => undefined,
     isActive: true,
   }),
@@ -271,7 +271,7 @@ test('renders beer', async () => {
     <LinkWrapper>
       <Beer
         updateBeerIf={dontUpdateBeerIf}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
         listReviewsByBeerIf={getListReviewsIf([joinedReview])}
         listStoragesByBeerIf={listStoragesByBeerIf}
         urlParamsIf={urlParamsIf}
@@ -294,7 +294,7 @@ test('throw on missing id', async () => {
       <LinkWrapper>
         <Beer
           updateBeerIf={dontUpdateBeerIf}
-          searchIf={searchIf}
+          searchFieldIf={searchFieldIf}
           listReviewsByBeerIf={getListReviewsIf([joinedReview])}
           listStoragesByBeerIf={listStoragesByBeerIf}
           urlParamsIf={{
@@ -322,7 +322,7 @@ test('updates beer', async () => {
           }),
           editBeerIf,
         }}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
         listReviewsByBeerIf={getListReviewsIf([])}
         listStoragesByBeerIf={listStoragesByBeerIf}
         urlParamsIf={urlParamsIf}
@@ -358,7 +358,7 @@ test('cancel update', async () => {
     <LinkWrapper>
       <Beer
         updateBeerIf={dontUpdateBeerIf}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
         listReviewsByBeerIf={getListReviewsIf([])}
         listStoragesByBeerIf={listStoragesByBeerIf}
         urlParamsIf={urlParamsIf}
@@ -380,7 +380,7 @@ test('render loading', async () => {
     <LinkWrapper>
       <Beer
         updateBeerIf={dontUpdateBeerIf}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
         listReviewsByBeerIf={getListReviewsIf([])}
         listStoragesByBeerIf={listStoragesByBeerIf}
         urlParamsIf={urlParamsIf}
@@ -402,7 +402,7 @@ test('render not found', async () => {
     <LinkWrapper>
       <Beer
         updateBeerIf={dontUpdateBeerIf}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
         listReviewsByBeerIf={getListReviewsIf([])}
         listStoragesByBeerIf={listStoragesByBeerIf}
         urlParamsIf={urlParamsIf}
@@ -425,7 +425,7 @@ test('load reviews', async () => {
     <LinkWrapper>
       <Beer
         updateBeerIf={dontUpdateBeerIf}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
         listReviewsByBeerIf={{
           useList: (params: IdFilteredListReviewParams) => {
             useList(params)
@@ -472,7 +472,7 @@ test('sort reviews', async () => {
     <LinkWrapper>
       <Beer
         updateBeerIf={dontUpdateBeerIf}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
         listReviewsByBeerIf={{
           useList: () => {
             return {
@@ -528,7 +528,7 @@ test('show loading indicator', async () => {
     <LinkWrapper>
       <Beer
         updateBeerIf={dontUpdateBeerIf}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
         listReviewsByBeerIf={{
           useList: () => {
             return {

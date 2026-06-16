@@ -19,7 +19,7 @@ import type {
   SearchBeerIf,
   SelectBeerIf,
 } from '../../core/beer/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import type { ReviewFilters } from './filter-types'
 import { testTimes } from '../../../test-util/filter-time'
 
@@ -91,8 +91,8 @@ const reviewContainerIf: ReviewContainerIf = {
   },
 }
 
-const searchIf: SearchIf = {
-  useSearch: () => ({
+const searchFieldIf: SearchFieldIf = {
+  useSearchField: () => ({
     activate: () => undefined,
     isActive: true,
   }),
@@ -280,7 +280,7 @@ test('updates review', async () => {
           },
           login: () => adminLogin,
         }}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -334,7 +334,7 @@ test('sets review sorting', async () => {
         reviews={[joinedReview]}
         onChanged={dontCall}
         reviewIf={dontUpdateReviewIf}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -360,7 +360,7 @@ test('renders reviews', async () => {
         reviews={[joinedReview, anotherJoinedReview]}
         onChanged={dontCall}
         reviewIf={dontUpdateReviewIf}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -393,7 +393,7 @@ test('renders title', async () => {
         reviews={[joinedReview, anotherJoinedReview]}
         onChanged={dontCall}
         reviewIf={dontUpdateReviewIf}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -415,7 +415,7 @@ test('does not render title', async () => {
         reviews={[joinedReview, anotherJoinedReview]}
         onChanged={dontCall}
         reviewIf={dontUpdateReviewIf}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )

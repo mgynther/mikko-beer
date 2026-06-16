@@ -7,7 +7,7 @@ import type {
   GetLocationIf,
   UpdateLocationIf,
 } from '../../core/location/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'
@@ -27,7 +27,7 @@ interface Props {
   urlParamsIf: UrlParamsIf
   getLocationIf: GetLocationIf
   reviewIf: ReviewIf
-  searchIf: SearchIf
+  searchFieldIf: SearchFieldIf
   statsIf: StatsIf
   updateLocationIf: UpdateLocationIf
 }
@@ -88,7 +88,7 @@ function Location(props: Props): React.JSX.Element {
         listReviewsByIf={props.listReviewsByLocationIf}
         urlParamsIf={props.urlParamsIf}
         reviewIf={props.reviewIf}
-        searchIf={props.searchIf}
+        searchFieldIf={props.searchFieldIf}
       />
     </div>
   )

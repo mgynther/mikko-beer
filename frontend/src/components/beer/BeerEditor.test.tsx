@@ -15,7 +15,7 @@ import type {
 } from '../../core/style/types'
 import type { UseDebounce } from '../../core/types'
 import type { EditBeerIf } from '../../core/beer/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -63,16 +63,16 @@ const search: SearchBreweryIf = {
   }),
 }
 
-const doSearch: SearchIf = {
-  useSearch: () => ({
+const doSearch: SearchFieldIf = {
+  useSearchField: () => ({
     activate: () => undefined,
     isActive: true,
   }),
   useDebounce,
 }
 
-const dontSearch: SearchIf = {
-  useSearch: () => ({
+const dontSearch: SearchFieldIf = {
+  useSearchField: () => ({
     activate: dontCall,
     isActive: false,
   }),
@@ -139,7 +139,7 @@ test('edits beer name', async () => {
         ...initialBeer,
         name: '',
       }}
-      searchIf={dontSearch}
+      searchFieldIf={dontSearch}
       onChange={onChange}
       editBeerIf={{
         selectBreweryIf: dontSelectBrewery,
@@ -170,7 +170,7 @@ test('edits beer breweries', async () => {
         ...initialBeer,
         breweries: [],
       }}
-      searchIf={doSearch}
+      searchFieldIf={doSearch}
       onChange={onChange}
       editBeerIf={{
         selectBreweryIf: {
@@ -207,7 +207,7 @@ test('edits beer styles', async () => {
         ...initialBeer,
         styles: [],
       }}
-      searchIf={doSearch}
+      searchFieldIf={doSearch}
       onChange={onChange}
       editBeerIf={{
         selectBreweryIf: dontSelectBrewery,
@@ -249,7 +249,7 @@ test('edits invalid beer by empty name', async () => {
         name: '',
       }}
       onChange={onChange}
-      searchIf={dontSearch}
+      searchFieldIf={dontSearch}
     />,
   )
   const nameInput = getByPlaceholderText(namePlaceholder)
@@ -266,7 +266,7 @@ test('renders values', async () => {
       editBeerIf={dontEditBeer}
       initialBeer={initialBeer}
       onChange={onChange}
-      searchIf={dontSearch}
+      searchFieldIf={dontSearch}
     />,
   )
   getByText(brewery.name)

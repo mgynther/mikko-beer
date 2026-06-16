@@ -4,7 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import SelectStyle from './SelectStyle'
 import type { UseDebounce } from '../../core/types'
 import type { StyleWithParentIds } from '../../core/style/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -24,8 +24,8 @@ const style = {
   parents: [parent.id],
 }
 
-const useSearch: SearchIf = {
-  useSearch: () => ({
+const useSearch: SearchFieldIf = {
+  useSearchField: () => ({
     activate: () => undefined,
     isActive: true,
   }),
@@ -50,7 +50,7 @@ test('selects style', async () => {
           }),
         },
       }}
-      searchIf={useSearch}
+      searchFieldIf={useSearch}
     />,
   )
   const searchInput = getByPlaceholderText('Search style')
@@ -97,7 +97,7 @@ test('selects created style', async () => {
           }),
         },
       }}
-      searchIf={useSearch}
+      searchFieldIf={useSearch}
     />,
   )
   const createRadio = getByRole('radio', { name: 'Create' })

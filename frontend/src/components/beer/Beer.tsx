@@ -9,7 +9,7 @@ import type {
 } from '../../core/beer/types'
 
 import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import type { ListStoragesByIf } from '../../core/storage/types'
 
 import { EditableMode } from '../common/EditableMode'
@@ -31,7 +31,7 @@ interface Props {
   listStoragesByBeerIf: ListStoragesByIf
   urlParamsIf: UrlParamsIf
   reviewIf: ReviewIf
-  searchIf: SearchIf
+  searchFieldIf: SearchFieldIf
   updateBeerIf: UpdateBeerIf
   getBeerIf: GetBeerIf
 }
@@ -83,7 +83,7 @@ function Beer(props: Props): React.JSX.Element {
       )}
       {mode === EditableMode.Edit && initialBeer !== undefined && (
         <UpdateBeer
-          searchIf={props.searchIf}
+          searchFieldIf={props.searchFieldIf}
           updateBeerIf={props.updateBeerIf}
           initialBeer={initialBeer}
           onCancel={() => {
@@ -105,7 +105,7 @@ function Beer(props: Props): React.JSX.Element {
         listReviewsByIf={props.listReviewsByBeerIf}
         urlParamsIf={props.urlParamsIf}
         reviewIf={props.reviewIf}
-        searchIf={props.searchIf}
+        searchFieldIf={props.searchFieldIf}
       />
     </div>
   )

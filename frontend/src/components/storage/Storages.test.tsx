@@ -142,8 +142,8 @@ test('renders storage', () => {
             return searchParams
           },
         }}
-        searchIf={{
-          useSearch: () => ({
+        searchFieldIf={{
+          useSearchField: () => ({
             activate: dontCall,
             isActive: true,
           }),

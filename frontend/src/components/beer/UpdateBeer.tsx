@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 
 import type { Beer, BeerWithIds, UpdateBeerIf } from '../../core/beer/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 
 import EditActions from '../common/EditActions'
 
 import BeerEditor from './BeerEditor'
 
 interface Props {
-  searchIf: SearchIf
+  searchFieldIf: SearchFieldIf
   updateBeerIf: UpdateBeerIf
   initialBeer: Beer
   onCancel: () => void
@@ -30,7 +30,7 @@ function UpdateBeer(props: Props): React.JSX.Element {
         onChange={(beer: BeerWithIds | undefined) => {
           setNewBeer(beer)
         }}
-        searchIf={props.searchIf}
+        searchFieldIf={props.searchFieldIf}
       />
       <EditActions
         isSaveDisabled={newBeer === undefined}

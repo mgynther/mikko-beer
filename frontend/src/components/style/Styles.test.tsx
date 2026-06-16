@@ -34,8 +34,8 @@ test('renders styles', () => {
         navigateIf={{
           useNavigate: (): (() => void) => () => undefined,
         }}
-        searchIf={{
-          useSearch: () => ({
+        searchFieldIf={{
+          useSearchField: () => ({
             activate: (): void => undefined,
             isActive: false,
           }),
@@ -61,8 +61,8 @@ test('renders loading text when loading', () => {
         navigateIf={{
           useNavigate: (): (() => void) => () => undefined,
         }}
-        searchIf={{
-          useSearch: () => ({
+        searchFieldIf={{
+          useSearchField: () => ({
             activate: (): void => undefined,
             isActive: false,
           }),
@@ -97,8 +97,8 @@ test('navigates to selected search result', async () => {
         navigateIf={{
           useNavigate: (): (() => void) => navigate,
         }}
-        searchIf={{
-          useSearch: () => ({
+        searchFieldIf={{
+          useSearchField: () => ({
             activate: (): void => undefined,
             isActive: true,
           }),

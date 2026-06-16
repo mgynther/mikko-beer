@@ -5,7 +5,7 @@ import CreateStorage from './CreateStorage'
 import type { UseDebounce } from '../../core/types'
 import type { CreateBeerIf, SearchBeerIf } from '../../core/beer/types'
 import type { ReviewContainerIf } from '../../core/review/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import type { CreateStorageIf } from '../../core/storage/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
@@ -97,8 +97,8 @@ const reviewContainerIf: ReviewContainerIf = {
   },
 }
 
-const searchIf: SearchIf = {
-  useSearch: () => ({
+const searchFieldIf: SearchFieldIf = {
+  useSearchField: () => ({
     activate: () => undefined,
     isActive: true,
   }),
@@ -124,7 +124,7 @@ test('creates storage', async () => {
     getByRole,
   } = render(
     <CreateStorage
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
       selectBeerIf={{
         create: dontCreateBeerIf,
         search: beerSearchIf,
@@ -178,7 +178,7 @@ test('clears beer', async () => {
   const user = userEvent.setup()
   const { findByRole, getAllByRole, getByPlaceholderText, getByRole } = render(
     <CreateStorage
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
       selectBeerIf={{
         create: dontCreateBeerIf,
         search: beerSearchIf,
@@ -209,7 +209,7 @@ test('clears container', async () => {
   const user = userEvent.setup()
   const { getByRole } = render(
     <CreateStorage
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
       selectBeerIf={{
         create: dontCreateBeerIf,
         search: beerSearchIf,
@@ -232,7 +232,7 @@ test('clears container', async () => {
 test('shows error', async () => {
   const { getByText } = render(
     <CreateStorage
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
       selectBeerIf={{
         create: dontCreateBeerIf,
         search: beerSearchIf,

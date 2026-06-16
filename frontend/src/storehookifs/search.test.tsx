@@ -9,8 +9,8 @@ import search from './search'
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 function Helper(): React.JSX.Element {
-  const searchIf = search(useDebounce)
-  const { activate, isActive } = searchIf.useSearch()
+  const searchFieldIf = search(useDebounce)
+  const { activate, isActive } = searchFieldIf.useSearchField()
   return (
     <div>
       <button onClick={activate}>Activate</button>

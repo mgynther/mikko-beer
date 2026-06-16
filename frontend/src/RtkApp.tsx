@@ -77,7 +77,7 @@ import type {
   StorageStatsIf,
 } from './core/storage/types'
 import type { StatsIf } from './core/stats/types'
-import type { SearchIf } from './core/search/types'
+import type { SearchFieldIf } from './core/search/types'
 import {
   getUseDebounce,
   infiniteScroll,
@@ -296,7 +296,7 @@ function RtkApp(): React.JSX.Element {
     getUseDebounce,
   )
 
-  const searchIf: SearchIf = search(useDebounce<string>)
+  const searchFieldIf: SearchFieldIf = search(useDebounce<string>)
 
   const storeIf: StoreIf = {
     getLogin,
@@ -335,7 +335,7 @@ function RtkApp(): React.JSX.Element {
 
     statsIf,
 
-    searchIf,
+    searchFieldIf: searchFieldIf,
 
     createStorageIf,
     getStorageIf,

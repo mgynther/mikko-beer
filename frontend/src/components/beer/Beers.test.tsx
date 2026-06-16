@@ -1,7 +1,7 @@
 import { act, render, waitFor } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
 import Beers from './Beers'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import LinkWrapper from '../LinkWrapper'
 import type { UseDebounce } from '../../core/types'
 import type { BeerList, ListBeersIf, SearchBeerIf } from '../../core/beer/types'
@@ -14,8 +14,8 @@ const notUsed = (): any => {
   throw new Error('Do not call')
 }
 
-const activeSearch: SearchIf = {
-  useSearch: () => ({
+const activeSearch: SearchFieldIf = {
+  useSearchField: () => ({
     activate: notUsed,
     isActive: false,
   }),
@@ -86,7 +86,7 @@ test('render beers', async () => {
         listBeersIf={listBeersIf}
         navigateIf={navigateIf}
         searchBeerIf={searchBeerIf}
-        searchIf={activeSearch}
+        searchFieldIf={activeSearch}
       />
     </LinkWrapper>,
   )
@@ -124,7 +124,7 @@ test('render loading', async () => {
         listBeersIf={listBeersIf}
         navigateIf={navigateIf}
         searchBeerIf={searchBeerIf}
-        searchIf={activeSearch}
+        searchFieldIf={activeSearch}
       />
     </LinkWrapper>,
   )
@@ -170,7 +170,7 @@ test('stops loading more', async () => {
         listBeersIf={listBeersIf}
         navigateIf={navigateIf}
         searchBeerIf={searchBeerIf}
-        searchIf={activeSearch}
+        searchFieldIf={activeSearch}
       />
     </LinkWrapper>,
   )

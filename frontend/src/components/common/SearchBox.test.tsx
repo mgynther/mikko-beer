@@ -5,7 +5,7 @@ import { expect, test, vitest } from 'vitest'
 import SearchBox from './SearchBox'
 import type { Props, SearchBoxItem } from './SearchBox'
 import { loadingIndicatorText } from './LoadingIndicator'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import type { UseDebounce } from '../../core/types'
 
 const dontCall = (): any => {
@@ -14,16 +14,16 @@ const dontCall = (): any => {
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
-const passiveSearch: SearchIf = {
-  useSearch: () => ({
+const passiveSearch: SearchFieldIf = {
+  useSearchField: () => ({
     activate: () => undefined,
     isActive: false,
   }),
   useDebounce,
 }
 
-const activeSearch: SearchIf = {
-  useSearch: () => ({
+const activeSearch: SearchFieldIf = {
+  useSearchField: () => ({
     activate: () => undefined,
     isActive: true,
   }),
@@ -31,7 +31,7 @@ const activeSearch: SearchIf = {
 }
 
 const defaultProps: Props<SearchBoxItem> = {
-  searchIf: passiveSearch,
+  searchFieldIf: passiveSearch,
   currentFilter: '',
   currentOptions: [],
   customSort: undefined,
@@ -61,8 +61,8 @@ test('activates', async () => {
   const { getByRole } = render(
     <SearchBox
       {...defaultProps}
-      searchIf={{
-        useSearch: () => {
+      searchFieldIf={{
+        useSearchField: () => {
           if (useSearchCount > 0) {
             throw new Error('Multiple calls not allowed')
           }
@@ -101,7 +101,7 @@ test('show items while loading', async () => {
   const { getByText } = render(
     <SearchBox
       {...defaultProps}
-      searchIf={activeSearch}
+      searchFieldIf={activeSearch}
       currentFilter={'A'}
       currentOptions={[
         {
@@ -123,7 +123,7 @@ test('does not show items while filter empty', async () => {
   const { queryByText } = render(
     <SearchBox
       {...defaultProps}
-      searchIf={activeSearch}
+      searchFieldIf={activeSearch}
       currentOptions={[
         {
           id: '1',
@@ -143,7 +143,7 @@ test('formats custom name', async () => {
   const { getByText, queryByText } = render(
     <SearchBox
       {...defaultProps}
-      searchIf={activeSearch}
+      searchFieldIf={activeSearch}
       currentFilter={'M'}
       currentOptions={[
         {
@@ -165,7 +165,7 @@ test('renders more results info', async () => {
   const { getByText } = render(
     <SearchBox
       {...defaultProps}
-      searchIf={activeSearch}
+      searchFieldIf={activeSearch}
       currentFilter={'M'}
       currentOptions={Array.from(Array(11).keys()).map((num) => ({
         id: `${num}`,
@@ -179,7 +179,11 @@ test('renders more results info', async () => {
 
 test('renders no results info', async () => {
   const { getByText } = render(
-    <SearchBox {...defaultProps} searchIf={activeSearch} currentFilter={'M'} />,
+    <SearchBox
+      {...defaultProps}
+      searchFieldIf={activeSearch}
+      currentFilter={'M'}
+    />,
   )
   const text = getByText('No results')
   expect(text).toBeDefined()
@@ -192,7 +196,7 @@ test('item is selected', async () => {
   const { getByRole } = render(
     <SearchBox
       {...defaultProps}
-      searchIf={activeSearch}
+      searchFieldIf={activeSearch}
       currentFilter={'M'}
       currentOptions={[
         {
@@ -255,7 +259,7 @@ test('shows loading indicator', async () => {
   const { getByText } = render(
     <SearchBox
       {...defaultProps}
-      searchIf={activeSearch}
+      searchFieldIf={activeSearch}
       currentFilter={'M'}
       isLoading={true}
     />,
@@ -268,7 +272,7 @@ test('sorts results', async () => {
   const { getAllByRole } = render(
     <SearchBox
       {...defaultProps}
-      searchIf={activeSearch}
+      searchFieldIf={activeSearch}
       currentFilter={'M'}
       currentOptions={[
         {
@@ -294,7 +298,7 @@ test('sorts results starting with filter', async () => {
   const { getAllByRole } = render(
     <SearchBox
       {...defaultProps}
-      searchIf={activeSearch}
+      searchFieldIf={activeSearch}
       currentFilter={'lag'}
       currentOptions={[
         {
@@ -320,7 +324,7 @@ test('sorts results with edge cases', async () => {
   const { getAllByRole } = render(
     <SearchBox
       {...defaultProps}
-      searchIf={activeSearch}
+      searchFieldIf={activeSearch}
       currentFilter={'item'}
       currentOptions={[
         {
@@ -364,7 +368,7 @@ test('custom sorts results', async () => {
       customSort={(a: SearchBoxItem, b: SearchBoxItem) =>
         -1 * a.name.localeCompare(b.name)
       }
-      searchIf={activeSearch}
+      searchFieldIf={activeSearch}
       currentFilter={'M'}
       currentOptions={[
         {

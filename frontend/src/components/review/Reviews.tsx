@@ -5,7 +5,7 @@ import type {
   JoinedReview,
   ReviewIf,
 } from '../../core/review/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 
 import ReviewList from './ReviewList'
 
@@ -20,7 +20,7 @@ interface Props {
   listReviewsIf: ListReviewsIf
   urlParamsIf: UrlParamsIf
   reviewIf: ReviewIf
-  searchIf: SearchIf
+  searchFieldIf: SearchFieldIf
 }
 
 function Reviews(props: Props): React.JSX.Element {
@@ -109,7 +109,7 @@ function Reviews(props: Props): React.JSX.Element {
         isLoading={isLoading}
         isTitleVisible={false}
         reviews={loadedReviews ?? []}
-        searchIf={props.searchIf}
+        searchFieldIf={props.searchFieldIf}
         sorting={reviewList?.sorting}
         setSorting={parsedSearchParams.changeSortingOrder}
         supportedSorting={['rating', 'time']}

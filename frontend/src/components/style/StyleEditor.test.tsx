@@ -4,7 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import StyleEditor from './StyleEditor'
 import type { UseDebounce } from '../../core/types'
 import type { ListStylesIf } from '../../core/style/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
@@ -32,8 +32,8 @@ const noList: ListStylesIf = {
   }),
 }
 
-const dontUseSearch: SearchIf = {
-  useSearch: () => ({
+const dontUseSearch: SearchFieldIf = {
+  useSearchField: () => ({
     activate: dontCall,
     isActive: false,
   }),
@@ -50,7 +50,7 @@ test('renders contents', async () => {
       }}
       hasError={false}
       listStylesIf={noList}
-      searchIf={dontUseSearch}
+      searchFieldIf={dontUseSearch}
       onChange={dontCall}
     />,
   )
@@ -69,7 +69,7 @@ test('renders error', async () => {
       }}
       hasError={true}
       listStylesIf={noList}
-      searchIf={dontUseSearch}
+      searchFieldIf={dontUseSearch}
       onChange={dontCall}
     />,
   )
@@ -88,7 +88,7 @@ test('removes parent', async () => {
       }}
       hasError={false}
       listStylesIf={noList}
-      searchIf={dontUseSearch}
+      searchFieldIf={dontUseSearch}
       onChange={onChange}
     />,
   )
@@ -118,7 +118,7 @@ test('enters name', async () => {
       }}
       hasError={false}
       listStylesIf={noList}
-      searchIf={dontUseSearch}
+      searchFieldIf={dontUseSearch}
       onChange={onChange}
     />,
   )

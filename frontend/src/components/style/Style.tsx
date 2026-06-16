@@ -9,7 +9,7 @@ import type {
   UpdateStyleIf,
 } from '../../core/style/types'
 
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import type { StatsIf } from '../../core/stats/types'
 import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
 import type { ListStoragesByIf } from '../../core/storage/types'
@@ -45,7 +45,7 @@ interface Props {
   getStyleIf: GetStyleIf
   urlParamsIf: UrlParamsIf
   reviewIf: ReviewIf
-  searchIf: SearchIf
+  searchFieldIf: SearchFieldIf
   statsIf: StatsIf
   updateStyleIf: UpdateStyleIf
 }
@@ -120,7 +120,7 @@ function Style(props: Props): React.JSX.Element {
             onSaved={() => {
               setMode(EditableMode.View)
             }}
-            searchIf={props.searchIf}
+            searchFieldIf={props.searchFieldIf}
           />
         </div>
       )}
@@ -145,7 +145,7 @@ function Style(props: Props): React.JSX.Element {
         listReviewsByIf={props.listReviewsByStyleIf}
         urlParamsIf={props.urlParamsIf}
         reviewIf={props.reviewIf}
-        searchIf={props.searchIf}
+        searchFieldIf={props.searchFieldIf}
       />
     </>
   )

@@ -2,12 +2,12 @@ import React from 'react'
 
 import SearchBrewery from './SearchBrewery'
 import type { SearchBreweryIf } from '../../core/brewery/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import type { NavigateIf } from '../../navigation'
 
 export interface Props {
   navigateIf: NavigateIf
-  searchIf: SearchIf
+  searchFieldIf: SearchFieldIf
   searchBreweryIf: SearchBreweryIf
 }
 
@@ -15,7 +15,7 @@ function SearchBreweryWithNavi(props: Props): React.JSX.Element {
   const navigate = props.navigateIf.useNavigate()
   return (
     <SearchBrewery
-      searchIf={props.searchIf}
+      searchFieldIf={props.searchFieldIf}
       searchBreweryIf={props.searchBreweryIf}
       select={(brewery) => {
         void navigate(`/breweries/${brewery.id}`)

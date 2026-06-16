@@ -29,7 +29,7 @@ import type {
 import type { GetStyleIf, UpdateStyleIf } from '../../core/style/types'
 import type { UseDebounce, YearMonth } from '../../core/types'
 import { asText } from '../container/ContainerInfo'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import type { UrlParamsIf } from '../util'
 import type { ReactNode } from 'react'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
@@ -126,8 +126,8 @@ const login = {
   refreshToken: '',
 }
 
-const searchIf: SearchIf = {
-  useSearch: () => ({
+const searchFieldIf: SearchFieldIf = {
+  useSearchField: () => ({
     activate: () => undefined,
     isActive: true,
   }),
@@ -320,7 +320,7 @@ test('renders style', async () => {
     <LinkWrapper>
       <Style
         updateStyleIf={dontUpdate}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
         listReviewsByStyleIf={getListReviewsIf([joinedReview])}
         listStoragesByStyleIf={getListStoragesByStyleIf(undefined)}
         urlParamsIf={urlParamsIf}
@@ -341,7 +341,7 @@ test('renders storages', async () => {
     <LinkWrapper>
       <Style
         updateStyleIf={dontUpdate}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
         listReviewsByStyleIf={getListReviewsIf([joinedReview])}
         listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
         urlParamsIf={urlParamsIf}
@@ -362,7 +362,7 @@ test('renders loading when loading', async () => {
     <LinkWrapper>
       <Style
         updateStyleIf={dontUpdate}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
         listReviewsByStyleIf={getListReviewsIf([joinedReview])}
         listStoragesByStyleIf={getListStoragesByStyleIf(undefined)}
         urlParamsIf={urlParamsIf}
@@ -385,7 +385,7 @@ test('renders not found when not found', async () => {
     <LinkWrapper>
       <Style
         updateStyleIf={dontUpdate}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
         listReviewsByStyleIf={getListReviewsIf([joinedReview])}
         listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
         urlParamsIf={urlParamsIf}
@@ -409,7 +409,7 @@ test('throw without style id', async () => {
       <LinkWrapper>
         <Style
           updateStyleIf={dontUpdate}
-          searchIf={searchIf}
+          searchFieldIf={searchFieldIf}
           listReviewsByStyleIf={getListReviewsIf([joinedReview])}
           listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
           urlParamsIf={{
@@ -440,7 +440,7 @@ test('updates style', async () => {
             isSuccess: update.mock.calls.length > 0,
           }),
         }}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
         listReviewsByStyleIf={getListReviewsIf([])}
         listStoragesByStyleIf={getListStoragesByStyleIf([])}
         urlParamsIf={urlParamsIf}
@@ -504,7 +504,7 @@ test('cancels update', async () => {
             isSuccess: false,
           }),
         }}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
         listReviewsByStyleIf={getListReviewsIf([])}
         listStoragesByStyleIf={getListStoragesByStyleIf([])}
         urlParamsIf={urlParamsIf}

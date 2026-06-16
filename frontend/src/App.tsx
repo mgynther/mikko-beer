@@ -86,7 +86,7 @@ function App(props: Props): React.JSX.Element {
 
     statsIf,
 
-    searchIf,
+    searchFieldIf,
 
     createStorageIf,
     getStorageIf,
@@ -130,7 +130,7 @@ function App(props: Props): React.JSX.Element {
                 navigateIf={navigateIf}
                 searchBeerIf={searchBeerIf}
                 searchBreweryIf={searchBreweryIf}
-                searchIf={searchIf}
+                searchFieldIf={searchFieldIf}
                 isAdmin={isAdmin}
                 isLoggedIn={isLoggedIn}
                 logout={
@@ -165,7 +165,7 @@ function App(props: Props): React.JSX.Element {
                     listBeersIf={listBeersIf}
                     navigateIf={navigateIf}
                     searchBeerIf={searchBeerIf}
-                    searchIf={searchIf}
+                    searchFieldIf={searchFieldIf}
                   />
                 ) : (
                   <LoginComponent loginIf={loginIf} />
@@ -183,7 +183,7 @@ function App(props: Props): React.JSX.Element {
                         getStorageIf={getStorageIf}
                         navigateIf={navigateIf}
                         urlParamsIf={props.urlParamsIf}
-                        searchIf={searchIf}
+                        searchFieldIf={searchFieldIf}
                       />
                     }
                   />
@@ -197,7 +197,7 @@ function App(props: Props): React.JSX.Element {
                         getStorageIf={getStorageIf}
                         navigateIf={navigateIf}
                         urlParamsIf={props.urlParamsIf}
-                        searchIf={searchIf}
+                        searchFieldIf={searchFieldIf}
                       />
                     }
                   />
@@ -209,7 +209,7 @@ function App(props: Props): React.JSX.Element {
                       listBeersIf={listBeersIf}
                       navigateIf={navigateIf}
                       searchBeerIf={searchBeerIf}
-                      searchIf={searchIf}
+                      searchFieldIf={searchFieldIf}
                     />
                   }
                 />
@@ -222,7 +222,7 @@ function App(props: Props): React.JSX.Element {
                       listStoragesByBeerIf={listStoragesByBeerIf}
                       urlParamsIf={props.urlParamsIf}
                       reviewIf={reviewIf}
-                      searchIf={searchIf}
+                      searchFieldIf={searchFieldIf}
                       updateBeerIf={updateBeerIf}
                     />
                   }
@@ -234,7 +234,7 @@ function App(props: Props): React.JSX.Element {
                       listBreweriesIf={listBreweriesIf}
                       navigateIf={navigateIf}
                       searchBreweryIf={searchBreweryIf}
-                      searchIf={searchIf}
+                      searchFieldIf={searchFieldIf}
                     />
                   }
                 />
@@ -247,7 +247,7 @@ function App(props: Props): React.JSX.Element {
                       listStoragesByBreweryIf={listStoragesByBreweryIf}
                       urlParamsIf={props.urlParamsIf}
                       reviewIf={reviewIf}
-                      searchIf={searchIf}
+                      searchFieldIf={searchFieldIf}
                       statsIf={statsIf}
                       updateBreweryIf={updateBreweryIf}
                     />
@@ -270,7 +270,7 @@ function App(props: Props): React.JSX.Element {
                       listLocationsIf={listLocationsIf}
                       navigateIf={navigateIf}
                       searchLocationIf={searchLocationIf}
-                      searchIf={searchIf}
+                      searchFieldIf={searchFieldIf}
                     />
                   }
                 />
@@ -282,7 +282,7 @@ function App(props: Props): React.JSX.Element {
                       listReviewsByLocationIf={listReviewsByLocationIf}
                       urlParamsIf={props.urlParamsIf}
                       reviewIf={reviewIf}
-                      searchIf={searchIf}
+                      searchFieldIf={searchFieldIf}
                       statsIf={statsIf}
                       updateLocationIf={updateLocationIf}
                     />
@@ -295,7 +295,7 @@ function App(props: Props): React.JSX.Element {
                       listReviewsIf={listReviewsIf}
                       urlParamsIf={props.urlParamsIf}
                       reviewIf={reviewIf}
-                      searchIf={searchIf}
+                      searchFieldIf={searchFieldIf}
                     />
                   }
                 />
@@ -305,7 +305,7 @@ function App(props: Props): React.JSX.Element {
                     <Styles
                       listStylesIf={listStylesIf}
                       navigateIf={navigateIf}
-                      searchIf={searchIf}
+                      searchFieldIf={searchFieldIf}
                     />
                   }
                 />
@@ -319,7 +319,7 @@ function App(props: Props): React.JSX.Element {
                       reviewIf={reviewIf}
                       getStyleIf={getStyleIf}
                       statsIf={statsIf}
-                      searchIf={searchIf}
+                      searchFieldIf={searchFieldIf}
                       updateStyleIf={updateStyleIf}
                     />
                   }
@@ -356,7 +356,7 @@ function App(props: Props): React.JSX.Element {
                       listStoragesIf={listStoragesIf}
                       urlParamsIf={props.urlParamsIf}
                       reviewContainerIf={reviewContainerIf}
-                      searchIf={searchIf}
+                      searchFieldIf={searchFieldIf}
                       selectBeerIf={selectBeerIf}
                       statsIf={storageStatsIf}
                       createStorageIf={createStorageIf}
@@ -373,7 +373,7 @@ function App(props: Props): React.JSX.Element {
                     listBeersIf={listBeersIf}
                     navigateIf={navigateIf}
                     searchBeerIf={searchBeerIf}
-                    searchIf={searchIf}
+                    searchFieldIf={searchFieldIf}
                   />
                 ) : (
                   <LoginComponent loginIf={loginIf} />

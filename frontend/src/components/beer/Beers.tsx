@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import type { Beer, ListBeersIf, SearchBeerIf } from '../../core/beer/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import type { NavigateIf } from '../../navigation'
 
 import BreweryLinks from '../brewery/BreweryLinks'
@@ -18,7 +18,7 @@ interface Props {
   listBeersIf: ListBeersIf
   navigateIf: NavigateIf
   searchBeerIf: SearchBeerIf
-  searchIf: SearchIf
+  searchFieldIf: SearchFieldIf
 }
 
 function Beers(props: Props): React.JSX.Element {
@@ -56,7 +56,7 @@ function Beers(props: Props): React.JSX.Element {
       <h3>Beers</h3>
       <SearchBeerWithNavi
         navigateIf={props.navigateIf}
-        searchIf={props.searchIf}
+        searchFieldIf={props.searchFieldIf}
         searchBeerIf={props.searchBeerIf}
       />
       {isLoading && <div>Loading...</div>}

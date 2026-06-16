@@ -13,7 +13,7 @@ import type {
   Review as ReviewType,
   ReviewContainerIf,
 } from '../../core/review/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -90,8 +90,8 @@ const reviewContainerIf: ReviewContainerIf = {
   },
 }
 
-const searchIf: SearchIf = {
-  useSearch: () => ({
+const searchFieldIf: SearchFieldIf = {
+  useSearchField: () => ({
     activate: () => undefined,
     isActive: true,
   }),
@@ -229,7 +229,7 @@ test('updates review', async () => {
           },
           login: () => adminLogin,
         }}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -283,7 +283,7 @@ test('update review without onChanged callback', async () => {
           },
           login: () => adminLogin,
         }}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -337,7 +337,7 @@ test('cancel editing', async () => {
           },
           login: () => adminLogin,
         }}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -376,7 +376,7 @@ test('cannot update review as viewer', async () => {
           },
           login: () => viewerLogin,
         }}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -421,7 +421,7 @@ test('renders review', async () => {
           },
           login: () => viewerLogin,
         }}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )

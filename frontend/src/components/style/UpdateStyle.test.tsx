@@ -8,7 +8,7 @@ import type {
   StyleWithParentIds,
 } from '../../core/style/types'
 import type { UseDebounce } from '../../core/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 
 const dontCall = (): any => {
@@ -57,8 +57,8 @@ const listStyles: ListStylesIf = {
   }),
 }
 
-const searchIf: SearchIf = {
-  useSearch: () => ({
+const searchFieldIf: SearchFieldIf = {
+  useSearchField: () => ({
     activate: () => undefined,
     isActive: true,
   }),
@@ -84,7 +84,7 @@ test('updates style', async () => {
       }}
       onCancel={dontCall}
       onSaved={onSaved}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
       initialStyle={style}
     />,
   )
@@ -131,7 +131,7 @@ test('shows loading indicator', async () => {
       }}
       onCancel={dontCall}
       onSaved={dontCall}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
       initialStyle={style}
     />,
   )
@@ -155,7 +155,7 @@ test('cancels updating style', async () => {
       }}
       onCancel={cancel}
       onSaved={dontCall}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
       initialStyle={style}
     />,
   )

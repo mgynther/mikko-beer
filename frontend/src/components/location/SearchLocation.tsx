@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import type { Location, SearchLocationIf } from '../../core/location/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 
 import SearchBox, { nameFormatter } from '../common/SearchBox'
 import { createLocationSort } from './create-location-sort'
@@ -11,7 +11,7 @@ export interface Props {
   isCreateEnabled: boolean
   placeholderText: string
   searchLocationIf: SearchLocationIf
-  searchIf: SearchIf
+  searchFieldIf: SearchFieldIf
   select: (location: Location) => void
 }
 
@@ -20,7 +20,7 @@ const createId = 'create-new'
 function SearchLocation(props: Props): React.JSX.Element {
   const { search, isLoading } = props.searchLocationIf.useSearch()
   const [filter, setFilter] = useState('')
-  const [debouncedFilter] = props.searchIf.useDebounce(filter)
+  const [debouncedFilter] = props.searchFieldIf.useDebounce(filter)
   const [results, setResults] = useState<Location[]>([])
 
   const { create } = props.searchLocationIf.create.useCreate()
@@ -62,7 +62,7 @@ function SearchLocation(props: Props): React.JSX.Element {
         customSort={createLocationSort}
         formatter={nameFormatter}
         isLoading={isLoading}
-        searchIf={props.searchIf}
+        searchFieldIf={props.searchFieldIf}
         setFilter={(filter: string) => {
           setFilter(filter)
         }}

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import type {
   ListStylesIf,
   Style,
@@ -15,7 +15,7 @@ import type { NavigateIf } from '../../navigation'
 interface Props {
   listStylesIf: ListStylesIf
   navigateIf: NavigateIf
-  searchIf: SearchIf
+  searchFieldIf: SearchFieldIf
 }
 
 function Styles(props: Props): React.JSX.Element {
@@ -30,7 +30,7 @@ function Styles(props: Props): React.JSX.Element {
       <h3>Styles</h3>
       <SearchStyle
         listStylesIf={props.listStylesIf}
-        searchIf={props.searchIf}
+        searchFieldIf={props.searchFieldIf}
         select={(style: Style) => {
           void navigate(`/styles/${style.id}`)
         }}

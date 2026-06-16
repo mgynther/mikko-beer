@@ -4,7 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import CreateBeer from './CreateBeer'
 import type { CreateBeerIf, CreateBeerRequest } from '../../core/beer/types'
 import type { UseDebounce } from '../../core/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 
 const id = 'dbec2360-d6af-45f4-b2a0-cad732a87e20'
 const namePlaceholder = 'Name'
@@ -72,8 +72,8 @@ test('creates beer', async () => {
       },
     },
   }
-  const searchIf: SearchIf = {
-    useSearch: () => ({
+  const searchFieldIf: SearchFieldIf = {
+    useSearchField: () => ({
       activate: () => undefined,
       isActive: true,
     }),
@@ -83,7 +83,7 @@ test('creates beer', async () => {
     <CreateBeer
       select={selectBeer}
       createBeerIf={createBeerIf}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
     />,
   )
   const nameInput = getByPlaceholderText(namePlaceholder)

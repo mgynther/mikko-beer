@@ -5,7 +5,7 @@ import UpdateBeer from './UpdateBeer'
 import type { UseDebounce } from '../../core/types'
 import type { Brewery, SelectBreweryIf } from '../../core/brewery/types'
 import type { SelectStyleIf } from '../../core/style/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 
 const id = 'b3cee2c7-81b8-4b4d-8625-f5a3955258eb'
 const beerName = 'Kukko Pils'
@@ -71,16 +71,16 @@ const dontSelectStyle: SelectStyleIf = {
   },
 }
 
-const dontSearch: SearchIf = {
-  useSearch: () => ({
+const dontSearch: SearchFieldIf = {
+  useSearchField: () => ({
     activate: dontCall,
     isActive: false,
   }),
   useDebounce,
 }
 
-const doSearch: SearchIf = {
-  useSearch: () => ({
+const doSearch: SearchFieldIf = {
+  useSearchField: () => ({
     activate: () => undefined,
     isActive: true,
   }),
@@ -109,7 +109,7 @@ test('updates beer name', async () => {
           selectStyleIf: dontSelectStyle,
         },
       }}
-      searchIf={dontSearch}
+      searchFieldIf={dontSearch}
       onCancel={dontCall}
       onSaved={onSaved}
     />,
@@ -170,7 +170,7 @@ test('updates beer brewery', async () => {
           selectStyleIf: dontSelectStyle,
         },
       }}
-      searchIf={doSearch}
+      searchFieldIf={doSearch}
       onCancel={dontCall}
       onSaved={onSaved}
     />,
@@ -237,7 +237,7 @@ test('updates beer style', async () => {
           },
         },
       }}
-      searchIf={doSearch}
+      searchFieldIf={doSearch}
       onCancel={dontCall}
       onSaved={onSaved}
     />,
@@ -286,7 +286,7 @@ test('cancels update', async () => {
           selectStyleIf: dontSelectStyle,
         },
       }}
-      searchIf={dontSearch}
+      searchFieldIf={dontSearch}
       onCancel={onCanceled}
       onSaved={dontCall}
     />,

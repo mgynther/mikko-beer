@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react'
 
 import type { Brewery, SearchBreweryIf } from '../../core/brewery/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 
 import SearchBox, { nameFormatter } from '../common/SearchBox'
 
 export interface Props {
   searchBreweryIf: SearchBreweryIf
-  searchIf: SearchIf
+  searchFieldIf: SearchFieldIf
   select: (brewery: Brewery) => void
 }
 
 function SearchBrewery(props: Props): React.JSX.Element {
   const { search, isLoading } = props.searchBreweryIf.useSearch()
   const [filter, setFilter] = useState('')
-  const [debouncedFilter] = props.searchIf.useDebounce(filter)
+  const [debouncedFilter] = props.searchFieldIf.useDebounce(filter)
   const [results, setResults] = useState<Brewery[]>([])
 
   async function doSearch(filter: string): Promise<void> {
@@ -38,7 +38,7 @@ function SearchBrewery(props: Props): React.JSX.Element {
         customSort={undefined}
         formatter={nameFormatter}
         isLoading={isLoading}
-        searchIf={props.searchIf}
+        searchFieldIf={props.searchFieldIf}
         setFilter={(filter: string) => {
           setFilter(filter)
         }}

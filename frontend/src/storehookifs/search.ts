@@ -1,14 +1,14 @@
 import { useId } from 'react'
-import type { SearchIf } from '../core/search/types'
+import type { SearchFieldIf } from '../core/search/types'
 import type { UseDebounce } from '../core/types'
 import { useDispatch, useSelector } from '../react-redux-wrapper'
 import { activate, selectActiveSearch } from '../store/search/reducer'
 
-const search: (useDebounce: UseDebounce<string>) => SearchIf = (
+const search: (useDebounce: UseDebounce<string>) => SearchFieldIf = (
   useDebounce: UseDebounce<string>,
 ) => {
-  const searchIf: SearchIf = {
-    useSearch: () => {
+  const searchFieldIf: SearchFieldIf = {
+    useSearchField: () => {
       const activeSearch: string = useSelector(selectActiveSearch)
       const dispatch = useDispatch()
       const id = useId()
@@ -22,7 +22,7 @@ const search: (useDebounce: UseDebounce<string>) => SearchIf = (
     },
     useDebounce,
   }
-  return searchIf
+  return searchFieldIf
 }
 
 export default search

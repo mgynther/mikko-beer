@@ -8,6 +8,7 @@ import type { SearchLocationIf } from '../../core/location/types'
 import type { CreateBeerIf, SearchBeerIf } from '../../core/beer/types'
 import type { ReviewContainerIf } from '../../core/review/types'
 import type { UrlParamsIf } from '../util'
+import type { SearchFieldIf } from '../../core/search/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -166,7 +167,7 @@ const storageIdParamsIf: UrlParamsIf = {
   }),
 }
 
-const noSearchIf = { useSearch: dontCall, useDebounce }
+const noSearchIf: SearchFieldIf = { useSearchField: dontCall, useDebounce }
 
 const unusedStorageIf = {
   useGet: dontCall,
@@ -217,8 +218,8 @@ test('adds review', async () => {
       useNavigate: () => dontCall,
     },
     urlParamsIf: noParamsIf,
-    searchIf: {
-      useSearch: () => ({
+    searchFieldIf: {
+      useSearchField: () => ({
         activate: () => undefined,
         isActive: true,
       }),
@@ -296,7 +297,7 @@ test('loads storage', async () => {
         useNavigate: () => dontCall,
       }}
       urlParamsIf={storageIdParamsIf}
-      searchIf={noSearchIf}
+      searchFieldIf={noSearchIf}
     />,
   )
   const text = getByText(loadingIndicatorText)
@@ -327,7 +328,7 @@ test('shows storage loading error', async () => {
         useNavigate: () => dontCall,
       }}
       urlParamsIf={storageIdParamsIf}
-      searchIf={noSearchIf}
+      searchFieldIf={noSearchIf}
     />,
   )
   const text = getByText('Error, storage does not exist.')
@@ -380,8 +381,8 @@ test('adds review from storage', async () => {
         get: () => undefined,
       }),
     },
-    searchIf: {
-      useSearch: () => ({
+    searchFieldIf: {
+      useSearchField: () => ({
         activate: () => undefined,
         isActive: true,
       }),
@@ -451,7 +452,7 @@ test('navigates', async () => {
         useNavigate: () => navigate,
       }}
       urlParamsIf={storageIdParamsIf}
-      searchIf={noSearchIf}
+      searchFieldIf={noSearchIf}
     />,
   )
   expect(navigate.mock.calls).toEqual([[`/beers/${beerId}`]])

@@ -2,7 +2,7 @@ import { act, render, waitFor } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
 import Locations from './Locations'
 import type { Location, LocationList } from '../../core/location/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import LinkWrapper from '../LinkWrapper'
 import type { UseDebounce } from '../../core/types'
 import type { CreateLocationIf } from '../../core/location/types'
@@ -14,8 +14,8 @@ const notUsed = (): any => {
   throw new Error('Do not call')
 }
 
-const activeSearch: SearchIf = {
-  useSearch: () => ({
+const activeSearch: SearchFieldIf = {
+  useSearchField: () => ({
     activate: notUsed,
     isActive: false,
   }),
@@ -70,7 +70,7 @@ test('renders locations', async () => {
           }),
           create: createLocationIf,
         }}
-        searchIf={activeSearch}
+        searchFieldIf={activeSearch}
       />
     </LinkWrapper>,
   )
@@ -111,7 +111,7 @@ test('renders loading', async () => {
           }),
           create: createLocationIf,
         }}
-        searchIf={activeSearch}
+        searchFieldIf={activeSearch}
       />
     </LinkWrapper>,
   )
@@ -162,7 +162,7 @@ test('stops loading more', async () => {
           }),
           create: createLocationIf,
         }}
-        searchIf={activeSearch}
+        searchFieldIf={activeSearch}
       />
     </LinkWrapper>,
   )

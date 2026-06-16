@@ -5,7 +5,7 @@ import UpdateReview from './UpdateReview'
 import type { UseDebounce } from '../../core/types'
 import type { CreateBeerIf, SearchBeerIf } from '../../core/beer/types'
 import type { ReviewContainerIf } from '../../core/review/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import type { SearchLocationIf } from '../../core/location/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
@@ -102,8 +102,8 @@ const reviewContainerIf: ReviewContainerIf = {
   },
 }
 
-const searchIf: SearchIf = {
-  useSearch: () => ({
+const searchFieldIf: SearchFieldIf = {
+  useSearchField: () => ({
     activate: () => undefined,
     isActive: true,
   }),
@@ -199,7 +199,7 @@ test('updates review', async () => {
         selectBeerIf,
         reviewContainerIf,
       }}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
       onCancel={dontCall}
     />,
   )
@@ -243,7 +243,7 @@ test('cancels update', async () => {
         selectBeerIf,
         reviewContainerIf,
       }}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
       onCancel={onCancel}
     />,
   )

@@ -2,12 +2,12 @@ import React from 'react'
 
 import SearchLocation from './SearchLocation'
 import type { SearchLocationIf } from '../../core/location/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import type { NavigateIf } from '../../navigation'
 
 export interface Props {
   navigateIf: NavigateIf
-  searchIf: SearchIf
+  searchFieldIf: SearchFieldIf
   searchLocationIf: SearchLocationIf
 }
 
@@ -18,7 +18,7 @@ function SearchLocationWithNavi(props: Props): React.JSX.Element {
       confirm={confirm}
       isCreateEnabled={false}
       placeholderText={'Search location'}
-      searchIf={props.searchIf}
+      searchFieldIf={props.searchFieldIf}
       searchLocationIf={props.searchLocationIf}
       select={(location) => {
         void navigate(`/locations/${location.id}`)

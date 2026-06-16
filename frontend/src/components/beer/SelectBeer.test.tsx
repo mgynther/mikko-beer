@@ -8,7 +8,7 @@ import type {
   CreateBeerRequest,
 } from '../../core/beer/types'
 import type { UseDebounce } from '../../core/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import type { Brewery } from '../../core/brewery/types'
 
 const namePlaceholder = 'Name'
@@ -42,8 +42,8 @@ const dontCreate = {
   isLoading: false,
 }
 
-const searchIf: SearchIf = {
-  useSearch: () => ({
+const searchFieldIf: SearchFieldIf = {
+  useSearchField: () => ({
     activate: () => undefined,
     isActive: true,
   }),
@@ -103,7 +103,7 @@ test('selects created beer', async () => {
           }),
         },
       }}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
     />,
   )
   const nameInput = getByPlaceholderText(namePlaceholder)
@@ -184,7 +184,7 @@ test('selects beer', async () => {
           }),
         },
       }}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
     />,
   )
 

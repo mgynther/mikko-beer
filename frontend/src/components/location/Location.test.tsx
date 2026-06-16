@@ -29,7 +29,7 @@ import type {
   SetSearch,
 } from '../../core/review/types'
 import type { UrlParamsIf } from '../util'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
@@ -207,8 +207,8 @@ const getLocationIf: GetLocationIf = {
   }),
 }
 
-const searchIf: SearchIf = {
-  useSearch: () => ({
+const searchFieldIf: SearchFieldIf = {
+  useSearchField: () => ({
     activate: (): undefined => undefined,
     isActive: true,
   }),
@@ -232,7 +232,7 @@ test('updates location', async () => {
         login: getLogin(),
       }}
       statsIf={statsIf}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
     />,
   )
   getByRole('heading', { name })
@@ -276,7 +276,7 @@ test('cancel editing', async () => {
       getLocationIf={getLocationIf}
       updateLocationIf={dontUpdateLocationIf}
       statsIf={statsIf}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
     />,
   )
   getByRole('heading', { name })
@@ -303,7 +303,7 @@ test('throw on missing id', async () => {
         getLocationIf={getLocationIf}
         updateLocationIf={dontUpdateLocationIf}
         statsIf={statsIf}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
       />,
     ),
   ).toThrow('Location component without locationId. Should not happen.')
@@ -323,7 +323,7 @@ test('render loading', async () => {
       }}
       updateLocationIf={dontUpdateLocationIf}
       statsIf={statsIf}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
     />,
   )
   getByText(loadingIndicatorText)
@@ -343,7 +343,7 @@ test('render not found', async () => {
       }}
       updateLocationIf={dontUpdateLocationIf}
       statsIf={statsIf}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
     />,
   )
   getByText('Not found')

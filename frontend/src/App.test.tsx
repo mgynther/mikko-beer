@@ -342,8 +342,8 @@ const storeIf: StoreIf = {
     },
     setSearch: async () => undefined,
   },
-  searchIf: {
-    useSearch: () => ({
+  searchFieldIf: {
+    useSearchField: () => ({
       activate: dontCall,
       isActive: false,
     }),

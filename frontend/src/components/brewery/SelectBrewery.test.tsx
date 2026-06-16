@@ -40,8 +40,8 @@ test('selects brewery', async () => {
         },
         search,
       }}
-      searchIf={{
-        useSearch: () => ({
+      searchFieldIf={{
+        useSearchField: () => ({
           activate: (): undefined => undefined,
           isActive: true,
         }),
@@ -78,8 +78,8 @@ test('selects created brewery', async () => {
         },
         search,
       }}
-      searchIf={{
-        useSearch: () => ({
+      searchFieldIf={{
+        useSearchField: () => ({
           activate: (): undefined => undefined,
           isActive: false,
         }),

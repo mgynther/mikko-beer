@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import type { NavigateIf } from './navigation'
 import type { SearchBeerIf } from './core/beer/types'
 import type { SearchBreweryIf } from './core/brewery/types'
-import type { SearchIf } from './core/search/types'
+import type { SearchFieldIf } from './core/search/types'
 import type { NavMenuState, Theme } from './core/types'
 import Nav from './Nav'
 
@@ -20,7 +20,7 @@ interface LayoutProps {
   navigateIf: NavigateIf
   searchBeerIf: SearchBeerIf
   searchBreweryIf: SearchBreweryIf
-  searchIf: SearchIf
+  searchFieldIf: SearchFieldIf
   isAdmin: boolean
   isLoggedIn: boolean
   logout: (() => void) | undefined
@@ -42,7 +42,7 @@ function Layout(props: LayoutProps): React.JSX.Element {
               navigateIf={props.navigateIf}
               searchBeerIf={props.searchBeerIf}
               searchBreweryIf={props.searchBreweryIf}
-              searchIf={props.searchIf}
+              searchFieldIf={props.searchFieldIf}
               theme={props.theme}
             />
           </header>

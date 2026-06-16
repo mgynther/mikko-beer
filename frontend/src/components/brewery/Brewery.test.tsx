@@ -26,7 +26,7 @@ import type {
 } from '../../core/review/types'
 import type { ListStoragesByIf } from '../../core/storage/types'
 import type { GetBreweryIf, UpdateBreweryIf } from '../../core/brewery/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import type { UrlParamsIf } from '../util'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 
@@ -208,8 +208,8 @@ const getBreweryIf: GetBreweryIf = {
   }),
 }
 
-const searchIf: SearchIf = {
-  useSearch: () => ({
+const searchFieldIf: SearchFieldIf = {
+  useSearchField: () => ({
     activate: dontCall,
     isActive: true,
   }),
@@ -239,7 +239,7 @@ test('updates brewery', async () => {
           isLoading: false,
         }),
       }}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
       statsIf={statsIf}
     />,
   )
@@ -283,7 +283,7 @@ test('cancel update', async () => {
       reviewIf={reviewIf}
       getBreweryIf={getBreweryIf}
       updateBreweryIf={dontUpdateBreweryIf}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
       statsIf={statsIf}
     />,
   )
@@ -312,7 +312,7 @@ test('render loading', async () => {
         }),
       }}
       updateBreweryIf={dontUpdateBreweryIf}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
       statsIf={statsIf}
     />,
   )
@@ -333,7 +333,7 @@ test('render not found', async () => {
         }),
       }}
       updateBreweryIf={dontUpdateBreweryIf}
-      searchIf={searchIf}
+      searchFieldIf={searchFieldIf}
       statsIf={statsIf}
     />,
   )
@@ -355,7 +355,7 @@ test('throw on missing id', async () => {
         reviewIf={reviewIf}
         getBreweryIf={getBreweryIf}
         updateBreweryIf={dontUpdateBreweryIf}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
         statsIf={statsIf}
       />,
     ),

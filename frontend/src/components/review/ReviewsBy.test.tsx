@@ -20,7 +20,7 @@ import type {
   SearchBeerIf,
   SelectBeerIf,
 } from '../../core/beer/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 import type { SearchLocationIf } from '../../core/location/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 import { testTimes } from '../../../test-util/filter-time'
@@ -95,8 +95,8 @@ const reviewContainerIf: ReviewContainerIf = {
   },
 }
 
-const searchIf: SearchIf = {
-  useSearch: () => ({
+const searchFieldIf: SearchFieldIf = {
+  useSearchField: () => ({
     activate: () => undefined,
     isActive: true,
   }),
@@ -221,7 +221,7 @@ test('lists reviews', async () => {
         }}
         urlParamsIf={urlParamsIf}
         reviewIf={dontUpdateReviewIf}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -326,7 +326,7 @@ orderChangeTests.forEach((testCase) => {
             }),
           }}
           reviewIf={dontUpdateReviewIf}
-          searchIf={searchIf}
+          searchFieldIf={searchFieldIf}
         />
       </LinkWrapper>,
     )
@@ -377,7 +377,7 @@ test('renders loading', async () => {
         }}
         urlParamsIf={urlParamsIf}
         reviewIf={dontUpdateReviewIf}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -408,7 +408,7 @@ test('opens filters', async () => {
         }}
         urlParamsIf={urlParamsIf}
         reviewIf={dontUpdateReviewIf}
-        searchIf={searchIf}
+        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -496,7 +496,7 @@ sliderChangeTests.forEach((testCase) => {
             }),
           }}
           reviewIf={dontUpdateReviewIf}
-          searchIf={searchIf}
+          searchFieldIf={searchFieldIf}
         />
       </LinkWrapper>,
     )

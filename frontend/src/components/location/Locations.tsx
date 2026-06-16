@@ -5,7 +5,7 @@ import type {
   ListLocationsIf,
   SearchLocationIf,
 } from '../../core/location/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 
 import type { NavigateIf } from '../../navigation'
 
@@ -20,7 +20,7 @@ export interface Props {
   listLocationsIf: ListLocationsIf
   navigateIf: NavigateIf
   searchLocationIf: SearchLocationIf
-  searchIf: SearchIf
+  searchFieldIf: SearchFieldIf
 }
 
 function Locations(props: Props): React.JSX.Element {
@@ -61,7 +61,7 @@ function Locations(props: Props): React.JSX.Element {
       <SearchLocationWithNavi
         navigateIf={props.navigateIf}
         searchLocationIf={props.searchLocationIf}
-        searchIf={props.searchIf}
+        searchFieldIf={props.searchFieldIf}
       />
       <ul>
         {loadedLocations.map((location: Location) => (

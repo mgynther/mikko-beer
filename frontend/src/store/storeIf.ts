@@ -34,7 +34,7 @@ import type {
   ReviewContainerIf,
   ReviewIf,
 } from '../core/review/types'
-import type { SearchIf } from '../core/search/types'
+import type { SearchFieldIf } from '../core/search/types'
 import type { StatsIf } from '../core/stats/types'
 import type {
   CreateStorageIf,
@@ -87,7 +87,7 @@ export interface StoreIf {
 
   statsIf: StatsIf
 
-  searchIf: SearchIf
+  searchFieldIf: SearchFieldIf
 
   createStorageIf: CreateStorageIf
   getStorageIf: GetStorageIf

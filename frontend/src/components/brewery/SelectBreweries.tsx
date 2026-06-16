@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
 import type { Brewery, SelectBreweryIf } from '../../core/brewery/types'
-import type { SearchIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../core/search/types'
 
 import Button from '../common/Button'
 import SelectBrewery from './SelectBrewery'
@@ -12,7 +12,7 @@ import '../common/SelectedItem.css'
 import './SelectBreweries.css'
 
 export interface Props {
-  searchIf: SearchIf
+  searchFieldIf: SearchFieldIf
   selectBreweryIf: SelectBreweryIf
   initialBreweries: Brewery[]
   select: (breweries: string[]) => void
@@ -24,7 +24,7 @@ interface BrewerySelection {
 }
 
 interface SelectionItemProps {
-  searchIf: SearchIf
+  searchFieldIf: SearchFieldIf
   selectBreweryIf: SelectBreweryIf
   brewery: Brewery | undefined
   select: (brewery: Brewery) => void
@@ -38,7 +38,7 @@ function SelectionItem(props: SelectionItemProps): React.JSX.Element {
     <>
       {props.brewery === undefined && (
         <SelectBrewery
-          searchIf={props.searchIf}
+          searchFieldIf={props.searchFieldIf}
           selectBreweryIf={props.selectBreweryIf}
           select={props.select}
           isRemoveVisible={props.isRemoveVisible}
@@ -99,7 +99,7 @@ function SelectBreweries(props: Props): React.JSX.Element {
       {selections.map((selection, selectionIndex) => (
         <SelectionItem
           key={selection.id}
-          searchIf={props.searchIf}
+          searchFieldIf={props.searchFieldIf}
           selectBreweryIf={props.selectBreweryIf}
           brewery={selection.brewery}
           select={(brewery) => {
