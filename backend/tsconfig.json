@@ -1,20 +1,7 @@
 {
+  "extends": "./tsconfig-base.json",
   "compilerOptions": {
-    "module": "esnext",
-    "target": "ESNext",
-    "declaration": true,
-    "rootDir": "./src",
-    "outDir": "./dist",
-    "strict": true,
-    "noImplicitAny": true
+    "noEmit": true
   },
-  "include": ["src/**/*"],
-  "watchOptions": {
-    "watchFile": "useFsEvents",
-    "watchDirectory": "useFsEvents",
-    "fallbackPolling": "dynamicPriority",
-    "synchronousWatchDirectory": true,
-    "excludeDirectories": ["**/node_modules", "build-tests", "dist"],
-    "excludeFiles": []
-  }
+  "include": ["src/**/*", "test/**/*"]
 }
