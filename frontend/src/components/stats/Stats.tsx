@@ -11,7 +11,6 @@ import Style from './Style'
 import TabButton from '../common/TabButton'
 import type { StatsIf } from '../../core/stats/types'
 import Container from './Container'
-import type { UrlParamsIf } from '../util'
 
 import './StatsModeContainer.css'
 
@@ -31,7 +30,6 @@ interface Props {
   breweryId: string | undefined
   locationId: string | undefined
   styleId: string | undefined
-  urlParamsIf: UrlParamsIf
 }
 
 interface ModeButton {
@@ -101,7 +99,7 @@ function getStatsMode(stats: string | undefined): Mode {
 }
 
 function Stats(props: Props): React.JSX.Element | null {
-  const search = props.urlParamsIf.useSearchParams()
+  const search = props.statsIf.useUrlSearchParams()
   const stats = search.get('stats') ?? undefined
   const showFull = props.breweryId === undefined && props.styleId === undefined
   const mode = getStatsMode(stats)

@@ -11,9 +11,12 @@ import './StatsTable.css'
 import { asText } from '../container/ContainerInfo'
 import Filters from './Filters'
 import TabButton from '../common/TabButton'
-import type { ListDirection, UseDebounce } from '../../core/types'
+import type {
+  ListDirection,
+  SearchParameters,
+  UseDebounce,
+} from '../../core/types'
 import { formatTitle } from '../list-helpers'
-import type { SearchParameters } from '../util'
 import { searchParams } from './search-params'
 import type { SearchRecord } from './filter-util'
 

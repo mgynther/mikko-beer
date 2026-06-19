@@ -81,8 +81,9 @@ import type { SearchFieldIf } from './core/search/types'
 import {
   getUseDebounce,
   infiniteScroll,
-  urlParamsIf,
   useDebounce,
+  useUrlPathParams,
+  useUrlSearchParams,
 } from './components/util'
 import { navigateIf } from './navigation'
 import type { StoreIf } from './store/storeIf'
@@ -231,6 +232,7 @@ function RtkApp(): React.JSX.Element {
     annual: getAnnualStorageStatsIf,
     monthly: getMonthlyStorageStatsIf,
     setSearch: setSearch.stats,
+    useUrlSearchParams,
   }
   const getStorageIf: GetStorageIf = getStorage()
   const deleteStorageIf: DeleteStorageIf = deleteStorage()
@@ -258,6 +260,7 @@ function RtkApp(): React.JSX.Element {
     minTime,
     maxTime,
     setSearch: setSearch.reviewList,
+    useUrlSearchParams,
   }
   const listReviewsIf: ListReviewsIf = listReviews(
     infiniteScroll,
@@ -294,6 +297,7 @@ function RtkApp(): React.JSX.Element {
     maxTime,
     setSearch.stats,
     getUseDebounce,
+    useUrlSearchParams,
   )
 
   const searchFieldIf: SearchFieldIf = search(useDebounce<string>)
@@ -352,7 +356,7 @@ function RtkApp(): React.JSX.Element {
     userIf,
   }
 
-  return <App urlParamsIf={urlParamsIf} storeIf={storeIf} />
+  return <App useUrlPathParams={useUrlPathParams} storeIf={storeIf} />
 }
 
 export default RtkApp

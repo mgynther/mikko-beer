@@ -1,6 +1,7 @@
 import type { Brewery } from '../brewery/types'
 import type { Container } from '../../core/container/types'
 import type { Style } from '../style/types'
+import type { UseUrlSearchParams } from '../types'
 
 export interface CreateStorageRequest {
   beer: string
@@ -105,4 +106,5 @@ export interface StorageStatsIf {
   annual: GetAnnualStorageStatsIf
   monthly: GetMonthlyStorageStatsIf
   setSearch: (mode: string, state: Record<string, string>) => void
+  useUrlSearchParams: UseUrlSearchParams
 }

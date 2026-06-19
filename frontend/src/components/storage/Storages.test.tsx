@@ -4,10 +4,9 @@ import Storages from './Storages'
 import type { Storage } from '../../core/storage/types'
 import { Role } from '../../core/user/types'
 import LinkWrapper from '../LinkWrapper'
-import type { UseDebounce } from '../../core/types'
+import type { UseDebounce, UseUrlSearchParams } from '../../core/types'
 import type { CreateBeerIf, SearchBeerIf } from '../../core/beer/types'
 import type { ReviewContainerIf } from '../../core/review/types'
-import type { SearchParameters } from '../util'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -101,6 +100,13 @@ const reviewContainerIf: ReviewContainerIf = {
 }
 
 test('renders storage', () => {
+  const useUrlSearchParams: UseUrlSearchParams = () => ({
+    get: (key: string): string | undefined => {
+      if (key === 'stats') {
+        return 'monthly'
+      }
+    },
+  })
   const { getByRole, getByText } = render(
     <LinkWrapper>
       <Storages
@@ -127,19 +133,6 @@ test('renders storage', () => {
             useDelete: () => ({
               delete: dontCall,
             }),
-          },
-        }}
-        urlParamsIf={{
-          usePathParams: () => ({}),
-          useSearchParams: () => {
-            const searchParams: SearchParameters = {
-              get: (key: string) => {
-                if (key === 'stats') {
-                  return 'monthly'
-                }
-              },
-            }
-            return searchParams
           },
         }}
         searchFieldIf={{
@@ -175,6 +168,7 @@ test('renders storage', () => {
             }),
           },
           setSearch: async () => undefined,
+          useUrlSearchParams,
         }}
         createStorageIf={{
           useCreate: () => ({

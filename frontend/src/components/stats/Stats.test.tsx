@@ -13,8 +13,11 @@ import type {
   StatsResult,
 } from '../../core/stats/types'
 import LinkWrapper from '../LinkWrapper'
-import type { UrlParamsIf } from '../util'
-import type { UseDebounce, YearMonth } from '../../core/types'
+import type {
+  UseDebounce,
+  UseUrlSearchParams,
+  YearMonth,
+} from '../../core/types'
 import { openFilters } from '../common/filters-test-util'
 
 const getUseDebounce = function <T>(): UseDebounce<T> {
@@ -27,6 +30,10 @@ const emptyLocationStats = { location: [] }
 
 const minTime: YearMonth = testTimes.min.yearMonth
 const maxTime: YearMonth = testTimes.max.yearMonth
+
+const defaultUseUrlSearchParams: UseUrlSearchParams = () => ({
+  get: () => undefined,
+})
 
 const emptyStatsIf: StatsIf = {
   annual: {
@@ -144,44 +151,35 @@ const emptyStatsIf: StatsIf = {
     getUseDebounce,
   },
   setSearch: () => undefined,
+  useUrlSearchParams: defaultUseUrlSearchParams,
 }
 
-const urlParamsIf: UrlParamsIf = {
-  usePathParams: () => ({}),
-  useSearchParams: () => ({
-    get: () => undefined,
-  }),
-}
-
-function getStatsParamsIf(
+function getUseUrlSearchParams(
   stats: string,
   filters: Record<string, string> = {},
-): UrlParamsIf {
+): UseUrlSearchParams {
   const params: Record<string, string> = { ...filters, stats }
-  return {
-    usePathParams: () => ({}),
-    useSearchParams: () => ({
-      get: (name: string) => params[name],
-    }),
-  }
+  return () => ({
+    get: (name: string) => params[name],
+  })
 }
 
 interface OverallTestCase {
-  urlParamsIf: UrlParamsIf
+  useUrlSearchParams: UseUrlSearchParams
   description: string
 }
 
 const overallTestCases: OverallTestCase[] = [
   {
-    urlParamsIf: urlParamsIf,
+    useUrlSearchParams: defaultUseUrlSearchParams,
     description: 'by default',
   },
   {
-    urlParamsIf: getStatsParamsIf('overall'),
+    useUrlSearchParams: getUseUrlSearchParams('overall'),
     description: 'from search param',
   },
   {
-    urlParamsIf: getStatsParamsIf('unknown'),
+    useUrlSearchParams: getUseUrlSearchParams('unknown'),
     description: 'from unknown search param',
   },
 ]
@@ -190,9 +188,9 @@ overallTestCases.forEach((testCase) => {
   test(`renders overall stats ${testCase.description}`, () => {
     const { getByText } = render(
       <Stats
-        urlParamsIf={testCase.urlParamsIf}
         statsIf={{
           ...emptyStatsIf,
+          useUrlSearchParams: testCase.useUrlSearchParams,
           overall: {
             useStats: () => ({
               stats: {
@@ -238,9 +236,9 @@ overallTestCases.forEach((testCase) => {
 test('renders annual stats', () => {
   const { getByText } = render(
     <Stats
-      urlParamsIf={getStatsParamsIf('annual')}
       statsIf={{
         ...emptyStatsIf,
+        useUrlSearchParams: getUseUrlSearchParams('annual'),
         annual: {
           useStats: () => ({
             stats: {
@@ -329,10 +327,10 @@ test('renders annual container stats', async () => {
         return () => undefined
       },
     },
+    useUrlSearchParams: getUseUrlSearchParams('annual_container'),
   }
   const { getByText } = render(
     <Stats
-      urlParamsIf={getStatsParamsIf('annual_container')}
       statsIf={statsIf}
       breweryId={'2bc301aa-1cbf-4764-879b-973346fdd2e3'}
       locationId={'1fc4acba-fc28-4629-b2d9-7b65669fb2a9'}
@@ -392,12 +390,12 @@ test('renders brewery stats', async () => {
       maxTime,
       getUseDebounce,
     },
+    useUrlSearchParams: getUseUrlSearchParams('brewery'),
   }
 
   const { getByText } = render(
     <LinkWrapper>
       <Stats
-        urlParamsIf={getStatsParamsIf('brewery')}
         statsIf={statsIf}
         breweryId={'a186917f-0d4c-40d0-bf67-e96227c55528'}
         locationId={'b533d497-8256-4525-8892-180a078060d5'}
@@ -425,12 +423,12 @@ test('sets state', async () => {
   const statsIf: StatsIf = {
     ...emptyStatsIf,
     setSearch,
+    useUrlSearchParams: getUseUrlSearchParams('brewery'),
   }
 
   const { getByRole } = render(
     <LinkWrapper>
       <Stats
-        urlParamsIf={getStatsParamsIf('brewery')}
         statsIf={statsIf}
         breweryId={undefined}
         locationId={undefined}
@@ -447,9 +445,9 @@ test('sets state', async () => {
 test('renders container stats', () => {
   const { getByText } = render(
     <Stats
-      urlParamsIf={getStatsParamsIf('container')}
       statsIf={{
         ...emptyStatsIf,
+        useUrlSearchParams: getUseUrlSearchParams('container'),
         container: {
           useStats: () => ({
             stats: {
@@ -502,9 +500,11 @@ test('renders container stats', () => {
 test('renders filtered container stats', () => {
   const { getByText, queryByText } = render(
     <Stats
-      urlParamsIf={getStatsParamsIf('container', { s_min_count: '11' })}
       statsIf={{
         ...emptyStatsIf,
+        useUrlSearchParams: getUseUrlSearchParams('container', {
+          s_min_count: '11',
+        }),
         container: {
           useStats: () => ({
             stats: {
@@ -589,12 +589,12 @@ test('renders location stats', async () => {
       maxTime,
       getUseDebounce,
     },
+    useUrlSearchParams: getUseUrlSearchParams('location'),
   }
 
   const { getByText } = render(
     <LinkWrapper>
       <Stats
-        urlParamsIf={getStatsParamsIf('location')}
         statsIf={statsIf}
         breweryId={'8e13fb83-6793-4c5b-a53a-9d867f07dfe4'}
         locationId={'e3da0a72-c0fc-43dc-95ca-2019406c40fb'}
@@ -619,9 +619,9 @@ test('renders location stats', async () => {
 test('renders rating stats', () => {
   const { getByText } = render(
     <Stats
-      urlParamsIf={getStatsParamsIf('rating')}
       statsIf={{
         ...emptyStatsIf,
+        useUrlSearchParams: getUseUrlSearchParams('rating'),
         rating: {
           useStats: () => ({
             stats: {
@@ -674,9 +674,9 @@ test('renders style stats', () => {
   const { getByText } = render(
     <LinkWrapper>
       <Stats
-        urlParamsIf={getStatsParamsIf('style')}
         statsIf={{
           ...emptyStatsIf,
+          useUrlSearchParams: getUseUrlSearchParams('style'),
           style: {
             useStats: () => statsResult,
             minTime,
@@ -757,10 +757,10 @@ navigationTests.forEach((testCase) => {
     const { getByRole } = render(
       <LinkWrapper>
         <Stats
-          urlParamsIf={getStatsParamsIf(testCase.originalSearch)}
           statsIf={{
             ...emptyStatsIf,
             setSearch,
+            useUrlSearchParams: getUseUrlSearchParams(testCase.originalSearch),
           }}
           breweryId={undefined}
           locationId={undefined}
@@ -780,10 +780,10 @@ test('navigates from overall to overall', async () => {
   const { getByRole } = render(
     <LinkWrapper>
       <Stats
-        urlParamsIf={getStatsParamsIf('overall')}
         statsIf={{
           ...emptyStatsIf,
           setSearch,
+          useUrlSearchParams: getUseUrlSearchParams('overall'),
         }}
         breweryId={undefined}
         locationId={undefined}

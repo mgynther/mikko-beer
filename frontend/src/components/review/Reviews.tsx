@@ -11,14 +11,12 @@ import ReviewList from './ReviewList'
 
 import './Review.css'
 import { parseSearchParams } from './search-params'
-import type { UrlParamsIf } from '../util'
 import { toTimestamp } from '../common/filter-util'
 
 const pageSize = 20
 
 interface Props {
   listReviewsIf: ListReviewsIf
-  urlParamsIf: UrlParamsIf
   reviewIf: ReviewIf
   searchFieldIf: SearchFieldIf
 }
@@ -30,7 +28,7 @@ function Reviews(props: Props): React.JSX.Element {
   const { list, reviewList, isLoading, isUninitialized } =
     props.listReviewsIf.useList()
 
-  const searchParameters = props.urlParamsIf.useSearchParams()
+  const searchParameters = props.listReviewsIf.filterIf.useUrlSearchParams()
   const parsedSearchParams = parseSearchParams({
     initialSorting: {
       order: 'time',

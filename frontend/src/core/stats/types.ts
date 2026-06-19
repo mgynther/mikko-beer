@@ -3,6 +3,7 @@ import type {
   ListDirection,
   Pagination,
   UseDebounce,
+  UseUrlSearchParams,
   YearMonth,
 } from '../types'
 
@@ -288,4 +289,5 @@ export interface StatsIf {
   rating: GetRatingStatsIf
   style: GetStyleStatsIf
   setSearch: SetSearch
+  useUrlSearchParams: UseUrlSearchParams
 }

@@ -24,7 +24,6 @@ import type { SearchFieldIf } from '../../core/search/types'
 import type { SearchLocationIf } from '../../core/location/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 import { testTimes } from '../../../test-util/filter-time'
-import type { UrlParamsIf } from '../util'
 import { openFilters } from '../common/filters-test-util'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
@@ -186,14 +185,10 @@ const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
   minTime,
   maxTime,
   setSearch,
-})
-
-const urlParamsIf: UrlParamsIf = {
-  usePathParams: () => ({}),
-  useSearchParams: () => ({
+  useUrlSearchParams: () => ({
     get: (): undefined => undefined,
   }),
-}
+})
 
 test('lists reviews', async () => {
   const list = vitest.fn()
@@ -219,7 +214,6 @@ test('lists reviews', async () => {
           },
           filterIf: listFilterIf(setSearch),
         }}
-        urlParamsIf={urlParamsIf}
         reviewIf={dontUpdateReviewIf}
         searchFieldIf={searchFieldIf}
       />
@@ -314,16 +308,19 @@ orderChangeTests.forEach((testCase) => {
       r_order: testCase.originalOrder,
       r_direction: testCase.originalDirection,
     }
+    const listReviewsByIf: ListReviewsByIf = getListReviewsByIf(setSearch)
     const { getByRole } = render(
       <LinkWrapper>
         <ReviewsBy
           id={id}
-          listReviewsByIf={getListReviewsByIf(setSearch)}
-          urlParamsIf={{
-            usePathParams: () => ({ ...searchParams }),
-            useSearchParams: () => ({
-              get: (key: string): string | undefined => searchParams[key],
-            }),
+          listReviewsByIf={{
+            ...listReviewsByIf,
+            filterIf: {
+              ...listReviewsByIf.filterIf,
+              useUrlSearchParams: () => ({
+                get: (key: string): string | undefined => searchParams[key],
+              }),
+            },
           }}
           reviewIf={dontUpdateReviewIf}
           searchFieldIf={searchFieldIf}
@@ -375,7 +372,6 @@ test('renders loading', async () => {
           },
           filterIf: listFilterIf(() => undefined),
         }}
-        urlParamsIf={urlParamsIf}
         reviewIf={dontUpdateReviewIf}
         searchFieldIf={searchFieldIf}
       />
@@ -406,7 +402,6 @@ test('opens filters', async () => {
           },
           filterIf: listFilterIf(setSearch),
         }}
-        urlParamsIf={urlParamsIf}
         reviewIf={dontUpdateReviewIf}
         searchFieldIf={searchFieldIf}
       />
@@ -486,14 +481,13 @@ sliderChangeTests.forEach((testCase) => {
                 isLoading: false,
               }
             },
-            filterIf: listFilterIf(setSearch),
-          }}
-          urlParamsIf={{
-            usePathParams: () => ({ ...defaultFiltersOpenParams }),
-            useSearchParams: () => ({
-              get: (key: string): string | undefined =>
-                defaultFiltersOpenParams[key],
-            }),
+            filterIf: {
+              ...listFilterIf(setSearch),
+              useUrlSearchParams: () => ({
+                get: (key: string): string | undefined =>
+                  defaultFiltersOpenParams[key],
+              }),
+            },
           }}
           reviewIf={dontUpdateReviewIf}
           searchFieldIf={searchFieldIf}

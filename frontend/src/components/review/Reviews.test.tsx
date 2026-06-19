@@ -26,7 +26,6 @@ import type { SearchFieldIf } from '../../core/search/types'
 import type { SearchLocationIf } from '../../core/location/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 import { testTimes } from '../../../test-util/filter-time'
-import type { UrlParamsIf } from '../util'
 import { openFilters } from '../common/filters-test-util'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
@@ -216,6 +215,9 @@ const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
   minTime,
   maxTime,
   setSearch,
+  useUrlSearchParams: () => ({
+    get: (): undefined => undefined,
+  }),
 })
 
 const getListReviewsIf: GetListReviewsIf = (cb, setSearch) => ({
@@ -244,13 +246,6 @@ const getListReviewsIf: GetListReviewsIf = (cb, setSearch) => ({
   filterIf: listFilterIf(setSearch),
 })
 
-const urlParamsIf: UrlParamsIf = {
-  usePathParams: () => ({}),
-  useSearchParams: () => ({
-    get: (): undefined => undefined,
-  }),
-}
-
 test('updates review', async () => {
   const user = userEvent.setup()
   const update = vitest.fn()
@@ -268,7 +263,6 @@ test('updates review', async () => {
             return () => undefined
           },
         }}
-        urlParamsIf={urlParamsIf}
         reviewIf={{
           get: {
             useGet: () => ({
@@ -339,23 +333,23 @@ test('sets review sorting to rating asc', async () => {
   const listParams = vitest.fn()
   const setSearch = vitest.fn()
   let scrollCb: () => void = () => undefined
+  const listReviewsIf: ListReviewsIf = getListReviewsIf(listParams, setSearch)
   const { getByRole } = render(
     <LinkWrapper>
       <Reviews
         listReviewsIf={{
-          ...getListReviewsIf(listParams, setSearch),
+          ...listReviewsIf,
+          filterIf: {
+            ...listReviewsIf.filterIf,
+            useUrlSearchParams: () => ({
+              get: (key: string): string | undefined =>
+                defaultSearchParams[key],
+            }),
+          },
           infiniteScroll: (cb): (() => undefined) => {
             scrollCb = cb
             return () => undefined
           },
-        }}
-        urlParamsIf={{
-          usePathParams: () => ({
-            ...defaultSearchParams,
-          }),
-          useSearchParams: () => ({
-            get: (key: string): string | undefined => defaultSearchParams[key],
-          }),
         }}
         reviewIf={dontUpdateReviewIf}
         searchFieldIf={searchFieldIf}
@@ -405,7 +399,6 @@ test('renders loading', async () => {
           },
           filterIf: listFilterIf(() => undefined),
         }}
-        urlParamsIf={urlParamsIf}
         reviewIf={dontUpdateReviewIf}
         searchFieldIf={searchFieldIf}
       />
@@ -464,7 +457,6 @@ test('stops loading more', async () => {
           },
           filterIf: listFilterIf(() => undefined),
         }}
-        urlParamsIf={urlParamsIf}
         reviewIf={dontUpdateReviewIf}
         searchFieldIf={searchFieldIf}
       />
@@ -538,7 +530,6 @@ test('opens filters', async () => {
             return () => undefined
           },
         }}
-        urlParamsIf={urlParamsIf}
         reviewIf={dontUpdateReviewIf}
         searchFieldIf={searchFieldIf}
       />
@@ -603,21 +594,22 @@ sliderChangeTests.forEach((testCase) => {
   test(`change ${testCase.property}`, async () => {
     const listParams = vitest.fn()
     const setSearch = vitest.fn()
+    const listReviewsIf: ListReviewsIf = getListReviewsIf(listParams, setSearch)
     const { getByLabelText } = render(
       <LinkWrapper>
         <Reviews
           listReviewsIf={{
-            ...getListReviewsIf(listParams, setSearch),
+            ...listReviewsIf,
+            filterIf: {
+              ...listReviewsIf.filterIf,
+              useUrlSearchParams: () => ({
+                get: (key: string): string | undefined =>
+                  defaultFiltersOpenParams[key],
+              }),
+            },
             infiniteScroll: (): (() => undefined) => {
               return () => undefined
             },
-          }}
-          urlParamsIf={{
-            usePathParams: () => ({ ...defaultFiltersOpenParams }),
-            useSearchParams: () => ({
-              get: (key: string): string | undefined =>
-                defaultFiltersOpenParams[key],
-            }),
           }}
           reviewIf={dontUpdateReviewIf}
           searchFieldIf={searchFieldIf}

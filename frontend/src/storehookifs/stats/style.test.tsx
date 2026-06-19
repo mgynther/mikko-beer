@@ -8,7 +8,11 @@ import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
 
 import type { StyleStats, StyleStatsQueryParams } from '../../core/stats/types'
-import type { UseDebounce, YearMonth } from '../../core/types'
+import type {
+  UseDebounce,
+  UseUrlSearchParams,
+  YearMonth,
+} from '../../core/types'
 
 const minTime: YearMonth = testTimes.min.yearMonth
 const maxTime: YearMonth = testTimes.max.yearMonth
@@ -16,6 +20,10 @@ const maxTime: YearMonth = testTimes.max.yearMonth
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
 }
+
+const useSearchParams: UseUrlSearchParams = () => ({
+  get: () => undefined,
+})
 
 function StyleStatsHelper(props: {
   queryParams: StyleStatsQueryParams
@@ -27,6 +35,7 @@ function StyleStatsHelper(props: {
     maxTime,
     setSearch,
     getUseDebounce,
+    useSearchParams,
   )
   const { stats } = statsIf.style.useStats(props.queryParams)
   return (

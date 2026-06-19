@@ -4,7 +4,11 @@ import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import Brewery from './Brewery'
 import { Role } from '../../core/user/types'
-import type { UseDebounce, YearMonth } from '../../core/types'
+import type {
+  UseDebounce,
+  UseUrlSearchParams,
+  YearMonth,
+} from '../../core/types'
 import type {
   GetAnnualContainerStatsIf,
   GetAnnualStatsIf,
@@ -27,7 +31,7 @@ import type {
 import type { ListStoragesByIf } from '../../core/storage/types'
 import type { GetBreweryIf, UpdateBreweryIf } from '../../core/brewery/types'
 import type { SearchFieldIf } from '../../core/search/types'
-import type { UrlParamsIf } from '../util'
+import type { UseUrlPathParams } from '../util'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
@@ -140,6 +144,14 @@ const noInfiniteScrollStats: NoInfiniteScrollStats = {
   getUseDebounce,
 }
 
+const useUrlSearchParams: UseUrlSearchParams = () => ({
+  get: (): undefined => undefined,
+})
+
+const useUrlPathParams: UseUrlPathParams = () => ({
+  breweryId: '63a33cb5-50ca-43f3-9e63-065f21751a12',
+})
+
 const statsIf: StatsIf = {
   annual: noStats,
   annualContainer: noInfiniteScrollStats,
@@ -150,6 +162,7 @@ const statsIf: StatsIf = {
   rating: noStats,
   style: noStats,
   setSearch: () => undefined,
+  useUrlSearchParams,
 }
 
 const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
@@ -159,6 +172,7 @@ const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
   minTime,
   maxTime,
   setSearch,
+  useUrlSearchParams,
 })
 
 const listReviewsByBreweryIf: ListReviewsByIf = {
@@ -216,13 +230,6 @@ const searchFieldIf: SearchFieldIf = {
   useDebounce,
 }
 
-const urlParamsIf: UrlParamsIf = {
-  usePathParams: () => ({ breweryId: id }),
-  useSearchParams: () => ({
-    get: (): undefined => undefined,
-  }),
-}
-
 test('updates brewery', async () => {
   const user = userEvent.setup()
   const update = vitest.fn()
@@ -230,7 +237,6 @@ test('updates brewery', async () => {
     <Brewery
       listReviewsByBreweryIf={listReviewsByBreweryIf}
       listStoragesByBreweryIf={listStoragesByBreweryIf}
-      urlParamsIf={urlParamsIf}
       reviewIf={reviewIf}
       getBreweryIf={getBreweryIf}
       updateBreweryIf={{
@@ -241,6 +247,7 @@ test('updates brewery', async () => {
       }}
       searchFieldIf={searchFieldIf}
       statsIf={statsIf}
+      useUrlPathParams={useUrlPathParams}
     />,
   )
   getByRole('heading', { name })
@@ -279,12 +286,12 @@ test('cancel update', async () => {
     <Brewery
       listReviewsByBreweryIf={listReviewsByBreweryIf}
       listStoragesByBreweryIf={listStoragesByBreweryIf}
-      urlParamsIf={urlParamsIf}
       reviewIf={reviewIf}
       getBreweryIf={getBreweryIf}
       updateBreweryIf={dontUpdateBreweryIf}
       searchFieldIf={searchFieldIf}
       statsIf={statsIf}
+      useUrlPathParams={useUrlPathParams}
     />,
   )
   getByRole('heading', { name })
@@ -303,7 +310,6 @@ test('render loading', async () => {
     <Brewery
       listReviewsByBreweryIf={listReviewsByBreweryIf}
       listStoragesByBreweryIf={listStoragesByBreweryIf}
-      urlParamsIf={urlParamsIf}
       reviewIf={reviewIf}
       getBreweryIf={{
         useGet: () => ({
@@ -314,6 +320,7 @@ test('render loading', async () => {
       updateBreweryIf={dontUpdateBreweryIf}
       searchFieldIf={searchFieldIf}
       statsIf={statsIf}
+      useUrlPathParams={useUrlPathParams}
     />,
   )
   getByText(loadingIndicatorText)
@@ -324,7 +331,6 @@ test('render not found', async () => {
     <Brewery
       listReviewsByBreweryIf={listReviewsByBreweryIf}
       listStoragesByBreweryIf={listStoragesByBreweryIf}
-      urlParamsIf={urlParamsIf}
       reviewIf={reviewIf}
       getBreweryIf={{
         useGet: () => ({
@@ -335,6 +341,7 @@ test('render not found', async () => {
       updateBreweryIf={dontUpdateBreweryIf}
       searchFieldIf={searchFieldIf}
       statsIf={statsIf}
+      useUrlPathParams={useUrlPathParams}
     />,
   )
   getByText('Not found')
@@ -346,17 +353,12 @@ test('throw on missing id', async () => {
       <Brewery
         listReviewsByBreweryIf={listReviewsByBreweryIf}
         listStoragesByBreweryIf={listStoragesByBreweryIf}
-        urlParamsIf={{
-          usePathParams: () => ({}),
-          useSearchParams: () => ({
-            get: (): undefined => undefined,
-          }),
-        }}
         reviewIf={reviewIf}
         getBreweryIf={getBreweryIf}
         updateBreweryIf={dontUpdateBreweryIf}
         searchFieldIf={searchFieldIf}
         statsIf={statsIf}
+        useUrlPathParams={() => ({})}
       />,
     ),
   ).toThrow('Brewery component without breweryId. Should not happen.')

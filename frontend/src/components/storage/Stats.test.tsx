@@ -2,14 +2,20 @@ import { render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import Stats from './Stats'
-import type { UrlParamsIf } from '../util'
 import type { StorageStatsIf } from '../../core/storage/types'
+import type { UseUrlSearchParams } from '../../core/types'
 
 const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const statsIf: StorageStatsIf = {
+const useEmptyUrlSearchParams: UseUrlSearchParams = () => ({
+  get: () => undefined,
+})
+
+const getStatsIf: (useUrlSearchParams: UseUrlSearchParams) => StorageStatsIf = (
+  useUrlSearchParams,
+) => ({
   annual: {
     useAnnualStats: () => ({
       stats: {
@@ -33,36 +39,27 @@ const statsIf: StorageStatsIf = {
     }),
   },
   setSearch: dontCall,
+  useUrlSearchParams: useUrlSearchParams,
+})
+
+function getStatsUrlParams(mode: string): UseUrlSearchParams {
+  return () => ({
+    get: (key: string): string | undefined => {
+      if (key === 'stats') {
+        return mode
+      }
+      return undefined
+    },
+  })
 }
 
-const emptyParamsIf: UrlParamsIf = {
-  usePathParams: dontCall,
-  useSearchParams: () => ({
-    get: () => undefined,
-  }),
-}
+const annualStatsUrlParams = getStatsUrlParams('annual')
 
-function getStatsParamsIf(mode: string): UrlParamsIf {
-  return {
-    ...emptyParamsIf,
-    useSearchParams: () => ({
-      get: (key: string): string | undefined => {
-        if (key === 'stats') {
-          return mode
-        }
-        return undefined
-      },
-    }),
-  }
-}
-
-const annualStatsParamsIf: UrlParamsIf = getStatsParamsIf('annual')
-
-const monthlyStatsParamsIf: UrlParamsIf = getStatsParamsIf('monthly')
+const monthlyStatsUrlParams = getStatsUrlParams('monthly')
 
 test('renders default annual storage stats on no search parameter', () => {
   const { getByText } = render(
-    <Stats statsIf={statsIf} urlParamsIf={emptyParamsIf} />,
+    <Stats statsIf={getStatsIf(useEmptyUrlSearchParams)} />,
   )
   getByText('2021')
   getByText('8')
@@ -72,7 +69,7 @@ test('renders default annual storage stats on no search parameter', () => {
 
 test('renders default annual storage stats on unknown search parameter', () => {
   const { getByText } = render(
-    <Stats statsIf={statsIf} urlParamsIf={getStatsParamsIf('unknown')} />,
+    <Stats statsIf={getStatsIf(getStatsUrlParams('unknown'))} />,
   )
   getByText('2021')
   getByText('8')
@@ -82,7 +79,7 @@ test('renders default annual storage stats on unknown search parameter', () => {
 
 test('renders annual storage stats', () => {
   const { getByText } = render(
-    <Stats statsIf={statsIf} urlParamsIf={annualStatsParamsIf} />,
+    <Stats statsIf={getStatsIf(annualStatsUrlParams)} />,
   )
   getByText('2021')
   getByText('8')
@@ -92,7 +89,7 @@ test('renders annual storage stats', () => {
 
 test('renders monthly storage stats', () => {
   const { getByText } = render(
-    <Stats statsIf={statsIf} urlParamsIf={monthlyStatsParamsIf} />,
+    <Stats statsIf={getStatsIf(monthlyStatsUrlParams)} />,
   )
   getByText('2021-04')
   getByText('8')
@@ -106,10 +103,9 @@ test('switch to annual storage stats', async () => {
   const { getByRole } = render(
     <Stats
       statsIf={{
-        ...statsIf,
+        ...getStatsIf(monthlyStatsUrlParams),
         setSearch,
       }}
-      urlParamsIf={monthlyStatsParamsIf}
     />,
   )
   const monthlyButton = getByRole('button', { name: 'Annual' })
@@ -126,10 +122,9 @@ test('switch to monthly storage stats', async () => {
   const { getByRole } = render(
     <Stats
       statsIf={{
-        ...statsIf,
+        ...getStatsIf(annualStatsUrlParams),
         setSearch,
       }}
-      urlParamsIf={annualStatsParamsIf}
     />,
   )
   const monthlyButton = getByRole('button', { name: 'Monthly' })
@@ -146,10 +141,9 @@ test('ignore selecting current storage stats mode', async () => {
   const { getByRole } = render(
     <Stats
       statsIf={{
-        ...statsIf,
+        ...getStatsIf(annualStatsUrlParams),
         setSearch,
       }}
-      urlParamsIf={annualStatsParamsIf}
     />,
   )
   const monthlyButton = getByRole('button', { name: 'Annual' })

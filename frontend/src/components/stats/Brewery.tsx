@@ -8,9 +8,9 @@ import type {
 
 import BreweryAllAtOnce from './BreweryAllAtOnce'
 import BreweryInfiniteScroll from './BreweryInfiniteScroll'
-import type { SearchParameters } from '../util'
 import { searchParams } from './search-params'
 import type { StatsFilterState } from './filter-types'
+import type { SearchParameters } from '../../core/types'
 
 interface Props {
   getBreweryStatsIf: GetBreweryStatsIf

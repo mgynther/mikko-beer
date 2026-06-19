@@ -12,10 +12,14 @@ import type { StoreIf } from './store/storeIf'
 import { Role } from './core/user/types'
 import type { GetLogin } from './core/login/types'
 import { PasswordChangeResult } from './core/login/types'
-import type { InfiniteScroll, UseDebounce, YearMonth } from './core/types'
+import type {
+  InfiniteScroll,
+  UseDebounce,
+  UseUrlSearchParams,
+  YearMonth,
+} from './core/types'
 import type { DeleteStorageIf } from './core/storage/types'
-import { urlParamsIf } from './components/util'
-import type { UrlParamsIf } from './components/util'
+import { useUrlPathParams } from './components/util'
 import type { SearchBeerIf, SelectBeerIf } from './core/beer/types'
 import type { SearchBreweryIf } from './core/brewery/types'
 import type { SearchLocationIf } from './core/location/types'
@@ -136,6 +140,10 @@ const deleteStorageIf: DeleteStorageIf = {
 const minTime: YearMonth = testTimes.min.yearMonth
 const maxTime: YearMonth = testTimes.max.yearMonth
 
+const useUrlSearchParams: UseUrlSearchParams = () => ({
+  get: (): undefined => undefined,
+})
+
 const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
   setSearch: SetSearch,
 ) => ({
@@ -143,6 +151,7 @@ const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
   minTime,
   maxTime,
   setSearch,
+  useUrlSearchParams,
 })
 
 const storeIf: StoreIf = {
@@ -341,6 +350,7 @@ const storeIf: StoreIf = {
       getUseDebounce,
     },
     setSearch: async () => undefined,
+    useUrlSearchParams,
   },
   searchFieldIf: {
     useSearchField: () => ({
@@ -389,6 +399,7 @@ const storeIf: StoreIf = {
       useMonthlyStats: dontCall,
     },
     setSearch: async () => undefined,
+    useUrlSearchParams,
   },
   getStyleIf: {
     useGet: dontCall,
@@ -424,7 +435,7 @@ test('renders app login', () => {
   const { getByRole } = render(
     <Provider store={store}>
       <LinkWrapper>
-        <App urlParamsIf={urlParamsIf} storeIf={storeIf} />
+        <App storeIf={storeIf} useUrlPathParams={useUrlPathParams} />
       </LinkWrapper>
     </Provider>,
   )
@@ -438,11 +449,11 @@ test('navigates to Beers', async () => {
     <Provider store={store}>
       <LinkWrapper>
         <App
-          urlParamsIf={urlParamsIf}
           storeIf={{
             ...storeIf,
             getLogin: getAdminLogin,
           }}
+          useUrlPathParams={useUrlPathParams}
         />
       </LinkWrapper>
     </Provider>,
@@ -491,11 +502,11 @@ navigationTests.forEach((testCase) => {
       <Provider store={store}>
         <LinkWrapper>
           <App
-            urlParamsIf={urlParamsIf}
             storeIf={{
               ...storeIf,
               getLogin: getAdminLogin,
             }}
+            useUrlPathParams={useUrlPathParams}
           />
         </LinkWrapper>
       </Provider>,
@@ -536,11 +547,11 @@ navigationMoreTests.forEach((testCase) => {
       <Provider store={store}>
         <LinkWrapper>
           <App
-            urlParamsIf={urlParamsIf}
             storeIf={{
               ...storeIf,
               getLogin: getAdminLogin,
             }}
+            useUrlPathParams={useUrlPathParams}
           />
         </LinkWrapper>
       </Provider>,
@@ -557,21 +568,22 @@ navigationMoreTests.forEach((testCase) => {
 test('loads annual stats directly', async () => {
   const user = userEvent.setup()
   const data: Record<string, string> = { stats: 'annual' }
-  const annualParamsIf: UrlParamsIf = {
-    ...urlParamsIf,
-    useSearchParams: () => ({
-      get: (name: string) => data[name],
-    }),
-  }
+  const useUrlSearchParams: UseUrlSearchParams = () => ({
+    get: (name: string) => data[name],
+  })
   const { getByRole, getByText } = render(
     <Provider store={store}>
       <LinkWrapper>
         <App
-          urlParamsIf={annualParamsIf}
           storeIf={{
             ...storeIf,
+            statsIf: {
+              ...storeIf.statsIf,
+              useUrlSearchParams,
+            },
             getLogin: getAdminLogin,
           }}
+          useUrlPathParams={useUrlPathParams}
         />
       </LinkWrapper>
     </Provider>,
@@ -587,11 +599,11 @@ test('sets theme to dark', async () => {
     <Provider store={store}>
       <LinkWrapper>
         <App
-          urlParamsIf={urlParamsIf}
           storeIf={{
             ...storeIf,
             getLogin: getAdminLogin,
           }}
+          useUrlPathParams={useUrlPathParams}
         />
       </LinkWrapper>
     </Provider>,
@@ -615,7 +627,6 @@ test('logout', async () => {
     <Provider store={store}>
       <LinkWrapper>
         <App
-          urlParamsIf={urlParamsIf}
           storeIf={{
             ...storeIf,
             getLogin: getAdminLogin,
@@ -625,6 +636,7 @@ test('logout', async () => {
               }),
             },
           }}
+          useUrlPathParams={useUrlPathParams}
         />
       </LinkWrapper>
     </Provider>,

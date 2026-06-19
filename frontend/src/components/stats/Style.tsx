@@ -11,9 +11,9 @@ import StyleLink from '../style/StyleLink'
 import AllFilters from './AllFilters'
 
 import './StatsTable.css'
-import type { SearchParameters } from '../util'
 import { toTimestamp } from '../common/filter-util'
 import { searchParams } from './search-params'
+import type { SearchParameters } from '../../core/types'
 
 interface Props {
   getStyleStatsIf: GetStyleStatsIf

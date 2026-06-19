@@ -27,10 +27,14 @@ import type {
   StatsIf,
 } from '../../core/stats/types'
 import type { GetStyleIf, UpdateStyleIf } from '../../core/style/types'
-import type { UseDebounce, YearMonth } from '../../core/types'
+import type {
+  UseDebounce,
+  UseUrlSearchParams,
+  YearMonth,
+} from '../../core/types'
 import { asText } from '../container/ContainerInfo'
 import type { SearchFieldIf } from '../../core/search/types'
-import type { UrlParamsIf } from '../util'
+import type { UseUrlPathParams } from '../util'
 import type { ReactNode } from 'react'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 
@@ -205,14 +209,13 @@ const reviewIf: ReviewIf = {
   login: () => login,
 }
 
-const urlParamsIf: UrlParamsIf = {
-  usePathParams: () => ({
-    styleId: style.id,
-  }),
-  useSearchParams: () => ({
-    get: () => undefined,
-  }),
-}
+const useUrlSearchParams: UseUrlSearchParams = () => ({
+  get: () => undefined,
+})
+
+const useUrlPathParams: UseUrlPathParams = () => ({
+  styleId: style.id,
+})
 
 const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
   setSearch: SetSearch,
@@ -221,6 +224,7 @@ const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
   minTime,
   maxTime,
   setSearch,
+  useUrlSearchParams: useUrlSearchParams,
 })
 
 function getListReviewsIf(reviews: JoinedReview[]): ListReviewsByIf {
@@ -304,6 +308,7 @@ const statsIf: StatsIf = {
   rating: noStats,
   style: noStats,
   setSearch: () => undefined,
+  useUrlSearchParams,
 }
 
 const dontUpdate: UpdateStyleIf = {
@@ -323,10 +328,10 @@ test('renders style', async () => {
         searchFieldIf={searchFieldIf}
         listReviewsByStyleIf={getListReviewsIf([joinedReview])}
         listStoragesByStyleIf={getListStoragesByStyleIf(undefined)}
-        urlParamsIf={urlParamsIf}
         reviewIf={reviewIf}
         getStyleIf={getStyleIf}
         statsIf={statsIf}
+        useUrlPathParams={useUrlPathParams}
       />
     </LinkWrapper>,
   )
@@ -344,10 +349,10 @@ test('renders storages', async () => {
         searchFieldIf={searchFieldIf}
         listReviewsByStyleIf={getListReviewsIf([joinedReview])}
         listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
-        urlParamsIf={urlParamsIf}
         reviewIf={reviewIf}
         getStyleIf={getStyleIf}
         statsIf={statsIf}
+        useUrlPathParams={useUrlPathParams}
       />
     </LinkWrapper>,
   )
@@ -365,7 +370,6 @@ test('renders loading when loading', async () => {
         searchFieldIf={searchFieldIf}
         listReviewsByStyleIf={getListReviewsIf([joinedReview])}
         listStoragesByStyleIf={getListStoragesByStyleIf(undefined)}
-        urlParamsIf={urlParamsIf}
         reviewIf={reviewIf}
         getStyleIf={{
           useGet: () => ({
@@ -374,6 +378,7 @@ test('renders loading when loading', async () => {
           }),
         }}
         statsIf={statsIf}
+        useUrlPathParams={useUrlPathParams}
       />
     </LinkWrapper>,
   )
@@ -388,7 +393,6 @@ test('renders not found when not found', async () => {
         searchFieldIf={searchFieldIf}
         listReviewsByStyleIf={getListReviewsIf([joinedReview])}
         listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
-        urlParamsIf={urlParamsIf}
         reviewIf={reviewIf}
         getStyleIf={{
           useGet: () => ({
@@ -397,6 +401,7 @@ test('renders not found when not found', async () => {
           }),
         }}
         statsIf={statsIf}
+        useUrlPathParams={useUrlPathParams}
       />
     </LinkWrapper>,
   )
@@ -412,13 +417,10 @@ test('throw without style id', async () => {
           searchFieldIf={searchFieldIf}
           listReviewsByStyleIf={getListReviewsIf([joinedReview])}
           listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
-          urlParamsIf={{
-            ...urlParamsIf,
-            usePathParams: () => ({}),
-          }}
           reviewIf={reviewIf}
           getStyleIf={getStyleIf}
           statsIf={statsIf}
+          useUrlPathParams={() => ({})}
         />
       </LinkWrapper>,
     ),
@@ -443,7 +445,6 @@ test('updates style', async () => {
         searchFieldIf={searchFieldIf}
         listReviewsByStyleIf={getListReviewsIf([])}
         listStoragesByStyleIf={getListStoragesByStyleIf([])}
-        urlParamsIf={urlParamsIf}
         reviewIf={reviewIf}
         getStyleIf={{
           useGet: () => {
@@ -459,6 +460,7 @@ test('updates style', async () => {
           },
         }}
         statsIf={statsIf}
+        useUrlPathParams={useUrlPathParams}
       />
     </LinkWrapper>
   )
@@ -507,10 +509,10 @@ test('cancels update', async () => {
         searchFieldIf={searchFieldIf}
         listReviewsByStyleIf={getListReviewsIf([])}
         listStoragesByStyleIf={getListStoragesByStyleIf([])}
-        urlParamsIf={urlParamsIf}
         reviewIf={reviewIf}
         getStyleIf={getStyleIf}
         statsIf={statsIf}
+        useUrlPathParams={useUrlPathParams}
       />
     </LinkWrapper>,
   )

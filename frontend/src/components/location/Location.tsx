@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import type { UrlParamsIf } from '../util'
+import type { UseUrlPathParams } from '../util'
 
 import type {
   Location as LocationType,
@@ -24,16 +24,16 @@ import ReviewsBy from '../review/ReviewsBy'
 
 interface Props {
   listReviewsByLocationIf: ListReviewsByIf
-  urlParamsIf: UrlParamsIf
   getLocationIf: GetLocationIf
   reviewIf: ReviewIf
   searchFieldIf: SearchFieldIf
   statsIf: StatsIf
   updateLocationIf: UpdateLocationIf
+  useUrlPathParams: UseUrlPathParams
 }
 
 function Location(props: Props): React.JSX.Element {
-  const { locationId } = props.urlParamsIf.usePathParams()
+  const { locationId } = props.useUrlPathParams()
   const [mode, setMode] = useState(EditableMode.View)
   const [initialLocation, setInitialLocation] = useState<
     LocationType | undefined
@@ -80,13 +80,11 @@ function Location(props: Props): React.JSX.Element {
         statsIf={props.statsIf}
         breweryId={undefined}
         locationId={locationId}
-        urlParamsIf={props.urlParamsIf}
         styleId={undefined}
       />
       <ReviewsBy
         id={locationId}
         listReviewsByIf={props.listReviewsByLocationIf}
-        urlParamsIf={props.urlParamsIf}
         reviewIf={props.reviewIf}
         searchFieldIf={props.searchFieldIf}
       />

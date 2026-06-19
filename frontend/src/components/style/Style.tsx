@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import type { UrlParamsIf } from '../util'
+import type { UseUrlPathParams } from '../util'
 
 import type {
   GetStyleIf,
@@ -43,7 +43,7 @@ interface Props {
   listReviewsByStyleIf: ListReviewsByIf
   listStoragesByStyleIf: ListStoragesByIf
   getStyleIf: GetStyleIf
-  urlParamsIf: UrlParamsIf
+  useUrlPathParams: UseUrlPathParams
   reviewIf: ReviewIf
   searchFieldIf: SearchFieldIf
   statsIf: StatsIf
@@ -51,7 +51,7 @@ interface Props {
 }
 
 function Style(props: Props): React.JSX.Element {
-  const { styleId } = props.urlParamsIf.usePathParams()
+  const { styleId } = props.useUrlPathParams()
   const [mode, setMode] = useState(EditableMode.View)
   const [initialStyle, setInitialStyle] = useState<
     StyleWithParentIds | undefined
@@ -128,7 +128,6 @@ function Style(props: Props): React.JSX.Element {
         statsIf={props.statsIf}
         breweryId={undefined}
         locationId={undefined}
-        urlParamsIf={props.urlParamsIf}
         styleId={styleId}
       />
       {storageItems.length > 0 && (
@@ -143,7 +142,6 @@ function Style(props: Props): React.JSX.Element {
       <ReviewsBy
         id={styleId}
         listReviewsByIf={props.listReviewsByStyleIf}
-        urlParamsIf={props.urlParamsIf}
         reviewIf={props.reviewIf}
         searchFieldIf={props.searchFieldIf}
       />

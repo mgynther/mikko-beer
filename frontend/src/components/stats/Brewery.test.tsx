@@ -4,13 +4,12 @@ import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import Brewery from './Brewery'
 import LinkWrapper from '../LinkWrapper'
-import type { SearchParameters } from '../util'
 import type {
   BreweryStats,
   GetBreweryStatsIf,
   OneBreweryStats,
 } from '../../core/stats/types'
-import type { UseDebounce, YearMonth } from '../../core/types'
+import type { SearchParameters, UseDebounce, YearMonth } from '../../core/types'
 import type { StatsFilters } from './filter-types'
 
 const dontCall = (): any => {

@@ -4,7 +4,11 @@ import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import Location from './Location'
 import { Role } from '../../core/user/types'
-import type { UseDebounce, YearMonth } from '../../core/types'
+import type {
+  UseDebounce,
+  UseUrlSearchParams,
+  YearMonth,
+} from '../../core/types'
 import type {
   GetAnnualContainerStatsIf,
   GetAnnualStatsIf,
@@ -28,7 +32,7 @@ import type {
   ReviewIf,
   SetSearch,
 } from '../../core/review/types'
-import type { UrlParamsIf } from '../util'
+import type { UseUrlPathParams } from '../util'
 import type { SearchFieldIf } from '../../core/search/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 
@@ -142,6 +146,14 @@ const noInfiniteScrollStats: NoInfiniteScrollStats = {
   getUseDebounce,
 }
 
+const useUrlSearchParams: UseUrlSearchParams = () => ({
+  get: (): undefined => undefined,
+})
+
+const useUrlPathParams: UseUrlPathParams = () => ({
+  locationId: '98d82f5a-b657-402b-a211-96c37c9dad12',
+})
+
 const statsIf: StatsIf = {
   annual: noStats,
   annualContainer: noInfiniteScrollStats,
@@ -152,6 +164,7 @@ const statsIf: StatsIf = {
   rating: noStats,
   style: noStats,
   setSearch: () => undefined,
+  useUrlSearchParams,
 }
 
 const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
@@ -161,6 +174,7 @@ const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
   minTime,
   maxTime,
   setSearch,
+  useUrlSearchParams,
 })
 
 const listReviewsByLocationIf: ListReviewsByIf = {
@@ -175,13 +189,6 @@ const listReviewsByLocationIf: ListReviewsByIf = {
     isLoading: false,
   }),
   filterIf: listFilterIf(() => undefined),
-}
-
-const urlParamsIf: UrlParamsIf = {
-  usePathParams: () => ({ locationId: id }),
-  useSearchParams: () => ({
-    get: (): undefined => undefined,
-  }),
 }
 
 const reviewIf: ReviewIf = {
@@ -221,7 +228,6 @@ test('updates location', async () => {
   const { getByPlaceholderText, getByRole } = render(
     <Location
       listReviewsByLocationIf={listReviewsByLocationIf}
-      urlParamsIf={urlParamsIf}
       reviewIf={reviewIf}
       getLocationIf={getLocationIf}
       updateLocationIf={{
@@ -233,6 +239,7 @@ test('updates location', async () => {
       }}
       statsIf={statsIf}
       searchFieldIf={searchFieldIf}
+      useUrlPathParams={useUrlPathParams}
     />,
   )
   getByRole('heading', { name })
@@ -271,12 +278,12 @@ test('cancel editing', async () => {
   const { getByRole } = render(
     <Location
       listReviewsByLocationIf={listReviewsByLocationIf}
-      urlParamsIf={urlParamsIf}
       reviewIf={reviewIf}
       getLocationIf={getLocationIf}
       updateLocationIf={dontUpdateLocationIf}
       statsIf={statsIf}
       searchFieldIf={searchFieldIf}
+      useUrlPathParams={useUrlPathParams}
     />,
   )
   getByRole('heading', { name })
@@ -295,10 +302,7 @@ test('throw on missing id', async () => {
     render(
       <Location
         listReviewsByLocationIf={listReviewsByLocationIf}
-        urlParamsIf={{
-          ...urlParamsIf,
-          usePathParams: () => ({}),
-        }}
+        useUrlPathParams={() => ({})}
         reviewIf={reviewIf}
         getLocationIf={getLocationIf}
         updateLocationIf={dontUpdateLocationIf}
@@ -313,7 +317,7 @@ test('render loading', async () => {
   const { getByText } = render(
     <Location
       listReviewsByLocationIf={listReviewsByLocationIf}
-      urlParamsIf={urlParamsIf}
+      useUrlPathParams={useUrlPathParams}
       reviewIf={reviewIf}
       getLocationIf={{
         useGet: () => ({
@@ -333,7 +337,6 @@ test('render not found', async () => {
   const { getByText } = render(
     <Location
       listReviewsByLocationIf={listReviewsByLocationIf}
-      urlParamsIf={urlParamsIf}
       reviewIf={reviewIf}
       getLocationIf={{
         useGet: () => ({
@@ -344,6 +347,7 @@ test('render not found', async () => {
       updateLocationIf={dontUpdateLocationIf}
       statsIf={statsIf}
       searchFieldIf={searchFieldIf}
+      useUrlPathParams={useUrlPathParams}
     />,
   )
   getByText('Not found')

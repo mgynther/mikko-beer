@@ -10,7 +10,12 @@ import type {
   StatsIf,
   StyleStatsQueryParams,
 } from '../../core/stats/types'
-import type { InfiniteScroll, UseDebounce, YearMonth } from '../../core/types'
+import type {
+  InfiniteScroll,
+  UseDebounce,
+  UseUrlSearchParams,
+  YearMonth,
+} from '../../core/types'
 import {
   useGetAnnualStatsQuery,
   useGetContainerStatsQuery,
@@ -41,12 +46,14 @@ const stats: (
   maxTime: YearMonth,
   setSearch: SetSearch,
   getUseDebounce: <T>() => UseDebounce<T>,
+  useSearchParams: UseUrlSearchParams,
 ) => StatsIf = (
   infiniteScroll: InfiniteScroll,
   minTime: YearMonth,
   maxTime: YearMonth,
   setSearch: SetSearch,
   getUseDebounce: <T>() => UseDebounce<T>,
+  useSearchParams: UseUrlSearchParams,
 ) => {
   const statsIf: StatsIf = {
     annual: {
@@ -153,6 +160,7 @@ const stats: (
       getUseDebounce,
     },
     setSearch,
+    useUrlSearchParams: useSearchParams,
   }
   return statsIf
 }

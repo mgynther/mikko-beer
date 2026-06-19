@@ -4,7 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import Container from './Container'
 import type { IdParams, OneContainerStats } from '../../core/stats/types'
 import { openFilters } from '../common/filters-test-util'
-import type { SearchParameters } from '../util'
+import type { SearchParameters } from '../../core/types'
 
 const breweryId = 'e6887360-78da-49e2-b876-68477c79c776'
 const locationId = '7a2ac8d0-3561-43bd-81ac-b51dd892b9bb'

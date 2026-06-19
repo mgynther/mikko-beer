@@ -24,3 +24,9 @@ export interface YearMonthFilter {
   value: YearMonth
   setValue: (yearMonth: YearMonth) => void
 }
+
+export interface SearchParameters {
+  get: (name: string) => string | undefined
+}
+
+export type UseUrlSearchParams = () => SearchParameters

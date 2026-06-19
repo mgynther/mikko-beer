@@ -8,7 +8,7 @@ import {
   filtersOpenOrDefault,
   filtersOpenStr,
 } from './filter-util'
-import type { SearchParameters } from '../util'
+import type { SearchParameters } from '../../core/types'
 
 test('average str', () => {
   expect(averageStr(8.23)).toEqual('8.23')

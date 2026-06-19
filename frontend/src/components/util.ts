@@ -4,7 +4,11 @@ import {
   useParams as useRouterParams,
   useSearchParams as useRouterSearchParams,
 } from 'react-router'
-import type { InfiniteScroll, UseDebounce } from '../core/types'
+import type {
+  InfiniteScroll,
+  UseDebounce,
+  UseUrlSearchParams,
+} from '../core/types'
 import { className as contentEndClassName } from './ContentEnd'
 
 export function pad(number: number): string {
@@ -73,27 +77,15 @@ export const getUseDebounce = function <T>(): UseDebounce<T> {
   return useDebounce<T>
 }
 
-function useParams(): Record<string, string | undefined> {
+export type UseUrlPathParams = () => Record<string, string | undefined>
+
+export const useUrlPathParams: UseUrlPathParams = () => {
   return useRouterParams()
 }
 
-export interface SearchParameters {
-  get: (name: string) => string | undefined
-}
-
-function useSearch(): SearchParameters {
+export const useUrlSearchParams: UseUrlSearchParams = () => {
   const searchParams = useRouterSearchParams()[0]
   return {
     get: (name: string) => searchParams.get(name) ?? undefined,
   }
-}
-
-export interface UrlParamsIf {
-  usePathParams: () => Record<string, string | undefined>
-  useSearchParams: () => SearchParameters
-}
-
-export const urlParamsIf: UrlParamsIf = {
-  usePathParams: useParams,
-  useSearchParams: useSearch,
 }

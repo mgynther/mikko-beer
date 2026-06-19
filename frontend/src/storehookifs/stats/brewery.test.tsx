@@ -13,7 +13,11 @@ import type {
   BreweryStats,
   BreweryStatsQueryParams,
 } from '../../core/stats/types'
-import type { UseDebounce, YearMonth } from '../../core/types'
+import type {
+  UseDebounce,
+  UseUrlSearchParams,
+  YearMonth,
+} from '../../core/types'
 
 const minTime: YearMonth = testTimes.min.yearMonth
 const maxTime: YearMonth = testTimes.max.yearMonth
@@ -21,6 +25,10 @@ const maxTime: YearMonth = testTimes.max.yearMonth
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
 }
+
+const useSearchParams: UseUrlSearchParams = () => ({
+  get: () => undefined,
+})
 
 function BreweryStatsHelper(props: {
   queryParams: BreweryStatsQueryParams
@@ -32,6 +40,7 @@ function BreweryStatsHelper(props: {
     maxTime,
     setSearch,
     getUseDebounce,
+    useSearchParams,
   )
   const { query, stats } = statsIf.brewery.useStats()
   return (

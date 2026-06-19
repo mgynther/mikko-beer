@@ -3,20 +3,18 @@ import React from 'react'
 import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
 import ReviewList from '../review/ReviewList'
 import type { SearchFieldIf } from '../../core/search/types'
-import type { UrlParamsIf } from '../util'
 import { parseSearchParams } from './search-params'
 import { toTimestamp } from '../common/filter-util'
 
 interface Props {
   id: string
   listReviewsByIf: ListReviewsByIf
-  urlParamsIf: UrlParamsIf
   reviewIf: ReviewIf
   searchFieldIf: SearchFieldIf
 }
 
 const ReviewsBy = (props: Props): React.JSX.Element => {
-  const searchParameters = props.urlParamsIf.useSearchParams()
+  const searchParameters = props.listReviewsByIf.filterIf.useUrlSearchParams()
 
   const parsedSearchParams = parseSearchParams({
     initialSorting: {

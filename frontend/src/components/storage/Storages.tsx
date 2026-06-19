@@ -16,7 +16,6 @@ import CreateStorage from './CreateStorage'
 import StorageList from './StorageList'
 import { countText } from './count-text'
 import Stats from './Stats'
-import type { UrlParamsIf } from '../util'
 
 interface Props {
   getLogin: GetLogin
@@ -25,7 +24,6 @@ interface Props {
   selectBeerIf: SelectBeerIf
   createStorageIf: CreateStorageIf
   reviewContainerIf: ReviewContainerIf
-  urlParamsIf: UrlParamsIf
   statsIf: StorageStatsIf
 }
 
@@ -50,7 +48,7 @@ function Storages(props: Props): React.JSX.Element {
         isTitleVisible={false}
         storages={storageItems}
       />
-      <Stats statsIf={props.statsIf} urlParamsIf={props.urlParamsIf} />
+      <Stats statsIf={props.statsIf} />
       <hr />
       {isAdmin && (
         <div>

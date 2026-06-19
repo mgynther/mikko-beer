@@ -12,7 +12,11 @@ import type {
   AnnualContainerStats,
   AnnualContainerStatsQueryParams,
 } from '../../core/stats/types'
-import type { UseDebounce, YearMonth } from '../../core/types'
+import type {
+  UseDebounce,
+  UseUrlSearchParams,
+  YearMonth,
+} from '../../core/types'
 
 const minTime: YearMonth = { year: 2017, month: 12 }
 const maxTime: YearMonth = { year: 2024, month: 12 }
@@ -20,6 +24,10 @@ const maxTime: YearMonth = { year: 2024, month: 12 }
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
 }
+
+const useSearchParams: UseUrlSearchParams = () => ({
+  get: () => undefined,
+})
 
 function AnnualContainerStatsHelper(props: {
   queryParams: AnnualContainerStatsQueryParams
@@ -31,6 +39,7 @@ function AnnualContainerStatsHelper(props: {
     maxTime,
     setSearch,
     getUseDebounce,
+    useSearchParams,
   )
   const { query, stats } = statsIf.annualContainer.useStats()
   return (

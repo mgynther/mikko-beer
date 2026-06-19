@@ -45,6 +45,7 @@ const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
   minTime,
   maxTime,
   setSearch,
+  useUrlSearchParams: () => ({ get: () => undefined }),
 })
 
 function Helper(): React.JSX.Element {

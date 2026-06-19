@@ -8,9 +8,9 @@ import type {
 
 import LocationAllAtOnce from './LocationAllAtOnce'
 import LocationInfiniteScroll from './LocationInfiniteScroll'
-import type { SearchParameters } from '../util'
 import { searchParams } from './search-params'
 import type { StatsFilterState } from './filter-types'
+import type { SearchParameters } from '../../core/types'
 
 interface Props {
   getLocationStatsIf: GetLocationStatsIf

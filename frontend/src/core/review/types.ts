@@ -12,6 +12,7 @@ import type {
   ListDirection,
   Pagination,
   UseDebounce,
+  UseUrlSearchParams,
   YearMonth,
 } from '../types'
 
@@ -118,6 +119,7 @@ export interface ListFilterIf {
   minTime: YearMonth
   maxTime: YearMonth
   setSearch: SetSearch
+  useUrlSearchParams: UseUrlSearchParams
 }
 
 export interface ListReviewsIf {

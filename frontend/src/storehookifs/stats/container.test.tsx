@@ -7,7 +7,11 @@ import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
 
 import type { ContainerStats, IdParams } from '../../core/stats/types'
-import type { UseDebounce, YearMonth } from '../../core/types'
+import type {
+  UseDebounce,
+  UseUrlSearchParams,
+  YearMonth,
+} from '../../core/types'
 
 const minTime: YearMonth = { year: 2017, month: 12 }
 const maxTime: YearMonth = { year: 2024, month: 12 }
@@ -15,6 +19,10 @@ const maxTime: YearMonth = { year: 2024, month: 12 }
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
 }
+
+const useSearchParams: UseUrlSearchParams = () => ({
+  get: () => undefined,
+})
 
 function ContainerStatsHelper(props: { params: IdParams }): React.JSX.Element {
   const setSearch = vitest.fn()
@@ -24,6 +32,7 @@ function ContainerStatsHelper(props: { params: IdParams }): React.JSX.Element {
     maxTime,
     setSearch,
     getUseDebounce,
+    useSearchParams,
   )
   const { stats } = statsIf.container.useStats(props.params)
   return (

@@ -15,12 +15,16 @@ import type {
   UpdateReviewIf,
 } from '../../core/review/types'
 import type { ListStoragesByIf } from '../../core/storage/types'
-import type { UseDebounce, YearMonth } from '../../core/types'
+import type {
+  UseDebounce,
+  UseUrlSearchParams,
+  YearMonth,
+} from '../../core/types'
 import { asText } from '../container/ContainerInfo'
 import type { SearchLocationIf } from '../../core/location/types'
 import type { SearchFieldIf } from '../../core/search/types'
 import type { EditBeerIf, GetBeerIf, UpdateBeerIf } from '../../core/beer/types'
-import type { UrlParamsIf } from '../util'
+import type { UseUrlPathParams } from '../util'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 import { testTimes } from '../../../test-util/filter-time'
 
@@ -177,17 +181,16 @@ const reviewIf: ReviewIf = {
   login: () => login,
 }
 
-const urlParamsIf: UrlParamsIf = {
-  usePathParams: () => ({
-    beerId: beer.id,
-  }),
-  useSearchParams: () => ({
-    get: () => undefined,
-  }),
-}
-
 const minTime: YearMonth = testTimes.min.yearMonth
 const maxTime: YearMonth = testTimes.max.yearMonth
+
+const useUrlSearchParams: UseUrlSearchParams = () => ({
+  get: (): undefined => undefined,
+})
+
+const useUrlPathParams: UseUrlPathParams = () => ({
+  beerId: beer.id,
+})
 
 const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
   setSearch: SetSearch,
@@ -196,6 +199,7 @@ const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
   minTime,
   maxTime,
   setSearch,
+  useUrlSearchParams,
 })
 
 function getListReviewsIf(reviews: JoinedReview[]): ListReviewsByIf {
@@ -274,9 +278,9 @@ test('renders beer', async () => {
         searchFieldIf={searchFieldIf}
         listReviewsByBeerIf={getListReviewsIf([joinedReview])}
         listStoragesByBeerIf={listStoragesByBeerIf}
-        urlParamsIf={urlParamsIf}
         reviewIf={reviewIf}
         getBeerIf={getBeerIf}
+        useUrlPathParams={useUrlPathParams}
       />
     </LinkWrapper>,
   )
@@ -297,12 +301,9 @@ test('throw on missing id', async () => {
           searchFieldIf={searchFieldIf}
           listReviewsByBeerIf={getListReviewsIf([joinedReview])}
           listStoragesByBeerIf={listStoragesByBeerIf}
-          urlParamsIf={{
-            ...urlParamsIf,
-            usePathParams: () => ({}),
-          }}
           reviewIf={reviewIf}
           getBeerIf={getBeerIf}
+          useUrlPathParams={() => ({})}
         />
       </LinkWrapper>,
     ),
@@ -325,9 +326,9 @@ test('updates beer', async () => {
         searchFieldIf={searchFieldIf}
         listReviewsByBeerIf={getListReviewsIf([])}
         listStoragesByBeerIf={listStoragesByBeerIf}
-        urlParamsIf={urlParamsIf}
         reviewIf={reviewIf}
         getBeerIf={getBeerIf}
+        useUrlPathParams={useUrlPathParams}
       />
     </LinkWrapper>,
   )
@@ -361,9 +362,9 @@ test('cancel update', async () => {
         searchFieldIf={searchFieldIf}
         listReviewsByBeerIf={getListReviewsIf([])}
         listStoragesByBeerIf={listStoragesByBeerIf}
-        urlParamsIf={urlParamsIf}
         reviewIf={reviewIf}
         getBeerIf={getBeerIf}
+        useUrlPathParams={useUrlPathParams}
       />
     </LinkWrapper>,
   )
@@ -383,7 +384,6 @@ test('render loading', async () => {
         searchFieldIf={searchFieldIf}
         listReviewsByBeerIf={getListReviewsIf([])}
         listStoragesByBeerIf={listStoragesByBeerIf}
-        urlParamsIf={urlParamsIf}
         reviewIf={reviewIf}
         getBeerIf={{
           useGetBeer: () => ({
@@ -391,6 +391,7 @@ test('render loading', async () => {
             isLoading: true,
           }),
         }}
+        useUrlPathParams={useUrlPathParams}
       />
     </LinkWrapper>,
   )
@@ -405,7 +406,6 @@ test('render not found', async () => {
         searchFieldIf={searchFieldIf}
         listReviewsByBeerIf={getListReviewsIf([])}
         listStoragesByBeerIf={listStoragesByBeerIf}
-        urlParamsIf={urlParamsIf}
         reviewIf={reviewIf}
         getBeerIf={{
           useGetBeer: () => ({
@@ -413,6 +413,7 @@ test('render not found', async () => {
             isLoading: false,
           }),
         }}
+        useUrlPathParams={useUrlPathParams}
       />
     </LinkWrapper>,
   )
@@ -443,9 +444,9 @@ test('load reviews', async () => {
           filterIf: listFilterIf(() => undefined),
         }}
         listStoragesByBeerIf={listStoragesByBeerIf}
-        urlParamsIf={urlParamsIf}
         reviewIf={reviewIf}
         getBeerIf={getBeerIf}
+        useUrlPathParams={useUrlPathParams}
       />
     </LinkWrapper>,
   )
@@ -489,9 +490,9 @@ test('sort reviews', async () => {
           filterIf: listFilterIf(setSearch),
         }}
         listStoragesByBeerIf={listStoragesByBeerIf}
-        urlParamsIf={urlParamsIf}
         reviewIf={reviewIf}
         getBeerIf={getBeerIf}
+        useUrlPathParams={useUrlPathParams}
       />
     </LinkWrapper>,
   )
@@ -539,9 +540,9 @@ test('show loading indicator', async () => {
           filterIf: listFilterIf(() => undefined),
         }}
         listStoragesByBeerIf={listStoragesByBeerIf}
-        urlParamsIf={urlParamsIf}
         reviewIf={reviewIf}
         getBeerIf={getBeerIf}
+        useUrlPathParams={useUrlPathParams}
       />
     </LinkWrapper>,
   )
