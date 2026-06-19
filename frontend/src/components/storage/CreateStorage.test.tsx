@@ -37,11 +37,21 @@ const beerSearchResult = {
     },
   ],
 }
+
+const searchFieldIf: SearchFieldIf = {
+  useSearchField: () => ({
+    activate: () => undefined,
+    isActive: true,
+  }),
+  useDebounce,
+}
+
 const beerSearchIf: SearchBeerIf = {
   useSearch: () => ({
     search: async () => [beerSearchResult],
     isLoading: false,
   }),
+  searchFieldIf,
 }
 const dontCreateBeerIf: CreateBeerIf = {
   useCreate: () => dontCreate,
@@ -95,14 +105,6 @@ const reviewContainerIf: ReviewContainerIf = {
       isLoading: false,
     }),
   },
-}
-
-const searchFieldIf: SearchFieldIf = {
-  useSearchField: () => ({
-    activate: () => undefined,
-    isActive: true,
-  }),
-  useDebounce,
 }
 
 const dontCreateStorageIf: CreateStorageIf = {

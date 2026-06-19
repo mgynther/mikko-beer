@@ -17,19 +17,20 @@ const dontCall = (): any => {
   throw new Error('must not be called')
 }
 
-const dontSearchBeer: SearchBeerIf = {
-  useSearch: () => ({
-    search: dontCall,
-    isLoading: false,
-  }),
-}
-
 const noSearch: SearchFieldIf = {
   useSearchField: () => ({
     activate: dontCall,
     isActive: false,
   }),
   useDebounce,
+}
+
+const dontSearchBeer: SearchBeerIf = {
+  useSearch: () => ({
+    search: dontCall,
+    isLoading: false,
+  }),
+  searchFieldIf: noSearch,
 }
 
 const activeSearch: SearchFieldIf = {
@@ -330,6 +331,7 @@ test('searches beer', async () => {
       search: async () => beers,
       isLoading: false,
     }),
+    searchFieldIf: activeSearch,
   }
   const { getByRole, getByPlaceholderText } = render(
     <LinkWrapper>

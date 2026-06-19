@@ -1,4 +1,5 @@
 import type { Brewery, SelectBreweryIf } from '../brewery/types'
+import type { SearchFieldIf } from '../search/types'
 import type { SelectStyleIf, Style } from '../style/types'
 import type { InfiniteScroll, Pagination } from '../types'
 
@@ -64,11 +65,18 @@ export interface EditBeerIf {
   selectStyleIf: SelectStyleIf
 }
 
+type UseSearchBeer = () => {
+  search: (query: string) => Promise<Beer[]>
+  isLoading: boolean
+}
+
+export interface SearchBeerHookIf {
+  useSearch: UseSearchBeer
+}
+
 export interface SearchBeerIf {
-  useSearch: () => {
-    search: (query: string) => Promise<Beer[]>
-    isLoading: boolean
-  }
+  useSearch: UseSearchBeer
+  searchFieldIf: SearchFieldIf
 }
 
 export interface SelectBeerIf {

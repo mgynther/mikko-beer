@@ -101,6 +101,10 @@ test('selects created beer', async () => {
             search: dontCall,
             isLoading: false,
           }),
+          searchFieldIf: {
+            useSearchField: dontCall,
+            useDebounce: dontCall,
+          },
         },
       }}
       searchFieldIf={searchFieldIf}
@@ -182,6 +186,7 @@ test('selects beer', async () => {
             search: async (): Promise<Beer[]> => [beer],
             isLoading: false,
           }),
+          searchFieldIf,
         },
       }}
       searchFieldIf={searchFieldIf}

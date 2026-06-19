@@ -29,6 +29,7 @@ import type {
   ReviewContainerIf,
   SetSearch,
 } from './core/review/types'
+import type { SearchFieldIf } from './core/search/types'
 
 beforeEach(() => {
   store.dispatch(setState('COLLAPSED'))
@@ -61,11 +62,20 @@ const getAdminLogin: GetLogin = () => ({
   refreshToken: 'refresh',
 })
 
+const searchFieldIf: SearchFieldIf = {
+  useSearchField: () => ({
+    activate: dontCall,
+    isActive: false,
+  }),
+  useDebounce,
+}
+
 const searchBeerIf: SearchBeerIf = {
   useSearch: () => ({
     search: dontCall,
     isLoading: false,
   }),
+  searchFieldIf,
 }
 
 const searchBreweryIf: SearchBreweryIf = {

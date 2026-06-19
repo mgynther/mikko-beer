@@ -5,7 +5,11 @@ import AddReview, { type Props as AddReviewProps } from './AddReview'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 import type { UseDebounce } from '../../core/types'
 import type { SearchLocationIf } from '../../core/location/types'
-import type { CreateBeerIf, SearchBeerIf } from '../../core/beer/types'
+import type {
+  CreateBeerIf,
+  SearchBeerIf,
+  SelectBeerIf,
+} from '../../core/beer/types'
 import type { ReviewContainerIf } from '../../core/review/types'
 import type { UseUrlPathParams } from '../util'
 import type { SearchFieldIf } from '../../core/search/types'
@@ -39,12 +43,23 @@ const beerSearchResult = {
     },
   ],
 }
+
+const searchFieldIf: SearchFieldIf = {
+  useSearchField: () => ({
+    activate: () => undefined,
+    isActive: true,
+  }),
+  useDebounce,
+}
+
 const beerSearchIf: SearchBeerIf = {
   useSearch: () => ({
     search: async () => [beerSearchResult],
     isLoading: false,
   }),
+  searchFieldIf,
 }
+
 const dontCreateBeerIf: CreateBeerIf = {
   useCreate: () => dontCreate,
   editBeerIf: {
@@ -104,7 +119,9 @@ const storageId = 'be233d3f-b0cc-4d30-8b52-4e1e7fa4fdf9'
 const smellText = 'Very nice, caramel, hops'
 const tasteText = 'Very good, caramel, malt, bitter'
 
-const dontSelectBeer = {
+const noSearchIf: SearchFieldIf = { useSearchField: dontCall, useDebounce }
+
+const dontSelectBeer: SelectBeerIf = {
   create: {
     useCreate: dontCall,
     editBeerIf: {
@@ -128,6 +145,7 @@ const dontSelectBeer = {
   },
   search: {
     useSearch: dontCall,
+    searchFieldIf: noSearchIf,
   },
 }
 
@@ -156,8 +174,6 @@ const noOpContainerIf = {
 const emptyUrlPathParams: UseUrlPathParams = () => ({})
 
 const storageIdUrlPathParams: UseUrlPathParams = () => ({ storageId })
-
-const noSearchIf: SearchFieldIf = { useSearchField: dontCall, useDebounce }
 
 const unusedStorageIf = {
   useGet: dontCall,
@@ -207,13 +223,7 @@ test('adds review', async () => {
     navigateIf: {
       useNavigate: () => dontCall,
     },
-    searchFieldIf: {
-      useSearchField: () => ({
-        activate: () => undefined,
-        isActive: true,
-      }),
-      useDebounce,
-    },
+    searchFieldIf,
     useUrlPathParams: emptyUrlPathParams,
   }
   const {
@@ -364,13 +374,7 @@ test('adds review from storage', async () => {
       useNavigate: () => dontCall,
     },
     useUrlPathParams: storageIdUrlPathParams,
-    searchFieldIf: {
-      useSearchField: () => ({
-        activate: () => undefined,
-        isActive: true,
-      }),
-      useDebounce,
-    },
+    searchFieldIf,
   }
 
   const { getByPlaceholderText, getByRole, queryAllByRole } = render(

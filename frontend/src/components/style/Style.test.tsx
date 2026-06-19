@@ -179,6 +179,7 @@ const updateReview: UpdateReviewIf = {
     },
     search: {
       useSearch: dontCall,
+      searchFieldIf,
     },
   },
   reviewContainerIf: {

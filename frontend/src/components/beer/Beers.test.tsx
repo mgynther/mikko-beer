@@ -62,6 +62,13 @@ const searchBeerIf: SearchBeerIf = {
     search: notUsed,
     isLoading: false,
   }),
+  searchFieldIf: {
+    useSearchField: () => ({
+      activate: notUsed,
+      isActive: false,
+    }),
+    useDebounce,
+  },
 }
 
 test('render beers', async () => {

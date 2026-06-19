@@ -30,7 +30,6 @@ function SelectBeer(props: Props): React.JSX.Element {
         }
         selectElement={
           <SearchBeer
-            searchFieldIf={props.searchFieldIf}
             searchBeerIf={props.selectBeerIf.search}
             select={props.select}
           />

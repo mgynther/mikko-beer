@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
 import type { Beer, BeerWithIds, SearchBeerIf } from '../../core/beer/types'
-import type { SearchFieldIf } from '../../core/search/types'
 
 import SearchBox from '../common/SearchBox'
 
@@ -11,14 +10,13 @@ import './SelectBeer.css'
 
 export interface Props {
   searchBeerIf: SearchBeerIf
-  searchFieldIf: SearchFieldIf
   select: (beer: BeerWithIds) => void
 }
 
 function SearchBeer(props: Props): React.JSX.Element {
   const { search, isLoading } = props.searchBeerIf.useSearch()
   const [filter, setFilter] = useState('')
-  const [debouncedFilter] = props.searchFieldIf.useDebounce(filter)
+  const [debouncedFilter] = props.searchBeerIf.searchFieldIf.useDebounce(filter)
   const [results, setResults] = useState<Beer[]>([])
 
   async function doSearch(filter: string): Promise<void> {
@@ -45,7 +43,7 @@ function SearchBeer(props: Props): React.JSX.Element {
           return `${beer.name} (${breweryStr})`
         }}
         isLoading={isLoading}
-        searchFieldIf={props.searchFieldIf}
+        searchFieldIf={props.searchBeerIf.searchFieldIf}
         setFilter={(filter: string) => {
           setFilter(filter)
         }}

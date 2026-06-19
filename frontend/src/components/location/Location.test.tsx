@@ -35,6 +35,7 @@ import type {
 import type { UseUrlPathParams } from '../util'
 import type { SearchFieldIf } from '../../core/search/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
+import type { SelectBeerIf } from '../../core/beer/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -62,7 +63,7 @@ function getLogin(): GetLogin {
   })
 }
 
-const dontSelectBeer = {
+const dontSelectBeer: SelectBeerIf = {
   create: {
     useCreate: dontCall,
     editBeerIf: {
@@ -86,6 +87,10 @@ const dontSelectBeer = {
   },
   search: {
     useSearch: dontCall,
+    searchFieldIf: {
+      useSearchField: dontCall,
+      useDebounce: dontCall,
+    },
   },
 }
 
@@ -191,6 +196,14 @@ const listReviewsByLocationIf: ListReviewsByIf = {
   filterIf: listFilterIf(() => undefined),
 }
 
+const searchFieldIf: SearchFieldIf = {
+  useSearchField: () => ({
+    activate: (): undefined => undefined,
+    isActive: true,
+  }),
+  useDebounce,
+}
+
 const reviewIf: ReviewIf = {
   get: {
     useGet: dontCall,
@@ -212,14 +225,6 @@ const getLocationIf: GetLocationIf = {
     },
     isLoading: false,
   }),
-}
-
-const searchFieldIf: SearchFieldIf = {
-  useSearchField: () => ({
-    activate: (): undefined => undefined,
-    isActive: true,
-  }),
-  useDebounce,
 }
 
 test('updates location', async () => {

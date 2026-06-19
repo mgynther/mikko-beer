@@ -200,8 +200,13 @@ function RtkApp(): React.JSX.Element {
     selectStyleIf,
   }
 
+  const searchFieldIf: SearchFieldIf = search(useDebounce<string>)
+
   const createBeerIf: CreateBeerIf = createBeer(editBeerIf)
-  const searchBeerIf: SearchBeerIf = searchBeer()
+  const searchBeerIf: SearchBeerIf = {
+    ...searchBeer(),
+    searchFieldIf,
+  }
   const updateBeerIf: UpdateBeerIf = updateBeer(editBeerIf)
   const selectBeerIf: SelectBeerIf = {
     create: createBeerIf,
@@ -299,8 +304,6 @@ function RtkApp(): React.JSX.Element {
     getUseDebounce,
     useUrlSearchParams,
   )
-
-  const searchFieldIf: SearchFieldIf = search(useDebounce<string>)
 
   const storeIf: StoreIf = {
     getLogin,

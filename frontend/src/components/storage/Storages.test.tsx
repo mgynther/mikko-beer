@@ -24,6 +24,10 @@ const beerSearchIf: SearchBeerIf = {
     search: dontCall,
     isLoading: false,
   }),
+  searchFieldIf: {
+    useSearchField: dontCall,
+    useDebounce: dontCall,
+  },
 }
 
 const dontCreateBeerIf: CreateBeerIf = {

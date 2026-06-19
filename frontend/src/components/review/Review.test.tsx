@@ -28,11 +28,20 @@ const dontCreate = {
 
 const reviewedBeerId = '8c7f4094-09ba-4ba9-aaa5-56099b1f5bbb'
 
+const searchFieldIf: SearchFieldIf = {
+  useSearchField: () => ({
+    activate: () => undefined,
+    isActive: true,
+  }),
+  useDebounce,
+}
+
 const beerSearchIf: SearchBeerIf = {
   useSearch: () => ({
     search: dontCall,
     isLoading: false,
   }),
+  searchFieldIf,
 }
 const dontCreateBeerIf: CreateBeerIf = {
   useCreate: () => dontCreate,
@@ -90,13 +99,6 @@ const reviewContainerIf: ReviewContainerIf = {
   },
 }
 
-const searchFieldIf: SearchFieldIf = {
-  useSearchField: () => ({
-    activate: () => undefined,
-    isActive: true,
-  }),
-  useDebounce,
-}
 const selectBeerIf = {
   create: dontCreateBeerIf,
   search: beerSearchIf,

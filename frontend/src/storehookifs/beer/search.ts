@@ -1,10 +1,10 @@
-import type { Beer, SearchBeerIf } from '../../core/beer/types'
+import type { Beer, SearchBeerHookIf } from '../../core/beer/types'
 import { useLazySearchBeersQuery } from '../../store/beer/api'
 import { validateBeerList } from '../../validation/beer'
 import { formatQuery } from '../search-query'
 
-const searchBeer: () => SearchBeerIf = () => {
-  const searchBeerIf: SearchBeerIf = {
+const searchBeer: () => SearchBeerHookIf = () => {
+  const searchBeerIf: SearchBeerHookIf = {
     useSearch: () => {
       const [searchBeers, { isFetching }] = useLazySearchBeersQuery()
       return {

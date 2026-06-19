@@ -56,7 +56,6 @@ function Beers(props: Props): React.JSX.Element {
       <h3>Beers</h3>
       <SearchBeerWithNavi
         navigateIf={props.navigateIf}
-        searchFieldIf={props.searchFieldIf}
         searchBeerIf={props.searchBeerIf}
       />
       {isLoading && <div>Loading...</div>}

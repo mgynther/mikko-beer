@@ -51,6 +51,10 @@ function Helper(props: HelperProps): React.JSX.Element {
       },
       search: {
         useSearch: dontCall,
+        searchFieldIf: {
+          useSearchField: dontCall,
+          useDebounce: dontCall,
+        },
       },
     },
     {

@@ -55,13 +55,10 @@ test('selects beer', async () => {
       search: async () => beers,
       isLoading: false,
     }),
+    searchFieldIf: activeSearch,
   }
   const { getByRole } = render(
-    <SearchBeer
-      searchBeerIf={searchBeerIf}
-      searchFieldIf={activeSearch}
-      select={selector}
-    />,
+    <SearchBeer searchBeerIf={searchBeerIf} select={selector} />,
   )
 
   const input = getByRole('textbox')

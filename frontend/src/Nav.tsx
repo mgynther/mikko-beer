@@ -75,7 +75,6 @@ function Nav(props: Props): React.JSX.Element {
             <SearchBeerWithNavi
               navigateIf={props.navigateIf}
               searchBeerIf={props.searchBeerIf}
-              searchFieldIf={props.searchFieldIf}
             />
           </div>
           <div className='Search'>
