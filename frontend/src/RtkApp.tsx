@@ -232,7 +232,10 @@ function RtkApp(): React.JSX.Element {
 
   const createLocationIf: CreateLocationIf = createLocation()
   const getLocationIf: GetLocationIf = getLocation()
-  const listLocationsIf: ListLocationsIf = listLocations()
+  const listLocationsIf: ListLocationsIf = {
+    ...listLocations(),
+    infiniteScroll,
+  }
   const searchLocationIf: SearchLocationIf = searchLocation(createLocationIf)
   const updateLocationIf: UpdateLocationIf = updateLocation(getLogin)
 

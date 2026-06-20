@@ -29,13 +29,19 @@ export interface GetLocationIf {
   }
 }
 
+type UseListLocations = () => {
+  list: (pagination: Pagination) => Promise<LocationList>
+  locationList: LocationList | undefined
+  isLoading: boolean
+  isUninitialized: boolean
+}
+
+export interface ListLocationsHookIf {
+  useList: UseListLocations
+}
+
 export interface ListLocationsIf {
-  useList: () => {
-    list: (pagination: Pagination) => Promise<LocationList>
-    locationList: LocationList | undefined
-    isLoading: boolean
-    isUninitialized: boolean
-  }
+  useList: UseListLocations
   infiniteScroll: InfiniteScroll
 }
 

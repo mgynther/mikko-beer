@@ -1,5 +1,7 @@
-import { infiniteScroll } from '../../components/util'
-import type { ListLocationsIf, LocationList } from '../../core/location/types'
+import type {
+  ListLocationsHookIf,
+  LocationList,
+} from '../../core/location/types'
 import type { Pagination } from '../../core/types'
 import { useLazyListLocationsQuery } from '../../store/location/api'
 import {
@@ -7,8 +9,8 @@ import {
   validateLocationListOrUndefined,
 } from '../../validation/location'
 
-const listLocations: () => ListLocationsIf = () => {
-  const listLocationsIf: ListLocationsIf = {
+const listLocations: () => ListLocationsHookIf = () => {
+  const listLocationsIf: ListLocationsHookIf = {
     useList: () => {
       const [trigger, { data, isFetching, isUninitialized }] =
         useLazyListLocationsQuery()
@@ -22,7 +24,6 @@ const listLocations: () => ListLocationsIf = () => {
         isUninitialized,
       }
     },
-    infiniteScroll,
   }
   return listLocationsIf
 }
