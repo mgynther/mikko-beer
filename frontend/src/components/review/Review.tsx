@@ -5,7 +5,6 @@ import type {
   Review as ReviewType,
   ReviewIf,
 } from '../../core/review/types'
-import type { SearchFieldIf } from '../../core/search/types'
 
 import BeerLink from '../beer/BeerLink'
 import BreweryLinks from '../brewery/BreweryLinks'
@@ -22,7 +21,6 @@ import ContainerInfo from '../container/ContainerInfo'
 interface Props {
   reviewIf: ReviewIf
   review: JoinedReview
-  searchFieldIf: SearchFieldIf
   onChanged: (() => void) | undefined
 }
 
@@ -120,7 +118,6 @@ function Review(props: Props): React.JSX.Element {
       {mode === EditableMode.Edit && fullReview !== undefined && (
         <>
           <UpdateReview
-            searchFieldIf={props.searchFieldIf}
             updateReviewIf={props.reviewIf.update}
             initialReview={{
               joined: review,

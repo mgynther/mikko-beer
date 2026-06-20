@@ -99,6 +99,14 @@ const dontSelectBeer: SelectBeerIf = {
   },
 }
 
+const searchFieldIf: SearchFieldIf = {
+  useSearchField: () => ({
+    activate: (): undefined => undefined,
+    isActive: true,
+  }),
+  useDebounce,
+}
+
 const searchLocationIf: SearchLocationIf = {
   useSearch: () => ({
     search: dontCall,
@@ -110,6 +118,7 @@ const searchLocationIf: SearchLocationIf = {
       isLoading: false,
     }),
   },
+  searchFieldIf,
 }
 
 const noOpContainerIf = {
@@ -201,14 +210,6 @@ const listReviewsByLocationIf: ListReviewsByIf = {
   filterIf: listFilterIf(() => undefined),
 }
 
-const searchFieldIf: SearchFieldIf = {
-  useSearchField: () => ({
-    activate: (): undefined => undefined,
-    isActive: true,
-  }),
-  useDebounce,
-}
-
 const reviewIf: ReviewIf = {
   get: {
     useGet: dontCall,
@@ -248,7 +249,6 @@ test('updates location', async () => {
         login: getLogin(),
       }}
       statsIf={statsIf}
-      searchFieldIf={searchFieldIf}
       useUrlPathParams={useUrlPathParams}
     />,
   )
@@ -292,7 +292,6 @@ test('cancel editing', async () => {
       getLocationIf={getLocationIf}
       updateLocationIf={dontUpdateLocationIf}
       statsIf={statsIf}
-      searchFieldIf={searchFieldIf}
       useUrlPathParams={useUrlPathParams}
     />,
   )
@@ -317,7 +316,6 @@ test('throw on missing id', async () => {
         getLocationIf={getLocationIf}
         updateLocationIf={dontUpdateLocationIf}
         statsIf={statsIf}
-        searchFieldIf={searchFieldIf}
       />,
     ),
   ).toThrow('Location component without locationId. Should not happen.')
@@ -337,7 +335,6 @@ test('render loading', async () => {
       }}
       updateLocationIf={dontUpdateLocationIf}
       statsIf={statsIf}
-      searchFieldIf={searchFieldIf}
     />,
   )
   getByText(loadingIndicatorText)
@@ -356,7 +353,6 @@ test('render not found', async () => {
       }}
       updateLocationIf={dontUpdateLocationIf}
       statsIf={statsIf}
-      searchFieldIf={searchFieldIf}
       useUrlPathParams={useUrlPathParams}
     />,
   )

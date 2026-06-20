@@ -9,7 +9,6 @@ import type {
   UpdateStyleIf,
 } from '../../core/style/types'
 
-import type { SearchFieldIf } from '../../core/search/types'
 import type { StatsIf } from '../../core/stats/types'
 import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
 import type { ListStoragesByIf } from '../../core/storage/types'
@@ -45,7 +44,6 @@ interface Props {
   getStyleIf: GetStyleIf
   useUrlPathParams: UseUrlPathParams
   reviewIf: ReviewIf
-  searchFieldIf: SearchFieldIf
   statsIf: StatsIf
   updateStyleIf: UpdateStyleIf
 }
@@ -142,7 +140,6 @@ function Style(props: Props): React.JSX.Element {
         id={styleId}
         listReviewsByIf={props.listReviewsByStyleIf}
         reviewIf={props.reviewIf}
-        searchFieldIf={props.searchFieldIf}
       />
     </>
   )

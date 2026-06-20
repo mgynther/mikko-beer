@@ -52,8 +52,8 @@ test('selects location', async () => {
           isLoading: false,
         }),
         create: createLocationIf,
+        searchFieldIf: activeSearch,
       }}
-      searchFieldIf={activeSearch}
     />,
   )
 
@@ -81,8 +81,8 @@ test('shows no results', async () => {
           isLoading: false,
         }),
         create: createLocationIf,
+        searchFieldIf: activeSearch,
       }}
-      searchFieldIf={activeSearch}
     />,
   )
 

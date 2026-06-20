@@ -132,6 +132,7 @@ const searchLocationIf: SearchLocationIf = {
       isLoading: false,
     }),
   },
+  searchFieldIf,
 }
 
 const smellText = 'Very nice, caramel, hops'
@@ -206,7 +207,6 @@ test('updates review', async () => {
         selectBeerIf,
         reviewContainerIf,
       }}
-      searchFieldIf={searchFieldIf}
       onCancel={dontCall}
     />,
   )
@@ -250,7 +250,6 @@ test('cancels update', async () => {
         selectBeerIf,
         reviewContainerIf,
       }}
-      searchFieldIf={searchFieldIf}
       onCancel={onCancel}
     />,
   )

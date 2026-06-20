@@ -8,7 +8,6 @@ import type {
   UpdateBreweryIf,
 } from '../../core/brewery/types'
 import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
-import type { SearchFieldIf } from '../../core/search/types'
 import type { ListStoragesByIf } from '../../core/storage/types'
 
 import { EditableMode } from '../common/EditableMode'
@@ -31,7 +30,6 @@ interface Props {
   useUrlPathParams: UseUrlPathParams
   reviewIf: ReviewIf
   getBreweryIf: GetBreweryIf
-  searchFieldIf: SearchFieldIf
   updateBreweryIf: UpdateBreweryIf
   statsIf: StatsIf
 }
@@ -95,7 +93,6 @@ function Brewery(props: Props): React.JSX.Element {
         id={breweryId}
         listReviewsByIf={props.listReviewsByBreweryIf}
         reviewIf={props.reviewIf}
-        searchFieldIf={props.searchFieldIf}
       />
     </div>
   )

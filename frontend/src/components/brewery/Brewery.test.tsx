@@ -113,6 +113,7 @@ const searchLocationIf: SearchLocationIf = {
       isLoading: false,
     }),
   },
+  searchFieldIf,
 }
 
 const noOpContainerIf = {
@@ -252,7 +253,6 @@ test('updates brewery', async () => {
           isLoading: false,
         }),
       }}
-      searchFieldIf={searchFieldIf}
       statsIf={statsIf}
       useUrlPathParams={useUrlPathParams}
     />,
@@ -296,7 +296,6 @@ test('cancel update', async () => {
       reviewIf={reviewIf}
       getBreweryIf={getBreweryIf}
       updateBreweryIf={dontUpdateBreweryIf}
-      searchFieldIf={searchFieldIf}
       statsIf={statsIf}
       useUrlPathParams={useUrlPathParams}
     />,
@@ -325,7 +324,6 @@ test('render loading', async () => {
         }),
       }}
       updateBreweryIf={dontUpdateBreweryIf}
-      searchFieldIf={searchFieldIf}
       statsIf={statsIf}
       useUrlPathParams={useUrlPathParams}
     />,
@@ -346,7 +344,6 @@ test('render not found', async () => {
         }),
       }}
       updateBreweryIf={dontUpdateBreweryIf}
-      searchFieldIf={searchFieldIf}
       statsIf={statsIf}
       useUrlPathParams={useUrlPathParams}
     />,
@@ -363,7 +360,6 @@ test('throw on missing id', async () => {
         reviewIf={reviewIf}
         getBreweryIf={getBreweryIf}
         updateBreweryIf={dontUpdateBreweryIf}
-        searchFieldIf={searchFieldIf}
         statsIf={statsIf}
         useUrlPathParams={() => ({})}
       />,

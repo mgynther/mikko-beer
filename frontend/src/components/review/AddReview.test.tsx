@@ -167,6 +167,7 @@ const searchLocationIf: SearchLocationIf = {
       isLoading: false,
     }),
   },
+  searchFieldIf,
 }
 
 const noOpContainerIf = {
@@ -230,7 +231,6 @@ test('adds review', async () => {
     navigateIf: {
       useNavigate: () => dontCall,
     },
-    searchFieldIf,
     useUrlPathParams: emptyUrlPathParams,
   }
   const {
@@ -304,7 +304,6 @@ test('loads storage', async () => {
         useNavigate: () => dontCall,
       }}
       useUrlPathParams={storageIdUrlPathParams}
-      searchFieldIf={noSearchIf}
     />,
   )
   const text = getByText(loadingIndicatorText)
@@ -335,7 +334,6 @@ test('shows storage loading error', async () => {
         useNavigate: () => dontCall,
       }}
       useUrlPathParams={storageIdUrlPathParams}
-      searchFieldIf={noSearchIf}
     />,
   )
   const text = getByText('Error, storage does not exist.')
@@ -381,7 +379,6 @@ test('adds review from storage', async () => {
       useNavigate: () => dontCall,
     },
     useUrlPathParams: storageIdUrlPathParams,
-    searchFieldIf,
   }
 
   const { getByPlaceholderText, getByRole, queryAllByRole } = render(
@@ -446,7 +443,6 @@ test('navigates', async () => {
         useNavigate: () => navigate,
       }}
       useUrlPathParams={storageIdUrlPathParams}
-      searchFieldIf={noSearchIf}
     />,
   )
   expect(navigate.mock.calls).toEqual([[`/beers/${beerId}`]])

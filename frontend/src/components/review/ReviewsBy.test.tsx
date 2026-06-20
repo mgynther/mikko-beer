@@ -152,6 +152,7 @@ const searchLocationIf: SearchLocationIf = {
       isLoading: false,
     }),
   },
+  searchFieldIf,
 }
 
 const dontUpdateReviewIf: ReviewIf = {
@@ -222,7 +223,6 @@ test('lists reviews', async () => {
           filterIf: listFilterIf(setSearch),
         }}
         reviewIf={dontUpdateReviewIf}
-        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -330,7 +330,6 @@ orderChangeTests.forEach((testCase) => {
             },
           }}
           reviewIf={dontUpdateReviewIf}
-          searchFieldIf={searchFieldIf}
         />
       </LinkWrapper>,
     )
@@ -380,7 +379,6 @@ test('renders loading', async () => {
           filterIf: listFilterIf(() => undefined),
         }}
         reviewIf={dontUpdateReviewIf}
-        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -410,7 +408,6 @@ test('opens filters', async () => {
           filterIf: listFilterIf(setSearch),
         }}
         reviewIf={dontUpdateReviewIf}
-        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -497,7 +494,6 @@ sliderChangeTests.forEach((testCase) => {
             },
           }}
           reviewIf={dontUpdateReviewIf}
-          searchFieldIf={searchFieldIf}
         />
       </LinkWrapper>,
     )

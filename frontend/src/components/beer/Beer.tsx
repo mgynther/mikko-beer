@@ -9,7 +9,6 @@ import type {
 } from '../../core/beer/types'
 
 import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
-import type { SearchFieldIf } from '../../core/search/types'
 import type { ListStoragesByIf } from '../../core/storage/types'
 
 import { EditableMode } from '../common/EditableMode'
@@ -31,7 +30,6 @@ interface Props {
   listStoragesByBeerIf: ListStoragesByIf
   useUrlPathParams: UseUrlPathParams
   reviewIf: ReviewIf
-  searchFieldIf: SearchFieldIf
   updateBeerIf: UpdateBeerIf
   getBeerIf: GetBeerIf
 }
@@ -103,7 +101,6 @@ function Beer(props: Props): React.JSX.Element {
         id={beerId}
         listReviewsByIf={props.listReviewsByBeerIf}
         reviewIf={props.reviewIf}
-        searchFieldIf={props.searchFieldIf}
       />
     </div>
   )

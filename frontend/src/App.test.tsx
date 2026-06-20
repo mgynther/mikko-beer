@@ -94,6 +94,7 @@ const searchLocationIf: SearchLocationIf = {
       isLoading: false,
     }),
   },
+  searchFieldIf,
 }
 
 const listStylesIf: ListStylesIf = {

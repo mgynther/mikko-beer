@@ -116,6 +116,7 @@ const searchLocationIf: SearchLocationIf = {
       isLoading: false,
     }),
   },
+  searchFieldIf,
 }
 
 const updateReview: UpdateReviewIf = {
@@ -292,7 +293,6 @@ test('renders beer', async () => {
     <LinkWrapper>
       <Beer
         updateBeerIf={dontUpdateBeerIf}
-        searchFieldIf={searchFieldIf}
         listReviewsByBeerIf={getListReviewsIf([joinedReview])}
         listStoragesByBeerIf={listStoragesByBeerIf}
         reviewIf={reviewIf}
@@ -315,7 +315,6 @@ test('throw on missing id', async () => {
       <LinkWrapper>
         <Beer
           updateBeerIf={dontUpdateBeerIf}
-          searchFieldIf={searchFieldIf}
           listReviewsByBeerIf={getListReviewsIf([joinedReview])}
           listStoragesByBeerIf={listStoragesByBeerIf}
           reviewIf={reviewIf}
@@ -340,7 +339,6 @@ test('updates beer', async () => {
           }),
           editBeerIf,
         }}
-        searchFieldIf={searchFieldIf}
         listReviewsByBeerIf={getListReviewsIf([])}
         listStoragesByBeerIf={listStoragesByBeerIf}
         reviewIf={reviewIf}
@@ -376,7 +374,6 @@ test('cancel update', async () => {
     <LinkWrapper>
       <Beer
         updateBeerIf={dontUpdateBeerIf}
-        searchFieldIf={searchFieldIf}
         listReviewsByBeerIf={getListReviewsIf([])}
         listStoragesByBeerIf={listStoragesByBeerIf}
         reviewIf={reviewIf}
@@ -398,7 +395,6 @@ test('render loading', async () => {
     <LinkWrapper>
       <Beer
         updateBeerIf={dontUpdateBeerIf}
-        searchFieldIf={searchFieldIf}
         listReviewsByBeerIf={getListReviewsIf([])}
         listStoragesByBeerIf={listStoragesByBeerIf}
         reviewIf={reviewIf}
@@ -420,7 +416,6 @@ test('render not found', async () => {
     <LinkWrapper>
       <Beer
         updateBeerIf={dontUpdateBeerIf}
-        searchFieldIf={searchFieldIf}
         listReviewsByBeerIf={getListReviewsIf([])}
         listStoragesByBeerIf={listStoragesByBeerIf}
         reviewIf={reviewIf}
@@ -443,7 +438,6 @@ test('load reviews', async () => {
     <LinkWrapper>
       <Beer
         updateBeerIf={dontUpdateBeerIf}
-        searchFieldIf={searchFieldIf}
         listReviewsByBeerIf={{
           useList: (params: IdFilteredListReviewParams) => {
             useList(params)
@@ -490,7 +484,6 @@ test('sort reviews', async () => {
     <LinkWrapper>
       <Beer
         updateBeerIf={dontUpdateBeerIf}
-        searchFieldIf={searchFieldIf}
         listReviewsByBeerIf={{
           useList: () => {
             return {
@@ -546,7 +539,6 @@ test('show loading indicator', async () => {
     <LinkWrapper>
       <Beer
         updateBeerIf={dontUpdateBeerIf}
-        searchFieldIf={searchFieldIf}
         listReviewsByBeerIf={{
           useList: () => {
             return {

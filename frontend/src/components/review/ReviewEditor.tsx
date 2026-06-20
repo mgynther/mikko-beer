@@ -8,7 +8,6 @@ import type {
   JoinedReview,
   ReviewRequest,
 } from '../../core/review/types'
-import type { SearchFieldIf } from '../../core/search/types'
 
 import SelectBeer from '../beer/SelectBeer'
 import SelectContainer from '../container/SelectContainer'
@@ -31,7 +30,6 @@ export interface InitialReview {
 }
 
 interface Props {
-  searchFieldIf: SearchFieldIf
   selectBeerIf: SelectBeerIf
   reviewContainerIf: ReviewContainerIf
   searchLocationIf: SearchLocationIf
@@ -213,7 +211,6 @@ function ReviewEditor(props: Props): React.JSX.Element {
                 isCreateEnabled={true}
                 placeholderText={'Location'}
                 searchLocationIf={props.searchLocationIf}
-                searchFieldIf={props.searchFieldIf}
                 select={setLocation}
               />
             ) : (

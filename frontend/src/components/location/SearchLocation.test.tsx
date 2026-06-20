@@ -57,8 +57,8 @@ test('selects location', async () => {
           isLoading: false,
         }),
         create: dontCreateLocation,
+        searchFieldIf: activeSearch,
       }}
-      searchFieldIf={activeSearch}
       select={selector}
     />,
   )
@@ -89,8 +89,8 @@ test('does not show create button with case-insensitive match', async () => {
           isLoading: false,
         }),
         create: dontCreateLocation,
+        searchFieldIf: activeSearch,
       }}
-      searchFieldIf={activeSearch}
       select={selector}
     />,
   )
@@ -119,8 +119,8 @@ test('shows no results when creating not enabled', async () => {
           isLoading: false,
         }),
         create: dontCreateLocation,
+        searchFieldIf: activeSearch,
       }}
-      searchFieldIf={activeSearch}
       select={selector}
     />,
   )
@@ -157,8 +157,8 @@ test('creates location', async () => {
             isLoading: false,
           }),
         },
+        searchFieldIf: activeSearch,
       }}
-      searchFieldIf={activeSearch}
       select={select}
     />,
   )
@@ -210,8 +210,8 @@ test('confirms creating location with partially matching result', async () => {
             isLoading: false,
           }),
         },
+        searchFieldIf: activeSearch,
       }}
-      searchFieldIf={activeSearch}
       select={select}
     />,
   )
@@ -261,8 +261,8 @@ test('does not create location on reject', async () => {
             isLoading: false,
           }),
         },
+        searchFieldIf: activeSearch,
       }}
-      searchFieldIf={activeSearch}
       select={select}
     />,
   )
@@ -307,8 +307,8 @@ test('sorts existing result before create new location', async () => {
             isLoading: false,
           }),
         },
+        searchFieldIf: activeSearch,
       }}
-      searchFieldIf={activeSearch}
       select={dontCall}
     />,
   )

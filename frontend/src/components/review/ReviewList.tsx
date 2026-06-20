@@ -6,7 +6,6 @@ import type {
   ReviewSorting,
   ReviewSortingOrder,
 } from '../../core/review/types'
-import type { SearchFieldIf } from '../../core/search/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
@@ -22,7 +21,6 @@ interface Props {
   isLoading: boolean
   isTitleVisible: boolean
   reviews: JoinedReview[]
-  searchFieldIf: SearchFieldIf
   sorting: ReviewSorting | undefined
   setSorting: (sorting: ReviewSortingOrder) => void
   supportedSorting: ReviewSortingOrder[]
@@ -45,7 +43,6 @@ function ReviewList(props: Props): React.JSX.Element {
           {props.reviews.map((review) => (
             <Review
               reviewIf={props.reviewIf}
-              searchFieldIf={props.searchFieldIf}
               key={review.id}
               review={review}
               onChanged={props.onChanged}

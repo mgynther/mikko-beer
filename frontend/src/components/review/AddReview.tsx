@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
 import type { CreateReviewIf, ReviewRequest } from '../../core/review/types'
-import type { SearchFieldIf } from '../../core/search/types'
 import type { GetStorageIf, Storage } from '../../core/storage/types'
 
 import Button from '../common/Button'
@@ -51,7 +50,6 @@ export interface Props {
   getStorageIf: GetStorageIf
   navigateIf: NavigateIf
   useUrlPathParams: UseUrlPathParams
-  searchFieldIf: SearchFieldIf
 }
 
 function AddReview(props: Props): React.JSX.Element {
@@ -97,7 +95,6 @@ function AddReview(props: Props): React.JSX.Element {
       <LoadingIndicator isLoading={isLoadingStorage} />
       {storageId === '' && (
         <ReviewEditor
-          searchFieldIf={props.searchFieldIf}
           searchLocationIf={props.createReviewIf.searchLocationIf}
           selectBeerIf={props.createReviewIf.selectBeerIf}
           reviewContainerIf={props.createReviewIf.reviewContainerIf}
@@ -111,7 +108,6 @@ function AddReview(props: Props): React.JSX.Element {
       )}
       {storage !== undefined && (
         <ReviewEditor
-          searchFieldIf={props.searchFieldIf}
           searchLocationIf={props.createReviewIf.searchLocationIf}
           selectBeerIf={props.createReviewIf.selectBeerIf}
           reviewContainerIf={props.createReviewIf.reviewContainerIf}

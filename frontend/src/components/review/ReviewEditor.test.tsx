@@ -133,6 +133,7 @@ const searchLocationIf: SearchLocationIf = {
       isLoading: false,
     }),
   },
+  searchFieldIf,
 }
 
 const additionalInfoText = 'Very nice atmosphere here'
@@ -247,7 +248,6 @@ test('adds review', async () => {
       isFromStorage={false}
       onChange={onChange}
       reviewContainerIf={reviewContainerIf}
-      searchFieldIf={searchFieldIf}
       searchLocationIf={searchLocationIf}
       selectBeerIf={selectBeerIf}
     />,
@@ -297,7 +297,6 @@ test('adds review with custom time', async () => {
       isFromStorage={false}
       onChange={onChange}
       reviewContainerIf={reviewContainerIf}
-      searchFieldIf={searchFieldIf}
       searchLocationIf={searchLocationIf}
       selectBeerIf={selectBeerIf}
     />,
@@ -349,7 +348,6 @@ test('change beer', async () => {
       isFromStorage={false}
       onChange={onChange}
       reviewContainerIf={reviewContainerIf}
-      searchFieldIf={searchFieldIf}
       searchLocationIf={searchLocationIf}
       selectBeerIf={selectBeerIf}
     />,
@@ -377,7 +375,6 @@ test('change container', async () => {
       isFromStorage={false}
       onChange={onChange}
       reviewContainerIf={reviewContainerIf}
-      searchFieldIf={searchFieldIf}
       searchLocationIf={searchLocationIf}
       selectBeerIf={selectBeerIf}
     />,
@@ -402,7 +399,6 @@ test('updates review', async () => {
       isFromStorage={false}
       onChange={onChange}
       reviewContainerIf={reviewContainerIf}
-      searchFieldIf={searchFieldIf}
       searchLocationIf={searchLocationIf}
       selectBeerIf={selectBeerIf}
     />,
@@ -448,7 +444,6 @@ test('clears location', async () => {
       isFromStorage={false}
       onChange={onChange}
       reviewContainerIf={reviewContainerIf}
-      searchFieldIf={searchFieldIf}
       searchLocationIf={searchLocationIf}
       selectBeerIf={selectBeerIf}
     />,
@@ -475,7 +470,6 @@ test('cannot change beer or container when from storage', () => {
       isFromStorage={true}
       onChange={() => undefined}
       reviewContainerIf={reviewContainerIf}
-      searchFieldIf={searchFieldIf}
       searchLocationIf={searchLocationIf}
       selectBeerIf={selectBeerIf}
     />,

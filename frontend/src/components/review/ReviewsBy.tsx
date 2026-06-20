@@ -2,7 +2,6 @@ import React from 'react'
 
 import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
 import ReviewList from '../review/ReviewList'
-import type { SearchFieldIf } from '../../core/search/types'
 import { parseSearchParams } from './search-params'
 import { toTimestamp } from '../common/filter-util'
 
@@ -10,7 +9,6 @@ interface Props {
   id: string
   listReviewsByIf: ListReviewsByIf
   reviewIf: ReviewIf
-  searchFieldIf: SearchFieldIf
 }
 
 const ReviewsBy = (props: Props): React.JSX.Element => {
@@ -58,7 +56,6 @@ const ReviewsBy = (props: Props): React.JSX.Element => {
         filters: parsedSearchParams.filters,
       }}
       reviewIf={props.reviewIf}
-      searchFieldIf={props.searchFieldIf}
       isLoading={isLoadingReviews}
       isTitleVisible={true}
       reviews={reviews?.reviews ?? []}

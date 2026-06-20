@@ -191,6 +191,7 @@ const searchLocationIf: SearchLocationIf = {
       isLoading: false,
     }),
   },
+  searchFieldIf,
 }
 
 const dontUpdateReviewIf: ReviewIf = {
@@ -290,7 +291,6 @@ test('updates review', async () => {
           },
           login: () => adminLogin,
         }}
-        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -346,7 +346,6 @@ test('sets review sorting', async () => {
         reviews={[joinedReview]}
         onChanged={dontCall}
         reviewIf={dontUpdateReviewIf}
-        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -374,7 +373,6 @@ test('renders reviews', async () => {
         reviews={[joinedReview, anotherJoinedReview]}
         onChanged={dontCall}
         reviewIf={dontUpdateReviewIf}
-        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -409,7 +407,6 @@ test('renders title', async () => {
         reviews={[joinedReview, anotherJoinedReview]}
         onChanged={dontCall}
         reviewIf={dontUpdateReviewIf}
-        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -433,7 +430,6 @@ test('does not render title', async () => {
         reviews={[joinedReview, anotherJoinedReview]}
         onChanged={dontCall}
         reviewIf={dontUpdateReviewIf}
-        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )

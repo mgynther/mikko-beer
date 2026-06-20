@@ -66,8 +66,8 @@ test('renders locations', async () => {
             isLoading: false,
           }),
           create: createLocationIf,
+          searchFieldIf: activeSearch,
         }}
-        searchFieldIf={activeSearch}
       />
     </LinkWrapper>,
   )
@@ -107,8 +107,8 @@ test('renders loading', async () => {
             isLoading: false,
           }),
           create: createLocationIf,
+          searchFieldIf: activeSearch,
         }}
-        searchFieldIf={activeSearch}
       />
     </LinkWrapper>,
   )
@@ -158,8 +158,8 @@ test('stops loading more', async () => {
             isLoading: false,
           }),
           create: createLocationIf,
+          searchFieldIf: activeSearch,
         }}
-        searchFieldIf={activeSearch}
       />
     </LinkWrapper>,
   )

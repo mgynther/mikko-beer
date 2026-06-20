@@ -176,6 +176,7 @@ const searchLocationIf: SearchLocationIf = {
       isLoading: false,
     }),
   },
+  searchFieldIf,
 }
 
 const dontUpdateReviewIf: ReviewIf = {
@@ -287,7 +288,6 @@ test('updates review', async () => {
           },
           login: () => adminLogin,
         }}
-        searchFieldIf={searchFieldIf}
       />
       <ContentEnd />
     </LinkWrapper>,
@@ -359,7 +359,6 @@ test('sets review sorting to rating asc', async () => {
           },
         }}
         reviewIf={dontUpdateReviewIf}
-        searchFieldIf={searchFieldIf}
       />
       <ContentEnd />
     </LinkWrapper>,
@@ -407,7 +406,6 @@ test('renders loading', async () => {
           filterIf: listFilterIf(() => undefined),
         }}
         reviewIf={dontUpdateReviewIf}
-        searchFieldIf={searchFieldIf}
       />
       <ContentEnd />
     </LinkWrapper>,
@@ -465,7 +463,6 @@ test('stops loading more', async () => {
           filterIf: listFilterIf(() => undefined),
         }}
         reviewIf={dontUpdateReviewIf}
-        searchFieldIf={searchFieldIf}
       />
       <ContentEnd />
     </LinkWrapper>,
@@ -538,7 +535,6 @@ test('opens filters', async () => {
           },
         }}
         reviewIf={dontUpdateReviewIf}
-        searchFieldIf={searchFieldIf}
       />
       <ContentEnd />
     </LinkWrapper>,
@@ -619,7 +615,6 @@ sliderChangeTests.forEach((testCase) => {
             },
           }}
           reviewIf={dontUpdateReviewIf}
-          searchFieldIf={searchFieldIf}
         />
         <ContentEnd />
       </LinkWrapper>,

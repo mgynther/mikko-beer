@@ -6,14 +6,11 @@ import type {
   ReviewRequest,
 } from '../../core/review/types'
 
-import type { SearchFieldIf } from '../../core/search/types'
-
 import EditActions from '../common/EditActions'
 
 import ReviewEditor from './ReviewEditor'
 
 interface Props {
-  searchFieldIf: SearchFieldIf
   updateReviewIf: UpdateReviewIf
   initialReview: {
     joined: JoinedReview
@@ -39,7 +36,6 @@ function UpdateReview(props: Props): React.JSX.Element {
   return (
     <>
       <ReviewEditor
-        searchFieldIf={props.searchFieldIf}
         searchLocationIf={props.updateReviewIf.searchLocationIf}
         selectBeerIf={props.updateReviewIf.selectBeerIf}
         reviewContainerIf={props.updateReviewIf.reviewContainerIf}

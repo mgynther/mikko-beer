@@ -249,6 +249,7 @@ function RtkApp(): React.JSX.Element {
   const searchLocationIf: SearchLocationIf = {
     ...searchLocation(),
     create: createLocationIf,
+    searchFieldIf,
   }
   const updateLocationIf: UpdateLocationIf = {
     ...updateLocation(),

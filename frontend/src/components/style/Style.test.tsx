@@ -145,6 +145,7 @@ const updateReview: UpdateReviewIf = {
     create: {
       useCreate: dontCall,
     },
+    searchFieldIf,
   },
   selectBeerIf: {
     create: {
@@ -328,7 +329,6 @@ test('renders style', async () => {
     <LinkWrapper>
       <Style
         updateStyleIf={dontUpdate}
-        searchFieldIf={searchFieldIf}
         listReviewsByStyleIf={getListReviewsIf([joinedReview])}
         listStoragesByStyleIf={getListStoragesByStyleIf(undefined)}
         reviewIf={reviewIf}
@@ -349,7 +349,6 @@ test('renders storages', async () => {
     <LinkWrapper>
       <Style
         updateStyleIf={dontUpdate}
-        searchFieldIf={searchFieldIf}
         listReviewsByStyleIf={getListReviewsIf([joinedReview])}
         listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
         reviewIf={reviewIf}
@@ -370,7 +369,6 @@ test('renders loading when loading', async () => {
     <LinkWrapper>
       <Style
         updateStyleIf={dontUpdate}
-        searchFieldIf={searchFieldIf}
         listReviewsByStyleIf={getListReviewsIf([joinedReview])}
         listStoragesByStyleIf={getListStoragesByStyleIf(undefined)}
         reviewIf={reviewIf}
@@ -393,7 +391,6 @@ test('renders not found when not found', async () => {
     <LinkWrapper>
       <Style
         updateStyleIf={dontUpdate}
-        searchFieldIf={searchFieldIf}
         listReviewsByStyleIf={getListReviewsIf([joinedReview])}
         listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
         reviewIf={reviewIf}
@@ -417,7 +414,6 @@ test('throw without style id', async () => {
       <LinkWrapper>
         <Style
           updateStyleIf={dontUpdate}
-          searchFieldIf={searchFieldIf}
           listReviewsByStyleIf={getListReviewsIf([joinedReview])}
           listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
           reviewIf={reviewIf}
@@ -445,7 +441,6 @@ test('updates style', async () => {
             isSuccess: update.mock.calls.length > 0,
           }),
         }}
-        searchFieldIf={searchFieldIf}
         listReviewsByStyleIf={getListReviewsIf([])}
         listStoragesByStyleIf={getListStoragesByStyleIf([])}
         reviewIf={reviewIf}
@@ -509,7 +504,6 @@ test('cancels update', async () => {
             isSuccess: false,
           }),
         }}
-        searchFieldIf={searchFieldIf}
         listReviewsByStyleIf={getListReviewsIf([])}
         listStoragesByStyleIf={getListStoragesByStyleIf([])}
         reviewIf={reviewIf}

@@ -1,6 +1,7 @@
 import type { Pagination, InfiniteScroll } from '../types'
 
 import type { GetLogin } from '../login/types'
+import type { SearchFieldIf } from '../search/types'
 
 export interface CreateLocationRequest {
   name: string
@@ -71,4 +72,5 @@ export interface SearchLocationHookIf {
 export interface SearchLocationIf {
   useSearch: UseSearchLocation
   create: CreateLocationIf
+  searchFieldIf: SearchFieldIf
 }

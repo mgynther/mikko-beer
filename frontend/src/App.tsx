@@ -181,7 +181,6 @@ function App(props: Props): React.JSX.Element {
                         createReviewIf={createReviewIf}
                         getStorageIf={getStorageIf}
                         navigateIf={navigateIf}
-                        searchFieldIf={searchFieldIf}
                         useUrlPathParams={props.useUrlPathParams}
                       />
                     }
@@ -195,7 +194,6 @@ function App(props: Props): React.JSX.Element {
                         createReviewIf={createReviewIf}
                         getStorageIf={getStorageIf}
                         navigateIf={navigateIf}
-                        searchFieldIf={searchFieldIf}
                         useUrlPathParams={props.useUrlPathParams}
                       />
                     }
@@ -220,7 +218,6 @@ function App(props: Props): React.JSX.Element {
                       listReviewsByBeerIf={listReviewsByBeerIf}
                       listStoragesByBeerIf={listStoragesByBeerIf}
                       reviewIf={reviewIf}
-                      searchFieldIf={searchFieldIf}
                       updateBeerIf={updateBeerIf}
                       useUrlPathParams={props.useUrlPathParams}
                     />
@@ -244,7 +241,6 @@ function App(props: Props): React.JSX.Element {
                       listReviewsByBreweryIf={listReviewsByBreweryIf}
                       listStoragesByBreweryIf={listStoragesByBreweryIf}
                       reviewIf={reviewIf}
-                      searchFieldIf={searchFieldIf}
                       statsIf={statsIf}
                       updateBreweryIf={updateBreweryIf}
                       useUrlPathParams={props.useUrlPathParams}
@@ -268,7 +264,6 @@ function App(props: Props): React.JSX.Element {
                       listLocationsIf={listLocationsIf}
                       navigateIf={navigateIf}
                       searchLocationIf={searchLocationIf}
-                      searchFieldIf={searchFieldIf}
                     />
                   }
                 />
@@ -279,7 +274,6 @@ function App(props: Props): React.JSX.Element {
                       getLocationIf={getLocationIf}
                       listReviewsByLocationIf={listReviewsByLocationIf}
                       reviewIf={reviewIf}
-                      searchFieldIf={searchFieldIf}
                       statsIf={statsIf}
                       updateLocationIf={updateLocationIf}
                       useUrlPathParams={props.useUrlPathParams}
@@ -292,7 +286,6 @@ function App(props: Props): React.JSX.Element {
                     <Reviews
                       listReviewsIf={listReviewsIf}
                       reviewIf={reviewIf}
-                      searchFieldIf={searchFieldIf}
                     />
                   }
                 />
@@ -314,7 +307,6 @@ function App(props: Props): React.JSX.Element {
                       reviewIf={reviewIf}
                       getStyleIf={getStyleIf}
                       statsIf={statsIf}
-                      searchFieldIf={searchFieldIf}
                       updateStyleIf={updateStyleIf}
                       useUrlPathParams={props.useUrlPathParams}
                     />

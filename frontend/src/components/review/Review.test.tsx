@@ -120,6 +120,7 @@ const searchLocationIf: SearchLocationIf = {
       isLoading: false,
     }),
   },
+  searchFieldIf,
 }
 
 const smellText = 'Very nice, caramel, hops'
@@ -236,7 +237,6 @@ test('updates review', async () => {
           },
           login: () => adminLogin,
         }}
-        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -290,7 +290,6 @@ test('update review without onChanged callback', async () => {
           },
           login: () => adminLogin,
         }}
-        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -344,7 +343,6 @@ test('cancel editing', async () => {
           },
           login: () => adminLogin,
         }}
-        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -383,7 +381,6 @@ test('cannot update review as viewer', async () => {
           },
           login: () => viewerLogin,
         }}
-        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
@@ -428,7 +425,6 @@ test('renders review', async () => {
           },
           login: () => viewerLogin,
         }}
-        searchFieldIf={searchFieldIf}
       />
     </LinkWrapper>,
   )
