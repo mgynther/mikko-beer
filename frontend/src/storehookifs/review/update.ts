@@ -1,23 +1,9 @@
-import type { SelectBeerIf } from '../../core/beer/types'
-import type { SearchLocationIf } from '../../core/location/types'
-import type {
-  Review,
-  ReviewContainerIf,
-  UpdateReviewIf,
-} from '../../core/review/types'
+import type { Review, UpdateReviewHookIf } from '../../core/review/types'
 import { useUpdateReviewMutation } from '../../store/review/api'
 import { validateReview } from '../../validation/review'
 
-const updateReview: (
-  searchLocationIf: SearchLocationIf,
-  selectBeerIf: SelectBeerIf,
-  reviewContainerIf: ReviewContainerIf,
-) => UpdateReviewIf = (
-  searchLocationIf: SearchLocationIf,
-  selectBeerIf: SelectBeerIf,
-  reviewContainerIf: ReviewContainerIf,
-) => {
-  const updateReviewIf: UpdateReviewIf = {
+const updateReview: () => UpdateReviewHookIf = () => {
+  const updateReviewIf: UpdateReviewHookIf = {
     useUpdate: () => {
       const [updateReview, { isLoading }] = useUpdateReviewMutation()
       return {
@@ -28,9 +14,6 @@ const updateReview: (
         isLoading,
       }
     },
-    searchLocationIf,
-    selectBeerIf,
-    reviewContainerIf,
   }
   return updateReviewIf
 }

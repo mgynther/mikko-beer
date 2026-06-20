@@ -172,11 +172,17 @@ export interface CreateReviewIf {
   reviewContainerIf: ReviewContainerIf
 }
 
+type UseUpdateReview = () => {
+  update: (request: Review) => Promise<void>
+  isLoading: boolean
+}
+
+export interface UpdateReviewHookIf {
+  useUpdate: UseUpdateReview
+}
+
 export interface UpdateReviewIf {
-  useUpdate: () => {
-    update: (request: Review) => Promise<void>
-    isLoading: boolean
-  }
+  useUpdate: UseUpdateReview
   searchLocationIf: SearchLocationIf
   selectBeerIf: SelectBeerIf
   reviewContainerIf: ReviewContainerIf

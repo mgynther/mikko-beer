@@ -313,11 +313,12 @@ function RtkApp(): React.JSX.Element {
     selectBeerIf,
     reviewContainerIf,
   }
-  const updateReviewIf: UpdateReviewIf = updateReview(
+  const updateReviewIf: UpdateReviewIf = {
+    ...updateReview(),
     searchLocationIf,
     selectBeerIf,
     reviewContainerIf,
-  )
+  }
   const reviewIf: ReviewIf = {
     get: getReviewIf,
     update: updateReviewIf,

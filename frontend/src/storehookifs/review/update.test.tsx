@@ -9,62 +9,13 @@ import { Provider } from '../../react-redux-wrapper'
 
 import Button from '../../components/common/Button'
 
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
-
 interface HelperProps {
   review: Review
   handler: () => void
 }
 
 function Helper(props: HelperProps): React.JSX.Element {
-  const updateIf = updateReview(
-    {
-      useSearch: dontCall,
-      create: {
-        useCreate: dontCall,
-      },
-    },
-    {
-      search: {
-        useSearch: dontCall,
-        searchFieldIf: {
-          useSearchField: dontCall,
-          useDebounce: dontCall,
-        },
-      },
-      create: {
-        useCreate: dontCall,
-        editBeerIf: {
-          selectBreweryIf: {
-            create: {
-              useCreate: dontCall,
-            },
-            search: {
-              useSearch: dontCall,
-            },
-          },
-          selectStyleIf: {
-            create: {
-              useCreate: dontCall,
-            },
-            list: {
-              useList: dontCall,
-            },
-          },
-        },
-      },
-    },
-    {
-      createIf: {
-        useCreate: dontCall,
-      },
-      listIf: {
-        useList: dontCall,
-      },
-    },
-  )
+  const updateIf = updateReview()
   const update = updateIf.useUpdate()
   const handleClick = (): void => {
     async function doHandle(): Promise<void> {
