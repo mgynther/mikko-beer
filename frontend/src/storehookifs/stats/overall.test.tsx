@@ -1,5 +1,4 @@
-import { expect, test, vitest } from 'vitest'
-import { infiniteScroll } from '../../components/util'
+import { expect, test } from 'vitest'
 import { store } from '../../store/store'
 import { addTestServerResponse } from '../../../test-util/server'
 import statsHook from './stats'
@@ -7,33 +6,9 @@ import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
 
 import type { IdParams, OverallStats } from '../../core/stats/types'
-import type {
-  UseDebounce,
-  UseUrlSearchParams,
-  YearMonth,
-} from '../../core/types'
-
-const minTime: YearMonth = { year: 2017, month: 12 }
-const maxTime: YearMonth = { year: 2024, month: 12 }
-
-const getUseDebounce = function <T>(): UseDebounce<T> {
-  return (value: T) => [value, false]
-}
-
-const useSearchParams: UseUrlSearchParams = () => ({
-  get: () => undefined,
-})
 
 function OverallStatsHelper(props: { params: IdParams }): React.JSX.Element {
-  const setSearch = vitest.fn()
-  const statsIf = statsHook(
-    infiniteScroll,
-    minTime,
-    maxTime,
-    setSearch,
-    getUseDebounce,
-    useSearchParams,
-  )
+  const statsIf = statsHook()
   const { stats } = statsIf.overall.useStats(props.params)
   return (
     <div>

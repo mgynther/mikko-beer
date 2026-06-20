@@ -209,23 +209,35 @@ export interface GetAnnualStatsIf {
   }
 }
 
+type UseAnnualContainerStats = () => {
+  query: (
+    params: AnnualContainerStatsQueryParams,
+  ) => Promise<AnnualContainerStats>
+  stats: AnnualContainerStats | undefined
+  isLoading: boolean
+}
+
+export interface GetAnnualContainerStatsHookIf {
+  useStats: UseAnnualContainerStats
+}
+
 export interface GetAnnualContainerStatsIf {
-  useStats: () => {
-    query: (
-      params: AnnualContainerStatsQueryParams,
-    ) => Promise<AnnualContainerStats>
-    stats: AnnualContainerStats | undefined
-    isLoading: boolean
-  }
+  useStats: UseAnnualContainerStats
   infiniteScroll: InfiniteScroll
 }
 
+type UseGetBreweryStats = () => {
+  query: (params: BreweryStatsQueryParams) => Promise<BreweryStats>
+  stats: BreweryStats | undefined
+  isLoading: boolean
+}
+
+export interface GetBreweryStatsHookIf {
+  useStats: UseGetBreweryStats
+}
+
 export interface GetBreweryStatsIf {
-  useStats: () => {
-    query: (params: BreweryStatsQueryParams) => Promise<BreweryStats>
-    stats: BreweryStats | undefined
-    isLoading: boolean
-  }
+  useStats: UseGetBreweryStats
   infiniteScroll: InfiniteScroll
   minTime: YearMonth
   maxTime: YearMonth
@@ -239,12 +251,18 @@ export interface GetContainerStatsIf {
   }
 }
 
+type UseGetLocationStats = () => {
+  query: (params: LocationStatsQueryParams) => Promise<LocationStats>
+  stats: LocationStats | undefined
+  isLoading: boolean
+}
+
+export interface GetLocationStatsHookIf {
+  useStats: UseGetLocationStats
+}
+
 export interface GetLocationStatsIf {
-  useStats: () => {
-    query: (params: LocationStatsQueryParams) => Promise<LocationStats>
-    stats: LocationStats | undefined
-    isLoading: boolean
-  }
+  useStats: UseGetLocationStats
   infiniteScroll: InfiniteScroll
   minTime: YearMonth
   maxTime: YearMonth
@@ -270,14 +288,31 @@ export interface StatsResult {
   isLoading: boolean
 }
 
+type UseGetStyleStats = (params: StyleStatsQueryParams) => StatsResult
+
+export interface GetStyleStatsHookIf {
+  useStats: UseGetStyleStats
+}
+
 export interface GetStyleStatsIf {
-  useStats: (params: StyleStatsQueryParams) => StatsResult
+  useStats: UseGetStyleStats
   minTime: YearMonth
   maxTime: YearMonth
   getUseDebounce: <T>() => UseDebounce<T>
 }
 
 export type SetSearch = (mode: string, state: Record<string, string>) => void
+
+export interface StatsHookIf {
+  annual: GetAnnualStatsIf
+  annualContainer: GetAnnualContainerStatsHookIf
+  brewery: GetBreweryStatsHookIf
+  container: GetContainerStatsIf
+  location: GetLocationStatsHookIf
+  overall: GetOverallStatsIf
+  rating: GetRatingStatsIf
+  style: GetStyleStatsHookIf
+}
 
 export interface StatsIf {
   annual: GetAnnualStatsIf

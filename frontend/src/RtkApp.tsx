@@ -76,7 +76,7 @@ import type {
   ListStoragesIf,
   StorageStatsIf,
 } from './core/storage/types'
-import type { StatsIf } from './core/stats/types'
+import type { StatsHookIf, StatsIf } from './core/stats/types'
 import type { SearchFieldIf } from './core/search/types'
 import {
   getUseDebounce,
@@ -325,14 +325,39 @@ function RtkApp(): React.JSX.Element {
     login: getLogin,
   }
 
-  const statsIf: StatsIf = stats(
-    infiniteScroll,
-    minTime,
-    maxTime,
-    setSearch.stats,
-    getUseDebounce,
+  const statsHookIf: StatsHookIf = stats()
+  const statsIf: StatsIf = {
+    annual: statsHookIf.annual,
+    annualContainer: {
+      ...statsHookIf.annualContainer,
+      infiniteScroll,
+    },
+    brewery: {
+      ...statsHookIf.brewery,
+      infiniteScroll,
+      minTime,
+      maxTime,
+      getUseDebounce,
+    },
+    container: statsHookIf.container,
+    location: {
+      ...statsHookIf.location,
+      infiniteScroll,
+      minTime,
+      maxTime,
+      getUseDebounce,
+    },
+    overall: statsHookIf.overall,
+    rating: statsHookIf.rating,
+    style: {
+      ...statsHookIf.style,
+      minTime,
+      maxTime,
+      getUseDebounce,
+    },
+    setSearch: setSearch.stats,
     useUrlSearchParams,
-  )
+  }
 
   const storeIf: StoreIf = {
     getLogin,

@@ -1,6 +1,5 @@
-import { expect, test, vitest } from 'vitest'
+import { expect, test } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
-import { infiniteScroll } from '../../components/util'
 import { store } from '../../store/store'
 import { addTestServerResponse } from '../../../test-util/server'
 import statsHook from './stats'
@@ -13,35 +12,11 @@ import type {
   LocationStats,
   LocationStatsQueryParams,
 } from '../../core/stats/types'
-import type {
-  UseDebounce,
-  UseUrlSearchParams,
-  YearMonth,
-} from '../../core/types'
-
-const minTime: YearMonth = testTimes.min.yearMonth
-const maxTime: YearMonth = testTimes.max.yearMonth
-
-const getUseDebounce = function <T>(): UseDebounce<T> {
-  return (value: T) => [value, false]
-}
-
-const useSearchParams: UseUrlSearchParams = () => ({
-  get: () => undefined,
-})
 
 function LocationStatsHelper(props: {
   queryParams: LocationStatsQueryParams
 }): React.JSX.Element {
-  const setSearch = vitest.fn()
-  const statsIf = statsHook(
-    infiniteScroll,
-    minTime,
-    maxTime,
-    setSearch,
-    getUseDebounce,
-    useSearchParams,
-  )
+  const statsIf = statsHook()
   const { query, stats } = statsIf.location.useStats()
   return (
     <div>

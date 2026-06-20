@@ -6,16 +6,9 @@ import type {
   IdParams,
   LocationStats,
   LocationStatsQueryParams,
-  SetSearch,
-  StatsIf,
+  StatsHookIf,
   StyleStatsQueryParams,
 } from '../../core/stats/types'
-import type {
-  InfiniteScroll,
-  UseDebounce,
-  UseUrlSearchParams,
-  YearMonth,
-} from '../../core/types'
 import {
   useGetAnnualStatsQuery,
   useGetContainerStatsQuery,
@@ -40,22 +33,8 @@ import {
   validateStyleStatsOrUndefined,
 } from '../../validation/stats'
 
-const stats: (
-  infiniteScroll: InfiniteScroll,
-  minTime: YearMonth,
-  maxTime: YearMonth,
-  setSearch: SetSearch,
-  getUseDebounce: <T>() => UseDebounce<T>,
-  useSearchParams: UseUrlSearchParams,
-) => StatsIf = (
-  infiniteScroll: InfiniteScroll,
-  minTime: YearMonth,
-  maxTime: YearMonth,
-  setSearch: SetSearch,
-  getUseDebounce: <T>() => UseDebounce<T>,
-  useSearchParams: UseUrlSearchParams,
-) => {
-  const statsIf: StatsIf = {
+const stats: () => StatsHookIf = () => {
+  const statsIf: StatsHookIf = {
     annual: {
       useStats: (params: IdParams) => {
         const { data, isLoading } = useGetAnnualStatsQuery(params)
@@ -80,7 +59,6 @@ const stats: (
           isLoading: isFetching,
         }
       },
-      infiniteScroll,
     },
     brewery: {
       useStats: () => {
@@ -96,10 +74,6 @@ const stats: (
           isLoading: isFetching,
         }
       },
-      infiniteScroll,
-      minTime,
-      maxTime,
-      getUseDebounce,
     },
     container: {
       useStats: (params: IdParams) => {
@@ -124,10 +98,6 @@ const stats: (
           isLoading: isFetching,
         }
       },
-      infiniteScroll,
-      minTime,
-      maxTime,
-      getUseDebounce,
     },
     overall: {
       useStats: (params: IdParams) => {
@@ -155,12 +125,7 @@ const stats: (
           isLoading: isFetching,
         }
       },
-      minTime,
-      maxTime,
-      getUseDebounce,
     },
-    setSearch,
-    useUrlSearchParams: useSearchParams,
   }
   return statsIf
 }
