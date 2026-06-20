@@ -297,12 +297,13 @@ function RtkApp(): React.JSX.Element {
     listReviewsByLocation(listReviewsFilterIf)
   const listReviewsByStyleIf: ListReviewsByIf =
     listReviewsByStyle(listReviewsFilterIf)
-  const createReviewIf: CreateReviewIf = createReview(
-    getDate,
+  const createReviewIf: CreateReviewIf = {
+    ...createReview(),
+    getCurrentDate: getDate,
     searchLocationIf,
     selectBeerIf,
     reviewContainerIf,
-  )
+  }
   const updateReviewIf: UpdateReviewIf = updateReview(
     searchLocationIf,
     selectBeerIf,

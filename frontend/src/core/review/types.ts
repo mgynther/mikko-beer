@@ -141,13 +141,19 @@ export interface ListReviewsByIf {
   filterIf: ListFilterIf
 }
 
+type UseCreateReview = () => {
+  create: (request: ReviewRequestWrapper) => Promise<void>
+  isLoading: boolean
+  isSuccess: boolean
+  review: Review | undefined
+}
+
+export interface CreateReviewHookIf {
+  useCreate: UseCreateReview
+}
+
 export interface CreateReviewIf {
-  useCreate: () => {
-    create: (request: ReviewRequestWrapper) => Promise<void>
-    isLoading: boolean
-    isSuccess: boolean
-    review: Review | undefined
-  }
+  useCreate: UseCreateReview
   getCurrentDate: () => Date
   searchLocationIf: SearchLocationIf
   selectBeerIf: SelectBeerIf

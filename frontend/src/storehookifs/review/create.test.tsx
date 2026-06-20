@@ -9,63 +9,13 @@ import { Provider } from '../../react-redux-wrapper'
 
 import Button from '../../components/common/Button'
 
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
-
 interface HelperProps {
   review: Review
   storageId: string
 }
 
 function Helper(props: HelperProps): React.JSX.Element {
-  const createIf = createReview(
-    () => new Date(props.review.time),
-    {
-      useSearch: dontCall,
-      create: {
-        useCreate: dontCall,
-      },
-    },
-    {
-      create: {
-        useCreate: dontCall,
-        editBeerIf: {
-          selectBreweryIf: {
-            create: {
-              useCreate: dontCall,
-            },
-            search: {
-              useSearch: dontCall,
-            },
-          },
-          selectStyleIf: {
-            create: {
-              useCreate: dontCall,
-            },
-            list: {
-              useList: dontCall,
-            },
-          },
-        },
-      },
-      search: {
-        useSearch: dontCall,
-        searchFieldIf: {
-          useSearchField: dontCall,
-          useDebounce: dontCall,
-        },
-      },
-    },
-    {
-      createIf: {
-        useCreate: dontCall,
-      },
-      listIf: {
-        useList: dontCall,
-      },
-    },
-  )
+  const createIf = createReview()
   const { create, review } = createIf.useCreate()
   const handleClick = (): void => {
     async function doHandle(): Promise<void> {
