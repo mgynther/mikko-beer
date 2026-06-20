@@ -53,10 +53,16 @@ export interface UpdateLocationIf {
   login: GetLogin
 }
 
+type UseSearchLocation = () => {
+  search: (name: string) => Promise<Location[]>
+  isLoading: boolean
+}
+
+export interface SearchLocationHookIf {
+  useSearch: UseSearchLocation
+}
+
 export interface SearchLocationIf {
-  useSearch: () => {
-    search: (name: string) => Promise<Location[]>
-    isLoading: boolean
-  }
+  useSearch: UseSearchLocation
   create: CreateLocationIf
 }

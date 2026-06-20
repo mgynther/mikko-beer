@@ -236,7 +236,10 @@ function RtkApp(): React.JSX.Element {
     ...listLocations(),
     infiniteScroll,
   }
-  const searchLocationIf: SearchLocationIf = searchLocation(createLocationIf)
+  const searchLocationIf: SearchLocationIf = {
+    ...searchLocation(),
+    create: createLocationIf,
+  }
   const updateLocationIf: UpdateLocationIf = updateLocation(getLogin)
 
   const createStorageIf: CreateStorageIf = createStorage()

@@ -1,16 +1,10 @@
-import type {
-  CreateLocationIf,
-  Location,
-  SearchLocationIf,
-} from '../../core/location/types'
+import type { Location, SearchLocationHookIf } from '../../core/location/types'
 import { useLazySearchLocationsQuery } from '../../store/location/api'
 import { validateLocationList } from '../../validation/location'
 import { formatQuery } from '../search-query'
 
-const searchLocation: (create: CreateLocationIf) => SearchLocationIf = (
-  create: CreateLocationIf,
-) => {
-  const searchLocationIf: SearchLocationIf = {
+const searchLocation: () => SearchLocationHookIf = () => {
+  const searchLocationIf: SearchLocationHookIf = {
     useSearch: () => {
       const [searchLocation, { isFetching }] = useLazySearchLocationsQuery()
       return {
@@ -21,7 +15,6 @@ const searchLocation: (create: CreateLocationIf) => SearchLocationIf = (
         isLoading: isFetching,
       }
     },
-    create,
   }
   return searchLocationIf
 }

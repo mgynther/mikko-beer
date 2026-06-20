@@ -11,15 +11,7 @@ import userEvent from '@testing-library/user-event'
 import Button from '../../components/common/Button'
 
 function Helper(): React.JSX.Element {
-  const searchFieldIf = searchLocations({
-    useCreate: () => ({
-      create: async (): Promise<Location> => ({
-        id: '32f585d2-aeb8-46bb-91b9-ab57bc5e8b11',
-        name: 'Fake created location',
-      }),
-      isLoading: false,
-    }),
-  })
+  const searchFieldIf = searchLocations()
   const { search } = searchFieldIf.useSearch()
   const [results, setResults] = useState<Location[]>([])
   const doSearch = async (): Promise<void> => {
