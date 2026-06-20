@@ -72,6 +72,7 @@ const dontCreateBeerIf: CreateBeerIf = {
           search: dontCall,
           isLoading: false,
         }),
+        searchFieldIf,
       },
     },
     selectStyleIf: {
@@ -131,6 +132,10 @@ const dontSelectBeer: SelectBeerIf = {
         },
         search: {
           useSearch: dontCall,
+          searchFieldIf: {
+            useSearchField: dontCall,
+            useDebounce: dontCall,
+          },
         },
       },
       selectStyleIf: {

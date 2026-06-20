@@ -46,6 +46,7 @@ const dontSearchBrewery: SearchBreweryIf = {
     search: dontCall,
     isLoading: false,
   }),
+  searchFieldIf: noSearch,
 }
 
 const dontNavigate: NavigateIf = {
@@ -141,7 +142,6 @@ navigationTests.forEach((testCase) => {
           navigateIf={dontNavigate}
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
-          searchFieldIf={noSearch}
           theme={defaultThemeProps}
         />
       </LinkWrapper>,
@@ -183,7 +183,6 @@ navigationMoreTests.forEach((testCase) => {
           navigateIf={dontNavigate}
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
-          searchFieldIf={noSearch}
           theme={defaultThemeProps}
         />
       </LinkWrapper>,
@@ -205,7 +204,6 @@ navigationMoreTests.forEach((testCase) => {
           navigateIf={dontNavigate}
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
-          searchFieldIf={noSearch}
           theme={defaultThemeProps}
         />
       </LinkWrapper>,
@@ -225,7 +223,6 @@ test('do not find text fields without more open', async () => {
         navigateIf={dontNavigate}
         searchBeerIf={dontSearchBeer}
         searchBreweryIf={dontSearchBrewery}
-        searchFieldIf={noSearch}
         theme={defaultThemeProps}
       />
     </LinkWrapper>,
@@ -263,7 +260,6 @@ themeTests.forEach((testCase) => {
           navigateIf={dontNavigate}
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
-          searchFieldIf={noSearch}
           theme={{
             setTheme: setTheme,
             theme: testCase.original,
@@ -289,7 +285,6 @@ test('logs out', async () => {
         navigateIf={dontNavigate}
         searchBeerIf={dontSearchBeer}
         searchBreweryIf={dontSearchBrewery}
-        searchFieldIf={noSearch}
         theme={defaultThemeProps}
       />
     </LinkWrapper>,
@@ -310,7 +305,6 @@ test('do not show admin features to viewer', async () => {
         navigateIf={dontNavigate}
         searchBeerIf={dontSearchBeer}
         searchBreweryIf={dontSearchBrewery}
-        searchFieldIf={noSearch}
         theme={defaultThemeProps}
       />
     </LinkWrapper>,
@@ -344,7 +338,6 @@ test('searches beer', async () => {
         }}
         searchBeerIf={searchBeerIf}
         searchBreweryIf={dontSearchBrewery}
-        searchFieldIf={activeSearch}
         theme={defaultThemeProps}
       />
     </LinkWrapper>,
@@ -369,6 +362,7 @@ test('searches brewery', async () => {
       search: async () => [brewery],
       isLoading: false,
     }),
+    searchFieldIf: activeSearch,
   }
   const { getByRole, getByPlaceholderText } = render(
     <LinkWrapper>
@@ -381,7 +375,6 @@ test('searches brewery', async () => {
         }}
         searchBeerIf={dontSearchBeer}
         searchBreweryIf={searchBreweryIf}
-        searchFieldIf={activeSearch}
         theme={defaultThemeProps}
       />
     </LinkWrapper>,
@@ -436,7 +429,6 @@ navStateTests.forEach((testCase) => {
           navigateIf={dontNavigate}
           searchBeerIf={dontSearchBeer}
           searchBreweryIf={dontSearchBrewery}
-          searchFieldIf={noSearch}
           theme={defaultThemeProps}
         />
       </LinkWrapper>,

@@ -6,7 +6,6 @@ import type {
   ListBreweriesIf,
   SearchBreweryIf,
 } from '../../core/brewery/types'
-import type { SearchFieldIf } from '../../core/search/types'
 
 import type { NavigateIf } from '../../navigation'
 
@@ -21,7 +20,6 @@ export interface Props {
   listBreweriesIf: ListBreweriesIf
   navigateIf: NavigateIf
   searchBreweryIf: SearchBreweryIf
-  searchFieldIf: SearchFieldIf
 }
 
 function Breweries(props: Props): React.JSX.Element {
@@ -62,7 +60,6 @@ function Breweries(props: Props): React.JSX.Element {
       <SearchBreweryWithNavi
         navigateIf={props.navigateIf}
         searchBreweryIf={props.searchBreweryIf}
-        searchFieldIf={props.searchFieldIf}
       />
       <ul>
         {loadedBreweries.map((brewery: Brewery) => (

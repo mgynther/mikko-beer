@@ -38,6 +38,14 @@ const dontCall = (): any => {
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
+const dontSearch: SearchFieldIf = {
+  useSearchField: () => ({
+    activate: dontCall,
+    isActive: false,
+  }),
+  useDebounce,
+}
+
 const dontSelectBrewery: SelectBreweryIf = {
   create: {
     useCreate: () => ({
@@ -50,6 +58,7 @@ const dontSelectBrewery: SelectBreweryIf = {
       search: dontCall,
       isLoading: false,
     }),
+    searchFieldIf: dontSearch,
   },
 }
 
@@ -69,14 +78,6 @@ const dontSelectStyle: SelectStyleIf = {
       isLoading: false,
     }),
   },
-}
-
-const dontSearch: SearchFieldIf = {
-  useSearchField: () => ({
-    activate: dontCall,
-    isActive: false,
-  }),
-  useDebounce,
 }
 
 const doSearch: SearchFieldIf = {
@@ -165,6 +166,7 @@ test('updates beer brewery', async () => {
                 search: async (): Promise<Brewery[]> => [anotherBrewery],
                 isLoading: false,
               }),
+              searchFieldIf: doSearch,
             },
           },
           selectStyleIf: dontSelectStyle,

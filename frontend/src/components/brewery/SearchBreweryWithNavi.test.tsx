@@ -37,6 +37,7 @@ test('selects brewery', async () => {
       search: async () => breweries,
       isLoading: false,
     }),
+    searchFieldIf: activeSearch,
   }
   const { getByRole } = render(
     <SearchBreweryWithNavi
@@ -44,7 +45,6 @@ test('selects brewery', async () => {
         useNavigate: () => selector,
       }}
       searchBreweryIf={searchBreweryIf}
-      searchFieldIf={activeSearch}
     />,
   )
 

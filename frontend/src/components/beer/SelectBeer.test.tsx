@@ -76,6 +76,7 @@ test('selects created beer', async () => {
                   search: async (): Promise<Brewery[]> => [brewery],
                   isLoading: false,
                 }),
+                searchFieldIf,
               },
             },
             selectStyleIf: {
@@ -161,6 +162,7 @@ test('selects beer', async () => {
                   search: dontCall,
                   isLoading: false,
                 }),
+                searchFieldIf,
               },
             },
             selectStyleIf: {

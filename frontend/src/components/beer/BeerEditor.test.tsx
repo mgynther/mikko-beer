@@ -56,19 +56,20 @@ const styleWithParentIds: StyleWithParentIds = {
 
 const styles: Style[] = [style]
 
-const search: SearchBreweryIf = {
-  useSearch: () => ({
-    search: async () => [brewery, anotherBrewery],
-    isLoading: false,
-  }),
-}
-
 const doSearch: SearchFieldIf = {
   useSearchField: () => ({
     activate: () => undefined,
     isActive: true,
   }),
   useDebounce,
+}
+
+const search: SearchBreweryIf = {
+  useSearch: () => ({
+    search: async () => [brewery, anotherBrewery],
+    isLoading: false,
+  }),
+  searchFieldIf: doSearch,
 }
 
 const dontSearch: SearchFieldIf = {
@@ -88,6 +89,7 @@ const dontSelectBrewery: SelectBreweryIf = {
       search: dontCall,
       isLoading: false,
     }),
+    searchFieldIf: dontSearch,
   },
 }
 

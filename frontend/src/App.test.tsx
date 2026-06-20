@@ -83,6 +83,7 @@ const searchBreweryIf: SearchBreweryIf = {
     search: dontCall,
     isLoading: false,
   }),
+  searchFieldIf,
 }
 
 const searchLocationIf: SearchLocationIf = {
@@ -193,6 +194,10 @@ const storeIf: StoreIf = {
         },
         search: {
           useSearch: dontCall,
+          searchFieldIf: {
+            useSearchField: dontCall,
+            useDebounce: dontCall,
+          },
         },
       },
       selectStyleIf: {

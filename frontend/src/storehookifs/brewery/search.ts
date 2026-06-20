@@ -1,10 +1,10 @@
-import type { Brewery, SearchBreweryIf } from '../../core/brewery/types'
+import type { Brewery, SearchBreweryHookIf } from '../../core/brewery/types'
 import { useLazySearchBreweriesQuery } from '../../store/brewery/api'
 import { validateBreweryList } from '../../validation/brewery'
 import { formatQuery } from '../search-query'
 
-const searchBrewery: () => SearchBreweryIf = () => {
-  const searchBreweryIf: SearchBreweryIf = {
+const searchBrewery: () => SearchBreweryHookIf = () => {
+  const searchBreweryIf: SearchBreweryHookIf = {
     useSearch: () => {
       const [searchBrewery, { isFetching }] = useLazySearchBreweriesQuery()
       return {

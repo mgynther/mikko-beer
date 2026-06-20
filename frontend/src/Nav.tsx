@@ -7,7 +7,6 @@ import SearchBreweryWithNavi from './components/brewery/SearchBreweryWithNavi'
 import type { NavigateIf } from './navigation'
 import type { SearchBeerIf } from './core/beer/types'
 import type { SearchBreweryIf } from './core/brewery/types'
-import type { SearchFieldIf } from './core/search/types'
 import type { NavMenuState, Theme } from './core/types'
 
 export interface NavMenuStateProps {
@@ -27,7 +26,6 @@ interface Props {
   navigateIf: NavigateIf
   searchBeerIf: SearchBeerIf
   searchBreweryIf: SearchBreweryIf
-  searchFieldIf: SearchFieldIf
   theme: ThemeProps
 }
 
@@ -81,7 +79,6 @@ function Nav(props: Props): React.JSX.Element {
             <SearchBreweryWithNavi
               navigateIf={props.navigateIf}
               searchBreweryIf={props.searchBreweryIf}
-              searchFieldIf={props.searchFieldIf}
             />
           </div>
 

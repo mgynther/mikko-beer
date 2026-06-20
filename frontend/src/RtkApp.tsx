@@ -158,7 +158,16 @@ function RtkApp(): React.JSX.Element {
   const createBreweryIf: CreateBreweryIf = createBrewery()
   const getBreweryIf: GetBreweryIf = getBrewery()
   const listBreweriesIf: ListBreweriesIf = listBreweries()
-  const searchBreweryIf: SearchBreweryIf = searchBrewery()
+
+  const searchFieldIf: SearchFieldIf = {
+    ...searchField(),
+    useDebounce: useDebounce<string>,
+  }
+
+  const searchBreweryIf: SearchBreweryIf = {
+    ...searchBrewery(),
+    searchFieldIf,
+  }
   const updateBreweryIf: UpdateBreweryIf = updateBrewery()
   const selectBreweryIf: SelectBreweryIf = {
     create: createBreweryIf,
@@ -201,11 +210,6 @@ function RtkApp(): React.JSX.Element {
   const editBeerIf: EditBeerIf = {
     selectBreweryIf,
     selectStyleIf,
-  }
-
-  const searchFieldIf: SearchFieldIf = {
-    ...searchField(),
-    useDebounce: useDebounce<string>,
   }
 
   const createBeerIf: CreateBeerIf = {

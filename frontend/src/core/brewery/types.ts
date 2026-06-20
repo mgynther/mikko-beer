@@ -1,3 +1,4 @@
+import type { SearchFieldIf } from '../search/types'
 import type { Pagination, InfiniteScroll } from '../types'
 
 export interface CreateBreweryRequest {
@@ -44,11 +45,18 @@ export interface UpdateBreweryIf {
   }
 }
 
+type UseSearchBrewery = () => {
+  search: (name: string) => Promise<Brewery[]>
+  isLoading: boolean
+}
+
+export interface SearchBreweryHookIf {
+  useSearch: UseSearchBrewery
+}
+
 export interface SearchBreweryIf {
-  useSearch: () => {
-    search: (name: string) => Promise<Brewery[]>
-    isLoading: boolean
-  }
+  useSearch: UseSearchBrewery
+  searchFieldIf: SearchFieldIf
 }
 
 export interface SelectBreweryIf {

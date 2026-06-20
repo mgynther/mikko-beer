@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 
 import type { Brewery, SelectBreweryIf } from '../../core/brewery/types'
-import type { SearchFieldIf } from '../../core/search/types'
 
 import Button from '../common/Button'
 import { Mode, SelectCreateRadioBasic } from '../common/SelectCreateRadio'
@@ -10,7 +9,6 @@ import CreateBrewery from './CreateBrewery'
 import SearchBrewery from './SearchBrewery'
 
 export interface Props {
-  searchFieldIf: SearchFieldIf
   selectBreweryIf: SelectBreweryIf
   select: (brewery: Brewery) => void
   isRemoveVisible: boolean
@@ -36,7 +34,6 @@ function SelectBrewery(props: Props): React.JSX.Element {
         )}
         {mode === Mode.SELECT && (
           <SearchBrewery
-            searchFieldIf={props.searchFieldIf}
             searchBreweryIf={props.selectBreweryIf.search}
             select={props.select}
           />

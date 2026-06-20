@@ -130,7 +130,6 @@ function App(props: Props): React.JSX.Element {
                 navigateIf={navigateIf}
                 searchBeerIf={searchBeerIf}
                 searchBreweryIf={searchBreweryIf}
-                searchFieldIf={searchFieldIf}
                 isAdmin={isAdmin}
                 isLoggedIn={isLoggedIn}
                 logout={
@@ -234,7 +233,6 @@ function App(props: Props): React.JSX.Element {
                       listBreweriesIf={listBreweriesIf}
                       navigateIf={navigateIf}
                       searchBreweryIf={searchBreweryIf}
-                      searchFieldIf={searchFieldIf}
                     />
                   }
                 />

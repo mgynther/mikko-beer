@@ -162,6 +162,10 @@ const updateReview: UpdateReviewIf = {
           },
           search: {
             useSearch: dontCall,
+            searchFieldIf: {
+              useSearchField: dontCall,
+              useDebounce: dontCall,
+            },
           },
         },
         selectStyleIf: {

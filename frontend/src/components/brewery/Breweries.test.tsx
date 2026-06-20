@@ -61,8 +61,8 @@ test('renders breweries', async () => {
             search: notUsed,
             isLoading: false,
           }),
+          searchFieldIf: activeSearch,
         }}
-        searchFieldIf={activeSearch}
       />
     </LinkWrapper>,
   )
@@ -102,8 +102,8 @@ test('render loading', async () => {
             search: notUsed,
             isLoading: false,
           }),
+          searchFieldIf: activeSearch,
         }}
-        searchFieldIf={activeSearch}
       />
     </LinkWrapper>,
   )
@@ -155,8 +155,8 @@ test('stops loading more', async () => {
             search: notUsed,
             isLoading: false,
           }),
+          searchFieldIf: activeSearch,
         }}
-        searchFieldIf={activeSearch}
       />
     </LinkWrapper>,
   )

@@ -34,6 +34,13 @@ const dontCreate = {
 test('creates beer', async () => {
   const user = userEvent.setup()
   const selectBeer = vitest.fn()
+  const searchFieldIf: SearchFieldIf = {
+    useSearchField: () => ({
+      activate: () => undefined,
+      isActive: true,
+    }),
+    useDebounce,
+  }
   const createBeerIf: CreateBeerIf = {
     useCreate: () => ({
       create: async (beer: CreateBeerRequest) => ({
@@ -52,6 +59,7 @@ test('creates beer', async () => {
             search: async () => [brewery],
             isLoading: false,
           }),
+          searchFieldIf,
         },
       },
       selectStyleIf: {
@@ -72,13 +80,7 @@ test('creates beer', async () => {
       },
     },
   }
-  const searchFieldIf: SearchFieldIf = {
-    useSearchField: () => ({
-      activate: () => undefined,
-      isActive: true,
-    }),
-    useDebounce,
-  }
+
   const { getByPlaceholderText, getByRole } = render(
     <CreateBeer
       select={selectBeer}

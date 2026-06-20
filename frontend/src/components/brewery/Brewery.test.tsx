@@ -33,6 +33,7 @@ import type { GetBreweryIf, UpdateBreweryIf } from '../../core/brewery/types'
 import type { SearchFieldIf } from '../../core/search/types'
 import type { UseUrlPathParams } from '../util'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
+import type { SelectBeerIf } from '../../core/beer/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -60,7 +61,15 @@ function getLogin(): GetLogin {
   })
 }
 
-const dontSelectBeer = {
+const searchFieldIf: SearchFieldIf = {
+  useSearchField: () => ({
+    activate: dontCall,
+    isActive: true,
+  }),
+  useDebounce,
+}
+
+const dontSelectBeer: SelectBeerIf = {
   create: {
     useCreate: dontCall,
     editBeerIf: {
@@ -70,6 +79,7 @@ const dontSelectBeer = {
         },
         search: {
           useSearch: dontCall,
+          searchFieldIf,
         },
       },
       selectStyleIf: {
@@ -224,14 +234,6 @@ const getBreweryIf: GetBreweryIf = {
     },
     isLoading: false,
   }),
-}
-
-const searchFieldIf: SearchFieldIf = {
-  useSearchField: () => ({
-    activate: dontCall,
-    isActive: true,
-  }),
-  useDebounce,
 }
 
 test('updates brewery', async () => {

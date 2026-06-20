@@ -137,6 +137,10 @@ const updateReview: UpdateReviewIf = {
           },
           search: {
             useSearch: dontCall,
+            searchFieldIf: {
+              useSearchField: dontCall,
+              useDebounce: dontCall,
+            },
           },
         },
         selectStyleIf: {
@@ -246,6 +250,10 @@ const editBeerIf: EditBeerIf = {
         search: dontCall,
         isLoading: false,
       }),
+      searchFieldIf: {
+        useSearchField: dontCall,
+        useDebounce: dontCall,
+      },
     },
   },
   selectStyleIf: {

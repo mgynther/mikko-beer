@@ -15,14 +15,23 @@ const anotherBrewery: Brewery = {
   name: 'Mallaskoski',
 }
 
-const search: SearchBreweryIf = {
+const useDebounce: UseDebounce<string> = (str) => [str, false]
+
+const getSearch: (isSearchFieldActive: boolean) => SearchBreweryIf = (
+  isSearchFieldActive: boolean,
+) => ({
   useSearch: () => ({
     search: async () => [brewery, anotherBrewery],
     isLoading: false,
   }),
-}
-
-const useDebounce: UseDebounce<string> = (str) => [str, false]
+  searchFieldIf: {
+    useSearchField: () => ({
+      activate: (): undefined => undefined,
+      isActive: isSearchFieldActive,
+    }),
+    useDebounce,
+  },
+})
 
 test('selects brewery', async () => {
   const user = userEvent.setup()
@@ -38,14 +47,7 @@ test('selects brewery', async () => {
             throw new Error('do not call')
           },
         },
-        search,
-      }}
-      searchFieldIf={{
-        useSearchField: () => ({
-          activate: (): undefined => undefined,
-          isActive: true,
-        }),
-        useDebounce,
+        search: getSearch(true),
       }}
     />,
   )
@@ -76,14 +78,7 @@ test('selects created brewery', async () => {
             isLoading: false,
           }),
         },
-        search,
-      }}
-      searchFieldIf={{
-        useSearchField: () => ({
-          activate: (): undefined => undefined,
-          isActive: false,
-        }),
-        useDebounce,
+        search: getSearch(false),
       }}
     />,
   )

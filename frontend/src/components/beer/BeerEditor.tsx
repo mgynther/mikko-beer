@@ -51,7 +51,6 @@ function BeerEditor(props: Props): React.JSX.Element {
       </div>
       <div className={'Section'}>
         <SelectBreweries
-          searchFieldIf={props.searchFieldIf}
           selectBreweryIf={props.editBeerIf.selectBreweryIf}
           initialBreweries={props.initialBeer?.breweries ?? []}
           select={(breweryIds) => {
