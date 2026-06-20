@@ -1,24 +1,16 @@
 import type {
   JoinedReviewList,
-  ListFilterIf,
   ListReviewParams,
-  ListReviewsIf,
+  ListReviewsHookIf,
 } from '../../core/review/types'
-import type { InfiniteScroll } from '../../core/types'
 import { useLazyListReviewsQuery } from '../../store/review/api'
 import {
   validateJoinedReviewList,
   validateJoinedReviewListOrUndefined,
 } from '../../validation/review'
 
-const listReviews: (
-  infiniteScroll: InfiniteScroll,
-  filterIf: ListFilterIf,
-) => ListReviewsIf = (
-  infiniteScroll: InfiniteScroll,
-  filterIf: ListFilterIf,
-) => {
-  const listReviewsIf: ListReviewsIf = {
+const listReviews: () => ListReviewsHookIf = () => {
+  const listReviewsIf: ListReviewsHookIf = {
     useList: () => {
       const [trigger, { data, isFetching, isUninitialized }] =
         useLazyListReviewsQuery()
@@ -32,8 +24,6 @@ const listReviews: (
         isUninitialized,
       }
     },
-    infiniteScroll,
-    filterIf,
   }
   return listReviewsIf
 }

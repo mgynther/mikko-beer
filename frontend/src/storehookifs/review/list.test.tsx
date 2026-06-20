@@ -1,35 +1,23 @@
-import { expect, test, vitest } from 'vitest'
+import { expect, test } from 'vitest'
 import { store } from '../../store/store'
 import { addTestServerResponse } from '../../../test-util/server'
 import listReviews from './list'
 import type {
   JoinedReviewList,
-  ListFilterIf,
   ReviewListFilter,
   ReviewSorting,
-  SetSearch,
 } from '../../core/review/types'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
 import userEvent from '@testing-library/user-event'
 
 import Button from '../../components/common/Button'
-import type { UseDebounce, YearMonth } from '../../core/types'
 import { testTimes } from '../../../test-util/filter-time'
-
-const infiniteScroll = (): (() => void) => () => undefined
-
-const getUseDebounce = function <T>(): UseDebounce<T> {
-  return (value: T) => [value, false]
-}
 
 const sorting: ReviewSorting = {
   order: 'time',
   direction: 'desc',
 }
-
-const minTime: YearMonth = testTimes.min.yearMonth
-const maxTime: YearMonth = testTimes.max.yearMonth
 
 const filter: ReviewListFilter = {
   minRating: 4,
@@ -38,19 +26,8 @@ const filter: ReviewListFilter = {
   maxTime: testTimes.max.utcTimestamp,
 }
 
-const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
-  setSearch: SetSearch,
-) => ({
-  getUseDebounce,
-  minTime,
-  maxTime,
-  setSearch,
-  useUrlSearchParams: () => ({ get: () => undefined }),
-})
-
 function Helper(): React.JSX.Element {
-  const setSearch = vitest.fn()
-  const listIf = listReviews(infiniteScroll, listFilterIf(setSearch))
+  const listIf = listReviews()
   const { list, reviewList } = listIf.useList()
   return (
     <div>

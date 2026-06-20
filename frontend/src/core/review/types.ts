@@ -122,13 +122,19 @@ export interface ListFilterIf {
   useUrlSearchParams: UseUrlSearchParams
 }
 
+type UseListReviews = () => {
+  list: (params: ListReviewParams) => Promise<JoinedReviewList>
+  reviewList: JoinedReviewList | undefined
+  isLoading: boolean
+  isUninitialized: boolean
+}
+
+export interface ListReviewsHookIf {
+  useList: UseListReviews
+}
+
 export interface ListReviewsIf {
-  useList: () => {
-    list: (params: ListReviewParams) => Promise<JoinedReviewList>
-    reviewList: JoinedReviewList | undefined
-    isLoading: boolean
-    isUninitialized: boolean
-  }
+  useList: UseListReviews
   infiniteScroll: InfiniteScroll
   filterIf: ListFilterIf
 }

@@ -285,10 +285,11 @@ function RtkApp(): React.JSX.Element {
     setSearch: setSearch.reviewList,
     useUrlSearchParams,
   }
-  const listReviewsIf: ListReviewsIf = listReviews(
+  const listReviewsIf: ListReviewsIf = {
+    ...listReviews(),
     infiniteScroll,
-    listReviewsFilterIf,
-  )
+    filterIf: listReviewsFilterIf,
+  }
   const listReviewsByBeerIf: ListReviewsByIf =
     listReviewsByBeer(listReviewsFilterIf)
   const listReviewsByBreweryIf: ListReviewsByIf =
