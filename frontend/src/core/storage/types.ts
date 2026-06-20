@@ -86,11 +86,17 @@ export interface ListStoragesIf {
   delete: DeleteStorageIf
 }
 
+type UseListStoragesBy = (id: string) => {
+  storages: StorageList | undefined
+  isLoading: boolean
+}
+
+export interface ListStoragesByHookIf {
+  useList: UseListStoragesBy
+}
+
 export interface ListStoragesByIf {
-  useList: (id: string) => {
-    storages: StorageList | undefined
-    isLoading: boolean
-  }
+  useList: UseListStoragesBy
   delete: DeleteStorageIf
 }
 

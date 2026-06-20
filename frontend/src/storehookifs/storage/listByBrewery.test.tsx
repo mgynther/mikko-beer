@@ -6,18 +6,12 @@ import type { StorageList } from '../../core/storage/types'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
 
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
-
 interface Props {
   breweryId: string
 }
 
 function Helper(props: Props): React.JSX.Element {
-  const listIf = listStoragesByBrewery({
-    useDelete: dontCall,
-  })
+  const listIf = listStoragesByBrewery()
   const { storages } = listIf.useList(props.breweryId)
   return (
     <div>

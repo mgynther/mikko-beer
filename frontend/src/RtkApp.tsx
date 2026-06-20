@@ -263,12 +263,18 @@ function RtkApp(): React.JSX.Element {
     ...listStorages(),
     delete: deleteStorageIf,
   }
-  const listStoragesByBeerIf: ListStoragesByIf =
-    listStoragesByBeer(deleteStorageIf)
-  const listStoragesByBreweryIf: ListStoragesByIf =
-    listStoragesByBrewery(deleteStorageIf)
-  const listStoragesByStyleIf: ListStoragesByIf =
-    listStoragesByStyle(deleteStorageIf)
+  const listStoragesByBeerIf: ListStoragesByIf = {
+    ...listStoragesByBeer(),
+    delete: deleteStorageIf,
+  }
+  const listStoragesByBreweryIf: ListStoragesByIf = {
+    ...listStoragesByBrewery(),
+    delete: deleteStorageIf,
+  }
+  const listStoragesByStyleIf: ListStoragesByIf = {
+    ...listStoragesByStyle(),
+    delete: deleteStorageIf,
+  }
 
   const minTime: YearMonth = {
     year: 2017,

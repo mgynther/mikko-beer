@@ -1,14 +1,9 @@
-import type {
-  DeleteStorageIf,
-  ListStoragesByIf,
-} from '../../core/storage/types'
+import type { ListStoragesByHookIf } from '../../core/storage/types'
 import { useListStoragesByBeerQuery } from '../../store/storage/api'
 import { validateStorageListOrUndefined } from '../../validation/storage'
 
-const listStoragesByBeer: (
-  deleteStorageIf: DeleteStorageIf,
-) => ListStoragesByIf = (deleteStorageIf: DeleteStorageIf) => {
-  const listStoragesByBeerIf: ListStoragesByIf = {
+const listStoragesByBeer: () => ListStoragesByHookIf = () => {
+  const listStoragesByBeerIf: ListStoragesByHookIf = {
     useList: (beerId: string) => {
       const { data, isLoading } = useListStoragesByBeerQuery(beerId)
       return {
@@ -16,7 +11,6 @@ const listStoragesByBeer: (
         isLoading,
       }
     },
-    delete: deleteStorageIf,
   }
   return listStoragesByBeerIf
 }
