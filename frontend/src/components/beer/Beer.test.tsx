@@ -225,6 +225,7 @@ function getListReviewsIf(reviews: JoinedReview[]): ListReviewsByIf {
       isLoading: reviews.length === 0,
     }),
     filterIf: listFilterIf(() => undefined),
+    reviewIf,
   }
 }
 
@@ -295,7 +296,6 @@ test('renders beer', async () => {
         updateBeerIf={dontUpdateBeerIf}
         listReviewsByBeerIf={getListReviewsIf([joinedReview])}
         listStoragesByBeerIf={listStoragesByBeerIf}
-        reviewIf={reviewIf}
         getBeerIf={getBeerIf}
         useUrlPathParams={useUrlPathParams}
       />
@@ -317,7 +317,6 @@ test('throw on missing id', async () => {
           updateBeerIf={dontUpdateBeerIf}
           listReviewsByBeerIf={getListReviewsIf([joinedReview])}
           listStoragesByBeerIf={listStoragesByBeerIf}
-          reviewIf={reviewIf}
           getBeerIf={getBeerIf}
           useUrlPathParams={() => ({})}
         />
@@ -341,7 +340,6 @@ test('updates beer', async () => {
         }}
         listReviewsByBeerIf={getListReviewsIf([])}
         listStoragesByBeerIf={listStoragesByBeerIf}
-        reviewIf={reviewIf}
         getBeerIf={getBeerIf}
         useUrlPathParams={useUrlPathParams}
       />
@@ -376,7 +374,6 @@ test('cancel update', async () => {
         updateBeerIf={dontUpdateBeerIf}
         listReviewsByBeerIf={getListReviewsIf([])}
         listStoragesByBeerIf={listStoragesByBeerIf}
-        reviewIf={reviewIf}
         getBeerIf={getBeerIf}
         useUrlPathParams={useUrlPathParams}
       />
@@ -397,7 +394,6 @@ test('render loading', async () => {
         updateBeerIf={dontUpdateBeerIf}
         listReviewsByBeerIf={getListReviewsIf([])}
         listStoragesByBeerIf={listStoragesByBeerIf}
-        reviewIf={reviewIf}
         getBeerIf={{
           useGetBeer: () => ({
             beer: undefined,
@@ -418,7 +414,6 @@ test('render not found', async () => {
         updateBeerIf={dontUpdateBeerIf}
         listReviewsByBeerIf={getListReviewsIf([])}
         listStoragesByBeerIf={listStoragesByBeerIf}
-        reviewIf={reviewIf}
         getBeerIf={{
           useGetBeer: () => ({
             beer: undefined,
@@ -453,9 +448,9 @@ test('load reviews', async () => {
             }
           },
           filterIf: listFilterIf(() => undefined),
+          reviewIf,
         }}
         listStoragesByBeerIf={listStoragesByBeerIf}
-        reviewIf={reviewIf}
         getBeerIf={getBeerIf}
         useUrlPathParams={useUrlPathParams}
       />
@@ -498,9 +493,9 @@ test('sort reviews', async () => {
             }
           },
           filterIf: listFilterIf(setSearch),
+          reviewIf: reviewIf,
         }}
         listStoragesByBeerIf={listStoragesByBeerIf}
-        reviewIf={reviewIf}
         getBeerIf={getBeerIf}
         useUrlPathParams={useUrlPathParams}
       />
@@ -547,9 +542,9 @@ test('show loading indicator', async () => {
             }
           },
           filterIf: listFilterIf(() => undefined),
+          reviewIf: reviewIf,
         }}
         listStoragesByBeerIf={listStoragesByBeerIf}
-        reviewIf={reviewIf}
         getBeerIf={getBeerIf}
         useUrlPathParams={useUrlPathParams}
       />

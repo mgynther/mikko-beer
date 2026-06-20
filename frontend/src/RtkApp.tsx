@@ -310,29 +310,6 @@ function RtkApp(): React.JSX.Element {
     infiniteScroll,
     filterIf: listReviewsFilterIf,
   }
-  const listReviewsByBeerIf: ListReviewsByIf = {
-    ...listReviewsByBeer(),
-    filterIf: listReviewsFilterIf,
-  }
-  const listReviewsByBreweryIf: ListReviewsByIf = {
-    ...listReviewsByBrewery(),
-    filterIf: listReviewsFilterIf,
-  }
-  const listReviewsByLocationIf: ListReviewsByIf = {
-    ...listReviewsByLocation(),
-    filterIf: listReviewsFilterIf,
-  }
-  const listReviewsByStyleIf: ListReviewsByIf = {
-    ...listReviewsByStyle(),
-    filterIf: listReviewsFilterIf,
-  }
-  const createReviewIf: CreateReviewIf = {
-    ...createReview(),
-    getCurrentDate: getDate,
-    searchLocationIf,
-    selectBeerIf,
-    reviewContainerIf,
-  }
   const updateReviewIf: UpdateReviewIf = {
     ...updateReview(),
     searchLocationIf,
@@ -343,6 +320,33 @@ function RtkApp(): React.JSX.Element {
     get: getReviewIf,
     update: updateReviewIf,
     login: getLogin,
+  }
+  const listReviewsByBeerIf: ListReviewsByIf = {
+    ...listReviewsByBeer(),
+    filterIf: listReviewsFilterIf,
+    reviewIf,
+  }
+  const listReviewsByBreweryIf: ListReviewsByIf = {
+    ...listReviewsByBrewery(),
+    filterIf: listReviewsFilterIf,
+    reviewIf,
+  }
+  const listReviewsByLocationIf: ListReviewsByIf = {
+    ...listReviewsByLocation(),
+    filterIf: listReviewsFilterIf,
+    reviewIf,
+  }
+  const listReviewsByStyleIf: ListReviewsByIf = {
+    ...listReviewsByStyle(),
+    filterIf: listReviewsFilterIf,
+    reviewIf,
+  }
+  const createReviewIf: CreateReviewIf = {
+    ...createReview(),
+    getCurrentDate: getDate,
+    searchLocationIf,
+    selectBeerIf,
+    reviewContainerIf,
   }
 
   const statsHookIf: StatsHookIf = stats()

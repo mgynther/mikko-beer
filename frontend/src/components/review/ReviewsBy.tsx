@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
+import type { ListReviewsByIf } from '../../core/review/types'
 import ReviewList from '../review/ReviewList'
 import { parseSearchParams } from './search-params'
 import { toTimestamp } from '../common/filter-util'
@@ -8,7 +8,6 @@ import { toTimestamp } from '../common/filter-util'
 interface Props {
   id: string
   listReviewsByIf: ListReviewsByIf
-  reviewIf: ReviewIf
 }
 
 const ReviewsBy = (props: Props): React.JSX.Element => {
@@ -55,7 +54,7 @@ const ReviewsBy = (props: Props): React.JSX.Element => {
         setIsOpen: parsedSearchParams.setIsFiltersOpen,
         filters: parsedSearchParams.filters,
       }}
-      reviewIf={props.reviewIf}
+      reviewIf={props.listReviewsByIf.reviewIf}
       isLoading={isLoadingReviews}
       isTitleVisible={true}
       reviews={reviews?.reviews ?? []}

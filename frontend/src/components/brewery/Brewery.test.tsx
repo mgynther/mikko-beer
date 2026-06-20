@@ -191,6 +191,19 @@ const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
   useUrlSearchParams,
 })
 
+const reviewIf: ReviewIf = {
+  get: {
+    useGet: dontCall,
+  },
+  update: {
+    useUpdate: dontCall,
+    searchLocationIf,
+    selectBeerIf: dontSelectBeer,
+    reviewContainerIf: noOpContainerIf,
+  },
+  login: getLogin(),
+}
+
 const listReviewsByBreweryIf: ListReviewsByIf = {
   useList: () => ({
     reviews: {
@@ -203,6 +216,7 @@ const listReviewsByBreweryIf: ListReviewsByIf = {
     isLoading: false,
   }),
   filterIf: listFilterIf(() => undefined),
+  reviewIf,
 }
 
 const listStoragesByBreweryIf: ListStoragesByIf = {
@@ -213,19 +227,6 @@ const listStoragesByBreweryIf: ListStoragesByIf = {
   delete: {
     useDelete: dontCall,
   },
-}
-
-const reviewIf: ReviewIf = {
-  get: {
-    useGet: dontCall,
-  },
-  update: {
-    useUpdate: dontCall,
-    searchLocationIf,
-    selectBeerIf: dontSelectBeer,
-    reviewContainerIf: noOpContainerIf,
-  },
-  login: getLogin(),
 }
 
 const getBreweryIf: GetBreweryIf = {
@@ -245,7 +246,6 @@ test('updates brewery', async () => {
     <Brewery
       listReviewsByBreweryIf={listReviewsByBreweryIf}
       listStoragesByBreweryIf={listStoragesByBreweryIf}
-      reviewIf={reviewIf}
       getBreweryIf={getBreweryIf}
       updateBreweryIf={{
         useUpdate: () => ({
@@ -293,7 +293,6 @@ test('cancel update', async () => {
     <Brewery
       listReviewsByBreweryIf={listReviewsByBreweryIf}
       listStoragesByBreweryIf={listStoragesByBreweryIf}
-      reviewIf={reviewIf}
       getBreweryIf={getBreweryIf}
       updateBreweryIf={dontUpdateBreweryIf}
       statsIf={statsIf}
@@ -316,7 +315,6 @@ test('render loading', async () => {
     <Brewery
       listReviewsByBreweryIf={listReviewsByBreweryIf}
       listStoragesByBreweryIf={listStoragesByBreweryIf}
-      reviewIf={reviewIf}
       getBreweryIf={{
         useGet: () => ({
           brewery: undefined,
@@ -336,7 +334,6 @@ test('render not found', async () => {
     <Brewery
       listReviewsByBreweryIf={listReviewsByBreweryIf}
       listStoragesByBreweryIf={listStoragesByBreweryIf}
-      reviewIf={reviewIf}
       getBreweryIf={{
         useGet: () => ({
           brewery: undefined,
@@ -357,7 +354,6 @@ test('throw on missing id', async () => {
       <Brewery
         listReviewsByBreweryIf={listReviewsByBreweryIf}
         listStoragesByBreweryIf={listStoragesByBreweryIf}
-        reviewIf={reviewIf}
         getBreweryIf={getBreweryIf}
         updateBreweryIf={dontUpdateBreweryIf}
         statsIf={statsIf}

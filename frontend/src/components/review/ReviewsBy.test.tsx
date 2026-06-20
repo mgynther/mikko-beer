@@ -221,8 +221,8 @@ test('lists reviews', async () => {
             }
           },
           filterIf: listFilterIf(setSearch),
+          reviewIf: dontUpdateReviewIf,
         }}
-        reviewIf={dontUpdateReviewIf}
       />
     </LinkWrapper>,
   )
@@ -280,7 +280,10 @@ const defaultSearchParams: Record<string, string> = {
   r_order: 'beer_name',
 }
 
-function getListReviewsByIf(setSearch: SetSearch): ListReviewsByIf {
+function getListReviewsByIf(
+  setSearch: SetSearch,
+  reviewIf: ReviewIf,
+): ListReviewsByIf {
   return {
     useList: (
       _: IdFilteredListReviewParams,
@@ -300,6 +303,7 @@ function getListReviewsByIf(setSearch: SetSearch): ListReviewsByIf {
       }
     },
     filterIf: listFilterIf(setSearch),
+    reviewIf,
   }
 }
 
@@ -315,7 +319,10 @@ orderChangeTests.forEach((testCase) => {
       r_order: testCase.originalOrder,
       r_direction: testCase.originalDirection,
     }
-    const listReviewsByIf: ListReviewsByIf = getListReviewsByIf(setSearch)
+    const listReviewsByIf: ListReviewsByIf = getListReviewsByIf(
+      setSearch,
+      dontUpdateReviewIf,
+    )
     const { getByRole } = render(
       <LinkWrapper>
         <ReviewsBy
@@ -329,7 +336,6 @@ orderChangeTests.forEach((testCase) => {
               }),
             },
           }}
-          reviewIf={dontUpdateReviewIf}
         />
       </LinkWrapper>,
     )
@@ -377,8 +383,8 @@ test('renders loading', async () => {
             }
           },
           filterIf: listFilterIf(() => undefined),
+          reviewIf: dontUpdateReviewIf,
         }}
-        reviewIf={dontUpdateReviewIf}
       />
     </LinkWrapper>,
   )
@@ -406,8 +412,8 @@ test('opens filters', async () => {
             }
           },
           filterIf: listFilterIf(setSearch),
+          reviewIf: dontUpdateReviewIf,
         }}
-        reviewIf={dontUpdateReviewIf}
       />
     </LinkWrapper>,
   )
@@ -492,8 +498,8 @@ sliderChangeTests.forEach((testCase) => {
                   defaultFiltersOpenParams[key],
               }),
             },
+            reviewIf: dontUpdateReviewIf,
           }}
-          reviewIf={dontUpdateReviewIf}
         />
       </LinkWrapper>,
     )

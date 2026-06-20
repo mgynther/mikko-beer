@@ -244,6 +244,7 @@ function getListReviewsIf(reviews: JoinedReview[]): ListReviewsByIf {
       isLoading: false,
     }),
     filterIf: listFilterIf(() => undefined),
+    reviewIf,
   }
 }
 
@@ -331,7 +332,6 @@ test('renders style', async () => {
         updateStyleIf={dontUpdate}
         listReviewsByStyleIf={getListReviewsIf([joinedReview])}
         listStoragesByStyleIf={getListStoragesByStyleIf(undefined)}
-        reviewIf={reviewIf}
         getStyleIf={getStyleIf}
         statsIf={statsIf}
         useUrlPathParams={useUrlPathParams}
@@ -351,7 +351,6 @@ test('renders storages', async () => {
         updateStyleIf={dontUpdate}
         listReviewsByStyleIf={getListReviewsIf([joinedReview])}
         listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
-        reviewIf={reviewIf}
         getStyleIf={getStyleIf}
         statsIf={statsIf}
         useUrlPathParams={useUrlPathParams}
@@ -371,7 +370,6 @@ test('renders loading when loading', async () => {
         updateStyleIf={dontUpdate}
         listReviewsByStyleIf={getListReviewsIf([joinedReview])}
         listStoragesByStyleIf={getListStoragesByStyleIf(undefined)}
-        reviewIf={reviewIf}
         getStyleIf={{
           useGet: () => ({
             style: undefined,
@@ -393,7 +391,6 @@ test('renders not found when not found', async () => {
         updateStyleIf={dontUpdate}
         listReviewsByStyleIf={getListReviewsIf([joinedReview])}
         listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
-        reviewIf={reviewIf}
         getStyleIf={{
           useGet: () => ({
             style: undefined,
@@ -416,7 +413,6 @@ test('throw without style id', async () => {
           updateStyleIf={dontUpdate}
           listReviewsByStyleIf={getListReviewsIf([joinedReview])}
           listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
-          reviewIf={reviewIf}
           getStyleIf={getStyleIf}
           statsIf={statsIf}
           useUrlPathParams={() => ({})}
@@ -443,7 +439,6 @@ test('updates style', async () => {
         }}
         listReviewsByStyleIf={getListReviewsIf([])}
         listStoragesByStyleIf={getListStoragesByStyleIf([])}
-        reviewIf={reviewIf}
         getStyleIf={{
           useGet: () => {
             const hasUpdate = update.mock.calls.length > 0
@@ -506,7 +501,6 @@ test('cancels update', async () => {
         }}
         listReviewsByStyleIf={getListReviewsIf([])}
         listStoragesByStyleIf={getListStoragesByStyleIf([])}
-        reviewIf={reviewIf}
         getStyleIf={getStyleIf}
         statsIf={statsIf}
         useUrlPathParams={useUrlPathParams}

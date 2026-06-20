@@ -217,7 +217,6 @@ function App(props: Props): React.JSX.Element {
                       getBeerIf={getBeerIf}
                       listReviewsByBeerIf={listReviewsByBeerIf}
                       listStoragesByBeerIf={listStoragesByBeerIf}
-                      reviewIf={reviewIf}
                       updateBeerIf={updateBeerIf}
                       useUrlPathParams={props.useUrlPathParams}
                     />
@@ -240,7 +239,6 @@ function App(props: Props): React.JSX.Element {
                       getBreweryIf={getBreweryIf}
                       listReviewsByBreweryIf={listReviewsByBreweryIf}
                       listStoragesByBreweryIf={listStoragesByBreweryIf}
-                      reviewIf={reviewIf}
                       statsIf={statsIf}
                       updateBreweryIf={updateBreweryIf}
                       useUrlPathParams={props.useUrlPathParams}
@@ -273,7 +271,6 @@ function App(props: Props): React.JSX.Element {
                     <Location
                       getLocationIf={getLocationIf}
                       listReviewsByLocationIf={listReviewsByLocationIf}
-                      reviewIf={reviewIf}
                       statsIf={statsIf}
                       updateLocationIf={updateLocationIf}
                       useUrlPathParams={props.useUrlPathParams}
@@ -304,7 +301,6 @@ function App(props: Props): React.JSX.Element {
                     <Style
                       listReviewsByStyleIf={listReviewsByStyleIf}
                       listStoragesByStyleIf={listStoragesByStyleIf}
-                      reviewIf={reviewIf}
                       getStyleIf={getStyleIf}
                       statsIf={statsIf}
                       updateStyleIf={updateStyleIf}

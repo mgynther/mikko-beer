@@ -8,7 +8,7 @@ import type {
   UpdateBeerIf,
 } from '../../core/beer/types'
 
-import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
+import type { ListReviewsByIf } from '../../core/review/types'
 import type { ListStoragesByIf } from '../../core/storage/types'
 
 import { EditableMode } from '../common/EditableMode'
@@ -29,7 +29,6 @@ interface Props {
   listReviewsByBeerIf: ListReviewsByIf
   listStoragesByBeerIf: ListStoragesByIf
   useUrlPathParams: UseUrlPathParams
-  reviewIf: ReviewIf
   updateBeerIf: UpdateBeerIf
   getBeerIf: GetBeerIf
 }
@@ -57,7 +56,7 @@ function Beer(props: Props): React.JSX.Element {
             <div>
               <EditButton
                 disabled={false}
-                getLogin={props.reviewIf.login}
+                getLogin={props.listReviewsByBeerIf.reviewIf.login}
                 onClick={() => {
                   setMode(EditableMode.Edit)
                   setInitialBeer({ ...beer })
@@ -95,13 +94,9 @@ function Beer(props: Props): React.JSX.Element {
       <BeerStorages
         beerId={beerId}
         listStoragesByBeerIf={props.listStoragesByBeerIf}
-        getLogin={props.reviewIf.login}
+        getLogin={props.listReviewsByBeerIf.reviewIf.login}
       />
-      <ReviewsBy
-        id={beerId}
-        listReviewsByIf={props.listReviewsByBeerIf}
-        reviewIf={props.reviewIf}
-      />
+      <ReviewsBy id={beerId} listReviewsByIf={props.listReviewsByBeerIf} />
     </div>
   )
 }

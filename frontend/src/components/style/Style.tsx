@@ -10,7 +10,7 @@ import type {
 } from '../../core/style/types'
 
 import type { StatsIf } from '../../core/stats/types'
-import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
+import type { ListReviewsByIf } from '../../core/review/types'
 import type { ListStoragesByIf } from '../../core/storage/types'
 
 import { EditableMode } from '../common/EditableMode'
@@ -43,7 +43,6 @@ interface Props {
   listStoragesByStyleIf: ListStoragesByIf
   getStyleIf: GetStyleIf
   useUrlPathParams: UseUrlPathParams
-  reviewIf: ReviewIf
   statsIf: StatsIf
   updateStyleIf: UpdateStyleIf
 }
@@ -74,7 +73,7 @@ function Style(props: Props): React.JSX.Element {
             <div>
               <EditButton
                 disabled={false}
-                getLogin={props.reviewIf.login}
+                getLogin={props.listReviewsByStyleIf.reviewIf.login}
                 onClick={() => {
                   setMode(EditableMode.Edit)
                   setInitialStyle({
@@ -107,8 +106,8 @@ function Style(props: Props): React.JSX.Element {
             getStyleIf={props.getStyleIf}
             initialStyle={initialStyle}
             listStylesIf={
-              props.reviewIf.update.selectBeerIf.create.editBeerIf.selectStyleIf
-                .list
+              props.listReviewsByStyleIf.reviewIf.update.selectBeerIf.create
+                .editBeerIf.selectStyleIf.list
             }
             updateStyleIf={props.updateStyleIf}
             onCancel={() => {
@@ -130,17 +129,13 @@ function Style(props: Props): React.JSX.Element {
       {storageItems.length > 0 && (
         <StorageList
           deleteStorageIf={props.listStoragesByStyleIf.delete}
-          getLogin={props.reviewIf.login}
+          getLogin={props.listReviewsByStyleIf.reviewIf.login}
           isLoading={isLoadingStorages}
           isTitleVisible={true}
           storages={storageItems}
         />
       )}
-      <ReviewsBy
-        id={styleId}
-        listReviewsByIf={props.listReviewsByStyleIf}
-        reviewIf={props.reviewIf}
-      />
+      <ReviewsBy id={styleId} listReviewsByIf={props.listReviewsByStyleIf} />
     </>
   )
 }

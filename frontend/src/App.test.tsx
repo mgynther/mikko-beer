@@ -28,6 +28,7 @@ import type { ListStylesIf } from './core/style/types'
 import type {
   ListFilterIf,
   ReviewContainerIf,
+  ReviewIf,
   SetSearch,
 } from './core/review/types'
 import type { SearchFieldIf } from './core/search/types'
@@ -164,6 +165,19 @@ const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
   useUrlSearchParams,
 })
 
+const reviewIf: ReviewIf = {
+  get: {
+    useGet: dontCall,
+  },
+  update: {
+    useUpdate: dontCall,
+    searchLocationIf,
+    selectBeerIf,
+    reviewContainerIf,
+  },
+  login: getUndefinedLogin,
+}
+
 const storeIf: StoreIf = {
   getLogin: getUndefinedLogin,
   getBeerIf: {
@@ -295,31 +309,24 @@ const storeIf: StoreIf = {
   listReviewsByBeerIf: {
     useList: dontCall,
     filterIf: listFilterIf(dontCall),
+    reviewIf,
   },
   listReviewsByBreweryIf: {
     useList: dontCall,
     filterIf: listFilterIf(dontCall),
+    reviewIf,
   },
   listReviewsByLocationIf: {
     useList: dontCall,
     filterIf: listFilterIf(dontCall),
+    reviewIf,
   },
   listReviewsByStyleIf: {
     useList: dontCall,
     filterIf: listFilterIf(dontCall),
+    reviewIf,
   },
-  reviewIf: {
-    get: {
-      useGet: dontCall,
-    },
-    update: {
-      useUpdate: dontCall,
-      searchLocationIf,
-      selectBeerIf,
-      reviewContainerIf,
-    },
-    login: getUndefinedLogin,
-  },
+  reviewIf,
   statsIf: {
     annual: {
       useStats: () => ({

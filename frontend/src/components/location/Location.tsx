@@ -18,13 +18,12 @@ import '../common/FlexRow.css'
 import NotFound from '../common/NotFound'
 import type { StatsIf } from '../../core/stats/types'
 import Stats from '../stats/Stats'
-import type { ListReviewsByIf, ReviewIf } from '../../core/review/types'
+import type { ListReviewsByIf } from '../../core/review/types'
 import ReviewsBy from '../review/ReviewsBy'
 
 interface Props {
   listReviewsByLocationIf: ListReviewsByIf
   getLocationIf: GetLocationIf
-  reviewIf: ReviewIf
   statsIf: StatsIf
   updateLocationIf: UpdateLocationIf
   useUrlPathParams: UseUrlPathParams
@@ -83,7 +82,6 @@ function Location(props: Props): React.JSX.Element {
       <ReviewsBy
         id={locationId}
         listReviewsByIf={props.listReviewsByLocationIf}
-        reviewIf={props.reviewIf}
       />
     </div>
   )

@@ -151,6 +151,7 @@ export interface ListReviewsByHookIf {
 export interface ListReviewsByIf {
   useList: UseListReviewsBy
   filterIf: ListFilterIf
+  reviewIf: ReviewIf
 }
 
 type UseCreateReview = () => {
