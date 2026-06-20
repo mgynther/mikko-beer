@@ -193,7 +193,10 @@ function RtkApp(): React.JSX.Element {
   }
 
   const getBeerIf: GetBeerIf = getBeer()
-  const listBeersIf: ListBeersIf = listBeers()
+  const listBeersIf: ListBeersIf = {
+    ...listBeers(),
+    infiniteScroll,
+  }
 
   const editBeerIf: EditBeerIf = {
     selectBreweryIf,

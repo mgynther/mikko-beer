@@ -56,13 +56,19 @@ export interface GetBeerIf {
   }
 }
 
+type UseListBeers = () => {
+  list: (pagination: Pagination) => Promise<BeerList>
+  beerList: BeerList | undefined
+  isLoading: boolean
+  isUninitialized: boolean
+}
+
+export interface ListBeersHookIf {
+  useList: UseListBeers
+}
+
 export interface ListBeersIf {
-  useList: () => {
-    list: (pagination: Pagination) => Promise<BeerList>
-    beerList: BeerList | undefined
-    isLoading: boolean
-    isUninitialized: boolean
-  }
+  useList: UseListBeers
   infiniteScroll: InfiniteScroll
 }
 
