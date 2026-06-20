@@ -7,6 +7,7 @@
   "scripts": {
     "build": "rm -rf dist && tsc -p ./tsconfig-build.json",
     "build:test": "rm -rf build-tests && tsc -p ./tsconfig-test.json",
+    "build:watch": "tsc -p ./tsconfig-build.json -w",
     "format": "npx prettier --write .",
     "format:check": "npx prettier --check .",
     "lint": "npm run lint:src && npm run lint:test",
