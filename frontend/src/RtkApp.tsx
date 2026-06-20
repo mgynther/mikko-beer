@@ -119,7 +119,7 @@ import listReviewsByLocation from './storehookifs/review/listByLocation'
 import listReviewsByStyle from './storehookifs/review/listByStyle'
 import updateReview from './storehookifs/review/update'
 
-import search from './storehookifs/search'
+import searchField from './storehookifs/search-field'
 
 import stats from './storehookifs/stats/stats'
 
@@ -203,7 +203,10 @@ function RtkApp(): React.JSX.Element {
     selectStyleIf,
   }
 
-  const searchFieldIf: SearchFieldIf = search(useDebounce<string>)
+  const searchFieldIf: SearchFieldIf = {
+    ...searchField(),
+    useDebounce: useDebounce<string>,
+  }
 
   const createBeerIf: CreateBeerIf = {
     ...createBeer(),

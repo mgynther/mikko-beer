@@ -1,9 +1,15 @@
 import type { UseDebounce } from '../types'
 
+type UseSearchField = () => {
+  activate: () => void
+  isActive: boolean
+}
+
+export interface SearchFieldHookIf {
+  useSearchField: UseSearchField
+}
+
 export interface SearchFieldIf {
-  useSearchField: () => {
-    activate: () => void
-    isActive: boolean
-  }
+  useSearchField: UseSearchField
   useDebounce: UseDebounce<string>
 }

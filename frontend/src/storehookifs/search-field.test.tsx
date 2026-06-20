@@ -1,15 +1,12 @@
 import { expect, test } from 'vitest'
 import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import type { UseDebounce } from '../core/types'
 import { store } from '../store/store'
 import { Provider } from '../react-redux-wrapper'
-import search from './search'
-
-const useDebounce: UseDebounce<string> = (str) => [str, false]
+import searchField from './search-field'
 
 function Helper(): React.JSX.Element {
-  const searchFieldIf = search(useDebounce)
+  const searchFieldIf = searchField()
   const { activate, isActive } = searchFieldIf.useSearchField()
   return (
     <div>
