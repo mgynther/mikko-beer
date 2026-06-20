@@ -27,11 +27,17 @@ export interface BeerList {
   beers: Beer[]
 }
 
+type UseCreateBeer = () => {
+  create: (request: CreateBeerRequest) => Promise<BeerWithIds>
+  isLoading: boolean
+}
+
+export interface CreateBeerHookIf {
+  useCreate: UseCreateBeer
+}
+
 export interface CreateBeerIf {
-  useCreate: () => {
-    create: (request: CreateBeerRequest) => Promise<BeerWithIds>
-    isLoading: boolean
-  }
+  useCreate: UseCreateBeer
   editBeerIf: EditBeerIf
 }
 

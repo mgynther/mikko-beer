@@ -202,7 +202,10 @@ function RtkApp(): React.JSX.Element {
 
   const searchFieldIf: SearchFieldIf = search(useDebounce<string>)
 
-  const createBeerIf: CreateBeerIf = createBeer(editBeerIf)
+  const createBeerIf: CreateBeerIf = {
+    ...createBeer(),
+    editBeerIf,
+  }
   const searchBeerIf: SearchBeerIf = {
     ...searchBeer(),
     searchFieldIf,
