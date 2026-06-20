@@ -72,11 +72,17 @@ export interface DeleteStorageIf {
   }
 }
 
+type UseListStorages = () => {
+  storages: StorageList | undefined
+  isLoading: boolean
+}
+
+export interface ListStoragesHookIf {
+  useList: UseListStorages
+}
+
 export interface ListStoragesIf {
-  useList: () => {
-    storages: StorageList | undefined
-    isLoading: boolean
-  }
+  useList: UseListStorages
   delete: DeleteStorageIf
 }
 

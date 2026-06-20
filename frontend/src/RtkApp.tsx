@@ -259,7 +259,10 @@ function RtkApp(): React.JSX.Element {
   }
   const getStorageIf: GetStorageIf = getStorage()
   const deleteStorageIf: DeleteStorageIf = deleteStorage()
-  const listStoragesIf: ListStoragesIf = listStorages(deleteStorageIf)
+  const listStoragesIf: ListStoragesIf = {
+    ...listStorages(),
+    delete: deleteStorageIf,
+  }
   const listStoragesByBeerIf: ListStoragesByIf =
     listStoragesByBeer(deleteStorageIf)
   const listStoragesByBreweryIf: ListStoragesByIf =
