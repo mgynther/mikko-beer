@@ -1,15 +1,12 @@
 import type {
   IdFilteredListReviewParams,
-  ListFilterIf,
-  ListReviewsByIf,
+  ListReviewsByHookIf,
 } from '../../core/review/types'
 import { useListReviewsByStyleQuery } from '../../store/review/api'
 import { validateJoinedReviewListOrUndefined } from '../../validation/review'
 
-const listReviewsByStyle: (filterIf: ListFilterIf) => ListReviewsByIf = (
-  filterIf: ListFilterIf,
-) => {
-  const listReviewsByStyleIf: ListReviewsByIf = {
+const listReviewsByStyle: () => ListReviewsByHookIf = () => {
+  const listReviewsByStyleIf: ListReviewsByHookIf = {
     useList: (params: IdFilteredListReviewParams) => {
       const { data, isLoading } = useListReviewsByStyleQuery(params)
       return {
@@ -17,7 +14,6 @@ const listReviewsByStyle: (filterIf: ListFilterIf) => ListReviewsByIf = (
         isLoading,
       }
     },
-    filterIf,
   }
   return listReviewsByStyleIf
 }

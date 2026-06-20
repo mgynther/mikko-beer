@@ -290,14 +290,22 @@ function RtkApp(): React.JSX.Element {
     infiniteScroll,
     filterIf: listReviewsFilterIf,
   }
-  const listReviewsByBeerIf: ListReviewsByIf =
-    listReviewsByBeer(listReviewsFilterIf)
-  const listReviewsByBreweryIf: ListReviewsByIf =
-    listReviewsByBrewery(listReviewsFilterIf)
-  const listReviewsByLocationIf: ListReviewsByIf =
-    listReviewsByLocation(listReviewsFilterIf)
-  const listReviewsByStyleIf: ListReviewsByIf =
-    listReviewsByStyle(listReviewsFilterIf)
+  const listReviewsByBeerIf: ListReviewsByIf = {
+    ...listReviewsByBeer(),
+    filterIf: listReviewsFilterIf,
+  }
+  const listReviewsByBreweryIf: ListReviewsByIf = {
+    ...listReviewsByBrewery(),
+    filterIf: listReviewsFilterIf,
+  }
+  const listReviewsByLocationIf: ListReviewsByIf = {
+    ...listReviewsByLocation(),
+    filterIf: listReviewsFilterIf,
+  }
+  const listReviewsByStyleIf: ListReviewsByIf = {
+    ...listReviewsByStyle(),
+    filterIf: listReviewsFilterIf,
+  }
   const createReviewIf: CreateReviewIf = {
     ...createReview(),
     getCurrentDate: getDate,

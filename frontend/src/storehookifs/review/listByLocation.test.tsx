@@ -1,22 +1,15 @@
-import { expect, test, vitest } from 'vitest'
+import { expect, test } from 'vitest'
 import { store } from '../../store/store'
 import { addTestServerResponse } from '../../../test-util/server'
 import listReviewsByLocation from './listByLocation'
 import type {
   JoinedReviewList,
-  ListFilterIf,
   ReviewListFilter,
   ReviewSorting,
-  SetSearch,
 } from '../../core/review/types'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
-import type { UseDebounce, YearMonth } from '../../core/types'
 import { testTimes } from '../../../test-util/filter-time'
-
-const getUseDebounce = function <T>(): UseDebounce<T> {
-  return (value: T) => [value, false]
-}
 
 interface HelperProps {
   locationId: string
@@ -27,9 +20,6 @@ const sorting: ReviewSorting = {
   direction: 'desc',
 }
 
-const minTime: YearMonth = testTimes.min.yearMonth
-const maxTime: YearMonth = testTimes.max.yearMonth
-
 const filter: ReviewListFilter = {
   minRating: 4,
   maxRating: 10,
@@ -37,19 +27,8 @@ const filter: ReviewListFilter = {
   maxTime: testTimes.max.utcTimestamp,
 }
 
-const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
-  setSearch: SetSearch,
-) => ({
-  getUseDebounce,
-  minTime,
-  maxTime,
-  setSearch,
-  useUrlSearchParams: () => ({ get: () => undefined }),
-})
-
 function Helper(props: HelperProps): React.JSX.Element {
-  const setSearch = vitest.fn()
-  const listIf = listReviewsByLocation(listFilterIf(setSearch))
+  const listIf = listReviewsByLocation()
   const { reviews } = listIf.useList({
     id: props.locationId,
     sorting,
