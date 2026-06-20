@@ -5,10 +5,7 @@ import StorageItem from './StorageItem'
 import type { DeleteStorageIf, Storage } from '../../core/storage/types'
 import { Role } from '../../core/user/types'
 import LinkWrapper from '../LinkWrapper'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 const brewery = {
   id: 'b5639203-8448-40ff-84c1-cc9b9b50909c',

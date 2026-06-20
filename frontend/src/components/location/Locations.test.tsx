@@ -7,16 +7,13 @@ import LinkWrapper from '../LinkWrapper'
 import type { UseDebounce } from '../../core/types'
 import type { CreateLocationIf } from '../../core/location/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
+import { dontCall } from '../../../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
-const notUsed = (): any => {
-  throw new Error('Do not call')
-}
-
 const activeSearch: SearchFieldIf = {
   useSearchField: () => ({
-    activate: notUsed,
+    activate: dontCall,
     isActive: false,
   }),
   useDebounce,
@@ -24,7 +21,7 @@ const activeSearch: SearchFieldIf = {
 
 const createLocationIf: CreateLocationIf = {
   useCreate: () => ({
-    create: notUsed,
+    create: dontCall,
     isLoading: false,
   }),
 }
@@ -61,11 +58,11 @@ test('renders locations', async () => {
           },
         }}
         navigateIf={{
-          useNavigate: () => notUsed,
+          useNavigate: () => dontCall,
         }}
         searchLocationIf={{
           useSearch: () => ({
-            search: notUsed,
+            search: dontCall,
             isLoading: false,
           }),
           create: createLocationIf,
@@ -91,7 +88,7 @@ test('renders loading', async () => {
       <Locations
         listLocationsIf={{
           useList: () => ({
-            list: notUsed,
+            list: dontCall,
             locationList: undefined,
             isLoading: true,
             isUninitialized: true,
@@ -102,11 +99,11 @@ test('renders loading', async () => {
           },
         }}
         navigateIf={{
-          useNavigate: () => notUsed,
+          useNavigate: () => dontCall,
         }}
         searchLocationIf={{
           useSearch: () => ({
-            search: notUsed,
+            search: dontCall,
             isLoading: false,
           }),
           create: createLocationIf,
@@ -153,11 +150,11 @@ test('stops loading more', async () => {
           },
         }}
         navigateIf={{
-          useNavigate: () => notUsed,
+          useNavigate: () => dontCall,
         }}
         searchLocationIf={{
           useSearch: () => ({
-            search: notUsed,
+            search: dontCall,
             isLoading: false,
           }),
           create: createLocationIf,

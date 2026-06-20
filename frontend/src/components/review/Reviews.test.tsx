@@ -27,15 +27,12 @@ import type { SearchLocationIf } from '../../core/location/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 import { testTimes } from '../../../test-util/filter-time'
 import { openFilters } from '../common/filters-test-util'
+import { dontCall } from '../../../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
-}
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
 }
 
 const dontCreate = {

@@ -7,10 +7,7 @@ import type {
   CreateBreweryRequest,
 } from '../../core/brewery/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 const id = '37e1e052-f558-40e1-ae50-4719d2d5f3cc'
 const namePlaceholder = 'Create brewery'

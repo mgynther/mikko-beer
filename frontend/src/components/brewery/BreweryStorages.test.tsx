@@ -6,10 +6,7 @@ import type { ListStoragesByIf, Storage } from '../../core/storage/types'
 import type { Beer } from '../../core/beer/types'
 import type { Container } from '../../core/container/types'
 import { Role } from '../../core/user/types'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 const breweryId = '6abf9c04-2aaa-42da-b8cb-a5eaa6bb0ff8'
 

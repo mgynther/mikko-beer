@@ -6,10 +6,7 @@ import type {
 } from '../../core/stats/types'
 
 import AnnualContainerAllAtOnce from './AnnualContainerAllAtOnce'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 const breweryId = '05ad469a-21ea-4be7-8112-68ef9ee65617'
 const locationId = '6cb586b2-f4fe-4b85-9c40-96897cd367a5'

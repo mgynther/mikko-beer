@@ -7,10 +7,7 @@ import type { Props, SearchBoxItem } from './SearchBox'
 import { loadingIndicatorText } from './LoadingIndicator'
 import type { SearchFieldIf } from '../../core/search/types'
 import type { UseDebounce } from '../../core/types'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 

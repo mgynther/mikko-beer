@@ -5,10 +5,7 @@ import SelectStyles from './SelectStyles'
 import type { UseDebounce } from '../../core/types'
 import type { StyleWithParentIds } from '../../core/style/types'
 import type { SearchFieldIf } from '../../core/search/types'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 

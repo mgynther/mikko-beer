@@ -10,12 +10,9 @@ import type { SearchFieldIf } from './core/search/types'
 import type { SearchBreweryIf } from './core/brewery/types'
 import type { NavigateIf } from './navigation'
 import type { NavMenuState, Theme, UseDebounce } from './core/types'
+import { dontCall } from '../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
 
 const noSearch: SearchFieldIf = {
   useSearchField: () => ({

@@ -4,10 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import Filters from './Filters'
 import { openFilters } from '../common/filters-test-util'
 import type { ReviewFilters } from './filter-types'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 const defaultFilters: ReviewFilters = {
   minRating: {

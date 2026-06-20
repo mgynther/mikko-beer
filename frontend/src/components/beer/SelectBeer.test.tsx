@@ -10,14 +10,11 @@ import type {
 import type { UseDebounce } from '../../core/types'
 import type { SearchFieldIf } from '../../core/search/types'
 import type { Brewery } from '../../core/brewery/types'
+import { dontCall } from '../../../test-util/dont-call'
 
 const namePlaceholder = 'Name'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
 
 const brewery = {
   id: 'a5a8968d-4556-4f66-8351-21f724cc8316',

@@ -27,15 +27,12 @@ import type { EditBeerIf, GetBeerIf, UpdateBeerIf } from '../../core/beer/types'
 import type { UseUrlPathParams } from '../util'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 import { testTimes } from '../../../test-util/filter-time'
+import { dontCall } from '../../../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
-}
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
 }
 
 const brewery = {

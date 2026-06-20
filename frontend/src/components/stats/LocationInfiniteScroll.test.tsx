@@ -12,10 +12,7 @@ import type {
 } from '../../core/stats/types'
 import type { UseDebounce, YearMonth } from '../../core/types'
 import type { StatsFilters } from './filter-types'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 const plevna: OneLocationStats = {
   locationId: 'd25daf1d-6586-4d9d-81fb-ae27f07b5fba',

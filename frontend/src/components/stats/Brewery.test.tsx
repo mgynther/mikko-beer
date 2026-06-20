@@ -11,10 +11,7 @@ import type {
 } from '../../core/stats/types'
 import type { SearchParameters, UseDebounce, YearMonth } from '../../core/types'
 import type { StatsFilters } from './filter-types'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]

@@ -4,10 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import CreateContainer from './CreateContainer'
 import type { Container, ContainerRequest } from '../../core/container/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 const id = 'bbf9a644-74ad-4947-8335-ff1464f97a20'
 const sizePlaceholder = 'Size, for example 0.25'

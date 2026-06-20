@@ -4,6 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import SelectBrewery from './SelectBrewery'
 import type { Brewery, SearchBreweryIf } from '../../core/brewery/types'
 import type { UseDebounce } from '../../core/types'
+import { dontCall } from '../../../test-util/dont-call'
 
 const brewery: Brewery = {
   id: 'e8d6ca94-e17f-43a5-9ff4-3ac72349f33d',
@@ -43,9 +44,7 @@ test('selects brewery', async () => {
       select={onSelect}
       selectBreweryIf={{
         create: {
-          useCreate: () => {
-            throw new Error('do not call')
-          },
+          useCreate: dontCall,
         },
         search: getSearch(true),
       }}

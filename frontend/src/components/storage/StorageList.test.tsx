@@ -4,10 +4,7 @@ import StorageList from './StorageList'
 import type { Storage } from '../../core/storage/types'
 import { Role } from '../../core/user/types'
 import LinkWrapper from '../LinkWrapper'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 const breweryOne = {
   id: 'a2725b45-e4d8-4892-a54b-e610f5b72aa9',

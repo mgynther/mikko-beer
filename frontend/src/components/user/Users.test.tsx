@@ -2,10 +2,7 @@ import { render } from '@testing-library/react'
 import { test } from 'vitest'
 import Users from './Users'
 import { Role } from '../../core/user/types'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 test('renders user', () => {
   const { getByText } = render(

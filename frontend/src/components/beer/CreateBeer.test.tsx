@@ -5,15 +5,12 @@ import CreateBeer from './CreateBeer'
 import type { CreateBeerIf, CreateBeerRequest } from '../../core/beer/types'
 import type { UseDebounce } from '../../core/types'
 import type { SearchFieldIf } from '../../core/search/types'
+import { dontCall } from '../../../test-util/dont-call'
 
 const id = 'dbec2360-d6af-45f4-b2a0-cad732a87e20'
 const namePlaceholder = 'Name'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
 
 const brewery = {
   id: 'a1b6e983-40fb-40e2-b6ca-03c16c343e4c',

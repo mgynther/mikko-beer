@@ -3,10 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import UserList from './UserList'
 import { type ListUsersIf, Role, type User } from '../../core/user/types'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 const user1Id = 'b45e51cd-7acd-4f3b-8092-56f526ad9956'
 

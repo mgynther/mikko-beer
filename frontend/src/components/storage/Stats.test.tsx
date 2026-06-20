@@ -4,10 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import Stats from './Stats'
 import type { StorageStatsIf } from '../../core/storage/types'
 import type { UseUrlSearchParams } from '../../core/types'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 const useEmptyUrlSearchParams: UseUrlSearchParams = () => ({
   get: () => undefined,

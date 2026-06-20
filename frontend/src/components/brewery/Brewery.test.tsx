@@ -34,6 +34,7 @@ import type { SearchFieldIf } from '../../core/search/types'
 import type { UseUrlPathParams } from '../util'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 import type { SelectBeerIf } from '../../core/beer/types'
+import { dontCall } from '../../../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -44,10 +45,6 @@ const getUseDebounce = function <T>(): UseDebounce<T> {
 const id = 'f57c65dd-80b1-46db-a41c-21ad137cb2a8'
 const name = 'Hopping Brewsters'
 const newNamePlaceholder = 'New name'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
 
 function getLogin(): GetLogin {
   return () => ({

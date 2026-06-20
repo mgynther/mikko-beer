@@ -5,6 +5,7 @@ import SelectContainer from './SelectContainer'
 import type { Container, ListContainersData } from '../../core/container/types'
 import type { ReviewContainerIf } from '../../core/review/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
+import { dontCall } from '../../../test-util/dont-call'
 
 const sizePlaceholder = 'Size, for example 0.25'
 const typePlaceholder = 'Type'
@@ -30,9 +31,7 @@ const useList = (): ListContainersData => ({
 
 const dontCreateIf: ReviewContainerIf = {
   createIf: {
-    useCreate: () => {
-      throw new Error('do not call')
-    },
+    useCreate: dontCall,
   },
   listIf: {
     useList,

@@ -7,16 +7,13 @@ import type { UseDebounce } from '../../core/types'
 import type { BeerList, ListBeersIf, SearchBeerIf } from '../../core/beer/types'
 import type { NavigateIf } from '../../navigation'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
+import { dontCall } from '../../../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
-const notUsed = (): any => {
-  throw new Error('Do not call')
-}
-
 const activeSearch: SearchFieldIf = {
   useSearchField: () => ({
-    activate: notUsed,
+    activate: dontCall,
     isActive: false,
   }),
   useDebounce,
@@ -54,17 +51,17 @@ const anotherBeer = {
 const beers = [beer, anotherBeer]
 
 const navigateIf: NavigateIf = {
-  useNavigate: () => notUsed,
+  useNavigate: () => dontCall,
 }
 
 const searchBeerIf: SearchBeerIf = {
   useSearch: () => ({
-    search: notUsed,
+    search: dontCall,
     isLoading: false,
   }),
   searchFieldIf: {
     useSearchField: () => ({
-      activate: notUsed,
+      activate: dontCall,
       isActive: false,
     }),
     useDebounce,

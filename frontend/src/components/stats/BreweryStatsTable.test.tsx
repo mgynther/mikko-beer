@@ -11,10 +11,7 @@ import type {
 import type { ListDirection, YearMonth } from '../../core/types'
 import { openFilters } from '../common/filters-test-util'
 import type { StatsFilters } from './filter-types'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 const koskipanimo: OneBreweryStats = {
   breweryId: '9c761e23-0113-4eeb-b2d5-819f1f5345b5',

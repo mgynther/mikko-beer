@@ -5,10 +5,7 @@ import { loadingIndicatorText } from '../common/LoadingIndicator'
 
 import Styles from './Styles'
 import userEvent from '@testing-library/user-event'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 test('renders styles', () => {
   const { getAllByRole } = render(

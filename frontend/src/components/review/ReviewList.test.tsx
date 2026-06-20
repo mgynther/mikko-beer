@@ -22,12 +22,9 @@ import type {
 import type { SearchFieldIf } from '../../core/search/types'
 import type { ReviewFilters } from './filter-types'
 import { testTimes } from '../../../test-util/filter-time'
+import { dontCall } from '../../../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
 
 const dontCreate = {
   create: dontCall,

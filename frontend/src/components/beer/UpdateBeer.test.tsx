@@ -6,6 +6,7 @@ import type { UseDebounce } from '../../core/types'
 import type { Brewery, SelectBreweryIf } from '../../core/brewery/types'
 import type { SelectStyleIf } from '../../core/style/types'
 import type { SearchFieldIf } from '../../core/search/types'
+import { dontCall } from '../../../test-util/dont-call'
 
 const id = 'b3cee2c7-81b8-4b4d-8625-f5a3955258eb'
 const beerName = 'Kukko Pils'
@@ -30,10 +31,6 @@ const anotherStyle = {
   id: 'f90f89cf-7967-4097-9f92-06ac0ec649d7',
   name: 'lager',
   parents: ['1f1eb9e4-8925-45a5-9dd5-7b34bba11418'],
-}
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
 }
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]

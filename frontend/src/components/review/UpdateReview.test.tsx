@@ -7,12 +7,9 @@ import type { CreateBeerIf, SearchBeerIf } from '../../core/beer/types'
 import type { ReviewContainerIf } from '../../core/review/types'
 import type { SearchFieldIf } from '../../core/search/types'
 import type { SearchLocationIf } from '../../core/location/types'
+import { dontCall } from '../../../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
 
 const dontCreate = {
   create: dontCall,

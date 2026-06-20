@@ -1,10 +1,7 @@
 import { render, fireEvent } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
 import TimeFilterSlider from './TimeFilterSlider'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 test('renders contents', () => {
   const title = 'Time'

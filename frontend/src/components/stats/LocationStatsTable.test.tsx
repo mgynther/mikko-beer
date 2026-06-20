@@ -11,10 +11,7 @@ import type {
 import type { ListDirection, YearMonth } from '../../core/types'
 import { openFilters } from '../common/filters-test-util'
 import type { StatsFilters } from './filter-types'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 const plevna: OneLocationStats = {
   locationId: '2aad4052-1f8a-4088-87d8-c079f40d74b9',

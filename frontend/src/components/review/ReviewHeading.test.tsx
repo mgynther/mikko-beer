@@ -6,10 +6,7 @@ import type { ReviewSorting, ReviewSortingOrder } from '../../core/review/types'
 import type { ReviewFilters } from './filter-types'
 import type { YearMonth } from '../../core/types'
 import { testTimes } from '../../../test-util/filter-time'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 const minTime: YearMonth = testTimes.min.yearMonth
 const maxTime: YearMonth = testTimes.max.yearMonth

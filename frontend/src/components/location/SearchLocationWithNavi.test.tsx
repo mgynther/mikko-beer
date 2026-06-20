@@ -7,12 +7,9 @@ import type { Location } from '../../core/location/types'
 import type { SearchFieldIf } from '../../core/search/types'
 import type { UseDebounce } from '../../core/types'
 import type { CreateLocationIf } from '../../core/location/types'
+import { dontCall } from '../../../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
 
 const activeSearch: SearchFieldIf = {
   useSearchField: () => ({

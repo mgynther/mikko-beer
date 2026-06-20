@@ -12,10 +12,7 @@ import type {
 } from '../../core/stats/types'
 import type { UseDebounce, YearMonth } from '../../core/types'
 import type { StatsFilters } from './filter-types'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 const koskipanimo: OneBreweryStats = {
   breweryId: '59c825c9-b346-420a-9e67-f0ae1af1d962',

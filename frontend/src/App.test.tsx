@@ -2,6 +2,7 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, expect, test, vitest } from 'vitest'
 import { testTimes } from '../test-util/filter-time'
+import { dontCall } from '../test-util/dont-call'
 import LinkWrapper from './components/LinkWrapper'
 
 import { Provider } from './react-redux-wrapper'
@@ -34,10 +35,6 @@ import type { SearchFieldIf } from './core/search/types'
 beforeEach(() => {
   store.dispatch(setState('COLLAPSED'))
 })
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
 
 const infiniteScroll: InfiniteScroll = () => () => undefined
 

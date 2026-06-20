@@ -11,13 +11,10 @@ import type {
   OneBreweryStats,
 } from '../../core/stats/types'
 import type { UseDebounce, YearMonth } from '../../core/types'
+import { dontCall } from '../../../test-util/dont-call'
 
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
-}
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
 }
 
 const styleId = 'b345a181-3709-4e12-b255-6fea3baf9f71'

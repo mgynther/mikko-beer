@@ -2,10 +2,7 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import UpdateBrewery from './UpdateBrewery'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 const id = 'a992b512-c636-486c-a85f-33938da9101c'
 const newNamePlaceholder = 'New name'

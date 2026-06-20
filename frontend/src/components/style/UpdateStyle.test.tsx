@@ -10,10 +10,7 @@ import type {
 import type { UseDebounce } from '../../core/types'
 import type { SearchFieldIf } from '../../core/search/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
+import { dontCall } from '../../../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 

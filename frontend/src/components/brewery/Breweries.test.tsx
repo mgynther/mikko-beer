@@ -6,16 +6,13 @@ import LinkWrapper from '../LinkWrapper'
 import type { UseDebounce } from '../../core/types'
 import type { BreweryList, ListBreweriesIf } from '../../core/brewery/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
+import { dontCall } from '../../../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
-const notUsed = (): any => {
-  throw new Error('Do not call')
-}
-
 const activeSearch: SearchFieldIf = {
   useSearchField: () => ({
-    activate: notUsed,
+    activate: dontCall,
     isActive: false,
   }),
   useDebounce,
@@ -54,11 +51,11 @@ test('renders breweries', async () => {
       <Breweries
         listBreweriesIf={listBreweriesIf}
         navigateIf={{
-          useNavigate: () => notUsed,
+          useNavigate: () => dontCall,
         }}
         searchBreweryIf={{
           useSearch: () => ({
-            search: notUsed,
+            search: dontCall,
             isLoading: false,
           }),
           searchFieldIf: activeSearch,
@@ -80,7 +77,7 @@ test('render loading', async () => {
   let scrollCb: () => void = () => undefined
   const listBreweriesIf: ListBreweriesIf = {
     useList: () => ({
-      list: notUsed,
+      list: dontCall,
       breweryList: undefined,
       isLoading: true,
       isUninitialized: true,
@@ -95,11 +92,11 @@ test('render loading', async () => {
       <Breweries
         listBreweriesIf={listBreweriesIf}
         navigateIf={{
-          useNavigate: () => notUsed,
+          useNavigate: () => dontCall,
         }}
         searchBreweryIf={{
           useSearch: () => ({
-            search: notUsed,
+            search: dontCall,
             isLoading: false,
           }),
           searchFieldIf: activeSearch,
@@ -148,11 +145,11 @@ test('stops loading more', async () => {
       <Breweries
         listBreweriesIf={listBreweriesIf}
         navigateIf={{
-          useNavigate: () => notUsed,
+          useNavigate: () => dontCall,
         }}
         searchBreweryIf={{
           useSearch: () => ({
-            search: notUsed,
+            search: dontCall,
             isLoading: false,
           }),
           searchFieldIf: activeSearch,

@@ -37,15 +37,12 @@ import type { SearchFieldIf } from '../../core/search/types'
 import type { UseUrlPathParams } from '../util'
 import type { ReactNode } from 'react'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
+import { dontCall } from '../../../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
-}
-
-const dontCall = (): any => {
-  throw new Error('must not be called')
 }
 
 const brewery = {

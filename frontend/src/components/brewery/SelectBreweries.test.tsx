@@ -4,6 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import SelectBreweries from './SelectBreweries'
 import type { Brewery, SearchBreweryIf } from '../../core/brewery/types'
 import type { UseDebounce } from '../../core/types'
+import { dontCall } from '../../../test-util/dont-call'
 
 const brewery: Brewery = {
   id: '69ccb1b1-ee01-446d-b41f-58f57a14148f',
@@ -15,9 +16,7 @@ const anotherBrewery: Brewery = {
   name: 'Mallaskoski',
 }
 
-const useCreate = (): any => {
-  throw new Error('do not call')
-}
+const useCreate = dontCall
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
