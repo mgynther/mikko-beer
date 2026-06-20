@@ -45,11 +45,17 @@ export interface ListLocationsIf {
   infiniteScroll: InfiniteScroll
 }
 
+type UseUpdateLogin = () => {
+  update: (locationRequest: Location) => Promise<void>
+  isLoading: boolean
+}
+
+export interface UpdateLocationHookIf {
+  useUpdate: UseUpdateLogin
+}
+
 export interface UpdateLocationIf {
-  useUpdate: () => {
-    update: (locationRequest: Location) => Promise<void>
-    isLoading: boolean
-  }
+  useUpdate: UseUpdateLogin
   login: GetLogin
 }
 

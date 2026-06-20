@@ -240,7 +240,10 @@ function RtkApp(): React.JSX.Element {
     ...searchLocation(),
     create: createLocationIf,
   }
-  const updateLocationIf: UpdateLocationIf = updateLocation(getLogin)
+  const updateLocationIf: UpdateLocationIf = {
+    ...updateLocation(),
+    login: getLogin,
+  }
 
   const createStorageIf: CreateStorageIf = createStorage()
   const getAnnualStorageStatsIf: GetAnnualStorageStatsIf =

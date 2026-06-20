@@ -15,11 +15,7 @@ interface HelperProps {
 }
 
 function Helper(props: HelperProps): React.JSX.Element {
-  const updateIf = updateLocation(() => ({
-    user: undefined,
-    authToken: '',
-    refreshToken: '',
-  }))
+  const updateIf = updateLocation()
   const update = updateIf.useUpdate()
   const handleClick = (): void => {
     async function doHandle(): Promise<void> {

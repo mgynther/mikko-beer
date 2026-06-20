@@ -1,12 +1,9 @@
-import type { Location, UpdateLocationIf } from '../../core/location/types'
-import type { GetLogin } from '../../core/login/types'
+import type { Location, UpdateLocationHookIf } from '../../core/location/types'
 import { useUpdateLocationMutation } from '../../store/location/api'
 import { validateLocation } from '../../validation/location'
 
-const updateLocation: (login: GetLogin) => UpdateLocationIf = (
-  login: GetLogin,
-) => {
-  const updateLocationIf: UpdateLocationIf = {
+const updateLocation: () => UpdateLocationHookIf = () => {
+  const updateLocationIf: UpdateLocationHookIf = {
     useUpdate: () => {
       const [updateLocation, { isLoading }] = useUpdateLocationMutation()
       return {
@@ -17,7 +14,6 @@ const updateLocation: (login: GetLogin) => UpdateLocationIf = (
         isLoading,
       }
     },
-    login,
   }
   return updateLocationIf
 }
