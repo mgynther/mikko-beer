@@ -4,12 +4,10 @@ import Storages from './Storages'
 import type { Storage } from '../../core/storage/types'
 import { Role } from '../../core/user/types'
 import LinkWrapper from '../LinkWrapper'
-import type { UseDebounce, UseUrlSearchParams } from '../../core/types'
+import type { UseUrlSearchParams } from '../../core/types'
 import type { CreateBeerIf, SearchBeerIf } from '../../core/beer/types'
 import type { ReviewContainerIf } from '../../core/review/types'
 import { dontCall } from '../../../test-util/dont-call'
-
-const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 const dontCreate = {
   create: dontCall,
@@ -59,6 +57,10 @@ const dontCreateBeerIf: CreateBeerIf = {
           styles: undefined,
           isLoading: false,
         }),
+        searchFieldIf: {
+          useSearchField: dontCall,
+          useDebounce: dontCall,
+        },
       },
     },
   },
@@ -139,13 +141,6 @@ test('renders storage', () => {
               delete: dontCall,
             }),
           },
-        }}
-        searchFieldIf={{
-          useSearchField: () => ({
-            activate: dontCall,
-            isActive: true,
-          }),
-          useDebounce,
         }}
         selectBeerIf={{
           create: dontCreateBeerIf,

@@ -79,6 +79,7 @@ const dontCreateBeerIf: CreateBeerIf = {
           styles: undefined,
           isLoading: false,
         }),
+        searchFieldIf,
       },
     },
   },
@@ -124,7 +125,6 @@ test('creates storage', async () => {
     getByRole,
   } = render(
     <CreateStorage
-      searchFieldIf={searchFieldIf}
       selectBeerIf={{
         create: dontCreateBeerIf,
         search: beerSearchIf,
@@ -178,7 +178,6 @@ test('clears beer', async () => {
   const user = userEvent.setup()
   const { findByRole, getAllByRole, getByPlaceholderText, getByRole } = render(
     <CreateStorage
-      searchFieldIf={searchFieldIf}
       selectBeerIf={{
         create: dontCreateBeerIf,
         search: beerSearchIf,
@@ -209,7 +208,6 @@ test('clears container', async () => {
   const user = userEvent.setup()
   const { getByRole } = render(
     <CreateStorage
-      searchFieldIf={searchFieldIf}
       selectBeerIf={{
         create: dontCreateBeerIf,
         search: beerSearchIf,
@@ -232,7 +230,6 @@ test('clears container', async () => {
 test('shows error', async () => {
   const { getByText } = render(
     <CreateStorage
-      searchFieldIf={searchFieldIf}
       selectBeerIf={{
         create: dontCreateBeerIf,
         search: beerSearchIf,

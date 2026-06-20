@@ -85,6 +85,10 @@ const dontSelectBeer: SelectBeerIf = {
         },
         list: {
           useList: dontCall,
+          searchFieldIf: {
+            useSearchField: dontCall,
+            useDebounce: dontCall,
+          },
         },
       },
     },

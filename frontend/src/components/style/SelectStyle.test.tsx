@@ -45,9 +45,9 @@ test('selects style', async () => {
             styles: [parent, style],
             isLoading: false,
           }),
+          searchFieldIf: useSearch,
         },
       }}
-      searchFieldIf={useSearch}
     />,
   )
   const searchInput = getByPlaceholderText('Search style')
@@ -92,9 +92,9 @@ test('selects created style', async () => {
             styles: [parent, style],
             isLoading: false,
           }),
+          searchFieldIf: useSearch,
         },
       }}
-      searchFieldIf={useSearch}
     />,
   )
   const createRadio = getByRole('radio', { name: 'Create' })

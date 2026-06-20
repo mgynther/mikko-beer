@@ -19,13 +19,6 @@ const otherParent = {
   name: 'Lager',
 }
 
-const noList: ListStylesIf = {
-  useList: () => ({
-    styles: [],
-    isLoading: false,
-  }),
-}
-
 const dontUseSearch: SearchFieldIf = {
   useSearchField: () => ({
     activate: dontCall,
@@ -34,12 +27,19 @@ const dontUseSearch: SearchFieldIf = {
   useDebounce,
 }
 
+const noList: ListStylesIf = {
+  useList: () => ({
+    styles: [],
+    isLoading: false,
+  }),
+  searchFieldIf: dontUseSearch,
+}
+
 test('renders parents', async () => {
   const { getByText } = render(
     <StyleParents
       initialParents={[parent, otherParent]}
       listStylesIf={noList}
-      searchFieldIf={dontUseSearch}
       select={dontCall}
     />,
   )
@@ -54,7 +54,6 @@ test('removes parent', async () => {
     <StyleParents
       initialParents={[parent, otherParent]}
       listStylesIf={noList}
-      searchFieldIf={dontUseSearch}
       select={select}
     />,
   )
@@ -82,8 +81,8 @@ test('adds parent', async () => {
           styles: [{ ...parent, parents: [] }],
           isLoading: false,
         }),
+        searchFieldIf,
       }}
-      searchFieldIf={searchFieldIf}
       select={select}
     />,
   )

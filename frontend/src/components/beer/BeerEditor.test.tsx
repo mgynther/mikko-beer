@@ -108,6 +108,7 @@ const dontEditBeer: EditBeerIf = {
         styles: [],
         isLoading: false,
       }),
+      searchFieldIf: doSearch,
     },
   },
 }
@@ -119,6 +120,7 @@ const dontSelectStyle: SelectStyleIf = {
       styles: undefined,
       isLoading: false,
     }),
+    searchFieldIf: dontSearch,
   },
 }
 
@@ -138,7 +140,6 @@ test('edits beer name', async () => {
         ...initialBeer,
         name: '',
       }}
-      searchFieldIf={dontSearch}
       onChange={onChange}
       editBeerIf={{
         selectBreweryIf: dontSelectBrewery,
@@ -169,7 +170,6 @@ test('edits beer breweries', async () => {
         ...initialBeer,
         breweries: [],
       }}
-      searchFieldIf={doSearch}
       onChange={onChange}
       editBeerIf={{
         selectBreweryIf: {
@@ -206,7 +206,6 @@ test('edits beer styles', async () => {
         ...initialBeer,
         styles: [],
       }}
-      searchFieldIf={doSearch}
       onChange={onChange}
       editBeerIf={{
         selectBreweryIf: dontSelectBrewery,
@@ -217,6 +216,7 @@ test('edits beer styles', async () => {
               styles: [styleWithParentIds],
               isLoading: false,
             }),
+            searchFieldIf: doSearch,
           },
         },
       }}
@@ -248,7 +248,6 @@ test('edits invalid beer by empty name', async () => {
         name: '',
       }}
       onChange={onChange}
-      searchFieldIf={dontSearch}
     />,
   )
   const nameInput = getByPlaceholderText(namePlaceholder)
@@ -265,7 +264,6 @@ test('renders values', async () => {
       editBeerIf={dontEditBeer}
       initialBeer={initialBeer}
       onChange={onChange}
-      searchFieldIf={dontSearch}
     />,
   )
   getByText(brewery.name)

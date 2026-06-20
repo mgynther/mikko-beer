@@ -83,7 +83,6 @@ function Beer(props: Props): React.JSX.Element {
       )}
       {mode === EditableMode.Edit && initialBeer !== undefined && (
         <UpdateBeer
-          searchFieldIf={props.searchFieldIf}
           updateBeerIf={props.updateBeerIf}
           initialBeer={initialBeer}
           onCancel={() => {

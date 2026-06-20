@@ -1,9 +1,9 @@
-import type { ListStylesIf } from '../../core/style/types'
+import type { ListStylesHookIf } from '../../core/style/types'
 import { useListStylesQuery } from '../../store/style/api'
 import { validateStyleListOrUndefined } from '../../validation/style'
 
-const listStyles: () => ListStylesIf = () => {
-  const listStylesIf: ListStylesIf = {
+const listStyles: () => ListStylesHookIf = () => {
+  const listStylesIf: ListStylesHookIf = {
     useList: () => {
       const { data, isLoading } = useListStylesQuery()
       return {

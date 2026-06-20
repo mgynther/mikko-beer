@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 
-import type { SearchFieldIf } from '../../core/search/types'
 import type {
   ListStylesIf,
   StyleWithParents,
@@ -14,7 +13,6 @@ interface Props {
   initialStyle: StyleWithParents
   hasError: boolean
   onChange: (style: StyleWithParentIds | undefined) => void
-  searchFieldIf: SearchFieldIf
 }
 
 function StyleEditor(props: Props): React.JSX.Element {
@@ -52,7 +50,6 @@ function StyleEditor(props: Props): React.JSX.Element {
       <StyleParents
         initialParents={props.initialStyle.parents}
         listStylesIf={props.listStylesIf}
-        searchFieldIf={props.searchFieldIf}
         select={(parents) => {
           setParents(parents)
           onChange(name, parents)

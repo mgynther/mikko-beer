@@ -3,11 +3,9 @@ import React, { useState } from 'react'
 import type { ListStylesIf, Style } from '../../core/style/types'
 
 import SearchBox, { nameFormatter } from '../common/SearchBox'
-import type { SearchFieldIf } from '../../core/search/types'
 
 export interface Props {
   listStylesIf: ListStylesIf
-  searchFieldIf: SearchFieldIf
   select: (style: Style) => void
 }
 
@@ -33,7 +31,7 @@ function SearchStyle(props: Props): React.JSX.Element {
         customSort={undefined}
         formatter={nameFormatter}
         isLoading={isLoading}
-        searchFieldIf={props.searchFieldIf}
+        searchFieldIf={props.listStylesIf.searchFieldIf}
         setFilter={(filter: string) => {
           setFilter(filter)
         }}

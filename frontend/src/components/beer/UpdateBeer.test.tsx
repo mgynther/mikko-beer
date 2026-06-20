@@ -74,6 +74,10 @@ const dontSelectStyle: SelectStyleIf = {
       styles: undefined,
       isLoading: false,
     }),
+    searchFieldIf: {
+      useSearchField: dontCall,
+      useDebounce: dontCall,
+    },
   },
 }
 
@@ -107,7 +111,6 @@ test('updates beer name', async () => {
           selectStyleIf: dontSelectStyle,
         },
       }}
-      searchFieldIf={dontSearch}
       onCancel={dontCall}
       onSaved={onSaved}
     />,
@@ -169,7 +172,6 @@ test('updates beer brewery', async () => {
           selectStyleIf: dontSelectStyle,
         },
       }}
-      searchFieldIf={doSearch}
       onCancel={dontCall}
       onSaved={onSaved}
     />,
@@ -232,11 +234,11 @@ test('updates beer style', async () => {
                 styles: [anotherStyle],
                 isLoading: false,
               }),
+              searchFieldIf: doSearch,
             },
           },
         },
       }}
-      searchFieldIf={doSearch}
       onCancel={dontCall}
       onSaved={onSaved}
     />,
@@ -285,7 +287,6 @@ test('cancels update', async () => {
           selectStyleIf: dontSelectStyle,
         },
       }}
-      searchFieldIf={dontSearch}
       onCancel={onCanceled}
       onSaved={dontCall}
     />,

@@ -90,6 +90,7 @@ test('selects created beer', async () => {
                   styles: [style],
                   isLoading: false,
                 }),
+                searchFieldIf,
               },
             },
           },
@@ -105,7 +106,6 @@ test('selects created beer', async () => {
           },
         },
       }}
-      searchFieldIf={searchFieldIf}
     />,
   )
   const nameInput = getByPlaceholderText(namePlaceholder)
@@ -176,6 +176,7 @@ test('selects beer', async () => {
                   styles: [],
                   isLoading: false,
                 }),
+                searchFieldIf,
               },
             },
           },
@@ -188,7 +189,6 @@ test('selects beer', async () => {
           searchFieldIf,
         },
       }}
-      searchFieldIf={searchFieldIf}
     />,
   )
 

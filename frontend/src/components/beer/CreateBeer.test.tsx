@@ -73,17 +73,14 @@ test('creates beer', async () => {
             styles: [style],
             isLoading: false,
           }),
+          searchFieldIf,
         },
       },
     },
   }
 
   const { getByPlaceholderText, getByRole } = render(
-    <CreateBeer
-      select={selectBeer}
-      createBeerIf={createBeerIf}
-      searchFieldIf={searchFieldIf}
-    />,
+    <CreateBeer select={selectBeer} createBeerIf={createBeerIf} />,
   )
   const nameInput = getByPlaceholderText(namePlaceholder)
   await user.type(nameInput, 'Severin')

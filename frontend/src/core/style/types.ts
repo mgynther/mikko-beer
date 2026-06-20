@@ -1,3 +1,5 @@
+import type { SearchFieldIf } from '../search/types'
+
 export interface CreateStyleRequest {
   name: string
   parents: string[]
@@ -42,11 +44,18 @@ export interface GetStyleIf {
   }
 }
 
+type UseListStyles = () => {
+  styles: StyleWithParentIds[] | undefined
+  isLoading: boolean
+}
+
+export interface ListStylesHookIf {
+  useList: UseListStyles
+}
+
 export interface ListStylesIf {
-  useList: () => {
-    styles: StyleWithParentIds[] | undefined
-    isLoading: boolean
-  }
+  useList: UseListStyles
+  searchFieldIf: SearchFieldIf
 }
 
 export interface SelectStyleIf {

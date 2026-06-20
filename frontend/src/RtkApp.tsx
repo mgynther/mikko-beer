@@ -194,7 +194,10 @@ function RtkApp(): React.JSX.Element {
 
   const createStyleIf: CreateStyleIf = createStyle()
   const getStyleIf: GetStyleIf = getStyle()
-  const listStylesIf: ListStylesIf = listStyles()
+  const listStylesIf: ListStylesIf = {
+    ...listStyles(),
+    searchFieldIf,
+  }
   const updateStyleIf: UpdateStyleIf = updateStyle()
   const selectStyleIf: SelectStyleIf = {
     create: createStyleIf,

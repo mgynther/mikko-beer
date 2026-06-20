@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 
 import type { BeerWithIds, CreateBeerIf } from '../../core/beer/types'
-import type { SearchFieldIf } from '../../core/search/types'
 
 import Button from '../common/Button'
 import BeerEditor from './BeerEditor'
@@ -10,7 +9,6 @@ import './CreateBeer.css'
 
 export interface Props {
   createBeerIf: CreateBeerIf
-  searchFieldIf: SearchFieldIf
   select: (beer: BeerWithIds) => void
 }
 
@@ -33,7 +31,6 @@ function CreateBeer(props: Props): React.JSX.Element {
         editBeerIf={props.createBeerIf.editBeerIf}
         initialBeer={undefined}
         onChange={setBeer}
-        searchFieldIf={props.searchFieldIf}
       />
       <Button
         disabled={beer === undefined || isLoading}

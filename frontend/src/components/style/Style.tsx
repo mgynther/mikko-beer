@@ -120,7 +120,6 @@ function Style(props: Props): React.JSX.Element {
             onSaved={() => {
               setMode(EditableMode.View)
             }}
-            searchFieldIf={props.searchFieldIf}
           />
         </div>
       )}

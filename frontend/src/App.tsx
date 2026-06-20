@@ -302,7 +302,6 @@ function App(props: Props): React.JSX.Element {
                     <Styles
                       listStylesIf={listStylesIf}
                       navigateIf={navigateIf}
-                      searchFieldIf={searchFieldIf}
                     />
                   }
                 />
@@ -351,7 +350,6 @@ function App(props: Props): React.JSX.Element {
                       getLogin={getLogin}
                       listStoragesIf={listStoragesIf}
                       reviewContainerIf={reviewContainerIf}
-                      searchFieldIf={searchFieldIf}
                       selectBeerIf={selectBeerIf}
                       statsIf={storageStatsIf}
                       createStorageIf={createStorageIf}

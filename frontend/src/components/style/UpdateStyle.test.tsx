@@ -47,19 +47,20 @@ const getStyle: GetStyleIf = {
   }),
 }
 
-const listStyles: ListStylesIf = {
-  useList: () => ({
-    styles: [parent, otherParent],
-    isLoading: false,
-  }),
-}
-
 const searchFieldIf: SearchFieldIf = {
   useSearchField: () => ({
     activate: () => undefined,
     isActive: true,
   }),
   useDebounce,
+}
+
+const listStyles: ListStylesIf = {
+  useList: () => ({
+    styles: [parent, otherParent],
+    isLoading: false,
+  }),
+  searchFieldIf,
 }
 
 test('updates style', async () => {
@@ -81,7 +82,6 @@ test('updates style', async () => {
       }}
       onCancel={dontCall}
       onSaved={onSaved}
-      searchFieldIf={searchFieldIf}
       initialStyle={style}
     />,
   )
@@ -128,7 +128,6 @@ test('shows loading indicator', async () => {
       }}
       onCancel={dontCall}
       onSaved={dontCall}
-      searchFieldIf={searchFieldIf}
       initialStyle={style}
     />,
   )
@@ -152,7 +151,6 @@ test('cancels updating style', async () => {
       }}
       onCancel={cancel}
       onSaved={dontCall}
-      searchFieldIf={searchFieldIf}
       initialStyle={style}
     />,
   )

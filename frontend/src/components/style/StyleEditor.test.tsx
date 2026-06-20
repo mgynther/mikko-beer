@@ -22,19 +22,20 @@ const otherParent = {
   name: 'Lager',
 }
 
-const noList: ListStylesIf = {
-  useList: () => ({
-    styles: [],
-    isLoading: false,
-  }),
-}
-
 const dontUseSearch: SearchFieldIf = {
   useSearchField: () => ({
     activate: dontCall,
     isActive: false,
   }),
   useDebounce,
+}
+
+const noList: ListStylesIf = {
+  useList: () => ({
+    styles: [],
+    isLoading: false,
+  }),
+  searchFieldIf: dontUseSearch,
 }
 
 test('renders contents', async () => {
@@ -47,7 +48,6 @@ test('renders contents', async () => {
       }}
       hasError={false}
       listStylesIf={noList}
-      searchFieldIf={dontUseSearch}
       onChange={dontCall}
     />,
   )
@@ -66,7 +66,6 @@ test('renders error', async () => {
       }}
       hasError={true}
       listStylesIf={noList}
-      searchFieldIf={dontUseSearch}
       onChange={dontCall}
     />,
   )
@@ -85,7 +84,6 @@ test('removes parent', async () => {
       }}
       hasError={false}
       listStylesIf={noList}
-      searchFieldIf={dontUseSearch}
       onChange={onChange}
     />,
   )
@@ -115,7 +113,6 @@ test('enters name', async () => {
       }}
       hasError={false}
       listStylesIf={noList}
-      searchFieldIf={dontUseSearch}
       onChange={onChange}
     />,
   )

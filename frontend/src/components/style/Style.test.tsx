@@ -174,6 +174,7 @@ const updateReview: UpdateReviewIf = {
               styles: [],
               isLoading: false,
             }),
+            searchFieldIf,
           },
         },
       },

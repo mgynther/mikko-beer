@@ -146,6 +146,10 @@ const updateReview: UpdateReviewIf = {
           },
           list: {
             useList: dontCall,
+            searchFieldIf: {
+              useSearchField: dontCall,
+              useDebounce: dontCall,
+            },
           },
         },
       },
@@ -267,6 +271,10 @@ const editBeerIf: EditBeerIf = {
         styles: [],
         isLoading: false,
       }),
+      searchFieldIf: {
+        useSearchField: dontCall,
+        useDebounce: dontCall,
+      },
     },
   },
 }

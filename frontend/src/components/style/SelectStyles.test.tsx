@@ -45,9 +45,9 @@ test('removes style', async () => {
             styles: [],
             isLoading: false,
           }),
+          searchFieldIf: useSearch,
         },
       }}
-      searchFieldIf={useSearch}
     />,
   )
   const changeButtons = getAllByRole('button', { name: 'Change' })
@@ -77,9 +77,9 @@ test('selects style', async () => {
             styles: [style],
             isLoading: false,
           }),
+          searchFieldIf: useSearch,
         },
       }}
-      searchFieldIf={useSearch}
     />,
   )
   const searchInput = getByPlaceholderText('Search style')
@@ -108,9 +108,9 @@ test('adds new style', async () => {
             styles: [style],
             isLoading: false,
           }),
+          searchFieldIf: useSearch,
         },
       }}
-      searchFieldIf={useSearch}
     />,
   )
   const addButton = getByRole('button', { name: 'Add style' })
@@ -151,9 +151,9 @@ test('selects created style', async () => {
             styles: [parent, style],
             isLoading: false,
           }),
+          searchFieldIf: useSearch,
         },
       }}
-      searchFieldIf={useSearch}
     />,
   )
   const createRadio = getByRole('radio', { name: 'Create' })

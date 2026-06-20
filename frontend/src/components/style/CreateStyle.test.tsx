@@ -51,10 +51,10 @@ test('creates style', async () => {
             styles: [parent, otherParent],
             isLoading: false,
           }),
+          searchFieldIf: useSearch,
         },
       }}
       remove={dontCall}
-      searchFieldIf={useSearch}
       select={select}
     />,
   )
@@ -117,10 +117,10 @@ test('removes style', async () => {
             styles: [parent, otherParent],
             isLoading: false,
           }),
+          searchFieldIf: useSearch,
         },
       }}
       remove={remove}
-      searchFieldIf={useSearch}
       select={dontCall}
     />,
   )

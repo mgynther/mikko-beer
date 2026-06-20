@@ -3,7 +3,6 @@ import React, { type SubmitEvent, useState } from 'react'
 import type { BeerWithIds, SelectBeerIf } from '../../core/beer/types'
 import type { Container } from '../../core/container/types'
 import type { ReviewContainerIf } from '../../core/review/types'
-import type { SearchFieldIf } from '../../core/search/types'
 import type { CreateStorageIf } from '../../core/storage/types'
 
 import Button from '../common/Button'
@@ -15,7 +14,6 @@ import './CreateStorage.css'
 import ContainerInfo from '../container/ContainerInfo'
 
 interface Props {
-  searchFieldIf: SearchFieldIf
   selectBeerIf: SelectBeerIf
   createStorageIf: CreateStorageIf
   reviewContainerIf: ReviewContainerIf
@@ -70,7 +68,6 @@ function CreateStorage(props: Props): React.JSX.Element {
         <div className='CreateStorageContent'>
           {beer === undefined ? (
             <SelectBeer
-              searchFieldIf={props.searchFieldIf}
               selectBeerIf={props.selectBeerIf}
               select={(beer: BeerWithIds) => {
                 setBeer(beer)

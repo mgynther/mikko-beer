@@ -27,16 +27,16 @@ test('renders styles', () => {
             ],
             isLoading: false,
           }),
+          searchFieldIf: {
+            useSearchField: () => ({
+              activate: (): void => undefined,
+              isActive: false,
+            }),
+            useDebounce: dontCall,
+          },
         }}
         navigateIf={{
           useNavigate: (): (() => void) => () => undefined,
-        }}
-        searchFieldIf={{
-          useSearchField: () => ({
-            activate: (): void => undefined,
-            isActive: false,
-          }),
-          useDebounce: dontCall,
         }}
       />
     </LinkWrapper>,
@@ -54,16 +54,16 @@ test('renders loading text when loading', () => {
             styles: undefined,
             isLoading: true,
           }),
+          searchFieldIf: {
+            useSearchField: () => ({
+              activate: (): void => undefined,
+              isActive: false,
+            }),
+            useDebounce: dontCall,
+          },
         }}
         navigateIf={{
           useNavigate: (): (() => void) => () => undefined,
-        }}
-        searchFieldIf={{
-          useSearchField: () => ({
-            activate: (): void => undefined,
-            isActive: false,
-          }),
-          useDebounce: dontCall,
         }}
       />
     </LinkWrapper>,
@@ -90,16 +90,16 @@ test('navigates to selected search result', async () => {
             ],
             isLoading: false,
           }),
+          searchFieldIf: {
+            useSearchField: () => ({
+              activate: (): void => undefined,
+              isActive: true,
+            }),
+            useDebounce: dontCall,
+          },
         }}
         navigateIf={{
           useNavigate: (): (() => void) => navigate,
-        }}
-        searchFieldIf={{
-          useSearchField: () => ({
-            activate: (): void => undefined,
-            isActive: true,
-          }),
-          useDebounce: dontCall,
         }}
       />
     </LinkWrapper>,

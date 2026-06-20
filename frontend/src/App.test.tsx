@@ -101,6 +101,7 @@ const listStylesIf: ListStylesIf = {
     styles: [],
     isLoading: false,
   }),
+  searchFieldIf,
 }
 
 const selectBeerIf: SelectBeerIf = {

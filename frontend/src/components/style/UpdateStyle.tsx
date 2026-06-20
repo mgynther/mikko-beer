@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 
-import type { SearchFieldIf } from '../../core/search/types'
 import type {
   GetStyleIf,
   ListStylesIf,
@@ -20,7 +19,6 @@ interface Props {
   initialStyle: StyleWithParentIds
   onCancel: () => void
   onSaved: () => void
-  searchFieldIf: SearchFieldIf
 }
 
 function UpdateStyle(props: Props): React.JSX.Element {
@@ -51,7 +49,6 @@ function UpdateStyle(props: Props): React.JSX.Element {
           initialStyle={styleWithParents}
           listStylesIf={props.listStylesIf}
           hasError={hasError}
-          searchFieldIf={props.searchFieldIf}
           onChange={(style: StyleWithParentIds | undefined) => {
             setNewStyle(style)
           }}

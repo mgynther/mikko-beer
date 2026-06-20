@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
-import type { SearchFieldIf } from '../../core/search/types'
 import type { SelectStyleIf, Style } from '../../core/style/types'
 
 import Button from '../common/Button'
@@ -12,7 +11,6 @@ import '../common/SelectedItem.css'
 import './SelectStyles.css'
 
 export interface Props {
-  searchFieldIf: SearchFieldIf
   selectStyleIf: SelectStyleIf
   initialStyles: Style[]
   select: (styles: string[]) => void
@@ -24,7 +22,6 @@ interface StyleSelection {
 }
 
 interface SelectionItemProps {
-  searchFieldIf: SearchFieldIf
   selectStyleIf: SelectStyleIf
   style: Style | undefined
   select: (style: Style) => void
@@ -37,7 +34,6 @@ function SelectionItem(props: SelectionItemProps): React.JSX.Element {
     <>
       {props.style === undefined && (
         <SelectStyle
-          searchFieldIf={props.searchFieldIf}
           selectStyleIf={props.selectStyleIf}
           select={props.select}
           remove={props.remove}
@@ -96,7 +92,6 @@ function SelectStyles(props: Props): React.JSX.Element {
       {selections.map((selection, selectionIndex) => (
         <SelectionItem
           key={selection.id}
-          searchFieldIf={props.searchFieldIf}
           selectStyleIf={props.selectStyleIf}
           style={selection.style}
           select={(style) => {

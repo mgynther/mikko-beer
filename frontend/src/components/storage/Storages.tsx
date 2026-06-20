@@ -4,7 +4,6 @@ import type { ReviewContainerIf } from '../../core/review/types'
 
 import type { SelectBeerIf } from '../../core/beer/types'
 import type { GetLogin, Login } from '../../core/login/types'
-import type { SearchFieldIf } from '../../core/search/types'
 import type {
   CreateStorageIf,
   ListStoragesIf,
@@ -20,7 +19,6 @@ import Stats from './Stats'
 interface Props {
   getLogin: GetLogin
   listStoragesIf: ListStoragesIf
-  searchFieldIf: SearchFieldIf
   selectBeerIf: SelectBeerIf
   createStorageIf: CreateStorageIf
   reviewContainerIf: ReviewContainerIf
@@ -53,7 +51,6 @@ function Storages(props: Props): React.JSX.Element {
       {isAdmin && (
         <div>
           <CreateStorage
-            searchFieldIf={props.searchFieldIf}
             selectBeerIf={props.selectBeerIf}
             createStorageIf={props.createStorageIf}
             reviewContainerIf={props.reviewContainerIf}

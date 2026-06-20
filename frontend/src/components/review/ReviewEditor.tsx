@@ -144,7 +144,6 @@ function ReviewEditor(props: Props): React.JSX.Element {
         <div className='ReviewContent'>
           {beer === undefined ? (
             <SelectBeer
-              searchFieldIf={props.searchFieldIf}
               select={(beer: BeerWithIds) => {
                 setBeer(beer)
               }}

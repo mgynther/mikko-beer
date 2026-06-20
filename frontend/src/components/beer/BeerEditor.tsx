@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 
 import type { Beer, BeerWithIds, EditBeerIf } from '../../core/beer/types'
-import type { SearchFieldIf } from '../../core/search/types'
 
 import SelectBreweries from '../brewery/SelectBreweries'
 import SelectStyles from '../style/SelectStyles'
@@ -10,7 +9,6 @@ interface Props {
   editBeerIf: EditBeerIf
   initialBeer: Beer | undefined
   onChange: (beer: BeerWithIds | undefined) => void
-  searchFieldIf: SearchFieldIf
 }
 
 function BeerEditor(props: Props): React.JSX.Element {
@@ -61,7 +59,6 @@ function BeerEditor(props: Props): React.JSX.Element {
       </div>
       <div className={'Section'}>
         <SelectStyles
-          searchFieldIf={props.searchFieldIf}
           selectStyleIf={props.editBeerIf.selectStyleIf}
           initialStyles={props.initialBeer?.styles ?? []}
           select={(styleIds) => {
