@@ -41,11 +41,17 @@ export interface CreateBeerIf {
   editBeerIf: EditBeerIf
 }
 
+type UseUpdateBeer = () => {
+  update: (request: BeerWithIds) => Promise<void>
+  isLoading: boolean
+}
+
+export interface UpdateBeerHookIf {
+  useUpdate: UseUpdateBeer
+}
+
 export interface UpdateBeerIf {
-  useUpdate: () => {
-    update: (request: BeerWithIds) => Promise<void>
-    isLoading: boolean
-  }
+  useUpdate: UseUpdateBeer
   editBeerIf: EditBeerIf
 }
 

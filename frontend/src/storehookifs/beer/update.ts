@@ -1,15 +1,9 @@
-import type {
-  BeerWithIds,
-  EditBeerIf,
-  UpdateBeerIf,
-} from '../../core/beer/types'
+import type { BeerWithIds, UpdateBeerHookIf } from '../../core/beer/types'
 import { useUpdateBeerMutation } from '../../store/beer/api'
 import { validateBeerWithIds } from '../../validation/beer'
 
-const updateBeer: (editBeerIf: EditBeerIf) => UpdateBeerIf = (
-  editBeerIf: EditBeerIf,
-) => {
-  const updateBeerIf: UpdateBeerIf = {
+const updateBeer: () => UpdateBeerHookIf = () => {
+  const updateBeerIf: UpdateBeerHookIf = {
     useUpdate: () => {
       const [updateBeer, { isLoading }] = useUpdateBeerMutation()
       return {
@@ -20,7 +14,6 @@ const updateBeer: (editBeerIf: EditBeerIf) => UpdateBeerIf = (
         isLoading,
       }
     },
-    editBeerIf,
   }
   return updateBeerIf
 }

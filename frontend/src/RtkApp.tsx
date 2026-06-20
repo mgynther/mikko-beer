@@ -213,7 +213,10 @@ function RtkApp(): React.JSX.Element {
     ...searchBeer(),
     searchFieldIf,
   }
-  const updateBeerIf: UpdateBeerIf = updateBeer(editBeerIf)
+  const updateBeerIf: UpdateBeerIf = {
+    ...updateBeer(),
+    editBeerIf,
+  }
   const selectBeerIf: SelectBeerIf = {
     create: createBeerIf,
     search: searchBeerIf,

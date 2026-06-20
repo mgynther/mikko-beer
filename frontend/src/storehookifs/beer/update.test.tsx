@@ -9,34 +9,13 @@ import { Provider } from '../../react-redux-wrapper'
 
 import Button from '../../components/common/Button'
 
-const dontCall = (): any => {
-  throw new Error('must not be called')
-}
-
 interface HelperProps {
   beer: BeerWithIds
   handleResponse: () => void
 }
 
 function Helper(props: HelperProps): React.JSX.Element {
-  const updateIf = updateBeer({
-    selectBreweryIf: {
-      create: {
-        useCreate: dontCall,
-      },
-      search: {
-        useSearch: dontCall,
-      },
-    },
-    selectStyleIf: {
-      create: {
-        useCreate: dontCall,
-      },
-      list: {
-        useList: dontCall,
-      },
-    },
-  })
+  const updateIf = updateBeer()
   const update = updateIf.useUpdate()
   const handleClick = (): void => {
     async function doHandle(): Promise<void> {
