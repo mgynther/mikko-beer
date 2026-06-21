@@ -42,7 +42,7 @@ function Reviews(props: Props): React.JSX.Element {
 
   useEffect(() => {
     setLoadedReviews(undefined)
-  }, [parsedSearchParams.searchString])
+  }, [parsedSearchParams.changeDetectionString])
 
   const reviewArray = reviewList === undefined ? [] : [...reviewList.reviews]
   const hasMore =

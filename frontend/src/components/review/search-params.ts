@@ -12,7 +12,7 @@ import type { ReviewFilters } from './filter-types'
 import { formatYearMonth, toTimestamp } from '../common/filter-util'
 import type { ReviewSorting, ReviewSortingOrder } from '../../core/review/types'
 
-interface Props {
+export interface Props {
   initialSorting: ReviewSorting
   searchParams: SearchParameters
   minTime: YearMonth
@@ -22,7 +22,8 @@ interface Props {
 }
 
 interface Result {
-  searchString: string
+  // Only for detecting changes. Never try to parse.
+  changeDetectionString: string
   changeSortingOrder: (order: ReviewSortingOrder) => void
   isFilterChangePending: boolean
   setIsFiltersOpen: (isOpen: boolean) => void
@@ -113,7 +114,7 @@ export function parseSearchParams(props: Props): Result {
     },
   }
 
-  const searchString = JSON.stringify({
+  const changeDetectionString = JSON.stringify({
     filters,
     sortingDirection: reviewListParams.sortingDirection,
     sortingOrder: reviewListParams.sortingOrder,
@@ -141,7 +142,7 @@ export function parseSearchParams(props: Props): Result {
   }
 
   return {
-    searchString,
+    changeDetectionString,
     changeSortingOrder,
     isFilterChangePending,
     setIsFiltersOpen,
