@@ -129,7 +129,6 @@ function Style(props: Props): React.JSX.Element {
       {storageItems.length > 0 && (
         <StorageList
           deleteStorageIf={props.listStoragesByStyleIf.delete}
-          getLogin={props.listReviewsByStyleIf.reviewIf.login}
           isLoading={isLoadingStorages}
           isTitleVisible={true}
           storages={storageItems}

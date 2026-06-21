@@ -73,6 +73,7 @@ function getListStoragesByBreweryIf(
       useDelete: () => ({
         delete: dontCall,
       }),
+      getLogin: () => login,
     },
   }
 }
@@ -83,7 +84,6 @@ test('render storages', async () => {
       <BreweryStorages
         breweryId={breweryId}
         listStoragesByBreweryIf={getListStoragesByBreweryIf([storage])}
-        getLogin={() => login}
       />
     </LinkWrapper>,
   )
@@ -99,7 +99,6 @@ test('render nothing on loading', async () => {
       <BreweryStorages
         breweryId={breweryId}
         listStoragesByBreweryIf={getListStoragesByBreweryIf(undefined)}
-        getLogin={() => login}
       />
     </LinkWrapper>,
   )

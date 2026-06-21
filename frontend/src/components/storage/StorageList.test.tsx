@@ -76,8 +76,8 @@ test('renders storage list', async () => {
           useDelete: () => ({
             delete: dontCall,
           }),
+          getLogin: () => adminLogin,
         }}
-        getLogin={() => adminLogin}
         isLoading={false}
         isTitleVisible={true}
         storages={[storageOne, storageTwo]}

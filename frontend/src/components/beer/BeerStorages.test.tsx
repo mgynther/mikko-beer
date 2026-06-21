@@ -71,6 +71,7 @@ function getListStoragesByBeerIf(
       useDelete: () => ({
         delete: dontCall,
       }),
+      getLogin: () => login,
     },
   }
 }
@@ -81,7 +82,6 @@ test('render storages', async () => {
       <BeerStorages
         beerId={beer.id}
         listStoragesByBeerIf={getListStoragesByBeerIf([storage])}
-        getLogin={() => login}
       />
     </LinkWrapper>,
   )
@@ -97,7 +97,6 @@ test('render nothing on loading', async () => {
       <BeerStorages
         beerId={beer.id}
         listStoragesByBeerIf={getListStoragesByBeerIf(undefined)}
-        getLogin={() => login}
       />
     </LinkWrapper>,
   )

@@ -86,7 +86,6 @@ function Brewery(props: Props): React.JSX.Element {
       <BreweryStorages
         breweryId={breweryId}
         listStoragesByBreweryIf={props.listStoragesByBreweryIf}
-        getLogin={props.listReviewsByBreweryIf.reviewIf.login}
       />
       <ReviewsBy
         id={breweryId}

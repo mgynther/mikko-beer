@@ -226,6 +226,7 @@ const listStoragesByBreweryIf: ListStoragesByIf = {
   }),
   delete: {
     useDelete: dontCall,
+    getLogin: getLogin(),
   },
 }
 

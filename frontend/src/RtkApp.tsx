@@ -269,7 +269,10 @@ function RtkApp(): React.JSX.Element {
     useUrlSearchParams,
   }
   const getStorageIf: GetStorageIf = getStorage()
-  const deleteStorageIf: DeleteStorageIf = deleteStorage()
+  const deleteStorageIf: DeleteStorageIf = {
+    ...deleteStorage(),
+    getLogin,
+  }
   const listStoragesIf: ListStoragesIf = {
     ...listStorages(),
     delete: deleteStorageIf,

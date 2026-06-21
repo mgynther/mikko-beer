@@ -1,8 +1,8 @@
-import type { DeleteStorageIf } from '../../core/storage/types'
+import type { DeleteStorageHookIf } from '../../core/storage/types'
 import { useDeleteStorageMutation } from '../../store/storage/api'
 
-const deleteStorage: () => DeleteStorageIf = () => {
-  const deleteStorageIf: DeleteStorageIf = {
+const deleteStorage: () => DeleteStorageHookIf = () => {
+  const deleteStorageIf: DeleteStorageHookIf = {
     useDelete: () => {
       const [deleteStorage] = useDeleteStorageMutation()
       return {

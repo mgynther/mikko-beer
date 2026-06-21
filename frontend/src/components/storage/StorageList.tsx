@@ -6,12 +6,10 @@ import LoadingIndicator from '../common/LoadingIndicator'
 import StorageItem from './StorageItem'
 
 import './StorageList.css'
-import type { GetLogin } from '../../core/login/types'
 import { countText } from './count-text'
 
 interface Props {
   deleteStorageIf: DeleteStorageIf
-  getLogin: GetLogin
   isLoading: boolean
   isTitleVisible: boolean
   storages: Storage[]
@@ -36,7 +34,6 @@ function StorageList(props: Props): React.JSX.Element {
           key={storage.id}
           deleteStorageIf={props.deleteStorageIf}
           confirm={confirm}
-          getLogin={props.getLogin}
           storage={storage}
         />
       ))}

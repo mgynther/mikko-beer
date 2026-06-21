@@ -240,6 +240,7 @@ const listStoragesByBeerIf: ListStoragesByIf = {
     useDelete: () => ({
       delete: dontCall,
     }),
+    getLogin: () => login,
   },
 }
 

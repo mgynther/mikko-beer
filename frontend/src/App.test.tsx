@@ -146,6 +146,7 @@ const deleteStorageIf: DeleteStorageIf = {
   useDelete: () => ({
     delete: dontCall,
   }),
+  getLogin: getUndefinedLogin,
 }
 
 const minTime: YearMonth = testTimes.min.yearMonth

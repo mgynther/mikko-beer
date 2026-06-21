@@ -2,6 +2,7 @@ import type { Brewery } from '../brewery/types'
 import type { Container } from '../../core/container/types'
 import type { Style } from '../style/types'
 import type { UseUrlSearchParams } from '../types'
+import type { GetLogin } from '../login/types'
 
 export interface CreateStorageRequest {
   beer: string
@@ -66,10 +67,17 @@ export interface GetStorageIf {
   }
 }
 
+type UseDeleteStorage = () => {
+  delete: (storageId: string) => Promise<void>
+}
+
+export interface DeleteStorageHookIf {
+  useDelete: UseDeleteStorage
+}
+
 export interface DeleteStorageIf {
-  useDelete: () => {
-    delete: (storageId: string) => Promise<void>
-  }
+  useDelete: UseDeleteStorage
+  getLogin: GetLogin
 }
 
 type UseListStorages = () => {

@@ -47,6 +47,7 @@ const dontDelete: DeleteStorageIf = {
   useDelete: () => ({
     delete: dontCall,
   }),
+  getLogin: () => adminLogin,
 }
 
 test('renders storage', async () => {
@@ -56,7 +57,6 @@ test('renders storage', async () => {
       <StorageItem
         deleteStorageIf={dontDelete}
         confirm={dontCall}
-        getLogin={() => adminLogin}
         storage={storage}
       />
     </LinkWrapper>,
@@ -80,7 +80,6 @@ test('renders storage with review', async () => {
       <StorageItem
         deleteStorageIf={dontDelete}
         confirm={dontCall}
-        getLogin={() => adminLogin}
         storage={{
           ...storage,
           hasReview: true,
@@ -102,9 +101,9 @@ test('deletes storage', async () => {
           useDelete: () => ({
             delete: del,
           }),
+          getLogin: () => adminLogin,
         }}
         confirm={(): boolean => true}
-        getLogin={() => adminLogin}
         storage={storage}
       />
     </LinkWrapper>,
@@ -126,9 +125,9 @@ test('does not delete storage on not confirmed', async () => {
           useDelete: () => ({
             delete: del,
           }),
+          getLogin: () => adminLogin,
         }}
         confirm={(): boolean => false}
-        getLogin={() => adminLogin}
         storage={storage}
       />
     </LinkWrapper>,

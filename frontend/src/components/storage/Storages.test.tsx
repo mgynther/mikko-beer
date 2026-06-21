@@ -8,6 +8,7 @@ import type { UseUrlSearchParams } from '../../core/types'
 import type { CreateBeerIf, SearchBeerIf } from '../../core/beer/types'
 import type { ReviewContainerIf } from '../../core/review/types'
 import { dontCall } from '../../../test-util/dont-call'
+import type { GetLogin } from '../../core/login/types'
 
 const dontCreate = {
   create: dontCall,
@@ -114,18 +115,19 @@ test('renders storage', () => {
       }
     },
   })
+  const getLogin: GetLogin = () => ({
+    user: {
+      id: '9d157897-7787-4139-98bf-867300a3605c',
+      username: 'viewer',
+      role: Role.viewer,
+    },
+    authToken: 'auth',
+    refreshToken: 'refresh',
+  })
   const { getByRole, getByText } = render(
     <LinkWrapper>
       <Storages
-        getLogin={() => ({
-          user: {
-            id: '9d157897-7787-4139-98bf-867300a3605c',
-            username: 'viewer',
-            role: Role.viewer,
-          },
-          authToken: 'auth',
-          refreshToken: 'refresh',
-        })}
+        getLogin={getLogin}
         listStoragesIf={{
           useList: () => ({
             data: {
@@ -140,6 +142,7 @@ test('renders storage', () => {
             useDelete: () => ({
               delete: dontCall,
             }),
+            getLogin,
           },
         }}
         selectBeerIf={{

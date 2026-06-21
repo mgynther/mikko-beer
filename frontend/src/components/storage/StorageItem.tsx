@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Link } from '../common/Link'
 
 import type { DeleteStorageIf, Storage } from '../../core/storage/types'
-import type { GetLogin, Login } from '../../core/login/types'
+import type { Login } from '../../core/login/types'
 import { Role } from '../../core/user/types'
 import { formatDateString } from '../util'
 
@@ -20,13 +20,12 @@ interface Props {
   deleteStorageIf: DeleteStorageIf
   // Giving confirm loses context and results in illegal invocation when used.
   confirm: (text: string) => boolean
-  getLogin: GetLogin
   storage: Storage
 }
 
 function StorageItem(props: Props): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false)
-  const login: Login = props.getLogin()
+  const login: Login = props.deleteStorageIf.getLogin()
   const isAdmin = login.user?.role === Role.admin
   const { storage } = props
   const del = props.deleteStorageIf.useDelete().delete

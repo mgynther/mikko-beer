@@ -264,6 +264,7 @@ function getListStoragesByStyleIf(
       useDelete: () => ({
         delete: dontCall,
       }),
+      getLogin: () => login,
     },
   }
 }
