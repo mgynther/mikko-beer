@@ -23,6 +23,7 @@ const updateContainerIf: UpdateContainerIf = {
     update: async () => undefined,
     isLoading: false,
   }),
+  getLogin: getLogin(),
 }
 
 test('renders containers', async () => {
@@ -52,7 +53,6 @@ test('renders containers', async () => {
           isLoading: false,
         }),
       }}
-      getLogin={getLogin()}
       updateContainerIf={updateContainerIf}
     />,
   )
@@ -76,7 +76,6 @@ test('renders loading', async () => {
           isLoading: true,
         }),
       }}
-      getLogin={getLogin()}
       updateContainerIf={updateContainerIf}
     />,
   )

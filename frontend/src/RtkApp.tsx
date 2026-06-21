@@ -174,9 +174,17 @@ function RtkApp(): React.JSX.Element {
     search: searchBreweryIf,
   }
 
+  const getLogin: GetLogin = () => {
+    const login: Login = useSelector(selectLogin)
+    return login
+  }
+
   const createContainerIf: CreateContainerIf = createContainer()
   const listContainersIf: ListContainersIf = listContainers()
-  const updateContainerIf: UpdateContainerIf = updateContainer()
+  const updateContainerIf: UpdateContainerIf = {
+    ...updateContainer(),
+    getLogin,
+  }
   const reviewContainerIf: ReviewContainerIf = {
     createIf: createContainerIf,
     listIf: listContainersIf,
@@ -235,10 +243,6 @@ function RtkApp(): React.JSX.Element {
   const changePasswordIf: ChangePasswordIf = changePassword()
   const loginIf: LoginIf = login()
   const logoutIf: LogoutIf = logout()
-  const getLogin: GetLogin = () => {
-    const login: Login = useSelector(selectLogin)
-    return login
-  }
 
   const createLocationIf: CreateLocationIf = createLocation()
   const getLocationIf: GetLocationIf = getLocation()

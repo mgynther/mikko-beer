@@ -1,9 +1,12 @@
-import type { Container, UpdateContainerIf } from '../../core/container/types'
+import type {
+  Container,
+  UpdateContainerHookIf,
+} from '../../core/container/types'
 import { useUpdateContainerMutation } from '../../store/container/api'
 import { validateContainer } from '../../validation/container'
 
-const updateContainer: () => UpdateContainerIf = () => {
-  const updateContainerIf: UpdateContainerIf = {
+const updateContainer: () => UpdateContainerHookIf = () => {
+  const updateContainerIf: UpdateContainerHookIf = {
     useUpdate: () => {
       const [updateContainer, { isLoading: isUpdatingContainer }] =
         useUpdateContainerMutation()

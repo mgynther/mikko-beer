@@ -247,6 +247,7 @@ const storeIf: StoreIf = {
   reviewContainerIf,
   updateContainerIf: {
     useUpdate: dontCall,
+    getLogin: getUndefinedLogin,
   },
   getLocationIf: {
     useGet: dontCall,

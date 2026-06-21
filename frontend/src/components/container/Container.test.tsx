@@ -27,19 +27,21 @@ function getLogin(role: Role): GetLogin {
   })
 }
 
-const updateContainerIf: UpdateContainerIf = {
+const getUpdateContainerIf: (getLogin: GetLogin) => UpdateContainerIf = (
+  getLogin: GetLogin,
+) => ({
   useUpdate: () => ({
     update: async () => undefined,
     isLoading: false,
   }),
-}
+  getLogin,
+})
 
 test('renders container as viewer', async () => {
   const { getByText } = render(
     <Container
       container={container}
-      getLogin={getLogin(Role.viewer)}
-      updateContainerIf={updateContainerIf}
+      updateContainerIf={getUpdateContainerIf(getLogin(Role.viewer))}
     />,
   )
   getByText('bottle 0.25')
@@ -50,8 +52,7 @@ test('renders editable container as admin', async () => {
   const { getByRole, getByText } = render(
     <Container
       container={container}
-      getLogin={getLogin(Role.admin)}
-      updateContainerIf={updateContainerIf}
+      updateContainerIf={getUpdateContainerIf(getLogin(Role.admin))}
     />,
   )
   getByText('bottle 0.25')
@@ -68,8 +69,8 @@ test('update container', async () => {
   const { getByPlaceholderText, getByRole, getByText } = render(
     <Container
       container={container}
-      getLogin={getLogin(Role.admin)}
       updateContainerIf={{
+        ...getUpdateContainerIf(getLogin(Role.admin)),
         useUpdate: () => ({
           update,
           isLoading: false,

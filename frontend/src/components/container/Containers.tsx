@@ -5,14 +5,12 @@ import type {
   ListContainersIf,
   UpdateContainerIf,
 } from '../../core/container/types'
-import type { GetLogin } from '../../core/login/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
 import Container from './Container'
 
 interface Props {
-  getLogin: GetLogin
   listContainersIf: ListContainersIf
   updateContainerIf: UpdateContainerIf
 }
@@ -38,7 +36,6 @@ function Containers(props: Props): React.JSX.Element {
           <li key={container.id} className='RowLike'>
             <Container
               container={container}
-              getLogin={props.getLogin}
               updateContainerIf={props.updateContainerIf}
             />
           </li>

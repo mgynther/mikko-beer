@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 
-import type { Container, UpdateContainerIf } from '../../core/container/types'
+import type {
+  Container,
+  UpdateContainerHookIf,
+} from '../../core/container/types'
 
 import EditActions from '../common/EditActions'
 
@@ -8,13 +11,13 @@ import ContainerEditor from './ContainerEditor'
 
 interface Props {
   initialContainer: Container
-  updateContainerIf: UpdateContainerIf
+  updateContainerHookIf: UpdateContainerHookIf
   onCancel: () => void
   onSaved: () => void
 }
 
 function UpdateContainer(props: Props): React.JSX.Element {
-  const { update, isLoading } = props.updateContainerIf.useUpdate()
+  const { update, isLoading } = props.updateContainerHookIf.useUpdate()
   const [newContainer, setNewContainer] = useState<Container | undefined>(
     undefined,
   )

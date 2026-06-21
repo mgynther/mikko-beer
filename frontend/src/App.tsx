@@ -249,7 +249,6 @@ function App(props: Props): React.JSX.Element {
                   path='containers'
                   element={
                     <Containers
-                      getLogin={getLogin}
                       listContainersIf={listContainersIf}
                       updateContainerIf={updateContainerIf}
                     />

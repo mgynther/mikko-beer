@@ -1,3 +1,5 @@
+import type { GetLogin } from '../login/types'
+
 export interface ContainerRequest {
   type: string
   size: string
@@ -29,9 +31,16 @@ export interface ListContainersIf {
   useList: () => ListContainersData
 }
 
+type UseUpdateContainer = () => {
+  update: (container: Container) => Promise<void>
+  isLoading: boolean
+}
+
+export interface UpdateContainerHookIf {
+  useUpdate: UseUpdateContainer
+}
+
 export interface UpdateContainerIf {
-  useUpdate: () => {
-    update: (container: Container) => Promise<void>
-    isLoading: boolean
-  }
+  useUpdate: UseUpdateContainer
+  getLogin: GetLogin
 }

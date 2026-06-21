@@ -23,7 +23,7 @@ test('updates container', async () => {
   const { getByPlaceholderText, getByRole } = render(
     <UpdateContainer
       initialContainer={container}
-      updateContainerIf={{
+      updateContainerHookIf={{
         useUpdate: () => ({
           update,
           isLoading: false,
@@ -62,7 +62,7 @@ test('cancel update', async () => {
   const { getByRole } = render(
     <UpdateContainer
       initialContainer={container}
-      updateContainerIf={{
+      updateContainerHookIf={{
         useUpdate: () => ({
           update: async (): Promise<void> => undefined,
           isLoading: false,
