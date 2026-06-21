@@ -35,7 +35,7 @@ test('updates location', async () => {
           update,
           isLoading: false,
         }),
-        login: getLogin(),
+        getLogin: getLogin(),
       }}
       onCancel={() => undefined}
       onSaved={onSaved}
@@ -74,7 +74,7 @@ test('cancel update', async () => {
           update: async (): Promise<void> => undefined,
           isLoading: false,
         }),
-        login: getLogin(),
+        getLogin: getLogin(),
       }}
       onCancel={onCancel}
       onSaved={() => undefined}

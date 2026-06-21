@@ -51,7 +51,7 @@ function Location(props: Props): React.JSX.Element {
           <div>
             <EditButton
               disabled={false}
-              getLogin={props.updateLocationIf.login}
+              getLogin={props.updateLocationIf.getLogin}
               onClick={() => {
                 setMode(EditableMode.Edit)
                 setInitialLocation({ ...location })

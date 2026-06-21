@@ -57,7 +57,7 @@ export interface UpdateLocationHookIf {
 
 export interface UpdateLocationIf {
   useUpdate: UseUpdateLogin
-  login: GetLogin
+  getLogin: GetLogin
 }
 
 type UseSearchLocation = () => {

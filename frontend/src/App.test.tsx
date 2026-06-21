@@ -265,7 +265,7 @@ const storeIf: StoreIf = {
   searchLocationIf,
   updateLocationIf: {
     useUpdate: dontCall,
-    login: getAdminLogin,
+    getLogin: getAdminLogin,
   },
   changePasswordIf: {
     useChangePassword: () => ({

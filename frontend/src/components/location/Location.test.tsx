@@ -246,7 +246,7 @@ test('updates location', async () => {
           update,
           isLoading: false,
         }),
-        login: getLogin(),
+        getLogin: getLogin(),
       }}
       statsIf={statsIf}
       useUrlPathParams={useUrlPathParams}
@@ -280,7 +280,7 @@ const dontUpdateLocationIf: UpdateLocationIf = {
     update: dontCall,
     isLoading: false,
   }),
-  login: getLogin(),
+  getLogin: getLogin(),
 }
 
 test('cancel editing', async () => {
