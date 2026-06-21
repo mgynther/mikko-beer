@@ -312,7 +312,9 @@ test('adds review with custom time', async () => {
   await selectContainer(getByRole, user)
 
   const customDateTime = '2023-10-31T12:00'
-  const customDateTimeFull = `${customDateTime}:00.000Z`
+  // Note that the customDateTime variable is specific to system timezone and
+  // the full date time string will reflect that.
+  const customDateTimeFull = new Date(customDateTime).toISOString()
 
   const dateInput = getByLabelText('Time input')
   fireEvent.change(dateInput, { target: { value: `${customDateTime}` } })
