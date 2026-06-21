@@ -246,7 +246,10 @@ function RtkApp(): React.JSX.Element {
     search: searchBeerIf,
   }
 
-  const changePasswordIf: ChangePasswordIf = changePassword()
+  const changePasswordIf: ChangePasswordIf = {
+    ...changePassword(),
+    getLogin,
+  }
   const loginIf: LoginIf = login()
   const logoutIf: LogoutIf = logout()
 

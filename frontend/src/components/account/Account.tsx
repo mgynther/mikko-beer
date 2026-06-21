@@ -14,10 +14,7 @@ function Account(props: Props): React.JSX.Element {
     <div>
       <h3>Account</h3>
       <div>Username: {login.user?.username}</div>
-      <ChangePassword
-        getLogin={props.getLogin}
-        changePasswordIf={props.changePasswordIf}
-      />
+      <ChangePassword changePasswordIf={props.changePasswordIf} />
     </div>
   )
 }

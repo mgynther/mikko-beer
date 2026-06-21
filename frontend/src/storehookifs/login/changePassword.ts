@@ -1,5 +1,5 @@
 import type {
-  ChangePasswordIf,
+  ChangePasswordHookIf,
   ChangePasswordParams,
   GetPasswordChangeResult,
   PasswordChangeResult,
@@ -8,8 +8,8 @@ import { useSelector } from '../../react-redux-wrapper'
 import { useChangePasswordMutation } from '../../store/login/api'
 import { selectPasswordChangeResult } from '../../store/login/reducer'
 
-const changePassword: () => ChangePasswordIf = () => {
-  const changePasswordIf: ChangePasswordIf = {
+const changePassword: () => ChangePasswordHookIf = () => {
+  const changePasswordIf: ChangePasswordHookIf = {
     useChangePassword: () => {
       const [changePassword, { isLoading }] = useChangePasswordMutation()
       return {

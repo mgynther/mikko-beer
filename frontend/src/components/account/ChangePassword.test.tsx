@@ -29,9 +29,10 @@ test('changes password', async () => {
     useGetPasswordChangeResult: () => ({
       getResult: () => PasswordChangeResult.UNDEFINED,
     }),
+    getLogin,
   }
   const { getByRole, getByPlaceholderText } = render(
-    <ChangePassword getLogin={getLogin} changePasswordIf={changePasswordIf} />,
+    <ChangePassword changePasswordIf={changePasswordIf} />,
   )
   const oldPasswordInput = getByPlaceholderText('Old password')
   const oldPassword = 'old password'
@@ -68,9 +69,10 @@ test('shows password change result', async () => {
     useGetPasswordChangeResult: () => ({
       getResult: () => PasswordChangeResult.SUCCESS,
     }),
+    getLogin,
   }
   const { getByText } = render(
-    <ChangePassword getLogin={getLogin} changePasswordIf={changePasswordIf} />,
+    <ChangePassword changePasswordIf={changePasswordIf} />,
   )
   getByText('Password changed!')
 })
@@ -84,9 +86,10 @@ test('password change has failed', async () => {
     useGetPasswordChangeResult: () => ({
       getResult: () => PasswordChangeResult.ERROR,
     }),
+    getLogin,
   }
   const { getByText } = render(
-    <ChangePassword getLogin={getLogin} changePasswordIf={changePasswordIf} />,
+    <ChangePassword changePasswordIf={changePasswordIf} />,
   )
   getByText('Change failed. Please check your old and new passwords.')
 })
@@ -100,16 +103,14 @@ test('does not render on missing user', async () => {
     useGetPasswordChangeResult: () => ({
       getResult: () => PasswordChangeResult.UNDEFINED,
     }),
+    getLogin: () => ({
+      user: undefined,
+      authToken: '',
+      refreshToken: '',
+    }),
   }
   const { container } = render(
-    <ChangePassword
-      getLogin={() => ({
-        user: undefined,
-        authToken: '',
-        refreshToken: '',
-      })}
-      changePasswordIf={changePasswordIf}
-    />,
+    <ChangePassword changePasswordIf={changePasswordIf} />,
   )
   expect(container.childElementCount).toEqual(0)
 })

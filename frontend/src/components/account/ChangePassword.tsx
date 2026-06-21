@@ -3,20 +3,16 @@ import React, { type SubmitEvent, useState } from 'react'
 import LoadingIndicator from '../common/LoadingIndicator'
 
 import './ChangePassword.css'
-import {
-  type ChangePasswordIf,
-  type GetLogin,
-  type Login,
-  PasswordChangeResult,
-} from '../../core/login/types'
+import type { ChangePasswordIf, Login } from '../../core/login/types'
+
+import { PasswordChangeResult } from '../../core/login/types'
 
 interface Props {
-  getLogin: GetLogin
   changePasswordIf: ChangePasswordIf
 }
 
 function ChangePassword(props: Props): React.JSX.Element | null {
-  const login: Login = props.getLogin()
+  const login: Login = props.changePasswordIf.getLogin()
   const { changePassword, isLoading } =
     props.changePasswordIf.useChangePassword()
   const passwordChangeResult: PasswordChangeResult = props.changePasswordIf

@@ -51,12 +51,22 @@ export interface LogoutIf {
 export type GetLogin = () => Login
 export type GetPasswordChangeResult = () => PasswordChangeResult
 
+type UseChangePassword = () => {
+  changePassword: (params: ChangePasswordParams) => Promise<void>
+  isLoading: boolean
+}
+
+type UseGetPasswordChangeResult = () => {
+  getResult: GetPasswordChangeResult
+}
+
+export interface ChangePasswordHookIf {
+  useChangePassword: UseChangePassword
+  useGetPasswordChangeResult: UseGetPasswordChangeResult
+}
+
 export interface ChangePasswordIf {
-  useChangePassword: () => {
-    changePassword: (params: ChangePasswordParams) => Promise<void>
-    isLoading: boolean
-  }
-  useGetPasswordChangeResult: () => {
-    getResult: GetPasswordChangeResult
-  }
+  useChangePassword: UseChangePassword
+  useGetPasswordChangeResult: UseGetPasswordChangeResult
+  getLogin: GetLogin
 }

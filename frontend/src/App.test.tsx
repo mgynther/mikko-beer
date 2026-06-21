@@ -275,6 +275,7 @@ const storeIf: StoreIf = {
     useGetPasswordChangeResult: () => ({
       getResult: () => PasswordChangeResult.UNDEFINED,
     }),
+    getLogin: getAdminLogin,
   },
   loginIf: {
     useLogin: () => ({
