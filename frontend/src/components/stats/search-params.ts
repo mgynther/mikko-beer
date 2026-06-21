@@ -17,7 +17,7 @@ import { invertDirection } from '../list-helpers'
 import type { StatsFilters } from './filter-types'
 import { formatYearMonth, toTimestamp } from '../common/filter-util'
 
-interface Props<T extends string> {
+export interface Props<T extends string> {
   nameProperty: string
   search: SearchParameters
   minTime: YearMonth
@@ -40,7 +40,8 @@ export interface FormattedStatsParams<T extends string> {
 }
 
 interface Result<T extends string> {
-  searchString: string
+  // Only for detecting changes. Never try to parse.
+  changeDetectionString: string
   changeSortingOrder: (order: T) => void
   isFilterChangePending: boolean
   setIsFiltersOpen: (isOpen: boolean) => void
@@ -139,7 +140,10 @@ export function searchParams<T extends string>(props: Props<T>): Result<T> {
     },
   }
 
-  const searchString = JSON.stringify({
+  // Intended only for detecting changes (an equality key for consumers). It
+  // must not be parsed or interpreted in any way, which is why serialization
+  // quirks such as Infinity becoming null are irrelevant here.
+  const changeDetectionString = JSON.stringify({
     filters,
     sortingDirection: statsParams.sortingDirection,
     sortingOrder: statsParams.sortingOrder,
@@ -167,7 +171,7 @@ export function searchParams<T extends string>(props: Props<T>): Result<T> {
   }
 
   return {
-    searchString,
+    changeDetectionString,
     changeSortingOrder,
     isFilterChangePending,
     setIsFiltersOpen,

@@ -55,7 +55,7 @@ function Brewery(props: Props): React.JSX.Element {
 
   useEffect(() => {
     setLoadedBreweries(undefined)
-  }, [parsedSearchParams.searchString])
+  }, [parsedSearchParams.changeDetectionString])
 
   const filterState: StatsFilterState = {
     filters: parsedSearchParams.filters,

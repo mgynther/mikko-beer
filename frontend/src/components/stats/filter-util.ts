@@ -23,7 +23,11 @@ export function filterNumOrDefault(
   search: SearchParameters | undefined,
 ): number {
   const value = search?.get(key)
-  return value === undefined ? filterNumDefaults[key] : parseFloat(value)
+  if (value === undefined) {
+    return filterNumDefaults[key]
+  }
+  const parsed = parseFloat(value)
+  return isNaN(parsed) ? filterNumDefaults[key] : parsed
 }
 
 export function filtersOpenOrDefault(

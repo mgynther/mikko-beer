@@ -55,7 +55,7 @@ function Location(props: Props): React.JSX.Element {
 
   useEffect(() => {
     setLoadedLocations(undefined)
-  }, [parsedSearchParams.searchString])
+  }, [parsedSearchParams.changeDetectionString])
 
   const filterState: StatsFilterState = {
     filters: parsedSearchParams.filters,

@@ -126,3 +126,33 @@ test('max review count', () => {
   }
   expect(filterNumOrDefault('s_max_count', toSearchParams(search))).toEqual(21)
 })
+
+test('min review count falls back on non-numeric value', () => {
+  const search: Record<string, string> = {
+    s_min_count: 'abc',
+  }
+  expect(filterNumOrDefault('s_min_count', toSearchParams(search))).toEqual(1)
+})
+
+test('max review count falls back on non-numeric value', () => {
+  const search: Record<string, string> = {
+    s_max_count: 'xyz',
+  }
+  expect(filterNumOrDefault('s_max_count', toSearchParams(search))).toEqual(
+    Infinity,
+  )
+})
+
+test('min review average falls back on non-numeric value', () => {
+  const search: Record<string, string> = {
+    s_min_avg: 'foo',
+  }
+  expect(filterNumOrDefault('s_min_avg', toSearchParams(search))).toEqual(4)
+})
+
+test('max review average falls back on non-numeric value', () => {
+  const search: Record<string, string> = {
+    s_max_avg: 'bar',
+  }
+  expect(filterNumOrDefault('s_max_avg', toSearchParams(search))).toEqual(10)
+})
