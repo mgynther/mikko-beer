@@ -23,7 +23,11 @@ import type {
 import { asText } from '../container/ContainerInfo'
 import type { SearchLocationIf } from '../../core/location/types'
 import type { SearchFieldIf } from '../../core/search/types'
-import type { EditBeerIf, GetBeerIf, UpdateBeerIf } from '../../core/beer/types'
+import type {
+  EditBeerIf,
+  GetBeerIf,
+  UpdateBeerLoginIf,
+} from '../../core/beer/types'
 import type { UseUrlPathParams } from '../util'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 import { testTimes } from '../../../test-util/filter-time'
@@ -282,19 +286,20 @@ const editBeerIf: EditBeerIf = {
   },
 }
 
-const dontUpdateBeerIf: UpdateBeerIf = {
+const dontUpdateBeerIf: UpdateBeerLoginIf = {
   useUpdate: () => ({
     update: dontCall,
     isLoading: false,
   }),
   editBeerIf,
+  getLogin: () => login,
 }
 
 test('renders beer', async () => {
   const { getByRole, getByText } = render(
     <LinkWrapper>
       <Beer
-        updateBeerIf={dontUpdateBeerIf}
+        updateBeerLoginIf={dontUpdateBeerIf}
         listReviewsByBeerIf={getListReviewsIf([joinedReview])}
         listStoragesByBeerIf={listStoragesByBeerIf}
         getBeerIf={getBeerIf}
@@ -315,7 +320,7 @@ test('throw on missing id', async () => {
     render(
       <LinkWrapper>
         <Beer
-          updateBeerIf={dontUpdateBeerIf}
+          updateBeerLoginIf={dontUpdateBeerIf}
           listReviewsByBeerIf={getListReviewsIf([joinedReview])}
           listStoragesByBeerIf={listStoragesByBeerIf}
           getBeerIf={getBeerIf}
@@ -332,12 +337,13 @@ test('updates beer', async () => {
   const { getByRole, getByPlaceholderText } = render(
     <LinkWrapper>
       <Beer
-        updateBeerIf={{
+        updateBeerLoginIf={{
           useUpdate: () => ({
             update,
             isLoading: false,
           }),
           editBeerIf,
+          getLogin: () => login,
         }}
         listReviewsByBeerIf={getListReviewsIf([])}
         listStoragesByBeerIf={listStoragesByBeerIf}
@@ -372,7 +378,7 @@ test('cancel update', async () => {
   const { getByRole } = render(
     <LinkWrapper>
       <Beer
-        updateBeerIf={dontUpdateBeerIf}
+        updateBeerLoginIf={dontUpdateBeerIf}
         listReviewsByBeerIf={getListReviewsIf([])}
         listStoragesByBeerIf={listStoragesByBeerIf}
         getBeerIf={getBeerIf}
@@ -392,7 +398,7 @@ test('render loading', async () => {
   const { getByText } = render(
     <LinkWrapper>
       <Beer
-        updateBeerIf={dontUpdateBeerIf}
+        updateBeerLoginIf={dontUpdateBeerIf}
         listReviewsByBeerIf={getListReviewsIf([])}
         listStoragesByBeerIf={listStoragesByBeerIf}
         getBeerIf={{
@@ -412,7 +418,7 @@ test('render not found', async () => {
   const { getByText } = render(
     <LinkWrapper>
       <Beer
-        updateBeerIf={dontUpdateBeerIf}
+        updateBeerLoginIf={dontUpdateBeerIf}
         listReviewsByBeerIf={getListReviewsIf([])}
         listStoragesByBeerIf={listStoragesByBeerIf}
         getBeerIf={{
@@ -433,7 +439,7 @@ test('load reviews', async () => {
   render(
     <LinkWrapper>
       <Beer
-        updateBeerIf={dontUpdateBeerIf}
+        updateBeerLoginIf={dontUpdateBeerIf}
         listReviewsByBeerIf={{
           useList: (params: IdFilteredListReviewParams) => {
             useList(params)
@@ -479,7 +485,7 @@ test('sort reviews', async () => {
   const { getByRole } = render(
     <LinkWrapper>
       <Beer
-        updateBeerIf={dontUpdateBeerIf}
+        updateBeerLoginIf={dontUpdateBeerIf}
         listReviewsByBeerIf={{
           useList: () => {
             return {
@@ -534,7 +540,7 @@ test('show loading indicator', async () => {
   const { getByText } = render(
     <LinkWrapper>
       <Beer
-        updateBeerIf={dontUpdateBeerIf}
+        updateBeerLoginIf={dontUpdateBeerIf}
         listReviewsByBeerIf={{
           useList: () => {
             return {

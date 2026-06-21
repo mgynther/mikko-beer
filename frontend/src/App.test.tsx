@@ -199,7 +199,7 @@ const storeIf: StoreIf = {
   },
   searchBeerIf,
   selectBeerIf,
-  updateBeerIf: {
+  updateBeerLoginIf: {
     useUpdate: dontCall,
     editBeerIf: {
       selectBreweryIf: {
@@ -221,6 +221,7 @@ const storeIf: StoreIf = {
         list: listStylesIf,
       },
     },
+    getLogin: getUndefinedLogin,
   },
   getBreweryIf: {
     useGet: dontCall,

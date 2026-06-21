@@ -5,7 +5,7 @@ import type { UseUrlPathParams } from '../util'
 import type {
   GetBeerIf,
   Beer as BeerType,
-  UpdateBeerIf,
+  UpdateBeerLoginIf,
 } from '../../core/beer/types'
 
 import type { ListReviewsByIf } from '../../core/review/types'
@@ -29,7 +29,7 @@ interface Props {
   listReviewsByBeerIf: ListReviewsByIf
   listStoragesByBeerIf: ListStoragesByIf
   useUrlPathParams: UseUrlPathParams
-  updateBeerIf: UpdateBeerIf
+  updateBeerLoginIf: UpdateBeerLoginIf
   getBeerIf: GetBeerIf
 }
 
@@ -56,7 +56,7 @@ function Beer(props: Props): React.JSX.Element {
             <div>
               <EditButton
                 disabled={false}
-                getLogin={props.listReviewsByBeerIf.reviewIf.getLogin}
+                getLogin={props.updateBeerLoginIf.getLogin}
                 onClick={() => {
                   setMode(EditableMode.Edit)
                   setInitialBeer({ ...beer })
@@ -80,7 +80,10 @@ function Beer(props: Props): React.JSX.Element {
       )}
       {mode === EditableMode.Edit && initialBeer !== undefined && (
         <UpdateBeer
-          updateBeerIf={props.updateBeerIf}
+          updateBeerIf={{
+            useUpdate: props.updateBeerLoginIf.useUpdate,
+            editBeerIf: props.updateBeerLoginIf.editBeerIf,
+          }}
           initialBeer={initialBeer}
           onCancel={() => {
             setInitialBeer(undefined)

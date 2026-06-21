@@ -64,7 +64,7 @@ import type {
   ListBeersIf,
   SearchBeerIf,
   SelectBeerIf,
-  UpdateBeerIf,
+  UpdateBeerLoginIf,
 } from './core/beer/types'
 import type {
   CreateStorageIf,
@@ -237,9 +237,10 @@ function RtkApp(): React.JSX.Element {
     ...searchBeer(),
     searchFieldIf,
   }
-  const updateBeerIf: UpdateBeerIf = {
+  const updateBeerLoginIf: UpdateBeerLoginIf = {
     ...updateBeer(),
     editBeerIf,
+    getLogin,
   }
   const selectBeerIf: SelectBeerIf = {
     create: createBeerIf,
@@ -406,7 +407,7 @@ function RtkApp(): React.JSX.Element {
     listBeersIf,
     searchBeerIf,
     selectBeerIf,
-    updateBeerIf,
+    updateBeerLoginIf,
 
     getBreweryIf,
     listBreweriesIf,

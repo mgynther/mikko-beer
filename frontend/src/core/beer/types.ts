@@ -1,4 +1,5 @@
 import type { Brewery, SelectBreweryIf } from '../brewery/types'
+import type { GetLogin } from '../login/types'
 import type { SearchFieldIf } from '../search/types'
 import type { SelectStyleIf, Style } from '../style/types'
 import type { InfiniteScroll, Pagination } from '../types'
@@ -53,6 +54,12 @@ export interface UpdateBeerHookIf {
 export interface UpdateBeerIf {
   useUpdate: UseUpdateBeer
   editBeerIf: EditBeerIf
+}
+
+export interface UpdateBeerLoginIf {
+  useUpdate: UseUpdateBeer
+  editBeerIf: EditBeerIf
+  getLogin: GetLogin
 }
 
 export interface GetBeerIf {

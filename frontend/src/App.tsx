@@ -56,7 +56,7 @@ function App(props: Props): React.JSX.Element {
     listBeersIf,
     searchBeerIf,
     selectBeerIf,
-    updateBeerIf,
+    updateBeerLoginIf,
 
     getBreweryIf,
     listBreweriesIf,
@@ -217,7 +217,7 @@ function App(props: Props): React.JSX.Element {
                       getBeerIf={getBeerIf}
                       listReviewsByBeerIf={listReviewsByBeerIf}
                       listStoragesByBeerIf={listStoragesByBeerIf}
-                      updateBeerIf={updateBeerIf}
+                      updateBeerLoginIf={updateBeerLoginIf}
                       useUrlPathParams={props.useUrlPathParams}
                     />
                   }

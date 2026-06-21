@@ -3,7 +3,7 @@ import type {
   ListBeersIf,
   SearchBeerIf,
   SelectBeerIf,
-  UpdateBeerIf,
+  UpdateBeerLoginIf,
 } from '../core/beer/types'
 import type {
   GetBreweryIf,
@@ -57,7 +57,7 @@ export interface StoreIf {
   listBeersIf: ListBeersIf
   searchBeerIf: SearchBeerIf
   selectBeerIf: SelectBeerIf
-  updateBeerIf: UpdateBeerIf
+  updateBeerLoginIf: UpdateBeerLoginIf
 
   getBreweryIf: GetBreweryIf
   listBreweriesIf: ListBreweriesIf
