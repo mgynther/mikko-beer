@@ -104,7 +104,7 @@ function Review(props: Props): React.JSX.Element {
                 <div>
                   <EditButton
                     disabled={false}
-                    getLogin={props.reviewIf.login}
+                    getLogin={props.reviewIf.getLogin}
                     onClick={() => {
                       setMode(EditableMode.Edit)
                     }}

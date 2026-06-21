@@ -197,5 +197,5 @@ export interface ReviewContainerIf {
 export interface ReviewIf {
   get: GetReviewIf
   update: UpdateReviewIf
-  login: GetLogin
+  getLogin: GetLogin
 }

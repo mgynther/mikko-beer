@@ -209,7 +209,7 @@ const dontUpdateReviewIf: ReviewIf = {
     selectBeerIf,
     reviewContainerIf,
   },
-  login: () => adminLogin,
+  getLogin: () => adminLogin,
 }
 
 const adminLogin: Login = {
@@ -289,7 +289,7 @@ test('updates review', async () => {
             selectBeerIf,
             reviewContainerIf,
           },
-          login: () => adminLogin,
+          getLogin: () => adminLogin,
         }}
       />
     </LinkWrapper>,

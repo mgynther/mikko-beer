@@ -210,7 +210,7 @@ const reviewIf: ReviewIf = {
     }),
   },
   update: updateReview,
-  login: () => login,
+  getLogin: () => login,
 }
 
 const useUrlSearchParams: UseUrlSearchParams = () => ({

@@ -56,7 +56,7 @@ function Beer(props: Props): React.JSX.Element {
             <div>
               <EditButton
                 disabled={false}
-                getLogin={props.listReviewsByBeerIf.reviewIf.login}
+                getLogin={props.listReviewsByBeerIf.reviewIf.getLogin}
                 onClick={() => {
                   setMode(EditableMode.Edit)
                   setInitialBeer({ ...beer })

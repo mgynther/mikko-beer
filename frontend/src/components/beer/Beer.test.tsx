@@ -188,7 +188,7 @@ const reviewIf: ReviewIf = {
     }),
   },
   update: updateReview,
-  login: () => login,
+  getLogin: () => login,
 }
 
 const minTime: YearMonth = testTimes.min.yearMonth

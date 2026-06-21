@@ -206,7 +206,7 @@ const reviewIf: ReviewIf = {
     selectBeerIf: dontSelectBeer,
     reviewContainerIf: noOpContainerIf,
   },
-  login: getLogin(),
+  getLogin: getLogin(),
 }
 
 const listReviewsByLocationIf: ListReviewsByIf = {

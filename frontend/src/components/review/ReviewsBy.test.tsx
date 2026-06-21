@@ -170,7 +170,7 @@ const dontUpdateReviewIf: ReviewIf = {
     selectBeerIf,
     reviewContainerIf,
   },
-  login: () => adminLogin,
+  getLogin: () => adminLogin,
 }
 
 const adminLogin: Login = {

@@ -176,7 +176,7 @@ const reviewIf: ReviewIf = {
     selectBeerIf,
     reviewContainerIf,
   },
-  login: getUndefinedLogin,
+  getLogin: getUndefinedLogin,
 }
 
 const storeIf: StoreIf = {

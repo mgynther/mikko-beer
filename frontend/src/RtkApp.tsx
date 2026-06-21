@@ -332,7 +332,7 @@ function RtkApp(): React.JSX.Element {
   const reviewIf: ReviewIf = {
     get: getReviewIf,
     update: updateReviewIf,
-    login: getLogin,
+    getLogin,
   }
   const listReviewsByBeerIf: ListReviewsByIf = {
     ...listReviewsByBeer(),

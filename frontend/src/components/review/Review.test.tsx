@@ -235,7 +235,7 @@ test('updates review', async () => {
             selectBeerIf,
             reviewContainerIf,
           },
-          login: () => adminLogin,
+          getLogin: () => adminLogin,
         }}
       />
     </LinkWrapper>,
@@ -288,7 +288,7 @@ test('update review without onChanged callback', async () => {
             selectBeerIf,
             reviewContainerIf,
           },
-          login: () => adminLogin,
+          getLogin: () => adminLogin,
         }}
       />
     </LinkWrapper>,
@@ -341,7 +341,7 @@ test('cancel editing', async () => {
             selectBeerIf,
             reviewContainerIf,
           },
-          login: () => adminLogin,
+          getLogin: () => adminLogin,
         }}
       />
     </LinkWrapper>,
@@ -379,7 +379,7 @@ test('cannot update review as viewer', async () => {
             selectBeerIf,
             reviewContainerIf,
           },
-          login: () => viewerLogin,
+          getLogin: () => viewerLogin,
         }}
       />
     </LinkWrapper>,
@@ -423,7 +423,7 @@ test('renders review', async () => {
             selectBeerIf,
             reviewContainerIf,
           },
-          login: () => viewerLogin,
+          getLogin: () => viewerLogin,
         }}
       />
     </LinkWrapper>,
