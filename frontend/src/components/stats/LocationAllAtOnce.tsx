@@ -5,18 +5,16 @@ import type {
   LocationStatsSortingOrder,
   OneLocationStats,
 } from '../../core/stats/types'
-import type { ListDirection } from '../../core/types'
 
 import LocationStatsTable from './LocationStatsTable'
-import { formatYearMonth, toTimestamp } from '../common/filter-util'
 import type { StatsFilterState } from './filter-types'
+import type { FormattedStatsParams } from './search-params'
 
 interface Props {
   getLocationStatsIf: GetLocationStatsIf
   filterState: StatsFilterState
   isFilterChangePending: boolean
-  sortingDirection: ListDirection
-  sortingOrder: LocationStatsSortingOrder
+  statsParams: FormattedStatsParams<LocationStatsSortingOrder>
   setSortingOrder: (order: LocationStatsSortingOrder) => void
   breweryId: string | undefined
   locationId: string | undefined
@@ -31,20 +29,21 @@ const giantPage = {
 }
 
 function LocationAllAtOnce(props: Props): React.JSX.Element {
-  const { filters } = props.filterState
-  const minReviewCount = filters.minReviewCount.value
-  const maxReviewCount = filters.maxReviewCount.value
-  const minReviewAverage = filters.minReviewAverage.value
-  const maxReviewAverage = filters.maxReviewAverage.value
-  const timeStart = filters.timeStart.value
-  const timeEnd = filters.timeEnd.value
+  const {
+    minReviewCount,
+    maxReviewCount,
+    minReviewAverage,
+    maxReviewAverage,
+    sortingDirection,
+    sortingOrder,
+    timeStart,
+    timeEnd,
+  } = props.statsParams
   const {
     isFilterChangePending,
     loadedLocations,
     setLoadedLocations,
-    sortingOrder,
     setSortingOrder,
-    sortingDirection,
   } = props
   const { query, isLoading: isLoadingStats } =
     props.getLocationStatsIf.useStats()
@@ -77,8 +76,8 @@ function LocationAllAtOnce(props: Props): React.JSX.Element {
         maxReviewCount,
         minReviewAverage,
         maxReviewAverage,
-        timeStart: toTimestamp(timeStart, 'start'),
-        timeEnd: toTimestamp(timeEnd, 'end'),
+        timeStart,
+        timeEnd,
       })
       setLoadedLocations([...result.location])
     }
@@ -93,8 +92,8 @@ function LocationAllAtOnce(props: Props): React.JSX.Element {
     maxReviewCount,
     minReviewAverage,
     maxReviewAverage,
-    formatYearMonth(timeStart),
-    formatYearMonth(timeEnd),
+    timeStart,
+    timeEnd,
   ])
 
   function getLocations(): OneLocationStats[] {
@@ -111,8 +110,8 @@ function LocationAllAtOnce(props: Props): React.JSX.Element {
       locations={getLocations()}
       filterState={props.filterState}
       isLoading={isLoading}
-      sortingDirection={props.sortingDirection}
-      sortingOrder={props.sortingOrder}
+      sortingDirection={sortingDirection}
+      sortingOrder={sortingOrder}
       setSortingOrder={setSortingOrder}
     />
   )

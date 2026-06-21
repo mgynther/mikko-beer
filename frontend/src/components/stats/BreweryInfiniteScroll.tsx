@@ -5,11 +5,10 @@ import type {
   BreweryStatsSortingOrder,
   OneBreweryStats,
 } from '../../core/stats/types'
-import type { ListDirection } from '../../core/types'
 
 import BreweryStatsTable from './BreweryStatsTable'
-import { toTimestamp } from '../common/filter-util'
 import type { StatsFilterState } from './filter-types'
+import type { FormattedStatsParams } from './search-params'
 
 const pageSize = 30
 
@@ -17,28 +16,28 @@ interface Props {
   getBreweryStatsIf: GetBreweryStatsIf
   filterState: StatsFilterState
   isFilterChangePending: boolean
-  sortingDirection: ListDirection
-  sortingOrder: BreweryStatsSortingOrder
   setSortingOrder: (order: BreweryStatsSortingOrder) => void
+  statsParams: FormattedStatsParams<BreweryStatsSortingOrder>
   loadedBreweries: OneBreweryStats[] | undefined
   setLoadedBreweries: (breweries: OneBreweryStats[] | undefined) => void
 }
 
 function BreweryInfiniteScroll(props: Props): React.JSX.Element {
-  const { filters } = props.filterState
-  const minReviewCount = filters.minReviewCount.value
-  const maxReviewCount = filters.maxReviewCount.value
-  const minReviewAverage = filters.minReviewAverage.value
-  const maxReviewAverage = filters.maxReviewAverage.value
-  const timeStart = filters.timeStart.value
-  const timeEnd = filters.timeEnd.value
+  const {
+    minReviewCount,
+    maxReviewCount,
+    minReviewAverage,
+    maxReviewAverage,
+    sortingDirection,
+    sortingOrder,
+    timeStart,
+    timeEnd,
+  } = props.statsParams
   const {
     isFilterChangePending,
     loadedBreweries,
     setLoadedBreweries,
-    sortingOrder,
     setSortingOrder,
-    sortingDirection,
   } = props
   const {
     query,
@@ -68,8 +67,8 @@ function BreweryInfiniteScroll(props: Props): React.JSX.Element {
         maxReviewCount,
         minReviewAverage,
         maxReviewAverage,
-        timeStart: toTimestamp(timeStart, 'start'),
-        timeEnd: toTimestamp(timeEnd, 'end'),
+        timeStart,
+        timeEnd,
       })
       const newBreweries = [...(loadedBreweries ?? []), ...result.brewery]
       setLoadedBreweries(newBreweries)
@@ -94,6 +93,8 @@ function BreweryInfiniteScroll(props: Props): React.JSX.Element {
     sortingOrder,
     sortingDirection,
     query,
+    timeStart,
+    timeEnd,
   ])
 
   return (

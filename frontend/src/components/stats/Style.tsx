@@ -11,7 +11,6 @@ import StyleLink from '../style/StyleLink'
 import AllFilters from './AllFilters'
 
 import './StatsTable.css'
-import { toTimestamp } from '../common/filter-util'
 import { searchParams } from './search-params'
 import type { SearchParameters } from '../../core/types'
 
@@ -59,8 +58,8 @@ function Style(props: Props): React.JSX.Element {
     maxReviewCount: parsedSearchParams.statsParams.maxReviewCount,
     minReviewAverage: parsedSearchParams.statsParams.minReviewAverage,
     maxReviewAverage: parsedSearchParams.statsParams.maxReviewAverage,
-    timeStart: toTimestamp(parsedSearchParams.statsParams.timeStart, 'start'),
-    timeEnd: toTimestamp(parsedSearchParams.statsParams.timeEnd, 'end'),
+    timeStart: parsedSearchParams.statsParams.timeStart,
+    timeEnd: parsedSearchParams.statsParams.timeEnd,
   })
 
   function isSelected(property: StyleStatsSortingOrder): boolean {

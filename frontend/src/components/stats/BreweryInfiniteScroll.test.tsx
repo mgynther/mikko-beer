@@ -7,12 +7,14 @@ import LinkWrapper from '../LinkWrapper'
 import { openFilters } from '../common/filters-test-util'
 import type {
   BreweryStats,
+  BreweryStatsSortingOrder,
   GetBreweryStatsIf,
   OneBreweryStats,
 } from '../../core/stats/types'
 import type { UseDebounce, YearMonth } from '../../core/types'
 import type { StatsFilters } from './filter-types'
 import { dontCall } from '../../../test-util/dont-call'
+import type { FormattedStatsParams } from './search-params'
 
 const koskipanimo: OneBreweryStats = {
   breweryId: '59c825c9-b346-420a-9e67-f0ae1af1d962',
@@ -70,6 +72,18 @@ const unusedFilters: StatsFilters = {
   },
 }
 
+const statsParams: FormattedStatsParams<BreweryStatsSortingOrder> = {
+  sortingOrder: 'brewery_name',
+  sortingDirection: 'asc',
+  minReviewCount: 1,
+  maxReviewCount: Infinity,
+  minReviewAverage: 4.0,
+  maxReviewAverage: 10.0,
+  timeStart: testTimes.min.utcTimestamp,
+  timeEnd: testTimes.max.utcTimestamp,
+  isFiltersOpen: false,
+}
+
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
 }
@@ -117,8 +131,6 @@ test('queries brewery stats', async () => {
         getBreweryStatsIf={getBreweryStatsIf}
         loadedBreweries={undefined}
         setLoadedBreweries={setLoadedBreweries}
-        sortingDirection={'asc'}
-        sortingOrder={'brewery_name'}
         setSortingOrder={() => undefined}
         filterState={{
           filters: unusedFilters,
@@ -126,6 +138,7 @@ test('queries brewery stats', async () => {
           setIsOpen: () => undefined,
         }}
         isFilterChangePending={false}
+        statsParams={statsParams}
       />
     </LinkWrapper>,
   )
@@ -165,8 +178,6 @@ test('renders brewery stats', () => {
         getBreweryStatsIf={unusedStats}
         loadedBreweries={[koskipanimo, lehe]}
         setLoadedBreweries={() => undefined}
-        sortingDirection={'asc'}
-        sortingOrder={'brewery_name'}
         setSortingOrder={() => undefined}
         filterState={{
           filters: unusedFilters,
@@ -174,6 +185,7 @@ test('renders brewery stats', () => {
           setIsOpen: dontCall,
         }}
         isFilterChangePending={false}
+        statsParams={statsParams}
       />
     </LinkWrapper>,
   )
@@ -205,8 +217,6 @@ test('renders loading', () => {
         }}
         loadedBreweries={undefined}
         setLoadedBreweries={() => undefined}
-        sortingDirection={'asc'}
-        sortingOrder={'brewery_name'}
         setSortingOrder={() => undefined}
         filterState={{
           filters: unusedFilters,
@@ -214,6 +224,7 @@ test('renders loading', () => {
           setIsOpen: dontCall,
         }}
         isFilterChangePending={false}
+        statsParams={statsParams}
       />
     </LinkWrapper>,
   )
@@ -243,8 +254,6 @@ test('does not try to load more when there is no more', () => {
         }}
         loadedBreweries={[]}
         setLoadedBreweries={() => undefined}
-        sortingDirection={'asc'}
-        sortingOrder={'brewery_name'}
         setSortingOrder={() => undefined}
         filterState={{
           filters: unusedFilters,
@@ -252,6 +261,7 @@ test('does not try to load more when there is no more', () => {
           setIsOpen: dontCall,
         }}
         isFilterChangePending={false}
+        statsParams={statsParams}
       />
     </LinkWrapper>,
   )
@@ -281,8 +291,6 @@ test('does not try to load more when loading', () => {
         }}
         loadedBreweries={undefined}
         setLoadedBreweries={() => undefined}
-        sortingDirection={'asc'}
-        sortingOrder={'brewery_name'}
         setSortingOrder={() => undefined}
         filterState={{
           filters: unusedFilters,
@@ -290,6 +298,7 @@ test('does not try to load more when loading', () => {
           setIsOpen: dontCall,
         }}
         isFilterChangePending={false}
+        statsParams={statsParams}
       />
     </LinkWrapper>,
   )
@@ -305,8 +314,6 @@ test('sets minimum review count filter', () => {
         getBreweryStatsIf={unusedStats}
         loadedBreweries={[koskipanimo, lehe]}
         setLoadedBreweries={() => undefined}
-        sortingDirection={'asc'}
-        sortingOrder={'brewery_name'}
         setSortingOrder={() => undefined}
         filterState={{
           filters: {
@@ -320,6 +327,7 @@ test('sets minimum review count filter', () => {
           setIsOpen: dontCall,
         }}
         isFilterChangePending={false}
+        statsParams={statsParams}
       />
     </LinkWrapper>,
   )
@@ -337,8 +345,6 @@ test('opens filters', async () => {
         getBreweryStatsIf={unusedStats}
         loadedBreweries={[koskipanimo, lehe]}
         setLoadedBreweries={() => undefined}
-        sortingDirection={'asc'}
-        sortingOrder={'brewery_name'}
         setSortingOrder={() => undefined}
         filterState={{
           filters: unusedFilters,
@@ -346,6 +352,7 @@ test('opens filters', async () => {
           setIsOpen: setIsFiltersOpen,
         }}
         isFilterChangePending={false}
+        statsParams={statsParams}
       />
     </LinkWrapper>,
   )

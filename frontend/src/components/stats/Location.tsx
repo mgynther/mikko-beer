@@ -72,12 +72,11 @@ function Location(props: Props): React.JSX.Element {
           isFilterChangePending={parsedSearchParams.isFilterChangePending}
           loadedLocations={loadedLocations}
           setLoadedLocations={setLoadedLocations}
-          sortingDirection={parsedSearchParams.statsParams.sortingDirection}
-          sortingOrder={parsedSearchParams.statsParams.sortingOrder}
           setSortingOrder={parsedSearchParams.changeSortingOrder}
           breweryId={props.breweryId}
           locationId={props.locationId}
           styleId={props.styleId}
+          statsParams={parsedSearchParams.statsParams}
         />
       )}
       {!isAllAtOnce && (
@@ -87,9 +86,8 @@ function Location(props: Props): React.JSX.Element {
           isFilterChangePending={parsedSearchParams.isFilterChangePending}
           loadedLocations={loadedLocations}
           setLoadedLocations={setLoadedLocations}
-          sortingDirection={parsedSearchParams.statsParams.sortingDirection}
-          sortingOrder={parsedSearchParams.statsParams.sortingOrder}
           setSortingOrder={parsedSearchParams.changeSortingOrder}
+          statsParams={parsedSearchParams.statsParams}
         />
       )}
     </>

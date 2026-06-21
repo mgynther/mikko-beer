@@ -72,9 +72,8 @@ function Brewery(props: Props): React.JSX.Element {
           isFilterChangePending={parsedSearchParams.isFilterChangePending}
           loadedBreweries={loadedBreweries}
           setLoadedBreweries={setLoadedBreweries}
-          sortingDirection={parsedSearchParams.statsParams.sortingDirection}
-          sortingOrder={parsedSearchParams.statsParams.sortingOrder}
           setSortingOrder={parsedSearchParams.changeSortingOrder}
+          statsParams={parsedSearchParams.statsParams}
           breweryId={props.breweryId}
           locationId={props.locationId}
           styleId={props.styleId}
@@ -87,9 +86,8 @@ function Brewery(props: Props): React.JSX.Element {
           isFilterChangePending={parsedSearchParams.isFilterChangePending}
           loadedBreweries={loadedBreweries}
           setLoadedBreweries={setLoadedBreweries}
-          sortingDirection={parsedSearchParams.statsParams.sortingDirection}
-          sortingOrder={parsedSearchParams.statsParams.sortingOrder}
           setSortingOrder={parsedSearchParams.changeSortingOrder}
+          statsParams={parsedSearchParams.statsParams}
         />
       )}
     </>

@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react'
-import type { SearchParameters, UseDebounce, YearMonth } from '../../core/types'
-import type { ParsedStatsParams, SearchRecord } from './filter-util'
+import type {
+  ListDirection,
+  SearchParameters,
+  UseDebounce,
+  YearMonth,
+} from '../../core/types'
+import type { SearchRecord } from './filter-util'
 import {
   averageStr,
   countStr,
@@ -10,7 +15,7 @@ import {
 } from './filter-util'
 import { invertDirection } from '../list-helpers'
 import type { StatsFilters } from './filter-types'
-import { formatYearMonth } from '../common/filter-util'
+import { formatYearMonth, toTimestamp } from '../common/filter-util'
 
 interface Props<T extends string> {
   nameProperty: string
@@ -22,12 +27,24 @@ interface Props<T extends string> {
   setState: (state: SearchRecord) => void
 }
 
+export interface FormattedStatsParams<T extends string> {
+  sortingOrder: T
+  sortingDirection: ListDirection
+  minReviewCount: number
+  maxReviewCount: number
+  minReviewAverage: number
+  maxReviewAverage: number
+  timeStart: number
+  timeEnd: number
+  isFiltersOpen: boolean
+}
+
 interface Result<T extends string> {
   searchString: string
   changeSortingOrder: (order: T) => void
   isFilterChangePending: boolean
   setIsFiltersOpen: (isOpen: boolean) => void
-  statsParams: ParsedStatsParams<T>
+  statsParams: FormattedStatsParams<T>
   filters: StatsFilters
 }
 
@@ -154,7 +171,11 @@ export function searchParams<T extends string>(props: Props<T>): Result<T> {
     changeSortingOrder,
     isFilterChangePending,
     setIsFiltersOpen,
-    statsParams,
+    statsParams: {
+      ...statsParams,
+      timeStart: toTimestamp(statsParams.timeStart, 'start'),
+      timeEnd: toTimestamp(statsParams.timeEnd, 'end'),
+    },
     filters,
   }
 }

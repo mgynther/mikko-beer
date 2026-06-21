@@ -8,11 +8,13 @@ import { openFilters } from '../common/filters-test-util'
 import type {
   GetLocationStatsIf,
   LocationStats,
+  LocationStatsSortingOrder,
   OneLocationStats,
 } from '../../core/stats/types'
 import type { UseDebounce, YearMonth } from '../../core/types'
 import type { StatsFilters } from './filter-types'
 import { dontCall } from '../../../test-util/dont-call'
+import type { FormattedStatsParams } from './search-params'
 
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
@@ -76,6 +78,18 @@ const unusedFilters: StatsFilters = {
   },
 }
 
+const statsParams: FormattedStatsParams<LocationStatsSortingOrder> = {
+  sortingOrder: 'location_name',
+  sortingDirection: 'asc',
+  minReviewCount: 1,
+  maxReviewCount: Infinity,
+  minReviewAverage: 4.0,
+  maxReviewAverage: 10.0,
+  timeStart: testTimes.min.utcTimestamp,
+  timeEnd: testTimes.max.utcTimestamp,
+  isFiltersOpen: false,
+}
+
 const unusedStats: GetLocationStatsIf = {
   useStats: () => ({
     query: async () => ({ location: [] }),
@@ -117,8 +131,6 @@ test('queries location stats', async () => {
         styleId={styleId}
         loadedLocations={undefined}
         setLoadedLocations={setLoadedLocations}
-        sortingDirection={'asc'}
-        sortingOrder={'location_name'}
         setSortingOrder={() => undefined}
         filterState={{
           filters: unusedFilters,
@@ -126,6 +138,7 @@ test('queries location stats', async () => {
           setIsOpen: () => undefined,
         }}
         isFilterChangePending={false}
+        statsParams={statsParams}
       />
     </LinkWrapper>,
   )
@@ -170,8 +183,6 @@ test('renders location stats', () => {
         styleId={styleId}
         loadedLocations={[plevna, oluthuone]}
         setLoadedLocations={() => undefined}
-        sortingDirection={'asc'}
-        sortingOrder={'location_name'}
         setSortingOrder={() => undefined}
         filterState={{
           filters: unusedFilters,
@@ -179,6 +190,7 @@ test('renders location stats', () => {
           setIsOpen: dontCall,
         }}
         isFilterChangePending={false}
+        statsParams={statsParams}
       />
     </LinkWrapper>,
   )
@@ -207,8 +219,6 @@ test('clears loaded locations on filter change pending', () => {
         styleId={styleId}
         loadedLocations={[plevna, oluthuone]}
         setLoadedLocations={setLoadedLocations}
-        sortingDirection={'asc'}
-        sortingOrder={'location_name'}
         setSortingOrder={() => undefined}
         filterState={{
           filters: unusedFilters,
@@ -216,6 +226,7 @@ test('clears loaded locations on filter change pending', () => {
           setIsOpen: dontCall,
         }}
         isFilterChangePending={true}
+        statsParams={statsParams}
       />
     </LinkWrapper>,
   )
@@ -242,8 +253,6 @@ test('renders loading', () => {
         styleId={styleId}
         loadedLocations={undefined}
         setLoadedLocations={() => undefined}
-        sortingDirection={'asc'}
-        sortingOrder={'location_name'}
         setSortingOrder={() => undefined}
         filterState={{
           filters: unusedFilters,
@@ -251,6 +260,7 @@ test('renders loading', () => {
           setIsOpen: dontCall,
         }}
         isFilterChangePending={false}
+        statsParams={statsParams}
       />
     </LinkWrapper>,
   )
@@ -269,8 +279,6 @@ test('sets minimum review count filter', () => {
         styleId={styleId}
         loadedLocations={[plevna, oluthuone]}
         setLoadedLocations={() => undefined}
-        sortingDirection={'asc'}
-        sortingOrder={'location_name'}
         setSortingOrder={() => undefined}
         filterState={{
           filters: {
@@ -284,6 +292,7 @@ test('sets minimum review count filter', () => {
           setIsOpen: dontCall,
         }}
         isFilterChangePending={false}
+        statsParams={statsParams}
       />
     </LinkWrapper>,
   )
@@ -304,8 +313,6 @@ test('opens filter', async () => {
         styleId={styleId}
         loadedLocations={[plevna, oluthuone]}
         setLoadedLocations={() => undefined}
-        sortingDirection={'asc'}
-        sortingOrder={'location_name'}
         setSortingOrder={() => undefined}
         filterState={{
           filters: unusedFilters,
@@ -313,6 +320,7 @@ test('opens filter', async () => {
           setIsOpen: setIsFiltersOpen,
         }}
         isFilterChangePending={false}
+        statsParams={statsParams}
       />
     </LinkWrapper>,
   )

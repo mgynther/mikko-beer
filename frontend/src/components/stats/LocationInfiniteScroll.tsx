@@ -5,11 +5,10 @@ import type {
   LocationStatsSortingOrder,
   OneLocationStats,
 } from '../../core/stats/types'
-import type { ListDirection } from '../../core/types'
 
 import LocationStatsTable from './LocationStatsTable'
-import { toTimestamp } from '../common/filter-util'
 import type { StatsFilterState } from './filter-types'
+import type { FormattedStatsParams } from './search-params'
 
 const pageSize = 30
 
@@ -17,28 +16,28 @@ interface Props {
   getLocationStatsIf: GetLocationStatsIf
   filterState: StatsFilterState
   isFilterChangePending: boolean
-  sortingDirection: ListDirection
-  sortingOrder: LocationStatsSortingOrder
   setSortingOrder: (order: LocationStatsSortingOrder) => void
+  statsParams: FormattedStatsParams<LocationStatsSortingOrder>
   loadedLocations: OneLocationStats[] | undefined
   setLoadedLocations: (locations: OneLocationStats[] | undefined) => void
 }
 
 function LocationInfiniteScroll(props: Props): React.JSX.Element {
-  const { filters } = props.filterState
-  const minReviewCount = filters.minReviewCount.value
-  const maxReviewCount = filters.maxReviewCount.value
-  const minReviewAverage = filters.minReviewAverage.value
-  const maxReviewAverage = filters.maxReviewAverage.value
-  const timeStart = filters.timeStart.value
-  const timeEnd = filters.timeEnd.value
+  const {
+    minReviewCount,
+    maxReviewCount,
+    minReviewAverage,
+    maxReviewAverage,
+    sortingDirection,
+    sortingOrder,
+    timeStart,
+    timeEnd,
+  } = props.statsParams
   const {
     isFilterChangePending,
     loadedLocations,
     setLoadedLocations,
-    sortingOrder,
     setSortingOrder,
-    sortingDirection,
   } = props
   const {
     query,
@@ -68,8 +67,8 @@ function LocationInfiniteScroll(props: Props): React.JSX.Element {
         maxReviewCount,
         minReviewAverage,
         maxReviewAverage,
-        timeStart: toTimestamp(timeStart, 'start'),
-        timeEnd: toTimestamp(timeEnd, 'end'),
+        timeStart,
+        timeEnd,
       })
       const newLocations = [...(loadedLocations ?? []), ...result.location]
       setLoadedLocations(newLocations)
@@ -94,6 +93,8 @@ function LocationInfiniteScroll(props: Props): React.JSX.Element {
     sortingOrder,
     sortingDirection,
     query,
+    timeStart,
+    timeEnd,
   ])
 
   return (
