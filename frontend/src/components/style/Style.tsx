@@ -73,7 +73,7 @@ function Style(props: Props): React.JSX.Element {
             <div>
               <EditButton
                 disabled={false}
-                getLogin={props.listReviewsByStyleIf.reviewIf.login}
+                getLogin={props.updateStyleIf.getLogin}
                 onClick={() => {
                   setMode(EditableMode.Edit)
                   setInitialStyle({
@@ -109,7 +109,9 @@ function Style(props: Props): React.JSX.Element {
               props.listReviewsByStyleIf.reviewIf.update.selectBeerIf.create
                 .editBeerIf.selectStyleIf.list
             }
-            updateStyleIf={props.updateStyleIf}
+            updateStyleHookIf={{
+              useUpdate: props.updateStyleIf.useUpdate,
+            }}
             onCancel={() => {
               setInitialStyle(undefined)
               setMode(EditableMode.View)

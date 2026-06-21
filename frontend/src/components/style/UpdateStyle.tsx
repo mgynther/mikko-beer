@@ -4,7 +4,7 @@ import type {
   GetStyleIf,
   ListStylesIf,
   StyleWithParentIds,
-  UpdateStyleIf,
+  UpdateStyleHookIf,
 } from '../../core/style/types'
 
 import EditActions from '../common/EditActions'
@@ -15,7 +15,7 @@ import StyleEditor from './StyleEditor'
 interface Props {
   getStyleIf: GetStyleIf
   listStylesIf: ListStylesIf
-  updateStyleIf: UpdateStyleIf
+  updateStyleHookIf: UpdateStyleHookIf
   initialStyle: StyleWithParentIds
   onCancel: () => void
   onSaved: () => void
@@ -29,7 +29,7 @@ function UpdateStyle(props: Props): React.JSX.Element {
     undefined,
   )
   const { update, hasError, isLoading, isSuccess } =
-    props.updateStyleIf.useUpdate()
+    props.updateStyleHookIf.useUpdate()
   const onSaved = props.onSaved
 
   useEffect(() => {

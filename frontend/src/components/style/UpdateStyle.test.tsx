@@ -72,7 +72,7 @@ test('updates style', async () => {
     <UpdateStyle
       getStyleIf={getStyle}
       listStylesIf={listStyles}
-      updateStyleIf={{
+      updateStyleHookIf={{
         useUpdate: () => ({
           update,
           hasError: false,
@@ -118,7 +118,7 @@ test('shows loading indicator', async () => {
         }),
       }}
       listStylesIf={listStyles}
-      updateStyleIf={{
+      updateStyleHookIf={{
         useUpdate: () => ({
           update: dontCall,
           hasError: false,
@@ -141,7 +141,7 @@ test('cancels updating style', async () => {
     <UpdateStyle
       getStyleIf={getStyle}
       listStylesIf={listStyles}
-      updateStyleIf={{
+      updateStyleHookIf={{
         useUpdate: () => ({
           update: dontCall,
           hasError: false,

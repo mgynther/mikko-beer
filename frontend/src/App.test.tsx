@@ -430,6 +430,7 @@ const storeIf: StoreIf = {
   listStylesIf,
   updateStyleIf: {
     useUpdate: dontCall,
+    getLogin: getUndefinedLogin,
   },
   userIf: {
     create: {

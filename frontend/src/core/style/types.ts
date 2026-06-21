@@ -1,3 +1,4 @@
+import type { GetLogin } from '../login/types'
 import type { SearchFieldIf } from '../search/types'
 
 export interface CreateStyleRequest {
@@ -63,11 +64,18 @@ export interface SelectStyleIf {
   list: ListStylesIf
 }
 
+type UseUpdateStyle = () => {
+  update: (style: StyleWithParentIds) => Promise<void>
+  hasError: boolean
+  isLoading: boolean
+  isSuccess: boolean
+}
+
+export interface UpdateStyleHookIf {
+  useUpdate: UseUpdateStyle
+}
+
 export interface UpdateStyleIf {
-  useUpdate: () => {
-    update: (style: StyleWithParentIds) => Promise<void>
-    hasError: boolean
-    isLoading: boolean
-    isSuccess: boolean
-  }
+  useUpdate: UseUpdateStyle
+  getLogin: GetLogin
 }

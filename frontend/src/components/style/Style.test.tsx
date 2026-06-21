@@ -324,6 +324,7 @@ const dontUpdate: UpdateStyleIf = {
     isLoading: false,
     isSuccess: false,
   }),
+  getLogin: () => login,
 }
 
 test('renders style', async () => {
@@ -437,6 +438,7 @@ test('updates style', async () => {
             isLoading: false,
             isSuccess: update.mock.calls.length > 0,
           }),
+          getLogin: () => login,
         }}
         listReviewsByStyleIf={getListReviewsIf([])}
         listStoragesByStyleIf={getListStoragesByStyleIf([])}
@@ -499,6 +501,7 @@ test('cancels update', async () => {
             isLoading: false,
             isSuccess: false,
           }),
+          getLogin: () => login,
         }}
         listReviewsByStyleIf={getListReviewsIf([])}
         listStoragesByStyleIf={getListStoragesByStyleIf([])}
