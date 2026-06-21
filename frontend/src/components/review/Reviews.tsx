@@ -10,7 +10,6 @@ import ReviewList from './ReviewList'
 
 import './Review.css'
 import { parseSearchParams } from './search-params'
-import { toTimestamp } from '../common/filter-util'
 
 const pageSize = 20
 
@@ -49,11 +48,10 @@ function Reviews(props: Props): React.JSX.Element {
   const hasMore =
     reviewArray.length > 0 || isUninitialized || loadedReviews === undefined
 
-  const { minRating, maxRating, minTime, maxTime } = parsedSearchParams.filters
+  const { minRating, maxRating } = parsedSearchParams.filters
   const minRatingValue = minRating.value
   const maxRatingValue = maxRating.value
-  const minTimeValue = toTimestamp(minTime.value, 'start')
-  const maxTimeValue = toTimestamp(maxTime.value, 'end')
+  const { minTime, maxTime } = parsedSearchParams
 
   useEffect(() => {
     const loadMore = async (): Promise<void> => {
@@ -66,8 +64,8 @@ function Reviews(props: Props): React.JSX.Element {
         filter: {
           minRating: minRatingValue,
           maxRating: maxRatingValue,
-          minTime: minTimeValue,
-          maxTime: maxTimeValue,
+          minTime,
+          maxTime,
         },
       })
       setLoadedReviews([...(loadedReviews ?? []), ...result.reviews])
@@ -90,8 +88,8 @@ function Reviews(props: Props): React.JSX.Element {
     direction,
     minRatingValue,
     maxRatingValue,
-    minTimeValue,
-    maxTimeValue,
+    minTime,
+    maxTime,
   ])
 
   return (

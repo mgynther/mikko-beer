@@ -3,7 +3,6 @@ import React from 'react'
 import type { ListReviewsByIf } from '../../core/review/types'
 import ReviewList from '../review/ReviewList'
 import { parseSearchParams } from './search-params'
-import { toTimestamp } from '../common/filter-util'
 
 interface Props {
   id: string
@@ -26,11 +25,10 @@ const ReviewsBy = (props: Props): React.JSX.Element => {
   })
   const order = parsedSearchParams.reviewListParams.sortingOrder
   const direction = parsedSearchParams.reviewListParams.sortingDirection
-  const { minRating, maxRating, minTime, maxTime } = parsedSearchParams.filters
+  const { minRating, maxRating } = parsedSearchParams.filters
   const minRatingValue = minRating.value
   const maxRatingValue = maxRating.value
-  const minTimeValue = toTimestamp(minTime.value, 'start')
-  const maxTimeValue = toTimestamp(maxTime.value, 'end')
+  const { minTime, maxTime } = parsedSearchParams
 
   const { reviews, isLoading: isLoadingReviews } =
     props.listReviewsByIf.useList({
@@ -42,8 +40,8 @@ const ReviewsBy = (props: Props): React.JSX.Element => {
       filter: {
         minRating: minRatingValue,
         maxRating: maxRatingValue,
-        minTime: minTimeValue,
-        maxTime: maxTimeValue,
+        minTime,
+        maxTime,
       },
     })
 

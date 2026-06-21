@@ -9,7 +9,7 @@ import {
 } from './filter-util'
 import { invertDirection } from '../list-helpers'
 import type { ReviewFilters } from './filter-types'
-import { formatYearMonth } from '../common/filter-util'
+import { formatYearMonth, toTimestamp } from '../common/filter-util'
 import type { ReviewSorting, ReviewSortingOrder } from '../../core/review/types'
 
 interface Props {
@@ -28,6 +28,8 @@ interface Result {
   setIsFiltersOpen: (isOpen: boolean) => void
   reviewListParams: ParsedReviewListParams
   filters: ReviewFilters
+  minTime: number
+  maxTime: number
 }
 
 export function parseSearchParams(props: Props): Result {
@@ -145,5 +147,7 @@ export function parseSearchParams(props: Props): Result {
     setIsFiltersOpen,
     reviewListParams,
     filters,
+    minTime: toTimestamp(props.minTime, 'start'),
+    maxTime: toTimestamp(props.maxTime, 'end'),
   }
 }
