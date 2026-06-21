@@ -55,7 +55,7 @@ function Brewery(props: Props): React.JSX.Element {
           <div>
             <EditButton
               disabled={false}
-              getLogin={props.listReviewsByBreweryIf.reviewIf.login}
+              getLogin={props.updateBreweryIf.getLogin}
               onClick={() => {
                 setMode(EditableMode.Edit)
                 setInitialBrewery({ ...brewery })
@@ -66,7 +66,9 @@ function Brewery(props: Props): React.JSX.Element {
       )}
       {mode === EditableMode.Edit && initialBrewery !== undefined && (
         <UpdateBrewery
-          updateBreweryIf={props.updateBreweryIf}
+          updateBreweryHookIf={{
+            useUpdate: props.updateBreweryIf.useUpdate,
+          }}
           initialBrewery={initialBrewery}
           onCancel={() => {
             setInitialBrewery(undefined)

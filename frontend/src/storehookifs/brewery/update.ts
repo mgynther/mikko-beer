@@ -1,9 +1,9 @@
-import type { Brewery, UpdateBreweryIf } from '../../core/brewery/types'
+import type { Brewery, UpdateBreweryHookIf } from '../../core/brewery/types'
 import { useUpdateBreweryMutation } from '../../store/brewery/api'
 import { validateBrewery } from '../../validation/brewery'
 
-const updateBrewery: () => UpdateBreweryIf = () => {
-  const updateBreweryIf: UpdateBreweryIf = {
+const updateBrewery: () => UpdateBreweryHookIf = () => {
+  const updateBreweryIf: UpdateBreweryHookIf = {
     useUpdate: () => {
       const [updateBrewery, { isLoading }] = useUpdateBreweryMutation()
       return {

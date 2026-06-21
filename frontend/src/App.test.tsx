@@ -237,6 +237,7 @@ const storeIf: StoreIf = {
   searchBreweryIf,
   updateBreweryIf: {
     useUpdate: dontCall,
+    getLogin: getUndefinedLogin,
   },
   listContainersIf: {
     useList: () => ({

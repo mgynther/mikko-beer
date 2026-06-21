@@ -1,3 +1,4 @@
+import type { GetLogin } from '../login/types'
 import type { SearchFieldIf } from '../search/types'
 import type { Pagination, InfiniteScroll } from '../types'
 
@@ -38,11 +39,18 @@ export interface ListBreweriesIf {
   infiniteScroll: InfiniteScroll
 }
 
+type UseUpdateBrewery = () => {
+  update: (breweryRequest: Brewery) => Promise<void>
+  isLoading: boolean
+}
+
+export interface UpdateBreweryHookIf {
+  useUpdate: UseUpdateBrewery
+}
+
 export interface UpdateBreweryIf {
-  useUpdate: () => {
-    update: (breweryRequest: Brewery) => Promise<void>
-    isLoading: boolean
-  }
+  useUpdate: UseUpdateBrewery
+  getLogin: GetLogin
 }
 
 type UseSearchBrewery = () => {

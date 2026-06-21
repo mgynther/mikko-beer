@@ -253,6 +253,7 @@ test('updates brewery', async () => {
           update,
           isLoading: false,
         }),
+        getLogin: getLogin(),
       }}
       statsIf={statsIf}
       useUrlPathParams={useUrlPathParams}
@@ -286,6 +287,7 @@ const dontUpdateBreweryIf: UpdateBreweryIf = {
     update: dontCall,
     isLoading: false,
   }),
+  getLogin: getLogin(),
 }
 
 test('cancel update', async () => {

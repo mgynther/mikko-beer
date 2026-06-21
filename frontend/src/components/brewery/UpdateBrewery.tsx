@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 
-import type { UpdateBreweryIf, Brewery } from '../../core/brewery/types'
+import type { UpdateBreweryHookIf, Brewery } from '../../core/brewery/types'
 
 import EditActions from '../common/EditActions'
 
 import BreweryEditor from './BreweryEditor'
 
 interface Props {
-  updateBreweryIf: UpdateBreweryIf
+  updateBreweryHookIf: UpdateBreweryHookIf
   initialBrewery: Brewery
   onCancel: () => void
   onSaved: () => void
@@ -15,7 +15,7 @@ interface Props {
 
 function UpdateBrewery(props: Props): React.JSX.Element {
   const [newBrewery, setNewBrewery] = useState<Brewery | undefined>(undefined)
-  const { update, isLoading } = props.updateBreweryIf.useUpdate()
+  const { update, isLoading } = props.updateBreweryHookIf.useUpdate()
   async function doUpdate(newBrewery: Brewery): Promise<void> {
     await update({ ...newBrewery })
     props.onSaved()

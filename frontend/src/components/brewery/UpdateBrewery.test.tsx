@@ -17,7 +17,7 @@ test('updates brewery', async () => {
         id,
         name: 'Koksipanimo',
       }}
-      updateBreweryIf={{
+      updateBreweryHookIf={{
         useUpdate: () => ({
           update,
           isLoading: false,
@@ -55,7 +55,7 @@ test('cancel update', async () => {
         id,
         name: 'Koskipanimo',
       }}
-      updateBreweryIf={{
+      updateBreweryHookIf={{
         useUpdate: () => ({
           update: dontCall,
           isLoading: false,

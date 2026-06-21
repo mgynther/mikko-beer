@@ -164,19 +164,22 @@ function RtkApp(): React.JSX.Element {
     useDebounce: useDebounce<string>,
   }
 
+  const getLogin: GetLogin = () => {
+    const login: Login = useSelector(selectLogin)
+    return login
+  }
+
   const searchBreweryIf: SearchBreweryIf = {
     ...searchBrewery(),
     searchFieldIf,
   }
-  const updateBreweryIf: UpdateBreweryIf = updateBrewery()
+  const updateBreweryIf: UpdateBreweryIf = {
+    ...updateBrewery(),
+    getLogin,
+  }
   const selectBreweryIf: SelectBreweryIf = {
     create: createBreweryIf,
     search: searchBreweryIf,
-  }
-
-  const getLogin: GetLogin = () => {
-    const login: Login = useSelector(selectLogin)
-    return login
   }
 
   const createContainerIf: CreateContainerIf = createContainer()
