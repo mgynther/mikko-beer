@@ -31,7 +31,7 @@
     "koa-compress": "5.2.2",
     "kysely": "0.29.2",
     "pg": "8.22.0",
-    "uuid": "14.0.0"
+    "uuid": "14.0.1"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
