@@ -79,10 +79,7 @@ export interface BreweryStats {
 }
 
 export type BreweryStatsSortingOrder =
-  | 'average'
-  | 'brewery_name'
-  | 'count'
-  | 'std_dev'
+  'average' | 'brewery_name' | 'count' | 'std_dev'
 
 export interface BreweryStatsSorting {
   order: BreweryStatsSortingOrder
@@ -104,10 +101,7 @@ export interface LocationStats {
 }
 
 export type LocationStatsSortingOrder =
-  | 'average'
-  | 'location_name'
-  | 'count'
-  | 'std_dev'
+  'average' | 'location_name' | 'count' | 'std_dev'
 
 export interface LocationStatsSorting {
   order: LocationStatsSortingOrder
@@ -192,10 +186,7 @@ export interface StyleStats {
 }
 
 export type StyleStatsSortingOrder =
-  | 'average'
-  | 'style_name'
-  | 'count'
-  | 'std_dev'
+  'average' | 'style_name' | 'count' | 'std_dev'
 
 export interface StyleStatsSorting {
   order: StyleStatsSortingOrder

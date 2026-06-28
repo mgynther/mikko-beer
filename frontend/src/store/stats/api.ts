@@ -73,9 +73,7 @@ function andMaxReviewCount(maxReviewCount: number): string {
 
 function statsFilters(
   params:
-    | BreweryStatsQueryParams
-    | LocationStatsQueryParams
-    | StyleStatsQueryParams,
+    BreweryStatsQueryParams | LocationStatsQueryParams | StyleStatsQueryParams,
 ): string {
   return `min_review_count=${params.minReviewCount}${andMaxReviewCount(
     params.maxReviewCount,

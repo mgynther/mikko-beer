@@ -6,10 +6,7 @@ import type {
 import { formatYearMonth, parseYearMonth } from '../common/filter-util'
 
 export type FilterNumKey =
-  | 's_min_count'
-  | 's_max_count'
-  | 's_min_avg'
-  | 's_max_avg'
+  's_min_count' | 's_max_count' | 's_min_avg' | 's_max_avg'
 
 const filterNumDefaults: Record<FilterNumKey, number> = {
   s_min_count: 1,
