@@ -10,19 +10,13 @@ type AuthenticationErrors =
 type BeerApiErrors = 'InvalidBeer' | 'InvalidBeerId' | 'BeerNotFound'
 
 type BreweryApiErrors =
-  | 'InvalidBrewery'
-  | 'InvalidBreweryId'
-  | 'BreweryNotFound'
+  'InvalidBrewery' | 'InvalidBreweryId' | 'BreweryNotFound'
 
 type ContainerApiErrors =
-  | 'InvalidContainer'
-  | 'InvalidContainerId'
-  | 'ContainerNotFound'
+  'InvalidContainer' | 'InvalidContainerId' | 'ContainerNotFound'
 
 type LocationApiErrors =
-  | 'InvalidLocation'
-  | 'InvalidLocationId'
-  | 'LocationNotFound'
+  'InvalidLocation' | 'InvalidLocationId' | 'LocationNotFound'
 
 type ReviewApiErrors =
   | 'InvalidReview'
@@ -37,9 +31,7 @@ type StatsApiErrors =
   | 'InvalidStatsIdFilter'
 
 type StorageApiErrors =
-  | 'InvalidStorage'
-  | 'InvalidStorageId'
-  | 'StorageNotFound'
+  'InvalidStorage' | 'InvalidStorageId' | 'StorageNotFound'
 
 type StyleApiErrors =
   | 'CyclicStyleRelationship'

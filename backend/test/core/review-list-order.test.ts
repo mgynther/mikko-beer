@@ -19,8 +19,7 @@ function valid(): Record<string, unknown> {
 interface CommonCase {
   title: string
   func:
-    | typeof validateFullReviewListOrder
-    | typeof validateFilteredReviewListOrder
+    typeof validateFullReviewListOrder | typeof validateFilteredReviewListOrder
 }
 
 describe('review list order unit tests', () => {

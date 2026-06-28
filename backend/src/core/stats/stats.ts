@@ -64,10 +64,7 @@ export type LocationStats = Array<{
 }>
 
 type BreweryStatsOrderProperty =
-  | 'average'
-  | 'brewery_name'
-  | 'count'
-  | 'std_dev'
+  'average' | 'brewery_name' | 'count' | 'std_dev'
 
 export interface BreweryStatsOrder {
   property: BreweryStatsOrderProperty
@@ -75,10 +72,7 @@ export interface BreweryStatsOrder {
 }
 
 type LocationStatsOrderProperty =
-  | 'average'
-  | 'location_name'
-  | 'count'
-  | 'std_dev'
+  'average' | 'location_name' | 'count' | 'std_dev'
 
 export interface LocationStatsOrder {
   property: LocationStatsOrderProperty

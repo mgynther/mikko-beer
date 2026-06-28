@@ -86,10 +86,7 @@ export interface ReviewRequest {
 }
 
 export type ReviewListOrderProperty =
-  | 'beer_name'
-  | 'brewery_name'
-  | 'rating'
-  | 'time'
+  'beer_name' | 'brewery_name' | 'rating' | 'time'
 
 export interface ReviewListOrder {
   property: ReviewListOrderProperty
