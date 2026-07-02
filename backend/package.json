@@ -38,10 +38,10 @@
     "@types/jsonwebtoken": "9.0.10",
     "@types/koa": "3.0.3",
     "@types/koa-compress": "4.0.7",
-    "@types/node": "26.0.1",
+    "@types/node": "26.1.0",
     "@types/pg": "8.20.0",
-    "prettier": "3.9.0",
+    "prettier": "3.9.4",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.62.0"
+    "typescript-eslint": "8.62.1"
   }
 }
