@@ -148,7 +148,7 @@ export function parseSearchParams(props: Props): Result {
     setIsFiltersOpen,
     reviewListParams,
     filters,
-    minTime: toTimestamp(props.minTime, 'start'),
-    maxTime: toTimestamp(props.maxTime, 'end'),
+    minTime: toTimestamp(reviewListParams.minTime, 'start'),
+    maxTime: toTimestamp(reviewListParams.maxTime, 'end'),
   }
 }

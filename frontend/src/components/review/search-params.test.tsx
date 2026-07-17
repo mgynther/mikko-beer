@@ -202,6 +202,13 @@ test('filters expose parsed values and props bounds', () => {
       value: { year: 2022, month: 8 },
     },
   })
+  // The filter value is a YearMonth, while statsParams exposes a timestamp.
+  expect(getByTestId('minTime').textContent).toEqual(
+    `${new Date(2019, 2, 1).getTime()}`,
+  )
+  expect(getByTestId('maxTime').textContent).toEqual(
+    `${new Date(2022, 8, 0, 23, 59, 59).getTime()}`,
+  )
 })
 
 // Group 3: timestamp outputs.
