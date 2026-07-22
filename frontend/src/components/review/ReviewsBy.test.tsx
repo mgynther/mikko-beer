@@ -14,6 +14,7 @@ import type {
   ReviewContainerIf,
   ReviewIf,
   SetSearch,
+  UseListReviewsByResult,
 } from '../../core/review/types'
 import type {
   CreateBeerIf,
@@ -141,6 +142,17 @@ const joinedReview = {
   time: '2023-08-15T12:00:00.000Z',
 }
 
+const defaultUseListReviewsByResult: UseListReviewsByResult = {
+  reviews: {
+    reviews: [joinedReview],
+    sorting: {
+      order: 'time',
+      direction: 'desc',
+    },
+  },
+  isLoading: false,
+}
+
 const searchLocationIf: SearchLocationIf = {
   useSearch: () => ({
     search: dontCall,
@@ -209,16 +221,7 @@ test('lists reviews', async () => {
         listReviewsByIf={{
           useList: (params: IdFilteredListReviewParams) => {
             list(params)
-            return {
-              reviews: {
-                reviews: [joinedReview],
-                sorting: {
-                  order: 'time',
-                  direction: 'desc',
-                },
-              },
-              isLoading: false,
-            }
+            return { ...defaultUseListReviewsByResult }
           },
           filterIf: listFilterIf(setSearch),
           reviewIf: dontUpdateReviewIf,
@@ -239,6 +242,59 @@ test('lists reviews', async () => {
           maxRating: 10,
           minTime: testTimes.min.utcTimestamp,
           maxTime: testTimes.max.utcTimestamp,
+        },
+      },
+    ],
+  ])
+})
+
+test('lists reviews with search parameters', async () => {
+  const list = vitest.fn()
+  const id = '301b473a-218f-4058-af00-61664c991da9'
+  const setSearch = vitest.fn()
+  render(
+    <LinkWrapper>
+      <ReviewsBy
+        id={id}
+        listReviewsByIf={{
+          useList: (params: IdFilteredListReviewParams) => {
+            list(params)
+            return { ...defaultUseListReviewsByResult }
+          },
+          filterIf: {
+            ...listFilterIf(setSearch),
+            useUrlSearchParams: () => ({
+              get: (param: string): string | undefined => {
+                const values: Record<string, string> = {
+                  r_min_rating: '5',
+                  r_max_rating: '9',
+                  r_min_time: '2018-01',
+                  r_max_time: '2024-11',
+                  r_order: 'rating',
+                  r_direction: 'desc',
+                }
+                return values[param]
+              },
+            }),
+          },
+          reviewIf: dontUpdateReviewIf,
+        }}
+      />
+    </LinkWrapper>,
+  )
+  expect(list.mock.calls).toEqual([
+    [
+      {
+        id,
+        sorting: {
+          direction: 'desc',
+          order: 'rating',
+        },
+        filter: {
+          minRating: 5,
+          maxRating: 9,
+          minTime: new Date('2018-01-01T00:00:00').getTime(),
+          maxTime: new Date('2024-11-30T23:59:59').getTime(),
         },
       },
     ],
@@ -291,16 +347,7 @@ function getListReviewsByIf(
       reviews: JoinedReviewList | undefined
       isLoading: boolean
     } => {
-      return {
-        reviews: {
-          reviews: [joinedReview],
-          sorting: {
-            order: 'time',
-            direction: 'desc',
-          },
-        },
-        isLoading: false,
-      }
+      return { ...defaultUseListReviewsByResult }
     },
     filterIf: listFilterIf(setSearch),
     reviewIf,
@@ -400,16 +447,7 @@ test('opens filters', async () => {
         id={'927ba184-4762-43d5-89f5-007e33ead51b'}
         listReviewsByIf={{
           useList: () => {
-            return {
-              reviews: {
-                reviews: [joinedReview],
-                sorting: {
-                  order: 'time',
-                  direction: 'desc',
-                },
-              },
-              isLoading: false,
-            }
+            return { ...defaultUseListReviewsByResult }
           },
           filterIf: listFilterIf(setSearch),
           reviewIf: dontUpdateReviewIf,
@@ -480,16 +518,7 @@ sliderChangeTests.forEach((testCase) => {
           id={'a9c672ff-c1c1-4abf-b45c-f2d263bab9ce'}
           listReviewsByIf={{
             useList: () => {
-              return {
-                reviews: {
-                  reviews: [joinedReview],
-                  sorting: {
-                    order: 'time',
-                    direction: 'desc',
-                  },
-                },
-                isLoading: false,
-              }
+              return { ...defaultUseListReviewsByResult }
             },
             filterIf: {
               ...listFilterIf(setSearch),

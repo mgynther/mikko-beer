@@ -136,10 +136,14 @@ export interface ListReviewsIf {
   filterIf: ListFilterIf
 }
 
-type UseListReviewsBy = (params: IdFilteredListReviewParams) => {
+export interface UseListReviewsByResult {
   reviews: JoinedReviewList | undefined
   isLoading: boolean
 }
+
+type UseListReviewsBy = (
+  params: IdFilteredListReviewParams,
+) => UseListReviewsByResult
 
 export interface ListReviewsByHookIf {
   useList: UseListReviewsBy
