@@ -165,6 +165,14 @@ const review = {
   time: dateStr,
 }
 
+const defaultReviewList: JoinedReviewList = {
+  reviews: [joinedReview],
+  sorting: {
+    order: 'beer_name',
+    direction: 'asc',
+  },
+}
+
 const searchLocationIf: SearchLocationIf = {
   useSearch: () => ({
     search: dontCall,
@@ -429,29 +437,14 @@ test('stops loading more', async () => {
               list: async (params): Promise<JoinedReviewList> => {
                 listMore(params)
                 if (getListRequestCount() > 1) {
-                  return {
-                    reviews: [],
-                    sorting: {
-                      order: 'beer_name',
-                      direction: 'asc',
-                    },
-                  }
+                  return { ...defaultReviewList, reviews: [] }
                 }
-                return {
-                  reviews: [joinedReview],
-                  sorting: {
-                    order: 'beer_name',
-                    direction: 'asc',
-                  },
-                }
+                return defaultReviewList
               },
-              reviewList: {
-                reviews: getListRequestCount() > 1 ? [] : [joinedReview],
-                sorting: {
-                  order: 'beer_name',
-                  direction: 'asc',
-                },
-              },
+              reviewList:
+                getListRequestCount() > 1
+                  ? { ...defaultReviewList, reviews: [] }
+                  : defaultReviewList,
               isLoading: false,
               isUninitialized: false,
             }
@@ -519,6 +512,73 @@ test('stops loading more', async () => {
     scrollCb()
   })
   expect(listMore).toHaveBeenCalledTimes(2)
+})
+
+test('lists reviews with search parameters', async () => {
+  const listMore = vitest.fn()
+  let scrollCb: () => void = () => undefined
+  render(
+    <LinkWrapper>
+      <Reviews
+        listReviewsIf={{
+          useList: () => ({
+            list: async (params): Promise<JoinedReviewList> => {
+              listMore(params)
+              return defaultReviewList
+            },
+            reviewList: defaultReviewList,
+            isLoading: false,
+            isUninitialized: false,
+          }),
+          infiniteScroll: (cb): (() => undefined) => {
+            scrollCb = cb
+            return () => undefined
+          },
+          filterIf: {
+            ...listFilterIf(() => undefined),
+            useUrlSearchParams: () => ({
+              get: (param: string): string | undefined => {
+                const values: Record<string, string> = {
+                  r_min_rating: '5',
+                  r_max_rating: '9',
+                  r_min_time: '2018-01',
+                  r_max_time: '2024-11',
+                  r_order: 'rating',
+                  r_direction: 'desc',
+                }
+                return values[param]
+              },
+            }),
+          },
+        }}
+        reviewIf={dontUpdateReviewIf}
+      />
+      <ContentEnd />
+    </LinkWrapper>,
+  )
+  await act(async () => {
+    scrollCb()
+  })
+  expect(listMore.mock.calls).toEqual([
+    [
+      {
+        pagination: {
+          size: 20,
+          skip: 0,
+        },
+        sorting: {
+          direction: 'desc',
+          order: 'rating',
+        },
+        filter: {
+          minRating: 5,
+          maxRating: 9,
+          minTime: new Date('2018-01-01T00:00:00').getTime(),
+          maxTime: new Date('2024-11-30T23:59:59').getTime(),
+        },
+      },
+    ],
+  ])
 })
 
 test('opens filters', async () => {
