@@ -6,6 +6,41 @@
 
 .RatingNumber {
   text-align: center;
+  color: hsl(0, 0%, 0%);
+  border-radius: 10px;
+  border: 1px solid hsl(0, 0%, 0%);
+  padding: 5px;
+  margin: auto;
+  max-width: 55px;
+  min-width: 55px;
+}
+
+.Rating-4 {
+  background-color: var(--rating-color-4);
+}
+
+.Rating-5 {
+  background-color: var(--rating-color-5);
+}
+
+.Rating-6 {
+  background-color: var(--rating-color-6);
+}
+
+.Rating-7 {
+  background-color: var(--rating-color-7);
+}
+
+.Rating-8 {
+  background-color: var(--rating-color-8);
+}
+
+.Rating-9 {
+  background-color: var(--rating-color-9);
+}
+
+.Rating-10 {
+  background-color: var(--rating-color-10);
 }
 
 .RatingSlider {

@@ -83,6 +83,7 @@
   text-align: center;
   justify-content: center;
   border-radius: 10px;
+  border: 1px solid hsl(0, 0%, 0%);
   color: hsl(0, 0%, 0%);
   font-size: 16px;
   width: 55px;
@@ -99,29 +100,29 @@
 }
 
 .Review-rating-4 {
-  background-color: hsl(0, 30%, 62%);
+  background-color: var(--rating-color-4);
 }
 
 .Review-rating-5 {
-  background-color: hsl(21, 30%, 58%);
+  background-color: var(--rating-color-5);
 }
 
 .Review-rating-6 {
-  background-color: hsl(42, 30%, 54%);
+  background-color: var(--rating-color-6);
 }
 
 .Review-rating-7 {
-  background-color: hsl(63, 30%, 50%);
+  background-color: var(--rating-color-7);
 }
 
 .Review-rating-8 {
-  background-color: hsl(84, 30%, 46%);
+  background-color: var(--rating-color-8);
 }
 
 .Review-rating-9 {
-  background-color: hsl(105, 30%, 42%);
+  background-color: var(--rating-color-9);
 }
 
 .Review-rating-10 {
-  background-color: hsl(126, 30%, 38%);
+  background-color: var(--rating-color-10);
 }

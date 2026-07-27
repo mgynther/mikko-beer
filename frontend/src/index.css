@@ -1,3 +1,13 @@
+:root {
+  --rating-color-4: hsl(0, 30%, 62%);
+  --rating-color-5: hsl(21, 30%, 58%);
+  --rating-color-6: hsl(42, 30%, 54%);
+  --rating-color-7: hsl(63, 30%, 50%);
+  --rating-color-8: hsl(84, 30%, 46%);
+  --rating-color-9: hsl(105, 30%, 42%);
+  --rating-color-10: hsl(126, 30%, 38%);
+}
+
 body {
   margin: 0;
   font-family:

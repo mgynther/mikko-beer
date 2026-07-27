@@ -267,7 +267,7 @@ function ReviewEditor(props: Props): React.JSX.Element {
       <div>
         <h5>Rating</h5>
         <div className='ReviewContent'>
-          <div className='RatingNumber'>{`${rating}`}</div>
+          <div className={`RatingNumber Rating-${rating}`}>{`${rating}`}</div>
           <Slider
             id='rating'
             className='RatingSlider'
