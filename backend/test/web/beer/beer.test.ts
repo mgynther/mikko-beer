@@ -7,6 +7,8 @@ import type {
   CreatedOrUpdatedBeer,
   ReadBeer,
 } from '../../../src/web/beer/beer.controller.js'
+import type { CreatedOrUpdatedBrewery } from '../../../src/web/brewery/brewery.controller.js'
+import type { CreatedOrUpdatedStyle } from '../../../src/web/style/style.controller.js'
 
 describe('beer tests', () => {
   const ctx = new TestContext()
@@ -18,18 +20,16 @@ describe('beer tests', () => {
   afterEach(ctx.afterEach)
 
   async function createBeer() {
-    const styleRes = await ctx.request.post(
+    const styleRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
       `/api/v1/style`,
       { name: 'Kriek', parents: [] },
       ctx.adminAuthHeaders(),
     )
     assertEqual(styleRes.status, 201)
 
-    const breweryRes = await ctx.request.post(
-      `/api/v1/brewery`,
-      { name: 'Lindemans' },
-      ctx.adminAuthHeaders(),
-    )
+    const breweryRes = await ctx.request.post<{
+      brewery: CreatedOrUpdatedBrewery
+    }>(`/api/v1/brewery`, { name: 'Lindemans' }, ctx.adminAuthHeaders())
     assertEqual(breweryRes.status, 201)
 
     const beerRes = await ctx.request.post<{ beer: CreatedOrUpdatedBeer }>(
@@ -123,35 +123,35 @@ describe('beer tests', () => {
   })
 
   it('create a child beer with 2 breweries and 2 styles', async () => {
-    const style1Res = await ctx.request.post(
+    const style1Res = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
       `/api/v1/style`,
       { name: 'Wild', parents: [] },
       ctx.adminAuthHeaders(),
     )
     assertEqual(style1Res.status, 201)
 
-    const style2Res = await ctx.request.post(
+    const style2Res = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
       `/api/v1/style`,
       { name: 'IPA', parents: [] },
       ctx.adminAuthHeaders(),
     )
     assertEqual(style2Res.status, 201)
 
-    const brewery1Res = await ctx.request.post(
+    const brewery1Res = await ctx.request.post<{
+      brewery: CreatedOrUpdatedBrewery
+    }>(
       `/api/v1/brewery`,
       { name: 'Rock Paper Scissors' },
       ctx.adminAuthHeaders(),
     )
     assertEqual(brewery1Res.status, 201)
 
-    const brewery2Res = await ctx.request.post(
-      `/api/v1/brewery`,
-      { name: 'Brewcats' },
-      ctx.adminAuthHeaders(),
-    )
+    const brewery2Res = await ctx.request.post<{
+      brewery: CreatedOrUpdatedBrewery
+    }>(`/api/v1/brewery`, { name: 'Brewcats' }, ctx.adminAuthHeaders())
     assertEqual(brewery2Res.status, 201)
 
-    const beerRes = await ctx.request.post(
+    const beerRes = await ctx.request.post<{ beer: CreatedOrUpdatedBeer }>(
       `/api/v1/beer`,
       {
         name: 'Imaginary Wild IPA',
@@ -210,14 +210,12 @@ describe('beer tests', () => {
   })
 
   it('fail to create a beer with invalid style', async () => {
-    const breweryRes = await ctx.request.post(
-      `/api/v1/brewery`,
-      { name: 'Brewcats' },
-      ctx.adminAuthHeaders(),
-    )
+    const breweryRes = await ctx.request.post<{
+      brewery: CreatedOrUpdatedBrewery
+    }>(`/api/v1/brewery`, { name: 'Brewcats' }, ctx.adminAuthHeaders())
     assertEqual(breweryRes.status, 201)
 
-    const beerRes = await ctx.request.post(
+    const beerRes = await ctx.request.post<{ beer: CreatedOrUpdatedBeer }>(
       `/api/v1/beer`,
       {
         name: 'Random IPA',
@@ -231,7 +229,7 @@ describe('beer tests', () => {
   })
 
   it('fail to create a beer with invalid brewery', async () => {
-    const styleRes = await ctx.request.post(
+    const styleRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
       `/api/v1/style`,
       { name: 'IPA', parents: [] },
       ctx.adminAuthHeaders(),
@@ -252,21 +250,19 @@ describe('beer tests', () => {
   })
 
   it('fail to create a beer without name', async () => {
-    const styleRes = await ctx.request.post(
+    const styleRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
       `/api/v1/style`,
       { name: 'Kriek', parents: [] },
       ctx.adminAuthHeaders(),
     )
     assertEqual(styleRes.status, 201)
 
-    const breweryRes = await ctx.request.post(
-      `/api/v1/brewery`,
-      { name: 'Lindemans' },
-      ctx.adminAuthHeaders(),
-    )
+    const breweryRes = await ctx.request.post<{
+      brewery: CreatedOrUpdatedBrewery
+    }>(`/api/v1/brewery`, { name: 'Lindemans' }, ctx.adminAuthHeaders())
     assertEqual(breweryRes.status, 201)
 
-    const beerRes = await ctx.request.post(
+    const beerRes = await ctx.request.post<{ beer: CreatedOrUpdatedBeer }>(
       `/api/v1/beer`,
       {
         breweries: [breweryRes.data.brewery.id],
@@ -278,30 +274,26 @@ describe('beer tests', () => {
   })
 
   it('update a beer', async () => {
-    const style1Res = await ctx.request.post(
+    const style1Res = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
       `/api/v1/style`,
       { name: 'Kriek', parents: [] },
       ctx.adminAuthHeaders(),
     )
     assertEqual(style1Res.status, 201)
-    const style2Res = await ctx.request.post(
+    const style2Res = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
       `/api/v1/style`,
       { name: 'IPA', parents: [] },
       ctx.adminAuthHeaders(),
     )
     assertEqual(style2Res.status, 201)
 
-    const brewery1Res = await ctx.request.post(
-      `/api/v1/brewery`,
-      { name: 'Lindemans' },
-      ctx.adminAuthHeaders(),
-    )
+    const brewery1Res = await ctx.request.post<{
+      brewery: CreatedOrUpdatedBrewery
+    }>(`/api/v1/brewery`, { name: 'Lindemans' }, ctx.adminAuthHeaders())
     assertEqual(brewery1Res.status, 201)
-    const brewery2Res = await ctx.request.post(
-      `/api/v1/brewery`,
-      { name: 'Sierra Nevada' },
-      ctx.adminAuthHeaders(),
-    )
+    const brewery2Res = await ctx.request.post<{
+      brewery: CreatedOrUpdatedBrewery
+    }>(`/api/v1/brewery`, { name: 'Sierra Nevada' }, ctx.adminAuthHeaders())
     assertEqual(brewery2Res.status, 201)
 
     const createRes = await ctx.request.post<{ beer: CreatedOrUpdatedBeer }>(

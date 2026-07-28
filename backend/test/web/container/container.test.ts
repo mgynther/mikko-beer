@@ -42,7 +42,9 @@ describe('container tests', () => {
 
   it('fail to create a container as viewer', async () => {
     const { authToken } = await ctx.createUser()
-    const res = await ctx.request.post(
+    const res = await ctx.request.post<{
+      container: CreatedOrUpdatedContainer
+    }>(
       `/api/v1/container`,
       { type: 'Bottle', size: '0.33' },
       ctx.createAuthHeaders(authToken),
@@ -52,11 +54,9 @@ describe('container tests', () => {
   })
 
   it('fail to create a container without type', async () => {
-    const res = await ctx.request.post(
-      `/api/v1/container`,
-      { size: '0.20' },
-      ctx.adminAuthHeaders(),
-    )
+    const res = await ctx.request.post<{
+      container: CreatedOrUpdatedContainer
+    }>(`/api/v1/container`, { size: '0.20' }, ctx.adminAuthHeaders())
 
     assertEqual(res.status, 400)
   })

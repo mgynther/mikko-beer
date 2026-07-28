@@ -154,7 +154,7 @@ describe('style tests', () => {
   })
 
   it('fail to create a child style with invalid parent', async () => {
-    const childRes = await ctx.request.post(
+    const childRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
       `/api/v1/style`,
       { name: 'Gueuze', parents: ['d31020d9-c400-41f4-91bb-2c847dcf1fbe'] },
       ctx.adminAuthHeaders(),
@@ -164,7 +164,7 @@ describe('style tests', () => {
   })
 
   it('fail to create a style without name', async () => {
-    const res = await ctx.request.post(
+    const res = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
       `/api/v1/style`,
       { parents: [] },
       ctx.adminAuthHeaders(),

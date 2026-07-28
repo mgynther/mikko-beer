@@ -16,6 +16,11 @@ import type {
   ReadStorage,
 } from '../../../src/web/storage/storage.controller.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
+import type { CreatedOrUpdatedBeer } from '../../../src/web/beer/beer.controller.js'
+import type { CreatedOrUpdatedBrewery } from '../../../src/web/brewery/brewery.controller.js'
+import type { CreatedOrUpdatedContainer } from '../../../src/web/container/container.controller.js'
+import type { CreatedOrUpdatedLocation } from '../../../src/web/location/location.controller.js'
+import type { CreatedOrUpdatedStyle } from '../../../src/web/style/style.controller.js'
 
 const createNewReviewRequest = (
   beerId: string,
@@ -42,21 +47,19 @@ describe('review tests', () => {
   afterEach(ctx.afterEach)
 
   async function createDeps(adminAuthHeaders: Record<string, string>) {
-    const styleRes = await ctx.request.post(
+    const styleRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
       `/api/v1/style`,
       { name: 'Kriek', parents: [] },
       adminAuthHeaders,
     )
     assertEqual(styleRes.status, 201)
 
-    const breweryRes = await ctx.request.post(
-      `/api/v1/brewery`,
-      { name: 'Lindemans' },
-      adminAuthHeaders,
-    )
+    const breweryRes = await ctx.request.post<{
+      brewery: CreatedOrUpdatedBrewery
+    }>(`/api/v1/brewery`, { name: 'Lindemans' }, adminAuthHeaders)
     assertEqual(breweryRes.status, 201)
 
-    const beerRes = await ctx.request.post(
+    const beerRes = await ctx.request.post<{ beer: CreatedOrUpdatedBeer }>(
       `/api/v1/beer`,
       {
         name: 'Lindemans Kriek',
@@ -71,17 +74,13 @@ describe('review tests', () => {
     assertDeepEqual(beerRes.data.beer.breweries, [breweryRes.data.brewery.id])
     assertDeepEqual(beerRes.data.beer.styles, [styleRes.data.style.id])
 
-    const containerRes = await ctx.request.post(
-      `/api/v1/container`,
-      { type: 'Bottle', size: '0.25' },
-      adminAuthHeaders,
-    )
+    const containerRes = await ctx.request.post<{
+      container: CreatedOrUpdatedContainer
+    }>(`/api/v1/container`, { type: 'Bottle', size: '0.25' }, adminAuthHeaders)
 
-    const locationRes = await ctx.request.post(
-      `/api/v1/location`,
-      { name: 'Pikilinna' },
-      adminAuthHeaders,
-    )
+    const locationRes = await ctx.request.post<{
+      location: CreatedOrUpdatedLocation
+    }>(`/api/v1/location`, { name: 'Pikilinna' }, adminAuthHeaders)
     assertEqual(locationRes.status, 201)
 
     return {
@@ -150,7 +149,7 @@ describe('review tests', () => {
       listRes.data.reviews[0].breweries[0],
       breweryRes.data.brewery,
     )
-    const parentlessStyle = { ...styleRes.data.style }
+    const parentlessStyle: any = { ...styleRes.data.style }
     delete parentlessStyle.parents
     assertDeepEqual(listRes.data.reviews[0].styles[0], parentlessStyle)
 
@@ -190,7 +189,9 @@ describe('review tests', () => {
   it('fail to create a review with invalid beer', async () => {
     const { containerRes } = await createDeps(ctx.adminAuthHeaders())
 
-    const reviewRes = await ctx.request.post(
+    const reviewRes = await ctx.request.post<{
+      review: CreatedOrUpdatedReview
+    }>(
       `/api/v1/review`,
       createNewReviewRequest(
         'bc589557-ca7d-4be3-97fb-d9369c7c6c3c',
@@ -205,7 +206,9 @@ describe('review tests', () => {
   it('fail to create a review with invalid container', async () => {
     const { beerRes } = await createDeps(ctx.adminAuthHeaders())
 
-    const reviewRes = await ctx.request.post(
+    const reviewRes = await ctx.request.post<{
+      review: CreatedOrUpdatedReview
+    }>(
       `/api/v1/review`,
       createNewReviewRequest(
         beerRes.data.beer.id,
@@ -268,7 +271,9 @@ describe('review tests', () => {
     const { beerRes, containerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const dummyId = 'b6c2c801-d8a5-4a13-98bb-32cfb9611359'
-    const reviewRes = await ctx.request.post(
+    const reviewRes = await ctx.request.post<{
+      review: CreatedOrUpdatedReview
+    }>(
       `/api/v1/review?storage=${dummyId}`,
       createNewReviewRequest(
         beerRes.data.beer.id,
@@ -283,7 +288,9 @@ describe('review tests', () => {
   it('fail to create a review without beer', async () => {
     const { containerRes } = await createDeps(ctx.adminAuthHeaders())
 
-    const reviewRes = await ctx.request.post(
+    const reviewRes = await ctx.request.post<{
+      review: CreatedOrUpdatedReview
+    }>(
       `/api/v1/review`,
       {
         additionalInfo: 'From Belgium',
@@ -353,7 +360,9 @@ describe('review tests', () => {
       review: CreatedOrUpdatedReview
     }>(`/api/v1/review`, requestData, ctx.adminAuthHeaders())
     assertEqual(reviewRes.status, 201)
-    const updateRes = await ctx.request.put(
+    const updateRes = await ctx.request.put<{
+      review: CreatedOrUpdatedReview
+    }>(
       `/api/v1/review/${reviewRes.data.review.id}`,
       {
         ...requestData,
@@ -379,7 +388,9 @@ describe('review tests', () => {
       review: CreatedOrUpdatedReview
     }>(`/api/v1/review`, requestData, ctx.adminAuthHeaders())
     assertEqual(reviewRes.status, 201)
-    const updateRes = await ctx.request.put(
+    const updateRes = await ctx.request.put<{
+      review: CreatedOrUpdatedReview
+    }>(
       `/api/v1/review/${reviewRes.data.review.id}`,
       {
         ...requestData,
@@ -420,21 +431,17 @@ describe('review tests', () => {
     assertEqual(reviewRes.status, 201)
     assertEqual(reviewRes.data.review.beer, beerRes.data.beer.id)
 
-    const otherStyleRes = await ctx.request.post(
-      `/api/v1/style`,
-      { name: 'IPA', parents: [] },
-      ctx.adminAuthHeaders(),
-    )
+    const otherStyleRes = await ctx.request.post<{
+      style: CreatedOrUpdatedStyle
+    }>(`/api/v1/style`, { name: 'IPA', parents: [] }, ctx.adminAuthHeaders())
     assertEqual(otherStyleRes.status, 201)
 
-    const otherBreweryRes = await ctx.request.post(
-      `/api/v1/brewery`,
-      { name: 'Nokian Panimo' },
-      ctx.adminAuthHeaders(),
-    )
+    const otherBreweryRes = await ctx.request.post<{
+      brewery: CreatedOrUpdatedBrewery
+    }>(`/api/v1/brewery`, { name: 'Nokian Panimo' }, ctx.adminAuthHeaders())
     assertEqual(otherBreweryRes.status, 201)
 
-    const otherBeerRes = await ctx.request.post(
+    const otherBeerRes = await ctx.request.post<{ beer: CreatedOrUpdatedBeer }>(
       `/api/v1/beer`,
       {
         name: 'IPA',
@@ -469,7 +476,9 @@ describe('review tests', () => {
     assertEqual(otherReviewRes.status, 201)
     assertEqual(otherReviewRes.data.review.beer, otherBeerRes.data.beer.id)
 
-    const collabBeerRes = await ctx.request.post(
+    const collabBeerRes = await ctx.request.post<{
+      beer: CreatedOrUpdatedBeer
+    }>(
       `/api/v1/beer`,
       {
         name: 'Wild Kriek IPA',
@@ -712,7 +721,9 @@ describe('review tests', () => {
       time: '2000-01-01T00:00:00.000Z',
     }
 
-    const reviewRes = await ctx.request.post(
+    const reviewRes = await ctx.request.post<{
+      review: CreatedOrUpdatedReview
+    }>(
       `/api/v1/review`,
       {
         ...reviewBase,
@@ -723,7 +734,9 @@ describe('review tests', () => {
     )
     assertEqual(reviewRes.status, 201)
 
-    const otherReviewRes = await ctx.request.post(
+    const otherReviewRes = await ctx.request.post<{
+      review: CreatedOrUpdatedReview
+    }>(
       `/api/v1/review`,
       {
         ...reviewBase,

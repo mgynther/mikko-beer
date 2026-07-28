@@ -88,7 +88,7 @@ describe('location tests', () => {
   })
 
   it('fail to create a location without name', async () => {
-    const res = await ctx.request.post(
+    const res = await ctx.request.post<{ location: CreatedOrUpdatedLocation }>(
       `/api/v1/location`,
       {},
       ctx.adminAuthHeaders(),

@@ -8,6 +8,10 @@ import type {
   MonthlyStorageStats,
   ReadStorage,
 } from '../../../src/web/storage/storage.controller.js'
+import type { CreatedOrUpdatedBeer } from '../../../src/web/beer/beer.controller.js'
+import type { CreatedOrUpdatedBrewery } from '../../../src/web/brewery/brewery.controller.js'
+import type { CreatedOrUpdatedContainer } from '../../../src/web/container/container.controller.js'
+import type { CreatedOrUpdatedStyle } from '../../../src/web/style/style.controller.js'
 
 describe('storage tests', () => {
   const ctx = new TestContext()
@@ -19,21 +23,19 @@ describe('storage tests', () => {
   afterEach(ctx.afterEach)
 
   async function createDeps(adminAuthHeaders: Record<string, string>) {
-    const styleRes = await ctx.request.post(
+    const styleRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
       `/api/v1/style`,
       { name: 'Kriek', parents: [] },
       adminAuthHeaders,
     )
     assertEqual(styleRes.status, 201)
 
-    const breweryRes = await ctx.request.post(
-      `/api/v1/brewery`,
-      { name: 'Lindemans' },
-      adminAuthHeaders,
-    )
+    const breweryRes = await ctx.request.post<{
+      brewery: CreatedOrUpdatedBrewery
+    }>(`/api/v1/brewery`, { name: 'Lindemans' }, adminAuthHeaders)
     assertEqual(breweryRes.status, 201)
 
-    const beerRes = await ctx.request.post(
+    const beerRes = await ctx.request.post<{ beer: CreatedOrUpdatedBeer }>(
       `/api/v1/beer`,
       {
         name: 'Lindemans Kriek',
@@ -48,11 +50,9 @@ describe('storage tests', () => {
     assertDeepEqual(beerRes.data.beer.breweries, [breweryRes.data.brewery.id])
     assertDeepEqual(beerRes.data.beer.styles, [styleRes.data.style.id])
 
-    const containerRes = await ctx.request.post(
-      `/api/v1/container`,
-      { type: 'Bottle', size: '0.25' },
-      adminAuthHeaders,
-    )
+    const containerRes = await ctx.request.post<{
+      container: CreatedOrUpdatedContainer
+    }>(`/api/v1/container`, { type: 'Bottle', size: '0.25' }, adminAuthHeaders)
 
     return {
       beerRes,
@@ -116,7 +116,7 @@ describe('storage tests', () => {
       listRes.data.storages[0].breweries[0],
       breweryRes.data.brewery,
     )
-    const parentlessStyle = { ...styleRes.data.style }
+    const parentlessStyle: any = { ...styleRes.data.style }
     delete parentlessStyle.parents
     assertDeepEqual(listRes.data.storages[0].styles[0], parentlessStyle)
 
@@ -156,7 +156,9 @@ describe('storage tests', () => {
   it('fail to create a storage without beer', async () => {
     const { containerRes } = await createDeps(ctx.adminAuthHeaders())
 
-    const storageRes = await ctx.request.post(
+    const storageRes = await ctx.request.post<{
+      storage: CreatedOrUpdatedStorage
+    }>(
       `/api/v1/storage`,
       {
         bestBefore,
@@ -170,7 +172,9 @@ describe('storage tests', () => {
   it('fail to create a storage with invalid beer', async () => {
     const { containerRes } = await createDeps(ctx.adminAuthHeaders())
 
-    const storageRes = await ctx.request.post(
+    const storageRes = await ctx.request.post<{
+      storage: CreatedOrUpdatedStorage
+    }>(
       `/api/v1/storage`,
       {
         bestBefore,
@@ -185,7 +189,9 @@ describe('storage tests', () => {
   it('fail to create a storage without container', async () => {
     const { beerRes } = await createDeps(ctx.adminAuthHeaders())
 
-    const storageRes = await ctx.request.post(
+    const storageRes = await ctx.request.post<{
+      storage: CreatedOrUpdatedStorage
+    }>(
       `/api/v1/storage`,
       {
         bestBefore,
@@ -199,7 +205,9 @@ describe('storage tests', () => {
   it('fail to create a storage with invalid container', async () => {
     const { beerRes } = await createDeps(ctx.adminAuthHeaders())
 
-    const storageRes = await ctx.request.post(
+    const storageRes = await ctx.request.post<{
+      storage: CreatedOrUpdatedStorage
+    }>(
       `/api/v1/storage`,
       {
         bestBefore,
@@ -302,21 +310,17 @@ describe('storage tests', () => {
     assertEqual(storageRes.status, 201)
     assertEqual(storageRes.data.storage.beer, beerRes.data.beer.id)
 
-    const otherStyleRes = await ctx.request.post(
-      `/api/v1/style`,
-      { name: 'IPA', parents: [] },
-      ctx.adminAuthHeaders(),
-    )
+    const otherStyleRes = await ctx.request.post<{
+      style: CreatedOrUpdatedStyle
+    }>(`/api/v1/style`, { name: 'IPA', parents: [] }, ctx.adminAuthHeaders())
     assertEqual(otherStyleRes.status, 201)
 
-    const otherBreweryRes = await ctx.request.post(
-      `/api/v1/brewery`,
-      { name: 'Nokian Panimo' },
-      ctx.adminAuthHeaders(),
-    )
+    const otherBreweryRes = await ctx.request.post<{
+      brewery: CreatedOrUpdatedBrewery
+    }>(`/api/v1/brewery`, { name: 'Nokian Panimo' }, ctx.adminAuthHeaders())
     assertEqual(otherBreweryRes.status, 201)
 
-    const otherBeerRes = await ctx.request.post(
+    const otherBeerRes = await ctx.request.post<{ beer: CreatedOrUpdatedBeer }>(
       `/api/v1/beer`,
       {
         name: 'IPA',
@@ -349,7 +353,9 @@ describe('storage tests', () => {
     assertEqual(otherStorageRes.status, 201)
     assertEqual(otherStorageRes.data.storage.beer, otherBeerRes.data.beer.id)
 
-    const collabBeerRes = await ctx.request.post(
+    const collabBeerRes = await ctx.request.post<{
+      beer: CreatedOrUpdatedBeer
+    }>(
       `/api/v1/beer`,
       {
         name: 'Wild Kriek IPA',

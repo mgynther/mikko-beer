@@ -88,7 +88,7 @@ describe('brewery tests', () => {
   })
 
   it('fail to create a brewery without name', async () => {
-    const res = await ctx.request.post(
+    const res = await ctx.request.post<{ brewery: CreatedOrUpdatedBrewery }>(
       `/api/v1/brewery`,
       {},
       ctx.adminAuthHeaders(),
@@ -108,7 +108,7 @@ describe('brewery tests', () => {
   })
 
   it('fail on duplicate search parameter', async () => {
-    const res = await ctx.request.get(
+    const res = await ctx.request.get<{ breweries: ReadBrewery[] }>(
       `/api/v1/brewery?size=10&size=11`,
       ctx.adminAuthHeaders(),
     )
