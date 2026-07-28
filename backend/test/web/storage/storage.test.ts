@@ -82,7 +82,7 @@ describe('storage tests', () => {
       ctx.adminAuthHeaders(),
     )
     assertEqual(storageRes.status, 201)
-    assertEqual(storageRes.data.storage.bestBefore.toString(), bestBefore)
+    assertEqual(storageRes.data.storage.bestBefore, bestBefore)
     assertEqual(storageRes.data.storage.beer, beerRes.data.beer.id)
     assertEqual(
       storageRes.data.storage.container,
@@ -96,7 +96,7 @@ describe('storage tests', () => {
 
     assertEqual(getRes.status, 200)
     assertEqual(getRes.data.storage.id, storageRes.data.storage.id)
-    assertEqual(getRes.data.storage.bestBefore.toString(), bestBefore)
+    assertEqual(getRes.data.storage.bestBefore, bestBefore)
     assertEqual(getRes.data.storage.beerId, beerRes.data.beer.id)
     assertDeepEqual(getRes.data.storage.container, containerRes.data.container)
 
@@ -243,7 +243,7 @@ describe('storage tests', () => {
     )
 
     assertEqual(getRes.status, 200)
-    assertEqual(getRes.data.storage.bestBefore.toString(), bestBeforeLater)
+    assertEqual(getRes.data.storage.bestBefore, bestBeforeLater)
   })
 
   it('delete a storage', async () => {

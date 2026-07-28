@@ -8,7 +8,9 @@ import type { Pagination } from '../../core/pagination.js'
 import type {
   CreateIf,
   CreateStorageRequest,
+  JoinedStorage,
   Storage,
+  StorageWithDate,
   UpdateIf,
 } from '../../core/storage/storage.js'
 import { validatePagination } from '../../core/pagination.js'
@@ -45,7 +47,7 @@ interface MonthlyStatsResult {
 
 export interface CreatedOrUpdatedStorage {
   id: string
-  bestBefore: Date
+  bestBefore: string
   beer: string
   container: string
 }
@@ -73,7 +75,7 @@ export interface ReadStorage {
   id: string
   beerId: string
   beerName: string
-  bestBefore: Date
+  bestBefore: string
   breweries: Array<{
     id: string
     name: string
@@ -83,7 +85,7 @@ export interface ReadStorage {
     type: string
     size: string
   }
-  createdAt: Date
+  createdAt: string
   hasReview: boolean
   styles: Array<{
     id: string
@@ -189,7 +191,7 @@ export function storageController(router: Router): void {
       return {
         status: 201,
         body: {
-          storage: result,
+          storage: toCreatedOrUpdatedStorage(result),
         },
       }
     },
@@ -223,7 +225,7 @@ export function storageController(router: Router): void {
       return {
         status: 200,
         body: {
-          storage: result,
+          storage: toCreatedOrUpdatedStorage(result),
         },
       }
     },
@@ -275,7 +277,7 @@ export function storageController(router: Router): void {
 
       return {
         status: 200,
-        body: { storage },
+        body: { storage: toReadStorage(storage) },
       }
     },
   )
@@ -294,7 +296,7 @@ export function storageController(router: Router): void {
         },
         ctx.log,
       )
-      const storages = storageResult
+      const storages = storageResult.map(toReadStorage)
 
       return {
         status: 200,
@@ -317,7 +319,7 @@ export function storageController(router: Router): void {
         },
         ctx.log,
       )
-      const storages = storageResult
+      const storages = storageResult.map(toReadStorage)
 
       return {
         status: 200,
@@ -340,7 +342,7 @@ export function storageController(router: Router): void {
         },
         ctx.log,
       )
-      const storages = storageResult
+      const storages = storageResult.map(toReadStorage)
 
       return {
         status: 200,
@@ -353,18 +355,37 @@ export function storageController(router: Router): void {
     const authTokenPayload = parseAuthToken(ctx)
     const { skip, size } = ctx.request.query
     const pagination = validatePagination({ skip, size })
-    const storages = await storageService.listStorages(
+    const storageResult = await storageService.listStorages(
       async (pagination: Pagination) =>
         await storageRepository.listStorages(ctx.db, pagination),
       authTokenPayload,
       pagination,
       ctx.log,
     )
+    const storages = storageResult.map(toReadStorage)
+
     return {
       status: 200,
       body: { storages, pagination },
     }
   })
+}
+
+function toCreatedOrUpdatedStorage(
+  storage: StorageWithDate,
+): CreatedOrUpdatedStorage {
+  return {
+    ...storage,
+    bestBefore: storage.bestBefore.toISOString(),
+  }
+}
+
+function toReadStorage(storage: JoinedStorage): ReadStorage {
+  return {
+    ...storage,
+    bestBefore: storage.bestBefore.toISOString(),
+    createdAt: storage.createdAt.toISOString(),
+  }
 }
 
 function createBeerLocker(
