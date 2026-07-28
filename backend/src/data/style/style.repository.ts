@@ -1,13 +1,15 @@
 import type { Database, Transaction } from '../database.js'
 import type { StyleRow, StyleRelationshipRow } from './style.table.js'
-import type {
-  NewStyle,
-  Style,
-  StyleRelationship,
-  StyleWithParentIds,
-  StyleWithParentsAndChildren,
-} from '../../core/style/style.js'
 import { contains } from '../record.js'
+
+export interface NewStyle {
+  name: string
+}
+
+export interface Style {
+  id: string
+  name: string
+}
 
 export async function insertStyle(
   trx: Transaction,
@@ -21,6 +23,11 @@ export async function insertStyle(
     .executeTakeFirstOrThrow()
 
   return toStyle(insertedStyle)
+}
+
+export interface StyleRelationship {
+  parent: string
+  child: string
 }
 
 export async function insertStyleRelationships(
@@ -76,6 +83,11 @@ export async function updateStyle(
     .executeTakeFirstOrThrow()
 
   return toStyle(updatedStyle)
+}
+
+export interface StyleWithParentsAndChildren extends Style {
+  children: Style[]
+  parents: Style[]
 }
 
 export async function findStyleById(
@@ -140,6 +152,10 @@ export async function lockStyles(
     .execute()
 
   return styles.map((style) => style.style_id)
+}
+
+export interface StyleWithParentIds extends Style {
+  parents: string[]
 }
 
 export async function listStyles(db: Database): Promise<StyleWithParentIds[]> {

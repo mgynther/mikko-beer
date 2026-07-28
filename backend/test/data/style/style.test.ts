@@ -4,7 +4,10 @@ import { TestContext } from '../test-context.js'
 import type { Database, Transaction } from '../../../src/data/database.js'
 import * as styleRepository from '../../../src/data/style/style.repository.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
-import type { Style, StyleRelationship } from '../../../src/core/style/style.js'
+import type {
+  Style,
+  StyleRelationship,
+} from '../../../src/data/style/style.repository.js'
 
 describe('style tests', () => {
   const ctx = new TestContext()
