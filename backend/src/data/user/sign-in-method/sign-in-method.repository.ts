@@ -1,5 +1,10 @@
-import type { UserPasswordHash } from '../../../core/user/sign-in-method'
 import type { Transaction } from '../../database'
+
+export interface UserPasswordHash {
+  userId: string
+  passwordHash: string
+  hashedAt: Date | undefined
+}
 
 function defaultToNull(date: Date | undefined): Date | null {
   return date ?? null

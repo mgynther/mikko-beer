@@ -14,7 +14,7 @@ import {
   findPasswordSignInMethod,
   updatePassword,
 } from '../../../src/data/user/sign-in-method/sign-in-method.repository.js'
-import type { UserPasswordHash } from '../../../src/core/user/sign-in-method.js'
+import type { UserPasswordHash } from '../../../src/data/user/sign-in-method/sign-in-method.repository.js'
 import type { Database } from '../../../src/data/database.js'
 
 async function getSignInMethod(
