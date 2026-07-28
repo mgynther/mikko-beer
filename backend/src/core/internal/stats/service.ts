@@ -38,7 +38,7 @@ export async function getAnnualContainer(
   pagination: Pagination,
   statsFilter: StatsIdFilter,
   log: log,
-): Promise<AnnualStats> {
+): Promise<AnnualContainerStats> {
   log('INFO', 'get annual container stats', statsFilter, pagination)
   return await getAnnualContainer(pagination, statsFilter)
 }

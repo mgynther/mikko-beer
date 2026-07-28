@@ -7,9 +7,12 @@ import {
   modeRatings,
   stdDevRatings,
 } from '../../data/stats/stats-helpers.js'
-import type { BeerWithBreweryAndStyleIds } from '../../../src/core/beer/beer.js'
-import type { Brewery } from '../../../src/core/brewery/brewery.js'
-import type { Location } from '../../../src/core/location/location.js'
+import type { CreateReviewRequest } from '../../../src/core/review/review.js'
+import type { CreatedOrUpdatedBeer } from '../../../src/web/beer/beer.controller.js'
+import type { CreatedOrUpdatedBrewery } from '../../../src/web/brewery/brewery.controller.js'
+import type { CreatedOrUpdatedContainer } from '../../../src/web/container/container.controller.js'
+import type { CreatedOrUpdatedLocation } from '../../../src/web/location/location.controller.js'
+import type { CreatedOrUpdatedReview } from '../../../src/web/review/review.controller.js'
 import type {
   AnnualContainerStats,
   AnnualStats,
@@ -19,22 +22,9 @@ import type {
   OverallStats,
   RatingStats,
   StyleStats,
-} from '../../../src/core/stats/stats.js'
-import type { Style } from '../../../src/core/style/style.js'
-import type { CreateReviewRequest } from '../../../src/core/review/review.js'
+} from '../../../src/web/stats/stats.controller.js'
+import type { CreatedOrUpdatedStyle } from '../../../src/web/style/style.controller.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
-
-interface ReviewRes {
-  id: string
-  additionalInfo: string
-  beer: string
-  container: string
-  location: string
-  rating: number
-  time: string
-  smell: string
-  taste: string
-}
 
 // Math is hard. By both hard coding and calculating it is easier to spot an
 // error when it happens.
@@ -48,7 +38,7 @@ describe('stats tests', () => {
   afterEach(ctx.afterEach)
 
   async function createDeps(adminAuthHeaders: Record<string, string>) {
-    const styleRes = await ctx.request.post<{ style: Style }>(
+    const styleRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
       `/api/v1/style`,
       { name: 'Kriek', parents: [] },
       adminAuthHeaders,
@@ -56,12 +46,12 @@ describe('stats tests', () => {
     assertEqual(styleRes.status, 201)
 
     const breweryRes = await ctx.request.post<{
-      brewery: Brewery
+      brewery: CreatedOrUpdatedBrewery
     }>(`/api/v1/brewery`, { name: 'Lindemans' }, adminAuthHeaders)
     assertEqual(breweryRes.status, 201)
 
     const beerRes = await ctx.request.post<{
-      beer: BeerWithBreweryAndStyleIds
+      beer: CreatedOrUpdatedBeer
     }>(
       `/api/v1/beer`,
       {
@@ -73,23 +63,19 @@ describe('stats tests', () => {
     )
     assertEqual(beerRes.status, 201)
 
-    const containerRes = await ctx.request.post(
-      `/api/v1/container`,
-      { type: 'Bottle', size: '0.25' },
-      adminAuthHeaders,
-    )
+    const containerRes = await ctx.request.post<{
+      container: CreatedOrUpdatedContainer
+    }>(`/api/v1/container`, { type: 'Bottle', size: '0.25' }, adminAuthHeaders)
     assertEqual(containerRes.status, 201)
 
     const locationRes = await ctx.request.post<{
-      location: Location
+      location: CreatedOrUpdatedLocation
     }>(`/api/v1/location`, { name: 'Kuja' }, adminAuthHeaders)
     assertEqual(locationRes.status, 201)
 
-    const otherLocationRes = await ctx.request.post<{ location: Location }>(
-      `/api/v1/location`,
-      { name: 'Oluthuone' },
-      adminAuthHeaders,
-    )
+    const otherLocationRes = await ctx.request.post<{
+      location: CreatedOrUpdatedLocation
+    }>(`/api/v1/location`, { name: 'Oluthuone' }, adminAuthHeaders)
     assertEqual(otherLocationRes.status, 201)
 
     const createRequest: CreateReviewRequest = {
@@ -103,22 +89,22 @@ describe('stats tests', () => {
       time: '2021-03-07T18:31:33.123Z',
     }
     const reviewRes = await ctx.request.post<{
-      review: ReviewRes
+      review: CreatedOrUpdatedReview
     }>(`/api/v1/review`, createRequest, ctx.adminAuthHeaders())
     assertEqual(reviewRes.status, 201)
 
     const otherStyleRes = await ctx.request.post<{
-      style: Style
+      style: CreatedOrUpdatedStyle
     }>(`/api/v1/style`, { name: 'IPA', parents: [] }, ctx.adminAuthHeaders())
     assertEqual(otherStyleRes.status, 201)
 
     const otherBreweryRes = await ctx.request.post<{
-      brewery: Brewery
+      brewery: CreatedOrUpdatedBrewery
     }>(`/api/v1/brewery`, { name: 'Nokian Panimo' }, ctx.adminAuthHeaders())
     assertEqual(otherBreweryRes.status, 201)
 
     const otherBeerRes = await ctx.request.post<{
-      beer: BeerWithBreweryAndStyleIds
+      beer: CreatedOrUpdatedBeer
     }>(
       `/api/v1/beer`,
       {
@@ -141,12 +127,12 @@ describe('stats tests', () => {
       time: '2022-03-08T18:31:33.123Z',
     }
     const otherReviewRes = await ctx.request.post<{
-      review: ReviewRes
+      review: CreatedOrUpdatedReview
     }>(`/api/v1/review`, createReviewRequest, ctx.adminAuthHeaders())
     assertEqual(otherReviewRes.status, 201)
 
     const collabBeerRes = await ctx.request.post<{
-      beer: BeerWithBreweryAndStyleIds
+      beer: CreatedOrUpdatedBeer
     }>(
       `/api/v1/beer`,
       {
@@ -172,12 +158,12 @@ describe('stats tests', () => {
       time: '2023-03-09T18:31:33.123Z',
     }
     const collabReviewRes = await ctx.request.post<{
-      review: ReviewRes
+      review: CreatedOrUpdatedReview
     }>(`/api/v1/review`, collabReviewRequest, ctx.adminAuthHeaders())
     assertEqual(collabReviewRes.status, 201)
 
     const collabReview2Res = await ctx.request.post<{
-      review: ReviewRes
+      review: CreatedOrUpdatedReview
     }>(
       `/api/v1/review`,
       {
@@ -222,8 +208,8 @@ describe('stats tests', () => {
     containerId: string,
     rating: number,
     time: string,
-  ): Promise<ReviewRes> {
-    const res = await ctx.request.post<{ review: ReviewRes }>(
+  ): Promise<CreatedOrUpdatedReview> {
+    const res = await ctx.request.post<{ review: CreatedOrUpdatedReview }>(
       `/api/v1/review`,
       {
         additionalInfo: '',
@@ -307,7 +293,7 @@ describe('stats tests', () => {
     assertEqual(statsRes.data.overall.containerCount, '1')
     assertEqual(statsRes.data.overall.reviewCount, '4')
     const ratings = allReviews
-      .filter((review: ReviewRes) => {
+      .filter((review: CreatedOrUpdatedReview) => {
         const beerId = review.beer
         const beer = beers.find((beer) => beer.id === beerId)
         if (beer === undefined) {
@@ -405,10 +391,10 @@ describe('stats tests', () => {
     assertEqual(statsRes.status, 200)
     function reviewRatingsByYear(year: string): number[] {
       return reviews
-        .filter((review: ReviewRes) => {
+        .filter((review: CreatedOrUpdatedReview) => {
           return review.time.startsWith(year)
         })
-        .map((review: ReviewRes) => review.rating)
+        .map((review: CreatedOrUpdatedReview) => review.rating)
     }
     checkAnnualStats(reviewRatingsByYear, statsRes.data.annual, [
       {
@@ -426,18 +412,18 @@ describe('stats tests', () => {
     ])
   })
 
-  function reviewsByYear(reviews: ReviewRes[], year: string) {
-    return reviews.filter((review: ReviewRes) => {
+  function reviewsByYear(reviews: CreatedOrUpdatedReview[], year: string) {
+    return reviews.filter((review: CreatedOrUpdatedReview) => {
       return review.time.startsWith(year)
     })
   }
 
   function reviewsByBrewery(
-    reviews: ReviewRes[],
-    beers: BeerWithBreweryAndStyleIds[],
+    reviews: CreatedOrUpdatedReview[],
+    beers: CreatedOrUpdatedBeer[],
     breweryId: string,
-  ): ReviewRes[] {
-    return reviews.filter((review: ReviewRes) => {
+  ): CreatedOrUpdatedReview[] {
+    return reviews.filter((review: CreatedOrUpdatedReview) => {
       const beerId = review.beer
       const beer = beers.find((beer) => beer.id === beerId)
       if (beer === undefined) {
@@ -463,7 +449,7 @@ describe('stats tests', () => {
         reviewsByYear(reviews, year),
         beers,
         breweryId,
-      ).map((review: ReviewRes) => review.rating)
+      ).map((review: CreatedOrUpdatedReview) => review.rating)
     }
     checkAnnualStats(reviewRatingsByYear, statsRes.data.annual, [
       {
@@ -490,7 +476,7 @@ describe('stats tests', () => {
     assertEqual(statsRes.status, 200)
     function reviewRatingsByYear(year: string) {
       return reviewsByYear(reviews, year).map(
-        (review: ReviewRes) => review.rating,
+        (review: CreatedOrUpdatedReview) => review.rating,
       )
     }
     const container = containers[0].data.container
@@ -521,7 +507,7 @@ describe('stats tests', () => {
     assertEqual(statsRes.status, 200)
     function reviewRatingsByYear(year: string) {
       return reviewsByYear(reviews, year).map(
-        (review: ReviewRes) => review.rating,
+        (review: CreatedOrUpdatedReview) => review.rating,
       )
     }
     const container = containers[0].data.container
@@ -561,7 +547,7 @@ describe('stats tests', () => {
         reviewsByYear(reviews, year),
         beers,
         brewery.id,
-      ).map((review: ReviewRes) => review.rating)
+      ).map((review: CreatedOrUpdatedReview) => review.rating)
     }
     const container = containers[0].data.container
     const years = ['2023', '2022', '2021']
@@ -639,7 +625,7 @@ describe('stats tests', () => {
   })
 
   interface BreweryStatsData {
-    brewery: Brewery
+    brewery: CreatedOrUpdatedBrewery
     count: number
     average: string
     reviewedBeerCount: number
@@ -681,8 +667,8 @@ describe('stats tests', () => {
 
   function reviewRatingsByBrewery(
     breweryId: string,
-    beers: BeerWithBreweryAndStyleIds[],
-    reviews: ReviewRes[],
+    beers: CreatedOrUpdatedBeer[],
+    reviews: CreatedOrUpdatedReview[],
     filterBreweryId: string,
   ): number[] {
     return reviews
@@ -777,7 +763,7 @@ describe('stats tests', () => {
   })
 
   interface LocationStatsData {
-    location: Location
+    location: CreatedOrUpdatedLocation
     count: number
     average: string
   }
@@ -816,8 +802,8 @@ describe('stats tests', () => {
 
   function reviewRatingsByLocation(
     locationId: string,
-    beers: BeerWithBreweryAndStyleIds[],
-    reviews: ReviewRes[],
+    beers: CreatedOrUpdatedBeer[],
+    reviews: CreatedOrUpdatedReview[],
     filterBreweryId: string | undefined,
   ): number[] {
     return reviews
@@ -1022,7 +1008,7 @@ describe('stats tests', () => {
 
   interface StyleStatData {
     ratings: number[]
-    style: Style
+    style: CreatedOrUpdatedStyle
     average: string
     count: number
   }
@@ -1058,8 +1044,8 @@ describe('stats tests', () => {
 
   function reviewRatingsByStyle(
     styleId: string,
-    beers: BeerWithBreweryAndStyleIds[],
-    reviews: ReviewRes[],
+    beers: CreatedOrUpdatedBeer[],
+    reviews: CreatedOrUpdatedReview[],
     filterBreweryId: string | undefined,
   ): number[] {
     return reviews

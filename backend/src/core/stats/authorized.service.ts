@@ -39,7 +39,7 @@ export async function getAnnualContainer(
   pagination: Pagination,
   statsFilter: StatsIdFilter,
   log: log,
-): Promise<AnnualStats> {
+): Promise<AnnualContainerStats> {
   authorizationService.authorizeViewer(authTokenPayload)
   return await statsService.getAnnualContainer(
     getAnnualContainer,
