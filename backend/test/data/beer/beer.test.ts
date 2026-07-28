@@ -2,7 +2,7 @@ import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
 import type { Beer } from '../../../src/core/beer/beer.js'
-import type { Brewery } from '../../../src/core/brewery/brewery.js'
+import type { Brewery } from '../../../src/data/brewery/brewery.repository.js'
 import type { Style } from '../../../src/core/style/style.js'
 import type { Database, Transaction } from '../../../src/data/database.js'
 import * as beerRepository from '../../../src/data/beer/beer.repository.js'
