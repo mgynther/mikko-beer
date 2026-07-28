@@ -1,14 +1,20 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
-import type { ListDirection } from '../../../src/core/list.js'
 import type {
   CreateReviewRequest,
-  JoinedReview,
-  Review,
-  ReviewListOrderProperty,
   ReviewRequest,
 } from '../../../src/core/review/review.js'
+import type {
+  CreatedOrUpdatedReview,
+  ListedReview,
+  ReadReview,
+  ReviewSorting,
+} from '../../../src/web/review/review.controller.js'
+import type {
+  CreatedOrUpdatedStorage,
+  ReadStorage,
+} from '../../../src/web/storage/storage.controller.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
 
 const createNewReviewRequest = (
@@ -91,7 +97,9 @@ describe('review tests', () => {
     const { beerRes, breweryRes, containerRes, locationRes, styleRes } =
       await createDeps(ctx.adminAuthHeaders())
 
-    const reviewRes = await ctx.request.post(
+    const reviewRes = await ctx.request.post<{
+      review: CreatedOrUpdatedReview
+    }>(
       `/api/v1/review`,
       createNewReviewRequest(
         beerRes.data.beer.id,
@@ -110,7 +118,7 @@ describe('review tests', () => {
     assertEqual(reviewRes.data.review.taste, 'Cherries, a little sour')
     assertEqual(reviewRes.data.review.time, '2023-03-07T18:31:33.123Z')
 
-    const getRes = await ctx.request.get<{ review: Review }>(
+    const getRes = await ctx.request.get<{ review: ReadReview }>(
       `/api/v1/review/${reviewRes.data.review.id}`,
       ctx.adminAuthHeaders(),
     )
@@ -124,9 +132,9 @@ describe('review tests', () => {
     assertEqual(getRes.data.review.rating, 8)
     assertEqual(getRes.data.review.smell, 'Cherries')
     assertEqual(getRes.data.review.taste, 'Cherries, a little sour')
-    assertEqual(getRes.data.review.time.toString(), '2023-03-07T18:31:33.123Z')
+    assertEqual(getRes.data.review.time, '2023-03-07T18:31:33.123Z')
 
-    const listRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
+    const listRes = await ctx.request.get<{ reviews: ListedReview[] }>(
       '/api/v1/review/',
       ctx.adminAuthHeaders(),
     )
@@ -146,14 +154,14 @@ describe('review tests', () => {
     delete parentlessStyle.parents
     assertDeepEqual(listRes.data.reviews[0].styles[0], parentlessStyle)
 
-    const skippedListRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
+    const skippedListRes = await ctx.request.get<{ reviews: ListedReview[] }>(
       '/api/v1/review?size=50&skip=30',
       ctx.adminAuthHeaders(),
     )
     assertEqual(skippedListRes.status, 200)
     assertEqual(skippedListRes.data.reviews.length, 0)
 
-    const breweryListRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
+    const breweryListRes = await ctx.request.get<{ reviews: ListedReview[] }>(
       `/api/v1/brewery/${breweryRes.data.brewery.id}/review/`,
       ctx.adminAuthHeaders(),
     )
@@ -162,7 +170,7 @@ describe('review tests', () => {
     assertEqual(breweryListRes.data.reviews[0].id, getRes.data.review.id)
     assertEqual(breweryListRes.data.reviews[0].beerId, getRes.data.review.beer)
 
-    const styleListRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
+    const styleListRes = await ctx.request.get<{ reviews: ListedReview[] }>(
       `/api/v1/style/${styleRes.data.style.id}/review/`,
       ctx.adminAuthHeaders(),
     )
@@ -171,7 +179,7 @@ describe('review tests', () => {
     assertEqual(styleListRes.data.reviews[0].id, getRes.data.review.id)
     assertEqual(styleListRes.data.reviews[0].beerId, getRes.data.review.beer)
 
-    const beerListRes = await ctx.request.get<{ reviews: JoinedReview[] }>(
+    const beerListRes = await ctx.request.get<{ reviews: ListedReview[] }>(
       `/api/v1/beer/${beerRes.data.beer.id}/review/`,
       ctx.adminAuthHeaders(),
     )
@@ -215,7 +223,9 @@ describe('review tests', () => {
     )
 
     const bestBefore = '2024-10-01T00:00:00.000Z'
-    const storageRes = await ctx.request.post(
+    const storageRes = await ctx.request.post<{
+      storage: CreatedOrUpdatedStorage
+    }>(
       `/api/v1/storage`,
       {
         bestBefore,
@@ -237,7 +247,9 @@ describe('review tests', () => {
       taste: 'Cherries, a little sour',
       time: '2023-03-07T18:31:33.123Z',
     }
-    const reviewRes = await ctx.request.post(
+    const reviewRes = await ctx.request.post<{
+      review: CreatedOrUpdatedReview
+    }>(
       `/api/v1/review?storage=${storageRes.data.storage.id}`,
       createReviewRequest,
       ctx.adminAuthHeaders(),
@@ -245,7 +257,7 @@ describe('review tests', () => {
     assertEqual(reviewRes.status, 201)
     assertEqual(reviewRes.data.review.beer, beerRes.data.beer.id)
 
-    const getStorageRes = await ctx.request.get<{ storage: Storage }>(
+    const getStorageRes = await ctx.request.get<{ storage: ReadStorage }>(
       `/api/v1/storage/${storageRes.data.storage.id}`,
       ctx.adminAuthHeaders(),
     )
@@ -299,15 +311,15 @@ describe('review tests', () => {
       taste: 'Crerries, a little sour',
     }
 
-    const reviewRes = await ctx.request.post(
-      `/api/v1/review`,
-      requestData,
-      ctx.adminAuthHeaders(),
-    )
+    const reviewRes = await ctx.request.post<{
+      review: CreatedOrUpdatedReview
+    }>(`/api/v1/review`, requestData, ctx.adminAuthHeaders())
     assertEqual(reviewRes.status, 201)
     assertEqual(reviewRes.data.review.taste, 'Crerries, a little sour')
 
-    const updateRes = await ctx.request.put(
+    const updateRes = await ctx.request.put<{
+      review: CreatedOrUpdatedReview
+    }>(
       `/api/v1/review/${reviewRes.data.review.id}`,
       {
         ...requestData,
@@ -318,14 +330,14 @@ describe('review tests', () => {
     )
     assertEqual(updateRes.status, 200)
 
-    const getRes = await ctx.request.get<{ review: Review }>(
+    const getRes = await ctx.request.get<{ review: ReadReview }>(
       `/api/v1/review/${reviewRes.data.review.id}`,
       ctx.adminAuthHeaders(),
     )
 
     assertEqual(getRes.status, 200)
     assertEqual(getRes.data.review.taste, 'Cherries, a little sour')
-    assertEqual(getRes.data.review.time.toString(), '2023-03-07T18:31:33.124Z')
+    assertEqual(getRes.data.review.time, '2023-03-07T18:31:33.124Z')
   })
 
   it('fail to update review with invalid beer', async () => {
@@ -337,11 +349,9 @@ describe('review tests', () => {
       '',
     )
 
-    const reviewRes = await ctx.request.post(
-      `/api/v1/review`,
-      requestData,
-      ctx.adminAuthHeaders(),
-    )
+    const reviewRes = await ctx.request.post<{
+      review: CreatedOrUpdatedReview
+    }>(`/api/v1/review`, requestData, ctx.adminAuthHeaders())
     assertEqual(reviewRes.status, 201)
     const updateRes = await ctx.request.put(
       `/api/v1/review/${reviewRes.data.review.id}`,
@@ -365,11 +375,9 @@ describe('review tests', () => {
       locationRes.data.location.id,
     )
 
-    const reviewRes = await ctx.request.post(
-      `/api/v1/review`,
-      requestData,
-      ctx.adminAuthHeaders(),
-    )
+    const reviewRes = await ctx.request.post<{
+      review: CreatedOrUpdatedReview
+    }>(`/api/v1/review`, requestData, ctx.adminAuthHeaders())
     assertEqual(reviewRes.status, 201)
     const updateRes = await ctx.request.put(
       `/api/v1/review/${reviewRes.data.review.id}`,
@@ -383,7 +391,10 @@ describe('review tests', () => {
   })
 
   it('get empty review list', async () => {
-    const res = await ctx.request.get(`/api/v1/review`, ctx.adminAuthHeaders())
+    const res = await ctx.request.get<{ reviews: ListedReview[] }>(
+      `/api/v1/review`,
+      ctx.adminAuthHeaders(),
+    )
 
     assertEqual(res.status, 200)
     assertEqual(res.data.reviews.length, 0)
@@ -403,11 +414,9 @@ describe('review tests', () => {
       taste: 'Cherries, a little sour',
       time: '2023-03-07T18:31:33.123Z',
     }
-    const reviewRes = await ctx.request.post(
-      `/api/v1/review`,
-      createReviewRequest,
-      ctx.adminAuthHeaders(),
-    )
+    const reviewRes = await ctx.request.post<{
+      review: CreatedOrUpdatedReview
+    }>(`/api/v1/review`, createReviewRequest, ctx.adminAuthHeaders())
     assertEqual(reviewRes.status, 201)
     assertEqual(reviewRes.data.review.beer, beerRes.data.beer.id)
 
@@ -454,11 +463,9 @@ describe('review tests', () => {
       taste: 'Bitter',
       time: '2023-03-10T18:31:33.123Z',
     }
-    const otherReviewRes = await ctx.request.post(
-      `/api/v1/review`,
-      createOtherReviewRequest,
-      ctx.adminAuthHeaders(),
-    )
+    const otherReviewRes = await ctx.request.post<{
+      review: CreatedOrUpdatedReview
+    }>(`/api/v1/review`, createOtherReviewRequest, ctx.adminAuthHeaders())
     assertEqual(otherReviewRes.status, 201)
     assertEqual(otherReviewRes.data.review.beer, otherBeerRes.data.beer.id)
 
@@ -487,11 +494,9 @@ describe('review tests', () => {
       taste: 'Bitter, sour',
       time: '2023-03-09T18:31:33.123Z',
     }
-    const collabReviewRes = await ctx.request.post(
-      `/api/v1/review`,
-      createCollabReviewRequest,
-      ctx.adminAuthHeaders(),
-    )
+    const collabReviewRes = await ctx.request.post<{
+      review: CreatedOrUpdatedReview
+    }>(`/api/v1/review`, createCollabReviewRequest, ctx.adminAuthHeaders())
     assertEqual(collabReviewRes.status, 201)
     assertEqual(collabReviewRes.data.review.beer, collabBeerRes.data.beer.id)
 
@@ -513,11 +518,8 @@ describe('review tests', () => {
     )
 
     const breweryListRes = await ctx.request.get<{
-      reviews: JoinedReview[]
-      sorting: {
-        order: ReviewListOrderProperty
-        direction: ListDirection
-      }
+      reviews: ListedReview[]
+      sorting: ReviewSorting
     }>(
       `/api/v1/brewery/${
         breweryRes.data.brewery.id
@@ -552,11 +554,8 @@ describe('review tests', () => {
       maxTime
     }`
     const breweryListRes = await ctx.request.get<{
-      reviews: JoinedReview[]
-      sorting: {
-        order: ReviewListOrderProperty
-        direction: ListDirection
-      }
+      reviews: ListedReview[]
+      sorting: ReviewSorting
     }>(
       `/api/v1/brewery/${
         breweryRes.data.brewery.id
@@ -582,11 +581,8 @@ describe('review tests', () => {
     )
 
     const locationListRes = await ctx.request.get<{
-      reviews: JoinedReview[]
-      sorting: {
-        order: ReviewListOrderProperty
-        direction: ListDirection
-      }
+      reviews: ListedReview[]
+      sorting: ReviewSorting
     }>(
       `/api/v1/location/${
         locationRes.data.location.id
@@ -620,11 +616,8 @@ describe('review tests', () => {
       maxTime
     }`
     const locationListRes = await ctx.request.get<{
-      reviews: JoinedReview[]
-      sorting: {
-        order: ReviewListOrderProperty
-        direction: ListDirection
-      }
+      reviews: ListedReview[]
+      sorting: ReviewSorting
     }>(
       `/api/v1/location/${
         locationRes.data.location.id
@@ -649,11 +642,8 @@ describe('review tests', () => {
     )
 
     const styleListRes = await ctx.request.get<{
-      reviews: JoinedReview[]
-      sorting: {
-        order: ReviewListOrderProperty
-        direction: ListDirection
-      }
+      reviews: ListedReview[]
+      sorting: ReviewSorting
     }>(
       `/api/v1/style/${
         styleRes.data.style.id
@@ -686,11 +676,8 @@ describe('review tests', () => {
       maxTime
     }`
     const styleListRes = await ctx.request.get<{
-      reviews: JoinedReview[]
-      sorting: {
-        order: ReviewListOrderProperty
-        direction: ListDirection
-      }
+      reviews: ListedReview[]
+      sorting: ReviewSorting
     }>(
       `/api/v1/style/${
         styleRes.data.style.id
@@ -748,11 +735,8 @@ describe('review tests', () => {
     assertEqual(otherReviewRes.status, 201)
 
     const beerListRes = await ctx.request.get<{
-      reviews: JoinedReview[]
-      sorting: {
-        order: ReviewListOrderProperty
-        direction: ListDirection
-      }
+      reviews: ListedReview[]
+      sorting: ReviewSorting
     }>(
       `/api/v1/beer/${beerRes.data.beer.id}/review?order=rating&direction=asc`,
       ctx.adminAuthHeaders(),
@@ -774,11 +758,8 @@ describe('review tests', () => {
       maxTime
     }`
     const beerListRes = await ctx.request.get<{
-      reviews: JoinedReview[]
-      sorting: {
-        order: ReviewListOrderProperty
-        direction: ListDirection
-      }
+      reviews: ListedReview[]
+      sorting: ReviewSorting
     }>(
       `/api/v1/beer/${
         beerRes.data.beer.id
@@ -817,7 +798,7 @@ describe('review tests', () => {
     const { reviewRes, collabReviewRes, otherReviewRes } =
       await createListDeps(adminAuthHeaders)
     const listRes = await ctx.request.get<{
-      reviews: JoinedReview[]
+      reviews: ListedReview[]
       sorting: Sorting
     }>(`/api/v1/review${data.query}`, ctx.adminAuthHeaders())
     assertEqual(listRes.status, 200)
@@ -901,11 +882,8 @@ describe('review tests', () => {
       maxTime
     }`
     const beerListRes = await ctx.request.get<{
-      reviews: JoinedReview[]
-      sorting: {
-        order: ReviewListOrderProperty
-        direction: ListDirection
-      }
+      reviews: ListedReview[]
+      sorting: ReviewSorting
     }>(
       `/api/v1/review?order=rating&direction=asc&${filter}`,
       ctx.adminAuthHeaders(),
