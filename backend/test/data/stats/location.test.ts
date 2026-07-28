@@ -1,7 +1,7 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
-import type { Pagination } from '../../../src/core/pagination.js'
+import type { Pagination } from '../../../src/data/pagination.js'
 import type { Review } from '../../../src/core/review/review.js'
 import type {
   LocationStatsOrder,

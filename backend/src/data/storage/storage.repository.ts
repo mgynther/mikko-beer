@@ -8,8 +8,8 @@ import type {
   StorageTable,
 } from './storage.table.js'
 
-import type { Pagination } from '../../core/pagination.js'
-import { toRowNumbers } from '../../core/pagination.js'
+import type { Pagination } from '../pagination.js'
+import { toRowNumbers } from '../pagination.js'
 import type {
   AnnualStorageStats,
   JoinedStorage,

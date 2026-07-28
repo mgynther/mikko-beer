@@ -2,7 +2,7 @@ import type { SelectQueryBuilder, RawBuilder } from 'kysely'
 import { sql } from 'kysely'
 
 import type { Database, KyselyDatabase } from '../database.js'
-import type { Pagination } from '../../core/pagination.js'
+import type { Pagination } from '../pagination.js'
 
 import type {
   AnnualContainerStats,

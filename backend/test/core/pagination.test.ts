@@ -4,7 +4,7 @@ import type {
   Pagination,
   PaginationRequest,
 } from '../../src/core/pagination.js'
-import { toRowNumbers, validatePagination } from '../../src/core/pagination.js'
+import { validatePagination } from '../../src/core/pagination.js'
 
 import { invalidPaginationError } from '../../src/core/errors.js'
 import { expectThrow } from './controller-error-helper.js'
@@ -64,12 +64,5 @@ describe('pagination unit tests', () => {
   })
   it('fail validation with non-number size after number', () => {
     fail({ size: '10 ; DROP DATABASE mikko_beer ;', skip: '8' })
-  })
-})
-
-describe('toRowNumbers unit tests', () => {
-  it('toRowNumbers', () => {
-    const result = toRowNumbers({ size: 14, skip: 4 })
-    assertDeepEqual(result, { start: 5, end: 18 })
   })
 })

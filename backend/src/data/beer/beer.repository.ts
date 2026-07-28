@@ -15,10 +15,10 @@ import type {
   NewBeer,
 } from '../../core/beer/beer.js'
 
-import type { Pagination } from '../../core/pagination.js'
-import { toRowNumbers } from '../../core/pagination.js'
-import type { SearchByName } from '../../core/search.js'
-import { defaultSearchMaxResults, toIlike } from '../../core/search.js'
+import type { Pagination } from '../pagination.js'
+import { toRowNumbers } from '../pagination.js'
+import type { SearchByName } from '../search.js'
+import { defaultSearchMaxResults, toIlike } from '../search.js'
 
 import type { Brewery } from '../../core/brewery/brewery.js'
 import type { Style } from '../../core/style/style.js'

@@ -5,9 +5,9 @@ import type {
   Location,
   CreateLocationRequest,
 } from '../../core/location/location.js'
-import type { Pagination } from '../../core/pagination.js'
-import type { SearchByName } from '../../core/search.js'
-import { defaultSearchMaxResults, toIlike } from '../../core/search.js'
+import type { Pagination } from '../pagination.js'
+import type { SearchByName } from '../search.js'
+import { defaultSearchMaxResults, toIlike } from '../search.js'
 
 export async function insertLocation(
   trx: Transaction,

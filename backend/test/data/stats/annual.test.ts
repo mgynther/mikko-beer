@@ -4,7 +4,7 @@ import { TestContext } from '../test-context.js'
 import * as statsRepository from '../../../src/data/stats/stats.repository.js'
 import { insertMultipleReviews } from '../review-helpers.js'
 import type { Review } from '../../../src/core/review/review.js'
-import type { Pagination } from '../../../src/core/pagination.js'
+import type { Pagination } from '../../../src/data/pagination.js'
 import { assertDeepEqual } from '../../assert.js'
 import { avg, median, mode, stdDev } from './stats-helpers.js'
 

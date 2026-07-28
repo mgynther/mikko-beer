@@ -1,9 +1,9 @@
 import type { Database, Transaction } from '../database.js'
 import type { BreweryRow } from './brewery.table.js'
 
-import type { Pagination } from '../../core/pagination.js'
-import type { SearchByName } from '../../core/search.js'
-import { defaultSearchMaxResults, toIlike } from '../../core/search.js'
+import type { Pagination } from '../pagination.js'
+import type { SearchByName } from '../search.js'
+import { defaultSearchMaxResults, toIlike } from '../search.js'
 
 export interface Brewery {
   id: string

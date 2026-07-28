@@ -10,8 +10,8 @@ import type {
 } from './review.table.js'
 
 import type { ListDirection } from '../../core/list.js'
-import type { Pagination } from '../../core/pagination.js'
-import { toRowNumbers } from '../../core/pagination.js'
+import type { Pagination } from '../pagination.js'
+import { toRowNumbers } from '../pagination.js'
 import type {
   JoinedReview,
   NewReview,
