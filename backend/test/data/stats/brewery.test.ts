@@ -6,7 +6,7 @@ import type { NewReview, Review } from '../../../src/core/review/review.js'
 import type {
   BreweryStatsOrder,
   StatsFilter,
-} from '../../../src/core/stats/stats.js'
+} from '../../../src/data/stats/stats.repository.js'
 import type { Database, Transaction } from '../../../src/data/database.js'
 import * as beerRepository from '../../../src/data/beer/beer.repository.js'
 import * as breweryRepository from '../../../src/data/brewery/brewery.repository.js'

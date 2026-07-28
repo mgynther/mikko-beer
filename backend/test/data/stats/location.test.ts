@@ -6,7 +6,7 @@ import type { Review } from '../../../src/core/review/review.js'
 import type {
   LocationStatsOrder,
   StatsFilter,
-} from '../../../src/core/stats/stats.js'
+} from '../../../src/data/stats/stats.repository.js'
 import type { Database } from '../../../src/data/database.js'
 import * as statsRepository from '../../../src/data/stats/stats.repository.js'
 import type { InsertedData } from '../review-helpers.js'

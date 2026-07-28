@@ -1,7 +1,7 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
-import type { StatsIdFilter } from '../../../src/core/stats/stats.js'
+import type { StatsIdFilter } from '../../../src/data/stats/stats.repository.js'
 import * as reviewRepository from '../../../src/data/review/review.repository.js'
 import * as statsRepository from '../../../src/data/stats/stats.repository.js'
 

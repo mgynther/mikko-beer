@@ -4,23 +4,9 @@ import { sql } from 'kysely'
 import type { Database, KyselyDatabase } from '../database.js'
 import type { Pagination } from '../pagination.js'
 
-import type {
-  AnnualContainerStats,
-  AnnualStats,
-  BreweryStats,
-  BreweryStatsOrder,
-  ContainerStats,
-  LocationStats,
-  LocationStatsOrder,
-  OverallStats,
-  RatingStats,
-  StatsIdFilter,
-  StatsFilter,
-  StyleStats,
-  StyleStatsOrder,
-} from '../../core/stats/stats.js'
 import { contains } from '../record.js'
 import { round, formatInteger } from './format.js'
+import type { ListDirection } from '../list.js'
 
 // MODE() WITHIN GROUP (ORDER BY review.rating ASC): on ties, Postgres
 // returns the lowest tied rating. This invariant must be replicated in
@@ -31,6 +17,12 @@ function noInfinity(value: number): number {
     return 10000000
   }
   return value
+}
+
+export interface StatsIdFilter {
+  brewery: string | undefined
+  location: string | undefined
+  style: string | undefined
 }
 
 function idFilter(statsFilter: StatsIdFilter): RawBuilder<unknown> {
@@ -90,6 +82,15 @@ interface AnnualQueryResult {
   year: number
 }
 
+export type AnnualStats = Array<{
+  reviewAverage: string
+  reviewCount: string
+  reviewStandardDeviation: string
+  reviewMedian: string
+  reviewMode: string
+  year: string
+}>
+
 export async function getAnnual(
   db: Database,
   statsFilter: StatsIdFilter,
@@ -129,6 +130,18 @@ interface AnnualContainerQueryResult {
   mode: number
   year: number
 }
+
+export type AnnualContainerStats = Array<{
+  containerId: string
+  containerSize: string
+  containerType: string
+  reviewAverage: string
+  reviewCount: string
+  reviewStandardDeviation: string
+  reviewMedian: string
+  reviewMode: string
+  year: string
+}>
 
 export async function getAnnualContainer(
   db: Database,
@@ -183,6 +196,17 @@ interface ContainerQueryResult {
   container_type: string
 }
 
+export type ContainerStats = Array<{
+  reviewAverage: string
+  reviewCount: string
+  reviewStandardDeviation: string
+  reviewMedian: string
+  reviewMode: string
+  containerId: string
+  containerSize: string
+  containerType: string
+}>
+
 export async function getContainer(
   db: Database,
   statsFilter: StatsIdFilter,
@@ -234,6 +258,14 @@ type LocationQueryBuilder = SelectQueryBuilder<
   LocationQuerySelection
 >
 
+type LocationStatsOrderProperty =
+  'average' | 'location_name' | 'count' | 'std_dev'
+
+export interface LocationStatsOrder {
+  property: LocationStatsOrderProperty
+  direction: ListDirection
+}
+
 function locationOrderBy(
   builder: LocationQueryBuilder,
   locationStatsOrder: LocationStatsOrder,
@@ -258,6 +290,28 @@ function locationOrderBy(
         .orderBy('review_average', 'desc')
         .orderBy('location_name', 'asc')
   }
+}
+
+export type LocationStats = Array<{
+  reviewAverage: string
+  reviewCount: string
+  reviewStandardDeviation: string
+  reviewMedian: string
+  reviewMode: string
+  locationId: string
+  locationName: string
+}>
+
+export interface StatsFilter {
+  brewery: string | undefined
+  location: string | undefined
+  style: string | undefined
+  maxReviewCount: number
+  minReviewCount: number
+  maxReviewAverage: number
+  minReviewAverage: number
+  timeStart: Date | undefined
+  timeEnd: Date | undefined
 }
 
 export async function getLocation(
@@ -395,6 +449,14 @@ type BreweryQueryBuilder = SelectQueryBuilder<
   BreweryQuerySelection
 >
 
+type BreweryStatsOrderProperty =
+  'average' | 'brewery_name' | 'count' | 'std_dev'
+
+export interface BreweryStatsOrder {
+  property: BreweryStatsOrderProperty
+  direction: ListDirection
+}
+
 function breweryOrderBy(
   builder: BreweryQueryBuilder,
   breweryStatsOrder: BreweryStatsOrder,
@@ -420,6 +482,17 @@ function breweryOrderBy(
         .orderBy('brewery_name', 'asc')
   }
 }
+
+export type BreweryStats = Array<{
+  reviewAverage: string
+  reviewCount: string
+  reviewStandardDeviation: string
+  reviewMedian: string
+  reviewMode: string
+  reviewedBeerCount: string
+  breweryId: string
+  breweryName: string
+}>
 
 export async function getBrewery(
   db: Database,
@@ -557,6 +630,22 @@ interface ReviewStats {
   stddev_pop: number
   percentile_cont: number
   mode: number
+}
+
+export interface OverallStats {
+  beerCount: string
+  breweryCount: string
+  containerCount: string
+  locationCount: string
+  distinctBeerReviewCount: string
+  reviewAverage: string
+  reviewCount: string
+  reviewStandardDeviation: string
+  reviewMedian: string
+  reviewMode: string
+  reviewWithLocationCount: string
+  reviewWithoutLocationCount: string
+  styleCount: string
 }
 
 async function getFullOverall(db: Database): Promise<OverallStats> {
@@ -859,6 +948,11 @@ interface RatingQueryResult {
   count: number
 }
 
+export type RatingStats = Array<{
+  rating: string
+  count: string
+}>
+
 export async function getRating(
   db: Database,
   statsFilter: StatsIdFilter,
@@ -895,6 +989,13 @@ type StyleQueryBuilder = SelectQueryBuilder<
   StyleQuerySelection
 >
 
+type StyleStatsOrderProperty = 'average' | 'style_name' | 'count' | 'std_dev'
+
+export interface StyleStatsOrder {
+  property: StyleStatsOrderProperty
+  direction: ListDirection
+}
+
 function styleOrderBy(
   builder: StyleQueryBuilder,
   styleStatsOrder: StyleStatsOrder,
@@ -920,6 +1021,16 @@ function styleOrderBy(
         .orderBy('style_name', 'asc')
   }
 }
+
+export type StyleStats = Array<{
+  reviewAverage: string
+  reviewCount: string
+  reviewStandardDeviation: string
+  reviewMedian: string
+  reviewMode: string
+  styleId: string
+  styleName: string
+}>
 
 export async function getStyle(
   db: Database,
