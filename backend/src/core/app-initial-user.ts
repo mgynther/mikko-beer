@@ -11,7 +11,7 @@ import type {
   AddPasswordUserIf,
   PasswordSignInMethod,
 } from './user/sign-in-method.js'
-import type { SignedInUser } from './internal/user/signed-in-user.js'
+import type { SignedInUser } from './user/signed-in-user.js'
 import type { DbRefreshToken } from './auth/refresh-token.js'
 
 export async function createInitialUser(

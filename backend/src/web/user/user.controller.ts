@@ -17,6 +17,8 @@ import type {
   CreateUserIf,
 } from '../../core/user/user.js'
 import type { DbRefreshToken } from '../../core/auth/refresh-token.js'
+import type { SignedInUser } from '../../core/user/signed-in-user.js'
+import type { User } from '../../core/user/user.js'
 import type { AuthTokenConfig } from '../../core/auth/auth-token.js'
 import type { Context } from '../context.js'
 
@@ -65,30 +67,34 @@ export function userController(router: Router, config: Config): void {
     const authTokenPayload = authHelper.parseAuthToken(ctx)
     const body: unknown = ctx.request.body
 
-    const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
-      const authTokenConfig: AuthTokenConfig = {
-        secret: config.authTokenSecret,
-        expiryDurationMin: config.authTokenExpiryDurationMin,
-      }
-      const createUserIf: CreateUserIf = {
-        createAnonymousUser: async (request: CreateAnonymousUserRequest) =>
-          await userRepository.createAnonymousUser(trx, request),
-        insertRefreshToken: async (userId: string): Promise<DbRefreshToken> =>
-          await refreshTokenRepository.insertRefreshToken(
-            trx,
-            userId,
-            new Date(),
-          ),
-        addPasswordUserIf: createAddPasswordUserIf(trx),
-      }
-      return await userService.createUser(
-        createUserIf,
-        authTokenPayload,
-        body,
-        authTokenConfig,
-        ctx.log,
-      )
-    })
+    const result = await ctx.db.executeReadWriteTransaction(
+      async (trx): Promise<SignedInUser> => {
+        const authTokenConfig: AuthTokenConfig = {
+          secret: config.authTokenSecret,
+          expiryDurationMin: config.authTokenExpiryDurationMin,
+        }
+        const createUserIf: CreateUserIf = {
+          createAnonymousUser: async (
+            request: CreateAnonymousUserRequest,
+          ): Promise<User> =>
+            await userRepository.createAnonymousUser(trx, request),
+          insertRefreshToken: async (userId: string): Promise<DbRefreshToken> =>
+            await refreshTokenRepository.insertRefreshToken(
+              trx,
+              userId,
+              new Date(),
+            ),
+          addPasswordUserIf: createAddPasswordUserIf(trx),
+        }
+        return await userService.createUser(
+          createUserIf,
+          authTokenPayload,
+          body,
+          authTokenConfig,
+          ctx.log,
+        )
+      },
+    )
 
     return {
       status: 201,
@@ -107,7 +113,7 @@ export function userController(router: Router, config: Config): void {
       const userId: string | undefined = ctx.params.userId
       const findRefreshToken = authHelper.createFindRefreshToken(ctx.db)
       const user = await userService.findUserById(
-        async (userId: string) =>
+        async (userId: string): Promise<User | undefined> =>
           await userRepository.findUserById(ctx.db, userId),
         findRefreshToken,
         {
@@ -127,7 +133,7 @@ export function userController(router: Router, config: Config): void {
   router.get('/api/v1/user', async (ctx: Context): Promise<ListResult> => {
     const authTokenPayload = authHelper.parseAuthToken(ctx)
     const users = await userService.listUsers(
-      async () => await userRepository.listUsers(ctx.db),
+      async (): Promise<User[]> => await userRepository.listUsers(ctx.db),
       authTokenPayload,
       ctx.log,
     )
@@ -143,9 +149,9 @@ export function userController(router: Router, config: Config): void {
     async (ctx: Context): Promise<DeleteResult> => {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const userId: string | undefined = ctx.params.userId
-      await ctx.db.executeReadWriteTransaction(async (trx) => {
+      await ctx.db.executeReadWriteTransaction(async (trx): Promise<void> => {
         await userService.deleteUserById(
-          async (userId: string) => {
+          async (userId: string): Promise<void> => {
             await userRepository.deleteUserById(trx, userId)
           },
           {

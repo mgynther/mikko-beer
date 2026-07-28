@@ -1,5 +1,5 @@
 import * as authTokenService from '../../internal/auth/auth-token.service.js'
-import type { SignedInUser } from './signed-in-user.js'
+import type { SignedInUser } from '../../user/signed-in-user.js'
 import type { CreateAnonymousUserRequest, Role, User } from '../../user/user.js'
 
 import { invalidCredentialsError, userNotFoundError } from '../../errors.js'

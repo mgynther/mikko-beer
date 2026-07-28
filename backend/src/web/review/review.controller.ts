@@ -155,30 +155,32 @@ export function reviewController(router: Router): void {
 
     const storageParam =
       typeof storage === 'string' && storage.length > 0 ? storage : undefined
-    const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
-      const createIf: CreateIf = {
-        createReview: async (review: NewReview) =>
-          await reviewRepository.insertReview(trx, review),
-        deleteFromStorage: async (storageId: string) => {
-          await storageRepository.deleteStorageById(trx, storageId)
-        },
-        lockBeer: async (id: string): Promise<string | undefined> =>
-          await beerRepository.lockBeer(trx, id),
-        lockContainer: async (id: string): Promise<string | undefined> =>
-          await containerRepository.lockContainer(trx, id),
-        lockStorage: async (id: string): Promise<string | undefined> =>
-          await storageRepository.lockStorage(trx, id),
-      }
-      return await reviewService.createReview(
-        createIf,
-        {
-          authTokenPayload,
-          body,
-        },
-        storageParam,
-        ctx.log,
-      )
-    })
+    const result = await ctx.db.executeReadWriteTransaction(
+      async (trx): Promise<Review> => {
+        const createIf: CreateIf = {
+          createReview: async (review: NewReview): Promise<Review> =>
+            await reviewRepository.insertReview(trx, review),
+          deleteFromStorage: async (storageId: string): Promise<void> => {
+            await storageRepository.deleteStorageById(trx, storageId)
+          },
+          lockBeer: async (id: string): Promise<string | undefined> =>
+            await beerRepository.lockBeer(trx, id),
+          lockContainer: async (id: string): Promise<string | undefined> =>
+            await containerRepository.lockContainer(trx, id),
+          lockStorage: async (id: string): Promise<string | undefined> =>
+            await storageRepository.lockStorage(trx, id),
+        }
+        return await reviewService.createReview(
+          createIf,
+          {
+            authTokenPayload,
+            body,
+          },
+          storageParam,
+          ctx.log,
+        )
+      },
+    )
 
     return {
       status: 201,
@@ -195,25 +197,27 @@ export function reviewController(router: Router): void {
       const body: unknown = ctx.request.body
       const reviewId: string | undefined = ctx.params.reviewId
 
-      const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
-        const updateIf: UpdateIf = {
-          updateReview: async (review: Review) =>
-            await reviewRepository.updateReview(trx, review),
-          lockBeer: async (id: string): Promise<string | undefined> =>
-            await beerRepository.lockBeer(trx, id),
-          lockContainer: async (id: string): Promise<string | undefined> =>
-            await containerRepository.lockContainer(trx, id),
-        }
-        return await reviewService.updateReview(
-          updateIf,
-          {
-            authTokenPayload,
-            id: reviewId,
-          },
-          body,
-          ctx.log,
-        )
-      })
+      const result = await ctx.db.executeReadWriteTransaction(
+        async (trx): Promise<Review> => {
+          const updateIf: UpdateIf = {
+            updateReview: async (review: Review): Promise<Review> =>
+              await reviewRepository.updateReview(trx, review),
+            lockBeer: async (id: string): Promise<string | undefined> =>
+              await beerRepository.lockBeer(trx, id),
+            lockContainer: async (id: string): Promise<string | undefined> =>
+              await containerRepository.lockContainer(trx, id),
+          }
+          return await reviewService.updateReview(
+            updateIf,
+            {
+              authTokenPayload,
+              id: reviewId,
+            },
+            body,
+            ctx.log,
+          )
+        },
+      )
 
       return {
         status: 200,
@@ -230,7 +234,7 @@ export function reviewController(router: Router): void {
       const authTokenPayload = parseAuthToken(ctx)
       const reviewId: string | undefined = ctx.params.reviewId
       const review = await reviewService.findReviewById(
-        async (reviewId: string) =>
+        async (reviewId: string): Promise<Review> =>
           await reviewRepository.findReviewById(ctx.db, reviewId),
         {
           authTokenPayload,
@@ -255,7 +259,10 @@ export function reviewController(router: Router): void {
         ctx.request.query,
       )
       const reviewResult = await reviewService.listReviewsByBeer(
-        async (beerId: string, reviewListRequest: ReviewListRequest) =>
+        async (
+          beerId: string,
+          reviewListRequest: ReviewListRequest,
+        ): Promise<JoinedReview[]> =>
           await reviewRepository.listReviewsByBeer(
             ctx.db,
             beerId,
@@ -292,7 +299,10 @@ export function reviewController(router: Router): void {
         ctx.request.query,
       )
       const reviewResult = await reviewService.listReviewsByBrewery(
-        async (breweryId: string, reviewListRequest: ReviewListRequest) =>
+        async (
+          breweryId: string,
+          reviewListRequest: ReviewListRequest,
+        ): Promise<JoinedReview[]> =>
           await reviewRepository.listReviewsByBrewery(
             ctx.db,
             breweryId,
@@ -329,7 +339,10 @@ export function reviewController(router: Router): void {
         ctx.request.query,
       )
       const reviewResult = await reviewService.listReviewsByLocation(
-        async (locationId: string, reviewListRequest: ReviewListRequest) =>
+        async (
+          locationId: string,
+          reviewListRequest: ReviewListRequest,
+        ): Promise<JoinedReview[]> =>
           await reviewRepository.listReviewsByLocation(
             ctx.db,
             locationId,
@@ -366,7 +379,10 @@ export function reviewController(router: Router): void {
         ctx.request.query,
       )
       const reviewResult = await reviewService.listReviewsByStyle(
-        async (styleId: string, reviewListRequest: ReviewListRequest) =>
+        async (
+          styleId: string,
+          reviewListRequest: ReviewListRequest,
+        ): Promise<JoinedReview[]> =>
           await reviewRepository.listReviewsByStyle(
             ctx.db,
             styleId,
@@ -401,7 +417,10 @@ export function reviewController(router: Router): void {
     const reviewListOrder = validateFullReviewListOrder(ctx.request.query)
     const pagination = validatePagination({ skip, size })
     const reviewResult = await reviewService.listReviews(
-      async (pagination: Pagination, reviewListRequest: ReviewListRequest) =>
+      async (
+        pagination: Pagination,
+        reviewListRequest: ReviewListRequest,
+      ): Promise<JoinedReview[]> =>
         await reviewRepository.listReviews(
           ctx.db,
           pagination,

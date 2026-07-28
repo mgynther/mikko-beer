@@ -81,7 +81,7 @@ export class App {
   }
 
   async start(): Promise<StartResult> {
-    return await new Promise<StartResult>((resolve, reject) => {
+    return await new Promise<StartResult>((resolve, reject): void => {
       const port = this.#config.port
       const db = this.#db
       const log = this.#log
@@ -97,38 +97,40 @@ export class App {
       }
       userRepository
         .listUsers(db)
-        .then((users: User[]) => {
+        .then((users: User[]): void => {
           let createPromise: Promise<void> | undefined = undefined
           if (users.length === 0) {
             logWithAdminPassword('No users. Creating initial admin')
             const adminUsername = uuidv4()
             const adminPassword = uuidv4()
-            createPromise = db.executeReadWriteTransaction(async (trx) => {
-              const authTokenConfig: AuthTokenConfig = {
-                secret: this.#config.authTokenSecret,
-                expiryDurationMin: this.#config.authTokenExpiryDurationMin,
-              }
-              const user = await createInitialUser(
-                async (request: CreateAnonymousUserRequest) =>
-                  await userRepository.createAnonymousUser(trx, request),
-                authTokenConfig,
-                this.#log,
-              )
-              startResult.authToken = user.authToken.authToken
-              startResult.userId = user.user.id
-              if (isAdminPasswordNeeded) {
-                const addPasswordUserIf = createAddPasswordUserIf(trx)
-                await addPasswordForInitialUser(
-                  addPasswordUserIf,
-                  user.user.id,
-                  {
-                    username: adminUsername,
-                    password: adminPassword,
-                  },
+            createPromise = db.executeReadWriteTransaction(
+              async (trx): Promise<void> => {
+                const authTokenConfig: AuthTokenConfig = {
+                  secret: this.#config.authTokenSecret,
+                  expiryDurationMin: this.#config.authTokenExpiryDurationMin,
+                }
+                const user = await createInitialUser(
+                  async (request: CreateAnonymousUserRequest): Promise<User> =>
+                    await userRepository.createAnonymousUser(trx, request),
+                  authTokenConfig,
                   this.#log,
                 )
-              }
-            })
+                startResult.authToken = user.authToken.authToken
+                startResult.userId = user.user.id
+                if (isAdminPasswordNeeded) {
+                  const addPasswordUserIf = createAddPasswordUserIf(trx)
+                  await addPasswordForInitialUser(
+                    addPasswordUserIf,
+                    user.user.id,
+                    {
+                      username: adminUsername,
+                      password: adminPassword,
+                    },
+                    this.#log,
+                  )
+                }
+              },
+            )
             logWithAdminPassword(
               `Created initial user "${adminUsername}" with password "${
                 adminPassword
@@ -136,7 +138,7 @@ export class App {
             )
           }
           log('INFO', 'Server starting')
-          const serverPromise = new Promise<void>((resolve) => {
+          const serverPromise = new Promise<void>((resolve): void => {
             this.#server = this.#koa.listen(port, resolve)
           })
           const promises = [serverPromise]
@@ -146,16 +148,16 @@ export class App {
           const oldDate = new Date()
           oldDate.setDate(oldDate.getDate() - 14)
           const oldPasswordHashedAtCleanupPromise =
-            db.executeReadWriteTransaction(async (trx) => {
+            db.executeReadWriteTransaction(async (trx): Promise<void> => {
               await clearOldHashedAt(trx, oldDate)
             })
           promises.push(oldPasswordHashedAtCleanupPromise)
-          Promise.all(promises).then(() => {
+          Promise.all(promises).then((): void => {
             log('INFO', `Server started in port ${port}`)
             resolve(startResult)
           })
         })
-        .catch((error: unknown) => {
+        .catch((error: unknown): void => {
           log('ERROR', 'Error starting', error)
           reject(error)
         })
@@ -163,7 +165,7 @@ export class App {
   }
 
   async stop(): Promise<void> {
-    await new Promise<void>((resolve, reject) => {
+    await new Promise<void>((resolve, reject): void => {
       const server = this.#server
       if (server === undefined) {
         resolve()

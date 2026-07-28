@@ -8,8 +8,16 @@ import type { Router } from '../router.js'
 import { validatePagination } from '../../core/pagination.js'
 
 import type {
+  AnnualContainerStats as CoreAnnualContainerStats,
+  AnnualStats as CoreAnnualStats,
+  BreweryStats as CoreBreweryStats,
   BreweryStatsOrder,
+  ContainerStats as CoreContainerStats,
+  LocationStats as CoreLocationStats,
   LocationStatsOrder,
+  OverallStats as CoreOverallStats,
+  RatingStats as CoreRatingStats,
+  StyleStats as CoreStyleStats,
   StyleStatsOrder,
   StatsIdFilter,
   StatsFilter,
@@ -171,7 +179,7 @@ export function statsController(router: Router): void {
       const authTokenPayload = parseAuthToken(ctx)
       const statsFilter = validateStatsIdFilter(ctx.request.query)
       const overall = await statsService.getOverall(
-        async (statsFilter: StatsIdFilter) =>
+        async (statsFilter: StatsIdFilter): Promise<CoreOverallStats> =>
           await statsRepository.getOverall(ctx.db, statsFilter),
         authTokenPayload,
         statsFilter,
@@ -189,7 +197,7 @@ export function statsController(router: Router): void {
       const authTokenPayload = parseAuthToken(ctx)
       const statsFilter = validateStatsIdFilter(ctx.request.query)
       const annual = await statsService.getAnnual(
-        async (statsFilter: StatsIdFilter) =>
+        async (statsFilter: StatsIdFilter): Promise<CoreAnnualStats> =>
           await statsRepository.getAnnual(ctx.db, statsFilter),
         authTokenPayload,
         statsFilter,
@@ -209,7 +217,10 @@ export function statsController(router: Router): void {
       const statsFilter = validateStatsIdFilter(ctx.request.query)
       const pagination = validatePagination({ skip, size })
       const annualContainer = await statsService.getAnnualContainer(
-        async (pagination: Pagination, statsFilter: StatsIdFilter) =>
+        async (
+          pagination: Pagination,
+          statsFilter: StatsIdFilter,
+        ): Promise<CoreAnnualContainerStats> =>
           await statsRepository.getAnnualContainer(
             ctx.db,
             pagination,
@@ -240,7 +251,7 @@ export function statsController(router: Router): void {
           pagination: Pagination,
           statsFilter: StatsFilter,
           breweryStatsOrder: BreweryStatsOrder,
-        ) =>
+        ): Promise<CoreBreweryStats> =>
           await statsRepository.getBrewery(
             ctx.db,
             pagination,
@@ -266,7 +277,7 @@ export function statsController(router: Router): void {
       const authTokenPayload = parseAuthToken(ctx)
       const statsFilter = validateStatsIdFilter(ctx.request.query)
       const container = await statsService.getContainer(
-        async (statsFilter: StatsIdFilter) =>
+        async (statsFilter: StatsIdFilter): Promise<CoreContainerStats> =>
           await statsRepository.getContainer(ctx.db, statsFilter),
         authTokenPayload,
         statsFilter,
@@ -296,7 +307,7 @@ export function statsController(router: Router): void {
           pagination: Pagination,
           statsFilter: StatsFilter,
           locationStatsOrder: LocationStatsOrder,
-        ) =>
+        ): Promise<CoreLocationStats> =>
           await statsRepository.getLocation(
             ctx.db,
             pagination,
@@ -322,7 +333,7 @@ export function statsController(router: Router): void {
       const authTokenPayload = parseAuthToken(ctx)
       const statsFilter = validateStatsIdFilter(ctx.request.query)
       const rating = await statsService.getRating(
-        async (statsFilter: StatsIdFilter) =>
+        async (statsFilter: StatsIdFilter): Promise<CoreRatingStats> =>
           await statsRepository.getRating(ctx.db, statsFilter),
         authTokenPayload,
         statsFilter,
@@ -343,7 +354,10 @@ export function statsController(router: Router): void {
       const styleStatsOrder = validateStyleStatsOrder({ order, direction })
       const statsFilter = validateStatsFilter(ctx.request.query)
       const style = await statsService.getStyle(
-        async (statsFilter: StatsFilter, styleStatsOrder: StyleStatsOrder) =>
+        async (
+          statsFilter: StatsFilter,
+          styleStatsOrder: StyleStatsOrder,
+        ): Promise<CoreStyleStats> =>
           await statsRepository.getStyle(ctx.db, statsFilter, styleStatsOrder),
         authTokenPayload,
         statsFilter,

@@ -4,13 +4,24 @@ import type { SearchByName } from '../../core/search.js'
 
 import * as beerRepository from '../../data/beer/beer.repository.js'
 import * as breweryRepository from '../../data/brewery/brewery.repository.js'
+import type {
+  InsertableBeerBreweryRow,
+  InsertableBeerStyleRow,
+} from '../../data/beer/beer.table.js'
 import type { Transaction } from '../../data/database.js'
 import * as styleRepository from '../../data/style/style.repository.js'
 
 import * as authHelper from '../authentication/authentication-helper.js'
 
 import type { Router } from '../router.js'
-import type { Beer, CreateIf, NewBeer, UpdateIf } from '../../core/beer/beer.js'
+import type {
+  Beer,
+  BeerWithBreweriesAndStyles,
+  BeerWithBreweryAndStyleIds,
+  CreateIf,
+  NewBeer,
+  UpdateIf,
+} from '../../core/beer/beer.js'
 import { validatePagination } from '../../core/pagination.js'
 import { validateSearchByName } from '../../core/search.js'
 import type { Context } from '../context.js'
@@ -79,24 +90,26 @@ export function beerController(router: Router): void {
     const authTokenPayload = authHelper.parseAuthToken(ctx)
     const body: unknown = ctx.request.body
 
-    const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
-      const createIf: CreateIf = {
-        create: async (beer: NewBeer) =>
-          await beerRepository.insertBeer(trx, beer),
-        lockBreweries: createBreweryLocker(trx),
-        lockStyles: createStyleLocker(trx),
-        insertBeerBreweries: createBeerBreweryInserter(trx),
-        insertBeerStyles: createBeerStyleInserter(trx),
-      }
-      return await beerService.createBeer(
-        createIf,
-        {
-          authTokenPayload,
-          body,
-        },
-        ctx.log,
-      )
-    })
+    const result = await ctx.db.executeReadWriteTransaction(
+      async (trx): Promise<BeerWithBreweryAndStyleIds> => {
+        const createIf: CreateIf = {
+          create: async (beer: NewBeer): Promise<Beer> =>
+            await beerRepository.insertBeer(trx, beer),
+          lockBreweries: createBreweryLocker(trx),
+          lockStyles: createStyleLocker(trx),
+          insertBeerBreweries: createBeerBreweryInserter(trx),
+          insertBeerStyles: createBeerStyleInserter(trx),
+        }
+        return await beerService.createBeer(
+          createIf,
+          {
+            authTokenPayload,
+            body,
+          },
+          ctx.log,
+        )
+      },
+    )
 
     return {
       status: 201,
@@ -113,31 +126,33 @@ export function beerController(router: Router): void {
       const body: unknown = ctx.request.body
       const beerId: string | undefined = ctx.params.beerId
 
-      const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
-        const updateIf: UpdateIf = {
-          update: async (beer: Beer) =>
-            await beerRepository.updateBeer(trx, beer),
-          lockBreweries: createBreweryLocker(trx),
-          lockStyles: createStyleLocker(trx),
-          insertBeerBreweries: createBeerBreweryInserter(trx),
-          deleteBeerBreweries: async (beerId: string) => {
-            await beerRepository.deleteBeerBreweries(trx, beerId)
-          },
-          insertBeerStyles: createBeerStyleInserter(trx),
-          deleteBeerStyles: async (beerId: string) => {
-            await beerRepository.deleteBeerStyles(trx, beerId)
-          },
-        }
-        return await beerService.updateBeer(
-          updateIf,
-          beerId,
-          {
-            authTokenPayload,
-            body,
-          },
-          ctx.log,
-        )
-      })
+      const result = await ctx.db.executeReadWriteTransaction(
+        async (trx): Promise<BeerWithBreweryAndStyleIds> => {
+          const updateIf: UpdateIf = {
+            update: async (beer: Beer): Promise<Beer> =>
+              await beerRepository.updateBeer(trx, beer),
+            lockBreweries: createBreweryLocker(trx),
+            lockStyles: createStyleLocker(trx),
+            insertBeerBreweries: createBeerBreweryInserter(trx),
+            deleteBeerBreweries: async (beerId: string): Promise<void> => {
+              await beerRepository.deleteBeerBreweries(trx, beerId)
+            },
+            insertBeerStyles: createBeerStyleInserter(trx),
+            deleteBeerStyles: async (beerId: string): Promise<void> => {
+              await beerRepository.deleteBeerStyles(trx, beerId)
+            },
+          }
+          return await beerService.updateBeer(
+            updateIf,
+            beerId,
+            {
+              authTokenPayload,
+              body,
+            },
+            ctx.log,
+          )
+        },
+      )
 
       return {
         status: 200,
@@ -154,7 +169,9 @@ export function beerController(router: Router): void {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const beerId: string | undefined = ctx.params.beerId
       const beer = await beerService.findBeerById(
-        async (beerId: string) =>
+        async (
+          beerId: string,
+        ): Promise<BeerWithBreweriesAndStyles | undefined> =>
           await beerRepository.findBeerById(ctx.db, beerId),
         {
           authTokenPayload,
@@ -175,7 +192,7 @@ export function beerController(router: Router): void {
     const { skip, size } = ctx.request.query
     const pagination = validatePagination({ skip, size })
     const beers = await beerService.listBeers(
-      async (pagination: Pagination) =>
+      async (pagination: Pagination): Promise<BeerWithBreweriesAndStyles[]> =>
         await beerRepository.listBeers(ctx.db, pagination),
       {
         authTokenPayload,
@@ -197,7 +214,9 @@ export function beerController(router: Router): void {
 
       const searchByName = validateSearchByName(body)
       const beers = await beerService.searchBeers(
-        async (searchRequest: SearchByName) =>
+        async (
+          searchRequest: SearchByName,
+        ): Promise<BeerWithBreweriesAndStyles[]> =>
           await beerRepository.searchBeers(ctx.db, searchRequest),
         {
           authTokenPayload,
@@ -217,10 +236,10 @@ export function beerController(router: Router): void {
 function createBeerBreweryInserter(
   trx: Transaction,
 ): (beerId: string, breweries: string[]) => Promise<void> {
-  return async (beerId: string, breweries: string[]) => {
+  return async (beerId: string, breweries: string[]): Promise<void> => {
     await beerRepository.insertBeerBreweries(
       trx,
-      breweries.map((brewery) => ({
+      breweries.map((brewery): InsertableBeerBreweryRow => ({
         beer: beerId,
         brewery,
       })),
@@ -231,10 +250,10 @@ function createBeerBreweryInserter(
 function createBeerStyleInserter(
   trx: Transaction,
 ): (beerId: string, breweries: string[]) => Promise<void> {
-  return async (beerId: string, styles: string[]) => {
+  return async (beerId: string, styles: string[]): Promise<void> => {
     await beerRepository.insertBeerStyles(
       trx,
-      styles.map((style) => ({
+      styles.map((style): InsertableBeerStyleRow => ({
         beer: beerId,
         style,
       })),

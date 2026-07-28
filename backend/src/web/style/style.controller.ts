@@ -7,6 +7,8 @@ import type {
   NewStyle,
   Style,
   StyleRelationship,
+  StyleWithParentIds,
+  StyleWithParentsAndChildren,
   UpdateStyleIf,
 } from '../../core/style/style.js'
 import type { Transaction } from '../../data/database.js'
@@ -73,23 +75,25 @@ export function styleController(router: Router): void {
     const authTokenPayload = parseAuthToken(ctx)
     const body: unknown = ctx.request.body
 
-    const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
-      const createIf: CreateStyleIf = {
-        create: async (style: NewStyle) =>
-          await styleRepository.insertStyle(trx, style),
-        lockStyles: createStyleLocker(trx),
-        insertParents: createParentInserter(trx),
-        listAllRelationships: createLister(trx),
-      }
-      return await styleService.createStyle(
-        createIf,
-        {
-          authTokenPayload,
-          body,
-        },
-        ctx.log,
-      )
-    })
+    const result = await ctx.db.executeReadWriteTransaction(
+      async (trx): Promise<StyleWithParentIds> => {
+        const createIf: CreateStyleIf = {
+          create: async (style: NewStyle): Promise<Style> =>
+            await styleRepository.insertStyle(trx, style),
+          lockStyles: createStyleLocker(trx),
+          insertParents: createParentInserter(trx),
+          listAllRelationships: createLister(trx),
+        }
+        return await styleService.createStyle(
+          createIf,
+          {
+            authTokenPayload,
+            body,
+          },
+          ctx.log,
+        )
+      },
+    )
 
     return {
       status: 201,
@@ -106,29 +110,31 @@ export function styleController(router: Router): void {
       const body: unknown = ctx.request.body
       const styleId: string | undefined = ctx.params.styleId
 
-      const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
-        const updateIf: UpdateStyleIf = {
-          update: async (style: Style) =>
-            await styleRepository.updateStyle(trx, style),
-          lockStyles: createStyleLocker(trx),
-          insertParents: createParentInserter(trx),
-          listAllRelationships: createLister(trx),
-          deleteStyleChildRelationships: async (
-            styleId: string,
-          ): Promise<void> => {
-            await styleRepository.deleteStyleChildRelationships(trx, styleId)
-          },
-        }
-        return await styleService.updateStyle(
-          updateIf,
-          {
-            authTokenPayload,
-            id: styleId,
-          },
-          body,
-          ctx.log,
-        )
-      })
+      const result = await ctx.db.executeReadWriteTransaction(
+        async (trx): Promise<StyleWithParentIds> => {
+          const updateIf: UpdateStyleIf = {
+            update: async (style: Style): Promise<Style> =>
+              await styleRepository.updateStyle(trx, style),
+            lockStyles: createStyleLocker(trx),
+            insertParents: createParentInserter(trx),
+            listAllRelationships: createLister(trx),
+            deleteStyleChildRelationships: async (
+              styleId: string,
+            ): Promise<void> => {
+              await styleRepository.deleteStyleChildRelationships(trx, styleId)
+            },
+          }
+          return await styleService.updateStyle(
+            updateIf,
+            {
+              authTokenPayload,
+              id: styleId,
+            },
+            body,
+            ctx.log,
+          )
+        },
+      )
 
       return {
         status: 200,
@@ -145,7 +151,9 @@ export function styleController(router: Router): void {
       const authTokenPayload = parseAuthToken(ctx)
       const styleId: string | undefined = ctx.params.styleId
       const style = await styleService.findStyleById(
-        async (styleId: string) =>
+        async (
+          styleId: string,
+        ): Promise<StyleWithParentsAndChildren | undefined> =>
           await styleRepository.findStyleById(ctx.db, styleId),
         {
           authTokenPayload,
@@ -164,7 +172,8 @@ export function styleController(router: Router): void {
   router.get('/api/v1/style', async (ctx: Context): Promise<ListResult> => {
     const authTokenPayload = parseAuthToken(ctx)
     const styles = await styleService.listStyles(
-      async () => await styleRepository.listStyles(ctx.db),
+      async (): Promise<StyleWithParentIds[]> =>
+        await styleRepository.listStyles(ctx.db),
       authTokenPayload,
       ctx.log,
     )
@@ -179,7 +188,7 @@ function createParentInserter(
   trx: Transaction,
 ): (styleId: string, parents: string[]) => Promise<void> {
   return async function (styleId: string, parents: string[]): Promise<void> {
-    const relationships = parents.map((parent) => ({
+    const relationships = parents.map((parent): StyleRelationship => ({
       parent,
       child: styleId,
     }))

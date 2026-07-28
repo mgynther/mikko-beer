@@ -10,7 +10,7 @@ import {
   userAlreadyHasSignInMethodError,
 } from '../../errors.js'
 import type { log } from '../../log.js'
-import type { SignedInUser } from '../user/signed-in-user.js'
+import type { SignedInUser } from '../../user/signed-in-user.js'
 import type {
   AddPasswordUserIf,
   ChangePasswordUserIf,

@@ -168,6 +168,31 @@ export default [
     files: ['src/web/*.ts', 'src/web/**/*.ts'],
     rules: {
       ...rules,
+      // The router is data agnostic and has to remain so: a RequestHandler
+      // returns a Response whose body is Record<string, unknown>. An
+      // inferred return type on a route handler therefore states nothing
+      // about the actual response shape, and the shape has to be declared
+      // by the controller. The default allowTypedFunctionExpressions lets
+      // exactly those handlers off the hook, because the Router interface
+      // already gives them a type, so it is turned off here.
+      //
+      // The annotation must be on the lambda rather than on a type
+      // parameter of the router: only a return type annotation gets the
+      // returned object literal checked against the declared type, which
+      // is what catches excess properties in a response body. Contextual
+      // typing through the router does not.
+      //
+      // This also requires return types on every other lambda of the
+      // layer. That is accepted on purpose. The alternative, a rule
+      // matching route handlers alone, has to recognize them by the name
+      // of the variable they are registered on and silently stops
+      // applying when that name changes.
+      '@typescript-eslint/explicit-function-return-type': [
+        'error',
+        {
+          allowTypedFunctionExpressions: false,
+        },
+      ],
       // Koa context requires assigning status and body.
       'no-param-reassign': 'off',
       'no-restricted-imports': [

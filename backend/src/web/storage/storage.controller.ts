@@ -6,9 +6,11 @@ import * as storageRepository from '../../data/storage/storage.repository.js'
 
 import type { Pagination } from '../../core/pagination.js'
 import type {
+  AnnualStorageStats as CoreAnnualStorageStats,
   CreateIf,
   CreateStorageRequest,
   JoinedStorage,
+  MonthlyStorageStats as CoreMonthlyStorageStats,
   Storage,
   StorageWithDate,
   UpdateIf,
@@ -138,7 +140,8 @@ export function storageController(router: Router): void {
     async (ctx: Context): Promise<AnnualStatsResult> => {
       const authTokenPayload = parseAuthToken(ctx)
       const annual = await storageService.getAnnualStorageStats(
-        async () => await storageRepository.getAnnualStorageStats(ctx.db),
+        async (): Promise<CoreAnnualStorageStats> =>
+          await storageRepository.getAnnualStorageStats(ctx.db),
         authTokenPayload,
         ctx.log,
       )
@@ -154,7 +157,8 @@ export function storageController(router: Router): void {
     async (ctx: Context): Promise<MonthlyStatsResult> => {
       const authTokenPayload = parseAuthToken(ctx)
       const monthly = await storageService.getMonthlyStorageStats(
-        async () => await storageRepository.getMonthlyStorageStats(ctx.db),
+        async (): Promise<CoreMonthlyStorageStats> =>
+          await storageRepository.getMonthlyStorageStats(ctx.db),
         authTokenPayload,
         ctx.log,
       )
@@ -171,22 +175,26 @@ export function storageController(router: Router): void {
       const authTokenPayload = parseAuthToken(ctx)
       const body: unknown = ctx.request.body
 
-      const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
-        const createIf: CreateIf = {
-          insertStorage: async (createStorageRequest: CreateStorageRequest) =>
-            await storageRepository.insertStorage(trx, createStorageRequest),
-          lockBeer: createBeerLocker(trx),
-          lockContainer: createContainerLocker(trx),
-        }
-        return await storageService.createStorage(
-          createIf,
-          {
-            authTokenPayload,
-            body,
-          },
-          ctx.log,
-        )
-      })
+      const result = await ctx.db.executeReadWriteTransaction(
+        async (trx): Promise<StorageWithDate> => {
+          const createIf: CreateIf = {
+            insertStorage: async (
+              createStorageRequest: CreateStorageRequest,
+            ): Promise<StorageWithDate> =>
+              await storageRepository.insertStorage(trx, createStorageRequest),
+            lockBeer: createBeerLocker(trx),
+            lockContainer: createContainerLocker(trx),
+          }
+          return await storageService.createStorage(
+            createIf,
+            {
+              authTokenPayload,
+              body,
+            },
+            ctx.log,
+          )
+        },
+      )
 
       return {
         status: 201,
@@ -204,23 +212,25 @@ export function storageController(router: Router): void {
       const body: unknown = ctx.request.body
       const storageId: string | undefined = ctx.params.storageId
 
-      const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
-        const updateIf: UpdateIf = {
-          updateStorage: async (storage: Storage) =>
-            await storageRepository.updateStorage(trx, storage),
-          lockBeer: createBeerLocker(trx),
-          lockContainer: createContainerLocker(trx),
-        }
-        return await storageService.updateStorage(
-          updateIf,
-          {
-            authTokenPayload,
-            id: storageId,
-          },
-          body,
-          ctx.log,
-        )
-      })
+      const result = await ctx.db.executeReadWriteTransaction(
+        async (trx): Promise<StorageWithDate> => {
+          const updateIf: UpdateIf = {
+            updateStorage: async (storage: Storage): Promise<StorageWithDate> =>
+              await storageRepository.updateStorage(trx, storage),
+            lockBeer: createBeerLocker(trx),
+            lockContainer: createContainerLocker(trx),
+          }
+          return await storageService.updateStorage(
+            updateIf,
+            {
+              authTokenPayload,
+              id: storageId,
+            },
+            body,
+            ctx.log,
+          )
+        },
+      )
 
       return {
         status: 200,
@@ -237,10 +247,10 @@ export function storageController(router: Router): void {
       const authTokenPayload = parseAuthToken(ctx)
       const storageId: string | undefined = ctx.params.storageId
 
-      await ctx.db.executeReadWriteTransaction(async (trx) => {
+      await ctx.db.executeReadWriteTransaction(async (trx): Promise<void> => {
         const deleteStorage: (id: string) => Promise<void> = async (
           storageId: string,
-        ) => {
+        ): Promise<void> => {
           await storageRepository.deleteStorageById(trx, storageId)
         }
         await storageService.deleteStorageById(
@@ -266,7 +276,7 @@ export function storageController(router: Router): void {
       const authTokenPayload = parseAuthToken(ctx)
       const storageId: string | undefined = ctx.params.storageId
       const storage = await storageService.findStorageById(
-        async (storageId: string) =>
+        async (storageId: string): Promise<JoinedStorage | undefined> =>
           await storageRepository.findStorageById(ctx.db, storageId),
         {
           authTokenPayload,
@@ -288,7 +298,7 @@ export function storageController(router: Router): void {
       const authTokenPayload = parseAuthToken(ctx)
       const beerId: string | undefined = ctx.params.beerId
       const storageResult = await storageService.listStoragesByBeer(
-        async (beerId: string) =>
+        async (beerId: string): Promise<JoinedStorage[]> =>
           await storageRepository.listStoragesByBeer(ctx.db, beerId),
         {
           authTokenPayload,
@@ -311,7 +321,7 @@ export function storageController(router: Router): void {
       const authTokenPayload = parseAuthToken(ctx)
       const breweryId: string | undefined = ctx.params.breweryId
       const storageResult = await storageService.listStoragesByBrewery(
-        async (breweryId: string) =>
+        async (breweryId: string): Promise<JoinedStorage[]> =>
           await storageRepository.listStoragesByBrewery(ctx.db, breweryId),
         {
           authTokenPayload,
@@ -334,7 +344,7 @@ export function storageController(router: Router): void {
       const authTokenPayload = parseAuthToken(ctx)
       const styleId: string | undefined = ctx.params.styleId
       const storageResult = await storageService.listStoragesByStyle(
-        async (styleId: string) =>
+        async (styleId: string): Promise<JoinedStorage[]> =>
           await storageRepository.listStoragesByStyle(ctx.db, styleId),
         {
           authTokenPayload,
@@ -356,7 +366,7 @@ export function storageController(router: Router): void {
     const { skip, size } = ctx.request.query
     const pagination = validatePagination({ skip, size })
     const storageResult = await storageService.listStorages(
-      async (pagination: Pagination) =>
+      async (pagination: Pagination): Promise<JoinedStorage[]> =>
         await storageRepository.listStorages(ctx.db, pagination),
       authTokenPayload,
       pagination,

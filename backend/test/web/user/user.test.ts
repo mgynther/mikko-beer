@@ -12,7 +12,7 @@ import type {
   CreatedUser,
   ReadUser,
 } from '../../../src/web/user/user.controller.js'
-import type { SignedInUser } from '../../../src/web/user/sign-in-method/sign-in-method.controller.js'
+import type { SignInResponseUser } from '../../../src/web/user/sign-in-method/sign-in-method.controller.js'
 
 import {
   findPasswordSignInMethod,
@@ -140,7 +140,7 @@ describe('user tests', () => {
     const originalSignInMethod = await getSignInMethod(ctx.db, user.id)
 
     const res = await ctx.request.post<{
-      user: SignedInUser
+      user: SignInResponseUser
       authToken: string
       refreshToken: string
     }>(`/api/v1/user/sign-in`, {

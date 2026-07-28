@@ -5,7 +5,7 @@ import type { CreateUserIf, CreateUserRequest } from '../../user/user'
 
 import type { log } from '../../log.js'
 import type { AuthTokenConfig } from '../../auth/auth-token.js'
-import type { SignedInUser } from './signed-in-user.js'
+import type { SignedInUser } from '../../user/signed-in-user.js'
 
 export async function createUser(
   createUserIf: CreateUserIf,

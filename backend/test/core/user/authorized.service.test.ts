@@ -18,7 +18,7 @@ import {
   noRightsError,
   userMismatchError,
 } from '../../../src/core/errors.js'
-import type { SignedInUser } from '../../../src/core/internal/user/signed-in-user.js'
+import type { SignedInUser } from '../../../src/core/user/signed-in-user.js'
 import type { DbRefreshToken } from '../../../src/core/auth/refresh-token.js'
 import { assertDeepEqual } from '../../assert.js'
 

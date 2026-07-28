@@ -71,9 +71,9 @@ export function breweryController(router: Router): void {
       const body: unknown = ctx.request.body
 
       const result = await ctx.db.executeReadWriteTransaction(
-        async (trx) =>
+        async (trx): Promise<Brewery> =>
           await breweryService.createBrewery(
-            async (brewery: CreateBreweryRequest) =>
+            async (brewery: CreateBreweryRequest): Promise<Brewery> =>
               await breweryRepository.insertBrewery(trx, brewery),
             {
               authTokenPayload,
@@ -100,9 +100,9 @@ export function breweryController(router: Router): void {
       const breweryId: string | undefined = ctx.params.breweryId
 
       const result = await ctx.db.executeReadWriteTransaction(
-        async (trx) =>
+        async (trx): Promise<Brewery> =>
           await breweryService.updateBrewery(
-            async (brewery: Brewery) =>
+            async (brewery: Brewery): Promise<Brewery> =>
               await breweryRepository.updateBrewery(trx, brewery),
             breweryId,
             {
@@ -128,7 +128,7 @@ export function breweryController(router: Router): void {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const breweryId: string | undefined = ctx.params.breweryId
       const brewery = await breweryService.findBreweryById(
-        async (breweryId: string) =>
+        async (breweryId: string): Promise<Brewery | undefined> =>
           await breweryRepository.findBreweryById(ctx.db, breweryId),
         {
           authTokenPayload,
@@ -149,7 +149,7 @@ export function breweryController(router: Router): void {
     const { skip, size } = ctx.request.query
     const pagination = validatePagination({ skip, size })
     const breweries = await breweryService.listBreweries(
-      async (pagination: Pagination) =>
+      async (pagination: Pagination): Promise<Brewery[]> =>
         await breweryRepository.listBreweries(ctx.db, pagination),
       {
         authTokenPayload,
@@ -170,7 +170,7 @@ export function breweryController(router: Router): void {
       const body: unknown = ctx.request.body
 
       const breweries = await breweryService.searchBreweries(
-        async (searchRequest: SearchByName) =>
+        async (searchRequest: SearchByName): Promise<Brewery[]> =>
           await breweryRepository.searchBreweries(ctx.db, searchRequest),
         {
           authTokenPayload,

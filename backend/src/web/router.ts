@@ -38,23 +38,23 @@ export function createRouter(routerParams: RouterParams): CreatedRouter {
   const koaRouter = new KoaRouter()
 
   const router: Router = {
-    get: (path: string, handler: RequestHandler) => {
-      koaRouter.get(path, async (koaContext) => {
+    get: (path: string, handler: RequestHandler): void => {
+      koaRouter.get(path, async (koaContext): Promise<void> => {
         await koaHandler(koaContext, handler, routerParams)
       })
     },
-    delete: (path: string, handler: RequestHandler) => {
-      koaRouter.delete(path, async (koaContext) => {
+    delete: (path: string, handler: RequestHandler): void => {
+      koaRouter.delete(path, async (koaContext): Promise<void> => {
         await koaHandler(koaContext, handler, routerParams)
       })
     },
-    post: (path: string, handler: RequestHandler) => {
-      koaRouter.post(path, async (koaContext) => {
+    post: (path: string, handler: RequestHandler): void => {
+      koaRouter.post(path, async (koaContext): Promise<void> => {
         await koaHandler(koaContext, handler, routerParams)
       })
     },
-    put: (path: string, handler: RequestHandler) => {
-      koaRouter.put(path, async (koaContext) => {
+    put: (path: string, handler: RequestHandler): void => {
+      koaRouter.put(path, async (koaContext): Promise<void> => {
         await koaHandler(koaContext, handler, routerParams)
       })
     },
@@ -101,7 +101,7 @@ async function koaHandler(
 
 function parseQuery(koaQuery: ParsedUrlQuery): Record<string, string> {
   const result: Record<string, string> = {}
-  Object.keys(koaQuery).forEach((key) => {
+  Object.keys(koaQuery).forEach((key): void => {
     const value = koaQuery[key]
     if (typeof value !== 'string') {
       throw invalidQueryError

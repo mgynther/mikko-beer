@@ -5,11 +5,12 @@ import type {
   AddPasswordUserIf,
   UserPasswordHash,
 } from '../../../core/user/sign-in-method'
+import type { User } from '../../../core/user/user.js'
 import type { Transaction } from '../../../data/database'
 
 export function createAddPasswordUserIf(trx: Transaction): AddPasswordUserIf {
   const addPasswordUserIf: AddPasswordUserIf = {
-    lockUserById: async (userId: string) =>
+    lockUserById: async (userId: string): Promise<User | undefined> =>
       await userRepository.lockUserById(trx, userId),
     insertPasswordSignInMethod: async function (
       userPassword: UserPasswordHash,

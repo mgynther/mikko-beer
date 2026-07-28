@@ -11,7 +11,7 @@ import type {
   SignInUsingPasswordIf,
 } from './sign-in-method.js'
 import type { IdRequest } from '../request.js'
-import type { SignedInUser } from '../internal/user/signed-in-user.js'
+import type { SignedInUser } from './signed-in-user.js'
 import type { User } from './user.js'
 import type { AuthTokenConfig } from '../auth/auth-token.js'
 import type { Tokens } from '../auth/tokens'

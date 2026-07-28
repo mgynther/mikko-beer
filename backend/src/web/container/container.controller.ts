@@ -59,9 +59,9 @@ export function containerController(router: Router): void {
       const body: unknown = ctx.request.body
 
       const result = await ctx.db.executeReadWriteTransaction(
-        async (trx) =>
+        async (trx): Promise<Container> =>
           await containerService.createContainer(
-            async (container: CreateContainerRequest) =>
+            async (container: CreateContainerRequest): Promise<Container> =>
               await containerRepository.insertContainer(trx, container),
             {
               authTokenPayload,
@@ -88,9 +88,9 @@ export function containerController(router: Router): void {
       const containerId: string | undefined = ctx.params.containerId
 
       const result = await ctx.db.executeReadWriteTransaction(
-        async (trx) =>
+        async (trx): Promise<Container> =>
           await containerService.updateContainer(
-            async (container: Container) =>
+            async (container: Container): Promise<Container> =>
               await containerRepository.updateContainer(trx, container),
             {
               authTokenPayload,
@@ -116,7 +116,7 @@ export function containerController(router: Router): void {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const containerId: string | undefined = ctx.params.containerId
       const container = await containerService.findContainerById(
-        async (containerId: string) =>
+        async (containerId: string): Promise<Container | undefined> =>
           await containerRepository.findContainerById(ctx.db, containerId),
         {
           authTokenPayload,
@@ -135,7 +135,8 @@ export function containerController(router: Router): void {
   router.get('/api/v1/container', async (ctx: Context): Promise<ListResult> => {
     const authTokenPayload = authHelper.parseAuthToken(ctx)
     const containers = await containerService.listContainers(
-      async () => await containerRepository.listContainers(ctx.db),
+      async (): Promise<Container[]> =>
+        await containerRepository.listContainers(ctx.db),
       authTokenPayload,
       ctx.log,
     )

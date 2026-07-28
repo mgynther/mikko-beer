@@ -12,6 +12,8 @@ import type {
   SignInUsingPasswordIf,
   UserPasswordHash,
 } from '../../../core/user/sign-in-method.js'
+import type { SignedInUser } from '../../../core/user/signed-in-user.js'
+import type { Tokens } from '../../../core/auth/tokens.js'
 import type { User } from '../../../core/user/user.js'
 import type { AuthTokenConfig } from '../../../core/auth/auth-token.js'
 import type { RefreshTokensIf } from '../../../core/user/authorized-sign-in-method.service.js'
@@ -20,7 +22,7 @@ import type { Transaction } from '../../../data/database.js'
 
 import type { Router } from '../../router.js'
 
-export interface SignedInUser {
+export interface SignInResponseUser {
   id: string
   role: 'admin' | 'viewer'
   username: string | null
@@ -29,7 +31,7 @@ export interface SignedInUser {
 interface SignInResult {
   status: 200
   body: {
-    user: SignedInUser
+    user: SignInResponseUser
     authToken: string
     refreshToken: string
   }
@@ -62,7 +64,7 @@ export function signInMethodController(router: Router): void {
       const body: unknown = ctx.request.body
 
       const signedInUser = await ctx.db.executeReadWriteTransaction(
-        async (trx) => {
+        async (trx): Promise<SignedInUser> => {
           const signInUsingPasswordIf: SignInUsingPasswordIf = {
             lockUserByUsername: async function (
               username: string,
@@ -112,30 +114,36 @@ export function signInMethodController(router: Router): void {
 
       const authTokenConfig: AuthTokenConfig = getAuthTokenConfig(ctx)
 
-      const tokens = await ctx.db.executeReadWriteTransaction(async (trx) => {
-        const refreshTokensIf: RefreshTokensIf = {
-          lockUserById: async (userId: string) =>
-            await userRepository.lockUserById(trx, userId),
-          deleteRefreshToken: async (refreshTokenId: string) => {
-            await refreshTokenRepository.deleteRefreshToken(
-              ctx.db,
-              refreshTokenId,
-            )
-          },
-          insertRefreshToken: async (userId: string) =>
-            await refreshTokenRepository.insertRefreshToken(
-              trx,
-              userId,
-              new Date(),
-            ),
-        }
-        return await signInMethodService.refreshTokens(
-          refreshTokensIf,
-          userId,
-          body,
-          authTokenConfig,
-        )
-      })
+      const tokens = await ctx.db.executeReadWriteTransaction(
+        async (trx): Promise<Tokens> => {
+          const refreshTokensIf: RefreshTokensIf = {
+            lockUserById: async (userId: string): Promise<User | undefined> =>
+              await userRepository.lockUserById(trx, userId),
+            deleteRefreshToken: async (
+              refreshTokenId: string,
+            ): Promise<void> => {
+              await refreshTokenRepository.deleteRefreshToken(
+                ctx.db,
+                refreshTokenId,
+              )
+            },
+            insertRefreshToken: async (
+              userId: string,
+            ): Promise<DbRefreshToken> =>
+              await refreshTokenRepository.insertRefreshToken(
+                trx,
+                userId,
+                new Date(),
+              ),
+          }
+          return await signInMethodService.refreshTokens(
+            refreshTokensIf,
+            userId,
+            body,
+            authTokenConfig,
+          )
+        },
+      )
 
       return {
         status: 200,
@@ -157,7 +165,7 @@ export function signInMethodController(router: Router): void {
       const findRefreshToken = authHelper.createFindRefreshToken(ctx.db)
       await authorizedAuthTokenService.deleteRefreshToken(
         findRefreshToken,
-        async (refreshTokenId: string) => {
+        async (refreshTokenId: string): Promise<void> => {
           await refreshTokenRepository.deleteRefreshToken(
             ctx.db,
             refreshTokenId,
@@ -185,9 +193,9 @@ export function signInMethodController(router: Router): void {
       const body: unknown = ctx.request.body
       const userId: string | undefined = ctx.params.userId
 
-      await ctx.db.executeReadWriteTransaction(async (trx) => {
+      await ctx.db.executeReadWriteTransaction(async (trx): Promise<void> => {
         const changePasswordUserIf: ChangePasswordUserIf = {
-          lockUserById: async (userId: string) =>
+          lockUserById: async (userId: string): Promise<User | undefined> =>
             await userRepository.lockUserById(trx, userId),
           findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
           updatePassword: async function (

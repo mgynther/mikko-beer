@@ -71,9 +71,9 @@ export function locationController(router: Router): void {
       const body: unknown = ctx.request.body
 
       const result = await ctx.db.executeReadWriteTransaction(
-        async (trx) =>
+        async (trx): Promise<Location> =>
           await locationService.createLocation(
-            async (location: CreateLocationRequest) =>
+            async (location: CreateLocationRequest): Promise<Location> =>
               await locationRepository.insertLocation(trx, location),
             {
               authTokenPayload,
@@ -100,9 +100,9 @@ export function locationController(router: Router): void {
       const locationId: string | undefined = ctx.params.locationId
 
       const result = await ctx.db.executeReadWriteTransaction(
-        async (trx) =>
+        async (trx): Promise<Location> =>
           await locationService.updateLocation(
-            async (location: Location) =>
+            async (location: Location): Promise<Location> =>
               await locationRepository.updateLocation(trx, location),
             locationId,
             {
@@ -128,7 +128,7 @@ export function locationController(router: Router): void {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const locationId: string | undefined = ctx.params.locationId
       const location = await locationService.findLocationById(
-        async (locationId: string) =>
+        async (locationId: string): Promise<Location | undefined> =>
           await locationRepository.findLocationById(ctx.db, locationId),
         {
           authTokenPayload,
@@ -149,7 +149,7 @@ export function locationController(router: Router): void {
     const { skip, size } = ctx.request.query
     const pagination = validatePagination({ skip, size })
     const locations = await locationService.listLocations(
-      async (pagination: Pagination) =>
+      async (pagination: Pagination): Promise<Location[]> =>
         await locationRepository.listLocations(ctx.db, pagination),
       {
         authTokenPayload,
@@ -170,7 +170,7 @@ export function locationController(router: Router): void {
       const body: unknown = ctx.request.body
 
       const locations = await locationService.searchLocations(
-        async (searchRequest: SearchByName) =>
+        async (searchRequest: SearchByName): Promise<Location[]> =>
           await locationRepository.searchLocations(ctx.db, searchRequest),
         {
           authTokenPayload,

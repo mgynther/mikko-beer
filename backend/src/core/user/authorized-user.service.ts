@@ -7,7 +7,7 @@ import type { CreateUserIf, User } from './user'
 import type { log } from '../log.js'
 import type { AuthTokenConfig, AuthTokenPayload } from '../auth/auth-token.js'
 import type { DbRefreshToken } from '../auth/refresh-token.js'
-import type { SignedInUser } from '../internal/user/signed-in-user.js'
+import type { SignedInUser } from './signed-in-user.js'
 
 export async function createUser(
   createUserIf: CreateUserIf,

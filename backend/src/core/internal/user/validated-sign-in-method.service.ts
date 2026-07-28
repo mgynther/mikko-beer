@@ -9,7 +9,7 @@ import type {
   ChangePasswordUserIf,
   SignInUsingPasswordIf,
 } from '../../user/sign-in-method.js'
-import type { SignedInUser } from './signed-in-user.js'
+import type { SignedInUser } from '../../user/signed-in-user.js'
 import { validateUserId } from '../user/validation.js'
 import type { AuthTokenConfig } from '../../auth/auth-token.js'
 
