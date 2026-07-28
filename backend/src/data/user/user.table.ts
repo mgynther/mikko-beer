@@ -1,6 +1,6 @@
 import type { Generated, Insertable, Selectable, Updateable } from 'kysely'
 
-import type { Role } from '../../core/user/user.js'
+export type Role = 'admin' | 'viewer'
 
 // Here we could have user information such as name if it was needed.
 // In this application is is not.
