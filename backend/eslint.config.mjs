@@ -149,6 +149,9 @@ export default [
               regex: 'console/',
             },
             {
+              regex: 'core/',
+            },
+            {
               regex: 'web/',
             },
             {
