@@ -20,8 +20,48 @@ import type { DbRefreshToken } from '../../core/auth/refresh-token.js'
 import type { AuthTokenConfig } from '../../core/auth/auth-token.js'
 import type { Context } from '../context.js'
 
+export interface CreatedUser {
+  id: string
+  role: 'admin' | 'viewer'
+  username: string | null
+}
+
+interface CreateResult {
+  status: 201
+  body: {
+    user: CreatedUser
+    authToken: string
+    refreshToken: string
+  }
+}
+
+export interface ReadUser {
+  id: string
+  role: 'admin' | 'viewer'
+  username: string | null
+}
+
+interface ReadResult {
+  status: 200
+  body: {
+    user: ReadUser
+  }
+}
+
+interface ListResult {
+  status: 200
+  body: {
+    users: Array<ReadUser>
+  }
+}
+
+interface DeleteResult {
+  status: 204
+  body: undefined
+}
+
 export function userController(router: Router, config: Config): void {
-  router.post('/api/v1/user', async (ctx: Context) => {
+  router.post('/api/v1/user', async (ctx: Context): Promise<CreateResult> => {
     const authTokenPayload = authHelper.parseAuthToken(ctx)
     const body: unknown = ctx.request.body
 
@@ -60,28 +100,31 @@ export function userController(router: Router, config: Config): void {
     }
   })
 
-  router.get('/api/v1/user/:userId', async (ctx: Context) => {
-    const authTokenPayload = authHelper.parseAuthToken(ctx)
-    const userId: string | undefined = ctx.params.userId
-    const findRefreshToken = authHelper.createFindRefreshToken(ctx.db)
-    const user = await userService.findUserById(
-      async (userId: string) =>
-        await userRepository.findUserById(ctx.db, userId),
-      findRefreshToken,
-      {
-        authTokenPayload,
-        id: userId,
-      },
-      ctx.log,
-    )
+  router.get(
+    '/api/v1/user/:userId',
+    async (ctx: Context): Promise<ReadResult> => {
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
+      const userId: string | undefined = ctx.params.userId
+      const findRefreshToken = authHelper.createFindRefreshToken(ctx.db)
+      const user = await userService.findUserById(
+        async (userId: string) =>
+          await userRepository.findUserById(ctx.db, userId),
+        findRefreshToken,
+        {
+          authTokenPayload,
+          id: userId,
+        },
+        ctx.log,
+      )
 
-    return {
-      status: 200,
-      body: { user },
-    }
-  })
+      return {
+        status: 200,
+        body: { user },
+      }
+    },
+  )
 
-  router.get('/api/v1/user', async (ctx: Context) => {
+  router.get('/api/v1/user', async (ctx: Context): Promise<ListResult> => {
     const authTokenPayload = authHelper.parseAuthToken(ctx)
     const users = await userService.listUsers(
       async () => await userRepository.listUsers(ctx.db),
@@ -95,27 +138,30 @@ export function userController(router: Router, config: Config): void {
     }
   })
 
-  router.delete('/api/v1/user/:userId', async (ctx: Context) => {
-    const authTokenPayload = authHelper.parseAuthToken(ctx)
-    const userId: string | undefined = ctx.params.userId
-    await ctx.db.executeReadWriteTransaction(async (trx) => {
-      await userService.deleteUserById(
-        async (userId: string) => {
-          await userRepository.deleteUserById(trx, userId)
-        },
-        {
-          authTokenPayload,
-          id: userId,
-        },
-        ctx.log,
-      )
-    })
+  router.delete(
+    '/api/v1/user/:userId',
+    async (ctx: Context): Promise<DeleteResult> => {
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
+      const userId: string | undefined = ctx.params.userId
+      await ctx.db.executeReadWriteTransaction(async (trx) => {
+        await userService.deleteUserById(
+          async (userId: string) => {
+            await userRepository.deleteUserById(trx, userId)
+          },
+          {
+            authTokenPayload,
+            id: userId,
+          },
+          ctx.log,
+        )
+      })
 
-    return {
-      status: 204,
-      body: undefined,
-    }
-  })
+      return {
+        status: 204,
+        body: undefined,
+      }
+    },
+  )
 
   signInMethodController(router)
 }

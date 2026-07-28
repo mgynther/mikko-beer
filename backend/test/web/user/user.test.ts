@@ -1,7 +1,6 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
-import type { User } from '../../../src/core/user/user.js'
 import {
   assertDeepEqual,
   assertEqual,
@@ -9,6 +8,10 @@ import {
   assertNotEqual,
   assertTruthy,
 } from '../../assert.js'
+import type {
+  CreatedUser,
+  ReadUser,
+} from '../../../src/web/user/user.controller.js'
 
 import {
   findPasswordSignInMethod,
@@ -61,7 +64,11 @@ describe('user tests', () => {
   })
 
   it('create a user', async () => {
-    const res = await ctx.request.post(
+    const res = await ctx.request.post<{
+      user: CreatedUser
+      authToken: string
+      refreshToken: string
+    }>(
       `/api/v1/user`,
       {
         user: {
@@ -80,7 +87,7 @@ describe('user tests', () => {
     assertEqual(res.data.user.role, 'admin')
 
     // The returned auth token is be usable.
-    const getRes = await ctx.request.get<{ user: User }>(
+    const getRes = await ctx.request.get<{ user: ReadUser }>(
       `/api/v1/user/${res.data.user.id}`,
       ctx.createAuthHeaders(res.data.authToken),
     )
@@ -92,7 +99,7 @@ describe('user tests', () => {
   it('get user by id', async () => {
     const { user, authToken } = await ctx.createUser()
 
-    const res = await ctx.request.get<{ user: User }>(
+    const res = await ctx.request.get<{ user: ReadUser }>(
       `/api/v1/user/${user.id}`,
       ctx.createAuthHeaders(authToken),
     )
@@ -105,7 +112,7 @@ describe('user tests', () => {
     const { user, authToken } = await ctx.createUser()
 
     interface Response {
-      users: User[]
+      users: ReadUser[]
     }
     const res = await ctx.request.get<Response>(
       `/api/v1/user`,
@@ -142,7 +149,7 @@ describe('user tests', () => {
     assertDeepEqual(postLoginSignInMethod, originalSignInMethod)
 
     // The returned auth token is be usable.
-    const getRes = await ctx.request.get<{ user: User }>(
+    const getRes = await ctx.request.get<{ user: ReadUser }>(
       `/api/v1/user/${res.data.user.id}`,
       ctx.createAuthHeaders(authToken),
     )
@@ -281,7 +288,7 @@ describe('user tests', () => {
   it('change password', async () => {
     const { user, authToken, username, password } = await ctx.createUser()
 
-    const getRes = await ctx.request.get<{ user: User }>(
+    const getRes = await ctx.request.get<{ user: ReadUser }>(
       `/api/v1/user/${user.id}`,
       ctx.createAuthHeaders(authToken),
     )
@@ -334,7 +341,7 @@ describe('user tests', () => {
   it('delete user', async () => {
     const { user, authToken } = await ctx.createUser()
 
-    const res = await ctx.request.get<{ user: User }>(
+    const res = await ctx.request.get<{ user: ReadUser }>(
       `/api/v1/user/${user.id}`,
       ctx.createAuthHeaders(authToken),
     )
@@ -346,7 +353,7 @@ describe('user tests', () => {
     )
     assertEqual(deleteRes.status, 204)
 
-    const afterDeleteGetRes = await ctx.request.get<{ user: User }>(
+    const afterDeleteGetRes = await ctx.request.get<{ user: ReadUser }>(
       `/api/v1/user/${user.id}`,
       ctx.adminAuthHeaders(),
     )
