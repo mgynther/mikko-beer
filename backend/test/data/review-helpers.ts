@@ -1,4 +1,4 @@
-import type { Beer } from '../../src/core/beer/beer.js'
+import type { Beer } from '../../src/data/beer/beer.repository.js'
 import type { Brewery } from '../../src/data/brewery/brewery.repository.js'
 import type { Container } from '../../src/data/container/container.repository.js'
 import type { Location } from '../../src/data/location/location.repository.js'

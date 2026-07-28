@@ -9,20 +9,22 @@ import type {
   InsertableBeerBreweryRow,
   InsertableBeerStyleRow,
 } from './beer.table.js'
-import type {
-  BeerWithBreweriesAndStyles,
-  Beer,
-  NewBeer,
-} from '../../core/beer/beer.js'
 
 import type { Pagination } from '../pagination.js'
 import { toRowNumbers } from '../pagination.js'
 import type { SearchByName } from '../search.js'
 import { defaultSearchMaxResults, toIlike } from '../search.js'
 
-import type { Brewery } from '../../core/brewery/brewery.js'
-import type { Style } from '../../core/style/style.js'
 import { contains } from '../record.js'
+
+export interface Beer {
+  id: string
+  name: string
+}
+
+export interface NewBeer {
+  name: string
+}
 
 export async function insertBeer(
   trx: Transaction,
@@ -106,6 +108,23 @@ export async function updateBeer(trx: Transaction, beer: Beer): Promise<Beer> {
     id: updatedBeer.beer_id,
     name: updatedBeer.name,
   }
+}
+
+export interface Brewery {
+  id: string
+  name: string
+}
+
+export interface Style {
+  id: string
+  name: string
+}
+
+export interface BeerWithBreweriesAndStyles {
+  id: string
+  name: string
+  breweries: Brewery[]
+  styles: Style[]
 }
 
 export async function findBeerById(
