@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test'
 
-import { contains } from '../../src/core/record.js'
+import { contains } from '../../src/data/record.js'
 import { assertEqual } from '../assert.js'
 
 describe('record', () => {

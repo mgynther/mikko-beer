@@ -22,7 +22,7 @@ import { defaultSearchMaxResults, toIlike } from '../search.js'
 
 import type { Brewery } from '../../core/brewery/brewery.js'
 import type { Style } from '../../core/style/style.js'
-import { contains } from '../../core/record.js'
+import { contains } from '../record.js'
 
 export async function insertBeer(
   trx: Transaction,

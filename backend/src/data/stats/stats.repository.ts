@@ -19,7 +19,7 @@ import type {
   StyleStats,
   StyleStatsOrder,
 } from '../../core/stats/stats.js'
-import { contains } from '../../core/record.js'
+import { contains } from '../record.js'
 import { round, formatInteger } from './format.js'
 
 // MODE() WITHIN GROUP (ORDER BY review.rating ASC): on ties, Postgres

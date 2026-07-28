@@ -18,7 +18,7 @@ import type {
   StorageRequest,
   StorageWithDate,
 } from '../../core/storage/storage.js'
-import { contains } from '../../core/record.js'
+import { contains } from '../record.js'
 
 export async function insertStorage(
   trx: Transaction,

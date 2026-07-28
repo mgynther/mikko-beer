@@ -1,13 +1,18 @@
 import type { Database, Transaction } from '../database.js'
 import type { LocationRow } from './location.table.js'
 
-import type {
-  Location,
-  CreateLocationRequest,
-} from '../../core/location/location.js'
 import type { Pagination } from '../pagination.js'
 import type { SearchByName } from '../search.js'
 import { defaultSearchMaxResults, toIlike } from '../search.js'
+
+export interface Location {
+  id: string
+  name: string
+}
+
+interface CreateLocationRequest {
+  name: string
+}
 
 export async function insertLocation(
   trx: Transaction,

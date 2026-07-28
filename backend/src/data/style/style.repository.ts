@@ -7,7 +7,7 @@ import type {
   StyleWithParentIds,
   StyleWithParentsAndChildren,
 } from '../../core/style/style.js'
-import { contains } from '../../core/record.js'
+import { contains } from '../record.js'
 
 export async function insertStyle(
   trx: Transaction,

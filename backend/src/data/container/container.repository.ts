@@ -1,9 +1,16 @@
 import type { Database, Transaction } from '../database.js'
 import type { ContainerRow } from './container.table.js'
-import type {
-  Container,
-  CreateContainerRequest,
-} from '../../core/container/container.js'
+
+export interface Container {
+  id: string
+  type: string
+  size: string
+}
+
+interface CreateContainerRequest {
+  type: string
+  size: string
+}
 
 export async function insertContainer(
   trx: Transaction,

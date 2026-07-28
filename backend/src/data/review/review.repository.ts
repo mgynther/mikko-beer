@@ -20,7 +20,7 @@ import type {
   ReviewListOrder,
   ReviewListRequest,
 } from '../../core/review/review.js'
-import { contains } from '../../core/record.js'
+import { contains } from '../record.js'
 
 export async function insertReview(
   trx: Transaction,
