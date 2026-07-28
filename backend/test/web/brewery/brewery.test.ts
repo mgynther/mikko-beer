@@ -1,8 +1,11 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
-import type { Brewery } from '../../../src/core/brewery/brewery.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
+import type {
+  CreatedOrUpdatedBrewery,
+  ReadBrewery,
+} from '../../../src/web/brewery/brewery.controller.js'
 
 describe('brewery tests', () => {
   const ctx = new TestContext()
@@ -14,7 +17,7 @@ describe('brewery tests', () => {
   afterEach(ctx.afterEach)
 
   it('create a brewery', async () => {
-    const res = await ctx.request.post(
+    const res = await ctx.request.post<{ brewery: CreatedOrUpdatedBrewery }>(
       `/api/v1/brewery`,
       { name: 'Koskipanimo' },
       ctx.adminAuthHeaders(),
@@ -23,7 +26,7 @@ describe('brewery tests', () => {
     assertEqual(res.status, 201)
     assertEqual(res.data.brewery.name, 'Koskipanimo')
 
-    const getRes = await ctx.request.get<{ brewery: Brewery }>(
+    const getRes = await ctx.request.get<{ brewery: ReadBrewery }>(
       `/api/v1/brewery/${res.data.brewery.id}`,
       ctx.adminAuthHeaders(),
     )
@@ -31,14 +34,14 @@ describe('brewery tests', () => {
     assertEqual(getRes.status, 200)
     assertDeepEqual(getRes.data.brewery, res.data.brewery)
 
-    const listRes = await ctx.request.get(
+    const listRes = await ctx.request.get<{ breweries: ReadBrewery[] }>(
       `/api/v1/brewery?skip=0&size=100`,
       ctx.adminAuthHeaders(),
     )
     assertEqual(listRes.status, 200)
     assertEqual(listRes.data.breweries.length, 1)
 
-    const searchRes = await ctx.request.post(
+    const searchRes = await ctx.request.post<{ breweries: ReadBrewery[] }>(
       `/api/v1/brewery/search`,
       { name: 'oSk' },
       ctx.adminAuthHeaders(),
@@ -46,7 +49,7 @@ describe('brewery tests', () => {
     assertEqual(searchRes.status, 200)
     assertEqual(searchRes.data.breweries.length, 1)
 
-    const badSearchRes = await ctx.request.post(
+    const badSearchRes = await ctx.request.post<{ breweries: ReadBrewery[] }>(
       `/api/v1/brewery/search`,
       { name: 'oSkJ' },
       ctx.adminAuthHeaders(),
@@ -56,7 +59,7 @@ describe('brewery tests', () => {
   })
 
   it('update a brewery', async () => {
-    const res = await ctx.request.post(
+    const res = await ctx.request.post<{ brewery: CreatedOrUpdatedBrewery }>(
       `/api/v1/brewery`,
       { name: 'Salami Brewing' },
       ctx.adminAuthHeaders(),
@@ -65,7 +68,9 @@ describe('brewery tests', () => {
     assertEqual(res.status, 201)
     assertEqual(res.data.brewery.name, 'Salami Brewing')
 
-    const updateRes = await ctx.request.put(
+    const updateRes = await ctx.request.put<{
+      brewery: CreatedOrUpdatedBrewery
+    }>(
       `/api/v1/brewery/${res.data.brewery.id}`,
       { name: 'Salama Brewing' },
       ctx.adminAuthHeaders(),
@@ -73,7 +78,7 @@ describe('brewery tests', () => {
     assertEqual(updateRes.status, 200)
     assertEqual(updateRes.data.brewery.name, 'Salama Brewing')
 
-    const getRes = await ctx.request.get<{ brewery: Brewery }>(
+    const getRes = await ctx.request.get<{ brewery: ReadBrewery }>(
       `/api/v1/brewery/${res.data.brewery.id}`,
       ctx.adminAuthHeaders(),
     )
@@ -93,7 +98,10 @@ describe('brewery tests', () => {
   })
 
   it('get empty brewery list', async () => {
-    const res = await ctx.request.get(`/api/v1/brewery`, ctx.adminAuthHeaders())
+    const res = await ctx.request.get<{ breweries: ReadBrewery[] }>(
+      `/api/v1/brewery`,
+      ctx.adminAuthHeaders(),
+    )
 
     assertEqual(res.status, 200)
     assertEqual(res.data.breweries.length, 0)
