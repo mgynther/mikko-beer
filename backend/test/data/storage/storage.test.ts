@@ -4,7 +4,7 @@ import { TestContext } from '../test-context.js'
 import type {
   StorageRequest,
   StorageWithDate,
-} from '../../../src/core/storage/storage.js'
+} from '../../../src/data/storage/storage.repository.js'
 import type { Database, Transaction } from '../../../src/data/database.js'
 import * as beerRepository from '../../../src/data/beer/beer.repository.js'
 import * as breweryRepository from '../../../src/data/brewery/brewery.repository.js'

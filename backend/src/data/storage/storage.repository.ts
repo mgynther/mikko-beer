@@ -10,15 +10,20 @@ import type {
 
 import type { Pagination } from '../pagination.js'
 import { toRowNumbers } from '../pagination.js'
-import type {
-  AnnualStorageStats,
-  JoinedStorage,
-  MonthlyStorageStats,
-  Storage,
-  StorageRequest,
-  StorageWithDate,
-} from '../../core/storage/storage.js'
 import { contains } from '../record.js'
+
+export interface StorageRequest {
+  beer: string
+  bestBefore: string
+  container: string
+}
+
+export interface StorageWithDate {
+  id: string
+  bestBefore: Date
+  beer: string
+  container: string
+}
 
 export async function insertStorage(
   trx: Transaction,
@@ -38,6 +43,13 @@ export async function insertStorage(
   return toStorage(insertedStorage)
 }
 
+export interface Storage {
+  id: string
+  bestBefore: string
+  beer: string
+  container: string
+}
+
 export async function updateStorage(
   trx: Transaction,
   storage: Storage,
@@ -55,6 +67,28 @@ export async function updateStorage(
     .executeTakeFirstOrThrow()
 
   return toStorage(updatedStorage)
+}
+
+export interface JoinedStorage {
+  id: string
+  beerId: string
+  beerName: string
+  bestBefore: Date
+  breweries: Array<{
+    id: string
+    name: string
+  }>
+  container: {
+    id: string
+    type: string
+    size: string
+  }
+  createdAt: Date
+  hasReview: boolean
+  styles: Array<{
+    id: string
+    name: string
+  }>
 }
 
 export async function findStorageById(
@@ -246,6 +280,11 @@ export async function joinStorageData(
   return parseBreweryStorageRows(storages)
 }
 
+export type AnnualStorageStats = Array<{
+  year: string
+  count: string
+}>
+
 export async function getAnnualStorageStats(
   db: Database,
 ): Promise<AnnualStorageStats> {
@@ -265,6 +304,12 @@ export async function getAnnualStorageStats(
     count: `${result.count}`,
   }))
 }
+
+export type MonthlyStorageStats = Array<{
+  year: string
+  month: string
+  count: string
+}>
 
 export async function getMonthlyStorageStats(
   db: Database,
