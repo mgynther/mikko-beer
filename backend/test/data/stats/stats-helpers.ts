@@ -1,4 +1,4 @@
-import type { Review } from '../../../src/core/review/review.js'
+import type { Review } from '../../../src/data/review/review.repository.js'
 import { formatInteger, round } from '../../../src/data/stats/format.js'
 
 function ratingsOf(reviews: Review[]): number[] {

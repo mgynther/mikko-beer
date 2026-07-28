@@ -2,7 +2,10 @@ import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
 import type { Pagination } from '../../../src/data/pagination.js'
-import type { NewReview, Review } from '../../../src/core/review/review.js'
+import type {
+  NewReview,
+  Review,
+} from '../../../src/data/review/review.repository.js'
 import type {
   BreweryStatsOrder,
   StatsFilter,

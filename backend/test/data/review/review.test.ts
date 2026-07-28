@@ -9,7 +9,7 @@ import type {
   ReviewListFilter,
   ReviewListOrder,
   ReviewListRequest,
-} from '../../../src/core/review/review.js'
+} from '../../../src/data/review/review.repository.js'
 import { insertData, insertMultipleReviews } from '../review-helpers.js'
 import {
   assertDeepEqual,

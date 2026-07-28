@@ -6,7 +6,10 @@ import * as reviewRepository from '../../../src/data/review/review.repository.js
 import * as statsRepository from '../../../src/data/stats/stats.repository.js'
 
 import { insertMultipleReviews } from '../review-helpers.js'
-import type { NewReview, Review } from '../../../src/core/review/review.js'
+import type {
+  NewReview,
+  Review,
+} from '../../../src/data/review/review.repository.js'
 import { assertDeepEqual, assertRejects } from '../../assert.js'
 import { avg, median, mode, stdDev } from './stats-helpers.js'
 import type { Database, Transaction } from '../../../src/data/database.js'

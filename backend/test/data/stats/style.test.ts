@@ -1,7 +1,7 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
-import type { Review } from '../../../src/core/review/review.js'
+import type { Review } from '../../../src/data/review/review.repository.js'
 import type {
   StyleStatsOrder,
   StatsFilter,

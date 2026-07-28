@@ -12,15 +12,30 @@ import type {
 import type { ListDirection } from '../list.js'
 import type { Pagination } from '../pagination.js'
 import { toRowNumbers } from '../pagination.js'
-import type {
-  JoinedReview,
-  NewReview,
-  Review,
-  ReviewListFilter,
-  ReviewListOrder,
-  ReviewListRequest,
-} from '../../core/review/review.js'
 import { contains } from '../record.js'
+
+export interface NewReview {
+  additionalInfo: string
+  beer: string
+  container: string
+  location: string
+  rating: number
+  time: Date
+  smell: string
+  taste: string
+}
+
+export interface Review {
+  id: string
+  additionalInfo: string
+  beer: string
+  container: string
+  location: string
+  rating: number
+  time: Date
+  smell: string
+  taste: string
+}
 
 export async function insertReview(
   trx: Transaction,
@@ -67,6 +82,13 @@ export async function findReviewById(
 
 interface ReviewTableRn extends ReviewTable {
   rn: number
+}
+
+export interface ReviewListFilter {
+  minRating: number
+  maxRating: number
+  minTime: Date
+  maxTime: Date
 }
 
 const listByRatingAsc = (
@@ -184,6 +206,11 @@ function getOrderByTime(direction: ListDirection) {
     query.orderBy('review.time', direction)
 }
 
+export interface ReviewListRequest {
+  filter: ReviewListFilter
+  order: ReviewListOrder
+}
+
 function getListQueryHelper(
   reviewListRequest: ReviewListRequest,
 ): ListQueryHelper {
@@ -221,6 +248,14 @@ function getListQueryHelper(
     ),
     orderBy: getOrderByTime(reviewListRequest.order.direction),
   }
+}
+
+export type ReviewListOrderProperty =
+  'beer_name' | 'brewery_name' | 'rating' | 'time'
+
+export interface ReviewListOrder {
+  property: ReviewListOrderProperty
+  direction: ListDirection
 }
 
 function getOrderBy(reviewListOrder: ReviewListOrder): OrderByGetter {
@@ -274,6 +309,34 @@ const listColumns: ListPossibleColumns[] = [
   'location.location_id as location_id',
   'location.name as location_name',
 ]
+
+export interface JoinedReview {
+  id: string
+  additionalInfo: string
+  beerId: string
+  beerName: string
+  breweries: Array<{
+    id: string
+    name: string
+  }>
+  container: {
+    id: string
+    type: string
+    size: string
+  }
+  location:
+    | {
+        id: string
+        name: string
+      }
+    | undefined
+  rating: number
+  styles: Array<{
+    id: string
+    name: string
+  }>
+  time: Date
+}
 
 export async function listReviews(
   db: Database,
