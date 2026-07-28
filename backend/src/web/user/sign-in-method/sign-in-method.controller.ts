@@ -20,152 +20,206 @@ import type { Transaction } from '../../../data/database.js'
 
 import type { Router } from '../../router.js'
 
-export function signInMethodController(router: Router): void {
-  router.post('/api/v1/user/sign-in', async (ctx: Context) => {
-    const body: unknown = ctx.request.body
+export interface SignedInUser {
+  id: string
+  role: 'admin' | 'viewer'
+  username: string | null
+}
 
-    const signedInUser = await ctx.db.executeReadWriteTransaction(
-      async (trx) => {
-        const signInUsingPasswordIf: SignInUsingPasswordIf = {
-          lockUserByUsername: async function (
-            username: string,
-          ): Promise<User | undefined> {
-            return await userRepository.lockUserByUsername(trx, username)
+interface SignInResult {
+  status: 200
+  body: {
+    user: SignedInUser
+    authToken: string
+    refreshToken: string
+  }
+}
+
+interface RefreshResult {
+  status: 200
+  body: {
+    authToken: string
+    refreshToken: string
+  }
+}
+
+interface SignOutResult {
+  status: 200
+  body: {
+    success: boolean
+  }
+}
+
+interface ChangePasswordResult {
+  status: 204
+  body: undefined
+}
+
+export function signInMethodController(router: Router): void {
+  router.post(
+    '/api/v1/user/sign-in',
+    async (ctx: Context): Promise<SignInResult> => {
+      const body: unknown = ctx.request.body
+
+      const signedInUser = await ctx.db.executeReadWriteTransaction(
+        async (trx) => {
+          const signInUsingPasswordIf: SignInUsingPasswordIf = {
+            lockUserByUsername: async function (
+              username: string,
+            ): Promise<User | undefined> {
+              return await userRepository.lockUserByUsername(trx, username)
+            },
+            findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
+            insertRefreshToken: async (
+              userId: string,
+            ): Promise<DbRefreshToken> =>
+              await refreshTokenRepository.insertRefreshToken(
+                trx,
+                userId,
+                new Date(),
+              ),
+            updatePassword: async function (
+              userPasswordHash: UserPasswordHash,
+            ): Promise<void> {
+              await signInMethodRepository.updatePassword(trx, userPasswordHash)
+            },
+          }
+          return await signInMethodService.signInUsingPassword(
+            signInUsingPasswordIf,
+            body,
+            getAuthTokenConfig(ctx),
+            ctx.log,
+          )
+        },
+      )
+
+      return {
+        status: 200,
+        body: {
+          user: signedInUser.user,
+          authToken: signedInUser.authToken.authToken,
+          refreshToken: signedInUser.refreshToken.refreshToken,
+        },
+      }
+    },
+  )
+
+  router.post(
+    '/api/v1/user/:userId/refresh',
+    async (ctx: Context): Promise<RefreshResult> => {
+      const body: unknown = ctx.request.body
+      const userId: string | undefined = ctx.params.userId
+
+      const authTokenConfig: AuthTokenConfig = getAuthTokenConfig(ctx)
+
+      const tokens = await ctx.db.executeReadWriteTransaction(async (trx) => {
+        const refreshTokensIf: RefreshTokensIf = {
+          lockUserById: async (userId: string) =>
+            await userRepository.lockUserById(trx, userId),
+          deleteRefreshToken: async (refreshTokenId: string) => {
+            await refreshTokenRepository.deleteRefreshToken(
+              ctx.db,
+              refreshTokenId,
+            )
           },
-          findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
-          insertRefreshToken: async (userId: string): Promise<DbRefreshToken> =>
+          insertRefreshToken: async (userId: string) =>
             await refreshTokenRepository.insertRefreshToken(
               trx,
               userId,
               new Date(),
             ),
+        }
+        return await signInMethodService.refreshTokens(
+          refreshTokensIf,
+          userId,
+          body,
+          authTokenConfig,
+        )
+      })
+
+      return {
+        status: 200,
+        body: {
+          authToken: tokens.auth.authToken,
+          refreshToken: tokens.refresh.refreshToken,
+        },
+      }
+    },
+  )
+
+  router.post(
+    '/api/v1/user/:userId/sign-out',
+    async (ctx: Context): Promise<SignOutResult> => {
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
+      const body: unknown = ctx.request.body
+      const userId: string | undefined = ctx.params.userId
+
+      const findRefreshToken = authHelper.createFindRefreshToken(ctx.db)
+      await authorizedAuthTokenService.deleteRefreshToken(
+        findRefreshToken,
+        async (refreshTokenId: string) => {
+          await refreshTokenRepository.deleteRefreshToken(
+            ctx.db,
+            refreshTokenId,
+          )
+        },
+        {
+          authTokenPayload,
+          id: userId,
+        },
+        body,
+        ctx.config.authTokenSecret,
+      )
+
+      return {
+        status: 200,
+        body: { success: true },
+      }
+    },
+  )
+
+  router.post(
+    '/api/v1/user/:userId/change-password',
+    async (ctx: Context): Promise<ChangePasswordResult> => {
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
+      const body: unknown = ctx.request.body
+      const userId: string | undefined = ctx.params.userId
+
+      await ctx.db.executeReadWriteTransaction(async (trx) => {
+        const changePasswordUserIf: ChangePasswordUserIf = {
+          lockUserById: async (userId: string) =>
+            await userRepository.lockUserById(trx, userId),
+          findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
           updatePassword: async function (
             userPasswordHash: UserPasswordHash,
           ): Promise<void> {
             await signInMethodRepository.updatePassword(trx, userPasswordHash)
           },
         }
-        return await signInMethodService.signInUsingPassword(
-          signInUsingPasswordIf,
+        const findRefreshToken = authHelper.createFindRefreshToken(ctx.db)
+        await signInMethodService.changePassword(
+          changePasswordUserIf,
+          findRefreshToken,
+          {
+            authTokenPayload,
+            id: userId,
+          },
           body,
-          getAuthTokenConfig(ctx),
           ctx.log,
         )
-      },
-    )
+      })
 
-    return {
-      status: 200,
-      body: {
-        user: signedInUser.user,
-        authToken: signedInUser.authToken.authToken,
-        refreshToken: signedInUser.refreshToken.refreshToken,
-      },
-    }
-  })
-
-  router.post('/api/v1/user/:userId/refresh', async (ctx: Context) => {
-    const body: unknown = ctx.request.body
-    const userId: string | undefined = ctx.params.userId
-
-    const authTokenConfig: AuthTokenConfig = getAuthTokenConfig(ctx)
-
-    const tokens = await ctx.db.executeReadWriteTransaction(async (trx) => {
-      const refreshTokensIf: RefreshTokensIf = {
-        lockUserById: async (userId: string) =>
-          await userRepository.lockUserById(trx, userId),
-        deleteRefreshToken: async (refreshTokenId: string) => {
-          await refreshTokenRepository.deleteRefreshToken(
-            ctx.db,
-            refreshTokenId,
-          )
-        },
-        insertRefreshToken: async (userId: string) =>
-          await refreshTokenRepository.insertRefreshToken(
-            trx,
-            userId,
-            new Date(),
-          ),
+      return {
+        status: 204,
+        body: undefined,
       }
-      return await signInMethodService.refreshTokens(
-        refreshTokensIf,
-        userId,
-        body,
-        authTokenConfig,
-      )
-    })
-
-    return {
-      status: 200,
-      body: {
-        authToken: tokens.auth.authToken,
-        refreshToken: tokens.refresh.refreshToken,
-      },
-    }
-  })
-
-  router.post('/api/v1/user/:userId/sign-out', async (ctx: Context) => {
-    const authTokenPayload = authHelper.parseAuthToken(ctx)
-    const body: unknown = ctx.request.body
-    const userId: string | undefined = ctx.params.userId
-
-    const findRefreshToken = authHelper.createFindRefreshToken(ctx.db)
-    await authorizedAuthTokenService.deleteRefreshToken(
-      findRefreshToken,
-      async (refreshTokenId: string) => {
-        await refreshTokenRepository.deleteRefreshToken(ctx.db, refreshTokenId)
-      },
-      {
-        authTokenPayload,
-        id: userId,
-      },
-      body,
-      ctx.config.authTokenSecret,
-    )
-
-    return {
-      status: 200,
-      body: { success: true },
-    }
-  })
-
-  router.post('/api/v1/user/:userId/change-password', async (ctx: Context) => {
-    const authTokenPayload = authHelper.parseAuthToken(ctx)
-    const body: unknown = ctx.request.body
-    const userId: string | undefined = ctx.params.userId
-
-    await ctx.db.executeReadWriteTransaction(async (trx) => {
-      const changePasswordUserIf: ChangePasswordUserIf = {
-        lockUserById: async (userId: string) =>
-          await userRepository.lockUserById(trx, userId),
-        findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
-        updatePassword: async function (
-          userPasswordHash: UserPasswordHash,
-        ): Promise<void> {
-          await signInMethodRepository.updatePassword(trx, userPasswordHash)
-        },
-      }
-      const findRefreshToken = authHelper.createFindRefreshToken(ctx.db)
-      await signInMethodService.changePassword(
-        changePasswordUserIf,
-        findRefreshToken,
-        {
-          authTokenPayload,
-          id: userId,
-        },
-        body,
-        ctx.log,
-      )
-    })
-
-    return {
-      status: 204,
-      body: undefined,
-    }
-  })
+    },
+  )
 }
 
-function createFindPasswordSignInMethod(trx: Transaction) {
+function createFindPasswordSignInMethod(
+  trx: Transaction,
+): (userId: string) => Promise<UserPasswordHash | undefined> {
   return async function (
     userId: string,
   ): Promise<UserPasswordHash | undefined> {

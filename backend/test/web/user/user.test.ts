@@ -12,6 +12,7 @@ import type {
   CreatedUser,
   ReadUser,
 } from '../../../src/web/user/user.controller.js'
+import type { SignedInUser } from '../../../src/web/user/sign-in-method/sign-in-method.controller.js'
 
 import {
   findPasswordSignInMethod,
@@ -138,7 +139,11 @@ describe('user tests', () => {
 
     const originalSignInMethod = await getSignInMethod(ctx.db, user.id)
 
-    const res = await ctx.request.post(`/api/v1/user/sign-in`, {
+    const res = await ctx.request.post<{
+      user: SignedInUser
+      authToken: string
+      refreshToken: string
+    }>(`/api/v1/user/sign-in`, {
       username: username,
       password: password,
     })
@@ -242,7 +247,10 @@ describe('user tests', () => {
   it('refresh auth token', async () => {
     const { user, authToken, refreshToken } = await ctx.createUser()
 
-    const res = await ctx.request.post(`/api/v1/user/${user.id}/refresh`, {
+    const res = await ctx.request.post<{
+      authToken: string
+      refreshToken: string
+    }>(`/api/v1/user/${user.id}/refresh`, {
       refreshToken,
     })
 
@@ -259,7 +267,7 @@ describe('user tests', () => {
     assertEqual(failGetRes.status, 404)
     assertEqual(failGetRes.data.error.code, 'UserOrRefreshTokenNotFound')
 
-    const getRes = await ctx.request.get(
+    const getRes = await ctx.request.get<{ user: ReadUser }>(
       `/api/v1/user/${user.id}`,
       ctx.createAuthHeaders(res.data.authToken),
     )
@@ -277,7 +285,7 @@ describe('user tests', () => {
     })
     assertEqual(res.status, 401)
 
-    const getRes = await ctx.request.get(
+    const getRes = await ctx.request.get<{ user: ReadUser }>(
       `/api/v1/user/${user.id}`,
       ctx.createAuthHeaders(authToken),
     )
