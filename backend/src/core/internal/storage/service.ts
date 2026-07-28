@@ -15,7 +15,6 @@ import {
   storageNotFoundError,
 } from '../../errors.js'
 import type { log } from '../../log.js'
-import { INFO } from '../../log.js'
 
 import type { Pagination } from '../../pagination.js'
 import type { LockId } from '../../db.js'
@@ -25,7 +24,7 @@ export async function createStorage(
   request: CreateStorageRequest,
   log: log,
 ): Promise<StorageWithDate> {
-  log(INFO, 'create storage for beer', request.beer)
+  log('INFO', 'create storage for beer', request.beer)
   await lockId(createIf.lockBeer, request.beer, referredBeerNotFoundError)
   await lockId(
     createIf.lockContainer,
@@ -34,7 +33,7 @@ export async function createStorage(
   )
   const storage = await createIf.insertStorage(request)
 
-  log(INFO, 'created storage for beer', request.beer)
+  log('INFO', 'created storage for beer', request.beer)
   return {
     ...storage,
   }
@@ -45,7 +44,7 @@ export async function updateStorage(
   request: Storage,
   log: log,
 ): Promise<StorageWithDate> {
-  log(INFO, 'update storage', request.id)
+  log('INFO', 'update storage', request.id)
   await lockId(updateIf.lockBeer, request.beer, referredBeerNotFoundError)
   await lockId(
     updateIf.lockContainer,
@@ -54,7 +53,7 @@ export async function updateStorage(
   )
   const storage = await updateIf.updateStorage(request)
 
-  log(INFO, 'updated storage', request.id)
+  log('INFO', 'updated storage', request.id)
   return {
     ...storage,
   }
@@ -65,7 +64,7 @@ export async function deleteStorageById(
   id: string,
   log: log,
 ): Promise<void> {
-  log(INFO, 'delete storage', id)
+  log('INFO', 'delete storage', id)
   await deleteStorageById(id)
 }
 
@@ -74,7 +73,7 @@ export async function findStorageById(
   storageId: string,
   log: log,
 ): Promise<JoinedStorage | undefined> {
-  log(INFO, 'find storage', storageId)
+  log('INFO', 'find storage', storageId)
   const storage = await findById(storageId)
 
   if (storage === undefined) throw storageNotFoundError(storageId)
@@ -87,7 +86,7 @@ export async function listStorages(
   pagination: Pagination,
   log: log,
 ): Promise<JoinedStorage[]> {
-  log(INFO, 'list storages', pagination)
+  log('INFO', 'list storages', pagination)
   return await list(pagination)
 }
 
@@ -96,7 +95,7 @@ export async function listStoragesByBeer(
   beerId: string,
   log: log,
 ): Promise<JoinedStorage[]> {
-  log(INFO, 'list storages by beer', beerId)
+  log('INFO', 'list storages by beer', beerId)
   return await listByBeer(beerId)
 }
 
@@ -105,7 +104,7 @@ export async function listStoragesByBrewery(
   breweryId: string,
   log: log,
 ): Promise<JoinedStorage[]> {
-  log(INFO, 'list storages by brewery', breweryId)
+  log('INFO', 'list storages by brewery', breweryId)
   return await listByBrewery(breweryId)
 }
 
@@ -114,7 +113,7 @@ export async function listStoragesByStyle(
   styleId: string,
   log: log,
 ): Promise<JoinedStorage[]> {
-  log(INFO, 'list storages by style', styleId)
+  log('INFO', 'list storages by style', styleId)
   return await listByStyle(styleId)
 }
 
@@ -122,7 +121,7 @@ export async function getAnnualStorageStats(
   getAnnualStats: () => Promise<AnnualStorageStats>,
   log: log,
 ): Promise<AnnualStorageStats> {
-  log(INFO, 'get annual storage stats')
+  log('INFO', 'get annual storage stats')
   return await getAnnualStats()
 }
 
@@ -130,7 +129,7 @@ export async function getMonthlyStorageStats(
   getMonthlyStats: () => Promise<MonthlyStorageStats>,
   log: log,
 ): Promise<MonthlyStorageStats> {
-  log(INFO, 'get monthly storage stats')
+  log('INFO', 'get monthly storage stats')
   return await getMonthlyStats()
 }
 

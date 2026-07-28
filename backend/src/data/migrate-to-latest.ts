@@ -9,11 +9,7 @@ import { Pool } from 'pg'
 
 const directory = dirname(fileURLToPath(import.meta.url))
 
-export enum Level {
-  INFO = 'INFO',
-  WARN = 'WARN',
-  ERROR = 'ERROR',
-}
+export type Level = 'INFO' | 'WARN' | 'ERROR'
 
 export type Log = (level: Level, ...args: unknown[]) => void
 
@@ -37,18 +33,15 @@ export async function migrateToLatest(log: Log): Promise<void> {
 
   results?.forEach((it) => {
     if (it.status === 'Success') {
-      log(
-        Level.INFO,
-        `migration "${it.migrationName}" was executed successfully`,
-      )
+      log('INFO', `migration "${it.migrationName}" was executed successfully`)
     } else if (it.status === 'Error') {
-      log(Level.ERROR, `failed to execute migration "${it.migrationName}"`)
+      log('ERROR', `failed to execute migration "${it.migrationName}"`)
     }
   })
 
   if (error !== undefined) {
-    log(Level.ERROR, 'failed to migrate')
-    log(Level.ERROR, error)
+    log('ERROR', 'failed to migrate')
+    log('ERROR', error)
     process.exit(1)
   }
 

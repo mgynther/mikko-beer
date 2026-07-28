@@ -24,7 +24,6 @@ import type { CreateAnonymousUserRequest, User } from '../core/user/user.js'
 import { createAddPasswordUserIf } from './user/sign-in-method/sign-in-method-helper.js'
 import { ControllerError } from '../core/errors.js'
 import type { log } from '../console/log.js'
-import { Level } from '../console/log.js'
 import type { AuthTokenConfig } from '../core/auth/auth-token.js'
 import {
   createInitialUser,
@@ -93,7 +92,7 @@ export class App {
       }
       function logWithAdminPassword(...args: unknown[]): void {
         if (isAdminPasswordNeeded) {
-          log(Level.INFO, ...args)
+          log('INFO', ...args)
         }
       }
       userRepository
@@ -136,7 +135,7 @@ export class App {
               }". Please change the password a.s.a.p.`,
             )
           }
-          log(Level.INFO, 'Server starting')
+          log('INFO', 'Server starting')
           const serverPromise = new Promise<void>((resolve) => {
             this.#server = this.#koa.listen(port, resolve)
           })
@@ -152,12 +151,12 @@ export class App {
             })
           promises.push(oldPasswordHashedAtCleanupPromise)
           Promise.all(promises).then(() => {
-            log(Level.INFO, `Server started in port ${port}`)
+            log('INFO', `Server started in port ${port}`)
             resolve(startResult)
           })
         })
         .catch((error: unknown) => {
-          log(Level.ERROR, 'Error starting', error)
+          log('ERROR', 'Error starting', error)
           reject(error)
         })
     })
@@ -184,7 +183,7 @@ export class App {
       await next()
     } catch (error) {
       if (error instanceof ControllerError) {
-        this.#log(Level.INFO, 'controller error', error.status, error.code)
+        this.#log('INFO', 'controller error', error.status, error.code)
         respondError(ctx, error)
       } else {
         respondError(ctx, createUnknownError(error, this.#log))
@@ -218,13 +217,13 @@ function isObject(value: unknown): value is Record<string, unknown> {
 function createUnknownError(error: unknown, log: log): ControllerError {
   if (error instanceof Error) {
     log(
-      Level.ERROR,
+      'ERROR',
       'unknown error, name:',
       `${error.name}, message:`,
       error.message,
     )
   } else {
-    log(Level.ERROR, 'unknown error:', error)
+    log('ERROR', 'unknown error:', error)
   }
   return new ControllerError(500, 'UnknownError', getUnknownErrorMessage(error))
 }

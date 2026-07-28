@@ -6,7 +6,6 @@ import type {
 
 import { breweryNotFoundError } from '../../errors.js'
 import type { log } from '../../log.js'
-import { INFO } from '../../log.js'
 import type { Pagination } from '../../pagination.js'
 import type { SearchByName } from '../../search.js'
 
@@ -15,12 +14,12 @@ export async function createBrewery(
   request: CreateBreweryRequest,
   log: log,
 ): Promise<Brewery> {
-  log(INFO, 'create brewery with name', request.name)
+  log('INFO', 'create brewery with name', request.name)
   const brewery = await create({
     name: request.name,
   })
 
-  log(INFO, 'created brewery with name', brewery.name, 'and id', brewery.id)
+  log('INFO', 'created brewery with name', brewery.name, 'and id', brewery.id)
   return { ...brewery }
 }
 
@@ -30,13 +29,13 @@ export async function updateBrewery(
   request: UpdateBreweryRequest,
   log: log,
 ): Promise<Brewery> {
-  log(INFO, 'update brewery with id', breweryId)
+  log('INFO', 'update brewery with id', breweryId)
   const brewery = await update({
     id: breweryId,
     name: request.name,
   })
 
-  log(INFO, 'updated brewery with id', breweryId)
+  log('INFO', 'updated brewery with id', breweryId)
   return { ...brewery }
 }
 
@@ -45,7 +44,7 @@ export async function findBreweryById(
   breweryId: string,
   log: log,
 ): Promise<Brewery> {
-  log(INFO, 'find brewery with id', breweryId)
+  log('INFO', 'find brewery with id', breweryId)
   const brewery = await find(breweryId)
 
   if (brewery === undefined) throw breweryNotFoundError(breweryId)
@@ -58,7 +57,7 @@ export async function listBreweries(
   pagination: Pagination,
   log: log,
 ): Promise<Brewery[]> {
-  log(INFO, 'list breweries', pagination)
+  log('INFO', 'list breweries', pagination)
   return await list(pagination)
 }
 
@@ -67,6 +66,6 @@ export async function searchBreweries(
   searchRequest: SearchByName,
   log: log,
 ): Promise<Brewery[]> {
-  log(INFO, 'search breweries', searchRequest)
+  log('INFO', 'search breweries', searchRequest)
   return await search(searchRequest)
 }

@@ -1,5 +1,4 @@
-import { Level } from './log.js'
-import type { log } from './log.js'
+import type { Level, log } from './log.js'
 
 export const consoleLog: log = (level: Level, ...args: unknown[]): void => {
   const timestamp = new Date().toISOString()
@@ -10,11 +9,11 @@ function getLogger(
   level: Level,
 ): (message: unknown, ...optionalParams: unknown[]) => void {
   switch (level) {
-    case Level.INFO:
+    case 'INFO':
       return console.log
-    case Level.WARN:
+    case 'WARN':
       return console.warn
-    case Level.ERROR:
+    case 'ERROR':
       return console.error
   }
 }

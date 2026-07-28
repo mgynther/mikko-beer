@@ -3,7 +3,6 @@ import type { SignedInUser } from './signed-in-user.js'
 import type { CreateAnonymousUserRequest, Role, User } from '../../user/user.js'
 
 import { invalidCredentialsError, userNotFoundError } from '../../errors.js'
-import { INFO } from '../../log.js'
 import type { log } from '../../log.js'
 import type { DbRefreshToken } from '../../auth/refresh-token.js'
 import type { AuthTokenConfig } from '../../auth/auth-token.js'
@@ -15,7 +14,7 @@ export async function createAnonymousUser(
   authTokenConfig: AuthTokenConfig,
   log: log,
 ): Promise<SignedInUser> {
-  log(INFO, 'create user with role', role)
+  log('INFO', 'create user with role', role)
   const user = await createAnonymousUser({ role })
 
   const { refresh, auth } = await authTokenService.createTokens(
@@ -23,7 +22,7 @@ export async function createAnonymousUser(
     user,
     authTokenConfig,
   )
-  log(INFO, 'created user', user.id)
+  log('INFO', 'created user', user.id)
   return {
     refreshToken: refresh,
     authToken: auth,
@@ -36,7 +35,7 @@ export async function findUserById(
   userId: string,
   log: log,
 ): Promise<User> {
-  log(INFO, 'find user', userId)
+  log('INFO', 'find user', userId)
   const user = await findUserById(userId)
   if (user === undefined) {
     throw userNotFoundError(userId)
@@ -48,7 +47,7 @@ export async function listUsers(
   listUsers: () => Promise<User[]>,
   log: log,
 ): Promise<User[]> {
-  log(INFO, 'list users')
+  log('INFO', 'list users')
   return await listUsers()
 }
 
@@ -80,7 +79,7 @@ export async function setUserUsername(
   username: string,
   log: log,
 ): Promise<void> {
-  log(INFO, 'set user username', userId, username)
+  log('INFO', 'set user username', userId, username)
   await setUserUsername(userId, username)
 }
 
@@ -89,6 +88,6 @@ export async function deleteUserById(
   id: string,
   log: log,
 ): Promise<void> {
-  log(INFO, 'delete user', id)
+  log('INFO', 'delete user', id)
   await deleteUserById(id)
 }

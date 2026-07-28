@@ -1,4 +1,3 @@
-import { Level } from '../../log.js'
 import type { log } from '../../log.js'
 
 export function createHandler(
@@ -11,7 +10,7 @@ export function createHandler(
       resolve(value)
       return
     }
-    log(Level.ERROR, `crypt failed: ${err.message}`)
+    log('ERROR', `crypt failed: ${err.message}`)
     // Not exposing error details to avoid using it in response.
     reject(new Error('unknown error'))
   }

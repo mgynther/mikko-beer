@@ -13,7 +13,6 @@ import {
   referredStyleNotFoundError,
 } from '../../errors.js'
 import type { log } from '../../log.js'
-import { INFO } from '../../log.js'
 import type { Pagination } from '../../pagination.js'
 import type { SearchByName } from '../../search.js'
 import { areKeysEqual } from '../../internal/key.js'
@@ -24,7 +23,7 @@ export async function createBeer(
   request: CreateBeerRequest,
   log: log,
 ): Promise<BeerWithBreweryAndStyleIds> {
-  log(INFO, 'create beer with name', request.name)
+  log('INFO', 'create beer with name', request.name)
   await lockIds(
     createIf.lockBreweries,
     request.breweries,
@@ -40,7 +39,7 @@ export async function createBeer(
     createIf.insertBeerStyles(beer.id, request.styles),
   ])
 
-  log(INFO, 'created beer with name', beer.name, 'and id', beer.id)
+  log('INFO', 'created beer with name', beer.name, 'and id', beer.id)
   return {
     id: beer.id,
     name: beer.name,
@@ -55,7 +54,7 @@ export async function updateBeer(
   request: UpdateBeerRequest,
   log: log,
 ): Promise<BeerWithBreweryAndStyleIds> {
-  log(INFO, 'update beer with id', beerId)
+  log('INFO', 'update beer with id', beerId)
   await lockIds(
     updateIf.lockBreweries,
     request.breweries,
@@ -73,7 +72,7 @@ export async function updateBeer(
     updateIf.insertBeerStyles(beerId, request.styles),
   ])
 
-  log(INFO, 'updated beer with id', beerId)
+  log('INFO', 'updated beer with id', beerId)
   return {
     id: beerId,
     name: request.name,
@@ -87,7 +86,7 @@ export async function findBeerById(
   beerId: string,
   log: log,
 ): Promise<BeerWithBreweriesAndStyles> {
-  log(INFO, 'find beer with id', beerId)
+  log('INFO', 'find beer with id', beerId)
   const beer = await find(beerId)
 
   if (beer === undefined) throw beerNotFoundError(beerId)
@@ -100,7 +99,7 @@ export async function listBeers(
   pagination: Pagination,
   log: log,
 ): Promise<BeerWithBreweriesAndStyles[]> {
-  log(INFO, 'list beers', pagination)
+  log('INFO', 'list beers', pagination)
   return await list(pagination)
 }
 
@@ -111,7 +110,7 @@ export async function searchBeers(
   searchRequest: SearchByName,
   log: log,
 ): Promise<BeerWithBreweriesAndStyles[]> {
-  log(INFO, 'search beers', searchRequest)
+  log('INFO', 'search beers', searchRequest)
   return await search(searchRequest)
 }
 

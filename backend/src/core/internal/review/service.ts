@@ -15,7 +15,6 @@ import {
   reviewNotFoundError,
 } from '../../errors.js'
 import type { log } from '../../log.js'
-import { INFO } from '../../log.js'
 import type { Pagination } from '../../pagination.js'
 import type { LockId } from '../../db.js'
 
@@ -26,9 +25,9 @@ export async function createReview(
   log: log,
 ): Promise<Review> {
   if (fromStorageId === undefined) {
-    log(INFO, 'create review for beer', request.beer)
+    log('INFO', 'create review for beer', request.beer)
   } else {
-    log(INFO, 'create review for beer', request.beer, 'from storage')
+    log('INFO', 'create review for beer', request.beer, 'from storage')
   }
   await lockId(createIf.lockBeer, request.beer, referredBeerNotFoundError)
   await lockId(
@@ -52,7 +51,7 @@ export async function createReview(
     await createIf.deleteFromStorage(fromStorageId)
   }
 
-  log(INFO, 'created review with id', review.id)
+  log('INFO', 'created review with id', review.id)
   return { ...review }
 }
 
@@ -62,7 +61,7 @@ export async function updateReview(
   request: UpdateReviewRequest,
   log: log,
 ): Promise<Review> {
-  log(INFO, 'update review with id', reviewId)
+  log('INFO', 'update review with id', reviewId)
   await lockId(updateIf.lockBeer, request.beer, referredBeerNotFoundError)
   await lockId(
     updateIf.lockContainer,
@@ -76,7 +75,7 @@ export async function updateReview(
     id: reviewId,
   })
 
-  log(INFO, 'updated review with id', review.id)
+  log('INFO', 'updated review with id', review.id)
   return { ...review }
 }
 
@@ -85,7 +84,7 @@ export async function findReviewById(
   reviewId: string,
   log: log,
 ): Promise<Review> {
-  log(INFO, 'find review with id', reviewId)
+  log('INFO', 'find review with id', reviewId)
   const review = await find(reviewId)
 
   if (review === undefined) throw reviewNotFoundError(reviewId)
@@ -102,7 +101,7 @@ export async function listReviews(
   reviewListRequest: ReviewListRequest,
   log: log,
 ): Promise<JoinedReview[]> {
-  log(INFO, 'list reviews', pagination, reviewListRequest)
+  log('INFO', 'list reviews', pagination, reviewListRequest)
   return await list(pagination, reviewListRequest)
 }
 
@@ -115,7 +114,7 @@ export async function listReviewsByBeer(
   reviewListRequest: ReviewListRequest,
   log: log,
 ): Promise<JoinedReview[]> {
-  log(INFO, 'list by beer', beerId, reviewListRequest)
+  log('INFO', 'list by beer', beerId, reviewListRequest)
   return await list(beerId, reviewListRequest)
 }
 
@@ -128,7 +127,7 @@ export async function listReviewsByBrewery(
   reviewListRequest: ReviewListRequest,
   log: log,
 ): Promise<JoinedReview[]> {
-  log(INFO, 'list by brewery', breweryId, reviewListRequest)
+  log('INFO', 'list by brewery', breweryId, reviewListRequest)
   return await list(breweryId, reviewListRequest)
 }
 
@@ -141,7 +140,7 @@ export async function listReviewsByLocation(
   reviewListRequest: ReviewListRequest,
   log: log,
 ): Promise<JoinedReview[]> {
-  log(INFO, 'list by location', locationId, reviewListRequest)
+  log('INFO', 'list by location', locationId, reviewListRequest)
   return await list(locationId, reviewListRequest)
 }
 
@@ -154,7 +153,7 @@ export async function listReviewsByStyle(
   reviewListRequest: ReviewListRequest,
   log: log,
 ): Promise<JoinedReview[]> {
-  log(INFO, 'list by style', styleId, reviewListRequest)
+  log('INFO', 'list by style', styleId, reviewListRequest)
   return await list(styleId, reviewListRequest)
 }
 

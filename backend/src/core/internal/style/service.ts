@@ -12,7 +12,6 @@ import type {
 
 import { parentStyleNotFoundError, styleNotFoundError } from '../../errors.js'
 import type { log } from '../../log.js'
-import { INFO } from '../../log.js'
 import { checkCyclicRelationships } from './style.util.js'
 import { areKeysEqual } from '../../internal/key.js'
 import type { LockIds } from '../../db.js'
@@ -23,7 +22,7 @@ export async function createStyle(
   log: log,
 ): Promise<StyleWithParentIds> {
   log(
-    INFO,
+    'INFO',
     'create style with name',
     request.name,
     'and parents',
@@ -46,7 +45,7 @@ export async function createStyle(
     await createStyleIf.insertParents(style.id, request.parents)
   }
 
-  log(INFO, 'created style', style.id)
+  log('INFO', 'created style', style.id)
   return {
     ...style,
     parents: request.parents,
@@ -59,7 +58,7 @@ export async function updateStyle(
   request: UpdateStyleRequest,
   log: log,
 ): Promise<StyleWithParentIds> {
-  log(INFO, 'update style', styleId)
+  log('INFO', 'update style', styleId)
   if (request.parents.length > 0) {
     await lockParents(updateStyleIf.lockStyles, request.parents)
   }
@@ -77,7 +76,7 @@ export async function updateStyle(
   }
   await Promise.all(promises)
 
-  log(INFO, 'updated style', style.id)
+  log('INFO', 'updated style', style.id)
   return {
     ...style,
     parents: request.parents,
@@ -89,7 +88,7 @@ export async function findStyleById(
   styleId: string,
   log: log,
 ): Promise<StyleWithParentsAndChildren> {
-  log(INFO, 'find style', styleId)
+  log('INFO', 'find style', styleId)
   const style = await find(styleId)
 
   if (style === undefined) throw styleNotFoundError(styleId)
@@ -101,7 +100,7 @@ export async function listStyles(
   list: () => Promise<StyleWithParentIds[]>,
   log: log,
 ): Promise<StyleWithParentIds[]> {
-  log(INFO, 'list styles')
+  log('INFO', 'list styles')
   return await list()
 }
 

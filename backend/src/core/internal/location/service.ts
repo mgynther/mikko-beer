@@ -6,7 +6,6 @@ import type {
 
 import { locationNotFoundError } from '../../errors.js'
 import type { log } from '../../log.js'
-import { INFO } from '../../log.js'
 import type { Pagination } from '../../pagination.js'
 import type { SearchByName } from '../../search.js'
 
@@ -15,12 +14,18 @@ export async function createLocation(
   request: CreateLocationRequest,
   log: log,
 ): Promise<Location> {
-  log(INFO, 'create location with name', request.name)
+  log('INFO', 'create location with name', request.name)
   const location = await create({
     name: request.name,
   })
 
-  log(INFO, 'created location with name', location.name, 'and id', location.id)
+  log(
+    'INFO',
+    'created location with name',
+    location.name,
+    'and id',
+    location.id,
+  )
   return { ...location }
 }
 
@@ -30,13 +35,13 @@ export async function updateLocation(
   request: UpdateLocationRequest,
   log: log,
 ): Promise<Location> {
-  log(INFO, 'update location with id', locationId)
+  log('INFO', 'update location with id', locationId)
   const location = await update({
     id: locationId,
     name: request.name,
   })
 
-  log(INFO, 'updated location with id', locationId)
+  log('INFO', 'updated location with id', locationId)
   return { ...location }
 }
 
@@ -45,7 +50,7 @@ export async function findLocationById(
   locationId: string,
   log: log,
 ): Promise<Location> {
-  log(INFO, 'find location with id', locationId)
+  log('INFO', 'find location with id', locationId)
   const location = await find(locationId)
 
   if (location === undefined) throw locationNotFoundError(locationId)
@@ -58,7 +63,7 @@ export async function listLocations(
   pagination: Pagination,
   log: log,
 ): Promise<Location[]> {
-  log(INFO, 'list locations', pagination)
+  log('INFO', 'list locations', pagination)
   return await list(pagination)
 }
 
@@ -67,6 +72,6 @@ export async function searchLocations(
   searchRequest: SearchByName,
   log: log,
 ): Promise<Location[]> {
-  log(INFO, 'search locations', searchRequest)
+  log('INFO', 'search locations', searchRequest)
   return await search(searchRequest)
 }

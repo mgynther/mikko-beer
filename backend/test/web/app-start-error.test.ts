@@ -11,8 +11,7 @@ import {
 import { App } from '../../src/web/app.js'
 import type { Database } from '../../src/data/database.js'
 
-import { Level } from '../../src/console/log.js'
-import type { log } from '../../src/console/log.js'
+import type { Level, log } from '../../src/console/log.js'
 
 interface LogEntry {
   level: Level
@@ -89,7 +88,7 @@ describe('start error', () => {
     )
     const logMessages = ctx.logMessages()
     assertDeepEqual(logMessages[logMessages.length - 1], {
-      level: Level.ERROR,
+      level: 'ERROR',
       message: 'Error starting,Error: this is error',
     })
   })
