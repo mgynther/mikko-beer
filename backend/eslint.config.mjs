@@ -122,6 +122,9 @@ export default [
         {
           patterns: [
             {
+              regex: 'console/',
+            },
+            {
               regex: 'data/',
             },
             {
@@ -142,6 +145,9 @@ export default [
         'error',
         {
           patterns: [
+            {
+              regex: 'console/',
+            },
             {
               regex: 'web/',
             },

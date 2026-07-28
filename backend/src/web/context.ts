@@ -1,6 +1,6 @@
 import type { Config } from './config.js'
 
-import type { log } from '../core/log.js'
+import type { log } from '../console/log.js'
 import type { Database } from '../data/database.js'
 
 interface Request {

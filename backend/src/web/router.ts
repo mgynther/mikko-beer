@@ -6,7 +6,7 @@ import type { ParsedUrlQuery } from 'node:querystring'
 import type { Context } from './context.js'
 import type { Database } from '../data/database.js'
 import type { Config } from './config.js'
-import type { log } from '../core/log.js'
+import type { log } from '../console/log.js'
 import { invalidQueryError } from '../core/errors.js'
 
 export interface Response {

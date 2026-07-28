@@ -2,8 +2,8 @@ import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from './test-context.js'
 import { assertDeepEqual, assertEqual } from '../assert.js'
-import type { Level } from '../../src/core/log.js'
-import type { log } from '../../src/core/log.js'
+import type { Level } from '../../src/console/log.js'
+import type { log } from '../../src/console/log.js'
 
 describe('log unknown error', () => {
   const errorMessage = 'Failed on purpose'

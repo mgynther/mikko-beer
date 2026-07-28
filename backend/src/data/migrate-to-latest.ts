@@ -3,15 +3,21 @@ import { fileURLToPath } from 'node:url'
 import { promises as fs } from 'node:fs'
 import type { Database } from './database.js'
 import { config } from './config.js'
-import { consoleLog as log } from '../core/console-log.js'
-import { Level } from '../core/log.js'
 import { Kysely, PostgresDialect } from 'kysely'
 import { Migrator, FileMigrationProvider } from 'kysely/migration'
 import { Pool } from 'pg'
 
 const directory = dirname(fileURLToPath(import.meta.url))
 
-async function migrateToLatest(): Promise<void> {
+export enum Level {
+  INFO = 'INFO',
+  WARN = 'WARN',
+  ERROR = 'ERROR',
+}
+
+export type Log = (level: Level, ...args: unknown[]) => void
+
+export async function migrateToLatest(log: Log): Promise<void> {
   const db = new Kysely<Database>({
     dialect: new PostgresDialect({
       pool: new Pool(config),
@@ -47,17 +53,4 @@ async function migrateToLatest(): Promise<void> {
   }
 
   await db.destroy()
-}
-
-try {
-  migrateToLatest().then(
-    () => {
-      log(Level.INFO, 'migration done')
-    },
-    () => {
-      log(Level.WARN, 'migration promise rejected')
-    },
-  )
-} catch (e) {
-  log(Level.WARN, 'error running migration', e)
 }

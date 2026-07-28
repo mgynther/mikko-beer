@@ -20,7 +20,7 @@
     "test:web": "npm run test:files -- --test-isolation=none --test-concurrency 1 build-tests/test/web/*.test.js build-tests/test/web/*/*.test.js",
     "test": "npm run test:files -- --test-isolation=none --test-concurrency 1 build-tests/test/*.test.js build-tests/test/*/*.test.js build-tests/test/*/*/*.test.js build-tests/test/*/*/*/*.test.js",
     "test:ci": "npm run test:files -- --experimental-test-coverage --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 --test-isolation=none --test-concurrency 1 build-tests/test/*.test.js build-tests/test/*/*.test.js build-tests/test/*/*/*.test.js build-tests/test/*/*/*/*.test.js",
-    "migrate:latest": "node --env-file .env dist/data/migrate-to-latest.js"
+    "migrate:latest": "node --env-file .env dist/migrate-to-latest.js"
   },
   "dependencies": {
     "@koa/bodyparser": "6.1.0",

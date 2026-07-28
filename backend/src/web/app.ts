@@ -23,8 +23,8 @@ import { userController } from './user/user.controller.js'
 import type { CreateAnonymousUserRequest, User } from '../core/user/user.js'
 import { createAddPasswordUserIf } from './user/sign-in-method/sign-in-method-helper.js'
 import { ControllerError } from '../core/errors.js'
-import type { log } from '../core/log.js'
-import { Level } from '../core/log.js'
+import type { log } from '../console/log.js'
+import { Level } from '../console/log.js'
 import type { AuthTokenConfig } from '../core/auth/auth-token.js'
 import {
   createInitialUser,

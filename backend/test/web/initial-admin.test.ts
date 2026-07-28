@@ -18,8 +18,8 @@ import { App } from '../../src/web/app.js'
 import type { Database } from '../../src/data/database.js'
 import type { User } from '../../src/core/user/user.js'
 
-import type { Level } from '../../src/core/log.js'
-import type { log } from '../../src/core/log.js'
+import type { Level } from '../../src/console/log.js'
+import type { log } from '../../src/console/log.js'
 
 interface LogEntry {
   level: Level

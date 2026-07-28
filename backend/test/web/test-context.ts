@@ -13,7 +13,7 @@ import { App } from '../../src/web/app.js'
 import { Database } from '../../src/data/database.js'
 import { User } from '../../src/core/user/user.js'
 
-import { Level, type log } from '../../src/core/log.js'
+import { Level, type log } from '../../src/console/log.js'
 
 export class TestContext {
   #adminAuthToken: string = ''

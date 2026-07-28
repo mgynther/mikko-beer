@@ -3,7 +3,7 @@ import type {
   NewUser,
   User,
 } from '../../core/user/user'
-import type { Database, Transaction } from '../../data/database'
+import type { Database, Transaction } from '../database'
 import type { UserRow } from './user.table'
 
 export async function createAnonymousUser(
