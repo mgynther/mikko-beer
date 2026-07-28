@@ -1,10 +1,15 @@
-import type {
-  CreateAnonymousUserRequest,
-  NewUser,
-  User,
-} from '../../core/user/user'
 import type { Database, Transaction } from '../database'
-import type { UserRow } from './user.table'
+import type { Role, UserRow } from './user.table'
+
+export interface CreateAnonymousUserRequest {
+  role: Role
+}
+
+export interface User {
+  id: string
+  role: Role
+  username: string | null
+}
 
 export async function createAnonymousUser(
   trx: Transaction,
@@ -17,6 +22,11 @@ export async function createAnonymousUser(
     .returningAll()
     .executeTakeFirstOrThrow()
   return toUser(insertedUser)
+}
+
+export interface NewUser {
+  role: Role
+  username: string
 }
 
 export async function insertUser(
