@@ -1,12 +1,12 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
-import type {
-  Beer,
-  BeerWithBreweriesAndStyles,
-} from '../../../src/core/beer/beer.js'
 import type { Style } from '../../../src/core/style/style.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
+import type {
+  CreatedOrUpdatedBeer,
+  ReadBeer,
+} from '../../../src/web/beer/beer.controller.js'
 
 describe('beer tests', () => {
   const ctx = new TestContext()
@@ -32,7 +32,7 @@ describe('beer tests', () => {
     )
     assertEqual(breweryRes.status, 201)
 
-    const beerRes = await ctx.request.post(
+    const beerRes = await ctx.request.post<{ beer: CreatedOrUpdatedBeer }>(
       `/api/v1/beer`,
       {
         name: 'Lindemans Kriek',
@@ -53,7 +53,7 @@ describe('beer tests', () => {
   it('create a beer', async () => {
     const { beerRes, breweryRes, styleRes } = await createBeer()
 
-    const getRes = await ctx.request.get<{ beer: BeerWithBreweriesAndStyles }>(
+    const getRes = await ctx.request.get<{ beer: ReadBeer }>(
       `/api/v1/beer/${beerRes.data.beer.id}`,
       ctx.adminAuthHeaders(),
     )
@@ -68,7 +68,7 @@ describe('beer tests', () => {
   })
 
   it('fail to find beer that does not exist', async () => {
-    const getRes = await ctx.request.get<{ beer: BeerWithBreweriesAndStyles }>(
+    const getRes = await ctx.request.get<{ beer: ReadBeer }>(
       `/api/v1/beer/e733fe0f-3b6a-438c-85cf-021987bec5f6`,
       ctx.adminAuthHeaders(),
     )
@@ -78,7 +78,7 @@ describe('beer tests', () => {
 
   it('search beer', async () => {
     const { beerRes } = await createBeer()
-    const searchRes = await ctx.request.post<{ beers: Beer[] }>(
+    const searchRes = await ctx.request.post<{ beers: ReadBeer[] }>(
       '/api/v1/beer/search',
       { name: 'iNd' },
       ctx.adminAuthHeaders(),
@@ -90,7 +90,7 @@ describe('beer tests', () => {
 
   it('fail to find beer without a match', async () => {
     await createBeer()
-    const searchNoMatchRes = await ctx.request.post<{ beers: Beer[] }>(
+    const searchNoMatchRes = await ctx.request.post<{ beers: ReadBeer[] }>(
       '/api/v1/beer/search',
       { name: 'iNda' },
       ctx.adminAuthHeaders(),
@@ -101,7 +101,7 @@ describe('beer tests', () => {
 
   it('find beer with exact match', async () => {
     const { beerRes } = await createBeer()
-    const searchExactRes = await ctx.request.post<{ beers: Beer[] }>(
+    const searchExactRes = await ctx.request.post<{ beers: ReadBeer[] }>(
       '/api/v1/beer/search',
       { name: '"lindemans kriek"' },
       ctx.adminAuthHeaders(),
@@ -113,7 +113,7 @@ describe('beer tests', () => {
 
   it('not find beer with exact match mismatch', async () => {
     await createBeer()
-    const searchExactNoMatchRes = await ctx.request.post<{ beers: Beer[] }>(
+    const searchExactNoMatchRes = await ctx.request.post<{ beers: ReadBeer[] }>(
       '/api/v1/beer/search',
       { name: '"lindemans krie"' },
       ctx.adminAuthHeaders(),
@@ -172,7 +172,7 @@ describe('beer tests', () => {
       brewery2Res.data.brewery.id,
     ])
 
-    const getRes = await ctx.request.get<{ beer: BeerWithBreweriesAndStyles }>(
+    const getRes = await ctx.request.get<{ beer: ReadBeer }>(
       `/api/v1/beer/${beerRes.data.beer.id}`,
       ctx.adminAuthHeaders(),
     )
@@ -238,7 +238,7 @@ describe('beer tests', () => {
     )
     assertEqual(styleRes.status, 201)
 
-    const beerRes = await ctx.request.post(
+    const beerRes = await ctx.request.post<{ beer: CreatedOrUpdatedBeer }>(
       `/api/v1/beer`,
       {
         name: 'Random IPA',
@@ -304,7 +304,7 @@ describe('beer tests', () => {
     )
     assertEqual(brewery2Res.status, 201)
 
-    const createRes = await ctx.request.post(
+    const createRes = await ctx.request.post<{ beer: CreatedOrUpdatedBeer }>(
       `/api/v1/beer`,
       {
         name: 'Lindemasn Kriek',
@@ -315,7 +315,7 @@ describe('beer tests', () => {
     )
     assertEqual(createRes.status, 201)
 
-    const updateRes = await ctx.request.put(
+    const updateRes = await ctx.request.put<{ beer: CreatedOrUpdatedBeer }>(
       `/api/v1/beer/${createRes.data.beer.id}`,
       {
         name: 'Torpedo',
@@ -326,7 +326,7 @@ describe('beer tests', () => {
     )
     assertEqual(updateRes.status, 200)
 
-    const getRes = await ctx.request.get<{ beer: BeerWithBreweriesAndStyles }>(
+    const getRes = await ctx.request.get<{ beer: ReadBeer }>(
       `/api/v1/beer/${createRes.data.beer.id}`,
       ctx.adminAuthHeaders(),
     )

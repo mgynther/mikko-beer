@@ -15,8 +15,67 @@ import { validatePagination } from '../../core/pagination.js'
 import { validateSearchByName } from '../../core/search.js'
 import type { Context } from '../context.js'
 
+export interface CreatedOrUpdatedBeer {
+  id: string
+  name: string
+  breweries: string[]
+  styles: string[]
+}
+
+interface CreateResult {
+  status: 201
+  body: {
+    beer: CreatedOrUpdatedBeer
+  }
+}
+
+interface UpdateResult {
+  status: 200
+  body: {
+    beer: CreatedOrUpdatedBeer
+  }
+}
+
+export interface ReadBeer {
+  id: string
+  name: string
+  breweries: Array<{
+    id: string
+    name: string
+  }>
+  styles: Array<{
+    id: string
+    name: string
+  }>
+}
+
+interface ReadResult {
+  status: 200
+  body: {
+    beer: ReadBeer
+  }
+}
+
+interface ListResult {
+  status: 200
+  body: {
+    beers: Array<ReadBeer>
+    pagination: {
+      size: number
+      skip: number
+    }
+  }
+}
+
+interface SearchResult {
+  status: 200
+  body: {
+    beers: Array<ReadBeer>
+  }
+}
+
 export function beerController(router: Router): void {
-  router.post('/api/v1/beer', async (ctx: Context) => {
+  router.post('/api/v1/beer', async (ctx: Context): Promise<CreateResult> => {
     const authTokenPayload = authHelper.parseAuthToken(ctx)
     const body: unknown = ctx.request.body
 
@@ -47,65 +106,71 @@ export function beerController(router: Router): void {
     }
   })
 
-  router.put('/api/v1/beer/:beerId', async (ctx: Context) => {
-    const authTokenPayload = authHelper.parseAuthToken(ctx)
-    const body: unknown = ctx.request.body
-    const beerId: string | undefined = ctx.params.beerId
+  router.put(
+    '/api/v1/beer/:beerId',
+    async (ctx: Context): Promise<UpdateResult> => {
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
+      const body: unknown = ctx.request.body
+      const beerId: string | undefined = ctx.params.beerId
 
-    const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
-      const updateIf: UpdateIf = {
-        update: async (beer: Beer) =>
-          await beerRepository.updateBeer(trx, beer),
-        lockBreweries: createBreweryLocker(trx),
-        lockStyles: createStyleLocker(trx),
-        insertBeerBreweries: createBeerBreweryInserter(trx),
-        deleteBeerBreweries: async (beerId: string) => {
-          await beerRepository.deleteBeerBreweries(trx, beerId)
-        },
-        insertBeerStyles: createBeerStyleInserter(trx),
-        deleteBeerStyles: async (beerId: string) => {
-          await beerRepository.deleteBeerStyles(trx, beerId)
+      const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
+        const updateIf: UpdateIf = {
+          update: async (beer: Beer) =>
+            await beerRepository.updateBeer(trx, beer),
+          lockBreweries: createBreweryLocker(trx),
+          lockStyles: createStyleLocker(trx),
+          insertBeerBreweries: createBeerBreweryInserter(trx),
+          deleteBeerBreweries: async (beerId: string) => {
+            await beerRepository.deleteBeerBreweries(trx, beerId)
+          },
+          insertBeerStyles: createBeerStyleInserter(trx),
+          deleteBeerStyles: async (beerId: string) => {
+            await beerRepository.deleteBeerStyles(trx, beerId)
+          },
+        }
+        return await beerService.updateBeer(
+          updateIf,
+          beerId,
+          {
+            authTokenPayload,
+            body,
+          },
+          ctx.log,
+        )
+      })
+
+      return {
+        status: 200,
+        body: {
+          beer: result,
         },
       }
-      return await beerService.updateBeer(
-        updateIf,
-        beerId,
+    },
+  )
+
+  router.get(
+    '/api/v1/beer/:beerId',
+    async (ctx: Context): Promise<ReadResult> => {
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
+      const beerId: string | undefined = ctx.params.beerId
+      const beer = await beerService.findBeerById(
+        async (beerId: string) =>
+          await beerRepository.findBeerById(ctx.db, beerId),
         {
           authTokenPayload,
-          body,
+          id: beerId,
         },
         ctx.log,
       )
-    })
 
-    return {
-      status: 200,
-      body: {
-        beer: result,
-      },
-    }
-  })
+      return {
+        status: 200,
+        body: { beer },
+      }
+    },
+  )
 
-  router.get('/api/v1/beer/:beerId', async (ctx: Context) => {
-    const authTokenPayload = authHelper.parseAuthToken(ctx)
-    const beerId: string | undefined = ctx.params.beerId
-    const beer = await beerService.findBeerById(
-      async (beerId: string) =>
-        await beerRepository.findBeerById(ctx.db, beerId),
-      {
-        authTokenPayload,
-        id: beerId,
-      },
-      ctx.log,
-    )
-
-    return {
-      status: 200,
-      body: { beer },
-    }
-  })
-
-  router.get('/api/v1/beer', async (ctx: Context) => {
+  router.get('/api/v1/beer', async (ctx: Context): Promise<ListResult> => {
     const authTokenPayload = authHelper.parseAuthToken(ctx)
     const { skip, size } = ctx.request.query
     const pagination = validatePagination({ skip, size })
@@ -124,26 +189,29 @@ export function beerController(router: Router): void {
     }
   })
 
-  router.post('/api/v1/beer/search', async (ctx: Context) => {
-    const authTokenPayload = authHelper.parseAuthToken(ctx)
-    const body: unknown = ctx.request.body
+  router.post(
+    '/api/v1/beer/search',
+    async (ctx: Context): Promise<SearchResult> => {
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
+      const body: unknown = ctx.request.body
 
-    const searchByName = validateSearchByName(body)
-    const beers = await beerService.searchBeers(
-      async (searchRequest: SearchByName) =>
-        await beerRepository.searchBeers(ctx.db, searchRequest),
-      {
-        authTokenPayload,
-        searchByName,
-      },
-      ctx.log,
-    )
+      const searchByName = validateSearchByName(body)
+      const beers = await beerService.searchBeers(
+        async (searchRequest: SearchByName) =>
+          await beerRepository.searchBeers(ctx.db, searchRequest),
+        {
+          authTokenPayload,
+          searchByName,
+        },
+        ctx.log,
+      )
 
-    return {
-      status: 200,
-      body: { beers },
-    }
-  })
+      return {
+        status: 200,
+        body: { beers },
+      }
+    },
+  )
 }
 
 function createBeerBreweryInserter(
