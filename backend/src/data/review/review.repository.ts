@@ -9,7 +9,7 @@ import type {
   ReviewTableContent,
 } from './review.table.js'
 
-import type { ListDirection } from '../../core/list.js'
+import type { ListDirection } from '../list.js'
 import type { Pagination } from '../pagination.js'
 import { toRowNumbers } from '../pagination.js'
 import type {
