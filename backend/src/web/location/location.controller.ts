@@ -14,79 +14,137 @@ import type {
 import { validatePagination } from '../../core/pagination.js'
 import type { Context } from '../context.js'
 
+export interface CreatedOrUpdatedLocation {
+  id: string
+  name: string
+}
+
+interface CreateResult {
+  status: 201
+  body: {
+    location: CreatedOrUpdatedLocation
+  }
+}
+
+interface UpdateResult {
+  status: 200
+  body: {
+    location: CreatedOrUpdatedLocation
+  }
+}
+
+export interface ReadLocation {
+  id: string
+  name: string
+}
+
+interface ReadResult {
+  status: 200
+  body: {
+    location: ReadLocation
+  }
+}
+
+interface ListResult {
+  status: 200
+  body: {
+    locations: Array<ReadLocation>
+    pagination: {
+      size: number
+      skip: number
+    }
+  }
+}
+
+interface SearchResult {
+  status: 200
+  body: {
+    locations: Array<ReadLocation>
+  }
+}
+
 export function locationController(router: Router): void {
-  router.post('/api/v1/location', async (ctx: Context) => {
-    const authTokenPayload = authHelper.parseAuthToken(ctx)
-    const body: unknown = ctx.request.body
+  router.post(
+    '/api/v1/location',
+    async (ctx: Context): Promise<CreateResult> => {
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
+      const body: unknown = ctx.request.body
 
-    const result = await ctx.db.executeReadWriteTransaction(
-      async (trx) =>
-        await locationService.createLocation(
-          async (location: CreateLocationRequest) =>
-            await locationRepository.insertLocation(trx, location),
-          {
-            authTokenPayload,
-            body,
-          },
-          ctx.log,
-        ),
-    )
+      const result = await ctx.db.executeReadWriteTransaction(
+        async (trx) =>
+          await locationService.createLocation(
+            async (location: CreateLocationRequest) =>
+              await locationRepository.insertLocation(trx, location),
+            {
+              authTokenPayload,
+              body,
+            },
+            ctx.log,
+          ),
+      )
 
-    return {
-      status: 201,
-      body: {
-        location: result,
-      },
-    }
-  })
+      return {
+        status: 201,
+        body: {
+          location: result,
+        },
+      }
+    },
+  )
 
-  router.put('/api/v1/location/:locationId', async (ctx: Context) => {
-    const authTokenPayload = authHelper.parseAuthToken(ctx)
-    const body: unknown = ctx.request.body
-    const locationId: string | undefined = ctx.params.locationId
+  router.put(
+    '/api/v1/location/:locationId',
+    async (ctx: Context): Promise<UpdateResult> => {
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
+      const body: unknown = ctx.request.body
+      const locationId: string | undefined = ctx.params.locationId
 
-    const result = await ctx.db.executeReadWriteTransaction(
-      async (trx) =>
-        await locationService.updateLocation(
-          async (location: Location) =>
-            await locationRepository.updateLocation(trx, location),
-          locationId,
-          {
-            authTokenPayload,
-            body,
-          },
-          ctx.log,
-        ),
-    )
+      const result = await ctx.db.executeReadWriteTransaction(
+        async (trx) =>
+          await locationService.updateLocation(
+            async (location: Location) =>
+              await locationRepository.updateLocation(trx, location),
+            locationId,
+            {
+              authTokenPayload,
+              body,
+            },
+            ctx.log,
+          ),
+      )
 
-    return {
-      status: 200,
-      body: {
-        location: result,
-      },
-    }
-  })
+      return {
+        status: 200,
+        body: {
+          location: result,
+        },
+      }
+    },
+  )
 
-  router.get('/api/v1/location/:locationId', async (ctx: Context) => {
-    const authTokenPayload = authHelper.parseAuthToken(ctx)
-    const locationId: string | undefined = ctx.params.locationId
-    const location = await locationService.findLocationById(
-      async (locationId: string) =>
-        await locationRepository.findLocationById(ctx.db, locationId),
-      {
-        authTokenPayload,
-        id: locationId,
-      },
-      ctx.log,
-    )
+  router.get(
+    '/api/v1/location/:locationId',
+    async (ctx: Context): Promise<ReadResult> => {
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
+      const locationId: string | undefined = ctx.params.locationId
+      const location = await locationService.findLocationById(
+        async (locationId: string) =>
+          await locationRepository.findLocationById(ctx.db, locationId),
+        {
+          authTokenPayload,
+          id: locationId,
+        },
+        ctx.log,
+      )
 
-    return {
-      status: 200,
-      body: { location },
-    }
-  })
+      return {
+        status: 200,
+        body: { location },
+      }
+    },
+  )
 
-  router.get('/api/v1/location', async (ctx: Context) => {
+  router.get('/api/v1/location', async (ctx: Context): Promise<ListResult> => {
     const authTokenPayload = authHelper.parseAuthToken(ctx)
     const { skip, size } = ctx.request.query
     const pagination = validatePagination({ skip, size })
@@ -105,23 +163,26 @@ export function locationController(router: Router): void {
     }
   })
 
-  router.post('/api/v1/location/search', async (ctx: Context) => {
-    const authTokenPayload = authHelper.parseAuthToken(ctx)
-    const body: unknown = ctx.request.body
+  router.post(
+    '/api/v1/location/search',
+    async (ctx: Context): Promise<SearchResult> => {
+      const authTokenPayload = authHelper.parseAuthToken(ctx)
+      const body: unknown = ctx.request.body
 
-    const locations = await locationService.searchLocations(
-      async (searchRequest: SearchByName) =>
-        await locationRepository.searchLocations(ctx.db, searchRequest),
-      {
-        authTokenPayload,
-        body,
-      },
-      ctx.log,
-    )
+      const locations = await locationService.searchLocations(
+        async (searchRequest: SearchByName) =>
+          await locationRepository.searchLocations(ctx.db, searchRequest),
+        {
+          authTokenPayload,
+          body,
+        },
+        ctx.log,
+      )
 
-    return {
-      status: 200,
-      body: { locations },
-    }
-  })
+      return {
+        status: 200,
+        body: { locations },
+      }
+    },
+  )
 }
