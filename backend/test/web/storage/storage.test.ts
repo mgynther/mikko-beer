@@ -1,13 +1,13 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
+import { assertDeepEqual, assertEqual } from '../../assert.js'
 import type {
   AnnualStorageStats,
-  JoinedStorage,
+  CreatedOrUpdatedStorage,
   MonthlyStorageStats,
-  Storage,
-} from '../../../src/core/storage/storage.js'
-import { assertDeepEqual, assertEqual } from '../../assert.js'
+  ReadStorage,
+} from '../../../src/web/storage/storage.controller.js'
 
 describe('storage tests', () => {
   const ctx = new TestContext()
@@ -70,7 +70,9 @@ describe('storage tests', () => {
       ctx.adminAuthHeaders(),
     )
 
-    const storageRes = await ctx.request.post(
+    const storageRes = await ctx.request.post<{
+      storage: CreatedOrUpdatedStorage
+    }>(
       `/api/v1/storage`,
       {
         bestBefore,
@@ -80,14 +82,14 @@ describe('storage tests', () => {
       ctx.adminAuthHeaders(),
     )
     assertEqual(storageRes.status, 201)
-    assertEqual(storageRes.data.storage.bestBefore, bestBefore)
+    assertEqual(storageRes.data.storage.bestBefore.toString(), bestBefore)
     assertEqual(storageRes.data.storage.beer, beerRes.data.beer.id)
     assertEqual(
       storageRes.data.storage.container,
       containerRes.data.container.id,
     )
 
-    const getRes = await ctx.request.get<{ storage: JoinedStorage }>(
+    const getRes = await ctx.request.get<{ storage: ReadStorage }>(
       `/api/v1/storage/${storageRes.data.storage.id}`,
       ctx.adminAuthHeaders(),
     )
@@ -98,7 +100,7 @@ describe('storage tests', () => {
     assertEqual(getRes.data.storage.beerId, beerRes.data.beer.id)
     assertDeepEqual(getRes.data.storage.container, containerRes.data.container)
 
-    const listRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
+    const listRes = await ctx.request.get<{ storages: ReadStorage[] }>(
       '/api/v1/storage/',
       ctx.adminAuthHeaders(),
     )
@@ -118,14 +120,14 @@ describe('storage tests', () => {
     delete parentlessStyle.parents
     assertDeepEqual(listRes.data.storages[0].styles[0], parentlessStyle)
 
-    const skippedListRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
+    const skippedListRes = await ctx.request.get<{ storages: ReadStorage[] }>(
       '/api/v1/storage?size=50&skip=30',
       ctx.adminAuthHeaders(),
     )
     assertEqual(skippedListRes.status, 200)
     assertEqual(skippedListRes.data.storages.length, 0)
 
-    const breweryListRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
+    const breweryListRes = await ctx.request.get<{ storages: ReadStorage[] }>(
       `/api/v1/brewery/${breweryRes.data.brewery.id}/storage/`,
       ctx.adminAuthHeaders(),
     )
@@ -134,7 +136,7 @@ describe('storage tests', () => {
     assertEqual(breweryListRes.data.storages[0].id, getRes.data.storage.id)
     assertDeepEqual(breweryListRes.data.storages[0], getRes.data.storage)
 
-    const styleListRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
+    const styleListRes = await ctx.request.get<{ storages: ReadStorage[] }>(
       `/api/v1/style/${styleRes.data.style.id}/storage/`,
       ctx.adminAuthHeaders(),
     )
@@ -143,7 +145,7 @@ describe('storage tests', () => {
     assertEqual(styleListRes.data.storages[0].id, getRes.data.storage.id)
     assertDeepEqual(styleListRes.data.storages[0], getRes.data.storage)
 
-    const beerListRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
+    const beerListRes = await ctx.request.get<{ storages: ReadStorage[] }>(
       `/api/v1/beer/${beerRes.data.beer.id}/storage/`,
       ctx.adminAuthHeaders(),
     )
@@ -218,14 +220,14 @@ describe('storage tests', () => {
       container: containerRes.data.container.id,
     }
 
-    const storageRes = await ctx.request.post(
-      `/api/v1/storage`,
-      requestData,
-      ctx.adminAuthHeaders(),
-    )
+    const storageRes = await ctx.request.post<{
+      storage: CreatedOrUpdatedStorage
+    }>(`/api/v1/storage`, requestData, ctx.adminAuthHeaders())
     assertEqual(storageRes.status, 201)
 
-    const updateRes = await ctx.request.put(
+    const updateRes = await ctx.request.put<{
+      storage: CreatedOrUpdatedStorage
+    }>(
       `/api/v1/storage/${storageRes.data.storage.id}`,
       {
         ...requestData,
@@ -235,7 +237,7 @@ describe('storage tests', () => {
     )
     assertEqual(updateRes.status, 200)
 
-    const getRes = await ctx.request.get<{ storage: Storage }>(
+    const getRes = await ctx.request.get<{ storage: ReadStorage }>(
       `/api/v1/storage/${storageRes.data.storage.id}`,
       ctx.adminAuthHeaders(),
     )
@@ -253,11 +255,9 @@ describe('storage tests', () => {
       container: containerRes.data.container.id,
     }
 
-    const storageRes = await ctx.request.post(
-      `/api/v1/storage`,
-      requestData,
-      ctx.adminAuthHeaders(),
-    )
+    const storageRes = await ctx.request.post<{
+      storage: CreatedOrUpdatedStorage
+    }>(`/api/v1/storage`, requestData, ctx.adminAuthHeaders())
     assertEqual(storageRes.status, 201)
     const storageId = storageRes.data.storage.id
 
@@ -267,7 +267,7 @@ describe('storage tests', () => {
     )
     assertEqual(deleteRes.status, 204)
 
-    const getRes = await ctx.request.get<{ storage: Storage }>(
+    const getRes = await ctx.request.get<{ storage: ReadStorage }>(
       `/api/v1/storage/${storageId}`,
       ctx.adminAuthHeaders(),
     )
@@ -275,7 +275,10 @@ describe('storage tests', () => {
   })
 
   it('get empty storage list', async () => {
-    const res = await ctx.request.get(`/api/v1/storage`, ctx.adminAuthHeaders())
+    const res = await ctx.request.get<{ storages: ReadStorage[] }>(
+      `/api/v1/storage`,
+      ctx.adminAuthHeaders(),
+    )
 
     assertEqual(res.status, 200)
     assertEqual(res.data.storages.length, 0)
@@ -285,7 +288,9 @@ describe('storage tests', () => {
     const { beerRes, breweryRes, containerRes, styleRes } =
       await createDeps(adminAuthHeaders)
 
-    const storageRes = await ctx.request.post(
+    const storageRes = await ctx.request.post<{
+      storage: CreatedOrUpdatedStorage
+    }>(
       `/api/v1/storage`,
       {
         beer: beerRes.data.beer.id,
@@ -330,7 +335,9 @@ describe('storage tests', () => {
       otherStyleRes.data.style.id,
     ])
 
-    const otherStorageRes = await ctx.request.post(
+    const otherStorageRes = await ctx.request.post<{
+      storage: CreatedOrUpdatedStorage
+    }>(
       `/api/v1/storage`,
       {
         beer: otherBeerRes.data.beer.id,
@@ -357,7 +364,9 @@ describe('storage tests', () => {
     assertEqual(collabBeerRes.status, 201)
     assertEqual(collabBeerRes.data.beer.name, 'Wild Kriek IPA')
 
-    const collabStorageRes = await ctx.request.post(
+    const collabStorageRes = await ctx.request.post<{
+      storage: CreatedOrUpdatedStorage
+    }>(
       `/api/v1/storage`,
       {
         beer: collabBeerRes.data.beer.id,
@@ -387,7 +396,7 @@ describe('storage tests', () => {
     const { breweryRes, otherBreweryRes, storageRes, collabStorageRes } =
       await createListByDeps(ctx.adminAuthHeaders())
 
-    const breweryListRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
+    const breweryListRes = await ctx.request.get<{ storages: ReadStorage[] }>(
       `/api/v1/brewery/${breweryRes.data.brewery.id}/storage/`,
       ctx.adminAuthHeaders(),
     )
@@ -431,7 +440,7 @@ describe('storage tests', () => {
     const { styleRes, otherStyleRes, storageRes, collabStorageRes } =
       await createListByDeps(ctx.adminAuthHeaders())
 
-    const styleListRes = await ctx.request.get<{ storages: JoinedStorage[] }>(
+    const styleListRes = await ctx.request.get<{ storages: ReadStorage[] }>(
       `/api/v1/style/${styleRes.data.style.id}/storage/`,
       ctx.adminAuthHeaders(),
     )

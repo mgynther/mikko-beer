@@ -47,7 +47,7 @@ export async function findStorageById(
   findById: (id: string) => Promise<JoinedStorage | undefined>,
   request: IdRequest,
   log: log,
-): Promise<JoinedStorage | undefined> {
+): Promise<JoinedStorage> {
   authorizationService.authorizeViewer(request.authTokenPayload)
   return await storageService.findStorageById(findById, request.id, log)
 }

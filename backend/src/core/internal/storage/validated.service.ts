@@ -61,7 +61,7 @@ export async function findStorageById(
   findById: (id: string) => Promise<JoinedStorage | undefined>,
   id: string | undefined,
   log: log,
-): Promise<JoinedStorage | undefined> {
+): Promise<JoinedStorage> {
   return await storageService.findStorageById(
     findById,
     validateStorageId(id),
