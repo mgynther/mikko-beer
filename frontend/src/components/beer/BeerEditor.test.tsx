@@ -6,16 +6,16 @@ import type {
   Brewery,
   SearchBreweryIf,
   SelectBreweryIf,
-} from '../../core/brewery/types'
+} from '../../types/brewery/types'
 import type {
   CreateStyleIf,
   SelectStyleIf,
   Style,
   StyleWithParentIds,
-} from '../../core/style/types'
-import type { UseDebounce } from '../../core/types'
-import type { EditBeerIf } from '../../core/beer/types'
-import type { SearchFieldIf } from '../../core/search/types'
+} from '../../types/style/types'
+import type { UseDebounce } from '../../types/types'
+import type { EditBeerIf } from '../../types/beer/types'
+import type { SearchFieldIf } from '../../types/search/types'
 import { dontCall } from '../../../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]

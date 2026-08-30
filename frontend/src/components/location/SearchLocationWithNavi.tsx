@@ -1,7 +1,7 @@
 import React from 'react'
 
 import SearchLocation from './SearchLocation'
-import type { SearchLocationIf } from '../../core/location/types'
+import type { SearchLocationIf } from '../../types/location/types'
 import type { NavigateIf } from '../../navigation'
 
 export interface Props {

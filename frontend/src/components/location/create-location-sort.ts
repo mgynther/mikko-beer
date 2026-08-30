@@ -1,4 +1,4 @@
-import type { Location } from '../../core/location/types'
+import type { Location } from '../../types/location/types'
 
 export const createId = 'create-new'
 

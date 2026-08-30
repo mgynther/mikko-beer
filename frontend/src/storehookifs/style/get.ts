@@ -1,4 +1,4 @@
-import type { GetStyleIf } from '../../core/style/types'
+import type { GetStyleIf } from '../../types/style/types'
 import { useGetStyleQuery } from '../../store/style/api'
 // prettier-ignore
 import {

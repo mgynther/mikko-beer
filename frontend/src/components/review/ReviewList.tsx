@@ -5,7 +5,7 @@ import type {
   ReviewIf,
   ReviewSorting,
   ReviewSortingOrder,
-} from '../../core/review/types'
+} from '../../types/review/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 

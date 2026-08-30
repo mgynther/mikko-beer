@@ -5,9 +5,9 @@ import { formatTitle } from '../list-helpers'
 import type {
   LocationStatsSortingOrder,
   OneLocationStats,
-} from '../../core/stats/types'
+} from '../../types/stats/types'
 
-import type { ListDirection } from '../../core/types'
+import type { ListDirection } from '../../types/types'
 
 import TabButton from '../common/TabButton'
 import LocationLink from '../location/LocationLink'

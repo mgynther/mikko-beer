@@ -1,7 +1,7 @@
 import * as t from 'io-ts'
 import { isLeft } from 'fp-ts/Either'
 
-import type { Location, LocationList } from '../core/location/types'
+import type { Location, LocationList } from '../types/location/types'
 import { formatError } from './format-error'
 
 export const ValidatedLocation = t.type({

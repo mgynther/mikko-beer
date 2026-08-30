@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 
-import type { Container, ContainerList } from '../core/container/types'
+import type { Container, ContainerList } from '../types/container/types'
 
 import {
   validateContainer,

@@ -8,7 +8,7 @@ import type {
   InfiniteScroll,
   UseDebounce,
   UseUrlSearchParams,
-} from '../core/types'
+} from '../types/types'
 import { className as contentEndClassName } from './ContentEnd'
 
 export function pad(number: number): string {

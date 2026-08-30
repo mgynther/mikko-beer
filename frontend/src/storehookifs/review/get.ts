@@ -1,4 +1,4 @@
-import type { GetReviewIf, Review } from '../../core/review/types'
+import type { GetReviewIf, Review } from '../../types/review/types'
 import { useLazyGetReviewQuery } from '../../store/review/api'
 import { validateReview } from '../../validation/review'
 

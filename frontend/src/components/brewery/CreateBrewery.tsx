@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import type { Brewery, CreateBreweryIf } from '../../core/brewery/types'
+import type { Brewery, CreateBreweryIf } from '../../types/brewery/types'
 
 import Button from '../common/Button'
 import LoadingIndicator from '../common/LoadingIndicator'

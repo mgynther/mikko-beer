@@ -3,9 +3,9 @@ import React, { type SubmitEvent, useState } from 'react'
 import LoadingIndicator from '../common/LoadingIndicator'
 
 import './ChangePassword.css'
-import type { ChangePasswordIf, Login } from '../../core/login/types'
+import type { ChangePasswordIf, Login } from '../../types/login/types'
 
-import { PasswordChangeResult } from '../../core/login/types'
+import { PasswordChangeResult } from '../../types/login/types'
 
 interface Props {
   changePasswordIf: ChangePasswordIf

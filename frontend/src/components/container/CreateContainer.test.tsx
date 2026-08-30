@@ -2,7 +2,7 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import CreateContainer from './CreateContainer'
-import type { Container, ContainerRequest } from '../../core/container/types'
+import type { Container, ContainerRequest } from '../../types/container/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 import { dontCall } from '../../../test-util/dont-call'
 

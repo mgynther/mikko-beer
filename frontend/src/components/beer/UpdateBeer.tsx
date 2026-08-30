@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import type { Beer, BeerWithIds, UpdateBeerIf } from '../../core/beer/types'
+import type { Beer, BeerWithIds, UpdateBeerIf } from '../../types/beer/types'
 
 import EditActions from '../common/EditActions'
 

@@ -1,5 +1,5 @@
-import type { BeerList, ListBeersHookIf } from '../../core/beer/types'
-import type { Pagination } from '../../core/types'
+import type { BeerList, ListBeersHookIf } from '../../types/beer/types'
+import type { Pagination } from '../../types/types'
 import { useLazyListBeersQuery } from '../../store/beer/api'
 import {
   validateBeerList,

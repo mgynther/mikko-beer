@@ -4,7 +4,7 @@ import type {
   Style,
   StyleList,
   StyleWithParentsAndChildren,
-} from '../core/style/types'
+} from '../types/style/types'
 
 import {
   validateStyle,

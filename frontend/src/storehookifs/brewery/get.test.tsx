@@ -2,7 +2,7 @@ import { expect, test } from 'vitest'
 import { store } from '../../store/store'
 import { addTestServerResponse } from '../../../test-util/server'
 import getBrewery from './get'
-import type { Brewery } from '../../core/brewery/types'
+import type { Brewery } from '../../types/brewery/types'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
 

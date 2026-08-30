@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { ChangePasswordIf, GetLogin, Login } from '../../core/login/types'
+import type { ChangePasswordIf, GetLogin, Login } from '../../types/login/types'
 import ChangePassword from './ChangePassword'
 
 interface Props {

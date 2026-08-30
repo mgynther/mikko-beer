@@ -6,7 +6,7 @@ import statsHook from './stats'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
 
-import type { StyleStats, StyleStatsQueryParams } from '../../core/stats/types'
+import type { StyleStats, StyleStatsQueryParams } from '../../types/stats/types'
 
 function StyleStatsHelper(props: {
   queryParams: StyleStatsQueryParams

@@ -2,7 +2,7 @@ import type {
   Brewery,
   CreateBreweryIf,
   CreateBreweryRequest,
-} from '../../core/brewery/types'
+} from '../../types/brewery/types'
 import { useCreateBreweryMutation } from '../../store/brewery/api'
 import { validateBrewery } from '../../validation/brewery'
 

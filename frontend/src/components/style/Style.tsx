@@ -7,11 +7,11 @@ import type {
   Style as StyleType,
   StyleWithParentIds,
   UpdateStyleIf,
-} from '../../core/style/types'
+} from '../../types/style/types'
 
-import type { StatsIf } from '../../core/stats/types'
-import type { ListReviewsByIf } from '../../core/review/types'
-import type { ListStoragesByIf } from '../../core/storage/types'
+import type { StatsIf } from '../../types/stats/types'
+import type { ListReviewsByIf } from '../../types/review/types'
+import type { ListStoragesByIf } from '../../types/storage/types'
 
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'

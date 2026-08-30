@@ -5,7 +5,7 @@ import { testTimes } from '../../../test-util/filter-time'
 import Filters from './Filters'
 import { openFilters } from '../common/filters-test-util'
 import type { StatsNoTimeFilters } from './filter-types'
-import type { YearMonth } from '../../core/types'
+import type { YearMonth } from '../../types/types'
 import { dontCall } from '../../../test-util/dont-call'
 
 const minTime: YearMonth = testTimes.min.yearMonth

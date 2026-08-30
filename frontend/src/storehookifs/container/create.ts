@@ -2,7 +2,7 @@ import type {
   Container,
   ContainerRequest,
   CreateContainerIf,
-} from '../../core/container/types'
+} from '../../types/container/types'
 import { useCreateContainerMutation } from '../../store/container/api'
 import { validateContainer } from '../../validation/container'
 

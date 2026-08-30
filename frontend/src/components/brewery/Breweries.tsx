@@ -5,7 +5,7 @@ import type {
   Brewery,
   ListBreweriesIf,
   SearchBreweryIf,
-} from '../../core/brewery/types'
+} from '../../types/brewery/types'
 
 import type { NavigateIf } from '../../navigation'
 

@@ -1,10 +1,10 @@
 import { act, render, waitFor } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
 import Breweries from './Breweries'
-import type { SearchFieldIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../types/search/types'
 import LinkWrapper from '../LinkWrapper'
-import type { UseDebounce } from '../../core/types'
-import type { BreweryList, ListBreweriesIf } from '../../core/brewery/types'
+import type { UseDebounce } from '../../types/types'
+import type { BreweryList, ListBreweriesIf } from '../../types/brewery/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 import { dontCall } from '../../../test-util/dont-call'
 

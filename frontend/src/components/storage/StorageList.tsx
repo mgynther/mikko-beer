@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { DeleteStorageIf, Storage } from '../../core/storage/types'
+import type { DeleteStorageIf, Storage } from '../../types/storage/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 import StorageItem from './StorageItem'

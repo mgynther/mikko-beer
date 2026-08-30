@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
-import type { Brewery, SelectBreweryIf } from '../../core/brewery/types'
+import type { Brewery, SelectBreweryIf } from '../../types/brewery/types'
 
 import Button from '../common/Button'
 import SelectBrewery from './SelectBrewery'

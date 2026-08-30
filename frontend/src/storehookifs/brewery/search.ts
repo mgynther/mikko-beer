@@ -1,4 +1,4 @@
-import type { Brewery, SearchBreweryHookIf } from '../../core/brewery/types'
+import type { Brewery, SearchBreweryHookIf } from '../../types/brewery/types'
 import { useLazySearchBreweriesQuery } from '../../store/brewery/api'
 import { validateBreweryList } from '../../validation/brewery'
 import { formatQuery } from '../search-query'

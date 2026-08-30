@@ -1,4 +1,4 @@
-import type { YearMonthFilter } from '../../core/types'
+import type { YearMonthFilter } from '../../types/types'
 
 export interface ReviewFilter {
   value: number

@@ -1,7 +1,7 @@
 import type {
   IdFilteredListReviewParams,
   ListReviewsByHookIf,
-} from '../../core/review/types'
+} from '../../types/review/types'
 import { useListReviewsByStyleQuery } from '../../store/review/api'
 import { validateJoinedReviewListOrUndefined } from '../../validation/review'
 

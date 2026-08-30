@@ -2,7 +2,7 @@ import type {
   CreateStorageIf,
   CreateStorageRequest,
   CreatedStorage,
-} from '../../core/storage/types'
+} from '../../types/storage/types'
 import { useCreateStorageMutation } from '../../store/storage/api'
 import { validateCreatedStorage } from '../../validation/storage'
 

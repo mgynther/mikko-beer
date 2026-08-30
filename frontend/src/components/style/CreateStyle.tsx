@@ -4,7 +4,7 @@ import type {
   SelectStyleIf,
   Style,
   StyleWithParentIds,
-} from '../../core/style/types'
+} from '../../types/style/types'
 
 import Button from '../common/Button'
 import LoadingIndicator from '../common/LoadingIndicator'

@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
 import type { NavigateIf } from './navigation'
-import type { SearchBeerIf } from './core/beer/types'
-import type { SearchBreweryIf } from './core/brewery/types'
-import type { NavMenuState, Theme } from './core/types'
+import type { SearchBeerIf } from './types/beer/types'
+import type { SearchBreweryIf } from './types/brewery/types'
+import type { NavMenuState, Theme } from './types/types'
 import Nav from './Nav'
 
 export interface NavMenuProps {

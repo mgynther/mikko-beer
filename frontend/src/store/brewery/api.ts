@@ -1,6 +1,6 @@
 import { emptySplitApi } from '../api'
 
-import type { Pagination } from '../../core/types'
+import type { Pagination } from '../../types/types'
 
 import { BeerTags } from '../beer/types'
 import { ReviewTags } from '../review/types'
@@ -11,7 +11,7 @@ import type {
   Brewery,
   BreweryList,
   CreateBreweryRequest,
-} from '../../core/brewery/types'
+} from '../../types/brewery/types'
 import { BreweryTags } from './types'
 
 const breweryApi = emptySplitApi.injectEndpoints({

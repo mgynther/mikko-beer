@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import type { Brewery } from '../../core/brewery/types'
+import type { Brewery } from '../../types/brewery/types'
 
 interface Props {
   brewery: Brewery

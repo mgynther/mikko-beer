@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
-import type { NavMenuState as NavMenuExpandedState } from '../../core/types'
+import type { NavMenuState as NavMenuExpandedState } from '../../types/types'
 
 export interface NavMenuState {
   state: NavMenuExpandedState

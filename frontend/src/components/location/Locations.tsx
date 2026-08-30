@@ -4,7 +4,7 @@ import type {
   Location,
   ListLocationsIf,
   SearchLocationIf,
-} from '../../core/location/types'
+} from '../../types/location/types'
 
 import type { NavigateIf } from '../../navigation'
 

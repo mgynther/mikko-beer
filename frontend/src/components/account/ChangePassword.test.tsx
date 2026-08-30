@@ -2,9 +2,9 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import ChangePassword from './ChangePassword'
-import { Role } from '../../core/user/types'
-import type { ChangePasswordIf, GetLogin } from '../../core/login/types'
-import { PasswordChangeResult } from '../../core/login/types'
+import { Role } from '../../types/user/types'
+import type { ChangePasswordIf, GetLogin } from '../../types/login/types'
+import { PasswordChangeResult } from '../../types/login/types'
 
 const userId = '8f19eb81-b283-440f-be76-73c1c858150c'
 

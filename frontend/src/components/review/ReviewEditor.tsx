@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 
-import type { BeerWithIds, SelectBeerIf } from '../../core/beer/types'
-import type { Container } from '../../core/container/types'
-import type { Location, SearchLocationIf } from '../../core/location/types'
+import type { BeerWithIds, SelectBeerIf } from '../../types/beer/types'
+import type { Container } from '../../types/container/types'
+import type { Location, SearchLocationIf } from '../../types/location/types'
 import type {
   ReviewContainerIf,
   JoinedReview,
   ReviewRequest,
-} from '../../core/review/types'
+} from '../../types/review/types'
 
 import SelectBeer from '../beer/SelectBeer'
 import SelectContainer from '../container/SelectContainer'

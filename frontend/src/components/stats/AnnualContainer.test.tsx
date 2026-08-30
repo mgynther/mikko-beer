@@ -6,7 +6,7 @@ import type {
   AnnualContainerStats,
   GetAnnualContainerStatsIf,
   OneAnnualContainerStats,
-} from '../../core/stats/types'
+} from '../../types/stats/types'
 
 const stats2023: OneAnnualContainerStats = {
   containerId: '08d61e11-7669-44b1-9252-a45fc99d53a7',

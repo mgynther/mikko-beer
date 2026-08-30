@@ -1,4 +1,4 @@
-import type { LogoutIf, LogoutParams } from '../../core/login/types'
+import type { LogoutIf, LogoutParams } from '../../types/login/types'
 import { useLogoutMutation } from '../../store/login/api'
 
 const logout: () => LogoutIf = () => {

@@ -4,7 +4,7 @@ import type {
   GetBreweryStatsIf,
   BreweryStatsSortingOrder,
   OneBreweryStats,
-} from '../../core/stats/types'
+} from '../../types/stats/types'
 
 import BreweryStatsTable from './BreweryStatsTable'
 import type { StatsFilterState } from './filter-types'

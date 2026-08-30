@@ -1,6 +1,6 @@
 import { infiniteScroll } from '../../components/util'
-import type { BreweryList, ListBreweriesIf } from '../../core/brewery/types'
-import type { Pagination } from '../../core/types'
+import type { BreweryList, ListBreweriesIf } from '../../types/brewery/types'
+import type { Pagination } from '../../types/types'
 import { useLazyListBreweriesQuery } from '../../store/brewery/api'
 import {
   validateBreweryList,

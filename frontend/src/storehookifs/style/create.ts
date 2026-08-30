@@ -1,4 +1,4 @@
-import type { CreateStyleIf, CreateStyleRequest } from '../../core/style/types'
+import type { CreateStyleIf, CreateStyleRequest } from '../../types/style/types'
 import { useCreateStyleMutation } from '../../store/style/api'
 import { validateStyleOrUndefined } from '../../validation/style'
 

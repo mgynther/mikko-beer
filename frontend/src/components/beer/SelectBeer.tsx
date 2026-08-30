@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { BeerWithIds, SelectBeerIf } from '../../core/beer/types'
+import type { BeerWithIds, SelectBeerIf } from '../../types/beer/types'
 
 import SelectCreateRadio, { Mode } from '../common/SelectCreateRadio'
 

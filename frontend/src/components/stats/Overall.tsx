@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { GetOverallStatsIf } from '../../core/stats/types'
+import type { GetOverallStatsIf } from '../../types/stats/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 

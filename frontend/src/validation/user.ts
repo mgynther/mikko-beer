@@ -1,7 +1,7 @@
 import * as t from 'io-ts'
 import { isLeft } from 'fp-ts/Either'
 
-import type { User, UserList } from '../core/user/types'
+import type { User, UserList } from '../types/user/types'
 import { formatError } from './format-error'
 
 const ValidatedUser = t.type({

@@ -3,7 +3,7 @@ import type {
   ChangePasswordParams,
   GetPasswordChangeResult,
   PasswordChangeResult,
-} from '../../core/login/types'
+} from '../../types/login/types'
 import { useSelector } from '../../react-redux-wrapper'
 import { useChangePasswordMutation } from '../../store/login/api'
 import { selectPasswordChangeResult } from '../../store/login/reducer'

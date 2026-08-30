@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
 import { test } from 'vitest'
 import Users from './Users'
-import { Role } from '../../core/user/types'
+import { Role } from '../../types/user/types'
 import { dontCall } from '../../../test-util/dont-call'
 
 test('renders user', () => {

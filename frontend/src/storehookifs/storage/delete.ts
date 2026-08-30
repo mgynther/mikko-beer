@@ -1,4 +1,4 @@
-import type { DeleteStorageHookIf } from '../../core/storage/types'
+import type { DeleteStorageHookIf } from '../../types/storage/types'
 import { useDeleteStorageMutation } from '../../store/storage/api'
 
 const deleteStorage: () => DeleteStorageHookIf = () => {

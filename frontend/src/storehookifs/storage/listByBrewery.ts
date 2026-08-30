@@ -1,4 +1,4 @@
-import type { ListStoragesByHookIf } from '../../core/storage/types'
+import type { ListStoragesByHookIf } from '../../types/storage/types'
 import { useListStoragesByBreweryQuery } from '../../store/storage/api'
 import { validateStorageListOrUndefined } from '../../validation/storage'
 

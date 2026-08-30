@@ -1,4 +1,4 @@
-import type { Theme } from './core/types'
+import type { Theme } from './types/types'
 
 export function applyTheme(theme: Theme): void {
   const bodyElements = document.getElementsByTagName('body')

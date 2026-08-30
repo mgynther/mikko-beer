@@ -4,7 +4,7 @@ import Button from './Button'
 import LoadingIndicator from './LoadingIndicator'
 
 import './SearchBox.css'
-import type { SearchFieldIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../types/search/types'
 
 export interface SearchBoxItem {
   id: string

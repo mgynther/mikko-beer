@@ -7,7 +7,7 @@ import type {
   MonthlyStats,
   Storage,
   StorageList,
-} from '../../core/storage/types'
+} from '../../types/storage/types'
 import { StorageTags } from './types'
 
 const storageApi = emptySplitApi.injectEndpoints({

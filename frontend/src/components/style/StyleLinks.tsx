@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Links } from '../common/Links'
 
-import type { Style } from '../../core/style/types'
+import type { Style } from '../../types/style/types'
 
 interface Props {
   styles: Style[]

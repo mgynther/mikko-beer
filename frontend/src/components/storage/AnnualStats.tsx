@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { GetAnnualStorageStatsIf } from '../../core/storage/types'
+import type { GetAnnualStorageStatsIf } from '../../types/storage/types'
 import LoadingIndicator from '../common/LoadingIndicator'
 
 interface Props {

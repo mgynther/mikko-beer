@@ -1,14 +1,14 @@
 import { render } from '@testing-library/react'
 import { test } from 'vitest'
 import Storages from './Storages'
-import type { Storage } from '../../core/storage/types'
-import { Role } from '../../core/user/types'
+import type { Storage } from '../../types/storage/types'
+import { Role } from '../../types/user/types'
 import LinkWrapper from '../LinkWrapper'
-import type { UseUrlSearchParams } from '../../core/types'
-import type { CreateBeerIf, SearchBeerIf } from '../../core/beer/types'
-import type { ReviewContainerIf } from '../../core/review/types'
+import type { UseUrlSearchParams } from '../../types/types'
+import type { CreateBeerIf, SearchBeerIf } from '../../types/beer/types'
+import type { ReviewContainerIf } from '../../types/review/types'
 import { dontCall } from '../../../test-util/dont-call'
-import type { GetLogin } from '../../core/login/types'
+import type { GetLogin } from '../../types/login/types'
 
 const dontCreate = {
   create: dontCall,

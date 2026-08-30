@@ -1,4 +1,4 @@
-import type { GetAnnualStorageStatsIf } from '../../core/storage/types'
+import type { GetAnnualStorageStatsIf } from '../../types/storage/types'
 import { useGetAnnualStorageStatsQuery } from '../../store/storage/api'
 import { validateAnnualStorageStatsOrUndefined } from '../../validation/storage'
 

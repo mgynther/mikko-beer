@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 
-import type { Location, LocationList } from '../core/location/types'
+import type { Location, LocationList } from '../types/location/types'
 
 import {
   validateLocation,

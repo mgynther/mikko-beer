@@ -2,8 +2,8 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import EditButton from './EditButton'
-import { Role, type User } from '../../core/user/types'
-import type { Login } from '../../core/login/types'
+import { Role, type User } from '../../types/user/types'
+import type { Login } from '../../types/login/types'
 
 const admin: User = {
   id: '123',

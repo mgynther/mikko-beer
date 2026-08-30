@@ -8,7 +8,7 @@ import TimeFilterSlider from '../common/TimeFilterSlider'
 import type { StatsFilter, StatsNoTimeFilterState } from './filter-types'
 import OpenFiltersButton from '../common/OpenFiltersButton'
 import FilterControls from '../common/FilterControls'
-import type { YearMonth, YearMonthFilter } from '../../core/types'
+import type { YearMonth, YearMonthFilter } from '../../types/types'
 
 interface Props {
   filterState: StatsNoTimeFilterState

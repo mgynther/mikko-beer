@@ -1,4 +1,4 @@
-import type { ListUsersIf } from '../../core/user/types'
+import type { ListUsersIf } from '../../types/user/types'
 import { useListUsersQuery } from '../../store/user/api'
 import { validateUserListOrUndefined } from '../../validation/user'
 

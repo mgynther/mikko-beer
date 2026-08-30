@@ -2,7 +2,7 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import UpdateContainer from './UpdateContainer'
-import type { Container } from '../../core/container/types'
+import type { Container } from '../../types/container/types'
 
 const id = '6ed0f88e-87d6-418a-af69-709ceea6cf77'
 const size = '0.32'

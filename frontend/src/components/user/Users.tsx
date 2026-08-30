@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { UserIf } from '../../core/user/types'
+import type { UserIf } from '../../types/user/types'
 
 import CreateUser from './CreateUser'
 import UserList from './UserList'

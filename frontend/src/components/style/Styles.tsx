@@ -4,7 +4,7 @@ import type {
   ListStylesIf,
   Style,
   StyleWithParentIds,
-} from '../../core/style/types'
+} from '../../types/style/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 import SearchStyle from './SearchStyle'

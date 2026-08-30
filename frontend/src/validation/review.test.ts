@@ -4,7 +4,7 @@ import type {
   JoinedReview,
   JoinedReviewList,
   Review,
-} from '../core/review/types'
+} from '../types/review/types'
 
 import {
   validateReview,

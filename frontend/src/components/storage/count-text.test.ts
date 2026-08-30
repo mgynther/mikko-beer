@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest'
 
 import { countText } from '../../components/storage/count-text'
-import type { Storage } from '../../core/storage/types'
+import type { Storage } from '../../types/storage/types'
 
 const ipaStorage: Storage = {
   id: 'e90dd689-c5c0-4972-a795-ce45d56c925b',

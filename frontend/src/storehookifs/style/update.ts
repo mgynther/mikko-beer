@@ -1,7 +1,7 @@
 import type {
   StyleWithParentIds,
   UpdateStyleHookIf,
-} from '../../core/style/types'
+} from '../../types/style/types'
 import { useUpdateStyleMutation } from '../../store/style/api'
 import { validateStyle } from '../../validation/style'
 

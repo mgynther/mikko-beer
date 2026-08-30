@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react'
-import type { SearchParameters, UseDebounce, YearMonth } from '../../core/types'
+import type {
+  SearchParameters,
+  UseDebounce,
+  YearMonth,
+} from '../../types/types'
 import type { ParsedReviewListParams, SearchRecord } from './filter-util'
 import {
   ratingStr,
@@ -10,7 +14,10 @@ import {
 import { invertDirection } from '../list-helpers'
 import type { ReviewFilters } from './filter-types'
 import { formatYearMonth, toTimestamp } from '../common/filter-util'
-import type { ReviewSorting, ReviewSortingOrder } from '../../core/review/types'
+import type {
+  ReviewSorting,
+  ReviewSortingOrder,
+} from '../../types/review/types'
 
 export interface Props {
   initialSorting: ReviewSorting

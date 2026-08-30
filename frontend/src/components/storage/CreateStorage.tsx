@@ -1,9 +1,9 @@
 import React, { type SubmitEvent, useState } from 'react'
 
-import type { BeerWithIds, SelectBeerIf } from '../../core/beer/types'
-import type { Container } from '../../core/container/types'
-import type { ReviewContainerIf } from '../../core/review/types'
-import type { CreateStorageIf } from '../../core/storage/types'
+import type { BeerWithIds, SelectBeerIf } from '../../types/beer/types'
+import type { Container } from '../../types/container/types'
+import type { ReviewContainerIf } from '../../types/review/types'
+import type { CreateStorageIf } from '../../types/storage/types'
 
 import Button from '../common/Button'
 import LoadingIndicator from '../common/LoadingIndicator'

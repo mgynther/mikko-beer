@@ -9,7 +9,7 @@ import type {
   OverallStats,
   RatingStats,
   StyleStats,
-} from '../core/stats/types'
+} from '../types/stats/types'
 
 import {
   validateAnnualContainerStats,

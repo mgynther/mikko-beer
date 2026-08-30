@@ -2,9 +2,9 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import Reviews from './Reviews'
-import type { UseDebounce, YearMonth } from '../../core/types'
-import type { Login } from '../../core/login/types'
-import { Role } from '../../core/user/types'
+import type { UseDebounce, YearMonth } from '../../types/types'
+import type { Login } from '../../types/login/types'
+import { Role } from '../../types/user/types'
 import LinkWrapper from '../LinkWrapper'
 import type {
   JoinedReviewList,
@@ -15,15 +15,15 @@ import type {
   ReviewContainerIf,
   ReviewIf,
   SetSearch,
-} from '../../core/review/types'
+} from '../../types/review/types'
 import ContentEnd from '../ContentEnd'
 import type {
   CreateBeerIf,
   SearchBeerIf,
   SelectBeerIf,
-} from '../../core/beer/types'
-import type { SearchFieldIf } from '../../core/search/types'
-import type { SearchLocationIf } from '../../core/location/types'
+} from '../../types/beer/types'
+import type { SearchFieldIf } from '../../types/search/types'
+import type { SearchLocationIf } from '../../types/location/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 import { testTimes } from '../../../test-util/filter-time'
 import { openFilters } from '../common/filters-test-util'

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
-import type { CreateReviewIf, ReviewRequest } from '../../core/review/types'
-import type { GetStorageIf, Storage } from '../../core/storage/types'
+import type { CreateReviewIf, ReviewRequest } from '../../types/review/types'
+import type { GetStorageIf, Storage } from '../../types/storage/types'
 
 import Button from '../common/Button'
 import LoadingIndicator from '../common/LoadingIndicator'

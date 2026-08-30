@@ -6,10 +6,10 @@ import type {
   Beer,
   BeerWithIds,
   CreateBeerRequest,
-} from '../../core/beer/types'
-import type { UseDebounce } from '../../core/types'
-import type { SearchFieldIf } from '../../core/search/types'
-import type { Brewery } from '../../core/brewery/types'
+} from '../../types/beer/types'
+import type { UseDebounce } from '../../types/types'
+import type { SearchFieldIf } from '../../types/search/types'
+import type { Brewery } from '../../types/brewery/types'
 import { dontCall } from '../../../test-util/dont-call'
 
 const namePlaceholder = 'Name'

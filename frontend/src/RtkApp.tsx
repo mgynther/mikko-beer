@@ -6,7 +6,7 @@ import type {
   DeleteUserIf,
   ListUsersIf,
   UserIf,
-} from './core/user/types'
+} from './types/user/types'
 
 import './App.css'
 
@@ -20,19 +20,19 @@ import type {
   ListBreweriesIf,
   SearchBreweryIf,
   UpdateBreweryIf,
-} from './core/brewery/types'
+} from './types/brewery/types'
 import type {
   CreateContainerIf,
   ListContainersIf,
   UpdateContainerIf,
-} from './core/container/types'
+} from './types/container/types'
 import type {
   CreateLocationIf,
   GetLocationIf,
   ListLocationsIf,
   SearchLocationIf,
   UpdateLocationIf,
-} from './core/location/types'
+} from './types/location/types'
 import type {
   CreateReviewIf,
   GetReviewIf,
@@ -42,21 +42,21 @@ import type {
   UpdateReviewIf,
   ReviewIf,
   ListFilterIf,
-} from './core/review/types'
+} from './types/review/types'
 import type {
   CreateStyleIf,
   GetStyleIf,
   ListStylesIf,
   SelectStyleIf,
   UpdateStyleIf,
-} from './core/style/types'
+} from './types/style/types'
 import type {
   ChangePasswordIf,
   GetLogin,
   Login,
   LoginIf,
   LogoutIf,
-} from './core/login/types'
+} from './types/login/types'
 import type {
   CreateBeerIf,
   EditBeerIf,
@@ -65,7 +65,7 @@ import type {
   SearchBeerIf,
   SelectBeerIf,
   UpdateBeerLoginIf,
-} from './core/beer/types'
+} from './types/beer/types'
 import type {
   CreateStorageIf,
   DeleteStorageIf,
@@ -75,9 +75,9 @@ import type {
   ListStoragesByIf,
   ListStoragesIf,
   StorageStatsIf,
-} from './core/storage/types'
-import type { StatsHookIf, StatsIf } from './core/stats/types'
-import type { SearchFieldIf } from './core/search/types'
+} from './types/storage/types'
+import type { StatsHookIf, StatsIf } from './types/stats/types'
+import type { SearchFieldIf } from './types/search/types'
 import {
   getUseDebounce,
   infiniteScroll,
@@ -147,7 +147,7 @@ import login from './storehookifs/login/login'
 import logout from './storehookifs/login/logout'
 import { createSetSearch } from './set-search.ts'
 import { getDate } from './date-getter.ts'
-import type { YearMonth } from './core/types.ts'
+import type { YearMonth } from './types/types.ts'
 
 function getNextMonthDate(): Date {
   const now = new Date()

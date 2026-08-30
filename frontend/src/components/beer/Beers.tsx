@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
-import type { Beer, ListBeersIf, SearchBeerIf } from '../../core/beer/types'
-import type { SearchFieldIf } from '../../core/search/types'
+import type { Beer, ListBeersIf, SearchBeerIf } from '../../types/beer/types'
+import type { SearchFieldIf } from '../../types/search/types'
 import type { NavigateIf } from '../../navigation'
 
 import BreweryLinks from '../brewery/BreweryLinks'

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import type { Location, SearchLocationIf } from '../../core/location/types'
+import type { Location, SearchLocationIf } from '../../types/location/types'
 
 import SearchBox, { nameFormatter } from '../common/SearchBox'
 import { createLocationSort } from './create-location-sort'

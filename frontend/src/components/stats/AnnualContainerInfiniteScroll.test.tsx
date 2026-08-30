@@ -3,7 +3,7 @@ import { expect, test, vitest } from 'vitest'
 import type {
   AnnualContainerStats,
   OneAnnualContainerStats,
-} from '../../core/stats/types'
+} from '../../types/stats/types'
 
 import AnnualContainerInfiniteScroll from './AnnualContainerInfiniteScroll'
 import { loadingIndicatorText } from '../common/LoadingIndicator'

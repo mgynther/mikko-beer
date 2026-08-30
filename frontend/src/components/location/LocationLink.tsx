@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Link } from '../common/Link'
 
-import type { Location } from '../../core/location/types'
+import type { Location } from '../../types/location/types'
 
 interface Props {
   location: Location

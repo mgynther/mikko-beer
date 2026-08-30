@@ -8,8 +8,12 @@ import type {
   BreweryStats,
   GetBreweryStatsIf,
   OneBreweryStats,
-} from '../../core/stats/types'
-import type { SearchParameters, UseDebounce, YearMonth } from '../../core/types'
+} from '../../types/stats/types'
+import type {
+  SearchParameters,
+  UseDebounce,
+  YearMonth,
+} from '../../types/types'
 import type { StatsFilters } from './filter-types'
 import { dontCall } from '../../../test-util/dont-call'
 

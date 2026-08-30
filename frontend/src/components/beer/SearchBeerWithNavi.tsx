@@ -1,7 +1,7 @@
 import React from 'react'
 
 import SearchBeer from './SearchBeer'
-import type { SearchBeerIf } from '../../core/beer/types'
+import type { SearchBeerIf } from '../../types/beer/types'
 import type { NavigateIf } from '../../navigation'
 
 interface Props {

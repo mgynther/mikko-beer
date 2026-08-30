@@ -1,4 +1,4 @@
-import type { CreateUserIf, CreateUserRequest } from '../../core/user/types'
+import type { CreateUserIf, CreateUserRequest } from '../../types/user/types'
 import { useCreateUserMutation } from '../../store/user/api'
 import { validateUserOrUndefined } from '../../validation/user'
 

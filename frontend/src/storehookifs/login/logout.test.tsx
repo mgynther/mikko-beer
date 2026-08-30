@@ -8,7 +8,7 @@ import userEvent from '@testing-library/user-event'
 
 import Button from '../../components/common/Button'
 import { selectLogin, success } from '../../store/login/reducer'
-import { Role } from '../../core/user/types'
+import { Role } from '../../types/user/types'
 
 interface Props {
   userId: string

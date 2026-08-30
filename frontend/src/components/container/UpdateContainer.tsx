@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import type {
   Container,
   UpdateContainerHookIf,
-} from '../../core/container/types'
+} from '../../types/container/types'
 
 import EditActions from '../common/EditActions'
 

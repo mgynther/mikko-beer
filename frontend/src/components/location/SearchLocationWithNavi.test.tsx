@@ -3,10 +3,10 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import SearchLocationWithNavi from './SearchLocationWithNavi'
 
-import type { Location } from '../../core/location/types'
-import type { SearchFieldIf } from '../../core/search/types'
-import type { UseDebounce } from '../../core/types'
-import type { CreateLocationIf } from '../../core/location/types'
+import type { Location } from '../../types/location/types'
+import type { SearchFieldIf } from '../../types/search/types'
+import type { UseDebounce } from '../../types/types'
+import type { CreateLocationIf } from '../../types/location/types'
 import { dontCall } from '../../../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]

@@ -5,8 +5,15 @@ import React from 'react'
 import { testTimes } from '../../../test-util/filter-time'
 import type { Props as HookProps } from './search-params'
 import { parseSearchParams } from './search-params'
-import type { SearchParameters, UseDebounce, YearMonth } from '../../core/types'
-import type { ReviewSorting, ReviewSortingOrder } from '../../core/review/types'
+import type {
+  SearchParameters,
+  UseDebounce,
+  YearMonth,
+} from '../../types/types'
+import type {
+  ReviewSorting,
+  ReviewSortingOrder,
+} from '../../types/review/types'
 
 const initialSorting: ReviewSorting = { order: 'time', direction: 'desc' }
 const minTime: YearMonth = testTimes.min.yearMonth

@@ -1,6 +1,9 @@
 import React from 'react'
 
-import type { ReviewSorting, ReviewSortingOrder } from '../../core/review/types'
+import type {
+  ReviewSorting,
+  ReviewSortingOrder,
+} from '../../types/review/types'
 
 import { formatTitle } from '../list-helpers'
 import TabButton from '../common/TabButton'

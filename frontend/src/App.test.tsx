@@ -10,28 +10,28 @@ import App from './App'
 import { setState } from './store/nav-menu/reducer'
 import { store } from './store/store'
 import type { StoreIf } from './store/storeIf'
-import { Role } from './core/user/types'
-import type { GetLogin } from './core/login/types'
-import { PasswordChangeResult } from './core/login/types'
+import { Role } from './types/user/types'
+import type { GetLogin } from './types/login/types'
+import { PasswordChangeResult } from './types/login/types'
 import type {
   InfiniteScroll,
   UseDebounce,
   UseUrlSearchParams,
   YearMonth,
-} from './core/types'
-import type { DeleteStorageIf } from './core/storage/types'
+} from './types/types'
+import type { DeleteStorageIf } from './types/storage/types'
 import { useUrlPathParams } from './components/util'
-import type { SearchBeerIf, SelectBeerIf } from './core/beer/types'
-import type { SearchBreweryIf } from './core/brewery/types'
-import type { SearchLocationIf } from './core/location/types'
-import type { ListStylesIf } from './core/style/types'
+import type { SearchBeerIf, SelectBeerIf } from './types/beer/types'
+import type { SearchBreweryIf } from './types/brewery/types'
+import type { SearchLocationIf } from './types/location/types'
+import type { ListStylesIf } from './types/style/types'
 import type {
   ListFilterIf,
   ReviewContainerIf,
   ReviewIf,
   SetSearch,
-} from './core/review/types'
-import type { SearchFieldIf } from './core/search/types'
+} from './types/review/types'
+import type { SearchFieldIf } from './types/search/types'
 
 beforeEach(() => {
   store.dispatch(setState('COLLAPSED'))

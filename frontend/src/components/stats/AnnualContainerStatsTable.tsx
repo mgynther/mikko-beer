@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { OneAnnualContainerStats } from '../../core/stats/types'
+import type { OneAnnualContainerStats } from '../../types/stats/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 

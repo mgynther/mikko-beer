@@ -2,7 +2,7 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import Beer from './Beer'
-import { Role } from '../../core/user/types'
+import { Role } from '../../types/user/types'
 import LinkWrapper from '../LinkWrapper'
 import type {
   IdFilteredListReviewParams,
@@ -13,21 +13,21 @@ import type {
   ReviewIf,
   SetSearch,
   UpdateReviewIf,
-} from '../../core/review/types'
-import type { ListStoragesByIf } from '../../core/storage/types'
+} from '../../types/review/types'
+import type { ListStoragesByIf } from '../../types/storage/types'
 import type {
   UseDebounce,
   UseUrlSearchParams,
   YearMonth,
-} from '../../core/types'
+} from '../../types/types'
 import { asText } from '../container/ContainerInfo'
-import type { SearchLocationIf } from '../../core/location/types'
-import type { SearchFieldIf } from '../../core/search/types'
+import type { SearchLocationIf } from '../../types/location/types'
+import type { SearchFieldIf } from '../../types/search/types'
 import type {
   EditBeerIf,
   GetBeerIf,
   UpdateBeerLoginIf,
-} from '../../core/beer/types'
+} from '../../types/beer/types'
 import type { UseUrlPathParams } from '../util'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 import { testTimes } from '../../../test-util/filter-time'

@@ -11,7 +11,7 @@ import Button from '../../components/common/Button'
 import type {
   BreweryStats,
   BreweryStatsQueryParams,
-} from '../../core/stats/types'
+} from '../../types/stats/types'
 
 function BreweryStatsHelper(props: {
   queryParams: BreweryStatsQueryParams

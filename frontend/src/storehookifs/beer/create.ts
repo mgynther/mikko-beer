@@ -2,7 +2,7 @@ import type {
   BeerWithIds,
   CreateBeerHookIf,
   CreateBeerRequest,
-} from '../../core/beer/types'
+} from '../../types/beer/types'
 import { useCreateBeerMutation } from '../../store/beer/api'
 import { validateBeerWithIds } from '../../validation/beer'
 

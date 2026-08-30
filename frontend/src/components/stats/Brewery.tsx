@@ -4,13 +4,13 @@ import type {
   BreweryStatsSortingOrder,
   GetBreweryStatsIf,
   OneBreweryStats,
-} from '../../core/stats/types'
+} from '../../types/stats/types'
 
 import BreweryAllAtOnce from './BreweryAllAtOnce'
 import BreweryInfiniteScroll from './BreweryInfiniteScroll'
 import { searchParams } from './search-params'
 import type { StatsFilterState } from './filter-types'
-import type { SearchParameters } from '../../core/types'
+import type { SearchParameters } from '../../types/types'
 
 interface Props {
   getBreweryStatsIf: GetBreweryStatsIf

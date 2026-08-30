@@ -5,9 +5,9 @@ import SearchBeerWithNavi from './components/beer/SearchBeerWithNavi'
 import SearchBreweryWithNavi from './components/brewery/SearchBreweryWithNavi'
 
 import type { NavigateIf } from './navigation'
-import type { SearchBeerIf } from './core/beer/types'
-import type { SearchBreweryIf } from './core/brewery/types'
-import type { NavMenuState, Theme } from './core/types'
+import type { SearchBeerIf } from './types/beer/types'
+import type { SearchBreweryIf } from './types/brewery/types'
+import type { NavMenuState, Theme } from './types/types'
 
 export interface NavMenuStateProps {
   navMenuState: NavMenuState

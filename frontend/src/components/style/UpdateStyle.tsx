@@ -5,7 +5,7 @@ import type {
   ListStylesIf,
   StyleWithParentIds,
   UpdateStyleHookIf,
-} from '../../core/style/types'
+} from '../../types/style/types'
 
 import EditActions from '../common/EditActions'
 import LoadingIndicator from '../common/LoadingIndicator'

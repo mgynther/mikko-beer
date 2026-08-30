@@ -1,4 +1,4 @@
-import type { GetBreweryIf } from '../../core/brewery/types'
+import type { GetBreweryIf } from '../../types/brewery/types'
 import { useGetBreweryQuery } from '../../store/brewery/api'
 import { validateBreweryOrUndefined } from '../../validation/brewery'
 

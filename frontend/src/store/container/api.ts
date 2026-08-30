@@ -7,7 +7,7 @@ import type {
   Container,
   ContainerList,
   ContainerRequest,
-} from '../../core/container/types'
+} from '../../types/container/types'
 
 import { ContainerTags } from './types'
 

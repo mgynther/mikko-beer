@@ -4,7 +4,7 @@ import type {
   ListReviewsIf,
   JoinedReview,
   ReviewIf,
-} from '../../core/review/types'
+} from '../../types/review/types'
 
 import ReviewList from './ReviewList'
 

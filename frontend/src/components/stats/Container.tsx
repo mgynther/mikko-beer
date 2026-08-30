@@ -3,7 +3,7 @@ import React from 'react'
 import type {
   GetContainerStatsIf,
   OneContainerStats,
-} from '../../core/stats/types'
+} from '../../types/stats/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
@@ -15,7 +15,7 @@ import type {
   ListDirection,
   SearchParameters,
   UseDebounce,
-} from '../../core/types'
+} from '../../types/types'
 import { formatTitle } from '../list-helpers'
 import { searchParams } from './search-params'
 import type { SearchRecord } from './filter-util'

@@ -7,7 +7,7 @@ import { Provider, useDispatch, useSelector } from '../../react-redux-wrapper'
 import userEvent from '@testing-library/user-event'
 
 import Button from '../../components/common/Button'
-import { PasswordChangeResult } from '../../core/login/types'
+import { PasswordChangeResult } from '../../types/login/types'
 import { selectLogin, success } from '../../store/login/reducer'
 
 interface Props {

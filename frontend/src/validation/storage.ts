@@ -7,7 +7,7 @@ import type {
   MonthlyStats,
   Storage,
   StorageList,
-} from '../core/storage/types'
+} from '../types/storage/types'
 import { formatError } from './format-error'
 import { ValidatedBrewery } from './brewery'
 import { ValidatedStyle } from './style'

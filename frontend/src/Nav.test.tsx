@@ -5,11 +5,11 @@ import LinkWrapper from './components/LinkWrapper'
 
 import Nav from './Nav'
 import type { NavMenuStateProps, ThemeProps } from './Nav'
-import type { SearchBeerIf } from './core/beer/types'
-import type { SearchFieldIf } from './core/search/types'
-import type { SearchBreweryIf } from './core/brewery/types'
+import type { SearchBeerIf } from './types/beer/types'
+import type { SearchFieldIf } from './types/search/types'
+import type { SearchBreweryIf } from './types/brewery/types'
 import type { NavigateIf } from './navigation'
-import type { NavMenuState, Theme, UseDebounce } from './core/types'
+import type { NavMenuState, Theme, UseDebounce } from './types/types'
 import { dontCall } from '../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]

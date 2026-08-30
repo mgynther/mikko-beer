@@ -10,7 +10,7 @@ import Button from '../../components/common/Button'
 import type {
   AnnualContainerStats,
   AnnualContainerStatsQueryParams,
-} from '../../core/stats/types'
+} from '../../types/stats/types'
 
 function AnnualContainerStatsHelper(props: {
   queryParams: AnnualContainerStatsQueryParams

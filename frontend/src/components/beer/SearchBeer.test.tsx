@@ -3,9 +3,9 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import SearchBeer from './SearchBeer'
 
-import type { SearchFieldIf } from '../../core/search/types'
-import type { UseDebounce } from '../../core/types'
-import type { SearchBeerIf } from '../../core/beer/types'
+import type { SearchFieldIf } from '../../types/search/types'
+import type { UseDebounce } from '../../types/types'
+import type { SearchBeerIf } from '../../types/beer/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 

@@ -1,7 +1,7 @@
 import type {
   CreateReviewHookIf,
   ReviewRequestWrapper,
-} from '../../core/review/types'
+} from '../../types/review/types'
 import { useCreateReviewMutation } from '../../store/review/api'
 import { validateReviewOrUndefined } from '../../validation/review'
 

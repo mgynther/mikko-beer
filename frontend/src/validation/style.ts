@@ -5,7 +5,7 @@ import type {
   Style,
   StyleList,
   StyleWithParentsAndChildren,
-} from '../core/style/types'
+} from '../types/style/types'
 import { formatError } from './format-error'
 
 export const ValidatedStyle = t.type({

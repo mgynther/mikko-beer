@@ -2,7 +2,7 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import UserList from './UserList'
-import { type ListUsersIf, Role, type User } from '../../core/user/types'
+import { type ListUsersIf, Role, type User } from '../../types/user/types'
 import { dontCall } from '../../../test-util/dont-call'
 
 const user1Id = 'b45e51cd-7acd-4f3b-8092-56f526ad9956'

@@ -1,4 +1,4 @@
-import type { GetLocationIf } from '../../core/location/types'
+import type { GetLocationIf } from '../../types/location/types'
 import { useGetLocationQuery } from '../../store/location/api'
 import { validateLocationOrUndefined } from '../../validation/location'
 

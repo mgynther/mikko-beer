@@ -3,7 +3,7 @@ import { expect, test, vitest } from 'vitest'
 import type {
   AnnualContainerStats,
   OneAnnualContainerStats,
-} from '../../core/stats/types'
+} from '../../types/stats/types'
 
 import AnnualContainerAllAtOnce from './AnnualContainerAllAtOnce'
 import { dontCall } from '../../../test-util/dont-call'

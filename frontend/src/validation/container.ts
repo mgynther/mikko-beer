@@ -1,7 +1,7 @@
 import * as t from 'io-ts'
 import { isLeft } from 'fp-ts/Either'
 
-import type { Container, ContainerList } from '../core/container/types'
+import type { Container, ContainerList } from '../types/container/types'
 import { formatError } from './format-error'
 
 export const ValidatedContainer = t.type({

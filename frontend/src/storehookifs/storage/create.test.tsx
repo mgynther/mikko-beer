@@ -5,7 +5,7 @@ import createStorage from './create'
 import type {
   CreatedStorage,
   CreateStorageRequest,
-} from '../../core/storage/types'
+} from '../../types/storage/types'
 import { render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from '../../react-redux-wrapper'

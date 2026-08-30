@@ -2,7 +2,10 @@ import { expect, test, vitest } from 'vitest'
 import { store } from '../../store/store'
 import { addTestServerResponse } from '../../../test-util/server'
 import createLocation from './create'
-import type { Location, CreateLocationRequest } from '../../core/location/types'
+import type {
+  Location,
+  CreateLocationRequest,
+} from '../../types/location/types'
 import { render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from '../../react-redux-wrapper'

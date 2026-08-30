@@ -5,9 +5,9 @@ import Container from './Container'
 import type {
   Container as ContainerType,
   UpdateContainerIf,
-} from '../../core/container/types'
-import { Role } from '../../core/user/types'
-import type { GetLogin } from '../../core/login/types'
+} from '../../types/container/types'
+import { Role } from '../../types/user/types'
+import type { GetLogin } from '../../types/login/types'
 
 const container: ContainerType = {
   id: '790d587e-b4e4-436f-82d3-6d450daba5d2',

@@ -5,8 +5,8 @@ import { expect, test, vitest } from 'vitest'
 import SearchBox from './SearchBox'
 import type { Props, SearchBoxItem } from './SearchBox'
 import { loadingIndicatorText } from './LoadingIndicator'
-import type { SearchFieldIf } from '../../core/search/types'
-import type { UseDebounce } from '../../core/types'
+import type { SearchFieldIf } from '../../types/search/types'
+import type { UseDebounce } from '../../types/types'
 import { dontCall } from '../../../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]

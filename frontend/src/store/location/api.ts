@@ -1,12 +1,12 @@
 import { emptySplitApi } from '../api'
 
-import type { Pagination } from '../../core/types'
+import type { Pagination } from '../../types/types'
 
 import type {
   Location,
   LocationList,
   CreateLocationRequest,
-} from '../../core/location/types'
+} from '../../types/location/types'
 import { LocationTags } from './types'
 import { locationStatsTagTypes } from '../stats/types'
 

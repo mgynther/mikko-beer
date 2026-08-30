@@ -6,10 +6,10 @@ import type {
   GetBeerIf,
   Beer as BeerType,
   UpdateBeerLoginIf,
-} from '../../core/beer/types'
+} from '../../types/beer/types'
 
-import type { ListReviewsByIf } from '../../core/review/types'
-import type { ListStoragesByIf } from '../../core/storage/types'
+import type { ListReviewsByIf } from '../../types/review/types'
+import type { ListStoragesByIf } from '../../types/storage/types'
 
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'

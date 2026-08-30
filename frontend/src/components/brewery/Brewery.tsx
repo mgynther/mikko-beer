@@ -6,9 +6,9 @@ import type {
   Brewery as BreweryType,
   GetBreweryIf,
   UpdateBreweryIf,
-} from '../../core/brewery/types'
-import type { ListReviewsByIf } from '../../core/review/types'
-import type { ListStoragesByIf } from '../../core/storage/types'
+} from '../../types/brewery/types'
+import type { ListReviewsByIf } from '../../types/review/types'
+import type { ListStoragesByIf } from '../../types/storage/types'
 
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'
@@ -19,7 +19,7 @@ import Stats from '../stats/Stats'
 import UpdateBrewery from './UpdateBrewery'
 
 import '../common/FlexRow.css'
-import type { StatsIf } from '../../core/stats/types'
+import type { StatsIf } from '../../types/stats/types'
 import BreweryStorages from './BreweryStorages'
 import ReviewsBy from '../review/ReviewsBy'
 import NotFound from '../common/NotFound'

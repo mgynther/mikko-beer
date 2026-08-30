@@ -1,4 +1,4 @@
-import type { Location, UpdateLocationHookIf } from '../../core/location/types'
+import type { Location, UpdateLocationHookIf } from '../../types/location/types'
 import { useUpdateLocationMutation } from '../../store/location/api'
 import { validateLocation } from '../../validation/location'
 

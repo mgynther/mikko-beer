@@ -11,7 +11,7 @@ import type {
   RatingStats,
   OverallStats,
   StyleStats,
-} from '../core/stats/types'
+} from '../types/stats/types'
 
 const ValidatedOverallStats = t.type({
   beerCount: t.string,

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import type { Container, CreateContainerIf } from '../../core/container/types'
+import type { Container, CreateContainerIf } from '../../types/container/types'
 
 import Button from '../common/Button'
 import LoadingIndicator from '../common/LoadingIndicator'

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import type { Brewery, SelectBreweryIf } from '../../core/brewery/types'
+import type { Brewery, SelectBreweryIf } from '../../types/brewery/types'
 
 import Button from '../common/Button'
 import { Mode, SelectCreateRadioBasic } from '../common/SelectCreateRadio'

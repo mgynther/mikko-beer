@@ -10,7 +10,7 @@ import type {
   ReviewRequestWrapper,
   ReviewSorting,
   ReviewListFilter,
-} from '../../core/review/types'
+} from '../../types/review/types'
 
 import { reviewTagTypes } from './types'
 

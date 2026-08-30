@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
 import Overall from './Overall'
-import type { IdParams, OverallStats } from '../../core/stats/types'
+import type { IdParams, OverallStats } from '../../types/stats/types'
 
 const breweryId = '927a5106-1c3a-470f-b5a4-c9cbea05c112'
 const styleId = '1afa8a5b-186f-40fd-b92f-42b1874091ac'

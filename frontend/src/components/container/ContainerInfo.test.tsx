@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
 import { expect, test } from 'vitest'
 import ContainerInfo, { asText } from './ContainerInfo'
-import type { Container } from '../../core/container/types'
+import type { Container } from '../../types/container/types'
 
 const container: Container = {
   id: '70bdc1c5-861f-4f65-afb8-c598f01e83d6',

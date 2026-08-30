@@ -5,7 +5,11 @@ import React from 'react'
 import { testTimes } from '../../../test-util/filter-time'
 import type { Props as HookProps } from './search-params'
 import { searchParams } from './search-params'
-import type { SearchParameters, UseDebounce, YearMonth } from '../../core/types'
+import type {
+  SearchParameters,
+  UseDebounce,
+  YearMonth,
+} from '../../types/types'
 
 type SortingOrder = 'text' | 'count' | 'average' | 'std_dev'
 

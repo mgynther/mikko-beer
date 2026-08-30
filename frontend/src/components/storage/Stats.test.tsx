@@ -2,8 +2,8 @@ import { render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import Stats from './Stats'
-import type { StorageStatsIf } from '../../core/storage/types'
-import type { UseUrlSearchParams } from '../../core/types'
+import type { StorageStatsIf } from '../../types/storage/types'
+import type { UseUrlSearchParams } from '../../types/types'
 import { dontCall } from '../../../test-util/dont-call'
 
 const useEmptyUrlSearchParams: UseUrlSearchParams = () => ({

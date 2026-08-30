@@ -2,7 +2,7 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import CreateUser from './CreateUser'
-import { Role } from '../../core/user/types'
+import { Role } from '../../types/user/types'
 
 interface CreateTest {
   role: Role

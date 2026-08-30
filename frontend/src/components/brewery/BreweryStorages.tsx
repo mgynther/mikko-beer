@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { ListStoragesByIf } from '../../core/storage/types'
+import type { ListStoragesByIf } from '../../types/storage/types'
 import StorageList from '../storage/StorageList'
 
 interface Props {

@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { Role } from '../../core/user/types'
-import type { GetLogin, Login } from '../../core/login/types'
+import { Role } from '../../types/user/types'
+import type { GetLogin, Login } from '../../types/login/types'
 
 import Button from './Button'
 

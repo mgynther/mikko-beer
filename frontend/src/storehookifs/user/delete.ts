@@ -1,4 +1,4 @@
-import type { DeleteUserIf } from '../../core/user/types'
+import type { DeleteUserIf } from '../../types/user/types'
 import { useDeleteUserMutation } from '../../store/user/api'
 
 const deleteUser: () => DeleteUserIf = () => {

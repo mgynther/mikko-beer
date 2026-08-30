@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 
-import type { User, UserList } from '../core/user/types'
+import type { User, UserList } from '../types/user/types'
 
 import { validateUserOrUndefined, validateUserListOrUndefined } from './user'
 

@@ -2,18 +2,18 @@ import { render, fireEvent } from '@testing-library/react'
 import userEvent, { type UserEvent } from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import Review from './Review'
-import type { UseDebounce } from '../../core/types'
-import type { Login } from '../../core/login/types'
-import { Role } from '../../core/user/types'
+import type { UseDebounce } from '../../types/types'
+import type { Login } from '../../types/login/types'
+import { Role } from '../../types/user/types'
 import LinkWrapper from '../LinkWrapper'
 import { asText } from '../container/ContainerInfo'
-import type { SearchLocationIf } from '../../core/location/types'
-import type { CreateBeerIf, SearchBeerIf } from '../../core/beer/types'
+import type { SearchLocationIf } from '../../types/location/types'
+import type { CreateBeerIf, SearchBeerIf } from '../../types/beer/types'
 import type {
   Review as ReviewType,
   ReviewContainerIf,
-} from '../../core/review/types'
-import type { SearchFieldIf } from '../../core/search/types'
+} from '../../types/review/types'
+import type { SearchFieldIf } from '../../types/search/types'
 import { dontCall } from '../../../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]

@@ -10,8 +10,8 @@ import type {
   BreweryStatsSortingOrder,
   GetBreweryStatsIf,
   OneBreweryStats,
-} from '../../core/stats/types'
-import type { UseDebounce, YearMonth } from '../../core/types'
+} from '../../types/stats/types'
+import type { UseDebounce, YearMonth } from '../../types/types'
 import type { StatsFilters } from './filter-types'
 import { dontCall } from '../../../test-util/dont-call'
 import type { FormattedStatsParams } from './search-params'

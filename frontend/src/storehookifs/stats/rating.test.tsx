@@ -5,7 +5,7 @@ import statsHook from './stats'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
 
-import type { IdParams, RatingStats } from '../../core/stats/types'
+import type { IdParams, RatingStats } from '../../types/stats/types'
 
 function RatingStatsHelper(props: { params: IdParams }): React.JSX.Element {
   const statsIf = statsHook()

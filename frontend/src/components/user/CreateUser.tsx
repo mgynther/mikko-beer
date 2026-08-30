@@ -3,8 +3,8 @@ import React, { type SubmitEvent, useState } from 'react'
 import LoadingIndicator from '../common/LoadingIndicator'
 
 import './CreateUser.css'
-import { Role } from '../../core/user/types'
-import type { CreateUserIf } from '../../core/user/types'
+import { Role } from '../../types/user/types'
+import type { CreateUserIf } from '../../types/user/types'
 
 interface Props {
   createUserIf: CreateUserIf

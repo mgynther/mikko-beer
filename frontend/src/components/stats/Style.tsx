@@ -4,7 +4,7 @@ import { formatTitle } from '../list-helpers'
 import type {
   GetStyleStatsIf,
   StyleStatsSortingOrder,
-} from '../../core/stats/types'
+} from '../../types/stats/types'
 import TabButton from '../common/TabButton'
 import StyleLink from '../style/StyleLink'
 
@@ -12,7 +12,7 @@ import AllFilters from './AllFilters'
 
 import './StatsTable.css'
 import { searchParams } from './search-params'
-import type { SearchParameters } from '../../core/types'
+import type { SearchParameters } from '../../types/types'
 
 interface Props {
   getStyleStatsIf: GetStyleStatsIf

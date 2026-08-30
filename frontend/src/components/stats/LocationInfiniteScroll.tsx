@@ -4,7 +4,7 @@ import type {
   GetLocationStatsIf,
   LocationStatsSortingOrder,
   OneLocationStats,
-} from '../../core/stats/types'
+} from '../../types/stats/types'
 
 import LocationStatsTable from './LocationStatsTable'
 import type { StatsFilterState } from './filter-types'

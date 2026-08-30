@@ -6,9 +6,9 @@ import type {
   GetStyleIf,
   ListStylesIf,
   StyleWithParentIds,
-} from '../../core/style/types'
-import type { UseDebounce } from '../../core/types'
-import type { SearchFieldIf } from '../../core/search/types'
+} from '../../types/style/types'
+import type { UseDebounce } from '../../types/types'
+import type { SearchFieldIf } from '../../types/search/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 import { dontCall } from '../../../test-util/dont-call'
 

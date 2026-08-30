@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
-import type { SelectStyleIf, Style } from '../../core/style/types'
+import type { SelectStyleIf, Style } from '../../types/style/types'
 
 import Button from '../common/Button'
 import SelectStyle from './SelectStyle'

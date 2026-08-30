@@ -8,7 +8,7 @@ import type {
   LocationStatsQueryParams,
   StatsHookIf,
   StyleStatsQueryParams,
-} from '../../core/stats/types'
+} from '../../types/stats/types'
 import {
   useGetAnnualStatsQuery,
   useGetContainerStatsQuery,

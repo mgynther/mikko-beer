@@ -1,4 +1,4 @@
-import type { Review, UpdateReviewHookIf } from '../../core/review/types'
+import type { Review, UpdateReviewHookIf } from '../../types/review/types'
 import { useUpdateReviewMutation } from '../../store/review/api'
 import { validateReview } from '../../validation/review'
 

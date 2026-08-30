@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
 import Rating from './Rating'
-import type { IdParams } from '../../core/stats/types'
+import type { IdParams } from '../../types/stats/types'
 
 test('renders rating stats', () => {
   const stats = vitest.fn()

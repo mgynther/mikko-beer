@@ -7,7 +7,7 @@ import {
   type LoginParams,
   type LogoutParams,
   PasswordChangeResult,
-} from '../../core/login/types'
+} from '../../types/login/types'
 
 const loginApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({

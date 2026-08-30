@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 import { createId, createLocationSort } from './create-location-sort'
-import type { Location } from '../../core/location/types'
+import type { Location } from '../../types/location/types'
 
 interface SortTestCase {
   a: Location

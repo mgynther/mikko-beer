@@ -1,7 +1,7 @@
 import { emptySplitApi } from '../api'
 
 import { UserTags } from './types'
-import type { CreateUserRequest, User, UserList } from '../../core/user/types'
+import type { CreateUserRequest, User, UserList } from '../../types/user/types'
 
 const userApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({

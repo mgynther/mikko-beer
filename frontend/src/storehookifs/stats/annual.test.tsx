@@ -5,7 +5,7 @@ import statsHook from './stats'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
 
-import type { AnnualStats, IdParams } from '../../core/stats/types'
+import type { AnnualStats, IdParams } from '../../types/stats/types'
 
 function AnnualStatsHelper(props: { params: IdParams }): React.JSX.Element {
   const statsIf = statsHook()

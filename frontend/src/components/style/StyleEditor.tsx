@@ -4,7 +4,7 @@ import type {
   ListStylesIf,
   StyleWithParents,
   StyleWithParentIds,
-} from '../../core/style/types'
+} from '../../types/style/types'
 
 import StyleParents from './StyleParents'
 

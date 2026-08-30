@@ -5,7 +5,7 @@ import CreateBrewery from './CreateBrewery'
 import type {
   CreateBreweryIf,
   CreateBreweryRequest,
-} from '../../core/brewery/types'
+} from '../../types/brewery/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 import { dontCall } from '../../../test-util/dont-call'
 

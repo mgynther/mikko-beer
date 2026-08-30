@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import type { BeerWithIds, CreateBeerIf } from '../../core/beer/types'
+import type { BeerWithIds, CreateBeerIf } from '../../types/beer/types'
 
 import Button from '../common/Button'
 import BeerEditor from './BeerEditor'

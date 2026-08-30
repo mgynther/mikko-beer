@@ -2,9 +2,9 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import ReviewList from './ReviewList'
-import type { UseDebounce, YearMonth } from '../../core/types'
-import type { Login } from '../../core/login/types'
-import { Role } from '../../core/user/types'
+import type { UseDebounce, YearMonth } from '../../types/types'
+import type { Login } from '../../types/login/types'
+import { Role } from '../../types/user/types'
 import LinkWrapper from '../LinkWrapper'
 import type {
   Review,
@@ -12,14 +12,14 @@ import type {
   ReviewIf,
   ReviewSorting,
   ReviewSortingOrder,
-} from '../../core/review/types'
-import type { SearchLocationIf } from '../../core/location/types'
+} from '../../types/review/types'
+import type { SearchLocationIf } from '../../types/location/types'
 import type {
   CreateBeerIf,
   SearchBeerIf,
   SelectBeerIf,
-} from '../../core/beer/types'
-import type { SearchFieldIf } from '../../core/search/types'
+} from '../../types/beer/types'
+import type { SearchFieldIf } from '../../types/search/types'
 import type { ReviewFilters } from './filter-types'
 import { testTimes } from '../../../test-util/filter-time'
 import { dontCall } from '../../../test-util/dont-call'

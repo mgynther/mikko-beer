@@ -1,4 +1,4 @@
-import type { Location, SearchLocationHookIf } from '../../core/location/types'
+import type { Location, SearchLocationHookIf } from '../../types/location/types'
 import { useLazySearchLocationsQuery } from '../../store/location/api'
 import { validateLocationList } from '../../validation/location'
 import { formatQuery } from '../search-query'

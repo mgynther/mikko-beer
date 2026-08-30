@@ -2,7 +2,7 @@ import type {
   Location,
   CreateLocationIf,
   CreateLocationRequest,
-} from '../../core/location/types'
+} from '../../types/location/types'
 import { useCreateLocationMutation } from '../../store/location/api'
 import { validateLocation } from '../../validation/location'
 

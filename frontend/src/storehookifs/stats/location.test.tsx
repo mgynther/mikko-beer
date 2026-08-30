@@ -11,7 +11,7 @@ import Button from '../../components/common/Button'
 import type {
   LocationStats,
   LocationStatsQueryParams,
-} from '../../core/stats/types'
+} from '../../types/stats/types'
 
 function LocationStatsHelper(props: {
   queryParams: LocationStatsQueryParams

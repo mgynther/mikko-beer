@@ -1,9 +1,9 @@
 import { render } from '@testing-library/react'
 import { test } from 'vitest'
 import Account from './Account'
-import { Role } from '../../core/user/types'
-import type { ChangePasswordIf, GetLogin } from '../../core/login/types'
-import { PasswordChangeResult } from '../../core/login/types'
+import { Role } from '../../types/user/types'
+import type { ChangePasswordIf, GetLogin } from '../../types/login/types'
+import { PasswordChangeResult } from '../../types/login/types'
 
 test('renders account', async () => {
   const getLogin: GetLogin = () => ({

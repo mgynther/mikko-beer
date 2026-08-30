@@ -1,15 +1,15 @@
 import React from 'react'
 
-import type { ReviewContainerIf } from '../../core/review/types'
+import type { ReviewContainerIf } from '../../types/review/types'
 
-import type { SelectBeerIf } from '../../core/beer/types'
-import type { GetLogin, Login } from '../../core/login/types'
+import type { SelectBeerIf } from '../../types/beer/types'
+import type { GetLogin, Login } from '../../types/login/types'
 import type {
   CreateStorageIf,
   ListStoragesIf,
   StorageStatsIf,
-} from '../../core/storage/types'
-import { Role } from '../../core/user/types'
+} from '../../types/storage/types'
+import { Role } from '../../types/user/types'
 
 import CreateStorage from './CreateStorage'
 import StorageList from './StorageList'

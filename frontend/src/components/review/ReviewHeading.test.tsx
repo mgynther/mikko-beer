@@ -2,9 +2,12 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import ReviewHeading from './ReviewHeading'
-import type { ReviewSorting, ReviewSortingOrder } from '../../core/review/types'
+import type {
+  ReviewSorting,
+  ReviewSortingOrder,
+} from '../../types/review/types'
 import type { ReviewFilters } from './filter-types'
-import type { YearMonth } from '../../core/types'
+import type { YearMonth } from '../../types/types'
 import { testTimes } from '../../../test-util/filter-time'
 import { dontCall } from '../../../test-util/dont-call'
 

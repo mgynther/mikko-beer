@@ -8,8 +8,12 @@ import type {
   GetLocationStatsIf,
   LocationStats,
   OneLocationStats,
-} from '../../core/stats/types'
-import type { SearchParameters, UseDebounce, YearMonth } from '../../core/types'
+} from '../../types/stats/types'
+import type {
+  SearchParameters,
+  UseDebounce,
+  YearMonth,
+} from '../../types/types'
 import { openFilters } from '../common/filters-test-util'
 import { dontCall } from '../../../test-util/dont-call'
 

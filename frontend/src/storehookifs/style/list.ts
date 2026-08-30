@@ -1,4 +1,4 @@
-import type { ListStylesHookIf } from '../../core/style/types'
+import type { ListStylesHookIf } from '../../types/style/types'
 import { useListStylesQuery } from '../../store/style/api'
 import { validateStyleListOrUndefined } from '../../validation/style'
 

@@ -6,7 +6,7 @@ import type {
   JoinedReviewList,
   ReviewListFilter,
   ReviewSorting,
-} from '../../core/review/types'
+} from '../../types/review/types'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
 import { testTimes } from '../../../test-util/filter-time'

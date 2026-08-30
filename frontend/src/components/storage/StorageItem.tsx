@@ -2,9 +2,9 @@ import { useState } from 'react'
 
 import { Link } from '../common/Link'
 
-import type { DeleteStorageIf, Storage } from '../../core/storage/types'
-import type { Login } from '../../core/login/types'
-import { Role } from '../../core/user/types'
+import type { DeleteStorageIf, Storage } from '../../types/storage/types'
+import type { Login } from '../../types/login/types'
+import { Role } from '../../types/user/types'
 import { formatDateString } from '../util'
 
 import BeerLink from '../beer/BeerLink'

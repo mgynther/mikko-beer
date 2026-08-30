@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { DeleteUserIf, ListUsersIf, User } from '../../core/user/types'
+import type { DeleteUserIf, ListUsersIf, User } from '../../types/user/types'
 
 import Button from '../common/Button'
 import LoadingIndicator from '../common/LoadingIndicator'

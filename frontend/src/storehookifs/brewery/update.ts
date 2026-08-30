@@ -1,4 +1,4 @@
-import type { Brewery, UpdateBreweryHookIf } from '../../core/brewery/types'
+import type { Brewery, UpdateBreweryHookIf } from '../../types/brewery/types'
 import { useUpdateBreweryMutation } from '../../store/brewery/api'
 import { validateBrewery } from '../../validation/brewery'
 

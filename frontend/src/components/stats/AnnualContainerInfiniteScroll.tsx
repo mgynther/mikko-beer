@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import type {
   GetAnnualContainerStatsIf,
   OneAnnualContainerStats,
-} from '../../core/stats/types'
+} from '../../types/stats/types'
 
 import AnnualContainerStatsTable from './AnnualContainerStatsTable'
 

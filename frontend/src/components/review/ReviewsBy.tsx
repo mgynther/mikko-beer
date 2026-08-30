@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { ListReviewsByIf } from '../../core/review/types'
+import type { ListReviewsByIf } from '../../types/review/types'
 import ReviewList from '../review/ReviewList'
 import { parseSearchParams } from './search-params'
 

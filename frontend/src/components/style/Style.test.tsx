@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import Style from './Style'
-import { Role } from '../../core/user/types'
+import { Role } from '../../types/user/types'
 import LinkWrapper from '../LinkWrapper'
 import type {
   JoinedReview,
@@ -13,8 +13,8 @@ import type {
   ReviewIf,
   SetSearch,
   UpdateReviewIf,
-} from '../../core/review/types'
-import type { ListStoragesByIf, Storage } from '../../core/storage/types'
+} from '../../types/review/types'
+import type { ListStoragesByIf, Storage } from '../../types/storage/types'
 import type {
   GetAnnualContainerStatsIf,
   GetAnnualStatsIf,
@@ -25,15 +25,15 @@ import type {
   GetRatingStatsIf,
   GetStyleStatsIf,
   StatsIf,
-} from '../../core/stats/types'
-import type { GetStyleIf, UpdateStyleIf } from '../../core/style/types'
+} from '../../types/stats/types'
+import type { GetStyleIf, UpdateStyleIf } from '../../types/style/types'
 import type {
   UseDebounce,
   UseUrlSearchParams,
   YearMonth,
-} from '../../core/types'
+} from '../../types/types'
 import { asText } from '../container/ContainerInfo'
-import type { SearchFieldIf } from '../../core/search/types'
+import type { SearchFieldIf } from '../../types/search/types'
 import type { UseUrlPathParams } from '../util'
 import type { ReactNode } from 'react'
 import { loadingIndicatorText } from '../common/LoadingIndicator'

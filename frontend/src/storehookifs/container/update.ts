@@ -1,7 +1,7 @@
 import type {
   Container,
   UpdateContainerHookIf,
-} from '../../core/container/types'
+} from '../../types/container/types'
 import { useUpdateContainerMutation } from '../../store/container/api'
 import { validateContainer } from '../../validation/container'
 

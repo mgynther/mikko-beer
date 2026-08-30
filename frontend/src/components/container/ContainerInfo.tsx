@@ -1,4 +1,4 @@
-import type { Container } from '../../core/container/types'
+import type { Container } from '../../types/container/types'
 
 interface Props {
   container: Container

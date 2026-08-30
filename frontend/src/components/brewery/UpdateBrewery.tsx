@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import type { UpdateBreweryHookIf, Brewery } from '../../core/brewery/types'
+import type { UpdateBreweryHookIf, Brewery } from '../../types/brewery/types'
 
 import EditActions from '../common/EditActions'
 

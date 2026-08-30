@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import type {
   Container as ContainerType,
   UpdateContainerIf,
-} from '../../core/container/types'
+} from '../../types/container/types'
 
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'

@@ -1,9 +1,9 @@
 import { render } from '@testing-library/react'
 import { expect, test } from 'vitest'
 import Containers from './Containers'
-import { Role } from '../../core/user/types'
-import type { GetLogin } from '../../core/login/types'
-import type { UpdateContainerIf } from '../../core/container/types'
+import { Role } from '../../types/user/types'
+import type { GetLogin } from '../../types/login/types'
+import type { UpdateContainerIf } from '../../types/container/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 
 function getLogin(): GetLogin {

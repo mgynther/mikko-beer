@@ -1,4 +1,4 @@
-import type { BeerWithIds, UpdateBeerHookIf } from '../../core/beer/types'
+import type { BeerWithIds, UpdateBeerHookIf } from '../../types/beer/types'
 import { useUpdateBeerMutation } from '../../store/beer/api'
 import { validateBeerWithIds } from '../../validation/beer'
 

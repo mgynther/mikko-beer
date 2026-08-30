@@ -1,4 +1,4 @@
-import type { GetStorageIf } from '../../core/storage/types'
+import type { GetStorageIf } from '../../types/storage/types'
 import { useGetStorageQuery } from '../../store/storage/api'
 import { validateStorageOrUndefined } from '../../validation/storage'
 

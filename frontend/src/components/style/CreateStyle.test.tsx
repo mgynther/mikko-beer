@@ -2,8 +2,8 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import CreateStyle from './CreateStyle'
-import type { UseDebounce } from '../../core/types'
-import type { SearchFieldIf } from '../../core/search/types'
+import type { UseDebounce } from '../../types/types'
+import type { SearchFieldIf } from '../../types/search/types'
 import { dontCall } from '../../../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]

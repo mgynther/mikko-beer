@@ -17,7 +17,7 @@ import type {
   StyleStats,
   StyleStatsQueryParams,
   StyleStatsSorting,
-} from '../../core/stats/types'
+} from '../../types/stats/types'
 
 import { StatsTags } from './types'
 

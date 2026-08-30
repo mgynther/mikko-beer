@@ -4,7 +4,7 @@ import type {
   UpdateReviewIf,
   JoinedReview,
   ReviewRequest,
-} from '../../core/review/types'
+} from '../../types/review/types'
 
 import EditActions from '../common/EditActions'
 

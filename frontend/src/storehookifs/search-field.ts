@@ -1,5 +1,5 @@
 import { useId } from 'react'
-import type { SearchFieldHookIf } from '../core/search/types'
+import type { SearchFieldHookIf } from '../types/search/types'
 import { useDispatch, useSelector } from '../react-redux-wrapper'
 import { activate, selectActiveSearch } from '../store/search/reducer'
 

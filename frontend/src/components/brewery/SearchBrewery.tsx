@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import type { Brewery, SearchBreweryIf } from '../../core/brewery/types'
+import type { Brewery, SearchBreweryIf } from '../../types/brewery/types'
 
 import SearchBox, { nameFormatter } from '../common/SearchBox'
 

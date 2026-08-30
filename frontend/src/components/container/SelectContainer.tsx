@@ -1,7 +1,7 @@
 import React from 'react'
 
-import type { Container } from '../../core/container/types'
-import type { ReviewContainerIf } from '../../core/review/types'
+import type { Container } from '../../types/container/types'
+import type { ReviewContainerIf } from '../../types/review/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 import SelectCreateRadio, { Mode } from '../common/SelectCreateRadio'

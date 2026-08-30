@@ -4,7 +4,7 @@ import type {
   JoinedReview,
   Review as ReviewType,
   ReviewIf,
-} from '../../core/review/types'
+} from '../../types/review/types'
 
 import BeerLink from '../beer/BeerLink'
 import BreweryLinks from '../brewery/BreweryLinks'

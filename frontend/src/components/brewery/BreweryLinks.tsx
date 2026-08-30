@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Links } from '../common/Links'
 
-import type { Brewery } from '../../core/brewery/types'
+import type { Brewery } from '../../types/brewery/types'
 
 interface Props {
   breweries: Brewery[]

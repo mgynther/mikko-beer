@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import type {
   GetAnnualContainerStatsIf,
   OneAnnualContainerStats,
-} from '../../core/stats/types'
+} from '../../types/stats/types'
 
 import AnnualContainerAllAtOnce from './AnnualContainerAllAtOnce'
 import AnnualContainerInfiniteScroll from './AnnualContainerInfiniteScroll'

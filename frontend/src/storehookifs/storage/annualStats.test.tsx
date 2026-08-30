@@ -4,7 +4,7 @@ import { addTestServerResponse } from '../../../test-util/server'
 import getAnnualStorageStats from './annualStats'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
-import type { AnnualStats } from '../../core/storage/types'
+import type { AnnualStats } from '../../types/storage/types'
 
 function Helper(): React.JSX.Element {
   const statsIf = getAnnualStorageStats()

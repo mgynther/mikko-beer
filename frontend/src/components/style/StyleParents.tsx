@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import type { ListStylesIf, Style } from '../../core/style/types'
+import type { ListStylesIf, Style } from '../../types/style/types'
 
 import Button from '../common/Button'
 

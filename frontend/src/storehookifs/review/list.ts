@@ -2,7 +2,7 @@ import type {
   JoinedReviewList,
   ListReviewParams,
   ListReviewsHookIf,
-} from '../../core/review/types'
+} from '../../types/review/types'
 import { useLazyListReviewsQuery } from '../../store/review/api'
 import {
   validateJoinedReviewList,

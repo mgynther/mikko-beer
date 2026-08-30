@@ -1,4 +1,4 @@
-import type { ListContainersIf } from '../../core/container/types'
+import type { ListContainersIf } from '../../types/container/types'
 import { useListContainersQuery } from '../../store/container/api'
 import { validateContainerListOrUndefined } from '../../validation/container'
 

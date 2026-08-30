@@ -1,8 +1,8 @@
 import type {
   ListLocationsHookIf,
   LocationList,
-} from '../../core/location/types'
-import type { Pagination } from '../../core/types'
+} from '../../types/location/types'
+import type { Pagination } from '../../types/types'
 import { useLazyListLocationsQuery } from '../../store/location/api'
 import {
   validateLocationList,

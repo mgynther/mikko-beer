@@ -1,7 +1,7 @@
 import * as t from 'io-ts'
 import { isLeft } from 'fp-ts/Either'
 
-import type { JoinedReviewList, Review } from '../core/review/types'
+import type { JoinedReviewList, Review } from '../types/review/types'
 import { formatError } from './format-error'
 import { ValidatedContainer } from './container'
 import { ValidatedLocation } from './location'

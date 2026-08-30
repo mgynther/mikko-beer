@@ -4,51 +4,51 @@ import type {
   SearchBeerIf,
   SelectBeerIf,
   UpdateBeerLoginIf,
-} from '../core/beer/types'
+} from '../types/beer/types'
 import type {
   GetBreweryIf,
   ListBreweriesIf,
   SearchBreweryIf,
   UpdateBreweryIf,
-} from '../core/brewery/types'
+} from '../types/brewery/types'
 import type {
   ListContainersIf,
   UpdateContainerIf,
-} from '../core/container/types'
+} from '../types/container/types'
 import type {
   GetLocationIf,
   ListLocationsIf,
   SearchLocationIf,
   UpdateLocationIf,
-} from '../core/location/types'
+} from '../types/location/types'
 import type {
   ChangePasswordIf,
   GetLogin,
   LoginIf,
   LogoutIf,
-} from '../core/login/types'
+} from '../types/login/types'
 import type {
   CreateReviewIf,
   ListReviewsByIf,
   ListReviewsIf,
   ReviewContainerIf,
   ReviewIf,
-} from '../core/review/types'
-import type { SearchFieldIf } from '../core/search/types'
-import type { StatsIf } from '../core/stats/types'
+} from '../types/review/types'
+import type { SearchFieldIf } from '../types/search/types'
+import type { StatsIf } from '../types/stats/types'
 import type {
   CreateStorageIf,
   GetStorageIf,
   ListStoragesByIf,
   ListStoragesIf,
   StorageStatsIf,
-} from '../core/storage/types'
+} from '../types/storage/types'
 import type {
   GetStyleIf,
   ListStylesIf,
   UpdateStyleIf,
-} from '../core/style/types'
-import type { UserIf } from '../core/user/types'
+} from '../types/style/types'
+import type { UserIf } from '../types/user/types'
 
 export interface StoreIf {
   getLogin: GetLogin

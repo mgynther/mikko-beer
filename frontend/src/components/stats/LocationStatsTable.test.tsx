@@ -7,8 +7,8 @@ import LinkWrapper from '../LinkWrapper'
 import type {
   LocationStatsSortingOrder,
   OneLocationStats,
-} from '../../core/stats/types'
-import type { ListDirection, YearMonth } from '../../core/types'
+} from '../../types/stats/types'
+import type { ListDirection, YearMonth } from '../../types/types'
 import { openFilters } from '../common/filters-test-util'
 import type { StatsFilters } from './filter-types'
 import { dontCall } from '../../../test-util/dont-call'

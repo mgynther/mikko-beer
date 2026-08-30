@@ -9,7 +9,7 @@ import Rating from './Rating'
 import Style from './Style'
 
 import TabButton from '../common/TabButton'
-import type { StatsIf } from '../../core/stats/types'
+import type { StatsIf } from '../../types/stats/types'
 import Container from './Container'
 
 import './StatsModeContainer.css'

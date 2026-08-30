@@ -3,12 +3,12 @@ import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import Brewery from './Brewery'
-import { Role } from '../../core/user/types'
+import { Role } from '../../types/user/types'
 import type {
   UseDebounce,
   UseUrlSearchParams,
   YearMonth,
-} from '../../core/types'
+} from '../../types/types'
 import type {
   GetAnnualContainerStatsIf,
   GetAnnualStatsIf,
@@ -19,21 +19,21 @@ import type {
   GetRatingStatsIf,
   GetStyleStatsIf,
   StatsIf,
-} from '../../core/stats/types'
-import type { SearchLocationIf } from '../../core/location/types'
-import type { GetLogin } from '../../core/login/types'
+} from '../../types/stats/types'
+import type { SearchLocationIf } from '../../types/location/types'
+import type { GetLogin } from '../../types/login/types'
 import type {
   ListFilterIf,
   ListReviewsByIf,
   ReviewIf,
   SetSearch,
-} from '../../core/review/types'
-import type { ListStoragesByIf } from '../../core/storage/types'
-import type { GetBreweryIf, UpdateBreweryIf } from '../../core/brewery/types'
-import type { SearchFieldIf } from '../../core/search/types'
+} from '../../types/review/types'
+import type { ListStoragesByIf } from '../../types/storage/types'
+import type { GetBreweryIf, UpdateBreweryIf } from '../../types/brewery/types'
+import type { SearchFieldIf } from '../../types/search/types'
 import type { UseUrlPathParams } from '../util'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
-import type { SelectBeerIf } from '../../core/beer/types'
+import type { SelectBeerIf } from '../../types/beer/types'
 import { dontCall } from '../../../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]

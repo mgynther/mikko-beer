@@ -2,8 +2,8 @@ import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vitest } from 'vitest'
 import SelectBrewery from './SelectBrewery'
-import type { Brewery, SearchBreweryIf } from '../../core/brewery/types'
-import type { UseDebounce } from '../../core/types'
+import type { Brewery, SearchBreweryIf } from '../../types/brewery/types'
+import type { UseDebounce } from '../../types/types'
 import { dontCall } from '../../../test-util/dont-call'
 
 const brewery: Brewery = {

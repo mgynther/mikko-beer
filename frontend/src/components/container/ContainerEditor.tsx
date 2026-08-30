@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import type { Container } from '../../core/container/types'
+import type { Container } from '../../types/container/types'
 import { isSizeValid } from './util'
 
 interface Props {

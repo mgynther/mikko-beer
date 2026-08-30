@@ -1,4 +1,4 @@
-import type { LoginIf, LoginParams } from '../../core/login/types'
+import type { LoginIf, LoginParams } from '../../types/login/types'
 import { useLoginMutation } from '../../store/login/api'
 
 const login: () => LoginIf = () => {

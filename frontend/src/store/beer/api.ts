@@ -1,11 +1,11 @@
 import { emptySplitApi } from '../api'
 
-import type { Pagination } from '../../core/types'
+import type { Pagination } from '../../types/types'
 import { ReviewTags } from '../review/types'
 import { StorageTags } from '../storage/types'
 import { beerStatsTagTypes } from '../stats/types'
 
-import type { Beer, BeerList, BeerWithIds } from '../../core/beer/types'
+import type { Beer, BeerList, BeerWithIds } from '../../types/beer/types'
 import { BeerTags } from './types'
 
 interface BeerRequest {

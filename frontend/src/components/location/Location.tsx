@@ -6,7 +6,7 @@ import type {
   Location as LocationType,
   GetLocationIf,
   UpdateLocationIf,
-} from '../../core/location/types'
+} from '../../types/location/types'
 
 import { EditableMode } from '../common/EditableMode'
 import EditButton from '../common/EditButton'
@@ -16,9 +16,9 @@ import UpdateLocation from './UpdateLocation'
 
 import '../common/FlexRow.css'
 import NotFound from '../common/NotFound'
-import type { StatsIf } from '../../core/stats/types'
+import type { StatsIf } from '../../types/stats/types'
 import Stats from '../stats/Stats'
-import type { ListReviewsByIf } from '../../core/review/types'
+import type { ListReviewsByIf } from '../../types/review/types'
 import ReviewsBy from '../review/ReviewsBy'
 
 interface Props {

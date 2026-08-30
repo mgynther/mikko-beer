@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react'
 import { test } from 'vitest'
 import StorageList from './StorageList'
-import type { Storage } from '../../core/storage/types'
-import { Role } from '../../core/user/types'
+import type { Storage } from '../../types/storage/types'
+import { Role } from '../../types/user/types'
 import LinkWrapper from '../LinkWrapper'
 import { dontCall } from '../../../test-util/dont-call'
 

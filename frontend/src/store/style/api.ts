@@ -8,7 +8,7 @@ import type {
   StyleList,
   StyleWithParentIds,
   StyleWithParentsAndChildren,
-} from '../../core/style/types'
+} from '../../types/style/types'
 import { StyleTags } from './types'
 import { styleStatsTagTypes } from '../stats/types'
 

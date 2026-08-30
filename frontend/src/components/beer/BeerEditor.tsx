@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import type { Beer, BeerWithIds, EditBeerIf } from '../../core/beer/types'
+import type { Beer, BeerWithIds, EditBeerIf } from '../../types/beer/types'
 
 import SelectBreweries from '../brewery/SelectBreweries'
 import SelectStyles from '../style/SelectStyles'

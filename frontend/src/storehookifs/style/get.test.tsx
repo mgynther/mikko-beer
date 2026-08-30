@@ -2,7 +2,7 @@ import { expect, test } from 'vitest'
 import { store } from '../../store/store'
 import { addTestServerResponse } from '../../../test-util/server'
 import getStyle from './get'
-import type { StyleWithParentsAndChildren } from '../../core/style/types'
+import type { StyleWithParentsAndChildren } from '../../types/style/types'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
 

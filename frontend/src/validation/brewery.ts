@@ -1,7 +1,7 @@
 import * as t from 'io-ts'
 import { isLeft } from 'fp-ts/Either'
 
-import type { Brewery, BreweryList } from '../core/brewery/types'
+import type { Brewery, BreweryList } from '../types/brewery/types'
 import { formatError } from './format-error'
 
 export const ValidatedBrewery = t.type({

@@ -1,4 +1,4 @@
-import type { GetMonthlyStorageStatsIf } from '../../core/storage/types'
+import type { GetMonthlyStorageStatsIf } from '../../types/storage/types'
 import { useGetMonthlyStorageStatsQuery } from '../../store/storage/api'
 // prettier-ignore
 import {

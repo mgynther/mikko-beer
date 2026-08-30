@@ -1,5 +1,5 @@
 import type { Brewery } from '../brewery/types'
-import type { Container } from '../../core/container/types'
+import type { Container } from '../../types/container/types'
 import type { Style } from '../style/types'
 import type { UseUrlSearchParams } from '../types'
 import type { GetLogin } from '../login/types'

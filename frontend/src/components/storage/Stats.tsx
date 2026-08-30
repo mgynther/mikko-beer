@@ -1,5 +1,5 @@
 import React from 'react'
-import type { StorageStatsIf } from '../../core/storage/types'
+import type { StorageStatsIf } from '../../types/storage/types'
 import TabButton from '../common/TabButton'
 import AnnualStats from './AnnualStats'
 import MonthlyStats from './MonthlyStats'

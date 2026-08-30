@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import type { UpdateLocationIf, Location } from '../../core/location/types'
+import type { UpdateLocationIf, Location } from '../../types/location/types'
 
 import EditActions from '../common/EditActions'
 

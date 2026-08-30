@@ -4,7 +4,7 @@ import type {
   Container as ContainerType,
   ListContainersIf,
   UpdateContainerIf,
-} from '../../core/container/types'
+} from '../../types/container/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
 
