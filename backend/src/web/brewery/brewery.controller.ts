@@ -1,6 +1,6 @@
-import * as breweryService from '../../core/brewery/authorized.service.js'
-import type { Pagination } from '../../core/pagination.js'
-import type { SearchByName } from '../../core/search.js'
+import * as breweryService from '../../logic/brewery/authorized.service.js'
+import type { Pagination } from '../../logic/pagination.js'
+import type { SearchByName } from '../../logic/search.js'
 
 import * as breweryRepository from '../../data/brewery/brewery.repository.js'
 
@@ -10,8 +10,8 @@ import type { Router } from '../router.js'
 import type {
   Brewery,
   CreateBreweryRequest,
-} from '../../core/brewery/brewery.js'
-import { validatePagination } from '../../core/pagination.js'
+} from '../../logic/brewery/brewery.js'
+import { validatePagination } from '../../logic/pagination.js'
 import type { Context } from '../context.js'
 
 export interface CreatedOrUpdatedBrewery {

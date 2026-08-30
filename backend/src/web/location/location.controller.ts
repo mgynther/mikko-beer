@@ -1,6 +1,6 @@
-import * as locationService from '../../core/location/authorized.service.js'
-import type { Pagination } from '../../core/pagination.js'
-import type { SearchByName } from '../../core/search.js'
+import * as locationService from '../../logic/location/authorized.service.js'
+import type { Pagination } from '../../logic/pagination.js'
+import type { SearchByName } from '../../logic/search.js'
 
 import * as locationRepository from '../../data/location/location.repository.js'
 
@@ -10,8 +10,8 @@ import type { Router } from '../router.js'
 import type {
   Location,
   CreateLocationRequest,
-} from '../../core/location/location.js'
-import { validatePagination } from '../../core/pagination.js'
+} from '../../logic/location/location.js'
+import { validatePagination } from '../../logic/pagination.js'
 import type { Context } from '../context.js'
 
 export interface CreatedOrUpdatedLocation {

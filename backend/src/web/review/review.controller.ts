@@ -1,4 +1,4 @@
-import * as reviewService from '../../core/review/authorized.service.js'
+import * as reviewService from '../../logic/review/authorized.service.js'
 
 import * as beerRepository from '../../data/beer/beer.repository.js'
 import * as containerRepository from '../../data/container/container.repository.js'
@@ -8,7 +8,7 @@ import * as storageRepository from '../../data/storage/storage.repository.js'
 import { parseAuthToken } from '../authentication/authentication-helper.js'
 
 import type { Router } from '../router.js'
-import type { Pagination } from '../../core/pagination.js'
+import type { Pagination } from '../../logic/pagination.js'
 import type {
   CreateIf,
   JoinedReview,
@@ -16,13 +16,13 @@ import type {
   Review,
   ReviewListRequest,
   UpdateIf,
-} from '../../core/review/review.js'
+} from '../../logic/review/review.js'
 import {
   validateFilteredReviewListOrder,
   validateFullReviewListOrder,
   validateReviewListFilter,
-} from '../../core/review/review.js'
-import { validatePagination } from '../../core/pagination.js'
+} from '../../logic/review/review.js'
+import { validatePagination } from '../../logic/pagination.js'
 import type { Context } from '../context.js'
 
 export interface CreatedOrUpdatedReview {

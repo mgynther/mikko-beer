@@ -4,8 +4,8 @@ import * as userRepository from '../../../data/user/user.repository.js'
 import type {
   AddPasswordUserIf,
   UserPasswordHash,
-} from '../../../core/user/sign-in-method'
-import type { User } from '../../../core/user/user.js'
+} from '../../../logic/user/sign-in-method'
+import type { User } from '../../../logic/user/user.js'
 import type { Transaction } from '../../../data/database'
 
 export function createAddPasswordUserIf(trx: Transaction): AddPasswordUserIf {

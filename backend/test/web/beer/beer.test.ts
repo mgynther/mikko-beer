@@ -1,7 +1,7 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
-import type { Style } from '../../../src/core/style/style.js'
+import type { Style } from '../../../src/logic/style/style.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
 import type {
   CreatedOrUpdatedBeer,

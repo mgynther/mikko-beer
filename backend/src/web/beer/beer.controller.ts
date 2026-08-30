@@ -1,6 +1,6 @@
-import * as beerService from '../../core/beer/authorized.service.js'
-import type { Pagination } from '../../core/pagination.js'
-import type { SearchByName } from '../../core/search.js'
+import * as beerService from '../../logic/beer/authorized.service.js'
+import type { Pagination } from '../../logic/pagination.js'
+import type { SearchByName } from '../../logic/search.js'
 
 import * as beerRepository from '../../data/beer/beer.repository.js'
 import * as breweryRepository from '../../data/brewery/brewery.repository.js'
@@ -21,9 +21,9 @@ import type {
   CreateIf,
   NewBeer,
   UpdateIf,
-} from '../../core/beer/beer.js'
-import { validatePagination } from '../../core/pagination.js'
-import { validateSearchByName } from '../../core/search.js'
+} from '../../logic/beer/beer.js'
+import { validatePagination } from '../../logic/pagination.js'
+import { validateSearchByName } from '../../logic/search.js'
 import type { Context } from '../context.js'
 
 export interface CreatedOrUpdatedBeer {

@@ -1,7 +1,7 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 import { assertDeepEqual } from '../assert.js'
 
-import { dummyLog as log } from '../core/dummy-log.js'
+import { dummyLog as log } from '../logic/dummy-log.js'
 import { testConfig } from './test-config.js'
 import { afterTest, afterTests, beforeTests } from '../data/test-helpers.js'
 import { App } from '../../src/web/app.js'

@@ -114,7 +114,7 @@ export default [
   {
     languageOptions,
     plugins,
-    files: ['src/core/*.ts', 'src/core/**/*.ts'],
+    files: ['src/logic/*.ts', 'src/logic/**/*.ts'],
     rules: {
       ...rules,
       'no-restricted-imports': [
@@ -149,13 +149,13 @@ export default [
               regex: 'console/',
             },
             {
-              regex: 'core/',
+              regex: 'logic/',
             },
             {
               regex: 'web/',
             },
             {
-              regex: 'core/internal/',
+              regex: 'logic/internal/',
             },
           ],
         },
@@ -200,7 +200,7 @@ export default [
         {
           patterns: [
             {
-              regex: 'core/internal/',
+              regex: 'logic/internal/',
             },
           ],
         },

@@ -1,21 +1,21 @@
-import * as storageService from '../../core/storage/authorized.service.js'
+import * as storageService from '../../logic/storage/authorized.service.js'
 
 import * as beerRepository from '../../data/beer/beer.repository.js'
 import * as containerRepository from '../../data/container/container.repository.js'
 import * as storageRepository from '../../data/storage/storage.repository.js'
 
-import type { Pagination } from '../../core/pagination.js'
+import type { Pagination } from '../../logic/pagination.js'
 import type {
-  AnnualStorageStats as CoreAnnualStorageStats,
+  AnnualStorageStats as LogicAnnualStorageStats,
   CreateIf,
   CreateStorageRequest,
   JoinedStorage,
-  MonthlyStorageStats as CoreMonthlyStorageStats,
+  MonthlyStorageStats as LogicMonthlyStorageStats,
   Storage,
   StorageWithDate,
   UpdateIf,
-} from '../../core/storage/storage.js'
-import { validatePagination } from '../../core/pagination.js'
+} from '../../logic/storage/storage.js'
+import { validatePagination } from '../../logic/pagination.js'
 import type { Transaction } from '../../data/database.js'
 import type { Router } from '../router.js'
 
@@ -140,7 +140,7 @@ export function storageController(router: Router): void {
     async (ctx: Context): Promise<AnnualStatsResult> => {
       const authTokenPayload = parseAuthToken(ctx)
       const annual = await storageService.getAnnualStorageStats(
-        async (): Promise<CoreAnnualStorageStats> =>
+        async (): Promise<LogicAnnualStorageStats> =>
           await storageRepository.getAnnualStorageStats(ctx.db),
         authTokenPayload,
         ctx.log,
@@ -157,7 +157,7 @@ export function storageController(router: Router): void {
     async (ctx: Context): Promise<MonthlyStatsResult> => {
       const authTokenPayload = parseAuthToken(ctx)
       const monthly = await storageService.getMonthlyStorageStats(
-        async (): Promise<CoreMonthlyStorageStats> =>
+        async (): Promise<LogicMonthlyStorageStats> =>
           await storageRepository.getMonthlyStorageStats(ctx.db),
         authTokenPayload,
         ctx.log,

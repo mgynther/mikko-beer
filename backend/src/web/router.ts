@@ -7,7 +7,7 @@ import type { Context } from './context.js'
 import type { Database } from '../data/database.js'
 import type { Config } from './config.js'
 import type { log } from '../console/log.js'
-import { invalidQueryError } from '../core/errors.js'
+import { invalidQueryError } from '../logic/errors.js'
 
 export interface Response {
   status: 200 | 201 | 204

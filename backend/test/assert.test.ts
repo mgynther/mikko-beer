@@ -14,7 +14,7 @@ import {
   assertThrows,
   assertTruthy,
 } from './assert.js'
-import { ControllerError } from '../src/core/errors.js'
+import { ControllerError } from '../src/logic/errors.js'
 
 describe('assertion tests', () => {
   it('is deep equal', () => {

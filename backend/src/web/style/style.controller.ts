@@ -1,4 +1,4 @@
-import * as styleService from '../../core/style/authorized.service.js'
+import * as styleService from '../../logic/style/authorized.service.js'
 
 import * as styleRepository from '../../data/style/style.repository.js'
 
@@ -10,7 +10,7 @@ import type {
   StyleWithParentIds,
   StyleWithParentsAndChildren,
   UpdateStyleIf,
-} from '../../core/style/style.js'
+} from '../../logic/style/style.js'
 import type { Transaction } from '../../data/database.js'
 import type { Router } from '../router.js'
 

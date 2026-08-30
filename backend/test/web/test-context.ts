@@ -11,7 +11,7 @@ import {
 } from '../data/test-helpers.js'
 import { App } from '../../src/web/app.js'
 import { Database } from '../../src/data/database.js'
-import { User } from '../../src/core/user/user.js'
+import { User } from '../../src/logic/user/user.js'
 
 import { Level, type log } from '../../src/console/log.js'
 

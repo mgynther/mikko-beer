@@ -20,15 +20,15 @@ import { storageController } from './storage/storage.controller.js'
 import { statsController } from './stats/stats.controller.js'
 import { styleController } from './style/style.controller.js'
 import { userController } from './user/user.controller.js'
-import type { CreateAnonymousUserRequest, User } from '../core/user/user.js'
+import type { CreateAnonymousUserRequest, User } from '../logic/user/user.js'
 import { createAddPasswordUserIf } from './user/sign-in-method/sign-in-method-helper.js'
-import { ControllerError } from '../core/errors.js'
+import { ControllerError } from '../logic/errors.js'
 import type { log } from '../console/log.js'
-import type { AuthTokenConfig } from '../core/auth/auth-token.js'
+import type { AuthTokenConfig } from '../logic/auth/auth-token.js'
 import {
   createInitialUser,
   addPasswordForInitialUser,
-} from '../core/app-initial-user.js'
+} from '../logic/app-initial-user.js'
 import { createStopHandler } from './app-stop-handler.js'
 
 export interface StartResult {

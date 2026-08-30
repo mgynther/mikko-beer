@@ -16,7 +16,7 @@ import {
 } from '../data/test-helpers.js'
 import { App } from '../../src/web/app.js'
 import type { Database } from '../../src/data/database.js'
-import type { User } from '../../src/core/user/user.js'
+import type { User } from '../../src/logic/user/user.js'
 
 import type { Level } from '../../src/console/log.js'
 import type { log } from '../../src/console/log.js'

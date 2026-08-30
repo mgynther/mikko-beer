@@ -1,34 +1,34 @@
-import * as statsService from '../../core/stats/authorized.service.js'
+import * as statsService from '../../logic/stats/authorized.service.js'
 
 import * as statsRepository from '../../data/stats/stats.repository.js'
 
-import type { Pagination } from '../../core/pagination.js'
+import type { Pagination } from '../../logic/pagination.js'
 import type { Router } from '../router.js'
 
-import { validatePagination } from '../../core/pagination.js'
+import { validatePagination } from '../../logic/pagination.js'
 
 import type {
-  AnnualContainerStats as CoreAnnualContainerStats,
-  AnnualStats as CoreAnnualStats,
-  BreweryStats as CoreBreweryStats,
+  AnnualContainerStats as LogicAnnualContainerStats,
+  AnnualStats as LogicAnnualStats,
+  BreweryStats as LogicBreweryStats,
   BreweryStatsOrder,
-  ContainerStats as CoreContainerStats,
-  LocationStats as CoreLocationStats,
+  ContainerStats as LogicContainerStats,
+  LocationStats as LogicLocationStats,
   LocationStatsOrder,
-  OverallStats as CoreOverallStats,
-  RatingStats as CoreRatingStats,
-  StyleStats as CoreStyleStats,
+  OverallStats as LogicOverallStats,
+  RatingStats as LogicRatingStats,
+  StyleStats as LogicStyleStats,
   StyleStatsOrder,
   StatsIdFilter,
   StatsFilter,
-} from '../../core/stats/stats.js'
+} from '../../logic/stats/stats.js'
 import {
   validateBreweryStatsOrder,
   validateLocationStatsOrder,
   validateStyleStatsOrder,
   validateStatsIdFilter,
   validateStatsFilter,
-} from '../../core/stats/stats.js'
+} from '../../logic/stats/stats.js'
 import { parseAuthToken } from '../authentication/authentication-helper.js'
 import type { Context } from '../context.js'
 
@@ -179,7 +179,7 @@ export function statsController(router: Router): void {
       const authTokenPayload = parseAuthToken(ctx)
       const statsFilter = validateStatsIdFilter(ctx.request.query)
       const overall = await statsService.getOverall(
-        async (statsFilter: StatsIdFilter): Promise<CoreOverallStats> =>
+        async (statsFilter: StatsIdFilter): Promise<LogicOverallStats> =>
           await statsRepository.getOverall(ctx.db, statsFilter),
         authTokenPayload,
         statsFilter,
@@ -197,7 +197,7 @@ export function statsController(router: Router): void {
       const authTokenPayload = parseAuthToken(ctx)
       const statsFilter = validateStatsIdFilter(ctx.request.query)
       const annual = await statsService.getAnnual(
-        async (statsFilter: StatsIdFilter): Promise<CoreAnnualStats> =>
+        async (statsFilter: StatsIdFilter): Promise<LogicAnnualStats> =>
           await statsRepository.getAnnual(ctx.db, statsFilter),
         authTokenPayload,
         statsFilter,
@@ -220,7 +220,7 @@ export function statsController(router: Router): void {
         async (
           pagination: Pagination,
           statsFilter: StatsIdFilter,
-        ): Promise<CoreAnnualContainerStats> =>
+        ): Promise<LogicAnnualContainerStats> =>
           await statsRepository.getAnnualContainer(
             ctx.db,
             pagination,
@@ -251,7 +251,7 @@ export function statsController(router: Router): void {
           pagination: Pagination,
           statsFilter: StatsFilter,
           breweryStatsOrder: BreweryStatsOrder,
-        ): Promise<CoreBreweryStats> =>
+        ): Promise<LogicBreweryStats> =>
           await statsRepository.getBrewery(
             ctx.db,
             pagination,
@@ -277,7 +277,7 @@ export function statsController(router: Router): void {
       const authTokenPayload = parseAuthToken(ctx)
       const statsFilter = validateStatsIdFilter(ctx.request.query)
       const container = await statsService.getContainer(
-        async (statsFilter: StatsIdFilter): Promise<CoreContainerStats> =>
+        async (statsFilter: StatsIdFilter): Promise<LogicContainerStats> =>
           await statsRepository.getContainer(ctx.db, statsFilter),
         authTokenPayload,
         statsFilter,
@@ -307,7 +307,7 @@ export function statsController(router: Router): void {
           pagination: Pagination,
           statsFilter: StatsFilter,
           locationStatsOrder: LocationStatsOrder,
-        ): Promise<CoreLocationStats> =>
+        ): Promise<LogicLocationStats> =>
           await statsRepository.getLocation(
             ctx.db,
             pagination,
@@ -333,7 +333,7 @@ export function statsController(router: Router): void {
       const authTokenPayload = parseAuthToken(ctx)
       const statsFilter = validateStatsIdFilter(ctx.request.query)
       const rating = await statsService.getRating(
-        async (statsFilter: StatsIdFilter): Promise<CoreRatingStats> =>
+        async (statsFilter: StatsIdFilter): Promise<LogicRatingStats> =>
           await statsRepository.getRating(ctx.db, statsFilter),
         authTokenPayload,
         statsFilter,
@@ -357,7 +357,7 @@ export function statsController(router: Router): void {
         async (
           statsFilter: StatsFilter,
           styleStatsOrder: StyleStatsOrder,
-        ): Promise<CoreStyleStats> =>
+        ): Promise<LogicStyleStats> =>
           await statsRepository.getStyle(ctx.db, statsFilter, styleStatsOrder),
         authTokenPayload,
         statsFilter,

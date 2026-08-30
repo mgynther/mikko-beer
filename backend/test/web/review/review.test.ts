@@ -4,7 +4,7 @@ import { TestContext } from '../test-context.js'
 import type {
   CreateReviewRequest,
   ReviewRequest,
-} from '../../../src/core/review/review.js'
+} from '../../../src/logic/review/review.js'
 import type {
   CreatedOrUpdatedReview,
   ListedReview,

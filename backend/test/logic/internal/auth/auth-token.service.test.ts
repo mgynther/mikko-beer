@@ -1,0 +1,165 @@
+import { describe, it } from 'node:test'
+
+import * as authTokenService from '../../../../src/logic/internal/auth/auth-token.service.js'
+import type {
+  AuthToken,
+  AuthTokenConfig,
+} from '../../../../src/logic/auth/auth-token.js'
+import {
+  AuthTokenExpiredError,
+  InvalidAuthTokenError,
+} from '../../../../src/logic/auth/auth-token.js'
+import type { DbRefreshToken } from '../../../../src/logic/auth/refresh-token.js'
+import type { User } from '../../../../src/logic/user/user.js'
+import type { Tokens } from '../../../../src/logic/auth/tokens'
+import { invalidCredentialsTokenError } from '../../../../src/logic/errors.js'
+import { expectReject } from '../../controller-error-helper.js'
+import { assertDeepEqual, assertEqual, assertThrows } from '../../../assert.js'
+
+const authTokenSecret = 'ThisIsSecret'
+const authTokenConfig: AuthTokenConfig = {
+  expiryDurationMin: 5,
+  secret: authTokenSecret,
+}
+
+const refreshTokenId = '914f4037-6cee-46ee-8799-1673dad63f55'
+
+const knownTokens: Tokens = {
+  auth: {
+    authToken:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI0YjcxZWZlMi00MmVmLTQ3MjQtOGU2Ny0xYmIzZTdiYzIxZDMiLCJyb2xlIjoiYWRtaW4iLCJyZWZyZXNoVG9rZW5JZCI6IjkxNGY0MDM3LTZjZWUtNDZlZS04Nzk5LTE2NzNkYWQ2M2Y1NSIsImlhdCI6MTcxOTA3NjI2MiwiZXhwIjoxNzE5MDc2NTYyfQ.FX28XilV4myW0993MdBEnxeIYoDDljG6ZeOUJA5XMtY',
+  },
+  refresh: {
+    refreshToken:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI0YjcxZWZlMi00MmVmLTQ3MjQtOGU2Ny0xYmIzZTdiYzIxZDMiLCJyZWZyZXNoVG9rZW5JZCI6IjkxNGY0MDM3LTZjZWUtNDZlZS04Nzk5LTE2NzNkYWQ2M2Y1NSIsImlzUmVmcmVzaFRva2VuIjp0cnVlLCJpYXQiOjE3MTkwNzYyNjJ9.d7A_QlMk14IvkDeApAvNwG61eNjaq6iCP-0Bmy0Yeo8',
+  },
+}
+
+const user: User = {
+  id: '4b71efe2-42ef-4724-8e67-1bb3e7bc21d3',
+  role: 'admin',
+  username: 'admin',
+}
+
+function expectKnownTokens(tokens: Tokens) {
+  function getStart(token: string) {
+    return token.split('.')[0]
+  }
+  assertEqual(
+    getStart(tokens.auth.authToken),
+    getStart(knownTokens.auth.authToken),
+  )
+  assertEqual(
+    getStart(tokens.refresh.refreshToken),
+    getStart(knownTokens.refresh.refreshToken),
+  )
+}
+
+async function insertAuthToken(userId: string): Promise<DbRefreshToken> {
+  assertEqual(userId, user.id)
+  return {
+    id: refreshTokenId,
+    userId,
+  }
+}
+
+describe('auth token service unit tests', () => {
+  function token(content: string): AuthToken {
+    return {
+      authToken: content,
+    }
+  }
+
+  it('fail to verify invalid auth token', () => {
+    assertThrows(
+      () => {
+        authTokenService.verifyAuthToken(token('invalid'), authTokenSecret)
+      },
+      new InvalidAuthTokenError(),
+      InvalidAuthTokenError,
+    )
+  })
+
+  // Tokens are time sensitive so they are difficult to test in isolated steps.
+  it('create, verify and delete tokens', async () => {
+    const tokens = await authTokenService.createTokens(
+      insertAuthToken,
+      user,
+      authTokenConfig,
+    )
+    expectKnownTokens(tokens)
+
+    const authTokenPayload = authTokenService.verifyAuthToken(
+      tokens.auth,
+      authTokenSecret,
+    )
+    assertDeepEqual(authTokenPayload, {
+      userId: user.id,
+      role: 'admin',
+      refreshTokenId,
+    })
+
+    let wasDeleted = false
+    async function deleteToken(deletedRefreshTokenId: string) {
+      assertEqual(deletedRefreshTokenId, refreshTokenId)
+      assertEqual(wasDeleted, false)
+      wasDeleted = true
+    }
+
+    await authTokenService.deleteRefreshToken(
+      deleteToken,
+      user.id,
+      tokens.refresh,
+      authTokenSecret,
+    )
+    assertEqual(wasDeleted, true)
+  })
+
+  it('fail to verify auth token with wrong secret', async () => {
+    const tokens = await authTokenService.createTokens(
+      insertAuthToken,
+      user,
+      authTokenConfig,
+    )
+    expectKnownTokens(tokens)
+
+    assertThrows(
+      () => {
+        authTokenService.verifyAuthToken(tokens.auth, 'ThisIsWrongSecret')
+      },
+      new InvalidAuthTokenError(),
+      InvalidAuthTokenError,
+    )
+  })
+
+  it('fail to verify expired auth token', async () => {
+    assertThrows(
+      () => {
+        authTokenService.verifyAuthToken(knownTokens.auth, authTokenSecret)
+      },
+      new AuthTokenExpiredError(),
+      AuthTokenExpiredError,
+    )
+  })
+
+  it('fail to delete refresh token on user mismatch', async () => {
+    const tokens = await authTokenService.createTokens(
+      insertAuthToken,
+      user,
+      authTokenConfig,
+    )
+    expectKnownTokens(tokens)
+
+    const wrongUserId = 'f388b0cb-63f5-4f6e-a9e6-3b6ac92844a7'
+    expectReject(async () => {
+      await authTokenService.deleteRefreshToken(
+        () => {
+          throw new Error('must not be called')
+        },
+        wrongUserId,
+        tokens.refresh,
+        authTokenSecret,
+      )
+    }, invalidCredentialsTokenError)
+  })
+})

@@ -1,4 +1,4 @@
-import * as containerService from '../../core/container/authorized.service.js'
+import * as containerService from '../../logic/container/authorized.service.js'
 
 import * as containerRepository from '../../data/container/container.repository.js'
 
@@ -8,7 +8,7 @@ import type { Router } from '../router.js'
 import type {
   Container,
   CreateContainerRequest,
-} from '../../core/container/container.js'
+} from '../../logic/container/container.js'
 import type { Context } from '../context.js'
 
 export interface CreatedOrUpdatedContainer {

@@ -1,4 +1,4 @@
-import * as userService from '../../core/user/authorized-user.service.js'
+import * as userService from '../../logic/user/authorized-user.service.js'
 
 import { createAddPasswordUserIf } from './sign-in-method/sign-in-method-helper.js'
 
@@ -15,11 +15,11 @@ import type { Router } from '../router.js'
 import type {
   CreateAnonymousUserRequest,
   CreateUserIf,
-} from '../../core/user/user.js'
-import type { DbRefreshToken } from '../../core/auth/refresh-token.js'
-import type { SignedInUser } from '../../core/user/signed-in-user.js'
-import type { User } from '../../core/user/user.js'
-import type { AuthTokenConfig } from '../../core/auth/auth-token.js'
+} from '../../logic/user/user.js'
+import type { DbRefreshToken } from '../../logic/auth/refresh-token.js'
+import type { SignedInUser } from '../../logic/user/signed-in-user.js'
+import type { User } from '../../logic/user/user.js'
+import type { AuthTokenConfig } from '../../logic/auth/auth-token.js'
 import type { Context } from '../context.js'
 
 export interface CreatedUser {

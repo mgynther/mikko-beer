@@ -1,22 +1,22 @@
-import * as authorizedAuthTokenService from '../../../core/auth/authorized-auth-token.service.js'
-import * as signInMethodService from '../../../core/user/authorized-sign-in-method.service.js'
+import * as authorizedAuthTokenService from '../../../logic/auth/authorized-auth-token.service.js'
+import * as signInMethodService from '../../../logic/user/authorized-sign-in-method.service.js'
 
 import * as refreshTokenRepository from '../../../data/authentication/refresh-token.repository.js'
 import * as signInMethodRepository from '../../../data/user/sign-in-method/sign-in-method.repository.js'
 import * as userRepository from '../../../data/user/user.repository.js'
 import * as authHelper from '../../authentication/authentication-helper.js'
 
-import type { DbRefreshToken } from '../../../core/auth/refresh-token.js'
+import type { DbRefreshToken } from '../../../logic/auth/refresh-token.js'
 import type {
   ChangePasswordUserIf,
   SignInUsingPasswordIf,
   UserPasswordHash,
-} from '../../../core/user/sign-in-method.js'
-import type { SignedInUser } from '../../../core/user/signed-in-user.js'
-import type { Tokens } from '../../../core/auth/tokens.js'
-import type { User } from '../../../core/user/user.js'
-import type { AuthTokenConfig } from '../../../core/auth/auth-token.js'
-import type { RefreshTokensIf } from '../../../core/user/authorized-sign-in-method.service.js'
+} from '../../../logic/user/sign-in-method.js'
+import type { SignedInUser } from '../../../logic/user/signed-in-user.js'
+import type { Tokens } from '../../../logic/auth/tokens.js'
+import type { User } from '../../../logic/user/user.js'
+import type { AuthTokenConfig } from '../../../logic/auth/auth-token.js'
+import type { RefreshTokensIf } from '../../../logic/user/authorized-sign-in-method.service.js'
 import type { Context } from '../../context.js'
 import type { Transaction } from '../../../data/database.js'
 
