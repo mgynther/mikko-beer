@@ -4,6 +4,7 @@ import { promises as fs } from 'fs'
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
+import { invalidateSchema } from '../test-helpers.js'
 import * as locationRepository from '../../../src/data/location/location.repository.js'
 import * as reviewRepository from '../../../src/data/review/review.repository.js'
 import { insertData } from '../review-helpers.js'
@@ -19,6 +20,9 @@ describe('review tests', () => {
   beforeEach(ctx.beforeEach)
 
   after(ctx.after)
+  // This test leaves the schema migrated away from the latest version, so
+  // the next test file has to build a new database.
+  after(invalidateSchema)
   afterEach(ctx.afterEach)
 
   it('insert a review', async () => {

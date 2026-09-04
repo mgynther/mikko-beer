@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from './test-context.js'
+import { invalidateSchema } from './test-helpers.js'
 import {
   FileMigrationProvider,
   Migrator,
@@ -20,6 +21,9 @@ describe('migrate down', () => {
   beforeEach(ctx.beforeEach)
 
   after(ctx.after)
+  // This test leaves the schema migrated away from the latest version, so
+  // the next test file has to build a new database.
+  after(invalidateSchema)
   afterEach(ctx.afterEach)
 
   // This is to ensure down functions in migrations do not throw.

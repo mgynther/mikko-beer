@@ -5,12 +5,23 @@ import { Kysely, PostgresDialect, sql } from 'kysely'
 import type { ConnectionConfig } from 'pg'
 import { Pool } from 'pg'
 import { Database } from '../../src/data/database.js'
+import type { KyselyDatabase } from '../../src/data/database.js'
 
 import { FileMigrationProvider, Migrator } from 'kysely/migration'
 import * as path from 'path'
 import { promises as fs } from 'fs'
 
 const directory = dirname(fileURLToPath(import.meta.url))
+
+// Tests run in a single process with --test-isolation=none, so the schema
+// created for the first test file is still valid for the rest of them. Only
+// tests that migrate the schema themselves need a rebuild, which they request
+// with invalidateSchema.
+let isSchemaReady = false
+
+export function invalidateSchema() {
+  isSchemaReady = false
+}
 
 export async function beforeTests(
   config: ConnectionConfig,
@@ -20,6 +31,12 @@ export async function beforeTests(
   // suitable.
   dataInitializer?: (db: Database) => Promise<void>,
 ) {
+  // Data initialization has to run against a database that no previous test
+  // file has left rows in, so it always gets a fresh database.
+  if (isSchemaReady && dataInitializer === undefined) {
+    return
+  }
+
   const adminDb = new Kysely<any>({
     dialect: new PostgresDialect({
       pool: new Pool(adminConfig),
@@ -47,6 +64,7 @@ export async function beforeTests(
     await dataInitializer(db)
   }
   await db.destroy()
+  isSchemaReady = true
 }
 
 export async function afterTests() {}
@@ -57,17 +75,28 @@ export async function beforeTest(db: Database) {
 
 export async function afterTest() {}
 
+// Ordered so that referencing rows are deleted before referenced ones. Rows
+// that reference a user are removed by the cascade of deleting the user.
+const clearedTables: (keyof KyselyDatabase)[] = [
+  'review',
+  'storage',
+  'beer_brewery',
+  'beer_style',
+  'beer',
+  'brewery',
+  'location',
+  'container',
+  'style_relationship',
+  'style',
+  'user',
+]
+
+// One round trip instead of one per table. Truncate would be an alternative
+// but is an order of magnitude slower for the small row counts of tests.
+const clearDbQuery = clearedTables
+  .map((table: keyof KyselyDatabase) => `delete from "${table}"`)
+  .join('; ')
+
 async function clearDb(db: Database) {
-  const realDb = db.getDb()
-  await realDb.deleteFrom('review').execute()
-  await realDb.deleteFrom('storage').execute()
-  await realDb.deleteFrom('beer_brewery').execute()
-  await realDb.deleteFrom('beer_style').execute()
-  await realDb.deleteFrom('beer').execute()
-  await realDb.deleteFrom('brewery').execute()
-  await realDb.deleteFrom('location').execute()
-  await realDb.deleteFrom('container').execute()
-  await realDb.deleteFrom('style_relationship').execute()
-  await realDb.deleteFrom('style').execute()
-  await realDb.deleteFrom('user').execute()
+  await sql.raw(clearDbQuery).execute(db.getDb())
 }
