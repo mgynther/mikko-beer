@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import ReviewList from './ReviewList'
 import type { UseDebounce, YearMonth } from '../../types/types'
@@ -256,7 +256,7 @@ const reviewFilters: ReviewFilters = {
 }
 
 test('updates review', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChanged = vitest.fn()
   const update = vitest.fn()
   const { getByPlaceholderText, getByRole, getByText } = render(
@@ -325,7 +325,7 @@ test('updates review', async () => {
 })
 
 test('sets review sorting', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setSorting = vitest.fn()
   const { getByRole } = render(
     <LinkWrapper>
@@ -356,7 +356,7 @@ test('sets review sorting', async () => {
 })
 
 test('renders reviews', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const { getByText, getByRole } = render(
     <LinkWrapper>
       <ReviewList

@@ -4,7 +4,7 @@ import { createServer } from '../../../test-util/server'
 import type { TestServer } from '../../../test-util/server'
 import deleteStorage from './delete'
 import { render, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { Provider } from '../../react-redux-wrapper'
 
 import Button from '../../components/common/Button'
@@ -42,7 +42,7 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('delete storage', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
 
   const storageId = 'b52fc245-2b0c-468f-be25-8d7401564229'
 

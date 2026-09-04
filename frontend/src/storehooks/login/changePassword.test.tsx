@@ -5,7 +5,7 @@ import type { TestServer } from '../../../test-util/server'
 import changePassword from './changePassword'
 import { render, waitFor } from '@testing-library/react'
 import { Provider, useDispatch, useSelector } from '../../react-redux-wrapper'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 
 import Button from '../../components/common/Button'
 import { PasswordChangeResult } from '../../types/login/types'
@@ -75,7 +75,7 @@ const passwordChangeTests: PasswordChangeTest[] = [
 
 passwordChangeTests.forEach((testCase) => {
   test(`change password: ${testCase.name}`, async () => {
-    const user = userEvent.setup()
+    const user = setupUser()
 
     const userId = '00448764-b114-4c54-a409-05b23d14de14'
 
@@ -118,7 +118,11 @@ function LoginDispatcher({ userId }: Props): React.JSX.Element {
 }
 
 test('change password after token refresh', async () => {
-  const user = userEvent.setup()
+  // The response to the retried request is added only after the click so the
+  // click has to wait for the failing request to be served first. Without the
+  // wait the retry response replaces the failing one before it is used and
+  // the token is never refreshed.
+  const user = setupUser({ delay: 0 })
 
   const userId = '53e994bf-c4e7-4ec3-bbeb-a4b64591da00'
 
@@ -169,7 +173,7 @@ function LoginStatusHelper(): React.JSX.Element {
 }
 
 test('log out on failed token refresh', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
 
   const userId = '7d869f30-4220-4910-9c2d-d4449aff8a79'
 

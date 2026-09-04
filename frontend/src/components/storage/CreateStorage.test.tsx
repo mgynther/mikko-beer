@@ -1,5 +1,6 @@
 import { render, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import CreateStorage from './CreateStorage'
 import type { UseDebounce } from '../../types/types'
@@ -115,7 +116,7 @@ const dontCreateStorageIf: CreateStorageIf = {
 }
 
 test('creates storage', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const create = vitest.fn()
   const {
     findByRole,
@@ -175,7 +176,7 @@ test('creates storage', async () => {
 })
 
 test('clears beer', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const { findByRole, getAllByRole, getByPlaceholderText, getByRole } = render(
     <CreateStorage
       selectBeerIf={{
@@ -205,7 +206,7 @@ test('clears beer', async () => {
 })
 
 test('clears container', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const { getByRole } = render(
     <CreateStorage
       selectBeerIf={{

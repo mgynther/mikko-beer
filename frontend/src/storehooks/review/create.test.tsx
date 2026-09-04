@@ -5,7 +5,7 @@ import type { TestServer } from '../../../test-util/server'
 import createReview from './create'
 import type { Review } from '../../types/review/types'
 import { render, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { Provider } from '../../react-redux-wrapper'
 
 import Button from '../../components/common/Button'
@@ -72,7 +72,7 @@ const createTestCases: CreateTest[] = [
 
 createTestCases.forEach((testCase) => {
   test(`create review ${testCase.name}`, async () => {
-    const user = userEvent.setup()
+    const user = setupUser()
 
     const expectedResponse: { review: Review } = {
       review: {

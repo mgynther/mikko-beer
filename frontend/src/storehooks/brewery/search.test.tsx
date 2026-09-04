@@ -7,7 +7,7 @@ import searchBreweries from './search'
 import type { Brewery, BreweryList } from '../../types/brewery/types'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 
 import Button from '../../components/common/Button'
 
@@ -49,7 +49,7 @@ function Helper(): React.JSX.Element {
 }
 
 test('search breweries', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
 
   const expectedResponse: BreweryList = {
     breweries: [

@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 
 import SearchBox from './SearchBox'
@@ -49,7 +49,7 @@ test('renders title', () => {
 })
 
 test('activates', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   let useSearchCount = 0
   const search = {
     activate: vitest.fn(),
@@ -187,7 +187,7 @@ test('renders no results info', async () => {
 })
 
 test('item is selected', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const itemName = 'Must be visible'
   const selector = vitest.fn()
   const { getByRole } = render(
@@ -224,7 +224,7 @@ test('renders filter', async () => {
 })
 
 test('clears filter', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setter = vitest.fn()
   const { getByRole } = render(
     <SearchBox
@@ -240,7 +240,7 @@ test('clears filter', async () => {
 })
 
 test('inputs text', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setter = vitest.fn()
   const { getByRole } = render(
     <SearchBox {...defaultProps} setFilter={setter} />,

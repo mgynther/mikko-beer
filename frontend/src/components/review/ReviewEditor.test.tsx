@@ -1,5 +1,6 @@
 import { render, fireEvent } from '@testing-library/react'
 import userEvent, { type UserEvent } from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import ReviewEditor from './ReviewEditor'
 import type { UseDebounce } from '../../types/types'
@@ -239,7 +240,7 @@ async function selectContainer(
 }
 
 test('adds review', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChange = vitest.fn()
   const { findByRole, getAllByRole, getByPlaceholderText, getByRole } = render(
     <ReviewEditor
@@ -282,7 +283,7 @@ test('adds review', async () => {
 })
 
 test('adds review with custom time', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChange = vitest.fn()
   const {
     findByRole,
@@ -341,7 +342,7 @@ test('adds review with custom time', async () => {
 })
 
 test('change beer', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChange = vitest.fn()
   const { findByRole, getAllByRole, getByPlaceholderText, getByRole } = render(
     <ReviewEditor
@@ -368,7 +369,7 @@ test('change beer', async () => {
 })
 
 test('change container', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChange = vitest.fn()
   const { getByRole } = render(
     <ReviewEditor
@@ -389,7 +390,7 @@ test('change container', async () => {
 })
 
 test('updates review', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChange = vitest.fn()
   const { getAllByRole, getByPlaceholderText, getByRole } = render(
     <ReviewEditor
@@ -424,7 +425,7 @@ test('updates review', async () => {
 })
 
 test('clears location', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChange = vitest.fn()
   const location: Location = {
     id: '3134b9d0-8c2a-4021-b867-5bb992b3f184',

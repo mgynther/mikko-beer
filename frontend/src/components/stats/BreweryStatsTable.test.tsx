@@ -1,5 +1,5 @@
 import { fireEvent, render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import BreweryStatsTable from './BreweryStatsTable'
@@ -101,7 +101,7 @@ test('renders brewery stats', () => {
 })
 
 test('opens filters', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setIsFiltersOpen = vitest.fn()
   const { getByRole } = render(
     <LinkWrapper>

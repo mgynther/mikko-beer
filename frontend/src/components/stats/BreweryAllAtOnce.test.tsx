@@ -1,5 +1,5 @@
 import { fireEvent, render, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import BreweryAllAtOnce from './BreweryAllAtOnce'
@@ -300,7 +300,7 @@ test('sets minimum review count filter', () => {
 })
 
 test('opens filter', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setIsFiltersOpen = vitest.fn()
   const { getByRole } = render(
     <LinkWrapper>

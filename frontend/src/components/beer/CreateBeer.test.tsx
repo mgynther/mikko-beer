@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import CreateBeer from './CreateBeer'
 import type { CreateBeerIf, CreateBeerRequest } from '../../types/beer/types'
@@ -29,7 +29,7 @@ const dontCreate = {
 }
 
 test('creates beer', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const selectBeer = vitest.fn()
   const searchFieldIf: SearchFieldIf = {
     useSearchField: () => ({

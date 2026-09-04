@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import Beer from './Beer'
 import { Role } from '../../types/user/types'
@@ -332,7 +332,7 @@ test('throw on missing id', async () => {
 })
 
 test('updates beer', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const update = vitest.fn()
   const { getByRole, getByPlaceholderText } = render(
     <LinkWrapper>
@@ -374,7 +374,7 @@ test('updates beer', async () => {
 })
 
 test('cancel update', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const { getByRole } = render(
     <LinkWrapper>
       <Beer
@@ -480,7 +480,7 @@ test('load reviews', async () => {
 })
 
 test('sort reviews', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setSearch = vitest.fn()
   const { getByRole } = render(
     <LinkWrapper>

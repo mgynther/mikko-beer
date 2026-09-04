@@ -6,7 +6,7 @@ import login from './login'
 import type { Login } from '../../types/login/types'
 import { render, waitFor } from '@testing-library/react'
 import { Provider, useSelector } from '../../react-redux-wrapper'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 
 import Button from '../../components/common/Button'
 import { selectLogin } from '../../store/login/reducer'
@@ -47,7 +47,7 @@ function Helper({ username }: Props): React.JSX.Element {
 }
 
 test('login', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
 
   const username = 'user1'
   const expectedResponse: Login = {

@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import StyleParents from './StyleParents'
 import type { UseDebounce } from '../../types/types'
@@ -48,7 +48,7 @@ test('renders parents', async () => {
 })
 
 test('removes parent', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const select = vitest.fn()
   const { getAllByRole } = render(
     <StyleParents
@@ -64,7 +64,7 @@ test('removes parent', async () => {
 })
 
 test('adds parent', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const select = vitest.fn()
   const searchFieldIf: SearchFieldIf = {
     useSearchField: () => ({

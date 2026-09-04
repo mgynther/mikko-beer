@@ -1,6 +1,6 @@
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { testTimes } from '../../../test-util/filter-time'
 import LocationInfiniteScroll from './LocationInfiniteScroll'
 import LinkWrapper from '../LinkWrapper'
@@ -335,7 +335,7 @@ test('sets minimum review count filter', () => {
 })
 
 test('opens filters', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setIsFiltersOpen = vitest.fn()
   const { getByRole } = render(
     <LinkWrapper>

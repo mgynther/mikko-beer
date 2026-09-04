@@ -1,5 +1,6 @@
 import { render, fireEvent } from '@testing-library/react'
 import userEvent, { type UserEvent } from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import AddReview, { type Props as AddReviewProps } from './AddReview'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
@@ -209,7 +210,7 @@ async function addReview(
 }
 
 test('adds review', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const create = vitest.fn()
   const props: AddReviewProps = {
     createReviewIf: {
@@ -341,7 +342,7 @@ test('shows storage loading error', async () => {
 })
 
 test('adds review from storage', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const create = vitest.fn()
   const props: AddReviewProps = {
     createReviewIf: {

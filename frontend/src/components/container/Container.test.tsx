@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import Container from './Container'
 import type {
@@ -48,7 +48,7 @@ test('renders container as viewer', async () => {
 })
 
 test('renders editable container as admin', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const { getByRole, getByText } = render(
     <Container
       container={container}
@@ -64,7 +64,7 @@ test('renders editable container as admin', async () => {
 })
 
 test('update container', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const update = vitest.fn()
   const { getByPlaceholderText, getByRole, getByText } = render(
     <Container

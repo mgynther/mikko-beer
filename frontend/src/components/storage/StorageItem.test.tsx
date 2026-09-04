@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import StorageItem from './StorageItem'
 import type { DeleteStorageIf, Storage } from '../../types/storage/types'
@@ -51,7 +51,7 @@ const dontDelete: DeleteStorageIf = {
 }
 
 test('renders storage', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const { getByRole, getByText } = render(
     <LinkWrapper>
       <StorageItem
@@ -92,7 +92,7 @@ test('renders storage with review', async () => {
 })
 
 test('deletes storage', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const del = vitest.fn()
   const { getByRole } = render(
     <LinkWrapper>
@@ -116,7 +116,7 @@ test('deletes storage', async () => {
 })
 
 test('does not delete storage on not confirmed', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const del = vitest.fn()
   const { getByRole } = render(
     <LinkWrapper>

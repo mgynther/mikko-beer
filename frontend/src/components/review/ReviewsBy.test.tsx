@@ -1,5 +1,5 @@
 import { act, fireEvent, render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import ReviewsBy from './ReviewsBy'
 import type { UseDebounce, YearMonth } from '../../types/types'
@@ -358,7 +358,7 @@ orderChangeTests.forEach((testCase) => {
   test(`change order from ${testCase.originalOrder} ${
     testCase.originalDirection
   } to ${testCase.newOrder} ${testCase.newDirection}`, async () => {
-    const user = userEvent.setup()
+    const user = setupUser()
     const id = '4dbab81d-b353-4f0d-97b5-390967c24c19'
     const setSearch = vitest.fn()
     const searchParams: Record<string, string> = {
@@ -439,7 +439,7 @@ test('renders loading', async () => {
 })
 
 test('opens filters', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setSearch = vitest.fn()
   const { getByRole } = render(
     <LinkWrapper>

@@ -1,5 +1,5 @@
 import { render, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import Stats from './Stats'
 import type { StorageStatsIf } from '../../types/storage/types'
@@ -95,7 +95,7 @@ test('renders monthly storage stats', () => {
 })
 
 test('switch to annual storage stats', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setSearch = vitest.fn()
   const { getByRole } = render(
     <Stats
@@ -114,7 +114,7 @@ test('switch to annual storage stats', async () => {
 })
 
 test('switch to monthly storage stats', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setSearch = vitest.fn()
   const { getByRole } = render(
     <Stats
@@ -133,7 +133,7 @@ test('switch to monthly storage stats', async () => {
 })
 
 test('ignore selecting current storage stats mode', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setSearch = vitest.fn()
   const { getByRole } = render(
     <Stats

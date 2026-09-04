@@ -1,5 +1,5 @@
 import { render, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import Stats from './Stats'
@@ -418,7 +418,7 @@ test('renders brewery stats', async () => {
 })
 
 test('sets state', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setSearch = vitest.fn()
   const statsIf: StatsIf = {
     ...emptyStatsIf,
@@ -752,7 +752,7 @@ navigationTests.forEach((testCase) => {
   test(`navigates from ${testCase.originalSearch} stats to ${
     testCase.destinationSearch
   }`, async () => {
-    const user = userEvent.setup()
+    const user = setupUser()
     const setSearch = vitest.fn()
     const { getByRole } = render(
       <LinkWrapper>
@@ -775,7 +775,7 @@ navigationTests.forEach((testCase) => {
 })
 
 test('navigates from overall to overall', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setSearch = vitest.fn()
   const { getByRole } = render(
     <LinkWrapper>

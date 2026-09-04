@@ -1,6 +1,6 @@
 import { expect, test, vitest } from 'vitest'
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 
 import SelectCreateRadio, {
   Mode,
@@ -8,7 +8,7 @@ import SelectCreateRadio, {
 } from './SelectCreateRadio'
 
 test('basic, clicks create when already selected', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChange = vitest.fn()
   const { getByRole } = render(
     <SelectCreateRadioBasic mode={Mode.CREATE} onChange={onChange} />,
@@ -21,7 +21,7 @@ test('basic, clicks create when already selected', async () => {
 })
 
 test('basic, clicks select when already selected', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChange = vitest.fn()
   const { getByRole } = render(
     <SelectCreateRadioBasic mode={Mode.SELECT} onChange={onChange} />,
@@ -34,7 +34,7 @@ test('basic, clicks select when already selected', async () => {
 })
 
 test('basic, clicks create', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChange = vitest.fn()
   const { getByRole } = render(
     <SelectCreateRadioBasic mode={Mode.SELECT} onChange={onChange} />,
@@ -47,7 +47,7 @@ test('basic, clicks create', async () => {
 })
 
 test('basic, clicks select', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChange = vitest.fn()
   const { getByRole } = render(
     <SelectCreateRadioBasic mode={Mode.CREATE} onChange={onChange} />,
@@ -60,7 +60,7 @@ test('basic, clicks select', async () => {
 })
 
 test('full, changes mode', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const createTextValue = 'This is create'
   const selectTextValue = 'This is select'
   const { getByRole, getByText, queryByText } = render(

@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../test-util/user-event'
 import { beforeEach, expect, test, vitest } from 'vitest'
 import { testTimes } from '../test-util/filter-time'
 import { dontCall } from '../test-util/dont-call'
@@ -471,7 +471,7 @@ test('renders app login', () => {
 })
 
 test('navigates to Beers', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const { getByRole } = render(
     <Provider store={store}>
       <LinkWrapper>
@@ -524,7 +524,7 @@ const navigationTests: NavigationTest[] = [
 
 navigationTests.forEach((testCase) => {
   test(`navigates to ${testCase.heading}`, async () => {
-    const user = userEvent.setup()
+    const user = setupUser()
     const { getByRole } = render(
       <Provider store={store}>
         <LinkWrapper>
@@ -569,7 +569,7 @@ const navigationMoreTests: NavigationTest[] = [
 
 navigationMoreTests.forEach((testCase) => {
   test(`navigates to ${testCase.heading}`, async () => {
-    const user = userEvent.setup()
+    const user = setupUser()
     const { getByRole } = render(
       <Provider store={store}>
         <LinkWrapper>
@@ -593,7 +593,7 @@ navigationMoreTests.forEach((testCase) => {
 })
 
 test('loads annual stats directly', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const data: Record<string, string> = { stats: 'annual' }
   const useUrlSearchParams: UseUrlSearchParams = () => ({
     get: (name: string) => data[name],
@@ -621,7 +621,7 @@ test('loads annual stats directly', async () => {
 })
 
 test('sets theme to dark', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const { getByRole } = render(
     <Provider store={store}>
       <LinkWrapper>
@@ -648,7 +648,7 @@ test('sets theme to dark', async () => {
 })
 
 test('logout', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const logout = vitest.fn()
   const { getByRole } = render(
     <Provider store={store}>

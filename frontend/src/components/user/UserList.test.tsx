@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import UserList from './UserList'
 import { type ListUsersIf, Role, type User } from '../../types/user/types'
@@ -23,7 +23,7 @@ const oneUserListIf = (user: User): ListUsersIf => ({
 })
 
 test('deletes user', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const del = vitest.fn()
   const { getByRole } = render(
     <UserList
@@ -42,7 +42,7 @@ test('deletes user', async () => {
 })
 
 test('does not delete user when not confirmed', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const del = vitest.fn()
   const { getByRole } = render(
     <UserList

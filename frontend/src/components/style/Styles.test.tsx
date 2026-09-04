@@ -4,7 +4,7 @@ import LinkWrapper from '../LinkWrapper'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 
 import Styles from './Styles'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { dontCall } from '../../../test-util/dont-call'
 
 test('renders styles', () => {
@@ -73,7 +73,7 @@ test('renders loading text when loading', () => {
 })
 
 test('navigates to selected search result', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const navigate = vitest.fn()
   const styleId = '7fdc561f-da68-4665-b888-a82d5a03bf85'
   const { getByPlaceholderText, getByRole } = render(

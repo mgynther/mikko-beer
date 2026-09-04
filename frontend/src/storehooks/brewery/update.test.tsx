@@ -5,7 +5,7 @@ import type { TestServer } from '../../../test-util/server'
 import updateBrewery from './update'
 import type { Brewery } from '../../types/brewery/types'
 import { render, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { Provider } from '../../react-redux-wrapper'
 
 import Button from '../../components/common/Button'
@@ -49,7 +49,7 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('update brewery', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
 
   const expectedResponse: { brewery: Brewery } = {
     brewery: {

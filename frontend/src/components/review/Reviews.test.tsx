@@ -1,5 +1,5 @@
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import Reviews from './Reviews'
 import type { UseDebounce, YearMonth } from '../../types/types'
@@ -263,7 +263,7 @@ const getListReviewsIf: GetListReviewsIf = (cb, setSearch) => ({
 })
 
 test('updates review', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const update = vitest.fn()
   let scrollCb: () => void = () => undefined
   const { getByPlaceholderText, getByRole, getByText } = render(
@@ -344,7 +344,7 @@ const defaultSearchParams: Record<string, string> = {
 }
 
 test('sets review sorting to rating asc', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const listParams = vitest.fn()
   const setSearch = vitest.fn()
   let scrollCb: () => void = () => undefined
@@ -582,7 +582,7 @@ test('lists reviews with search parameters', async () => {
 })
 
 test('opens filters', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setSearch = vitest.fn()
   const listParams = vitest.fn()
   const { getByRole } = render(

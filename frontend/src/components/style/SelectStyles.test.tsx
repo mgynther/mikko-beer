@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import SelectStyles from './SelectStyles'
 import type { UseDebounce } from '../../types/types'
@@ -30,7 +30,7 @@ const useSearch: SearchFieldIf = {
 }
 
 test('removes style', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const select = vitest.fn()
   const { getAllByRole, getByRole } = render(
     <SelectStyles
@@ -62,7 +62,7 @@ test('removes style', async () => {
 })
 
 test('selects style', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const select = vitest.fn()
   const { getByPlaceholderText, getByRole } = render(
     <SelectStyles
@@ -93,7 +93,7 @@ test('selects style', async () => {
 })
 
 test('adds new style', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const select = vitest.fn()
   const { getByRole } = render(
     <SelectStyles
@@ -124,7 +124,7 @@ test('adds new style', async () => {
 })
 
 test('selects created style', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const create = vitest.fn()
   const select = vitest.fn()
   const newStyle: StyleWithParentIds = {

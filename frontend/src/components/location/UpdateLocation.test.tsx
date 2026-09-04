@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import UpdateLocation from './UpdateLocation'
 import { Role } from '../../types/user/types'
@@ -21,7 +21,7 @@ function getLogin(): GetLogin {
 }
 
 test('updates location', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onSaved = vitest.fn()
   const update = vitest.fn()
   const { getByPlaceholderText, getByRole } = render(
@@ -61,7 +61,7 @@ test('updates location', async () => {
 })
 
 test('cancel update', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onCancel = vitest.fn()
   const { getByRole } = render(
     <UpdateLocation

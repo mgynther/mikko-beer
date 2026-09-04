@@ -1,5 +1,5 @@
 import { fireEvent, render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import LocationStatsTable from './LocationStatsTable'
@@ -68,7 +68,7 @@ const unusedFilters: StatsFilters = {
 }
 
 test('renders location stats', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const { getByRole, getByText } = render(
     <LinkWrapper>
       <LocationStatsTable
@@ -103,7 +103,7 @@ test('renders location stats', async () => {
 })
 
 test('opens filters', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setIsFiltersOpen = vitest.fn()
   const { getByRole } = render(
     <LinkWrapper>

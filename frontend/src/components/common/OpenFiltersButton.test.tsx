@@ -1,11 +1,11 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import OpenFiltersButton from './OpenFiltersButton'
 import { openFilters } from '../common/filters-test-util'
 
 test('opens filters', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setIsOpen = vitest.fn()
   const { getByRole } = render(
     <OpenFiltersButton isOpen={false} setIsOpen={setIsOpen} />,
@@ -15,7 +15,7 @@ test('opens filters', async () => {
 })
 
 test('closes filters', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setIsOpen = vitest.fn()
   const { getByRole } = render(
     <OpenFiltersButton isOpen={true} setIsOpen={setIsOpen} />,

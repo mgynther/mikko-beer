@@ -1,5 +1,5 @@
 import { render, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import Style from './Style'
@@ -425,7 +425,7 @@ test('throw without style id', async () => {
 })
 
 test('updates style', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const update = vitest.fn()
   const styleName = 'Rye IPA'
   const getNode: () => ReactNode = () => (
@@ -489,7 +489,7 @@ test('updates style', async () => {
 })
 
 test('cancels update', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const update = vitest.fn()
   const { getByRole } = render(
     <LinkWrapper>

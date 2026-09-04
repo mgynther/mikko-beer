@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import React from 'react'
 import { testTimes } from '../../../test-util/filter-time'
@@ -349,7 +349,7 @@ test('mount commits formatToSearch once for populated search', () => {
 // Group 5: value setters -> immediate debounce -> setState (pipeline).
 
 test('min count setter commits value', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} minCountArg={7} />,
@@ -362,7 +362,7 @@ test('min count setter commits value', async () => {
 })
 
 test('max count setter commits value', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} maxCountArg={42} />,
@@ -375,7 +375,7 @@ test('max count setter commits value', async () => {
 })
 
 test('count setter rounds to nearest integer string', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} minCountArg={7.6} />,
@@ -388,7 +388,7 @@ test('count setter rounds to nearest integer string', async () => {
 })
 
 test('min average setter commits two-decimal string', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} minAvgArg={8} />,
@@ -401,7 +401,7 @@ test('min average setter commits two-decimal string', async () => {
 })
 
 test('max average setter commits two-decimal string', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} maxAvgArg={9} />,
@@ -414,7 +414,7 @@ test('max average setter commits two-decimal string', async () => {
 })
 
 test('average setter rounds to two decimals', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} minAvgArg={7.567} />,
@@ -427,7 +427,7 @@ test('average setter rounds to two decimals', async () => {
 })
 
 test('time start setter commits formatted year-month', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness
@@ -443,7 +443,7 @@ test('time start setter commits formatted year-month', async () => {
 })
 
 test('time end setter commits formatted year-month', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness
@@ -459,7 +459,7 @@ test('time end setter commits formatted year-month', async () => {
 })
 
 test('setters rebuild from committed state, keeping other keys', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const populated = {
     s_min_count: '3',
@@ -502,7 +502,7 @@ test('pending flag plumbs through from debounce tuple', () => {
 // Group 7: setIsFiltersOpen (direct, no debounce).
 
 test('setIsFiltersOpen true commits synchronously', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} filtersOpenArg={true} />,
@@ -513,7 +513,7 @@ test('setIsFiltersOpen true commits synchronously', async () => {
 })
 
 test('setIsFiltersOpen false commits synchronously', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness
@@ -532,7 +532,7 @@ test('setIsFiltersOpen false commits synchronously', async () => {
 // Group 8: changeSortingOrder.
 
 test('changeSortingOrder toggles direction for same order asc', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness
@@ -551,7 +551,7 @@ test('changeSortingOrder toggles direction for same order asc', async () => {
 })
 
 test('changeSortingOrder toggles direction for same order desc', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness
@@ -570,7 +570,7 @@ test('changeSortingOrder toggles direction for same order desc', async () => {
 })
 
 test('changeSortingOrder to nameProperty sets ascending', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness
@@ -589,7 +589,7 @@ test('changeSortingOrder to nameProperty sets ascending', async () => {
 })
 
 test('changeSortingOrder to non-nameProperty sets descending', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} orderArg={'count'} />,
@@ -602,7 +602,7 @@ test('changeSortingOrder to non-nameProperty sets descending', async () => {
 })
 
 test('changeSortingOrder ascending follows the nameProperty prop', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness

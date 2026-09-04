@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import SearchLocationWithNavi from './SearchLocationWithNavi'
 
@@ -39,7 +39,7 @@ const anotherLocation = {
 const locations: Location[] = [location, anotherLocation]
 
 test('selects location', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const selector = vitest.fn()
   const { getByRole } = render(
     <SearchLocationWithNavi
@@ -68,7 +68,7 @@ test('selects location', async () => {
 })
 
 test('shows no results', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const selector = vitest.fn()
   const { getByRole, getByText } = render(
     <SearchLocationWithNavi

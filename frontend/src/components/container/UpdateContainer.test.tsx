@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import UpdateContainer from './UpdateContainer'
 import type { Container } from '../../types/container/types'
@@ -17,7 +17,7 @@ const container: Container = {
 }
 
 test('updates container', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onSaved = vitest.fn()
   const update = vitest.fn()
   const { getByPlaceholderText, getByRole } = render(
@@ -57,7 +57,7 @@ test('updates container', async () => {
 })
 
 test('cancel update', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onCancel = vitest.fn()
   const { getByRole } = render(
     <UpdateContainer

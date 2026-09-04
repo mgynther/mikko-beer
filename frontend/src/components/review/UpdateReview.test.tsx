@@ -1,5 +1,6 @@
 import { render, fireEvent } from '@testing-library/react'
 import userEvent, { type UserEvent } from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import UpdateReview from './UpdateReview'
 import type { UseDebounce } from '../../types/types'
@@ -188,7 +189,7 @@ async function addReview(
 }
 
 test('updates review', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onSaved = vitest.fn()
   const update = vitest.fn()
   const { getByPlaceholderText, getByRole } = render(
@@ -232,7 +233,7 @@ test('updates review', async () => {
 })
 
 test('cancels update', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onCancel = vitest.fn()
   const { getByPlaceholderText, getByRole } = render(
     <UpdateReview

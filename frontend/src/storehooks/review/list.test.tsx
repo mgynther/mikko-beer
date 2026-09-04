@@ -10,7 +10,7 @@ import type {
 } from '../../types/review/types'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 
 import Button from '../../components/common/Button'
 import { testTimes } from '../../../test-util/filter-time'
@@ -64,7 +64,7 @@ function Helper(): React.JSX.Element {
 }
 
 test('list reviews', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
 
   const expectedResponse: JoinedReviewList = {
     reviews: [

@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import SelectContainer from './SelectContainer'
 import type { Container, ListContainersData } from '../../types/container/types'
@@ -39,7 +39,7 @@ const dontCreateIf: ReviewContainerIf = {
 }
 
 test('selects container', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onSelect = vitest.fn()
   const { getByRole } = render(
     <SelectContainer select={onSelect} reviewContainerIf={dontCreateIf} />,
@@ -73,7 +73,7 @@ test('render loading', async () => {
 })
 
 test('selects created container', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onSelect = vitest.fn()
   const newContainer: Container = {
     id: '13d3e36c-e1db-4c6e-b4f8-d28e45209882',

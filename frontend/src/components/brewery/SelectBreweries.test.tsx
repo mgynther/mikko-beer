@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import SelectBreweries from './SelectBreweries'
 import type { Brewery, SearchBreweryIf } from '../../types/brewery/types'
@@ -37,7 +37,7 @@ const getSearch: (mode: 'active' | 'inactive') => SearchBreweryIf = (
 })
 
 test('selects one more brewery', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onSelect = vitest.fn()
   const { findByRole, getByPlaceholderText, getByRole } = render(
     <SelectBreweries
@@ -64,7 +64,7 @@ test('selects one more brewery', async () => {
 })
 
 test('removes selected brewery', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onSelect = vitest.fn()
   const { getAllByRole, getByRole } = render(
     <SelectBreweries

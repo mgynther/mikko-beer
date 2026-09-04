@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import EditButton from './EditButton'
 import { Role, type User } from '../../types/user/types'
@@ -50,7 +50,7 @@ test('is disabled for viewer', () => {
 })
 
 test('handles click for admin', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const clickCb = vitest.fn()
   const { getByRole } = render(
     <EditButton
@@ -65,7 +65,7 @@ test('handles click for admin', async () => {
 })
 
 test('does not handle click when disabled', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const clickCb = vitest.fn()
   const { getByRole } = render(
     <EditButton

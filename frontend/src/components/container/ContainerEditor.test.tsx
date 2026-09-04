@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import ContainerEditor from './ContainerEditor'
 
@@ -8,7 +8,7 @@ const sizePlaceholder = 'Size, for example 0.25'
 const typePlaceholder = 'Type'
 
 test('edits valid container', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChange = vitest.fn()
   const { getByPlaceholderText } = render(
     <ContainerEditor
@@ -37,7 +37,7 @@ test('edits valid container', async () => {
 })
 
 test('edits invalid container by empty type', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChange = vitest.fn()
   const { getByPlaceholderText } = render(
     <ContainerEditor
@@ -56,7 +56,7 @@ test('edits invalid container by empty type', async () => {
 })
 
 test('edits invalid container by invalid size', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChange = vitest.fn()
   const { getByPlaceholderText } = render(
     <ContainerEditor

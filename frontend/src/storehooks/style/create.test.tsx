@@ -5,7 +5,7 @@ import type { TestServer } from '../../../test-util/server'
 import createStyle from './create'
 import type { Style, CreateStyleRequest } from '../../types/style/types'
 import { render, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { Provider } from '../../react-redux-wrapper'
 
 import Button from '../../components/common/Button'
@@ -47,7 +47,7 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('create style', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
 
   const expectedResponse: { style: Style } = {
     style: {

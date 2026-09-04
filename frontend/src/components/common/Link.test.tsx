@@ -1,12 +1,12 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test } from 'vitest'
 import LinkWrapper from '../LinkWrapper'
 
 import Link from './Link'
 
 test('renders link', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const path = '/testing'
   const { getByRole } = render(
     <LinkWrapper>

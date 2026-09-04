@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import CreateContainer from './CreateContainer'
 import type { Container, ContainerRequest } from '../../types/container/types'
@@ -11,7 +11,7 @@ const sizePlaceholder = 'Size, for example 0.25'
 const typePlaceholder = 'Type'
 
 test('creates container', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const selectContainer = vitest.fn()
   const { getByPlaceholderText, getByRole } = render(
     <CreateContainer

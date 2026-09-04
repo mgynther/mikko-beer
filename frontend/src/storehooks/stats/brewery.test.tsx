@@ -6,7 +6,7 @@ import type { TestServer } from '../../../test-util/server'
 import statsHook from './stats'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 
 import Button from '../../components/common/Button'
 import type {
@@ -57,7 +57,7 @@ function BreweryStatsHelper(props: {
 }
 
 test('brewery stats', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
 
   const expectedResponse: BreweryStats = {
     brewery: [

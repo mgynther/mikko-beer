@@ -1,5 +1,5 @@
 import { fireEvent, render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import Filters from './Filters'
 import { openFilters } from '../common/filters-test-util'
@@ -48,7 +48,7 @@ const defaultFilters: ReviewFilters = {
 }
 
 test('opens filters', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setIsOpen = vitest.fn()
   const { getByRole } = render(
     <Filters
@@ -64,7 +64,7 @@ test('opens filters', async () => {
 })
 
 test('closes filters', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setIsOpen = vitest.fn()
   const { getByRole } = render(
     <Filters

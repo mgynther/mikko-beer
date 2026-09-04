@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import UpdateBrewery from './UpdateBrewery'
 import { dontCall } from '../../../test-util/dont-call'
@@ -8,7 +8,7 @@ const id = 'a992b512-c636-486c-a85f-33938da9101c'
 const newNamePlaceholder = 'New name'
 
 test('updates brewery', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onSaved = vitest.fn()
   const update = vitest.fn()
   const { getByPlaceholderText, getByRole } = render(
@@ -47,7 +47,7 @@ test('updates brewery', async () => {
 })
 
 test('cancel update', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onCancel = vitest.fn()
   const { getByRole } = render(
     <UpdateBrewery

@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import LinkWrapper from './components/LinkWrapper'
 
@@ -129,7 +129,7 @@ const navigationTests: NavigationTest[] = [
 
 navigationTests.forEach((testCase) => {
   test(`navigates to ${testCase.pathname}`, async () => {
-    const user = userEvent.setup()
+    const user = setupUser()
     const { getByRole } = render(
       <LinkWrapper>
         <Nav
@@ -170,7 +170,7 @@ const navigationMoreTests: NavigationTest[] = [
 
 navigationMoreTests.forEach((testCase) => {
   test(`navigates to ${testCase.pathname}`, async () => {
-    const user = userEvent.setup()
+    const user = setupUser()
     const { getByRole } = render(
       <LinkWrapper>
         <Nav
@@ -246,7 +246,7 @@ const themeTests: ThemeTest[] = [
 
 themeTests.forEach((testCase) => {
   test(`set theme from ${testCase.original} to ${testCase.new} `, async () => {
-    const user = userEvent.setup()
+    const user = setupUser()
     const setTheme = vitest.fn()
     const { getByRole } = render(
       <LinkWrapper>
@@ -271,7 +271,7 @@ themeTests.forEach((testCase) => {
 })
 
 test('logs out', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const logout = vitest.fn()
   const { getByRole } = render(
     <LinkWrapper>
@@ -315,7 +315,7 @@ test('do not show admin features to viewer', async () => {
 })
 
 test('searches beer', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const navigate = vitest.fn()
   const searchBeerIf: SearchBeerIf = {
     useSearch: () => ({
@@ -352,7 +352,7 @@ test('searches beer', async () => {
 })
 
 test('searches brewery', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const navigate = vitest.fn()
   const searchBreweryIf: SearchBreweryIf = {
     useSearch: () => ({
@@ -412,7 +412,7 @@ navStateTests.forEach((testCase) => {
   } to ${
     testCase.new
   }`, async () => {
-    const user = userEvent.setup()
+    const user = setupUser()
     const setNavState = vitest.fn()
     const { getByRole } = render(
       <LinkWrapper>

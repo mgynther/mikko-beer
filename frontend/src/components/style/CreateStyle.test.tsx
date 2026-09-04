@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import CreateStyle from './CreateStyle'
 import type { UseDebounce } from '../../types/types'
@@ -29,7 +29,7 @@ const useSearch: SearchFieldIf = {
 }
 
 test('creates style', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const select = vitest.fn()
   const create = vitest.fn()
   const createdId = 'cb5636a9-0c9a-4a6b-8558-29e4f0918a32'

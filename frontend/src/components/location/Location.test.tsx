@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import Location from './Location'
@@ -235,7 +235,7 @@ const getLocationIf: GetLocationIf = {
 }
 
 test('updates location', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const update = vitest.fn()
   const { getByPlaceholderText, getByRole } = render(
     <Location
@@ -284,7 +284,7 @@ const dontUpdateLocationIf: UpdateLocationIf = {
 }
 
 test('cancel editing', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const { getByRole } = render(
     <Location
       listReviewsByLocationIf={listReviewsByLocationIf}

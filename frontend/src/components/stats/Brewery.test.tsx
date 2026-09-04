@@ -1,5 +1,5 @@
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import Brewery from './Brewery'
@@ -397,7 +397,7 @@ orderChangeTests.forEach((testCase) => {
   test(`change ${testCase.originalOrder} ${testCase.originalDirection} to ${
     testCase.newOrder
   } ${testCase.newDirection}`, async () => {
-    const user = userEvent.setup()
+    const user = setupUser()
     const setState = vitest.fn()
     const searchRecord: Record<string, string> = {
       ...defaultSearchParams,

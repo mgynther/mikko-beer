@@ -1,5 +1,6 @@
 import { render, fireEvent } from '@testing-library/react'
 import userEvent, { type UserEvent } from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import Review from './Review'
 import type { UseDebounce } from '../../types/types'
@@ -212,7 +213,7 @@ async function addReview(
 }
 
 test('updates review', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChanged = vitest.fn()
   const update = vitest.fn()
   const { getByPlaceholderText, getByRole, getByText } = render(
@@ -266,7 +267,7 @@ test('updates review', async () => {
 })
 
 test('update review without onChanged callback', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const update = vitest.fn()
   const { getByPlaceholderText, getByRole, getByText } = render(
     <LinkWrapper>
@@ -318,7 +319,7 @@ test('update review without onChanged callback', async () => {
 })
 
 test('cancel editing', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChanged = vitest.fn()
   const update = vitest.fn()
   const { getByRole, getByText } = render(
@@ -356,7 +357,7 @@ test('cancel editing', async () => {
 })
 
 test('cannot update review as viewer', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChanged = vitest.fn()
   const update = vitest.fn()
   const { getByText, queryByRole } = render(
@@ -391,7 +392,7 @@ test('cannot update review as viewer', async () => {
 })
 
 test('renders review', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const additionalInfo = 'Additional info'
   const location = {
     id: '7170c079-724d-4099-963b-85cd868dfa49',

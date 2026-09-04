@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import StyleEditor from './StyleEditor'
 import type { UseDebounce } from '../../types/types'
@@ -73,7 +73,7 @@ test('renders error', async () => {
 })
 
 test('removes parent', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChange = vitest.fn()
   const { getAllByRole } = render(
     <StyleEditor
@@ -102,7 +102,7 @@ test('removes parent', async () => {
 })
 
 test('enters name', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChange = vitest.fn()
   const { getByPlaceholderText } = render(
     <StyleEditor

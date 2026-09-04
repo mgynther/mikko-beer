@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import SelectBrewery from './SelectBrewery'
 import type { Brewery, SearchBreweryIf } from '../../types/brewery/types'
@@ -35,7 +35,7 @@ const getSearch: (isSearchFieldActive: boolean) => SearchBreweryIf = (
 })
 
 test('selects brewery', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onSelect = vitest.fn()
   const { getByPlaceholderText, findByRole } = render(
     <SelectBrewery
@@ -59,7 +59,7 @@ test('selects brewery', async () => {
 })
 
 test('selects created brewery', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onSelect = vitest.fn()
   const newBrewery: Brewery = {
     id: 'ca036383-f707-4a52-a26d-bd0c048c0106',

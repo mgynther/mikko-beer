@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import UpdateBeer from './UpdateBeer'
 import type { UseDebounce } from '../../types/types'
@@ -90,7 +90,7 @@ const doSearch: SearchFieldIf = {
 }
 
 test('updates beer name', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onSaved = vitest.fn()
   const update = vitest.fn()
   const { getByPlaceholderText, getByRole } = render(
@@ -137,7 +137,7 @@ test('updates beer name', async () => {
 })
 
 test('updates beer brewery', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onSaved = vitest.fn()
   const update = vitest.fn()
   const { getByPlaceholderText, getAllByRole, getByRole } = render(
@@ -201,7 +201,7 @@ test('updates beer brewery', async () => {
 })
 
 test('updates beer style', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onSaved = vitest.fn()
   const update = vitest.fn()
   const { getByPlaceholderText, getAllByRole, getByRole } = render(

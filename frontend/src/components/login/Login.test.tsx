@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import Login from './Login'
 
 test('logs in', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const login = vitest.fn()
   const { getByRole, getByPlaceholderText } = render(
     <Login

@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../test-util/user-event'
 import { store } from '../store/store'
 import { Provider } from '../react-redux-wrapper'
 import searchField from './search-field'
@@ -17,7 +17,7 @@ function Helper(): React.JSX.Element {
 }
 
 test('activate search', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const { getByText } = render(
     <Provider store={store}>
       <Helper />

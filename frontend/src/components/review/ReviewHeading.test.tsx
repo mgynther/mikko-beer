@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import ReviewHeading from './ReviewHeading'
 import type {
@@ -170,7 +170,7 @@ const sortingTests: SortingTest[] = [
 
 sortingTests.forEach((testCase) => {
   test(testCase.name, async () => {
-    const user = userEvent.setup()
+    const user = setupUser()
     const setSorting = vitest.fn()
     const { getByRole } = render(
       <ReviewHeading

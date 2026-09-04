@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import SearchLocation from './SearchLocation'
 
@@ -44,7 +44,7 @@ const anotherLocation = {
 const locations: Location[] = [location, anotherLocation]
 
 test('selects location', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const selector = vitest.fn()
   const { getByRole } = render(
     <SearchLocation
@@ -76,7 +76,7 @@ test('selects location', async () => {
 })
 
 test('does not show create button with case-insensitive match', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const selector = vitest.fn()
   const { getByRole, queryByRole } = render(
     <SearchLocation
@@ -106,7 +106,7 @@ test('does not show create button with case-insensitive match', async () => {
 })
 
 test('shows no results when creating not enabled', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const selector = vitest.fn()
   const { getByRole, getByText } = render(
     <SearchLocation
@@ -133,7 +133,7 @@ test('shows no results when creating not enabled', async () => {
 })
 
 test('creates location', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const create = vitest.fn()
   const select = vitest.fn()
   const { getByRole } = render(
@@ -177,7 +177,7 @@ test('creates location', async () => {
 })
 
 test('confirms creating location with partially matching result', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const create = vitest.fn()
   const select = vitest.fn()
   const confirmCb = vitest.fn()
@@ -233,7 +233,7 @@ test('confirms creating location with partially matching result', async () => {
 })
 
 test('does not create location on reject', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const create = vitest.fn()
   const select = vitest.fn()
   const confirmCb = vitest.fn()
@@ -284,7 +284,7 @@ test('does not create location on reject', async () => {
 })
 
 test('sorts existing result before create new location', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const resultName = `${location.name}, Tampere`
   const { getAllByRole, getByRole } = render(
     <SearchLocation

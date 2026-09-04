@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import React from 'react'
 import { testTimes } from '../../../test-util/filter-time'
@@ -274,7 +274,7 @@ test('mount commits formatToSearch once for populated params', () => {
 // Group 5: value setters -> immediate debounce -> setState (pipeline).
 
 test('min rating setter commits rounded value', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} minRatingArg={7} />,
@@ -287,7 +287,7 @@ test('min rating setter commits rounded value', async () => {
 })
 
 test('max rating setter commits value', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} maxRatingArg={9} />,
@@ -300,7 +300,7 @@ test('max rating setter commits value', async () => {
 })
 
 test('rating setter rounds to nearest integer string', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} minRatingArg={7.6} />,
@@ -313,7 +313,7 @@ test('rating setter rounds to nearest integer string', async () => {
 })
 
 test('min time setter commits formatted year-month', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness
@@ -329,7 +329,7 @@ test('min time setter commits formatted year-month', async () => {
 })
 
 test('max time setter commits formatted year-month', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness
@@ -345,7 +345,7 @@ test('max time setter commits formatted year-month', async () => {
 })
 
 test('setters rebuild from committed state, keeping other keys', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const populated = {
     r_min_rating: '5',
@@ -386,7 +386,7 @@ test('pending flag plumbs through from debounce tuple', () => {
 // Group 7: setIsFiltersOpen (direct, no debounce).
 
 test('setIsFiltersOpen true commits synchronously', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} filtersOpenArg={true} />,
@@ -397,7 +397,7 @@ test('setIsFiltersOpen true commits synchronously', async () => {
 })
 
 test('setIsFiltersOpen false commits synchronously', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness
@@ -416,7 +416,7 @@ test('setIsFiltersOpen false commits synchronously', async () => {
 // Group 8: changeSortingOrder.
 
 test('changeSortingOrder toggles direction for same order asc', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness
@@ -438,7 +438,7 @@ test('changeSortingOrder toggles direction for same order asc', async () => {
 })
 
 test('changeSortingOrder toggles direction for same order desc', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness
@@ -460,7 +460,7 @@ test('changeSortingOrder toggles direction for same order desc', async () => {
 })
 
 test('changeSortingOrder to beer_name sets ascending', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} orderArg={'beer_name'} />,
@@ -473,7 +473,7 @@ test('changeSortingOrder to beer_name sets ascending', async () => {
 })
 
 test('changeSortingOrder to non-beer_name sets descending', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} orderArg={'rating'} />,

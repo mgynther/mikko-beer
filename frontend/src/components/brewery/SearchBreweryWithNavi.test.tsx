@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import SearchBreweryWithNavi from './SearchBreweryWithNavi'
 
@@ -30,7 +30,7 @@ const anotherBrewery = {
 const breweries = [brewery, anotherBrewery]
 
 test('selects brewery', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const selector = vitest.fn()
   const searchBreweryIf: SearchBreweryIf = {
     useSearch: () => ({

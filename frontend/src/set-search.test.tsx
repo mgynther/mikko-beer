@@ -3,7 +3,7 @@ import { expect, test, vitest } from 'vitest'
 import { createSetSearch } from './set-search'
 import type { NavigationFunc } from './navigation'
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../test-util/user-event'
 
 import Button from './components/common/Button'
 
@@ -42,7 +42,7 @@ const statsSearch =
   'stats=annual&stats-property=value&another-stats-property=another-value'
 
 test('set review list search', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const navigate = vitest.fn()
   const { getByRole } = render(<Helper navigate={navigate} pathname='/' />)
   const button = getByRole('button', { name: 'Test review list' })
@@ -53,7 +53,7 @@ test('set review list search', async () => {
 })
 
 test('set stats search', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const navigate = vitest.fn()
   const { getByRole } = render(<Helper navigate={navigate} pathname='/' />)
   const button = getByRole('button', { name: 'Test stats' })
@@ -62,7 +62,7 @@ test('set stats search', async () => {
 })
 
 test('set review list and stats search', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const navigate = vitest.fn()
   const { getByRole } = render(<Helper navigate={navigate} pathname='/' />)
 
@@ -77,7 +77,7 @@ test('set review list and stats search', async () => {
 })
 
 test('clear stored search on pathname change', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const navigate = vitest.fn()
   const { getByRole, rerender } = render(
     <Helper navigate={navigate} pathname='/' />,

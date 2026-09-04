@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import LocationEditor from './LocationEditor'
 
@@ -7,7 +7,7 @@ const id = '444f76de-2b62-4e03-bcc3-1fc068d21e38'
 const namePlaceholder = 'Name'
 
 test('edits valid location', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChange = vitest.fn()
   const { getByPlaceholderText } = render(
     <LocationEditor
@@ -32,7 +32,7 @@ test('edits valid location', async () => {
 })
 
 test('edits invalid location by empty name', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChange = vitest.fn()
   const { getByPlaceholderText } = render(
     <LocationEditor

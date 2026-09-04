@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import CreateUser from './CreateUser'
 import { Role } from '../../types/user/types'
@@ -22,7 +22,7 @@ const createTests: CreateTest[] = [
 
 createTests.forEach((testCase) => {
   test('creates user', async () => {
-    const user = userEvent.setup()
+    const user = setupUser()
     const create = vitest.fn()
     const { getByRole, getByPlaceholderText } = render(
       <CreateUser

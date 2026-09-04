@@ -2,7 +2,7 @@ import { expect, test } from 'vitest'
 import { formatDateString, joinSortedNames, pad, useDebounce } from './util'
 import { render, waitFor } from '@testing-library/react'
 import React from 'react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../test-util/user-event'
 
 test('pad under 10', () => {
   expect(pad(1)).toEqual('01')
@@ -45,7 +45,7 @@ function DebounceHelper(): React.JSX.Element {
 }
 
 test('debounce', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const { getByRole, getByText } = render(<DebounceHelper />)
   const input = getByRole('textbox')
   input.focus()

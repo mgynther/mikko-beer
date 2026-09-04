@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import BreweryEditor from './BreweryEditor'
 
@@ -7,7 +7,7 @@ const id = 'a89fbb3e-df4b-4ee6-ad88-887936726df3'
 const namePlaceholder = 'Name'
 
 test('edits valid brewery', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChange = vitest.fn()
   const { getByPlaceholderText } = render(
     <BreweryEditor
@@ -32,7 +32,7 @@ test('edits valid brewery', async () => {
 })
 
 test('edits invalid brewery by empty name', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const onChange = vitest.fn()
   const { getByPlaceholderText } = render(
     <BreweryEditor

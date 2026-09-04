@@ -1,5 +1,5 @@
 import { fireEvent, render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import Container from './Container'
 import type { IdParams, OneContainerStats } from '../../types/stats/types'
@@ -346,7 +346,7 @@ sliderChangeTests.forEach((testCase) => {
 })
 
 test('opens filters', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const setState = vitest.fn()
   const { getByRole } = renderFromRecordWithSetState(
     defaultSearchParams,
@@ -467,7 +467,7 @@ orderChangeTests.forEach((testCase) => {
   test(`change ${testCase.originalOrder} ${testCase.originalDirection} to ${
     testCase.newOrder
   } ${testCase.newDirection}`, async () => {
-    const user = userEvent.setup()
+    const user = setupUser()
     const setState = vitest.fn()
     const searchRecord: Record<string, string> = {
       ...defaultSearchParams,

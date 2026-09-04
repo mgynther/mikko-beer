@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import Brewery from './Brewery'
@@ -241,7 +241,7 @@ const getBreweryIf: GetBreweryIf = {
 }
 
 test('updates brewery', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const update = vitest.fn()
   const { getByPlaceholderText, getByRole } = render(
     <Brewery
@@ -291,7 +291,7 @@ const dontUpdateBreweryIf: UpdateBreweryIf = {
 }
 
 test('cancel update', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
   const { getByRole } = render(
     <Brewery
       listReviewsByBreweryIf={listReviewsByBreweryIf}

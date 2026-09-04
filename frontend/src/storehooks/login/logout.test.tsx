@@ -5,7 +5,7 @@ import type { TestServer } from '../../../test-util/server'
 import logout from './logout'
 import { render, waitFor } from '@testing-library/react'
 import { Provider, useSelector } from '../../react-redux-wrapper'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from '../../../test-util/user-event'
 
 import Button from '../../components/common/Button'
 import { selectLogin, success } from '../../store/login/reducer'
@@ -48,7 +48,7 @@ function Helper({ userId, refreshToken }: Props): React.JSX.Element {
 }
 
 test('logout', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
 
   const userId = '60a67ae0-a806-4b69-a899-5c1698d8b397'
   const username = 'user1'
