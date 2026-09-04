@@ -13,6 +13,9 @@ const nonDomTests = ['**/*.test.ts']
 const shared = {
   globals: true,
   pool: 'threads',
+  // Reusing the environment between test files avoids constructing a jsdom
+  // instance and re-importing every module for each of them.
+  isolate: false,
 } as const
 
 export default defineConfig({
@@ -23,6 +26,7 @@ export default defineConfig({
           ...shared,
           name: 'dom',
           environment: 'jsdom',
+          setupFiles: ['./test-util/setup.ts'],
           include: domTests,
           exclude,
         },
