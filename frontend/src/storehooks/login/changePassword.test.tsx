@@ -118,11 +118,7 @@ function LoginDispatcher({ userId }: Props): React.JSX.Element {
 }
 
 test('change password after token refresh', async () => {
-  // The response to the retried request is added only after the click so the
-  // click has to wait for the failing request to be served first. Without the
-  // wait the retry response replaces the failing one before it is used and
-  // the token is never refreshed.
-  const user = setupUser({ delay: 0 })
+  const user = setupUser()
 
   const userId = '53e994bf-c4e7-4ec3-bbeb-a4b64591da00'
 
@@ -146,6 +142,15 @@ test('change password after token refresh', async () => {
     status: 200,
   })
 
+  // Served after the failing one above so that the request is retried with a
+  // refreshed token.
+  server?.addResponse<{ success: true }>({
+    method: 'POST',
+    pathname: `/api/v1/user/${userId}/change-password`,
+    response: { success: true },
+    status: 200,
+  })
+
   const { getByRole, getByText } = render(
     <Provider store={store}>
       <Helper userId={userId} />
@@ -153,13 +158,6 @@ test('change password after token refresh', async () => {
   )
   const changePasswordButton = getByRole('button', { name: 'Change password' })
   await user.click(changePasswordButton)
-
-  server?.addResponse<{ success: true }>({
-    method: 'POST',
-    pathname: `/api/v1/user/${userId}/change-password`,
-    response: { success: true },
-    status: 200,
-  })
 
   await waitFor(() => {
     expect(getByText(PasswordChangeResult.SUCCESS)).toBeDefined()

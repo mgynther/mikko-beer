@@ -24,7 +24,10 @@ export interface TestServer {
 }
 
 export function createServer(): TestServer {
-  let requests: Record<string, InternalResponse> = {}
+  // Responses are queued per path so that a test can set up several
+  // responses to the same request in advance. They are served in the order
+  // they were added.
+  let requests: Record<string, InternalResponse[]> = {}
 
   const handler = async (req: IncomingMessage, res: ServerResponse) => {
     /* v8 ignore next -- with web request there is a string URL */
@@ -33,7 +36,8 @@ export function createServer(): TestServer {
       throw new Error('url is not a string')
     }
     const url: string = req.url
-    const response = requests[url]
+    const queued = requests[url] ?? []
+    const response = queued[0]
     const parsedURL = new URL(url, `http://${req.headers.host}`)
     // TODO access search params like this parsedURL.searchParams.get("keyword")
     if (
@@ -44,7 +48,7 @@ export function createServer(): TestServer {
       res.writeHead(response.status, { 'Content-Type': 'application/json' })
       res.write(response.response ? JSON.stringify(response.response) : '')
       res.end()
-      delete requests[url]
+      queued.shift()
       return
     }
     res.writeHead(500, { 'Content-Type': 'application/json' })
@@ -72,14 +76,16 @@ export function createServer(): TestServer {
   })
 
   function addTestServerResponse<T>(response: Response<T>): void {
-    requests[response.pathname] = {
+    const queued = requests[response.pathname] ?? []
+    queued.push({
       method: response.method,
       pathname: response.pathname,
       response: response.response
         ? JSON.parse(JSON.stringify(response.response))
         : undefined,
       status: response.status,
-    }
+    })
+    requests[response.pathname] = queued
   }
 
   return {
