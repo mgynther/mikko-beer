@@ -1,6 +1,7 @@
-import { expect, test } from 'vitest'
+import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { store } from '../../store/store'
-import { addTestServerResponse } from '../../../test-util/server'
+import { createServer } from '../../../test-util/server'
+import type { TestServer } from '../../../test-util/server'
 import login from './login'
 import type { Login } from '../../types/login/types'
 import { render, waitFor } from '@testing-library/react'
@@ -9,6 +10,20 @@ import userEvent from '@testing-library/user-event'
 
 import Button from '../../components/common/Button'
 import { selectLogin } from '../../store/login/reducer'
+
+let server: TestServer | undefined
+
+beforeAll(() => {
+  server = createServer()
+})
+
+beforeEach(() => {
+  server?.clear()
+})
+
+afterAll(() => {
+  server?.close()
+})
 
 interface Props {
   username: string
@@ -45,7 +60,7 @@ test('login', async () => {
     },
   }
 
-  addTestServerResponse<Login>({
+  server?.addResponse<Login>({
     method: 'POST',
     pathname: `/api/v1/user/sign-in`,
     response: expectedResponse,

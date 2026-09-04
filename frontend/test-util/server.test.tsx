@@ -1,8 +1,9 @@
 import React from 'react'
 
-import { expect, test, vitest } from 'vitest'
+import { beforeAll, beforeEach, afterAll, expect, test, vitest } from 'vitest'
 import { store } from '../src/store/store'
-import { addTestServerResponse } from './server'
+import { createServer } from './server'
+import type { TestServer } from './server'
 import createBeer from '../src/storehooks/beer/create'
 import type { BeerWithIds, CreateBeerRequest } from '../src/types/beer/types'
 import { render, waitFor } from '@testing-library/react'
@@ -10,6 +11,20 @@ import userEvent from '@testing-library/user-event'
 import { Provider } from '../src/react-redux-wrapper'
 
 import Button from '../src/components/common/Button'
+
+let server: TestServer | undefined
+
+beforeAll(() => {
+  server = createServer()
+})
+
+beforeEach(() => {
+  server?.clear()
+})
+
+afterAll(() => {
+  server?.close()
+})
 
 interface HelperProps {
   beer: CreateBeerRequest
@@ -44,7 +59,7 @@ test('test server responds with 500 to unexpected request', async () => {
     },
   }
 
-  addTestServerResponse<{ beer: BeerWithIds }>({
+  server?.addResponse<{ beer: BeerWithIds }>({
     method: 'POST',
     pathname: '/api/v1/thisiswrong',
     response: expectedResponse,

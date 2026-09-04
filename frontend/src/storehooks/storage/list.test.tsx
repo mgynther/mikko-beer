@@ -1,10 +1,25 @@
-import { expect, test } from 'vitest'
+import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { store } from '../../store/store'
-import { addTestServerResponse } from '../../../test-util/server'
+import { createServer } from '../../../test-util/server'
+import type { TestServer } from '../../../test-util/server'
 import listStorages from './list'
 import type { StorageList } from '../../types/storage/types'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
+
+let server: TestServer | undefined
+
+beforeAll(() => {
+  server = createServer()
+})
+
+beforeEach(() => {
+  server?.clear()
+})
+
+afterAll(() => {
+  server?.close()
+})
 
 function Helper(): React.JSX.Element {
   const listIf = listStorages()
@@ -74,7 +89,7 @@ test('list storages', async () => {
     ],
   }
 
-  addTestServerResponse<StorageList>({
+  server?.addResponse<StorageList>({
     method: 'GET',
     pathname: `/api/v1/storage`,
     response: expectedResponse,

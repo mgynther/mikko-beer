@@ -1,6 +1,7 @@
-import { expect, test } from 'vitest'
+import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { store } from '../../store/store'
-import { addTestServerResponse } from '../../../test-util/server'
+import { createServer } from '../../../test-util/server'
+import type { TestServer } from '../../../test-util/server'
 import listReviews from './list'
 import type {
   JoinedReviewList,
@@ -13,6 +14,20 @@ import userEvent from '@testing-library/user-event'
 
 import Button from '../../components/common/Button'
 import { testTimes } from '../../../test-util/filter-time'
+
+let server: TestServer | undefined
+
+beforeAll(() => {
+  server = createServer()
+})
+
+beforeEach(() => {
+  server?.clear()
+})
+
+afterAll(() => {
+  server?.close()
+})
 
 const sorting: ReviewSorting = {
   order: 'time',
@@ -118,7 +133,7 @@ test('list reviews', async () => {
     },
   }
 
-  addTestServerResponse<JoinedReviewList>({
+  server?.addResponse<JoinedReviewList>({
     method: 'GET',
     // prettier-ignore
     pathname: `/api/v1/review?size=10&skip=0&order=${

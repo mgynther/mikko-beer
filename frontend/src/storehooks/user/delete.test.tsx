@@ -1,12 +1,27 @@
-import { expect, test, vitest } from 'vitest'
+import { beforeAll, beforeEach, afterAll, expect, test, vitest } from 'vitest'
 import { store } from '../../store/store'
-import { addTestServerResponse } from '../../../test-util/server'
+import { createServer } from '../../../test-util/server'
+import type { TestServer } from '../../../test-util/server'
 import deleteUser from './delete'
 import { render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from '../../react-redux-wrapper'
 
 import Button from '../../components/common/Button'
+
+let server: TestServer | undefined
+
+beforeAll(() => {
+  server = createServer()
+})
+
+beforeEach(() => {
+  server?.clear()
+})
+
+afterAll(() => {
+  server?.close()
+})
 
 interface HelperProps {
   userId: string
@@ -31,7 +46,7 @@ test('delete user', async () => {
 
   const userId = '50a1b304-46fc-43de-b824-fce6de36ff6a'
 
-  addTestServerResponse<void>({
+  server?.addResponse<void>({
     method: 'DELETE',
     pathname: `/api/v1/user/${userId}`,
     response: undefined,

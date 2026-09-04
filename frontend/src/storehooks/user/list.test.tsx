@@ -1,10 +1,25 @@
-import { expect, test } from 'vitest'
+import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { store } from '../../store/store'
-import { addTestServerResponse } from '../../../test-util/server'
+import { createServer } from '../../../test-util/server'
+import type { TestServer } from '../../../test-util/server'
 import listUsers from './list'
 import type { UserList } from '../../types/user/types'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
+
+let server: TestServer | undefined
+
+beforeAll(() => {
+  server = createServer()
+})
+
+beforeEach(() => {
+  server?.clear()
+})
+
+afterAll(() => {
+  server?.close()
+})
 
 function Helper(): React.JSX.Element {
   const listIf = listUsers()
@@ -34,7 +49,7 @@ test('list users', async () => {
     ],
   }
 
-  addTestServerResponse<UserList>({
+  server?.addResponse<UserList>({
     method: 'GET',
     pathname: '/api/v1/user',
     response: expectedResponse,

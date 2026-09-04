@@ -1,10 +1,25 @@
-import { expect, test } from 'vitest'
+import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { store } from '../../store/store'
-import { addTestServerResponse } from '../../../test-util/server'
+import { createServer } from '../../../test-util/server'
+import type { TestServer } from '../../../test-util/server'
 import getBeer from './get'
 import type { Beer } from '../../types/beer/types'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
+
+let server: TestServer | undefined
+
+beforeAll(() => {
+  server = createServer()
+})
+
+beforeEach(() => {
+  server?.clear()
+})
+
+afterAll(() => {
+  server?.close()
+})
 
 interface HelperProps {
   beerId: string
@@ -41,7 +56,7 @@ test('get beer', async () => {
     },
   }
 
-  addTestServerResponse<{ beer: Beer }>({
+  server?.addResponse<{ beer: Beer }>({
     method: 'GET',
     pathname: `/api/v1/beer/${expectedResponse.beer.id}`,
     response: expectedResponse,
@@ -68,7 +83,7 @@ test('try to get beer that does not exist', async () => {
     },
   }
 
-  addTestServerResponse<ErrorResponse>({
+  server?.addResponse<ErrorResponse>({
     method: 'GET',
     pathname: `/api/v1/beer/${beerId}`,
     response: expectedResponse,

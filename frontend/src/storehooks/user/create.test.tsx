@@ -1,6 +1,7 @@
-import { expect, test } from 'vitest'
+import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { store } from '../../store/store'
-import { addTestServerResponse } from '../../../test-util/server'
+import { createServer } from '../../../test-util/server'
+import type { TestServer } from '../../../test-util/server'
 import createUser from './create'
 import type { CreateUserRequest, User } from '../../types/user/types'
 import { Role } from '../../types/user/types'
@@ -9,6 +10,20 @@ import userEvent from '@testing-library/user-event'
 import { Provider } from '../../react-redux-wrapper'
 
 import Button from '../../components/common/Button'
+
+let server: TestServer | undefined
+
+beforeAll(() => {
+  server = createServer()
+})
+
+beforeEach(() => {
+  server?.clear()
+})
+
+afterAll(() => {
+  server?.close()
+})
 
 interface HelperProps {
   request: CreateUserRequest
@@ -42,7 +57,7 @@ test('create user', async () => {
     },
   }
 
-  addTestServerResponse<{ user: User }>({
+  server?.addResponse<{ user: User }>({
     method: 'POST',
     pathname: '/api/v1/user',
     response: expectedResponse,

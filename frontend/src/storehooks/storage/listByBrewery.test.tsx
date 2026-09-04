@@ -1,10 +1,25 @@
-import { expect, test } from 'vitest'
+import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { store } from '../../store/store'
-import { addTestServerResponse } from '../../../test-util/server'
+import { createServer } from '../../../test-util/server'
+import type { TestServer } from '../../../test-util/server'
 import listStoragesByBrewery from './listByBrewery'
 import type { StorageList } from '../../types/storage/types'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
+
+let server: TestServer | undefined
+
+beforeAll(() => {
+  server = createServer()
+})
+
+beforeEach(() => {
+  server?.clear()
+})
+
+afterAll(() => {
+  server?.close()
+})
 
 interface Props {
   breweryId: string
@@ -55,7 +70,7 @@ test('list storages by brewery', async () => {
     ],
   }
 
-  addTestServerResponse<StorageList>({
+  server?.addResponse<StorageList>({
     method: 'GET',
     pathname: `/api/v1/brewery/${breweryId}/storage`,
     response: expectedResponse,

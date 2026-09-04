@@ -1,6 +1,7 @@
-import { expect, test } from 'vitest'
+import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { store } from '../../store/store'
-import { addTestServerResponse } from '../../../test-util/server'
+import { createServer } from '../../../test-util/server'
+import type { TestServer } from '../../../test-util/server'
 import statsHook from './stats'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
@@ -11,6 +12,20 @@ import type {
   AnnualContainerStats,
   AnnualContainerStatsQueryParams,
 } from '../../types/stats/types'
+
+let server: TestServer | undefined
+
+beforeAll(() => {
+  server = createServer()
+})
+
+beforeEach(() => {
+  server?.clear()
+})
+
+afterAll(() => {
+  server?.close()
+})
 
 function AnnualContainerStatsHelper(props: {
   queryParams: AnnualContainerStatsQueryParams
@@ -67,7 +82,7 @@ test('annual container stats', async () => {
     pagination: { skip: 0, size: 10 },
   }
 
-  addTestServerResponse<AnnualContainerStats>({
+  server?.addResponse<AnnualContainerStats>({
     method: 'GET',
     pathname: `/api/v1/stats/annual_container?size=${
       queryParams.pagination.size

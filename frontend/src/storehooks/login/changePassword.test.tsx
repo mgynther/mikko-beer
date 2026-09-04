@@ -1,6 +1,7 @@
-import { expect, test } from 'vitest'
+import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { store } from '../../store/store'
-import { addTestServerResponse } from '../../../test-util/server'
+import { createServer } from '../../../test-util/server'
+import type { TestServer } from '../../../test-util/server'
 import changePassword from './changePassword'
 import { render, waitFor } from '@testing-library/react'
 import { Provider, useDispatch, useSelector } from '../../react-redux-wrapper'
@@ -9,6 +10,20 @@ import userEvent from '@testing-library/user-event'
 import Button from '../../components/common/Button'
 import { PasswordChangeResult } from '../../types/login/types'
 import { selectLogin, success } from '../../store/login/reducer'
+
+let server: TestServer | undefined
+
+beforeAll(() => {
+  server = createServer()
+})
+
+beforeEach(() => {
+  server?.clear()
+})
+
+afterAll(() => {
+  server?.close()
+})
 
 interface Props {
   userId: string
@@ -64,7 +79,7 @@ passwordChangeTests.forEach((testCase) => {
 
     const userId = '00448764-b114-4c54-a409-05b23d14de14'
 
-    addTestServerResponse<{ success: true }>({
+    server?.addResponse<{ success: true }>({
       method: 'POST',
       pathname: `/api/v1/user/${userId}/change-password`,
       response: { success: true },
@@ -113,14 +128,14 @@ test('change password after token refresh', async () => {
     </Provider>,
   )
 
-  addTestServerResponse<{ success: true }>({
+  server?.addResponse<{ success: true }>({
     method: 'POST',
     pathname: `/api/v1/user/${userId}/change-password`,
     response: { success: true },
     status: 401,
   })
 
-  addTestServerResponse<{ data: { authToken: string; refreshToken: string } }>({
+  server?.addResponse<{ data: { authToken: string; refreshToken: string } }>({
     method: 'POST',
     pathname: `/api/v1/user/${userId}/refresh`,
     response: { data: { authToken: 'auth', refreshToken: 'refresh' } },
@@ -135,7 +150,7 @@ test('change password after token refresh', async () => {
   const changePasswordButton = getByRole('button', { name: 'Change password' })
   await user.click(changePasswordButton)
 
-  addTestServerResponse<{ success: true }>({
+  server?.addResponse<{ success: true }>({
     method: 'POST',
     pathname: `/api/v1/user/${userId}/change-password`,
     response: { success: true },
@@ -170,14 +185,14 @@ test('log out on failed token refresh', async () => {
     </Provider>,
   )
 
-  addTestServerResponse<{ success: true }>({
+  server?.addResponse<{ success: true }>({
     method: 'POST',
     pathname: `/api/v1/user/${userId}/change-password`,
     response: { success: true },
     status: 401,
   })
 
-  addTestServerResponse<{ data: { authToken: string; refreshToken: string } }>({
+  server?.addResponse<{ data: { authToken: string; refreshToken: string } }>({
     method: 'POST',
     pathname: `/api/v1/user/${userId}/refresh`,
     response: { data: { authToken: 'auth', refreshToken: 'refresh' } },

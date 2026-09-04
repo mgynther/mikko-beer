@@ -1,7 +1,8 @@
-import { expect, test } from 'vitest'
+import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { useState } from 'react'
 import { store } from '../../store/store'
-import { addTestServerResponse } from '../../../test-util/server'
+import { createServer } from '../../../test-util/server'
+import type { TestServer } from '../../../test-util/server'
 import searchBeer from './search'
 import type { Beer, BeerList } from '../../types/beer/types'
 import { render, waitFor } from '@testing-library/react'
@@ -9,6 +10,20 @@ import { Provider } from '../../react-redux-wrapper'
 import userEvent from '@testing-library/user-event'
 
 import Button from '../../components/common/Button'
+
+let server: TestServer | undefined
+
+beforeAll(() => {
+  server = createServer()
+})
+
+beforeEach(() => {
+  server?.clear()
+})
+
+afterAll(() => {
+  server?.close()
+})
 
 function Helper(): React.JSX.Element {
   const searchBeerIf = searchBeer()
@@ -73,7 +88,7 @@ test('search beers', async () => {
     ],
   }
 
-  addTestServerResponse<BeerList>({
+  server?.addResponse<BeerList>({
     method: 'POST',
     pathname: `/api/v1/beer/search`,
     response: expectedResponse,

@@ -1,10 +1,25 @@
-import { expect, test } from 'vitest'
+import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { store } from '../../store/store'
-import { addTestServerResponse } from '../../../test-util/server'
+import { createServer } from '../../../test-util/server'
+import type { TestServer } from '../../../test-util/server'
 import getStyle from './get'
 import type { StyleWithParentsAndChildren } from '../../types/style/types'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
+
+let server: TestServer | undefined
+
+beforeAll(() => {
+  server = createServer()
+})
+
+beforeEach(() => {
+  server?.clear()
+})
+
+afterAll(() => {
+  server?.close()
+})
 
 interface HelperProps {
   styleId: string
@@ -26,7 +41,7 @@ test('get style', async () => {
     },
   }
 
-  addTestServerResponse<{ style: StyleWithParentsAndChildren }>({
+  server?.addResponse<{ style: StyleWithParentsAndChildren }>({
     method: 'GET',
     pathname: `/api/v1/style/${expectedResponse.style.id}`,
     response: expectedResponse,

@@ -1,7 +1,8 @@
-import { expect, test } from 'vitest'
+import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import { store } from '../../store/store'
-import { addTestServerResponse } from '../../../test-util/server'
+import { createServer } from '../../../test-util/server'
+import type { TestServer } from '../../../test-util/server'
 import statsHook from './stats'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
@@ -12,6 +13,20 @@ import type {
   LocationStats,
   LocationStatsQueryParams,
 } from '../../types/stats/types'
+
+let server: TestServer | undefined
+
+beforeAll(() => {
+  server = createServer()
+})
+
+beforeEach(() => {
+  server?.clear()
+})
+
+afterAll(() => {
+  server?.close()
+})
 
 function LocationStatsHelper(props: {
   queryParams: LocationStatsQueryParams
@@ -80,7 +95,7 @@ test('location stats', async () => {
     timeEnd: testTimes.max.utcTimestamp,
   }
 
-  addTestServerResponse<LocationStats>({
+  server?.addResponse<LocationStats>({
     method: 'GET',
     pathname: `/api/v1/stats/location?size=${
       queryParams.pagination.size

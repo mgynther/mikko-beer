@@ -1,6 +1,7 @@
-import { expect, test, vitest } from 'vitest'
+import { beforeAll, beforeEach, afterAll, expect, test, vitest } from 'vitest'
 import { store } from '../../store/store'
-import { addTestServerResponse } from '../../../test-util/server'
+import { createServer } from '../../../test-util/server'
+import type { TestServer } from '../../../test-util/server'
 import updateReview from './update'
 import type { Review } from '../../types/review/types'
 import { render, waitFor } from '@testing-library/react'
@@ -8,6 +9,20 @@ import userEvent from '@testing-library/user-event'
 import { Provider } from '../../react-redux-wrapper'
 
 import Button from '../../components/common/Button'
+
+let server: TestServer | undefined
+
+beforeAll(() => {
+  server = createServer()
+})
+
+beforeEach(() => {
+  server?.clear()
+})
+
+afterAll(() => {
+  server?.close()
+})
 
 interface HelperProps {
   review: Review
@@ -50,7 +65,7 @@ test('update review', async () => {
     },
   }
 
-  addTestServerResponse<{ review: Review }>({
+  server?.addResponse<{ review: Review }>({
     method: 'PUT',
     pathname: `/api/v1/review/${expectedResponse.review.id}`,
     response: expectedResponse,

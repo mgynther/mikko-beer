@@ -1,11 +1,26 @@
-import { expect, test } from 'vitest'
+import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { store } from '../../store/store'
-import { addTestServerResponse } from '../../../test-util/server'
+import { createServer } from '../../../test-util/server'
+import type { TestServer } from '../../../test-util/server'
 import statsHook from './stats'
 import { render, waitFor } from '@testing-library/react'
 import { Provider } from '../../react-redux-wrapper'
 
 import type { IdParams, OverallStats } from '../../types/stats/types'
+
+let server: TestServer | undefined
+
+beforeAll(() => {
+  server = createServer()
+})
+
+beforeEach(() => {
+  server?.clear()
+})
+
+afterAll(() => {
+  server?.close()
+})
 
 function OverallStatsHelper(props: { params: IdParams }): React.JSX.Element {
   const statsIf = statsHook()
@@ -56,7 +71,7 @@ test('overall stats', async () => {
     styleId: '1d922ad8-5dc2-46f7-b240-3c4168f9a36c',
   }
 
-  addTestServerResponse<{ overall: OverallStats }>({
+  server?.addResponse<{ overall: OverallStats }>({
     method: 'GET',
     pathname: `/api/v1/stats/overall?style=${params.styleId}`,
     response: { overall: overallStats },
