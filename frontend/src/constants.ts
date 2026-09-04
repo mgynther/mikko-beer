@@ -16,7 +16,7 @@ function getTestPortStart(): number {
 
 function getVitestId(): number {
   try {
-    return parseVitestId(process.env.VITEST_WORKER_ID)
+    return parseVitestId(process.env.VITEST_POOL_ID)
   } catch {
     // v8 ignore next -- cannot reach in Node but is needed for browser.
     return -1
