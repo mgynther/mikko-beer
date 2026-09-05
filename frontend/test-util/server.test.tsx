@@ -7,7 +7,7 @@ import type { TestServer } from './server'
 import createBeer from '../src/storehooks/beer/create'
 import type { BeerWithIds, CreateBeerRequest } from '../src/types/beer/types'
 import { render, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { setupUser } from './user-event'
 import { Provider } from '../src/react-redux-wrapper'
 
 import Button from '../src/components/common/Button'
@@ -48,7 +48,7 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('test server responds with 500 to unexpected request', async () => {
-  const user = userEvent.setup()
+  const user = setupUser()
 
   const expectedResponse: { beer: BeerWithIds } = {
     beer: {

@@ -1,5 +1,5 @@
 import { render, fireEvent } from '@testing-library/react'
-import userEvent, { type UserEvent } from '@testing-library/user-event'
+import { type UserEvent } from '@testing-library/user-event'
 import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import Review from './Review'
@@ -202,7 +202,7 @@ async function addReview(
   const smellInput = getByPlaceholderText('Smell')
   smellInput.focus()
   await user.clear(smellInput)
-  await userEvent.paste(smellText)
+  await user.paste(smellText)
   const ratingInput = getByRole('slider')
   ratingInput.click()
   fireEvent.change(ratingInput, { target: { value: `${reviewRating}` } })

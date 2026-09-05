@@ -1,5 +1,5 @@
 import { render, fireEvent } from '@testing-library/react'
-import userEvent, { type UserEvent } from '@testing-library/user-event'
+import { type UserEvent } from '@testing-library/user-event'
 import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import ReviewEditor from './ReviewEditor'
@@ -189,16 +189,16 @@ async function addReview(
 ): Promise<void> {
   const additionalInfoInput = getByPlaceholderText('Additional info')
   additionalInfoInput.focus()
-  await userEvent.paste(additionalInfoText)
+  await user.paste(additionalInfoText)
   const locationInput = getByPlaceholderText('Location')
   locationInput.focus()
-  await userEvent.paste(location.name)
+  await user.paste(location.name)
   const locationButton = getByRole('button', { name: location.name })
   await user.click(locationButton)
   const smellInput = getByPlaceholderText('Smell')
   smellInput.focus()
   await user.clear(smellInput)
-  await userEvent.paste(smellText)
+  await user.paste(smellText)
   const ratingInput = getByRole('slider')
   ratingInput.click()
   fireEvent.change(ratingInput, { target: { value: `${reviewRating}` } })
@@ -235,7 +235,7 @@ async function selectContainer(
   const containerSelect = getByRole('combobox')
   await user.click(containerSelect)
   const draft = getByRole('option', { name: 'draft 0.25' })
-  await userEvent.selectOptions(containerSelect, draft)
+  await user.selectOptions(containerSelect, draft)
   await user.click(draft)
 }
 

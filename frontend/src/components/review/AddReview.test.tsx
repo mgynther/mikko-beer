@@ -1,5 +1,5 @@
 import { render, fireEvent } from '@testing-library/react'
-import userEvent, { type UserEvent } from '@testing-library/user-event'
+import { type UserEvent } from '@testing-library/user-event'
 import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import AddReview, { type Props as AddReviewProps } from './AddReview'
@@ -197,7 +197,7 @@ async function addReview(
 ): Promise<void> {
   const smellInput = getByPlaceholderText('Smell')
   smellInput.focus()
-  await userEvent.paste(smellText)
+  await user.paste(smellText)
   const tasteInput = getByPlaceholderText('Taste')
   tasteInput.focus()
   await user.paste(tasteText)
@@ -257,7 +257,7 @@ test('adds review', async () => {
   const containerSelect = getByRole('combobox')
   await user.click(containerSelect)
   const bottle = getByRole('option', { name: 'bottle 0.33' })
-  await userEvent.selectOptions(containerSelect, bottle)
+  await user.selectOptions(containerSelect, bottle)
   await user.click(bottle)
   const changeButtons = queryAllByRole('button', { name: /change/i })
   expect(changeButtons.length).toEqual(2)

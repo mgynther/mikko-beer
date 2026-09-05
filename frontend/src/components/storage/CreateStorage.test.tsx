@@ -1,5 +1,4 @@
 import { render, fireEvent } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import CreateStorage from './CreateStorage'
@@ -155,7 +154,7 @@ test('creates storage', async () => {
   const containerSelect = getByRole('combobox')
   await user.click(containerSelect)
   const bottle = getByRole('option', { name: 'bottle 0.33' })
-  await userEvent.selectOptions(containerSelect, bottle)
+  await user.selectOptions(containerSelect, bottle)
 
   const date = '2023-12-25'
   const dateInput = getByLabelText('Best before')
@@ -221,7 +220,7 @@ test('clears container', async () => {
   const containerSelect = getByRole('combobox')
   await user.click(containerSelect)
   const bottle = getByRole('option', { name: 'bottle 0.33' })
-  await userEvent.selectOptions(containerSelect, bottle)
+  await user.selectOptions(containerSelect, bottle)
 
   const changeButton = getByRole('button', { name: 'Change' })
   await user.click(changeButton)
