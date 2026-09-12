@@ -1,3 +1,6 @@
+import { readdirSync } from 'node:fs'
+import { join } from 'node:path'
+
 import eslint from '@eslint/js'
 import tsEslint from 'typescript-eslint'
 
@@ -104,6 +107,86 @@ const rules = {
   '@typescript-eslint/prefer-destructuring': 'off',
 }
 
+// Every directory under src is a layer. A layer may import only from
+// itself, so that the dependencies between them stay explicit and
+// reviewable. web/ is the single exception: it wires the other layers
+// together and may import all of them, restricted only from reaching
+// their internals.
+//
+// Listing the layers here and deriving the restrictions from the list
+// keeps the rule impossible to state inconsistently: a new layer is
+// banned from every other layer, and every other layer is banned from
+// it, by adding one name.
+const wiringLayer = 'web'
+const layers = ['console', 'crypto', 'data', 'logic', wiringLayer]
+
+// A layer that is never registered above would otherwise get no
+// restrictions at all and be importable from everywhere, which is the
+// one way the derivation could quietly become too permissive. Fail the
+// lint instead of allowing that.
+const srcDirectories = readdirSync(join(import.meta.dirname, 'src'), {
+  withFileTypes: true,
+})
+  .filter((entry) => entry.isDirectory())
+  .map((entry) => entry.name)
+const unregisteredLayers = srcDirectories.filter(
+  (directory) => !layers.includes(directory),
+)
+if (unregisteredLayers.length > 0) {
+  throw new Error(
+    `Unregistered layers under src: ${unregisteredLayers.join(', ')}. ` +
+      'Every directory under src is a layer and must be listed in ' +
+      'layers of eslint.config.mjs so that import restrictions are ' +
+      'applied to and against it.',
+  )
+}
+
+function layerFiles(layer) {
+  return [`src/${layer}/*.ts`, `src/${layer}/**/*.ts`]
+}
+
+function noOtherLayerImports(layer) {
+  return {
+    'no-restricted-imports': [
+      'error',
+      {
+        patterns: layers
+          .filter((other) => other !== layer)
+          .map((other) => ({ regex: `${other}/` })),
+      },
+    ],
+  }
+}
+
+// web/ uses the other layers through their public modules only. Their
+// internal/ directories are the layer's own business and are derived
+// from the same list, so a new layer gets its internals protected
+// without a separate edit here.
+function noLayerInternalImports() {
+  return {
+    'no-restricted-imports': [
+      'error',
+      {
+        patterns: layers
+          .filter((layer) => layer !== wiringLayer)
+          .map((layer) => ({ regex: `${layer}/internal/` })),
+      },
+    ],
+  }
+}
+
+const isolatedLayerConfigs = layers
+  .filter((layer) => layer !== wiringLayer)
+  .map((layer) => ({
+    languageOptions,
+    plugins,
+    files: layerFiles(layer),
+    rules: {
+      ...rules,
+      ...noOtherLayerImports(layer),
+    },
+  }))
+
 export default [
   {
     languageOptions,
@@ -111,118 +194,11 @@ export default [
     files: ['src/*.{js,ts,tsx,jsx}', 'src/**/*.{js,ts,tsx,jsx}'],
     rules,
   },
+  ...isolatedLayerConfigs,
   {
     languageOptions,
     plugins,
-    files: ['src/console/*.ts', 'src/console/**/*.ts'],
-    rules: {
-      ...rules,
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              regex: 'crypto/',
-            },
-            {
-              regex: 'data/',
-            },
-            {
-              regex: 'logic/',
-            },
-            {
-              regex: 'web/',
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    languageOptions,
-    plugins,
-    files: ['src/crypto/*.ts', 'src/crypto/**/*.ts'],
-    rules: {
-      ...rules,
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              regex: 'console/',
-            },
-            {
-              regex: 'data/',
-            },
-            {
-              regex: 'logic/',
-            },
-            {
-              regex: 'web/',
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    languageOptions,
-    plugins,
-    files: ['src/logic/*.ts', 'src/logic/**/*.ts'],
-    rules: {
-      ...rules,
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              regex: 'console/',
-            },
-            {
-              regex: 'crypto/',
-            },
-            {
-              regex: 'data/',
-            },
-            {
-              regex: 'web/',
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    languageOptions,
-    plugins,
-    files: ['src/data/*.ts', 'src/data/**/*.ts'],
-    rules: {
-      ...rules,
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              regex: 'console/',
-            },
-            {
-              regex: 'crypto/',
-            },
-            {
-              regex: 'logic/',
-            },
-            {
-              regex: 'web/',
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    languageOptions,
-    plugins,
-    files: ['src/web/*.ts', 'src/web/**/*.ts'],
+    files: layerFiles(wiringLayer),
     rules: {
       ...rules,
       // The router is data agnostic and has to remain so: a RequestHandler
@@ -252,16 +228,7 @@ export default [
       ],
       // Koa context requires assigning status and body.
       'no-param-reassign': 'off',
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              regex: 'logic/internal/',
-            },
-          ],
-        },
-      ],
+      ...noLayerInternalImports(),
     },
   },
   {
