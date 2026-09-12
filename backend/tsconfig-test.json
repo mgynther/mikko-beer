@@ -1,7 +1,4 @@
 {
-  "extends": "./tsconfig-base.json",
-  "compilerOptions": {
-    "outDir": "./build-tests"
-  },
-  "include": ["src/data/*", "src/data/**/*", "test/**/*"]
+  "extends": "./tsconfig-test-base.json",
+  "include": ["src/data/**/*", "test/**/*"]
 }
