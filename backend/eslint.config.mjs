@@ -214,9 +214,6 @@ export default [
             {
               regex: 'web/',
             },
-            {
-              regex: 'logic/internal/',
-            },
           ],
         },
       ],
