@@ -10,6 +10,11 @@ import type {
   CreateContainerRequest,
 } from '../../logic/container/container.js'
 import type { Context } from '../context.js'
+import {
+  validateContainerId,
+  validateCreateContainerRequest,
+  validateUpdateContainerRequest,
+} from '../../validation/container.js'
 
 export interface CreatedOrUpdatedContainer {
   id: string
@@ -63,6 +68,7 @@ export function containerController(router: Router): void {
           await containerService.createContainer(
             async (container: CreateContainerRequest): Promise<Container> =>
               await containerRepository.insertContainer(trx, container),
+            validateCreateContainerRequest,
             {
               authTokenPayload,
               body,
@@ -92,6 +98,7 @@ export function containerController(router: Router): void {
           await containerService.updateContainer(
             async (container: Container): Promise<Container> =>
               await containerRepository.updateContainer(trx, container),
+            validateUpdateContainerRequest,
             {
               authTokenPayload,
               id: containerId,
@@ -118,6 +125,7 @@ export function containerController(router: Router): void {
       const container = await containerService.findContainerById(
         async (containerId: string): Promise<Container | undefined> =>
           await containerRepository.findContainerById(ctx.db, containerId),
+        validateContainerId,
         {
           authTokenPayload,
           id: containerId,

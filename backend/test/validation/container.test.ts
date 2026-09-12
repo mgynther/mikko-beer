@@ -1,19 +1,15 @@
 import { describe, it } from 'node:test'
 
 import {
+  validateContainerId,
   validateCreateContainerRequest,
   validateUpdateContainerRequest,
-} from '../../../../src/logic/internal/container/validation.js'
-import {
-  invalidContainerError,
-  invalidContainerIdError,
-} from '../../../../src/logic/errors.js'
-import { expectThrow } from '../../controller-error-helper.js'
-import { assertDeepEqual } from '../../../assert.js'
+} from '../../src/validation/container.js'
 import type {
   CreateContainerRequest,
   UpdateContainerRequest,
-} from '../../../../src/logic/container/container.js'
+} from '../../src/validation/container.js'
+import { assertDeepEqual, assertEqual } from '../assert.js'
 
 function validCreateRequest(): CreateContainerRequest {
   return {
@@ -33,14 +29,26 @@ describe('container validation unit tests', () => {
   it('valid create container request passes validation', () => {
     const input = validCreateRequest()
     const output = validCreateRequest()
-    assertDeepEqual(validateCreateContainerRequest(input), output)
+    assertEqual(validateCreateContainerRequest(input).errorCode, undefined)
+    assertDeepEqual(validateCreateContainerRequest(input).result, output)
+  })
+
+  it('invalid create container request fails validation', () => {
+    const input = { type: 'bottle' }
+    assertEqual(
+      validateCreateContainerRequest(input).errorCode,
+      'invalid-container',
+    )
+    assertDeepEqual(validateCreateContainerRequest(input).result, undefined)
   })
 
   it('valid update container request passes validation', () => {
     const input = validUpdateRequest()
     const output = validUpdateRequest()
     const id = '259b2593-7ec5-47c5-b379-cd29083fa726'
-    assertDeepEqual(validateUpdateContainerRequest(input, id), {
+    const validationResult = validateUpdateContainerRequest(input, id)
+    assertEqual(validationResult.errorCode, undefined)
+    assertDeepEqual(validationResult.result, {
       id,
       request: output,
     })
@@ -63,7 +71,9 @@ describe('container validation unit tests', () => {
     const { func, getValid, title } = validator
 
     function fail(container: unknown) {
-      expectThrow(() => func(container), invalidContainerError)
+      const result = func(container)
+      assertEqual(result.errorCode, 'invalid-container')
+      assertEqual(result.result, undefined)
     }
 
     it(title('fail with empty type'), () => {
@@ -134,9 +144,35 @@ describe('container validation unit tests', () => {
   })
 
   it('fail update with empty id', () => {
-    expectThrow(
-      () => validateUpdateContainerRequest(validUpdateRequest(), ''),
-      invalidContainerIdError,
+    const validationResult = validateUpdateContainerRequest(
+      validUpdateRequest(),
+      '',
     )
+    assertEqual(validationResult.errorCode, 'invalid-container-id')
+    assertEqual(validationResult.result, undefined)
   })
+
+  it('valid container id passes validation', () => {
+    const id = 'dc3baca5-6c3d-44e1-b6a4-f2be0b2e02ab'
+    const validationResult = validateContainerId(id)
+    assertEqual(validationResult.errorCode, undefined)
+    assertEqual(validationResult.result, id)
+  })
+
+  interface InvalidIdCase {
+    label: string
+    id: string | undefined
+  }
+  const invalidIdCases: InvalidIdCase[] = [
+    { label: 'empty string', id: '' },
+    { label: 'undefined', id: undefined },
+  ]
+
+  invalidIdCases.forEach((testCase) =>
+    it(`invalid container id "${testCase.label}" fails validation`, () => {
+      const validationResult = validateContainerId(testCase.id)
+      assertEqual(validationResult.errorCode, 'invalid-container-id')
+      assertEqual(validationResult.result, undefined)
+    }),
+  )
 })

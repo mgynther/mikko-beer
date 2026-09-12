@@ -58,6 +58,7 @@ describe('container authorized service unit tests', () => {
   it('create container as admin', async () => {
     await containerService.createContainer(
       create,
+      () => ({ errorCode: undefined, result: validCreateContainerRequest }),
       {
         authTokenPayload: adminAuthToken,
         body: validCreateContainerRequest,
@@ -66,10 +67,15 @@ describe('container authorized service unit tests', () => {
     )
   })
 
+  function notCalled(): any {
+    throw new Error('not to be called')
+  }
+
   it('fail to create container as viewer', async () => {
     await expectReject(async () => {
       await containerService.createContainer(
         create,
+        notCalled,
         {
           authTokenPayload: viewerAuthToken,
           body: validCreateContainerRequest,
@@ -83,6 +89,7 @@ describe('container authorized service unit tests', () => {
     await expectReject(async () => {
       await containerService.createContainer(
         create,
+        () => ({ errorCode: 'invalid-container', result: undefined }),
         {
           authTokenPayload: adminAuthToken,
           body: invalidContainerRequest,
@@ -95,6 +102,10 @@ describe('container authorized service unit tests', () => {
   it('update container as admin', async () => {
     await containerService.updateContainer(
       update,
+      () => ({
+        errorCode: undefined,
+        result: { id: container.id, request: validUpdateContainerRequest },
+      }),
       {
         authTokenPayload: adminAuthToken,
         id: container.id,
@@ -108,6 +119,7 @@ describe('container authorized service unit tests', () => {
     await expectReject(async () => {
       await containerService.updateContainer(
         update,
+        notCalled,
         {
           authTokenPayload: viewerAuthToken,
           id: container.id,
@@ -122,6 +134,7 @@ describe('container authorized service unit tests', () => {
     await expectReject(async () => {
       await containerService.updateContainer(
         update,
+        () => ({ errorCode: 'invalid-container', result: undefined }),
         {
           authTokenPayload: adminAuthToken,
           id: container.id,
@@ -135,6 +148,7 @@ describe('container authorized service unit tests', () => {
     it(`find container as ${token.role}`, async () => {
       const result = await containerService.findContainerById(
         async () => container,
+        () => ({ errorCode: undefined, result: container.id }),
         {
           authTokenPayload: token,
           id: container.id,

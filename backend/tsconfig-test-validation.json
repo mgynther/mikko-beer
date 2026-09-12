@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig-test-base.json",
+  "include": ["src/validation/**/*", "test/assert.ts", "test/validation/**/*"]
+}

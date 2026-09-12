@@ -19,6 +19,7 @@
     "test:crypto": "npm run build:test:base -- tsconfig-test-crypto.json && npm run test:run -- build-tests/test/crypto/*.test.js build-tests/test/crypto/*/*.test.js build-tests/test/crypto/*/*/*.test.js",
     "test:logic": "npm run build:test:base -- tsconfig-test-logic.json && npm run test:run -- build-tests/test/logic/*.test.js build-tests/test/logic/*/*.test.js build-tests/test/logic/*/*/*.test.js",
     "test:data": "npm run build:test:base -- tsconfig-test-data.json && npm run test:run -- build-tests/test/data/*.test.js build-tests/test/data/*/*.test.js",
+    "test:validation": "npm run build:test:base -- tsconfig-test-validation.json && npm run test:run -- build-tests/test/validation/*.test.js build-tests/test/validation/*/*.test.js build-tests/test/validation/*/*/*.test.js",
     "test:web": "npm run build:test:base -- tsconfig-test.json && npm run test:run -- build-tests/test/web/*.test.js build-tests/test/web/*/*.test.js build-tests/test/web/*/*/*.test.js",
     "test": "npm run build:test && npm run test:run -- build-tests/test/*.test.js build-tests/test/*/*.test.js build-tests/test/*/*/*.test.js build-tests/test/*/*/*/*.test.js",
     "test:ci": "npm run build:test && npm run test:run -- --experimental-test-coverage --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 build-tests/test/*.test.js build-tests/test/*/*.test.js build-tests/test/*/*/*.test.js build-tests/test/*/*/*/*.test.js",
