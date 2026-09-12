@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 
 import type { Location, SearchLocationIf } from '../../types/location/types'
+import type { Confirm } from '../confirm'
 
 import SearchBox, { nameFormatter } from '../common/SearchBox'
 import { createLocationSort } from './create-location-sort'
 
 export interface Props {
-  confirm: (text: string) => boolean
+  confirm: Confirm
   isCreateEnabled: boolean
   placeholderText: string
   searchLocationIf: SearchLocationIf

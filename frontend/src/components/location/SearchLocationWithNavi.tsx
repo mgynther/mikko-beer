@@ -1,6 +1,7 @@
 import React from 'react'
 
 import SearchLocation from './SearchLocation'
+import { confirmDialog } from '../confirm'
 import type { SearchLocationIf } from '../../types/location/types'
 import type { NavigateIf } from '../../navigation'
 
@@ -13,7 +14,7 @@ function SearchLocationWithNavi(props: Props): React.JSX.Element {
   const navigate = props.navigateIf.useNavigate()
   return (
     <SearchLocation
-      confirm={confirm}
+      confirm={confirmDialog}
       isCreateEnabled={false}
       placeholderText={'Search location'}
       searchLocationIf={props.searchLocationIf}

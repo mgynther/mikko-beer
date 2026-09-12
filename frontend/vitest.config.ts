@@ -2,9 +2,13 @@ import { defineConfig } from 'vitest/config'
 
 const exclude = ['e2e', 'node_modules']
 
-// Component tests are .tsx by convention and need a DOM. theme-applier is the
-// one plain .ts test that manipulates document.
-const domTests = ['**/*.test.tsx', 'src/theme-applier.test.ts']
+// Component tests are .tsx by convention and need a DOM. theme-applier and
+// confirm are the plain .ts tests that need window or document.
+const domTests = [
+  '**/*.test.tsx',
+  'src/theme-applier.test.ts',
+  'src/components/confirm.test.ts',
+]
 
 // Constructing a jsdom instance costs about a second per test file so the
 // tests that do not need one run in the node environment instead.

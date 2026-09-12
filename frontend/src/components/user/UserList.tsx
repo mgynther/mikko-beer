@@ -1,13 +1,13 @@
 import React from 'react'
 
 import type { DeleteUserIf, ListUsersIf, User } from '../../types/user/types'
+import type { Confirm } from '../confirm'
 
 import Button from '../common/Button'
 import LoadingIndicator from '../common/LoadingIndicator'
 
 interface Props {
-  // Giving confirm loses context and results in illegal invocation when used.
-  confirm: (text: string) => boolean
+  confirm: Confirm
   deleteUserIf: DeleteUserIf
   listUsersIf: ListUsersIf
 }

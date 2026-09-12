@@ -13,6 +13,7 @@ import SelectBeer from '../beer/SelectBeer'
 import SelectContainer from '../container/SelectContainer'
 import SearchLocation from '../location/SearchLocation'
 
+import { confirmDialog } from '../confirm'
 import { pad } from '../util'
 
 import ContainerInfo from '../container/ContainerInfo'
@@ -207,7 +208,7 @@ function ReviewEditor(props: Props): React.JSX.Element {
           <div>
             {location === undefined ? (
               <SearchLocation
-                confirm={confirm}
+                confirm={confirmDialog}
                 isCreateEnabled={true}
                 placeholderText={'Location'}
                 searchLocationIf={props.searchLocationIf}

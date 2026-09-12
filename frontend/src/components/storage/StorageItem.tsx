@@ -4,6 +4,7 @@ import { Link } from '../common/Link'
 
 import type { DeleteStorageIf, Storage } from '../../types/storage/types'
 import type { Login } from '../../types/login/types'
+import type { Confirm } from '../confirm'
 import { Role } from '../../types/user/types'
 import { formatDateString } from '../util'
 
@@ -18,8 +19,7 @@ import ContainerInfo from '../container/ContainerInfo'
 
 interface Props {
   deleteStorageIf: DeleteStorageIf
-  // Giving confirm loses context and results in illegal invocation when used.
-  confirm: (text: string) => boolean
+  confirm: Confirm
   storage: Storage
 }
 

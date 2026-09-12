@@ -3,6 +3,7 @@ import React from 'react'
 import type { DeleteStorageIf, Storage } from '../../types/storage/types'
 
 import LoadingIndicator from '../common/LoadingIndicator'
+import { confirmDialog } from '../confirm'
 import StorageItem from './StorageItem'
 
 import './StorageList.css'
@@ -33,7 +34,7 @@ function StorageList(props: Props): React.JSX.Element {
         <StorageItem
           key={storage.id}
           deleteStorageIf={props.deleteStorageIf}
-          confirm={confirm}
+          confirm={confirmDialog}
           storage={storage}
         />
       ))}

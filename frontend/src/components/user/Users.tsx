@@ -2,6 +2,7 @@ import React from 'react'
 
 import type { UserIf } from '../../types/user/types'
 
+import { confirmDialog } from '../confirm'
 import CreateUser from './CreateUser'
 import UserList from './UserList'
 
@@ -14,7 +15,7 @@ function Users(props: Props): React.JSX.Element {
     <div>
       <h3>Users</h3>
       <UserList
-        confirm={confirm}
+        confirm={confirmDialog}
         deleteUserIf={props.userIf.delete}
         listUsersIf={props.userIf.list}
       />
