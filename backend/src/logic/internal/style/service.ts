@@ -1,5 +1,3 @@
-import { v4 as uuidv4 } from 'uuid'
-
 import type {
   CreateStyleIf,
   CreateStyleRequest,
@@ -28,7 +26,7 @@ export async function createStyle(
     'and parents',
     request.parents,
   )
-  const styleId = uuidv4()
+  const styleId = 'validation id for new style'
 
   if (request.parents.length > 0) {
     await lockParents(createStyleIf.lockStyles, request.parents)
