@@ -90,6 +90,8 @@ const userPasswordHash: UserPasswordHash = {
 const signInUsingPasswordIf: SignInUsingPasswordIf = {
   lockUserByUsername: async () => user,
   findPasswordSignInMethod: async () => userPasswordHash,
+  verifySecret: async () => true,
+  encryptSecret: async () => 'encrypted',
   insertRefreshToken: async () => dbRefreshToken,
   updatePassword: async () => undefined,
 }
@@ -97,6 +99,8 @@ const signInUsingPasswordIf: SignInUsingPasswordIf = {
 const changePasswordUserIf: ChangePasswordUserIf = {
   lockUserById: async () => user,
   findPasswordSignInMethod: async () => userPasswordHash,
+  verifySecret: async () => true,
+  encryptSecret: async () => 'encrypted',
   updatePassword: async () => undefined,
 }
 

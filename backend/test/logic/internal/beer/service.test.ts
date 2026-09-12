@@ -132,7 +132,7 @@ describe('beer service unit tests', () => {
       insertBeerBreweries: async () => {},
       insertBeerStyles: async () => {},
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await beerService.createBeer(createIf, createBeerRequest, log)
     }, referredBreweryNotFoundError)
   })
@@ -145,7 +145,7 @@ describe('beer service unit tests', () => {
       insertBeerBreweries: async () => {},
       insertBeerStyles: async () => {},
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await beerService.createBeer(createIf, createBeerRequest, log)
     }, referredStyleNotFoundError)
   })
@@ -230,7 +230,7 @@ describe('beer service unit tests', () => {
       deleteBeerStyles: notCalled,
       insertBeerStyles: notCalled,
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await beerService.updateBeer(updateIf, beer.id, updateBeerRequest, log)
     }, referredBreweryNotFoundError)
   })
@@ -245,7 +245,7 @@ describe('beer service unit tests', () => {
       deleteBeerStyles: notCalled,
       insertBeerStyles: notCalled,
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await beerService.updateBeer(updateIf, beer.id, updateBeerRequest, log)
     }, referredStyleNotFoundError)
   })
@@ -265,7 +265,7 @@ describe('beer service unit tests', () => {
       assertEqual(searchId, id)
       return undefined
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await beerService.findBeerById(finder, id, log)
     }, beerNotFoundError(id))
   })

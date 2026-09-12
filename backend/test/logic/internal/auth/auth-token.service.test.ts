@@ -151,7 +151,7 @@ describe('auth token service unit tests', () => {
     expectKnownTokens(tokens)
 
     const wrongUserId = 'f388b0cb-63f5-4f6e-a9e6-3b6ac92844a7'
-    expectReject(async () => {
+    await expectReject(async () => {
       await authTokenService.deleteRefreshToken(
         () => {
           throw new Error('must not be called')

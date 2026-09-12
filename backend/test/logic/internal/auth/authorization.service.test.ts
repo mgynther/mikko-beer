@@ -138,7 +138,7 @@ describe('authorization service unit tests', () => {
 
   it('fail to authorize admin user as viewer', async () => {
     const authTokenPayload = await createAuthTokenPayload(viewer)
-    expectReject(async () => {
+    await expectReject(async () => {
       await authorizationService.authorizeUser(
         admin.id,
         authTokenPayload,
@@ -149,7 +149,7 @@ describe('authorization service unit tests', () => {
 
   it('fail to authorize other viewer user as viewer', async () => {
     const authTokenPayload = await createAuthTokenPayload(viewer)
-    expectReject(async () => {
+    await expectReject(async () => {
       await authorizationService.authorizeUser(
         otherViewer.id,
         authTokenPayload,
@@ -160,7 +160,7 @@ describe('authorization service unit tests', () => {
 
   it('fail to authorize viewer when refresh token not found', async () => {
     const authTokenPayload = await createAuthTokenPayload(viewer)
-    expectReject(async () => {
+    await expectReject(async () => {
       await authorizationService.authorizeUser(
         viewer.id,
         authTokenPayload,

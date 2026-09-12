@@ -56,7 +56,7 @@ describe('user service unit tests', () => {
 
   it('fail to find user that does not exist', async () => {
     const id = 'a52a35af-060a-4f43-ae00-c3d0dbaa8e6f'
-    expectReject(async () => {
+    await expectReject(async () => {
       await userService.findUserById(async () => undefined, id, log)
     }, userNotFoundError(id))
   })

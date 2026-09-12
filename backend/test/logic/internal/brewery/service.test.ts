@@ -78,7 +78,7 @@ describe('brewery service unit tests', () => {
       assertEqual(searchId, id)
       return undefined
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await breweryService.findBreweryById(finder, id, log)
     }, breweryNotFoundError(id))
   })

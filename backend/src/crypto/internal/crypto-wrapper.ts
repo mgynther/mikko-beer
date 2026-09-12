@@ -1,11 +1,11 @@
-import * as crypto from 'node:crypto'
+import { scrypt as nodeScrypt } from 'node:crypto'
 
 export function scrypt(
   secret: string,
   salt: string,
   handler: (err: Error | null, value: string) => void,
 ): void {
-  crypto.scrypt(
+  nodeScrypt(
     secret,
     salt,
     64,

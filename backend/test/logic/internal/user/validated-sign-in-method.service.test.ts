@@ -54,6 +54,8 @@ const userPasswordHash: UserPasswordHash = {
 const signInUsingPasswordIf: SignInUsingPasswordIf = {
   lockUserByUsername: async () => user,
   findPasswordSignInMethod: async () => userPasswordHash,
+  verifySecret: async () => true,
+  encryptSecret: async () => 'encrypted',
   insertRefreshToken: async () => dbRefreshToken,
   updatePassword: async () => undefined,
 }
@@ -61,6 +63,8 @@ const signInUsingPasswordIf: SignInUsingPasswordIf = {
 const changePasswordUserIf: ChangePasswordUserIf = {
   lockUserById: async () => user,
   findPasswordSignInMethod: async () => userPasswordHash,
+  verifySecret: async () => true,
+  encryptSecret: async () => 'encrypted',
   updatePassword: async () => undefined,
 }
 
@@ -98,7 +102,10 @@ describe('validated sign in method service unit tests', () => {
   it('fail to sign in using wrong password', async () => {
     await expectReject(async () => {
       await service.signInUsingPassword(
-        signInUsingPasswordIf,
+        {
+          ...signInUsingPasswordIf,
+          verifySecret: async () => false,
+        },
         {
           username: 'admin',
           password: 'wrong password',
@@ -121,7 +128,10 @@ describe('validated sign in method service unit tests', () => {
   it('fail to change password with wrong old password', async () => {
     await expectReject(async () => {
       await service.changePassword(
-        changePasswordUserIf,
+        {
+          ...changePasswordUserIf,
+          verifySecret: async () => false,
+        },
         userId,
         {
           ...passwordChange,

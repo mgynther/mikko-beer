@@ -82,7 +82,7 @@ describe('location service unit tests', () => {
       assertEqual(searchId, id)
       return undefined
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await locationService.findLocationById(finder, id, log)
     }, locationNotFoundError(id))
   })

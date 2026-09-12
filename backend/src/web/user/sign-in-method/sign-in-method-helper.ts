@@ -7,6 +7,36 @@ import type {
 } from '../../../logic/user/sign-in-method'
 import type { User } from '../../../logic/user/user.js'
 import type { Transaction } from '../../../data/database'
+import { encryptSecret, verifySecret } from '../../../crypto/crypto.service.js'
+import type { log } from '../../../console/log.js'
+
+export function createErrorLogger(logger: log): (...args: unknown[]) => void {
+  return (...args: unknown[]): void => {
+    logger('ERROR', args)
+  }
+}
+
+function wrapEncryptSecret(logger: log, secret: string): Promise<string> {
+  return encryptSecret(createErrorLogger(logger), secret)
+}
+
+export const createEncryptSecret =
+  () =>
+  (logger: log, secret: string): Promise<string> =>
+    wrapEncryptSecret(logger, secret)
+
+function wrapVerifySecret(
+  logger: log,
+  secret: string,
+  hash: string,
+): Promise<boolean> {
+  return verifySecret(createErrorLogger(logger), secret, hash)
+}
+
+export const createVerifySecret =
+  () =>
+  (logger: log, secret: string, hash: string): Promise<boolean> =>
+    wrapVerifySecret(logger, secret, hash)
 
 export function createAddPasswordUserIf(trx: Transaction): AddPasswordUserIf {
   const addPasswordUserIf: AddPasswordUserIf = {
@@ -23,6 +53,7 @@ export function createAddPasswordUserIf(trx: Transaction): AddPasswordUserIf {
     ): Promise<void> {
       await userRepository.setUserUsername(trx, userId, username)
     },
+    encryptSecret: createEncryptSecret(),
   }
   return addPasswordUserIf
 }

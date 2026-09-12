@@ -1,5 +1,3 @@
-import * as crypto from 'node:crypto'
-
 import * as authTokenService from '../../internal/auth/auth-token.service.js'
 import * as userService from '../user/user.service.js'
 
@@ -19,7 +17,6 @@ import type {
   SignInUsingPasswordIf,
 } from '../../user/sign-in-method.js'
 import type { AuthTokenConfig } from '../../auth/auth-token.js'
-import { scrypt } from './crypto.js'
 
 export const MIN_PASSWORD_LENGTH = 8
 export const MAX_PASSWORD_LENGTH = 255
@@ -39,9 +36,10 @@ export async function addPasswordSignInMethod(
     throw userAlreadyHasSignInMethodError
   }
 
+  validatePassword(method.password)
   await addPasswordUserIf.insertPasswordSignInMethod({
     userId,
-    passwordHash: await encryptPassword(log, method.password),
+    passwordHash: await addPasswordUserIf.encryptSecret(log, method.password),
     hashedAt: new Date(),
   })
 
@@ -77,14 +75,22 @@ export async function changePassword(
   }
 
   if (
-    !(await verifyPassword(change.oldPassword, signInMethod.passwordHash, log))
+    !(await changePasswordUserIf.verifySecret(
+      log,
+      change.oldPassword,
+      signInMethod.passwordHash,
+    ))
   ) {
     throw invalidCredentialsError
   }
 
+  validatePassword(change.newPassword)
   await changePasswordUserIf.updatePassword({
     userId,
-    passwordHash: await encryptPassword(log, change.newPassword),
+    passwordHash: await changePasswordUserIf.encryptSecret(
+      log,
+      change.newPassword,
+    ),
     hashedAt: new Date(),
   })
 }
@@ -108,7 +114,13 @@ export async function signInUsingPassword(
   }
 
   const password = method.password
-  if (!(await verifyPassword(password, signInMethod.passwordHash, log))) {
+  if (
+    !(await signInUsingPasswordIf.verifySecret(
+      log,
+      password,
+      signInMethod.passwordHash,
+    ))
+  ) {
     throw invalidCredentialsError
   }
 
@@ -117,7 +129,7 @@ export async function signInUsingPassword(
       userId: user.id,
       // Cannot apply any validation on the password as the rules may have
       // changed and login cannot fail permanently for this reason here.
-      passwordHash: await encryptSecret(log, password),
+      passwordHash: await signInUsingPasswordIf.encryptSecret(log, password),
       hashedAt: new Date(),
     })
   }
@@ -135,10 +147,7 @@ export async function signInUsingPassword(
   }
 }
 
-export async function encryptPassword(
-  log: log,
-  password: string,
-): Promise<string> {
+function validatePassword(password: string): void {
   if (password.length < MIN_PASSWORD_LENGTH) {
     throw passwordTooWeakError
   }
@@ -146,28 +155,4 @@ export async function encryptPassword(
   if (password.length > MAX_PASSWORD_LENGTH) {
     throw passwordTooLongError
   }
-
-  return await encryptSecret(log, password)
-}
-
-async function encryptSecret(log: log, secret: string): Promise<string> {
-  const salt = crypto.randomBytes(16).toString('hex')
-  return `${salt}:${await scrypt(log, secret, salt)}`
-}
-
-export async function verifySecret(
-  secret: string,
-  hash: string,
-  log: log,
-): Promise<boolean> {
-  const [salt, secretHash] = hash.split(':')
-  return (await scrypt(log, secret, salt)) === secretHash
-}
-
-async function verifyPassword(
-  password: string,
-  hash: string,
-  log: log,
-): Promise<boolean> {
-  return await verifySecret(password, hash, log)
 }

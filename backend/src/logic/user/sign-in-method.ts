@@ -1,14 +1,24 @@
 import type { DbRefreshToken } from '../auth/refresh-token.js'
+import type { log } from '../log.js'
 
 import type { User } from './user.js'
+
+type EncryptSecret = (logger: log, secret: string) => Promise<string>
 
 export interface AddPasswordUserIf {
   lockUserById: LockUserById
   insertPasswordSignInMethod: (
     userPassword: NewUserPasswordHash,
   ) => Promise<void>
+  encryptSecret: EncryptSecret
   setUserUsername: (userId: string, username: string) => Promise<void>
 }
+
+type VerifySecret = (
+  logger: log,
+  secret: string,
+  hash: string,
+) => Promise<boolean>
 
 export type SignInMethod = PasswordSignInMethod
 
@@ -22,6 +32,8 @@ export interface SignInUsingPasswordIf {
   findPasswordSignInMethod: (
     userId: string,
   ) => Promise<UserPasswordHash | undefined>
+  verifySecret: VerifySecret
+  encryptSecret: EncryptSecret
   insertRefreshToken: (userId: string) => Promise<DbRefreshToken>
   updatePassword: (userPasswordHash: NewUserPasswordHash) => Promise<void>
 }
@@ -33,6 +45,8 @@ export interface ChangePasswordUserIf {
   findPasswordSignInMethod: (
     userId: string,
   ) => Promise<UserPasswordHash | undefined>
+  verifySecret: VerifySecret
+  encryptSecret: EncryptSecret
   updatePassword: (userPasswordHash: NewUserPasswordHash) => Promise<void>
 }
 

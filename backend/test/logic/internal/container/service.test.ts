@@ -88,7 +88,7 @@ describe('container service unit tests', () => {
       assertEqual(searchId, id)
       return undefined
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await containerService.findContainerById(finder, id, log)
     }, containerNotFoundError(id))
   })

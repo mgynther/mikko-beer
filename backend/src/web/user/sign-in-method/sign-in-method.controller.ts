@@ -21,6 +21,10 @@ import type { Context } from '../../context.js'
 import type { Transaction } from '../../../data/database.js'
 
 import type { Router } from '../../router.js'
+import {
+  createEncryptSecret,
+  createVerifySecret,
+} from './sign-in-method-helper.js'
 
 export interface SignInResponseUser {
   id: string
@@ -72,6 +76,8 @@ export function signInMethodController(router: Router): void {
               return await userRepository.lockUserByUsername(trx, username)
             },
             findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
+            verifySecret: createVerifySecret(),
+            encryptSecret: createEncryptSecret(),
             insertRefreshToken: async (
               userId: string,
             ): Promise<DbRefreshToken> =>
@@ -198,6 +204,8 @@ export function signInMethodController(router: Router): void {
           lockUserById: async (userId: string): Promise<User | undefined> =>
             await userRepository.lockUserById(trx, userId),
           findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
+          verifySecret: createVerifySecret(),
+          encryptSecret: createEncryptSecret(),
           updatePassword: async function (
             userPasswordHash: UserPasswordHash,
           ): Promise<void> {

@@ -114,6 +114,60 @@ export default [
   {
     languageOptions,
     plugins,
+    files: ['src/console/*.ts', 'src/console/**/*.ts'],
+    rules: {
+      ...rules,
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: 'crypto/',
+            },
+            {
+              regex: 'data/',
+            },
+            {
+              regex: 'logic/',
+            },
+            {
+              regex: 'web/',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    languageOptions,
+    plugins,
+    files: ['src/crypto/*.ts', 'src/crypto/**/*.ts'],
+    rules: {
+      ...rules,
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: 'console/',
+            },
+            {
+              regex: 'data/',
+            },
+            {
+              regex: 'logic/',
+            },
+            {
+              regex: 'web/',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    languageOptions,
+    plugins,
     files: ['src/logic/*.ts', 'src/logic/**/*.ts'],
     rules: {
       ...rules,
@@ -123,6 +177,9 @@ export default [
           patterns: [
             {
               regex: 'console/',
+            },
+            {
+              regex: 'crypto/',
             },
             {
               regex: 'data/',
@@ -147,6 +204,9 @@ export default [
           patterns: [
             {
               regex: 'console/',
+            },
+            {
+              regex: 'crypto/',
             },
             {
               regex: 'logic/',

@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test'
-import { assertDeepEqual, assertEqual } from '../../../assert.js'
-import { createHandler } from '../../../../src/logic/internal/user/crypto-handler.js'
+import { assertDeepEqual, assertEqual } from '../../assert.js'
+import { createHandler } from '../../../src/crypto/internal/crypto-handler.js'
 
 describe('crypto handler', () => {
   it('resolve without error', (t) => {
@@ -32,7 +32,6 @@ describe('crypto handler', () => {
       new Error('unknown error'),
     ])
     assertDeepEqual(log.mock.calls[0].arguments, [
-      'ERROR',
       `crypt failed: ${errorMessage}`,
     ])
   })

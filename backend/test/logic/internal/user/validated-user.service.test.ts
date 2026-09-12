@@ -53,6 +53,7 @@ const createIf: CreateUserIf = {
       role: user.user.role,
       username: null,
     }),
+    encryptSecret: async () => 'encrypted',
     insertPasswordSignInMethod: async () => undefined,
     setUserUsername: async () => undefined,
   },

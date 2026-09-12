@@ -139,7 +139,7 @@ describe('style service unit tests', () => {
       insertParents: insertRelationship,
       listAllRelationships: noRelationships,
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await styleService.createStyle(createIf, createWithParentRequest, log)
     }, parentStyleNotFoundError)
   })
@@ -162,7 +162,7 @@ describe('style service unit tests', () => {
         ]
       },
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await styleService.createStyle(createIf, request, log)
     }, cyclicRelationshipError)
   })
@@ -232,7 +232,7 @@ describe('style service unit tests', () => {
       deleteStyleChildRelationships,
       listAllRelationships: noRelationships,
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await styleService.updateStyle(
         updateIf,
         style.id,
@@ -261,7 +261,7 @@ describe('style service unit tests', () => {
         ]
       },
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await styleService.updateStyle(updateIf, style.id, request, log)
     }, cyclicRelationshipError)
   })
@@ -281,7 +281,7 @@ describe('style service unit tests', () => {
       assertEqual(searchId, id)
       return undefined
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await styleService.findStyleById(finder, id, log)
     }, styleNotFoundError(id))
   })

@@ -171,7 +171,7 @@ describe('review service unit tests', () => {
       lockContainer,
       lockStorage: notCalled,
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await reviewService.createReview(
         createIf,
         createReviewRequest,
@@ -189,7 +189,7 @@ describe('review service unit tests', () => {
       lockContainer: async () => undefined,
       lockStorage: notCalled,
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await reviewService.createReview(
         createIf,
         createReviewRequest,
@@ -239,7 +239,7 @@ describe('review service unit tests', () => {
       lockContainer,
       lockStorage: async () => undefined,
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await reviewService.createReview(
         createIf,
         createReviewRequest,
@@ -274,7 +274,7 @@ describe('review service unit tests', () => {
       lockBeer: async () => undefined,
       lockContainer,
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await reviewService.updateReview(
         updateIf,
         review.id,
@@ -290,7 +290,7 @@ describe('review service unit tests', () => {
       lockBeer,
       lockContainer: async () => undefined,
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await reviewService.updateReview(
         updateIf,
         review.id,
@@ -315,7 +315,7 @@ describe('review service unit tests', () => {
       assertEqual(searchId, id)
       return undefined
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await reviewService.findReviewById(finder, id, log)
     }, reviewNotFoundError(id))
   })

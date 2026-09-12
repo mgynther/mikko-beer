@@ -135,7 +135,7 @@ describe('storage service unit tests', () => {
         return id
       },
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await storageService.createStorage(createIf, createRequest, log)
     }, referredBeerNotFoundError)
   })
@@ -153,7 +153,7 @@ describe('storage service unit tests', () => {
         return undefined
       },
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await storageService.createStorage(createIf, createRequest, log)
     }, referredContainerNotFoundError)
   })
@@ -214,7 +214,7 @@ describe('storage service unit tests', () => {
         return id
       },
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await storageService.updateStorage(updateIf, updateRequest, log)
     }, referredBeerNotFoundError)
   })
@@ -232,7 +232,7 @@ describe('storage service unit tests', () => {
         return undefined
       },
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await storageService.updateStorage(updateIf, updateRequest, log)
     }, referredContainerNotFoundError)
   })
@@ -264,7 +264,7 @@ describe('storage service unit tests', () => {
       assertEqual(searchId, id)
       return undefined
     }
-    expectReject(async () => {
+    await expectReject(async () => {
       await storageService.findStorageById(finder, id, log)
     }, storageNotFoundError(id))
   })
