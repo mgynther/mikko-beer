@@ -1,1 +1,1 @@
-export type log = (...args: unknown[]) => void
+export type log = (...args: string[]) => void

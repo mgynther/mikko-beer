@@ -90,7 +90,7 @@ export class App {
         authToken: '',
         userId: '',
       }
-      function logWithAdminPassword(...args: unknown[]): void {
+      function logWithAdminPassword(...args: string[]): void {
         if (isAdminPasswordNeeded) {
           log('INFO', ...args)
         }
@@ -185,7 +185,7 @@ export class App {
       await next()
     } catch (error) {
       if (error instanceof ControllerError) {
-        this.#log('INFO', 'controller error', error.status, error.code)
+        this.#log('INFO', 'controller error', `${error.status}`, error.code)
         respondError(ctx, error)
       } else {
         respondError(ctx, createUnknownError(error, this.#log))

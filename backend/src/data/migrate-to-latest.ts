@@ -11,7 +11,7 @@ const directory = dirname(fileURLToPath(import.meta.url))
 
 export type Level = 'INFO' | 'WARN' | 'ERROR'
 
-export type Log = (level: Level, ...args: unknown[]) => void
+export type Log = (level: Level, ...args: (string | object | Error)[]) => void
 
 export async function migrateToLatest(log: Log): Promise<void> {
   const db = new Kysely<Database>({
@@ -40,8 +40,7 @@ export async function migrateToLatest(log: Log): Promise<void> {
   })
 
   if (error !== undefined) {
-    log('ERROR', 'failed to migrate')
-    log('ERROR', error)
+    log('ERROR', 'failed to migrate', error ?? '')
     process.exit(1)
   }
 

@@ -10,9 +10,9 @@ import type { Transaction } from '../../../data/database'
 import { encryptSecret, verifySecret } from '../../../crypto/crypto.service.js'
 import type { log } from '../../../console/log.js'
 
-export function createErrorLogger(logger: log): (...args: unknown[]) => void {
-  return (...args: unknown[]): void => {
-    logger('ERROR', args)
+export function createErrorLogger(logger: log): (...args: string[]) => void {
+  return (...args: string[]): void => {
+    logger('ERROR', ...args)
   }
 }
 

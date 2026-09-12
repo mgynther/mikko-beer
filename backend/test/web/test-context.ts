@@ -41,8 +41,15 @@ export class TestContext {
 
   beforeEach = async (): Promise<void> => {
     const logMessages: string[] = []
-    const log: log = (level: Level, ...args: unknown[]) => {
-      logMessages.push(args.map((a: unknown) => (a as any).toString()).join())
+    const log: log = (
+      level: Level,
+      ...args: (string | object | Error | unknown)[]
+    ) => {
+      logMessages.push(
+        args
+          .map((a: string | object | Error | unknown) => (a ?? '').toString())
+          .join(),
+      )
       this.#userLogger?.(level, ...args)
     }
     this.#app = new App(testConfig, log)

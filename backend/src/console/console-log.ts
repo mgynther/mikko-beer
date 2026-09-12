@@ -1,6 +1,9 @@
 import type { Level, log } from './log.js'
 
-export const consoleLog: log = (level: Level, ...args: unknown[]): void => {
+export const consoleLog: log = (
+  level: Level,
+  ...args: (string | object | Error | unknown)[]
+): void => {
   const timestamp = new Date().toISOString()
   getLogger(level)(timestamp, level, ':', ...args)
 }
