@@ -13,6 +13,11 @@ import type {
 } from '../../logic/brewery/brewery.js'
 import { validatePagination } from '../../logic/pagination.js'
 import type { Context } from '../context.js'
+import {
+  validateBreweryId,
+  validateCreateBreweryRequest,
+  validateUpdateBreweryRequest,
+} from '../../validation/brewery.js'
 
 export interface CreatedOrUpdatedBrewery {
   id: string
@@ -75,6 +80,7 @@ export function breweryController(router: Router): void {
           await breweryService.createBrewery(
             async (brewery: CreateBreweryRequest): Promise<Brewery> =>
               await breweryRepository.insertBrewery(trx, brewery),
+            validateCreateBreweryRequest,
             {
               authTokenPayload,
               body,
@@ -104,6 +110,7 @@ export function breweryController(router: Router): void {
           await breweryService.updateBrewery(
             async (brewery: Brewery): Promise<Brewery> =>
               await breweryRepository.updateBrewery(trx, brewery),
+            validateUpdateBreweryRequest,
             breweryId,
             {
               authTokenPayload,
@@ -130,6 +137,7 @@ export function breweryController(router: Router): void {
       const brewery = await breweryService.findBreweryById(
         async (breweryId: string): Promise<Brewery | undefined> =>
           await breweryRepository.findBreweryById(ctx.db, breweryId),
+        validateBreweryId,
         {
           authTokenPayload,
           id: breweryId,

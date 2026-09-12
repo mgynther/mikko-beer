@@ -14,6 +14,7 @@ import type { BodyRequest, IdRequest } from '../request.js'
 import type { Pagination } from '../pagination.js'
 import type { AuthTokenPayload } from '../auth/auth-token.js'
 import { validateStyleId } from '../internal/style/validation.js'
+import type { ValidateBreweryId } from '../brewery/brewery.js'
 
 export async function createStorage(
   createIf: CreateIf,
@@ -73,12 +74,14 @@ export async function listStoragesByBeer(
 
 export async function listStoragesByBrewery(
   listByBrewery: (beerId: string) => Promise<JoinedStorage[]>,
+  validateBreweryId: ValidateBreweryId,
   request: IdRequest,
   log: log,
 ): Promise<JoinedStorage[]> {
   authorizationService.authorizeViewer(request.authTokenPayload)
   return await storageService.listStoragesByBrewery(
     listByBrewery,
+    validateBreweryId,
     request.id,
     log,
   )

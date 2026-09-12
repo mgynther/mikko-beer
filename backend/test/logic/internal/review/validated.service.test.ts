@@ -14,6 +14,7 @@ import type {
 import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
 import {
+  invalidBreweryIdError,
   invalidLocationIdError,
   invalidReviewError,
   invalidReviewIdError,
@@ -134,6 +135,31 @@ describe('review validated service unit tests', () => {
     },
     order: { property: 'time', direction: 'desc' },
   }
+
+  it('list reviews by brewery', async () => {
+    const breweryId = 'd7e4b5da-6d44-4a1f-a2f1-3c2b1a70b3b1'
+    const joinedReviews: JoinedReview[] = []
+    const result = await reviewService.listReviewsByBrewery(
+      async () => joinedReviews,
+      () => ({ errorCode: undefined, result: breweryId }),
+      breweryId,
+      reviewListRequest,
+      log,
+    )
+    assertDeepEqual(result, joinedReviews)
+  })
+
+  it('fail to list reviews by invalid brewery id', async () => {
+    await expectReject(async () => {
+      await reviewService.listReviewsByBrewery(
+        notCalled,
+        () => ({ errorCode: 'invalid-brewery-id', result: undefined }),
+        undefined,
+        reviewListRequest,
+        log,
+      )
+    }, invalidBreweryIdError)
+  })
 
   it('list reviews by location', async () => {
     const locationId = '4dcd6b2a-15e3-4bcb-9d4c-3cb5cc1a5ad3'

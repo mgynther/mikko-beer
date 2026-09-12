@@ -53,6 +53,7 @@ describe('brewery authorized service unit tests', () => {
   it('create brewery as admin', async () => {
     await breweryService.createBrewery(
       create,
+      () => ({ errorCode: undefined, result: validCreateBreweryRequest }),
       {
         authTokenPayload: adminAuthToken,
         body: validCreateBreweryRequest,
@@ -61,10 +62,15 @@ describe('brewery authorized service unit tests', () => {
     )
   })
 
+  function notCalled(): any {
+    throw new Error('not to be called')
+  }
+
   it('fail to create brewery as viewer', async () => {
     await expectReject(async () => {
       await breweryService.createBrewery(
         create,
+        notCalled,
         {
           authTokenPayload: viewerAuthToken,
           body: validCreateBreweryRequest,
@@ -78,6 +84,7 @@ describe('brewery authorized service unit tests', () => {
     await expectReject(async () => {
       await breweryService.createBrewery(
         create,
+        () => ({ errorCode: 'invalid-brewery', result: undefined }),
         {
           authTokenPayload: adminAuthToken,
           body: invalidBreweryRequest,
@@ -90,6 +97,10 @@ describe('brewery authorized service unit tests', () => {
   it('update brewery as admin', async () => {
     await breweryService.updateBrewery(
       update,
+      () => ({
+        errorCode: undefined,
+        result: { id: brewery.id, request: validUpdateBreweryRequest },
+      }),
       brewery.id,
       {
         authTokenPayload: adminAuthToken,
@@ -103,6 +114,7 @@ describe('brewery authorized service unit tests', () => {
     await expectReject(async () => {
       await breweryService.updateBrewery(
         update,
+        notCalled,
         brewery.id,
         {
           authTokenPayload: viewerAuthToken,
@@ -117,6 +129,7 @@ describe('brewery authorized service unit tests', () => {
     await expectReject(async () => {
       await breweryService.updateBrewery(
         update,
+        () => ({ errorCode: 'invalid-brewery', result: undefined }),
         brewery.id,
         {
           authTokenPayload: adminAuthToken,
@@ -130,6 +143,7 @@ describe('brewery authorized service unit tests', () => {
     it(`find brewery as ${token.role}`, async () => {
       const result = await breweryService.findBreweryById(
         async () => brewery,
+        () => ({ errorCode: undefined, result: brewery.id }),
         {
           authTokenPayload: token,
           id: brewery.id,

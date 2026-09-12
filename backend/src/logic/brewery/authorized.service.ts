@@ -2,22 +2,30 @@ import * as authorizationService from '../internal/auth/authorization.service.js
 import * as breweryService from '../internal/brewery/validated.service.js'
 
 import type { BodyRequest, IdRequest, PaginationRequest } from '../request'
-import type { Brewery, CreateBreweryRequest } from '../brewery/brewery'
+import type {
+  Brewery,
+  CreateBreweryRequest,
+  ValidateBreweryId,
+  ValidateCreateBrewery,
+  ValidateUpdateBrewery,
+} from '../brewery/brewery'
 import type { log } from '../log.js'
 import type { Pagination } from '../pagination.js'
 import type { SearchByName } from '../search.js'
 
 export async function createBrewery(
   create: (brewery: CreateBreweryRequest) => Promise<Brewery>,
+  validate: ValidateCreateBrewery,
   request: BodyRequest,
   log: log,
 ): Promise<Brewery> {
   authorizationService.authorizeAdmin(request.authTokenPayload)
-  return await breweryService.createBrewery(create, request.body, log)
+  return await breweryService.createBrewery(create, validate, request.body, log)
 }
 
 export async function updateBrewery(
   update: (brewery: Brewery) => Promise<Brewery>,
+  validate: ValidateUpdateBrewery,
   breweryId: string | undefined,
   request: BodyRequest,
   log: log,
@@ -25,6 +33,7 @@ export async function updateBrewery(
   authorizationService.authorizeAdmin(request.authTokenPayload)
   return await breweryService.updateBrewery(
     update,
+    validate,
     breweryId,
     request.body,
     log,
@@ -33,11 +42,12 @@ export async function updateBrewery(
 
 export async function findBreweryById(
   find: (id: string) => Promise<Brewery | undefined>,
+  validateId: ValidateBreweryId,
   request: IdRequest,
   log: log,
 ): Promise<Brewery> {
   authorizationService.authorizeViewer(request.authTokenPayload)
-  return await breweryService.findBreweryById(find, request.id, log)
+  return await breweryService.findBreweryById(find, validateId, request.id, log)
 }
 
 export async function listBreweries(

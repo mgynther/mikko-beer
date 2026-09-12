@@ -239,6 +239,10 @@ describe('storage authorized service unit tests', () => {
     it(`list storages by brewery as ${token.role}`, async () => {
       const result = await storageService.listStoragesByBrewery(
         async () => [joinedStorage],
+        (id: string | undefined) => ({
+          errorCode: undefined,
+          result: id ?? '',
+        }),
         {
           authTokenPayload: token,
           id: joinedStorage.breweries[0].id,

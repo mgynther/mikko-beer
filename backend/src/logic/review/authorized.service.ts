@@ -12,6 +12,7 @@ import type { log } from '../log.js'
 import type { BodyRequest, IdRequest } from '../request'
 import type { Pagination } from '../pagination'
 import type { AuthTokenPayload } from '../auth/auth-token'
+import type { ValidateBreweryId } from '../brewery/brewery.js'
 import type { ValidateLocationId } from '../location/location.js'
 
 export async function createReview(
@@ -90,6 +91,7 @@ export async function listReviewsByBrewery(
     breweryId: string,
     reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
+  validateBreweryId: ValidateBreweryId,
   request: IdRequest,
   reviewListRequest: ReviewListRequest,
   log: log,
@@ -97,6 +99,7 @@ export async function listReviewsByBrewery(
   authorizationService.authorizeViewer(request.authTokenPayload)
   return await reviewService.listReviewsByBrewery(
     list,
+    validateBreweryId,
     request.id,
     reviewListRequest,
     log,

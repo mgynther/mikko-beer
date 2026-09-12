@@ -21,6 +21,7 @@ import type { Router } from '../router.js'
 
 import { parseAuthToken } from '../authentication/authentication-helper.js'
 import type { Context } from '../context.js'
+import { validateBreweryId } from '../../validation/brewery.js'
 
 export type AnnualStorageStats = Array<{
   year: string
@@ -323,6 +324,7 @@ export function storageController(router: Router): void {
       const storageResult = await storageService.listStoragesByBrewery(
         async (breweryId: string): Promise<JoinedStorage[]> =>
           await storageRepository.listStoragesByBrewery(ctx.db, breweryId),
+        validateBreweryId,
         {
           authTokenPayload,
           id: breweryId,

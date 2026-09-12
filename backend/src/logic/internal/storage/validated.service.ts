@@ -16,7 +16,8 @@ import {
 import type { log } from '../../log.js'
 import type { Pagination } from '../../pagination.js'
 import { validateBeerId } from '../beer/validation.js'
-import { validateBreweryId } from '../brewery/validation.js'
+import type { ValidateBreweryId } from '../../brewery/brewery.js'
+import { invalidBreweryIdError } from '../../errors.js'
 import { validateStyleId } from '../style/validation.js'
 
 export async function createStorage(
@@ -91,12 +92,17 @@ export async function listStoragesByBeer(
 
 export async function listStoragesByBrewery(
   listByBrewery: (beerId: string) => Promise<JoinedStorage[]>,
+  validateBreweryId: ValidateBreweryId,
   breweryId: string | undefined,
   log: log,
 ): Promise<JoinedStorage[]> {
+  const idResult = validateBreweryId(breweryId)
+  if (idResult.errorCode === 'invalid-brewery-id') {
+    throw invalidBreweryIdError
+  }
   return await storageService.listStoragesByBrewery(
     listByBrewery,
-    validateBreweryId(breweryId),
+    idResult.result,
     log,
   )
 }

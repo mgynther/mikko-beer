@@ -5,6 +5,7 @@ import * as storageService from '../../../../src/logic/internal/storage/validate
 import type {
   Storage,
   CreateStorageRequest,
+  JoinedStorage,
   UpdateStorageRequest,
   CreateIf,
   UpdateIf,
@@ -13,9 +14,11 @@ import type {
 import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
 import {
+  invalidBreweryIdError,
   invalidStorageError,
   invalidStorageIdError,
 } from '../../../../src/logic/errors.js'
+import { assertDeepEqual } from '../../../assert.js'
 
 const validCreateStorageRequest: CreateStorageRequest = {
   beer: '9fda06b4-ddda-428b-965c-cfa16f77c010',
@@ -99,6 +102,33 @@ describe('storage authorized service unit tests', () => {
         log,
       )
     }, invalidStorageIdError)
+  })
+
+  function notCalled(): any {
+    throw new Error('not to be called')
+  }
+
+  it('list storages by brewery', async () => {
+    const breweryId = 'd1e6e30f-1b1e-4a01-9f54-0b2d1b9b6c2f'
+    const joinedStorages: JoinedStorage[] = []
+    const result = await storageService.listStoragesByBrewery(
+      async () => joinedStorages,
+      () => ({ errorCode: undefined, result: breweryId }),
+      breweryId,
+      log,
+    )
+    assertDeepEqual(result, joinedStorages)
+  })
+
+  it('fail to list storages by invalid brewery id', async () => {
+    await expectReject(async () => {
+      await storageService.listStoragesByBrewery(
+        notCalled,
+        () => ({ errorCode: 'invalid-brewery-id', result: undefined }),
+        undefined,
+        log,
+      )
+    }, invalidBreweryIdError)
   })
 
   it('get annual storage stats', async () => {
