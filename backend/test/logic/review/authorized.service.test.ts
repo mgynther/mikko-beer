@@ -255,6 +255,10 @@ describe('review authorized service unit tests', () => {
       assertEqual(typeof joinedReview.location?.id, 'string')
       const result = await reviewService.listReviewsByLocation(
         async () => [joinedReview],
+        (id: string | undefined) => ({
+          errorCode: undefined,
+          result: id ?? '',
+        }),
         {
           authTokenPayload: token,
           id: joinedReview.location?.id,

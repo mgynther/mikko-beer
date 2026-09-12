@@ -15,8 +15,9 @@ import {
 import type { log } from '../../log.js'
 import type { Pagination } from '../../pagination.js'
 import { validateBeerId } from '../beer/validation.js'
+import type { ValidateLocationId } from '../../location/location.js'
+import { invalidLocationIdError } from '../../errors.js'
 import { validateBreweryId } from '../brewery/validation.js'
-import { validateLocationId } from '../location/validation.js'
 import { validateStyleId } from '../style/validation.js'
 
 export async function createReview(
@@ -113,13 +114,18 @@ export async function listReviewsByLocation(
     locationId: string,
     reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
+  validateLocationId: ValidateLocationId,
   locationId: string | undefined,
   reviewListRequest: ReviewListRequest,
   log: log,
 ): Promise<JoinedReview[]> {
+  const idResult = validateLocationId(locationId)
+  if (idResult.errorCode === 'invalid-location-id') {
+    throw invalidLocationIdError
+  }
   return await reviewService.listReviewsByLocation(
     list,
-    validateLocationId(locationId),
+    idResult.result,
     reviewListRequest,
     log,
   )

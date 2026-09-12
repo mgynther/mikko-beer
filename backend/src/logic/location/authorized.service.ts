@@ -2,22 +2,35 @@ import * as authorizationService from '../internal/auth/authorization.service.js
 import * as locationService from '../internal/location/validated.service.js'
 
 import type { BodyRequest, IdRequest, PaginationRequest } from '../request'
-import type { Location, CreateLocationRequest } from '../location/location'
+import type {
+  Location,
+  CreateLocationRequest,
+  ValidateCreateLocation,
+  ValidateLocationId,
+  ValidateUpdateLocation,
+} from '../location/location'
 import type { log } from '../log.js'
 import type { Pagination } from '../pagination.js'
 import type { SearchByName } from '../search.js'
 
 export async function createLocation(
   create: (location: CreateLocationRequest) => Promise<Location>,
+  validate: ValidateCreateLocation,
   request: BodyRequest,
   log: log,
 ): Promise<Location> {
   authorizationService.authorizeAdmin(request.authTokenPayload)
-  return await locationService.createLocation(create, request.body, log)
+  return await locationService.createLocation(
+    create,
+    validate,
+    request.body,
+    log,
+  )
 }
 
 export async function updateLocation(
   update: (location: Location) => Promise<Location>,
+  validate: ValidateUpdateLocation,
   locationId: string | undefined,
   request: BodyRequest,
   log: log,
@@ -25,6 +38,7 @@ export async function updateLocation(
   authorizationService.authorizeAdmin(request.authTokenPayload)
   return await locationService.updateLocation(
     update,
+    validate,
     locationId,
     request.body,
     log,
@@ -33,11 +47,17 @@ export async function updateLocation(
 
 export async function findLocationById(
   find: (id: string) => Promise<Location | undefined>,
+  validateId: ValidateLocationId,
   request: IdRequest,
   log: log,
 ): Promise<Location> {
   authorizationService.authorizeViewer(request.authTokenPayload)
-  return await locationService.findLocationById(find, request.id, log)
+  return await locationService.findLocationById(
+    find,
+    validateId,
+    request.id,
+    log,
+  )
 }
 
 export async function listLocations(

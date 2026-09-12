@@ -54,6 +54,7 @@ describe('location authorized service unit tests', () => {
   it('create location as admin', async () => {
     await locationService.createLocation(
       create,
+      () => ({ errorCode: undefined, result: validCreateLocationRequest }),
       {
         authTokenPayload: adminAuthToken,
         body: validCreateLocationRequest,
@@ -62,10 +63,15 @@ describe('location authorized service unit tests', () => {
     )
   })
 
+  function notCalled(): any {
+    throw new Error('not to be called')
+  }
+
   it('fail to create location as viewer', async () => {
     await expectReject(async () => {
       await locationService.createLocation(
         create,
+        notCalled,
         {
           authTokenPayload: viewerAuthToken,
           body: validCreateLocationRequest,
@@ -79,6 +85,7 @@ describe('location authorized service unit tests', () => {
     await expectReject(async () => {
       await locationService.createLocation(
         create,
+        () => ({ errorCode: 'invalid-location', result: undefined }),
         {
           authTokenPayload: adminAuthToken,
           body: invalidLocationRequest,
@@ -91,6 +98,10 @@ describe('location authorized service unit tests', () => {
   it('update location as admin', async () => {
     await locationService.updateLocation(
       update,
+      () => ({
+        errorCode: undefined,
+        result: { id: location.id, request: validUpdateLocationRequest },
+      }),
       location.id,
       {
         authTokenPayload: adminAuthToken,
@@ -104,6 +115,7 @@ describe('location authorized service unit tests', () => {
     await expectReject(async () => {
       await locationService.updateLocation(
         update,
+        notCalled,
         location.id,
         {
           authTokenPayload: viewerAuthToken,
@@ -118,6 +130,7 @@ describe('location authorized service unit tests', () => {
     await expectReject(async () => {
       await locationService.updateLocation(
         update,
+        () => ({ errorCode: 'invalid-location', result: undefined }),
         location.id,
         {
           authTokenPayload: adminAuthToken,
@@ -131,6 +144,7 @@ describe('location authorized service unit tests', () => {
     it(`find location as ${token.role}`, async () => {
       const result = await locationService.findLocationById(
         async () => location,
+        () => ({ errorCode: undefined, result: location.id }),
         {
           authTokenPayload: token,
           id: location.id,

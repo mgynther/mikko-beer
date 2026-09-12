@@ -13,6 +13,11 @@ import type {
 } from '../../logic/location/location.js'
 import { validatePagination } from '../../logic/pagination.js'
 import type { Context } from '../context.js'
+import {
+  validateLocationId,
+  validateCreateLocationRequest,
+  validateUpdateLocationRequest,
+} from '../../validation/location.js'
 
 export interface CreatedOrUpdatedLocation {
   id: string
@@ -75,6 +80,7 @@ export function locationController(router: Router): void {
           await locationService.createLocation(
             async (location: CreateLocationRequest): Promise<Location> =>
               await locationRepository.insertLocation(trx, location),
+            validateCreateLocationRequest,
             {
               authTokenPayload,
               body,
@@ -104,6 +110,7 @@ export function locationController(router: Router): void {
           await locationService.updateLocation(
             async (location: Location): Promise<Location> =>
               await locationRepository.updateLocation(trx, location),
+            validateUpdateLocationRequest,
             locationId,
             {
               authTokenPayload,
@@ -130,6 +137,7 @@ export function locationController(router: Router): void {
       const location = await locationService.findLocationById(
         async (locationId: string): Promise<Location | undefined> =>
           await locationRepository.findLocationById(ctx.db, locationId),
+        validateLocationId,
         {
           authTokenPayload,
           id: locationId,

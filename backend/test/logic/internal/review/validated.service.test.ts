@@ -6,15 +6,19 @@ import type {
   Review,
   CreateReviewRequest,
   CreateIf,
+  JoinedReview,
+  ReviewListRequest,
   UpdateReviewRequest,
   UpdateIf,
 } from '../../../../src/logic/review/review.js'
 import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
 import {
+  invalidLocationIdError,
   invalidReviewError,
   invalidReviewIdError,
 } from '../../../../src/logic/errors.js'
+import { assertDeepEqual } from '../../../assert.js'
 
 const storageId = '970c40b2-94ad-4825-b683-c3f5e9046063'
 
@@ -115,5 +119,44 @@ describe('review validated service unit tests', () => {
         log,
       )
     }, invalidReviewIdError)
+  })
+
+  function notCalled(): any {
+    throw new Error('not to be called')
+  }
+
+  const reviewListRequest: ReviewListRequest = {
+    filter: {
+      minRating: 4,
+      maxRating: 10,
+      minTime: new Date('1970-01-01'),
+      maxTime: new Date('9999-01-01'),
+    },
+    order: { property: 'time', direction: 'desc' },
+  }
+
+  it('list reviews by location', async () => {
+    const locationId = '4dcd6b2a-15e3-4bcb-9d4c-3cb5cc1a5ad3'
+    const joinedReviews: JoinedReview[] = []
+    const result = await reviewService.listReviewsByLocation(
+      async () => joinedReviews,
+      () => ({ errorCode: undefined, result: locationId }),
+      locationId,
+      reviewListRequest,
+      log,
+    )
+    assertDeepEqual(result, joinedReviews)
+  })
+
+  it('fail to list reviews by invalid location id', async () => {
+    await expectReject(async () => {
+      await reviewService.listReviewsByLocation(
+        notCalled,
+        () => ({ errorCode: 'invalid-location-id', result: undefined }),
+        undefined,
+        reviewListRequest,
+        log,
+      )
+    }, invalidLocationIdError)
   })
 })

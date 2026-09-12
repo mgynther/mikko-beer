@@ -24,6 +24,7 @@ import {
 } from '../../logic/review/review.js'
 import { validatePagination } from '../../logic/pagination.js'
 import type { Context } from '../context.js'
+import { validateLocationId } from '../../validation/location.js'
 
 export interface CreatedOrUpdatedReview {
   id: string
@@ -348,6 +349,7 @@ export function reviewController(router: Router): void {
             locationId,
             reviewListRequest,
           ),
+        validateLocationId,
         {
           authTokenPayload,
           id: locationId,

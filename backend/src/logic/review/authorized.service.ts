@@ -12,6 +12,7 @@ import type { log } from '../log.js'
 import type { BodyRequest, IdRequest } from '../request'
 import type { Pagination } from '../pagination'
 import type { AuthTokenPayload } from '../auth/auth-token'
+import type { ValidateLocationId } from '../location/location.js'
 
 export async function createReview(
   createIf: CreateIf,
@@ -107,6 +108,7 @@ export async function listReviewsByLocation(
     locationId: string,
     reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
+  validateLocationId: ValidateLocationId,
   request: IdRequest,
   reviewListRequest: ReviewListRequest,
   log: log,
@@ -114,6 +116,7 @@ export async function listReviewsByLocation(
   authorizationService.authorizeViewer(request.authTokenPayload)
   return await reviewService.listReviewsByLocation(
     list,
+    validateLocationId,
     request.id,
     reviewListRequest,
     log,
