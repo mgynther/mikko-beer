@@ -24,6 +24,7 @@ import {
 } from '../../logic/review/review.js'
 import { validatePagination } from '../../logic/pagination.js'
 import type { Context } from '../context.js'
+import { validateBeerId } from '../../validation/beer.js'
 import { validateBreweryId } from '../../validation/brewery.js'
 import { validateLocationId } from '../../validation/location.js'
 import { validateStyleId } from '../../validation/style.js'
@@ -271,6 +272,7 @@ export function reviewController(router: Router): void {
             beerId,
             reviewListRequest,
           ),
+        validateBeerId,
         {
           authTokenPayload,
           id: beerId,

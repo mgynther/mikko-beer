@@ -14,6 +14,7 @@ import type {
 import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
 import {
+  invalidBeerIdError,
   invalidBreweryIdError,
   invalidStorageError,
   invalidStorageIdError,
@@ -108,6 +109,29 @@ describe('storage authorized service unit tests', () => {
   function notCalled(): any {
     throw new Error('not to be called')
   }
+
+  it('list storages by beer', async () => {
+    const beerId = 'bb1b78f9-3f4f-4a2b-8d3e-2b1a6d4c7f5e'
+    const joinedStorages: JoinedStorage[] = []
+    const result = await storageService.listStoragesByBeer(
+      async () => joinedStorages,
+      () => ({ errorCode: undefined, result: beerId }),
+      beerId,
+      log,
+    )
+    assertDeepEqual(result, joinedStorages)
+  })
+
+  it('fail to list storages by invalid beer id', async () => {
+    await expectReject(async () => {
+      await storageService.listStoragesByBeer(
+        notCalled,
+        () => ({ errorCode: 'invalid-beer-id', result: undefined }),
+        undefined,
+        log,
+      )
+    }, invalidBeerIdError)
+  })
 
   it('list storages by brewery', async () => {
     const breweryId = 'd1e6e30f-1b1e-4a01-9f54-0b2d1b9b6c2f'

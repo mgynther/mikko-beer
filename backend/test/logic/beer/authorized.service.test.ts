@@ -78,9 +78,14 @@ const viewerAuthToken: AuthTokenPayload = {
 }
 
 describe('beer authorized service unit tests', () => {
+  function notCalled(): any {
+    throw new Error('not to be called')
+  }
+
   it('create beer as admin', async () => {
     await beerService.createBeer(
       createIf,
+      () => ({ errorCode: undefined, result: validCreateBeerRequest }),
       {
         authTokenPayload: adminAuthToken,
         body: validCreateBeerRequest,
@@ -93,6 +98,7 @@ describe('beer authorized service unit tests', () => {
     await expectReject(async () => {
       await beerService.createBeer(
         createIf,
+        notCalled,
         {
           authTokenPayload: viewerAuthToken,
           body: validCreateBeerRequest,
@@ -106,6 +112,7 @@ describe('beer authorized service unit tests', () => {
     await expectReject(async () => {
       await beerService.createBeer(
         createIf,
+        () => ({ errorCode: 'invalid-beer', result: undefined }),
         {
           authTokenPayload: adminAuthToken,
           body: invalidBeerRequest,
@@ -118,6 +125,10 @@ describe('beer authorized service unit tests', () => {
   it('update beer as admin', async () => {
     await beerService.updateBeer(
       updateIf,
+      () => ({
+        errorCode: undefined,
+        result: { id: beer.id, request: validUpdateBeerRequest },
+      }),
       beer.id,
       {
         authTokenPayload: adminAuthToken,
@@ -131,6 +142,7 @@ describe('beer authorized service unit tests', () => {
     await expectReject(async () => {
       await beerService.updateBeer(
         updateIf,
+        notCalled,
         beer.id,
         {
           authTokenPayload: viewerAuthToken,
@@ -145,6 +157,7 @@ describe('beer authorized service unit tests', () => {
     await expectReject(async () => {
       await beerService.updateBeer(
         updateIf,
+        () => ({ errorCode: 'invalid-beer', result: undefined }),
         beer.id,
         {
           authTokenPayload: adminAuthToken,
@@ -158,6 +171,7 @@ describe('beer authorized service unit tests', () => {
     it(`find beer as ${token.role}`, async () => {
       const result = await beerService.findBeerById(
         async () => beerWithBreweriesAndStyles,
+        () => ({ errorCode: undefined, result: beer.id }),
         {
           authTokenPayload: token,
           id: beer.id,

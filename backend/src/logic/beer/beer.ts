@@ -54,3 +54,47 @@ export interface BeerRequest {
 
 export type CreateBeerRequest = BeerRequest
 export type UpdateBeerRequest = BeerRequest
+
+export interface ValidUpdateBeerRequest {
+  id: string
+  request: UpdateBeerRequest
+}
+
+export type CreateBeerValidationResult =
+  | {
+      errorCode: 'invalid-beer'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: CreateBeerRequest
+    }
+
+export type ValidateCreateBeer = (body: unknown) => CreateBeerValidationResult
+
+export type UpdateBeerValidationResult =
+  | {
+      errorCode: 'invalid-beer' | 'invalid-beer-id'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: ValidUpdateBeerRequest
+    }
+
+export type ValidateUpdateBeer = (
+  body: unknown,
+  id: string | undefined,
+) => UpdateBeerValidationResult
+
+export type ValidateBeerIdResult =
+  | {
+      errorCode: 'invalid-beer-id'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: string
+    }
+
+export type ValidateBeerId = (id: string | undefined) => ValidateBeerIdResult

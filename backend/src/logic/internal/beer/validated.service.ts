@@ -5,48 +5,65 @@ import type {
   BeerWithBreweryAndStyleIds,
   CreateIf,
   UpdateIf,
+  ValidateBeerId,
+  ValidateCreateBeer,
+  ValidateUpdateBeer,
 } from '../../beer/beer.js'
 
-import {
-  validateBeerId,
-  validateCreateBeerRequest,
-  validateUpdateBeerRequest,
-} from './validation.js'
 import type { SearchByName } from '../../search.js'
+import { invalidBeerError, invalidBeerIdError } from '../../errors.js'
 
 import type { log } from '../../log.js'
 import type { Pagination } from '../../pagination.js'
 
 export async function createBeer(
   createIf: CreateIf,
+  validate: ValidateCreateBeer,
   body: unknown,
   log: log,
 ): Promise<BeerWithBreweryAndStyleIds> {
-  const createBeerRequest = validateCreateBeerRequest(body)
-  return await beerService.createBeer(createIf, createBeerRequest, log)
+  const validationResult = validate(body)
+  if (validationResult.errorCode === 'invalid-beer') {
+    throw invalidBeerError
+  }
+  return await beerService.createBeer(createIf, validationResult.result, log)
 }
 
 export async function updateBeer(
   updateIf: UpdateIf,
+  validate: ValidateUpdateBeer,
   beerId: string | undefined,
   body: unknown,
   log: log,
 ): Promise<BeerWithBreweryAndStyleIds> {
-  const validRequest = validateUpdateBeerRequest(body, beerId)
+  const validationResult = validate(body, beerId)
+  if (validationResult.errorCode !== undefined) {
+    switch (validationResult.errorCode) {
+      case 'invalid-beer':
+        throw invalidBeerError
+      case 'invalid-beer-id':
+        throw invalidBeerIdError
+    }
+  }
   return await beerService.updateBeer(
     updateIf,
-    validRequest.id,
-    validRequest.request,
+    validationResult.result.id,
+    validationResult.result.request,
     log,
   )
 }
 
 export async function findBeerById(
   find: (id: string) => Promise<BeerWithBreweriesAndStyles | undefined>,
+  validateBeerId: ValidateBeerId,
   id: string | undefined,
   log: log,
 ): Promise<BeerWithBreweriesAndStyles> {
-  return await beerService.findBeerById(find, validateBeerId(id), log)
+  const idResult = validateBeerId(id)
+  if (idResult.errorCode === 'invalid-beer-id') {
+    throw invalidBeerIdError
+  }
+  return await beerService.findBeerById(find, idResult.result, log)
 }
 
 export async function listBeers(

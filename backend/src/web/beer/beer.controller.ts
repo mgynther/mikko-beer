@@ -25,6 +25,11 @@ import type {
 import { validatePagination } from '../../logic/pagination.js'
 import { validateSearchByName } from '../../logic/search.js'
 import type { Context } from '../context.js'
+import {
+  validateBeerId,
+  validateCreateBeerRequest,
+  validateUpdateBeerRequest,
+} from '../../validation/beer.js'
 
 export interface CreatedOrUpdatedBeer {
   id: string
@@ -102,6 +107,7 @@ export function beerController(router: Router): void {
         }
         return await beerService.createBeer(
           createIf,
+          validateCreateBeerRequest,
           {
             authTokenPayload,
             body,
@@ -144,6 +150,7 @@ export function beerController(router: Router): void {
           }
           return await beerService.updateBeer(
             updateIf,
+            validateUpdateBeerRequest,
             beerId,
             {
               authTokenPayload,
@@ -173,6 +180,7 @@ export function beerController(router: Router): void {
           beerId: string,
         ): Promise<BeerWithBreweriesAndStyles | undefined> =>
           await beerRepository.findBeerById(ctx.db, beerId),
+        validateBeerId,
         {
           authTokenPayload,
           id: beerId,

@@ -12,6 +12,7 @@ import type { log } from '../log.js'
 import type { BodyRequest, IdRequest } from '../request'
 import type { Pagination } from '../pagination'
 import type { AuthTokenPayload } from '../auth/auth-token'
+import type { ValidateBeerId } from '../beer/beer.js'
 import type { ValidateBreweryId } from '../brewery/brewery.js'
 import type { ValidateLocationId } from '../location/location.js'
 import type { ValidateStyleId } from '../style/style.js'
@@ -74,6 +75,7 @@ export async function listReviewsByBeer(
     beerId: string,
     reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
+  validateBeerId: ValidateBeerId,
   request: IdRequest,
   reviewListRequest: ReviewListRequest,
   log: log,
@@ -81,6 +83,7 @@ export async function listReviewsByBeer(
   authorizationService.authorizeViewer(request.authTokenPayload)
   return await reviewService.listReviewsByBeer(
     list,
+    validateBeerId,
     request.id,
     reviewListRequest,
     log,
