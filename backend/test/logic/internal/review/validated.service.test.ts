@@ -10,6 +10,9 @@ import type {
   ReviewListRequest,
   UpdateReviewRequest,
   UpdateIf,
+  ValidateCreateReview,
+  ValidateReviewId,
+  ValidateUpdateReview,
 } from '../../../../src/logic/review/review.js'
 import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
@@ -21,7 +24,7 @@ import {
   invalidReviewIdError,
   invalidStyleIdError,
 } from '../../../../src/logic/errors.js'
-import { assertDeepEqual } from '../../../assert.js'
+import { assertDeepEqual, assertEqual } from '../../../assert.js'
 
 const storageId = '970c40b2-94ad-4825-b683-c3f5e9046063'
 
@@ -72,10 +75,65 @@ const updateIf: UpdateIf = {
   lockContainer: async () => validCreateReviewRequest.container,
 }
 
+const passCreateValidation: ValidateCreateReview = (input: unknown) => {
+  assertDeepEqual(input, validCreateReviewRequest)
+  return {
+    errorCode: undefined,
+    result: validCreateReviewRequest,
+  }
+}
+
+const failCreateValidation: ValidateCreateReview = () => {
+  return {
+    errorCode: 'invalid-review',
+    result: undefined,
+  }
+}
+
+const passUpdateValidation: ValidateUpdateReview = (
+  input: unknown,
+  id: string | undefined,
+) => {
+  assertDeepEqual(input, validUpdateReviewRequest)
+  assertEqual(id, review.id)
+  return {
+    errorCode: undefined,
+    result: {
+      id: review.id,
+      request: validUpdateReviewRequest,
+    },
+  }
+}
+
+const failUpdateValidationWithReview: ValidateUpdateReview = () => {
+  return {
+    errorCode: 'invalid-review',
+    result: undefined,
+  }
+}
+
+const failUpdateValidationWithId: ValidateUpdateReview = () => {
+  return {
+    errorCode: 'invalid-review-id',
+    result: undefined,
+  }
+}
+
+const passReviewIdValidation: ValidateReviewId = (id: string | undefined) => ({
+  errorCode: undefined,
+  result: id ?? '',
+})
+
+const failReviewIdValidation: ValidateReviewId = () => ({
+  errorCode: 'invalid-review-id',
+  result: undefined,
+})
+
 describe('review validated service unit tests', () => {
   it('create review', async () => {
     await reviewService.createReview(
       createIf,
+      passCreateValidation,
       validCreateReviewRequest,
       storageId,
       log,
@@ -86,6 +144,7 @@ describe('review validated service unit tests', () => {
     await expectReject(async () => {
       await reviewService.createReview(
         createIf,
+        failCreateValidation,
         invalidReviewRequest,
         storageId,
         log,
@@ -96,16 +155,18 @@ describe('review validated service unit tests', () => {
   it('update review', async () => {
     await reviewService.updateReview(
       updateIf,
+      passUpdateValidation,
       review.id,
       validUpdateReviewRequest,
       log,
     )
   })
 
-  it('fail to update invalid review', async () => {
+  it('fail to update review with invalid review', async () => {
     await expectReject(async () => {
       await reviewService.updateReview(
         updateIf,
+        failUpdateValidationWithReview,
         review.id,
         invalidReviewRequest,
         log,
@@ -117,6 +178,7 @@ describe('review validated service unit tests', () => {
     await expectReject(async () => {
       await reviewService.updateReview(
         updateIf,
+        failUpdateValidationWithId,
         undefined,
         validUpdateReviewRequest,
         log,
@@ -127,6 +189,27 @@ describe('review validated service unit tests', () => {
   function notCalled(): any {
     throw new Error('not to be called')
   }
+
+  it('find review by id', async () => {
+    const result = await reviewService.findReviewById(
+      async () => review,
+      passReviewIdValidation,
+      review.id,
+      log,
+    )
+    assertDeepEqual(result, review)
+  })
+
+  it('fail to find review by invalid id', async () => {
+    await expectReject(async () => {
+      await reviewService.findReviewById(
+        notCalled,
+        failReviewIdValidation,
+        undefined,
+        log,
+      )
+    }, invalidReviewIdError)
+  })
 
   const reviewListRequest: ReviewListRequest = {
     filter: {

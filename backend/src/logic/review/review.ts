@@ -258,3 +258,51 @@ export function validateReviewListFilter(
     maxTime: timeOrDefault(max_time, defaultReviewListFilter.maxTime),
   }
 }
+
+export interface ValidUpdateReviewRequest {
+  id: string
+  request: UpdateReviewRequest
+}
+
+export type CreateReviewValidationResult =
+  | {
+      errorCode: 'invalid-review'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: CreateReviewRequest
+    }
+
+export type ValidateCreateReview = (
+  body: unknown,
+) => CreateReviewValidationResult
+
+export type UpdateReviewValidationResult =
+  | {
+      errorCode: 'invalid-review' | 'invalid-review-id'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: ValidUpdateReviewRequest
+    }
+
+export type ValidateUpdateReview = (
+  body: unknown,
+  id: string | undefined,
+) => UpdateReviewValidationResult
+
+export type ValidateReviewIdResult =
+  | {
+      errorCode: 'invalid-review-id'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: string
+    }
+
+export type ValidateReviewId = (
+  id: string | undefined,
+) => ValidateReviewIdResult

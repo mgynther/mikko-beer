@@ -88,9 +88,17 @@ const viewerAuthToken: AuthTokenPayload = {
 }
 
 describe('review authorized service unit tests', () => {
+  function notCalled(): any {
+    throw new Error('not to be called')
+  }
+
+  const passReviewIdValidation = (id: string | undefined) =>
+    ({ errorCode: undefined, result: id ?? '' }) as const
+
   it('create review as admin', async () => {
     await reviewService.createReview(
       createIf,
+      () => ({ errorCode: undefined, result: validCreateReviewRequest }),
       {
         authTokenPayload: adminAuthToken,
         body: validCreateReviewRequest,
@@ -104,6 +112,7 @@ describe('review authorized service unit tests', () => {
     await expectReject(async () => {
       await reviewService.createReview(
         createIf,
+        notCalled,
         {
           authTokenPayload: viewerAuthToken,
           body: validCreateReviewRequest,
@@ -118,6 +127,7 @@ describe('review authorized service unit tests', () => {
     await expectReject(async () => {
       await reviewService.createReview(
         createIf,
+        () => ({ errorCode: 'invalid-review', result: undefined }),
         {
           authTokenPayload: adminAuthToken,
           body: invalidReviewRequest,
@@ -131,6 +141,10 @@ describe('review authorized service unit tests', () => {
   it('update review as admin', async () => {
     await reviewService.updateReview(
       updateIf,
+      () => ({
+        errorCode: undefined,
+        result: { id: review.id, request: validUpdateReviewRequest },
+      }),
       {
         authTokenPayload: adminAuthToken,
         id: review.id,
@@ -144,6 +158,7 @@ describe('review authorized service unit tests', () => {
     await expectReject(async () => {
       await reviewService.updateReview(
         updateIf,
+        notCalled,
         {
           authTokenPayload: viewerAuthToken,
           id: review.id,
@@ -158,6 +173,7 @@ describe('review authorized service unit tests', () => {
     await expectReject(async () => {
       await reviewService.updateReview(
         updateIf,
+        () => ({ errorCode: 'invalid-review', result: undefined }),
         {
           authTokenPayload: adminAuthToken,
           id: review.id,
@@ -205,6 +221,7 @@ describe('review authorized service unit tests', () => {
     it(`find review as ${token.role}`, async () => {
       const result = await reviewService.findReviewById(
         async () => review,
+        passReviewIdValidation,
         {
           authTokenPayload: token,
           id: review.id,

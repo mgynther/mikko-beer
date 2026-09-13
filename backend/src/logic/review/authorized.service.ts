@@ -7,6 +7,9 @@ import type {
   Review,
   ReviewListRequest,
   UpdateIf,
+  ValidateCreateReview,
+  ValidateReviewId,
+  ValidateUpdateReview,
 } from './review'
 import type { log } from '../log.js'
 import type { BodyRequest, IdRequest } from '../request'
@@ -19,6 +22,7 @@ import type { ValidateStyleId } from '../style/style.js'
 
 export async function createReview(
   createIf: CreateIf,
+  validate: ValidateCreateReview,
   request: BodyRequest,
   fromStorageId: string | undefined,
   log: log,
@@ -26,6 +30,7 @@ export async function createReview(
   authorizationService.authorizeAdmin(request.authTokenPayload)
   return await reviewService.createReview(
     createIf,
+    validate,
     request.body,
     fromStorageId,
     log,
@@ -34,21 +39,34 @@ export async function createReview(
 
 export async function updateReview(
   updateIf: UpdateIf,
+  validate: ValidateUpdateReview,
   request: IdRequest,
   body: unknown,
   log: log,
 ): Promise<Review> {
   authorizationService.authorizeAdmin(request.authTokenPayload)
-  return await reviewService.updateReview(updateIf, request.id, body, log)
+  return await reviewService.updateReview(
+    updateIf,
+    validate,
+    request.id,
+    body,
+    log,
+  )
 }
 
 export async function findReviewById(
   find: (id: string) => Promise<Review | undefined>,
+  validateReviewId: ValidateReviewId,
   request: IdRequest,
   log: log,
 ): Promise<Review> {
   authorizationService.authorizeViewer(request.authTokenPayload)
-  return await reviewService.findReviewById(find, request.id, log)
+  return await reviewService.findReviewById(
+    find,
+    validateReviewId,
+    request.id,
+    log,
+  )
 }
 
 export async function listReviews(

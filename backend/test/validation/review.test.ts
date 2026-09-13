@@ -2,15 +2,11 @@ import { describe, it } from 'node:test'
 
 import {
   validateCreateReviewRequest,
+  validateReviewId,
   validateUpdateReviewRequest,
-} from '../../../../src/logic/internal/review/validation.js'
-import {
-  invalidReviewError,
-  invalidReviewIdError,
-} from '../../../../src/logic/errors.js'
-import { expectThrow } from '../../controller-error-helper.js'
-import { assertDeepEqual } from '../../../assert.js'
-import type { ReviewRequest } from '../../../../src/logic/review/review.js'
+} from '../../src/validation/review.js'
+import type { ReviewRequest } from '../../src/validation/review.js'
+import { assertDeepEqual, assertEqual } from '../assert.js'
 
 function validRequest(): ReviewRequest {
   return {
@@ -25,7 +21,7 @@ function validRequest(): ReviewRequest {
   }
 }
 
-describe('review create/update validation unit tests', () => {
+describe('review validation unit tests', () => {
   const id = '49f208f7-07b2-4fca-bbd3-8a4bc49b9b38'
 
   ;[
@@ -35,9 +31,7 @@ describe('review create/update validation unit tests', () => {
       outputFormatter: (input: object) => input,
     },
     {
-      func: (request: unknown) => {
-        return validateUpdateReviewRequest(request, id)
-      },
+      func: (request: unknown) => validateUpdateReviewRequest(request, id),
       title: (base: string) => `${base}: update`,
       outputFormatter: (input: object) => ({
         id,
@@ -50,7 +44,9 @@ describe('review create/update validation unit tests', () => {
     function pass(review: ReviewRequest) {
       const input = { ...review }
       const output = { ...review }
-      assertDeepEqual(func(input), outputFormatter(output))
+      const validationResult = func(input)
+      assertEqual(validationResult.errorCode, undefined)
+      assertDeepEqual(validationResult.result, outputFormatter(output))
     }
 
     it(title('pass validation'), () => {
@@ -100,14 +96,14 @@ describe('review create/update validation unit tests', () => {
           ...validRequest(),
           rating,
         }
-        const input = { ...review }
-        const output = { ...review }
-        assertDeepEqual(func(input), outputFormatter(output))
+        pass(review)
       }),
     )
 
     function fail(review: unknown) {
-      expectThrow(() => func(review), invalidReviewError)
+      const validationResult = func(review)
+      assertEqual(validationResult.errorCode, 'invalid-review')
+      assertEqual(validationResult.result, undefined)
     }
 
     it(title('fail with empty beer'), () => {
@@ -223,6 +219,35 @@ describe('review create/update validation unit tests', () => {
       fail({ additionalInfo, beer, container, location, rating, time, smell })
     })
 
+    it(title('fail with malformed time'), () => {
+      const review = {
+        ...validRequest(),
+        time: '2023-12-07',
+      }
+      fail(review)
+    })
+
+    it(title('fail with invalid time'), () => {
+      const review = {
+        ...validRequest(),
+        time: 123,
+      }
+      fail(review)
+    })
+
+    it(title('fail without time'), () => {
+      const {
+        additionalInfo,
+        beer,
+        container,
+        location,
+        rating,
+        smell,
+        taste,
+      } = validRequest()
+      fail({ additionalInfo, beer, container, location, rating, smell, taste })
+    })
+
     it(title('fail with additional property'), () => {
       const review = {
         ...validRequest(),
@@ -232,10 +257,37 @@ describe('review create/update validation unit tests', () => {
     })
   })
 
-  it('fail update with empty id', () => {
-    expectThrow(
-      () => validateUpdateReviewRequest(validRequest(), ''),
-      invalidReviewIdError,
-    )
+  interface InvalidIdCase {
+    label: string
+    id: string | undefined
+  }
+  const invalidIdCases: InvalidIdCase[] = [
+    { label: 'empty string', id: '' },
+    { label: 'undefined', id: undefined },
+  ]
+
+  invalidIdCases.forEach((testCase) =>
+    it(`fail update with ${testCase.label} review id`, () => {
+      const validationResult = validateUpdateReviewRequest(
+        validRequest(),
+        testCase.id,
+      )
+      assertEqual(validationResult.errorCode, 'invalid-review-id')
+      assertEqual(validationResult.result, undefined)
+    }),
+  )
+
+  it('valid review id passes validation', () => {
+    const validationResult = validateReviewId(id)
+    assertEqual(validationResult.errorCode, undefined)
+    assertEqual(validationResult.result, id)
   })
+
+  invalidIdCases.forEach((testCase) =>
+    it(`invalid review id "${testCase.label}" fails validation`, () => {
+      const validationResult = validateReviewId(testCase.id)
+      assertEqual(validationResult.errorCode, 'invalid-review-id')
+      assertEqual(validationResult.result, undefined)
+    }),
+  )
 })

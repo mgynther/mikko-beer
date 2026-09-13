@@ -6,12 +6,10 @@ import type {
   Review,
   ReviewListRequest,
   UpdateIf,
+  ValidateCreateReview,
+  ValidateReviewId,
+  ValidateUpdateReview,
 } from '../../review/review.js'
-import {
-  validateCreateReviewRequest,
-  validateReviewId,
-  validateUpdateReviewRequest,
-} from './validation.js'
 import type { log } from '../../log.js'
 import type { Pagination } from '../../pagination.js'
 import type { ValidateBeerId } from '../../beer/beer.js'
@@ -21,20 +19,26 @@ import {
   invalidBreweryIdError,
   invalidBeerIdError,
   invalidLocationIdError,
+  invalidReviewError,
+  invalidReviewIdError,
   invalidStyleIdError,
 } from '../../errors.js'
 import type { ValidateStyleId } from '../../style/style.js'
 
 export async function createReview(
   createIf: CreateIf,
+  validate: ValidateCreateReview,
   body: unknown,
   fromStorageId: string | undefined,
   log: log,
 ): Promise<Review> {
-  const createRequest = validateCreateReviewRequest(body)
+  const validationResult = validate(body)
+  if (validationResult.errorCode === 'invalid-review') {
+    throw invalidReviewError
+  }
   return await reviewService.createReview(
     createIf,
-    createRequest,
+    validationResult.result,
     fromStorageId,
     log,
   )
@@ -42,25 +46,39 @@ export async function createReview(
 
 export async function updateReview(
   updateIf: UpdateIf,
+  validate: ValidateUpdateReview,
   id: string | undefined,
   body: unknown,
   log: log,
 ): Promise<Review> {
-  const updateRequest = validateUpdateReviewRequest(body, id)
+  const validationResult = validate(body, id)
+  if (validationResult.errorCode !== undefined) {
+    switch (validationResult.errorCode) {
+      case 'invalid-review':
+        throw invalidReviewError
+      case 'invalid-review-id':
+        throw invalidReviewIdError
+    }
+  }
   return await reviewService.updateReview(
     updateIf,
-    updateRequest.id,
-    updateRequest.request,
+    validationResult.result.id,
+    validationResult.result.request,
     log,
   )
 }
 
 export async function findReviewById(
   find: (id: string) => Promise<Review | undefined>,
+  validateReviewId: ValidateReviewId,
   id: string | undefined,
   log: log,
 ): Promise<Review> {
-  return await reviewService.findReviewById(find, validateReviewId(id), log)
+  const idResult = validateReviewId(id)
+  if (idResult.errorCode === 'invalid-review-id') {
+    throw invalidReviewIdError
+  }
+  return await reviewService.findReviewById(find, idResult.result, log)
 }
 
 export async function listReviews(

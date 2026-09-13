@@ -25,6 +25,11 @@ import {
 import { validatePagination } from '../../logic/pagination.js'
 import type { Context } from '../context.js'
 import { validateBeerId } from '../../validation/beer.js'
+import {
+  validateCreateReviewRequest,
+  validateReviewId,
+  validateUpdateReviewRequest,
+} from '../../validation/review.js'
 import { validateBreweryId } from '../../validation/brewery.js'
 import { validateLocationId } from '../../validation/location.js'
 import { validateStyleId } from '../../validation/style.js'
@@ -176,6 +181,7 @@ export function reviewController(router: Router): void {
         }
         return await reviewService.createReview(
           createIf,
+          validateCreateReviewRequest,
           {
             authTokenPayload,
             body,
@@ -213,6 +219,7 @@ export function reviewController(router: Router): void {
           }
           return await reviewService.updateReview(
             updateIf,
+            validateUpdateReviewRequest,
             {
               authTokenPayload,
               id: reviewId,
@@ -240,6 +247,7 @@ export function reviewController(router: Router): void {
       const review = await reviewService.findReviewById(
         async (reviewId: string): Promise<Review> =>
           await reviewRepository.findReviewById(ctx.db, reviewId),
+        validateReviewId,
         {
           authTokenPayload,
           id: reviewId,
