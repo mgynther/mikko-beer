@@ -1,7 +1,7 @@
-import type { ConnectionConfig } from 'pg'
+import type { DatabaseConfig } from './database-config.js'
 import { getEnvVariable } from '../env-helper.js'
 
-export const config: ConnectionConfig = Object.freeze({
+export const config: DatabaseConfig = Object.freeze({
   database: getEnvVariable('DATABASE'),
   host: getEnvVariable('DATABASE_HOST'),
   user: getEnvVariable('DATABASE_USER'),

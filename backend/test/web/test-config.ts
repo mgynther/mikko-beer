@@ -1,4 +1,4 @@
-import type { ConnectionConfig } from 'pg'
+import type { DatabaseConfig } from '../../src/data/database-config.js'
 import {
   testConfig as testDataConfig,
   testAdminConfig,
@@ -6,7 +6,7 @@ import {
 import type { Config } from '../../src/web/config.js'
 
 export interface TestConfig extends Config {
-  readonly adminDatabase: ConnectionConfig
+  readonly adminDatabase: DatabaseConfig
 }
 
 export const testConfig: TestConfig = {

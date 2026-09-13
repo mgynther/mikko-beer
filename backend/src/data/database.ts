@@ -3,6 +3,8 @@ import { Kysely, PostgresDialect } from 'kysely'
 import type { ConnectionConfig } from 'pg'
 import { Pool } from 'pg'
 
+import type { DatabaseConfig } from './database-config.js'
+
 import type { RefreshTokenTable } from './authentication/refresh-token.table.js'
 import type { PasswordSignInMethodTable } from './user/sign-in-method/password-sign-in-method.table.js'
 import type { SignInMethodTable } from './user/sign-in-method/sign-in-method.table.js'
@@ -50,13 +52,14 @@ export class Transaction {
 export class Database {
   private readonly internalDb: Kysely<KyselyDatabase>
 
-  constructor(config: ConnectionConfig) {
+  constructor(config: DatabaseConfig) {
+    const connectionConfig = toConnectionConfig(config)
     this.internalDb = new Kysely<KyselyDatabase>({
       dialect: new PostgresDialect({
         /* eslint-disable-next-line @typescript-eslint/require-await --
          * async required by interface.
          */
-        pool: async (): Promise<Pool> => new Pool(config),
+        pool: async (): Promise<Pool> => new Pool(connectionConfig),
       }),
     })
   }
@@ -77,5 +80,16 @@ export class Database {
 
   getDb(): Kysely<KyselyDatabase> {
     return this.internalDb
+  }
+}
+
+// The single place where the application configuration is turned into what pg
+// wants. Keeping it here means no other layer has to name a pg type.
+function toConnectionConfig(config: DatabaseConfig): ConnectionConfig {
+  return {
+    database: config.database,
+    host: config.host,
+    user: config.user,
+    password: config.password,
   }
 }

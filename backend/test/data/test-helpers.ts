@@ -2,8 +2,9 @@ import { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { Kysely, PostgresDialect, sql } from 'kysely'
-import type { ConnectionConfig } from 'pg'
 import { Pool } from 'pg'
+
+import type { DatabaseConfig } from '../../src/data/database-config.js'
 import { Database } from '../../src/data/database.js'
 import type { KyselyDatabase } from '../../src/data/database.js'
 
@@ -24,8 +25,8 @@ export function invalidateSchema() {
 }
 
 export async function beforeTests(
-  config: ConnectionConfig,
-  adminConfig: ConnectionConfig,
+  config: DatabaseConfig,
+  adminConfig: DatabaseConfig,
   // Initializing data here can be relevant only when App needs to start with
   // specific data. For other purposes getting database from the is more
   // suitable.

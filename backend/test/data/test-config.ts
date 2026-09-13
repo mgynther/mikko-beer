@@ -1,12 +1,12 @@
-import type { ConnectionConfig } from 'pg'
+import type { DatabaseConfig } from '../../src/data/database-config.js'
 
-export const testConfig: ConnectionConfig = {
+export const testConfig: DatabaseConfig = {
   host: getEnvVariable('DATABASE_HOST'),
   database: getEnvVariable('DATABASE'),
   user: getEnvVariable('DATABASE_USER'),
   password: getEnvVariable('DATABASE_PASSWORD'),
 }
-export const testAdminConfig: ConnectionConfig = {
+export const testAdminConfig: DatabaseConfig = {
   host: getEnvVariable('DATABASE_HOST'),
   database: 'postgres',
   user: getEnvVariable('DATABASE_USER'),

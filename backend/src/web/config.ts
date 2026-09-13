@@ -1,6 +1,5 @@
-import type { ConnectionConfig } from 'pg'
-
 import { config as databaseConfig } from '../data/config.js'
+import type { DatabaseConfig } from '../data/database-config.js'
 import { getEnvVariable } from '../env-helper.js'
 import { parseExpiryDurationMin } from './parse.js'
 
@@ -9,7 +8,7 @@ export interface Config {
   readonly port: number
   readonly authTokenSecret: string
   readonly authTokenExpiryDurationMin: number
-  readonly database: ConnectionConfig
+  readonly database: DatabaseConfig
 }
 
 export const config: Config = Object.freeze({

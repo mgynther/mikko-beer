@@ -149,37 +149,108 @@ if (unregisteredLayers.length > 0) {
   )
 }
 
+// The external packages each layer may import. Anything not listed here
+// cannot be imported anywhere under src/, so taking a new dependency into
+// use is a deliberate, reviewable act: it has to be given a layer first.
+// Giving it exactly one layer is what keeps a breaking change in it
+// contained, because every other layer works on types that layer owns.
+//
+// logic/ is empty on purpose and must stay that way. It is what keeps the
+// business logic immune to dependency upgrades: everything it needs arrives
+// as a callback or a plain value supplied by web/.
+const layerDependencies = {
+  console: [],
+  crypto: ['node:crypto'],
+  data: ['kysely', 'node:fs', 'node:path', 'node:url', 'pg'],
+  jwt: ['jsonwebtoken'],
+  logic: [],
+  validation: ['ajv'],
+  web: [
+    '@koa/bodyparser',
+    '@koa/router',
+    'koa',
+    'koa-compress',
+    'node:http',
+    'node:querystring',
+    'uuid',
+  ],
+}
+
+// Files directly under src/ are the entry points and the shared env helper.
+// They belong to no layer and only wire layers together, so they need
+// nothing external either.
+const rootDependencies = []
+
+// A layer without an entry above would get no dependency restriction at
+// all, which is the one way this derivation could quietly become too
+// permissive. Fail the lint instead of allowing that.
+const layersWithoutDependencies = layers.filter(
+  (layer) => layerDependencies[layer] === undefined,
+)
+if (layersWithoutDependencies.length > 0) {
+  throw new Error(
+    'Layers without a dependency list: ' +
+      `${layersWithoutDependencies.join(', ')}. Every layer must be listed ` +
+      'in layerDependencies of eslint.config.mjs, with an empty array when ' +
+      'it uses no external packages, so that unlisted packages stay banned ' +
+      'from it.',
+  )
+}
+
 function layerFiles(layer) {
   return [`src/${layer}/*.ts`, `src/${layer}/**/*.ts`]
 }
 
-function noOtherLayerImports(layer) {
+function restrictedImports(patterns) {
   return {
-    'no-restricted-imports': [
-      'error',
-      {
-        patterns: layers
-          .filter((other) => other !== layer)
-          .map((other) => ({ regex: `${other}/` })),
-      },
-    ],
+    'no-restricted-imports': ['error', { patterns }],
   }
+}
+
+function otherLayerPatterns(layer) {
+  return layers
+    .filter((other) => other !== layer)
+    .map((other) => ({
+      regex: `${other}/`,
+      message: `Only ${wiringLayer}/ may import other layers.`,
+    }))
 }
 
 // web/ uses the other layers through their public modules only. Their
 // internal/ directories are the layer's own business and are derived
 // from the same list, so a new layer gets its internals protected
 // without a separate edit here.
-function noLayerInternalImports() {
+function layerInternalPatterns() {
+  return layers
+    .filter((layer) => layer !== wiringLayer)
+    .map((layer) => ({
+      regex: `${layer}/internal/`,
+      message: `Use ${layer}/ through its public modules.`,
+    }))
+}
+
+function escapeForRegex(text) {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+// Bans every non-relative import, which is every package and every node
+// builtin, except the listed ones and their subpaths. An empty list
+// therefore bans all external imports.
+function dependencyPattern(name, dependencies) {
+  const allowed = dependencies
+    .map((dependency) => `${escapeForRegex(dependency)}(?:/|$)`)
+    .join('|')
+  const exceptAllowed = allowed.length === 0 ? '' : `(?!(?:${allowed}))`
+  const allowedList =
+    dependencies.length === 0
+      ? 'no external packages'
+      : `only ${dependencies.join(', ')}`
   return {
-    'no-restricted-imports': [
-      'error',
-      {
-        patterns: layers
-          .filter((layer) => layer !== wiringLayer)
-          .map((layer) => ({ regex: `${layer}/internal/` })),
-      },
-    ],
+    regex: `^(?!\\.)${exceptAllowed}`,
+    message:
+      `${name} may import ${allowedList}. Add the package to ` +
+      'layerDependencies of eslint.config.mjs if it belongs here, and ' +
+      'otherwise use the layer that owns it.',
   }
 }
 
@@ -191,7 +262,10 @@ const isolatedLayerConfigs = layers
     files: layerFiles(layer),
     rules: {
       ...rules,
-      ...noOtherLayerImports(layer),
+      ...restrictedImports([
+        ...otherLayerPatterns(layer),
+        dependencyPattern(`${layer}/`, layerDependencies[layer]),
+      ]),
     },
   }))
 
@@ -236,7 +310,21 @@ export default [
       ],
       // Koa context requires assigning status and body.
       'no-param-reassign': 'off',
-      ...noLayerInternalImports(),
+      ...restrictedImports([
+        ...layerInternalPatterns(),
+        dependencyPattern(`${wiringLayer}/`, layerDependencies[wiringLayer]),
+      ]),
+    },
+  },
+  {
+    languageOptions,
+    plugins,
+    files: ['src/*.ts'],
+    rules: {
+      ...rules,
+      ...restrictedImports([
+        dependencyPattern('Files directly under src/', rootDependencies),
+      ]),
     },
   },
   {
