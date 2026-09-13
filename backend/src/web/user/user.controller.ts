@@ -21,6 +21,10 @@ import type { SignedInUser } from '../../logic/user/signed-in-user.js'
 import type { User } from '../../logic/user/user.js'
 import type { AuthTokenConfig } from '../../logic/auth/auth-token.js'
 import type { Context } from '../context.js'
+import {
+  validateCreateUserRequest,
+  validateUserId,
+} from '../../validation/user.js'
 
 export interface CreatedUser {
   id: string
@@ -88,6 +92,7 @@ export function userController(router: Router, config: Config): void {
         }
         return await userService.createUser(
           createUserIf,
+          validateCreateUserRequest,
           authTokenPayload,
           body,
           authTokenConfig,
@@ -115,6 +120,7 @@ export function userController(router: Router, config: Config): void {
       const user = await userService.findUserById(
         async (userId: string): Promise<User | undefined> =>
           await userRepository.findUserById(ctx.db, userId),
+        validateUserId,
         findRefreshToken,
         {
           authTokenPayload,
@@ -154,6 +160,7 @@ export function userController(router: Router, config: Config): void {
           async (userId: string): Promise<void> => {
             await userRepository.deleteUserById(trx, userId)
           },
+          validateUserId,
           {
             authTokenPayload,
             id: userId,

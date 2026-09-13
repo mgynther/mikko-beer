@@ -9,15 +9,18 @@ import type { log } from '../log.js'
 import type {
   ChangePasswordUserIf,
   SignInUsingPasswordIf,
+  ValidatePasswordChange,
+  ValidatePasswordSignInMethod,
 } from './sign-in-method.js'
 import type { IdRequest } from '../request.js'
 import type { SignedInUser } from './signed-in-user.js'
-import type { User } from './user.js'
+import type { User, ValidateUserId } from './user.js'
 import type { AuthTokenConfig } from '../auth/auth-token.js'
 import type { Tokens } from '../auth/tokens'
 
 export async function signInUsingPassword(
   signInUsingPasswordIf: SignInUsingPasswordIf,
+  validate: ValidatePasswordSignInMethod,
   body: unknown,
   authTokenConfig: AuthTokenConfig,
   log: log,
@@ -25,6 +28,7 @@ export async function signInUsingPassword(
   // No authorization as sign in takes place here.
   return await signInMethodService.signInUsingPassword(
     signInUsingPasswordIf,
+    validate,
     body,
     authTokenConfig,
     log,
@@ -33,6 +37,8 @@ export async function signInUsingPassword(
 
 export async function changePassword(
   changePasswordUserIf: ChangePasswordUserIf,
+  validate: ValidatePasswordChange,
+  validateUserId: ValidateUserId,
   findRefreshToken: (
     userId: string,
     refreshTokenId: string,
@@ -48,6 +54,8 @@ export async function changePassword(
   )
   await signInMethodService.changePassword(
     changePasswordUserIf,
+    validate,
+    validateUserId,
     request.id,
     body,
     log,

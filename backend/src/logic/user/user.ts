@@ -35,7 +35,26 @@ export interface CreateUserRequest {
   passwordSignInMethod: PasswordSignInMethod
 }
 
-export interface CreateUserType {
-  user?: unknown
-  passwordSignInMethod?: unknown
-}
+export type CreateUserValidationResult =
+  | {
+      errorCode: 'invalid-user' | 'invalid-sign-in-method'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: CreateUserRequest
+    }
+
+export type ValidateCreateUser = (body: unknown) => CreateUserValidationResult
+
+export type ValidateUserIdResult =
+  | {
+      errorCode: 'invalid-user-id'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: string
+    }
+
+export type ValidateUserId = (id: string | undefined) => ValidateUserIdResult

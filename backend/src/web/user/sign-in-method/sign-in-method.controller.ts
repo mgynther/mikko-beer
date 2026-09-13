@@ -18,6 +18,11 @@ import type { User } from '../../../logic/user/user.js'
 import type { AuthTokenConfig } from '../../../logic/auth/auth-token.js'
 import type { RefreshTokensIf } from '../../../logic/user/authorized-sign-in-method.service.js'
 import type { Context } from '../../context.js'
+import {
+  validatePasswordChange,
+  validatePasswordSignInMethod,
+  validateUserId,
+} from '../../../validation/user.js'
 import type { Transaction } from '../../../data/database.js'
 
 import type { Router } from '../../router.js'
@@ -94,6 +99,7 @@ export function signInMethodController(router: Router): void {
           }
           return await signInMethodService.signInUsingPassword(
             signInUsingPasswordIf,
+            validatePasswordSignInMethod,
             body,
             getAuthTokenConfig(ctx),
             ctx.log,
@@ -177,6 +183,7 @@ export function signInMethodController(router: Router): void {
             refreshTokenId,
           )
         },
+        validateUserId,
         {
           authTokenPayload,
           id: userId,
@@ -215,6 +222,8 @@ export function signInMethodController(router: Router): void {
         const findRefreshToken = authHelper.createFindRefreshToken(ctx.db)
         await signInMethodService.changePassword(
           changePasswordUserIf,
+          validatePasswordChange,
+          validateUserId,
           findRefreshToken,
           {
             authTokenPayload,

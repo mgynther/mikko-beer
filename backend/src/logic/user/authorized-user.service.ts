@@ -2,7 +2,12 @@ import * as authorizationService from '../internal/auth/authorization.service.js
 import * as userService from '../internal/user/validated-user.service.js'
 
 import type { IdRequest } from '../request'
-import type { CreateUserIf, User } from './user'
+import type {
+  CreateUserIf,
+  User,
+  ValidateCreateUser,
+  ValidateUserId,
+} from './user'
 
 import type { log } from '../log.js'
 import type { AuthTokenConfig, AuthTokenPayload } from '../auth/auth-token.js'
@@ -11,17 +16,25 @@ import type { SignedInUser } from './signed-in-user.js'
 
 export async function createUser(
   createUserIf: CreateUserIf,
+  validate: ValidateCreateUser,
   authTokenPayload: AuthTokenPayload,
   body: unknown,
   authTokenConfig: AuthTokenConfig,
   log: log,
 ): Promise<SignedInUser> {
   authorizationService.authorizeAdmin(authTokenPayload)
-  return await userService.createUser(createUserIf, body, authTokenConfig, log)
+  return await userService.createUser(
+    createUserIf,
+    validate,
+    body,
+    authTokenConfig,
+    log,
+  )
 }
 
 export async function findUserById(
   findUserById: (userId: string) => Promise<User | undefined>,
+  validateUserId: ValidateUserId,
   findRefreshToken: (
     userId: string,
     refreshTokenId: string,
@@ -34,7 +47,12 @@ export async function findUserById(
     request.authTokenPayload,
     findRefreshToken,
   )
-  return await userService.findUserById(findUserById, request.id, log)
+  return await userService.findUserById(
+    findUserById,
+    validateUserId,
+    request.id,
+    log,
+  )
 }
 
 export async function listUsers(
@@ -48,9 +66,15 @@ export async function listUsers(
 
 export async function deleteUserById(
   deleteUserById: (id: string) => Promise<void>,
+  validateUserId: ValidateUserId,
   request: IdRequest,
   log: log,
 ): Promise<void> {
   authorizationService.authorizeAdmin(request.authTokenPayload)
-  await userService.deleteUserById(deleteUserById, request.id, log)
+  await userService.deleteUserById(
+    deleteUserById,
+    validateUserId,
+    request.id,
+    log,
+  )
 }

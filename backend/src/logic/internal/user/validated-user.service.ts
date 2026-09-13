@@ -1,8 +1,17 @@
 import * as userService from '../user/user.service.js'
 import * as signInMethodUserService from '../user/sign-in-method-user.service.js'
 
-import type { CreateUserIf, User } from '../../user/user.js'
-import { validateCreateUserRequest, validateUserId } from './validation.js'
+import type {
+  CreateUserIf,
+  User,
+  ValidateCreateUser,
+  ValidateUserId,
+} from '../../user/user.js'
+import {
+  invalidSignInMethodError,
+  invalidUserError,
+  invalidUserIdError,
+} from '../../errors.js'
 
 import type { log } from '../../log.js'
 import type { AuthTokenConfig } from '../../auth/auth-token.js'
@@ -10,14 +19,23 @@ import type { SignedInUser } from '../../user/signed-in-user.js'
 
 export async function createUser(
   createUserIf: CreateUserIf,
+  validate: ValidateCreateUser,
   body: unknown,
   authTokenConfig: AuthTokenConfig,
   log: log,
 ): Promise<SignedInUser> {
-  const request = validateCreateUserRequest(body)
+  const validationResult = validate(body)
+  if (validationResult.errorCode !== undefined) {
+    switch (validationResult.errorCode) {
+      case 'invalid-user':
+        throw invalidUserError
+      case 'invalid-sign-in-method':
+        throw invalidSignInMethodError
+    }
+  }
   return await signInMethodUserService.createUser(
     createUserIf,
-    request,
+    validationResult.result,
     authTokenConfig,
     log,
   )
@@ -25,10 +43,15 @@ export async function createUser(
 
 export async function findUserById(
   findUserById: (userId: string) => Promise<User | undefined>,
+  validateUserId: ValidateUserId,
   id: string | undefined,
   log: log,
 ): Promise<User> {
-  return await userService.findUserById(findUserById, validateUserId(id), log)
+  const idResult = validateUserId(id)
+  if (idResult.errorCode === 'invalid-user-id') {
+    throw invalidUserIdError
+  }
+  return await userService.findUserById(findUserById, idResult.result, log)
 }
 
 export async function listUsers(
@@ -40,8 +63,13 @@ export async function listUsers(
 
 export async function deleteUserById(
   deleteUserById: (id: string) => Promise<void>,
+  validateUserId: ValidateUserId,
   id: string | undefined,
   log: log,
 ): Promise<void> {
-  await userService.deleteUserById(deleteUserById, validateUserId(id), log)
+  const idResult = validateUserId(id)
+  if (idResult.errorCode === 'invalid-user-id') {
+    throw invalidUserIdError
+  }
+  await userService.deleteUserById(deleteUserById, idResult.result, log)
 }

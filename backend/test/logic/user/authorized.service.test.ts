@@ -8,7 +8,9 @@ import type {
 } from '../../../src/logic/auth/auth-token.js'
 import type {
   CreateUserIf,
-  CreateUserType,
+  CreateUserRequest,
+  ValidateCreateUser,
+  ValidateUserId,
 } from '../../../src/logic/user/user.js'
 import { dummyLog as log } from '../dummy-log.js'
 import { expectReject } from '../controller-error-helper.js'
@@ -22,7 +24,7 @@ import type { SignedInUser } from '../../../src/logic/user/signed-in-user.js'
 import type { DbRefreshToken } from '../../../src/logic/auth/refresh-token.js'
 import { assertDeepEqual } from '../../assert.js'
 
-const validCreateUserRequest: CreateUserType = {
+const validCreateUserRequest = {
   user: {
     role: 'admin',
   },
@@ -85,10 +87,43 @@ const authTokenConfig: AuthTokenConfig = {
   expiryDurationMin: 1,
 }
 
+const createUserRequest: CreateUserRequest = {
+  role: 'admin',
+  passwordSignInMethod: {
+    username: 'admin',
+    password: 'adminpassword',
+  },
+}
+
+const passCreateValidation: ValidateCreateUser = () => ({
+  errorCode: undefined,
+  result: createUserRequest,
+})
+
+const failCreateValidation: ValidateCreateUser = () => ({
+  errorCode: 'invalid-user',
+  result: undefined,
+})
+
+const passUserIdValidation: ValidateUserId = (id: string | undefined) => ({
+  errorCode: undefined,
+  result: id ?? '',
+})
+
+const failUserIdValidation: ValidateUserId = () => ({
+  errorCode: 'invalid-user-id',
+  result: undefined,
+})
+
+function notCalled(): any {
+  throw new Error('not to be called')
+}
+
 describe('user authorized service unit tests', () => {
   it('create user as admin', async () => {
     await userService.createUser(
       createIf,
+      passCreateValidation,
       adminAuthToken,
       validCreateUserRequest,
       authTokenConfig,
@@ -100,6 +135,7 @@ describe('user authorized service unit tests', () => {
     await expectReject(async () => {
       await userService.createUser(
         createIf,
+        notCalled,
         viewerAuthToken,
         validCreateUserRequest,
         authTokenConfig,
@@ -112,6 +148,7 @@ describe('user authorized service unit tests', () => {
     await expectReject(async () => {
       await userService.createUser(
         createIf,
+        failCreateValidation,
         adminAuthToken,
         invalidUserRequest,
         authTokenConfig,
@@ -123,6 +160,7 @@ describe('user authorized service unit tests', () => {
   it('delete user as admin', async () => {
     await userService.deleteUserById(
       deleteUserById,
+      passUserIdValidation,
       {
         authTokenPayload: adminAuthToken,
         id: user.user.id,
@@ -135,6 +173,7 @@ describe('user authorized service unit tests', () => {
     await expectReject(async () => {
       await userService.deleteUserById(
         deleteUserById,
+        notCalled,
         {
           authTokenPayload: viewerAuthToken,
           id: user.user.id,
@@ -148,6 +187,7 @@ describe('user authorized service unit tests', () => {
     await expectReject(async () => {
       await userService.deleteUserById(
         deleteUserById,
+        failUserIdValidation,
         {
           authTokenPayload: adminAuthToken,
           id: undefined,
@@ -170,6 +210,7 @@ describe('user authorized service unit tests', () => {
     }
     const result = await userService.findUserById(
       async () => user,
+      passUserIdValidation,
       async () => dbRefreshToken,
       {
         authTokenPayload: adminAuthToken,
@@ -189,6 +230,7 @@ describe('user authorized service unit tests', () => {
     await expectReject(async () => {
       await userService.findUserById(
         async () => user,
+        passUserIdValidation,
         async () => dbRefreshToken,
         {
           authTokenPayload: viewerAuthToken,
@@ -207,6 +249,7 @@ describe('user authorized service unit tests', () => {
       }
       const result = await userService.findUserById(
         async () => user,
+        passUserIdValidation,
         async () => dbRefreshToken,
         {
           authTokenPayload: token,

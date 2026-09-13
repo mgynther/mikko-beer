@@ -23,9 +23,13 @@ import { expectReject } from '../controller-error-helper.js'
 import type {
   ChangePasswordUserIf,
   PasswordChange,
+  PasswordSignInMethod,
   SignInUsingPasswordIf,
   UserPasswordHash,
+  ValidatePasswordChange,
+  ValidatePasswordSignInMethod,
 } from '../../../src/logic/user/sign-in-method.js'
+import type { ValidateUserId } from '../../../src/logic/user/user.js'
 
 import { dummyLog as log } from '../dummy-log.js'
 
@@ -109,10 +113,35 @@ const passwordChange: PasswordChange = {
   newPassword: 'this is new password',
 }
 
+function passSignInMethodValidation(
+  method: PasswordSignInMethod,
+): ValidatePasswordSignInMethod {
+  return () => ({ errorCode: undefined, result: method })
+}
+
+function passPasswordChangeValidation(
+  change: PasswordChange,
+): ValidatePasswordChange {
+  return () => ({ errorCode: undefined, result: change })
+}
+
+const validateUserId: ValidateUserId = (id: string | undefined) => ({
+  errorCode: undefined,
+  result: id ?? '',
+})
+
+function notCalled(): any {
+  throw new Error('not to be called')
+}
+
 describe('authorized sign in method service unit tests', () => {
   it('sign in using password', async () => {
     await service.signInUsingPassword(
       signInUsingPasswordIf,
+      passSignInMethodValidation({
+        username: 'admin',
+        password: knownPassword,
+      }),
       {
         username: 'admin',
         password: knownPassword,
@@ -125,6 +154,8 @@ describe('authorized sign in method service unit tests', () => {
   it('change password', async () => {
     await service.changePassword(
       changePasswordUserIf,
+      passPasswordChangeValidation(passwordChange),
+      validateUserId,
       async () => dbRefreshToken,
       {
         id: userId,
@@ -139,6 +170,8 @@ describe('authorized sign in method service unit tests', () => {
     await expectReject(async () => {
       await service.changePassword(
         changePasswordUserIf,
+        notCalled,
+        notCalled,
         async () => dbRefreshToken,
         {
           id: userId,

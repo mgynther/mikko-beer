@@ -66,3 +66,31 @@ export interface NewUserPasswordHash {
   passwordHash: string
   hashedAt: Date
 }
+
+export type PasswordSignInMethodValidationResult =
+  | {
+      errorCode: 'invalid-sign-in-method'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: PasswordSignInMethod
+    }
+
+export type ValidatePasswordSignInMethod = (
+  request: unknown,
+) => PasswordSignInMethodValidationResult
+
+export type PasswordChangeValidationResult =
+  | {
+      errorCode: 'invalid-password-change'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: PasswordChange
+    }
+
+export type ValidatePasswordChange = (
+  request: unknown,
+) => PasswordChangeValidationResult
