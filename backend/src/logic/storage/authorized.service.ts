@@ -8,6 +8,9 @@ import type {
   MonthlyStorageStats,
   StorageWithDate,
   UpdateIf,
+  ValidateCreateStorage,
+  ValidateStorageId,
+  ValidateUpdateStorage,
 } from './storage.js'
 import type { log } from '../log.js'
 import type { BodyRequest, IdRequest } from '../request.js'
@@ -19,39 +22,64 @@ import type { ValidateStyleId } from '../style/style.js'
 
 export async function createStorage(
   createIf: CreateIf,
+  validate: ValidateCreateStorage,
   request: BodyRequest,
   log: log,
 ): Promise<StorageWithDate> {
   authorizationService.authorizeAdmin(request.authTokenPayload)
-  return await storageService.createStorage(createIf, request.body, log)
+  return await storageService.createStorage(
+    createIf,
+    validate,
+    request.body,
+    log,
+  )
 }
 
 export async function updateStorage(
   updateIf: UpdateIf,
+  validate: ValidateUpdateStorage,
   request: IdRequest,
   body: unknown,
   log: log,
 ): Promise<StorageWithDate> {
   authorizationService.authorizeAdmin(request.authTokenPayload)
-  return await storageService.updateStorage(updateIf, request.id, body, log)
+  return await storageService.updateStorage(
+    updateIf,
+    validate,
+    request.id,
+    body,
+    log,
+  )
 }
 
 export async function deleteStorageById(
   deleteStorageById: (id: string) => Promise<void>,
+  validateStorageId: ValidateStorageId,
   request: IdRequest,
   log: log,
 ): Promise<void> {
   authorizationService.authorizeAdmin(request.authTokenPayload)
-  await storageService.deleteStorageById(deleteStorageById, request.id, log)
+  await storageService.deleteStorageById(
+    deleteStorageById,
+    validateStorageId,
+    request.id,
+    log,
+  )
 }
 
 export async function findStorageById(
   findById: (id: string) => Promise<JoinedStorage | undefined>,
+  validateStorageId: ValidateStorageId,
   request: IdRequest,
   log: log,
 ): Promise<JoinedStorage> {
   authorizationService.authorizeViewer(request.authTokenPayload)
-  return await storageService.findStorageById(findById, request.id, log)
+  return await storageService.findStorageById(
+    findById,
+    validateStorageId,
+    request.id,
+    log,
+  )
 }
 
 export async function listStorages(

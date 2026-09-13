@@ -10,6 +10,9 @@ import type {
   CreateIf,
   UpdateIf,
   StorageWithDate,
+  ValidateCreateStorage,
+  ValidateStorageId,
+  ValidateUpdateStorage,
 } from '../../../../src/logic/storage/storage.js'
 import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
@@ -20,7 +23,7 @@ import {
   invalidStorageIdError,
   invalidStyleIdError,
 } from '../../../../src/logic/errors.js'
-import { assertDeepEqual } from '../../../assert.js'
+import { assertDeepEqual, assertEqual } from '../../../assert.js'
 
 const validCreateStorageRequest: CreateStorageRequest = {
   beer: '9fda06b4-ddda-428b-965c-cfa16f77c010',
@@ -64,30 +67,98 @@ const updateIf: UpdateIf = {
   lockContainer: async () => storage.container,
 }
 
-describe('storage authorized service unit tests', () => {
+const passCreateValidation: ValidateCreateStorage = (input: unknown) => {
+  assertDeepEqual(input, validCreateStorageRequest)
+  return {
+    errorCode: undefined,
+    result: validCreateStorageRequest,
+  }
+}
+
+const failCreateValidation: ValidateCreateStorage = () => {
+  return {
+    errorCode: 'invalid-storage',
+    result: undefined,
+  }
+}
+
+const passUpdateValidation: ValidateUpdateStorage = (
+  input: unknown,
+  id: string | undefined,
+) => {
+  assertDeepEqual(input, validUpdateStorageRequest)
+  assertEqual(id, storage.id)
+  return {
+    errorCode: undefined,
+    result: {
+      id: storage.id,
+      request: validUpdateStorageRequest,
+    },
+  }
+}
+
+const failUpdateValidationWithStorage: ValidateUpdateStorage = () => {
+  return {
+    errorCode: 'invalid-storage',
+    result: undefined,
+  }
+}
+
+const failUpdateValidationWithId: ValidateUpdateStorage = () => {
+  return {
+    errorCode: 'invalid-storage-id',
+    result: undefined,
+  }
+}
+
+const passStorageIdValidation: ValidateStorageId = (
+  id: string | undefined,
+) => ({
+  errorCode: undefined,
+  result: id ?? '',
+})
+
+const failStorageIdValidation: ValidateStorageId = () => ({
+  errorCode: 'invalid-storage-id',
+  result: undefined,
+})
+
+describe('storage validated service unit tests', () => {
   it('create storage', async () => {
-    await storageService.createStorage(createIf, validCreateStorageRequest, log)
+    await storageService.createStorage(
+      createIf,
+      passCreateValidation,
+      validCreateStorageRequest,
+      log,
+    )
   })
 
   it('fail to create invalid storage', async () => {
     await expectReject(async () => {
-      await storageService.createStorage(createIf, invalidStorageRequest, log)
+      await storageService.createStorage(
+        createIf,
+        failCreateValidation,
+        invalidStorageRequest,
+        log,
+      )
     }, invalidStorageError)
   })
 
   it('update storage', async () => {
     await storageService.updateStorage(
       updateIf,
+      passUpdateValidation,
       storage.id,
       validUpdateStorageRequest,
       log,
     )
   })
 
-  it('fail to update invalid storage', async () => {
+  it('fail to update storage with invalid storage', async () => {
     await expectReject(async () => {
       await storageService.updateStorage(
         updateIf,
+        failUpdateValidationWithStorage,
         storage.id,
         invalidStorageRequest,
         log,
@@ -99,6 +170,7 @@ describe('storage authorized service unit tests', () => {
     await expectReject(async () => {
       await storageService.updateStorage(
         updateIf,
+        failUpdateValidationWithId,
         undefined,
         validUpdateStorageRequest,
         log,
@@ -109,6 +181,62 @@ describe('storage authorized service unit tests', () => {
   function notCalled(): any {
     throw new Error('not to be called')
   }
+
+  it('delete storage by id', async () => {
+    await storageService.deleteStorageById(
+      async () => undefined,
+      passStorageIdValidation,
+      storage.id,
+      log,
+    )
+  })
+
+  it('fail to delete storage by invalid id', async () => {
+    await expectReject(async () => {
+      await storageService.deleteStorageById(
+        notCalled,
+        failStorageIdValidation,
+        undefined,
+        log,
+      )
+    }, invalidStorageIdError)
+  })
+
+  it('find storage by id', async () => {
+    const joinedStorage: JoinedStorage = {
+      id: storage.id,
+      beerId: storage.beer,
+      beerName: 'Severin',
+      bestBefore: storage.bestBefore,
+      breweries: [],
+      container: {
+        id: storage.container,
+        type: 'bottle',
+        size: '0.33',
+      },
+      createdAt: new Date('2024-12-10T12:12:12.000Z'),
+      hasReview: false,
+      styles: [],
+    }
+    const result = await storageService.findStorageById(
+      async () => joinedStorage,
+      passStorageIdValidation,
+      storage.id,
+      log,
+    )
+    assertDeepEqual(result, joinedStorage)
+  })
+
+  it('fail to find storage by invalid id', async () => {
+    await expectReject(async () => {
+      await storageService.findStorageById(
+        notCalled,
+        failStorageIdValidation,
+        undefined,
+        log,
+      )
+    }, invalidStorageIdError)
+  })
 
   it('list storages by beer', async () => {
     const beerId = 'bb1b78f9-3f4f-4a2b-8d3e-2b1a6d4c7f5e'

@@ -22,6 +22,11 @@ import type { Router } from '../router.js'
 import { parseAuthToken } from '../authentication/authentication-helper.js'
 import type { Context } from '../context.js'
 import { validateBeerId } from '../../validation/beer.js'
+import {
+  validateCreateStorageRequest,
+  validateStorageId,
+  validateUpdateStorageRequest,
+} from '../../validation/storage.js'
 import { validateBreweryId } from '../../validation/brewery.js'
 import { validateStyleId } from '../../validation/style.js'
 
@@ -190,6 +195,7 @@ export function storageController(router: Router): void {
           }
           return await storageService.createStorage(
             createIf,
+            validateCreateStorageRequest,
             {
               authTokenPayload,
               body,
@@ -225,6 +231,7 @@ export function storageController(router: Router): void {
           }
           return await storageService.updateStorage(
             updateIf,
+            validateUpdateStorageRequest,
             {
               authTokenPayload,
               id: storageId,
@@ -258,6 +265,7 @@ export function storageController(router: Router): void {
         }
         await storageService.deleteStorageById(
           deleteStorage,
+          validateStorageId,
           {
             authTokenPayload,
             id: storageId,
@@ -281,6 +289,7 @@ export function storageController(router: Router): void {
       const storage = await storageService.findStorageById(
         async (storageId: string): Promise<JoinedStorage | undefined> =>
           await storageRepository.findStorageById(ctx.db, storageId),
+        validateStorageId,
         {
           authTokenPayload,
           id: storageId,

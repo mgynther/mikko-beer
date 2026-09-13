@@ -7,12 +7,10 @@ import type {
   MonthlyStorageStats,
   StorageWithDate,
   UpdateIf,
+  ValidateCreateStorage,
+  ValidateStorageId,
+  ValidateUpdateStorage,
 } from '../../storage/storage.js'
-import {
-  validateCreateStorageRequest,
-  validateStorageId,
-  validateUpdateStorageRequest,
-} from './validation.js'
 import type { log } from '../../log.js'
 import type { Pagination } from '../../pagination.js'
 import type { ValidateBeerId } from '../../beer/beer.js'
@@ -20,31 +18,50 @@ import type { ValidateBreweryId } from '../../brewery/brewery.js'
 import {
   invalidBeerIdError,
   invalidBreweryIdError,
+  invalidStorageError,
+  invalidStorageIdError,
   invalidStyleIdError,
 } from '../../errors.js'
 import type { ValidateStyleId } from '../../style/style.js'
 
 export async function createStorage(
   createIf: CreateIf,
+  validate: ValidateCreateStorage,
   body: unknown,
   log: log,
 ): Promise<StorageWithDate> {
-  const createRequest = validateCreateStorageRequest(body)
-  return await storageService.createStorage(createIf, createRequest, log)
+  const validationResult = validate(body)
+  if (validationResult.errorCode === 'invalid-storage') {
+    throw invalidStorageError
+  }
+  return await storageService.createStorage(
+    createIf,
+    validationResult.result,
+    log,
+  )
 }
 
 export async function updateStorage(
   updateIf: UpdateIf,
+  validate: ValidateUpdateStorage,
   id: string | undefined,
   body: unknown,
   log: log,
 ): Promise<StorageWithDate> {
-  const updateRequest = validateUpdateStorageRequest(body, id)
+  const validationResult = validate(body, id)
+  if (validationResult.errorCode !== undefined) {
+    switch (validationResult.errorCode) {
+      case 'invalid-storage':
+        throw invalidStorageError
+      case 'invalid-storage-id':
+        throw invalidStorageIdError
+    }
+  }
   return await storageService.updateStorage(
     updateIf,
     {
-      ...updateRequest.request,
-      id: updateRequest.id,
+      ...validationResult.result.request,
+      id: validationResult.result.id,
     },
     log,
   )
@@ -52,26 +69,32 @@ export async function updateStorage(
 
 export async function deleteStorageById(
   deleteStorageById: (id: string) => Promise<void>,
+  validateStorageId: ValidateStorageId,
   id: string | undefined,
   log: log,
 ): Promise<void> {
+  const idResult = validateStorageId(id)
+  if (idResult.errorCode === 'invalid-storage-id') {
+    throw invalidStorageIdError
+  }
   await storageService.deleteStorageById(
     deleteStorageById,
-    validateStorageId(id),
+    idResult.result,
     log,
   )
 }
 
 export async function findStorageById(
   findById: (id: string) => Promise<JoinedStorage | undefined>,
+  validateStorageId: ValidateStorageId,
   id: string | undefined,
   log: log,
 ): Promise<JoinedStorage> {
-  return await storageService.findStorageById(
-    findById,
-    validateStorageId(id),
-    log,
-  )
+  const idResult = validateStorageId(id)
+  if (idResult.errorCode === 'invalid-storage-id') {
+    throw invalidStorageIdError
+  }
+  return await storageService.findStorageById(findById, idResult.result, log)
 }
 
 export async function listStorages(

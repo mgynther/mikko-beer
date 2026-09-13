@@ -64,3 +64,51 @@ export type MonthlyStorageStats = Array<{
   month: string
   count: string
 }>
+
+export interface ValidUpdateStorageRequest {
+  id: string
+  request: UpdateStorageRequest
+}
+
+export type CreateStorageValidationResult =
+  | {
+      errorCode: 'invalid-storage'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: CreateStorageRequest
+    }
+
+export type ValidateCreateStorage = (
+  body: unknown,
+) => CreateStorageValidationResult
+
+export type UpdateStorageValidationResult =
+  | {
+      errorCode: 'invalid-storage' | 'invalid-storage-id'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: ValidUpdateStorageRequest
+    }
+
+export type ValidateUpdateStorage = (
+  body: unknown,
+  id: string | undefined,
+) => UpdateStorageValidationResult
+
+export type ValidateStorageIdResult =
+  | {
+      errorCode: 'invalid-storage-id'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: string
+    }
+
+export type ValidateStorageId = (
+  id: string | undefined,
+) => ValidateStorageIdResult

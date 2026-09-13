@@ -2,18 +2,14 @@ import { describe, it } from 'node:test'
 
 import {
   validateCreateStorageRequest,
+  validateStorageId,
   validateUpdateStorageRequest,
-} from '../../../src/logic/internal/storage/validation.js'
-import {
-  invalidStorageError,
-  invalidStorageIdError,
-} from '../../../src/logic/errors.js'
-import { expectThrow } from '../controller-error-helper.js'
-import { assertDeepEqual } from '../../assert.js'
+} from '../../src/validation/storage.js'
 import type {
   CreateStorageRequest,
   UpdateStorageRequest,
-} from '../../../src/logic/storage/storage.js'
+} from '../../src/validation/storage.js'
+import { assertDeepEqual, assertEqual } from '../assert.js'
 
 function validCreateRequest(): CreateStorageRequest {
   return {
@@ -32,17 +28,30 @@ function validUpdateRequest(): UpdateStorageRequest {
 }
 
 describe('storage validation unit tests', () => {
-  it('valid create storate request passes validation', () => {
+  const id = '328ec839-cf21-43b3-8a33-8b69c126eebc'
+
+  it('valid create storage request passes validation', () => {
     const input = validCreateRequest()
     const output = validCreateRequest()
-    assertDeepEqual(validateCreateStorageRequest(input), output)
+    assertEqual(validateCreateStorageRequest(input).errorCode, undefined)
+    assertDeepEqual(validateCreateStorageRequest(input).result, output)
   })
 
-  it('valid update storate request passes validation', () => {
+  it('invalid create storage request fails validation', () => {
+    const input = { beer: validCreateRequest().beer }
+    assertEqual(
+      validateCreateStorageRequest(input).errorCode,
+      'invalid-storage',
+    )
+    assertDeepEqual(validateCreateStorageRequest(input).result, undefined)
+  })
+
+  it('valid update storage request passes validation', () => {
     const input = validUpdateRequest()
     const output = validUpdateRequest()
-    const id = '328ec839-cf21-43b3-8a33-8b69c126eebc'
-    assertDeepEqual(validateUpdateStorageRequest(input, id), {
+    const validationResult = validateUpdateStorageRequest(input, id)
+    assertEqual(validationResult.errorCode, undefined)
+    assertDeepEqual(validationResult.result, {
       id,
       request: output,
     })
@@ -54,10 +63,7 @@ describe('storage validation unit tests', () => {
       title: (base: string) => `${base}: create`,
     },
     {
-      func: (request: unknown) => {
-        const id = 'f824f850-e7b7-4972-a3ac-2e2fc447c8aa'
-        return validateUpdateStorageRequest(request, id)
-      },
+      func: (request: unknown) => validateUpdateStorageRequest(request, id),
       getValid: validUpdateRequest,
       title: (base: string) => `${base}: update`,
     },
@@ -65,7 +71,9 @@ describe('storage validation unit tests', () => {
     const { func, getValid, title } = validator
 
     function fail(storage: unknown) {
-      expectThrow(() => func(storage), invalidStorageError)
+      const result = func(storage)
+      assertEqual(result.errorCode, 'invalid-storage')
+      assertEqual(result.result, undefined)
     }
 
     it(title('fail with empty beer'), () => {
@@ -105,6 +113,14 @@ describe('storage validation unit tests', () => {
       fail(storage)
     })
 
+    it(title('fail with malformed best before'), () => {
+      const storage = {
+        ...getValid(),
+        bestBefore: '2023-12-08',
+      }
+      fail(storage)
+    })
+
     it(title('fail without best before'), () => {
       const { beer, container } = getValid()
       fail({ beer, container })
@@ -140,10 +156,37 @@ describe('storage validation unit tests', () => {
     })
   })
 
-  it('fail update with empty id', () => {
-    expectThrow(
-      () => validateUpdateStorageRequest(validUpdateRequest(), ''),
-      invalidStorageIdError,
-    )
+  interface InvalidIdCase {
+    label: string
+    id: string | undefined
+  }
+  const invalidIdCases: InvalidIdCase[] = [
+    { label: 'empty string', id: '' },
+    { label: 'undefined', id: undefined },
+  ]
+
+  invalidIdCases.forEach((testCase) =>
+    it(`fail update with ${testCase.label} storage id`, () => {
+      const validationResult = validateUpdateStorageRequest(
+        validUpdateRequest(),
+        testCase.id,
+      )
+      assertEqual(validationResult.errorCode, 'invalid-storage-id')
+      assertEqual(validationResult.result, undefined)
+    }),
+  )
+
+  it('valid storage id passes validation', () => {
+    const validationResult = validateStorageId(id)
+    assertEqual(validationResult.errorCode, undefined)
+    assertEqual(validationResult.result, id)
   })
+
+  invalidIdCases.forEach((testCase) =>
+    it(`invalid storage id "${testCase.label}" fails validation`, () => {
+      const validationResult = validateStorageId(testCase.id)
+      assertEqual(validationResult.errorCode, 'invalid-storage-id')
+      assertEqual(validationResult.result, undefined)
+    }),
+  )
 })

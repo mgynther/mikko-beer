@@ -75,9 +75,17 @@ const viewerAuthToken: AuthTokenPayload = {
 }
 
 describe('storage authorized service unit tests', () => {
+  function notCalled(): any {
+    throw new Error('not to be called')
+  }
+
+  const passStorageIdValidation = (id: string | undefined) =>
+    ({ errorCode: undefined, result: id ?? '' }) as const
+
   it('create storage as admin', async () => {
     await storageService.createStorage(
       createIf,
+      () => ({ errorCode: undefined, result: validCreateStorageRequest }),
       {
         authTokenPayload: adminAuthToken,
         body: validCreateStorageRequest,
@@ -90,6 +98,7 @@ describe('storage authorized service unit tests', () => {
     await expectReject(async () => {
       await storageService.createStorage(
         createIf,
+        notCalled,
         {
           authTokenPayload: viewerAuthToken,
           body: validCreateStorageRequest,
@@ -103,6 +112,7 @@ describe('storage authorized service unit tests', () => {
     await expectReject(async () => {
       await storageService.createStorage(
         createIf,
+        () => ({ errorCode: 'invalid-storage', result: undefined }),
         {
           authTokenPayload: adminAuthToken,
           body: invalidStorageRequest,
@@ -115,6 +125,10 @@ describe('storage authorized service unit tests', () => {
   it('update storage as admin', async () => {
     await storageService.updateStorage(
       updateIf,
+      () => ({
+        errorCode: undefined,
+        result: { id: storage.id, request: validUpdateStorageRequest },
+      }),
       {
         authTokenPayload: adminAuthToken,
         id: storage.id,
@@ -128,6 +142,7 @@ describe('storage authorized service unit tests', () => {
     await expectReject(async () => {
       await storageService.updateStorage(
         updateIf,
+        notCalled,
         {
           authTokenPayload: viewerAuthToken,
           id: storage.id,
@@ -142,6 +157,7 @@ describe('storage authorized service unit tests', () => {
     await expectReject(async () => {
       await storageService.updateStorage(
         updateIf,
+        () => ({ errorCode: 'invalid-storage', result: undefined }),
         {
           authTokenPayload: adminAuthToken,
           id: storage.id,
@@ -155,6 +171,7 @@ describe('storage authorized service unit tests', () => {
   it('delete storage as admin', async () => {
     await storageService.deleteStorageById(
       async () => undefined,
+      passStorageIdValidation,
       {
         authTokenPayload: adminAuthToken,
         id: storage.id,
@@ -166,7 +183,8 @@ describe('storage authorized service unit tests', () => {
   it('fail to delete storage as viewer', async () => {
     await expectReject(async () => {
       await storageService.deleteStorageById(
-        async () => undefined,
+        notCalled,
+        notCalled,
         {
           authTokenPayload: viewerAuthToken,
           id: storage.id,
@@ -205,6 +223,7 @@ describe('storage authorized service unit tests', () => {
     it(`find storage as ${token.role}`, async () => {
       const result = await storageService.findStorageById(
         async () => joinedStorage,
+        passStorageIdValidation,
         {
           authTokenPayload: token,
           id: storage.id,
