@@ -14,9 +14,10 @@ import {
   invalidSignInMethodError,
   invalidUserIdError,
 } from '../../errors.js'
-import type { AuthTokenConfig } from '../../auth/auth-token.js'
+import type { AuthTokenConfig, JwtIf } from '../../auth/auth-token.js'
 
 export async function signInUsingPassword(
+  jwtIf: JwtIf,
   signInUsingPasswordIf: SignInUsingPasswordIf,
   validate: ValidatePasswordSignInMethod,
   body: unknown,
@@ -28,6 +29,7 @@ export async function signInUsingPassword(
     throw invalidSignInMethodError
   }
   return await signInMethodService.signInUsingPassword(
+    jwtIf,
     signInUsingPasswordIf,
     validationResult.result,
     authTokenConfig,

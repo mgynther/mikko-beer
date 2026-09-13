@@ -34,6 +34,7 @@ import type { ValidateUserId } from '../../../src/logic/user/user.js'
 import type { ValidateRefreshToken } from '../../../src/logic/auth/refresh-token.js'
 
 import { dummyLog as log } from '../dummy-log.js'
+import { testJwtIf } from '../jwt-helper.js'
 
 const userId = '589e0cf9-7a2d-4c7e-8d62-6e67f32cb3ce'
 const refreshTokenId = 'c6697088-c417-4dee-988d-c018b07527f7'
@@ -63,6 +64,7 @@ const knownHash =
   '3571471e876241089e4e29130fd96cf0:6b26a82522532fca44ba7fef2f6b6f5d930fb2e2179f7cdcd682470d15a4cc4296b7f77c59bf317fa7281900626cf7b4499948d9d0f4718ae1170d4a63e35f36'
 
 const validRefreshToken: RefreshToken = jwt.signRefreshToken(
+  testJwtIf,
   {
     userId,
     refreshTokenId,
@@ -148,6 +150,7 @@ function notCalled(): any {
 describe('authorized sign in method service unit tests', () => {
   it('sign in using password', async () => {
     await service.signInUsingPassword(
+      testJwtIf,
       signInUsingPasswordIf,
       passSignInMethodValidation({
         username: 'admin',
@@ -196,6 +199,7 @@ describe('authorized sign in method service unit tests', () => {
 
   it('refresh tokens with valid refresh token', async () => {
     await service.refreshTokens(
+      testJwtIf,
       refreshTokensIf,
       passRefreshTokenValidation(validRefreshToken),
       userId,
@@ -207,6 +211,7 @@ describe('authorized sign in method service unit tests', () => {
   it('fail to refresh tokens with invalid refresh token', async () => {
     await expectReject(async () => {
       await service.refreshTokens(
+        testJwtIf,
         refreshTokensIf,
         passRefreshTokenValidation({ refreshToken: 'this is invalid' }),
         userId,
@@ -219,6 +224,7 @@ describe('authorized sign in method service unit tests', () => {
   it('fail to refresh tokens with invalid request', async () => {
     await expectReject(async () => {
       await service.refreshTokens(
+        testJwtIf,
         refreshTokensIf,
         failRefreshTokenValidation,
         userId,

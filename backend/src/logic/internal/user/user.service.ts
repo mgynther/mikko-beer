@@ -5,9 +5,10 @@ import type { CreateAnonymousUserRequest, Role, User } from '../../user/user.js'
 import { invalidCredentialsError, userNotFoundError } from '../../errors.js'
 import type { log } from '../../log.js'
 import type { DbRefreshToken } from '../../auth/refresh-token.js'
-import type { AuthTokenConfig } from '../../auth/auth-token.js'
+import type { AuthTokenConfig, JwtIf } from '../../auth/auth-token.js'
 
 export async function createAnonymousUser(
+  jwtIf: JwtIf,
   createAnonymousUser: (request: CreateAnonymousUserRequest) => Promise<User>,
   insertRefreshToken: (userId: string) => Promise<DbRefreshToken>,
   role: Role,
@@ -18,6 +19,7 @@ export async function createAnonymousUser(
   const user = await createAnonymousUser({ role })
 
   const { refresh, auth } = await authTokenService.createTokens(
+    jwtIf,
     insertRefreshToken,
     user,
     authTokenConfig,

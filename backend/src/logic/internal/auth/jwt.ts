@@ -1,11 +1,11 @@
-// This file wraps jsonwebtoken usage to logic types.
-import jwt from 'jsonwebtoken'
-const { sign, verify, TokenExpiredError } = jwt
-import type { JwtPayload } from 'jsonwebtoken'
+// This file converts between logic types and the plain claims of the jwt
+// layer. The jwt implementation itself is injected as JwtIf so that the logic
+// layer never depends on a jwt library.
 import type {
   AuthToken,
   AuthTokenConfig,
   AuthTokenPayload,
+  JwtIf,
 } from '../../auth/auth-token.js'
 import {
   AuthTokenExpiredError,
@@ -25,57 +25,61 @@ export interface RefreshTokenPayload {
 }
 
 export function signAuthToken(
+  jwtIf: JwtIf,
   tokenPayload: AuthTokenPayload,
   authTokenConfig: AuthTokenConfig,
 ): AuthToken {
   return {
-    authToken: sign(tokenPayload, authTokenConfig.secret, {
-      expiresIn: `${authTokenConfig.expiryDurationMin}m`,
-    }),
+    authToken: jwtIf.sign(
+      { ...tokenPayload },
+      authTokenConfig.secret,
+      authTokenConfig.expiryDurationMin,
+    ),
   }
 }
 
 export function signRefreshToken(
+  jwtIf: JwtIf,
   tokenPayload: RefreshTokenPayload,
   authTokenSecret: string,
 ): RefreshToken {
   // Refresh tokens never expire.
-  return { refreshToken: sign(tokenPayload, authTokenSecret) }
+  return {
+    refreshToken: jwtIf.sign({ ...tokenPayload }, authTokenSecret, undefined),
+  }
 }
 
 export function verifyAuthToken(
+  jwtIf: JwtIf,
   token: AuthToken,
   authTokenSecret: string,
 ): AuthTokenPayload {
-  const payload = verifyToken(token.authToken, authTokenSecret)
-  if (typeof payload === 'string') {
-    throw new InvalidAuthTokenError()
-  }
+  const payload = verifyToken(jwtIf, token.authToken, authTokenSecret)
   return parseAuthTokenPayload(payload)
 }
 
 export function verifyRefreshToken(
+  jwtIf: JwtIf,
   token: RefreshToken,
   authTokenSecret: string,
 ): RefreshTokenPayload {
-  const payload = verifyToken(token.refreshToken, authTokenSecret)
-  if (typeof payload === 'string') {
-    throw new InvalidAuthTokenError()
-  }
+  const payload = verifyToken(jwtIf, token.refreshToken, authTokenSecret)
   return parseRefreshTokenPayload(payload)
 }
 
 function verifyToken(
+  jwtIf: JwtIf,
   token: string,
   authTokenSecret: string,
-): string | JwtPayload {
-  try {
-    return verify(token, authTokenSecret)
-  } catch (error) {
-    if (error instanceof TokenExpiredError) {
-      throw new AuthTokenExpiredError()
+): unknown {
+  const verificationResult = jwtIf.verify(token, authTokenSecret)
+  if (verificationResult.errorCode !== undefined) {
+    switch (verificationResult.errorCode) {
+      case 'expired-jwt':
+        throw new AuthTokenExpiredError()
+      case 'invalid-jwt':
+        throw new InvalidAuthTokenError()
     }
-
-    throw new InvalidAuthTokenError()
   }
+  return verificationResult.result
 }

@@ -118,7 +118,15 @@ const rules = {
 // banned from every other layer, and every other layer is banned from
 // it, by adding one name.
 const wiringLayer = 'web'
-const layers = ['console', 'crypto', 'data', 'logic', 'validation', wiringLayer]
+const layers = [
+  'console',
+  'crypto',
+  'data',
+  'jwt',
+  'logic',
+  'validation',
+  wiringLayer,
+]
 
 // A layer that is never registered above would otherwise get no
 // restrictions at all and be importable from everywhere, which is the

@@ -16,7 +16,7 @@ import type {
   PasswordSignInMethod,
   SignInUsingPasswordIf,
 } from '../../user/sign-in-method.js'
-import type { AuthTokenConfig } from '../../auth/auth-token.js'
+import type { AuthTokenConfig, JwtIf } from '../../auth/auth-token.js'
 
 export const MIN_PASSWORD_LENGTH = 8
 export const MAX_PASSWORD_LENGTH = 255
@@ -96,6 +96,7 @@ export async function changePassword(
 }
 
 export async function signInUsingPassword(
+  jwtIf: JwtIf,
   signInUsingPasswordIf: SignInUsingPasswordIf,
   method: PasswordSignInMethod,
   authTokenConfig: AuthTokenConfig,
@@ -135,6 +136,7 @@ export async function signInUsingPassword(
   }
 
   const { refresh, auth } = await authTokenService.createTokens(
+    jwtIf,
     signInUsingPasswordIf.insertRefreshToken,
     user,
     authTokenConfig,

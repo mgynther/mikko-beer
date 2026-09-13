@@ -17,6 +17,7 @@
     "start": "npm run migrate:latest && node --env-file .env dist/index.js",
     "test:run": "node --env-file .env-test --test --test-timeout 5000 --test-isolation=none --test-concurrency 1",
     "test:crypto": "npm run build:test:base -- tsconfig-test-crypto.json && npm run test:run -- build-tests/test/crypto/*.test.js build-tests/test/crypto/*/*.test.js build-tests/test/crypto/*/*/*.test.js",
+    "test:jwt": "npm run build:test:base -- tsconfig-test-jwt.json && npm run test:run -- build-tests/test/jwt/*.test.js build-tests/test/jwt/*/*.test.js build-tests/test/jwt/*/*/*.test.js",
     "test:logic": "npm run build:test:base -- tsconfig-test-logic.json && npm run test:run -- build-tests/test/logic/*.test.js build-tests/test/logic/*/*.test.js build-tests/test/logic/*/*/*.test.js",
     "test:data": "npm run build:test:base -- tsconfig-test-data.json && npm run test:run -- build-tests/test/data/*.test.js build-tests/test/data/*/*.test.js",
     "test:validation": "npm run build:test:base -- tsconfig-test-validation.json && npm run test:run -- build-tests/test/validation/*.test.js build-tests/test/validation/*/*.test.js build-tests/test/validation/*/*/*.test.js",

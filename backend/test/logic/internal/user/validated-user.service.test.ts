@@ -18,6 +18,7 @@ import {
 } from '../../../../src/logic/errors.js'
 import { assertDeepEqual, assertEqual } from '../../../assert.js'
 import type { SignedInUser } from '../../../../src/logic/user/signed-in-user.js'
+import { testJwtIf } from '../../jwt-helper.js'
 
 const validCreateUserRequest = {
   user: {
@@ -115,6 +116,7 @@ function notCalled(): any {
 describe('user validated service unit tests', () => {
   it('create user', async () => {
     await userService.createUser(
+      testJwtIf,
       createIf,
       passCreateValidation,
       validCreateUserRequest,
@@ -126,6 +128,7 @@ describe('user validated service unit tests', () => {
   it('fail to create invalid user', async () => {
     await expectReject(async () => {
       await userService.createUser(
+        testJwtIf,
         createIf,
         failCreateValidationWithUser,
         invalidUserRequest,
@@ -138,6 +141,7 @@ describe('user validated service unit tests', () => {
   it('fail to create user with invalid sign-in method', async () => {
     await expectReject(async () => {
       await userService.createUser(
+        testJwtIf,
         createIf,
         failCreateValidationWithSignInMethod,
         invalidUserRequest,

@@ -23,6 +23,7 @@ import { userController } from './user/user.controller.js'
 import type { CreateAnonymousUserRequest, User } from '../logic/user/user.js'
 import { createAddPasswordUserIf } from './user/sign-in-method/sign-in-method-helper.js'
 import { ControllerError } from '../logic/errors.js'
+import { jwtIf } from './authentication/jwt-helper.js'
 import type { log } from '../console/log.js'
 import type { AuthTokenConfig } from '../logic/auth/auth-token.js'
 import {
@@ -110,6 +111,7 @@ export class App {
                   expiryDurationMin: this.#config.authTokenExpiryDurationMin,
                 }
                 const user = await createInitialUser(
+                  jwtIf,
                   async (request: CreateAnonymousUserRequest): Promise<User> =>
                     await userRepository.createAnonymousUser(trx, request),
                   authTokenConfig,

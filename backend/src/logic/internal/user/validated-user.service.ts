@@ -14,10 +14,11 @@ import {
 } from '../../errors.js'
 
 import type { log } from '../../log.js'
-import type { AuthTokenConfig } from '../../auth/auth-token.js'
+import type { AuthTokenConfig, JwtIf } from '../../auth/auth-token.js'
 import type { SignedInUser } from '../../user/signed-in-user.js'
 
 export async function createUser(
+  jwtIf: JwtIf,
   createUserIf: CreateUserIf,
   validate: ValidateCreateUser,
   body: unknown,
@@ -34,6 +35,7 @@ export async function createUser(
     }
   }
   return await signInMethodUserService.createUser(
+    jwtIf,
     createUserIf,
     validationResult.result,
     authTokenConfig,

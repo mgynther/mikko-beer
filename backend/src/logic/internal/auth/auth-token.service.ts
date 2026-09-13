@@ -2,6 +2,7 @@ import type {
   AuthTokenConfig,
   AuthToken,
   AuthTokenPayload,
+  JwtIf,
 } from '../../auth/auth-token.js'
 import type { Tokens } from '../../auth/tokens'
 import type { DbRefreshToken, RefreshToken } from '../../auth/refresh-token.js'
@@ -11,6 +12,7 @@ import { invalidCredentialsTokenError } from '../../errors.js'
 import type { RefreshTokenPayload } from './jwt.js'
 
 export async function createTokens(
+  jwtIf: JwtIf,
   insertRefreshToken: (userId: string) => Promise<DbRefreshToken>,
   user: User,
   authTokenConfig: AuthTokenConfig,
@@ -18,6 +20,7 @@ export async function createTokens(
   const token = await insertRefreshToken(user.id)
 
   const refresh = jwt.signRefreshToken(
+    jwtIf,
     {
       userId: user.id,
       refreshTokenId: token.id,
@@ -26,7 +29,7 @@ export async function createTokens(
     authTokenConfig.secret,
   )
 
-  const auth = createAuthToken(user.role, refresh, authTokenConfig)
+  const auth = createAuthToken(jwtIf, user.role, refresh, authTokenConfig)
 
   return {
     auth,
@@ -35,19 +38,22 @@ export async function createTokens(
 }
 
 export function verifyAuthToken(
+  jwtIf: JwtIf,
   token: AuthToken,
   authTokenSecret: string,
 ): AuthTokenPayload {
-  return jwt.verifyAuthToken(token, authTokenSecret)
+  return jwt.verifyAuthToken(jwtIf, token, authTokenSecret)
 }
 
 export async function deleteRefreshToken(
+  jwtIf: JwtIf,
   deleteRefreshToken: (refreshTokenId: string) => Promise<void>,
   userId: string,
   refreshToken: RefreshToken,
   authTokenSecret: string,
 ): Promise<void> {
   const payload: RefreshTokenPayload = parseRefreshToken(
+    jwtIf,
     refreshToken,
     authTokenSecret,
   )
@@ -59,25 +65,32 @@ export async function deleteRefreshToken(
 }
 
 function parseRefreshToken(
+  jwtIf: JwtIf,
   refreshToken: RefreshToken,
   authTokenSecret: string,
 ): RefreshTokenPayload {
   try {
-    return jwt.verifyRefreshToken(refreshToken, authTokenSecret)
+    return jwt.verifyRefreshToken(jwtIf, refreshToken, authTokenSecret)
   } catch (_) {
     throw invalidCredentialsTokenError
   }
 }
 
 function createAuthToken(
+  jwtIf: JwtIf,
   role: Role,
   refreshToken: RefreshToken,
   authTokenConfig: AuthTokenConfig,
 ): AuthToken {
   const { userId, refreshTokenId } = jwt.verifyRefreshToken(
+    jwtIf,
     refreshToken,
     authTokenConfig.secret,
   )
 
-  return jwt.signAuthToken({ userId, role, refreshTokenId }, authTokenConfig)
+  return jwt.signAuthToken(
+    jwtIf,
+    { userId, role, refreshTokenId },
+    authTokenConfig,
+  )
 }

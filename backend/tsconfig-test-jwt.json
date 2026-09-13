@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig-test-base.json",
+  "include": ["src/jwt/**/*", "test/assert.ts", "test/jwt/**/*"]
+}

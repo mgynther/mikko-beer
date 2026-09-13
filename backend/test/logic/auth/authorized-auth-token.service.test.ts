@@ -18,6 +18,7 @@ import {
 } from '../../../src/logic/errors.js'
 import type { ValidateUserId } from '../../../src/logic/user/user.js'
 import type { ValidateRefreshToken } from '../../../src/logic/auth/refresh-token.js'
+import { testJwtIf } from '../jwt-helper.js'
 
 const validateUserId: ValidateUserId = (id: string | undefined) => ({
   errorCode: undefined,
@@ -69,6 +70,7 @@ const viewerDbRefreshToken: DbRefreshToken = {
 const authTokenSecret: string = 'this is secret'
 
 const adminRefreshToken: RefreshToken = jwt.signRefreshToken(
+  testJwtIf,
   {
     userId: adminAuthToken.userId,
     refreshTokenId: adminDbRefreshToken.id,
@@ -78,6 +80,7 @@ const adminRefreshToken: RefreshToken = jwt.signRefreshToken(
 )
 
 const anotherAdminRefreshToken: RefreshToken = jwt.signRefreshToken(
+  testJwtIf,
   {
     userId: anotherAdminAuthToken.userId,
     refreshTokenId: anotherAdminDbRefreshToken.id,
@@ -87,6 +90,7 @@ const anotherAdminRefreshToken: RefreshToken = jwt.signRefreshToken(
 )
 
 const viewerRefreshToken: RefreshToken = jwt.signRefreshToken(
+  testJwtIf,
   {
     userId: viewerAuthToken.userId,
     refreshTokenId: viewerDbRefreshToken.id,
@@ -100,6 +104,7 @@ const deleteRefreshToken = async () => undefined
 describe('authorized auth token service unit tests', () => {
   it('delete refresh token as admin', async () => {
     await authTokenService.deleteRefreshToken(
+      testJwtIf,
       async () => adminDbRefreshToken,
       deleteRefreshToken,
       passRefreshTokenValidation(adminRefreshToken),
@@ -119,6 +124,7 @@ describe('authorized auth token service unit tests', () => {
   // it.
   it("delete another admin's refresh token as admin", async () => {
     await authTokenService.deleteRefreshToken(
+      testJwtIf,
       async () => anotherAdminDbRefreshToken,
       deleteRefreshToken,
       passRefreshTokenValidation(anotherAdminRefreshToken),
@@ -134,6 +140,7 @@ describe('authorized auth token service unit tests', () => {
 
   it("delete one's own refresh token as viewer", async () => {
     await authTokenService.deleteRefreshToken(
+      testJwtIf,
       async () => viewerDbRefreshToken,
       deleteRefreshToken,
       passRefreshTokenValidation(viewerRefreshToken),
@@ -150,6 +157,7 @@ describe('authorized auth token service unit tests', () => {
   it('fail to delete refresh token with invalid user id', async () => {
     await expectReject(async () => {
       await authTokenService.deleteRefreshToken(
+        testJwtIf,
         async () => adminDbRefreshToken,
         deleteRefreshToken,
         passRefreshTokenValidation(adminRefreshToken),
@@ -167,6 +175,7 @@ describe('authorized auth token service unit tests', () => {
   it('fail to delete refresh token with invalid request', async () => {
     await expectReject(async () => {
       await authTokenService.deleteRefreshToken(
+        testJwtIf,
         async () => adminDbRefreshToken,
         deleteRefreshToken,
         failRefreshTokenValidation,
@@ -184,6 +193,7 @@ describe('authorized auth token service unit tests', () => {
   it('fail to delete admin refresh token as viewer', async () => {
     await expectReject(async () => {
       await authTokenService.deleteRefreshToken(
+        testJwtIf,
         async () => viewerDbRefreshToken,
         deleteRefreshToken,
         passRefreshTokenValidation(viewerRefreshToken),

@@ -4,8 +4,10 @@ import * as authTokenService from '../internal/auth/validated-auth-token.service
 import type { IdRequest } from '../request'
 import type { DbRefreshToken, ValidateRefreshToken } from './refresh-token'
 import type { ValidateUserId } from '../user/user.js'
+import type { JwtIf } from './auth-token.js'
 
 export async function deleteRefreshToken(
+  jwtIf: JwtIf,
   findRefreshToken: (
     userId: string,
     refreshTokenId: string,
@@ -23,6 +25,7 @@ export async function deleteRefreshToken(
     findRefreshToken,
   )
   await authTokenService.deleteRefreshToken(
+    jwtIf,
     deleteRefreshToken,
     validateRefreshToken,
     validateUserId,

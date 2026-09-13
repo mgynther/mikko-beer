@@ -4,16 +4,18 @@ import * as signInMethodService from '../user/sign-in-method.service.js'
 import type { CreateUserIf, CreateUserRequest } from '../../user/user'
 
 import type { log } from '../../log.js'
-import type { AuthTokenConfig } from '../../auth/auth-token.js'
+import type { AuthTokenConfig, JwtIf } from '../../auth/auth-token.js'
 import type { SignedInUser } from '../../user/signed-in-user.js'
 
 export async function createUser(
+  jwtIf: JwtIf,
   createUserIf: CreateUserIf,
   request: CreateUserRequest,
   authTokenConfig: AuthTokenConfig,
   log: log,
 ): Promise<SignedInUser> {
   const user = await userService.createAnonymousUser(
+    jwtIf,
     createUserIf.createAnonymousUser,
     createUserIf.insertRefreshToken,
     request.role,

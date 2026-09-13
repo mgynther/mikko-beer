@@ -18,6 +18,7 @@ import type { User } from '../../../logic/user/user.js'
 import type { AuthTokenConfig } from '../../../logic/auth/auth-token.js'
 import type { RefreshTokensIf } from '../../../logic/user/authorized-sign-in-method.service.js'
 import type { Context } from '../../context.js'
+import { jwtIf } from '../../authentication/jwt-helper.js'
 import {
   validatePasswordChange,
   validatePasswordSignInMethod,
@@ -99,6 +100,7 @@ export function signInMethodController(router: Router): void {
             },
           }
           return await signInMethodService.signInUsingPassword(
+            jwtIf,
             signInUsingPasswordIf,
             validatePasswordSignInMethod,
             body,
@@ -150,6 +152,7 @@ export function signInMethodController(router: Router): void {
               ),
           }
           return await signInMethodService.refreshTokens(
+            jwtIf,
             refreshTokensIf,
             validateRefreshToken,
             userId,
@@ -178,6 +181,7 @@ export function signInMethodController(router: Router): void {
 
       const findRefreshToken = authHelper.createFindRefreshToken(ctx.db)
       await authorizedAuthTokenService.deleteRefreshToken(
+        jwtIf,
         findRefreshToken,
         async (refreshTokenId: string): Promise<void> => {
           await refreshTokenRepository.deleteRefreshToken(

@@ -21,6 +21,7 @@ import type { SignedInUser } from '../../logic/user/signed-in-user.js'
 import type { User } from '../../logic/user/user.js'
 import type { AuthTokenConfig } from '../../logic/auth/auth-token.js'
 import type { Context } from '../context.js'
+import { jwtIf } from '../authentication/jwt-helper.js'
 import {
   validateCreateUserRequest,
   validateUserId,
@@ -91,6 +92,7 @@ export function userController(router: Router, config: Config): void {
           addPasswordUserIf: createAddPasswordUserIf(trx),
         }
         return await userService.createUser(
+          jwtIf,
           createUserIf,
           validateCreateUserRequest,
           authTokenPayload,

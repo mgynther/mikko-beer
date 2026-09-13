@@ -12,6 +12,7 @@ import type {
 import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
 import { assertDeepEqual, assertEqual, assertTruthy } from '../../../assert.js'
+import { testJwtIf } from '../../jwt-helper.js'
 
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {
@@ -43,6 +44,7 @@ describe('user service unit tests', () => {
       }
     }
     const signedInUser = await userService.createAnonymousUser(
+      testJwtIf,
       create,
       insertRefreshToken,
       user.role,

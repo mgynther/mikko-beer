@@ -1,6 +1,6 @@
 import * as authTokenService from '../internal/auth/auth-token.service.js'
 
-import type { AuthTokenPayload } from './auth-token.js'
+import type { AuthTokenPayload, JwtIf } from './auth-token.js'
 import { AuthTokenExpiredError } from './auth-token.js'
 import {
   expiredAuthTokenError,
@@ -9,11 +9,12 @@ import {
 } from '../errors.js'
 
 export function parseAuthTokenPayload(
+  jwtIf: JwtIf,
   authorizationHeader: string | undefined,
   authTokenSecret: string,
 ): AuthTokenPayload {
   const authorization = validAuthorizationOrThrow(authorizationHeader)
-  return validAuthTokenPayload(authorization, authTokenSecret)
+  return validAuthTokenPayload(jwtIf, authorization, authTokenSecret)
 }
 
 function validAuthorizationOrThrow(authorization: string | undefined): string {
@@ -28,12 +29,14 @@ function validAuthorizationOrThrow(authorization: string | undefined): string {
 }
 
 function validAuthTokenPayload(
+  jwtIf: JwtIf,
   authorization: string,
   authTokenSecret: string,
 ): AuthTokenPayload {
   const authToken = authorization.substring('Bearer '.length)
   try {
     const authTokenPayload: AuthTokenPayload = authTokenService.verifyAuthToken(
+      jwtIf,
       { authToken },
       authTokenSecret,
     )

@@ -16,10 +16,11 @@ import type {
 import type { IdRequest } from '../request.js'
 import type { SignedInUser } from './signed-in-user.js'
 import type { User, ValidateUserId } from './user.js'
-import type { AuthTokenConfig } from '../auth/auth-token.js'
+import type { AuthTokenConfig, JwtIf } from '../auth/auth-token.js'
 import type { Tokens } from '../auth/tokens'
 
 export async function signInUsingPassword(
+  jwtIf: JwtIf,
   signInUsingPasswordIf: SignInUsingPasswordIf,
   validate: ValidatePasswordSignInMethod,
   body: unknown,
@@ -28,6 +29,7 @@ export async function signInUsingPassword(
 ): Promise<SignedInUser> {
   // No authorization as sign in takes place here.
   return await signInMethodService.signInUsingPassword(
+    jwtIf,
     signInUsingPasswordIf,
     validate,
     body,
@@ -70,6 +72,7 @@ export interface RefreshTokensIf {
 }
 
 export async function refreshTokens(
+  jwtIf: JwtIf,
   refreshTokensIf: RefreshTokensIf,
   validate: ValidateRefreshToken,
   userId: string,
@@ -87,12 +90,14 @@ export async function refreshTokens(
     userId,
   )
   await authTokenService.deleteRefreshToken(
+    jwtIf,
     refreshTokensIf.deleteRefreshToken,
     user.id,
     validationResult.result,
     authTokenConfig.secret,
   )
   const tokens = await authTokenService.createTokens(
+    jwtIf,
     refreshTokensIf.insertRefreshToken,
     user,
     authTokenConfig,

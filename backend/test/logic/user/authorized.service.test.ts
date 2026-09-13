@@ -23,6 +23,7 @@ import {
 import type { SignedInUser } from '../../../src/logic/user/signed-in-user.js'
 import type { DbRefreshToken } from '../../../src/logic/auth/refresh-token.js'
 import { assertDeepEqual } from '../../assert.js'
+import { testJwtIf } from '../jwt-helper.js'
 
 const validCreateUserRequest = {
   user: {
@@ -122,6 +123,7 @@ function notCalled(): any {
 describe('user authorized service unit tests', () => {
   it('create user as admin', async () => {
     await userService.createUser(
+      testJwtIf,
       createIf,
       passCreateValidation,
       adminAuthToken,
@@ -134,6 +136,7 @@ describe('user authorized service unit tests', () => {
   it('fail to create user as viewer', async () => {
     await expectReject(async () => {
       await userService.createUser(
+        testJwtIf,
         createIf,
         notCalled,
         viewerAuthToken,
@@ -147,6 +150,7 @@ describe('user authorized service unit tests', () => {
   it('fail to create invalid user as admin', async () => {
     await expectReject(async () => {
       await userService.createUser(
+        testJwtIf,
         createIf,
         failCreateValidation,
         adminAuthToken,

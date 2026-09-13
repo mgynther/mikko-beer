@@ -3,6 +3,7 @@ import {
   assertDeepEqual,
   assertEqual,
   assertGreaterThan,
+  assertTruthy,
 } from '../../../assert.js'
 
 import * as authTokenService from '../../../../src/logic/internal/auth/auth-token.service.js'
@@ -33,6 +34,8 @@ import {
 import { expectReject } from '../../controller-error-helper.js'
 import { dummyLog as log } from '../../dummy-log.js'
 import type { AuthTokenConfig } from '../../../../src/logic/auth/auth-token.js'
+import type { SignedInUser } from '../../../../src/logic/user/signed-in-user.js'
+import { testJwtIf } from '../../jwt-helper.js'
 
 function assertCurrentDateTime(date: Date) {
   if (date === undefined) {
@@ -131,12 +134,30 @@ describe('password sign-in-method service unit tests', () => {
     }
   }
 
+  const refreshTokenId = 'a8d69fd5-1491-4b63-86ea-6d5e3c7f624d'
+
   async function insertRefreshToken(userId: string) {
     assertEqual(userId, user.id)
     return {
-      id: 'a8d69fd5-1491-4b63-86ea-6d5e3c7f624d',
+      id: refreshTokenId,
       userId,
     }
+  }
+
+  // The token format belongs to the jwt layer. Here it matters that the
+  // tokens were created and carry the signed in user.
+  function expectTokensOf(signedInUser: SignedInUser) {
+    assertTruthy(signedInUser.refreshToken.refreshToken)
+    const authTokenPayload = authTokenService.verifyAuthToken(
+      testJwtIf,
+      signedInUser.authToken,
+      authTokenConfig.secret,
+    )
+    assertDeepEqual(authTokenPayload, {
+      userId: user.id,
+      role: user.role,
+      refreshTokenId,
+    })
   }
 
   async function encryptSecret() {
@@ -366,19 +387,14 @@ describe('password sign-in-method service unit tests', () => {
       updatePassword: notCalled,
     }
     const result = await signInUsingPassword(
+      testJwtIf,
       signInUsingPasswordIf,
       method,
       authTokenConfig,
       log,
     )
     assertDeepEqual(result.user, user)
-    const reference = await authTokenService.createTokens(
-      insertRefreshToken,
-      user,
-      authTokenConfig,
-    )
-    assertDeepEqual(result.refreshToken, reference.refresh)
-    assertDeepEqual(result.authToken, reference.auth)
+    expectTokensOf(result)
   })
 
   it('sign in using non-recently hashed password', async () => {
@@ -398,19 +414,14 @@ describe('password sign-in-method service unit tests', () => {
       updatePassword,
     }
     const result = await signInUsingPassword(
+      testJwtIf,
       signInUsingPasswordIf,
       method,
       authTokenConfig,
       log,
     )
     assertDeepEqual(result.user, user)
-    const reference = await authTokenService.createTokens(
-      insertRefreshToken,
-      user,
-      authTokenConfig,
-    )
-    assertDeepEqual(result.refreshToken, reference.refresh)
-    assertDeepEqual(result.authToken, reference.auth)
+    expectTokensOf(result)
     assertEqual(userHashes.length, 1)
     const newHash = userHashes[0]
     assertEqual(newHash.userId, user.id)
@@ -429,6 +440,7 @@ describe('password sign-in-method service unit tests', () => {
     }
     await expectReject(async () => {
       await signInUsingPassword(
+        testJwtIf,
         signInUsingPasswordIf,
         method,
         authTokenConfig,
@@ -448,6 +460,7 @@ describe('password sign-in-method service unit tests', () => {
     }
     await expectReject(async () => {
       await signInUsingPassword(
+        testJwtIf,
         signInUsingPasswordIf,
         method,
         authTokenConfig,
@@ -467,6 +480,7 @@ describe('password sign-in-method service unit tests', () => {
     }
     await expectReject(async () => {
       await signInUsingPassword(
+        testJwtIf,
         signInUsingPasswordIf,
         method,
         authTokenConfig,

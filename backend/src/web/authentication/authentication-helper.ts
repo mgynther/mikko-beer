@@ -6,6 +6,7 @@ import type { AuthTokenPayload } from '../../logic/auth/auth-token.js'
 import * as refreshTokenRepository from '../../data/authentication/refresh-token.repository.js'
 import type { Database } from '../../data/database.js'
 import type { DbRefreshToken } from '../../logic/auth/refresh-token.js'
+import { jwtIf } from './jwt-helper.js'
 
 export function createFindRefreshToken(db: Database) {
   return async (
@@ -17,5 +18,5 @@ export function createFindRefreshToken(db: Database) {
 
 export function parseAuthToken(ctx: Context): AuthTokenPayload {
   const authorization = ctx.headers.authorization
-  return parseAuthTokenPayload(authorization, ctx.config.authTokenSecret)
+  return parseAuthTokenPayload(jwtIf, authorization, ctx.config.authTokenSecret)
 }

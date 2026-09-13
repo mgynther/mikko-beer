@@ -25,6 +25,7 @@ import type {
 import type { ValidateUserId } from '../../../../src/logic/user/user.js'
 
 import { dummyLog as log } from '../../dummy-log.js'
+import { testJwtIf } from '../../jwt-helper.js'
 
 const userId = '2bbcaed7-2b4d-4888-9a32-8573dc19fd56'
 
@@ -113,6 +114,7 @@ const failUserIdValidation: ValidateUserId = () => ({
 describe('validated sign in method service unit tests', () => {
   it('sign in using password', async () => {
     await service.signInUsingPassword(
+      testJwtIf,
       signInUsingPasswordIf,
       passSignInMethodValidation({
         username: 'admin',
@@ -130,6 +132,7 @@ describe('validated sign in method service unit tests', () => {
   it('fail to sign in with invalid request', async () => {
     await expectReject(async () => {
       await service.signInUsingPassword(
+        testJwtIf,
         signInUsingPasswordIf,
         failSignInMethodValidation,
         {
@@ -144,6 +147,7 @@ describe('validated sign in method service unit tests', () => {
   it('fail to sign in using wrong password', async () => {
     await expectReject(async () => {
       await service.signInUsingPassword(
+        testJwtIf,
         {
           ...signInUsingPasswordIf,
           verifySecret: async () => false,

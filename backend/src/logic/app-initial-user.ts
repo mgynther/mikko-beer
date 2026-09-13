@@ -4,7 +4,7 @@ import * as signInMethodService from './internal/user/sign-in-method.service.js'
 import type { log } from './log.js'
 
 import type { CreateAnonymousUserRequest, User } from './user/user'
-import type { AuthTokenConfig } from './auth/auth-token.js'
+import type { AuthTokenConfig, JwtIf } from './auth/auth-token.js'
 import type {
   AddPasswordUserIf,
   PasswordSignInMethod,
@@ -13,6 +13,7 @@ import type { SignedInUser } from './user/signed-in-user.js'
 import type { DbRefreshToken } from './auth/refresh-token.js'
 
 export async function createInitialUser(
+  jwtIf: JwtIf,
   createAnonymousUser: (request: CreateAnonymousUserRequest) => Promise<User>,
   authTokenConfig: AuthTokenConfig,
   refreshTokenId: string,
@@ -30,6 +31,7 @@ export async function createInitialUser(
     })
 
   const user = await userService.createAnonymousUser(
+    jwtIf,
     createAnonymousUser,
     insertRefreshToken,
     'admin',

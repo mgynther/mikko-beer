@@ -15,6 +15,7 @@ import {
   invalidAuthorizationHeaderError,
 } from '../../../src/logic/errors.js'
 import { expectThrow } from '../controller-error-helper.js'
+import { testJwtIf } from '../jwt-helper.js'
 import { assertDeepEqual } from '../../assert.js'
 
 const authTokenSecret = 'ThisIsSecret'
@@ -37,8 +38,16 @@ const viewer: User = {
 }
 
 const expiredAuthToken: AuthToken = {
-  authToken:
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI0YjcxZWZlMi00MmVmLTQ3MjQtOGU2Ny0xYmIzZTdiYzIxZDMiLCJyb2xlIjoiYWRtaW4iLCJyZWZyZXNoVG9rZW5JZCI6IjkxNGY0MDM3LTZjZWUtNDZlZS04Nzk5LTE2NzNkYWQ2M2Y1NSIsImlhdCI6MTcxOTA3NjI2MiwiZXhwIjoxNzE5MDc2NTYyfQ.FX28XilV4myW0993MdBEnxeIYoDDljG6ZeOUJA5XMtY',
+  authToken: testJwtIf.sign(
+    {
+      userId: admin.id,
+      role: admin.role,
+      refreshTokenId,
+    },
+    authTokenSecret,
+    // A non-positive expiry duration makes the test jwt expire immediately.
+    -1,
+  ),
 }
 
 async function insertAuthToken(userId: string): Promise<DbRefreshToken> {
@@ -50,6 +59,7 @@ async function insertAuthToken(userId: string): Promise<DbRefreshToken> {
 
 async function createTokens(user: User): Promise<Tokens> {
   return await authTokenService.createTokens(
+    testJwtIf,
     insertAuthToken,
     user,
     authTokenConfig,
@@ -64,6 +74,7 @@ describe('authentication service unit tests', () => {
   it('authenticate admin', async () => {
     const tokens = await createTokens(admin)
     const parsed = authentication.parseAuthTokenPayload(
+      testJwtIf,
       header(tokens.auth),
       authTokenSecret,
     )
@@ -77,6 +88,7 @@ describe('authentication service unit tests', () => {
   it('authenticate viewer', async () => {
     const tokens = await createTokens(viewer)
     const parsed = authentication.parseAuthTokenPayload(
+      testJwtIf,
       header(tokens.auth),
       authTokenSecret,
     )
@@ -90,6 +102,7 @@ describe('authentication service unit tests', () => {
   it('fail to parse auth token with expired auth header', () => {
     expectThrow(() => {
       authentication.parseAuthTokenPayload(
+        testJwtIf,
         header(expiredAuthToken),
         authTokenSecret,
       )
@@ -98,13 +111,18 @@ describe('authentication service unit tests', () => {
 
   it('fail to parse auth token without auth header', () => {
     expectThrow(() => {
-      authentication.parseAuthTokenPayload(undefined, authTokenSecret)
+      authentication.parseAuthTokenPayload(
+        testJwtIf,
+        undefined,
+        authTokenSecret,
+      )
     }, invalidAuthorizationHeaderError)
   })
 
   it('fail to parse auth token with invalid auth header', () => {
     expectThrow(() => {
       authentication.parseAuthTokenPayload(
+        testJwtIf,
         'this is invalid auth header',
         authTokenSecret,
       )
@@ -113,7 +131,11 @@ describe('authentication service unit tests', () => {
 
   it('fail to parse auth token with invalid auth token', () => {
     expectThrow(() => {
-      authentication.parseAuthTokenPayload('Bearer abc', authTokenSecret)
+      authentication.parseAuthTokenPayload(
+        testJwtIf,
+        'Bearer abc',
+        authTokenSecret,
+      )
     }, invalidAuthTokenError)
   })
 })

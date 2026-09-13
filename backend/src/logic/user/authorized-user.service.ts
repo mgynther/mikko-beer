@@ -10,11 +10,16 @@ import type {
 } from './user'
 
 import type { log } from '../log.js'
-import type { AuthTokenConfig, AuthTokenPayload } from '../auth/auth-token.js'
+import type {
+  AuthTokenConfig,
+  AuthTokenPayload,
+  JwtIf,
+} from '../auth/auth-token.js'
 import type { DbRefreshToken } from '../auth/refresh-token.js'
 import type { SignedInUser } from './signed-in-user.js'
 
 export async function createUser(
+  jwtIf: JwtIf,
   createUserIf: CreateUserIf,
   validate: ValidateCreateUser,
   authTokenPayload: AuthTokenPayload,
@@ -24,6 +29,7 @@ export async function createUser(
 ): Promise<SignedInUser> {
   authorizationService.authorizeAdmin(authTokenPayload)
   return await userService.createUser(
+    jwtIf,
     createUserIf,
     validate,
     body,
