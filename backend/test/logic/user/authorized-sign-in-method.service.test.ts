@@ -17,6 +17,7 @@ import type {
 import type { User } from '../../../src/logic/user/user.js'
 import {
   invalidCredentialsTokenError,
+  invalidRefreshTokenError,
   userMismatchError,
 } from '../../../src/logic/errors.js'
 import { expectReject } from '../controller-error-helper.js'
@@ -30,6 +31,7 @@ import type {
   ValidatePasswordSignInMethod,
 } from '../../../src/logic/user/sign-in-method.js'
 import type { ValidateUserId } from '../../../src/logic/user/user.js'
+import type { ValidateRefreshToken } from '../../../src/logic/auth/refresh-token.js'
 
 import { dummyLog as log } from '../dummy-log.js'
 
@@ -125,6 +127,15 @@ function passPasswordChangeValidation(
   return () => ({ errorCode: undefined, result: change })
 }
 
+function passRefreshTokenValidation(token: RefreshToken): ValidateRefreshToken {
+  return () => ({ errorCode: undefined, result: token })
+}
+
+const failRefreshTokenValidation: ValidateRefreshToken = () => ({
+  errorCode: 'invalid-refresh-token',
+  result: undefined,
+})
+
 const validateUserId: ValidateUserId = (id: string | undefined) => ({
   errorCode: undefined,
   result: id ?? '',
@@ -186,6 +197,7 @@ describe('authorized sign in method service unit tests', () => {
   it('refresh tokens with valid refresh token', async () => {
     await service.refreshTokens(
       refreshTokensIf,
+      passRefreshTokenValidation(validRefreshToken),
       userId,
       validRefreshToken,
       authTokenConfig,
@@ -196,10 +208,23 @@ describe('authorized sign in method service unit tests', () => {
     await expectReject(async () => {
       await service.refreshTokens(
         refreshTokensIf,
+        passRefreshTokenValidation({ refreshToken: 'this is invalid' }),
         userId,
         { refreshToken: 'this is invalid' },
         authTokenConfig,
       )
     }, invalidCredentialsTokenError)
+  })
+
+  it('fail to refresh tokens with invalid request', async () => {
+    await expectReject(async () => {
+      await service.refreshTokens(
+        refreshTokensIf,
+        failRefreshTokenValidation,
+        userId,
+        {},
+        authTokenConfig,
+      )
+    }, invalidRefreshTokenError)
   })
 })

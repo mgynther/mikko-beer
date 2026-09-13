@@ -4,7 +4,8 @@ import * as signInMethodService from '../internal/user/validated-sign-in-method.
 import * as userService from '../internal/user/user.service.js'
 
 import type { DbRefreshToken } from '../auth/refresh-token.js'
-import { validateRefreshToken } from '../internal/auth/refresh-token.js'
+import type { ValidateRefreshToken } from '../auth/refresh-token.js'
+import { invalidRefreshTokenError } from '../errors.js'
 import type { log } from '../log.js'
 import type {
   ChangePasswordUserIf,
@@ -70,11 +71,15 @@ export interface RefreshTokensIf {
 
 export async function refreshTokens(
   refreshTokensIf: RefreshTokensIf,
+  validate: ValidateRefreshToken,
   userId: string,
   body: unknown,
   authTokenConfig: AuthTokenConfig,
 ): Promise<Tokens> {
-  const refreshToken = validateRefreshToken(body)
+  const validationResult = validate(body)
+  if (validationResult.errorCode === 'invalid-refresh-token') {
+    throw invalidRefreshTokenError
+  }
   // No authorization as refresh provides new tokens based on refresh token
   // only.
   const user = await userService.lockUserById(
@@ -84,7 +89,7 @@ export async function refreshTokens(
   await authTokenService.deleteRefreshToken(
     refreshTokensIf.deleteRefreshToken,
     user.id,
-    refreshToken,
+    validationResult.result,
     authTokenConfig.secret,
   )
   const tokens = await authTokenService.createTokens(

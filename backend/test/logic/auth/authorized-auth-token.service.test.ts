@@ -12,14 +12,25 @@ import type {
   RefreshToken,
 } from '../../../src/logic/auth/refresh-token.js'
 import {
+  invalidRefreshTokenError,
   invalidUserIdError,
   userMismatchError,
 } from '../../../src/logic/errors.js'
 import type { ValidateUserId } from '../../../src/logic/user/user.js'
+import type { ValidateRefreshToken } from '../../../src/logic/auth/refresh-token.js'
 
 const validateUserId: ValidateUserId = (id: string | undefined) => ({
   errorCode: undefined,
   result: id ?? '',
+})
+
+function passRefreshTokenValidation(token: RefreshToken): ValidateRefreshToken {
+  return () => ({ errorCode: undefined, result: token })
+}
+
+const failRefreshTokenValidation: ValidateRefreshToken = () => ({
+  errorCode: 'invalid-refresh-token',
+  result: undefined,
 })
 
 const adminAuthToken: AuthTokenPayload = {
@@ -91,6 +102,7 @@ describe('authorized auth token service unit tests', () => {
     await authTokenService.deleteRefreshToken(
       async () => adminDbRefreshToken,
       deleteRefreshToken,
+      passRefreshTokenValidation(adminRefreshToken),
       validateUserId,
       {
         authTokenPayload: adminAuthToken,
@@ -109,6 +121,7 @@ describe('authorized auth token service unit tests', () => {
     await authTokenService.deleteRefreshToken(
       async () => anotherAdminDbRefreshToken,
       deleteRefreshToken,
+      passRefreshTokenValidation(anotherAdminRefreshToken),
       validateUserId,
       {
         authTokenPayload: adminAuthToken,
@@ -123,6 +136,7 @@ describe('authorized auth token service unit tests', () => {
     await authTokenService.deleteRefreshToken(
       async () => viewerDbRefreshToken,
       deleteRefreshToken,
+      passRefreshTokenValidation(viewerRefreshToken),
       validateUserId,
       {
         authTokenPayload: viewerAuthToken,
@@ -138,6 +152,7 @@ describe('authorized auth token service unit tests', () => {
       await authTokenService.deleteRefreshToken(
         async () => adminDbRefreshToken,
         deleteRefreshToken,
+        passRefreshTokenValidation(adminRefreshToken),
         () => ({ errorCode: 'invalid-user-id', result: undefined }),
         {
           authTokenPayload: adminAuthToken,
@@ -149,11 +164,29 @@ describe('authorized auth token service unit tests', () => {
     }, invalidUserIdError)
   })
 
+  it('fail to delete refresh token with invalid request', async () => {
+    await expectReject(async () => {
+      await authTokenService.deleteRefreshToken(
+        async () => adminDbRefreshToken,
+        deleteRefreshToken,
+        failRefreshTokenValidation,
+        validateUserId,
+        {
+          authTokenPayload: adminAuthToken,
+          id: adminAuthToken.userId,
+        },
+        {},
+        authTokenSecret,
+      )
+    }, invalidRefreshTokenError)
+  })
+
   it('fail to delete admin refresh token as viewer', async () => {
     await expectReject(async () => {
       await authTokenService.deleteRefreshToken(
         async () => viewerDbRefreshToken,
         deleteRefreshToken,
+        passRefreshTokenValidation(viewerRefreshToken),
         validateUserId,
         {
           authTokenPayload: viewerAuthToken,

@@ -2,7 +2,7 @@ import * as authorizationService from '../internal/auth/authorization.service.js
 import * as authTokenService from '../internal/auth/validated-auth-token.service.js'
 
 import type { IdRequest } from '../request'
-import type { DbRefreshToken } from './refresh-token'
+import type { DbRefreshToken, ValidateRefreshToken } from './refresh-token'
 import type { ValidateUserId } from '../user/user.js'
 
 export async function deleteRefreshToken(
@@ -11,6 +11,7 @@ export async function deleteRefreshToken(
     refreshTokenId: string,
   ) => Promise<DbRefreshToken | undefined>,
   deleteRefreshToken: (refreshTokenId: string) => Promise<void>,
+  validateRefreshToken: ValidateRefreshToken,
   validateUserId: ValidateUserId,
   request: IdRequest,
   body: unknown,
@@ -23,6 +24,7 @@ export async function deleteRefreshToken(
   )
   await authTokenService.deleteRefreshToken(
     deleteRefreshToken,
+    validateRefreshToken,
     validateUserId,
     request.id,
     body,

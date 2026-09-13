@@ -23,6 +23,7 @@ import {
   validatePasswordSignInMethod,
   validateUserId,
 } from '../../../validation/user.js'
+import { validateRefreshToken } from '../../../validation/auth.js'
 import type { Transaction } from '../../../data/database.js'
 
 import type { Router } from '../../router.js'
@@ -150,6 +151,7 @@ export function signInMethodController(router: Router): void {
           }
           return await signInMethodService.refreshTokens(
             refreshTokensIf,
+            validateRefreshToken,
             userId,
             body,
             authTokenConfig,
@@ -183,6 +185,7 @@ export function signInMethodController(router: Router): void {
             refreshTokenId,
           )
         },
+        validateRefreshToken,
         validateUserId,
         {
           authTokenPayload,
