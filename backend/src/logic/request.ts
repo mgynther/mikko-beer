@@ -1,6 +1,5 @@
 import type { AuthTokenPayload } from './auth/auth-token'
 import type { Pagination } from './pagination'
-import type { SearchByName } from './search'
 
 export interface BodyRequest {
   authTokenPayload: AuthTokenPayload
@@ -15,9 +14,4 @@ export interface IdRequest {
 export interface PaginationRequest {
   authTokenPayload: AuthTokenPayload
   pagination: Pagination
-}
-
-export interface SearchByNameRequest {
-  authTokenPayload: AuthTokenPayload
-  searchByName: SearchByName
 }

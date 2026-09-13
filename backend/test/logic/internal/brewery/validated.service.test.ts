@@ -14,6 +14,7 @@ import { expectReject } from '../../controller-error-helper.js'
 import {
   invalidBreweryError,
   invalidBreweryIdError,
+  invalidSearchError,
 } from '../../../../src/logic/errors.js'
 import { assertDeepEqual, assertEqual } from '../../../assert.js'
 
@@ -160,5 +161,26 @@ describe('brewery validated service unit tests', () => {
         log,
       )
     }, invalidBreweryIdError)
+  })
+
+  it('search breweries', async () => {
+    const result = await breweryService.searchBreweries(
+      async () => [brewery],
+      () => ({ errorCode: undefined, result: { name: brewery.name } }),
+      { name: brewery.name },
+      log,
+    )
+    assertDeepEqual(result, [brewery])
+  })
+
+  it('fail to search breweries with invalid request', async () => {
+    await expectReject(async () => {
+      await breweryService.searchBreweries(
+        notCalled,
+        () => ({ errorCode: 'invalid-search', result: undefined }),
+        {},
+        log,
+      )
+    }, invalidSearchError)
   })
 })

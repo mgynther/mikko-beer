@@ -1,6 +1,7 @@
 import * as locationService from '../../logic/location/authorized.service.js'
 import type { Pagination } from '../../logic/pagination.js'
 import type { SearchByName } from '../../logic/search.js'
+import { validateSearchByName } from '../../validation/search.js'
 
 import * as locationRepository from '../../data/location/location.repository.js'
 
@@ -180,6 +181,7 @@ export function locationController(router: Router): void {
       const locations = await locationService.searchLocations(
         async (searchRequest: SearchByName): Promise<Location[]> =>
           await locationRepository.searchLocations(ctx.db, searchRequest),
+        validateSearchByName,
         {
           authTokenPayload,
           body,

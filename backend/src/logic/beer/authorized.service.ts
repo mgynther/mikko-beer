@@ -13,13 +13,8 @@ import type {
 
 import type { log } from '../log.js'
 import type { Pagination } from '../pagination.js'
-import type { SearchByName } from '../search.js'
-import type {
-  BodyRequest,
-  IdRequest,
-  PaginationRequest,
-  SearchByNameRequest,
-} from '../request.js'
+import type { SearchByName, ValidateSearchByName } from '../search.js'
+import type { BodyRequest, IdRequest, PaginationRequest } from '../request.js'
 
 export async function createBeer(
   createIf: CreateIf,
@@ -71,9 +66,10 @@ export async function searchBeers(
   search: (
     searchRequest: SearchByName,
   ) => Promise<BeerWithBreweriesAndStyles[]>,
-  request: SearchByNameRequest,
+  validate: ValidateSearchByName,
+  request: BodyRequest,
   log: log,
 ): Promise<BeerWithBreweriesAndStyles[]> {
   authorizationService.authorizeViewer(request.authTokenPayload)
-  return await beerService.searchBeers(search, request.searchByName, log)
+  return await beerService.searchBeers(search, validate, request.body, log)
 }

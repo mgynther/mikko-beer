@@ -196,9 +196,10 @@ describe('beer authorized service unit tests', () => {
     it(`searches beers as ${token.role}`, async () => {
       const result = await beerService.searchBeers(
         async () => [beerWithBreweriesAndStyles],
+        () => ({ errorCode: undefined, result: { name: beer.name } }),
         {
           authTokenPayload: token,
-          searchByName: { name: beer.name },
+          body: { name: beer.name },
         },
         log,
       )

@@ -10,8 +10,12 @@ import type {
   ValidateUpdateBeer,
 } from '../../beer/beer.js'
 
-import type { SearchByName } from '../../search.js'
-import { invalidBeerError, invalidBeerIdError } from '../../errors.js'
+import type { SearchByName, ValidateSearchByName } from '../../search.js'
+import {
+  invalidBeerError,
+  invalidBeerIdError,
+  invalidSearchError,
+} from '../../errors.js'
 
 import type { log } from '../../log.js'
 import type { Pagination } from '../../pagination.js'
@@ -78,8 +82,13 @@ export async function searchBeers(
   search: (
     searchRequest: SearchByName,
   ) => Promise<BeerWithBreweriesAndStyles[]>,
-  searchRequest: SearchByName,
+  validate: ValidateSearchByName,
+  body: unknown,
   log: log,
 ): Promise<BeerWithBreweriesAndStyles[]> {
-  return await beerService.searchBeers(search, searchRequest, log)
+  const validationResult = validate(body)
+  if (validationResult.errorCode === 'invalid-search') {
+    throw invalidSearchError
+  }
+  return await beerService.searchBeers(search, validationResult.result, log)
 }

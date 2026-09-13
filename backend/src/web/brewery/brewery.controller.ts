@@ -1,6 +1,7 @@
 import * as breweryService from '../../logic/brewery/authorized.service.js'
 import type { Pagination } from '../../logic/pagination.js'
 import type { SearchByName } from '../../logic/search.js'
+import { validateSearchByName } from '../../validation/search.js'
 
 import * as breweryRepository from '../../data/brewery/brewery.repository.js'
 
@@ -180,6 +181,7 @@ export function breweryController(router: Router): void {
       const breweries = await breweryService.searchBreweries(
         async (searchRequest: SearchByName): Promise<Brewery[]> =>
           await breweryRepository.searchBreweries(ctx.db, searchRequest),
+        validateSearchByName,
         {
           authTokenPayload,
           body,

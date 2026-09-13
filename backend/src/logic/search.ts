@@ -1,27 +1,17 @@
-import { ajv } from './internal/ajv.js'
-
-import { invalidSearchError } from './errors.js'
-
 export interface SearchByName {
   name: string
 }
 
-const doValidateSearchByNameRequest = ajv.compile<SearchByName>({
-  type: 'object',
-  properties: {
-    name: {
-      type: 'string',
-      minLength: 1,
-    },
-  },
-  required: ['name'],
-  additionalProperties: false,
-})
+export type SearchByNameValidationResult =
+  | {
+      errorCode: 'invalid-search'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: SearchByName
+    }
 
-export function validateSearchByName(body: unknown): SearchByName {
-  if (!doValidateSearchByNameRequest(body)) {
-    throw invalidSearchError
-  }
-  const name: string = (body as { name: string }).name
-  return { name }
-}
+export type ValidateSearchByName = (
+  body: unknown,
+) => SearchByNameValidationResult

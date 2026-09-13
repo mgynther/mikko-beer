@@ -9,9 +9,12 @@ import type {
 } from '../../location/location.js'
 import type { log } from '../../log.js'
 import type { Pagination } from '../../pagination.js'
-import type { SearchByName } from '../../search.js'
-import { validateSearchByName } from '../../search.js'
-import { invalidLocationError, invalidLocationIdError } from '../../errors.js'
+import type { SearchByName, ValidateSearchByName } from '../../search.js'
+import {
+  invalidLocationError,
+  invalidLocationIdError,
+  invalidSearchError,
+} from '../../errors.js'
 
 export async function createLocation(
   create: (location: CreateLocationRequest) => Promise<Location>,
@@ -77,9 +80,17 @@ export async function listLocations(
 
 export async function searchLocations(
   search: (searchRequest: SearchByName) => Promise<Location[]>,
+  validate: ValidateSearchByName,
   body: unknown,
   log: log,
 ): Promise<Location[]> {
-  const validRequest = validateSearchByName(body)
-  return await locationService.searchLocations(search, validRequest, log)
+  const validationResult = validate(body)
+  if (validationResult.errorCode === 'invalid-search') {
+    throw invalidSearchError
+  }
+  return await locationService.searchLocations(
+    search,
+    validationResult.result,
+    log,
+  )
 }

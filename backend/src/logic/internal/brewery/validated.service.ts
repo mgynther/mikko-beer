@@ -9,9 +9,12 @@ import type {
 } from '../../brewery/brewery.js'
 import type { log } from '../../log.js'
 import type { Pagination } from '../../pagination.js'
-import type { SearchByName } from '../../search.js'
-import { validateSearchByName } from '../../search.js'
-import { invalidBreweryError, invalidBreweryIdError } from '../../errors.js'
+import type { SearchByName, ValidateSearchByName } from '../../search.js'
+import {
+  invalidBreweryError,
+  invalidBreweryIdError,
+  invalidSearchError,
+} from '../../errors.js'
 
 export async function createBrewery(
   create: (brewery: CreateBreweryRequest) => Promise<Brewery>,
@@ -77,9 +80,17 @@ export async function listBreweries(
 
 export async function searchBreweries(
   search: (searchRequest: SearchByName) => Promise<Brewery[]>,
+  validate: ValidateSearchByName,
   body: unknown,
   log: log,
 ): Promise<Brewery[]> {
-  const validRequest = validateSearchByName(body)
-  return await breweryService.searchBreweries(search, validRequest, log)
+  const validationResult = validate(body)
+  if (validationResult.errorCode === 'invalid-search') {
+    throw invalidSearchError
+  }
+  return await breweryService.searchBreweries(
+    search,
+    validationResult.result,
+    log,
+  )
 }

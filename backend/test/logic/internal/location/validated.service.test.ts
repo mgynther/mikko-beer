@@ -14,6 +14,7 @@ import { expectReject } from '../../controller-error-helper.js'
 import {
   invalidLocationError,
   invalidLocationIdError,
+  invalidSearchError,
 } from '../../../../src/logic/errors.js'
 import { assertDeepEqual, assertEqual } from '../../../assert.js'
 
@@ -161,5 +162,26 @@ describe('location validated service unit tests', () => {
         log,
       )
     }, invalidLocationIdError)
+  })
+
+  it('search locations', async () => {
+    const result = await locationService.searchLocations(
+      async () => [location],
+      () => ({ errorCode: undefined, result: { name: location.name } }),
+      { name: location.name },
+      log,
+    )
+    assertDeepEqual(result, [location])
+  })
+
+  it('fail to search locations with invalid request', async () => {
+    await expectReject(async () => {
+      await locationService.searchLocations(
+        notCalled,
+        () => ({ errorCode: 'invalid-search', result: undefined }),
+        {},
+        log,
+      )
+    }, invalidSearchError)
   })
 })

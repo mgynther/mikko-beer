@@ -17,6 +17,7 @@ import { expectReject } from '../../controller-error-helper.js'
 import {
   invalidBeerError,
   invalidBeerIdError,
+  invalidSearchError,
 } from '../../../../src/logic/errors.js'
 import { assertDeepEqual, assertEqual } from '../../../assert.js'
 
@@ -190,5 +191,31 @@ describe('beer validated service unit tests', () => {
         log,
       )
     }, invalidBeerIdError)
+  })
+
+  it('search beers', async () => {
+    const beerWithBreweriesAndStyles: BeerWithBreweriesAndStyles = {
+      ...beer,
+      breweries: [{ id: breweryId, name: 'Koskipanimo' }],
+      styles: [{ id: styleId, name: 'American IPA' }],
+    }
+    const result = await beerService.searchBeers(
+      async () => [beerWithBreweriesAndStyles],
+      () => ({ errorCode: undefined, result: { name: beer.name } }),
+      { name: beer.name },
+      log,
+    )
+    assertDeepEqual(result, [beerWithBreweriesAndStyles])
+  })
+
+  it('fail to search beers with invalid request', async () => {
+    await expectReject(async () => {
+      await beerService.searchBeers(
+        notCalled,
+        () => ({ errorCode: 'invalid-search', result: undefined }),
+        {},
+        log,
+      )
+    }, invalidSearchError)
   })
 })

@@ -23,7 +23,7 @@ import type {
   UpdateIf,
 } from '../../logic/beer/beer.js'
 import { validatePagination } from '../pagination-helper.js'
-import { validateSearchByName } from '../../logic/search.js'
+import { validateSearchByName } from '../../validation/search.js'
 import type { Context } from '../context.js'
 import {
   validateBeerId,
@@ -220,15 +220,15 @@ export function beerController(router: Router): void {
       const authTokenPayload = authHelper.parseAuthToken(ctx)
       const body: unknown = ctx.request.body
 
-      const searchByName = validateSearchByName(body)
       const beers = await beerService.searchBeers(
         async (
           searchRequest: SearchByName,
         ): Promise<BeerWithBreweriesAndStyles[]> =>
           await beerRepository.searchBeers(ctx.db, searchRequest),
+        validateSearchByName,
         {
           authTokenPayload,
-          searchByName,
+          body,
         },
         ctx.log,
       )

@@ -11,7 +11,7 @@ import type {
 } from '../location/location'
 import type { log } from '../log.js'
 import type { Pagination } from '../pagination.js'
-import type { SearchByName } from '../search.js'
+import type { SearchByName, ValidateSearchByName } from '../search.js'
 
 export async function createLocation(
   create: (location: CreateLocationRequest) => Promise<Location>,
@@ -71,9 +71,15 @@ export async function listLocations(
 
 export async function searchLocations(
   search: (searchRequest: SearchByName) => Promise<Location[]>,
+  validate: ValidateSearchByName,
   request: BodyRequest,
   log: log,
 ): Promise<Location[]> {
   authorizationService.authorizeViewer(request.authTokenPayload)
-  return await locationService.searchLocations(search, request.body, log)
+  return await locationService.searchLocations(
+    search,
+    validate,
+    request.body,
+    log,
+  )
 }

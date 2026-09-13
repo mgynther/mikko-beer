@@ -169,6 +169,7 @@ describe('location authorized service unit tests', () => {
     it(`searches breweries as ${token.role}`, async () => {
       const result = await locationService.searchLocations(
         async () => [location],
+        () => ({ errorCode: undefined, result: { name: location.name } }),
         {
           authTokenPayload: token,
           body: { name: location.name },

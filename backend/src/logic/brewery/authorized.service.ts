@@ -11,7 +11,7 @@ import type {
 } from '../brewery/brewery'
 import type { log } from '../log.js'
 import type { Pagination } from '../pagination.js'
-import type { SearchByName } from '../search.js'
+import type { SearchByName, ValidateSearchByName } from '../search.js'
 
 export async function createBrewery(
   create: (brewery: CreateBreweryRequest) => Promise<Brewery>,
@@ -61,9 +61,15 @@ export async function listBreweries(
 
 export async function searchBreweries(
   search: (searchRequest: SearchByName) => Promise<Brewery[]>,
+  validate: ValidateSearchByName,
   request: BodyRequest,
   log: log,
 ): Promise<Brewery[]> {
   authorizationService.authorizeViewer(request.authTokenPayload)
-  return await breweryService.searchBreweries(search, request.body, log)
+  return await breweryService.searchBreweries(
+    search,
+    validate,
+    request.body,
+    log,
+  )
 }

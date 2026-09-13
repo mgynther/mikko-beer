@@ -168,6 +168,7 @@ describe('brewery authorized service unit tests', () => {
     it(`searches breweries as ${token.role}`, async () => {
       const result = await breweryService.searchBreweries(
         async () => [brewery],
+        () => ({ errorCode: undefined, result: { name: brewery.name } }),
         {
           authTokenPayload: token,
           body: { name: brewery.name },
