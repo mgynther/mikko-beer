@@ -28,7 +28,7 @@ import {
   validateStyleStatsOrder,
   validateStatsIdFilter,
   validateStatsFilter,
-} from '../../logic/stats/stats.js'
+} from './stats-helper.js'
 import { parseAuthToken } from '../authentication/authentication-helper.js'
 import type { Context } from '../context.js'
 
