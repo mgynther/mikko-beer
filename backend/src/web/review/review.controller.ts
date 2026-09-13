@@ -17,12 +17,12 @@ import type {
   ReviewListRequest,
   UpdateIf,
 } from '../../logic/review/review.js'
+import { validatePagination } from '../../logic/pagination.js'
 import {
   validateFilteredReviewListOrder,
   validateFullReviewListOrder,
   validateReviewListFilter,
-} from '../../logic/review/review.js'
-import { validatePagination } from '../../logic/pagination.js'
+} from './review-list-helper.js'
 import type { Context } from '../context.js'
 import { validateBeerId } from '../../validation/beer.js'
 import {

@@ -2,7 +2,10 @@ import { describe, it } from 'node:test'
 
 import {
   validateCreateReviewRequest,
+  validateFilteredReviewListOrder,
+  validateFullReviewListOrder,
   validateReviewId,
+  validateReviewListFilter,
   validateUpdateReviewRequest,
 } from '../../src/validation/review.js'
 import type { ReviewRequest } from '../../src/validation/review.js'
@@ -290,4 +293,279 @@ describe('review validation unit tests', () => {
       assertEqual(validationResult.result, undefined)
     }),
   )
+})
+
+function validOrderQuery(): Record<string, unknown> {
+  return { order: 'time', direction: 'desc' }
+}
+
+interface CommonOrderCase {
+  title: string
+  func: (query: Record<string, unknown>) => {
+    errorCode: string | undefined
+    result: { property: string; direction: string } | undefined
+  }
+}
+
+describe('review list order validation unit tests', () => {
+  ;[
+    {
+      title: 'full review list order',
+      func: validateFullReviewListOrder,
+    },
+    {
+      title: 'filtered review list order',
+      func: validateFilteredReviewListOrder,
+    },
+  ].forEach((testCase: CommonOrderCase) => {
+    const { func, title } = testCase
+
+    function pass(query: Record<string, unknown>, expected: object) {
+      const validationResult = func(query)
+      assertEqual(validationResult.errorCode, undefined)
+      assertDeepEqual(validationResult.result, expected)
+    }
+
+    function failOrder(query: Record<string, unknown>) {
+      const validationResult = func(query)
+      assertEqual(validationResult.errorCode, 'invalid-review-list-query-order')
+      assertEqual(validationResult.result, undefined)
+    }
+
+    it(`valid test helper is valid, ${title}`, () => {
+      pass(validOrderQuery(), { property: 'time', direction: 'desc' })
+    })
+
+    it(`invalid order value, ${title}`, () => {
+      failOrder({ ...validOrderQuery(), order: 'testing' })
+    })
+
+    it(`invalid order type, ${title}`, () => {
+      failOrder({ ...validOrderQuery(), order: 123 })
+    })
+
+    it(`invalid direction value, ${title}`, () => {
+      failOrder({ ...validOrderQuery(), direction: 'testing' })
+    })
+
+    it(`invalid direction type, ${title}`, () => {
+      failOrder({ ...validOrderQuery(), direction: [] })
+    })
+
+    it(`time desc, ${title}`, () => {
+      pass(
+        { order: 'time', direction: 'desc' },
+        {
+          property: 'time',
+          direction: 'desc',
+        },
+      )
+    })
+
+    it(`time asc, ${title}`, () => {
+      pass(
+        { order: 'time', direction: 'asc' },
+        {
+          property: 'time',
+          direction: 'asc',
+        },
+      )
+    })
+
+    it(`rating asc, ${title}`, () => {
+      pass(
+        { order: 'rating', direction: 'asc' },
+        {
+          property: 'rating',
+          direction: 'asc',
+        },
+      )
+    })
+
+    it(`rating desc, ${title}`, () => {
+      pass(
+        { order: 'rating', direction: 'desc' },
+        {
+          property: 'rating',
+          direction: 'desc',
+        },
+      )
+    })
+  })
+
+  it('defaults with undefined, full review list order', () => {
+    const validationResult = validateFullReviewListOrder({})
+    assertEqual(validationResult.errorCode, undefined)
+    assertDeepEqual(validationResult.result, {
+      property: 'time',
+      direction: 'desc',
+    })
+  })
+
+  it('defaults with undefined, filtered review list order', () => {
+    const validationResult = validateFilteredReviewListOrder({})
+    assertEqual(validationResult.errorCode, undefined)
+    assertDeepEqual(validationResult.result, {
+      property: 'beer_name',
+      direction: 'asc',
+    })
+  })
+
+  it('defaults with empty string, full review list order', () => {
+    const validationResult = validateFullReviewListOrder({
+      order: '',
+      direction: '',
+    })
+    assertEqual(validationResult.errorCode, undefined)
+    assertDeepEqual(validationResult.result, {
+      property: 'time',
+      direction: 'desc',
+    })
+  })
+
+  it('defaults with empty string, filtered review list order', () => {
+    const validationResult = validateFilteredReviewListOrder({
+      order: '',
+      direction: '',
+    })
+    assertEqual(validationResult.errorCode, undefined)
+    assertDeepEqual(validationResult.result, {
+      property: 'beer_name',
+      direction: 'asc',
+    })
+  })
+
+  it('beer_name fails, full review list order', () => {
+    const validationResult = validateFullReviewListOrder({
+      order: 'beer_name',
+      direction: 'desc',
+    })
+    assertEqual(
+      validationResult.errorCode,
+      'invalid-review-list-query-beer-name',
+    )
+    assertEqual(validationResult.result, undefined)
+  })
+
+  it('beer_name desc, filtered review list order', () => {
+    const validationResult = validateFilteredReviewListOrder({
+      order: 'beer_name',
+      direction: 'desc',
+    })
+    assertEqual(validationResult.errorCode, undefined)
+    assertDeepEqual(validationResult.result, {
+      property: 'beer_name',
+      direction: 'desc',
+    })
+  })
+
+  it('brewery_name fails, full review list order', () => {
+    const validationResult = validateFullReviewListOrder({
+      order: 'brewery_name',
+      direction: 'desc',
+    })
+    assertEqual(
+      validationResult.errorCode,
+      'invalid-review-list-query-brewery-name',
+    )
+    assertEqual(validationResult.result, undefined)
+  })
+
+  it('brewery_name asc, filtered review list order', () => {
+    const validationResult = validateFilteredReviewListOrder({
+      order: 'brewery_name',
+      direction: 'asc',
+    })
+    assertEqual(validationResult.errorCode, undefined)
+    assertDeepEqual(validationResult.result, {
+      property: 'brewery_name',
+      direction: 'asc',
+    })
+  })
+})
+
+interface ReviewListFilterQuery {
+  min_rating: string
+  max_rating: string
+  min_time: string
+  max_time: string
+}
+
+describe('review list filter validation unit tests', () => {
+  it('defaults to the full range when all properties are missing', () => {
+    const validationResult = validateReviewListFilter({})
+    assertEqual(validationResult.errorCode, undefined)
+    assertDeepEqual(validationResult.result, {
+      minRating: 4,
+      maxRating: 10,
+      minTime: new Date('1970-01-01T00:00:00.000Z'),
+      maxTime: new Date('2100-01-01T00:00:00.000Z'),
+    })
+  })
+
+  it('defaults to the full range when all properties are empty', () => {
+    const validationResult = validateReviewListFilter({
+      min_rating: '',
+      max_rating: '',
+      min_time: '',
+      max_time: '',
+    })
+    assertEqual(validationResult.errorCode, undefined)
+    assertDeepEqual(validationResult.result, {
+      minRating: 4,
+      maxRating: 10,
+      minTime: new Date('1970-01-01T00:00:00.000Z'),
+      maxTime: new Date('2100-01-01T00:00:00.000Z'),
+    })
+  })
+
+  it('returns values matching the input when all properties are valid', () => {
+    const minTime = 1678334400000
+    const maxTime = 1746792000000
+    const validQuery: ReviewListFilterQuery = {
+      min_rating: '5',
+      max_rating: '9',
+      min_time: `${minTime}`,
+      max_time: `${maxTime}`,
+    }
+    const validationResult = validateReviewListFilter({ ...validQuery })
+    assertEqual(validationResult.errorCode, undefined)
+    assertDeepEqual(validationResult.result, {
+      minRating: 5,
+      maxRating: 9,
+      minTime: new Date(minTime),
+      maxTime: new Date(maxTime),
+    })
+  })
+
+  const validFilterQuery: ReviewListFilterQuery = {
+    min_rating: '5',
+    max_rating: '9',
+    min_time: '1678334400000',
+    max_time: '253370764800000',
+  }
+
+  const invalidFilterCases: Array<Record<string, unknown>> = [
+    { ...validFilterQuery, min_rating: 'invalid' },
+    { ...validFilterQuery, max_rating: 'invalid' },
+    { ...validFilterQuery, min_time: 'invalid' },
+    { ...validFilterQuery, max_time: 'invalid' },
+    { ...validFilterQuery, min_rating: '3' },
+    { ...validFilterQuery, max_rating: '11' },
+    { ...validFilterQuery, min_time: 123 },
+    { ...validFilterQuery, max_time: 123 },
+  ]
+
+  invalidFilterCases.forEach((testCase) => {
+    it(`fails with min_rating ${testCase.min_rating} max_rating ${
+      testCase.max_rating
+    } min_time ${testCase.min_time} max_time ${testCase.max_time}`, () => {
+      const validationResult = validateReviewListFilter({ ...testCase })
+      assertEqual(
+        validationResult.errorCode,
+        'invalid-review-list-query-filter',
+      )
+      assertEqual(validationResult.result, undefined)
+    })
+  })
 })
