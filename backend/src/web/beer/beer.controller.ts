@@ -22,7 +22,7 @@ import type {
   NewBeer,
   UpdateIf,
 } from '../../logic/beer/beer.js'
-import { validatePagination } from '../../logic/pagination.js'
+import { validatePagination } from '../pagination-helper.js'
 import { validateSearchByName } from '../../logic/search.js'
 import type { Context } from '../context.js'
 import {

@@ -11,7 +11,7 @@ import type {
   Brewery,
   CreateBreweryRequest,
 } from '../../logic/brewery/brewery.js'
-import { validatePagination } from '../../logic/pagination.js'
+import { validatePagination } from '../pagination-helper.js'
 import type { Context } from '../context.js'
 import {
   validateBreweryId,

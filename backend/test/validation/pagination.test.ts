@@ -3,25 +3,33 @@ import { describe, it } from 'node:test'
 import type {
   Pagination,
   PaginationRequest,
-} from '../../src/logic/pagination.js'
-import { validatePagination } from '../../src/logic/pagination.js'
+} from '../../src/validation/pagination.js'
+import { validatePagination } from '../../src/validation/pagination.js'
 
-import { invalidPaginationError } from '../../src/logic/errors.js'
-import { expectThrow } from './controller-error-helper.js'
-import { assertDeepEqual } from '../assert.js'
+import { assertDeepEqual, assertEqual } from '../assert.js'
 
-describe('pagination unit tests', () => {
+describe('pagination validation unit tests', () => {
   function pass(input: PaginationRequest, output: Pagination) {
-    assertDeepEqual(validatePagination(input), output)
+    const validationResult = validatePagination(input)
+    assertEqual(validationResult.errorCode, undefined)
+    assertDeepEqual(validationResult.result, output)
   }
   function fail(input: PaginationRequest) {
-    expectThrow(() => validatePagination(input), invalidPaginationError)
+    const validationResult = validatePagination(input)
+    assertEqual(validationResult.errorCode, 'invalid-pagination')
+    assertEqual(validationResult.result, undefined)
   }
   it('pass validation', () => {
     pass({ size: '30', skip: '8' }, { size: 30, skip: 8 })
   })
   it('pass validation with defaults', () => {
     pass({ size: undefined, skip: undefined }, { size: 10000, skip: 0 })
+  })
+  it('pass validation with zero skip', () => {
+    pass({ size: '10', skip: '0' }, { size: 10, skip: 0 })
+  })
+  it('pass validation with maximum size', () => {
+    pass({ size: '10000', skip: '0' }, { size: 10000, skip: 0 })
   })
   it('fail validation with only skip missing', () => {
     fail({ size: '10000', skip: undefined })
@@ -34,6 +42,12 @@ describe('pagination unit tests', () => {
   })
   it('fail validation with empty skip', () => {
     fail({ size: '1', skip: '' })
+  })
+  it('fail validation with array size', () => {
+    fail({ size: ['1'], skip: '2' })
+  })
+  it('fail validation with array skip', () => {
+    fail({ size: '1', skip: ['2'] })
   })
   it('fail validation with zero size', () => {
     fail({ size: '0', skip: '5' })

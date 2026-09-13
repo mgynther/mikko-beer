@@ -17,7 +17,7 @@ import type {
   ReviewListRequest,
   UpdateIf,
 } from '../../logic/review/review.js'
-import { validatePagination } from '../../logic/pagination.js'
+import { validatePagination } from '../pagination-helper.js'
 import {
   validateFilteredReviewListOrder,
   validateFullReviewListOrder,

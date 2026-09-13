@@ -5,7 +5,7 @@ import * as statsRepository from '../../data/stats/stats.repository.js'
 import type { Pagination } from '../../logic/pagination.js'
 import type { Router } from '../router.js'
 
-import { validatePagination } from '../../logic/pagination.js'
+import { validatePagination } from '../pagination-helper.js'
 
 import type {
   AnnualContainerStats as LogicAnnualContainerStats,

@@ -11,7 +11,7 @@ import type {
   Location,
   CreateLocationRequest,
 } from '../../logic/location/location.js'
-import { validatePagination } from '../../logic/pagination.js'
+import { validatePagination } from '../pagination-helper.js'
 import type { Context } from '../context.js'
 import {
   validateLocationId,

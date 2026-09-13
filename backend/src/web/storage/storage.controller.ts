@@ -15,7 +15,7 @@ import type {
   StorageWithDate,
   UpdateIf,
 } from '../../logic/storage/storage.js'
-import { validatePagination } from '../../logic/pagination.js'
+import { validatePagination } from '../pagination-helper.js'
 import type { Transaction } from '../../data/database.js'
 import type { Router } from '../router.js'
 
