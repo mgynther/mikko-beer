@@ -255,6 +255,10 @@ describe('storage authorized service unit tests', () => {
     it(`list storages by style as ${token.role}`, async () => {
       const result = await storageService.listStoragesByStyle(
         async () => [joinedStorage],
+        (id: string | undefined) => ({
+          errorCode: undefined,
+          result: id ?? '',
+        }),
         {
           authTokenPayload: token,
           id: joinedStorage.styles[0].id,

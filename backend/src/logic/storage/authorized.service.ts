@@ -13,8 +13,8 @@ import type { log } from '../log.js'
 import type { BodyRequest, IdRequest } from '../request.js'
 import type { Pagination } from '../pagination.js'
 import type { AuthTokenPayload } from '../auth/auth-token.js'
-import { validateStyleId } from '../internal/style/validation.js'
 import type { ValidateBreweryId } from '../brewery/brewery.js'
+import type { ValidateStyleId } from '../style/style.js'
 
 export async function createStorage(
   createIf: CreateIf,
@@ -89,13 +89,15 @@ export async function listStoragesByBrewery(
 
 export async function listStoragesByStyle(
   listByStyle: (beerId: string) => Promise<JoinedStorage[]>,
+  validateStyleId: ValidateStyleId,
   request: IdRequest,
   log: log,
 ): Promise<JoinedStorage[]> {
   authorizationService.authorizeViewer(request.authTokenPayload)
   return await storageService.listStoragesByStyle(
     listByStyle,
-    validateStyleId(request.id),
+    validateStyleId,
+    request.id,
     log,
   )
 }

@@ -18,6 +18,7 @@ import {
   invalidLocationIdError,
   invalidReviewError,
   invalidReviewIdError,
+  invalidStyleIdError,
 } from '../../../../src/logic/errors.js'
 import { assertDeepEqual } from '../../../assert.js'
 
@@ -184,5 +185,30 @@ describe('review validated service unit tests', () => {
         log,
       )
     }, invalidLocationIdError)
+  })
+
+  it('list reviews by style', async () => {
+    const styleId = 'd33f2cd5-2d35-4d6a-8e77-07cbe1d0a6ab'
+    const joinedReviews: JoinedReview[] = []
+    const result = await reviewService.listReviewsByStyle(
+      async () => joinedReviews,
+      () => ({ errorCode: undefined, result: styleId }),
+      styleId,
+      reviewListRequest,
+      log,
+    )
+    assertDeepEqual(result, joinedReviews)
+  })
+
+  it('fail to list reviews by invalid style id', async () => {
+    await expectReject(async () => {
+      await reviewService.listReviewsByStyle(
+        notCalled,
+        () => ({ errorCode: 'invalid-style-id', result: undefined }),
+        undefined,
+        reviewListRequest,
+        log,
+      )
+    }, invalidStyleIdError)
   })
 })

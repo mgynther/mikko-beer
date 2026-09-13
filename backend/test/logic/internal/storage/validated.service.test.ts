@@ -17,6 +17,7 @@ import {
   invalidBreweryIdError,
   invalidStorageError,
   invalidStorageIdError,
+  invalidStyleIdError,
 } from '../../../../src/logic/errors.js'
 import { assertDeepEqual } from '../../../assert.js'
 
@@ -129,6 +130,29 @@ describe('storage authorized service unit tests', () => {
         log,
       )
     }, invalidBreweryIdError)
+  })
+
+  it('list storages by style', async () => {
+    const styleId = '0e2ba1b7-2fb1-4de8-9ba8-3dc5b9e5b9a3'
+    const joinedStorages: JoinedStorage[] = []
+    const result = await storageService.listStoragesByStyle(
+      async () => joinedStorages,
+      () => ({ errorCode: undefined, result: styleId }),
+      styleId,
+      log,
+    )
+    assertDeepEqual(result, joinedStorages)
+  })
+
+  it('fail to list storages by invalid style id', async () => {
+    await expectReject(async () => {
+      await storageService.listStoragesByStyle(
+        notCalled,
+        () => ({ errorCode: 'invalid-style-id', result: undefined }),
+        undefined,
+        log,
+      )
+    }, invalidStyleIdError)
   })
 
   it('get annual storage stats', async () => {

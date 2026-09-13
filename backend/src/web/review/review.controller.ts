@@ -26,6 +26,7 @@ import { validatePagination } from '../../logic/pagination.js'
 import type { Context } from '../context.js'
 import { validateBreweryId } from '../../validation/brewery.js'
 import { validateLocationId } from '../../validation/location.js'
+import { validateStyleId } from '../../validation/style.js'
 
 export interface CreatedOrUpdatedReview {
   id: string
@@ -392,6 +393,7 @@ export function reviewController(router: Router): void {
             styleId,
             reviewListRequest,
           ),
+        validateStyleId,
         {
           authTokenPayload,
           id: styleId,

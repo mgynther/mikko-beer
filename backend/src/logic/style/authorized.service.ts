@@ -7,36 +7,53 @@ import type {
   StyleWithParentIds,
   StyleWithParentsAndChildren,
   UpdateStyleIf,
+  ValidateCreateStyle,
+  ValidateStyleId,
+  ValidateUpdateStyle,
 } from './style'
 import type { log } from '../log.js'
 import type { AuthTokenPayload } from '../auth/auth-token.js'
 
 export async function createStyle(
   createStyleIf: CreateStyleIf,
+  validate: ValidateCreateStyle,
   request: BodyRequest,
   log: log,
 ): Promise<StyleWithParentIds> {
   authorizationService.authorizeAdmin(request.authTokenPayload)
-  return await styleService.createStyle(createStyleIf, request.body, log)
+  return await styleService.createStyle(
+    createStyleIf,
+    validate,
+    request.body,
+    log,
+  )
 }
 
 export async function updateStyle(
   updateStyleIf: UpdateStyleIf,
+  validate: ValidateUpdateStyle,
   request: IdRequest,
   body: unknown,
   log: log,
 ): Promise<StyleWithParentIds> {
   authorizationService.authorizeAdmin(request.authTokenPayload)
-  return await styleService.updateStyle(updateStyleIf, request.id, body, log)
+  return await styleService.updateStyle(
+    updateStyleIf,
+    validate,
+    request.id,
+    body,
+    log,
+  )
 }
 
 export async function findStyleById(
   find: (id: string) => Promise<StyleWithParentsAndChildren | undefined>,
+  validateId: ValidateStyleId,
   request: IdRequest,
   log: log,
 ): Promise<StyleWithParentsAndChildren> {
   authorizationService.authorizeViewer(request.authTokenPayload)
-  return await styleService.findStyleById(find, request.id, log)
+  return await styleService.findStyleById(find, validateId, request.id, log)
 }
 
 export async function listStyles(

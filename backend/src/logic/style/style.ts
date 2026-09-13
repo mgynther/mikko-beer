@@ -47,3 +47,47 @@ export interface UpdateStyleRequest {
   name: string
   parents: string[]
 }
+
+export interface ValidUpdateStyleRequest {
+  id: string
+  request: UpdateStyleRequest
+}
+
+export type CreateStyleValidationResult =
+  | {
+      errorCode: 'invalid-style'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: CreateStyleRequest
+    }
+
+export type ValidateCreateStyle = (body: unknown) => CreateStyleValidationResult
+
+export type UpdateStyleValidationResult =
+  | {
+      errorCode: 'invalid-style' | 'invalid-style-id'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: ValidUpdateStyleRequest
+    }
+
+export type ValidateUpdateStyle = (
+  body: unknown,
+  id: string | undefined,
+) => UpdateStyleValidationResult
+
+export type ValidateStyleIdResult =
+  | {
+      errorCode: 'invalid-style-id'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: string
+    }
+
+export type ValidateStyleId = (id: string | undefined) => ValidateStyleIdResult

@@ -14,6 +14,7 @@ import type { Pagination } from '../pagination'
 import type { AuthTokenPayload } from '../auth/auth-token'
 import type { ValidateBreweryId } from '../brewery/brewery.js'
 import type { ValidateLocationId } from '../location/location.js'
+import type { ValidateStyleId } from '../style/style.js'
 
 export async function createReview(
   createIf: CreateIf,
@@ -131,6 +132,7 @@ export async function listReviewsByStyle(
     styleId: string,
     reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
+  validateStyleId: ValidateStyleId,
   request: IdRequest,
   reviewListRequest: ReviewListRequest,
   log: log,
@@ -138,6 +140,7 @@ export async function listReviewsByStyle(
   authorizationService.authorizeViewer(request.authTokenPayload)
   return await reviewService.listReviewsByStyle(
     list,
+    validateStyleId,
     request.id,
     reviewListRequest,
     log,

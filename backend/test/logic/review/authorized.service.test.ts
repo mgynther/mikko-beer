@@ -276,6 +276,10 @@ describe('review authorized service unit tests', () => {
     it(`list reviews by style as ${token.role}`, async () => {
       const result = await reviewService.listReviewsByStyle(
         async () => [joinedReview],
+        (id: string | undefined) => ({
+          errorCode: undefined,
+          result: id ?? '',
+        }),
         {
           authTokenPayload: token,
           id: joinedReview.styles[0].id,

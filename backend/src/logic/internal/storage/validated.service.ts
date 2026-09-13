@@ -17,8 +17,8 @@ import type { log } from '../../log.js'
 import type { Pagination } from '../../pagination.js'
 import { validateBeerId } from '../beer/validation.js'
 import type { ValidateBreweryId } from '../../brewery/brewery.js'
-import { invalidBreweryIdError } from '../../errors.js'
-import { validateStyleId } from '../style/validation.js'
+import { invalidBreweryIdError, invalidStyleIdError } from '../../errors.js'
+import type { ValidateStyleId } from '../../style/style.js'
 
 export async function createStorage(
   createIf: CreateIf,
@@ -109,12 +109,17 @@ export async function listStoragesByBrewery(
 
 export async function listStoragesByStyle(
   listByStyle: (beerId: string) => Promise<JoinedStorage[]>,
+  validateStyleId: ValidateStyleId,
   styleId: string | undefined,
   log: log,
 ): Promise<JoinedStorage[]> {
+  const idResult = validateStyleId(styleId)
+  if (idResult.errorCode === 'invalid-style-id') {
+    throw invalidStyleIdError
+  }
   return await storageService.listStoragesByStyle(
     listByStyle,
-    validateStyleId(styleId),
+    idResult.result,
     log,
   )
 }

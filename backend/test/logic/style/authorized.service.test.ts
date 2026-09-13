@@ -66,9 +66,14 @@ const viewerAuthToken: AuthTokenPayload = {
 }
 
 describe('style authorized service unit tests', () => {
+  function notCalled(): any {
+    throw new Error('not to be called')
+  }
+
   it('create style as admin', async () => {
     await styleService.createStyle(
       createIf,
+      () => ({ errorCode: undefined, result: validCreateStyleRequest }),
       {
         authTokenPayload: adminAuthToken,
         body: validCreateStyleRequest,
@@ -81,6 +86,7 @@ describe('style authorized service unit tests', () => {
     await expectReject(async () => {
       await styleService.createStyle(
         createIf,
+        notCalled,
         {
           authTokenPayload: viewerAuthToken,
           body: validCreateStyleRequest,
@@ -94,6 +100,7 @@ describe('style authorized service unit tests', () => {
     await expectReject(async () => {
       await styleService.createStyle(
         createIf,
+        () => ({ errorCode: 'invalid-style', result: undefined }),
         {
           authTokenPayload: adminAuthToken,
           body: invalidStyleRequest,
@@ -106,6 +113,10 @@ describe('style authorized service unit tests', () => {
   it('update style as admin', async () => {
     await styleService.updateStyle(
       updateIf,
+      () => ({
+        errorCode: undefined,
+        result: { id: style.id, request: validUpdateStyleRequest },
+      }),
       {
         authTokenPayload: adminAuthToken,
         id: style.id,
@@ -119,6 +130,7 @@ describe('style authorized service unit tests', () => {
     await expectReject(async () => {
       await styleService.updateStyle(
         updateIf,
+        notCalled,
         {
           authTokenPayload: viewerAuthToken,
           id: style.id,
@@ -133,6 +145,7 @@ describe('style authorized service unit tests', () => {
     await expectReject(async () => {
       await styleService.updateStyle(
         updateIf,
+        () => ({ errorCode: 'invalid-style', result: undefined }),
         {
           authTokenPayload: adminAuthToken,
           id: style.id,
@@ -151,6 +164,7 @@ describe('style authorized service unit tests', () => {
       }
       const result = await styleService.findStyleById(
         async () => styleWithParentsAndChilden,
+        () => ({ errorCode: undefined, result: style.id }),
         {
           authTokenPayload: token,
           id: style.id,

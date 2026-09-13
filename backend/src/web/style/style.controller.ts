@@ -16,6 +16,11 @@ import type { Router } from '../router.js'
 
 import { parseAuthToken } from '../authentication/authentication-helper.js'
 import type { Context } from '../context.js'
+import {
+  validateCreateStyleRequest,
+  validateStyleId,
+  validateUpdateStyleRequest,
+} from '../../validation/style.js'
 
 export interface CreatedOrUpdatedStyle {
   id: string
@@ -86,6 +91,7 @@ export function styleController(router: Router): void {
         }
         return await styleService.createStyle(
           createIf,
+          validateCreateStyleRequest,
           {
             authTokenPayload,
             body,
@@ -126,6 +132,7 @@ export function styleController(router: Router): void {
           }
           return await styleService.updateStyle(
             updateIf,
+            validateUpdateStyleRequest,
             {
               authTokenPayload,
               id: styleId,
@@ -155,6 +162,7 @@ export function styleController(router: Router): void {
           styleId: string,
         ): Promise<StyleWithParentsAndChildren | undefined> =>
           await styleRepository.findStyleById(ctx.db, styleId),
+        validateStyleId,
         {
           authTokenPayload,
           id: styleId,

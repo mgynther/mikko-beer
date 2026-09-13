@@ -17,8 +17,12 @@ import type { Pagination } from '../../pagination.js'
 import { validateBeerId } from '../beer/validation.js'
 import type { ValidateLocationId } from '../../location/location.js'
 import type { ValidateBreweryId } from '../../brewery/brewery.js'
-import { invalidBreweryIdError, invalidLocationIdError } from '../../errors.js'
-import { validateStyleId } from '../style/validation.js'
+import {
+  invalidBreweryIdError,
+  invalidLocationIdError,
+  invalidStyleIdError,
+} from '../../errors.js'
+import type { ValidateStyleId } from '../../style/style.js'
 
 export async function createReview(
   createIf: CreateIf,
@@ -141,13 +145,18 @@ export async function listReviewsByStyle(
     styleId: string,
     reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
+  validateStyleId: ValidateStyleId,
   styleId: string | undefined,
   reviewListRequest: ReviewListRequest,
   log: log,
 ): Promise<JoinedReview[]> {
+  const idResult = validateStyleId(styleId)
+  if (idResult.errorCode === 'invalid-style-id') {
+    throw invalidStyleIdError
+  }
   return await reviewService.listReviewsByStyle(
     list,
-    validateStyleId(styleId),
+    idResult.result,
     reviewListRequest,
     log,
   )
