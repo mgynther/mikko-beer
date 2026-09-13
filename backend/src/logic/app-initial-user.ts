@@ -1,5 +1,3 @@
-import { v4 as uuidv4 } from 'uuid'
-
 import * as userService from './internal/user/user.service.js'
 import * as signInMethodService from './internal/user/sign-in-method.service.js'
 
@@ -17,6 +15,7 @@ import type { DbRefreshToken } from './auth/refresh-token.js'
 export async function createInitialUser(
   createAnonymousUser: (request: CreateAnonymousUserRequest) => Promise<User>,
   authTokenConfig: AuthTokenConfig,
+  refreshTokenId: string,
   log: log,
 ): Promise<SignedInUser> {
   /* eslint-disable-next-line @typescript-eslint/require-await --
@@ -26,7 +25,7 @@ export async function createInitialUser(
     // Here we don't need a refresh token in db. One will be created
     // when admin user logs in.
     ({
-      id: uuidv4(),
+      id: refreshTokenId,
       userId,
     })
 

@@ -113,6 +113,7 @@ export class App {
                   async (request: CreateAnonymousUserRequest): Promise<User> =>
                     await userRepository.createAnonymousUser(trx, request),
                   authTokenConfig,
+                  uuidv4(),
                   this.#log,
                 )
                 startResult.authToken = user.authToken.authToken
