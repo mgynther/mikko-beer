@@ -3,13 +3,13 @@ import { isLeft } from 'fp-ts/Either'
 
 import type { Beer, BeerList, BeerWithIds } from '../types/beer/types'
 import { formatError } from './format-error'
-import { ValidatedBrewery } from './brewery'
+import { ValidatedBreweryBasics } from './brewery'
 import { ValidatedStyle } from './style'
 
 const ValidatedBeer = t.type({
   id: t.string,
   name: t.string,
-  breweries: t.array(ValidatedBrewery),
+  breweries: t.array(ValidatedBreweryBasics),
   styles: t.array(ValidatedStyle),
 })
 

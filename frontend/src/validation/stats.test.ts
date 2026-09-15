@@ -29,6 +29,7 @@ import {
 const validOverall: OverallStats = {
   beerCount: '482',
   breweryCount: '91',
+  breweryCountryCount: '12',
   containerCount: '7',
   locationCount: '14',
   distinctBeerReviewCount: '401',
@@ -146,6 +147,7 @@ const validBrewery: BreweryStats = {
     {
       breweryId: 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
       breweryName: 'Test Brewery',
+      breweryCountry: undefined,
       reviewAverage: '9.01',
       reviewCount: '67',
       reviewMedian: '8.50',
@@ -185,6 +187,57 @@ test('validateBreweryStats throws invalid', () => {
       brewery: [{ breweryId: 123 }],
     }),
   ).toThrow()
+})
+
+test('validateBreweryStats passes country', () => {
+  const stats: BreweryStats = {
+    brewery: [
+      {
+        ...validBrewery.brewery[0],
+        breweryCountry: 'FI',
+      },
+    ],
+  }
+  expect(validateBreweryStats(stats)).toEqual(stats)
+})
+
+test('validateBreweryStats sets missing country explicitly undefined', () => {
+  const result = validateBreweryStats({
+    brewery: [
+      {
+        breweryId: 'd90a4f4e-2f4b-4a0e-bb3e-0a7f4e0a6b58',
+        breweryName: 'Test Brewery',
+        reviewAverage: '9.01',
+        reviewCount: '67',
+        reviewMedian: '8.50',
+        reviewMode: '9',
+        reviewStandardDeviation: '0.57',
+        reviewedBeerCount: '23',
+      },
+    ],
+  })
+  const brewery = result.brewery[0]
+  expect(Object.keys(brewery).includes('breweryCountry')).toEqual(true)
+  expect(brewery.breweryCountry).toEqual(undefined)
+})
+
+test('validateBreweryStats throws for non-string country', () => {
+  expect(() =>
+    validateBreweryStats({
+      brewery: [
+        {
+          ...validBrewery.brewery[0],
+          breweryCountry: 358,
+        },
+      ],
+    }),
+  ).toThrow()
+})
+
+test('validateOverallStatsOrUndefined throws for missing country count', () => {
+  const { breweryCountryCount, ...withoutCountryCount } = validOverall
+  expect(breweryCountryCount).toEqual('12')
+  expect(() => validateOverallStatsOrUndefined(withoutCountryCount)).toThrow()
 })
 
 // Container

@@ -2,10 +2,10 @@ import React from 'react'
 
 import { Links } from '../common/Links'
 
-import type { Brewery } from '../../types/brewery/types'
+import type { BreweryBasics } from '../../types/brewery/types'
 
 interface Props {
-  breweries: Brewery[]
+  breweries: BreweryBasics[]
 }
 
 export function breweryLinkFormatter(id: string): string {

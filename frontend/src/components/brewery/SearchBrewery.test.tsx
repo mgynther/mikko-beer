@@ -20,11 +20,13 @@ const activeSearch: SearchFieldIf = {
 const brewery = {
   id: '2825930f-bc30-4db0-9302-dd727bb9835c',
   name: 'Coolhead',
+  country: undefined,
 }
 
 const anotherBrewery = {
   id: '0c50c605-dcf9-47d0-abdf-05c798810455',
   name: 'Salama',
+  country: undefined,
 }
 
 const breweries = [brewery, anotherBrewery]

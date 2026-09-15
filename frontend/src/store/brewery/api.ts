@@ -52,7 +52,8 @@ const breweryApi = emptySplitApi.injectEndpoints({
         url: '/brewery',
         method: 'POST',
         body: {
-          ...brewery,
+          name: brewery.name,
+          country: brewery.country,
         },
       }),
       invalidatesTags: [BreweryTags.Brewery],
@@ -63,6 +64,7 @@ const breweryApi = emptySplitApi.injectEndpoints({
         method: 'PUT',
         body: {
           name: brewery.name,
+          country: brewery.country,
         },
       }),
       invalidatesTags: [

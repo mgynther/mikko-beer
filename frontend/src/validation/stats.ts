@@ -8,6 +8,7 @@ import type {
   BreweryStats,
   ContainerStats,
   LocationStats,
+  OneBreweryStats,
   RatingStats,
   OverallStats,
   StyleStats,
@@ -16,6 +17,7 @@ import type {
 const ValidatedOverallStats = t.type({
   beerCount: t.string,
   breweryCount: t.string,
+  breweryCountryCount: t.string,
   containerCount: t.string,
   locationCount: t.string,
   distinctBeerReviewCount: t.string,
@@ -63,6 +65,7 @@ const ValidatedBreweryStats = t.type({
     t.type({
       breweryId: t.string,
       breweryName: t.string,
+      breweryCountry: t.union([t.string, t.undefined]),
       reviewAverage: t.string,
       reviewCount: t.string,
       reviewMedian: t.string,
@@ -176,6 +179,24 @@ export function validateAnnualContainerStats(
   return valid
 }
 
+// A country missing from the response is an explicit undefined from here on,
+// so that no layer can forget to pass it along.
+function toOneBreweryStats(
+  stats: t.TypeOf<typeof ValidatedBreweryStats>['brewery'][number],
+): OneBreweryStats {
+  return {
+    breweryId: stats.breweryId,
+    breweryName: stats.breweryName,
+    breweryCountry: stats.breweryCountry,
+    reviewAverage: stats.reviewAverage,
+    reviewCount: stats.reviewCount,
+    reviewMedian: stats.reviewMedian,
+    reviewMode: stats.reviewMode,
+    reviewStandardDeviation: stats.reviewStandardDeviation,
+    reviewedBeerCount: stats.reviewedBeerCount,
+  }
+}
+
 export function validateBreweryStatsOrUndefined(
   result: unknown,
 ): BreweryStats | undefined {
@@ -192,7 +213,9 @@ export function validateBreweryStats(result: unknown): BreweryStats {
     throw Error(formatError(decoded))
   }
   const valid: StatsT = decoded.right
-  return valid
+  return {
+    brewery: valid.brewery.map(toOneBreweryStats),
+  }
 }
 
 export function validateContainerStatsOrUndefined(

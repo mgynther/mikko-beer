@@ -52,6 +52,7 @@ test('overall stats', async () => {
   const overallStats: OverallStats = {
     beerCount: '482',
     breweryCount: '91',
+    breweryCountryCount: '12',
     containerCount: '7',
     locationCount: '14',
     distinctBeerReviewCount: '401',

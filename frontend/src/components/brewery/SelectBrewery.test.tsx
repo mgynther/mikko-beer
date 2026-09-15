@@ -9,11 +9,13 @@ import { dontCall } from '../../../test-util/dont-call'
 const brewery: Brewery = {
   id: 'e8d6ca94-e17f-43a5-9ff4-3ac72349f33d',
   name: 'Koskipanimo',
+  country: undefined,
 }
 
 const anotherBrewery: Brewery = {
   id: '4566c772-9de8-4edc-89fe-32c358b3dc23',
   name: 'Mallaskoski',
+  country: undefined,
 }
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
@@ -64,6 +66,7 @@ test('selects created brewery', async () => {
   const newBrewery: Brewery = {
     id: 'ca036383-f707-4a52-a26d-bd0c048c0106',
     name: 'Tuju',
+    country: undefined,
   }
   const { getByPlaceholderText, getByRole } = render(
     <SelectBrewery

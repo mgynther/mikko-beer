@@ -4,14 +4,30 @@ import { isLeft } from 'fp-ts/Either'
 import type { Brewery, BreweryList } from '../types/brewery/types'
 import { formatError } from './format-error'
 
-export const ValidatedBrewery = t.type({
+export const ValidatedBreweryBasics = t.type({
   id: t.string,
   name: t.string,
+})
+
+const ValidatedBrewery = t.type({
+  id: t.string,
+  name: t.string,
+  country: t.union([t.string, t.undefined]),
 })
 
 const ValidatedBreweryList = t.type({
   breweries: t.array(ValidatedBrewery),
 })
+
+// A country missing from the response is an explicit undefined from here on,
+// so that no layer can forget to pass it along.
+function toBrewery(brewery: t.TypeOf<typeof ValidatedBrewery>): Brewery {
+  return {
+    id: brewery.id,
+    name: brewery.name,
+    country: brewery.country,
+  }
+}
 
 export function validateBreweryOrUndefined(
   result: unknown,
@@ -29,7 +45,7 @@ export function validateBrewery(result: unknown): Brewery {
     throw Error(formatError(decoded))
   }
   const valid: BreweryT = decoded.right
-  return valid
+  return toBrewery(valid)
 }
 
 export function validateBreweryListOrUndefined(
@@ -48,5 +64,7 @@ export function validateBreweryList(result: unknown): BreweryList {
     throw Error(formatError(decoded))
   }
   const valid: BreweryListT = decoded.right
-  return valid
+  return {
+    breweries: valid.breweries.map(toBrewery),
+  }
 }

@@ -9,7 +9,7 @@ import type {
   StorageList,
 } from '../types/storage/types'
 import { formatError } from './format-error'
-import { ValidatedBrewery } from './brewery'
+import { ValidatedBreweryBasics } from './brewery'
 import { ValidatedStyle } from './style'
 import { ValidatedContainer } from './container'
 
@@ -25,7 +25,7 @@ const ValidatedStorage = t.type({
   beerId: t.string,
   beerName: t.string,
   bestBefore: t.string,
-  breweries: t.array(ValidatedBrewery),
+  breweries: t.array(ValidatedBreweryBasics),
   container: ValidatedContainer,
   createdAt: t.string,
   hasReview: t.boolean,

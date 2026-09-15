@@ -49,6 +49,7 @@ test('create brewery', async () => {
     brewery: {
       id: '2e92c7c4-d1ee-41d3-acf5-18fd29e94233',
       name: 'Test brewery',
+      country: 'FI',
     },
   }
 
@@ -63,7 +64,10 @@ test('create brewery', async () => {
   const { getByRole } = render(
     <Provider store={store}>
       <Helper
-        brewery={{ name: expectedResponse.brewery.name }}
+        brewery={{
+          name: expectedResponse.brewery.name,
+          country: expectedResponse.brewery.country,
+        }}
         handleResponse={handler}
       />
     </Provider>,

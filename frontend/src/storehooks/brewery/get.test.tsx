@@ -41,6 +41,7 @@ test('get brewery', async () => {
     brewery: {
       id: 'ef20147e-c396-48c6-a314-ceef15a42ca5',
       name: 'Test brewery',
+      country: 'FI',
     },
   }
 

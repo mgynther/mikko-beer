@@ -116,6 +116,7 @@ const emptyStatsIf: StatsIf = {
       stats: {
         beerCount: '0',
         breweryCount: '0',
+        breweryCountryCount: '12',
         containerCount: '0',
         locationCount: '0',
         reviewCount: '0',
@@ -196,6 +197,7 @@ overallTestCases.forEach((testCase) => {
               stats: {
                 beerCount: '123',
                 breweryCount: '54',
+                breweryCountryCount: '12',
                 containerCount: '8',
                 locationCount: '17',
                 reviewCount: '112',
@@ -356,6 +358,7 @@ test('renders brewery stats', async () => {
   const koskipanimo: OneBreweryStats = {
     breweryId: '8981fe71-1a4d-48f3-8b4e-9b9b3ddf9d8a',
     breweryName: 'Koskipanimo',
+    breweryCountry: undefined,
     reviewAverage: '9.06',
     reviewCount: '63',
     reviewMedian: '9.00',
@@ -366,6 +369,7 @@ test('renders brewery stats', async () => {
   const lehe: OneBreweryStats = {
     breweryId: 'ba44d3d1-5071-41bc-8a05-65ec8914a13e',
     breweryName: 'Lehe pruulikoda',
+    breweryCountry: undefined,
     reviewAverage: '9.71',
     reviewCount: '24',
     reviewMedian: '9.50',

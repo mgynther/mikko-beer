@@ -12,6 +12,7 @@ import {
 const validBrewery: Brewery = {
   id: 'a60b1313-eec8-412a-92fd-12a446b95ecf',
   name: 'Test Brewery',
+  country: undefined,
 }
 
 test('validateBreweryOrUndefined returns undefined for undefined', () => {
@@ -46,6 +47,7 @@ test('validateBrewery returns brewery for valid input', () => {
   const brewery: Brewery = {
     id: 'b1eb758e-02f3-4ed6-b305-12928340f60f',
     name: 'Another Brewery',
+    country: undefined,
   }
   expect(validateBrewery(brewery)).toEqual(brewery)
 })
@@ -113,6 +115,62 @@ test('validateBreweryList returns list with multiple breweries', () => {
       {
         id: 'ccaf97db-2c89-40a0-ae2c-e00275c24307',
         name: 'Another Brewery',
+        country: undefined,
+      },
+    ],
+  }
+  expect(validateBreweryList(list)).toEqual(list)
+})
+
+test('validateBrewery returns country', () => {
+  const brewery: Brewery = {
+    id: '9a20b0f5-25d5-4a56-a9f4-a3a6a9df0d51',
+    name: 'Brewery With Country',
+    country: 'FI',
+  }
+  expect(validateBrewery(brewery)).toEqual(brewery)
+})
+
+test('validateBrewery sets missing country explicitly undefined', () => {
+  const brewery = validateBrewery({
+    id: '1ecb1e0e-8b1c-4de6-a9d8-5a3a75fbb9a6',
+    name: 'Brewery Without Country',
+  })
+  expect(Object.keys(brewery).includes('country')).toEqual(true)
+  expect(brewery.country).toEqual(undefined)
+})
+
+test('validateBrewery throws for non-string country', () => {
+  expect(() =>
+    validateBrewery({
+      id: '4bd5d1a1-3cbb-4a6e-84e6-2cdd10a1d3a0',
+      name: 'Test Brewery',
+      country: 358,
+    }),
+  ).toThrow()
+})
+
+test('validateBreweryList sets missing country explicitly undefined', () => {
+  const list = validateBreweryList({
+    breweries: [
+      {
+        id: 'b7b0c5b1-1b1a-4b37-9f6f-38b6a9c0f0c1',
+        name: 'Brewery Without Country',
+      },
+    ],
+  })
+  const brewery = list.breweries[0]
+  expect(Object.keys(brewery).includes('country')).toEqual(true)
+  expect(brewery.country).toEqual(undefined)
+})
+
+test('validateBreweryList returns countries', () => {
+  const list: BreweryList = {
+    breweries: [
+      {
+        id: 'a9a99f43-4f58-4b56-90e4-0a9a4b6e6b39',
+        name: 'Brewery With Country',
+        country: 'FI',
       },
     ],
   }

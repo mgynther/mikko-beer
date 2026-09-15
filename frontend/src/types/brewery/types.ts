@@ -4,11 +4,17 @@ import type { Pagination, InfiniteScroll } from '../types'
 
 export interface CreateBreweryRequest {
   name: string
+  country: string | undefined
 }
 
-export interface Brewery {
+// Breweries referred to by other entities are not known by their country.
+export interface BreweryBasics {
   id: string
   name: string
+}
+
+export interface Brewery extends BreweryBasics {
+  country: string | undefined
 }
 
 export interface BreweryList {

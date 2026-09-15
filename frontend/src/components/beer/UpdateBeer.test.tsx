@@ -14,11 +14,13 @@ const beerName = 'Kukko Pils'
 const brewery = {
   id: 'ddc2da9d-1d79-472a-86e3-2636a573e96b',
   name: 'Laitilan Wirvoitusjuomatehdas',
+  country: undefined,
 }
 
 const anotherBrewery = {
   id: '8098ccd8-8fcc-42d2-8057-d55884d6e424',
   name: 'Laitilan',
+  country: undefined,
 }
 
 const style = {

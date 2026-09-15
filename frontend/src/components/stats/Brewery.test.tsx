@@ -24,6 +24,7 @@ const getUseDebounce = function <T>(): UseDebounce<T> {
 const koskipanimo: OneBreweryStats = {
   breweryId: 'ad11fad9-951a-473f-9c2e-88084589c4f7',
   breweryName: 'Koskipanimo',
+  breweryCountry: undefined,
   reviewAverage: '9.06',
   reviewCount: '63',
   reviewMedian: '9.00',
@@ -35,6 +36,7 @@ const koskipanimo: OneBreweryStats = {
 const lehe: OneBreweryStats = {
   breweryId: '1d6505ea-9cbd-4215-bc5c-bd80b2a27af8',
   breweryName: 'Lehe pruulikoda',
+  breweryCountry: undefined,
   reviewAverage: '9.71',
   reviewCount: '24',
   reviewMedian: '9.50',

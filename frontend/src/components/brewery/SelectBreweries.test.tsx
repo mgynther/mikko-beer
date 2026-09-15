@@ -9,11 +9,13 @@ import { dontCall } from '../../../test-util/dont-call'
 const brewery: Brewery = {
   id: '69ccb1b1-ee01-446d-b41f-58f57a14148f',
   name: 'Koskipanimo',
+  country: undefined,
 }
 
 const anotherBrewery: Brewery = {
   id: 'a0bb0b55-c2d0-4150-9f18-8e3808cab0c3',
   name: 'Mallaskoski',
+  country: undefined,
 }
 
 const useCreate = dontCall

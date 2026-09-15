@@ -9,6 +9,7 @@ const styleId = '1afa8a5b-186f-40fd-b92f-42b1874091ac'
 const overallStats: OverallStats = {
   beerCount: '123',
   breweryCount: '54',
+  breweryCountryCount: '12',
   containerCount: '8',
   locationCount: '5',
   reviewCount: '112',
@@ -59,6 +60,7 @@ test('renders overall stats with location', () => {
   ])
   getByText(overallStats.beerCount)
   getByText(overallStats.breweryCount)
+  getByText(overallStats.breweryCountryCount)
   getByText(overallStats.containerCount)
   getByText(overallStats.reviewCount)
   getByText(overallStats.distinctBeerReviewCount)
@@ -86,6 +88,7 @@ test('renders overall stats without location', () => {
   ])
   getByText(overallStats.beerCount)
   getByText(overallStats.breweryCount)
+  getByText(overallStats.breweryCountryCount)
   getByText(overallStats.containerCount)
   getByText(overallStats.locationCount)
   getByText(overallStats.reviewCount)

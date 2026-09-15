@@ -19,6 +19,7 @@ import type { FormattedStatsParams } from './search-params'
 const koskipanimo: OneBreweryStats = {
   breweryId: '59c825c9-b346-420a-9e67-f0ae1af1d962',
   breweryName: 'Koskipanimo',
+  breweryCountry: undefined,
   reviewAverage: '9.06',
   reviewCount: '63',
   reviewMedian: '9.00',
@@ -30,6 +31,7 @@ const koskipanimo: OneBreweryStats = {
 const lehe: OneBreweryStats = {
   breweryId: '2816d69f-ddf1-449f-be32-3a2a880ac45b',
   breweryName: 'Lehe pruulikoda',
+  breweryCountry: undefined,
   reviewAverage: '9.71',
   reviewCount: '24',
   reviewMedian: '9.50',

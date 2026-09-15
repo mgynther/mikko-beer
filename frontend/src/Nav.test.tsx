@@ -53,6 +53,7 @@ const dontNavigate: NavigateIf = {
 const brewery = {
   id: '60338d36-4f67-47bd-9cac-9fe2b26132f5',
   name: 'Lehe Pruulikoda',
+  country: undefined,
 }
 
 const breweries = [brewery]

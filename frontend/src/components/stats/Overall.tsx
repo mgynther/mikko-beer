@@ -34,6 +34,10 @@ function Overall(props: Props): React.JSX.Element {
               <td>{stats.breweryCount}</td>
             </tr>
             <tr>
+              <td>Brewery countries</td>
+              <td>{stats.breweryCountryCount}</td>
+            </tr>
+            <tr>
               <td>Containers</td>
               <td>{stats.containerCount}</td>
             </tr>

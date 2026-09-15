@@ -55,6 +55,7 @@ test('update brewery', async () => {
     brewery: {
       id: 'b20edb3f-ff2f-4303-9ed9-01b025dc3c49',
       name: 'Test brewery',
+      country: 'FI',
     },
   }
 

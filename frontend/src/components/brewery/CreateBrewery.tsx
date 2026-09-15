@@ -18,6 +18,7 @@ function CreateBrewery(props: Props): React.JSX.Element {
   const [initialBrewery] = useState<Brewery>({
     id: 'newbrewery',
     name: '',
+    country: undefined,
   })
   const [newBrewery, setNewBrewery] = useState<Brewery | undefined>(undefined)
   const { create, isLoading } = props.createBreweryIf.useCreate()
@@ -25,6 +26,7 @@ function CreateBrewery(props: Props): React.JSX.Element {
   async function doCreate(newBrewery: Brewery): Promise<void> {
     const result = await create({
       name: newBrewery.name,
+      country: newBrewery.country,
     })
     props.select(result)
   }

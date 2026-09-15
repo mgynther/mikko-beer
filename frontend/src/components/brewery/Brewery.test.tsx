@@ -235,6 +235,7 @@ const getBreweryIf: GetBreweryIf = {
     brewery: {
       id,
       name,
+      country: undefined,
     },
     isLoading: false,
   }),

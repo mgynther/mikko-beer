@@ -32,11 +32,13 @@ const namePlaceholder = 'Name'
 const brewery: Brewery = {
   id: '9a145362-452f-4a21-b17d-7529fc2caa4b',
   name: 'Panimo Himo',
+  country: undefined,
 }
 
 const anotherBrewery: Brewery = {
   id: '4566c772-9de8-4edc-89fe-32c358b3dc23',
   name: 'Tuju',
+  country: undefined,
 }
 
 const breweries: Brewery[] = [brewery, anotherBrewery]

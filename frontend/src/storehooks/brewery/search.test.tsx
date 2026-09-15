@@ -56,10 +56,12 @@ test('search breweries', async () => {
       {
         id: '4104837d-e583-4acf-a731-5517ae0f910b',
         name: 'Test brewery',
+        country: 'FI',
       },
       {
         id: 'f8ab1ed0-0afa-4509-a826-aa0613e4e8e8',
         name: 'Another brewery',
+        country: undefined,
       },
     ],
   }

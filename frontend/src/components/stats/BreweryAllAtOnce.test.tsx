@@ -24,6 +24,7 @@ const styleId = 'b345a181-3709-4e12-b255-6fea3baf9f71'
 const koskipanimo: OneBreweryStats = {
   breweryId: '9bf16009-53f2-42e9-86f2-7dc80211aa63',
   breweryName: 'Koskipanimo',
+  breweryCountry: undefined,
   reviewAverage: '9.06',
   reviewCount: '63',
   reviewMedian: '9.00',
@@ -35,6 +36,7 @@ const koskipanimo: OneBreweryStats = {
 const lehe: OneBreweryStats = {
   breweryId: '1db4ef0e-f9a1-441f-b803-6b9b80d971ce',
   breweryName: 'Lehe pruulikoda',
+  breweryCountry: undefined,
   reviewAverage: '9.71',
   reviewCount: '24',
   reviewMedian: '9.50',

@@ -16,6 +16,7 @@ export interface IdParams {
 export interface OverallStats {
   beerCount: string
   breweryCount: string
+  breweryCountryCount: string
   containerCount: string
   locationCount: string
   distinctBeerReviewCount: string
@@ -66,6 +67,7 @@ export interface AnnualContainerStatsQueryParams {
 export interface OneBreweryStats {
   breweryId: string
   breweryName: string
+  breweryCountry: string | undefined
   reviewAverage: string
   reviewCount: string
   reviewMedian: string

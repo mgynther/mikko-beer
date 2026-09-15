@@ -64,6 +64,7 @@ test('brewery stats', async () => {
       {
         breweryId: '4f951cc6-1ce2-4fca-94a8-79369c278005',
         breweryName: 'Koskipanimo',
+        breweryCountry: 'FI',
         reviewAverage: '9.08',
         reviewCount: '77',
         reviewMedian: '9.00',
@@ -74,6 +75,7 @@ test('brewery stats', async () => {
       {
         breweryId: 'f78d663c-7ed2-4109-9070-5133887ee0d8',
         breweryName: 'Mallassepät',
+        breweryCountry: undefined,
         reviewAverage: '9.23',
         reviewCount: '61',
         reviewMedian: '9.50',

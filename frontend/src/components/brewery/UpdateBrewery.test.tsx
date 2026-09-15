@@ -2,6 +2,7 @@ import { render } from '@testing-library/react'
 import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import UpdateBrewery from './UpdateBrewery'
+import { countryPlaceholder } from './BreweryEditor'
 import { dontCall } from '../../../test-util/dont-call'
 
 const id = 'a992b512-c636-486c-a85f-33938da9101c'
@@ -16,6 +17,7 @@ test('updates brewery', async () => {
       initialBrewery={{
         id,
         name: 'Koksipanimo',
+        country: undefined,
       }}
       updateBreweryHookIf={{
         useUpdate: () => ({
@@ -54,6 +56,7 @@ test('cancel update', async () => {
       initialBrewery={{
         id,
         name: 'Koskipanimo',
+        country: undefined,
       }}
       updateBreweryHookIf={{
         useUpdate: () => ({
@@ -69,4 +72,44 @@ test('cancel update', async () => {
   await user.click(cancelButton)
   const cancelCalls = onCancel.mock.calls
   expect(cancelCalls).toEqual([[]])
+})
+
+test('updates brewery country', async () => {
+  const user = setupUser()
+  const onSaved = vitest.fn()
+  const update = vitest.fn()
+  const { getByPlaceholderText, getByRole } = render(
+    <UpdateBrewery
+      initialBrewery={{
+        id,
+        name: 'Koskipanimo',
+        country: undefined,
+      }}
+      updateBreweryHookIf={{
+        useUpdate: () => ({
+          update,
+          isLoading: false,
+        }),
+      }}
+      onCancel={() => undefined}
+      onSaved={onSaved}
+    />,
+  )
+  const saveButton = getByRole('button', { name: 'Save' })
+  const countryInput = getByPlaceholderText(countryPlaceholder)
+  await user.type(countryInput, 'FI')
+  expect(saveButton.hasAttribute('disabled')).toEqual(false)
+  await user.click(saveButton)
+  const updateCalls = update.mock.calls
+  expect(updateCalls).toEqual([
+    [
+      {
+        id,
+        name: 'Koskipanimo',
+        country: 'FI',
+      },
+    ],
+  ])
+  const saveCalls = onSaved.mock.calls
+  expect(saveCalls).toEqual([[]])
 })

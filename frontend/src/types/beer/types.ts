@@ -1,4 +1,4 @@
-import type { Brewery, SelectBreweryIf } from '../brewery/types'
+import type { BreweryBasics, SelectBreweryIf } from '../brewery/types'
 import type { GetLogin } from '../login/types'
 import type { SearchFieldIf } from '../search/types'
 import type { SelectStyleIf, Style } from '../style/types'
@@ -13,7 +13,7 @@ export interface CreateBeerRequest {
 export interface Beer {
   id: string
   name: string
-  breweries: Brewery[]
+  breweries: BreweryBasics[]
   styles: Style[]
 }
 

@@ -19,6 +19,7 @@ const useDebounce: UseDebounce<string> = (str) => [str, false]
 const brewery = {
   id: 'a5a8968d-4556-4f66-8351-21f724cc8316',
   name: 'Koskipanimo',
+  country: undefined,
 }
 
 const style = {

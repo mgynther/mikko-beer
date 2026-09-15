@@ -1,7 +1,11 @@
 import React, { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
-import type { Brewery, SelectBreweryIf } from '../../types/brewery/types'
+import type {
+  Brewery,
+  BreweryBasics,
+  SelectBreweryIf,
+} from '../../types/brewery/types'
 
 import Button from '../common/Button'
 import SelectBrewery from './SelectBrewery'
@@ -12,18 +16,18 @@ import './SelectBreweries.css'
 
 export interface Props {
   selectBreweryIf: SelectBreweryIf
-  initialBreweries: Brewery[]
+  initialBreweries: BreweryBasics[]
   select: (breweries: string[]) => void
 }
 
 interface BrewerySelection {
   id: string
-  brewery: Brewery | undefined
+  brewery: BreweryBasics | undefined
 }
 
 interface SelectionItemProps {
   selectBreweryIf: SelectBreweryIf
-  brewery: Brewery | undefined
+  brewery: BreweryBasics | undefined
   select: (brewery: Brewery) => void
   isRemoveVisible: boolean
   remove: () => void

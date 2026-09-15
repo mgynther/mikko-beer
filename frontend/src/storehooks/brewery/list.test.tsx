@@ -50,10 +50,12 @@ test('list breweries', async () => {
       {
         id: 'eadee3b4-5b47-49a2-a2f6-6719c83b1a0e',
         name: 'Test brewery',
+        country: 'FI',
       },
       {
         id: '7326edd5-b1e8-489a-b5fc-902de0095bd5',
         name: 'Another brewery',
+        country: undefined,
       },
     ],
   }

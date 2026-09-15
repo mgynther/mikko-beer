@@ -16,6 +16,7 @@ import { dontCall } from '../../../test-util/dont-call'
 const koskipanimo: OneBreweryStats = {
   breweryId: '9c761e23-0113-4eeb-b2d5-819f1f5345b5',
   breweryName: 'Koskipanimo',
+  breweryCountry: undefined,
   reviewAverage: '9.06',
   reviewCount: '63',
   reviewMedian: '9.00',
@@ -27,6 +28,7 @@ const koskipanimo: OneBreweryStats = {
 const lehe: OneBreweryStats = {
   breweryId: 'a65d5e2a-7c00-48bb-80f2-14bc89940839',
   breweryName: 'Lehe pruulikoda',
+  breweryCountry: undefined,
   reviewAverage: '9.71',
   reviewCount: '24',
   reviewMedian: '9.50',
