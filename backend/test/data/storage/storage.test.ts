@@ -29,6 +29,7 @@ describe('storage tests', () => {
         const [brewery, style, beer, container] = await Promise.all([
           breweryRepository.insertBrewery(trx, {
             name: 'Koskipanimo',
+            country: undefined,
           }),
           styleRepository.insertStyle(trx, {
             name: 'Pils',

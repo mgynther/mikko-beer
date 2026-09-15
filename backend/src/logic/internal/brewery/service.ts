@@ -17,6 +17,7 @@ export async function createBrewery(
   log('INFO', 'create brewery with name', request.name)
   const brewery = await create({
     name: request.name,
+    country: request.country,
   })
 
   log('INFO', 'created brewery with name', brewery.name, 'and id', brewery.id)
@@ -33,6 +34,7 @@ export async function updateBrewery(
   const brewery = await update({
     id: breweryId,
     name: request.name,
+    country: request.country,
   })
 
   log('INFO', 'updated brewery with id', breweryId)

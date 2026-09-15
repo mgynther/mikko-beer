@@ -87,6 +87,105 @@ describe('brewery tests', () => {
     assertDeepEqual(getRes.data.brewery, updateRes.data.brewery)
   })
 
+  it('create a brewery with country', async () => {
+    const res = await ctx.request.post<{ brewery: CreatedOrUpdatedBrewery }>(
+      `/api/v1/brewery`,
+      { name: 'Koskipanimo', country: 'FI' },
+      ctx.adminAuthHeaders(),
+    )
+
+    assertEqual(res.status, 201)
+    assertEqual(res.data.brewery.country, 'FI')
+
+    const getRes = await ctx.request.get<{ brewery: ReadBrewery }>(
+      `/api/v1/brewery/${res.data.brewery.id}`,
+      ctx.adminAuthHeaders(),
+    )
+    assertEqual(getRes.status, 200)
+    assertDeepEqual(getRes.data.brewery, res.data.brewery)
+
+    const listRes = await ctx.request.get<{ breweries: ReadBrewery[] }>(
+      `/api/v1/brewery?skip=0&size=100`,
+      ctx.adminAuthHeaders(),
+    )
+    assertEqual(listRes.status, 200)
+    assertDeepEqual(listRes.data.breweries, [res.data.brewery])
+
+    const searchRes = await ctx.request.post<{ breweries: ReadBrewery[] }>(
+      `/api/v1/brewery/search`,
+      { name: 'oSk' },
+      ctx.adminAuthHeaders(),
+    )
+    assertEqual(searchRes.status, 200)
+    assertDeepEqual(searchRes.data.breweries, [res.data.brewery])
+  })
+
+  it('brewery without country has no country property', async () => {
+    const res = await ctx.request.post<{ brewery: CreatedOrUpdatedBrewery }>(
+      `/api/v1/brewery`,
+      { name: 'Koskipanimo' },
+      ctx.adminAuthHeaders(),
+    )
+
+    assertEqual(res.status, 201)
+    assertEqual(Object.hasOwn(res.data.brewery, 'country'), false)
+
+    const getRes = await ctx.request.get<{ brewery: ReadBrewery }>(
+      `/api/v1/brewery/${res.data.brewery.id}`,
+      ctx.adminAuthHeaders(),
+    )
+    assertEqual(getRes.status, 200)
+    assertEqual(Object.hasOwn(getRes.data.brewery, 'country'), false)
+  })
+
+  it('update brewery country', async () => {
+    const res = await ctx.request.post<{ brewery: CreatedOrUpdatedBrewery }>(
+      `/api/v1/brewery`,
+      { name: 'Koskipanimo', country: 'FI' },
+      ctx.adminAuthHeaders(),
+    )
+    assertEqual(res.status, 201)
+
+    const updateRes = await ctx.request.put<{
+      brewery: CreatedOrUpdatedBrewery
+    }>(
+      `/api/v1/brewery/${res.data.brewery.id}`,
+      { name: 'Koskipanimo', country: 'BE' },
+      ctx.adminAuthHeaders(),
+    )
+    assertEqual(updateRes.status, 200)
+    assertEqual(updateRes.data.brewery.country, 'BE')
+
+    // Leaving the country out of an update clears it.
+    const clearRes = await ctx.request.put<{
+      brewery: CreatedOrUpdatedBrewery
+    }>(
+      `/api/v1/brewery/${res.data.brewery.id}`,
+      { name: 'Koskipanimo' },
+      ctx.adminAuthHeaders(),
+    )
+    assertEqual(clearRes.status, 200)
+    assertEqual(Object.hasOwn(clearRes.data.brewery, 'country'), false)
+
+    const getRes = await ctx.request.get<{ brewery: ReadBrewery }>(
+      `/api/v1/brewery/${res.data.brewery.id}`,
+      ctx.adminAuthHeaders(),
+    )
+    assertEqual(getRes.status, 200)
+    assertDeepEqual(getRes.data.brewery, clearRes.data.brewery)
+  })
+
+  it('fail to create a brewery with invalid country', async () => {
+    const res = await ctx.request.post<{
+      brewery: CreatedOrUpdatedBrewery
+    }>(
+      `/api/v1/brewery`,
+      { name: 'Koskipanimo', country: 'fi' },
+      ctx.adminAuthHeaders(),
+    )
+    assertEqual(res.status, 400)
+  })
+
   it('fail to create a brewery without name', async () => {
     const res = await ctx.request.post<{ brewery: CreatedOrUpdatedBrewery }>(
       `/api/v1/brewery`,

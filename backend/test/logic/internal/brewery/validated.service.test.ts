@@ -20,15 +20,18 @@ import { assertDeepEqual, assertEqual } from '../../../assert.js'
 
 const validCreateBreweryRequest: CreateBreweryRequest = {
   name: 'Koskipanimo',
+  country: undefined,
 }
 
 const validUpdateBreweryRequest: UpdateBreweryRequest = {
   name: 'Pyynikin käsityöläispanimo',
+  country: undefined,
 }
 
 const brewery: Brewery = {
   id: 'cac161f5-2792-4fbb-a251-4305ee39f350',
   name: validCreateBreweryRequest.name,
+  country: undefined,
 }
 
 const invalidBreweryRequest = {
@@ -93,6 +96,26 @@ describe('brewery validated service unit tests', () => {
     )
   })
 
+  it('create brewery with country', async () => {
+    const request: CreateBreweryRequest = {
+      name: 'Koskipanimo',
+      country: 'FI',
+    }
+    const createWithCountry: (
+      brewery: CreateBreweryRequest,
+    ) => Promise<Brewery> = async (newBrewery: CreateBreweryRequest) => {
+      assertDeepEqual(newBrewery, request)
+      return { ...brewery, country: 'FI' }
+    }
+    const result = await breweryService.createBrewery(
+      createWithCountry,
+      () => ({ errorCode: undefined, result: request }),
+      request,
+      log,
+    )
+    assertDeepEqual(result, { ...brewery, country: 'FI' })
+  })
+
   it('fail to create invalid brewery', async () => {
     await expectReject(async () => {
       await breweryService.createBrewery(
@@ -141,7 +164,7 @@ describe('brewery validated service unit tests', () => {
   it('find brewery by id', async () => {
     const id = 'b0f6b8ba-63f8-4ba6-9b46-3fb0a1d6ee31'
     await breweryService.findBreweryById(
-      async () => ({ id, name: brewery.name }),
+      async () => ({ id, name: brewery.name, country: undefined }),
       () => ({ errorCode: undefined, result: id }),
       id,
       log,

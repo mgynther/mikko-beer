@@ -41,6 +41,7 @@ describe('stats authorized service unit tests', () => {
       const overallStats: OverallStats = {
         beerCount: '123',
         breweryCount: '40',
+        breweryCountryCount: '12',
         containerCount: '8',
         locationCount: '3',
         reviewCount: '120',
@@ -136,6 +137,7 @@ describe('stats authorized service unit tests', () => {
           reviewedBeerCount: '63',
           breweryId: 'c1c9948d-2a7a-4b54-9ada-0fbfedfe2121',
           breweryName: 'Koskipanimo',
+          breweryCountry: 'FI',
         },
         {
           reviewAverage: '9.01',
@@ -146,6 +148,7 @@ describe('stats authorized service unit tests', () => {
           reviewedBeerCount: '54',
           breweryId: '1c0b32ed-a73a-422d-a14a-e70b0ea28e1d',
           breweryName: 'Mallaskoski',
+          breweryCountry: undefined,
         },
       ]
       const result = await statsService.getBrewery(

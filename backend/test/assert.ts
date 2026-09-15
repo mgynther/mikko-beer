@@ -85,3 +85,17 @@ export function assertDoesNotThrow(func: () => void) {
 export function assertTruthy(value: object | undefined | string) {
   assert.ok(value)
 }
+
+// For rejections where the error is not ours to construct, such as a database
+// constraint violation. Matching the message keeps the test independent of the
+// driver's error class and its many properties.
+export async function assertRejectsWithMessage(
+  func: () => Promise<unknown>,
+  includedMessage: string,
+): Promise<void> {
+  await assert.rejects(func, (err: unknown) => {
+    assert.ok(err instanceof Error)
+    assertIncludes(err.message, includedMessage)
+    return true
+  })
+}

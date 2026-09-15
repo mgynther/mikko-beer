@@ -29,9 +29,13 @@ export interface InsertedData {
 // adapted for specific cases that are not already supported. Instead specific
 // test data should be created.
 export async function insertData(trx: Transaction): Promise<InsertedData> {
-  const brewery = await breweryRepository.insertBrewery(trx, { name: 'Salama' })
+  const brewery = await breweryRepository.insertBrewery(trx, {
+    name: 'Salama',
+    country: undefined,
+  })
   const otherBrewery = await breweryRepository.insertBrewery(trx, {
     name: 'Brewdog',
+    country: undefined,
   })
   const style = await styleRepository.insertStyle(trx, { name: 'Helles' })
   const otherStyle = await styleRepository.insertStyle(trx, { name: 'Lager' })

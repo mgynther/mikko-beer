@@ -35,6 +35,7 @@ import type { Context } from '../context.js'
 export interface OverallStats {
   beerCount: string
   breweryCount: string
+  breweryCountryCount: string
   containerCount: string
   locationCount: string
   distinctBeerReviewCount: string
@@ -99,6 +100,7 @@ export type BreweryStats = Array<{
   reviewedBeerCount: string
   breweryId: string
   breweryName: string
+  breweryCountry: string | undefined
 }>
 
 interface BreweryStatsResult {

@@ -30,6 +30,7 @@ export type BreweryStats = Array<{
   reviewedBeerCount: string
   breweryId: string
   breweryName: string
+  breweryCountry: string | undefined
 }>
 
 export type ContainerStats = Array<{
@@ -72,6 +73,7 @@ export interface LocationStatsOrder {
 export interface OverallStats {
   beerCount: string
   breweryCount: string
+  breweryCountryCount: string
   containerCount: string
   locationCount: string
   distinctBeerReviewCount: string

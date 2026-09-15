@@ -2,6 +2,7 @@ import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
 import type { StatsIdFilter } from '../../../src/data/stats/stats.repository.js'
+import * as breweryRepository from '../../../src/data/brewery/brewery.repository.js'
 import * as reviewRepository from '../../../src/data/review/review.repository.js'
 import * as statsRepository from '../../../src/data/stats/stats.repository.js'
 
@@ -75,6 +76,7 @@ describe('overall stats tests', () => {
     assertDeepEqual(stats, {
       beerCount: '2',
       breweryCount: '2',
+      breweryCountryCount: '0',
       containerCount: '2',
       locationCount: '2',
       distinctBeerReviewCount: '2',
@@ -96,11 +98,74 @@ describe('overall stats tests', () => {
     assertDeepEqual(stats, {
       beerCount: '1',
       breweryCount: '1',
+      breweryCountryCount: '0',
       containerCount: '1',
       locationCount: '1',
       distinctBeerReviewCount: '1',
       ...expectedStats(matchingReviews),
       styleCount: '1',
+    })
+  })
+
+  it('counts distinct brewery countries', async () => {
+    const { data } = await insertReviews(ctx.db)
+
+    async function setCountries(country: string, otherCountry: string) {
+      await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
+        await breweryRepository.updateBrewery(trx, {
+          ...data.brewery,
+          country,
+        })
+        await breweryRepository.updateBrewery(trx, {
+          ...data.otherBrewery,
+          country: otherCountry,
+        })
+      })
+    }
+
+    async function countryCounts(statsFilter: StatsIdFilter) {
+      const stats = await statsRepository.getOverall(ctx.db, statsFilter)
+      return {
+        breweryCount: stats.breweryCount,
+        breweryCountryCount: stats.breweryCountryCount,
+      }
+    }
+
+    await setCountries('FI', 'GB')
+    assertDeepEqual(await countryCounts(defaultFilter), {
+      breweryCount: '2',
+      breweryCountryCount: '2',
+    })
+    assertDeepEqual(
+      await countryCounts({ ...defaultFilter, brewery: data.brewery.id }),
+      { breweryCount: '1', breweryCountryCount: '1' },
+    )
+    assertDeepEqual(
+      await countryCounts({ ...defaultFilter, location: data.location.id }),
+      { breweryCount: '1', breweryCountryCount: '1' },
+    )
+    assertDeepEqual(
+      await countryCounts({ ...defaultFilter, style: data.otherStyle.id }),
+      { breweryCount: '1', breweryCountryCount: '1' },
+    )
+
+    // Two breweries of the same country count as one country.
+    await setCountries('FI', 'FI')
+    assertDeepEqual(await countryCounts(defaultFilter), {
+      breweryCount: '2',
+      breweryCountryCount: '1',
+    })
+
+    // One country set, one left out: null is not counted.
+    await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
+      await breweryRepository.updateBrewery(trx, {
+        ...data.otherBrewery,
+        country: undefined,
+      })
+    })
+    assertDeepEqual(await countryCounts(defaultFilter), {
+      breweryCount: '2',
+      breweryCountryCount: '1',
     })
   })
 
@@ -134,6 +199,7 @@ describe('overall stats tests', () => {
     assertDeepEqual(stats, {
       beerCount: '1',
       breweryCount: '1',
+      breweryCountryCount: '0',
       containerCount: '1',
       locationCount: '1',
       distinctBeerReviewCount: '1',
@@ -155,6 +221,7 @@ describe('overall stats tests', () => {
     assertDeepEqual(stats, {
       beerCount: '1',
       breweryCount: '1',
+      breweryCountryCount: '0',
       containerCount: '1',
       locationCount: '1',
       distinctBeerReviewCount: '1',

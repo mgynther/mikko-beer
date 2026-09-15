@@ -2,6 +2,7 @@ import { ajv } from './internal/ajv.js'
 
 interface BreweryRequest {
   name: string
+  country: string | undefined
 }
 
 export type CreateBreweryRequest = BreweryRequest
@@ -49,10 +50,23 @@ const doValidateBreweryRequest = ajv.compile<CreateBreweryRequest>({
       type: 'string',
       minLength: 1,
     },
+    country: {
+      type: 'string',
+      pattern: '^[A-Z]{2}$',
+    },
   },
   required: ['name'],
   additionalProperties: false,
 })
+
+// A country missing from the request is an explicit undefined from here on,
+// so that no layer can forget to pass it along.
+function toBreweryRequest(request: BreweryRequest): BreweryRequest {
+  return {
+    name: request.name,
+    country: request.country,
+  }
+}
 
 function isCreateBreweryRequestValid(body: unknown): boolean {
   return doValidateBreweryRequest(body)
@@ -72,10 +86,10 @@ export function validateCreateBreweryRequest(
   /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
    * Validated using ajv.
    */
-  const result = body as CreateBreweryRequest
+  const validated = body as CreateBreweryRequest
   return {
     errorCode: undefined,
-    result,
+    result: toBreweryRequest(validated),
   }
 }
 
@@ -93,12 +107,12 @@ export function validateUpdateBreweryRequest(
   /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
    * Validated using ajv.
    */
-  const result = body as UpdateBreweryRequest
+  const validated = body as UpdateBreweryRequest
   return {
     errorCode: undefined,
     result: {
       id: validationResult.result,
-      request: result,
+      request: toBreweryRequest(validated),
     },
   }
 }

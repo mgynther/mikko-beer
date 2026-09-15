@@ -2,7 +2,7 @@ import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
 import type { Beer } from '../../../src/data/beer/beer.repository.js'
-import type { Brewery } from '../../../src/data/brewery/brewery.repository.js'
+import type { Brewery } from '../../../src/data/beer/beer.repository.js'
 import type { Style } from '../../../src/data/style/style.repository.js'
 import type { Database, Transaction } from '../../../src/data/database.js'
 import * as beerRepository from '../../../src/data/beer/beer.repository.js'
@@ -43,9 +43,11 @@ describe('beer tests', () => {
           }),
           breweryRepository.insertBrewery(trx, {
             name: 'Koskipanimo',
+            country: undefined,
           }),
           breweryRepository.insertBrewery(trx, {
             name: 'Ölfabrikenin',
+            country: undefined,
           }),
           styleRepository.insertStyle(trx, {
             name: 'American IPA',
@@ -68,7 +70,10 @@ describe('beer tests', () => {
         ])
         return {
           beers: [severinBeer, smörreBeer],
-          breweries: [koskipanimoBrewery, fabrikenBrewery],
+          breweries: [koskipanimoBrewery, fabrikenBrewery].map((brewery) => ({
+            id: brewery.id,
+            name: brewery.name,
+          })),
           style,
         }
       },

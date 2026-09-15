@@ -18,15 +18,18 @@ import { assertDeepEqual } from '../../assert.js'
 
 const validCreateBreweryRequest: CreateBreweryRequest = {
   name: 'Koskipanimo',
+  country: undefined,
 }
 
 const validUpdateBreweryRequest: UpdateBreweryRequest = {
   name: 'Koskipanimo',
+  country: undefined,
 }
 
 const brewery: Brewery = {
   id: '7a0c8831-af4b-4600-b527-6f3d58c3abad',
   name: validCreateBreweryRequest.name,
+  country: undefined,
 }
 
 const invalidBreweryRequest = {
@@ -60,6 +63,26 @@ describe('brewery authorized service unit tests', () => {
       },
       log,
     )
+  })
+
+  it('create brewery with country as admin', async () => {
+    const request: CreateBreweryRequest = {
+      name: validCreateBreweryRequest.name,
+      country: 'FI',
+    }
+    const result = await breweryService.createBrewery(
+      async (newBrewery: CreateBreweryRequest) => {
+        assertDeepEqual(newBrewery, request)
+        return { ...brewery, country: 'FI' }
+      },
+      () => ({ errorCode: undefined, result: request }),
+      {
+        authTokenPayload: adminAuthToken,
+        body: request,
+      },
+      log,
+    )
+    assertDeepEqual(result, { ...brewery, country: 'FI' })
   })
 
   function notCalled(): any {

@@ -1,4 +1,3 @@
-import type { Brewery } from '../brewery/brewery.js'
 import type { Style } from '../style/style.js'
 import type { LockIds } from '../db.js'
 
@@ -42,7 +41,10 @@ export interface BeerWithBreweryAndStyleIds {
 export interface BeerWithBreweriesAndStyles {
   id: string
   name: string
-  breweries: Brewery[]
+  breweries: Array<{
+    id: string
+    name: string
+  }>
   styles: Style[]
 }
 

@@ -441,6 +441,7 @@ interface BreweryQuerySelection {
   reviewed_beer_count: number
   brewery_id: string
   brewery_name: string
+  brewery_country: string | null
 }
 
 type BreweryQueryBuilder = SelectQueryBuilder<
@@ -492,6 +493,7 @@ export type BreweryStats = Array<{
   reviewedBeerCount: string
   breweryId: string
   breweryName: string
+  breweryCountry: string | undefined
 }>
 
 export async function getBrewery(
@@ -518,6 +520,7 @@ export async function getBrewery(
     sql<number>`MODE() WITHIN GROUP (ORDER BY review.rating ASC)`.as('mode'),
     'brewery.brewery_id as brewery_id',
     'brewery.name as brewery_name',
+    'brewery.country as brewery_country',
   ])
 
   if (statsFilter.brewery !== undefined) {
@@ -543,6 +546,7 @@ export async function getBrewery(
         ),
         'brewery.brewery_id as brewery_id',
         'brewery.name as brewery_name',
+        'brewery.country as brewery_country',
       ])
   }
 
@@ -610,12 +614,14 @@ export async function getBrewery(
     reviewedBeerCount: `${row.reviewed_beer_count}`,
     breweryId: row.brewery_id,
     breweryName: row.brewery_name,
+    breweryCountry: row.brewery_country ?? undefined,
   }))
 }
 
 interface Stats {
   beer_count: number
   brewery_count: number
+  brewery_country_count: number
   container_count: number
   location_count: number
   style_count: number
@@ -635,6 +641,7 @@ interface ReviewStats {
 export interface OverallStats {
   beerCount: string
   breweryCount: string
+  breweryCountryCount: string
   containerCount: string
   locationCount: string
   distinctBeerReviewCount: string
@@ -652,6 +659,7 @@ async function getFullOverall(db: Database): Promise<OverallStats> {
   const statsQuery = sql<Stats & ReviewStats>`SELECT
     (SELECT COUNT(1) FROM beer) AS beer_count,
     (SELECT COUNT(1) FROM brewery) AS brewery_count,
+    (SELECT COUNT(DISTINCT country) FROM brewery) AS brewery_country_count,
     (SELECT COUNT(1) FROM container) AS container_count,
     (SELECT COUNT(1) FROM location) AS location_count,
     (SELECT COUNT(1) FROM review) AS review_count,
@@ -672,6 +680,7 @@ async function getFullOverall(db: Database): Promise<OverallStats> {
   return {
     beerCount: `${stats.beer_count}`,
     breweryCount: `${stats.brewery_count}`,
+    breweryCountryCount: `${stats.brewery_country_count}`,
     containerCount: `${stats.container_count}`,
     locationCount: `${stats.location_count}`,
     distinctBeerReviewCount: `${stats.distinct_beer_review_count}`,
@@ -721,9 +730,14 @@ async function getBreweryOverall(
   const beerStatsQuery = beerQuery
     .innerJoin('beer_style', 'querybrewery.beer', 'beer_style.beer')
     .innerJoin('beer_brewery', 'querybrewery.beer', 'beer_brewery.beer')
+    .innerJoin('brewery', 'beer_brewery.brewery', 'brewery.brewery_id')
     .select(({ fn }) => [
       fn.count<number>('querybrewery.beer').distinct().as('beer_count'),
       fn.count<number>('beer_brewery.brewery').distinct().as('brewery_count'),
+      fn
+        .count<number>('brewery.country')
+        .distinct()
+        .as('brewery_country_count'),
       fn.count<number>('beer_style.style').distinct().as('style_count'),
     ])
     .where('querybrewery.brewery', '=', brewery)
@@ -772,6 +786,7 @@ async function getBreweryOverall(
   return {
     beerCount: `${beerStatsResults.beer_count}`,
     breweryCount: `${beerStatsResults.brewery_count}`,
+    breweryCountryCount: `${beerStatsResults.brewery_country_count}`,
     containerCount: `${containerCount}`,
     locationCount: `${reviewStats.location_count}`,
     distinctBeerReviewCount: `${reviewStats.distinct_beer_review_count}`,
@@ -800,8 +815,13 @@ async function getLocationOverall(
     .innerJoin('beer', 'review.beer', 'beer.beer_id')
     .innerJoin('beer_style', 'beer.beer_id', 'beer_style.beer')
     .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
+    .innerJoin('brewery', 'beer_brewery.brewery', 'brewery.brewery_id')
     .select(({ fn }) => [
       fn.count<number>('beer_brewery.brewery').distinct().as('brewery_count'),
+      fn
+        .count<number>('brewery.country')
+        .distinct()
+        .as('brewery_country_count'),
       fn.count<number>('beer_style.style').distinct().as('style_count'),
     ])
     .where('review.location', '=', location)
@@ -829,6 +849,7 @@ async function getLocationOverall(
   return {
     beerCount: `${reviewStats.beer_count}`,
     breweryCount: `${beerStats.brewery_count}`,
+    breweryCountryCount: `${beerStats.brewery_country_count}`,
     containerCount: `${reviewStats.container_count}`,
     locationCount: '1',
     distinctBeerReviewCount: `${reviewStats.beer_count}`,
@@ -852,9 +873,14 @@ async function getStyleOverall(
   const beerStatsQuery = beerQuery
     .innerJoin('beer_style', 'querystyle.beer', 'beer_style.beer')
     .innerJoin('beer_brewery', 'querystyle.beer', 'beer_brewery.beer')
+    .innerJoin('brewery', 'beer_brewery.brewery', 'brewery.brewery_id')
     .select(({ fn }) => [
       fn.count<number>('querystyle.beer').distinct().as('beer_count'),
       fn.count<number>('beer_brewery.brewery').distinct().as('brewery_count'),
+      fn
+        .count<number>('brewery.country')
+        .distinct()
+        .as('brewery_country_count'),
       fn.count<number>('beer_style.style').distinct().as('style_count'),
     ])
     .where('querystyle.style', '=', style)
@@ -903,6 +929,7 @@ async function getStyleOverall(
   return {
     beerCount: `${beerStatsResults.beer_count}`,
     breweryCount: `${beerStatsResults.brewery_count}`,
+    breweryCountryCount: `${beerStatsResults.brewery_country_count}`,
     containerCount: `${containerCount}`,
     locationCount: `${reviewStats.location_count}`,
     distinctBeerReviewCount: `${reviewStats.distinct_beer_review_count}`,

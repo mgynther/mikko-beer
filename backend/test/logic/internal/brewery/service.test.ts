@@ -17,19 +17,44 @@ import { assertDeepEqual, assertEqual } from '../../../assert.js'
 const brewery: Brewery = {
   id: 'd804c8fe-8d41-4c8b-88d1-95bdfeb558ef',
   name: 'Koskipanimo',
+  country: undefined,
 }
 
 describe('brewery service unit tests', () => {
   it('create brewery', async () => {
     const request: CreateBreweryRequest = {
       name: brewery.name,
+      country: undefined,
     }
     const create = async (newBrewery: CreateBreweryRequest) => {
       const result = {
         id: brewery.id,
         name: brewery.name,
+        country: newBrewery.country,
       }
-      assertDeepEqual(newBrewery, { name: brewery.name })
+      assertDeepEqual(newBrewery, { name: brewery.name, country: undefined })
+      return result
+    }
+    const result = await breweryService.createBrewery(create, request, log)
+    assertDeepEqual(result, {
+      ...request,
+      id: brewery.id,
+      country: undefined,
+    })
+  })
+
+  it('create brewery with country', async () => {
+    const request: CreateBreweryRequest = {
+      name: brewery.name,
+      country: 'FI',
+    }
+    const create = async (newBrewery: CreateBreweryRequest) => {
+      const result = {
+        id: brewery.id,
+        name: brewery.name,
+        country: newBrewery.country,
+      }
+      assertDeepEqual(newBrewery, { name: brewery.name, country: 'FI' })
       return result
     }
     const result = await breweryService.createBrewery(create, request, log)
@@ -42,13 +67,46 @@ describe('brewery service unit tests', () => {
   it('update brewery', async () => {
     const request: UpdateBreweryRequest = {
       name: brewery.name,
+      country: undefined,
     }
     const update = async (brewery: Brewery) => {
       const result = {
         id: brewery.id,
         name: brewery.name,
+        country: brewery.country,
       }
       assertDeepEqual(brewery, result)
+      return result
+    }
+    const result = await breweryService.updateBrewery(
+      update,
+      brewery.id,
+      request,
+      log,
+    )
+    assertDeepEqual(result, {
+      ...request,
+      id: brewery.id,
+      country: undefined,
+    })
+  })
+
+  it('update brewery country', async () => {
+    const request: UpdateBreweryRequest = {
+      name: brewery.name,
+      country: 'FI',
+    }
+    const update = async (brewery: Brewery) => {
+      const result = {
+        id: brewery.id,
+        name: brewery.name,
+        country: brewery.country,
+      }
+      assertDeepEqual(brewery, {
+        id: brewery.id,
+        name: brewery.name,
+        country: 'FI',
+      })
       return result
     }
     const result = await breweryService.updateBrewery(

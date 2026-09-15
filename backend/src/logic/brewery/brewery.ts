@@ -1,10 +1,12 @@
 export interface Brewery {
   id: string
   name: string
+  country: string | undefined
 }
 
 interface BreweryRequest {
   name: string
+  country: string | undefined
 }
 
 export type CreateBreweryRequest = BreweryRequest

@@ -3,6 +3,7 @@ import type { Generated, Insertable, Selectable, Updateable } from 'kysely'
 export interface BreweryTable {
   brewery_id: Generated<string>
   name: string
+  country: string | null
   created_at: Generated<Date>
 }
 

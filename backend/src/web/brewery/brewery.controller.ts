@@ -23,6 +23,7 @@ import {
 export interface CreatedOrUpdatedBrewery {
   id: string
   name: string
+  country: string | undefined
 }
 
 interface CreateResult {
@@ -42,6 +43,7 @@ interface UpdateResult {
 export interface ReadBrewery {
   id: string
   name: string
+  country: string | undefined
 }
 
 interface ReadResult {

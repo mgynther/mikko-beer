@@ -47,7 +47,11 @@ describe('stats tests', () => {
 
     const breweryRes = await ctx.request.post<{
       brewery: CreatedOrUpdatedBrewery
-    }>(`/api/v1/brewery`, { name: 'Lindemans' }, adminAuthHeaders)
+    }>(
+      `/api/v1/brewery`,
+      { name: 'Lindemans', country: 'BE' },
+      adminAuthHeaders,
+    )
     assertEqual(breweryRes.status, 201)
 
     const beerRes = await ctx.request.post<{
@@ -100,7 +104,11 @@ describe('stats tests', () => {
 
     const otherBreweryRes = await ctx.request.post<{
       brewery: CreatedOrUpdatedBrewery
-    }>(`/api/v1/brewery`, { name: 'Nokian Panimo' }, ctx.adminAuthHeaders())
+    }>(
+      `/api/v1/brewery`,
+      { name: 'Nokian Panimo', country: 'FI' },
+      ctx.adminAuthHeaders(),
+    )
     assertEqual(otherBreweryRes.status, 201)
 
     const otherBeerRes = await ctx.request.post<{
@@ -248,6 +256,8 @@ describe('stats tests', () => {
     assertEqual(beers.length, 3)
     assertEqual(statsRes.data.overall.breweryCount, `${breweries.length}`)
     assertEqual(breweries.length, 2)
+    // Lindemans is BE, Nokian Panimo is FI.
+    assertEqual(statsRes.data.overall.breweryCountryCount, '2')
     assertEqual(statsRes.data.overall.containerCount, `${containers.length}`)
     assertEqual(containers.length, 1)
     assertEqual(statsRes.data.overall.reviewCount, `${allReviews.length}`)
@@ -290,6 +300,8 @@ describe('stats tests', () => {
     assertEqual(statsRes.status, 200)
     assertEqual(statsRes.data.overall.beerCount, '2')
     assertEqual(statsRes.data.overall.breweryCount, '2')
+    // The collaboration beer brings Nokian Panimo along with its country.
+    assertEqual(statsRes.data.overall.breweryCountryCount, '2')
     assertEqual(statsRes.data.overall.containerCount, '1')
     assertEqual(statsRes.data.overall.reviewCount, '4')
     const ratings = allReviews
@@ -649,6 +661,7 @@ describe('stats tests', () => {
         reviewedBeerCount: `${nokia.reviewedBeerCount}`,
         breweryId: nokia.brewery.id,
         breweryName: nokia.brewery.name,
+        breweryCountry: nokia.brewery.country,
       },
       {
         reviewCount: `${lindemansRatings.length}`,
@@ -657,6 +670,7 @@ describe('stats tests', () => {
         reviewedBeerCount: `${lindemans.reviewedBeerCount}`,
         breweryId: lindemans.brewery.id,
         breweryName: lindemans.brewery.name,
+        breweryCountry: lindemans.brewery.country,
       },
     ])
     assertEqual(nokiaRatings.length, nokia.count)

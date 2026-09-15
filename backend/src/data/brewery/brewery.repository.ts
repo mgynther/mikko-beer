@@ -8,10 +8,12 @@ import { defaultSearchMaxResults, toIlike } from '../search.js'
 export interface Brewery {
   id: string
   name: string
+  country: string | undefined
 }
 
 interface CreateBreweryRequest {
   name: string
+  country: string | undefined
 }
 
 export async function insertBrewery(
@@ -21,7 +23,10 @@ export async function insertBrewery(
   const insertedBrewery = await trx
     .trx()
     .insertInto('brewery')
-    .values(brewery)
+    .values({
+      name: brewery.name,
+      country: brewery.country,
+    })
     .returningAll()
     .executeTakeFirstOrThrow()
 
@@ -37,6 +42,7 @@ export async function updateBrewery(
     .updateTable('brewery')
     .set({
       name: brewery.name,
+      country: brewery.country ?? null,
     })
     .where('brewery_id', '=', brewery.id)
     .returningAll()
@@ -114,5 +120,6 @@ function rowToBrewery(row: BreweryRow): Brewery {
   return {
     id: row.brewery_id,
     name: row.name,
+    country: row.country ?? undefined,
   }
 }
