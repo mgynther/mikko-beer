@@ -366,3 +366,43 @@ test('throw on missing id', async () => {
     ),
   ).toThrow('Brewery component without breweryId. Should not happen.')
 })
+
+test('renders brewery country flag', () => {
+  const { getByRole, getByText } = render(
+    <Brewery
+      listReviewsByBreweryIf={listReviewsByBreweryIf}
+      listStoragesByBreweryIf={listStoragesByBreweryIf}
+      getBreweryIf={{
+        useGet: () => ({
+          brewery: {
+            id,
+            name,
+            country: 'FI',
+          },
+          isLoading: false,
+        }),
+      }}
+      updateBreweryIf={dontUpdateBreweryIf}
+      statsIf={statsIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
+  )
+  const heading = getByRole('heading', { name: `${name} \u{1F1EB}\u{1F1EE}` })
+  expect(heading).toBeDefined()
+  getByText('\u{1F1EB}\u{1F1EE}')
+})
+
+test('renders brewery without country flag', () => {
+  const { getByRole, queryByText } = render(
+    <Brewery
+      listReviewsByBreweryIf={listReviewsByBreweryIf}
+      listStoragesByBreweryIf={listStoragesByBreweryIf}
+      getBreweryIf={getBreweryIf}
+      updateBreweryIf={dontUpdateBreweryIf}
+      statsIf={statsIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
+  )
+  getByRole('heading', { name })
+  expect(queryByText('\u{1F1EB}\u{1F1EE}')).toEqual(null)
+})

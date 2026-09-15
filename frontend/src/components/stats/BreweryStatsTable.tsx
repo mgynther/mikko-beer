@@ -10,6 +10,7 @@ import type {
 import type { ListDirection } from '../../types/types'
 
 import BreweryLinks from '../brewery/BreweryLinks'
+import Flag from '../common/Flag'
 import TableSkeleton from '../common/TableSkeleton'
 import TabButton from '../common/TabButton'
 
@@ -129,7 +130,8 @@ function BreweryStatsTable(props: Props): React.JSX.Element {
                       name: brewery.breweryName,
                     },
                   ]}
-                />
+                />{' '}
+                <Flag country={brewery.breweryCountry} />
               </td>
               <td className='StatsNumColumn'>{formatCount(brewery)}</td>
               <td className='StatsNumColumn'>{brewery.reviewAverage}</td>

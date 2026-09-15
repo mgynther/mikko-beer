@@ -11,6 +11,7 @@ import type { ListReviewsByIf } from '../../types/review/types'
 import type { ListStoragesByIf } from '../../types/storage/types'
 
 import { EditableMode } from '../common/EditableMode'
+import Flag from '../common/Flag'
 import EditButton from '../common/EditButton'
 import LoadingIndicator from '../common/LoadingIndicator'
 
@@ -50,7 +51,9 @@ function Brewery(props: Props): React.JSX.Element {
       {mode === EditableMode.View && (
         <div className='FlexRow'>
           <div>
-            <h3>{brewery.name}</h3>
+            <h3>
+              {brewery.name} <Flag country={brewery.country} />
+            </h3>
           </div>
           <div>
             <EditButton

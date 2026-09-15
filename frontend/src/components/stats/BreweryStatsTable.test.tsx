@@ -16,7 +16,7 @@ import { dontCall } from '../../../test-util/dont-call'
 const koskipanimo: OneBreweryStats = {
   breweryId: '9c761e23-0113-4eeb-b2d5-819f1f5345b5',
   breweryName: 'Koskipanimo',
-  breweryCountry: undefined,
+  breweryCountry: 'FI',
   reviewAverage: '9.06',
   reviewCount: '63',
   reviewMedian: '9.00',
@@ -28,7 +28,7 @@ const koskipanimo: OneBreweryStats = {
 const lehe: OneBreweryStats = {
   breweryId: 'a65d5e2a-7c00-48bb-80f2-14bc89940839',
   breweryName: 'Lehe pruulikoda',
-  breweryCountry: undefined,
+  breweryCountry: 'EE',
   reviewAverage: '9.71',
   reviewCount: '24',
   reviewMedian: '9.50',
@@ -100,6 +100,28 @@ test('renders brewery stats', () => {
   getByText(lehe.reviewMedian)
   getByText(lehe.reviewMode)
   getByText(lehe.reviewStandardDeviation)
+  getByText('\u{1F1EB}\u{1F1EE}')
+  getByText('\u{1F1EA}\u{1F1EA}')
+})
+
+test('renders brewery stats without country', () => {
+  const { queryByText } = render(
+    <LinkWrapper>
+      <BreweryStatsTable
+        breweries={[{ ...koskipanimo, breweryCountry: undefined }]}
+        isLoading={false}
+        sortingDirection={'asc'}
+        sortingOrder={'brewery_name'}
+        setSortingOrder={() => undefined}
+        filterState={{
+          filters: unusedFilters,
+          isOpen: false,
+          setIsOpen: dontCall,
+        }}
+      />
+    </LinkWrapper>,
+  )
+  expect(queryByText('\u{1F1EB}\u{1F1EE}')).toEqual(null)
 })
 
 test('opens filters', async () => {
