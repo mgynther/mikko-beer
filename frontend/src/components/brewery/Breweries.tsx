@@ -9,6 +9,7 @@ import type {
 
 import type { NavigateIf } from '../../navigation'
 
+import { nameWithFlag } from '../common/name-with-flag'
 import LoadingIndicator from '../common/LoadingIndicator'
 
 import { breweryLinkFormatter } from './BreweryLinks'
@@ -64,7 +65,10 @@ function Breweries(props: Props): React.JSX.Element {
       <ul>
         {loadedBreweries.map((brewery: Brewery) => (
           <li key={brewery.id}>
-            <Link to={breweryLinkFormatter(brewery.id)} text={brewery.name} />
+            <Link
+              to={breweryLinkFormatter(brewery.id)}
+              text={nameWithFlag(brewery.name, brewery.country)}
+            />
           </li>
         ))}
       </ul>

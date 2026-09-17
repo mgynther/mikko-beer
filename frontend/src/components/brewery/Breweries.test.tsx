@@ -75,6 +75,51 @@ test('renders breweries', async () => {
   getByPlaceholderText('Search brewery')
 })
 
+test('renders brewery country flags', async () => {
+  const withCountry = { ...brewery, country: 'EE' }
+  const countryBreweries = [withCountry, anotherBrewery]
+  let scrollCb: () => void = () => undefined
+  const listBreweriesIf: ListBreweriesIf = {
+    useList: () => ({
+      list: async () => ({
+        breweries: countryBreweries,
+      }),
+      breweryList: { breweries: countryBreweries },
+      isLoading: false,
+      isUninitialized: false,
+    }),
+    infiniteScroll: (cb) => {
+      scrollCb = cb
+      return () => undefined
+    },
+  }
+  const { getByRole } = render(
+    <LinkWrapper>
+      <Breweries
+        listBreweriesIf={listBreweriesIf}
+        navigateIf={{
+          useNavigate: () => dontCall,
+        }}
+        searchBreweryIf={{
+          useSearch: () => ({
+            search: dontCall,
+            isLoading: false,
+          }),
+          searchFieldIf: activeSearch,
+        }}
+      />
+    </LinkWrapper>,
+  )
+  await act(async () => {
+    scrollCb()
+  })
+  getByRole('link', {
+    name: `${withCountry.name} \u{1F1EA}\u{1F1EA}`,
+  })
+  // A brewery without country code is linked by plain name.
+  getByRole('link', { name: anotherBrewery.name })
+})
+
 test('render loading', async () => {
   let scrollCb: () => void = () => undefined
   const listBreweriesIf: ListBreweriesIf = {

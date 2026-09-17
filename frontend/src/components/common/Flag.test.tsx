@@ -27,6 +27,11 @@ test('renders Belgian flag', () => {
   expect(getByText('\u{1F1E7}\u{1F1EA}')).toBeDefined()
 })
 
+test('renders nothing for lower case country code', () => {
+  const { container } = render(<Flag country='fi' />)
+  expect(container.firstChild).toEqual(null)
+})
+
 test('renders nothing without country', () => {
   const { container } = render(<Flag country={undefined} />)
   expect(container.firstChild).toEqual(null)
@@ -39,5 +44,10 @@ test('renders nothing for too short country', () => {
 
 test('renders nothing for too long country', () => {
   const { container } = render(<Flag country='FIN' />)
+  expect(container.firstChild).toEqual(null)
+})
+
+test('renders nothing for invalid country', () => {
+  const { container } = render(<Flag country='12' />)
   expect(container.firstChild).toEqual(null)
 })
