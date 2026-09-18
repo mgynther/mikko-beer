@@ -4,6 +4,7 @@ import { TestContext } from '../test-context.js'
 import type { StatsIdFilter } from '../../../src/data/stats/stats-filter.js'
 import * as breweryRepository from '../../../src/data/brewery/brewery.repository.js'
 import * as reviewRepository from '../../../src/data/review/review.repository.js'
+import * as storageRepository from '../../../src/data/storage/storage.repository.js'
 import * as overallStatsRepository from '../../../src/data/stats/overall.repository.js'
 
 import { insertMultipleReviews } from '../review-helpers.js'
@@ -11,7 +12,7 @@ import type {
   NewReview,
   Review,
 } from '../../../src/data/review/review.repository.js'
-import { assertDeepEqual, assertRejects } from '../../assert.js'
+import { assertDeepEqual, assertEqual, assertRejects } from '../../assert.js'
 import { avg, median, mode, stdDev } from './stats-helpers.js'
 import type { Database, Transaction } from '../../../src/data/database.js'
 
@@ -167,6 +168,43 @@ describe('overall stats tests', () => {
       breweryCount: '2',
       breweryCountryCount: '1',
     })
+  })
+
+  // A beer's containers are counted from its reviews and its storages
+  // both, so a storage in a container the beer was never reviewed in adds
+  // to the count. The brewery and the style variants count them; the
+  // location one does not, as a storage has no location.
+  it('counts a storage container of a brewery and of a style', async () => {
+    const { data } = await insertReviews(ctx.db)
+    await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
+      await storageRepository.insertStorage(trx, {
+        beer: data.beer.id,
+        bestBefore: '2024-12-01T00:00:00.000Z',
+        container: data.otherContainer.id,
+      })
+    })
+
+    async function containerCount(statsFilter: StatsIdFilter) {
+      const stats = await overallStatsRepository.getOverall(ctx.db, statsFilter)
+      return stats.containerCount
+    }
+
+    // data.beer is reviewed in data.container only, and now stored in
+    // data.otherContainer as well.
+    assertEqual(
+      await containerCount({ ...defaultFilter, brewery: data.brewery.id }),
+      '2',
+    )
+    assertEqual(
+      await containerCount({ ...defaultFilter, style: data.style.id }),
+      '2',
+    )
+
+    // The other brewery has no storage, so its count is unaffected.
+    assertEqual(
+      await containerCount({ ...defaultFilter, brewery: data.otherBrewery.id }),
+      '1',
+    )
   })
 
   it('throws on overall by multiple filters', async () => {

@@ -89,14 +89,13 @@ interface ContainerIds {
 
 function countContainerIds(idRows: ContainerIds[]): number {
   const ids = new Set<string>()
-  function add(value: string | null): void {
-    if (value !== null) {
-      ids.add(value)
-    }
-  }
   idRows.forEach((row) => {
-    add(row.review_container)
-    add(row.storage_container)
+    if (row.review_container !== null) {
+      ids.add(row.review_container)
+    }
+    if (row.storage_container !== null) {
+      ids.add(row.storage_container)
+    }
   })
   return ids.size
 }
