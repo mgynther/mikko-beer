@@ -2,12 +2,10 @@ import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
 import type { Review } from '../../../src/data/review/review.repository.js'
-import type {
-  StyleStatsOrder,
-  StatsFilter,
-} from '../../../src/data/stats/stats.repository.js'
+import type { StyleStatsOrder } from '../../../src/data/stats/style.repository.js'
+import type { StatsFilter } from '../../../src/data/stats/stats-filter.js'
 import type { Database } from '../../../src/data/database.js'
-import * as statsRepository from '../../../src/data/stats/stats.repository.js'
+import * as styleStatsRepository from '../../../src/data/stats/style.repository.js'
 import type { InsertedData } from '../review-helpers.js'
 import { insertMultipleReviews } from '../review-helpers.js'
 import { assertDeepEqual } from '../../assert.js'
@@ -44,7 +42,7 @@ describe('style stats tests', () => {
     styleStatsOrder: StyleStatsOrder,
   ) {
     const { reviews, data } = await insertMultipleReviews(9, db)
-    const stats = await statsRepository.getStyle(
+    const stats = await styleStatsRepository.getStyle(
       db,
       statsFilter?.(data) ?? defaultFilter,
       styleStatsOrder,

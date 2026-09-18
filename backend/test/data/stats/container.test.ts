@@ -1,7 +1,7 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
-import * as statsRepository from '../../../src/data/stats/stats.repository.js'
+import * as containerStatsRepository from '../../../src/data/stats/container.repository.js'
 import { insertMultipleReviews } from '../review-helpers.js'
 import type { Review } from '../../../src/data/review/review.repository.js'
 import { assertDeepEqual } from '../../assert.js'
@@ -41,7 +41,7 @@ describe('container stats tests', () => {
 
   it('no filters', async () => {
     const { data, reviews } = await insertMultipleReviews(9, ctx.db)
-    const stats = await statsRepository.getContainer(ctx.db, {
+    const stats = await containerStatsRepository.getContainer(ctx.db, {
       brewery: undefined,
       location: undefined,
       style: undefined,
@@ -55,7 +55,7 @@ describe('container stats tests', () => {
 
   it('filter by brewery', async () => {
     const { data, reviews } = await insertMultipleReviews(9, ctx.db)
-    const stats = await statsRepository.getContainer(ctx.db, {
+    const stats = await containerStatsRepository.getContainer(ctx.db, {
       brewery: data.brewery.id,
       location: undefined,
       style: undefined,
@@ -68,7 +68,7 @@ describe('container stats tests', () => {
 
   it('filter by location', async () => {
     const { data, reviews } = await insertMultipleReviews(9, ctx.db)
-    const stats = await statsRepository.getContainer(ctx.db, {
+    const stats = await containerStatsRepository.getContainer(ctx.db, {
       brewery: undefined,
       location: data.location.id,
       style: undefined,
@@ -81,7 +81,7 @@ describe('container stats tests', () => {
 
   it('filter by style', async () => {
     const { data, reviews } = await insertMultipleReviews(9, ctx.db)
-    const stats = await statsRepository.getContainer(ctx.db, {
+    const stats = await containerStatsRepository.getContainer(ctx.db, {
       brewery: undefined,
       location: undefined,
       style: data.otherStyle.id,

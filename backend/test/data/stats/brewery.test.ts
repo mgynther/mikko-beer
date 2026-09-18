@@ -6,16 +6,14 @@ import type {
   NewReview,
   Review,
 } from '../../../src/data/review/review.repository.js'
-import type {
-  BreweryStatsOrder,
-  StatsFilter,
-} from '../../../src/data/stats/stats.repository.js'
+import type { BreweryStatsOrder } from '../../../src/data/stats/brewery.repository.js'
+import type { StatsFilter } from '../../../src/data/stats/stats-filter.js'
 import type { Database, Transaction } from '../../../src/data/database.js'
 import * as beerRepository from '../../../src/data/beer/beer.repository.js'
 import * as breweryRepository from '../../../src/data/brewery/brewery.repository.js'
 import * as containerRepository from '../../../src/data/container/container.repository.js'
 import * as reviewRepository from '../../../src/data/review/review.repository.js'
-import * as statsRepository from '../../../src/data/stats/stats.repository.js'
+import * as breweryStatsRepository from '../../../src/data/stats/brewery.repository.js'
 import * as styleRepository from '../../../src/data/style/style.repository.js'
 import type { InsertedData } from '../review-helpers.js'
 import { insertMultipleReviews } from '../review-helpers.js'
@@ -54,7 +52,7 @@ describe('brewery stats tests', () => {
     breweryStatsOrder: BreweryStatsOrder,
   ) {
     const { reviews, data } = await insertMultipleReviews(9, db)
-    const stats = await statsRepository.getBrewery(
+    const stats = await breweryStatsRepository.getBrewery(
       db,
       pagination,
       statsFilter?.(data) ?? defaultFilter,
@@ -368,7 +366,7 @@ describe('brewery stats tests', () => {
         return { brewery, otherBeer, otherBrewery }
       })
 
-    const stats = await statsRepository.getBrewery(
+    const stats = await breweryStatsRepository.getBrewery(
       ctx.db,
       allResults,
       defaultFilter,
@@ -458,7 +456,7 @@ describe('brewery stats tests', () => {
       direction: 'asc',
     }
 
-    const stats = await statsRepository.getBrewery(
+    const stats = await breweryStatsRepository.getBrewery(
       ctx.db,
       allResults,
       defaultFilter,
@@ -476,7 +474,7 @@ describe('brewery stats tests', () => {
     )
 
     // The brewery filter rebuilds the query with its own select list.
-    const filteredStats = await statsRepository.getBrewery(
+    const filteredStats = await breweryStatsRepository.getBrewery(
       ctx.db,
       allResults,
       { ...defaultFilter, brewery: brewery.id },

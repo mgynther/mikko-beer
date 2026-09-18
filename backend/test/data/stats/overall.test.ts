@@ -1,10 +1,10 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
-import type { StatsIdFilter } from '../../../src/data/stats/stats.repository.js'
+import type { StatsIdFilter } from '../../../src/data/stats/stats-filter.js'
 import * as breweryRepository from '../../../src/data/brewery/brewery.repository.js'
 import * as reviewRepository from '../../../src/data/review/review.repository.js'
-import * as statsRepository from '../../../src/data/stats/stats.repository.js'
+import * as overallStatsRepository from '../../../src/data/stats/overall.repository.js'
 
 import { insertMultipleReviews } from '../review-helpers.js'
 import type {
@@ -72,7 +72,7 @@ describe('overall stats tests', () => {
   it('shows overall stats', async () => {
     const { reviews } = await insertReviews(ctx.db)
 
-    const stats = await statsRepository.getOverall(ctx.db, defaultFilter)
+    const stats = await overallStatsRepository.getOverall(ctx.db, defaultFilter)
     assertDeepEqual(stats, {
       beerCount: '2',
       breweryCount: '2',
@@ -88,7 +88,7 @@ describe('overall stats tests', () => {
   it('shows overall by brewery', async () => {
     const { reviews, data } = await insertReviews(ctx.db)
 
-    const stats = await statsRepository.getOverall(ctx.db, {
+    const stats = await overallStatsRepository.getOverall(ctx.db, {
       ...defaultFilter,
       brewery: data.brewery.id,
     })
@@ -124,7 +124,7 @@ describe('overall stats tests', () => {
     }
 
     async function countryCounts(statsFilter: StatsIdFilter) {
-      const stats = await statsRepository.getOverall(ctx.db, statsFilter)
+      const stats = await overallStatsRepository.getOverall(ctx.db, statsFilter)
       return {
         breweryCount: stats.breweryCount,
         breweryCountryCount: stats.breweryCountryCount,
@@ -173,7 +173,7 @@ describe('overall stats tests', () => {
     const { data } = await insertMultipleReviews(9, ctx.db)
     await assertRejects(
       async () => {
-        await statsRepository.getOverall(ctx.db, {
+        await overallStatsRepository.getOverall(ctx.db, {
           ...defaultFilter,
           brewery: data.brewery.id,
           style: data.style.id,
@@ -189,7 +189,7 @@ describe('overall stats tests', () => {
   it('shows overall by location', async () => {
     const { reviews, data } = await insertReviews(ctx.db)
 
-    const stats = await statsRepository.getOverall(ctx.db, {
+    const stats = await overallStatsRepository.getOverall(ctx.db, {
       ...defaultFilter,
       location: data.location.id,
     })
@@ -211,7 +211,7 @@ describe('overall stats tests', () => {
   it('shows overall by style', async () => {
     const { reviews, data } = await insertReviews(ctx.db)
 
-    const stats = await statsRepository.getOverall(ctx.db, {
+    const stats = await overallStatsRepository.getOverall(ctx.db, {
       ...defaultFilter,
       style: data.otherStyle.id,
     })

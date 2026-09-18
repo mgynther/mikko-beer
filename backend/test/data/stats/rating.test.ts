@@ -1,8 +1,8 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
-import type { StatsIdFilter } from '../../../src/data/stats/stats.repository.js'
-import * as statsRepository from '../../../src/data/stats/stats.repository.js'
+import type { StatsIdFilter } from '../../../src/data/stats/stats-filter.js'
+import * as ratingStatsRepository from '../../../src/data/stats/rating.repository.js'
 
 import { insertMultipleReviews } from '../review-helpers.js'
 import { assertDeepEqual } from '../../assert.js'
@@ -25,7 +25,7 @@ describe('rating stats tests', () => {
   it('shows rating stats', async () => {
     const { reviews } = await insertMultipleReviews(9, ctx.db)
 
-    const stats = await statsRepository.getRating(ctx.db, defaultFilter)
+    const stats = await ratingStatsRepository.getRating(ctx.db, defaultFilter)
     function getCount(rating: string): string {
       const count = reviews.filter(
         (review) => `${review.rating}` === rating,

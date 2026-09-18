@@ -3,12 +3,10 @@ import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 import { TestContext } from '../test-context.js'
 import type { Pagination } from '../../../src/data/pagination.js'
 import type { Review } from '../../../src/data/review/review.repository.js'
-import type {
-  LocationStatsOrder,
-  StatsFilter,
-} from '../../../src/data/stats/stats.repository.js'
+import type { LocationStatsOrder } from '../../../src/data/stats/location.repository.js'
+import type { StatsFilter } from '../../../src/data/stats/stats-filter.js'
 import type { Database } from '../../../src/data/database.js'
-import * as statsRepository from '../../../src/data/stats/stats.repository.js'
+import * as locationStatsRepository from '../../../src/data/stats/location.repository.js'
 import type { InsertedData } from '../review-helpers.js'
 import { insertMultipleReviews } from '../review-helpers.js'
 import { assertDeepEqual } from '../../assert.js'
@@ -46,7 +44,7 @@ describe('location stats tests', () => {
     locationStatsOrder: LocationStatsOrder,
   ) {
     const { reviews, data } = await insertMultipleReviews(9, db)
-    const stats = await statsRepository.getLocation(
+    const stats = await locationStatsRepository.getLocation(
       db,
       pagination,
       statsFilter?.(data) ?? defaultFilter,
