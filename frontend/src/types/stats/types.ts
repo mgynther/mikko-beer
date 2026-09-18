@@ -64,6 +64,29 @@ export interface AnnualContainerStatsQueryParams {
   pagination: Pagination
 }
 
+export interface OneBreweryCountryStats {
+  countryCode: string
+  breweryCount: string
+  reviewAverage: string
+  reviewCount: string
+  reviewMedian: string
+  reviewMode: string
+  reviewStandardDeviation: string
+  reviewedBeerCount: string
+}
+
+export interface BreweryCountryStats {
+  breweryCountry: OneBreweryCountryStats[]
+}
+
+export type BreweryCountryStatsSortingOrder =
+  'average' | 'brewery_count' | 'count' | 'country_code' | 'std_dev'
+
+export interface BreweryCountryStatsSorting {
+  order: BreweryCountryStatsSortingOrder
+  direction: ListDirection
+}
+
 export interface OneBreweryStats {
   breweryId: string
   breweryName: string
@@ -130,6 +153,20 @@ export interface RatingStats {
     rating: string
     count: string
   }>
+}
+
+export interface BreweryCountryStatsQueryParams {
+  breweryId: string | undefined
+  locationId: string | undefined
+  styleId: string | undefined
+  pagination: Pagination
+  sorting: BreweryCountryStatsSorting
+  minReviewCount: number
+  maxReviewCount: number
+  minReviewAverage: number
+  maxReviewAverage: number
+  timeStart: number
+  timeEnd: number
 }
 
 export interface BreweryStatsQueryParams {
@@ -219,6 +256,26 @@ export interface GetAnnualContainerStatsIf {
   infiniteScroll: InfiniteScroll
 }
 
+type UseGetBreweryCountryStats = () => {
+  query: (
+    params: BreweryCountryStatsQueryParams,
+  ) => Promise<BreweryCountryStats>
+  stats: BreweryCountryStats | undefined
+  isLoading: boolean
+}
+
+export interface GetBreweryCountryStatsHookIf {
+  useStats: UseGetBreweryCountryStats
+}
+
+export interface GetBreweryCountryStatsIf {
+  useStats: UseGetBreweryCountryStats
+  infiniteScroll: InfiniteScroll
+  minTime: YearMonth
+  maxTime: YearMonth
+  getUseDebounce: <T>() => UseDebounce<T>
+}
+
 type UseGetBreweryStats = () => {
   query: (params: BreweryStatsQueryParams) => Promise<BreweryStats>
   stats: BreweryStats | undefined
@@ -300,6 +357,7 @@ export interface StatsHookIf {
   annual: GetAnnualStatsIf
   annualContainer: GetAnnualContainerStatsHookIf
   brewery: GetBreweryStatsHookIf
+  breweryCountry: GetBreweryCountryStatsHookIf
   container: GetContainerStatsIf
   location: GetLocationStatsHookIf
   overall: GetOverallStatsIf
@@ -311,6 +369,7 @@ export interface StatsIf {
   annual: GetAnnualStatsIf
   annualContainer: GetAnnualContainerStatsIf
   brewery: GetBreweryStatsIf
+  breweryCountry: GetBreweryCountryStatsIf
   container: GetContainerStatsIf
   location: GetLocationStatsIf
   overall: GetOverallStatsIf

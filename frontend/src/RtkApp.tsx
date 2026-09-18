@@ -380,6 +380,13 @@ function RtkApp(): React.JSX.Element {
       maxTime,
       getUseDebounce,
     },
+    breweryCountry: {
+      ...statsHookIf.breweryCountry,
+      infiniteScroll,
+      minTime,
+      maxTime,
+      getUseDebounce,
+    },
     container: statsHookIf.container,
     location: {
       ...statsHookIf.location,

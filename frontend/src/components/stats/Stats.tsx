@@ -3,6 +3,7 @@ import React from 'react'
 import Annual from './Annual'
 import AnnualContainerInfiniteScroll from './AnnualContainer'
 import Brewery from './Brewery'
+import BreweryCountry from './BreweryCountry'
 import Location from './Location'
 import Overall from './Overall'
 import Rating from './Rating'
@@ -18,6 +19,7 @@ enum Mode {
   Annual = 'annual',
   AnnualContainer = 'annual_container',
   Brewery = 'brewery',
+  BreweryCountry = 'brewery_country',
   Container = 'container',
   Location = 'location',
   Overall = 'overall',
@@ -55,6 +57,10 @@ const buttons: ModeButton[] = [
     title: 'Brewery',
   },
   {
+    mode: Mode.BreweryCountry,
+    title: 'Brewery country',
+  },
+  {
     mode: Mode.Container,
     title: 'Container',
   },
@@ -86,6 +92,8 @@ function getStatsMode(stats: string | undefined): Mode {
       return Mode.AnnualContainer
     case Mode.Brewery as string:
       return Mode.Brewery
+    case Mode.BreweryCountry as string:
+      return Mode.BreweryCountry
     case Mode.Container as string:
       return Mode.Container
     case Mode.Location as string:
@@ -152,6 +160,16 @@ function Stats(props: Props): React.JSX.Element | null {
       {mode === Mode.Brewery && (
         <Brewery
           getBreweryStatsIf={props.statsIf.brewery}
+          breweryId={props.breweryId}
+          locationId={props.locationId}
+          search={search}
+          setState={setState}
+          styleId={props.styleId}
+        />
+      )}
+      {mode === Mode.BreweryCountry && (
+        <BreweryCountry
+          getBreweryCountryStatsIf={props.statsIf.breweryCountry}
           breweryId={props.breweryId}
           locationId={props.locationId}
           search={search}

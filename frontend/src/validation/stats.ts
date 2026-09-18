@@ -5,6 +5,7 @@ import { formatError } from './format-error'
 import type {
   AnnualContainerStats,
   AnnualStats,
+  BreweryCountryStats,
   BreweryStats,
   ContainerStats,
   LocationStats,
@@ -56,6 +57,21 @@ const ValidatedAnnualContainerStats = t.type({
       reviewMode: t.string,
       reviewStandardDeviation: t.string,
       year: t.string,
+    }),
+  ),
+})
+
+const ValidatedBreweryCountryStats = t.type({
+  breweryCountry: t.array(
+    t.type({
+      countryCode: t.string,
+      breweryCount: t.string,
+      reviewAverage: t.string,
+      reviewCount: t.string,
+      reviewMedian: t.string,
+      reviewMode: t.string,
+      reviewStandardDeviation: t.string,
+      reviewedBeerCount: t.string,
     }),
   ),
 })
@@ -172,6 +188,27 @@ export function validateAnnualContainerStats(
 ): AnnualContainerStats {
   type StatsT = t.TypeOf<typeof ValidatedAnnualContainerStats>
   const decoded = ValidatedAnnualContainerStats.decode(result)
+  if (isLeft(decoded)) {
+    throw Error(formatError(decoded))
+  }
+  const valid: StatsT = decoded.right
+  return valid
+}
+
+export function validateBreweryCountryStatsOrUndefined(
+  result: unknown,
+): BreweryCountryStats | undefined {
+  if (typeof result === 'undefined') {
+    return undefined
+  }
+  return validateBreweryCountryStats(result)
+}
+
+export function validateBreweryCountryStats(
+  result: unknown,
+): BreweryCountryStats {
+  type StatsT = t.TypeOf<typeof ValidatedBreweryCountryStats>
+  const decoded = ValidatedBreweryCountryStats.decode(result)
   if (isLeft(decoded)) {
     throw Error(formatError(decoded))
   }

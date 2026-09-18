@@ -45,8 +45,14 @@ test('Annual & Container stats', async ({ page }) => {
 
 test('Brewery stats', async ({ page }) => {
   await toStats(page)
-  await page.getByRole('button', { name: /^brewery/i }).click()
+  await page.getByRole('button', { name: 'Brewery', exact: true }).click()
   await expect(page.getByText(/abbaye de scourmont - chimay/i)).toBeVisible()
+})
+
+test('Brewery country stats', async ({ page }) => {
+  await toStats(page)
+  await page.getByRole('button', { name: /^brewery country/i }).click()
+  await expect(page.getByText(/FI 🇫🇮/)).toBeVisible()
 })
 
 test('Location stats', async ({ page }) => {
@@ -58,7 +64,7 @@ test('Location stats', async ({ page }) => {
 test('Rating stats', async ({ page }) => {
   await toStats(page)
   await page.getByRole('button', { name: /^rating/i }).click()
-  await expect(page.getByText(/count/i)).toBeVisible()
+  await expect(page.getByText('Count', { exact: true })).toBeVisible()
 })
 
 test('Style stats', async ({ page }) => {

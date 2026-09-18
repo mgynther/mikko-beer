@@ -18,6 +18,7 @@ import type { ListStoragesByIf, Storage } from '../../types/storage/types'
 import type {
   GetAnnualContainerStatsIf,
   GetAnnualStatsIf,
+  GetBreweryCountryStatsIf,
   GetBreweryStatsIf,
   GetContainerStatsIf,
   GetLocationStatsIf,
@@ -289,6 +290,7 @@ const noStats: NoStats = {
 }
 
 type NoInfiniteScrollStats = GetAnnualContainerStatsIf &
+  GetBreweryCountryStatsIf &
   GetBreweryStatsIf &
   GetLocationStatsIf
 
@@ -308,6 +310,7 @@ const statsIf: StatsIf = {
   annual: noStats,
   annualContainer: noInfiniteScrollStats,
   brewery: noInfiniteScrollStats,
+  breweryCountry: noInfiniteScrollStats,
   container: noStats,
   location: noInfiniteScrollStats,
   overall: noStats,

@@ -4,6 +4,9 @@ import type {
   AnnualContainerStats,
   AnnualContainerStatsQueryParams,
   AnnualStats,
+  BreweryCountryStats,
+  BreweryCountryStatsQueryParams,
+  BreweryCountryStatsSorting,
   BreweryStats,
   BreweryStatsQueryParams,
   BreweryStatsSorting,
@@ -56,6 +59,12 @@ function andIdFilter(params: IdParams): string {
   return `&${filter}`
 }
 
+function breweryCountryStatsSorting(
+  sorting: BreweryCountryStatsSorting,
+): string {
+  return `order=${sorting.order}&direction=${sorting.direction}`
+}
+
 function breweryStatsSorting(sorting: BreweryStatsSorting): string {
   return `order=${sorting.order}&direction=${sorting.direction}`
 }
@@ -73,7 +82,10 @@ function andMaxReviewCount(maxReviewCount: number): string {
 
 function statsFilters(
   params:
-    BreweryStatsQueryParams | LocationStatsQueryParams | StyleStatsQueryParams,
+    | BreweryCountryStatsQueryParams
+    | BreweryStatsQueryParams
+    | LocationStatsQueryParams
+    | StyleStatsQueryParams,
 ): string {
   return `min_review_count=${params.minReviewCount}${andMaxReviewCount(
     params.maxReviewCount,
@@ -128,6 +140,20 @@ const statsApi = emptySplitApi.injectEndpoints({
         method: 'GET',
       }),
       providesTags: [StatsTags.Brewery],
+    }),
+    getBreweryCountryStats: build.query<
+      BreweryCountryStats,
+      BreweryCountryStatsQueryParams
+    >({
+      query: (params: BreweryCountryStatsQueryParams) => ({
+        url: `/stats/brewery_country?size=${params.pagination.size}&skip=${
+          params.pagination.skip
+        }${andIdFilter(params)}&${breweryCountryStatsSorting(
+          params.sorting,
+        )}&${statsFilters(params)}`,
+        method: 'GET',
+      }),
+      providesTags: [StatsTags.BreweryCountry],
     }),
     getContainerStats: build.query<ContainerStats, IdParams>({
       query: (params: IdParams) => ({
@@ -188,6 +214,7 @@ export const {
   useGetRatingStatsQuery,
   useGetStyleStatsQuery,
   useLazyGetAnnualContainerStatsQuery,
+  useLazyGetBreweryCountryStatsQuery,
   useLazyGetBreweryStatsQuery,
   useLazyGetLocationStatsQuery,
 } = statsApi

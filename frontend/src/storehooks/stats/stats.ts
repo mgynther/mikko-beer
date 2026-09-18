@@ -1,6 +1,8 @@
 import type {
   AnnualContainerStats,
   AnnualContainerStatsQueryParams,
+  BreweryCountryStats,
+  BreweryCountryStatsQueryParams,
   BreweryStats,
   BreweryStatsQueryParams,
   IdParams,
@@ -16,6 +18,7 @@ import {
   useGetRatingStatsQuery,
   useGetStyleStatsQuery,
   useLazyGetAnnualContainerStatsQuery,
+  useLazyGetBreweryCountryStatsQuery,
   useLazyGetBreweryStatsQuery,
   useLazyGetLocationStatsQuery,
 } from '../../store/stats/api'
@@ -23,6 +26,8 @@ import {
   validateAnnualStatsOrUndefined,
   validateAnnualContainerStats,
   validateAnnualContainerStatsOrUndefined,
+  validateBreweryCountryStats,
+  validateBreweryCountryStatsOrUndefined,
   validateBreweryStats,
   validateBreweryStatsOrUndefined,
   validateContainerStatsOrUndefined,
@@ -71,6 +76,22 @@ const stats: () => StatsHookIf = () => {
             return validateBreweryStats(result.data)
           },
           stats: validateBreweryStatsOrUndefined(data),
+          isLoading: isFetching,
+        }
+      },
+    },
+    breweryCountry: {
+      useStats: () => {
+        const [trigger, { data, isFetching }] =
+          useLazyGetBreweryCountryStatsQuery()
+        return {
+          query: async (
+            params: BreweryCountryStatsQueryParams,
+          ): Promise<BreweryCountryStats> => {
+            const result = await trigger(params)
+            return validateBreweryCountryStats(result.data)
+          },
+          stats: validateBreweryCountryStatsOrUndefined(data),
           isLoading: isFetching,
         }
       },

@@ -350,6 +350,13 @@ const storeIf: StoreIf = {
       maxTime,
       getUseDebounce,
     },
+    breweryCountry: {
+      useStats: dontCall,
+      infiniteScroll,
+      minTime,
+      maxTime,
+      getUseDebounce,
+    },
     container: {
       useStats: dontCall,
     },

@@ -6,6 +6,7 @@ import Stats from './Stats'
 import type {
   LocationStats,
   OneAnnualContainerStats,
+  OneBreweryCountryStats,
   OneBreweryStats,
   OneLocationStats,
   OneStyleStats,
@@ -26,6 +27,7 @@ const getUseDebounce = function <T>(): UseDebounce<T> {
 
 const emptyAnnualContainerStats = { annualContainer: [] }
 const emptyBreweryStats = { brewery: [] }
+const emptyBreweryCountryStats = { breweryCountry: [] }
 const emptyLocationStats = { location: [] }
 
 const minTime: YearMonth = testTimes.min.yearMonth
@@ -68,6 +70,20 @@ const emptyStatsIf: StatsIf = {
     useStats: () => ({
       query: async () => emptyBreweryStats,
       stats: emptyBreweryStats,
+      isLoading: false,
+    }),
+    infiniteScroll: (cb: () => void) => {
+      cb()
+      return () => undefined
+    },
+    minTime,
+    maxTime,
+    getUseDebounce,
+  },
+  breweryCountry: {
+    useStats: () => ({
+      query: async () => emptyBreweryCountryStats,
+      stats: emptyBreweryCountryStats,
       isLoading: false,
     }),
     infiniteScroll: (cb: () => void) => {
@@ -419,6 +435,75 @@ test('renders brewery stats', async () => {
   getByText(lehe.reviewMedian)
   getByText(lehe.reviewMode)
   getByText(lehe.reviewStandardDeviation)
+})
+
+test('renders brewery country stats', async () => {
+  const finland: OneBreweryCountryStats = {
+    countryCode: 'FI',
+    breweryCount: '13',
+    reviewAverage: '9.06',
+    reviewCount: '63',
+    reviewMedian: '9.00',
+    reviewMode: '9',
+    reviewStandardDeviation: '0.35',
+    reviewedBeerCount: '62',
+  }
+  const estonia: OneBreweryCountryStats = {
+    countryCode: 'EE',
+    breweryCount: '4',
+    reviewAverage: '9.71',
+    reviewCount: '24',
+    reviewMedian: '9.50',
+    reviewMode: '10',
+    reviewStandardDeviation: '0.67',
+    reviewedBeerCount: '24',
+  }
+  const breweryCountryStats = {
+    breweryCountry: [{ ...finland }, { ...estonia }],
+  }
+  const statsIf: StatsIf = {
+    ...emptyStatsIf,
+    breweryCountry: {
+      useStats: () => ({
+        query: async () => breweryCountryStats,
+        stats: emptyBreweryCountryStats,
+        isLoading: false,
+      }),
+      infiniteScroll: (cb: () => void) => {
+        cb()
+        return () => undefined
+      },
+      minTime,
+      maxTime,
+      getUseDebounce,
+    },
+    useUrlSearchParams: getUseUrlSearchParams('brewery_country'),
+  }
+
+  const { getByText } = render(
+    <LinkWrapper>
+      <Stats
+        statsIf={statsIf}
+        breweryId={'a186917f-0d4c-40d0-bf67-e96227c55528'}
+        locationId={'b533d497-8256-4525-8892-180a078060d5'}
+        styleId={'4917d1c7-5439-4e78-a562-242200a236db'}
+      />
+    </LinkWrapper>,
+  )
+  await waitFor(() => getByText(finland.countryCode))
+  getByText(finland.breweryCount)
+  getByText(finland.reviewAverage)
+  getByText(`${finland.reviewCount} (${finland.reviewedBeerCount})`)
+  getByText(finland.reviewMedian)
+  getByText(finland.reviewMode)
+  getByText(finland.reviewStandardDeviation)
+  getByText(estonia.countryCode)
+  getByText(estonia.breweryCount)
+  getByText(estonia.reviewAverage)
+  getByText(estonia.reviewCount)
+  getByText(estonia.reviewMedian)
+  getByText(estonia.reviewMode)
+  getByText(estonia.reviewStandardDeviation)
 })
 
 test('sets state', async () => {

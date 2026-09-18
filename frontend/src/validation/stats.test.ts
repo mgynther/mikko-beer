@@ -3,6 +3,7 @@ import { expect, test } from 'vitest'
 import type {
   AnnualContainerStats,
   AnnualStats,
+  BreweryCountryStats,
   BreweryStats,
   ContainerStats,
   LocationStats,
@@ -15,6 +16,8 @@ import {
   validateAnnualContainerStats,
   validateAnnualContainerStatsOrUndefined,
   validateAnnualStatsOrUndefined,
+  validateBreweryCountryStats,
+  validateBreweryCountryStatsOrUndefined,
   validateBreweryStats,
   validateBreweryStatsOrUndefined,
   validateContainerStatsOrUndefined,
@@ -138,6 +141,62 @@ test('validateAnnualContainerStats throws invalid', () => {
     validateAnnualContainerStats({
       annualContainer: [{ containerId: 123 }],
     }),
+  ).toThrow()
+})
+
+// Brewery country
+const validBreweryCountry: BreweryCountryStats = {
+  breweryCountry: [
+    {
+      countryCode: 'FI',
+      breweryCount: '12',
+      reviewAverage: '9.01',
+      reviewCount: '67',
+      reviewMedian: '8.50',
+      reviewMode: '9',
+      reviewStandardDeviation: '0.57',
+      reviewedBeerCount: '23',
+    },
+  ],
+}
+
+test('validateBreweryCountryStatsOrUndefined passes undefined', () => {
+  const result = validateBreweryCountryStatsOrUndefined(undefined)
+  expect(result).toEqual(undefined)
+})
+
+test('validateBreweryCountryStatsOrUndefined passes valid', () => {
+  const result = validateBreweryCountryStatsOrUndefined(validBreweryCountry)
+  expect(result).toEqual(validBreweryCountry)
+})
+
+test('validateBreweryCountryStatsOrUndefined throws invalid', () => {
+  expect(() =>
+    validateBreweryCountryStatsOrUndefined({
+      breweryCountry: [{ countryCode: 358 }],
+    }),
+  ).toThrow()
+})
+
+test('validateBreweryCountryStats passes valid', () => {
+  const result = validateBreweryCountryStats(validBreweryCountry)
+  expect(result).toEqual(validBreweryCountry)
+})
+
+test('validateBreweryCountryStats throws invalid', () => {
+  expect(() =>
+    validateBreweryCountryStats({
+      breweryCountry: [{ countryCode: 358 }],
+    }),
+  ).toThrow()
+})
+
+test('validateBreweryCountryStats throws for missing brewery count', () => {
+  const { breweryCount, ...withoutBreweryCount } =
+    validBreweryCountry.breweryCountry[0]
+  expect(breweryCount).toEqual('12')
+  expect(() =>
+    validateBreweryCountryStats({ breweryCountry: [withoutBreweryCount] }),
   ).toThrow()
 })
 

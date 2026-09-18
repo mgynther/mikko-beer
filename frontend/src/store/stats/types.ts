@@ -2,6 +2,7 @@ export enum StatsTags {
   Annual = 'Annual',
   AnnualContainer = 'AnnualContainer',
   Brewery = 'Brewery',
+  BreweryCountry = 'BreweryCountry',
   Container = 'Container',
   Location = 'Location',
   Overall = 'Overall',
@@ -14,6 +15,7 @@ export function allStatsTagTypes(): string[] {
     StatsTags.Annual,
     StatsTags.AnnualContainer,
     StatsTags.Brewery,
+    StatsTags.BreweryCountry,
     StatsTags.Container,
     StatsTags.Location,
     StatsTags.Overall,
@@ -23,11 +25,16 @@ export function allStatsTagTypes(): string[] {
 }
 
 export function beerStatsTagTypes(): string[] {
-  return [StatsTags.Overall, StatsTags.Brewery, StatsTags.Style]
+  return [
+    StatsTags.Overall,
+    StatsTags.Brewery,
+    StatsTags.BreweryCountry,
+    StatsTags.Style,
+  ]
 }
 
 export function breweryStatsTagTypes(): string[] {
-  return [StatsTags.Overall, StatsTags.Brewery]
+  return [StatsTags.Overall, StatsTags.Brewery, StatsTags.BreweryCountry]
 }
 
 export function containerStatsTagTypes(): string[] {
