@@ -171,7 +171,7 @@ const statsApi = emptySplitApi.injectEndpoints({
         )}&${locationStatsSorting(params.sorting)}&${statsFilters(params)}`,
         method: 'GET',
       }),
-      providesTags: [StatsTags.Brewery],
+      providesTags: [StatsTags.Location],
     }),
     getOverallStats: build.query<
       {
