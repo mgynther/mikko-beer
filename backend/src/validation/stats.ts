@@ -3,6 +3,14 @@ import { parseDate } from './internal/date-parser.js'
 import type { ListDirection } from './internal/list.js'
 import { directionValidation } from './internal/list.js'
 
+type BreweryCountryStatsOrderProperty =
+  'average' | 'brewery_count' | 'count' | 'country_code' | 'std_dev'
+
+export interface BreweryCountryStatsOrder {
+  property: BreweryCountryStatsOrderProperty
+  direction: ListDirection
+}
+
 type BreweryStatsOrderProperty =
   'average' | 'brewery_name' | 'count' | 'std_dev'
 
@@ -62,6 +70,16 @@ export type StatsFilterValidationResult =
   | {
       errorCode: undefined
       result: StatsFilter
+    }
+
+export type BreweryCountryStatsOrderValidationResult =
+  | {
+      errorCode: 'invalid-brewery-country-stats-query'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: BreweryCountryStatsOrder
     }
 
 export type BreweryStatsOrderValidationResult =
@@ -211,6 +229,23 @@ export function validateStatsFilter(
   return { errorCode: undefined, result }
 }
 
+const doValidateBreweryCountryStatsOrder =
+  ajv.compile<BreweryCountryStatsOrder>({
+    type: 'object',
+    properties: {
+      property: {
+        enum: ['average', 'brewery_count', 'count', 'country_code', 'std_dev'],
+      },
+      direction: directionValidation,
+    },
+    required: ['property', 'direction'],
+    additionalProperties: false,
+  })
+
+function isBreweryCountryStatsOrderValid(body: unknown): boolean {
+  return doValidateBreweryCountryStatsOrder(body)
+}
+
 const doValidateBreweryStatsOrder = ajv.compile<BreweryStatsOrder>({
   type: 'object',
   properties: {
@@ -276,6 +311,31 @@ function statsOrderParamsOrDefaults(
     direction = 'asc'
   }
   return { property: order, direction }
+}
+
+export function validateBreweryCountryStatsOrder(
+  query: Record<string, unknown>,
+): BreweryCountryStatsOrderValidationResult {
+  const params = statsOrderParamsOrDefaults(query, 'country_code')
+  if (!isBreweryCountryStatsOrderValid(params)) {
+    return {
+      errorCode: 'invalid-brewery-country-stats-query',
+      result: undefined,
+    }
+  }
+  return {
+    errorCode: undefined,
+    result: {
+      /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+       * Validated using ajv.
+       */
+      property: params.property as BreweryCountryStatsOrderProperty,
+      /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+       * Validated using ajv.
+       */
+      direction: params.direction as ListDirection,
+    },
+  }
 }
 
 export function validateBreweryStatsOrder(

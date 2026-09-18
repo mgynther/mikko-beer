@@ -1,4 +1,5 @@
 import {
+  validateBreweryCountryStatsOrder as doValidateBreweryCountryStatsOrder,
   validateBreweryStatsOrder as doValidateBreweryStatsOrder,
   validateLocationStatsOrder as doValidateLocationStatsOrder,
   validateStatsFilter as doValidateStatsFilter,
@@ -7,6 +8,7 @@ import {
 } from '../../validation/stats.js'
 
 import type {
+  BreweryCountryStatsOrder,
   BreweryStatsOrder,
   LocationStatsOrder,
   StatsFilter,
@@ -14,6 +16,7 @@ import type {
   StyleStatsOrder,
 } from '../../logic/stats/stats.js'
 import {
+  invalidBreweryCountryStatsQueryError,
   invalidBreweryStatsQueryError,
   invalidIdFilterError,
   invalidLocationStatsQueryError,
@@ -36,6 +39,16 @@ export function validateStatsFilter(
   const validationResult = doValidateStatsFilter(query)
   if (validationResult.errorCode === 'invalid-id-filter') {
     throw invalidIdFilterError
+  }
+  return validationResult.result
+}
+
+export function validateBreweryCountryStatsOrder(
+  query: Record<string, unknown>,
+): BreweryCountryStatsOrder {
+  const validationResult = doValidateBreweryCountryStatsOrder(query)
+  if (validationResult.errorCode === 'invalid-brewery-country-stats-query') {
+    throw invalidBreweryCountryStatsQueryError
   }
   return validationResult.result
 }

@@ -1,6 +1,7 @@
 import { describe, it } from 'node:test'
 
 import {
+  validateBreweryCountryStatsOrder,
   validateBreweryStatsOrder,
   validateLocationStatsOrder,
   validateStyleStatsOrder,
@@ -242,6 +243,13 @@ interface StatsOrderCase {
 
 const statsOrderCases: StatsOrderCase[] = [
   {
+    title: 'brewery country',
+    func: validateBreweryCountryStatsOrder,
+    errorCode: 'invalid-brewery-country-stats-query',
+    defaultProperty: 'country_code',
+    namedProperty: 'country_code',
+  },
+  {
     title: 'brewery',
     func: validateBreweryStatsOrder,
     errorCode: 'invalid-brewery-stats-query',
@@ -350,5 +358,45 @@ statsOrderCases.forEach((statsOrderCase) => {
     it('validate invalid direction type', () => {
       fail({ order: 'average', direction: [] })
     })
+  })
+})
+
+// brewery_count is the one order property no other stats dimension has, so
+// the shared cases above do not reach it.
+describe('brewery country stats order validation unit tests', () => {
+  it('validate brewery count asc order', () => {
+    const validationResult = validateBreweryCountryStatsOrder({
+      order: 'brewery_count',
+      direction: 'asc',
+    })
+    assertEqual(validationResult.errorCode, undefined)
+    assertDeepEqual(validationResult.result, {
+      property: 'brewery_count',
+      direction: 'asc',
+    })
+  })
+
+  it('validate brewery count desc order', () => {
+    const validationResult = validateBreweryCountryStatsOrder({
+      order: 'brewery_count',
+      direction: 'desc',
+    })
+    assertEqual(validationResult.errorCode, undefined)
+    assertDeepEqual(validationResult.result, {
+      property: 'brewery_count',
+      direction: 'desc',
+    })
+  })
+
+  it('do not validate a brewery name order', () => {
+    const validationResult = validateBreweryCountryStatsOrder({
+      order: 'brewery_name',
+      direction: 'asc',
+    })
+    assertEqual(
+      validationResult.errorCode,
+      'invalid-brewery-country-stats-query',
+    )
+    assertEqual(validationResult.result, undefined)
   })
 })

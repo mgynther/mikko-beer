@@ -21,6 +21,17 @@ export type AnnualContainerStats = Array<{
   year: string
 }>
 
+export type BreweryCountryStats = Array<{
+  reviewAverage: string
+  reviewCount: string
+  reviewStandardDeviation: string
+  reviewMedian: string
+  reviewMode: string
+  reviewedBeerCount: string
+  breweryCount: string
+  countryCode: string
+}>
+
 export type BreweryStats = Array<{
   reviewAverage: string
   reviewCount: string
@@ -53,6 +64,14 @@ export type LocationStats = Array<{
   locationId: string
   locationName: string
 }>
+
+type BreweryCountryStatsOrderProperty =
+  'average' | 'brewery_count' | 'count' | 'country_code' | 'std_dev'
+
+export interface BreweryCountryStatsOrder {
+  property: BreweryCountryStatsOrderProperty
+  direction: ListDirection
+}
 
 type BreweryStatsOrderProperty =
   'average' | 'brewery_name' | 'count' | 'std_dev'

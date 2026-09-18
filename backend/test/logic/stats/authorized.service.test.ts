@@ -7,6 +7,7 @@ import { dummyLog as log } from '../dummy-log.js'
 import type {
   AnnualContainerStats,
   AnnualStats,
+  BreweryCountryStats,
   BreweryStats,
   ContainerStats,
   LocationStats,
@@ -171,6 +172,51 @@ describe('stats authorized service unit tests', () => {
         log,
       )
       assertDeepEqual(result, [...breweryStats])
+    })
+
+    it(`get brewery country stats as ${token.role}`, async () => {
+      const breweryCountryStats: BreweryCountryStats = [
+        {
+          reviewAverage: '8.91',
+          reviewCount: '76',
+          reviewStandardDeviation: '0.64',
+          reviewMedian: '9.00',
+          reviewMode: '9',
+          reviewedBeerCount: '61',
+          breweryCount: '14',
+          countryCode: 'FI',
+        },
+        {
+          reviewAverage: '9.24',
+          reviewCount: '33',
+          reviewStandardDeviation: '0.51',
+          reviewMedian: '9.00',
+          reviewMode: '10',
+          reviewedBeerCount: '30',
+          breweryCount: '5',
+          countryCode: 'BE',
+        },
+      ]
+      const result = await statsService.getBreweryCountry(
+        async () => [...breweryCountryStats],
+        token,
+        { skip: 0, size: 20 },
+        {
+          ...statsFilter,
+          maxReviewCount: 90,
+          minReviewCount: 30,
+          maxReviewAverage: 9.87,
+          minReviewAverage: 5.23,
+          timeStart: undefined,
+          timeEnd: undefined,
+        },
+        {
+          property: 'brewery_count',
+          direction: 'desc',
+        },
+        log,
+      )
+      assertDeepEqual(result, [...breweryCountryStats])
     })
 
     it(`get container stats as ${token.role}`, async () => {

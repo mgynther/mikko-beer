@@ -3,6 +3,8 @@ import type { Pagination } from '../../pagination.js'
 import type {
   AnnualContainerStats,
   AnnualStats,
+  BreweryCountryStats,
+  BreweryCountryStatsOrder,
   BreweryStats,
   BreweryStatsOrder,
   ContainerStats,
@@ -56,6 +58,31 @@ export async function getBrewery(
 ): Promise<BreweryStats> {
   log('INFO', 'get brewery stats', statsFilter, breweryStatsOrder, pagination)
   return await getBrewery(pagination, statsFilter, breweryStatsOrder)
+}
+
+export async function getBreweryCountry(
+  getBreweryCountry: (
+    pagination: Pagination,
+    statsFilter: StatsFilter,
+    breweryCountryStatsOrder: BreweryCountryStatsOrder,
+  ) => Promise<BreweryCountryStats>,
+  pagination: Pagination,
+  statsFilter: StatsFilter,
+  breweryCountryStatsOrder: BreweryCountryStatsOrder,
+  log: log,
+): Promise<BreweryCountryStats> {
+  log(
+    'INFO',
+    'get brewery country stats',
+    statsFilter,
+    breweryCountryStatsOrder,
+    pagination,
+  )
+  return await getBreweryCountry(
+    pagination,
+    statsFilter,
+    breweryCountryStatsOrder,
+  )
 }
 
 export async function getContainer(

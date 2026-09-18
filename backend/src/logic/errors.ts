@@ -25,6 +25,7 @@ type ReviewApiErrors =
   | 'ReviewNotFound'
 
 type StatsApiErrors =
+  | 'InvalidBreweryCountryStatsQuery'
   | 'InvalidBreweryStatsQuery'
   | 'InvalidLocationStatsQuery'
   | 'InvalidStyleStatsQuery'
@@ -302,6 +303,12 @@ export const invalidIdFilterError = new ControllerError(
   400,
   'InvalidStatsIdFilter',
   'invalid filter with multiple of brewery, location and style',
+)
+
+export const invalidBreweryCountryStatsQueryError = new ControllerError(
+  400,
+  'InvalidBreweryCountryStatsQuery',
+  'invalid brewery country stats query',
 )
 
 export const invalidBreweryStatsQueryError = new ControllerError(

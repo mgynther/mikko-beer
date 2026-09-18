@@ -3,6 +3,7 @@ import * as statsService from '../../logic/stats/authorized.service.js'
 import * as annualStatsRepository from '../../data/stats/annual.repository.js'
 import * as annualContainerStatsRepository from '../../data/stats/annual-container.repository.js'
 import * as breweryStatsRepository from '../../data/stats/brewery.repository.js'
+import * as breweryCountryStatsRepository from '../../data/stats/brewery-country.repository.js'
 import * as containerStatsRepository from '../../data/stats/container.repository.js'
 import * as locationStatsRepository from '../../data/stats/location.repository.js'
 import * as overallStatsRepository from '../../data/stats/overall.repository.js'
@@ -17,6 +18,8 @@ import { validatePagination } from '../pagination-helper.js'
 import type {
   AnnualContainerStats as LogicAnnualContainerStats,
   AnnualStats as LogicAnnualStats,
+  BreweryCountryStats as LogicBreweryCountryStats,
+  BreweryCountryStatsOrder,
   BreweryStats as LogicBreweryStats,
   BreweryStatsOrder,
   ContainerStats as LogicContainerStats,
@@ -30,6 +33,7 @@ import type {
   StatsFilter,
 } from '../../logic/stats/stats.js'
 import {
+  validateBreweryCountryStatsOrder,
   validateBreweryStatsOrder,
   validateLocationStatsOrder,
   validateStyleStatsOrder,
@@ -114,6 +118,24 @@ interface BreweryStatsResult {
   status: 200
   body: {
     brewery: BreweryStats
+  }
+}
+
+export type BreweryCountryStats = Array<{
+  reviewAverage: string
+  reviewCount: string
+  reviewStandardDeviation: string
+  reviewMedian: string
+  reviewMode: string
+  reviewedBeerCount: string
+  breweryCount: string
+  countryCode: string
+}>
+
+interface BreweryCountryStatsResult {
+  status: 200
+  body: {
+    breweryCountry: BreweryCountryStats
   }
 }
 
@@ -276,6 +298,43 @@ export function statsController(router: Router): void {
       return {
         status: 200,
         body: { brewery },
+      }
+    },
+  )
+
+  router.get(
+    '/api/v1/stats/brewery_country',
+    async (ctx: Context): Promise<BreweryCountryStatsResult> => {
+      const authTokenPayload = parseAuthToken(ctx)
+      const { skip, size } = ctx.request.query
+      const { order, direction } = ctx.request.query
+      const pagination = validatePagination({ skip, size })
+      const statsFilter = validateStatsFilter(ctx.request.query)
+      const breweryCountryStatsOrder = validateBreweryCountryStatsOrder({
+        order,
+        direction,
+      })
+      const breweryCountry = await statsService.getBreweryCountry(
+        async (
+          pagination: Pagination,
+          statsFilter: StatsFilter,
+          breweryCountryStatsOrder: BreweryCountryStatsOrder,
+        ): Promise<LogicBreweryCountryStats> =>
+          await breweryCountryStatsRepository.getBreweryCountry(
+            ctx.db,
+            pagination,
+            statsFilter,
+            breweryCountryStatsOrder,
+          ),
+        authTokenPayload,
+        pagination,
+        statsFilter,
+        breweryCountryStatsOrder,
+        ctx.log,
+      )
+      return {
+        status: 200,
+        body: { breweryCountry },
       }
     },
   )

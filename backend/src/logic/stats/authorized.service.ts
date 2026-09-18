@@ -5,6 +5,8 @@ import type { AuthTokenPayload } from '../auth/auth-token'
 import type {
   AnnualContainerStats,
   AnnualStats,
+  BreweryCountryStats,
+  BreweryCountryStatsOrder,
   BreweryStats,
   BreweryStatsOrder,
   ContainerStats,
@@ -67,6 +69,28 @@ export async function getBrewery(
     pagination,
     statsFilter,
     breweryStatsOrder,
+    log,
+  )
+}
+
+export async function getBreweryCountry(
+  getBreweryCountry: (
+    pagination: Pagination,
+    statsFilter: StatsFilter,
+    breweryCountryStatsOrder: BreweryCountryStatsOrder,
+  ) => Promise<BreweryCountryStats>,
+  authTokenPayload: AuthTokenPayload,
+  pagination: Pagination,
+  statsFilter: StatsFilter,
+  breweryCountryStatsOrder: BreweryCountryStatsOrder,
+  log: log,
+): Promise<BreweryCountryStats> {
+  authorizationService.authorizeViewer(authTokenPayload)
+  return await statsService.getBreweryCountry(
+    getBreweryCountry,
+    pagination,
+    statsFilter,
+    breweryCountryStatsOrder,
     log,
   )
 }

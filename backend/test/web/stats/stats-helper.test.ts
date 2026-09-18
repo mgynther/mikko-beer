@@ -1,6 +1,7 @@
 import { describe, it } from 'node:test'
 
 import {
+  validateBreweryCountryStatsOrder,
   validateBreweryStatsOrder,
   validateLocationStatsOrder,
   validateStatsFilter,
@@ -8,6 +9,7 @@ import {
   validateStyleStatsOrder,
 } from '../../../src/web/stats/stats-helper.js'
 import {
+  invalidBreweryCountryStatsQueryError,
   invalidBreweryStatsQueryError,
   invalidIdFilterError,
   invalidLocationStatsQueryError,
@@ -67,6 +69,21 @@ describe('stats helper tests', () => {
     expectThrow(
       () => validateBreweryStatsOrder({ order: 'invalid' }),
       invalidBreweryStatsQueryError,
+    )
+  })
+
+  it('return brewery country stats order', () => {
+    const result = validateBreweryCountryStatsOrder({
+      order: 'brewery_count',
+      direction: 'desc',
+    })
+    assertDeepEqual(result, { property: 'brewery_count', direction: 'desc' })
+  })
+
+  it('throw brewery country stats query error', () => {
+    expectThrow(
+      () => validateBreweryCountryStatsOrder({ order: 'invalid' }),
+      invalidBreweryCountryStatsQueryError,
     )
   })
 
