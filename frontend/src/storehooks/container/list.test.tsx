@@ -1,31 +1,47 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
+import { expect, test, vitest } from 'vitest'
+import { render } from '@testing-library/react'
+
 import listContainers from './list'
-import type { ContainerList } from '../../types/container/types'
-import { render, waitFor } from '@testing-library/react'
-import { Provider } from '../../react-redux-wrapper'
+import type {
+  ContainerList,
+  UseListContainers,
+  ValidateContainerListOrUndefined,
+} from './types'
 
-let server: TestServer | undefined
+// Stubs for the store function and the validator, for the reason given in
+// storehooks/brewery/get.test.tsx.
+const validatedContainerList: ContainerList = {
+  containers: [
+    {
+      id: 'a8c0f5a1-2b0f-4f0e-8d1e-66a1d5f2b3c4',
+      type: 'validated',
+      size: '0.75',
+    },
+  ],
+}
 
-beforeAll(() => {
-  server = createServer()
-})
+const listed = { containers: [{ id: 'listed', type: 'can', size: '0.44' }] }
 
-beforeEach(() => {
-  server?.clear()
-})
+interface HelperProps {
+  data: unknown
+  isLoading: boolean
+  onValidate: (result: unknown) => void
+}
 
-afterAll(() => {
-  server?.close()
-})
-
-function Helper(): React.JSX.Element {
-  const listIf = listContainers()
-  const { data } = listIf.useList()
+function Helper(props: HelperProps): React.JSX.Element {
+  const useStoreList: UseListContainers = () => ({
+    data: props.data,
+    isLoading: props.isLoading,
+  })
+  const validate: ValidateContainerListOrUndefined = (result: unknown) => {
+    props.onValidate(result)
+    return result === undefined ? undefined : validatedContainerList
+  }
+  const { data, isLoading } = listContainers(useStoreList, validate).useList()
   return (
     <div>
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      {data === undefined && <div>No containers</div>}
       {data?.containers.map((container) => (
         <div key={container.id}>
           {container.type} {container.size}
@@ -35,41 +51,24 @@ function Helper(): React.JSX.Element {
   )
 }
 
-test('list containers', async () => {
-  const expectedResponse: ContainerList = {
-    containers: [
-      {
-        id: '655a8095-5dc5-4e7e-a461-b543d6d3fbaa',
-        type: 'draft',
-        size: '0.10',
-      },
-      {
-        id: 'f70e0233-6ca9-4899-8a88-fa0c0e718a49',
-        type: 'can',
-        size: '0.44',
-      },
-    ],
-  }
-
-  server?.addResponse<ContainerList>({
-    method: 'GET',
-    pathname: `/api/v1/container`,
-    response: expectedResponse,
-    status: 200,
-  })
+test('list containers', () => {
+  const onValidate = vitest.fn()
 
   const { getByText } = render(
-    <Provider store={store}>
-      <Helper />
-    </Provider>,
+    <Helper data={listed} isLoading={false} onValidate={onValidate} />,
   )
-  await waitFor(() => {
-    const [firstContainer, secondContainer] = expectedResponse.containers
-    expect(
-      getByText(`${firstContainer.type} ${firstContainer.size}`),
-    ).toBeDefined()
-    expect(
-      getByText(`${secondContainer.type} ${secondContainer.size}`),
-    ).toBeDefined()
-  })
+
+  const [container] = validatedContainerList.containers
+  expect(getByText(`${container.type} ${container.size}`)).toBeDefined()
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onValidate).toHaveBeenCalledWith(listed)
+})
+
+test('list containers that have not arrived', () => {
+  const { getByText } = render(
+    <Helper data={undefined} isLoading={true} onValidate={() => undefined} />,
+  )
+
+  expect(getByText('No containers')).toBeDefined()
+  expect(getByText('Loading')).toBeDefined()
 })

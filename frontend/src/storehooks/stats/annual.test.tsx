@@ -1,82 +1,67 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
+import { expect, test, vitest } from 'vitest'
+import { render } from '@testing-library/react'
+
 import statsHook from './stats'
-import { render, waitFor } from '@testing-library/react'
-import { Provider } from '../../react-redux-wrapper'
+import type { IdParams, AnnualStats } from './types'
+import { statsStore } from '../../../test-util/stats-store'
+import { statsValidators } from '../../../test-util/stats-validators'
 
-import type { AnnualStats, IdParams } from '../../types/stats/types'
+// Stubs for the store function and the validator, for the reason given in
+// storehooks/brewery/get.test.tsx. The store functions a test does not drive
+// are dontCall, so wiring the wrong one fails loudly.
+const validatedStats: AnnualStats = {
+  annual: [],
+}
 
-let server: TestServer | undefined
+const data = { annual: [{ id: 'one' }] }
 
-beforeAll(() => {
-  server = createServer()
-})
+const params: IdParams = {
+  breweryId: undefined,
+  locationId: undefined,
+  styleId: undefined,
+}
 
-beforeEach(() => {
-  server?.clear()
-})
+interface HelperProps {
+  onQuery: (params: IdParams) => void
+  onValidate: (result: unknown) => void
+}
 
-afterAll(() => {
-  server?.close()
-})
-
-function AnnualStatsHelper(props: { params: IdParams }): React.JSX.Element {
-  const statsIf = statsHook()
-  const { stats } = statsIf.annual.useStats(props.params)
+function Helper(props: HelperProps): React.JSX.Element {
+  const store = statsStore({
+    annual: (idParams: IdParams) => {
+      props.onQuery(idParams)
+      return { data, isLoading: false }
+    },
+  })
+  const validators = statsValidators({
+    annualOrUndefined: (result: unknown) => {
+      props.onValidate(result)
+      return validatedStats
+    },
+  })
+  const { stats, isLoading } = statsHook(store, validators).annual.useStats(
+    params,
+  )
   return (
     <div>
-      {stats?.annual.map((annual) => (
-        <div key={annual.year}>
-          <div>{annual.year}</div>
-          <div>{annual.reviewAverage}</div>
-          <div>{annual.reviewCount}</div>
-          <div>{annual.reviewMedian}</div>
-          <div>{annual.reviewMode}</div>
-          <div>{annual.reviewStandardDeviation}</div>
-        </div>
-      ))}
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      <div>{stats === undefined ? 'No stats' : 'Validated stats'}</div>
     </div>
   )
 }
 
-test('annual stats', async () => {
-  const expectedResponse: AnnualStats = {
-    annual: [
-      {
-        reviewAverage: '8.45',
-        reviewCount: '132',
-        reviewMedian: '8.00',
-        reviewMode: '8',
-        reviewStandardDeviation: '0.84',
-        year: '2023',
-      },
-    ],
-  }
-
-  const params: IdParams = {
-    breweryId: '9f25a740-1e7f-454b-b067-57a941795ca9',
-    locationId: undefined,
-    styleId: undefined,
-  }
-
-  server?.addResponse<AnnualStats>({
-    method: 'GET',
-    pathname: `/api/v1/stats/annual?brewery=${params.breweryId}`,
-    response: expectedResponse,
-    status: 200,
-  })
+test('annual stats', () => {
+  const onQuery = vitest.fn()
+  const onValidate = vitest.fn()
 
   const { getByText } = render(
-    <Provider store={store}>
-      <AnnualStatsHelper params={params} />
-    </Provider>,
+    <Helper onQuery={onQuery} onValidate={onValidate} />,
   )
-  const annual = expectedResponse.annual[0]
-  await waitFor(() => {
-    expect(getByText(annual.year)).toBeDefined()
-  })
-  expect(getByText(annual.reviewAverage)).toBeDefined()
-  expect(getByText(annual.reviewCount)).toBeDefined()
+
+  expect(getByText('Validated stats')).toBeDefined()
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onQuery).toHaveBeenCalledWith(params)
+  // These statistics are not wrapped in an envelope, so the validator is
+  // given the response as it arrived.
+  expect(onValidate).toHaveBeenCalledWith(data)
 })

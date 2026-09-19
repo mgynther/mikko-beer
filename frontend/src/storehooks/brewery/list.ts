@@ -1,25 +1,28 @@
 import type {
   BreweryList,
   ListBreweriesHookIf,
-} from '../../types/brewery/types'
-import type { Pagination } from '../../types/types'
-import { useLazyListBreweriesQuery } from '../../store/brewery/api'
-import {
+  UseListBreweries,
+  ValidateBreweryList,
+  ValidateBreweryListOrUndefined,
+} from './types'
+import type { Pagination } from '../types'
+
+const listBreweries: (
+  useListBreweries: UseListBreweries,
+  validateBreweryList: ValidateBreweryList,
+  validateBreweryListOrUndefined: ValidateBreweryListOrUndefined,
+) => ListBreweriesHookIf = (
+  useListBreweries,
   validateBreweryList,
   validateBreweryListOrUndefined,
-} from '../../validation/brewery'
-
-const listBreweries: () => ListBreweriesHookIf = () => {
+) => {
   const listBreweriesIf: ListBreweriesHookIf = {
     useList: () => {
-      const [trigger, { data, isFetching, isUninitialized }] =
-        useLazyListBreweriesQuery()
+      const { list, data, isFetching, isUninitialized } = useListBreweries()
       return {
         breweryList: validateBreweryListOrUndefined(data),
-        list: async (pagination: Pagination): Promise<BreweryList> => {
-          const result = await trigger(pagination).unwrap()
-          return validateBreweryList(result)
-        },
+        list: async (pagination: Pagination): Promise<BreweryList> =>
+          validateBreweryList(await list(pagination)),
         isLoading: isFetching,
         isUninitialized,
       }

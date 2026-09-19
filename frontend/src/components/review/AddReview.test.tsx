@@ -3,17 +3,17 @@ import { type UserEvent } from '@testing-library/user-event'
 import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import AddReview, { type Props as AddReviewProps } from './AddReview'
-import { loadingIndicatorText } from '../common/LoadingIndicator'
-import type { UseDebounce } from '../../types/types'
-import type { SearchLocationIf } from '../../types/location/types'
+import { loadingIndicatorText } from '../internal/common/LoadingIndicator'
+import type { UseDebounce } from '../types/types'
+import type { SearchLocationIf } from '../types/location/types'
 import type {
   CreateBeerIf,
   SearchBeerIf,
   SelectBeerIf,
-} from '../../types/beer/types'
-import type { ReviewContainerIf } from '../../types/review/types'
-import type { UseUrlPathParams } from '../util'
-import type { SearchFieldIf } from '../../types/search/types'
+} from '../types/beer/types'
+import type { ReviewContainerIf } from '../types/review/types'
+import type { UseUrlPathParams } from '../types/types'
+import type { SearchFieldIf } from '../types/search/types'
 import { dontCall } from '../../../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]

@@ -1,0 +1,134 @@
+import { render } from '@testing-library/react'
+import { setupUser } from '../../../../test-util/user-event'
+import { expect, test, vitest } from 'vitest'
+import StorageItem from './StorageItem'
+import type { DeleteStorageIf, Storage } from '../../types/storage/types'
+import { Role } from '../../types/user/types'
+import { dontCall } from '../../../../test-util/dont-call'
+import { testLink } from '../../../../test-util/link'
+
+const brewery = {
+  id: 'b5639203-8448-40ff-84c1-cc9b9b50909c',
+  name: 'Koskipanimo',
+}
+
+const style = {
+  id: '26713c2b-07a1-4072-a6bf-32196bea1919',
+  name: 'American IPA',
+}
+
+const storage: Storage = {
+  id: 'd02c5fb5-a993-447d-824a-93bfeb85949a',
+  beerId: '14167707-87d1-49f1-b6b1-0a95ebfb5afb',
+  beerName: 'Severin',
+  bestBefore: '2023-12-10T12:00:00.000',
+  breweries: [brewery],
+  container: {
+    id: 'a5bc2c5b-50ae-4f47-b374-63bc2be4f524',
+    type: 'bottle',
+    size: '0.33',
+  },
+  createdAt: '2020-09-12T12:00:00.000Z',
+  hasReview: false,
+  styles: [style],
+}
+
+const adminLogin = {
+  user: {
+    id: 'ce26ca10-9238-4b84-a0e6-6ac3a2890449',
+    username: 'admin',
+    role: Role.admin,
+  },
+  authToken: 'auth',
+  refreshToken: 'refresh',
+}
+
+const dontDelete: DeleteStorageIf = {
+  useDelete: () => ({
+    delete: dontCall,
+  }),
+  getLogin: () => adminLogin,
+}
+
+test('renders storage', async () => {
+  const user = setupUser()
+  const { getByRole, getByText } = render(
+    <StorageItem
+      linkComponent={testLink}
+      deleteStorageIf={dontDelete}
+      confirm={dontCall}
+      storage={storage}
+    />,
+  )
+  getByRole('link', { name: brewery.name })
+  getByRole('link', { name: storage.beerName })
+  getByRole('link', { name: style.name })
+  getByText(storage.bestBefore.split('T')[0])
+  const openButton = getByRole('button', { name: 'Open ▼' })
+  await user.click(openButton)
+  const reviewLink = getByRole('link', { name: 'Review' })
+  const path = `/addreview/${storage.id}`
+  expect(reviewLink.getAttribute('href')).toEqual(path)
+})
+
+test('renders storage with review', async () => {
+  const { getByRole, getByText } = render(
+    <StorageItem
+      linkComponent={testLink}
+      deleteStorageIf={dontDelete}
+      confirm={dontCall}
+      storage={{
+        ...storage,
+        hasReview: true,
+      }}
+    />,
+  )
+  getByRole('link', { name: storage.beerName })
+  getByText('*')
+})
+
+test('deletes storage', async () => {
+  const user = setupUser()
+  const del = vitest.fn()
+  const { getByRole } = render(
+    <StorageItem
+      linkComponent={testLink}
+      deleteStorageIf={{
+        useDelete: () => ({
+          delete: del,
+        }),
+        getLogin: () => adminLogin,
+      }}
+      confirm={(): boolean => true}
+      storage={storage}
+    />,
+  )
+  const openButton = getByRole('button', { name: 'Open ▼' })
+  await user.click(openButton)
+  const deleteButton = getByRole('button', { name: 'Delete' })
+  await user.click(deleteButton)
+  expect(del.mock.calls).toEqual([[storage.id]])
+})
+
+test('does not delete storage on not confirmed', async () => {
+  const user = setupUser()
+  const del = vitest.fn()
+  const { getByRole } = render(
+    <StorageItem
+      linkComponent={testLink}
+      deleteStorageIf={{
+        useDelete: () => ({
+          delete: del,
+        }),
+        getLogin: () => adminLogin,
+      }}
+      confirm={(): boolean => false}
+      storage={storage}
+    />,
+  )
+  const openButton = getByRole('button', { name: 'Open ▼' })
+  await user.click(openButton)
+  const deleteButton = getByRole('button', { name: 'Delete' })
+  await user.click(deleteButton)
+  expect(del.mock.calls).toEqual([])
+})

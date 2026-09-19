@@ -1,88 +1,47 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
-import logout from './logout'
+import { expect, test, vitest } from 'vitest'
 import { render, waitFor } from '@testing-library/react'
-import { Provider, useSelector } from '../../react-redux-wrapper'
+
+import logout from './logout'
+import type { LogoutParams, UseLogout } from './types'
 import { setupUser } from '../../../test-util/user-event'
 
-import Button from '../../components/common/Button'
-import { selectLogin, success } from '../../store/login/reducer'
-import { Role } from '../../types/user/types'
-
-let server: TestServer | undefined
-
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
-
-interface Props {
-  userId: string
-  refreshToken: string
+// A stub for the store function, for the reason given in
+// storehooks/brewery/get.test.tsx. Logging out validates nothing: what is
+// proven here is that the parameters reach the store.
+const params: LogoutParams = {
+  userId: '8e5b4c3d-2e1f-4098-8776-5e4d3c2b1a09',
+  body: { refreshToken: 'refresh' },
 }
 
-function Helper({ userId, refreshToken }: Props): React.JSX.Element {
-  const logoutIf = logout()
-  const { logout: doLogout } = logoutIf.useLogout()
-  const loginState = useSelector(selectLogin)
+function Helper(props: {
+  onLogout: (params: LogoutParams) => void
+}): React.JSX.Element {
+  const useStoreLogout: UseLogout = () => ({
+    logout: async (logoutParams: LogoutParams): Promise<void> => {
+      props.onLogout(logoutParams)
+    },
+  })
+  const { logout: doLogout } = logout(useStoreLogout).useLogout()
   return (
-    <div>
-      {loginState.user !== undefined && <div>{loginState.user.username}</div>}
-      <Button
-        onClick={() => {
-          void doLogout({ userId, body: { refreshToken } })
-        }}
-        text='Logout'
-      />
-    </div>
+    <button
+      type='button'
+      onClick={() => {
+        void doLogout(params)
+      }}
+    >
+      Logout
+    </button>
   )
 }
 
 test('logout', async () => {
   const user = setupUser()
+  const onLogout = vitest.fn()
 
-  const userId = '60a67ae0-a806-4b69-a899-5c1698d8b397'
-  const username = 'user1'
-  const refreshToken = 'refreshtoken'
+  const { getByRole } = render(<Helper onLogout={onLogout} />)
 
-  store.dispatch(
-    success({
-      authToken: 'authtoken',
-      refreshToken,
-      user: {
-        id: userId,
-        username,
-        role: Role.admin,
-      },
-    }),
-  )
-
-  const { getByRole, getByText, queryByText } = render(
-    <Provider store={store}>
-      <Helper userId={userId} refreshToken={refreshToken} />
-    </Provider>,
-  )
-  expect(getByText(username)).toBeDefined()
-
-  server?.addResponse<{ success: true }>({
-    method: 'POST',
-    pathname: `/api/v1/user/${userId}/sign-out`,
-    response: { success: true },
-    status: 200,
-  })
-
-  const logoutButton = getByRole('button', { name: 'Logout' })
-  await user.click(logoutButton)
+  await user.click(getByRole('button', { name: 'Logout' }))
   await waitFor(() => {
-    expect(queryByText(username)).toBeNull()
+    expect(onLogout).toHaveBeenCalledWith(params)
   })
 })

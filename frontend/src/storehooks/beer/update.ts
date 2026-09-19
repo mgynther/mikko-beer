@@ -1,15 +1,22 @@
-import type { BeerWithIds, UpdateBeerHookIf } from '../../types/beer/types'
-import { useUpdateBeerMutation } from '../../store/beer/api'
-import { validateBeerWithIds } from '../../validation/beer'
+import type {
+  BeerWithIds,
+  UpdateBeerHookIf,
+  UseUpdateBeer,
+  ValidateBeerWithIds,
+} from './types'
+import { unwrapMember } from '../envelope'
 
-const updateBeer: () => UpdateBeerHookIf = () => {
+const updateBeer: (
+  useUpdateBeer: UseUpdateBeer,
+  validateBeerWithIds: ValidateBeerWithIds,
+) => UpdateBeerHookIf = (useUpdateBeer, validateBeerWithIds) => {
   const updateBeerIf: UpdateBeerHookIf = {
     useUpdate: () => {
-      const [updateBeer, { isLoading }] = useUpdateBeerMutation()
+      const { update, isLoading } = useUpdateBeer()
       return {
         update: async (beer: BeerWithIds): Promise<void> => {
-          const result = await updateBeer({ ...beer }).unwrap()
-          validateBeerWithIds(result.beer)
+          const result = await update({ ...beer })
+          validateBeerWithIds(unwrapMember(result, 'beer'))
         },
         isLoading,
       }

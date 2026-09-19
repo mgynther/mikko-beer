@@ -3,12 +3,8 @@ import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import Brewery from './Brewery'
-import { Role } from '../../types/user/types'
-import type {
-  UseDebounce,
-  UseUrlSearchParams,
-  YearMonth,
-} from '../../types/types'
+import { Role } from '../types/user/types'
+import type { UseDebounce, UseUrlSearchParams, YearMonth } from '../types/types'
 import type {
   GetAnnualContainerStatsIf,
   GetAnnualStatsIf,
@@ -20,22 +16,23 @@ import type {
   GetRatingStatsIf,
   GetStyleStatsIf,
   StatsIf,
-} from '../../types/stats/types'
-import type { SearchLocationIf } from '../../types/location/types'
-import type { GetLogin } from '../../types/login/types'
+} from '../types/stats/types'
+import type { SearchLocationIf } from '../types/location/types'
+import type { GetLogin } from '../types/login/types'
 import type {
   ListFilterIf,
   ListReviewsByIf,
   ReviewIf,
   SetSearch,
-} from '../../types/review/types'
-import type { ListStoragesByIf } from '../../types/storage/types'
-import type { GetBreweryIf, UpdateBreweryIf } from '../../types/brewery/types'
-import type { SearchFieldIf } from '../../types/search/types'
-import type { UseUrlPathParams } from '../util'
-import { loadingIndicatorText } from '../common/LoadingIndicator'
-import type { SelectBeerIf } from '../../types/beer/types'
+} from '../types/review/types'
+import type { ListStoragesByIf } from '../types/storage/types'
+import type { GetBreweryIf, UpdateBreweryIf } from '../types/brewery/types'
+import type { SearchFieldIf } from '../types/search/types'
+import type { UseUrlPathParams } from '../types/types'
+import { loadingIndicatorText } from '../internal/common/LoadingIndicator'
+import type { SelectBeerIf } from '../types/beer/types'
 import { dontCall } from '../../../test-util/dont-call'
+import { testLink } from '../../../test-util/link'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -249,6 +246,7 @@ test('updates brewery', async () => {
   const update = vitest.fn()
   const { getByPlaceholderText, getByRole } = render(
     <Brewery
+      linkComponent={testLink}
       listReviewsByBreweryIf={listReviewsByBreweryIf}
       listStoragesByBreweryIf={listStoragesByBreweryIf}
       getBreweryIf={getBreweryIf}
@@ -298,6 +296,7 @@ test('cancel update', async () => {
   const user = setupUser()
   const { getByRole } = render(
     <Brewery
+      linkComponent={testLink}
       listReviewsByBreweryIf={listReviewsByBreweryIf}
       listStoragesByBreweryIf={listStoragesByBreweryIf}
       getBreweryIf={getBreweryIf}
@@ -320,6 +319,7 @@ test('cancel update', async () => {
 test('render loading', async () => {
   const { getByText } = render(
     <Brewery
+      linkComponent={testLink}
       listReviewsByBreweryIf={listReviewsByBreweryIf}
       listStoragesByBreweryIf={listStoragesByBreweryIf}
       getBreweryIf={{
@@ -339,6 +339,7 @@ test('render loading', async () => {
 test('render not found', async () => {
   const { getByText } = render(
     <Brewery
+      linkComponent={testLink}
       listReviewsByBreweryIf={listReviewsByBreweryIf}
       listStoragesByBreweryIf={listStoragesByBreweryIf}
       getBreweryIf={{
@@ -359,6 +360,7 @@ test('throw on missing id', async () => {
   expect(() =>
     render(
       <Brewery
+        linkComponent={testLink}
         listReviewsByBreweryIf={listReviewsByBreweryIf}
         listStoragesByBreweryIf={listStoragesByBreweryIf}
         getBreweryIf={getBreweryIf}
@@ -373,6 +375,7 @@ test('throw on missing id', async () => {
 test('renders brewery country flag', () => {
   const { getByRole, getByText } = render(
     <Brewery
+      linkComponent={testLink}
       listReviewsByBreweryIf={listReviewsByBreweryIf}
       listStoragesByBreweryIf={listStoragesByBreweryIf}
       getBreweryIf={{
@@ -398,6 +401,7 @@ test('renders brewery country flag', () => {
 test('renders brewery without country flag', () => {
   const { getByRole, queryByText } = render(
     <Brewery
+      linkComponent={testLink}
       listReviewsByBreweryIf={listReviewsByBreweryIf}
       listStoragesByBreweryIf={listStoragesByBreweryIf}
       getBreweryIf={getBreweryIf}

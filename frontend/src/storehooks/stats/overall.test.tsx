@@ -1,102 +1,80 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
+import { expect, test, vitest } from 'vitest'
+import { render } from '@testing-library/react'
+
 import statsHook from './stats'
-import { render, waitFor } from '@testing-library/react'
-import { Provider } from '../../react-redux-wrapper'
+import type { IdParams, OverallStats } from './types'
+import { statsStore } from '../../../test-util/stats-store'
+import { statsValidators } from '../../../test-util/stats-validators'
 
-import type { IdParams, OverallStats } from '../../types/stats/types'
+// Stubs for the store function and the validator, for the reason given in
+// storehooks/brewery/get.test.tsx. The store functions a test does not drive
+// are dontCall, so wiring the wrong one fails loudly.
+const validatedStats: OverallStats = {
+  beerCount: '482',
+  breweryCount: '91',
+  breweryCountryCount: '12',
+  containerCount: '7',
+  locationCount: '14',
+  distinctBeerReviewCount: '401',
+  reviewAverage: '8.25',
+  reviewCount: '512',
+  reviewMedian: '8.00',
+  reviewMode: '8',
+  reviewStandardDeviation: '0.86',
+  reviewWithLocationCount: '198',
+  reviewWithoutLocationCount: '314',
+  styleCount: '33',
+}
 
-let server: TestServer | undefined
+const data = { overall: { beerCount: '1' } }
 
-beforeAll(() => {
-  server = createServer()
-})
+const params: IdParams = {
+  breweryId: undefined,
+  locationId: undefined,
+  styleId: undefined,
+}
 
-beforeEach(() => {
-  server?.clear()
-})
+interface HelperProps {
+  onQuery: (params: IdParams) => void
+  onValidate: (result: unknown) => void
+}
 
-afterAll(() => {
-  server?.close()
-})
-
-function OverallStatsHelper(props: { params: IdParams }): React.JSX.Element {
-  const statsIf = statsHook()
-  const { stats } = statsIf.overall.useStats(props.params)
+function Helper(props: HelperProps): React.JSX.Element {
+  const store = statsStore({
+    overall: (idParams: IdParams) => {
+      props.onQuery(idParams)
+      return { data, isLoading: false }
+    },
+  })
+  const validators = statsValidators({
+    overallOrUndefined: (result: unknown) => {
+      props.onValidate(result)
+      return validatedStats
+    },
+  })
+  const { stats, isLoading } = statsHook(store, validators).overall.useStats(
+    params,
+  )
   return (
     <div>
-      {stats !== undefined && (
-        <>
-          <div>{stats.beerCount}</div>
-          <div>{stats.breweryCount}</div>
-          <div>{stats.containerCount}</div>
-          <div>{stats.locationCount}</div>
-          <div>{stats.distinctBeerReviewCount}</div>
-          <div>{stats.reviewAverage}</div>
-          <div>{stats.reviewCount}</div>
-          <div>{stats.reviewMedian}</div>
-          <div>{stats.reviewMode}</div>
-          <div>{stats.reviewStandardDeviation}</div>
-          <div>{stats.reviewWithLocationCount}</div>
-          <div>{stats.reviewWithoutLocationCount}</div>
-          <div>{stats.styleCount}</div>
-        </>
-      )}
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      <div>{stats === undefined ? 'No stats' : stats.beerCount}</div>
     </div>
   )
 }
 
-test('overall stats', async () => {
-  const overallStats: OverallStats = {
-    beerCount: '482',
-    breweryCount: '91',
-    breweryCountryCount: '12',
-    containerCount: '7',
-    locationCount: '14',
-    distinctBeerReviewCount: '401',
-    reviewAverage: '8.25',
-    reviewCount: '512',
-    reviewMedian: '8.00',
-    reviewMode: '8',
-    reviewStandardDeviation: '0.86',
-    reviewWithLocationCount: '198',
-    reviewWithoutLocationCount: '314',
-    styleCount: '33',
-  }
-
-  const params: IdParams = {
-    breweryId: undefined,
-    locationId: undefined,
-    styleId: '1d922ad8-5dc2-46f7-b240-3c4168f9a36c',
-  }
-
-  server?.addResponse<{ overall: OverallStats }>({
-    method: 'GET',
-    pathname: `/api/v1/stats/overall?style=${params.styleId}`,
-    response: { overall: overallStats },
-    status: 200,
-  })
+test('overall stats', () => {
+  const onQuery = vitest.fn()
+  const onValidate = vitest.fn()
 
   const { getByText } = render(
-    <Provider store={store}>
-      <OverallStatsHelper params={params} />
-    </Provider>,
+    <Helper onQuery={onQuery} onValidate={onValidate} />,
   )
-  await waitFor(() => {
-    expect(getByText(overallStats.beerCount)).toBeDefined()
-  })
-  expect(getByText(overallStats.breweryCount)).toBeDefined()
-  expect(getByText(overallStats.containerCount)).toBeDefined()
-  expect(getByText(overallStats.locationCount)).toBeDefined()
-  expect(getByText(overallStats.distinctBeerReviewCount)).toBeDefined()
-  expect(getByText(overallStats.reviewAverage)).toBeDefined()
-  expect(getByText(overallStats.reviewCount)).toBeDefined()
-  expect(getByText(overallStats.reviewMedian)).toBeDefined()
-  expect(getByText(overallStats.reviewMode)).toBeDefined()
-  expect(getByText(overallStats.reviewStandardDeviation)).toBeDefined()
-  expect(getByText(overallStats.reviewWithLocationCount)).toBeDefined()
-  expect(getByText(overallStats.reviewWithoutLocationCount)).toBeDefined()
-  expect(getByText(overallStats.styleCount)).toBeDefined()
+
+  expect(getByText(validatedStats.beerCount)).toBeDefined()
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onQuery).toHaveBeenCalledWith(params)
+  // The overall statistics arrive wrapped in an envelope, which is unwrapped
+  // before the validator sees them.
+  expect(onValidate).toHaveBeenCalledWith(data.overall)
 })

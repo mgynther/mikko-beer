@@ -1,10 +1,63 @@
 import * as t from 'io-ts'
 import { isLeft } from 'fp-ts/Either'
 
-import type { JoinedReviewList, Review } from '../types/review/types'
 import { formatError } from './format-error'
-import { ValidatedContainer } from './container'
-import { ValidatedLocation } from './location'
+import type { Container } from './container'
+import { ValidatedContainer, toContainer } from './container'
+import type { Location } from './location'
+import { ValidatedLocation, toLocation } from './location'
+
+// This layer's own view of a valid review, declared here rather than
+// imported from types/. See the comment in style.ts.
+export interface Review {
+  id: string
+  additionalInfo: string
+  beer: string
+  container: string
+  location: string
+  rating: number
+  smell: string
+  taste: string
+  time: string
+}
+
+interface JoinedReviewBrewery {
+  id: string
+  name: string
+}
+
+interface JoinedReviewStyle {
+  id: string
+  name: string
+}
+
+export interface JoinedReview {
+  id: string
+  additionalInfo: string
+  beerId: string
+  beerName: string
+  breweries: JoinedReviewBrewery[]
+  container: Container
+  location: Location | undefined
+  rating: number
+  styles: JoinedReviewStyle[]
+  time: string
+}
+
+export type ReviewSortingOrder =
+  'beer_name' | 'brewery_name' | 'rating' | 'time'
+
+export type ListDirection = 'asc' | 'desc'
+
+export interface ReviewSorting {
+  order: ReviewSortingOrder
+  direction: ListDirection
+}
+
+export interface JoinedReviewList {
+  reviews: JoinedReview[]
+  sorting: ReviewSorting
+}
 
 const ValidatedReview = t.type({
   id: t.string,
@@ -56,6 +109,51 @@ const ValidatedJoinedReviewList = t.type({
   sorting: ValidatedSorting,
 })
 
+function toJoinedReviewBrewery(
+  brewery: t.TypeOf<typeof ValidatedJoinedReviewBrewery>,
+): JoinedReviewBrewery {
+  return {
+    id: brewery.id,
+    name: brewery.name,
+  }
+}
+
+function toJoinedReviewStyle(
+  style: t.TypeOf<typeof ValidatedJoinedReviewStyle>,
+): JoinedReviewStyle {
+  return {
+    id: style.id,
+    name: style.name,
+  }
+}
+
+// A location missing from the response is an explicit undefined from here on,
+// so that no layer can forget to pass it along.
+function toJoinedReview(
+  review: t.TypeOf<typeof ValidatedJoinedReview>,
+): JoinedReview {
+  return {
+    id: review.id,
+    additionalInfo: review.additionalInfo,
+    beerId: review.beerId,
+    beerName: review.beerName,
+    breweries: review.breweries.map(toJoinedReviewBrewery),
+    container: toContainer(review.container),
+    location:
+      review.location === undefined ? undefined : toLocation(review.location),
+    rating: review.rating,
+    styles: review.styles.map(toJoinedReviewStyle),
+    time: review.time,
+  }
+}
+
+function toSorting(sorting: t.TypeOf<typeof ValidatedSorting>): ReviewSorting {
+  return {
+    order: sorting.order,
+    direction: sorting.direction,
+  }
+}
+
 export function validateReviewOrUndefined(result: unknown): Review | undefined {
   if (typeof result === 'undefined') {
     return undefined
@@ -64,13 +162,22 @@ export function validateReviewOrUndefined(result: unknown): Review | undefined {
 }
 
 export function validateReview(result: unknown): Review {
-  type ReviewT = t.TypeOf<typeof ValidatedReview>
   const decoded = ValidatedReview.decode(result)
   if (isLeft(decoded)) {
     throw Error(formatError(decoded))
   }
-  const valid: ReviewT = decoded.right
-  return valid
+  const review = decoded.right
+  return {
+    id: review.id,
+    additionalInfo: review.additionalInfo,
+    beer: review.beer,
+    container: review.container,
+    location: review.location,
+    rating: review.rating,
+    smell: review.smell,
+    taste: review.taste,
+    time: review.time,
+  }
 }
 
 export function validateJoinedReviewListOrUndefined(
@@ -83,14 +190,12 @@ export function validateJoinedReviewListOrUndefined(
 }
 
 export function validateJoinedReviewList(result: unknown): JoinedReviewList {
-  type ReviewListT = t.TypeOf<typeof ValidatedJoinedReviewList>
   const decoded = ValidatedJoinedReviewList.decode(result)
   if (isLeft(decoded)) {
     throw Error(formatError(decoded))
   }
-  const valid: ReviewListT = decoded.right
   return {
-    reviews: valid.reviews,
-    sorting: valid.sorting,
+    reviews: decoded.right.reviews.map(toJoinedReview),
+    sorting: toSorting(decoded.right.sorting),
   }
 }

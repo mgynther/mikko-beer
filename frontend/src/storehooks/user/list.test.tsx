@@ -1,31 +1,44 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
+import { expect, test, vitest } from 'vitest'
+import { render } from '@testing-library/react'
+
 import listUsers from './list'
-import type { UserList } from '../../types/user/types'
-import { render, waitFor } from '@testing-library/react'
-import { Provider } from '../../react-redux-wrapper'
+import type {
+  UseListUsers,
+  UserList,
+  ValidateUserListOrUndefined,
+} from './types'
 
-let server: TestServer | undefined
+// Stubs for the store function and the validator, for the reason given in
+// storehooks/brewery/get.test.tsx.
+const validatedUserList: UserList = {
+  users: [
+    {
+      id: 'b4c5d6e7-f8a9-40b1-82c3-d4e5f6a7b8c9',
+      username: 'validateduser',
+      role: 'admin',
+    },
+  ],
+}
 
-beforeAll(() => {
-  server = createServer()
-})
+const listed = { users: [{ id: 'listed', username: 'listed', role: 'admin' }] }
 
-beforeEach(() => {
-  server?.clear()
-})
+interface HelperProps {
+  onValidate: (result: unknown) => void
+}
 
-afterAll(() => {
-  server?.close()
-})
-
-function Helper(): React.JSX.Element {
-  const listIf = listUsers()
-  const { data } = listIf.useList()
+function Helper(props: HelperProps): React.JSX.Element {
+  const useStoreList: UseListUsers = () => ({
+    data: listed,
+    isLoading: false,
+  })
+  const validate: ValidateUserListOrUndefined = (result: unknown) => {
+    props.onValidate(result)
+    return validatedUserList
+  }
+  const { data, isLoading } = listUsers(useStoreList, validate).useList()
   return (
     <div>
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
       {data?.users.map((user) => (
         <div key={user.id}>{user.username}</div>
       ))}
@@ -33,36 +46,12 @@ function Helper(): React.JSX.Element {
   )
 }
 
-test('list users', async () => {
-  const expectedResponse: UserList = {
-    users: [
-      {
-        id: '5de58dcf-e515-49ea-8a8b-5bf22d3087cb',
-        username: 'testuser',
-        role: 'admin',
-      },
-      {
-        id: '3f5789eb-4802-4e79-b9b3-28f1c97234ea',
-        username: 'anotheruser',
-        role: 'viewer',
-      },
-    ],
-  }
+test('list users', () => {
+  const onValidate = vitest.fn()
 
-  server?.addResponse<UserList>({
-    method: 'GET',
-    pathname: '/api/v1/user',
-    response: expectedResponse,
-    status: 200,
-  })
+  const { getByText } = render(<Helper onValidate={onValidate} />)
 
-  const { getByText } = render(
-    <Provider store={store}>
-      <Helper />
-    </Provider>,
-  )
-  await waitFor(() => {
-    expect(getByText(expectedResponse.users[0].username)).toBeDefined()
-    expect(getByText(expectedResponse.users[1].username)).toBeDefined()
-  })
+  expect(getByText(validatedUserList.users[0].username)).toBeDefined()
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onValidate).toHaveBeenCalledWith(listed)
 })

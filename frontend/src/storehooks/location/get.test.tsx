@@ -1,89 +1,87 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
+import { expect, test, vitest } from 'vitest'
+import { render } from '@testing-library/react'
+
 import getLocation from './get'
-import type { Location } from '../../types/location/types'
-import { render, waitFor } from '@testing-library/react'
-import { Provider } from '../../react-redux-wrapper'
+import type {
+  Location,
+  UseGetLocation,
+  ValidateLocationOrUndefined,
+} from './types'
 
-let server: TestServer | undefined
+// Both the store function and the validator are stubs. What the request looks
+// like is proven in the store layer and what a valid location looks like in
+// the validation layer; what is proven here is that the response reaches the
+// validator through the envelope and that the validator's result reaches the
+// interface.
+const validatedLocation: Location = {
+  id: 'f1e2d3c4-b5a6-4978-8f0e-1d2c3b4a5968',
+  name: 'Validated location',
+}
 
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
+const locationId = '38ba5e94-5807-4fe5-ba85-f2580895a4fc'
 
 interface HelperProps {
-  locationId: string
+  data: unknown
+  isLoading: boolean
+  onGet: (locationId: string) => void
+  onValidate: (result: unknown) => void
 }
 
 function Helper(props: HelperProps): React.JSX.Element {
-  const getIf = getLocation()
-  const { isLoading, location } = getIf.useGet(props.locationId)
+  const useStoreGet: UseGetLocation = (id: string) => {
+    props.onGet(id)
+    return { data: props.data, isLoading: props.isLoading }
+  }
+  const validate: ValidateLocationOrUndefined = (result: unknown) => {
+    props.onValidate(result)
+    return result === undefined ? undefined : validatedLocation
+  }
+  const { location, isLoading } = getLocation(useStoreGet, validate).useGet(
+    locationId,
+  )
   return (
-    <>
-      <div>{location?.name}</div>
-      {!isLoading && location === undefined && <div>Failed</div>}
-    </>
+    <div>
+      <div>{location === undefined ? 'No location' : location.name}</div>
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+    </div>
   )
 }
 
-test('get location', async () => {
-  const expectedResponse: { location: Location } = {
-    location: {
-      id: '38ba5e94-5807-4fe5-ba85-f2580895a4fc',
-      name: 'Test location',
-    },
-  }
-
-  server?.addResponse<{ location: Location }>({
-    method: 'GET',
-    pathname: `/api/v1/location/${expectedResponse.location.id}`,
-    response: expectedResponse,
-    status: 200,
-  })
+test('get location', () => {
+  const onGet = vitest.fn()
+  const onValidate = vitest.fn()
+  const data = { location: { id: locationId, name: 'Test location' } }
 
   const { getByText } = render(
-    <Provider store={store}>
-      <Helper locationId={expectedResponse.location.id} />
-    </Provider>,
+    <Helper
+      data={data}
+      isLoading={false}
+      onGet={onGet}
+      onValidate={onValidate}
+    />,
   )
-  await waitFor(() => {
-    expect(getByText(expectedResponse.location.name)).toBeDefined()
-  })
+
+  expect(getByText(validatedLocation.name)).toBeDefined()
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onGet).toHaveBeenCalledWith(locationId)
+  // The envelope is unwrapped here, so the validator judges the location and
+  // not the wrapper it arrived in.
+  expect(onValidate).toHaveBeenCalledWith(data.location)
 })
 
-test('try to get location that does not exist', async () => {
-  const locationId = '87b4a36e-dcd9-4f54-8951-3da05fdc29f1'
-  type ErrorResponse = { error: { code: string; message: string } }
-  const expectedResponse: ErrorResponse = {
-    error: {
-      code: `LocationNotFound`,
-      message: `location with id ${locationId}`,
-    },
-  }
-
-  server?.addResponse<ErrorResponse>({
-    method: 'GET',
-    pathname: `/api/v1/location/${locationId}`,
-    response: expectedResponse,
-    status: 404,
-  })
+test('get location that has not arrived', () => {
+  const onValidate = vitest.fn()
 
   const { getByText } = render(
-    <Provider store={store}>
-      <Helper locationId={locationId} />
-    </Provider>,
+    <Helper
+      data={undefined}
+      isLoading={true}
+      onGet={() => undefined}
+      onValidate={onValidate}
+    />,
   )
-  await waitFor(() => {
-    expect(getByText('Failed')).toBeDefined()
-  })
+
+  expect(getByText('No location')).toBeDefined()
+  expect(getByText('Loading')).toBeDefined()
+  expect(onValidate).toHaveBeenCalledWith(undefined)
 })

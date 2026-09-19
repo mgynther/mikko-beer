@@ -1,18 +1,26 @@
-import type { CreateStyleIf, CreateStyleRequest } from '../../types/style/types'
-import { useCreateStyleMutation } from '../../store/style/api'
-import { validateStyleOrUndefined } from '../../validation/style'
+import type {
+  CreateStyleHookIf,
+  CreateStyleRequest,
+  UseCreateStyle,
+  ValidateStyleOrUndefined,
+} from './types'
+import { unwrapMemberOrUndefined } from '../envelope'
 
-const createStyle: () => CreateStyleIf = () => {
-  const createStyleIf: CreateStyleIf = {
+const createStyle: (
+  useCreateStyle: UseCreateStyle,
+  validateStyleOrUndefined: ValidateStyleOrUndefined,
+) => CreateStyleHookIf = (useCreateStyle, validateStyleOrUndefined) => {
+  const createStyleIf: CreateStyleHookIf = {
     useCreate: () => {
-      const [createStyle, { data, isError, isLoading, isSuccess }] =
-        useCreateStyleMutation()
+      const { create, data, hasError, isLoading, isSuccess } = useCreateStyle()
       return {
         create: async (style: CreateStyleRequest): Promise<void> => {
-          await createStyle(style)
+          await create(style)
         },
-        createdStyle: validateStyleOrUndefined(data?.style),
-        hasError: isError,
+        createdStyle: validateStyleOrUndefined(
+          unwrapMemberOrUndefined(data, 'style'),
+        ),
+        hasError,
         isLoading,
         isSuccess,
       }

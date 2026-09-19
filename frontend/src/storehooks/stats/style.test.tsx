@@ -1,121 +1,72 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { testTimes } from '../../../test-util/filter-time'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
+import { expect, test, vitest } from 'vitest'
+import { render } from '@testing-library/react'
+
 import statsHook from './stats'
-import { render, waitFor } from '@testing-library/react'
-import { Provider } from '../../react-redux-wrapper'
+import type { StyleStats, StyleStatsQueryParams } from './types'
+import { statsStore } from '../../../test-util/stats-store'
+import { statsValidators } from '../../../test-util/stats-validators'
 
-import type { StyleStats, StyleStatsQueryParams } from '../../types/stats/types'
+// Stubs for the store function and the validator, for the reason given in
+// storehooks/brewery/get.test.tsx. The store functions a test does not drive
+// are dontCall, so wiring the wrong one fails loudly.
+const validatedStats: StyleStats = {
+  style: [],
+}
 
-let server: TestServer | undefined
+const data = { style: [{ styleId: 'one' }] }
 
-beforeAll(() => {
-  server = createServer()
-})
+const params: StyleStatsQueryParams = {
+  breweryId: undefined,
+  locationId: undefined,
+  styleId: undefined,
+  sorting: { order: 'average', direction: 'asc' },
+  minReviewCount: 40,
+  maxReviewCount: 80,
+  minReviewAverage: 9,
+  maxReviewAverage: 9.3,
+  timeStart: 1,
+  timeEnd: 2,
+}
 
-beforeEach(() => {
-  server?.clear()
-})
+interface HelperProps {
+  onQuery: (params: StyleStatsQueryParams) => void
+  onValidate: (result: unknown) => void
+}
 
-afterAll(() => {
-  server?.close()
-})
-
-function StyleStatsHelper(props: {
-  queryParams: StyleStatsQueryParams
-}): React.JSX.Element {
-  const statsIf = statsHook()
-  const { stats } = statsIf.style.useStats(props.queryParams)
+function Helper(props: HelperProps): React.JSX.Element {
+  const store = statsStore({
+    style: (queryParams: StyleStatsQueryParams) => {
+      props.onQuery(queryParams)
+      return { data, isLoading: false }
+    },
+  })
+  const validators = statsValidators({
+    styleOrUndefined: (result: unknown) => {
+      props.onValidate(result)
+      return validatedStats
+    },
+  })
+  const { stats, isLoading } = statsHook(store, validators).style.useStats(
+    params,
+  )
   return (
     <div>
-      {stats?.style.map((style) => (
-        <div key={style.styleId}>
-          <div>{style.styleName}</div>
-          <div>{style.reviewAverage}</div>
-          <div>{style.reviewCount}</div>
-          <div>{style.reviewMedian}</div>
-          <div>{style.reviewMode}</div>
-          <div>{style.reviewStandardDeviation}</div>
-        </div>
-      ))}
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      <div>{stats === undefined ? 'No stats' : 'Validated stats'}</div>
     </div>
   )
 }
 
-test('style stats', async () => {
-  const expectedResponse: StyleStats = {
-    style: [
-      {
-        styleId: '0eac21cc-9401-474f-b22f-8c7d535b712f',
-        styleName: 'IPA',
-        reviewAverage: '9.18',
-        reviewCount: '302',
-        reviewMedian: '8.50',
-        reviewMode: '9',
-        reviewStandardDeviation: '0.45',
-      },
-      {
-        styleId: '69aca5b4-4bfd-45bd-b68d-006f4b725c2b',
-        styleName: 'Pils',
-        reviewAverage: '9.03',
-        reviewCount: '199',
-        reviewMedian: '8.00',
-        reviewMode: '8',
-        reviewStandardDeviation: '0.56',
-      },
-    ],
-  }
-
-  const queryParams: StyleStatsQueryParams = {
-    breweryId: undefined,
-    locationId: undefined,
-    styleId: undefined,
-    sorting: {
-      order: 'count',
-      direction: 'desc',
-    },
-    minReviewCount: 40,
-    maxReviewCount: Infinity,
-    minReviewAverage: 9.0,
-    maxReviewAverage: 9.3,
-    timeStart: testTimes.min.utcTimestamp,
-    timeEnd: testTimes.max.utcTimestamp,
-  }
-
-  server?.addResponse<StyleStats>({
-    method: 'GET',
-    pathname: `/api/v1/stats/style?order=${
-      queryParams.sorting.order
-    }&direction=${queryParams.sorting.direction}&min_review_count=${
-      queryParams.minReviewCount
-    }&min_review_average=${queryParams.minReviewAverage}&max_review_average=${
-      queryParams.maxReviewAverage
-    }&time_start=${queryParams.timeStart}&time_end=${queryParams.timeEnd}`,
-    response: expectedResponse,
-    status: 200,
-  })
+test('style stats', () => {
+  const onQuery = vitest.fn()
+  const onValidate = vitest.fn()
 
   const { getByText } = render(
-    <Provider store={store}>
-      <StyleStatsHelper queryParams={queryParams} />
-    </Provider>,
+    <Helper onQuery={onQuery} onValidate={onValidate} />,
   )
-  const ipa = expectedResponse.style[0]
-  const pils = expectedResponse.style[1]
-  await waitFor(() => {
-    expect(getByText(ipa.styleName)).toBeDefined()
-    expect(getByText(ipa.reviewAverage)).toBeDefined()
-    expect(getByText(ipa.reviewCount)).toBeDefined()
-    expect(getByText(ipa.reviewMedian)).toBeDefined()
-    expect(getByText(ipa.reviewMode)).toBeDefined()
-    expect(getByText(ipa.reviewStandardDeviation)).toBeDefined()
-    expect(getByText(pils.styleName)).toBeDefined()
-    expect(getByText(pils.reviewAverage)).toBeDefined()
-    expect(getByText(pils.reviewCount)).toBeDefined()
-    expect(getByText(pils.reviewMedian)).toBeDefined()
-    expect(getByText(pils.reviewMode)).toBeDefined()
-    expect(getByText(pils.reviewStandardDeviation)).toBeDefined()
-  })
+
+  expect(getByText('Validated stats')).toBeDefined()
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onQuery).toHaveBeenCalledWith(params)
+  expect(onValidate).toHaveBeenCalledWith(data)
 })

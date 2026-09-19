@@ -1,13 +1,21 @@
-import type { GetLocationIf } from '../../types/location/types'
-import { useGetLocationQuery } from '../../store/location/api'
-import { validateLocationOrUndefined } from '../../validation/location'
+import type {
+  GetLocationHookIf,
+  UseGetLocation,
+  ValidateLocationOrUndefined,
+} from './types'
+import { unwrapMemberOrUndefined } from '../envelope'
 
-const getLocation: () => GetLocationIf = () => {
-  const getLocationIf: GetLocationIf = {
+const getLocation: (
+  useGetLocation: UseGetLocation,
+  validateLocationOrUndefined: ValidateLocationOrUndefined,
+) => GetLocationHookIf = (useGetLocation, validateLocationOrUndefined) => {
+  const getLocationIf: GetLocationHookIf = {
     useGet: (locationId: string) => {
-      const { data, isLoading } = useGetLocationQuery(locationId)
+      const { data, isLoading } = useGetLocation(locationId)
       return {
-        location: validateLocationOrUndefined(data?.location),
+        location: validateLocationOrUndefined(
+          unwrapMemberOrUndefined(data, 'location'),
+        ),
         isLoading,
       }
     },

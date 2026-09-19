@@ -1,79 +1,109 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
-import createStyle from './create'
-import type { Style, CreateStyleRequest } from '../../types/style/types'
+import { expect, test, vitest } from 'vitest'
 import { render, waitFor } from '@testing-library/react'
+
+import createStyle from './create'
+import type {
+  CreateStyleRequest,
+  Style,
+  UseCreateStyle,
+  ValidateStyleOrUndefined,
+} from './types'
 import { setupUser } from '../../../test-util/user-event'
-import { Provider } from '../../react-redux-wrapper'
 
-import Button from '../../components/common/Button'
+// Stubs for the store function and the validator, for the reason given in
+// storehooks/brewery/get.test.tsx.
+const validatedStyle: Style = {
+  id: 'dc4ee8ed-f0f8-4f0b-a9ba-46b1f3e8c1dd',
+  name: 'Validated style',
+}
 
-let server: TestServer | undefined
+const created = { style: { id: 'created', name: 'Created style' } }
 
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
+const request: CreateStyleRequest = { name: 'Test style', parents: [] }
 
 interface HelperProps {
-  style: CreateStyleRequest
-  handleResponse: (style: Style) => void
+  data: unknown
+  hasError: boolean
+  isSuccess: boolean
+  onCreate: (style: CreateStyleRequest) => void
+  onValidate: (result: unknown) => void
 }
 
 function Helper(props: HelperProps): React.JSX.Element {
-  const createIf = createStyle()
-  const create = createIf.useCreate()
-  const handleClick = (): void => {
-    async function doHandle(): Promise<void> {
-      await create.create(props.style)
-    }
-    void doHandle()
+  const useStoreCreate: UseCreateStyle = () => ({
+    create: async (style: CreateStyleRequest): Promise<void> => {
+      props.onCreate(style)
+    },
+    data: props.data,
+    hasError: props.hasError,
+    isLoading: false,
+    isSuccess: props.isSuccess,
+  })
+  const validate: ValidateStyleOrUndefined = (result: unknown) => {
+    props.onValidate(result)
+    return result === undefined ? undefined : validatedStyle
   }
+  const { create, createdStyle, hasError, isLoading, isSuccess } = createStyle(
+    useStoreCreate,
+    validate,
+  ).useCreate()
   return (
-    <>
-      <Button onClick={handleClick} text='Test' />
-      <div>{create.createdStyle?.name}</div>
-    </>
+    <div>
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      <div>{hasError ? 'Failed' : 'Not failed'}</div>
+      <div>{isSuccess ? 'Succeeded' : 'Not succeeded'}</div>
+      <div>{createdStyle === undefined ? 'No style' : createdStyle.name}</div>
+      <button
+        type='button'
+        onClick={() => {
+          void create(request)
+        }}
+      >
+        Create
+      </button>
+    </div>
   )
 }
 
 test('create style', async () => {
   const user = setupUser()
-
-  const expectedResponse: { style: Style } = {
-    style: {
-      id: '31c67c1d-58e3-4c26-b91e-6d1738757475',
-      name: 'Test style',
-    },
-  }
-
-  server?.addResponse<{ style: Style }>({
-    method: 'POST',
-    pathname: '/api/v1/style',
-    response: expectedResponse,
-    status: 201,
-  })
+  const onCreate = vitest.fn()
+  const onValidate = vitest.fn()
 
   const { getByRole, getByText } = render(
-    <Provider store={store}>
-      <Helper
-        style={{ parents: [], name: expectedResponse.style.name }}
-        handleResponse={() => undefined}
-      />
-    </Provider>,
+    <Helper
+      data={created}
+      hasError={false}
+      isSuccess={true}
+      onCreate={onCreate}
+      onValidate={onValidate}
+    />,
   )
-  const testButton = getByRole('button', { name: 'Test' })
-  await user.click(testButton)
+  expect(getByText(validatedStyle.name)).toBeDefined()
+  expect(getByText('Succeeded')).toBeDefined()
+  expect(getByText('Not failed')).toBeDefined()
+  expect(getByText('Not loading')).toBeDefined()
+
+  await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(getByText(expectedResponse.style.name)).toBeDefined()
+    expect(onCreate).toHaveBeenCalledWith(request)
   })
+  // The envelope is unwrapped before the validator sees the style.
+  expect(onValidate).toHaveBeenCalledWith(created.style)
+})
+
+test('failed style creation has no created style', () => {
+  const { getByText } = render(
+    <Helper
+      data={undefined}
+      hasError={true}
+      isSuccess={false}
+      onCreate={() => undefined}
+      onValidate={() => undefined}
+    />,
+  )
+
+  expect(getByText('No style')).toBeDefined()
+  expect(getByText('Failed')).toBeDefined()
+  expect(getByText('Not succeeded')).toBeDefined()
 })

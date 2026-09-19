@@ -1,14 +1,14 @@
 import { render } from '@testing-library/react'
 import { test } from 'vitest'
 import Storages from './Storages'
-import type { Storage } from '../../types/storage/types'
-import { Role } from '../../types/user/types'
-import LinkWrapper from '../LinkWrapper'
-import type { UseUrlSearchParams } from '../../types/types'
-import type { CreateBeerIf, SearchBeerIf } from '../../types/beer/types'
-import type { ReviewContainerIf } from '../../types/review/types'
+import type { Storage } from '../types/storage/types'
+import { Role } from '../types/user/types'
+import type { UseUrlSearchParams } from '../types/types'
+import type { CreateBeerIf, SearchBeerIf } from '../types/beer/types'
+import type { ReviewContainerIf } from '../types/review/types'
 import { dontCall } from '../../../test-util/dont-call'
-import type { GetLogin } from '../../types/login/types'
+import type { GetLogin } from '../types/login/types'
+import { testLink } from '../../../test-util/link'
 
 const dontCreate = {
   create: dontCall,
@@ -125,64 +125,63 @@ test('renders storage', () => {
     refreshToken: 'refresh',
   })
   const { getByRole, getByText } = render(
-    <LinkWrapper>
-      <Storages
-        getLogin={getLogin}
-        listStoragesIf={{
-          useList: () => ({
-            data: {
-              storages: [storage],
-            },
-            storages: {
-              storages: [storage],
+    <Storages
+      linkComponent={testLink}
+      getLogin={getLogin}
+      listStoragesIf={{
+        useList: () => ({
+          data: {
+            storages: [storage],
+          },
+          storages: {
+            storages: [storage],
+          },
+          isLoading: false,
+        }),
+        delete: {
+          useDelete: () => ({
+            delete: dontCall,
+          }),
+          getLogin,
+        },
+      }}
+      selectBeerIf={{
+        create: dontCreateBeerIf,
+        search: beerSearchIf,
+      }}
+      statsIf={{
+        annual: {
+          useAnnualStats: () => ({
+            stats: undefined,
+            isLoading: false,
+          }),
+        },
+        monthly: {
+          useMonthlyStats: () => ({
+            stats: {
+              monthly: [
+                {
+                  year: '2024',
+                  month: '4',
+                  count: '15',
+                },
+              ],
             },
             isLoading: false,
           }),
-          delete: {
-            useDelete: () => ({
-              delete: dontCall,
-            }),
-            getLogin,
-          },
-        }}
-        selectBeerIf={{
-          create: dontCreateBeerIf,
-          search: beerSearchIf,
-        }}
-        statsIf={{
-          annual: {
-            useAnnualStats: () => ({
-              stats: undefined,
-              isLoading: false,
-            }),
-          },
-          monthly: {
-            useMonthlyStats: () => ({
-              stats: {
-                monthly: [
-                  {
-                    year: '2024',
-                    month: '4',
-                    count: '15',
-                  },
-                ],
-              },
-              isLoading: false,
-            }),
-          },
-          setSearch: async () => undefined,
-          useUrlSearchParams,
-        }}
-        createStorageIf={{
-          useCreate: () => ({
-            create: dontCall,
-            hasError: false,
-            isLoading: false,
-          }),
-        }}
-        reviewContainerIf={reviewContainerIf}
-      />
-    </LinkWrapper>,
+        },
+        setSearch: async () => undefined,
+        useUrlSearchParams,
+      }}
+      createStorageIf={{
+        useCreate: () => ({
+          create: dontCall,
+          hasError: false,
+          isLoading: false,
+        }),
+      }}
+      reviewContainerIf={reviewContainerIf}
+    />,
   )
   getByRole('link', { name: brewery.name })
   getByRole('link', { name: storage.beerName })

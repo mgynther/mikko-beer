@@ -1,101 +1,83 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
+import { expect, test, vitest } from 'vitest'
+import { render } from '@testing-library/react'
+
 import getBeer from './get'
-import type { Beer } from '../../types/beer/types'
-import { render, waitFor } from '@testing-library/react'
-import { Provider } from '../../react-redux-wrapper'
+import type { Beer, UseGetBeer, ValidateBeerOrUndefined } from './types'
 
-let server: TestServer | undefined
+// Both the store function and the validator are stubs. What the request looks
+// like is proven in the store layer and what a valid beer looks like in
+// the validation layer; what is proven here is that the response reaches the
+// validator through the envelope and that the validator's result reaches the
+// interface.
+const validatedBeer: Beer = {
+  id: '2b3c4d5e-6f70-4819-a2b3-c4d5e6f70819',
+  name: 'Validated beer',
+  breweries: [],
+  styles: [],
+}
 
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
+const beerId = 'ef20147e-c396-48c6-a314-ceef15a42ca5'
 
 interface HelperProps {
-  beerId: string
+  data: unknown
+  isLoading: boolean
+  onGet: (beerId: string) => void
+  onValidate: (result: unknown) => void
 }
 
 function Helper(props: HelperProps): React.JSX.Element {
-  const getIf = getBeer()
-  const { beer, isLoading } = getIf.useGetBeer(props.beerId)
+  const useStoreGet: UseGetBeer = (id: string) => {
+    props.onGet(id)
+    return { data: props.data, isLoading: props.isLoading }
+  }
+  const validate: ValidateBeerOrUndefined = (result: unknown) => {
+    props.onValidate(result)
+    return result === undefined ? undefined : validatedBeer
+  }
+  const { beer, isLoading } = getBeer(useStoreGet, validate).useGetBeer(beerId)
   return (
-    <>
-      <div>{beer?.name}</div>
-      {!isLoading && beer === undefined && <div>Failed</div>}
-    </>
+    <div>
+      <div>{beer === undefined ? 'No beer' : beer.name}</div>
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+    </div>
   )
 }
 
-test('get beer', async () => {
-  const expectedResponse: { beer: Beer } = {
-    beer: {
-      id: 'ef20147e-c396-48c6-a314-ceef15a42ca5',
-      name: 'Test beer',
-      breweries: [
-        {
-          id: 'e0bd0f1a-da5f-4fff-94fc-c2bd7ee79b3c',
-          name: 'Test brewery',
-        },
-      ],
-      styles: [
-        {
-          id: '76c407e6-9028-4eb7-9cad-b3a2c0df58f7',
-          name: 'Test style',
-        },
-      ],
-    },
-  }
-
-  server?.addResponse<{ beer: Beer }>({
-    method: 'GET',
-    pathname: `/api/v1/beer/${expectedResponse.beer.id}`,
-    response: expectedResponse,
-    status: 200,
-  })
+test('get beer', () => {
+  const onGet = vitest.fn()
+  const onValidate = vitest.fn()
+  const data = { beer: { id: beerId, name: 'Test beer' } }
 
   const { getByText } = render(
-    <Provider store={store}>
-      <Helper beerId={expectedResponse.beer.id} />
-    </Provider>,
+    <Helper
+      data={data}
+      isLoading={false}
+      onGet={onGet}
+      onValidate={onValidate}
+    />,
   )
-  await waitFor(() => {
-    expect(getByText(expectedResponse.beer.name)).toBeDefined()
-  })
+
+  expect(getByText(validatedBeer.name)).toBeDefined()
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onGet).toHaveBeenCalledWith(beerId)
+  // The envelope is unwrapped here, so the validator judges the beer and
+  // not the wrapper it arrived in.
+  expect(onValidate).toHaveBeenCalledWith(data.beer)
 })
 
-test('try to get beer that does not exist', async () => {
-  const beerId = 'c58d13a1-8485-4873-b386-a1132ca873e4'
-  type ErrorResponse = { error: { code: string; message: string } }
-  const expectedResponse: ErrorResponse = {
-    error: {
-      code: `BeerNotFound`,
-      message: `beer with id ${beerId}`,
-    },
-  }
-
-  server?.addResponse<ErrorResponse>({
-    method: 'GET',
-    pathname: `/api/v1/beer/${beerId}`,
-    response: expectedResponse,
-    status: 404,
-  })
+test('get beer that has not arrived', () => {
+  const onValidate = vitest.fn()
 
   const { getByText } = render(
-    <Provider store={store}>
-      <Helper beerId={beerId} />
-    </Provider>,
+    <Helper
+      data={undefined}
+      isLoading={true}
+      onGet={() => undefined}
+      onValidate={onValidate}
+    />,
   )
-  await waitFor(() => {
-    expect(getByText('Failed')).toBeDefined()
-  })
+
+  expect(getByText('No beer')).toBeDefined()
+  expect(getByText('Loading')).toBeDefined()
+  expect(onValidate).toHaveBeenCalledWith(undefined)
 })

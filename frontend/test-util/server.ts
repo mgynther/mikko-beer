@@ -1,7 +1,7 @@
 import { createServer as createNodeServer } from 'http'
 import type { IncomingMessage, ServerResponse } from 'http'
 import type { AddressInfo } from 'net'
-import { uniqueTestServerPort } from '../src/constants'
+import { uniqueTestServerPort } from '../src/store/internal/config/constants'
 
 interface Response<T> {
   method: 'GET' | 'POST' | 'PUT' | 'DELETE'

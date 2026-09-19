@@ -1,146 +1,105 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { testTimes } from '../../../test-util/filter-time'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
-import statsHook from './stats'
+import { expect, test, vitest } from 'vitest'
 import { render, waitFor } from '@testing-library/react'
-import { Provider } from '../../react-redux-wrapper'
+
+import statsHook from './stats'
+import type { BreweryStats, BreweryStatsQueryParams } from './types'
+import { statsStore } from '../../../test-util/stats-store'
+import { statsValidators } from '../../../test-util/stats-validators'
 import { setupUser } from '../../../test-util/user-event'
 
-import Button from '../../components/common/Button'
-import type {
-  BreweryStats,
-  BreweryStatsQueryParams,
-} from '../../types/stats/types'
+// Stubs for the store function and the validators, for the reason given in
+// storehooks/brewery/get.test.tsx. The store functions a test does not drive
+// are dontCall, so wiring the wrong one fails loudly.
+const validatedStats: BreweryStats = {
+  brewery: [],
+}
 
-let server: TestServer | undefined
+const queried = { brewery: [{ id: 'queried' }] }
+const held = { brewery: [{ id: 'held' }] }
 
-beforeAll(() => {
-  server = createServer()
-})
+const params: BreweryStatsQueryParams = {
+  breweryId: undefined,
+  locationId: undefined,
+  styleId: undefined,
+  pagination: { size: 10, skip: 0 },
+  sorting: { order: 'average', direction: 'asc' },
+  minReviewCount: 40,
+  maxReviewCount: 80,
+  minReviewAverage: 9,
+  maxReviewAverage: 9.3,
+  timeStart: 1,
+  timeEnd: 2,
+}
 
-beforeEach(() => {
-  server?.clear()
-})
+interface HelperProps {
+  onQuery: (params: BreweryStatsQueryParams) => void
+  onQueried: (stats: BreweryStats) => void
+  onValidate: (result: unknown) => void
+}
 
-afterAll(() => {
-  server?.close()
-})
-
-function BreweryStatsHelper(props: {
-  queryParams: BreweryStatsQueryParams
-}): React.JSX.Element {
-  const statsIf = statsHook()
-  const { query, stats } = statsIf.brewery.useStats()
+function Helper(props: HelperProps): React.JSX.Element {
+  const store = statsStore({
+    brewery: () => ({
+      query: async (queryParams: BreweryStatsQueryParams): Promise<unknown> => {
+        props.onQuery(queryParams)
+        return queried
+      },
+      data: held,
+      isFetching: false,
+    }),
+  })
+  const validators = statsValidators({
+    brewery: (result: unknown) => {
+      props.onValidate(result)
+      return validatedStats
+    },
+    breweryOrUndefined: (result: unknown) => {
+      props.onValidate(result)
+      return validatedStats
+    },
+  })
+  const { query, stats, isLoading } = statsHook(
+    store,
+    validators,
+  ).brewery.useStats()
   return (
     <div>
-      {stats?.brewery.map((brewery) => (
-        <div key={brewery.breweryId}>
-          <div>{brewery.breweryName}</div>
-          <div>{brewery.reviewAverage}</div>
-          <div>{brewery.reviewCount}</div>
-          <div>{brewery.reviewMedian}</div>
-          <div>{brewery.reviewMode}</div>
-          <div>{brewery.reviewStandardDeviation}</div>
-          <div>{brewery.reviewedBeerCount}</div>
-        </div>
-      ))}
-      <Button
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      <div>{stats === undefined ? 'No stats' : 'Validated stats'}</div>
+      <button
+        type='button'
         onClick={() => {
-          void query(props.queryParams)
+          void (async (): Promise<void> => {
+            props.onQueried(await query(params))
+          })()
         }}
-        text='Load'
-      />
+      >
+        Query
+      </button>
     </div>
   )
 }
 
 test('brewery stats', async () => {
   const user = setupUser()
-
-  const expectedResponse: BreweryStats = {
-    brewery: [
-      {
-        breweryId: '4f951cc6-1ce2-4fca-94a8-79369c278005',
-        breweryName: 'Koskipanimo',
-        breweryCountry: 'FI',
-        reviewAverage: '9.08',
-        reviewCount: '77',
-        reviewMedian: '9.00',
-        reviewMode: '9',
-        reviewStandardDeviation: '0.55',
-        reviewedBeerCount: '72',
-      },
-      {
-        breweryId: 'f78d663c-7ed2-4109-9070-5133887ee0d8',
-        breweryName: 'Mallassepät',
-        breweryCountry: undefined,
-        reviewAverage: '9.23',
-        reviewCount: '61',
-        reviewMedian: '9.50',
-        reviewMode: '10',
-        reviewStandardDeviation: '0.54',
-        reviewedBeerCount: '60',
-      },
-    ],
-  }
-
-  const queryParams: BreweryStatsQueryParams = {
-    breweryId: undefined,
-    locationId: undefined,
-    styleId: undefined,
-    pagination: { skip: 0, size: 10 },
-    sorting: {
-      order: 'average',
-      direction: 'asc',
-    },
-    minReviewCount: 40,
-    maxReviewCount: 80,
-    minReviewAverage: 9.0,
-    maxReviewAverage: 9.3,
-    timeStart: testTimes.min.utcTimestamp,
-    timeEnd: testTimes.max.utcTimestamp,
-  }
-
-  server?.addResponse<BreweryStats>({
-    method: 'GET',
-    pathname: `/api/v1/stats/brewery?size=${queryParams.pagination.size}&skip=${
-      queryParams.pagination.skip
-    }&order=${queryParams.sorting.order}&direction=${
-      queryParams.sorting.direction
-    }&min_review_count=${queryParams.minReviewCount}&max_review_count=${
-      queryParams.maxReviewCount
-    }&min_review_average=${queryParams.minReviewAverage}&max_review_average=${
-      queryParams.maxReviewAverage
-    }&time_start=${queryParams.timeStart}&time_end=${queryParams.timeEnd}`,
-    response: expectedResponse,
-    status: 200,
-  })
+  const onQuery = vitest.fn()
+  const onQueried = vitest.fn()
+  const onValidate = vitest.fn()
 
   const { getByRole, getByText } = render(
-    <Provider store={store}>
-      <BreweryStatsHelper queryParams={queryParams} />
-    </Provider>,
+    <Helper onQuery={onQuery} onQueried={onQueried} onValidate={onValidate} />,
   )
-  const loadButton = getByRole('button', { name: 'Load' })
-  await user.click(loadButton)
-  const koskipanimo = expectedResponse.brewery[0]
-  const mallassepat = expectedResponse.brewery[1]
+
+  // What the store already holds is validated on the way out, and what a
+  // query brings back is validated on its way through.
+  expect(getByText('Validated stats')).toBeDefined()
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onValidate).toHaveBeenCalledWith(held)
+
+  await user.click(getByRole('button', { name: 'Query' }))
   await waitFor(() => {
-    expect(getByText(koskipanimo.breweryName)).toBeDefined()
-    expect(getByText(koskipanimo.reviewAverage)).toBeDefined()
-    expect(getByText(koskipanimo.reviewCount)).toBeDefined()
-    expect(getByText(koskipanimo.reviewMedian)).toBeDefined()
-    expect(getByText(koskipanimo.reviewMode)).toBeDefined()
-    expect(getByText(koskipanimo.reviewStandardDeviation)).toBeDefined()
-    expect(getByText(koskipanimo.reviewedBeerCount)).toBeDefined()
-    expect(getByText(mallassepat.breweryName)).toBeDefined()
-    expect(getByText(mallassepat.reviewAverage)).toBeDefined()
-    expect(getByText(mallassepat.reviewCount)).toBeDefined()
-    expect(getByText(mallassepat.reviewMedian)).toBeDefined()
-    expect(getByText(mallassepat.reviewMode)).toBeDefined()
-    expect(getByText(mallassepat.reviewStandardDeviation)).toBeDefined()
-    expect(getByText(mallassepat.reviewedBeerCount)).toBeDefined()
+    expect(onQueried).toHaveBeenCalledWith(validatedStats)
   })
+  expect(onQuery).toHaveBeenCalledWith(params)
+  expect(onValidate).toHaveBeenCalledWith(queried)
 })

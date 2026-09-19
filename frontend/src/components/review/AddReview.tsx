@@ -1,15 +1,17 @@
+import type { NavigateIf } from '../types/types'
 import React, { useEffect, useState } from 'react'
 
-import type { CreateReviewIf, ReviewRequest } from '../../types/review/types'
-import type { GetStorageIf, Storage } from '../../types/storage/types'
+import type { CreateReviewIf, ReviewRequest } from '../types/review/types'
+import type { GetStorageIf, Storage } from '../types/storage/types'
 
-import Button from '../common/Button'
-import LoadingIndicator from '../common/LoadingIndicator'
+import Button from '../internal/common/Button'
+import LoadingIndicator from '../internal/common/LoadingIndicator'
 import { formatDateString } from '../util'
-import type { UseUrlPathParams } from '../util'
-import type { NavigateIf } from '../../navigation'
+import type { UseUrlPathParams } from '../types/types'
 
-import ReviewEditor, { type InitialReview } from './ReviewEditor'
+import ReviewEditor, {
+  type InitialReview,
+} from '../internal/review/ReviewEditor'
 
 import './AddReview.css'
 

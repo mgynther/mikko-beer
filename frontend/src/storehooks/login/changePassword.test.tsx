@@ -1,215 +1,81 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
-import changePassword from './changePassword'
+import { expect, test, vitest } from 'vitest'
 import { render, waitFor } from '@testing-library/react'
-import { Provider, useDispatch, useSelector } from '../../react-redux-wrapper'
+
+import changePassword from './changePassword'
+import type {
+  ChangePasswordParams,
+  PasswordChangeResult,
+  UseChangePassword,
+  UsePasswordChangeResult,
+} from './types'
 import { setupUser } from '../../../test-util/user-event'
 
-import Button from '../../components/common/Button'
-import { PasswordChangeResult } from '../../types/login/types'
-import { selectLogin, success } from '../../store/login/reducer'
-
-let server: TestServer | undefined
-
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
-
-interface Props {
-  userId: string
+// Stubs for the store functions, for the reason given in
+// storehooks/brewery/get.test.tsx. Changing a password validates nothing:
+// what is proven here is that the parameters reach the store and that the
+// result the store keeps reaches the interface.
+const params: ChangePasswordParams = {
+  userId: '00448764-b114-4c54-a409-05b23d14de14',
+  body: {
+    oldPassword: 'oldpassword',
+    newPassword: 'newpassword',
+  },
 }
 
-function Helper({ userId }: Props): React.JSX.Element {
-  const changePasswordIf = changePassword()
-  const { changePassword: doChangePassword } =
+interface HelperProps {
+  result: PasswordChangeResult
+  onChange: (params: ChangePasswordParams) => void
+}
+
+function Helper(props: HelperProps): React.JSX.Element {
+  const useStoreChange: UseChangePassword = () => ({
+    changePassword: async (
+      changeParams: ChangePasswordParams,
+    ): Promise<void> => {
+      props.onChange(changeParams)
+    },
+    isLoading: false,
+  })
+  const useStoreResult: UsePasswordChangeResult = () => props.result
+  const changePasswordIf = changePassword(useStoreChange, useStoreResult)
+  const { changePassword: doChangePassword, isLoading } =
     changePasswordIf.useChangePassword()
   const { getResult } = changePasswordIf.useGetPasswordChangeResult()
-  const result = getResult()
   return (
     <div>
-      <div>{result}</div>
-      <Button
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      <div>{getResult()}</div>
+      <button
+        type='button'
         onClick={() => {
-          void doChangePassword({
-            userId,
-            body: {
-              oldPassword: 'oldpassword',
-              newPassword: 'newpassword',
-            },
-          })
+          void doChangePassword(params)
         }}
-        text='Change password'
-      />
+      >
+        Change password
+      </button>
     </div>
   )
 }
 
-interface PasswordChangeTest {
-  name: string
-  status: number
-  result: PasswordChangeResult
-}
-
-const passwordChangeTests: PasswordChangeTest[] = [
-  {
-    name: 'success',
-    status: 200,
-    result: PasswordChangeResult.SUCCESS,
-  },
-  {
-    name: 'fail',
-    status: 400,
-    result: PasswordChangeResult.ERROR,
-  },
-]
-
-passwordChangeTests.forEach((testCase) => {
-  test(`change password: ${testCase.name}`, async () => {
-    const user = setupUser()
-
-    const userId = '00448764-b114-4c54-a409-05b23d14de14'
-
-    server?.addResponse<{ success: true }>({
-      method: 'POST',
-      pathname: `/api/v1/user/${userId}/change-password`,
-      response: { success: true },
-      status: testCase.status,
-    })
-
-    const { getByRole, getByText } = render(
-      <Provider store={store}>
-        <Helper userId={userId} />
-      </Provider>,
-    )
-    const changePasswordButton = getByRole('button', {
-      name: 'Change password',
-    })
-    await user.click(changePasswordButton)
-    await waitFor(() => {
-      expect(getByText(testCase.result)).toBeDefined()
-    })
-  })
-})
-
-function LoginDispatcher({ userId }: Props): React.JSX.Element {
-  const dispatch = useDispatch()
-  dispatch(
-    success({
-      user: {
-        id: userId,
-        username: 'admin',
-        role: 'admin',
-      },
-      authToken: 'auth',
-      refreshToken: 'refresh',
-    }),
-  )
-  return <div />
-}
-
-test('change password after token refresh', async () => {
+test('change password', async () => {
   const user = setupUser()
-
-  const userId = '53e994bf-c4e7-4ec3-bbeb-a4b64591da00'
-
-  render(
-    <Provider store={store}>
-      <LoginDispatcher userId={userId} />
-    </Provider>,
-  )
-
-  server?.addResponse<{ success: true }>({
-    method: 'POST',
-    pathname: `/api/v1/user/${userId}/change-password`,
-    response: { success: true },
-    status: 401,
-  })
-
-  server?.addResponse<{ data: { authToken: string; refreshToken: string } }>({
-    method: 'POST',
-    pathname: `/api/v1/user/${userId}/refresh`,
-    response: { data: { authToken: 'auth', refreshToken: 'refresh' } },
-    status: 200,
-  })
-
-  // Served after the failing one above so that the request is retried with a
-  // refreshed token.
-  server?.addResponse<{ success: true }>({
-    method: 'POST',
-    pathname: `/api/v1/user/${userId}/change-password`,
-    response: { success: true },
-    status: 200,
-  })
+  const onChange = vitest.fn()
 
   const { getByRole, getByText } = render(
-    <Provider store={store}>
-      <Helper userId={userId} />
-    </Provider>,
+    <Helper result='UNDEFINED' onChange={onChange} />,
   )
-  const changePasswordButton = getByRole('button', { name: 'Change password' })
-  await user.click(changePasswordButton)
 
+  await user.click(getByRole('button', { name: 'Change password' }))
   await waitFor(() => {
-    expect(getByText(PasswordChangeResult.SUCCESS)).toBeDefined()
+    expect(onChange).toHaveBeenCalledWith(params)
   })
+  expect(getByText('Not loading')).toBeDefined()
 })
 
-function LoginStatusHelper(): React.JSX.Element {
-  const loginState = useSelector(selectLogin)
-  const isLoggedIn = loginState.user !== undefined
-  return <div>{isLoggedIn ? 'Logged in' : 'Logged out'}</div>
-}
-
-test('log out on failed token refresh', async () => {
-  const user = setupUser()
-
-  const userId = '7d869f30-4220-4910-9c2d-d4449aff8a79'
-
-  render(
-    <Provider store={store}>
-      <LoginDispatcher userId={userId} />
-    </Provider>,
+test('the password change result comes from the store', () => {
+  const { getByText } = render(
+    <Helper result='SUCCESS' onChange={() => undefined} />,
   )
 
-  render(
-    <Provider store={store}>
-      <LoginStatusHelper />
-    </Provider>,
-  )
-
-  server?.addResponse<{ success: true }>({
-    method: 'POST',
-    pathname: `/api/v1/user/${userId}/change-password`,
-    response: { success: true },
-    status: 401,
-  })
-
-  server?.addResponse<{ data: { authToken: string; refreshToken: string } }>({
-    method: 'POST',
-    pathname: `/api/v1/user/${userId}/refresh`,
-    response: { data: { authToken: 'auth', refreshToken: 'refresh' } },
-    status: 500,
-  })
-
-  const { getByRole, getByText } = render(
-    <Provider store={store}>
-      <Helper userId={userId} />
-    </Provider>,
-  )
-  expect(getByText('Logged in')).toBeDefined()
-  const changePasswordButton = getByRole('button', { name: 'Change password' })
-  await user.click(changePasswordButton)
-  await waitFor(() => {
-    expect(getByText('Logged out')).toBeDefined()
-  })
+  expect(getByText('SUCCESS')).toBeDefined()
 })

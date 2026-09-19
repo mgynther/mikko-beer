@@ -1,15 +1,22 @@
-import type { Brewery, UpdateBreweryHookIf } from '../../types/brewery/types'
-import { useUpdateBreweryMutation } from '../../store/brewery/api'
-import { validateBrewery } from '../../validation/brewery'
+import type {
+  Brewery,
+  UpdateBreweryHookIf,
+  UseUpdateBrewery,
+  ValidateBrewery,
+} from './types'
+import { unwrapMember } from '../envelope'
 
-const updateBrewery: () => UpdateBreweryHookIf = () => {
+const updateBrewery: (
+  useUpdateBrewery: UseUpdateBrewery,
+  validateBrewery: ValidateBrewery,
+) => UpdateBreweryHookIf = (useUpdateBrewery, validateBrewery) => {
   const updateBreweryIf: UpdateBreweryHookIf = {
     useUpdate: () => {
-      const [updateBrewery, { isLoading }] = useUpdateBreweryMutation()
+      const { update, isLoading } = useUpdateBrewery()
       return {
         update: async (breweryRequest: Brewery): Promise<void> => {
-          const result = await updateBrewery(breweryRequest).unwrap()
-          validateBrewery(result.brewery)
+          const result = await update(breweryRequest)
+          validateBrewery(unwrapMember(result, 'brewery'))
         },
         isLoading,
       }

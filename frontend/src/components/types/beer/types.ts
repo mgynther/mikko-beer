@@ -1,0 +1,94 @@
+import type { BreweryBasics, SelectBreweryIf } from '../brewery/types'
+import type { GetLogin } from '../login/types'
+import type { SearchFieldIf } from '../search/types'
+import type { SelectStyleIf, Style } from '../style/types'
+import type { InfiniteScroll, Pagination } from '../types'
+
+export interface CreateBeerRequest {
+  name: string
+  breweries: string[]
+  styles: string[]
+}
+
+export interface Beer {
+  id: string
+  name: string
+  breweries: BreweryBasics[]
+  styles: Style[]
+}
+
+export interface BeerWithIds {
+  id: string
+  name: string
+  breweries: string[]
+  styles: string[]
+}
+
+export interface BeerList {
+  beers: Beer[]
+}
+
+type UseCreateBeer = () => {
+  create: (request: CreateBeerRequest) => Promise<BeerWithIds>
+  isLoading: boolean
+}
+
+export interface CreateBeerIf {
+  useCreate: UseCreateBeer
+  editBeerIf: EditBeerIf
+}
+
+type UseUpdateBeer = () => {
+  update: (request: BeerWithIds) => Promise<void>
+  isLoading: boolean
+}
+
+export interface UpdateBeerIf {
+  useUpdate: UseUpdateBeer
+  editBeerIf: EditBeerIf
+}
+
+export interface UpdateBeerLoginIf {
+  useUpdate: UseUpdateBeer
+  editBeerIf: EditBeerIf
+  getLogin: GetLogin
+}
+
+export interface GetBeerIf {
+  useGetBeer: (beerId: string) => {
+    beer: Beer | undefined
+    isLoading: boolean
+  }
+}
+
+type UseListBeers = () => {
+  list: (pagination: Pagination) => Promise<BeerList>
+  beerList: BeerList | undefined
+  isLoading: boolean
+  isUninitialized: boolean
+}
+
+export interface ListBeersIf {
+  useList: UseListBeers
+  infiniteScroll: InfiniteScroll
+}
+
+export interface EditBeerIf {
+  selectBreweryIf: SelectBreweryIf
+  selectStyleIf: SelectStyleIf
+}
+
+type UseSearchBeer = () => {
+  search: (query: string) => Promise<Beer[]>
+  isLoading: boolean
+}
+
+export interface SearchBeerIf {
+  useSearch: UseSearchBeer
+  searchFieldIf: SearchFieldIf
+}
+
+export interface SelectBeerIf {
+  create: CreateBeerIf
+  search: SearchBeerIf
+}

@@ -1,11 +1,16 @@
-import type { ListUsersIf } from '../../types/user/types'
-import { useListUsersQuery } from '../../store/user/api'
-import { validateUserListOrUndefined } from '../../validation/user'
+import type {
+  ListUsersHookIf,
+  UseListUsers,
+  ValidateUserListOrUndefined,
+} from './types'
 
-const listUsers: () => ListUsersIf = () => {
-  const listUsersIf: ListUsersIf = {
+const listUsers: (
+  useListUsers: UseListUsers,
+  validateUserListOrUndefined: ValidateUserListOrUndefined,
+) => ListUsersHookIf = (useListUsers, validateUserListOrUndefined) => {
+  const listUsersIf: ListUsersHookIf = {
     useList: () => {
-      const { data, isLoading } = useListUsersQuery()
+      const { data, isLoading } = useListUsers()
       return {
         data: validateUserListOrUndefined(data),
         isLoading,

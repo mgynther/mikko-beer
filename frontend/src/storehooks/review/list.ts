@@ -2,24 +2,27 @@ import type {
   JoinedReviewList,
   ListReviewParams,
   ListReviewsHookIf,
-} from '../../types/review/types'
-import { useLazyListReviewsQuery } from '../../store/review/api'
-import {
+  UseListReviews,
+  ValidateJoinedReviewList,
+  ValidateJoinedReviewListOrUndefined,
+} from './types'
+
+const listReviews: (
+  useListReviews: UseListReviews,
+  validateJoinedReviewList: ValidateJoinedReviewList,
+  validateJoinedReviewListOrUndefined: ValidateJoinedReviewListOrUndefined,
+) => ListReviewsHookIf = (
+  useListReviews,
   validateJoinedReviewList,
   validateJoinedReviewListOrUndefined,
-} from '../../validation/review'
-
-const listReviews: () => ListReviewsHookIf = () => {
+) => {
   const listReviewsIf: ListReviewsHookIf = {
     useList: () => {
-      const [trigger, { data, isFetching, isUninitialized }] =
-        useLazyListReviewsQuery()
+      const { list, data, isFetching, isUninitialized } = useListReviews()
       return {
         reviewList: validateJoinedReviewListOrUndefined(data),
-        list: async (params: ListReviewParams): Promise<JoinedReviewList> => {
-          const result = await trigger(params).unwrap()
-          return validateJoinedReviewList(result)
-        },
+        list: async (params: ListReviewParams): Promise<JoinedReviewList> =>
+          validateJoinedReviewList(await list(params)),
         isLoading: isFetching,
         isUninitialized,
       }

@@ -1,89 +1,129 @@
-import { beforeAll, beforeEach, afterAll, expect, test, vitest } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
-import updateReview from './update'
-import type { Review } from '../../types/review/types'
+import { expect, test, vitest } from 'vitest'
 import { render, waitFor } from '@testing-library/react'
+
+import updateReview from './update'
+import type { Review, UseUpdateReview, ValidateReview } from './types'
 import { setupUser } from '../../../test-util/user-event'
-import { Provider } from '../../react-redux-wrapper'
 
-import Button from '../../components/common/Button'
+// Stubs for the store function and the validator, for the reason given in
+// storehooks/brewery/get.test.tsx.
+const validatedReview: Review = {
+  id: '9f8e7d6c-5b4a-4392-8170-6f5e4d3c2b1a',
+  additionalInfo: 'Validated additional info',
+  beer: '1f2e3d4c-5b6a-4798-8071-2f3e4d5c6b7a',
+  container: '2e3d4c5b-6a79-4881-9062-3e4d5c6b7a89',
+  location: '3d4c5b6a-7988-4172-8053-4d5c6b7a8998',
+  rating: 7,
+  smell: 'Validated smell',
+  taste: 'Validated taste',
+  time: '2025-01-01T00:00:00.000Z',
+}
 
-let server: TestServer | undefined
+const updated = { review: { id: 'updated', taste: 'Updated taste' } }
 
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
+const review: Review = {
+  id: '0b1c2d3e-4f50-4617-8293-a4b5c6d7e8f9',
+  additionalInfo: 'Test additional info',
+  beer: '1c2d3e4f-5061-4728-93a4-b5c6d7e8f901',
+  container: '2d3e4f50-6172-4839-a4b5-c6d7e8f90112',
+  location: '3e4f5061-7283-494a-b5c6-d7e8f9011223',
+  rating: 9,
+  smell: 'Test smell',
+  taste: 'Test taste',
+  time: '2026-03-12T00:00:00.000Z',
+}
 
 interface HelperProps {
-  review: Review
-  handler: () => void
+  onUpdate: (review: Review) => void
+  onUpdated: () => void
+  onError: () => void
+  validate: ValidateReview
 }
 
 function Helper(props: HelperProps): React.JSX.Element {
-  const updateIf = updateReview()
-  const update = updateIf.useUpdate()
-  const handleClick = (): void => {
-    async function doHandle(): Promise<void> {
-      await update.update(props.review)
-      props.handler()
-    }
-    void doHandle()
-  }
+  const useStoreUpdate: UseUpdateReview = () => ({
+    update: async (updatedReview: Review): Promise<unknown> => {
+      props.onUpdate(updatedReview)
+      return updated
+    },
+    isLoading: false,
+  })
+  const { update, isLoading } = updateReview(
+    useStoreUpdate,
+    props.validate,
+  ).useUpdate()
   return (
-    <>
-      <Button onClick={handleClick} text='Test' />
-      {update.isLoading && <div>Loading</div>}
-      {!update.isLoading && <div>Not loading</div>}
-    </>
+    <div>
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      <button
+        type='button'
+        onClick={() => {
+          void (async (): Promise<void> => {
+            try {
+              await update(review)
+              props.onUpdated()
+            } catch {
+              props.onError()
+            }
+          })()
+        }}
+      >
+        Update
+      </button>
+    </div>
   )
 }
 
 test('update review', async () => {
   const user = setupUser()
-
-  const expectedResponse: { review: Review } = {
-    review: {
-      id: '47726cec-e692-4a07-8eb3-410f69610b04',
-      additionalInfo: 'Test additional info',
-      beer: '618002af-1732-4772-9df1-b8faff268cb5',
-      container: '921b4081-8c73-4931-aaf1-69a6ce78a2b6',
-      location: 'd36fb4db-78e6-484a-8bd9-4afee3472fd6',
-      rating: 8,
-      smell: 'Test smell',
-      taste: 'Test taste',
-      time: '2026-03-12T00:00:00.000Z',
-    },
+  const onUpdate = vitest.fn()
+  const onUpdated = vitest.fn()
+  const onValidate = vitest.fn()
+  const validate: ValidateReview = (result: unknown) => {
+    onValidate(result)
+    return validatedReview
   }
 
-  server?.addResponse<{ review: Review }>({
-    method: 'PUT',
-    pathname: `/api/v1/review/${expectedResponse.review.id}`,
-    response: expectedResponse,
-    status: 200,
-  })
-
-  const handler = vitest.fn()
   const { getByRole, getByText } = render(
-    <Provider store={store}>
-      <Helper handler={handler} review={expectedResponse.review} />
-    </Provider>,
+    <Helper
+      onUpdate={onUpdate}
+      onUpdated={onUpdated}
+      onError={() => undefined}
+      validate={validate}
+    />,
   )
-  const testButton = getByRole('button', { name: 'Test' })
-  await user.click(testButton)
+
+  await user.click(getByRole('button', { name: 'Update' }))
   await waitFor(() => {
-    expect(handler).toHaveBeenCalled()
+    expect(onUpdated).toHaveBeenCalled()
   })
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onUpdate).toHaveBeenCalledWith(review)
+  expect(onValidate).toHaveBeenCalledWith(updated.review)
+})
+
+test('fail to update review that does not validate', async () => {
+  const user = setupUser()
+  const onUpdated = vitest.fn()
+  const onError = vitest.fn()
+
+  const { getByRole } = render(
+    <Helper
+      onUpdate={() => undefined}
+      onUpdated={onUpdated}
+      onError={onError}
+      validate={() => {
+        throw Error('Could not validate data')
+      }}
+    />,
+  )
+
+  await user.click(getByRole('button', { name: 'Update' }))
+  // A response that does not validate must not be reported as a successful
+  // update: the throw propagates out of update and what follows it is never
+  // reached.
   await waitFor(() => {
-    expect(getByText('Not loading')).toBeDefined()
+    expect(onError).toHaveBeenCalled()
   })
+  expect(onUpdated).not.toHaveBeenCalled()
 })

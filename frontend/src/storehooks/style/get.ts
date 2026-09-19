@@ -1,16 +1,19 @@
-import type { GetStyleIf } from '../../types/style/types'
-import { useGetStyleQuery } from '../../store/style/api'
-// prettier-ignore
-import {
-  validateStyleWithParentsAndChildrenOrUndefined
-} from '../../validation/style'
+import type {
+  GetStyleHookIf,
+  UseGetStyle,
+  ValidateStyleWithParentsAndChildrenOrUndefined,
+} from './types'
+import { unwrapMemberOrUndefined } from '../envelope'
 
-const getStyle: () => GetStyleIf = () => {
-  const getStyleIf: GetStyleIf = {
+const getStyle: (
+  useGetStyle: UseGetStyle,
+  validateStyle: ValidateStyleWithParentsAndChildrenOrUndefined,
+) => GetStyleHookIf = (useGetStyle, validateStyle) => {
+  const getStyleIf: GetStyleHookIf = {
     useGet: (styleId: string) => {
-      const { data, isLoading } = useGetStyleQuery(styleId)
+      const { data, isLoading } = useGetStyle(styleId)
       return {
-        style: validateStyleWithParentsAndChildrenOrUndefined(data?.style),
+        style: validateStyle(unwrapMemberOrUndefined(data, 'style')),
         isLoading,
       }
     },

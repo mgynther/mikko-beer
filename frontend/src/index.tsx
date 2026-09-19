@@ -1,25 +1,13 @@
-import React from 'react'
 import ReactDOM from 'react-dom/client'
-import LinkWrapper from './components/LinkWrapper'
-import './index.css'
-import RtkApp from './RtkApp'
 import { onCLS, onINP, onLCP } from 'web-vitals'
 
-import { Provider } from './react-redux-wrapper'
-import { store } from './store/store'
+import './index.css'
+import Root from './wiring/Root'
 
 const rootElement = document.getElementById('root')
 if (rootElement === null) throw new Error('Element with id root missing')
 const root = ReactDOM.createRoot(rootElement)
-root.render(
-  <Provider store={store}>
-    <React.StrictMode>
-      <LinkWrapper>
-        <RtkApp />
-      </LinkWrapper>
-    </React.StrictMode>
-  </Provider>,
-)
+root.render(<Root />)
 
 onCLS(console.log)
 onINP(console.log)

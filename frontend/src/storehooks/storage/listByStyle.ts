@@ -1,11 +1,19 @@
-import type { ListStoragesByHookIf } from '../../types/storage/types'
-import { useListStoragesByStyleQuery } from '../../store/storage/api'
-import { validateStorageListOrUndefined } from '../../validation/storage'
+import type {
+  ListStoragesByHookIf,
+  UseListStoragesBy,
+  ValidateStorageListOrUndefined,
+} from './types'
 
-const listStoragesByStyle: () => ListStoragesByHookIf = () => {
+const listStoragesByStyle: (
+  useListStoragesByStyle: UseListStoragesBy,
+  validateStorageListOrUndefined: ValidateStorageListOrUndefined,
+) => ListStoragesByHookIf = (
+  useListStoragesByStyle,
+  validateStorageListOrUndefined,
+) => {
   const listStoragesByStyleIf: ListStoragesByHookIf = {
-    useList: (breweryId: string) => {
-      const { data, isLoading } = useListStoragesByStyleQuery(breweryId)
+    useList: (id: string) => {
+      const { data, isLoading } = useListStoragesByStyle(id)
       return {
         storages: validateStorageListOrUndefined(data),
         isLoading,

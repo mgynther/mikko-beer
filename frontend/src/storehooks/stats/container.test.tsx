@@ -1,89 +1,67 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
+import { expect, test, vitest } from 'vitest'
+import { render } from '@testing-library/react'
+
 import statsHook from './stats'
-import { render, waitFor } from '@testing-library/react'
-import { Provider } from '../../react-redux-wrapper'
+import type { IdParams, ContainerStats } from './types'
+import { statsStore } from '../../../test-util/stats-store'
+import { statsValidators } from '../../../test-util/stats-validators'
 
-import type { ContainerStats, IdParams } from '../../types/stats/types'
+// Stubs for the store function and the validator, for the reason given in
+// storehooks/brewery/get.test.tsx. The store functions a test does not drive
+// are dontCall, so wiring the wrong one fails loudly.
+const validatedStats: ContainerStats = {
+  container: [],
+}
 
-let server: TestServer | undefined
+const data = { container: [{ id: 'one' }] }
 
-beforeAll(() => {
-  server = createServer()
-})
+const params: IdParams = {
+  breweryId: undefined,
+  locationId: undefined,
+  styleId: undefined,
+}
 
-beforeEach(() => {
-  server?.clear()
-})
+interface HelperProps {
+  onQuery: (params: IdParams) => void
+  onValidate: (result: unknown) => void
+}
 
-afterAll(() => {
-  server?.close()
-})
-
-function ContainerStatsHelper(props: { params: IdParams }): React.JSX.Element {
-  const statsIf = statsHook()
-  const { stats } = statsIf.container.useStats(props.params)
+function Helper(props: HelperProps): React.JSX.Element {
+  const store = statsStore({
+    container: (idParams: IdParams) => {
+      props.onQuery(idParams)
+      return { data, isLoading: false }
+    },
+  })
+  const validators = statsValidators({
+    containerOrUndefined: (result: unknown) => {
+      props.onValidate(result)
+      return validatedStats
+    },
+  })
+  const { stats, isLoading } = statsHook(store, validators).container.useStats(
+    params,
+  )
   return (
     <div>
-      {stats?.container.map((container) => (
-        <div key={container.containerId}>
-          <div>{container.containerType}</div>
-          <div>{container.containerSize}</div>
-          <div>{container.reviewAverage}</div>
-          <div>{container.reviewCount}</div>
-          <div>{container.reviewMedian}</div>
-          <div>{container.reviewMode}</div>
-          <div>{container.reviewStandardDeviation}</div>
-        </div>
-      ))}
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      <div>{stats === undefined ? 'No stats' : 'Validated stats'}</div>
     </div>
   )
 }
 
-test('container stats', async () => {
-  const expectedResponse: ContainerStats = {
-    container: [
-      {
-        containerId: 'a7b8c9d0-e1f2-3456-abcd-ef1234567890',
-        containerSize: '0.50',
-        containerType: 'can',
-        reviewAverage: '7.55',
-        reviewCount: '88',
-        reviewMedian: '8.00',
-        reviewMode: '8',
-        reviewStandardDeviation: '0.86',
-      },
-    ],
-  }
-
-  const params: IdParams = {
-    breweryId: undefined,
-    locationId: '7f67282b-a8b9-4424-b43d-df6f41c7c48f',
-    styleId: undefined,
-  }
-
-  server?.addResponse<ContainerStats>({
-    method: 'GET',
-    pathname: `/api/v1/stats/container?location=${params.locationId}`,
-    response: expectedResponse,
-    status: 200,
-  })
+test('container stats', () => {
+  const onQuery = vitest.fn()
+  const onValidate = vitest.fn()
 
   const { getByText } = render(
-    <Provider store={store}>
-      <ContainerStatsHelper params={params} />
-    </Provider>,
+    <Helper onQuery={onQuery} onValidate={onValidate} />,
   )
-  const container = expectedResponse.container[0]
-  await waitFor(() => {
-    expect(getByText(container.containerType)).toBeDefined()
-  })
-  expect(getByText(container.containerSize)).toBeDefined()
-  expect(getByText(container.reviewAverage)).toBeDefined()
-  expect(getByText(container.reviewCount)).toBeDefined()
-  expect(getByText(container.reviewMedian)).toBeDefined()
-  expect(getByText(container.reviewMode)).toBeDefined()
-  expect(getByText(container.reviewStandardDeviation)).toBeDefined()
+
+  expect(getByText('Validated stats')).toBeDefined()
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onQuery).toHaveBeenCalledWith(params)
+  // These statistics are not wrapped in an envelope, so the validator is
+  // given the response as it arrived.
+  expect(onValidate).toHaveBeenCalledWith(data)
 })

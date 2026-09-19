@@ -1,17 +1,21 @@
-import type { Location, SearchLocationHookIf } from '../../types/location/types'
-import { useLazySearchLocationsQuery } from '../../store/location/api'
-import { validateLocationList } from '../../validation/location'
+import type {
+  Location,
+  SearchLocationHookIf,
+  UseSearchLocations,
+  ValidateLocationList,
+} from './types'
 import { formatQuery } from '../search-query'
 
-const searchLocation: () => SearchLocationHookIf = () => {
+const searchLocation: (
+  useSearchLocations: UseSearchLocations,
+  validateLocationList: ValidateLocationList,
+) => SearchLocationHookIf = (useSearchLocations, validateLocationList) => {
   const searchLocationIf: SearchLocationHookIf = {
     useSearch: () => {
-      const [searchLocation, { isFetching }] = useLazySearchLocationsQuery()
+      const { search, isFetching } = useSearchLocations()
       return {
-        search: async (name: string): Promise<Location[]> => {
-          const result = await searchLocation(formatQuery(name)).unwrap()
-          return validateLocationList(result).locations
-        },
+        search: async (name: string): Promise<Location[]> =>
+          validateLocationList(await search(formatQuery(name))).locations,
         isLoading: isFetching,
       }
     },

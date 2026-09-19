@@ -1,13 +1,14 @@
-import type { DeleteStorageHookIf } from '../../types/storage/types'
-import { useDeleteStorageMutation } from '../../store/storage/api'
+import type { DeleteStorageHookIf, UseDeleteStorage } from './types'
 
-const deleteStorage: () => DeleteStorageHookIf = () => {
+const deleteStorage: (
+  useDeleteStorage: UseDeleteStorage,
+) => DeleteStorageHookIf = (useDeleteStorage) => {
   const deleteStorageIf: DeleteStorageHookIf = {
     useDelete: () => {
-      const [deleteStorage] = useDeleteStorageMutation()
+      const { delete: deleteById } = useDeleteStorage()
       return {
         delete: async (id: string): Promise<void> => {
-          await deleteStorage(id)
+          await deleteById(id)
         },
       }
     },

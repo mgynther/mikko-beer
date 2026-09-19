@@ -1,10 +1,10 @@
 import React from 'react'
 
-import type { UserIf } from '../../types/user/types'
+import type { UserIf } from '../types/user/types'
 
-import { confirmDialog } from '../confirm'
-import CreateUser from './CreateUser'
-import UserList from './UserList'
+import { confirmDialog } from '../internal/confirm'
+import CreateUser from '../internal/user/CreateUser'
+import UserList from '../internal/user/UserList'
 
 interface Props {
   userIf: UserIf

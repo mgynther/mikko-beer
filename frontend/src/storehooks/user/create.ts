@@ -1,25 +1,25 @@
-import type { CreateUserIf, CreateUserRequest } from '../../types/user/types'
-import { useCreateUserMutation } from '../../store/user/api'
-import { validateUserOrUndefined } from '../../validation/user'
+import type {
+  CreateUserHookIf,
+  CreateUserRequest,
+  UseCreateUser,
+  ValidateUserOrUndefined,
+} from './types'
+import { unwrapMemberOrUndefined } from '../envelope'
 
-const createUser: () => CreateUserIf = () => {
-  const createUserIf: CreateUserIf = {
+const createUser: (
+  useCreateUser: UseCreateUser,
+  validateUserOrUndefined: ValidateUserOrUndefined,
+) => CreateUserHookIf = (useCreateUser, validateUserOrUndefined) => {
+  const createUserIf: CreateUserHookIf = {
     useCreate: () => {
-      const [
-        createUser,
-        {
-          data: createdUserData,
-          error: createUserError,
-          isLoading: isCreatingUser,
-        },
-      ] = useCreateUserMutation()
+      const { create, data, hasError, isLoading } = useCreateUser()
       return {
         create: async (user: CreateUserRequest): Promise<void> => {
-          await createUser(user)
+          await create(user)
         },
-        user: validateUserOrUndefined(createdUserData?.user),
-        hasError: createUserError !== undefined,
-        isLoading: isCreatingUser,
+        user: validateUserOrUndefined(unwrapMemberOrUndefined(data, 'user')),
+        hasError,
+        isLoading,
       }
     },
   }

@@ -1,31 +1,52 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
+import { expect, test, vitest } from 'vitest'
+import { render } from '@testing-library/react'
+
 import listStorages from './list'
-import type { StorageList } from '../../types/storage/types'
-import { render, waitFor } from '@testing-library/react'
-import { Provider } from '../../react-redux-wrapper'
+import type {
+  StorageList,
+  UseListStorages,
+  ValidateStorageListOrUndefined,
+} from './types'
 
-let server: TestServer | undefined
+// Stubs for the store function and the validator, for the reason given in
+// storehooks/brewery/get.test.tsx.
+const validatedStorageList: StorageList = {
+  storages: [
+    {
+      id: 'c3d4e5f6-0718-4293-a4b5-c6d7e8f90112',
+      beerId: 'd4e5f607-1829-43a4-b5c6-d7e8f9011223',
+      beerName: 'Validated beer',
+      bestBefore: '2026-01-01T00:00:00.000Z',
+      breweries: [],
+      container: {
+        id: 'e5f60718-293a-44b5-8c6d-7e8f90112233',
+        type: 'bottle',
+        size: '0.33',
+      },
+      createdAt: '2025-01-01T00:00:00.000Z',
+      hasReview: false,
+      styles: [],
+    },
+  ],
+}
 
-beforeAll(() => {
-  server = createServer()
-})
+const listed = { storages: [{ id: 'listed', beerName: 'Listed beer' }] }
 
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
-
-function Helper(): React.JSX.Element {
-  const listIf = listStorages()
-  const { storages } = listIf.useList()
+function Helper(props: {
+  onValidate: (result: unknown) => void
+}): React.JSX.Element {
+  const useStoreList: UseListStorages = () => ({
+    data: listed,
+    isLoading: false,
+  })
+  const validate: ValidateStorageListOrUndefined = (result: unknown) => {
+    props.onValidate(result)
+    return validatedStorageList
+  }
+  const { storages, isLoading } = listStorages(useStoreList, validate).useList()
   return (
     <div>
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
       {storages?.storages.map((storage) => (
         <div key={storage.id}>{storage.beerName}</div>
       ))}
@@ -33,76 +54,12 @@ function Helper(): React.JSX.Element {
   )
 }
 
-test('list storages', async () => {
-  const expectedResponse: StorageList = {
-    storages: [
-      {
-        id: '896b7a5f-715c-4fa2-89d3-c0af91e902ea',
-        beerId: '2ecb1795-a6a2-4b4a-a7a5-c5f3cc459857',
-        beerName: 'Test beer',
-        bestBefore: '2025-12-10T12:00:00.000Z',
-        breweries: [
-          {
-            id: 'b065774f-32ad-45d0-95f6-289716a4441d',
-            name: 'Test brewery',
-          },
-        ],
-        container: {
-          id: '40572dbf-9336-4ac4-9a3a-958147a97c3e',
-          type: 'can',
-          size: '0.44',
-        },
-        createdAt: '2024-02-03T12:00:00.000Z',
-        hasReview: false,
-        styles: [
-          {
-            id: 'ee926cb7-1e23-4a26-8e9b-d2ac42d817b2',
-            name: 'Test style',
-          },
-        ],
-      },
-      {
-        id: '74260c4e-366c-4e35-89ef-052cb813db04',
-        beerId: '040483ad-e2c9-4bbf-90ee-60cc8efadfc2',
-        beerName: 'Another beer',
-        bestBefore: '2025-03-04T12:00:00.000Z',
-        breweries: [
-          {
-            id: '2a870b29-9f2d-4f62-bc05-aa6df676510e',
-            name: 'Another brewery',
-          },
-        ],
-        container: {
-          id: '2aaa8d00-01e7-4179-aa3b-588a542e1c7b',
-          type: 'bottle',
-          size: '0.50',
-        },
-        createdAt: '2025-10-12T12:00:00.000Z',
-        hasReview: false,
-        styles: [
-          {
-            id: 'd9bc09f9-e1c7-437b-87e5-9dc04d6fcc37',
-            name: 'Another style',
-          },
-        ],
-      },
-    ],
-  }
+test('list storages', () => {
+  const onValidate = vitest.fn()
 
-  server?.addResponse<StorageList>({
-    method: 'GET',
-    pathname: `/api/v1/storage`,
-    response: expectedResponse,
-    status: 200,
-  })
+  const { getByText } = render(<Helper onValidate={onValidate} />)
 
-  const { getByText } = render(
-    <Provider store={store}>
-      <Helper />
-    </Provider>,
-  )
-  await waitFor(() => {
-    expect(getByText(expectedResponse.storages[0].beerName)).toBeDefined()
-    expect(getByText(expectedResponse.storages[1].beerName)).toBeDefined()
-  })
+  expect(getByText(validatedStorageList.storages[0].beerName)).toBeDefined()
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onValidate).toHaveBeenCalledWith(listed)
 })

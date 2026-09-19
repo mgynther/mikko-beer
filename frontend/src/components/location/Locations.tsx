@@ -1,21 +1,22 @@
+import type { NavigateIf } from '../types/types'
 import React, { useEffect, useState } from 'react'
 
 import type {
   Location,
   ListLocationsIf,
   SearchLocationIf,
-} from '../../types/location/types'
+} from '../types/location/types'
 
-import type { NavigateIf } from '../../navigation'
+import LoadingIndicator from '../internal/common/LoadingIndicator'
 
-import LoadingIndicator from '../common/LoadingIndicator'
-
-import LocationLink from './LocationLink'
-import SearchLocationWithNavi from './SearchLocationWithNavi'
+import LocationLink from '../internal/location/LocationLink'
+import SearchLocationWithNavi from '../internal/location/SearchLocationWithNavi'
+import type { LinkComponent } from '../common/link'
 
 const pageSize = 20
 
 export interface Props {
+  linkComponent: LinkComponent
   listLocationsIf: ListLocationsIf
   navigateIf: NavigateIf
   searchLocationIf: SearchLocationIf
@@ -63,7 +64,10 @@ function Locations(props: Props): React.JSX.Element {
       <ul>
         {loadedLocations.map((location: Location) => (
           <li key={location.id}>
-            <LocationLink location={location} />
+            <LocationLink
+              linkComponent={props.linkComponent}
+              location={location}
+            />
           </li>
         ))}
       </ul>

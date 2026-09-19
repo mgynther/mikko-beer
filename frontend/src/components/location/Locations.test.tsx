@@ -1,13 +1,13 @@
 import { act, render, waitFor } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
 import Locations from './Locations'
-import type { Location, LocationList } from '../../types/location/types'
-import type { SearchFieldIf } from '../../types/search/types'
-import LinkWrapper from '../LinkWrapper'
-import type { UseDebounce } from '../../types/types'
-import type { CreateLocationIf } from '../../types/location/types'
-import { loadingIndicatorText } from '../common/LoadingIndicator'
+import type { Location, LocationList } from '../types/location/types'
+import type { SearchFieldIf } from '../types/search/types'
+import type { UseDebounce } from '../types/types'
+import type { CreateLocationIf } from '../types/location/types'
+import { loadingIndicatorText } from '../internal/common/LoadingIndicator'
 import { dontCall } from '../../../test-util/dont-call'
+import { testLink } from '../../../test-util/link'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -41,35 +41,34 @@ const locations: Location[] = [location, anotherLocation]
 test('renders locations', async () => {
   let scrollCb: () => void = () => undefined
   const { getByPlaceholderText, getByRole } = render(
-    <LinkWrapper>
-      <Locations
-        listLocationsIf={{
-          useList: () => ({
-            list: async (): Promise<LocationList> => ({
-              locations,
-            }),
-            locationList: { locations },
-            isLoading: false,
-            isUninitialized: false,
+    <Locations
+      linkComponent={testLink}
+      listLocationsIf={{
+        useList: () => ({
+          list: async (): Promise<LocationList> => ({
+            locations,
           }),
-          infiniteScroll: (cb): (() => undefined) => {
-            scrollCb = cb
-            return () => undefined
-          },
-        }}
-        navigateIf={{
-          useNavigate: () => dontCall,
-        }}
-        searchLocationIf={{
-          useSearch: () => ({
-            search: dontCall,
-            isLoading: false,
-          }),
-          create: createLocationIf,
-          searchFieldIf: activeSearch,
-        }}
-      />
-    </LinkWrapper>,
+          locationList: { locations },
+          isLoading: false,
+          isUninitialized: false,
+        }),
+        infiniteScroll: (cb): (() => undefined) => {
+          scrollCb = cb
+          return () => undefined
+        },
+      }}
+      navigateIf={{
+        useNavigate: () => dontCall,
+      }}
+      searchLocationIf={{
+        useSearch: () => ({
+          search: dontCall,
+          isLoading: false,
+        }),
+        create: createLocationIf,
+        searchFieldIf: activeSearch,
+      }}
+    />,
   )
   expect(scrollCb).not.toEqual(undefined)
   await act(async () => {
@@ -84,33 +83,32 @@ test('renders locations', async () => {
 test('renders loading', async () => {
   let scrollCb: () => void = () => undefined
   const { getByText } = render(
-    <LinkWrapper>
-      <Locations
-        listLocationsIf={{
-          useList: () => ({
-            list: dontCall,
-            locationList: undefined,
-            isLoading: true,
-            isUninitialized: true,
-          }),
-          infiniteScroll: (cb): (() => undefined) => {
-            scrollCb = cb
-            return () => undefined
-          },
-        }}
-        navigateIf={{
-          useNavigate: () => dontCall,
-        }}
-        searchLocationIf={{
-          useSearch: () => ({
-            search: dontCall,
-            isLoading: false,
-          }),
-          create: createLocationIf,
-          searchFieldIf: activeSearch,
-        }}
-      />
-    </LinkWrapper>,
+    <Locations
+      linkComponent={testLink}
+      listLocationsIf={{
+        useList: () => ({
+          list: dontCall,
+          locationList: undefined,
+          isLoading: true,
+          isUninitialized: true,
+        }),
+        infiniteScroll: (cb): (() => undefined) => {
+          scrollCb = cb
+          return () => undefined
+        },
+      }}
+      navigateIf={{
+        useNavigate: () => dontCall,
+      }}
+      searchLocationIf={{
+        useSearch: () => ({
+          search: dontCall,
+          isLoading: false,
+        }),
+        create: createLocationIf,
+        searchFieldIf: activeSearch,
+      }}
+    />,
   )
   scrollCb()
   await waitFor(() => getByText(loadingIndicatorText))
@@ -123,45 +121,44 @@ test('stops loading more', async () => {
     return listMore.mock.calls.length
   }
   const { getByText } = render(
-    <LinkWrapper>
-      <Locations
-        listLocationsIf={{
-          useList: () => ({
-            list: async (params): Promise<LocationList> => {
-              listMore(params)
-              if (getListRequestCount() > 1) {
-                return {
-                  locations: [],
-                }
-              }
+    <Locations
+      linkComponent={testLink}
+      listLocationsIf={{
+        useList: () => ({
+          list: async (params): Promise<LocationList> => {
+            listMore(params)
+            if (getListRequestCount() > 1) {
               return {
-                locations,
+                locations: [],
               }
-            },
-            locationList: {
-              locations: getListRequestCount() > 1 ? [] : [location],
-            },
-            isLoading: false,
-            isUninitialized: false,
-          }),
-          infiniteScroll: (cb): (() => undefined) => {
-            scrollCb = cb
-            return () => undefined
+            }
+            return {
+              locations,
+            }
           },
-        }}
-        navigateIf={{
-          useNavigate: () => dontCall,
-        }}
-        searchLocationIf={{
-          useSearch: () => ({
-            search: dontCall,
-            isLoading: false,
-          }),
-          create: createLocationIf,
-          searchFieldIf: activeSearch,
-        }}
-      />
-    </LinkWrapper>,
+          locationList: {
+            locations: getListRequestCount() > 1 ? [] : [location],
+          },
+          isLoading: false,
+          isUninitialized: false,
+        }),
+        infiniteScroll: (cb): (() => undefined) => {
+          scrollCb = cb
+          return () => undefined
+        },
+      }}
+      navigateIf={{
+        useNavigate: () => dontCall,
+      }}
+      searchLocationIf={{
+        useSearch: () => ({
+          search: dontCall,
+          isLoading: false,
+        }),
+        create: createLocationIf,
+        searchFieldIf: activeSearch,
+      }}
+    />,
   )
   // act is important to ensure changes have been fully applied. loading is not
   // toggled between renders so without act there would be a race condition in

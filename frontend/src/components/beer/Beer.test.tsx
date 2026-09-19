@@ -2,8 +2,7 @@ import { render } from '@testing-library/react'
 import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import Beer from './Beer'
-import { Role } from '../../types/user/types'
-import LinkWrapper from '../LinkWrapper'
+import { Role } from '../types/user/types'
 import type {
   IdFilteredListReviewParams,
   JoinedReview,
@@ -13,25 +12,22 @@ import type {
   ReviewIf,
   SetSearch,
   UpdateReviewIf,
-} from '../../types/review/types'
-import type { ListStoragesByIf } from '../../types/storage/types'
-import type {
-  UseDebounce,
-  UseUrlSearchParams,
-  YearMonth,
-} from '../../types/types'
-import { asText } from '../container/ContainerInfo'
-import type { SearchLocationIf } from '../../types/location/types'
-import type { SearchFieldIf } from '../../types/search/types'
+} from '../types/review/types'
+import type { ListStoragesByIf } from '../types/storage/types'
+import type { UseDebounce, UseUrlSearchParams, YearMonth } from '../types/types'
+import { asText } from '../internal/container/ContainerInfo'
+import type { SearchLocationIf } from '../types/location/types'
+import type { SearchFieldIf } from '../types/search/types'
 import type {
   EditBeerIf,
   GetBeerIf,
   UpdateBeerLoginIf,
-} from '../../types/beer/types'
-import type { UseUrlPathParams } from '../util'
-import { loadingIndicatorText } from '../common/LoadingIndicator'
+} from '../types/beer/types'
+import type { UseUrlPathParams } from '../types/types'
+import { loadingIndicatorText } from '../internal/common/LoadingIndicator'
 import { testTimes } from '../../../test-util/filter-time'
 import { dontCall } from '../../../test-util/dont-call'
+import { testLink } from '../../../test-util/link'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -297,15 +293,14 @@ const dontUpdateBeerIf: UpdateBeerLoginIf = {
 
 test('renders beer', async () => {
   const { getByRole, getByText } = render(
-    <LinkWrapper>
-      <Beer
-        updateBeerLoginIf={dontUpdateBeerIf}
-        listReviewsByBeerIf={getListReviewsIf([joinedReview])}
-        listStoragesByBeerIf={listStoragesByBeerIf}
-        getBeerIf={getBeerIf}
-        useUrlPathParams={useUrlPathParams}
-      />
-    </LinkWrapper>,
+    <Beer
+      linkComponent={testLink}
+      updateBeerLoginIf={dontUpdateBeerIf}
+      listReviewsByBeerIf={getListReviewsIf([joinedReview])}
+      listStoragesByBeerIf={listStoragesByBeerIf}
+      getBeerIf={getBeerIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
   )
 
   getByRole('heading', { name: beer.name })
@@ -318,15 +313,14 @@ test('renders beer', async () => {
 test('throw on missing id', async () => {
   expect(() =>
     render(
-      <LinkWrapper>
-        <Beer
-          updateBeerLoginIf={dontUpdateBeerIf}
-          listReviewsByBeerIf={getListReviewsIf([joinedReview])}
-          listStoragesByBeerIf={listStoragesByBeerIf}
-          getBeerIf={getBeerIf}
-          useUrlPathParams={() => ({})}
-        />
-      </LinkWrapper>,
+      <Beer
+        linkComponent={testLink}
+        updateBeerLoginIf={dontUpdateBeerIf}
+        listReviewsByBeerIf={getListReviewsIf([joinedReview])}
+        listStoragesByBeerIf={listStoragesByBeerIf}
+        getBeerIf={getBeerIf}
+        useUrlPathParams={() => ({})}
+      />,
     ),
   ).toThrow('Beer component without beerId. Should not happen.')
 })
@@ -335,22 +329,21 @@ test('updates beer', async () => {
   const user = setupUser()
   const update = vitest.fn()
   const { getByRole, getByPlaceholderText } = render(
-    <LinkWrapper>
-      <Beer
-        updateBeerLoginIf={{
-          useUpdate: () => ({
-            update,
-            isLoading: false,
-          }),
-          editBeerIf,
-          getLogin: () => login,
-        }}
-        listReviewsByBeerIf={getListReviewsIf([])}
-        listStoragesByBeerIf={listStoragesByBeerIf}
-        getBeerIf={getBeerIf}
-        useUrlPathParams={useUrlPathParams}
-      />
-    </LinkWrapper>,
+    <Beer
+      linkComponent={testLink}
+      updateBeerLoginIf={{
+        useUpdate: () => ({
+          update,
+          isLoading: false,
+        }),
+        editBeerIf,
+        getLogin: () => login,
+      }}
+      listReviewsByBeerIf={getListReviewsIf([])}
+      listStoragesByBeerIf={listStoragesByBeerIf}
+      getBeerIf={getBeerIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
   )
 
   const editButton = getByRole('button', { name: 'Edit' })
@@ -376,15 +369,14 @@ test('updates beer', async () => {
 test('cancel update', async () => {
   const user = setupUser()
   const { getByRole } = render(
-    <LinkWrapper>
-      <Beer
-        updateBeerLoginIf={dontUpdateBeerIf}
-        listReviewsByBeerIf={getListReviewsIf([])}
-        listStoragesByBeerIf={listStoragesByBeerIf}
-        getBeerIf={getBeerIf}
-        useUrlPathParams={useUrlPathParams}
-      />
-    </LinkWrapper>,
+    <Beer
+      linkComponent={testLink}
+      updateBeerLoginIf={dontUpdateBeerIf}
+      listReviewsByBeerIf={getListReviewsIf([])}
+      listStoragesByBeerIf={listStoragesByBeerIf}
+      getBeerIf={getBeerIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
   )
 
   const editButton = getByRole('button', { name: 'Edit' })
@@ -396,40 +388,38 @@ test('cancel update', async () => {
 
 test('render loading', async () => {
   const { getByText } = render(
-    <LinkWrapper>
-      <Beer
-        updateBeerLoginIf={dontUpdateBeerIf}
-        listReviewsByBeerIf={getListReviewsIf([])}
-        listStoragesByBeerIf={listStoragesByBeerIf}
-        getBeerIf={{
-          useGetBeer: () => ({
-            beer: undefined,
-            isLoading: true,
-          }),
-        }}
-        useUrlPathParams={useUrlPathParams}
-      />
-    </LinkWrapper>,
+    <Beer
+      linkComponent={testLink}
+      updateBeerLoginIf={dontUpdateBeerIf}
+      listReviewsByBeerIf={getListReviewsIf([])}
+      listStoragesByBeerIf={listStoragesByBeerIf}
+      getBeerIf={{
+        useGetBeer: () => ({
+          beer: undefined,
+          isLoading: true,
+        }),
+      }}
+      useUrlPathParams={useUrlPathParams}
+    />,
   )
   getByText(loadingIndicatorText)
 })
 
 test('render not found', async () => {
   const { getByText } = render(
-    <LinkWrapper>
-      <Beer
-        updateBeerLoginIf={dontUpdateBeerIf}
-        listReviewsByBeerIf={getListReviewsIf([])}
-        listStoragesByBeerIf={listStoragesByBeerIf}
-        getBeerIf={{
-          useGetBeer: () => ({
-            beer: undefined,
-            isLoading: false,
-          }),
-        }}
-        useUrlPathParams={useUrlPathParams}
-      />
-    </LinkWrapper>,
+    <Beer
+      linkComponent={testLink}
+      updateBeerLoginIf={dontUpdateBeerIf}
+      listReviewsByBeerIf={getListReviewsIf([])}
+      listStoragesByBeerIf={listStoragesByBeerIf}
+      getBeerIf={{
+        useGetBeer: () => ({
+          beer: undefined,
+          isLoading: false,
+        }),
+      }}
+      useUrlPathParams={useUrlPathParams}
+    />,
   )
   getByText('Not found')
 })
@@ -437,31 +427,30 @@ test('render not found', async () => {
 test('load reviews', async () => {
   const useList = vitest.fn()
   render(
-    <LinkWrapper>
-      <Beer
-        updateBeerLoginIf={dontUpdateBeerIf}
-        listReviewsByBeerIf={{
-          useList: (params: IdFilteredListReviewParams) => {
-            useList(params)
-            return {
-              reviews: {
-                reviews: [joinedReview],
-                sorting: {
-                  order: 'time',
-                  direction: 'asc',
-                },
+    <Beer
+      linkComponent={testLink}
+      updateBeerLoginIf={dontUpdateBeerIf}
+      listReviewsByBeerIf={{
+        useList: (params: IdFilteredListReviewParams) => {
+          useList(params)
+          return {
+            reviews: {
+              reviews: [joinedReview],
+              sorting: {
+                order: 'time',
+                direction: 'asc',
               },
-              isLoading: false,
-            }
-          },
-          filterIf: listFilterIf(() => undefined),
-          reviewIf,
-        }}
-        listStoragesByBeerIf={listStoragesByBeerIf}
-        getBeerIf={getBeerIf}
-        useUrlPathParams={useUrlPathParams}
-      />
-    </LinkWrapper>,
+            },
+            isLoading: false,
+          }
+        },
+        filterIf: listFilterIf(() => undefined),
+        reviewIf,
+      }}
+      listStoragesByBeerIf={listStoragesByBeerIf}
+      getBeerIf={getBeerIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
   )
   expect(useList.mock.calls).toEqual([
     [
@@ -483,30 +472,29 @@ test('sort reviews', async () => {
   const user = setupUser()
   const setSearch = vitest.fn()
   const { getByRole } = render(
-    <LinkWrapper>
-      <Beer
-        updateBeerLoginIf={dontUpdateBeerIf}
-        listReviewsByBeerIf={{
-          useList: () => {
-            return {
-              reviews: {
-                reviews: [joinedReview],
-                sorting: {
-                  order: 'time',
-                  direction: 'asc',
-                },
+    <Beer
+      linkComponent={testLink}
+      updateBeerLoginIf={dontUpdateBeerIf}
+      listReviewsByBeerIf={{
+        useList: () => {
+          return {
+            reviews: {
+              reviews: [joinedReview],
+              sorting: {
+                order: 'time',
+                direction: 'asc',
               },
-              isLoading: false,
-            }
-          },
-          filterIf: listFilterIf(setSearch),
-          reviewIf: reviewIf,
-        }}
-        listStoragesByBeerIf={listStoragesByBeerIf}
-        getBeerIf={getBeerIf}
-        useUrlPathParams={useUrlPathParams}
-      />
-    </LinkWrapper>,
+            },
+            isLoading: false,
+          }
+        },
+        filterIf: listFilterIf(setSearch),
+        reviewIf: reviewIf,
+      }}
+      listStoragesByBeerIf={listStoragesByBeerIf}
+      getBeerIf={getBeerIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
   )
   const ratingButton = getByRole('button', { name: 'Rating' })
   await user.click(ratingButton)
@@ -538,24 +526,23 @@ test('sort reviews', async () => {
 
 test('show loading indicator', async () => {
   const { getByText } = render(
-    <LinkWrapper>
-      <Beer
-        updateBeerLoginIf={dontUpdateBeerIf}
-        listReviewsByBeerIf={{
-          useList: () => {
-            return {
-              reviews: undefined,
-              isLoading: true,
-            }
-          },
-          filterIf: listFilterIf(() => undefined),
-          reviewIf: reviewIf,
-        }}
-        listStoragesByBeerIf={listStoragesByBeerIf}
-        getBeerIf={getBeerIf}
-        useUrlPathParams={useUrlPathParams}
-      />
-    </LinkWrapper>,
+    <Beer
+      linkComponent={testLink}
+      updateBeerLoginIf={dontUpdateBeerIf}
+      listReviewsByBeerIf={{
+        useList: () => {
+          return {
+            reviews: undefined,
+            isLoading: true,
+          }
+        },
+        filterIf: listFilterIf(() => undefined),
+        reviewIf: reviewIf,
+      }}
+      listStoragesByBeerIf={listStoragesByBeerIf}
+      getBeerIf={getBeerIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
   )
   getByText(loadingIndicatorText)
 })

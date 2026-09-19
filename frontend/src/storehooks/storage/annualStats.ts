@@ -1,13 +1,18 @@
-import type { GetAnnualStorageStatsIf } from '../../types/storage/types'
-import { useGetAnnualStorageStatsQuery } from '../../store/storage/api'
-import { validateAnnualStorageStatsOrUndefined } from '../../validation/storage'
+import type {
+  GetAnnualStorageStatsHookIf,
+  UseGetStorageStats,
+  ValidateAnnualStatsOrUndefined,
+} from './types'
 
-const getAnnualStorageStats: () => GetAnnualStorageStatsIf = () => {
-  const getAnnualStorageStatsIf: GetAnnualStorageStatsIf = {
+const getAnnualStorageStats: (
+  useStats: UseGetStorageStats,
+  validateStats: ValidateAnnualStatsOrUndefined,
+) => GetAnnualStorageStatsHookIf = (useStats, validateStats) => {
+  const getAnnualStorageStatsIf: GetAnnualStorageStatsHookIf = {
     useAnnualStats: () => {
-      const { data, isLoading } = useGetAnnualStorageStatsQuery()
+      const { data, isLoading } = useStats()
       return {
-        stats: validateAnnualStorageStatsOrUndefined(data),
+        stats: validateStats(data),
         isLoading,
       }
     },

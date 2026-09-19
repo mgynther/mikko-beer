@@ -1,85 +1,109 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
-import createUser from './create'
-import type { CreateUserRequest, User } from '../../types/user/types'
-import { Role } from '../../types/user/types'
+import { expect, test, vitest } from 'vitest'
 import { render, waitFor } from '@testing-library/react'
+
+import createUser from './create'
+import type {
+  CreateUserRequest,
+  UseCreateUser,
+  User,
+  ValidateUserOrUndefined,
+} from './types'
 import { setupUser } from '../../../test-util/user-event'
-import { Provider } from '../../react-redux-wrapper'
 
-import Button from '../../components/common/Button'
+// Stubs for the store function and the validator, for the reason given in
+// storehooks/brewery/get.test.tsx.
+const validatedUser: User = {
+  id: 'c7d8e9f0-a1b2-43c4-95d6-e7f8a9b0c1d2',
+  username: 'validateduser',
+  role: 'viewer',
+}
 
-let server: TestServer | undefined
+const created = { user: { id: 'created', username: 'created', role: 'admin' } }
 
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
+const request: CreateUserRequest = {
+  user: { role: 'viewer' },
+  passwordSignInMethod: {
+    username: 'testuser',
+    password: 'testpassword',
+  },
+}
 
 interface HelperProps {
-  request: CreateUserRequest
+  data: unknown
+  hasError: boolean
+  onCreate: (user: CreateUserRequest) => void
+  onValidate: (result: unknown) => void
 }
 
 function Helper(props: HelperProps): React.JSX.Element {
-  const createIf = createUser()
-  const create = createIf.useCreate()
-  const handleClick = (): void => {
-    async function doHandle(): Promise<void> {
-      await create.create(props.request)
-    }
-    void doHandle()
+  const useStoreCreate: UseCreateUser = () => ({
+    create: async (user: CreateUserRequest): Promise<void> => {
+      props.onCreate(user)
+    },
+    data: props.data,
+    hasError: props.hasError,
+    isLoading: false,
+  })
+  const validate: ValidateUserOrUndefined = (result: unknown) => {
+    props.onValidate(result)
+    return result === undefined ? undefined : validatedUser
   }
+  const { create, user, hasError, isLoading } = createUser(
+    useStoreCreate,
+    validate,
+  ).useCreate()
   return (
     <div>
-      {create.user !== undefined && <div>{create.user.username}</div>}
-      <Button onClick={handleClick} text='Test' />
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      <div>{hasError ? 'Failed' : 'Not failed'}</div>
+      <div>{user === undefined ? 'No user' : user.username}</div>
+      <button
+        type='button'
+        onClick={() => {
+          void create(request)
+        }}
+      >
+        Create
+      </button>
     </div>
   )
 }
 
 test('create user', async () => {
   const user = setupUser()
-
-  const expectedResponse: { user: User } = {
-    user: {
-      id: '999d495a-7b8e-4e44-a870-9f6e7d12254e',
-      username: 'testuser',
-      role: Role.viewer,
-    },
-  }
-
-  server?.addResponse<{ user: User }>({
-    method: 'POST',
-    pathname: '/api/v1/user',
-    response: expectedResponse,
-    status: 201,
-  })
+  const onCreate = vitest.fn()
+  const onValidate = vitest.fn()
 
   const { getByRole, getByText } = render(
-    <Provider store={store}>
-      <Helper
-        request={{
-          user: { role: Role.viewer },
-          passwordSignInMethod: {
-            username: expectedResponse.user.username,
-            password: 'testpassword',
-          },
-        }}
-      />
-    </Provider>,
+    <Helper
+      data={created}
+      hasError={false}
+      onCreate={onCreate}
+      onValidate={onValidate}
+    />,
   )
-  const testButton = getByRole('button', { name: 'Test' })
-  await user.click(testButton)
+  expect(getByText(validatedUser.username)).toBeDefined()
+  expect(getByText('Not failed')).toBeDefined()
+  expect(getByText('Not loading')).toBeDefined()
+
+  await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(getByText(expectedResponse.user.username)).toBeDefined()
+    expect(onCreate).toHaveBeenCalledWith(request)
   })
+  // The envelope is unwrapped before the validator sees the user.
+  expect(onValidate).toHaveBeenCalledWith(created.user)
+})
+
+test('failed user creation has no user', () => {
+  const { getByText } = render(
+    <Helper
+      data={undefined}
+      hasError={true}
+      onCreate={() => undefined}
+      onValidate={() => undefined}
+    />,
+  )
+
+  expect(getByText('No user')).toBeDefined()
+  expect(getByText('Failed')).toBeDefined()
 })

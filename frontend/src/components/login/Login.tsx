@@ -1,8 +1,8 @@
 import React, { type SubmitEvent, useState } from 'react'
 
-import type { LoginIf } from '../../types/login/types'
+import type { LoginIf } from '../types/login/types'
 
-import LoadingIndicator from '../common/LoadingIndicator'
+import LoadingIndicator from '../internal/common/LoadingIndicator'
 
 interface Props {
   loginIf: LoginIf

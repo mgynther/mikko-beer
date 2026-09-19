@@ -1,21 +1,24 @@
 import type {
   StyleWithParentIds,
   UpdateStyleHookIf,
-} from '../../types/style/types'
-import { useUpdateStyleMutation } from '../../store/style/api'
-import { validateStyle } from '../../validation/style'
+  UseUpdateStyle,
+  ValidateStyle,
+} from './types'
+import { unwrapMember } from '../envelope'
 
-const updateStyle: () => UpdateStyleHookIf = () => {
+const updateStyle: (
+  useUpdateStyle: UseUpdateStyle,
+  validateStyle: ValidateStyle,
+) => UpdateStyleHookIf = (useUpdateStyle, validateStyle) => {
   const updateStyleIf: UpdateStyleHookIf = {
     useUpdate: () => {
-      const [updateStyle, { isError, isLoading, isSuccess }] =
-        useUpdateStyleMutation()
+      const { update, hasError, isLoading, isSuccess } = useUpdateStyle()
       return {
         update: async (style: StyleWithParentIds): Promise<void> => {
-          const result = await updateStyle(style).unwrap()
-          validateStyle(result.style)
+          const result = await update(style)
+          validateStyle(unwrapMember(result, 'style'))
         },
-        hasError: isError,
+        hasError,
         isLoading,
         isSuccess,
       }

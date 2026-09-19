@@ -1,8 +1,24 @@
 import * as t from 'io-ts'
 import { isLeft } from 'fp-ts/Either'
 
-import type { Brewery, BreweryList } from '../types/brewery/types'
 import { formatError } from './format-error'
+
+// This layer's own view of a valid brewery, declared here rather than
+// imported from types/. See the comment in style.ts.
+//
+// Breweries referred to by other entities are not known by their country.
+export interface BreweryBasics {
+  id: string
+  name: string
+}
+
+export interface Brewery extends BreweryBasics {
+  country: string | undefined
+}
+
+export interface BreweryList {
+  breweries: Brewery[]
+}
 
 export const ValidatedBreweryBasics = t.type({
   id: t.string,
@@ -18,6 +34,15 @@ const ValidatedBrewery = t.type({
 const ValidatedBreweryList = t.type({
   breweries: t.array(ValidatedBrewery),
 })
+
+export function toBreweryBasics(
+  brewery: t.TypeOf<typeof ValidatedBreweryBasics>,
+): BreweryBasics {
+  return {
+    id: brewery.id,
+    name: brewery.name,
+  }
+}
 
 // A country missing from the response is an explicit undefined from here on,
 // so that no layer can forget to pass it along.
@@ -39,13 +64,11 @@ export function validateBreweryOrUndefined(
 }
 
 export function validateBrewery(result: unknown): Brewery {
-  type BreweryT = t.TypeOf<typeof ValidatedBrewery>
   const decoded = ValidatedBrewery.decode(result)
   if (isLeft(decoded)) {
     throw Error(formatError(decoded))
   }
-  const valid: BreweryT = decoded.right
-  return toBrewery(valid)
+  return toBrewery(decoded.right)
 }
 
 export function validateBreweryListOrUndefined(
@@ -58,13 +81,11 @@ export function validateBreweryListOrUndefined(
 }
 
 export function validateBreweryList(result: unknown): BreweryList {
-  type BreweryListT = t.TypeOf<typeof ValidatedBreweryList>
   const decoded = ValidatedBreweryList.decode(result)
   if (isLeft(decoded)) {
     throw Error(formatError(decoded))
   }
-  const valid: BreweryListT = decoded.right
   return {
-    breweries: valid.breweries.map(toBrewery),
+    breweries: decoded.right.breweries.map(toBrewery),
   }
 }

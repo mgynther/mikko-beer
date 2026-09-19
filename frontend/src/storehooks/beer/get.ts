@@ -1,13 +1,19 @@
-import type { GetBeerIf } from '../../types/beer/types'
-import { useGetBeerQuery } from '../../store/beer/api'
-import { validateBeerOrUndefined } from '../../validation/beer'
+import type {
+  GetBeerHookIf,
+  UseGetBeer,
+  ValidateBeerOrUndefined,
+} from './types'
+import { unwrapMemberOrUndefined } from '../envelope'
 
-const getBeer: () => GetBeerIf = () => {
-  const getBeerIf: GetBeerIf = {
+const getBeer: (
+  useGetBeer: UseGetBeer,
+  validateBeerOrUndefined: ValidateBeerOrUndefined,
+) => GetBeerHookIf = (useGetBeer, validateBeerOrUndefined) => {
+  const getBeerIf: GetBeerHookIf = {
     useGetBeer: (beerId: string) => {
-      const { data, isLoading } = useGetBeerQuery(beerId)
+      const { data, isLoading } = useGetBeer(beerId)
       return {
-        beer: validateBeerOrUndefined(data?.beer),
+        beer: validateBeerOrUndefined(unwrapMemberOrUndefined(data, 'beer')),
         isLoading,
       }
     },

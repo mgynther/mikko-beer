@@ -1,87 +1,83 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { useState } from 'react'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
-import searchBreweries from './search'
-import type { Brewery, BreweryList } from '../../types/brewery/types'
+import { expect, test, vitest } from 'vitest'
 import { render, waitFor } from '@testing-library/react'
-import { Provider } from '../../react-redux-wrapper'
+
+import searchBrewery from './search'
+import type {
+  Brewery,
+  BreweryList,
+  UseSearchBreweries,
+  ValidateBreweryList,
+} from './types'
 import { setupUser } from '../../../test-util/user-event'
 
-import Button from '../../components/common/Button'
+// Stubs for the store function and the validator, for the reason given in
+// get.test.tsx.
+const validatedBreweryList: BreweryList = {
+  breweries: [
+    {
+      id: '3a2b1c0d-9e8f-4706-8152-3c4d5e6f7a8b',
+      name: 'Validated brewery',
+      country: 'Norway',
+    },
+  ],
+}
 
-let server: TestServer | undefined
+const found = { breweries: [{ id: 'found', name: 'Found brewery' }] }
 
-beforeAll(() => {
-  server = createServer()
-})
+interface HelperProps {
+  onSearch: (name: string) => void
+  onFound: (breweries: Brewery[]) => void
+  onValidate: (result: unknown) => void
+}
 
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
-
-function Helper(): React.JSX.Element {
-  const searchBreweryIf = searchBreweries()
-  const { search } = searchBreweryIf.useSearch()
-  const [results, setResults] = useState<Brewery[]>([])
-  const doSearch = async (): Promise<void> => {
-    const result = await search('brewery')
-    setResults(result)
+function Helper(props: HelperProps): React.JSX.Element {
+  const useStoreSearch: UseSearchBreweries = () => ({
+    search: async (name: string): Promise<unknown> => {
+      props.onSearch(name)
+      return found
+    },
+    isFetching: true,
+  })
+  const validate: ValidateBreweryList = (result: unknown) => {
+    props.onValidate(result)
+    return validatedBreweryList
   }
+  const { search, isLoading } = searchBrewery(
+    useStoreSearch,
+    validate,
+  ).useSearch()
   return (
     <div>
-      {results.map((brewery) => (
-        <div key={brewery.id}>{brewery.name}</div>
-      ))}
-      <Button
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      <button
+        type='button'
         onClick={() => {
-          void doSearch()
+          void (async (): Promise<void> => {
+            props.onFound(await search('brewery name'))
+          })()
         }}
-        text='Search'
-      />
+      >
+        Search
+      </button>
     </div>
   )
 }
 
 test('search breweries', async () => {
   const user = setupUser()
-
-  const expectedResponse: BreweryList = {
-    breweries: [
-      {
-        id: '4104837d-e583-4acf-a731-5517ae0f910b',
-        name: 'Test brewery',
-        country: 'FI',
-      },
-      {
-        id: 'f8ab1ed0-0afa-4509-a826-aa0613e4e8e8',
-        name: 'Another brewery',
-        country: undefined,
-      },
-    ],
-  }
-
-  server?.addResponse<BreweryList>({
-    method: 'POST',
-    pathname: `/api/v1/brewery/search`,
-    response: expectedResponse,
-    status: 200,
-  })
+  const onSearch = vitest.fn()
+  const onValidate = vitest.fn()
+  const onFound = vitest.fn()
 
   const { getByRole, getByText } = render(
-    <Provider store={store}>
-      <Helper />
-    </Provider>,
+    <Helper onSearch={onSearch} onFound={onFound} onValidate={onValidate} />,
   )
-  const loadButton = getByRole('button', { name: 'Search' })
-  await user.click(loadButton)
+  expect(getByText('Loading')).toBeDefined()
+
+  await user.click(getByRole('button', { name: 'Search' }))
   await waitFor(() => {
-    expect(getByText(expectedResponse.breweries[0].name)).toBeDefined()
-    expect(getByText(expectedResponse.breweries[1].name)).toBeDefined()
+    expect(onFound).toHaveBeenCalledWith(validatedBreweryList.breweries)
   })
+  expect(onSearch).toHaveBeenCalledWith('brewery name')
+  expect(onValidate).toHaveBeenCalledWith(found)
 })

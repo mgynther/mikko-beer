@@ -1,79 +1,117 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
-import listLocations from './list'
-import type { LocationList } from '../../types/location/types'
+import { expect, test, vitest } from 'vitest'
 import { render, waitFor } from '@testing-library/react'
-import { Provider } from '../../react-redux-wrapper'
+
+import listLocations from './list'
+import type {
+  LocationList,
+  UseListLocations,
+  ValidateLocationList,
+  ValidateLocationListOrUndefined,
+} from './types'
+import type { Pagination } from '../types'
 import { setupUser } from '../../../test-util/user-event'
 
-import Button from '../../components/common/Button'
+// Stubs for the store function and the validators, for the reason given in
+// get.test.tsx.
+const validatedLocationList: LocationList = {
+  locations: [
+    {
+      id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f',
+      name: 'Validated location',
+    },
+  ],
+}
 
-let server: TestServer | undefined
+const listed = { locations: [{ id: 'listed', name: 'Listed location' }] }
 
-beforeAll(() => {
-  server = createServer()
-})
+const pagination: Pagination = { skip: 0, size: 10 }
 
-beforeEach(() => {
-  server?.clear()
-})
+interface HelperProps {
+  data: unknown
+  onList: (pagination: Pagination) => void
+  onListed: (list: LocationList) => void
+  onValidate: (result: unknown) => void
+}
 
-afterAll(() => {
-  server?.close()
-})
-
-function Helper(): React.JSX.Element {
-  const listIf = listLocations()
-  const { list, locationList } = listIf.useList()
+function Helper(props: HelperProps): React.JSX.Element {
+  const useStoreList: UseListLocations = () => ({
+    list: async (listPagination: Pagination): Promise<unknown> => {
+      props.onList(listPagination)
+      return listed
+    },
+    data: props.data,
+    isFetching: false,
+    isUninitialized: props.data === undefined,
+  })
+  const validate: ValidateLocationList = (result: unknown) => {
+    props.onValidate(result)
+    return validatedLocationList
+  }
+  const validateOrUndefined: ValidateLocationListOrUndefined = (
+    result: unknown,
+  ) => (result === undefined ? undefined : validate(result))
+  const { list, locationList, isUninitialized } = listLocations(
+    useStoreList,
+    validate,
+    validateOrUndefined,
+  ).useList()
   return (
     <div>
+      <div>{isUninitialized ? 'Uninitialized' : 'Initialized'}</div>
       {locationList?.locations.map((location) => (
         <div key={location.id}>{location.name}</div>
       ))}
-      <Button
+      <button
+        type='button'
         onClick={() => {
-          void list({ skip: 0, size: 10 })
+          void (async (): Promise<void> => {
+            props.onListed(await list(pagination))
+          })()
         }}
-        text='Load'
-      />
+      >
+        List
+      </button>
     </div>
   )
 }
 
 test('list locations', async () => {
   const user = setupUser()
-
-  const expectedResponse: LocationList = {
-    locations: [
-      {
-        id: 'd0fcd6db-f26e-4eb6-b4ab-632769fc6ce5',
-        name: 'Test location',
-      },
-      {
-        id: '2587d055-c844-47ca-8885-4713a07394f1',
-        name: 'Another location',
-      },
-    ],
-  }
-
-  server?.addResponse<LocationList>({
-    method: 'GET',
-    pathname: `/api/v1/location?size=10&skip=0`,
-    response: expectedResponse,
-    status: 200,
-  })
+  const onList = vitest.fn()
+  const onListed = vitest.fn()
+  const onValidate = vitest.fn()
 
   const { getByRole, getByText } = render(
-    <Provider store={store}>
-      <Helper />
-    </Provider>,
+    <Helper
+      data={undefined}
+      onList={onList}
+      onListed={onListed}
+      onValidate={onValidate}
+    />,
   )
-  const loadButton = getByRole('button', { name: 'Load' })
-  await user.click(loadButton)
+  expect(getByText('Uninitialized')).toBeDefined()
+
+  await user.click(getByRole('button', { name: 'List' }))
   await waitFor(() => {
-    expect(getByText(expectedResponse.locations[0].name)).toBeDefined()
-    expect(getByText(expectedResponse.locations[1].name)).toBeDefined()
+    expect(onListed).toHaveBeenCalledWith(validatedLocationList)
   })
+  expect(onList).toHaveBeenCalledWith(pagination)
+  expect(onValidate).toHaveBeenCalledWith(listed)
+})
+
+test('the location list the store holds is validated on the way out', () => {
+  const onValidate = vitest.fn()
+
+  const { getByText } = render(
+    <Helper
+      data={listed}
+      onList={() => undefined}
+      onListed={() => undefined}
+      onValidate={onValidate}
+    />,
+  )
+
+  expect(getByText(validatedLocationList.locations[0].name)).toBeDefined()
+  expect(getByText('Initialized')).toBeDefined()
+  expect(onValidate).toHaveBeenCalledWith(listed)
 })

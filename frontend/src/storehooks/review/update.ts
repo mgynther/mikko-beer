@@ -1,15 +1,22 @@
-import type { Review, UpdateReviewHookIf } from '../../types/review/types'
-import { useUpdateReviewMutation } from '../../store/review/api'
-import { validateReview } from '../../validation/review'
+import type {
+  Review,
+  UpdateReviewHookIf,
+  UseUpdateReview,
+  ValidateReview,
+} from './types'
+import { unwrapMember } from '../envelope'
 
-const updateReview: () => UpdateReviewHookIf = () => {
+const updateReview: (
+  useUpdateReview: UseUpdateReview,
+  validateReview: ValidateReview,
+) => UpdateReviewHookIf = (useUpdateReview, validateReview) => {
   const updateReviewIf: UpdateReviewHookIf = {
     useUpdate: () => {
-      const [updateReview, { isLoading }] = useUpdateReviewMutation()
+      const { update, isLoading } = useUpdateReview()
       return {
         update: async (review: Review): Promise<void> => {
-          const result = await updateReview(review).unwrap()
-          validateReview(result.review)
+          const result = await update(review)
+          validateReview(unwrapMember(result, 'review'))
         },
         isLoading,
       }

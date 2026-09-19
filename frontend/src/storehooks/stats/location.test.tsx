@@ -1,132 +1,107 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { testTimes } from '../../../test-util/filter-time'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
-import statsHook from './stats'
+import { expect, test, vitest } from 'vitest'
 import { render, waitFor } from '@testing-library/react'
-import { Provider } from '../../react-redux-wrapper'
+
+import statsHook from './stats'
+import type { LocationStats, LocationStatsQueryParams } from './types'
+import { statsStore } from '../../../test-util/stats-store'
+import { statsValidators } from '../../../test-util/stats-validators'
 import { setupUser } from '../../../test-util/user-event'
 
-import Button from '../../components/common/Button'
-import type {
-  LocationStats,
-  LocationStatsQueryParams,
-} from '../../types/stats/types'
+// Stubs for the store function and the validators, for the reason given in
+// storehooks/brewery/get.test.tsx. The store functions a test does not drive
+// are dontCall, so wiring the wrong one fails loudly.
+const validatedStats: LocationStats = {
+  location: [],
+}
 
-let server: TestServer | undefined
+const queried = { location: [{ id: 'queried' }] }
+const held = { location: [{ id: 'held' }] }
 
-beforeAll(() => {
-  server = createServer()
-})
+const params: LocationStatsQueryParams = {
+  breweryId: undefined,
+  locationId: undefined,
+  styleId: undefined,
+  pagination: { size: 10, skip: 0 },
+  sorting: { order: 'average', direction: 'asc' },
+  minReviewCount: 40,
+  maxReviewCount: 80,
+  minReviewAverage: 9,
+  maxReviewAverage: 9.3,
+  timeStart: 1,
+  timeEnd: 2,
+}
 
-beforeEach(() => {
-  server?.clear()
-})
+interface HelperProps {
+  onQuery: (params: LocationStatsQueryParams) => void
+  onQueried: (stats: LocationStats) => void
+  onValidate: (result: unknown) => void
+}
 
-afterAll(() => {
-  server?.close()
-})
-
-function LocationStatsHelper(props: {
-  queryParams: LocationStatsQueryParams
-}): React.JSX.Element {
-  const statsIf = statsHook()
-  const { query, stats } = statsIf.location.useStats()
+function Helper(props: HelperProps): React.JSX.Element {
+  const store = statsStore({
+    location: () => ({
+      query: async (
+        queryParams: LocationStatsQueryParams,
+      ): Promise<unknown> => {
+        props.onQuery(queryParams)
+        return queried
+      },
+      data: held,
+      isFetching: false,
+    }),
+  })
+  const validators = statsValidators({
+    location: (result: unknown) => {
+      props.onValidate(result)
+      return validatedStats
+    },
+    locationOrUndefined: (result: unknown) => {
+      props.onValidate(result)
+      return validatedStats
+    },
+  })
+  const { query, stats, isLoading } = statsHook(
+    store,
+    validators,
+  ).location.useStats()
   return (
     <div>
-      {stats?.location.map((location) => (
-        <div key={location.locationId}>
-          <div>{location.locationName}</div>
-          <div>{location.reviewAverage}</div>
-          <div>{location.reviewCount}</div>
-        </div>
-      ))}
-      <Button
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      <div>{stats === undefined ? 'No stats' : 'Validated stats'}</div>
+      <button
+        type='button'
         onClick={() => {
-          void query(props.queryParams)
+          void (async (): Promise<void> => {
+            props.onQueried(await query(params))
+          })()
         }}
-        text='Load'
-      />
+      >
+        Query
+      </button>
     </div>
   )
 }
 
 test('location stats', async () => {
   const user = setupUser()
-
-  const expectedResponse: LocationStats = {
-    location: [
-      {
-        locationId: '6d586d9d-e87c-43f2-87d3-abe5ecb63c08',
-        locationName: 'Kuja Beer Shop & Bar',
-        reviewAverage: '9.25',
-        reviewCount: '202',
-        reviewMedian: '9.50',
-        reviewMode: '10',
-        reviewStandardDeviation: '0.75',
-      },
-      {
-        locationId: '616e52b4-78c2-4a60-8a11-173c97632294',
-        locationName: 'Oluthuone Panimomestari',
-        reviewAverage: '9.05',
-        reviewCount: '35',
-        reviewMedian: '9.00',
-        reviewMode: '9',
-        reviewStandardDeviation: '0.68',
-      },
-    ],
-  }
-
-  const queryParams: LocationStatsQueryParams = {
-    breweryId: undefined,
-    locationId: undefined,
-    styleId: undefined,
-    pagination: { skip: 0, size: 10 },
-    sorting: {
-      order: 'count',
-      direction: 'desc',
-    },
-    minReviewCount: 40,
-    maxReviewCount: 80,
-    minReviewAverage: 9.0,
-    maxReviewAverage: 9.3,
-    timeStart: testTimes.min.utcTimestamp,
-    timeEnd: testTimes.max.utcTimestamp,
-  }
-
-  server?.addResponse<LocationStats>({
-    method: 'GET',
-    pathname: `/api/v1/stats/location?size=${
-      queryParams.pagination.size
-    }&skip=${queryParams.pagination.skip}&order=${
-      queryParams.sorting.order
-    }&direction=${queryParams.sorting.direction}&min_review_count=${
-      queryParams.minReviewCount
-    }&max_review_count=${queryParams.maxReviewCount}&min_review_average=${
-      queryParams.minReviewAverage
-    }&max_review_average=${queryParams.maxReviewAverage}&time_start=${
-      queryParams.timeStart
-    }&time_end=${queryParams.timeEnd}`,
-    response: expectedResponse,
-    status: 200,
-  })
+  const onQuery = vitest.fn()
+  const onQueried = vitest.fn()
+  const onValidate = vitest.fn()
 
   const { getByRole, getByText } = render(
-    <Provider store={store}>
-      <LocationStatsHelper queryParams={queryParams} />
-    </Provider>,
+    <Helper onQuery={onQuery} onQueried={onQueried} onValidate={onValidate} />,
   )
-  const loadButton = getByRole('button', { name: 'Load' })
-  await user.click(loadButton)
-  const kuja = expectedResponse.location[0]
-  const oluthuone = expectedResponse.location[1]
+
+  // What the store already holds is validated on the way out, and what a
+  // query brings back is validated on its way through.
+  expect(getByText('Validated stats')).toBeDefined()
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onValidate).toHaveBeenCalledWith(held)
+
+  await user.click(getByRole('button', { name: 'Query' }))
   await waitFor(() => {
-    expect(getByText(kuja.locationName)).toBeDefined()
-    expect(getByText(kuja.reviewAverage)).toBeDefined()
-    expect(getByText(kuja.reviewCount)).toBeDefined()
-    expect(getByText(oluthuone.locationName)).toBeDefined()
-    expect(getByText(oluthuone.reviewAverage)).toBeDefined()
-    expect(getByText(oluthuone.reviewCount)).toBeDefined()
+    expect(onQueried).toHaveBeenCalledWith(validatedStats)
   })
+  expect(onQuery).toHaveBeenCalledWith(params)
+  expect(onValidate).toHaveBeenCalledWith(queried)
 })

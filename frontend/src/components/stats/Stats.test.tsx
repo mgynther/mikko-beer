@@ -12,14 +12,10 @@ import type {
   OneStyleStats,
   StatsIf,
   StatsResult,
-} from '../../types/stats/types'
-import LinkWrapper from '../LinkWrapper'
-import type {
-  UseDebounce,
-  UseUrlSearchParams,
-  YearMonth,
-} from '../../types/types'
+} from '../types/stats/types'
+import type { UseDebounce, UseUrlSearchParams, YearMonth } from '../types/types'
 import { openFilters } from '../../../test-util/open-filters'
+import { testLink } from '../../../test-util/link'
 
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
@@ -205,6 +201,7 @@ overallTestCases.forEach((testCase) => {
   test(`renders overall stats ${testCase.description}`, () => {
     const { getByText } = render(
       <Stats
+        linkComponent={testLink}
         statsIf={{
           ...emptyStatsIf,
           useUrlSearchParams: testCase.useUrlSearchParams,
@@ -254,6 +251,7 @@ overallTestCases.forEach((testCase) => {
 test('renders annual stats', () => {
   const { getByText } = render(
     <Stats
+      linkComponent={testLink}
       statsIf={{
         ...emptyStatsIf,
         useUrlSearchParams: getUseUrlSearchParams('annual'),
@@ -349,6 +347,7 @@ test('renders annual container stats', async () => {
   }
   const { getByText } = render(
     <Stats
+      linkComponent={testLink}
       statsIf={statsIf}
       breweryId={'2bc301aa-1cbf-4764-879b-973346fdd2e3'}
       locationId={'1fc4acba-fc28-4629-b2d9-7b65669fb2a9'}
@@ -414,14 +413,13 @@ test('renders brewery stats', async () => {
   }
 
   const { getByText } = render(
-    <LinkWrapper>
-      <Stats
-        statsIf={statsIf}
-        breweryId={'a186917f-0d4c-40d0-bf67-e96227c55528'}
-        locationId={'b533d497-8256-4525-8892-180a078060d5'}
-        styleId={'4917d1c7-5439-4e78-a562-242200a236db'}
-      />
-    </LinkWrapper>,
+    <Stats
+      linkComponent={testLink}
+      statsIf={statsIf}
+      breweryId={'a186917f-0d4c-40d0-bf67-e96227c55528'}
+      locationId={'b533d497-8256-4525-8892-180a078060d5'}
+      styleId={'4917d1c7-5439-4e78-a562-242200a236db'}
+    />,
   )
   await waitFor(() => getByText(koskipanimo.breweryName))
   getByText(koskipanimo.reviewAverage)
@@ -481,14 +479,13 @@ test('renders brewery country stats', async () => {
   }
 
   const { getByText } = render(
-    <LinkWrapper>
-      <Stats
-        statsIf={statsIf}
-        breweryId={'a186917f-0d4c-40d0-bf67-e96227c55528'}
-        locationId={'b533d497-8256-4525-8892-180a078060d5'}
-        styleId={'4917d1c7-5439-4e78-a562-242200a236db'}
-      />
-    </LinkWrapper>,
+    <Stats
+      linkComponent={testLink}
+      statsIf={statsIf}
+      breweryId={'a186917f-0d4c-40d0-bf67-e96227c55528'}
+      locationId={'b533d497-8256-4525-8892-180a078060d5'}
+      styleId={'4917d1c7-5439-4e78-a562-242200a236db'}
+    />,
   )
   await waitFor(() => getByText(finland.countryCode))
   getByText(finland.breweryCount)
@@ -516,14 +513,13 @@ test('sets state', async () => {
   }
 
   const { getByRole } = render(
-    <LinkWrapper>
-      <Stats
-        statsIf={statsIf}
-        breweryId={undefined}
-        locationId={undefined}
-        styleId={undefined}
-      />
-    </LinkWrapper>,
+    <Stats
+      linkComponent={testLink}
+      statsIf={statsIf}
+      breweryId={undefined}
+      locationId={undefined}
+      styleId={undefined}
+    />,
   )
   await openFilters(getByRole, user)
   expect(setSearch).toHaveBeenCalledTimes(2)
@@ -534,6 +530,7 @@ test('sets state', async () => {
 test('renders container stats', () => {
   const { getByText } = render(
     <Stats
+      linkComponent={testLink}
       statsIf={{
         ...emptyStatsIf,
         useUrlSearchParams: getUseUrlSearchParams('container'),
@@ -589,6 +586,7 @@ test('renders container stats', () => {
 test('renders filtered container stats', () => {
   const { getByText, queryByText } = render(
     <Stats
+      linkComponent={testLink}
       statsIf={{
         ...emptyStatsIf,
         useUrlSearchParams: getUseUrlSearchParams('container', {
@@ -682,14 +680,13 @@ test('renders location stats', async () => {
   }
 
   const { getByText } = render(
-    <LinkWrapper>
-      <Stats
-        statsIf={statsIf}
-        breweryId={'8e13fb83-6793-4c5b-a53a-9d867f07dfe4'}
-        locationId={'e3da0a72-c0fc-43dc-95ca-2019406c40fb'}
-        styleId={'6ad84abe-06e7-4a76-8c38-e57c072c7c2e'}
-      />
-    </LinkWrapper>,
+    <Stats
+      linkComponent={testLink}
+      statsIf={statsIf}
+      breweryId={'8e13fb83-6793-4c5b-a53a-9d867f07dfe4'}
+      locationId={'e3da0a72-c0fc-43dc-95ca-2019406c40fb'}
+      styleId={'6ad84abe-06e7-4a76-8c38-e57c072c7c2e'}
+    />,
   )
   await waitFor(() => getByText(oluthuone.locationName))
   getByText(oluthuone.reviewAverage)
@@ -708,6 +705,7 @@ test('renders location stats', async () => {
 test('renders rating stats', () => {
   const { getByText } = render(
     <Stats
+      linkComponent={testLink}
       statsIf={{
         ...emptyStatsIf,
         useUrlSearchParams: getUseUrlSearchParams('rating'),
@@ -761,23 +759,22 @@ test('renders style stats', () => {
   }
 
   const { getByText } = render(
-    <LinkWrapper>
-      <Stats
-        statsIf={{
-          ...emptyStatsIf,
-          useUrlSearchParams: getUseUrlSearchParams('style'),
-          style: {
-            useStats: () => statsResult,
-            minTime,
-            maxTime,
-            getUseDebounce,
-          },
-        }}
-        breweryId={'482584a6-4ccb-44d6-be37-3458a5c21601'}
-        locationId={'fef5fbb5-90ae-4c41-a1a7-e87821f620c8'}
-        styleId={'449f632a-eb95-4ad1-a1ff-f4338c603584'}
-      />
-    </LinkWrapper>,
+    <Stats
+      linkComponent={testLink}
+      statsIf={{
+        ...emptyStatsIf,
+        useUrlSearchParams: getUseUrlSearchParams('style'),
+        style: {
+          useStats: () => statsResult,
+          minTime,
+          maxTime,
+          getUseDebounce,
+        },
+      }}
+      breweryId={'482584a6-4ccb-44d6-be37-3458a5c21601'}
+      locationId={'fef5fbb5-90ae-4c41-a1a7-e87821f620c8'}
+      styleId={'449f632a-eb95-4ad1-a1ff-f4338c603584'}
+    />,
   )
   getByText(pils.styleName)
   getByText(pils.reviewAverage)
@@ -844,18 +841,17 @@ navigationTests.forEach((testCase) => {
     const user = setupUser()
     const setSearch = vitest.fn()
     const { getByRole } = render(
-      <LinkWrapper>
-        <Stats
-          statsIf={{
-            ...emptyStatsIf,
-            setSearch,
-            useUrlSearchParams: getUseUrlSearchParams(testCase.originalSearch),
-          }}
-          breweryId={undefined}
-          locationId={undefined}
-          styleId={undefined}
-        />
-      </LinkWrapper>,
+      <Stats
+        linkComponent={testLink}
+        statsIf={{
+          ...emptyStatsIf,
+          setSearch,
+          useUrlSearchParams: getUseUrlSearchParams(testCase.originalSearch),
+        }}
+        breweryId={undefined}
+        locationId={undefined}
+        styleId={undefined}
+      />,
     )
     const naviButton = getByRole('button', { name: testCase.buttonText })
     await user.click(naviButton)
@@ -867,18 +863,17 @@ test('navigates from overall to overall', async () => {
   const user = setupUser()
   const setSearch = vitest.fn()
   const { getByRole } = render(
-    <LinkWrapper>
-      <Stats
-        statsIf={{
-          ...emptyStatsIf,
-          setSearch,
-          useUrlSearchParams: getUseUrlSearchParams('overall'),
-        }}
-        breweryId={undefined}
-        locationId={undefined}
-        styleId={undefined}
-      />
-    </LinkWrapper>,
+    <Stats
+      linkComponent={testLink}
+      statsIf={{
+        ...emptyStatsIf,
+        setSearch,
+        useUrlSearchParams: getUseUrlSearchParams('overall'),
+      }}
+      breweryId={undefined}
+      locationId={undefined}
+      styleId={undefined}
+    />,
   )
   const naviButton = getByRole('button', { name: 'Overall' })
   await user.click(naviButton)

@@ -1,21 +1,25 @@
 import type {
-  Location,
-  CreateLocationIf,
+  CreateLocationHookIf,
   CreateLocationRequest,
-} from '../../types/location/types'
-import { useCreateLocationMutation } from '../../store/location/api'
-import { validateLocation } from '../../validation/location'
+  Location,
+  UseCreateLocation,
+  ValidateLocation,
+} from './types'
+import { unwrapMember } from '../envelope'
 
-const createLocation: () => CreateLocationIf = () => {
-  const createLocationIf: CreateLocationIf = {
+const createLocation: (
+  useCreateLocation: UseCreateLocation,
+  validateLocation: ValidateLocation,
+) => CreateLocationHookIf = (useCreateLocation, validateLocation) => {
+  const createLocationIf: CreateLocationHookIf = {
     useCreate: () => {
-      const [createLocation, { isLoading }] = useCreateLocationMutation()
+      const { create, isLoading } = useCreateLocation()
       return {
         create: async (
           locationRequest: CreateLocationRequest,
         ): Promise<Location> => {
-          const result = await createLocation(locationRequest).unwrap()
-          return validateLocation(result.location)
+          const result = await create(locationRequest)
+          return validateLocation(unwrapMember(result, 'location'))
         },
         isLoading,
       }

@@ -1,79 +1,87 @@
-import { beforeAll, beforeEach, afterAll, expect, test, vitest } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
+import { expect, test, vitest } from 'vitest'
+import { render, waitFor } from '@testing-library/react'
+
 import createLocation from './create'
 import type {
   Location,
   CreateLocationRequest,
-} from '../../types/location/types'
-import { render, waitFor } from '@testing-library/react'
+  UseCreateLocation,
+  ValidateLocation,
+} from './types'
 import { setupUser } from '../../../test-util/user-event'
-import { Provider } from '../../react-redux-wrapper'
 
-import Button from '../../components/common/Button'
+// Stubs for the store function and the validator, for the reason given in
+// get.test.tsx.
+const validatedLocation: Location = {
+  id: '6a2d7f8c-1b3e-4f5a-9c0d-2e4f6a8b0c1d',
+  name: 'Validated location',
+}
 
-let server: TestServer | undefined
+const created = { location: { id: 'created', name: 'Created location' } }
 
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
+const request: CreateLocationRequest = {
+  name: 'Test location',
+}
 
 interface HelperProps {
-  location: CreateLocationRequest
-  handleResponse: (location: Location) => void
+  onCreate: (location: CreateLocationRequest) => void
+  onCreated: (location: Location) => void
+  onValidate: (result: unknown) => void
 }
 
 function Helper(props: HelperProps): React.JSX.Element {
-  const createIf = createLocation()
-  const create = createIf.useCreate()
-  const handleClick = (): void => {
-    async function doHandle(): Promise<void> {
-      const response = await create.create(props.location)
-      props.handleResponse(response)
-    }
-    void doHandle()
+  const useStoreCreate: UseCreateLocation = () => ({
+    create: async (location: CreateLocationRequest): Promise<unknown> => {
+      props.onCreate(location)
+      return created
+    },
+    isLoading: false,
+  })
+  const validate: ValidateLocation = (result: unknown) => {
+    props.onValidate(result)
+    return validatedLocation
   }
-  return <Button onClick={handleClick} text='Test' />
+  const { create, isLoading } = createLocation(
+    useStoreCreate,
+    validate,
+  ).useCreate()
+  return (
+    <div>
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      <button
+        type='button'
+        onClick={() => {
+          void (async (): Promise<void> => {
+            props.onCreated(await create(request))
+          })()
+        }}
+      >
+        Create
+      </button>
+    </div>
+  )
 }
 
 test('create location', async () => {
   const user = setupUser()
+  const onCreate = vitest.fn()
+  const onCreated = vitest.fn()
+  const onValidate = vitest.fn()
 
-  const expectedResponse: { location: Location } = {
-    location: {
-      id: 'c053e116-53e3-4de4-8273-e35158d776b7',
-      name: 'Test location',
-    },
-  }
-
-  server?.addResponse<{ location: Location }>({
-    method: 'POST',
-    pathname: '/api/v1/location',
-    response: expectedResponse,
-    status: 201,
-  })
-
-  const handler = vitest.fn()
-  const { getByRole } = render(
-    <Provider store={store}>
-      <Helper
-        location={{ name: expectedResponse.location.name }}
-        handleResponse={handler}
-      />
-    </Provider>,
+  const { getByRole, getByText } = render(
+    <Helper
+      onCreate={onCreate}
+      onCreated={onCreated}
+      onValidate={onValidate}
+    />,
   )
-  const testButton = getByRole('button', { name: 'Test' })
-  await user.click(testButton)
+
+  await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(handler).toHaveBeenCalledWith(expectedResponse.location)
+    expect(onCreated).toHaveBeenCalledWith(validatedLocation)
   })
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onCreate).toHaveBeenCalledWith(request)
+  // The envelope is unwrapped before the validator sees the location.
+  expect(onValidate).toHaveBeenCalledWith(created.location)
 })

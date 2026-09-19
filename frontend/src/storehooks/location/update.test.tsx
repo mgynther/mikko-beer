@@ -1,82 +1,115 @@
-import { beforeAll, beforeEach, afterAll, expect, test, vitest } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
-import updateLocation from './update'
-import type { Location } from '../../types/location/types'
+import { expect, test, vitest } from 'vitest'
 import { render, waitFor } from '@testing-library/react'
+
+import updateLocation from './update'
+import type { Location, UseUpdateLocation, ValidateLocation } from './types'
 import { setupUser } from '../../../test-util/user-event'
-import { Provider } from '../../react-redux-wrapper'
 
-import Button from '../../components/common/Button'
+// Stubs for the store function and the validator, for the reason given in
+// get.test.tsx.
+const validatedLocation: Location = {
+  id: '5d6e7f80-9a1b-42c3-8d4e-5f6a7b8c9d0e',
+  name: 'Validated location',
+}
 
-let server: TestServer | undefined
+const updated = { location: { id: 'updated', name: 'Updated location' } }
 
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
+const location: Location = {
+  id: '2b3c4d5e-6f70-4819-a2b3-c4d5e6f70819',
+  name: 'Test location',
+}
 
 interface HelperProps {
-  location: Location
-  handler: () => void
+  onUpdate: (location: Location) => void
+  onUpdated: () => void
+  onError: () => void
+  validate: ValidateLocation
 }
 
 function Helper(props: HelperProps): React.JSX.Element {
-  const updateIf = updateLocation()
-  const update = updateIf.useUpdate()
-  const handleClick = (): void => {
-    async function doHandle(): Promise<void> {
-      await update.update(props.location)
-      props.handler()
-    }
-    void doHandle()
-  }
+  const useStoreUpdate: UseUpdateLocation = () => ({
+    update: async (updatedLocation: Location): Promise<unknown> => {
+      props.onUpdate(updatedLocation)
+      return updated
+    },
+    isLoading: false,
+  })
+  const { update, isLoading } = updateLocation(
+    useStoreUpdate,
+    props.validate,
+  ).useUpdate()
   return (
-    <>
-      <Button onClick={handleClick} text='Test' />
-      {update.isLoading && <div>Loading</div>}
-      {!update.isLoading && <div>Not loading</div>}
-    </>
+    <div>
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      <button
+        type='button'
+        onClick={() => {
+          void (async (): Promise<void> => {
+            try {
+              await update(location)
+              props.onUpdated()
+            } catch {
+              props.onError()
+            }
+          })()
+        }}
+      >
+        Update
+      </button>
+    </div>
   )
 }
 
 test('update location', async () => {
   const user = setupUser()
-
-  const expectedResponse: { location: Location } = {
-    location: {
-      id: '640ced88-a5b4-498e-9007-a045e0cc1797',
-      name: 'Test location',
-    },
+  const onUpdate = vitest.fn()
+  const onUpdated = vitest.fn()
+  const onValidate = vitest.fn()
+  const validate: ValidateLocation = (result: unknown) => {
+    onValidate(result)
+    return validatedLocation
   }
 
-  server?.addResponse<{ location: Location }>({
-    method: 'PUT',
-    pathname: `/api/v1/location/${expectedResponse.location.id}`,
-    response: expectedResponse,
-    status: 200,
-  })
-
-  const handler = vitest.fn()
   const { getByRole, getByText } = render(
-    <Provider store={store}>
-      <Helper location={expectedResponse.location} handler={handler} />
-    </Provider>,
+    <Helper
+      onUpdate={onUpdate}
+      onUpdated={onUpdated}
+      onError={() => undefined}
+      validate={validate}
+    />,
   )
-  const testButton = getByRole('button', { name: 'Test' })
-  await user.click(testButton)
+
+  await user.click(getByRole('button', { name: 'Update' }))
   await waitFor(() => {
-    expect(handler).toHaveBeenCalled()
+    expect(onUpdated).toHaveBeenCalled()
   })
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onUpdate).toHaveBeenCalledWith(location)
+  expect(onValidate).toHaveBeenCalledWith(updated.location)
+})
+
+test('fail to update location that does not validate', async () => {
+  const user = setupUser()
+  const onUpdated = vitest.fn()
+  const onError = vitest.fn()
+
+  const { getByRole } = render(
+    <Helper
+      onUpdate={() => undefined}
+      onUpdated={onUpdated}
+      onError={onError}
+      validate={() => {
+        throw Error('Could not validate data')
+      }}
+    />,
+  )
+
+  await user.click(getByRole('button', { name: 'Update' }))
+  // A response that does not validate must not be reported as a successful
+  // update: the throw propagates out of update and what follows it is never
+  // reached.
   await waitFor(() => {
-    expect(getByText('Not loading')).toBeDefined()
+    expect(onError).toHaveBeenCalled()
   })
+  expect(onUpdated).not.toHaveBeenCalled()
 })

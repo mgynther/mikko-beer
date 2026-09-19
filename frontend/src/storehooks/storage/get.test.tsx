@@ -1,110 +1,91 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
+import { expect, test, vitest } from 'vitest'
+import { render } from '@testing-library/react'
+
 import getStorage from './get'
-import type { Storage } from '../../types/storage/types'
-import { render, waitFor } from '@testing-library/react'
-import { Provider } from '../../react-redux-wrapper'
+import type {
+  Storage,
+  UseGetStorage,
+  ValidateStorageOrUndefined,
+} from './types'
 
-let server: TestServer | undefined
+// Stubs for the store function and the validator, for the reason given in
+// storehooks/brewery/get.test.tsx.
+const validatedStorage: Storage = {
+  id: 'e5f60718-293a-44b5-8c6d-7e8f90112233',
+  beerId: 'f6071829-3a4b-45c6-9d7e-8f9011223344',
+  beerName: 'Validated beer',
+  bestBefore: '2026-01-01T00:00:00.000Z',
+  breweries: [],
+  container: {
+    id: '07182930-4b5c-46d7-9e8f-901122334455',
+    type: 'bottle',
+    size: '0.33',
+  },
+  createdAt: '2025-01-01T00:00:00.000Z',
+  hasReview: false,
+  styles: [],
+}
 
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
+const storageId = '9b2ae1cd-5d2f-4a6a-b1d0-2f9b0e2c9e9c'
 
 interface HelperProps {
-  storageId: string
+  data: unknown
+  isLoading: boolean
+  onGet: (storageId: string) => void
+  onValidate: (result: unknown) => void
 }
 
 function Helper(props: HelperProps): React.JSX.Element {
-  const getIf = getStorage()
-  const { isLoading, storage } = getIf.useGet(props.storageId)
+  const useStoreGet: UseGetStorage = (id: string) => {
+    props.onGet(id)
+    return { data: props.data, isLoading: props.isLoading }
+  }
+  const validate: ValidateStorageOrUndefined = (result: unknown) => {
+    props.onValidate(result)
+    return result === undefined ? undefined : validatedStorage
+  }
+  const { storage, isLoading } = getStorage(useStoreGet, validate).useGet(
+    storageId,
+  )
   return (
-    <>
-      <div>{storage?.beerName}</div>
-      {!isLoading && storage === undefined && <div>Failed</div>}
-    </>
+    <div>
+      <div>{storage === undefined ? 'No storage' : storage.beerName}</div>
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+    </div>
   )
 }
 
-test('get storage', async () => {
-  const expectedResponse: { storage: Storage } = {
-    storage: {
-      id: 'f31e011c-e158-46b7-af46-9414ef492a09',
-      beerId: 'b53f50a0-942a-4392-b38e-54c151eda773',
-      beerName: 'Test beer',
-      bestBefore: '2027-01-01T00:00:00.000Z',
-      breweries: [
-        {
-          id: '2dad3097-8505-4e18-8e79-86e708b0db69',
-          name: 'Test brewery',
-        },
-      ],
-      container: {
-        id: 'e68022b8-f3a8-4bcc-bf1e-2cf5165e2c3e',
-        type: 'bottle',
-        size: '0.33',
-      },
-      createdAt: '2026-03-12T00:00:00.000Z',
-      hasReview: false,
-      styles: [
-        {
-          id: 'b32292b7-0dad-4442-8120-6cb5353e97aa',
-          name: 'Test style',
-        },
-      ],
-    },
-  }
-
-  server?.addResponse<{ storage: Storage }>({
-    method: 'GET',
-    pathname: `/api/v1/storage/${expectedResponse.storage.id}`,
-    response: expectedResponse,
-    status: 200,
-  })
+test('get storage', () => {
+  const onGet = vitest.fn()
+  const onValidate = vitest.fn()
+  const data = { storage: { id: storageId, beerName: 'Test beer' } }
 
   const { getByText } = render(
-    <Provider store={store}>
-      <Helper storageId={expectedResponse.storage.id} />
-    </Provider>,
+    <Helper
+      data={data}
+      isLoading={false}
+      onGet={onGet}
+      onValidate={onValidate}
+    />,
   )
-  await waitFor(() => {
-    expect(getByText(expectedResponse.storage.beerName)).toBeDefined()
-  })
+
+  expect(getByText(validatedStorage.beerName)).toBeDefined()
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onGet).toHaveBeenCalledWith(storageId)
+  // The envelope is unwrapped before the validator sees the storage.
+  expect(onValidate).toHaveBeenCalledWith(data.storage)
 })
 
-test('try to get storage that does not exist', async () => {
-  const storageId = '251dcae3-865f-4cf5-84b3-88009f002f71'
-  type ErrorResponse = { error: { code: string; message: string } }
-  const expectedResponse: ErrorResponse = {
-    error: {
-      code: `StorageNotFound`,
-      message: `storage with id ${storageId}`,
-    },
-  }
-
-  server?.addResponse<ErrorResponse>({
-    method: 'GET',
-    pathname: `/api/v1/storage/${storageId}`,
-    response: expectedResponse,
-    status: 404,
-  })
-
+test('get storage that has not arrived', () => {
   const { getByText } = render(
-    <Provider store={store}>
-      <Helper storageId={storageId} />
-    </Provider>,
+    <Helper
+      data={undefined}
+      isLoading={true}
+      onGet={() => undefined}
+      onValidate={() => undefined}
+    />,
   )
-  await waitFor(() => {
-    expect(getByText('Failed')).toBeDefined()
-  })
+
+  expect(getByText('No storage')).toBeDefined()
+  expect(getByText('Loading')).toBeDefined()
 })

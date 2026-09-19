@@ -1,10 +1,9 @@
-import type { LogoutIf, LogoutParams } from '../../types/login/types'
-import { useLogoutMutation } from '../../store/login/api'
+import type { LogoutHookIf, LogoutParams, UseLogout } from './types'
 
-const logout: () => LogoutIf = () => {
-  const logoutIf: LogoutIf = {
+const logout: (useLogout: UseLogout) => LogoutHookIf = (useLogout) => {
+  const logoutIf: LogoutHookIf = {
     useLogout: () => {
-      const [logout] = useLogoutMutation()
+      const { logout } = useLogout()
       return {
         logout: async (params: LogoutParams): Promise<void> => {
           await logout(params)

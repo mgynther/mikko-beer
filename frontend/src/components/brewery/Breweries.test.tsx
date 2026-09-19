@@ -1,12 +1,12 @@
 import { act, render, waitFor } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
 import Breweries from './Breweries'
-import type { SearchFieldIf } from '../../types/search/types'
-import LinkWrapper from '../LinkWrapper'
-import type { UseDebounce } from '../../types/types'
-import type { BreweryList, ListBreweriesIf } from '../../types/brewery/types'
-import { loadingIndicatorText } from '../common/LoadingIndicator'
+import type { SearchFieldIf } from '../types/search/types'
+import type { UseDebounce } from '../types/types'
+import type { BreweryList, ListBreweriesIf } from '../types/brewery/types'
+import { loadingIndicatorText } from '../internal/common/LoadingIndicator'
 import { dontCall } from '../../../test-util/dont-call'
+import { testLink } from '../../../test-util/link'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -49,21 +49,20 @@ test('renders breweries', async () => {
     },
   }
   const { getByPlaceholderText, getByRole } = render(
-    <LinkWrapper>
-      <Breweries
-        listBreweriesIf={listBreweriesIf}
-        navigateIf={{
-          useNavigate: () => dontCall,
-        }}
-        searchBreweryIf={{
-          useSearch: () => ({
-            search: dontCall,
-            isLoading: false,
-          }),
-          searchFieldIf: activeSearch,
-        }}
-      />
-    </LinkWrapper>,
+    <Breweries
+      linkComponent={testLink}
+      listBreweriesIf={listBreweriesIf}
+      navigateIf={{
+        useNavigate: () => dontCall,
+      }}
+      searchBreweryIf={{
+        useSearch: () => ({
+          search: dontCall,
+          isLoading: false,
+        }),
+        searchFieldIf: activeSearch,
+      }}
+    />,
   )
   expect(scrollCb).not.toEqual(undefined)
   await act(async () => {
@@ -94,21 +93,20 @@ test('renders brewery country flags', async () => {
     },
   }
   const { getByRole } = render(
-    <LinkWrapper>
-      <Breweries
-        listBreweriesIf={listBreweriesIf}
-        navigateIf={{
-          useNavigate: () => dontCall,
-        }}
-        searchBreweryIf={{
-          useSearch: () => ({
-            search: dontCall,
-            isLoading: false,
-          }),
-          searchFieldIf: activeSearch,
-        }}
-      />
-    </LinkWrapper>,
+    <Breweries
+      linkComponent={testLink}
+      listBreweriesIf={listBreweriesIf}
+      navigateIf={{
+        useNavigate: () => dontCall,
+      }}
+      searchBreweryIf={{
+        useSearch: () => ({
+          search: dontCall,
+          isLoading: false,
+        }),
+        searchFieldIf: activeSearch,
+      }}
+    />,
   )
   await act(async () => {
     scrollCb()
@@ -135,21 +133,20 @@ test('render loading', async () => {
     },
   }
   const { getByText } = render(
-    <LinkWrapper>
-      <Breweries
-        listBreweriesIf={listBreweriesIf}
-        navigateIf={{
-          useNavigate: () => dontCall,
-        }}
-        searchBreweryIf={{
-          useSearch: () => ({
-            search: dontCall,
-            isLoading: false,
-          }),
-          searchFieldIf: activeSearch,
-        }}
-      />
-    </LinkWrapper>,
+    <Breweries
+      linkComponent={testLink}
+      listBreweriesIf={listBreweriesIf}
+      navigateIf={{
+        useNavigate: () => dontCall,
+      }}
+      searchBreweryIf={{
+        useSearch: () => ({
+          search: dontCall,
+          isLoading: false,
+        }),
+        searchFieldIf: activeSearch,
+      }}
+    />,
   )
   await act(async () => {
     scrollCb()
@@ -188,21 +185,20 @@ test('stops loading more', async () => {
     },
   }
   const { getByText } = render(
-    <LinkWrapper>
-      <Breweries
-        listBreweriesIf={listBreweriesIf}
-        navigateIf={{
-          useNavigate: () => dontCall,
-        }}
-        searchBreweryIf={{
-          useSearch: () => ({
-            search: dontCall,
-            isLoading: false,
-          }),
-          searchFieldIf: activeSearch,
-        }}
-      />
-    </LinkWrapper>,
+    <Breweries
+      linkComponent={testLink}
+      listBreweriesIf={listBreweriesIf}
+      navigateIf={{
+        useNavigate: () => dontCall,
+      }}
+      searchBreweryIf={{
+        useSearch: () => ({
+          search: dontCall,
+          isLoading: false,
+        }),
+        searchFieldIf: activeSearch,
+      }}
+    />,
   )
   // act is important to ensure changes have been fully applied. loading is not
   // toggled between renders so without act there would be a race condition in

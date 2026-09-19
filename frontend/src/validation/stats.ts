@@ -2,18 +2,139 @@ import * as t from 'io-ts'
 import { isLeft } from 'fp-ts/Either'
 
 import { formatError } from './format-error'
-import type {
-  AnnualContainerStats,
-  AnnualStats,
-  BreweryCountryStats,
-  BreweryStats,
-  ContainerStats,
-  LocationStats,
-  OneBreweryStats,
-  RatingStats,
-  OverallStats,
-  StyleStats,
-} from '../types/stats/types'
+
+// This layer's own view of valid statistics, declared here rather than
+// imported from types/. See the comment in style.ts. Every count and average
+// is a string: they arrive as the backend formatted them and are not numbers
+// until something decides how to read them.
+export interface OverallStats {
+  beerCount: string
+  breweryCount: string
+  breweryCountryCount: string
+  containerCount: string
+  locationCount: string
+  distinctBeerReviewCount: string
+  reviewAverage: string
+  reviewCount: string
+  reviewMedian: string
+  reviewMode: string
+  reviewStandardDeviation: string
+  reviewWithLocationCount: string
+  reviewWithoutLocationCount: string
+  styleCount: string
+}
+
+export interface OneAnnualStats {
+  reviewAverage: string
+  reviewCount: string
+  reviewMedian: string
+  reviewMode: string
+  reviewStandardDeviation: string
+  year: string
+}
+
+export interface AnnualStats {
+  annual: OneAnnualStats[]
+}
+
+export interface OneAnnualContainerStats {
+  containerId: string
+  containerSize: string
+  containerType: string
+  reviewAverage: string
+  reviewMedian: string
+  reviewMode: string
+  reviewStandardDeviation: string
+  reviewCount: string
+  year: string
+}
+
+export interface AnnualContainerStats {
+  annualContainer: OneAnnualContainerStats[]
+}
+
+export interface OneBreweryCountryStats {
+  countryCode: string
+  breweryCount: string
+  reviewAverage: string
+  reviewCount: string
+  reviewMedian: string
+  reviewMode: string
+  reviewStandardDeviation: string
+  reviewedBeerCount: string
+}
+
+export interface BreweryCountryStats {
+  breweryCountry: OneBreweryCountryStats[]
+}
+
+export interface OneBreweryStats {
+  breweryId: string
+  breweryName: string
+  breweryCountry: string | undefined
+  reviewAverage: string
+  reviewCount: string
+  reviewMedian: string
+  reviewMode: string
+  reviewStandardDeviation: string
+  reviewedBeerCount: string
+}
+
+export interface BreweryStats {
+  brewery: OneBreweryStats[]
+}
+
+export interface OneContainerStats {
+  containerId: string
+  containerSize: string
+  containerType: string
+  reviewAverage: string
+  reviewCount: string
+  reviewMedian: string
+  reviewMode: string
+  reviewStandardDeviation: string
+}
+
+export interface ContainerStats {
+  container: OneContainerStats[]
+}
+
+export interface OneLocationStats {
+  locationId: string
+  locationName: string
+  reviewAverage: string
+  reviewCount: string
+  reviewMedian: string
+  reviewMode: string
+  reviewStandardDeviation: string
+}
+
+export interface LocationStats {
+  location: OneLocationStats[]
+}
+
+export interface OneRatingStats {
+  rating: string
+  count: string
+}
+
+export interface RatingStats {
+  rating: OneRatingStats[]
+}
+
+export interface OneStyleStats {
+  reviewAverage: string
+  reviewCount: string
+  reviewMedian: string
+  reviewMode: string
+  reviewStandardDeviation: string
+  styleId: string
+  styleName: string
+}
+
+export interface StyleStats {
+  style: OneStyleStats[]
+}
 
 const ValidatedOverallStats = t.type({
   beerCount: t.string,
@@ -32,194 +153,187 @@ const ValidatedOverallStats = t.type({
   styleCount: t.string,
 })
 
+const ValidatedOneAnnualStats = t.type({
+  reviewAverage: t.string,
+  reviewCount: t.string,
+  reviewMedian: t.string,
+  reviewMode: t.string,
+  reviewStandardDeviation: t.string,
+  year: t.string,
+})
+
 const ValidatedAnnualStats = t.type({
-  annual: t.array(
-    t.type({
-      reviewAverage: t.string,
-      reviewCount: t.string,
-      reviewMedian: t.string,
-      reviewMode: t.string,
-      reviewStandardDeviation: t.string,
-      year: t.string,
-    }),
-  ),
+  annual: t.array(ValidatedOneAnnualStats),
+})
+
+const ValidatedOneAnnualContainerStats = t.type({
+  containerId: t.string,
+  containerSize: t.string,
+  containerType: t.string,
+  reviewAverage: t.string,
+  reviewCount: t.string,
+  reviewMedian: t.string,
+  reviewMode: t.string,
+  reviewStandardDeviation: t.string,
+  year: t.string,
 })
 
 const ValidatedAnnualContainerStats = t.type({
-  annualContainer: t.array(
-    t.type({
-      containerId: t.string,
-      containerSize: t.string,
-      containerType: t.string,
-      reviewAverage: t.string,
-      reviewCount: t.string,
-      reviewMedian: t.string,
-      reviewMode: t.string,
-      reviewStandardDeviation: t.string,
-      year: t.string,
-    }),
-  ),
+  annualContainer: t.array(ValidatedOneAnnualContainerStats),
+})
+
+const ValidatedOneBreweryCountryStats = t.type({
+  countryCode: t.string,
+  breweryCount: t.string,
+  reviewAverage: t.string,
+  reviewCount: t.string,
+  reviewMedian: t.string,
+  reviewMode: t.string,
+  reviewStandardDeviation: t.string,
+  reviewedBeerCount: t.string,
 })
 
 const ValidatedBreweryCountryStats = t.type({
-  breweryCountry: t.array(
-    t.type({
-      countryCode: t.string,
-      breweryCount: t.string,
-      reviewAverage: t.string,
-      reviewCount: t.string,
-      reviewMedian: t.string,
-      reviewMode: t.string,
-      reviewStandardDeviation: t.string,
-      reviewedBeerCount: t.string,
-    }),
-  ),
+  breweryCountry: t.array(ValidatedOneBreweryCountryStats),
+})
+
+const ValidatedOneBreweryStats = t.type({
+  breweryId: t.string,
+  breweryName: t.string,
+  breweryCountry: t.union([t.string, t.undefined]),
+  reviewAverage: t.string,
+  reviewCount: t.string,
+  reviewMedian: t.string,
+  reviewMode: t.string,
+  reviewStandardDeviation: t.string,
+  reviewedBeerCount: t.string,
 })
 
 const ValidatedBreweryStats = t.type({
-  brewery: t.array(
-    t.type({
-      breweryId: t.string,
-      breweryName: t.string,
-      breweryCountry: t.union([t.string, t.undefined]),
-      reviewAverage: t.string,
-      reviewCount: t.string,
-      reviewMedian: t.string,
-      reviewMode: t.string,
-      reviewStandardDeviation: t.string,
-      reviewedBeerCount: t.string,
-    }),
-  ),
+  brewery: t.array(ValidatedOneBreweryStats),
+})
+
+const ValidatedOneContainerStats = t.type({
+  containerId: t.string,
+  containerSize: t.string,
+  containerType: t.string,
+  reviewAverage: t.string,
+  reviewCount: t.string,
+  reviewMedian: t.string,
+  reviewMode: t.string,
+  reviewStandardDeviation: t.string,
 })
 
 const ValidatedContainerStats = t.type({
-  container: t.array(
-    t.type({
-      containerId: t.string,
-      containerSize: t.string,
-      containerType: t.string,
-      reviewAverage: t.string,
-      reviewCount: t.string,
-      reviewMedian: t.string,
-      reviewMode: t.string,
-      reviewStandardDeviation: t.string,
-    }),
-  ),
+  container: t.array(ValidatedOneContainerStats),
+})
+
+const ValidatedOneLocationStats = t.type({
+  locationId: t.string,
+  locationName: t.string,
+  reviewAverage: t.string,
+  reviewCount: t.string,
+  reviewMedian: t.string,
+  reviewMode: t.string,
+  reviewStandardDeviation: t.string,
 })
 
 const ValidatedLocationStats = t.type({
-  location: t.array(
-    t.type({
-      locationId: t.string,
-      locationName: t.string,
-      reviewAverage: t.string,
-      reviewCount: t.string,
-      reviewMedian: t.string,
-      reviewMode: t.string,
-      reviewStandardDeviation: t.string,
-    }),
-  ),
+  location: t.array(ValidatedOneLocationStats),
+})
+
+const ValidatedOneRatingStats = t.type({
+  rating: t.string,
+  count: t.string,
 })
 
 const ValidatedRatingStats = t.type({
-  rating: t.array(
-    t.type({
-      rating: t.string,
-      count: t.string,
-    }),
-  ),
+  rating: t.array(ValidatedOneRatingStats),
+})
+
+const ValidatedOneStyleStats = t.type({
+  reviewAverage: t.string,
+  reviewCount: t.string,
+  reviewMedian: t.string,
+  reviewMode: t.string,
+  reviewStandardDeviation: t.string,
+  styleId: t.string,
+  styleName: t.string,
 })
 
 const ValidatedStyleStats = t.type({
-  style: t.array(
-    t.type({
-      reviewAverage: t.string,
-      reviewCount: t.string,
-      reviewMedian: t.string,
-      reviewMode: t.string,
-      reviewStandardDeviation: t.string,
-      styleId: t.string,
-      styleName: t.string,
-    }),
-  ),
+  style: t.array(ValidatedOneStyleStats),
 })
 
-export function validateOverallStatsOrUndefined(
-  result: unknown,
-): OverallStats | undefined {
-  if (typeof result === 'undefined') {
-    return undefined
+function toOverallStats(
+  stats: t.TypeOf<typeof ValidatedOverallStats>,
+): OverallStats {
+  return {
+    beerCount: stats.beerCount,
+    breweryCount: stats.breweryCount,
+    breweryCountryCount: stats.breweryCountryCount,
+    containerCount: stats.containerCount,
+    locationCount: stats.locationCount,
+    distinctBeerReviewCount: stats.distinctBeerReviewCount,
+    reviewAverage: stats.reviewAverage,
+    reviewCount: stats.reviewCount,
+    reviewMedian: stats.reviewMedian,
+    reviewMode: stats.reviewMode,
+    reviewStandardDeviation: stats.reviewStandardDeviation,
+    reviewWithLocationCount: stats.reviewWithLocationCount,
+    reviewWithoutLocationCount: stats.reviewWithoutLocationCount,
+    styleCount: stats.styleCount,
   }
-  type StatsT = t.TypeOf<typeof ValidatedOverallStats>
-  const decoded = ValidatedOverallStats.decode(result)
-  if (isLeft(decoded)) {
-    throw Error(formatError(decoded))
-  }
-  const valid: StatsT = decoded.right
-  return valid
 }
 
-export function validateAnnualStatsOrUndefined(
-  result: unknown,
-): AnnualStats | undefined {
-  if (typeof result === 'undefined') {
-    return undefined
+function toOneAnnualStats(
+  stats: t.TypeOf<typeof ValidatedOneAnnualStats>,
+): OneAnnualStats {
+  return {
+    reviewAverage: stats.reviewAverage,
+    reviewCount: stats.reviewCount,
+    reviewMedian: stats.reviewMedian,
+    reviewMode: stats.reviewMode,
+    reviewStandardDeviation: stats.reviewStandardDeviation,
+    year: stats.year,
   }
-  type StatsT = t.TypeOf<typeof ValidatedAnnualStats>
-  const decoded = ValidatedAnnualStats.decode(result)
-  if (isLeft(decoded)) {
-    throw Error(formatError(decoded))
-  }
-  const valid: StatsT = decoded.right
-  return valid
 }
 
-export function validateAnnualContainerStatsOrUndefined(
-  result: unknown,
-): AnnualContainerStats | undefined {
-  if (typeof result === 'undefined') {
-    return undefined
+function toOneAnnualContainerStats(
+  stats: t.TypeOf<typeof ValidatedOneAnnualContainerStats>,
+): OneAnnualContainerStats {
+  return {
+    containerId: stats.containerId,
+    containerSize: stats.containerSize,
+    containerType: stats.containerType,
+    reviewAverage: stats.reviewAverage,
+    reviewCount: stats.reviewCount,
+    reviewMedian: stats.reviewMedian,
+    reviewMode: stats.reviewMode,
+    reviewStandardDeviation: stats.reviewStandardDeviation,
+    year: stats.year,
   }
-  return validateAnnualContainerStats(result)
 }
 
-export function validateAnnualContainerStats(
-  result: unknown,
-): AnnualContainerStats {
-  type StatsT = t.TypeOf<typeof ValidatedAnnualContainerStats>
-  const decoded = ValidatedAnnualContainerStats.decode(result)
-  if (isLeft(decoded)) {
-    throw Error(formatError(decoded))
+function toOneBreweryCountryStats(
+  stats: t.TypeOf<typeof ValidatedOneBreweryCountryStats>,
+): OneBreweryCountryStats {
+  return {
+    countryCode: stats.countryCode,
+    breweryCount: stats.breweryCount,
+    reviewAverage: stats.reviewAverage,
+    reviewCount: stats.reviewCount,
+    reviewMedian: stats.reviewMedian,
+    reviewMode: stats.reviewMode,
+    reviewStandardDeviation: stats.reviewStandardDeviation,
+    reviewedBeerCount: stats.reviewedBeerCount,
   }
-  const valid: StatsT = decoded.right
-  return valid
-}
-
-export function validateBreweryCountryStatsOrUndefined(
-  result: unknown,
-): BreweryCountryStats | undefined {
-  if (typeof result === 'undefined') {
-    return undefined
-  }
-  return validateBreweryCountryStats(result)
-}
-
-export function validateBreweryCountryStats(
-  result: unknown,
-): BreweryCountryStats {
-  type StatsT = t.TypeOf<typeof ValidatedBreweryCountryStats>
-  const decoded = ValidatedBreweryCountryStats.decode(result)
-  if (isLeft(decoded)) {
-    throw Error(formatError(decoded))
-  }
-  const valid: StatsT = decoded.right
-  return valid
 }
 
 // A country missing from the response is an explicit undefined from here on,
 // so that no layer can forget to pass it along.
 function toOneBreweryStats(
-  stats: t.TypeOf<typeof ValidatedBreweryStats>['brewery'][number],
+  stats: t.TypeOf<typeof ValidatedOneBreweryStats>,
 ): OneBreweryStats {
   return {
     breweryId: stats.breweryId,
@@ -234,6 +348,130 @@ function toOneBreweryStats(
   }
 }
 
+function toOneContainerStats(
+  stats: t.TypeOf<typeof ValidatedOneContainerStats>,
+): OneContainerStats {
+  return {
+    containerId: stats.containerId,
+    containerSize: stats.containerSize,
+    containerType: stats.containerType,
+    reviewAverage: stats.reviewAverage,
+    reviewCount: stats.reviewCount,
+    reviewMedian: stats.reviewMedian,
+    reviewMode: stats.reviewMode,
+    reviewStandardDeviation: stats.reviewStandardDeviation,
+  }
+}
+
+function toOneLocationStats(
+  stats: t.TypeOf<typeof ValidatedOneLocationStats>,
+): OneLocationStats {
+  return {
+    locationId: stats.locationId,
+    locationName: stats.locationName,
+    reviewAverage: stats.reviewAverage,
+    reviewCount: stats.reviewCount,
+    reviewMedian: stats.reviewMedian,
+    reviewMode: stats.reviewMode,
+    reviewStandardDeviation: stats.reviewStandardDeviation,
+  }
+}
+
+function toOneRatingStats(
+  stats: t.TypeOf<typeof ValidatedOneRatingStats>,
+): OneRatingStats {
+  return {
+    rating: stats.rating,
+    count: stats.count,
+  }
+}
+
+function toOneStyleStats(
+  stats: t.TypeOf<typeof ValidatedOneStyleStats>,
+): OneStyleStats {
+  return {
+    reviewAverage: stats.reviewAverage,
+    reviewCount: stats.reviewCount,
+    reviewMedian: stats.reviewMedian,
+    reviewMode: stats.reviewMode,
+    reviewStandardDeviation: stats.reviewStandardDeviation,
+    styleId: stats.styleId,
+    styleName: stats.styleName,
+  }
+}
+
+export function validateOverallStatsOrUndefined(
+  result: unknown,
+): OverallStats | undefined {
+  if (typeof result === 'undefined') {
+    return undefined
+  }
+  const decoded = ValidatedOverallStats.decode(result)
+  if (isLeft(decoded)) {
+    throw Error(formatError(decoded))
+  }
+  return toOverallStats(decoded.right)
+}
+
+export function validateAnnualStatsOrUndefined(
+  result: unknown,
+): AnnualStats | undefined {
+  if (typeof result === 'undefined') {
+    return undefined
+  }
+  const decoded = ValidatedAnnualStats.decode(result)
+  if (isLeft(decoded)) {
+    throw Error(formatError(decoded))
+  }
+  return {
+    annual: decoded.right.annual.map(toOneAnnualStats),
+  }
+}
+
+export function validateAnnualContainerStatsOrUndefined(
+  result: unknown,
+): AnnualContainerStats | undefined {
+  if (typeof result === 'undefined') {
+    return undefined
+  }
+  return validateAnnualContainerStats(result)
+}
+
+export function validateAnnualContainerStats(
+  result: unknown,
+): AnnualContainerStats {
+  const decoded = ValidatedAnnualContainerStats.decode(result)
+  if (isLeft(decoded)) {
+    throw Error(formatError(decoded))
+  }
+  return {
+    annualContainer: decoded.right.annualContainer.map(
+      toOneAnnualContainerStats,
+    ),
+  }
+}
+
+export function validateBreweryCountryStatsOrUndefined(
+  result: unknown,
+): BreweryCountryStats | undefined {
+  if (typeof result === 'undefined') {
+    return undefined
+  }
+  return validateBreweryCountryStats(result)
+}
+
+export function validateBreweryCountryStats(
+  result: unknown,
+): BreweryCountryStats {
+  const decoded = ValidatedBreweryCountryStats.decode(result)
+  if (isLeft(decoded)) {
+    throw Error(formatError(decoded))
+  }
+  return {
+    breweryCountry: decoded.right.breweryCountry.map(toOneBreweryCountryStats),
+  }
+}
+
 export function validateBreweryStatsOrUndefined(
   result: unknown,
 ): BreweryStats | undefined {
@@ -244,14 +482,12 @@ export function validateBreweryStatsOrUndefined(
 }
 
 export function validateBreweryStats(result: unknown): BreweryStats {
-  type StatsT = t.TypeOf<typeof ValidatedBreweryStats>
   const decoded = ValidatedBreweryStats.decode(result)
   if (isLeft(decoded)) {
     throw Error(formatError(decoded))
   }
-  const valid: StatsT = decoded.right
   return {
-    brewery: valid.brewery.map(toOneBreweryStats),
+    brewery: decoded.right.brewery.map(toOneBreweryStats),
   }
 }
 
@@ -261,23 +497,23 @@ export function validateContainerStatsOrUndefined(
   if (typeof result === 'undefined') {
     return undefined
   }
-  type StatsT = t.TypeOf<typeof ValidatedContainerStats>
   const decoded = ValidatedContainerStats.decode(result)
   if (isLeft(decoded)) {
     throw Error(formatError(decoded))
   }
-  const valid: StatsT = decoded.right
-  return valid
+  return {
+    container: decoded.right.container.map(toOneContainerStats),
+  }
 }
 
 export function validateLocationStats(result: unknown): LocationStats {
-  type StatsT = t.TypeOf<typeof ValidatedLocationStats>
   const decoded = ValidatedLocationStats.decode(result)
   if (isLeft(decoded)) {
     throw Error(formatError(decoded))
   }
-  const valid: StatsT = decoded.right
-  return valid
+  return {
+    location: decoded.right.location.map(toOneLocationStats),
+  }
 }
 
 export function validateLocationStatsOrUndefined(
@@ -295,13 +531,13 @@ export function validateRatingStatsOrUndefined(
   if (typeof result === 'undefined') {
     return undefined
   }
-  type StatsT = t.TypeOf<typeof ValidatedRatingStats>
   const decoded = ValidatedRatingStats.decode(result)
   if (isLeft(decoded)) {
     throw Error(formatError(decoded))
   }
-  const valid: StatsT = decoded.right
-  return valid
+  return {
+    rating: decoded.right.rating.map(toOneRatingStats),
+  }
 }
 
 export function validateStyleStatsOrUndefined(
@@ -310,11 +546,11 @@ export function validateStyleStatsOrUndefined(
   if (typeof result === 'undefined') {
     return undefined
   }
-  type StatsT = t.TypeOf<typeof ValidatedStyleStats>
   const decoded = ValidatedStyleStats.decode(result)
   if (isLeft(decoded)) {
     throw Error(formatError(decoded))
   }
-  const valid: StatsT = decoded.right
-  return valid
+  return {
+    style: decoded.right.style.map(toOneStyleStats),
+  }
 }

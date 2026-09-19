@@ -1,11 +1,19 @@
-import type { ListContainersIf } from '../../types/container/types'
-import { useListContainersQuery } from '../../store/container/api'
-import { validateContainerListOrUndefined } from '../../validation/container'
+import type {
+  ListContainersHookIf,
+  UseListContainers,
+  ValidateContainerListOrUndefined,
+} from './types'
 
-const listContainers: () => ListContainersIf = () => {
-  const listContainersIf: ListContainersIf = {
+const listContainers: (
+  useListContainers: UseListContainers,
+  validateContainerListOrUndefined: ValidateContainerListOrUndefined,
+) => ListContainersHookIf = (
+  useListContainers,
+  validateContainerListOrUndefined,
+) => {
+  const listContainersIf: ListContainersHookIf = {
     useList: () => {
-      const { data, isLoading } = useListContainersQuery()
+      const { data, isLoading } = useListContainers()
       return {
         data: validateContainerListOrUndefined(data),
         isLoading,

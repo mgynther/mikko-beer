@@ -1,4 +1,4 @@
-import type { YearMonth } from '../src/types/types'
+import type { YearMonth } from '../src/components/types/types'
 
 export interface Times {
   min: {

@@ -1,31 +1,33 @@
 import React, { useState } from 'react'
 
-import type { UseUrlPathParams } from '../util'
+import type { UseUrlPathParams } from '../types/types'
 
 import type {
   GetBeerIf,
   Beer as BeerType,
   UpdateBeerLoginIf,
-} from '../../types/beer/types'
+} from '../types/beer/types'
 
-import type { ListReviewsByIf } from '../../types/review/types'
-import type { ListStoragesByIf } from '../../types/storage/types'
+import type { ListReviewsByIf } from '../types/review/types'
+import type { ListStoragesByIf } from '../types/storage/types'
 
-import { EditableMode } from '../common/EditableMode'
-import EditButton from '../common/EditButton'
+import { EditableMode } from '../internal/common/EditableMode'
+import EditButton from '../internal/common/EditButton'
 
-import BreweryLinks from '../brewery/BreweryLinks'
-import LoadingIndicator from '../common/LoadingIndicator'
-import NotFound from '../common/NotFound'
-import StyleLinks from '../style/StyleLinks'
+import BreweryLinks from '../internal/brewery/BreweryLinks'
+import LoadingIndicator from '../internal/common/LoadingIndicator'
+import NotFound from '../internal/common/NotFound'
+import StyleLinks from '../internal/style/StyleLinks'
 
-import UpdateBeer from './UpdateBeer'
+import UpdateBeer from '../internal/beer/UpdateBeer'
 
 import './Beer.css'
-import BeerStorages from './BeerStorages'
-import ReviewsBy from '../review/ReviewsBy'
+import BeerStorages from '../internal/beer/BeerStorages'
+import ReviewsBy from '../internal/review/ReviewsBy'
+import type { LinkComponent } from '../common/link'
 
 interface Props {
+  linkComponent: LinkComponent
   listReviewsByBeerIf: ListReviewsByIf
   listStoragesByBeerIf: ListStoragesByIf
   useUrlPathParams: UseUrlPathParams
@@ -67,13 +69,19 @@ function Beer(props: Props): React.JSX.Element {
           <div className='BeerInfo'>
             <h5>Breweries</h5>
             <div>
-              <BreweryLinks breweries={beer.breweries} />
+              <BreweryLinks
+                linkComponent={props.linkComponent}
+                breweries={beer.breweries}
+              />
             </div>
           </div>
           <div className='BeerInfo'>
             <h5>Styles</h5>
             <div>
-              <StyleLinks styles={beer.styles} />
+              <StyleLinks
+                linkComponent={props.linkComponent}
+                styles={beer.styles}
+              />
             </div>
           </div>
         </>
@@ -95,10 +103,15 @@ function Beer(props: Props): React.JSX.Element {
         />
       )}
       <BeerStorages
+        linkComponent={props.linkComponent}
         beerId={beerId}
         listStoragesByBeerIf={props.listStoragesByBeerIf}
       />
-      <ReviewsBy id={beerId} listReviewsByIf={props.listReviewsByBeerIf} />
+      <ReviewsBy
+        linkComponent={props.linkComponent}
+        id={beerId}
+        listReviewsByIf={props.listReviewsByBeerIf}
+      />
     </div>
   )
 }

@@ -4,16 +4,18 @@ import type {
   ListReviewsIf,
   JoinedReview,
   ReviewIf,
-} from '../../types/review/types'
+} from '../types/review/types'
 
-import ReviewList from './ReviewList'
+import ReviewList from '../internal/review/ReviewList'
 
 import './Review.css'
-import { parseSearchParams } from './search-params'
+import { parseSearchParams } from '../internal/review/search-params'
+import type { LinkComponent } from '../common/link'
 
 const pageSize = 20
 
 interface Props {
+  linkComponent: LinkComponent
   listReviewsIf: ListReviewsIf
   reviewIf: ReviewIf
 }
@@ -96,6 +98,7 @@ function Reviews(props: Props): React.JSX.Element {
     <div>
       <h3>Reviews</h3>
       <ReviewList
+        linkComponent={props.linkComponent}
         filterState={{
           isOpen: parsedSearchParams.reviewListParams.isFiltersOpen,
           setIsOpen: parsedSearchParams.setIsFiltersOpen,

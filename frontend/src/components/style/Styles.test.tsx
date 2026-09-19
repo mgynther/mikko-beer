@@ -1,45 +1,44 @@
 import { render } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
-import LinkWrapper from '../LinkWrapper'
-import { loadingIndicatorText } from '../common/LoadingIndicator'
+import { loadingIndicatorText } from '../internal/common/LoadingIndicator'
 
 import Styles from './Styles'
 import { setupUser } from '../../../test-util/user-event'
 import { dontCall } from '../../../test-util/dont-call'
+import { testLink } from '../../../test-util/link'
 
 test('renders styles', () => {
   const { getAllByRole } = render(
-    <LinkWrapper>
-      <Styles
-        listStylesIf={{
-          useList: () => ({
-            styles: [
-              {
-                id: '48f8815e-5968-4863-a152-5693096b75ff',
-                name: 'Stout',
-                parents: [],
-              },
-              {
-                id: '40b7b0e0-6921-4d0c-9318-9f0d9a703a3d',
-                name: 'Porter',
-                parents: [],
-              },
-            ],
-            isLoading: false,
+    <Styles
+      linkComponent={testLink}
+      listStylesIf={{
+        useList: () => ({
+          styles: [
+            {
+              id: '48f8815e-5968-4863-a152-5693096b75ff',
+              name: 'Stout',
+              parents: [],
+            },
+            {
+              id: '40b7b0e0-6921-4d0c-9318-9f0d9a703a3d',
+              name: 'Porter',
+              parents: [],
+            },
+          ],
+          isLoading: false,
+        }),
+        searchFieldIf: {
+          useSearchField: () => ({
+            activate: (): void => undefined,
+            isActive: false,
           }),
-          searchFieldIf: {
-            useSearchField: () => ({
-              activate: (): void => undefined,
-              isActive: false,
-            }),
-            useDebounce: dontCall,
-          },
-        }}
-        navigateIf={{
-          useNavigate: (): (() => void) => () => undefined,
-        }}
-      />
-    </LinkWrapper>,
+          useDebounce: dontCall,
+        },
+      }}
+      navigateIf={{
+        useNavigate: (): (() => void) => () => undefined,
+      }}
+    />,
   )
   const links = getAllByRole('link')
   expect(links.map((a) => a.innerHTML)).toEqual(['Porter', 'Stout'])
@@ -47,26 +46,25 @@ test('renders styles', () => {
 
 test('renders loading text when loading', () => {
   const { getByText } = render(
-    <LinkWrapper>
-      <Styles
-        listStylesIf={{
-          useList: () => ({
-            styles: undefined,
-            isLoading: true,
+    <Styles
+      linkComponent={testLink}
+      listStylesIf={{
+        useList: () => ({
+          styles: undefined,
+          isLoading: true,
+        }),
+        searchFieldIf: {
+          useSearchField: () => ({
+            activate: (): void => undefined,
+            isActive: false,
           }),
-          searchFieldIf: {
-            useSearchField: () => ({
-              activate: (): void => undefined,
-              isActive: false,
-            }),
-            useDebounce: dontCall,
-          },
-        }}
-        navigateIf={{
-          useNavigate: (): (() => void) => () => undefined,
-        }}
-      />
-    </LinkWrapper>,
+          useDebounce: dontCall,
+        },
+      }}
+      navigateIf={{
+        useNavigate: (): (() => void) => () => undefined,
+      }}
+    />,
   )
   const loadingText = getByText(loadingIndicatorText)
   expect(loadingText).toBeDefined()
@@ -77,32 +75,31 @@ test('navigates to selected search result', async () => {
   const navigate = vitest.fn()
   const styleId = '7fdc561f-da68-4665-b888-a82d5a03bf85'
   const { getByPlaceholderText, getByRole } = render(
-    <LinkWrapper>
-      <Styles
-        listStylesIf={{
-          useList: () => ({
-            styles: [
-              {
-                id: styleId,
-                name: 'American Lager',
-                parents: [],
-              },
-            ],
-            isLoading: false,
+    <Styles
+      linkComponent={testLink}
+      listStylesIf={{
+        useList: () => ({
+          styles: [
+            {
+              id: styleId,
+              name: 'American Lager',
+              parents: [],
+            },
+          ],
+          isLoading: false,
+        }),
+        searchFieldIf: {
+          useSearchField: () => ({
+            activate: (): void => undefined,
+            isActive: true,
           }),
-          searchFieldIf: {
-            useSearchField: () => ({
-              activate: (): void => undefined,
-              isActive: true,
-            }),
-            useDebounce: dontCall,
-          },
-        }}
-        navigateIf={{
-          useNavigate: (): (() => void) => navigate,
-        }}
-      />
-    </LinkWrapper>,
+          useDebounce: dontCall,
+        },
+      }}
+      navigateIf={{
+        useNavigate: (): (() => void) => navigate,
+      }}
+    />,
   )
   const searchInput = getByPlaceholderText('Search style')
   await user.type(searchInput, 'Amer')

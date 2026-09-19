@@ -1,23 +1,27 @@
 import type {
-  CreateStorageIf,
-  CreateStorageRequest,
   CreatedStorage,
-} from '../../types/storage/types'
-import { useCreateStorageMutation } from '../../store/storage/api'
-import { validateCreatedStorage } from '../../validation/storage'
+  CreateStorageHookIf,
+  CreateStorageRequest,
+  UseCreateStorage,
+  ValidateCreatedStorage,
+} from './types'
+import { unwrapMember } from '../envelope'
 
-const createStorage: () => CreateStorageIf = () => {
-  const createStorageIf: CreateStorageIf = {
+const createStorage: (
+  useCreateStorage: UseCreateStorage,
+  validateCreatedStorage: ValidateCreatedStorage,
+) => CreateStorageHookIf = (useCreateStorage, validateCreatedStorage) => {
+  const createStorageIf: CreateStorageHookIf = {
     useCreate: () => {
-      const [createStorage, { error, isLoading }] = useCreateStorageMutation()
+      const { create, hasError, isLoading } = useCreateStorage()
       return {
         create: async (
           request: CreateStorageRequest,
         ): Promise<CreatedStorage> => {
-          const result = await createStorage(request).unwrap()
-          return validateCreatedStorage(result.storage)
+          const result = await create(request)
+          return validateCreatedStorage(unwrapMember(result, 'storage'))
         },
-        hasError: error !== undefined,
+        hasError,
         isLoading,
       }
     },

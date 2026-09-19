@@ -1,80 +1,86 @@
-import { beforeAll, beforeEach, afterAll, expect, test, vitest } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
-import createContainer from './create'
-import type { Container, ContainerRequest } from '../../types/container/types'
+import { expect, test, vitest } from 'vitest'
 import { render, waitFor } from '@testing-library/react'
+
+import createContainer from './create'
+import type {
+  Container,
+  ContainerRequest,
+  UseCreateContainer,
+  ValidateContainer,
+} from './types'
 import { setupUser } from '../../../test-util/user-event'
-import { Provider } from '../../react-redux-wrapper'
 
-import Button from '../../components/common/Button'
+// Stubs for the store function and the validator, for the reason given in
+// storehooks/brewery/get.test.tsx.
+const validatedContainer: Container = {
+  id: '0d4e3e4b-3d1e-4a7e-9a0e-b0a5a1c9e7f2',
+  type: 'validated',
+  size: '0.25',
+}
 
-let server: TestServer | undefined
+const created = { container: { id: 'created', type: 'bottle', size: '0.33' } }
 
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
+const request: ContainerRequest = { type: 'bottle', size: '0.33' }
 
 interface HelperProps {
-  container: ContainerRequest
-  handleResponse: (container: Container) => void
+  onCreate: (container: ContainerRequest) => void
+  onCreated: (container: Container) => void
+  onValidate: (result: unknown) => void
 }
 
 function Helper(props: HelperProps): React.JSX.Element {
-  const createIf = createContainer()
-  const create = createIf.useCreate()
-  const handleClick = (): void => {
-    async function doHandle(): Promise<void> {
-      const response = await create.create(props.container)
-      props.handleResponse(response)
-    }
-    void doHandle()
+  const useStoreCreate: UseCreateContainer = () => ({
+    create: async (container: ContainerRequest): Promise<unknown> => {
+      props.onCreate(container)
+      return created
+    },
+    isLoading: false,
+  })
+  const validate: ValidateContainer = (result: unknown) => {
+    props.onValidate(result)
+    return validatedContainer
   }
-  return <Button onClick={handleClick} text='Test' />
+  const { create, isLoading } = createContainer(
+    useStoreCreate,
+    validate,
+  ).useCreate()
+  return (
+    <div>
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      <button
+        type='button'
+        onClick={() => {
+          void (async (): Promise<void> => {
+            props.onCreated(await create(request))
+          })()
+        }}
+      >
+        Create
+      </button>
+    </div>
+  )
 }
 
 test('create container', async () => {
   const user = setupUser()
+  const onCreate = vitest.fn()
+  const onCreated = vitest.fn()
+  const onValidate = vitest.fn()
 
-  const expectedResponse: { container: Container } = {
-    container: {
-      id: 'e1ed6014-3653-4792-a7d5-711b40f4c70f',
-      type: 'bottle',
-      size: '0.33',
-    },
-  }
-
-  server?.addResponse<{ container: Container }>({
-    method: 'POST',
-    pathname: '/api/v1/container',
-    response: expectedResponse,
-    status: 201,
-  })
-
-  const handler = vitest.fn()
-  const { getByRole } = render(
-    <Provider store={store}>
-      <Helper
-        container={{
-          type: expectedResponse.container.type,
-          size: expectedResponse.container.size,
-        }}
-        handleResponse={handler}
-      />
-    </Provider>,
+  const { getByRole, getByText } = render(
+    <Helper
+      onCreate={onCreate}
+      onCreated={onCreated}
+      onValidate={onValidate}
+    />,
   )
-  const testButton = getByRole('button', { name: 'Test' })
-  await user.click(testButton)
+
+  await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(handler).toHaveBeenCalledWith(expectedResponse.container)
+    expect(onCreated).toHaveBeenCalledWith(validatedContainer)
   })
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onCreate).toHaveBeenCalledWith(request)
+  // The envelope is unwrapped before the validator sees the container.
+  expect(onValidate).toHaveBeenCalledWith(created.container)
 })

@@ -1,13 +1,21 @@
-import type { GetStorageIf } from '../../types/storage/types'
-import { useGetStorageQuery } from '../../store/storage/api'
-import { validateStorageOrUndefined } from '../../validation/storage'
+import type {
+  GetStorageHookIf,
+  UseGetStorage,
+  ValidateStorageOrUndefined,
+} from './types'
+import { unwrapMemberOrUndefined } from '../envelope'
 
-const getStorage: () => GetStorageIf = () => {
-  const getStorageIf: GetStorageIf = {
+const getStorage: (
+  useGetStorage: UseGetStorage,
+  validateStorageOrUndefined: ValidateStorageOrUndefined,
+) => GetStorageHookIf = (useGetStorage, validateStorageOrUndefined) => {
+  const getStorageIf: GetStorageHookIf = {
     useGet: (storageId: string) => {
-      const { data, isLoading } = useGetStorageQuery(storageId)
+      const { data, isLoading } = useGetStorage(storageId)
       return {
-        storage: validateStorageOrUndefined(data?.storage),
+        storage: validateStorageOrUndefined(
+          unwrapMemberOrUndefined(data, 'storage'),
+        ),
         isLoading,
       }
     },

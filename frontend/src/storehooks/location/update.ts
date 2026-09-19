@@ -1,15 +1,22 @@
-import type { Location, UpdateLocationHookIf } from '../../types/location/types'
-import { useUpdateLocationMutation } from '../../store/location/api'
-import { validateLocation } from '../../validation/location'
+import type {
+  Location,
+  UpdateLocationHookIf,
+  UseUpdateLocation,
+  ValidateLocation,
+} from './types'
+import { unwrapMember } from '../envelope'
 
-const updateLocation: () => UpdateLocationHookIf = () => {
+const updateLocation: (
+  useUpdateLocation: UseUpdateLocation,
+  validateLocation: ValidateLocation,
+) => UpdateLocationHookIf = (useUpdateLocation, validateLocation) => {
   const updateLocationIf: UpdateLocationHookIf = {
     useUpdate: () => {
-      const [updateLocation, { isLoading }] = useUpdateLocationMutation()
+      const { update, isLoading } = useUpdateLocation()
       return {
         update: async (locationRequest: Location): Promise<void> => {
-          const result = await updateLocation(locationRequest).unwrap()
-          validateLocation(result.location)
+          const result = await update(locationRequest)
+          validateLocation(unwrapMember(result, 'location'))
         },
         isLoading,
       }

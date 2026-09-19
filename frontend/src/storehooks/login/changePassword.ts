@@ -2,16 +2,17 @@ import type {
   ChangePasswordHookIf,
   ChangePasswordParams,
   GetPasswordChangeResult,
-  PasswordChangeResult,
-} from '../../types/login/types'
-import { useSelector } from '../../react-redux-wrapper'
-import { useChangePasswordMutation } from '../../store/login/api'
-import { selectPasswordChangeResult } from '../../store/login/reducer'
+  UseChangePassword,
+  UsePasswordChangeResult,
+} from './types'
 
-const changePassword: () => ChangePasswordHookIf = () => {
+const changePassword: (
+  useChangePassword: UseChangePassword,
+  usePasswordChangeResult: UsePasswordChangeResult,
+) => ChangePasswordHookIf = (useChangePassword, usePasswordChangeResult) => {
   const changePasswordIf: ChangePasswordHookIf = {
     useChangePassword: () => {
-      const [changePassword, { isLoading }] = useChangePasswordMutation()
+      const { changePassword, isLoading } = useChangePassword()
       return {
         changePassword: async (params: ChangePasswordParams): Promise<void> => {
           await changePassword(params)
@@ -20,12 +21,8 @@ const changePassword: () => ChangePasswordHookIf = () => {
       }
     },
     useGetPasswordChangeResult: () => {
-      const getPasswordChangeResult: GetPasswordChangeResult = () => {
-        const passwordChangeResult: PasswordChangeResult = useSelector(
-          selectPasswordChangeResult,
-        )
-        return passwordChangeResult
-      }
+      const getPasswordChangeResult: GetPasswordChangeResult = () =>
+        usePasswordChangeResult()
       return {
         getResult: getPasswordChangeResult,
       }

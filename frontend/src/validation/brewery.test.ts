@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 
-import type { Brewery, BreweryList } from '../types/brewery/types'
+import type { Brewery, BreweryList } from './brewery'
 
 import {
   validateBreweryOrUndefined,

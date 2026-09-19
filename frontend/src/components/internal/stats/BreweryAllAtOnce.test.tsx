@@ -1,0 +1,323 @@
+import { fireEvent, render, waitFor } from '@testing-library/react'
+import { setupUser } from '../../../../test-util/user-event'
+import { expect, test, vitest } from 'vitest'
+import { testTimes } from '../../../../test-util/filter-time'
+import BreweryAllAtOnce from './BreweryAllAtOnce'
+import { openFilters } from '../../../../test-util/open-filters'
+import type {
+  BreweryStats,
+  BreweryStatsSortingOrder,
+  GetBreweryStatsIf,
+  OneBreweryStats,
+} from '../../types/stats/types'
+import type { UseDebounce, YearMonth } from '../../types/types'
+import { dontCall } from '../../../../test-util/dont-call'
+import type { FormattedStatsParams } from './search-params'
+import { testLink } from '../../../../test-util/link'
+
+const getUseDebounce = function <T>(): UseDebounce<T> {
+  return (value: T) => [value, false]
+}
+
+const styleId = 'b345a181-3709-4e12-b255-6fea3baf9f71'
+
+const koskipanimo: OneBreweryStats = {
+  breweryId: '9bf16009-53f2-42e9-86f2-7dc80211aa63',
+  breweryName: 'Koskipanimo',
+  breweryCountry: undefined,
+  reviewAverage: '9.06',
+  reviewCount: '63',
+  reviewMedian: '9.00',
+  reviewMode: '9',
+  reviewStandardDeviation: '0.35',
+  reviewedBeerCount: '62',
+}
+
+const lehe: OneBreweryStats = {
+  breweryId: '1db4ef0e-f9a1-441f-b803-6b9b80d971ce',
+  breweryName: 'Lehe pruulikoda',
+  breweryCountry: undefined,
+  reviewAverage: '9.71',
+  reviewCount: '24',
+  reviewMedian: '9.50',
+  reviewMode: '10',
+  reviewStandardDeviation: '0.67',
+  reviewedBeerCount: '24',
+}
+
+const minTime: YearMonth = testTimes.min.yearMonth
+const maxTime: YearMonth = testTimes.max.yearMonth
+
+const unusedFilters = {
+  minReviewCount: {
+    value: 1,
+    setValue: dontCall,
+  },
+  maxReviewCount: {
+    value: Infinity,
+    setValue: dontCall,
+  },
+  minReviewAverage: {
+    value: 4.0,
+    setValue: dontCall,
+  },
+  maxReviewAverage: {
+    value: 10.0,
+    setValue: dontCall,
+  },
+  timeStart: {
+    min: minTime,
+    max: maxTime,
+    value: minTime,
+    setValue: dontCall,
+  },
+  timeEnd: {
+    min: minTime,
+    max: maxTime,
+    value: maxTime,
+    setValue: dontCall,
+  },
+}
+
+const statsParams: FormattedStatsParams<BreweryStatsSortingOrder> = {
+  sortingOrder: 'brewery_name',
+  sortingDirection: 'asc',
+  minReviewCount: 1,
+  maxReviewCount: Infinity,
+  minReviewAverage: 4.0,
+  maxReviewAverage: 10.0,
+  timeStart: testTimes.min.utcTimestamp,
+  timeEnd: testTimes.max.utcTimestamp,
+  isFiltersOpen: false,
+}
+
+const unusedStats: GetBreweryStatsIf = {
+  useStats: () => ({
+    query: async () => ({ brewery: [] }),
+    stats: { brewery: [] },
+    isLoading: false,
+  }),
+  infiniteScroll: dontCall,
+  minTime,
+  maxTime,
+  getUseDebounce,
+}
+
+test('queries brewery stats', async () => {
+  const query = vitest.fn()
+  const setLoadedBreweries = vitest.fn()
+  render(
+    <BreweryAllAtOnce
+      linkComponent={testLink}
+      getBreweryStatsIf={{
+        useStats: () => ({
+          query: async (params): Promise<BreweryStats> => {
+            query(params)
+            return {
+              brewery: [{ ...koskipanimo }, { ...lehe }],
+            }
+          },
+          stats: {
+            brewery: [],
+          },
+          isLoading: false,
+        }),
+        infiniteScroll: dontCall,
+        minTime,
+        maxTime,
+        getUseDebounce,
+      }}
+      breweryId={undefined}
+      locationId={undefined}
+      styleId={styleId}
+      loadedBreweries={undefined}
+      setLoadedBreweries={setLoadedBreweries}
+      setSortingOrder={() => undefined}
+      filterState={{
+        filters: unusedFilters,
+        isOpen: false,
+        setIsOpen: () => undefined,
+      }}
+      isFilterChangePending={false}
+      statsParams={statsParams}
+    />,
+  )
+  expect(query.mock.calls).toEqual([
+    [
+      {
+        breweryId: undefined,
+        maxReviewAverage: unusedFilters.maxReviewAverage.value,
+        maxReviewCount: unusedFilters.maxReviewCount.value,
+        minReviewAverage: unusedFilters.minReviewAverage.value,
+        minReviewCount: unusedFilters.minReviewCount.value,
+        pagination: {
+          size: 10000,
+          skip: 0,
+        },
+        sorting: {
+          direction: 'asc',
+          order: 'brewery_name',
+        },
+        styleId,
+        timeStart: testTimes.min.utcTimestamp,
+        timeEnd: testTimes.max.utcTimestamp,
+      },
+    ],
+  ])
+  await waitFor(() => {
+    expect(setLoadedBreweries.mock.calls).toEqual([
+      [undefined],
+      [[koskipanimo, lehe]],
+    ])
+  })
+})
+
+test('renders brewery stats', () => {
+  const { getByText } = render(
+    <BreweryAllAtOnce
+      linkComponent={testLink}
+      getBreweryStatsIf={unusedStats}
+      breweryId={undefined}
+      locationId={undefined}
+      styleId={styleId}
+      loadedBreweries={[koskipanimo, lehe]}
+      setLoadedBreweries={() => undefined}
+      setSortingOrder={() => undefined}
+      filterState={{
+        filters: unusedFilters,
+        isOpen: false,
+        setIsOpen: dontCall,
+      }}
+      isFilterChangePending={false}
+      statsParams={statsParams}
+    />,
+  )
+  getByText(koskipanimo.breweryName)
+  getByText(koskipanimo.reviewAverage)
+  getByText(`${koskipanimo.reviewCount} (${koskipanimo.reviewedBeerCount})`)
+  getByText(koskipanimo.reviewMedian)
+  getByText(koskipanimo.reviewMode)
+  getByText(koskipanimo.reviewStandardDeviation)
+  getByText(lehe.breweryName)
+  getByText(lehe.reviewAverage)
+  getByText(lehe.reviewCount)
+  getByText(lehe.reviewMedian)
+  getByText(lehe.reviewMode)
+  getByText(lehe.reviewStandardDeviation)
+})
+
+test('clears loaded breweries on filter change pending', () => {
+  const setLoadedBreweries = vitest.fn()
+  render(
+    <BreweryAllAtOnce
+      linkComponent={testLink}
+      getBreweryStatsIf={unusedStats}
+      breweryId={undefined}
+      locationId={undefined}
+      styleId={styleId}
+      loadedBreweries={[koskipanimo, lehe]}
+      setLoadedBreweries={setLoadedBreweries}
+      setSortingOrder={() => undefined}
+      filterState={{
+        filters: unusedFilters,
+        isOpen: false,
+        setIsOpen: dontCall,
+      }}
+      isFilterChangePending={true}
+      statsParams={statsParams}
+    />,
+  )
+  expect(setLoadedBreweries.mock.calls).toEqual([[undefined], [undefined]])
+})
+
+test('renders loading', () => {
+  const { getAllByRole } = render(
+    <BreweryAllAtOnce
+      linkComponent={testLink}
+      getBreweryStatsIf={{
+        useStats: () => ({
+          query: async (): Promise<BreweryStats> => ({ brewery: [] }),
+          stats: undefined,
+          isLoading: true,
+        }),
+        infiniteScroll: dontCall,
+        minTime,
+        maxTime,
+        getUseDebounce,
+      }}
+      breweryId={undefined}
+      locationId={undefined}
+      styleId={styleId}
+      loadedBreweries={undefined}
+      setLoadedBreweries={() => undefined}
+      setSortingOrder={() => undefined}
+      filterState={{
+        filters: unusedFilters,
+        isOpen: false,
+        setIsOpen: dontCall,
+      }}
+      isFilterChangePending={false}
+      statsParams={statsParams}
+    />,
+  )
+  const cells = getAllByRole('cell')
+  expect(cells.length).toEqual(6 * 3)
+})
+
+test('sets minimum review count filter', () => {
+  const setMinimumReviewAverage = vitest.fn()
+  const { getByDisplayValue } = render(
+    <BreweryAllAtOnce
+      linkComponent={testLink}
+      getBreweryStatsIf={unusedStats}
+      breweryId={undefined}
+      locationId={undefined}
+      styleId={styleId}
+      loadedBreweries={[koskipanimo, lehe]}
+      setLoadedBreweries={() => undefined}
+      setSortingOrder={() => undefined}
+      filterState={{
+        filters: {
+          ...unusedFilters,
+          minReviewAverage: {
+            value: 4.0,
+            setValue: setMinimumReviewAverage,
+          },
+        },
+        isOpen: true,
+        setIsOpen: dontCall,
+      }}
+      isFilterChangePending={false}
+      statsParams={statsParams}
+    />,
+  )
+  const slider = getByDisplayValue('4')
+  fireEvent.change(slider, { target: { value: '4.5' } })
+  expect(setMinimumReviewAverage.mock.calls).toEqual([[4.5]])
+})
+
+test('opens filter', async () => {
+  const user = setupUser()
+  const setIsFiltersOpen = vitest.fn()
+  const { getByRole } = render(
+    <BreweryAllAtOnce
+      linkComponent={testLink}
+      getBreweryStatsIf={unusedStats}
+      breweryId={undefined}
+      locationId={undefined}
+      styleId={styleId}
+      loadedBreweries={[koskipanimo, lehe]}
+      setLoadedBreweries={() => undefined}
+      setSortingOrder={() => undefined}
+      filterState={{
+        filters: unusedFilters,
+        isOpen: false,
+        setIsOpen: setIsFiltersOpen,
+      }}
+      isFilterChangePending={false}
+      statsParams={statsParams}
+    />,
+  )
+  await openFilters(getByRole, user)
+  expect(setIsFiltersOpen.mock.calls).toEqual([[true]])
+})

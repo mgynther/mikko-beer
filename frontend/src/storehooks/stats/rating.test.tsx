@@ -1,73 +1,67 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
+import { expect, test, vitest } from 'vitest'
+import { render } from '@testing-library/react'
+
 import statsHook from './stats'
-import { render, waitFor } from '@testing-library/react'
-import { Provider } from '../../react-redux-wrapper'
+import type { IdParams, RatingStats } from './types'
+import { statsStore } from '../../../test-util/stats-store'
+import { statsValidators } from '../../../test-util/stats-validators'
 
-import type { IdParams, RatingStats } from '../../types/stats/types'
+// Stubs for the store function and the validator, for the reason given in
+// storehooks/brewery/get.test.tsx. The store functions a test does not drive
+// are dontCall, so wiring the wrong one fails loudly.
+const validatedStats: RatingStats = {
+  rating: [],
+}
 
-let server: TestServer | undefined
+const data = { rating: [{ id: 'one' }] }
 
-beforeAll(() => {
-  server = createServer()
-})
+const params: IdParams = {
+  breweryId: undefined,
+  locationId: undefined,
+  styleId: undefined,
+}
 
-beforeEach(() => {
-  server?.clear()
-})
+interface HelperProps {
+  onQuery: (params: IdParams) => void
+  onValidate: (result: unknown) => void
+}
 
-afterAll(() => {
-  server?.close()
-})
-
-function RatingStatsHelper(props: { params: IdParams }): React.JSX.Element {
-  const statsIf = statsHook()
-  const { stats } = statsIf.rating.useStats(props.params)
+function Helper(props: HelperProps): React.JSX.Element {
+  const store = statsStore({
+    rating: (idParams: IdParams) => {
+      props.onQuery(idParams)
+      return { data, isLoading: false }
+    },
+  })
+  const validators = statsValidators({
+    ratingOrUndefined: (result: unknown) => {
+      props.onValidate(result)
+      return validatedStats
+    },
+  })
+  const { stats, isLoading } = statsHook(store, validators).rating.useStats(
+    params,
+  )
   return (
     <div>
-      {stats?.rating.map((rating) => (
-        <div key={rating.rating}>
-          <div>{rating.rating}</div>
-          <div>{rating.count}</div>
-        </div>
-      ))}
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      <div>{stats === undefined ? 'No stats' : 'Validated stats'}</div>
     </div>
   )
 }
 
-test('rating stats', async () => {
-  const expectedResponse: RatingStats = {
-    rating: [
-      {
-        rating: '10',
-        count: '45',
-      },
-    ],
-  }
-
-  const params: IdParams = {
-    breweryId: undefined,
-    locationId: undefined,
-    styleId: undefined,
-  }
-
-  server?.addResponse<RatingStats>({
-    method: 'GET',
-    pathname: '/api/v1/stats/rating',
-    response: expectedResponse,
-    status: 200,
-  })
+test('rating stats', () => {
+  const onQuery = vitest.fn()
+  const onValidate = vitest.fn()
 
   const { getByText } = render(
-    <Provider store={store}>
-      <RatingStatsHelper params={params} />
-    </Provider>,
+    <Helper onQuery={onQuery} onValidate={onValidate} />,
   )
-  const rating = expectedResponse.rating[0]
-  await waitFor(() => {
-    expect(getByText(rating.rating)).toBeDefined()
-  })
-  expect(getByText(rating.count)).toBeDefined()
+
+  expect(getByText('Validated stats')).toBeDefined()
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onQuery).toHaveBeenCalledWith(params)
+  // These statistics are not wrapped in an envelope, so the validator is
+  // given the response as it arrived.
+  expect(onValidate).toHaveBeenCalledWith(data)
 })

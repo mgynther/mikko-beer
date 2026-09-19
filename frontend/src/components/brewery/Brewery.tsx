@@ -1,31 +1,33 @@
 import React, { useState } from 'react'
 
-import type { UseUrlPathParams } from '../util'
+import type { UseUrlPathParams } from '../types/types'
 
 import type {
   Brewery as BreweryType,
   GetBreweryIf,
   UpdateBreweryIf,
-} from '../../types/brewery/types'
-import type { ListReviewsByIf } from '../../types/review/types'
-import type { ListStoragesByIf } from '../../types/storage/types'
+} from '../types/brewery/types'
+import type { ListReviewsByIf } from '../types/review/types'
+import type { ListStoragesByIf } from '../types/storage/types'
 
-import { EditableMode } from '../common/EditableMode'
-import Flag from '../common/Flag'
-import EditButton from '../common/EditButton'
-import LoadingIndicator from '../common/LoadingIndicator'
+import { EditableMode } from '../internal/common/EditableMode'
+import Flag from '../internal/common/Flag'
+import EditButton from '../internal/common/EditButton'
+import LoadingIndicator from '../internal/common/LoadingIndicator'
 
 import Stats from '../stats/Stats'
 
-import UpdateBrewery from './UpdateBrewery'
+import UpdateBrewery from '../internal/brewery/UpdateBrewery'
 
 import '../common/FlexRow.css'
-import type { StatsIf } from '../../types/stats/types'
-import BreweryStorages from './BreweryStorages'
-import ReviewsBy from '../review/ReviewsBy'
-import NotFound from '../common/NotFound'
+import type { StatsIf } from '../types/stats/types'
+import BreweryStorages from '../internal/brewery/BreweryStorages'
+import ReviewsBy from '../internal/review/ReviewsBy'
+import NotFound from '../internal/common/NotFound'
+import type { LinkComponent } from '../common/link'
 
 interface Props {
+  linkComponent: LinkComponent
   listReviewsByBreweryIf: ListReviewsByIf
   listStoragesByBreweryIf: ListStoragesByIf
   useUrlPathParams: UseUrlPathParams
@@ -83,16 +85,19 @@ function Brewery(props: Props): React.JSX.Element {
         />
       )}
       <Stats
+        linkComponent={props.linkComponent}
         statsIf={props.statsIf}
         breweryId={brewery.id}
         locationId={undefined}
         styleId={undefined}
       />
       <BreweryStorages
+        linkComponent={props.linkComponent}
         breweryId={breweryId}
         listStoragesByBreweryIf={props.listStoragesByBreweryIf}
       />
       <ReviewsBy
+        linkComponent={props.linkComponent}
         id={breweryId}
         listReviewsByIf={props.listReviewsByBreweryIf}
       />

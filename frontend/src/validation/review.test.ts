@@ -1,10 +1,6 @@
 import { expect, test } from 'vitest'
 
-import type {
-  JoinedReview,
-  JoinedReviewList,
-  Review,
-} from '../types/review/types'
+import type { JoinedReview, JoinedReviewList, Review } from './review'
 
 import {
   validateReview,
@@ -124,4 +120,29 @@ test('validateJoinedReviewList throws for invalid input', () => {
       reviews: [{ id: 123 }],
     }),
   ).toThrow()
+})
+
+test('validateJoinedReviewList makes a missing location undefined', () => {
+  const withoutLocation = {
+    id: validJoinedReview.id,
+    additionalInfo: validJoinedReview.additionalInfo,
+    beerId: validJoinedReview.beerId,
+    beerName: validJoinedReview.beerName,
+    breweries: validJoinedReview.breweries,
+    container: validJoinedReview.container,
+    rating: validJoinedReview.rating,
+    styles: validJoinedReview.styles,
+    time: validJoinedReview.time,
+  }
+  const list = {
+    reviews: [withoutLocation],
+    sorting: {
+      order: 'rating',
+      direction: 'asc',
+    },
+  }
+  const validated = validateJoinedReviewList(list)
+  const review = validated.reviews[0]
+  expect(review.location).toEqual(undefined)
+  expect('location' in review).toEqual(true)
 })

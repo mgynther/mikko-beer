@@ -1,33 +1,34 @@
 import React, { useState } from 'react'
 
-import type { UseUrlPathParams } from '../util'
+import type { UseUrlPathParams } from '../types/types'
 
 import type {
   GetStyleIf,
   Style as StyleType,
   StyleWithParentIds,
   UpdateStyleIf,
-} from '../../types/style/types'
+} from '../types/style/types'
 
-import type { StatsIf } from '../../types/stats/types'
-import type { ListReviewsByIf } from '../../types/review/types'
-import type { ListStoragesByIf } from '../../types/storage/types'
+import type { StatsIf } from '../types/stats/types'
+import type { ListReviewsByIf } from '../types/review/types'
+import type { ListStoragesByIf } from '../types/storage/types'
 
-import { EditableMode } from '../common/EditableMode'
-import EditButton from '../common/EditButton'
+import { EditableMode } from '../internal/common/EditableMode'
+import EditButton from '../internal/common/EditButton'
 
-import LoadingIndicator from '../common/LoadingIndicator'
+import LoadingIndicator from '../internal/common/LoadingIndicator'
 import Stats from '../stats/Stats'
-import StorageList from '../storage/StorageList'
+import StorageList from '../internal/storage/StorageList'
 
-import StyleLinks from './StyleLinks'
-import UpdateStyle from './UpdateStyle'
+import StyleLinks from '../internal/style/StyleLinks'
+import UpdateStyle from '../internal/style/UpdateStyle'
 
 import '../common/FlexRow.css'
-import NotFound from '../common/NotFound'
-import ReviewsBy from '../review/ReviewsBy'
+import NotFound from '../internal/common/NotFound'
+import ReviewsBy from '../internal/review/ReviewsBy'
 
 import './Style.css'
+import type { LinkComponent } from '../common/link'
 
 interface NoLinksProps {
   styles: StyleType[]
@@ -39,6 +40,7 @@ function NoLinks(props: NoLinksProps): React.JSX.Element | null {
 }
 
 interface Props {
+  linkComponent: LinkComponent
   listReviewsByStyleIf: ListReviewsByIf
   listStoragesByStyleIf: ListStoragesByIf
   getStyleIf: GetStyleIf
@@ -87,14 +89,20 @@ function Style(props: Props): React.JSX.Element {
           <div className='StyleInfo'>
             <h5>Parents</h5>
             <div>
-              <StyleLinks styles={style.parents} />
+              <StyleLinks
+                linkComponent={props.linkComponent}
+                styles={style.parents}
+              />
               <NoLinks styles={style.parents} />
             </div>
           </div>
           <div className='StyleInfo'>
             <h5>Children</h5>
             <div>
-              <StyleLinks styles={style.children} />
+              <StyleLinks
+                linkComponent={props.linkComponent}
+                styles={style.children}
+              />
               <NoLinks styles={style.children} />
             </div>
           </div>
@@ -123,6 +131,7 @@ function Style(props: Props): React.JSX.Element {
         </div>
       )}
       <Stats
+        linkComponent={props.linkComponent}
         statsIf={props.statsIf}
         breweryId={undefined}
         locationId={undefined}
@@ -130,13 +139,18 @@ function Style(props: Props): React.JSX.Element {
       />
       {storageItems.length > 0 && (
         <StorageList
+          linkComponent={props.linkComponent}
           deleteStorageIf={props.listStoragesByStyleIf.delete}
           isLoading={isLoadingStorages}
           isTitleVisible={true}
           storages={storageItems}
         />
       )}
-      <ReviewsBy id={styleId} listReviewsByIf={props.listReviewsByStyleIf} />
+      <ReviewsBy
+        linkComponent={props.linkComponent}
+        id={styleId}
+        listReviewsByIf={props.listReviewsByStyleIf}
+      />
     </>
   )
 }

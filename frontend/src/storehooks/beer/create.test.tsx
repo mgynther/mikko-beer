@@ -1,82 +1,88 @@
-import { beforeAll, beforeEach, afterAll, expect, test, vitest } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
-import createBeer from './create'
-import type { BeerWithIds, CreateBeerRequest } from '../../types/beer/types'
+import { expect, test, vitest } from 'vitest'
 import { render, waitFor } from '@testing-library/react'
+
+import createBeer from './create'
+import type {
+  BeerWithIds,
+  CreateBeerRequest,
+  UseCreateBeer,
+  ValidateBeerWithIds,
+} from './types'
 import { setupUser } from '../../../test-util/user-event'
-import { Provider } from '../../react-redux-wrapper'
 
-import Button from '../../components/common/Button'
+// Stubs for the store function and the validator, for the reason given in
+// get.test.tsx.
+const validatedBeer: BeerWithIds = {
+  id: 'f0e1d2c3-b4a5-4968-8172-6a5b4c3d2e1f',
+  name: 'Validated beer',
+  breweries: [],
+  styles: [],
+}
 
-let server: TestServer | undefined
+const created = { beer: { id: 'created', name: 'Created beer' } }
 
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
+const request: CreateBeerRequest = {
+  name: 'Test beer',
+  breweries: ['1b2c3d4e-5f60-4718-9829-3a4b5c6d7e8f'],
+  styles: ['2c3d4e5f-6071-4829-a93a-4b5c6d7e8f90'],
+}
 
 interface HelperProps {
-  beer: CreateBeerRequest
-  handleResponse: (beer: BeerWithIds) => void
+  onCreate: (beer: CreateBeerRequest) => void
+  onCreated: (beer: BeerWithIds) => void
+  onValidate: (result: unknown) => void
 }
 
 function Helper(props: HelperProps): React.JSX.Element {
-  const createIf = createBeer()
-  const create = createIf.useCreate()
-  const handleClick = (): void => {
-    async function doHandle(): Promise<void> {
-      const response = await create.create(props.beer)
-      props.handleResponse(response)
-    }
-    void doHandle()
+  const useStoreCreate: UseCreateBeer = () => ({
+    create: async (beer: CreateBeerRequest): Promise<unknown> => {
+      props.onCreate(beer)
+      return created
+    },
+    isLoading: false,
+  })
+  const validate: ValidateBeerWithIds = (result: unknown) => {
+    props.onValidate(result)
+    return validatedBeer
   }
-  return <Button onClick={handleClick} text='Test' />
+  const { create, isLoading } = createBeer(useStoreCreate, validate).useCreate()
+  return (
+    <div>
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      <button
+        type='button'
+        onClick={() => {
+          void (async (): Promise<void> => {
+            props.onCreated(await create(request))
+          })()
+        }}
+      >
+        Create
+      </button>
+    </div>
+  )
 }
 
 test('create beer', async () => {
   const user = setupUser()
+  const onCreate = vitest.fn()
+  const onCreated = vitest.fn()
+  const onValidate = vitest.fn()
 
-  const expectedResponse: { beer: BeerWithIds } = {
-    beer: {
-      id: '09901f8e-8a7d-47e7-8f7d-83068967ee72',
-      name: 'Test beer',
-      breweries: ['3e1d805f-88d9-4619-aa3f-5684acef261f'],
-      styles: ['3c66312c-b66b-4f5d-97d6-d2d5a3fc6835'],
-    },
-  }
-
-  server?.addResponse<{ beer: BeerWithIds }>({
-    method: 'POST',
-    pathname: '/api/v1/beer',
-    response: expectedResponse,
-    status: 201,
-  })
-
-  const handler = vitest.fn()
-  const { getByRole } = render(
-    <Provider store={store}>
-      <Helper
-        beer={{
-          name: expectedResponse.beer.name,
-          breweries: expectedResponse.beer.breweries,
-          styles: expectedResponse.beer.styles,
-        }}
-        handleResponse={handler}
-      />
-    </Provider>,
+  const { getByRole, getByText } = render(
+    <Helper
+      onCreate={onCreate}
+      onCreated={onCreated}
+      onValidate={onValidate}
+    />,
   )
-  const testButton = getByRole('button', { name: 'Test' })
-  await user.click(testButton)
+
+  await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(handler).toHaveBeenCalledWith(expectedResponse.beer)
+    expect(onCreated).toHaveBeenCalledWith(validatedBeer)
   })
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onCreate).toHaveBeenCalledWith(request)
+  // The envelope is unwrapped before the validator sees the beer.
+  expect(onValidate).toHaveBeenCalledWith(created.beer)
 })

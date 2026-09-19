@@ -1,0 +1,155 @@
+import React, { useState } from 'react'
+
+import type {
+  JoinedReview,
+  Review as ReviewType,
+  ReviewIf,
+} from '../../types/review/types'
+
+import BeerLink from '../beer/BeerLink'
+import BreweryLinks from '../brewery/BreweryLinks'
+import { EditableMode } from '../common/EditableMode'
+import EditButton from '../common/EditButton'
+import LocationLink from '../location/LocationLink'
+import StyleLinks from '../style/StyleLinks'
+
+import UpdateReview from './UpdateReview'
+
+import '../../review/Review.css'
+import ContainerInfo from '../container/ContainerInfo'
+import type { LinkComponent } from '../../common/link'
+
+interface Props {
+  linkComponent: LinkComponent
+  reviewIf: ReviewIf
+  review: JoinedReview
+  onChanged: (() => void) | undefined
+}
+
+function Review(props: Props): React.JSX.Element {
+  const [mode, setMode] = useState(EditableMode.View)
+  const { get } = props.reviewIf.get.useGet()
+  const review = props.review
+
+  const [isOpen, setIsOpen] = useState(false)
+
+  const [fullReview, setFullReview] = useState<ReviewType | undefined>(
+    undefined,
+  )
+
+  async function fetchReview(id: string): Promise<void> {
+    setIsOpen(true)
+    const review = await get(id)
+    setFullReview(review)
+  }
+
+  function formatDate(date: Date): string {
+    return date.toISOString().substring(0, 10)
+  }
+
+  return (
+    <>
+      {mode === EditableMode.View && (
+        <div
+          className='Review RowLike'
+          key={review.id}
+          onClick={() => {
+            if (fullReview === undefined) {
+              void fetchReview(review.id)
+              return
+            }
+            setIsOpen(!isOpen)
+          }}
+        >
+          <div className='Review-primary-info-row'>
+            <div>
+              <BreweryLinks
+                linkComponent={props.linkComponent}
+                breweries={review.breweries}
+              />
+            </div>
+            <div>
+              <BeerLink
+                linkComponent={props.linkComponent}
+                beer={{
+                  id: review.beerId,
+                  name: review.beerName,
+                }}
+              />
+            </div>
+            <div>
+              <StyleLinks
+                linkComponent={props.linkComponent}
+                styles={review.styles}
+              />
+            </div>
+            <div className={`Review-rating Review-rating-${review.rating}`}>
+              <div>{review.rating}</div>
+            </div>
+            <div className='Review-time'>
+              {formatDate(new Date(review.time))}
+            </div>
+          </div>
+          <div className='Review-secondary-info-row'>
+            <ContainerInfo container={review.container} />
+            <div>
+              {review.location !== undefined && (
+                <LocationLink
+                  linkComponent={props.linkComponent}
+                  location={review.location}
+                />
+              )}
+            </div>
+          </div>
+          {review.additionalInfo !== '' && (
+            <div className='Review-additional-row'>
+              <div className='Review-additional'>{review.additionalInfo}</div>
+            </div>
+          )}
+          {isOpen && fullReview !== undefined && (
+            <>
+              <div className='Review-sensory-row'>
+                <div>{fullReview.smell}</div>
+                <div>{fullReview.taste}</div>
+              </div>
+              <div className='Review-additional-row'>
+                <div>
+                  <EditButton
+                    disabled={false}
+                    getLogin={props.reviewIf.getLogin}
+                    onClick={() => {
+                      setMode(EditableMode.Edit)
+                    }}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+      {mode === EditableMode.Edit && fullReview !== undefined && (
+        <>
+          <UpdateReview
+            updateReviewIf={props.reviewIf.update}
+            initialReview={{
+              joined: review,
+              review: fullReview,
+            }}
+            onCancel={() => {
+              setMode(EditableMode.View)
+            }}
+            onSaved={() => {
+              setMode(EditableMode.View)
+              void fetchReview(review.id)
+              if (props.onChanged !== undefined) {
+                props.onChanged()
+              }
+            }}
+          />
+        </>
+      )}
+    </>
+  )
+}
+
+export default Review

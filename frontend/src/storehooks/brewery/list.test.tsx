@@ -1,81 +1,118 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
-import listBreweries from './list'
-import type { BreweryList } from '../../types/brewery/types'
+import { expect, test, vitest } from 'vitest'
 import { render, waitFor } from '@testing-library/react'
-import { Provider } from '../../react-redux-wrapper'
+
+import listBreweries from './list'
+import type {
+  BreweryList,
+  UseListBreweries,
+  ValidateBreweryList,
+  ValidateBreweryListOrUndefined,
+} from './types'
+import type { Pagination } from '../types'
 import { setupUser } from '../../../test-util/user-event'
 
-import Button from '../../components/common/Button'
+// Stubs for the store function and the validators, for the reason given in
+// get.test.tsx.
+const validatedBreweryList: BreweryList = {
+  breweries: [
+    {
+      id: '0f1e2d3c-4b5a-4968-8778-6a5b4c3d2e1f',
+      name: 'Validated brewery',
+      country: undefined,
+    },
+  ],
+}
 
-let server: TestServer | undefined
+const listed = { breweries: [{ id: 'listed', name: 'Listed brewery' }] }
 
-beforeAll(() => {
-  server = createServer()
-})
+const pagination: Pagination = { skip: 0, size: 10 }
 
-beforeEach(() => {
-  server?.clear()
-})
+interface HelperProps {
+  data: unknown
+  onList: (pagination: Pagination) => void
+  onListed: (list: BreweryList) => void
+  onValidate: (result: unknown) => void
+}
 
-afterAll(() => {
-  server?.close()
-})
-
-function Helper(): React.JSX.Element {
-  const listIf = listBreweries()
-  const { list, breweryList } = listIf.useList()
+function Helper(props: HelperProps): React.JSX.Element {
+  const useStoreList: UseListBreweries = () => ({
+    list: async (listPagination: Pagination): Promise<unknown> => {
+      props.onList(listPagination)
+      return listed
+    },
+    data: props.data,
+    isFetching: false,
+    isUninitialized: props.data === undefined,
+  })
+  const validate: ValidateBreweryList = (result: unknown) => {
+    props.onValidate(result)
+    return validatedBreweryList
+  }
+  const validateOrUndefined: ValidateBreweryListOrUndefined = (
+    result: unknown,
+  ) => (result === undefined ? undefined : validate(result))
+  const { list, breweryList, isUninitialized } = listBreweries(
+    useStoreList,
+    validate,
+    validateOrUndefined,
+  ).useList()
   return (
     <div>
+      <div>{isUninitialized ? 'Uninitialized' : 'Initialized'}</div>
       {breweryList?.breweries.map((brewery) => (
         <div key={brewery.id}>{brewery.name}</div>
       ))}
-      <Button
+      <button
+        type='button'
         onClick={() => {
-          void list({ skip: 0, size: 10 })
+          void (async (): Promise<void> => {
+            props.onListed(await list(pagination))
+          })()
         }}
-        text='Load'
-      />
+      >
+        List
+      </button>
     </div>
   )
 }
 
 test('list breweries', async () => {
   const user = setupUser()
-
-  const expectedResponse: BreweryList = {
-    breweries: [
-      {
-        id: 'eadee3b4-5b47-49a2-a2f6-6719c83b1a0e',
-        name: 'Test brewery',
-        country: 'FI',
-      },
-      {
-        id: '7326edd5-b1e8-489a-b5fc-902de0095bd5',
-        name: 'Another brewery',
-        country: undefined,
-      },
-    ],
-  }
-
-  server?.addResponse<BreweryList>({
-    method: 'GET',
-    pathname: `/api/v1/brewery?size=10&skip=0`,
-    response: expectedResponse,
-    status: 200,
-  })
+  const onList = vitest.fn()
+  const onListed = vitest.fn()
+  const onValidate = vitest.fn()
 
   const { getByRole, getByText } = render(
-    <Provider store={store}>
-      <Helper />
-    </Provider>,
+    <Helper
+      data={undefined}
+      onList={onList}
+      onListed={onListed}
+      onValidate={onValidate}
+    />,
   )
-  const loadButton = getByRole('button', { name: 'Load' })
-  await user.click(loadButton)
+  expect(getByText('Uninitialized')).toBeDefined()
+
+  await user.click(getByRole('button', { name: 'List' }))
   await waitFor(() => {
-    expect(getByText(expectedResponse.breweries[0].name)).toBeDefined()
-    expect(getByText(expectedResponse.breweries[1].name)).toBeDefined()
+    expect(onListed).toHaveBeenCalledWith(validatedBreweryList)
   })
+  expect(onList).toHaveBeenCalledWith(pagination)
+  expect(onValidate).toHaveBeenCalledWith(listed)
+})
+
+test('the brewery list the store holds is validated on the way out', () => {
+  const onValidate = vitest.fn()
+
+  const { getByText } = render(
+    <Helper
+      data={listed}
+      onList={() => undefined}
+      onListed={() => undefined}
+      onValidate={onValidate}
+    />,
+  )
+
+  expect(getByText(validatedBreweryList.breweries[0].name)).toBeDefined()
+  expect(getByText('Initialized')).toBeDefined()
+  expect(onValidate).toHaveBeenCalledWith(listed)
 })

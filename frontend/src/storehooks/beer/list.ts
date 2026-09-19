@@ -1,22 +1,28 @@
-import type { BeerList, ListBeersHookIf } from '../../types/beer/types'
-import type { Pagination } from '../../types/types'
-import { useLazyListBeersQuery } from '../../store/beer/api'
-import {
+import type {
+  BeerList,
+  ListBeersHookIf,
+  UseListBeers,
+  ValidateBeerList,
+  ValidateBeerListOrUndefined,
+} from './types'
+import type { Pagination } from '../types'
+
+const listBeers: (
+  useListBeers: UseListBeers,
+  validateBeerList: ValidateBeerList,
+  validateBeerListOrUndefined: ValidateBeerListOrUndefined,
+) => ListBeersHookIf = (
+  useListBeers,
   validateBeerList,
   validateBeerListOrUndefined,
-} from '../../validation/beer'
-
-const listBeers: () => ListBeersHookIf = () => {
+) => {
   const listBeersIf: ListBeersHookIf = {
     useList: () => {
-      const [trigger, { data, isFetching, isUninitialized }] =
-        useLazyListBeersQuery()
+      const { list, data, isFetching, isUninitialized } = useListBeers()
       return {
         beerList: validateBeerListOrUndefined(data),
-        list: async (pagination: Pagination): Promise<BeerList> => {
-          const result = await trigger(pagination).unwrap()
-          return validateBeerList(result)
-        },
+        list: async (pagination: Pagination): Promise<BeerList> =>
+          validateBeerList(await list(pagination)),
         isLoading: isFetching,
         isUninitialized,
       }

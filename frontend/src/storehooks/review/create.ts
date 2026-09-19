@@ -1,22 +1,27 @@
 import type {
   CreateReviewHookIf,
   ReviewRequestWrapper,
-} from '../../types/review/types'
-import { useCreateReviewMutation } from '../../store/review/api'
-import { validateReviewOrUndefined } from '../../validation/review'
+  UseCreateReview,
+  ValidateReviewOrUndefined,
+} from './types'
+import { unwrapMemberOrUndefined } from '../envelope'
 
-const createReview: () => CreateReviewHookIf = () => {
+const createReview: (
+  useCreateReview: UseCreateReview,
+  validateReviewOrUndefined: ValidateReviewOrUndefined,
+) => CreateReviewHookIf = (useCreateReview, validateReviewOrUndefined) => {
   const createReviewIf: CreateReviewHookIf = {
     useCreate: () => {
-      const [createReview, { isLoading, isSuccess, data }] =
-        useCreateReviewMutation()
+      const { create, data, isLoading, isSuccess } = useCreateReview()
       return {
         create: async (request: ReviewRequestWrapper): Promise<void> => {
-          await createReview(request)
+          await create(request)
         },
         isLoading,
         isSuccess,
-        review: validateReviewOrUndefined(data?.review),
+        review: validateReviewOrUndefined(
+          unwrapMemberOrUndefined(data, 'review'),
+        ),
       }
     },
   }

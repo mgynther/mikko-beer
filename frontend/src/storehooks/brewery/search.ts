@@ -1,17 +1,21 @@
-import type { Brewery, SearchBreweryHookIf } from '../../types/brewery/types'
-import { useLazySearchBreweriesQuery } from '../../store/brewery/api'
-import { validateBreweryList } from '../../validation/brewery'
+import type {
+  Brewery,
+  SearchBreweryHookIf,
+  UseSearchBreweries,
+  ValidateBreweryList,
+} from './types'
 import { formatQuery } from '../search-query'
 
-const searchBrewery: () => SearchBreweryHookIf = () => {
+const searchBrewery: (
+  useSearchBreweries: UseSearchBreweries,
+  validateBreweryList: ValidateBreweryList,
+) => SearchBreweryHookIf = (useSearchBreweries, validateBreweryList) => {
   const searchBreweryIf: SearchBreweryHookIf = {
     useSearch: () => {
-      const [searchBrewery, { isFetching }] = useLazySearchBreweriesQuery()
+      const { search, isFetching } = useSearchBreweries()
       return {
-        search: async (name: string): Promise<Brewery[]> => {
-          const result = await searchBrewery(formatQuery(name)).unwrap()
-          return validateBreweryList(result).breweries
-        },
+        search: async (name: string): Promise<Brewery[]> =>
+          validateBreweryList(await search(formatQuery(name))).breweries,
         isLoading: isFetching,
       }
     },

@@ -1,0 +1,125 @@
+import React, { type SubmitEvent, useState } from 'react'
+
+import LoadingIndicator from '../common/LoadingIndicator'
+
+import './ChangePassword.css'
+import type { ChangePasswordIf, Login } from '../../types/login/types'
+
+import type { PasswordChangeResult } from '../../types/login/types'
+
+interface Props {
+  changePasswordIf: ChangePasswordIf
+}
+
+function ChangePassword(props: Props): React.JSX.Element | null {
+  const login: Login = props.changePasswordIf.getLogin()
+  const { changePassword, isLoading } =
+    props.changePasswordIf.useChangePassword()
+  const passwordChangeResult: PasswordChangeResult = props.changePasswordIf
+    .useGetPasswordChangeResult()
+    .getResult()
+
+  const [isMismatch, setIsMismatch] = useState(false)
+  const [oldPassword, setOldPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [newPasswordConfirmation, setNewPasswordConfirmation] = useState('')
+
+  // Enabled by types but should not be possible.
+  if (login.user === undefined) {
+    return null
+  }
+
+  const userId = login.user.id
+
+  async function doChange(event: SubmitEvent<HTMLFormElement>): Promise<void> {
+    event.preventDefault()
+    await changePassword({
+      userId: userId,
+      body: {
+        oldPassword,
+        newPassword,
+      },
+    })
+    setIsMismatch(false)
+    setOldPassword('')
+    setNewPassword('')
+    setNewPasswordConfirmation('')
+  }
+
+  function formatPasswordChangeResult(
+    passwordChangeResult: PasswordChangeResult,
+  ): string | null {
+    if (passwordChangeResult === 'UNDEFINED') {
+      return null
+    }
+    if (passwordChangeResult === 'SUCCESS') {
+      return 'Password changed!'
+    }
+    return 'Change failed. Please check your old and new passwords.'
+  }
+
+  return (
+    <div>
+      <h4>Change password</h4>
+      <form
+        className='ChangePasswordForm'
+        onSubmit={(e) => {
+          void doChange(e)
+        }}
+      >
+        <div>
+          <input
+            type='password'
+            placeholder='Old password'
+            id='oldPassword'
+            value={oldPassword}
+            onChange={(e) => {
+              setOldPassword(e.target.value)
+            }}
+          />
+        </div>
+        <div>
+          <input
+            type='password'
+            placeholder='New password'
+            id='newPassword'
+            autoComplete='new-password'
+            value={newPassword}
+            onChange={(e) => {
+              const newPassword = e.target.value
+              setIsMismatch(newPassword !== newPasswordConfirmation)
+              setNewPassword(newPassword)
+            }}
+          />
+        </div>
+        <div>
+          <input
+            type='password'
+            placeholder='New password confirmation'
+            id='newPasswordConfirmation'
+            autoComplete='new-password'
+            value={newPasswordConfirmation}
+            onChange={(e) => {
+              const newPasswordConfirmation = e.target.value
+              setIsMismatch(newPassword !== newPasswordConfirmation)
+              setNewPasswordConfirmation(newPasswordConfirmation)
+            }}
+          />
+        </div>
+        <div>
+          <input
+            type='submit'
+            value='Change'
+            disabled={isLoading || isMismatch}
+          />
+        </div>
+        <div>
+          <LoadingIndicator isLoading={isLoading} />
+          {!isLoading && formatPasswordChangeResult(passwordChangeResult)}
+        </div>
+      </form>
+    </div>
+  )
+}
+
+export default ChangePassword

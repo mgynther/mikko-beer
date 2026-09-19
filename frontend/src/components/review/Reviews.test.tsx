@@ -2,10 +2,9 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import Reviews from './Reviews'
-import type { UseDebounce, YearMonth } from '../../types/types'
-import type { Login } from '../../types/login/types'
-import { Role } from '../../types/user/types'
-import LinkWrapper from '../LinkWrapper'
+import type { UseDebounce, YearMonth } from '../types/types'
+import type { Login } from '../types/login/types'
+import { Role } from '../types/user/types'
 import type {
   JoinedReviewList,
   ListFilterIf,
@@ -15,19 +14,20 @@ import type {
   ReviewContainerIf,
   ReviewIf,
   SetSearch,
-} from '../../types/review/types'
+} from '../types/review/types'
 import ContentEnd from '../ContentEnd'
 import type {
   CreateBeerIf,
   SearchBeerIf,
   SelectBeerIf,
-} from '../../types/beer/types'
-import type { SearchFieldIf } from '../../types/search/types'
-import type { SearchLocationIf } from '../../types/location/types'
-import { loadingIndicatorText } from '../common/LoadingIndicator'
+} from '../types/beer/types'
+import type { SearchFieldIf } from '../types/search/types'
+import type { SearchLocationIf } from '../types/location/types'
+import { loadingIndicatorText } from '../internal/common/LoadingIndicator'
 import { testTimes } from '../../../test-util/filter-time'
 import { openFilters } from '../../../test-util/open-filters'
 import { dontCall } from '../../../test-util/dont-call'
+import { testLink } from '../../../test-util/link'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -267,8 +267,9 @@ test('updates review', async () => {
   const update = vitest.fn()
   let scrollCb: () => void = () => undefined
   const { getByPlaceholderText, getByRole, getByText } = render(
-    <LinkWrapper>
+    <>
       <Reviews
+        linkComponent={testLink}
         listReviewsIf={{
           ...getListReviewsIf(
             () => undefined,
@@ -298,7 +299,7 @@ test('updates review', async () => {
         }}
       />
       <ContentEnd />
-    </LinkWrapper>,
+    </>,
   )
   expect(scrollCb).not.toEqual(undefined)
   await act(async () => {
@@ -350,8 +351,9 @@ test('sets review sorting to rating asc', async () => {
   let scrollCb: () => void = () => undefined
   const listReviewsIf: ListReviewsIf = getListReviewsIf(listParams, setSearch)
   const { getByRole } = render(
-    <LinkWrapper>
+    <>
       <Reviews
+        linkComponent={testLink}
         listReviewsIf={{
           ...listReviewsIf,
           filterIf: {
@@ -369,7 +371,7 @@ test('sets review sorting to rating asc', async () => {
         reviewIf={dontUpdateReviewIf}
       />
       <ContentEnd />
-    </LinkWrapper>,
+    </>,
   )
   expect(scrollCb).not.toEqual(undefined)
   await act(async () => {
@@ -392,8 +394,9 @@ test('sets review sorting to rating asc', async () => {
 test('renders loading', async () => {
   let scrollCb: () => void = () => undefined
   const { getByText } = render(
-    <LinkWrapper>
+    <>
       <Reviews
+        linkComponent={testLink}
         listReviewsIf={{
           useList: () => ({
             list: async (): Promise<JoinedReviewList> => ({
@@ -416,7 +419,7 @@ test('renders loading', async () => {
         reviewIf={dontUpdateReviewIf}
       />
       <ContentEnd />
-    </LinkWrapper>,
+    </>,
   )
   scrollCb()
   getByText(loadingIndicatorText)
@@ -429,8 +432,9 @@ test('stops loading more', async () => {
     return listMore.mock.calls.length
   }
   const { getByText } = render(
-    <LinkWrapper>
+    <>
       <Reviews
+        linkComponent={testLink}
         listReviewsIf={{
           useList: () => {
             return {
@@ -458,7 +462,7 @@ test('stops loading more', async () => {
         reviewIf={dontUpdateReviewIf}
       />
       <ContentEnd />
-    </LinkWrapper>,
+    </>,
   )
   // act is important to ensure changes have been fully applied. loading is not
   // toggled between renders so without act there would be a race condition in
@@ -518,8 +522,9 @@ test('lists reviews with search parameters', async () => {
   const listMore = vitest.fn()
   let scrollCb: () => void = () => undefined
   render(
-    <LinkWrapper>
+    <>
       <Reviews
+        linkComponent={testLink}
         listReviewsIf={{
           useList: () => ({
             list: async (params): Promise<JoinedReviewList> => {
@@ -554,7 +559,7 @@ test('lists reviews with search parameters', async () => {
         reviewIf={dontUpdateReviewIf}
       />
       <ContentEnd />
-    </LinkWrapper>,
+    </>,
   )
   await act(async () => {
     scrollCb()
@@ -586,8 +591,9 @@ test('opens filters', async () => {
   const setSearch = vitest.fn()
   const listParams = vitest.fn()
   const { getByRole } = render(
-    <LinkWrapper>
+    <>
       <Reviews
+        linkComponent={testLink}
         listReviewsIf={{
           ...getListReviewsIf(listParams, setSearch),
           infiniteScroll: (): (() => undefined) => {
@@ -597,7 +603,7 @@ test('opens filters', async () => {
         reviewIf={dontUpdateReviewIf}
       />
       <ContentEnd />
-    </LinkWrapper>,
+    </>,
   )
   await openFilters(getByRole, user)
   expect(setSearch).toHaveBeenCalledTimes(2)
@@ -659,8 +665,9 @@ sliderChangeTests.forEach((testCase) => {
     const setSearch = vitest.fn()
     const listReviewsIf: ListReviewsIf = getListReviewsIf(listParams, setSearch)
     const { getByLabelText } = render(
-      <LinkWrapper>
+      <>
         <Reviews
+          linkComponent={testLink}
           listReviewsIf={{
             ...listReviewsIf,
             filterIf: {
@@ -677,7 +684,7 @@ sliderChangeTests.forEach((testCase) => {
           reviewIf={dontUpdateReviewIf}
         />
         <ContentEnd />
-      </LinkWrapper>,
+      </>,
     )
     await act(async () => {
       changeSlider(getByLabelText, testCase.label, testCase.toDisplayValue)

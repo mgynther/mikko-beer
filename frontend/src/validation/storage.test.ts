@@ -6,7 +6,7 @@ import type {
   MonthlyStats,
   Storage,
   StorageList,
-} from '../types/storage/types'
+} from './storage'
 
 import {
   validateStorage,

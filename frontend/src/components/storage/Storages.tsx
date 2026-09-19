@@ -1,22 +1,24 @@
 import React from 'react'
 
-import type { ReviewContainerIf } from '../../types/review/types'
+import type { ReviewContainerIf } from '../types/review/types'
 
-import type { SelectBeerIf } from '../../types/beer/types'
-import type { GetLogin, Login } from '../../types/login/types'
+import type { SelectBeerIf } from '../types/beer/types'
+import type { GetLogin, Login } from '../types/login/types'
 import type {
   CreateStorageIf,
   ListStoragesIf,
   StorageStatsIf,
-} from '../../types/storage/types'
-import { Role } from '../../types/user/types'
+} from '../types/storage/types'
+import { Role } from '../types/user/types'
 
-import CreateStorage from './CreateStorage'
-import StorageList from './StorageList'
-import { countText } from './count-text'
-import Stats from './Stats'
+import CreateStorage from '../internal/storage/CreateStorage'
+import StorageList from '../internal/storage/StorageList'
+import { countText } from '../internal/storage/count-text'
+import Stats from '../internal/storage/Stats'
+import type { LinkComponent } from '../common/link'
 
 interface Props {
+  linkComponent: LinkComponent
   getLogin: GetLogin
   listStoragesIf: ListStoragesIf
   selectBeerIf: SelectBeerIf
@@ -40,6 +42,7 @@ function Storages(props: Props): React.JSX.Element {
     <div>
       <h3>{title}</h3>
       <StorageList
+        linkComponent={props.linkComponent}
         deleteStorageIf={props.listStoragesIf.delete}
         isLoading={isLoading}
         isTitleVisible={false}

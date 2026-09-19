@@ -1,14 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import {
-  useParams as useRouterParams,
-  useSearchParams as useRouterSearchParams,
-} from 'react-router'
-import type {
-  InfiniteScroll,
-  UseDebounce,
-  UseUrlSearchParams,
-} from '../types/types'
+import type { InfiniteScroll, UseDebounce } from './types/types'
 import { className as contentEndClassName } from './ContentEnd'
 
 export function pad(number: number): string {
@@ -75,17 +67,4 @@ export const useDebounce = <T>(value: T, delay = 300): [T, boolean] => {
 
 export const getUseDebounce = function <T>(): UseDebounce<T> {
   return useDebounce<T>
-}
-
-export type UseUrlPathParams = () => Record<string, string | undefined>
-
-export const useUrlPathParams: UseUrlPathParams = () => {
-  return useRouterParams()
-}
-
-export const useUrlSearchParams: UseUrlSearchParams = () => {
-  const searchParams = useRouterSearchParams()[0]
-  return {
-    get: (name: string) => searchParams.get(name) ?? undefined,
-  }
 }

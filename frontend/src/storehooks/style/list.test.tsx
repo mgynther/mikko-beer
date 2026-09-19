@@ -1,31 +1,47 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
+import { expect, test, vitest } from 'vitest'
+import { render } from '@testing-library/react'
+
 import listStyles from './list'
-import type { StyleList } from '../../types/style/types'
-import { render, waitFor } from '@testing-library/react'
-import { Provider } from '../../react-redux-wrapper'
+import type {
+  StyleList,
+  UseListStyles,
+  ValidateStyleListOrUndefined,
+} from './types'
 
-let server: TestServer | undefined
+// Stubs for the store function and the validator, for the reason given in
+// storehooks/brewery/get.test.tsx.
+const validatedStyleList: StyleList = {
+  styles: [
+    {
+      id: '4e8a3d8f-1b25-4a1a-8f6e-06a1fbbf0a3c',
+      name: 'Validated style',
+      parents: [],
+    },
+  ],
+}
 
-beforeAll(() => {
-  server = createServer()
-})
+const listed = { styles: [{ id: 'listed', name: 'Listed style', parents: [] }] }
 
-beforeEach(() => {
-  server?.clear()
-})
+interface HelperProps {
+  data: unknown
+  isLoading: boolean
+  onValidate: (result: unknown) => void
+}
 
-afterAll(() => {
-  server?.close()
-})
-
-function Helper(): React.JSX.Element {
-  const listIf = listStyles()
-  const { styles } = listIf.useList()
+function Helper(props: HelperProps): React.JSX.Element {
+  const useStoreList: UseListStyles = () => ({
+    data: props.data,
+    isLoading: props.isLoading,
+  })
+  const validate: ValidateStyleListOrUndefined = (result: unknown) => {
+    props.onValidate(result)
+    return result === undefined ? undefined : validatedStyleList
+  }
+  const { styles, isLoading } = listStyles(useStoreList, validate).useList()
   return (
     <div>
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      {styles === undefined && <div>No styles</div>}
       {styles?.map((style) => (
         <div key={style.id}>{style.name}</div>
       ))}
@@ -33,37 +49,24 @@ function Helper(): React.JSX.Element {
   )
 }
 
-test('list styles', async () => {
-  const expectedResponse: StyleList = {
-    styles: [
-      {
-        id: '00e6b36b-f430-4fc9-9f13-0b8888987038',
-        name: 'Test style',
-        parents: [],
-      },
-      {
-        id: '859e872a-07b8-40ca-845c-1feddda59c2a',
-        name: 'Another style',
-        parents: [],
-      },
-    ],
-  }
-
-  server?.addResponse<StyleList>({
-    method: 'GET',
-    pathname: `/api/v1/style`,
-    response: expectedResponse,
-    status: 200,
-  })
+test('list styles', () => {
+  const onValidate = vitest.fn()
 
   const { getByText } = render(
-    <Provider store={store}>
-      <Helper />
-    </Provider>,
+    <Helper data={listed} isLoading={false} onValidate={onValidate} />,
   )
-  await waitFor(() => {
-    const [firstStyle, secondStyle] = expectedResponse.styles
-    expect(getByText(firstStyle.name)).toBeDefined()
-    expect(getByText(secondStyle.name)).toBeDefined()
-  })
+
+  // The interface gives out the styles, not the list that carries them.
+  expect(getByText(validatedStyleList.styles[0].name)).toBeDefined()
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onValidate).toHaveBeenCalledWith(listed)
+})
+
+test('list styles that have not arrived', () => {
+  const { getByText } = render(
+    <Helper data={undefined} isLoading={true} onValidate={() => undefined} />,
+  )
+
+  expect(getByText('No styles')).toBeDefined()
+  expect(getByText('Loading')).toBeDefined()
 })

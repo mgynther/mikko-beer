@@ -1,112 +1,103 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
-import statsHook from './stats'
+import { expect, test, vitest } from 'vitest'
 import { render, waitFor } from '@testing-library/react'
-import { Provider } from '../../react-redux-wrapper'
-import { setupUser } from '../../../test-util/user-event'
 
-import Button from '../../components/common/Button'
+import statsHook from './stats'
 import type {
   AnnualContainerStats,
   AnnualContainerStatsQueryParams,
-} from '../../types/stats/types'
+} from './types'
+import { statsStore } from '../../../test-util/stats-store'
+import { statsValidators } from '../../../test-util/stats-validators'
+import { setupUser } from '../../../test-util/user-event'
 
-let server: TestServer | undefined
+// Stubs for the store function and the validators, for the reason given in
+// storehooks/brewery/get.test.tsx. The store functions a test does not drive
+// are dontCall, so wiring the wrong one fails loudly.
+const validatedStats: AnnualContainerStats = {
+  annualContainer: [],
+}
 
-beforeAll(() => {
-  server = createServer()
-})
+const queried = { annualContainer: [{ id: 'queried' }] }
+const held = { annualContainer: [{ id: 'held' }] }
 
-beforeEach(() => {
-  server?.clear()
-})
+const params: AnnualContainerStatsQueryParams = {
+  breweryId: undefined,
+  locationId: undefined,
+  styleId: undefined,
+  pagination: { size: 10, skip: 0 },
+}
 
-afterAll(() => {
-  server?.close()
-})
+interface HelperProps {
+  onQuery: (params: AnnualContainerStatsQueryParams) => void
+  onQueried: (stats: AnnualContainerStats) => void
+  onValidate: (result: unknown) => void
+}
 
-function AnnualContainerStatsHelper(props: {
-  queryParams: AnnualContainerStatsQueryParams
-}): React.JSX.Element {
-  const statsIf = statsHook()
-  const { query, stats } = statsIf.annualContainer.useStats()
+function Helper(props: HelperProps): React.JSX.Element {
+  const store = statsStore({
+    annualContainer: () => ({
+      query: async (
+        queryParams: AnnualContainerStatsQueryParams,
+      ): Promise<unknown> => {
+        props.onQuery(queryParams)
+        return queried
+      },
+      data: held,
+      isFetching: false,
+    }),
+  })
+  const validators = statsValidators({
+    annualContainer: (result: unknown) => {
+      props.onValidate(result)
+      return validatedStats
+    },
+    annualContainerOrUndefined: (result: unknown) => {
+      props.onValidate(result)
+      return validatedStats
+    },
+  })
+  const { query, stats, isLoading } = statsHook(
+    store,
+    validators,
+  ).annualContainer.useStats()
   return (
     <div>
-      {stats?.annualContainer.map((ac) => (
-        <div key={`${ac.containerId}-${ac.year}`}>
-          <div>{ac.containerType}</div>
-          <div>{ac.containerSize}</div>
-          <div>{ac.reviewAverage}</div>
-          <div>{ac.reviewCount}</div>
-          <div>{ac.reviewMedian}</div>
-          <div>{ac.reviewMode}</div>
-          <div>{ac.reviewStandardDeviation}</div>
-          <div>{ac.year}</div>
-        </div>
-      ))}
-      <Button
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      <div>{stats === undefined ? 'No stats' : 'Validated stats'}</div>
+      <button
+        type='button'
         onClick={() => {
-          void query(props.queryParams)
+          void (async (): Promise<void> => {
+            props.onQueried(await query(params))
+          })()
         }}
-        text='Load'
-      />
+      >
+        Query
+      </button>
     </div>
   )
 }
 
-test('annual container stats', async () => {
+test('annual-container stats', async () => {
   const user = setupUser()
-
-  const expectedResponse: AnnualContainerStats = {
-    annualContainer: [
-      {
-        containerId: 'f3a1b2c4-d5e6-7890-abcd-ef1234567890',
-        containerSize: '0.33',
-        containerType: 'bottle',
-        reviewAverage: '8.12',
-        reviewCount: '42',
-        reviewMedian: '8.00',
-        reviewMode: '8',
-        reviewStandardDeviation: '0.84',
-        year: '2024',
-      },
-    ],
-  }
-
-  const queryParams: AnnualContainerStatsQueryParams = {
-    breweryId: undefined,
-    locationId: undefined,
-    styleId: 'c186ac2d-021b-4653-a84e-7d041de47d3e',
-    pagination: { skip: 0, size: 10 },
-  }
-
-  server?.addResponse<AnnualContainerStats>({
-    method: 'GET',
-    pathname: `/api/v1/stats/annual_container?size=${
-      queryParams.pagination.size
-    }&skip=${queryParams.pagination.skip}&style=${queryParams.styleId}`,
-    response: expectedResponse,
-    status: 200,
-  })
+  const onQuery = vitest.fn()
+  const onQueried = vitest.fn()
+  const onValidate = vitest.fn()
 
   const { getByRole, getByText } = render(
-    <Provider store={store}>
-      <AnnualContainerStatsHelper queryParams={queryParams} />
-    </Provider>,
+    <Helper onQuery={onQuery} onQueried={onQueried} onValidate={onValidate} />,
   )
-  const loadButton = getByRole('button', { name: 'Load' })
-  await user.click(loadButton)
-  const annualContainer = expectedResponse.annualContainer[0]
+
+  // What the store already holds is validated on the way out, and what a
+  // query brings back is validated on its way through.
+  expect(getByText('Validated stats')).toBeDefined()
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onValidate).toHaveBeenCalledWith(held)
+
+  await user.click(getByRole('button', { name: 'Query' }))
   await waitFor(() => {
-    expect(getByText(annualContainer.containerType)).toBeDefined()
+    expect(onQueried).toHaveBeenCalledWith(validatedStats)
   })
-  expect(getByText(annualContainer.containerSize)).toBeDefined()
-  expect(getByText(annualContainer.reviewAverage)).toBeDefined()
-  expect(getByText(annualContainer.reviewCount)).toBeDefined()
-  expect(getByText(annualContainer.reviewMedian)).toBeDefined()
-  expect(getByText(annualContainer.reviewMode)).toBeDefined()
-  expect(getByText(annualContainer.reviewStandardDeviation)).toBeDefined()
-  expect(getByText(annualContainer.year)).toBeDefined()
+  expect(onQuery).toHaveBeenCalledWith(params)
+  expect(onValidate).toHaveBeenCalledWith(queried)
 })

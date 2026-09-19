@@ -1,83 +1,117 @@
-import { beforeAll, beforeEach, afterAll, expect, test, vitest } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
-import updateBrewery from './update'
-import type { Brewery } from '../../types/brewery/types'
+import { expect, test, vitest } from 'vitest'
 import { render, waitFor } from '@testing-library/react'
+
+import updateBrewery from './update'
+import type { Brewery, UseUpdateBrewery, ValidateBrewery } from './types'
 import { setupUser } from '../../../test-util/user-event'
-import { Provider } from '../../react-redux-wrapper'
 
-import Button from '../../components/common/Button'
+// Stubs for the store function and the validator, for the reason given in
+// get.test.tsx.
+const validatedBrewery: Brewery = {
+  id: '6d5c4b3a-2e1f-4098-8765-4a3b2c1d0e9f',
+  name: 'Validated brewery',
+  country: 'Denmark',
+}
 
-let server: TestServer | undefined
+const updated = { brewery: { id: 'updated', name: 'Updated brewery' } }
 
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
+const brewery: Brewery = {
+  id: 'c3b2a190-8f7e-4d6c-9b5a-4938271605f4',
+  name: 'Test brewery',
+  country: 'Finland',
+}
 
 interface HelperProps {
-  brewery: Brewery
-  handler: () => void
+  onUpdate: (brewery: Brewery) => void
+  onUpdated: () => void
+  onError: () => void
+  validate: ValidateBrewery
 }
 
 function Helper(props: HelperProps): React.JSX.Element {
-  const updateIf = updateBrewery()
-  const update = updateIf.useUpdate()
-  const handleClick = (): void => {
-    async function doHandle(): Promise<void> {
-      await update.update(props.brewery)
-      props.handler()
-    }
-    void doHandle()
-  }
+  const useStoreUpdate: UseUpdateBrewery = () => ({
+    update: async (updatedBrewery: Brewery): Promise<unknown> => {
+      props.onUpdate(updatedBrewery)
+      return updated
+    },
+    isLoading: false,
+  })
+  const { update, isLoading } = updateBrewery(
+    useStoreUpdate,
+    props.validate,
+  ).useUpdate()
   return (
-    <>
-      <Button onClick={handleClick} text='Test' />
-      {update.isLoading && <div>Loading</div>}
-      {!update.isLoading && <div>Not loading</div>}
-    </>
+    <div>
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      <button
+        type='button'
+        onClick={() => {
+          void (async (): Promise<void> => {
+            try {
+              await update(brewery)
+              props.onUpdated()
+            } catch {
+              props.onError()
+            }
+          })()
+        }}
+      >
+        Update
+      </button>
+    </div>
   )
 }
 
 test('update brewery', async () => {
   const user = setupUser()
-
-  const expectedResponse: { brewery: Brewery } = {
-    brewery: {
-      id: 'b20edb3f-ff2f-4303-9ed9-01b025dc3c49',
-      name: 'Test brewery',
-      country: 'FI',
-    },
+  const onUpdate = vitest.fn()
+  const onUpdated = vitest.fn()
+  const onValidate = vitest.fn()
+  const validate: ValidateBrewery = (result: unknown) => {
+    onValidate(result)
+    return validatedBrewery
   }
 
-  server?.addResponse<{ brewery: Brewery }>({
-    method: 'PUT',
-    pathname: `/api/v1/brewery/${expectedResponse.brewery.id}`,
-    response: expectedResponse,
-    status: 200,
-  })
-
-  const handler = vitest.fn()
   const { getByRole, getByText } = render(
-    <Provider store={store}>
-      <Helper brewery={expectedResponse.brewery} handler={handler} />
-    </Provider>,
+    <Helper
+      onUpdate={onUpdate}
+      onUpdated={onUpdated}
+      onError={() => undefined}
+      validate={validate}
+    />,
   )
-  const testButton = getByRole('button', { name: 'Test' })
-  await user.click(testButton)
+
+  await user.click(getByRole('button', { name: 'Update' }))
   await waitFor(() => {
-    expect(handler).toHaveBeenCalled()
+    expect(onUpdated).toHaveBeenCalled()
   })
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onUpdate).toHaveBeenCalledWith(brewery)
+  expect(onValidate).toHaveBeenCalledWith(updated.brewery)
+})
+
+test('fail to update brewery that does not validate', async () => {
+  const user = setupUser()
+  const onUpdated = vitest.fn()
+  const onError = vitest.fn()
+
+  const { getByRole } = render(
+    <Helper
+      onUpdate={() => undefined}
+      onUpdated={onUpdated}
+      onError={onError}
+      validate={() => {
+        throw Error('Could not validate data')
+      }}
+    />,
+  )
+
+  await user.click(getByRole('button', { name: 'Update' }))
+  // A response that does not validate must not be reported as a successful
+  // update: the throw propagates out of update and what follows it is never
+  // reached.
   await waitFor(() => {
-    expect(getByText('Not loading')).toBeDefined()
+    expect(onError).toHaveBeenCalled()
   })
+  expect(onUpdated).not.toHaveBeenCalled()
 })

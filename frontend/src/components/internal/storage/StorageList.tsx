@@ -1,0 +1,48 @@
+import React from 'react'
+
+import type { DeleteStorageIf, Storage } from '../../types/storage/types'
+
+import LoadingIndicator from '../common/LoadingIndicator'
+import { confirmDialog } from '../confirm'
+import StorageItem from './StorageItem'
+
+import './StorageList.css'
+import { countText } from './count-text'
+import type { LinkComponent } from '../../common/link'
+
+interface Props {
+  linkComponent: LinkComponent
+  deleteStorageIf: DeleteStorageIf
+  isLoading: boolean
+  isTitleVisible: boolean
+  storages: Storage[]
+}
+
+function StorageList(props: Props): React.JSX.Element {
+  return (
+    <div>
+      {props.isTitleVisible && (
+        <h4>Storage {`(${countText(props.storages)})`}</h4>
+      )}
+      <LoadingIndicator isLoading={props.isLoading} />
+      <div className='StorageHeading'>
+        <div className='BeerBreweries'>Breweries</div>
+        <div className='BeerName'>Beer name (reviewed *)</div>
+        <div className='BeerStyles'>Styles</div>
+        <div className='BestBefore'>Best before</div>
+        <div className='Actions'></div>
+      </div>
+      {props.storages.map((storage: Storage) => (
+        <StorageItem
+          linkComponent={props.linkComponent}
+          key={storage.id}
+          deleteStorageIf={props.deleteStorageIf}
+          confirm={confirmDialog}
+          storage={storage}
+        />
+      ))}
+    </div>
+  )
+}
+
+export default StorageList

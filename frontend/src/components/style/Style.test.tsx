@@ -3,8 +3,7 @@ import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import Style from './Style'
-import { Role } from '../../types/user/types'
-import LinkWrapper from '../LinkWrapper'
+import { Role } from '../types/user/types'
 import type {
   JoinedReview,
   ListFilterIf,
@@ -13,8 +12,8 @@ import type {
   ReviewIf,
   SetSearch,
   UpdateReviewIf,
-} from '../../types/review/types'
-import type { ListStoragesByIf, Storage } from '../../types/storage/types'
+} from '../types/review/types'
+import type { ListStoragesByIf, Storage } from '../types/storage/types'
 import type {
   GetAnnualContainerStatsIf,
   GetAnnualStatsIf,
@@ -26,19 +25,16 @@ import type {
   GetRatingStatsIf,
   GetStyleStatsIf,
   StatsIf,
-} from '../../types/stats/types'
-import type { GetStyleIf, UpdateStyleIf } from '../../types/style/types'
-import type {
-  UseDebounce,
-  UseUrlSearchParams,
-  YearMonth,
-} from '../../types/types'
-import { asText } from '../container/ContainerInfo'
-import type { SearchFieldIf } from '../../types/search/types'
-import type { UseUrlPathParams } from '../util'
+} from '../types/stats/types'
+import type { GetStyleIf, UpdateStyleIf } from '../types/style/types'
+import type { UseDebounce, UseUrlSearchParams, YearMonth } from '../types/types'
+import { asText } from '../internal/container/ContainerInfo'
+import type { SearchFieldIf } from '../types/search/types'
+import type { UseUrlPathParams } from '../types/types'
 import type { ReactNode } from 'react'
-import { loadingIndicatorText } from '../common/LoadingIndicator'
+import { loadingIndicatorText } from '../internal/common/LoadingIndicator'
 import { dontCall } from '../../../test-util/dont-call'
+import { testLink } from '../../../test-util/link'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -332,16 +328,15 @@ const dontUpdate: UpdateStyleIf = {
 
 test('renders style', async () => {
   const { getByRole } = render(
-    <LinkWrapper>
-      <Style
-        updateStyleIf={dontUpdate}
-        listReviewsByStyleIf={getListReviewsIf([joinedReview])}
-        listStoragesByStyleIf={getListStoragesByStyleIf(undefined)}
-        getStyleIf={getStyleIf}
-        statsIf={statsIf}
-        useUrlPathParams={useUrlPathParams}
-      />
-    </LinkWrapper>,
+    <Style
+      linkComponent={testLink}
+      updateStyleIf={dontUpdate}
+      listReviewsByStyleIf={getListReviewsIf([joinedReview])}
+      listStoragesByStyleIf={getListStoragesByStyleIf(undefined)}
+      getStyleIf={getStyleIf}
+      statsIf={statsIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
   )
 
   getByRole('heading', { name: style.name })
@@ -351,16 +346,15 @@ test('renders style', async () => {
 
 test('renders storages', async () => {
   const { getByRole, getByText } = render(
-    <LinkWrapper>
-      <Style
-        updateStyleIf={dontUpdate}
-        listReviewsByStyleIf={getListReviewsIf([joinedReview])}
-        listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
-        getStyleIf={getStyleIf}
-        statsIf={statsIf}
-        useUrlPathParams={useUrlPathParams}
-      />
-    </LinkWrapper>,
+    <Style
+      linkComponent={testLink}
+      updateStyleIf={dontUpdate}
+      listReviewsByStyleIf={getListReviewsIf([joinedReview])}
+      listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
+      getStyleIf={getStyleIf}
+      statsIf={statsIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
   )
   getByRole('heading', { name: style.name })
   getByText(joinedReview.additionalInfo)
@@ -370,42 +364,40 @@ test('renders storages', async () => {
 
 test('renders loading when loading', async () => {
   const { getByText } = render(
-    <LinkWrapper>
-      <Style
-        updateStyleIf={dontUpdate}
-        listReviewsByStyleIf={getListReviewsIf([joinedReview])}
-        listStoragesByStyleIf={getListStoragesByStyleIf(undefined)}
-        getStyleIf={{
-          useGet: () => ({
-            style: undefined,
-            isLoading: true,
-          }),
-        }}
-        statsIf={statsIf}
-        useUrlPathParams={useUrlPathParams}
-      />
-    </LinkWrapper>,
+    <Style
+      linkComponent={testLink}
+      updateStyleIf={dontUpdate}
+      listReviewsByStyleIf={getListReviewsIf([joinedReview])}
+      listStoragesByStyleIf={getListStoragesByStyleIf(undefined)}
+      getStyleIf={{
+        useGet: () => ({
+          style: undefined,
+          isLoading: true,
+        }),
+      }}
+      statsIf={statsIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
   )
   getByText(loadingIndicatorText)
 })
 
 test('renders not found when not found', async () => {
   const { getByText } = render(
-    <LinkWrapper>
-      <Style
-        updateStyleIf={dontUpdate}
-        listReviewsByStyleIf={getListReviewsIf([joinedReview])}
-        listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
-        getStyleIf={{
-          useGet: () => ({
-            style: undefined,
-            isLoading: false,
-          }),
-        }}
-        statsIf={statsIf}
-        useUrlPathParams={useUrlPathParams}
-      />
-    </LinkWrapper>,
+    <Style
+      linkComponent={testLink}
+      updateStyleIf={dontUpdate}
+      listReviewsByStyleIf={getListReviewsIf([joinedReview])}
+      listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
+      getStyleIf={{
+        useGet: () => ({
+          style: undefined,
+          isLoading: false,
+        }),
+      }}
+      statsIf={statsIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
   )
   getByText('Not found')
 })
@@ -413,16 +405,15 @@ test('renders not found when not found', async () => {
 test('throw without style id', async () => {
   expect(() =>
     render(
-      <LinkWrapper>
-        <Style
-          updateStyleIf={dontUpdate}
-          listReviewsByStyleIf={getListReviewsIf([joinedReview])}
-          listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
-          getStyleIf={getStyleIf}
-          statsIf={statsIf}
-          useUrlPathParams={() => ({})}
-        />
-      </LinkWrapper>,
+      <Style
+        linkComponent={testLink}
+        updateStyleIf={dontUpdate}
+        listReviewsByStyleIf={getListReviewsIf([joinedReview])}
+        listStoragesByStyleIf={getListStoragesByStyleIf([storage])}
+        getStyleIf={getStyleIf}
+        statsIf={statsIf}
+        useUrlPathParams={() => ({})}
+      />,
     ),
   ).toThrow()
 })
@@ -432,36 +423,35 @@ test('updates style', async () => {
   const update = vitest.fn()
   const styleName = 'Rye IPA'
   const getNode: () => ReactNode = () => (
-    <LinkWrapper>
-      <Style
-        updateStyleIf={{
-          useUpdate: () => ({
-            update,
-            hasError: false,
+    <Style
+      linkComponent={testLink}
+      updateStyleIf={{
+        useUpdate: () => ({
+          update,
+          hasError: false,
+          isLoading: false,
+          isSuccess: update.mock.calls.length > 0,
+        }),
+        getLogin: () => login,
+      }}
+      listReviewsByStyleIf={getListReviewsIf([])}
+      listStoragesByStyleIf={getListStoragesByStyleIf([])}
+      getStyleIf={{
+        useGet: () => {
+          const hasUpdate = update.mock.calls.length > 0
+          return {
+            style: {
+              ...style,
+              name: hasUpdate ? styleName : style.name,
+              parents: hasUpdate ? [] : style.parents,
+            },
             isLoading: false,
-            isSuccess: update.mock.calls.length > 0,
-          }),
-          getLogin: () => login,
-        }}
-        listReviewsByStyleIf={getListReviewsIf([])}
-        listStoragesByStyleIf={getListStoragesByStyleIf([])}
-        getStyleIf={{
-          useGet: () => {
-            const hasUpdate = update.mock.calls.length > 0
-            return {
-              style: {
-                ...style,
-                name: hasUpdate ? styleName : style.name,
-                parents: hasUpdate ? [] : style.parents,
-              },
-              isLoading: false,
-            }
-          },
-        }}
-        statsIf={statsIf}
-        useUrlPathParams={useUrlPathParams}
-      />
-    </LinkWrapper>
+          }
+        },
+      }}
+      statsIf={statsIf}
+      useUrlPathParams={useUrlPathParams}
+    />
   )
   const { getByRole, getByPlaceholderText, getByText, rerender } =
     render(getNode())
@@ -495,24 +485,23 @@ test('cancels update', async () => {
   const user = setupUser()
   const update = vitest.fn()
   const { getByRole } = render(
-    <LinkWrapper>
-      <Style
-        updateStyleIf={{
-          useUpdate: () => ({
-            update,
-            hasError: false,
-            isLoading: false,
-            isSuccess: false,
-          }),
-          getLogin: () => login,
-        }}
-        listReviewsByStyleIf={getListReviewsIf([])}
-        listStoragesByStyleIf={getListStoragesByStyleIf([])}
-        getStyleIf={getStyleIf}
-        statsIf={statsIf}
-        useUrlPathParams={useUrlPathParams}
-      />
-    </LinkWrapper>,
+    <Style
+      linkComponent={testLink}
+      updateStyleIf={{
+        useUpdate: () => ({
+          update,
+          hasError: false,
+          isLoading: false,
+          isSuccess: false,
+        }),
+        getLogin: () => login,
+      }}
+      listReviewsByStyleIf={getListReviewsIf([])}
+      listStoragesByStyleIf={getListStoragesByStyleIf([])}
+      getStyleIf={getStyleIf}
+      statsIf={statsIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
   )
 
   const editButton = getByRole('button', { name: 'Edit' })

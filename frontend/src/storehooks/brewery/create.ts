@@ -1,21 +1,25 @@
 import type {
   Brewery,
-  CreateBreweryIf,
+  CreateBreweryHookIf,
   CreateBreweryRequest,
-} from '../../types/brewery/types'
-import { useCreateBreweryMutation } from '../../store/brewery/api'
-import { validateBrewery } from '../../validation/brewery'
+  UseCreateBrewery,
+  ValidateBrewery,
+} from './types'
+import { unwrapMember } from '../envelope'
 
-const createBrewery: () => CreateBreweryIf = () => {
-  const createBreweryIf: CreateBreweryIf = {
+const createBrewery: (
+  useCreateBrewery: UseCreateBrewery,
+  validateBrewery: ValidateBrewery,
+) => CreateBreweryHookIf = (useCreateBrewery, validateBrewery) => {
+  const createBreweryIf: CreateBreweryHookIf = {
     useCreate: () => {
-      const [createBrewery, { isLoading }] = useCreateBreweryMutation()
+      const { create, isLoading } = useCreateBrewery()
       return {
         create: async (
           breweryRequest: CreateBreweryRequest,
         ): Promise<Brewery> => {
-          const result = await createBrewery(breweryRequest).unwrap()
-          return validateBrewery(result.brewery)
+          const result = await create(breweryRequest)
+          return validateBrewery(unwrapMember(result, 'brewery'))
         },
         isLoading,
       }

@@ -1,25 +1,28 @@
 import type {
   ListLocationsHookIf,
   LocationList,
-} from '../../types/location/types'
-import type { Pagination } from '../../types/types'
-import { useLazyListLocationsQuery } from '../../store/location/api'
-import {
+  UseListLocations,
+  ValidateLocationList,
+  ValidateLocationListOrUndefined,
+} from './types'
+import type { Pagination } from '../types'
+
+const listLocations: (
+  useListLocations: UseListLocations,
+  validateLocationList: ValidateLocationList,
+  validateLocationListOrUndefined: ValidateLocationListOrUndefined,
+) => ListLocationsHookIf = (
+  useListLocations,
   validateLocationList,
   validateLocationListOrUndefined,
-} from '../../validation/location'
-
-const listLocations: () => ListLocationsHookIf = () => {
+) => {
   const listLocationsIf: ListLocationsHookIf = {
     useList: () => {
-      const [trigger, { data, isFetching, isUninitialized }] =
-        useLazyListLocationsQuery()
+      const { list, data, isFetching, isUninitialized } = useListLocations()
       return {
         locationList: validateLocationListOrUndefined(data),
-        list: async (pagination: Pagination): Promise<LocationList> => {
-          const result = await trigger(pagination).unwrap()
-          return validateLocationList(result)
-        },
+        list: async (pagination: Pagination): Promise<LocationList> =>
+          validateLocationList(await list(pagination)),
         isLoading: isFetching,
         isUninitialized,
       }

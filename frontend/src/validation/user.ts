@@ -1,10 +1,23 @@
 import * as t from 'io-ts'
 import { isLeft } from 'fp-ts/Either'
 
-import type { User, UserList } from '../types/user/types'
 import { formatError } from './format-error'
 
-const ValidatedUser = t.type({
+// This layer's own view of a valid user, declared here rather than imported
+// from types/. See the comment in style.ts. The role arrives as a string and
+// is kept as one: which strings are roles is the application's business, not
+// the response's.
+export interface User {
+  id: string
+  username: string
+  role: string
+}
+
+export interface UserList {
+  users: User[]
+}
+
+export const ValidatedUser = t.type({
   id: t.string,
   username: t.string,
   role: t.string,
@@ -14,17 +27,23 @@ const ValidatedUserList = t.type({
   users: t.array(ValidatedUser),
 })
 
+export function toUser(user: t.TypeOf<typeof ValidatedUser>): User {
+  return {
+    id: user.id,
+    username: user.username,
+    role: user.role,
+  }
+}
+
 export function validateUserOrUndefined(result: unknown): User | undefined {
   if (typeof result === 'undefined') {
     return undefined
   }
-  type UserT = t.TypeOf<typeof ValidatedUser>
   const decoded = ValidatedUser.decode(result)
   if (isLeft(decoded)) {
     throw Error(formatError(decoded))
   }
-  const valid: UserT = decoded.right
-  return valid
+  return toUser(decoded.right)
 }
 
 export function validateUserListOrUndefined(
@@ -37,11 +56,11 @@ export function validateUserListOrUndefined(
 }
 
 function validateUserList(result: unknown): UserList {
-  type UserListT = t.TypeOf<typeof ValidatedUserList>
   const decoded = ValidatedUserList.decode(result)
   if (isLeft(decoded)) {
     throw Error(formatError(decoded))
   }
-  const valid: UserListT = decoded.right
-  return valid
+  return {
+    users: decoded.right.users.map(toUser),
+  }
 }

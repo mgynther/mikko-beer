@@ -1,80 +1,153 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
-import login from './login'
-import type { Login } from '../../types/login/types'
+import { expect, test, vitest } from 'vitest'
 import { render, waitFor } from '@testing-library/react'
-import { Provider, useSelector } from '../../react-redux-wrapper'
+
+import login from './login'
+import type {
+  Login,
+  LoginParams,
+  LoginResponse,
+  UseLogin,
+  UseSaveLogin,
+  ValidateLogin,
+} from './types'
 import { setupUser } from '../../../test-util/user-event'
 
-import Button from '../../components/common/Button'
-import { selectLogin } from '../../store/login/reducer'
-
-let server: TestServer | undefined
-
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
-
-interface Props {
-  username: string
+// Stubs for the store functions and the validator, for the reason given in
+// storehooks/brewery/get.test.tsx.
+const validatedLogin: Login = {
+  authToken: 'validatedauthtoken',
+  refreshToken: 'validatedrefreshtoken',
+  user: {
+    id: 'c6d7e8f9-0112-4233-8445-566778899aab',
+    username: 'validateduser',
+    role: 'admin',
+  },
 }
 
-function Helper({ username }: Props): React.JSX.Element {
-  const loginIf = login()
-  const { login: doLogin } = loginIf.useLogin()
-  const loginState = useSelector(selectLogin)
+const params: LoginParams = { username: 'user1', password: 'password1' }
+
+interface HelperProps {
+  response: LoginResponse
+  onLogin: (params: LoginParams) => void
+  onSave: (login: Login) => void
+  onError: () => void
+  validate: ValidateLogin
+}
+
+function Helper(props: HelperProps): React.JSX.Element {
+  const useStoreLogin: UseLogin = () => ({
+    login: async (loginParams: LoginParams): Promise<LoginResponse> => {
+      props.onLogin(loginParams)
+      return props.response
+    },
+    isLoading: false,
+  })
+  const useSaveLogin: UseSaveLogin = () => props.onSave
+  const { login: doLogin, isLoading } = login(
+    useStoreLogin,
+    useSaveLogin,
+    props.validate,
+  ).useLogin()
   return (
     <div>
-      {loginState.user !== undefined && <div>{loginState.user.username}</div>}
-      <Button
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      <button
+        type='button'
         onClick={() => {
-          void doLogin({ username, password: 'password1' })
+          void (async (): Promise<void> => {
+            try {
+              await doLogin(params)
+            } catch {
+              props.onError()
+            }
+          })()
         }}
-        text='Login'
-      />
+      >
+        Login
+      </button>
     </div>
   )
 }
 
 test('login', async () => {
   const user = setupUser()
-
-  const username = 'user1'
-  const expectedResponse: Login = {
-    authToken: 'authtoken1',
-    refreshToken: 'refreshtoken1',
-    user: {
-      id: 'dcdafbc9-3fe6-485f-9821-05bd4a8b7eb3',
-      username,
-      role: 'admin',
-    },
-  }
-
-  server?.addResponse<Login>({
-    method: 'POST',
-    pathname: `/api/v1/user/sign-in`,
-    response: expectedResponse,
-    status: 200,
-  })
+  const onLogin = vitest.fn()
+  const onSave = vitest.fn()
+  const onValidate = vitest.fn()
+  const data = { authToken: 'token', refreshToken: 'refresh' }
 
   const { getByRole, getByText } = render(
-    <Provider store={store}>
-      <Helper username={username} />
-    </Provider>,
+    <Helper
+      response={{ isSuccess: true, data }}
+      onLogin={onLogin}
+      onSave={onSave}
+      onError={() => undefined}
+      validate={(result: unknown) => {
+        onValidate(result)
+        return validatedLogin
+      }}
+    />,
   )
-  const loginButton = getByRole('button', { name: 'Login' })
-  await user.click(loginButton)
+
+  await user.click(getByRole('button', { name: 'Login' }))
   await waitFor(() => {
-    expect(getByText(username)).toBeDefined()
+    // What the validator returned is what the session is made of.
+    expect(onSave).toHaveBeenCalledWith(validatedLogin)
   })
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onLogin).toHaveBeenCalledWith(params)
+  expect(onValidate).toHaveBeenCalledWith(data)
+})
+
+test('a failed login saves no session and does not reject', async () => {
+  const user = setupUser()
+  const onLogin = vitest.fn()
+  const onSave = vitest.fn()
+  const onValidate = vitest.fn()
+  const onError = vitest.fn()
+
+  const { getByRole } = render(
+    <Helper
+      response={{ isSuccess: false, data: undefined }}
+      onLogin={onLogin}
+      onSave={onSave}
+      onError={onError}
+      validate={(result: unknown) => {
+        onValidate(result)
+        return validatedLogin
+      }}
+    />,
+  )
+
+  await user.click(getByRole('button', { name: 'Login' }))
+  await waitFor(() => {
+    expect(onLogin).toHaveBeenCalledWith(params)
+  })
+  expect(onValidate).not.toHaveBeenCalled()
+  expect(onSave).not.toHaveBeenCalled()
+  expect(onError).not.toHaveBeenCalled()
+})
+
+test('a login that does not validate throws', async () => {
+  const user = setupUser()
+  const onSave = vitest.fn()
+  const onError = vitest.fn()
+
+  const { getByRole } = render(
+    <Helper
+      response={{ isSuccess: true, data: { authToken: 1 } }}
+      onLogin={() => undefined}
+      onSave={onSave}
+      onError={onError}
+      validate={() => {
+        throw Error('Could not validate data')
+      }}
+    />,
+  )
+
+  await user.click(getByRole('button', { name: 'Login' }))
+  await waitFor(() => {
+    expect(onError).toHaveBeenCalled()
+  })
+  expect(onSave).not.toHaveBeenCalled()
 })

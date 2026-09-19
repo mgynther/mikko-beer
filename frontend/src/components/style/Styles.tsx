@@ -1,17 +1,19 @@
+import type { NavigateIf } from '../types/types'
 import React from 'react'
 
 import type {
   ListStylesIf,
   Style,
   StyleWithParentIds,
-} from '../../types/style/types'
+} from '../types/style/types'
 
-import LoadingIndicator from '../common/LoadingIndicator'
-import SearchStyle from './SearchStyle'
-import StyleLink from './StyleLink'
-import type { NavigateIf } from '../../navigation'
+import LoadingIndicator from '../internal/common/LoadingIndicator'
+import SearchStyle from '../internal/style/SearchStyle'
+import StyleLink from '../internal/style/StyleLink'
+import type { LinkComponent } from '../common/link'
 
 interface Props {
+  linkComponent: LinkComponent
   listStylesIf: ListStylesIf
   navigateIf: NavigateIf
 }
@@ -36,7 +38,7 @@ function Styles(props: Props): React.JSX.Element {
       <ul>
         {sortedStyles.map((style: StyleWithParentIds) => (
           <li key={style.id} className='RowLike'>
-            <StyleLink style={style} />
+            <StyleLink linkComponent={props.linkComponent} style={style} />
           </li>
         ))}
       </ul>

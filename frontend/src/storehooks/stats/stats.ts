@@ -9,141 +9,117 @@ import type {
   LocationStats,
   LocationStatsQueryParams,
   StatsHookIf,
+  StatsStore,
+  StatsValidators,
   StyleStatsQueryParams,
-} from '../../types/stats/types'
-import {
-  useGetAnnualStatsQuery,
-  useGetContainerStatsQuery,
-  useGetOverallStatsQuery,
-  useGetRatingStatsQuery,
-  useGetStyleStatsQuery,
-  useLazyGetAnnualContainerStatsQuery,
-  useLazyGetBreweryCountryStatsQuery,
-  useLazyGetBreweryStatsQuery,
-  useLazyGetLocationStatsQuery,
-} from '../../store/stats/api'
-import {
-  validateAnnualStatsOrUndefined,
-  validateAnnualContainerStats,
-  validateAnnualContainerStatsOrUndefined,
-  validateBreweryCountryStats,
-  validateBreweryCountryStatsOrUndefined,
-  validateBreweryStats,
-  validateBreweryStatsOrUndefined,
-  validateContainerStatsOrUndefined,
-  validateLocationStats,
-  validateLocationStatsOrUndefined,
-  validateOverallStatsOrUndefined,
-  validateRatingStatsOrUndefined,
-  validateStyleStatsOrUndefined,
-} from '../../validation/stats'
+} from './types'
+import { unwrapMemberOrUndefined } from '../envelope'
 
-const stats: () => StatsHookIf = () => {
+const stats: (store: StatsStore, validators: StatsValidators) => StatsHookIf = (
+  store,
+  validators,
+) => {
   const statsIf: StatsHookIf = {
     annual: {
       useStats: (params: IdParams) => {
-        const { data, isLoading } = useGetAnnualStatsQuery(params)
+        const { data, isLoading } = store.annual(params)
         return {
-          stats: validateAnnualStatsOrUndefined(data),
+          stats: validators.annualOrUndefined(data),
           isLoading,
         }
       },
     },
     annualContainer: {
       useStats: () => {
-        const [trigger, { data, isFetching }] =
-          useLazyGetAnnualContainerStatsQuery()
+        const { query, data, isFetching } = store.annualContainer()
         return {
           query: async (
             params: AnnualContainerStatsQueryParams,
           ): Promise<AnnualContainerStats> => {
-            const result = await trigger(params)
-            return validateAnnualContainerStats(result.data)
+            return validators.annualContainer(await query(params))
           },
-          stats: validateAnnualContainerStatsOrUndefined(data),
+          stats: validators.annualContainerOrUndefined(data),
           isLoading: isFetching,
         }
       },
     },
     brewery: {
       useStats: () => {
-        const [trigger, { data, isFetching }] = useLazyGetBreweryStatsQuery()
+        const { query, data, isFetching } = store.brewery()
         return {
           query: async (
             params: BreweryStatsQueryParams,
           ): Promise<BreweryStats> => {
-            const result = await trigger(params)
-            return validateBreweryStats(result.data)
+            return validators.brewery(await query(params))
           },
-          stats: validateBreweryStatsOrUndefined(data),
+          stats: validators.breweryOrUndefined(data),
           isLoading: isFetching,
         }
       },
     },
     breweryCountry: {
       useStats: () => {
-        const [trigger, { data, isFetching }] =
-          useLazyGetBreweryCountryStatsQuery()
+        const { query, data, isFetching } = store.breweryCountry()
         return {
           query: async (
             params: BreweryCountryStatsQueryParams,
           ): Promise<BreweryCountryStats> => {
-            const result = await trigger(params)
-            return validateBreweryCountryStats(result.data)
+            return validators.breweryCountry(await query(params))
           },
-          stats: validateBreweryCountryStatsOrUndefined(data),
+          stats: validators.breweryCountryOrUndefined(data),
           isLoading: isFetching,
         }
       },
     },
     container: {
       useStats: (params: IdParams) => {
-        const { data, isLoading } = useGetContainerStatsQuery(params)
+        const { data, isLoading } = store.container(params)
         return {
-          stats: validateContainerStatsOrUndefined(data),
+          stats: validators.containerOrUndefined(data),
           isLoading,
         }
       },
     },
     location: {
       useStats: () => {
-        const [trigger, { data, isFetching }] = useLazyGetLocationStatsQuery()
+        const { query, data, isFetching } = store.location()
         return {
           query: async (
             params: LocationStatsQueryParams,
           ): Promise<LocationStats> => {
-            const result = await trigger(params)
-            return validateLocationStats(result.data)
+            return validators.location(await query(params))
           },
-          stats: validateLocationStatsOrUndefined(data),
+          stats: validators.locationOrUndefined(data),
           isLoading: isFetching,
         }
       },
     },
     overall: {
       useStats: (params: IdParams) => {
-        const { data, isLoading } = useGetOverallStatsQuery(params)
+        const { data, isLoading } = store.overall(params)
         return {
-          stats: validateOverallStatsOrUndefined(data?.overall),
+          stats: validators.overallOrUndefined(
+            unwrapMemberOrUndefined(data, 'overall'),
+          ),
           isLoading,
         }
       },
     },
     rating: {
       useStats: (params: IdParams) => {
-        const { data, isLoading } = useGetRatingStatsQuery(params)
+        const { data, isLoading } = store.rating(params)
         return {
-          stats: validateRatingStatsOrUndefined(data),
+          stats: validators.ratingOrUndefined(data),
           isLoading,
         }
       },
     },
     style: {
       useStats: (params: StyleStatsQueryParams) => {
-        const { data, isFetching } = useGetStyleStatsQuery(params)
+        const { data, isLoading } = store.style(params)
         return {
-          stats: validateStyleStatsOrUndefined(data),
-          isLoading: isFetching,
+          stats: validators.styleOrUndefined(data),
+          isLoading,
         }
       },
     },

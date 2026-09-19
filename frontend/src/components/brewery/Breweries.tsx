@@ -1,29 +1,30 @@
+import type { NavigateIf } from '../types/types'
 import React, { useEffect, useState } from 'react'
-import { Link } from '../common/Link'
 
 import type {
   Brewery,
   ListBreweriesIf,
   SearchBreweryIf,
-} from '../../types/brewery/types'
+} from '../types/brewery/types'
 
-import type { NavigateIf } from '../../navigation'
+import { nameWithFlag } from '../internal/common/name-with-flag'
+import LoadingIndicator from '../internal/common/LoadingIndicator'
 
-import { nameWithFlag } from '../common/name-with-flag'
-import LoadingIndicator from '../common/LoadingIndicator'
-
-import { breweryLinkFormatter } from './BreweryLinks'
-import SearchBreweryWithNavi from './SearchBreweryWithNavi'
+import { breweryLinkFormatter } from '../internal/brewery/BreweryLinks'
+import SearchBreweryWithNavi from '../internal/brewery/SearchBreweryWithNavi'
+import type { LinkComponent } from '../common/link'
 
 const pageSize = 20
 
 export interface Props {
+  linkComponent: LinkComponent
   listBreweriesIf: ListBreweriesIf
   navigateIf: NavigateIf
   searchBreweryIf: SearchBreweryIf
 }
 
 function Breweries(props: Props): React.JSX.Element {
+  const Link = props.linkComponent
   const [loadedBreweries, setLoadedBreweries] = useState<Brewery[]>([])
   const { breweryList, list, isLoading, isUninitialized } =
     props.listBreweriesIf.useList()

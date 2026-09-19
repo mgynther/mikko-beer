@@ -1,19 +1,20 @@
 import React from 'react'
 
-import Annual from './Annual'
-import AnnualContainerInfiniteScroll from './AnnualContainer'
-import Brewery from './Brewery'
-import BreweryCountry from './BreweryCountry'
-import Location from './Location'
-import Overall from './Overall'
-import Rating from './Rating'
-import Style from './Style'
+import Annual from '../internal/stats/Annual'
+import AnnualContainerInfiniteScroll from '../internal/stats/AnnualContainer'
+import Brewery from '../internal/stats/Brewery'
+import BreweryCountry from '../internal/stats/BreweryCountry'
+import Location from '../internal/stats/Location'
+import Overall from '../internal/stats/Overall'
+import Rating from '../internal/stats/Rating'
+import Style from '../internal/stats/Style'
 
-import TabButton from '../common/TabButton'
-import type { StatsIf } from '../../types/stats/types'
-import Container from './Container'
+import TabButton from '../internal/common/TabButton'
+import type { StatsIf } from '../types/stats/types'
+import Container from '../internal/stats/Container'
 
 import './StatsModeContainer.css'
+import type { LinkComponent } from '../common/link'
 
 enum Mode {
   Annual = 'annual',
@@ -28,6 +29,7 @@ enum Mode {
 }
 
 interface Props {
+  linkComponent: LinkComponent
   statsIf: StatsIf
   breweryId: string | undefined
   locationId: string | undefined
@@ -159,6 +161,7 @@ function Stats(props: Props): React.JSX.Element | null {
       )}
       {mode === Mode.Brewery && (
         <Brewery
+          linkComponent={props.linkComponent}
           getBreweryStatsIf={props.statsIf.brewery}
           breweryId={props.breweryId}
           locationId={props.locationId}
@@ -189,6 +192,7 @@ function Stats(props: Props): React.JSX.Element | null {
       )}
       {mode === Mode.Location && (
         <Location
+          linkComponent={props.linkComponent}
           getLocationStatsIf={props.statsIf.location}
           breweryId={props.breweryId}
           locationId={props.locationId}
@@ -215,6 +219,7 @@ function Stats(props: Props): React.JSX.Element | null {
       )}
       {mode === Mode.Style && (
         <Style
+          linkComponent={props.linkComponent}
           getStyleStatsIf={props.statsIf.style}
           breweryId={props.breweryId}
           locationId={props.locationId}

@@ -4,11 +4,11 @@ import type {
   Container as ContainerType,
   ListContainersIf,
   UpdateContainerIf,
-} from '../../types/container/types'
+} from '../types/container/types'
 
-import LoadingIndicator from '../common/LoadingIndicator'
+import LoadingIndicator from '../internal/common/LoadingIndicator'
 
-import Container from './Container'
+import Container from '../internal/container/Container'
 
 interface Props {
   listContainersIf: ListContainersIf

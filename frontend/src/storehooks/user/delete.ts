@@ -1,13 +1,14 @@
-import type { DeleteUserIf } from '../../types/user/types'
-import { useDeleteUserMutation } from '../../store/user/api'
+import type { DeleteUserHookIf, UseDeleteUser } from './types'
 
-const deleteUser: () => DeleteUserIf = () => {
-  const deleteUserIf: DeleteUserIf = {
+const deleteUser: (useDeleteUser: UseDeleteUser) => DeleteUserHookIf = (
+  useDeleteUser,
+) => {
+  const deleteUserIf: DeleteUserHookIf = {
     useDelete: () => {
-      const [deleteUser] = useDeleteUserMutation()
+      const { delete: deleteById } = useDeleteUser()
       return {
         delete: async (userId: string): Promise<void> => {
-          await deleteUser(userId)
+          await deleteById(userId)
         },
       }
     },

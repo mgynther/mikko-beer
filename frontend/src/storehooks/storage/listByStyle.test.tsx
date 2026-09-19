@@ -1,35 +1,60 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
+import { expect, test, vitest } from 'vitest'
+import { render } from '@testing-library/react'
+
 import listStoragesByStyle from './listByStyle'
-import type { StorageList } from '../../types/storage/types'
-import { render, waitFor } from '@testing-library/react'
-import { Provider } from '../../react-redux-wrapper'
+import type {
+  StorageList,
+  UseListStoragesBy,
+  ValidateStorageListOrUndefined,
+} from './types'
 
-let server: TestServer | undefined
-
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
-
-interface Props {
-  styleId: string
+// Stubs for the store function and the validator, for the reason given in
+// storehooks/brewery/get.test.tsx.
+const validatedStorageList: StorageList = {
+  storages: [
+    {
+      id: 'c3d4e5f6-0718-4293-a4b5-c6d7e8f90112',
+      beerId: 'd4e5f607-1829-43a4-b5c6-d7e8f9011223',
+      beerName: 'Validated beer',
+      bestBefore: '2026-01-01T00:00:00.000Z',
+      breweries: [],
+      container: {
+        id: 'e5f60718-293a-44b5-8c6d-7e8f90112233',
+        type: 'bottle',
+        size: '0.33',
+      },
+      createdAt: '2025-01-01T00:00:00.000Z',
+      hasReview: false,
+      styles: [],
+    },
+  ],
 }
 
-function Helper(props: Props): React.JSX.Element {
-  const listIf = listStoragesByStyle()
-  const { storages } = listIf.useList(props.styleId)
+const listed = { storages: [{ id: 'listed', beerName: 'Listed beer' }] }
+
+const styleId = 'a1b2c3d4-e5f6-4071-8293-a4b5c6d7e8f9'
+
+interface HelperProps {
+  onList: (id: string) => void
+  onValidate: (result: unknown) => void
+}
+
+function Helper(props: HelperProps): React.JSX.Element {
+  const useStoreList: UseListStoragesBy = (id: string) => {
+    props.onList(id)
+    return { data: listed, isLoading: false }
+  }
+  const validate: ValidateStorageListOrUndefined = (result: unknown) => {
+    props.onValidate(result)
+    return validatedStorageList
+  }
+  const { storages, isLoading } = listStoragesByStyle(
+    useStoreList,
+    validate,
+  ).useList(styleId)
   return (
     <div>
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
       {storages?.storages.map((storage) => (
         <div key={storage.id}>{storage.beerName}</div>
       ))}
@@ -37,52 +62,16 @@ function Helper(props: Props): React.JSX.Element {
   )
 }
 
-test('list storages by style', async () => {
-  const styleId = '1251dd32-8ebc-4569-b2c5-5de303768c8d'
-
-  const expectedResponse: StorageList = {
-    storages: [
-      {
-        id: '270da853-33f3-4310-be27-43d0474ac163',
-        beerId: '02323050-dcd2-4fbb-aa84-ac6910728f37',
-        beerName: 'Test beer',
-        bestBefore: '2026-12-31T10:00:00.000Z',
-        breweries: [
-          {
-            id: 'd182f232-0f72-4615-963a-bbb6c448ea4f',
-            name: 'Test brewery',
-          },
-        ],
-        container: {
-          id: '53892c47-3017-4694-8b70-df029dd4b2da',
-          type: 'bottle',
-          size: '0.50',
-        },
-        createdAt: '2026-03-13T10:00:00.000Z',
-        hasReview: false,
-        styles: [
-          {
-            id: styleId,
-            name: 'Imperial Sour',
-          },
-        ],
-      },
-    ],
-  }
-
-  server?.addResponse<StorageList>({
-    method: 'GET',
-    pathname: `/api/v1/style/${styleId}/storage`,
-    response: expectedResponse,
-    status: 200,
-  })
+test('list storages by style', () => {
+  const onList = vitest.fn()
+  const onValidate = vitest.fn()
 
   const { getByText } = render(
-    <Provider store={store}>
-      <Helper styleId={styleId} />
-    </Provider>,
+    <Helper onList={onList} onValidate={onValidate} />,
   )
-  await waitFor(() => {
-    expect(getByText(expectedResponse.storages[0].beerName)).toBeDefined()
-  })
+
+  expect(getByText(validatedStorageList.storages[0].beerName)).toBeDefined()
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onList).toHaveBeenCalledWith(styleId)
+  expect(onValidate).toHaveBeenCalledWith(listed)
 })

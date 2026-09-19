@@ -1,17 +1,12 @@
 import { act, render, waitFor } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
 import Beers from './Beers'
-import type { SearchFieldIf } from '../../types/search/types'
-import LinkWrapper from '../LinkWrapper'
-import type { UseDebounce } from '../../types/types'
-import type {
-  BeerList,
-  ListBeersIf,
-  SearchBeerIf,
-} from '../../types/beer/types'
-import type { NavigateIf } from '../../navigation'
-import { loadingIndicatorText } from '../common/LoadingIndicator'
+import type { SearchFieldIf } from '../types/search/types'
+import type { NavigateIf, UseDebounce } from '../types/types'
+import type { BeerList, ListBeersIf, SearchBeerIf } from '../types/beer/types'
+import { loadingIndicatorText } from '../internal/common/LoadingIndicator'
 import { dontCall } from '../../../test-util/dont-call'
+import { testLink } from '../../../test-util/link'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -89,14 +84,13 @@ test('render beers', async () => {
     },
   }
   const { getByPlaceholderText, getAllByRole, getByRole } = render(
-    <LinkWrapper>
-      <Beers
-        listBeersIf={listBeersIf}
-        navigateIf={navigateIf}
-        searchBeerIf={searchBeerIf}
-        searchFieldIf={activeSearch}
-      />
-    </LinkWrapper>,
+    <Beers
+      linkComponent={testLink}
+      listBeersIf={listBeersIf}
+      navigateIf={navigateIf}
+      searchBeerIf={searchBeerIf}
+      searchFieldIf={activeSearch}
+    />,
   )
   expect(scrollCb).not.toEqual(undefined)
   await act(async () => {
@@ -127,14 +121,13 @@ test('render loading', async () => {
     },
   }
   const { getByText } = render(
-    <LinkWrapper>
-      <Beers
-        listBeersIf={listBeersIf}
-        navigateIf={navigateIf}
-        searchBeerIf={searchBeerIf}
-        searchFieldIf={activeSearch}
-      />
-    </LinkWrapper>,
+    <Beers
+      linkComponent={testLink}
+      listBeersIf={listBeersIf}
+      navigateIf={navigateIf}
+      searchBeerIf={searchBeerIf}
+      searchFieldIf={activeSearch}
+    />,
   )
   await act(async () => {
     scrollCb()
@@ -173,14 +166,13 @@ test('stops loading more', async () => {
     },
   }
   const { getByText } = render(
-    <LinkWrapper>
-      <Beers
-        listBeersIf={listBeersIf}
-        navigateIf={navigateIf}
-        searchBeerIf={searchBeerIf}
-        searchFieldIf={activeSearch}
-      />
-    </LinkWrapper>,
+    <Beers
+      linkComponent={testLink}
+      listBeersIf={listBeersIf}
+      navigateIf={navigateIf}
+      searchBeerIf={searchBeerIf}
+      searchFieldIf={activeSearch}
+    />,
   )
   // act is important to ensure changes have been fully applied. loading is not
   // toggled between renders so without act there would be a race condition in

@@ -1,16 +1,18 @@
-import type { GetMonthlyStorageStatsIf } from '../../types/storage/types'
-import { useGetMonthlyStorageStatsQuery } from '../../store/storage/api'
-// prettier-ignore
-import {
-  validateMonthlyStorageStatsOrUndefined,
-} from '../../validation/storage'
+import type {
+  GetMonthlyStorageStatsHookIf,
+  UseGetStorageStats,
+  ValidateMonthlyStatsOrUndefined,
+} from './types'
 
-const getMonthlyStorageStats: () => GetMonthlyStorageStatsIf = () => {
-  const getMonthlyStorageStatsIf: GetMonthlyStorageStatsIf = {
+const getMonthlyStorageStats: (
+  useStats: UseGetStorageStats,
+  validateStats: ValidateMonthlyStatsOrUndefined,
+) => GetMonthlyStorageStatsHookIf = (useStats, validateStats) => {
+  const getMonthlyStorageStatsIf: GetMonthlyStorageStatsHookIf = {
     useMonthlyStats: () => {
-      const { data, isLoading } = useGetMonthlyStorageStatsQuery()
+      const { data, isLoading } = useStats()
       return {
-        stats: validateMonthlyStorageStatsOrUndefined(data),
+        stats: validateStats(data),
         isLoading,
       }
     },

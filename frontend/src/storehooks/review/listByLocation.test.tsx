@@ -1,131 +1,86 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
+import { expect, test, vitest } from 'vitest'
+import { render } from '@testing-library/react'
+
 import listReviewsByLocation from './listByLocation'
 import type {
+  IdFilteredListReviewParams,
   JoinedReviewList,
-  ReviewListFilter,
-  ReviewSorting,
-} from '../../types/review/types'
-import { render, waitFor } from '@testing-library/react'
-import { Provider } from '../../react-redux-wrapper'
-import { testTimes } from '../../../test-util/filter-time'
+  UseListReviewsBy,
+  ValidateJoinedReviewListOrUndefined,
+} from './types'
 
-let server: TestServer | undefined
+// Stubs for the store function and the validator, for the reason given in
+// storehooks/brewery/get.test.tsx.
+const validatedReviewList: JoinedReviewList = {
+  reviews: [
+    {
+      id: '6a5b4c3d-2e1f-4098-8776-5e4d3c2b1a09',
+      additionalInfo: 'Validated additional info',
+      beerId: '7b6c5d4e-3f20-4189-8877-6f5e4d3c2b1a',
+      beerName: 'Validated beer',
+      breweries: [],
+      container: {
+        id: '8c7d6e5f-4031-429a-9988-7a6b5c4d3e2f',
+        type: 'bottle',
+        size: '0.33',
+      },
+      location: undefined,
+      rating: 6,
+      styles: [],
+      time: '2025-01-01T00:00:00.000Z',
+    },
+  ],
+  sorting: { order: 'time', direction: 'desc' },
+}
 
-beforeAll(() => {
-  server = createServer()
-})
+const listed = { reviews: [{ id: 'listed' }], sorting: {} }
 
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
+const params: IdFilteredListReviewParams = {
+  filter: { minRating: 4, maxRating: 10, minTime: 1, maxTime: 2 },
+  id: '846c2506-6fdd-4fc9-b6e6-41300bab9ed5',
+  sorting: { order: 'rating', direction: 'asc' },
+}
 
 interface HelperProps {
-  locationId: string
-}
-
-const sorting: ReviewSorting = {
-  order: 'beer_name',
-  direction: 'desc',
-}
-
-const filter: ReviewListFilter = {
-  minRating: 4,
-  maxRating: 10,
-  minTime: testTimes.min.utcTimestamp,
-  maxTime: testTimes.max.utcTimestamp,
+  onList: (params: IdFilteredListReviewParams) => void
+  onValidate: (result: unknown) => void
 }
 
 function Helper(props: HelperProps): React.JSX.Element {
-  const listIf = listReviewsByLocation()
-  const { reviews } = listIf.useList({
-    id: props.locationId,
-    sorting,
-    filter,
-  })
+  const useStoreList: UseListReviewsBy = (
+    listParams: IdFilteredListReviewParams,
+  ) => {
+    props.onList(listParams)
+    return { data: listed, isLoading: false }
+  }
+  const validate: ValidateJoinedReviewListOrUndefined = (result: unknown) => {
+    props.onValidate(result)
+    return validatedReviewList
+  }
+  const { reviews, isLoading } = listReviewsByLocation(
+    useStoreList,
+    validate,
+  ).useList(params)
   return (
     <div>
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
       {reviews?.reviews.map((review) => (
-        <div key={review.id}>{review.location?.name}</div>
+        <div key={review.id}>{review.beerName}</div>
       ))}
     </div>
   )
 }
 
-test('list reviews by location', async () => {
-  const locationId = '9acc86e4-fc44-42c9-b1e6-b22972fe3733'
-  const locationName = 'Test location'
-
-  const expectedResponse: JoinedReviewList = {
-    reviews: [
-      {
-        id: 'ac03e2e2-3340-420e-858e-8bd6dfd1f12a',
-        additionalInfo: 'Test additional info',
-        beerId: 'd57b9bd4-b8ab-484c-ae43-fa134f92bc7c',
-        beerName: 'Test beer',
-        breweries: [
-          {
-            id: 'c502aafe-1d1b-47f7-bd4a-ddfd30289033',
-            name: 'Test brewery',
-          },
-        ],
-        container: {
-          id: '62892557-aae3-4bf1-80e2-f996552423f3',
-          type: 'bottle',
-          size: '0.33',
-        },
-        location: {
-          id: locationId,
-          name: locationName,
-        },
-        rating: 8,
-        styles: [
-          {
-            id: '1290be01-54f5-4e93-9cd0-2636293d4afb',
-            name: 'Test style',
-          },
-        ],
-        time: '2026-03-12T00:00:00.000Z',
-      },
-    ],
-    sorting,
-  }
-
-  server?.addResponse<JoinedReviewList>({
-    method: 'GET',
-    // prettier-ignore
-    pathname: `/api/v1/location/${
-      locationId
-    }/review?order=${
-      sorting.order
-    }&direction=${
-      sorting.direction
-    }&min_rating=${
-      filter.minRating
-    }&max_rating=${
-      filter.maxRating
-    }&min_time=${
-      filter.minTime
-    }&max_time=${
-      filter.maxTime
-    }`,
-    response: expectedResponse,
-    status: 200,
-  })
+test('list reviews by location', () => {
+  const onList = vitest.fn()
+  const onValidate = vitest.fn()
 
   const { getByText } = render(
-    <Provider store={store}>
-      <Helper locationId={locationId} />
-    </Provider>,
+    <Helper onList={onList} onValidate={onValidate} />,
   )
 
-  await waitFor(() => {
-    expect(getByText(locationName)).toBeDefined()
-  })
+  expect(getByText(validatedReviewList.reviews[0].beerName)).toBeDefined()
+  expect(getByText('Not loading')).toBeDefined()
+  expect(onList).toHaveBeenCalledWith(params)
+  expect(onValidate).toHaveBeenCalledWith(listed)
 })

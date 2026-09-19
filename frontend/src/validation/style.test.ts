@@ -1,10 +1,6 @@
 import { expect, test } from 'vitest'
 
-import type {
-  Style,
-  StyleList,
-  StyleWithParentsAndChildren,
-} from '../types/style/types'
+import type { Style, StyleList, StyleWithParentsAndChildren } from './style'
 
 import {
   validateStyle,

@@ -1,66 +1,57 @@
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { store } from '../../store/store'
-import { createServer } from '../../../test-util/server'
-import type { TestServer } from '../../../test-util/server'
+import { expect, test, vitest } from 'vitest'
+import { render } from '@testing-library/react'
+
 import getAnnualStorageStats from './annualStats'
-import { render, waitFor } from '@testing-library/react'
-import { Provider } from '../../react-redux-wrapper'
-import type { AnnualStats } from '../../types/storage/types'
+import type {
+  AnnualStats,
+  UseGetStorageStats,
+  ValidateAnnualStatsOrUndefined,
+} from './types'
 
-let server: TestServer | undefined
+// Stubs for the store function and the validator, for the reason given in
+// storehooks/brewery/get.test.tsx.
+const validatedStats: AnnualStats = {
+  annual: [{ year: '2001', count: '11' }],
+}
 
-beforeAll(() => {
-  server = createServer()
-})
+const stats = { annual: [{ year: '2000', count: '1' }] }
 
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
-
-function Helper(): React.JSX.Element {
-  const statsIf = getAnnualStorageStats()
-  const { stats } = statsIf.useAnnualStats()
+function Helper(props: {
+  onValidate: (result: unknown) => void
+}): React.JSX.Element {
+  const useStoreStats: UseGetStorageStats = () => ({
+    data: stats,
+    isLoading: false,
+  })
+  const validate: ValidateAnnualStatsOrUndefined = (result: unknown) => {
+    props.onValidate(result)
+    return validatedStats
+  }
+  const { stats: validStats, isLoading } = getAnnualStorageStats(
+    useStoreStats,
+    validate,
+  ).useAnnualStats()
   return (
-    <table>
-      <tbody>
-        {stats?.annual.map((oneYear) => (
-          <tr key={oneYear.year}>
-            <td>{oneYear.year}</td>
-            <td>{oneYear.count}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div>
+      <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+      {validStats?.annual.map((one) => (
+        <div key={one.year}>
+          {one.year}: {one.count}
+        </div>
+      ))}
+    </div>
   )
 }
 
-test('get annual stats', async () => {
-  const expectedResponse: AnnualStats = {
-    annual: [
-      {
-        year: '2024',
-        count: '5',
-      },
-    ],
-  }
-  server?.addResponse<AnnualStats>({
-    method: 'GET',
-    pathname: `/api/v1/storage/annual-stats`,
-    response: expectedResponse,
-    status: 200,
-  })
+test('get annual storage stats', () => {
+  const onValidate = vitest.fn()
 
-  const { getByText } = render(
-    <Provider store={store}>
-      <Helper />
-    </Provider>,
-  )
-  await waitFor(() => {
-    expect(getByText(expectedResponse.annual[0].year)).toBeDefined()
-    expect(getByText(expectedResponse.annual[0].count)).toBeDefined()
-  })
+  const { getByText } = render(<Helper onValidate={onValidate} />)
+
+  const [one] = validatedStats.annual
+  expect(getByText(`${one.year}: ${one.count}`)).toBeDefined()
+  expect(getByText('Not loading')).toBeDefined()
+  // The statistics are not wrapped in an envelope, so the validator is given
+  // the response as it arrived.
+  expect(onValidate).toHaveBeenCalledWith(stats)
 })

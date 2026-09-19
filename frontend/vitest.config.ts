@@ -6,8 +6,8 @@ const exclude = ['e2e', 'node_modules']
 // confirm are the plain .ts tests that need window or document.
 const domTests = [
   '**/*.test.tsx',
-  'src/theme-applier.test.ts',
-  'src/components/confirm.test.ts',
+  'src/wiring/theme-applier.test.ts',
+  'src/components/internal/confirm.test.ts',
 ]
 
 // Constructing a jsdom instance costs about a second per test file so the
@@ -49,7 +49,7 @@ export default defineConfig({
       enabled: true,
       provider: 'v8',
       reporter: ['text', 'html'],
-      exclude: ['src/**/*.css', 'src/react-redux-wrapper.ts'],
+      exclude: ['src/**/*.css'],
       skipFull: true,
       thresholds: {
         statements: 100,

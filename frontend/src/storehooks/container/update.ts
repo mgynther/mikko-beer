@@ -1,21 +1,24 @@
 import type {
   Container,
   UpdateContainerHookIf,
-} from '../../types/container/types'
-import { useUpdateContainerMutation } from '../../store/container/api'
-import { validateContainer } from '../../validation/container'
+  UseUpdateContainer,
+  ValidateContainer,
+} from './types'
+import { unwrapMember } from '../envelope'
 
-const updateContainer: () => UpdateContainerHookIf = () => {
+const updateContainer: (
+  useUpdateContainer: UseUpdateContainer,
+  validateContainer: ValidateContainer,
+) => UpdateContainerHookIf = (useUpdateContainer, validateContainer) => {
   const updateContainerIf: UpdateContainerHookIf = {
     useUpdate: () => {
-      const [updateContainer, { isLoading: isUpdatingContainer }] =
-        useUpdateContainerMutation()
+      const { update, isLoading } = useUpdateContainer()
       return {
         update: async (container: Container): Promise<void> => {
-          const result = await updateContainer(container).unwrap()
-          validateContainer(result.container)
+          const result = await update(container)
+          validateContainer(unwrapMember(result, 'container'))
         },
-        isLoading: isUpdatingContainer,
+        isLoading,
       }
     },
   }

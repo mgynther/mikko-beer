@@ -1,20 +1,22 @@
+import type { NavigateIf } from '../types/types'
 import React, { useEffect, useState } from 'react'
 
-import type { Beer, ListBeersIf, SearchBeerIf } from '../../types/beer/types'
-import type { SearchFieldIf } from '../../types/search/types'
-import type { NavigateIf } from '../../navigation'
+import type { Beer, ListBeersIf, SearchBeerIf } from '../types/beer/types'
+import type { SearchFieldIf } from '../types/search/types'
 
-import BreweryLinks from '../brewery/BreweryLinks'
-import StyleLinks from '../style/StyleLinks'
+import BreweryLinks from '../internal/brewery/BreweryLinks'
+import StyleLinks from '../internal/style/StyleLinks'
 
-import BeerLink from './BeerLink'
-import SearchBeerWithNavi from './SearchBeerWithNavi'
+import BeerLink from '../internal/beer/BeerLink'
+import SearchBeerWithNavi from '../internal/beer/SearchBeerWithNavi'
 
 import './Beers.css'
+import type { LinkComponent } from '../common/link'
 
 const pageSize = 20
 
 interface Props {
+  linkComponent: LinkComponent
   listBeersIf: ListBeersIf
   navigateIf: NavigateIf
   searchBeerIf: SearchBeerIf
@@ -68,13 +70,19 @@ function Beers(props: Props): React.JSX.Element {
         {loadedBeers.map((beer: Beer) => (
           <div className='BeerRow RowLike' key={beer.id}>
             <div className='BeerName'>
-              <BeerLink beer={beer} />
+              <BeerLink linkComponent={props.linkComponent} beer={beer} />
             </div>
             <div className='BeerBreweries'>
-              <BreweryLinks breweries={beer.breweries} />
+              <BreweryLinks
+                linkComponent={props.linkComponent}
+                breweries={beer.breweries}
+              />
             </div>
             <div className='BeerStyles'>
-              <StyleLinks styles={beer.styles} />
+              <StyleLinks
+                linkComponent={props.linkComponent}
+                styles={beer.styles}
+              />
             </div>
           </div>
         ))}

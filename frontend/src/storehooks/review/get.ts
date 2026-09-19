@@ -1,15 +1,22 @@
-import type { GetReviewIf, Review } from '../../types/review/types'
-import { useLazyGetReviewQuery } from '../../store/review/api'
-import { validateReview } from '../../validation/review'
+import type {
+  GetReviewHookIf,
+  Review,
+  UseGetReview,
+  ValidateReview,
+} from './types'
+import { unwrapMember } from '../envelope'
 
-const getReview: () => GetReviewIf = () => {
-  const getReviewIf: GetReviewIf = {
+const getReview: (
+  useGetReview: UseGetReview,
+  validateReview: ValidateReview,
+) => GetReviewHookIf = (useGetReview, validateReview) => {
+  const getReviewIf: GetReviewHookIf = {
     useGet: () => {
-      const [getReview] = useLazyGetReviewQuery()
+      const { get } = useGetReview()
       return {
         get: async (reviewId: string): Promise<Review> => {
-          const result = await getReview(reviewId).unwrap()
-          return validateReview(result.review)
+          const result = await get(reviewId)
+          return validateReview(unwrapMember(result, 'review'))
         },
       }
     },

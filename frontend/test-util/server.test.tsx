@@ -1,16 +1,17 @@
 import React from 'react'
 
 import { beforeAll, beforeEach, afterAll, expect, test, vitest } from 'vitest'
-import { store } from '../src/store/store'
+import { StoreProvider } from '../src/store/provider'
 import { createServer } from './server'
 import type { TestServer } from './server'
 import createBeer from '../src/storehooks/beer/create'
-import type { BeerWithIds, CreateBeerRequest } from '../src/types/beer/types'
+import { useCreateBeer } from '../src/store/beer'
+import type {
+  BeerWithIds,
+  CreateBeerRequest,
+} from '../src/storehooks/beer/types'
 import { render, waitFor } from '@testing-library/react'
 import { setupUser } from './user-event'
-import { Provider } from '../src/react-redux-wrapper'
-
-import Button from '../src/components/common/Button'
 
 let server: TestServer | undefined
 
@@ -32,7 +33,11 @@ interface HelperProps {
 }
 
 function Helper(props: HelperProps): React.JSX.Element {
-  const createIf = createBeer()
+  // The request never succeeds here, so the validator is never called. It is
+  // a stub anyway: this test is about the test server, not about beers.
+  const createIf = createBeer(useCreateBeer, () => {
+    throw Error('Nothing to validate')
+  })
   const create = createIf.useCreate()
   const handleClick = (): void => {
     async function doHandle(): Promise<void> {
@@ -44,7 +49,14 @@ function Helper(props: HelperProps): React.JSX.Element {
     }
     void doHandle()
   }
-  return <Button onClick={handleClick} text='Test' />
+  // A plain button rather than the application's own: this test is about the
+  // test server, and reaching into the components layer for a button would
+  // make it about that too.
+  return (
+    <button type='button' onClick={handleClick}>
+      Test
+    </button>
+  )
 }
 
 test('test server responds with 500 to unexpected request', async () => {
@@ -68,7 +80,7 @@ test('test server responds with 500 to unexpected request', async () => {
 
   const handler = vitest.fn()
   const { getByRole } = render(
-    <Provider store={store}>
+    <StoreProvider>
       <Helper
         beer={{
           name: expectedResponse.beer.name,
@@ -77,7 +89,7 @@ test('test server responds with 500 to unexpected request', async () => {
         }}
         handleResponse={handler}
       />
-    </Provider>,
+    </StoreProvider>,
   )
   const testButton = getByRole('button', { name: 'Test' })
   await user.click(testButton)

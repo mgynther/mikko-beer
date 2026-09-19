@@ -1,27 +1,29 @@
 import React, { useState } from 'react'
 
-import type { UseUrlPathParams } from '../util'
+import type { UseUrlPathParams } from '../types/types'
 
 import type {
   Location as LocationType,
   GetLocationIf,
   UpdateLocationIf,
-} from '../../types/location/types'
+} from '../types/location/types'
 
-import { EditableMode } from '../common/EditableMode'
-import EditButton from '../common/EditButton'
-import LoadingIndicator from '../common/LoadingIndicator'
+import { EditableMode } from '../internal/common/EditableMode'
+import EditButton from '../internal/common/EditButton'
+import LoadingIndicator from '../internal/common/LoadingIndicator'
 
-import UpdateLocation from './UpdateLocation'
+import UpdateLocation from '../internal/location/UpdateLocation'
 
 import '../common/FlexRow.css'
-import NotFound from '../common/NotFound'
-import type { StatsIf } from '../../types/stats/types'
+import NotFound from '../internal/common/NotFound'
+import type { StatsIf } from '../types/stats/types'
 import Stats from '../stats/Stats'
-import type { ListReviewsByIf } from '../../types/review/types'
-import ReviewsBy from '../review/ReviewsBy'
+import type { ListReviewsByIf } from '../types/review/types'
+import ReviewsBy from '../internal/review/ReviewsBy'
+import type { LinkComponent } from '../common/link'
 
 interface Props {
+  linkComponent: LinkComponent
   listReviewsByLocationIf: ListReviewsByIf
   getLocationIf: GetLocationIf
   statsIf: StatsIf
@@ -74,12 +76,14 @@ function Location(props: Props): React.JSX.Element {
         />
       )}
       <Stats
+        linkComponent={props.linkComponent}
         statsIf={props.statsIf}
         breweryId={undefined}
         locationId={locationId}
         styleId={undefined}
       />
       <ReviewsBy
+        linkComponent={props.linkComponent}
         id={locationId}
         listReviewsByIf={props.listReviewsByLocationIf}
       />

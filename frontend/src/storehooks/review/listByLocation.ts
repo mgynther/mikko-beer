@@ -1,14 +1,20 @@
 import type {
   IdFilteredListReviewParams,
   ListReviewsByHookIf,
-} from '../../types/review/types'
-import { useListReviewsByLocationQuery } from '../../store/review/api'
-import { validateJoinedReviewListOrUndefined } from '../../validation/review'
+  UseListReviewsBy,
+  ValidateJoinedReviewListOrUndefined,
+} from './types'
 
-const listReviewsByLocation: () => ListReviewsByHookIf = () => {
+const listReviewsByLocation: (
+  useListReviewsByLocation: UseListReviewsBy,
+  validateJoinedReviewListOrUndefined: ValidateJoinedReviewListOrUndefined,
+) => ListReviewsByHookIf = (
+  useListReviewsByLocation,
+  validateJoinedReviewListOrUndefined,
+) => {
   const listReviewsByLocationIf: ListReviewsByHookIf = {
     useList: (params: IdFilteredListReviewParams) => {
-      const { data, isLoading } = useListReviewsByLocationQuery(params)
+      const { data, isLoading } = useListReviewsByLocation(params)
       return {
         reviews: validateJoinedReviewListOrUndefined(data),
         isLoading,

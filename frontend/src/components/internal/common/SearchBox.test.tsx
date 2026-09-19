@@ -1,0 +1,394 @@
+import { render } from '@testing-library/react'
+import { setupUser } from '../../../../test-util/user-event'
+import { expect, test, vitest } from 'vitest'
+
+import SearchBox from './SearchBox'
+import type { Props, SearchBoxItem } from './SearchBox'
+import { loadingIndicatorText } from './LoadingIndicator'
+import type { SearchFieldIf } from '../../types/search/types'
+import type { UseDebounce } from '../../types/types'
+import { dontCall } from '../../../../test-util/dont-call'
+
+const useDebounce: UseDebounce<string> = (str) => [str, false]
+
+const passiveSearch: SearchFieldIf = {
+  useSearchField: () => ({
+    activate: () => undefined,
+    isActive: false,
+  }),
+  useDebounce,
+}
+
+const activeSearch: SearchFieldIf = {
+  useSearchField: () => ({
+    activate: () => undefined,
+    isActive: true,
+  }),
+  useDebounce,
+}
+
+const defaultProps: Props<SearchBoxItem> = {
+  searchFieldIf: passiveSearch,
+  currentFilter: '',
+  currentOptions: [],
+  customSort: undefined,
+  formatter: (item: SearchBoxItem) => item.name,
+  isLoading: false,
+  setFilter: () => undefined,
+  select: () => undefined,
+  title: '',
+}
+
+test('renders title', () => {
+  const titleText = 'This is title'
+  const { getByPlaceholderText } = render(
+    <SearchBox {...defaultProps} title={titleText} />,
+  )
+  const inputElement = getByPlaceholderText(titleText)
+  expect(inputElement).toBeInstanceOf(HTMLInputElement)
+})
+
+test('activates', async () => {
+  const user = setupUser()
+  let useSearchCount = 0
+  const search = {
+    activate: vitest.fn(),
+    isActive: false,
+  }
+  const { getByRole } = render(
+    <SearchBox
+      {...defaultProps}
+      searchFieldIf={{
+        useSearchField: () => {
+          if (useSearchCount > 0) {
+            throw new Error('Multiple calls not allowed')
+          }
+          useSearchCount += 1
+          return search
+        },
+        useDebounce,
+      }}
+    />,
+  )
+  await user.click(getByRole('button'))
+  expect(search.activate.mock.calls.length).toEqual(1)
+  expect(useSearchCount).toEqual(1)
+})
+
+test('does not show items when inactive', () => {
+  const itemName = 'Must not be visible'
+  const { queryByText } = render(
+    <SearchBox
+      {...defaultProps}
+      currentFilter={'M'}
+      currentOptions={[
+        {
+          id: '1',
+          name: itemName,
+        },
+      ]}
+    />,
+  )
+  const item = queryByText(itemName)
+  expect(item).toEqual(null)
+})
+
+test('show items while loading', async () => {
+  const itemName = 'Must be visible'
+  const { getByText } = render(
+    <SearchBox
+      {...defaultProps}
+      searchFieldIf={activeSearch}
+      currentFilter={'A'}
+      currentOptions={[
+        {
+          id: '1',
+          name: itemName,
+        },
+      ]}
+      isLoading={true}
+    />,
+  )
+  const item = getByText(itemName)
+  expect(item).toBeDefined()
+  const loadingText = getByText(loadingIndicatorText)
+  expect(loadingText).toBeDefined()
+})
+
+test('does not show items while filter empty', async () => {
+  const itemName = 'Must not be visible'
+  const { queryByText } = render(
+    <SearchBox
+      {...defaultProps}
+      searchFieldIf={activeSearch}
+      currentOptions={[
+        {
+          id: '1',
+          name: itemName,
+        },
+      ]}
+    />,
+  )
+  const item = queryByText(itemName)
+  expect(item).toEqual(null)
+})
+
+test('formats custom name', async () => {
+  const itemName = 'Must not be visible'
+  const customFormattedName = 'Must be visible'
+  const selector = vitest.fn()
+  const { getByText, queryByText } = render(
+    <SearchBox
+      {...defaultProps}
+      searchFieldIf={activeSearch}
+      currentFilter={'M'}
+      currentOptions={[
+        {
+          id: '1',
+          name: itemName,
+        },
+      ]}
+      formatter={() => customFormattedName}
+      select={selector}
+    />,
+  )
+  const realName = queryByText(itemName)
+  expect(realName).toBeNull()
+  const formattedName = getByText(customFormattedName)
+  expect(formattedName).toBeDefined()
+})
+
+test('renders more results info', async () => {
+  const { getByText } = render(
+    <SearchBox
+      {...defaultProps}
+      searchFieldIf={activeSearch}
+      currentFilter={'M'}
+      currentOptions={Array.from(Array(11).keys()).map((num) => ({
+        id: `${num}`,
+        name: `${num}`,
+      }))}
+    />,
+  )
+  const text = getByText('There are more results. Refine search...')
+  expect(text).toBeDefined()
+})
+
+test('renders no results info', async () => {
+  const { getByText } = render(
+    <SearchBox
+      {...defaultProps}
+      searchFieldIf={activeSearch}
+      currentFilter={'M'}
+    />,
+  )
+  const text = getByText('No results')
+  expect(text).toBeDefined()
+})
+
+test('item is selected', async () => {
+  const user = setupUser()
+  const itemName = 'Must be visible'
+  const selector = vitest.fn()
+  const { getByRole } = render(
+    <SearchBox
+      {...defaultProps}
+      searchFieldIf={activeSearch}
+      currentFilter={'M'}
+      currentOptions={[
+        {
+          id: '1',
+          name: itemName,
+        },
+      ]}
+      select={selector}
+    />,
+  )
+  const itemButton = getByRole('button', { name: itemName })
+  expect(itemButton).toBeDefined()
+  await user.click(itemButton)
+  expect(selector.mock.calls).toEqual([[{ id: '1', name: itemName }]])
+})
+
+test('renders filter', async () => {
+  const filter = 'Must render this'
+  const { getByRole } = render(
+    <SearchBox {...defaultProps} currentFilter={filter} />,
+  )
+  const input = getByRole('textbox')
+  expect(input).toBeInstanceOf(HTMLInputElement)
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
+   * No other way to access value of input. Also type already checked.
+   */
+  expect((input as HTMLInputElement).value).toEqual(filter)
+})
+
+test('clears filter', async () => {
+  const user = setupUser()
+  const setter = vitest.fn()
+  const { getByRole } = render(
+    <SearchBox
+      {...defaultProps}
+      currentFilter={'Some text'}
+      setFilter={setter}
+    />,
+  )
+  const clearButton = getByRole('button')
+  expect(clearButton).toBeDefined()
+  await user.click(clearButton)
+  expect(setter).toHaveBeenCalledWith('')
+})
+
+test('inputs text', async () => {
+  const user = setupUser()
+  const setter = vitest.fn()
+  const { getByRole } = render(
+    <SearchBox {...defaultProps} setFilter={setter} />,
+  )
+  const input = getByRole('textbox')
+  expect(input).toBeDefined()
+  await user.type(input, 'Test')
+  const expected = [['T'], ['e'], ['s'], ['t']]
+  expect(setter.mock.calls).toEqual(expected)
+})
+
+test('shows loading indicator', async () => {
+  const { getByText } = render(
+    <SearchBox
+      {...defaultProps}
+      searchFieldIf={activeSearch}
+      currentFilter={'M'}
+      isLoading={true}
+    />,
+  )
+  const loadingText = getByText(loadingIndicatorText)
+  expect(loadingText).toBeDefined()
+})
+
+test('sorts results', async () => {
+  const { getAllByRole } = render(
+    <SearchBox
+      {...defaultProps}
+      searchFieldIf={activeSearch}
+      currentFilter={'M'}
+      currentOptions={[
+        {
+          id: '1',
+          name: 'item b',
+        },
+        {
+          id: '2',
+          name: 'item a',
+        },
+      ]}
+      select={dontCall}
+    />,
+  )
+  const itemButtons = getAllByRole('button', { name: /item/v })
+  expect(itemButtons.map((item) => item.innerHTML)).toEqual([
+    'item a',
+    'item b',
+  ])
+})
+
+test('sorts results starting with filter', async () => {
+  const { getAllByRole } = render(
+    <SearchBox
+      {...defaultProps}
+      searchFieldIf={activeSearch}
+      currentFilter={'lag'}
+      currentOptions={[
+        {
+          id: '1',
+          name: 'American lager',
+        },
+        {
+          id: '2',
+          name: 'Lager',
+        },
+      ]}
+      select={dontCall}
+    />,
+  )
+  const itemButtons = getAllByRole('button', { name: /lager/iv })
+  expect(itemButtons.map((item) => item.innerHTML)).toEqual([
+    'Lager',
+    'American lager',
+  ])
+})
+
+test('sorts results with edge cases', async () => {
+  const { getAllByRole } = render(
+    <SearchBox
+      {...defaultProps}
+      searchFieldIf={activeSearch}
+      currentFilter={'item'}
+      currentOptions={[
+        {
+          id: '1',
+          name: 'abc item 123',
+        },
+        {
+          id: '2',
+          name: 'item',
+        },
+        {
+          id: '4',
+          name: 'item',
+        },
+        {
+          id: '5',
+          name: 'item 321',
+        },
+        {
+          id: '3',
+          name: 'testing item',
+        },
+      ]}
+      select={dontCall}
+    />,
+  )
+  const itemButtons = getAllByRole('button', { name: /item/iv })
+  expect(itemButtons.map((item) => item.innerHTML)).toEqual([
+    'item',
+    'item',
+    'item 321',
+    'abc item 123',
+    'testing item',
+  ])
+})
+
+test('custom sorts results', async () => {
+  const { getAllByRole } = render(
+    <SearchBox
+      {...defaultProps}
+      customSort={(a: SearchBoxItem, b: SearchBoxItem) =>
+        -1 * a.name.localeCompare(b.name)
+      }
+      searchFieldIf={activeSearch}
+      currentFilter={'M'}
+      currentOptions={[
+        {
+          id: '1',
+          name: 'item b',
+        },
+        {
+          id: '2',
+          name: 'item a',
+        },
+        {
+          id: '3',
+          name: 'item a',
+        },
+      ]}
+      select={dontCall}
+    />,
+  )
+  const itemButtons = getAllByRole('button', { name: /item/v })
+  expect(itemButtons.length).toEqual(3)
+  expect(itemButtons.map((item) => item.innerHTML)).toEqual([
+    'item b',
+    'item a',
+    'item a',
+  ])
+})

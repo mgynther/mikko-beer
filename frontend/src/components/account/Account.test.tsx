@@ -1,9 +1,8 @@
 import { render } from '@testing-library/react'
 import { test } from 'vitest'
 import Account from './Account'
-import { Role } from '../../types/user/types'
-import type { ChangePasswordIf, GetLogin } from '../../types/login/types'
-import { PasswordChangeResult } from '../../types/login/types'
+import { Role } from '../types/user/types'
+import type { ChangePasswordIf, GetLogin } from '../types/login/types'
 
 test('renders account', async () => {
   const getLogin: GetLogin = () => ({
@@ -21,7 +20,7 @@ test('renders account', async () => {
       isLoading: false,
     }),
     useGetPasswordChangeResult: () => ({
-      getResult: () => PasswordChangeResult.SUCCESS,
+      getResult: () => 'SUCCESS',
     }),
     getLogin,
   }
