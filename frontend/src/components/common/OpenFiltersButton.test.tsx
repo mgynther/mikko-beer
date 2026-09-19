@@ -2,7 +2,7 @@ import { render } from '@testing-library/react'
 import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import OpenFiltersButton from './OpenFiltersButton'
-import { openFilters } from '../common/filters-test-util'
+import { openFilters } from '../../../test-util/open-filters'
 
 test('opens filters', async () => {
   const user = setupUser()

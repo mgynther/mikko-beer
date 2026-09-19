@@ -26,7 +26,7 @@ import type { SearchFieldIf } from '../../types/search/types'
 import type { SearchLocationIf } from '../../types/location/types'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
 import { testTimes } from '../../../test-util/filter-time'
-import { openFilters } from '../common/filters-test-util'
+import { openFilters } from '../../../test-util/open-filters'
 import { dontCall } from '../../../test-util/dont-call'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]

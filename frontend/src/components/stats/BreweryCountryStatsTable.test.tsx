@@ -9,7 +9,7 @@ import type {
   OneBreweryCountryStats,
 } from '../../types/stats/types'
 import type { ListDirection, YearMonth } from '../../types/types'
-import { openFilters } from '../common/filters-test-util'
+import { openFilters } from '../../../test-util/open-filters'
 import type { StatsFilters } from './filter-types'
 import { dontCall } from '../../../test-util/dont-call'
 

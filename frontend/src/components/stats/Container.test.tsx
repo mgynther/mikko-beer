@@ -3,7 +3,7 @@ import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import Container from './Container'
 import type { IdParams, OneContainerStats } from '../../types/stats/types'
-import { openFilters } from '../common/filters-test-util'
+import { openFilters } from '../../../test-util/open-filters'
 import type { SearchParameters } from '../../types/types'
 
 const breweryId = 'e6887360-78da-49e2-b876-68477c79c776'

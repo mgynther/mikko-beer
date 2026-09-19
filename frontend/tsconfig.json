@@ -32,6 +32,7 @@
     "./environment.d.ts",
     "./playwright.config.ts",
     "./src",
+    "./test-util",
     "./vite-env.d.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]

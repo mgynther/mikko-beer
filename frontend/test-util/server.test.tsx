@@ -81,7 +81,7 @@ test('test server responds with 500 to unexpected request', async () => {
   )
   const testButton = getByRole('button', { name: 'Test' })
   await user.click(testButton)
-  await waitFor(async () => {
+  await waitFor(() => {
     expect(handler).toHaveBeenCalledWith({
       data: {
         errorMessage:

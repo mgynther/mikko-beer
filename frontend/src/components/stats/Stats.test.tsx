@@ -19,7 +19,7 @@ import type {
   UseUrlSearchParams,
   YearMonth,
 } from '../../types/types'
-import { openFilters } from '../common/filters-test-util'
+import { openFilters } from '../../../test-util/open-filters'
 
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]

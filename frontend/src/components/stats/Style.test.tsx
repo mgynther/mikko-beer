@@ -10,7 +10,7 @@ import type {
   StatsResult,
   StyleStatsQueryParams,
 } from '../../types/stats/types'
-import { openFilters } from '../common/filters-test-util'
+import { openFilters } from '../../../test-util/open-filters'
 import type {
   SearchParameters,
   UseDebounce,

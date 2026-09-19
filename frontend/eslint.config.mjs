@@ -97,6 +97,19 @@ const rules = {
   '@typescript-eslint/prefer-destructuring': 'off',
 }
 
+// The test utilities and the end-to-end tests get their own rule sets rather
+// than sharing the ones of src/. They are not production code and they are not
+// the unit tests either, so the two are free to diverge from src/ and from each
+// other without anyone having to untangle a shared object first. They start
+// from the same rules on purpose: what is not needed here is not relaxed here.
+const testUtilRules = {
+  ...rules,
+}
+
+const e2eRules = {
+  ...rules,
+}
+
 export default [
   {
     languageOptions,
@@ -124,6 +137,18 @@ export default [
       '@typescript-eslint/require-await': 'off',
       '@typescript-eslint/strict-void-return': 'off',
     },
+  },
+  {
+    languageOptions,
+    files: ['test-util/*.{ts,tsx}', 'test-util/**/*.{ts,tsx}'],
+    plugins,
+    rules: testUtilRules,
+  },
+  {
+    languageOptions,
+    files: ['e2e/*.ts', 'e2e/**/*.ts'],
+    plugins,
+    rules: e2eRules,
   },
   {
     ignores: ['*.css', '*.svg', '*.json', 'vite.config.ts', 'vitest.config.ts'],

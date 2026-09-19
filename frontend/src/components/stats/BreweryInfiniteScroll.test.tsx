@@ -4,7 +4,7 @@ import { setupUser } from '../../../test-util/user-event'
 import { testTimes } from '../../../test-util/filter-time'
 import BreweryInfiniteScroll from './BreweryInfiniteScroll'
 import LinkWrapper from '../LinkWrapper'
-import { openFilters } from '../common/filters-test-util'
+import { openFilters } from '../../../test-util/open-filters'
 import type {
   BreweryStats,
   BreweryStatsSortingOrder,

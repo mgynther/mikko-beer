@@ -1,5 +1,7 @@
-import { infiniteScroll } from '../../components/util'
-import type { BreweryList, ListBreweriesIf } from '../../types/brewery/types'
+import type {
+  BreweryList,
+  ListBreweriesHookIf,
+} from '../../types/brewery/types'
 import type { Pagination } from '../../types/types'
 import { useLazyListBreweriesQuery } from '../../store/brewery/api'
 import {
@@ -7,8 +9,8 @@ import {
   validateBreweryListOrUndefined,
 } from '../../validation/brewery'
 
-const listBreweries: () => ListBreweriesIf = () => {
-  const listBreweriesIf: ListBreweriesIf = {
+const listBreweries: () => ListBreweriesHookIf = () => {
+  const listBreweriesIf: ListBreweriesHookIf = {
     useList: () => {
       const [trigger, { data, isFetching, isUninitialized }] =
         useLazyListBreweriesQuery()
@@ -22,7 +24,6 @@ const listBreweries: () => ListBreweriesIf = () => {
         isUninitialized,
       }
     },
-    infiniteScroll,
   }
   return listBreweriesIf
 }

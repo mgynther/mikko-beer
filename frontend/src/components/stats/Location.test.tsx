@@ -14,7 +14,7 @@ import type {
   UseDebounce,
   YearMonth,
 } from '../../types/types'
-import { openFilters } from '../common/filters-test-util'
+import { openFilters } from '../../../test-util/open-filters'
 import { dontCall } from '../../../test-util/dont-call'
 
 const getUseDebounce = function <T>(): UseDebounce<T> {

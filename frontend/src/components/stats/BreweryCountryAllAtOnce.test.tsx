@@ -4,7 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import BreweryCountryAllAtOnce from './BreweryCountryAllAtOnce'
 import LinkWrapper from '../LinkWrapper'
-import { openFilters } from '../common/filters-test-util'
+import { openFilters } from '../../../test-util/open-filters'
 import type {
   BreweryCountryStats,
   BreweryCountryStatsSortingOrder,

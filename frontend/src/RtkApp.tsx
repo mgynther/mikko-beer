@@ -157,7 +157,10 @@ function getNextMonthDate(): Date {
 function RtkApp(): React.JSX.Element {
   const createBreweryIf: CreateBreweryIf = createBrewery()
   const getBreweryIf: GetBreweryIf = getBrewery()
-  const listBreweriesIf: ListBreweriesIf = listBreweries()
+  const listBreweriesIf: ListBreweriesIf = {
+    ...listBreweries(),
+    infiniteScroll,
+  }
 
   const searchFieldIf: SearchFieldIf = {
     ...searchField(),

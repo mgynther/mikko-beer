@@ -4,7 +4,7 @@ import { setupUser } from '../../../test-util/user-event'
 import { testTimes } from '../../../test-util/filter-time'
 import LocationInfiniteScroll from './LocationInfiniteScroll'
 import LinkWrapper from '../LinkWrapper'
-import { openFilters } from '../common/filters-test-util'
+import { openFilters } from '../../../test-util/open-filters'
 import type {
   GetLocationStatsIf,
   LocationStats,

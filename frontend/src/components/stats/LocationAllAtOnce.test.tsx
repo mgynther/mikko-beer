@@ -4,7 +4,7 @@ import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../../test-util/filter-time'
 import LocationAllAtOnce from './LocationAllAtOnce'
 import LinkWrapper from '../LinkWrapper'
-import { openFilters } from '../common/filters-test-util'
+import { openFilters } from '../../../test-util/open-filters'
 import type {
   GetLocationStatsIf,
   LocationStats,

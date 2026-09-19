@@ -29,7 +29,7 @@ export function createServer(): TestServer {
   // they were added.
   let requests: Record<string, InternalResponse[]> = {}
 
-  const handler = async (req: IncomingMessage, res: ServerResponse) => {
+  const handler = (req: IncomingMessage, res: ServerResponse): void => {
     /* v8 ignore next -- with web request there is a string URL */
     if (typeof req.url !== 'string') {
       /* v8 ignore next -- with web request there is a string URL */
@@ -54,7 +54,9 @@ export function createServer(): TestServer {
     res.writeHead(500, { 'Content-Type': 'application/json' })
     res.write(
       JSON.stringify({
-        errorMessage: `Unexpected request with method ${req.method} to path ${parsedURL.pathname}`,
+        errorMessage:
+          `Unexpected request with method ${req.method} ` +
+          `to path ${parsedURL.pathname}`,
       }),
     )
     res.end()
@@ -64,8 +66,9 @@ export function createServer(): TestServer {
 
   server.listen(uniqueTestServerPort, () => {
     const addressInfo: AddressInfo | string | null = server.address()
-    // Null is returned when not listening yet which is impossible here. String is
-    // returned when listening to pipe or Unix socket which is equally impossible.
+    // Null is returned when not listening yet which is impossible here.
+    // String is returned when listening to pipe or Unix socket which is
+    // equally impossible.
     /* v8 ignore next */
     if (typeof addressInfo === 'string' || addressInfo === null) {
       /* v8 ignore next -- See above why this is unreachable. */
@@ -90,10 +93,10 @@ export function createServer(): TestServer {
 
   return {
     addResponse: addTestServerResponse,
-    clear: () => {
+    clear: (): void => {
       requests = {}
     },
-    close: () => {
+    close: (): void => {
       server.close()
     },
   }

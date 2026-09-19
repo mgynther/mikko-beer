@@ -2,7 +2,7 @@ import { fireEvent, render } from '@testing-library/react'
 import { setupUser } from '../../../test-util/user-event'
 import { expect, test, vitest } from 'vitest'
 import Filters from './Filters'
-import { openFilters } from '../common/filters-test-util'
+import { openFilters } from '../../../test-util/open-filters'
 import type { ReviewFilters } from './filter-types'
 import { dontCall } from '../../../test-util/dont-call'
 
