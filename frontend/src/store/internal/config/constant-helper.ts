@@ -32,11 +32,6 @@ export function getBackendUrl(
   }
 
   // v8 ignore start -- In browser URL is set but default is good in dev.
-  const envUrl =
-    /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
-     * env variables seem to be considered any.
-     */
-    import.meta.env.VITE_BACKEND_URL as unknown as string | undefined
-  return envUrl ?? 'http://localhost:3001'
+  return import.meta.env.VITE_BACKEND_URL ?? 'http://localhost:3001'
   // v8 ignore stop
 }
