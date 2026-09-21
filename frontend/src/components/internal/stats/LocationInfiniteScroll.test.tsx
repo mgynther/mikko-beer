@@ -13,6 +13,7 @@ import type {
 import type { UseDebounce, YearMonth } from '../../types/types'
 import type { StatsFilters } from './filter-types'
 import { dontCall } from '../../../../test-util/dont-call'
+import { updatedItems } from '../../../../test-util/load-more'
 import type { FormattedStatsParams } from './search-params'
 import { testLink } from '../../../../test-util/link'
 
@@ -164,7 +165,9 @@ test('queries location stats', async () => {
     ],
   ])
   await waitFor(() => {
-    expect(setLoadedLocations.mock.calls).toEqual([[[plevna, oluthuone]]])
+    expect(updatedItems(setLoadedLocations.mock.calls, undefined)).toEqual([
+      [plevna, oluthuone],
+    ])
   })
 })
 

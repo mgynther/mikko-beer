@@ -5,13 +5,19 @@ import type {
   OneAnnualContainerStats,
 } from '../../types/stats/types'
 
+import { useLoadMore } from '../common/use-load-more'
+
 import AnnualContainerStatsTable from './AnnualContainerStatsTable'
+
+const pageSize = 30
 
 interface Props {
   getAnnualContainerStatsIf: GetAnnualContainerStatsIf
   loadedAnnualContainers: OneAnnualContainerStats[] | undefined
   setLoadedAnnualContainers: (
-    locations: OneAnnualContainerStats[] | undefined,
+    update: (
+      current: OneAnnualContainerStats[] | undefined,
+    ) => OneAnnualContainerStats[] | undefined,
   ) => void
 }
 
@@ -24,34 +30,29 @@ function AnnualContainerInfiniteScroll(props: Props): React.JSX.Element {
   const hasMore =
     lastPageArray.length > 0 || loadedAnnualContainers === undefined
 
-  useEffect(() => {
-    const loadMore = async (): Promise<void> => {
-      const result = await query({
-        breweryId: undefined,
-        locationId: undefined,
-        styleId: undefined,
-        pagination: {
-          skip: loadedAnnualContainers?.length ?? 0,
-          size: 30,
-        },
-      })
-      const newAnnualContainers = [
-        ...(loadedAnnualContainers ?? []),
-        ...result.annualContainer,
-      ]
-      setLoadedAnnualContainers(newAnnualContainers)
-    }
-    function checkLoad(): void {
-      if (isLoading) {
-        return
-      }
-      if (!hasMore) {
-        return
-      }
-      void loadMore()
-    }
-    return props.getAnnualContainerStatsIf.infiniteScroll(checkLoad)
-  }, [isLoading, hasMore, query])
+  const checkLoad = useLoadMore({
+    hasMore,
+    isLoading,
+    items: loadedAnnualContainers,
+    loadPage: async (skip: number) =>
+      (
+        await query({
+          breweryId: undefined,
+          locationId: undefined,
+          styleId: undefined,
+          pagination: { skip, size: pageSize },
+        })
+      ).annualContainer,
+    setItems: setLoadedAnnualContainers,
+  })
+
+  // Observing the end of the content reports whether it is in view, so
+  // subscribing again once a page has arrived is what loads the next one
+  // while the list is still shorter than the window.
+  useEffect(
+    () => props.getAnnualContainerStatsIf.infiniteScroll(checkLoad),
+    [checkLoad, loadedAnnualContainers, isLoading, hasMore],
+  )
 
   return (
     <>

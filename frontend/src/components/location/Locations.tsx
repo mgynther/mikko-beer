@@ -9,6 +9,7 @@ import type {
 
 import LoadingIndicator from '../internal/common/LoadingIndicator'
 
+import { useLoadMore } from '../internal/common/use-load-more'
 import LocationLink from '../internal/location/LocationLink'
 import SearchLocationWithNavi from '../internal/location/SearchLocationWithNavi'
 import type { LinkComponent } from '../common/link'
@@ -23,7 +24,9 @@ export interface Props {
 }
 
 function Locations(props: Props): React.JSX.Element {
-  const [loadedLocations, setLoadedLocations] = useState<Location[]>([])
+  const [loadedLocations, setLoadedLocations] = useState<
+    Location[] | undefined
+  >(undefined)
   const { locationList, list, isLoading, isUninitialized } =
     props.listLocationsIf.useList()
 
@@ -31,28 +34,23 @@ function Locations(props: Props): React.JSX.Element {
     locationList?.locations === undefined ? [] : [...locationList.locations]
 
   const hasMore = locationArray.length > 0 || isUninitialized
-  const loadedCount = loadedLocations.length
 
-  useEffect(() => {
-    const loadMore = async (): Promise<void> => {
-      const result = await list({
-        skip: loadedCount,
-        size: pageSize,
-      })
-      const newLocations = [...loadedLocations, ...result.locations]
-      setLoadedLocations(newLocations)
-    }
-    function checkLoad(): void {
-      if (isLoading) {
-        return
-      }
-      if (!hasMore) {
-        return
-      }
-      void loadMore()
-    }
-    return props.listLocationsIf.infiniteScroll(checkLoad)
-  }, [loadedCount, isLoading, hasMore])
+  const checkLoad = useLoadMore({
+    hasMore,
+    isLoading,
+    items: loadedLocations,
+    loadPage: async (skip: number) =>
+      (await list({ skip, size: pageSize })).locations,
+    setItems: setLoadedLocations,
+  })
+
+  // Observing the end of the content reports whether it is in view, so
+  // subscribing again once a page has arrived is what loads the next one
+  // while the list is still shorter than the window.
+  useEffect(
+    () => props.listLocationsIf.infiniteScroll(checkLoad),
+    [checkLoad, loadedLocations, isLoading, hasMore],
+  )
 
   return (
     <div>
@@ -62,7 +60,7 @@ function Locations(props: Props): React.JSX.Element {
         searchLocationIf={props.searchLocationIf}
       />
       <ul>
-        {loadedLocations.map((location: Location) => (
+        {(loadedLocations ?? []).map((location: Location) => (
           <li key={location.id}>
             <LocationLink
               linkComponent={props.linkComponent}

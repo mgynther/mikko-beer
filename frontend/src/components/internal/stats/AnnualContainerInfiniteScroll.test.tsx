@@ -7,6 +7,7 @@ import type {
 
 import AnnualContainerInfiniteScroll from './AnnualContainerInfiniteScroll'
 import { loadingIndicatorText } from '../common/LoadingIndicator'
+import { updatedItems } from '../../../../test-util/load-more'
 
 const stats2023: OneAnnualContainerStats = {
   containerId: 'c585a736-2880-47bf-a185-bf0f167cc804',
@@ -73,9 +74,9 @@ test('queries annual container stats', async () => {
     ],
   ])
   await waitFor(() => {
-    expect(setLoadedAnnualContainers.mock.calls).toEqual([
-      [[stats2023, stats2022]],
-    ])
+    expect(
+      updatedItems(setLoadedAnnualContainers.mock.calls, undefined),
+    ).toEqual([[stats2023, stats2022]])
   })
 })
 

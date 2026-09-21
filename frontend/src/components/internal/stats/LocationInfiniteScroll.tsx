@@ -6,6 +6,8 @@ import type {
   OneLocationStats,
 } from '../../types/stats/types'
 
+import { useLoadMore } from '../common/use-load-more'
+
 import LocationStatsTable from './LocationStatsTable'
 import type { StatsFilterState } from './filter-types'
 import type { FormattedStatsParams } from './search-params'
@@ -21,7 +23,11 @@ interface Props {
   setSortingOrder: (order: LocationStatsSortingOrder) => void
   statsParams: FormattedStatsParams<LocationStatsSortingOrder>
   loadedLocations: OneLocationStats[] | undefined
-  setLoadedLocations: (locations: OneLocationStats[] | undefined) => void
+  setLoadedLocations: (
+    update: (
+      current: OneLocationStats[] | undefined,
+    ) => OneLocationStats[] | undefined,
+  ) => void
 }
 
 function LocationInfiniteScroll(props: Props): React.JSX.Element {
@@ -51,53 +57,39 @@ function LocationInfiniteScroll(props: Props): React.JSX.Element {
   const lastPageArray = stats?.location === undefined ? [] : [...stats.location]
   const hasMore = lastPageArray.length > 0 || loadedLocations === undefined
 
-  useEffect(() => {
-    const loadMore = async (): Promise<void> => {
-      const result = await query({
-        breweryId: undefined,
-        locationId: undefined,
-        styleId: undefined,
-        pagination: {
-          skip: loadedLocations?.length ?? 0,
-          size: pageSize,
-        },
-        sorting: {
-          order: sortingOrder,
-          direction: sortingDirection,
-        },
-        minReviewCount,
-        maxReviewCount,
-        minReviewAverage,
-        maxReviewAverage,
-        timeStart,
-        timeEnd,
-      })
-      const newLocations = [...(loadedLocations ?? []), ...result.location]
-      setLoadedLocations(newLocations)
-    }
-    function checkLoad(): void {
-      if (isLoading) {
-        return
-      }
-      if (!hasMore) {
-        return
-      }
-      void loadMore()
-    }
-    return props.getLocationStatsIf.infiniteScroll(checkLoad)
-  }, [
-    isLoading,
+  const checkLoad = useLoadMore({
     hasMore,
-    minReviewCount,
-    maxReviewCount,
-    minReviewAverage,
-    maxReviewAverage,
-    sortingOrder,
-    sortingDirection,
-    query,
-    timeStart,
-    timeEnd,
-  ])
+    isLoading,
+    items: loadedLocations,
+    loadPage: async (skip: number) =>
+      (
+        await query({
+          breweryId: undefined,
+          locationId: undefined,
+          styleId: undefined,
+          pagination: { skip, size: pageSize },
+          sorting: {
+            order: sortingOrder,
+            direction: sortingDirection,
+          },
+          minReviewCount,
+          maxReviewCount,
+          minReviewAverage,
+          maxReviewAverage,
+          timeStart,
+          timeEnd,
+        })
+      ).location,
+    setItems: setLoadedLocations,
+  })
+
+  // Observing the end of the content reports whether it is in view, so
+  // subscribing again once a page has arrived is what loads the next one
+  // while the list is still shorter than the window.
+  useEffect(
+    () => props.getLocationStatsIf.infiniteScroll(checkLoad),
+    [checkLoad, loadedLocations, isLoading, hasMore],
+  )
 
   return (
     <LocationStatsTable

@@ -13,6 +13,7 @@ import type {
 import type { UseDebounce, YearMonth } from '../../types/types'
 import type { StatsFilters } from './filter-types'
 import { dontCall } from '../../../../test-util/dont-call'
+import { updatedItems } from '../../../../test-util/load-more'
 import type { FormattedStatsParams } from './search-params'
 
 const finland: OneBreweryCountryStats = {
@@ -165,7 +166,9 @@ test('queries brewery country stats', async () => {
     ],
   ])
   await waitFor(() => {
-    expect(setLoadedBreweryCountries.mock.calls).toEqual([[[finland, estonia]]])
+    expect(
+      updatedItems(setLoadedBreweryCountries.mock.calls, undefined),
+    ).toEqual([[finland, estonia]])
   })
 })
 
@@ -229,7 +232,9 @@ test('queries the next page after the loaded ones', async () => {
     ],
   ])
   await waitFor(() => {
-    expect(setLoadedBreweryCountries.mock.calls).toEqual([[[finland, estonia]]])
+    expect(
+      updatedItems(setLoadedBreweryCountries.mock.calls, [finland]),
+    ).toEqual([[finland, estonia]])
   })
 })
 

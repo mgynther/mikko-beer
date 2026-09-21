@@ -9,6 +9,7 @@ import StyleLinks from '../internal/style/StyleLinks'
 
 import BeerLink from '../internal/beer/BeerLink'
 import SearchBeerWithNavi from '../internal/beer/SearchBeerWithNavi'
+import { useLoadMore } from '../internal/common/use-load-more'
 
 import './Beers.css'
 import type { LinkComponent } from '../common/link'
@@ -24,34 +25,29 @@ interface Props {
 }
 
 function Beers(props: Props): React.JSX.Element {
-  const [loadedBeers, setLoadedBeers] = useState<Beer[]>([])
+  const [loadedBeers, setLoadedBeers] = useState<Beer[] | undefined>(undefined)
   const { beerList, list, isLoading, isUninitialized } =
     props.listBeersIf.useList()
 
   const beerArray = beerList?.beers === undefined ? [] : [...beerList.beers]
   const hasMore = beerArray.length > 0 || isUninitialized
-  const loadedCount = loadedBeers.length
 
-  useEffect(() => {
-    const loadMore = async (): Promise<void> => {
-      const result = await list({
-        skip: loadedCount,
-        size: pageSize,
-      })
-      const newBeers = [...loadedBeers, ...result.beers]
-      setLoadedBeers(newBeers)
-    }
-    function checkLoad(): void {
-      if (isLoading) {
-        return
-      }
-      if (!hasMore) {
-        return
-      }
-      void loadMore()
-    }
-    return props.listBeersIf.infiniteScroll(checkLoad)
-  }, [loadedCount, isLoading, hasMore])
+  const checkLoad = useLoadMore({
+    hasMore,
+    isLoading,
+    items: loadedBeers,
+    loadPage: async (skip: number) =>
+      (await list({ skip, size: pageSize })).beers,
+    setItems: setLoadedBeers,
+  })
+
+  // Observing the end of the content reports whether it is in view, so
+  // subscribing again once a page has arrived is what loads the next one
+  // while the list is still shorter than the window.
+  useEffect(
+    () => props.listBeersIf.infiniteScroll(checkLoad),
+    [checkLoad, loadedBeers, isLoading, hasMore],
+  )
 
   return (
     <div>
@@ -67,7 +63,7 @@ function Beers(props: Props): React.JSX.Element {
         <div className='BeerStyles'>Styles</div>
       </div>
       <div>
-        {loadedBeers.map((beer: Beer) => (
+        {(loadedBeers ?? []).map((beer: Beer) => (
           <div className='BeerRow RowLike' key={beer.id}>
             <div className='BeerName'>
               <BeerLink linkComponent={props.linkComponent} beer={beer} />

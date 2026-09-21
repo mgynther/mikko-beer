@@ -6,6 +6,8 @@ import type {
   OneBreweryCountryStats,
 } from '../../types/stats/types'
 
+import { useLoadMore } from '../common/use-load-more'
+
 import BreweryCountryStatsTable from './BreweryCountryStatsTable'
 import type { StatsFilterState } from './filter-types'
 import type { FormattedStatsParams } from './search-params'
@@ -20,7 +22,9 @@ interface Props {
   statsParams: FormattedStatsParams<BreweryCountryStatsSortingOrder>
   loadedBreweryCountries: OneBreweryCountryStats[] | undefined
   setLoadedBreweryCountries: (
-    breweryCountries: OneBreweryCountryStats[] | undefined,
+    update: (
+      current: OneBreweryCountryStats[] | undefined,
+    ) => OneBreweryCountryStats[] | undefined,
   ) => void
 }
 
@@ -53,56 +57,39 @@ function BreweryCountryInfiniteScroll(props: Props): React.JSX.Element {
   const hasMore =
     lastPageArray.length > 0 || loadedBreweryCountries === undefined
 
-  useEffect(() => {
-    const loadMore = async (): Promise<void> => {
-      const result = await query({
-        breweryId: undefined,
-        locationId: undefined,
-        styleId: undefined,
-        pagination: {
-          skip: loadedBreweryCountries?.length ?? 0,
-          size: pageSize,
-        },
-        sorting: {
-          order: sortingOrder,
-          direction: sortingDirection,
-        },
-        minReviewCount,
-        maxReviewCount,
-        minReviewAverage,
-        maxReviewAverage,
-        timeStart,
-        timeEnd,
-      })
-      const newBreweryCountries = [
-        ...(loadedBreweryCountries ?? []),
-        ...result.breweryCountry,
-      ]
-      setLoadedBreweryCountries(newBreweryCountries)
-    }
-    function checkLoad(): void {
-      if (isLoading) {
-        return
-      }
-      if (!hasMore) {
-        return
-      }
-      void loadMore()
-    }
-    return props.getBreweryCountryStatsIf.infiniteScroll(checkLoad)
-  }, [
-    isLoading,
+  const checkLoad = useLoadMore({
     hasMore,
-    minReviewCount,
-    maxReviewCount,
-    minReviewAverage,
-    maxReviewAverage,
-    sortingOrder,
-    sortingDirection,
-    query,
-    timeStart,
-    timeEnd,
-  ])
+    isLoading,
+    items: loadedBreweryCountries,
+    loadPage: async (skip: number) =>
+      (
+        await query({
+          breweryId: undefined,
+          locationId: undefined,
+          styleId: undefined,
+          pagination: { skip, size: pageSize },
+          sorting: {
+            order: sortingOrder,
+            direction: sortingDirection,
+          },
+          minReviewCount,
+          maxReviewCount,
+          minReviewAverage,
+          maxReviewAverage,
+          timeStart,
+          timeEnd,
+        })
+      ).breweryCountry,
+    setItems: setLoadedBreweryCountries,
+  })
+
+  // Observing the end of the content reports whether it is in view, so
+  // subscribing again once a page has arrived is what loads the next one
+  // while the list is still shorter than the window.
+  useEffect(
+    () => props.getBreweryCountryStatsIf.infiniteScroll(checkLoad),
+    [checkLoad, loadedBreweryCountries, isLoading, hasMore],
+  )
 
   return (
     <BreweryCountryStatsTable

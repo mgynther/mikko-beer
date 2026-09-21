@@ -11,6 +11,7 @@ import { nameWithFlag } from '../internal/common/name-with-flag'
 import LoadingIndicator from '../internal/common/LoadingIndicator'
 
 import { breweryLinkFormatter } from '../internal/brewery/BreweryLinks'
+import { useLoadMore } from '../internal/common/use-load-more'
 import SearchBreweryWithNavi from '../internal/brewery/SearchBreweryWithNavi'
 import type { LinkComponent } from '../common/link'
 
@@ -25,7 +26,9 @@ export interface Props {
 
 function Breweries(props: Props): React.JSX.Element {
   const Link = props.linkComponent
-  const [loadedBreweries, setLoadedBreweries] = useState<Brewery[]>([])
+  const [loadedBreweries, setLoadedBreweries] = useState<Brewery[] | undefined>(
+    undefined,
+  )
   const { breweryList, list, isLoading, isUninitialized } =
     props.listBreweriesIf.useList()
 
@@ -33,28 +36,23 @@ function Breweries(props: Props): React.JSX.Element {
     breweryList?.breweries === undefined ? [] : [...breweryList.breweries]
 
   const hasMore = breweryArray.length > 0 || isUninitialized
-  const loadedCount = loadedBreweries.length
 
-  useEffect(() => {
-    const loadMore = async (): Promise<void> => {
-      const result = await list({
-        skip: loadedCount,
-        size: pageSize,
-      })
-      const newBreweries = [...loadedBreweries, ...result.breweries]
-      setLoadedBreweries(newBreweries)
-    }
-    function checkLoad(): void {
-      if (isLoading) {
-        return
-      }
-      if (!hasMore) {
-        return
-      }
-      void loadMore()
-    }
-    return props.listBreweriesIf.infiniteScroll(checkLoad)
-  }, [loadedCount, isLoading, hasMore])
+  const checkLoad = useLoadMore({
+    hasMore,
+    isLoading,
+    items: loadedBreweries,
+    loadPage: async (skip: number) =>
+      (await list({ skip, size: pageSize })).breweries,
+    setItems: setLoadedBreweries,
+  })
+
+  // Observing the end of the content reports whether it is in view, so
+  // subscribing again once a page has arrived is what loads the next one
+  // while the list is still shorter than the window.
+  useEffect(
+    () => props.listBreweriesIf.infiniteScroll(checkLoad),
+    [checkLoad, loadedBreweries, isLoading, hasMore],
+  )
 
   return (
     <div>
@@ -64,7 +62,7 @@ function Breweries(props: Props): React.JSX.Element {
         searchBreweryIf={props.searchBreweryIf}
       />
       <ul>
-        {loadedBreweries.map((brewery: Brewery) => (
+        {(loadedBreweries ?? []).map((brewery: Brewery) => (
           <li key={brewery.id}>
             <Link
               to={breweryLinkFormatter(brewery.id)}

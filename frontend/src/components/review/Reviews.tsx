@@ -6,6 +6,7 @@ import type {
   ReviewIf,
 } from '../types/review/types'
 
+import { useLoadMore } from '../internal/common/use-load-more'
 import ReviewList from '../internal/review/ReviewList'
 
 import './Review.css'
@@ -55,44 +56,33 @@ function Reviews(props: Props): React.JSX.Element {
   const maxRatingValue = maxRating.value
   const { minTime, maxTime } = parsedSearchParams
 
-  useEffect(() => {
-    const loadMore = async (): Promise<void> => {
-      const result = await list({
-        pagination: {
-          skip: loadedReviews?.length ?? 0,
-          size: pageSize,
-        },
-        sorting: { order, direction },
-        filter: {
-          minRating: minRatingValue,
-          maxRating: maxRatingValue,
-          minTime,
-          maxTime,
-        },
-      })
-      setLoadedReviews([...(loadedReviews ?? []), ...result.reviews])
-    }
-    function checkLoad(): void {
-      if (isLoading) {
-        return
-      }
-      if (!hasMore) {
-        return
-      }
-      void loadMore()
-    }
-    return props.listReviewsIf.infiniteScroll(checkLoad)
-  }, [
-    isLoading,
+  const checkLoad = useLoadMore({
     hasMore,
-    list,
-    order,
-    direction,
-    minRatingValue,
-    maxRatingValue,
-    minTime,
-    maxTime,
-  ])
+    isLoading,
+    items: loadedReviews,
+    loadPage: async (skip: number) =>
+      (
+        await list({
+          pagination: { skip, size: pageSize },
+          sorting: { order, direction },
+          filter: {
+            minRating: minRatingValue,
+            maxRating: maxRatingValue,
+            minTime,
+            maxTime,
+          },
+        })
+      ).reviews,
+    setItems: setLoadedReviews,
+  })
+
+  // Observing the end of the content reports whether it is in view, so
+  // subscribing again once a page has arrived is what loads the next one
+  // while the list is still shorter than the window.
+  useEffect(
+    () => props.listReviewsIf.infiniteScroll(checkLoad),
+    [checkLoad, loadedReviews, isLoading, hasMore],
+  )
 
   return (
     <div>

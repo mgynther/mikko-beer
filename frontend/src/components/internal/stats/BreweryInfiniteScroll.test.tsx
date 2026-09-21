@@ -13,6 +13,7 @@ import type {
 import type { UseDebounce, YearMonth } from '../../types/types'
 import type { StatsFilters } from './filter-types'
 import { dontCall } from '../../../../test-util/dont-call'
+import { updatedItems } from '../../../../test-util/load-more'
 import type { FormattedStatsParams } from './search-params'
 import { testLink } from '../../../../test-util/link'
 
@@ -168,7 +169,9 @@ test('queries brewery stats', async () => {
     ],
   ])
   await waitFor(() => {
-    expect(setLoadedBreweries.mock.calls).toEqual([[[koskipanimo, lehe]]])
+    expect(updatedItems(setLoadedBreweries.mock.calls, undefined)).toEqual([
+      [koskipanimo, lehe],
+    ])
   })
 })
 
