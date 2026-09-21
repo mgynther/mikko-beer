@@ -1,5 +1,13 @@
 import { test, expect, type Page } from '@playwright/test'
-import { localUrl, reviewContainer } from './constants'
+import {
+  breweryCountry,
+  breweryName,
+  localUrl,
+  locationName,
+  reviewContainer,
+  reviewYear,
+  styleName,
+} from './constants'
 import { login } from './login'
 
 async function toStats(page: Page): Promise<void> {
@@ -18,7 +26,7 @@ test('Overall stats', async ({ page }) => {
 test('Annual stats', async ({ page }) => {
   await toStats(page)
   await page.getByRole('button', { name: 'Annual', exact: true }).click()
-  await expect(page.getByText(/2021/i)).toBeVisible()
+  await expect(page.getByText(reviewYear)).toBeVisible()
 })
 
 test('To annual stats with URL', async ({ page }) => {
@@ -26,19 +34,19 @@ test('To annual stats with URL', async ({ page }) => {
   await login(page)
   await page.getByRole('link', { name: /add review/i }).click()
   await page.goto(`${localUrl}/stats?stats=annual`)
-  await expect(page.getByText(/2021/i)).toBeVisible()
+  await expect(page.getByText(reviewYear)).toBeVisible()
 })
 
 test('Annual & Container stats', async ({ page }) => {
   await toStats(page)
   await page.getByRole('button', { name: /^annual & container/i }).click()
-  // Note using real current year can cause a failure right after new year if a
-  // review has not been created by an e2e test.
-  const currentYear = new Date().getUTCFullYear()
+  // The rows are sorted by year descending and loaded a page at a time, and
+  // the review's year is one no other review reaches, so the row is on the
+  // first page whatever else the database holds.
   await expect(
     page
       .getByRole('row')
-      .filter({ hasText: `${currentYear}` })
+      .filter({ hasText: reviewYear })
       .filter({ hasText: reviewContainer }),
   ).toBeVisible()
 })
@@ -46,19 +54,19 @@ test('Annual & Container stats', async ({ page }) => {
 test('Brewery stats', async ({ page }) => {
   await toStats(page)
   await page.getByRole('button', { name: 'Brewery', exact: true }).click()
-  await expect(page.getByText(/abbaye de scourmont - chimay/i)).toBeVisible()
+  await expect(page.getByText(breweryName)).toBeVisible()
 })
 
 test('Brewery country stats', async ({ page }) => {
   await toStats(page)
   await page.getByRole('button', { name: /^brewery country/i }).click()
-  await expect(page.getByText(/FI 🇫🇮/)).toBeVisible()
+  await expect(page.getByText(breweryCountry)).toBeVisible()
 })
 
 test('Location stats', async ({ page }) => {
   await toStats(page)
   await page.getByRole('button', { name: /^location/i }).click()
-  await expect(page.getByText(/Brewdog, Tampere/i)).toBeVisible()
+  await expect(page.getByText(locationName)).toBeVisible()
 })
 
 test('Rating stats', async ({ page }) => {
@@ -70,5 +78,5 @@ test('Rating stats', async ({ page }) => {
 test('Style stats', async ({ page }) => {
   await toStats(page)
   await page.getByRole('button', { name: /^style/i }).click()
-  await expect(page.getByText(/altbier/i)).toBeVisible()
+  await expect(page.getByText(styleName)).toBeVisible()
 })

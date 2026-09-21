@@ -1,5 +1,13 @@
 import { test, expect } from '@playwright/test'
 import { login } from './login'
+import {
+  beerName,
+  beerOption,
+  beerSearch,
+  breweryName,
+  breweryOption,
+  brewerySearch,
+} from './constants'
 
 test('Search beer from navigation menu', async ({ page }) => {
   await login(page)
@@ -7,9 +15,9 @@ test('Search beer from navigation menu', async ({ page }) => {
   await page
     .getByRole('navigation')
     .getByRole('combobox', { name: /search beer/i })
-    .fill('severi')
-  await page.getByRole('option', { name: /^severin \(koskipanimo\)$/i }).click()
-  await expect(page.getByRole('heading', { name: 'Severin' })).toBeVisible()
+    .fill(beerSearch)
+  await page.getByRole('option', { name: beerOption }).click()
+  await expect(page.getByRole('heading', { name: beerName })).toBeVisible()
 })
 
 test('Search brewery from navigation menu', async ({ page }) => {
@@ -18,7 +26,7 @@ test('Search brewery from navigation menu', async ({ page }) => {
   await page
     .getByRole('navigation')
     .getByRole('combobox', { name: /search brewery/i })
-    .fill('oskipa')
-  await page.getByRole('option', { name: /^koskipanimo$/i }).click()
-  await expect(page.getByRole('heading', { name: 'Koskipanimo' })).toBeVisible()
+    .fill(brewerySearch)
+  await page.getByRole('option', { name: breweryOption }).click()
+  await expect(page.getByRole('heading', { name: breweryName })).toBeVisible()
 })
