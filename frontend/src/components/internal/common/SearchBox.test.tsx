@@ -204,9 +204,9 @@ test('item is selected', async () => {
       select={selector}
     />,
   )
-  const itemButton = getByRole('button', { name: itemName })
-  expect(itemButton).toBeDefined()
-  await user.click(itemButton)
+  const itemOption = getByRole('option', { name: itemName })
+  expect(itemOption).toBeDefined()
+  await user.click(itemOption)
   expect(selector.mock.calls).toEqual([[{ id: '1', name: itemName }]])
 })
 
@@ -215,7 +215,7 @@ test('renders filter', async () => {
   const { getByRole } = render(
     <SearchBox {...defaultProps} currentFilter={filter} />,
   )
-  const input = getByRole('textbox')
+  const input = getByRole('combobox')
   expect(input).toBeInstanceOf(HTMLInputElement)
   /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
    * No other way to access value of input. Also type already checked.
@@ -245,7 +245,7 @@ test('inputs text', async () => {
   const { getByRole } = render(
     <SearchBox {...defaultProps} setFilter={setter} />,
   )
-  const input = getByRole('textbox')
+  const input = getByRole('combobox')
   expect(input).toBeDefined()
   await user.type(input, 'Test')
   const expected = [['T'], ['e'], ['s'], ['t']]
@@ -284,8 +284,8 @@ test('sorts results', async () => {
       select={dontCall}
     />,
   )
-  const itemButtons = getAllByRole('button', { name: /item/v })
-  expect(itemButtons.map((item) => item.innerHTML)).toEqual([
+  const itemOptions = getAllByRole('option', { name: /item/v })
+  expect(itemOptions.map((item) => item.innerHTML)).toEqual([
     'item a',
     'item b',
   ])
@@ -310,8 +310,8 @@ test('sorts results starting with filter', async () => {
       select={dontCall}
     />,
   )
-  const itemButtons = getAllByRole('button', { name: /lager/iv })
-  expect(itemButtons.map((item) => item.innerHTML)).toEqual([
+  const itemOptions = getAllByRole('option', { name: /lager/iv })
+  expect(itemOptions.map((item) => item.innerHTML)).toEqual([
     'Lager',
     'American lager',
   ])
@@ -348,8 +348,8 @@ test('sorts results with edge cases', async () => {
       select={dontCall}
     />,
   )
-  const itemButtons = getAllByRole('button', { name: /item/iv })
-  expect(itemButtons.map((item) => item.innerHTML)).toEqual([
+  const itemOptions = getAllByRole('option', { name: /item/iv })
+  expect(itemOptions.map((item) => item.innerHTML)).toEqual([
     'item',
     'item',
     'item 321',
@@ -384,11 +384,224 @@ test('custom sorts results', async () => {
       select={dontCall}
     />,
   )
-  const itemButtons = getAllByRole('button', { name: /item/v })
-  expect(itemButtons.length).toEqual(3)
-  expect(itemButtons.map((item) => item.innerHTML)).toEqual([
+  const itemOptions = getAllByRole('option', { name: /item/v })
+  expect(itemOptions.length).toEqual(3)
+  expect(itemOptions.map((item) => item.innerHTML)).toEqual([
     'item b',
     'item a',
     'item a',
   ])
+})
+
+const keyboardOptions: SearchBoxItem[] = [
+  {
+    id: '1',
+    name: 'item a',
+  },
+  {
+    id: '2',
+    name: 'item b',
+  },
+  {
+    id: '3',
+    name: 'item c',
+  },
+]
+
+test('renders as a collapsed combobox', () => {
+  const title = 'Search item'
+  const { getByRole, queryByRole } = render(
+    <SearchBox {...defaultProps} title={title} />,
+  )
+  const input = getByRole('combobox', { name: title })
+  expect(input.getAttribute('aria-expanded')).toEqual('false')
+  expect(input.getAttribute('aria-autocomplete')).toEqual('list')
+  expect(input.getAttribute('aria-activedescendant')).toBeNull()
+  expect(queryByRole('listbox')).toBeNull()
+})
+
+test('renders as an expanded combobox', () => {
+  const title = 'Search item'
+  const { getAllByRole, getByRole } = render(
+    <SearchBox
+      {...defaultProps}
+      searchFieldIf={activeSearch}
+      currentFilter={'item'}
+      currentOptions={keyboardOptions}
+      title={title}
+    />,
+  )
+  const input = getByRole('combobox', { name: title })
+  expect(input.getAttribute('aria-expanded')).toEqual('true')
+  const listbox = getByRole('listbox', { name: title })
+  expect(input.getAttribute('aria-controls')).toEqual(
+    listbox.getAttribute('id'),
+  )
+  const options = getAllByRole('option')
+  expect(options.map((option) => option.innerHTML)).toEqual([
+    'item a',
+    'item b',
+    'item c',
+  ])
+  expect(options.map((option) => option.getAttribute('aria-selected'))).toEqual(
+    ['false', 'false', 'false'],
+  )
+})
+
+interface KeyboardRender {
+  getActiveOption: () => string | null
+  input: HTMLElement
+  options: HTMLElement[]
+  select: ReturnType<typeof vitest.fn>
+  setFilter: ReturnType<typeof vitest.fn>
+}
+
+function renderForKeyboard(
+  currentOptions: SearchBoxItem[] = keyboardOptions,
+): KeyboardRender {
+  const select = vitest.fn()
+  const setFilter = vitest.fn()
+  const { getAllByRole, getByRole, queryAllByRole } = render(
+    <SearchBox
+      {...defaultProps}
+      searchFieldIf={activeSearch}
+      currentFilter={'item'}
+      currentOptions={currentOptions}
+      select={select}
+      setFilter={setFilter}
+    />,
+  )
+  const input = getByRole('combobox')
+  return {
+    // The highlight is read back the way a screen reader reads it rather
+    // than from the class the same state also sets.
+    getActiveOption: (): string | null => {
+      const id = input.getAttribute('aria-activedescendant')
+      if (id === null) return null
+      const active = queryAllByRole('option').filter(
+        (option) => option.getAttribute('id') === id,
+      )
+      expect(active.length).toEqual(1)
+      expect(active[0].getAttribute('aria-selected')).toEqual('true')
+      return active[0].innerHTML
+    },
+    input,
+    options: currentOptions.length === 0 ? [] : getAllByRole('option'),
+    select,
+    setFilter,
+  }
+}
+
+test('highlights the first option with arrow down', async () => {
+  const user = setupUser()
+  const { getActiveOption, input } = renderForKeyboard()
+  expect(getActiveOption()).toBeNull()
+  await user.type(input, '{ArrowDown}')
+  expect(getActiveOption()).toEqual('item a')
+})
+
+test('highlights the next option with arrow down', async () => {
+  const user = setupUser()
+  const { getActiveOption, input } = renderForKeyboard()
+  await user.type(input, '{ArrowDown}{ArrowDown}')
+  expect(getActiveOption()).toEqual('item b')
+})
+
+test('wraps to the first option with arrow down', async () => {
+  const user = setupUser()
+  const { getActiveOption, input } = renderForKeyboard()
+  await user.type(input, '{ArrowDown}{ArrowDown}{ArrowDown}{ArrowDown}')
+  expect(getActiveOption()).toEqual('item a')
+})
+
+test('highlights the last option with arrow up', async () => {
+  const user = setupUser()
+  const { getActiveOption, input } = renderForKeyboard()
+  await user.type(input, '{ArrowUp}')
+  expect(getActiveOption()).toEqual('item c')
+})
+
+test('highlights the previous option with arrow up', async () => {
+  const user = setupUser()
+  const { getActiveOption, input } = renderForKeyboard()
+  await user.type(input, '{ArrowDown}{ArrowDown}{ArrowUp}')
+  expect(getActiveOption()).toEqual('item a')
+})
+
+test('wraps to the last option with arrow up', async () => {
+  const user = setupUser()
+  const { getActiveOption, input } = renderForKeyboard()
+  await user.type(input, '{ArrowDown}{ArrowUp}')
+  expect(getActiveOption()).toEqual('item c')
+})
+
+test('arrow keys highlight nothing without options', async () => {
+  const user = setupUser()
+  const { getActiveOption, input } = renderForKeyboard([])
+  await user.type(input, '{ArrowDown}{ArrowUp}')
+  expect(getActiveOption()).toBeNull()
+})
+
+test('drops a highlight the options no longer have', async () => {
+  const user = setupUser()
+  const { getAllByRole, getByRole, rerender } = render(
+    <SearchBox
+      {...defaultProps}
+      searchFieldIf={activeSearch}
+      currentFilter={'item'}
+      currentOptions={keyboardOptions}
+      select={dontCall}
+    />,
+  )
+  const input = getByRole('combobox')
+  await user.type(input, '{ArrowUp}')
+  const lastId = getAllByRole('option')[2].getAttribute('id')
+  expect(input.getAttribute('aria-activedescendant')).toEqual(lastId)
+  // A request answering with fewer results than the highlight was moved
+  // into must not leave it pointing past the end of the list.
+  rerender(
+    <SearchBox
+      {...defaultProps}
+      searchFieldIf={activeSearch}
+      currentFilter={'item'}
+      currentOptions={[keyboardOptions[0]]}
+      select={dontCall}
+    />,
+  )
+  expect(getAllByRole('option').length).toEqual(1)
+  expect(input.getAttribute('aria-activedescendant')).toBeNull()
+})
+
+test('selects the highlighted option with enter', async () => {
+  const user = setupUser()
+  const { input, select, setFilter } = renderForKeyboard()
+  await user.type(input, '{ArrowDown}{ArrowDown}{Enter}')
+  expect(select.mock.calls).toEqual([[keyboardOptions[1]]])
+  expect(setFilter.mock.calls).toEqual([['']])
+})
+
+test('enter selects nothing without a highlight', async () => {
+  const user = setupUser()
+  const { input, select, setFilter } = renderForKeyboard()
+  await user.type(input, '{Enter}')
+  expect(select.mock.calls).toEqual([])
+  expect(setFilter.mock.calls).toEqual([])
+})
+
+test('clears the filter on escape', async () => {
+  const user = setupUser()
+  const { getActiveOption, input, setFilter } = renderForKeyboard()
+  await user.type(input, '{ArrowDown}')
+  expect(getActiveOption()).toEqual('item a')
+  await user.type(input, '{Escape}')
+  expect(setFilter.mock.calls).toEqual([['']])
+  expect(getActiveOption()).toBeNull()
+})
+
+test('clicking an option clears the highlight', async () => {
+  const user = setupUser()
+  const { getActiveOption, input, options } = renderForKeyboard()
+  await user.type(input, '{ArrowDown}')
+  await user.click(options[2])
+  expect(getActiveOption()).toBeNull()
 })

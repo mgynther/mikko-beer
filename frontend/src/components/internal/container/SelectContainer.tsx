@@ -39,7 +39,11 @@ function SelectContainer(props: Props): React.JSX.Element {
         selectElement={
           <div>
             <LoadingIndicator isLoading={isLoading} />
+            {/* The search boxes on the same page are comboboxes too, so
+                the container picker says which one it is rather than
+                being the unnamed one. */}
             <select
+              aria-label='Container'
               defaultValue={''}
               onChange={(e) => {
                 selectContainerById(e.target.value)

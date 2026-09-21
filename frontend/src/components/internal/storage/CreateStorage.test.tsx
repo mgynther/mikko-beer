@@ -146,12 +146,12 @@ test('creates storage', async () => {
   expect(beerSearch).toBeDefined()
   beerSearch.focus()
   await user.paste('Seve')
-  const beerButton = await findByRole('button', {
+  const beerOption = await findByRole('option', {
     name: 'Severin (Koskipanimo)',
   })
-  expect(beerButton).toBeDefined()
-  await user.click(beerButton)
-  const containerSelect = getByRole('combobox')
+  expect(beerOption).toBeDefined()
+  await user.click(beerOption)
+  const containerSelect = getByRole('combobox', { name: 'Container' })
   await user.click(containerSelect)
   const bottle = getByRole('option', { name: 'bottle 0.33' })
   await user.selectOptions(containerSelect, bottle)
@@ -193,11 +193,11 @@ test('clears beer', async () => {
   expect(beerSearch).toBeDefined()
   beerSearch.focus()
   await user.paste('Seve')
-  const beerButton = await findByRole('button', {
+  const beerOption = await findByRole('option', {
     name: 'Severin (Koskipanimo)',
   })
-  expect(beerButton).toBeDefined()
-  await user.click(beerButton)
+  expect(beerOption).toBeDefined()
+  await user.click(beerOption)
 
   const changeButton = getByRole('button', { name: 'Change' })
   await user.click(changeButton)
@@ -217,14 +217,14 @@ test('clears container', async () => {
     />,
   )
 
-  const containerSelect = getByRole('combobox')
+  const containerSelect = getByRole('combobox', { name: 'Container' })
   await user.click(containerSelect)
   const bottle = getByRole('option', { name: 'bottle 0.33' })
   await user.selectOptions(containerSelect, bottle)
 
   const changeButton = getByRole('button', { name: 'Change' })
   await user.click(changeButton)
-  getByRole('combobox')
+  getByRole('combobox', { name: 'Container' })
 })
 
 test('shows error', async () => {

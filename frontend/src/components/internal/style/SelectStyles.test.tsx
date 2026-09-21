@@ -84,8 +84,8 @@ test('selects style', async () => {
   )
   const searchInput = getByPlaceholderText('Search style')
   await user.type(searchInput, 'Pils')
-  const styleButton = getByRole('button', { name: style.name })
-  await user.click(styleButton)
+  const styleOption = getByRole('option', { name: style.name })
+  await user.click(styleOption)
 
   const calls = select.mock.calls
   expect(calls.length).toEqual(2)
@@ -165,8 +165,8 @@ test('selects created style', async () => {
 
   const searchInput = getByPlaceholderText('Search style')
   await user.type(searchInput, 'a')
-  const parentButton = getByRole('button', { name: parent.name })
-  await user.click(parentButton)
+  const parentOption = getByRole('option', { name: parent.name })
+  await user.click(parentOption)
 
   const createButton = getByRole('button', { name: 'Create' })
   await user.click(createButton)

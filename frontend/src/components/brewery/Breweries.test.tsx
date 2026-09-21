@@ -70,7 +70,7 @@ test('renders breweries', async () => {
   })
   getByRole('link', { name: brewery.name })
   getByRole('link', { name: anotherBrewery.name })
-  getByRole('textbox')
+  getByRole('combobox')
   getByPlaceholderText('Search brewery')
 })
 

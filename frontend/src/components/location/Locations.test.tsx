@@ -76,7 +76,7 @@ test('renders locations', async () => {
   })
   getByRole('link', { name: location.name })
   getByRole('link', { name: anotherLocation.name })
-  getByRole('textbox')
+  getByRole('combobox')
   getByPlaceholderText('Search location')
 })
 

@@ -57,7 +57,7 @@ test('selects one more brewery', async () => {
 
   const brewerySearch = getByPlaceholderText('Search brewery')
   await user.type(brewerySearch, anotherBrewery.name)
-  const breweryOption = await findByRole('button', {
+  const breweryOption = await findByRole('option', {
     name: anotherBrewery.name,
   })
   await user.click(breweryOption)

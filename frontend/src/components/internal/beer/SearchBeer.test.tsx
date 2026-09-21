@@ -61,15 +61,15 @@ test('selects beer', async () => {
     <SearchBeer searchBeerIf={searchBeerIf} select={selector} />,
   )
 
-  const input = getByRole('textbox')
+  const input = getByRole('combobox')
   expect(input).toBeDefined()
   await user.type(input, 'Do')
 
-  const itemButton = getByRole('button', {
+  const itemOption = getByRole('option', {
     name: `${beer.name} (${brewery.name})`,
   })
-  expect(itemButton).toBeDefined()
-  await user.click(itemButton)
+  expect(itemOption).toBeDefined()
+  await user.click(itemOption)
   expect(selector.mock.calls).toEqual([
     [
       {

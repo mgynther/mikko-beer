@@ -186,8 +186,8 @@ test('edits beer breweries', async () => {
   )
   const brewerySearch = getByPlaceholderText('Search brewery')
   await user.type(brewerySearch, brewery.name)
-  const breweryButton = getByRole('button', { name: brewery.name })
-  await user.click(breweryButton)
+  const breweryOption = getByRole('option', { name: brewery.name })
+  await user.click(breweryOption)
   const calls = onChange.mock.calls
   expect(calls[calls.length - 1]).toEqual([
     {
@@ -226,8 +226,8 @@ test('edits beer styles', async () => {
   )
   const styleSearch = getByPlaceholderText('Search style')
   await user.type(styleSearch, style.name)
-  const styleButton = getByRole('button', { name: style.name })
-  await user.click(styleButton)
+  const styleOption = getByRole('option', { name: style.name })
+  await user.click(styleOption)
   const calls = onChange.mock.calls
   expect(calls[calls.length - 1]).toEqual([
     {

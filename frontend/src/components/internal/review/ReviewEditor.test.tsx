@@ -193,8 +193,8 @@ async function addReview(
   const locationInput = getByPlaceholderText('Location')
   locationInput.focus()
   await user.paste(location.name)
-  const locationButton = getByRole('button', { name: location.name })
-  await user.click(locationButton)
+  const locationOption = getByRole('option', { name: location.name })
+  await user.click(locationOption)
   const smellInput = getByPlaceholderText('Smell')
   smellInput.focus()
   await user.clear(smellInput)
@@ -221,10 +221,10 @@ async function selectBeer(
   expect(beerSearch).toBeDefined()
   beerSearch.focus()
   await user.paste('Seve')
-  const beerButton = await findByRole('button', {
+  const beerOption = await findByRole('option', {
     name: 'Severin (Koskipanimo)',
   })
-  await user.click(beerButton)
+  await user.click(beerOption)
   getByRole('button', { name: 'Change' })
 }
 
@@ -232,7 +232,7 @@ async function selectContainer(
   getByRole: (text: string, props?: { name: string }) => HTMLElement,
   user: UserEvent,
 ): Promise<void> {
-  const containerSelect = getByRole('combobox')
+  const containerSelect = getByRole('combobox', { name: 'Container' })
   await user.click(containerSelect)
   const draft = getByRole('option', { name: 'draft 0.25' })
   await user.selectOptions(containerSelect, draft)
@@ -386,7 +386,7 @@ test('change container', async () => {
   await selectContainer(getByRole, user)
   const changeButton = getByRole('button', { name: 'Change' })
   await user.click(changeButton)
-  getByRole('combobox')
+  getByRole('combobox', { name: 'Container' })
 })
 
 test('updates review', async () => {

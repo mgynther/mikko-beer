@@ -50,12 +50,12 @@ test('selects brewery', async () => {
     />,
   )
 
-  const input = getByRole('textbox')
+  const input = getByRole('combobox')
   expect(input).toBeDefined()
   await user.type(input, 'Co')
 
-  const itemButton = getByRole('button', { name: brewery.name })
-  expect(itemButton).toBeDefined()
-  await user.click(itemButton)
+  const itemOption = getByRole('option', { name: brewery.name })
+  expect(itemOption).toBeDefined()
+  await user.click(itemOption)
   expect(selector.mock.calls).toEqual([[`/breweries/${brewery.id}`]])
 })

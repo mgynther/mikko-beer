@@ -339,10 +339,10 @@ test('searches beer', async () => {
   expect(input).toBeDefined()
   await user.type(input, 'Do')
 
-  const itemButton = getByRole('button', {
+  const itemOption = getByRole('option', {
     name: `${beer.name} (${brewery.name})`,
   })
-  await user.click(itemButton)
+  await user.click(itemOption)
   expect(navigate.mock.calls).toEqual([[`/beers/${beer.id}`]])
 })
 
@@ -375,8 +375,8 @@ test('searches brewery', async () => {
   expect(input).toBeDefined()
   await user.type(input, 'Lehe')
 
-  const itemButton = getByRole('button', { name: brewery.name })
-  await user.click(itemButton)
+  const itemOption = getByRole('option', { name: brewery.name })
+  await user.click(itemOption)
   expect(navigate.mock.calls).toEqual([[`/breweries/${brewery.id}`]])
 })
 

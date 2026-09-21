@@ -63,13 +63,13 @@ test('selects location', async () => {
     />,
   )
 
-  const input = getByRole('textbox')
+  const input = getByRole('combobox')
   expect(input).toBeDefined()
   await user.type(input, 'Public H')
 
-  const itemButton = getByRole('button', { name: location.name })
-  expect(itemButton).toBeDefined()
-  await user.click(itemButton)
+  const itemOption = getByRole('option', { name: location.name })
+  expect(itemOption).toBeDefined()
+  await user.click(itemOption)
   expect(selector.mock.calls).toEqual([
     [{ id: location.id, name: location.name }],
   ])
@@ -95,11 +95,11 @@ test('does not show create button with case-insensitive match', async () => {
     />,
   )
 
-  const input = getByRole('textbox')
+  const input = getByRole('combobox')
   expect(input).toBeDefined()
   await user.type(input, location.name.toLowerCase())
 
-  getByRole('button', { name: location.name })
+  getByRole('option', { name: location.name })
   expect(queryByRole('button', { name: `Create "${location.name}"` })).toEqual(
     null,
   )
@@ -125,7 +125,7 @@ test('shows no results when creating not enabled', async () => {
     />,
   )
 
-  const input = getByRole('textbox')
+  const input = getByRole('combobox')
   expect(input).toBeDefined()
   await user.type(input, 'Public H')
 
@@ -163,15 +163,15 @@ test('creates location', async () => {
     />,
   )
 
-  const input = getByRole('textbox')
+  const input = getByRole('combobox')
   expect(input).toBeDefined()
   await user.type(input, location.name)
 
-  const createButton = getByRole('button', {
+  const createOption = getByRole('option', {
     name: `Create "${location.name}"`,
   })
-  expect(createButton).toBeDefined()
-  await user.click(createButton)
+  expect(createOption).toBeDefined()
+  await user.click(createOption)
   expect(create.mock.calls).toEqual([[{ name: location.name }]])
   expect(select.mock.calls).toEqual([[location]])
 })
@@ -216,15 +216,15 @@ test('confirms creating location with partially matching result', async () => {
     />,
   )
 
-  const input = getByRole('textbox')
+  const input = getByRole('combobox')
   expect(input).toBeDefined()
   await user.type(input, location.name)
 
-  const createButton = getByRole('button', {
+  const createOption = getByRole('option', {
     name: `Create "${location.name}"`,
   })
-  expect(createButton).toBeDefined()
-  await user.click(createButton)
+  expect(createOption).toBeDefined()
+  await user.click(createOption)
   expect(confirmCb.mock.calls).toEqual([
     [`Are you sure you want to create ${location.name}?`],
   ])
@@ -267,15 +267,15 @@ test('does not create location on reject', async () => {
     />,
   )
 
-  const input = getByRole('textbox')
+  const input = getByRole('combobox')
   expect(input).toBeDefined()
   await user.type(input, location.name)
 
-  const createButton = getByRole('button', {
+  const createOption = getByRole('option', {
     name: `Create "${location.name}"`,
   })
-  expect(createButton).toBeDefined()
-  await user.click(createButton)
+  expect(createOption).toBeDefined()
+  await user.click(createOption)
   expect(confirmCb.mock.calls).toEqual([
     [`Are you sure you want to create ${location.name}?`],
   ])
@@ -313,12 +313,12 @@ test('sorts existing result before create new location', async () => {
     />,
   )
 
-  const input = getByRole('textbox')
+  const input = getByRole('combobox')
   expect(input).toBeDefined()
   await user.type(input, location.name)
 
-  const resultButtons = getAllByRole('button', { name: /Huurre/v })
-  expect(resultButtons.map((item) => item.innerHTML)).toEqual([
+  const resultOptions = getAllByRole('option', { name: /Huurre/v })
+  expect(resultOptions.map((item) => item.innerHTML)).toEqual([
     resultName,
     `Create "${location.name}"`,
   ])

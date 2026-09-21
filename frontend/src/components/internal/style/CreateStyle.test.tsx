@@ -68,11 +68,11 @@ test('creates style', async () => {
   }
 
   await search()
-  const parentButton = getByRole('button', { name: parent.name })
-  await user.click(parentButton)
+  const parentOption = getByRole('option', { name: parent.name })
+  await user.click(parentOption)
   await search()
-  const otherParentButton = getByRole('button', { name: otherParent.name })
-  await user.click(otherParentButton)
+  const otherParentOption = getByRole('option', { name: otherParent.name })
+  await user.click(otherParentOption)
 
   const createButton = getByRole('button', { name: 'Create' })
   await user.click(createButton)

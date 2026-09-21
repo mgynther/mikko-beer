@@ -91,8 +91,8 @@ test('updates style', async () => {
 
   const searchInput = getByPlaceholderText('Search style')
   await user.type(searchInput, 'a')
-  const otherParentButton = getByRole('button', { name: otherParent.name })
-  await user.click(otherParentButton)
+  const otherParentOption = getByRole('option', { name: otherParent.name })
+  await user.click(otherParentOption)
 
   const saveButton = getByRole('button', { name: 'Save' })
   await user.click(saveButton)

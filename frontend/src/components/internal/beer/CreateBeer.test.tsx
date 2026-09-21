@@ -88,13 +88,13 @@ test('creates beer', async () => {
 
   const brewerySearch = getByPlaceholderText('Search brewery')
   await user.type(brewerySearch, 'Koskipa')
-  const breweryButton = getByRole('button', { name: 'Koskipanimo' })
-  await user.click(breweryButton)
+  const breweryOption = getByRole('option', { name: 'Koskipanimo' })
+  await user.click(breweryOption)
 
   const styleSearch = getByPlaceholderText('Search style')
   await user.type(styleSearch, 'IPA')
-  const styleButton = getByRole('button', { name: 'IPA' })
-  await user.click(styleButton)
+  const styleOption = getByRole('option', { name: 'IPA' })
+  await user.click(styleOption)
 
   const createButton = getByRole('button', { name: 'Create beer' })
   expect(createButton.hasAttribute('disabled')).toEqual(false)

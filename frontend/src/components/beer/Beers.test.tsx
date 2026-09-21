@@ -100,7 +100,7 @@ test('render beers', async () => {
   getByRole('link', { name: anotherBeer.name })
   getAllByRole('link', { name: brewery.name })
   getAllByRole('link', { name: style.name })
-  getByRole('textbox')
+  getByRole('combobox')
   getByPlaceholderText('Search beer')
 })
 

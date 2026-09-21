@@ -54,7 +54,7 @@ test('selects brewery', async () => {
   )
   const brewerySearch = getByPlaceholderText('Search brewery')
   await user.type(brewerySearch, 'Koskip')
-  const breweryOption = await findByRole('button', { name: 'Koskipanimo' })
+  const breweryOption = await findByRole('option', { name: 'Koskipanimo' })
   await user.click(breweryOption)
   const selectCalls = onSelect.mock.calls
   expect(selectCalls).toEqual([[brewery]])
