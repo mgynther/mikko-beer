@@ -196,8 +196,8 @@ const layerDependencies = {
   // better alternative by accident.
   //
   // The backend url is derived in internal/config/ from the environment,
-  // which is plain parsing over process.env and stays that way: the store is
-  // the only thing that talks to the backend, so it is the only thing that
+  // which is plain parsing over import.meta.env and stays that way: the store
+  // is the only thing that talks to the backend, so it is the only thing that
   // needs to know where it is.
   store: ['@reduxjs/toolkit', 'async-mutex', 'react-redux'],
   // storehooks unwraps the response envelope in plain TypeScript rather than

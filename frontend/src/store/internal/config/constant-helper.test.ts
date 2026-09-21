@@ -39,9 +39,15 @@ test('get default unique test port in browser', () => {
 })
 
 test('get unique backend url in node', () => {
-  expect(getBackendUrl(12, 30012)).toEqual('http://localhost:30012')
+  expect(getBackendUrl(12, 30012, undefined)).toEqual('http://localhost:30012')
+})
+
+test('get configured backend url in browser', () => {
+  expect(getBackendUrl(-1, 0, 'http://backend:1234')).toEqual(
+    'http://backend:1234',
+  )
 })
 
 test('get default backend url in browser', () => {
-  expect(getBackendUrl(-1, 0)).toEqual('http://localhost:3001')
+  expect(getBackendUrl(-1, 0, undefined)).toEqual('http://localhost:3001')
 })

@@ -5,31 +5,16 @@ import {
   parseVitestId,
 } from './constant-helper'
 
-function getTestPortStart(): number {
-  try {
-    return parseTestPortStart(process.env.TEST_PORT_START)
-  } catch {
-    // v8 ignore next -- cannot reach in Node but is needed for browser.
-    return -1
-  }
-}
-
-function getVitestId(): number {
-  try {
-    return parseVitestId(process.env.VITEST_POOL_ID)
-  } catch {
-    // v8 ignore next -- cannot reach in Node but is needed for browser.
-    return -1
-  }
-}
-
-const vitestId = getVitestId()
-const testPortStart = getTestPortStart()
+// vitest exposes the process environment through import.meta.env, so the
+// values a test run sets arrive the same way the build time ones do and
+// nothing here has to reach for process, which a browser does not have.
+const vitestId = parseVitestId(import.meta.env.VITEST_POOL_ID)
+const testPortStart = parseTestPortStart(import.meta.env.TEST_PORT_START)
 const uniqueTestServerPort = getUniqueTestServerPort(vitestId, testPortStart)
-
-function getUrl(): string {
-  return getBackendUrl(vitestId, uniqueTestServerPort)
-}
-const backendUrl: string = getUrl()
+const backendUrl: string = getBackendUrl(
+  vitestId,
+  uniqueTestServerPort,
+  import.meta.env.VITE_BACKEND_URL,
+)
 
 export { backendUrl, uniqueTestServerPort }

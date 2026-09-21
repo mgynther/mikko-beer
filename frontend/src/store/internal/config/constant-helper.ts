@@ -26,12 +26,12 @@ export function getUniqueTestServerPort(
 export function getBackendUrl(
   vitestId: number,
   uniqueTestServerPort: number,
+  configuredUrl: string | undefined,
 ): string {
   if (vitestId > -1) {
     return `http://localhost:${uniqueTestServerPort}`
   }
 
-  // v8 ignore start -- In browser URL is set but default is good in dev.
-  return import.meta.env.VITE_BACKEND_URL ?? 'http://localhost:3001'
-  // v8 ignore stop
+  // In a browser the url is configured but the default is good in dev.
+  return configuredUrl ?? 'http://localhost:3001'
 }

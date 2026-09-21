@@ -29,7 +29,6 @@
   ],
   "include": [
     "./e2e",
-    "./environment.d.ts",
     "./playwright.config.ts",
     "./src",
     "./test-util",
