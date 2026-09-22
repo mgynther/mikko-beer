@@ -11,6 +11,7 @@ import EditActions from '../common/EditActions'
 import LoadingIndicator from '../common/LoadingIndicator'
 
 import StyleEditor from './StyleEditor'
+import { createErrorLogger } from '../error-logger'
 
 interface Props {
   getStyleIf: GetStyleIf
@@ -65,7 +66,9 @@ function UpdateStyle(props: Props): React.JSX.Element {
           newStyle === undefined
             ? undefined
             : (): void => {
-                void doUpdate(newStyle)
+                doUpdate(newStyle).catch(
+                  createErrorLogger('doUpdate failed', console.error),
+                )
               }
         }
       />

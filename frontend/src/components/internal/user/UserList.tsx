@@ -5,6 +5,7 @@ import type { Confirm } from '../confirm'
 
 import Button from '../common/Button'
 import LoadingIndicator from '../common/LoadingIndicator'
+import { createErrorLogger } from '../error-logger'
 
 interface Props {
   confirm: Confirm
@@ -35,7 +36,9 @@ function UserList(props: Props): React.JSX.Element {
             {user.username} ({user.role}){' '}
             <Button
               onClick={() => {
-                void confirmDeleteUser(user)
+                confirmDeleteUser(user).catch(
+                  createErrorLogger('confirmDeleteUser failed', console.error),
+                )
               }}
               text='Delete'
             />

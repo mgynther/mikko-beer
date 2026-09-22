@@ -4,6 +4,7 @@ import React from 'react'
 import SearchLocation from './SearchLocation'
 import { confirmDialog } from '../confirm'
 import type { SearchLocationIf } from '../../types/location/types'
+import { createErrorLogger } from '../error-logger'
 
 export interface Props {
   navigateIf: NavigateIf
@@ -19,7 +20,9 @@ function SearchLocationWithNavi(props: Props): React.JSX.Element {
       placeholderText={'Search location'}
       searchLocationIf={props.searchLocationIf}
       select={(location) => {
-        void navigate(`/locations/${location.id}`)
+        navigate(`/locations/${location.id}`).catch(
+          createErrorLogger('navigate failed', console.error),
+        )
       }}
     />
   )

@@ -9,6 +9,7 @@ import type {
 import { statsStore } from '../../../test-util/stats-store'
 import { statsValidators } from '../../../test-util/stats-validators'
 import { setupUser } from '../../../test-util/user-event'
+import { createErrorLogger } from '../../../test-util/error-logger'
 
 // Stubs for the store function and the validators, for the reason given in
 // storehooks/brewery/get.test.tsx. The store functions a test does not drive
@@ -67,9 +68,9 @@ function Helper(props: HelperProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             props.onQueried(await query(params))
-          })()
+          })().catch(createErrorLogger('query failed', console.error))
         }}
       >
         Query

@@ -3,6 +3,7 @@ import React, { type SubmitEvent, useState } from 'react'
 import type { LoginIf } from '../types/login/types'
 
 import LoadingIndicator from '../internal/common/LoadingIndicator'
+import { createErrorLogger } from '../internal/error-logger'
 
 interface Props {
   loginIf: LoginIf
@@ -28,7 +29,7 @@ function Login(props: Props): React.JSX.Element {
     <div>
       <form
         onSubmit={(e) => {
-          void doLogin(e)
+          doLogin(e).catch(createErrorLogger('doLogin failed', console.error))
         }}
       >
         <h3>Login</h3>

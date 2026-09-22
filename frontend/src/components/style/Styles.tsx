@@ -11,6 +11,7 @@ import LoadingIndicator from '../internal/common/LoadingIndicator'
 import SearchStyle from '../internal/style/SearchStyle'
 import StyleLink from '../internal/style/StyleLink'
 import type { LinkComponent } from '../common/link'
+import { createErrorLogger } from '../internal/error-logger'
 
 interface Props {
   linkComponent: LinkComponent
@@ -31,7 +32,9 @@ function Styles(props: Props): React.JSX.Element {
       <SearchStyle
         listStylesIf={props.listStylesIf}
         select={(style: Style) => {
-          void navigate(`/styles/${style.id}`)
+          navigate(`/styles/${style.id}`).catch(
+            createErrorLogger('navigate failed', console.error),
+          )
         }}
       />
       <LoadingIndicator isLoading={isLoading} />

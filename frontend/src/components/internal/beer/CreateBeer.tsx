@@ -6,6 +6,7 @@ import Button from '../common/Button'
 import BeerEditor from './BeerEditor'
 
 import './CreateBeer.css'
+import { createErrorLogger } from '../error-logger'
 
 export interface Props {
   createBeerIf: CreateBeerIf
@@ -37,7 +38,9 @@ function CreateBeer(props: Props): React.JSX.Element {
         onClick={
           beer
             ? (): void => {
-                void doCreate(beer)
+                doCreate(beer).catch(
+                  createErrorLogger('doCreate failed', console.error),
+                )
               }
             : undefined
         }

@@ -5,6 +5,7 @@ import LoadingIndicator from '../common/LoadingIndicator'
 import './CreateUser.css'
 import { Role } from '../../types/user/types'
 import type { CreateUserIf } from '../../types/user/types'
+import { createErrorLogger } from '../error-logger'
 
 interface Props {
   createUserIf: CreateUserIf
@@ -42,7 +43,7 @@ function CreateUser(props: Props): React.JSX.Element {
       <form
         className='CreateUserForm'
         onSubmit={(e) => {
-          void doChange(e)
+          doChange(e).catch(createErrorLogger('doChange failed', console.error))
         }}
       >
         <div>

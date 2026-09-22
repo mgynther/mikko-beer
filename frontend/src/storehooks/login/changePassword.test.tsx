@@ -9,6 +9,7 @@ import type {
   UsePasswordChangeResult,
 } from './types'
 import { setupUser } from '../../../test-util/user-event'
+import { createErrorLogger } from '../../../test-util/error-logger'
 
 // Stubs for the store functions, for the reason given in
 // storehooks/brewery/get.test.tsx. Changing a password validates nothing:
@@ -48,7 +49,9 @@ function Helper(props: HelperProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void doChangePassword(params)
+          doChangePassword(params).catch(
+            createErrorLogger('doChangePassword failed', console.error),
+          )
         }}
       >
         Change password

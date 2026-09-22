@@ -7,6 +7,7 @@ import { setupUser } from '../../test-util/user-event'
 
 import { StoreProvider } from './provider'
 import { useCreateUser, useDeleteUser, useListUsers } from './user'
+import { createErrorLogger } from '../../test-util/error-logger'
 
 // See store/beer.test.tsx for what the store layer's tests are for and why
 // the helpers render the data as text.
@@ -80,7 +81,9 @@ function CreateUserHelper(): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void create(createRequest)
+          create(createRequest).catch(
+            createErrorLogger('create failed', console.error),
+          )
         }}
       >
         Create
@@ -143,10 +146,10 @@ function DeleteUserHelper(props: { onDeleted: () => void }): React.JSX.Element {
     <button
       type='button'
       onClick={() => {
-        void (async (): Promise<void> => {
+        ;(async (): Promise<void> => {
           await deleteUser(userId)
           props.onDeleted()
-        })()
+        })().catch(createErrorLogger('deleteUser failed', console.error))
       }}
     >
       Delete

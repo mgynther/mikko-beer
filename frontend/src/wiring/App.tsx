@@ -29,6 +29,7 @@ import type { NavigateIf, UseUrlPathParams } from '../components/types/types'
 import Layout from '../components/Layout'
 import { applyTheme } from './theme-applier'
 import type { LinkComponent } from '../components/common/link'
+import { createErrorLogger } from './error-logger'
 
 interface Props {
   linkComponent: LinkComponent
@@ -106,12 +107,12 @@ function App(props: Props): React.JSX.Element {
   const { logout } = logoutIf.useLogout()
 
   function doLogout(user: User): void {
-    void logout({
+    logout({
       userId: user.id,
       body: {
         refreshToken: login.refreshToken,
       },
-    })
+    }).catch(createErrorLogger('logout failed', console.error))
   }
   const user: User | undefined = login.user
 

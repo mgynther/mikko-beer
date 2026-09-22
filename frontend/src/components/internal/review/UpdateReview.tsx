@@ -9,6 +9,7 @@ import type {
 import EditActions from '../common/EditActions'
 
 import ReviewEditor from './ReviewEditor'
+import { createErrorLogger } from '../error-logger'
 
 interface Props {
   updateReviewIf: UpdateReviewIf
@@ -56,7 +57,9 @@ function UpdateReview(props: Props): React.JSX.Element {
         onSave={
           newReview
             ? (): void => {
-                void doUpdate(newReview)
+                doUpdate(newReview).catch(
+                  createErrorLogger('doUpdate failed', console.error),
+                )
               }
             : undefined
         }

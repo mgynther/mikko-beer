@@ -170,7 +170,7 @@ test('renders storage', () => {
             isLoading: false,
           }),
         },
-        setSearch: async () => undefined,
+        setSearch: () => undefined,
         useUrlSearchParams,
       }}
       createStorageIf={{

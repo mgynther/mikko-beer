@@ -62,7 +62,7 @@ const linkComponent: LinkComponent = (props) => (
 const useUrlPathParams: UseUrlPathParams = () => useParams()
 
 const navigateIf: NavigateIf = {
-  useNavigate: () => () => undefined,
+  useNavigate: () => async () => undefined,
 }
 
 const infiniteScroll: InfiniteScroll = () => () => undefined
@@ -412,7 +412,7 @@ const storeIf: StoreIf = {
       maxTime,
       getUseDebounce,
     },
-    setSearch: async () => undefined,
+    setSearch: () => undefined,
     useUrlSearchParams,
   },
   searchFieldIf: {
@@ -461,7 +461,7 @@ const storeIf: StoreIf = {
     monthly: {
       useMonthlyStats: dontCall,
     },
-    setSearch: async () => undefined,
+    setSearch: () => undefined,
     useUrlSearchParams,
   },
   getStyleIf: {
@@ -689,7 +689,7 @@ test('sets theme to dark', async () => {
 
 test('logout', async () => {
   const user = setupUser()
-  const logout = vitest.fn()
+  const logout = vitest.fn(async (): Promise<void> => undefined)
   const { getByRole } = render(
     <MemoryRouter>
       <App

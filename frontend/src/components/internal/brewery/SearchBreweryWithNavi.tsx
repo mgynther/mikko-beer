@@ -3,6 +3,7 @@ import React from 'react'
 
 import SearchBrewery from './SearchBrewery'
 import type { SearchBreweryIf } from '../../types/brewery/types'
+import { createErrorLogger } from '../error-logger'
 
 export interface Props {
   navigateIf: NavigateIf
@@ -15,7 +16,9 @@ function SearchBreweryWithNavi(props: Props): React.JSX.Element {
     <SearchBrewery
       searchBreweryIf={props.searchBreweryIf}
       select={(brewery) => {
-        void navigate(`/breweries/${brewery.id}`)
+        navigate(`/breweries/${brewery.id}`).catch(
+          createErrorLogger('navigate failed', console.error),
+        )
       }}
     />
   )

@@ -12,6 +12,7 @@ import type {
 } from '../src/storehooks/beer/types'
 import { render, waitFor } from '@testing-library/react'
 import { setupUser } from './user-event'
+import { createErrorLogger } from './error-logger'
 
 let server: TestServer | undefined
 
@@ -47,7 +48,7 @@ function Helper(props: HelperProps): React.JSX.Element {
         props.handleResponse(e)
       }
     }
-    void doHandle()
+    doHandle().catch(createErrorLogger('doHandle failed', console.error))
   }
   // A plain button rather than the application's own: this test is about the
   // test server, and reaching into the components layer for a button would

@@ -15,6 +15,7 @@ import StyleLinks from '../style/StyleLinks'
 import './StorageList.css'
 import ContainerInfo from '../container/ContainerInfo'
 import type { LinkComponent } from '../../common/link'
+import { createErrorLogger } from '../error-logger'
 
 interface Props {
   linkComponent: LinkComponent
@@ -90,7 +91,12 @@ function StorageItem(props: Props): React.JSX.Element {
               <div>
                 <LinkLikeButton
                   onClick={() => {
-                    void confirmDeleteStorage(storage)
+                    confirmDeleteStorage(storage).catch(
+                      createErrorLogger(
+                        'confirmDeleteStorage failed',
+                        console.error,
+                      ),
+                    )
                   }}
                   text='Delete'
                 />

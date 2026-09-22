@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react'
 import { expect, test, vitest } from 'vitest'
 import { loadingIndicatorText } from '../internal/common/LoadingIndicator'
+import type { NavigationFunc } from '../types/types'
 
 import Styles from './Styles'
 import { setupUser } from '../../../test-util/user-event'
@@ -36,7 +37,7 @@ test('renders styles', () => {
         },
       }}
       navigateIf={{
-        useNavigate: (): (() => void) => () => undefined,
+        useNavigate: (): NavigationFunc => async () => undefined,
       }}
     />,
   )
@@ -62,7 +63,7 @@ test('renders loading text when loading', () => {
         },
       }}
       navigateIf={{
-        useNavigate: (): (() => void) => () => undefined,
+        useNavigate: (): NavigationFunc => async () => undefined,
       }}
     />,
   )
@@ -72,7 +73,7 @@ test('renders loading text when loading', () => {
 
 test('navigates to selected search result', async () => {
   const user = setupUser()
-  const navigate = vitest.fn()
+  const navigate = vitest.fn(async (): Promise<void> => undefined)
   const styleId = '7fdc561f-da68-4665-b888-a82d5a03bf85'
   const { getByPlaceholderText, getByRole } = render(
     <Styles
@@ -97,7 +98,7 @@ test('navigates to selected search result', async () => {
         },
       }}
       navigateIf={{
-        useNavigate: (): (() => void) => navigate,
+        useNavigate: (): NavigationFunc => navigate,
       }}
     />,
   )

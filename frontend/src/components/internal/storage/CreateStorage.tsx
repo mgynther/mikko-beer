@@ -12,6 +12,7 @@ import SelectContainer from '../container/SelectContainer'
 
 import './CreateStorage.css'
 import ContainerInfo from '../container/ContainerInfo'
+import { createErrorLogger } from '../error-logger'
 
 interface Props {
   selectBeerIf: SelectBeerIf
@@ -59,7 +60,9 @@ function CreateStorage(props: Props): React.JSX.Element {
         onSubmit={
           isValid
             ? (e): void => {
-                void doChange(e, beer, container)
+                doChange(e, beer, container).catch(
+                  createErrorLogger('doChange failed', console.error),
+                )
               }
             : undefined
         }

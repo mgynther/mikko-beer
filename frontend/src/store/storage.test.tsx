@@ -17,6 +17,7 @@ import {
   useListStoragesByBrewery,
   useListStoragesByStyle,
 } from './storage'
+import { createErrorLogger } from '../../test-util/error-logger'
 
 // See store/beer.test.tsx for what the store layer's tests are for and why
 // the helpers render the data as text.
@@ -289,13 +290,13 @@ function CreateStorageHelper(props: CreateProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             try {
               props.onResult(await create(createRequest))
             } catch {
               props.onError()
             }
-          })()
+          })().catch(createErrorLogger('create failed', console.error))
         }}
       >
         Create
@@ -366,10 +367,10 @@ function DeleteStorageHelper(props: {
     <button
       type='button'
       onClick={() => {
-        void (async (): Promise<void> => {
+        ;(async (): Promise<void> => {
           await deleteStorage(storageId)
           props.onDeleted()
-        })()
+        })().catch(createErrorLogger('deleteStorage failed', console.error))
       }}
     >
       Delete

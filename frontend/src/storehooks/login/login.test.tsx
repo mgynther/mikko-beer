@@ -11,6 +11,7 @@ import type {
   ValidateLogin,
 } from './types'
 import { setupUser } from '../../../test-util/user-event'
+import { createErrorLogger } from '../../../test-util/error-logger'
 
 // Stubs for the store functions and the validator, for the reason given in
 // storehooks/brewery/get.test.tsx.
@@ -54,13 +55,13 @@ function Helper(props: HelperProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             try {
               await doLogin(params)
             } catch {
               props.onError()
             }
-          })()
+          })().catch(createErrorLogger('doLogin failed', console.error))
         }}
       >
         Login

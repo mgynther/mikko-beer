@@ -4,6 +4,7 @@ import { render, waitFor } from '@testing-library/react'
 import logout from './logout'
 import type { LogoutParams, UseLogout } from './types'
 import { setupUser } from '../../../test-util/user-event'
+import { createErrorLogger } from '../../../test-util/error-logger'
 
 // A stub for the store function, for the reason given in
 // storehooks/brewery/get.test.tsx. Logging out validates nothing: what is
@@ -26,7 +27,9 @@ function Helper(props: {
     <button
       type='button'
       onClick={() => {
-        void doLogout(params)
+        doLogout(params).catch(
+          createErrorLogger('doLogout failed', console.error),
+        )
       }}
     >
       Logout

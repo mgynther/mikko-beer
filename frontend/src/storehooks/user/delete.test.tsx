@@ -4,6 +4,7 @@ import { render, waitFor } from '@testing-library/react'
 import deleteUser from './delete'
 import type { UseDeleteUser } from './types'
 import { setupUser } from '../../../test-util/user-event'
+import { createErrorLogger } from '../../../test-util/error-logger'
 
 // A stub for the store function, for the reason given in
 // storehooks/brewery/get.test.tsx. Deleting validates nothing: what is proven
@@ -23,7 +24,9 @@ function Helper(props: {
     <button
       type='button'
       onClick={() => {
-        void deleteById(userId)
+        deleteById(userId).catch(
+          createErrorLogger('deleteById failed', console.error),
+        )
       }}
     >
       Delete

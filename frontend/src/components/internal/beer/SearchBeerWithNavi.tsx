@@ -3,6 +3,7 @@ import React from 'react'
 
 import SearchBeer from './SearchBeer'
 import type { SearchBeerIf } from '../../types/beer/types'
+import { createErrorLogger } from '../error-logger'
 
 interface Props {
   navigateIf: NavigateIf
@@ -15,7 +16,9 @@ function SearchBeerWithNavi(props: Props): React.JSX.Element {
     <SearchBeer
       searchBeerIf={props.searchBeerIf}
       select={(beer) => {
-        void navigate(`/beers/${beer.id}`)
+        navigate(`/beers/${beer.id}`).catch(
+          createErrorLogger('navigate failed', console.error),
+        )
       }}
     />
   )

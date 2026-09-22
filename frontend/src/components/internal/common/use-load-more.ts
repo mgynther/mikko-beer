@@ -1,4 +1,5 @@
 import { useCallback, useLayoutEffect, useRef } from 'react'
+import { createErrorLogger } from '../error-logger'
 
 export interface LoadMoreProps<T> {
   // Whether the list has a page left to load. The lists answer this from
@@ -71,12 +72,6 @@ export function useLoadMore<T>(props: LoadMoreProps<T>): () => void {
           // in order to say so.
           return [...(current ?? []), ...page]
         })
-      } catch (e) {
-        // Nothing above this has a way to report a failed page: the lists
-        // render what they have and say nothing about what did not arrive.
-        // Rethrowing would only reach the browser as an unhandled
-        // rejection, so the console is where it goes until they can say so.
-        console.error('loading a page failed', e)
       } finally {
         // A failed page releases the lock too, or one would wedge the list
         // for as long as it is on the screen.
@@ -89,6 +84,9 @@ export function useLoadMore<T>(props: LoadMoreProps<T>): () => void {
         isLoadingRef.current = false
       }
     }
-    void load()
+    // Nothing above this has a way to report a failed page: the lists render
+    // what they have and say nothing about what did not arrive. The console
+    // is where it goes until one of them can say so.
+    load().catch(createErrorLogger('loading a page failed', console.error))
   }, [])
 }

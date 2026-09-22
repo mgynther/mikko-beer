@@ -13,6 +13,7 @@ import {
   useSearchBreweries,
   useUpdateBrewery,
 } from './brewery'
+import { createErrorLogger } from '../../test-util/error-logger'
 
 // The store layer is where the requests are real: these tests drive the test
 // server and prove that a public function asks for the right url with the
@@ -119,13 +120,13 @@ function ListBreweriesHelper(props: ListProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             try {
               props.onResult(await list({ size: props.size, skip: 0 }))
             } catch {
               props.onError()
             }
-          })()
+          })().catch(createErrorLogger('list failed', console.error))
         }}
       >
         List
@@ -202,9 +203,9 @@ function SearchBreweriesHelper(props: TriggerProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             props.onResult(await search('test'))
-          })()
+          })().catch(createErrorLogger('search failed', console.error))
         }}
       >
         Search
@@ -246,14 +247,14 @@ function CreateBreweryHelper(props: TriggerProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             props.onResult(
               await create({
                 name: brewery.name,
                 country: brewery.country,
               }),
             )
-          })()
+          })().catch(createErrorLogger('create failed', console.error))
         }}
       >
         Create
@@ -295,9 +296,9 @@ function UpdateBreweryHelper(props: TriggerProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             props.onResult(await update(brewery))
-          })()
+          })().catch(createErrorLogger('update failed', console.error))
         }}
       >
         Update

@@ -5,6 +5,7 @@ import type { Beer, BeerWithIds, UpdateBeerIf } from '../../types/beer/types'
 import EditActions from '../common/EditActions'
 
 import BeerEditor from './BeerEditor'
+import { createErrorLogger } from '../error-logger'
 
 interface Props {
   updateBeerIf: UpdateBeerIf
@@ -39,7 +40,9 @@ function UpdateBeer(props: Props): React.JSX.Element {
         onSave={
           newBeer
             ? (): void => {
-                void doUpdate(newBeer)
+                doUpdate(newBeer).catch(
+                  createErrorLogger('doUpdate failed', console.error),
+                )
               }
             : undefined
         }

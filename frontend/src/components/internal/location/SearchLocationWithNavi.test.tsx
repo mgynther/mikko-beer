@@ -40,7 +40,7 @@ const locations: Location[] = [location, anotherLocation]
 
 test('selects location', async () => {
   const user = setupUser()
-  const selector = vitest.fn()
+  const selector = vitest.fn(async (): Promise<void> => undefined)
   const { getByRole } = render(
     <SearchLocationWithNavi
       navigateIf={{
@@ -69,7 +69,7 @@ test('selects location', async () => {
 
 test('shows no results', async () => {
   const user = setupUser()
-  const selector = vitest.fn()
+  const selector = vitest.fn(async (): Promise<void> => undefined)
   const { getByRole, getByText } = render(
     <SearchLocationWithNavi
       navigateIf={{

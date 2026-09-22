@@ -25,6 +25,7 @@ import {
   useGetRatingStats,
   useGetStyleStats,
 } from './stats'
+import { createErrorLogger } from '../../test-util/error-logger'
 
 // See store/beer.test.tsx for what the store layer's tests are for and why
 // the helpers render the data as text.
@@ -264,9 +265,9 @@ function AnnualContainerStatsHelper(
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             props.onResult(await query(props.params))
-          })()
+          })().catch(createErrorLogger('query failed', console.error))
         }}
       >
         Query
@@ -326,9 +327,9 @@ function BreweryStatsHelper(props: BreweryStatsProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             props.onResult(await query(props.params))
-          })()
+          })().catch(createErrorLogger('query failed', console.error))
         }}
       >
         Query
@@ -379,9 +380,9 @@ function BreweryCountryStatsHelper(
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             props.onResult(await query(props.params))
-          })()
+          })().catch(createErrorLogger('query failed', console.error))
         }}
       >
         Query
@@ -438,9 +439,9 @@ function LocationStatsHelper(props: LocationStatsProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             props.onResult(await query(props.params))
-          })()
+          })().catch(createErrorLogger('query failed', console.error))
         }}
       >
         Query

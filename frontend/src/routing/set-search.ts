@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import type { NavigateIf } from './navigate'
+import { createErrorLogger } from './error-logger'
 
 type ReviewList = (state: Record<string, string>) => void
 type Stats = (mode: string, state: Record<string, string>) => void
@@ -52,14 +53,13 @@ export function createSetSearch(
     setStoredStatsState({})
   }, [pathname])
 
-  useEffect(
-    () => void doNavigate(),
-    [
-      JSON.stringify(storedReviewListState),
-      storedStatsMode,
-      JSON.stringify(storedStatsState),
-    ],
-  )
+  useEffect(() => {
+    doNavigate().catch(createErrorLogger('doNavigate failed', console.error))
+  }, [
+    JSON.stringify(storedReviewListState),
+    storedStatsMode,
+    JSON.stringify(storedStatsState),
+  ])
 
   return {
     reviewList: (state: Record<string, string>): void => {

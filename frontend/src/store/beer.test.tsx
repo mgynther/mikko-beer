@@ -13,6 +13,7 @@ import {
   useSearchBeers,
   useUpdateBeer,
 } from './beer'
+import { createErrorLogger } from '../../test-util/error-logger'
 
 // The store layer is where the requests are real: these tests drive the test
 // server and prove that a public function asks for the right url with the
@@ -120,13 +121,13 @@ function ListBeersHelper(props: ListProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             try {
               props.onResult(await list({ size: props.size, skip: 0 }))
             } catch {
               props.onError()
             }
-          })()
+          })().catch(createErrorLogger('list failed', console.error))
         }}
       >
         List
@@ -203,9 +204,9 @@ function SearchBeersHelper(props: TriggerProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             props.onResult(await search('test'))
-          })()
+          })().catch(createErrorLogger('search failed', console.error))
         }}
       >
         Search
@@ -247,7 +248,7 @@ function CreateBeerHelper(props: TriggerProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             props.onResult(
               await create({
                 name: beer.name,
@@ -255,7 +256,7 @@ function CreateBeerHelper(props: TriggerProps): React.JSX.Element {
                 styles: beer.styles,
               }),
             )
-          })()
+          })().catch(createErrorLogger('create failed', console.error))
         }}
       >
         Create
@@ -297,9 +298,9 @@ function UpdateBeerHelper(props: TriggerProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             props.onResult(await update(beer))
-          })()
+          })().catch(createErrorLogger('update failed', console.error))
         }}
       >
         Update

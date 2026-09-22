@@ -7,6 +7,7 @@ import SearchBox from '../common/SearchBox'
 import { joinSortedNames } from '../../util'
 
 import './SelectBeer.css'
+import { createErrorLogger } from '../error-logger'
 
 export interface Props {
   searchBeerIf: SearchBeerIf
@@ -29,7 +30,9 @@ function SearchBeer(props: Props): React.JSX.Element {
       setResults([])
       return
     }
-    void doSearch(debouncedFilter)
+    doSearch(debouncedFilter).catch(
+      createErrorLogger('doSearch failed', console.error),
+    )
   }, [debouncedFilter])
 
   return (

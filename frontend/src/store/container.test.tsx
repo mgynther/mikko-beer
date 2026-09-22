@@ -11,6 +11,7 @@ import {
   useListContainers,
   useUpdateContainer,
 } from './container'
+import { createErrorLogger } from '../../test-util/error-logger'
 
 // See store/beer.test.tsx for what the store layer's tests are for and why
 // the helpers render the data as text.
@@ -79,11 +80,11 @@ function CreateContainerHelper(props: TriggerProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             props.onResult(
               await create({ type: container.type, size: container.size }),
             )
-          })()
+          })().catch(createErrorLogger('create failed', console.error))
         }}
       >
         Create
@@ -126,9 +127,9 @@ function UpdateContainerHelper(props: TriggerProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             props.onResult(await update(container))
-          })()
+          })().catch(createErrorLogger('update failed', console.error))
         }}
       >
         Update

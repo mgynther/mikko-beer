@@ -5,6 +5,7 @@ import type { UpdateLocationIf, Location } from '../../types/location/types'
 import EditActions from '../common/EditActions'
 
 import LocationEditor from './LocationEditor'
+import { createErrorLogger } from '../error-logger'
 
 interface Props {
   updateLocationIf: UpdateLocationIf
@@ -41,7 +42,9 @@ function UpdateLocation(props: Props): React.JSX.Element {
         onSave={
           newLocation
             ? (): void => {
-                void doUpdate(newLocation)
+                doUpdate(newLocation).catch(
+                  createErrorLogger('doUpdate failed', console.error),
+                )
               }
             : undefined
         }

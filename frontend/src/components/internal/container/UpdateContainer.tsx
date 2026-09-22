@@ -8,6 +8,7 @@ import type {
 import EditActions from '../common/EditActions'
 
 import ContainerEditor from './ContainerEditor'
+import { createErrorLogger } from '../error-logger'
 
 interface Props {
   initialContainer: Container
@@ -43,7 +44,9 @@ function UpdateContainer(props: Props): React.JSX.Element {
         onSave={
           newContainer
             ? (): void => {
-                void doUpdate(newContainer)
+                doUpdate(newContainer).catch(
+                  createErrorLogger('doUpdate failed', console.error),
+                )
               }
             : undefined
         }

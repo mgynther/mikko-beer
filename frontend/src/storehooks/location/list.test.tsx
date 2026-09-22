@@ -10,6 +10,7 @@ import type {
 } from './types'
 import type { Pagination } from '../types'
 import { setupUser } from '../../../test-util/user-event'
+import { createErrorLogger } from '../../../test-util/error-logger'
 
 // Stubs for the store function and the validators, for the reason given in
 // get.test.tsx.
@@ -64,9 +65,9 @@ function Helper(props: HelperProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             props.onListed(await list(pagination))
-          })()
+          })().catch(createErrorLogger('list failed', console.error))
         }}
       >
         List

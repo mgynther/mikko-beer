@@ -15,6 +15,7 @@ import {
   useSaveLogin,
   useStoredLogin,
 } from './login'
+import { createErrorLogger } from '../../test-util/error-logger'
 
 // See store/beer.test.tsx for what the store layer's tests are for. The
 // session the store keeps is tested here too: it is what the refresh handling
@@ -56,13 +57,13 @@ function LoginHelper(props: LoginProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             const response = await login({
               username: props.username,
               password: 'password1',
             })
             props.onResponse(response.isSuccess, response.data)
-          })()
+          })().catch(createErrorLogger('login failed', console.error))
         }}
       >
         Login
@@ -158,13 +159,13 @@ function LogoutHelper(props: { onLoggedOut: () => void }): React.JSX.Element {
     <button
       type='button'
       onClick={() => {
-        void (async (): Promise<void> => {
+        ;(async (): Promise<void> => {
           await logout({
             userId: signedIn.user.id,
             body: { refreshToken: signedIn.refreshToken },
           })
           props.onLoggedOut()
-        })()
+        })().catch(createErrorLogger('logout failed', console.error))
       }}
     >
       Logout
@@ -204,13 +205,13 @@ function ChangePasswordHelper(props: { userId: string }): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void changePassword({
+          changePassword({
             userId: props.userId,
             body: {
               oldPassword: 'oldpassword',
               newPassword: 'newpassword',
             },
-          })
+          }).catch(createErrorLogger('changePassword failed', console.error))
         }}
       >
         Change password

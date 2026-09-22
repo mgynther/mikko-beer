@@ -6,6 +6,7 @@ import './ChangePassword.css'
 import type { ChangePasswordIf, Login } from '../../types/login/types'
 
 import type { PasswordChangeResult } from '../../types/login/types'
+import { createErrorLogger } from '../error-logger'
 
 interface Props {
   changePasswordIf: ChangePasswordIf
@@ -64,7 +65,7 @@ function ChangePassword(props: Props): React.JSX.Element | null {
       <form
         className='ChangePasswordForm'
         onSubmit={(e) => {
-          void doChange(e)
+          doChange(e).catch(createErrorLogger('doChange failed', console.error))
         }}
       >
         <div>

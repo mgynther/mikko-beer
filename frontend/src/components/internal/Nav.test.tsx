@@ -312,7 +312,7 @@ test('do not show admin features to viewer', async () => {
 
 test('searches beer', async () => {
   const user = setupUser()
-  const navigate = vitest.fn()
+  const navigate = vitest.fn(async (): Promise<void> => undefined)
   const searchBeerIf: SearchBeerIf = {
     useSearch: () => ({
       search: async () => beers,
@@ -348,7 +348,7 @@ test('searches beer', async () => {
 
 test('searches brewery', async () => {
   const user = setupUser()
-  const navigate = vitest.fn()
+  const navigate = vitest.fn(async (): Promise<void> => undefined)
   const searchBreweryIf: SearchBreweryIf = {
     useSearch: () => ({
       search: async () => [brewery],

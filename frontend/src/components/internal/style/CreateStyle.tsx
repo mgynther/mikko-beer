@@ -12,6 +12,7 @@ import LoadingIndicator from '../common/LoadingIndicator'
 import StyleEditor from './StyleEditor'
 
 import './CreateStyle.css'
+import { createErrorLogger } from '../error-logger'
 
 export interface Props {
   selectStyleIf: SelectStyleIf
@@ -59,7 +60,9 @@ function CreateStyle(props: Props): React.JSX.Element {
           onClick={
             style
               ? (): void => {
-                  void doCreate(style)
+                  doCreate(style).catch(
+                    createErrorLogger('doCreate failed', console.error),
+                  )
                 }
               : undefined
           }

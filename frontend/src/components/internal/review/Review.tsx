@@ -18,6 +18,7 @@ import UpdateReview from './UpdateReview'
 import '../../review/Review.css'
 import ContainerInfo from '../container/ContainerInfo'
 import type { LinkComponent } from '../../common/link'
+import { createErrorLogger } from '../error-logger'
 
 interface Props {
   linkComponent: LinkComponent
@@ -55,7 +56,9 @@ function Review(props: Props): React.JSX.Element {
           key={review.id}
           onClick={() => {
             if (fullReview === undefined) {
-              void fetchReview(review.id)
+              fetchReview(review.id).catch(
+                createErrorLogger('fetchReview failed', console.error),
+              )
               return
             }
             setIsOpen(!isOpen)
@@ -140,7 +143,9 @@ function Review(props: Props): React.JSX.Element {
             }}
             onSaved={() => {
               setMode(EditableMode.View)
-              void fetchReview(review.id)
+              fetchReview(review.id).catch(
+                createErrorLogger('fetchReview failed', console.error),
+              )
               if (props.onChanged !== undefined) {
                 props.onChanged()
               }

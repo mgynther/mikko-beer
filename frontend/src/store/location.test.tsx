@@ -13,6 +13,7 @@ import {
   useSearchLocations,
   useUpdateLocation,
 } from './location'
+import { createErrorLogger } from '../../test-util/error-logger'
 
 // The store layer is where the requests are real: these tests drive the test
 // server and prove that a public function asks for the right url with the
@@ -118,13 +119,13 @@ function ListLocationsHelper(props: ListProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             try {
               props.onResult(await list({ size: props.size, skip: 0 }))
             } catch {
               props.onError()
             }
-          })()
+          })().catch(createErrorLogger('list failed', console.error))
         }}
       >
         List
@@ -201,9 +202,9 @@ function SearchLocationsHelper(props: TriggerProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             props.onResult(await search('test'))
-          })()
+          })().catch(createErrorLogger('search failed', console.error))
         }}
       >
         Search
@@ -245,13 +246,13 @@ function CreateLocationHelper(props: TriggerProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             props.onResult(
               await create({
                 name: location.name,
               }),
             )
-          })()
+          })().catch(createErrorLogger('create failed', console.error))
         }}
       >
         Create
@@ -293,9 +294,9 @@ function UpdateLocationHelper(props: TriggerProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             props.onResult(await update(location))
-          })()
+          })().catch(createErrorLogger('update failed', console.error))
         }}
       >
         Update

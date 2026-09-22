@@ -90,6 +90,8 @@ const rules = {
     },
   ],
   '@typescript-eslint/require-await': 'error',
+  '@typescript-eslint/no-floating-promises': ['error', { ignoreVoid: false }],
+  '@typescript-eslint/no-misused-promises': 'error',
 
   complexity: 'off',
   'max-lines': 'off',

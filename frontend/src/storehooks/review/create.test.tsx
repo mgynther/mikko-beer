@@ -9,6 +9,7 @@ import type {
   ValidateReviewOrUndefined,
 } from './types'
 import { setupUser } from '../../../test-util/user-event'
+import { createErrorLogger } from '../../../test-util/error-logger'
 
 // Stubs for the store function and the validator, for the reason given in
 // storehooks/brewery/get.test.tsx.
@@ -72,7 +73,9 @@ function Helper(props: HelperProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void create(request)
+          create(request).catch(
+            createErrorLogger('create failed', console.error),
+          )
         }}
       >
         Create

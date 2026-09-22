@@ -4,6 +4,7 @@ import { render, waitFor } from '@testing-library/react'
 import updateContainer from './update'
 import type { Container, UseUpdateContainer, ValidateContainer } from './types'
 import { setupUser } from '../../../test-util/user-event'
+import { createErrorLogger } from '../../../test-util/error-logger'
 
 // Stubs for the store function and the validator, for the reason given in
 // get.test.tsx.
@@ -46,14 +47,14 @@ function Helper(props: HelperProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             try {
               await update(container)
               props.onUpdated()
             } catch {
               props.onError()
             }
-          })()
+          })().catch(createErrorLogger('update failed', console.error))
         }}
       >
         Update

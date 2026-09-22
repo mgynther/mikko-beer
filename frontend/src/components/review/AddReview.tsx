@@ -14,6 +14,7 @@ import ReviewEditor, {
 } from '../internal/review/ReviewEditor'
 
 import './AddReview.css'
+import { createErrorLogger } from '../internal/error-logger'
 
 function toInitialReview(
   storageData: Storage,
@@ -73,12 +74,16 @@ function AddReview(props: Props): React.JSX.Element {
 
   useEffect(() => {
     if (isSuccess && createdReview !== undefined) {
-      void navigate(`/beers/${createdReview.beer}`)
+      navigate(`/beers/${createdReview.beer}`).catch(
+        createErrorLogger('navigate failed', console.error),
+      )
     }
   }, [isSuccess, createdReview])
 
   function doAddReview(review: ReviewRequest): void {
-    void create({ body: review, storageId })
+    create({ body: review, storageId }).catch(
+      createErrorLogger('create failed', console.error),
+    )
   }
 
   if (storageId !== '' && !isLoadingStorage && storage === undefined) {

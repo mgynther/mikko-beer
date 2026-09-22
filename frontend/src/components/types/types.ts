@@ -35,7 +35,7 @@ export type InfiniteScroll = (loadMore: () => void) => () => void
 export type NavigationFunc = (
   url: string,
   options?: { replace: boolean },
-) => void | Promise<void>
+) => Promise<void>
 
 export interface NavigateIf {
   useNavigate: () => NavigationFunc

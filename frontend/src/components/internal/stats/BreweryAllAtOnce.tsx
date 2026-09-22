@@ -10,6 +10,7 @@ import BreweryStatsTable from './BreweryStatsTable'
 import type { StatsFilterState } from './filter-types'
 import type { FormattedStatsParams } from './search-params'
 import type { LinkComponent } from '../../common/link'
+import { createErrorLogger } from '../error-logger'
 
 interface Props {
   linkComponent: LinkComponent
@@ -83,7 +84,7 @@ function BreweryAllAtOnce(props: Props): React.JSX.Element {
       })
       setLoadedBreweries([...result.brewery])
     }
-    void loadAll()
+    loadAll().catch(createErrorLogger('loadAll failed', console.error))
   }, [
     breweryId,
     locationId,

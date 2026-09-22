@@ -4,6 +4,7 @@ import { render, waitFor } from '@testing-library/react'
 import searchBeer from './search'
 import type { Beer, BeerList, UseSearchBeers, ValidateBeerList } from './types'
 import { setupUser } from '../../../test-util/user-event'
+import { createErrorLogger } from '../../../test-util/error-logger'
 
 // Stubs for the store function and the validator, for the reason given in
 // get.test.tsx.
@@ -45,9 +46,9 @@ function Helper(props: HelperProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             props.onFound(await search('beer name'))
-          })()
+          })().catch(createErrorLogger('search failed', console.error))
         }}
       >
         Search

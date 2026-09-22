@@ -22,6 +22,7 @@ import {
   useListReviewsByStyle,
   useUpdateReview,
 } from './review'
+import { createErrorLogger } from '../../test-util/error-logger'
 
 // See store/beer.test.tsx for what the store layer's tests are for and why
 // the helpers render the data as text.
@@ -79,9 +80,9 @@ function GetReviewHelper(props: TriggerProps): React.JSX.Element {
     <button
       type='button'
       onClick={() => {
-        void (async (): Promise<void> => {
+        ;(async (): Promise<void> => {
           props.onResult(await get(reviewId))
-        })()
+        })().catch(createErrorLogger('get failed', console.error))
       }}
     >
       Get
@@ -126,9 +127,9 @@ function ListReviewsHelper(props: TriggerProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             props.onResult(await list(params))
-          })()
+          })().catch(createErrorLogger('list failed', console.error))
         }}
       >
         List
@@ -298,7 +299,7 @@ function CreateReviewHelper(props: { storageId: string }): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void create({
+          create({
             body: {
               additionalInfo: review.additionalInfo,
               beer: review.beer,
@@ -310,7 +311,7 @@ function CreateReviewHelper(props: { storageId: string }): React.JSX.Element {
               time: review.time,
             },
             storageId: props.storageId,
-          })
+          }).catch(createErrorLogger('create failed', console.error))
         }}
       >
         Create
@@ -374,9 +375,9 @@ function UpdateReviewHelper(props: TriggerProps): React.JSX.Element {
       <button
         type='button'
         onClick={() => {
-          void (async (): Promise<void> => {
+          ;(async (): Promise<void> => {
             props.onResult(await update(review))
-          })()
+          })().catch(createErrorLogger('update failed', console.error))
         }}
       >
         Update

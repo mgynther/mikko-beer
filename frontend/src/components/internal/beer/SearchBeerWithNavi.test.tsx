@@ -49,7 +49,7 @@ const beers = [beer, anotherBeer]
 
 test('selects beer', async () => {
   const user = setupUser()
-  const selector = vitest.fn()
+  const selector = vitest.fn(async (): Promise<void> => undefined)
   const searchBeerIf: SearchBeerIf = {
     useSearch: () => ({
       search: async () => beers,

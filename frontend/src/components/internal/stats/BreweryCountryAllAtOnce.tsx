@@ -9,6 +9,7 @@ import type {
 import BreweryCountryStatsTable from './BreweryCountryStatsTable'
 import type { StatsFilterState } from './filter-types'
 import type { FormattedStatsParams } from './search-params'
+import { createErrorLogger } from '../error-logger'
 
 interface Props {
   getBreweryCountryStatsIf: GetBreweryCountryStatsIf
@@ -85,7 +86,7 @@ function BreweryCountryAllAtOnce(props: Props): React.JSX.Element {
       })
       setLoadedBreweryCountries([...result.breweryCountry])
     }
-    void loadAll()
+    loadAll().catch(createErrorLogger('loadAll failed', console.error))
   }, [
     breweryId,
     locationId,

@@ -5,6 +5,7 @@ import type { UpdateBreweryHookIf, Brewery } from '../../types/brewery/types'
 import EditActions from '../common/EditActions'
 
 import BreweryEditor from './BreweryEditor'
+import { createErrorLogger } from '../error-logger'
 
 interface Props {
   updateBreweryHookIf: UpdateBreweryHookIf
@@ -39,7 +40,9 @@ function UpdateBrewery(props: Props): React.JSX.Element {
         onSave={
           newBrewery
             ? (): void => {
-                void doUpdate(newBrewery)
+                doUpdate(newBrewery).catch(
+                  createErrorLogger('doUpdate failed', console.error),
+                )
               }
             : undefined
         }

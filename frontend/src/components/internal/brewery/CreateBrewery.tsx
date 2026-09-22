@@ -8,6 +8,7 @@ import LoadingIndicator from '../common/LoadingIndicator'
 import BreweryEditor from './BreweryEditor'
 
 import '../../common/FlexRow.css'
+import { createErrorLogger } from '../error-logger'
 
 export interface Props {
   createBreweryIf: CreateBreweryIf
@@ -47,7 +48,9 @@ function CreateBrewery(props: Props): React.JSX.Element {
             onClick={
               newBrewery
                 ? (): void => {
-                    void doCreate(newBrewery)
+                    doCreate(newBrewery).catch(
+                      createErrorLogger('doCreate failed', console.error),
+                    )
                   }
                 : undefined
             }

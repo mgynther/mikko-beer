@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import type { Brewery, SearchBreweryIf } from '../../types/brewery/types'
 
 import SearchBox, { nameFormatter } from '../common/SearchBox'
+import { createErrorLogger } from '../error-logger'
 
 export interface Props {
   searchBreweryIf: SearchBreweryIf
@@ -26,7 +27,9 @@ function SearchBrewery(props: Props): React.JSX.Element {
       setResults([])
       return
     }
-    void doSearch(debouncedFilter)
+    doSearch(debouncedFilter).catch(
+      createErrorLogger('doSearch failed', console.error),
+    )
   }, [debouncedFilter])
 
   return (

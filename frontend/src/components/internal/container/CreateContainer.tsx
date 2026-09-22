@@ -6,6 +6,7 @@ import Button from '../common/Button'
 import LoadingIndicator from '../common/LoadingIndicator'
 
 import ContainerEditor from './ContainerEditor'
+import { createErrorLogger } from '../error-logger'
 
 export interface Props {
   select: (container: Container) => void
@@ -42,7 +43,9 @@ function CreateContainer(props: Props): React.JSX.Element {
         onClick={
           container
             ? (): void => {
-                void doCreate(container)
+                doCreate(container).catch(
+                  createErrorLogger('doCreate failed', console.error),
+                )
               }
             : undefined
         }

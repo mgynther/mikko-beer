@@ -5,6 +5,7 @@ import type { Confirm } from '../confirm'
 
 import SearchBox, { nameFormatter } from '../common/SearchBox'
 import { createLocationSort } from './create-location-sort'
+import { createErrorLogger } from '../error-logger'
 
 export interface Props {
   confirm: Confirm
@@ -35,7 +36,9 @@ function SearchLocation(props: Props): React.JSX.Element {
       setResults([])
       return
     }
-    void doSearch(debouncedFilter)
+    doSearch(debouncedFilter).catch(
+      createErrorLogger('doSearch failed', console.error),
+    )
   }, [debouncedFilter])
 
   const hasCurrentFilter = results.some(
@@ -77,11 +80,15 @@ function SearchLocation(props: Props): React.JSX.Element {
               const confirmQuestion =
                 `Are you sure you want to create ${debouncedFilter}?`
               if (props.confirm(confirmQuestion)) {
-                void doCreate()
+                doCreate().catch(
+                  createErrorLogger('doCreate failed', console.error),
+                )
               }
               return
             }
-            void doCreate()
+            doCreate().catch(
+              createErrorLogger('doCreate failed', console.error),
+            )
             return
           }
           props.select(location)

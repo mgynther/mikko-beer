@@ -211,7 +211,7 @@ async function addReview(
 
 test('adds review', async () => {
   const user = setupUser()
-  const create = vitest.fn()
+  const create = vitest.fn(async (): Promise<void> => undefined)
   const props: AddReviewProps = {
     createReviewIf: {
       useCreate: () => ({
@@ -343,7 +343,7 @@ test('shows storage loading error', async () => {
 
 test('adds review from storage', async () => {
   const user = setupUser()
-  const create = vitest.fn()
+  const create = vitest.fn(async (): Promise<void> => undefined)
   const props: AddReviewProps = {
     createReviewIf: {
       useCreate: () => ({
@@ -409,7 +409,7 @@ test('adds review from storage', async () => {
 })
 
 test('navigates', async () => {
-  const navigate = vitest.fn()
+  const navigate = vitest.fn(async (): Promise<void> => undefined)
   const beerId = '7795fabb-a4c4-4e43-b5d0-8b7f01aa906c'
   render(
     <AddReview

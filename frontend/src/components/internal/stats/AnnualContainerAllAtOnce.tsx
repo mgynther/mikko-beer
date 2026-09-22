@@ -6,6 +6,7 @@ import type {
 } from '../../types/stats/types'
 
 import AnnualContainerStatsTable from './AnnualContainerStatsTable'
+import { createErrorLogger } from '../error-logger'
 
 interface Props {
   getAnnualContainerStatsIf: GetAnnualContainerStatsIf
@@ -46,7 +47,7 @@ function AnnualContainerAllAtOnce(props: Props): React.JSX.Element {
       })
       setLoadedAnnualContainers([...result.annualContainer])
     }
-    void loadAll()
+    loadAll().catch(createErrorLogger('loadAll failed', console.error))
   }, [breweryId, locationId, styleId])
 
   return (
