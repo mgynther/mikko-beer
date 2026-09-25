@@ -12,8 +12,9 @@ import type {
   JoinedReview,
   NewReview,
   Review,
+  FullReviewListOrder,
+  FullReviewListRequest,
   ReviewListFilter,
-  ReviewListOrder,
   ReviewListRequest,
   UpdateIf,
   UpdateReviewRequest,
@@ -84,7 +85,7 @@ const joinedReview: JoinedReview = {
   ],
 }
 
-const order: ReviewListOrder = {
+const order: FullReviewListOrder = {
   property: 'rating',
   direction: 'desc',
 }
@@ -323,7 +324,7 @@ describe('review service unit tests', () => {
   it('list reviews', async () => {
     const lister = async (
       listPagination: Pagination,
-      listRequest: ReviewListRequest,
+      listRequest: FullReviewListRequest,
     ) => {
       assertDeepEqual(listPagination, pagination)
       assertDeepEqual(listRequest.filter, reviewListFilter)

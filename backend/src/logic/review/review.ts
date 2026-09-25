@@ -95,6 +95,16 @@ export interface ReviewListRequest {
   order: ReviewListOrder
 }
 
+export interface FullReviewListOrder {
+  property: 'rating' | 'time'
+  direction: ListDirection
+}
+
+export interface FullReviewListRequest {
+  filter: ReviewListFilter
+  order: FullReviewListOrder
+}
+
 export type CreateReviewRequest = ReviewRequest
 export type UpdateReviewRequest = ReviewRequest
 

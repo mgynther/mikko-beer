@@ -211,27 +211,19 @@ export interface ReviewListRequest {
   order: ReviewListOrder
 }
 
+export interface FullReviewListOrder {
+  property: 'rating' | 'time'
+  direction: ListDirection
+}
+
+export interface FullReviewListRequest {
+  filter: ReviewListFilter
+  order: FullReviewListOrder
+}
+
 function getListQueryHelper(
-  reviewListRequest: ReviewListRequest,
+  reviewListRequest: FullReviewListRequest,
 ): ListQueryHelper {
-  if (reviewListRequest.order.property === 'beer_name') {
-    return {
-      selectQuery: getListQueryByRating(
-        reviewListRequest.filter,
-        reviewListRequest.order.direction,
-      ),
-      orderBy: getOrderByBeerName(reviewListRequest.order.direction),
-    }
-  }
-  if (reviewListRequest.order.property === 'brewery_name') {
-    return {
-      selectQuery: getListQueryByRating(
-        reviewListRequest.filter,
-        reviewListRequest.order.direction,
-      ),
-      orderBy: getOrderByBreweryName(reviewListRequest.order.direction),
-    }
-  }
   if (reviewListRequest.order.property === 'rating') {
     return {
       selectQuery: getListQueryByRating(
@@ -341,7 +333,7 @@ export interface JoinedReview {
 export async function listReviews(
   db: Database,
   pagination: Pagination,
-  reviewListRequest: ReviewListRequest,
+  reviewListRequest: FullReviewListRequest,
 ): Promise<JoinedReview[]> {
   const { start, end } = toRowNumbers(pagination)
 

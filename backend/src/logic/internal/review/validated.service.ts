@@ -4,6 +4,7 @@ import type {
   CreateIf,
   JoinedReview,
   Review,
+  FullReviewListRequest,
   ReviewListRequest,
   UpdateIf,
   ValidateCreateReview,
@@ -84,10 +85,10 @@ export async function findReviewById(
 export async function listReviews(
   list: (
     pagination: Pagination,
-    reviewListRequest: ReviewListRequest,
+    reviewListRequest: FullReviewListRequest,
   ) => Promise<JoinedReview[]>,
   pagination: Pagination,
-  reviewListRequest: ReviewListRequest,
+  reviewListRequest: FullReviewListRequest,
   log: log,
 ): Promise<JoinedReview[]> {
   return await reviewService.listReviews(

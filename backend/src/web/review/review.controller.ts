@@ -11,6 +11,7 @@ import type { Router } from '../router.js'
 import type { Pagination } from '../../logic/pagination.js'
 import type {
   CreateIf,
+  FullReviewListRequest,
   JoinedReview,
   NewReview,
   Review,
@@ -435,7 +436,7 @@ export function reviewController(router: Router): void {
     const reviewResult = await reviewService.listReviews(
       async (
         pagination: Pagination,
-        reviewListRequest: ReviewListRequest,
+        reviewListRequest: FullReviewListRequest,
       ): Promise<JoinedReview[]> =>
         await reviewRepository.listReviews(
           ctx.db,

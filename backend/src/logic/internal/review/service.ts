@@ -5,6 +5,7 @@ import type {
   Review,
   CreateIf,
   UpdateIf,
+  FullReviewListRequest,
   ReviewListRequest,
 } from '../../review/review.js'
 
@@ -95,10 +96,10 @@ export async function findReviewById(
 export async function listReviews(
   list: (
     pagination: Pagination,
-    reviewListRequest: ReviewListRequest,
+    reviewListRequest: FullReviewListRequest,
   ) => Promise<JoinedReview[]>,
   pagination: Pagination,
-  reviewListRequest: ReviewListRequest,
+  reviewListRequest: FullReviewListRequest,
   log: log,
 ): Promise<JoinedReview[]> {
   log('INFO', 'list reviews', pagination, reviewListRequest)

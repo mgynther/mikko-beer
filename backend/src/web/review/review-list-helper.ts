@@ -5,6 +5,7 @@ import {
 } from '../../validation/review.js'
 
 import type {
+  FullReviewListOrder,
   ReviewListFilter,
   ReviewListOrder,
 } from '../../logic/review/review.js'
@@ -17,7 +18,7 @@ import {
 
 export function validateFullReviewListOrder(
   query: Record<string, unknown>,
-): ReviewListOrder {
+): FullReviewListOrder {
   const validationResult = doValidateFullReviewListOrder(query)
   if (validationResult.errorCode !== undefined) {
     switch (validationResult.errorCode) {

@@ -167,6 +167,11 @@ export interface ReviewListOrder {
   direction: ListDirection
 }
 
+export interface FullReviewListOrder {
+  property: 'rating' | 'time'
+  direction: ListDirection
+}
+
 export interface ReviewListFilter {
   minRating: number
   maxRating: number
@@ -184,7 +189,7 @@ export type FullReviewListOrderValidationResult =
     }
   | {
       errorCode: undefined
-      result: ReviewListOrder
+      result: FullReviewListOrder
     }
 
 export type FilteredReviewListOrderValidationResult =
@@ -287,7 +292,15 @@ export function validateFullReviewListOrder(
       result: undefined,
     }
   }
-  return { errorCode: undefined, result: reviewListOrder }
+  // The checks above narrow the property but not the object holding it, so
+  // the narrowed property goes into a new object.
+  return {
+    errorCode: undefined,
+    result: {
+      property: reviewListOrder.property,
+      direction: reviewListOrder.direction,
+    },
+  }
 }
 
 export function validateFilteredReviewListOrder(

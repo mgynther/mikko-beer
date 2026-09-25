@@ -4,6 +4,7 @@ import { TestContext } from '../test-context.js'
 import type { Database } from '../../../src/data/database.js'
 import * as reviewRepository from '../../../src/data/review/review.repository.js'
 import type {
+  FullReviewListRequest,
   JoinedReview,
   Review,
   ReviewListFilter,
@@ -11,11 +12,7 @@ import type {
   ReviewListRequest,
 } from '../../../src/data/review/review.repository.js'
 import { insertData, insertMultipleReviews } from '../review-helpers.js'
-import {
-  assertDeepEqual,
-  assertEqual,
-  assertNotDeepEqual,
-} from '../../assert.js'
+import { assertDeepEqual, assertNotDeepEqual } from '../../assert.js'
 
 const noOpReviewListFilter: ReviewListFilter = {
   minRating: 4,
@@ -35,7 +32,7 @@ describe('review tests', () => {
 
   async function listReviews(
     db: Database,
-    reviewListRequest: ReviewListRequest,
+    reviewListRequest: FullReviewListRequest,
   ): Promise<JoinedReview[]> {
     return await reviewRepository.listReviews(
       db,
@@ -46,7 +43,7 @@ describe('review tests', () => {
 
   async function prepareListTest(
     db: Database,
-    reviewListRequest: ReviewListRequest,
+    reviewListRequest: FullReviewListRequest,
   ) {
     const { reviews, data } = await insertMultipleReviews(10, db)
     const list = await listReviews(db, reviewListRequest)
@@ -72,85 +69,6 @@ describe('review tests', () => {
         id: review.id,
       })
     })
-  })
-
-  function sortDates(dates: Date[]): Date[] {
-    const sorted = [...dates]
-    function sortDate(a: Date, b: Date) {
-      return a.getTime() - b.getTime()
-    }
-    sorted.sort(sortDate)
-    return sorted
-  }
-
-  it('list reviews, brewery_name desc', async () => {
-    const db = ctx.db
-    const { data } = await insertMultipleReviews(10, db)
-    const reviewListOrder: ReviewListOrder = {
-      property: 'brewery_name',
-      direction: 'desc',
-    }
-    const list = await listReviews(db, {
-      filter: noOpReviewListFilter,
-      order: reviewListOrder,
-    })
-    assertEqual(list.length, 10)
-    const start = new Array(5).fill(1).map((_) => data.brewery.name)
-    const end = new Array(5).fill(1).map((_) => data.otherBrewery.name)
-    const expectedNames = [...start, ...end]
-    assertDeepEqual(
-      list.map((item) => item.breweries[0].name),
-      expectedNames,
-    )
-    function reviewToTime(row: JoinedReview): Date {
-      return row.time
-    }
-
-    const breweryReviewTimes = list.slice(0, 5).map(reviewToTime)
-    assertEqual(breweryReviewTimes.length, 5)
-    const expectedBreweryReviewTimes = sortDates([...breweryReviewTimes])
-    assertDeepEqual(breweryReviewTimes, expectedBreweryReviewTimes)
-
-    const otherBreweryReviewTimes = list.slice(5, 10).map(reviewToTime)
-    assertEqual(otherBreweryReviewTimes.length, 5)
-    const expectedOtherBreweryReviewTimes = sortDates([
-      ...otherBreweryReviewTimes,
-    ])
-    assertDeepEqual(otherBreweryReviewTimes, expectedOtherBreweryReviewTimes)
-  })
-
-  it('list reviews, beer_name asc', async () => {
-    const db = ctx.db
-    const { data } = await insertMultipleReviews(10, db)
-    const reviewListOrder: ReviewListOrder = {
-      property: 'beer_name',
-      direction: 'asc',
-    }
-    const list = await listReviews(db, {
-      filter: noOpReviewListFilter,
-      order: reviewListOrder,
-    })
-    assertEqual(list.length, 10)
-    const start = new Array(5).fill(1).map((_) => data.beer.name)
-    const end = new Array(5).fill(1).map((_) => data.otherBeer.name)
-    const expectedNames = [...start, ...end]
-    assertDeepEqual(
-      list.map((item) => item.beerName),
-      expectedNames,
-    )
-    function reviewToTime(row: JoinedReview): Date {
-      return row.time
-    }
-
-    const beerReviewTimes = list.slice(0, 5).map(reviewToTime)
-    assertEqual(beerReviewTimes.length, 5)
-    const expectedBeerReviewTimes = sortDates([...beerReviewTimes])
-    assertDeepEqual(beerReviewTimes, expectedBeerReviewTimes)
-
-    const otherBeerReviewTimes = list.slice(5, 10).map(reviewToTime)
-    assertEqual(otherBeerReviewTimes.length, 5)
-    const expectedOtherBeerReviewTimes = sortDates([...otherBeerReviewTimes])
-    assertDeepEqual(otherBeerReviewTimes, expectedOtherBeerReviewTimes)
   })
 
   function toTime(review: Review | JoinedReview): Date {
@@ -201,7 +119,7 @@ describe('review tests', () => {
 
   async function testTime(
     db: Database,
-    reviewListRequest: ReviewListRequest,
+    reviewListRequest: FullReviewListRequest,
     sorter: TimeSorter,
     expectedReviewsFilter: (review: Review) => boolean,
   ) {
@@ -303,7 +221,7 @@ describe('review tests', () => {
 
   async function testRatingTime(
     db: Database,
-    reviewListRequest: ReviewListRequest,
+    reviewListRequest: FullReviewListRequest,
     sorter: RatingSorter,
   ) {
     const { reviews, list } = await prepareListTest(db, reviewListRequest)

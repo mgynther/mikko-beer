@@ -12,6 +12,7 @@ import type {
   UpdateReviewRequest,
   UpdateIf,
   ReviewListFilter,
+  FullReviewListRequest,
   ReviewListRequest,
 } from '../../../src/logic/review/review.js'
 import { dummyLog as log } from '../dummy-log.js'
@@ -192,6 +193,10 @@ describe('review authorized service unit tests', () => {
       filter: reviewListFilter,
       order: reviewListOrder,
     }
+    const fullReviewListRequest: FullReviewListRequest = {
+      filter: reviewListFilter,
+      order: { property: 'time', direction: 'desc' },
+    }
     const joinedReview: JoinedReview = {
       ...review,
       beerId: review.beer,
@@ -236,7 +241,7 @@ describe('review authorized service unit tests', () => {
         async () => [joinedReview],
         token,
         { skip: 0, size: 20 },
-        reviewListRequest,
+        fullReviewListRequest,
         log,
       )
       assertDeepEqual(result, [joinedReview])
