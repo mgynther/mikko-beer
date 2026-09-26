@@ -38,7 +38,7 @@ interface Props {
   useUrlPathParams: UseUrlPathParams
 }
 
-function App(props: Props): React.JSX.Element {
+function RouterApp(props: Props): React.JSX.Element {
   const navMenu = props.storeIf.navMenuIf.useNavMenu()
   const themeSelection = props.storeIf.themeIf.useTheme()
   const { theme } = themeSelection
@@ -369,4 +369,4 @@ function App(props: Props): React.JSX.Element {
   )
 }
 
-export default App
+export default RouterApp

@@ -7,7 +7,7 @@ import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../test-util/filter-time'
 import { dontCall } from '../../test-util/dont-call'
 
-import App from './App'
+import RouterApp from './RouterApp'
 import type { StoreIf } from '../components/types/storeIf'
 import type { LinkComponent } from '../components/common/link'
 import { Role } from '../components/types/user/types'
@@ -498,7 +498,7 @@ const storeIf: StoreIf = {
 test('renders app login', () => {
   const { getByRole } = render(
     <MemoryRouter>
-      <App
+      <RouterApp
         linkComponent={linkComponent}
         navigateIf={navigateIf}
         storeIf={storeIf}
@@ -514,7 +514,7 @@ test('navigates to Beers', async () => {
   const user = setupUser()
   const { getByRole } = render(
     <MemoryRouter>
-      <App
+      <RouterApp
         linkComponent={linkComponent}
         navigateIf={navigateIf}
         storeIf={{
@@ -567,7 +567,7 @@ navigationTests.forEach((testCase) => {
     const user = setupUser()
     const { getByRole } = render(
       <MemoryRouter>
-        <App
+        <RouterApp
           linkComponent={linkComponent}
           navigateIf={navigateIf}
           storeIf={{
@@ -612,7 +612,7 @@ navigationMoreTests.forEach((testCase) => {
     const user = setupUser()
     const { getByRole } = render(
       <MemoryRouter>
-        <App
+        <RouterApp
           linkComponent={linkComponent}
           navigateIf={navigateIf}
           storeIf={{
@@ -640,7 +640,7 @@ test('loads annual stats directly', async () => {
   })
   const { getByRole, getByText } = render(
     <MemoryRouter>
-      <App
+      <RouterApp
         linkComponent={linkComponent}
         navigateIf={navigateIf}
         storeIf={{
@@ -664,7 +664,7 @@ test('sets theme to dark', async () => {
   const user = setupUser()
   const { getByRole } = render(
     <MemoryRouter>
-      <App
+      <RouterApp
         linkComponent={linkComponent}
         navigateIf={navigateIf}
         storeIf={{
@@ -692,7 +692,7 @@ test('logout', async () => {
   const logout = vitest.fn(async (): Promise<void> => undefined)
   const { getByRole } = render(
     <MemoryRouter>
-      <App
+      <RouterApp
         linkComponent={linkComponent}
         navigateIf={navigateIf}
         storeIf={{

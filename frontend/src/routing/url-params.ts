@@ -3,10 +3,6 @@ import {
   useSearchParams as useRouterSearchParams,
 } from 'react-router'
 
-// The path and query parameters of the current url, offered as interfaces the
-// same way navigating is. The shapes are declared here rather than imported
-// from types/ so that routing keeps importing nothing; they meet their
-// counterparts in RtkApp, which is where drift turns into a compile error.
 export type UseUrlPathParams = () => Record<string, string | undefined>
 
 export interface SearchParameters {

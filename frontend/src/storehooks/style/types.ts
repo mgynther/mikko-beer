@@ -1,8 +1,3 @@
-// The shapes these hooks work on and the validators they are given, declared
-// here rather than imported from types/ so that this layer can be changed and
-// tested without types/ having been changed first. types/ declares the same
-// shapes for the components and the two meet in RtkApp, which is where drift
-// between them turns into a compile error.
 export interface Style {
   id: string
   name: string

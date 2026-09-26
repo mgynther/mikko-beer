@@ -7,7 +7,7 @@ import type {
   UserIf,
 } from '../components/types/user/types'
 
-import App from './App.tsx'
+import RouterApp from './RouterApp.tsx'
 
 import type {
   SelectBreweryIf,
@@ -287,7 +287,7 @@ import { createSetSearch } from '../routing/set-search'
 import { getDate, getNextMonthDate } from './date-getter.ts'
 import type { YearMonth } from '../components/types/types.ts'
 
-function RtkApp(): React.JSX.Element {
+function StoreApp(): React.JSX.Element {
   const createBreweryIf: CreateBreweryIf = createBrewery(
     useCreateBrewery,
     validateBrewery,
@@ -700,7 +700,7 @@ function RtkApp(): React.JSX.Element {
   }
 
   return (
-    <App
+    <RouterApp
       linkComponent={Link}
       navigateIf={navigateIf}
       useUrlPathParams={useUrlPathParams}
@@ -709,4 +709,4 @@ function RtkApp(): React.JSX.Element {
   )
 }
 
-export default RtkApp
+export default StoreApp

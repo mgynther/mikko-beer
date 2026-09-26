@@ -114,8 +114,8 @@ const rules = {
 //
 // Composition is a layer rather than a set of files directly under src so that
 // it can be named in the bans. A relative import carries no layer in its path,
-// so src/components/beer/Beers.tsx importing '../../App' matched no pattern
-// and was allowed; 'wiring/App' matches, and is not.
+// so src/components/beer/Beers.tsx importing '../../RouterApp' matched no pattern
+// and was allowed; 'wiring/RouterApp' matches, and is not.
 //
 // Deriving the restrictions from a list keeps the rule impossible to state
 // inconsistently: a new layer is banned from every layer it is not given, and

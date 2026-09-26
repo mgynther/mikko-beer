@@ -27,11 +27,6 @@ export interface ThemeIf {
 
 export type InfiniteScroll = (loadMore: () => void) => () => void
 
-// Navigating is offered to the components as an interface, the same way
-// everything else is. The implementation lives in routing/ and defines
-// these two on its own rather than importing them from here: a layer that
-// imports nothing stays a layer that cannot break. The two definitions meet
-// in RtkApp, which is where drift between them turns into a compile error.
 export type NavigationFunc = (
   url: string,
   options?: { replace: boolean },

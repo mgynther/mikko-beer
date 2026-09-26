@@ -3,11 +3,6 @@ import { isLeft } from 'fp-ts/Either'
 
 import { formatError } from './format-error'
 
-// The shapes this module hands out, declared here rather than imported from
-// types/ because they are this layer's own view of what a valid response
-// contains. types/ declares the same shapes for the components and the two
-// meet in RtkApp, which is where drift between them turns into a compile
-// error.
 export interface Style {
   id: string
   name: string
