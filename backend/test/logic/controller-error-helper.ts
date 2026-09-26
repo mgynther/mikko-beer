@@ -24,8 +24,6 @@ export function expectThrow(fn: () => void, error: ControllerError) {
   throw new Error('expected error but nothing was thrown')
 }
 
-// earl Error validator do not seem to check message at least with async
-// rejections. To avoid mistakes it's better to have a custom validator.
 function assertControllerError(
   receivedError: unknown,
   expectedError: ControllerError,
