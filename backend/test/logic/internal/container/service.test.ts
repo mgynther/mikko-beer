@@ -11,12 +11,9 @@ import { containerNotFoundError } from '../../../../src/logic/errors.js'
 import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
 import { assertDeepEqual, assertEqual } from '../../../assert.js'
+import { buildContainer } from '../../container/builders.js'
 
-const container: Container = {
-  id: '1fcbeb9e-1ea1-4c50-8fe5-b0aa18ac7e9a',
-  type: 'draft',
-  size: '0.1',
-}
+const container = buildContainer()
 
 describe('container service unit tests', () => {
   it('create container', async () => {

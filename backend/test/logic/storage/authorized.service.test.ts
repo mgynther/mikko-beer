@@ -4,10 +4,8 @@ import * as storageService from '../../../src/logic/storage/authorized.service.j
 
 import type { AuthTokenPayload } from '../../../src/logic/auth/auth-token.js'
 import type {
-  JoinedStorage,
   Storage,
   CreateStorageRequest,
-  UpdateStorageRequest,
   CreateIf,
   UpdateIf,
   StorageWithDate,
@@ -19,25 +17,19 @@ import {
   noRightsError,
 } from '../../../src/logic/errors.js'
 import { assertDeepEqual } from '../../assert.js'
+import { buildAuthTokenPayload } from '../auth/builders.js'
+import {
+  buildCreateStorageRequest,
+  buildJoinedStorage,
+  buildStorageWithDate,
+  buildUpdateStorageRequest,
+} from './builders.js'
 
-const validCreateStorageRequest: CreateStorageRequest = {
-  beer: 'd667bdcb-a26e-4079-b249-c50769129c4c',
-  bestBefore: '2024-12-12T12:12:12.000Z',
-  container: '38209047-93df-4aa6-ae22-1fde02c65edf',
-}
+const validCreateStorageRequest = buildCreateStorageRequest()
 
-const validUpdateStorageRequest: UpdateStorageRequest = {
-  beer: 'a3d0fda0-834b-4b8e-9164-822e422d63d0',
-  bestBefore: '2024-12-13T12:12:12.000Z',
-  container: '688904c8-a66f-4b1a-9b59-b9a2dc86a602',
-}
+const validUpdateStorageRequest = buildUpdateStorageRequest()
 
-const storage: StorageWithDate = {
-  id: 'bf684f7c-e4e1-488b-b2a2-afe363189144',
-  beer: 'cb7f08d3-eeb5-43b7-9c9d-d3d308fc5de5',
-  bestBefore: new Date('2024-12-11T12:12:12.000Z'),
-  container: '4455d3e8-7438-44cb-9b6e-95821c2d1b1e',
-}
+const storage = buildStorageWithDate()
 
 const invalidStorageRequest = {
   bestBefore: '2024-12-13T12:12:12.000Z',
@@ -50,29 +42,22 @@ const create: (
 const update: (storage: Storage) => Promise<StorageWithDate> = async () =>
   storage
 
+// Every beer and container a request refers to exists.
 const createIf: CreateIf = {
   insertStorage: create,
-  lockBeer: async () => storage.beer,
-  lockContainer: async () => storage.container,
+  lockBeer: async (id: string) => id,
+  lockContainer: async (id: string) => id,
 }
 
 const updateIf: UpdateIf = {
   updateStorage: update,
-  lockBeer: async () => storage.beer,
-  lockContainer: async () => storage.container,
+  lockBeer: async (id: string) => id,
+  lockContainer: async (id: string) => id,
 }
 
-const adminAuthToken: AuthTokenPayload = {
-  userId: '868fa5ed-6a50-4e9d-80ab-b16a496969e4',
-  role: 'admin',
-  refreshTokenId: 'dd80f30a-7757-4fd4-bee2-2fcc607f6507',
-}
+const adminAuthToken = buildAuthTokenPayload({ role: 'admin' })
 
-const viewerAuthToken: AuthTokenPayload = {
-  userId: '90c62eb4-3483-402d-979c-fc684da2c595',
-  role: 'viewer',
-  refreshTokenId: '5354aaa4-b3d0-45d8-8c81-75d18588b58d',
-}
+const viewerAuthToken = buildAuthTokenPayload({ role: 'viewer' })
 
 describe('storage authorized service unit tests', () => {
   function notCalled(): any {
@@ -194,31 +179,7 @@ describe('storage authorized service unit tests', () => {
     }, noRightsError)
   })
   ;[adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
-    const joinedStorage: JoinedStorage = {
-      ...storage,
-      bestBefore: new Date(storage.bestBefore),
-      beerId: storage.beer,
-      beerName: 'Weizenbock',
-      breweries: [
-        {
-          id: 'dd528975-07b6-4e11-b523-5c64986b618f',
-          name: 'Koskipanimo',
-        },
-      ],
-      container: {
-        id: 'c14851cd-9740-4cdc-8248-e1561d26ff9b',
-        size: '0.50',
-        type: 'draft',
-      },
-      createdAt: new Date('2022-12-30T17:15:12.123.Z'),
-      hasReview: false,
-      styles: [
-        {
-          id: 'd3353300-9ccc-4640-940a-5391655a3a73',
-          name: 'Weizenbock',
-        },
-      ],
-    }
+    const joinedStorage = buildJoinedStorage()
 
     it(`find storage as ${token.role}`, async () => {
       const result = await storageService.findStorageById(
@@ -226,7 +187,7 @@ describe('storage authorized service unit tests', () => {
         passStorageIdValidation,
         {
           authTokenPayload: token,
-          id: storage.id,
+          id: joinedStorage.id,
         },
         log,
       )
@@ -252,7 +213,7 @@ describe('storage authorized service unit tests', () => {
         }),
         {
           authTokenPayload: token,
-          id: joinedStorage.beerId,
+          id: 'd667bdcb-a26e-4079-b249-c50769129c4c',
         },
         log,
       )
@@ -268,7 +229,7 @@ describe('storage authorized service unit tests', () => {
         }),
         {
           authTokenPayload: token,
-          id: joinedStorage.breweries[0].id,
+          id: 'dd528975-07b6-4e11-b523-5c64986b618f',
         },
         log,
       )
@@ -284,7 +245,7 @@ describe('storage authorized service unit tests', () => {
         }),
         {
           authTokenPayload: token,
-          id: joinedStorage.styles[0].id,
+          id: 'd3353300-9ccc-4640-940a-5391655a3a73',
         },
         log,
       )

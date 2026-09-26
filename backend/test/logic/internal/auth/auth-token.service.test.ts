@@ -10,7 +10,6 @@ import {
   InvalidAuthTokenError,
 } from '../../../../src/logic/auth/auth-token.js'
 import type { DbRefreshToken } from '../../../../src/logic/auth/refresh-token.js'
-import type { User } from '../../../../src/logic/user/user.js'
 import type { Tokens } from '../../../../src/logic/auth/tokens'
 import { invalidCredentialsTokenError } from '../../../../src/logic/errors.js'
 import { expectReject } from '../../controller-error-helper.js'
@@ -22,6 +21,7 @@ import {
   assertTruthy,
 } from '../../../assert.js'
 import { testJwtIf } from '../../jwt-helper.js'
+import { buildUser } from '../../user/builders.js'
 
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {
@@ -31,11 +31,7 @@ const authTokenConfig: AuthTokenConfig = {
 
 const refreshTokenId = '914f4037-6cee-46ee-8799-1673dad63f55'
 
-const user: User = {
-  id: '4b71efe2-42ef-4724-8e67-1bb3e7bc21d3',
-  role: 'admin',
-  username: 'admin',
-}
+const user = buildUser({ role: 'admin' })
 
 // The token format itself belongs to the jwt layer. Here it is enough that
 // two distinct tokens were created.

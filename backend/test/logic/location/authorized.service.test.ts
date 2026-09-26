@@ -6,7 +6,6 @@ import type { AuthTokenPayload } from '../../../src/logic/auth/auth-token.js'
 import type {
   Location,
   CreateLocationRequest,
-  UpdateLocationRequest,
 } from '../../../src/logic/location/location.js'
 import { dummyLog as log } from '../dummy-log.js'
 import { expectReject } from '../controller-error-helper.js'
@@ -15,19 +14,18 @@ import {
   noRightsError,
 } from '../../../src/logic/errors.js'
 import { assertDeepEqual } from '../../assert.js'
+import { buildAuthTokenPayload } from '../auth/builders.js'
+import {
+  buildCreateLocationRequest,
+  buildLocation,
+  buildUpdateLocationRequest,
+} from './builders.js'
 
-const validCreateLocationRequest: CreateLocationRequest = {
-  name: 'Kuja Beer Shop & Bar',
-}
+const validCreateLocationRequest = buildCreateLocationRequest()
 
-const validUpdateLocationRequest: UpdateLocationRequest = {
-  name: 'Kuja Beer Shop & Bar',
-}
+const validUpdateLocationRequest = buildUpdateLocationRequest()
 
-const location: Location = {
-  id: '581f2104-ae08-4d94-ae67-f7a3f6c4d4f3',
-  name: validCreateLocationRequest.name,
-}
+const location = buildLocation()
 
 const invalidLocationRequest = {
   unexpectedProperty: 'This is invalid',
@@ -38,17 +36,9 @@ const create: (
 ) => Promise<Location> = async () => location
 const update: (location: Location) => Promise<Location> = async () => location
 
-const adminAuthToken: AuthTokenPayload = {
-  userId: '57b37a59-da27-4290-bd78-634b6c64722e',
-  role: 'admin',
-  refreshTokenId: '8400cecf-24a5-4e27-b6d2-42e6af054440',
-}
+const adminAuthToken = buildAuthTokenPayload({ role: 'admin' })
 
-const viewerAuthToken: AuthTokenPayload = {
-  userId: '7c02b999-0c7d-4c8b-b4f1-2e3902a9a83f',
-  role: 'viewer',
-  refreshTokenId: '3b242dfc-9632-46bc-9985-912d5702a236',
-}
+const viewerAuthToken = buildAuthTokenPayload({ role: 'viewer' })
 
 describe('location authorized service unit tests', () => {
   it('create location as admin', async () => {
@@ -169,10 +159,10 @@ describe('location authorized service unit tests', () => {
     it(`searches breweries as ${token.role}`, async () => {
       const result = await locationService.searchLocations(
         async () => [location],
-        () => ({ errorCode: undefined, result: { name: location.name } }),
+        () => ({ errorCode: undefined, result: { name: 'Kuj' } }),
         {
           authTokenPayload: token,
-          body: { name: location.name },
+          body: { name: 'Kuj' },
         },
         log,
       )

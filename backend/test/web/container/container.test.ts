@@ -41,7 +41,7 @@ describe('container tests', () => {
   })
 
   it('fail to create a container as viewer', async () => {
-    const { authToken } = await ctx.createUser()
+    const { authToken } = await ctx.createUser({ role: 'viewer' })
     const res = await ctx.request.post<{
       container: CreatedOrUpdatedContainer
     }>(

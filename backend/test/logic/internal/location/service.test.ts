@@ -13,11 +13,9 @@ import * as locationService from '../../../../src/logic/internal/location/servic
 import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
 import { assertDeepEqual, assertEqual } from '../../../assert.js'
+import { buildLocation } from '../../location/builders.js'
 
-const location: Location = {
-  id: '6512b741-a387-437d-ae97-4131aca72641',
-  name: 'Kuja Beer Shop & Bar',
-}
+const location = buildLocation()
 
 describe('location service unit tests', () => {
   it('create location', async () => {

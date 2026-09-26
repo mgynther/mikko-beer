@@ -1,11 +1,137 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
+import type { Database, Transaction } from '../../../src/data/database.js'
+import type { Brewery } from '../../../src/data/brewery/brewery.repository.js'
+import type { Container } from '../../../src/data/container/container.repository.js'
+import type { Location } from '../../../src/data/location/location.repository.js'
+import type { Style } from '../../../src/data/style/style.repository.js'
+import type { StatsIdFilter } from '../../../src/data/stats/stats-filter.js'
 import * as containerStatsRepository from '../../../src/data/stats/container.repository.js'
-import { insertMultipleReviews } from '../review-helpers.js'
-import type { Review } from '../../../src/data/review/review.repository.js'
+import * as beerRepository from '../../../src/data/beer/beer.repository.js'
+import * as breweryRepository from '../../../src/data/brewery/brewery.repository.js'
+import * as containerRepository from '../../../src/data/container/container.repository.js'
+import * as locationRepository from '../../../src/data/location/location.repository.js'
+import * as reviewRepository from '../../../src/data/review/review.repository.js'
+import * as styleRepository from '../../../src/data/style/style.repository.js'
 import { assertDeepEqual } from '../../assert.js'
-import { avg, median, mode, stdDev } from './stats-helpers.js'
+import { buildNewBeer } from '../beer/builders.js'
+import { buildNewBrewery } from '../brewery/builders.js'
+import { buildNewContainer } from '../container/builders.js'
+import { buildNewLocation } from '../location/builders.js'
+import { buildNewReview } from '../review/builders.js'
+import { buildNewStyle } from '../style/builders.js'
+
+const noFilter: StatsIdFilter = {
+  brewery: undefined,
+  location: undefined,
+  style: undefined,
+}
+
+interface ContainerRating {
+  container: Container
+  rating: number
+}
+
+interface ReviewedBeer {
+  brewery: Brewery
+  location: Location
+  style: Style
+}
+
+// A beer of a brewery and a style of its own, reviewed at a location of its
+// own, so that filtering by any of the three keeps exactly its reviews.
+// Brewery, style and location names are unique, so the caller names them.
+async function insertReviewedBeer(
+  trx: Transaction,
+  names: { brewery: string; style: string; location: string },
+  ratings: ContainerRating[],
+): Promise<ReviewedBeer> {
+  const brewery = await breweryRepository.insertBrewery(
+    trx,
+    buildNewBrewery({ name: names.brewery }),
+  )
+  const style = await styleRepository.insertStyle(
+    trx,
+    buildNewStyle({ name: names.style }),
+  )
+  const location = await locationRepository.insertLocation(
+    trx,
+    buildNewLocation({ name: names.location }),
+  )
+  const beer = await beerRepository.insertBeer(trx, buildNewBeer())
+  await beerRepository.insertBeerBreweries(trx, [
+    { beer: beer.id, brewery: brewery.id },
+  ])
+  await beerRepository.insertBeerStyles(trx, [
+    { beer: beer.id, style: style.id },
+  ])
+  await Promise.all(
+    ratings.map(({ container, rating }) =>
+      reviewRepository.insertReview(
+        trx,
+        buildNewReview({
+          beer: beer.id,
+          container: container.id,
+          location: location.id,
+          rating,
+        }),
+      ),
+    ),
+  )
+  return { brewery, location, style }
+}
+
+interface Containers {
+  bottle033: Container
+  bottle050: Container
+  can044: Container
+}
+
+// The containers are inserted out of order, so that the order of the stats
+// comes from sorting by type and then size. Both beers are reviewed from
+// the 0.33 bottle, so filtering by one of them changes its statistics
+// rather than just removing it.
+async function insertBeers(db: Database): Promise<{
+  containers: Containers
+  kriek: ReviewedBeer
+  ipa: ReviewedBeer
+}> {
+  return await db.executeReadWriteTransaction(async (trx: Transaction) => {
+    const can044 = await containerRepository.insertContainer(
+      trx,
+      buildNewContainer({ type: 'can', size: '0.44' }),
+    )
+    const bottle050 = await containerRepository.insertContainer(
+      trx,
+      buildNewContainer({ type: 'bottle', size: '0.50' }),
+    )
+    const bottle033 = await containerRepository.insertContainer(
+      trx,
+      buildNewContainer({ type: 'bottle', size: '0.33' }),
+    )
+    const kriek = await insertReviewedBeer(
+      trx,
+      { brewery: 'Lindemans', style: 'Kriek', location: 'Kuja' },
+      [
+        { container: bottle033, rating: 5 },
+        { container: bottle033, rating: 7 },
+      ],
+    )
+    const ipa = await insertReviewedBeer(
+      trx,
+      { brewery: 'Nokian Panimo', style: 'IPA', location: 'Oluthuone' },
+      [
+        { container: bottle033, rating: 9 },
+        { container: bottle050, rating: 8 },
+        { container: can044, rating: 4 },
+        { container: can044, rating: 7 },
+        { container: can044, rating: 10 },
+      ],
+    )
+    return { containers: { bottle033, bottle050, can044 }, kriek, ipa }
+  })
+}
 
 describe('container stats tests', () => {
   const ctx = new TestContext()
@@ -16,78 +142,109 @@ describe('container stats tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  function filterByContainer(reviews: Review[], containerId: string): Review[] {
-    return reviews.filter((r) => r.container === containerId)
-  }
-
-  function containerStats(
-    reviews: Review[],
-    containerId: string,
-    containerSize: string,
-    containerType: string,
-  ) {
-    const matching = filterByContainer(reviews, containerId)
-    return {
-      containerId,
-      containerSize,
-      containerType,
-      reviewAverage: avg(matching),
-      reviewCount: `${matching.length}`,
-      reviewStandardDeviation: stdDev(matching),
-      reviewMedian: median(matching),
-      reviewMode: mode(matching),
-    }
-  }
-
   it('no filters', async () => {
-    const { data, reviews } = await insertMultipleReviews(9, ctx.db)
-    const stats = await containerStatsRepository.getContainer(ctx.db, {
-      brewery: undefined,
-      location: undefined,
-      style: undefined,
-    })
-    const { container, otherContainer } = data
+    const { containers } = await insertBeers(ctx.db)
+    const stats = await containerStatsRepository.getContainer(ctx.db, noFilter)
     assertDeepEqual(stats, [
-      containerStats(reviews, container.id, '0.50', 'bottle'),
-      containerStats(reviews, otherContainer.id, '0.44', 'can'),
+      {
+        containerId: containers.bottle033.id,
+        containerSize: '0.33',
+        containerType: 'bottle',
+        reviewAverage: '7.00',
+        reviewCount: '3',
+        reviewStandardDeviation: '1.63',
+        reviewMedian: '7.00',
+        reviewMode: '5',
+      },
+      {
+        containerId: containers.bottle050.id,
+        containerSize: '0.50',
+        containerType: 'bottle',
+        reviewAverage: '8.00',
+        reviewCount: '1',
+        reviewStandardDeviation: '0.00',
+        reviewMedian: '8.00',
+        reviewMode: '8',
+      },
+      {
+        containerId: containers.can044.id,
+        containerSize: '0.44',
+        containerType: 'can',
+        reviewAverage: '7.00',
+        reviewCount: '3',
+        reviewStandardDeviation: '2.45',
+        reviewMedian: '7.00',
+        reviewMode: '4',
+      },
     ])
+  })
+
+  const kriekBottle033 = (containers: Containers) => ({
+    containerId: containers.bottle033.id,
+    containerSize: '0.33',
+    containerType: 'bottle',
+    reviewAverage: '6.00',
+    reviewCount: '2',
+    reviewStandardDeviation: '1.00',
+    reviewMedian: '6.00',
+    reviewMode: '5',
   })
 
   it('filter by brewery', async () => {
-    const { data, reviews } = await insertMultipleReviews(9, ctx.db)
+    const { containers, kriek } = await insertBeers(ctx.db)
     const stats = await containerStatsRepository.getContainer(ctx.db, {
-      brewery: data.brewery.id,
-      location: undefined,
-      style: undefined,
+      ...noFilter,
+      brewery: kriek.brewery.id,
     })
-    const { container } = data
-    assertDeepEqual(stats, [
-      containerStats(reviews, container.id, '0.50', 'bottle'),
-    ])
+    assertDeepEqual(stats, [kriekBottle033(containers)])
   })
 
   it('filter by location', async () => {
-    const { data, reviews } = await insertMultipleReviews(9, ctx.db)
+    const { containers, kriek } = await insertBeers(ctx.db)
     const stats = await containerStatsRepository.getContainer(ctx.db, {
-      brewery: undefined,
-      location: data.location.id,
-      style: undefined,
+      ...noFilter,
+      location: kriek.location.id,
     })
-    const { container } = data
-    assertDeepEqual(stats, [
-      containerStats(reviews, container.id, '0.50', 'bottle'),
-    ])
+    assertDeepEqual(stats, [kriekBottle033(containers)])
   })
 
   it('filter by style', async () => {
-    const { data, reviews } = await insertMultipleReviews(9, ctx.db)
+    const { containers, ipa } = await insertBeers(ctx.db)
     const stats = await containerStatsRepository.getContainer(ctx.db, {
-      brewery: undefined,
-      location: undefined,
-      style: data.otherStyle.id,
+      ...noFilter,
+      style: ipa.style.id,
     })
     assertDeepEqual(stats, [
-      containerStats(reviews, data.otherContainer.id, '0.44', 'can'),
+      {
+        containerId: containers.bottle033.id,
+        containerSize: '0.33',
+        containerType: 'bottle',
+        reviewAverage: '9.00',
+        reviewCount: '1',
+        reviewStandardDeviation: '0.00',
+        reviewMedian: '9.00',
+        reviewMode: '9',
+      },
+      {
+        containerId: containers.bottle050.id,
+        containerSize: '0.50',
+        containerType: 'bottle',
+        reviewAverage: '8.00',
+        reviewCount: '1',
+        reviewStandardDeviation: '0.00',
+        reviewMedian: '8.00',
+        reviewMode: '8',
+      },
+      {
+        containerId: containers.can044.id,
+        containerSize: '0.44',
+        containerType: 'can',
+        reviewAverage: '7.00',
+        reviewCount: '3',
+        reviewStandardDeviation: '2.45',
+        reviewMedian: '7.00',
+        reviewMode: '4',
+      },
     ])
   })
 })

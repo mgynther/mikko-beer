@@ -2,10 +2,7 @@ import { describe, it } from 'node:test'
 
 import * as userService from '../../../src/logic/user/authorized-user.service.js'
 
-import type {
-  AuthTokenConfig,
-  AuthTokenPayload,
-} from '../../../src/logic/auth/auth-token.js'
+import type { AuthTokenPayload } from '../../../src/logic/auth/auth-token.js'
 import type {
   CreateUserIf,
   CreateUserRequest,
@@ -20,10 +17,14 @@ import {
   noRightsError,
   userMismatchError,
 } from '../../../src/logic/errors.js'
-import type { SignedInUser } from '../../../src/logic/user/signed-in-user.js'
-import type { DbRefreshToken } from '../../../src/logic/auth/refresh-token.js'
 import { assertDeepEqual } from '../../assert.js'
 import { testJwtIf } from '../jwt-helper.js'
+import {
+  buildAuthTokenConfig,
+  buildAuthTokenPayload,
+  buildDbRefreshToken,
+} from '../auth/builders.js'
+import { buildUser } from './builders.js'
 
 const validCreateUserRequest = {
   user: {
@@ -35,34 +36,16 @@ const validCreateUserRequest = {
   },
 }
 
-const user: SignedInUser = {
-  user: {
-    id: '565dc891-0e04-4813-a6c6-dbd5535a80ff',
-    role: 'admin',
-    username: 'admin',
-  },
-  refreshToken: {
-    refreshToken: '30835b0c-4522-4874-b216-78867e2478fc',
-  },
-  authToken: {
-    authToken: '739b4328-e670-47ba-84d8-dd7470ace0bd',
-  },
-}
+const user = buildUser()
 
 const invalidUserRequest = {}
 
 const createIf: CreateUserIf = {
-  createAnonymousUser: async () => user.user,
-  insertRefreshToken: async () => ({
-    id: 'c7473953-1c2d-4945-b00f-174f371d6e57',
-    userId: user.user.id,
-  }),
+  createAnonymousUser: async () => user,
+  insertRefreshToken: async () => buildDbRefreshToken({ userId: user.id }),
   addPasswordUserIf: {
-    lockUserById: async () => ({
-      id: user.user.id,
-      role: user.user.role,
-      username: null,
-    }),
+    // A user without a username has no password sign-in method yet.
+    lockUserById: async () => ({ ...user, username: null }),
     encryptSecret: async () => 'encrypted',
     insertPasswordSignInMethod: async () => undefined,
     setUserUsername: async () => undefined,
@@ -71,22 +54,17 @@ const createIf: CreateUserIf = {
 
 const deleteUserById = async () => undefined
 
-const adminAuthToken: AuthTokenPayload = {
+const adminAuthToken = buildAuthTokenPayload({
   userId: 'e5390bee-7afb-42d6-9f1c-6c04b72d03d1',
   role: 'admin',
-  refreshTokenId: 'e72a8f54-f71c-4fb4-8e93-bf65bef4e31e',
-}
+})
 
-const viewerAuthToken: AuthTokenPayload = {
+const viewerAuthToken = buildAuthTokenPayload({
   userId: 'f793fe89-cbb1-41d2-b7fd-fd60de26c6ca',
   role: 'viewer',
-  refreshTokenId: '4e287a07-d115-4e10-b414-f2a106d49765',
-}
+})
 
-const authTokenConfig: AuthTokenConfig = {
-  secret: 'this is secret',
-  expiryDurationMin: 1,
-}
+const authTokenConfig = buildAuthTokenConfig()
 
 const createUserRequest: CreateUserRequest = {
   role: 'admin',
@@ -167,7 +145,7 @@ describe('user authorized service unit tests', () => {
       passUserIdValidation,
       {
         authTokenPayload: adminAuthToken,
-        id: user.user.id,
+        id: user.id,
       },
       log,
     )
@@ -180,7 +158,7 @@ describe('user authorized service unit tests', () => {
         notCalled,
         {
           authTokenPayload: viewerAuthToken,
-          id: user.user.id,
+          id: user.id,
         },
         log,
       )
@@ -201,17 +179,10 @@ describe('user authorized service unit tests', () => {
     }, invalidUserIdError)
   })
 
-  const dbRefreshToken: DbRefreshToken = {
-    id: '0cc90f4e-706c-4edc-a58c-67f8008cf27e',
-    userId: user.user.id,
-  }
+  const dbRefreshToken = buildDbRefreshToken()
 
   it('find viewer user as admin', async () => {
-    const user = {
-      id: viewerAuthToken.userId,
-      role: viewerAuthToken.role,
-      username: 'viewer',
-    }
+    const user = buildUser({ id: viewerAuthToken.userId })
     const result = await userService.findUserById(
       async () => user,
       passUserIdValidation,
@@ -226,11 +197,7 @@ describe('user authorized service unit tests', () => {
   })
 
   it('fail to find admin user as viewer', async () => {
-    const user = {
-      id: adminAuthToken.userId,
-      role: adminAuthToken.role,
-      username: 'admin',
-    }
+    const user = buildUser({ id: adminAuthToken.userId })
     await expectReject(async () => {
       await userService.findUserById(
         async () => user,
@@ -246,11 +213,7 @@ describe('user authorized service unit tests', () => {
   })
   ;[adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
     it(`find self user as ${token.role}`, async () => {
-      const user = {
-        id: token.userId,
-        role: token.role,
-        username: 'doesnotmatter',
-      }
+      const user = buildUser({ id: token.userId })
       const result = await userService.findUserById(
         async () => user,
         passUserIdValidation,
@@ -265,12 +228,8 @@ describe('user authorized service unit tests', () => {
     })
 
     it(`list user as ${token.role}`, async () => {
-      const result = await userService.listUsers(
-        async () => [user.user],
-        token,
-        log,
-      )
-      assertDeepEqual(result, [user.user])
+      const result = await userService.listUsers(async () => [user], token, log)
+      assertDeepEqual(result, [user])
     })
   })
 })

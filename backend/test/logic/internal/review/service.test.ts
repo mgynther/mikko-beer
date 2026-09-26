@@ -8,82 +8,38 @@ import {
 } from '../../../../src/logic/errors.js'
 import type {
   CreateIf,
-  CreateReviewRequest,
-  JoinedReview,
   NewReview,
   Review,
   FullReviewListOrder,
   FullReviewListRequest,
-  ReviewListFilter,
   ReviewListRequest,
   UpdateIf,
-  UpdateReviewRequest,
 } from '../../../../src/logic/review/review.js'
+import type { LockId } from '../../../../src/logic/db.js'
 import type { Pagination } from '../../../../src/logic/pagination.js'
 import * as reviewService from '../../../../src/logic/internal/review/service.js'
 
 import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
 import { assertDeepEqual, assertEqual } from '../../../assert.js'
+import {
+  buildCreateReviewRequest,
+  buildJoinedReview,
+  buildReview,
+  buildReviewListFilter,
+  buildUpdateReviewRequest,
+} from '../../review/builders.js'
 
-const time = '2024-07-06T19:36:38.182Z'
+const reviewListFilter = buildReviewListFilter()
 
-const reviewListFilter: ReviewListFilter = {
-  minRating: 4,
-  maxRating: 10,
-  minTime: new Date('1970-01-01'),
-  maxTime: new Date('9999-01-01'),
-}
+const createReviewRequest = buildCreateReviewRequest()
 
-const newReview: NewReview = {
-  additionalInfo: 'something interesting',
-  beer: 'f796e263-650e-4044-b5c9-9f550b97aa5a',
-  container: '7bf36e1b-f740-42a6-8318-72acbcee74db',
-  location: '',
-  rating: 8,
-  time: new Date(time),
-  smell: 'good',
-  taste: 'tasty',
-}
+const updateReviewRequest = buildUpdateReviewRequest()
 
-const createReviewRequest: CreateReviewRequest = {
-  ...newReview,
-  time: new Date(time).toISOString(),
-}
+// The review as the repository returns it after an insert or an update.
+const review = buildReview()
 
-const review: Review = {
-  ...newReview,
-  id: '8cb936ee-77d7-46ed-89e1-4ca25bbd0416',
-}
-
-const updateReviewRequest: UpdateReviewRequest = {
-  ...review,
-  time: new Date(time).toISOString(),
-}
-
-const joinedReview: JoinedReview = {
-  ...review,
-  beerId: '9ac340c5-795e-4b4a-828e-47feb2868fc8',
-  beerName: 'Smoky Road',
-  breweries: [
-    {
-      id: 'dfa48fab-3f6a-417c-9026-ca50ed4f5f8c',
-      name: 'Mallassepät',
-    },
-  ],
-  container: {
-    id: '65c44eda-b072-450e-a032-04c024d8b405',
-    type: 'draft',
-    size: '0.1',
-  },
-  location: undefined,
-  styles: [
-    {
-      id: '6481c189-dc9a-45c0-b8ab-c7577db72b1c',
-      name: 'rauch',
-    },
-  ],
-}
+const joinedReview = buildJoinedReview()
 
 const order: FullReviewListOrder = {
   property: 'rating',
@@ -95,47 +51,42 @@ const pagination: Pagination = {
   skip: 80,
 }
 
-const lockBeer = async (beerId: string): Promise<string | undefined> => {
-  assertEqual(beerId, review.beer)
-  return review.beer
-}
-
-const lockContainer = async (
-  containerId: string,
-): Promise<string | undefined> => {
-  assertEqual(containerId, review.container)
-  return review.container
-}
-
 const storageId = '1e90c440-73d4-4de4-bc31-c267df3e8d46'
 
-const lockStorage = async (
-  lockStorageId: string,
-): Promise<string | undefined> => {
-  assertEqual(lockStorageId, storageId)
-  return storageId
+function lockOnly(lockedId: string): LockId {
+  return async (id: string): Promise<string | undefined> => {
+    assertEqual(id, lockedId)
+    return id
+  }
+}
+
+const createIfLocks = {
+  lockBeer: lockOnly(createReviewRequest.beer),
+  lockContainer: lockOnly(createReviewRequest.container),
+}
+
+const updateIfLocks = {
+  lockBeer: lockOnly(updateReviewRequest.beer),
+  lockContainer: lockOnly(updateReviewRequest.container),
 }
 
 const createReview = async (newReview: NewReview) => {
-  assertDeepEqual(
-    {
-      ...newReview,
-      time: newReview.time.toISOString(),
-    },
-    createReviewRequest,
-  )
-  return { ...review }
+  assertDeepEqual(newReview, {
+    ...createReviewRequest,
+    time: new Date(createReviewRequest.time),
+  })
+  return review
 }
 
-const updateReview = async (review: Review) => {
-  assertDeepEqual(
-    {
-      ...review,
-      time: review.time.toISOString(),
-    },
-    updateReviewRequest,
-  )
-  return { ...review }
+const reviewId = '8cb936ee-77d7-46ed-89e1-4ca25bbd0416'
+
+const updateReview = async (updatedReview: Review) => {
+  assertDeepEqual(updatedReview, {
+    ...updateReviewRequest,
+    id: reviewId,
+    time: new Date(updateReviewRequest.time),
+  })
+  return review
 }
 
 async function notCalled(): Promise<undefined> {
@@ -145,10 +96,9 @@ async function notCalled(): Promise<undefined> {
 describe('review service unit tests', () => {
   it('create review', async () => {
     const createIf: CreateIf = {
+      ...createIfLocks,
       createReview,
       deleteFromStorage: notCalled,
-      lockBeer,
-      lockContainer,
       lockStorage: notCalled,
     }
     const result = await reviewService.createReview(
@@ -157,19 +107,15 @@ describe('review service unit tests', () => {
       undefined,
       log,
     )
-    assertDeepEqual(result, {
-      ...createReviewRequest,
-      id: review.id,
-      time: new Date(createReviewRequest.time),
-    })
+    assertDeepEqual(result, review)
   })
 
   it('fail to create review with invalid beer', async () => {
     const createIf: CreateIf = {
+      ...createIfLocks,
       createReview,
       deleteFromStorage: notCalled,
       lockBeer: async () => undefined,
-      lockContainer,
       lockStorage: notCalled,
     }
     await expectReject(async () => {
@@ -184,9 +130,9 @@ describe('review service unit tests', () => {
 
   it('fail to create review with invalid container', async () => {
     const createIf: CreateIf = {
+      ...createIfLocks,
       createReview,
       deleteFromStorage: notCalled,
-      lockBeer,
       lockContainer: async () => undefined,
       lockStorage: notCalled,
     }
@@ -212,11 +158,10 @@ describe('review service unit tests', () => {
       assertEqual(deleteId, storageId)
     }
     const createIf: CreateIf = {
+      ...createIfLocks,
       createReview: create,
       deleteFromStorage,
-      lockBeer,
-      lockContainer,
-      lockStorage,
+      lockStorage: lockOnly(storageId),
     }
     const result = await reviewService.createReview(
       createIf,
@@ -224,20 +169,15 @@ describe('review service unit tests', () => {
       storageId,
       log,
     )
-    assertDeepEqual(result, {
-      ...createReviewRequest,
-      id: review.id,
-      time: new Date(createReviewRequest.time),
-    })
+    assertDeepEqual(result, review)
     assertEqual(deletedFromStorage, true)
   })
 
   it('fail to create review with invalid storage', async () => {
     const createIf: CreateIf = {
+      ...createIfLocks,
       createReview,
       deleteFromStorage: notCalled,
-      lockBeer,
-      lockContainer,
       lockStorage: async () => undefined,
     }
     await expectReject(async () => {
@@ -252,33 +192,28 @@ describe('review service unit tests', () => {
 
   it('update review', async () => {
     const updateIf: UpdateIf = {
+      ...updateIfLocks,
       updateReview,
-      lockBeer,
-      lockContainer,
     }
     const result = await reviewService.updateReview(
       updateIf,
-      review.id,
+      reviewId,
       updateReviewRequest,
       log,
     )
-    assertDeepEqual(result, {
-      ...updateReviewRequest,
-      id: review.id,
-      time: new Date(updateReviewRequest.time),
-    })
+    assertDeepEqual(result, review)
   })
 
   it('fail to update review with invalid beer', async () => {
     const updateIf: UpdateIf = {
+      ...updateIfLocks,
       updateReview,
       lockBeer: async () => undefined,
-      lockContainer,
     }
     await expectReject(async () => {
       await reviewService.updateReview(
         updateIf,
-        review.id,
+        reviewId,
         updateReviewRequest,
         log,
       )
@@ -287,14 +222,14 @@ describe('review service unit tests', () => {
 
   it('fail to update review with invalid container', async () => {
     const updateIf: UpdateIf = {
+      ...updateIfLocks,
       updateReview,
-      lockBeer,
       lockContainer: async () => undefined,
     }
     await expectReject(async () => {
       await reviewService.updateReview(
         updateIf,
-        review.id,
+        reviewId,
         updateReviewRequest,
         log,
       )
@@ -302,12 +237,13 @@ describe('review service unit tests', () => {
   })
 
   it('find review', async () => {
-    const finder = async (reviewId: string) => {
-      assertEqual(reviewId, review.id)
-      return review
+    const found = buildReview()
+    const finder = async (findId: string) => {
+      assertEqual(findId, found.id)
+      return found
     }
-    const result = await reviewService.findReviewById(finder, review.id, log)
-    assertDeepEqual(result, review)
+    const result = await reviewService.findReviewById(finder, found.id, log)
+    assertDeepEqual(result, found)
   })
 
   it('not find review with unknown id', async () => {

@@ -5,7 +5,6 @@ import * as breweryService from '../../../../src/logic/internal/brewery/validate
 import type {
   Brewery,
   CreateBreweryRequest,
-  UpdateBreweryRequest,
   ValidateCreateBrewery,
   ValidateUpdateBrewery,
 } from '../../../../src/logic/brewery/brewery.js'
@@ -17,22 +16,17 @@ import {
   invalidSearchError,
 } from '../../../../src/logic/errors.js'
 import { assertDeepEqual, assertEqual } from '../../../assert.js'
+import {
+  buildBrewery,
+  buildCreateBreweryRequest,
+  buildUpdateBreweryRequest,
+} from '../../brewery/builders.js'
 
-const validCreateBreweryRequest: CreateBreweryRequest = {
-  name: 'Koskipanimo',
-  country: undefined,
-}
+const validCreateBreweryRequest = buildCreateBreweryRequest()
 
-const validUpdateBreweryRequest: UpdateBreweryRequest = {
-  name: 'Pyynikin käsityöläispanimo',
-  country: undefined,
-}
+const validUpdateBreweryRequest = buildUpdateBreweryRequest()
 
-const brewery: Brewery = {
-  id: 'cac161f5-2792-4fbb-a251-4305ee39f350',
-  name: validCreateBreweryRequest.name,
-  country: undefined,
-}
+const brewery = buildBrewery()
 
 const invalidBreweryRequest = {
   unexpectedProperty: 'This is invalid',
@@ -97,10 +91,7 @@ describe('brewery validated service unit tests', () => {
   })
 
   it('create brewery with country', async () => {
-    const request: CreateBreweryRequest = {
-      name: 'Koskipanimo',
-      country: 'FI',
-    }
+    const request = buildCreateBreweryRequest({ country: 'FI' })
     const createWithCountry: (
       brewery: CreateBreweryRequest,
     ) => Promise<Brewery> = async (newBrewery: CreateBreweryRequest) => {
@@ -162,13 +153,14 @@ describe('brewery validated service unit tests', () => {
   })
 
   it('find brewery by id', async () => {
-    const id = 'b0f6b8ba-63f8-4ba6-9b46-3fb0a1d6ee31'
-    await breweryService.findBreweryById(
-      async () => ({ id, name: brewery.name, country: undefined }),
-      () => ({ errorCode: undefined, result: id }),
-      id,
+    const found = buildBrewery()
+    const result = await breweryService.findBreweryById(
+      async () => found,
+      () => ({ errorCode: undefined, result: found.id }),
+      found.id,
       log,
     )
+    assertDeepEqual(result, found)
   })
 
   function notCalled(): any {
@@ -189,8 +181,8 @@ describe('brewery validated service unit tests', () => {
   it('search breweries', async () => {
     const result = await breweryService.searchBreweries(
       async () => [brewery],
-      () => ({ errorCode: undefined, result: { name: brewery.name } }),
-      { name: brewery.name },
+      () => ({ errorCode: undefined, result: { name: 'Kosk' } }),
+      { name: 'Kosk' },
       log,
     )
     assertDeepEqual(result, [brewery])

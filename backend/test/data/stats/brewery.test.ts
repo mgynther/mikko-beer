@@ -1,26 +1,31 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
-import type { Pagination } from '../../../src/data/pagination.js'
-import type {
-  NewReview,
-  Review,
-} from '../../../src/data/review/review.repository.js'
+import type { Database, Transaction } from '../../../src/data/database.js'
+import type { Beer } from '../../../src/data/beer/beer.repository.js'
+import type { Brewery } from '../../../src/data/brewery/brewery.repository.js'
+import type { Container } from '../../../src/data/container/container.repository.js'
+import type { Location } from '../../../src/data/location/location.repository.js'
+import type { Style } from '../../../src/data/style/style.repository.js'
 import type { BreweryStatsOrder } from '../../../src/data/stats/brewery.repository.js'
 import type { StatsFilter } from '../../../src/data/stats/stats-filter.js'
-import type { Database, Transaction } from '../../../src/data/database.js'
 import * as beerRepository from '../../../src/data/beer/beer.repository.js'
 import * as breweryRepository from '../../../src/data/brewery/brewery.repository.js'
 import * as containerRepository from '../../../src/data/container/container.repository.js'
+import * as locationRepository from '../../../src/data/location/location.repository.js'
 import * as reviewRepository from '../../../src/data/review/review.repository.js'
-import * as breweryStatsRepository from '../../../src/data/stats/brewery.repository.js'
 import * as styleRepository from '../../../src/data/style/style.repository.js'
-import type { InsertedData } from '../review-helpers.js'
-import { insertMultipleReviews } from '../review-helpers.js'
-import { assertDeepEqual, assertEqual } from '../../assert.js'
-import { avg, median, mode, stdDev } from './stats-helpers.js'
+import * as breweryStatsRepository from '../../../src/data/stats/brewery.repository.js'
+import { assertDeepEqual } from '../../assert.js'
+import { buildNewBeer } from '../beer/builders.js'
+import { buildNewBrewery } from '../brewery/builders.js'
+import { buildNewContainer } from '../container/builders.js'
+import { buildNewLocation } from '../location/builders.js'
+import { buildNewReview } from '../review/builders.js'
+import { buildNewStyle } from '../style/builders.js'
 
-const defaultFilter: StatsFilter = {
+// Lets every review through, so that a test filters by what it sets.
+const noFilter: StatsFilter = {
   brewery: undefined,
   location: undefined,
   style: undefined,
@@ -32,8 +37,214 @@ const defaultFilter: StatsFilter = {
   timeEnd: undefined,
 }
 
-function filterByBeer(reviews: Review[], beerId: string): Review[] {
-  return reviews.filter((r) => r.beer === beerId)
+interface Rating {
+  rating: number
+  time: Date
+}
+
+async function insertReviews(
+  trx: Transaction,
+  beer: Beer,
+  container: Container,
+  location: Location,
+  ratings: Rating[],
+): Promise<void> {
+  await Promise.all(
+    ratings.map(({ rating, time }) =>
+      reviewRepository.insertReview(
+        trx,
+        buildNewReview({
+          beer: beer.id,
+          container: container.id,
+          location: location.id,
+          rating,
+          time,
+        }),
+      ),
+    ),
+  )
+}
+
+interface ReviewedBrewery {
+  brewery: Brewery
+  location: Location
+  style: Style
+}
+
+// A brewery with one beer of a style of its own, reviewed at a location of
+// its own, so that filtering by the brewery, the style or the location
+// keeps exactly this brewery. Brewery, style and location names are
+// unique, so the caller names them.
+async function insertReviewedBrewery(
+  trx: Transaction,
+  container: Container,
+  names: {
+    brewery: string
+    country: string | undefined
+    style: string
+    location: string
+  },
+  ratings: Rating[],
+): Promise<ReviewedBrewery> {
+  const brewery = await breweryRepository.insertBrewery(
+    trx,
+    buildNewBrewery({ name: names.brewery, country: names.country }),
+  )
+  const style = await styleRepository.insertStyle(
+    trx,
+    buildNewStyle({ name: names.style }),
+  )
+  const location = await locationRepository.insertLocation(
+    trx,
+    buildNewLocation({ name: names.location }),
+  )
+  const beer = await beerRepository.insertBeer(trx, buildNewBeer())
+  await beerRepository.insertBeerBreweries(trx, [
+    { beer: beer.id, brewery: brewery.id },
+  ])
+  await beerRepository.insertBeerStyles(trx, [
+    { beer: beer.id, style: style.id },
+  ])
+  await insertReviews(trx, beer, container, location, ratings)
+  return { brewery, location, style }
+}
+
+// Lindemans comes before Nokian Panimo by name and has fewer reviews, a
+// lower average and a lower deviation, so every order puts Lindemans first
+// ascending and Nokian Panimo first descending. The reviews of Lindemans
+// are from 2024 and those of Nokian Panimo from 2023, so a time filter
+// keeps one of them. Nokian Panimo has no country.
+async function insertBreweries(db: Database): Promise<{
+  lindemans: ReviewedBrewery
+  nokian: ReviewedBrewery
+}> {
+  return await db.executeReadWriteTransaction(async (trx: Transaction) => {
+    const container = await containerRepository.insertContainer(
+      trx,
+      buildNewContainer(),
+    )
+    const lindemans = await insertReviewedBrewery(
+      trx,
+      container,
+      {
+        brewery: 'Lindemans',
+        country: 'BE',
+        style: 'Kriek',
+        location: 'Kuja',
+      },
+      [
+        { rating: 5, time: new Date('2024-03-01T18:00:00.000Z') },
+        { rating: 7, time: new Date('2024-04-01T18:00:00.000Z') },
+      ],
+    )
+    const nokian = await insertReviewedBrewery(
+      trx,
+      container,
+      {
+        brewery: 'Nokian Panimo',
+        country: undefined,
+        style: 'IPA',
+        location: 'Oluthuone',
+      },
+      [
+        { rating: 4, time: new Date('2023-03-01T18:00:00.000Z') },
+        { rating: 7, time: new Date('2023-04-01T18:00:00.000Z') },
+        { rating: 10, time: new Date('2023-05-01T18:00:00.000Z') },
+      ],
+    )
+    return { lindemans, nokian }
+  })
+}
+
+function lindemansStats(lindemans: ReviewedBrewery) {
+  return {
+    reviewAverage: '6.00',
+    reviewCount: '2',
+    reviewStandardDeviation: '1.00',
+    reviewMedian: '6.00',
+    reviewMode: '5',
+    reviewedBeerCount: '1',
+    breweryId: lindemans.brewery.id,
+    breweryName: 'Lindemans',
+    breweryCountry: 'BE',
+  }
+}
+
+function nokianStats(nokian: ReviewedBrewery) {
+  return {
+    reviewAverage: '7.00',
+    reviewCount: '3',
+    reviewStandardDeviation: '2.45',
+    reviewMedian: '7.00',
+    // Every rating occurs once, and the lowest of a tie wins.
+    reviewMode: '4',
+    reviewedBeerCount: '1',
+    breweryId: nokian.brewery.id,
+    breweryName: 'Nokian Panimo',
+    breweryCountry: undefined,
+  }
+}
+
+interface Collaboration {
+  salama: Brewery
+  brewdog: Brewery
+}
+
+// Salama brews a beer of its own and a collaboration beer with Brewdog.
+// The own beer is rated 5 and 7, the collaboration beer 4 and 10.
+async function insertCollaboration(db: Database): Promise<Collaboration> {
+  return await db.executeReadWriteTransaction(async (trx: Transaction) => {
+    const salama = await breweryRepository.insertBrewery(
+      trx,
+      buildNewBrewery({ name: 'Salama', country: 'FI' }),
+    )
+    const brewdog = await breweryRepository.insertBrewery(
+      trx,
+      buildNewBrewery({ name: 'Brewdog', country: 'GB' }),
+    )
+    const ownBeer = await beerRepository.insertBeer(trx, buildNewBeer())
+    const collaborationBeer = await beerRepository.insertBeer(
+      trx,
+      buildNewBeer(),
+    )
+    await beerRepository.insertBeerBreweries(trx, [
+      { beer: ownBeer.id, brewery: salama.id },
+      { beer: collaborationBeer.id, brewery: salama.id },
+      { beer: collaborationBeer.id, brewery: brewdog.id },
+    ])
+    const container = await containerRepository.insertContainer(
+      trx,
+      buildNewContainer(),
+    )
+    const location = await locationRepository.insertLocation(
+      trx,
+      buildNewLocation(),
+    )
+    const time = new Date('2024-03-01T18:00:00.000Z')
+    await insertReviews(trx, ownBeer, container, location, [
+      { rating: 5, time },
+      { rating: 7, time },
+    ])
+    await insertReviews(trx, collaborationBeer, container, location, [
+      { rating: 4, time },
+      { rating: 10, time },
+    ])
+    return { salama, brewdog }
+  })
+}
+
+function brewdogStats(brewdog: Brewery) {
+  return {
+    reviewAverage: '7.00',
+    reviewCount: '2',
+    reviewStandardDeviation: '3.00',
+    reviewMedian: '7.00',
+    reviewMode: '4',
+    reviewedBeerCount: '1',
+    breweryId: brewdog.id,
+    breweryName: 'Brewdog',
+    breweryCountry: 'GB',
+  }
 }
 
 describe('brewery stats tests', () => {
@@ -45,451 +256,156 @@ describe('brewery stats tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  async function getResults(
-    db: Database,
-    pagination: Pagination,
-    statsFilter: ((data: InsertedData) => StatsFilter) | undefined,
-    breweryStatsOrder: BreweryStatsOrder,
-  ) {
-    const { reviews, data } = await insertMultipleReviews(9, db)
-    const stats = await breweryStatsRepository.getBrewery(
-      db,
-      pagination,
-      statsFilter?.(data) ?? defaultFilter,
-      breweryStatsOrder,
+  async function getBrewery(
+    filter: StatsFilter,
+    order: BreweryStatsOrder,
+  ): ReturnType<typeof breweryStatsRepository.getBrewery> {
+    return await breweryStatsRepository.getBrewery(
+      ctx.db,
+      { size: 10, skip: 0 },
+      filter,
+      order,
     )
-    const breweryReviews = filterByBeer(reviews, data.beer.id)
-    const otherBreweryReviews = filterByBeer(reviews, data.otherBeer.id)
-    const brewery = {
-      reviewAverage: avg(breweryReviews),
-      reviewCount: `${breweryReviews.length}`,
-      reviewStandardDeviation: stdDev(breweryReviews),
-      reviewMedian: median(breweryReviews),
-      reviewMode: mode(breweryReviews),
-      reviewedBeerCount: '1',
-      breweryId: data.brewery.id,
-      breweryName: data.brewery.name,
-      breweryCountry: data.brewery.country,
-    }
-    const otherBrewery = {
-      reviewAverage: avg(otherBreweryReviews),
-      reviewCount: `${otherBreweryReviews.length}`,
-      reviewStandardDeviation: stdDev(otherBreweryReviews),
-      reviewMedian: median(otherBreweryReviews),
-      reviewMode: mode(otherBreweryReviews),
-      reviewedBeerCount: '1',
-      breweryId: data.otherBrewery.id,
-      breweryName: data.otherBrewery.name,
-      breweryCountry: data.otherBrewery.country,
-    }
-    return { stats, brewery, otherBrewery }
   }
 
-  const allResults: Pagination = { size: 10, skip: 0 }
+  const orderProperties: BreweryStatsOrder['property'][] = [
+    'average',
+    'brewery_name',
+    'count',
+    'std_dev',
+  ]
 
-  it('by average asc', async () => {
-    const { stats, brewery, otherBrewery } = await getResults(
-      ctx.db,
-      allResults,
-      undefined,
-      { property: 'average', direction: 'asc' },
-    )
-    assertDeepEqual(stats, [brewery, otherBrewery])
+  orderProperties.forEach((property) => {
+    it(`by ${property} asc`, async () => {
+      const { lindemans, nokian } = await insertBreweries(ctx.db)
+      const stats = await getBrewery(noFilter, { property, direction: 'asc' })
+      assertDeepEqual(stats, [lindemansStats(lindemans), nokianStats(nokian)])
+    })
+
+    it(`by ${property} desc`, async () => {
+      const { lindemans, nokian } = await insertBreweries(ctx.db)
+      const stats = await getBrewery(noFilter, { property, direction: 'desc' })
+      assertDeepEqual(stats, [nokianStats(nokian), lindemansStats(lindemans)])
+    })
   })
 
-  it('by average desc', async () => {
-    const { stats, brewery, otherBrewery } = await getResults(
-      ctx.db,
-      allResults,
-      undefined,
-      { property: 'average', direction: 'desc' },
-    )
-    assertDeepEqual(stats, [otherBrewery, brewery])
-  })
-
-  it('by count asc', async () => {
-    const { stats, brewery, otherBrewery } = await getResults(
-      ctx.db,
-      allResults,
-      undefined,
-      { property: 'count', direction: 'asc' },
-    )
-    assertDeepEqual(stats, [brewery, otherBrewery])
-  })
-
-  it('by count desc', async () => {
-    const { stats, brewery, otherBrewery } = await getResults(
-      ctx.db,
-      allResults,
-      undefined,
-      { property: 'count', direction: 'desc' },
-    )
-    assertDeepEqual(stats, [otherBrewery, brewery])
-  })
-
-  it('by brewery_name asc', async () => {
-    const { stats, brewery, otherBrewery } = await getResults(
-      ctx.db,
-      allResults,
-      undefined,
-      { property: 'brewery_name', direction: 'asc' },
-    )
-    assertDeepEqual(stats, [otherBrewery, brewery])
-  })
-
-  it('by brewery_name desc', async () => {
-    const { stats, brewery, otherBrewery } = await getResults(
-      ctx.db,
-      allResults,
-      undefined,
-      { property: 'brewery_name', direction: 'desc' },
-    )
-    assertDeepEqual(stats, [brewery, otherBrewery])
-  })
-
-  it('by std_dev asc', async () => {
-    const { stats, brewery, otherBrewery } = await getResults(
-      ctx.db,
-      allResults,
-      undefined,
-      { property: 'std_dev', direction: 'asc' },
-    )
-    assertDeepEqual(stats, [brewery, otherBrewery])
-  })
-
-  it('by std_dev desc', async () => {
-    const { stats, brewery, otherBrewery } = await getResults(
-      ctx.db,
-      allResults,
-      undefined,
-      { property: 'std_dev', direction: 'desc' },
-    )
-    assertDeepEqual(stats, [otherBrewery, brewery])
-  })
+  const byName: BreweryStatsOrder = {
+    property: 'brewery_name',
+    direction: 'asc',
+  }
 
   it('filter by brewery', async () => {
-    const { stats, otherBrewery } = await getResults(
-      ctx.db,
-      allResults,
-      (data: InsertedData) => ({
-        ...defaultFilter,
-        brewery: data.otherBrewery.id,
-      }),
-      { property: 'brewery_name', direction: 'desc' },
+    const { nokian } = await insertBreweries(ctx.db)
+    const stats = await getBrewery(
+      { ...noFilter, brewery: nokian.brewery.id },
+      byName,
     )
-    assertDeepEqual(stats, [otherBrewery])
+    assertDeepEqual(stats, [nokianStats(nokian)])
   })
 
   it('filter by location', async () => {
-    const { stats, otherBrewery } = await getResults(
-      ctx.db,
-      allResults,
-      (data: InsertedData) => ({
-        ...defaultFilter,
-        location: data.otherLocation.id,
-      }),
-      { property: 'brewery_name', direction: 'desc' },
+    const { nokian } = await insertBreweries(ctx.db)
+    const stats = await getBrewery(
+      { ...noFilter, location: nokian.location.id },
+      byName,
     )
-    assertDeepEqual(stats, [otherBrewery])
+    assertDeepEqual(stats, [nokianStats(nokian)])
   })
 
   it('filter by style', async () => {
-    const { stats, brewery } = await getResults(
-      ctx.db,
-      allResults,
-      (data: InsertedData) => ({
-        ...defaultFilter,
-        style: data.style.id,
-      }),
-      { property: 'brewery_name', direction: 'desc' },
+    const { lindemans } = await insertBreweries(ctx.db)
+    const stats = await getBrewery(
+      { ...noFilter, style: lindemans.style.id },
+      byName,
     )
-    assertDeepEqual(stats, [brewery])
+    assertDeepEqual(stats, [lindemansStats(lindemans)])
   })
 
   it('filter by min review count', async () => {
-    const { stats, otherBrewery } = await getResults(
-      ctx.db,
-      allResults,
-      () => ({
-        ...defaultFilter,
-        minReviewCount: 5,
-      }),
-      { property: 'brewery_name', direction: 'desc' },
-    )
-    assertDeepEqual(stats, [otherBrewery])
+    const { nokian } = await insertBreweries(ctx.db)
+    const stats = await getBrewery({ ...noFilter, minReviewCount: 3 }, byName)
+    assertDeepEqual(stats, [nokianStats(nokian)])
   })
 
   it('filter by max review count', async () => {
-    const { stats, brewery } = await getResults(
-      ctx.db,
-      allResults,
-      () => ({
-        ...defaultFilter,
-        maxReviewCount: 4,
-      }),
-      { property: 'brewery_name', direction: 'desc' },
-    )
-    assertDeepEqual(stats, [brewery])
+    const { lindemans } = await insertBreweries(ctx.db)
+    const stats = await getBrewery({ ...noFilter, maxReviewCount: 2 }, byName)
+    assertDeepEqual(stats, [lindemansStats(lindemans)])
   })
 
   it('filter by min review average', async () => {
-    const { stats, otherBrewery } = await getResults(
-      ctx.db,
-      allResults,
-      () => ({
-        ...defaultFilter,
-        minReviewAverage: 6.3,
-      }),
-      { property: 'brewery_name', direction: 'desc' },
+    const { nokian } = await insertBreweries(ctx.db)
+    const stats = await getBrewery(
+      { ...noFilter, minReviewAverage: 6.5 },
+      byName,
     )
-    assertDeepEqual(stats, [otherBrewery])
+    assertDeepEqual(stats, [nokianStats(nokian)])
   })
 
   it('filter by max review average', async () => {
-    const { stats, brewery } = await getResults(
-      ctx.db,
-      allResults,
-      () => ({
-        ...defaultFilter,
-        maxReviewAverage: 6.3,
-      }),
-      { property: 'brewery_name', direction: 'desc' },
+    const { lindemans } = await insertBreweries(ctx.db)
+    const stats = await getBrewery(
+      { ...noFilter, maxReviewAverage: 6.5 },
+      byName,
     )
-    assertDeepEqual(stats, [brewery])
+    assertDeepEqual(stats, [lindemansStats(lindemans)])
   })
 
   it('filter by start time', async () => {
-    const { stats, brewery } = await getResults(
-      ctx.db,
-      allResults,
-      () => ({
-        ...defaultFilter,
-        timeStart: new Date('2024-01-01T00:00:00.000Z'),
-      }),
-      { property: 'brewery_name', direction: 'desc' },
+    const { lindemans } = await insertBreweries(ctx.db)
+    const stats = await getBrewery(
+      { ...noFilter, timeStart: new Date('2024-01-01T00:00:00.000Z') },
+      byName,
     )
-    assertDeepEqual(stats, [brewery])
+    assertDeepEqual(stats, [lindemansStats(lindemans)])
   })
 
   it('filter by end time', async () => {
-    const { stats, otherBrewery } = await getResults(
-      ctx.db,
-      allResults,
-      () => ({
-        ...defaultFilter,
-        timeEnd: new Date('2024-01-01T00:00:00.000Z'),
-      }),
-      { property: 'brewery_name', direction: 'desc' },
+    const { nokian } = await insertBreweries(ctx.db)
+    const stats = await getBrewery(
+      { ...noFilter, timeEnd: new Date('2024-01-01T00:00:00.000Z') },
+      byName,
     )
-    assertDeepEqual(stats, [otherBrewery])
+    assertDeepEqual(stats, [nokianStats(nokian)])
   })
 
   it('count reviewed beers', async () => {
-    const reviews: Review[] = []
-    const { brewery, otherBeer, otherBrewery } =
-      await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
-        const brewery = await breweryRepository.insertBrewery(trx, {
-          name: 'Salama',
-          country: undefined,
-        })
-        const otherBrewery = await breweryRepository.insertBrewery(trx, {
-          name: 'Brewdog',
-          country: undefined,
-        })
-        const style = await styleRepository.insertStyle(trx, { name: 'Helles' })
-        const beer = await beerRepository.insertBeer(trx, {
-          name: 'Brainzilla',
-        })
-        const otherBeer = await beerRepository.insertBeer(trx, {
-          name: 'Lost Lager',
-        })
-        const beerBreweryRequest = {
-          beer: beer.id,
-          brewery: brewery.id,
-        }
-        const otherBeerBreweryRequest = {
-          beer: otherBeer.id,
-          brewery: brewery.id,
-        }
-        const otherBeerOtherBreweryRequest = {
-          beer: otherBeer.id,
-          brewery: otherBrewery.id,
-        }
-        await beerRepository.insertBeerBreweries(trx, [
-          beerBreweryRequest,
-          otherBeerBreweryRequest,
-          otherBeerOtherBreweryRequest,
-        ])
-        const beerStyleRequest = {
-          beer: beer.id,
-          style: style.id,
-        }
-        const otherBeerStyleRequest = {
-          beer: otherBeer.id,
-          style: style.id,
-        }
-        await beerRepository.insertBeerStyles(trx, [
-          beerStyleRequest,
-          otherBeerStyleRequest,
-        ])
-        const containerRequest = {
-          size: '0.50',
-          type: 'bottle',
-        }
-        const container = await containerRepository.insertContainer(
-          trx,
-          containerRequest,
-        )
-        const indices: Array<number> = Array.from(Array(9).keys())
-        const newReviews: NewReview[] = indices.map((i) => {
-          const reviewRequest: NewReview = {
-            additionalInfo: '',
-            beer: i % 2 === 0 ? otherBeer.id : beer.id,
-            container: container.id,
-            location: '',
-            rating: (i % 7) + 4,
-            time: new Date(
-              `202${i % 2 === 0 ? 3 : 4}-0${(i % 3) + 2}-0${
-                (i % 5) + 1
-              }T18:00:00.000Z`,
-            ),
-            smell: 'vanilla',
-            taste: 'chocolate',
-          }
-          return reviewRequest
-        })
-        const requests = newReviews.map((reviewRequest) =>
-          reviewRepository.insertReview(trx, reviewRequest),
-        )
-        const createdReviews = await Promise.all(requests)
-        createdReviews.forEach((review) => reviews.push(review))
-        return { brewery, otherBeer, otherBrewery }
-      })
-
-    const stats = await breweryStatsRepository.getBrewery(
-      ctx.db,
-      allResults,
-      defaultFilter,
-      { property: 'brewery_name', direction: 'asc' },
-    )
-    const otherBeerReviews = filterByBeer(reviews, otherBeer.id)
-    const breweryStats = {
-      reviewAverage: avg(reviews),
-      reviewCount: `${reviews.length}`,
-      reviewStandardDeviation: stdDev(reviews),
-      reviewMedian: median(reviews),
-      reviewMode: mode(reviews),
-      reviewedBeerCount: '2',
-      breweryId: brewery.id,
-      breweryName: brewery.name,
-      breweryCountry: brewery.country,
-    }
-    const otherBreweryStats = {
-      reviewAverage: avg(otherBeerReviews),
-      reviewCount: `${otherBeerReviews.length}`,
-      reviewStandardDeviation: stdDev(otherBeerReviews),
-      reviewMedian: median(otherBeerReviews),
-      reviewMode: mode(otherBeerReviews),
-      reviewedBeerCount: '1',
-      breweryId: otherBrewery.id,
-      breweryName: otherBrewery.name,
-      breweryCountry: otherBrewery.country,
-    }
-    assertDeepEqual(stats, [otherBreweryStats, breweryStats])
+    const { salama, brewdog } = await insertCollaboration(ctx.db)
+    const stats = await getBrewery(noFilter, byName)
+    assertDeepEqual(stats, [
+      brewdogStats(brewdog),
+      {
+        reviewAverage: '6.50',
+        reviewCount: '4',
+        reviewStandardDeviation: '2.29',
+        reviewMedian: '6.00',
+        reviewMode: '4',
+        reviewedBeerCount: '2',
+        breweryId: salama.id,
+        breweryName: 'Salama',
+        breweryCountry: 'FI',
+      },
+    ])
   })
 
-  it('show brewery countries', async () => {
-    const reviews: Review[] = []
-    const { brewery, otherBrewery } = await ctx.db.executeReadWriteTransaction(
-      async (trx: Transaction) => {
-        const brewery = await breweryRepository.insertBrewery(trx, {
-          name: 'Salama',
-          country: 'FI',
-        })
-        const otherBrewery = await breweryRepository.insertBrewery(trx, {
-          name: 'Brewdog',
-          country: 'GB',
-        })
-        const style = await styleRepository.insertStyle(trx, { name: 'Helles' })
-        const beer = await beerRepository.insertBeer(trx, {
-          name: 'Brainzilla',
-        })
-        const otherBeer = await beerRepository.insertBeer(trx, {
-          name: 'Lost Lager',
-        })
-        await beerRepository.insertBeerBreweries(trx, [
-          { beer: beer.id, brewery: brewery.id },
-          { beer: otherBeer.id, brewery: brewery.id },
-          { beer: otherBeer.id, brewery: otherBrewery.id },
-        ])
-        await beerRepository.insertBeerStyles(trx, [
-          { beer: beer.id, style: style.id },
-          { beer: otherBeer.id, style: style.id },
-        ])
-        const container = await containerRepository.insertContainer(trx, {
-          size: '0.50',
-          type: 'bottle',
-        })
-        const indices: Array<number> = Array.from(Array(4).keys())
-        const newReviews: NewReview[] = indices.map((i) => ({
-          additionalInfo: '',
-          beer: i % 2 === 0 ? otherBeer.id : beer.id,
-          container: container.id,
-          location: '',
-          rating: (i % 7) + 4,
-          time: new Date(`2024-0${(i % 3) + 2}-0${(i % 5) + 1}T18:00:00.000Z`),
-          smell: 'vanilla',
-          taste: 'chocolate',
-        }))
-        const createdReviews = await Promise.all(
-          newReviews.map((reviewRequest) =>
-            reviewRepository.insertReview(trx, reviewRequest),
-          ),
-        )
-        createdReviews.forEach((review) => reviews.push(review))
-        return { brewery, otherBrewery }
+  // The brewery filter selects from another table than the unfiltered
+  // query, so this also checks what it selects.
+  it('filter by brewery keeps the other breweries of its beers', async () => {
+    const { salama, brewdog } = await insertCollaboration(ctx.db)
+    const stats = await getBrewery({ ...noFilter, brewery: brewdog.id }, byName)
+    assertDeepEqual(stats, [
+      brewdogStats(brewdog),
+      {
+        reviewAverage: '7.00',
+        reviewCount: '2',
+        reviewStandardDeviation: '3.00',
+        reviewMedian: '7.00',
+        reviewMode: '4',
+        reviewedBeerCount: '1',
+        breweryId: salama.id,
+        breweryName: 'Salama',
+        breweryCountry: 'FI',
       },
-    )
-
-    const byName: BreweryStatsOrder = {
-      property: 'brewery_name',
-      direction: 'asc',
-    }
-
-    const stats = await breweryStatsRepository.getBrewery(
-      ctx.db,
-      allResults,
-      defaultFilter,
-      byName,
-    )
-    assertDeepEqual(
-      stats.map((row) => ({
-        breweryName: row.breweryName,
-        breweryCountry: row.breweryCountry,
-      })),
-      [
-        { breweryName: 'Brewdog', breweryCountry: 'GB' },
-        { breweryName: 'Salama', breweryCountry: 'FI' },
-      ],
-    )
-
-    // The brewery filter rebuilds the query with its own select list.
-    const filteredStats = await breweryStatsRepository.getBrewery(
-      ctx.db,
-      allResults,
-      { ...defaultFilter, brewery: brewery.id },
-      byName,
-    )
-    assertDeepEqual(
-      filteredStats.map((row) => ({
-        breweryName: row.breweryName,
-        breweryCountry: row.breweryCountry,
-      })),
-      [
-        { breweryName: 'Brewdog', breweryCountry: 'GB' },
-        { breweryName: 'Salama', breweryCountry: 'FI' },
-      ],
-    )
-    assertEqual(otherBrewery.country, 'GB')
+    ])
   })
 })

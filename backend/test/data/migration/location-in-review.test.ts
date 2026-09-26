@@ -5,10 +5,14 @@ import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
 import { invalidateSchema } from '../test-helpers.js'
+import * as beerRepository from '../../../src/data/beer/beer.repository.js'
+import * as containerRepository from '../../../src/data/container/container.repository.js'
 import * as locationRepository from '../../../src/data/location/location.repository.js'
 import * as reviewRepository from '../../../src/data/review/review.repository.js'
-import { insertData } from '../review-helpers.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
+import { buildNewBeer } from '../beer/builders.js'
+import { buildNewContainer } from '../container/builders.js'
+import { buildNewReview } from '../review/builders.js'
 import { FileMigrationProvider, Migrator } from 'kysely/migration'
 
 const directory = dirname(fileURLToPath(import.meta.url))
@@ -37,17 +41,17 @@ describe('review tests', () => {
     })
     await migrator.migrateTo('2025_01_10_23_48_20_add_location')
     const review = await ctx.db.executeReadWriteTransaction(async (trx) => {
-      const { beer, container } = await insertData(trx)
-      const reviewRequest = {
+      const beer = await beerRepository.insertBeer(trx, buildNewBeer())
+      const container = await containerRepository.insertContainer(
+        trx,
+        buildNewContainer(),
+      )
+      // Before the migration a review names its location.
+      const reviewRequest = buildNewReview({
         beer: beer.id,
-        additionalInfo: 'additional',
         container: container.id,
         location: locationName,
-        rating: 8,
-        time: new Date(),
-        smell: 'vanilla',
-        taste: 'chocolate',
-      }
+      })
       const review = await reviewRepository.insertReview(trx, reviewRequest)
       assertDeepEqual(review, {
         ...reviewRequest,

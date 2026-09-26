@@ -4,17 +4,9 @@ import * as jwt from '../../../src/logic/internal/auth/jwt.js'
 
 import * as service from '../../../src/logic/user/authorized-sign-in-method.service.js'
 
-import type {
-  DbRefreshToken,
-  RefreshToken,
-} from '../../../src/logic/auth/refresh-token.js'
+import type { RefreshToken } from '../../../src/logic/auth/refresh-token.js'
 
 import type { RefreshTokensIf } from '../../../src/logic/user/authorized-sign-in-method.service.js'
-import type {
-  AuthTokenConfig,
-  AuthTokenPayload,
-} from '../../../src/logic/auth/auth-token.js'
-import type { User } from '../../../src/logic/user/user.js'
 import {
   invalidCredentialsTokenError,
   invalidRefreshTokenError,
@@ -35,27 +27,24 @@ import type { ValidateRefreshToken } from '../../../src/logic/auth/refresh-token
 
 import { dummyLog as log } from '../dummy-log.js'
 import { testJwtIf } from '../jwt-helper.js'
+import {
+  buildAuthTokenConfig,
+  buildAuthTokenPayload,
+  buildDbRefreshToken,
+} from '../auth/builders.js'
+import { buildUser } from './builders.js'
 
 const userId = '589e0cf9-7a2d-4c7e-8d62-6e67f32cb3ce'
 const refreshTokenId = 'c6697088-c417-4dee-988d-c018b07527f7'
 
-const user: User = {
-  id: userId,
-  role: 'admin',
-  username: 'admin',
-}
+const user = buildUser({ id: userId })
 
-const adminAuthToken: AuthTokenPayload = {
-  userId,
-  role: 'admin',
-  refreshTokenId,
-}
+const adminAuthToken = buildAuthTokenPayload({ userId, role: 'admin' })
 
-const viewerAuthToken: AuthTokenPayload = {
+const viewerAuthToken = buildAuthTokenPayload({
   userId: 'dbf43779-cc8b-4097-bca2-af0b8e6da64b',
   role: 'viewer',
-  refreshTokenId: '0054d008-2a4c-4c84-af92-886df7dd38fe',
-}
+})
 
 const authTokenSecret: string = 'this is secret'
 
@@ -73,10 +62,7 @@ const validRefreshToken: RefreshToken = jwt.signRefreshToken(
   authTokenSecret,
 )
 
-const dbRefreshToken: DbRefreshToken = {
-  id: 'e6190cc2-630e-4f23-bc70-aa76254ef28b',
-  userId,
-}
+const dbRefreshToken = buildDbRefreshToken()
 
 const refreshTokensIf: RefreshTokensIf = {
   deleteRefreshToken: async () => undefined,
@@ -84,10 +70,7 @@ const refreshTokensIf: RefreshTokensIf = {
   lockUserById: async () => user,
 }
 
-const authTokenConfig: AuthTokenConfig = {
-  secret: authTokenSecret,
-  expiryDurationMin: 1,
-}
+const authTokenConfig = buildAuthTokenConfig({ secret: authTokenSecret })
 
 const userPasswordHash: UserPasswordHash = {
   userId,

@@ -7,8 +7,6 @@ import {
 } from '../../../../src/logic/errors.js'
 import type {
   Style,
-  StyleWithParentIds,
-  StyleWithParentsAndChildren,
   CreateStyleRequest,
   UpdateStyleRequest,
   NewStyle,
@@ -21,27 +19,16 @@ import * as styleService from '../../../../src/logic/internal/style/service.js'
 import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
 import { assertDeepEqual, assertEqual } from '../../../assert.js'
+import {
+  buildStyle,
+  buildStyleWithParentIds,
+  buildStyleWithParentsAndChildren,
+} from '../../style/builders.js'
 
-const style: Style = {
-  id: '71dcc323-7e59-4122-9afa-d4ffc484dee6',
-  name: 'imperial gose',
-}
+const style = buildStyle({ id: '71dcc323-7e59-4122-9afa-d4ffc484dee6' })
 
-const parentStyle: Style = {
-  id: '0ba08b98-44af-46ea-b88d-35f01764b638',
-  name: 'gose',
-}
-
-const styleWithParentIds: StyleWithParentIds = {
-  ...style,
-  parents: [parentStyle.id],
-}
-
-const styleWithParentsAndChildren: StyleWithParentsAndChildren = {
-  ...style,
-  children: [],
-  parents: [parentStyle],
-}
+// A style that is its own parent is a cycle.
+const parentStyle = buildStyle({ id: '0ba08b98-44af-46ea-b88d-35f01764b638' })
 
 const createWithParentRequest: CreateStyleRequest = {
   name: style.name,
@@ -267,12 +254,13 @@ describe('style service unit tests', () => {
   })
 
   it('find style', async () => {
+    const found = buildStyleWithParentsAndChildren()
     const finder = async (styleId: string) => {
-      assertEqual(styleId, style.id)
-      return styleWithParentsAndChildren
+      assertEqual(styleId, found.id)
+      return found
     }
-    const result = await styleService.findStyleById(finder, style.id, log)
-    assertDeepEqual(result, styleWithParentsAndChildren)
+    const result = await styleService.findStyleById(finder, found.id, log)
+    assertDeepEqual(result, found)
   })
 
   it('fail to find style with unknown id', async () => {
@@ -287,10 +275,11 @@ describe('style service unit tests', () => {
   })
 
   it('list styles', async () => {
+    const listed = buildStyleWithParentIds()
     const lister = async () => {
-      return [styleWithParentIds]
+      return [listed]
     }
     const result = await styleService.listStyles(lister, log)
-    assertDeepEqual(result, [styleWithParentIds])
+    assertDeepEqual(result, [listed])
   })
 })

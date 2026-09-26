@@ -3,79 +3,53 @@ import { describe, it } from 'node:test'
 import * as beerService from '../../../src/logic/beer/authorized.service.js'
 
 import type { AuthTokenPayload } from '../../../src/logic/auth/auth-token.js'
-import type {
-  Beer,
-  BeerWithBreweriesAndStyles,
-  CreateBeerRequest,
-  CreateIf,
-  UpdateBeerRequest,
-  UpdateIf,
-} from '../../../src/logic/beer/beer.js'
+import type { CreateIf, UpdateIf } from '../../../src/logic/beer/beer.js'
 import { dummyLog as log } from '../dummy-log.js'
 import { expectReject } from '../controller-error-helper.js'
 import { invalidBeerError, noRightsError } from '../../../src/logic/errors.js'
 import { assertDeepEqual } from '../../assert.js'
+import { buildAuthTokenPayload } from '../auth/builders.js'
+import {
+  buildBeer,
+  buildBeerWithBreweriesAndStyles,
+  buildCreateBeerRequest,
+  buildUpdateBeerRequest,
+} from './builders.js'
 
-const breweryId = '25eb0361-ed50-4de7-aec5-74fe4e7fe011'
-const styleId = '0716f9c8-a419-4c36-af3d-425ed1a3a306'
+const validCreateBeerRequest = buildCreateBeerRequest()
 
-const validCreateBeerRequest: CreateBeerRequest = {
-  name: 'Severin',
-  breweries: [breweryId],
-  styles: [styleId],
-}
+const validUpdateBeerRequest = buildUpdateBeerRequest()
 
-const validUpdateBeerRequest: UpdateBeerRequest = {
-  name: 'Severin',
-  breweries: [breweryId],
-  styles: [styleId],
-}
+const beer = buildBeer()
 
-const beer: Beer = {
-  id: '149bfae4-a2e6-45b9-a397-e61d3fa7a1c3',
-  name: validCreateBeerRequest.name,
-}
-
-const beerWithBreweriesAndStyles: BeerWithBreweriesAndStyles = {
-  ...beer,
-  breweries: [],
-  styles: [],
-}
+const beerWithBreweriesAndStyles = buildBeerWithBreweriesAndStyles()
 
 const invalidBeerRequest = {
   name: 'This is invalid',
-  breweries: [breweryId],
 }
 
+// Every brewery and style a request refers to exists.
 const createIf: CreateIf = {
   create: async () => beer,
-  lockBreweries: async () => [breweryId],
-  lockStyles: async () => [styleId],
+  lockBreweries: async (ids: string[]) => ids,
+  lockStyles: async (ids: string[]) => ids,
   insertBeerBreweries: async () => {},
   insertBeerStyles: async () => {},
 }
 
 const updateIf: UpdateIf = {
   update: async () => beer,
-  lockBreweries: async () => [breweryId],
-  lockStyles: async () => [styleId],
+  lockBreweries: async (ids: string[]) => ids,
+  lockStyles: async (ids: string[]) => ids,
   deleteBeerBreweries: async () => {},
   deleteBeerStyles: async () => {},
   insertBeerBreweries: async () => {},
   insertBeerStyles: async () => {},
 }
 
-const adminAuthToken: AuthTokenPayload = {
-  userId: '5b5590e3-3bef-4267-a0f8-fe051fb681a5',
-  role: 'admin',
-  refreshTokenId: 'd7206329-8ccd-4509-bb5c-61d74798cda8',
-}
+const adminAuthToken = buildAuthTokenPayload({ role: 'admin' })
 
-const viewerAuthToken: AuthTokenPayload = {
-  userId: '6018c984-4e6c-4d17-b814-7511eff902d4',
-  role: 'viewer',
-  refreshTokenId: 'db81d9d8-d11e-40f2-83cf-4cddc98504c7',
-}
+const viewerAuthToken = buildAuthTokenPayload({ role: 'viewer' })
 
 describe('beer authorized service unit tests', () => {
   function notCalled(): any {
@@ -171,10 +145,13 @@ describe('beer authorized service unit tests', () => {
     it(`find beer as ${token.role}`, async () => {
       const result = await beerService.findBeerById(
         async () => beerWithBreweriesAndStyles,
-        () => ({ errorCode: undefined, result: beer.id }),
+        () => ({
+          errorCode: undefined,
+          result: beerWithBreweriesAndStyles.id,
+        }),
         {
           authTokenPayload: token,
-          id: beer.id,
+          id: beerWithBreweriesAndStyles.id,
         },
         log,
       )
@@ -196,10 +173,10 @@ describe('beer authorized service unit tests', () => {
     it(`searches beers as ${token.role}`, async () => {
       const result = await beerService.searchBeers(
         async () => [beerWithBreweriesAndStyles],
-        () => ({ errorCode: undefined, result: { name: beer.name } }),
+        () => ({ errorCode: undefined, result: { name: 'Sipe' } }),
         {
           authTokenPayload: token,
-          body: { name: beer.name },
+          body: { name: 'Sipe' },
         },
         log,
       )

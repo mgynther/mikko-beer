@@ -3,7 +3,6 @@ import { describe, it } from 'node:test'
 import * as jwt from '../../../../src/logic/internal/auth/jwt.js'
 import type {
   AuthTokenConfig,
-  AuthTokenPayload,
   JwtClaims,
   JwtIf,
 } from '../../../../src/logic/auth/auth-token.js'
@@ -12,6 +11,7 @@ import {
   InvalidAuthTokenError,
 } from '../../../../src/logic/auth/auth-token.js'
 import { assertDeepEqual, assertThrows } from '../../../assert.js'
+import { buildAuthTokenPayload } from '../../auth/builders.js'
 
 const secret = 'thisissecret'
 
@@ -20,15 +20,11 @@ const authTokenConfig: AuthTokenConfig = {
   expiryDurationMin: 5,
 }
 
-const authTokenPayload: AuthTokenPayload = {
-  userId: '6b58d7a1-25b6-4f22-b2e4-3a40aa8d4a44',
-  role: 'admin',
-  refreshTokenId: '1fbb1e58-1b63-4b0a-9d35-3f5a42f0cf52',
-}
+const authTokenPayload = buildAuthTokenPayload()
 
 const refreshTokenPayload: jwt.RefreshTokenPayload = {
-  userId: authTokenPayload.userId,
-  refreshTokenId: authTokenPayload.refreshTokenId,
+  userId: '6b58d7a1-25b6-4f22-b2e4-3a40aa8d4a44',
+  refreshTokenId: '1fbb1e58-1b63-4b0a-9d35-3f5a42f0cf52',
   isRefreshToken: true,
 }
 

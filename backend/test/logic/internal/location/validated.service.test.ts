@@ -5,7 +5,6 @@ import * as locationService from '../../../../src/logic/internal/location/valida
 import type {
   Location,
   CreateLocationRequest,
-  UpdateLocationRequest,
   ValidateCreateLocation,
   ValidateUpdateLocation,
 } from '../../../../src/logic/location/location.js'
@@ -17,19 +16,17 @@ import {
   invalidSearchError,
 } from '../../../../src/logic/errors.js'
 import { assertDeepEqual, assertEqual } from '../../../assert.js'
+import {
+  buildCreateLocationRequest,
+  buildLocation,
+  buildUpdateLocationRequest,
+} from '../../location/builders.js'
 
-const validCreateLocationRequest: CreateLocationRequest = {
-  name: 'Kuja Beer Shop & Bar',
-}
+const validCreateLocationRequest = buildCreateLocationRequest()
 
-const validUpdateLocationRequest: UpdateLocationRequest = {
-  name: 'Oluthuone Kaisla',
-}
+const validUpdateLocationRequest = buildUpdateLocationRequest()
 
-const location: Location = {
-  id: '8348dbfa-c68b-4c00-8593-f2be2be3002c',
-  name: validCreateLocationRequest.name,
-}
+const location = buildLocation()
 
 const invalidLocationRequest = {
   unexpectedProperty: 'This is invalid',
@@ -140,13 +137,14 @@ describe('location validated service unit tests', () => {
   })
 
   it('find location by id', async () => {
-    const id = 'd4a0a0b8-3b08-4f70-a1b6-1f0ae3a1e2f6'
-    await locationService.findLocationById(
-      async () => ({ id, name: location.name }),
-      () => ({ errorCode: undefined, result: id }),
-      id,
+    const found = buildLocation()
+    const result = await locationService.findLocationById(
+      async () => found,
+      () => ({ errorCode: undefined, result: found.id }),
+      found.id,
       log,
     )
+    assertDeepEqual(result, found)
   })
 
   function notCalled(): any {
@@ -167,8 +165,8 @@ describe('location validated service unit tests', () => {
   it('search locations', async () => {
     const result = await locationService.searchLocations(
       async () => [location],
-      () => ({ errorCode: undefined, result: { name: location.name } }),
-      { name: location.name },
+      () => ({ errorCode: undefined, result: { name: 'Kuj' } }),
+      { name: 'Kuj' },
       log,
     )
     assertDeepEqual(result, [location])

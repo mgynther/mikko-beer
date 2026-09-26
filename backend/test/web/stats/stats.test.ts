@@ -6,7 +6,7 @@ import {
   medianRatings,
   modeRatings,
   stdDevRatings,
-} from '../../data/stats/stats-helpers.js'
+} from './stats-helpers.js'
 import type { CreateReviewRequest } from '../../../src/logic/review/review.js'
 import type { CreatedOrUpdatedBeer } from '../../../src/web/beer/beer.controller.js'
 import type { CreatedOrUpdatedBrewery } from '../../../src/web/brewery/brewery.controller.js'

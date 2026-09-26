@@ -11,32 +11,29 @@ import {
   userOrRefreshTokenNotFoundError,
 } from '../../../../src/logic/errors.js'
 import { expectReject, expectThrow } from '../../controller-error-helper.js'
+import { buildUser } from '../../user/builders.js'
 
 const refreshTokenId = 'f2224f80-b478-43e2-8cc9-d39cf8079524'
 
-const admin: User = {
+const admin = buildUser({
   id: '185c5a57-c29f-456f-9dac-db29a7de96c3',
   role: 'admin',
-  username: 'admin',
-}
+})
 
-const otherAdmin: User = {
+const otherAdmin = buildUser({
   id: 'e8d718a3-0a85-41f3-9040-b7aff4470987',
   role: 'admin',
-  username: 'otheradmin',
-}
+})
 
-const viewer: User = {
+const viewer = buildUser({
   id: '2a036606-c4cc-46b6-8093-4bf3835fff85',
   role: 'viewer',
-  username: 'viewer',
-}
+})
 
-const otherViewer: User = {
+const otherViewer = buildUser({
   id: 'ca8c2111-db26-472a-bdf5-4c5fa1516425',
   role: 'viewer',
-  username: 'otherviewer',
-}
+})
 
 async function findRefreshToken(
   userId: string,
@@ -128,7 +125,7 @@ describe('authorization service unit tests', () => {
   })
 
   it('authorize self user as viewer', async () => {
-    const authTokenPayload = await createAuthTokenPayload(admin)
+    const authTokenPayload = await createAuthTokenPayload(viewer)
     await authorizationService.authorizeUser(
       viewer.id,
       authTokenPayload,

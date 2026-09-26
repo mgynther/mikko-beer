@@ -4,89 +4,58 @@ import * as reviewService from '../../../src/logic/review/authorized.service.js'
 
 import type { AuthTokenPayload } from '../../../src/logic/auth/auth-token.js'
 import type {
-  Review,
-  CreateReviewRequest,
   CreateIf,
-  JoinedReview,
   ReviewListOrder,
-  UpdateReviewRequest,
   UpdateIf,
-  ReviewListFilter,
   FullReviewListRequest,
   ReviewListRequest,
 } from '../../../src/logic/review/review.js'
 import { dummyLog as log } from '../dummy-log.js'
 import { expectReject } from '../controller-error-helper.js'
 import { invalidReviewError, noRightsError } from '../../../src/logic/errors.js'
-import { assertDeepEqual, assertEqual } from '../../assert.js'
+import { assertDeepEqual } from '../../assert.js'
+import { buildAuthTokenPayload } from '../auth/builders.js'
+import {
+  buildCreateReviewRequest,
+  buildJoinedReview,
+  buildReview,
+  buildReviewListFilter,
+  buildUpdateReviewRequest,
+} from './builders.js'
 
 const storageId = '5e11fcf9-3fa4-402d-90e2-17706e8d78e6'
 
-const reviewListFilter: ReviewListFilter = {
-  minRating: 4,
-  maxRating: 10,
-  minTime: new Date('1970-01-01'),
-  maxTime: new Date('9999-01-01'),
-}
+const reviewListFilter = buildReviewListFilter()
 
-const validCreateReviewRequest: CreateReviewRequest = {
-  additionalInfo: '',
-  beer: '62d30965-f42d-451d-b79f-0dc41d4d3088',
-  container: 'f0d1aa85-12a3-45e5-8bf4-44c7e9d38c12',
-  location: '',
-  rating: 9,
-  smell: 'quite nice',
-  taste: 'fruity, pleasant citrus',
-  time: '2024-06-02T12:00:00.000Z',
-}
+const validCreateReviewRequest = buildCreateReviewRequest()
 
-const validUpdateReviewRequest: UpdateReviewRequest = {
-  additionalInfo: '',
-  beer: '1611037d-0938-423e-a10c-bacd95052cec',
-  container: '449dba95-c10d-4810-8ecf-92f9c33a18a4',
-  location: '',
-  rating: 9,
-  smell: 'quite nice',
-  taste: 'fruity, pleasant citrus',
-  time: '2024-06-02T12:00:00.000Z',
-}
+const validUpdateReviewRequest = buildUpdateReviewRequest()
 
-const review: Review = {
-  ...validCreateReviewRequest,
-  id: '1d8f6ba2-8813-4a6f-b520-ecd56cb3c646',
-  time: new Date(validCreateReviewRequest.time),
-}
+const review = buildReview()
 
 const invalidReviewRequest = {
   smell: 'quite nice',
   taste: 'fruity, pleasant citrus',
 }
 
+// Every beer, container and storage a request refers to exists.
 const createIf: CreateIf = {
   createReview: async () => review,
   deleteFromStorage: async () => undefined,
-  lockBeer: async () => validCreateReviewRequest.beer,
-  lockContainer: async () => validCreateReviewRequest.container,
-  lockStorage: async () => 'a48879ea-8249-4c08-8118-cea63beca4cf',
+  lockBeer: async (id: string) => id,
+  lockContainer: async (id: string) => id,
+  lockStorage: async (id: string) => id,
 }
 
 const updateIf: UpdateIf = {
   updateReview: async () => review,
-  lockBeer: async () => validCreateReviewRequest.beer,
-  lockContainer: async () => validCreateReviewRequest.container,
+  lockBeer: async (id: string) => id,
+  lockContainer: async (id: string) => id,
 }
 
-const adminAuthToken: AuthTokenPayload = {
-  userId: '97bfead4-409a-4989-a2b8-cb2f1cd126a0',
-  role: 'admin',
-  refreshTokenId: '22404eb4-a865-485a-8be6-01f519d69169',
-}
+const adminAuthToken = buildAuthTokenPayload({ role: 'admin' })
 
-const viewerAuthToken: AuthTokenPayload = {
-  userId: 'a2ed9601-f68d-45a7-ab33-bfc34ee43c24',
-  role: 'viewer',
-  refreshTokenId: '35cab924-9f13-4a9c-a204-77d77dca0c5f',
-}
+const viewerAuthToken = buildAuthTokenPayload({ role: 'viewer' })
 
 describe('review authorized service unit tests', () => {
   function notCalled(): any {
@@ -197,32 +166,7 @@ describe('review authorized service unit tests', () => {
       filter: reviewListFilter,
       order: { property: 'time', direction: 'desc' },
     }
-    const joinedReview: JoinedReview = {
-      ...review,
-      beerId: review.beer,
-      beerName: 'Weizenbock',
-      breweries: [
-        {
-          id: '10a7f306-5cf8-480e-aa52-9d85a421c7c0',
-          name: 'Koskipanimo',
-        },
-      ],
-      container: {
-        id: '30f66fe6-4f2c-4b76-a03e-e9ebead65a14',
-        size: '0.50',
-        type: 'draft',
-      },
-      location: {
-        id: '70c3f124-d0d2-46ad-be9d-b74664894fab',
-        name: 'Pub Pikilinna',
-      },
-      styles: [
-        {
-          id: 'c9ea7133-9392-4c28-b8f5-33c61350809c',
-          name: 'Weizenbock',
-        },
-      ],
-    }
+    const joinedReview = buildJoinedReview()
     it(`find review as ${token.role}`, async () => {
       const result = await reviewService.findReviewById(
         async () => review,
@@ -256,7 +200,7 @@ describe('review authorized service unit tests', () => {
         }),
         {
           authTokenPayload: token,
-          id: joinedReview.beerId,
+          id: '62d30965-f42d-451d-b79f-0dc41d4d3088',
         },
         reviewListRequest,
         log,
@@ -273,7 +217,7 @@ describe('review authorized service unit tests', () => {
         }),
         {
           authTokenPayload: token,
-          id: joinedReview.breweries[0].id,
+          id: '10a7f306-5cf8-480e-aa52-9d85a421c7c0',
         },
         reviewListRequest,
         log,
@@ -282,7 +226,6 @@ describe('review authorized service unit tests', () => {
     })
 
     it(`list reviews by location as ${token.role}`, async () => {
-      assertEqual(typeof joinedReview.location?.id, 'string')
       const result = await reviewService.listReviewsByLocation(
         async () => [joinedReview],
         (id: string | undefined) => ({
@@ -291,7 +234,7 @@ describe('review authorized service unit tests', () => {
         }),
         {
           authTokenPayload: token,
-          id: joinedReview.location?.id,
+          id: '70c3f124-d0d2-46ad-be9d-b74664894fab',
         },
         reviewListRequest,
         log,
@@ -308,7 +251,7 @@ describe('review authorized service unit tests', () => {
         }),
         {
           authTokenPayload: token,
-          id: joinedReview.styles[0].id,
+          id: 'c9ea7133-9392-4c28-b8f5-33c61350809c',
         },
         reviewListRequest,
         log,

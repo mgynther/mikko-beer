@@ -30,21 +30,15 @@ import { dummyLog as log } from '../../dummy-log.js'
 import type { AuthTokenConfig } from '../../../../src/logic/auth/auth-token.js'
 import type { SignedInUser } from '../../../../src/logic/user/signed-in-user.js'
 import { testJwtIf } from '../../jwt-helper.js'
+import { buildUser } from '../../user/builders.js'
 
 describe('password sign-in-method service unit tests', () => {
   const userId = '3b3adde6-c6a2-45f1-bd5e-bce71b8d835f'
   const username = 'user'
-  const user: User = {
-    id: userId,
-    role: 'admin',
-    username: username,
-  }
+  const user = buildUser({ id: userId, username })
 
-  const noPasswordUser: User = {
-    id: userId,
-    role: 'admin',
-    username: null,
-  }
+  // A user without a username has no password sign-in method yet.
+  const noPasswordUser = buildUser({ id: userId, username: null })
 
   const knownPassword = 'password'
 

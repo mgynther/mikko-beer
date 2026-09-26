@@ -4,57 +4,32 @@ import * as statsService from '../../../src/logic/stats/authorized.service.js'
 
 import type { AuthTokenPayload } from '../../../src/logic/auth/auth-token'
 import { dummyLog as log } from '../dummy-log.js'
-import type {
-  AnnualContainerStats,
-  AnnualStats,
-  BreweryCountryStats,
-  BreweryStats,
-  ContainerStats,
-  LocationStats,
-  OverallStats,
-  RatingStats,
-  StatsIdFilter,
-  StyleStats,
-} from '../../../src/logic/stats/stats.js'
 import { assertDeepEqual } from '../../assert.js'
+import { buildAuthTokenPayload } from '../auth/builders.js'
+import {
+  buildAnnualContainerStatsRow,
+  buildAnnualStatsRow,
+  buildBreweryCountryStatsRow,
+  buildBreweryStatsRow,
+  buildContainerStatsRow,
+  buildLocationStatsRow,
+  buildOverallStats,
+  buildRatingStatsRow,
+  buildStatsFilter,
+  buildStatsIdFilter,
+  buildStyleStatsRow,
+} from './builders.js'
 
-const adminAuthToken: AuthTokenPayload = {
-  userId: '2238a6f3-6cc7-44a4-bb91-6369bd9adf56',
-  role: 'admin',
-  refreshTokenId: '0d3e980c-7d2b-4c73-a439-c55ddaa7a682',
-}
+const adminAuthToken = buildAuthTokenPayload({ role: 'admin' })
 
-const viewerAuthToken: AuthTokenPayload = {
-  userId: '57373ccd-a2ed-480c-beb4-90565da54e2d',
-  role: 'viewer',
-  refreshTokenId: 'ddf43e29-7c7f-4246-9e39-88add3375bd6',
-}
+const viewerAuthToken = buildAuthTokenPayload({ role: 'viewer' })
 
 describe('stats authorized service unit tests', () => {
   ;[adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
-    const statsFilter: StatsIdFilter = {
-      brewery: '94235104-ded1-44ec-a54c-ce972fe35420',
-      location: undefined,
-      style: undefined,
-    }
+    const statsFilter = buildStatsIdFilter()
 
     it(`get overall stats as ${token.role}`, async () => {
-      const overallStats: OverallStats = {
-        beerCount: '123',
-        breweryCount: '40',
-        breweryCountryCount: '12',
-        containerCount: '8',
-        locationCount: '3',
-        reviewCount: '120',
-        distinctBeerReviewCount: '119',
-        reviewAverage: '8.50',
-        reviewStandardDeviation: '0.74',
-        reviewMedian: '8.50',
-        reviewMode: '9',
-        reviewWithLocationCount: '45',
-        reviewWithoutLocationCount: '75',
-        styleCount: '28',
-      }
+      const overallStats = buildOverallStats()
       const result = await statsService.getOverall(
         async () => ({ ...overallStats }),
         token,
@@ -65,24 +40,7 @@ describe('stats authorized service unit tests', () => {
     })
 
     it(`get annual stats as ${token.role}`, async () => {
-      const annualStats: AnnualStats = [
-        {
-          reviewAverage: '8.23',
-          reviewCount: '234',
-          reviewStandardDeviation: '0.91',
-          reviewMedian: '8.00',
-          reviewMode: '8',
-          year: '2023',
-        },
-        {
-          reviewAverage: '8.31',
-          reviewCount: '215',
-          reviewStandardDeviation: '0.88',
-          reviewMedian: '8.00',
-          reviewMode: '8',
-          year: '2024',
-        },
-      ]
+      const annualStats = [buildAnnualStatsRow()]
       const result = await statsService.getAnnual(
         async () => [...annualStats],
         token,
@@ -93,30 +51,7 @@ describe('stats authorized service unit tests', () => {
     })
 
     it(`get annual container stats as ${token.role}`, async () => {
-      const annualContainerStats: AnnualContainerStats = [
-        {
-          containerId: '002f40ba-5b47-4d23-a7b1-944ecf237552',
-          containerType: 'bottle',
-          containerSize: '0.33',
-          reviewAverage: '8.23',
-          reviewCount: '234',
-          reviewStandardDeviation: '0.91',
-          reviewMedian: '8.00',
-          reviewMode: '8',
-          year: '2023',
-        },
-        {
-          containerId: '86b63fb6-937d-4a4f-b593-dd4db450c5c2',
-          containerType: 'can',
-          containerSize: '0.44',
-          reviewAverage: '8.31',
-          reviewCount: '215',
-          reviewStandardDeviation: '0.88',
-          reviewMedian: '8.00',
-          reviewMode: '8',
-          year: '2024',
-        },
-      ]
+      const annualContainerStats = [buildAnnualContainerStatsRow()]
       const result = await statsService.getAnnualContainer(
         async () => [...annualContainerStats],
         token,
@@ -128,43 +63,12 @@ describe('stats authorized service unit tests', () => {
     })
 
     it(`get brewery stats as ${token.role}`, async () => {
-      const breweryStats: BreweryStats = [
-        {
-          reviewAverage: '9.08',
-          reviewCount: '64',
-          reviewStandardDeviation: '0.62',
-          reviewMedian: '9.00',
-          reviewMode: '9',
-          reviewedBeerCount: '63',
-          breweryId: 'c1c9948d-2a7a-4b54-9ada-0fbfedfe2121',
-          breweryName: 'Koskipanimo',
-          breweryCountry: 'FI',
-        },
-        {
-          reviewAverage: '9.01',
-          reviewCount: '55',
-          reviewStandardDeviation: '0.71',
-          reviewMedian: '9.00',
-          reviewMode: '9',
-          reviewedBeerCount: '54',
-          breweryId: '1c0b32ed-a73a-422d-a14a-e70b0ea28e1d',
-          breweryName: 'Mallaskoski',
-          breweryCountry: undefined,
-        },
-      ]
+      const breweryStats = [buildBreweryStatsRow()]
       const result = await statsService.getBrewery(
         async () => [...breweryStats],
         token,
         { skip: 0, size: 20 },
-        {
-          ...statsFilter,
-          maxReviewCount: 66,
-          minReviewCount: 50,
-          maxReviewAverage: 9.87,
-          minReviewAverage: 5.23,
-          timeStart: undefined,
-          timeEnd: undefined,
-        },
+        buildStatsFilter(),
         {
           property: 'brewery_name',
           direction: 'desc',
@@ -175,41 +79,12 @@ describe('stats authorized service unit tests', () => {
     })
 
     it(`get brewery country stats as ${token.role}`, async () => {
-      const breweryCountryStats: BreweryCountryStats = [
-        {
-          reviewAverage: '8.91',
-          reviewCount: '76',
-          reviewStandardDeviation: '0.64',
-          reviewMedian: '9.00',
-          reviewMode: '9',
-          reviewedBeerCount: '61',
-          breweryCount: '14',
-          countryCode: 'FI',
-        },
-        {
-          reviewAverage: '9.24',
-          reviewCount: '33',
-          reviewStandardDeviation: '0.51',
-          reviewMedian: '9.00',
-          reviewMode: '10',
-          reviewedBeerCount: '30',
-          breweryCount: '5',
-          countryCode: 'BE',
-        },
-      ]
+      const breweryCountryStats = [buildBreweryCountryStatsRow()]
       const result = await statsService.getBreweryCountry(
         async () => [...breweryCountryStats],
         token,
         { skip: 0, size: 20 },
-        {
-          ...statsFilter,
-          maxReviewCount: 90,
-          minReviewCount: 30,
-          maxReviewAverage: 9.87,
-          minReviewAverage: 5.23,
-          timeStart: undefined,
-          timeEnd: undefined,
-        },
+        buildStatsFilter(),
         {
           property: 'brewery_count',
           direction: 'desc',
@@ -220,28 +95,7 @@ describe('stats authorized service unit tests', () => {
     })
 
     it(`get container stats as ${token.role}`, async () => {
-      const containerStats: ContainerStats = [
-        {
-          reviewAverage: '8.43',
-          reviewCount: '212',
-          reviewStandardDeviation: '0.82',
-          reviewMedian: '8.50',
-          reviewMode: '8',
-          containerId: '95dbb5a8-c814-42ef-a9bf-d3aa220749a1',
-          containerSize: '0.25',
-          containerType: 'draft',
-        },
-        {
-          reviewAverage: '8.11',
-          reviewCount: '201',
-          reviewStandardDeviation: '0.94',
-          reviewMedian: '8.00',
-          reviewMode: '8',
-          containerId: '87aa392e-b1af-44d2-8690-460687709f0c',
-          containerSize: '0.33',
-          containerType: 'bottle',
-        },
-      ]
+      const containerStats = [buildContainerStatsRow()]
       const result = await statsService.getContainer(
         async () => [...containerStats],
         token,
@@ -252,39 +106,12 @@ describe('stats authorized service unit tests', () => {
     })
 
     it(`get location stats as ${token.role}`, async () => {
-      const locationStats: LocationStats = [
-        {
-          reviewAverage: '9.08',
-          reviewCount: '64',
-          reviewStandardDeviation: '0.62',
-          reviewMedian: '9.00',
-          reviewMode: '9',
-          locationId: '7deae235-e990-4ee7-b445-b19dd7fa5a1f',
-          locationName: 'Kuja Beer Shop & Bar',
-        },
-        {
-          reviewAverage: '9.01',
-          reviewCount: '55',
-          reviewStandardDeviation: '0.71',
-          reviewMedian: '9.00',
-          reviewMode: '9',
-          locationId: '8a44ffcd-a647-4903-ab8f-7d98c4c28189',
-          locationName: 'Oluthuone Panimomestari',
-        },
-      ]
+      const locationStats = [buildLocationStatsRow()]
       const result = await statsService.getLocation(
         async () => [...locationStats],
         token,
         { skip: 0, size: 20 },
-        {
-          ...statsFilter,
-          maxReviewCount: 66,
-          minReviewCount: 50,
-          maxReviewAverage: 9.87,
-          minReviewAverage: 5.23,
-          timeStart: undefined,
-          timeEnd: undefined,
-        },
+        buildStatsFilter(),
         {
           property: 'location_name',
           direction: 'desc',
@@ -295,16 +122,7 @@ describe('stats authorized service unit tests', () => {
     })
 
     it(`get rating stats as ${token.role}`, async () => {
-      const ratingStats: RatingStats = [
-        {
-          rating: '9',
-          count: '5',
-        },
-        {
-          rating: '8',
-          count: '15',
-        },
-      ]
+      const ratingStats = [buildRatingStatsRow()]
 
       const result = await statsService.getRating(
         async () => [...ratingStats],
@@ -316,38 +134,11 @@ describe('stats authorized service unit tests', () => {
     })
 
     it(`get style stats as ${token.role}`, async () => {
-      const styleStats: StyleStats = [
-        {
-          reviewAverage: '9.12',
-          reviewCount: '58',
-          reviewStandardDeviation: '0.58',
-          reviewMedian: '9.00',
-          reviewMode: '9',
-          styleId: 'c1c9948d-2a7a-4b54-9ada-0fbfedfe2121',
-          styleName: 'American IPA',
-        },
-        {
-          reviewAverage: '9.69',
-          reviewCount: '40',
-          reviewStandardDeviation: '0.46',
-          reviewMedian: '10.00',
-          reviewMode: '10',
-          styleId: '2a0f8f10-297f-4bfa-81af-98c529b6dfbe',
-          styleName: 'Imperial Stout',
-        },
-      ]
+      const styleStats = [buildStyleStatsRow()]
       const result = await statsService.getStyle(
         async () => [...styleStats],
         token,
-        {
-          ...statsFilter,
-          maxReviewCount: 62,
-          minReviewCount: 39,
-          maxReviewAverage: 9.87,
-          minReviewAverage: 5.23,
-          timeStart: undefined,
-          timeEnd: undefined,
-        },
+        buildStatsFilter(),
         {
           property: 'average',
           direction: 'desc',

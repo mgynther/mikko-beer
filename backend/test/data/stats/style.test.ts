@@ -1,17 +1,30 @@
 import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
 
 import { TestContext } from '../test-context.js'
-import type { Review } from '../../../src/data/review/review.repository.js'
+import type { Database, Transaction } from '../../../src/data/database.js'
+import type { Brewery } from '../../../src/data/brewery/brewery.repository.js'
+import type { Container } from '../../../src/data/container/container.repository.js'
+import type { Location } from '../../../src/data/location/location.repository.js'
+import type { Style } from '../../../src/data/style/style.repository.js'
 import type { StyleStatsOrder } from '../../../src/data/stats/style.repository.js'
 import type { StatsFilter } from '../../../src/data/stats/stats-filter.js'
-import type { Database } from '../../../src/data/database.js'
+import * as beerRepository from '../../../src/data/beer/beer.repository.js'
+import * as breweryRepository from '../../../src/data/brewery/brewery.repository.js'
+import * as containerRepository from '../../../src/data/container/container.repository.js'
+import * as locationRepository from '../../../src/data/location/location.repository.js'
+import * as reviewRepository from '../../../src/data/review/review.repository.js'
+import * as styleRepository from '../../../src/data/style/style.repository.js'
 import * as styleStatsRepository from '../../../src/data/stats/style.repository.js'
-import type { InsertedData } from '../review-helpers.js'
-import { insertMultipleReviews } from '../review-helpers.js'
 import { assertDeepEqual } from '../../assert.js'
-import { avg, median, mode, stdDev } from './stats-helpers.js'
+import { buildNewBeer } from '../beer/builders.js'
+import { buildNewBrewery } from '../brewery/builders.js'
+import { buildNewContainer } from '../container/builders.js'
+import { buildNewLocation } from '../location/builders.js'
+import { buildNewReview } from '../review/builders.js'
+import { buildNewStyle } from '../style/builders.js'
 
-const defaultFilter: StatsFilter = {
+// Lets every review through, so that a test filters by what it sets.
+const noFilter: StatsFilter = {
   brewery: undefined,
   location: undefined,
   style: undefined,
@@ -23,6 +36,123 @@ const defaultFilter: StatsFilter = {
   timeEnd: undefined,
 }
 
+interface Rating {
+  rating: number
+  time: Date
+}
+
+interface ReviewedStyle {
+  brewery: Brewery
+  location: Location
+  style: Style
+}
+
+// A style with one beer of a brewery of its own, reviewed at a location of
+// its own, so that filtering by the style, the brewery or the location
+// keeps exactly this style. Brewery, style and location names are unique,
+// so the caller names them.
+async function insertReviewedStyle(
+  trx: Transaction,
+  container: Container,
+  names: { style: string; brewery: string; location: string },
+  ratings: Rating[],
+): Promise<ReviewedStyle> {
+  const style = await styleRepository.insertStyle(
+    trx,
+    buildNewStyle({ name: names.style }),
+  )
+  const brewery = await breweryRepository.insertBrewery(
+    trx,
+    buildNewBrewery({ name: names.brewery }),
+  )
+  const location = await locationRepository.insertLocation(
+    trx,
+    buildNewLocation({ name: names.location }),
+  )
+  const beer = await beerRepository.insertBeer(trx, buildNewBeer())
+  await beerRepository.insertBeerBreweries(trx, [
+    { beer: beer.id, brewery: brewery.id },
+  ])
+  await beerRepository.insertBeerStyles(trx, [
+    { beer: beer.id, style: style.id },
+  ])
+  await Promise.all(
+    ratings.map(({ rating, time }) =>
+      reviewRepository.insertReview(
+        trx,
+        buildNewReview({
+          beer: beer.id,
+          container: container.id,
+          location: location.id,
+          rating,
+          time,
+        }),
+      ),
+    ),
+  )
+  return { brewery, location, style }
+}
+
+// Gueuze comes before IPA by name and has fewer reviews, a lower average
+// and a lower deviation, so every order puts Gueuze first ascending and
+// IPA first descending. The reviews of Gueuze are from 2024 and those of
+// IPA from 2023, so a time filter keeps one of them.
+async function insertStyles(
+  db: Database,
+): Promise<{ gueuze: ReviewedStyle; ipa: ReviewedStyle }> {
+  return await db.executeReadWriteTransaction(async (trx: Transaction) => {
+    const container = await containerRepository.insertContainer(
+      trx,
+      buildNewContainer(),
+    )
+    const gueuze = await insertReviewedStyle(
+      trx,
+      container,
+      { style: 'Gueuze', brewery: 'Cantillon', location: 'Kuja' },
+      [
+        { rating: 5, time: new Date('2024-03-01T18:00:00.000Z') },
+        { rating: 7, time: new Date('2024-04-01T18:00:00.000Z') },
+      ],
+    )
+    const ipa = await insertReviewedStyle(
+      trx,
+      container,
+      { style: 'IPA', brewery: 'Nokian Panimo', location: 'Oluthuone' },
+      [
+        { rating: 4, time: new Date('2023-03-01T18:00:00.000Z') },
+        { rating: 7, time: new Date('2023-04-01T18:00:00.000Z') },
+        { rating: 10, time: new Date('2023-05-01T18:00:00.000Z') },
+      ],
+    )
+    return { gueuze, ipa }
+  })
+}
+
+function gueuzeStats(gueuze: ReviewedStyle) {
+  return {
+    reviewAverage: '6.00',
+    reviewCount: '2',
+    reviewStandardDeviation: '1.00',
+    reviewMedian: '6.00',
+    reviewMode: '5',
+    styleId: gueuze.style.id,
+    styleName: 'Gueuze',
+  }
+}
+
+function ipaStats(ipa: ReviewedStyle) {
+  return {
+    reviewAverage: '7.00',
+    reviewCount: '3',
+    reviewStandardDeviation: '2.45',
+    reviewMedian: '7.00',
+    // Every rating occurs once, and the lowest of a tie wins.
+    reviewMode: '4',
+    styleId: ipa.style.id,
+    styleName: 'IPA',
+  }
+}
+
 describe('style stats tests', () => {
   const ctx = new TestContext()
 
@@ -32,213 +162,102 @@ describe('style stats tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  function filterByBeer(reviews: Review[], beerId: string): Review[] {
-    return reviews.filter((r) => r.beer === beerId)
+  async function getStyle(
+    filter: StatsFilter,
+    order: StyleStatsOrder,
+  ): ReturnType<typeof styleStatsRepository.getStyle> {
+    return await styleStatsRepository.getStyle(ctx.db, filter, order)
   }
 
-  async function getResults(
-    db: Database,
-    statsFilter: ((data: InsertedData) => StatsFilter) | undefined,
-    styleStatsOrder: StyleStatsOrder,
-  ) {
-    const { reviews, data } = await insertMultipleReviews(9, db)
-    const stats = await styleStatsRepository.getStyle(
-      db,
-      statsFilter?.(data) ?? defaultFilter,
-      styleStatsOrder,
-    )
-    const styleReviews = filterByBeer(reviews, data.beer.id)
-    const otherStyleReviews = filterByBeer(reviews, data.otherBeer.id)
-    const style = {
-      reviewAverage: avg(styleReviews),
-      reviewCount: `${styleReviews.length}`,
-      reviewStandardDeviation: stdDev(styleReviews),
-      reviewMedian: median(styleReviews),
-      reviewMode: mode(styleReviews),
-      styleId: data.style.id,
-      styleName: data.style.name,
-    }
-    const otherStyle = {
-      reviewAverage: avg(otherStyleReviews),
-      reviewCount: `${otherStyleReviews.length}`,
-      reviewStandardDeviation: stdDev(otherStyleReviews),
-      reviewMedian: median(otherStyleReviews),
-      reviewMode: mode(otherStyleReviews),
-      styleId: data.otherStyle.id,
-      styleName: data.otherStyle.name,
-    }
-    return { stats, style, otherStyle }
-  }
+  const orderProperties: StyleStatsOrder['property'][] = [
+    'average',
+    'count',
+    'std_dev',
+    'style_name',
+  ]
 
-  it('by average asc', async () => {
-    const { stats, style, otherStyle } = await getResults(ctx.db, undefined, {
-      property: 'average',
-      direction: 'asc',
+  orderProperties.forEach((property) => {
+    it(`by ${property} asc`, async () => {
+      const { gueuze, ipa } = await insertStyles(ctx.db)
+      const stats = await getStyle(noFilter, { property, direction: 'asc' })
+      assertDeepEqual(stats, [gueuzeStats(gueuze), ipaStats(ipa)])
     })
-    assertDeepEqual(stats, [style, otherStyle])
+
+    it(`by ${property} desc`, async () => {
+      const { gueuze, ipa } = await insertStyles(ctx.db)
+      const stats = await getStyle(noFilter, { property, direction: 'desc' })
+      assertDeepEqual(stats, [ipaStats(ipa), gueuzeStats(gueuze)])
+    })
   })
 
-  it('by average desc', async () => {
-    const { stats, style, otherStyle } = await getResults(ctx.db, undefined, {
-      property: 'average',
-      direction: 'desc',
-    })
-    assertDeepEqual(stats, [otherStyle, style])
-  })
-
-  it('by count asc', async () => {
-    const { stats, style, otherStyle } = await getResults(ctx.db, undefined, {
-      property: 'count',
-      direction: 'asc',
-    })
-    assertDeepEqual(stats, [style, otherStyle])
-  })
-
-  it('by count desc', async () => {
-    const { stats, style, otherStyle } = await getResults(ctx.db, undefined, {
-      property: 'count',
-      direction: 'desc',
-    })
-    assertDeepEqual(stats, [otherStyle, style])
-  })
-
-  it('by style_name asc', async () => {
-    const { stats, style, otherStyle } = await getResults(ctx.db, undefined, {
-      property: 'style_name',
-      direction: 'asc',
-    })
-    assertDeepEqual(stats, [style, otherStyle])
-  })
-
-  it('by style_name desc', async () => {
-    const { stats, style, otherStyle } = await getResults(ctx.db, undefined, {
-      property: 'style_name',
-      direction: 'desc',
-    })
-    assertDeepEqual(stats, [otherStyle, style])
-  })
-
-  it('by std_dev asc', async () => {
-    const { stats, style, otherStyle } = await getResults(ctx.db, undefined, {
-      property: 'std_dev',
-      direction: 'asc',
-    })
-    assertDeepEqual(stats, [style, otherStyle])
-  })
-
-  it('by std_dev desc', async () => {
-    const { stats, style, otherStyle } = await getResults(ctx.db, undefined, {
-      property: 'std_dev',
-      direction: 'desc',
-    })
-    assertDeepEqual(stats, [otherStyle, style])
-  })
+  const byName: StyleStatsOrder = { property: 'style_name', direction: 'asc' }
 
   it('filter by brewery', async () => {
-    const { stats, otherStyle } = await getResults(
-      ctx.db,
-      (data: InsertedData) => ({
-        ...defaultFilter,
-        brewery: data.otherBrewery.id,
-      }),
-      { property: 'style_name', direction: 'desc' },
+    const { ipa } = await insertStyles(ctx.db)
+    const stats = await getStyle(
+      { ...noFilter, brewery: ipa.brewery.id },
+      byName,
     )
-    assertDeepEqual(stats, [otherStyle])
+    assertDeepEqual(stats, [ipaStats(ipa)])
   })
 
   it('filter by location', async () => {
-    const { stats, otherStyle } = await getResults(
-      ctx.db,
-      (data: InsertedData) => ({
-        ...defaultFilter,
-        location: data.otherLocation.id,
-      }),
-      { property: 'style_name', direction: 'desc' },
+    const { ipa } = await insertStyles(ctx.db)
+    const stats = await getStyle(
+      { ...noFilter, location: ipa.location.id },
+      byName,
     )
-    assertDeepEqual(stats, [otherStyle])
+    assertDeepEqual(stats, [ipaStats(ipa)])
   })
 
   it('filter by style', async () => {
-    const { stats, style } = await getResults(
-      ctx.db,
-      (data: InsertedData) => ({
-        ...defaultFilter,
-        style: data.style.id,
-      }),
-      { property: 'style_name', direction: 'desc' },
+    const { gueuze } = await insertStyles(ctx.db)
+    const stats = await getStyle(
+      { ...noFilter, style: gueuze.style.id },
+      byName,
     )
-    assertDeepEqual(stats, [style])
+    assertDeepEqual(stats, [gueuzeStats(gueuze)])
   })
 
   it('filter by min review count', async () => {
-    const { stats, otherStyle } = await getResults(
-      ctx.db,
-      () => ({
-        ...defaultFilter,
-        minReviewCount: 5,
-      }),
-      { property: 'style_name', direction: 'desc' },
-    )
-    assertDeepEqual(stats, [otherStyle])
+    const { ipa } = await insertStyles(ctx.db)
+    const stats = await getStyle({ ...noFilter, minReviewCount: 3 }, byName)
+    assertDeepEqual(stats, [ipaStats(ipa)])
   })
 
   it('filter by max review count', async () => {
-    const { stats, style } = await getResults(
-      ctx.db,
-      () => ({
-        ...defaultFilter,
-        maxReviewCount: 4,
-      }),
-      { property: 'style_name', direction: 'desc' },
-    )
-    assertDeepEqual(stats, [style])
+    const { gueuze } = await insertStyles(ctx.db)
+    const stats = await getStyle({ ...noFilter, maxReviewCount: 2 }, byName)
+    assertDeepEqual(stats, [gueuzeStats(gueuze)])
   })
 
   it('filter by min review average', async () => {
-    const { stats, otherStyle } = await getResults(
-      ctx.db,
-      () => ({
-        ...defaultFilter,
-        minReviewAverage: 6.3,
-      }),
-      { property: 'style_name', direction: 'desc' },
-    )
-    assertDeepEqual(stats, [otherStyle])
+    const { ipa } = await insertStyles(ctx.db)
+    const stats = await getStyle({ ...noFilter, minReviewAverage: 6.5 }, byName)
+    assertDeepEqual(stats, [ipaStats(ipa)])
   })
 
   it('filter by max review average', async () => {
-    const { stats, style } = await getResults(
-      ctx.db,
-      () => ({
-        ...defaultFilter,
-        maxReviewAverage: 6.3,
-      }),
-      { property: 'style_name', direction: 'desc' },
-    )
-    assertDeepEqual(stats, [style])
+    const { gueuze } = await insertStyles(ctx.db)
+    const stats = await getStyle({ ...noFilter, maxReviewAverage: 6.5 }, byName)
+    assertDeepEqual(stats, [gueuzeStats(gueuze)])
   })
 
   it('filter by start time', async () => {
-    const { stats, style } = await getResults(
-      ctx.db,
-      () => ({
-        ...defaultFilter,
-        timeStart: new Date('2024-01-01T00:00:00.000Z'),
-      }),
-      { property: 'style_name', direction: 'desc' },
+    const { gueuze } = await insertStyles(ctx.db)
+    const stats = await getStyle(
+      { ...noFilter, timeStart: new Date('2024-01-01T00:00:00.000Z') },
+      byName,
     )
-    assertDeepEqual(stats, [style])
+    assertDeepEqual(stats, [gueuzeStats(gueuze)])
   })
 
   it('filter by end time', async () => {
-    const { stats, otherStyle } = await getResults(
-      ctx.db,
-      () => ({
-        ...defaultFilter,
-        timeEnd: new Date('2024-01-01T00:00:00.000Z'),
-      }),
-      { property: 'style_name', direction: 'desc' },
+    const { ipa } = await insertStyles(ctx.db)
+    const stats = await getStyle(
+      { ...noFilter, timeEnd: new Date('2024-01-01T00:00:00.000Z') },
+      byName,
     )
-    assertDeepEqual(stats, [otherStyle])
+    assertDeepEqual(stats, [ipaStats(ipa)])
   })
 })

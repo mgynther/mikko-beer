@@ -2,10 +2,6 @@ import { describe, it } from 'node:test'
 
 import * as service from '../../../../src/logic/internal/user/validated-sign-in-method.service.js'
 
-import type { DbRefreshToken } from '../../../../src/logic/auth/refresh-token.js'
-
-import type { AuthTokenConfig } from '../../../../src/logic/auth/auth-token.js'
-import type { User } from '../../../../src/logic/user/user.js'
 import {
   invalidCredentialsError,
   invalidPasswordChangeError,
@@ -26,30 +22,23 @@ import type { ValidateUserId } from '../../../../src/logic/user/user.js'
 
 import { dummyLog as log } from '../../dummy-log.js'
 import { testJwtIf } from '../../jwt-helper.js'
+import {
+  buildAuthTokenConfig,
+  buildDbRefreshToken,
+} from '../../auth/builders.js'
+import { buildUser } from '../../user/builders.js'
 
 const userId = '2bbcaed7-2b4d-4888-9a32-8573dc19fd56'
 
-const user: User = {
-  id: userId,
-  role: 'admin',
-  username: 'admin',
-}
-
-const authTokenSecret: string = 'this is secret'
+const user = buildUser({ id: userId })
 
 const knownPassword = 'password'
 const knownHash =
   '$scrypt$ln=14,r=8,p=1$LSFeH5c5d4Fav49HIqHpiQ$7biLfcxLU9RUv+TVf2fM3s7wY4DJiOfzavESywH5/iFFItGPC9zylXDHCouIE3eJpRbFepfVanqB+inf92yIdA'
 
-const dbRefreshToken: DbRefreshToken = {
-  id: '187d17b9-0063-4257-af64-0710907679ba',
-  userId,
-}
+const dbRefreshToken = buildDbRefreshToken({ userId })
 
-const authTokenConfig: AuthTokenConfig = {
-  secret: authTokenSecret,
-  expiryDurationMin: 1,
-}
+const authTokenConfig = buildAuthTokenConfig()
 
 const userPasswordHash: UserPasswordHash = {
   userId,

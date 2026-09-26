@@ -6,7 +6,6 @@ import type { AuthTokenPayload } from '../../../src/logic/auth/auth-token.js'
 import type {
   Container,
   CreateContainerRequest,
-  UpdateContainerRequest,
 } from '../../../src/logic/container/container.js'
 import { dummyLog as log } from '../dummy-log.js'
 import { expectReject } from '../controller-error-helper.js'
@@ -15,22 +14,18 @@ import {
   noRightsError,
 } from '../../../src/logic/errors.js'
 import { assertDeepEqual } from '../../assert.js'
+import { buildAuthTokenPayload } from '../auth/builders.js'
+import {
+  buildContainer,
+  buildCreateContainerRequest,
+  buildUpdateContainerRequest,
+} from './builders.js'
 
-const validCreateContainerRequest: CreateContainerRequest = {
-  size: '0.33',
-  type: 'bottle',
-}
+const validCreateContainerRequest = buildCreateContainerRequest()
 
-const validUpdateContainerRequest: UpdateContainerRequest = {
-  size: '0.44',
-  type: 'can',
-}
+const validUpdateContainerRequest = buildUpdateContainerRequest()
 
-const container: Container = {
-  id: '101c3ae9-80db-4d22-ba33-1f7b50f8cf49',
-  size: validCreateContainerRequest.size,
-  type: validCreateContainerRequest.type,
-}
+const container = buildContainer()
 
 const invalidContainerRequest = {
   size: '0.44',
@@ -42,17 +37,9 @@ const create: (
 const update: (container: Container) => Promise<Container> = async () =>
   container
 
-const adminAuthToken: AuthTokenPayload = {
-  userId: '75c72a6f-95a0-475d-9b50-e926fe59ebc4',
-  role: 'admin',
-  refreshTokenId: '38d569af-3996-4b6f-9632-5748481cc605',
-}
+const adminAuthToken = buildAuthTokenPayload({ role: 'admin' })
 
-const viewerAuthToken: AuthTokenPayload = {
-  userId: '8460921e-08b1-4ab5-83d2-7fdde2b106fb',
-  role: 'viewer',
-  refreshTokenId: 'e820508c-1c47-4676-8812-0ee2ec94c20e',
-}
+const viewerAuthToken = buildAuthTokenPayload({ role: 'viewer' })
 
 describe('container authorized service unit tests', () => {
   it('create container as admin', async () => {

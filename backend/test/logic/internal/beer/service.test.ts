@@ -2,7 +2,6 @@ import { describe, it } from 'node:test'
 
 import type {
   Beer,
-  BeerWithBreweriesAndStyles,
   CreateBeerRequest,
   UpdateBeerRequest,
   NewBeer,
@@ -21,26 +20,16 @@ import {
 } from '../../../../src/logic/errors.js'
 import { expectReject } from '../../controller-error-helper.js'
 import { assertDeepEqual, assertEqual } from '../../../assert.js'
+import {
+  buildBeer,
+  buildBeerWithBreweriesAndStyles,
+} from '../../beer/builders.js'
 
-const beer: BeerWithBreweriesAndStyles = {
-  id: '406a337c-3107-4307-bd84-be3ec7c7d2f6',
-  name: 'Siperia',
-  breweries: [
-    {
-      id: '67a4565b-1bfa-456f-9025-ab687615c6d3',
-      name: 'Koskipanimo',
-    },
-  ],
-  styles: [
-    {
-      id: '439bf543-13b7-4de7-a429-e0cb3d372acb',
-      name: 'imperial stout',
-    },
-  ],
-}
+const beer = buildBeer()
 
-const breweries = beer.breweries.map((brewery) => brewery.id)
-const styles = beer.styles.map((style) => style.id)
+// A brewery and a style each, so that a lock can fail to find one.
+const breweries = ['67a4565b-1bfa-456f-9025-ab687615c6d3']
+const styles = ['439bf543-13b7-4de7-a429-e0cb3d372acb']
 
 const lockBreweries = async (lockBreweryIds: string[]) => {
   assertDeepEqual(lockBreweryIds, breweries)
@@ -251,12 +240,13 @@ describe('beer service unit tests', () => {
   })
 
   it('find beer', async () => {
+    const found = buildBeerWithBreweriesAndStyles()
     const finder = async (beerId: string) => {
-      assertEqual(beerId, beer.id)
-      return beer
+      assertEqual(beerId, found.id)
+      return found
     }
-    const result = await beerService.findBeerById(finder, beer.id, log)
-    assertDeepEqual(result, beer)
+    const result = await beerService.findBeerById(finder, found.id, log)
+    assertDeepEqual(result, found)
   })
 
   it('fail to find beer with unknown id', async () => {
@@ -275,23 +265,25 @@ describe('beer service unit tests', () => {
       size: 10,
       skip: 80,
     }
+    const listed = buildBeerWithBreweriesAndStyles()
     const lister = async (listPagination: Pagination) => {
       assertDeepEqual(listPagination, pagination)
-      return [beer]
+      return [listed]
     }
     const result = await beerService.listBeers(lister, pagination, log)
-    assertDeepEqual(result, [beer])
+    assertDeepEqual(result, [listed])
   })
 
   it('search beers', async () => {
     const searchByName: SearchByName = {
       name: 'Sipe',
     }
+    const found = buildBeerWithBreweriesAndStyles()
     const searcher = async (search: SearchByName) => {
       assertDeepEqual(search, searchByName)
-      return [beer]
+      return [found]
     }
     const result = await beerService.searchBeers(searcher, searchByName, log)
-    assertDeepEqual(result, [beer])
+    assertDeepEqual(result, [found])
   })
 })

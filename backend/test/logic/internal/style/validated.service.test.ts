@@ -3,12 +3,8 @@ import { describe, it } from 'node:test'
 import * as styleService from '../../../../src/logic/internal/style/validated.service.js'
 
 import type {
-  Style,
-  CreateStyleRequest,
   CreateStyleIf,
-  UpdateStyleRequest,
   UpdateStyleIf,
-  StyleWithParentsAndChildren,
   ValidateCreateStyle,
   ValidateUpdateStyle,
 } from '../../../../src/logic/style/style.js'
@@ -19,38 +15,35 @@ import {
   invalidStyleIdError,
 } from '../../../../src/logic/errors.js'
 import { assertDeepEqual, assertEqual } from '../../../assert.js'
+import {
+  buildCreateStyleRequest,
+  buildStyle,
+  buildStyleWithParentIds,
+  buildStyleWithParentsAndChildren,
+  buildUpdateStyleRequest,
+} from '../../style/builders.js'
 
-const styleId = 'af011f79-7e68-4f64-87dd-4b45c8e175dc'
+const validCreateStyleRequest = buildCreateStyleRequest()
 
-const validCreateStyleRequest: CreateStyleRequest = {
-  name: 'American IPA',
-  parents: [],
-}
+const validUpdateStyleRequest = buildUpdateStyleRequest()
 
-const validUpdateStyleRequest: UpdateStyleRequest = {
-  name: 'Imperial Stout',
-  parents: [],
-}
-
-const style: Style = {
-  id: '3db5f19b-fa63-4296-bb18-891c2bbfa80d',
-  name: validCreateStyleRequest.name,
-}
+const style = buildStyle()
 
 const invalidStyleRequest = {
   name: 'This is invalid',
 }
 
+// Every parent a request refers to exists.
 const createIf: CreateStyleIf = {
   create: async () => style,
-  lockStyles: async () => [styleId],
+  lockStyles: async (ids: string[]) => ids,
   insertParents: async () => {},
   listAllRelationships: async () => [],
 }
 
 const updateIf: UpdateStyleIf = {
   update: async () => style,
-  lockStyles: async () => [styleId],
+  lockStyles: async (ids: string[]) => ids,
   insertParents: async () => {},
   listAllRelationships: async () => [],
   deleteStyleChildRelationships: async () => {},
@@ -156,15 +149,11 @@ describe('style validated service unit tests', () => {
   })
 
   it('find style by id', async () => {
-    const styleWithParentsAndChildren: StyleWithParentsAndChildren = {
-      ...style,
-      children: [],
-      parents: [],
-    }
+    const styleWithParentsAndChildren = buildStyleWithParentsAndChildren()
     const result = await styleService.findStyleById(
       async () => styleWithParentsAndChildren,
-      () => ({ errorCode: undefined, result: style.id }),
-      style.id,
+      () => ({ errorCode: undefined, result: styleWithParentsAndChildren.id }),
+      styleWithParentsAndChildren.id,
       log,
     )
     assertDeepEqual(result, styleWithParentsAndChildren)
@@ -186,7 +175,7 @@ describe('style validated service unit tests', () => {
   })
 
   it('list styles', async () => {
-    const styles = [{ ...style, parents: [] }]
+    const styles = [buildStyleWithParentIds()]
     const result = await styleService.listStyles(async () => styles, log)
     assertDeepEqual(result, styles)
   })

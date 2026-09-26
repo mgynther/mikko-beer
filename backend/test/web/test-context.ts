@@ -12,7 +12,7 @@ import {
 } from '../data/test-helpers.js'
 import { App } from '../../src/web/app.js'
 import { Database } from '../../src/data/database.js'
-import { User } from '../../src/logic/user/user.js'
+import type { Role, User } from '../../src/logic/user/user.js'
 
 import { Level, type log } from '../../src/console/log.js'
 
@@ -85,7 +85,13 @@ export class TestContext {
     return this.#adminUserId
   }
 
-  createUser = async (): Promise<{
+  // A valid user signed in with a password and nothing more.
+  // Neither its values nor how they relate to those of any other result may
+  // be assumed: a test that depends on a property sets it in the overrides
+  // itself, or reads it back from the result.
+  createUser = async (
+    overrides: { role?: Role } = {},
+  ): Promise<{
     user: User
     authToken: string
     refreshToken: string
@@ -98,7 +104,7 @@ export class TestContext {
       `/api/v1/user`,
       {
         user: {
-          role: 'viewer',
+          role: overrides.role ?? 'viewer',
         },
         passwordSignInMethod: {
           username: userUsername,

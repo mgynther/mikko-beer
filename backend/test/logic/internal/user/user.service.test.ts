@@ -2,7 +2,6 @@ import { describe, it } from 'node:test'
 
 import { userNotFoundError } from '../../../../src/logic/errors.js'
 import * as userService from '../../../../src/logic/internal/user/user.service.js'
-import type { AuthTokenConfig } from '../../../../src/logic/auth/auth-token'
 import type { DbRefreshToken } from '../../../../src/logic/auth/refresh-token'
 import type {
   CreateAnonymousUserRequest,
@@ -13,20 +12,15 @@ import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
 import { assertDeepEqual, assertEqual, assertTruthy } from '../../../assert.js'
 import { testJwtIf } from '../../jwt-helper.js'
+import {
+  buildAuthTokenConfig,
+  buildDbRefreshToken,
+} from '../../auth/builders.js'
+import { buildUser } from '../../user/builders.js'
 
-const authTokenSecret = 'ThisIsSecret'
-const authTokenConfig: AuthTokenConfig = {
-  expiryDurationMin: 5,
-  secret: authTokenSecret,
-}
+const authTokenConfig = buildAuthTokenConfig()
 
-const userId = 'f28f87af-106e-46af-8994-6fd9204bf85c'
-
-const user: User = {
-  id: userId,
-  role: 'admin',
-  username: 'user',
-}
+const user = buildUser()
 
 describe('user service unit tests', () => {
   it('create anonymous user', async () => {
@@ -37,11 +31,8 @@ describe('user service unit tests', () => {
     async function insertRefreshToken(
       requestUserId: string,
     ): Promise<DbRefreshToken> {
-      assertEqual(requestUserId, userId)
-      return {
-        id: '0586c701-e053-46bf-b599-346093989140',
-        userId,
-      }
+      assertEqual(requestUserId, user.id)
+      return buildDbRefreshToken({ userId: user.id })
     }
     const signedInUser = await userService.createAnonymousUser(
       testJwtIf,

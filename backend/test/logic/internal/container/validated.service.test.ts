@@ -5,7 +5,6 @@ import * as containerService from '../../../../src/logic/internal/container/vali
 import type {
   Container,
   CreateContainerRequest,
-  UpdateContainerRequest,
   ValidateCreateContainer,
   ValidateUpdateContainer,
 } from '../../../../src/logic/container/container.js'
@@ -16,22 +15,17 @@ import {
   invalidContainerIdError,
 } from '../../../../src/logic/errors.js'
 import { assertDeepEqual, assertEqual } from '../../../assert.js'
+import {
+  buildContainer,
+  buildCreateContainerRequest,
+  buildUpdateContainerRequest,
+} from '../../container/builders.js'
 
-const validCreateContainerRequest: CreateContainerRequest = {
-  size: '0.33',
-  type: 'bottle',
-}
+const validCreateContainerRequest = buildCreateContainerRequest()
 
-const validUpdateContainerRequest: UpdateContainerRequest = {
-  size: '0.44',
-  type: 'can',
-}
+const validUpdateContainerRequest = buildUpdateContainerRequest()
 
-const container: Container = {
-  id: '48310f6a-1637-467f-9bc5-3b6406bd403e',
-  size: validCreateContainerRequest.size,
-  type: validCreateContainerRequest.type,
-}
+const container = buildContainer()
 
 const invalidContainerRequest = {
   size: '0.44',
@@ -87,7 +81,7 @@ const failUpdateValidationWithId: ValidateUpdateContainer = () => {
   }
 }
 
-describe('container authorized service unit tests', () => {
+describe('container validated service unit tests', () => {
   it('create container', async () => {
     await containerService.createContainer(
       create,
@@ -143,13 +137,14 @@ describe('container authorized service unit tests', () => {
   })
 
   it('find container by id', async () => {
-    const id = '31835df3-128a-41c6-9cc5-6ac663113d04'
-    await containerService.findContainerById(
-      async () => ({ id, size: '0.33', type: 'bottle' }),
-      () => ({ errorCode: undefined, result: id }),
-      id,
+    const found = buildContainer()
+    const result = await containerService.findContainerById(
+      async () => found,
+      () => ({ errorCode: undefined, result: found.id }),
+      found.id,
       log,
     )
+    assertDeepEqual(result, found)
   })
 
   function notCalled(): any {

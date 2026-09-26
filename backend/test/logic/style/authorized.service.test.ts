@@ -4,66 +4,51 @@ import * as styleService from '../../../src/logic/style/authorized.service.js'
 
 import type { AuthTokenPayload } from '../../../src/logic/auth/auth-token.js'
 import type {
-  Style,
-  StyleWithParentIds,
-  StyleWithParentsAndChildren,
-  CreateStyleRequest,
   CreateStyleIf,
-  UpdateStyleRequest,
   UpdateStyleIf,
 } from '../../../src/logic/style/style.js'
 import { dummyLog as log } from '../dummy-log.js'
 import { expectReject } from '../controller-error-helper.js'
 import { invalidStyleError, noRightsError } from '../../../src/logic/errors.js'
 import { assertDeepEqual } from '../../assert.js'
+import { buildAuthTokenPayload } from '../auth/builders.js'
+import {
+  buildCreateStyleRequest,
+  buildStyle,
+  buildStyleWithParentIds,
+  buildStyleWithParentsAndChildren,
+  buildUpdateStyleRequest,
+} from './builders.js'
 
-const styleId = '6e68f545-097c-4f1a-af81-23c2f9cdb533'
+const validCreateStyleRequest = buildCreateStyleRequest()
 
-const validCreateStyleRequest: CreateStyleRequest = {
-  name: 'American IPA',
-  parents: [],
-}
+const validUpdateStyleRequest = buildUpdateStyleRequest()
 
-const validUpdateStyleRequest: UpdateStyleRequest = {
-  name: 'American IPA',
-  parents: [],
-}
-
-const style: Style = {
-  id: '10a312cd-b173-4287-9bfa-f22de79cfb0e',
-  name: validCreateStyleRequest.name,
-}
+const style = buildStyle()
 
 const invalidStyleRequest = {
   name: 'This is invalid',
 }
 
+// Every parent a request refers to exists.
 const createIf: CreateStyleIf = {
   create: async () => style,
-  lockStyles: async () => [styleId],
+  lockStyles: async (ids: string[]) => ids,
   insertParents: async () => {},
   listAllRelationships: async () => [],
 }
 
 const updateIf: UpdateStyleIf = {
   update: async () => style,
-  lockStyles: async () => [styleId],
+  lockStyles: async (ids: string[]) => ids,
   insertParents: async () => {},
   listAllRelationships: async () => [],
   deleteStyleChildRelationships: async () => {},
 }
 
-const adminAuthToken: AuthTokenPayload = {
-  userId: 'd60705aa-81c7-41b2-9ea6-552b62de196e',
-  role: 'admin',
-  refreshTokenId: '561e1675-77a5-4fdb-a92f-29ab58fd02e5',
-}
+const adminAuthToken = buildAuthTokenPayload({ role: 'admin' })
 
-const viewerAuthToken: AuthTokenPayload = {
-  userId: '8bb74120-5d80-4ebd-8597-6de643ee6d63',
-  role: 'viewer',
-  refreshTokenId: '2223ec08-40e9-4fda-a5db-c66bafa796cc',
-}
+const viewerAuthToken = buildAuthTokenPayload({ role: 'viewer' })
 
 describe('style authorized service unit tests', () => {
   function notCalled(): any {
@@ -157,28 +142,24 @@ describe('style authorized service unit tests', () => {
   })
   ;[adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
     it(`find style as ${token.role}`, async () => {
-      const styleWithParentsAndChilden: StyleWithParentsAndChildren = {
-        ...style,
-        children: [],
-        parents: [],
-      }
+      const styleWithParentsAndChildren = buildStyleWithParentsAndChildren()
       const result = await styleService.findStyleById(
-        async () => styleWithParentsAndChilden,
-        () => ({ errorCode: undefined, result: style.id }),
+        async () => styleWithParentsAndChildren,
+        () => ({
+          errorCode: undefined,
+          result: styleWithParentsAndChildren.id,
+        }),
         {
           authTokenPayload: token,
-          id: style.id,
+          id: styleWithParentsAndChildren.id,
         },
         log,
       )
-      assertDeepEqual(result, styleWithParentsAndChilden)
+      assertDeepEqual(result, styleWithParentsAndChildren)
     })
 
     it(`list styles as ${token.role}`, async () => {
-      const styleWithParentIds: StyleWithParentIds = {
-        ...style,
-        parents: [],
-      }
+      const styleWithParentIds = buildStyleWithParentIds()
       const result = await styleService.listStyles(
         async () => [styleWithParentIds],
         token,

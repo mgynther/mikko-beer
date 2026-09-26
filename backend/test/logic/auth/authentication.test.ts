@@ -17,6 +17,7 @@ import {
 import { expectThrow } from '../controller-error-helper.js'
 import { testJwtIf } from '../jwt-helper.js'
 import { assertDeepEqual } from '../../assert.js'
+import { buildUser } from '../user/builders.js'
 
 const authTokenSecret = 'ThisIsSecret'
 const authTokenConfig: AuthTokenConfig = {
@@ -25,17 +26,9 @@ const authTokenConfig: AuthTokenConfig = {
 }
 const refreshTokenId = 'f2224f80-b478-43e2-8cc9-d39cf8079524'
 
-const admin: User = {
-  id: 'f4768755-d692-458f-a311-5aaeb81fd4ec',
-  role: 'admin',
-  username: 'admin',
-}
+const admin = buildUser({ role: 'admin' })
 
-const viewer: User = {
-  id: 'c232d501-748e-4897-a2b7-4ee3387716e0',
-  role: 'viewer',
-  username: 'viewer',
-}
+const viewer = buildUser({ role: 'viewer' })
 
 const expiredAuthToken: AuthToken = {
   authToken: testJwtIf.sign(

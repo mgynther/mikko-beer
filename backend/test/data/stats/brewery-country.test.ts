@@ -13,12 +13,12 @@ import * as reviewRepository from '../../../src/data/review/review.repository.js
 import * as styleRepository from '../../../src/data/style/style.repository.js'
 import * as breweryCountryStatsRepository from '../../../src/data/stats/brewery-country.repository.js'
 import { assertDeepEqual } from '../../assert.js'
-import {
-  avgRatings,
-  medianRatings,
-  modeRatings,
-  stdDevRatings,
-} from './stats-helpers.js'
+import { buildNewBeer } from '../beer/builders.js'
+import { buildNewBrewery } from '../brewery/builders.js'
+import { buildNewContainer } from '../container/builders.js'
+import { buildNewLocation } from '../location/builders.js'
+import { buildNewReview } from '../review/builders.js'
+import { buildNewStyle } from '../style/builders.js'
 
 const giantPage: Pagination = { size: 10000, skip: 0 }
 
@@ -39,10 +39,6 @@ const byCountryCode: BreweryCountryStatsOrder = {
   direction: 'asc',
 }
 
-// The generic review test data has no brewery countries and no
-// collaboration beer, and its helper is explicitly not to be adapted, so
-// this file builds its own.
-//
 //   fiOne (FI)    -> fiBeer, collab
 //   fiTwo (FI)    -> collab
 //   be    (BE)    -> beBeer, collab
@@ -71,15 +67,24 @@ async function insertFixture(db: Database): Promise<Ids> {
       name: string,
       country: string | undefined,
     ): Promise<beerRepository.Brewery> {
-      return breweryRepository.insertBrewery(trx, { name, country })
+      return breweryRepository.insertBrewery(
+        trx,
+        buildNewBrewery({ name, country }),
+      )
     }
     const fiOnePromise = brewery('Sonnisaari', 'FI')
     const fiTwoPromise = brewery('Mallaskoski', 'FI')
     const bePromise = brewery('Cantillon', 'BE')
     const unknownPromise = brewery('Unknown Origin', undefined)
 
-    const lagerPromise = styleRepository.insertStyle(trx, { name: 'Lager' })
-    const ipaPromise = styleRepository.insertStyle(trx, { name: 'IPA' })
+    const lagerPromise = styleRepository.insertStyle(
+      trx,
+      buildNewStyle({ name: 'Lager' }),
+    )
+    const ipaPromise = styleRepository.insertStyle(
+      trx,
+      buildNewStyle({ name: 'IPA' }),
+    )
 
     const [fiOne, fiTwo, be, unknown, lager, ipa] = await Promise.all([
       fiOnePromise,
@@ -91,11 +96,10 @@ async function insertFixture(db: Database): Promise<Ids> {
     ])
 
     async function beer(
-      name: string,
       breweries: string[],
       style: string,
     ): Promise<beerRepository.Beer> {
-      const inserted = await beerRepository.insertBeer(trx, { name })
+      const inserted = await beerRepository.insertBeer(trx, buildNewBeer())
       await Promise.all([
         beerRepository.insertBeerBreweries(
           trx,
@@ -105,13 +109,19 @@ async function insertFixture(db: Database): Promise<Ids> {
       ])
       return inserted
     }
-    const fiBeerPromise = beer('Nordic Lager', [fiOne.id], lager.id)
-    const beBeerPromise = beer('Gueuze', [be.id], lager.id)
-    const collabPromise = beer('Three Way', [fiOne.id, fiTwo.id, be.id], ipa.id)
-    const unknownBeerPromise = beer('Mystery', [unknown.id], lager.id)
+    const fiBeerPromise = beer([fiOne.id], lager.id)
+    const beBeerPromise = beer([be.id], lager.id)
+    const collabPromise = beer([fiOne.id, fiTwo.id, be.id], ipa.id)
+    const unknownBeerPromise = beer([unknown.id], lager.id)
 
-    const barPromise = locationRepository.insertLocation(trx, { name: 'bar' })
-    const homePromise = locationRepository.insertLocation(trx, { name: 'home' })
+    const barPromise = locationRepository.insertLocation(
+      trx,
+      buildNewLocation({ name: 'bar' }),
+    )
+    const homePromise = locationRepository.insertLocation(
+      trx,
+      buildNewLocation({ name: 'home' }),
+    )
 
     const [fiBeer, beBeer, collab, unknownBeer, bar, home] = await Promise.all([
       fiBeerPromise,
@@ -139,13 +149,11 @@ async function insertFixture(db: Database): Promise<Ids> {
   })
 }
 
-const container = { size: '0.33', type: 'bottle' }
-
 async function insertReviews(db: Database, ids: Ids): Promise<void> {
   await db.executeReadWriteTransaction(async (trx: Transaction) => {
     const { id: containerId } = await containerRepository.insertContainer(
       trx,
-      container,
+      buildNewContainer(),
     )
     async function review(
       beer: string,
@@ -153,16 +161,16 @@ async function insertReviews(db: Database, ids: Ids): Promise<void> {
       location: string,
       time: string,
     ) {
-      await reviewRepository.insertReview(trx, {
-        additionalInfo: '',
-        beer,
-        container: containerId,
-        location,
-        rating,
-        time: new Date(time),
-        smell: 'vanilla',
-        taste: 'chocolate',
-      })
+      await reviewRepository.insertReview(
+        trx,
+        buildNewReview({
+          beer,
+          container: containerId,
+          location,
+          rating,
+          time: new Date(time),
+        }),
+      )
     }
     await Promise.all([
       review(ids.fiBeer, 8, ids.bar, '2024-01-01T18:00:00.000Z'),
@@ -174,18 +182,69 @@ async function insertReviews(db: Database, ids: Ids): Promise<void> {
   })
 }
 
+interface RatingStats {
+  reviewAverage: string
+  reviewCount: string
+  reviewStandardDeviation: string
+  reviewMedian: string
+  reviewMode: string
+}
+
+// The statistics of each set of ratings a row is expected to have. On a
+// tie the mode is the lowest of the tied ratings.
+const statsOf = {
+  '5': {
+    reviewAverage: '5.00',
+    reviewCount: '1',
+    reviewStandardDeviation: '0.00',
+    reviewMedian: '5.00',
+    reviewMode: '5',
+  },
+  '10': {
+    reviewAverage: '10.00',
+    reviewCount: '1',
+    reviewStandardDeviation: '0.00',
+    reviewMedian: '10.00',
+    reviewMode: '10',
+  },
+  '5, 10': {
+    reviewAverage: '7.50',
+    reviewCount: '2',
+    reviewStandardDeviation: '2.50',
+    reviewMedian: '7.50',
+    reviewMode: '5',
+  },
+  '8, 6': {
+    reviewAverage: '7.00',
+    reviewCount: '2',
+    reviewStandardDeviation: '1.00',
+    reviewMedian: '7.00',
+    reviewMode: '6',
+  },
+  '8, 10': {
+    reviewAverage: '9.00',
+    reviewCount: '2',
+    reviewStandardDeviation: '1.00',
+    reviewMedian: '9.00',
+    reviewMode: '8',
+  },
+  '8, 6, 10': {
+    reviewAverage: '8.00',
+    reviewCount: '3',
+    reviewStandardDeviation: '1.63',
+    reviewMedian: '8.00',
+    reviewMode: '6',
+  },
+}
+
 function row(
   countryCode: string,
-  ratings: number[],
+  ratingStats: RatingStats,
   reviewedBeerCount: number,
   breweryCount: number,
 ) {
   return {
-    reviewAverage: avgRatings(ratings),
-    reviewCount: `${ratings.length}`,
-    reviewStandardDeviation: stdDevRatings(ratings),
-    reviewMedian: medianRatings(ratings),
-    reviewMode: modeRatings(ratings),
+    ...ratingStats,
     reviewedBeerCount: `${reviewedBeerCount}`,
     breweryCount: `${breweryCount}`,
     countryCode,
@@ -195,8 +254,8 @@ function row(
 // With no filters: FI has fiBeer's 8 and 6 plus collab's 10, BE has
 // beBeer's 5 plus the same collab 10. The collaboration review appears
 // once on each side although FI has two of its three breweries.
-const allFi = row('FI', [8, 6, 10], 2, 2)
-const allBe = row('BE', [5, 10], 2, 1)
+const allFi = row('FI', statsOf['8, 6, 10'], 2, 2)
+const allBe = row('BE', statsOf['5, 10'], 2, 1)
 
 describe('brewery country stats tests', () => {
   const ctx = new TestContext()
@@ -307,20 +366,29 @@ describe('brewery country stats tests', () => {
     const ids = await insertAll()
     const stats = await getStats({ ...defaultFilter, brewery: ids.fiOne })
     // fiOne brews fiBeer and collab. BE is present through collab only.
-    assertDeepEqual(stats, [row('BE', [10], 1, 1), row('FI', [8, 6, 10], 2, 2)])
+    assertDeepEqual(stats, [
+      row('BE', statsOf['10'], 1, 1),
+      row('FI', statsOf['8, 6, 10'], 2, 2),
+    ])
   })
 
   it('filters by location', async () => {
     const ids = await insertAll()
     const stats = await getStats({ ...defaultFilter, location: ids.bar })
-    assertDeepEqual(stats, [row('BE', [5, 10], 2, 1), row('FI', [8, 10], 2, 2)])
+    assertDeepEqual(stats, [
+      row('BE', statsOf['5, 10'], 2, 1),
+      row('FI', statsOf['8, 10'], 2, 2),
+    ])
   })
 
   it('filters by style', async () => {
     const ids = await insertAll()
     const stats = await getStats({ ...defaultFilter, style: ids.ipa })
     // Only collab is an IPA, and its single review counts once per country.
-    assertDeepEqual(stats, [row('BE', [10], 1, 1), row('FI', [10], 1, 2)])
+    assertDeepEqual(stats, [
+      row('BE', statsOf['10'], 1, 1),
+      row('FI', statsOf['10'], 1, 2),
+    ])
   })
 
   it('filters by time', async () => {
@@ -331,15 +399,18 @@ describe('brewery country stats tests', () => {
     })
     // The 2023 review of beBeer drops out, leaving BE with collab only.
     assertDeepEqual(fromStart, [
-      row('BE', [10], 1, 1),
-      row('FI', [8, 6, 10], 2, 2),
+      row('BE', statsOf['10'], 1, 1),
+      row('FI', statsOf['8, 6, 10'], 2, 2),
     ])
 
     const untilEnd = await getStats({
       ...defaultFilter,
       timeEnd: new Date('2024-02-28T00:00:00.000Z'),
     })
-    assertDeepEqual(untilEnd, [row('BE', [5], 1, 1), row('FI', [8, 6], 1, 1)])
+    assertDeepEqual(untilEnd, [
+      row('BE', statsOf['5'], 1, 1),
+      row('FI', statsOf['8, 6'], 1, 1),
+    ])
   })
 
   it('filters by review count over the deduplicated count', async () => {

@@ -13,12 +13,9 @@ import * as breweryService from '../../../../src/logic/internal/brewery/service.
 import { dummyLog as log } from '../../dummy-log.js'
 import { expectReject } from '../../controller-error-helper.js'
 import { assertDeepEqual, assertEqual } from '../../../assert.js'
+import { buildBrewery } from '../../brewery/builders.js'
 
-const brewery: Brewery = {
-  id: 'd804c8fe-8d41-4c8b-88d1-95bdfeb558ef',
-  name: 'Koskipanimo',
-  country: undefined,
-}
+const brewery = buildBrewery()
 
 describe('brewery service unit tests', () => {
   it('create brewery', async () => {

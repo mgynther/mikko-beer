@@ -6,7 +6,6 @@ import type {
   Storage,
   CreateStorageRequest,
   JoinedStorage,
-  UpdateStorageRequest,
   CreateIf,
   UpdateIf,
   StorageWithDate,
@@ -24,25 +23,18 @@ import {
   invalidStyleIdError,
 } from '../../../../src/logic/errors.js'
 import { assertDeepEqual, assertEqual } from '../../../assert.js'
+import {
+  buildCreateStorageRequest,
+  buildJoinedStorage,
+  buildStorageWithDate,
+  buildUpdateStorageRequest,
+} from '../../storage/builders.js'
 
-const validCreateStorageRequest: CreateStorageRequest = {
-  beer: '9fda06b4-ddda-428b-965c-cfa16f77c010',
-  bestBefore: '2024-12-12T12:12:12.000Z',
-  container: '2ea4c01b-0f86-4331-8a5b-807abb662385',
-}
+const validCreateStorageRequest = buildCreateStorageRequest()
 
-const validUpdateStorageRequest: UpdateStorageRequest = {
-  beer: '00707241-77e7-455a-bd24-bddd76836c1f',
-  bestBefore: '2024-12-13T12:12:12.000Z',
-  container: 'e5a2d533-5886-4bdd-883a-46a14cb51d87',
-}
+const validUpdateStorageRequest = buildUpdateStorageRequest()
 
-const storage: StorageWithDate = {
-  id: 'c3959cec-9a26-4e03-87b9-4325fe01d3c1',
-  beer: 'd5af5383-381c-4e58-8745-76c06ec00449',
-  bestBefore: new Date('2024-12-11T12:12:12.000Z'),
-  container: '5d9bb066-bbf2-4102-beba-66dbecfd10ce',
-}
+const storage = buildStorageWithDate()
 
 const invalidStorageRequest = {
   bestBefore: '2024-12-13T12:12:12.000Z',
@@ -55,16 +47,17 @@ const create: (
 const update: (storage: Storage) => Promise<StorageWithDate> = async () =>
   storage
 
+// Every beer and container a request refers to exists.
 const createIf: CreateIf = {
   insertStorage: create,
-  lockBeer: async () => storage.beer,
-  lockContainer: async () => storage.container,
+  lockBeer: async (id: string) => id,
+  lockContainer: async (id: string) => id,
 }
 
 const updateIf: UpdateIf = {
   updateStorage: update,
-  lockBeer: async () => storage.beer,
-  lockContainer: async () => storage.container,
+  lockBeer: async (id: string) => id,
+  lockContainer: async (id: string) => id,
 }
 
 const passCreateValidation: ValidateCreateStorage = (input: unknown) => {
@@ -203,25 +196,11 @@ describe('storage validated service unit tests', () => {
   })
 
   it('find storage by id', async () => {
-    const joinedStorage: JoinedStorage = {
-      id: storage.id,
-      beerId: storage.beer,
-      beerName: 'Severin',
-      bestBefore: storage.bestBefore,
-      breweries: [],
-      container: {
-        id: storage.container,
-        type: 'bottle',
-        size: '0.33',
-      },
-      createdAt: new Date('2024-12-10T12:12:12.000Z'),
-      hasReview: false,
-      styles: [],
-    }
+    const joinedStorage = buildJoinedStorage()
     const result = await storageService.findStorageById(
       async () => joinedStorage,
       passStorageIdValidation,
-      storage.id,
+      joinedStorage.id,
       log,
     )
     assertDeepEqual(result, joinedStorage)

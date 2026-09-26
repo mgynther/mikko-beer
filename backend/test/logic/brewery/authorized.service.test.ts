@@ -6,7 +6,6 @@ import type { AuthTokenPayload } from '../../../src/logic/auth/auth-token.js'
 import type {
   Brewery,
   CreateBreweryRequest,
-  UpdateBreweryRequest,
 } from '../../../src/logic/brewery/brewery.js'
 import { dummyLog as log } from '../dummy-log.js'
 import { expectReject } from '../controller-error-helper.js'
@@ -15,22 +14,18 @@ import {
   noRightsError,
 } from '../../../src/logic/errors.js'
 import { assertDeepEqual } from '../../assert.js'
+import { buildAuthTokenPayload } from '../auth/builders.js'
+import {
+  buildBrewery,
+  buildCreateBreweryRequest,
+  buildUpdateBreweryRequest,
+} from './builders.js'
 
-const validCreateBreweryRequest: CreateBreweryRequest = {
-  name: 'Koskipanimo',
-  country: undefined,
-}
+const validCreateBreweryRequest = buildCreateBreweryRequest()
 
-const validUpdateBreweryRequest: UpdateBreweryRequest = {
-  name: 'Koskipanimo',
-  country: undefined,
-}
+const validUpdateBreweryRequest = buildUpdateBreweryRequest()
 
-const brewery: Brewery = {
-  id: '7a0c8831-af4b-4600-b527-6f3d58c3abad',
-  name: validCreateBreweryRequest.name,
-  country: undefined,
-}
+const brewery = buildBrewery()
 
 const invalidBreweryRequest = {
   unexpectedProperty: 'This is invalid',
@@ -40,17 +35,9 @@ const create: (brewery: CreateBreweryRequest) => Promise<Brewery> = async () =>
   brewery
 const update: (brewery: Brewery) => Promise<Brewery> = async () => brewery
 
-const adminAuthToken: AuthTokenPayload = {
-  userId: 'fd64b45e-baac-4372-a4ab-9970b8282a1d',
-  role: 'admin',
-  refreshTokenId: '121b797c-ae9d-4362-817e-6af5674401ae',
-}
+const adminAuthToken = buildAuthTokenPayload({ role: 'admin' })
 
-const viewerAuthToken: AuthTokenPayload = {
-  userId: '73eae8cd-4ef5-42f6-b492-604b1e25dfad',
-  role: 'viewer',
-  refreshTokenId: 'deda2185-2814-4943-9f81-d8880ba06ec1',
-}
+const viewerAuthToken = buildAuthTokenPayload({ role: 'viewer' })
 
 describe('brewery authorized service unit tests', () => {
   it('create brewery as admin', async () => {
@@ -66,10 +53,7 @@ describe('brewery authorized service unit tests', () => {
   })
 
   it('create brewery with country as admin', async () => {
-    const request: CreateBreweryRequest = {
-      name: validCreateBreweryRequest.name,
-      country: 'FI',
-    }
+    const request = buildCreateBreweryRequest({ country: 'FI' })
     const result = await breweryService.createBrewery(
       async (newBrewery: CreateBreweryRequest) => {
         assertDeepEqual(newBrewery, request)
@@ -191,10 +175,10 @@ describe('brewery authorized service unit tests', () => {
     it(`searches breweries as ${token.role}`, async () => {
       const result = await breweryService.searchBreweries(
         async () => [brewery],
-        () => ({ errorCode: undefined, result: { name: brewery.name } }),
+        () => ({ errorCode: undefined, result: { name: 'Kosk' } }),
         {
           authTokenPayload: token,
-          body: { name: brewery.name },
+          body: { name: 'Kosk' },
         },
         log,
       )

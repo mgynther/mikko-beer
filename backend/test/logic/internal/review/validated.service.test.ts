@@ -3,12 +3,9 @@ import { describe, it } from 'node:test'
 import * as reviewService from '../../../../src/logic/internal/review/validated.service.js'
 
 import type {
-  Review,
-  CreateReviewRequest,
   CreateIf,
   JoinedReview,
   ReviewListRequest,
-  UpdateReviewRequest,
   UpdateIf,
   ValidateCreateReview,
   ValidateReviewId,
@@ -25,54 +22,39 @@ import {
   invalidStyleIdError,
 } from '../../../../src/logic/errors.js'
 import { assertDeepEqual, assertEqual } from '../../../assert.js'
+import {
+  buildCreateReviewRequest,
+  buildReview,
+  buildReviewListFilter,
+  buildUpdateReviewRequest,
+} from '../../review/builders.js'
 
 const storageId = '970c40b2-94ad-4825-b683-c3f5e9046063'
 
-const validCreateReviewRequest: CreateReviewRequest = {
-  additionalInfo: '',
-  beer: '578d78a7-11b8-471d-bf60-d25dfcc57ebd',
-  container: 'b474a006-29b8-471a-bd3a-98e0a4e26908',
-  location: '',
-  rating: 9,
-  smell: 'quite nice',
-  taste: 'fruity, pleasant citrus',
-  time: '2024-06-02T12:00:00.000Z',
-}
+const validCreateReviewRequest = buildCreateReviewRequest()
 
-const validUpdateReviewRequest: UpdateReviewRequest = {
-  additionalInfo: '',
-  beer: '7c148cf3-ef09-42df-9268-362afca56a32',
-  container: '0866246b-cf0d-43b9-b38d-92cca166cddb',
-  location: '',
-  rating: 9,
-  smell: 'quite nice',
-  taste: 'fruity, pleasant citrus',
-  time: '2024-06-02T12:00:00.000Z',
-}
+const validUpdateReviewRequest = buildUpdateReviewRequest()
 
-const review: Review = {
-  ...validCreateReviewRequest,
-  id: '9acc327d-3cbc-4bcc-b3ce-59aeff45ad33',
-  time: new Date(validCreateReviewRequest.time),
-}
+const review = buildReview()
 
 const invalidReviewRequest = {
   smell: 'quite nice',
   taste: 'fruity, pleasant citrus',
 }
 
+// Every beer, container and storage a request refers to exists.
 const createIf: CreateIf = {
   createReview: async () => review,
   deleteFromStorage: async () => undefined,
-  lockBeer: async () => validCreateReviewRequest.beer,
-  lockContainer: async () => validCreateReviewRequest.container,
-  lockStorage: async () => '754dcf3d-a93c-4ba3-af25-fb3f0a5d2153',
+  lockBeer: async (id: string) => id,
+  lockContainer: async (id: string) => id,
+  lockStorage: async (id: string) => id,
 }
 
 const updateIf: UpdateIf = {
   updateReview: async () => review,
-  lockBeer: async () => validCreateReviewRequest.beer,
-  lockContainer: async () => validCreateReviewRequest.container,
+  lockBeer: async (id: string) => id,
+  lockContainer: async (id: string) => id,
 }
 
 const passCreateValidation: ValidateCreateReview = (input: unknown) => {
@@ -212,12 +194,7 @@ describe('review validated service unit tests', () => {
   })
 
   const reviewListRequest: ReviewListRequest = {
-    filter: {
-      minRating: 4,
-      maxRating: 10,
-      minTime: new Date('1970-01-01'),
-      maxTime: new Date('9999-01-01'),
-    },
+    filter: buildReviewListFilter(),
     order: { property: 'time', direction: 'desc' },
   }
 
