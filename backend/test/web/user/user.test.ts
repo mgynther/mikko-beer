@@ -5,8 +5,6 @@ import {
   assertDeepEqual,
   assertEqual,
   assertNotDeepEqual,
-  assertNotEqual,
-  assertTruthy,
 } from '../../assert.js'
 import type {
   CreatedUser,
@@ -163,42 +161,7 @@ describe('user tests', () => {
     assertDeepEqual(getRes.data.user, res.data.user)
   })
 
-  it('rehash on sign in a user without hashedAt', async () => {
-    const { user, username, password } = await ctx.createUser()
-
-    const originalSignInMethod = await getSignInMethod(ctx.db, user.id)
-    await ctx.db.executeReadWriteTransaction(async (trx) => {
-      return await updatePassword(trx, {
-        userId: user.id,
-        passwordHash: originalSignInMethod.passwordHash,
-        hashedAt: undefined,
-      })
-    })
-    const preparedSignInMethod = await getSignInMethod(ctx.db, user.id)
-    assertEqual(preparedSignInMethod.hashedAt, undefined)
-
-    const res = await ctx.request.post(`/api/v1/user/sign-in`, {
-      username: username,
-      password: password,
-    })
-    assertEqual(res.status, 200)
-
-    const postLoginSignInMethod = await getSignInMethod(ctx.db, user.id)
-    assertEqual(postLoginSignInMethod.userId, user.id)
-    assertTruthy(postLoginSignInMethod.hashedAt)
-    assertNotEqual(
-      postLoginSignInMethod.passwordHash,
-      preparedSignInMethod.passwordHash,
-    )
-
-    const secondRes = await ctx.request.post(`/api/v1/user/sign-in`, {
-      username: username,
-      password: password,
-    })
-    assertEqual(secondRes.status, 200)
-  })
-
-  it('rehash recently hashed legacy hash on sign in', async () => {
+  it('rehash legacy hash on sign in', async () => {
     const { user, username } = await ctx.createUser()
     const password = 'password'
     const legacyHash =
@@ -207,7 +170,6 @@ describe('user tests', () => {
       return await updatePassword(trx, {
         userId: user.id,
         passwordHash: legacyHash,
-        hashedAt: new Date(),
       })
     })
 
@@ -218,7 +180,6 @@ describe('user tests', () => {
     assertEqual(res.status, 200)
 
     const postLoginSignInMethod = await getSignInMethod(ctx.db, user.id)
-    assertTruthy(postLoginSignInMethod.hashedAt)
     assertEqual(
       postLoginSignInMethod.passwordHash.startsWith('$scrypt$ln=10,r=8,p=1$'),
       true,
@@ -231,7 +192,7 @@ describe('user tests', () => {
     assertEqual(secondRes.status, 200)
   })
 
-  it('rehash recently hashed password with other parameters on sign in', async () => {
+  it('rehash password hashed with other parameters on sign in', async () => {
     const { user, username } = await ctx.createUser()
     const password = 'password'
     const otherParametersHash =
@@ -240,7 +201,6 @@ describe('user tests', () => {
       return await updatePassword(trx, {
         userId: user.id,
         passwordHash: otherParametersHash,
-        hashedAt: new Date(),
       })
     })
 

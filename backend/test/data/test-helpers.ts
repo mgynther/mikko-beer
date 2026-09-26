@@ -27,14 +27,8 @@ export function invalidateSchema() {
 export async function beforeTests(
   config: DatabaseConfig,
   adminConfig: DatabaseConfig,
-  // Initializing data here can be relevant only when App needs to start with
-  // specific data. For other purposes getting database from the is more
-  // suitable.
-  dataInitializer?: (db: Database) => Promise<void>,
 ) {
-  // Data initialization has to run against a database that no previous test
-  // file has left rows in, so it always gets a fresh database.
-  if (isSchemaReady && dataInitializer === undefined) {
+  if (isSchemaReady) {
     return
   }
 
@@ -61,9 +55,6 @@ export async function beforeTests(
   })
 
   await migrator.migrateToLatest()
-  if (dataInitializer !== undefined) {
-    await dataInitializer(db)
-  }
   await db.destroy()
   isSchemaReady = true
 }

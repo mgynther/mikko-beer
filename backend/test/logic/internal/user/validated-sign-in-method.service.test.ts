@@ -54,7 +54,6 @@ const authTokenConfig: AuthTokenConfig = {
 const userPasswordHash: UserPasswordHash = {
   userId,
   passwordHash: knownHash,
-  hashedAt: undefined,
 }
 
 const signInUsingPasswordIf: SignInUsingPasswordIf = {

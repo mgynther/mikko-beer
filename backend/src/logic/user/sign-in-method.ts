@@ -7,9 +7,7 @@ type EncryptSecret = (logger: log, secret: string) => Promise<string>
 
 export interface AddPasswordUserIf {
   lockUserById: LockUserById
-  insertPasswordSignInMethod: (
-    userPassword: NewUserPasswordHash,
-  ) => Promise<void>
+  insertPasswordSignInMethod: (userPassword: UserPasswordHash) => Promise<void>
   encryptSecret: EncryptSecret
   setUserUsername: (userId: string, username: string) => Promise<void>
 }
@@ -38,7 +36,7 @@ export interface SignInUsingPasswordIf {
   needsRehash: NeedsRehash
   encryptSecret: EncryptSecret
   insertRefreshToken: (userId: string) => Promise<DbRefreshToken>
-  updatePassword: (userPasswordHash: NewUserPasswordHash) => Promise<void>
+  updatePassword: (userPasswordHash: UserPasswordHash) => Promise<void>
 }
 
 type LockUserById = (userId: string) => Promise<User | undefined>
@@ -50,7 +48,7 @@ export interface ChangePasswordUserIf {
   ) => Promise<UserPasswordHash | undefined>
   verifySecret: VerifySecret
   encryptSecret: EncryptSecret
-  updatePassword: (userPasswordHash: NewUserPasswordHash) => Promise<void>
+  updatePassword: (userPasswordHash: UserPasswordHash) => Promise<void>
 }
 
 export interface PasswordChange {
@@ -61,13 +59,6 @@ export interface PasswordChange {
 export interface UserPasswordHash {
   userId: string
   passwordHash: string
-  hashedAt: Date | undefined
-}
-
-export interface NewUserPasswordHash {
-  userId: string
-  passwordHash: string
-  hashedAt: Date
 }
 
 export type PasswordSignInMethodValidationResult =

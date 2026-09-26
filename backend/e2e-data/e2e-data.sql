@@ -17,15 +17,16 @@ BEGIN;
 -- The user. Three rows, the same ones the app writes when a password sign-in
 -- method is added: the user, the method and the hash.
 --
--- The hash is scrypt in the salt:hash format of crypto/crypto.service.ts,
--- with the parameters of crypto/internal/crypto-wrapper.ts. scrypt is
--- deterministic, so the hash of "e2eadmin" under a fixed salt is a constant
--- and no code is needed to create the user. Committing it is safe: the
--- password is "e2eadmin", written next to it in e2e/constants.ts, for a test
--- account on a local database.
+-- The hash is scrypt in the format crypto/crypto.service.ts writes, with the
+-- parameters of web/password-hash-parameters.ts. scrypt is deterministic, so
+-- the hash of "e2eadmin" under a fixed salt is a constant and no code is
+-- needed to create the user. Committing it is safe: the password is
+-- "e2eadmin", written next to it in e2e/constants.ts, for a test account on a
+-- local database.
 --
--- hashed_at is set, so that the first login of a seeded database does not
--- rehash the password in the middle of a test run.
+-- The hash has to be in the format and parameters the app writes, or the
+-- first login of a seeded database rehashes the password in the middle of a
+-- test run. Regenerate it when the parameters change.
 INSERT INTO "user" (user_id, username, role)
 VALUES ('e2e00000-0000-4000-8000-000000000001', 'e2eadmin', 'admin')
 ON CONFLICT (user_id) DO UPDATE
@@ -35,12 +36,11 @@ INSERT INTO sign_in_method (user_id, type)
 VALUES ('e2e00000-0000-4000-8000-000000000001', 'password')
 ON CONFLICT (user_id, type) DO NOTHING;
 
-INSERT INTO password_sign_in_method (user_id, password_hash, hashed_at)
+INSERT INTO password_sign_in_method (user_id, password_hash)
 VALUES ('e2e00000-0000-4000-8000-000000000001',
-        '999431349c26b91ff0eb712bae9f8531:9b739d369fe70905c0bca93014487623f71c5b066191aaf917df73e407887a4560c94648d4116f70b6348b1e69c6a74dfd637996fbc2be324aa1a3f53720a94d',
-        now())
+        '$scrypt$ln=15,r=8,p=3$DmgsN7yYw0Bf00RRWqkHAg$l+mah3VlXnj0ipUiOSrAbCo8hUScnN3KIQA2pw+t1HEypfENQ9SBn7DfgqvkLNA8swDR8OdojwiimbAu1H85xw')
 ON CONFLICT (user_id) DO UPDATE
-  SET password_hash = EXCLUDED.password_hash, hashed_at = EXCLUDED.hashed_at;
+  SET password_hash = EXCLUDED.password_hash;
 
 -- The brewery. The country has to be FI for the brewery country statistics
 -- to have the row the test looks for.

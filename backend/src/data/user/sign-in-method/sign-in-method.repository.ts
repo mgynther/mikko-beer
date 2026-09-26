@@ -3,15 +3,6 @@ import type { Transaction } from '../../database'
 export interface UserPasswordHash {
   userId: string
   passwordHash: string
-  hashedAt: Date | undefined
-}
-
-function defaultToNull(date: Date | undefined): Date | null {
-  return date ?? null
-}
-
-function defaultToUndefined(date: Date | null): Date | undefined {
-  return date ?? undefined
 }
 
 export async function findPasswordSignInMethod(
@@ -34,7 +25,6 @@ export async function findPasswordSignInMethod(
   return {
     userId: method.user_id,
     passwordHash: method.password_hash,
-    hashedAt: defaultToUndefined(method.hashed_at),
   }
 }
 
@@ -53,7 +43,6 @@ export async function insertPasswordSignInMethod(
     .values({
       user_id: method.userId,
       password_hash: method.passwordHash,
-      hashed_at: defaultToNull(method.hashedAt),
     })
     .returningAll()
     .executeTakeFirstOrThrow()
@@ -61,7 +50,6 @@ export async function insertPasswordSignInMethod(
   return {
     userId: result.user_id,
     passwordHash: result.password_hash,
-    hashedAt: defaultToUndefined(result.hashed_at),
   }
 }
 
@@ -74,7 +62,6 @@ export async function updatePassword(
     .updateTable('password_sign_in_method')
     .set({
       password_hash: userPasswordHash.passwordHash,
-      hashed_at: defaultToNull(userPasswordHash.hashedAt),
     })
     .where('user_id', '=', userPasswordHash.userId)
     .returningAll()
@@ -83,20 +70,5 @@ export async function updatePassword(
   return {
     userId: updatedMethod.user_id,
     passwordHash: updatedMethod.password_hash,
-    hashedAt: defaultToUndefined(updatedMethod.hashed_at),
   }
-}
-
-export async function clearOldHashedAt(
-  trx: Transaction,
-  oldDate: Date,
-): Promise<void> {
-  await trx
-    .trx()
-    .updateTable('password_sign_in_method')
-    .set({
-      hashed_at: null,
-    })
-    .where('hashed_at', '<', oldDate)
-    .execute()
 }

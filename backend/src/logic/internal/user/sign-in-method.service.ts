@@ -40,7 +40,6 @@ export async function addPasswordSignInMethod(
   await addPasswordUserIf.insertPasswordSignInMethod({
     userId,
     passwordHash: await addPasswordUserIf.encryptSecret(log, method.password),
-    hashedAt: new Date(),
   })
 
   await userService.setUserUsername(
@@ -91,7 +90,6 @@ export async function changePassword(
       log,
       change.newPassword,
     ),
-    hashedAt: new Date(),
   })
 }
 
@@ -125,16 +123,12 @@ export async function signInUsingPassword(
     throw invalidCredentialsError
   }
 
-  if (
-    signInMethod.hashedAt === undefined ||
-    signInUsingPasswordIf.needsRehash(signInMethod.passwordHash)
-  ) {
+  if (signInUsingPasswordIf.needsRehash(signInMethod.passwordHash)) {
     await signInUsingPasswordIf.updatePassword({
       userId: user.id,
       // Cannot apply any validation on the password as the rules may have
       // changed and login cannot fail permanently for this reason here.
       passwordHash: await signInUsingPasswordIf.encryptSecret(log, password),
-      hashedAt: new Date(),
     })
   }
 

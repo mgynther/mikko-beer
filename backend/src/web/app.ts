@@ -7,7 +7,6 @@ import { v4 as uuidv4 } from 'uuid'
 import type { Config } from './config.js'
 import type { Context } from './context.js'
 import { Database } from '../data/database.js'
-import { clearOldHashedAt } from '../data/user/sign-in-method/sign-in-method.repository.js'
 import * as userRepository from '../data/user/user.repository.js'
 import { createRouter } from './router.js'
 import type { Router } from './router.js'
@@ -151,13 +150,6 @@ export class App {
           if (createPromise !== undefined) {
             promises.push(createPromise)
           }
-          const oldDate = new Date()
-          oldDate.setDate(oldDate.getDate() - 14)
-          const oldPasswordHashedAtCleanupPromise =
-            db.executeReadWriteTransaction(async (trx): Promise<void> => {
-              await clearOldHashedAt(trx, oldDate)
-            })
-          promises.push(oldPasswordHashedAtCleanupPromise)
           Promise.all(promises).then((): void => {
             log('INFO', `Server started in port ${port}`)
             resolve(startResult)

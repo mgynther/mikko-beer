@@ -92,7 +92,6 @@ const authTokenConfig: AuthTokenConfig = {
 const userPasswordHash: UserPasswordHash = {
   userId,
   passwordHash: knownHash,
-  hashedAt: new Date('2022-12-12T10:00:01.023Z'),
 }
 
 const signInUsingPasswordIf: SignInUsingPasswordIf = {
