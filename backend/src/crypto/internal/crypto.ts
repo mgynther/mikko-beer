@@ -1,6 +1,6 @@
 import { createHandler } from './crypto-handler.js'
 import { scrypt as callbackCrypt } from './crypto-wrapper.js'
-import type { ScryptParameters } from './scrypt-parameters.js'
+import type { ScryptParameters } from '../scrypt-parameters.js'
 import type { log } from '../log.js'
 
 export async function scrypt(

@@ -2,15 +2,18 @@ import { randomBytes, timingSafeEqual } from 'node:crypto'
 
 import { scrypt } from './internal/crypto.js'
 import { formatHash, parseHash } from './internal/hash-format.js'
-import type { ScryptParameters } from './internal/scrypt-parameters.js'
+import type { ScryptParameters } from './scrypt-parameters.js'
 
 import type { log } from './log.js'
 
-const parameters: ScryptParameters = { N: 16384, r: 8, p: 1 }
 const saltLength = 16
 const keyLength = 64
 
-export async function encryptSecret(log: log, secret: string): Promise<string> {
+export async function encryptSecret(
+  log: log,
+  parameters: ScryptParameters,
+  secret: string,
+): Promise<string> {
   const salt = randomBytes(saltLength)
   const key = await scrypt(log, secret, salt, keyLength, parameters)
   return formatHash({ parameters, salt, key })

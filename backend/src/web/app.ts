@@ -121,7 +121,10 @@ export class App {
                 startResult.authToken = user.authToken.authToken
                 startResult.userId = user.user.id
                 if (isAdminPasswordNeeded) {
-                  const addPasswordUserIf = createAddPasswordUserIf(trx)
+                  const addPasswordUserIf = createAddPasswordUserIf(
+                    trx,
+                    this.#config.passwordHashParameters,
+                  )
                   await addPasswordForInitialUser(
                     addPasswordUserIf,
                     user.user.id,

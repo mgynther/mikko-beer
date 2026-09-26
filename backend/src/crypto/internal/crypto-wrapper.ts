@@ -1,6 +1,6 @@
 import { scrypt as nodeScrypt } from 'node:crypto'
 
-import type { ScryptParameters } from './scrypt-parameters.js'
+import type { ScryptParameters } from '../scrypt-parameters.js'
 
 export function scrypt(
   secret: string,

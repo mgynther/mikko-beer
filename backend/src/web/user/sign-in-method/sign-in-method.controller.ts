@@ -84,7 +84,9 @@ export function signInMethodController(router: Router): void {
             },
             findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
             verifySecret: createVerifySecret(),
-            encryptSecret: createEncryptSecret(),
+            encryptSecret: createEncryptSecret(
+              ctx.config.passwordHashParameters,
+            ),
             insertRefreshToken: async (
               userId: string,
             ): Promise<DbRefreshToken> =>
@@ -219,7 +221,7 @@ export function signInMethodController(router: Router): void {
             await userRepository.lockUserById(trx, userId),
           findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
           verifySecret: createVerifySecret(),
-          encryptSecret: createEncryptSecret(),
+          encryptSecret: createEncryptSecret(ctx.config.passwordHashParameters),
           updatePassword: async function (
             userPasswordHash: UserPasswordHash,
           ): Promise<void> {

@@ -1,4 +1,4 @@
-import type { ScryptParameters } from './scrypt-parameters.js'
+import type { ScryptParameters } from '../scrypt-parameters.js'
 
 export interface ScryptHash {
   parameters: ScryptParameters

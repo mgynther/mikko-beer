@@ -46,19 +46,20 @@ describe('encrypt and verify secret', () => {
     assertEqual(await verifySecret(log, knownPassword, 'malformed'), false)
   })
 
-  it('encrypt password with current parameters and verify it', async () => {
+  it('encrypt password with given parameters and verify it', async () => {
     const password = 'password'
-    const result = await encryptSecret(log, password)
-    assertEqual(result.startsWith('$scrypt$ln=14,r=8,p=1$'), true)
+    const result = await encryptSecret(log, { N: 1024, r: 8, p: 2 }, password)
+    assertEqual(result.startsWith('$scrypt$ln=10,r=8,p=2$'), true)
     assertEqual(await verifySecret(log, password, result), true)
     assertEqual(await verifySecret(log, `${password}1`, result), false)
   })
 
   it('encrypt same password with different salts', async () => {
     const password = 'password'
+    const parameters = { N: 1024, r: 8, p: 1 }
     assertEqual(
-      (await encryptSecret(log, password)) ===
-        (await encryptSecret(log, password)),
+      (await encryptSecret(log, parameters, password)) ===
+        (await encryptSecret(log, parameters, password)),
       false,
     )
   })

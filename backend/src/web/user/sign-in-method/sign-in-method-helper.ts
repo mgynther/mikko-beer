@@ -8,6 +8,7 @@ import type {
 import type { User } from '../../../logic/user/user.js'
 import type { Transaction } from '../../../data/database'
 import { encryptSecret, verifySecret } from '../../../crypto/crypto.service.js'
+import type { ScryptParameters } from '../../../crypto/scrypt-parameters.js'
 import type { log } from '../../../console/log.js'
 
 export function createErrorLogger(logger: log): (...args: string[]) => void {
@@ -16,14 +17,18 @@ export function createErrorLogger(logger: log): (...args: string[]) => void {
   }
 }
 
-function wrapEncryptSecret(logger: log, secret: string): Promise<string> {
-  return encryptSecret(createErrorLogger(logger), secret)
+function wrapEncryptSecret(
+  logger: log,
+  parameters: ScryptParameters,
+  secret: string,
+): Promise<string> {
+  return encryptSecret(createErrorLogger(logger), parameters, secret)
 }
 
 export const createEncryptSecret =
-  () =>
+  (parameters: ScryptParameters) =>
   (logger: log, secret: string): Promise<string> =>
-    wrapEncryptSecret(logger, secret)
+    wrapEncryptSecret(logger, parameters, secret)
 
 function wrapVerifySecret(
   logger: log,
@@ -38,7 +43,10 @@ export const createVerifySecret =
   (logger: log, secret: string, hash: string): Promise<boolean> =>
     wrapVerifySecret(logger, secret, hash)
 
-export function createAddPasswordUserIf(trx: Transaction): AddPasswordUserIf {
+export function createAddPasswordUserIf(
+  trx: Transaction,
+  passwordHashParameters: ScryptParameters,
+): AddPasswordUserIf {
   const addPasswordUserIf: AddPasswordUserIf = {
     lockUserById: async (userId: string): Promise<User | undefined> =>
       await userRepository.lockUserById(trx, userId),
@@ -53,7 +61,7 @@ export function createAddPasswordUserIf(trx: Transaction): AddPasswordUserIf {
     ): Promise<void> {
       await userRepository.setUserUsername(trx, userId, username)
     },
-    encryptSecret: createEncryptSecret(),
+    encryptSecret: createEncryptSecret(passwordHashParameters),
   }
   return addPasswordUserIf
 }

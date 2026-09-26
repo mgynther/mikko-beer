@@ -89,7 +89,10 @@ export function userController(router: Router, config: Config): void {
               userId,
               new Date(),
             ),
-          addPasswordUserIf: createAddPasswordUserIf(trx),
+          addPasswordUserIf: createAddPasswordUserIf(
+            trx,
+            config.passwordHashParameters,
+          ),
         }
         return await userService.createUser(
           jwtIf,

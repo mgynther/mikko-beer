@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { createClient } from './client.js'
 import type { RequestHeaders } from './client.js'
 import { testConfig } from './test-config.js'
+import type { TestConfig } from './test-config.js'
 import {
   afterTest,
   afterTests,
@@ -20,19 +21,22 @@ export class TestContext {
   #adminUserId: string = ''
   #app?: App
   #userLogger?: log
+  #config: TestConfig
 
-  constructor(userLogger?: log) {
+  readonly request: ReturnType<typeof createClient>
+
+  constructor(userLogger?: log, config: TestConfig = testConfig) {
     this.#userLogger = userLogger
+    this.#config = config
+    this.request = createClient(`http://localhost:${config.port}`)
   }
-
-  request = createClient(`http://localhost:${testConfig.port}`)
 
   get db(): Database {
     return this.#app!.db
   }
 
   before = async (): Promise<void> => {
-    await beforeTests(testConfig.database, testConfig.adminDatabase)
+    await beforeTests(this.#config.database, this.#config.adminDatabase)
   }
 
   after = async (): Promise<void> => {
@@ -52,7 +56,7 @@ export class TestContext {
       )
       this.#userLogger?.(level, ...args)
     }
-    this.#app = new App(testConfig, log)
+    this.#app = new App(this.#config, log)
 
     await beforeTest(this.db)
 

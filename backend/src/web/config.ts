@@ -2,6 +2,8 @@ import { config as databaseConfig } from '../data/config.js'
 import type { DatabaseConfig } from '../data/database-config.js'
 import { getEnvVariable } from '../env-helper.js'
 import { parseExpiryDurationMin } from './parse.js'
+import { passwordHashParameters } from './password-hash-parameters.js'
+import type { ScryptParameters } from '../crypto/scrypt-parameters.js'
 
 export interface Config {
   readonly generateInitialAdminPassword: boolean
@@ -9,6 +11,7 @@ export interface Config {
   readonly authTokenSecret: string
   readonly authTokenExpiryDurationMin: number
   readonly database: DatabaseConfig
+  readonly passwordHashParameters: ScryptParameters
 }
 
 export const config: Config = Object.freeze({
@@ -20,4 +23,5 @@ export const config: Config = Object.freeze({
     getEnvVariable('AUTH_TOKEN_EXPIRY_DURATION_MIN'),
   ),
   database: Object.freeze(databaseConfig),
+  passwordHashParameters: Object.freeze(passwordHashParameters),
 })

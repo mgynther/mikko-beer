@@ -16,4 +16,7 @@ export const testConfig: TestConfig = {
   authTokenExpiryDurationMin: 120,
   database: testDataConfig,
   adminDatabase: testAdminConfig,
+  // Fast hashing, as nearly every test creates users. The production cost
+  // has a web test of its own.
+  passwordHashParameters: { N: 1024, r: 8, p: 1 },
 }

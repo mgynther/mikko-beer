@@ -220,7 +220,7 @@ describe('user tests', () => {
     const postLoginSignInMethod = await getSignInMethod(ctx.db, user.id)
     assertTruthy(postLoginSignInMethod.hashedAt)
     assertEqual(
-      postLoginSignInMethod.passwordHash.startsWith('$scrypt$ln=14,r=8,p=1$'),
+      postLoginSignInMethod.passwordHash.startsWith('$scrypt$ln=10,r=8,p=1$'),
       true,
     )
 
