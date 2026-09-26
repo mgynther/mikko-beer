@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import * as jwt from '../../../../src/logic/internal/auth/jwt.js'
 import type {
@@ -46,8 +46,8 @@ function failingJwtIf(errorCode: 'expired-jwt' | 'invalid-jwt'): JwtIf {
   }
 }
 
-describe('jwt unit tests', () => {
-  it('sign auth token', () => {
+suite('jwt unit tests', () => {
+  test('sign auth token', () => {
     const signedClaims: JwtClaims[] = []
     const secrets: string[] = []
     const expiries: Array<number | undefined> = []
@@ -67,7 +67,7 @@ describe('jwt unit tests', () => {
     assertDeepEqual(expiries, [authTokenConfig.expiryDurationMin])
   })
 
-  it('sign refresh token without expiry', () => {
+  test('sign refresh token without expiry', () => {
     const expiries: Array<number | undefined> = []
     const jwtIf: JwtIf = {
       sign: (_claims, _signSecret, expiryDurationMin) => {
@@ -81,19 +81,19 @@ describe('jwt unit tests', () => {
     assertDeepEqual(expiries, [undefined])
   })
 
-  it('verify auth token', () => {
+  test('verify auth token', () => {
     const jwtIf = verifyingJwtIf({ ...authTokenPayload })
     const result = jwt.verifyAuthToken(jwtIf, { authToken: 'a' }, secret)
     assertDeepEqual(result, authTokenPayload)
   })
 
-  it('verify refresh token', () => {
+  test('verify refresh token', () => {
     const jwtIf = verifyingJwtIf({ ...refreshTokenPayload })
     const result = jwt.verifyRefreshToken(jwtIf, { refreshToken: 'r' }, secret)
     assertDeepEqual(result, refreshTokenPayload)
   })
 
-  it('pass the token and secret to verification', () => {
+  test('pass the token and secret to verification', () => {
     const tokens: string[] = []
     const secrets: string[] = []
     const jwtIf: JwtIf = {
@@ -109,7 +109,7 @@ describe('jwt unit tests', () => {
     assertDeepEqual(secrets, [secret])
   })
 
-  it('fail to verify an expired auth token', () => {
+  test('fail to verify an expired auth token', () => {
     const jwtIf = failingJwtIf('expired-jwt')
     assertThrows(
       () => jwt.verifyAuthToken(jwtIf, { authToken: 'a' }, secret),
@@ -118,7 +118,7 @@ describe('jwt unit tests', () => {
     )
   })
 
-  it('fail to verify an invalid auth token', () => {
+  test('fail to verify an invalid auth token', () => {
     const jwtIf = failingJwtIf('invalid-jwt')
     assertThrows(
       () => jwt.verifyAuthToken(jwtIf, { authToken: 'a' }, secret),
@@ -127,7 +127,7 @@ describe('jwt unit tests', () => {
     )
   })
 
-  it('fail to verify an expired refresh token', () => {
+  test('fail to verify an expired refresh token', () => {
     const jwtIf = failingJwtIf('expired-jwt')
     assertThrows(
       () => jwt.verifyRefreshToken(jwtIf, { refreshToken: 'r' }, secret),
@@ -136,7 +136,7 @@ describe('jwt unit tests', () => {
     )
   })
 
-  it('fail to verify an invalid refresh token', () => {
+  test('fail to verify an invalid refresh token', () => {
     const jwtIf = failingJwtIf('invalid-jwt')
     assertThrows(
       () => jwt.verifyRefreshToken(jwtIf, { refreshToken: 'r' }, secret),
@@ -145,7 +145,7 @@ describe('jwt unit tests', () => {
     )
   })
 
-  it('fail to verify an auth token with an invalid payload', () => {
+  test('fail to verify an auth token with an invalid payload', () => {
     const jwtIf = verifyingJwtIf({ userId: 123 })
     assertThrows(
       () => jwt.verifyAuthToken(jwtIf, { authToken: 'a' }, secret),
@@ -154,7 +154,7 @@ describe('jwt unit tests', () => {
     )
   })
 
-  it('fail to verify a refresh token with an invalid payload', () => {
+  test('fail to verify a refresh token with an invalid payload', () => {
     const jwtIf = verifyingJwtIf({ ...authTokenPayload })
     assertThrows(
       () => jwt.verifyRefreshToken(jwtIf, { refreshToken: 'r' }, secret),

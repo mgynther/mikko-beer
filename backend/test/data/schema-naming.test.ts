@@ -1,4 +1,4 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import { suite, test, before, beforeEach, after, afterEach } from '../test.js'
 
 import { sql } from 'kysely'
 
@@ -40,7 +40,7 @@ function misnamed<Row extends NamedRow>(
     .map((row) => `${row.name}, expected ${expectedName(row)}`)
 }
 
-describe('schema naming', () => {
+suite('schema naming', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -49,7 +49,7 @@ describe('schema naming', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('constraints are named after their table and columns', async () => {
+  test('constraints are named after their table and columns', async () => {
     const { rows } = await sql<NamedRow & { type: string }>`
       select
         c.conname as name,
@@ -73,7 +73,7 @@ describe('schema naming', () => {
 
   // Indexes behind a primary key or unique constraint share its name and are
   // checked above, so only the ones created on their own are checked here.
-  it('indexes are named after their table and columns', async () => {
+  test('indexes are named after their table and columns', async () => {
     const { rows } = await sql<NamedRow>`
       select
         ic.relname as name,

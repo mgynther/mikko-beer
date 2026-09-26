@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import {
   referredBeerNotFoundError,
@@ -39,8 +39,8 @@ function lockOnly(lockedId: string): LockId {
   }
 }
 
-describe('storage service unit tests', () => {
-  it('create storage', async () => {
+suite('storage service unit tests', () => {
+  test('create storage', async () => {
     const insertStorage = async (newStorage: CreateStorageRequest) => {
       assertDeepEqual(newStorage, createRequest)
       return storage
@@ -70,7 +70,7 @@ describe('storage service unit tests', () => {
     assertEqual(isContainerLocked, true)
   })
 
-  it('fail to create storage with invalid beer', async () => {
+  test('fail to create storage with invalid beer', async () => {
     const insertStorage = async () => {
       throw new Error('must not be called')
     }
@@ -88,7 +88,7 @@ describe('storage service unit tests', () => {
     }, referredBeerNotFoundError)
   })
 
-  it('fail to create storage with invalid container', async () => {
+  test('fail to create storage with invalid container', async () => {
     const insertStorage = async () => {
       throw new Error('must not be called')
     }
@@ -106,7 +106,7 @@ describe('storage service unit tests', () => {
     }, referredContainerNotFoundError)
   })
 
-  it('update storage', async () => {
+  test('update storage', async () => {
     let isBeerLocked = false
     let isContainerLocked = false
     const updateStorage = async (updatedStorage: Storage) => {
@@ -136,7 +136,7 @@ describe('storage service unit tests', () => {
     assertEqual(isContainerLocked, true)
   })
 
-  it('fail to update storage with invalid beer', async () => {
+  test('fail to update storage with invalid beer', async () => {
     const updateStorage = async () => {
       throw new Error('must not be called')
     }
@@ -154,7 +154,7 @@ describe('storage service unit tests', () => {
     }, referredBeerNotFoundError)
   })
 
-  it('fail to update storage with invalid container', async () => {
+  test('fail to update storage with invalid container', async () => {
     const updateStorage = async () => {
       throw new Error('must not be called')
     }
@@ -172,7 +172,7 @@ describe('storage service unit tests', () => {
     }, referredContainerNotFoundError)
   })
 
-  it('delete storage', async (t) => {
+  test('delete storage', async (t) => {
     const mockImpl = async () => undefined
     const deleter = t.mock.fn(mockImpl)
     const id = '18801a29-1c4e-40a4-ab3b-1701b4416c6c'
@@ -184,7 +184,7 @@ describe('storage service unit tests', () => {
     )
   })
 
-  it('find storage', async () => {
+  test('find storage', async () => {
     const joinedStorage = buildJoinedStorage()
     const finder = async (storageId: string) => {
       assertEqual(storageId, joinedStorage.id)
@@ -198,7 +198,7 @@ describe('storage service unit tests', () => {
     assertDeepEqual(result, joinedStorage)
   })
 
-  it('not find storage with unknown id', async () => {
+  test('not find storage with unknown id', async () => {
     const id = 'd29b2ee6-5d2e-40bf-bb87-c02c00a6628f'
     const finder = async (searchId: string) => {
       assertEqual(searchId, id)
@@ -209,7 +209,7 @@ describe('storage service unit tests', () => {
     }, storageNotFoundError(id))
   })
 
-  it('list storages', async () => {
+  test('list storages', async () => {
     const pagination: Pagination = {
       size: 10,
       skip: 80,
@@ -222,7 +222,7 @@ describe('storage service unit tests', () => {
     assertDeepEqual(result, [joinedStorage])
   })
 
-  it('list storages by beer', async () => {
+  test('list storages by beer', async () => {
     const beerId = '77d16346-2a56-4b52-9425-1e885b2be7c4'
     const joinedStorage = buildJoinedStorage()
     const lister = async (listBeerId: string) => {
@@ -233,7 +233,7 @@ describe('storage service unit tests', () => {
     assertDeepEqual(result, [joinedStorage])
   })
 
-  it('list storages by brewery', async () => {
+  test('list storages by brewery', async () => {
     const breweryId = 'cbc84989-ad82-4a46-b9ee-c6be16ef5e46'
     const joinedStorage = buildJoinedStorage()
     const lister = async (listBreweryId: string) => {
@@ -248,7 +248,7 @@ describe('storage service unit tests', () => {
     assertDeepEqual(result, [joinedStorage])
   })
 
-  it('list storages by style', async () => {
+  test('list storages by style', async () => {
     const styleId = '1c753e76-1231-4ced-8fb0-94c2031283f8'
     const joinedStorage = buildJoinedStorage()
     const lister = async (listStyleId: string) => {
@@ -263,7 +263,7 @@ describe('storage service unit tests', () => {
     assertDeepEqual(result, [joinedStorage])
   })
 
-  it('get annual storage stats', async () => {
+  test('get annual storage stats', async () => {
     const getter = async () => {
       return [{ year: '2022', count: '8' }]
     }
@@ -271,7 +271,7 @@ describe('storage service unit tests', () => {
     assertDeepEqual(result, [{ year: '2022', count: '8' }])
   })
 
-  it('get monthly storage stats', async () => {
+  test('get monthly storage stats', async () => {
     const getter = async () => {
       return [{ year: '2022', month: '10', count: '8' }]
     }

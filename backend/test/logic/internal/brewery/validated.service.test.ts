@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import * as breweryService from '../../../../src/logic/internal/brewery/validated.service.js'
 
@@ -80,8 +80,8 @@ const failUpdateValidationWithId: ValidateUpdateBrewery = () => {
   }
 }
 
-describe('brewery validated service unit tests', () => {
-  it('create brewery', async () => {
+suite('brewery validated service unit tests', () => {
+  test('create brewery', async () => {
     await breweryService.createBrewery(
       create,
       passCreateValidation,
@@ -90,7 +90,7 @@ describe('brewery validated service unit tests', () => {
     )
   })
 
-  it('create brewery with country', async () => {
+  test('create brewery with country', async () => {
     const request = buildCreateBreweryRequest({ country: 'FI' })
     const createWithCountry: (
       brewery: CreateBreweryRequest,
@@ -107,7 +107,7 @@ describe('brewery validated service unit tests', () => {
     assertDeepEqual(result, { ...brewery, country: 'FI' })
   })
 
-  it('fail to create invalid brewery', async () => {
+  test('fail to create invalid brewery', async () => {
     await expectReject(async () => {
       await breweryService.createBrewery(
         create,
@@ -118,7 +118,7 @@ describe('brewery validated service unit tests', () => {
     }, invalidBreweryError)
   })
 
-  it('update brewery', async () => {
+  test('update brewery', async () => {
     await breweryService.updateBrewery(
       update,
       passUpdateValidation,
@@ -128,7 +128,7 @@ describe('brewery validated service unit tests', () => {
     )
   })
 
-  it('fail to update brewery with invalid brewery', async () => {
+  test('fail to update brewery with invalid brewery', async () => {
     await expectReject(async () => {
       await breweryService.updateBrewery(
         update,
@@ -140,7 +140,7 @@ describe('brewery validated service unit tests', () => {
     }, invalidBreweryError)
   })
 
-  it('fail to update brewery with undefined id', async () => {
+  test('fail to update brewery with undefined id', async () => {
     await expectReject(async () => {
       await breweryService.updateBrewery(
         update,
@@ -152,7 +152,7 @@ describe('brewery validated service unit tests', () => {
     }, invalidBreweryIdError)
   })
 
-  it('find brewery by id', async () => {
+  test('find brewery by id', async () => {
     const found = buildBrewery()
     const result = await breweryService.findBreweryById(
       async () => found,
@@ -167,7 +167,7 @@ describe('brewery validated service unit tests', () => {
     throw new Error('not to be called')
   }
 
-  it('fail to find brewery by invalid id', async () => {
+  test('fail to find brewery by invalid id', async () => {
     await expectReject(async () => {
       await breweryService.findBreweryById(
         notCalled,
@@ -178,7 +178,7 @@ describe('brewery validated service unit tests', () => {
     }, invalidBreweryIdError)
   })
 
-  it('search breweries', async () => {
+  test('search breweries', async () => {
     const result = await breweryService.searchBreweries(
       async () => [brewery],
       () => ({ errorCode: undefined, result: { name: 'Kosk' } }),
@@ -188,7 +188,7 @@ describe('brewery validated service unit tests', () => {
     assertDeepEqual(result, [brewery])
   })
 
-  it('fail to search breweries with invalid request', async () => {
+  test('fail to search breweries with invalid request', async () => {
     await expectReject(async () => {
       await breweryService.searchBreweries(
         notCalled,

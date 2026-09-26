@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import type { Database, Transaction } from '../../../src/data/database.js'
@@ -244,7 +251,7 @@ function brewdogStats(brewdog: Brewery) {
   }
 }
 
-describe('brewery stats tests', () => {
+suite('brewery stats tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -273,13 +280,13 @@ describe('brewery stats tests', () => {
   ]
 
   orderProperties.forEach((property) => {
-    it(`by ${property} asc`, async () => {
+    test(`by ${property} asc`, async () => {
       const { lindemans, nokian } = await insertBreweries(ctx.db)
       const stats = await getBrewery(noFilter, { property, direction: 'asc' })
       assertDeepEqual(stats, [lindemansStats(lindemans), nokianStats(nokian)])
     })
 
-    it(`by ${property} desc`, async () => {
+    test(`by ${property} desc`, async () => {
       const { lindemans, nokian } = await insertBreweries(ctx.db)
       const stats = await getBrewery(noFilter, { property, direction: 'desc' })
       assertDeepEqual(stats, [nokianStats(nokian), lindemansStats(lindemans)])
@@ -291,7 +298,7 @@ describe('brewery stats tests', () => {
     direction: 'asc',
   }
 
-  it('filter by brewery', async () => {
+  test('filter by brewery', async () => {
     const { nokian } = await insertBreweries(ctx.db)
     const stats = await getBrewery(
       { ...noFilter, brewery: nokian.brewery.id },
@@ -300,7 +307,7 @@ describe('brewery stats tests', () => {
     assertDeepEqual(stats, [nokianStats(nokian)])
   })
 
-  it('filter by location', async () => {
+  test('filter by location', async () => {
     const { nokian } = await insertBreweries(ctx.db)
     const stats = await getBrewery(
       { ...noFilter, location: nokian.location.id },
@@ -309,7 +316,7 @@ describe('brewery stats tests', () => {
     assertDeepEqual(stats, [nokianStats(nokian)])
   })
 
-  it('filter by style', async () => {
+  test('filter by style', async () => {
     const { lindemans } = await insertBreweries(ctx.db)
     const stats = await getBrewery(
       { ...noFilter, style: lindemans.style.id },
@@ -318,19 +325,19 @@ describe('brewery stats tests', () => {
     assertDeepEqual(stats, [lindemansStats(lindemans)])
   })
 
-  it('filter by min review count', async () => {
+  test('filter by min review count', async () => {
     const { nokian } = await insertBreweries(ctx.db)
     const stats = await getBrewery({ ...noFilter, minReviewCount: 3 }, byName)
     assertDeepEqual(stats, [nokianStats(nokian)])
   })
 
-  it('filter by max review count', async () => {
+  test('filter by max review count', async () => {
     const { lindemans } = await insertBreweries(ctx.db)
     const stats = await getBrewery({ ...noFilter, maxReviewCount: 2 }, byName)
     assertDeepEqual(stats, [lindemansStats(lindemans)])
   })
 
-  it('filter by min review average', async () => {
+  test('filter by min review average', async () => {
     const { nokian } = await insertBreweries(ctx.db)
     const stats = await getBrewery(
       { ...noFilter, minReviewAverage: 6.5 },
@@ -339,7 +346,7 @@ describe('brewery stats tests', () => {
     assertDeepEqual(stats, [nokianStats(nokian)])
   })
 
-  it('filter by max review average', async () => {
+  test('filter by max review average', async () => {
     const { lindemans } = await insertBreweries(ctx.db)
     const stats = await getBrewery(
       { ...noFilter, maxReviewAverage: 6.5 },
@@ -348,7 +355,7 @@ describe('brewery stats tests', () => {
     assertDeepEqual(stats, [lindemansStats(lindemans)])
   })
 
-  it('filter by start time', async () => {
+  test('filter by start time', async () => {
     const { lindemans } = await insertBreweries(ctx.db)
     const stats = await getBrewery(
       { ...noFilter, timeStart: new Date('2024-01-01T00:00:00.000Z') },
@@ -357,7 +364,7 @@ describe('brewery stats tests', () => {
     assertDeepEqual(stats, [lindemansStats(lindemans)])
   })
 
-  it('filter by end time', async () => {
+  test('filter by end time', async () => {
     const { nokian } = await insertBreweries(ctx.db)
     const stats = await getBrewery(
       { ...noFilter, timeEnd: new Date('2024-01-01T00:00:00.000Z') },
@@ -366,7 +373,7 @@ describe('brewery stats tests', () => {
     assertDeepEqual(stats, [nokianStats(nokian)])
   })
 
-  it('count reviewed beers', async () => {
+  test('count reviewed beers', async () => {
     const { salama, brewdog } = await insertCollaboration(ctx.db)
     const stats = await getBrewery(noFilter, byName)
     assertDeepEqual(stats, [
@@ -387,7 +394,7 @@ describe('brewery stats tests', () => {
 
   // The brewery filter selects from another table than the unfiltered
   // query, so this also checks what it selects.
-  it('filter by brewery keeps the other breweries of its beers', async () => {
+  test('filter by brewery keeps the other breweries of its beers', async () => {
     const { salama, brewdog } = await insertCollaboration(ctx.db)
     const stats = await getBrewery({ ...noFilter, brewery: brewdog.id }, byName)
     assertDeepEqual(stats, [

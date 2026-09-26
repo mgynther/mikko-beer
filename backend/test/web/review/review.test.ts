@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import type {
@@ -37,7 +44,7 @@ const createNewReviewRequest = (
   time: '2023-03-07T18:31:33.123Z',
 })
 
-describe('review tests', () => {
+suite('review tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -100,7 +107,7 @@ describe('review tests', () => {
     }
   }
 
-  it('create a review', async () => {
+  test('create a review', async () => {
     const { beerRes, breweryRes, containerRes, locationRes, styleRes } =
       await createDeps(ctx.adminAuthHeaders())
 
@@ -194,7 +201,7 @@ describe('review tests', () => {
     assertDeepEqual(beerListRes.data.reviews, breweryListRes.data.reviews)
   })
 
-  it('fail to create a review with invalid beer', async () => {
+  test('fail to create a review with invalid beer', async () => {
     const { containerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const reviewRes = await ctx.request.post<{
@@ -211,7 +218,7 @@ describe('review tests', () => {
     assertEqual(reviewRes.status, 400)
   })
 
-  it('fail to create a review with invalid container', async () => {
+  test('fail to create a review with invalid container', async () => {
     const { beerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const reviewRes = await ctx.request.post<{
@@ -228,7 +235,7 @@ describe('review tests', () => {
     assertEqual(reviewRes.status, 400)
   })
 
-  it('delete storage when review created from storage', async () => {
+  test('delete storage when review created from storage', async () => {
     const { beerRes, containerRes, locationRes } = await createDeps(
       ctx.adminAuthHeaders(),
     )
@@ -275,7 +282,7 @@ describe('review tests', () => {
     assertEqual(getStorageRes.status, 404)
   })
 
-  it('fail to create review with invalid storage', async () => {
+  test('fail to create review with invalid storage', async () => {
     const { beerRes, containerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const dummyId = 'b6c2c801-d8a5-4a13-98bb-32cfb9611359'
@@ -293,7 +300,7 @@ describe('review tests', () => {
     assertEqual(reviewRes.status, 400)
   })
 
-  it('fail to create a review without beer', async () => {
+  test('fail to create a review without beer', async () => {
     const { containerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const reviewRes = await ctx.request.post<{
@@ -314,7 +321,7 @@ describe('review tests', () => {
     assertEqual(reviewRes.status, 400)
   })
 
-  it('update review', async () => {
+  test('update review', async () => {
     const { beerRes, containerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const requestData = {
@@ -355,7 +362,7 @@ describe('review tests', () => {
     assertEqual(getRes.data.review.time, '2023-03-07T18:31:33.124Z')
   })
 
-  it('fail to update review with invalid beer', async () => {
+  test('fail to update review with invalid beer', async () => {
     const { beerRes, containerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const requestData = createNewReviewRequest(
@@ -381,7 +388,7 @@ describe('review tests', () => {
     assertEqual(updateRes.status, 400)
   })
 
-  it('fail to update review with invalid container', async () => {
+  test('fail to update review with invalid container', async () => {
     const { beerRes, containerRes, locationRes } = await createDeps(
       ctx.adminAuthHeaders(),
     )
@@ -409,7 +416,7 @@ describe('review tests', () => {
     assertEqual(updateRes.status, 400)
   })
 
-  it('get empty review list', async () => {
+  test('get empty review list', async () => {
     const res = await ctx.request.get<{ reviews: ListedReview[] }>(
       `/api/v1/review`,
       ctx.adminAuthHeaders(),
@@ -537,7 +544,7 @@ describe('review tests', () => {
     }
   }
 
-  it('list reviews by brewery', async () => {
+  test('list reviews by brewery', async () => {
     const { breweryRes, reviewRes, collabReviewRes } = await createListDeps(
       ctx.adminAuthHeaders(),
     )
@@ -568,7 +575,7 @@ describe('review tests', () => {
     assertEqual(sorting.direction, 'desc')
   })
 
-  it('list reviews by brewery filtered by rating and time', async () => {
+  test('list reviews by brewery filtered by rating and time', async () => {
     const { breweryRes, collabReviewRes } = await createListDeps(
       ctx.adminAuthHeaders(),
     )
@@ -600,7 +607,7 @@ describe('review tests', () => {
     assertEqual(sorting.direction, 'desc')
   })
 
-  it('list reviews by location', async () => {
+  test('list reviews by location', async () => {
     const { locationRes, reviewRes, otherReviewRes } = await createListDeps(
       ctx.adminAuthHeaders(),
     )
@@ -630,7 +637,7 @@ describe('review tests', () => {
     assertEqual(sorting.direction, 'desc')
   })
 
-  it('list reviews by location filtered by rating and time', async () => {
+  test('list reviews by location filtered by rating and time', async () => {
     const { locationRes, otherReviewRes } = await createListDeps(
       ctx.adminAuthHeaders(),
     )
@@ -661,7 +668,7 @@ describe('review tests', () => {
     assertEqual(sorting.direction, 'desc')
   })
 
-  it('list reviews by style', async () => {
+  test('list reviews by style', async () => {
     const { styleRes, reviewRes, collabReviewRes } = await createListDeps(
       ctx.adminAuthHeaders(),
     )
@@ -692,7 +699,7 @@ describe('review tests', () => {
     assertEqual(sorting.direction, 'desc')
   })
 
-  it('list reviews by style filtered by rating and time', async () => {
+  test('list reviews by style filtered by rating and time', async () => {
     const { styleRes, reviewRes } = await createListDeps(ctx.adminAuthHeaders())
 
     const minTime = new Date('2023-03-07T17:31:33.123Z').getTime()
@@ -721,7 +728,7 @@ describe('review tests', () => {
     assertEqual(sorting.direction, 'desc')
   })
 
-  it('list reviews by beer', async () => {
+  test('list reviews by beer', async () => {
     const { beerRes, containerRes, locationRes } = await createDeps(
       ctx.adminAuthHeaders(),
     )
@@ -767,7 +774,7 @@ describe('review tests', () => {
     )
   })
 
-  it('list reviews by beer filtered by rating and time', async () => {
+  test('list reviews by beer filtered by rating and time', async () => {
     const { beerRes, reviewRes } = await createListDeps(ctx.adminAuthHeaders())
 
     const minTime = new Date('2023-03-07T17:31:33.123Z').getTime()
@@ -841,7 +848,7 @@ describe('review tests', () => {
     assertDeepEqual(listRes.data.sorting, data.sorting)
   }
 
-  it('list reviews', async () => {
+  test('list reviews', async () => {
     await testListOrder(ctx.adminAuthHeaders(), {
       query: '',
       sorting: { order: 'time', direction: 'desc' },
@@ -851,7 +858,7 @@ describe('review tests', () => {
     })
   })
 
-  it('list reviews, time', async () => {
+  test('list reviews, time', async () => {
     await testListOrder(ctx.adminAuthHeaders(), {
       query: '?order=time',
       sorting: { order: 'time', direction: 'desc' },
@@ -861,7 +868,7 @@ describe('review tests', () => {
     })
   })
 
-  it('list reviews, time desc', async () => {
+  test('list reviews, time desc', async () => {
     await testListOrder(ctx.adminAuthHeaders(), {
       query: '?order=time&direction=desc',
       sorting: { order: 'time', direction: 'desc' },
@@ -871,7 +878,7 @@ describe('review tests', () => {
     })
   })
 
-  it('list reviews, rating', async () => {
+  test('list reviews, rating', async () => {
     await testListOrder(ctx.adminAuthHeaders(), {
       query: '?order=rating',
       sorting: { order: 'rating', direction: 'desc' },
@@ -881,7 +888,7 @@ describe('review tests', () => {
     })
   })
 
-  it('list reviews, rating asc', async () => {
+  test('list reviews, rating asc', async () => {
     await testListOrder(ctx.adminAuthHeaders(), {
       query: '?order=rating&direction=asc',
       sorting: { order: 'rating', direction: 'asc' },
@@ -891,7 +898,7 @@ describe('review tests', () => {
     })
   })
 
-  it('list reviews filtered by rating and time', async () => {
+  test('list reviews filtered by rating and time', async () => {
     const { reviewRes } = await createListDeps(ctx.adminAuthHeaders())
 
     const minTime = new Date('2023-03-07T17:31:33.123Z').getTime()

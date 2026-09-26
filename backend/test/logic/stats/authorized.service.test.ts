@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../test.js'
 
 import * as statsService from '../../../src/logic/stats/authorized.service.js'
 
@@ -24,11 +24,11 @@ const adminAuthToken = buildAuthTokenPayload({ role: 'admin' })
 
 const viewerAuthToken = buildAuthTokenPayload({ role: 'viewer' })
 
-describe('stats authorized service unit tests', () => {
+suite('stats authorized service unit tests', () => {
   ;[adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
     const statsFilter = buildStatsIdFilter()
 
-    it(`get overall stats as ${token.role}`, async () => {
+    test(`get overall stats as ${token.role}`, async () => {
       const overallStats = buildOverallStats()
       const result = await statsService.getOverall(
         async () => ({ ...overallStats }),
@@ -39,7 +39,7 @@ describe('stats authorized service unit tests', () => {
       assertDeepEqual(result, { ...overallStats })
     })
 
-    it(`get annual stats as ${token.role}`, async () => {
+    test(`get annual stats as ${token.role}`, async () => {
       const annualStats = [buildAnnualStatsRow()]
       const result = await statsService.getAnnual(
         async () => [...annualStats],
@@ -50,7 +50,7 @@ describe('stats authorized service unit tests', () => {
       assertDeepEqual(result, [...annualStats])
     })
 
-    it(`get annual container stats as ${token.role}`, async () => {
+    test(`get annual container stats as ${token.role}`, async () => {
       const annualContainerStats = [buildAnnualContainerStatsRow()]
       const result = await statsService.getAnnualContainer(
         async () => [...annualContainerStats],
@@ -62,7 +62,7 @@ describe('stats authorized service unit tests', () => {
       assertDeepEqual(result, [...annualContainerStats])
     })
 
-    it(`get brewery stats as ${token.role}`, async () => {
+    test(`get brewery stats as ${token.role}`, async () => {
       const breweryStats = [buildBreweryStatsRow()]
       const result = await statsService.getBrewery(
         async () => [...breweryStats],
@@ -78,7 +78,7 @@ describe('stats authorized service unit tests', () => {
       assertDeepEqual(result, [...breweryStats])
     })
 
-    it(`get brewery country stats as ${token.role}`, async () => {
+    test(`get brewery country stats as ${token.role}`, async () => {
       const breweryCountryStats = [buildBreweryCountryStatsRow()]
       const result = await statsService.getBreweryCountry(
         async () => [...breweryCountryStats],
@@ -94,7 +94,7 @@ describe('stats authorized service unit tests', () => {
       assertDeepEqual(result, [...breweryCountryStats])
     })
 
-    it(`get container stats as ${token.role}`, async () => {
+    test(`get container stats as ${token.role}`, async () => {
       const containerStats = [buildContainerStatsRow()]
       const result = await statsService.getContainer(
         async () => [...containerStats],
@@ -105,7 +105,7 @@ describe('stats authorized service unit tests', () => {
       assertDeepEqual(result, [...containerStats])
     })
 
-    it(`get location stats as ${token.role}`, async () => {
+    test(`get location stats as ${token.role}`, async () => {
       const locationStats = [buildLocationStatsRow()]
       const result = await statsService.getLocation(
         async () => [...locationStats],
@@ -121,7 +121,7 @@ describe('stats authorized service unit tests', () => {
       assertDeepEqual(result, [...locationStats])
     })
 
-    it(`get rating stats as ${token.role}`, async () => {
+    test(`get rating stats as ${token.role}`, async () => {
       const ratingStats = [buildRatingStatsRow()]
 
       const result = await statsService.getRating(
@@ -133,7 +133,7 @@ describe('stats authorized service unit tests', () => {
       assertDeepEqual(result, [...ratingStats])
     })
 
-    it(`get style stats as ${token.role}`, async () => {
+    test(`get style stats as ${token.role}`, async () => {
       const styleStats = [buildStyleStatsRow()]
       const result = await statsService.getStyle(
         async () => [...styleStats],

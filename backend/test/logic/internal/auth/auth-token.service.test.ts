@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import * as authTokenService from '../../../../src/logic/internal/auth/auth-token.service.js'
 import type {
@@ -49,14 +49,14 @@ async function insertAuthToken(userId: string): Promise<DbRefreshToken> {
   }
 }
 
-describe('auth token service unit tests', () => {
+suite('auth token service unit tests', () => {
   function token(content: string): AuthToken {
     return {
       authToken: content,
     }
   }
 
-  it('fail to verify invalid auth token', () => {
+  test('fail to verify invalid auth token', () => {
     assertThrows(
       () => {
         authTokenService.verifyAuthToken(
@@ -71,7 +71,7 @@ describe('auth token service unit tests', () => {
   })
 
   // Tokens are time sensitive so they are difficult to test in isolated steps.
-  it('create, verify and delete tokens', async () => {
+  test('create, verify and delete tokens', async () => {
     const tokens = await authTokenService.createTokens(
       testJwtIf,
       insertAuthToken,
@@ -108,7 +108,7 @@ describe('auth token service unit tests', () => {
     assertEqual(wasDeleted, true)
   })
 
-  it('fail to verify auth token with wrong secret', async () => {
+  test('fail to verify auth token with wrong secret', async () => {
     const tokens = await authTokenService.createTokens(
       testJwtIf,
       insertAuthToken,
@@ -130,7 +130,7 @@ describe('auth token service unit tests', () => {
     )
   })
 
-  it('fail to verify expired auth token', () => {
+  test('fail to verify expired auth token', () => {
     const expiredAuthToken: AuthToken = {
       // A non-positive expiry duration makes the test jwt expire immediately.
       authToken: testJwtIf.sign(
@@ -152,7 +152,7 @@ describe('auth token service unit tests', () => {
     )
   })
 
-  it('fail to delete refresh token on user mismatch', async () => {
+  test('fail to delete refresh token on user mismatch', async () => {
     const tokens = await authTokenService.createTokens(
       testJwtIf,
       insertAuthToken,

@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../test.js'
 
 import {
   validateBreweryId,
@@ -15,22 +15,22 @@ function validRequest(): CreateBreweryRequest {
   }
 }
 
-describe('brewery validation unit tests', () => {
-  it('valid create brewery request passes validation', () => {
+suite('brewery validation unit tests', () => {
+  test('valid create brewery request passes validation', () => {
     const input = validRequest()
     const output = validRequest()
     assertEqual(validateCreateBreweryRequest(input).errorCode, undefined)
     assertDeepEqual(validateCreateBreweryRequest(input).result, output)
   })
 
-  it('valid create brewery request with country passes validation', () => {
+  test('valid create brewery request with country passes validation', () => {
     const input = { ...validRequest(), country: 'FI' }
     const output = { ...validRequest(), country: 'FI' }
     assertEqual(validateCreateBreweryRequest(input).errorCode, undefined)
     assertDeepEqual(validateCreateBreweryRequest(input).result, output)
   })
 
-  it('create brewery request without country has undefined country', () => {
+  test('create brewery request without country has undefined country', () => {
     const result = validateCreateBreweryRequest({
       name: 'Craft Brewery',
     }).result
@@ -38,7 +38,7 @@ describe('brewery validation unit tests', () => {
     assertEqual(Object.hasOwn(result ?? {}, 'country'), true)
   })
 
-  it('invalid create brewery request fails validation', () => {
+  test('invalid create brewery request fails validation', () => {
     const input = {}
     assertEqual(
       validateCreateBreweryRequest(input).errorCode,
@@ -47,7 +47,7 @@ describe('brewery validation unit tests', () => {
     assertDeepEqual(validateCreateBreweryRequest(input).result, undefined)
   })
 
-  it('valid update brewery request passes validation', () => {
+  test('valid update brewery request passes validation', () => {
     const input = validRequest()
     const output = validRequest()
     const id = '3e2d9787-4787-4435-8e1e-475e0bb7c525'
@@ -79,7 +79,7 @@ describe('brewery validation unit tests', () => {
       assertEqual(result.result, undefined)
     }
 
-    it(title('fail with empty name'), () => {
+    test(title('fail with empty name'), () => {
       const brewery = {
         ...validRequest(),
         name: '',
@@ -87,11 +87,11 @@ describe('brewery validation unit tests', () => {
       fail(brewery)
     })
 
-    it(title('fail without name'), () => {
+    test(title('fail without name'), () => {
       fail({})
     })
 
-    it(title('fail with invalid name'), () => {
+    test(title('fail with invalid name'), () => {
       const brewery = {
         ...validRequest(),
         name: ['f', 'a', 'i', 'l'],
@@ -113,15 +113,18 @@ describe('brewery validation unit tests', () => {
     ]
 
     invalidCountries.forEach((country) =>
-      it(title(`fail with invalid country ${JSON.stringify(country)}`), () => {
-        fail({
-          ...validRequest(),
-          country,
-        })
-      }),
+      test(
+        title(`fail with invalid country ${JSON.stringify(country)}`),
+        () => {
+          fail({
+            ...validRequest(),
+            country,
+          })
+        },
+      ),
     )
 
-    it(title('pass with country'), () => {
+    test(title('pass with country'), () => {
       const result = func({
         ...validRequest(),
         country: 'BE',
@@ -129,7 +132,7 @@ describe('brewery validation unit tests', () => {
       assertEqual(result.errorCode, undefined)
     })
 
-    it(title('fail with additional property'), () => {
+    test(title('fail with additional property'), () => {
       const brewery = {
         ...validRequest(),
         additional: 'will fail',
@@ -138,7 +141,7 @@ describe('brewery validation unit tests', () => {
     })
   })
 
-  it('fail update with valid country and invalid id', () => {
+  test('fail update with valid country and invalid id', () => {
     const validationResult = validateUpdateBreweryRequest(
       { ...validRequest(), country: 'FI' },
       '',
@@ -147,13 +150,13 @@ describe('brewery validation unit tests', () => {
     assertEqual(validationResult.result, undefined)
   })
 
-  it('fail update with empty id', () => {
+  test('fail update with empty id', () => {
     const validationResult = validateUpdateBreweryRequest(validRequest(), '')
     assertEqual(validationResult.errorCode, 'invalid-brewery-id')
     assertEqual(validationResult.result, undefined)
   })
 
-  it('valid brewery id passes validation', () => {
+  test('valid brewery id passes validation', () => {
     const id = '5b0cc2fa-3f0b-4f19-8b8c-0a4f0a2b7d2e'
     const validationResult = validateBreweryId(id)
     assertEqual(validationResult.errorCode, undefined)
@@ -170,7 +173,7 @@ describe('brewery validation unit tests', () => {
   ]
 
   invalidIdCases.forEach((testCase) =>
-    it(`invalid brewery id "${testCase.label}" fails validation`, () => {
+    test(`invalid brewery id "${testCase.label}" fails validation`, () => {
       const validationResult = validateBreweryId(testCase.id)
       assertEqual(validationResult.errorCode, 'invalid-brewery-id')
       assertEqual(validationResult.result, undefined)

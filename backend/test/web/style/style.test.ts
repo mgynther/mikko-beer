@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import { assertDeepEqual, assertEqual, assertTruthy } from '../../assert.js'
@@ -8,7 +15,7 @@ import type {
   ReadStyle,
 } from '../../../src/web/style/style.controller.js'
 
-describe('style tests', () => {
+suite('style tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -17,7 +24,7 @@ describe('style tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('create a style', async () => {
+  test('create a style', async () => {
     const res = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
       `/api/v1/style`,
       { name: 'Wild', parents: [] },
@@ -40,7 +47,7 @@ describe('style tests', () => {
     assertDeepEqual(getRes.data.style.parents, [])
   })
 
-  it('create a child style', async () => {
+  test('create a child style', async () => {
     const res = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
       `/api/v1/style`,
       { name: 'Pale Ale', parents: [] },
@@ -93,7 +100,7 @@ describe('style tests', () => {
     assertDeepEqual(getParentRes.data.style.parents, [])
   })
 
-  it('create a child style with 2 parents', async () => {
+  test('create a child style with 2 parents', async () => {
     const [parent1Res, parent2Res] = await Promise.all(
       ['Ale', 'Lager'].map((name) =>
         ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
@@ -151,7 +158,7 @@ describe('style tests', () => {
     assertEqual(listRes.data.styles.length, 3)
   })
 
-  it('fail to create a child style with invalid parent', async () => {
+  test('fail to create a child style with invalid parent', async () => {
     const childRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
       `/api/v1/style`,
       { name: 'Gueuze', parents: ['d31020d9-c400-41f4-91bb-2c847dcf1fbe'] },
@@ -161,7 +168,7 @@ describe('style tests', () => {
     assertEqual(childRes.status, 400)
   })
 
-  it('fail to create a style without name', async () => {
+  test('fail to create a style without name', async () => {
     const res = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
       `/api/v1/style`,
       { parents: [] },
@@ -171,7 +178,7 @@ describe('style tests', () => {
     assertEqual(res.status, 400)
   })
 
-  it('update a style', async () => {
+  test('update a style', async () => {
     const [aleRes, lagerRes] = await Promise.all(
       ['Pale Ale', 'Lager'].map((name) =>
         ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
@@ -216,7 +223,7 @@ describe('style tests', () => {
     ])
   })
 
-  it('fail to update a child style with invalid parent', async () => {
+  test('fail to update a child style with invalid parent', async () => {
     const createRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
       `/api/v1/style`,
       { name: 'Gueuze', parents: [] },
@@ -233,7 +240,7 @@ describe('style tests', () => {
     assertEqual(updateRes.status, 400)
   })
 
-  it('get empty style list', async () => {
+  test('get empty style list', async () => {
     const res = await ctx.request.get<{ styles: ListedStyle[] }>(
       `/api/v1/style`,
       ctx.adminAuthHeaders(),
@@ -243,7 +250,7 @@ describe('style tests', () => {
     assertEqual(res.data.styles.length, 0)
   })
 
-  it('fail to create cyclic relationship', async () => {
+  test('fail to create cyclic relationship', async () => {
     const aleRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
       `/api/v1/style`,
       { name: 'Pale Ale', parents: [] },

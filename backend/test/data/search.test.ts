@@ -1,20 +1,20 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../test.js'
 
 import { toIlike } from '../../src/data/search.js'
 
 import { assertEqual, assertThrows } from '../assert.js'
 
-describe('search ilike unit tests', () => {
-  it('add wildcards', () => {
+suite('search ilike unit tests', () => {
+  test('add wildcards', () => {
     assertEqual(toIlike({ name: 'test' }), '%test%')
   })
-  it('add wildcards to exact match pattern with whitespace', () => {
+  test('add wildcards to exact match pattern with whitespace', () => {
     assertEqual(toIlike({ name: '"test " ' }), '%"test " %')
   })
-  it('match exactly', () => {
+  test('match exactly', () => {
     assertEqual(toIlike({ name: '"test"' }), 'test')
   })
-  it('throws on empty string', () => {
+  test('throws on empty string', () => {
     assertThrows(
       () => toIlike({ name: '' }),
       new Error('must not search with missing or empty name'),

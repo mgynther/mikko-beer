@@ -1,11 +1,18 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import type { Transaction } from '../../../src/data/database.js'
 import * as locationRepository from '../../../src/data/location/location.repository.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
 
-describe('location tests', () => {
+suite('location tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -14,7 +21,7 @@ describe('location tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('find location by id', async () => {
+  test('find location by id', async () => {
     const location = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
         return await locationRepository.insertLocation(trx, { name: 'Huurre' })
@@ -27,7 +34,7 @@ describe('location tests', () => {
     assertDeepEqual(readLocation, location)
   })
 
-  it('find location that does not exist', async () => {
+  test('find location that does not exist', async () => {
     const readLocation = await locationRepository.findLocationById(
       ctx.db,
       'b33cd516-02ab-4659-9b2c-8f7e891ba219',
@@ -35,7 +42,7 @@ describe('location tests', () => {
     assertEqual(readLocation, undefined)
   })
 
-  it('update location', async () => {
+  test('update location', async () => {
     const location = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
         return await locationRepository.insertLocation(trx, { name: 'Plenva' })
@@ -55,7 +62,7 @@ describe('location tests', () => {
     })
   })
 
-  it('lock only location that exists', async () => {
+  test('lock only location that exists', async () => {
     const location = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
         return await locationRepository.insertLocation(trx, {
@@ -73,7 +80,7 @@ describe('location tests', () => {
     })
   })
 
-  it('list locations', async () => {
+  test('list locations', async () => {
     const location = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
         return await locationRepository.insertLocation(trx, {
@@ -88,7 +95,7 @@ describe('location tests', () => {
     assertDeepEqual(locations, [location])
   })
 
-  it('search locations', async () => {
+  test('search locations', async () => {
     const location = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
         return await locationRepository.insertLocation(trx, {

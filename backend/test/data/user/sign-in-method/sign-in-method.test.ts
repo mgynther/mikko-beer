@@ -1,10 +1,17 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../../test.js'
 
 import { TestContext } from '../../test-context.js'
 import * as signInMethodRepository from '../../../../src/data/user/sign-in-method/sign-in-method.repository.js'
 import { assertEqual } from '../../../assert.js'
 
-describe('sign-in-method tests', () => {
+suite('sign-in-method tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -13,7 +20,7 @@ describe('sign-in-method tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('return undefined sign-in-method when it does not exist', async () => {
+  test('return undefined sign-in-method when it does not exist', async () => {
     const signInMethod = await ctx.db.executeReadWriteTransaction(
       async (trx) => {
         return await signInMethodRepository.findPasswordSignInMethod(

@@ -1,4 +1,4 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import { suite, test, before, beforeEach, after, afterEach } from '../test.js'
 import { assertDeepEqual, assertRejects } from '../assert.js'
 
 import { testConfig } from './test-config.js'
@@ -69,7 +69,7 @@ export class TestContext {
   }
 }
 
-describe('start error', () => {
+suite('start error', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -78,7 +78,7 @@ describe('start error', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('failure to start is logged', async () => {
+  test('failure to start is logged', async () => {
     await assertRejects(
       async () => {
         await ctx.app()!.start()

@@ -1,4 +1,4 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import { suite, test, before, beforeEach, after, afterEach } from '../test.js'
 import {
   assertDeepEqual,
   assertEqual,
@@ -72,7 +72,7 @@ export class TestContext {
   }
 }
 
-describe('initial admin', () => {
+suite('initial admin', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -81,7 +81,7 @@ describe('initial admin', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('initial admin sign in works', async () => {
+  test('initial admin sign in works', async () => {
     const messages = ctx.logMessages()
     assertGreaterThan(messages.length, 1)
     const parts = messages[1].message.split('"')

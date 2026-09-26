@@ -1,9 +1,9 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 import { assertEqual } from '../../../assert.js'
 import { hasCycleDfs } from '../../../../src/logic/internal/style/style-tree-dfs.js'
 import type { StyleRelationship } from '../../../../src/logic/style/style.js'
 
-describe('style tree depth-first search unit tests', () => {
+suite('style tree depth-first search unit tests', () => {
   // Although uuids are actually used in the implementation, here we work on
   // human-readable style names to make it easier to debug if needed.
   const ale = 'ale'
@@ -13,11 +13,11 @@ describe('style tree depth-first search unit tests', () => {
   const neipa = 'neipa'
   const westCoastIpa = 'west coast ipa'
 
-  it('no cycle in no relationships', () => {
+  test('no cycle in no relationships', () => {
     assertEqual(hasCycleDfs([]), false)
   })
 
-  it('cycle in self relationship', () => {
+  test('cycle in self relationship', () => {
     assertEqual(hasCycleDfs([{ parent: 'same', child: 'same' }]), true)
   })
 
@@ -27,11 +27,11 @@ describe('style tree depth-first search unit tests', () => {
       child: ipa,
     },
   ]
-  it('no cycle in single relationship', () => {
+  test('no cycle in single relationship', () => {
     assertEqual(hasCycleDfs(basicRelationships), false)
   })
 
-  it('cycle in simple cycle', () => {
+  test('cycle in simple cycle', () => {
     assertEqual(
       hasCycleDfs([
         { parent: '1', child: '2' },
@@ -49,7 +49,7 @@ describe('style tree depth-first search unit tests', () => {
     },
   ]
 
-  it('no cycle in three level relationship', () => {
+  test('no cycle in three level relationship', () => {
     assertEqual(hasCycleDfs(threeLevelRelationships), false)
   })
 
@@ -65,7 +65,7 @@ describe('style tree depth-first search unit tests', () => {
     },
   ]
 
-  it('no cycle in common parent relationship', () => {
+  test('no cycle in common parent relationship', () => {
     assertEqual(hasCycleDfs(commonParentRelationships), false)
   })
 
@@ -81,11 +81,11 @@ describe('style tree depth-first search unit tests', () => {
     },
   ]
 
-  it('no cycle in diamond relationships', () => {
+  test('no cycle in diamond relationships', () => {
     assertEqual(hasCycleDfs(diamondRelationships), false)
   })
 
-  it('cycle in complex graph', () => {
+  test('cycle in complex graph', () => {
     const relationships = [
       ...diamondRelationships,
       {

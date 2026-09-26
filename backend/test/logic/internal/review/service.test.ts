@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import {
   referredBeerNotFoundError,
@@ -93,8 +93,8 @@ async function notCalled(): Promise<undefined> {
   throw new Error('must not be called')
 }
 
-describe('review service unit tests', () => {
-  it('create review', async () => {
+suite('review service unit tests', () => {
+  test('create review', async () => {
     const createIf: CreateIf = {
       ...createIfLocks,
       createReview,
@@ -110,7 +110,7 @@ describe('review service unit tests', () => {
     assertDeepEqual(result, review)
   })
 
-  it('fail to create review with invalid beer', async () => {
+  test('fail to create review with invalid beer', async () => {
     const createIf: CreateIf = {
       ...createIfLocks,
       createReview,
@@ -128,7 +128,7 @@ describe('review service unit tests', () => {
     }, referredBeerNotFoundError)
   })
 
-  it('fail to create review with invalid container', async () => {
+  test('fail to create review with invalid container', async () => {
     const createIf: CreateIf = {
       ...createIfLocks,
       createReview,
@@ -146,7 +146,7 @@ describe('review service unit tests', () => {
     }, referredContainerNotFoundError)
   })
 
-  it('create review from storage', async () => {
+  test('create review from storage', async () => {
     let deletedFromStorage = false
     const create = async (newReview: NewReview) => {
       assertEqual(deletedFromStorage, false)
@@ -173,7 +173,7 @@ describe('review service unit tests', () => {
     assertEqual(deletedFromStorage, true)
   })
 
-  it('fail to create review with invalid storage', async () => {
+  test('fail to create review with invalid storage', async () => {
     const createIf: CreateIf = {
       ...createIfLocks,
       createReview,
@@ -190,7 +190,7 @@ describe('review service unit tests', () => {
     }, referredStorageNotFoundError)
   })
 
-  it('update review', async () => {
+  test('update review', async () => {
     const updateIf: UpdateIf = {
       ...updateIfLocks,
       updateReview,
@@ -204,7 +204,7 @@ describe('review service unit tests', () => {
     assertDeepEqual(result, review)
   })
 
-  it('fail to update review with invalid beer', async () => {
+  test('fail to update review with invalid beer', async () => {
     const updateIf: UpdateIf = {
       ...updateIfLocks,
       updateReview,
@@ -220,7 +220,7 @@ describe('review service unit tests', () => {
     }, referredBeerNotFoundError)
   })
 
-  it('fail to update review with invalid container', async () => {
+  test('fail to update review with invalid container', async () => {
     const updateIf: UpdateIf = {
       ...updateIfLocks,
       updateReview,
@@ -236,7 +236,7 @@ describe('review service unit tests', () => {
     }, referredContainerNotFoundError)
   })
 
-  it('find review', async () => {
+  test('find review', async () => {
     const found = buildReview()
     const finder = async (findId: string) => {
       assertEqual(findId, found.id)
@@ -246,7 +246,7 @@ describe('review service unit tests', () => {
     assertDeepEqual(result, found)
   })
 
-  it('not find review with unknown id', async () => {
+  test('not find review with unknown id', async () => {
     const id = '544369e2-f10b-4799-9b67-527731a78011'
     const finder = async (searchId: string) => {
       assertEqual(searchId, id)
@@ -257,7 +257,7 @@ describe('review service unit tests', () => {
     }, reviewNotFoundError(id))
   })
 
-  it('list reviews', async () => {
+  test('list reviews', async () => {
     const lister = async (
       listPagination: Pagination,
       listRequest: FullReviewListRequest,
@@ -279,7 +279,7 @@ describe('review service unit tests', () => {
     assertDeepEqual(result, [joinedReview])
   })
 
-  it('list reviews by beer', async () => {
+  test('list reviews by beer', async () => {
     const beerId = 'ff16b2f6-7862-4e55-9ecb-b67d617e8f9c'
     const lister = async (
       listBeerId: string,
@@ -302,7 +302,7 @@ describe('review service unit tests', () => {
     assertDeepEqual(result, [joinedReview])
   })
 
-  it('list reviews by brewery', async () => {
+  test('list reviews by brewery', async () => {
     const breweryId = 'f7471dfd-9af9-4a9b-b39d-47f4e7199800'
     const lister = async (
       listBreweryId: string,
@@ -325,7 +325,7 @@ describe('review service unit tests', () => {
     assertDeepEqual(result, [joinedReview])
   })
 
-  it('list reviews by location', async () => {
+  test('list reviews by location', async () => {
     const locationId = '714b123e-c6c1-4e1a-b6f8-0ce4e076520e'
     const lister = async (
       listLocationId: string,
@@ -348,7 +348,7 @@ describe('review service unit tests', () => {
     assertDeepEqual(result, [joinedReview])
   })
 
-  it('list reviews by style', async () => {
+  test('list reviews by style', async () => {
     const styleId = 'b265c454-6842-415b-840c-bfdb579aa658'
     const lister = async (
       listStyleId: string,

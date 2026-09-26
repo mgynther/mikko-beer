@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import type { Database, Transaction } from '../../../src/data/database.js'
@@ -146,7 +153,7 @@ const oneBeerCounts = {
   styleCount: '1',
 }
 
-describe('overall stats tests', () => {
+suite('overall stats tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -155,7 +162,7 @@ describe('overall stats tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('shows overall stats', async () => {
+  test('shows overall stats', async () => {
     await insertBeers(ctx.db)
 
     const stats = await overallStatsRepository.getOverall(ctx.db, noFilter)
@@ -178,7 +185,7 @@ describe('overall stats tests', () => {
     })
   })
 
-  it('shows overall by brewery', async () => {
+  test('shows overall by brewery', async () => {
     const { kriek } = await insertBeers(ctx.db)
 
     const stats = await overallStatsRepository.getOverall(ctx.db, {
@@ -199,7 +206,7 @@ describe('overall stats tests', () => {
     })
   })
 
-  it('shows overall by location', async () => {
+  test('shows overall by location', async () => {
     const { kriek } = await insertBeers(ctx.db)
 
     const stats = await overallStatsRepository.getOverall(ctx.db, {
@@ -219,7 +226,7 @@ describe('overall stats tests', () => {
     })
   })
 
-  it('shows overall by style', async () => {
+  test('shows overall by style', async () => {
     const { ipa } = await insertBeers(ctx.db)
 
     const stats = await overallStatsRepository.getOverall(ctx.db, {
@@ -239,7 +246,7 @@ describe('overall stats tests', () => {
     })
   })
 
-  it('counts distinct brewery countries', async () => {
+  test('counts distinct brewery countries', async () => {
     const { kriek, ipa } = await insertBeers(ctx.db)
 
     async function setCountries(
@@ -303,7 +310,7 @@ describe('overall stats tests', () => {
   // both, so a storage in a container the beer was never reviewed in adds
   // to the count. The brewery and the style variants count them; the
   // location one does not, as a storage has no location.
-  it('counts a storage container of a brewery and of a style', async () => {
+  test('counts a storage container of a brewery and of a style', async () => {
     const { kriek, ipa } = await insertBeers(ctx.db)
     await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
       await storageRepository.insertStorage(trx, {
@@ -334,7 +341,7 @@ describe('overall stats tests', () => {
     )
   })
 
-  it('throws on overall by multiple filters', async () => {
+  test('throws on overall by multiple filters', async () => {
     const { kriek } = await insertBeers(ctx.db)
     await assertRejects(
       async () => {

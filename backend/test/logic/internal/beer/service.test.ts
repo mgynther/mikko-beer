@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import type {
   Beer,
@@ -57,8 +57,8 @@ const updateBeerRequest: UpdateBeerRequest = {
   styles,
 }
 
-describe('beer service unit tests', () => {
-  it('create beer', async () => {
+suite('beer service unit tests', () => {
+  test('create beer', async () => {
     let breweriesInserted = false
     let breweriesLocked = false
     let stylesInserted = false
@@ -113,7 +113,7 @@ describe('beer service unit tests', () => {
     assertEqual(stylesLocked, true)
   })
 
-  it('fail to create beer with invalid brewery', async () => {
+  test('fail to create beer with invalid brewery', async () => {
     const createIf: CreateIf = {
       create: async () => beer,
       lockBreweries: async () => [],
@@ -126,7 +126,7 @@ describe('beer service unit tests', () => {
     }, referredBreweryNotFoundError)
   })
 
-  it('fail to create beer with invalid style', async () => {
+  test('fail to create beer with invalid style', async () => {
     const createIf: CreateIf = {
       create: async () => beer,
       lockBreweries,
@@ -139,7 +139,7 @@ describe('beer service unit tests', () => {
     }, referredStyleNotFoundError)
   })
 
-  it('update beer', async () => {
+  test('update beer', async () => {
     let breweriesDeleted = false
     let breweriesInserted = false
     let breweriesLocked = false
@@ -209,7 +209,7 @@ describe('beer service unit tests', () => {
     assertEqual(stylesLocked, true)
   })
 
-  it('fail to update beer with invalid brewery', async () => {
+  test('fail to update beer with invalid brewery', async () => {
     const updateIf: UpdateIf = {
       update: async () => beer,
       lockBreweries: async () => [],
@@ -224,7 +224,7 @@ describe('beer service unit tests', () => {
     }, referredBreweryNotFoundError)
   })
 
-  it('fail to update beer with invalid style', async () => {
+  test('fail to update beer with invalid style', async () => {
     const updateIf: UpdateIf = {
       update: async () => beer,
       lockBreweries,
@@ -239,7 +239,7 @@ describe('beer service unit tests', () => {
     }, referredStyleNotFoundError)
   })
 
-  it('find beer', async () => {
+  test('find beer', async () => {
     const found = buildBeerWithBreweriesAndStyles()
     const finder = async (beerId: string) => {
       assertEqual(beerId, found.id)
@@ -249,7 +249,7 @@ describe('beer service unit tests', () => {
     assertDeepEqual(result, found)
   })
 
-  it('fail to find beer with unknown id', async () => {
+  test('fail to find beer with unknown id', async () => {
     const id = '7b27cdc4-53cf-493a-be92-07924a9f3399'
     const finder = async (searchId: string) => {
       assertEqual(searchId, id)
@@ -260,7 +260,7 @@ describe('beer service unit tests', () => {
     }, beerNotFoundError(id))
   })
 
-  it('list beers', async () => {
+  test('list beers', async () => {
     const pagination: Pagination = {
       size: 10,
       skip: 80,
@@ -274,7 +274,7 @@ describe('beer service unit tests', () => {
     assertDeepEqual(result, [listed])
   })
 
-  it('search beers', async () => {
+  test('search beers', async () => {
     const searchByName: SearchByName = {
       name: 'Sipe',
     }

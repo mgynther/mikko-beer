@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
@@ -13,7 +20,7 @@ import type { CreatedOrUpdatedBrewery } from '../../../src/web/brewery/brewery.c
 import type { CreatedOrUpdatedContainer } from '../../../src/web/container/container.controller.js'
 import type { CreatedOrUpdatedStyle } from '../../../src/web/style/style.controller.js'
 
-describe('storage tests', () => {
+suite('storage tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -70,7 +77,7 @@ describe('storage tests', () => {
   const bestBefore = '2024-10-01T00:00:00.000Z'
   const bestBeforeLater = '2024-10-02T00:00:00.000Z'
 
-  it('create a storage', async () => {
+  test('create a storage', async () => {
     const { beerRes, breweryRes, containerRes, styleRes } = await createDeps(
       ctx.adminAuthHeaders(),
     )
@@ -158,7 +165,7 @@ describe('storage tests', () => {
     assertDeepEqual(beerListRes.data.storages, breweryListRes.data.storages)
   })
 
-  it('fail to create a storage without beer', async () => {
+  test('fail to create a storage without beer', async () => {
     const { containerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const storageRes = await ctx.request.post<{
@@ -174,7 +181,7 @@ describe('storage tests', () => {
     assertEqual(storageRes.status, 400)
   })
 
-  it('fail to create a storage with invalid beer', async () => {
+  test('fail to create a storage with invalid beer', async () => {
     const { containerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const storageRes = await ctx.request.post<{
@@ -191,7 +198,7 @@ describe('storage tests', () => {
     assertEqual(storageRes.status, 400)
   })
 
-  it('fail to create a storage without container', async () => {
+  test('fail to create a storage without container', async () => {
     const { beerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const storageRes = await ctx.request.post<{
@@ -207,7 +214,7 @@ describe('storage tests', () => {
     assertEqual(storageRes.status, 400)
   })
 
-  it('fail to create a storage with invalid container', async () => {
+  test('fail to create a storage with invalid container', async () => {
     const { beerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const storageRes = await ctx.request.post<{
@@ -224,7 +231,7 @@ describe('storage tests', () => {
     assertEqual(storageRes.status, 400)
   })
 
-  it('update a storage', async () => {
+  test('update a storage', async () => {
     const { beerRes, containerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const requestData = {
@@ -259,7 +266,7 @@ describe('storage tests', () => {
     assertEqual(getRes.data.storage.bestBefore, bestBeforeLater)
   })
 
-  it('delete a storage', async () => {
+  test('delete a storage', async () => {
     const { beerRes, containerRes } = await createDeps(ctx.adminAuthHeaders())
 
     const requestData = {
@@ -287,7 +294,7 @@ describe('storage tests', () => {
     assertEqual(getRes.status, 404)
   })
 
-  it('get empty storage list', async () => {
+  test('get empty storage list', async () => {
     const res = await ctx.request.get<{ storages: ReadStorage[] }>(
       `/api/v1/storage`,
       ctx.adminAuthHeaders(),
@@ -386,7 +393,7 @@ describe('storage tests', () => {
     }
   }
 
-  it('list storages by brewery', async () => {
+  test('list storages by brewery', async () => {
     const { breweryRes, otherBreweryRes, storageRes, collabStorageRes } =
       await createListByDeps(ctx.adminAuthHeaders())
 
@@ -430,7 +437,7 @@ describe('storage tests', () => {
     assertDeepEqual(ids, [collabStorage?.id, kriekStorage.id])
   })
 
-  it('list storages by style', async () => {
+  test('list storages by style', async () => {
     const { styleRes, otherStyleRes, storageRes, collabStorageRes } =
       await createListByDeps(ctx.adminAuthHeaders())
 
@@ -474,7 +481,7 @@ describe('storage tests', () => {
     assertDeepEqual(ids, [collabStorage.id, kriekStorage.id])
   })
 
-  it('get annual storage stats', async () => {
+  test('get annual storage stats', async () => {
     await createListByDeps(ctx.adminAuthHeaders())
 
     const statsRes = await ctx.request.get<{ annual: AnnualStorageStats }>(
@@ -490,7 +497,7 @@ describe('storage tests', () => {
     ])
   })
 
-  it('get monthly storage stats', async () => {
+  test('get monthly storage stats', async () => {
     await createListByDeps(ctx.adminAuthHeaders())
 
     const statsRes = await ctx.request.get<{ monthly: MonthlyStorageStats }>(

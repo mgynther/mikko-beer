@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import type { Transaction } from '../../../src/data/database.js'
@@ -20,7 +27,7 @@ const noFilter: StatsIdFilter = {
   style: undefined,
 }
 
-describe('rating stats tests', () => {
+suite('rating stats tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -29,7 +36,7 @@ describe('rating stats tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('shows rating stats', async () => {
+  test('shows rating stats', async () => {
     await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
       const [beer, container, location] = await Promise.all([
         beerRepository.insertBeer(trx, buildNewBeer()),

@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import type { Beer } from '../../../src/data/beer/beer.repository.js'
@@ -57,7 +64,7 @@ async function insertStorage(
   })
 }
 
-describe('storage tests', () => {
+suite('storage tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -86,7 +93,7 @@ describe('storage tests', () => {
     )
   }
 
-  it('lock storage that exists', async () => {
+  test('lock storage that exists', async () => {
     const storage = await createStorage(ctx.db)
     await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
       const lockedKey = await storageRepository.lockStorage(trx, storage.id)
@@ -94,13 +101,13 @@ describe('storage tests', () => {
     })
   })
 
-  it('storage does not have review', async () => {
+  test('storage does not have review', async () => {
     const storage = await createStorage(ctx.db)
     const found = await storageRepository.findStorageById(ctx.db, storage.id)
     assertEqual(found?.hasReview, false)
   })
 
-  it('storages have reviews', async () => {
+  test('storages have reviews', async () => {
     // The storages are listed by their best before dates: the kriek's
     // first, then the IPA's, then the lager's. The kriek is reviewed twice,
     // the IPA once and the lager not at all.
@@ -157,7 +164,7 @@ describe('storage tests', () => {
     )
   })
 
-  it('delete storage', async () => {
+  test('delete storage', async () => {
     const storage = await createStorage(ctx.db)
     const createdStorage = await storageRepository.findStorageById(
       ctx.db,
@@ -174,7 +181,7 @@ describe('storage tests', () => {
     assertEqual(deletedStorage, undefined)
   })
 
-  it('do not lock storage that does not exists', async () => {
+  test('do not lock storage that does not exists', async () => {
     const dummyId = 'a3386d9d-cf3f-4ae9-9101-493a117a5458'
     await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
       const lockedKey = await storageRepository.lockStorage(trx, dummyId)
@@ -205,7 +212,7 @@ describe('storage tests', () => {
     })
   }
 
-  it('annual storage stats', async () => {
+  test('annual storage stats', async () => {
     await createStatsData(ctx.db)
     const results = await storageRepository.getAnnualStorageStats(ctx.db)
     assertDeepEqual(results, [
@@ -220,7 +227,7 @@ describe('storage tests', () => {
     ])
   })
 
-  it('monthly storage stats', async () => {
+  test('monthly storage stats', async () => {
     await createStatsData(ctx.db)
     const results = await storageRepository.getMonthlyStorageStats(ctx.db)
     assertDeepEqual(results, [

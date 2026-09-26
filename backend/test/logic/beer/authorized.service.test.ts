@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../test.js'
 
 import * as beerService from '../../../src/logic/beer/authorized.service.js'
 
@@ -51,12 +51,12 @@ const adminAuthToken = buildAuthTokenPayload({ role: 'admin' })
 
 const viewerAuthToken = buildAuthTokenPayload({ role: 'viewer' })
 
-describe('beer authorized service unit tests', () => {
+suite('beer authorized service unit tests', () => {
   function notCalled(): any {
     throw new Error('not to be called')
   }
 
-  it('create beer as admin', async () => {
+  test('create beer as admin', async () => {
     await beerService.createBeer(
       createIf,
       () => ({ errorCode: undefined, result: validCreateBeerRequest }),
@@ -68,7 +68,7 @@ describe('beer authorized service unit tests', () => {
     )
   })
 
-  it('fail to create beer as viewer', async () => {
+  test('fail to create beer as viewer', async () => {
     await expectReject(async () => {
       await beerService.createBeer(
         createIf,
@@ -82,7 +82,7 @@ describe('beer authorized service unit tests', () => {
     }, noRightsError)
   })
 
-  it('fail to create invalid beer', async () => {
+  test('fail to create invalid beer', async () => {
     await expectReject(async () => {
       await beerService.createBeer(
         createIf,
@@ -96,7 +96,7 @@ describe('beer authorized service unit tests', () => {
     }, invalidBeerError)
   })
 
-  it('update beer as admin', async () => {
+  test('update beer as admin', async () => {
     await beerService.updateBeer(
       updateIf,
       () => ({
@@ -112,7 +112,7 @@ describe('beer authorized service unit tests', () => {
     )
   })
 
-  it('fail to update beer as viewer', async () => {
+  test('fail to update beer as viewer', async () => {
     await expectReject(async () => {
       await beerService.updateBeer(
         updateIf,
@@ -127,7 +127,7 @@ describe('beer authorized service unit tests', () => {
     }, noRightsError)
   })
 
-  it('fail to update invalid beer as admin', async () => {
+  test('fail to update invalid beer as admin', async () => {
     await expectReject(async () => {
       await beerService.updateBeer(
         updateIf,
@@ -142,7 +142,7 @@ describe('beer authorized service unit tests', () => {
     }, invalidBeerError)
   })
   ;[adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
-    it(`find beer as ${token.role}`, async () => {
+    test(`find beer as ${token.role}`, async () => {
       const result = await beerService.findBeerById(
         async () => beerWithBreweriesAndStyles,
         () => ({
@@ -158,7 +158,7 @@ describe('beer authorized service unit tests', () => {
       assertDeepEqual(result, beerWithBreweriesAndStyles)
     })
 
-    it(`list beers as ${token.role}`, async () => {
+    test(`list beers as ${token.role}`, async () => {
       const result = await beerService.listBeers(
         async () => [beerWithBreweriesAndStyles],
         {
@@ -170,7 +170,7 @@ describe('beer authorized service unit tests', () => {
       assertDeepEqual(result, [beerWithBreweriesAndStyles])
     })
 
-    it(`searches beers as ${token.role}`, async () => {
+    test(`searches beers as ${token.role}`, async () => {
       const result = await beerService.searchBeers(
         async () => [beerWithBreweriesAndStyles],
         () => ({ errorCode: undefined, result: { name: 'Sipe' } }),

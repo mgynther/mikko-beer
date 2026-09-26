@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../test.js'
 
 import * as locationService from '../../../src/logic/location/authorized.service.js'
 
@@ -40,8 +40,8 @@ const adminAuthToken = buildAuthTokenPayload({ role: 'admin' })
 
 const viewerAuthToken = buildAuthTokenPayload({ role: 'viewer' })
 
-describe('location authorized service unit tests', () => {
-  it('create location as admin', async () => {
+suite('location authorized service unit tests', () => {
+  test('create location as admin', async () => {
     await locationService.createLocation(
       create,
       () => ({ errorCode: undefined, result: validCreateLocationRequest }),
@@ -57,7 +57,7 @@ describe('location authorized service unit tests', () => {
     throw new Error('not to be called')
   }
 
-  it('fail to create location as viewer', async () => {
+  test('fail to create location as viewer', async () => {
     await expectReject(async () => {
       await locationService.createLocation(
         create,
@@ -71,7 +71,7 @@ describe('location authorized service unit tests', () => {
     }, noRightsError)
   })
 
-  it('fail to create invalid location as admin', async () => {
+  test('fail to create invalid location as admin', async () => {
     await expectReject(async () => {
       await locationService.createLocation(
         create,
@@ -85,7 +85,7 @@ describe('location authorized service unit tests', () => {
     }, invalidLocationError)
   })
 
-  it('update location as admin', async () => {
+  test('update location as admin', async () => {
     await locationService.updateLocation(
       update,
       () => ({
@@ -101,7 +101,7 @@ describe('location authorized service unit tests', () => {
     )
   })
 
-  it('fail to update location as viewer', async () => {
+  test('fail to update location as viewer', async () => {
     await expectReject(async () => {
       await locationService.updateLocation(
         update,
@@ -116,7 +116,7 @@ describe('location authorized service unit tests', () => {
     }, noRightsError)
   })
 
-  it('fail to update invalid location as admin', async () => {
+  test('fail to update invalid location as admin', async () => {
     await expectReject(async () => {
       await locationService.updateLocation(
         update,
@@ -131,7 +131,7 @@ describe('location authorized service unit tests', () => {
     }, invalidLocationError)
   })
   ;[adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
-    it(`find location as ${token.role}`, async () => {
+    test(`find location as ${token.role}`, async () => {
       const result = await locationService.findLocationById(
         async () => location,
         () => ({ errorCode: undefined, result: location.id }),
@@ -144,7 +144,7 @@ describe('location authorized service unit tests', () => {
       assertDeepEqual(result, location)
     })
 
-    it(`list breweries as ${token.role}`, async () => {
+    test(`list breweries as ${token.role}`, async () => {
       const result = await locationService.listLocations(
         async () => [location],
         {
@@ -156,7 +156,7 @@ describe('location authorized service unit tests', () => {
       assertDeepEqual(result, [location])
     })
 
-    it(`searches breweries as ${token.role}`, async () => {
+    test(`searches breweries as ${token.role}`, async () => {
       const result = await locationService.searchLocations(
         async () => [location],
         () => ({ errorCode: undefined, result: { name: 'Kuj' } }),

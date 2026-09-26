@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from './test.js'
 import * as assert from 'node:assert/strict'
 
 import {
@@ -16,42 +16,42 @@ import {
 } from './assert.js'
 import { ControllerError } from '../src/logic/errors.js'
 
-describe('assertion tests', () => {
-  it('is deep equal', () => {
+suite('assertion tests', () => {
+  test('is deep equal', () => {
     assertDeepEqual({ prop: 'testing' }, { prop: 'testing' })
   })
 
-  it('throws on failing deep equal', () => {
+  test('throws on failing deep equal', () => {
     assert.throws(() =>
       assertDeepEqual({ prop: 'testing' }, { property: 'another' }),
     )
   })
 
-  it('is not deep equal', () => {
+  test('is not deep equal', () => {
     assertNotDeepEqual({ prop: 'testing' }, { prop: 'testing', another: 'a' })
   })
 
-  it('throws on failing not deep equal', () => {
+  test('throws on failing not deep equal', () => {
     assert.throws(() => assertNotDeepEqual([123, 'test'], [123, 'test']))
   })
 
-  it('is equal', () => {
+  test('is equal', () => {
     assertEqual('testing', 'testing')
   })
 
-  it('throws on failing equal', () => {
+  test('throws on failing equal', () => {
     assert.throws(() => assertEqual('one', 'another'))
   })
 
-  it('is not equal', () => {
+  test('is not equal', () => {
     assertNotEqual(1, 2)
   })
 
-  it('throws on failing not equal', () => {
+  test('throws on failing not equal', () => {
     assert.throws(() => assertNotEqual(123, 123))
   })
 
-  it('is instance of', () => {
+  test('is instance of', () => {
     assertInstanceOf(
       new ControllerError(400, 'UnknownError', 'This is an error', {
         info: 'some info here',
@@ -60,29 +60,29 @@ describe('assertion tests', () => {
     )
   })
 
-  it('is not instance of', () => {
+  test('is not instance of', () => {
     assert.throws(
       () => assertInstanceOf(new Error('unknown error'), ControllerError),
       /not a ControllerError instance/,
     )
   })
 
-  it('is greater than', () => {
+  test('is greater than', () => {
     assertGreaterThan(2, 1)
   })
 
-  it('is not greater than', () => {
+  test('is not greater than', () => {
     assert.throws(
       () => assertGreaterThan(1, 2),
       /value 1 is not greater than 2/,
     )
   })
 
-  it('includes', () => {
+  test('includes', () => {
     assertIncludes('india pale ale', 'pale ale')
   })
 
-  it('does not include', () => {
+  test('does not include', () => {
     assert.throws(
       () => assertIncludes('pale ale', 'india pale ale'),
       /value india pale ale is not included in pale ale/,
@@ -90,12 +90,12 @@ describe('assertion tests', () => {
   })
   ;['india pale ale', { prop: 'some value' }, ['array'], [], {}].forEach(
     (value) =>
-      it(`'${value}' is truthy`, () => {
+      test(`'${value}' is truthy`, () => {
         assertTruthy(value)
       }),
   )
   ;['', undefined].forEach((value) =>
-    it(`'${value}' is not truthy`, () => {
+    test(`'${value}' is not truthy`, () => {
       assert.throws(() => assertTruthy(value))
     }),
   )
@@ -105,7 +105,7 @@ describe('assertion tests', () => {
       super(message)
     }
   }
-  it('throws', () => {
+  test('throws', () => {
     assertThrows(
       () => {
         throw new CustomError('test')
@@ -115,7 +115,7 @@ describe('assertion tests', () => {
     )
   })
 
-  it('rejects', () => {
+  test('rejects', () => {
     assertRejects(
       async () => {
         throw new CustomError('test')
@@ -125,7 +125,7 @@ describe('assertion tests', () => {
     )
   })
 
-  it('fails on throwing error of wrong type', () => {
+  test('fails on throwing error of wrong type', () => {
     assert.throws(
       () =>
         assertThrows(
@@ -139,7 +139,7 @@ describe('assertion tests', () => {
     )
   })
 
-  it('fails on throwing error with wrong message', () => {
+  test('fails on throwing error with wrong message', () => {
     assert.throws(() =>
       assertThrows(
         () => {
@@ -151,11 +151,11 @@ describe('assertion tests', () => {
     )
   })
 
-  it('does not throw', () => {
+  test('does not throw', () => {
     assertDoesNotThrow(() => 1 + 2)
   })
 
-  it('fails on throwing when not supposed to', () => {
+  test('fails on throwing when not supposed to', () => {
     assert.throws(
       () =>
         assertDoesNotThrow(() => {

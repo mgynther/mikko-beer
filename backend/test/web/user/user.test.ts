@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import {
@@ -32,7 +39,7 @@ async function getSignInMethod(
   return signInMethod
 }
 
-describe('user tests', () => {
+suite('user tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -41,7 +48,7 @@ describe('user tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('fail to create a user without authorization', async () => {
+  test('fail to create a user without authorization', async () => {
     const params = {
       user: {
         role: 'admin',
@@ -62,7 +69,7 @@ describe('user tests', () => {
     assertEqual(invalidAuthRes.status, 401)
   })
 
-  it('create a user', async () => {
+  test('create a user', async () => {
     const res = await ctx.request.post<{
       user: CreatedUser
       authToken: string
@@ -95,7 +102,7 @@ describe('user tests', () => {
     assertDeepEqual(getRes.data.user, res.data.user)
   })
 
-  it('get user by id', async () => {
+  test('get user by id', async () => {
     const { user, authToken } = await ctx.createUser()
 
     const res = await ctx.request.get<{ user: ReadUser }>(
@@ -107,7 +114,7 @@ describe('user tests', () => {
     assertDeepEqual(res.data, { user })
   })
 
-  it('list users', async () => {
+  test('list users', async () => {
     const { user, authToken } = await ctx.createUser()
 
     interface Response {
@@ -132,7 +139,7 @@ describe('user tests', () => {
     assertDeepEqual(res.data, expectedResponse)
   })
 
-  it('sign in a user', async () => {
+  test('sign in a user', async () => {
     const { authToken, user, username, password } = await ctx.createUser()
 
     const originalSignInMethod = await getSignInMethod(ctx.db, user.id)
@@ -161,7 +168,7 @@ describe('user tests', () => {
     assertDeepEqual(getRes.data.user, res.data.user)
   })
 
-  it('rehash password hashed with other parameters on sign in', async () => {
+  test('rehash password hashed with other parameters on sign in', async () => {
     const { user, username } = await ctx.createUser()
     const password = 'password'
     const otherParametersHash =
@@ -186,7 +193,7 @@ describe('user tests', () => {
     )
   })
 
-  it('fail to sign in user with the wrong password', async () => {
+  test('fail to sign in user with the wrong password', async () => {
     const { username } = await ctx.createUser()
 
     const res = await ctx.request.post(`/api/v1/user/sign-in`, {
@@ -211,7 +218,7 @@ describe('user tests', () => {
     assertEqual(results.length, 1)
   })
 
-  it('fail to sign in unknown user like a wrong password', async () => {
+  test('fail to sign in unknown user like a wrong password', async () => {
     const res = await ctx.request.post(`/api/v1/user/sign-in`, {
       username: 'unknown',
       password: 'password',
@@ -226,7 +233,7 @@ describe('user tests', () => {
     })
   })
 
-  it('sign out a user', async () => {
+  test('sign out a user', async () => {
     const { user, authToken, refreshToken } = await ctx.createUser()
 
     const res = await ctx.request.post(
@@ -247,7 +254,7 @@ describe('user tests', () => {
     assertEqual(getRes.data.error.code, 'UserOrRefreshTokenNotFound')
   })
 
-  it('refresh auth token', async () => {
+  test('refresh auth token', async () => {
     const { user, authToken, refreshToken } = await ctx.createUser()
 
     const res = await ctx.request.post<{
@@ -279,7 +286,7 @@ describe('user tests', () => {
     assertEqual(getRes.data.user.username, user.username)
   })
 
-  it('do not change tokens on invalid refresh request', async () => {
+  test('do not change tokens on invalid refresh request', async () => {
     const [{ user, authToken }, anotherUser] = await Promise.all([
       ctx.createUser(),
       ctx.createUser(),
@@ -298,7 +305,7 @@ describe('user tests', () => {
     assertEqual(getRes.data.user.username, user.username)
   })
 
-  it('change password', async () => {
+  test('change password', async () => {
     const { user, authToken, username, password } = await ctx.createUser()
 
     const getRes = await ctx.request.get<{ user: ReadUser }>(
@@ -351,7 +358,7 @@ describe('user tests', () => {
     assertEqual(currentPwdSignInRes.status, 200)
   })
 
-  it('delete user', async () => {
+  test('delete user', async () => {
     const { user, authToken } = await ctx.createUser()
 
     const res = await ctx.request.get<{ user: ReadUser }>(

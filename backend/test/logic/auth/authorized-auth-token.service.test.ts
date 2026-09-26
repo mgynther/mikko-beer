@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../test.js'
 
 import * as jwt from '../../../src/logic/internal/auth/jwt.js'
 
@@ -82,8 +82,8 @@ const viewerRefreshToken: RefreshToken = jwt.signRefreshToken(
 
 const deleteRefreshToken = async () => undefined
 
-describe('authorized auth token service unit tests', () => {
-  it('delete refresh token as admin', async () => {
+suite('authorized auth token service unit tests', () => {
+  test('delete refresh token as admin', async () => {
     await authTokenService.deleteRefreshToken(
       testJwtIf,
       async () => dbRefreshToken,
@@ -103,7 +103,7 @@ describe('authorized auth token service unit tests', () => {
   // needed but possible and allowed nevertheless. Disabling would require
   // code specifically for this case so it's probably less work to just test
   // it.
-  it("delete another admin's refresh token as admin", async () => {
+  test("delete another admin's refresh token as admin", async () => {
     await authTokenService.deleteRefreshToken(
       testJwtIf,
       async () => dbRefreshToken,
@@ -119,7 +119,7 @@ describe('authorized auth token service unit tests', () => {
     )
   })
 
-  it("delete one's own refresh token as viewer", async () => {
+  test("delete one's own refresh token as viewer", async () => {
     await authTokenService.deleteRefreshToken(
       testJwtIf,
       async () => dbRefreshToken,
@@ -135,7 +135,7 @@ describe('authorized auth token service unit tests', () => {
     )
   })
 
-  it('fail to delete refresh token with invalid user id', async () => {
+  test('fail to delete refresh token with invalid user id', async () => {
     await expectReject(async () => {
       await authTokenService.deleteRefreshToken(
         testJwtIf,
@@ -153,7 +153,7 @@ describe('authorized auth token service unit tests', () => {
     }, invalidUserIdError)
   })
 
-  it('fail to delete refresh token with invalid request', async () => {
+  test('fail to delete refresh token with invalid request', async () => {
     await expectReject(async () => {
       await authTokenService.deleteRefreshToken(
         testJwtIf,
@@ -171,7 +171,7 @@ describe('authorized auth token service unit tests', () => {
     }, invalidRefreshTokenError)
   })
 
-  it('fail to delete admin refresh token as viewer', async () => {
+  test('fail to delete admin refresh token as viewer', async () => {
     await expectReject(async () => {
       await authTokenService.deleteRefreshToken(
         testJwtIf,

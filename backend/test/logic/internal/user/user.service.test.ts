@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import { userNotFoundError } from '../../../../src/logic/errors.js'
 import * as userService from '../../../../src/logic/internal/user/user.service.js'
@@ -22,8 +22,8 @@ const authTokenConfig = buildAuthTokenConfig()
 
 const user = buildUser()
 
-describe('user service unit tests', () => {
-  it('create anonymous user', async () => {
+suite('user service unit tests', () => {
+  test('create anonymous user', async () => {
     async function create(request: CreateAnonymousUserRequest): Promise<User> {
       assertEqual(request.role, user.role)
       return user
@@ -47,7 +47,7 @@ describe('user service unit tests', () => {
     assertTruthy(signedInUser.authToken.authToken)
   })
 
-  it('fail to find user that does not exist', async () => {
+  test('fail to find user that does not exist', async () => {
     const id = 'a52a35af-060a-4f43-ae00-c3d0dbaa8e6f'
     await expectReject(async () => {
       await userService.findUserById(async () => undefined, id, log)

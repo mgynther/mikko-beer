@@ -1,22 +1,22 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../test.js'
 
 import { parseDate } from '../../../src/validation/internal/date-parser.js'
 import { assertEqual, assertInstanceOf } from '../../assert.js'
 
-describe('validation date parser unit tests', () => {
-  it('returns undefined with undefined', () => {
+suite('validation date parser unit tests', () => {
+  test('returns undefined with undefined', () => {
     assertEqual(parseDate(undefined), undefined)
   })
 
-  it('returns undefined with an empty string', () => {
+  test('returns undefined with an empty string', () => {
     assertEqual(parseDate(''), undefined)
   })
 
-  it("returns undefined with the string 'invalid'", () => {
+  test("returns undefined with the string 'invalid'", () => {
     assertEqual(parseDate('invalid'), undefined)
   })
 
-  it('returns a Date with getTime matching the original timestamp', () => {
+  test('returns a Date with getTime matching the original timestamp', () => {
     const timestamp = 1665532800000
     const result = parseDate(`${timestamp}`)
     assertInstanceOf(result, Date)

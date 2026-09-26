@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../test.js'
 
 import type { DbRefreshToken } from '../../../src/logic/auth/refresh-token.js'
 import * as authTokenService from '../../../src/logic/internal/auth/auth-token.service.js'
@@ -63,8 +63,8 @@ function header(authToken: AuthToken): string {
   return `Bearer ${authToken.authToken}`
 }
 
-describe('authentication service unit tests', () => {
-  it('authenticate admin', async () => {
+suite('authentication service unit tests', () => {
+  test('authenticate admin', async () => {
     const tokens = await createTokens(admin)
     const parsed = authentication.parseAuthTokenPayload(
       testJwtIf,
@@ -78,7 +78,7 @@ describe('authentication service unit tests', () => {
     })
   })
 
-  it('authenticate viewer', async () => {
+  test('authenticate viewer', async () => {
     const tokens = await createTokens(viewer)
     const parsed = authentication.parseAuthTokenPayload(
       testJwtIf,
@@ -92,7 +92,7 @@ describe('authentication service unit tests', () => {
     })
   })
 
-  it('fail to parse auth token with expired auth header', () => {
+  test('fail to parse auth token with expired auth header', () => {
     expectThrow(() => {
       authentication.parseAuthTokenPayload(
         testJwtIf,
@@ -102,7 +102,7 @@ describe('authentication service unit tests', () => {
     }, expiredAuthTokenError)
   })
 
-  it('fail to parse auth token without auth header', () => {
+  test('fail to parse auth token without auth header', () => {
     expectThrow(() => {
       authentication.parseAuthTokenPayload(
         testJwtIf,
@@ -112,7 +112,7 @@ describe('authentication service unit tests', () => {
     }, invalidAuthorizationHeaderError)
   })
 
-  it('fail to parse auth token with invalid auth header', () => {
+  test('fail to parse auth token with invalid auth header', () => {
     expectThrow(() => {
       authentication.parseAuthTokenPayload(
         testJwtIf,
@@ -122,7 +122,7 @@ describe('authentication service unit tests', () => {
     }, invalidAuthorizationHeaderError)
   })
 
-  it('fail to parse auth token with invalid auth token', () => {
+  test('fail to parse auth token with invalid auth token', () => {
     expectThrow(() => {
       authentication.parseAuthTokenPayload(
         testJwtIf,

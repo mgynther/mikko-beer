@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import type { Database, Transaction } from '../../../src/data/database.js'
@@ -211,7 +218,7 @@ function lagerStats(lager: Style) {
   }
 }
 
-describe('style stats tests', () => {
+suite('style stats tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -235,13 +242,13 @@ describe('style stats tests', () => {
   ]
 
   orderProperties.forEach((property) => {
-    it(`by ${property} asc`, async () => {
+    test(`by ${property} asc`, async () => {
       const { gueuze, ipa } = await insertStyles(ctx.db)
       const stats = await getStyle(noFilter, { property, direction: 'asc' })
       assertDeepEqual(stats, [gueuzeStats(gueuze), ipaStats(ipa)])
     })
 
-    it(`by ${property} desc`, async () => {
+    test(`by ${property} desc`, async () => {
       const { gueuze, ipa } = await insertStyles(ctx.db)
       const stats = await getStyle(noFilter, { property, direction: 'desc' })
       assertDeepEqual(stats, [ipaStats(ipa), gueuzeStats(gueuze)])
@@ -250,7 +257,7 @@ describe('style stats tests', () => {
 
   const byName: StyleStatsOrder = { property: 'style_name', direction: 'asc' }
 
-  it('filter by brewery', async () => {
+  test('filter by brewery', async () => {
     const { ipa } = await insertStyles(ctx.db)
     const stats = await getStyle(
       { ...noFilter, brewery: ipa.brewery.id },
@@ -259,7 +266,7 @@ describe('style stats tests', () => {
     assertDeepEqual(stats, [ipaStats(ipa)])
   })
 
-  it('filter by location', async () => {
+  test('filter by location', async () => {
     const { ipa } = await insertStyles(ctx.db)
     const stats = await getStyle(
       { ...noFilter, location: ipa.location.id },
@@ -268,7 +275,7 @@ describe('style stats tests', () => {
     assertDeepEqual(stats, [ipaStats(ipa)])
   })
 
-  it('filter by style', async () => {
+  test('filter by style', async () => {
     const { gueuze } = await insertStyles(ctx.db)
     const stats = await getStyle(
       { ...noFilter, style: gueuze.style.id },
@@ -277,31 +284,31 @@ describe('style stats tests', () => {
     assertDeepEqual(stats, [gueuzeStats(gueuze)])
   })
 
-  it('filter by min review count', async () => {
+  test('filter by min review count', async () => {
     const { ipa } = await insertStyles(ctx.db)
     const stats = await getStyle({ ...noFilter, minReviewCount: 3 }, byName)
     assertDeepEqual(stats, [ipaStats(ipa)])
   })
 
-  it('filter by max review count', async () => {
+  test('filter by max review count', async () => {
     const { gueuze } = await insertStyles(ctx.db)
     const stats = await getStyle({ ...noFilter, maxReviewCount: 2 }, byName)
     assertDeepEqual(stats, [gueuzeStats(gueuze)])
   })
 
-  it('filter by min review average', async () => {
+  test('filter by min review average', async () => {
     const { ipa } = await insertStyles(ctx.db)
     const stats = await getStyle({ ...noFilter, minReviewAverage: 6.5 }, byName)
     assertDeepEqual(stats, [ipaStats(ipa)])
   })
 
-  it('filter by max review average', async () => {
+  test('filter by max review average', async () => {
     const { gueuze } = await insertStyles(ctx.db)
     const stats = await getStyle({ ...noFilter, maxReviewAverage: 6.5 }, byName)
     assertDeepEqual(stats, [gueuzeStats(gueuze)])
   })
 
-  it('filter by start time', async () => {
+  test('filter by start time', async () => {
     const { gueuze } = await insertStyles(ctx.db)
     const stats = await getStyle(
       { ...noFilter, timeStart: new Date('2024-01-01T00:00:00.000Z') },
@@ -310,7 +317,7 @@ describe('style stats tests', () => {
     assertDeepEqual(stats, [gueuzeStats(gueuze)])
   })
 
-  it('filter by end time', async () => {
+  test('filter by end time', async () => {
     const { ipa } = await insertStyles(ctx.db)
     const stats = await getStyle(
       { ...noFilter, timeEnd: new Date('2024-01-01T00:00:00.000Z') },
@@ -319,7 +326,7 @@ describe('style stats tests', () => {
     assertDeepEqual(stats, [ipaStats(ipa)])
   })
 
-  it('count a review into each style of its beer', async () => {
+  test('count a review into each style of its beer', async () => {
     const { ale, lager } = await insertMultiStyle(ctx.db)
     const stats = await getStyle(noFilter, byName)
     assertDeepEqual(stats, [
@@ -338,7 +345,7 @@ describe('style stats tests', () => {
 
   // The style filter selects from another table than the unfiltered query,
   // so this also checks what it selects.
-  it('filter by style keeps the other styles of its beers', async () => {
+  test('filter by style keeps the other styles of its beers', async () => {
     const { ale, lager } = await insertMultiStyle(ctx.db)
     const stats = await getStyle({ ...noFilter, style: lager.id }, byName)
     assertDeepEqual(stats, [

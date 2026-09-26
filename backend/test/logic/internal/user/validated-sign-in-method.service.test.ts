@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import * as service from '../../../../src/logic/internal/user/validated-sign-in-method.service.js'
 
@@ -101,8 +101,8 @@ const failUserIdValidation: ValidateUserId = () => ({
   result: undefined,
 })
 
-describe('validated sign in method service unit tests', () => {
-  it('sign in using password', async () => {
+suite('validated sign in method service unit tests', () => {
+  test('sign in using password', async () => {
     await service.signInUsingPassword(
       testJwtIf,
       signInUsingPasswordIf,
@@ -119,7 +119,7 @@ describe('validated sign in method service unit tests', () => {
     )
   })
 
-  it('fail to sign in with invalid request', async () => {
+  test('fail to sign in with invalid request', async () => {
     await expectReject(async () => {
       await service.signInUsingPassword(
         testJwtIf,
@@ -134,7 +134,7 @@ describe('validated sign in method service unit tests', () => {
     }, invalidSignInMethodError)
   })
 
-  it('fail to sign in using wrong password', async () => {
+  test('fail to sign in using wrong password', async () => {
     await expectReject(async () => {
       await service.signInUsingPassword(
         testJwtIf,
@@ -156,7 +156,7 @@ describe('validated sign in method service unit tests', () => {
     }, invalidCredentialsError)
   })
 
-  it('change password', async () => {
+  test('change password', async () => {
     await service.changePassword(
       changePasswordUserIf,
       passPasswordChangeValidation(passwordChange),
@@ -167,7 +167,7 @@ describe('validated sign in method service unit tests', () => {
     )
   })
 
-  it('fail to change password with wrong old password', async () => {
+  test('fail to change password with wrong old password', async () => {
     await expectReject(async () => {
       await service.changePassword(
         {
@@ -189,7 +189,7 @@ describe('validated sign in method service unit tests', () => {
     }, invalidCredentialsError)
   })
 
-  it('fail to change password with invalid request', async () => {
+  test('fail to change password with invalid request', async () => {
     await expectReject(async () => {
       await service.changePassword(
         changePasswordUserIf,
@@ -204,7 +204,7 @@ describe('validated sign in method service unit tests', () => {
     }, invalidPasswordChangeError)
   })
 
-  it('fail to change password with invalid user id', async () => {
+  test('fail to change password with invalid user id', async () => {
     await expectReject(async () => {
       await service.changePassword(
         changePasswordUserIf,

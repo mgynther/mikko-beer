@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import * as locationService from '../../../../src/logic/internal/location/validated.service.js'
 
@@ -81,8 +81,8 @@ const failUpdateValidationWithId: ValidateUpdateLocation = () => {
   }
 }
 
-describe('location validated service unit tests', () => {
-  it('create location', async () => {
+suite('location validated service unit tests', () => {
+  test('create location', async () => {
     await locationService.createLocation(
       create,
       passCreateValidation,
@@ -91,7 +91,7 @@ describe('location validated service unit tests', () => {
     )
   })
 
-  it('fail to create invalid location', async () => {
+  test('fail to create invalid location', async () => {
     await expectReject(async () => {
       await locationService.createLocation(
         create,
@@ -102,7 +102,7 @@ describe('location validated service unit tests', () => {
     }, invalidLocationError)
   })
 
-  it('update location', async () => {
+  test('update location', async () => {
     await locationService.updateLocation(
       update,
       passUpdateValidation,
@@ -112,7 +112,7 @@ describe('location validated service unit tests', () => {
     )
   })
 
-  it('fail to update location with invalid location', async () => {
+  test('fail to update location with invalid location', async () => {
     await expectReject(async () => {
       await locationService.updateLocation(
         update,
@@ -124,7 +124,7 @@ describe('location validated service unit tests', () => {
     }, invalidLocationError)
   })
 
-  it('fail to update location with undefined id', async () => {
+  test('fail to update location with undefined id', async () => {
     await expectReject(async () => {
       await locationService.updateLocation(
         update,
@@ -136,7 +136,7 @@ describe('location validated service unit tests', () => {
     }, invalidLocationIdError)
   })
 
-  it('find location by id', async () => {
+  test('find location by id', async () => {
     const found = buildLocation()
     const result = await locationService.findLocationById(
       async () => found,
@@ -151,7 +151,7 @@ describe('location validated service unit tests', () => {
     throw new Error('not to be called')
   }
 
-  it('fail to find location by invalid id', async () => {
+  test('fail to find location by invalid id', async () => {
     await expectReject(async () => {
       await locationService.findLocationById(
         notCalled,
@@ -162,7 +162,7 @@ describe('location validated service unit tests', () => {
     }, invalidLocationIdError)
   })
 
-  it('search locations', async () => {
+  test('search locations', async () => {
     const result = await locationService.searchLocations(
       async () => [location],
       () => ({ errorCode: undefined, result: { name: 'Kuj' } }),
@@ -172,7 +172,7 @@ describe('location validated service unit tests', () => {
     assertDeepEqual(result, [location])
   })
 
-  it('fail to search locations with invalid request', async () => {
+  test('fail to search locations with invalid request', async () => {
     await expectReject(async () => {
       await locationService.searchLocations(
         notCalled,

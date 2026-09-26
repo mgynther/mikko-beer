@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import * as storageService from '../../../../src/logic/internal/storage/validated.service.js'
 
@@ -116,8 +116,8 @@ const failStorageIdValidation: ValidateStorageId = () => ({
   result: undefined,
 })
 
-describe('storage validated service unit tests', () => {
-  it('create storage', async () => {
+suite('storage validated service unit tests', () => {
+  test('create storage', async () => {
     await storageService.createStorage(
       createIf,
       passCreateValidation,
@@ -126,7 +126,7 @@ describe('storage validated service unit tests', () => {
     )
   })
 
-  it('fail to create invalid storage', async () => {
+  test('fail to create invalid storage', async () => {
     await expectReject(async () => {
       await storageService.createStorage(
         createIf,
@@ -137,7 +137,7 @@ describe('storage validated service unit tests', () => {
     }, invalidStorageError)
   })
 
-  it('update storage', async () => {
+  test('update storage', async () => {
     await storageService.updateStorage(
       updateIf,
       passUpdateValidation,
@@ -147,7 +147,7 @@ describe('storage validated service unit tests', () => {
     )
   })
 
-  it('fail to update storage with invalid storage', async () => {
+  test('fail to update storage with invalid storage', async () => {
     await expectReject(async () => {
       await storageService.updateStorage(
         updateIf,
@@ -159,7 +159,7 @@ describe('storage validated service unit tests', () => {
     }, invalidStorageError)
   })
 
-  it('fail to update storage with undefined id', async () => {
+  test('fail to update storage with undefined id', async () => {
     await expectReject(async () => {
       await storageService.updateStorage(
         updateIf,
@@ -175,7 +175,7 @@ describe('storage validated service unit tests', () => {
     throw new Error('not to be called')
   }
 
-  it('delete storage by id', async () => {
+  test('delete storage by id', async () => {
     await storageService.deleteStorageById(
       async () => undefined,
       passStorageIdValidation,
@@ -184,7 +184,7 @@ describe('storage validated service unit tests', () => {
     )
   })
 
-  it('fail to delete storage by invalid id', async () => {
+  test('fail to delete storage by invalid id', async () => {
     await expectReject(async () => {
       await storageService.deleteStorageById(
         notCalled,
@@ -195,7 +195,7 @@ describe('storage validated service unit tests', () => {
     }, invalidStorageIdError)
   })
 
-  it('find storage by id', async () => {
+  test('find storage by id', async () => {
     const joinedStorage = buildJoinedStorage()
     const result = await storageService.findStorageById(
       async () => joinedStorage,
@@ -206,7 +206,7 @@ describe('storage validated service unit tests', () => {
     assertDeepEqual(result, joinedStorage)
   })
 
-  it('fail to find storage by invalid id', async () => {
+  test('fail to find storage by invalid id', async () => {
     await expectReject(async () => {
       await storageService.findStorageById(
         notCalled,
@@ -217,7 +217,7 @@ describe('storage validated service unit tests', () => {
     }, invalidStorageIdError)
   })
 
-  it('list storages by beer', async () => {
+  test('list storages by beer', async () => {
     const beerId = 'bb1b78f9-3f4f-4a2b-8d3e-2b1a6d4c7f5e'
     const joinedStorages: JoinedStorage[] = []
     const result = await storageService.listStoragesByBeer(
@@ -229,7 +229,7 @@ describe('storage validated service unit tests', () => {
     assertDeepEqual(result, joinedStorages)
   })
 
-  it('fail to list storages by invalid beer id', async () => {
+  test('fail to list storages by invalid beer id', async () => {
     await expectReject(async () => {
       await storageService.listStoragesByBeer(
         notCalled,
@@ -240,7 +240,7 @@ describe('storage validated service unit tests', () => {
     }, invalidBeerIdError)
   })
 
-  it('list storages by brewery', async () => {
+  test('list storages by brewery', async () => {
     const breweryId = 'd1e6e30f-1b1e-4a01-9f54-0b2d1b9b6c2f'
     const joinedStorages: JoinedStorage[] = []
     const result = await storageService.listStoragesByBrewery(
@@ -252,7 +252,7 @@ describe('storage validated service unit tests', () => {
     assertDeepEqual(result, joinedStorages)
   })
 
-  it('fail to list storages by invalid brewery id', async () => {
+  test('fail to list storages by invalid brewery id', async () => {
     await expectReject(async () => {
       await storageService.listStoragesByBrewery(
         notCalled,
@@ -263,7 +263,7 @@ describe('storage validated service unit tests', () => {
     }, invalidBreweryIdError)
   })
 
-  it('list storages by style', async () => {
+  test('list storages by style', async () => {
     const styleId = '0e2ba1b7-2fb1-4de8-9ba8-3dc5b9e5b9a3'
     const joinedStorages: JoinedStorage[] = []
     const result = await storageService.listStoragesByStyle(
@@ -275,7 +275,7 @@ describe('storage validated service unit tests', () => {
     assertDeepEqual(result, joinedStorages)
   })
 
-  it('fail to list storages by invalid style id', async () => {
+  test('fail to list storages by invalid style id', async () => {
     await expectReject(async () => {
       await storageService.listStoragesByStyle(
         notCalled,
@@ -286,14 +286,14 @@ describe('storage validated service unit tests', () => {
     }, invalidStyleIdError)
   })
 
-  it('get annual storage stats', async () => {
+  test('get annual storage stats', async () => {
     const getter = async () => {
       return [{ year: '2022', count: '8' }]
     }
     await storageService.getAnnualStorageStats(getter, log)
   })
 
-  it('get monthly storage stats', async () => {
+  test('get monthly storage stats', async () => {
     const getter = async () => {
       return [{ year: '2022', month: '10', count: '8' }]
     }

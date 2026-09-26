@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../test.js'
 
 import * as reviewService from '../../../src/logic/review/authorized.service.js'
 
@@ -57,7 +57,7 @@ const adminAuthToken = buildAuthTokenPayload({ role: 'admin' })
 
 const viewerAuthToken = buildAuthTokenPayload({ role: 'viewer' })
 
-describe('review authorized service unit tests', () => {
+suite('review authorized service unit tests', () => {
   function notCalled(): any {
     throw new Error('not to be called')
   }
@@ -65,7 +65,7 @@ describe('review authorized service unit tests', () => {
   const passReviewIdValidation = (id: string | undefined) =>
     ({ errorCode: undefined, result: id ?? '' }) as const
 
-  it('create review as admin', async () => {
+  test('create review as admin', async () => {
     await reviewService.createReview(
       createIf,
       () => ({ errorCode: undefined, result: validCreateReviewRequest }),
@@ -78,7 +78,7 @@ describe('review authorized service unit tests', () => {
     )
   })
 
-  it('fail to create review as viewer', async () => {
+  test('fail to create review as viewer', async () => {
     await expectReject(async () => {
       await reviewService.createReview(
         createIf,
@@ -93,7 +93,7 @@ describe('review authorized service unit tests', () => {
     }, noRightsError)
   })
 
-  it('fail to create invalid review as admin', async () => {
+  test('fail to create invalid review as admin', async () => {
     await expectReject(async () => {
       await reviewService.createReview(
         createIf,
@@ -108,7 +108,7 @@ describe('review authorized service unit tests', () => {
     }, invalidReviewError)
   })
 
-  it('update review as admin', async () => {
+  test('update review as admin', async () => {
     await reviewService.updateReview(
       updateIf,
       () => ({
@@ -124,7 +124,7 @@ describe('review authorized service unit tests', () => {
     )
   })
 
-  it('fail to update review as viewer', async () => {
+  test('fail to update review as viewer', async () => {
     await expectReject(async () => {
       await reviewService.updateReview(
         updateIf,
@@ -139,7 +139,7 @@ describe('review authorized service unit tests', () => {
     }, noRightsError)
   })
 
-  it('fail to update invalid review as admin', async () => {
+  test('fail to update invalid review as admin', async () => {
     await expectReject(async () => {
       await reviewService.updateReview(
         updateIf,
@@ -167,7 +167,7 @@ describe('review authorized service unit tests', () => {
       order: { property: 'time', direction: 'desc' },
     }
     const joinedReview = buildJoinedReview()
-    it(`find review as ${token.role}`, async () => {
+    test(`find review as ${token.role}`, async () => {
       const result = await reviewService.findReviewById(
         async () => review,
         passReviewIdValidation,
@@ -180,7 +180,7 @@ describe('review authorized service unit tests', () => {
       assertDeepEqual(result, review)
     })
 
-    it(`list reviews as ${token.role}`, async () => {
+    test(`list reviews as ${token.role}`, async () => {
       const result = await reviewService.listReviews(
         async () => [joinedReview],
         token,
@@ -191,7 +191,7 @@ describe('review authorized service unit tests', () => {
       assertDeepEqual(result, [joinedReview])
     })
 
-    it(`list reviews by beer as ${token.role}`, async () => {
+    test(`list reviews by beer as ${token.role}`, async () => {
       const result = await reviewService.listReviewsByBeer(
         async () => [joinedReview],
         (id: string | undefined) => ({
@@ -208,7 +208,7 @@ describe('review authorized service unit tests', () => {
       assertDeepEqual(result, [joinedReview])
     })
 
-    it(`list reviews by brewery as ${token.role}`, async () => {
+    test(`list reviews by brewery as ${token.role}`, async () => {
       const result = await reviewService.listReviewsByBrewery(
         async () => [joinedReview],
         (id: string | undefined) => ({
@@ -225,7 +225,7 @@ describe('review authorized service unit tests', () => {
       assertDeepEqual(result, [joinedReview])
     })
 
-    it(`list reviews by location as ${token.role}`, async () => {
+    test(`list reviews by location as ${token.role}`, async () => {
       const result = await reviewService.listReviewsByLocation(
         async () => [joinedReview],
         (id: string | undefined) => ({
@@ -242,7 +242,7 @@ describe('review authorized service unit tests', () => {
       assertDeepEqual(result, [joinedReview])
     })
 
-    it(`list reviews by style as ${token.role}`, async () => {
+    test(`list reviews by style as ${token.role}`, async () => {
       const result = await reviewService.listReviewsByStyle(
         async () => [joinedReview],
         (id: string | undefined) => ({

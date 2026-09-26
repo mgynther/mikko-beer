@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import {
   cyclicRelationshipError,
@@ -40,7 +40,7 @@ const updateWithParentRequest: UpdateStyleRequest = {
   parents: [parentStyle.id],
 }
 
-describe('style service unit tests', () => {
+suite('style service unit tests', () => {
   async function create(newStyle: NewStyle) {
     const result = {
       id: style.id,
@@ -76,7 +76,7 @@ describe('style service unit tests', () => {
     assertDeepEqual(parents, [parentStyle.id])
   }
 
-  it('create style without parents', async () => {
+  test('create style without parents', async () => {
     const request: CreateStyleRequest = {
       name: style.name,
       parents: [],
@@ -98,7 +98,7 @@ describe('style service unit tests', () => {
     })
   })
 
-  it('create style with parent', async () => {
+  test('create style with parent', async () => {
     const createIf: CreateStyleIf = {
       create,
       lockStyles: lockParent,
@@ -117,7 +117,7 @@ describe('style service unit tests', () => {
     })
   })
 
-  it('fail to create style with invalid parent', async () => {
+  test('fail to create style with invalid parent', async () => {
     const createIf: CreateStyleIf = {
       create,
       lockStyles: async () => {
@@ -131,7 +131,7 @@ describe('style service unit tests', () => {
     }, parentStyleNotFoundError)
   })
 
-  it('fail to create with existing cyclic relationship', async () => {
+  test('fail to create with existing cyclic relationship', async () => {
     const request: CreateStyleRequest = {
       name: style.name,
       parents: [parentStyle.id],
@@ -163,7 +163,7 @@ describe('style service unit tests', () => {
     return updateStyle
   }
 
-  it('update without parents', async () => {
+  test('update without parents', async () => {
     const request: UpdateStyleRequest = {
       name: style.name,
       parents: [],
@@ -188,7 +188,7 @@ describe('style service unit tests', () => {
     })
   })
 
-  it('update with parent', async () => {
+  test('update with parent', async () => {
     const updateIf: UpdateStyleIf = {
       update,
       lockStyles: lockParent,
@@ -209,7 +209,7 @@ describe('style service unit tests', () => {
     })
   })
 
-  it('fail to update with invalid parent', async () => {
+  test('fail to update with invalid parent', async () => {
     const updateIf: UpdateStyleIf = {
       update,
       lockStyles: async () => {
@@ -229,7 +229,7 @@ describe('style service unit tests', () => {
     }, parentStyleNotFoundError)
   })
 
-  it('fail to update with existing cyclic relationship', async () => {
+  test('fail to update with existing cyclic relationship', async () => {
     const request: UpdateStyleRequest = {
       name: style.name,
       parents: [parentStyle.id],
@@ -253,7 +253,7 @@ describe('style service unit tests', () => {
     }, cyclicRelationshipError)
   })
 
-  it('find style', async () => {
+  test('find style', async () => {
     const found = buildStyleWithParentsAndChildren()
     const finder = async (styleId: string) => {
       assertEqual(styleId, found.id)
@@ -263,7 +263,7 @@ describe('style service unit tests', () => {
     assertDeepEqual(result, found)
   })
 
-  it('fail to find style with unknown id', async () => {
+  test('fail to find style with unknown id', async () => {
     const id = '76cac82a-58a6-4978-8a00-1de381df032f'
     const finder = async (searchId: string) => {
       assertEqual(searchId, id)
@@ -274,7 +274,7 @@ describe('style service unit tests', () => {
     }, styleNotFoundError(id))
   })
 
-  it('list styles', async () => {
+  test('list styles', async () => {
     const listed = buildStyleWithParentIds()
     const lister = async () => {
       return [listed]

@@ -1,9 +1,9 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../test.js'
 import { assertDeepEqual, assertEqual } from '../assert.js'
 import { createStopHandler } from '../../src/web/app-stop-handler.js'
 
-describe('app stopHandler', () => {
-  it('resolve without error', (t) => {
+suite('app stopHandler', () => {
+  test('resolve without error', (t) => {
     const mockImpl = () => undefined
     const resolve = t.mock.fn(mockImpl)
     const reject = t.mock.fn(mockImpl)
@@ -13,7 +13,7 @@ describe('app stopHandler', () => {
     assertEqual(resolve.mock.callCount(), 1)
   })
 
-  it('reject with error', (t) => {
+  test('reject with error', (t) => {
     const mockImpl = () => undefined
     const resolve = t.mock.fn(mockImpl)
     const reject = t.mock.fn(mockImpl)

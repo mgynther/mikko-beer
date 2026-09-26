@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import {
@@ -29,7 +36,7 @@ import { assertDeepEqual, assertEqual } from '../../assert.js'
 
 // Math is hard. By both hard coding and calculating it is easier to spot an
 // error when it happens.
-describe('stats tests', () => {
+suite('stats tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -235,7 +242,7 @@ describe('stats tests', () => {
     return res.data.review
   }
 
-  it('get overall stats', async () => {
+  test('get overall stats', async () => {
     const { beers, breweries, reviews, containers, styles } = await createDeps(
       ctx.adminAuthHeaders(),
     )
@@ -280,7 +287,7 @@ describe('stats tests', () => {
     assertEqual(styles.length, 2)
   })
 
-  it('get overall stats by brewery', async () => {
+  test('get overall stats by brewery', async () => {
     const { beers, breweries, reviews, containers, styles } = await createDeps(
       ctx.adminAuthHeaders(),
     )
@@ -393,7 +400,7 @@ describe('stats tests', () => {
     )
   }
 
-  it('get annual stats', async () => {
+  test('get annual stats', async () => {
     const { reviews } = await createDeps(ctx.adminAuthHeaders())
 
     const statsRes = await ctx.request.get<{ annual: AnnualStats }>(
@@ -445,7 +452,7 @@ describe('stats tests', () => {
     })
   }
 
-  it('get annual stats by brewery', async () => {
+  test('get annual stats by brewery', async () => {
     const { beers, breweries, reviews } = await createDeps(
       ctx.adminAuthHeaders(),
     )
@@ -479,7 +486,7 @@ describe('stats tests', () => {
     ])
   })
 
-  it('get annual container stats', async () => {
+  test('get annual container stats', async () => {
     const { containers, reviews } = await createDeps(ctx.adminAuthHeaders())
 
     const statsRes = await ctx.request.get<{
@@ -510,7 +517,7 @@ describe('stats tests', () => {
     )
   })
 
-  it('get annual container stats with pagination', async () => {
+  test('get annual container stats with pagination', async () => {
     const { containers, reviews } = await createDeps(ctx.adminAuthHeaders())
 
     const statsRes = await ctx.request.get<{
@@ -541,7 +548,7 @@ describe('stats tests', () => {
     )
   })
 
-  it('get annual container stats by brewery', async () => {
+  test('get annual container stats by brewery', async () => {
     const { beers, breweries, containers, reviews } = await createDeps(
       ctx.adminAuthHeaders(),
     )
@@ -582,7 +589,7 @@ describe('stats tests', () => {
     )
   })
 
-  it('get container stats', async () => {
+  test('get container stats', async () => {
     const { containers, reviews } = await createDeps(ctx.adminAuthHeaders())
 
     const statsRes = await ctx.request.get<{ container: ContainerStats }>(
@@ -604,7 +611,7 @@ describe('stats tests', () => {
     ])
   })
 
-  it('get container stats by brewery', async () => {
+  test('get container stats by brewery', async () => {
     const {
       breweries,
       beers,
@@ -747,7 +754,7 @@ describe('stats tests', () => {
     return { brewery: breweryRes.data.brewery, beer: beerRes.data.beer }
   }
 
-  it('get brewery country stats', async () => {
+  test('get brewery country stats', async () => {
     const { breweries, containers, styles } = await createDeps(
       ctx.adminAuthHeaders(),
     )
@@ -788,7 +795,7 @@ describe('stats tests', () => {
     ])
   })
 
-  it('get brewery country stats ordered by brewery count', async () => {
+  test('get brewery country stats ordered by brewery count', async () => {
     const { breweries, containers, styles } = await createDeps(
       ctx.adminAuthHeaders(),
     )
@@ -817,7 +824,7 @@ describe('stats tests', () => {
     )
   })
 
-  it('get brewery country stats by brewery', async () => {
+  test('get brewery country stats by brewery', async () => {
     const { breweries, containers, styles } = await createDeps(
       ctx.adminAuthHeaders(),
     )
@@ -848,7 +855,7 @@ describe('stats tests', () => {
     ])
   })
 
-  it('get brewery country stats paginated', async () => {
+  test('get brewery country stats paginated', async () => {
     const { breweries, containers, styles } = await createDeps(
       ctx.adminAuthHeaders(),
     )
@@ -866,7 +873,7 @@ describe('stats tests', () => {
     assertEqual(statsRes.data.breweryCountry[0].countryCode, 'FI')
   })
 
-  it('fail to get brewery country stats with an invalid order', async () => {
+  test('fail to get brewery country stats with an invalid order', async () => {
     const statsRes = await ctx.request.get(
       '/api/v1/stats/brewery_country?order=brewery_name',
       ctx.adminAuthHeaders(),
@@ -875,7 +882,7 @@ describe('stats tests', () => {
     assertEqual(statsRes.data.error.code, 'InvalidBreweryCountryStatsQuery')
   })
 
-  it('get brewery stats', async () => {
+  test('get brewery stats', async () => {
     const { beers, breweries, reviews } = await createDeps(
       ctx.adminAuthHeaders(),
     )
@@ -917,7 +924,7 @@ describe('stats tests', () => {
     )
   })
 
-  it('get brewery stats by brewery', async () => {
+  test('get brewery stats by brewery', async () => {
     const { beers, breweries, reviews } = await createDeps(
       ctx.adminAuthHeaders(),
     )
@@ -1013,7 +1020,7 @@ describe('stats tests', () => {
       .map((review) => review.rating)
   }
 
-  it('get location stats', async () => {
+  test('get location stats', async () => {
     const { beers, locations, reviews } = await createDeps(
       ctx.adminAuthHeaders(),
     )
@@ -1045,7 +1052,7 @@ describe('stats tests', () => {
     )
   })
 
-  it('get location stats by brewery', async () => {
+  test('get location stats by brewery', async () => {
     const { beers, breweries, locations, reviews } = await createDeps(
       ctx.adminAuthHeaders(),
     )
@@ -1077,7 +1084,7 @@ describe('stats tests', () => {
     )
   })
 
-  it('get location stats by location', async () => {
+  test('get location stats by location', async () => {
     const { beers, locations, reviews } = await createDeps(
       ctx.adminAuthHeaders(),
     )
@@ -1126,7 +1133,7 @@ describe('stats tests', () => {
     assertDeepEqual(actualStats, expectedStats)
   }
 
-  it('get rating stats', async () => {
+  test('get rating stats', async () => {
     const { reviews } = await createDeps(ctx.adminAuthHeaders())
 
     const statsRes = await ctx.request.get<{ rating: RatingStats }>(
@@ -1152,7 +1159,7 @@ describe('stats tests', () => {
     checkRatingStats(stats, statsRes.data.rating, expectedStats)
   })
 
-  it('get rating stats by brewery', async () => {
+  test('get rating stats by brewery', async () => {
     const { beers, breweries, reviews } = await createDeps(
       ctx.adminAuthHeaders(),
     )
@@ -1255,7 +1262,7 @@ describe('stats tests', () => {
       .map((review) => review.rating)
   }
 
-  it('get style stats', async () => {
+  test('get style stats', async () => {
     const { beers, reviews, styles } = await createDeps(ctx.adminAuthHeaders())
 
     const statsRes = await ctx.request.get<{ style: StyleStats }>(
@@ -1296,7 +1303,7 @@ describe('stats tests', () => {
     )
   })
 
-  it('get style stats by brewery', async () => {
+  test('get style stats by brewery', async () => {
     const { beers, breweries, reviews, styles } = await createDeps(
       ctx.adminAuthHeaders(),
     )
@@ -1341,7 +1348,7 @@ describe('stats tests', () => {
     )
   })
 
-  it('get style stats by brewery and min review count', async () => {
+  test('get style stats by brewery and min review count', async () => {
     const { beers, breweries, reviews, styles } = await createDeps(
       ctx.adminAuthHeaders(),
     )
@@ -1378,7 +1385,7 @@ describe('stats tests', () => {
     assertEqual(kriekAverage, '6.67')
   })
 
-  it('get style stats by style', async () => {
+  test('get style stats by style', async () => {
     const { styles } = await createDeps(ctx.adminAuthHeaders())
 
     const styleId = styles[0].data.style.id
@@ -1412,7 +1419,7 @@ describe('stats tests', () => {
     ])
   })
 
-  it('get style stats by time', async () => {
+  test('get style stats by time', async () => {
     const { styles } = await createDeps(ctx.adminAuthHeaders())
 
     const order = '&order=average&direction=desc'

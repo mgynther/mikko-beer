@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import type { AuthTokenPayload } from '../../../../src/logic/auth/auth-token.js'
 import {
@@ -9,8 +9,8 @@ import { InvalidAuthTokenError } from '../../../../src/logic/auth/auth-token.js'
 import { assertDeepEqual, assertThrows } from '../../../assert.js'
 import type { RefreshTokenPayload } from '../../../../src/logic/internal/auth/jwt.js'
 
-describe('jwt parser auth token unit tests', () => {
-  it('parse valid ', async () => {
+suite('jwt parser auth token unit tests', () => {
+  test('parse valid ', async () => {
     const payload: AuthTokenPayload = {
       userId: '795cfb77-9db9-46f5-9b8e-9188198dd2dc',
       role: 'admin',
@@ -60,7 +60,7 @@ describe('jwt parser auth token unit tests', () => {
   ]
 
   invalidAuthTokenPayloadTests.forEach((testCase) =>
-    it(`fail to parse ${testCase.name}`, async () => {
+    test(`fail to parse ${testCase.name}`, async () => {
       assertThrows(
         () => parseAuthTokenPayload(testCase.payload),
         new InvalidAuthTokenError(),
@@ -70,8 +70,8 @@ describe('jwt parser auth token unit tests', () => {
   )
 })
 
-describe('jwt parser refresh token unit tests', () => {
-  it('parse valid ', async () => {
+suite('jwt parser refresh token unit tests', () => {
+  test('parse valid ', async () => {
     const payload: RefreshTokenPayload = {
       userId: 'aa8ffab8-8cc3-4598-ae32-4e80888e3faf',
       refreshTokenId: 'ab02c737-a4de-4ac0-8f2f-d3bb2814a7c1',
@@ -113,7 +113,7 @@ describe('jwt parser refresh token unit tests', () => {
   ]
 
   invalidRefreshTokenPayloadTests.forEach((testCase) =>
-    it(`fail to parse ${testCase.name}`, async () => {
+    test(`fail to parse ${testCase.name}`, async () => {
       assertThrows(
         () => parseRefreshTokenPayload(testCase.payload),
         new InvalidAuthTokenError(),

@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../test.js'
 
 import {
   validateCreateReviewRequest,
@@ -24,7 +24,7 @@ function validRequest(): ReviewRequest {
   }
 }
 
-describe('review validation unit tests', () => {
+suite('review validation unit tests', () => {
   const id = '49f208f7-07b2-4fca-bbd3-8a4bc49b9b38'
 
   ;[
@@ -52,11 +52,11 @@ describe('review validation unit tests', () => {
       assertDeepEqual(validationResult.result, outputFormatter(output))
     }
 
-    it(title('pass validation'), () => {
+    test(title('pass validation'), () => {
       pass(validRequest())
     })
 
-    it(title('pass with empty additional info'), () => {
+    test(title('pass with empty additional info'), () => {
       const review = {
         ...validRequest(),
         additionalInfo: '',
@@ -64,7 +64,7 @@ describe('review validation unit tests', () => {
       pass(review)
     })
 
-    it(title('pass with empty location'), () => {
+    test(title('pass with empty location'), () => {
       const review = {
         ...validRequest(),
         location: '',
@@ -72,7 +72,7 @@ describe('review validation unit tests', () => {
       pass(review)
     })
 
-    it(title('pass with UTC time'), () => {
+    test(title('pass with UTC time'), () => {
       const review = {
         ...validRequest(),
         time: '2023-12-07T20:32:40.123Z',
@@ -80,7 +80,7 @@ describe('review validation unit tests', () => {
       pass(review)
     })
 
-    it(title('pass with - timezone'), () => {
+    test(title('pass with - timezone'), () => {
       const review = {
         ...validRequest(),
         time: '2023-12-07T19:32:40.123-01:00',
@@ -94,7 +94,7 @@ describe('review validation unit tests', () => {
         .map((x, y) => x + y)
     }
     numberRange(4, 10).forEach((rating) =>
-      it(title(`pass with rating ${rating}`), () => {
+      test(title(`pass with rating ${rating}`), () => {
         const review = {
           ...validRequest(),
           rating,
@@ -109,7 +109,7 @@ describe('review validation unit tests', () => {
       assertEqual(validationResult.result, undefined)
     }
 
-    it(title('fail with empty beer'), () => {
+    test(title('fail with empty beer'), () => {
       const review = {
         ...validRequest(),
         beer: '',
@@ -117,13 +117,13 @@ describe('review validation unit tests', () => {
       fail(review)
     })
 
-    it(title('fail without additionalInfo'), () => {
+    test(title('fail without additionalInfo'), () => {
       const { beer, container, location, rating, time, smell, taste } =
         validRequest()
       fail({ beer, container, location, rating, time, smell, taste })
     })
 
-    it(title('fail without beer'), () => {
+    test(title('fail without beer'), () => {
       const {
         additionalInfo,
         container,
@@ -136,7 +136,7 @@ describe('review validation unit tests', () => {
       fail({ additionalInfo, container, location, rating, time, smell, taste })
     })
 
-    it(title('fail with empty container'), () => {
+    test(title('fail with empty container'), () => {
       const review = {
         ...validRequest(),
         container: '',
@@ -144,19 +144,19 @@ describe('review validation unit tests', () => {
       fail(review)
     })
 
-    it(title('fail without container'), () => {
+    test(title('fail without container'), () => {
       const { additionalInfo, beer, location, rating, time, smell, taste } =
         validRequest()
       fail({ additionalInfo, beer, location, rating, time, smell, taste })
     })
 
-    it(title('fail without location'), () => {
+    test(title('fail without location'), () => {
       const { additionalInfo, beer, container, rating, time, smell, taste } =
         validRequest()
       fail({ additionalInfo, beer, container, rating, time, smell, taste })
     })
 
-    it(title('fail with invalid rating'), () => {
+    test(title('fail with invalid rating'), () => {
       const review = {
         ...validRequest(),
         rating: '',
@@ -164,13 +164,13 @@ describe('review validation unit tests', () => {
       fail(review)
     })
 
-    it(title('fail without rating'), () => {
+    test(title('fail without rating'), () => {
       const { additionalInfo, beer, container, location, time, smell, taste } =
         validRequest()
       fail({ additionalInfo, beer, container, location, time, smell, taste })
     })
 
-    it(title('fail with rating below range'), () => {
+    test(title('fail with rating below range'), () => {
       const review = {
         ...validRequest(),
         rating: 3,
@@ -178,7 +178,7 @@ describe('review validation unit tests', () => {
       fail(review)
     })
 
-    it(title('fail with rating above range'), () => {
+    test(title('fail with rating above range'), () => {
       const review = {
         ...validRequest(),
         rating: 11,
@@ -186,7 +186,7 @@ describe('review validation unit tests', () => {
       fail(review)
     })
 
-    it(title('fail with non-integer rating'), () => {
+    test(title('fail with non-integer rating'), () => {
       const review = {
         ...validRequest(),
         rating: 9.12,
@@ -194,7 +194,7 @@ describe('review validation unit tests', () => {
       fail(review)
     })
 
-    it(title('fail with empty smell'), () => {
+    test(title('fail with empty smell'), () => {
       const review = {
         ...validRequest(),
         smell: '',
@@ -202,13 +202,13 @@ describe('review validation unit tests', () => {
       fail(review)
     })
 
-    it(title('fail without smell'), () => {
+    test(title('fail without smell'), () => {
       const { additionalInfo, beer, container, location, rating, time, taste } =
         validRequest()
       fail({ additionalInfo, beer, container, location, rating, time, taste })
     })
 
-    it(title('fail with empty taste'), () => {
+    test(title('fail with empty taste'), () => {
       const review = {
         ...validRequest(),
         taste: '',
@@ -216,13 +216,13 @@ describe('review validation unit tests', () => {
       fail(review)
     })
 
-    it(title('fail without taste'), () => {
+    test(title('fail without taste'), () => {
       const { additionalInfo, beer, container, location, rating, time, smell } =
         validRequest()
       fail({ additionalInfo, beer, container, location, rating, time, smell })
     })
 
-    it(title('fail with malformed time'), () => {
+    test(title('fail with malformed time'), () => {
       const review = {
         ...validRequest(),
         time: '2023-12-07',
@@ -230,7 +230,7 @@ describe('review validation unit tests', () => {
       fail(review)
     })
 
-    it(title('fail with invalid time'), () => {
+    test(title('fail with invalid time'), () => {
       const review = {
         ...validRequest(),
         time: 123,
@@ -238,7 +238,7 @@ describe('review validation unit tests', () => {
       fail(review)
     })
 
-    it(title('fail without time'), () => {
+    test(title('fail without time'), () => {
       const {
         additionalInfo,
         beer,
@@ -251,7 +251,7 @@ describe('review validation unit tests', () => {
       fail({ additionalInfo, beer, container, location, rating, smell, taste })
     })
 
-    it(title('fail with additional property'), () => {
+    test(title('fail with additional property'), () => {
       const review = {
         ...validRequest(),
         additional: 'will fail',
@@ -270,7 +270,7 @@ describe('review validation unit tests', () => {
   ]
 
   invalidIdCases.forEach((testCase) =>
-    it(`fail update with ${testCase.label} review id`, () => {
+    test(`fail update with ${testCase.label} review id`, () => {
       const validationResult = validateUpdateReviewRequest(
         validRequest(),
         testCase.id,
@@ -280,14 +280,14 @@ describe('review validation unit tests', () => {
     }),
   )
 
-  it('valid review id passes validation', () => {
+  test('valid review id passes validation', () => {
     const validationResult = validateReviewId(id)
     assertEqual(validationResult.errorCode, undefined)
     assertEqual(validationResult.result, id)
   })
 
   invalidIdCases.forEach((testCase) =>
-    it(`invalid review id "${testCase.label}" fails validation`, () => {
+    test(`invalid review id "${testCase.label}" fails validation`, () => {
       const validationResult = validateReviewId(testCase.id)
       assertEqual(validationResult.errorCode, 'invalid-review-id')
       assertEqual(validationResult.result, undefined)
@@ -307,7 +307,7 @@ interface CommonOrderCase {
   }
 }
 
-describe('review list order validation unit tests', () => {
+suite('review list order validation unit tests', () => {
   ;[
     {
       title: 'full review list order',
@@ -332,27 +332,27 @@ describe('review list order validation unit tests', () => {
       assertEqual(validationResult.result, undefined)
     }
 
-    it(`valid test helper is valid, ${title}`, () => {
+    test(`valid test helper is valid, ${title}`, () => {
       pass(validOrderQuery(), { property: 'time', direction: 'desc' })
     })
 
-    it(`invalid order value, ${title}`, () => {
+    test(`invalid order value, ${title}`, () => {
       failOrder({ ...validOrderQuery(), order: 'testing' })
     })
 
-    it(`invalid order type, ${title}`, () => {
+    test(`invalid order type, ${title}`, () => {
       failOrder({ ...validOrderQuery(), order: 123 })
     })
 
-    it(`invalid direction value, ${title}`, () => {
+    test(`invalid direction value, ${title}`, () => {
       failOrder({ ...validOrderQuery(), direction: 'testing' })
     })
 
-    it(`invalid direction type, ${title}`, () => {
+    test(`invalid direction type, ${title}`, () => {
       failOrder({ ...validOrderQuery(), direction: [] })
     })
 
-    it(`time desc, ${title}`, () => {
+    test(`time desc, ${title}`, () => {
       pass(
         { order: 'time', direction: 'desc' },
         {
@@ -362,7 +362,7 @@ describe('review list order validation unit tests', () => {
       )
     })
 
-    it(`time asc, ${title}`, () => {
+    test(`time asc, ${title}`, () => {
       pass(
         { order: 'time', direction: 'asc' },
         {
@@ -372,7 +372,7 @@ describe('review list order validation unit tests', () => {
       )
     })
 
-    it(`rating asc, ${title}`, () => {
+    test(`rating asc, ${title}`, () => {
       pass(
         { order: 'rating', direction: 'asc' },
         {
@@ -382,7 +382,7 @@ describe('review list order validation unit tests', () => {
       )
     })
 
-    it(`rating desc, ${title}`, () => {
+    test(`rating desc, ${title}`, () => {
       pass(
         { order: 'rating', direction: 'desc' },
         {
@@ -393,7 +393,7 @@ describe('review list order validation unit tests', () => {
     })
   })
 
-  it('defaults with undefined, full review list order', () => {
+  test('defaults with undefined, full review list order', () => {
     const validationResult = validateFullReviewListOrder({})
     assertEqual(validationResult.errorCode, undefined)
     assertDeepEqual(validationResult.result, {
@@ -402,7 +402,7 @@ describe('review list order validation unit tests', () => {
     })
   })
 
-  it('defaults with undefined, filtered review list order', () => {
+  test('defaults with undefined, filtered review list order', () => {
     const validationResult = validateFilteredReviewListOrder({})
     assertEqual(validationResult.errorCode, undefined)
     assertDeepEqual(validationResult.result, {
@@ -411,7 +411,7 @@ describe('review list order validation unit tests', () => {
     })
   })
 
-  it('defaults with empty string, full review list order', () => {
+  test('defaults with empty string, full review list order', () => {
     const validationResult = validateFullReviewListOrder({
       order: '',
       direction: '',
@@ -423,7 +423,7 @@ describe('review list order validation unit tests', () => {
     })
   })
 
-  it('defaults with empty string, filtered review list order', () => {
+  test('defaults with empty string, filtered review list order', () => {
     const validationResult = validateFilteredReviewListOrder({
       order: '',
       direction: '',
@@ -435,7 +435,7 @@ describe('review list order validation unit tests', () => {
     })
   })
 
-  it('beer_name fails, full review list order', () => {
+  test('beer_name fails, full review list order', () => {
     const validationResult = validateFullReviewListOrder({
       order: 'beer_name',
       direction: 'desc',
@@ -447,7 +447,7 @@ describe('review list order validation unit tests', () => {
     assertEqual(validationResult.result, undefined)
   })
 
-  it('beer_name desc, filtered review list order', () => {
+  test('beer_name desc, filtered review list order', () => {
     const validationResult = validateFilteredReviewListOrder({
       order: 'beer_name',
       direction: 'desc',
@@ -459,7 +459,7 @@ describe('review list order validation unit tests', () => {
     })
   })
 
-  it('brewery_name fails, full review list order', () => {
+  test('brewery_name fails, full review list order', () => {
     const validationResult = validateFullReviewListOrder({
       order: 'brewery_name',
       direction: 'desc',
@@ -471,7 +471,7 @@ describe('review list order validation unit tests', () => {
     assertEqual(validationResult.result, undefined)
   })
 
-  it('brewery_name asc, filtered review list order', () => {
+  test('brewery_name asc, filtered review list order', () => {
     const validationResult = validateFilteredReviewListOrder({
       order: 'brewery_name',
       direction: 'asc',
@@ -491,8 +491,8 @@ interface ReviewListFilterQuery {
   max_time: string
 }
 
-describe('review list filter validation unit tests', () => {
-  it('defaults to the full range when all properties are missing', () => {
+suite('review list filter validation unit tests', () => {
+  test('defaults to the full range when all properties are missing', () => {
     const validationResult = validateReviewListFilter({})
     assertEqual(validationResult.errorCode, undefined)
     assertDeepEqual(validationResult.result, {
@@ -503,7 +503,7 @@ describe('review list filter validation unit tests', () => {
     })
   })
 
-  it('defaults to the full range when all properties are empty', () => {
+  test('defaults to the full range when all properties are empty', () => {
     const validationResult = validateReviewListFilter({
       min_rating: '',
       max_rating: '',
@@ -519,7 +519,7 @@ describe('review list filter validation unit tests', () => {
     })
   })
 
-  it('returns values matching the input when all properties are valid', () => {
+  test('returns values matching the input when all properties are valid', () => {
     const minTime = 1678334400000
     const maxTime = 1746792000000
     const validQuery: ReviewListFilterQuery = {
@@ -557,7 +557,7 @@ describe('review list filter validation unit tests', () => {
   ]
 
   invalidFilterCases.forEach((testCase) => {
-    it(`fails with min_rating ${testCase.min_rating} max_rating ${
+    test(`fails with min_rating ${testCase.min_rating} max_rating ${
       testCase.max_rating
     } min_time ${testCase.min_time} max_time ${testCase.max_time}`, () => {
       const validationResult = validateReviewListFilter({ ...testCase })

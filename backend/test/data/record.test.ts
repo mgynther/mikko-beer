@@ -1,18 +1,18 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../test.js'
 
 import { contains } from '../../src/data/record.js'
 import { assertEqual } from '../assert.js'
 
-describe('record', () => {
+suite('record', () => {
   const record: Record<string, string> = {
     key: 'value',
   }
 
-  it('contains existing key', () => {
+  test('contains existing key', () => {
     assertEqual(contains(record, 'key'), true)
   })
 
-  it('does not contains missing key', () => {
+  test('does not contains missing key', () => {
     assertEqual(contains(record, 'ke'), false)
   })
 })

@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../test.js'
 
 import {
   validateCreateStyleRequest,
@@ -31,23 +31,23 @@ function validUpdateRequest(): UpdateStyleRequest {
   }
 }
 
-describe('style validation unit tests', () => {
+suite('style validation unit tests', () => {
   const id = 'c8e02862-7fe7-44d5-b0eb-cd23e72faf56'
 
-  it('valid create style request passes validation', () => {
+  test('valid create style request passes validation', () => {
     const input = validCreateRequest()
     const output = validCreateRequest()
     assertEqual(validateCreateStyleRequest(input).errorCode, undefined)
     assertDeepEqual(validateCreateStyleRequest(input).result, output)
   })
 
-  it('invalid create style request fails validation', () => {
+  test('invalid create style request fails validation', () => {
     const input = { name: 'Cream Ale' }
     assertEqual(validateCreateStyleRequest(input).errorCode, 'invalid-style')
     assertDeepEqual(validateCreateStyleRequest(input).result, undefined)
   })
 
-  it('valid update style request passes validation', () => {
+  test('valid update style request passes validation', () => {
     const input = validUpdateRequest()
     const output = validUpdateRequest()
     const validationResult = validateUpdateStyleRequest(input, id)
@@ -76,7 +76,7 @@ describe('style validation unit tests', () => {
   ].forEach((validator) => {
     const { func, getValid, outFormatter, title } = validator
 
-    it(title('pass validation without parents'), () => {
+    test(title('pass validation without parents'), () => {
       const input = { name: getValid().name, parents: [] }
       const output = { ...input }
       const validationResult = func(input)
@@ -90,7 +90,7 @@ describe('style validation unit tests', () => {
       assertEqual(result.result, undefined)
     }
 
-    it(title('fail with empty name'), () => {
+    test(title('fail with empty name'), () => {
       const style = {
         ...getValid(),
         name: '',
@@ -98,12 +98,12 @@ describe('style validation unit tests', () => {
       fail(style)
     })
 
-    it(title('fail without name'), () => {
+    test(title('fail without name'), () => {
       const { parents } = getValid()
       fail({ parents })
     })
 
-    it(title('fail with invalid name'), () => {
+    test(title('fail with invalid name'), () => {
       const style = {
         ...getValid(),
         name: 123,
@@ -111,12 +111,12 @@ describe('style validation unit tests', () => {
       fail(style)
     })
 
-    it(title('fail without parents property'), () => {
+    test(title('fail without parents property'), () => {
       const { name } = getValid()
       fail({ name })
     })
 
-    it(title('fail with invalid parents'), () => {
+    test(title('fail with invalid parents'), () => {
       const style = {
         ...getValid(),
         parents: [123],
@@ -124,7 +124,7 @@ describe('style validation unit tests', () => {
       fail(style)
     })
 
-    it(title('fail with empty parent'), () => {
+    test(title('fail with empty parent'), () => {
       const style = {
         ...getValid(),
         parents: [''],
@@ -132,7 +132,7 @@ describe('style validation unit tests', () => {
       fail(style)
     })
 
-    it(title('fail with additional property'), () => {
+    test(title('fail with additional property'), () => {
       const style = {
         ...getValid(),
         additional: 'will fail',
@@ -151,7 +151,7 @@ describe('style validation unit tests', () => {
   ]
 
   invalidIdCases.forEach((testCase) =>
-    it(`fail update with ${testCase.label} style id`, () => {
+    test(`fail update with ${testCase.label} style id`, () => {
       const validationResult = validateUpdateStyleRequest(
         validUpdateRequest(),
         testCase.id,
@@ -161,14 +161,14 @@ describe('style validation unit tests', () => {
     }),
   )
 
-  it('valid style id passes validation', () => {
+  test('valid style id passes validation', () => {
     const validationResult = validateStyleId(id)
     assertEqual(validationResult.errorCode, undefined)
     assertEqual(validationResult.result, id)
   })
 
   invalidIdCases.forEach((testCase) =>
-    it(`invalid style id "${testCase.label}" fails validation`, () => {
+    test(`invalid style id "${testCase.label}" fails validation`, () => {
       const validationResult = validateStyleId(testCase.id)
       assertEqual(validationResult.errorCode, 'invalid-style-id')
       assertEqual(validationResult.result, undefined)

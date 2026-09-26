@@ -1,18 +1,18 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../test.js'
 
 import { areKeysEqual } from '../../../src/logic/internal/key.js'
 import { assertEqual } from '../../assert.js'
 
-describe('key tests', () => {
-  it('keys equal', () => {
+suite('key tests', () => {
+  test('keys equal', () => {
     assertEqual(areKeysEqual(['a', 'b'], ['a', 'b']), true)
   })
 
-  it('keys different', () => {
+  test('keys different', () => {
     assertEqual(areKeysEqual(['a', 'b'], ['a', 'c']), false)
   })
 
-  it('key count different', () => {
+  test('key count different', () => {
     assertEqual(areKeysEqual(['a'], ['a', 'c']), false)
   })
 })

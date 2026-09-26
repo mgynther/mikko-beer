@@ -1,7 +1,14 @@
 import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { promises as fs } from 'fs'
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import { invalidateSchema } from '../test-helpers.js'
@@ -17,7 +24,7 @@ import { FileMigrationProvider, Migrator } from 'kysely/migration'
 
 const directory = dirname(fileURLToPath(import.meta.url))
 
-describe('review tests', () => {
+suite('review tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -29,7 +36,7 @@ describe('review tests', () => {
   after(invalidateSchema)
   afterEach(ctx.afterEach)
 
-  it('insert a review', async () => {
+  test('insert a review', async () => {
     const locationName = 'A Fancy place'
     const migrator = new Migrator({
       db: ctx.db.getDb(),

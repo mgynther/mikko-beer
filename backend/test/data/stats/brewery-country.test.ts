@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import type { Pagination } from '../../../src/data/pagination.js'
@@ -257,7 +264,7 @@ function row(
 const allFi = row('FI', statsOf['8, 6, 10'], 2, 2)
 const allBe = row('BE', statsOf['5, 10'], 2, 1)
 
-describe('brewery country stats tests', () => {
+suite('brewery country stats tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -287,12 +294,12 @@ describe('brewery country stats tests', () => {
     )
   }
 
-  it('counts a collaboration review once per country', async () => {
+  test('counts a collaboration review once per country', async () => {
     await insertAll()
     assertDeepEqual(await getStats(defaultFilter), [allBe, allFi])
   })
 
-  it('leaves out a brewery without a country', async () => {
+  test('leaves out a brewery without a country', async () => {
     await insertAll()
     const stats = await getStats(defaultFilter)
     // unknownBeer was reviewed, but its brewery has no country, so it is
@@ -333,7 +340,7 @@ describe('brewery country stats tests', () => {
   ]
 
   orderCases.forEach(({ title, property, ascending }) => {
-    it(`orders by ${title}`, async () => {
+    test(`orders by ${title}`, async () => {
       await insertAll()
       assertDeepEqual(
         await getStats(defaultFilter, { property, direction: 'asc' }),
@@ -346,7 +353,7 @@ describe('brewery country stats tests', () => {
     })
   })
 
-  it('paginates', async () => {
+  test('paginates', async () => {
     await insertAll()
     assertDeepEqual(
       await getStats(defaultFilter, byCountryCode, { size: 1, skip: 0 }),
@@ -362,7 +369,7 @@ describe('brewery country stats tests', () => {
     )
   })
 
-  it('filters by brewery', async () => {
+  test('filters by brewery', async () => {
     const ids = await insertAll()
     const stats = await getStats({ ...defaultFilter, brewery: ids.fiOne })
     // fiOne brews fiBeer and collab. BE is present through collab only.
@@ -372,7 +379,7 @@ describe('brewery country stats tests', () => {
     ])
   })
 
-  it('filters by location', async () => {
+  test('filters by location', async () => {
     const ids = await insertAll()
     const stats = await getStats({ ...defaultFilter, location: ids.bar })
     assertDeepEqual(stats, [
@@ -381,7 +388,7 @@ describe('brewery country stats tests', () => {
     ])
   })
 
-  it('filters by style', async () => {
+  test('filters by style', async () => {
     const ids = await insertAll()
     const stats = await getStats({ ...defaultFilter, style: ids.ipa })
     // Only collab is an IPA, and its single review counts once per country.
@@ -391,7 +398,7 @@ describe('brewery country stats tests', () => {
     ])
   })
 
-  it('filters by time', async () => {
+  test('filters by time', async () => {
     await insertAll()
     const fromStart = await getStats({
       ...defaultFilter,
@@ -413,7 +420,7 @@ describe('brewery country stats tests', () => {
     ])
   })
 
-  it('filters by review count over the deduplicated count', async () => {
+  test('filters by review count over the deduplicated count', async () => {
     await insertAll()
 
     async function withCounts(min: number, max: number) {
@@ -431,7 +438,7 @@ describe('brewery country stats tests', () => {
     assertDeepEqual(await withCounts(4, Infinity), [])
   })
 
-  it('filters by review average', async () => {
+  test('filters by review average', async () => {
     await insertAll()
 
     async function withAverages(min: number, max: number) {

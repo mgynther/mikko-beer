@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../test.js'
 
 import {
   validateBeerId,
@@ -33,23 +33,23 @@ function validUpdateRequest(): UpdateBeerRequest {
   }
 }
 
-describe('beer validation unit tests', () => {
+suite('beer validation unit tests', () => {
   const id = '4924c26e-5d7b-44a4-92e1-97454fb2e5e1'
 
-  it('valid create beer request passes validation', () => {
+  test('valid create beer request passes validation', () => {
     const input = validCreateRequest()
     const output = validCreateRequest()
     assertEqual(validateCreateBeerRequest(input).errorCode, undefined)
     assertDeepEqual(validateCreateBeerRequest(input).result, output)
   })
 
-  it('invalid create beer request fails validation', () => {
+  test('invalid create beer request fails validation', () => {
     const input = { name: 'Craft lager' }
     assertEqual(validateCreateBeerRequest(input).errorCode, 'invalid-beer')
     assertDeepEqual(validateCreateBeerRequest(input).result, undefined)
   })
 
-  it('valid update beer request passes validation', () => {
+  test('valid update beer request passes validation', () => {
     const input = validUpdateRequest()
     const output = validUpdateRequest()
     const validationResult = validateUpdateBeerRequest(input, id)
@@ -79,7 +79,7 @@ describe('beer validation unit tests', () => {
       assertEqual(result.result, undefined)
     }
 
-    it(title('fail with empty name'), () => {
+    test(title('fail with empty name'), () => {
       const beer = {
         ...getValid(),
         name: '',
@@ -87,22 +87,22 @@ describe('beer validation unit tests', () => {
       fail(beer)
     })
 
-    it(title('fail without name'), () => {
+    test(title('fail without name'), () => {
       const { breweries, styles } = getValid()
       fail({ breweries, styles })
     })
 
-    it(title('fail without breweries'), () => {
+    test(title('fail without breweries'), () => {
       const { name, styles } = getValid()
       fail({ name, styles })
     })
 
-    it(title('fail without styles'), () => {
+    test(title('fail without styles'), () => {
       const { name, breweries } = getValid()
       fail({ name, breweries })
     })
 
-    it(title('fail with 0 breweries'), () => {
+    test(title('fail with 0 breweries'), () => {
       const beer = {
         ...getValid(),
         breweries: [],
@@ -110,7 +110,7 @@ describe('beer validation unit tests', () => {
       fail(beer)
     })
 
-    it(title('fail with 0 styles'), () => {
+    test(title('fail with 0 styles'), () => {
       const beer = {
         ...getValid(),
         styles: [],
@@ -118,7 +118,7 @@ describe('beer validation unit tests', () => {
       fail(beer)
     })
 
-    it(title('fail with invalid breweries'), () => {
+    test(title('fail with invalid breweries'), () => {
       const beer = {
         ...getValid(),
         breweries: [9],
@@ -126,7 +126,7 @@ describe('beer validation unit tests', () => {
       fail(beer)
     })
 
-    it(title('fail with invalid styles'), () => {
+    test(title('fail with invalid styles'), () => {
       const beer = {
         ...getValid(),
         styles: [{ testing: 'will fail' }],
@@ -134,7 +134,7 @@ describe('beer validation unit tests', () => {
       fail(beer)
     })
 
-    it(title('fail with invalid name'), () => {
+    test(title('fail with invalid name'), () => {
       const beer = {
         ...getValid(),
         name: ['f', 'a', 'i', 'l'],
@@ -142,7 +142,7 @@ describe('beer validation unit tests', () => {
       fail(beer)
     })
 
-    it(title('fail with additional property'), () => {
+    test(title('fail with additional property'), () => {
       const beer = {
         ...getValid(),
         additional: 'will fail',
@@ -161,7 +161,7 @@ describe('beer validation unit tests', () => {
   ]
 
   invalidIdCases.forEach((testCase) =>
-    it(`fail update with ${testCase.label} beer id`, () => {
+    test(`fail update with ${testCase.label} beer id`, () => {
       const validationResult = validateUpdateBeerRequest(
         validUpdateRequest(),
         testCase.id,
@@ -171,14 +171,14 @@ describe('beer validation unit tests', () => {
     }),
   )
 
-  it('valid beer id passes validation', () => {
+  test('valid beer id passes validation', () => {
     const validationResult = validateBeerId(id)
     assertEqual(validationResult.errorCode, undefined)
     assertEqual(validationResult.result, id)
   })
 
   invalidIdCases.forEach((testCase) =>
-    it(`invalid beer id "${testCase.label}" fails validation`, () => {
+    test(`invalid beer id "${testCase.label}" fails validation`, () => {
       const validationResult = validateBeerId(testCase.id)
       assertEqual(validationResult.errorCode, 'invalid-beer-id')
       assertEqual(validationResult.result, undefined)

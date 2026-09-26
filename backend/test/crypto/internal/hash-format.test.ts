@@ -1,11 +1,11 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../test.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
 import {
   formatHash,
   parseHash,
 } from '../../../src/crypto/internal/hash-format.js'
 
-describe('hash format', () => {
+suite('hash format', () => {
   const hash = {
     parameters: { N: 131072, r: 8, p: 2 },
     salt: Buffer.from([0xfb, 0xff, 0x01]),
@@ -13,11 +13,11 @@ describe('hash format', () => {
   }
   const formatted = '$scrypt$ln=17,r=8,p=2$+/8B$AAECAw'
 
-  it('format parameters, salt and key as unpadded base64', () => {
+  test('format parameters, salt and key as unpadded base64', () => {
     assertEqual(formatHash(hash), formatted)
   })
 
-  it('parse formatted hash', () => {
+  test('parse formatted hash', () => {
     assertDeepEqual(parseHash(formatted), hash)
   })
 
@@ -32,7 +32,7 @@ describe('hash format', () => {
     ['legacy salt:key format', `${'ab'.repeat(16)}:${'cd'.repeat(64)}`],
   ]
   for (const [name, value] of malformed) {
-    it(`reject ${name}`, () => {
+    test(`reject ${name}`, () => {
       assertEqual(parseHash(value), undefined)
     })
   }

@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../test.js'
 
 import * as jwt from '../../../src/logic/internal/auth/jwt.js'
 
@@ -131,8 +131,8 @@ function notCalled(): any {
   throw new Error('not to be called')
 }
 
-describe('authorized sign in method service unit tests', () => {
-  it('sign in using password', async () => {
+suite('authorized sign in method service unit tests', () => {
+  test('sign in using password', async () => {
     await service.signInUsingPassword(
       testJwtIf,
       signInUsingPasswordIf,
@@ -149,7 +149,7 @@ describe('authorized sign in method service unit tests', () => {
     )
   })
 
-  it('change password', async () => {
+  test('change password', async () => {
     await service.changePassword(
       changePasswordUserIf,
       passPasswordChangeValidation(passwordChange),
@@ -164,7 +164,7 @@ describe('authorized sign in method service unit tests', () => {
     )
   })
 
-  it('fail to change another user password as viewer', async () => {
+  test('fail to change another user password as viewer', async () => {
     await expectReject(async () => {
       await service.changePassword(
         changePasswordUserIf,
@@ -181,7 +181,7 @@ describe('authorized sign in method service unit tests', () => {
     }, userMismatchError)
   })
 
-  it('refresh tokens with valid refresh token', async () => {
+  test('refresh tokens with valid refresh token', async () => {
     await service.refreshTokens(
       testJwtIf,
       refreshTokensIf,
@@ -192,7 +192,7 @@ describe('authorized sign in method service unit tests', () => {
     )
   })
 
-  it('fail to refresh tokens with invalid refresh token', async () => {
+  test('fail to refresh tokens with invalid refresh token', async () => {
     await expectReject(async () => {
       await service.refreshTokens(
         testJwtIf,
@@ -205,7 +205,7 @@ describe('authorized sign in method service unit tests', () => {
     }, invalidCredentialsTokenError)
   })
 
-  it('fail to refresh tokens with invalid request', async () => {
+  test('fail to refresh tokens with invalid request', async () => {
     await expectReject(async () => {
       await service.refreshTokens(
         testJwtIf,

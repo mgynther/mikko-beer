@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import type { Transaction } from '../../../src/data/database.js'
@@ -9,7 +16,7 @@ import {
   assertRejectsWithMessage,
 } from '../../assert.js'
 
-describe('brewery tests', () => {
+suite('brewery tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -18,7 +25,7 @@ describe('brewery tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('insert brewery with country', async () => {
+  test('insert brewery with country', async () => {
     const brewery = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
         return await breweryRepository.insertBrewery(trx, {
@@ -35,7 +42,7 @@ describe('brewery tests', () => {
     assertDeepEqual(readBrewery, brewery)
   })
 
-  it('insert brewery without country', async () => {
+  test('insert brewery without country', async () => {
     const brewery = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
         return await breweryRepository.insertBrewery(trx, {
@@ -51,7 +58,7 @@ describe('brewery tests', () => {
     })
   })
 
-  it('update brewery country', async () => {
+  test('update brewery country', async () => {
     const brewery = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
         return await breweryRepository.insertBrewery(trx, {
@@ -97,7 +104,7 @@ describe('brewery tests', () => {
     )
   })
 
-  it('reject invalid country in database', async () => {
+  test('reject invalid country in database', async () => {
     async function insert(country: string) {
       await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
         return await breweryRepository.insertBrewery(trx, {
@@ -126,7 +133,7 @@ describe('brewery tests', () => {
     )
   })
 
-  it('reject invalid country on update in database', async () => {
+  test('reject invalid country on update in database', async () => {
     const brewery = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
         return await breweryRepository.insertBrewery(trx, {
@@ -145,7 +152,7 @@ describe('brewery tests', () => {
     }, 'brewery_country_check')
   })
 
-  it('find brewery by id', async () => {
+  test('find brewery by id', async () => {
     const brewery = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
         return await breweryRepository.insertBrewery(trx, {
@@ -161,7 +168,7 @@ describe('brewery tests', () => {
     assertDeepEqual(readBrewery, brewery)
   })
 
-  it('find brewery that does not exist', async () => {
+  test('find brewery that does not exist', async () => {
     const readBrewery = await breweryRepository.findBreweryById(
       ctx.db,
       'a3047606-807c-4550-8b14-8ec13dd03cdb',
@@ -169,7 +176,7 @@ describe('brewery tests', () => {
     assertDeepEqual(readBrewery, undefined)
   })
 
-  it('update brewery', async () => {
+  test('update brewery', async () => {
     const brewery = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
         return await breweryRepository.insertBrewery(trx, {
@@ -192,7 +199,7 @@ describe('brewery tests', () => {
     })
   })
 
-  it('lock only brewery that exists', async () => {
+  test('lock only brewery that exists', async () => {
     const brewery = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
         return await breweryRepository.insertBrewery(trx, {
@@ -211,7 +218,7 @@ describe('brewery tests', () => {
     })
   })
 
-  it('list breweries', async () => {
+  test('list breweries', async () => {
     const brewery = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
         return await breweryRepository.insertBrewery(trx, {
@@ -227,7 +234,7 @@ describe('brewery tests', () => {
     assertDeepEqual(breweries, [brewery])
   })
 
-  it('search breweries', async () => {
+  test('search breweries', async () => {
     const brewery = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
         return await breweryRepository.insertBrewery(trx, {

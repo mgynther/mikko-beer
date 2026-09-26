@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../test.js'
 
 import {
   validateCreateStorageRequest,
@@ -27,17 +27,17 @@ function validUpdateRequest(): UpdateStorageRequest {
   }
 }
 
-describe('storage validation unit tests', () => {
+suite('storage validation unit tests', () => {
   const id = '328ec839-cf21-43b3-8a33-8b69c126eebc'
 
-  it('valid create storage request passes validation', () => {
+  test('valid create storage request passes validation', () => {
     const input = validCreateRequest()
     const output = validCreateRequest()
     assertEqual(validateCreateStorageRequest(input).errorCode, undefined)
     assertDeepEqual(validateCreateStorageRequest(input).result, output)
   })
 
-  it('invalid create storage request fails validation', () => {
+  test('invalid create storage request fails validation', () => {
     const input = { beer: validCreateRequest().beer }
     assertEqual(
       validateCreateStorageRequest(input).errorCode,
@@ -46,7 +46,7 @@ describe('storage validation unit tests', () => {
     assertDeepEqual(validateCreateStorageRequest(input).result, undefined)
   })
 
-  it('valid update storage request passes validation', () => {
+  test('valid update storage request passes validation', () => {
     const input = validUpdateRequest()
     const output = validUpdateRequest()
     const validationResult = validateUpdateStorageRequest(input, id)
@@ -76,7 +76,7 @@ describe('storage validation unit tests', () => {
       assertEqual(result.result, undefined)
     }
 
-    it(title('fail with empty beer'), () => {
+    test(title('fail with empty beer'), () => {
       const storage = {
         ...getValid(),
         beer: '',
@@ -84,7 +84,7 @@ describe('storage validation unit tests', () => {
       fail(storage)
     })
 
-    it(title('fail with invalid beer'), () => {
+    test(title('fail with invalid beer'), () => {
       const storage = {
         ...getValid(),
         beer: {},
@@ -92,12 +92,12 @@ describe('storage validation unit tests', () => {
       fail(storage)
     })
 
-    it(title('fail without beer'), () => {
+    test(title('fail without beer'), () => {
       const { bestBefore, container } = getValid()
       fail({ bestBefore, container })
     })
 
-    it(title('fail with empty best before'), () => {
+    test(title('fail with empty best before'), () => {
       const storage = {
         ...getValid(),
         bestBefore: '',
@@ -105,7 +105,7 @@ describe('storage validation unit tests', () => {
       fail(storage)
     })
 
-    it(title('fail with invalid best before'), () => {
+    test(title('fail with invalid best before'), () => {
       const storage = {
         ...getValid(),
         bestBefore: 123,
@@ -113,7 +113,7 @@ describe('storage validation unit tests', () => {
       fail(storage)
     })
 
-    it(title('fail with malformed best before'), () => {
+    test(title('fail with malformed best before'), () => {
       const storage = {
         ...getValid(),
         bestBefore: '2023-12-08',
@@ -121,12 +121,12 @@ describe('storage validation unit tests', () => {
       fail(storage)
     })
 
-    it(title('fail without best before'), () => {
+    test(title('fail without best before'), () => {
       const { beer, container } = getValid()
       fail({ beer, container })
     })
 
-    it(title('fail with empty container'), () => {
+    test(title('fail with empty container'), () => {
       const storage = {
         ...getValid(),
         container: '',
@@ -134,7 +134,7 @@ describe('storage validation unit tests', () => {
       fail(storage)
     })
 
-    it(title('fail with invalid container'), () => {
+    test(title('fail with invalid container'), () => {
       const storage = {
         ...getValid(),
         container: [null],
@@ -142,12 +142,12 @@ describe('storage validation unit tests', () => {
       fail(storage)
     })
 
-    it(title('fail without container'), () => {
+    test(title('fail without container'), () => {
       const { beer, bestBefore } = getValid()
       fail({ beer, bestBefore })
     })
 
-    it(title('fail with additional property'), () => {
+    test(title('fail with additional property'), () => {
       const storage = {
         ...getValid(),
         additional: 'will fail',
@@ -166,7 +166,7 @@ describe('storage validation unit tests', () => {
   ]
 
   invalidIdCases.forEach((testCase) =>
-    it(`fail update with ${testCase.label} storage id`, () => {
+    test(`fail update with ${testCase.label} storage id`, () => {
       const validationResult = validateUpdateStorageRequest(
         validUpdateRequest(),
         testCase.id,
@@ -176,14 +176,14 @@ describe('storage validation unit tests', () => {
     }),
   )
 
-  it('valid storage id passes validation', () => {
+  test('valid storage id passes validation', () => {
     const validationResult = validateStorageId(id)
     assertEqual(validationResult.errorCode, undefined)
     assertEqual(validationResult.result, id)
   })
 
   invalidIdCases.forEach((testCase) =>
-    it(`invalid storage id "${testCase.label}" fails validation`, () => {
+    test(`invalid storage id "${testCase.label}" fails validation`, () => {
       const validationResult = validateStorageId(testCase.id)
       assertEqual(validationResult.errorCode, 'invalid-storage-id')
       assertEqual(validationResult.result, undefined)

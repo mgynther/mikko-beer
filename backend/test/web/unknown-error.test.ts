@@ -1,11 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import { suite, test, before, beforeEach, after, afterEach } from '../test.js'
 
 import { TestContext } from './test-context.js'
 import { assertDeepEqual, assertEqual } from '../assert.js'
 import type { Level } from '../../src/console/log.js'
 import type { log } from '../../src/console/log.js'
 
-describe('log unknown error', () => {
+suite('log unknown error', () => {
   const errorMessage = 'Failed on purpose'
   const failureLogger: log = (_: Level, ...args: unknown[]) => {
     if (args[0] === 'list breweries') {
@@ -23,7 +23,7 @@ describe('log unknown error', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('log unknown error object when it happens', async () => {
+  test('log unknown error object when it happens', async () => {
     const res = await ctx.request.get(`/api/v1/brewery`, ctx.adminAuthHeaders())
 
     assertEqual(res.status, 500)
@@ -35,7 +35,7 @@ describe('log unknown error', () => {
     })
   })
 
-  it('log unknown error when it happens', async () => {
+  test('log unknown error when it happens', async () => {
     const res = await ctx.request.get(
       `/api/v1/location`,
       ctx.adminAuthHeaders(),

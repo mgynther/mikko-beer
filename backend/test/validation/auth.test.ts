@@ -1,10 +1,10 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../test.js'
 
 import { validateRefreshToken } from '../../src/validation/auth.js'
 import { assertDeepEqual, assertEqual } from '../assert.js'
 
-describe('refresh token validation unit tests', () => {
-  it('valid token passes validation', () => {
+suite('refresh token validation unit tests', () => {
+  test('valid token passes validation', () => {
     const token = {
       refreshToken: 'testing',
     }
@@ -20,30 +20,30 @@ describe('refresh token validation unit tests', () => {
     assertEqual(validationResult.result, undefined)
   }
 
-  it('invalid token missing property', () => {
+  test('invalid token missing property', () => {
     fail({})
   })
 
-  it('invalid token empty property', () => {
+  test('invalid token empty property', () => {
     fail({
       refreshToken: '',
     })
   })
 
-  it('invalid token wrong type property', () => {
+  test('invalid token wrong type property', () => {
     fail({
       refreshToken: 123,
     })
   })
 
-  it('invalid token extra property', () => {
+  test('invalid token extra property', () => {
     fail({
       refreshToken: 'testing',
       property: 'extra',
     })
   })
 
-  it('invalid token undefined', () => {
+  test('invalid token undefined', () => {
     fail(undefined)
   })
 })

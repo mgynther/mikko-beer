@@ -1,9 +1,9 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../test.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
 import { createHandler } from '../../../src/crypto/internal/crypto-handler.js'
 
-describe('crypto handler', () => {
-  it('resolve key without error', (t) => {
+suite('crypto handler', () => {
+  test('resolve key without error', (t) => {
     const mockImpl = () => undefined
     const resolve = t.mock.fn(mockImpl)
     const reject = t.mock.fn(mockImpl)
@@ -18,7 +18,7 @@ describe('crypto handler', () => {
 
   // Node's scrypt passes no key when it fails asynchronously, although its
   // typings declare the key as always present.
-  it('reject with error and no key', (t) => {
+  test('reject with error and no key', (t) => {
     const mockImpl = () => undefined
     const resolve = t.mock.fn(mockImpl)
     const reject = t.mock.fn(mockImpl)

@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
@@ -7,7 +14,7 @@ import type {
   ReadLocation,
 } from '../../../src/web/location/location.controller.js'
 
-describe('location tests', () => {
+suite('location tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -16,7 +23,7 @@ describe('location tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('create a location', async () => {
+  test('create a location', async () => {
     const res = await ctx.request.post<{ location: CreatedOrUpdatedLocation }>(
       `/api/v1/location`,
       { name: 'Oluthuone Panimomestari' },
@@ -58,7 +65,7 @@ describe('location tests', () => {
     assertEqual(badSearchRes.data.locations.length, 0)
   })
 
-  it('update a location', async () => {
+  test('update a location', async () => {
     const res = await ctx.request.post<{ location: CreatedOrUpdatedLocation }>(
       `/api/v1/location`,
       { name: 'Kuja' },
@@ -87,7 +94,7 @@ describe('location tests', () => {
     assertDeepEqual(getRes.data.location, updateRes.data.location)
   })
 
-  it('fail to create a location without name', async () => {
+  test('fail to create a location without name', async () => {
     const res = await ctx.request.post<{ location: CreatedOrUpdatedLocation }>(
       `/api/v1/location`,
       {},
@@ -97,7 +104,7 @@ describe('location tests', () => {
     assertEqual(res.status, 400)
   })
 
-  it('get empty location list', async () => {
+  test('get empty location list', async () => {
     const res = await ctx.request.get<{ locations: ReadLocation[] }>(
       `/api/v1/location`,
       ctx.adminAuthHeaders(),

@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import * as beerService from '../../../../src/logic/internal/beer/validated.service.js'
 
@@ -96,8 +96,8 @@ const failUpdateValidationWithId: ValidateUpdateBeer = () => {
   }
 }
 
-describe('beer validated service unit tests', () => {
-  it('create beer', async () => {
+suite('beer validated service unit tests', () => {
+  test('create beer', async () => {
     await beerService.createBeer(
       createIf,
       passCreateValidation,
@@ -106,7 +106,7 @@ describe('beer validated service unit tests', () => {
     )
   })
 
-  it('fail to create invalid beer', async () => {
+  test('fail to create invalid beer', async () => {
     await expectReject(async () => {
       await beerService.createBeer(
         createIf,
@@ -117,7 +117,7 @@ describe('beer validated service unit tests', () => {
     }, invalidBeerError)
   })
 
-  it('update beer', async () => {
+  test('update beer', async () => {
     await beerService.updateBeer(
       updateIf,
       passUpdateValidation,
@@ -127,7 +127,7 @@ describe('beer validated service unit tests', () => {
     )
   })
 
-  it('fail to update beer with invalid beer', async () => {
+  test('fail to update beer with invalid beer', async () => {
     await expectReject(async () => {
       await beerService.updateBeer(
         updateIf,
@@ -139,7 +139,7 @@ describe('beer validated service unit tests', () => {
     }, invalidBeerError)
   })
 
-  it('fail to update beer with undefined id', async () => {
+  test('fail to update beer with undefined id', async () => {
     await expectReject(async () => {
       await beerService.updateBeer(
         updateIf,
@@ -151,7 +151,7 @@ describe('beer validated service unit tests', () => {
     }, invalidBeerIdError)
   })
 
-  it('find beer by id', async () => {
+  test('find beer by id', async () => {
     const beerWithBreweriesAndStyles = buildBeerWithBreweriesAndStyles()
     const result = await beerService.findBeerById(
       async () => beerWithBreweriesAndStyles,
@@ -166,7 +166,7 @@ describe('beer validated service unit tests', () => {
     throw new Error('not to be called')
   }
 
-  it('fail to find beer by invalid id', async () => {
+  test('fail to find beer by invalid id', async () => {
     await expectReject(async () => {
       await beerService.findBeerById(
         notCalled,
@@ -177,7 +177,7 @@ describe('beer validated service unit tests', () => {
     }, invalidBeerIdError)
   })
 
-  it('search beers', async () => {
+  test('search beers', async () => {
     const beerWithBreweriesAndStyles = buildBeerWithBreweriesAndStyles()
     const result = await beerService.searchBeers(
       async () => [beerWithBreweriesAndStyles],
@@ -188,7 +188,7 @@ describe('beer validated service unit tests', () => {
     assertDeepEqual(result, [beerWithBreweriesAndStyles])
   })
 
-  it('fail to search beers with invalid request', async () => {
+  test('fail to search beers with invalid request', async () => {
     await expectReject(async () => {
       await beerService.searchBeers(
         notCalled,

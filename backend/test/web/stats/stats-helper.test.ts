@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../test.js'
 
 import {
   validateBreweryCountryStatsOrder,
@@ -18,8 +18,8 @@ import {
 import { expectThrow } from '../../logic/controller-error-helper.js'
 import { assertDeepEqual } from '../../assert.js'
 
-describe('stats helper tests', () => {
-  it('return stats id filter', () => {
+suite('stats helper tests', () => {
+  test('return stats id filter', () => {
     const result = validateStatsIdFilter({ brewery: 'testing' })
     assertDeepEqual(result, {
       brewery: 'testing',
@@ -28,14 +28,14 @@ describe('stats helper tests', () => {
     })
   })
 
-  it('throw id filter error for multiple stats id filters', () => {
+  test('throw id filter error for multiple stats id filters', () => {
     expectThrow(
       () => validateStatsIdFilter({ brewery: 'a', style: 'b' }),
       invalidIdFilterError,
     )
   })
 
-  it('return stats filter', () => {
+  test('return stats filter', () => {
     const result = validateStatsFilter({ min_review_count: '4' })
     assertDeepEqual(result, {
       brewery: undefined,
@@ -50,14 +50,14 @@ describe('stats helper tests', () => {
     })
   })
 
-  it('throw id filter error for multiple stats filter ids', () => {
+  test('throw id filter error for multiple stats filter ids', () => {
     expectThrow(
       () => validateStatsFilter({ location: 'a', style: 'b' }),
       invalidIdFilterError,
     )
   })
 
-  it('return brewery stats order', () => {
+  test('return brewery stats order', () => {
     const result = validateBreweryStatsOrder({
       order: 'average',
       direction: 'desc',
@@ -65,14 +65,14 @@ describe('stats helper tests', () => {
     assertDeepEqual(result, { property: 'average', direction: 'desc' })
   })
 
-  it('throw brewery stats query error', () => {
+  test('throw brewery stats query error', () => {
     expectThrow(
       () => validateBreweryStatsOrder({ order: 'invalid' }),
       invalidBreweryStatsQueryError,
     )
   })
 
-  it('return brewery country stats order', () => {
+  test('return brewery country stats order', () => {
     const result = validateBreweryCountryStatsOrder({
       order: 'brewery_count',
       direction: 'desc',
@@ -80,14 +80,14 @@ describe('stats helper tests', () => {
     assertDeepEqual(result, { property: 'brewery_count', direction: 'desc' })
   })
 
-  it('throw brewery country stats query error', () => {
+  test('throw brewery country stats query error', () => {
     expectThrow(
       () => validateBreweryCountryStatsOrder({ order: 'invalid' }),
       invalidBreweryCountryStatsQueryError,
     )
   })
 
-  it('return location stats order', () => {
+  test('return location stats order', () => {
     const result = validateLocationStatsOrder({
       order: 'count',
       direction: 'asc',
@@ -95,14 +95,14 @@ describe('stats helper tests', () => {
     assertDeepEqual(result, { property: 'count', direction: 'asc' })
   })
 
-  it('throw location stats query error', () => {
+  test('throw location stats query error', () => {
     expectThrow(
       () => validateLocationStatsOrder({ order: 'invalid' }),
       invalidLocationStatsQueryError,
     )
   })
 
-  it('return style stats order', () => {
+  test('return style stats order', () => {
     const result = validateStyleStatsOrder({
       order: 'std_dev',
       direction: 'desc',
@@ -110,7 +110,7 @@ describe('stats helper tests', () => {
     assertDeepEqual(result, { property: 'std_dev', direction: 'desc' })
   })
 
-  it('throw style stats query error', () => {
+  test('throw style stats query error', () => {
     expectThrow(
       () => validateStyleStatsOrder({ order: 'invalid' }),
       invalidStyleStatsQueryError,

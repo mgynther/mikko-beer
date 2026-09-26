@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import type { Database, Transaction } from '../../../src/data/database.js'
@@ -152,7 +159,7 @@ function oluthuoneStats(oluthuone: ReviewedLocation) {
   }
 }
 
-describe('location stats tests', () => {
+suite('location stats tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -181,13 +188,13 @@ describe('location stats tests', () => {
   ]
 
   orderProperties.forEach((property) => {
-    it(`by ${property} asc`, async () => {
+    test(`by ${property} asc`, async () => {
       const { kuja, oluthuone } = await insertLocations(ctx.db)
       const stats = await getLocation(noFilter, { property, direction: 'asc' })
       assertDeepEqual(stats, [kujaStats(kuja), oluthuoneStats(oluthuone)])
     })
 
-    it(`by ${property} desc`, async () => {
+    test(`by ${property} desc`, async () => {
       const { kuja, oluthuone } = await insertLocations(ctx.db)
       const stats = await getLocation(noFilter, { property, direction: 'desc' })
       assertDeepEqual(stats, [oluthuoneStats(oluthuone), kujaStats(kuja)])
@@ -199,7 +206,7 @@ describe('location stats tests', () => {
     direction: 'asc',
   }
 
-  it('filter by brewery', async () => {
+  test('filter by brewery', async () => {
     const { kuja } = await insertLocations(ctx.db)
     const stats = await getLocation(
       { ...noFilter, brewery: kuja.brewery.id },
@@ -208,7 +215,7 @@ describe('location stats tests', () => {
     assertDeepEqual(stats, [kujaStats(kuja)])
   })
 
-  it('filter by location', async () => {
+  test('filter by location', async () => {
     const { oluthuone } = await insertLocations(ctx.db)
     const stats = await getLocation(
       { ...noFilter, location: oluthuone.location.id },
@@ -217,7 +224,7 @@ describe('location stats tests', () => {
     assertDeepEqual(stats, [oluthuoneStats(oluthuone)])
   })
 
-  it('filter by style', async () => {
+  test('filter by style', async () => {
     const { kuja } = await insertLocations(ctx.db)
     const stats = await getLocation(
       { ...noFilter, style: kuja.style.id },
@@ -226,19 +233,19 @@ describe('location stats tests', () => {
     assertDeepEqual(stats, [kujaStats(kuja)])
   })
 
-  it('filter by min review count', async () => {
+  test('filter by min review count', async () => {
     const { oluthuone } = await insertLocations(ctx.db)
     const stats = await getLocation({ ...noFilter, minReviewCount: 3 }, byName)
     assertDeepEqual(stats, [oluthuoneStats(oluthuone)])
   })
 
-  it('filter by max review count', async () => {
+  test('filter by max review count', async () => {
     const { kuja } = await insertLocations(ctx.db)
     const stats = await getLocation({ ...noFilter, maxReviewCount: 2 }, byName)
     assertDeepEqual(stats, [kujaStats(kuja)])
   })
 
-  it('filter by min review average', async () => {
+  test('filter by min review average', async () => {
     const { oluthuone } = await insertLocations(ctx.db)
     const stats = await getLocation(
       { ...noFilter, minReviewAverage: 6.5 },
@@ -247,7 +254,7 @@ describe('location stats tests', () => {
     assertDeepEqual(stats, [oluthuoneStats(oluthuone)])
   })
 
-  it('filter by max review average', async () => {
+  test('filter by max review average', async () => {
     const { kuja } = await insertLocations(ctx.db)
     const stats = await getLocation(
       { ...noFilter, maxReviewAverage: 6.5 },
@@ -256,7 +263,7 @@ describe('location stats tests', () => {
     assertDeepEqual(stats, [kujaStats(kuja)])
   })
 
-  it('filter by start time', async () => {
+  test('filter by start time', async () => {
     const { kuja } = await insertLocations(ctx.db)
     const stats = await getLocation(
       { ...noFilter, timeStart: new Date('2024-01-01T00:00:00.000Z') },
@@ -265,7 +272,7 @@ describe('location stats tests', () => {
     assertDeepEqual(stats, [kujaStats(kuja)])
   })
 
-  it('filter by end time', async () => {
+  test('filter by end time', async () => {
     const { oluthuone } = await insertLocations(ctx.db)
     const stats = await getLocation(
       { ...noFilter, timeEnd: new Date('2024-01-01T00:00:00.000Z') },

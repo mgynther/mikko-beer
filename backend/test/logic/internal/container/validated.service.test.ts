@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import * as containerService from '../../../../src/logic/internal/container/validated.service.js'
 
@@ -81,8 +81,8 @@ const failUpdateValidationWithId: ValidateUpdateContainer = () => {
   }
 }
 
-describe('container validated service unit tests', () => {
-  it('create container', async () => {
+suite('container validated service unit tests', () => {
+  test('create container', async () => {
     await containerService.createContainer(
       create,
       passCreateValidation,
@@ -91,7 +91,7 @@ describe('container validated service unit tests', () => {
     )
   })
 
-  it('fail to create invalid container', async () => {
+  test('fail to create invalid container', async () => {
     await expectReject(async () => {
       await containerService.createContainer(
         create,
@@ -102,7 +102,7 @@ describe('container validated service unit tests', () => {
     }, invalidContainerError)
   })
 
-  it('update container', async () => {
+  test('update container', async () => {
     await containerService.updateContainer(
       update,
       passUpdateValidation,
@@ -112,7 +112,7 @@ describe('container validated service unit tests', () => {
     )
   })
 
-  it('fail to update container with invalid container', async () => {
+  test('fail to update container with invalid container', async () => {
     await expectReject(async () => {
       await containerService.updateContainer(
         update,
@@ -124,7 +124,7 @@ describe('container validated service unit tests', () => {
     }, invalidContainerError)
   })
 
-  it('fail to update container with undefined id', async () => {
+  test('fail to update container with undefined id', async () => {
     await expectReject(async () => {
       await containerService.updateContainer(
         update,
@@ -136,7 +136,7 @@ describe('container validated service unit tests', () => {
     }, invalidContainerIdError)
   })
 
-  it('find container by id', async () => {
+  test('find container by id', async () => {
     const found = buildContainer()
     const result = await containerService.findContainerById(
       async () => found,
@@ -151,7 +151,7 @@ describe('container validated service unit tests', () => {
     throw new Error('not to be called')
   }
 
-  it('fail to find container by invalid id', async () => {
+  test('fail to find container by invalid id', async () => {
     await expectReject(async () => {
       await containerService.findContainerById(
         notCalled,

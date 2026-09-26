@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
@@ -7,7 +14,7 @@ import type {
   ReadBrewery,
 } from '../../../src/web/brewery/brewery.controller.js'
 
-describe('brewery tests', () => {
+suite('brewery tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -16,7 +23,7 @@ describe('brewery tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('create a brewery', async () => {
+  test('create a brewery', async () => {
     const res = await ctx.request.post<{ brewery: CreatedOrUpdatedBrewery }>(
       `/api/v1/brewery`,
       { name: 'Koskipanimo' },
@@ -58,7 +65,7 @@ describe('brewery tests', () => {
     assertEqual(badSearchRes.data.breweries.length, 0)
   })
 
-  it('update a brewery', async () => {
+  test('update a brewery', async () => {
     const res = await ctx.request.post<{ brewery: CreatedOrUpdatedBrewery }>(
       `/api/v1/brewery`,
       { name: 'Salami Brewing' },
@@ -87,7 +94,7 @@ describe('brewery tests', () => {
     assertDeepEqual(getRes.data.brewery, updateRes.data.brewery)
   })
 
-  it('create a brewery with country', async () => {
+  test('create a brewery with country', async () => {
     const res = await ctx.request.post<{ brewery: CreatedOrUpdatedBrewery }>(
       `/api/v1/brewery`,
       { name: 'Koskipanimo', country: 'FI' },
@@ -120,7 +127,7 @@ describe('brewery tests', () => {
     assertDeepEqual(searchRes.data.breweries, [res.data.brewery])
   })
 
-  it('brewery without country has no country property', async () => {
+  test('brewery without country has no country property', async () => {
     const res = await ctx.request.post<{ brewery: CreatedOrUpdatedBrewery }>(
       `/api/v1/brewery`,
       { name: 'Koskipanimo' },
@@ -138,7 +145,7 @@ describe('brewery tests', () => {
     assertEqual(Object.hasOwn(getRes.data.brewery, 'country'), false)
   })
 
-  it('update brewery country', async () => {
+  test('update brewery country', async () => {
     const res = await ctx.request.post<{ brewery: CreatedOrUpdatedBrewery }>(
       `/api/v1/brewery`,
       { name: 'Koskipanimo', country: 'FI' },
@@ -175,7 +182,7 @@ describe('brewery tests', () => {
     assertDeepEqual(getRes.data.brewery, clearRes.data.brewery)
   })
 
-  it('fail to create a brewery with invalid country', async () => {
+  test('fail to create a brewery with invalid country', async () => {
     const res = await ctx.request.post<{
       brewery: CreatedOrUpdatedBrewery
     }>(
@@ -186,7 +193,7 @@ describe('brewery tests', () => {
     assertEqual(res.status, 400)
   })
 
-  it('fail to create a brewery without name', async () => {
+  test('fail to create a brewery without name', async () => {
     const res = await ctx.request.post<{ brewery: CreatedOrUpdatedBrewery }>(
       `/api/v1/brewery`,
       {},
@@ -196,7 +203,7 @@ describe('brewery tests', () => {
     assertEqual(res.status, 400)
   })
 
-  it('get empty brewery list', async () => {
+  test('get empty brewery list', async () => {
     const res = await ctx.request.get<{ breweries: ReadBrewery[] }>(
       `/api/v1/brewery`,
       ctx.adminAuthHeaders(),
@@ -206,7 +213,7 @@ describe('brewery tests', () => {
     assertEqual(res.data.breweries.length, 0)
   })
 
-  it('fail on duplicate search parameter', async () => {
+  test('fail on duplicate search parameter', async () => {
     const res = await ctx.request.get<{ breweries: ReadBrewery[] }>(
       `/api/v1/brewery?size=10&size=11`,
       ctx.adminAuthHeaders(),

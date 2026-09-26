@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import type {
   Brewery,
@@ -17,8 +17,8 @@ import { buildBrewery } from '../../brewery/builders.js'
 
 const brewery = buildBrewery()
 
-describe('brewery service unit tests', () => {
-  it('create brewery', async () => {
+suite('brewery service unit tests', () => {
+  test('create brewery', async () => {
     const request: CreateBreweryRequest = {
       name: brewery.name,
       country: undefined,
@@ -40,7 +40,7 @@ describe('brewery service unit tests', () => {
     })
   })
 
-  it('create brewery with country', async () => {
+  test('create brewery with country', async () => {
     const request: CreateBreweryRequest = {
       name: brewery.name,
       country: 'FI',
@@ -61,7 +61,7 @@ describe('brewery service unit tests', () => {
     })
   })
 
-  it('update brewery', async () => {
+  test('update brewery', async () => {
     const request: UpdateBreweryRequest = {
       name: brewery.name,
       country: undefined,
@@ -88,7 +88,7 @@ describe('brewery service unit tests', () => {
     })
   })
 
-  it('update brewery country', async () => {
+  test('update brewery country', async () => {
     const request: UpdateBreweryRequest = {
       name: brewery.name,
       country: 'FI',
@@ -118,7 +118,7 @@ describe('brewery service unit tests', () => {
     })
   })
 
-  it('find brewery', async () => {
+  test('find brewery', async () => {
     const finder = async (breweryId: string) => {
       assertEqual(breweryId, brewery.id)
       return brewery
@@ -127,7 +127,7 @@ describe('brewery service unit tests', () => {
     assertDeepEqual(result, brewery)
   })
 
-  it('fail to find brewery with unknown id', async () => {
+  test('fail to find brewery with unknown id', async () => {
     const id = '2f15e28b-ccbf-4afa-aa05-25f43b1e548b'
     const finder = async (searchId: string) => {
       assertEqual(searchId, id)
@@ -138,7 +138,7 @@ describe('brewery service unit tests', () => {
     }, breweryNotFoundError(id))
   })
 
-  it('list brewerys', async () => {
+  test('list brewerys', async () => {
     const pagination: Pagination = {
       size: 10,
       skip: 80,
@@ -151,7 +151,7 @@ describe('brewery service unit tests', () => {
     assertDeepEqual(result, [brewery])
   })
 
-  it('search brewerys', async () => {
+  test('search brewerys', async () => {
     const searchByName: SearchByName = {
       name: 'Sipe',
     }

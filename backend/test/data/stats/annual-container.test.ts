@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import type { Database, Transaction } from '../../../src/data/database.js'
@@ -199,7 +206,7 @@ function can2023(containers: Containers) {
   }
 }
 
-describe('annual container stats tests', () => {
+suite('annual container stats tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -208,7 +215,7 @@ describe('annual container stats tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('no filters', async () => {
+  test('no filters', async () => {
     const { containers } = await insertBeers(ctx.db)
     const stats = await annualContainerStatsRepository.getAnnualContainer(
       ctx.db,
@@ -222,7 +229,7 @@ describe('annual container stats tests', () => {
     ])
   })
 
-  it('no filters with pagination size', async () => {
+  test('no filters with pagination size', async () => {
     const { containers } = await insertBeers(ctx.db)
     const stats = await annualContainerStatsRepository.getAnnualContainer(
       ctx.db,
@@ -232,7 +239,7 @@ describe('annual container stats tests', () => {
     assertDeepEqual(stats, [bottle2024(containers)])
   })
 
-  it('no filters with pagination skip', async () => {
+  test('no filters with pagination skip', async () => {
     const { containers } = await insertBeers(ctx.db)
     const stats = await annualContainerStatsRepository.getAnnualContainer(
       ctx.db,
@@ -242,7 +249,7 @@ describe('annual container stats tests', () => {
     assertDeepEqual(stats, [bottle2023(containers)])
   })
 
-  it('filter by brewery', async () => {
+  test('filter by brewery', async () => {
     const { containers, kriek } = await insertBeers(ctx.db)
     const stats = await annualContainerStatsRepository.getAnnualContainer(
       ctx.db,
@@ -252,7 +259,7 @@ describe('annual container stats tests', () => {
     assertDeepEqual(stats, [bottle2024(containers)])
   })
 
-  it('filter by location', async () => {
+  test('filter by location', async () => {
     const { containers, kriek } = await insertBeers(ctx.db)
     const stats = await annualContainerStatsRepository.getAnnualContainer(
       ctx.db,
@@ -262,7 +269,7 @@ describe('annual container stats tests', () => {
     assertDeepEqual(stats, [bottle2024(containers)])
   })
 
-  it('filter by style', async () => {
+  test('filter by style', async () => {
     const { containers, ipa } = await insertBeers(ctx.db)
     const stats = await annualContainerStatsRepository.getAnnualContainer(
       ctx.db,

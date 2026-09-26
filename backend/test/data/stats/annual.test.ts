@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import type { Database, Transaction } from '../../../src/data/database.js'
@@ -135,7 +142,7 @@ const stats2023 = {
   year: '2023',
 }
 
-describe('annual stats tests', () => {
+suite('annual stats tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -144,18 +151,18 @@ describe('annual stats tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('no filters', async () => {
+  test('no filters', async () => {
     await insertBeers(ctx.db)
     const stats = await annualStatsRepository.getAnnual(ctx.db, noFilter)
     assertDeepEqual(stats, [stats2024, stats2023])
   })
 
-  it('no filters & no reviews', async () => {
+  test('no filters & no reviews', async () => {
     const stats = await annualStatsRepository.getAnnual(ctx.db, noFilter)
     assertDeepEqual(stats, [])
   })
 
-  it('filter by brewery', async () => {
+  test('filter by brewery', async () => {
     const { kriek } = await insertBeers(ctx.db)
     const stats = await annualStatsRepository.getAnnual(ctx.db, {
       ...noFilter,
@@ -164,7 +171,7 @@ describe('annual stats tests', () => {
     assertDeepEqual(stats, [stats2024])
   })
 
-  it('filter by brewery, location & style', async () => {
+  test('filter by brewery, location & style', async () => {
     const { kriek } = await insertBeers(ctx.db)
     const stats = await annualStatsRepository.getAnnual(ctx.db, {
       brewery: kriek.brewery.id,
@@ -174,7 +181,7 @@ describe('annual stats tests', () => {
     assertDeepEqual(stats, [stats2024])
   })
 
-  it('filter by location', async () => {
+  test('filter by location', async () => {
     const { kriek } = await insertBeers(ctx.db)
     const stats = await annualStatsRepository.getAnnual(ctx.db, {
       ...noFilter,
@@ -183,7 +190,7 @@ describe('annual stats tests', () => {
     assertDeepEqual(stats, [stats2024])
   })
 
-  it('filter by style', async () => {
+  test('filter by style', async () => {
     const { ipa } = await insertBeers(ctx.db)
     const stats = await annualStatsRepository.getAnnual(ctx.db, {
       ...noFilter,

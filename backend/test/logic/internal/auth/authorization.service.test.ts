@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import type { DbRefreshToken } from '../../../../src/logic/auth/refresh-token.js'
 import * as authorizationService from '../../../../src/logic/internal/auth/authorization.service.js'
@@ -63,30 +63,30 @@ async function createAuthTokenPayload(user: User): Promise<AuthTokenPayload> {
   }
 }
 
-describe('authorization service unit tests', () => {
-  it('authorize admin', async () => {
+suite('authorization service unit tests', () => {
+  test('authorize admin', async () => {
     const payload = await createAuthTokenPayload(admin)
     authorizationService.authorizeAdmin(payload)
   })
 
-  it('fail to authorize admin as viewer', async () => {
+  test('fail to authorize admin as viewer', async () => {
     const payload = await createAuthTokenPayload(viewer)
     expectThrow(() => {
       authorizationService.authorizeAdmin(payload)
     }, noRightsError)
   })
 
-  it('authorize viewer', async () => {
+  test('authorize viewer', async () => {
     const payload = await createAuthTokenPayload(viewer)
     authorizationService.authorizeViewer(payload)
   })
 
-  it('authorize viewer as admin', async () => {
+  test('authorize viewer as admin', async () => {
     const payload = await createAuthTokenPayload(admin)
     authorizationService.authorizeViewer(payload)
   })
 
-  it('fail to authorize user without user id', async () => {
+  test('fail to authorize user without user id', async () => {
     const authTokenPayload = await createAuthTokenPayload(admin)
     await expectReject(async () => {
       await authorizationService.authorizeUser(
@@ -97,7 +97,7 @@ describe('authorization service unit tests', () => {
     }, noUserIdParameterError)
   })
 
-  it('authorize self user as admin', async () => {
+  test('authorize self user as admin', async () => {
     const authTokenPayload = await createAuthTokenPayload(admin)
     await authorizationService.authorizeUser(
       admin.id,
@@ -106,7 +106,7 @@ describe('authorization service unit tests', () => {
     )
   })
 
-  it('authorize other admin user as admin', async () => {
+  test('authorize other admin user as admin', async () => {
     const authTokenPayload = await createAuthTokenPayload(admin)
     await authorizationService.authorizeUser(
       otherAdmin.id,
@@ -115,7 +115,7 @@ describe('authorization service unit tests', () => {
     )
   })
 
-  it('authorize viewer user as admin', async () => {
+  test('authorize viewer user as admin', async () => {
     const authTokenPayload = await createAuthTokenPayload(admin)
     await authorizationService.authorizeUser(
       viewer.id,
@@ -124,7 +124,7 @@ describe('authorization service unit tests', () => {
     )
   })
 
-  it('authorize self user as viewer', async () => {
+  test('authorize self user as viewer', async () => {
     const authTokenPayload = await createAuthTokenPayload(viewer)
     await authorizationService.authorizeUser(
       viewer.id,
@@ -133,7 +133,7 @@ describe('authorization service unit tests', () => {
     )
   })
 
-  it('fail to authorize admin user as viewer', async () => {
+  test('fail to authorize admin user as viewer', async () => {
     const authTokenPayload = await createAuthTokenPayload(viewer)
     await expectReject(async () => {
       await authorizationService.authorizeUser(
@@ -144,7 +144,7 @@ describe('authorization service unit tests', () => {
     }, userMismatchError)
   })
 
-  it('fail to authorize other viewer user as viewer', async () => {
+  test('fail to authorize other viewer user as viewer', async () => {
     const authTokenPayload = await createAuthTokenPayload(viewer)
     await expectReject(async () => {
       await authorizationService.authorizeUser(
@@ -155,7 +155,7 @@ describe('authorization service unit tests', () => {
     }, userMismatchError)
   })
 
-  it('fail to authorize viewer when refresh token not found', async () => {
+  test('fail to authorize viewer when refresh token not found', async () => {
     const authTokenPayload = await createAuthTokenPayload(viewer)
     await expectReject(async () => {
       await authorizationService.authorizeUser(

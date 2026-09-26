@@ -1,4 +1,4 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import { suite, test, before, beforeEach, after, afterEach } from '../test.js'
 
 import { sql } from 'kysely'
 
@@ -7,7 +7,7 @@ import { assertDeepEqual } from '../assert.js'
 
 // pg_index.indkey is an int2vector, which indexes from 0. Slicing it gives an
 // ordinary array indexed from 1, comparable with pg_constraint.conkey.
-describe('schema indexes', () => {
+suite('schema indexes', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -16,7 +16,7 @@ describe('schema indexes', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('every foreign key leads an index', async () => {
+  test('every foreign key leads an index', async () => {
     const { rows } = await sql<{ name: string }>`
       select c.conname as name
       from pg_constraint c
@@ -41,7 +41,7 @@ describe('schema indexes', () => {
 
   // A unique index enforces something even when another index covers its
   // columns, so only non-unique ones can be redundant.
-  it('no index repeats the leading columns of another', async () => {
+  test('no index repeats the leading columns of another', async () => {
     const { rows } = await sql<{ name: string }>`
       select distinct ic.relname as name
       from pg_index i

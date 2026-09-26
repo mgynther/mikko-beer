@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../test.js'
 
 import {
   validateBreweryCountryStatsOrder,
@@ -17,7 +17,7 @@ const noFilter = {
   style: undefined,
 }
 
-describe('stats id filter validation unit tests', () => {
+suite('stats id filter validation unit tests', () => {
   function pass(query: Record<string, unknown> | undefined, output: object) {
     const validationResult = validateStatsIdFilter(query)
     assertEqual(validationResult.errorCode, undefined)
@@ -30,15 +30,15 @@ describe('stats id filter validation unit tests', () => {
     assertEqual(validationResult.result, undefined)
   }
 
-  it('validate undefined filter', () => {
+  test('validate undefined filter', () => {
     pass(undefined, noFilter)
   })
 
-  it('validate empty filter', () => {
+  test('validate empty filter', () => {
     pass({}, noFilter)
   })
 
-  it('validate brewery filter', () => {
+  test('validate brewery filter', () => {
     pass(
       { brewery: 'testing' },
       {
@@ -49,7 +49,7 @@ describe('stats id filter validation unit tests', () => {
     )
   })
 
-  it('validate location filter', () => {
+  test('validate location filter', () => {
     pass(
       { location: 'testing' },
       {
@@ -60,7 +60,7 @@ describe('stats id filter validation unit tests', () => {
     )
   })
 
-  it('validate style filter', () => {
+  test('validate style filter', () => {
     pass(
       { style: 'testing' },
       {
@@ -85,35 +85,35 @@ describe('stats id filter validation unit tests', () => {
   ]
 
   multipleIdFilterCases.forEach((testCase) => {
-    it(`validate multiple id filter cases brewery: ${
+    test(`validate multiple id filter cases brewery: ${
       testCase.brewery
     } location: ${testCase.location} style: ${testCase.style}`, () => {
       fail({ ...testCase })
     })
   })
 
-  it('validate invalid brewery filter', () => {
+  test('validate invalid brewery filter', () => {
     pass({ brewery: 123 }, noFilter)
   })
 
-  it('validate empty brewery filter', () => {
+  test('validate empty brewery filter', () => {
     pass({ brewery: '' }, noFilter)
   })
 
-  it('validate empty location filter', () => {
+  test('validate empty location filter', () => {
     pass({ location: '' }, noFilter)
   })
 
-  it('validate empty style filter', () => {
+  test('validate empty style filter', () => {
     pass({ style: '' }, noFilter)
   })
 
-  it('validate unknown filter', () => {
+  test('validate unknown filter', () => {
     pass({ additional: 'testing' }, noFilter)
   })
 })
 
-describe('stats filter validation unit tests', () => {
+suite('stats filter validation unit tests', () => {
   const defaultFilter: StatsFilter = {
     brewery: undefined,
     location: undefined,
@@ -132,15 +132,15 @@ describe('stats filter validation unit tests', () => {
     assertDeepEqual(validationResult.result, output)
   }
 
-  it('validate undefined filter', () => {
+  test('validate undefined filter', () => {
     pass(undefined, defaultFilter)
   })
 
-  it('validate empty filter', () => {
+  test('validate empty filter', () => {
     pass({}, defaultFilter)
   })
 
-  it('validate valid filter', () => {
+  test('validate valid filter', () => {
     pass(
       {
         brewery: 'testing',
@@ -164,7 +164,7 @@ describe('stats filter validation unit tests', () => {
     )
   })
 
-  it('fail with multiple id filters', () => {
+  test('fail with multiple id filters', () => {
     const validationResult = validateStatsFilter({
       brewery: 'testing',
       style: 'testing',
@@ -173,7 +173,7 @@ describe('stats filter validation unit tests', () => {
     assertEqual(validationResult.result, undefined)
   })
 
-  it('validate invalid min review count', () => {
+  test('validate invalid min review count', () => {
     pass(
       { brewery: 'testing', min_review_count: 'test' },
       {
@@ -183,7 +183,7 @@ describe('stats filter validation unit tests', () => {
     )
   })
 
-  it('validate too small min review count', () => {
+  test('validate too small min review count', () => {
     pass(
       { brewery: 'testing', min_review_count: '-1' },
       {
@@ -193,39 +193,39 @@ describe('stats filter validation unit tests', () => {
     )
   })
 
-  it('validate empty min review count', () => {
+  test('validate empty min review count', () => {
     pass({ min_review_count: '' }, defaultFilter)
   })
 
-  it('validate too small min review average', () => {
+  test('validate too small min review average', () => {
     pass({ min_review_average: '3' }, defaultFilter)
   })
 
-  it('validate too large max review average', () => {
+  test('validate too large max review average', () => {
     pass({ max_review_average: '11' }, defaultFilter)
   })
 
-  it('validate invalid max review average', () => {
+  test('validate invalid max review average', () => {
     pass({ max_review_average: 'test' }, defaultFilter)
   })
 
-  it('validate non-string max review count', () => {
+  test('validate non-string max review count', () => {
     pass({ max_review_count: 100 }, defaultFilter)
   })
 
-  it('validate invalid brewery filter', () => {
+  test('validate invalid brewery filter', () => {
     pass({ brewery: 123 }, defaultFilter)
   })
 
-  it('validate invalid start time filter', () => {
+  test('validate invalid start time filter', () => {
     pass({ time_start: 'abc' }, defaultFilter)
   })
 
-  it('validate invalid end time filter', () => {
+  test('validate invalid end time filter', () => {
     pass({ time_end: '-123' }, defaultFilter)
   })
 
-  it('validate unknown filter', () => {
+  test('validate unknown filter', () => {
     pass({ additional: 'testing' }, defaultFilter)
   })
 })
@@ -276,7 +276,7 @@ statsOrderCases.forEach((statsOrderCase) => {
   const { title, func, errorCode, defaultProperty, namedProperty } =
     statsOrderCase
 
-  describe(`${title} stats order validation unit tests`, () => {
+  suite(`${title} stats order validation unit tests`, () => {
     function pass(query: Record<string, unknown>, output: object) {
       const validationResult = func(query)
       assertEqual(validationResult.errorCode, undefined)
@@ -289,11 +289,11 @@ statsOrderCases.forEach((statsOrderCase) => {
       assertEqual(validationResult.result, undefined)
     }
 
-    it('validate empty order', () => {
+    test('validate empty order', () => {
       pass({}, { property: defaultProperty, direction: 'asc' })
     })
 
-    it('validate empty string order and direction', () => {
+    test('validate empty string order and direction', () => {
       pass(
         { order: '', direction: '' },
         {
@@ -303,7 +303,7 @@ statsOrderCases.forEach((statsOrderCase) => {
       )
     })
 
-    it('validate average desc order', () => {
+    test('validate average desc order', () => {
       pass(
         { order: 'average', direction: 'desc' },
         {
@@ -313,7 +313,7 @@ statsOrderCases.forEach((statsOrderCase) => {
       )
     })
 
-    it('validate named property desc order', () => {
+    test('validate named property desc order', () => {
       pass(
         { order: namedProperty, direction: 'desc' },
         {
@@ -323,7 +323,7 @@ statsOrderCases.forEach((statsOrderCase) => {
       )
     })
 
-    it('validate count asc order', () => {
+    test('validate count asc order', () => {
       pass(
         { order: 'count', direction: 'asc' },
         {
@@ -333,7 +333,7 @@ statsOrderCases.forEach((statsOrderCase) => {
       )
     })
 
-    it('validate std dev desc order', () => {
+    test('validate std dev desc order', () => {
       pass(
         { order: 'std_dev', direction: 'desc' },
         {
@@ -343,19 +343,19 @@ statsOrderCases.forEach((statsOrderCase) => {
       )
     })
 
-    it('validate invalid order', () => {
+    test('validate invalid order', () => {
       fail({ order: 'invalid', direction: 'asc' })
     })
 
-    it('validate invalid direction', () => {
+    test('validate invalid direction', () => {
       fail({ order: 'average', direction: 'invalid' })
     })
 
-    it('validate invalid order type', () => {
+    test('validate invalid order type', () => {
       fail({ order: 123, direction: 'asc' })
     })
 
-    it('validate invalid direction type', () => {
+    test('validate invalid direction type', () => {
       fail({ order: 'average', direction: [] })
     })
   })
@@ -363,8 +363,8 @@ statsOrderCases.forEach((statsOrderCase) => {
 
 // brewery_count is the one order property no other stats dimension has, so
 // the shared cases above do not reach it.
-describe('brewery country stats order validation unit tests', () => {
-  it('validate brewery count asc order', () => {
+suite('brewery country stats order validation unit tests', () => {
+  test('validate brewery count asc order', () => {
     const validationResult = validateBreweryCountryStatsOrder({
       order: 'brewery_count',
       direction: 'asc',
@@ -376,7 +376,7 @@ describe('brewery country stats order validation unit tests', () => {
     })
   })
 
-  it('validate brewery count desc order', () => {
+  test('validate brewery count desc order', () => {
     const validationResult = validateBreweryCountryStatsOrder({
       order: 'brewery_count',
       direction: 'desc',
@@ -388,7 +388,7 @@ describe('brewery country stats order validation unit tests', () => {
     })
   })
 
-  it('do not validate a brewery name order', () => {
+  test('do not validate a brewery name order', () => {
     const validationResult = validateBreweryCountryStatsOrder({
       order: 'brewery_name',
       direction: 'asc',

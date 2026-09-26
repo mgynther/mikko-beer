@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import type { Database, Transaction } from '../../../src/data/database.js'
@@ -176,7 +183,7 @@ function title(
   return `${listing}${filtered}, ${order.property} ${order.direction}`
 }
 
-describe('review tests', () => {
+suite('review tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -185,7 +192,7 @@ describe('review tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('insert a review', async () => {
+  test('insert a review', async () => {
     await ctx.db.executeReadWriteTransaction(async (trx) => {
       const [beer, container, location] = await Promise.all([
         beerRepository.insertBeer(trx, buildNewBeer()),
@@ -250,7 +257,7 @@ describe('review tests', () => {
   ]
 
   listCases.forEach((listCase) =>
-    it(title('list reviews', listCase), async () => {
+    test(title('list reviews', listCase), async () => {
       const { reviews } = await insertScenario(ctx.db)
       const list = await reviewRepository.listReviews(
         ctx.db,
@@ -301,7 +308,7 @@ describe('review tests', () => {
   ]
 
   byBeerCases.forEach((listCase) =>
-    it(title('list reviews by IPA', listCase), async () => {
+    test(title('list reviews by IPA', listCase), async () => {
       const { reviews, ipa } = await insertScenario(ctx.db)
       const list = await reviewRepository.listReviewsByBeer(ctx.db, ipa.id, {
         filter: { ...noFilter, ...listCase.filter },
@@ -350,7 +357,7 @@ describe('review tests', () => {
   ]
 
   byBreweryCases.forEach((listCase) =>
-    it(title('list reviews by Lindemans', listCase), async () => {
+    test(title('list reviews by Lindemans', listCase), async () => {
       const { reviews, lindemans } = await insertScenario(ctx.db)
       const list = await reviewRepository.listReviewsByBrewery(
         ctx.db,
@@ -405,7 +412,7 @@ describe('review tests', () => {
   ]
 
   byLocationCases.forEach((listCase) =>
-    it(title('list reviews by Kuja', listCase), async () => {
+    test(title('list reviews by Kuja', listCase), async () => {
       const { reviews, kuja } = await insertScenario(ctx.db)
       const list = await reviewRepository.listReviewsByLocation(
         ctx.db,
@@ -455,7 +462,7 @@ describe('review tests', () => {
   ]
 
   byStyleCases.forEach((listCase) =>
-    it(title('list reviews by Lambic', listCase), async () => {
+    test(title('list reviews by Lambic', listCase), async () => {
       const { reviews, lambic } = await insertScenario(ctx.db)
       const list = await reviewRepository.listReviewsByStyle(
         ctx.db,

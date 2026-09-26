@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../test.js'
 
 import {
   validateCreateAnonymousUserRequest,
@@ -14,7 +14,7 @@ import type {
 } from '../../src/validation/user.js'
 import { assertDeepEqual, assertEqual } from '../assert.js'
 
-describe('create anonymous user validation unit tests', () => {
+suite('create anonymous user validation unit tests', () => {
   function pass(user: CreateAnonymousUserRequest) {
     const input = { ...user }
     const output = { ...user }
@@ -29,32 +29,32 @@ describe('create anonymous user validation unit tests', () => {
     assertEqual(validationResult.result, undefined)
   }
 
-  it('pass as admin', () => {
+  test('pass as admin', () => {
     pass({ role: 'admin' })
   })
 
-  it('pass as viewer', () => {
+  test('pass as viewer', () => {
     pass({ role: 'viewer' })
   })
 
-  it('fail as unknown role', () => {
+  test('fail as unknown role', () => {
     fail({ role: 'unknown' })
   })
 
-  it('fail as invalid role', () => {
+  test('fail as invalid role', () => {
     fail({ role: 123 })
   })
 
-  it('fail without role', () => {
+  test('fail without role', () => {
     fail({})
   })
 
-  it('fail with additional property', () => {
+  test('fail with additional property', () => {
     fail({ role: 'admin', additional: true })
   })
 })
 
-describe('create user validation unit tests', () => {
+suite('create user validation unit tests', () => {
   const validRequest = {
     user: {
       role: 'admin',
@@ -65,7 +65,7 @@ describe('create user validation unit tests', () => {
     },
   }
 
-  it('pass with valid request', () => {
+  test('pass with valid request', () => {
     const expected = {
       role: 'admin',
       passwordSignInMethod: {
@@ -77,7 +77,7 @@ describe('create user validation unit tests', () => {
     assertDeepEqual(validationResult.result, expected)
   })
 
-  it('fail with invalid user', () => {
+  test('fail with invalid user', () => {
     const request = {
       user: {},
       passwordSignInMethod: { ...validRequest.passwordSignInMethod },
@@ -87,7 +87,7 @@ describe('create user validation unit tests', () => {
     assertEqual(validationResult.result, undefined)
   })
 
-  it('fail with invalid password sign-in method', () => {
+  test('fail with invalid password sign-in method', () => {
     const request = {
       user: { ...validRequest.user },
       passwordSignInMethod: {},
@@ -97,15 +97,15 @@ describe('create user validation unit tests', () => {
     assertEqual(validationResult.result, undefined)
   })
 
-  it('fail with empty request', () => {
+  test('fail with empty request', () => {
     const validationResult = validateCreateUserRequest({})
     assertEqual(validationResult.errorCode, 'invalid-user')
     assertEqual(validationResult.result, undefined)
   })
 })
 
-describe('user id validation unit tests', () => {
-  it('valid user id passes validation', () => {
+suite('user id validation unit tests', () => {
+  test('valid user id passes validation', () => {
     const id = 'e5d1f1a6-9f10-4c52-9b7b-9a35c7b7d3c8'
     const validationResult = validateUserId(id)
     assertEqual(validationResult.errorCode, undefined)
@@ -122,7 +122,7 @@ describe('user id validation unit tests', () => {
   ]
 
   invalidIdCases.forEach((testCase) =>
-    it(`invalid user id "${testCase.label}" fails validation`, () => {
+    test(`invalid user id "${testCase.label}" fails validation`, () => {
       const validationResult = validateUserId(testCase.id)
       assertEqual(validationResult.errorCode, 'invalid-user-id')
       assertEqual(validationResult.result, undefined)
@@ -130,7 +130,7 @@ describe('user id validation unit tests', () => {
   )
 })
 
-describe('password sign-in-method validation unit tests', () => {
+suite('password sign-in-method validation unit tests', () => {
   function validPasswordSignInMethod() {
     return {
       username: 'user',
@@ -152,11 +152,11 @@ describe('password sign-in-method validation unit tests', () => {
     assertEqual(validationResult.result, undefined)
   }
 
-  it('pass validation', () => {
+  test('pass validation', () => {
     pass(validPasswordSignInMethod())
   })
 
-  it('fail with empty username', () => {
+  test('fail with empty username', () => {
     const request = {
       ...validPasswordSignInMethod(),
       username: '',
@@ -164,7 +164,7 @@ describe('password sign-in-method validation unit tests', () => {
     fail(request)
   })
 
-  it('fail with invalid username', () => {
+  test('fail with invalid username', () => {
     const request = {
       ...validPasswordSignInMethod(),
       username: 1,
@@ -172,12 +172,12 @@ describe('password sign-in-method validation unit tests', () => {
     fail(request)
   })
 
-  it('fail without username', () => {
+  test('fail without username', () => {
     const { password } = validPasswordSignInMethod()
     fail({ password })
   })
 
-  it('fail with empty password', () => {
+  test('fail with empty password', () => {
     const request = {
       ...validPasswordSignInMethod(),
       password: '',
@@ -185,7 +185,7 @@ describe('password sign-in-method validation unit tests', () => {
     fail(request)
   })
 
-  it('fail with invalid password', () => {
+  test('fail with invalid password', () => {
     const request = {
       ...validPasswordSignInMethod(),
       password: {},
@@ -193,17 +193,17 @@ describe('password sign-in-method validation unit tests', () => {
     fail(request)
   })
 
-  it('fail without password', () => {
+  test('fail without password', () => {
     const { username } = validPasswordSignInMethod()
     fail({ username })
   })
 
-  it('fail with additional property', () => {
+  test('fail with additional property', () => {
     fail({ ...validPasswordSignInMethod(), additional: true })
   })
 })
 
-describe('password change validation unit tests', () => {
+suite('password change validation unit tests', () => {
   function validPasswordChange() {
     return {
       oldPassword: 'pwd1',
@@ -225,11 +225,11 @@ describe('password change validation unit tests', () => {
     assertEqual(validationResult.result, undefined)
   }
 
-  it('pass validation', () => {
+  test('pass validation', () => {
     pass(validPasswordChange())
   })
 
-  it('fail with empty old password', () => {
+  test('fail with empty old password', () => {
     const request = {
       ...validPasswordChange(),
       oldPassword: '',
@@ -237,7 +237,7 @@ describe('password change validation unit tests', () => {
     fail(request)
   })
 
-  it('fail with invalid old password', () => {
+  test('fail with invalid old password', () => {
     const request = {
       ...validPasswordChange(),
       oldPassword: 1,
@@ -245,12 +245,12 @@ describe('password change validation unit tests', () => {
     fail(request)
   })
 
-  it('fail without old password', () => {
+  test('fail without old password', () => {
     const { newPassword } = validPasswordChange()
     fail({ newPassword })
   })
 
-  it('fail with empty new password', () => {
+  test('fail with empty new password', () => {
     const request = {
       ...validPasswordChange(),
       newPassword: '',
@@ -258,7 +258,7 @@ describe('password change validation unit tests', () => {
     fail(request)
   })
 
-  it('fail with invalid new password', () => {
+  test('fail with invalid new password', () => {
     const request = {
       ...validPasswordChange(),
       newPassword: {},
@@ -266,12 +266,12 @@ describe('password change validation unit tests', () => {
     fail(request)
   })
 
-  it('fail without new password', () => {
+  test('fail without new password', () => {
     const { oldPassword } = validPasswordChange()
     fail({ oldPassword })
   })
 
-  it('fail with additional property', () => {
+  test('fail with additional property', () => {
     fail({ ...validPasswordChange(), additional: true })
   })
 })

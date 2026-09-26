@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../test.js'
 
 import * as styleService from '../../../src/logic/style/authorized.service.js'
 
@@ -50,12 +50,12 @@ const adminAuthToken = buildAuthTokenPayload({ role: 'admin' })
 
 const viewerAuthToken = buildAuthTokenPayload({ role: 'viewer' })
 
-describe('style authorized service unit tests', () => {
+suite('style authorized service unit tests', () => {
   function notCalled(): any {
     throw new Error('not to be called')
   }
 
-  it('create style as admin', async () => {
+  test('create style as admin', async () => {
     await styleService.createStyle(
       createIf,
       () => ({ errorCode: undefined, result: validCreateStyleRequest }),
@@ -67,7 +67,7 @@ describe('style authorized service unit tests', () => {
     )
   })
 
-  it('fail to create style as viewer', async () => {
+  test('fail to create style as viewer', async () => {
     await expectReject(async () => {
       await styleService.createStyle(
         createIf,
@@ -81,7 +81,7 @@ describe('style authorized service unit tests', () => {
     }, noRightsError)
   })
 
-  it('fail to create invalid style as admin', async () => {
+  test('fail to create invalid style as admin', async () => {
     await expectReject(async () => {
       await styleService.createStyle(
         createIf,
@@ -95,7 +95,7 @@ describe('style authorized service unit tests', () => {
     }, invalidStyleError)
   })
 
-  it('update style as admin', async () => {
+  test('update style as admin', async () => {
     await styleService.updateStyle(
       updateIf,
       () => ({
@@ -111,7 +111,7 @@ describe('style authorized service unit tests', () => {
     )
   })
 
-  it('fail to update style as viewer', async () => {
+  test('fail to update style as viewer', async () => {
     await expectReject(async () => {
       await styleService.updateStyle(
         updateIf,
@@ -126,7 +126,7 @@ describe('style authorized service unit tests', () => {
     }, noRightsError)
   })
 
-  it('fail to update invalid style as admin', async () => {
+  test('fail to update invalid style as admin', async () => {
     await expectReject(async () => {
       await styleService.updateStyle(
         updateIf,
@@ -141,7 +141,7 @@ describe('style authorized service unit tests', () => {
     }, invalidStyleError)
   })
   ;[adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
-    it(`find style as ${token.role}`, async () => {
+    test(`find style as ${token.role}`, async () => {
       const styleWithParentsAndChildren = buildStyleWithParentsAndChildren()
       const result = await styleService.findStyleById(
         async () => styleWithParentsAndChildren,
@@ -158,7 +158,7 @@ describe('style authorized service unit tests', () => {
       assertDeepEqual(result, styleWithParentsAndChildren)
     })
 
-    it(`list styles as ${token.role}`, async () => {
+    test(`list styles as ${token.role}`, async () => {
       const styleWithParentIds = buildStyleWithParentIds()
       const result = await styleService.listStyles(
         async () => [styleWithParentIds],

@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../test.js'
 
 import * as userService from '../../../src/logic/user/authorized-user.service.js'
 
@@ -98,8 +98,8 @@ function notCalled(): any {
   throw new Error('not to be called')
 }
 
-describe('user authorized service unit tests', () => {
-  it('create user as admin', async () => {
+suite('user authorized service unit tests', () => {
+  test('create user as admin', async () => {
     await userService.createUser(
       testJwtIf,
       createIf,
@@ -111,7 +111,7 @@ describe('user authorized service unit tests', () => {
     )
   })
 
-  it('fail to create user as viewer', async () => {
+  test('fail to create user as viewer', async () => {
     await expectReject(async () => {
       await userService.createUser(
         testJwtIf,
@@ -125,7 +125,7 @@ describe('user authorized service unit tests', () => {
     }, noRightsError)
   })
 
-  it('fail to create invalid user as admin', async () => {
+  test('fail to create invalid user as admin', async () => {
     await expectReject(async () => {
       await userService.createUser(
         testJwtIf,
@@ -139,7 +139,7 @@ describe('user authorized service unit tests', () => {
     }, invalidUserError)
   })
 
-  it('delete user as admin', async () => {
+  test('delete user as admin', async () => {
     await userService.deleteUserById(
       deleteUserById,
       passUserIdValidation,
@@ -151,7 +151,7 @@ describe('user authorized service unit tests', () => {
     )
   })
 
-  it('fail to delete user as viewer', async () => {
+  test('fail to delete user as viewer', async () => {
     await expectReject(async () => {
       await userService.deleteUserById(
         deleteUserById,
@@ -165,7 +165,7 @@ describe('user authorized service unit tests', () => {
     }, noRightsError)
   })
 
-  it('fail to delete user with undefined id as admin', async () => {
+  test('fail to delete user with undefined id as admin', async () => {
     await expectReject(async () => {
       await userService.deleteUserById(
         deleteUserById,
@@ -181,7 +181,7 @@ describe('user authorized service unit tests', () => {
 
   const dbRefreshToken = buildDbRefreshToken()
 
-  it('find viewer user as admin', async () => {
+  test('find viewer user as admin', async () => {
     const user = buildUser({ id: viewerAuthToken.userId })
     const result = await userService.findUserById(
       async () => user,
@@ -196,7 +196,7 @@ describe('user authorized service unit tests', () => {
     assertDeepEqual(result, user)
   })
 
-  it('fail to find admin user as viewer', async () => {
+  test('fail to find admin user as viewer', async () => {
     const user = buildUser({ id: adminAuthToken.userId })
     await expectReject(async () => {
       await userService.findUserById(
@@ -212,7 +212,7 @@ describe('user authorized service unit tests', () => {
     }, userMismatchError)
   })
   ;[adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
-    it(`find self user as ${token.role}`, async () => {
+    test(`find self user as ${token.role}`, async () => {
       const user = buildUser({ id: token.userId })
       const result = await userService.findUserById(
         async () => user,
@@ -227,7 +227,7 @@ describe('user authorized service unit tests', () => {
       assertDeepEqual(result, user)
     })
 
-    it(`list user as ${token.role}`, async () => {
+    test(`list user as ${token.role}`, async () => {
       const result = await userService.listUsers(async () => [user], token, log)
       assertDeepEqual(result, [user])
     })

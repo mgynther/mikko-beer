@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 import { assertDeepEqual, assertEqual, assertTruthy } from '../../../assert.js'
 
 import * as authTokenService from '../../../../src/logic/internal/auth/auth-token.service.js'
@@ -32,7 +32,7 @@ import type { SignedInUser } from '../../../../src/logic/user/signed-in-user.js'
 import { testJwtIf } from '../../jwt-helper.js'
 import { buildUser } from '../../user/builders.js'
 
-describe('password sign-in-method service unit tests', () => {
+suite('password sign-in-method service unit tests', () => {
   const userId = '3b3adde6-c6a2-45f1-bd5e-bce71b8d835f'
   const username = 'user'
   const user = buildUser({ id: userId, username })
@@ -173,7 +173,7 @@ describe('password sign-in-method service unit tests', () => {
     },
   ]
 
-  it('add password sign-in-method', async () => {
+  test('add password sign-in-method', async () => {
     const addPasswordUserIf: AddPasswordUserIf = {
       lockUserById: lockNoPasswordUser,
       encryptSecret,
@@ -195,7 +195,7 @@ describe('password sign-in-method service unit tests', () => {
   })
 
   passwordValidationFailureCases.forEach((testCase) =>
-    it(`fail to add password sign-in-method with invalid password ${
+    test(`fail to add password sign-in-method with invalid password ${
       testCase.name
     }`, async () => {
       const addPasswordUserIf: AddPasswordUserIf = {
@@ -218,7 +218,7 @@ describe('password sign-in-method service unit tests', () => {
     }),
   )
 
-  it('fail to add password sign-in-method for missing user', async () => {
+  test('fail to add password sign-in-method for missing user', async () => {
     const addPasswordUserIf: AddPasswordUserIf = {
       lockUserById: lockMissingUser,
       encryptSecret: notCalled,
@@ -230,7 +230,7 @@ describe('password sign-in-method service unit tests', () => {
     }, invalidCredentialsError)
   })
 
-  it('fail to add password sign-in-method again', async () => {
+  test('fail to add password sign-in-method again', async () => {
     const addPasswordUserIf: AddPasswordUserIf = {
       lockUserById: lockValidUser,
       encryptSecret: notCalled,
@@ -242,7 +242,7 @@ describe('password sign-in-method service unit tests', () => {
     }, userAlreadyHasSignInMethodError)
   })
 
-  it('change password', async () => {
+  test('change password', async () => {
     const changePasswordUserIf: ChangePasswordUserIf = {
       lockUserById: lockValidUser,
       findPasswordSignInMethod: getUserPasswordHasher(userPasswordHash),
@@ -258,7 +258,7 @@ describe('password sign-in-method service unit tests', () => {
   })
 
   passwordValidationFailureCases.forEach((testCase) =>
-    it(`fail to change password with invalid password ${
+    test(`fail to change password with invalid password ${
       testCase.name
     }`, async () => {
       const changePasswordUserIf: ChangePasswordUserIf = {
@@ -282,7 +282,7 @@ describe('password sign-in-method service unit tests', () => {
     }),
   )
 
-  it('fail to change password with null username', async () => {
+  test('fail to change password with null username', async () => {
     const changePasswordUserIf: ChangePasswordUserIf = {
       lockUserById: async () => {
         return {
@@ -300,7 +300,7 @@ describe('password sign-in-method service unit tests', () => {
     }, invalidCredentialsError)
   })
 
-  it('fail to change password with empty username', async () => {
+  test('fail to change password with empty username', async () => {
     const changePasswordUserIf: ChangePasswordUserIf = {
       lockUserById: async () => {
         return {
@@ -318,7 +318,7 @@ describe('password sign-in-method service unit tests', () => {
     }, invalidCredentialsError)
   })
 
-  it('fail to change password without user', async () => {
+  test('fail to change password without user', async () => {
     const changePasswordUserIf: ChangePasswordUserIf = {
       lockUserById: lockMissingUser,
       findPasswordSignInMethod: notCalled,
@@ -331,7 +331,7 @@ describe('password sign-in-method service unit tests', () => {
     }, invalidCredentialsError)
   })
 
-  it('fail to change password without sign-in-method', async () => {
+  test('fail to change password without sign-in-method', async () => {
     const changePasswordUserIf: ChangePasswordUserIf = {
       lockUserById: lockValidUser,
       findPasswordSignInMethod: getUserPasswordHasher(undefined),
@@ -344,7 +344,7 @@ describe('password sign-in-method service unit tests', () => {
     }, invalidCredentialsError)
   })
 
-  it('fail to change password with wrong old password', async () => {
+  test('fail to change password with wrong old password', async () => {
     const changePasswordUserIf: ChangePasswordUserIf = {
       lockUserById: lockValidUser,
       findPasswordSignInMethod: getUserPasswordHasher(userPasswordHash),
@@ -357,7 +357,7 @@ describe('password sign-in-method service unit tests', () => {
     }, invalidCredentialsError)
   })
 
-  it('sign in without rehashing password in current format', async () => {
+  test('sign in without rehashing password in current format', async () => {
     const signInUsingPasswordIf: SignInUsingPasswordIf = {
       lockUserByUsername: lockValidUserByUsername,
       findPasswordSignInMethod: getUserPasswordHasher(userPasswordHash),
@@ -379,7 +379,7 @@ describe('password sign-in-method service unit tests', () => {
     expectTokensOf(result)
   })
 
-  it('sign in and rehash password in outdated format', async () => {
+  test('sign in and rehash password in outdated format', async () => {
     const userHashes: UserPasswordHash[] = []
     const updatePassword = async (userPasswordHash: UserPasswordHash) => {
       userHashes.push(userPasswordHash)
@@ -410,7 +410,7 @@ describe('password sign-in-method service unit tests', () => {
     assertEqual(newHash.passwordHash, encryptedSecret)
   })
 
-  it('fail to sign in using password without user after the work of a password check', async () => {
+  test('fail to sign in using password without user after the work of a password check', async () => {
     const rejectedSecrets: string[] = []
     const signInUsingPasswordIf: SignInUsingPasswordIf = {
       lockUserByUsername: lockMissingUser,
@@ -436,7 +436,7 @@ describe('password sign-in-method service unit tests', () => {
     assertDeepEqual(rejectedSecrets, [method.password])
   })
 
-  it('fail to sign in using password without password after the work of a password check', async () => {
+  test('fail to sign in using password without password after the work of a password check', async () => {
     const rejectedSecrets: string[] = []
     const signInUsingPasswordIf: SignInUsingPasswordIf = {
       lockUserByUsername: lockValidUserByUsername,
@@ -462,7 +462,7 @@ describe('password sign-in-method service unit tests', () => {
     assertDeepEqual(rejectedSecrets, [method.password])
   })
 
-  it('fail to sign in using password with wrong password', async () => {
+  test('fail to sign in using password with wrong password', async () => {
     const signInUsingPasswordIf: SignInUsingPasswordIf = {
       lockUserByUsername: lockValidUserByUsername,
       findPasswordSignInMethod: getUserPasswordHasher(userPasswordHash),

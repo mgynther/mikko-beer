@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import { testConfig } from '../test-config.js'
@@ -6,7 +13,7 @@ import { assertEqual } from '../../assert.js'
 import { passwordHashParameters } from '../../../src/web/password-hash-parameters.js'
 import { findPasswordSignInMethod } from '../../../src/data/user/sign-in-method/sign-in-method.repository.js'
 
-describe('production password hashing', () => {
+suite('production password hashing', () => {
   const ctx = new TestContext(undefined, {
     ...testConfig,
     passwordHashParameters,
@@ -17,7 +24,7 @@ describe('production password hashing', () => {
   afterEach(ctx.afterEach)
   after(ctx.after)
 
-  it('hash with production parameters and sign in', async () => {
+  test('hash with production parameters and sign in', async () => {
     const { user, username, password } = await ctx.createUser()
 
     const signInMethod = await ctx.db.executeReadWriteTransaction(

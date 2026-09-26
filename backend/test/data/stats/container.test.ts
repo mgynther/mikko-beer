@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import type { Database, Transaction } from '../../../src/data/database.js'
@@ -135,7 +142,7 @@ async function insertBeers(db: Database): Promise<{
   })
 }
 
-describe('container stats tests', () => {
+suite('container stats tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -144,7 +151,7 @@ describe('container stats tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('no filters', async () => {
+  test('no filters', async () => {
     const { containers } = await insertBeers(ctx.db)
     const stats = await containerStatsRepository.getContainer(ctx.db, noFilter)
     assertDeepEqual(stats, [
@@ -192,7 +199,7 @@ describe('container stats tests', () => {
     reviewMode: '5',
   })
 
-  it('filter by brewery', async () => {
+  test('filter by brewery', async () => {
     const { containers, kriek } = await insertBeers(ctx.db)
     const stats = await containerStatsRepository.getContainer(ctx.db, {
       ...noFilter,
@@ -201,7 +208,7 @@ describe('container stats tests', () => {
     assertDeepEqual(stats, [kriekBottle033(containers)])
   })
 
-  it('filter by location', async () => {
+  test('filter by location', async () => {
     const { containers, kriek } = await insertBeers(ctx.db)
     const stats = await containerStatsRepository.getContainer(ctx.db, {
       ...noFilter,
@@ -210,7 +217,7 @@ describe('container stats tests', () => {
     assertDeepEqual(stats, [kriekBottle033(containers)])
   })
 
-  it('filter by style', async () => {
+  test('filter by style', async () => {
     const { containers, ipa } = await insertBeers(ctx.db)
     const stats = await containerStatsRepository.getContainer(ctx.db, {
       ...noFilter,

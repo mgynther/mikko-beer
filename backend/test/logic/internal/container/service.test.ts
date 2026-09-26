@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import type {
   Container,
@@ -15,8 +15,8 @@ import { buildContainer } from '../../container/builders.js'
 
 const container = buildContainer()
 
-describe('container service unit tests', () => {
-  it('create container', async () => {
+suite('container service unit tests', () => {
+  test('create container', async () => {
     const request: CreateContainerRequest = {
       type: container.type,
       size: container.size,
@@ -40,7 +40,7 @@ describe('container service unit tests', () => {
     })
   })
 
-  it('update container', async () => {
+  test('update container', async () => {
     const request: UpdateContainerRequest = {
       type: container.type,
       size: container.size,
@@ -66,7 +66,7 @@ describe('container service unit tests', () => {
     })
   })
 
-  it('find container', async () => {
+  test('find container', async () => {
     const finder = async (containerId: string) => {
       assertEqual(containerId, container.id)
       return container
@@ -79,7 +79,7 @@ describe('container service unit tests', () => {
     assertDeepEqual(result, container)
   })
 
-  it('fail to find container with unknown id', async () => {
+  test('fail to find container with unknown id', async () => {
     const id = 'd29b2ee6-5d2e-40bf-bb87-c02c00a6628f'
     const finder = async (searchId: string) => {
       assertEqual(searchId, id)
@@ -90,7 +90,7 @@ describe('container service unit tests', () => {
     }, containerNotFoundError(id))
   })
 
-  it('list containers', async () => {
+  test('list containers', async () => {
     const lister = async () => {
       return [container]
     }

@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../test.js'
 import jsonwebtoken from 'jsonwebtoken'
 const { sign } = jsonwebtoken
 
@@ -13,8 +13,8 @@ const claims = {
   role: 'admin',
 }
 
-describe('jwt service unit tests', () => {
-  it('sign and verify a token without expiry', () => {
+suite('jwt service unit tests', () => {
+  test('sign and verify a token without expiry', () => {
     const token = signJwt(claims, secret, undefined)
     assertTruthy(token)
     const verificationResult = verifyJwt(token, secret)
@@ -25,7 +25,7 @@ describe('jwt service unit tests', () => {
     )
   })
 
-  it('sign and verify a token with expiry', () => {
+  test('sign and verify a token with expiry', () => {
     const token = signJwt(claims, secret, 60)
     const verificationResult = verifyJwt(token, secret)
     assertEqual(verificationResult.errorCode, undefined)
@@ -35,34 +35,34 @@ describe('jwt service unit tests', () => {
     )
   })
 
-  it('a token without expiry has no expiry claim', () => {
+  test('a token without expiry has no expiry claim', () => {
     const token = signJwt(claims, secret, undefined)
     const verificationResult = verifyJwt(token, secret)
     assertEqual(verificationResult.errorCode, undefined)
     assertEqual(verificationResult.result?.exp, undefined)
   })
 
-  it('fail to verify an expired token', () => {
+  test('fail to verify an expired token', () => {
     const token = signJwt(claims, secret, -1)
     const verificationResult = verifyJwt(token, secret)
     assertEqual(verificationResult.errorCode, 'expired-jwt')
     assertEqual(verificationResult.result, undefined)
   })
 
-  it('fail to verify a token signed with another secret', () => {
+  test('fail to verify a token signed with another secret', () => {
     const token = signJwt(claims, otherSecret, undefined)
     const verificationResult = verifyJwt(token, secret)
     assertEqual(verificationResult.errorCode, 'invalid-jwt')
     assertEqual(verificationResult.result, undefined)
   })
 
-  it('fail to verify a malformed token', () => {
+  test('fail to verify a malformed token', () => {
     const verificationResult = verifyJwt('this is not a token', secret)
     assertEqual(verificationResult.errorCode, 'invalid-jwt')
     assertEqual(verificationResult.result, undefined)
   })
 
-  it('fail to verify a token with a string payload', () => {
+  test('fail to verify a token with a string payload', () => {
     const token = sign('hacking', secret)
     const verificationResult = verifyJwt(token, secret)
     assertEqual(verificationResult.errorCode, 'invalid-jwt')

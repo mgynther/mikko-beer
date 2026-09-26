@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../test.js'
 
 import {
   validateLocationId,
@@ -23,15 +23,15 @@ function validUpdateRequest(): UpdateLocationRequest {
   }
 }
 
-describe('location validation unit tests', () => {
-  it('valid create location request passes validation', () => {
+suite('location validation unit tests', () => {
+  test('valid create location request passes validation', () => {
     const input = validCreateRequest()
     const output = validCreateRequest()
     assertEqual(validateCreateLocationRequest(input).errorCode, undefined)
     assertDeepEqual(validateCreateLocationRequest(input).result, output)
   })
 
-  it('invalid create location request fails validation', () => {
+  test('invalid create location request fails validation', () => {
     const input = {}
     assertEqual(
       validateCreateLocationRequest(input).errorCode,
@@ -40,7 +40,7 @@ describe('location validation unit tests', () => {
     assertDeepEqual(validateCreateLocationRequest(input).result, undefined)
   })
 
-  it('valid update location request passes validation', () => {
+  test('valid update location request passes validation', () => {
     const input = validUpdateRequest()
     const output = validUpdateRequest()
     const id = '1cd2c9e0-908f-4769-a484-a4f18b20f467'
@@ -74,7 +74,7 @@ describe('location validation unit tests', () => {
       assertEqual(result.result, undefined)
     }
 
-    it(title('fail with empty name'), () => {
+    test(title('fail with empty name'), () => {
       const location = {
         ...getValid(),
         name: '',
@@ -82,11 +82,11 @@ describe('location validation unit tests', () => {
       fail(location)
     })
 
-    it(title('fail without name'), () => {
+    test(title('fail without name'), () => {
       fail({})
     })
 
-    it(title('fail with invalid name'), () => {
+    test(title('fail with invalid name'), () => {
       const location = {
         ...getValid(),
         name: ['f', 'a', 'i', 'l'],
@@ -94,7 +94,7 @@ describe('location validation unit tests', () => {
       fail(location)
     })
 
-    it(title('fail with additional property'), () => {
+    test(title('fail with additional property'), () => {
       const location = {
         ...getValid(),
         additional: 'will fail',
@@ -103,7 +103,7 @@ describe('location validation unit tests', () => {
     })
   })
 
-  it('fail update with empty id', () => {
+  test('fail update with empty id', () => {
     const validationResult = validateUpdateLocationRequest(
       validUpdateRequest(),
       '',
@@ -112,7 +112,7 @@ describe('location validation unit tests', () => {
     assertEqual(validationResult.result, undefined)
   })
 
-  it('valid location id passes validation', () => {
+  test('valid location id passes validation', () => {
     const id = 'd4a6e2ba-9e1e-4b2b-9e2f-9d6a9b0e5b13'
     const validationResult = validateLocationId(id)
     assertEqual(validationResult.errorCode, undefined)
@@ -129,7 +129,7 @@ describe('location validation unit tests', () => {
   ]
 
   invalidIdCases.forEach((testCase) =>
-    it(`invalid location id "${testCase.label}" fails validation`, () => {
+    test(`invalid location id "${testCase.label}" fails validation`, () => {
       const validationResult = validateLocationId(testCase.id)
       assertEqual(validationResult.errorCode, 'invalid-location-id')
       assertEqual(validationResult.result, undefined)

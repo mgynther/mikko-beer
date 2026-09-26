@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../test.js'
 
 import * as containerService from '../../../src/logic/container/authorized.service.js'
 
@@ -41,8 +41,8 @@ const adminAuthToken = buildAuthTokenPayload({ role: 'admin' })
 
 const viewerAuthToken = buildAuthTokenPayload({ role: 'viewer' })
 
-describe('container authorized service unit tests', () => {
-  it('create container as admin', async () => {
+suite('container authorized service unit tests', () => {
+  test('create container as admin', async () => {
     await containerService.createContainer(
       create,
       () => ({ errorCode: undefined, result: validCreateContainerRequest }),
@@ -58,7 +58,7 @@ describe('container authorized service unit tests', () => {
     throw new Error('not to be called')
   }
 
-  it('fail to create container as viewer', async () => {
+  test('fail to create container as viewer', async () => {
     await expectReject(async () => {
       await containerService.createContainer(
         create,
@@ -72,7 +72,7 @@ describe('container authorized service unit tests', () => {
     }, noRightsError)
   })
 
-  it('fail to create invalid container as admin', async () => {
+  test('fail to create invalid container as admin', async () => {
     await expectReject(async () => {
       await containerService.createContainer(
         create,
@@ -86,7 +86,7 @@ describe('container authorized service unit tests', () => {
     }, invalidContainerError)
   })
 
-  it('update container as admin', async () => {
+  test('update container as admin', async () => {
     await containerService.updateContainer(
       update,
       () => ({
@@ -102,7 +102,7 @@ describe('container authorized service unit tests', () => {
     )
   })
 
-  it('fail to update container as viewer', async () => {
+  test('fail to update container as viewer', async () => {
     await expectReject(async () => {
       await containerService.updateContainer(
         update,
@@ -117,7 +117,7 @@ describe('container authorized service unit tests', () => {
     }, noRightsError)
   })
 
-  it('fail to update invalid container as admin', async () => {
+  test('fail to update invalid container as admin', async () => {
     await expectReject(async () => {
       await containerService.updateContainer(
         update,
@@ -132,7 +132,7 @@ describe('container authorized service unit tests', () => {
     }, invalidContainerError)
   })
   ;[adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
-    it(`find container as ${token.role}`, async () => {
+    test(`find container as ${token.role}`, async () => {
       const result = await containerService.findContainerById(
         async () => container,
         () => ({ errorCode: undefined, result: container.id }),
@@ -145,7 +145,7 @@ describe('container authorized service unit tests', () => {
       assertDeepEqual(result, container)
     })
 
-    it(`list containers as ${token.role}`, async () => {
+    test(`list containers as ${token.role}`, async () => {
       const result = await containerService.listContainers(
         async () => [container],
         token,

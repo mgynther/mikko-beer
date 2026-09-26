@@ -1,11 +1,11 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import { cyclicRelationshipError } from '../../../../src/logic/errors.js'
 import { checkCyclicRelationships } from '../../../../src/logic/internal/style/style.util.js'
 import { expectThrow } from '../../controller-error-helper.js'
 import { assertDoesNotThrow } from '../../../assert.js'
 
-describe('style relationship unit tests', () => {
+suite('style relationship unit tests', () => {
   const ale = {
     id: '7b6af078-0b6d-4171-8818-0288da190480',
     name: 'Ale',
@@ -29,13 +29,13 @@ describe('style relationship unit tests', () => {
     },
   ]
 
-  it('fail to find cyclic when there is no cycle', () => {
+  test('fail to find cyclic when there is no cycle', () => {
     assertDoesNotThrow(() =>
       checkCyclicRelationships(relationships, neipa.id, [ipa.id]),
     )
   })
 
-  it('find cyclic when there is a cycle', () => {
+  test('find cyclic when there is a cycle', () => {
     expectThrow(
       () => checkCyclicRelationships(relationships, ale.id, [neipa.id]),
       cyclicRelationshipError,

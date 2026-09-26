@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import { assertEqual } from '../../assert.js'
@@ -7,7 +14,7 @@ import type {
   ReadContainer,
 } from '../../../src/web/container/container.controller.js'
 
-describe('container tests', () => {
+suite('container tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -16,7 +23,7 @@ describe('container tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  it('create a container', async () => {
+  test('create a container', async () => {
     const res = await ctx.request.post<{
       container: CreatedOrUpdatedContainer
     }>(
@@ -40,7 +47,7 @@ describe('container tests', () => {
     assertEqual(getRes.data.container.size, res.data.container.size)
   })
 
-  it('fail to create a container as viewer', async () => {
+  test('fail to create a container as viewer', async () => {
     const { authToken } = await ctx.createUser({ role: 'viewer' })
     const res = await ctx.request.post<{
       container: CreatedOrUpdatedContainer
@@ -53,7 +60,7 @@ describe('container tests', () => {
     assertEqual(res.status, 403)
   })
 
-  it('fail to create a container without type', async () => {
+  test('fail to create a container without type', async () => {
     const res = await ctx.request.post<{
       container: CreatedOrUpdatedContainer
     }>(`/api/v1/container`, { size: '0.20' }, ctx.adminAuthHeaders())
@@ -61,7 +68,7 @@ describe('container tests', () => {
     assertEqual(res.status, 400)
   })
 
-  it('update a container', async () => {
+  test('update a container', async () => {
     const createRes = await ctx.request.post<{
       container: CreatedOrUpdatedContainer
     }>(
@@ -95,7 +102,7 @@ describe('container tests', () => {
     assertEqual(getRes.data.container.size, updateRes.data.container.size)
   })
 
-  it('get empty container list', async () => {
+  test('get empty container list', async () => {
     const res = await ctx.request.get<{ containers: ReadContainer[] }>(
       `/api/v1/container`,
       ctx.adminAuthHeaders(),

@@ -1,11 +1,11 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../test.js'
 
 import type { SearchByName } from '../../src/validation/search.js'
 import { validateSearchByName } from '../../src/validation/search.js'
 
 import { assertDeepEqual, assertEqual } from '../assert.js'
 
-describe('search validation unit tests', () => {
+suite('search validation unit tests', () => {
   function pass(input: unknown, output: SearchByName) {
     const validationResult = validateSearchByName(input)
     assertEqual(validationResult.errorCode, undefined)
@@ -16,22 +16,22 @@ describe('search validation unit tests', () => {
     assertEqual(validationResult.errorCode, 'invalid-search')
     assertEqual(validationResult.result, undefined)
   }
-  it('pass validation', () => {
+  test('pass validation', () => {
     pass({ name: 'testing' }, { name: 'testing' })
   })
-  it('fail with empty name', () => {
+  test('fail with empty name', () => {
     fail({ name: '' })
   })
-  it('fail with missing name', () => {
+  test('fail with missing name', () => {
     fail({})
   })
-  it('fail with additional property', () => {
+  test('fail with additional property', () => {
     fail({ name: 'testing', something: 123 })
   })
-  it('fail with wrong type', () => {
+  test('fail with wrong type', () => {
     fail({ name: 123 })
   })
-  it('fail with undefined', () => {
+  test('fail with undefined', () => {
     fail(undefined)
   })
 })

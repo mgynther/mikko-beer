@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../test.js'
 
 import {
   validateContainerId,
@@ -25,15 +25,15 @@ function validUpdateRequest(): UpdateContainerRequest {
   }
 }
 
-describe('container validation unit tests', () => {
-  it('valid create container request passes validation', () => {
+suite('container validation unit tests', () => {
+  test('valid create container request passes validation', () => {
     const input = validCreateRequest()
     const output = validCreateRequest()
     assertEqual(validateCreateContainerRequest(input).errorCode, undefined)
     assertDeepEqual(validateCreateContainerRequest(input).result, output)
   })
 
-  it('invalid create container request fails validation', () => {
+  test('invalid create container request fails validation', () => {
     const input = { type: 'bottle' }
     assertEqual(
       validateCreateContainerRequest(input).errorCode,
@@ -42,7 +42,7 @@ describe('container validation unit tests', () => {
     assertDeepEqual(validateCreateContainerRequest(input).result, undefined)
   })
 
-  it('valid update container request passes validation', () => {
+  test('valid update container request passes validation', () => {
     const input = validUpdateRequest()
     const output = validUpdateRequest()
     const id = '259b2593-7ec5-47c5-b379-cd29083fa726'
@@ -76,7 +76,7 @@ describe('container validation unit tests', () => {
       assertEqual(result.result, undefined)
     }
 
-    it(title('fail with empty type'), () => {
+    test(title('fail with empty type'), () => {
       const container = {
         ...getValid(),
         type: '',
@@ -84,7 +84,7 @@ describe('container validation unit tests', () => {
       fail(container)
     })
 
-    it(title('fail with empty size'), () => {
+    test(title('fail with empty size'), () => {
       const container = {
         ...getValid(),
         size: '',
@@ -92,17 +92,17 @@ describe('container validation unit tests', () => {
       fail(container)
     })
 
-    it(title('fail without type'), () => {
+    test(title('fail without type'), () => {
       const { size } = getValid()
       fail({ size })
     })
 
-    it(title('fail without size'), () => {
+    test(title('fail without size'), () => {
       const { type } = getValid()
       fail({ type })
     })
 
-    it(title('fail with invalid type'), () => {
+    test(title('fail with invalid type'), () => {
       const container = {
         ...getValid(),
         type: 123,
@@ -110,7 +110,7 @@ describe('container validation unit tests', () => {
       fail(container)
     })
 
-    it(title('fail with invalid size'), () => {
+    test(title('fail with invalid size'), () => {
       const container = {
         ...getValid(),
         size: {},
@@ -118,7 +118,7 @@ describe('container validation unit tests', () => {
       fail(container)
     })
 
-    it(title('fail with vague size'), () => {
+    test(title('fail with vague size'), () => {
       const container = {
         ...getValid(),
         size: '1.0',
@@ -126,7 +126,7 @@ describe('container validation unit tests', () => {
       fail(container)
     })
 
-    it(title('fail with specific size'), () => {
+    test(title('fail with specific size'), () => {
       const container = {
         ...getValid(),
         size: '1.001',
@@ -134,7 +134,7 @@ describe('container validation unit tests', () => {
       fail(container)
     })
 
-    it(title('fail with additional property'), () => {
+    test(title('fail with additional property'), () => {
       const container = {
         ...getValid(),
         additional: 'will fail',
@@ -143,7 +143,7 @@ describe('container validation unit tests', () => {
     })
   })
 
-  it('fail update with empty id', () => {
+  test('fail update with empty id', () => {
     const validationResult = validateUpdateContainerRequest(
       validUpdateRequest(),
       '',
@@ -152,7 +152,7 @@ describe('container validation unit tests', () => {
     assertEqual(validationResult.result, undefined)
   })
 
-  it('valid container id passes validation', () => {
+  test('valid container id passes validation', () => {
     const id = 'dc3baca5-6c3d-44e1-b6a4-f2be0b2e02ab'
     const validationResult = validateContainerId(id)
     assertEqual(validationResult.errorCode, undefined)
@@ -169,7 +169,7 @@ describe('container validation unit tests', () => {
   ]
 
   invalidIdCases.forEach((testCase) =>
-    it(`invalid container id "${testCase.label}" fails validation`, () => {
+    test(`invalid container id "${testCase.label}" fails validation`, () => {
       const validationResult = validateContainerId(testCase.id)
       assertEqual(validationResult.errorCode, 'invalid-container-id')
       assertEqual(validationResult.result, undefined)

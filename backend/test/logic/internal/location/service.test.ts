@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import type {
   Location,
@@ -17,8 +17,8 @@ import { buildLocation } from '../../location/builders.js'
 
 const location = buildLocation()
 
-describe('location service unit tests', () => {
-  it('create location', async () => {
+suite('location service unit tests', () => {
+  test('create location', async () => {
     const request: CreateLocationRequest = {
       name: location.name,
     }
@@ -37,7 +37,7 @@ describe('location service unit tests', () => {
     })
   })
 
-  it('update location', async () => {
+  test('update location', async () => {
     const request: UpdateLocationRequest = {
       name: location.name,
     }
@@ -61,7 +61,7 @@ describe('location service unit tests', () => {
     })
   })
 
-  it('find location', async () => {
+  test('find location', async () => {
     const finder = async (locationId: string) => {
       assertEqual(locationId, location.id)
       return location
@@ -74,7 +74,7 @@ describe('location service unit tests', () => {
     assertEqual(result, location)
   })
 
-  it('fail to find location with unknown id', async () => {
+  test('fail to find location with unknown id', async () => {
     const id = 'fe7bd6e4-321a-4614-9ccf-7568491841e3'
     const finder = async (searchId: string) => {
       assertEqual(searchId, id)
@@ -85,7 +85,7 @@ describe('location service unit tests', () => {
     }, locationNotFoundError(id))
   })
 
-  it('list locations', async () => {
+  test('list locations', async () => {
     const pagination: Pagination = {
       size: 10,
       skip: 80,
@@ -98,7 +98,7 @@ describe('location service unit tests', () => {
     assertDeepEqual(result, [location])
   })
 
-  it('search locations', async () => {
+  test('search locations', async () => {
     const searchByName: SearchByName = {
       name: 'Kuj',
     }

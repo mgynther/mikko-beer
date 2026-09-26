@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../test.js'
 
 import * as storageService from '../../../src/logic/storage/authorized.service.js'
 
@@ -59,7 +59,7 @@ const adminAuthToken = buildAuthTokenPayload({ role: 'admin' })
 
 const viewerAuthToken = buildAuthTokenPayload({ role: 'viewer' })
 
-describe('storage authorized service unit tests', () => {
+suite('storage authorized service unit tests', () => {
   function notCalled(): any {
     throw new Error('not to be called')
   }
@@ -67,7 +67,7 @@ describe('storage authorized service unit tests', () => {
   const passStorageIdValidation = (id: string | undefined) =>
     ({ errorCode: undefined, result: id ?? '' }) as const
 
-  it('create storage as admin', async () => {
+  test('create storage as admin', async () => {
     await storageService.createStorage(
       createIf,
       () => ({ errorCode: undefined, result: validCreateStorageRequest }),
@@ -79,7 +79,7 @@ describe('storage authorized service unit tests', () => {
     )
   })
 
-  it('fail to create storage as viewer', async () => {
+  test('fail to create storage as viewer', async () => {
     await expectReject(async () => {
       await storageService.createStorage(
         createIf,
@@ -93,7 +93,7 @@ describe('storage authorized service unit tests', () => {
     }, noRightsError)
   })
 
-  it('fail to create invalid storage as admin', async () => {
+  test('fail to create invalid storage as admin', async () => {
     await expectReject(async () => {
       await storageService.createStorage(
         createIf,
@@ -107,7 +107,7 @@ describe('storage authorized service unit tests', () => {
     }, invalidStorageError)
   })
 
-  it('update storage as admin', async () => {
+  test('update storage as admin', async () => {
     await storageService.updateStorage(
       updateIf,
       () => ({
@@ -123,7 +123,7 @@ describe('storage authorized service unit tests', () => {
     )
   })
 
-  it('fail to update storage as viewer', async () => {
+  test('fail to update storage as viewer', async () => {
     await expectReject(async () => {
       await storageService.updateStorage(
         updateIf,
@@ -138,7 +138,7 @@ describe('storage authorized service unit tests', () => {
     }, noRightsError)
   })
 
-  it('fail to update invalid storage as admin', async () => {
+  test('fail to update invalid storage as admin', async () => {
     await expectReject(async () => {
       await storageService.updateStorage(
         updateIf,
@@ -153,7 +153,7 @@ describe('storage authorized service unit tests', () => {
     }, invalidStorageError)
   })
 
-  it('delete storage as admin', async () => {
+  test('delete storage as admin', async () => {
     await storageService.deleteStorageById(
       async () => undefined,
       passStorageIdValidation,
@@ -165,7 +165,7 @@ describe('storage authorized service unit tests', () => {
     )
   })
 
-  it('fail to delete storage as viewer', async () => {
+  test('fail to delete storage as viewer', async () => {
     await expectReject(async () => {
       await storageService.deleteStorageById(
         notCalled,
@@ -181,7 +181,7 @@ describe('storage authorized service unit tests', () => {
   ;[adminAuthToken, viewerAuthToken].forEach((token: AuthTokenPayload) => {
     const joinedStorage = buildJoinedStorage()
 
-    it(`find storage as ${token.role}`, async () => {
+    test(`find storage as ${token.role}`, async () => {
       const result = await storageService.findStorageById(
         async () => joinedStorage,
         passStorageIdValidation,
@@ -194,7 +194,7 @@ describe('storage authorized service unit tests', () => {
       assertDeepEqual(result, joinedStorage)
     })
 
-    it(`list storages as ${token.role}`, async () => {
+    test(`list storages as ${token.role}`, async () => {
       const result = await storageService.listStorages(
         async () => [joinedStorage],
         token,
@@ -204,7 +204,7 @@ describe('storage authorized service unit tests', () => {
       assertDeepEqual(result, [joinedStorage])
     })
 
-    it(`list storages by beer as ${token.role}`, async () => {
+    test(`list storages by beer as ${token.role}`, async () => {
       const result = await storageService.listStoragesByBeer(
         async () => [joinedStorage],
         (id: string | undefined) => ({
@@ -220,7 +220,7 @@ describe('storage authorized service unit tests', () => {
       assertDeepEqual(result, [joinedStorage])
     })
 
-    it(`list storages by brewery as ${token.role}`, async () => {
+    test(`list storages by brewery as ${token.role}`, async () => {
       const result = await storageService.listStoragesByBrewery(
         async () => [joinedStorage],
         (id: string | undefined) => ({
@@ -236,7 +236,7 @@ describe('storage authorized service unit tests', () => {
       assertDeepEqual(result, [joinedStorage])
     })
 
-    it(`list storages by style as ${token.role}`, async () => {
+    test(`list storages by style as ${token.role}`, async () => {
       const result = await storageService.listStoragesByStyle(
         async () => [joinedStorage],
         (id: string | undefined) => ({
@@ -252,7 +252,7 @@ describe('storage authorized service unit tests', () => {
       assertDeepEqual(result, [joinedStorage])
     })
 
-    it(`get annual storage stats as ${token.role}`, async () => {
+    test(`get annual storage stats as ${token.role}`, async () => {
       const getter = async () => {
         return [{ year: '2022', count: '8' }]
       }
@@ -264,7 +264,7 @@ describe('storage authorized service unit tests', () => {
       assertDeepEqual(result, [{ year: '2022', count: '8' }])
     })
 
-    it(`get monthly storage stats as ${token.role}`, async () => {
+    test(`get monthly storage stats as ${token.role}`, async () => {
       const getter = async () => {
         return [{ year: '2022', month: '10', count: '8' }]
       }

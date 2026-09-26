@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../test.js'
 
 import {
   validateFilteredReviewListOrder,
@@ -14,8 +14,8 @@ import {
 import { expectThrow } from '../../logic/controller-error-helper.js'
 import { assertDeepEqual } from '../../assert.js'
 
-describe('review list helper tests', () => {
-  it('return full review list order', () => {
+suite('review list helper tests', () => {
+  test('return full review list order', () => {
     const result = validateFullReviewListOrder({
       order: 'rating',
       direction: 'asc',
@@ -23,14 +23,14 @@ describe('review list helper tests', () => {
     assertDeepEqual(result, { property: 'rating', direction: 'asc' })
   })
 
-  it('throw order error for invalid full review list order', () => {
+  test('throw order error for invalid full review list order', () => {
     expectThrow(
       () => validateFullReviewListOrder({ order: 'invalid' }),
       invalidReviewListQueryOrderError,
     )
   })
 
-  it('throw beer name error for full review list order', () => {
+  test('throw beer name error for full review list order', () => {
     expectThrow(
       () =>
         validateFullReviewListOrder({ order: 'beer_name', direction: 'asc' }),
@@ -38,7 +38,7 @@ describe('review list helper tests', () => {
     )
   })
 
-  it('throw brewery name error for full review list order', () => {
+  test('throw brewery name error for full review list order', () => {
     expectThrow(
       () =>
         validateFullReviewListOrder({
@@ -49,7 +49,7 @@ describe('review list helper tests', () => {
     )
   })
 
-  it('return filtered review list order', () => {
+  test('return filtered review list order', () => {
     const result = validateFilteredReviewListOrder({
       order: 'beer_name',
       direction: 'desc',
@@ -57,14 +57,14 @@ describe('review list helper tests', () => {
     assertDeepEqual(result, { property: 'beer_name', direction: 'desc' })
   })
 
-  it('throw order error for invalid filtered review list order', () => {
+  test('throw order error for invalid filtered review list order', () => {
     expectThrow(
       () => validateFilteredReviewListOrder({ direction: 'invalid' }),
       invalidReviewListQueryOrderError,
     )
   })
 
-  it('return review list filter', () => {
+  test('return review list filter', () => {
     const minTime = 1678334400000
     const maxTime = 1746792000000
     const result = validateReviewListFilter({
@@ -81,7 +81,7 @@ describe('review list helper tests', () => {
     })
   })
 
-  it('throw filter error for invalid review list filter', () => {
+  test('throw filter error for invalid review list filter', () => {
     expectThrow(
       () => validateReviewListFilter({ min_rating: 'invalid' }),
       invalidReviewListQueryFilterError,

@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import * as reviewService from '../../../../src/logic/internal/review/validated.service.js'
 
@@ -111,8 +111,8 @@ const failReviewIdValidation: ValidateReviewId = () => ({
   result: undefined,
 })
 
-describe('review validated service unit tests', () => {
-  it('create review', async () => {
+suite('review validated service unit tests', () => {
+  test('create review', async () => {
     await reviewService.createReview(
       createIf,
       passCreateValidation,
@@ -122,7 +122,7 @@ describe('review validated service unit tests', () => {
     )
   })
 
-  it('fail to create invalid review', async () => {
+  test('fail to create invalid review', async () => {
     await expectReject(async () => {
       await reviewService.createReview(
         createIf,
@@ -134,7 +134,7 @@ describe('review validated service unit tests', () => {
     }, invalidReviewError)
   })
 
-  it('update review', async () => {
+  test('update review', async () => {
     await reviewService.updateReview(
       updateIf,
       passUpdateValidation,
@@ -144,7 +144,7 @@ describe('review validated service unit tests', () => {
     )
   })
 
-  it('fail to update review with invalid review', async () => {
+  test('fail to update review with invalid review', async () => {
     await expectReject(async () => {
       await reviewService.updateReview(
         updateIf,
@@ -156,7 +156,7 @@ describe('review validated service unit tests', () => {
     }, invalidReviewError)
   })
 
-  it('fail to update review with undefined id', async () => {
+  test('fail to update review with undefined id', async () => {
     await expectReject(async () => {
       await reviewService.updateReview(
         updateIf,
@@ -172,7 +172,7 @@ describe('review validated service unit tests', () => {
     throw new Error('not to be called')
   }
 
-  it('find review by id', async () => {
+  test('find review by id', async () => {
     const result = await reviewService.findReviewById(
       async () => review,
       passReviewIdValidation,
@@ -182,7 +182,7 @@ describe('review validated service unit tests', () => {
     assertDeepEqual(result, review)
   })
 
-  it('fail to find review by invalid id', async () => {
+  test('fail to find review by invalid id', async () => {
     await expectReject(async () => {
       await reviewService.findReviewById(
         notCalled,
@@ -198,7 +198,7 @@ describe('review validated service unit tests', () => {
     order: { property: 'time', direction: 'desc' },
   }
 
-  it('list reviews by beer', async () => {
+  test('list reviews by beer', async () => {
     const beerId = '2e8f2c9f-5f31-4e84-9d22-f0b13d6ad9b0'
     const joinedReviews: JoinedReview[] = []
     const result = await reviewService.listReviewsByBeer(
@@ -211,7 +211,7 @@ describe('review validated service unit tests', () => {
     assertDeepEqual(result, joinedReviews)
   })
 
-  it('fail to list reviews by invalid beer id', async () => {
+  test('fail to list reviews by invalid beer id', async () => {
     await expectReject(async () => {
       await reviewService.listReviewsByBeer(
         notCalled,
@@ -223,7 +223,7 @@ describe('review validated service unit tests', () => {
     }, invalidBeerIdError)
   })
 
-  it('list reviews by brewery', async () => {
+  test('list reviews by brewery', async () => {
     const breweryId = 'd7e4b5da-6d44-4a1f-a2f1-3c2b1a70b3b1'
     const joinedReviews: JoinedReview[] = []
     const result = await reviewService.listReviewsByBrewery(
@@ -236,7 +236,7 @@ describe('review validated service unit tests', () => {
     assertDeepEqual(result, joinedReviews)
   })
 
-  it('fail to list reviews by invalid brewery id', async () => {
+  test('fail to list reviews by invalid brewery id', async () => {
     await expectReject(async () => {
       await reviewService.listReviewsByBrewery(
         notCalled,
@@ -248,7 +248,7 @@ describe('review validated service unit tests', () => {
     }, invalidBreweryIdError)
   })
 
-  it('list reviews by location', async () => {
+  test('list reviews by location', async () => {
     const locationId = '4dcd6b2a-15e3-4bcb-9d4c-3cb5cc1a5ad3'
     const joinedReviews: JoinedReview[] = []
     const result = await reviewService.listReviewsByLocation(
@@ -261,7 +261,7 @@ describe('review validated service unit tests', () => {
     assertDeepEqual(result, joinedReviews)
   })
 
-  it('fail to list reviews by invalid location id', async () => {
+  test('fail to list reviews by invalid location id', async () => {
     await expectReject(async () => {
       await reviewService.listReviewsByLocation(
         notCalled,
@@ -273,7 +273,7 @@ describe('review validated service unit tests', () => {
     }, invalidLocationIdError)
   })
 
-  it('list reviews by style', async () => {
+  test('list reviews by style', async () => {
     const styleId = 'd33f2cd5-2d35-4d6a-8e77-07cbe1d0a6ab'
     const joinedReviews: JoinedReview[] = []
     const result = await reviewService.listReviewsByStyle(
@@ -286,7 +286,7 @@ describe('review validated service unit tests', () => {
     assertDeepEqual(result, joinedReviews)
   })
 
-  it('fail to list reviews by invalid style id', async () => {
+  test('fail to list reviews by invalid style id', async () => {
     await expectReject(async () => {
       await reviewService.listReviewsByStyle(
         notCalled,

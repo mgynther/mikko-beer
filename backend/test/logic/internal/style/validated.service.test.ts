@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import * as styleService from '../../../../src/logic/internal/style/validated.service.js'
 
@@ -93,8 +93,8 @@ const failUpdateValidationWithId: ValidateUpdateStyle = () => {
   }
 }
 
-describe('style validated service unit tests', () => {
-  it('create style', async () => {
+suite('style validated service unit tests', () => {
+  test('create style', async () => {
     await styleService.createStyle(
       createIf,
       passCreateValidation,
@@ -103,7 +103,7 @@ describe('style validated service unit tests', () => {
     )
   })
 
-  it('fail to create invalid style', async () => {
+  test('fail to create invalid style', async () => {
     await expectReject(async () => {
       await styleService.createStyle(
         createIf,
@@ -114,7 +114,7 @@ describe('style validated service unit tests', () => {
     }, invalidStyleError)
   })
 
-  it('update style', async () => {
+  test('update style', async () => {
     await styleService.updateStyle(
       updateIf,
       passUpdateValidation,
@@ -124,7 +124,7 @@ describe('style validated service unit tests', () => {
     )
   })
 
-  it('fail to update style with invalid style', async () => {
+  test('fail to update style with invalid style', async () => {
     await expectReject(async () => {
       await styleService.updateStyle(
         updateIf,
@@ -136,7 +136,7 @@ describe('style validated service unit tests', () => {
     }, invalidStyleError)
   })
 
-  it('fail to update style with undefined id', async () => {
+  test('fail to update style with undefined id', async () => {
     await expectReject(async () => {
       await styleService.updateStyle(
         updateIf,
@@ -148,7 +148,7 @@ describe('style validated service unit tests', () => {
     }, invalidStyleIdError)
   })
 
-  it('find style by id', async () => {
+  test('find style by id', async () => {
     const styleWithParentsAndChildren = buildStyleWithParentsAndChildren()
     const result = await styleService.findStyleById(
       async () => styleWithParentsAndChildren,
@@ -163,7 +163,7 @@ describe('style validated service unit tests', () => {
     throw new Error('not to be called')
   }
 
-  it('fail to find style by invalid id', async () => {
+  test('fail to find style by invalid id', async () => {
     await expectReject(async () => {
       await styleService.findStyleById(
         notCalled,
@@ -174,7 +174,7 @@ describe('style validated service unit tests', () => {
     }, invalidStyleIdError)
   })
 
-  it('list styles', async () => {
+  test('list styles', async () => {
     const styles = [buildStyleWithParentIds()]
     const result = await styleService.listStyles(async () => styles, log)
     assertDeepEqual(result, styles)

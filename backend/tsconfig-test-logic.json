@@ -1,4 +1,9 @@
 {
   "extends": "./tsconfig-test-base.json",
-  "include": ["src/logic/**/*", "test/assert.ts", "test/logic/**/*"]
+  "include": [
+    "src/logic/**/*",
+    "test/assert.ts",
+    "test/test.ts",
+    "test/logic/**/*"
+  ]
 }

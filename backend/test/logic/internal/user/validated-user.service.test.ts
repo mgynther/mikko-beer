@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../../../test.js'
 
 import * as userService from '../../../../src/logic/internal/user/validated-user.service.js'
 
@@ -95,8 +95,8 @@ function notCalled(): any {
   throw new Error('not to be called')
 }
 
-describe('user validated service unit tests', () => {
-  it('create user', async () => {
+suite('user validated service unit tests', () => {
+  test('create user', async () => {
     await userService.createUser(
       testJwtIf,
       createIf,
@@ -107,7 +107,7 @@ describe('user validated service unit tests', () => {
     )
   })
 
-  it('fail to create invalid user', async () => {
+  test('fail to create invalid user', async () => {
     await expectReject(async () => {
       await userService.createUser(
         testJwtIf,
@@ -120,7 +120,7 @@ describe('user validated service unit tests', () => {
     }, invalidUserError)
   })
 
-  it('fail to create user with invalid sign-in method', async () => {
+  test('fail to create user with invalid sign-in method', async () => {
     await expectReject(async () => {
       await userService.createUser(
         testJwtIf,
@@ -133,7 +133,7 @@ describe('user validated service unit tests', () => {
     }, invalidSignInMethodError)
   })
 
-  it('find user by id', async () => {
+  test('find user by id', async () => {
     const result = await userService.findUserById(
       async () => user,
       passUserIdValidation,
@@ -143,19 +143,19 @@ describe('user validated service unit tests', () => {
     assertDeepEqual(result, user)
   })
 
-  it('fail to find user by invalid id', async () => {
+  test('fail to find user by invalid id', async () => {
     await expectReject(async () => {
       await userService.findUserById(notCalled, failUserIdValidation, '', log)
     }, invalidUserIdError)
   })
 
-  it('list users', async () => {
+  test('list users', async () => {
     const users: User[] = [user]
     const result = await userService.listUsers(async () => users, log)
     assertDeepEqual(result, users)
   })
 
-  it('delete user', async () => {
+  test('delete user', async () => {
     await userService.deleteUserById(
       deleteUserById,
       passUserIdValidation,
@@ -164,7 +164,7 @@ describe('user validated service unit tests', () => {
     )
   })
 
-  it('fail to delete user with undefined id', async () => {
+  test('fail to delete user with undefined id', async () => {
     await expectReject(async () => {
       await userService.deleteUserById(
         notCalled,

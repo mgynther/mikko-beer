@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { suite, test } from '../test.js'
 import { assertDeepEqual, assertEqual } from '../assert.js'
 import * as assert from 'node:assert/strict'
 
@@ -10,7 +10,7 @@ import {
 } from '../../src/crypto/crypto.service.js'
 import { formatHash } from '../../src/crypto/internal/hash-format.js'
 
-describe('encrypt and verify secret', () => {
+suite('encrypt and verify secret', () => {
   const log = () => undefined
   const knownPassword = 'password'
   // The known hashes are computed with node:crypto directly rather than with
@@ -23,26 +23,26 @@ describe('encrypt and verify secret', () => {
   const knownHighMemoryHash =
     '$scrypt$ln=16,r=8,p=1$UuZh6Sxk0UCYyOj9IgAF1A$KxiteKvPQ0ZvZWtbzNfH+jITSUSfq9H1Hu1jn5Ks7+dLXqkyeuYKCygfyHaeucgg897kBNm7LwCSR2V+8lFNgw'
 
-  it('verify password against known hash', async () => {
+  test('verify password against known hash', async () => {
     assertEqual(await verifySecret(log, knownPassword, knownHash), true)
   })
 
-  it('verify wrong password against known hash', async () => {
+  test('verify wrong password against known hash', async () => {
     assertEqual(await verifySecret(log, `${knownPassword}1`, knownHash), false)
   })
 
-  it('fail to verify password against known hash in legacy format', async () => {
+  test('fail to verify password against known hash in legacy format', async () => {
     assertEqual(await verifySecret(log, knownPassword, knownLegacyHash), false)
   })
 
-  it('verify password against hash needing more than default memory', async () => {
+  test('verify password against hash needing more than default memory', async () => {
     assertEqual(
       await verifySecret(log, knownPassword, knownHighMemoryHash),
       true,
     )
   })
 
-  it('fail to verify against hash with parameters scrypt refuses', async () => {
+  test('fail to verify against hash with parameters scrypt refuses', async () => {
     const messages: string[] = []
     const refusedHash =
       '$scrypt$ln=60,r=8,p=1$LSFeH5c5d4Fav49HIqHpiQ$7biLfcxLU9RUv+TVf2fM3s7wY4DJiOfzavESywH5/iFFItGPC9zylXDHCouIE3eJpRbFepfVanqB+inf92yIdA'
@@ -58,7 +58,7 @@ describe('encrypt and verify secret', () => {
     assertEqual(messages[0].startsWith('crypt failed: '), true)
   })
 
-  it('verify password against malformed hash and log it', async () => {
+  test('verify password against malformed hash and log it', async () => {
     const messages: string[] = []
     assertEqual(
       await verifySecret(
@@ -71,7 +71,7 @@ describe('encrypt and verify secret', () => {
     assertDeepEqual(messages, ['stored hash is malformed'])
   })
 
-  it('encrypt password with given parameters and verify it', async () => {
+  test('encrypt password with given parameters and verify it', async () => {
     const password = 'password'
     const result = await encryptSecret(log, { N: 1024, r: 8, p: 2 }, password)
     assertEqual(result.startsWith('$scrypt$ln=10,r=8,p=2$'), true)
@@ -79,7 +79,7 @@ describe('encrypt and verify secret', () => {
     assertEqual(await verifySecret(log, `${password}1`, result), false)
   })
 
-  it('encrypt same password with different salts', async () => {
+  test('encrypt same password with different salts', async () => {
     const password = 'password'
     const parameters = { N: 1024, r: 8, p: 1 }
     assertEqual(
@@ -90,18 +90,18 @@ describe('encrypt and verify secret', () => {
   })
 })
 
-describe('needs rehash', () => {
+suite('needs rehash', () => {
   const log = () => undefined
   const parameters = { N: 1024, r: 8, p: 2 }
   const salt = Buffer.alloc(16, 1)
   const key = Buffer.alloc(64, 2)
 
-  it('no rehash for hash encrypted with the parameters', async () => {
+  test('no rehash for hash encrypted with the parameters', async () => {
     const hash = await encryptSecret(log, parameters, 'password')
     assertEqual(needsRehash(parameters, hash), false)
   })
 
-  it('no rehash for hash with the parameters and lengths', () => {
+  test('no rehash for hash with the parameters and lengths', () => {
     assertEqual(
       needsRehash(parameters, formatHash({ parameters, salt, key })),
       false,
@@ -126,20 +126,20 @@ describe('needs rehash', () => {
     ],
   ]
   for (const [name, hash] of outdated) {
-    it(`rehash ${name}`, () => {
+    test(`rehash ${name}`, () => {
       assertEqual(needsRehash(parameters, hash), true)
     })
   }
 })
 
-describe('reject secret', () => {
+suite('reject secret', () => {
   const log = () => undefined
 
-  it('reject secret by hashing it with the parameters', async () => {
+  test('reject secret by hashing it with the parameters', async () => {
     await rejectSecret(log, { N: 1024, r: 8, p: 2 }, 'password')
   })
 
-  it('fail to reject secret with parameters scrypt refuses', async () => {
+  test('fail to reject secret with parameters scrypt refuses', async () => {
     const messages: string[] = []
     await assert.rejects(
       rejectSecret(

@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import type { Beer } from '../../../src/data/beer/beer.repository.js'
@@ -13,7 +20,7 @@ import { buildNewBeer } from './builders.js'
 import { buildNewBrewery } from '../brewery/builders.js'
 import { buildNewStyle } from '../style/builders.js'
 
-describe('beer tests', () => {
+suite('beer tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -83,7 +90,7 @@ describe('beer tests', () => {
     )
   }
 
-  it('find beer by id', async () => {
+  test('find beer by id', async () => {
     const createResult = await createBeers(ctx.db)
     const readBeer = await beerRepository.findBeerById(
       ctx.db,
@@ -96,7 +103,7 @@ describe('beer tests', () => {
     })
   })
 
-  it('find beer that does not exist', async () => {
+  test('find beer that does not exist', async () => {
     const readBeer = await beerRepository.findBeerById(
       ctx.db,
       'fda99507-46d0-4f6f-a3fe-85cffecd8762',
@@ -104,7 +111,7 @@ describe('beer tests', () => {
     assertDeepEqual(readBeer, undefined)
   })
 
-  it('update beer', async () => {
+  test('update beer', async () => {
     const beer = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
         return await beerRepository.insertBeer(trx, { name: 'Viikingi Kajre' })
@@ -124,7 +131,7 @@ describe('beer tests', () => {
     })
   })
 
-  it('lock beer that exists', async () => {
+  test('lock beer that exists', async () => {
     const beer = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
         return await beerRepository.insertBeer(trx, { name: 'Weizenbock' })
@@ -139,7 +146,7 @@ describe('beer tests', () => {
     assertEqual(lockedKey, beer.id)
   })
 
-  it('do not lock beer that does not exists', async () => {
+  test('do not lock beer that does not exists', async () => {
     const dummyId = '48c92e78-f24b-44bb-901e-02116ca9214e'
     const lockedKey = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
@@ -149,7 +156,7 @@ describe('beer tests', () => {
     assertEqual(lockedKey, undefined)
   })
 
-  it('empty beer list', async () => {
+  test('empty beer list', async () => {
     const beers = await beerRepository.listBeers(ctx.db, {
       size: 20,
       skip: 0,
@@ -157,7 +164,7 @@ describe('beer tests', () => {
     assertDeepEqual(beers, [])
   })
 
-  it('list beers', async () => {
+  test('list beers', async () => {
     const createResult = await createBeers(ctx.db)
     const beers = await beerRepository.listBeers(ctx.db, {
       size: 20,
@@ -177,7 +184,7 @@ describe('beer tests', () => {
     ])
   })
 
-  it('delete beer breweries', async () => {
+  test('delete beer breweries', async () => {
     const createResult = await createBeers(ctx.db)
     await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction): Promise<void> => {
@@ -197,7 +204,7 @@ describe('beer tests', () => {
     ])
   })
 
-  it('delete beer styles', async () => {
+  test('delete beer styles', async () => {
     const createResult = await createBeers(ctx.db)
     await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction): Promise<void> => {
@@ -217,7 +224,7 @@ describe('beer tests', () => {
     ])
   })
 
-  it('search beers', async () => {
+  test('search beers', async () => {
     const createResult = await createBeers(ctx.db)
     const beers = await beerRepository.searchBeers(ctx.db, {
       name: createResult.beers[0].name.substring(2, 6),
@@ -275,19 +282,19 @@ describe('beer tests', () => {
     })
   }
 
-  it('find beer with its breweries and styles by name', async () => {
+  test('find beer with its breweries and styles by name', async () => {
     const { beer, breweries, styles } = await insertCreamAle(ctx.db)
     const found = await beerRepository.findBeerById(ctx.db, beer.id)
     assertDeepEqual(found, { ...beer, breweries, styles })
   })
 
-  it('list beers with their breweries and styles by name', async () => {
+  test('list beers with their breweries and styles by name', async () => {
     const { beer, breweries, styles } = await insertCreamAle(ctx.db)
     const beers = await beerRepository.listBeers(ctx.db, { size: 20, skip: 0 })
     assertDeepEqual(beers, [{ ...beer, breweries, styles }])
   })
 
-  it('search beers with their breweries and styles by name', async () => {
+  test('search beers with their breweries and styles by name', async () => {
     const { beer, breweries, styles } = await insertCreamAle(ctx.db)
     const beers = await beerRepository.searchBeers(ctx.db, { name: 'Cream' })
     assertDeepEqual(beers, [{ ...beer, breweries, styles }])

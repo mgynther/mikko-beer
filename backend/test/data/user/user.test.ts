@@ -1,4 +1,11 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'node:test'
+import {
+  suite,
+  test,
+  before,
+  beforeEach,
+  after,
+  afterEach,
+} from '../../test.js'
 
 import { TestContext } from '../test-context.js'
 import type { NewUser, User } from '../../../src/data/user/user.repository.js'
@@ -6,7 +13,7 @@ import * as userRepository from '../../../src/data/user/user.repository.js'
 import type { Transaction } from '../../../src/data/database.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
 
-describe('user tests', () => {
+suite('user tests', () => {
   const ctx = new TestContext()
 
   before(ctx.before)
@@ -26,31 +33,31 @@ describe('user tests', () => {
     })
   }
 
-  it('insert user', async () => {
+  test('insert user', async () => {
     const insertedUser = await insertUser()
     assertEqual(insertedUser.username, user.username)
     assertEqual(insertedUser.role, user.role)
   })
 
-  it('find user', async () => {
+  test('find user', async () => {
     const insertedUser = await insertUser()
     const foundUser = await userRepository.findUserById(ctx.db, insertedUser.id)
     assertDeepEqual(foundUser, insertedUser)
   })
 
-  it('do not find user that does not exist', async () => {
+  test('do not find user that does not exist', async () => {
     const userId = '35370921-5d47-4274-a5cc-9fe0246d74e5'
     const foundUser = await userRepository.findUserById(ctx.db, userId)
     assertEqual(foundUser, undefined)
   })
 
-  it('list users', async () => {
+  test('list users', async () => {
     const insertedUser = await insertUser()
     const users = await userRepository.listUsers(ctx.db)
     assertDeepEqual(users, [insertedUser])
   })
 
-  it('do not list users when there are none', async () => {
+  test('do not list users when there are none', async () => {
     const users = await userRepository.listUsers(ctx.db)
     assertDeepEqual(users, [])
   })
@@ -117,11 +124,11 @@ describe('user tests', () => {
     assertEqual(foundUser?.username, remainingName)
   }
 
-  it('lock user by id', async () => {
+  test('lock user by id', async () => {
     await testLocking(userRepository.lockUserById, (user: User) => user.id)
   })
 
-  it('lock user that does not exist by id', async () => {
+  test('lock user that does not exist by id', async () => {
     const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
       await userRepository.lockUserById(
         trx,
@@ -131,7 +138,7 @@ describe('user tests', () => {
     assertEqual(result, undefined)
   })
 
-  it('lock user by username', async () => {
+  test('lock user by username', async () => {
     await testLocking(userRepository.lockUserByUsername, (user: User) => {
       if (user.username === null) {
         throw new Error('username must not be null')
@@ -140,7 +147,7 @@ describe('user tests', () => {
     })
   })
 
-  it('set user username', async () => {
+  test('set user username', async () => {
     const insertedUser = await insertUser()
     const username = 'another username'
     await ctx.db.executeReadWriteTransaction(async (trx) => {
@@ -150,7 +157,7 @@ describe('user tests', () => {
     assertEqual(foundUser?.username, username)
   })
 
-  it('delete user', async () => {
+  test('delete user', async () => {
     const insertedUser = await insertUser()
     await ctx.db.executeReadWriteTransaction(async (trx) => {
       userRepository.deleteUserById(trx, insertedUser.id)
