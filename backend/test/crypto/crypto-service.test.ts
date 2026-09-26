@@ -1,5 +1,5 @@
 import { describe, it } from 'node:test'
-import { assertEqual } from '../assert.js'
+import { assertDeepEqual, assertEqual } from '../assert.js'
 import * as assert from 'node:assert/strict'
 
 import {
@@ -65,8 +65,17 @@ describe('encrypt and verify secret', () => {
     assertEqual(messages[0].startsWith('crypt failed: '), true)
   })
 
-  it('verify password against malformed hash', async () => {
-    assertEqual(await verifySecret(log, knownPassword, 'malformed'), false)
+  it('verify password against malformed hash and log it', async () => {
+    const messages: string[] = []
+    assertEqual(
+      await verifySecret(
+        (message) => messages.push(message),
+        knownPassword,
+        'malformed',
+      ),
+      false,
+    )
+    assertDeepEqual(messages, ['stored hash is malformed'])
   })
 
   it('encrypt password with given parameters and verify it', async () => {

@@ -26,6 +26,7 @@ export async function verifySecret(
 ): Promise<boolean> {
   const parsed = parseHash(hash)
   if (parsed === undefined) {
+    log('stored hash is malformed')
     return false
   }
   const key = await scrypt(
