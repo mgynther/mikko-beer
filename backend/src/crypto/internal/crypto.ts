@@ -12,6 +12,11 @@ export async function scrypt(
 ): Promise<Buffer> {
   return await new Promise((resolve, reject) => {
     const handler = createHandler(log, resolve, reject)
-    callbackCrypt(secret, salt, keyLength, parameters, handler)
+    // Parameters scrypt refuses throw here rather than reach the handler.
+    try {
+      callbackCrypt(secret, salt, keyLength, parameters, handler)
+    } catch (error) {
+      handler(error, undefined)
+    }
   })
 }

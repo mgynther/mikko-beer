@@ -49,6 +49,22 @@ describe('encrypt and verify secret', () => {
     )
   })
 
+  it('fail to verify against hash with parameters scrypt refuses', async () => {
+    const messages: string[] = []
+    const refusedHash =
+      '$scrypt$ln=60,r=8,p=1$LSFeH5c5d4Fav49HIqHpiQ$7biLfcxLU9RUv+TVf2fM3s7wY4DJiOfzavESywH5/iFFItGPC9zylXDHCouIE3eJpRbFepfVanqB+inf92yIdA'
+    await assert.rejects(
+      verifySecret(
+        (message) => messages.push(message),
+        knownPassword,
+        refusedHash,
+      ),
+      new Error('unknown error'),
+    )
+    assertEqual(messages.length, 1)
+    assertEqual(messages[0].startsWith('crypt failed: '), true)
+  })
+
   it('verify password against malformed hash', async () => {
     assertEqual(await verifySecret(log, knownPassword, 'malformed'), false)
   })
@@ -127,6 +143,16 @@ describe('reject secret', () => {
   })
 
   it('fail to reject secret with parameters scrypt refuses', async () => {
-    await assert.rejects(rejectSecret(log, { N: 1000, r: 8, p: 1 }, 'password'))
+    const messages: string[] = []
+    await assert.rejects(
+      rejectSecret(
+        (message) => messages.push(message),
+        { N: 1000, r: 8, p: 1 },
+        'password',
+      ),
+      new Error('unknown error'),
+    )
+    assertEqual(messages.length, 1)
+    assertEqual(messages[0].startsWith('crypt failed: '), true)
   })
 })

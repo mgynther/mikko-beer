@@ -7,7 +7,7 @@ export function scrypt(
   salt: Buffer,
   keyLength: number,
   parameters: ScryptParameters,
-  handler: (err: Error | null, key: Buffer | undefined) => void,
+  handler: (err: unknown, key: Buffer | undefined) => void,
 ): void {
   const { N, r, p } = parameters
   // Exactly the memory these parameters need, so a stored hash is verified
