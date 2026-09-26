@@ -6,8 +6,8 @@ const exclude = ['e2e', 'node_modules']
 // confirm are the plain .ts tests that need window or document.
 const domTests = [
   '**/*.test.tsx',
-  'src/wiring/theme-applier.test.ts',
-  'src/components/internal/confirm.test.ts',
+  'test/wiring/theme-applier.test.ts',
+  'test/components/internal/confirm.test.ts',
 ]
 
 // Constructing a jsdom instance costs about a second per test file so the
@@ -30,7 +30,7 @@ export default defineConfig({
           ...shared,
           name: 'dom',
           environment: 'jsdom',
-          setupFiles: ['./test-util/setup.ts'],
+          setupFiles: ['./test/setup.ts'],
           include: domTests,
           exclude,
         },

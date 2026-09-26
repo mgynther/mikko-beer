@@ -1,0 +1,365 @@
+import { render } from '@testing-library/react'
+import { setupUser } from '../../user-event'
+import { expect, test, vitest } from 'vitest'
+import { testTimes } from '../filter-time'
+import Location from '../../../src/components/location/Location'
+import { Role } from '../../../src/components/types/user/types'
+import type {
+  UseDebounce,
+  UseUrlSearchParams,
+  YearMonth,
+} from '../../../src/components/types/types'
+import type {
+  GetAnnualContainerStatsIf,
+  GetAnnualStatsIf,
+  GetBreweryCountryStatsIf,
+  GetBreweryStatsIf,
+  GetContainerStatsIf,
+  GetLocationStatsIf,
+  GetOverallStatsIf,
+  GetRatingStatsIf,
+  GetStyleStatsIf,
+  StatsIf,
+} from '../../../src/components/types/stats/types'
+import type {
+  GetLocationIf,
+  SearchLocationIf,
+  UpdateLocationIf,
+} from '../../../src/components/types/location/types'
+import type { GetLogin } from '../../../src/components/types/login/types'
+import type {
+  ListFilterIf,
+  ListReviewsByIf,
+  ReviewIf,
+  SetSearch,
+} from '../../../src/components/types/review/types'
+import type { UseUrlPathParams } from '../../../src/components/types/types'
+import type { SearchFieldIf } from '../../../src/components/types/search/types'
+import { loadingIndicatorText } from '../../../src/components/internal/common/LoadingIndicator'
+import type { SelectBeerIf } from '../../../src/components/types/beer/types'
+import { dontCall } from '../../dont-call'
+import { testLink } from '../link'
+
+const useDebounce: UseDebounce<string> = (str) => [str, false]
+
+const getUseDebounce = function <T>(): UseDebounce<T> {
+  return (value: T) => [value, false]
+}
+
+const id = '88471fe8-0f00-4a37-9b1c-9db78933c0a6'
+const name = 'Oluthuone Pamimomestari'
+const newNamePlaceholder = 'New name'
+
+function getLogin(): GetLogin {
+  return () => ({
+    user: {
+      id: 'ada1b9b1-ea66-4e17-bda8-f8ea1e65a020',
+      username: 'admin',
+      role: Role.admin,
+    },
+    authToken: 'auth',
+    refreshToken: 'refresh',
+  })
+}
+
+const dontSelectBeer: SelectBeerIf = {
+  create: {
+    useCreate: dontCall,
+    editBeerIf: {
+      selectBreweryIf: {
+        create: {
+          useCreate: dontCall,
+        },
+        search: {
+          useSearch: dontCall,
+          searchFieldIf: {
+            useSearchField: dontCall,
+            useDebounce: dontCall,
+          },
+        },
+      },
+      selectStyleIf: {
+        create: {
+          useCreate: dontCall,
+        },
+        list: {
+          useList: dontCall,
+          searchFieldIf: {
+            useSearchField: dontCall,
+            useDebounce: dontCall,
+          },
+        },
+      },
+    },
+  },
+  search: {
+    useSearch: dontCall,
+    searchFieldIf: {
+      useSearchField: dontCall,
+      useDebounce: dontCall,
+    },
+  },
+}
+
+const searchFieldIf: SearchFieldIf = {
+  useSearchField: () => ({
+    activate: (): undefined => undefined,
+    isActive: true,
+  }),
+  useDebounce,
+}
+
+const searchLocationIf: SearchLocationIf = {
+  useSearch: () => ({
+    search: dontCall,
+    isLoading: false,
+  }),
+  create: {
+    useCreate: () => ({
+      create: dontCall,
+      isLoading: false,
+    }),
+  },
+  searchFieldIf,
+}
+
+const noOpContainerIf = {
+  createIf: {
+    useCreate: dontCall,
+  },
+  listIf: {
+    useList: dontCall,
+  },
+}
+
+const minTime: YearMonth = testTimes.min.yearMonth
+const maxTime: YearMonth = testTimes.max.yearMonth
+
+type NoStats = GetAnnualStatsIf &
+  GetContainerStatsIf &
+  GetOverallStatsIf &
+  GetRatingStatsIf &
+  GetStyleStatsIf
+
+const noStats: NoStats = {
+  useStats: () => ({
+    stats: undefined,
+    isLoading: false,
+  }),
+  minTime,
+  maxTime,
+  getUseDebounce,
+}
+
+type NoInfiniteScrollStats = GetAnnualContainerStatsIf &
+  GetBreweryCountryStatsIf &
+  GetBreweryStatsIf &
+  GetLocationStatsIf
+
+const noInfiniteScrollStats: NoInfiniteScrollStats = {
+  useStats: () => ({
+    query: dontCall,
+    stats: undefined,
+    isLoading: false,
+  }),
+  infiniteScroll: dontCall,
+  minTime,
+  maxTime,
+  getUseDebounce,
+}
+
+const useUrlSearchParams: UseUrlSearchParams = () => ({
+  get: (): undefined => undefined,
+})
+
+const useUrlPathParams: UseUrlPathParams = () => ({
+  locationId: '98d82f5a-b657-402b-a211-96c37c9dad12',
+})
+
+const statsIf: StatsIf = {
+  annual: noStats,
+  annualContainer: noInfiniteScrollStats,
+  brewery: noInfiniteScrollStats,
+  breweryCountry: noInfiniteScrollStats,
+  container: noStats,
+  location: noInfiniteScrollStats,
+  overall: noStats,
+  rating: noStats,
+  style: noStats,
+  setSearch: () => undefined,
+  useUrlSearchParams,
+}
+
+const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
+  setSearch: SetSearch,
+) => ({
+  getUseDebounce,
+  minTime,
+  maxTime,
+  setSearch,
+  useUrlSearchParams,
+})
+
+const reviewIf: ReviewIf = {
+  get: {
+    useGet: dontCall,
+  },
+  update: {
+    useUpdate: dontCall,
+    searchLocationIf,
+    selectBeerIf: dontSelectBeer,
+    reviewContainerIf: noOpContainerIf,
+  },
+  getLogin: getLogin(),
+}
+
+const listReviewsByLocationIf: ListReviewsByIf = {
+  useList: () => ({
+    reviews: {
+      reviews: [],
+      sorting: {
+        order: 'rating',
+        direction: 'asc',
+      },
+    },
+    isLoading: false,
+  }),
+  filterIf: listFilterIf(() => undefined),
+  reviewIf,
+}
+
+const getLocationIf: GetLocationIf = {
+  useGet: () => ({
+    location: {
+      id,
+      name,
+    },
+    isLoading: false,
+  }),
+}
+
+test('updates location', async () => {
+  const user = setupUser()
+  const update = vitest.fn()
+  const { getByPlaceholderText, getByRole } = render(
+    <Location
+      linkComponent={testLink}
+      listReviewsByLocationIf={listReviewsByLocationIf}
+      getLocationIf={getLocationIf}
+      updateLocationIf={{
+        useUpdate: () => ({
+          update,
+          isLoading: false,
+        }),
+        getLogin: getLogin(),
+      }}
+      statsIf={statsIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
+  )
+  getByRole('heading', { name })
+
+  const editButton = getByRole('button', { name: 'Edit' })
+  await user.click(editButton)
+
+  const saveButton = getByRole('button', { name: 'Save' })
+  const nameInput = getByPlaceholderText(newNamePlaceholder)
+  await user.clear(nameInput)
+  const newName = 'Oluthuone Panimomestari'
+  await user.type(nameInput, newName)
+  expect(saveButton.hasAttribute('disabled')).toEqual(false)
+  await user.click(saveButton)
+  const updateCalls = update.mock.calls
+  expect(updateCalls).toEqual([
+    [
+      {
+        id,
+        name: newName,
+      },
+    ],
+  ])
+})
+
+const dontUpdateLocationIf: UpdateLocationIf = {
+  useUpdate: () => ({
+    update: dontCall,
+    isLoading: false,
+  }),
+  getLogin: getLogin(),
+}
+
+test('cancel editing', async () => {
+  const user = setupUser()
+  const { getByRole } = render(
+    <Location
+      linkComponent={testLink}
+      listReviewsByLocationIf={listReviewsByLocationIf}
+      getLocationIf={getLocationIf}
+      updateLocationIf={dontUpdateLocationIf}
+      statsIf={statsIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
+  )
+  getByRole('heading', { name })
+
+  const editButton = getByRole('button', { name: 'Edit' })
+  await user.click(editButton)
+
+  const cancelButton = getByRole('button', { name: 'Cancel' })
+  await user.click(cancelButton)
+
+  getByRole('button', { name: 'Edit' })
+})
+
+test('throw on missing id', async () => {
+  expect(() =>
+    render(
+      <Location
+        linkComponent={testLink}
+        listReviewsByLocationIf={listReviewsByLocationIf}
+        useUrlPathParams={() => ({})}
+        getLocationIf={getLocationIf}
+        updateLocationIf={dontUpdateLocationIf}
+        statsIf={statsIf}
+      />,
+    ),
+  ).toThrow('Location component without locationId. Should not happen.')
+})
+
+test('render loading', async () => {
+  const { getByText } = render(
+    <Location
+      linkComponent={testLink}
+      listReviewsByLocationIf={listReviewsByLocationIf}
+      useUrlPathParams={useUrlPathParams}
+      getLocationIf={{
+        useGet: () => ({
+          location: undefined,
+          isLoading: true,
+        }),
+      }}
+      updateLocationIf={dontUpdateLocationIf}
+      statsIf={statsIf}
+    />,
+  )
+  getByText(loadingIndicatorText)
+})
+
+test('render not found', async () => {
+  const { getByText } = render(
+    <Location
+      linkComponent={testLink}
+      listReviewsByLocationIf={listReviewsByLocationIf}
+      getLocationIf={{
+        useGet: () => ({
+          location: undefined,
+          isLoading: false,
+        }),
+      }}
+      updateLocationIf={dontUpdateLocationIf}
+      statsIf={statsIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
+  )
+  getByText('Not found')
+})

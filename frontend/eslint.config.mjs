@@ -228,43 +228,40 @@ const layerDependencies = {
 // renderer only.
 const rootDependencies = ['react-dom', 'web-vitals']
 
-// What a unit test may import on top of what its layer may import. The tests
-// live next to the code, so they match the layer configs and would otherwise
-// inherit a ban on their own tooling. They get no extra layers: a test that
-// needs a layer its subject may not import is describing an architecture
-// violation, not a testing need.
+// The unit tests live in test/, in a tree that mirrors src/: the tests of a
+// layer, and the helpers only that layer's tests use, are under test/<layer>/
+// and are held to the same layer bans as the code they test. The relative
+// path from a test to what it imports names the layer just as a path inside
+// src does, so the same patterns apply unchanged. They get no extra layers: a
+// test that needs a layer its subject may not import is describing an
+// architecture violation, not a testing need, and a helper in another layer's
+// directory is banned for the same reason that layer's code is.
+//
+// What a test may import on top of what its layer may import.
 const testDependencies = [
   '@testing-library/react',
   '@testing-library/user-event',
   'vitest',
 ]
 
-// The test utilities and the end-to-end tests get their own rule sets rather
-// than sharing the ones of src. They are not production code and they are not
-// the unit tests either, so the two are free to diverge from src and from each
-// other without anyone having to untangle a shared object first. They start
-// from the same rules on purpose: what is not needed here is not relaxed here.
-const testUtilRules = {
-  ...rules,
+// The packages a layer's test helpers need on top of those, by layer. The
+// store's tests run a real HTTP server, and that server is the only thing
+// that needs node's networking.
+const layerTestDependencies = {
+  store: ['http', 'net'],
 }
 
+// The end-to-end tests get their own rule set rather than sharing the one of
+// src. They are not production code and they are not the unit tests either,
+// so they are free to diverge from both without anyone having to untangle a
+// shared object first. They start from the same rules on purpose: what is not
+// needed here is not relaxed here.
 const e2eRules = {
   ...rules,
 }
 
-// test-util exists to serve src and reaches into it freely, internals
-// included: it is not a layer, so the layer bans do not apply to it, and the
-// test server reads the port it listens on from store/internal/config/. e2e
-// does not: it drives the built application over HTTP and has no business
-// reaching into either one.
-const testUtilDependencies = [
-  '@testing-library/react',
-  '@testing-library/user-event',
-  'http',
-  'net',
-  'react',
-  'vitest',
-]
+// e2e drives the built application over HTTP and has no business reaching
+// into src or test.
 const e2eDependencies = ['@playwright/test', 'uuid']
 
 // A layer that is never registered above would otherwise get no restrictions
@@ -285,6 +282,36 @@ if (unregisteredLayers.length > 0) {
       'Every directory under src is a layer and must be listed in layers of ' +
       'eslint.config.mjs so that import restrictions are applied to and ' +
       'against it.',
+  )
+}
+
+// The same argument for test/: a directory there that is not a layer would get
+// none of the layer bans. The helpers every layer's tests share are the files
+// directly under test/, not a directory of their own.
+const testDirectories = readdirSync(join(import.meta.dirname, 'test'), {
+  withFileTypes: true,
+})
+  .filter((entry) => entry.isDirectory())
+  .map((entry) => entry.name)
+const unknownTestDirectories = testDirectories.filter(
+  (directory) => !layers.includes(directory),
+)
+if (unknownTestDirectories.length > 0) {
+  throw new Error(
+    `Directories under test that are not layers: ` +
+      `${unknownTestDirectories.join(', ')}. test/ mirrors src/, so the ` +
+      'tests of a layer go under test/<layer>/ and helpers shared by every ' +
+      'layer directly under test/.',
+  )
+}
+
+const unknownTestDependencies = Object.keys(layerTestDependencies).filter(
+  (layer) => !layers.includes(layer),
+)
+if (unknownTestDependencies.length > 0) {
+  throw new Error(
+    'Unknown layers in layerTestDependencies: ' +
+      `${unknownTestDependencies.join(', ')}.`,
   )
 }
 
@@ -332,7 +359,7 @@ function layerFiles(layer) {
 }
 
 function layerTestFiles(layer) {
-  return [`src/${layer}/*.test.{ts,tsx}`, `src/${layer}/**/*.test.{ts,tsx}`]
+  return [`test/${layer}/*.{ts,tsx}`, `test/${layer}/**/*.{ts,tsx}`]
 }
 
 // renderHook is a wrapper around render with a test component of the
@@ -398,10 +425,7 @@ function internalPatterns(layer) {
 
 // Test scaffolding belongs to the tests. Production code that imports it ships
 // it.
-const testUtilPattern = directoryPattern(
-  'test-util',
-  'test-util/ is for tests only.',
-)
+const testPattern = directoryPattern('test', 'test/ is for tests only.')
 
 function escapeForRegex(text) {
   return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -428,8 +452,8 @@ function dependencyPattern(name, dependencies) {
   }
 }
 
-// The production files of a layer, and then its tests, which are the same
-// layers plus the testing tools. The test entry has to repeat the layer
+// The production files of a layer, and then its tests and their helpers, which
+// are the same layers plus the testing tools. The test entry has to repeat the layer
 // patterns because flat config merges rule by rule: the entry that comes later
 // replaces the whole no-restricted-imports value, not part of it.
 const layerConfigs = layers.flatMap((layer) => [
@@ -442,7 +466,7 @@ const layerConfigs = layers.flatMap((layer) => [
       ...restrictedImports([
         ...disallowedLayerPatterns(layer),
         ...internalPatterns(layer),
-        testUtilPattern,
+        testPattern,
         dependencyPattern(`${layer}/`, layerDependencies[layer]),
       ]),
     },
@@ -459,6 +483,7 @@ const layerConfigs = layers.flatMap((layer) => [
         dependencyPattern(`The tests of ${layer}/`, [
           ...layerDependencies[layer],
           ...testDependencies,
+          ...(layerTestDependencies[layer] ?? []),
         ]),
       ]),
     },
@@ -468,7 +493,12 @@ const layerConfigs = layers.flatMap((layer) => [
 export default [
   {
     languageOptions,
-    files: ['src/*.{js,ts,tsx,jsx}', 'src/**/*.{js,ts,tsx,jsx}'],
+    files: [
+      'src/*.{js,ts,tsx,jsx}',
+      'src/**/*.{js,ts,tsx,jsx}',
+      'test/*.{js,ts,tsx,jsx}',
+      'test/**/*.{js,ts,tsx,jsx}',
+    ],
     plugins,
     rules,
   },
@@ -483,28 +513,37 @@ export default [
     rules: {
       ...rules,
       ...restrictedImports([
-        testUtilPattern,
+        testPattern,
         dependencyPattern('Files directly under src/', rootDependencies),
       ]),
     },
   },
+  // The files directly under test are the helpers every layer's tests share,
+  // and their tests. Being shared is what they are for, so they may import no
+  // layer at all: a helper that needs one belongs under that layer's
+  // directory, where the layer's bans apply to it.
   {
     languageOptions,
     plugins,
-    files: ['src/*.test.{ts,tsx}'],
+    files: ['test/*.{ts,tsx}'],
     rules: {
       ...rules,
       ...restrictedImports([
-        dependencyPattern('The tests directly under src/', [
-          ...rootDependencies,
-          ...testDependencies,
-        ]),
+        ...layers.map((layer) =>
+          directoryPattern(
+            layer,
+            'The helpers directly under test/ are shared by every layer and ' +
+              `may not import ${layer}/. Move a helper that needs it under ` +
+              `test/${layer}/.`,
+          ),
+        ),
+        dependencyPattern('The files directly under test/', testDependencies),
       ]),
     },
   },
   {
     languageOptions,
-    files: ['src/*.test.{js,ts,tsx,jsx}', 'src/**/*.test.{js,ts,tsx,jsx}'],
+    files: ['test/*.test.{js,ts,tsx,jsx}', 'test/**/*.test.{js,ts,tsx,jsx}'],
     plugins,
     rules: {
       ...rules,
@@ -513,15 +552,23 @@ export default [
       '@typescript-eslint/strict-void-return': 'off',
     },
   },
+  // A test reaches what it tests by a relative path back into src/, which is
+  // as long as the tree is deep, and prettier leaves an import of a single
+  // name on one line however long it is. Only a line that is a whole import
+  // statement is exempt, so the limit still holds for everything a test says.
   {
     languageOptions,
-    files: ['test-util/*.{ts,tsx}', 'test-util/**/*.{ts,tsx}'],
+    files: ['test/*.{ts,tsx}', 'test/**/*.{ts,tsx}'],
     plugins,
     rules: {
-      ...testUtilRules,
-      ...restrictedImports([
-        dependencyPattern('test-util/', testUtilDependencies),
-      ]),
+      'max-len': [
+        'error',
+        {
+          code: 80,
+          ignoreRegExpLiterals: true,
+          ignorePattern: "^import (type )?[^']+ from '[^']+'$",
+        },
+      ],
     },
   },
   {
@@ -535,7 +582,7 @@ export default [
           'src',
           'e2e/ drives the built application and may not import its code.',
         ),
-        testUtilPattern,
+        testPattern,
         dependencyPattern('e2e/', e2eDependencies),
       ]),
     },

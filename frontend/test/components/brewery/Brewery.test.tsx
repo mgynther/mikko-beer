@@ -1,0 +1,422 @@
+import { render } from '@testing-library/react'
+import { setupUser } from '../../user-event'
+import { expect, test, vitest } from 'vitest'
+import { testTimes } from '../filter-time'
+import Brewery from '../../../src/components/brewery/Brewery'
+import { Role } from '../../../src/components/types/user/types'
+import type {
+  UseDebounce,
+  UseUrlSearchParams,
+  YearMonth,
+} from '../../../src/components/types/types'
+import type {
+  GetAnnualContainerStatsIf,
+  GetAnnualStatsIf,
+  GetBreweryCountryStatsIf,
+  GetBreweryStatsIf,
+  GetContainerStatsIf,
+  GetLocationStatsIf,
+  GetOverallStatsIf,
+  GetRatingStatsIf,
+  GetStyleStatsIf,
+  StatsIf,
+} from '../../../src/components/types/stats/types'
+import type { SearchLocationIf } from '../../../src/components/types/location/types'
+import type { GetLogin } from '../../../src/components/types/login/types'
+import type {
+  ListFilterIf,
+  ListReviewsByIf,
+  ReviewIf,
+  SetSearch,
+} from '../../../src/components/types/review/types'
+import type { ListStoragesByIf } from '../../../src/components/types/storage/types'
+import type {
+  GetBreweryIf,
+  UpdateBreweryIf,
+} from '../../../src/components/types/brewery/types'
+import type { SearchFieldIf } from '../../../src/components/types/search/types'
+import type { UseUrlPathParams } from '../../../src/components/types/types'
+import { loadingIndicatorText } from '../../../src/components/internal/common/LoadingIndicator'
+import type { SelectBeerIf } from '../../../src/components/types/beer/types'
+import { dontCall } from '../../dont-call'
+import { testLink } from '../link'
+
+const useDebounce: UseDebounce<string> = (str) => [str, false]
+
+const getUseDebounce = function <T>(): UseDebounce<T> {
+  return (value: T) => [value, false]
+}
+
+const id = 'f57c65dd-80b1-46db-a41c-21ad137cb2a8'
+const name = 'Hopping Brewsters'
+const newNamePlaceholder = 'New name'
+
+function getLogin(): GetLogin {
+  return () => ({
+    user: {
+      id: 'ada1b9b1-ea66-4e17-bda8-f8ea1e65a020',
+      username: 'admin',
+      role: Role.admin,
+    },
+    authToken: 'auth',
+    refreshToken: 'refresh',
+  })
+}
+
+const searchFieldIf: SearchFieldIf = {
+  useSearchField: () => ({
+    activate: dontCall,
+    isActive: true,
+  }),
+  useDebounce,
+}
+
+const dontSelectBeer: SelectBeerIf = {
+  create: {
+    useCreate: dontCall,
+    editBeerIf: {
+      selectBreweryIf: {
+        create: {
+          useCreate: dontCall,
+        },
+        search: {
+          useSearch: dontCall,
+          searchFieldIf,
+        },
+      },
+      selectStyleIf: {
+        create: {
+          useCreate: dontCall,
+        },
+        list: {
+          useList: dontCall,
+          searchFieldIf: {
+            useSearchField: dontCall,
+            useDebounce: dontCall,
+          },
+        },
+      },
+    },
+  },
+  search: {
+    useSearch: dontCall,
+    searchFieldIf: {
+      useSearchField: dontCall,
+      useDebounce: dontCall,
+    },
+  },
+}
+
+const searchLocationIf: SearchLocationIf = {
+  useSearch: () => ({
+    search: dontCall,
+    isLoading: false,
+  }),
+  create: {
+    useCreate: () => ({
+      create: dontCall,
+      isLoading: false,
+    }),
+  },
+  searchFieldIf,
+}
+
+const noOpContainerIf = {
+  createIf: {
+    useCreate: dontCall,
+  },
+  listIf: {
+    useList: dontCall,
+  },
+}
+
+type NoStats = GetAnnualStatsIf &
+  GetContainerStatsIf &
+  GetOverallStatsIf &
+  GetRatingStatsIf &
+  GetStyleStatsIf
+
+const minTime: YearMonth = testTimes.min.yearMonth
+const maxTime: YearMonth = testTimes.max.yearMonth
+
+const noStats: NoStats = {
+  useStats: () => ({
+    stats: undefined,
+    isLoading: false,
+  }),
+  minTime,
+  maxTime,
+  getUseDebounce,
+}
+
+type NoInfiniteScrollStats = GetAnnualContainerStatsIf &
+  GetBreweryCountryStatsIf &
+  GetBreweryStatsIf &
+  GetLocationStatsIf
+
+const noInfiniteScrollStats: NoInfiniteScrollStats = {
+  useStats: () => ({
+    query: dontCall,
+    stats: undefined,
+    isLoading: false,
+  }),
+  infiniteScroll: dontCall,
+  minTime,
+  maxTime,
+  getUseDebounce,
+}
+
+const useUrlSearchParams: UseUrlSearchParams = () => ({
+  get: (): undefined => undefined,
+})
+
+const useUrlPathParams: UseUrlPathParams = () => ({
+  breweryId: '63a33cb5-50ca-43f3-9e63-065f21751a12',
+})
+
+const statsIf: StatsIf = {
+  annual: noStats,
+  annualContainer: noInfiniteScrollStats,
+  brewery: noInfiniteScrollStats,
+  breweryCountry: noInfiniteScrollStats,
+  container: noStats,
+  location: noInfiniteScrollStats,
+  overall: noStats,
+  rating: noStats,
+  style: noStats,
+  setSearch: () => undefined,
+  useUrlSearchParams,
+}
+
+const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
+  setSearch: SetSearch,
+) => ({
+  getUseDebounce,
+  minTime,
+  maxTime,
+  setSearch,
+  useUrlSearchParams,
+})
+
+const reviewIf: ReviewIf = {
+  get: {
+    useGet: dontCall,
+  },
+  update: {
+    useUpdate: dontCall,
+    searchLocationIf,
+    selectBeerIf: dontSelectBeer,
+    reviewContainerIf: noOpContainerIf,
+  },
+  getLogin: getLogin(),
+}
+
+const listReviewsByBreweryIf: ListReviewsByIf = {
+  useList: () => ({
+    reviews: {
+      reviews: [],
+      sorting: {
+        order: 'time',
+        direction: 'desc',
+      },
+    },
+    isLoading: false,
+  }),
+  filterIf: listFilterIf(() => undefined),
+  reviewIf,
+}
+
+const listStoragesByBreweryIf: ListStoragesByIf = {
+  useList: () => ({
+    storages: { storages: [] },
+    isLoading: false,
+  }),
+  delete: {
+    useDelete: dontCall,
+    getLogin: getLogin(),
+  },
+}
+
+const getBreweryIf: GetBreweryIf = {
+  useGet: () => ({
+    brewery: {
+      id,
+      name,
+      country: undefined,
+    },
+    isLoading: false,
+  }),
+}
+
+test('updates brewery', async () => {
+  const user = setupUser()
+  const update = vitest.fn()
+  const { getByPlaceholderText, getByRole } = render(
+    <Brewery
+      linkComponent={testLink}
+      listReviewsByBreweryIf={listReviewsByBreweryIf}
+      listStoragesByBreweryIf={listStoragesByBreweryIf}
+      getBreweryIf={getBreweryIf}
+      updateBreweryIf={{
+        useUpdate: () => ({
+          update,
+          isLoading: false,
+        }),
+        getLogin: getLogin(),
+      }}
+      statsIf={statsIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
+  )
+  getByRole('heading', { name })
+
+  const editButton = getByRole('button', { name: 'Edit' })
+  await user.click(editButton)
+
+  const saveButton = getByRole('button', { name: 'Save' })
+  const nameInput = getByPlaceholderText(newNamePlaceholder)
+  await user.clear(nameInput)
+  const newName = 'Hopping Brewsters R.I.P.'
+  await user.type(nameInput, newName)
+  expect(saveButton.hasAttribute('disabled')).toEqual(false)
+  await user.click(saveButton)
+  const updateCalls = update.mock.calls
+  expect(updateCalls).toEqual([
+    [
+      {
+        id,
+        name: newName,
+      },
+    ],
+  ])
+})
+
+const dontUpdateBreweryIf: UpdateBreweryIf = {
+  useUpdate: () => ({
+    update: dontCall,
+    isLoading: false,
+  }),
+  getLogin: getLogin(),
+}
+
+test('cancel update', async () => {
+  const user = setupUser()
+  const { getByRole } = render(
+    <Brewery
+      linkComponent={testLink}
+      listReviewsByBreweryIf={listReviewsByBreweryIf}
+      listStoragesByBreweryIf={listStoragesByBreweryIf}
+      getBreweryIf={getBreweryIf}
+      updateBreweryIf={dontUpdateBreweryIf}
+      statsIf={statsIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
+  )
+  getByRole('heading', { name })
+
+  const editButton = getByRole('button', { name: 'Edit' })
+  await user.click(editButton)
+
+  const cancelButton = getByRole('button', { name: 'Cancel' })
+  await user.click(cancelButton)
+
+  getByRole('button', { name: 'Edit' })
+})
+
+test('render loading', async () => {
+  const { getByText } = render(
+    <Brewery
+      linkComponent={testLink}
+      listReviewsByBreweryIf={listReviewsByBreweryIf}
+      listStoragesByBreweryIf={listStoragesByBreweryIf}
+      getBreweryIf={{
+        useGet: () => ({
+          brewery: undefined,
+          isLoading: true,
+        }),
+      }}
+      updateBreweryIf={dontUpdateBreweryIf}
+      statsIf={statsIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
+  )
+  getByText(loadingIndicatorText)
+})
+
+test('render not found', async () => {
+  const { getByText } = render(
+    <Brewery
+      linkComponent={testLink}
+      listReviewsByBreweryIf={listReviewsByBreweryIf}
+      listStoragesByBreweryIf={listStoragesByBreweryIf}
+      getBreweryIf={{
+        useGet: () => ({
+          brewery: undefined,
+          isLoading: false,
+        }),
+      }}
+      updateBreweryIf={dontUpdateBreweryIf}
+      statsIf={statsIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
+  )
+  getByText('Not found')
+})
+
+test('throw on missing id', async () => {
+  expect(() =>
+    render(
+      <Brewery
+        linkComponent={testLink}
+        listReviewsByBreweryIf={listReviewsByBreweryIf}
+        listStoragesByBreweryIf={listStoragesByBreweryIf}
+        getBreweryIf={getBreweryIf}
+        updateBreweryIf={dontUpdateBreweryIf}
+        statsIf={statsIf}
+        useUrlPathParams={() => ({})}
+      />,
+    ),
+  ).toThrow('Brewery component without breweryId. Should not happen.')
+})
+
+test('renders brewery country flag', () => {
+  const { getByRole, getByText } = render(
+    <Brewery
+      linkComponent={testLink}
+      listReviewsByBreweryIf={listReviewsByBreweryIf}
+      listStoragesByBreweryIf={listStoragesByBreweryIf}
+      getBreweryIf={{
+        useGet: () => ({
+          brewery: {
+            id,
+            name,
+            country: 'FI',
+          },
+          isLoading: false,
+        }),
+      }}
+      updateBreweryIf={dontUpdateBreweryIf}
+      statsIf={statsIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
+  )
+  const heading = getByRole('heading', { name: `${name} \u{1F1EB}\u{1F1EE}` })
+  expect(heading).toBeDefined()
+  getByText('\u{1F1EB}\u{1F1EE}')
+})
+
+test('renders brewery without country flag', () => {
+  const { getByRole, queryByText } = render(
+    <Brewery
+      linkComponent={testLink}
+      listReviewsByBreweryIf={listReviewsByBreweryIf}
+      listStoragesByBreweryIf={listStoragesByBreweryIf}
+      getBreweryIf={getBreweryIf}
+      updateBreweryIf={dontUpdateBreweryIf}
+      statsIf={statsIf}
+      useUrlPathParams={useUrlPathParams}
+    />,
+  )
+  getByRole('heading', { name })
+  expect(queryByText('\u{1F1EB}\u{1F1EE}')).toEqual(null)
+})
