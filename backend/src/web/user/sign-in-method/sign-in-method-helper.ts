@@ -10,6 +10,7 @@ import type { Transaction } from '../../../data/database'
 import {
   encryptSecret,
   needsRehash,
+  rejectSecret,
   verifySecret,
 } from '../../../crypto/crypto.service.js'
 import type { ScryptParameters } from '../../../crypto/scrypt-parameters.js'
@@ -46,6 +47,19 @@ export const createVerifySecret =
   () =>
   (logger: log, secret: string, hash: string): Promise<boolean> =>
     wrapVerifySecret(logger, secret, hash)
+
+function wrapRejectSecret(
+  logger: log,
+  parameters: ScryptParameters,
+  secret: string,
+): Promise<void> {
+  return rejectSecret(createErrorLogger(logger), parameters, secret)
+}
+
+export const createRejectSecret =
+  (parameters: ScryptParameters) =>
+  (logger: log, secret: string): Promise<void> =>
+    wrapRejectSecret(logger, parameters, secret)
 
 export const createNeedsRehash =
   (parameters: ScryptParameters) =>

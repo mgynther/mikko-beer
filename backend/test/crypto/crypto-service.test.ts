@@ -1,9 +1,11 @@
 import { describe, it } from 'node:test'
 import { assertEqual } from '../assert.js'
+import * as assert from 'node:assert/strict'
 
 import {
   encryptSecret,
   needsRehash,
+  rejectSecret,
   verifySecret,
 } from '../../src/crypto/crypto.service.js'
 import { formatHash } from '../../src/crypto/internal/hash-format.js'
@@ -114,5 +116,17 @@ describe('needs rehash', () => {
   it('rehash legacy hash even with its own parameters', () => {
     const legacyHash = `${'ab'.repeat(16)}:${'cd'.repeat(64)}`
     assertEqual(needsRehash({ N: 16384, r: 8, p: 1 }, legacyHash), true)
+  })
+})
+
+describe('reject secret', () => {
+  const log = () => undefined
+
+  it('reject secret by hashing it with the parameters', async () => {
+    await rejectSecret(log, { N: 1024, r: 8, p: 2 }, 'password')
+  })
+
+  it('fail to reject secret with parameters scrypt refuses', async () => {
+    await assert.rejects(rejectSecret(log, { N: 1000, r: 8, p: 1 }, 'password'))
   })
 })

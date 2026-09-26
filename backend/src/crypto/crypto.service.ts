@@ -38,6 +38,17 @@ export async function verifySecret(
   return timingSafeEqual(key, parsed.key)
 }
 
+// The work of verifying a secret against a hash with the parameters, for
+// when there is no hash, so that a missing one does not answer sooner.
+export async function rejectSecret(
+  log: log,
+  parameters: ScryptParameters,
+  secret: string,
+): Promise<void> {
+  const salt = randomBytes(saltLength)
+  await scrypt(log, secret, salt, keyLength, parameters)
+}
+
 export function needsRehash(
   parameters: ScryptParameters,
   hash: string,

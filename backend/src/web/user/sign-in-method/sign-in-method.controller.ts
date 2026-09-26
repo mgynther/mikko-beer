@@ -31,6 +31,7 @@ import type { Router } from '../../router.js'
 import {
   createEncryptSecret,
   createNeedsRehash,
+  createRejectSecret,
   createVerifySecret,
 } from './sign-in-method-helper.js'
 
@@ -85,6 +86,7 @@ export function signInMethodController(router: Router): void {
             },
             findPasswordSignInMethod: createFindPasswordSignInMethod(trx),
             verifySecret: createVerifySecret(),
+            rejectSecret: createRejectSecret(ctx.config.passwordHashParameters),
             needsRehash: createNeedsRehash(ctx.config.passwordHashParameters),
             encryptSecret: createEncryptSecret(
               ctx.config.passwordHashParameters,

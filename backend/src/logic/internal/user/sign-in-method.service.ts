@@ -100,19 +100,18 @@ export async function signInUsingPassword(
   authTokenConfig: AuthTokenConfig,
   log: log,
 ): Promise<SignedInUser> {
-  const user = await userService.lockUserByUsername(
-    signInUsingPasswordIf.lockUserByUsername,
-    method.username,
-  )
-  const signInMethod = await signInUsingPasswordIf.findPasswordSignInMethod(
-    user.id,
-  )
+  const password = method.password
+  const user = await signInUsingPasswordIf.lockUserByUsername(method.username)
+  const signInMethod =
+    user === undefined
+      ? undefined
+      : await signInUsingPasswordIf.findPasswordSignInMethod(user.id)
 
-  if (signInMethod === undefined) {
+  if (user === undefined || signInMethod === undefined) {
+    await signInUsingPasswordIf.rejectSecret(log, password)
     throw invalidCredentialsError
   }
 
-  const password = method.password
   if (
     !(await signInUsingPasswordIf.verifySecret(
       log,

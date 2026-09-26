@@ -368,6 +368,7 @@ describe('password sign-in-method service unit tests', () => {
       lockUserByUsername: lockValidUserByUsername,
       findPasswordSignInMethod: getUserPasswordHasher(userPasswordHash),
       verifySecret: passVerifySecret,
+      rejectSecret: notCalled,
       needsRehash: needsNoRehash,
       encryptSecret: notCalled,
       insertRefreshToken,
@@ -394,6 +395,7 @@ describe('password sign-in-method service unit tests', () => {
       lockUserByUsername: lockValidUserByUsername,
       findPasswordSignInMethod: getUserPasswordHasher(userPasswordHash),
       verifySecret: passVerifySecret,
+      rejectSecret: notCalled,
       needsRehash,
       encryptSecret,
       insertRefreshToken,
@@ -414,11 +416,15 @@ describe('password sign-in-method service unit tests', () => {
     assertEqual(newHash.passwordHash, encryptedSecret)
   })
 
-  it('fail to sign in using password without user', async () => {
+  it('fail to sign in using password without user after the work of a password check', async () => {
+    const rejectedSecrets: string[] = []
     const signInUsingPasswordIf: SignInUsingPasswordIf = {
       lockUserByUsername: lockMissingUser,
       findPasswordSignInMethod: notCalled,
       verifySecret: notCalled,
+      rejectSecret: async (_logger: unknown, secret: string) => {
+        rejectedSecrets.push(secret)
+      },
       needsRehash: rehashNotChecked,
       encryptSecret: notCalled,
       insertRefreshToken: notCalled,
@@ -433,13 +439,18 @@ describe('password sign-in-method service unit tests', () => {
         log,
       )
     }, invalidCredentialsError)
+    assertDeepEqual(rejectedSecrets, [method.password])
   })
 
-  it('fail to sign in using password without password', async () => {
+  it('fail to sign in using password without password after the work of a password check', async () => {
+    const rejectedSecrets: string[] = []
     const signInUsingPasswordIf: SignInUsingPasswordIf = {
       lockUserByUsername: lockValidUserByUsername,
       findPasswordSignInMethod: getUserPasswordHasher(undefined),
       verifySecret: notCalled,
+      rejectSecret: async (_logger: unknown, secret: string) => {
+        rejectedSecrets.push(secret)
+      },
       needsRehash: rehashNotChecked,
       encryptSecret: notCalled,
       insertRefreshToken: notCalled,
@@ -454,6 +465,7 @@ describe('password sign-in-method service unit tests', () => {
         log,
       )
     }, invalidCredentialsError)
+    assertDeepEqual(rejectedSecrets, [method.password])
   })
 
   it('fail to sign in using password with wrong password', async () => {
@@ -461,6 +473,7 @@ describe('password sign-in-method service unit tests', () => {
       lockUserByUsername: lockValidUserByUsername,
       findPasswordSignInMethod: getUserPasswordHasher(userPasswordHash),
       verifySecret: failVerifySecret,
+      rejectSecret: notCalled,
       needsRehash: rehashNotChecked,
       encryptSecret: notCalled,
       insertRefreshToken: notCalled,

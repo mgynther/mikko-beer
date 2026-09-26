@@ -242,6 +242,21 @@ describe('user tests', () => {
     assertEqual(results.length, 1)
   })
 
+  it('fail to sign in unknown user like a wrong password', async () => {
+    const res = await ctx.request.post(`/api/v1/user/sign-in`, {
+      username: 'unknown',
+      password: 'password',
+    })
+
+    assertEqual(res.status, 401)
+    assertDeepEqual(res.data, {
+      error: {
+        code: 'InvalidCredentials',
+        message: 'wrong username or password',
+      },
+    })
+  })
+
   it('sign out a user', async () => {
     const { user, authToken, refreshToken } = await ctx.createUser()
 
