@@ -153,6 +153,73 @@ function ipaStats(ipa: ReviewedStyle) {
   }
 }
 
+interface MultiStyle {
+  ale: Style
+  lager: Style
+}
+
+// An ale beer is an ale only, a cream ale beer both an ale and a lager. The
+// ale beer is rated 5 and 7, the cream ale beer 4 and 10.
+async function insertMultiStyle(db: Database): Promise<MultiStyle> {
+  return await db.executeReadWriteTransaction(async (trx: Transaction) => {
+    const ale = await styleRepository.insertStyle(
+      trx,
+      buildNewStyle({ name: 'Ale' }),
+    )
+    const lager = await styleRepository.insertStyle(
+      trx,
+      buildNewStyle({ name: 'Lager' }),
+    )
+    const aleBeer = await beerRepository.insertBeer(trx, buildNewBeer())
+    const creamAleBeer = await beerRepository.insertBeer(trx, buildNewBeer())
+    await beerRepository.insertBeerStyles(trx, [
+      { beer: aleBeer.id, style: ale.id },
+      { beer: creamAleBeer.id, style: ale.id },
+      { beer: creamAleBeer.id, style: lager.id },
+    ])
+    const container = await containerRepository.insertContainer(
+      trx,
+      buildNewContainer(),
+    )
+    const location = await locationRepository.insertLocation(
+      trx,
+      buildNewLocation(),
+    )
+    const ratings = [
+      { beer: aleBeer, rating: 5 },
+      { beer: aleBeer, rating: 7 },
+      { beer: creamAleBeer, rating: 4 },
+      { beer: creamAleBeer, rating: 10 },
+    ]
+    await Promise.all(
+      ratings.map(({ beer, rating }) =>
+        reviewRepository.insertReview(
+          trx,
+          buildNewReview({
+            beer: beer.id,
+            container: container.id,
+            location: location.id,
+            rating,
+          }),
+        ),
+      ),
+    )
+    return { ale, lager }
+  })
+}
+
+function lagerStats(lager: Style) {
+  return {
+    reviewAverage: '7.00',
+    reviewCount: '2',
+    reviewStandardDeviation: '3.00',
+    reviewMedian: '7.00',
+    reviewMode: '4',
+    styleId: lager.id,
+    styleName: 'Lager',
+  }
+}
+
 describe('style stats tests', () => {
   const ctx = new TestContext()
 
@@ -259,5 +326,41 @@ describe('style stats tests', () => {
       byName,
     )
     assertDeepEqual(stats, [ipaStats(ipa)])
+  })
+
+  it('count a review into each style of its beer', async () => {
+    const { ale, lager } = await insertMultiStyle(ctx.db)
+    const stats = await getStyle(noFilter, byName)
+    assertDeepEqual(stats, [
+      {
+        reviewAverage: '6.50',
+        reviewCount: '4',
+        reviewStandardDeviation: '2.29',
+        reviewMedian: '6.00',
+        reviewMode: '4',
+        styleId: ale.id,
+        styleName: 'Ale',
+      },
+      lagerStats(lager),
+    ])
+  })
+
+  // The style filter selects from another table than the unfiltered query,
+  // so this also checks what it selects.
+  it('filter by style keeps the other styles of its beers', async () => {
+    const { ale, lager } = await insertMultiStyle(ctx.db)
+    const stats = await getStyle({ ...noFilter, style: lager.id }, byName)
+    assertDeepEqual(stats, [
+      {
+        reviewAverage: '7.00',
+        reviewCount: '2',
+        reviewStandardDeviation: '3.00',
+        reviewMedian: '7.00',
+        reviewMode: '4',
+        styleId: ale.id,
+        styleName: 'Ale',
+      },
+      lagerStats(lager),
+    ])
   })
 })
