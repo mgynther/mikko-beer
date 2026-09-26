@@ -4,7 +4,7 @@ import { Routes, Route, Outlet } from 'react-router'
 import { Role } from '../components/types/user/types'
 import type { User } from '../components/types/user/types'
 
-import './App.css'
+import './app.css'
 
 import Account from '../components/account/Account'
 import AddReview from '../components/review/AddReview'
