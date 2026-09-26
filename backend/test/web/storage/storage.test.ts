@@ -23,17 +23,26 @@ describe('storage tests', () => {
   afterEach(ctx.afterEach)
 
   async function createDeps(adminAuthHeaders: Record<string, string>) {
-    const styleRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
-      `/api/v1/style`,
-      { name: 'Kriek', parents: [] },
-      adminAuthHeaders,
-    )
+    const [styleRes, breweryRes, containerRes] = await Promise.all([
+      ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
+        `/api/v1/style`,
+        { name: 'Kriek', parents: [] },
+        adminAuthHeaders,
+      ),
+      ctx.request.post<{ brewery: CreatedOrUpdatedBrewery }>(
+        `/api/v1/brewery`,
+        { name: 'Lindemans' },
+        adminAuthHeaders,
+      ),
+      ctx.request.post<{ container: CreatedOrUpdatedContainer }>(
+        `/api/v1/container`,
+        { type: 'Bottle', size: '0.25' },
+        adminAuthHeaders,
+      ),
+    ])
     assertEqual(styleRes.status, 201)
-
-    const breweryRes = await ctx.request.post<{
-      brewery: CreatedOrUpdatedBrewery
-    }>(`/api/v1/brewery`, { name: 'Lindemans' }, adminAuthHeaders)
     assertEqual(breweryRes.status, 201)
+    assertEqual(containerRes.status, 201)
 
     const beerRes = await ctx.request.post<{ beer: CreatedOrUpdatedBeer }>(
       `/api/v1/beer`,
@@ -49,10 +58,6 @@ describe('storage tests', () => {
     assertEqual(beerRes.data.beer.name, 'Lindemans Kriek')
     assertDeepEqual(beerRes.data.beer.breweries, [breweryRes.data.brewery.id])
     assertDeepEqual(beerRes.data.beer.styles, [styleRes.data.style.id])
-
-    const containerRes = await ctx.request.post<{
-      container: CreatedOrUpdatedContainer
-    }>(`/api/v1/container`, { type: 'Bottle', size: '0.25' }, adminAuthHeaders)
 
     return {
       beerRes,
@@ -293,43 +298,49 @@ describe('storage tests', () => {
   })
 
   async function createListByDeps(adminAuthHeaders: Record<string, string>) {
-    const { beerRes, breweryRes, containerRes, styleRes } =
-      await createDeps(adminAuthHeaders)
-
-    const storageRes = await ctx.request.post<{
-      storage: CreatedOrUpdatedStorage
-    }>(
-      `/api/v1/storage`,
-      {
-        beer: beerRes.data.beer.id,
-        bestBefore: bestBeforeLater,
-        container: containerRes.data.container.id,
-      },
-      ctx.adminAuthHeaders(),
-    )
-    assertEqual(storageRes.status, 201)
-    assertEqual(storageRes.data.storage.beer, beerRes.data.beer.id)
-
-    const otherStyleRes = await ctx.request.post<{
-      style: CreatedOrUpdatedStyle
-    }>(`/api/v1/style`, { name: 'IPA', parents: [] }, ctx.adminAuthHeaders())
+    const [
+      { beerRes, breweryRes, containerRes, styleRes },
+      otherStyleRes,
+      otherBreweryRes,
+    ] = await Promise.all([
+      createDeps(adminAuthHeaders),
+      ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
+        `/api/v1/style`,
+        { name: 'IPA', parents: [] },
+        adminAuthHeaders,
+      ),
+      ctx.request.post<{ brewery: CreatedOrUpdatedBrewery }>(
+        `/api/v1/brewery`,
+        { name: 'Nokian Panimo' },
+        adminAuthHeaders,
+      ),
+    ])
     assertEqual(otherStyleRes.status, 201)
-
-    const otherBreweryRes = await ctx.request.post<{
-      brewery: CreatedOrUpdatedBrewery
-    }>(`/api/v1/brewery`, { name: 'Nokian Panimo' }, ctx.adminAuthHeaders())
     assertEqual(otherBreweryRes.status, 201)
 
-    const otherBeerRes = await ctx.request.post<{ beer: CreatedOrUpdatedBeer }>(
-      `/api/v1/beer`,
-      {
-        name: 'IPA',
-        breweries: [otherBreweryRes.data.brewery.id],
-        styles: [otherStyleRes.data.style.id],
-      },
-      ctx.adminAuthHeaders(),
-    )
-
+    const [otherBeerRes, collabBeerRes] = await Promise.all([
+      ctx.request.post<{ beer: CreatedOrUpdatedBeer }>(
+        `/api/v1/beer`,
+        {
+          name: 'IPA',
+          breweries: [otherBreweryRes.data.brewery.id],
+          styles: [otherStyleRes.data.style.id],
+        },
+        adminAuthHeaders,
+      ),
+      ctx.request.post<{ beer: CreatedOrUpdatedBeer }>(
+        `/api/v1/beer`,
+        {
+          name: 'Wild Kriek IPA',
+          breweries: [
+            breweryRes.data.brewery.id,
+            otherBreweryRes.data.brewery.id,
+          ],
+          styles: [styleRes.data.style.id, otherStyleRes.data.style.id],
+        },
+        adminAuthHeaders,
+      ),
+    ])
     assertEqual(otherBeerRes.status, 201)
     assertEqual(otherBeerRes.data.beer.name, 'IPA')
     assertDeepEqual(otherBeerRes.data.beer.breweries, [
@@ -338,49 +349,26 @@ describe('storage tests', () => {
     assertDeepEqual(otherBeerRes.data.beer.styles, [
       otherStyleRes.data.style.id,
     ])
-
-    const otherStorageRes = await ctx.request.post<{
-      storage: CreatedOrUpdatedStorage
-    }>(
-      `/api/v1/storage`,
-      {
-        beer: otherBeerRes.data.beer.id,
-        bestBefore,
-        container: containerRes.data.container.id,
-      },
-      ctx.adminAuthHeaders(),
-    )
-    assertEqual(otherStorageRes.status, 201)
-    assertEqual(otherStorageRes.data.storage.beer, otherBeerRes.data.beer.id)
-
-    const collabBeerRes = await ctx.request.post<{
-      beer: CreatedOrUpdatedBeer
-    }>(
-      `/api/v1/beer`,
-      {
-        name: 'Wild Kriek IPA',
-        breweries: [
-          breweryRes.data.brewery.id,
-          otherBreweryRes.data.brewery.id,
-        ],
-        styles: [styleRes.data.style.id, otherStyleRes.data.style.id],
-      },
-      ctx.adminAuthHeaders(),
-    )
     assertEqual(collabBeerRes.status, 201)
     assertEqual(collabBeerRes.data.beer.name, 'Wild Kriek IPA')
 
-    const collabStorageRes = await ctx.request.post<{
-      storage: CreatedOrUpdatedStorage
-    }>(
-      `/api/v1/storage`,
-      {
-        beer: collabBeerRes.data.beer.id,
-        bestBefore,
-        container: containerRes.data.container.id,
-      },
-      ctx.adminAuthHeaders(),
+    const [storageRes, otherStorageRes, collabStorageRes] = await Promise.all(
+      [
+        { beer: beerRes.data.beer.id, bestBefore: bestBeforeLater },
+        { beer: otherBeerRes.data.beer.id, bestBefore },
+        { beer: collabBeerRes.data.beer.id, bestBefore },
+      ].map((request) =>
+        ctx.request.post<{ storage: CreatedOrUpdatedStorage }>(
+          `/api/v1/storage`,
+          { ...request, container: containerRes.data.container.id },
+          adminAuthHeaders,
+        ),
+      ),
     )
+    assertEqual(storageRes.status, 201)
+    assertEqual(storageRes.data.storage.beer, beerRes.data.beer.id)
+    assertEqual(otherStorageRes.status, 201)
+    assertEqual(otherStorageRes.data.storage.beer, otherBeerRes.data.beer.id)
     assertEqual(collabStorageRes.status, 201)
     assertEqual(collabStorageRes.data.storage.beer, collabBeerRes.data.beer.id)
 

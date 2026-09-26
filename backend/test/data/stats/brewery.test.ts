@@ -86,26 +86,25 @@ async function insertReviewedBrewery(
   },
   ratings: Rating[],
 ): Promise<ReviewedBrewery> {
-  const brewery = await breweryRepository.insertBrewery(
-    trx,
-    buildNewBrewery({ name: names.brewery, country: names.country }),
-  )
-  const style = await styleRepository.insertStyle(
-    trx,
-    buildNewStyle({ name: names.style }),
-  )
-  const location = await locationRepository.insertLocation(
-    trx,
-    buildNewLocation({ name: names.location }),
-  )
-  const beer = await beerRepository.insertBeer(trx, buildNewBeer())
-  await beerRepository.insertBeerBreweries(trx, [
-    { beer: beer.id, brewery: brewery.id },
+  const [brewery, style, location, beer] = await Promise.all([
+    breweryRepository.insertBrewery(
+      trx,
+      buildNewBrewery({ name: names.brewery, country: names.country }),
+    ),
+    styleRepository.insertStyle(trx, buildNewStyle({ name: names.style })),
+    locationRepository.insertLocation(
+      trx,
+      buildNewLocation({ name: names.location }),
+    ),
+    beerRepository.insertBeer(trx, buildNewBeer()),
   ])
-  await beerRepository.insertBeerStyles(trx, [
-    { beer: beer.id, style: style.id },
+  await Promise.all([
+    beerRepository.insertBeerBreweries(trx, [
+      { beer: beer.id, brewery: brewery.id },
+    ]),
+    beerRepository.insertBeerStyles(trx, [{ beer: beer.id, style: style.id }]),
+    insertReviews(trx, beer, container, location, ratings),
   ])
-  await insertReviews(trx, beer, container, location, ratings)
   return { brewery, location, style }
 }
 
@@ -123,35 +122,37 @@ async function insertBreweries(db: Database): Promise<{
       trx,
       buildNewContainer(),
     )
-    const lindemans = await insertReviewedBrewery(
-      trx,
-      container,
-      {
-        brewery: 'Lindemans',
-        country: 'BE',
-        style: 'Kriek',
-        location: 'Kuja',
-      },
-      [
-        { rating: 5, time: new Date('2024-03-01T18:00:00.000Z') },
-        { rating: 7, time: new Date('2024-04-01T18:00:00.000Z') },
-      ],
-    )
-    const nokian = await insertReviewedBrewery(
-      trx,
-      container,
-      {
-        brewery: 'Nokian Panimo',
-        country: undefined,
-        style: 'IPA',
-        location: 'Oluthuone',
-      },
-      [
-        { rating: 4, time: new Date('2023-03-01T18:00:00.000Z') },
-        { rating: 7, time: new Date('2023-04-01T18:00:00.000Z') },
-        { rating: 10, time: new Date('2023-05-01T18:00:00.000Z') },
-      ],
-    )
+    const [lindemans, nokian] = await Promise.all([
+      insertReviewedBrewery(
+        trx,
+        container,
+        {
+          brewery: 'Lindemans',
+          country: 'BE',
+          style: 'Kriek',
+          location: 'Kuja',
+        },
+        [
+          { rating: 5, time: new Date('2024-03-01T18:00:00.000Z') },
+          { rating: 7, time: new Date('2024-04-01T18:00:00.000Z') },
+        ],
+      ),
+      insertReviewedBrewery(
+        trx,
+        container,
+        {
+          brewery: 'Nokian Panimo',
+          country: undefined,
+          style: 'IPA',
+          location: 'Oluthuone',
+        },
+        [
+          { rating: 4, time: new Date('2023-03-01T18:00:00.000Z') },
+          { rating: 7, time: new Date('2023-04-01T18:00:00.000Z') },
+          { rating: 10, time: new Date('2023-05-01T18:00:00.000Z') },
+        ],
+      ),
+    ])
     return { lindemans, nokian }
   })
 }
@@ -194,40 +195,36 @@ interface Collaboration {
 // The own beer is rated 5 and 7, the collaboration beer 4 and 10.
 async function insertCollaboration(db: Database): Promise<Collaboration> {
   return await db.executeReadWriteTransaction(async (trx: Transaction) => {
-    const salama = await breweryRepository.insertBrewery(
-      trx,
-      buildNewBrewery({ name: 'Salama', country: 'FI' }),
-    )
-    const brewdog = await breweryRepository.insertBrewery(
-      trx,
-      buildNewBrewery({ name: 'Brewdog', country: 'GB' }),
-    )
-    const ownBeer = await beerRepository.insertBeer(trx, buildNewBeer())
-    const collaborationBeer = await beerRepository.insertBeer(
-      trx,
-      buildNewBeer(),
-    )
-    await beerRepository.insertBeerBreweries(trx, [
-      { beer: ownBeer.id, brewery: salama.id },
-      { beer: collaborationBeer.id, brewery: salama.id },
-      { beer: collaborationBeer.id, brewery: brewdog.id },
-    ])
-    const container = await containerRepository.insertContainer(
-      trx,
-      buildNewContainer(),
-    )
-    const location = await locationRepository.insertLocation(
-      trx,
-      buildNewLocation(),
-    )
+    const [salama, brewdog, ownBeer, collaborationBeer, container, location] =
+      await Promise.all([
+        breweryRepository.insertBrewery(
+          trx,
+          buildNewBrewery({ name: 'Salama', country: 'FI' }),
+        ),
+        breweryRepository.insertBrewery(
+          trx,
+          buildNewBrewery({ name: 'Brewdog', country: 'GB' }),
+        ),
+        beerRepository.insertBeer(trx, buildNewBeer()),
+        beerRepository.insertBeer(trx, buildNewBeer()),
+        containerRepository.insertContainer(trx, buildNewContainer()),
+        locationRepository.insertLocation(trx, buildNewLocation()),
+      ])
     const time = new Date('2024-03-01T18:00:00.000Z')
-    await insertReviews(trx, ownBeer, container, location, [
-      { rating: 5, time },
-      { rating: 7, time },
-    ])
-    await insertReviews(trx, collaborationBeer, container, location, [
-      { rating: 4, time },
-      { rating: 10, time },
+    await Promise.all([
+      beerRepository.insertBeerBreweries(trx, [
+        { beer: ownBeer.id, brewery: salama.id },
+        { beer: collaborationBeer.id, brewery: salama.id },
+        { beer: collaborationBeer.id, brewery: brewdog.id },
+      ]),
+      insertReviews(trx, ownBeer, container, location, [
+        { rating: 5, time },
+        { rating: 7, time },
+      ]),
+      insertReviews(trx, collaborationBeer, container, location, [
+        { rating: 4, time },
+        { rating: 10, time },
+      ]),
     ])
     return { salama, brewdog }
   })

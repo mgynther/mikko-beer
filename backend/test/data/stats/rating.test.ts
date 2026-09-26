@@ -31,15 +31,11 @@ describe('rating stats tests', () => {
 
   it('shows rating stats', async () => {
     await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
-      const beer = await beerRepository.insertBeer(trx, buildNewBeer())
-      const container = await containerRepository.insertContainer(
-        trx,
-        buildNewContainer(),
-      )
-      const location = await locationRepository.insertLocation(
-        trx,
-        buildNewLocation(),
-      )
+      const [beer, container, location] = await Promise.all([
+        beerRepository.insertBeer(trx, buildNewBeer()),
+        containerRepository.insertContainer(trx, buildNewContainer()),
+        locationRepository.insertLocation(trx, buildNewLocation()),
+      ])
       // Out of order and with a gap, so that the stats list only the
       // ratings given, in ascending order.
       await Promise.all(

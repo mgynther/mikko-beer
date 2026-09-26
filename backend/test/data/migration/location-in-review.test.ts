@@ -41,11 +41,10 @@ describe('review tests', () => {
     })
     await migrator.migrateTo('2025_01_10_23_48_20_add_location')
     const review = await ctx.db.executeReadWriteTransaction(async (trx) => {
-      const beer = await beerRepository.insertBeer(trx, buildNewBeer())
-      const container = await containerRepository.insertContainer(
-        trx,
-        buildNewContainer(),
-      )
+      const [beer, container] = await Promise.all([
+        beerRepository.insertBeer(trx, buildNewBeer()),
+        containerRepository.insertContainer(trx, buildNewContainer()),
+      ])
       // Before the migration a review names its location.
       const reviewRequest = buildNewReview({
         beer: beer.id,

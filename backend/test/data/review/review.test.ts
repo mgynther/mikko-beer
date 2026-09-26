@@ -67,34 +67,28 @@ interface Scenario {
 // Panimo. kriek2 and ipa2 share a rating, so their time breaks the tie.
 async function insertScenario(db: Database): Promise<Scenario> {
   return await db.executeReadWriteTransaction(async (trx: Transaction) => {
-    const lindemans = await breweryRepository.insertBrewery(
-      trx,
-      buildNewBrewery({ name: 'Lindemans' }),
-    )
-    const nokian = await breweryRepository.insertBrewery(
-      trx,
-      buildNewBrewery({ name: 'Nokian Panimo' }),
-    )
-    const lambic = await styleRepository.insertStyle(
-      trx,
-      buildNewStyle({ name: 'Lambic' }),
-    )
-    const ipaStyle = await styleRepository.insertStyle(
-      trx,
-      buildNewStyle({ name: 'IPA' }),
-    )
-    const kuja = await locationRepository.insertLocation(
-      trx,
-      buildNewLocation({ name: 'Kuja' }),
-    )
-    const oluthuone = await locationRepository.insertLocation(
-      trx,
-      buildNewLocation({ name: 'Oluthuone' }),
-    )
-    const container = await containerRepository.insertContainer(
-      trx,
-      buildNewContainer(),
-    )
+    const [lindemans, nokian, lambic, ipaStyle, kuja, oluthuone, container] =
+      await Promise.all([
+        breweryRepository.insertBrewery(
+          trx,
+          buildNewBrewery({ name: 'Lindemans' }),
+        ),
+        breweryRepository.insertBrewery(
+          trx,
+          buildNewBrewery({ name: 'Nokian Panimo' }),
+        ),
+        styleRepository.insertStyle(trx, buildNewStyle({ name: 'Lambic' })),
+        styleRepository.insertStyle(trx, buildNewStyle({ name: 'IPA' })),
+        locationRepository.insertLocation(
+          trx,
+          buildNewLocation({ name: 'Kuja' }),
+        ),
+        locationRepository.insertLocation(
+          trx,
+          buildNewLocation({ name: 'Oluthuone' }),
+        ),
+        containerRepository.insertContainer(trx, buildNewContainer()),
+      ])
 
     async function insertBeer(
       name: string,
@@ -102,17 +96,21 @@ async function insertScenario(db: Database): Promise<Scenario> {
       style: Style,
     ): Promise<Beer> {
       const beer = await beerRepository.insertBeer(trx, buildNewBeer({ name }))
-      await beerRepository.insertBeerBreweries(trx, [
-        { beer: beer.id, brewery: brewery.id },
-      ])
-      await beerRepository.insertBeerStyles(trx, [
-        { beer: beer.id, style: style.id },
+      await Promise.all([
+        beerRepository.insertBeerBreweries(trx, [
+          { beer: beer.id, brewery: brewery.id },
+        ]),
+        beerRepository.insertBeerStyles(trx, [
+          { beer: beer.id, style: style.id },
+        ]),
       ])
       return beer
     }
-    const kriek = await insertBeer('Kriek', lindemans, lambic)
-    const faro = await insertBeer('Faro', lindemans, lambic)
-    const ipa = await insertBeer('IPA', nokian, ipaStyle)
+    const [kriek, faro, ipa] = await Promise.all([
+      insertBeer('Kriek', lindemans, lambic),
+      insertBeer('Faro', lindemans, lambic),
+      insertBeer('IPA', nokian, ipaStyle),
+    ])
 
     async function insertReview(
       beer: Beer,
@@ -131,18 +129,21 @@ async function insertScenario(db: Database): Promise<Scenario> {
         }),
       )
     }
+    const [kriek1, kriek2, faroReview, ipa1, ipa2, ipa3] = await Promise.all([
+      insertReview(kriek, kuja, 8, '2023-02-01T18:00:00.000Z'),
+      insertReview(kriek, oluthuone, 5, '2024-03-01T18:00:00.000Z'),
+      insertReview(faro, kuja, 6, '2024-01-15T18:00:00.000Z'),
+      insertReview(ipa, kuja, 9, '2023-06-01T18:00:00.000Z'),
+      insertReview(ipa, oluthuone, 5, '2024-05-01T18:00:00.000Z'),
+      insertReview(ipa, kuja, 7, '2022-11-01T18:00:00.000Z'),
+    ])
     const reviews: Reviews = {
-      kriek1: await insertReview(kriek, kuja, 8, '2023-02-01T18:00:00.000Z'),
-      kriek2: await insertReview(
-        kriek,
-        oluthuone,
-        5,
-        '2024-03-01T18:00:00.000Z',
-      ),
-      faro: await insertReview(faro, kuja, 6, '2024-01-15T18:00:00.000Z'),
-      ipa1: await insertReview(ipa, kuja, 9, '2023-06-01T18:00:00.000Z'),
-      ipa2: await insertReview(ipa, oluthuone, 5, '2024-05-01T18:00:00.000Z'),
-      ipa3: await insertReview(ipa, kuja, 7, '2022-11-01T18:00:00.000Z'),
+      kriek1,
+      kriek2,
+      faro: faroReview,
+      ipa1,
+      ipa2,
+      ipa3,
     }
     return { reviews, ipa, lindemans, kuja, lambic }
   })
@@ -186,15 +187,11 @@ describe('review tests', () => {
 
   it('insert a review', async () => {
     await ctx.db.executeReadWriteTransaction(async (trx) => {
-      const beer = await beerRepository.insertBeer(trx, buildNewBeer())
-      const container = await containerRepository.insertContainer(
-        trx,
-        buildNewContainer(),
-      )
-      const location = await locationRepository.insertLocation(
-        trx,
-        buildNewLocation(),
-      )
+      const [beer, container, location] = await Promise.all([
+        beerRepository.insertBeer(trx, buildNewBeer()),
+        containerRepository.insertContainer(trx, buildNewContainer()),
+        locationRepository.insertLocation(trx, buildNewLocation()),
+      ])
       const reviewRequest = buildNewReview({
         beer: beer.id,
         container: container.id,

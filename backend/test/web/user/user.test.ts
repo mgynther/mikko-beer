@@ -280,8 +280,10 @@ describe('user tests', () => {
   })
 
   it('do not change tokens on invalid refresh request', async () => {
-    const { user, authToken } = await ctx.createUser()
-    const anotherUser = await ctx.createUser()
+    const [{ user, authToken }, anotherUser] = await Promise.all([
+      ctx.createUser(),
+      ctx.createUser(),
+    ])
 
     const res = await ctx.request.post(`/api/v1/user/${user.id}/refresh`, {
       refreshToken: anotherUser.refreshToken,

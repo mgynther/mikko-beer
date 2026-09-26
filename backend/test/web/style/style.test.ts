@@ -94,18 +94,16 @@ describe('style tests', () => {
   })
 
   it('create a child style with 2 parents', async () => {
-    const parent1Res = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
-      `/api/v1/style`,
-      { name: 'Ale', parents: [] },
-      ctx.adminAuthHeaders(),
+    const [parent1Res, parent2Res] = await Promise.all(
+      ['Ale', 'Lager'].map((name) =>
+        ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
+          `/api/v1/style`,
+          { name, parents: [] },
+          ctx.adminAuthHeaders(),
+        ),
+      ),
     )
     assertEqual(parent1Res.status, 201)
-
-    const parent2Res = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
-      `/api/v1/style`,
-      { name: 'Lager', parents: [] },
-      ctx.adminAuthHeaders(),
-    )
     assertEqual(parent2Res.status, 201)
 
     const childRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
@@ -133,16 +131,22 @@ describe('style tests', () => {
     assertEqual(getRes.data.style.id, childRes.data.style.id)
     assertEqual(getRes.data.style.name, 'Cream Ale')
     assertDeepEqual(getRes.data.style.children, [])
-    assertDeepEqual(getRes.data.style.parents, [
-      {
-        id: parent1Res.data.style.id,
-        name: parent1Res.data.style.name,
-      },
-      {
-        id: parent2Res.data.style.id,
-        name: parent2Res.data.style.name,
-      },
-    ])
+    // A style's parents are read in no particular order.
+    const byId = (a: { id: string }, b: { id: string }): number =>
+      a.id.localeCompare(b.id)
+    assertDeepEqual(
+      [...getRes.data.style.parents].sort(byId),
+      [
+        {
+          id: parent1Res.data.style.id,
+          name: parent1Res.data.style.name,
+        },
+        {
+          id: parent2Res.data.style.id,
+          name: parent2Res.data.style.name,
+        },
+      ].sort(byId),
+    )
 
     const listRes = await ctx.request.get<{ styles: ListedStyle[] }>(
       `/api/v1/style`,
@@ -174,18 +178,15 @@ describe('style tests', () => {
   })
 
   it('update a style', async () => {
-    const aleRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
-      `/api/v1/style`,
-      { name: 'Pale Ale', parents: [] },
-      ctx.adminAuthHeaders(),
+    const [aleRes, lagerRes] = await Promise.all(
+      ['Pale Ale', 'Lager'].map((name) =>
+        ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
+          `/api/v1/style`,
+          { name, parents: [] },
+          ctx.adminAuthHeaders(),
+        ),
+      ),
     )
-
-    const lagerRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
-      `/api/v1/style`,
-      { name: 'Lager', parents: [] },
-      ctx.adminAuthHeaders(),
-    )
-
     assertEqual(aleRes.status, 201)
     assertEqual(lagerRes.status, 201)
 

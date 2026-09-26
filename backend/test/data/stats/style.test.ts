@@ -57,27 +57,24 @@ async function insertReviewedStyle(
   names: { style: string; brewery: string; location: string },
   ratings: Rating[],
 ): Promise<ReviewedStyle> {
-  const style = await styleRepository.insertStyle(
-    trx,
-    buildNewStyle({ name: names.style }),
-  )
-  const brewery = await breweryRepository.insertBrewery(
-    trx,
-    buildNewBrewery({ name: names.brewery }),
-  )
-  const location = await locationRepository.insertLocation(
-    trx,
-    buildNewLocation({ name: names.location }),
-  )
-  const beer = await beerRepository.insertBeer(trx, buildNewBeer())
-  await beerRepository.insertBeerBreweries(trx, [
-    { beer: beer.id, brewery: brewery.id },
+  const [style, brewery, location, beer] = await Promise.all([
+    styleRepository.insertStyle(trx, buildNewStyle({ name: names.style })),
+    breweryRepository.insertBrewery(
+      trx,
+      buildNewBrewery({ name: names.brewery }),
+    ),
+    locationRepository.insertLocation(
+      trx,
+      buildNewLocation({ name: names.location }),
+    ),
+    beerRepository.insertBeer(trx, buildNewBeer()),
   ])
-  await beerRepository.insertBeerStyles(trx, [
-    { beer: beer.id, style: style.id },
-  ])
-  await Promise.all(
-    ratings.map(({ rating, time }) =>
+  await Promise.all([
+    beerRepository.insertBeerBreweries(trx, [
+      { beer: beer.id, brewery: brewery.id },
+    ]),
+    beerRepository.insertBeerStyles(trx, [{ beer: beer.id, style: style.id }]),
+    ...ratings.map(({ rating, time }) =>
       reviewRepository.insertReview(
         trx,
         buildNewReview({
@@ -89,7 +86,7 @@ async function insertReviewedStyle(
         }),
       ),
     ),
-  )
+  ])
   return { brewery, location, style }
 }
 
@@ -105,25 +102,27 @@ async function insertStyles(
       trx,
       buildNewContainer(),
     )
-    const gueuze = await insertReviewedStyle(
-      trx,
-      container,
-      { style: 'Gueuze', brewery: 'Cantillon', location: 'Kuja' },
-      [
-        { rating: 5, time: new Date('2024-03-01T18:00:00.000Z') },
-        { rating: 7, time: new Date('2024-04-01T18:00:00.000Z') },
-      ],
-    )
-    const ipa = await insertReviewedStyle(
-      trx,
-      container,
-      { style: 'IPA', brewery: 'Nokian Panimo', location: 'Oluthuone' },
-      [
-        { rating: 4, time: new Date('2023-03-01T18:00:00.000Z') },
-        { rating: 7, time: new Date('2023-04-01T18:00:00.000Z') },
-        { rating: 10, time: new Date('2023-05-01T18:00:00.000Z') },
-      ],
-    )
+    const [gueuze, ipa] = await Promise.all([
+      insertReviewedStyle(
+        trx,
+        container,
+        { style: 'Gueuze', brewery: 'Cantillon', location: 'Kuja' },
+        [
+          { rating: 5, time: new Date('2024-03-01T18:00:00.000Z') },
+          { rating: 7, time: new Date('2024-04-01T18:00:00.000Z') },
+        ],
+      ),
+      insertReviewedStyle(
+        trx,
+        container,
+        { style: 'IPA', brewery: 'Nokian Panimo', location: 'Oluthuone' },
+        [
+          { rating: 4, time: new Date('2023-03-01T18:00:00.000Z') },
+          { rating: 7, time: new Date('2023-04-01T18:00:00.000Z') },
+          { rating: 10, time: new Date('2023-05-01T18:00:00.000Z') },
+        ],
+      ),
+    ])
     return { gueuze, ipa }
   })
 }
@@ -162,29 +161,21 @@ interface MultiStyle {
 // ale beer is rated 5 and 7, the cream ale beer 4 and 10.
 async function insertMultiStyle(db: Database): Promise<MultiStyle> {
   return await db.executeReadWriteTransaction(async (trx: Transaction) => {
-    const ale = await styleRepository.insertStyle(
-      trx,
-      buildNewStyle({ name: 'Ale' }),
-    )
-    const lager = await styleRepository.insertStyle(
-      trx,
-      buildNewStyle({ name: 'Lager' }),
-    )
-    const aleBeer = await beerRepository.insertBeer(trx, buildNewBeer())
-    const creamAleBeer = await beerRepository.insertBeer(trx, buildNewBeer())
-    await beerRepository.insertBeerStyles(trx, [
-      { beer: aleBeer.id, style: ale.id },
-      { beer: creamAleBeer.id, style: ale.id },
-      { beer: creamAleBeer.id, style: lager.id },
+    const [ale, lager, aleBeer, creamAleBeer] = await Promise.all([
+      styleRepository.insertStyle(trx, buildNewStyle({ name: 'Ale' })),
+      styleRepository.insertStyle(trx, buildNewStyle({ name: 'Lager' })),
+      beerRepository.insertBeer(trx, buildNewBeer()),
+      beerRepository.insertBeer(trx, buildNewBeer()),
     ])
-    const container = await containerRepository.insertContainer(
-      trx,
-      buildNewContainer(),
-    )
-    const location = await locationRepository.insertLocation(
-      trx,
-      buildNewLocation(),
-    )
+    const [container, location] = await Promise.all([
+      containerRepository.insertContainer(trx, buildNewContainer()),
+      locationRepository.insertLocation(trx, buildNewLocation()),
+      beerRepository.insertBeerStyles(trx, [
+        { beer: aleBeer.id, style: ale.id },
+        { beer: creamAleBeer.id, style: ale.id },
+        { beer: creamAleBeer.id, style: lager.id },
+      ]),
+    ])
     const ratings = [
       { beer: aleBeer, rating: 5 },
       { beer: aleBeer, rating: 7 },

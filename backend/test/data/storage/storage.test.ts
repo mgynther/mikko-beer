@@ -27,20 +27,19 @@ async function insertBeer(
   trx: Transaction,
   names: { brewery: string; style: string },
 ): Promise<Beer> {
-  const brewery = await breweryRepository.insertBrewery(
-    trx,
-    buildNewBrewery({ name: names.brewery }),
-  )
-  const style = await styleRepository.insertStyle(
-    trx,
-    buildNewStyle({ name: names.style }),
-  )
-  const beer = await beerRepository.insertBeer(trx, buildNewBeer())
-  await beerRepository.insertBeerBreweries(trx, [
-    { beer: beer.id, brewery: brewery.id },
+  const [brewery, style, beer] = await Promise.all([
+    breweryRepository.insertBrewery(
+      trx,
+      buildNewBrewery({ name: names.brewery }),
+    ),
+    styleRepository.insertStyle(trx, buildNewStyle({ name: names.style })),
+    beerRepository.insertBeer(trx, buildNewBeer()),
   ])
-  await beerRepository.insertBeerStyles(trx, [
-    { beer: beer.id, style: style.id },
+  await Promise.all([
+    beerRepository.insertBeerBreweries(trx, [
+      { beer: beer.id, brewery: brewery.id },
+    ]),
+    beerRepository.insertBeerStyles(trx, [{ beer: beer.id, style: style.id }]),
   ])
   return beer
 }
@@ -70,14 +69,13 @@ describe('storage tests', () => {
   async function createStorage(db: Database): Promise<StorageWithDate> {
     return await db.executeReadWriteTransaction(
       async (trx: Transaction): Promise<StorageWithDate> => {
-        const beer = await insertBeer(trx, {
-          brewery: 'Koskipanimo',
-          style: 'Pils',
-        })
-        const container = await containerRepository.insertContainer(
-          trx,
-          buildNewContainer(),
-        )
+        const [beer, container] = await Promise.all([
+          insertBeer(trx, {
+            brewery: 'Koskipanimo',
+            style: 'Pils',
+          }),
+          containerRepository.insertContainer(trx, buildNewContainer()),
+        ])
         return await insertStorage(
           trx,
           beer,
@@ -108,28 +106,24 @@ describe('storage tests', () => {
     // the IPA once and the lager not at all.
     const { kriek, ipa, lager } = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
-        const kriek = await insertBeer(trx, {
-          brewery: 'Lindemans',
-          style: 'Kriek',
-        })
-        const ipa = await insertBeer(trx, {
-          brewery: 'Nokian Panimo',
-          style: 'IPA',
-        })
-        const lager = await insertBeer(trx, {
-          brewery: 'Koskipanimo',
-          style: 'Lager',
-        })
-        const container = await containerRepository.insertContainer(
-          trx,
-          buildNewContainer(),
-        )
-        const location = await locationRepository.insertLocation(
-          trx,
-          buildNewLocation(),
-        )
-        await Promise.all(
-          [kriek, kriek, ipa].map((beer) =>
+        const [kriek, ipa, lager, container, location] = await Promise.all([
+          insertBeer(trx, {
+            brewery: 'Lindemans',
+            style: 'Kriek',
+          }),
+          insertBeer(trx, {
+            brewery: 'Nokian Panimo',
+            style: 'IPA',
+          }),
+          insertBeer(trx, {
+            brewery: 'Koskipanimo',
+            style: 'Lager',
+          }),
+          containerRepository.insertContainer(trx, buildNewContainer()),
+          locationRepository.insertLocation(trx, buildNewLocation()),
+        ])
+        await Promise.all([
+          ...[kriek, kriek, ipa].map((beer) =>
             reviewRepository.insertReview(
               trx,
               buildNewReview({
@@ -139,10 +133,10 @@ describe('storage tests', () => {
               }),
             ),
           ),
-        )
-        await insertStorage(trx, lager, container, '2024-12-02T12:12:12.000Z')
-        await insertStorage(trx, ipa, container, '2023-12-02T12:12:12.000Z')
-        await insertStorage(trx, kriek, container, '2022-12-02T12:12:12.000Z')
+          insertStorage(trx, lager, container, '2024-12-02T12:12:12.000Z'),
+          insertStorage(trx, ipa, container, '2023-12-02T12:12:12.000Z'),
+          insertStorage(trx, kriek, container, '2022-12-02T12:12:12.000Z'),
+        ])
         return { kriek, ipa, lager }
       },
     )
@@ -189,17 +183,16 @@ describe('storage tests', () => {
   })
 
   // Two storages in December 2022, two in November 2023 and one in
-  // December 2023, inserted out of order.
+  // December 2023, listed out of order.
   async function createStatsData(db: Database): Promise<void> {
     await db.executeReadWriteTransaction(async (trx: Transaction) => {
-      const beer = await insertBeer(trx, {
-        brewery: 'Koskipanimo',
-        style: 'Pils',
-      })
-      const container = await containerRepository.insertContainer(
-        trx,
-        buildNewContainer(),
-      )
+      const [beer, container] = await Promise.all([
+        insertBeer(trx, {
+          brewery: 'Koskipanimo',
+          style: 'Pils',
+        }),
+        containerRepository.insertContainer(trx, buildNewContainer()),
+      ])
       await Promise.all(
         [
           '2023-12-02T12:12:12.000Z',

@@ -58,31 +58,28 @@ async function insertReviewedBeer(
   },
   ratings: (location: Location) => Rating[],
 ): Promise<ReviewedBeer> {
-  const brewery = await breweryRepository.insertBrewery(
-    trx,
-    buildNewBrewery({ name: names.brewery }),
-  )
-  const style = await styleRepository.insertStyle(
-    trx,
-    buildNewStyle({ name: names.style }),
-  )
-  const location = await locationRepository.insertLocation(
-    trx,
-    buildNewLocation({ name: names.location }),
-  )
-  const container = await containerRepository.insertContainer(
-    trx,
-    buildNewContainer(names.container),
-  )
-  const beer = await beerRepository.insertBeer(trx, buildNewBeer())
-  await beerRepository.insertBeerBreweries(trx, [
-    { beer: beer.id, brewery: brewery.id },
+  const [brewery, style, location, container, beer] = await Promise.all([
+    breweryRepository.insertBrewery(
+      trx,
+      buildNewBrewery({ name: names.brewery }),
+    ),
+    styleRepository.insertStyle(trx, buildNewStyle({ name: names.style })),
+    locationRepository.insertLocation(
+      trx,
+      buildNewLocation({ name: names.location }),
+    ),
+    containerRepository.insertContainer(
+      trx,
+      buildNewContainer(names.container),
+    ),
+    beerRepository.insertBeer(trx, buildNewBeer()),
   ])
-  await beerRepository.insertBeerStyles(trx, [
-    { beer: beer.id, style: style.id },
-  ])
-  await Promise.all(
-    ratings(location).map(({ rating, location: reviewLocation }) =>
+  await Promise.all([
+    beerRepository.insertBeerBreweries(trx, [
+      { beer: beer.id, brewery: brewery.id },
+    ]),
+    beerRepository.insertBeerStyles(trx, [{ beer: beer.id, style: style.id }]),
+    ...ratings(location).map(({ rating, location: reviewLocation }) =>
       reviewRepository.insertReview(
         trx,
         buildNewReview({
@@ -94,7 +91,7 @@ async function insertReviewedBeer(
         }),
       ),
     ),
-  )
+  ])
   return { beer, brewery, container, location, style }
 }
 
@@ -104,34 +101,36 @@ async function insertBeers(
   db: Database,
 ): Promise<{ kriek: ReviewedBeer; ipa: ReviewedBeer }> {
   return await db.executeReadWriteTransaction(async (trx: Transaction) => {
-    const kriek = await insertReviewedBeer(
-      trx,
-      {
-        brewery: 'Lindemans',
-        style: 'Kriek',
-        location: 'Kuja',
-        container: { type: 'bottle', size: '0.33' },
-      },
-      (kuja) => [
-        { rating: 5, location: kuja },
-        { rating: 7, location: kuja },
-        { rating: 6, location: undefined },
-      ],
-    )
-    const ipa = await insertReviewedBeer(
-      trx,
-      {
-        brewery: 'Nokian Panimo',
-        style: 'IPA',
-        location: 'Oluthuone',
-        container: { type: 'can', size: '0.44' },
-      },
-      (oluthuone) => [
-        { rating: 4, location: oluthuone },
-        { rating: 7, location: oluthuone },
-        { rating: 10, location: oluthuone },
-      ],
-    )
+    const [kriek, ipa] = await Promise.all([
+      insertReviewedBeer(
+        trx,
+        {
+          brewery: 'Lindemans',
+          style: 'Kriek',
+          location: 'Kuja',
+          container: { type: 'bottle', size: '0.33' },
+        },
+        (kuja) => [
+          { rating: 5, location: kuja },
+          { rating: 7, location: kuja },
+          { rating: 6, location: undefined },
+        ],
+      ),
+      insertReviewedBeer(
+        trx,
+        {
+          brewery: 'Nokian Panimo',
+          style: 'IPA',
+          location: 'Oluthuone',
+          container: { type: 'can', size: '0.44' },
+        },
+        (oluthuone) => [
+          { rating: 4, location: oluthuone },
+          { rating: 7, location: oluthuone },
+          { rating: 10, location: oluthuone },
+        ],
+      ),
+    ])
     return { kriek, ipa }
   })
 }

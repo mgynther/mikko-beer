@@ -47,27 +47,24 @@ async function insertReviewedBeer(
   names: { brewery: string; style: string; location: string },
   ratings: ContainerRating[],
 ): Promise<ReviewedBeer> {
-  const brewery = await breweryRepository.insertBrewery(
-    trx,
-    buildNewBrewery({ name: names.brewery }),
-  )
-  const style = await styleRepository.insertStyle(
-    trx,
-    buildNewStyle({ name: names.style }),
-  )
-  const location = await locationRepository.insertLocation(
-    trx,
-    buildNewLocation({ name: names.location }),
-  )
-  const beer = await beerRepository.insertBeer(trx, buildNewBeer())
-  await beerRepository.insertBeerBreweries(trx, [
-    { beer: beer.id, brewery: brewery.id },
+  const [brewery, style, location, beer] = await Promise.all([
+    breweryRepository.insertBrewery(
+      trx,
+      buildNewBrewery({ name: names.brewery }),
+    ),
+    styleRepository.insertStyle(trx, buildNewStyle({ name: names.style })),
+    locationRepository.insertLocation(
+      trx,
+      buildNewLocation({ name: names.location }),
+    ),
+    beerRepository.insertBeer(trx, buildNewBeer()),
   ])
-  await beerRepository.insertBeerStyles(trx, [
-    { beer: beer.id, style: style.id },
-  ])
-  await Promise.all(
-    ratings.map(({ container, rating }) =>
+  await Promise.all([
+    beerRepository.insertBeerBreweries(trx, [
+      { beer: beer.id, brewery: brewery.id },
+    ]),
+    beerRepository.insertBeerStyles(trx, [{ beer: beer.id, style: style.id }]),
+    ...ratings.map(({ container, rating }) =>
       reviewRepository.insertReview(
         trx,
         buildNewReview({
@@ -78,7 +75,7 @@ async function insertReviewedBeer(
         }),
       ),
     ),
-  )
+  ])
   return { brewery, location, style }
 }
 
@@ -88,8 +85,9 @@ interface Containers {
   can044: Container
 }
 
-// The containers are inserted out of order, so that the order of the stats
-// comes from sorting by type and then size. Both beers are reviewed from
+// The containers are listed out of order and inserted in no particular
+// order, so the order of the stats comes from sorting by type and then
+// size. Both beers are reviewed from
 // the 0.33 bottle, so filtering by one of them changes its statistics
 // rather than just removing it.
 async function insertBeers(db: Database): Promise<{
@@ -98,37 +96,41 @@ async function insertBeers(db: Database): Promise<{
   ipa: ReviewedBeer
 }> {
   return await db.executeReadWriteTransaction(async (trx: Transaction) => {
-    const can044 = await containerRepository.insertContainer(
-      trx,
-      buildNewContainer({ type: 'can', size: '0.44' }),
-    )
-    const bottle050 = await containerRepository.insertContainer(
-      trx,
-      buildNewContainer({ type: 'bottle', size: '0.50' }),
-    )
-    const bottle033 = await containerRepository.insertContainer(
-      trx,
-      buildNewContainer({ type: 'bottle', size: '0.33' }),
-    )
-    const kriek = await insertReviewedBeer(
-      trx,
-      { brewery: 'Lindemans', style: 'Kriek', location: 'Kuja' },
-      [
-        { container: bottle033, rating: 5 },
-        { container: bottle033, rating: 7 },
-      ],
-    )
-    const ipa = await insertReviewedBeer(
-      trx,
-      { brewery: 'Nokian Panimo', style: 'IPA', location: 'Oluthuone' },
-      [
-        { container: bottle033, rating: 9 },
-        { container: bottle050, rating: 8 },
-        { container: can044, rating: 4 },
-        { container: can044, rating: 7 },
-        { container: can044, rating: 10 },
-      ],
-    )
+    const [can044, bottle050, bottle033] = await Promise.all([
+      containerRepository.insertContainer(
+        trx,
+        buildNewContainer({ type: 'can', size: '0.44' }),
+      ),
+      containerRepository.insertContainer(
+        trx,
+        buildNewContainer({ type: 'bottle', size: '0.50' }),
+      ),
+      containerRepository.insertContainer(
+        trx,
+        buildNewContainer({ type: 'bottle', size: '0.33' }),
+      ),
+    ])
+    const [kriek, ipa] = await Promise.all([
+      insertReviewedBeer(
+        trx,
+        { brewery: 'Lindemans', style: 'Kriek', location: 'Kuja' },
+        [
+          { container: bottle033, rating: 5 },
+          { container: bottle033, rating: 7 },
+        ],
+      ),
+      insertReviewedBeer(
+        trx,
+        { brewery: 'Nokian Panimo', style: 'IPA', location: 'Oluthuone' },
+        [
+          { container: bottle033, rating: 9 },
+          { container: bottle050, rating: 8 },
+          { container: can044, rating: 4 },
+          { container: can044, rating: 7 },
+          { container: can044, rating: 10 },
+        ],
+      ),
+    ])
     return { containers: { bottle033, bottle050, can044 }, kriek, ipa }
   })
 }

@@ -51,27 +51,24 @@ async function insertReviewedBeer(
   names: { brewery: string; style: string; location: string },
   ratings: ContainerRating[],
 ): Promise<ReviewedBeer> {
-  const brewery = await breweryRepository.insertBrewery(
-    trx,
-    buildNewBrewery({ name: names.brewery }),
-  )
-  const style = await styleRepository.insertStyle(
-    trx,
-    buildNewStyle({ name: names.style }),
-  )
-  const location = await locationRepository.insertLocation(
-    trx,
-    buildNewLocation({ name: names.location }),
-  )
-  const beer = await beerRepository.insertBeer(trx, buildNewBeer())
-  await beerRepository.insertBeerBreweries(trx, [
-    { beer: beer.id, brewery: brewery.id },
+  const [brewery, style, location, beer] = await Promise.all([
+    breweryRepository.insertBrewery(
+      trx,
+      buildNewBrewery({ name: names.brewery }),
+    ),
+    styleRepository.insertStyle(trx, buildNewStyle({ name: names.style })),
+    locationRepository.insertLocation(
+      trx,
+      buildNewLocation({ name: names.location }),
+    ),
+    beerRepository.insertBeer(trx, buildNewBeer()),
   ])
-  await beerRepository.insertBeerStyles(trx, [
-    { beer: beer.id, style: style.id },
-  ])
-  await Promise.all(
-    ratings.map(({ container, rating, time }) =>
+  await Promise.all([
+    beerRepository.insertBeerBreweries(trx, [
+      { beer: beer.id, brewery: brewery.id },
+    ]),
+    beerRepository.insertBeerStyles(trx, [{ beer: beer.id, style: style.id }]),
+    ...ratings.map(({ container, rating, time }) =>
       reviewRepository.insertReview(
         trx,
         buildNewReview({
@@ -83,7 +80,7 @@ async function insertReviewedBeer(
         }),
       ),
     ),
-  )
+  ])
   return { brewery, location, style }
 }
 
@@ -94,63 +91,67 @@ interface Containers {
 
 // The kriek is reviewed from a bottle in 2024, the IPA from a can and a
 // bottle in 2023. So the stats list 2024 before 2023, and within 2023 the
-// bottle before the can, although the can is inserted first.
+// bottle before the can, whichever of them is inserted first.
 async function insertBeers(db: Database): Promise<{
   containers: Containers
   kriek: ReviewedBeer
   ipa: ReviewedBeer
 }> {
   return await db.executeReadWriteTransaction(async (trx: Transaction) => {
-    const can = await containerRepository.insertContainer(
-      trx,
-      buildNewContainer({ type: 'can', size: '0.44' }),
-    )
-    const bottle = await containerRepository.insertContainer(
-      trx,
-      buildNewContainer({ type: 'bottle', size: '0.33' }),
-    )
-    const kriek = await insertReviewedBeer(
-      trx,
-      { brewery: 'Lindemans', style: 'Kriek', location: 'Kuja' },
-      [
-        {
-          container: bottle,
-          rating: 5,
-          time: new Date('2024-03-01T18:00:00.000Z'),
-        },
-        {
-          container: bottle,
-          rating: 7,
-          time: new Date('2024-04-01T18:00:00.000Z'),
-        },
-      ],
-    )
-    const ipa = await insertReviewedBeer(
-      trx,
-      { brewery: 'Nokian Panimo', style: 'IPA', location: 'Oluthuone' },
-      [
-        {
-          container: can,
-          rating: 4,
-          time: new Date('2023-03-01T18:00:00.000Z'),
-        },
-        {
-          container: can,
-          rating: 7,
-          time: new Date('2023-04-01T18:00:00.000Z'),
-        },
-        {
-          container: can,
-          rating: 10,
-          time: new Date('2023-05-01T18:00:00.000Z'),
-        },
-        {
-          container: bottle,
-          rating: 9,
-          time: new Date('2023-06-01T18:00:00.000Z'),
-        },
-      ],
-    )
+    const [can, bottle] = await Promise.all([
+      containerRepository.insertContainer(
+        trx,
+        buildNewContainer({ type: 'can', size: '0.44' }),
+      ),
+      containerRepository.insertContainer(
+        trx,
+        buildNewContainer({ type: 'bottle', size: '0.33' }),
+      ),
+    ])
+    const [kriek, ipa] = await Promise.all([
+      insertReviewedBeer(
+        trx,
+        { brewery: 'Lindemans', style: 'Kriek', location: 'Kuja' },
+        [
+          {
+            container: bottle,
+            rating: 5,
+            time: new Date('2024-03-01T18:00:00.000Z'),
+          },
+          {
+            container: bottle,
+            rating: 7,
+            time: new Date('2024-04-01T18:00:00.000Z'),
+          },
+        ],
+      ),
+      insertReviewedBeer(
+        trx,
+        { brewery: 'Nokian Panimo', style: 'IPA', location: 'Oluthuone' },
+        [
+          {
+            container: can,
+            rating: 4,
+            time: new Date('2023-03-01T18:00:00.000Z'),
+          },
+          {
+            container: can,
+            rating: 7,
+            time: new Date('2023-04-01T18:00:00.000Z'),
+          },
+          {
+            container: can,
+            rating: 10,
+            time: new Date('2023-05-01T18:00:00.000Z'),
+          },
+          {
+            container: bottle,
+            rating: 9,
+            time: new Date('2023-06-01T18:00:00.000Z'),
+          },
+        ],
+      ),
+    ])
     return { containers: { bottle, can }, kriek, ipa }
   })
 }

@@ -48,27 +48,24 @@ async function insertReviewedBeer(
   names: { brewery: string; style: string; location: string },
   ratings: Rating[],
 ): Promise<ReviewedBeer> {
-  const brewery = await breweryRepository.insertBrewery(
-    trx,
-    buildNewBrewery({ name: names.brewery }),
-  )
-  const style = await styleRepository.insertStyle(
-    trx,
-    buildNewStyle({ name: names.style }),
-  )
-  const location = await locationRepository.insertLocation(
-    trx,
-    buildNewLocation({ name: names.location }),
-  )
-  const beer = await beerRepository.insertBeer(trx, buildNewBeer())
-  await beerRepository.insertBeerBreweries(trx, [
-    { beer: beer.id, brewery: brewery.id },
+  const [brewery, style, location, beer] = await Promise.all([
+    breweryRepository.insertBrewery(
+      trx,
+      buildNewBrewery({ name: names.brewery }),
+    ),
+    styleRepository.insertStyle(trx, buildNewStyle({ name: names.style })),
+    locationRepository.insertLocation(
+      trx,
+      buildNewLocation({ name: names.location }),
+    ),
+    beerRepository.insertBeer(trx, buildNewBeer()),
   ])
-  await beerRepository.insertBeerStyles(trx, [
-    { beer: beer.id, style: style.id },
-  ])
-  await Promise.all(
-    ratings.map(({ rating, time }) =>
+  await Promise.all([
+    beerRepository.insertBeerBreweries(trx, [
+      { beer: beer.id, brewery: brewery.id },
+    ]),
+    beerRepository.insertBeerStyles(trx, [{ beer: beer.id, style: style.id }]),
+    ...ratings.map(({ rating, time }) =>
       reviewRepository.insertReview(
         trx,
         buildNewReview({
@@ -80,7 +77,7 @@ async function insertReviewedBeer(
         }),
       ),
     ),
-  )
+  ])
   return { brewery, location, style }
 }
 
@@ -94,25 +91,27 @@ async function insertBeers(
       trx,
       buildNewContainer(),
     )
-    const kriek = await insertReviewedBeer(
-      trx,
-      container,
-      { brewery: 'Lindemans', style: 'Kriek', location: 'Kuja' },
-      [
-        { rating: 5, time: new Date('2024-03-01T18:00:00.000Z') },
-        { rating: 7, time: new Date('2024-04-01T18:00:00.000Z') },
-      ],
-    )
-    const ipa = await insertReviewedBeer(
-      trx,
-      container,
-      { brewery: 'Nokian Panimo', style: 'IPA', location: 'Oluthuone' },
-      [
-        { rating: 4, time: new Date('2023-03-01T18:00:00.000Z') },
-        { rating: 7, time: new Date('2023-04-01T18:00:00.000Z') },
-        { rating: 10, time: new Date('2023-05-01T18:00:00.000Z') },
-      ],
-    )
+    const [kriek, ipa] = await Promise.all([
+      insertReviewedBeer(
+        trx,
+        container,
+        { brewery: 'Lindemans', style: 'Kriek', location: 'Kuja' },
+        [
+          { rating: 5, time: new Date('2024-03-01T18:00:00.000Z') },
+          { rating: 7, time: new Date('2024-04-01T18:00:00.000Z') },
+        ],
+      ),
+      insertReviewedBeer(
+        trx,
+        container,
+        { brewery: 'Nokian Panimo', style: 'IPA', location: 'Oluthuone' },
+        [
+          { rating: 4, time: new Date('2023-03-01T18:00:00.000Z') },
+          { rating: 7, time: new Date('2023-04-01T18:00:00.000Z') },
+          { rating: 10, time: new Date('2023-05-01T18:00:00.000Z') },
+        ],
+      ),
+    ])
     return { kriek, ipa }
   })
 }
