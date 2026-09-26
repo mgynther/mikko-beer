@@ -7,7 +7,11 @@ import type {
 } from '../../../logic/user/sign-in-method'
 import type { User } from '../../../logic/user/user.js'
 import type { Transaction } from '../../../data/database'
-import { encryptSecret, verifySecret } from '../../../crypto/crypto.service.js'
+import {
+  encryptSecret,
+  needsRehash,
+  verifySecret,
+} from '../../../crypto/crypto.service.js'
 import type { ScryptParameters } from '../../../crypto/scrypt-parameters.js'
 import type { log } from '../../../console/log.js'
 
@@ -42,6 +46,11 @@ export const createVerifySecret =
   () =>
   (logger: log, secret: string, hash: string): Promise<boolean> =>
     wrapVerifySecret(logger, secret, hash)
+
+export const createNeedsRehash =
+  (parameters: ScryptParameters) =>
+  (hash: string): boolean =>
+    needsRehash(parameters, hash)
 
 export function createAddPasswordUserIf(
   trx: Transaction,

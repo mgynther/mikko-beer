@@ -20,6 +20,8 @@ type VerifySecret = (
   hash: string,
 ) => Promise<boolean>
 
+type NeedsRehash = (hash: string) => boolean
+
 export type SignInMethod = PasswordSignInMethod
 
 export interface PasswordSignInMethod {
@@ -33,6 +35,7 @@ export interface SignInUsingPasswordIf {
     userId: string,
   ) => Promise<UserPasswordHash | undefined>
   verifySecret: VerifySecret
+  needsRehash: NeedsRehash
   encryptSecret: EncryptSecret
   insertRefreshToken: (userId: string) => Promise<DbRefreshToken>
   updatePassword: (userPasswordHash: NewUserPasswordHash) => Promise<void>

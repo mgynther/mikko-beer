@@ -61,6 +61,7 @@ const signInUsingPasswordIf: SignInUsingPasswordIf = {
   lockUserByUsername: async () => user,
   findPasswordSignInMethod: async () => userPasswordHash,
   verifySecret: async () => true,
+  needsRehash: () => false,
   encryptSecret: async () => 'encrypted',
   insertRefreshToken: async () => dbRefreshToken,
   updatePassword: async () => undefined,

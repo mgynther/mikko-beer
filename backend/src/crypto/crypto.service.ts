@@ -37,3 +37,22 @@ export async function verifySecret(
   )
   return timingSafeEqual(key, parsed.key)
 }
+
+export function needsRehash(
+  parameters: ScryptParameters,
+  hash: string,
+): boolean {
+  const parsed = parseHash(hash)
+  if (parsed === undefined) {
+    return true
+  }
+  return (
+    // Stored in another format than the one written now.
+    formatHash(parsed) !== hash ||
+    parsed.parameters.N !== parameters.N ||
+    parsed.parameters.r !== parameters.r ||
+    parsed.parameters.p !== parameters.p ||
+    parsed.salt.length !== saltLength ||
+    parsed.key.length !== keyLength
+  )
+}

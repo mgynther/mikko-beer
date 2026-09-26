@@ -125,7 +125,10 @@ export async function signInUsingPassword(
     throw invalidCredentialsError
   }
 
-  if (signInMethod.hashedAt === undefined) {
+  if (
+    signInMethod.hashedAt === undefined ||
+    signInUsingPasswordIf.needsRehash(signInMethod.passwordHash)
+  ) {
     await signInUsingPasswordIf.updatePassword({
       userId: user.id,
       // Cannot apply any validation on the password as the rules may have

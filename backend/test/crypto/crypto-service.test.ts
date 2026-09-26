@@ -1,7 +1,12 @@
 import { describe, it } from 'node:test'
 import { assertEqual } from '../assert.js'
 
-import { encryptSecret, verifySecret } from '../../src/crypto/crypto.service.js'
+import {
+  encryptSecret,
+  needsRehash,
+  verifySecret,
+} from '../../src/crypto/crypto.service.js'
+import { formatHash } from '../../src/crypto/internal/hash-format.js'
 
 describe('encrypt and verify secret', () => {
   const log = () => undefined
@@ -62,5 +67,52 @@ describe('encrypt and verify secret', () => {
         (await encryptSecret(log, parameters, password)),
       false,
     )
+  })
+})
+
+describe('needs rehash', () => {
+  const log = () => undefined
+  const parameters = { N: 1024, r: 8, p: 2 }
+  const salt = Buffer.alloc(16, 1)
+  const key = Buffer.alloc(64, 2)
+
+  it('no rehash for hash encrypted with the parameters', async () => {
+    const hash = await encryptSecret(log, parameters, 'password')
+    assertEqual(needsRehash(parameters, hash), false)
+  })
+
+  it('no rehash for hash with the parameters and lengths', () => {
+    assertEqual(
+      needsRehash(parameters, formatHash({ parameters, salt, key })),
+      false,
+    )
+  })
+
+  const outdated: Array<[string, string]> = [
+    ['malformed hash', 'malformed'],
+    [
+      'other N',
+      formatHash({ parameters: { ...parameters, N: 2048 }, salt, key }),
+    ],
+    ['other r', formatHash({ parameters: { ...parameters, r: 4 }, salt, key })],
+    ['other p', formatHash({ parameters: { ...parameters, p: 1 }, salt, key })],
+    [
+      'other salt length',
+      formatHash({ parameters, salt: Buffer.alloc(8, 1), key }),
+    ],
+    [
+      'other key length',
+      formatHash({ parameters, salt, key: Buffer.alloc(32, 2) }),
+    ],
+  ]
+  for (const [name, hash] of outdated) {
+    it(`rehash ${name}`, () => {
+      assertEqual(needsRehash(parameters, hash), true)
+    })
+  }
+
+  it('rehash legacy hash even with its own parameters', () => {
+    const legacyHash = `${'ab'.repeat(16)}:${'cd'.repeat(64)}`
+    assertEqual(needsRehash({ N: 16384, r: 8, p: 1 }, legacyHash), true)
   })
 })

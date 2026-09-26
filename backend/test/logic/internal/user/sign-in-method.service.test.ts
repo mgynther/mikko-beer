@@ -172,6 +172,20 @@ describe('password sign-in-method service unit tests', () => {
     return false
   }
 
+  function needsNoRehash(hash: string): boolean {
+    assertEqual(hash, encryptedSecret)
+    return false
+  }
+
+  function needsRehash(hash: string): boolean {
+    assertEqual(hash, encryptedSecret)
+    return true
+  }
+
+  function rehashNotChecked(): boolean {
+    throw new Error('not to be called')
+  }
+
   interface PasswordValidationFailureCase {
     name: string
     password: string
@@ -382,6 +396,7 @@ describe('password sign-in-method service unit tests', () => {
       lockUserByUsername: lockValidUserByUsername,
       findPasswordSignInMethod: getUserPasswordHasher(recentUserPasswordHash),
       verifySecret: passVerifySecret,
+      needsRehash: needsNoRehash,
       encryptSecret: notCalled,
       insertRefreshToken,
       updatePassword: notCalled,
@@ -409,6 +424,38 @@ describe('password sign-in-method service unit tests', () => {
         nonRecentUserPasswordHash,
       ),
       verifySecret: passVerifySecret,
+      needsRehash: needsNoRehash,
+      encryptSecret,
+      insertRefreshToken,
+      updatePassword,
+    }
+    const result = await signInUsingPassword(
+      testJwtIf,
+      signInUsingPasswordIf,
+      method,
+      authTokenConfig,
+      log,
+    )
+    assertDeepEqual(result.user, user)
+    expectTokensOf(result)
+    assertEqual(userHashes.length, 1)
+    const newHash = userHashes[0]
+    assertEqual(newHash.userId, user.id)
+    assertEqual(newHash.passwordHash, encryptedSecret)
+    assertCurrentDateTime(newHash.hashedAt)
+  })
+
+  it('sign in using recently hashed password in outdated format', async () => {
+    const userHashes: NewUserPasswordHash[] = []
+    const updatePassword = async (userPasswordHash: NewUserPasswordHash) => {
+      userHashes.push(userPasswordHash)
+      return undefined
+    }
+    const signInUsingPasswordIf: SignInUsingPasswordIf = {
+      lockUserByUsername: lockValidUserByUsername,
+      findPasswordSignInMethod: getUserPasswordHasher(recentUserPasswordHash),
+      verifySecret: passVerifySecret,
+      needsRehash,
       encryptSecret,
       insertRefreshToken,
       updatePassword,
@@ -434,6 +481,7 @@ describe('password sign-in-method service unit tests', () => {
       lockUserByUsername: lockMissingUser,
       findPasswordSignInMethod: notCalled,
       verifySecret: notCalled,
+      needsRehash: rehashNotChecked,
       encryptSecret: notCalled,
       insertRefreshToken: notCalled,
       updatePassword: notCalled,
@@ -454,6 +502,7 @@ describe('password sign-in-method service unit tests', () => {
       lockUserByUsername: lockValidUserByUsername,
       findPasswordSignInMethod: getUserPasswordHasher(undefined),
       verifySecret: notCalled,
+      needsRehash: rehashNotChecked,
       encryptSecret: notCalled,
       insertRefreshToken: notCalled,
       updatePassword: notCalled,
@@ -474,6 +523,7 @@ describe('password sign-in-method service unit tests', () => {
       lockUserByUsername: lockValidUserByUsername,
       findPasswordSignInMethod: getUserPasswordHasher(recentUserPasswordHash),
       verifySecret: failVerifySecret,
+      needsRehash: rehashNotChecked,
       encryptSecret: notCalled,
       insertRefreshToken: notCalled,
       updatePassword: notCalled,

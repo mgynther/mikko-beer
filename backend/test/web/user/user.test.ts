@@ -198,7 +198,7 @@ describe('user tests', () => {
     assertEqual(secondRes.status, 200)
   })
 
-  it('rehash legacy hash on sign in into current format', async () => {
+  it('rehash recently hashed legacy hash on sign in', async () => {
     const { user, username } = await ctx.createUser()
     const password = 'password'
     const legacyHash =
@@ -207,7 +207,7 @@ describe('user tests', () => {
       return await updatePassword(trx, {
         userId: user.id,
         passwordHash: legacyHash,
-        hashedAt: undefined,
+        hashedAt: new Date(),
       })
     })
 
@@ -229,6 +229,32 @@ describe('user tests', () => {
       password: password,
     })
     assertEqual(secondRes.status, 200)
+  })
+
+  it('rehash recently hashed password with other parameters on sign in', async () => {
+    const { user, username } = await ctx.createUser()
+    const password = 'password'
+    const otherParametersHash =
+      '$scrypt$ln=14,r=8,p=1$LSFeH5c5d4Fav49HIqHpiQ$7biLfcxLU9RUv+TVf2fM3s7wY4DJiOfzavESywH5/iFFItGPC9zylXDHCouIE3eJpRbFepfVanqB+inf92yIdA'
+    await ctx.db.executeReadWriteTransaction(async (trx) => {
+      return await updatePassword(trx, {
+        userId: user.id,
+        passwordHash: otherParametersHash,
+        hashedAt: new Date(),
+      })
+    })
+
+    const res = await ctx.request.post(`/api/v1/user/sign-in`, {
+      username: username,
+      password: password,
+    })
+    assertEqual(res.status, 200)
+
+    const postLoginSignInMethod = await getSignInMethod(ctx.db, user.id)
+    assertEqual(
+      postLoginSignInMethod.passwordHash.startsWith('$scrypt$ln=10,r=8,p=1$'),
+      true,
+    )
   })
 
   it('fail to sign in user with the wrong password', async () => {
