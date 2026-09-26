@@ -182,20 +182,15 @@ describe('beer tests', () => {
     assertEqual(getRes.status, 200)
     assertEqual(getRes.data.beer.id, beerRes.data.beer.id)
     assertEqual(getRes.data.beer.name, beerRes.data.beer.name)
-    // A beer's breweries and styles are read in no particular order.
-    const byId = (a: { id: string }, b: { id: string }): number =>
-      a.id.localeCompare(b.id)
-    assertDeepEqual(
-      [...getRes.data.beer.breweries].sort(byId),
-      [brewery1Res.data.brewery, brewery2Res.data.brewery].sort(byId),
-    )
-    assertDeepEqual(
-      [...getRes.data.beer.styles].sort(byId),
-      [
-        withoutParents(style1Res.data.style),
-        withoutParents(style2Res.data.style),
-      ].sort(byId),
-    )
+    // By name: Brewcats before Rock Paper Scissors, IPA before Wild.
+    assertDeepEqual(getRes.data.beer.breweries, [
+      brewery2Res.data.brewery,
+      brewery1Res.data.brewery,
+    ])
+    assertDeepEqual(getRes.data.beer.styles, [
+      withoutParents(style2Res.data.style),
+      withoutParents(style1Res.data.style),
+    ])
   })
 
   it('list beers', async () => {

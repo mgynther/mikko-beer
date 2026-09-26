@@ -131,22 +131,16 @@ describe('style tests', () => {
     assertEqual(getRes.data.style.id, childRes.data.style.id)
     assertEqual(getRes.data.style.name, 'Cream Ale')
     assertDeepEqual(getRes.data.style.children, [])
-    // A style's parents are read in no particular order.
-    const byId = (a: { id: string }, b: { id: string }): number =>
-      a.id.localeCompare(b.id)
-    assertDeepEqual(
-      [...getRes.data.style.parents].sort(byId),
-      [
-        {
-          id: parent1Res.data.style.id,
-          name: parent1Res.data.style.name,
-        },
-        {
-          id: parent2Res.data.style.id,
-          name: parent2Res.data.style.name,
-        },
-      ].sort(byId),
-    )
+    assertDeepEqual(getRes.data.style.parents, [
+      {
+        id: parent1Res.data.style.id,
+        name: parent1Res.data.style.name,
+      },
+      {
+        id: parent2Res.data.style.id,
+        name: parent2Res.data.style.name,
+      },
+    ])
 
     const listRes = await ctx.request.get<{ styles: ListedStyle[] }>(
       `/api/v1/style`,

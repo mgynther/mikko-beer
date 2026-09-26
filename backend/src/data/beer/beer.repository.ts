@@ -173,6 +173,9 @@ export async function findBeerById(
     }
   })
 
+  breweries.sort((a, b) => a.name.localeCompare(b.name))
+  styles.sort((a, b) => a.name.localeCompare(b.name))
+
   return {
     id: beer_id,
     name: name,
@@ -302,6 +305,11 @@ function toBeersWithBreweriesAndStyles(
         name: beer.style_name,
       })
     }
+  })
+
+  beerArray.forEach((beer) => {
+    beer.breweries.sort((a, b) => a.name.localeCompare(b.name))
+    beer.styles.sort((a, b) => a.name.localeCompare(b.name))
   })
 
   return beerArray

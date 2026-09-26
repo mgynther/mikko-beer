@@ -9,6 +9,9 @@ import * as beerRepository from '../../../src/data/beer/beer.repository.js'
 import * as breweryRepository from '../../../src/data/brewery/brewery.repository.js'
 import * as styleRepository from '../../../src/data/style/style.repository.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
+import { buildNewBeer } from './builders.js'
+import { buildNewBrewery } from '../brewery/builders.js'
+import { buildNewStyle } from '../style/builders.js'
 
 describe('beer tests', () => {
   const ctx = new TestContext()
@@ -226,5 +229,67 @@ describe('beer tests', () => {
         styles: [createResult.style],
       },
     ])
+  })
+
+  interface CreamAle {
+    beer: Beer
+    breweries: Brewery[]
+    styles: Style[]
+  }
+
+  // A cream ale by two breweries, both an ale and a lager, linked in reverse
+  // order of the names. The breweries and styles are returned by name.
+  async function insertCreamAle(db: Database): Promise<CreamAle> {
+    return await db.executeReadWriteTransaction(async (trx: Transaction) => {
+      const [beer, sierraNevada, brewdog, lager, ale] = await Promise.all([
+        beerRepository.insertBeer(trx, buildNewBeer({ name: 'Cream Ale' })),
+        breweryRepository.insertBrewery(
+          trx,
+          buildNewBrewery({ name: 'Sierra Nevada' }),
+        ),
+        breweryRepository.insertBrewery(
+          trx,
+          buildNewBrewery({ name: 'Brewdog' }),
+        ),
+        styleRepository.insertStyle(trx, buildNewStyle({ name: 'Lager' })),
+        styleRepository.insertStyle(trx, buildNewStyle({ name: 'Ale' })),
+      ])
+      await Promise.all([
+        beerRepository.insertBeerBreweries(trx, [
+          { beer: beer.id, brewery: sierraNevada.id },
+          { beer: beer.id, brewery: brewdog.id },
+        ]),
+        beerRepository.insertBeerStyles(trx, [
+          { beer: beer.id, style: lager.id },
+          { beer: beer.id, style: ale.id },
+        ]),
+      ])
+      return {
+        beer,
+        breweries: [brewdog, sierraNevada].map(({ id, name }) => ({
+          id,
+          name,
+        })),
+        styles: [ale, lager],
+      }
+    })
+  }
+
+  it('find beer with its breweries and styles by name', async () => {
+    const { beer, breweries, styles } = await insertCreamAle(ctx.db)
+    const found = await beerRepository.findBeerById(ctx.db, beer.id)
+    assertDeepEqual(found, { ...beer, breweries, styles })
+  })
+
+  it('list beers with their breweries and styles by name', async () => {
+    const { beer, breweries, styles } = await insertCreamAle(ctx.db)
+    const beers = await beerRepository.listBeers(ctx.db, { size: 20, skip: 0 })
+    assertDeepEqual(beers, [{ ...beer, breweries, styles }])
+  })
+
+  it('search beers with their breweries and styles by name', async () => {
+    const { beer, breweries, styles } = await insertCreamAle(ctx.db)
+    const beers = await beerRepository.searchBeers(ctx.db, { name: 'Cream' })
+    assertDeepEqual(beers, [{ ...beer, breweries, styles }])
   })
 })

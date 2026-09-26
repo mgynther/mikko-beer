@@ -4,6 +4,7 @@ import { TestContext } from '../test-context.js'
 import type { Database, Transaction } from '../../../src/data/database.js'
 import * as styleRepository from '../../../src/data/style/style.repository.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
+import { buildNewStyle } from './builders.js'
 import type {
   Style,
   StyleRelationship,
@@ -157,5 +158,31 @@ describe('style tests', () => {
         parents: [],
       },
     ])
+  })
+
+  it('find style with its parents and children by name', async () => {
+    const { creamAle, parents, children } =
+      await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
+        const [creamAle, lager, ale, kentucky, genesee] = await Promise.all(
+          ['Cream Ale', 'Lager', 'Ale', 'Kentucky Common', 'Genesee'].map(
+            (name) => styleRepository.insertStyle(trx, buildNewStyle({ name })),
+          ),
+        )
+        // Related in reverse order of their names.
+        await styleRepository.insertStyleRelationships(trx, [
+          { parent: lager.id, child: creamAle.id },
+          { parent: ale.id, child: creamAle.id },
+          { parent: creamAle.id, child: kentucky.id },
+          { parent: creamAle.id, child: genesee.id },
+        ])
+        return {
+          creamAle,
+          parents: [ale, lager],
+          children: [genesee, kentucky],
+        }
+      })
+    const found = await styleRepository.findStyleById(ctx.db, creamAle.id)
+    assertDeepEqual(found?.parents, parents)
+    assertDeepEqual(found?.children, children)
   })
 })

@@ -128,14 +128,18 @@ export async function findStyleById(
   return {
     id: style.style_id,
     name: style.name,
-    children: children.map((child) => ({
-      id: child.style_id,
-      name: child.name,
-    })),
-    parents: parents.map((parent) => ({
-      id: parent.style_id,
-      name: parent.name,
-    })),
+    children: children
+      .map((child) => ({
+        id: child.style_id,
+        name: child.name,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name)),
+    parents: parents
+      .map((parent) => ({
+        id: parent.style_id,
+        name: parent.name,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name)),
   }
 }
 
