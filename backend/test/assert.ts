@@ -43,10 +43,10 @@ export function assertIncludes(
   )
 }
 
-type Class<T> = new (...args: any[]) => T
+type Class<T> = new (...args: never[]) => T
 // Does not catch classes of wrong type compile time but at least provides a way
 // to have generic class type.
-export function assertInstanceOf<T>(instance: T, classType: Class<T>) {
+export function assertInstanceOf<T>(instance: T, classType: Class<T>): void {
   assert.equal(
     instance instanceof classType,
     true,
@@ -58,7 +58,7 @@ export function assertThrows<T extends Error>(
   func: () => void,
   error: T,
   classType: Class<T>,
-) {
+): void {
   assert.throws(func, (err: unknown) => {
     assertInstanceOf(err, classType)
     assert.deepEqual(err, error)
@@ -78,11 +78,11 @@ export async function assertRejects<T extends Error>(
   })
 }
 
-export function assertDoesNotThrow(func: () => void) {
+export function assertDoesNotThrow(func: () => void): void {
   assert.doesNotThrow(func)
 }
 
-export function assertTruthy(value: object | undefined | string) {
+export function assertTruthy(value: object | undefined | string): void {
   assert.ok(value)
 }
 

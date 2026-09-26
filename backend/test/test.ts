@@ -8,7 +8,10 @@ import * as nodeTest from 'node:test'
 
 type Hook = () => void | Promise<void>
 
-type Implementation = (...args: any[]) => any
+// A call through the mocked F returns what its constraint returns, so only
+// an any return lets the call be typed as ReturnType<F>.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Implementation = (...args: never[]) => any
 
 interface MockFunctionCall {
   arguments: unknown[]

@@ -353,6 +353,25 @@ export default [
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/require-await': 'off',
       '@typescript-eslint/strict-void-return': 'off',
+      // The runner is used through test/test.ts only, so that what tests
+      // use of it stays in one file and a new feature has to be added there.
+      ...restrictedImports([
+        {
+          regex: '^node:test(?:/|$)',
+          message: 'Import suite, test and the hooks from test/test.ts.',
+        },
+      ]),
     },
+  },
+  {
+    languageOptions: {
+      ...languageOptions,
+      parserOptions: {
+        project: ['./tsconfig-test.json'],
+      },
+    },
+    files: ['test/assert.ts', 'test/test.ts'],
+    plugins,
+    rules,
   },
 ]
