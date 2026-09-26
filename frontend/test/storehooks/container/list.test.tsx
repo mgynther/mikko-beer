@@ -7,17 +7,12 @@ import type {
   UseListContainers,
   ValidateContainerListOrUndefined,
 } from '../../../src/storehooks/container/types'
+import { buildContainer } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // storehooks/brewery/get.test.tsx.
 const validatedContainerList: ContainerList = {
-  containers: [
-    {
-      id: 'a8c0f5a1-2b0f-4f0e-8d1e-66a1d5f2b3c4',
-      type: 'validated',
-      size: '0.75',
-    },
-  ],
+  containers: [buildContainer({ type: 'validated', size: '0.75' })],
 }
 
 const listed = { containers: [{ id: 'listed', type: 'can', size: '0.44' }] }

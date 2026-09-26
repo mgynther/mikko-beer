@@ -7,27 +7,12 @@ import type {
   UseListStorages,
   ValidateStorageListOrUndefined,
 } from '../../../src/storehooks/storage/types'
+import { buildStorage } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // storehooks/brewery/get.test.tsx.
 const validatedStorageList: StorageList = {
-  storages: [
-    {
-      id: 'c3d4e5f6-0718-4293-a4b5-c6d7e8f90112',
-      beerId: 'd4e5f607-1829-43a4-b5c6-d7e8f9011223',
-      beerName: 'Validated beer',
-      bestBefore: '2026-01-01T00:00:00.000Z',
-      breweries: [],
-      container: {
-        id: 'e5f60718-293a-44b5-8c6d-7e8f90112233',
-        type: 'bottle',
-        size: '0.33',
-      },
-      createdAt: '2025-01-01T00:00:00.000Z',
-      hasReview: false,
-      styles: [],
-    },
-  ],
+  storages: [buildStorage({ beerName: 'Validated beer' })],
 }
 
 const listed = { storages: [{ id: 'listed', beerName: 'Listed beer' }] }

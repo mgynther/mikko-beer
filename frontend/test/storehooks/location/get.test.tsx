@@ -3,20 +3,17 @@ import { render } from '@testing-library/react'
 
 import getLocation from '../../../src/storehooks/location/get'
 import type {
-  Location,
   UseGetLocation,
   ValidateLocationOrUndefined,
 } from '../../../src/storehooks/location/types'
+import { buildLocation } from './builders'
 
 // Both the store function and the validator are stubs. What the request looks
 // like is proven in the store layer and what a valid location looks like in
 // the validation layer; what is proven here is that the response reaches the
 // validator through the envelope and that the validator's result reaches the
 // interface.
-const validatedLocation: Location = {
-  id: 'f1e2d3c4-b5a6-4978-8f0e-1d2c3b4a5968',
-  name: 'Validated location',
-}
+const validatedLocation = buildLocation({ name: 'Validated location' })
 
 const locationId = '38ba5e94-5807-4fe5-ba85-f2580895a4fc'
 

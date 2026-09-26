@@ -4,19 +4,16 @@ import { render, waitFor } from '@testing-library/react'
 import createStyle from '../../../src/storehooks/style/create'
 import type {
   CreateStyleRequest,
-  Style,
   UseCreateStyle,
   ValidateStyleOrUndefined,
 } from '../../../src/storehooks/style/types'
 import { setupUser } from '../../user-event'
 import { createErrorLogger } from '../../error-logger'
+import { buildStyle } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // storehooks/brewery/get.test.tsx.
-const validatedStyle: Style = {
-  id: 'dc4ee8ed-f0f8-4f0b-a9ba-46b1f3e8c1dd',
-  name: 'Validated style',
-}
+const validatedStyle = buildStyle({ name: 'Validated style' })
 
 const created = { style: { id: 'created', name: 'Created style' } }
 

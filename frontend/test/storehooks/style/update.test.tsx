@@ -3,28 +3,21 @@ import { render, waitFor } from '@testing-library/react'
 
 import updateStyle from '../../../src/storehooks/style/update'
 import type {
-  Style,
   StyleWithParentIds,
   UseUpdateStyle,
   ValidateStyle,
 } from '../../../src/storehooks/style/types'
 import { setupUser } from '../../user-event'
 import { createErrorLogger } from '../../error-logger'
+import { buildStyle, buildStyleWithParentIds } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // storehooks/brewery/get.test.tsx.
-const validatedStyle: Style = {
-  id: '1a5c2c8b-6f7e-4f03-93b2-0b9e1b7a5f20',
-  name: 'Validated style',
-}
+const validatedStyle = buildStyle()
 
 const updated = { style: { id: 'updated', name: 'Updated style' } }
 
-const style: StyleWithParentIds = {
-  id: '8cc5fe99-8f76-4a53-933f-86494dc77e1e',
-  name: 'Test style',
-  parents: [],
-}
+const style = buildStyleWithParentIds()
 
 interface HelperProps {
   onUpdate: (style: StyleWithParentIds) => void

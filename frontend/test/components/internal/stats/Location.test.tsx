@@ -14,7 +14,6 @@ import type {
   YearMonth,
 } from '../../../../src/components/types/types'
 import { openFilters } from '../../open-filters'
-import { dontCall } from '../../../dont-call'
 import { testLink } from '../../link'
 
 const getUseDebounce = function <T>(): UseDebounce<T> {
@@ -43,37 +42,6 @@ const oluthuone: OneLocationStats = {
 
 const minTime: YearMonth = testTimes.min.yearMonth
 const maxTime: YearMonth = testTimes.max.yearMonth
-
-const unusedFilters = {
-  minReviewCount: {
-    value: 1,
-    setValue: dontCall,
-  },
-  maxReviewCount: {
-    value: Infinity,
-    setValue: dontCall,
-  },
-  minReviewAverage: {
-    value: 4.0,
-    setValue: dontCall,
-  },
-  maxReviewAverage: {
-    value: 10.0,
-    setValue: dontCall,
-  },
-  timeStart: {
-    min: minTime,
-    max: maxTime,
-    value: minTime,
-    setValue: dontCall,
-  },
-  timeEnd: {
-    min: minTime,
-    max: maxTime,
-    value: maxTime,
-    setValue: dontCall,
-  },
-}
 
 const locationStats = { location: [{ ...plevna }, { ...oluthuone }] }
 const emptyStats = { location: [] }
@@ -143,10 +111,11 @@ test('queries location stats', async () => {
       {
         breweryId: undefined,
         locationId: undefined,
-        maxReviewAverage: unusedFilters.maxReviewAverage.value,
-        maxReviewCount: unusedFilters.maxReviewCount.value,
-        minReviewAverage: unusedFilters.minReviewAverage.value,
-        minReviewCount: unusedFilters.minReviewCount.value,
+        // The defaults, as no search parameter sets a filter.
+        maxReviewAverage: 10,
+        maxReviewCount: Infinity,
+        minReviewAverage: 4,
+        minReviewCount: 1,
         pagination: {
           size: 30,
           skip: 0,
@@ -209,10 +178,11 @@ test('queries filtered location stats', async () => {
       {
         breweryId,
         locationId,
-        maxReviewAverage: unusedFilters.maxReviewAverage.value,
-        maxReviewCount: unusedFilters.maxReviewCount.value,
-        minReviewAverage: unusedFilters.minReviewAverage.value,
-        minReviewCount: unusedFilters.minReviewCount.value,
+        // The defaults, as no search parameter sets a filter.
+        maxReviewAverage: 10,
+        maxReviewCount: Infinity,
+        minReviewAverage: 4,
+        minReviewCount: 1,
         pagination: {
           size: 10000,
           skip: 0,

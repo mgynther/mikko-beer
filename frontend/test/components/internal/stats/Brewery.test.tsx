@@ -13,8 +13,6 @@ import type {
   UseDebounce,
   YearMonth,
 } from '../../../../src/components/types/types'
-import type { StatsFilters } from '../../../../src/components/internal/stats/filter-types'
-import { dontCall } from '../../../dont-call'
 import { testLink } from '../../link'
 
 const getUseDebounce = function <T>(): UseDebounce<T> {
@@ -47,37 +45,6 @@ const lehe: OneBreweryStats = {
 
 const minTime: YearMonth = testTimes.min.yearMonth
 const maxTime: YearMonth = testTimes.max.yearMonth
-
-const unusedFilters: StatsFilters = {
-  minReviewCount: {
-    value: 1,
-    setValue: dontCall,
-  },
-  maxReviewCount: {
-    value: Infinity,
-    setValue: dontCall,
-  },
-  minReviewAverage: {
-    value: 4.0,
-    setValue: dontCall,
-  },
-  maxReviewAverage: {
-    value: 10.0,
-    setValue: dontCall,
-  },
-  timeStart: {
-    min: minTime,
-    max: maxTime,
-    value: minTime,
-    setValue: dontCall,
-  },
-  timeEnd: {
-    min: minTime,
-    max: maxTime,
-    value: maxTime,
-    setValue: dontCall,
-  },
-}
 
 const breweryStats = { brewery: [{ ...koskipanimo }, { ...lehe }] }
 const emptyStats = { brewery: [] }
@@ -145,10 +112,11 @@ test('queries brewery stats', async () => {
     [
       {
         breweryId: undefined,
-        maxReviewAverage: unusedFilters.maxReviewAverage.value,
-        maxReviewCount: unusedFilters.maxReviewCount.value,
-        minReviewAverage: unusedFilters.minReviewAverage.value,
-        minReviewCount: unusedFilters.minReviewCount.value,
+        // The defaults, as no search parameter sets a filter.
+        maxReviewAverage: 10,
+        maxReviewCount: Infinity,
+        minReviewAverage: 4,
+        minReviewCount: 1,
         pagination: {
           size: 30,
           skip: 0,

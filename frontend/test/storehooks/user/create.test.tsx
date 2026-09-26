@@ -5,19 +5,15 @@ import createUser from '../../../src/storehooks/user/create'
 import type {
   CreateUserRequest,
   UseCreateUser,
-  User,
   ValidateUserOrUndefined,
 } from '../../../src/storehooks/user/types'
 import { setupUser } from '../../user-event'
 import { createErrorLogger } from '../../error-logger'
+import { buildUser } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // storehooks/brewery/get.test.tsx.
-const validatedUser: User = {
-  id: 'c7d8e9f0-a1b2-43c4-95d6-e7f8a9b0c1d2',
-  username: 'validateduser',
-  role: 'viewer',
-}
+const validatedUser = buildUser({ username: 'validateduser' })
 
 const created = { user: { id: 'created', username: 'created', role: 'admin' } }
 

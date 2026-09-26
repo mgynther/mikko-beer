@@ -30,6 +30,9 @@ import { testTimes } from '../../filter-time'
 import { openFilters } from '../../open-filters'
 import { dontCall } from '../../../dont-call'
 import { testLink } from '../../link'
+import { buildJoinedReview } from '../../types/review/builders'
+import { buildLogin } from '../../types/login/builders'
+import { buildUser } from '../../types/user/builders'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -118,32 +121,7 @@ const selectBeerIf: SelectBeerIf = {
   search: beerSearchIf,
 }
 
-const joinedReview = {
-  id: 'f1f2157a-3bad-4a40-9da8-2da8c3f6d69b',
-  additionalInfo: '',
-  beerId: '22e2ee56-4eb0-48db-969c-a0ac57396b5e',
-  beerName: 'Ikiurso',
-  breweries: [
-    {
-      id: 'f00effc4-ddca-4100-95f6-9f2f3456256b',
-      name: 'Panimo Hiisi',
-    },
-  ],
-  container: {
-    id: '705c2235-e957-4b2a-8994-a0c026c09bd3',
-    type: 'bottle',
-    size: '0.33',
-  },
-  location: undefined,
-  rating: 9,
-  styles: [
-    {
-      id: '65550e97-9d64-4692-804b-5b82131a71ff',
-      name: 'imperial stout',
-    },
-  ],
-  time: '2023-08-15T12:00:00.000Z',
-}
+const joinedReview = buildJoinedReview()
 
 const defaultUseListReviewsByResult: UseListReviewsByResult = {
   reviews: {
@@ -188,15 +166,7 @@ const dontUpdateReviewIf: ReviewIf = {
   getLogin: () => adminLogin,
 }
 
-const adminLogin: Login = {
-  user: {
-    id: '4b07d278-b705-4ea2-bc43-20ab95a5fba3',
-    username: 'admin',
-    role: Role.admin,
-  },
-  authToken: '',
-  refreshToken: '',
-}
+const adminLogin: Login = buildLogin({ user: buildUser({ role: Role.admin }) })
 
 const minTime: YearMonth = testTimes.min.yearMonth
 const maxTime: YearMonth = testTimes.max.yearMonth

@@ -1,10 +1,12 @@
 import { render } from '@testing-library/react'
 import { test } from 'vitest'
 import StorageList from '../../../../src/components/internal/storage/StorageList'
-import type { Storage } from '../../../../src/components/types/storage/types'
 import { Role } from '../../../../src/components/types/user/types'
 import { dontCall } from '../../../dont-call'
 import { testLink } from '../../link'
+import { buildLogin } from '../../types/login/builders'
+import { buildStorage } from '../../types/storage/builders'
+import { buildUser } from '../../types/user/builders'
 
 const breweryOne = {
   id: 'a2725b45-e4d8-4892-a54b-e610f5b72aa9',
@@ -26,47 +28,25 @@ const styleTwo = {
   name: 'Doppelbock',
 }
 
-const storageOne: Storage = {
+const storageOne = buildStorage({
   id: 'e09ad3aa-6ce2-4963-968d-fc28065f8229',
-  beerId: '0badeb1c-95ee-422b-829f-4fa3974248aa',
   beerName: 'Severin',
   bestBefore: '2023-12-10T12:00:00.000',
   breweries: [breweryOne],
-  container: {
-    id: '498a18ff-3c07-496c-9e20-6aa7edcae59d',
-    type: 'bottle',
-    size: '0.33',
-  },
-  createdAt: '2020-09-12T12:00:00.000Z',
   hasReview: false,
   styles: [styleOne],
-}
+})
 
-const storageTwo: Storage = {
+const storageTwo = buildStorage({
   id: 'e734f0b3-1e62-46e6-8566-0ebf1659baa9',
-  beerId: 'f192c806-9807-4568-b990-5e2c22a6f6d2',
   beerName: 'Yuletide Doppelbock',
   bestBefore: '2024-11-01T12:00:00.000',
   breweries: [breweryTwo],
-  container: {
-    id: 'b912de3d-48c3-471a-a0c0-82b94e2d3da2',
-    type: 'bottle',
-    size: '0.33',
-  },
-  createdAt: '2021-08-11T11:00:00.000Z',
   hasReview: true,
   styles: [styleTwo],
-}
+})
 
-const adminLogin = {
-  user: {
-    id: 'e809902c-f056-4c73-8929-31c87d164d85',
-    username: 'admin',
-    role: Role.admin,
-  },
-  authToken: 'auth',
-  refreshToken: 'refresh',
-}
+const adminLogin = buildLogin({ user: buildUser({ role: Role.admin }) })
 
 test('renders storage list', async () => {
   const { getByRole, getByText } = render(

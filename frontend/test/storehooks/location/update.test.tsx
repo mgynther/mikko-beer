@@ -9,20 +9,15 @@ import type {
 } from '../../../src/storehooks/location/types'
 import { setupUser } from '../../user-event'
 import { createErrorLogger } from '../../error-logger'
+import { buildLocation } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // get.test.tsx.
-const validatedLocation: Location = {
-  id: '5d6e7f80-9a1b-42c3-8d4e-5f6a7b8c9d0e',
-  name: 'Validated location',
-}
+const validatedLocation = buildLocation()
 
 const updated = { location: { id: 'updated', name: 'Updated location' } }
 
-const location: Location = {
-  id: '2b3c4d5e-6f70-4819-a2b3-c4d5e6f70819',
-  name: 'Test location',
-}
+const location = buildLocation()
 
 interface HelperProps {
   onUpdate: (location: Location) => void

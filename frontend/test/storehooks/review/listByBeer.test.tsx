@@ -8,28 +8,12 @@ import type {
   UseListReviewsBy,
   ValidateJoinedReviewListOrUndefined,
 } from '../../../src/storehooks/review/types'
+import { buildJoinedReview } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // storehooks/brewery/get.test.tsx.
 const validatedReviewList: JoinedReviewList = {
-  reviews: [
-    {
-      id: '6a5b4c3d-2e1f-4098-8776-5e4d3c2b1a09',
-      additionalInfo: 'Validated additional info',
-      beerId: '7b6c5d4e-3f20-4189-8877-6f5e4d3c2b1a',
-      beerName: 'Validated beer',
-      breweries: [],
-      container: {
-        id: '8c7d6e5f-4031-429a-9988-7a6b5c4d3e2f',
-        type: 'bottle',
-        size: '0.33',
-      },
-      location: undefined,
-      rating: 6,
-      styles: [],
-      time: '2025-01-01T00:00:00.000Z',
-    },
-  ],
+  reviews: [buildJoinedReview({ beerName: 'Validated beer' })],
   sorting: { order: 'time', direction: 'desc' },
 }
 

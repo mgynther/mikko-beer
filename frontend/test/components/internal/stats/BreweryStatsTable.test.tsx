@@ -12,9 +12,9 @@ import type {
   YearMonth,
 } from '../../../../src/components/types/types'
 import { openFilters } from '../../open-filters'
-import type { StatsFilters } from '../../../../src/components/internal/stats/filter-types'
 import { dontCall } from '../../../dont-call'
 import { testLink } from '../../link'
+import { buildStatsFilters } from './builders'
 
 const koskipanimo: OneBreweryStats = {
   breweryId: '9c761e23-0113-4eeb-b2d5-819f1f5345b5',
@@ -43,36 +43,7 @@ const lehe: OneBreweryStats = {
 const minTime: YearMonth = testTimes.min.yearMonth
 const maxTime: YearMonth = testTimes.max.yearMonth
 
-const unusedFilters: StatsFilters = {
-  minReviewCount: {
-    value: 1,
-    setValue: dontCall,
-  },
-  maxReviewCount: {
-    value: Infinity,
-    setValue: dontCall,
-  },
-  minReviewAverage: {
-    value: 4.0,
-    setValue: dontCall,
-  },
-  maxReviewAverage: {
-    value: 10.0,
-    setValue: dontCall,
-  },
-  timeStart: {
-    min: minTime,
-    max: maxTime,
-    value: minTime,
-    setValue: dontCall,
-  },
-  timeEnd: {
-    min: minTime,
-    max: maxTime,
-    value: maxTime,
-    setValue: dontCall,
-  },
-}
+const unusedFilters = buildStatsFilters()
 
 test('renders brewery stats', () => {
   const { getByText } = render(

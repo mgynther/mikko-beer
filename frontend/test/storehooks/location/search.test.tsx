@@ -10,17 +10,11 @@ import type {
 } from '../../../src/storehooks/location/types'
 import { setupUser } from '../../user-event'
 import { createErrorLogger } from '../../error-logger'
+import { buildLocation } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // get.test.tsx.
-const validatedLocationList: LocationList = {
-  locations: [
-    {
-      id: '7f8e9d0c-1b2a-4394-8576-a1b2c3d4e5f6',
-      name: 'Validated location',
-    },
-  ],
-}
+const validatedLocationList: LocationList = { locations: [buildLocation()] }
 
 const found = { locations: [{ id: 'found', name: 'Found location' }] }
 

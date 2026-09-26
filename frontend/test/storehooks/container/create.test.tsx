@@ -10,14 +10,11 @@ import type {
 } from '../../../src/storehooks/container/types'
 import { setupUser } from '../../user-event'
 import { createErrorLogger } from '../../error-logger'
+import { buildContainer } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // storehooks/brewery/get.test.tsx.
-const validatedContainer: Container = {
-  id: '0d4e3e4b-3d1e-4a7e-9a0e-b0a5a1c9e7f2',
-  type: 'validated',
-  size: '0.25',
-}
+const validatedContainer = buildContainer()
 
 const created = { container: { id: 'created', type: 'bottle', size: '0.33' } }
 

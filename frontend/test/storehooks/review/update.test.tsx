@@ -9,34 +9,15 @@ import type {
 } from '../../../src/storehooks/review/types'
 import { setupUser } from '../../user-event'
 import { createErrorLogger } from '../../error-logger'
+import { buildReview } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // storehooks/brewery/get.test.tsx.
-const validatedReview: Review = {
-  id: '9f8e7d6c-5b4a-4392-8170-6f5e4d3c2b1a',
-  additionalInfo: 'Validated additional info',
-  beer: '1f2e3d4c-5b6a-4798-8071-2f3e4d5c6b7a',
-  container: '2e3d4c5b-6a79-4881-9062-3e4d5c6b7a89',
-  location: '3d4c5b6a-7988-4172-8053-4d5c6b7a8998',
-  rating: 7,
-  smell: 'Validated smell',
-  taste: 'Validated taste',
-  time: '2025-01-01T00:00:00.000Z',
-}
+const validatedReview = buildReview()
 
 const updated = { review: { id: 'updated', taste: 'Updated taste' } }
 
-const review: Review = {
-  id: '0b1c2d3e-4f50-4617-8293-a4b5c6d7e8f9',
-  additionalInfo: 'Test additional info',
-  beer: '1c2d3e4f-5061-4728-93a4-b5c6d7e8f901',
-  container: '2d3e4f50-6172-4839-a4b5-c6d7e8f90112',
-  location: '3e4f5061-7283-494a-b5c6-d7e8f9011223',
-  rating: 9,
-  smell: 'Test smell',
-  taste: 'Test taste',
-  time: '2026-03-12T00:00:00.000Z',
-}
+const review = buildReview()
 
 interface HelperProps {
   onUpdate: (review: Review) => void

@@ -7,17 +7,12 @@ import type {
   UseListStyles,
   ValidateStyleListOrUndefined,
 } from '../../../src/storehooks/style/types'
+import { buildStyleWithParentIds } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // storehooks/brewery/get.test.tsx.
 const validatedStyleList: StyleList = {
-  styles: [
-    {
-      id: '4e8a3d8f-1b25-4a1a-8f6e-06a1fbbf0a3c',
-      name: 'Validated style',
-      parents: [],
-    },
-  ],
+  styles: [buildStyleWithParentIds({ name: 'Validated style' })],
 }
 
 const listed = { styles: [{ id: 'listed', name: 'Listed style', parents: [] }] }

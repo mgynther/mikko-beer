@@ -6,36 +6,10 @@ import type {
   ReviewSorting,
   ReviewSortingOrder,
 } from '../../../../src/components/types/review/types'
-import type { ReviewFilters } from '../../../../src/components/internal/review/filter-types'
-import type { YearMonth } from '../../../../src/components/types/types'
-import { testTimes } from '../../filter-time'
 import { dontCall } from '../../../dont-call'
+import { buildReviewFilters } from './builders'
 
-const minTime: YearMonth = testTimes.min.yearMonth
-const maxTime: YearMonth = testTimes.max.yearMonth
-
-const reviewFilters: ReviewFilters = {
-  minRating: {
-    value: 4,
-    setValue: dontCall,
-  },
-  maxRating: {
-    value: 10,
-    setValue: dontCall,
-  },
-  minTime: {
-    min: minTime,
-    max: maxTime,
-    value: minTime,
-    setValue: dontCall,
-  },
-  maxTime: {
-    min: minTime,
-    max: maxTime,
-    value: maxTime,
-    setValue: dontCall,
-  },
-}
+const reviewFilters = buildReviewFilters()
 
 interface SortingTest {
   name: string

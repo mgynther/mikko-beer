@@ -11,6 +11,7 @@ import type { ReviewContainerIf } from '../../../../src/components/types/review/
 import type { SearchFieldIf } from '../../../../src/components/types/search/types'
 import type { CreateStorageIf } from '../../../../src/components/types/storage/types'
 import { dontCall } from '../../../dont-call'
+import { buildBeer } from '../../types/beer/builders'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -21,22 +22,13 @@ const dontCreate = {
 
 const beerId = '320ea456-b51a-408a-bf3f-9f69488fd551'
 const beerName = 'Severin'
-const beerSearchResult = {
+const beerSearchResult = buildBeer({
   id: beerId,
   name: beerName,
   breweries: [
-    {
-      id: '95ba8194-8263-4f98-9cfc-5a26a07ecc10',
-      name: 'Koskipanimo',
-    },
+    { id: '95ba8194-8263-4f98-9cfc-5a26a07ecc10', name: 'Koskipanimo' },
   ],
-  styles: [
-    {
-      id: 'c4e5b84d-c29b-404d-be96-94e2a6d496bb',
-      name: 'american ipa',
-    },
-  ],
-}
+})
 
 const searchFieldIf: SearchFieldIf = {
   useSearchField: () => ({

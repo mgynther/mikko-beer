@@ -8,6 +8,8 @@ import type {
 } from '../../../../src/components/types/container/types'
 import { Role } from '../../../../src/components/types/user/types'
 import type { GetLogin } from '../../../../src/components/types/login/types'
+import { buildLogin } from '../../types/login/builders'
+import { buildUser } from '../../types/user/builders'
 
 const container: ContainerType = {
   id: '790d587e-b4e4-436f-82d3-6d450daba5d2',
@@ -16,15 +18,7 @@ const container: ContainerType = {
 }
 
 function getLogin(role: Role): GetLogin {
-  return () => ({
-    user: {
-      id: '05952a9e-1c6f-4974-9c1c-4e5fe473b0f7',
-      username: 'viewer',
-      role,
-    },
-    authToken: 'auth',
-    refreshToken: 'refresh',
-  })
+  return () => buildLogin({ user: buildUser({ role }) })
 }
 
 const getUpdateContainerIf: (getLogin: GetLogin) => UpdateContainerIf = (

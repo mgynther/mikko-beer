@@ -1,7 +1,6 @@
 import { render } from '@testing-library/react'
 import { test } from 'vitest'
 import Storages from '../../../src/components/storage/Storages'
-import type { Storage } from '../../../src/components/types/storage/types'
 import { Role } from '../../../src/components/types/user/types'
 import type { UseUrlSearchParams } from '../../../src/components/types/types'
 import type {
@@ -10,6 +9,9 @@ import type {
 } from '../../../src/components/types/beer/types'
 import type { ReviewContainerIf } from '../../../src/components/types/review/types'
 import { dontCall } from '../../dont-call'
+import { buildLogin } from '../types/login/builders'
+import { buildStorage } from '../types/storage/builders'
+import { buildUser } from '../types/user/builders'
 import type { GetLogin } from '../../../src/components/types/login/types'
 import { testLink } from '../link'
 
@@ -80,21 +82,13 @@ const style = {
   name: 'American IPA',
 }
 
-const storage: Storage = {
-  id: '3c3478f6-c754-4fee-a2b1-a63b59ae6b77',
-  beerId: '1c7ba165-a001-41a0-b8bb-bc52435df0c0',
+const storage = buildStorage({
   beerName: 'Severin',
   bestBefore: '2023-12-10T12:00:00.000',
   breweries: [brewery],
-  container: {
-    id: '3b7871b5-0016-4330-a134-23ef3aaee3eb',
-    type: 'bottle',
-    size: '0.33',
-  },
-  createdAt: '2021-05-05T10:00:00.000Z',
   hasReview: true,
   styles: [style],
-}
+})
 
 const reviewContainerIf: ReviewContainerIf = {
   createIf: {
@@ -118,15 +112,8 @@ test('renders storage', () => {
       }
     },
   })
-  const getLogin: GetLogin = () => ({
-    user: {
-      id: '9d157897-7787-4139-98bf-867300a3605c',
-      username: 'viewer',
-      role: Role.viewer,
-    },
-    authToken: 'auth',
-    refreshToken: 'refresh',
-  })
+  const getLogin: GetLogin = () =>
+    buildLogin({ user: buildUser({ role: Role.viewer }) })
   const { getByRole, getByText } = render(
     <Storages
       linkComponent={testLink}

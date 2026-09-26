@@ -3,21 +3,17 @@ import { render } from '@testing-library/react'
 
 import getBrewery from '../../../src/storehooks/brewery/get'
 import type {
-  Brewery,
   UseGetBrewery,
   ValidateBreweryOrUndefined,
 } from '../../../src/storehooks/brewery/types'
+import { buildBrewery } from './builders'
 
 // Both the store function and the validator are stubs. What the request looks
 // like is proven in the store layer and what a valid brewery looks like in
 // the validation layer; what is proven here is that the response reaches the
 // validator through the envelope and that the validator's result reaches the
 // interface.
-const validatedBrewery: Brewery = {
-  id: '8a7b6c5d-4e3f-4210-9876-5a4b3c2d1e0f',
-  name: 'Validated brewery',
-  country: 'Finland',
-}
+const validatedBrewery = buildBrewery({ name: 'Validated brewery' })
 
 const breweryId = 'ef20147e-c396-48c6-a314-ceef15a42ca5'
 

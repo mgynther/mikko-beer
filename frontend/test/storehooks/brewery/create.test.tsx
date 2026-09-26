@@ -10,14 +10,11 @@ import type {
 } from '../../../src/storehooks/brewery/types'
 import { setupUser } from '../../user-event'
 import { createErrorLogger } from '../../error-logger'
+import { buildBrewery } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // get.test.tsx.
-const validatedBrewery: Brewery = {
-  id: 'd1c2b3a4-5e6f-4708-9a1b-2c3d4e5f6a7b',
-  name: 'Validated brewery',
-  country: 'Sweden',
-}
+const validatedBrewery = buildBrewery()
 
 const created = { brewery: { id: 'created', name: 'Created brewery' } }
 

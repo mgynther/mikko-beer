@@ -4,20 +4,14 @@ import { expect, test, vitest } from 'vitest'
 import UpdateLocation from '../../../../src/components/internal/location/UpdateLocation'
 import { Role } from '../../../../src/components/types/user/types'
 import type { GetLogin } from '../../../../src/components/types/login/types'
+import { buildLogin } from '../../types/login/builders'
+import { buildUser } from '../../types/user/builders'
 
 const id = 'e00e1994-026c-4be6-93f2-4b247a0f0ce8'
 const newNamePlaceholder = 'New name'
 
 function getLogin(): GetLogin {
-  return () => ({
-    user: {
-      id: '3ae3514d-4fbe-416c-add4-85b6fbc76922',
-      username: 'admin',
-      role: Role.admin,
-    },
-    authToken: 'auth',
-    refreshToken: 'refresh',
-  })
+  return () => buildLogin({ user: buildUser({ role: Role.admin }) })
 }
 
 test('updates location', async () => {

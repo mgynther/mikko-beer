@@ -12,6 +12,10 @@ import type { ReviewContainerIf } from '../../../../src/components/types/review/
 import type { SearchFieldIf } from '../../../../src/components/types/search/types'
 import type { SearchLocationIf } from '../../../../src/components/types/location/types'
 import { dontCall } from '../../../dont-call'
+import {
+  buildJoinedReview,
+  buildReviewRequest,
+} from '../../types/review/builders'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -19,8 +23,6 @@ const dontCreate = {
   create: dontCall,
   isLoading: false,
 }
-
-const reviewedBeerId = '8d3463b8-0942-4f51-ad3b-619e23a4ba07'
 
 const searchBeerId = 'f49f41b6-4a8b-473d-ab31-d0a69eaf6fc2'
 const searchBeerName = 'Severin'
@@ -104,8 +106,6 @@ const containerListResult = {
   size: '0.25',
 }
 
-const dateStr = '2022-04-01T12:00:00.000Z'
-
 const reviewContainerIf: ReviewContainerIf = {
   createIf: {
     useCreate: () => dontCreate,
@@ -144,34 +144,13 @@ const tasteText = 'Very good, caramel, malt, bitter'
 
 const reviewRating = 10
 
-const reviewContainerId = '609c0289-0dd8-454f-8c2e-92b32f9fad86'
-
-const joinedReview = {
-  id: 'f71bc3ea-2f76-4770-afdb-cfa8870d3a86',
-  additionalInfo: '',
-  beerId: reviewedBeerId,
-  beerName: 'Siperia',
-  breweries: [],
-  container: {
-    id: reviewContainerId,
-    type: 'bottle',
-    size: '0.50',
-  },
-  location: undefined,
-  rating: 9,
-  styles: [],
-  time: dateStr,
-}
-const review = {
-  additionalInfo: '',
-  beer: reviewedBeerId,
-  container: reviewContainerId,
-  location: '',
-  rating: 9,
-  smell: 'Nice',
-  taste: 'Roasted malt, bitter, strong',
-  time: dateStr,
-}
+// The review as it is shown and as it was loaded. The beer, the container
+// and the location are taken from the first, and everything else from the
+// second.
+const joinedReview = buildJoinedReview({ location: undefined })
+// The editor works in whole minutes, so a time without seconds is saved as it
+// was loaded.
+const review = buildReviewRequest({ time: '2022-04-01T12:00:00.000Z' })
 
 async function addReview(
   getByPlaceholderText: (text: string) => HTMLElement,
@@ -221,14 +200,14 @@ test('updates review', async () => {
     [
       {
         id: joinedReview.id,
-        additionalInfo: '',
-        beer: reviewedBeerId,
-        container: reviewContainerId,
+        additionalInfo: review.additionalInfo,
+        beer: joinedReview.beerId,
+        container: joinedReview.container.id,
         location: '',
         rating: reviewRating,
         smell: smellText,
         taste: tasteText,
-        time: dateStr,
+        time: review.time,
       },
     ],
   ])

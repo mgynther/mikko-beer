@@ -8,6 +8,7 @@ import type {
 } from '../../../src/storehooks/stats/types'
 import { statsStore } from './stats-store'
 import { statsValidators } from './stats-validators'
+import { buildStyleStatsQueryParams } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // storehooks/brewery/get.test.tsx. The store functions a test does not drive
@@ -18,18 +19,7 @@ const validatedStats: StyleStats = {
 
 const data = { style: [{ styleId: 'one' }] }
 
-const params: StyleStatsQueryParams = {
-  breweryId: undefined,
-  locationId: undefined,
-  styleId: undefined,
-  sorting: { order: 'average', direction: 'asc' },
-  minReviewCount: 40,
-  maxReviewCount: 80,
-  minReviewAverage: 9,
-  maxReviewAverage: 9.3,
-  timeStart: 1,
-  timeEnd: 2,
-}
+const params = buildStyleStatsQueryParams()
 
 interface HelperProps {
   onQuery: (params: StyleStatsQueryParams) => void

@@ -5,11 +5,12 @@ import type {
   ListStoragesByIf,
   Storage,
 } from '../../../../src/components/types/storage/types'
-import type { Beer } from '../../../../src/components/types/beer/types'
-import type { Container } from '../../../../src/components/types/container/types'
 import { Role } from '../../../../src/components/types/user/types'
 import { dontCall } from '../../../dont-call'
 import { testLink } from '../../link'
+import { buildLogin } from '../../types/login/builders'
+import { buildStorage } from '../../types/storage/builders'
+import { buildUser } from '../../types/user/builders'
 
 const breweryId = '6abf9c04-2aaa-42da-b8cb-a5eaa6bb0ff8'
 
@@ -25,40 +26,14 @@ const style = {
   children: [],
 }
 
-const beer: Beer = {
-  id: '36b72ef1-ed5e-430c-8748-48554cbcda23',
-  name: 'Smörre',
-  breweries: [brewery],
-  styles: [style],
-}
-
-const container: Container = {
-  id: '678d1052-b81e-49d5-b222-620dbd4c817f',
-  type: 'bottle',
-  size: '0.33',
-}
-
-const storage: Storage = {
-  id: 'e37d284f-49af-41fc-8fd9-8ec1f5b8fca2',
-  beerId: beer.id,
-  beerName: beer.name,
+const storage = buildStorage({
+  beerName: 'Smörre',
   bestBefore: '2024-06-28T12:00:00.000',
   breweries: [brewery],
-  container,
-  createdAt: '2024-03-01T12:00:00.000Z',
-  hasReview: false,
   styles: [style],
-}
+})
 
-const login = {
-  user: {
-    id: 'dc39260f-b459-4688-9103-08ef7ad903b0',
-    username: 'mikko',
-    role: Role.admin,
-  },
-  authToken: '',
-  refreshToken: '',
-}
+const login = buildLogin({ user: buildUser({ role: Role.admin }) })
 
 function getListStoragesByBreweryIf(
   storages: Storage[] | undefined,
@@ -90,7 +65,7 @@ test('render storages', async () => {
     />,
   )
   getByText(brewery.name)
-  getByText(beer.name)
+  getByText(storage.beerName)
   getByText(style.name)
   getByText(storage.bestBefore.split('T')[0])
 })

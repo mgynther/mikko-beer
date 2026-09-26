@@ -39,6 +39,8 @@ import type {
   SetSearch,
 } from '../../src/components/types/review/types'
 import type { SearchFieldIf } from '../../src/components/types/search/types'
+import { buildLogin } from '../components/types/login/builders'
+import { buildUser } from '../components/types/user/builders'
 
 const navMenuIf: NavMenuIf = {
   useNavMenu: () => {
@@ -75,21 +77,12 @@ const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
 }
 
-const getUndefinedLogin: GetLogin = () => ({
-  user: undefined,
-  authToken: '',
-  refreshToken: '',
-})
+// Signed in means holding an auth token.
+const getUndefinedLogin: GetLogin = () =>
+  buildLogin({ authToken: '', user: undefined })
 
-const getAdminLogin: GetLogin = () => ({
-  user: {
-    id: '98e1693b-cd1d-46e7-a738-db8f089a5244',
-    username: 'admin',
-    role: Role.admin,
-  },
-  authToken: 'auth',
-  refreshToken: 'refresh',
-})
+const getAdminLogin: GetLogin = () =>
+  buildLogin({ authToken: 'auth', user: buildUser({ role: Role.admin }) })
 
 const searchFieldIf: SearchFieldIf = {
   useSearchField: () => ({

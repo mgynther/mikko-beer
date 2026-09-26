@@ -12,12 +12,13 @@ import type {
   CreateBeerIf,
   SearchBeerIf,
 } from '../../../../src/components/types/beer/types'
-import type {
-  JoinedReview,
-  ReviewContainerIf,
-} from '../../../../src/components/types/review/types'
+import type { ReviewContainerIf } from '../../../../src/components/types/review/types'
 import type { SearchFieldIf } from '../../../../src/components/types/search/types'
 import { dontCall } from '../../../dont-call'
+import {
+  buildJoinedReview,
+  buildReviewRequest,
+} from '../../types/review/builders'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -25,8 +26,6 @@ const dontCreate = {
   create: dontCall,
   isLoading: false,
 }
-
-const reviewedBeerId = '76a4e30b-955b-4523-9955-9b60523f92d4'
 
 const searchBeerId = '307334fc-bd6b-4782-9f5e-0cffb74d6d02'
 const searchBeerName = 'Severin'
@@ -152,44 +151,13 @@ const tasteText = 'Very good, caramel, malt, bitter'
 
 const reviewRating = 10
 
-const reviewContainerId = 'b2cd8c37-cfab-4978-95c4-24898364ada4'
-
-const joinedReview: JoinedReview = {
-  id: '4f5f97ae-a5a0-4ff6-9106-6a5cf8301fa1',
-  additionalInfo: '',
-  beerId: reviewedBeerId,
-  beerName: 'Siperia',
-  breweries: [
-    {
-      id: '38da2abb-c7ff-4128-804a-a49030342ae2',
-      name: 'Koskipanimo',
-    },
-  ],
-  container: {
-    id: reviewContainerId,
-    type: 'bottle',
-    size: '0.50',
-  },
-  location: undefined,
-  rating: 9,
-  styles: [
-    {
-      id: '45d0330a-7aca-44e1-a254-538675699287',
-      name: 'Imperial Stout',
-    },
-  ],
-  time: dateStr,
-}
-const review = {
-  additionalInfo: '',
-  beer: reviewedBeerId,
-  container: reviewContainerId,
-  location: '',
-  rating: 9,
-  smell: 'Nice',
-  taste: 'Roasted malt, bitter, strong',
-  time: dateStr,
-}
+// The review as it is shown and as it was loaded. The editor takes the beer,
+// the container and the location from the first, and everything else from
+// the second.
+const joinedReview = buildJoinedReview({ location: undefined })
+// The editor works in whole minutes, so a time without seconds is given back
+// as it was loaded.
+const review = buildReviewRequest({ time: dateStr })
 
 async function addReview(
   getByPlaceholderText: (text: string) => HTMLElement,
@@ -198,6 +166,7 @@ async function addReview(
 ): Promise<void> {
   const additionalInfoInput = getByPlaceholderText('Additional info')
   additionalInfoInput.focus()
+  await user.clear(additionalInfoInput)
   await user.paste(additionalInfoText)
   const locationInput = getByPlaceholderText('Location')
   locationInput.focus()
@@ -422,8 +391,8 @@ test('updates review', async () => {
   expect(finalChange).toEqual([
     {
       additionalInfo: additionalInfoText,
-      beer: reviewedBeerId,
-      container: reviewContainerId,
+      beer: joinedReview.beerId,
+      container: joinedReview.container.id,
       location: location.id,
       rating: reviewRating,
       smell: smellText,
@@ -465,8 +434,14 @@ test('clears location', async () => {
   const finalChange = onChange.mock.calls[onChange.mock.calls.length - 1]
   expect(finalChange).toEqual([
     {
-      ...review,
+      additionalInfo: review.additionalInfo,
+      beer: joinedReview.beerId,
+      container: joinedReview.container.id,
       location: '',
+      rating: review.rating,
+      smell: review.smell,
+      taste: review.taste,
+      time: review.time,
     },
   ])
 })

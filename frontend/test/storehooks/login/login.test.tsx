@@ -12,18 +12,11 @@ import type {
 } from '../../../src/storehooks/login/types'
 import { setupUser } from '../../user-event'
 import { createErrorLogger } from '../../error-logger'
+import { buildLogin } from './builders'
 
 // Stubs for the store functions and the validator, for the reason given in
 // storehooks/brewery/get.test.tsx.
-const validatedLogin: Login = {
-  authToken: 'validatedauthtoken',
-  refreshToken: 'validatedrefreshtoken',
-  user: {
-    id: 'c6d7e8f9-0112-4233-8445-566778899aab',
-    username: 'validateduser',
-    role: 'admin',
-  },
-}
+const validatedLogin = buildLogin()
 
 const params: LoginParams = { username: 'user1', password: 'password1' }
 

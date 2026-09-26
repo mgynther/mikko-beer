@@ -6,7 +6,6 @@ import type {
   UseDebounce,
   YearMonth,
 } from '../../../src/components/types/types'
-import type { Login } from '../../../src/components/types/login/types'
 import { Role } from '../../../src/components/types/user/types'
 import type {
   JoinedReviewList,
@@ -30,6 +29,9 @@ import { loadingIndicatorText } from '../../../src/components/internal/common/Lo
 import { testTimes } from '../filter-time'
 import { openFilters } from '../open-filters'
 import { dontCall } from '../../dont-call'
+import { buildLogin } from '../types/login/builders'
+import { buildJoinedReview, buildReview } from '../types/review/builders'
+import { buildUser } from '../types/user/builders'
 import { testLink } from '../link'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
@@ -42,8 +44,6 @@ const dontCreate = {
   create: dontCall,
   isLoading: false,
 }
-
-const reviewedBeerId = 'a562b38b-b9df-4cf6-be4a-e1179eb4e89a'
 
 const searchFieldIf: SearchFieldIf = {
   useSearchField: () => ({
@@ -101,8 +101,6 @@ const dontCreateBeerIf: CreateBeerIf = {
   },
 }
 
-const dateStr = '2022-04-01T12:00:00.000Z'
-
 const reviewContainerIf: ReviewContainerIf = {
   createIf: {
     useCreate: () => dontCreate,
@@ -122,51 +120,16 @@ const selectBeerIf: SelectBeerIf = {
   search: beerSearchIf,
 }
 
-const smellText = 'Very nice, caramel, hops'
 const newTasteText = 'Very good, caramel, malt, bitter'
 
-const reviewRating = 10
-
-const reviewContainerId = '30d153af-1170-49a1-8b33-c96d789748a9'
-
-const joinedReview = {
-  id: '9b6c746a-5870-4572-ba46-9116d64b436a',
-  additionalInfo: '',
-  beerId: reviewedBeerId,
+const joinedReview = buildJoinedReview({
   beerName: 'Siperia',
-  breweries: [
-    {
-      id: '54d41335-6ebb-4e07-8992-4c8e756850e4',
-      name: 'Koskipanimo',
-    },
-  ],
-  container: {
-    id: reviewContainerId,
-    type: 'bottle',
-    size: '0.50',
-  },
   location: undefined,
-  rating: 9,
-  styles: [
-    {
-      id: 'f83ac055-90b4-489c-b549-cee985262ef1',
-      name: 'imperial stout',
-    },
-  ],
-  time: dateStr,
-}
+})
 
-const review = {
-  id: joinedReview.id,
-  additionalInfo: '',
-  beer: reviewedBeerId,
-  container: reviewContainerId,
-  location: '',
-  rating: reviewRating,
-  smell: smellText,
-  taste: 'Roasted malt, bitter, strong',
-  time: dateStr,
-}
+// The editor works in whole minutes, so a time without seconds is saved as it
+// was loaded.
+const review = buildReview({ time: '2022-04-01T12:00:00.000Z' })
 
 const defaultReviewList: JoinedReviewList = {
   reviews: [joinedReview],
@@ -208,15 +171,7 @@ const dontUpdateReviewIf: ReviewIf = {
   getLogin: () => adminLogin,
 }
 
-const adminLogin: Login = {
-  user: {
-    id: 'cae333fe-8247-4b31-93af-f2218b20f63e',
-    username: 'admin',
-    role: Role.admin,
-  },
-  authToken: '',
-  refreshToken: '',
-}
+const adminLogin = buildLogin({ user: buildUser({ role: Role.admin }) })
 
 type GetListReviewsIfCb = (params: ListReviewParams) => void
 type GetListReviewsIf = (
@@ -322,16 +277,18 @@ test('updates review', async () => {
   await user.click(saveButton)
   expect(update.mock.calls).toEqual([
     [
+      // The beer, the container and the location are those of the review as
+      // it is shown, everything else is the review as it was loaded.
       {
         id: joinedReview.id,
-        additionalInfo: '',
-        beer: reviewedBeerId,
-        container: reviewContainerId,
+        additionalInfo: review.additionalInfo,
+        beer: joinedReview.beerId,
+        container: joinedReview.container.id,
         location: '',
-        rating: reviewRating,
-        smell: smellText,
+        rating: review.rating,
+        smell: review.smell,
         taste: newTasteText,
-        time: dateStr,
+        time: review.time,
       },
     ],
   ])

@@ -5,6 +5,7 @@ import statsHook from '../../../src/storehooks/stats/stats'
 import type { IdParams, AnnualStats } from '../../../src/storehooks/stats/types'
 import { statsStore } from './stats-store'
 import { statsValidators } from './stats-validators'
+import { buildIdParams } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // storehooks/brewery/get.test.tsx. The store functions a test does not drive
@@ -15,11 +16,7 @@ const validatedStats: AnnualStats = {
 
 const data = { annual: [{ id: 'one' }] }
 
-const params: IdParams = {
-  breweryId: undefined,
-  locationId: undefined,
-  styleId: undefined,
-}
+const params = buildIdParams()
 
 interface HelperProps {
   onQuery: (params: IdParams) => void

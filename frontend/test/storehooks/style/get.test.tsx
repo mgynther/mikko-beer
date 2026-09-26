@@ -3,19 +3,16 @@ import { render } from '@testing-library/react'
 
 import getStyle from '../../../src/storehooks/style/get'
 import type {
-  StyleWithParentsAndChildren,
   UseGetStyle,
   ValidateStyleWithParentsAndChildrenOrUndefined,
 } from '../../../src/storehooks/style/types'
+import { buildStyleWithParentsAndChildren } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // storehooks/brewery/get.test.tsx.
-const validatedStyle: StyleWithParentsAndChildren = {
-  id: '8e2fc6bc-3d5f-4a8e-98ef-4a9ec0f7dc6a',
+const validatedStyle = buildStyleWithParentsAndChildren({
   name: 'Validated style',
-  parents: [],
-  children: [],
-}
+})
 
 const styleId = 'bb6a57f4-f26e-4512-9235-4991ebc00ba9'
 

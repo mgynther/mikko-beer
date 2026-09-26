@@ -17,6 +17,8 @@ import type { ReviewContainerIf } from '../../../src/components/types/review/typ
 import type { UseUrlPathParams } from '../../../src/components/types/types'
 import type { SearchFieldIf } from '../../../src/components/types/search/types'
 import { dontCall } from '../../dont-call'
+import { buildReview } from '../types/review/builders'
+import { buildStorage } from '../types/storage/builders'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -364,17 +366,12 @@ test('adds review from storage', async () => {
     },
     getStorageIf: {
       useGet: (storageId: string) => ({
-        storage: {
+        storage: buildStorage({
           id: storageId,
           beerId,
-          beerName,
           bestBefore: '2024-07-31T12:00:00.000',
-          breweries: beerSearchResult.breweries,
           container: containerListResult,
-          createdAt: '2022-03-30T18:00:00.000Z',
-          hasReview: false,
-          styles: beerSearchResult.styles,
-        },
+        }),
         isLoading: false,
       }),
     },
@@ -419,17 +416,7 @@ test('navigates', async () => {
         useCreate: () => ({
           ...dontCreate,
           isSuccess: true,
-          review: {
-            id: '',
-            additionalInfo: '',
-            beer: beerId,
-            container: '',
-            location: '',
-            rating: 10,
-            smell: '',
-            taste: '',
-            time: dateStr,
-          },
+          review: buildReview({ beer: beerId }),
         }),
         getCurrentDate,
         searchLocationIf,

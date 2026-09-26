@@ -40,6 +40,8 @@ import { loadingIndicatorText } from '../../../src/components/internal/common/Lo
 import type { SelectBeerIf } from '../../../src/components/types/beer/types'
 import { dontCall } from '../../dont-call'
 import { testLink } from '../link'
+import { buildLogin } from '../types/login/builders'
+import { buildUser } from '../types/user/builders'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -52,15 +54,7 @@ const name = 'Hopping Brewsters'
 const newNamePlaceholder = 'New name'
 
 function getLogin(): GetLogin {
-  return () => ({
-    user: {
-      id: 'ada1b9b1-ea66-4e17-bda8-f8ea1e65a020',
-      username: 'admin',
-      role: Role.admin,
-    },
-    authToken: 'auth',
-    refreshToken: 'refresh',
-  })
+  return () => buildLogin({ user: buildUser({ role: Role.admin }) })
 }
 
 const searchFieldIf: SearchFieldIf = {

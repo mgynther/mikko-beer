@@ -3,24 +3,16 @@ import { render } from '@testing-library/react'
 
 import getLogin from '../../../src/storehooks/login/getLogin'
 import type {
-  Login,
   UseStoredLogin,
   ValidateLogin,
 } from '../../../src/storehooks/login/types'
+import { buildLogin } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // storehooks/brewery/get.test.tsx. The session is read back out of the store
 // here, so what this proves is that the stored value goes through the
 // validator and that a value the validator rejects is reported as logged out.
-const validatedLogin: Login = {
-  authToken: 'validatedauthtoken',
-  refreshToken: 'validatedrefreshtoken',
-  user: {
-    id: 'd7e8f901-1223-4344-8556-6778899aabbc',
-    username: 'validateduser',
-    role: 'admin',
-  },
-}
+const validatedLogin = buildLogin({ authToken: 'validatedauthtoken' })
 
 interface HelperProps {
   stored: unknown

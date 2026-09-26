@@ -8,7 +8,6 @@ import type {
   JoinedReview,
   ListFilterIf,
   ListReviewsByIf,
-  Review,
   ReviewIf,
   SetSearch,
   UpdateReviewIf,
@@ -31,6 +30,10 @@ import type { UseUrlPathParams } from '../../../src/components/types/types'
 import { loadingIndicatorText } from '../../../src/components/internal/common/LoadingIndicator'
 import { testTimes } from '../filter-time'
 import { dontCall } from '../../dont-call'
+import { buildContainer } from '../types/container/builders'
+import { buildLogin } from '../types/login/builders'
+import { buildJoinedReview, buildReview } from '../types/review/builders'
+import { buildUser } from '../types/user/builders'
 import { testLink } from '../link'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
@@ -57,44 +60,14 @@ const beer = {
   styles: [style],
 }
 
-const joinedReview: JoinedReview = {
-  id: '9a3f616c-b6f3-4053-9986-64312b9547fe',
+const joinedReview = buildJoinedReview({
   additionalInfo: 'From batch #123',
-  beerId: beer.id,
-  beerName: beer.name,
-  breweries: [],
-  container: {
-    id: '27a356d5-128a-4eab-83eb-00f8043288a3',
-    type: 'bottle',
-    size: '0.33',
-  },
-  location: undefined,
-  styles: [],
-  time: '2024-10-12T15:23:45.000Z',
-  rating: 10,
-}
+  container: buildContainer({ type: 'bottle', size: '0.33' }),
+})
 
-const review: Review = {
-  id: joinedReview.id,
-  additionalInfo: joinedReview.additionalInfo,
-  beer: beer.id,
-  container: joinedReview.container.id,
-  location: '',
-  time: joinedReview.time,
-  rating: 10,
-  smell: '',
-  taste: '',
-}
+const review = buildReview()
 
-const login = {
-  user: {
-    id: '5046343b-5a39-40db-83fa-6833e7216d42',
-    username: 'mikko',
-    role: Role.admin,
-  },
-  authToken: '',
-  refreshToken: '',
-}
+const login = buildLogin({ user: buildUser({ role: Role.admin }) })
 
 const dontCreate = {
   create: dontCall,

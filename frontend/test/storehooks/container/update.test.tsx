@@ -9,22 +9,15 @@ import type {
 } from '../../../src/storehooks/container/types'
 import { setupUser } from '../../user-event'
 import { createErrorLogger } from '../../error-logger'
+import { buildContainer } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // get.test.tsx.
-const validatedContainer: Container = {
-  id: 'b2f1c3d4-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
-  type: 'validated',
-  size: '0.33',
-}
+const validatedContainer = buildContainer()
 
 const updated = { container: { id: 'updated', type: 'can', size: '0.44' } }
 
-const container: Container = {
-  id: '9b1a2c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5e',
-  type: 'bottle',
-  size: '0.50',
-}
+const container = buildContainer()
 
 interface HelperProps {
   onUpdate: (container: Container) => void

@@ -2,11 +2,7 @@ import { render } from '@testing-library/react'
 import { setupUser } from '../../../user-event'
 import { expect, test, vitest } from 'vitest'
 import ReviewList from '../../../../src/components/internal/review/ReviewList'
-import type {
-  UseDebounce,
-  YearMonth,
-} from '../../../../src/components/types/types'
-import type { Login } from '../../../../src/components/types/login/types'
+import type { UseDebounce } from '../../../../src/components/types/types'
 import { Role } from '../../../../src/components/types/user/types'
 import type {
   Review,
@@ -22,10 +18,12 @@ import type {
   SelectBeerIf,
 } from '../../../../src/components/types/beer/types'
 import type { SearchFieldIf } from '../../../../src/components/types/search/types'
-import type { ReviewFilters } from '../../../../src/components/internal/review/filter-types'
-import { testTimes } from '../../filter-time'
 import { dontCall } from '../../../dont-call'
 import { testLink } from '../../link'
+import { buildLogin } from '../../types/login/builders'
+import { buildJoinedReview, buildReview } from '../../types/review/builders'
+import { buildUser } from '../../types/user/builders'
+import { buildReviewFilters } from './builders'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -33,8 +31,6 @@ const dontCreate = {
   create: dontCall,
   isLoading: false,
 }
-
-const reviewedBeerId = '6ec1cde8-03aa-4567-bfac-b8509bc030cd'
 
 const searchFieldIf: SearchFieldIf = {
   useSearchField: () => ({
@@ -93,8 +89,6 @@ const dontCreateBeerIf: CreateBeerIf = {
   },
 }
 
-const dateStr = '2022-04-01T12:00:00.000Z'
-
 const reviewContainerIf: ReviewContainerIf = {
   createIf: {
     useCreate: () => dontCreate,
@@ -114,74 +108,39 @@ const selectBeerIf: SelectBeerIf = {
   search: beerSearchIf,
 }
 
-const smellText = 'Very nice, caramel, hops'
 const newTasteText = 'Very good, caramel, malt, bitter'
 
-const reviewRating = 10
-
-const reviewContainerId = '2800eea5-e4ab-49fe-84cd-bf320a70383d'
-
-const joinedReview = {
+const joinedReview = buildJoinedReview({
   id: 'a2b1bef8-717c-4323-979c-cf220745666c',
-  additionalInfo: '',
-  beerId: reviewedBeerId,
   beerName: 'Siperia',
   breweries: [
-    {
-      id: 'dd236932-aba3-488e-a685-e99a8e7c8972',
-      name: 'Koskipanimo',
-    },
+    { id: 'dd236932-aba3-488e-a685-e99a8e7c8972', name: 'Koskipanimo' },
   ],
-  container: {
-    id: reviewContainerId,
-    type: 'bottle',
-    size: '0.50',
-  },
   location: undefined,
   rating: 9,
   styles: [
-    {
-      id: '30aad2a4-1f46-4f99-be9e-5b4d8bfa9bda',
-      name: 'imperial stout',
-    },
+    { id: '30aad2a4-1f46-4f99-be9e-5b4d8bfa9bda', name: 'imperial stout' },
   ],
-  time: dateStr,
-}
+})
 
-const review = {
-  id: joinedReview.id,
-  additionalInfo: '',
-  beer: reviewedBeerId,
-  container: reviewContainerId,
-  location: '',
-  rating: reviewRating,
-  smell: smellText,
+// The editor works in whole minutes, so a time without seconds is saved as it
+// was loaded.
+const review = buildReview({
+  smell: 'Nice',
   taste: 'Roasted malt, bitter, strong',
-  time: dateStr,
-}
+  time: '2022-04-01T12:00:00.000Z',
+})
 
-const anotherJoinedReview = {
+const anotherJoinedReview = buildJoinedReview({
   id: '40df563a-e3bb-46eb-b5c2-85a1b079ee74',
-  additionalInfo: '',
-  beerId: '911e1dbb-3c6a-4db5-a3eb-bac5b83a83fa',
   beerName: 'CCCCC IPA',
   breweries: [
-    {
-      id: 'fddab316-81a6-4d49-abc1-3e96e2b37442',
-      name: 'Beer Hunters',
-    },
+    { id: 'fddab316-81a6-4d49-abc1-3e96e2b37442', name: 'Beer Hunters' },
   ],
-  container: joinedReview.container,
-  location: undefined,
-  rating: 10,
   styles: [
-    {
-      id: '9e67df6d-3bde-4b5b-ba02-b17a9a743b49',
-      name: 'american ipa',
-    },
+    { id: '9e67df6d-3bde-4b5b-ba02-b17a9a743b49', name: 'american ipa' },
   ],
-  time: dateStr,
-}
+})
 
 const searchLocationIf: SearchLocationIf = {
   useSearch: () => ({
@@ -215,15 +174,7 @@ const dontUpdateReviewIf: ReviewIf = {
   getLogin: () => adminLogin,
 }
 
-const adminLogin: Login = {
-  user: {
-    id: 'cae333fe-8247-4b31-93af-f2218b20f63e',
-    username: 'admin',
-    role: Role.admin,
-  },
-  authToken: '',
-  refreshToken: '',
-}
+const adminLogin = buildLogin({ user: buildUser({ role: Role.admin }) })
 
 const irrelevantSorting: ReviewSorting = {
   order: 'beer_name',
@@ -232,31 +183,7 @@ const irrelevantSorting: ReviewSorting = {
 
 const irrelevantSupportedSorting: ReviewSortingOrder[] = ['beer_name']
 
-const minTime: YearMonth = testTimes.min.yearMonth
-const maxTime: YearMonth = testTimes.max.yearMonth
-
-const reviewFilters: ReviewFilters = {
-  minRating: {
-    value: 4,
-    setValue: dontCall,
-  },
-  maxRating: {
-    value: 10,
-    setValue: dontCall,
-  },
-  minTime: {
-    min: minTime,
-    max: maxTime,
-    value: minTime,
-    setValue: dontCall,
-  },
-  maxTime: {
-    min: minTime,
-    max: maxTime,
-    value: maxTime,
-    setValue: dontCall,
-  },
-}
+const reviewFilters = buildReviewFilters()
 
 test('updates review', async () => {
   const user = setupUser()
@@ -310,16 +237,18 @@ test('updates review', async () => {
   await user.click(saveButton)
   expect(update.mock.calls).toEqual([
     [
+      // The beer, the container and the location are those of the review as
+      // it is shown, everything else is the review as it was loaded.
       {
         id: joinedReview.id,
-        additionalInfo: '',
-        beer: reviewedBeerId,
-        container: reviewContainerId,
+        additionalInfo: review.additionalInfo,
+        beer: joinedReview.beerId,
+        container: joinedReview.container.id,
         location: '',
-        rating: reviewRating,
-        smell: smellText,
+        rating: review.rating,
+        smell: review.smell,
         taste: newTasteText,
-        time: dateStr,
+        time: review.time,
       },
     ],
   ])

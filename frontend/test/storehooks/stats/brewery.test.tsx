@@ -10,6 +10,7 @@ import { statsStore } from './stats-store'
 import { statsValidators } from './stats-validators'
 import { setupUser } from '../../user-event'
 import { createErrorLogger } from '../../error-logger'
+import { buildBreweryStatsQueryParams } from './builders'
 
 // Stubs for the store function and the validators, for the reason given in
 // storehooks/brewery/get.test.tsx. The store functions a test does not drive
@@ -21,19 +22,7 @@ const validatedStats: BreweryStats = {
 const queried = { brewery: [{ id: 'queried' }] }
 const held = { brewery: [{ id: 'held' }] }
 
-const params: BreweryStatsQueryParams = {
-  breweryId: undefined,
-  locationId: undefined,
-  styleId: undefined,
-  pagination: { size: 10, skip: 0 },
-  sorting: { order: 'average', direction: 'asc' },
-  minReviewCount: 40,
-  maxReviewCount: 80,
-  minReviewAverage: 9,
-  maxReviewAverage: 9.3,
-  timeStart: 1,
-  timeEnd: 2,
-}
+const params = buildBreweryStatsQueryParams()
 
 interface HelperProps {
   onQuery: (params: BreweryStatsQueryParams) => void

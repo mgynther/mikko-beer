@@ -3,28 +3,14 @@ import { render } from '@testing-library/react'
 
 import getStorage from '../../../src/storehooks/storage/get'
 import type {
-  Storage,
   UseGetStorage,
   ValidateStorageOrUndefined,
 } from '../../../src/storehooks/storage/types'
+import { buildStorage } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // storehooks/brewery/get.test.tsx.
-const validatedStorage: Storage = {
-  id: 'e5f60718-293a-44b5-8c6d-7e8f90112233',
-  beerId: 'f6071829-3a4b-45c6-9d7e-8f9011223344',
-  beerName: 'Validated beer',
-  bestBefore: '2026-01-01T00:00:00.000Z',
-  breweries: [],
-  container: {
-    id: '07182930-4b5c-46d7-9e8f-901122334455',
-    type: 'bottle',
-    size: '0.33',
-  },
-  createdAt: '2025-01-01T00:00:00.000Z',
-  hasReview: false,
-  styles: [],
-}
+const validatedStorage = buildStorage({ beerName: 'Validated beer' })
 
 const storageId = '9b2ae1cd-5d2f-4a6a-b1d0-2f9b0e2c9e9c'
 

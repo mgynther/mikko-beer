@@ -5,17 +5,11 @@ import { Role } from '../../../src/components/types/user/types'
 import type { GetLogin } from '../../../src/components/types/login/types'
 import type { UpdateContainerIf } from '../../../src/components/types/container/types'
 import { loadingIndicatorText } from '../../../src/components/internal/common/LoadingIndicator'
+import { buildLogin } from '../types/login/builders'
+import { buildUser } from '../types/user/builders'
 
 function getLogin(): GetLogin {
-  return () => ({
-    user: {
-      id: '05952a9e-1c6f-4974-9c1c-4e5fe473b0f7',
-      username: 'viewer',
-      role: Role.viewer,
-    },
-    authToken: 'auth',
-    refreshToken: 'refresh',
-  })
+  return () => buildLogin({ user: buildUser({ role: Role.viewer }) })
 }
 
 const updateContainerIf: UpdateContainerIf = {

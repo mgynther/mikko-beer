@@ -8,7 +8,6 @@ import type {
   JoinedReview,
   ListFilterIf,
   ListReviewsByIf,
-  Review,
   ReviewIf,
   SetSearch,
   UpdateReviewIf,
@@ -44,17 +43,17 @@ import type { UseUrlPathParams } from '../../../src/components/types/types'
 import type { ReactNode } from 'react'
 import { loadingIndicatorText } from '../../../src/components/internal/common/LoadingIndicator'
 import { dontCall } from '../../dont-call'
+import { buildContainer } from '../types/container/builders'
+import { buildJoinedReview, buildReview } from '../types/review/builders'
+import { buildStorage } from '../types/storage/builders'
 import { testLink } from '../link'
+import { buildLogin } from '../types/login/builders'
+import { buildUser } from '../types/user/builders'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
-}
-
-const brewery = {
-  id: '6290fa39-3515-4682-a69c-51d18b2b03b1',
-  name: 'Koskipanimo',
 }
 
 const parent = {
@@ -76,63 +75,16 @@ const style = {
   children: [child],
 }
 
-const beer = {
-  id: '4eee87d3-a451-46bf-a8dc-16778bc108af',
-  name: 'Smörre',
-  breweries: [brewery],
-  styles: [style],
-}
-
-const joinedReview: JoinedReview = {
-  id: '6cf9fdd2-e922-4bc6-bac5-0f231193679e',
+const joinedReview = buildJoinedReview({
   additionalInfo: 'From batch #123',
-  beerId: beer.id,
-  beerName: beer.name,
-  breweries: [],
-  container: {
-    id: '345a65ed-3bb2-4be3-a370-5610e5d0edd0',
-    type: 'bottle',
-    size: '0.33',
-  },
-  location: undefined,
-  styles: [],
-  time: '2024-10-12T15:23:45.000Z',
-  rating: 10,
-}
+  container: buildContainer({ type: 'bottle', size: '0.33' }),
+})
 
-const review: Review = {
-  id: joinedReview.id,
-  additionalInfo: joinedReview.additionalInfo,
-  beer: beer.id,
-  container: joinedReview.container.id,
-  location: '',
-  time: joinedReview.time,
-  rating: 10,
-  smell: '',
-  taste: '',
-}
+const review = buildReview()
 
-const storage: Storage = {
-  id: '350d015b-22d7-4bc7-b126-19ad09c5733c',
-  beerId: beer.id,
-  beerName: beer.name,
-  bestBefore: '2025-01-30T12:00:00.000',
-  breweries: joinedReview.breweries,
-  container: joinedReview.container,
-  createdAt: '2023-02-02T12:00:00.000Z',
-  hasReview: false,
-  styles: joinedReview.styles,
-}
+const storage = buildStorage({ bestBefore: '2025-01-30T12:00:00.000' })
 
-const login = {
-  user: {
-    id: 'dc39260f-b459-4688-9103-08ef7ad903b0',
-    username: 'mikko',
-    role: Role.admin,
-  },
-  authToken: '',
-  refreshToken: '',
-}
+const login = buildLogin({ user: buildUser({ role: Role.admin }) })
 
 const searchFieldIf: SearchFieldIf = {
   useSearchField: () => ({

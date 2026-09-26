@@ -2,23 +2,16 @@ import { render } from '@testing-library/react'
 import { setupUser } from '../../../user-event'
 import { expect, test, vitest } from 'vitest'
 import ChangePassword from '../../../../src/components/internal/account/ChangePassword'
-import { Role } from '../../../../src/components/types/user/types'
 import type {
   ChangePasswordIf,
   GetLogin,
 } from '../../../../src/components/types/login/types'
+import { buildLogin } from '../../types/login/builders'
+import { buildUser } from '../../types/user/builders'
 
 const userId = '8f19eb81-b283-440f-be76-73c1c858150c'
 
-const getLogin: GetLogin = () => ({
-  user: {
-    id: userId,
-    username: 'admin',
-    role: Role.admin,
-  },
-  authToken: 'dummy',
-  refreshToken: 'dummy',
-})
+const getLogin: GetLogin = () => buildLogin({ user: buildUser({ id: userId }) })
 
 test('changes password', async () => {
   const user = setupUser()

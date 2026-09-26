@@ -11,17 +11,12 @@ import type {
 import type { Pagination } from '../../../src/storehooks/types'
 import { setupUser } from '../../user-event'
 import { createErrorLogger } from '../../error-logger'
+import { buildBrewery } from './builders'
 
 // Stubs for the store function and the validators, for the reason given in
 // get.test.tsx.
-const validatedBreweryList: BreweryList = {
-  breweries: [
-    {
-      id: '0f1e2d3c-4b5a-4968-8778-6a5b4c3d2e1f',
-      name: 'Validated brewery',
-      country: undefined,
-    },
-  ],
+const validatedBreweryList = {
+  breweries: [buildBrewery({ name: 'Validated brewery' })],
 }
 
 const listed = { breweries: [{ id: 'listed', name: 'Listed brewery' }] }

@@ -149,10 +149,10 @@ test('queries brewery stats', async () => {
     [
       {
         breweryId: undefined,
-        maxReviewAverage: unusedFilters.maxReviewAverage.value,
-        maxReviewCount: unusedFilters.maxReviewCount.value,
-        minReviewAverage: unusedFilters.minReviewAverage.value,
-        minReviewCount: unusedFilters.minReviewCount.value,
+        maxReviewAverage: statsParams.maxReviewAverage,
+        maxReviewCount: statsParams.maxReviewCount,
+        minReviewAverage: statsParams.minReviewAverage,
+        minReviewCount: statsParams.minReviewCount,
         pagination: {
           size: 10000,
           skip: 0,

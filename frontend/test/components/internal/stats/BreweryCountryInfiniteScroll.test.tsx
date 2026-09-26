@@ -150,10 +150,10 @@ test('queries brewery country stats', async () => {
       {
         breweryId: undefined,
         locationId: undefined,
-        maxReviewAverage: unusedFilters.maxReviewAverage.value,
-        maxReviewCount: unusedFilters.maxReviewCount.value,
-        minReviewAverage: unusedFilters.minReviewAverage.value,
-        minReviewCount: unusedFilters.minReviewCount.value,
+        maxReviewAverage: statsParams.maxReviewAverage,
+        maxReviewCount: statsParams.maxReviewCount,
+        minReviewAverage: statsParams.minReviewAverage,
+        minReviewCount: statsParams.minReviewCount,
         pagination: {
           size: 30,
           skip: 0,
@@ -216,10 +216,10 @@ test('queries the next page after the loaded ones', async () => {
       {
         breweryId: undefined,
         locationId: undefined,
-        maxReviewAverage: unusedFilters.maxReviewAverage.value,
-        maxReviewCount: unusedFilters.maxReviewCount.value,
-        minReviewAverage: unusedFilters.minReviewAverage.value,
-        minReviewCount: unusedFilters.minReviewCount.value,
+        maxReviewAverage: statsParams.maxReviewAverage,
+        maxReviewCount: statsParams.maxReviewCount,
+        minReviewAverage: statsParams.minReviewAverage,
+        minReviewCount: statsParams.minReviewCount,
         pagination: {
           size: 30,
           skip: 1,

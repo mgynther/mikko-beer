@@ -20,6 +20,7 @@ import type {
 } from '../../../src/components/types/types'
 import { openFilters } from '../open-filters'
 import { testLink } from '../link'
+import { buildOverallStats } from '../types/stats/builders'
 
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
@@ -129,22 +130,7 @@ const emptyStatsIf: StatsIf = {
   },
   overall: {
     useStats: () => ({
-      stats: {
-        beerCount: '0',
-        breweryCount: '0',
-        breweryCountryCount: '12',
-        containerCount: '0',
-        locationCount: '0',
-        reviewCount: '0',
-        distinctBeerReviewCount: '0',
-        reviewAverage: '0.00',
-        reviewMedian: '0.00',
-        reviewMode: '0',
-        reviewStandardDeviation: '0.00',
-        reviewWithLocationCount: '0',
-        reviewWithoutLocationCount: '0',
-        styleCount: '0',
-      },
+      stats: buildOverallStats(),
       isLoading: false,
     }),
   },

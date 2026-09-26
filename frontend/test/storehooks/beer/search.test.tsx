@@ -10,19 +10,11 @@ import type {
 } from '../../../src/storehooks/beer/types'
 import { setupUser } from '../../user-event'
 import { createErrorLogger } from '../../error-logger'
+import { buildBeer } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // get.test.tsx.
-const validatedBeerList: BeerList = {
-  beers: [
-    {
-      id: '7f809192-a3b4-45c6-97d8-e9f0a1b2c3d4',
-      name: 'Validated beer',
-      breweries: [],
-      styles: [],
-    },
-  ],
-}
+const validatedBeerList: BeerList = { beers: [buildBeer()] }
 
 const found = { beers: [{ id: 'found', name: 'Found beer' }] }
 

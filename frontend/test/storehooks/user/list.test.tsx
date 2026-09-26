@@ -7,17 +7,12 @@ import type {
   UserList,
   ValidateUserListOrUndefined,
 } from '../../../src/storehooks/user/types'
+import { buildUser } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // storehooks/brewery/get.test.tsx.
 const validatedUserList: UserList = {
-  users: [
-    {
-      id: 'b4c5d6e7-f8a9-40b1-82c3-d4e5f6a7b8c9',
-      username: 'validateduser',
-      role: 'admin',
-    },
-  ],
+  users: [buildUser({ username: 'validateduser' })],
 }
 
 const listed = { users: [{ id: 'listed', username: 'listed', role: 'admin' }] }

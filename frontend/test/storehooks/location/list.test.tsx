@@ -11,16 +11,12 @@ import type {
 import type { Pagination } from '../../../src/storehooks/types'
 import { setupUser } from '../../user-event'
 import { createErrorLogger } from '../../error-logger'
+import { buildLocation } from './builders'
 
 // Stubs for the store function and the validators, for the reason given in
 // get.test.tsx.
-const validatedLocationList: LocationList = {
-  locations: [
-    {
-      id: '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f',
-      name: 'Validated location',
-    },
-  ],
+const validatedLocationList = {
+  locations: [buildLocation({ name: 'Validated location' })],
 }
 
 const listed = { locations: [{ id: 'listed', name: 'Listed location' }] }

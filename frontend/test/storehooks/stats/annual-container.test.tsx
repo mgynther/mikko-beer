@@ -10,6 +10,7 @@ import { statsStore } from './stats-store'
 import { statsValidators } from './stats-validators'
 import { setupUser } from '../../user-event'
 import { createErrorLogger } from '../../error-logger'
+import { buildAnnualContainerStatsQueryParams } from './builders'
 
 // Stubs for the store function and the validators, for the reason given in
 // storehooks/brewery/get.test.tsx. The store functions a test does not drive
@@ -21,12 +22,7 @@ const validatedStats: AnnualContainerStats = {
 const queried = { annualContainer: [{ id: 'queried' }] }
 const held = { annualContainer: [{ id: 'held' }] }
 
-const params: AnnualContainerStatsQueryParams = {
-  breweryId: undefined,
-  locationId: undefined,
-  styleId: undefined,
-  pagination: { size: 10, skip: 0 },
-}
+const params = buildAnnualContainerStatsQueryParams()
 
 interface HelperProps {
   onQuery: (params: AnnualContainerStatsQueryParams) => void

@@ -2,13 +2,13 @@ import { render } from '@testing-library/react'
 import { setupUser } from '../../../user-event'
 import { expect, test, vitest } from 'vitest'
 import StorageItem from '../../../../src/components/internal/storage/StorageItem'
-import type {
-  DeleteStorageIf,
-  Storage,
-} from '../../../../src/components/types/storage/types'
+import type { DeleteStorageIf } from '../../../../src/components/types/storage/types'
 import { Role } from '../../../../src/components/types/user/types'
 import { dontCall } from '../../../dont-call'
 import { testLink } from '../../link'
+import { buildLogin } from '../../types/login/builders'
+import { buildStorage } from '../../types/storage/builders'
+import { buildUser } from '../../types/user/builders'
 
 const brewery = {
   id: 'b5639203-8448-40ff-84c1-cc9b9b50909c',
@@ -20,31 +20,14 @@ const style = {
   name: 'American IPA',
 }
 
-const storage: Storage = {
-  id: 'd02c5fb5-a993-447d-824a-93bfeb85949a',
-  beerId: '14167707-87d1-49f1-b6b1-0a95ebfb5afb',
+const storage = buildStorage({
   beerName: 'Severin',
   bestBefore: '2023-12-10T12:00:00.000',
   breweries: [brewery],
-  container: {
-    id: 'a5bc2c5b-50ae-4f47-b374-63bc2be4f524',
-    type: 'bottle',
-    size: '0.33',
-  },
-  createdAt: '2020-09-12T12:00:00.000Z',
-  hasReview: false,
   styles: [style],
-}
+})
 
-const adminLogin = {
-  user: {
-    id: 'ce26ca10-9238-4b84-a0e6-6ac3a2890449',
-    username: 'admin',
-    role: Role.admin,
-  },
-  authToken: 'auth',
-  refreshToken: 'refresh',
-}
+const adminLogin = buildLogin({ user: buildUser({ role: Role.admin }) })
 
 const dontDelete: DeleteStorageIf = {
   useDelete: () => ({

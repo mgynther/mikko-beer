@@ -10,15 +10,11 @@ import type {
 } from '../../../src/storehooks/storage/types'
 import { setupUser } from '../../user-event'
 import { createErrorLogger } from '../../error-logger'
+import { buildCreatedStorage } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // storehooks/brewery/get.test.tsx.
-const validatedCreatedStorage: CreatedStorage = {
-  id: '90112233-4455-4667-8899-aabbccddeeff',
-  beer: 'a1b2c3d4-e5f6-4071-8293-a4b5c6d7e8f9',
-  bestBefore: '2026-01-01T00:00:00.000Z',
-  container: 'b2c3d4e5-f607-4182-93a4-b5c6d7e8f901',
-}
+const validatedCreatedStorage = buildCreatedStorage()
 
 const created = { storage: { id: 'created', beer: 'beer' } }
 

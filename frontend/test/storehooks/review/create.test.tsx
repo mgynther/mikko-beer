@@ -3,27 +3,17 @@ import { render, waitFor } from '@testing-library/react'
 
 import createReview from '../../../src/storehooks/review/create'
 import type {
-  Review,
   ReviewRequestWrapper,
   UseCreateReview,
   ValidateReviewOrUndefined,
 } from '../../../src/storehooks/review/types'
 import { setupUser } from '../../user-event'
 import { createErrorLogger } from '../../error-logger'
+import { buildReview } from './builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // storehooks/brewery/get.test.tsx.
-const validatedReview: Review = {
-  id: '9f8e7d6c-5b4a-4392-8170-6f5e4d3c2b1a',
-  additionalInfo: 'Validated additional info',
-  beer: '1f2e3d4c-5b6a-4798-8071-2f3e4d5c6b7a',
-  container: '2e3d4c5b-6a79-4881-9062-3e4d5c6b7a89',
-  location: '3d4c5b6a-7988-4172-8053-4d5c6b7a8998',
-  rating: 7,
-  smell: 'Validated smell',
-  taste: 'Validated taste',
-  time: '2025-01-01T00:00:00.000Z',
-}
+const validatedReview = buildReview({ taste: 'Validated taste' })
 
 const created = { review: { id: 'created', taste: 'Created taste' } }
 
