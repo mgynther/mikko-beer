@@ -4,7 +4,7 @@ import { assertDeepEqual, assertEqual, assertInstanceOf } from '../assert.js'
 export async function expectReject(
   fn: () => Promise<void>,
   error: ControllerError,
-) {
+): Promise<void> {
   try {
     await fn()
   } catch (e: unknown) {
@@ -14,7 +14,7 @@ export async function expectReject(
   throw new Error('expected rejection but promise was not rejected')
 }
 
-export function expectThrow(fn: () => void, error: ControllerError) {
+export function expectThrow(fn: () => void, error: ControllerError): void {
   try {
     fn()
   } catch (e: unknown) {
@@ -27,10 +27,9 @@ export function expectThrow(fn: () => void, error: ControllerError) {
 function assertControllerError(
   receivedError: unknown,
   expectedError: ControllerError,
-) {
+): void {
   assertInstanceOf(receivedError, ControllerError)
-  const error: ControllerError = receivedError as ControllerError
-  assertEqual(error.message, expectedError.message)
-  assertEqual(error.status, expectedError.status)
-  assertDeepEqual(error, expectedError)
+  assertEqual(receivedError.message, expectedError.message)
+  assertEqual(receivedError.status, expectedError.status)
+  assertDeepEqual(receivedError, expectedError)
 }

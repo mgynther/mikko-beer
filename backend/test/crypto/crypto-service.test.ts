@@ -1,6 +1,5 @@
 import { suite, test } from '../test.js'
-import { assertDeepEqual, assertEqual } from '../assert.js'
-import * as assert from 'node:assert/strict'
+import { assertDeepEqual, assertEqual, assertRejects } from '../assert.js'
 
 import {
   encryptSecret,
@@ -46,13 +45,16 @@ suite('encrypt and verify secret', () => {
     const messages: string[] = []
     const refusedHash =
       '$scrypt$ln=60,r=8,p=1$LSFeH5c5d4Fav49HIqHpiQ$7biLfcxLU9RUv+TVf2fM3s7wY4DJiOfzavESywH5/iFFItGPC9zylXDHCouIE3eJpRbFepfVanqB+inf92yIdA'
-    await assert.rejects(
-      verifySecret(
-        (message) => messages.push(message),
-        knownPassword,
-        refusedHash,
-      ),
+    await assertRejects(
+      async () => {
+        await verifySecret(
+          (message) => messages.push(message),
+          knownPassword,
+          refusedHash,
+        )
+      },
       new Error('unknown error'),
+      Error,
     )
     assertEqual(messages.length, 1)
     assertEqual(messages[0].startsWith('crypt failed: '), true)
@@ -141,13 +143,16 @@ suite('reject secret', () => {
 
   test('fail to reject secret with parameters scrypt refuses', async () => {
     const messages: string[] = []
-    await assert.rejects(
-      rejectSecret(
-        (message) => messages.push(message),
-        { N: 1000, r: 8, p: 1 },
-        'password',
-      ),
+    await assertRejects(
+      async () => {
+        await rejectSecret(
+          (message) => messages.push(message),
+          { N: 1000, r: 8, p: 1 },
+          'password',
+        )
+      },
       new Error('unknown error'),
+      Error,
     )
     assertEqual(messages.length, 1)
     assertEqual(messages[0].startsWith('crypt failed: '), true)

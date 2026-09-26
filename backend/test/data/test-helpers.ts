@@ -18,21 +18,25 @@ const directory = dirname(fileURLToPath(import.meta.url))
 // created for the first test file is still valid for the rest of them. Only
 // tests that migrate the schema themselves need a rebuild, which they request
 // with invalidateSchema.
-let isSchemaReady = false
+let schemaReady: Promise<void> | undefined
 
-export function invalidateSchema() {
-  isSchemaReady = false
+export function invalidateSchema(): void {
+  schemaReady = undefined
 }
 
 export async function beforeTests(
   config: DatabaseConfig,
   adminConfig: DatabaseConfig,
-) {
-  if (isSchemaReady) {
-    return
-  }
+): Promise<void> {
+  schemaReady ??= createSchema(config, adminConfig)
+  await schemaReady
+}
 
-  const adminDb = new Kysely<any>({
+async function createSchema(
+  config: DatabaseConfig,
+  adminConfig: DatabaseConfig,
+): Promise<void> {
+  const adminDb = new Kysely<unknown>({
     dialect: new PostgresDialect({
       pool: new Pool(adminConfig),
     }),
@@ -56,16 +60,15 @@ export async function beforeTests(
 
   await migrator.migrateToLatest()
   await db.destroy()
-  isSchemaReady = true
 }
 
-export async function afterTests() {}
+export async function afterTests(): Promise<void> {}
 
-export async function beforeTest(db: Database) {
+export async function beforeTest(db: Database): Promise<void> {
   await clearDb(db)
 }
 
-export async function afterTest() {}
+export async function afterTest(): Promise<void> {}
 
 // Ordered so that referencing rows are deleted before referenced ones. Rows
 // that reference a user are removed by the cascade of deleting the user.
@@ -89,6 +92,6 @@ const clearDbQuery = clearedTables
   .map((table: keyof KyselyDatabase) => `delete from "${table}"`)
   .join('; ')
 
-async function clearDb(db: Database) {
+async function clearDb(db: Database): Promise<void> {
   await sql.raw(clearDbQuery).execute(db.getDb())
 }

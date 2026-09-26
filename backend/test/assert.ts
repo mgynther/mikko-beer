@@ -46,7 +46,10 @@ export function assertIncludes(
 type Class<T> = new (...args: never[]) => T
 // Does not catch classes of wrong type compile time but at least provides a way
 // to have generic class type.
-export function assertInstanceOf<T>(instance: T, classType: Class<T>): void {
+export function assertInstanceOf<T>(
+  instance: unknown,
+  classType: Class<T>,
+): asserts instance is T {
   assert.equal(
     instance instanceof classType,
     true,

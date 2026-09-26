@@ -1,3 +1,3 @@
-import { log } from '../../src/logic/log.js'
+import type { log } from '../../src/logic/log.js'
 
 export const dummyLog: log = () => undefined

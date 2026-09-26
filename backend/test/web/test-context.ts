@@ -11,10 +11,11 @@ import {
   beforeTests,
 } from '../data/test-helpers.js'
 import { App } from '../../src/web/app.js'
-import { Database } from '../../src/data/database.js'
+import type { Database } from '../../src/data/database.js'
 import type { Role, User } from '../../src/logic/user/user.js'
 
-import { Level, type log } from '../../src/console/log.js'
+import type { Level } from '../../src/console/log.js'
+import { type log } from '../../src/console/log.js'
 
 export class TestContext {
   #adminAuthToken: string = ''
@@ -77,7 +78,7 @@ export class TestContext {
     await afterTest()
   }
 
-  adminAuthHeaders = () => {
+  adminAuthHeaders = (): RequestHeaders => {
     return this.createAuthHeaders(this.#adminAuthToken)
   }
 

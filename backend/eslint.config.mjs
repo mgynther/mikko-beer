@@ -269,6 +269,18 @@ const isolatedLayerConfigs = layers
     },
   }))
 
+// The test runner and the assertion library are each used through one
+// wrapper, test/test.ts and test/assert.ts, so that what the tests use of
+// them stays in one file and anything new has to be added there.
+const testRunnerImport = {
+  regex: '^node:test(?:/|$)',
+  message: 'Import suite, test and the hooks from test/test.ts.',
+}
+const assertionImport = {
+  regex: '^node:assert(?:/|$)',
+  message: 'Use the assertions of test/assert.ts.',
+}
+
 export default [
   {
     languageOptions,
@@ -353,14 +365,7 @@ export default [
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/require-await': 'off',
       '@typescript-eslint/strict-void-return': 'off',
-      // The runner is used through test/test.ts only, so that what tests
-      // use of it stays in one file and a new feature has to be added there.
-      ...restrictedImports([
-        {
-          regex: '^node:test(?:/|$)',
-          message: 'Import suite, test and the hooks from test/test.ts.',
-        },
-      ]),
+      ...restrictedImports([testRunnerImport, assertionImport]),
     },
   },
   {
@@ -370,8 +375,20 @@ export default [
         project: ['./tsconfig-test.json'],
       },
     },
-    files: ['test/assert.ts', 'test/test.ts'],
+    files: ['test/*.ts', 'test/**/*.ts'],
+    ignores: ['test/*.test.ts', 'test/**/*.test.ts'],
     plugins,
-    rules,
+    rules: {
+      ...rules,
+      ...restrictedImports([testRunnerImport, assertionImport]),
+    },
+  },
+  {
+    files: ['test/test.ts'],
+    rules: restrictedImports([assertionImport]),
+  },
+  {
+    files: ['test/assert.ts', 'test/assert.test.ts'],
+    rules: restrictedImports([testRunnerImport]),
   },
 ]

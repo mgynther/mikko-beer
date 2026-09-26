@@ -1,3 +1,8 @@
+// Tests read response bodies as whatever the endpoint is known to return
+// without declaring it at each call, so a body is untyped unless a test asks.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ResponseData = any
+
 type RequestBody = object
 export type RequestHeaders = Record<string, string>
 interface ClientResponse<T> {
@@ -6,21 +11,21 @@ interface ClientResponse<T> {
 }
 
 export interface Client {
-  get: <T = any>(
+  get: <T = ResponseData>(
     url: string,
     headers?: RequestHeaders,
   ) => Promise<ClientResponse<T>>
-  post: <T = any>(
-    url: string,
-    body: RequestBody,
-    headers?: RequestHeaders,
-  ) => Promise<ClientResponse<T>>
-  put: <T = any>(
+  post: <T = ResponseData>(
     url: string,
     body: RequestBody,
     headers?: RequestHeaders,
   ) => Promise<ClientResponse<T>>
-  delete: <T = any>(
+  put: <T = ResponseData>(
+    url: string,
+    body: RequestBody,
+    headers?: RequestHeaders,
+  ) => Promise<ClientResponse<T>>
+  delete: <T = ResponseData>(
     url: string,
     headers?: RequestHeaders,
   ) => Promise<ClientResponse<T>>
@@ -49,18 +54,21 @@ export function createClient(baseUrl: string): Client {
     }
   }
   return {
-    get: async <T = any>(url: string, headers?: RequestHeaders) => {
+    get: async <T>(
+      url: string,
+      headers?: RequestHeaders,
+    ): Promise<ClientResponse<T>> => {
       const response = await fetch(`${baseUrl}${url}`, {
         method: 'GET',
         headers: combineHeaders(headers),
       })
       return createResponse<T>(response)
     },
-    post: async <T = any>(
+    post: async <T = ResponseData>(
       url: string,
       body: RequestBody,
       headers?: RequestHeaders,
-    ) => {
+    ): Promise<ClientResponse<T>> => {
       const response = await fetch(`${baseUrl}${url}`, {
         method: 'POST',
         headers: combineHeaders(headers),
@@ -68,11 +76,11 @@ export function createClient(baseUrl: string): Client {
       })
       return createResponse<T>(response)
     },
-    put: async <T = any>(
+    put: async <T = ResponseData>(
       url: string,
       body: RequestBody,
       headers?: RequestHeaders,
-    ) => {
+    ): Promise<ClientResponse<T>> => {
       const response = await fetch(`${baseUrl}${url}`, {
         method: 'PUT',
         headers: combineHeaders(headers),
@@ -80,7 +88,10 @@ export function createClient(baseUrl: string): Client {
       })
       return createResponse<T>(response)
     },
-    delete: async <T = any>(url: string, headers?: RequestHeaders) => {
+    delete: async <T>(
+      url: string,
+      headers?: RequestHeaders,
+    ): Promise<ClientResponse<T>> => {
       const response = await fetch(`${baseUrl}${url}`, {
         method: 'DELETE',
         headers: combineHeaders(headers),
