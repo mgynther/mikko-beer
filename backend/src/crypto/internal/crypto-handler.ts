@@ -2,7 +2,7 @@ import type { log } from '../log.js'
 
 export function createHandler(
   log: log,
-  resolve: (value: string) => void,
+  resolve: (key: Buffer) => void,
   reject: (error: Error | null) => void,
 ): (err: Error | null, key: Buffer | undefined) => void {
   return function (err: Error | null, key: Buffer | undefined): void {
@@ -12,6 +12,6 @@ export function createHandler(
       reject(new Error('unknown error'))
       return
     }
-    resolve(key.toString('hex'))
+    resolve(key)
   }
 }

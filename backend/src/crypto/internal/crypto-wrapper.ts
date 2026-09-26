@@ -1,9 +1,17 @@
 import { scrypt as nodeScrypt } from 'node:crypto'
 
+import type { ScryptParameters } from './scrypt-parameters.js'
+
 export function scrypt(
   secret: string,
-  salt: string,
+  salt: Buffer,
+  keyLength: number,
+  parameters: ScryptParameters,
   handler: (err: Error | null, key: Buffer | undefined) => void,
 ): void {
-  nodeScrypt(secret, salt, 64, { N: 16384, r: 8, p: 1 }, handler)
+  const { N, r, p } = parameters
+  // Exactly the memory these parameters need, so a stored hash is verified
+  // whatever its parameters rather than refused by the default limit.
+  const maxmem = 128 * r * (N + p + 2)
+  nodeScrypt(secret, salt, keyLength, { N, r, p, maxmem }, handler)
 }

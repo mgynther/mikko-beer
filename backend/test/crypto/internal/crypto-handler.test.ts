@@ -3,16 +3,17 @@ import { assertDeepEqual, assertEqual } from '../../assert.js'
 import { createHandler } from '../../../src/crypto/internal/crypto-handler.js'
 
 describe('crypto handler', () => {
-  it('resolve key as hex without error', (t) => {
+  it('resolve key without error', (t) => {
     const mockImpl = () => undefined
     const resolve = t.mock.fn(mockImpl)
     const reject = t.mock.fn(mockImpl)
     const log = t.mock.fn(mockImpl)
     const handler = createHandler(log, resolve, reject)
-    handler(null, Buffer.from([0x01, 0xab]))
+    const key = Buffer.from([0x01, 0xab])
+    handler(null, key)
     assertEqual(reject.mock.callCount(), 0)
     assertEqual(resolve.mock.callCount(), 1)
-    assertDeepEqual(resolve.mock.calls[0].arguments, ['01ab'])
+    assertDeepEqual(resolve.mock.calls[0].arguments, [key])
   })
 
   // Node's scrypt passes no key when it fails asynchronously, although its
