@@ -31,15 +31,8 @@ describe('encrypt and verify secret', () => {
     assertEqual(await verifySecret(log, `${knownPassword}1`, knownHash), false)
   })
 
-  it('verify password against known legacy hash', async () => {
-    assertEqual(await verifySecret(log, knownPassword, knownLegacyHash), true)
-  })
-
-  it('verify wrong password against known legacy hash', async () => {
-    assertEqual(
-      await verifySecret(log, `${knownPassword}1`, knownLegacyHash),
-      false,
-    )
+  it('fail to verify password against known hash in legacy format', async () => {
+    assertEqual(await verifySecret(log, knownPassword, knownLegacyHash), false)
   })
 
   it('verify password against hash needing more than default memory', async () => {
@@ -137,11 +130,6 @@ describe('needs rehash', () => {
       assertEqual(needsRehash(parameters, hash), true)
     })
   }
-
-  it('rehash legacy hash even with its own parameters', () => {
-    const legacyHash = `${'ab'.repeat(16)}:${'cd'.repeat(64)}`
-    assertEqual(needsRehash({ N: 16384, r: 8, p: 1 }, legacyHash), true)
-  })
 })
 
 describe('reject secret', () => {

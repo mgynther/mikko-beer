@@ -59,8 +59,6 @@ export function needsRehash(
     return true
   }
   return (
-    // Stored in another format than the one written now.
-    formatHash(parsed) !== hash ||
     parsed.parameters.N !== parameters.N ||
     parsed.parameters.r !== parameters.r ||
     parsed.parameters.p !== parameters.p ||

@@ -21,16 +21,6 @@ describe('hash format', () => {
     assertDeepEqual(parseHash(formatted), hash)
   })
 
-  it('parse legacy hash with its fixed parameters and hex text salt', () => {
-    const salt = '3571471e876241089e4e29130fd96cf0'
-    const key = 'ab'.repeat(64)
-    assertDeepEqual(parseHash(`${salt}:${key}`), {
-      parameters: { N: 16384, r: 8, p: 1 },
-      salt: Buffer.from(salt, 'utf8'),
-      key: Buffer.from(key, 'hex'),
-    })
-  })
-
   const malformed: Array<[string, string]> = [
     ['empty', ''],
     ['other algorithm', '$argon2id$ln=17,r=8,p=2$+/8B$AAECAw'],
@@ -39,15 +29,7 @@ describe('hash format', () => {
     ['padded base64', '$scrypt$ln=17,r=8,p=2$+/8B$AAECAw=='],
     ['base64 with stray trailing bits', '$scrypt$ln=17,r=8,p=2$+/8B$AAECAx'],
     ['url safe base64', '$scrypt$ln=17,r=8,p=2$-_8B$AAECAw'],
-    ['legacy with short salt', `3571471e:${'ab'.repeat(64)}`],
-    [
-      'legacy with short key',
-      `3571471e876241089e4e29130fd96cf0:${'ab'.repeat(32)}`,
-    ],
-    [
-      'legacy in upper case',
-      `3571471E876241089E4E29130FD96CF0:${'AB'.repeat(64)}`,
-    ],
+    ['legacy salt:key format', `${'ab'.repeat(16)}:${'cd'.repeat(64)}`],
   ]
   for (const [name, value] of malformed) {
     it(`reject ${name}`, () => {

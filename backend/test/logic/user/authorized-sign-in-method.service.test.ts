@@ -61,7 +61,7 @@ const authTokenSecret: string = 'this is secret'
 
 const knownPassword = 'password'
 const knownHash =
-  '3571471e876241089e4e29130fd96cf0:6b26a82522532fca44ba7fef2f6b6f5d930fb2e2179f7cdcd682470d15a4cc4296b7f77c59bf317fa7281900626cf7b4499948d9d0f4718ae1170d4a63e35f36'
+  '$scrypt$ln=14,r=8,p=1$LSFeH5c5d4Fav49HIqHpiQ$7biLfcxLU9RUv+TVf2fM3s7wY4DJiOfzavESywH5/iFFItGPC9zylXDHCouIE3eJpRbFepfVanqB+inf92yIdA'
 
 const validRefreshToken: RefreshToken = jwt.signRefreshToken(
   testJwtIf,

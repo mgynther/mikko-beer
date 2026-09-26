@@ -11,12 +11,6 @@ export interface ScryptHash {
 const phcPattern =
   /^\$scrypt\$ln=(\d+),r=(\d+),p=(\d+)\$([A-Za-z0-9+/]+)\$([A-Za-z0-9+/]+)$/
 
-// The first format had no parameters and passed the hex salt to scrypt as a
-// string, so the salt is the bytes of its hex text. Kept until every user has
-// signed in and had the password rehashed.
-const legacyPattern = /^([0-9a-f]{32}):([0-9a-f]{128})$/
-const legacyParameters: ScryptParameters = { N: 16384, r: 8, p: 1 }
-
 export function formatHash(hash: ScryptHash): string {
   const { N, r, p } = hash.parameters
   const salt = toBase64(hash.salt)
@@ -25,27 +19,11 @@ export function formatHash(hash: ScryptHash): string {
 }
 
 export function parseHash(hash: string): ScryptHash | undefined {
-  const phc = phcPattern.exec(hash)
-  if (phc !== null) {
-    return parsePhc(hash, phc)
+  const match = phcPattern.exec(hash)
+  if (match === null) {
+    return undefined
   }
 
-  const legacy = legacyPattern.exec(hash)
-  if (legacy !== null) {
-    return {
-      parameters: legacyParameters,
-      salt: Buffer.from(legacy[1]),
-      key: Buffer.from(legacy[2], 'hex'),
-    }
-  }
-
-  return undefined
-}
-
-function parsePhc(
-  hash: string,
-  match: RegExpExecArray,
-): ScryptHash | undefined {
   const parsed: ScryptHash = {
     parameters: {
       N: 2 ** Number(match[1]),

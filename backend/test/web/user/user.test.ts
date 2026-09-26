@@ -161,37 +161,6 @@ describe('user tests', () => {
     assertDeepEqual(getRes.data.user, res.data.user)
   })
 
-  it('rehash legacy hash on sign in', async () => {
-    const { user, username } = await ctx.createUser()
-    const password = 'password'
-    const legacyHash =
-      '3571471e876241089e4e29130fd96cf0:6b26a82522532fca44ba7fef2f6b6f5d930fb2e2179f7cdcd682470d15a4cc4296b7f77c59bf317fa7281900626cf7b4499948d9d0f4718ae1170d4a63e35f36'
-    await ctx.db.executeReadWriteTransaction(async (trx) => {
-      return await updatePassword(trx, {
-        userId: user.id,
-        passwordHash: legacyHash,
-      })
-    })
-
-    const res = await ctx.request.post(`/api/v1/user/sign-in`, {
-      username: username,
-      password: password,
-    })
-    assertEqual(res.status, 200)
-
-    const postLoginSignInMethod = await getSignInMethod(ctx.db, user.id)
-    assertEqual(
-      postLoginSignInMethod.passwordHash.startsWith('$scrypt$ln=10,r=8,p=1$'),
-      true,
-    )
-
-    const secondRes = await ctx.request.post(`/api/v1/user/sign-in`, {
-      username: username,
-      password: password,
-    })
-    assertEqual(secondRes.status, 200)
-  })
-
   it('rehash password hashed with other parameters on sign in', async () => {
     const { user, username } = await ctx.createUser()
     const password = 'password'
