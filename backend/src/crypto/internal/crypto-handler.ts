@@ -4,14 +4,14 @@ export function createHandler(
   log: log,
   resolve: (value: string) => void,
   reject: (error: Error | null) => void,
-): (err: Error | null, value: string) => void {
-  return function (err: Error | null, value: string): void {
-    if (err === null) {
-      resolve(value)
+): (err: Error | null, key: Buffer | undefined) => void {
+  return function (err: Error | null, key: Buffer | undefined): void {
+    if (key === undefined) {
+      log(`crypt failed: ${String(err)}`)
+      // Not exposing error details to avoid using it in response.
+      reject(new Error('unknown error'))
       return
     }
-    log(`crypt failed: ${err.message}`)
-    // Not exposing error details to avoid using it in response.
-    reject(new Error('unknown error'))
+    resolve(key.toString('hex'))
   }
 }

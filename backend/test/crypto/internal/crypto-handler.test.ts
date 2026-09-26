@@ -3,20 +3,21 @@ import { assertDeepEqual, assertEqual } from '../../assert.js'
 import { createHandler } from '../../../src/crypto/internal/crypto-handler.js'
 
 describe('crypto handler', () => {
-  it('resolve without error', (t) => {
+  it('resolve key as hex without error', (t) => {
     const mockImpl = () => undefined
     const resolve = t.mock.fn(mockImpl)
     const reject = t.mock.fn(mockImpl)
     const log = t.mock.fn(mockImpl)
     const handler = createHandler(log, resolve, reject)
-    const resolveValue = 'value'
-    handler(null, resolveValue)
+    handler(null, Buffer.from([0x01, 0xab]))
     assertEqual(reject.mock.callCount(), 0)
     assertEqual(resolve.mock.callCount(), 1)
-    assertDeepEqual(resolve.mock.calls[0].arguments, [resolveValue])
+    assertDeepEqual(resolve.mock.calls[0].arguments, ['01ab'])
   })
 
-  it('reject with error', (t) => {
+  // Node's scrypt passes no key when it fails asynchronously, although its
+  // typings declare the key as always present.
+  it('reject with error and no key', (t) => {
     const mockImpl = () => undefined
     const resolve = t.mock.fn(mockImpl)
     const reject = t.mock.fn(mockImpl)
@@ -24,7 +25,7 @@ describe('crypto handler', () => {
     const handler = createHandler(log, resolve, reject)
     const errorMessage = 'testing'
     const error = new Error(errorMessage)
-    handler(error, '')
+    handler(error, undefined)
     assertEqual(resolve.mock.callCount(), 0)
     assertEqual(reject.mock.callCount(), 1)
     assertEqual(log.mock.callCount(), 1)
@@ -32,7 +33,7 @@ describe('crypto handler', () => {
       new Error('unknown error'),
     ])
     assertDeepEqual(log.mock.calls[0].arguments, [
-      `crypt failed: ${errorMessage}`,
+      `crypt failed: Error: ${errorMessage}`,
     ])
   })
 })
