@@ -252,7 +252,9 @@ const getBreweryIf: GetBreweryIf = {
 
 test('updates brewery', async () => {
   const user = setupUser()
-  const update = mockFunction<[breweryRequest: BreweryType]>()
+  const update = mockFunction<[breweryRequest: BreweryType], Promise<void>>(
+    async () => undefined,
+  )
   const { getByPlaceholderText, getByRole } = render(
     <Brewery
       linkComponent={testLink}

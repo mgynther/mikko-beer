@@ -20,7 +20,9 @@ function getLogin(): GetLogin {
 test('updates location', async () => {
   const user = setupUser()
   const onSaved = mockFunction<[]>()
-  const update = mockFunction<[locationRequest: Location]>()
+  const update = mockFunction<[locationRequest: Location], Promise<void>>(
+    async () => undefined,
+  )
   const { getByPlaceholderText, getByRole } = render(
     <UpdateLocation
       initialLocation={{

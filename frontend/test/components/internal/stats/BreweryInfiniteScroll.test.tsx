@@ -251,7 +251,10 @@ test('renders loading', () => {
 
 test('does not try to load more when there is no more', () => {
   let loadCallback: () => void = () => undefined
-  const query = mockFunction<[params: BreweryStatsQueryParams]>()
+  const query = mockFunction<
+    [params: BreweryStatsQueryParams],
+    Promise<BreweryStats>
+  >(async () => ({ brewery: [] }))
   render(
     <BreweryInfiniteScroll
       linkComponent={testLink}
@@ -287,7 +290,10 @@ test('does not try to load more when there is no more', () => {
 
 test('does not try to load more when loading', () => {
   let loadCallback: () => void = () => undefined
-  const query = mockFunction<[params: BreweryStatsQueryParams]>()
+  const query = mockFunction<
+    [params: BreweryStatsQueryParams],
+    Promise<BreweryStats>
+  >(async () => ({ brewery: [] }))
   render(
     <BreweryInfiniteScroll
       linkComponent={testLink}

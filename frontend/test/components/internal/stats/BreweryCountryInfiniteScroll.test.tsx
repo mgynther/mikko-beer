@@ -322,7 +322,10 @@ test('renders loading', () => {
 
 test('does not try to load more when there is no more', () => {
   let loadCallback: () => void = () => undefined
-  const query = mockFunction<[params: BreweryCountryStatsQueryParams]>()
+  const query = mockFunction<
+    [params: BreweryCountryStatsQueryParams],
+    Promise<BreweryCountryStats>
+  >(async () => ({ breweryCountry: [] }))
   render(
     <BreweryCountryInfiniteScroll
       getBreweryCountryStatsIf={{
@@ -357,7 +360,10 @@ test('does not try to load more when there is no more', () => {
 
 test('does not try to load more when loading', () => {
   let loadCallback: () => void = () => undefined
-  const query = mockFunction<[params: BreweryCountryStatsQueryParams]>()
+  const query = mockFunction<
+    [params: BreweryCountryStatsQueryParams],
+    Promise<BreweryCountryStats>
+  >(async () => ({ breweryCountry: [] }))
   render(
     <BreweryCountryInfiniteScroll
       getBreweryCountryStatsIf={{

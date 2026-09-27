@@ -100,7 +100,9 @@ const doSearch: SearchFieldIf = {
 test('updates beer name', async () => {
   const user = setupUser()
   const onSaved = mockFunction<[]>()
-  const update = mockFunction<[request: BeerWithIds]>()
+  const update = mockFunction<[request: BeerWithIds], Promise<void>>(
+    async () => undefined,
+  )
   const { getByPlaceholderText, getByRole } = render(
     <UpdateBeer
       initialBeer={{
@@ -147,7 +149,9 @@ test('updates beer name', async () => {
 test('updates beer brewery', async () => {
   const user = setupUser()
   const onSaved = mockFunction<[]>()
-  const update = mockFunction<[request: BeerWithIds]>()
+  const update = mockFunction<[request: BeerWithIds], Promise<void>>(
+    async () => undefined,
+  )
   const { getByPlaceholderText, getAllByRole, getByRole } = render(
     <UpdateBeer
       initialBeer={{
@@ -211,7 +215,9 @@ test('updates beer brewery', async () => {
 test('updates beer style', async () => {
   const user = setupUser()
   const onSaved = mockFunction<[]>()
-  const update = mockFunction<[request: BeerWithIds]>()
+  const update = mockFunction<[request: BeerWithIds], Promise<void>>(
+    async () => undefined,
+  )
   const { getByPlaceholderText, getAllByRole, getByRole } = render(
     <UpdateBeer
       initialBeer={{

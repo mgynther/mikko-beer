@@ -22,7 +22,10 @@ const getLogin: GetLogin = () => buildLogin({ user: buildUser({ id: userId }) })
 
 test('changes password', async () => {
   const user = setupUser()
-  const changePassword = mockFunction<Parameters<ChangePasswordFunction>>()
+  const changePassword = mockFunction<
+    Parameters<ChangePasswordFunction>,
+    Promise<void>
+  >(async () => undefined)
   const changePasswordIf: ChangePasswordIf = {
     useChangePassword: () => ({
       changePassword,

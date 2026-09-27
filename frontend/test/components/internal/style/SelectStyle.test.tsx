@@ -72,7 +72,9 @@ test('selects style', async () => {
 
 test('selects created style', async () => {
   const user = setupUser()
-  const create = mockFunction<[style: CreateStyleRequest]>()
+  const create = mockFunction<[style: CreateStyleRequest], Promise<void>>(
+    async () => undefined,
+  )
   const select = mockFunction<[style: Style]>()
   const newStyle: StyleWithParentIds = {
     id: 'ed6921a0-ae9e-46f1-9e96-677032b6c7db',

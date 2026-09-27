@@ -30,7 +30,9 @@ const oneUserListIf = (user: User): ListUsersIf => ({
 
 test('deletes user', async () => {
   const user = setupUser()
-  const del = mockFunction<[userId: string]>()
+  const del = mockFunction<[userId: string], Promise<void>>(
+    async () => undefined,
+  )
   const { getByRole } = render(
     <UserList
       confirm={(): boolean => true}
@@ -49,7 +51,9 @@ test('deletes user', async () => {
 
 test('does not delete user when not confirmed', async () => {
   const user = setupUser()
-  const del = mockFunction<[userId: string]>()
+  const del = mockFunction<[userId: string], Promise<void>>(
+    async () => undefined,
+  )
   const { getByRole } = render(
     <UserList
       confirm={(): boolean => false}

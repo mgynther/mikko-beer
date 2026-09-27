@@ -26,7 +26,9 @@ const createTests: CreateTest[] = [
 createTests.forEach((testCase) => {
   test('creates user', async () => {
     const user = setupUser()
-    const create = mockFunction<[user: CreateUserRequest]>()
+    const create = mockFunction<[user: CreateUserRequest], Promise<void>>(
+      async () => undefined,
+    )
     const { getByRole, getByPlaceholderText } = render(
       <CreateUser
         createUserIf={{
@@ -74,7 +76,9 @@ createTests.forEach((testCase) => {
 })
 
 test('shows error', async () => {
-  const create = mockFunction<[user: CreateUserRequest]>()
+  const create = mockFunction<[user: CreateUserRequest], Promise<void>>(
+    async () => undefined,
+  )
   const { getByText } = render(
     <CreateUser
       createUserIf={{
@@ -91,7 +95,9 @@ test('shows error', async () => {
 })
 
 test('shows created text', async () => {
-  const create = mockFunction<[user: CreateUserRequest]>()
+  const create = mockFunction<[user: CreateUserRequest], Promise<void>>(
+    async () => undefined,
+  )
   const { getByText } = render(
     <CreateUser
       createUserIf={{

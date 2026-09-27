@@ -21,7 +21,9 @@ const container: Container = {
 test('updates container', async () => {
   const user = setupUser()
   const onSaved = mockFunction<[]>()
-  const update = mockFunction<[container: Container]>()
+  const update = mockFunction<[container: Container], Promise<void>>(
+    async () => undefined,
+  )
   const { getByPlaceholderText, getByRole } = render(
     <UpdateContainer
       initialContainer={container}

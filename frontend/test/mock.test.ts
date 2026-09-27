@@ -33,3 +33,9 @@ test('cannot be called without its arguments being typed', () => {
   mocked('first')
   assertEqual(mocked.mock.calls.length, 1)
 })
+
+test('without an implementation stands in only for void functions', () => {
+  // @ts-expect-error A mock without an implementation returns undefined.
+  const load: () => Promise<void> = mockFunction<[]>()
+  assertEqual(typeof load, 'function')
+})

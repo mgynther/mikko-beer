@@ -160,7 +160,10 @@ test('renders loading', () => {
 
 test('does not try to load more when there is no more', () => {
   let loadCallback: () => void = () => undefined
-  const query = mockFunction<[params: AnnualContainerStatsQueryParams]>()
+  const query = mockFunction<
+    [params: AnnualContainerStatsQueryParams],
+    Promise<AnnualContainerStats>
+  >(async () => ({ annualContainer: [] }))
   render(
     <AnnualContainerInfiniteScroll
       getAnnualContainerStatsIf={{
@@ -186,7 +189,10 @@ test('does not try to load more when there is no more', () => {
 
 test('does not try to load more when loading', () => {
   let loadCallback: () => void = () => undefined
-  const query = mockFunction<[params: AnnualContainerStatsQueryParams]>()
+  const query = mockFunction<
+    [params: AnnualContainerStatsQueryParams],
+    Promise<AnnualContainerStats>
+  >(async () => ({ annualContainer: [] }))
   render(
     <AnnualContainerInfiniteScroll
       getAnnualContainerStatsIf={{

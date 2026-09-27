@@ -14,7 +14,9 @@ const newNamePlaceholder = 'New name'
 test('updates brewery', async () => {
   const user = setupUser()
   const onSaved = mockFunction<[]>()
-  const update = mockFunction<[breweryRequest: Brewery]>()
+  const update = mockFunction<[breweryRequest: Brewery], Promise<void>>(
+    async () => undefined,
+  )
   const { getByPlaceholderText, getByRole } = render(
     <UpdateBrewery
       initialBrewery={{
@@ -81,7 +83,9 @@ test('cancel update', async () => {
 test('updates brewery country', async () => {
   const user = setupUser()
   const onSaved = mockFunction<[]>()
-  const update = mockFunction<[breweryRequest: Brewery]>()
+  const update = mockFunction<[breweryRequest: Brewery], Promise<void>>(
+    async () => undefined,
+  )
   const { getByPlaceholderText, getByRole } = render(
     <UpdateBrewery
       initialBrewery={{

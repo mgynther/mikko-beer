@@ -1,4 +1,7 @@
-import type { Storage } from '../../../../src/components/types/storage/types'
+import type {
+  CreatedStorage,
+  Storage,
+} from '../../../../src/components/types/storage/types'
 import { buildContainer } from '../container/builders'
 
 // A valid Storage and nothing more.
@@ -16,6 +19,22 @@ export function buildStorage(overrides: Partial<Storage> = {}): Storage {
     createdAt: '2025-01-01T00:00:00.000Z',
     hasReview: false,
     styles: [],
+    ...overrides,
+  }
+}
+
+// A valid CreatedStorage and nothing more.
+// Neither its values nor how they relate to those of any other result may
+// be assumed: a test that depends on a property sets it in the overrides
+// itself.
+export function buildCreatedStorage(
+  overrides: Partial<CreatedStorage> = {},
+): CreatedStorage {
+  return {
+    id: 'e5f60718-2930-44b5-86d7-e8f901122334',
+    beer: 'f6071829-3041-45c6-97e8-f90112233445',
+    bestBefore: '2026-01-01T00:00:00.000Z',
+    container: '0718293a-4152-46d7-a8f9-011223344556',
     ...overrides,
   }
 }

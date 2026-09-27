@@ -241,7 +241,9 @@ const getLocationIf: GetLocationIf = {
 
 test('updates location', async () => {
   const user = setupUser()
-  const update = mockFunction<[locationRequest: LocationType]>()
+  const update = mockFunction<[locationRequest: LocationType], Promise<void>>(
+    async () => undefined,
+  )
   const { getByPlaceholderText, getByRole } = render(
     <Location
       linkComponent={testLink}

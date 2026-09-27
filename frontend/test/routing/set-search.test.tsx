@@ -47,8 +47,10 @@ const statsSearch =
 
 test('set review list search', async () => {
   const user = setupUser()
-  const navigate =
-    mockFunction<[url: string, options?: { replace: boolean } | undefined]>()
+  const navigate = mockFunction<
+    [url: string, options?: { replace: boolean } | undefined],
+    Promise<void>
+  >(async () => undefined)
   const { getByRole } = render(<Helper navigate={navigate} pathname='/' />)
   const button = getByRole('button', { name: 'Test review list' })
   await user.click(button)
@@ -62,8 +64,10 @@ test('set review list search', async () => {
 
 test('set stats search', async () => {
   const user = setupUser()
-  const navigate =
-    mockFunction<[url: string, options?: { replace: boolean } | undefined]>()
+  const navigate = mockFunction<
+    [url: string, options?: { replace: boolean } | undefined],
+    Promise<void>
+  >(async () => undefined)
   const { getByRole } = render(<Helper navigate={navigate} pathname='/' />)
   const button = getByRole('button', { name: 'Test stats' })
   await user.click(button)
@@ -72,8 +76,10 @@ test('set stats search', async () => {
 
 test('set review list and stats search', async () => {
   const user = setupUser()
-  const navigate =
-    mockFunction<[url: string, options?: { replace: boolean } | undefined]>()
+  const navigate = mockFunction<
+    [url: string, options?: { replace: boolean } | undefined],
+    Promise<void>
+  >(async () => undefined)
   const { getByRole } = render(<Helper navigate={navigate} pathname='/' />)
 
   const reviewListButton = getByRole('button', { name: 'Test review list' })
@@ -91,8 +97,10 @@ test('set review list and stats search', async () => {
 
 test('clear stored search on pathname change', async () => {
   const user = setupUser()
-  const navigate =
-    mockFunction<[url: string, options?: { replace: boolean } | undefined]>()
+  const navigate = mockFunction<
+    [url: string, options?: { replace: boolean } | undefined],
+    Promise<void>
+  >(async () => undefined)
   const { getByRole, rerender } = render(
     <Helper navigate={navigate} pathname='/' />,
   )

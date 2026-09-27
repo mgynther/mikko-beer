@@ -61,7 +61,9 @@ test('renders editable container as admin', async () => {
 
 test('update container', async () => {
   const user = setupUser()
-  const update = mockFunction<[container: ContainerType]>()
+  const update = mockFunction<[container: ContainerType], Promise<void>>(
+    async () => undefined,
+  )
   const { getByPlaceholderText, getByRole, getByText } = render(
     <Container
       container={container}

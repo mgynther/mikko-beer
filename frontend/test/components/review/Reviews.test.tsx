@@ -225,7 +225,9 @@ const getListReviewsIf: GetListReviewsIf = (cb, setSearch) => ({
 
 test('updates review', async () => {
   const user = setupUser()
-  const update = mockFunction<[request: Review]>()
+  const update = mockFunction<[request: Review], Promise<void>>(
+    async () => undefined,
+  )
   let scrollCb: () => void = () => undefined
   const { getByPlaceholderText, getByRole, getByText } = render(
     <>

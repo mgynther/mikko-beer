@@ -385,7 +385,9 @@ test('throw without style id', async () => {
 
 test('updates style', async () => {
   const user = setupUser()
-  const update = mockFunction<[style: StyleWithParentIds]>()
+  const update = mockFunction<[style: StyleWithParentIds], Promise<void>>(
+    async () => undefined,
+  )
   const styleName = 'Rye IPA'
   const getNode: () => ReactNode = () => (
     <Style
@@ -448,7 +450,9 @@ test('updates style', async () => {
 
 test('cancels update', async () => {
   const user = setupUser()
-  const update = mockFunction<[style: StyleWithParentIds]>()
+  const update = mockFunction<[style: StyleWithParentIds], Promise<void>>(
+    async () => undefined,
+  )
   const { getByRole } = render(
     <Style
       linkComponent={testLink}

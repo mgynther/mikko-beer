@@ -247,7 +247,10 @@ test('renders loading', () => {
 
 test('does not try to load more when there is no more', () => {
   let loadCallback: () => void = () => undefined
-  const query = mockFunction<[params: LocationStatsQueryParams]>()
+  const query = mockFunction<
+    [params: LocationStatsQueryParams],
+    Promise<LocationStats>
+  >(async () => ({ location: [] }))
   render(
     <LocationInfiniteScroll
       linkComponent={testLink}
@@ -283,7 +286,10 @@ test('does not try to load more when there is no more', () => {
 
 test('does not try to load more when loading', () => {
   let loadCallback: () => void = () => undefined
-  const query = mockFunction<[params: LocationStatsQueryParams]>()
+  const query = mockFunction<
+    [params: LocationStatsQueryParams],
+    Promise<LocationStats>
+  >(async () => ({ location: [] }))
   render(
     <LocationInfiniteScroll
       linkComponent={testLink}

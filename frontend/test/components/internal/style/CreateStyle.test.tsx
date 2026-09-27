@@ -37,7 +37,9 @@ const useSearch: SearchFieldIf = {
 test('creates style', async () => {
   const user = setupUser()
   const select = mockFunction<[style: Style]>()
-  const create = mockFunction<[style: CreateStyleRequest]>()
+  const create = mockFunction<[style: CreateStyleRequest], Promise<void>>(
+    async () => undefined,
+  )
   const createdId = 'cb5636a9-0c9a-4a6b-8558-29e4f0918a32'
   const name = 'Cream Ale'
   const { getByPlaceholderText, getByRole } = render(

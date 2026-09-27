@@ -190,7 +190,9 @@ const reviewFilters = buildReviewFilters()
 test('updates review', async () => {
   const user = setupUser()
   const onChanged = mockFunction<[]>()
-  const update = mockFunction<[request: Review]>()
+  const update = mockFunction<[request: Review], Promise<void>>(
+    async () => undefined,
+  )
   const { getByPlaceholderText, getByRole, getByText } = render(
     <ReviewList
       linkComponent={testLink}

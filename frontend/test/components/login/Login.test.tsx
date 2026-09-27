@@ -8,7 +8,9 @@ import type { LoginParams } from '../../../src/components/types/login/types'
 
 test('logs in', async () => {
   const user = setupUser()
-  const login = mockFunction<[login: LoginParams]>()
+  const login = mockFunction<[login: LoginParams], Promise<void>>(
+    async () => undefined,
+  )
   const { getByRole, getByPlaceholderText } = render(
     <Login
       loginIf={{

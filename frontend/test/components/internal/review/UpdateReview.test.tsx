@@ -178,7 +178,9 @@ async function addReview(
 test('updates review', async () => {
   const user = setupUser()
   const onSaved = mockFunction<[]>()
-  const update = mockFunction<[request: Review]>()
+  const update = mockFunction<[request: Review], Promise<void>>(
+    async () => undefined,
+  )
   const { getByPlaceholderText, getByRole } = render(
     <UpdateReview
       initialReview={{

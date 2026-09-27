@@ -309,7 +309,9 @@ test('throw on missing id', async () => {
 
 test('updates beer', async () => {
   const user = setupUser()
-  const update = mockFunction<[request: BeerWithIds]>()
+  const update = mockFunction<[request: BeerWithIds], Promise<void>>(
+    async () => undefined,
+  )
   const { getByRole, getByPlaceholderText } = render(
     <Beer
       linkComponent={testLink}
