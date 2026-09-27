@@ -174,7 +174,9 @@ suite('storage service unit tests', () => {
   })
 
   test('delete storage', async () => {
-    const deleter = mockFunction(async (_: string): Promise<void> => undefined)
+    const deleter = mockFunction<[id: string], Promise<void>>(
+      async () => undefined,
+    )
     const id = '18801a29-1c4e-40a4-ab3b-1701b4416c6c'
     await storageService.deleteStorageById(deleter, id, log)
     assertEqual(deleter.mock.callCount(), 1)
