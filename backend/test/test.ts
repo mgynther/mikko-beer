@@ -8,46 +8,33 @@ import * as nodeTest from 'node:test'
 
 type Hook = () => void | Promise<void>
 
-// A call through the mocked F returns what its constraint returns, so only
-// an any return lets the call be typed as ReturnType<F>.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Implementation = (...args: never[]) => any
-
-interface MockFunctionCall {
-  arguments: unknown[]
-}
-
-type MockFunction<F extends Implementation> = ((
-  ...args: Parameters<F>
-) => ReturnType<F>) & {
+// The mocks of node:test are returned as they are, and the compiler checks
+// that they are what this type says, so the type is all there is to review.
+//
+// The arguments are never unless given, so an untyped mock can neither stand
+// in for a function nor have its calls asserted: what it is called with is
+// checked against what the test expects. A mock without an implementation
+// returns undefined, so it stands in only for a function returning void or
+// undefined, and anything else it stands in for gets an implementation that
+// returns what the type promises.
+type MockFunction<A extends unknown[] = never, R = undefined> = ((
+  ...args: A
+) => R) & {
   mock: {
     callCount: () => number
-    calls: MockFunctionCall[]
+    calls: readonly { arguments: A }[]
   }
 }
 
 interface TestContext {
   mock: {
-    fn: <F extends Implementation>(implementation: F) => MockFunction<F>
+    fn: {
+      <A extends unknown[] = never>(): MockFunction<A>
+      <A extends unknown[], R>(
+        implementation: (...args: A) => R,
+      ): MockFunction<A, R>
+    }
   }
-}
-
-function mockFunction<F extends Implementation>(
-  context: nodeTest.TestContext,
-  implementation: F,
-): MockFunction<F> {
-  const mocked = context.mock.fn(implementation)
-  const call = (...args: Parameters<F>): ReturnType<F> => mocked(...args)
-  return Object.assign(call, {
-    mock: {
-      callCount: (): number => mocked.mock.callCount(),
-      get calls(): MockFunctionCall[] {
-        return mocked.mock.calls.map((mockedCall) => ({
-          arguments: mockedCall.arguments,
-        }))
-      },
-    },
-  })
 }
 
 export function suite(name: string, fn: () => void): void {
@@ -58,13 +45,18 @@ export function test(
   name: string,
   fn: (context: TestContext) => void | Promise<void>,
 ): void {
-  nodeTest.it(name, (context) =>
-    fn({
-      mock: {
-        fn: (implementation) => mockFunction(context, implementation),
-      },
-    }),
-  )
+  nodeTest.it(name, (context) => {
+    function mockFunction<A extends unknown[] = never>(): MockFunction<A>
+    function mockFunction<A extends unknown[], R>(
+      implementation: (...args: A) => R,
+    ): MockFunction<A, R>
+    function mockFunction<A extends unknown[], R>(
+      implementation?: (...args: A) => R,
+    ): MockFunction<A, R> {
+      return context.mock.fn(implementation)
+    }
+    return fn({ mock: { fn: mockFunction } })
+  })
 }
 
 export function before(fn: Hook): void {

@@ -4,10 +4,9 @@ import { createHandler } from '../../../src/crypto/internal/crypto-handler.js'
 
 suite('crypto handler', () => {
   test('resolve key without error', (t) => {
-    const mockImpl = () => undefined
-    const resolve = t.mock.fn(mockImpl)
-    const reject = t.mock.fn(mockImpl)
-    const log = t.mock.fn(mockImpl)
+    const resolve = t.mock.fn<[key: Buffer]>()
+    const reject = t.mock.fn<[error: Error | null]>()
+    const log = t.mock.fn<string[]>()
     const handler = createHandler(log, resolve, reject)
     const key = Buffer.from([0x01, 0xab])
     handler(null, key)
@@ -19,10 +18,9 @@ suite('crypto handler', () => {
   // Node's scrypt passes no key when it fails asynchronously, although its
   // typings declare the key as always present.
   test('reject with error and no key', (t) => {
-    const mockImpl = () => undefined
-    const resolve = t.mock.fn(mockImpl)
-    const reject = t.mock.fn(mockImpl)
-    const log = t.mock.fn(mockImpl)
+    const resolve = t.mock.fn<[key: Buffer]>()
+    const reject = t.mock.fn<[error: Error | null]>()
+    const log = t.mock.fn<string[]>()
     const handler = createHandler(log, resolve, reject)
     const errorMessage = 'testing'
     const error = new Error(errorMessage)

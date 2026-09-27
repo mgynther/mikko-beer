@@ -4,9 +4,8 @@ import { createStopHandler } from '../../src/web/app-stop-handler.js'
 
 suite('app stopHandler', () => {
   test('resolve without error', (t) => {
-    const mockImpl = () => undefined
-    const resolve = t.mock.fn(mockImpl)
-    const reject = t.mock.fn(mockImpl)
+    const resolve = t.mock.fn<[]>()
+    const reject = t.mock.fn<[error: Error]>()
     const handler = createStopHandler(resolve, reject)
     handler(undefined)
     assertEqual(reject.mock.callCount(), 0)
@@ -14,9 +13,8 @@ suite('app stopHandler', () => {
   })
 
   test('reject with error', (t) => {
-    const mockImpl = () => undefined
-    const resolve = t.mock.fn(mockImpl)
-    const reject = t.mock.fn(mockImpl)
+    const resolve = t.mock.fn<[]>()
+    const reject = t.mock.fn<[error: Error]>()
     const handler = createStopHandler(resolve, reject)
     const error = new Error('testing')
     handler(error)
