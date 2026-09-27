@@ -15,19 +15,14 @@ import {
 } from '../../../crypto/crypto.service.js'
 import type { ScryptParameters } from '../../../crypto/scrypt-parameters.js'
 import type { log } from '../../../console/log.js'
-
-export function createErrorLogger(logger: log): (...args: string[]) => void {
-  return (...args: string[]): void => {
-    logger('ERROR', ...args)
-  }
-}
+import { createCryptoErrorLogger } from '../../crypto-error-logger.js'
 
 function wrapEncryptSecret(
   logger: log,
   parameters: ScryptParameters,
   secret: string,
 ): Promise<string> {
-  return encryptSecret(createErrorLogger(logger), parameters, secret)
+  return encryptSecret(createCryptoErrorLogger(logger), parameters, secret)
 }
 
 export const createEncryptSecret =
@@ -40,7 +35,7 @@ function wrapVerifySecret(
   secret: string,
   hash: string,
 ): Promise<boolean> {
-  return verifySecret(createErrorLogger(logger), secret, hash)
+  return verifySecret(createCryptoErrorLogger(logger), secret, hash)
 }
 
 export const createVerifySecret =
@@ -53,7 +48,7 @@ function wrapRejectSecret(
   parameters: ScryptParameters,
   secret: string,
 ): Promise<void> {
-  return rejectSecret(createErrorLogger(logger), parameters, secret)
+  return rejectSecret(createCryptoErrorLogger(logger), parameters, secret)
 }
 
 export const createRejectSecret =
