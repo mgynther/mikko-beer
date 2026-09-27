@@ -97,6 +97,8 @@ const rules = {
     },
   ],
   '@typescript-eslint/require-await': 'error',
+  '@typescript-eslint/no-floating-promises': ['error', { ignoreVoid: false }],
+  '@typescript-eslint/no-misused-promises': 'error',
 
   complexity: 'off',
   'max-lines': 'off',
@@ -388,7 +390,22 @@ export default [
   },
   {
     files: ['test/test.ts', 'test/mock.ts'],
-    rules: restrictedImports([assertionImport]),
+    rules: {
+      ...restrictedImports([assertionImport]),
+      // The runner reports a failing test itself, and the promises of
+      // describe and it only tell when the runner is done with them: they
+      // never reject. node:test declares them as suite and test, which
+      // describe and it are aliases of, so those are the names matched.
+      '@typescript-eslint/no-floating-promises': [
+        'error',
+        {
+          ignoreVoid: false,
+          allowForKnownSafeCalls: [
+            { from: 'package', name: ['suite', 'test'], package: 'node:test' },
+          ],
+        },
+      ],
+    },
   },
   {
     files: ['test/assert.ts', 'test/assert.test.ts'],

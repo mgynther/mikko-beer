@@ -151,7 +151,7 @@ suite('user tests', () => {
     const insertedUser = await insertUser()
     const username = 'another username'
     await ctx.db.executeReadWriteTransaction(async (trx) => {
-      userRepository.setUserUsername(trx, insertedUser.id, username)
+      await userRepository.setUserUsername(trx, insertedUser.id, username)
     })
     const foundUser = await userRepository.findUserById(ctx.db, insertedUser.id)
     assertEqual(foundUser?.username, username)
@@ -160,7 +160,7 @@ suite('user tests', () => {
   test('delete user', async () => {
     const insertedUser = await insertUser()
     await ctx.db.executeReadWriteTransaction(async (trx) => {
-      userRepository.deleteUserById(trx, insertedUser.id)
+      await userRepository.deleteUserById(trx, insertedUser.id)
     })
     const foundUser = await userRepository.findUserById(ctx.db, insertedUser.id)
     assertEqual(foundUser, undefined)

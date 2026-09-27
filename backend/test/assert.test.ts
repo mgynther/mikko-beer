@@ -141,8 +141,8 @@ suite('assertion tests', () => {
     )
   })
 
-  test('rejects', () => {
-    assertRejects(
+  test('rejects', async () => {
+    await assertRejects(
       async () => {
         throw new CustomError('test')
       },
