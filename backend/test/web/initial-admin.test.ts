@@ -1,13 +1,9 @@
 import { suite, test, before, beforeEach, after, afterEach } from '../test.js'
-import {
-  assertDeepEqual,
-  assertEqual,
-  assertGreaterThan,
-  assertIncludes,
-} from '../assert.js'
+import { assertDeepEqual, assertEqual, assertIncludes } from '../assert.js'
 
 import { createClient } from './client.js'
 import { testConfig } from './test-config.js'
+import type { TestConfig } from './test-config.js'
 import {
   afterTest,
   afterTests,
@@ -15,6 +11,7 @@ import {
   beforeTests,
 } from '../data/test-helpers.js'
 import { App } from '../../src/web/app.js'
+import type { StartResult } from '../../src/web/app.js'
 import type { Database } from '../../src/data/database.js'
 import type { User } from '../../src/logic/user/user.js'
 
@@ -29,6 +26,16 @@ interface LogEntry {
 export class TestContext {
   #app?: App
   #logMessages: LogEntry[] = []
+  readonly #config: TestConfig = {
+    ...testConfig,
+    generateInitialAdminPassword: true,
+  }
+  readonly #log: log = (level: Level, ...args: unknown[]) => {
+    this.#logMessages.push({
+      level,
+      message: args.map((a: unknown) => `${a}`).join(),
+    })
+  }
 
   request = createClient(`http://localhost:${testConfig.port}`)
 
@@ -45,20 +52,19 @@ export class TestContext {
   }
 
   beforeEach = async (): Promise<void> => {
-    const config = {
-      ...testConfig,
-      generateInitialAdminPassword: true,
-    }
-    const log: log = (level: Level, ...args: unknown[]) => {
-      this.#logMessages.push({
-        level,
-        message: args.map((a: unknown) => `${a}`).join(),
-      })
-    }
-    this.#app = new App(config, log)
+    this.#logMessages = []
+    this.#app = new App(this.#config, this.#log)
 
     await beforeTest(this.db)
     await this.#app.start()
+  }
+
+  // Starts the application again on the same database, as a restart of
+  // the server does.
+  restart = async (): Promise<StartResult> => {
+    await this.#app!.stop()
+    this.#app = new App(this.#config, this.#log)
+    return await this.#app.start()
   }
 
   afterEach = async (): Promise<void> => {
@@ -82,11 +88,14 @@ suite('initial admin', () => {
   afterEach(ctx.afterEach)
 
   test('initial admin sign in works', async () => {
-    const messages = ctx.logMessages()
-    assertGreaterThan(messages.length, 1)
-    const parts = messages[1].message.split('"')
+    const createdMessages = ctx
+      .logMessages()
+      .filter((entry: LogEntry) =>
+        entry.message.startsWith('Created initial user'),
+      )
+    assertEqual(createdMessages.length, 1)
+    const parts = createdMessages[0].message.split('"')
     assertEqual(parts.length, 5)
-    assertIncludes(parts[0], 'Created initial user')
     assertIncludes(parts[2], 'with password')
     const adminUsername = parts[1]
     const adminPassword = parts[3]
@@ -107,5 +116,19 @@ suite('initial admin', () => {
     )
     assertEqual(getRes.status, 200)
     assertDeepEqual(getRes.data.user, res.data.user)
+  })
+
+  test('restart creates no other initial user', async () => {
+    const result = await ctx.restart()
+
+    assertDeepEqual(result, { authToken: '', userId: '' })
+    assertEqual(
+      ctx
+        .logMessages()
+        .filter((entry: LogEntry) =>
+          entry.message.startsWith('Created initial user'),
+        ).length,
+      1,
+    )
   })
 })

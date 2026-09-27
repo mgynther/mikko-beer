@@ -81,85 +81,81 @@ export class App {
   }
 
   async start(): Promise<StartResult> {
-    return await new Promise<StartResult>((resolve, reject): void => {
-      const port = this.#config.port
-      const db = this.#db
-      const log = this.#log
-      const isAdminPasswordNeeded = this.#config.generateInitialAdminPassword
-      const startResult: StartResult = {
-        authToken: '',
-        userId: '',
+    try {
+      const startResult = await this.#createInitialUserIfNone()
+      await this.#listen()
+      return startResult
+    } catch (error) {
+      this.#log('ERROR', 'Error starting', error)
+      throw error
+    }
+  }
+
+  async #createInitialUserIfNone(): Promise<StartResult> {
+    const startResult: StartResult = {
+      authToken: '',
+      userId: '',
+    }
+    const users = await userRepository.listUsers(this.#db)
+    if (users.length > 0) {
+      return startResult
+    }
+    const log = this.#log
+    const isAdminPasswordNeeded = this.#config.generateInitialAdminPassword
+    function logWithAdminPassword(...args: string[]): void {
+      if (isAdminPasswordNeeded) {
+        log('INFO', ...args)
       }
-      function logWithAdminPassword(...args: string[]): void {
-        if (isAdminPasswordNeeded) {
-          log('INFO', ...args)
-        }
+    }
+    logWithAdminPassword('No users. Creating initial admin')
+    const adminUsername = uuidv4()
+    const adminPassword = uuidv4()
+    await this.#db.executeReadWriteTransaction(async (trx): Promise<void> => {
+      const authTokenConfig: AuthTokenConfig = {
+        secret: this.#config.authTokenSecret,
+        expiryDurationMin: this.#config.authTokenExpiryDurationMin,
       }
-      userRepository
-        .listUsers(db)
-        .then((users: User[]): void => {
-          let createPromise: Promise<void> | undefined = undefined
-          if (users.length === 0) {
-            logWithAdminPassword('No users. Creating initial admin')
-            const adminUsername = uuidv4()
-            const adminPassword = uuidv4()
-            createPromise = db.executeReadWriteTransaction(
-              async (trx): Promise<void> => {
-                const authTokenConfig: AuthTokenConfig = {
-                  secret: this.#config.authTokenSecret,
-                  expiryDurationMin: this.#config.authTokenExpiryDurationMin,
-                }
-                const user = await createInitialUser(
-                  jwtIf,
-                  async (request: CreateAnonymousUserRequest): Promise<User> =>
-                    await userRepository.createAnonymousUser(trx, request),
-                  authTokenConfig,
-                  uuidv4(),
-                  this.#log,
-                )
-                startResult.authToken = user.authToken.authToken
-                startResult.userId = user.user.id
-                if (isAdminPasswordNeeded) {
-                  const addPasswordUserIf = createAddPasswordUserIf(
-                    trx,
-                    this.#config.passwordHashParameters,
-                  )
-                  await addPasswordForInitialUser(
-                    addPasswordUserIf,
-                    user.user.id,
-                    {
-                      username: adminUsername,
-                      password: adminPassword,
-                    },
-                    this.#log,
-                  )
-                }
-              },
-            )
-            logWithAdminPassword(
-              `Created initial user "${adminUsername}" with password "${
-                adminPassword
-              }". Please change the password a.s.a.p.`,
-            )
-          }
-          log('INFO', 'Server starting')
-          const serverPromise = new Promise<void>((resolve): void => {
-            this.#server = this.#koa.listen(port, resolve)
-          })
-          const promises = [serverPromise]
-          if (createPromise !== undefined) {
-            promises.push(createPromise)
-          }
-          Promise.all(promises).then((): void => {
-            log('INFO', `Server started in port ${port}`)
-            resolve(startResult)
-          })
-        })
-        .catch((error: unknown): void => {
-          log('ERROR', 'Error starting', error)
-          reject(error)
-        })
+      const user = await createInitialUser(
+        jwtIf,
+        async (request: CreateAnonymousUserRequest): Promise<User> =>
+          await userRepository.createAnonymousUser(trx, request),
+        authTokenConfig,
+        uuidv4(),
+        this.#log,
+      )
+      startResult.authToken = user.authToken.authToken
+      startResult.userId = user.user.id
+      if (isAdminPasswordNeeded) {
+        const addPasswordUserIf = createAddPasswordUserIf(
+          trx,
+          this.#config.passwordHashParameters,
+        )
+        await addPasswordForInitialUser(
+          addPasswordUserIf,
+          user.user.id,
+          {
+            username: adminUsername,
+            password: adminPassword,
+          },
+          this.#log,
+        )
+      }
     })
+    logWithAdminPassword(
+      `Created initial user "${adminUsername}" with password "${
+        adminPassword
+      }". Please change the password a.s.a.p.`,
+    )
+    return startResult
+  }
+
+  async #listen(): Promise<void> {
+    const port = this.#config.port
+    this.#log('INFO', 'Server starting')
+    await new Promise<void>((resolve): void => {
+      this.#server = this.#koa.listen(port, resolve)
+    })
+    this.#log('INFO', `Server started in port ${port}`)
   }
 
   async stop(): Promise<void> {

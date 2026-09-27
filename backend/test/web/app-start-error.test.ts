@@ -2,6 +2,7 @@ import { suite, test, before, beforeEach, after, afterEach } from '../test.js'
 import { assertDeepEqual, assertRejects } from '../assert.js'
 
 import { testConfig } from './test-config.js'
+import type { TestConfig } from './test-config.js'
 import {
   afterTest,
   afterTests,
@@ -21,8 +22,17 @@ interface LogEntry {
 const errorMessage = 'this is error'
 
 export class TestContext {
+  readonly #config: TestConfig
+  readonly #failingLogMessage: string | undefined
   #app?: App
   #logMessages: LogEntry[] = []
+
+  // The logger throws on a message starting with failingLogMessage, which
+  // stands for a failure in whatever start() is doing when it logs it.
+  constructor(config: TestConfig, failingLogMessage?: string) {
+    this.#config = config
+    this.#failingLogMessage = failingLogMessage
+  }
 
   get db(): Database {
     return this.#app!.db
@@ -37,7 +47,7 @@ export class TestContext {
   }
 
   before = async (): Promise<void> => {
-    await beforeTests(testConfig.database, testConfig.adminDatabase)
+    await beforeTests(this.#config.database, this.#config.adminDatabase)
   }
 
   after = async (): Promise<void> => {
@@ -45,21 +55,21 @@ export class TestContext {
   }
 
   beforeEach = async (): Promise<void> => {
-    const config = {
-      ...testConfig,
-      generateInitialAdminPassword: true,
-    }
+    this.#logMessages = []
     const log: log = (level: Level, ...args: unknown[]) => {
       const message = args.map((a: unknown) => `${a}`).join()
       this.#logMessages.push({
         level,
         message,
       })
-      if (message.startsWith('Created initial user')) {
+      if (
+        this.#failingLogMessage !== undefined &&
+        message.startsWith(this.#failingLogMessage)
+      ) {
         throw new Error(errorMessage)
       }
     }
-    this.#app = new App(config, log)
+    this.#app = new App(this.#config, log)
     await beforeTest(this.db)
   }
 
@@ -70,7 +80,13 @@ export class TestContext {
 }
 
 suite('start error', () => {
-  const ctx = new TestContext()
+  const ctx = new TestContext(
+    {
+      ...testConfig,
+      generateInitialAdminPassword: true,
+    },
+    'Created initial user',
+  )
 
   before(ctx.before)
   beforeEach(ctx.beforeEach)
@@ -91,5 +107,54 @@ suite('start error', () => {
       level: 'ERROR',
       message: 'Error starting,Error: this is error',
     })
+  })
+})
+
+suite('initial user creation error', () => {
+  // Password hash parameters scrypt refuses, as a misconfiguration would
+  // have them, fail hashing the initial admin's password inside the
+  // transaction that creates the initial user.
+  const ctx = new TestContext({
+    ...testConfig,
+    generateInitialAdminPassword: true,
+    passwordHashParameters: { N: 1000, r: 8, p: 1 },
+  })
+
+  before(ctx.before)
+  beforeEach(ctx.beforeEach)
+
+  after(ctx.after)
+  afterEach(ctx.afterEach)
+
+  test('failure to create the initial user rejects start', async () => {
+    await assertRejects(
+      async () => {
+        await ctx.app()!.start()
+      },
+      new Error('unknown error'),
+      Error,
+    )
+    const logMessages = ctx.logMessages()
+    assertDeepEqual(logMessages[logMessages.length - 1], {
+      level: 'ERROR',
+      message: 'Error starting,Error: unknown error',
+    })
+  })
+
+  test('failure to create the initial user does not start the server', async () => {
+    await assertRejects(
+      async () => {
+        await ctx.app()!.start()
+      },
+      new Error('unknown error'),
+      Error,
+    )
+    const logMessages = ctx.logMessages()
+    assertDeepEqual(
+      logMessages.filter((entry: LogEntry) =>
+        entry.message.startsWith('Server'),
+      ),
+      [],
+    )
   })
 })
