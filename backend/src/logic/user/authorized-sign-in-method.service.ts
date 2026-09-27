@@ -3,9 +3,11 @@ import * as authorizationService from '../internal/auth/authorization.service.js
 import * as signInMethodService from '../internal/user/validated-sign-in-method.service.js'
 import * as userService from '../internal/user/user.service.js'
 
-import type { DbRefreshToken } from '../auth/refresh-token.js'
-import type { ValidateRefreshToken } from '../auth/refresh-token.js'
-import { invalidRefreshTokenError } from '../errors.js'
+import type {
+  DbRefreshToken,
+  DeleteRefreshToken,
+  RefreshTokenPayload,
+} from '../auth/refresh-token.js'
 import type { log } from '../log.js'
 import type {
   ChangePasswordUserIf,
@@ -50,9 +52,10 @@ export async function changePassword(
   body: unknown,
   log: log,
 ): Promise<void> {
-  await authorizationService.authorizeUser(
+  await authorizationService.authorizeUserForUpdate(
     request.id,
     request.authTokenPayload,
+    changePasswordUserIf.lockUserById,
     findRefreshToken,
   )
   await signInMethodService.changePassword(
@@ -67,40 +70,32 @@ export async function changePassword(
 
 export interface RefreshTokensIf {
   lockUserById: (userId: string) => Promise<User | undefined>
-  deleteRefreshToken: (refreshTokenId: string) => Promise<void>
+  deleteRefreshToken: DeleteRefreshToken
   insertRefreshToken: (userId: string) => Promise<DbRefreshToken>
 }
 
 export async function refreshTokens(
   jwtIf: JwtIf,
   refreshTokensIf: RefreshTokensIf,
-  validate: ValidateRefreshToken,
-  userId: string,
-  body: unknown,
+  userId: string | undefined,
+  refreshTokenPayload: RefreshTokenPayload,
   authTokenConfig: AuthTokenConfig,
 ): Promise<Tokens> {
-  const validationResult = validate(body)
-  if (validationResult.errorCode === 'invalid-refresh-token') {
-    throw invalidRefreshTokenError
-  }
   // No authorization as refresh provides new tokens based on refresh token
   // only.
+  authTokenService.verifyRefreshTokenOwner(userId, refreshTokenPayload)
   const user = await userService.lockUserById(
     refreshTokensIf.lockUserById,
-    userId,
+    refreshTokenPayload.userId,
   )
   await authTokenService.deleteRefreshToken(
-    jwtIf,
     refreshTokensIf.deleteRefreshToken,
-    user.id,
-    validationResult.result,
-    authTokenConfig.secret,
+    refreshTokenPayload,
   )
-  const tokens = await authTokenService.createTokens(
+  return await authTokenService.createTokens(
     jwtIf,
     refreshTokensIf.insertRefreshToken,
     user,
     authTokenConfig,
   )
-  return tokens
 }

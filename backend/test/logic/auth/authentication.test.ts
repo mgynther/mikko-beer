@@ -1,6 +1,10 @@
 import { suite, test } from '../../test.js'
 
-import type { DbRefreshToken } from '../../../src/logic/auth/refresh-token.js'
+import type {
+  DbRefreshToken,
+  RefreshToken,
+  ValidateRefreshToken,
+} from '../../../src/logic/auth/refresh-token.js'
 import * as authTokenService from '../../../src/logic/internal/auth/auth-token.service.js'
 import * as authentication from '../../../src/logic/auth/authentication.js'
 import type { User } from '../../../src/logic/user/user.js'
@@ -13,6 +17,8 @@ import {
   expiredAuthTokenError,
   invalidAuthTokenError,
   invalidAuthorizationHeaderError,
+  invalidCredentialsTokenError,
+  invalidRefreshTokenError,
 } from '../../../src/logic/errors.js'
 import { expectThrow } from '../controller-error-helper.js'
 import { testJwtIf } from '../jwt-helper.js'
@@ -62,6 +68,15 @@ async function createTokens(user: User): Promise<Tokens> {
 function header(authToken: AuthToken): string {
   return `Bearer ${authToken.authToken}`
 }
+
+function passRefreshTokenValidation(token: RefreshToken): ValidateRefreshToken {
+  return () => ({ errorCode: undefined, result: token })
+}
+
+const failRefreshTokenValidation: ValidateRefreshToken = () => ({
+  errorCode: 'invalid-refresh-token',
+  result: undefined,
+})
 
 suite('authentication service unit tests', () => {
   test('authenticate admin', async () => {
@@ -130,5 +145,45 @@ suite('authentication service unit tests', () => {
         authTokenSecret,
       )
     }, invalidAuthTokenError)
+  })
+
+  test('parse refresh token', async () => {
+    const tokens = await createTokens(viewer)
+    const parsed = authentication.parseRefreshTokenPayload(
+      testJwtIf,
+      passRefreshTokenValidation(tokens.refresh),
+      tokens.refresh,
+      authTokenSecret,
+    )
+    assertDeepEqual(parsed, {
+      userId: viewer.id,
+      refreshTokenId,
+      isRefreshToken: true,
+    })
+  })
+
+  test('fail to parse refresh token from invalid request', () => {
+    expectThrow(() => {
+      authentication.parseRefreshTokenPayload(
+        testJwtIf,
+        failRefreshTokenValidation,
+        {},
+        authTokenSecret,
+      )
+    }, invalidRefreshTokenError)
+  })
+
+  test('fail to parse invalid refresh token', () => {
+    const invalidRefreshToken: RefreshToken = {
+      refreshToken: 'this is invalid',
+    }
+    expectThrow(() => {
+      authentication.parseRefreshTokenPayload(
+        testJwtIf,
+        passRefreshTokenValidation(invalidRefreshToken),
+        invalidRefreshToken,
+        authTokenSecret,
+      )
+    }, invalidCredentialsTokenError)
   })
 })

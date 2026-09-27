@@ -11,10 +11,11 @@ import type {
   ValidateCreateStorage,
   ValidateStorageId,
   ValidateUpdateStorage,
+  StorageList,
 } from './storage.js'
 import type { log } from '../log.js'
-import type { BodyRequest, IdRequest } from '../request.js'
-import type { Pagination } from '../pagination.js'
+import type { BodyRequest, IdRequest, PaginationRequest } from '../request.js'
+import type { Pagination, ValidatePagination } from '../pagination.js'
 import type { AuthTokenPayload } from '../auth/auth-token.js'
 import type { ValidateBeerId } from '../beer/beer.js'
 import type { ValidateBreweryId } from '../brewery/brewery.js'
@@ -84,12 +85,17 @@ export async function findStorageById(
 
 export async function listStorages(
   list: (pagination: Pagination) => Promise<JoinedStorage[]>,
-  authTokenPayload: AuthTokenPayload,
-  pagination: Pagination,
+  validatePagination: ValidatePagination,
+  request: PaginationRequest,
   log: log,
-): Promise<JoinedStorage[]> {
-  authorizationService.authorizeViewer(authTokenPayload)
-  return await storageService.listStorages(list, pagination, log)
+): Promise<StorageList> {
+  authorizationService.authorizeViewer(request.authTokenPayload)
+  return await storageService.listStorages(
+    list,
+    validatePagination,
+    request.pagination,
+    log,
+  )
 }
 
 export async function listStoragesByBeer(

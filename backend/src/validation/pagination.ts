@@ -5,9 +5,9 @@ export interface Pagination {
   skip: number
 }
 
-export interface PaginationRequest {
-  size: string | string[] | undefined
-  skip: string | string[] | undefined
+export interface PaginationQuery {
+  size: string | undefined
+  skip: string | undefined
 }
 
 export type PaginationValidationResult =
@@ -20,7 +20,7 @@ export type PaginationValidationResult =
       result: Pagination
     }
 
-const doValidatePagination = ajv.compile<PaginationRequest>({
+const doValidatePagination = ajv.compile<Pagination>({
   type: 'object',
   properties: {
     size: {
@@ -38,15 +38,12 @@ const doValidatePagination = ajv.compile<PaginationRequest>({
 })
 
 export function validatePagination(
-  pagination: PaginationRequest,
+  pagination: PaginationQuery,
 ): PaginationValidationResult {
   if (pagination.size === undefined && pagination.skip === undefined) {
     return { errorCode: undefined, result: { size: 10000, skip: 0 } }
   }
-  if (
-    typeof pagination.size !== 'string' ||
-    typeof pagination.skip !== 'string'
-  ) {
+  if (pagination.size === undefined || pagination.skip === undefined) {
     return { errorCode: 'invalid-pagination', result: undefined }
   }
   const regex = /^[0-9]+$/v

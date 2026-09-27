@@ -52,6 +52,26 @@ export interface StatsFilter {
   timeEnd: Date | undefined
 }
 
+export interface StatsIdFilterQuery {
+  brewery: string | undefined
+  location: string | undefined
+  style: string | undefined
+}
+
+export interface StatsFilterQuery extends StatsIdFilterQuery {
+  minReviewCount: string | undefined
+  maxReviewCount: string | undefined
+  minReviewAverage: string | undefined
+  maxReviewAverage: string | undefined
+  timeStart: string | undefined
+  timeEnd: string | undefined
+}
+
+export interface StatsOrderQuery {
+  order: string | undefined
+  direction: string | undefined
+}
+
 export type StatsIdFilterValidationResult =
   | {
       errorCode: 'invalid-id-filter'
@@ -72,7 +92,7 @@ export type StatsFilterValidationResult =
       result: StatsFilter
     }
 
-export type BreweryCountryStatsOrderValidationResult =
+type BreweryCountryStatsOrderValidationResult =
   | {
       errorCode: 'invalid-brewery-country-stats-query'
       result: undefined
@@ -82,7 +102,7 @@ export type BreweryCountryStatsOrderValidationResult =
       result: BreweryCountryStatsOrder
     }
 
-export type BreweryStatsOrderValidationResult =
+type BreweryStatsOrderValidationResult =
   | {
       errorCode: 'invalid-brewery-stats-query'
       result: undefined
@@ -92,7 +112,7 @@ export type BreweryStatsOrderValidationResult =
       result: BreweryStatsOrder
     }
 
-export type LocationStatsOrderValidationResult =
+type LocationStatsOrderValidationResult =
   | {
       errorCode: 'invalid-location-stats-query'
       result: undefined
@@ -102,7 +122,7 @@ export type LocationStatsOrderValidationResult =
       result: LocationStatsOrder
     }
 
-export type StyleStatsOrderValidationResult =
+type StyleStatsOrderValidationResult =
   | {
       errorCode: 'invalid-style-stats-query'
       result: undefined
@@ -113,12 +133,8 @@ export type StyleStatsOrderValidationResult =
     }
 
 function validStatsIdFilter(
-  query: Record<string, unknown> | undefined,
+  query: StatsIdFilterQuery,
 ): StatsIdFilter | undefined {
-  const noFilter = { brewery: undefined, location: undefined, style: undefined }
-  if (query === undefined) {
-    return noFilter
-  }
   const { brewery, location, style } = query
   const validBrewery =
     typeof brewery === 'string' && brewery.length > 0 ? brewery : undefined
@@ -140,7 +156,7 @@ function validStatsIdFilter(
 }
 
 export function validateStatsIdFilter(
-  query: Record<string, unknown> | undefined,
+  query: StatsIdFilterQuery,
 ): StatsIdFilterValidationResult {
   const result = validStatsIdFilter(query)
   if (result === undefined) {
@@ -150,7 +166,7 @@ export function validateStatsIdFilter(
 }
 
 export function validateStatsFilter(
-  query: Record<string, unknown> | undefined,
+  query: StatsFilterQuery,
 ): StatsFilterValidationResult {
   const defaultResult: StatsFilter = {
     brewery: undefined,
@@ -163,9 +179,6 @@ export function validateStatsFilter(
     timeStart: undefined,
     timeEnd: undefined,
   }
-  if (query === undefined) {
-    return { errorCode: undefined, result: defaultResult }
-  }
   const idFilterResult = validateStatsIdFilter(query)
   if (idFilterResult.errorCode === 'invalid-id-filter') {
     return { errorCode: 'invalid-id-filter', result: undefined }
@@ -175,12 +188,12 @@ export function validateStatsFilter(
     ...idFilterResult.result,
   }
   const {
-    min_review_count,
-    max_review_count,
-    min_review_average,
-    max_review_average,
-    time_start,
-    time_end,
+    minReviewCount,
+    maxReviewCount,
+    minReviewAverage,
+    maxReviewAverage,
+    timeStart,
+    timeEnd,
   } = query
   type NumberKey =
     | 'maxReviewAverage'
@@ -189,11 +202,11 @@ export function validateStatsFilter(
     | 'minReviewCount'
   function assignValidNumber(
     key: NumberKey,
-    value: unknown,
+    value: string | undefined,
     validator: (value: number) => boolean,
     parser: (valud: string) => number,
   ): void {
-    if (typeof value === 'string' && value.length > 0) {
+    if (value !== undefined && value.length > 0) {
       const numValue = parser(value)
       if (!isNaN(numValue) && validator(numValue)) {
         result[key] = numValue
@@ -205,27 +218,30 @@ export function validateStatsFilter(
     value <= Infinity && value >= 1
   assignValidNumber(
     'maxReviewAverage',
-    max_review_average,
+    maxReviewAverage,
     validateAverage,
     parseFloat,
   )
   assignValidNumber(
     'minReviewAverage',
-    min_review_average,
+    minReviewAverage,
     validateAverage,
     parseFloat,
   )
-  assignValidNumber('maxReviewCount', max_review_count, validateCount, parseInt)
-  assignValidNumber('minReviewCount', min_review_count, validateCount, parseInt)
+  assignValidNumber('maxReviewCount', maxReviewCount, validateCount, parseInt)
+  assignValidNumber('minReviewCount', minReviewCount, validateCount, parseInt)
 
-  function assignValidDate(key: 'timeStart' | 'timeEnd', value: unknown): void {
+  function assignValidDate(
+    key: 'timeStart' | 'timeEnd',
+    value: string | undefined,
+  ): void {
     const dateOrUndefined = parseDate(value)
     if (dateOrUndefined !== undefined) {
       result[key] = dateOrUndefined
     }
   }
-  assignValidDate('timeStart', time_start)
-  assignValidDate('timeEnd', time_end)
+  assignValidDate('timeStart', timeStart)
+  assignValidDate('timeEnd', timeEnd)
   return { errorCode: undefined, result }
 }
 
@@ -300,7 +316,7 @@ interface StatsOrderParams {
 }
 
 function statsOrderParamsOrDefaults(
-  query: Record<string, unknown>,
+  query: StatsOrderQuery,
   defaultProperty: string,
 ): StatsOrderParams {
   let { order, direction } = query
@@ -314,7 +330,7 @@ function statsOrderParamsOrDefaults(
 }
 
 export function validateBreweryCountryStatsOrder(
-  query: Record<string, unknown>,
+  query: StatsOrderQuery,
 ): BreweryCountryStatsOrderValidationResult {
   const params = statsOrderParamsOrDefaults(query, 'country_code')
   if (!isBreweryCountryStatsOrderValid(params)) {
@@ -339,7 +355,7 @@ export function validateBreweryCountryStatsOrder(
 }
 
 export function validateBreweryStatsOrder(
-  query: Record<string, unknown>,
+  query: StatsOrderQuery,
 ): BreweryStatsOrderValidationResult {
   const params = statsOrderParamsOrDefaults(query, 'brewery_name')
   if (!isBreweryStatsOrderValid(params)) {
@@ -361,7 +377,7 @@ export function validateBreweryStatsOrder(
 }
 
 export function validateLocationStatsOrder(
-  query: Record<string, unknown>,
+  query: StatsOrderQuery,
 ): LocationStatsOrderValidationResult {
   const params = statsOrderParamsOrDefaults(query, 'location_name')
   if (!isLocationStatsOrderValid(params)) {
@@ -383,7 +399,7 @@ export function validateLocationStatsOrder(
 }
 
 export function validateStyleStatsOrder(
-  query: Record<string, unknown>,
+  query: StatsOrderQuery,
 ): StyleStatsOrderValidationResult {
   const params = statsOrderParamsOrDefaults(query, 'style_name')
   if (!isStyleStatsOrderValid(params)) {

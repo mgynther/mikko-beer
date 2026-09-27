@@ -2,6 +2,7 @@ import * as authorizationService from '../internal/auth/authorization.service.js
 import * as beerService from '../internal/beer/validated.service.js'
 
 import type {
+  BeerList,
   BeerWithBreweriesAndStyles,
   BeerWithBreweryAndStyleIds,
   CreateIf,
@@ -12,7 +13,7 @@ import type {
 } from './beer.js'
 
 import type { log } from '../log.js'
-import type { Pagination } from '../pagination.js'
+import type { Pagination, ValidatePagination } from '../pagination.js'
 import type { SearchByName, ValidateSearchByName } from '../search.js'
 import type { BodyRequest, IdRequest, PaginationRequest } from '../request.js'
 
@@ -55,11 +56,17 @@ export async function findBeerById(
 
 export async function listBeers(
   list: (pagination: Pagination) => Promise<BeerWithBreweriesAndStyles[]>,
+  validatePagination: ValidatePagination,
   request: PaginationRequest,
   log: log,
-): Promise<BeerWithBreweriesAndStyles[]> {
+): Promise<BeerList> {
   authorizationService.authorizeViewer(request.authTokenPayload)
-  return await beerService.listBeers(list, request.pagination, log)
+  return await beerService.listBeers(
+    list,
+    validatePagination,
+    request.pagination,
+    log,
+  )
 }
 
 export async function searchBeers(

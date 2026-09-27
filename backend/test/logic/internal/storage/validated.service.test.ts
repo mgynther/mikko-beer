@@ -21,7 +21,14 @@ import {
   invalidStorageError,
   invalidStorageIdError,
   invalidStyleIdError,
+  invalidPaginationError,
 } from '../../../../src/logic/errors.js'
+import type { Pagination } from '../../../../src/logic/pagination.js'
+import { mockFunction } from '../../../mock.js'
+import {
+  failPaginationValidation,
+  passPaginationValidation,
+} from '../../pagination-validation.js'
 import { assertDeepEqual, assertEqual } from '../../../assert.js'
 import {
   buildCreateStorageRequest,
@@ -298,5 +305,36 @@ suite('storage validated service unit tests', () => {
       return [{ year: '2022', month: '10', count: '8' }]
     }
     await storageService.getMonthlyStorageStats(getter, log)
+  })
+
+  test('list storages with the pagination validated', async () => {
+    const list = mockFunction<[pagination: Pagination], Promise<never[]>>(
+      async () => [],
+    )
+    const result = await storageService.listStorages(
+      list,
+      passPaginationValidation({ size: 20, skip: 40 }),
+      { size: '20', skip: '40' },
+      log,
+    )
+    assertDeepEqual(result, {
+      storages: [],
+      pagination: { size: 20, skip: 40 },
+    })
+    assertDeepEqual(
+      list.mock.calls.map((call) => call.arguments),
+      [[{ size: 20, skip: 40 }]],
+    )
+  })
+
+  test('fail to list storages with invalid pagination', async () => {
+    await expectReject(async () => {
+      await storageService.listStorages(
+        async () => [],
+        failPaginationValidation,
+        { size: 'invalid', skip: '40' },
+        log,
+      )
+    }, invalidPaginationError)
   })
 })

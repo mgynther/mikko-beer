@@ -16,6 +16,11 @@ import { invalidReviewError, noRightsError } from '../../../src/logic/errors.js'
 import { assertDeepEqual } from '../../assert.js'
 import { buildAuthTokenPayload } from '../auth/builders.js'
 import {
+  defaultReviewListQuery,
+  passFilteredReviewListValidation,
+  passFullReviewListValidation,
+} from './list-validation.js'
+import {
   buildCreateReviewRequest,
   buildJoinedReview,
   buildReview,
@@ -183,12 +188,20 @@ suite('review authorized service unit tests', () => {
     test(`list reviews as ${token.role}`, async () => {
       const result = await reviewService.listReviews(
         async () => [joinedReview],
+        passFullReviewListValidation(fullReviewListRequest, {
+          skip: 0,
+          size: 20,
+        }),
         token,
-        { skip: 0, size: 20 },
-        fullReviewListRequest,
+        { skip: '0', size: '20' },
+        defaultReviewListQuery,
         log,
       )
-      assertDeepEqual(result, [joinedReview])
+      assertDeepEqual(result, {
+        reviews: [joinedReview],
+        pagination: { skip: 0, size: 20 },
+        order: fullReviewListRequest.order,
+      })
     })
 
     test(`list reviews by beer as ${token.role}`, async () => {
@@ -198,14 +211,18 @@ suite('review authorized service unit tests', () => {
           errorCode: undefined,
           result: id ?? '',
         }),
+        passFilteredReviewListValidation(reviewListRequest),
         {
           authTokenPayload: token,
           id: '62d30965-f42d-451d-b79f-0dc41d4d3088',
         },
-        reviewListRequest,
+        defaultReviewListQuery,
         log,
       )
-      assertDeepEqual(result, [joinedReview])
+      assertDeepEqual(result, {
+        reviews: [joinedReview],
+        order: reviewListOrder,
+      })
     })
 
     test(`list reviews by brewery as ${token.role}`, async () => {
@@ -215,14 +232,18 @@ suite('review authorized service unit tests', () => {
           errorCode: undefined,
           result: id ?? '',
         }),
+        passFilteredReviewListValidation(reviewListRequest),
         {
           authTokenPayload: token,
           id: '10a7f306-5cf8-480e-aa52-9d85a421c7c0',
         },
-        reviewListRequest,
+        defaultReviewListQuery,
         log,
       )
-      assertDeepEqual(result, [joinedReview])
+      assertDeepEqual(result, {
+        reviews: [joinedReview],
+        order: reviewListOrder,
+      })
     })
 
     test(`list reviews by location as ${token.role}`, async () => {
@@ -232,14 +253,18 @@ suite('review authorized service unit tests', () => {
           errorCode: undefined,
           result: id ?? '',
         }),
+        passFilteredReviewListValidation(reviewListRequest),
         {
           authTokenPayload: token,
           id: '70c3f124-d0d2-46ad-be9d-b74664894fab',
         },
-        reviewListRequest,
+        defaultReviewListQuery,
         log,
       )
-      assertDeepEqual(result, [joinedReview])
+      assertDeepEqual(result, {
+        reviews: [joinedReview],
+        order: reviewListOrder,
+      })
     })
 
     test(`list reviews by style as ${token.role}`, async () => {
@@ -249,14 +274,18 @@ suite('review authorized service unit tests', () => {
           errorCode: undefined,
           result: id ?? '',
         }),
+        passFilteredReviewListValidation(reviewListRequest),
         {
           authTokenPayload: token,
           id: 'c9ea7133-9392-4c28-b8f5-33c61350809c',
         },
-        reviewListRequest,
+        defaultReviewListQuery,
         log,
       )
-      assertDeepEqual(result, [joinedReview])
+      assertDeepEqual(result, {
+        reviews: [joinedReview],
+        order: reviewListOrder,
+      })
     })
   })
 })

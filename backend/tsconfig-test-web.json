@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig-test-base.json",
+  "include": [
+    "src/web/**/*",
+    "test/assert.ts",
+    "test/client.ts",
+    "test/mock.ts",
+    "test/test.ts",
+    "test/web/**/*"
+  ]
+}

@@ -11,6 +11,7 @@ import {
   userOrRefreshTokenNotFoundError,
 } from '../../../../src/logic/errors.js'
 import { expectReject, expectThrow } from '../../controller-error-helper.js'
+import { assertDeepEqual } from '../../../assert.js'
 import { buildUser } from '../../user/builders.js'
 
 const refreshTokenId = 'f2224f80-b478-43e2-8cc9-d39cf8079524'
@@ -53,6 +54,14 @@ async function notCalledFindRefreshToken(): Promise<
 
 async function dontFindRefresToken(): Promise<undefined> {
   return undefined
+}
+
+async function lockUserById(userId: string): Promise<User> {
+  return buildUser({ id: userId })
+}
+
+async function notCalledLockUserById(): Promise<User | undefined> {
+  throw new Error('must not be called')
 }
 
 async function createAuthTokenPayload(user: User): Promise<AuthTokenPayload> {
@@ -161,6 +170,85 @@ suite('authorization service unit tests', () => {
       await authorizationService.authorizeUser(
         viewer.id,
         authTokenPayload,
+        dontFindRefresToken,
+      )
+    }, userOrRefreshTokenNotFoundError)
+  })
+
+  test('lock the viewer before finding its refresh token', async () => {
+    const authTokenPayload = await createAuthTokenPayload(viewer)
+    const calls: string[] = []
+    await authorizationService.authorizeUserForUpdate(
+      viewer.id,
+      authTokenPayload,
+      async (userId: string): Promise<User> => {
+        calls.push(`lock user ${userId}`)
+        return viewer
+      },
+      async (userId: string, id: string): Promise<DbRefreshToken> => {
+        calls.push(`find refresh token ${id}`)
+        return { id, userId }
+      },
+    )
+    assertDeepEqual(calls, [
+      `lock user ${viewer.id}`,
+      `find refresh token ${refreshTokenId}`,
+    ])
+  })
+
+  test('authorize viewer user for update as admin', async () => {
+    const authTokenPayload = await createAuthTokenPayload(admin)
+    await authorizationService.authorizeUserForUpdate(
+      viewer.id,
+      authTokenPayload,
+      notCalledLockUserById,
+      notCalledFindRefreshToken,
+    )
+  })
+
+  test('fail to authorize user for update without user id', async () => {
+    const authTokenPayload = await createAuthTokenPayload(viewer)
+    await expectReject(async () => {
+      await authorizationService.authorizeUserForUpdate(
+        '',
+        authTokenPayload,
+        notCalledLockUserById,
+        notCalledFindRefreshToken,
+      )
+    }, noUserIdParameterError)
+  })
+
+  test('fail to authorize other viewer user for update as viewer', async () => {
+    const authTokenPayload = await createAuthTokenPayload(viewer)
+    await expectReject(async () => {
+      await authorizationService.authorizeUserForUpdate(
+        otherViewer.id,
+        authTokenPayload,
+        notCalledLockUserById,
+        notCalledFindRefreshToken,
+      )
+    }, userMismatchError)
+  })
+
+  test('fail to authorize viewer for update when user not found', async () => {
+    const authTokenPayload = await createAuthTokenPayload(viewer)
+    await expectReject(async () => {
+      await authorizationService.authorizeUserForUpdate(
+        viewer.id,
+        authTokenPayload,
+        async () => undefined,
+        notCalledFindRefreshToken,
+      )
+    }, userOrRefreshTokenNotFoundError)
+  })
+
+  test('fail to authorize viewer for update when refresh token not found', async () => {
+    const authTokenPayload = await createAuthTokenPayload(viewer)
+    await expectReject(async () => {
+      await authorizationService.authorizeUserForUpdate(
+        viewer.id,
+        authTokenPayload,
+        lockUserById,
         dontFindRefresToken,
       )
     }, userOrRefreshTokenNotFoundError)

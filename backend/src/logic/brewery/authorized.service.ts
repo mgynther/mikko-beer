@@ -8,9 +8,10 @@ import type {
   ValidateBreweryId,
   ValidateCreateBrewery,
   ValidateUpdateBrewery,
+  BreweryList,
 } from '../brewery/brewery'
 import type { log } from '../log.js'
-import type { Pagination } from '../pagination.js'
+import type { Pagination, ValidatePagination } from '../pagination.js'
 import type { SearchByName, ValidateSearchByName } from '../search.js'
 
 export async function createBrewery(
@@ -52,11 +53,17 @@ export async function findBreweryById(
 
 export async function listBreweries(
   list: (pagination: Pagination) => Promise<Brewery[]>,
+  validatePagination: ValidatePagination,
   request: PaginationRequest,
   log: log,
-): Promise<Brewery[]> {
+): Promise<BreweryList> {
   authorizationService.authorizeViewer(request.authTokenPayload)
-  return await breweryService.listBreweries(list, request.pagination, log)
+  return await breweryService.listBreweries(
+    list,
+    validatePagination,
+    request.pagination,
+    log,
+  )
 }
 
 export async function searchBreweries(

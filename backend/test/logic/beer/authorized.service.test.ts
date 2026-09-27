@@ -1,4 +1,5 @@
 import { suite, test } from '../../test.js'
+import { passPaginationValidation } from '../pagination-validation.js'
 
 import * as beerService from '../../../src/logic/beer/authorized.service.js'
 
@@ -161,13 +162,17 @@ suite('beer authorized service unit tests', () => {
     test(`list beers as ${token.role}`, async () => {
       const result = await beerService.listBeers(
         async () => [beerWithBreweriesAndStyles],
+        passPaginationValidation({ skip: 0, size: 10 }),
         {
           authTokenPayload: token,
-          pagination: { skip: 0, size: 10 },
+          pagination: { skip: '0', size: '10' },
         },
         log,
       )
-      assertDeepEqual(result, [beerWithBreweriesAndStyles])
+      assertDeepEqual(result, {
+        beers: [beerWithBreweriesAndStyles],
+        pagination: { skip: 0, size: 10 },
+      })
     })
 
     test(`searches beers as ${token.role}`, async () => {

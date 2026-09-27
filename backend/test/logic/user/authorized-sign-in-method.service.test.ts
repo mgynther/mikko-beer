@@ -1,15 +1,16 @@
 import { suite, test } from '../../test.js'
 
-import * as jwt from '../../../src/logic/internal/auth/jwt.js'
-
 import * as service from '../../../src/logic/user/authorized-sign-in-method.service.js'
 
-import type { RefreshToken } from '../../../src/logic/auth/refresh-token.js'
+import type {
+  DbRefreshToken,
+  RefreshTokenPayload,
+} from '../../../src/logic/auth/refresh-token.js'
 
 import type { RefreshTokensIf } from '../../../src/logic/user/authorized-sign-in-method.service.js'
 import {
+  invalidCredentialsError,
   invalidCredentialsTokenError,
-  invalidRefreshTokenError,
   userMismatchError,
 } from '../../../src/logic/errors.js'
 import { expectReject } from '../controller-error-helper.js'
@@ -22,10 +23,11 @@ import type {
   ValidatePasswordChange,
   ValidatePasswordSignInMethod,
 } from '../../../src/logic/user/sign-in-method.js'
-import type { ValidateUserId } from '../../../src/logic/user/user.js'
-import type { ValidateRefreshToken } from '../../../src/logic/auth/refresh-token.js'
+import type { User, ValidateUserId } from '../../../src/logic/user/user.js'
 
 import { dummyLog as log } from '../dummy-log.js'
+import { mockFunction } from '../../mock.js'
+import { assertDeepEqual, assertEqual, assertTruthy } from '../../assert.js'
 import { testJwtIf } from '../jwt-helper.js'
 import {
   buildAuthTokenConfig,
@@ -52,20 +54,16 @@ const knownPassword = 'password'
 const knownHash =
   '$scrypt$ln=14,r=8,p=1$LSFeH5c5d4Fav49HIqHpiQ$7biLfcxLU9RUv+TVf2fM3s7wY4DJiOfzavESywH5/iFFItGPC9zylXDHCouIE3eJpRbFepfVanqB+inf92yIdA'
 
-const validRefreshToken: RefreshToken = jwt.signRefreshToken(
-  testJwtIf,
-  {
-    userId,
-    refreshTokenId,
-    isRefreshToken: true,
-  },
-  authTokenSecret,
-)
+const refreshTokenPayload: RefreshTokenPayload = {
+  userId,
+  refreshTokenId,
+  isRefreshToken: true,
+}
 
 const dbRefreshToken = buildDbRefreshToken()
 
 const refreshTokensIf: RefreshTokensIf = {
-  deleteRefreshToken: async () => undefined,
+  deleteRefreshToken: async () => true,
   insertRefreshToken: async () => dbRefreshToken,
   lockUserById: async () => user,
 }
@@ -112,15 +110,6 @@ function passPasswordChangeValidation(
 ): ValidatePasswordChange {
   return () => ({ errorCode: undefined, result: change })
 }
-
-function passRefreshTokenValidation(token: RefreshToken): ValidateRefreshToken {
-  return () => ({ errorCode: undefined, result: token })
-}
-
-const failRefreshTokenValidation: ValidateRefreshToken = () => ({
-  errorCode: 'invalid-refresh-token',
-  result: undefined,
-})
 
 const validateUserId: ValidateUserId = (id: string | undefined) => ({
   errorCode: undefined,
@@ -181,40 +170,78 @@ suite('authorized sign in method service unit tests', () => {
     }, userMismatchError)
   })
 
-  test('refresh tokens with valid refresh token', async () => {
-    await service.refreshTokens(
+  test('refresh tokens with the refresh token of the payload', async () => {
+    const deleteRefreshToken = mockFunction<
+      [refreshTokenId: string],
+      Promise<boolean>
+    >(async () => true)
+
+    const tokens = await service.refreshTokens(
       testJwtIf,
-      refreshTokensIf,
-      passRefreshTokenValidation(validRefreshToken),
+      { ...refreshTokensIf, deleteRefreshToken },
       userId,
-      validRefreshToken,
+      refreshTokenPayload,
       authTokenConfig,
     )
+
+    assertDeepEqual(
+      deleteRefreshToken.mock.calls.map((call) => call.arguments),
+      [[refreshTokenId]],
+    )
+    assertTruthy(tokens.auth.authToken)
+    assertTruthy(tokens.refresh.refreshToken)
   })
 
-  test('fail to refresh tokens with invalid refresh token', async () => {
+  test("fail to refresh tokens with another user's refresh token", async () => {
+    const anotherUserId = 'e0ad6a86-4dc4-4f4e-a6e5-f0a6f0f38f51'
+    const lockUserById = mockFunction<
+      [userId: string],
+      Promise<User | undefined>
+    >(async () => user)
+
     await expectReject(async () => {
       await service.refreshTokens(
         testJwtIf,
-        refreshTokensIf,
-        passRefreshTokenValidation({ refreshToken: 'this is invalid' }),
-        userId,
-        { refreshToken: 'this is invalid' },
+        { ...refreshTokensIf, lockUserById },
+        anotherUserId,
+        refreshTokenPayload,
         authTokenConfig,
       )
     }, invalidCredentialsTokenError)
+    assertEqual(lockUserById.mock.callCount(), 0)
   })
 
-  test('fail to refresh tokens with invalid request', async () => {
+  test('fail to refresh tokens with a refresh token already used', async () => {
+    const insertRefreshToken = mockFunction<
+      [userId: string],
+      Promise<DbRefreshToken>
+    >(async () => dbRefreshToken)
+
     await expectReject(async () => {
       await service.refreshTokens(
         testJwtIf,
-        refreshTokensIf,
-        failRefreshTokenValidation,
+        {
+          ...refreshTokensIf,
+          deleteRefreshToken: async () => false,
+          insertRefreshToken,
+        },
         userId,
-        {},
+        refreshTokenPayload,
         authTokenConfig,
       )
-    }, invalidRefreshTokenError)
+    }, invalidCredentialsTokenError)
+    assertEqual(insertRefreshToken.mock.callCount(), 0)
+  })
+
+  test('fail to refresh tokens of a user that no longer exists', async () => {
+    await expectReject(async () => {
+      await service.refreshTokens(
+        testJwtIf,
+        { ...refreshTokensIf, lockUserById: async () => undefined },
+        userId,
+        refreshTokenPayload,
+        authTokenConfig,
+      )
+    }, invalidCredentialsError)
   })
 })

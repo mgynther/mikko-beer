@@ -88,12 +88,6 @@ export class ControllerError extends Error {
     this.code = code
     this.data = data
   }
-
-  toJSON(): Record<string, unknown> {
-    return {
-      error: { code: this.code, message: this.message },
-    }
-  }
 }
 
 // Authentication

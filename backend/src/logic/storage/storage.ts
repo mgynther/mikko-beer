@@ -1,3 +1,4 @@
+import type { Pagination } from '../pagination.js'
 import type { Container } from '../container/container.js'
 import type { LockId } from '../db.js'
 
@@ -112,3 +113,8 @@ export type ValidateStorageIdResult =
 export type ValidateStorageId = (
   id: string | undefined,
 ) => ValidateStorageIdResult
+
+export interface StorageList {
+  storages: JoinedStorage[]
+  pagination: Pagination
+}

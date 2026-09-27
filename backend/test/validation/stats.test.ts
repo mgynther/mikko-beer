@@ -8,7 +8,13 @@ import {
   validateStatsIdFilter,
   validateStatsFilter,
 } from '../../src/validation/stats.js'
-import type { StatsFilter, StatsIdFilter } from '../../src/validation/stats.js'
+import type {
+  StatsFilter,
+  StatsFilterQuery,
+  StatsIdFilter,
+  StatsIdFilterQuery,
+  StatsOrderQuery,
+} from '../../src/validation/stats.js'
 import { assertDeepEqual, assertEqual } from '../assert.js'
 
 const noFilter = {
@@ -17,25 +23,41 @@ const noFilter = {
   style: undefined,
 }
 
+const noIdFilterQuery: StatsIdFilterQuery = noFilter
+
+const noFilterQuery: StatsFilterQuery = {
+  ...noIdFilterQuery,
+  minReviewCount: undefined,
+  maxReviewCount: undefined,
+  minReviewAverage: undefined,
+  maxReviewAverage: undefined,
+  timeStart: undefined,
+  timeEnd: undefined,
+}
+
+const noOrderQuery: StatsOrderQuery = {
+  order: undefined,
+  direction: undefined,
+}
+
 suite('stats id filter validation unit tests', () => {
-  function pass(
-    query: Record<string, unknown> | undefined,
-    output: StatsIdFilter,
-  ) {
-    const validationResult = validateStatsIdFilter(query)
+  function pass(query: Partial<StatsIdFilterQuery>, output: StatsIdFilter) {
+    const validationResult = validateStatsIdFilter({
+      ...noIdFilterQuery,
+      ...query,
+    })
     assertEqual(validationResult.errorCode, undefined)
     assertDeepEqual(validationResult.result, output)
   }
 
-  function fail(query: Record<string, unknown>) {
-    const validationResult = validateStatsIdFilter(query)
+  function fail(query: Partial<StatsIdFilterQuery>) {
+    const validationResult = validateStatsIdFilter({
+      ...noIdFilterQuery,
+      ...query,
+    })
     assertEqual(validationResult.errorCode, 'invalid-id-filter')
     assertEqual(validationResult.result, undefined)
   }
-
-  test('validate undefined filter', () => {
-    pass(undefined, noFilter)
-  })
 
   test('validate empty filter', () => {
     pass({}, noFilter)
@@ -95,10 +117,6 @@ suite('stats id filter validation unit tests', () => {
     })
   })
 
-  test('validate invalid brewery filter', () => {
-    pass({ brewery: 123 }, noFilter)
-  })
-
   test('validate empty brewery filter', () => {
     pass({ brewery: '' }, noFilter)
   })
@@ -109,10 +127,6 @@ suite('stats id filter validation unit tests', () => {
 
   test('validate empty style filter', () => {
     pass({ style: '' }, noFilter)
-  })
-
-  test('validate unknown filter', () => {
-    pass({ additional: 'testing' }, noFilter)
   })
 })
 
@@ -129,18 +143,11 @@ suite('stats filter validation unit tests', () => {
     timeEnd: undefined,
   }
 
-  function pass(
-    query: Record<string, unknown> | undefined,
-    output: StatsFilter,
-  ) {
-    const validationResult = validateStatsFilter(query)
+  function pass(query: Partial<StatsFilterQuery>, output: StatsFilter) {
+    const validationResult = validateStatsFilter({ ...noFilterQuery, ...query })
     assertEqual(validationResult.errorCode, undefined)
     assertDeepEqual(validationResult.result, output)
   }
-
-  test('validate undefined filter', () => {
-    pass(undefined, defaultFilter)
-  })
 
   test('validate empty filter', () => {
     pass({}, defaultFilter)
@@ -150,12 +157,12 @@ suite('stats filter validation unit tests', () => {
     pass(
       {
         brewery: 'testing',
-        max_review_average: '9.54',
-        min_review_average: '5',
-        max_review_count: '100',
-        min_review_count: '4',
-        time_start: '1665532800000',
-        time_end: '1734652800000',
+        maxReviewAverage: '9.54',
+        minReviewAverage: '5',
+        maxReviewCount: '100',
+        minReviewCount: '4',
+        timeStart: '1665532800000',
+        timeEnd: '1734652800000',
       },
       {
         ...defaultFilter,
@@ -172,6 +179,7 @@ suite('stats filter validation unit tests', () => {
 
   test('fail with multiple id filters', () => {
     const validationResult = validateStatsFilter({
+      ...noFilterQuery,
       brewery: 'testing',
       style: 'testing',
     })
@@ -181,7 +189,7 @@ suite('stats filter validation unit tests', () => {
 
   test('validate invalid min review count', () => {
     pass(
-      { brewery: 'testing', min_review_count: 'test' },
+      { brewery: 'testing', minReviewCount: 'test' },
       {
         ...defaultFilter,
         brewery: 'testing',
@@ -191,7 +199,7 @@ suite('stats filter validation unit tests', () => {
 
   test('validate too small min review count', () => {
     pass(
-      { brewery: 'testing', min_review_count: '-1' },
+      { brewery: 'testing', minReviewCount: '-1' },
       {
         ...defaultFilter,
         brewery: 'testing',
@@ -200,45 +208,33 @@ suite('stats filter validation unit tests', () => {
   })
 
   test('validate empty min review count', () => {
-    pass({ min_review_count: '' }, defaultFilter)
+    pass({ minReviewCount: '' }, defaultFilter)
   })
 
   test('validate too small min review average', () => {
-    pass({ min_review_average: '3' }, defaultFilter)
+    pass({ minReviewAverage: '3' }, defaultFilter)
   })
 
   test('validate too large max review average', () => {
-    pass({ max_review_average: '11' }, defaultFilter)
+    pass({ maxReviewAverage: '11' }, defaultFilter)
   })
 
   test('validate invalid max review average', () => {
-    pass({ max_review_average: 'test' }, defaultFilter)
-  })
-
-  test('validate non-string max review count', () => {
-    pass({ max_review_count: 100 }, defaultFilter)
-  })
-
-  test('validate invalid brewery filter', () => {
-    pass({ brewery: 123 }, defaultFilter)
+    pass({ maxReviewAverage: 'test' }, defaultFilter)
   })
 
   test('validate invalid start time filter', () => {
-    pass({ time_start: 'abc' }, defaultFilter)
+    pass({ timeStart: 'abc' }, defaultFilter)
   })
 
   test('validate invalid end time filter', () => {
-    pass({ time_end: '-123' }, defaultFilter)
-  })
-
-  test('validate unknown filter', () => {
-    pass({ additional: 'testing' }, defaultFilter)
+    pass({ timeEnd: '-123' }, defaultFilter)
   })
 })
 
 interface StatsOrderCase {
   title: string
-  func: (query: Record<string, unknown>) => {
+  func: (query: StatsOrderQuery) => {
     errorCode: string | undefined
     result: { property: string; direction: string } | undefined
   }
@@ -284,16 +280,16 @@ statsOrderCases.forEach((statsOrderCase) => {
 
   suite(`${title} stats order validation unit tests`, () => {
     function pass(
-      query: Record<string, unknown>,
+      query: Partial<StatsOrderQuery>,
       output: { property: string; direction: string },
     ) {
-      const validationResult = func(query)
+      const validationResult = func({ ...noOrderQuery, ...query })
       assertEqual(validationResult.errorCode, undefined)
       assertDeepEqual(validationResult.result, output)
     }
 
-    function fail(query: Record<string, unknown>) {
-      const validationResult = func(query)
+    function fail(query: Partial<StatsOrderQuery>) {
+      const validationResult = func({ ...noOrderQuery, ...query })
       assertEqual(validationResult.errorCode, errorCode)
       assertEqual(validationResult.result, undefined)
     }
@@ -358,14 +354,6 @@ statsOrderCases.forEach((statsOrderCase) => {
 
     test('validate invalid direction', () => {
       fail({ order: 'average', direction: 'invalid' })
-    })
-
-    test('validate invalid order type', () => {
-      fail({ order: 123, direction: 'asc' })
-    })
-
-    test('validate invalid direction type', () => {
-      fail({ order: 'average', direction: [] })
     })
   })
 })

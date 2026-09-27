@@ -1,0 +1,22 @@
+import type { DatabaseConfig } from '../../src/data/database-config.js'
+import {
+  testConfig as testDataConfig,
+  testAdminConfig,
+} from '../data/test-config.js'
+import type { Config } from '../../src/wiring/config.js'
+
+export interface TestConfig extends Config {
+  readonly adminDatabase: DatabaseConfig
+}
+
+export const testConfig: TestConfig = {
+  generateInitialAdminPassword: false,
+  port: 3002,
+  authTokenSecret: '26494cafdd9e008ab95e0fb5d02b47ffe77708ecdf2a7804b6',
+  authTokenExpiryDurationMin: 120,
+  database: testDataConfig,
+  adminDatabase: testAdminConfig,
+  // Fast hashing, as nearly every test creates users. The production cost
+  // has a web test of its own.
+  passwordHashParameters: { N: 1024, r: 8, p: 1 },
+}

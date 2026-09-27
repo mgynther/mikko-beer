@@ -1,3 +1,4 @@
+import type { ValidatePagination } from '../pagination.js'
 import type { ListDirection } from '../list.js'
 
 export type AnnualStats = Array<{
@@ -144,4 +145,122 @@ type StyleStatsOrderProperty = 'average' | 'style_name' | 'count' | 'std_dev'
 export interface StyleStatsOrder {
   property: StyleStatsOrderProperty
   direction: ListDirection
+}
+
+export interface StatsIdFilterQuery {
+  brewery: string | undefined
+  location: string | undefined
+  style: string | undefined
+}
+
+export interface StatsFilterQuery extends StatsIdFilterQuery {
+  minReviewCount: string | undefined
+  maxReviewCount: string | undefined
+  minReviewAverage: string | undefined
+  maxReviewAverage: string | undefined
+  timeStart: string | undefined
+  timeEnd: string | undefined
+}
+
+export interface StatsOrderQuery {
+  order: string | undefined
+  direction: string | undefined
+}
+
+export interface OrderedStatsQuery extends StatsFilterQuery, StatsOrderQuery {}
+
+type StatsIdFilterValidationResult =
+  | {
+      errorCode: 'invalid-id-filter'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: StatsIdFilter
+    }
+
+export type ValidateStatsIdFilter = (
+  query: StatsIdFilterQuery,
+) => StatsIdFilterValidationResult
+
+type StatsFilterValidationResult =
+  | {
+      errorCode: 'invalid-id-filter'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: StatsFilter
+    }
+
+export type ValidateStatsFilter = (
+  query: StatsFilterQuery,
+) => StatsFilterValidationResult
+
+export type ValidateBreweryCountryStatsOrder = (query: StatsOrderQuery) =>
+  | {
+      errorCode: 'invalid-brewery-country-stats-query'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: BreweryCountryStatsOrder
+    }
+
+export type ValidateBreweryStatsOrder = (query: StatsOrderQuery) =>
+  | {
+      errorCode: 'invalid-brewery-stats-query'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: BreweryStatsOrder
+    }
+
+export type ValidateLocationStatsOrder = (query: StatsOrderQuery) =>
+  | {
+      errorCode: 'invalid-location-stats-query'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: LocationStatsOrder
+    }
+
+export type ValidateStyleStatsOrder = (query: StatsOrderQuery) =>
+  | {
+      errorCode: 'invalid-style-stats-query'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: StyleStatsOrder
+    }
+
+export interface ValidateAnnualContainerStats {
+  pagination: ValidatePagination
+  filter: ValidateStatsIdFilter
+}
+
+export interface ValidateBreweryStats {
+  pagination: ValidatePagination
+  filter: ValidateStatsFilter
+  order: ValidateBreweryStatsOrder
+}
+
+export interface ValidateBreweryCountryStats {
+  pagination: ValidatePagination
+  filter: ValidateStatsFilter
+  order: ValidateBreweryCountryStatsOrder
+}
+
+export interface ValidateLocationStats {
+  pagination: ValidatePagination
+  filter: ValidateStatsFilter
+  order: ValidateLocationStatsOrder
+}
+
+export interface ValidateStyleStats {
+  filter: ValidateStatsFilter
+  order: ValidateStyleStatsOrder
 }

@@ -6,9 +6,15 @@ import type {
   ValidateBreweryId,
   ValidateCreateBrewery,
   ValidateUpdateBrewery,
+  BreweryList,
 } from '../../brewery/brewery.js'
 import type { log } from '../../log.js'
-import type { Pagination } from '../../pagination.js'
+import type {
+  Pagination,
+  PaginationQuery,
+  ValidatePagination,
+} from '../../pagination.js'
+import { validPagination } from '../pagination.js'
 import type { SearchByName, ValidateSearchByName } from '../../search.js'
 import {
   invalidBreweryError,
@@ -72,10 +78,13 @@ export async function findBreweryById(
 
 export async function listBreweries(
   list: (pagination: Pagination) => Promise<Brewery[]>,
-  pagination: Pagination,
+  validatePagination: ValidatePagination,
+  query: PaginationQuery,
   log: log,
-): Promise<Brewery[]> {
-  return await breweryService.listBreweries(list, pagination, log)
+): Promise<BreweryList> {
+  const pagination = validPagination(validatePagination, query)
+  const breweries = await breweryService.listBreweries(list, pagination, log)
+  return { breweries, pagination }
 }
 
 export async function searchBreweries(

@@ -19,6 +19,16 @@ import {
   buildStatsIdFilter,
   buildStyleStatsRow,
 } from './builders.js'
+import {
+  defaultOrderedStatsQuery,
+  defaultStatsIdFilterQuery,
+  passAnnualContainerStatsValidation,
+  passBreweryCountryStatsValidation,
+  passBreweryStatsValidation,
+  passLocationStatsValidation,
+  passStatsIdFilterValidation,
+  passStyleStatsValidation,
+} from './stats-validation.js'
 
 const adminAuthToken = buildAuthTokenPayload({ role: 'admin' })
 
@@ -32,8 +42,9 @@ suite('stats authorized service unit tests', () => {
       const overallStats = buildOverallStats()
       const result = await statsService.getOverall(
         async () => ({ ...overallStats }),
+        passStatsIdFilterValidation(statsFilter),
         token,
-        statsFilter,
+        defaultStatsIdFilterQuery,
         log,
       )
       assertDeepEqual(result, { ...overallStats })
@@ -43,8 +54,9 @@ suite('stats authorized service unit tests', () => {
       const annualStats = [buildAnnualStatsRow()]
       const result = await statsService.getAnnual(
         async () => [...annualStats],
+        passStatsIdFilterValidation(statsFilter),
         token,
-        statsFilter,
+        defaultStatsIdFilterQuery,
         log,
       )
       assertDeepEqual(result, [...annualStats])
@@ -54,9 +66,10 @@ suite('stats authorized service unit tests', () => {
       const annualContainerStats = [buildAnnualContainerStatsRow()]
       const result = await statsService.getAnnualContainer(
         async () => [...annualContainerStats],
+        passAnnualContainerStatsValidation({ skip: 0, size: 20 }, statsFilter),
         token,
-        { skip: 0, size: 20 },
-        statsFilter,
+        { skip: '0', size: '20' },
+        defaultStatsIdFilterQuery,
         log,
       )
       assertDeepEqual(result, [...annualContainerStats])
@@ -66,13 +79,13 @@ suite('stats authorized service unit tests', () => {
       const breweryStats = [buildBreweryStatsRow()]
       const result = await statsService.getBrewery(
         async () => [...breweryStats],
-        token,
-        { skip: 0, size: 20 },
-        buildStatsFilter(),
-        {
+        passBreweryStatsValidation({ skip: 0, size: 20 }, buildStatsFilter(), {
           property: 'brewery_name',
           direction: 'desc',
-        },
+        }),
+        token,
+        { skip: '0', size: '20' },
+        defaultOrderedStatsQuery,
         log,
       )
       assertDeepEqual(result, [...breweryStats])
@@ -82,13 +95,17 @@ suite('stats authorized service unit tests', () => {
       const breweryCountryStats = [buildBreweryCountryStatsRow()]
       const result = await statsService.getBreweryCountry(
         async () => [...breweryCountryStats],
+        passBreweryCountryStatsValidation(
+          { skip: 0, size: 20 },
+          buildStatsFilter(),
+          {
+            property: 'brewery_count',
+            direction: 'desc',
+          },
+        ),
         token,
-        { skip: 0, size: 20 },
-        buildStatsFilter(),
-        {
-          property: 'brewery_count',
-          direction: 'desc',
-        },
+        { skip: '0', size: '20' },
+        defaultOrderedStatsQuery,
         log,
       )
       assertDeepEqual(result, [...breweryCountryStats])
@@ -98,8 +115,9 @@ suite('stats authorized service unit tests', () => {
       const containerStats = [buildContainerStatsRow()]
       const result = await statsService.getContainer(
         async () => [...containerStats],
+        passStatsIdFilterValidation(statsFilter),
         token,
-        statsFilter,
+        defaultStatsIdFilterQuery,
         log,
       )
       assertDeepEqual(result, [...containerStats])
@@ -109,13 +127,13 @@ suite('stats authorized service unit tests', () => {
       const locationStats = [buildLocationStatsRow()]
       const result = await statsService.getLocation(
         async () => [...locationStats],
-        token,
-        { skip: 0, size: 20 },
-        buildStatsFilter(),
-        {
+        passLocationStatsValidation({ skip: 0, size: 20 }, buildStatsFilter(), {
           property: 'location_name',
           direction: 'desc',
-        },
+        }),
+        token,
+        { skip: '0', size: '20' },
+        defaultOrderedStatsQuery,
         log,
       )
       assertDeepEqual(result, [...locationStats])
@@ -126,8 +144,9 @@ suite('stats authorized service unit tests', () => {
 
       const result = await statsService.getRating(
         async () => [...ratingStats],
+        passStatsIdFilterValidation(statsFilter),
         token,
-        statsFilter,
+        defaultStatsIdFilterQuery,
         log,
       )
       assertDeepEqual(result, [...ratingStats])
@@ -137,12 +156,12 @@ suite('stats authorized service unit tests', () => {
       const styleStats = [buildStyleStatsRow()]
       const result = await statsService.getStyle(
         async () => [...styleStats],
-        token,
-        buildStatsFilter(),
-        {
+        passStyleStatsValidation(buildStatsFilter(), {
           property: 'average',
           direction: 'desc',
-        },
+        }),
+        token,
+        defaultOrderedStatsQuery,
         log,
       )
       assertDeepEqual(result, [...styleStats])

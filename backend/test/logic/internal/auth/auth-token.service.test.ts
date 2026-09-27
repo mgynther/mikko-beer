@@ -12,7 +12,7 @@ import {
 import type { DbRefreshToken } from '../../../../src/logic/auth/refresh-token.js'
 import type { Tokens } from '../../../../src/logic/auth/tokens'
 import { invalidCredentialsTokenError } from '../../../../src/logic/errors.js'
-import { expectReject } from '../../controller-error-helper.js'
+import { expectReject, expectThrow } from '../../controller-error-helper.js'
 import {
   assertDeepEqual,
   assertEqual,
@@ -96,15 +96,16 @@ suite('auth token service unit tests', () => {
       assertEqual(deletedRefreshTokenId, refreshTokenId)
       assertEqual(wasDeleted, false)
       wasDeleted = true
+      return true
     }
 
-    await authTokenService.deleteRefreshToken(
+    const refreshTokenPayload = authTokenService.parseRefreshToken(
       testJwtIf,
-      deleteToken,
-      user.id,
       tokens.refresh,
       authTokenSecret,
     )
+    authTokenService.verifyRefreshTokenOwner(user.id, refreshTokenPayload)
+    await authTokenService.deleteRefreshToken(deleteToken, refreshTokenPayload)
     assertEqual(wasDeleted, true)
   })
 
@@ -152,25 +153,52 @@ suite('auth token service unit tests', () => {
     )
   })
 
-  test('fail to delete refresh token on user mismatch', async () => {
+  test('fail to delete refresh token that was already deleted', async () => {
     const tokens = await authTokenService.createTokens(
       testJwtIf,
       insertAuthToken,
       user,
       authTokenConfig,
     )
-    expectCreatedTokens(tokens)
 
-    const wrongUserId = 'f388b0cb-63f5-4f6e-a9e6-3b6ac92844a7'
+    const refreshTokenPayload = authTokenService.parseRefreshToken(
+      testJwtIf,
+      tokens.refresh,
+      authTokenSecret,
+    )
+
     await expectReject(async () => {
       await authTokenService.deleteRefreshToken(
+        async () => false,
+        refreshTokenPayload,
+      )
+    }, invalidCredentialsTokenError)
+  })
+
+  test('fail to verify refresh token owner on user mismatch', () => {
+    const wrongUserId = 'f388b0cb-63f5-4f6e-a9e6-3b6ac92844a7'
+    expectThrow(() => {
+      authTokenService.verifyRefreshTokenOwner(wrongUserId, {
+        userId: user.id,
+        refreshTokenId,
+        isRefreshToken: true,
+      })
+    }, invalidCredentialsTokenError)
+  })
+
+  test('fail to parse refresh token with wrong secret', async () => {
+    const tokens = await authTokenService.createTokens(
+      testJwtIf,
+      insertAuthToken,
+      user,
+      authTokenConfig,
+    )
+
+    expectThrow(() => {
+      authTokenService.parseRefreshToken(
         testJwtIf,
-        () => {
-          throw new Error('must not be called')
-        },
-        wrongUserId,
         tokens.refresh,
-        authTokenSecret,
+        'ThisIsWrongSecret',
       )
     }, invalidCredentialsTokenError)
   })

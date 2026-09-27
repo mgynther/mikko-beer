@@ -1,3 +1,4 @@
+import type { Pagination } from '../pagination.js'
 import type { Style } from '../style/style.js'
 import type { LockIds } from '../db.js'
 
@@ -100,3 +101,8 @@ export type ValidateBeerIdResult =
     }
 
 export type ValidateBeerId = (id: string | undefined) => ValidateBeerIdResult
+
+export interface BeerList {
+  beers: BeerWithBreweriesAndStyles[]
+  pagination: Pagination
+}

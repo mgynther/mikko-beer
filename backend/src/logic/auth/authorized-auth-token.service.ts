@@ -2,35 +2,38 @@ import * as authorizationService from '../internal/auth/authorization.service.js
 import * as authTokenService from '../internal/auth/validated-auth-token.service.js'
 
 import type { IdRequest } from '../request'
-import type { DbRefreshToken, ValidateRefreshToken } from './refresh-token'
-import type { ValidateUserId } from '../user/user.js'
-import type { JwtIf } from './auth-token.js'
+import type {
+  DbRefreshToken,
+  DeleteRefreshToken,
+  RefreshTokenPayload,
+} from './refresh-token'
+import type { User, ValidateUserId } from '../user/user.js'
 
-export async function deleteRefreshToken(
-  jwtIf: JwtIf,
+export interface DeleteRefreshTokenIf {
+  lockUserById: (userId: string) => Promise<User | undefined>
   findRefreshToken: (
     userId: string,
     refreshTokenId: string,
-  ) => Promise<DbRefreshToken | undefined>,
-  deleteRefreshToken: (refreshTokenId: string) => Promise<void>,
-  validateRefreshToken: ValidateRefreshToken,
+  ) => Promise<DbRefreshToken | undefined>
+  deleteRefreshToken: DeleteRefreshToken
+}
+
+export async function deleteRefreshToken(
+  deleteRefreshTokenIf: DeleteRefreshTokenIf,
   validateUserId: ValidateUserId,
   request: IdRequest,
-  body: unknown,
-  authTokenSecret: string,
+  refreshTokenPayload: RefreshTokenPayload,
 ): Promise<void> {
-  await authorizationService.authorizeUser(
+  await authorizationService.authorizeUserForUpdate(
     request.id,
     request.authTokenPayload,
-    findRefreshToken,
+    deleteRefreshTokenIf.lockUserById,
+    deleteRefreshTokenIf.findRefreshToken,
   )
   await authTokenService.deleteRefreshToken(
-    jwtIf,
-    deleteRefreshToken,
-    validateRefreshToken,
+    deleteRefreshTokenIf.deleteRefreshToken,
     validateUserId,
     request.id,
-    body,
-    authTokenSecret,
+    refreshTokenPayload,
   )
 }

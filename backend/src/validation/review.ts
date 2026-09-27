@@ -179,6 +179,18 @@ export interface ReviewListFilter {
   maxTime: Date
 }
 
+export interface ReviewListOrderQuery {
+  order: string | undefined
+  direction: string | undefined
+}
+
+export interface ReviewListFilterQuery {
+  minRating: string | undefined
+  maxRating: string | undefined
+  minTime: string | undefined
+  maxTime: string | undefined
+}
+
 export type FullReviewListOrderValidationResult =
   | {
       errorCode:
@@ -234,22 +246,22 @@ interface ReviewListOrderParams {
 }
 
 function reviewListOrderParamsOrDefaults(
-  query: Record<string, unknown>,
+  query: ReviewListOrderQuery,
   defaultProperty: ReviewListOrderProperty,
   defaultDirection: ListDirection,
 ): ReviewListOrderParams {
-  let { order, direction } = query
-  if (order === undefined || order === '') {
-    order = defaultProperty
+  const { order, direction } = query
+  return {
+    property: order === undefined || order === '' ? defaultProperty : order,
+    direction:
+      direction === undefined || direction === ''
+        ? defaultDirection
+        : direction,
   }
-  if (direction === undefined || direction === '') {
-    direction = defaultDirection
-  }
-  return { property: order, direction }
 }
 
 function validReviewListOrder(
-  query: Record<string, unknown>,
+  query: ReviewListOrderQuery,
   defaultProperty: ReviewListOrderProperty,
   defaultDirection: ListDirection,
 ): ReviewListOrder | undefined {
@@ -274,7 +286,7 @@ function validReviewListOrder(
 }
 
 export function validateFullReviewListOrder(
-  query: Record<string, unknown>,
+  query: ReviewListOrderQuery,
 ): FullReviewListOrderValidationResult {
   const reviewListOrder = validReviewListOrder(query, 'time', 'desc')
   if (reviewListOrder === undefined) {
@@ -304,7 +316,7 @@ export function validateFullReviewListOrder(
 }
 
 export function validateFilteredReviewListOrder(
-  query: Record<string, unknown>,
+  query: ReviewListOrderQuery,
 ): FilteredReviewListOrderValidationResult {
   const reviewListOrder = validReviewListOrder(query, 'beer_name', 'asc')
   if (reviewListOrder === undefined) {
@@ -335,14 +347,20 @@ const doValidateRatingFilter = ajv.compile<ReviewListFilterRatings>({
   additionalProperties: false,
 })
 
-function ratingOrDefault(value: unknown, defaultValue: number): number {
-  if (typeof value !== 'string' || value === '') {
+function ratingOrDefault(
+  value: string | undefined,
+  defaultValue: number,
+): number {
+  if (value === undefined || value === '') {
     return defaultValue
   }
   return parseInt(value)
 }
 
-function timeOrDefault(value: unknown, defaultValue: Date): Date | undefined {
+function timeOrDefault(
+  value: string | undefined,
+  defaultValue: Date,
+): Date | undefined {
   if (value === undefined || value === '') {
     return defaultValue
   }
@@ -350,18 +368,23 @@ function timeOrDefault(value: unknown, defaultValue: Date): Date | undefined {
 }
 
 export function validateReviewListFilter(
-  query: Record<string, unknown>,
+  query: ReviewListFilterQuery,
 ): ReviewListFilterValidationResult {
-  const { min_rating, max_rating, min_time, max_time } = query
   const ratings = {
-    minRating: ratingOrDefault(min_rating, defaultReviewListFilter.minRating),
-    maxRating: ratingOrDefault(max_rating, defaultReviewListFilter.maxRating),
+    minRating: ratingOrDefault(
+      query.minRating,
+      defaultReviewListFilter.minRating,
+    ),
+    maxRating: ratingOrDefault(
+      query.maxRating,
+      defaultReviewListFilter.maxRating,
+    ),
   }
   if (!doValidateRatingFilter(ratings)) {
     return { errorCode: 'invalid-review-list-query-filter', result: undefined }
   }
-  const minTime = timeOrDefault(min_time, defaultReviewListFilter.minTime)
-  const maxTime = timeOrDefault(max_time, defaultReviewListFilter.maxTime)
+  const minTime = timeOrDefault(query.minTime, defaultReviewListFilter.minTime)
+  const maxTime = timeOrDefault(query.maxTime, defaultReviewListFilter.maxTime)
   if (minTime === undefined || maxTime === undefined) {
     return { errorCode: 'invalid-review-list-query-filter', result: undefined }
   }

@@ -1,3 +1,4 @@
+import type { Pagination, ValidatePagination } from '../pagination.js'
 import type { Container } from '../container/container.js'
 import type { ListDirection } from '../list.js'
 
@@ -155,3 +156,85 @@ export type ValidateReviewIdResult =
 export type ValidateReviewId = (
   id: string | undefined,
 ) => ValidateReviewIdResult
+
+export interface ReviewListOrderQuery {
+  order: string | undefined
+  direction: string | undefined
+}
+
+export interface ReviewListFilterQuery {
+  minRating: string | undefined
+  maxRating: string | undefined
+  minTime: string | undefined
+  maxTime: string | undefined
+}
+
+export interface ReviewListQuery
+  extends ReviewListOrderQuery, ReviewListFilterQuery {}
+
+export type FullReviewListOrderValidationResult =
+  | {
+      errorCode:
+        | 'invalid-review-list-query-order'
+        | 'invalid-review-list-query-beer-name'
+        | 'invalid-review-list-query-brewery-name'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: FullReviewListOrder
+    }
+
+export type ValidateFullReviewListOrder = (
+  query: ReviewListOrderQuery,
+) => FullReviewListOrderValidationResult
+
+type FilteredReviewListOrderValidationResult =
+  | {
+      errorCode: 'invalid-review-list-query-order'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: ReviewListOrder
+    }
+
+type ValidateFilteredReviewListOrder = (
+  query: ReviewListOrderQuery,
+) => FilteredReviewListOrderValidationResult
+
+type ReviewListFilterValidationResult =
+  | {
+      errorCode: 'invalid-review-list-query-filter'
+      result: undefined
+    }
+  | {
+      errorCode: undefined
+      result: ReviewListFilter
+    }
+
+export type ValidateReviewListFilter = (
+  query: ReviewListFilterQuery,
+) => ReviewListFilterValidationResult
+
+export interface ValidateFilteredReviewList {
+  order: ValidateFilteredReviewListOrder
+  filter: ValidateReviewListFilter
+}
+
+export interface ValidateFullReviewList {
+  order: ValidateFullReviewListOrder
+  filter: ValidateReviewListFilter
+  pagination: ValidatePagination
+}
+
+export interface FilteredReviewList {
+  reviews: JoinedReview[]
+  order: ReviewListOrder
+}
+
+export interface ReviewList {
+  reviews: JoinedReview[]
+  pagination: Pagination
+  order: FullReviewListOrder
+}

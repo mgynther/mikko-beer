@@ -1,4 +1,8 @@
-import type { Database, Transaction } from '../database.js'
+import type { Kysely, Selectable, SelectQueryBuilder } from 'kysely'
+
+import type { Database, KyselyDatabase, Transaction } from '../database.js'
+import type { UserTable } from '../user/user.table.js'
+import type { RefreshTokenTable } from './refresh-token.table.js'
 
 export interface DbRefreshToken {
   id: string
@@ -31,32 +35,59 @@ export async function findRefreshToken(
   userId: string,
   refreshTokenId: string,
 ): Promise<DbRefreshToken | undefined> {
-  const token = await db
-    .getDb()
+  const token = await selectRefreshToken(
+    db.getDb(),
+    userId,
+    refreshTokenId,
+  ).executeTakeFirst()
+  return token === undefined ? undefined : toDbRefreshToken(token)
+}
+
+// Locks the refresh token row only. Locking the user row is left to the
+// caller, which decides the order the two are locked in.
+export async function findRefreshTokenInTransaction(
+  trx: Transaction,
+  userId: string,
+  refreshTokenId: string,
+): Promise<DbRefreshToken | undefined> {
+  const token = await selectRefreshToken(trx.trx(), userId, refreshTokenId)
+    .forShare('rt')
+    .executeTakeFirst()
+  return token === undefined ? undefined : toDbRefreshToken(token)
+}
+
+function selectRefreshToken(
+  db: Kysely<KyselyDatabase>,
+  userId: string,
+  refreshTokenId: string,
+): SelectQueryBuilder<
+  KyselyDatabase & { rt: RefreshTokenTable; u: UserTable },
+  'rt' | 'u',
+  Selectable<RefreshTokenTable>
+> {
+  return db
     .selectFrom('refresh_token as rt')
     .selectAll('rt')
     .innerJoin('user as u', 'rt.user_id', 'u.user_id')
     .where('u.user_id', '=', userId)
     .where('rt.refresh_token_id', '=', refreshTokenId)
-    .executeTakeFirst()
+}
 
-  if (token === undefined) {
-    return undefined
-  }
-
+function toDbRefreshToken(row: Selectable<RefreshTokenTable>): DbRefreshToken {
   return {
-    id: token.refresh_token_id,
-    userId: token.user_id,
+    id: row.refresh_token_id,
+    userId: row.user_id,
   }
 }
 
 export async function deleteRefreshToken(
-  db: Database,
+  trx: Transaction,
   refreshTokenId: string,
-): Promise<void> {
-  await db
-    .getDb()
+): Promise<boolean> {
+  const result = await trx
+    .trx()
     .deleteFrom('refresh_token')
     .where('refresh_token_id', '=', refreshTokenId)
-    .execute()
+    .executeTakeFirstOrThrow()
+  return result.numDeletedRows > 0n
 }

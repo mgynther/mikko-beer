@@ -111,7 +111,7 @@ const rules = {
 
 // Every directory under src is a layer. A layer may import only from
 // itself, so that the dependencies between them stay explicit and
-// reviewable. web/ is the single exception: it wires the other layers
+// reviewable. wiring/ is the single exception: it wires the other layers
 // together and may import all of them, restricted only from reaching
 // their internals.
 //
@@ -119,7 +119,7 @@ const rules = {
 // keeps the rule impossible to state inconsistently: a new layer is
 // banned from every other layer, and every other layer is banned from
 // it, by adding one name.
-const wiringLayer = 'web'
+const wiringLayer = 'wiring'
 const layers = [
   'console',
   'crypto',
@@ -127,6 +127,7 @@ const layers = [
   'jwt',
   'logic',
   'validation',
+  'web',
   wiringLayer,
 ]
 
@@ -159,7 +160,7 @@ if (unregisteredLayers.length > 0) {
 //
 // logic/ is empty on purpose and must stay that way. It is what keeps the
 // business logic immune to dependency upgrades: everything it needs arrives
-// as a callback or a plain value supplied by web/.
+// as a callback or a plain value supplied by wiring/.
 const layerDependencies = {
   console: [],
   crypto: ['node:crypto'],
@@ -175,8 +176,8 @@ const layerDependencies = {
     'node:events',
     'node:http',
     'node:querystring',
-    'uuid',
   ],
+  wiring: ['uuid'],
 }
 
 // Files directly under src/ are the entry points and the shared env helper.
@@ -219,7 +220,7 @@ function otherLayerPatterns(layer) {
     }))
 }
 
-// web/ uses the other layers through their public modules only. Their
+// wiring/ uses the other layers through their public modules only. Their
 // internal/ directories are the layer's own business and are derived
 // from the same list, so a new layer gets its internals protected
 // without a separate edit here.
@@ -287,6 +288,30 @@ const assertionImport = {
   message: 'Use the assertions of test/assert.ts.',
 }
 
+// A request handler returns a response body, and the function type it is
+// assigned to, whether a route of the web layer or a handler of the wiring
+// layer, is what says which body. The default allowTypedFunctionExpressions
+// lets exactly those functions off the hook, because the type they are
+// assigned to already gives them one, so it is turned off in both layers.
+//
+// The annotation must be on the function itself: only a return type
+// annotation gets the returned object literal checked against the declared
+// type, which is what catches excess properties in a response body.
+// Contextual typing does not.
+//
+// This also requires return types on every other lambda of the two layers.
+// That is accepted on purpose. The alternative, a rule matching handlers
+// alone, has to recognize them by the name of the variable they are
+// registered on and silently stops applying when that name changes.
+const explicitHandlerReturnTypes = {
+  '@typescript-eslint/explicit-function-return-type': [
+    'error',
+    {
+      allowTypedFunctionExpressions: false,
+    },
+  ],
+}
+
 export default [
   {
     languageOptions,
@@ -296,38 +321,18 @@ export default [
   },
   ...isolatedLayerConfigs,
   {
+    files: layerFiles('web'),
+    rules: {
+      ...explicitHandlerReturnTypes,
+    },
+  },
+  {
     languageOptions,
     plugins,
     files: layerFiles(wiringLayer),
     rules: {
       ...rules,
-      // The router is data agnostic and has to remain so: a RequestHandler
-      // returns a Response whose body is Record<string, unknown>. An
-      // inferred return type on a route handler therefore states nothing
-      // about the actual response shape, and the shape has to be declared
-      // by the controller. The default allowTypedFunctionExpressions lets
-      // exactly those handlers off the hook, because the Router interface
-      // already gives them a type, so it is turned off here.
-      //
-      // The annotation must be on the lambda rather than on a type
-      // parameter of the router: only a return type annotation gets the
-      // returned object literal checked against the declared type, which
-      // is what catches excess properties in a response body. Contextual
-      // typing through the router does not.
-      //
-      // This also requires return types on every other lambda of the
-      // layer. That is accepted on purpose. The alternative, a rule
-      // matching route handlers alone, has to recognize them by the name
-      // of the variable they are registered on and silently stops
-      // applying when that name changes.
-      '@typescript-eslint/explicit-function-return-type': [
-        'error',
-        {
-          allowTypedFunctionExpressions: false,
-        },
-      ],
-      // Koa context requires assigning status and body.
-      'no-param-reassign': 'off',
+      ...explicitHandlerReturnTypes,
       ...restrictedImports([
         ...layerInternalPatterns(),
         dependencyPattern(`${wiringLayer}/`, layerDependencies[wiringLayer]),

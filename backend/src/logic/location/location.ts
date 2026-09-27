@@ -1,3 +1,5 @@
+import type { Pagination } from '../pagination.js'
+
 export interface Location {
   id: string
   name: string
@@ -57,3 +59,8 @@ export type ValidateLocationIdResult =
 export type ValidateLocationId = (
   id: string | undefined,
 ) => ValidateLocationIdResult
+
+export interface LocationList {
+  locations: Location[]
+  pagination: Pagination
+}

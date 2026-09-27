@@ -4,6 +4,7 @@ import * as reviewService from '../../../../src/logic/internal/review/validated.
 
 import type {
   CreateIf,
+  FullReviewListRequest,
   JoinedReview,
   ReviewListRequest,
   UpdateIf,
@@ -17,6 +18,7 @@ import {
   invalidBeerIdError,
   invalidBreweryIdError,
   invalidLocationIdError,
+  invalidPaginationError,
   invalidReviewError,
   invalidReviewIdError,
   invalidStyleIdError,
@@ -28,6 +30,13 @@ import {
   buildReviewListFilter,
   buildUpdateReviewRequest,
 } from '../../review/builders.js'
+import {
+  defaultReviewListQuery,
+  passFilteredReviewListValidation,
+  passFullReviewListValidation,
+} from '../../review/list-validation.js'
+import { failPaginationValidation } from '../../pagination-validation.js'
+import { mockFunction } from '../../../mock.js'
 
 const storageId = '970c40b2-94ad-4825-b683-c3f5e9046063'
 
@@ -134,6 +143,37 @@ suite('review validated service unit tests', () => {
     }, invalidReviewError)
   })
 
+  test('create review from storage', async () => {
+    const deleteFromStorage = mockFunction<[storageId: string], Promise<void>>(
+      async () => undefined,
+    )
+    await reviewService.createReview(
+      { ...createIf, deleteFromStorage },
+      passCreateValidation,
+      validCreateReviewRequest,
+      storageId,
+      log,
+    )
+    assertDeepEqual(
+      deleteFromStorage.mock.calls.map((call) => call.arguments),
+      [[storageId]],
+    )
+  })
+
+  test('create review without storage for an empty storage', async () => {
+    const deleteFromStorage = mockFunction<[storageId: string], Promise<void>>(
+      async () => undefined,
+    )
+    await reviewService.createReview(
+      { ...createIf, deleteFromStorage },
+      passCreateValidation,
+      validCreateReviewRequest,
+      '',
+      log,
+    )
+    assertEqual(deleteFromStorage.mock.callCount(), 0)
+  })
+
   test('update review', async () => {
     await reviewService.updateReview(
       updateIf,
@@ -204,11 +244,15 @@ suite('review validated service unit tests', () => {
     const result = await reviewService.listReviewsByBeer(
       async () => joinedReviews,
       () => ({ errorCode: undefined, result: beerId }),
+      passFilteredReviewListValidation(reviewListRequest),
       beerId,
-      reviewListRequest,
+      defaultReviewListQuery,
       log,
     )
-    assertDeepEqual(result, joinedReviews)
+    assertDeepEqual(result, {
+      reviews: joinedReviews,
+      order: reviewListRequest.order,
+    })
   })
 
   test('fail to list reviews by invalid beer id', async () => {
@@ -216,8 +260,9 @@ suite('review validated service unit tests', () => {
       await reviewService.listReviewsByBeer(
         notCalled,
         () => ({ errorCode: 'invalid-beer-id', result: undefined }),
+        passFilteredReviewListValidation(reviewListRequest),
         undefined,
-        reviewListRequest,
+        defaultReviewListQuery,
         log,
       )
     }, invalidBeerIdError)
@@ -229,11 +274,15 @@ suite('review validated service unit tests', () => {
     const result = await reviewService.listReviewsByBrewery(
       async () => joinedReviews,
       () => ({ errorCode: undefined, result: breweryId }),
+      passFilteredReviewListValidation(reviewListRequest),
       breweryId,
-      reviewListRequest,
+      defaultReviewListQuery,
       log,
     )
-    assertDeepEqual(result, joinedReviews)
+    assertDeepEqual(result, {
+      reviews: joinedReviews,
+      order: reviewListRequest.order,
+    })
   })
 
   test('fail to list reviews by invalid brewery id', async () => {
@@ -241,8 +290,9 @@ suite('review validated service unit tests', () => {
       await reviewService.listReviewsByBrewery(
         notCalled,
         () => ({ errorCode: 'invalid-brewery-id', result: undefined }),
+        passFilteredReviewListValidation(reviewListRequest),
         undefined,
-        reviewListRequest,
+        defaultReviewListQuery,
         log,
       )
     }, invalidBreweryIdError)
@@ -254,11 +304,15 @@ suite('review validated service unit tests', () => {
     const result = await reviewService.listReviewsByLocation(
       async () => joinedReviews,
       () => ({ errorCode: undefined, result: locationId }),
+      passFilteredReviewListValidation(reviewListRequest),
       locationId,
-      reviewListRequest,
+      defaultReviewListQuery,
       log,
     )
-    assertDeepEqual(result, joinedReviews)
+    assertDeepEqual(result, {
+      reviews: joinedReviews,
+      order: reviewListRequest.order,
+    })
   })
 
   test('fail to list reviews by invalid location id', async () => {
@@ -266,8 +320,9 @@ suite('review validated service unit tests', () => {
       await reviewService.listReviewsByLocation(
         notCalled,
         () => ({ errorCode: 'invalid-location-id', result: undefined }),
+        passFilteredReviewListValidation(reviewListRequest),
         undefined,
-        reviewListRequest,
+        defaultReviewListQuery,
         log,
       )
     }, invalidLocationIdError)
@@ -279,11 +334,15 @@ suite('review validated service unit tests', () => {
     const result = await reviewService.listReviewsByStyle(
       async () => joinedReviews,
       () => ({ errorCode: undefined, result: styleId }),
+      passFilteredReviewListValidation(reviewListRequest),
       styleId,
-      reviewListRequest,
+      defaultReviewListQuery,
       log,
     )
-    assertDeepEqual(result, joinedReviews)
+    assertDeepEqual(result, {
+      reviews: joinedReviews,
+      order: reviewListRequest.order,
+    })
   })
 
   test('fail to list reviews by invalid style id', async () => {
@@ -291,10 +350,53 @@ suite('review validated service unit tests', () => {
       await reviewService.listReviewsByStyle(
         notCalled,
         () => ({ errorCode: 'invalid-style-id', result: undefined }),
+        passFilteredReviewListValidation(reviewListRequest),
         undefined,
-        reviewListRequest,
+        defaultReviewListQuery,
         log,
       )
     }, invalidStyleIdError)
+  })
+
+  const fullReviewListRequest: FullReviewListRequest = {
+    filter: buildReviewListFilter(),
+    order: { property: 'rating', direction: 'desc' },
+  }
+
+  test('list reviews', async () => {
+    const joinedReviews: JoinedReview[] = []
+    const result = await reviewService.listReviews(
+      async () => joinedReviews,
+      passFullReviewListValidation(fullReviewListRequest, {
+        size: 20,
+        skip: 0,
+      }),
+      { size: '20', skip: '0' },
+      defaultReviewListQuery,
+      log,
+    )
+    assertDeepEqual(result, {
+      reviews: joinedReviews,
+      pagination: { size: 20, skip: 0 },
+      order: fullReviewListRequest.order,
+    })
+  })
+
+  test('fail to list reviews with invalid pagination', async () => {
+    await expectReject(async () => {
+      await reviewService.listReviews(
+        notCalled,
+        {
+          ...passFullReviewListValidation(fullReviewListRequest, {
+            size: 20,
+            skip: 0,
+          }),
+          pagination: failPaginationValidation,
+        },
+        { size: 'invalid', skip: '0' },
+        defaultReviewListQuery,
+        log,
+      )
+    }, invalidPaginationError)
   })
 })

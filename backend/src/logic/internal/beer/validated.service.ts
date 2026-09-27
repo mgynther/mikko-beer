@@ -1,6 +1,7 @@
 import * as beerService from './service.js'
 
 import type {
+  BeerList,
   BeerWithBreweriesAndStyles,
   BeerWithBreweryAndStyleIds,
   CreateIf,
@@ -18,7 +19,12 @@ import {
 } from '../../errors.js'
 
 import type { log } from '../../log.js'
-import type { Pagination } from '../../pagination.js'
+import type {
+  Pagination,
+  PaginationQuery,
+  ValidatePagination,
+} from '../../pagination.js'
+import { validPagination } from '../pagination.js'
 
 export async function createBeer(
   createIf: CreateIf,
@@ -72,10 +78,13 @@ export async function findBeerById(
 
 export async function listBeers(
   list: (pagination: Pagination) => Promise<BeerWithBreweriesAndStyles[]>,
-  pagination: Pagination,
+  validatePagination: ValidatePagination,
+  query: PaginationQuery,
   log: log,
-): Promise<BeerWithBreweriesAndStyles[]> {
-  return await beerService.listBeers(list, pagination, log)
+): Promise<BeerList> {
+  const pagination = validPagination(validatePagination, query)
+  const beers = await beerService.listBeers(list, pagination, log)
+  return { beers, pagination }
 }
 
 export async function searchBeers(

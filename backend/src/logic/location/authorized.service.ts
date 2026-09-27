@@ -8,9 +8,10 @@ import type {
   ValidateCreateLocation,
   ValidateLocationId,
   ValidateUpdateLocation,
+  LocationList,
 } from '../location/location'
 import type { log } from '../log.js'
-import type { Pagination } from '../pagination.js'
+import type { Pagination, ValidatePagination } from '../pagination.js'
 import type { SearchByName, ValidateSearchByName } from '../search.js'
 
 export async function createLocation(
@@ -62,11 +63,17 @@ export async function findLocationById(
 
 export async function listLocations(
   list: (pagination: Pagination) => Promise<Location[]>,
+  validatePagination: ValidatePagination,
   request: PaginationRequest,
   log: log,
-): Promise<Location[]> {
+): Promise<LocationList> {
   authorizationService.authorizeViewer(request.authTokenPayload)
-  return await locationService.listLocations(list, request.pagination, log)
+  return await locationService.listLocations(
+    list,
+    validatePagination,
+    request.pagination,
+    log,
+  )
 }
 
 export async function searchLocations(

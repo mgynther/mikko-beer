@@ -6,9 +6,15 @@ import type {
   ValidateCreateLocation,
   ValidateLocationId,
   ValidateUpdateLocation,
+  LocationList,
 } from '../../location/location.js'
 import type { log } from '../../log.js'
-import type { Pagination } from '../../pagination.js'
+import type {
+  Pagination,
+  PaginationQuery,
+  ValidatePagination,
+} from '../../pagination.js'
+import { validPagination } from '../pagination.js'
 import type { SearchByName, ValidateSearchByName } from '../../search.js'
 import {
   invalidLocationError,
@@ -72,10 +78,13 @@ export async function findLocationById(
 
 export async function listLocations(
   list: (pagination: Pagination) => Promise<Location[]>,
-  pagination: Pagination,
+  validatePagination: ValidatePagination,
+  query: PaginationQuery,
   log: log,
-): Promise<Location[]> {
-  return await locationService.listLocations(list, pagination, log)
+): Promise<LocationList> {
+  const pagination = validPagination(validatePagination, query)
+  const locations = await locationService.listLocations(list, pagination, log)
+  return { locations, pagination }
 }
 
 export async function searchLocations(

@@ -1,3 +1,5 @@
+import type { Pagination } from '../pagination.js'
+
 export interface Brewery {
   id: string
   name: string
@@ -59,3 +61,8 @@ export type ValidateBreweryIdResult =
 export type ValidateBreweryId = (
   id: string | undefined,
 ) => ValidateBreweryIdResult
+
+export interface BreweryList {
+  breweries: Brewery[]
+  pagination: Pagination
+}

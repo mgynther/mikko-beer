@@ -1,4 +1,5 @@
 import { suite, test } from '../../test.js'
+import { passPaginationValidation } from '../pagination-validation.js'
 
 import * as locationService from '../../../src/logic/location/authorized.service.js'
 
@@ -147,13 +148,17 @@ suite('location authorized service unit tests', () => {
     test(`list breweries as ${token.role}`, async () => {
       const result = await locationService.listLocations(
         async () => [location],
+        passPaginationValidation({ skip: 0, size: 10 }),
         {
           authTokenPayload: token,
-          pagination: { skip: 0, size: 10 },
+          pagination: { skip: '0', size: '10' },
         },
         log,
       )
-      assertDeepEqual(result, [location])
+      assertDeepEqual(result, {
+        locations: [location],
+        pagination: { skip: 0, size: 10 },
+      })
     })
 
     test(`searches breweries as ${token.role}`, async () => {

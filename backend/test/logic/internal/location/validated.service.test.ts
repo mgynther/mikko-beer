@@ -14,7 +14,14 @@ import {
   invalidLocationError,
   invalidLocationIdError,
   invalidSearchError,
+  invalidPaginationError,
 } from '../../../../src/logic/errors.js'
+import type { Pagination } from '../../../../src/logic/pagination.js'
+import { mockFunction } from '../../../mock.js'
+import {
+  failPaginationValidation,
+  passPaginationValidation,
+} from '../../pagination-validation.js'
 import { assertDeepEqual, assertEqual } from '../../../assert.js'
 import {
   buildCreateLocationRequest,
@@ -181,5 +188,36 @@ suite('location validated service unit tests', () => {
         log,
       )
     }, invalidSearchError)
+  })
+
+  test('list locations with the pagination validated', async () => {
+    const list = mockFunction<[pagination: Pagination], Promise<never[]>>(
+      async () => [],
+    )
+    const result = await locationService.listLocations(
+      list,
+      passPaginationValidation({ size: 20, skip: 40 }),
+      { size: '20', skip: '40' },
+      log,
+    )
+    assertDeepEqual(result, {
+      locations: [],
+      pagination: { size: 20, skip: 40 },
+    })
+    assertDeepEqual(
+      list.mock.calls.map((call) => call.arguments),
+      [[{ size: 20, skip: 40 }]],
+    )
+  })
+
+  test('fail to list locations with invalid pagination', async () => {
+    await expectReject(async () => {
+      await locationService.listLocations(
+        async () => [],
+        failPaginationValidation,
+        { size: 'invalid', skip: '40' },
+        log,
+      )
+    }, invalidPaginationError)
   })
 })

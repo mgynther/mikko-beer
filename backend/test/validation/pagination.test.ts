@@ -2,19 +2,19 @@ import { suite, test } from '../test.js'
 
 import type {
   Pagination,
-  PaginationRequest,
+  PaginationQuery,
 } from '../../src/validation/pagination.js'
 import { validatePagination } from '../../src/validation/pagination.js'
 
 import { assertDeepEqual, assertEqual } from '../assert.js'
 
 suite('pagination validation unit tests', () => {
-  function pass(input: PaginationRequest, output: Pagination) {
+  function pass(input: PaginationQuery, output: Pagination) {
     const validationResult = validatePagination(input)
     assertEqual(validationResult.errorCode, undefined)
     assertDeepEqual(validationResult.result, output)
   }
-  function fail(input: PaginationRequest) {
+  function fail(input: PaginationQuery) {
     const validationResult = validatePagination(input)
     assertEqual(validationResult.errorCode, 'invalid-pagination')
     assertEqual(validationResult.result, undefined)
@@ -42,12 +42,6 @@ suite('pagination validation unit tests', () => {
   })
   test('fail validation with empty skip', () => {
     fail({ size: '1', skip: '' })
-  })
-  test('fail validation with array size', () => {
-    fail({ size: ['1'], skip: '2' })
-  })
-  test('fail validation with array skip', () => {
-    fail({ size: '1', skip: ['2'] })
   })
   test('fail validation with zero size', () => {
     fail({ size: '0', skip: '5' })

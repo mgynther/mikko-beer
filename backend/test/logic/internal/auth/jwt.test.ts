@@ -10,6 +10,7 @@ import {
   AuthTokenExpiredError,
   InvalidAuthTokenError,
 } from '../../../../src/logic/auth/auth-token.js'
+import type { RefreshTokenPayload } from '../../../../src/logic/auth/refresh-token.js'
 import { assertDeepEqual, assertThrows } from '../../../assert.js'
 import { buildAuthTokenPayload } from '../../auth/builders.js'
 
@@ -22,7 +23,7 @@ const authTokenConfig: AuthTokenConfig = {
 
 const authTokenPayload = buildAuthTokenPayload()
 
-const refreshTokenPayload: jwt.RefreshTokenPayload = {
+const refreshTokenPayload: RefreshTokenPayload = {
   userId: '6b58d7a1-25b6-4f22-b2e4-3a40aa8d4a44',
   refreshTokenId: '1fbb1e58-1b63-4b0a-9d35-3f5a42f0cf52',
   isRefreshToken: true,

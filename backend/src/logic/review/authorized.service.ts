@@ -3,18 +3,23 @@ import * as reviewService from '../internal/review/validated.service.js'
 
 import type {
   CreateIf,
+  FilteredReviewList,
+  FullReviewListRequest,
   JoinedReview,
   Review,
-  FullReviewListRequest,
+  ReviewList,
+  ReviewListQuery,
   ReviewListRequest,
   UpdateIf,
+  ValidateFilteredReviewList,
+  ValidateFullReviewList,
   ValidateCreateReview,
   ValidateReviewId,
   ValidateUpdateReview,
 } from './review'
 import type { log } from '../log.js'
 import type { BodyRequest, IdRequest } from '../request'
-import type { Pagination } from '../pagination'
+import type { Pagination, PaginationQuery } from '../pagination'
 import type { AuthTokenPayload } from '../auth/auth-token'
 import type { ValidateBeerId } from '../beer/beer.js'
 import type { ValidateBreweryId } from '../brewery/brewery.js'
@@ -25,7 +30,7 @@ export async function createReview(
   createIf: CreateIf,
   validate: ValidateCreateReview,
   request: BodyRequest,
-  fromStorageId: string | undefined,
+  fromStorage: string | undefined,
   log: log,
 ): Promise<Review> {
   authorizationService.authorizeAdmin(request.authTokenPayload)
@@ -33,7 +38,7 @@ export async function createReview(
     createIf,
     validate,
     request.body,
-    fromStorageId,
+    fromStorage,
     log,
   )
 }
@@ -75,16 +80,18 @@ export async function listReviews(
     pagination: Pagination,
     reviewListRequest: FullReviewListRequest,
   ) => Promise<JoinedReview[]>,
+  validate: ValidateFullReviewList,
   authTokenPayload: AuthTokenPayload,
-  pagination: Pagination,
-  reviewListRequest: FullReviewListRequest,
+  paginationQuery: PaginationQuery,
+  query: ReviewListQuery,
   log: log,
-): Promise<JoinedReview[]> {
+): Promise<ReviewList> {
   authorizationService.authorizeViewer(authTokenPayload)
   return await reviewService.listReviews(
     list,
-    pagination,
-    reviewListRequest,
+    validate,
+    paginationQuery,
+    query,
     log,
   )
 }
@@ -95,16 +102,18 @@ export async function listReviewsByBeer(
     reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
   validateBeerId: ValidateBeerId,
+  validate: ValidateFilteredReviewList,
   request: IdRequest,
-  reviewListRequest: ReviewListRequest,
+  query: ReviewListQuery,
   log: log,
-): Promise<JoinedReview[]> {
+): Promise<FilteredReviewList> {
   authorizationService.authorizeViewer(request.authTokenPayload)
   return await reviewService.listReviewsByBeer(
     list,
     validateBeerId,
+    validate,
     request.id,
-    reviewListRequest,
+    query,
     log,
   )
 }
@@ -115,16 +124,18 @@ export async function listReviewsByBrewery(
     reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
   validateBreweryId: ValidateBreweryId,
+  validate: ValidateFilteredReviewList,
   request: IdRequest,
-  reviewListRequest: ReviewListRequest,
+  query: ReviewListQuery,
   log: log,
-): Promise<JoinedReview[]> {
+): Promise<FilteredReviewList> {
   authorizationService.authorizeViewer(request.authTokenPayload)
   return await reviewService.listReviewsByBrewery(
     list,
     validateBreweryId,
+    validate,
     request.id,
-    reviewListRequest,
+    query,
     log,
   )
 }
@@ -135,16 +146,18 @@ export async function listReviewsByLocation(
     reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
   validateLocationId: ValidateLocationId,
+  validate: ValidateFilteredReviewList,
   request: IdRequest,
-  reviewListRequest: ReviewListRequest,
+  query: ReviewListQuery,
   log: log,
-): Promise<JoinedReview[]> {
+): Promise<FilteredReviewList> {
   authorizationService.authorizeViewer(request.authTokenPayload)
   return await reviewService.listReviewsByLocation(
     list,
     validateLocationId,
+    validate,
     request.id,
-    reviewListRequest,
+    query,
     log,
   )
 }
@@ -155,16 +168,18 @@ export async function listReviewsByStyle(
     reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
   validateStyleId: ValidateStyleId,
+  validate: ValidateFilteredReviewList,
   request: IdRequest,
-  reviewListRequest: ReviewListRequest,
+  query: ReviewListQuery,
   log: log,
-): Promise<JoinedReview[]> {
+): Promise<FilteredReviewList> {
   authorizationService.authorizeViewer(request.authTokenPayload)
   return await reviewService.listReviewsByStyle(
     list,
     validateStyleId,
+    validate,
     request.id,
-    reviewListRequest,
+    query,
     log,
   )
 }

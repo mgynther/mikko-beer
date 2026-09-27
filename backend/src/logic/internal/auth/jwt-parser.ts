@@ -1,7 +1,7 @@
 import { InvalidAuthTokenError } from '../../auth/auth-token.js'
 import type { AuthTokenPayload } from '../../auth/auth-token.js'
 import type { Role } from '../../user/user.js'
-import type { RefreshTokenPayload } from './jwt.js'
+import type { RefreshTokenPayload } from '../../auth/refresh-token.js'
 
 function isRole(role: string): role is Role {
   switch (role) {

@@ -1,4 +1,5 @@
 import { suite, test } from '../../test.js'
+import { passPaginationValidation } from '../pagination-validation.js'
 
 import * as storageService from '../../../src/logic/storage/authorized.service.js'
 
@@ -197,11 +198,17 @@ suite('storage authorized service unit tests', () => {
     test(`list storages as ${token.role}`, async () => {
       const result = await storageService.listStorages(
         async () => [joinedStorage],
-        token,
-        { skip: 0, size: 20 },
+        passPaginationValidation({ skip: 0, size: 20 }),
+        {
+          authTokenPayload: token,
+          pagination: { skip: '0', size: '20' },
+        },
         log,
       )
-      assertDeepEqual(result, [joinedStorage])
+      assertDeepEqual(result, {
+        storages: [joinedStorage],
+        pagination: { skip: 0, size: 20 },
+      })
     })
 
     test(`list storages by beer as ${token.role}`, async () => {

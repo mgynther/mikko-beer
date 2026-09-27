@@ -2,17 +2,27 @@ import * as reviewService from './service.js'
 
 import type {
   CreateIf,
+  FilteredReviewList,
+  FullReviewListRequest,
   JoinedReview,
   Review,
-  FullReviewListRequest,
+  ReviewList,
+  ReviewListQuery,
   ReviewListRequest,
   UpdateIf,
   ValidateCreateReview,
+  ValidateFilteredReviewList,
+  ValidateFullReviewList,
   ValidateReviewId,
   ValidateUpdateReview,
 } from '../../review/review.js'
 import type { log } from '../../log.js'
-import type { Pagination } from '../../pagination.js'
+import type { Pagination, PaginationQuery } from '../../pagination.js'
+import { validPagination } from '../pagination.js'
+import {
+  validFilteredReviewListRequest,
+  validFullReviewListRequest,
+} from './list-query.js'
 import type { ValidateBeerId } from '../../beer/beer.js'
 import type { ValidateLocationId } from '../../location/location.js'
 import type { ValidateBreweryId } from '../../brewery/brewery.js'
@@ -30,13 +40,14 @@ export async function createReview(
   createIf: CreateIf,
   validate: ValidateCreateReview,
   body: unknown,
-  fromStorageId: string | undefined,
+  fromStorage: string | undefined,
   log: log,
 ): Promise<Review> {
   const validationResult = validate(body)
   if (validationResult.errorCode === 'invalid-review') {
     throw invalidReviewError
   }
+  const fromStorageId = fromStorage === '' ? undefined : fromStorage
   return await reviewService.createReview(
     createIf,
     validationResult.result,
@@ -87,16 +98,20 @@ export async function listReviews(
     pagination: Pagination,
     reviewListRequest: FullReviewListRequest,
   ) => Promise<JoinedReview[]>,
-  pagination: Pagination,
-  reviewListRequest: FullReviewListRequest,
+  validate: ValidateFullReviewList,
+  paginationQuery: PaginationQuery,
+  query: ReviewListQuery,
   log: log,
-): Promise<JoinedReview[]> {
-  return await reviewService.listReviews(
+): Promise<ReviewList> {
+  const reviewListRequest = validFullReviewListRequest(validate, query)
+  const pagination = validPagination(validate.pagination, paginationQuery)
+  const reviews = await reviewService.listReviews(
     list,
     pagination,
     reviewListRequest,
     log,
   )
+  return { reviews, pagination, order: reviewListRequest.order }
 }
 
 export async function listReviewsByBeer(
@@ -105,20 +120,23 @@ export async function listReviewsByBeer(
     reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
   validateBeerId: ValidateBeerId,
+  validate: ValidateFilteredReviewList,
   beerId: string | undefined,
-  reviewListRequest: ReviewListRequest,
+  query: ReviewListQuery,
   log: log,
-): Promise<JoinedReview[]> {
+): Promise<FilteredReviewList> {
+  const reviewListRequest = validFilteredReviewListRequest(validate, query)
   const idResult = validateBeerId(beerId)
   if (idResult.errorCode === 'invalid-beer-id') {
     throw invalidBeerIdError
   }
-  return await reviewService.listReviewsByBeer(
+  const reviews = await reviewService.listReviewsByBeer(
     list,
     idResult.result,
     reviewListRequest,
     log,
   )
+  return { reviews, order: reviewListRequest.order }
 }
 
 export async function listReviewsByBrewery(
@@ -127,20 +145,23 @@ export async function listReviewsByBrewery(
     reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
   validateBreweryId: ValidateBreweryId,
+  validate: ValidateFilteredReviewList,
   breweryId: string | undefined,
-  reviewListRequest: ReviewListRequest,
+  query: ReviewListQuery,
   log: log,
-): Promise<JoinedReview[]> {
+): Promise<FilteredReviewList> {
+  const reviewListRequest = validFilteredReviewListRequest(validate, query)
   const idResult = validateBreweryId(breweryId)
   if (idResult.errorCode === 'invalid-brewery-id') {
     throw invalidBreweryIdError
   }
-  return await reviewService.listReviewsByBrewery(
+  const reviews = await reviewService.listReviewsByBrewery(
     list,
     idResult.result,
     reviewListRequest,
     log,
   )
+  return { reviews, order: reviewListRequest.order }
 }
 
 export async function listReviewsByLocation(
@@ -149,20 +170,23 @@ export async function listReviewsByLocation(
     reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
   validateLocationId: ValidateLocationId,
+  validate: ValidateFilteredReviewList,
   locationId: string | undefined,
-  reviewListRequest: ReviewListRequest,
+  query: ReviewListQuery,
   log: log,
-): Promise<JoinedReview[]> {
+): Promise<FilteredReviewList> {
+  const reviewListRequest = validFilteredReviewListRequest(validate, query)
   const idResult = validateLocationId(locationId)
   if (idResult.errorCode === 'invalid-location-id') {
     throw invalidLocationIdError
   }
-  return await reviewService.listReviewsByLocation(
+  const reviews = await reviewService.listReviewsByLocation(
     list,
     idResult.result,
     reviewListRequest,
     log,
   )
+  return { reviews, order: reviewListRequest.order }
 }
 
 export async function listReviewsByStyle(
@@ -171,18 +195,21 @@ export async function listReviewsByStyle(
     reviewListRequest: ReviewListRequest,
   ) => Promise<JoinedReview[]>,
   validateStyleId: ValidateStyleId,
+  validate: ValidateFilteredReviewList,
   styleId: string | undefined,
-  reviewListRequest: ReviewListRequest,
+  query: ReviewListQuery,
   log: log,
-): Promise<JoinedReview[]> {
+): Promise<FilteredReviewList> {
+  const reviewListRequest = validFilteredReviewListRequest(validate, query)
   const idResult = validateStyleId(styleId)
   if (idResult.errorCode === 'invalid-style-id') {
     throw invalidStyleIdError
   }
-  return await reviewService.listReviewsByStyle(
+  const reviews = await reviewService.listReviewsByStyle(
     list,
     idResult.result,
     reviewListRequest,
     log,
   )
+  return { reviews, order: reviewListRequest.order }
 }

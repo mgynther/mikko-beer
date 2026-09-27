@@ -12,17 +12,14 @@ import {
   InvalidAuthTokenError,
 } from '../../auth/auth-token.js'
 
-import type { RefreshToken } from '../../auth/refresh-token.js'
+import type {
+  RefreshToken,
+  RefreshTokenPayload,
+} from '../../auth/refresh-token.js'
 import {
   parseAuthTokenPayload,
   parseRefreshTokenPayload,
 } from './jwt-parser.js'
-
-export interface RefreshTokenPayload {
-  userId: string
-  refreshTokenId: string
-  isRefreshToken: true
-}
 
 export function signAuthToken(
   jwtIf: JwtIf,

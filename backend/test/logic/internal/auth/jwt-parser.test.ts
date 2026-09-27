@@ -7,7 +7,7 @@ import {
 } from '../../../../src/logic/internal/auth/jwt-parser.js'
 import { InvalidAuthTokenError } from '../../../../src/logic/auth/auth-token.js'
 import { assertDeepEqual, assertThrows } from '../../../assert.js'
-import type { RefreshTokenPayload } from '../../../../src/logic/internal/auth/jwt.js'
+import type { RefreshTokenPayload } from '../../../../src/logic/auth/refresh-token.js'
 
 suite('jwt parser auth token unit tests', () => {
   test('parse valid ', async () => {
