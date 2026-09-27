@@ -1,47 +1,52 @@
-import { expect, test } from 'vitest'
+import { test } from '../test'
+import { assertDeepEqual, assertThrowsWithMessage } from '../assert'
 import {
   unwrapMember,
   unwrapMemberOrUndefined,
 } from '../../src/storehooks/envelope'
 
 test('unwrap member', () => {
-  expect(unwrapMember({ beer: { id: 'id' } }, 'beer')).toEqual({ id: 'id' })
+  assertDeepEqual(unwrapMember({ beer: { id: 'id' } }, 'beer'), { id: 'id' })
 })
 
 test('unwrap undefined member', () => {
-  expect(unwrapMember({ beer: undefined }, 'beer')).toEqual(undefined)
+  assertDeepEqual(unwrapMember({ beer: undefined }, 'beer'), undefined)
 })
 
 test('fail to unwrap missing member', () => {
-  expect(() => unwrapMember({ bear: { id: 'id' } }, 'beer')).toThrow(
+  assertThrowsWithMessage(
+    () => unwrapMember({ bear: { id: 'id' } }, 'beer'),
     'Could not unwrap data: missing member beer',
   )
 })
 
 test('fail to unwrap non-object', () => {
-  expect(() => unwrapMember('beer', 'beer')).toThrow(
+  assertThrowsWithMessage(
+    () => unwrapMember('beer', 'beer'),
     'Could not unwrap data: expected an object, got string',
   )
 })
 
 test('fail to unwrap null', () => {
-  expect(() => unwrapMember(null, 'beer')).toThrow(
+  assertThrowsWithMessage(
+    () => unwrapMember(null, 'beer'),
     'Could not unwrap data: expected an object, got object',
   )
 })
 
 test('fail to unwrap array', () => {
-  expect(() => unwrapMember([{ id: 'id' }], 'beer')).toThrow(
+  assertThrowsWithMessage(
+    () => unwrapMember([{ id: 'id' }], 'beer'),
     'Could not unwrap data: expected an object, got object',
   )
 })
 
 test('unwrap member or undefined', () => {
-  expect(unwrapMemberOrUndefined({ beer: { id: 'id' } }, 'beer')).toEqual({
+  assertDeepEqual(unwrapMemberOrUndefined({ beer: { id: 'id' } }, 'beer'), {
     id: 'id',
   })
 })
 
 test('unwrap undefined or undefined', () => {
-  expect(unwrapMemberOrUndefined(undefined, 'beer')).toEqual(undefined)
+  assertDeepEqual(unwrapMemberOrUndefined(undefined, 'beer'), undefined)
 })

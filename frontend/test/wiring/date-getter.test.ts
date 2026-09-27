@@ -1,9 +1,10 @@
-import { expect, test } from 'vitest'
+import { test } from '../test'
+import { assertGreaterThan } from '../assert'
 import { getDate, getNextMonthDate } from '../../src/wiring/date-getter'
 
 test('getDate', () => {
   const date = getDate()
-  expect(date.getFullYear()).toBeGreaterThan(2000)
+  assertGreaterThan(date.getFullYear(), 2000)
 })
 
 test('getNextMonthDate', () => {
@@ -11,5 +12,5 @@ test('getNextMonthDate', () => {
   // let's just satisfy coverage requirement by calling the function under test
   // and asserting something very generic.
   const nextMonthDate = getNextMonthDate()
-  expect(nextMonthDate.getFullYear()).toBeGreaterThan(2000)
+  assertGreaterThan(nextMonthDate.getFullYear(), 2000)
 })

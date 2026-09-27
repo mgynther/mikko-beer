@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render, waitFor } from '../../render'
 
 import searchBeer from '../../../src/storehooks/beer/search'
 import type {
@@ -56,19 +58,19 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('search beers', async () => {
   const user = setupUser()
-  const onSearch = vitest.fn()
-  const onValidate = vitest.fn()
-  const onFound = vitest.fn()
+  const onSearch = mockFunction()
+  const onValidate = mockFunction()
+  const onFound = mockFunction()
 
   const { getByRole, getByText } = render(
     <Helper onSearch={onSearch} onFound={onFound} onValidate={onValidate} />,
   )
-  expect(getByText('Loading')).toBeDefined()
+  assertDefined(getByText('Loading'))
 
   await user.click(getByRole('button', { name: 'Search' }))
   await waitFor(() => {
-    expect(onFound).toHaveBeenCalledWith(validatedBeerList.beers)
+    assertCalledWith(onFound, [validatedBeerList.beers])
   })
-  expect(onSearch).toHaveBeenCalledWith('beer name')
-  expect(onValidate).toHaveBeenCalledWith(found)
+  assertCalledWith(onSearch, ['beer name'])
+  assertCalledWith(onValidate, [found])
 })

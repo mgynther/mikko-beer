@@ -1,5 +1,12 @@
-import { expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { test } from '../../test'
+import {
+  assertCallCount,
+  assertCalled,
+  assertCalledWith,
+  assertDefined,
+} from '../../assert'
+import { mockFunction } from '../../mock'
+import { render, waitFor } from '../../render'
 
 import login from '../../../src/storehooks/login/login'
 import type {
@@ -65,9 +72,9 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('login', async () => {
   const user = setupUser()
-  const onLogin = vitest.fn()
-  const onSave = vitest.fn()
-  const onValidate = vitest.fn()
+  const onLogin = mockFunction()
+  const onSave = mockFunction()
+  const onValidate = mockFunction()
   const data = { authToken: 'token', refreshToken: 'refresh' }
 
   const { getByRole, getByText } = render(
@@ -86,19 +93,19 @@ test('login', async () => {
   await user.click(getByRole('button', { name: 'Login' }))
   await waitFor(() => {
     // What the validator returned is what the session is made of.
-    expect(onSave).toHaveBeenCalledWith(validatedLogin)
+    assertCalledWith(onSave, [validatedLogin])
   })
-  expect(getByText('Not loading')).toBeDefined()
-  expect(onLogin).toHaveBeenCalledWith(params)
-  expect(onValidate).toHaveBeenCalledWith(data)
+  assertDefined(getByText('Not loading'))
+  assertCalledWith(onLogin, [params])
+  assertCalledWith(onValidate, [data])
 })
 
 test('a failed login saves no session and does not reject', async () => {
   const user = setupUser()
-  const onLogin = vitest.fn()
-  const onSave = vitest.fn()
-  const onValidate = vitest.fn()
-  const onError = vitest.fn()
+  const onLogin = mockFunction()
+  const onSave = mockFunction()
+  const onValidate = mockFunction()
+  const onError = mockFunction()
 
   const { getByRole } = render(
     <Helper
@@ -115,17 +122,17 @@ test('a failed login saves no session and does not reject', async () => {
 
   await user.click(getByRole('button', { name: 'Login' }))
   await waitFor(() => {
-    expect(onLogin).toHaveBeenCalledWith(params)
+    assertCalledWith(onLogin, [params])
   })
-  expect(onValidate).not.toHaveBeenCalled()
-  expect(onSave).not.toHaveBeenCalled()
-  expect(onError).not.toHaveBeenCalled()
+  assertCallCount(onValidate, 0)
+  assertCallCount(onSave, 0)
+  assertCallCount(onError, 0)
 })
 
 test('a login that does not validate throws', async () => {
   const user = setupUser()
-  const onSave = vitest.fn()
-  const onError = vitest.fn()
+  const onSave = mockFunction()
+  const onError = mockFunction()
 
   const { getByRole } = render(
     <Helper
@@ -141,7 +148,7 @@ test('a login that does not validate throws', async () => {
 
   await user.click(getByRole('button', { name: 'Login' }))
   await waitFor(() => {
-    expect(onError).toHaveBeenCalled()
+    assertCalled(onError)
   })
-  expect(onSave).not.toHaveBeenCalled()
+  assertCallCount(onSave, 0)
 })

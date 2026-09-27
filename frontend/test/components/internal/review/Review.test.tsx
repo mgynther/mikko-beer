@@ -1,7 +1,11 @@
-import { render, fireEvent } from '@testing-library/react'
-import { type UserEvent } from '@testing-library/user-event'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
+import type { RenderResult } from '../../../render'
+import { fireEvent } from '../../../fire-event'
+import type { UserEvent } from '../../../user-event'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import Review from '../../../../src/components/internal/review/Review'
 import type { UseDebounce } from '../../../../src/components/types/types'
 import { Role } from '../../../../src/components/types/user/types'
@@ -151,7 +155,7 @@ const viewerLogin = buildLogin({ user: buildUser({ role: Role.viewer }) })
 
 async function addReview(
   getByPlaceholderText: (text: string) => HTMLElement,
-  getByRole: (text: string, props?: Record<string, unknown>) => HTMLElement,
+  getByRole: RenderResult['getByRole'],
   user: UserEvent,
 ): Promise<void> {
   const smellInput = getByPlaceholderText('Smell')
@@ -169,8 +173,8 @@ async function addReview(
 
 test('updates review', async () => {
   const user = setupUser()
-  const onChanged = vitest.fn()
-  const update = vitest.fn()
+  const onChanged = mockFunction()
+  const update = mockFunction()
   const { getByPlaceholderText, getByRole, getByText } = render(
     <Review
       linkComponent={testLink}
@@ -205,7 +209,7 @@ test('updates review', async () => {
   // The beer, the container and the location are those of the review as it is
   // shown, everything else is the review as it was loaded, and only what was
   // edited changes.
-  expect(update.mock.calls).toEqual([
+  assertDeepEqual(update.mock.calls, [
     [
       {
         id: joinedReview.id,
@@ -220,12 +224,12 @@ test('updates review', async () => {
       },
     ],
   ])
-  expect(onChanged.mock.calls).toEqual([[]])
+  assertDeepEqual(onChanged.mock.calls, [[]])
 })
 
 test('update review without onChanged callback', async () => {
   const user = setupUser()
-  const update = vitest.fn()
+  const update = mockFunction()
   const { getByPlaceholderText, getByRole, getByText } = render(
     <Review
       linkComponent={testLink}
@@ -260,7 +264,7 @@ test('update review without onChanged callback', async () => {
   // The beer, the container and the location are those of the review as it is
   // shown, everything else is the review as it was loaded, and only what was
   // edited changes.
-  expect(update.mock.calls).toEqual([
+  assertDeepEqual(update.mock.calls, [
     [
       {
         id: joinedReview.id,
@@ -279,8 +283,8 @@ test('update review without onChanged callback', async () => {
 
 test('cancel editing', async () => {
   const user = setupUser()
-  const onChanged = vitest.fn()
-  const update = vitest.fn()
+  const onChanged = mockFunction()
+  const update = mockFunction()
   const { getByRole, getByText } = render(
     <Review
       linkComponent={testLink}
@@ -316,8 +320,8 @@ test('cancel editing', async () => {
 
 test('cannot update review as viewer', async () => {
   const user = setupUser()
-  const onChanged = vitest.fn()
-  const update = vitest.fn()
+  const onChanged = mockFunction()
+  const update = mockFunction()
   const { getByText, queryByRole } = render(
     <Review
       linkComponent={testLink}
@@ -345,7 +349,7 @@ test('cannot update review as viewer', async () => {
   const beerName = getByText(joinedReview.beerName)
   await user.click(beerName)
   const editButton = queryByRole('button', { name: 'Edit' })
-  expect(editButton).toEqual(null)
+  assertDeepEqual(editButton, null)
 })
 
 test('renders review', async () => {
@@ -369,8 +373,8 @@ test('renders review', async () => {
     smell: 'Nice',
     taste: 'Roasted malt, bitter, strong',
   })
-  const onChanged = vitest.fn()
-  const update = vitest.fn()
+  const onChanged = mockFunction()
+  const update = mockFunction()
   const { getByText, getByRole } = render(
     <Review
       linkComponent={testLink}

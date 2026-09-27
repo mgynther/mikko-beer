@@ -1,6 +1,8 @@
-import { render, waitFor } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCallCount, assertDeepEqual } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render, waitFor } from '../../render'
 import { setupUser } from '../../user-event'
-import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../filter-time'
 import Stats from '../../../src/components/stats/Stats'
 import type {
@@ -495,7 +497,7 @@ test('renders brewery country stats', async () => {
 
 test('sets state', async () => {
   const user = setupUser()
-  const setSearch = vitest.fn()
+  const setSearch = mockFunction()
   const statsIf: StatsIf = {
     ...emptyStatsIf,
     setSearch,
@@ -512,9 +514,9 @@ test('sets state', async () => {
     />,
   )
   await openFilters(getByRole, user)
-  expect(setSearch).toHaveBeenCalledTimes(2)
+  assertCallCount(setSearch, 2)
   const filtersOpen = setSearch.mock.calls.map((args) => args[1].s_filters)
-  expect(filtersOpen).toEqual(['0', '1'])
+  assertDeepEqual(filtersOpen, ['0', '1'])
 })
 
 test('renders container stats', () => {
@@ -617,9 +619,9 @@ test('renders filtered container stats', () => {
       styleId={'c5efc2ba-6b91-4284-8c29-563a872b13a0'}
     />,
   )
-  expect(queryByText('7.87')).toEqual(null)
-  expect(queryByText('10')).toEqual(null)
-  expect(queryByText('bottle 0.33')).toEqual(null)
+  assertDeepEqual(queryByText('7.87'), null)
+  assertDeepEqual(queryByText('10'), null)
+  assertDeepEqual(queryByText('bottle 0.33'), null)
   getByText('8.23')
   getByText('8.50')
   getByText('9')
@@ -829,7 +831,7 @@ navigationTests.forEach((testCase) => {
     testCase.destinationSearch
   }`, async () => {
     const user = setupUser()
-    const setSearch = vitest.fn()
+    const setSearch = mockFunction()
     const { getByRole } = render(
       <Stats
         linkComponent={testLink}
@@ -845,13 +847,13 @@ navigationTests.forEach((testCase) => {
     )
     const naviButton = getByRole('button', { name: testCase.buttonText })
     await user.click(naviButton)
-    expect(setSearch.mock.calls).toEqual([[testCase.destinationSearch, {}]])
+    assertDeepEqual(setSearch.mock.calls, [[testCase.destinationSearch, {}]])
   })
 })
 
 test('navigates from overall to overall', async () => {
   const user = setupUser()
-  const setSearch = vitest.fn()
+  const setSearch = mockFunction()
   const { getByRole } = render(
     <Stats
       linkComponent={testLink}
@@ -867,5 +869,5 @@ test('navigates from overall to overall', async () => {
   )
   const naviButton = getByRole('button', { name: 'Overall' })
   await user.click(naviButton)
-  expect(setSearch).not.toHaveBeenCalled()
+  assertCallCount(setSearch, 0)
 })

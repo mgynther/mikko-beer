@@ -1,5 +1,7 @@
-import { beforeAll, beforeEach, afterAll, expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { beforeAll, beforeEach, afterAll, test } from '../test'
+import { assertCalled, assertDefined } from '../assert'
+import { mockFunction } from '../mock'
+import { render, waitFor } from '../render'
 
 import { createServer } from './server'
 import type { TestServer } from './server'
@@ -70,9 +72,9 @@ test('list users', async () => {
   )
 
   await waitFor(() => {
-    expect(getByText(JSON.stringify(expectedResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(expectedResponse)))
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 function CreateUserHelper(): React.JSX.Element {
@@ -114,10 +116,10 @@ test('create user', async () => {
 
   await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(getByText(JSON.stringify(expectedResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(expectedResponse)))
   })
-  expect(getByText('Not failed')).toBeDefined()
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not failed'))
+  assertDefined(getByText('Not loading'))
 })
 
 test('fail to create user', async () => {
@@ -139,9 +141,9 @@ test('fail to create user', async () => {
   // which is what the form that calls it reads.
   await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(getByText('Failed')).toBeDefined()
+    assertDefined(getByText('Failed'))
   })
-  expect(getByText('No data')).toBeDefined()
+  assertDefined(getByText('No data'))
 })
 
 function DeleteUserHelper(props: { onDeleted: () => void }): React.JSX.Element {
@@ -170,7 +172,7 @@ test('delete user', async () => {
     status: 204,
   })
 
-  const onDeleted = vitest.fn()
+  const onDeleted = mockFunction()
   const { getByRole } = render(
     <StoreProvider>
       <DeleteUserHelper onDeleted={onDeleted} />
@@ -179,6 +181,6 @@ test('delete user', async () => {
 
   await user.click(getByRole('button', { name: 'Delete' }))
   await waitFor(() => {
-    expect(onDeleted).toHaveBeenCalled()
+    assertCalled(onDeleted)
   })
 })

@@ -237,12 +237,37 @@ const rootDependencies = ['react-dom', 'web-vitals']
 // architecture violation, not a testing need, and a helper in another layer's
 // directory is banned for the same reason that layer's code is.
 //
-// What a test may import on top of what its layer may import.
+// The testing tools. Every test uses them, but through the wrappers directly
+// under test/ below rather than by importing them, so they are allowed by the
+// dependency patterns and then banned by testToolPatterns, which says where
+// the wrapper is.
 const testDependencies = [
   '@testing-library/react',
   '@testing-library/user-event',
   'vitest',
 ]
+
+// The wrappers of the testing tools, one per purpose, and the packages each
+// may import. What the tests use of a tool stays in its wrapper, so a feature
+// that tests start to need is added there on purpose and the tool can be
+// replaced in one file. The assertions are the exception that proves the
+// rule: they cannot be trusted to test themselves, so their tests check them
+// against vitest itself.
+const testToolWrappers = {
+  'test/assert.test.ts': ['vitest'],
+  'test/assert.ts': ['vitest'],
+  'test/fire-event.ts': ['@testing-library/react'],
+  'test/mock.ts': ['vitest'],
+  'test/render.ts': ['@testing-library/react', 'react'],
+  'test/test.ts': ['vitest'],
+  'test/user-event.ts': ['@testing-library/user-event'],
+}
+
+const testToolWrapperNames = {
+  '@testing-library/react': 'test/render.ts and test/fire-event.ts',
+  '@testing-library/user-event': 'test/user-event.ts',
+  vitest: 'test/test.ts, test/assert.ts and test/mock.ts',
+}
 
 // The packages a layer's test helpers need on top of those, by layer. The
 // store's tests run a real HTTP server, and that server is the only thing
@@ -423,6 +448,17 @@ function internalPatterns(layer) {
     }))
 }
 
+// Bans the testing tools except the ones listed, which only their wrappers
+// list.
+function testToolPatterns(allowed = []) {
+  return testDependencies
+    .filter((tool) => !allowed.includes(tool))
+    .map((tool) => ({
+      regex: `^${escapeForRegex(tool)}(?:/|$)`,
+      message: `Use ${tool} through ${testToolWrapperNames[tool]}.`,
+    }))
+}
+
 // Test scaffolding belongs to the tests. Production code that imports it ships
 // it.
 const testPattern = directoryPattern('test', 'test/ is for tests only.')
@@ -450,6 +486,26 @@ function dependencyPattern(name, dependencies) {
       'eslint.config.mjs if it belongs here, and otherwise use the layer ' +
       'that owns it.',
   }
+}
+
+// The helpers directly under test/ and their tests, given the packages the file
+// may import on top of the testing tools it reaches through the wrappers.
+function sharedTestHelperImports(dependencies) {
+  return restrictedImports([
+    ...layers.map((layer) =>
+      directoryPattern(
+        layer,
+        'The helpers directly under test/ are shared by every layer and ' +
+          `may not import ${layer}/. Move a helper that needs it under ` +
+          `test/${layer}/.`,
+      ),
+    ),
+    ...testToolPatterns(dependencies),
+    dependencyPattern('The files directly under test/', [
+      ...testDependencies,
+      ...dependencies,
+    ]),
+  ])
 }
 
 // The production files of a layer, and then its tests and their helpers, which
@@ -480,6 +536,7 @@ const layerConfigs = layers.flatMap((layer) => [
       ...restrictedImports([
         ...disallowedLayerPatterns(layer),
         ...internalPatterns(layer),
+        ...testToolPatterns(),
         dependencyPattern(`The tests of ${layer}/`, [
           ...layerDependencies[layer],
           ...testDependencies,
@@ -528,19 +585,15 @@ export default [
     files: ['test/*.{ts,tsx}'],
     rules: {
       ...rules,
-      ...restrictedImports([
-        ...layers.map((layer) =>
-          directoryPattern(
-            layer,
-            'The helpers directly under test/ are shared by every layer and ' +
-              `may not import ${layer}/. Move a helper that needs it under ` +
-              `test/${layer}/.`,
-          ),
-        ),
-        dependencyPattern('The files directly under test/', testDependencies),
-      ]),
+      ...sharedTestHelperImports([]),
     },
   },
+  // Each wrapper may import what it wraps. The entries repeat the bans above
+  // because a later entry replaces the whole no-restricted-imports value.
+  ...Object.entries(testToolWrappers).map(([file, dependencies]) => ({
+    files: [file],
+    rules: sharedTestHelperImports(dependencies),
+  })),
   {
     languageOptions,
     files: ['test/*.test.{js,ts,tsx,jsx}', 'test/**/*.test.{js,ts,tsx,jsx}'],

@@ -1,4 +1,5 @@
-import { expect, test } from 'vitest'
+import { test } from '../test'
+import { assertDeepEqual, assertThrowsWithMessage } from '../assert'
 import { validateLogin } from '../../src/validation/login'
 
 const user = {
@@ -13,7 +14,7 @@ test('validate login', () => {
     refreshToken: 'refresh',
     user,
   }
-  expect(validateLogin(login)).toEqual(login)
+  assertDeepEqual(validateLogin(login), login)
 })
 
 test('validate login without user', () => {
@@ -22,19 +23,24 @@ test('validate login without user', () => {
     refreshToken: 'refresh',
     user: undefined,
   }
-  expect(validateLogin(login)).toEqual(login)
+  assertDeepEqual(validateLogin(login), login)
 })
 
 test('fail to validate login without tokens', () => {
-  expect(() => validateLogin({ user })).toThrow('Could not validate data')
+  assertThrowsWithMessage(
+    () => validateLogin({ user }),
+    'Could not validate data',
+  )
 })
 
 test('fail to validate login with invalid user', () => {
-  expect(() =>
-    validateLogin({
-      authToken: 'auth',
-      refreshToken: 'refresh',
-      user: { id: 'id' },
-    }),
-  ).toThrow('Could not validate data')
+  assertThrowsWithMessage(
+    () =>
+      validateLogin({
+        authToken: 'auth',
+        refreshToken: 'refresh',
+        user: { id: 'id' },
+      }),
+    'Could not validate data',
+  )
 })

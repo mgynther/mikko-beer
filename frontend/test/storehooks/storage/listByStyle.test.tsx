@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render } from '../../render'
 
 import listStoragesByStyle from '../../../src/storehooks/storage/listByStyle'
 import type {
@@ -48,15 +50,15 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('list storages by style', () => {
-  const onList = vitest.fn()
-  const onValidate = vitest.fn()
+  const onList = mockFunction()
+  const onValidate = mockFunction()
 
   const { getByText } = render(
     <Helper onList={onList} onValidate={onValidate} />,
   )
 
-  expect(getByText(validatedStorageList.storages[0].beerName)).toBeDefined()
-  expect(getByText('Not loading')).toBeDefined()
-  expect(onList).toHaveBeenCalledWith(styleId)
-  expect(onValidate).toHaveBeenCalledWith(listed)
+  assertDefined(getByText(validatedStorageList.storages[0].beerName))
+  assertDefined(getByText('Not loading'))
+  assertCalledWith(onList, [styleId])
+  assertCalledWith(onValidate, [listed])
 })

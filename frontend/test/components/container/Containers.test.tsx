@@ -1,5 +1,6 @@
-import { render } from '@testing-library/react'
-import { expect, test } from 'vitest'
+import { test } from '../../test'
+import { assertDeepEqual } from '../../assert'
+import { render } from '../../render'
 import Containers from '../../../src/components/container/Containers'
 import { Role } from '../../../src/components/types/user/types'
 import type { GetLogin } from '../../../src/components/types/login/types'
@@ -54,11 +55,10 @@ test('renders containers', async () => {
   getByText('can 0.33')
   getByText('can 0.50')
   const listItems = getAllByText(/bottle|can/)
-  expect(listItems.map((item) => item.innerHTML)).toEqual([
-    'bottle 0.33',
-    'can 0.33',
-    'can 0.50',
-  ])
+  assertDeepEqual(
+    listItems.map((item) => item.innerHTML),
+    ['bottle 0.33', 'can 0.33', 'can 0.50'],
+  )
 })
 
 test('renders loading', async () => {

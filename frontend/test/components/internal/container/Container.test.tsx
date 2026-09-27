@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import Container from '../../../../src/components/internal/container/Container'
 import type {
   Container as ContainerType,
@@ -59,7 +61,7 @@ test('renders editable container as admin', async () => {
 
 test('update container', async () => {
   const user = setupUser()
-  const update = vitest.fn()
+  const update = mockFunction()
   const { getByPlaceholderText, getByRole, getByText } = render(
     <Container
       container={container}
@@ -81,7 +83,7 @@ test('update container', async () => {
   await user.paste('can')
   const saveButton = getByRole('button', { name: 'Save' })
   await user.click(saveButton)
-  expect(update.mock.calls).toEqual([
+  assertDeepEqual(update.mock.calls, [
     [
       {
         ...container,

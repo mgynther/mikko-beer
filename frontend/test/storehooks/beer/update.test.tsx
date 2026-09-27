@@ -1,5 +1,12 @@
-import { expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { test } from '../../test'
+import {
+  assertCallCount,
+  assertCalled,
+  assertCalledWith,
+  assertDefined,
+} from '../../assert'
+import { mockFunction } from '../../mock'
+import { render, waitFor } from '../../render'
 
 import updateBeer from '../../../src/storehooks/beer/update'
 import type {
@@ -62,9 +69,9 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('update beer', async () => {
   const user = setupUser()
-  const onUpdate = vitest.fn()
-  const onUpdated = vitest.fn()
-  const onValidate = vitest.fn()
+  const onUpdate = mockFunction()
+  const onUpdated = mockFunction()
+  const onValidate = mockFunction()
   const validate: ValidateBeerWithIds = (result: unknown) => {
     onValidate(result)
     return validatedBeer
@@ -81,17 +88,17 @@ test('update beer', async () => {
 
   await user.click(getByRole('button', { name: 'Update' }))
   await waitFor(() => {
-    expect(onUpdated).toHaveBeenCalled()
+    assertCalled(onUpdated)
   })
-  expect(getByText('Not loading')).toBeDefined()
-  expect(onUpdate).toHaveBeenCalledWith(beer)
-  expect(onValidate).toHaveBeenCalledWith(updated.beer)
+  assertDefined(getByText('Not loading'))
+  assertCalledWith(onUpdate, [beer])
+  assertCalledWith(onValidate, [updated.beer])
 })
 
 test('fail to update beer that does not validate', async () => {
   const user = setupUser()
-  const onUpdated = vitest.fn()
-  const onError = vitest.fn()
+  const onUpdated = mockFunction()
+  const onError = mockFunction()
 
   const { getByRole } = render(
     <Helper
@@ -109,7 +116,7 @@ test('fail to update beer that does not validate', async () => {
   // update: the throw propagates out of update and what follows it is never
   // reached.
   await waitFor(() => {
-    expect(onError).toHaveBeenCalled()
+    assertCalled(onError)
   })
-  expect(onUpdated).not.toHaveBeenCalled()
+  assertCallCount(onUpdated, 0)
 })

@@ -1,5 +1,7 @@
-import { beforeAll, beforeEach, afterAll, expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { beforeAll, beforeEach, afterAll, test } from '../test'
+import { assertCalled, assertCalledWith, assertDefined } from '../assert'
+import { mockFunction } from '../mock'
+import { render, waitFor } from '../render'
 
 import { createServer } from './server'
 import type { TestServer } from './server'
@@ -77,12 +79,12 @@ test('get storage', async () => {
       <GetStorageHelper />
     </StoreProvider>,
   )
-  expect(getByText('Loading')).toBeDefined()
+  assertDefined(getByText('Loading'))
 
   await waitFor(() => {
-    expect(getByText(JSON.stringify(expectedResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(expectedResponse)))
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 function ListStoragesHelper(): React.JSX.Element {
@@ -110,9 +112,9 @@ test('list storages', async () => {
     </StoreProvider>,
   )
   await waitFor(() => {
-    expect(getByText(JSON.stringify(expectedResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(expectedResponse)))
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 function ListStoragesByBeerHelper(props: { id: string }): React.JSX.Element {
@@ -141,9 +143,9 @@ test('list storages by beer', async () => {
   )
 
   await waitFor(() => {
-    expect(getByText(JSON.stringify(storageListResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(storageListResponse)))
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 function ListStoragesByBreweryHelper(props: { id: string }): React.JSX.Element {
@@ -172,9 +174,9 @@ test('list storages by brewery', async () => {
   )
 
   await waitFor(() => {
-    expect(getByText(JSON.stringify(storageListResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(storageListResponse)))
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 function ListStoragesByStyleHelper(props: { id: string }): React.JSX.Element {
@@ -203,9 +205,9 @@ test('list storages by style', async () => {
   )
 
   await waitFor(() => {
-    expect(getByText(JSON.stringify(storageListResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(storageListResponse)))
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 function AnnualStatsHelper(): React.JSX.Element {
@@ -233,9 +235,9 @@ test('get annual storage stats', async () => {
     </StoreProvider>,
   )
   await waitFor(() => {
-    expect(getByText(JSON.stringify(expectedResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(expectedResponse)))
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 function MonthlyStatsHelper(): React.JSX.Element {
@@ -265,9 +267,9 @@ test('get monthly storage stats', async () => {
     </StoreProvider>,
   )
   await waitFor(() => {
-    expect(getByText(JSON.stringify(expectedResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(expectedResponse)))
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 const createRequest = {
@@ -315,7 +317,7 @@ test('create storage', async () => {
     status: 201,
   })
 
-  const onResult = vitest.fn()
+  const onResult = mockFunction()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <CreateStorageHelper onResult={onResult} onError={() => undefined} />
@@ -324,12 +326,12 @@ test('create storage', async () => {
 
   await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(onResult).toHaveBeenCalledWith(expectedResponse)
+    assertCalledWith(onResult, [expectedResponse])
   })
   await waitFor(() => {
-    expect(getByText('Not loading')).toBeDefined()
+    assertDefined(getByText('Not loading'))
   })
-  expect(getByText('Not failed')).toBeDefined()
+  assertDefined(getByText('Not failed'))
 })
 
 test('fail to create storage', async () => {
@@ -341,7 +343,7 @@ test('fail to create storage', async () => {
     status: 400,
   })
 
-  const onError = vitest.fn()
+  const onError = mockFunction()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <CreateStorageHelper onResult={() => undefined} onError={onError} />
@@ -352,10 +354,10 @@ test('fail to create storage', async () => {
   // called it is still open when it fails.
   await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(onError).toHaveBeenCalled()
+    assertCalled(onError)
   })
   await waitFor(() => {
-    expect(getByText('Failed')).toBeDefined()
+    assertDefined(getByText('Failed'))
   })
 })
 
@@ -387,7 +389,7 @@ test('delete storage', async () => {
     status: 204,
   })
 
-  const onDeleted = vitest.fn()
+  const onDeleted = mockFunction()
   const { getByRole } = render(
     <StoreProvider>
       <DeleteStorageHelper onDeleted={onDeleted} />
@@ -396,6 +398,6 @@ test('delete storage', async () => {
 
   await user.click(getByRole('button', { name: 'Delete' }))
   await waitFor(() => {
-    expect(onDeleted).toHaveBeenCalled()
+    assertCalled(onDeleted)
   })
 })

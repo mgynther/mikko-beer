@@ -1,6 +1,9 @@
-import { act, fireEvent, render, waitFor } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertCallCount, assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { act, render, waitFor } from '../../../render'
+import { fireEvent } from '../../../fire-event'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../filter-time'
 import Location from '../../../../src/components/internal/stats/Location'
 import type {
@@ -68,7 +71,7 @@ const emptySearchParameters: SearchParameters = {
 const noOpSetState = (): undefined => undefined
 
 test('queries location stats', async () => {
-  const query = vitest.fn()
+  const query = mockFunction()
   let loadCallback: () => void = () => undefined
   const getLocationStatsIf: GetLocationStatsIf = {
     useStats: () => ({
@@ -102,11 +105,11 @@ test('queries location stats', async () => {
       styleId={undefined}
     />,
   )
-  expect(query.mock.calls).toEqual([])
+  assertDeepEqual(query.mock.calls, [])
   await act(async () => {
     loadCallback()
   })
-  expect(query.mock.calls).toEqual([
+  assertDeepEqual(query.mock.calls, [
     [
       {
         breweryId: undefined,
@@ -133,7 +136,7 @@ test('queries location stats', async () => {
 })
 
 test('queries filtered location stats', async () => {
-  const query = vitest.fn()
+  const query = mockFunction()
   const breweryId = '4737b7ed-6c81-4320-9922-a2e32614f903'
   const locationId = '434a13d1-63d4-47e2-bb22-ee1cb4bd37df'
   const styleId = 'e2e4f56d-f433-4c1d-bdbb-c980bc8b3f42'
@@ -173,7 +176,7 @@ test('queries filtered location stats', async () => {
   await act(async () => {
     loadCallback()
   })
-  expect(query.mock.calls).toEqual([
+  assertDeepEqual(query.mock.calls, [
     [
       {
         breweryId,
@@ -305,7 +308,7 @@ const sliderChangeTests: SliderChangeTest[] = [
 
 sliderChangeTests.forEach((testCase) => {
   test(`change ${testCase.property}`, async () => {
-    const setState = vitest.fn()
+    const setState = mockFunction()
     const { getByLabelText } = render(
       <Location
         linkComponent={testLink}
@@ -324,7 +327,7 @@ sliderChangeTests.forEach((testCase) => {
       ...defaultFiltersOpenParams,
     }
     expected[testCase.property] = testCase.stateValue
-    expect(setState.mock.calls).toEqual([
+    assertDeepEqual(setState.mock.calls, [
       [defaultFiltersOpenParams],
       [expected],
     ])
@@ -431,7 +434,7 @@ orderChangeTests.forEach((testCase) => {
     testCase.newOrder
   } ${testCase.newDirection}`, async () => {
     const user = setupUser()
-    const setState = vitest.fn()
+    const setState = mockFunction()
     const searchRecord: Record<string, string> = {
       ...defaultSearchParams,
       s_order: testCase.originalOrder,
@@ -455,13 +458,13 @@ orderChangeTests.forEach((testCase) => {
       s_order: testCase.newOrder,
       s_direction: testCase.newDirection,
     }
-    expect(setState.mock.calls).toEqual([[searchRecord], [expected]])
+    assertDeepEqual(setState.mock.calls, [[searchRecord], [expected]])
   })
 })
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setState = vitest.fn()
+  const setState = mockFunction()
   const { getByRole } = render(
     <Location
       linkComponent={testLink}
@@ -474,7 +477,7 @@ test('opens filters', async () => {
     />,
   )
   await openFilters(getByRole, user)
-  expect(setState).toHaveBeenCalledTimes(2)
+  assertCallCount(setState, 2)
   const filtersOpen = setState.mock.calls.map((args) => args[0].s_filters)
-  expect(filtersOpen).toEqual(['0', '1'])
+  assertDeepEqual(filtersOpen, ['0', '1'])
 })

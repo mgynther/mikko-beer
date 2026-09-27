@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../test'
+import { assertDeepEqual, assertDefined, assertEqual } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render } from '../../render'
 import { setupUser } from '../../user-event'
-import { expect, test, vitest } from 'vitest'
 
 import Nav from '../../../src/components/internal/Nav'
 
@@ -149,7 +151,7 @@ navigationTests.forEach((testCase) => {
       />,
     )
     const link = getByRole('link', { name: testCase.linkText })
-    expect(link.getAttribute('href')).toEqual(testCase.pathname)
+    assertEqual(link.getAttribute('href'), testCase.pathname)
   })
 })
 
@@ -187,7 +189,7 @@ navigationMoreTests.forEach((testCase) => {
       />,
     )
     const link = getByRole('link', { name: testCase.linkText })
-    expect(link.getAttribute('href')).toEqual(testCase.pathname)
+    assertEqual(link.getAttribute('href'), testCase.pathname)
   })
 })
 
@@ -206,7 +208,7 @@ navigationMoreTests.forEach((testCase) => {
       />,
     )
     const link = queryByRole('link', { name: testCase.linkText })
-    expect(link).toEqual(null)
+    assertDeepEqual(link, null)
   })
 })
 
@@ -224,7 +226,7 @@ test('do not find text fields without more open', async () => {
     />,
   )
   const fields = queryByRole('textfield')
-  expect(fields).toEqual(null)
+  assertDeepEqual(fields, null)
 })
 
 interface ThemeTest {
@@ -246,7 +248,7 @@ const themeTests: ThemeTest[] = [
 themeTests.forEach((testCase) => {
   test(`set theme from ${testCase.original} to ${testCase.new} `, async () => {
     const user = setupUser()
-    const setTheme = vitest.fn()
+    const setTheme = mockFunction()
     const { getByRole } = render(
       <Nav
         linkComponent={testLink}
@@ -264,13 +266,13 @@ themeTests.forEach((testCase) => {
     )
     const checkbox = getByRole('checkbox', { name: 'Dark' })
     await user.click(checkbox)
-    expect(setTheme.mock.calls).toEqual([[testCase.new]])
+    assertDeepEqual(setTheme.mock.calls, [[testCase.new]])
   })
 })
 
 test('logs out', async () => {
   const user = setupUser()
-  const logout = vitest.fn()
+  const logout = mockFunction()
   const { getByRole } = render(
     <Nav
       linkComponent={testLink}
@@ -285,11 +287,11 @@ test('logs out', async () => {
   )
   const logoutButton = getByRole('button', { name: 'Logout' })
   await user.click(logoutButton)
-  expect(logout.mock.calls).toEqual([[]])
+  assertDeepEqual(logout.mock.calls, [[]])
 })
 
 test('do not show admin features to viewer', async () => {
-  const logout = vitest.fn()
+  const logout = mockFunction()
   const { queryByRole } = render(
     <Nav
       linkComponent={testLink}
@@ -304,15 +306,17 @@ test('do not show admin features to viewer', async () => {
   )
 
   const addReviewLink = queryByRole('link', { name: 'Add review' })
-  expect(addReviewLink).toEqual(null)
+  assertDeepEqual(addReviewLink, null)
 
   const usersLink = queryByRole('link', { name: 'Users' })
-  expect(usersLink).toEqual(null)
+  assertDeepEqual(usersLink, null)
 })
 
 test('searches beer', async () => {
   const user = setupUser()
-  const navigate = vitest.fn(async (): Promise<void> => undefined)
+  const navigate = mockFunction(
+    async (_url: string): Promise<void> => undefined,
+  )
   const searchBeerIf: SearchBeerIf = {
     useSearch: () => ({
       search: async () => beers,
@@ -336,19 +340,21 @@ test('searches beer', async () => {
   )
 
   const input = getByPlaceholderText('Search beer')
-  expect(input).toBeDefined()
+  assertDefined(input)
   await user.type(input, 'Do')
 
   const itemOption = getByRole('option', {
     name: `${beer.name} (${brewery.name})`,
   })
   await user.click(itemOption)
-  expect(navigate.mock.calls).toEqual([[`/beers/${beer.id}`]])
+  assertDeepEqual(navigate.mock.calls, [[`/beers/${beer.id}`]])
 })
 
 test('searches brewery', async () => {
   const user = setupUser()
-  const navigate = vitest.fn(async (): Promise<void> => undefined)
+  const navigate = mockFunction(
+    async (_url: string): Promise<void> => undefined,
+  )
   const searchBreweryIf: SearchBreweryIf = {
     useSearch: () => ({
       search: async () => [brewery],
@@ -372,12 +378,12 @@ test('searches brewery', async () => {
   )
 
   const input = getByPlaceholderText('Search brewery')
-  expect(input).toBeDefined()
+  assertDefined(input)
   await user.type(input, 'Lehe')
 
   const itemOption = getByRole('option', { name: brewery.name })
   await user.click(itemOption)
-  expect(navigate.mock.calls).toEqual([[`/breweries/${brewery.id}`]])
+  assertDeepEqual(navigate.mock.calls, [[`/breweries/${brewery.id}`]])
 })
 
 interface NavStateTest {
@@ -407,7 +413,7 @@ navStateTests.forEach((testCase) => {
     testCase.new
   }`, async () => {
     const user = setupUser()
-    const setNavState = vitest.fn()
+    const setNavState = mockFunction()
     const { getByRole } = render(
         <Nav linkComponent={testLink}
           isAdmin={true}
@@ -424,6 +430,6 @@ navStateTests.forEach((testCase) => {
     )
     const button = getByRole('button', { name: testCase.buttonText })
     await user.click(button)
-    expect(setNavState.mock.calls).toEqual([[testCase.new]])
+    assertDeepEqual(setNavState.mock.calls, [[testCase.new]])
   })
 })

@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import SelectStyle from '../../../../src/components/internal/style/SelectStyle'
 import type { UseDebounce } from '../../../../src/components/types/types'
 import type { StyleWithParentIds } from '../../../../src/components/types/style/types'
@@ -31,7 +33,7 @@ const useSearch: SearchFieldIf = {
 
 test('selects style', async () => {
   const user = setupUser()
-  const select = vitest.fn()
+  const select = mockFunction()
   const { getByPlaceholderText, getByRole } = render(
     <SelectStyle
       remove={() => undefined}
@@ -55,7 +57,7 @@ test('selects style', async () => {
   const styleOption = getByRole('option', { name: style.name })
   await user.click(styleOption)
 
-  expect(select.mock.calls).toEqual([
+  assertDeepEqual(select.mock.calls, [
     [
       {
         ...style,
@@ -66,8 +68,8 @@ test('selects style', async () => {
 
 test('selects created style', async () => {
   const user = setupUser()
-  const create = vitest.fn()
-  const select = vitest.fn()
+  const create = mockFunction()
+  const select = mockFunction()
   const newStyle: StyleWithParentIds = {
     id: 'ed6921a0-ae9e-46f1-9e96-677032b6c7db',
     name: 'IPA',
@@ -111,7 +113,7 @@ test('selects created style', async () => {
 
   const createButton = getByRole('button', { name: 'Create' })
   await user.click(createButton)
-  expect(create.mock.calls).toEqual([
+  assertDeepEqual(create.mock.calls, [
     [
       {
         name: newStyle.name,
@@ -123,7 +125,7 @@ test('selects created style', async () => {
   // Something is needed here to trigger rendering. In the full application it
   // happens on its own.
   await user.clear(nameInput)
-  expect(select.mock.calls).toEqual([
+  assertDeepEqual(select.mock.calls, [
     [
       {
         ...newStyle,

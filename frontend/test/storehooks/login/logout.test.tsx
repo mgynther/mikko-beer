@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render, waitFor } from '../../render'
 
 import logout from '../../../src/storehooks/login/logout'
 import type {
@@ -42,12 +44,12 @@ function Helper(props: {
 
 test('logout', async () => {
   const user = setupUser()
-  const onLogout = vitest.fn()
+  const onLogout = mockFunction()
 
   const { getByRole } = render(<Helper onLogout={onLogout} />)
 
   await user.click(getByRole('button', { name: 'Logout' }))
   await waitFor(() => {
-    expect(onLogout).toHaveBeenCalledWith(params)
+    assertCalledWith(onLogout, [params])
   })
 })

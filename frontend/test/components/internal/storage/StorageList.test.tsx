@@ -1,5 +1,5 @@
-import { render } from '@testing-library/react'
-import { test } from 'vitest'
+import { test } from '../../../test'
+import { render } from '../../../render'
 import StorageList from '../../../../src/components/internal/storage/StorageList'
 import { Role } from '../../../../src/components/types/user/types'
 import { dontCall } from '../../../dont-call'

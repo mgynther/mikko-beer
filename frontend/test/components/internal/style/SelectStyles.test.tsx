@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import SelectStyles from '../../../../src/components/internal/style/SelectStyles'
 import type { UseDebounce } from '../../../../src/components/types/types'
 import type { StyleWithParentIds } from '../../../../src/components/types/style/types'
@@ -31,7 +33,7 @@ const useSearch: SearchFieldIf = {
 
 test('removes style', async () => {
   const user = setupUser()
-  const select = vitest.fn()
+  const select = mockFunction()
   const { getAllByRole, getByRole } = render(
     <SelectStyles
       select={select}
@@ -57,13 +59,13 @@ test('removes style', async () => {
   await user.click(removeButton)
 
   const calls = select.mock.calls
-  expect(calls.length).toEqual(3)
-  expect(calls[calls.length - 1]).toEqual([[style.id]])
+  assertEqual(calls.length, 3)
+  assertDeepEqual(calls[calls.length - 1], [[style.id]])
 })
 
 test('selects style', async () => {
   const user = setupUser()
-  const select = vitest.fn()
+  const select = mockFunction()
   const { getByPlaceholderText, getByRole } = render(
     <SelectStyles
       select={select}
@@ -88,13 +90,13 @@ test('selects style', async () => {
   await user.click(styleOption)
 
   const calls = select.mock.calls
-  expect(calls.length).toEqual(2)
-  expect(calls[calls.length - 1]).toEqual([[style.id]])
+  assertEqual(calls.length, 2)
+  assertDeepEqual(calls[calls.length - 1], [[style.id]])
 })
 
 test('adds new style', async () => {
   const user = setupUser()
-  const select = vitest.fn()
+  const select = mockFunction()
   const { getByRole } = render(
     <SelectStyles
       select={select}
@@ -117,16 +119,16 @@ test('adds new style', async () => {
   await user.click(addButton)
 
   const calls = select.mock.calls
-  expect(calls.length).toEqual(1)
-  expect(calls[calls.length - 1]).toEqual([[]])
+  assertEqual(calls.length, 1)
+  assertDeepEqual(calls[calls.length - 1], [[]])
   getByRole('radio', { name: 'Create' })
   getByRole('radio', { name: 'Select' })
 })
 
 test('selects created style', async () => {
   const user = setupUser()
-  const create = vitest.fn()
-  const select = vitest.fn()
+  const create = mockFunction()
+  const select = mockFunction()
   const newStyle: StyleWithParentIds = {
     id: '47c42362-221c-4ae1-8656-1cfd92acfa12',
     name: 'IPA',
@@ -170,7 +172,7 @@ test('selects created style', async () => {
 
   const createButton = getByRole('button', { name: 'Create' })
   await user.click(createButton)
-  expect(create.mock.calls).toEqual([
+  assertDeepEqual(create.mock.calls, [
     [
       {
         name: newStyle.name,
@@ -183,6 +185,6 @@ test('selects created style', async () => {
   // happens on its own.
   await user.clear(nameInput)
   const calls = select.mock.calls
-  expect(calls.length).toEqual(2)
-  expect(calls[calls.length - 1]).toEqual([[newStyle.id]])
+  assertEqual(calls.length, 2)
+  assertDeepEqual(calls[calls.length - 1], [[newStyle.id]])
 })

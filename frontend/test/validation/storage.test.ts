@@ -1,4 +1,5 @@
-import { expect, test } from 'vitest'
+import { test } from '../test'
+import { assertDeepEqual, assertThrows } from '../assert'
 
 import type {
   AnnualStats,
@@ -25,18 +26,19 @@ const validCreatedStorage: CreatedStorage = {
 }
 
 test('validateCreatedStorage returns storage for valid input', () => {
-  expect(validateCreatedStorage(validCreatedStorage)).toEqual(
+  assertDeepEqual(
+    validateCreatedStorage(validCreatedStorage),
     validCreatedStorage,
   )
 })
 
 test('validateCreatedStorage throws for invalid input', () => {
-  expect(() =>
+  assertThrows(() =>
     validateCreatedStorage({
       id: '8bf994a7-412f-4fce-9729-d1ff436fa83d',
       beer: '01f15bff-d95f-464f-8a89-df0d761950f5',
     }),
-  ).toThrow()
+  )
 })
 
 const validStorage: Storage = {
@@ -66,97 +68,97 @@ const validStorage: Storage = {
 }
 
 test('validateStorage returns storage for valid input', () => {
-  expect(validateStorage(validStorage)).toEqual(validStorage)
+  assertDeepEqual(validateStorage(validStorage), validStorage)
 })
 
 test('validateStorage throws for invalid input', () => {
-  expect(() =>
+  assertThrows(() =>
     validateStorage({
       id: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
       beerId: 123,
     }),
-  ).toThrow()
+  )
 })
 
 test('validateStorageOrUndefined returns undefined for undefined', () => {
-  expect(validateStorageOrUndefined(undefined)).toEqual(undefined)
+  assertDeepEqual(validateStorageOrUndefined(undefined), undefined)
 })
 
 test('validateStorageOrUndefined returns storage for valid input', () => {
-  expect(validateStorageOrUndefined(validStorage)).toEqual(validStorage)
+  assertDeepEqual(validateStorageOrUndefined(validStorage), validStorage)
 })
 
 test('validateStorageOrUndefined throws for invalid input', () => {
-  expect(() =>
+  assertThrows(() =>
     validateStorageOrUndefined({
       id: '11223344-5566-7788-99aa-bbccddeeff00',
     }),
-  ).toThrow()
+  )
 })
 
 test('validateStorageListOrUndefined returns undefined for undefined', () => {
-  expect(validateStorageListOrUndefined(undefined)).toEqual(undefined)
+  assertDeepEqual(validateStorageListOrUndefined(undefined), undefined)
 })
 
 test('validateStorageListOrUndefined returns list for valid input', () => {
   const list: StorageList = {
     storages: [validStorage],
   }
-  expect(validateStorageListOrUndefined(list)).toEqual(list)
+  assertDeepEqual(validateStorageListOrUndefined(list), list)
 })
 
 test('validateStorageListOrUndefined throws for invalid input', () => {
-  expect(() =>
+  assertThrows(() =>
     validateStorageListOrUndefined({
       storages: [{ id: 123 }],
     }),
-  ).toThrow()
+  )
 })
 
 test('validateStorageListOrUndefined returns empty list', () => {
   const list: StorageList = { storages: [] }
-  expect(validateStorageListOrUndefined(list)).toEqual(list)
+  assertDeepEqual(validateStorageListOrUndefined(list), list)
 })
 
 test('validateAnnualStorageStatsOrUndefined returns undefined', () => {
-  expect(validateAnnualStorageStatsOrUndefined(undefined)).toEqual(undefined)
+  assertDeepEqual(validateAnnualStorageStatsOrUndefined(undefined), undefined)
 })
 
 test('validateAnnualStorageStatsOrUndefined returns stats', () => {
   const stats: AnnualStats = {
     annual: [{ year: '2024', count: '42' }],
   }
-  expect(validateAnnualStorageStatsOrUndefined(stats)).toEqual(stats)
+  assertDeepEqual(validateAnnualStorageStatsOrUndefined(stats), stats)
 })
 
 test('validateAnnualStorageStatsOrUndefined throws for invalid', () => {
-  expect(() =>
+  assertThrows(() =>
     validateAnnualStorageStatsOrUndefined({
       annual: [{ year: 2024, count: 42 }],
     }),
-  ).toThrow()
+  )
 })
 
 test('validateAnnualStorageStatsOrUndefined returns empty list', () => {
   const stats: AnnualStats = { annual: [] }
-  expect(validateAnnualStorageStatsOrUndefined(stats)).toEqual(stats)
+  assertDeepEqual(validateAnnualStorageStatsOrUndefined(stats), stats)
 })
 
 test('validateMonthlyStorageStatsOrUndefined returns undefined', () => {
-  expect(validateMonthlyStorageStatsOrUndefined(undefined)).toEqual(undefined)
+  assertDeepEqual(validateMonthlyStorageStatsOrUndefined(undefined), undefined)
 })
 
 test('validateMonthlyStorageStatsOrUndefined returns stats', () => {
   const stats: MonthlyStats = {
     monthly: [{ year: '2024', month: '6', count: '10' }],
   }
-  expect(validateMonthlyStorageStatsOrUndefined(stats)).toEqual(stats)
+  assertDeepEqual(validateMonthlyStorageStatsOrUndefined(stats), stats)
 })
 
 test('validateMonthlyStorageStatsOrUndefined throws for invalid', () => {
-  expect(() =>
+  assertThrows(() =>
     validateMonthlyStorageStatsOrUndefined({
       monthly: [{ year: '2024' }],
     }),
-  ).toThrow()
+  )
 })

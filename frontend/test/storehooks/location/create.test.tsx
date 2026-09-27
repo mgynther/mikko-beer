@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render, waitFor } from '../../render'
 
 import createLocation from '../../../src/storehooks/location/create'
 import type {
@@ -63,9 +65,9 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('create location', async () => {
   const user = setupUser()
-  const onCreate = vitest.fn()
-  const onCreated = vitest.fn()
-  const onValidate = vitest.fn()
+  const onCreate = mockFunction()
+  const onCreated = mockFunction()
+  const onValidate = mockFunction()
 
   const { getByRole, getByText } = render(
     <Helper
@@ -77,10 +79,10 @@ test('create location', async () => {
 
   await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(onCreated).toHaveBeenCalledWith(validatedLocation)
+    assertCalledWith(onCreated, [validatedLocation])
   })
-  expect(getByText('Not loading')).toBeDefined()
-  expect(onCreate).toHaveBeenCalledWith(request)
+  assertDefined(getByText('Not loading'))
+  assertCalledWith(onCreate, [request])
   // The envelope is unwrapped before the validator sees the location.
-  expect(onValidate).toHaveBeenCalledWith(created.location)
+  assertCalledWith(onValidate, [created.location])
 })

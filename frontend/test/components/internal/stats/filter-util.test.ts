@@ -1,4 +1,5 @@
-import { expect, test } from 'vitest'
+import { test } from '../../../test'
+import { assertEqual } from '../../../assert'
 
 import {
   averageStr,
@@ -11,11 +12,11 @@ import {
 import type { SearchParameters } from '../../../../src/components/types/types'
 
 test('average str', () => {
-  expect(averageStr(8.23)).toEqual('8.23')
+  assertEqual(averageStr(8.23), '8.23')
 })
 
 test('count str', () => {
-  expect(countStr(122)).toEqual('122')
+  assertEqual(countStr(122), '122')
 })
 
 function toSearchParams(record: Record<string, string>): SearchParameters {
@@ -26,65 +27,66 @@ function toSearchParams(record: Record<string, string>): SearchParameters {
 
 test('default asc list direction', () => {
   const search: Record<string, string> = {}
-  expect(listDirectionOrDefault(toSearchParams(search))).toEqual('asc')
+  assertEqual(listDirectionOrDefault(toSearchParams(search)), 'asc')
 })
 
 test('asc list direction', () => {
   const search: Record<string, string> = {
     list_direction: 'asc',
   }
-  expect(listDirectionOrDefault(toSearchParams(search))).toEqual('asc')
+  assertEqual(listDirectionOrDefault(toSearchParams(search)), 'asc')
 })
 
 test('desc list direction', () => {
   const search: Record<string, string> = {
     s_direction: 'desc',
   }
-  expect(listDirectionOrDefault(toSearchParams(search))).toEqual('desc')
+  assertEqual(listDirectionOrDefault(toSearchParams(search)), 'desc')
 })
 
 test('filters open default', () => {
   const search: Record<string, string> = {}
-  expect(filtersOpenOrDefault(toSearchParams(search))).toEqual(false)
+  assertEqual(filtersOpenOrDefault(toSearchParams(search)), false)
 })
 
 test('filters open', () => {
   const search: Record<string, string> = {
     s_filters: '1',
   }
-  expect(filtersOpenOrDefault(toSearchParams(search))).toEqual(true)
+  assertEqual(filtersOpenOrDefault(toSearchParams(search)), true)
 })
 
 test('filters closed', () => {
   const search: Record<string, string> = {
     s_filters: '0',
   }
-  expect(filtersOpenOrDefault(toSearchParams(search))).toEqual(false)
+  assertEqual(filtersOpenOrDefault(toSearchParams(search)), false)
 })
 
 test('filtersOpenStr open', () => {
-  expect(filtersOpenStr(true)).toEqual('1')
+  assertEqual(filtersOpenStr(true), '1')
 })
 
 test('filtersOpenStr closed', () => {
-  expect(filtersOpenStr(false)).toEqual('0')
+  assertEqual(filtersOpenStr(false), '0')
 })
 
 test('min review count default', () => {
   const search: Record<string, string> = {}
-  expect(filterNumOrDefault('s_min_count', toSearchParams(search))).toEqual(1)
+  assertEqual(filterNumOrDefault('s_min_count', toSearchParams(search)), 1)
 })
 
 test('min review count', () => {
   const search: Record<string, string> = {
     s_min_count: '13',
   }
-  expect(filterNumOrDefault('s_min_count', toSearchParams(search))).toEqual(13)
+  assertEqual(filterNumOrDefault('s_min_count', toSearchParams(search)), 13)
 })
 
 test('max review count default', () => {
   const search: Record<string, string> = {}
-  expect(filterNumOrDefault('s_max_count', toSearchParams(search))).toEqual(
+  assertEqual(
+    filterNumOrDefault('s_max_count', toSearchParams(search)),
     Infinity,
   )
 })
@@ -93,52 +95,53 @@ test('max review count', () => {
   const search: Record<string, string> = {
     s_max_count: '21',
   }
-  expect(filterNumOrDefault('s_max_count', toSearchParams(search))).toEqual(21)
+  assertEqual(filterNumOrDefault('s_max_count', toSearchParams(search)), 21)
 })
 
 test('min review average default', () => {
   const search: Record<string, string> = {}
-  expect(filterNumOrDefault('s_min_avg', toSearchParams(search))).toEqual(4)
+  assertEqual(filterNumOrDefault('s_min_avg', toSearchParams(search)), 4)
 })
 
 test('min review average', () => {
   const search: Record<string, string> = {
     s_min_avg: '8.30',
   }
-  expect(filterNumOrDefault('s_min_avg', toSearchParams(search))).toEqual(8.3)
+  assertEqual(filterNumOrDefault('s_min_avg', toSearchParams(search)), 8.3)
 })
 
 test('max_review_average default', () => {
   const search: Record<string, string> = {}
-  expect(filterNumOrDefault('s_max_avg', toSearchParams(search))).toEqual(10)
+  assertEqual(filterNumOrDefault('s_max_avg', toSearchParams(search)), 10)
 })
 
 test('max review average', () => {
   const search: Record<string, string> = {
     s_max_avg: '8.50',
   }
-  expect(filterNumOrDefault('s_max_avg', toSearchParams(search))).toEqual(8.5)
+  assertEqual(filterNumOrDefault('s_max_avg', toSearchParams(search)), 8.5)
 })
 
 test('max review count', () => {
   const search: Record<string, string> = {
     s_max_count: '21',
   }
-  expect(filterNumOrDefault('s_max_count', toSearchParams(search))).toEqual(21)
+  assertEqual(filterNumOrDefault('s_max_count', toSearchParams(search)), 21)
 })
 
 test('min review count falls back on non-numeric value', () => {
   const search: Record<string, string> = {
     s_min_count: 'abc',
   }
-  expect(filterNumOrDefault('s_min_count', toSearchParams(search))).toEqual(1)
+  assertEqual(filterNumOrDefault('s_min_count', toSearchParams(search)), 1)
 })
 
 test('max review count falls back on non-numeric value', () => {
   const search: Record<string, string> = {
     s_max_count: 'xyz',
   }
-  expect(filterNumOrDefault('s_max_count', toSearchParams(search))).toEqual(
+  assertEqual(
+    filterNumOrDefault('s_max_count', toSearchParams(search)),
     Infinity,
   )
 })
@@ -147,12 +150,12 @@ test('min review average falls back on non-numeric value', () => {
   const search: Record<string, string> = {
     s_min_avg: 'foo',
   }
-  expect(filterNumOrDefault('s_min_avg', toSearchParams(search))).toEqual(4)
+  assertEqual(filterNumOrDefault('s_min_avg', toSearchParams(search)), 4)
 })
 
 test('max review average falls back on non-numeric value', () => {
   const search: Record<string, string> = {
     s_max_avg: 'bar',
   }
-  expect(filterNumOrDefault('s_max_avg', toSearchParams(search))).toEqual(10)
+  assertEqual(filterNumOrDefault('s_max_avg', toSearchParams(search)), 10)
 })

@@ -1,6 +1,9 @@
-import { fireEvent, render, waitFor } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render, waitFor } from '../../../render'
+import { fireEvent } from '../../../fire-event'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../filter-time'
 import BreweryAllAtOnce from '../../../../src/components/internal/stats/BreweryAllAtOnce'
 import { openFilters } from '../../open-filters'
@@ -107,8 +110,8 @@ const unusedStats: GetBreweryStatsIf = {
 }
 
 test('queries brewery stats', async () => {
-  const query = vitest.fn()
-  const setLoadedBreweries = vitest.fn()
+  const query = mockFunction()
+  const setLoadedBreweries = mockFunction()
   render(
     <BreweryAllAtOnce
       linkComponent={testLink}
@@ -145,10 +148,11 @@ test('queries brewery stats', async () => {
       statsParams={statsParams}
     />,
   )
-  expect(query.mock.calls).toEqual([
+  assertDeepEqual(query.mock.calls, [
     [
       {
         breweryId: undefined,
+        locationId: undefined,
         maxReviewAverage: statsParams.maxReviewAverage,
         maxReviewCount: statsParams.maxReviewCount,
         minReviewAverage: statsParams.minReviewAverage,
@@ -168,7 +172,7 @@ test('queries brewery stats', async () => {
     ],
   ])
   await waitFor(() => {
-    expect(setLoadedBreweries.mock.calls).toEqual([
+    assertDeepEqual(setLoadedBreweries.mock.calls, [
       [undefined],
       [[koskipanimo, lehe]],
     ])
@@ -210,7 +214,7 @@ test('renders brewery stats', () => {
 })
 
 test('clears loaded breweries on filter change pending', () => {
-  const setLoadedBreweries = vitest.fn()
+  const setLoadedBreweries = mockFunction()
   render(
     <BreweryAllAtOnce
       linkComponent={testLink}
@@ -230,7 +234,7 @@ test('clears loaded breweries on filter change pending', () => {
       statsParams={statsParams}
     />,
   )
-  expect(setLoadedBreweries.mock.calls).toEqual([[undefined], [undefined]])
+  assertDeepEqual(setLoadedBreweries.mock.calls, [[undefined], [undefined]])
 })
 
 test('renders loading', () => {
@@ -264,11 +268,11 @@ test('renders loading', () => {
     />,
   )
   const cells = getAllByRole('cell')
-  expect(cells.length).toEqual(6 * 3)
+  assertEqual(cells.length, 6 * 3)
 })
 
 test('sets minimum review count filter', () => {
-  const setMinimumReviewAverage = vitest.fn()
+  const setMinimumReviewAverage = mockFunction()
   const { getByDisplayValue } = render(
     <BreweryAllAtOnce
       linkComponent={testLink}
@@ -296,12 +300,12 @@ test('sets minimum review count filter', () => {
   )
   const slider = getByDisplayValue('4')
   fireEvent.change(slider, { target: { value: '4.5' } })
-  expect(setMinimumReviewAverage.mock.calls).toEqual([[4.5]])
+  assertDeepEqual(setMinimumReviewAverage.mock.calls, [[4.5]])
 })
 
 test('opens filter', async () => {
   const user = setupUser()
-  const setIsFiltersOpen = vitest.fn()
+  const setIsFiltersOpen = mockFunction()
   const { getByRole } = render(
     <BreweryAllAtOnce
       linkComponent={testLink}
@@ -322,5 +326,5 @@ test('opens filter', async () => {
     />,
   )
   await openFilters(getByRole, user)
-  expect(setIsFiltersOpen.mock.calls).toEqual([[true]])
+  assertDeepEqual(setIsFiltersOpen.mock.calls, [[true]])
 })

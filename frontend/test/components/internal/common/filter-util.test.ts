@@ -1,4 +1,5 @@
-import { expect, test } from 'vitest'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
 import { testTimes } from '../../filter-time'
 
 import {
@@ -8,15 +9,15 @@ import {
 } from '../../../../src/components/internal/common/filter-util'
 
 test('format YearMonth padded', () => {
-  expect(formatYearMonth({ year: 2019, month: 5 })).toEqual('2019-05')
+  assertEqual(formatYearMonth({ year: 2019, month: 5 }), '2019-05')
 })
 
 test('format YearMonth non-padded', () => {
-  expect(formatYearMonth({ year: 2019, month: 11 })).toEqual('2019-11')
+  assertEqual(formatYearMonth({ year: 2019, month: 11 }), '2019-11')
 })
 
 test('parse YearMonth', () => {
-  expect(parseYearMonth('2019-05', { year: 2016, month: 2 })).toEqual({
+  assertDeepEqual(parseYearMonth('2019-05', { year: 2016, month: 2 }), {
     year: 2019,
     month: 5,
   })
@@ -25,13 +26,15 @@ test('parse YearMonth', () => {
 // toTimestamp cannot be comprehensively tested without hard-coding a lot of
 // known values. Smoke testing with the known values.
 test('YearMonth start toTimestamp', () => {
-  expect(toTimestamp(testTimes.min.yearMonth, 'start')).toEqual(
+  assertEqual(
+    toTimestamp(testTimes.min.yearMonth, 'start'),
     testTimes.min.utcTimestamp,
   )
 })
 
 test('YearMonth end toTimestamp', () => {
-  expect(toTimestamp(testTimes.max.yearMonth, 'end')).toEqual(
+  assertEqual(
+    toTimestamp(testTimes.max.yearMonth, 'end'),
     testTimes.max.utcTimestamp,
   )
 })
@@ -56,7 +59,7 @@ const parseYearMonthFallbackTests: ParseYearMonthFallbackTest[] = [
 
 parseYearMonthFallbackTests.forEach((testCase) =>
   test(`fallback to default on parsing ${testCase.label} YearMonth`, () => {
-    expect(parseYearMonth(testCase.value, { year: 2016, month: 2 })).toEqual({
+    assertDeepEqual(parseYearMonth(testCase.value, { year: 2016, month: 2 }), {
       year: 2016,
       month: 2,
     })

@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import SelectBreweries from '../../../../src/components/internal/brewery/SelectBreweries'
 import type {
   Brewery,
@@ -43,7 +45,7 @@ const getSearch: (mode: 'active' | 'inactive') => SearchBreweryIf = (
 
 test('selects one more brewery', async () => {
   const user = setupUser()
-  const onSelect = vitest.fn()
+  const onSelect = mockFunction()
   const { findByRole, getByPlaceholderText, getByRole } = render(
     <SelectBreweries
       initialBreweries={[brewery]}
@@ -65,12 +67,12 @@ test('selects one more brewery', async () => {
   })
   await user.click(breweryOption)
   const selectCalls = onSelect.mock.calls
-  expect(selectCalls).toEqual([[[]], [[]], [[brewery.id, anotherBrewery.id]]])
+  assertDeepEqual(selectCalls, [[[]], [[]], [[brewery.id, anotherBrewery.id]]])
 })
 
 test('removes selected brewery', async () => {
   const user = setupUser()
-  const onSelect = vitest.fn()
+  const onSelect = mockFunction()
   const { getAllByRole, getByRole } = render(
     <SelectBreweries
       initialBreweries={[brewery, anotherBrewery]}
@@ -85,11 +87,11 @@ test('removes selected brewery', async () => {
   await user.click(changeButtons[0])
 
   const selectCalls = onSelect.mock.calls
-  expect(selectCalls).toEqual([[[]]])
+  assertDeepEqual(selectCalls, [[[]]])
 
   const removeButton = getByRole('button', { name: 'Remove' })
   await user.click(removeButton)
 
   const finalSelectedCalls = onSelect.mock.calls
-  expect(finalSelectedCalls).toEqual([[[]], [[]], [[anotherBrewery.id]]])
+  assertDeepEqual(finalSelectedCalls, [[[]], [[]], [[anotherBrewery.id]]])
 })

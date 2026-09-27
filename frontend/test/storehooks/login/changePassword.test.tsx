@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render, waitFor } from '../../render'
 
 import changePassword from '../../../src/storehooks/login/changePassword'
 import type {
@@ -62,7 +64,7 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('change password', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
 
   const { getByRole, getByText } = render(
     <Helper result='UNDEFINED' onChange={onChange} />,
@@ -70,9 +72,9 @@ test('change password', async () => {
 
   await user.click(getByRole('button', { name: 'Change password' }))
   await waitFor(() => {
-    expect(onChange).toHaveBeenCalledWith(params)
+    assertCalledWith(onChange, [params])
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 test('the password change result comes from the store', () => {
@@ -80,5 +82,5 @@ test('the password change result comes from the store', () => {
     <Helper result='SUCCESS' onChange={() => undefined} />,
   )
 
-  expect(getByText('SUCCESS')).toBeDefined()
+  assertDefined(getByText('SUCCESS'))
 })

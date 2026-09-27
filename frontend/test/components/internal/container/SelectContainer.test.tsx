@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import SelectContainer from '../../../../src/components/internal/container/SelectContainer'
 import type {
   Container,
@@ -43,21 +45,21 @@ const dontCreateIf: ReviewContainerIf = {
 
 test('selects container', async () => {
   const user = setupUser()
-  const onSelect = vitest.fn()
+  const onSelect = mockFunction()
   const { getByRole } = render(
     <SelectContainer select={onSelect} reviewContainerIf={dontCreateIf} />,
   )
   const containerSelect = getByRole('combobox')
   await user.click(containerSelect)
   const bottle = getByRole('option', { name: 'bottle 0.33' })
-  expect(onSelect.mock.calls).toEqual([])
+  assertDeepEqual(onSelect.mock.calls, [])
   await user.selectOptions(containerSelect, bottle)
   const selectCalls = onSelect.mock.calls
-  expect(selectCalls).toEqual([[bottleContainer]])
+  assertDeepEqual(selectCalls, [[bottleContainer]])
 })
 
 test('render loading', async () => {
-  const onSelect = vitest.fn()
+  const onSelect = mockFunction()
   const { getByText } = render(
     <SelectContainer
       select={onSelect}
@@ -77,7 +79,7 @@ test('render loading', async () => {
 
 test('selects created container', async () => {
   const user = setupUser()
-  const onSelect = vitest.fn()
+  const onSelect = mockFunction()
   const newContainer: Container = {
     id: '13d3e36c-e1db-4c6e-b4f8-d28e45209882',
     type: 'bottle',
@@ -110,5 +112,5 @@ test('selects created container', async () => {
   await user.click(createButton)
 
   const selectCalls = onSelect.mock.calls
-  expect(selectCalls).toEqual([[newContainer]])
+  assertDeepEqual(selectCalls, [[newContainer]])
 })

@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertDefined, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
 
 import SelectCreateRadio, {
@@ -9,54 +11,54 @@ import SelectCreateRadio, {
 
 test('basic, clicks create when already selected', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByRole } = render(
     <SelectCreateRadioBasic mode={Mode.CREATE} onChange={onChange} />,
   )
   const create = getByRole('radio', { name: 'Create' })
-  expect(create).toBeDefined()
-  expect(asInput(create).checked).toEqual(true)
+  assertDefined(create)
+  assertEqual(asInput(create).checked, true)
   await user.click(create)
-  expect(onChange.mock.calls).toEqual([])
+  assertDeepEqual(onChange.mock.calls, [])
 })
 
 test('basic, clicks select when already selected', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByRole } = render(
     <SelectCreateRadioBasic mode={Mode.SELECT} onChange={onChange} />,
   )
   const select = getByRole('radio', { name: 'Select' })
-  expect(asInput(select).checked).toEqual(true)
-  expect(select).toBeDefined()
+  assertEqual(asInput(select).checked, true)
+  assertDefined(select)
   await user.click(select)
-  expect(onChange.mock.calls).toEqual([])
+  assertDeepEqual(onChange.mock.calls, [])
 })
 
 test('basic, clicks create', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByRole } = render(
     <SelectCreateRadioBasic mode={Mode.SELECT} onChange={onChange} />,
   )
   const create = getByRole('radio', { name: 'Create' })
-  expect(create).toBeDefined()
-  expect(asInput(create).checked).toEqual(false)
+  assertDefined(create)
+  assertEqual(asInput(create).checked, false)
   await user.click(create)
-  expect(onChange.mock.calls).toEqual([[Mode.CREATE]])
+  assertDeepEqual(onChange.mock.calls, [[Mode.CREATE]])
 })
 
 test('basic, clicks select', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByRole } = render(
     <SelectCreateRadioBasic mode={Mode.CREATE} onChange={onChange} />,
   )
   const select = getByRole('radio', { name: 'Select' })
-  expect(select).toBeDefined()
-  expect(asInput(select).checked).toEqual(false)
+  assertDefined(select)
+  assertEqual(asInput(select).checked, false)
   await user.click(select)
-  expect(onChange.mock.calls).toEqual([[Mode.SELECT]])
+  assertDeepEqual(onChange.mock.calls, [[Mode.SELECT]])
 })
 
 test('full, changes mode', async () => {
@@ -70,26 +72,26 @@ test('full, changes mode', async () => {
       selectElement={<div>{selectTextValue}</div>}
     />,
   )
-  expect(queryByText(createTextValue)).toBeNull()
-  expect(getByText(selectTextValue)).toBeDefined()
+  assertEqual(queryByText(createTextValue), null)
+  assertDefined(getByText(selectTextValue))
 
   const create = getByRole('radio', { name: 'Create' })
-  expect(create).toBeDefined()
-  expect(asInput(create).checked).toEqual(false)
+  assertDefined(create)
+  assertEqual(asInput(create).checked, false)
   await user.click(create)
   const createText = getByText(createTextValue)
-  expect(createText).toBeDefined()
+  assertDefined(createText)
   const selectText = queryByText(selectTextValue)
-  expect(selectText).toEqual(null)
+  assertDeepEqual(selectText, null)
 
   const select = getByRole('radio', { name: 'Select' })
-  expect(select).toBeDefined()
-  expect(asInput(select).checked).toEqual(false)
+  assertDefined(select)
+  assertEqual(asInput(select).checked, false)
   await user.click(select)
   const secondCreateText = queryByText(createTextValue)
-  expect(secondCreateText).toEqual(null)
+  assertDeepEqual(secondCreateText, null)
   const secondSelectText = getByText(selectTextValue)
-  expect(secondSelectText).toBeDefined()
+  assertDefined(secondSelectText)
 })
 
 function asInput(element: HTMLElement): HTMLInputElement {

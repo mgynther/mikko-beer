@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render } from '../../render'
 
 import listUsers from '../../../src/storehooks/user/list'
 import type {
@@ -42,11 +44,11 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('list users', () => {
-  const onValidate = vitest.fn()
+  const onValidate = mockFunction()
 
   const { getByText } = render(<Helper onValidate={onValidate} />)
 
-  expect(getByText(validatedUserList.users[0].username)).toBeDefined()
-  expect(getByText('Not loading')).toBeDefined()
-  expect(onValidate).toHaveBeenCalledWith(listed)
+  assertDefined(getByText(validatedUserList.users[0].username))
+  assertDefined(getByText('Not loading'))
+  assertCalledWith(onValidate, [listed])
 })

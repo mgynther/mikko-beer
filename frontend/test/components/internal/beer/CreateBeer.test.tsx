@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import CreateBeer from '../../../../src/components/internal/beer/CreateBeer'
 import type {
   CreateBeerIf,
@@ -34,7 +36,7 @@ const dontCreate = {
 
 test('creates beer', async () => {
   const user = setupUser()
-  const selectBeer = vitest.fn()
+  const selectBeer = mockFunction()
   const searchFieldIf: SearchFieldIf = {
     useSearchField: () => ({
       activate: () => undefined,
@@ -100,10 +102,10 @@ test('creates beer', async () => {
   await user.click(styleOption)
 
   const createButton = getByRole('button', { name: 'Create beer' })
-  expect(createButton.hasAttribute('disabled')).toEqual(false)
+  assertEqual(createButton.hasAttribute('disabled'), false)
   await user.click(createButton)
   const createCalls = selectBeer.mock.calls
-  expect(createCalls).toEqual([
+  assertDeepEqual(createCalls, [
     [
       {
         id,

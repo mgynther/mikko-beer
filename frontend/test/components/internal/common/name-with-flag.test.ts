@@ -1,37 +1,38 @@
-import { expect, test } from 'vitest'
+import { test } from '../../../test'
+import { assertEqual } from '../../../assert'
 
 import { nameWithFlag } from '../../../../src/components/internal/common/name-with-flag'
 
 const name = 'Lehe pruulikoda'
 
 test('combines name and flag', () => {
-  expect(nameWithFlag(name, 'EE')).toEqual(`${name} \u{1F1EA}\u{1F1EA}`)
+  assertEqual(nameWithFlag(name, 'EE'), `${name} \u{1F1EA}\u{1F1EA}`)
 })
 
 test('gives plain name for lower case country code', () => {
-  expect(nameWithFlag(name, 'ee')).toEqual(name)
+  assertEqual(nameWithFlag(name, 'ee'), name)
 })
 
 test('gives plain name without country code', () => {
-  expect(nameWithFlag(name, undefined)).toEqual(name)
+  assertEqual(nameWithFlag(name, undefined), name)
 })
 
 test('gives plain name for empty country code', () => {
-  expect(nameWithFlag(name, '')).toEqual(name)
+  assertEqual(nameWithFlag(name, ''), name)
 })
 
 test('gives plain name for too short country code', () => {
-  expect(nameWithFlag(name, 'E')).toEqual(name)
+  assertEqual(nameWithFlag(name, 'E'), name)
 })
 
 test('gives plain name for too long country code', () => {
-  expect(nameWithFlag(name, 'EST')).toEqual(name)
+  assertEqual(nameWithFlag(name, 'EST'), name)
 })
 
 test('gives plain name for invalid country code', () => {
-  expect(nameWithFlag(name, '12')).toEqual(name)
+  assertEqual(nameWithFlag(name, '12'), name)
 })
 
 test('gives plain empty name', () => {
-  expect(nameWithFlag('', undefined)).toEqual('')
+  assertEqual(nameWithFlag('', undefined), '')
 })

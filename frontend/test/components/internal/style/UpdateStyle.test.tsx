@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertDefined } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import UpdateStyle from '../../../../src/components/internal/style/UpdateStyle'
 import type {
   GetStyleIf,
@@ -65,8 +67,8 @@ const listStyles: ListStylesIf = {
 
 test('updates style', async () => {
   const user = setupUser()
-  const onSaved = vitest.fn()
-  const update = vitest.fn()
+  const onSaved = mockFunction()
+  const update = mockFunction()
   const newName = 'Cream Ale'
   const { getByPlaceholderText, getByRole } = render(
     <UpdateStyle
@@ -96,7 +98,7 @@ test('updates style', async () => {
 
   const saveButton = getByRole('button', { name: 'Save' })
   await user.click(saveButton)
-  expect(update.mock.calls).toEqual([
+  assertDeepEqual(update.mock.calls, [
     [
       {
         id,
@@ -105,7 +107,7 @@ test('updates style', async () => {
       },
     ],
   ])
-  expect(onSaved.mock.calls).toEqual([[]])
+  assertDeepEqual(onSaved.mock.calls, [[]])
 })
 
 test('shows loading indicator', async () => {
@@ -132,11 +134,11 @@ test('shows loading indicator', async () => {
     />,
   )
   const loadingText = getByText(loadingIndicatorText)
-  expect(loadingText).toBeDefined()
+  assertDefined(loadingText)
 })
 
 test('cancels updating style', async () => {
-  const cancel = vitest.fn()
+  const cancel = mockFunction()
   const { getByRole } = render(
     <UpdateStyle
       getStyleIf={getStyle}
@@ -156,5 +158,5 @@ test('cancels updating style', async () => {
   )
   const cancelButton = getByRole('button', { name: 'Cancel' })
   cancelButton.click()
-  expect(cancel.mock.calls).toEqual([[]])
+  assertDeepEqual(cancel.mock.calls, [[]])
 })

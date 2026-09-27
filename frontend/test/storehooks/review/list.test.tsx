@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render, waitFor } from '../../render'
 
 import listReviews from '../../../src/storehooks/review/list'
 import type {
@@ -79,9 +81,9 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('list reviews', async () => {
   const user = setupUser()
-  const onList = vitest.fn()
-  const onListed = vitest.fn()
-  const onValidate = vitest.fn()
+  const onList = mockFunction()
+  const onListed = mockFunction()
+  const onValidate = mockFunction()
 
   const { getByRole, getByText } = render(
     <Helper
@@ -91,18 +93,18 @@ test('list reviews', async () => {
       onValidate={onValidate}
     />,
   )
-  expect(getByText('Uninitialized')).toBeDefined()
+  assertDefined(getByText('Uninitialized'))
 
   await user.click(getByRole('button', { name: 'List' }))
   await waitFor(() => {
-    expect(onListed).toHaveBeenCalledWith(validatedReviewList)
+    assertCalledWith(onListed, [validatedReviewList])
   })
-  expect(onList).toHaveBeenCalledWith(params)
-  expect(onValidate).toHaveBeenCalledWith(listed)
+  assertCalledWith(onList, [params])
+  assertCalledWith(onValidate, [listed])
 })
 
 test('the review list the store holds is validated on the way out', () => {
-  const onValidate = vitest.fn()
+  const onValidate = mockFunction()
 
   const { getByText } = render(
     <Helper
@@ -113,7 +115,7 @@ test('the review list the store holds is validated on the way out', () => {
     />,
   )
 
-  expect(getByText(validatedReviewList.reviews[0].beerName)).toBeDefined()
-  expect(getByText('Initialized')).toBeDefined()
-  expect(onValidate).toHaveBeenCalledWith(listed)
+  assertDefined(getByText(validatedReviewList.reviews[0].beerName))
+  assertDefined(getByText('Initialized'))
+  assertCalledWith(onValidate, [listed])
 })

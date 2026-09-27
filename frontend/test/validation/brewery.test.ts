@@ -1,4 +1,5 @@
-import { expect, test } from 'vitest'
+import { test } from '../test'
+import { assertDeepEqual, assertEqual, assertThrows } from '../assert'
 
 import type { Brewery, BreweryList } from '../../src/validation/brewery'
 
@@ -16,31 +17,31 @@ const validBrewery: Brewery = {
 }
 
 test('validateBreweryOrUndefined returns undefined for undefined', () => {
-  expect(validateBreweryOrUndefined(undefined)).toEqual(undefined)
+  assertDeepEqual(validateBreweryOrUndefined(undefined), undefined)
 })
 
 test('validateBreweryOrUndefined returns brewery for valid input', () => {
-  expect(validateBreweryOrUndefined(validBrewery)).toEqual(validBrewery)
+  assertDeepEqual(validateBreweryOrUndefined(validBrewery), validBrewery)
 })
 
 test('validateBreweryOrUndefined throws for invalid input', () => {
-  expect(() => validateBreweryOrUndefined({ id: 123 })).toThrow()
+  assertThrows(() => validateBreweryOrUndefined({ id: 123 }))
 })
 
 test('validateBreweryOrUndefined throws for missing name', () => {
-  expect(() =>
+  assertThrows(() =>
     validateBreweryOrUndefined({
       id: 'ff5a9ed2-f0dc-4759-8e97-1a06e31c50d3',
     }),
-  ).toThrow()
+  )
 })
 
 test('validateBreweryOrUndefined throws for missing id', () => {
-  expect(() =>
+  assertThrows(() =>
     validateBreweryOrUndefined({
       name: 'Test Brewery',
     }),
-  ).toThrow()
+  )
 })
 
 test('validateBrewery returns brewery for valid input', () => {
@@ -49,63 +50,63 @@ test('validateBrewery returns brewery for valid input', () => {
     name: 'Another Brewery',
     country: undefined,
   }
-  expect(validateBrewery(brewery)).toEqual(brewery)
+  assertDeepEqual(validateBrewery(brewery), brewery)
 })
 
 test('validateBrewery throws for invalid input', () => {
-  expect(() => validateBrewery({ id: 123 })).toThrow()
+  assertThrows(() => validateBrewery({ id: 123 }))
 })
 
 test('validateBrewery throws for non-string name', () => {
-  expect(() =>
+  assertThrows(() =>
     validateBrewery({
       id: 'de4901c9-716c-460f-bd19-78bd31e04dfc',
       name: 456,
     }),
-  ).toThrow()
+  )
 })
 
 test('validateBreweryListOrUndefined returns undefined for undefined', () => {
-  expect(validateBreweryListOrUndefined(undefined)).toEqual(undefined)
+  assertDeepEqual(validateBreweryListOrUndefined(undefined), undefined)
 })
 
 test('validateBreweryListOrUndefined returns list for valid input', () => {
   const list: BreweryList = {
     breweries: [validBrewery],
   }
-  expect(validateBreweryListOrUndefined(list)).toEqual(list)
+  assertDeepEqual(validateBreweryListOrUndefined(list), list)
 })
 
 test('validateBreweryListOrUndefined throws for invalid input', () => {
-  expect(() => validateBreweryListOrUndefined({ breweries: 'wrong' })).toThrow()
+  assertThrows(() => validateBreweryListOrUndefined({ breweries: 'wrong' }))
 })
 
 test('validateBreweryListOrUndefined throws for invalid list', () => {
-  expect(() =>
+  assertThrows(() =>
     validateBreweryListOrUndefined({
       breweries: [{ id: 123 }],
     }),
-  ).toThrow()
+  )
 })
 
 test('validateBreweryListOrUndefined returns empty list', () => {
   const list: BreweryList = { breweries: [] }
-  expect(validateBreweryListOrUndefined(list)).toEqual(list)
+  assertDeepEqual(validateBreweryListOrUndefined(list), list)
 })
 
 test('validateBreweryList returns list for valid input', () => {
   const list: BreweryList = {
     breweries: [validBrewery],
   }
-  expect(validateBreweryList(list)).toEqual(list)
+  assertDeepEqual(validateBreweryList(list), list)
 })
 
 test('validateBreweryList throws for invalid input', () => {
-  expect(() => validateBreweryList({})).toThrow()
+  assertThrows(() => validateBreweryList({}))
 })
 
 test('validateBreweryList throws for missing breweries field', () => {
-  expect(() => validateBreweryList({ wrong: [] })).toThrow()
+  assertThrows(() => validateBreweryList({ wrong: [] }))
 })
 
 test('validateBreweryList returns list with multiple breweries', () => {
@@ -119,7 +120,7 @@ test('validateBreweryList returns list with multiple breweries', () => {
       },
     ],
   }
-  expect(validateBreweryList(list)).toEqual(list)
+  assertDeepEqual(validateBreweryList(list), list)
 })
 
 test('validateBrewery returns country', () => {
@@ -128,7 +129,7 @@ test('validateBrewery returns country', () => {
     name: 'Brewery With Country',
     country: 'FI',
   }
-  expect(validateBrewery(brewery)).toEqual(brewery)
+  assertDeepEqual(validateBrewery(brewery), brewery)
 })
 
 test('validateBrewery sets missing country explicitly undefined', () => {
@@ -136,18 +137,18 @@ test('validateBrewery sets missing country explicitly undefined', () => {
     id: '1ecb1e0e-8b1c-4de6-a9d8-5a3a75fbb9a6',
     name: 'Brewery Without Country',
   })
-  expect(Object.keys(brewery).includes('country')).toEqual(true)
-  expect(brewery.country).toEqual(undefined)
+  assertEqual(Object.keys(brewery).includes('country'), true)
+  assertEqual(brewery.country, undefined)
 })
 
 test('validateBrewery throws for non-string country', () => {
-  expect(() =>
+  assertThrows(() =>
     validateBrewery({
       id: '4bd5d1a1-3cbb-4a6e-84e6-2cdd10a1d3a0',
       name: 'Test Brewery',
       country: 358,
     }),
-  ).toThrow()
+  )
 })
 
 test('validateBreweryList sets missing country explicitly undefined', () => {
@@ -160,8 +161,8 @@ test('validateBreweryList sets missing country explicitly undefined', () => {
     ],
   })
   const brewery = list.breweries[0]
-  expect(Object.keys(brewery).includes('country')).toEqual(true)
-  expect(brewery.country).toEqual(undefined)
+  assertEqual(Object.keys(brewery).includes('country'), true)
+  assertEqual(brewery.country, undefined)
 })
 
 test('validateBreweryList returns countries', () => {
@@ -174,5 +175,5 @@ test('validateBreweryList returns countries', () => {
       },
     ],
   }
-  expect(validateBreweryList(list)).toEqual(list)
+  assertDeepEqual(validateBreweryList(list), list)
 })

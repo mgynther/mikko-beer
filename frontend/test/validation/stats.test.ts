@@ -1,4 +1,5 @@
-import { expect, test } from 'vitest'
+import { test } from '../test'
+import { assertDeepEqual, assertEqual, assertThrows } from '../assert'
 
 import type {
   AnnualContainerStats,
@@ -48,20 +49,20 @@ const validOverall: OverallStats = {
 
 test('validateOverallStatsOrUndefined passes undefined', () => {
   const result = validateOverallStatsOrUndefined(undefined)
-  expect(result).toEqual(undefined)
+  assertDeepEqual(result, undefined)
 })
 
 test('validateOverallStatsOrUndefined passes valid', () => {
   const result = validateOverallStatsOrUndefined(validOverall)
-  expect(result).toEqual(validOverall)
+  assertDeepEqual(result, validOverall)
 })
 
 test('validateOverallStatsOrUndefined throws invalid', () => {
-  expect(() =>
+  assertThrows(() =>
     validateOverallStatsOrUndefined({
       beerCount: 482,
     }),
-  ).toThrow()
+  )
 })
 
 // Annual
@@ -80,20 +81,20 @@ const validAnnual: AnnualStats = {
 
 test('validateAnnualStatsOrUndefined passes undefined', () => {
   const result = validateAnnualStatsOrUndefined(undefined)
-  expect(result).toEqual(undefined)
+  assertDeepEqual(result, undefined)
 })
 
 test('validateAnnualStatsOrUndefined passes valid', () => {
   const result = validateAnnualStatsOrUndefined(validAnnual)
-  expect(result).toEqual(validAnnual)
+  assertDeepEqual(result, validAnnual)
 })
 
 test('validateAnnualStatsOrUndefined throws invalid', () => {
-  expect(() =>
+  assertThrows(() =>
     validateAnnualStatsOrUndefined({
       annual: [{ reviewCount: 105 }],
     }),
-  ).toThrow()
+  )
 })
 
 // AnnualContainer
@@ -115,33 +116,33 @@ const validAnnualContainer: AnnualContainerStats = {
 
 test('validateAnnualContainerStatsOrUndefined passes undefined', () => {
   const result = validateAnnualContainerStatsOrUndefined(undefined)
-  expect(result).toEqual(undefined)
+  assertDeepEqual(result, undefined)
 })
 
 test('validateAnnualContainerStatsOrUndefined passes valid', () => {
   const result = validateAnnualContainerStatsOrUndefined(validAnnualContainer)
-  expect(result).toEqual(validAnnualContainer)
+  assertDeepEqual(result, validAnnualContainer)
 })
 
 test('validateAnnualContainerStatsOrUndefined throws invalid', () => {
-  expect(() =>
+  assertThrows(() =>
     validateAnnualContainerStatsOrUndefined({
       annualContainer: [{ containerId: 123 }],
     }),
-  ).toThrow()
+  )
 })
 
 test('validateAnnualContainerStats passes valid', () => {
   const result = validateAnnualContainerStats(validAnnualContainer)
-  expect(result).toEqual(validAnnualContainer)
+  assertDeepEqual(result, validAnnualContainer)
 })
 
 test('validateAnnualContainerStats throws invalid', () => {
-  expect(() =>
+  assertThrows(() =>
     validateAnnualContainerStats({
       annualContainer: [{ containerId: 123 }],
     }),
-  ).toThrow()
+  )
 })
 
 // Brewery country
@@ -162,42 +163,42 @@ const validBreweryCountry: BreweryCountryStats = {
 
 test('validateBreweryCountryStatsOrUndefined passes undefined', () => {
   const result = validateBreweryCountryStatsOrUndefined(undefined)
-  expect(result).toEqual(undefined)
+  assertDeepEqual(result, undefined)
 })
 
 test('validateBreweryCountryStatsOrUndefined passes valid', () => {
   const result = validateBreweryCountryStatsOrUndefined(validBreweryCountry)
-  expect(result).toEqual(validBreweryCountry)
+  assertDeepEqual(result, validBreweryCountry)
 })
 
 test('validateBreweryCountryStatsOrUndefined throws invalid', () => {
-  expect(() =>
+  assertThrows(() =>
     validateBreweryCountryStatsOrUndefined({
       breweryCountry: [{ countryCode: 358 }],
     }),
-  ).toThrow()
+  )
 })
 
 test('validateBreweryCountryStats passes valid', () => {
   const result = validateBreweryCountryStats(validBreweryCountry)
-  expect(result).toEqual(validBreweryCountry)
+  assertDeepEqual(result, validBreweryCountry)
 })
 
 test('validateBreweryCountryStats throws invalid', () => {
-  expect(() =>
+  assertThrows(() =>
     validateBreweryCountryStats({
       breweryCountry: [{ countryCode: 358 }],
     }),
-  ).toThrow()
+  )
 })
 
 test('validateBreweryCountryStats throws for missing brewery count', () => {
   const { breweryCount, ...withoutBreweryCount } =
     validBreweryCountry.breweryCountry[0]
-  expect(breweryCount).toEqual('12')
-  expect(() =>
+  assertEqual(breweryCount, '12')
+  assertThrows(() =>
     validateBreweryCountryStats({ breweryCountry: [withoutBreweryCount] }),
-  ).toThrow()
+  )
 })
 
 // Brewery
@@ -219,33 +220,33 @@ const validBrewery: BreweryStats = {
 
 test('validateBreweryStatsOrUndefined passes undefined', () => {
   const result = validateBreweryStatsOrUndefined(undefined)
-  expect(result).toEqual(undefined)
+  assertDeepEqual(result, undefined)
 })
 
 test('validateBreweryStatsOrUndefined passes valid', () => {
   const result = validateBreweryStatsOrUndefined(validBrewery)
-  expect(result).toEqual(validBrewery)
+  assertDeepEqual(result, validBrewery)
 })
 
 test('validateBreweryStatsOrUndefined throws invalid', () => {
-  expect(() =>
+  assertThrows(() =>
     validateBreweryStatsOrUndefined({
       brewery: [{ breweryId: 123 }],
     }),
-  ).toThrow()
+  )
 })
 
 test('validateBreweryStats passes valid', () => {
   const result = validateBreweryStats(validBrewery)
-  expect(result).toEqual(validBrewery)
+  assertDeepEqual(result, validBrewery)
 })
 
 test('validateBreweryStats throws invalid', () => {
-  expect(() =>
+  assertThrows(() =>
     validateBreweryStats({
       brewery: [{ breweryId: 123 }],
     }),
-  ).toThrow()
+  )
 })
 
 test('validateBreweryStats passes country', () => {
@@ -257,7 +258,7 @@ test('validateBreweryStats passes country', () => {
       },
     ],
   }
-  expect(validateBreweryStats(stats)).toEqual(stats)
+  assertDeepEqual(validateBreweryStats(stats), stats)
 })
 
 test('validateBreweryStats sets missing country explicitly undefined', () => {
@@ -276,12 +277,12 @@ test('validateBreweryStats sets missing country explicitly undefined', () => {
     ],
   })
   const brewery = result.brewery[0]
-  expect(Object.keys(brewery).includes('breweryCountry')).toEqual(true)
-  expect(brewery.breweryCountry).toEqual(undefined)
+  assertEqual(Object.keys(brewery).includes('breweryCountry'), true)
+  assertEqual(brewery.breweryCountry, undefined)
 })
 
 test('validateBreweryStats throws for non-string country', () => {
-  expect(() =>
+  assertThrows(() =>
     validateBreweryStats({
       brewery: [
         {
@@ -290,13 +291,13 @@ test('validateBreweryStats throws for non-string country', () => {
         },
       ],
     }),
-  ).toThrow()
+  )
 })
 
 test('validateOverallStatsOrUndefined throws for missing country count', () => {
   const { breweryCountryCount, ...withoutCountryCount } = validOverall
-  expect(breweryCountryCount).toEqual('12')
-  expect(() => validateOverallStatsOrUndefined(withoutCountryCount)).toThrow()
+  assertEqual(breweryCountryCount, '12')
+  assertThrows(() => validateOverallStatsOrUndefined(withoutCountryCount))
 })
 
 // Container
@@ -317,20 +318,20 @@ const validContainer: ContainerStats = {
 
 test('validateContainerStatsOrUndefined passes undefined', () => {
   const result = validateContainerStatsOrUndefined(undefined)
-  expect(result).toEqual(undefined)
+  assertDeepEqual(result, undefined)
 })
 
 test('validateContainerStatsOrUndefined passes valid', () => {
   const result = validateContainerStatsOrUndefined(validContainer)
-  expect(result).toEqual(validContainer)
+  assertDeepEqual(result, validContainer)
 })
 
 test('validateContainerStatsOrUndefined throws invalid', () => {
-  expect(() =>
+  assertThrows(() =>
     validateContainerStatsOrUndefined({
       container: [{ containerId: 123 }],
     }),
-  ).toThrow()
+  )
 })
 
 // Location
@@ -350,33 +351,33 @@ const validLocation: LocationStats = {
 
 test('validateLocationStats passes valid', () => {
   const result = validateLocationStats(validLocation)
-  expect(result).toEqual(validLocation)
+  assertDeepEqual(result, validLocation)
 })
 
 test('validateLocationStats throws invalid', () => {
-  expect(() =>
+  assertThrows(() =>
     validateLocationStats({
       location: [{ locationId: 123 }],
     }),
-  ).toThrow()
+  )
 })
 
 test('validateLocationStatsOrUndefined passes undefined', () => {
   const result = validateLocationStatsOrUndefined(undefined)
-  expect(result).toEqual(undefined)
+  assertDeepEqual(result, undefined)
 })
 
 test('validateLocationStatsOrUndefined passes valid', () => {
   const result = validateLocationStatsOrUndefined(validLocation)
-  expect(result).toEqual(validLocation)
+  assertDeepEqual(result, validLocation)
 })
 
 test('validateLocationStatsOrUndefined throws invalid', () => {
-  expect(() =>
+  assertThrows(() =>
     validateLocationStatsOrUndefined({
       location: [{ locationId: 123 }],
     }),
-  ).toThrow()
+  )
 })
 
 // Rating
@@ -391,20 +392,20 @@ const validRating: RatingStats = {
 
 test('validateRatingStatsOrUndefined passes undefined', () => {
   const result = validateRatingStatsOrUndefined(undefined)
-  expect(result).toEqual(undefined)
+  assertDeepEqual(result, undefined)
 })
 
 test('validateRatingStatsOrUndefined passes valid', () => {
   const result = validateRatingStatsOrUndefined(validRating)
-  expect(result).toEqual(validRating)
+  assertDeepEqual(result, validRating)
 })
 
 test('validateRatingStatsOrUndefined throws invalid', () => {
-  expect(() =>
+  assertThrows(() =>
     validateRatingStatsOrUndefined({
       rating: [{ rating: 10 }],
     }),
-  ).toThrow()
+  )
 })
 
 // Style
@@ -424,18 +425,18 @@ const validStyle: StyleStats = {
 
 test('validateStyleStatsOrUndefined passes undefined', () => {
   const result = validateStyleStatsOrUndefined(undefined)
-  expect(result).toEqual(undefined)
+  assertDeepEqual(result, undefined)
 })
 
 test('validateStyleStatsOrUndefined passes valid', () => {
   const result = validateStyleStatsOrUndefined(validStyle)
-  expect(result).toEqual(validStyle)
+  assertDeepEqual(result, validStyle)
 })
 
 test('validateStyleStatsOrUndefined throws invalid', () => {
-  expect(() =>
+  assertThrows(() =>
     validateStyleStatsOrUndefined({
       style: [{ styleId: 123 }],
     }),
-  ).toThrow()
+  )
 })

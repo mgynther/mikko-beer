@@ -1,6 +1,9 @@
-import { fireEvent, render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
+import { fireEvent } from '../../../fire-event'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../filter-time'
 import BreweryCountryStatsTable from '../../../../src/components/internal/stats/BreweryCountryStatsTable'
 import type {
@@ -106,7 +109,7 @@ test('renders brewery country stats', () => {
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setIsFiltersOpen = vitest.fn()
+  const setIsFiltersOpen = mockFunction()
   const { getByRole } = render(
     <BreweryCountryStatsTable
       breweryCountries={[finland, estonia]}
@@ -122,7 +125,7 @@ test('opens filters', async () => {
     />,
   )
   await openFilters(getByRole, user)
-  expect(setIsFiltersOpen.mock.calls).toEqual([[true]])
+  assertDeepEqual(setIsFiltersOpen.mock.calls, [[true]])
 })
 
 interface OrderTestData {
@@ -180,7 +183,7 @@ const orderTests: OrderTestData[] = [
 
 orderTests.forEach((data) => {
   test(`set order to ${data.testName}`, () => {
-    const setSortingOrder = vitest.fn()
+    const setSortingOrder = mockFunction()
     const { getByRole } = render(
       <BreweryCountryStatsTable
         breweryCountries={[finland, estonia]}
@@ -197,12 +200,12 @@ orderTests.forEach((data) => {
     )
     const orderButton = getByRole('button', { name: data.buttonText })
     orderButton.click()
-    expect(setSortingOrder.mock.calls).toEqual([[data.expectedOrder]])
+    assertDeepEqual(setSortingOrder.mock.calls, [[data.expectedOrder]])
   })
 })
 
 test('sets minimum review count filter', () => {
-  const setMinimumReviewCount = vitest.fn()
+  const setMinimumReviewCount = mockFunction()
   const { getByDisplayValue } = render(
     <BreweryCountryStatsTable
       breweryCountries={[finland, estonia]}
@@ -225,5 +228,5 @@ test('sets minimum review count filter', () => {
   )
   const slider = getByDisplayValue('2')
   fireEvent.change(slider, { target: { value: '3' } })
-  expect(setMinimumReviewCount.mock.calls).toEqual([[5]])
+  assertDeepEqual(setMinimumReviewCount.mock.calls, [[5]])
 })

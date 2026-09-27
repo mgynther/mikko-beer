@@ -1,5 +1,5 @@
-import { afterEach } from 'vitest'
-import { cleanup } from '@testing-library/react'
+import { afterEach } from './test'
+import { cleanup } from './render'
 
 // Testing library registers its automatic cleanup when it is first imported.
 // Test files share a module registry when the environment is reused so the

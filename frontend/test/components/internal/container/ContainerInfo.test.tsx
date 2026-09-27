@@ -1,5 +1,6 @@
-import { render } from '@testing-library/react'
-import { expect, test } from 'vitest'
+import { test } from '../../../test'
+import { assertEqual } from '../../../assert'
+import { render } from '../../../render'
 import ContainerInfo, {
   asText,
 } from '../../../../src/components/internal/container/ContainerInfo'
@@ -12,7 +13,7 @@ const container: Container = {
 }
 
 test('container info as text', () => {
-  expect(asText(container)).toEqual('bottle 0.25')
+  assertEqual(asText(container), 'bottle 0.25')
 })
 
 test('renders container info', () => {

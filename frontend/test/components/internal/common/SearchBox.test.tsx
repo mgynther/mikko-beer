@@ -1,6 +1,15 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import {
+  assertCalledWith,
+  assertDeepEqual,
+  assertDefined,
+  assertEqual,
+  assertInstanceOf,
+} from '../../../assert'
+import { mockFunction } from '../../../mock'
+import type { MockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 
 import SearchBox from '../../../../src/components/internal/common/SearchBox'
 import type {
@@ -48,14 +57,14 @@ test('renders title', () => {
     <SearchBox {...defaultProps} title={titleText} />,
   )
   const inputElement = getByPlaceholderText(titleText)
-  expect(inputElement).toBeInstanceOf(HTMLInputElement)
+  assertInstanceOf(inputElement, HTMLInputElement)
 })
 
 test('activates', async () => {
   const user = setupUser()
   let useSearchCount = 0
   const search = {
-    activate: vitest.fn(),
+    activate: mockFunction(),
     isActive: false,
   }
   const { getByRole } = render(
@@ -74,8 +83,8 @@ test('activates', async () => {
     />,
   )
   await user.click(getByRole('button'))
-  expect(search.activate.mock.calls.length).toEqual(1)
-  expect(useSearchCount).toEqual(1)
+  assertEqual(search.activate.mock.calls.length, 1)
+  assertEqual(useSearchCount, 1)
 })
 
 test('does not show items when inactive', () => {
@@ -93,7 +102,7 @@ test('does not show items when inactive', () => {
     />,
   )
   const item = queryByText(itemName)
-  expect(item).toEqual(null)
+  assertDeepEqual(item, null)
 })
 
 test('show items while loading', async () => {
@@ -113,9 +122,9 @@ test('show items while loading', async () => {
     />,
   )
   const item = getByText(itemName)
-  expect(item).toBeDefined()
+  assertDefined(item)
   const loadingText = getByText(loadingIndicatorText)
-  expect(loadingText).toBeDefined()
+  assertDefined(loadingText)
 })
 
 test('does not show items while filter empty', async () => {
@@ -133,13 +142,13 @@ test('does not show items while filter empty', async () => {
     />,
   )
   const item = queryByText(itemName)
-  expect(item).toEqual(null)
+  assertDeepEqual(item, null)
 })
 
 test('formats custom name', async () => {
   const itemName = 'Must not be visible'
   const customFormattedName = 'Must be visible'
-  const selector = vitest.fn()
+  const selector = mockFunction()
   const { getByText, queryByText } = render(
     <SearchBox
       {...defaultProps}
@@ -156,9 +165,9 @@ test('formats custom name', async () => {
     />,
   )
   const realName = queryByText(itemName)
-  expect(realName).toBeNull()
+  assertEqual(realName, null)
   const formattedName = getByText(customFormattedName)
-  expect(formattedName).toBeDefined()
+  assertDefined(formattedName)
 })
 
 test('renders more results info', async () => {
@@ -174,7 +183,7 @@ test('renders more results info', async () => {
     />,
   )
   const text = getByText('There are more results. Refine search...')
-  expect(text).toBeDefined()
+  assertDefined(text)
 })
 
 test('renders no results info', async () => {
@@ -186,13 +195,13 @@ test('renders no results info', async () => {
     />,
   )
   const text = getByText('No results')
-  expect(text).toBeDefined()
+  assertDefined(text)
 })
 
 test('item is selected', async () => {
   const user = setupUser()
   const itemName = 'Must be visible'
-  const selector = vitest.fn()
+  const selector = mockFunction()
   const { getByRole } = render(
     <SearchBox
       {...defaultProps}
@@ -208,9 +217,9 @@ test('item is selected', async () => {
     />,
   )
   const itemOption = getByRole('option', { name: itemName })
-  expect(itemOption).toBeDefined()
+  assertDefined(itemOption)
   await user.click(itemOption)
-  expect(selector.mock.calls).toEqual([[{ id: '1', name: itemName }]])
+  assertDeepEqual(selector.mock.calls, [[{ id: '1', name: itemName }]])
 })
 
 test('renders filter', async () => {
@@ -219,16 +228,13 @@ test('renders filter', async () => {
     <SearchBox {...defaultProps} currentFilter={filter} />,
   )
   const input = getByRole('combobox')
-  expect(input).toBeInstanceOf(HTMLInputElement)
-  /* eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion --
-   * No other way to access value of input. Also type already checked.
-   */
-  expect((input as HTMLInputElement).value).toEqual(filter)
+  assertInstanceOf(input, HTMLInputElement)
+  assertEqual(input.value, filter)
 })
 
 test('clears filter', async () => {
   const user = setupUser()
-  const setter = vitest.fn()
+  const setter = mockFunction()
   const { getByRole } = render(
     <SearchBox
       {...defaultProps}
@@ -237,22 +243,22 @@ test('clears filter', async () => {
     />,
   )
   const clearButton = getByRole('button')
-  expect(clearButton).toBeDefined()
+  assertDefined(clearButton)
   await user.click(clearButton)
-  expect(setter).toHaveBeenCalledWith('')
+  assertCalledWith(setter, [''])
 })
 
 test('inputs text', async () => {
   const user = setupUser()
-  const setter = vitest.fn()
+  const setter = mockFunction()
   const { getByRole } = render(
     <SearchBox {...defaultProps} setFilter={setter} />,
   )
   const input = getByRole('combobox')
-  expect(input).toBeDefined()
+  assertDefined(input)
   await user.type(input, 'Test')
   const expected = [['T'], ['e'], ['s'], ['t']]
-  expect(setter.mock.calls).toEqual(expected)
+  assertDeepEqual(setter.mock.calls, expected)
 })
 
 test('shows loading indicator', async () => {
@@ -265,7 +271,7 @@ test('shows loading indicator', async () => {
     />,
   )
   const loadingText = getByText(loadingIndicatorText)
-  expect(loadingText).toBeDefined()
+  assertDefined(loadingText)
 })
 
 test('sorts results', async () => {
@@ -288,10 +294,10 @@ test('sorts results', async () => {
     />,
   )
   const itemOptions = getAllByRole('option', { name: /item/v })
-  expect(itemOptions.map((item) => item.innerHTML)).toEqual([
-    'item a',
-    'item b',
-  ])
+  assertDeepEqual(
+    itemOptions.map((item) => item.innerHTML),
+    ['item a', 'item b'],
+  )
 })
 
 test('sorts results starting with filter', async () => {
@@ -314,10 +320,10 @@ test('sorts results starting with filter', async () => {
     />,
   )
   const itemOptions = getAllByRole('option', { name: /lager/iv })
-  expect(itemOptions.map((item) => item.innerHTML)).toEqual([
-    'Lager',
-    'American lager',
-  ])
+  assertDeepEqual(
+    itemOptions.map((item) => item.innerHTML),
+    ['Lager', 'American lager'],
+  )
 })
 
 test('sorts results with edge cases', async () => {
@@ -352,13 +358,10 @@ test('sorts results with edge cases', async () => {
     />,
   )
   const itemOptions = getAllByRole('option', { name: /item/iv })
-  expect(itemOptions.map((item) => item.innerHTML)).toEqual([
-    'item',
-    'item',
-    'item 321',
-    'abc item 123',
-    'testing item',
-  ])
+  assertDeepEqual(
+    itemOptions.map((item) => item.innerHTML),
+    ['item', 'item', 'item 321', 'abc item 123', 'testing item'],
+  )
 })
 
 test('custom sorts results', async () => {
@@ -388,12 +391,11 @@ test('custom sorts results', async () => {
     />,
   )
   const itemOptions = getAllByRole('option', { name: /item/v })
-  expect(itemOptions.length).toEqual(3)
-  expect(itemOptions.map((item) => item.innerHTML)).toEqual([
-    'item b',
-    'item a',
-    'item a',
-  ])
+  assertEqual(itemOptions.length, 3)
+  assertDeepEqual(
+    itemOptions.map((item) => item.innerHTML),
+    ['item b', 'item a', 'item a'],
+  )
 })
 
 const keyboardOptions: SearchBoxItem[] = [
@@ -417,10 +419,10 @@ test('renders as a collapsed combobox', () => {
     <SearchBox {...defaultProps} title={title} />,
   )
   const input = getByRole('combobox', { name: title })
-  expect(input.getAttribute('aria-expanded')).toEqual('false')
-  expect(input.getAttribute('aria-autocomplete')).toEqual('list')
-  expect(input.getAttribute('aria-activedescendant')).toBeNull()
-  expect(queryByRole('listbox')).toBeNull()
+  assertEqual(input.getAttribute('aria-expanded'), 'false')
+  assertEqual(input.getAttribute('aria-autocomplete'), 'list')
+  assertEqual(input.getAttribute('aria-activedescendant'), null)
+  assertEqual(queryByRole('listbox'), null)
 })
 
 test('renders as an expanded combobox', () => {
@@ -435,18 +437,16 @@ test('renders as an expanded combobox', () => {
     />,
   )
   const input = getByRole('combobox', { name: title })
-  expect(input.getAttribute('aria-expanded')).toEqual('true')
+  assertEqual(input.getAttribute('aria-expanded'), 'true')
   const listbox = getByRole('listbox', { name: title })
-  expect(input.getAttribute('aria-controls')).toEqual(
-    listbox.getAttribute('id'),
-  )
+  assertEqual(input.getAttribute('aria-controls'), listbox.getAttribute('id'))
   const options = getAllByRole('option')
-  expect(options.map((option) => option.innerHTML)).toEqual([
-    'item a',
-    'item b',
-    'item c',
-  ])
-  expect(options.map((option) => option.getAttribute('aria-selected'))).toEqual(
+  assertDeepEqual(
+    options.map((option) => option.innerHTML),
+    ['item a', 'item b', 'item c'],
+  )
+  assertDeepEqual(
+    options.map((option) => option.getAttribute('aria-selected')),
     ['false', 'false', 'false'],
   )
 })
@@ -455,15 +455,15 @@ interface KeyboardRender {
   getActiveOption: () => string | null
   input: HTMLElement
   options: HTMLElement[]
-  select: ReturnType<typeof vitest.fn>
-  setFilter: ReturnType<typeof vitest.fn>
+  select: MockFunction
+  setFilter: MockFunction
 }
 
 function renderForKeyboard(
   currentOptions: SearchBoxItem[] = keyboardOptions,
 ): KeyboardRender {
-  const select = vitest.fn()
-  const setFilter = vitest.fn()
+  const select = mockFunction()
+  const setFilter = mockFunction()
   const { getAllByRole, getByRole, queryAllByRole } = render(
     <SearchBox
       {...defaultProps}
@@ -484,8 +484,8 @@ function renderForKeyboard(
       const active = queryAllByRole('option').filter(
         (option) => option.getAttribute('id') === id,
       )
-      expect(active.length).toEqual(1)
-      expect(active[0].getAttribute('aria-selected')).toEqual('true')
+      assertEqual(active.length, 1)
+      assertEqual(active[0].getAttribute('aria-selected'), 'true')
       return active[0].innerHTML
     },
     input,
@@ -498,51 +498,51 @@ function renderForKeyboard(
 test('highlights the first option with arrow down', async () => {
   const user = setupUser()
   const { getActiveOption, input } = renderForKeyboard()
-  expect(getActiveOption()).toBeNull()
+  assertEqual(getActiveOption(), null)
   await user.type(input, '{ArrowDown}')
-  expect(getActiveOption()).toEqual('item a')
+  assertEqual(getActiveOption(), 'item a')
 })
 
 test('highlights the next option with arrow down', async () => {
   const user = setupUser()
   const { getActiveOption, input } = renderForKeyboard()
   await user.type(input, '{ArrowDown}{ArrowDown}')
-  expect(getActiveOption()).toEqual('item b')
+  assertEqual(getActiveOption(), 'item b')
 })
 
 test('wraps to the first option with arrow down', async () => {
   const user = setupUser()
   const { getActiveOption, input } = renderForKeyboard()
   await user.type(input, '{ArrowDown}{ArrowDown}{ArrowDown}{ArrowDown}')
-  expect(getActiveOption()).toEqual('item a')
+  assertEqual(getActiveOption(), 'item a')
 })
 
 test('highlights the last option with arrow up', async () => {
   const user = setupUser()
   const { getActiveOption, input } = renderForKeyboard()
   await user.type(input, '{ArrowUp}')
-  expect(getActiveOption()).toEqual('item c')
+  assertEqual(getActiveOption(), 'item c')
 })
 
 test('highlights the previous option with arrow up', async () => {
   const user = setupUser()
   const { getActiveOption, input } = renderForKeyboard()
   await user.type(input, '{ArrowDown}{ArrowDown}{ArrowUp}')
-  expect(getActiveOption()).toEqual('item a')
+  assertEqual(getActiveOption(), 'item a')
 })
 
 test('wraps to the last option with arrow up', async () => {
   const user = setupUser()
   const { getActiveOption, input } = renderForKeyboard()
   await user.type(input, '{ArrowDown}{ArrowUp}')
-  expect(getActiveOption()).toEqual('item c')
+  assertEqual(getActiveOption(), 'item c')
 })
 
 test('arrow keys highlight nothing without options', async () => {
   const user = setupUser()
   const { getActiveOption, input } = renderForKeyboard([])
   await user.type(input, '{ArrowDown}{ArrowUp}')
-  expect(getActiveOption()).toBeNull()
+  assertEqual(getActiveOption(), null)
 })
 
 test('drops a highlight the options no longer have', async () => {
@@ -559,7 +559,7 @@ test('drops a highlight the options no longer have', async () => {
   const input = getByRole('combobox')
   await user.type(input, '{ArrowUp}')
   const lastId = getAllByRole('option')[2].getAttribute('id')
-  expect(input.getAttribute('aria-activedescendant')).toEqual(lastId)
+  assertEqual(input.getAttribute('aria-activedescendant'), lastId)
   // A request answering with fewer results than the highlight was moved
   // into must not leave it pointing past the end of the list.
   rerender(
@@ -571,34 +571,34 @@ test('drops a highlight the options no longer have', async () => {
       select={dontCall}
     />,
   )
-  expect(getAllByRole('option').length).toEqual(1)
-  expect(input.getAttribute('aria-activedescendant')).toBeNull()
+  assertEqual(getAllByRole('option').length, 1)
+  assertEqual(input.getAttribute('aria-activedescendant'), null)
 })
 
 test('selects the highlighted option with enter', async () => {
   const user = setupUser()
   const { input, select, setFilter } = renderForKeyboard()
   await user.type(input, '{ArrowDown}{ArrowDown}{Enter}')
-  expect(select.mock.calls).toEqual([[keyboardOptions[1]]])
-  expect(setFilter.mock.calls).toEqual([['']])
+  assertDeepEqual(select.mock.calls, [[keyboardOptions[1]]])
+  assertDeepEqual(setFilter.mock.calls, [['']])
 })
 
 test('enter selects nothing without a highlight', async () => {
   const user = setupUser()
   const { input, select, setFilter } = renderForKeyboard()
   await user.type(input, '{Enter}')
-  expect(select.mock.calls).toEqual([])
-  expect(setFilter.mock.calls).toEqual([])
+  assertDeepEqual(select.mock.calls, [])
+  assertDeepEqual(setFilter.mock.calls, [])
 })
 
 test('clears the filter on escape', async () => {
   const user = setupUser()
   const { getActiveOption, input, setFilter } = renderForKeyboard()
   await user.type(input, '{ArrowDown}')
-  expect(getActiveOption()).toEqual('item a')
+  assertEqual(getActiveOption(), 'item a')
   await user.type(input, '{Escape}')
-  expect(setFilter.mock.calls).toEqual([['']])
-  expect(getActiveOption()).toBeNull()
+  assertDeepEqual(setFilter.mock.calls, [['']])
+  assertEqual(getActiveOption(), null)
 })
 
 test('clicking an option clears the highlight', async () => {
@@ -606,5 +606,5 @@ test('clicking an option clears the highlight', async () => {
   const { getActiveOption, input, options } = renderForKeyboard()
   await user.type(input, '{ArrowDown}')
   await user.click(options[2])
-  expect(getActiveOption()).toBeNull()
+  assertEqual(getActiveOption(), null)
 })

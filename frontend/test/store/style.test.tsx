@@ -1,5 +1,7 @@
-import { beforeAll, beforeEach, afterAll, expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { beforeAll, beforeEach, afterAll, test } from '../test'
+import { assertCalledWith, assertDefined } from '../assert'
+import { mockFunction } from '../mock'
+import { render, waitFor } from '../render'
 
 import { createServer } from './server'
 import type { TestServer } from './server'
@@ -61,12 +63,12 @@ test('get style', async () => {
       <GetStyleHelper />
     </StoreProvider>,
   )
-  expect(getByText('Loading')).toBeDefined()
+  assertDefined(getByText('Loading'))
 
   await waitFor(() => {
-    expect(getByText(JSON.stringify(expectedResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(expectedResponse)))
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 function ListStylesHelper(): React.JSX.Element {
@@ -95,9 +97,9 @@ test('list styles', async () => {
   )
 
   await waitFor(() => {
-    expect(getByText(JSON.stringify(expectedResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(expectedResponse)))
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 function CreateStyleHelper(): React.JSX.Element {
@@ -140,11 +142,11 @@ test('create style', async () => {
 
   await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(getByText('Succeeded')).toBeDefined()
+    assertDefined(getByText('Succeeded'))
   })
-  expect(getByText(JSON.stringify(expectedResponse))).toBeDefined()
-  expect(getByText('Not failed')).toBeDefined()
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText(JSON.stringify(expectedResponse)))
+  assertDefined(getByText('Not failed'))
+  assertDefined(getByText('Not loading'))
 })
 
 test('fail to create style', async () => {
@@ -165,9 +167,9 @@ test('fail to create style', async () => {
   // The creation does not reject: the form reads the outcome from hasError.
   await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(getByText('Failed')).toBeDefined()
+    assertDefined(getByText('Failed'))
   })
-  expect(getByText('Not succeeded')).toBeDefined()
+  assertDefined(getByText('Not succeeded'))
 })
 
 function UpdateStyleHelper(props: {
@@ -203,7 +205,7 @@ test('update style', async () => {
     status: 200,
   })
 
-  const onResult = vitest.fn()
+  const onResult = mockFunction()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <UpdateStyleHelper onResult={onResult} />
@@ -212,11 +214,11 @@ test('update style', async () => {
 
   await user.click(getByRole('button', { name: 'Update' }))
   await waitFor(() => {
-    expect(onResult).toHaveBeenCalledWith(expectedResponse)
+    assertCalledWith(onResult, [expectedResponse])
   })
   await waitFor(() => {
-    expect(getByText('Succeeded')).toBeDefined()
+    assertDefined(getByText('Succeeded'))
   })
-  expect(getByText('Not failed')).toBeDefined()
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not failed'))
+  assertDefined(getByText('Not loading'))
 })

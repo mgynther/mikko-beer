@@ -1,6 +1,9 @@
-import { act, fireEvent, render, waitFor } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCallCount, assertDeepEqual } from '../../assert'
+import { mockFunction } from '../../mock'
+import { act, render, waitFor } from '../../render'
+import { fireEvent } from '../../fire-event'
 import { setupUser } from '../../user-event'
-import { expect, test, vitest } from 'vitest'
 import Reviews from '../../../src/components/review/Reviews'
 import type {
   UseDebounce,
@@ -222,7 +225,7 @@ const getListReviewsIf: GetListReviewsIf = (cb, setSearch) => ({
 
 test('updates review', async () => {
   const user = setupUser()
-  const update = vitest.fn()
+  const update = mockFunction()
   let scrollCb: () => void = () => undefined
   const { getByPlaceholderText, getByRole, getByText } = render(
     <>
@@ -259,7 +262,6 @@ test('updates review', async () => {
       <ContentEnd />
     </>,
   )
-  expect(scrollCb).not.toEqual(undefined)
   await act(async () => {
     scrollCb()
   })
@@ -275,7 +277,7 @@ test('updates review', async () => {
 
   const saveButton = getByRole('button', { name: 'Save' })
   await user.click(saveButton)
-  expect(update.mock.calls).toEqual([
+  assertDeepEqual(update.mock.calls, [
     [
       // The beer, the container and the location are those of the review as
       // it is shown, everything else is the review as it was loaded.
@@ -306,8 +308,8 @@ const defaultSearchParams: Record<string, string> = {
 
 test('sets review sorting to rating asc', async () => {
   const user = setupUser()
-  const listParams = vitest.fn()
-  const setSearch = vitest.fn()
+  const listParams = mockFunction()
+  const setSearch = mockFunction()
   let scrollCb: () => void = () => undefined
   const listReviewsIf: ListReviewsIf = getListReviewsIf(listParams, setSearch)
   const { getByRole } = render(
@@ -333,13 +335,12 @@ test('sets review sorting to rating asc', async () => {
       <ContentEnd />
     </>,
   )
-  expect(scrollCb).not.toEqual(undefined)
   await act(async () => {
     scrollCb()
   })
   const ratingButton = getByRole('button', { name: 'Rating ▼' })
   await user.click(ratingButton)
-  expect(setSearch.mock.calls).toEqual([
+  assertDeepEqual(setSearch.mock.calls, [
     [defaultSearchParams],
     [
       {
@@ -386,7 +387,7 @@ test('renders loading', async () => {
 })
 
 test('stops loading more', async () => {
-  const listMore = vitest.fn()
+  const listMore = mockFunction()
   let scrollCb: () => void = () => undefined
   function getListRequestCount(): number {
     return listMore.mock.calls.length
@@ -434,7 +435,7 @@ test('stops loading more', async () => {
   await act(async () => {
     scrollCb()
   })
-  expect(listMore.mock.calls).toEqual([
+  assertDeepEqual(listMore.mock.calls, [
     [
       {
         pagination: {
@@ -475,11 +476,11 @@ test('stops loading more', async () => {
   await act(async () => {
     scrollCb()
   })
-  expect(listMore).toHaveBeenCalledTimes(2)
+  assertCallCount(listMore, 2)
 })
 
 test('lists reviews with search parameters', async () => {
-  const listMore = vitest.fn()
+  const listMore = mockFunction()
   let scrollCb: () => void = () => undefined
   render(
     <>
@@ -524,7 +525,7 @@ test('lists reviews with search parameters', async () => {
   await act(async () => {
     scrollCb()
   })
-  expect(listMore.mock.calls).toEqual([
+  assertDeepEqual(listMore.mock.calls, [
     [
       {
         pagination: {
@@ -548,8 +549,8 @@ test('lists reviews with search parameters', async () => {
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setSearch = vitest.fn()
-  const listParams = vitest.fn()
+  const setSearch = mockFunction()
+  const listParams = mockFunction()
   const { getByRole } = render(
     <>
       <Reviews
@@ -566,9 +567,9 @@ test('opens filters', async () => {
     </>,
   )
   await openFilters(getByRole, user)
-  expect(setSearch).toHaveBeenCalledTimes(2)
+  assertCallCount(setSearch, 2)
   const filtersOpen = setSearch.mock.calls.map((args) => args[0].r_filters)
-  expect(filtersOpen).toEqual(['0', '1'])
+  assertDeepEqual(filtersOpen, ['0', '1'])
 })
 
 function changeSlider(
@@ -621,8 +622,8 @@ const defaultFiltersOpenParams: Record<string, string> = {
 
 sliderChangeTests.forEach((testCase) => {
   test(`change ${testCase.property}`, async () => {
-    const listParams = vitest.fn()
-    const setSearch = vitest.fn()
+    const listParams = mockFunction()
+    const setSearch = mockFunction()
     const listReviewsIf: ListReviewsIf = getListReviewsIf(listParams, setSearch)
     const { getByLabelText } = render(
       <>
@@ -653,7 +654,7 @@ sliderChangeTests.forEach((testCase) => {
       ...defaultFiltersOpenParams,
     }
     expected[testCase.property] = testCase.stateValue
-    expect(setSearch.mock.calls).toEqual([
+    assertDeepEqual(setSearch.mock.calls, [
       [defaultFiltersOpenParams],
       [expected],
     ])

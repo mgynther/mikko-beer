@@ -1,4 +1,5 @@
-import { expect, test } from 'vitest'
+import { test } from '../../../test'
+import { assertEqual } from '../../../assert'
 import {
   getBackendUrl,
   getUniqueTestServerPort,
@@ -7,47 +8,48 @@ import {
 } from '../../../../src/store/internal/config/constant-helper'
 
 test('parse number test port start', () => {
-  expect(parseTestPortStart('3000')).toEqual(3000)
+  assertEqual(parseTestPortStart('3000'), 3000)
 })
 
 test('parse empty test port start', () => {
-  expect(parseTestPortStart('')).toEqual(-1)
+  assertEqual(parseTestPortStart(''), -1)
 })
 
 test('parse undefined test port start', () => {
-  expect(parseTestPortStart(undefined)).toEqual(-1)
+  assertEqual(parseTestPortStart(undefined), -1)
 })
 
 test('parse number vitest id', () => {
-  expect(parseVitestId('3000')).toEqual(3000)
+  assertEqual(parseVitestId('3000'), 3000)
 })
 
 test('parse empty vitest id', () => {
-  expect(parseVitestId('')).toEqual(-1)
+  assertEqual(parseVitestId(''), -1)
 })
 
 test('parse undefined vitest id', () => {
-  expect(parseVitestId(undefined)).toEqual(-1)
+  assertEqual(parseVitestId(undefined), -1)
 })
 
 test('get unique test port in node', () => {
-  expect(getUniqueTestServerPort(12, 30000)).toEqual(30012)
+  assertEqual(getUniqueTestServerPort(12, 30000), 30012)
 })
 
 test('get default unique test port in browser', () => {
-  expect(getUniqueTestServerPort(-1, -1)).toEqual(0)
+  assertEqual(getUniqueTestServerPort(-1, -1), 0)
 })
 
 test('get unique backend url in node', () => {
-  expect(getBackendUrl(12, 30012, undefined)).toEqual('http://localhost:30012')
+  assertEqual(getBackendUrl(12, 30012, undefined), 'http://localhost:30012')
 })
 
 test('get configured backend url in browser', () => {
-  expect(getBackendUrl(-1, 0, 'http://backend:1234')).toEqual(
+  assertEqual(
+    getBackendUrl(-1, 0, 'http://backend:1234'),
     'http://backend:1234',
   )
 })
 
 test('get default backend url in browser', () => {
-  expect(getBackendUrl(-1, 0, undefined)).toEqual('http://localhost:3001')
+  assertEqual(getBackendUrl(-1, 0, undefined), 'http://localhost:3001')
 })

@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render } from '../../render'
 
 import listStorages from '../../../src/storehooks/storage/list'
 import type {
@@ -40,11 +42,11 @@ function Helper(props: {
 }
 
 test('list storages', () => {
-  const onValidate = vitest.fn()
+  const onValidate = mockFunction()
 
   const { getByText } = render(<Helper onValidate={onValidate} />)
 
-  expect(getByText(validatedStorageList.storages[0].beerName)).toBeDefined()
-  expect(getByText('Not loading')).toBeDefined()
-  expect(onValidate).toHaveBeenCalledWith(listed)
+  assertDefined(getByText(validatedStorageList.storages[0].beerName))
+  assertDefined(getByText('Not loading'))
+  assertCalledWith(onValidate, [listed])
 })

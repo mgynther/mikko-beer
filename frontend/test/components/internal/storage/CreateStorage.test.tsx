@@ -1,6 +1,9 @@
-import { render, fireEvent } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertDefined } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
+import { fireEvent } from '../../../fire-event'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import CreateStorage from '../../../../src/components/internal/storage/CreateStorage'
 import type { UseDebounce } from '../../../../src/components/types/types'
 import type {
@@ -111,7 +114,7 @@ const dontCreateStorageIf: CreateStorageIf = {
 
 test('creates storage', async () => {
   const user = setupUser()
-  const create = vitest.fn()
+  const create = mockFunction()
   const {
     findByRole,
     getAllByRole,
@@ -138,13 +141,13 @@ test('creates storage', async () => {
   const selects = getAllByRole('radio', { name: 'Select' })
   await user.click(selects[0])
   const beerSearch = getByPlaceholderText('Search beer')
-  expect(beerSearch).toBeDefined()
+  assertDefined(beerSearch)
   beerSearch.focus()
   await user.paste('Seve')
   const beerOption = await findByRole('option', {
     name: 'Severin (Koskipanimo)',
   })
-  expect(beerOption).toBeDefined()
+  assertDefined(beerOption)
   await user.click(beerOption)
   const containerSelect = getByRole('combobox', { name: 'Container' })
   await user.click(containerSelect)
@@ -158,7 +161,7 @@ test('creates storage', async () => {
   const createButton = getByRole('button', { name: 'Create' })
   await user.click(createButton)
 
-  expect(create.mock.calls).toEqual([
+  assertDeepEqual(create.mock.calls, [
     [
       {
         beer: beerId,
@@ -185,13 +188,13 @@ test('clears beer', async () => {
   const selects = getAllByRole('radio', { name: 'Select' })
   await user.click(selects[0])
   const beerSearch = getByPlaceholderText('Search beer')
-  expect(beerSearch).toBeDefined()
+  assertDefined(beerSearch)
   beerSearch.focus()
   await user.paste('Seve')
   const beerOption = await findByRole('option', {
     name: 'Severin (Koskipanimo)',
   })
-  expect(beerOption).toBeDefined()
+  assertDefined(beerOption)
   await user.click(beerOption)
 
   const changeButton = getByRole('button', { name: 'Change' })

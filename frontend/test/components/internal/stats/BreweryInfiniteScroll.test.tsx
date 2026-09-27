@@ -1,5 +1,8 @@
-import { fireEvent, render, waitFor } from '@testing-library/react'
-import { expect, test, vitest } from 'vitest'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render, waitFor } from '../../../render'
+import { fireEvent } from '../../../fire-event'
 import { setupUser } from '../../../user-event'
 import { testTimes } from '../../filter-time'
 import BreweryInfiniteScroll from '../../../../src/components/internal/stats/BreweryInfiniteScroll'
@@ -107,8 +110,8 @@ const unusedStats: GetBreweryStatsIf = {
 }
 
 test('queries brewery stats', async () => {
-  const query = vitest.fn()
-  const setLoadedBreweries = vitest.fn()
+  const query = mockFunction()
+  const setLoadedBreweries = mockFunction()
   let loadCallback: () => void = () => undefined
   const getBreweryStatsIf: GetBreweryStatsIf = {
     useStats: () => ({
@@ -147,12 +150,13 @@ test('queries brewery stats', async () => {
       statsParams={statsParams}
     />,
   )
-  expect(query.mock.calls).toEqual([])
+  assertDeepEqual(query.mock.calls, [])
   loadCallback()
-  expect(query.mock.calls).toEqual([
+  assertDeepEqual(query.mock.calls, [
     [
       {
         breweryId: undefined,
+        locationId: undefined,
         maxReviewAverage: statsParams.maxReviewAverage,
         maxReviewCount: statsParams.maxReviewCount,
         minReviewAverage: statsParams.minReviewAverage,
@@ -172,7 +176,7 @@ test('queries brewery stats', async () => {
     ],
   ])
   await waitFor(() => {
-    expect(updatedItems(setLoadedBreweries.mock.calls, undefined)).toEqual([
+    assertDeepEqual(updatedItems(setLoadedBreweries.mock.calls, undefined), [
       [koskipanimo, lehe],
     ])
   })
@@ -234,12 +238,12 @@ test('renders loading', () => {
     />,
   )
   const cells = getAllByRole('cell')
-  expect(cells.length).toEqual(6 * 3)
+  assertEqual(cells.length, 6 * 3)
 })
 
 test('does not try to load more when there is no more', () => {
   let loadCallback: () => void = () => undefined
-  const query = vitest.fn()
+  const query = mockFunction()
   render(
     <BreweryInfiniteScroll
       linkComponent={testLink}
@@ -270,12 +274,12 @@ test('does not try to load more when there is no more', () => {
     />,
   )
   loadCallback()
-  expect(query.mock.calls).toEqual([])
+  assertDeepEqual(query.mock.calls, [])
 })
 
 test('does not try to load more when loading', () => {
   let loadCallback: () => void = () => undefined
-  const query = vitest.fn()
+  const query = mockFunction()
   render(
     <BreweryInfiniteScroll
       linkComponent={testLink}
@@ -306,11 +310,11 @@ test('does not try to load more when loading', () => {
     />,
   )
   loadCallback()
-  expect(query.mock.calls).toEqual([])
+  assertDeepEqual(query.mock.calls, [])
 })
 
 test('sets minimum review count filter', () => {
-  const setMinimumReviewAverage = vitest.fn()
+  const setMinimumReviewAverage = mockFunction()
   const { getByDisplayValue } = render(
     <BreweryInfiniteScroll
       linkComponent={testLink}
@@ -335,12 +339,12 @@ test('sets minimum review count filter', () => {
   )
   const slider = getByDisplayValue('4')
   fireEvent.change(slider, { target: { value: '4.5' } })
-  expect(setMinimumReviewAverage.mock.calls).toEqual([[4.5]])
+  assertDeepEqual(setMinimumReviewAverage.mock.calls, [[4.5]])
 })
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setIsFiltersOpen = vitest.fn()
+  const setIsFiltersOpen = mockFunction()
   const { getByRole } = render(
     <BreweryInfiniteScroll
       linkComponent={testLink}
@@ -358,5 +362,5 @@ test('opens filters', async () => {
     />,
   )
   await openFilters(getByRole, user)
-  expect(setIsFiltersOpen.mock.calls).toEqual([[true]])
+  assertDeepEqual(setIsFiltersOpen.mock.calls, [[true]])
 })

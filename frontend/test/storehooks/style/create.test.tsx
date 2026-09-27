@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render, waitFor } from '../../render'
 
 import createStyle from '../../../src/storehooks/style/create'
 import type {
@@ -67,8 +69,8 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('create style', async () => {
   const user = setupUser()
-  const onCreate = vitest.fn()
-  const onValidate = vitest.fn()
+  const onCreate = mockFunction()
+  const onValidate = mockFunction()
 
   const { getByRole, getByText } = render(
     <Helper
@@ -79,17 +81,17 @@ test('create style', async () => {
       onValidate={onValidate}
     />,
   )
-  expect(getByText(validatedStyle.name)).toBeDefined()
-  expect(getByText('Succeeded')).toBeDefined()
-  expect(getByText('Not failed')).toBeDefined()
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText(validatedStyle.name))
+  assertDefined(getByText('Succeeded'))
+  assertDefined(getByText('Not failed'))
+  assertDefined(getByText('Not loading'))
 
   await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(onCreate).toHaveBeenCalledWith(request)
+    assertCalledWith(onCreate, [request])
   })
   // The envelope is unwrapped before the validator sees the style.
-  expect(onValidate).toHaveBeenCalledWith(created.style)
+  assertCalledWith(onValidate, [created.style])
 })
 
 test('failed style creation has no created style', () => {
@@ -103,7 +105,7 @@ test('failed style creation has no created style', () => {
     />,
   )
 
-  expect(getByText('No style')).toBeDefined()
-  expect(getByText('Failed')).toBeDefined()
-  expect(getByText('Not succeeded')).toBeDefined()
+  assertDefined(getByText('No style'))
+  assertDefined(getByText('Failed'))
+  assertDefined(getByText('Not succeeded'))
 })

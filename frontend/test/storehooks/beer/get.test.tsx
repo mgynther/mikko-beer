@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render } from '../../render'
 
 import getBeer from '../../../src/storehooks/beer/get'
 import type {
@@ -43,8 +45,8 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('get beer', () => {
-  const onGet = vitest.fn()
-  const onValidate = vitest.fn()
+  const onGet = mockFunction()
+  const onValidate = mockFunction()
   const data = { beer: { id: beerId, name: 'Test beer' } }
 
   const { getByText } = render(
@@ -56,16 +58,16 @@ test('get beer', () => {
     />,
   )
 
-  expect(getByText(validatedBeer.name)).toBeDefined()
-  expect(getByText('Not loading')).toBeDefined()
-  expect(onGet).toHaveBeenCalledWith(beerId)
+  assertDefined(getByText(validatedBeer.name))
+  assertDefined(getByText('Not loading'))
+  assertCalledWith(onGet, [beerId])
   // The envelope is unwrapped here, so the validator judges the beer and
   // not the wrapper it arrived in.
-  expect(onValidate).toHaveBeenCalledWith(data.beer)
+  assertCalledWith(onValidate, [data.beer])
 })
 
 test('get beer that has not arrived', () => {
-  const onValidate = vitest.fn()
+  const onValidate = mockFunction()
 
   const { getByText } = render(
     <Helper
@@ -76,7 +78,7 @@ test('get beer that has not arrived', () => {
     />,
   )
 
-  expect(getByText('No beer')).toBeDefined()
-  expect(getByText('Loading')).toBeDefined()
-  expect(onValidate).toHaveBeenCalledWith(undefined)
+  assertDefined(getByText('No beer'))
+  assertDefined(getByText('Loading'))
+  assertCalledWith(onValidate, [undefined])
 })

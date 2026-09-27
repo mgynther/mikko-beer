@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render, waitFor } from '../../render'
 
 import getReview from '../../../src/storehooks/review/get'
 import type {
@@ -53,9 +55,9 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('get review', async () => {
   const user = setupUser()
-  const onGet = vitest.fn()
-  const onGot = vitest.fn()
-  const onValidate = vitest.fn()
+  const onGet = mockFunction()
+  const onGot = mockFunction()
+  const onValidate = mockFunction()
 
   const { getByRole } = render(
     <Helper onGet={onGet} onGot={onGot} onValidate={onValidate} />,
@@ -63,9 +65,9 @@ test('get review', async () => {
 
   await user.click(getByRole('button', { name: 'Get' }))
   await waitFor(() => {
-    expect(onGot).toHaveBeenCalledWith(validatedReview)
+    assertCalledWith(onGot, [validatedReview])
   })
-  expect(onGet).toHaveBeenCalledWith(reviewId)
+  assertCalledWith(onGet, [reviewId])
   // The envelope is unwrapped before the validator sees the review.
-  expect(onValidate).toHaveBeenCalledWith(got.review)
+  assertCalledWith(onValidate, [got.review])
 })

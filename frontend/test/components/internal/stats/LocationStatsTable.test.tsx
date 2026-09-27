@@ -1,6 +1,9 @@
-import { fireEvent, render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
+import { fireEvent } from '../../../fire-event'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../filter-time'
 import LocationStatsTable from '../../../../src/components/internal/stats/LocationStatsTable'
 import type {
@@ -70,12 +73,12 @@ test('renders location stats', async () => {
   getByText(oluthuone.reviewStandardDeviation)
   const link = getByRole('link', { name: plevna.locationName })
   const path = `/locations/${plevna.locationId}`
-  expect(link.getAttribute('href')).toEqual(path)
+  assertEqual(link.getAttribute('href'), path)
 })
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setIsFiltersOpen = vitest.fn()
+  const setIsFiltersOpen = mockFunction()
   const { getByRole } = render(
     <LocationStatsTable
       linkComponent={testLink}
@@ -92,7 +95,7 @@ test('opens filters', async () => {
     />,
   )
   await openFilters(getByRole, user)
-  expect(setIsFiltersOpen.mock.calls).toEqual([[true]])
+  assertDeepEqual(setIsFiltersOpen.mock.calls, [[true]])
 })
 
 interface OrderTestData {
@@ -143,7 +146,7 @@ const orderTests: OrderTestData[] = [
 
 orderTests.forEach((data) => {
   test(`set order to ${data.testName}`, () => {
-    const setSortingOrder = vitest.fn()
+    const setSortingOrder = mockFunction()
     const { getByRole } = render(
       <LocationStatsTable
         linkComponent={testLink}
@@ -161,12 +164,12 @@ orderTests.forEach((data) => {
     )
     const orderButton = getByRole('button', { name: data.buttonText })
     orderButton.click()
-    expect(setSortingOrder.mock.calls).toEqual([[data.expectedOrder]])
+    assertDeepEqual(setSortingOrder.mock.calls, [[data.expectedOrder]])
   })
 })
 
 test('sets minimum review count filter', () => {
-  const setMinimumReviewCount = vitest.fn()
+  const setMinimumReviewCount = mockFunction()
   const { getByDisplayValue } = render(
     <LocationStatsTable
       linkComponent={testLink}
@@ -213,5 +216,5 @@ test('sets minimum review count filter', () => {
   )
   const slider = getByDisplayValue('2')
   fireEvent.change(slider, { target: { value: '3' } })
-  expect(setMinimumReviewCount.mock.calls).toEqual([[5]])
+  assertDeepEqual(setMinimumReviewCount.mock.calls, [[5]])
 })

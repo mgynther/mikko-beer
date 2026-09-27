@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import ReviewHeading from '../../../../src/components/internal/review/ReviewHeading'
 import type {
   ReviewSorting,
@@ -145,7 +147,7 @@ const sortingTests: SortingTest[] = [
 sortingTests.forEach((testCase) => {
   test(testCase.name, async () => {
     const user = setupUser()
-    const setSorting = vitest.fn()
+    const setSorting = mockFunction()
     const { getByRole } = render(
       <ReviewHeading
         filterState={{
@@ -160,12 +162,12 @@ sortingTests.forEach((testCase) => {
     )
     const sortButton = getByRole('button', { name: testCase.sortButtonText })
     await user.click(sortButton)
-    expect(setSorting.mock.calls).toEqual([[testCase.expectedSorting]])
+    assertDeepEqual(setSorting.mock.calls, [[testCase.expectedSorting]])
   })
 })
 
 test('no sorting buttons when not supported', () => {
-  const setSorting = vitest.fn()
+  const setSorting = mockFunction()
   const { getByRole, queryAllByRole } = render(
     <ReviewHeading
       filterState={{
@@ -183,5 +185,5 @@ test('no sorting buttons when not supported', () => {
   )
   const filtersButton = getByRole('button', { name: 'Filters ▼' })
   const sortButtons = queryAllByRole('button')
-  expect(sortButtons).toEqual([filtersButton])
+  assertDeepEqual(sortButtons, [filtersButton])
 })

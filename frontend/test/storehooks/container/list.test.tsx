@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render } from '../../render'
 
 import listContainers from '../../../src/storehooks/container/list'
 import type {
@@ -47,16 +49,16 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('list containers', () => {
-  const onValidate = vitest.fn()
+  const onValidate = mockFunction()
 
   const { getByText } = render(
     <Helper data={listed} isLoading={false} onValidate={onValidate} />,
   )
 
   const [container] = validatedContainerList.containers
-  expect(getByText(`${container.type} ${container.size}`)).toBeDefined()
-  expect(getByText('Not loading')).toBeDefined()
-  expect(onValidate).toHaveBeenCalledWith(listed)
+  assertDefined(getByText(`${container.type} ${container.size}`))
+  assertDefined(getByText('Not loading'))
+  assertCalledWith(onValidate, [listed])
 })
 
 test('list containers that have not arrived', () => {
@@ -64,6 +66,6 @@ test('list containers that have not arrived', () => {
     <Helper data={undefined} isLoading={true} onValidate={() => undefined} />,
   )
 
-  expect(getByText('No containers')).toBeDefined()
-  expect(getByText('Loading')).toBeDefined()
+  assertDefined(getByText('No containers'))
+  assertDefined(getByText('Loading'))
 })

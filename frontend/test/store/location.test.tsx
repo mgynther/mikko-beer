@@ -1,5 +1,12 @@
-import { beforeAll, beforeEach, afterAll, expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { beforeAll, beforeEach, afterAll, test } from '../test'
+import {
+  assertCallCount,
+  assertCalled,
+  assertCalledWith,
+  assertDefined,
+} from '../assert'
+import { mockFunction } from '../mock'
+import { render, waitFor } from '../render'
 
 import { createServer } from './server'
 import type { TestServer } from './server'
@@ -68,12 +75,12 @@ test('get location', async () => {
       <GetLocationHelper locationId={locationId} />
     </StoreProvider>,
   )
-  expect(getByText('Loading')).toBeDefined()
+  assertDefined(getByText('Loading'))
 
   await waitFor(() => {
-    expect(getByText(JSON.stringify(locationResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(locationResponse)))
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 test('get location that does not exist', async () => {
@@ -94,10 +101,10 @@ test('get location that does not exist', async () => {
   )
 
   await waitFor(() => {
-    expect(getByText('Not loading')).toBeDefined()
+    assertDefined(getByText('Not loading'))
   })
   // A failed request has no data to give.
-  expect(getByText('No data')).toBeDefined()
+  assertDefined(getByText('No data'))
 })
 
 interface TriggerProps {
@@ -143,7 +150,7 @@ test('list locations', async () => {
     status: 200,
   })
 
-  const onResult = vitest.fn()
+  const onResult = mockFunction()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <ListLocationsHelper
@@ -153,17 +160,17 @@ test('list locations', async () => {
       />
     </StoreProvider>,
   )
-  expect(getByText('Uninitialized')).toBeDefined()
+  assertDefined(getByText('Uninitialized'))
 
   await user.click(getByRole('button', { name: 'List' }))
   await waitFor(() => {
-    expect(onResult).toHaveBeenCalledWith(locationListResponse)
+    assertCalledWith(onResult, [locationListResponse])
   })
   await waitFor(() => {
-    expect(getByText(JSON.stringify(locationListResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(locationListResponse)))
   })
-  expect(getByText('Initialized')).toBeDefined()
-  expect(getByText('Not fetching')).toBeDefined()
+  assertDefined(getByText('Initialized'))
+  assertDefined(getByText('Not fetching'))
 })
 
 test('fail to list locations', async () => {
@@ -175,8 +182,8 @@ test('fail to list locations', async () => {
     status: 500,
   })
 
-  const onResult = vitest.fn()
-  const onError = vitest.fn()
+  const onResult = mockFunction()
+  const onError = mockFunction()
   const { getByRole } = render(
     <StoreProvider>
       <ListLocationsHelper size={20} onResult={onResult} onError={onError} />
@@ -189,9 +196,9 @@ test('fail to list locations', async () => {
   // A failed request rejects: the unwrapping is done here so that every
   // caller gets the same failure instead of an RTK Query result object.
   await waitFor(() => {
-    expect(onError).toHaveBeenCalled()
+    assertCalled(onError)
   })
-  expect(onResult).not.toHaveBeenCalled()
+  assertCallCount(onResult, 0)
 })
 
 function SearchLocationsHelper(props: TriggerProps): React.JSX.Element {
@@ -222,7 +229,7 @@ test('search locations', async () => {
     status: 200,
   })
 
-  const onResult = vitest.fn()
+  const onResult = mockFunction()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <SearchLocationsHelper onResult={onResult} onError={() => undefined} />
@@ -231,10 +238,10 @@ test('search locations', async () => {
 
   await user.click(getByRole('button', { name: 'Search' }))
   await waitFor(() => {
-    expect(onResult).toHaveBeenCalledWith(locationListResponse)
+    assertCalledWith(onResult, [locationListResponse])
   })
   await waitFor(() => {
-    expect(getByText('Not fetching')).toBeDefined()
+    assertDefined(getByText('Not fetching'))
   })
 })
 
@@ -270,7 +277,7 @@ test('create location', async () => {
     status: 201,
   })
 
-  const onResult = vitest.fn()
+  const onResult = mockFunction()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <CreateLocationHelper onResult={onResult} onError={() => undefined} />
@@ -279,10 +286,10 @@ test('create location', async () => {
 
   await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(onResult).toHaveBeenCalledWith(locationResponse)
+    assertCalledWith(onResult, [locationResponse])
   })
   await waitFor(() => {
-    expect(getByText('Not loading')).toBeDefined()
+    assertDefined(getByText('Not loading'))
   })
 })
 
@@ -314,7 +321,7 @@ test('update location', async () => {
     status: 200,
   })
 
-  const onResult = vitest.fn()
+  const onResult = mockFunction()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <UpdateLocationHelper onResult={onResult} onError={() => undefined} />
@@ -323,9 +330,9 @@ test('update location', async () => {
 
   await user.click(getByRole('button', { name: 'Update' }))
   await waitFor(() => {
-    expect(onResult).toHaveBeenCalledWith(locationResponse)
+    assertCalledWith(onResult, [locationResponse])
   })
   await waitFor(() => {
-    expect(getByText('Not loading')).toBeDefined()
+    assertDefined(getByText('Not loading'))
   })
 })

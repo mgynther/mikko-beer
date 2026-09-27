@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import SelectBrewery from '../../../../src/components/internal/brewery/SelectBrewery'
 import type {
   Brewery,
@@ -41,7 +43,7 @@ const getSearch: (isSearchFieldActive: boolean) => SearchBreweryIf = (
 
 test('selects brewery', async () => {
   const user = setupUser()
-  const onSelect = vitest.fn()
+  const onSelect = mockFunction()
   const { getByPlaceholderText, findByRole } = render(
     <SelectBrewery
       isRemoveVisible={false}
@@ -60,12 +62,12 @@ test('selects brewery', async () => {
   const breweryOption = await findByRole('option', { name: 'Koskipanimo' })
   await user.click(breweryOption)
   const selectCalls = onSelect.mock.calls
-  expect(selectCalls).toEqual([[brewery]])
+  assertDeepEqual(selectCalls, [[brewery]])
 })
 
 test('selects created brewery', async () => {
   const user = setupUser()
-  const onSelect = vitest.fn()
+  const onSelect = mockFunction()
   const newBrewery: Brewery = {
     id: 'ca036383-f707-4a52-a26d-bd0c048c0106',
     name: 'Tuju',
@@ -96,5 +98,5 @@ test('selects created brewery', async () => {
   await user.click(createButton)
 
   const selectCalls = onSelect.mock.calls
-  expect(selectCalls).toEqual([[newBrewery]])
+  assertDeepEqual(selectCalls, [[newBrewery]])
 })

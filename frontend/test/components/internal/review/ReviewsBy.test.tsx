@@ -1,6 +1,9 @@
-import { act, fireEvent, render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertCallCount, assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { act, render } from '../../../render'
+import { fireEvent } from '../../../fire-event'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import ReviewsBy from '../../../../src/components/internal/review/ReviewsBy'
 import type {
   UseDebounce,
@@ -184,9 +187,9 @@ const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
 })
 
 test('lists reviews', async () => {
-  const list = vitest.fn()
+  const list = mockFunction()
   const id = '833c90e2-e2c6-42c9-a1ee-a4454b42a302'
-  const setSearch = vitest.fn()
+  const setSearch = mockFunction()
   render(
     <ReviewsBy
       linkComponent={testLink}
@@ -201,7 +204,7 @@ test('lists reviews', async () => {
       }}
     />,
   )
-  expect(list.mock.calls).toEqual([
+  assertDeepEqual(list.mock.calls, [
     [
       {
         id,
@@ -221,9 +224,9 @@ test('lists reviews', async () => {
 })
 
 test('lists reviews with search parameters', async () => {
-  const list = vitest.fn()
+  const list = mockFunction()
   const id = '301b473a-218f-4058-af00-61664c991da9'
-  const setSearch = vitest.fn()
+  const setSearch = mockFunction()
   render(
     <ReviewsBy
       linkComponent={testLink}
@@ -253,7 +256,7 @@ test('lists reviews with search parameters', async () => {
       }}
     />,
   )
-  expect(list.mock.calls).toEqual([
+  assertDeepEqual(list.mock.calls, [
     [
       {
         id,
@@ -331,7 +334,7 @@ orderChangeTests.forEach((testCase) => {
   } to ${testCase.newOrder} ${testCase.newDirection}`, async () => {
     const user = setupUser()
     const id = '4dbab81d-b353-4f0d-97b5-390967c24c19'
-    const setSearch = vitest.fn()
+    const setSearch = mockFunction()
     const searchParams: Record<string, string> = {
       ...defaultSearchParams,
       r_order: testCase.originalOrder,
@@ -359,7 +362,7 @@ orderChangeTests.forEach((testCase) => {
 
     const ratingButton = getByRole('button', { name: testCase.buttonText })
     await user.click(ratingButton)
-    expect(setSearch.mock.calls).toEqual([
+    assertDeepEqual(setSearch.mock.calls, [
       [
         {
           r_direction: testCase.originalDirection,
@@ -409,7 +412,7 @@ test('renders loading', async () => {
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setSearch = vitest.fn()
+  const setSearch = mockFunction()
   const { getByRole } = render(
     <ReviewsBy
       linkComponent={testLink}
@@ -424,9 +427,9 @@ test('opens filters', async () => {
     />,
   )
   await openFilters(getByRole, user)
-  expect(setSearch).toHaveBeenCalledTimes(2)
+  assertCallCount(setSearch, 2)
   const filtersOpen = setSearch.mock.calls.map((args) => args[0].r_filters)
-  expect(filtersOpen).toEqual(['0', '1'])
+  assertDeepEqual(filtersOpen, ['0', '1'])
 })
 
 function changeSlider(
@@ -479,7 +482,7 @@ const defaultFiltersOpenParams: Record<string, string> = {
 
 sliderChangeTests.forEach((testCase) => {
   test(`change ${testCase.property}`, async () => {
-    const setSearch = vitest.fn()
+    const setSearch = mockFunction()
     const { getByLabelText } = render(
       <ReviewsBy
         linkComponent={testLink}
@@ -506,7 +509,7 @@ sliderChangeTests.forEach((testCase) => {
       ...defaultFiltersOpenParams,
     }
     expected[testCase.property] = testCase.stateValue
-    expect(setSearch.mock.calls).toEqual([
+    assertDeepEqual(setSearch.mock.calls, [
       [defaultFiltersOpenParams],
       [expected],
     ])

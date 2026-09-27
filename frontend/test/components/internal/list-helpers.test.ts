@@ -1,4 +1,5 @@
-import { expect, test } from 'vitest'
+import { test } from '../../test'
+import { assertEqual } from '../../assert'
 
 import type { ListDirection } from '../../../src/components/types/types'
 import {
@@ -20,7 +21,7 @@ const invertTests: InvertTest[] = [
 
 invertTests.forEach((testData) => {
   test(`invert direction ${testData.input}`, () => {
-    expect(invertDirection(testData.input)).toEqual(testData.output)
+    assertEqual(invertDirection(testData.input), testData.output)
   })
 })
 
@@ -37,7 +38,7 @@ const directionSymbolTests: DirectionSymbolTest[] = [
 
 directionSymbolTests.forEach((testData) => {
   test(`get direction symbol ${testData.input}`, () => {
-    expect(getDirectionSymbol(testData.input)).toEqual(testData.output)
+    assertEqual(getDirectionSymbol(testData.input), testData.output)
   })
 })
 
@@ -61,6 +62,6 @@ formatTitleTests.forEach(({ base, isSelected, direction, output }) => {
   test(`format title ${base} isSelected ${
     isSelected
   } direction ${direction}`, () => {
-    expect(formatTitle(base, isSelected, direction)).toEqual(output)
+    assertEqual(formatTitle(base, isSelected, direction), output)
   })
 })

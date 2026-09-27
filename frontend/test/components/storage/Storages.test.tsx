@@ -1,5 +1,5 @@
-import { render } from '@testing-library/react'
-import { test } from 'vitest'
+import { test } from '../../test'
+import { render } from '../../render'
 import Storages from '../../../src/components/storage/Storages'
 import { Role } from '../../../src/components/types/user/types'
 import type { UseUrlSearchParams } from '../../../src/components/types/types'

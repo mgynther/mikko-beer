@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import StyleEditor from '../../../../src/components/internal/style/StyleEditor'
 import type { UseDebounce } from '../../../../src/components/types/types'
 import type { ListStylesIf } from '../../../../src/components/types/style/types'
@@ -74,7 +76,7 @@ test('renders error', async () => {
 
 test('removes parent', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getAllByRole } = render(
     <StyleEditor
       initialStyle={{
@@ -88,9 +90,9 @@ test('removes parent', async () => {
     />,
   )
   const removeButtons = getAllByRole('button', { name: 'Remove' })
-  expect(removeButtons.length).toEqual(2)
+  assertEqual(removeButtons.length, 2)
   await user.click(removeButtons[0])
-  expect(onChange.mock.calls).toEqual([
+  assertDeepEqual(onChange.mock.calls, [
     [
       {
         id,
@@ -103,7 +105,7 @@ test('removes parent', async () => {
 
 test('enters name', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByPlaceholderText } = render(
     <StyleEditor
       initialStyle={{
@@ -121,7 +123,7 @@ test('enters name', async () => {
   const newName = 'Cream Ale'
   await user.type(nameInput, newName)
   const calls = onChange.mock.calls
-  expect(calls[calls.length - 1]).toEqual([
+  assertDeepEqual(calls[calls.length - 1], [
     {
       id,
       name: newName,

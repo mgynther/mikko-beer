@@ -1,5 +1,7 @@
-import { render, waitFor } from '@testing-library/react'
-import { expect, test, vitest } from 'vitest'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render, waitFor } from '../../../render'
 import type {
   AnnualContainerStats,
   OneAnnualContainerStats,
@@ -37,8 +39,8 @@ const stats2022: OneAnnualContainerStats = {
 }
 
 test('queries annual container stats', async () => {
-  const query = vitest.fn()
-  const setLoadedAnnualContainers = vitest.fn()
+  const query = mockFunction()
+  const setLoadedAnnualContainers = mockFunction()
   render(
     <AnnualContainerAllAtOnce
       getAnnualContainerStatsIf={{
@@ -63,7 +65,7 @@ test('queries annual container stats', async () => {
       setLoadedAnnualContainers={setLoadedAnnualContainers}
     />,
   )
-  expect(query.mock.calls).toEqual([
+  assertDeepEqual(query.mock.calls, [
     [
       {
         breweryId,
@@ -77,7 +79,7 @@ test('queries annual container stats', async () => {
     ],
   ])
   await waitFor(() => {
-    expect(setLoadedAnnualContainers.mock.calls).toEqual([
+    assertDeepEqual(setLoadedAnnualContainers.mock.calls, [
       [undefined],
       [undefined],
       [[stats2023, stats2022]],
@@ -86,8 +88,8 @@ test('queries annual container stats', async () => {
 })
 
 test('renders annual container stats', async () => {
-  const query = vitest.fn()
-  const setLoadedAnnualContainers = vitest.fn()
+  const query = mockFunction()
+  const setLoadedAnnualContainers = mockFunction()
   const { getByText } = render(
     <AnnualContainerAllAtOnce
       getAnnualContainerStatsIf={{

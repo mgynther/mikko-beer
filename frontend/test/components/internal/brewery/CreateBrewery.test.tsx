@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import CreateBrewery from '../../../../src/components/internal/brewery/CreateBrewery'
 import { countryPlaceholder } from '../../../../src/components/internal/brewery/BreweryEditor'
 import type {
@@ -15,7 +17,7 @@ const namePlaceholder = 'Create brewery'
 
 test('creates brewery', async () => {
   const user = setupUser()
-  const selectBrewery = vitest.fn()
+  const selectBrewery = mockFunction()
   const createBreweryIf: CreateBreweryIf = {
     useCreate: () => ({
       create: async (brewery: CreateBreweryRequest) => ({
@@ -31,14 +33,15 @@ test('creates brewery', async () => {
   const createButton = getByRole('button', { name: 'Create' })
   const nameInput = getByPlaceholderText(namePlaceholder)
   await user.type(nameInput, 'Salama Brewing')
-  expect(createButton.hasAttribute('disabled')).toEqual(false)
+  assertEqual(createButton.hasAttribute('disabled'), false)
   await user.click(createButton)
   const createCalls = selectBrewery.mock.calls
-  expect(createCalls).toEqual([
+  assertDeepEqual(createCalls, [
     [
       {
         id,
         name: 'Salama Brewing',
+        country: undefined,
       },
     ],
   ])
@@ -59,7 +62,7 @@ test('render loading', async () => {
 
 test('creates brewery with country', async () => {
   const user = setupUser()
-  const selectBrewery = vitest.fn()
+  const selectBrewery = mockFunction()
   const createBreweryIf: CreateBreweryIf = {
     useCreate: () => ({
       create: async (brewery: CreateBreweryRequest) => ({
@@ -77,10 +80,10 @@ test('creates brewery with country', async () => {
   await user.type(nameInput, 'Salama Brewing')
   const countryInput = getByPlaceholderText(countryPlaceholder)
   await user.type(countryInput, 'FI')
-  expect(createButton.hasAttribute('disabled')).toEqual(false)
+  assertEqual(createButton.hasAttribute('disabled'), false)
   await user.click(createButton)
   const createCalls = selectBrewery.mock.calls
-  expect(createCalls).toEqual([
+  assertDeepEqual(createCalls, [
     [
       {
         id,

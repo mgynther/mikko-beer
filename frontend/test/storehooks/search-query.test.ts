@@ -1,4 +1,5 @@
-import { expect, test } from 'vitest'
+import { test } from '../test'
+import { assertEqual } from '../assert'
 import { formatQuery } from '../../src/storehooks/search-query'
 
 interface TestCase {
@@ -55,6 +56,6 @@ const testCases: TestCase[] = [
 
 testCases.forEach((testCase) => {
   test(`formats "${testCase.query}" to "${testCase.expectedOutput}"`, () => {
-    expect(formatQuery(testCase.query)).toEqual(testCase.expectedOutput)
+    assertEqual(formatQuery(testCase.query), testCase.expectedOutput)
   })
 })

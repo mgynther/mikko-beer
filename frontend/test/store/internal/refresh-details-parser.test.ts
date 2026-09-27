@@ -1,4 +1,5 @@
-import { expect, test } from 'vitest'
+import { test } from '../../test'
+import { assertDeepEqual, assertEqual } from '../../assert'
 import {
   parseAuthToken,
   parseRefreshDetails,
@@ -6,7 +7,7 @@ import {
 
 test('defaults refresh details to empty strings on store missing', () => {
   const result = parseRefreshDetails(undefined)
-  expect(result).toEqual({
+  assertDeepEqual(result, {
     userId: '',
     refreshToken: '',
   })
@@ -22,7 +23,7 @@ test('defaults refresh details to empty string on user missing', () => {
     },
   }
   const result = parseRefreshDetails(state)
-  expect(result).toEqual({
+  assertDeepEqual(result, {
     userId: '',
     refreshToken: 'refresh',
   })
@@ -43,14 +44,14 @@ test('returns userId and refresh token when found', () => {
     },
   }
   const result = parseRefreshDetails(state)
-  expect(result).toEqual({
+  assertDeepEqual(result, {
     userId,
     refreshToken: 'refresh',
   })
 })
 
 test('defaults auth token to empty string on store missing', () => {
-  expect(parseAuthToken(undefined)).toEqual('')
+  assertEqual(parseAuthToken(undefined), '')
 })
 
 test('returns auth token when found', () => {
@@ -61,5 +62,5 @@ test('returns auth token when found', () => {
       },
     },
   }
-  expect(parseAuthToken(state)).toEqual('auth')
+  assertEqual(parseAuthToken(state), 'auth')
 })

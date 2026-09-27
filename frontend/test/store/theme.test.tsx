@@ -1,5 +1,6 @@
-import { expect, test } from 'vitest'
-import { render } from '@testing-library/react'
+import { test } from '../test'
+import { assertDefined } from '../assert'
+import { render } from '../render'
 
 import { setupUser } from '../user-event'
 
@@ -30,8 +31,8 @@ test('set theme', async () => {
       <Helper />
     </StoreProvider>,
   )
-  expect(getByText('LIGHT')).toBeDefined()
+  assertDefined(getByText('LIGHT'))
 
   await user.click(getByText('Darken'))
-  expect(getByText('DARK')).toBeDefined()
+  assertDefined(getByText('DARK'))
 })

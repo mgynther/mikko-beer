@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import ReviewList from '../../../../src/components/internal/review/ReviewList'
 import type { UseDebounce } from '../../../../src/components/types/types'
 import { Role } from '../../../../src/components/types/user/types'
@@ -187,8 +189,8 @@ const reviewFilters = buildReviewFilters()
 
 test('updates review', async () => {
   const user = setupUser()
-  const onChanged = vitest.fn()
-  const update = vitest.fn()
+  const onChanged = mockFunction()
+  const update = mockFunction()
   const { getByPlaceholderText, getByRole, getByText } = render(
     <ReviewList
       linkComponent={testLink}
@@ -235,7 +237,7 @@ test('updates review', async () => {
 
   const saveButton = getByRole('button', { name: 'Save' })
   await user.click(saveButton)
-  expect(update.mock.calls).toEqual([
+  assertDeepEqual(update.mock.calls, [
     [
       // The beer, the container and the location are those of the review as
       // it is shown, everything else is the review as it was loaded.
@@ -252,12 +254,12 @@ test('updates review', async () => {
       },
     ],
   ])
-  expect(onChanged.mock.calls).toEqual([[]])
+  assertDeepEqual(onChanged.mock.calls, [[]])
 })
 
 test('sets review sorting', async () => {
   const user = setupUser()
-  const setSorting = vitest.fn()
+  const setSorting = mockFunction()
   const { getByRole } = render(
     <ReviewList
       linkComponent={testLink}
@@ -282,7 +284,7 @@ test('sets review sorting', async () => {
   getByRole('button', { name: 'Name ▼' })
   const breweriesButton = getByRole('button', { name: 'Breweries' })
   await user.click(breweriesButton)
-  expect(setSorting.mock.calls).toEqual([['brewery_name']])
+  assertDeepEqual(setSorting.mock.calls, [['brewery_name']])
 })
 
 test('renders reviews', async () => {
@@ -361,5 +363,5 @@ test('does not render title', async () => {
     />,
   )
   const heading = queryByRole('heading', { name: 'Reviews' })
-  expect(heading).toEqual(null)
+  assertDeepEqual(heading, null)
 })

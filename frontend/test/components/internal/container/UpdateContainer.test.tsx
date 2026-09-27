@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import UpdateContainer from '../../../../src/components/internal/container/UpdateContainer'
 import type { Container } from '../../../../src/components/types/container/types'
 
@@ -18,8 +20,8 @@ const container: Container = {
 
 test('updates container', async () => {
   const user = setupUser()
-  const onSaved = vitest.fn()
-  const update = vitest.fn()
+  const onSaved = mockFunction()
+  const update = mockFunction()
   const { getByPlaceholderText, getByRole } = render(
     <UpdateContainer
       initialContainer={container}
@@ -40,10 +42,10 @@ test('updates container', async () => {
   const sizeInput = getByPlaceholderText(sizePlaceholder)
   await user.clear(sizeInput)
   await user.type(sizeInput, '0.33')
-  expect(saveButton.hasAttribute('disabled')).toEqual(false)
+  assertEqual(saveButton.hasAttribute('disabled'), false)
   await user.click(saveButton)
   const updateCalls = update.mock.calls
-  expect(updateCalls).toEqual([
+  assertDeepEqual(updateCalls, [
     [
       {
         id,
@@ -53,12 +55,12 @@ test('updates container', async () => {
     ],
   ])
   const saveCalls = onSaved.mock.calls
-  expect(saveCalls).toEqual([[]])
+  assertDeepEqual(saveCalls, [[]])
 })
 
 test('cancel update', async () => {
   const user = setupUser()
-  const onCancel = vitest.fn()
+  const onCancel = mockFunction()
   const { getByRole } = render(
     <UpdateContainer
       initialContainer={container}
@@ -75,5 +77,5 @@ test('cancel update', async () => {
   const cancelButton = getByRole('button', { name: 'Cancel' })
   await user.click(cancelButton)
   const cancelCalls = onCancel.mock.calls
-  expect(cancelCalls).toEqual([[]])
+  assertDeepEqual(cancelCalls, [[]])
 })

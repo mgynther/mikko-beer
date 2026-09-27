@@ -1,23 +1,33 @@
-import { expect, test, vitest } from 'vitest'
+import { test } from './test'
+import {
+  assertCallCount,
+  assertEqual,
+  assertIncludes,
+  assertThrows,
+  assertThrowsWithMessage,
+} from './assert'
+import { mockFunction } from './mock'
 import type { Console } from './dont-call'
 import { dontCall, dontCallWithConsole } from './dont-call'
 
 test('dontCall throws', () => {
-  expect(() => dontCall()).toThrow()
+  assertThrows(() => dontCall())
 })
 
 test('dontCallWithConsole throws and logs', () => {
-  const error = vitest.fn()
+  const error = mockFunction()
   const console: Console = {
     error,
   }
-  const expected = new Error('must not be called')
-  expect(() => dontCallWithConsole(console)).toThrow(expected)
-  expect(console.error).toHaveBeenCalledTimes(1)
+  assertThrowsWithMessage(
+    () => dontCallWithConsole(console),
+    'must not be called',
+  )
+  assertCallCount(error, 1)
   const calls = error.mock.calls
-  expect(calls[0][0]).toEqual('must not be called, see stack')
+  assertEqual(calls[0][0], 'must not be called, see stack')
   const stack = calls[0][1]
-  expect(stack).toContain('Error')
-  expect(stack).toContain('at dontCallWithConsole')
-  expect(stack).toContain('dont-call.ts')
+  assertIncludes(stack, 'Error')
+  assertIncludes(stack, 'at dontCallWithConsole')
+  assertIncludes(stack, 'dont-call.ts')
 })

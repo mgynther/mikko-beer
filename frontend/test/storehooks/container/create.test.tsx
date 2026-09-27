@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render, waitFor } from '../../render'
 
 import createContainer from '../../../src/storehooks/container/create'
 import type {
@@ -61,9 +63,9 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('create container', async () => {
   const user = setupUser()
-  const onCreate = vitest.fn()
-  const onCreated = vitest.fn()
-  const onValidate = vitest.fn()
+  const onCreate = mockFunction()
+  const onCreated = mockFunction()
+  const onValidate = mockFunction()
 
   const { getByRole, getByText } = render(
     <Helper
@@ -75,10 +77,10 @@ test('create container', async () => {
 
   await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(onCreated).toHaveBeenCalledWith(validatedContainer)
+    assertCalledWith(onCreated, [validatedContainer])
   })
-  expect(getByText('Not loading')).toBeDefined()
-  expect(onCreate).toHaveBeenCalledWith(request)
+  assertDefined(getByText('Not loading'))
+  assertCalledWith(onCreate, [request])
   // The envelope is unwrapped before the validator sees the container.
-  expect(onValidate).toHaveBeenCalledWith(created.container)
+  assertCalledWith(onValidate, [created.container])
 })

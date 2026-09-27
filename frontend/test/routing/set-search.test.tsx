@@ -1,8 +1,10 @@
-import { expect, test, vitest } from 'vitest'
+import { test } from '../test'
+import { assertCalledWith } from '../assert'
+import { mockFunction } from '../mock'
+import { render } from '../render'
 
 import { createSetSearch } from '../../src/routing/set-search'
 import type { NavigationFunc } from '../../src/routing/navigate'
-import { render } from '@testing-library/react'
 import { setupUser } from '../user-event'
 
 interface HelperProps {
@@ -45,27 +47,30 @@ const statsSearch =
 
 test('set review list search', async () => {
   const user = setupUser()
-  const navigate = vitest.fn()
+  const navigate = mockFunction()
   const { getByRole } = render(<Helper navigate={navigate} pathname='/' />)
   const button = getByRole('button', { name: 'Test review list' })
   await user.click(button)
-  expect(navigate).toHaveBeenCalledWith(`?${reviewListSearch}`, {
-    replace: true,
-  })
+  assertCalledWith(navigate, [
+    `?${reviewListSearch}`,
+    {
+      replace: true,
+    },
+  ])
 })
 
 test('set stats search', async () => {
   const user = setupUser()
-  const navigate = vitest.fn()
+  const navigate = mockFunction()
   const { getByRole } = render(<Helper navigate={navigate} pathname='/' />)
   const button = getByRole('button', { name: 'Test stats' })
   await user.click(button)
-  expect(navigate).toHaveBeenCalledWith(`?${statsSearch}`, { replace: true })
+  assertCalledWith(navigate, [`?${statsSearch}`, { replace: true }])
 })
 
 test('set review list and stats search', async () => {
   const user = setupUser()
-  const navigate = vitest.fn()
+  const navigate = mockFunction()
   const { getByRole } = render(<Helper navigate={navigate} pathname='/' />)
 
   const reviewListButton = getByRole('button', { name: 'Test review list' })
@@ -73,14 +78,17 @@ test('set review list and stats search', async () => {
 
   const statsButton = getByRole('button', { name: 'Test stats' })
   await user.click(statsButton)
-  expect(navigate).toHaveBeenCalledWith(`?${statsSearch}&${reviewListSearch}`, {
-    replace: true,
-  })
+  assertCalledWith(navigate, [
+    `?${statsSearch}&${reviewListSearch}`,
+    {
+      replace: true,
+    },
+  ])
 })
 
 test('clear stored search on pathname change', async () => {
   const user = setupUser()
-  const navigate = vitest.fn()
+  const navigate = mockFunction()
   const { getByRole, rerender } = render(
     <Helper navigate={navigate} pathname='/' />,
   )
@@ -92,5 +100,5 @@ test('clear stored search on pathname change', async () => {
 
   const statsButton = getByRole('button', { name: 'Test stats' })
   await user.click(statsButton)
-  expect(navigate).toHaveBeenCalledWith(`?${statsSearch}`, { replace: true })
+  assertCalledWith(navigate, [`?${statsSearch}`, { replace: true }])
 })

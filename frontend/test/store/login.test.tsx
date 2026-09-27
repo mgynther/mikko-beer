@@ -1,5 +1,7 @@
-import { beforeAll, beforeEach, afterAll, expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { beforeAll, beforeEach, afterAll, test } from '../test'
+import { assertCalled, assertCalledWith, assertDefined } from '../assert'
+import { mockFunction } from '../mock'
+import { render, waitFor } from '../render'
 
 import { createServer } from './server'
 import type { TestServer } from './server'
@@ -81,7 +83,7 @@ test('login', async () => {
     status: 200,
   })
 
-  const onResponse = vitest.fn()
+  const onResponse = mockFunction()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <LoginHelper username='user1' onResponse={onResponse} />
@@ -90,10 +92,10 @@ test('login', async () => {
 
   await user.click(getByRole('button', { name: 'Login' }))
   await waitFor(() => {
-    expect(onResponse).toHaveBeenCalledWith(true, signedIn)
+    assertCalledWith(onResponse, [true, signedIn])
   })
   await waitFor(() => {
-    expect(getByText('Not loading')).toBeDefined()
+    assertDefined(getByText('Not loading'))
   })
 })
 
@@ -106,7 +108,7 @@ test('failed login is an answer rather than a rejection', async () => {
     status: 401,
   })
 
-  const onResponse = vitest.fn()
+  const onResponse = mockFunction()
   const { getByRole } = render(
     <StoreProvider>
       <LoginHelper username='user2' onResponse={onResponse} />
@@ -117,7 +119,7 @@ test('failed login is an answer rather than a rejection', async () => {
   // the backend, so the caller is told rather than thrown at.
   await user.click(getByRole('button', { name: 'Login' }))
   await waitFor(() => {
-    expect(onResponse).toHaveBeenCalledWith(false, undefined)
+    assertCalledWith(onResponse, [false, undefined])
   })
 })
 
@@ -150,7 +152,7 @@ test('the session goes into the store and comes back out', async () => {
   await user.click(getByRole('button', { name: 'Save' }))
   // It comes back out as unknown: what was in localStorage at startup is
   // whatever was in localStorage.
-  expect(getByText(JSON.stringify(signedIn))).toBeDefined()
+  assertDefined(getByText(JSON.stringify(signedIn)))
 })
 
 function LogoutHelper(props: { onLoggedOut: () => void }): React.JSX.Element {
@@ -182,7 +184,7 @@ test('logout', async () => {
     status: 200,
   })
 
-  const onLoggedOut = vitest.fn()
+  const onLoggedOut = mockFunction()
   const { getByRole } = render(
     <StoreProvider>
       <LogoutHelper onLoggedOut={onLoggedOut} />
@@ -191,7 +193,7 @@ test('logout', async () => {
 
   await user.click(getByRole('button', { name: 'Logout' }))
   await waitFor(() => {
-    expect(onLoggedOut).toHaveBeenCalled()
+    assertCalled(onLoggedOut)
   })
 })
 
@@ -252,7 +254,7 @@ passwordChangeTests.forEach((testCase) => {
     // Whether the change went through is state the store keeps, not something
     // the call gives back.
     await waitFor(() => {
-      expect(getByText(testCase.result)).toBeDefined()
+      assertDefined(getByText(testCase.result))
     })
   })
 })
@@ -297,7 +299,7 @@ test('change password after token refresh', async () => {
 
   await user.click(getByRole('button', { name: 'Change password' }))
   await waitFor(() => {
-    expect(getByText('SUCCESS')).toBeDefined()
+    assertDefined(getByText('SUCCESS'))
   })
 })
 
@@ -330,16 +332,16 @@ test('log out on failed token refresh', async () => {
     </StoreProvider>,
   )
   await user.click(getByRole('button', { name: 'Save' }))
-  expect(getByText(JSON.stringify(session))).toBeDefined()
+  assertDefined(getByText(JSON.stringify(session)))
 
   await user.click(getByRole('button', { name: 'Change password' }))
   // A refresh that fails ends the session, which is the one way the store
   // changes it without being asked.
   await waitFor(() => {
-    expect(
+    assertDefined(
       getByText(
         JSON.stringify({ user: undefined, authToken: '', refreshToken: '' }),
       ),
-    ).toBeDefined()
+    )
   })
 })

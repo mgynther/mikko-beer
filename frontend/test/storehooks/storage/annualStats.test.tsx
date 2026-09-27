@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render } from '../../render'
 
 import getAnnualStorageStats from '../../../src/storehooks/storage/annualStats'
 import type {
@@ -44,14 +46,14 @@ function Helper(props: {
 }
 
 test('get annual storage stats', () => {
-  const onValidate = vitest.fn()
+  const onValidate = mockFunction()
 
   const { getByText } = render(<Helper onValidate={onValidate} />)
 
   const [one] = validatedStats.annual
-  expect(getByText(`${one.year}: ${one.count}`)).toBeDefined()
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText(`${one.year}: ${one.count}`))
+  assertDefined(getByText('Not loading'))
   // The statistics are not wrapped in an envelope, so the validator is given
   // the response as it arrived.
-  expect(onValidate).toHaveBeenCalledWith(stats)
+  assertCalledWith(onValidate, [stats])
 })

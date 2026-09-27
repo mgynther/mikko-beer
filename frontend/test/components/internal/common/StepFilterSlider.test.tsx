@@ -1,5 +1,8 @@
-import { render, fireEvent } from '@testing-library/react'
-import { expect, test, vitest } from 'vitest'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
+import { fireEvent } from '../../../fire-event'
 import StepFilterSlider from '../../../../src/components/internal/common/StepFilterSlider'
 import { dontCall } from '../../../dont-call'
 
@@ -21,8 +24,8 @@ test('renders contents', () => {
 })
 
 test('changes value', async () => {
-  const setDisplayValue = vitest.fn()
-  const setValue = vitest.fn()
+  const setDisplayValue = mockFunction()
+  const setValue = mockFunction()
   const { getByDisplayValue } = render(
     <StepFilterSlider
       title={'Title'}
@@ -36,13 +39,13 @@ test('changes value', async () => {
   )
   const slider = getByDisplayValue(5)
   fireEvent.change(slider, { target: { value: '7' } })
-  expect(setDisplayValue.mock.calls).toEqual([[7]])
-  expect(setValue.mock.calls).toEqual([[7]])
+  assertDeepEqual(setDisplayValue.mock.calls, [[7]])
+  assertDeepEqual(setValue.mock.calls, [[7]])
 })
 
 test('changes value on mobile', async () => {
-  const setDisplayValue = vitest.fn()
-  const setValue = vitest.fn()
+  const setDisplayValue = mockFunction()
+  const setValue = mockFunction()
   const { getByDisplayValue } = render(
     <StepFilterSlider
       title={'Title'}
@@ -59,6 +62,6 @@ test('changes value on mobile', async () => {
   fireEvent.change(slider, { target: { value: '7' } })
   fireEvent.change(slider, { target: { value: '8' } })
   fireEvent.touchEnd(slider)
-  expect(setDisplayValue.mock.calls).toEqual([[7], [8]])
-  expect(setValue.mock.calls).toEqual([[8]])
+  assertDeepEqual(setDisplayValue.mock.calls, [[7], [8]])
+  assertDeepEqual(setValue.mock.calls, [[8]])
 })

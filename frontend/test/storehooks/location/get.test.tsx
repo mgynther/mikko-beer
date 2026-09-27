@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render } from '../../render'
 
 import getLocation from '../../../src/storehooks/location/get'
 import type {
@@ -45,8 +47,8 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('get location', () => {
-  const onGet = vitest.fn()
-  const onValidate = vitest.fn()
+  const onGet = mockFunction()
+  const onValidate = mockFunction()
   const data = { location: { id: locationId, name: 'Test location' } }
 
   const { getByText } = render(
@@ -58,16 +60,16 @@ test('get location', () => {
     />,
   )
 
-  expect(getByText(validatedLocation.name)).toBeDefined()
-  expect(getByText('Not loading')).toBeDefined()
-  expect(onGet).toHaveBeenCalledWith(locationId)
+  assertDefined(getByText(validatedLocation.name))
+  assertDefined(getByText('Not loading'))
+  assertCalledWith(onGet, [locationId])
   // The envelope is unwrapped here, so the validator judges the location and
   // not the wrapper it arrived in.
-  expect(onValidate).toHaveBeenCalledWith(data.location)
+  assertCalledWith(onValidate, [data.location])
 })
 
 test('get location that has not arrived', () => {
-  const onValidate = vitest.fn()
+  const onValidate = mockFunction()
 
   const { getByText } = render(
     <Helper
@@ -78,7 +80,7 @@ test('get location that has not arrived', () => {
     />,
   )
 
-  expect(getByText('No location')).toBeDefined()
-  expect(getByText('Loading')).toBeDefined()
-  expect(onValidate).toHaveBeenCalledWith(undefined)
+  assertDefined(getByText('No location'))
+  assertDefined(getByText('Loading'))
+  assertCalledWith(onValidate, [undefined])
 })

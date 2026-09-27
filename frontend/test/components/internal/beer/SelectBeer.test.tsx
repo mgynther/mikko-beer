@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertDefined, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import SelectBeer from '../../../../src/components/internal/beer/SelectBeer'
 import type {
   Beer,
@@ -50,7 +52,7 @@ const searchFieldIf: SearchFieldIf = {
 
 test('selects created beer', async () => {
   const user = setupUser()
-  const selectBeer = vitest.fn()
+  const selectBeer = mockFunction()
   const id = 'b5a1c3e1-1dc2-4ef5-ba2d-01a7efb08be1'
   const { getByPlaceholderText, getByRole } = render(
     <SelectBeer
@@ -123,10 +125,10 @@ test('selects created beer', async () => {
   await user.click(styleOption)
 
   const createButton = getByRole('button', { name: 'Create beer' })
-  expect(createButton.hasAttribute('disabled')).toEqual(false)
+  assertEqual(createButton.hasAttribute('disabled'), false)
   await user.click(createButton)
   const createCalls = selectBeer.mock.calls
-  expect(createCalls).toEqual([
+  assertDeepEqual(createCalls, [
     [
       {
         id,
@@ -140,7 +142,7 @@ test('selects created beer', async () => {
 
 test('selects beer', async () => {
   const user = setupUser()
-  const selectBeer = vitest.fn()
+  const selectBeer = mockFunction()
   const { getAllByRole, getByRole } = render(
     <SelectBeer
       select={selectBeer}
@@ -197,15 +199,15 @@ test('selects beer', async () => {
   await user.click(selectRadio)
 
   const input = getByRole('combobox')
-  expect(input).toBeDefined()
+  assertDefined(input)
   await user.type(input, 'Do')
 
   const itemOption = getByRole('option', {
     name: `${beer.name} (${brewery.name})`,
   })
-  expect(itemOption).toBeDefined()
+  assertDefined(itemOption)
   await user.click(itemOption)
-  expect(selectBeer.mock.calls).toEqual([
+  assertDeepEqual(selectBeer.mock.calls, [
     [
       {
         breweries: [brewery.id],

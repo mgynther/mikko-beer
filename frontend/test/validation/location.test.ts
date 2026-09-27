@@ -1,4 +1,5 @@
-import { expect, test } from 'vitest'
+import { test } from '../test'
+import { assertDeepEqual, assertThrows } from '../assert'
 
 import type { Location, LocationList } from '../../src/validation/location'
 
@@ -15,47 +16,47 @@ const validLocation: Location = {
 }
 
 test('validateLocation returns location for valid input', () => {
-  expect(validateLocation(validLocation)).toEqual(validLocation)
+  assertDeepEqual(validateLocation(validLocation), validLocation)
 })
 
 test('validateLocation throws for invalid input', () => {
-  expect(() =>
+  assertThrows(() =>
     validateLocation({
       id: 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
     }),
-  ).toThrow()
+  )
 })
 
 test('validateLocationOrUndefined returns undefined for undefined', () => {
-  expect(validateLocationOrUndefined(undefined)).toEqual(undefined)
+  assertDeepEqual(validateLocationOrUndefined(undefined), undefined)
 })
 
 test('validateLocationOrUndefined returns location for valid input', () => {
-  expect(validateLocationOrUndefined(validLocation)).toEqual(validLocation)
+  assertDeepEqual(validateLocationOrUndefined(validLocation), validLocation)
 })
 
 test('validateLocationOrUndefined throws for invalid input', () => {
-  expect(() => validateLocationOrUndefined({ name: 'id missing' })).toThrow()
+  assertThrows(() => validateLocationOrUndefined({ name: 'id missing' }))
 })
 
 test('validateLocationList returns list for valid input', () => {
   const list: LocationList = {
     locations: [validLocation],
   }
-  expect(validateLocationList(list)).toEqual(list)
+  assertDeepEqual(validateLocationList(list), list)
 })
 
 test('validateLocationList throws for invalid location', () => {
-  expect(() =>
+  assertThrows(() =>
     validateLocationList({
       locations: [{ id: 123 }],
     }),
-  ).toThrow()
+  )
 })
 
 test('validateLocationList returns empty list', () => {
   const list: LocationList = { locations: [] }
-  expect(validateLocationList(list)).toEqual(list)
+  assertDeepEqual(validateLocationList(list), list)
 })
 
 test('validateLocationList returns list with multiple', () => {
@@ -68,24 +69,24 @@ test('validateLocationList returns list with multiple', () => {
       },
     ],
   }
-  expect(validateLocationList(list)).toEqual(list)
+  assertDeepEqual(validateLocationList(list), list)
 })
 
 test('validateLocationListOrUndefined returns undefined for undefined', () => {
-  expect(validateLocationListOrUndefined(undefined)).toEqual(undefined)
+  assertDeepEqual(validateLocationListOrUndefined(undefined), undefined)
 })
 
 test('validateLocationListOrUndefined returns list for valid input', () => {
   const list: LocationList = {
     locations: [validLocation],
   }
-  expect(validateLocationListOrUndefined(list)).toEqual(list)
+  assertDeepEqual(validateLocationListOrUndefined(list), list)
 })
 
 test('validateLocationListOrUndefined throws for invalid location', () => {
-  expect(() =>
+  assertThrows(() =>
     validateLocationListOrUndefined({
       locations: [{ id: 123 }],
     }),
-  ).toThrow()
+  )
 })

@@ -1,6 +1,9 @@
-import { fireEvent, render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
+import { fireEvent } from '../../../fire-event'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import Container from '../../../../src/components/internal/stats/Container'
 import type {
   IdParams,
@@ -110,13 +113,13 @@ function renderFromRecordWithSetState(
   record: Record<string, string>,
   setState: (state: Record<string, string>) => void,
 ): ReturnType<typeof render> {
-  return renderContainer(vitest.fn(), setState, toSearchParams(record))
+  return renderContainer(mockFunction(), setState, toSearchParams(record))
 }
 
 test('renders container stats', () => {
-  const stats = vitest.fn()
+  const stats = mockFunction()
   const { getByText } = renderWithStats(stats)
-  expect(stats.mock.calls).toEqual([[{ breweryId, locationId, styleId }]])
+  assertDeepEqual(stats.mock.calls, [[{ breweryId, locationId, styleId }]])
   getByText('7.87')
   getByText('8.00')
   getByText('8')
@@ -144,7 +147,7 @@ test('filter container stats by min average', () => {
     s_min_avg: '8.10',
   }
   const { getByText, queryByText } = renderFromRecord(searchRecord)
-  expect(queryByText('7.87')).toEqual(null)
+  assertDeepEqual(queryByText('7.87'), null)
   getByText('8.23')
 })
 
@@ -155,7 +158,7 @@ test('filter container stats by max average', () => {
   }
   const { getByText, queryByText } = renderFromRecord(searchRecord)
   getByText('7.87')
-  expect(queryByText('8.23')).toEqual(null)
+  assertDeepEqual(queryByText('8.23'), null)
 })
 
 test('filter container stats by min count', () => {
@@ -164,7 +167,7 @@ test('filter container stats by min count', () => {
     s_min_count: '13',
   }
   const { getByText, queryByText } = renderFromRecord(searchRecord)
-  expect(queryByText('10')).toEqual(null)
+  assertDeepEqual(queryByText('10'), null)
   getByText('24')
 })
 
@@ -175,7 +178,7 @@ test('filter container stats by max count', () => {
   }
   const { getByText, queryByText } = renderFromRecord(searchRecord)
   getByText('10')
-  expect(queryByText('24')).toEqual(null)
+  assertDeepEqual(queryByText('24'), null)
 })
 
 test('order container stats by average desc', () => {
@@ -186,9 +189,9 @@ test('order container stats by average desc', () => {
   }
   const { getAllByText } = renderFromRecord(searchRecord)
   const averages = getAllByText(/7.87|8.23/v)
-  expect(averages.length).toEqual(2)
-  expect(averages[0].innerHTML).toEqual('8.23')
-  expect(averages[1].innerHTML).toEqual('7.87')
+  assertEqual(averages.length, 2)
+  assertEqual(averages[0].innerHTML, '8.23')
+  assertEqual(averages[1].innerHTML, '7.87')
 })
 
 test('order container stats by average asc', () => {
@@ -199,9 +202,9 @@ test('order container stats by average asc', () => {
   }
   const { getAllByText } = renderFromRecord(searchRecord)
   const averages = getAllByText(/7.87|8.23/v)
-  expect(averages.length).toEqual(2)
-  expect(averages[0].innerHTML).toEqual('7.87')
-  expect(averages[1].innerHTML).toEqual('8.23')
+  assertEqual(averages.length, 2)
+  assertEqual(averages[0].innerHTML, '7.87')
+  assertEqual(averages[1].innerHTML, '8.23')
 })
 
 test('order container stats by count desc', () => {
@@ -212,9 +215,9 @@ test('order container stats by count desc', () => {
   }
   const { getAllByText } = renderFromRecord(searchRecord)
   const counts = getAllByText(/10|24/v)
-  expect(counts.length).toEqual(2)
-  expect(counts[0].innerHTML).toEqual('24')
-  expect(counts[1].innerHTML).toEqual('10')
+  assertEqual(counts.length, 2)
+  assertEqual(counts[0].innerHTML, '24')
+  assertEqual(counts[1].innerHTML, '10')
 })
 
 test('order container stats by count asc', () => {
@@ -225,9 +228,9 @@ test('order container stats by count asc', () => {
   }
   const { getAllByText } = renderFromRecord(searchRecord)
   const counts = getAllByText(/10|24/v)
-  expect(counts.length).toEqual(2)
-  expect(counts[0].innerHTML).toEqual('10')
-  expect(counts[1].innerHTML).toEqual('24')
+  assertEqual(counts.length, 2)
+  assertEqual(counts[0].innerHTML, '10')
+  assertEqual(counts[1].innerHTML, '24')
 })
 
 test('order container stats by container desc', () => {
@@ -238,9 +241,9 @@ test('order container stats by container desc', () => {
   }
   const { getAllByText } = renderFromRecord(searchRecord)
   const containers = getAllByText(/draft 0.25|bottle 0.33/v)
-  expect(containers.length).toEqual(2)
-  expect(containers[0].innerHTML).toEqual('draft 0.25')
-  expect(containers[1].innerHTML).toEqual('bottle 0.33')
+  assertEqual(containers.length, 2)
+  assertEqual(containers[0].innerHTML, 'draft 0.25')
+  assertEqual(containers[1].innerHTML, 'bottle 0.33')
 })
 
 test('order container stats by container asc', () => {
@@ -251,9 +254,9 @@ test('order container stats by container asc', () => {
   }
   const { getAllByText } = renderFromRecord(searchRecord)
   const containers = getAllByText(/draft 0.25|bottle 0.33/v)
-  expect(containers.length).toEqual(2)
-  expect(containers[0].innerHTML).toEqual('bottle 0.33')
-  expect(containers[1].innerHTML).toEqual('draft 0.25')
+  assertEqual(containers.length, 2)
+  assertEqual(containers[0].innerHTML, 'bottle 0.33')
+  assertEqual(containers[1].innerHTML, 'draft 0.25')
 })
 
 test('order container stats by std_dev desc', () => {
@@ -264,9 +267,9 @@ test('order container stats by std_dev desc', () => {
   }
   const { getAllByText } = renderFromRecord(searchRecord)
   const counts = getAllByText(/0.38|0.54/v)
-  expect(counts.length).toEqual(2)
-  expect(counts[0].innerHTML).toEqual('0.54')
-  expect(counts[1].innerHTML).toEqual('0.38')
+  assertEqual(counts.length, 2)
+  assertEqual(counts[0].innerHTML, '0.54')
+  assertEqual(counts[1].innerHTML, '0.38')
 })
 
 test('order container stats by std_dev asc', () => {
@@ -277,9 +280,9 @@ test('order container stats by std_dev asc', () => {
   }
   const { getAllByText } = renderFromRecord(searchRecord)
   const counts = getAllByText(/0.38|0.54/v)
-  expect(counts.length).toEqual(2)
-  expect(counts[0].innerHTML).toEqual('0.38')
-  expect(counts[1].innerHTML).toEqual('0.54')
+  assertEqual(counts.length, 2)
+  assertEqual(counts[0].innerHTML, '0.38')
+  assertEqual(counts[1].innerHTML, '0.54')
 })
 
 function changeSlider(
@@ -327,7 +330,7 @@ const sliderChangeTests: SliderChangeTest[] = [
 
 sliderChangeTests.forEach((testCase) => {
   test(`change ${testCase.property}`, () => {
-    const setState = vitest.fn()
+    const setState = mockFunction()
     const { getByDisplayValue } = renderFromRecordWithSetState(
       defaultFiltersOpenParams,
       setState,
@@ -341,7 +344,7 @@ sliderChangeTests.forEach((testCase) => {
       ...defaultFiltersOpenParams,
     }
     expected[testCase.property] = testCase.stateValue
-    expect(setState.mock.calls).toEqual([
+    assertDeepEqual(setState.mock.calls, [
       [defaultFiltersOpenParams],
       [expected],
     ])
@@ -350,13 +353,13 @@ sliderChangeTests.forEach((testCase) => {
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setState = vitest.fn()
+  const setState = mockFunction()
   const { getByRole } = renderFromRecordWithSetState(
     defaultSearchParams,
     setState,
   )
   await openFilters(getByRole, user)
-  expect(setState.mock.calls).toEqual([
+  assertDeepEqual(setState.mock.calls, [
     [
       {
         ...defaultSearchParams,
@@ -471,7 +474,7 @@ orderChangeTests.forEach((testCase) => {
     testCase.newOrder
   } ${testCase.newDirection}`, async () => {
     const user = setupUser()
-    const setState = vitest.fn()
+    const setState = mockFunction()
     const searchRecord: Record<string, string> = {
       ...defaultSearchParams,
       s_order: testCase.originalOrder,
@@ -485,7 +488,7 @@ orderChangeTests.forEach((testCase) => {
       s_order: testCase.newOrder,
       s_direction: testCase.newDirection,
     }
-    expect(setState.mock.calls).toEqual([
+    assertDeepEqual(setState.mock.calls, [
       [
         {
           ...defaultSearchParams,

@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render } from '../../render'
 
 import statsHook from '../../../src/storehooks/stats/stats'
 import type { IdParams, RatingStats } from '../../../src/storehooks/stats/types'
@@ -48,17 +50,17 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('rating stats', () => {
-  const onQuery = vitest.fn()
-  const onValidate = vitest.fn()
+  const onQuery = mockFunction()
+  const onValidate = mockFunction()
 
   const { getByText } = render(
     <Helper onQuery={onQuery} onValidate={onValidate} />,
   )
 
-  expect(getByText('Validated stats')).toBeDefined()
-  expect(getByText('Not loading')).toBeDefined()
-  expect(onQuery).toHaveBeenCalledWith(params)
+  assertDefined(getByText('Validated stats'))
+  assertDefined(getByText('Not loading'))
+  assertCalledWith(onQuery, [params])
   // These statistics are not wrapped in an envelope, so the validator is
   // given the response as it arrived.
-  expect(onValidate).toHaveBeenCalledWith(data)
+  assertCalledWith(onValidate, [data])
 })

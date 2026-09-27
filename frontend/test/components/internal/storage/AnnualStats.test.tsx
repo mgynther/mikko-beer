@@ -1,5 +1,5 @@
-import { render } from '@testing-library/react'
-import { test } from 'vitest'
+import { test } from '../../../test'
+import { render } from '../../../render'
 import AnnualStats from '../../../../src/components/internal/storage/AnnualStats'
 
 test('renders annual storage stats', () => {

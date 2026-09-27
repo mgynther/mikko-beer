@@ -1,6 +1,9 @@
-import { fireEvent, render, waitFor } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render, waitFor } from '../../../render'
+import { fireEvent } from '../../../fire-event'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../filter-time'
 import LocationAllAtOnce from '../../../../src/components/internal/stats/LocationAllAtOnce'
 import { openFilters } from '../../open-filters'
@@ -106,8 +109,8 @@ const unusedStats: GetLocationStatsIf = {
 }
 
 test('queries location stats', async () => {
-  const query = vitest.fn()
-  const setLoadedLocations = vitest.fn()
+  const query = mockFunction()
+  const setLoadedLocations = mockFunction()
   render(
     <LocationAllAtOnce
       linkComponent={testLink}
@@ -144,7 +147,7 @@ test('queries location stats', async () => {
       statsParams={statsParams}
     />,
   )
-  expect(query.mock.calls).toEqual([
+  assertDeepEqual(query.mock.calls, [
     [
       {
         breweryId,
@@ -168,7 +171,7 @@ test('queries location stats', async () => {
     ],
   ])
   await waitFor(() => {
-    expect(setLoadedLocations.mock.calls).toEqual([
+    assertDeepEqual(setLoadedLocations.mock.calls, [
       [undefined],
       [[plevna, oluthuone]],
     ])
@@ -210,7 +213,7 @@ test('renders location stats', () => {
 })
 
 test('clears loaded locations on filter change pending', () => {
-  const setLoadedLocations = vitest.fn()
+  const setLoadedLocations = mockFunction()
   render(
     <LocationAllAtOnce
       linkComponent={testLink}
@@ -230,7 +233,7 @@ test('clears loaded locations on filter change pending', () => {
       statsParams={statsParams}
     />,
   )
-  expect(setLoadedLocations.mock.calls).toEqual([[undefined], [undefined]])
+  assertDeepEqual(setLoadedLocations.mock.calls, [[undefined], [undefined]])
 })
 
 test('renders loading', () => {
@@ -264,11 +267,11 @@ test('renders loading', () => {
     />,
   )
   const cells = getAllByRole('cell')
-  expect(cells.length).toEqual(9)
+  assertEqual(cells.length, 9)
 })
 
 test('sets minimum review count filter', () => {
-  const setMinimumReviewAverage = vitest.fn()
+  const setMinimumReviewAverage = mockFunction()
   const { getByDisplayValue } = render(
     <LocationAllAtOnce
       linkComponent={testLink}
@@ -296,12 +299,12 @@ test('sets minimum review count filter', () => {
   )
   const slider = getByDisplayValue('4')
   fireEvent.change(slider, { target: { value: '4.5' } })
-  expect(setMinimumReviewAverage.mock.calls).toEqual([[4.5]])
+  assertDeepEqual(setMinimumReviewAverage.mock.calls, [[4.5]])
 })
 
 test('opens filter', async () => {
   const user = setupUser()
-  const setIsFiltersOpen = vitest.fn()
+  const setIsFiltersOpen = mockFunction()
   const { getByRole } = render(
     <LocationAllAtOnce
       linkComponent={testLink}
@@ -322,5 +325,5 @@ test('opens filter', async () => {
     />,
   )
   await openFilters(getByRole, user)
-  expect(setIsFiltersOpen.mock.calls).toEqual([[true]])
+  assertDeepEqual(setIsFiltersOpen.mock.calls, [[true]])
 })

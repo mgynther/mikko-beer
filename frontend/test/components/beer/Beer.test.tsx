@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../test'
+import { assertDeepEqual, assertThrowsWithMessage } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render } from '../../render'
 import { setupUser } from '../../user-event'
-import { expect, test, vitest } from 'vitest'
 import Beer from '../../../src/components/beer/Beer'
 import { Role } from '../../../src/components/types/user/types'
 import type {
@@ -288,23 +290,25 @@ test('renders beer', async () => {
 })
 
 test('throw on missing id', async () => {
-  expect(() =>
-    render(
-      <Beer
-        linkComponent={testLink}
-        updateBeerLoginIf={dontUpdateBeerIf}
-        listReviewsByBeerIf={getListReviewsIf([joinedReview])}
-        listStoragesByBeerIf={listStoragesByBeerIf}
-        getBeerIf={getBeerIf}
-        useUrlPathParams={() => ({})}
-      />,
-    ),
-  ).toThrow('Beer component without beerId. Should not happen.')
+  assertThrowsWithMessage(
+    () =>
+      render(
+        <Beer
+          linkComponent={testLink}
+          updateBeerLoginIf={dontUpdateBeerIf}
+          listReviewsByBeerIf={getListReviewsIf([joinedReview])}
+          listStoragesByBeerIf={listStoragesByBeerIf}
+          getBeerIf={getBeerIf}
+          useUrlPathParams={() => ({})}
+        />,
+      ),
+    'Beer component without beerId. Should not happen.',
+  )
 })
 
 test('updates beer', async () => {
   const user = setupUser()
-  const update = vitest.fn()
+  const update = mockFunction()
   const { getByRole, getByPlaceholderText } = render(
     <Beer
       linkComponent={testLink}
@@ -331,7 +335,7 @@ test('updates beer', async () => {
   await user.type(nameInput, beerName)
   const saveButton = getByRole('button', { name: 'Save' })
   await user.click(saveButton)
-  expect(update.mock.calls).toEqual([
+  assertDeepEqual(update.mock.calls, [
     [
       {
         ...beer,
@@ -402,7 +406,7 @@ test('render not found', async () => {
 })
 
 test('load reviews', async () => {
-  const useList = vitest.fn()
+  const useList = mockFunction()
   render(
     <Beer
       linkComponent={testLink}
@@ -429,7 +433,7 @@ test('load reviews', async () => {
       useUrlPathParams={useUrlPathParams}
     />,
   )
-  expect(useList.mock.calls).toEqual([
+  assertDeepEqual(useList.mock.calls, [
     [
       {
         id: beer.id,
@@ -447,7 +451,7 @@ test('load reviews', async () => {
 
 test('sort reviews', async () => {
   const user = setupUser()
-  const setSearch = vitest.fn()
+  const setSearch = mockFunction()
   const { getByRole } = render(
     <Beer
       linkComponent={testLink}
@@ -475,7 +479,7 @@ test('sort reviews', async () => {
   )
   const ratingButton = getByRole('button', { name: 'Rating' })
   await user.click(ratingButton)
-  expect(setSearch.mock.calls).toEqual([
+  assertDeepEqual(setSearch.mock.calls, [
     [
       {
         r_direction: 'asc',

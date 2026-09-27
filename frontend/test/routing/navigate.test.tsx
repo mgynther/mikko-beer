@@ -1,5 +1,6 @@
-import { expect, test } from 'vitest'
-import { render } from '@testing-library/react'
+import { test } from '../test'
+import { assertEqual } from '../assert'
+import { render } from '../render'
 import { setupUser } from '../user-event'
 
 import LinkWrapper from '../../src/routing/LinkWrapper'
@@ -34,5 +35,5 @@ test('navigates', async () => {
     </LinkWrapper>,
   )
   await user.click(getByRole('button', { name: 'Navigate' }))
-  expect(window.location.pathname).toEqual(path)
+  assertEqual(window.location.pathname, path)
 })

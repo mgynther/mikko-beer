@@ -1,6 +1,13 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import {
+  assertCallCount,
+  assertCalled,
+  assertDeepEqual,
+  assertEqual,
+} from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import EditButton from '../../../../src/components/internal/common/EditButton'
 import { Role, type User } from '../../../../src/components/types/user/types'
 import type { Login } from '../../../../src/components/types/login/types'
@@ -28,7 +35,7 @@ test('is disabled without user', () => {
     />,
   )
   const button = queryByRole('button')
-  expect(button).toEqual(null)
+  assertDeepEqual(button, null)
 })
 
 test('is disabled for viewer', () => {
@@ -46,12 +53,12 @@ test('is disabled for viewer', () => {
     />,
   )
   const button = queryByRole('button')
-  expect(button).toEqual(null)
+  assertDeepEqual(button, null)
 })
 
 test('handles click for admin', async () => {
   const user = setupUser()
-  const clickCb = vitest.fn()
+  const clickCb = mockFunction()
   const { getByRole } = render(
     <EditButton
       disabled={false}
@@ -61,12 +68,12 @@ test('handles click for admin', async () => {
   )
   const button = getByRole('button')
   await user.click(button)
-  expect(clickCb).toHaveBeenCalled()
+  assertCalled(clickCb)
 })
 
 test('does not handle click when disabled', async () => {
   const user = setupUser()
-  const clickCb = vitest.fn()
+  const clickCb = mockFunction()
   const { getByRole } = render(
     <EditButton
       disabled={true}
@@ -76,6 +83,6 @@ test('does not handle click when disabled', async () => {
   )
   const button = getByRole('button')
   await user.click(button)
-  expect(clickCb).not.toHaveBeenCalled()
-  expect(button.hasAttribute('disabled')).toEqual(true)
+  assertCallCount(clickCb, 0)
+  assertEqual(button.hasAttribute('disabled'), true)
 })

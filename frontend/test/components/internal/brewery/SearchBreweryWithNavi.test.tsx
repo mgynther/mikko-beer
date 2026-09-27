@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertDefined } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import SearchBreweryWithNavi from '../../../../src/components/internal/brewery/SearchBreweryWithNavi'
 
 import type { SearchFieldIf } from '../../../../src/components/types/search/types'
@@ -33,7 +35,9 @@ const breweries = [brewery, anotherBrewery]
 
 test('selects brewery', async () => {
   const user = setupUser()
-  const selector = vitest.fn(async (): Promise<void> => undefined)
+  const selector = mockFunction(
+    async (_url: string): Promise<void> => undefined,
+  )
   const searchBreweryIf: SearchBreweryIf = {
     useSearch: () => ({
       search: async () => breweries,
@@ -51,11 +55,11 @@ test('selects brewery', async () => {
   )
 
   const input = getByRole('combobox')
-  expect(input).toBeDefined()
+  assertDefined(input)
   await user.type(input, 'Co')
 
   const itemOption = getByRole('option', { name: brewery.name })
-  expect(itemOption).toBeDefined()
+  assertDefined(itemOption)
   await user.click(itemOption)
-  expect(selector.mock.calls).toEqual([[`/breweries/${brewery.id}`]])
+  assertDeepEqual(selector.mock.calls, [[`/breweries/${brewery.id}`]])
 })

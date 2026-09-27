@@ -1,6 +1,9 @@
-import { fireEvent, render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
+import { fireEvent } from '../../../fire-event'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../filter-time'
 import Filters from '../../../../src/components/internal/stats/Filters'
 import { openFilters } from '../../open-filters'
@@ -32,7 +35,7 @@ const defaultFilters: StatsNoTimeFilters = {
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setIsOpen = vitest.fn()
+  const setIsOpen = mockFunction()
   const { getByRole } = render(
     <Filters
       filterState={{
@@ -55,12 +58,12 @@ test('opens filters', async () => {
     />,
   )
   await openFilters(getByRole, user)
-  expect(setIsOpen.mock.calls).toEqual([[true]])
+  assertDeepEqual(setIsOpen.mock.calls, [[true]])
 })
 
 test('closes filters', async () => {
   const user = setupUser()
-  const setIsOpen = vitest.fn()
+  const setIsOpen = mockFunction()
   const { getByRole } = render(
     <Filters
       filterState={{
@@ -84,7 +87,7 @@ test('closes filters', async () => {
   )
   const toggleButton = getByRole('button', { name: 'Filters ▲' })
   await user.click(toggleButton)
-  expect(setIsOpen.mock.calls).toEqual([[false]])
+  assertDeepEqual(setIsOpen.mock.calls, [[false]])
 })
 
 test('renders values when open', () => {
@@ -164,12 +167,12 @@ test('does not render time', () => {
       timeEnd={undefined}
     />,
   )
-  expect(queryByText('Minimum time:')).toBeNull()
-  expect(queryByText('Maximum time:')).toBeNull()
+  assertEqual(queryByText('Minimum time:'), null)
+  assertEqual(queryByText('Maximum time:'), null)
 })
 
 test('sets minimum review count', () => {
-  const setMinimumReviewCount = vitest.fn()
+  const setMinimumReviewCount = mockFunction()
   const { getByDisplayValue } = render(
     <Filters
       filterState={{
@@ -210,11 +213,11 @@ test('sets minimum review count', () => {
   )
   const slider = getByDisplayValue('2')
   fireEvent.change(slider, { target: { value: '3' } })
-  expect(setMinimumReviewCount.mock.calls).toEqual([[5]])
+  assertDeepEqual(setMinimumReviewCount.mock.calls, [[5]])
 })
 
 test('sets maximum review count', () => {
-  const setMaximumReviewCount = vitest.fn()
+  const setMaximumReviewCount = mockFunction()
   const { getByDisplayValue } = render(
     <Filters
       filterState={{
@@ -255,11 +258,11 @@ test('sets maximum review count', () => {
   )
   const slider = getByDisplayValue('5')
   fireEvent.change(slider, { target: { value: '6' } })
-  expect(setMaximumReviewCount.mock.calls).toEqual([[21]])
+  assertDeepEqual(setMaximumReviewCount.mock.calls, [[21]])
 })
 
 test('sets minimum review average', () => {
-  const setMinimumReviewAverage = vitest.fn()
+  const setMinimumReviewAverage = mockFunction()
   const { getByDisplayValue } = render(
     <Filters
       filterState={{
@@ -300,11 +303,11 @@ test('sets minimum review average', () => {
   )
   const slider = getByDisplayValue('6.8')
   fireEvent.change(slider, { target: { value: '6.9' } })
-  expect(setMinimumReviewAverage.mock.calls).toEqual([[6.9]])
+  assertDeepEqual(setMinimumReviewAverage.mock.calls, [[6.9]])
 })
 
 test('sets maximum review average', () => {
-  const setMaximumReviewAverage = vitest.fn()
+  const setMaximumReviewAverage = mockFunction()
   const { getByDisplayValue } = render(
     <Filters
       filterState={{
@@ -345,11 +348,11 @@ test('sets maximum review average', () => {
   )
   const slider = getByDisplayValue('9.2')
   fireEvent.change(slider, { target: { value: '9.1' } })
-  expect(setMaximumReviewAverage.mock.calls).toEqual([[9.1]])
+  assertDeepEqual(setMaximumReviewAverage.mock.calls, [[9.1]])
 })
 
 test('sets minimum time', () => {
-  const setMinimumTime = vitest.fn()
+  const setMinimumTime = mockFunction()
   const { getByDisplayValue } = render(
     <Filters
       filterState={{
@@ -393,7 +396,7 @@ test('sets minimum time', () => {
   )
   const slider = getByDisplayValue('1')
   fireEvent.change(slider, { target: { value: '3' } })
-  expect(setMinimumTime.mock.calls).toEqual([
+  assertDeepEqual(setMinimumTime.mock.calls, [
     [
       {
         year: 2018,
@@ -404,7 +407,7 @@ test('sets minimum time', () => {
 })
 
 test('sets maximum time', () => {
-  const setMaximumTime = vitest.fn()
+  const setMaximumTime = mockFunction()
   const { getByDisplayValue } = render(
     <Filters
       filterState={{
@@ -448,7 +451,7 @@ test('sets maximum time', () => {
   )
   const slider = getByDisplayValue('4')
   fireEvent.change(slider, { target: { value: '5' } })
-  expect(setMaximumTime.mock.calls).toEqual([
+  assertDeepEqual(setMaximumTime.mock.calls, [
     [
       {
         year: 2018,

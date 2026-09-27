@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render, waitFor } from '../../render'
 
 import createUser from '../../../src/storehooks/user/create'
 import type {
@@ -70,8 +72,8 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('create user', async () => {
   const user = setupUser()
-  const onCreate = vitest.fn()
-  const onValidate = vitest.fn()
+  const onCreate = mockFunction()
+  const onValidate = mockFunction()
 
   const { getByRole, getByText } = render(
     <Helper
@@ -81,16 +83,16 @@ test('create user', async () => {
       onValidate={onValidate}
     />,
   )
-  expect(getByText(validatedUser.username)).toBeDefined()
-  expect(getByText('Not failed')).toBeDefined()
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText(validatedUser.username))
+  assertDefined(getByText('Not failed'))
+  assertDefined(getByText('Not loading'))
 
   await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(onCreate).toHaveBeenCalledWith(request)
+    assertCalledWith(onCreate, [request])
   })
   // The envelope is unwrapped before the validator sees the user.
-  expect(onValidate).toHaveBeenCalledWith(created.user)
+  assertCalledWith(onValidate, [created.user])
 })
 
 test('failed user creation has no user', () => {
@@ -103,6 +105,6 @@ test('failed user creation has no user', () => {
     />,
   )
 
-  expect(getByText('No user')).toBeDefined()
-  expect(getByText('Failed')).toBeDefined()
+  assertDefined(getByText('No user'))
+  assertDefined(getByText('Failed'))
 })

@@ -1,7 +1,11 @@
-import { render, fireEvent } from '@testing-library/react'
-import { type UserEvent } from '@testing-library/user-event'
+import { test } from '../../test'
+import { assertDeepEqual, assertDefined, assertEqual } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render } from '../../render'
+import type { RenderResult } from '../../render'
+import { fireEvent } from '../../fire-event'
+import type { UserEvent } from '../../user-event'
 import { setupUser } from '../../user-event'
-import { expect, test, vitest } from 'vitest'
 import AddReview, {
   type Props as AddReviewProps,
 } from '../../../src/components/review/AddReview'
@@ -13,7 +17,10 @@ import type {
   SearchBeerIf,
   SelectBeerIf,
 } from '../../../src/components/types/beer/types'
-import type { ReviewContainerIf } from '../../../src/components/types/review/types'
+import type {
+  ReviewContainerIf,
+  ReviewRequestWrapper,
+} from '../../../src/components/types/review/types'
 import type { UseUrlPathParams } from '../../../src/components/types/types'
 import type { SearchFieldIf } from '../../../src/components/types/search/types'
 import { dontCall } from '../../dont-call'
@@ -196,7 +203,7 @@ const reviewRating = 8
 
 async function addReview(
   getByPlaceholderText: (text: string) => HTMLElement,
-  getByRole: (text: string, props?: Record<string, unknown>) => HTMLElement,
+  getByRole: RenderResult['getByRole'],
   user: UserEvent,
 ): Promise<void> {
   const smellInput = getByPlaceholderText('Smell')
@@ -209,13 +216,15 @@ async function addReview(
   ratingInput.click()
   fireEvent.change(ratingInput, { target: { value: `${reviewRating}` } })
   const addButton = getByRole('button', { name: 'Add' })
-  expect(addButton.hasAttribute('disabled')).toEqual(false)
+  assertEqual(addButton.hasAttribute('disabled'), false)
   addButton.click()
 }
 
 test('adds review', async () => {
   const user = setupUser()
-  const create = vitest.fn(async (): Promise<void> => undefined)
+  const create = mockFunction(
+    async (_request: ReviewRequestWrapper): Promise<void> => undefined,
+  )
   const props: AddReviewProps = {
     createReviewIf: {
       useCreate: () => ({
@@ -249,13 +258,13 @@ test('adds review', async () => {
   const selects = getAllByRole('radio', { name: 'Select' })
   await user.click(selects[0])
   const beerSearch = getByPlaceholderText('Search beer')
-  expect(beerSearch).toBeDefined()
+  assertDefined(beerSearch)
   beerSearch.focus()
   await user.paste('Seve')
   const beerOption = await findByRole('option', {
     name: 'Severin (Koskipanimo)',
   })
-  expect(beerOption).toBeDefined()
+  assertDefined(beerOption)
   await user.click(beerOption)
   getByRole('button', { name: /change/i })
   const containerSelect = getByRole('combobox', { name: 'Container' })
@@ -264,9 +273,9 @@ test('adds review', async () => {
   await user.selectOptions(containerSelect, bottle)
   await user.click(bottle)
   const changeButtons = queryAllByRole('button', { name: /change/i })
-  expect(changeButtons.length).toEqual(2)
+  assertEqual(changeButtons.length, 2)
   await addReview(getByPlaceholderText, getByRole, user)
-  expect(create.mock.calls).toEqual([
+  assertDeepEqual(create.mock.calls, [
     [
       {
         body: {
@@ -312,7 +321,7 @@ test('loads storage', async () => {
     />,
   )
   const text = getByText(loadingIndicatorText)
-  expect(text).toBeDefined()
+  assertDefined(text)
 })
 
 test('shows storage loading error', async () => {
@@ -342,12 +351,14 @@ test('shows storage loading error', async () => {
     />,
   )
   const text = getByText('Error, storage does not exist.')
-  expect(text).toBeDefined()
+  assertDefined(text)
 })
 
 test('adds review from storage', async () => {
   const user = setupUser()
-  const create = vitest.fn(async (): Promise<void> => undefined)
+  const create = mockFunction(
+    async (_request: ReviewRequestWrapper): Promise<void> => undefined,
+  )
   const props: AddReviewProps = {
     createReviewIf: {
       useCreate: () => ({
@@ -385,10 +396,10 @@ test('adds review from storage', async () => {
     <AddReview {...props} />,
   )
   const changeButtons = queryAllByRole('button', { name: /change/i })
-  expect(changeButtons.length).toEqual(0)
+  assertEqual(changeButtons.length, 0)
   await addReview(getByPlaceholderText, getByRole, user)
 
-  expect(create.mock.calls).toEqual([
+  assertDeepEqual(create.mock.calls, [
     [
       {
         body: {
@@ -408,7 +419,9 @@ test('adds review from storage', async () => {
 })
 
 test('navigates', async () => {
-  const navigate = vitest.fn(async (): Promise<void> => undefined)
+  const navigate = mockFunction(
+    async (_url: string): Promise<void> => undefined,
+  )
   const beerId = '7795fabb-a4c4-4e43-b5d0-8b7f01aa906c'
   render(
     <AddReview
@@ -435,5 +448,5 @@ test('navigates', async () => {
       useUrlPathParams={storageIdUrlPathParams}
     />,
   )
-  expect(navigate.mock.calls).toEqual([[`/beers/${beerId}`]])
+  assertDeepEqual(navigate.mock.calls, [[`/beers/${beerId}`]])
 })

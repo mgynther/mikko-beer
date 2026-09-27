@@ -1,10 +1,13 @@
-import { render, fireEvent } from '@testing-library/react'
-import { expect, test, vitest } from 'vitest'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
+import { fireEvent } from '../../../fire-event'
 import ValueFilterSlider from '../../../../src/components/internal/stats/ValueFilterSlider'
 
 test('sets value', () => {
-  const setDisplayValue = vitest.fn()
-  const setValue = vitest.fn()
+  const setDisplayValue = mockFunction()
+  const setValue = mockFunction()
   const { getByDisplayValue } = render(
     <ValueFilterSlider
       title={'Title'}
@@ -16,13 +19,13 @@ test('sets value', () => {
   )
   const slider = getByDisplayValue(0)
   fireEvent.change(slider, { target: { value: '2' } })
-  expect(setDisplayValue.mock.calls).toEqual([[194]])
-  expect(setValue.mock.calls).toEqual([[194]])
+  assertDeepEqual(setDisplayValue.mock.calls, [[194]])
+  assertDeepEqual(setValue.mock.calls, [[194]])
 })
 
 test('sets value on mobile', () => {
-  const setDisplayValue = vitest.fn()
-  const setValue = vitest.fn()
+  const setDisplayValue = mockFunction()
+  const setValue = mockFunction()
   const { getByDisplayValue } = render(
     <ValueFilterSlider
       title={'Title'}
@@ -37,8 +40,8 @@ test('sets value on mobile', () => {
   fireEvent.change(slider, { target: { value: '1' } })
   fireEvent.change(slider, { target: { value: '2' } })
   fireEvent.touchEnd(slider)
-  expect(setDisplayValue.mock.calls).toEqual([[21], [194]])
-  expect(setValue.mock.calls).toEqual([[194]])
+  assertDeepEqual(setDisplayValue.mock.calls, [[21], [194]])
+  assertDeepEqual(setValue.mock.calls, [[194]])
 })
 
 test('defaults to first value on invalid', () => {
@@ -47,8 +50,8 @@ test('defaults to first value on invalid', () => {
       title={'Title'}
       value={1}
       values={[5, 21, 194]}
-      setDisplayValue={vitest.fn()}
-      setValue={vitest.fn()}
+      setDisplayValue={mockFunction()}
+      setValue={mockFunction()}
     />,
   )
   getByDisplayValue(0)

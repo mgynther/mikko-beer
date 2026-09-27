@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render } from '../../render'
 
 import getStyle from '../../../src/storehooks/style/get'
 import type {
@@ -44,8 +46,8 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('get style', () => {
-  const onGet = vitest.fn()
-  const onValidate = vitest.fn()
+  const onGet = mockFunction()
+  const onValidate = mockFunction()
   const data = { style: { id: styleId, name: 'Test style' } }
 
   const { getByText } = render(
@@ -57,15 +59,15 @@ test('get style', () => {
     />,
   )
 
-  expect(getByText(validatedStyle.name)).toBeDefined()
-  expect(getByText('Not loading')).toBeDefined()
-  expect(onGet).toHaveBeenCalledWith(styleId)
+  assertDefined(getByText(validatedStyle.name))
+  assertDefined(getByText('Not loading'))
+  assertCalledWith(onGet, [styleId])
   // The envelope is unwrapped before the validator sees the style.
-  expect(onValidate).toHaveBeenCalledWith(data.style)
+  assertCalledWith(onValidate, [data.style])
 })
 
 test('get style that has not arrived', () => {
-  const onValidate = vitest.fn()
+  const onValidate = mockFunction()
 
   const { getByText } = render(
     <Helper
@@ -76,7 +78,7 @@ test('get style that has not arrived', () => {
     />,
   )
 
-  expect(getByText('No style')).toBeDefined()
-  expect(getByText('Loading')).toBeDefined()
-  expect(onValidate).toHaveBeenCalledWith(undefined)
+  assertDefined(getByText('No style'))
+  assertDefined(getByText('Loading'))
+  assertCalledWith(onValidate, [undefined])
 })

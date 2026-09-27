@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import UpdateBrewery from '../../../../src/components/internal/brewery/UpdateBrewery'
 import { countryPlaceholder } from '../../../../src/components/internal/brewery/BreweryEditor'
 import { dontCall } from '../../../dont-call'
@@ -10,8 +12,8 @@ const newNamePlaceholder = 'New name'
 
 test('updates brewery', async () => {
   const user = setupUser()
-  const onSaved = vitest.fn()
-  const update = vitest.fn()
+  const onSaved = mockFunction()
+  const update = mockFunction()
   const { getByPlaceholderText, getByRole } = render(
     <UpdateBrewery
       initialBrewery={{
@@ -33,24 +35,25 @@ test('updates brewery', async () => {
   const nameInput = getByPlaceholderText(newNamePlaceholder)
   await user.clear(nameInput)
   await user.type(nameInput, 'Koskipanimo')
-  expect(saveButton.hasAttribute('disabled')).toEqual(false)
+  assertEqual(saveButton.hasAttribute('disabled'), false)
   await user.click(saveButton)
   const updateCalls = update.mock.calls
-  expect(updateCalls).toEqual([
+  assertDeepEqual(updateCalls, [
     [
       {
         id,
         name: 'Koskipanimo',
+        country: undefined,
       },
     ],
   ])
   const saveCalls = onSaved.mock.calls
-  expect(saveCalls).toEqual([[]])
+  assertDeepEqual(saveCalls, [[]])
 })
 
 test('cancel update', async () => {
   const user = setupUser()
-  const onCancel = vitest.fn()
+  const onCancel = mockFunction()
   const { getByRole } = render(
     <UpdateBrewery
       initialBrewery={{
@@ -71,13 +74,13 @@ test('cancel update', async () => {
   const cancelButton = getByRole('button', { name: 'Cancel' })
   await user.click(cancelButton)
   const cancelCalls = onCancel.mock.calls
-  expect(cancelCalls).toEqual([[]])
+  assertDeepEqual(cancelCalls, [[]])
 })
 
 test('updates brewery country', async () => {
   const user = setupUser()
-  const onSaved = vitest.fn()
-  const update = vitest.fn()
+  const onSaved = mockFunction()
+  const update = mockFunction()
   const { getByPlaceholderText, getByRole } = render(
     <UpdateBrewery
       initialBrewery={{
@@ -98,10 +101,10 @@ test('updates brewery country', async () => {
   const saveButton = getByRole('button', { name: 'Save' })
   const countryInput = getByPlaceholderText(countryPlaceholder)
   await user.type(countryInput, 'FI')
-  expect(saveButton.hasAttribute('disabled')).toEqual(false)
+  assertEqual(saveButton.hasAttribute('disabled'), false)
   await user.click(saveButton)
   const updateCalls = update.mock.calls
-  expect(updateCalls).toEqual([
+  assertDeepEqual(updateCalls, [
     [
       {
         id,
@@ -111,5 +114,5 @@ test('updates brewery country', async () => {
     ],
   ])
   const saveCalls = onSaved.mock.calls
-  expect(saveCalls).toEqual([[]])
+  assertDeepEqual(saveCalls, [[]])
 })

@@ -1,28 +1,29 @@
-import { expect, test } from 'vitest'
+import { test } from '../test'
+import { assertEqual } from '../assert'
+import { render, waitFor } from '../render'
 import {
   formatDateString,
   joinSortedNames,
   pad,
   useDebounce,
 } from '../../src/components/util'
-import { render, waitFor } from '@testing-library/react'
 import React from 'react'
 import { setupUser } from '../user-event'
 
 test('pad under 10', () => {
-  expect(pad(1)).toEqual('01')
+  assertEqual(pad(1), '01')
 })
 
 test('do not pad 10', () => {
-  expect(pad(10)).toEqual('10')
+  assertEqual(pad(10), '10')
 })
 
 test('formatDateString', () => {
-  expect(formatDateString('2024-12-10T12:00:00.000Z')).toEqual('2024-12-10')
+  assertEqual(formatDateString('2024-12-10T12:00:00.000Z'), '2024-12-10')
 })
 
 test('joinSortedNames', () => {
-  expect(
+  assertEqual(
     joinSortedNames([
       {
         name: 'one',
@@ -31,7 +32,8 @@ test('joinSortedNames', () => {
         name: 'two',
       },
     ]),
-  ).toEqual('one, two')
+    'one, two',
+  )
 })
 
 function DebounceHelper(): React.JSX.Element {

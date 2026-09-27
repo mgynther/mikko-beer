@@ -1,5 +1,7 @@
-import { act, render, waitFor } from '@testing-library/react'
-import { expect, test, vitest } from 'vitest'
+import { test } from '../../test'
+import { assertCallCount, assertDeepEqual } from '../../assert'
+import { mockFunction } from '../../mock'
+import { act, render, waitFor } from '../../render'
 import Beers from '../../../src/components/beer/Beers'
 import type { SearchFieldIf } from '../../../src/components/types/search/types'
 import type {
@@ -99,7 +101,6 @@ test('render beers', async () => {
       searchFieldIf={activeSearch}
     />,
   )
-  expect(scrollCb).not.toEqual(undefined)
   await act(async () => {
     scrollCb()
   })
@@ -143,7 +144,7 @@ test('render loading', async () => {
 })
 
 test('stops loading more', async () => {
-  const listMore = vitest.fn()
+  const listMore = mockFunction()
   let scrollCb: () => void = () => undefined
   function getListRequestCount(): number {
     return listMore.mock.calls.length
@@ -191,7 +192,7 @@ test('stops loading more', async () => {
   await act(async () => {
     scrollCb()
   })
-  expect(listMore.mock.calls).toEqual([
+  assertDeepEqual(listMore.mock.calls, [
     [
       {
         size: 20,
@@ -208,5 +209,5 @@ test('stops loading more', async () => {
   await act(async () => {
     scrollCb()
   })
-  expect(listMore).toHaveBeenCalledTimes(2)
+  assertCallCount(listMore, 2)
 })

@@ -1,5 +1,6 @@
-import { render } from '@testing-library/react'
-import { expect, test } from 'vitest'
+import { test } from '../../../test'
+import { assertEqual } from '../../../assert'
+import { render } from '../../../render'
 import BeerStorages from '../../../../src/components/internal/beer/BeerStorages'
 import type {
   ListStoragesByIf,
@@ -76,5 +77,5 @@ test('render nothing on loading', async () => {
       listStoragesByBeerIf={getListStoragesByBeerIf(undefined)}
     />,
   )
-  expect(container.children.length).toEqual(0)
+  assertEqual(container.children.length, 0)
 })

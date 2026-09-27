@@ -1,5 +1,5 @@
-import { render } from '@testing-library/react'
-import { test } from 'vitest'
+import { test } from '../../../test'
+import { render } from '../../../render'
 
 import StyleLink from '../../../../src/components/internal/style/StyleLink'
 import { testLink } from '../../link'

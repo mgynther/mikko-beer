@@ -1,10 +1,12 @@
-import { render } from '@testing-library/react'
-import { expect, test, vitest } from 'vitest'
+import { test } from '../../../test'
+import { assertCalled } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import TabButton from '../../../../src/components/internal/common/TabButton'
 
 test('clicks button', () => {
   const title = 'This is title'
-  const onClick = vitest.fn()
+  const onClick = mockFunction()
   const { getByRole } = render(
     <TabButton
       isCompact={false}
@@ -16,7 +18,7 @@ test('clicks button', () => {
   )
   const saveButton = getByRole('button', { name: title })
   saveButton.click()
-  expect(onClick).toHaveBeenCalled()
+  assertCalled(onClick)
 })
 
 test('renders compact selected non-uppercase', () => {
@@ -26,7 +28,7 @@ test('renders compact selected non-uppercase', () => {
       isCompact={true}
       isSelected={true}
       isUpperCase={false}
-      onClick={vitest.fn()}
+      onClick={mockFunction()}
       title={title}
     />,
   )

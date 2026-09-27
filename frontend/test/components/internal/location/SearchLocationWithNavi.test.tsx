@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertDefined } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import SearchLocationWithNavi from '../../../../src/components/internal/location/SearchLocationWithNavi'
 
 import type { Location } from '../../../../src/components/types/location/types'
@@ -40,7 +42,9 @@ const locations: Location[] = [location, anotherLocation]
 
 test('selects location', async () => {
   const user = setupUser()
-  const selector = vitest.fn(async (): Promise<void> => undefined)
+  const selector = mockFunction(
+    async (_url: string): Promise<void> => undefined,
+  )
   const { getByRole } = render(
     <SearchLocationWithNavi
       navigateIf={{
@@ -58,18 +62,20 @@ test('selects location', async () => {
   )
 
   const input = getByRole('combobox')
-  expect(input).toBeDefined()
+  assertDefined(input)
   await user.type(input, 'Oluth')
 
   const itemOption = getByRole('option', { name: location.name })
-  expect(itemOption).toBeDefined()
+  assertDefined(itemOption)
   await user.click(itemOption)
-  expect(selector.mock.calls).toEqual([[`/locations/${location.id}`]])
+  assertDeepEqual(selector.mock.calls, [[`/locations/${location.id}`]])
 })
 
 test('shows no results', async () => {
   const user = setupUser()
-  const selector = vitest.fn(async (): Promise<void> => undefined)
+  const selector = mockFunction(
+    async (_url: string): Promise<void> => undefined,
+  )
   const { getByRole, getByText } = render(
     <SearchLocationWithNavi
       navigateIf={{
@@ -87,7 +93,7 @@ test('shows no results', async () => {
   )
 
   const input = getByRole('combobox')
-  expect(input).toBeDefined()
+  assertDefined(input)
   await user.type(input, 'Oluth')
 
   getByText('No results')

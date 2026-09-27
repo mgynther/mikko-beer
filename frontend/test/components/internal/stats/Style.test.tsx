@@ -1,6 +1,9 @@
-import { fireEvent, render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
+import { fireEvent } from '../../../fire-event'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../filter-time'
 import Style from '../../../../src/components/internal/stats/Style'
 import type {
@@ -151,7 +154,7 @@ test('renders style stats', () => {
 })
 
 test('applies filters', () => {
-  const statsRequests = vitest.fn()
+  const statsRequests = mockFunction()
   const searchRecord: Record<string, string> = {
     s_order: 'average',
     s_direction: 'desc',
@@ -172,8 +175,8 @@ test('applies filters', () => {
     />,
   )
   const calls = statsRequests.mock.calls
-  expect(calls.length).toEqual(1)
-  expect(calls[0]).toEqual([
+  assertEqual(calls.length, 1)
+  assertDeepEqual(calls[0], [
     {
       breweryId,
       locationId,
@@ -194,7 +197,7 @@ test('applies filters', () => {
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setState = vitest.fn()
+  const setState = mockFunction()
   const { getByRole } = render(
     <Style
       linkComponent={testLink}
@@ -207,7 +210,7 @@ test('opens filters', async () => {
     />,
   )
   await openFilters(getByRole, user)
-  expect(setState.mock.calls).toEqual([
+  assertDeepEqual(setState.mock.calls, [
     [
       {
         ...defaultSearchParams,
@@ -279,7 +282,7 @@ const sliderChangeTests: SliderChangeTest[] = [
 
 sliderChangeTests.forEach((testCase) => {
   test(`change ${testCase.property}`, async () => {
-    const setState = vitest.fn()
+    const setState = mockFunction()
     const { getByLabelText } = render(
       <Style
         linkComponent={testLink}
@@ -296,7 +299,7 @@ sliderChangeTests.forEach((testCase) => {
       ...defaultFiltersOpenParams,
     }
     expected[testCase.property] = testCase.stateValue
-    expect(setState.mock.calls).toEqual([
+    assertDeepEqual(setState.mock.calls, [
       [defaultFiltersOpenParams],
       [expected],
     ])
@@ -304,7 +307,7 @@ sliderChangeTests.forEach((testCase) => {
 })
 
 test('uses ids', async () => {
-  const statsRequests = vitest.fn()
+  const statsRequests = mockFunction()
   render(
     <Style
       linkComponent={testLink}
@@ -317,8 +320,8 @@ test('uses ids', async () => {
     />,
   )
   const calls = statsRequests.mock.calls
-  expect(calls.length).toEqual(1)
-  expect(calls[0]).toEqual([
+  assertEqual(calls.length, 1)
+  assertDeepEqual(calls[0], [
     {
       ...defaultParams,
       breweryId,
@@ -428,7 +431,7 @@ orderChangeTests.forEach((testCase) => {
     testCase.newOrder
   } ${testCase.newDirection}`, async () => {
     const user = setupUser()
-    const setState = vitest.fn()
+    const setState = mockFunction()
     const searchRecord: Record<string, string> = {
       ...defaultSearchParams,
       s_order: testCase.originalOrder,
@@ -448,8 +451,8 @@ orderChangeTests.forEach((testCase) => {
     const orderButton = getByRole('button', { name: testCase.buttonText })
     await user.click(orderButton)
     const calls = setState.mock.calls
-    expect(calls.length).toEqual(2)
-    expect(calls[1]).toEqual([
+    assertEqual(calls.length, 2)
+    assertDeepEqual(calls[1], [
       {
         ...defaultSearchParams,
         s_order: testCase.newOrder,

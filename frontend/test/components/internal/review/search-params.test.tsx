@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual, assertNotEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import React from 'react'
 import { testTimes } from '../../filter-time'
 import type { Props as HookProps } from '../../../../src/components/internal/review/search-params'
@@ -42,7 +44,7 @@ function defaultProps(overrides: Partial<HookProps> = {}): HookProps {
     minTime,
     maxTime,
     getUseDebounce: immediateDebounce,
-    setState: vitest.fn(),
+    setState: mockFunction(),
     ...overrides,
   }
 }
@@ -114,7 +116,7 @@ const defaultRecord = {
 test('empty searchParams parse to defaults', () => {
   const { getByTestId } = render(<Harness hookProps={defaultProps()} />)
   const parsed = JSON.parse(getByTestId('reviewListParams').textContent ?? '')
-  expect(parsed).toEqual({
+  assertDeepEqual(parsed, {
     sortingOrder: 'time',
     sortingDirection: 'desc',
     minReviewRating: 4,
@@ -142,7 +144,7 @@ test('populated searchParams parse through', () => {
     />,
   )
   const parsed = JSON.parse(getByTestId('reviewListParams').textContent ?? '')
-  expect(parsed).toEqual({
+  assertDeepEqual(parsed, {
     sortingOrder: 'rating',
     sortingDirection: 'asc',
     minReviewRating: 6,
@@ -168,7 +170,7 @@ test('invalid searchParams fall back to defaults', () => {
     />,
   )
   const parsed = JSON.parse(getByTestId('reviewListParams').textContent ?? '')
-  expect(parsed).toEqual({
+  assertDeepEqual(parsed, {
     sortingOrder: 'time',
     sortingDirection: 'desc',
     minReviewRating: 4,
@@ -195,7 +197,7 @@ test('filters expose parsed values and props bounds', () => {
     />,
   )
   const filters = JSON.parse(getByTestId('filters').textContent ?? '')
-  expect(filters).toEqual({
+  assertDeepEqual(filters, {
     minRating: { value: 6 },
     maxRating: { value: 9 },
     minTime: {
@@ -210,10 +212,12 @@ test('filters expose parsed values and props bounds', () => {
     },
   })
   // The filter value is a YearMonth, while statsParams exposes a timestamp.
-  expect(getByTestId('minTime').textContent).toEqual(
+  assertEqual(
+    getByTestId('minTime').textContent,
     `${new Date('2019-03-01T00:00:00').getTime()}`,
   )
-  expect(getByTestId('maxTime').textContent).toEqual(
+  assertEqual(
+    getByTestId('maxTime').textContent,
     `${new Date('2022-08-31T23:59:59').getTime()}`,
   )
 })
@@ -222,10 +226,12 @@ test('filters expose parsed values and props bounds', () => {
 
 test('minTime and maxTime are numeric timestamps', () => {
   const { getByTestId } = render(<Harness hookProps={defaultProps()} />)
-  expect(getByTestId('minTime').textContent).toEqual(
+  assertEqual(
+    getByTestId('minTime').textContent,
     `${testTimes.min.utcTimestamp}`,
   )
-  expect(getByTestId('maxTime').textContent).toEqual(
+  assertEqual(
+    getByTestId('maxTime').textContent,
     `${testTimes.max.utcTimestamp}`,
   )
 })
@@ -233,13 +239,13 @@ test('minTime and maxTime are numeric timestamps', () => {
 // Group 4: mount effect ("initial setter for reload").
 
 test('mount commits formatToSearch once for empty defaults', () => {
-  const setState = vitest.fn()
+  const setState = mockFunction()
   render(<Harness hookProps={defaultProps({ setState })} />)
-  expect(setState.mock.calls).toEqual([[defaultRecord]])
+  assertDeepEqual(setState.mock.calls, [[defaultRecord]])
 })
 
 test('mount commits formatToSearch once for populated params', () => {
-  const setState = vitest.fn()
+  const setState = mockFunction()
   render(
     <Harness
       hookProps={defaultProps({
@@ -256,7 +262,7 @@ test('mount commits formatToSearch once for populated params', () => {
       })}
     />,
   )
-  expect(setState.mock.calls).toEqual([
+  assertDeepEqual(setState.mock.calls, [
     [
       {
         r_min_rating: '6',
@@ -275,46 +281,46 @@ test('mount commits formatToSearch once for populated params', () => {
 
 test('min rating setter commits rounded value', async () => {
   const user = setupUser()
-  const setState = vitest.fn()
+  const setState = mockFunction()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} minRatingArg={7} />,
   )
   setState.mockClear()
   await user.click(getByRole('button', { name: 'set min rating' }))
-  expect(setState.mock.calls).toEqual([
+  assertDeepEqual(setState.mock.calls, [
     [{ ...defaultRecord, r_min_rating: '7' }],
   ])
 })
 
 test('max rating setter commits value', async () => {
   const user = setupUser()
-  const setState = vitest.fn()
+  const setState = mockFunction()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} maxRatingArg={9} />,
   )
   setState.mockClear()
   await user.click(getByRole('button', { name: 'set max rating' }))
-  expect(setState.mock.calls).toEqual([
+  assertDeepEqual(setState.mock.calls, [
     [{ ...defaultRecord, r_max_rating: '9' }],
   ])
 })
 
 test('rating setter rounds to nearest integer string', async () => {
   const user = setupUser()
-  const setState = vitest.fn()
+  const setState = mockFunction()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} minRatingArg={7.6} />,
   )
   setState.mockClear()
   await user.click(getByRole('button', { name: 'set min rating' }))
-  expect(setState.mock.calls).toEqual([
+  assertDeepEqual(setState.mock.calls, [
     [{ ...defaultRecord, r_min_rating: '8' }],
   ])
 })
 
 test('min time setter commits formatted year-month', async () => {
   const user = setupUser()
-  const setState = vitest.fn()
+  const setState = mockFunction()
   const { getByRole } = render(
     <Harness
       hookProps={defaultProps({ setState })}
@@ -323,14 +329,14 @@ test('min time setter commits formatted year-month', async () => {
   )
   setState.mockClear()
   await user.click(getByRole('button', { name: 'set min time' }))
-  expect(setState.mock.calls).toEqual([
+  assertDeepEqual(setState.mock.calls, [
     [{ ...defaultRecord, r_min_time: '2020-04' }],
   ])
 })
 
 test('max time setter commits formatted year-month', async () => {
   const user = setupUser()
-  const setState = vitest.fn()
+  const setState = mockFunction()
   const { getByRole } = render(
     <Harness
       hookProps={defaultProps({ setState })}
@@ -339,14 +345,14 @@ test('max time setter commits formatted year-month', async () => {
   )
   setState.mockClear()
   await user.click(getByRole('button', { name: 'set max time' }))
-  expect(setState.mock.calls).toEqual([
+  assertDeepEqual(setState.mock.calls, [
     [{ ...defaultRecord, r_max_time: '2021-11' }],
   ])
 })
 
 test('setters rebuild from committed state, keeping other keys', async () => {
   const user = setupUser()
-  const setState = vitest.fn()
+  const setState = mockFunction()
   const populated = {
     r_min_rating: '5',
     r_max_rating: '9',
@@ -367,7 +373,7 @@ test('setters rebuild from committed state, keeping other keys', async () => {
   )
   setState.mockClear()
   await user.click(getByRole('button', { name: 'set min rating' }))
-  expect(setState.mock.calls).toEqual([[{ ...populated, r_min_rating: '7' }]])
+  assertDeepEqual(setState.mock.calls, [[{ ...populated, r_min_rating: '7' }]])
 })
 
 // Group 6: isFilterChangePending.
@@ -376,29 +382,29 @@ test('pending flag plumbs through from debounce tuple', () => {
   const pending = render(
     <Harness hookProps={defaultProps({ getUseDebounce: pendingDebounce })} />,
   )
-  expect(pending.getByTestId('pending').textContent).toEqual('true')
+  assertEqual(pending.getByTestId('pending').textContent, 'true')
   pending.unmount()
 
   const settled = render(<Harness hookProps={defaultProps()} />)
-  expect(settled.getByTestId('pending').textContent).toEqual('false')
+  assertEqual(settled.getByTestId('pending').textContent, 'false')
 })
 
 // Group 7: setIsFiltersOpen (direct, no debounce).
 
 test('setIsFiltersOpen true commits synchronously', async () => {
   const user = setupUser()
-  const setState = vitest.fn()
+  const setState = mockFunction()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} filtersOpenArg={true} />,
   )
   setState.mockClear()
   await user.click(getByRole('button', { name: 'set filters open' }))
-  expect(setState.mock.calls).toEqual([[{ ...defaultRecord, r_filters: '1' }]])
+  assertDeepEqual(setState.mock.calls, [[{ ...defaultRecord, r_filters: '1' }]])
 })
 
 test('setIsFiltersOpen false commits synchronously', async () => {
   const user = setupUser()
-  const setState = vitest.fn()
+  const setState = mockFunction()
   const { getByRole } = render(
     <Harness
       hookProps={defaultProps({
@@ -410,14 +416,14 @@ test('setIsFiltersOpen false commits synchronously', async () => {
   )
   setState.mockClear()
   await user.click(getByRole('button', { name: 'set filters open' }))
-  expect(setState.mock.calls).toEqual([[{ ...defaultRecord, r_filters: '0' }]])
+  assertDeepEqual(setState.mock.calls, [[{ ...defaultRecord, r_filters: '0' }]])
 })
 
 // Group 8: changeSortingOrder.
 
 test('changeSortingOrder toggles direction for same order asc', async () => {
   const user = setupUser()
-  const setState = vitest.fn()
+  const setState = mockFunction()
   const { getByRole } = render(
     <Harness
       hookProps={defaultProps({
@@ -432,14 +438,14 @@ test('changeSortingOrder toggles direction for same order asc', async () => {
   )
   setState.mockClear()
   await user.click(getByRole('button', { name: 'change order' }))
-  expect(setState.mock.calls).toEqual([
+  assertDeepEqual(setState.mock.calls, [
     [{ ...defaultRecord, r_order: 'rating', r_direction: 'desc' }],
   ])
 })
 
 test('changeSortingOrder toggles direction for same order desc', async () => {
   const user = setupUser()
-  const setState = vitest.fn()
+  const setState = mockFunction()
   const { getByRole } = render(
     <Harness
       hookProps={defaultProps({
@@ -454,33 +460,33 @@ test('changeSortingOrder toggles direction for same order desc', async () => {
   )
   setState.mockClear()
   await user.click(getByRole('button', { name: 'change order' }))
-  expect(setState.mock.calls).toEqual([
+  assertDeepEqual(setState.mock.calls, [
     [{ ...defaultRecord, r_order: 'rating', r_direction: 'asc' }],
   ])
 })
 
 test('changeSortingOrder to beer_name sets ascending', async () => {
   const user = setupUser()
-  const setState = vitest.fn()
+  const setState = mockFunction()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} orderArg={'beer_name'} />,
   )
   setState.mockClear()
   await user.click(getByRole('button', { name: 'change order' }))
-  expect(setState.mock.calls).toEqual([
+  assertDeepEqual(setState.mock.calls, [
     [{ ...defaultRecord, r_order: 'beer_name', r_direction: 'asc' }],
   ])
 })
 
 test('changeSortingOrder to non-beer_name sets descending', async () => {
   const user = setupUser()
-  const setState = vitest.fn()
+  const setState = mockFunction()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} orderArg={'rating'} />,
   )
   setState.mockClear()
   await user.click(getByRole('button', { name: 'change order' }))
-  expect(setState.mock.calls).toEqual([
+  assertDeepEqual(setState.mock.calls, [
     [{ ...defaultRecord, r_order: 'rating', r_direction: 'desc' }],
   ])
 })
@@ -493,7 +499,7 @@ test('changeDetectionString is stable for equal inputs', () => {
   )
   const first = getByTestId('changeDetectionString').textContent
   rerender(<Harness hookProps={defaultProps()} />)
-  expect(getByTestId('changeDetectionString').textContent).toEqual(first)
+  assertEqual(getByTestId('changeDetectionString').textContent, first)
 })
 
 test('changeDetectionString differs when sorting order changes', () => {
@@ -508,7 +514,7 @@ test('changeDetectionString differs when sorting order changes', () => {
       })}
     />,
   )
-  expect(getByTestId('changeDetectionString').textContent).not.toEqual(first)
+  assertNotEqual(getByTestId('changeDetectionString').textContent, first)
 })
 
 test('changeDetectionString differs when a filter value changes', () => {
@@ -523,5 +529,5 @@ test('changeDetectionString differs when a filter value changes', () => {
       })}
     />,
   )
-  expect(getByTestId('changeDetectionString').textContent).not.toEqual(first)
+  assertNotEqual(getByTestId('changeDetectionString').textContent, first)
 })

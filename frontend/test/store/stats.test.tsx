@@ -1,5 +1,7 @@
-import { beforeAll, beforeEach, afterAll, expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { beforeAll, beforeEach, afterAll, test } from '../test'
+import { assertCalledWith, assertDefined } from '../assert'
+import { mockFunction } from '../mock'
+import { render, waitFor } from '../render'
 
 import { createServer } from './server'
 import type { TestServer } from './server'
@@ -107,9 +109,9 @@ test('get annual stats', async () => {
   )
 
   await waitFor(() => {
-    expect(getByText(JSON.stringify(expectedResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(expectedResponse)))
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 function ContainerStatsHelper(props: { params: IdParams }): React.JSX.Element {
@@ -140,9 +142,9 @@ test('get container stats', async () => {
   )
 
   await waitFor(() => {
-    expect(getByText(JSON.stringify(expectedResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(expectedResponse)))
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 function OverallStatsHelper(props: { params: IdParams }): React.JSX.Element {
@@ -173,9 +175,9 @@ test('get overall stats', async () => {
   )
 
   await waitFor(() => {
-    expect(getByText(JSON.stringify(expectedResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(expectedResponse)))
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 function RatingStatsHelper(props: { params: IdParams }): React.JSX.Element {
@@ -204,9 +206,9 @@ test('get rating stats', async () => {
   )
 
   await waitFor(() => {
-    expect(getByText(JSON.stringify(expectedResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(expectedResponse)))
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 function StyleStatsHelper(props: {
@@ -244,9 +246,9 @@ test('get style stats', async () => {
   )
 
   await waitFor(() => {
-    expect(getByText(JSON.stringify(expectedResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(expectedResponse)))
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 interface AnnualContainerStatsProps {
@@ -289,7 +291,7 @@ test('query annual container stats', async () => {
     status: 200,
   })
 
-  const onResult = vitest.fn()
+  const onResult = mockFunction()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <AnnualContainerStatsHelper
@@ -305,12 +307,12 @@ test('query annual container stats', async () => {
 
   await user.click(getByRole('button', { name: 'Query' }))
   await waitFor(() => {
-    expect(onResult).toHaveBeenCalledWith(expectedResponse)
+    assertCalledWith(onResult, [expectedResponse])
   })
   await waitFor(() => {
-    expect(getByText(JSON.stringify(expectedResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(expectedResponse)))
   })
-  expect(getByText('Not fetching')).toBeDefined()
+  assertDefined(getByText('Not fetching'))
 })
 
 interface BreweryStatsProps {
@@ -348,7 +350,7 @@ test('query brewery stats', async () => {
     status: 200,
   })
 
-  const onResult = vitest.fn()
+  const onResult = mockFunction()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <BreweryStatsHelper onResult={onResult} params={breweryParams} />
@@ -357,10 +359,10 @@ test('query brewery stats', async () => {
 
   await user.click(getByRole('button', { name: 'Query' }))
   await waitFor(() => {
-    expect(onResult).toHaveBeenCalledWith(expectedResponse)
+    assertCalledWith(onResult, [expectedResponse])
   })
   await waitFor(() => {
-    expect(getByText(JSON.stringify(expectedResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(expectedResponse)))
   })
 })
 
@@ -403,7 +405,7 @@ test('query brewery country stats', async () => {
     status: 200,
   })
 
-  const onResult = vitest.fn()
+  const onResult = mockFunction()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <BreweryCountryStatsHelper
@@ -418,10 +420,10 @@ test('query brewery country stats', async () => {
 
   await user.click(getByRole('button', { name: 'Query' }))
   await waitFor(() => {
-    expect(onResult).toHaveBeenCalledWith(expectedResponse)
+    assertCalledWith(onResult, [expectedResponse])
   })
   await waitFor(() => {
-    expect(getByText(JSON.stringify(expectedResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(expectedResponse)))
   })
 })
 
@@ -460,7 +462,7 @@ test('query location stats', async () => {
     status: 200,
   })
 
-  const onResult = vitest.fn()
+  const onResult = mockFunction()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <LocationStatsHelper
@@ -475,10 +477,10 @@ test('query location stats', async () => {
 
   await user.click(getByRole('button', { name: 'Query' }))
   await waitFor(() => {
-    expect(onResult).toHaveBeenCalledWith(expectedResponse)
+    assertCalledWith(onResult, [expectedResponse])
   })
   await waitFor(() => {
-    expect(getByText(JSON.stringify(expectedResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(expectedResponse)))
   })
 })
 
@@ -497,7 +499,7 @@ test('an infinite maximum review count is left out of the query', async () => {
     status: 200,
   })
 
-  const onResult = vitest.fn()
+  const onResult = mockFunction()
   const { getByRole } = render(
     <StoreProvider>
       <BreweryStatsHelper
@@ -515,7 +517,7 @@ test('an infinite maximum review count is left out of the query', async () => {
   // sent at all.
   await user.click(getByRole('button', { name: 'Query' }))
   await waitFor(() => {
-    expect(onResult).toHaveBeenCalledWith(expectedResponse)
+    assertCalledWith(onResult, [expectedResponse])
   })
 })
 
@@ -528,7 +530,7 @@ test('a failed query gives undefined data rather than rejecting', async () => {
     status: 500,
   })
 
-  const onResult = vitest.fn()
+  const onResult = mockFunction()
   const { getByRole } = render(
     <StoreProvider>
       <BreweryStatsHelper
@@ -545,6 +547,6 @@ test('a failed query gives undefined data rather than rejecting', async () => {
   // failure is data that did not arrive rather than an error to throw.
   await user.click(getByRole('button', { name: 'Query' }))
   await waitFor(() => {
-    expect(onResult).toHaveBeenCalledWith(undefined)
+    assertCalledWith(onResult, [undefined])
   })
 })

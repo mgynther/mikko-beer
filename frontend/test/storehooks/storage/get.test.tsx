@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render } from '../../render'
 
 import getStorage from '../../../src/storehooks/storage/get'
 import type {
@@ -42,8 +44,8 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('get storage', () => {
-  const onGet = vitest.fn()
-  const onValidate = vitest.fn()
+  const onGet = mockFunction()
+  const onValidate = mockFunction()
   const data = { storage: { id: storageId, beerName: 'Test beer' } }
 
   const { getByText } = render(
@@ -55,11 +57,11 @@ test('get storage', () => {
     />,
   )
 
-  expect(getByText(validatedStorage.beerName)).toBeDefined()
-  expect(getByText('Not loading')).toBeDefined()
-  expect(onGet).toHaveBeenCalledWith(storageId)
+  assertDefined(getByText(validatedStorage.beerName))
+  assertDefined(getByText('Not loading'))
+  assertCalledWith(onGet, [storageId])
   // The envelope is unwrapped before the validator sees the storage.
-  expect(onValidate).toHaveBeenCalledWith(data.storage)
+  assertCalledWith(onValidate, [data.storage])
 })
 
 test('get storage that has not arrived', () => {
@@ -72,6 +74,6 @@ test('get storage that has not arrived', () => {
     />,
   )
 
-  expect(getByText('No storage')).toBeDefined()
-  expect(getByText('Loading')).toBeDefined()
+  assertDefined(getByText('No storage'))
+  assertDefined(getByText('Loading'))
 })

@@ -1,5 +1,7 @@
-import { render } from '@testing-library/react'
-import { expect, test, vitest } from 'vitest'
+import { test } from '../../test'
+import { assertDeepEqual, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render } from '../../render'
 import { loadingIndicatorText } from '../../../src/components/internal/common/LoadingIndicator'
 import type { NavigationFunc } from '../../../src/components/types/types'
 
@@ -42,7 +44,10 @@ test('renders styles', () => {
     />,
   )
   const links = getAllByRole('link')
-  expect(links.map((a) => a.innerHTML)).toEqual(['Porter', 'Stout'])
+  assertDeepEqual(
+    links.map((a) => a.innerHTML),
+    ['Porter', 'Stout'],
+  )
 })
 
 test('renders loading text when loading', () => {
@@ -68,12 +73,14 @@ test('renders loading text when loading', () => {
     />,
   )
   const loadingText = getByText(loadingIndicatorText)
-  expect(loadingText).toBeDefined()
+  assertDefined(loadingText)
 })
 
 test('navigates to selected search result', async () => {
   const user = setupUser()
-  const navigate = vitest.fn(async (): Promise<void> => undefined)
+  const navigate = mockFunction(
+    async (_url: string): Promise<void> => undefined,
+  )
   const styleId = '7fdc561f-da68-4665-b888-a82d5a03bf85'
   const { getByPlaceholderText, getByRole } = render(
     <Styles
@@ -106,5 +113,5 @@ test('navigates to selected search result', async () => {
   await user.type(searchInput, 'Amer')
   const option = getByRole('option', { name: 'American Lager' })
   await user.click(option)
-  expect(navigate.mock.calls).toEqual([[`/styles/${styleId}`]])
+  assertDeepEqual(navigate.mock.calls, [[`/styles/${styleId}`]])
 })

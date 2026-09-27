@@ -1,4 +1,5 @@
-import { expect, test } from 'vitest'
+import { test } from '../test'
+import { assertDeepEqual, assertEqual, assertThrows } from '../assert'
 
 import type {
   JoinedReview,
@@ -26,36 +27,36 @@ const validReview: Review = {
 }
 
 test('validateReview returns review for valid input', () => {
-  expect(validateReview(validReview)).toEqual(validReview)
+  assertDeepEqual(validateReview(validReview), validReview)
 })
 
 test('validateReview throws for invalid input', () => {
-  expect(() =>
+  assertThrows(() =>
     validateReview({
       id: 'e5f6a7b8-c9d0-1234-efab-345678901234',
       rating: 'not a number',
     }),
-  ).toThrow()
+  )
 })
 
 test('validateReviewOrUndefined returns undefined for undefined', () => {
-  expect(validateReviewOrUndefined(undefined)).toEqual(undefined)
+  assertDeepEqual(validateReviewOrUndefined(undefined), undefined)
 })
 
 test('validateReviewOrUndefined returns review for valid input', () => {
-  expect(validateReviewOrUndefined(validReview)).toEqual(validReview)
+  assertDeepEqual(validateReviewOrUndefined(validReview), validReview)
 })
 
 test('validateReviewOrUndefined throws for invalid input', () => {
-  expect(() =>
+  assertThrows(() =>
     validateReviewOrUndefined({
       id: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
     }),
-  ).toThrow()
+  )
 })
 
 test('validateJoinedReviewListOrUndefined returns undefined', () => {
-  expect(validateJoinedReviewListOrUndefined(undefined)).toEqual(undefined)
+  assertDeepEqual(validateJoinedReviewListOrUndefined(undefined), undefined)
 })
 
 const validJoinedReview: JoinedReview = {
@@ -96,15 +97,15 @@ test('validateJoinedReviewListOrUndefined returns list for valid input', () => {
       direction: 'asc',
     },
   }
-  expect(validateJoinedReviewListOrUndefined(list)).toEqual(list)
+  assertDeepEqual(validateJoinedReviewListOrUndefined(list), list)
 })
 
 test('validateJoinedReviewListOrUndefined throws for invalid input', () => {
-  expect(() =>
+  assertThrows(() =>
     validateJoinedReviewListOrUndefined({
       reviews: [{ id: 123 }],
     }),
-  ).toThrow()
+  )
 })
 
 test('validateJoinedReviewList returns list for valid input', () => {
@@ -115,15 +116,15 @@ test('validateJoinedReviewList returns list for valid input', () => {
       direction: 'desc',
     },
   }
-  expect(validateJoinedReviewList(list)).toEqual(list)
+  assertDeepEqual(validateJoinedReviewList(list), list)
 })
 
 test('validateJoinedReviewList throws for invalid input', () => {
-  expect(() =>
+  assertThrows(() =>
     validateJoinedReviewList({
       reviews: [{ id: 123 }],
     }),
-  ).toThrow()
+  )
 })
 
 test('validateJoinedReviewList makes a missing location undefined', () => {
@@ -147,6 +148,6 @@ test('validateJoinedReviewList makes a missing location undefined', () => {
   }
   const validated = validateJoinedReviewList(list)
   const review = validated.reviews[0]
-  expect(review.location).toEqual(undefined)
-  expect('location' in review).toEqual(true)
+  assertDeepEqual(review.location, undefined)
+  assertEqual('location' in review, true)
 })

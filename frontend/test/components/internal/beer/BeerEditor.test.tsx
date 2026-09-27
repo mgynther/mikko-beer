@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import BeerEditor from '../../../../src/components/internal/beer/BeerEditor'
 import type {
   Brewery,
@@ -135,7 +137,7 @@ const initialBeer = {
 
 test('edits beer name', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByPlaceholderText } = render(
     <BeerEditor
       initialBeer={{
@@ -153,7 +155,7 @@ test('edits beer name', async () => {
   await user.clear(nameInput)
   await user.type(nameInput, beerName)
   const calls = onChange.mock.calls
-  expect(calls[calls.length - 1]).toEqual([
+  assertDeepEqual(calls[calls.length - 1], [
     {
       id,
       breweries: breweries.map((b) => b.id),
@@ -165,7 +167,7 @@ test('edits beer name', async () => {
 
 test('edits beer breweries', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByPlaceholderText, getByRole } = render(
     <BeerEditor
       initialBeer={{
@@ -189,7 +191,7 @@ test('edits beer breweries', async () => {
   const breweryOption = getByRole('option', { name: brewery.name })
   await user.click(breweryOption)
   const calls = onChange.mock.calls
-  expect(calls[calls.length - 1]).toEqual([
+  assertDeepEqual(calls[calls.length - 1], [
     {
       id,
       breweries: [brewery.id],
@@ -201,7 +203,7 @@ test('edits beer breweries', async () => {
 
 test('edits beer styles', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByPlaceholderText, getByRole } = render(
     <BeerEditor
       initialBeer={{
@@ -229,7 +231,7 @@ test('edits beer styles', async () => {
   const styleOption = getByRole('option', { name: style.name })
   await user.click(styleOption)
   const calls = onChange.mock.calls
-  expect(calls[calls.length - 1]).toEqual([
+  assertDeepEqual(calls[calls.length - 1], [
     {
       id,
       breweries: breweries.map((b) => b.id),
@@ -241,7 +243,7 @@ test('edits beer styles', async () => {
 
 test('edits invalid beer by empty name', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByPlaceholderText } = render(
     <BeerEditor
       editBeerIf={dontEditBeer}
@@ -256,11 +258,11 @@ test('edits invalid beer by empty name', async () => {
   await user.type(nameInput, 'S')
   await user.clear(nameInput)
   const calls = onChange.mock.calls
-  expect(calls[calls.length - 1]).toEqual([undefined])
+  assertDeepEqual(calls[calls.length - 1], [undefined])
 })
 
 test('renders values', async () => {
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByText, getByDisplayValue } = render(
     <BeerEditor
       editBeerIf={dontEditBeer}

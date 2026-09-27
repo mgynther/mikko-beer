@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render, waitFor } from '../../render'
 
 import deleteUser from '../../../src/storehooks/user/delete'
 import type { UseDeleteUser } from '../../../src/storehooks/user/types'
@@ -36,12 +38,12 @@ function Helper(props: {
 
 test('delete user', async () => {
   const user = setupUser()
-  const onDelete = vitest.fn()
+  const onDelete = mockFunction()
 
   const { getByRole } = render(<Helper onDelete={onDelete} />)
 
   await user.click(getByRole('button', { name: 'Delete' }))
   await waitFor(() => {
-    expect(onDelete).toHaveBeenCalledWith(userId)
+    assertCalledWith(onDelete, [userId])
   })
 })

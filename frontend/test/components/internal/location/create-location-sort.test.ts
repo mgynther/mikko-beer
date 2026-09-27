@@ -1,4 +1,5 @@
-import { expect, test } from 'vitest'
+import { test } from '../../../test'
+import { assertEqual } from '../../../assert'
 import {
   createId,
   createLocationSort,
@@ -56,6 +57,6 @@ const sortTestCases: SortTestCase[] = [
 sortTestCases.forEach((testCase) => {
   test(`sort create location: ${testCase.label}`, () => {
     const result = createLocationSort(testCase.a, testCase.b)
-    expect(result).toEqual(testCase.result)
+    assertEqual(result, testCase.result)
   })
 })

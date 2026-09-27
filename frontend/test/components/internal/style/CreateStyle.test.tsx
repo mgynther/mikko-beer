@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import CreateStyle from '../../../../src/components/internal/style/CreateStyle'
 import type { UseDebounce } from '../../../../src/components/types/types'
 import type { SearchFieldIf } from '../../../../src/components/types/search/types'
@@ -30,8 +32,8 @@ const useSearch: SearchFieldIf = {
 
 test('creates style', async () => {
   const user = setupUser()
-  const select = vitest.fn()
-  const create = vitest.fn()
+  const select = mockFunction()
+  const create = mockFunction()
   const createdId = 'cb5636a9-0c9a-4a6b-8558-29e4f0918a32'
   const name = 'Cream Ale'
   const { getByPlaceholderText, getByRole } = render(
@@ -76,7 +78,7 @@ test('creates style', async () => {
 
   const createButton = getByRole('button', { name: 'Create' })
   await user.click(createButton)
-  expect(create.mock.calls).toEqual([
+  assertDeepEqual(create.mock.calls, [
     [
       {
         name,
@@ -88,7 +90,7 @@ test('creates style', async () => {
   // Something is needed here to trigger rendering. In the full application it
   // happens on its own.
   await user.clear(nameInput)
-  expect(select.mock.calls).toEqual([
+  assertDeepEqual(select.mock.calls, [
     [
       {
         id: createdId,
@@ -99,7 +101,7 @@ test('creates style', async () => {
 })
 
 test('removes style', async () => {
-  const remove = vitest.fn()
+  const remove = mockFunction()
   const { getByRole } = render(
     <CreateStyle
       selectStyleIf={{
@@ -126,5 +128,5 @@ test('removes style', async () => {
   )
   const removeButton = getByRole('button', { name: 'Remove' })
   removeButton.click()
-  expect(remove.mock.calls).toEqual([[]])
+  assertDeepEqual(remove.mock.calls, [[]])
 })

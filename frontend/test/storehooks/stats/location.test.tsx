@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render, waitFor } from '../../render'
 
 import statsHook from '../../../src/storehooks/stats/stats'
 import type {
@@ -77,9 +79,9 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('location stats', async () => {
   const user = setupUser()
-  const onQuery = vitest.fn()
-  const onQueried = vitest.fn()
-  const onValidate = vitest.fn()
+  const onQuery = mockFunction()
+  const onQueried = mockFunction()
+  const onValidate = mockFunction()
 
   const { getByRole, getByText } = render(
     <Helper onQuery={onQuery} onQueried={onQueried} onValidate={onValidate} />,
@@ -87,14 +89,14 @@ test('location stats', async () => {
 
   // What the store already holds is validated on the way out, and what a
   // query brings back is validated on its way through.
-  expect(getByText('Validated stats')).toBeDefined()
-  expect(getByText('Not loading')).toBeDefined()
-  expect(onValidate).toHaveBeenCalledWith(held)
+  assertDefined(getByText('Validated stats'))
+  assertDefined(getByText('Not loading'))
+  assertCalledWith(onValidate, [held])
 
   await user.click(getByRole('button', { name: 'Query' }))
   await waitFor(() => {
-    expect(onQueried).toHaveBeenCalledWith(validatedStats)
+    assertCalledWith(onQueried, [validatedStats])
   })
-  expect(onQuery).toHaveBeenCalledWith(params)
-  expect(onValidate).toHaveBeenCalledWith(queried)
+  assertCalledWith(onQuery, [params])
+  assertCalledWith(onValidate, [queried])
 })

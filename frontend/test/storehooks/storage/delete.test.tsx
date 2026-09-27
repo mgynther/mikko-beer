@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render, waitFor } from '../../render'
 
 import deleteStorage from '../../../src/storehooks/storage/delete'
 import type { UseDeleteStorage } from '../../../src/storehooks/storage/types'
@@ -36,12 +38,12 @@ function Helper(props: {
 
 test('delete storage', async () => {
   const user = setupUser()
-  const onDelete = vitest.fn()
+  const onDelete = mockFunction()
 
   const { getByRole } = render(<Helper onDelete={onDelete} />)
 
   await user.click(getByRole('button', { name: 'Delete' }))
   await waitFor(() => {
-    expect(onDelete).toHaveBeenCalledWith(storageId)
+    assertCalledWith(onDelete, [storageId])
   })
 })

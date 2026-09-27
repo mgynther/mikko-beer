@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import UpdateBeer from '../../../../src/components/internal/beer/UpdateBeer'
 import type { UseDebounce } from '../../../../src/components/types/types'
 import type {
@@ -96,8 +98,8 @@ const doSearch: SearchFieldIf = {
 
 test('updates beer name', async () => {
   const user = setupUser()
-  const onSaved = vitest.fn()
-  const update = vitest.fn()
+  const onSaved = mockFunction()
+  const update = mockFunction()
   const { getByPlaceholderText, getByRole } = render(
     <UpdateBeer
       initialBeer={{
@@ -124,10 +126,10 @@ test('updates beer name', async () => {
   await user.clear(nameInput)
   await user.type(nameInput, beerName)
   const saveButton = getByRole('button', { name: 'Save' })
-  expect(saveButton.hasAttribute('disabled')).toEqual(false)
+  assertEqual(saveButton.hasAttribute('disabled'), false)
   await user.click(saveButton)
   const updateCalls = update.mock.calls
-  expect(updateCalls).toEqual([
+  assertDeepEqual(updateCalls, [
     [
       {
         id,
@@ -138,13 +140,13 @@ test('updates beer name', async () => {
     ],
   ])
   const saveCalls = onSaved.mock.calls
-  expect(saveCalls).toEqual([[]])
+  assertDeepEqual(saveCalls, [[]])
 })
 
 test('updates beer brewery', async () => {
   const user = setupUser()
-  const onSaved = vitest.fn()
-  const update = vitest.fn()
+  const onSaved = mockFunction()
+  const update = mockFunction()
   const { getByPlaceholderText, getAllByRole, getByRole } = render(
     <UpdateBeer
       initialBeer={{
@@ -188,10 +190,10 @@ test('updates beer brewery', async () => {
   const breweryOption = getByRole('option', { name: anotherBrewery.name })
   await user.click(breweryOption)
   const saveButton = getByRole('button', { name: 'Save' })
-  expect(saveButton.hasAttribute('disabled')).toEqual(false)
+  assertEqual(saveButton.hasAttribute('disabled'), false)
   await user.click(saveButton)
   const updateCalls = update.mock.calls
-  expect(updateCalls).toEqual([
+  assertDeepEqual(updateCalls, [
     [
       {
         id,
@@ -202,13 +204,13 @@ test('updates beer brewery', async () => {
     ],
   ])
   const saveCalls = onSaved.mock.calls
-  expect(saveCalls).toEqual([[]])
+  assertDeepEqual(saveCalls, [[]])
 })
 
 test('updates beer style', async () => {
   const user = setupUser()
-  const onSaved = vitest.fn()
-  const update = vitest.fn()
+  const onSaved = mockFunction()
+  const update = mockFunction()
   const { getByPlaceholderText, getAllByRole, getByRole } = render(
     <UpdateBeer
       initialBeer={{
@@ -255,10 +257,10 @@ test('updates beer style', async () => {
   const breweryOption = getByRole('option', { name: anotherStyle.name })
   await user.click(breweryOption)
   const saveButton = getByRole('button', { name: 'Save' })
-  expect(saveButton.hasAttribute('disabled')).toEqual(false)
+  assertEqual(saveButton.hasAttribute('disabled'), false)
   await user.click(saveButton)
   const updateCalls = update.mock.calls
-  expect(updateCalls).toEqual([
+  assertDeepEqual(updateCalls, [
     [
       {
         id,
@@ -269,11 +271,11 @@ test('updates beer style', async () => {
     ],
   ])
   const saveCalls = onSaved.mock.calls
-  expect(saveCalls).toEqual([[]])
+  assertDeepEqual(saveCalls, [[]])
 })
 
 test('cancels update', async () => {
-  const onCanceled = vitest.fn()
+  const onCanceled = mockFunction()
   const { getByRole } = render(
     <UpdateBeer
       initialBeer={{
@@ -297,8 +299,8 @@ test('cancels update', async () => {
     />,
   )
   const cancelButton = getByRole('button', { name: 'Cancel' })
-  expect(cancelButton.hasAttribute('disabled')).toEqual(false)
+  assertEqual(cancelButton.hasAttribute('disabled'), false)
   cancelButton.click()
   const cancelCalls = onCanceled.mock.calls
-  expect(cancelCalls).toEqual([[]])
+  assertDeepEqual(cancelCalls, [[]])
 })

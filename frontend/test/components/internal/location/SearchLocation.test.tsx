@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertDefined } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import SearchLocation from '../../../../src/components/internal/location/SearchLocation'
 
 import type { Location } from '../../../../src/components/types/location/types'
@@ -45,7 +47,7 @@ const locations: Location[] = [location, anotherLocation]
 
 test('selects location', async () => {
   const user = setupUser()
-  const selector = vitest.fn()
+  const selector = mockFunction()
   const { getByRole } = render(
     <SearchLocation
       confirm={dontCall}
@@ -64,20 +66,20 @@ test('selects location', async () => {
   )
 
   const input = getByRole('combobox')
-  expect(input).toBeDefined()
+  assertDefined(input)
   await user.type(input, 'Public H')
 
   const itemOption = getByRole('option', { name: location.name })
-  expect(itemOption).toBeDefined()
+  assertDefined(itemOption)
   await user.click(itemOption)
-  expect(selector.mock.calls).toEqual([
+  assertDeepEqual(selector.mock.calls, [
     [{ id: location.id, name: location.name }],
   ])
 })
 
 test('does not show create button with case-insensitive match', async () => {
   const user = setupUser()
-  const selector = vitest.fn()
+  const selector = mockFunction()
   const { getByRole, queryByRole } = render(
     <SearchLocation
       confirm={dontCall}
@@ -96,18 +98,19 @@ test('does not show create button with case-insensitive match', async () => {
   )
 
   const input = getByRole('combobox')
-  expect(input).toBeDefined()
+  assertDefined(input)
   await user.type(input, location.name.toLowerCase())
 
   getByRole('option', { name: location.name })
-  expect(queryByRole('button', { name: `Create "${location.name}"` })).toEqual(
+  assertDeepEqual(
+    queryByRole('button', { name: `Create "${location.name}"` }),
     null,
   )
 })
 
 test('shows no results when creating not enabled', async () => {
   const user = setupUser()
-  const selector = vitest.fn()
+  const selector = mockFunction()
   const { getByRole, getByText } = render(
     <SearchLocation
       confirm={dontCall}
@@ -126,7 +129,7 @@ test('shows no results when creating not enabled', async () => {
   )
 
   const input = getByRole('combobox')
-  expect(input).toBeDefined()
+  assertDefined(input)
   await user.type(input, 'Public H')
 
   getByText('No results')
@@ -134,8 +137,8 @@ test('shows no results when creating not enabled', async () => {
 
 test('creates location', async () => {
   const user = setupUser()
-  const create = vitest.fn()
-  const select = vitest.fn()
+  const create = mockFunction()
+  const select = mockFunction()
   const { getByRole } = render(
     <SearchLocation
       confirm={dontCall}
@@ -164,23 +167,23 @@ test('creates location', async () => {
   )
 
   const input = getByRole('combobox')
-  expect(input).toBeDefined()
+  assertDefined(input)
   await user.type(input, location.name)
 
   const createOption = getByRole('option', {
     name: `Create "${location.name}"`,
   })
-  expect(createOption).toBeDefined()
+  assertDefined(createOption)
   await user.click(createOption)
-  expect(create.mock.calls).toEqual([[{ name: location.name }]])
-  expect(select.mock.calls).toEqual([[location]])
+  assertDeepEqual(create.mock.calls, [[{ name: location.name }]])
+  assertDeepEqual(select.mock.calls, [[location]])
 })
 
 test('confirms creating location with partially matching result', async () => {
   const user = setupUser()
-  const create = vitest.fn()
-  const select = vitest.fn()
-  const confirmCb = vitest.fn()
+  const create = mockFunction()
+  const select = mockFunction()
+  const confirmCb = mockFunction()
   const { getByRole } = render(
     <SearchLocation
       confirm={(text: string): boolean => {
@@ -217,26 +220,26 @@ test('confirms creating location with partially matching result', async () => {
   )
 
   const input = getByRole('combobox')
-  expect(input).toBeDefined()
+  assertDefined(input)
   await user.type(input, location.name)
 
   const createOption = getByRole('option', {
     name: `Create "${location.name}"`,
   })
-  expect(createOption).toBeDefined()
+  assertDefined(createOption)
   await user.click(createOption)
-  expect(confirmCb.mock.calls).toEqual([
+  assertDeepEqual(confirmCb.mock.calls, [
     [`Are you sure you want to create ${location.name}?`],
   ])
-  expect(create.mock.calls).toEqual([[{ name: location.name }]])
-  expect(select.mock.calls).toEqual([[location]])
+  assertDeepEqual(create.mock.calls, [[{ name: location.name }]])
+  assertDeepEqual(select.mock.calls, [[location]])
 })
 
 test('does not create location on reject', async () => {
   const user = setupUser()
-  const create = vitest.fn()
-  const select = vitest.fn()
-  const confirmCb = vitest.fn()
+  const create = mockFunction()
+  const select = mockFunction()
+  const confirmCb = mockFunction()
   const { getByRole } = render(
     <SearchLocation
       confirm={(text: string): boolean => {
@@ -268,19 +271,19 @@ test('does not create location on reject', async () => {
   )
 
   const input = getByRole('combobox')
-  expect(input).toBeDefined()
+  assertDefined(input)
   await user.type(input, location.name)
 
   const createOption = getByRole('option', {
     name: `Create "${location.name}"`,
   })
-  expect(createOption).toBeDefined()
+  assertDefined(createOption)
   await user.click(createOption)
-  expect(confirmCb.mock.calls).toEqual([
+  assertDeepEqual(confirmCb.mock.calls, [
     [`Are you sure you want to create ${location.name}?`],
   ])
-  expect(create.mock.calls).toEqual([])
-  expect(select.mock.calls).toEqual([])
+  assertDeepEqual(create.mock.calls, [])
+  assertDeepEqual(select.mock.calls, [])
 })
 
 test('sorts existing result before create new location', async () => {
@@ -314,12 +317,12 @@ test('sorts existing result before create new location', async () => {
   )
 
   const input = getByRole('combobox')
-  expect(input).toBeDefined()
+  assertDefined(input)
   await user.type(input, location.name)
 
   const resultOptions = getAllByRole('option', { name: /Huurre/v })
-  expect(resultOptions.map((item) => item.innerHTML)).toEqual([
-    resultName,
-    `Create "${location.name}"`,
-  ])
+  assertDeepEqual(
+    resultOptions.map((item) => item.innerHTML),
+    [resultName, `Create "${location.name}"`],
+  )
 })

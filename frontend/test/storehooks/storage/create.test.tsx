@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render, waitFor } from '../../render'
 
 import createStorage from '../../../src/storehooks/storage/create'
 import type {
@@ -68,9 +70,9 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('create storage', async () => {
   const user = setupUser()
-  const onCreate = vitest.fn()
-  const onCreated = vitest.fn()
-  const onValidate = vitest.fn()
+  const onCreate = mockFunction()
+  const onCreated = mockFunction()
+  const onValidate = mockFunction()
 
   const { getByRole, getByText } = render(
     <Helper
@@ -83,13 +85,13 @@ test('create storage', async () => {
 
   await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(onCreated).toHaveBeenCalledWith(validatedCreatedStorage)
+    assertCalledWith(onCreated, [validatedCreatedStorage])
   })
-  expect(getByText('Not failed')).toBeDefined()
-  expect(getByText('Not loading')).toBeDefined()
-  expect(onCreate).toHaveBeenCalledWith(request)
+  assertDefined(getByText('Not failed'))
+  assertDefined(getByText('Not loading'))
+  assertCalledWith(onCreate, [request])
   // The envelope is unwrapped before the validator sees the storage.
-  expect(onValidate).toHaveBeenCalledWith(created.storage)
+  assertCalledWith(onValidate, [created.storage])
 })
 
 test('a failed creation is reported rather than validated', () => {
@@ -102,5 +104,5 @@ test('a failed creation is reported rather than validated', () => {
     />,
   )
 
-  expect(getByText('Failed')).toBeDefined()
+  assertDefined(getByText('Failed'))
 })

@@ -1,6 +1,8 @@
-import { act, render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { act, render } from '../../../render'
 import React, { useState } from 'react'
-import { expect, test, vitest } from 'vitest'
 
 import { setupUser } from '../../../user-event'
 
@@ -62,7 +64,7 @@ function deferredPage(): Deferred {
 }
 
 test('loads the first page', async () => {
-  const loadPage = vitest.fn()
+  const loadPage = mockFunction()
   const user = setupUser()
   const { getByRole, getByText } = render(
     <LoadMore
@@ -75,12 +77,12 @@ test('loads the first page', async () => {
     />,
   )
   await user.click(getByRole('button', { name: scroll }))
-  expect(loadPage.mock.calls).toEqual([[0]])
+  assertDeepEqual(loadPage.mock.calls, [[0]])
   getByText('items: a b')
 })
 
 test('loads the next page after the ones it has', async () => {
-  const loadPage = vitest.fn()
+  const loadPage = mockFunction()
   const user = setupUser()
   const { getByRole, getByText } = render(
     <LoadMore
@@ -94,7 +96,7 @@ test('loads the next page after the ones it has', async () => {
   )
   await user.click(getByRole('button', { name: scroll }))
   await user.click(getByRole('button', { name: scroll }))
-  expect(loadPage.mock.calls).toEqual([[0], [2]])
+  assertDeepEqual(loadPage.mock.calls, [[0], [2]])
   getByText('items: a b c')
 })
 
@@ -109,7 +111,7 @@ test('loads an empty page, which is a loaded list of nothing', async () => {
 })
 
 test('does not load again while a page is on its way', async () => {
-  const loadPage = vitest.fn()
+  const loadPage = mockFunction()
   const deferred = deferredPage()
   const user = setupUser()
   const { getByRole, getByText } = render(
@@ -127,17 +129,17 @@ test('does not load again while a page is on its way', async () => {
   await user.click(getByRole('button', { name: scroll }))
   // The render that would say a request is running has not happened yet, so
   // the lock rather than the rendered isLoading is what is being tested here.
-  expect(loadPage.mock.calls).toEqual([[0]])
+  assertDeepEqual(loadPage.mock.calls, [[0]])
   await act(async () => {
     deferred.resolve(['a'])
   })
   getByText('items: a')
   await user.click(getByRole('button', { name: scroll }))
-  expect(loadPage.mock.calls).toEqual([[0], [1]])
+  assertDeepEqual(loadPage.mock.calls, [[0], [1]])
 })
 
 test('does not load while the caller says it is loading', async () => {
-  const loadPage = vitest.fn()
+  const loadPage = mockFunction()
   const user = setupUser()
   const { getByRole } = render(
     <LoadMore
@@ -150,11 +152,11 @@ test('does not load while the caller says it is loading', async () => {
     />,
   )
   await user.click(getByRole('button', { name: scroll }))
-  expect(loadPage.mock.calls).toEqual([])
+  assertDeepEqual(loadPage.mock.calls, [])
 })
 
 test('does not load when there is nothing more', async () => {
-  const loadPage = vitest.fn()
+  const loadPage = mockFunction()
   const user = setupUser()
   const { getByRole } = render(
     <LoadMore
@@ -167,7 +169,7 @@ test('does not load when there is nothing more', async () => {
     />,
   )
   await user.click(getByRole('button', { name: scroll }))
-  expect(loadPage.mock.calls).toEqual([])
+  assertDeepEqual(loadPage.mock.calls, [])
 })
 
 test('drops a page of a list that has moved on', async () => {
@@ -196,7 +198,7 @@ test('drops a page of a list that has moved on', async () => {
 })
 
 test('loads again after a page that failed', async () => {
-  const loadPage = vitest.fn()
+  const loadPage = mockFunction()
   let hasFailed = false
   const user = setupUser()
   const { getByRole, getByText } = render(
@@ -216,6 +218,6 @@ test('loads again after a page that failed', async () => {
   await user.click(getByRole('button', { name: scroll }))
   getByText(notLoaded)
   await user.click(getByRole('button', { name: scroll }))
-  expect(loadPage.mock.calls).toEqual([[0], [0]])
+  assertDeepEqual(loadPage.mock.calls, [[0], [0]])
   getByText('items: a')
 })

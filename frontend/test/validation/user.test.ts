@@ -1,4 +1,5 @@
-import { expect, test } from 'vitest'
+import { test } from '../test'
+import { assertDeepEqual, assertThrows } from '../assert'
 
 import type { User, UserList } from '../../src/validation/user'
 
@@ -14,42 +15,42 @@ const validUser: User = {
 }
 
 test('validateUserOrUndefined returns undefined for undefined', () => {
-  expect(validateUserOrUndefined(undefined)).toEqual(undefined)
+  assertDeepEqual(validateUserOrUndefined(undefined), undefined)
 })
 
 test('validateUserOrUndefined returns user for valid input', () => {
-  expect(validateUserOrUndefined(validUser)).toEqual(validUser)
+  assertDeepEqual(validateUserOrUndefined(validUser), validUser)
 })
 
 test('validateUserOrUndefined throws for invalid input', () => {
-  expect(() =>
+  assertThrows(() =>
     validateUserOrUndefined({
       id: 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
       username: 123,
     }),
-  ).toThrow()
+  )
 })
 
 test('validateUserListOrUndefined returns undefined for undefined', () => {
-  expect(validateUserListOrUndefined(undefined)).toEqual(undefined)
+  assertDeepEqual(validateUserListOrUndefined(undefined), undefined)
 })
 
 test('validateUserListOrUndefined returns list for valid input', () => {
   const list: UserList = {
     users: [validUser],
   }
-  expect(validateUserListOrUndefined(list)).toEqual(list)
+  assertDeepEqual(validateUserListOrUndefined(list), list)
 })
 
 test('validateUserListOrUndefined throws for invalid input', () => {
-  expect(() =>
+  assertThrows(() =>
     validateUserListOrUndefined({
       users: [{ id: 123 }],
     }),
-  ).toThrow()
+  )
 })
 
 test('validateUserListOrUndefined returns empty list', () => {
   const list: UserList = { users: [] }
-  expect(validateUserListOrUndefined(list)).toEqual(list)
+  assertDeepEqual(validateUserListOrUndefined(list), list)
 })

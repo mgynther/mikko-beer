@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import StorageItem from '../../../../src/components/internal/storage/StorageItem'
 import type { DeleteStorageIf } from '../../../../src/components/types/storage/types'
 import { Role } from '../../../../src/components/types/user/types'
@@ -54,7 +56,7 @@ test('renders storage', async () => {
   await user.click(openButton)
   const reviewLink = getByRole('link', { name: 'Review' })
   const path = `/addreview/${storage.id}`
-  expect(reviewLink.getAttribute('href')).toEqual(path)
+  assertEqual(reviewLink.getAttribute('href'), path)
 })
 
 test('renders storage with review', async () => {
@@ -75,7 +77,7 @@ test('renders storage with review', async () => {
 
 test('deletes storage', async () => {
   const user = setupUser()
-  const del = vitest.fn()
+  const del = mockFunction()
   const { getByRole } = render(
     <StorageItem
       linkComponent={testLink}
@@ -93,12 +95,12 @@ test('deletes storage', async () => {
   await user.click(openButton)
   const deleteButton = getByRole('button', { name: 'Delete' })
   await user.click(deleteButton)
-  expect(del.mock.calls).toEqual([[storage.id]])
+  assertDeepEqual(del.mock.calls, [[storage.id]])
 })
 
 test('does not delete storage on not confirmed', async () => {
   const user = setupUser()
-  const del = vitest.fn()
+  const del = mockFunction()
   const { getByRole } = render(
     <StorageItem
       linkComponent={testLink}
@@ -116,5 +118,5 @@ test('does not delete storage on not confirmed', async () => {
   await user.click(openButton)
   const deleteButton = getByRole('button', { name: 'Delete' })
   await user.click(deleteButton)
-  expect(del.mock.calls).toEqual([])
+  assertDeepEqual(del.mock.calls, [])
 })

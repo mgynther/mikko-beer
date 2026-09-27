@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render, waitFor } from '../../render'
 
 import createBeer from '../../../src/storehooks/beer/create'
 import type {
@@ -62,9 +64,9 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('create beer', async () => {
   const user = setupUser()
-  const onCreate = vitest.fn()
-  const onCreated = vitest.fn()
-  const onValidate = vitest.fn()
+  const onCreate = mockFunction()
+  const onCreated = mockFunction()
+  const onValidate = mockFunction()
 
   const { getByRole, getByText } = render(
     <Helper
@@ -76,10 +78,10 @@ test('create beer', async () => {
 
   await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(onCreated).toHaveBeenCalledWith(validatedBeer)
+    assertCalledWith(onCreated, [validatedBeer])
   })
-  expect(getByText('Not loading')).toBeDefined()
-  expect(onCreate).toHaveBeenCalledWith(request)
+  assertDefined(getByText('Not loading'))
+  assertCalledWith(onCreate, [request])
   // The envelope is unwrapped before the validator sees the beer.
-  expect(onValidate).toHaveBeenCalledWith(created.beer)
+  assertCalledWith(onValidate, [created.beer])
 })

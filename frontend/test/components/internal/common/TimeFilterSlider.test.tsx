@@ -1,5 +1,8 @@
-import { render, fireEvent } from '@testing-library/react'
-import { expect, test, vitest } from 'vitest'
+import { test } from '../../../test'
+import { assertDeepEqual, assertThrowsWithMessage } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
+import { fireEvent } from '../../../fire-event'
 import TimeFilterSlider from '../../../../src/components/internal/common/TimeFilterSlider'
 import { dontCall } from '../../../dont-call'
 
@@ -53,30 +56,32 @@ test('defaults to min time', () => {
 
 test('throws on invalid range', () => {
   const title = 'Time'
-  expect(() =>
-    render(
-      <TimeFilterSlider
-        title={title}
-        time={{
-          year: 2024,
-          month: 12,
-        }}
-        minTime={{
-          year: 2025,
-          month: 1,
-        }}
-        maxTime={{
-          year: 2024,
-          month: 11,
-        }}
-        setTime={dontCall}
-      />,
-    ),
-  ).toThrow(`maxTime 2024-11 cannot be before minTime 2025-01`)
+  assertThrowsWithMessage(
+    () =>
+      render(
+        <TimeFilterSlider
+          title={title}
+          time={{
+            year: 2024,
+            month: 12,
+          }}
+          minTime={{
+            year: 2025,
+            month: 1,
+          }}
+          maxTime={{
+            year: 2024,
+            month: 11,
+          }}
+          setTime={dontCall}
+        />,
+      ),
+    `maxTime 2024-11 cannot be before minTime 2025-01`,
+  )
 })
 
 test('changes value', async () => {
-  const setTime = vitest.fn()
+  const setTime = mockFunction()
   const { getByDisplayValue } = render(
     <TimeFilterSlider
       title={'title'}
@@ -97,5 +102,5 @@ test('changes value', async () => {
   )
   const slider = getByDisplayValue(1)
   fireEvent.change(slider, { target: { value: '2' } })
-  expect(setTime.mock.calls).toEqual([[{ year: 2024, month: 3 }]])
+  assertDeepEqual(setTime.mock.calls, [[{ year: 2024, month: 3 }]])
 })

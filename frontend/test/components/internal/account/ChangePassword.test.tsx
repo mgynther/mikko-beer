@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import ChangePassword from '../../../../src/components/internal/account/ChangePassword'
 import type {
   ChangePasswordIf,
@@ -15,7 +17,7 @@ const getLogin: GetLogin = () => buildLogin({ user: buildUser({ id: userId }) })
 
 test('changes password', async () => {
   const user = setupUser()
-  const changePassword = vitest.fn()
+  const changePassword = mockFunction()
   const changePasswordIf: ChangePasswordIf = {
     useChangePassword: () => ({
       changePassword,
@@ -40,9 +42,9 @@ test('changes password', async () => {
   )
   await user.type(passwordConfirmationInput, newPassword)
   const submit = getByRole('button', { name: 'Change' })
-  expect(submit.hasAttribute('disabled')).toEqual(false)
+  assertEqual(submit.hasAttribute('disabled'), false)
   await user.click(submit)
-  expect(changePassword.mock.calls).toEqual([
+  assertDeepEqual(changePassword.mock.calls, [
     [
       {
         userId,
@@ -107,5 +109,5 @@ test('does not render on missing user', async () => {
   const { container } = render(
     <ChangePassword changePasswordIf={changePasswordIf} />,
   )
-  expect(container.childElementCount).toEqual(0)
+  assertEqual(container.childElementCount, 0)
 })

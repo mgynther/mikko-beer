@@ -1,4 +1,5 @@
-import { expect, test } from 'vitest'
+import { test } from '../test'
+import { assertDeepEqual, assertThrows } from '../assert'
 
 import type { Container, ContainerList } from '../../src/validation/container'
 
@@ -14,71 +15,71 @@ const validContainer: Container = {
 }
 
 test('validateContainer returns container for valid input', () => {
-  expect(validateContainer(validContainer)).toEqual(validContainer)
+  assertDeepEqual(validateContainer(validContainer), validContainer)
 })
 
 test('validateContainer throws for invalid input', () => {
-  expect(() => validateContainer({ id: 123 })).toThrow()
+  assertThrows(() => validateContainer({ id: 123 }))
 })
 
 test('validateContainer throws for missing type', () => {
-  expect(() =>
+  assertThrows(() =>
     validateContainer({
       id: 'dec7d08e-f5ba-43f5-a437-b9e02aaf0cb1',
       size: '0.50',
     }),
-  ).toThrow()
+  )
 })
 
 test('validateContainer throws for missing size', () => {
-  expect(() =>
+  assertThrows(() =>
     validateContainer({
       id: 'fa582513-0ee9-4873-96a3-24bd92d7817d',
       type: 'Can',
     }),
-  ).toThrow()
+  )
 })
 
 test('validateContainer throws for non-string type', () => {
-  expect(() =>
+  assertThrows(() =>
     validateContainer({
       id: '8d0b4708-d512-4a78-8c15-98091e9f1aa3',
       type: 123,
       size: '0.50',
     }),
-  ).toThrow()
+  )
 })
 
 test('validateContainerListOrUndefined returns undefined for undefined', () => {
-  expect(validateContainerListOrUndefined(undefined)).toEqual(undefined)
+  assertDeepEqual(validateContainerListOrUndefined(undefined), undefined)
 })
 
 test('validateContainerListOrUndefined returns list for valid input', () => {
   const list: ContainerList = {
     containers: [validContainer],
   }
-  expect(validateContainerListOrUndefined(list)).toEqual(list)
+  assertDeepEqual(validateContainerListOrUndefined(list), list)
 })
 
 test('validateContainerListOrUndefined throws for invalid input', () => {
-  expect(() =>
+  assertThrows(() =>
     validateContainerListOrUndefined({
       containers: 'wrong',
     }),
-  ).toThrow()
+  )
 })
 
 test('validateContainerListOrUndefined throws for invalid container', () => {
-  expect(() =>
+  assertThrows(() =>
     validateContainerListOrUndefined({
       containers: [{ id: 123 }],
     }),
-  ).toThrow()
+  )
 })
 
 test('validateContainerListOrUndefined returns empty list', () => {
   const list: ContainerList = { containers: [] }
-  expect(validateContainerListOrUndefined(list)).toEqual(list)
+  assertDeepEqual(validateContainerListOrUndefined(list), list)
 })
 
 test('validateContainerListOrUndefined returns list with multiple', () => {
@@ -92,5 +93,5 @@ test('validateContainerListOrUndefined returns list with multiple', () => {
       },
     ],
   }
-  expect(validateContainerListOrUndefined(list)).toEqual(list)
+  assertDeepEqual(validateContainerListOrUndefined(list), list)
 })

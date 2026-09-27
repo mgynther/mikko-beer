@@ -1,6 +1,9 @@
-import { fireEvent, render, waitFor } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render, waitFor } from '../../../render'
+import { fireEvent } from '../../../fire-event'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../filter-time'
 import BreweryCountryAllAtOnce from '../../../../src/components/internal/stats/BreweryCountryAllAtOnce'
 import { openFilters } from '../../open-filters'
@@ -104,8 +107,8 @@ const unusedStats: GetBreweryCountryStatsIf = {
 }
 
 test('queries brewery country stats', async () => {
-  const query = vitest.fn()
-  const setLoadedBreweryCountries = vitest.fn()
+  const query = mockFunction()
+  const setLoadedBreweryCountries = mockFunction()
   render(
     <BreweryCountryAllAtOnce
       getBreweryCountryStatsIf={{
@@ -141,7 +144,7 @@ test('queries brewery country stats', async () => {
       statsParams={statsParams}
     />,
   )
-  expect(query.mock.calls).toEqual([
+  assertDeepEqual(query.mock.calls, [
     [
       {
         breweryId: undefined,
@@ -165,7 +168,7 @@ test('queries brewery country stats', async () => {
     ],
   ])
   await waitFor(() => {
-    expect(setLoadedBreweryCountries.mock.calls).toEqual([
+    assertDeepEqual(setLoadedBreweryCountries.mock.calls, [
       [undefined],
       [[finland, estonia]],
     ])
@@ -208,7 +211,7 @@ test('renders brewery country stats', () => {
 })
 
 test('clears loaded brewery countries on filter change pending', () => {
-  const setLoadedBreweryCountries = vitest.fn()
+  const setLoadedBreweryCountries = mockFunction()
   render(
     <BreweryCountryAllAtOnce
       getBreweryCountryStatsIf={unusedStats}
@@ -227,7 +230,7 @@ test('clears loaded brewery countries on filter change pending', () => {
       statsParams={statsParams}
     />,
   )
-  expect(setLoadedBreweryCountries.mock.calls).toEqual([
+  assertDeepEqual(setLoadedBreweryCountries.mock.calls, [
     [undefined],
     [undefined],
   ])
@@ -265,11 +268,11 @@ test('renders loading', () => {
     />,
   )
   const cells = getAllByRole('cell')
-  expect(cells.length).toEqual(7 * 3)
+  assertEqual(cells.length, 7 * 3)
 })
 
 test('sets minimum review count filter', () => {
-  const setMinimumReviewAverage = vitest.fn()
+  const setMinimumReviewAverage = mockFunction()
   const { getByDisplayValue } = render(
     <BreweryCountryAllAtOnce
       getBreweryCountryStatsIf={unusedStats}
@@ -296,12 +299,12 @@ test('sets minimum review count filter', () => {
   )
   const slider = getByDisplayValue('4')
   fireEvent.change(slider, { target: { value: '4.5' } })
-  expect(setMinimumReviewAverage.mock.calls).toEqual([[4.5]])
+  assertDeepEqual(setMinimumReviewAverage.mock.calls, [[4.5]])
 })
 
 test('opens filter', async () => {
   const user = setupUser()
-  const setIsFiltersOpen = vitest.fn()
+  const setIsFiltersOpen = mockFunction()
   const { getByRole } = render(
     <BreweryCountryAllAtOnce
       getBreweryCountryStatsIf={unusedStats}
@@ -321,5 +324,5 @@ test('opens filter', async () => {
     />,
   )
   await openFilters(getByRole, user)
-  expect(setIsFiltersOpen.mock.calls).toEqual([[true]])
+  assertDeepEqual(setIsFiltersOpen.mock.calls, [[true]])
 })

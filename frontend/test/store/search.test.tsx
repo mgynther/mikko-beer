@@ -1,5 +1,6 @@
-import { expect, test } from 'vitest'
-import { render } from '@testing-library/react'
+import { test } from '../test'
+import { assertDefined } from '../assert'
+import { render } from '../render'
 
 import { setupUser } from '../user-event'
 
@@ -30,10 +31,10 @@ test('activate search', async () => {
       <Helper id='the-field' label='The field' />
     </StoreProvider>,
   )
-  expect(getByText('The field is passive')).toBeDefined()
+  assertDefined(getByText('The field is passive'))
 
   await user.click(getByRole('button', { name: 'Activate The field' }))
-  expect(getByText('The field is active')).toBeDefined()
+  assertDefined(getByText('The field is active'))
 })
 
 test('only the activated search field is active', async () => {
@@ -46,6 +47,6 @@ test('only the activated search field is active', async () => {
   )
 
   await user.click(getByRole('button', { name: 'Activate Second' }))
-  expect(getByText('First is passive')).toBeDefined()
-  expect(getByText('Second is active')).toBeDefined()
+  assertDefined(getByText('First is passive'))
+  assertDefined(getByText('Second is active'))
 })

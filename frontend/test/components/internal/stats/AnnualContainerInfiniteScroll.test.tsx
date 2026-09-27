@@ -1,5 +1,7 @@
-import { render, waitFor } from '@testing-library/react'
-import { expect, test, vitest } from 'vitest'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render, waitFor } from '../../../render'
 import type {
   AnnualContainerStats,
   OneAnnualContainerStats,
@@ -34,8 +36,8 @@ const stats2022: OneAnnualContainerStats = {
 }
 
 test('queries annual container stats', async () => {
-  const query = vitest.fn()
-  const setLoadedAnnualContainers = vitest.fn()
+  const query = mockFunction()
+  const setLoadedAnnualContainers = mockFunction()
   let loadCallback: () => void = () => undefined
   render(
     <AnnualContainerInfiniteScroll
@@ -61,28 +63,32 @@ test('queries annual container stats', async () => {
       setLoadedAnnualContainers={setLoadedAnnualContainers}
     />,
   )
-  expect(query.mock.calls).toEqual([])
+  assertDeepEqual(query.mock.calls, [])
   loadCallback()
-  expect(query.mock.calls).toEqual([
+  assertDeepEqual(query.mock.calls, [
     [
       {
+        breweryId: undefined,
+        locationId: undefined,
         pagination: {
           size: 30,
           skip: 0,
         },
+        styleId: undefined,
       },
     ],
   ])
   await waitFor(() => {
-    expect(
+    assertDeepEqual(
       updatedItems(setLoadedAnnualContainers.mock.calls, undefined),
-    ).toEqual([[stats2023, stats2022]])
+      [[stats2023, stats2022]],
+    )
   })
 })
 
 test('renders annual container stats', async () => {
-  const query = vitest.fn()
-  const setLoadedAnnualContainers = vitest.fn()
+  const query = mockFunction()
+  const setLoadedAnnualContainers = mockFunction()
   const { getByText } = render(
     <AnnualContainerInfiniteScroll
       getAnnualContainerStatsIf={{
@@ -139,7 +145,7 @@ test('renders loading', () => {
 
 test('does not try to load more when there is no more', () => {
   let loadCallback: () => void = () => undefined
-  const query = vitest.fn()
+  const query = mockFunction()
   render(
     <AnnualContainerInfiniteScroll
       getAnnualContainerStatsIf={{
@@ -160,12 +166,12 @@ test('does not try to load more when there is no more', () => {
     />,
   )
   loadCallback()
-  expect(query.mock.calls).toEqual([])
+  assertDeepEqual(query.mock.calls, [])
 })
 
 test('does not try to load more when loading', () => {
   let loadCallback: () => void = () => undefined
-  const query = vitest.fn()
+  const query = mockFunction()
   render(
     <AnnualContainerInfiniteScroll
       getAnnualContainerStatsIf={{
@@ -184,5 +190,5 @@ test('does not try to load more when loading', () => {
     />,
   )
   loadCallback()
-  expect(query.mock.calls).toEqual([])
+  assertDeepEqual(query.mock.calls, [])
 })

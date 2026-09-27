@@ -1,10 +1,12 @@
-import { beforeAll, beforeEach, afterAll, expect, test, vitest } from 'vitest'
+import { beforeAll, beforeEach, afterAll, test } from '../test'
+import { assertCalledWith } from '../assert'
+import { mockFunction } from '../mock'
+import { render, waitFor } from '../render'
 import { StoreProvider } from '../../src/store/provider'
 import { createServer } from './server'
 import type { TestServer } from './server'
 import { useCreateBeer } from '../../src/store/beer'
 import type { CreateBeerRequest } from '../../src/store/internal/beer/requests'
-import { render, waitFor } from '@testing-library/react'
 import { setupUser } from '../user-event'
 import { createErrorLogger } from '../error-logger'
 
@@ -68,7 +70,7 @@ test('test server responds with 500 to unexpected request', async () => {
     status: 201,
   })
 
-  const handler = vitest.fn()
+  const handler = mockFunction()
   const { getByRole } = render(
     <StoreProvider>
       <Helper
@@ -84,12 +86,14 @@ test('test server responds with 500 to unexpected request', async () => {
   const testButton = getByRole('button', { name: 'Test' })
   await user.click(testButton)
   await waitFor(() => {
-    expect(handler).toHaveBeenCalledWith({
-      data: {
-        errorMessage:
-          'Unexpected request with method POST to path /api/v1/beer',
+    assertCalledWith(handler, [
+      {
+        data: {
+          errorMessage:
+            'Unexpected request with method POST to path /api/v1/beer',
+        },
+        status: 500,
       },
-      status: 500,
-    })
+    ])
   })
 })

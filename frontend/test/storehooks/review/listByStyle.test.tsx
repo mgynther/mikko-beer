@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render } from '../../render'
 
 import listReviewsByStyle from '../../../src/storehooks/review/listByStyle'
 import type {
@@ -56,15 +58,15 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('list reviews by style', () => {
-  const onList = vitest.fn()
-  const onValidate = vitest.fn()
+  const onList = mockFunction()
+  const onValidate = mockFunction()
 
   const { getByText } = render(
     <Helper onList={onList} onValidate={onValidate} />,
   )
 
-  expect(getByText(validatedReviewList.reviews[0].beerName)).toBeDefined()
-  expect(getByText('Not loading')).toBeDefined()
-  expect(onList).toHaveBeenCalledWith(params)
-  expect(onValidate).toHaveBeenCalledWith(listed)
+  assertDefined(getByText(validatedReviewList.reviews[0].beerName))
+  assertDefined(getByText('Not loading'))
+  assertCalledWith(onList, [params])
+  assertCalledWith(onValidate, [listed])
 })

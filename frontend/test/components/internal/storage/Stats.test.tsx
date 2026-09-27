@@ -1,6 +1,8 @@
-import { render, waitFor } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertCallCount, assertCalledWith } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render, waitFor } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import Stats from '../../../../src/components/internal/storage/Stats'
 import type { StorageStatsIf } from '../../../../src/components/types/storage/types'
 import type { UseUrlSearchParams } from '../../../../src/components/types/types'
@@ -96,7 +98,7 @@ test('renders monthly storage stats', () => {
 
 test('switch to annual storage stats', async () => {
   const user = setupUser()
-  const setSearch = vitest.fn()
+  const setSearch = mockFunction()
   const { getByRole } = render(
     <Stats
       statsIf={{
@@ -108,14 +110,14 @@ test('switch to annual storage stats', async () => {
   const monthlyButton = getByRole('button', { name: 'Annual' })
   await user.click(monthlyButton)
   await waitFor(() => {
-    expect(setSearch).toHaveBeenCalledWith('annual', {})
+    assertCalledWith(setSearch, ['annual', {}])
   })
-  expect(setSearch).toHaveBeenCalledTimes(1)
+  assertCallCount(setSearch, 1)
 })
 
 test('switch to monthly storage stats', async () => {
   const user = setupUser()
-  const setSearch = vitest.fn()
+  const setSearch = mockFunction()
   const { getByRole } = render(
     <Stats
       statsIf={{
@@ -127,14 +129,14 @@ test('switch to monthly storage stats', async () => {
   const monthlyButton = getByRole('button', { name: 'Monthly' })
   await user.click(monthlyButton)
   await waitFor(() => {
-    expect(setSearch).toHaveBeenCalledWith('monthly', {})
+    assertCalledWith(setSearch, ['monthly', {}])
   })
-  expect(setSearch).toHaveBeenCalledTimes(1)
+  assertCallCount(setSearch, 1)
 })
 
 test('ignore selecting current storage stats mode', async () => {
   const user = setupUser()
-  const setSearch = vitest.fn()
+  const setSearch = mockFunction()
   const { getByRole } = render(
     <Stats
       statsIf={{
@@ -145,5 +147,5 @@ test('ignore selecting current storage stats mode', async () => {
   )
   const monthlyButton = getByRole('button', { name: 'Annual' })
   await user.click(monthlyButton)
-  expect(setSearch).not.toHaveBeenCalled()
+  assertCallCount(setSearch, 0)
 })

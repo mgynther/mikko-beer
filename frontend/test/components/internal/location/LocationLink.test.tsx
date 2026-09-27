@@ -1,5 +1,5 @@
-import { render } from '@testing-library/react'
-import { test } from 'vitest'
+import { test } from '../../../test'
+import { render } from '../../../render'
 
 import LocationLink from '../../../../src/components/internal/location/LocationLink'
 import { testLink } from '../../link'

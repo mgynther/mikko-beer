@@ -1,7 +1,11 @@
-import { render, fireEvent } from '@testing-library/react'
-import { type UserEvent } from '@testing-library/user-event'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
+import type { RenderResult } from '../../../render'
+import { fireEvent } from '../../../fire-event'
+import type { UserEvent } from '../../../user-event'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import UpdateReview from '../../../../src/components/internal/review/UpdateReview'
 import type { UseDebounce } from '../../../../src/components/types/types'
 import type {
@@ -154,7 +158,7 @@ const review = buildReviewRequest({ time: '2022-04-01T12:00:00.000Z' })
 
 async function addReview(
   getByPlaceholderText: (text: string) => HTMLElement,
-  getByRole: (text: string, props?: Record<string, unknown>) => HTMLElement,
+  getByRole: RenderResult['getByRole'],
   user: UserEvent,
 ): Promise<void> {
   const smellInput = getByPlaceholderText('Smell')
@@ -172,8 +176,8 @@ async function addReview(
 
 test('updates review', async () => {
   const user = setupUser()
-  const onSaved = vitest.fn()
-  const update = vitest.fn()
+  const onSaved = mockFunction()
+  const update = mockFunction()
   const { getByPlaceholderText, getByRole } = render(
     <UpdateReview
       initialReview={{
@@ -196,7 +200,7 @@ test('updates review', async () => {
   await addReview(getByPlaceholderText, getByRole, user)
   const saveButton = getByRole('button', { name: 'Save' })
   await user.click(saveButton)
-  expect(update.mock.calls).toEqual([
+  assertDeepEqual(update.mock.calls, [
     [
       {
         id: joinedReview.id,
@@ -211,12 +215,12 @@ test('updates review', async () => {
       },
     ],
   ])
-  expect(onSaved.mock.calls).toEqual([[]])
+  assertDeepEqual(onSaved.mock.calls, [[]])
 })
 
 test('cancels update', async () => {
   const user = setupUser()
-  const onCancel = vitest.fn()
+  const onCancel = mockFunction()
   const { getByPlaceholderText, getByRole } = render(
     <UpdateReview
       initialReview={{
@@ -239,5 +243,5 @@ test('cancels update', async () => {
   await addReview(getByPlaceholderText, getByRole, user)
   const cancelButton = getByRole('button', { name: 'Cancel' })
   await user.click(cancelButton)
-  expect(onCancel.mock.calls).toEqual([[]])
+  assertDeepEqual(onCancel.mock.calls, [[]])
 })

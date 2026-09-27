@@ -1,5 +1,12 @@
-import { beforeAll, beforeEach, afterAll, expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { beforeAll, beforeEach, afterAll, test } from '../test'
+import {
+  assertCallCount,
+  assertCalled,
+  assertCalledWith,
+  assertDefined,
+} from '../assert'
+import { mockFunction } from '../mock'
+import { render, waitFor } from '../render'
 
 import { createServer } from './server'
 import type { TestServer } from './server'
@@ -69,12 +76,12 @@ test('get brewery', async () => {
       <GetBreweryHelper breweryId={breweryId} />
     </StoreProvider>,
   )
-  expect(getByText('Loading')).toBeDefined()
+  assertDefined(getByText('Loading'))
 
   await waitFor(() => {
-    expect(getByText(JSON.stringify(breweryResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(breweryResponse)))
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 test('get brewery that does not exist', async () => {
@@ -95,10 +102,10 @@ test('get brewery that does not exist', async () => {
   )
 
   await waitFor(() => {
-    expect(getByText('Not loading')).toBeDefined()
+    assertDefined(getByText('Not loading'))
   })
   // A failed request has no data to give.
-  expect(getByText('No data')).toBeDefined()
+  assertDefined(getByText('No data'))
 })
 
 interface TriggerProps {
@@ -144,7 +151,7 @@ test('list breweries', async () => {
     status: 200,
   })
 
-  const onResult = vitest.fn()
+  const onResult = mockFunction()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <ListBreweriesHelper
@@ -154,17 +161,17 @@ test('list breweries', async () => {
       />
     </StoreProvider>,
   )
-  expect(getByText('Uninitialized')).toBeDefined()
+  assertDefined(getByText('Uninitialized'))
 
   await user.click(getByRole('button', { name: 'List' }))
   await waitFor(() => {
-    expect(onResult).toHaveBeenCalledWith(breweryListResponse)
+    assertCalledWith(onResult, [breweryListResponse])
   })
   await waitFor(() => {
-    expect(getByText(JSON.stringify(breweryListResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(breweryListResponse)))
   })
-  expect(getByText('Initialized')).toBeDefined()
-  expect(getByText('Not fetching')).toBeDefined()
+  assertDefined(getByText('Initialized'))
+  assertDefined(getByText('Not fetching'))
 })
 
 test('fail to list breweries', async () => {
@@ -176,8 +183,8 @@ test('fail to list breweries', async () => {
     status: 500,
   })
 
-  const onResult = vitest.fn()
-  const onError = vitest.fn()
+  const onResult = mockFunction()
+  const onError = mockFunction()
   const { getByRole } = render(
     <StoreProvider>
       <ListBreweriesHelper size={20} onResult={onResult} onError={onError} />
@@ -190,9 +197,9 @@ test('fail to list breweries', async () => {
   // A failed request rejects: the unwrapping is done here so that every
   // caller gets the same failure instead of an RTK Query result object.
   await waitFor(() => {
-    expect(onError).toHaveBeenCalled()
+    assertCalled(onError)
   })
-  expect(onResult).not.toHaveBeenCalled()
+  assertCallCount(onResult, 0)
 })
 
 function SearchBreweriesHelper(props: TriggerProps): React.JSX.Element {
@@ -223,7 +230,7 @@ test('search breweries', async () => {
     status: 200,
   })
 
-  const onResult = vitest.fn()
+  const onResult = mockFunction()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <SearchBreweriesHelper onResult={onResult} onError={() => undefined} />
@@ -232,10 +239,10 @@ test('search breweries', async () => {
 
   await user.click(getByRole('button', { name: 'Search' }))
   await waitFor(() => {
-    expect(onResult).toHaveBeenCalledWith(breweryListResponse)
+    assertCalledWith(onResult, [breweryListResponse])
   })
   await waitFor(() => {
-    expect(getByText('Not fetching')).toBeDefined()
+    assertDefined(getByText('Not fetching'))
   })
 })
 
@@ -272,7 +279,7 @@ test('create brewery', async () => {
     status: 201,
   })
 
-  const onResult = vitest.fn()
+  const onResult = mockFunction()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <CreateBreweryHelper onResult={onResult} onError={() => undefined} />
@@ -281,10 +288,10 @@ test('create brewery', async () => {
 
   await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(onResult).toHaveBeenCalledWith(breweryResponse)
+    assertCalledWith(onResult, [breweryResponse])
   })
   await waitFor(() => {
-    expect(getByText('Not loading')).toBeDefined()
+    assertDefined(getByText('Not loading'))
   })
 })
 
@@ -316,7 +323,7 @@ test('update brewery', async () => {
     status: 200,
   })
 
-  const onResult = vitest.fn()
+  const onResult = mockFunction()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <UpdateBreweryHelper onResult={onResult} onError={() => undefined} />
@@ -325,9 +332,9 @@ test('update brewery', async () => {
 
   await user.click(getByRole('button', { name: 'Update' }))
   await waitFor(() => {
-    expect(onResult).toHaveBeenCalledWith(breweryResponse)
+    assertCalledWith(onResult, [breweryResponse])
   })
   await waitFor(() => {
-    expect(getByText('Not loading')).toBeDefined()
+    assertDefined(getByText('Not loading'))
   })
 })

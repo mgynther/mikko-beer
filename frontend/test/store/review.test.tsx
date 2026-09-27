@@ -1,5 +1,7 @@
-import { beforeAll, beforeEach, afterAll, expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { beforeAll, beforeEach, afterAll, test } from '../test'
+import { assertCalledWith, assertDefined } from '../assert'
+import { mockFunction } from '../mock'
+import { render, waitFor } from '../render'
 
 import { createServer } from './server'
 import type { TestServer } from './server'
@@ -99,7 +101,7 @@ test('get review', async () => {
     status: 200,
   })
 
-  const onResult = vitest.fn()
+  const onResult = mockFunction()
   const { getByRole } = render(
     <StoreProvider>
       <GetReviewHelper onResult={onResult} />
@@ -108,7 +110,7 @@ test('get review', async () => {
 
   await user.click(getByRole('button', { name: 'Get' }))
   await waitFor(() => {
-    expect(onResult).toHaveBeenCalledWith({ review })
+    assertCalledWith(onResult, [{ review }])
   })
 })
 
@@ -147,22 +149,22 @@ test('list reviews', async () => {
     status: 200,
   })
 
-  const onResult = vitest.fn()
+  const onResult = mockFunction()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <ListReviewsHelper onResult={onResult} />
     </StoreProvider>,
   )
-  expect(getByText('Uninitialized')).toBeDefined()
+  assertDefined(getByText('Uninitialized'))
 
   await user.click(getByRole('button', { name: 'List' }))
   await waitFor(() => {
-    expect(onResult).toHaveBeenCalledWith(reviewListResponse)
+    assertCalledWith(onResult, [reviewListResponse])
   })
   await waitFor(() => {
-    expect(getByText(JSON.stringify(reviewListResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(reviewListResponse)))
   })
-  expect(getByText('Not fetching')).toBeDefined()
+  assertDefined(getByText('Not fetching'))
 })
 
 function ListReviewsByBeerHelper(props: { id: string }): React.JSX.Element {
@@ -191,9 +193,9 @@ test('list reviews by beer', async () => {
   )
 
   await waitFor(() => {
-    expect(getByText(JSON.stringify(reviewListResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(reviewListResponse)))
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 function ListReviewsByBreweryHelper(props: { id: string }): React.JSX.Element {
@@ -222,9 +224,9 @@ test('list reviews by brewery', async () => {
   )
 
   await waitFor(() => {
-    expect(getByText(JSON.stringify(reviewListResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(reviewListResponse)))
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 function ListReviewsByLocationHelper(props: { id: string }): React.JSX.Element {
@@ -253,9 +255,9 @@ test('list reviews by location', async () => {
   )
 
   await waitFor(() => {
-    expect(getByText(JSON.stringify(reviewListResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(reviewListResponse)))
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 function ListReviewsByStyleHelper(props: { id: string }): React.JSX.Element {
@@ -284,9 +286,9 @@ test('list reviews by style', async () => {
   )
 
   await waitFor(() => {
-    expect(getByText(JSON.stringify(reviewListResponse))).toBeDefined()
+    assertDefined(getByText(JSON.stringify(reviewListResponse)))
   })
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText('Not loading'))
 })
 
 function CreateReviewHelper(props: { storageId: string }): React.JSX.Element {
@@ -338,10 +340,10 @@ test('create review', async () => {
 
   await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(getByText('Succeeded')).toBeDefined()
+    assertDefined(getByText('Succeeded'))
   })
-  expect(getByText(JSON.stringify({ review }))).toBeDefined()
-  expect(getByText('Not loading')).toBeDefined()
+  assertDefined(getByText(JSON.stringify({ review })))
+  assertDefined(getByText('Not loading'))
 })
 
 test('create review without storage', async () => {
@@ -363,7 +365,7 @@ test('create review without storage', async () => {
   // url carries no storage parameter at all.
   await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(getByText('Succeeded')).toBeDefined()
+    assertDefined(getByText('Succeeded'))
   })
 })
 
@@ -395,7 +397,7 @@ test('update review', async () => {
     status: 200,
   })
 
-  const onResult = vitest.fn()
+  const onResult = mockFunction()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <UpdateReviewHelper onResult={onResult} />
@@ -404,9 +406,9 @@ test('update review', async () => {
 
   await user.click(getByRole('button', { name: 'Update' }))
   await waitFor(() => {
-    expect(onResult).toHaveBeenCalledWith({ review })
+    assertCalledWith(onResult, [{ review }])
   })
   await waitFor(() => {
-    expect(getByText('Not loading')).toBeDefined()
+    assertDefined(getByText('Not loading'))
   })
 })

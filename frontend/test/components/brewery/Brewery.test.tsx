@@ -1,6 +1,13 @@
-import { render } from '@testing-library/react'
+import { test } from '../../test'
+import {
+  assertDeepEqual,
+  assertDefined,
+  assertEqual,
+  assertThrowsWithMessage,
+} from '../../assert'
+import { mockFunction } from '../../mock'
+import { render } from '../../render'
 import { setupUser } from '../../user-event'
-import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../filter-time'
 import Brewery from '../../../src/components/brewery/Brewery'
 import { Role } from '../../../src/components/types/user/types'
@@ -244,7 +251,7 @@ const getBreweryIf: GetBreweryIf = {
 
 test('updates brewery', async () => {
   const user = setupUser()
-  const update = vitest.fn()
+  const update = mockFunction()
   const { getByPlaceholderText, getByRole } = render(
     <Brewery
       linkComponent={testLink}
@@ -272,14 +279,15 @@ test('updates brewery', async () => {
   await user.clear(nameInput)
   const newName = 'Hopping Brewsters R.I.P.'
   await user.type(nameInput, newName)
-  expect(saveButton.hasAttribute('disabled')).toEqual(false)
+  assertEqual(saveButton.hasAttribute('disabled'), false)
   await user.click(saveButton)
   const updateCalls = update.mock.calls
-  expect(updateCalls).toEqual([
+  assertDeepEqual(updateCalls, [
     [
       {
         id,
         name: newName,
+        country: undefined,
       },
     ],
   ])
@@ -358,19 +366,21 @@ test('render not found', async () => {
 })
 
 test('throw on missing id', async () => {
-  expect(() =>
-    render(
-      <Brewery
-        linkComponent={testLink}
-        listReviewsByBreweryIf={listReviewsByBreweryIf}
-        listStoragesByBreweryIf={listStoragesByBreweryIf}
-        getBreweryIf={getBreweryIf}
-        updateBreweryIf={dontUpdateBreweryIf}
-        statsIf={statsIf}
-        useUrlPathParams={() => ({})}
-      />,
-    ),
-  ).toThrow('Brewery component without breweryId. Should not happen.')
+  assertThrowsWithMessage(
+    () =>
+      render(
+        <Brewery
+          linkComponent={testLink}
+          listReviewsByBreweryIf={listReviewsByBreweryIf}
+          listStoragesByBreweryIf={listStoragesByBreweryIf}
+          getBreweryIf={getBreweryIf}
+          updateBreweryIf={dontUpdateBreweryIf}
+          statsIf={statsIf}
+          useUrlPathParams={() => ({})}
+        />,
+      ),
+    'Brewery component without breweryId. Should not happen.',
+  )
 })
 
 test('renders brewery country flag', () => {
@@ -395,7 +405,7 @@ test('renders brewery country flag', () => {
     />,
   )
   const heading = getByRole('heading', { name: `${name} \u{1F1EB}\u{1F1EE}` })
-  expect(heading).toBeDefined()
+  assertDefined(heading)
   getByText('\u{1F1EB}\u{1F1EE}')
 })
 
@@ -412,5 +422,5 @@ test('renders brewery without country flag', () => {
     />,
   )
   getByRole('heading', { name })
-  expect(queryByText('\u{1F1EB}\u{1F1EE}')).toEqual(null)
+  assertDeepEqual(queryByText('\u{1F1EB}\u{1F1EE}'), null)
 })

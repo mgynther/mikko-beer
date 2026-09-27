@@ -1,6 +1,12 @@
-import { render } from '@testing-library/react'
+import { test } from '../../test'
+import {
+  assertDeepEqual,
+  assertEqual,
+  assertThrowsWithMessage,
+} from '../../assert'
+import { mockFunction } from '../../mock'
+import { render } from '../../render'
 import { setupUser } from '../../user-event'
-import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../filter-time'
 import Location from '../../../src/components/location/Location'
 import { Role } from '../../../src/components/types/user/types'
@@ -234,7 +240,7 @@ const getLocationIf: GetLocationIf = {
 
 test('updates location', async () => {
   const user = setupUser()
-  const update = vitest.fn()
+  const update = mockFunction()
   const { getByPlaceholderText, getByRole } = render(
     <Location
       linkComponent={testLink}
@@ -261,10 +267,10 @@ test('updates location', async () => {
   await user.clear(nameInput)
   const newName = 'Oluthuone Panimomestari'
   await user.type(nameInput, newName)
-  expect(saveButton.hasAttribute('disabled')).toEqual(false)
+  assertEqual(saveButton.hasAttribute('disabled'), false)
   await user.click(saveButton)
   const updateCalls = update.mock.calls
-  expect(updateCalls).toEqual([
+  assertDeepEqual(updateCalls, [
     [
       {
         id,
@@ -306,18 +312,20 @@ test('cancel editing', async () => {
 })
 
 test('throw on missing id', async () => {
-  expect(() =>
-    render(
-      <Location
-        linkComponent={testLink}
-        listReviewsByLocationIf={listReviewsByLocationIf}
-        useUrlPathParams={() => ({})}
-        getLocationIf={getLocationIf}
-        updateLocationIf={dontUpdateLocationIf}
-        statsIf={statsIf}
-      />,
-    ),
-  ).toThrow('Location component without locationId. Should not happen.')
+  assertThrowsWithMessage(
+    () =>
+      render(
+        <Location
+          linkComponent={testLink}
+          listReviewsByLocationIf={listReviewsByLocationIf}
+          useUrlPathParams={() => ({})}
+          getLocationIf={getLocationIf}
+          updateLocationIf={dontUpdateLocationIf}
+          statsIf={statsIf}
+        />,
+      ),
+    'Location component without locationId. Should not happen.',
+  )
 })
 
 test('render loading', async () => {

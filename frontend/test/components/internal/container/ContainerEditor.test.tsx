@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import ContainerEditor from '../../../../src/components/internal/container/ContainerEditor'
 
 const id = 'f8b01ff9-3daa-4137-81cd-f16cf9073d48'
@@ -9,7 +11,7 @@ const typePlaceholder = 'Type'
 
 test('edits valid container', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByPlaceholderText } = render(
     <ContainerEditor
       initialContainer={{
@@ -25,7 +27,7 @@ test('edits valid container', async () => {
   const sizeInput = getByPlaceholderText(sizePlaceholder)
   await user.type(sizeInput, '0.33')
   const validCalls = onChange.mock.calls.filter((args) => args[0] !== undefined)
-  expect(validCalls).toEqual([
+  assertDeepEqual(validCalls, [
     [
       {
         id,
@@ -38,7 +40,7 @@ test('edits valid container', async () => {
 
 test('edits invalid container by empty type', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByPlaceholderText } = render(
     <ContainerEditor
       initialContainer={{
@@ -52,12 +54,12 @@ test('edits invalid container by empty type', async () => {
   const sizeInput = getByPlaceholderText(sizePlaceholder)
   await user.type(sizeInput, '0.33')
   const validCalls = onChange.mock.calls.filter((args) => args[0] !== undefined)
-  expect(validCalls.length).toEqual(0)
+  assertEqual(validCalls.length, 0)
 })
 
 test('edits invalid container by invalid size', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByPlaceholderText } = render(
     <ContainerEditor
       initialContainer={{
@@ -73,11 +75,11 @@ test('edits invalid container by invalid size', async () => {
   const sizeInput = getByPlaceholderText(sizePlaceholder)
   await user.type(sizeInput, '0.3')
   const validCalls = onChange.mock.calls.filter((args) => args[0] !== undefined)
-  expect(validCalls.length).toEqual(0)
+  assertEqual(validCalls.length, 0)
 })
 
 test('renders values', async () => {
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByDisplayValue } = render(
     <ContainerEditor
       initialContainer={{

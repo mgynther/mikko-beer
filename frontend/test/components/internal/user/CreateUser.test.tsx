@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import CreateUser from '../../../../src/components/internal/user/CreateUser'
 import { Role } from '../../../../src/components/types/user/types'
 
@@ -23,7 +25,7 @@ const createTests: CreateTest[] = [
 createTests.forEach((testCase) => {
   test('creates user', async () => {
     const user = setupUser()
-    const create = vitest.fn()
+    const create = mockFunction()
     const { getByRole, getByPlaceholderText } = render(
       <CreateUser
         createUserIf={{
@@ -52,9 +54,9 @@ createTests.forEach((testCase) => {
     await user.selectOptions(roleSelect, adminOption)
 
     const createButton = getByRole('button', { name: 'Create' })
-    expect(createButton.hasAttribute('disabled')).toEqual(false)
+    assertEqual(createButton.hasAttribute('disabled'), false)
     await user.click(createButton)
-    expect(create.mock.calls).toEqual([
+    assertDeepEqual(create.mock.calls, [
       [
         {
           passwordSignInMethod: {
@@ -71,7 +73,7 @@ createTests.forEach((testCase) => {
 })
 
 test('shows error', async () => {
-  const create = vitest.fn()
+  const create = mockFunction()
   const { getByText } = render(
     <CreateUser
       createUserIf={{
@@ -88,7 +90,7 @@ test('shows error', async () => {
 })
 
 test('shows created text', async () => {
-  const create = vitest.fn()
+  const create = mockFunction()
   const { getByText } = render(
     <CreateUser
       createUserIf={{

@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render } from '../../render'
 
 import getLogin from '../../../src/storehooks/login/getLogin'
 import type {
@@ -35,7 +37,7 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('get login', () => {
-  const onValidate = vitest.fn()
+  const onValidate = mockFunction()
   const stored = { authToken: 'stored', refreshToken: 'refresh' }
 
   const { getByText } = render(
@@ -46,8 +48,8 @@ test('get login', () => {
     />,
   )
 
-  expect(getByText(validatedLogin.authToken)).toBeDefined()
-  expect(onValidate).toHaveBeenCalledWith(stored)
+  assertDefined(getByText(validatedLogin.authToken))
+  assertCalledWith(onValidate, [stored])
 })
 
 test('get logged out when the stored session does not validate', () => {
@@ -62,6 +64,6 @@ test('get logged out when the stored session does not validate', () => {
     />,
   )
 
-  expect(getByText('No user')).toBeDefined()
-  expect(getByText('No token')).toBeDefined()
+  assertDefined(getByText('No user'))
+  assertDefined(getByText('No token'))
 })

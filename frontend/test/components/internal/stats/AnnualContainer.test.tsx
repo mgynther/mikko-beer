@@ -1,5 +1,7 @@
-import { act, render, waitFor } from '@testing-library/react'
-import { expect, test, vitest } from 'vitest'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { act, render, waitFor } from '../../../render'
 import AnnualContainer from '../../../../src/components/internal/stats/AnnualContainer'
 import type {
   AnnualContainerStats,
@@ -49,7 +51,7 @@ const usedStats: GetAnnualContainerStatsIf = {
 }
 
 test('queries annualContainer stats', async () => {
-  const query = vitest.fn()
+  const query = mockFunction()
   let loadCallback: () => void = () => undefined
   render(
     <AnnualContainer
@@ -76,11 +78,11 @@ test('queries annualContainer stats', async () => {
       styleId={undefined}
     />,
   )
-  expect(query.mock.calls).toEqual([])
+  assertDeepEqual(query.mock.calls, [])
   await act(async () => {
     loadCallback()
   })
-  expect(query.mock.calls).toEqual([
+  assertDeepEqual(query.mock.calls, [
     [
       {
         breweryId: undefined,
@@ -96,7 +98,7 @@ test('queries annualContainer stats', async () => {
 })
 
 test('queries filtered annual container stats', async () => {
-  const query = vitest.fn()
+  const query = mockFunction()
   const breweryId = 'c876a4bb-8899-41de-a413-afbb5faea82c'
   const locationId = '305f744e-7e5d-4bde-b528-4e74150b8db5'
   const styleId = '84a0e394-d051-4001-852a-df997190f836'
@@ -129,7 +131,7 @@ test('queries filtered annual container stats', async () => {
   await act(async () => {
     loadCallback()
   })
-  expect(query.mock.calls).toEqual([
+  assertDeepEqual(query.mock.calls, [
     [
       {
         breweryId,

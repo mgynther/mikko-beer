@@ -1,5 +1,6 @@
-import { expect, test } from 'vitest'
-import { render } from '@testing-library/react'
+import { test } from '../test'
+import { assertEqual } from '../assert'
+import { render } from '../render'
 import { setupUser } from '../user-event'
 
 import LinkWrapper from '../../src/routing/LinkWrapper'
@@ -14,7 +15,7 @@ test('renders a link that navigates', async () => {
     </LinkWrapper>,
   )
   const link = getByRole('link', { name: 'Link text' })
-  expect(link.getAttribute('href')).toEqual(path)
+  assertEqual(link.getAttribute('href'), path)
   await user.click(link)
-  expect(window.location.pathname).toEqual(path)
+  assertEqual(window.location.pathname, path)
 })

@@ -1,4 +1,5 @@
-import { expect, test } from 'vitest'
+import { test } from '../test'
+import { assertDeepEqual, assertThrows } from '../assert'
 
 import type {
   Style,
@@ -21,32 +22,32 @@ const validStyle: Style = {
 }
 
 test('validateStyle returns style for valid input', () => {
-  expect(validateStyle(validStyle)).toEqual(validStyle)
+  assertDeepEqual(validateStyle(validStyle), validStyle)
 })
 
 test('validateStyle throws for invalid input', () => {
-  expect(() =>
+  assertThrows(() =>
     validateStyle({
       id: 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
       name: 123,
     }),
-  ).toThrow()
+  )
 })
 
 test('validateStyleOrUndefined returns undefined for undefined', () => {
-  expect(validateStyleOrUndefined(undefined)).toEqual(undefined)
+  assertDeepEqual(validateStyleOrUndefined(undefined), undefined)
 })
 
 test('validateStyleOrUndefined returns style for valid input', () => {
-  expect(validateStyleOrUndefined(validStyle)).toEqual(validStyle)
+  assertDeepEqual(validateStyleOrUndefined(validStyle), validStyle)
 })
 
 test('validateStyleOrUndefined throws for invalid input', () => {
-  expect(() =>
+  assertThrows(() =>
     validateStyleOrUndefined({
       id: 'c3d4e5f6-a7b8-9012-cdef-123456789012',
     }),
-  ).toThrow()
+  )
 })
 
 const validStyleWithParentsAndChildren: StyleWithParentsAndChildren = {
@@ -67,9 +68,10 @@ const validStyleWithParentsAndChildren: StyleWithParentsAndChildren = {
 }
 
 test('validateStyleWithParentsAndChildren returns style for valid', () => {
-  expect(
+  assertDeepEqual(
     validateStyleWithParentsAndChildren(validStyleWithParentsAndChildren),
-  ).toEqual(validStyleWithParentsAndChildren)
+    validStyleWithParentsAndChildren,
+  )
 })
 
 test('validateStyleWithParentsAndChildren returns style for valid', () => {
@@ -79,39 +81,41 @@ test('validateStyleWithParentsAndChildren returns style for valid', () => {
     children: [],
     parents: [],
   }
-  expect(validateStyleWithParentsAndChildren(style)).toEqual(style)
+  assertDeepEqual(validateStyleWithParentsAndChildren(style), style)
 })
 
 test('validateStyleWithParentsAndChildren throws for invalid input', () => {
-  expect(() =>
+  assertThrows(() =>
     validateStyleWithParentsAndChildren({
       id: '22334455-6677-8899-aabb-ccddeeff0011',
       name: 'Porter',
       children: [{ id: 123 }],
     }),
-  ).toThrow()
+  )
 })
 
 test('validateStyleWithParentsAndChildrenOrUndefined returns undefined', () => {
-  expect(validateStyleWithParentsAndChildrenOrUndefined(undefined)).toEqual(
+  assertDeepEqual(
+    validateStyleWithParentsAndChildrenOrUndefined(undefined),
     undefined,
   )
 })
 
 test('validateStyleWithParentsAndChildrenOrUndefined returns style', () => {
-  expect(
+  assertDeepEqual(
     validateStyleWithParentsAndChildrenOrUndefined(
       validStyleWithParentsAndChildren,
     ),
-  ).toEqual(validStyleWithParentsAndChildren)
+    validStyleWithParentsAndChildren,
+  )
 })
 
 test('validateStyleWithParentsAndChildrenOrUndefined throws', () => {
-  expect(() =>
+  assertThrows(() =>
     validateStyleWithParentsAndChildrenOrUndefined({
       id: '33445566-7788-99aa-bbcc-ddeeff001122',
     }),
-  ).toThrow()
+  )
 })
 
 const validStyleList: StyleList = {
@@ -125,34 +129,34 @@ const validStyleList: StyleList = {
 }
 
 test('validateStyleList returns list for valid input', () => {
-  expect(validateStyleList(validStyleList)).toEqual(validStyleList)
+  assertDeepEqual(validateStyleList(validStyleList), validStyleList)
 })
 
 test('validateStyleList returns empty list', () => {
   const list: StyleList = { styles: [] }
-  expect(validateStyleList(list)).toEqual(list)
+  assertDeepEqual(validateStyleList(list), list)
 })
 
 test('validateStyleList throws for invalid input', () => {
-  expect(() =>
+  assertThrows(() =>
     validateStyleList({
       styles: [{ id: 123 }],
     }),
-  ).toThrow()
+  )
 })
 
 test('validateStyleListOrUndefined returns undefined for undefined', () => {
-  expect(validateStyleListOrUndefined(undefined)).toEqual(undefined)
+  assertDeepEqual(validateStyleListOrUndefined(undefined), undefined)
 })
 
 test('validateStyleListOrUndefined returns list for valid input', () => {
-  expect(validateStyleListOrUndefined(validStyleList)).toEqual(validStyleList)
+  assertDeepEqual(validateStyleListOrUndefined(validStyleList), validStyleList)
 })
 
 test('validateStyleListOrUndefined throws for invalid input', () => {
-  expect(() =>
+  assertThrows(() =>
     validateStyleListOrUndefined({
       styles: [{ id: 123 }],
     }),
-  ).toThrow()
+  )
 })

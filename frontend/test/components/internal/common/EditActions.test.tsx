@@ -1,5 +1,12 @@
-import { render } from '@testing-library/react'
-import { expect, test, vitest } from 'vitest'
+import { test } from '../../../test'
+import {
+  assertCallCount,
+  assertCalled,
+  assertDefined,
+  assertEqual,
+} from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import EditActions from '../../../../src/components/internal/common/EditActions'
 import { loadingIndicatorText } from '../../../../src/components/internal/common/LoadingIndicator'
 
@@ -13,11 +20,11 @@ test('renders loading text', () => {
     />,
   )
   const text = getByText(loadingIndicatorText)
-  expect(text).toBeDefined()
+  assertDefined(text)
 })
 
 test('disables save button while saving', () => {
-  const saveCb = vitest.fn()
+  const saveCb = mockFunction()
   const { getByRole } = render(
     <EditActions
       isSaving={true}
@@ -27,9 +34,9 @@ test('disables save button while saving', () => {
     />,
   )
   const saveButton = getByRole('button', { name: 'Save' })
-  expect(saveButton.hasAttribute('disabled')).toEqual(true)
+  assertEqual(saveButton.hasAttribute('disabled'), true)
   saveButton.click()
-  expect(saveCb).not.toHaveBeenCalled()
+  assertCallCount(saveCb, 0)
 })
 
 test('disables save button without onSave', () => {
@@ -42,11 +49,11 @@ test('disables save button without onSave', () => {
     />,
   )
   const saveButton = getByRole('button', { name: 'Save' })
-  expect(saveButton.hasAttribute('disabled')).toEqual(true)
+  assertEqual(saveButton.hasAttribute('disabled'), true)
 })
 
 test('disables save button while saving disabled', () => {
-  const saveCb = vitest.fn()
+  const saveCb = mockFunction()
   const { getByRole } = render(
     <EditActions
       isSaving={false}
@@ -56,13 +63,13 @@ test('disables save button while saving disabled', () => {
     />,
   )
   const saveButton = getByRole('button', { name: 'Save' })
-  expect(saveButton.hasAttribute('disabled')).toEqual(true)
+  assertEqual(saveButton.hasAttribute('disabled'), true)
   saveButton.click()
-  expect(saveCb).not.toHaveBeenCalled()
+  assertCallCount(saveCb, 0)
 })
 
 test('cancels', () => {
-  const cancelCb = vitest.fn()
+  const cancelCb = mockFunction()
   const { getByRole } = render(
     <EditActions
       isSaving={false}
@@ -72,13 +79,13 @@ test('cancels', () => {
     />,
   )
   const cancelButton = getByRole('button', { name: 'Cancel' })
-  expect(cancelButton.hasAttribute('disabled')).toEqual(false)
+  assertEqual(cancelButton.hasAttribute('disabled'), false)
   cancelButton.click()
-  expect(cancelCb).toHaveBeenCalled()
+  assertCalled(cancelCb)
 })
 
 test('saves', () => {
-  const saveCb = vitest.fn()
+  const saveCb = mockFunction()
   const { getByRole } = render(
     <EditActions
       isSaving={false}
@@ -88,7 +95,7 @@ test('saves', () => {
     />,
   )
   const saveButton = getByRole('button', { name: 'Save' })
-  expect(saveButton.hasAttribute('disabled')).toEqual(false)
+  assertEqual(saveButton.hasAttribute('disabled'), false)
   saveButton.click()
-  expect(saveCb).toHaveBeenCalled()
+  assertCalled(saveCb)
 })

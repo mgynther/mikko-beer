@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import BreweryEditor, {
   countryPlaceholder,
 } from '../../../../src/components/internal/brewery/BreweryEditor'
@@ -10,7 +12,7 @@ const namePlaceholder = 'Name'
 
 test('edits valid brewery', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByPlaceholderText } = render(
     <BreweryEditor
       brewery={{
@@ -25,18 +27,19 @@ test('edits valid brewery', async () => {
   const nameInput = getByPlaceholderText(namePlaceholder)
   await user.type(nameInput, 'Salama')
   const calls = onChange.mock.calls
-  expect(calls.length).toEqual(6)
-  expect(calls[calls.length - 1]).toEqual([
+  assertEqual(calls.length, 6)
+  assertDeepEqual(calls[calls.length - 1], [
     {
       id,
       name: 'Salama',
+      country: undefined,
     },
   ])
 })
 
 test('edits invalid brewery by empty name', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByPlaceholderText } = render(
     <BreweryEditor
       brewery={{
@@ -52,12 +55,12 @@ test('edits invalid brewery by empty name', async () => {
   await user.type(nameInput, 'S')
   await user.clear(nameInput)
   const calls = onChange.mock.calls
-  expect(calls.length).toEqual(2)
-  expect(calls[calls.length - 1]).toEqual([undefined])
+  assertEqual(calls.length, 2)
+  assertDeepEqual(calls[calls.length - 1], [undefined])
 })
 
 test('renders values', async () => {
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByDisplayValue } = render(
     <BreweryEditor
       brewery={{
@@ -74,7 +77,7 @@ test('renders values', async () => {
 
 test('edits valid country', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByPlaceholderText } = render(
     <BreweryEditor
       brewery={{
@@ -89,7 +92,7 @@ test('edits valid country', async () => {
   const countryInput = getByPlaceholderText(countryPlaceholder)
   await user.type(countryInput, 'FI')
   const calls = onChange.mock.calls
-  expect(calls).toEqual([
+  assertDeepEqual(calls, [
     [undefined],
     [
       {
@@ -103,7 +106,7 @@ test('edits valid country', async () => {
 
 test('edits country in lower case', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByDisplayValue, getByPlaceholderText } = render(
     <BreweryEditor
       brewery={{
@@ -119,7 +122,7 @@ test('edits country in lower case', async () => {
   await user.type(countryInput, 'fi')
   getByDisplayValue('FI')
   const calls = onChange.mock.calls
-  expect(calls[calls.length - 1]).toEqual([
+  assertDeepEqual(calls[calls.length - 1], [
     {
       id,
       name: 'Koskipanimo',
@@ -130,7 +133,7 @@ test('edits country in lower case', async () => {
 
 test('edits invalid brewery by non-letter country', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByPlaceholderText } = render(
     <BreweryEditor
       brewery={{
@@ -145,12 +148,12 @@ test('edits invalid brewery by non-letter country', async () => {
   const countryInput = getByPlaceholderText(countryPlaceholder)
   await user.type(countryInput, '12')
   const calls = onChange.mock.calls
-  expect(calls[calls.length - 1]).toEqual([undefined])
+  assertDeepEqual(calls[calls.length - 1], [undefined])
 })
 
 test('edits empty country to undefined', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByPlaceholderText } = render(
     <BreweryEditor
       brewery={{
@@ -165,7 +168,7 @@ test('edits empty country to undefined', async () => {
   const countryInput = getByPlaceholderText(countryPlaceholder)
   await user.clear(countryInput)
   const calls = onChange.mock.calls
-  expect(calls).toEqual([
+  assertDeepEqual(calls, [
     [
       {
         id,
@@ -178,7 +181,7 @@ test('edits empty country to undefined', async () => {
 
 test('edits name of brewery with country', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByPlaceholderText } = render(
     <BreweryEditor
       brewery={{
@@ -193,7 +196,7 @@ test('edits name of brewery with country', async () => {
   const nameInput = getByPlaceholderText(namePlaceholder)
   await user.type(nameInput, '!')
   const calls = onChange.mock.calls
-  expect(calls[calls.length - 1]).toEqual([
+  assertDeepEqual(calls[calls.length - 1], [
     {
       id,
       name: 'Koskipanimo!',
@@ -203,7 +206,7 @@ test('edits name of brewery with country', async () => {
 })
 
 test('renders country', async () => {
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByDisplayValue } = render(
     <BreweryEditor
       brewery={{

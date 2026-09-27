@@ -1,11 +1,13 @@
-import { render } from '@testing-library/react'
+import { test } from '../../test'
+import { assertDeepEqual, assertEqual } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render } from '../../render'
 import { setupUser } from '../../user-event'
-import { expect, test, vitest } from 'vitest'
 import Login from '../../../src/components/login/Login'
 
 test('logs in', async () => {
   const user = setupUser()
-  const login = vitest.fn()
+  const login = mockFunction()
   const { getByRole, getByPlaceholderText } = render(
     <Login
       loginIf={{
@@ -23,9 +25,9 @@ test('logs in', async () => {
   const password = 'password'
   await user.type(passwordInput, password)
   const submit = getByRole('button', { name: 'Login' })
-  expect(submit.hasAttribute('disabled')).toEqual(false)
+  assertEqual(submit.hasAttribute('disabled'), false)
   await user.click(submit)
-  expect(login.mock.calls).toEqual([
+  assertDeepEqual(login.mock.calls, [
     [
       {
         username,

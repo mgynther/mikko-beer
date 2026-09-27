@@ -1,5 +1,7 @@
-import { expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { test } from '../../test'
+import { assertCalledWith, assertDefined } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render, waitFor } from '../../render'
 
 import createReview from '../../../src/storehooks/review/create'
 import type {
@@ -76,8 +78,8 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('create review', async () => {
   const user = setupUser()
-  const onCreate = vitest.fn()
-  const onValidate = vitest.fn()
+  const onCreate = mockFunction()
+  const onValidate = mockFunction()
 
   const { getByRole, getByText } = render(
     <Helper
@@ -87,15 +89,15 @@ test('create review', async () => {
       onValidate={onValidate}
     />,
   )
-  expect(getByText(validatedReview.taste)).toBeDefined()
-  expect(getByText('Succeeded')).toBeDefined()
+  assertDefined(getByText(validatedReview.taste))
+  assertDefined(getByText('Succeeded'))
 
   await user.click(getByRole('button', { name: 'Create' }))
   await waitFor(() => {
-    expect(onCreate).toHaveBeenCalledWith(request)
+    assertCalledWith(onCreate, [request])
   })
   // The envelope is unwrapped before the validator sees the review.
-  expect(onValidate).toHaveBeenCalledWith(created.review)
+  assertCalledWith(onValidate, [created.review])
 })
 
 test('a review that has not been created is undefined', () => {
@@ -108,6 +110,6 @@ test('a review that has not been created is undefined', () => {
     />,
   )
 
-  expect(getByText('No review')).toBeDefined()
-  expect(getByText('Not succeeded')).toBeDefined()
+  assertDefined(getByText('No review'))
+  assertDefined(getByText('Not succeeded'))
 })

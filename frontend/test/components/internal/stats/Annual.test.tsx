@@ -1,10 +1,12 @@
-import { render } from '@testing-library/react'
-import { expect, test, vitest } from 'vitest'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import Annual from '../../../../src/components/internal/stats/Annual'
 import type { IdParams } from '../../../../src/components/types/stats/types'
 
 test('renders annual stats', () => {
-  const stats = vitest.fn()
+  const stats = mockFunction()
   const breweryId = 'e6887360-78da-49e2-b876-68477c79c776'
   const locationId = 'ab7b1a78-802f-4f63-a0d0-7b3ec9551390'
   const styleId = '2b885977-a2fd-43c2-95f9-6b19f3c8054d'
@@ -43,7 +45,7 @@ test('renders annual stats', () => {
       styleId={styleId}
     />,
   )
-  expect(stats.mock.calls).toEqual([[{ breweryId, locationId, styleId }]])
+  assertDeepEqual(stats.mock.calls, [[{ breweryId, locationId, styleId }]])
   getByText('8.23')
   getByText('8.50')
   getByText('8')

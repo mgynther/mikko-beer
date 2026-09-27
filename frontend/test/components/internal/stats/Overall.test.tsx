@@ -1,5 +1,7 @@
-import { render } from '@testing-library/react'
-import { expect, test, vitest } from 'vitest'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import Overall from '../../../../src/components/internal/stats/Overall'
 import type {
   IdParams,
@@ -49,10 +51,10 @@ function renderOverall(
 }
 
 test('renders overall stats with location', () => {
-  const stats = vitest.fn()
+  const stats = mockFunction()
   const locationId = '22a1767b-e81c-42aa-b2d2-227e323d2a6c'
   const { getByText, queryByText } = renderOverall(stats, locationId)
-  expect(stats.mock.calls).toEqual([
+  assertDeepEqual(stats.mock.calls, [
     [
       {
         breweryId,
@@ -72,15 +74,15 @@ test('renders overall stats with location', () => {
   getByText(overallStats.reviewMode)
   getByText(overallStats.reviewStandardDeviation)
   getByText(overallStats.styleCount)
-  expect(queryByText(overallStats.locationCount)).toEqual(null)
-  expect(queryByText(overallStats.reviewWithLocationCount)).toEqual(null)
-  expect(queryByText(overallStats.reviewWithoutLocationCount)).toEqual(null)
+  assertDeepEqual(queryByText(overallStats.locationCount), null)
+  assertDeepEqual(queryByText(overallStats.reviewWithLocationCount), null)
+  assertDeepEqual(queryByText(overallStats.reviewWithoutLocationCount), null)
 })
 
 test('renders overall stats without location', () => {
-  const stats = vitest.fn()
+  const stats = mockFunction()
   const { getByText } = renderOverall(stats, undefined)
-  expect(stats.mock.calls).toEqual([
+  assertDeepEqual(stats.mock.calls, [
     [
       {
         breweryId,

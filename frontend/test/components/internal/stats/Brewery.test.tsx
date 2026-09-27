@@ -1,6 +1,9 @@
-import { act, fireEvent, render, waitFor } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { act, render, waitFor } from '../../../render'
+import { fireEvent } from '../../../fire-event'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../../filter-time'
 import Brewery from '../../../../src/components/internal/stats/Brewery'
 import type {
@@ -71,7 +74,7 @@ const emptySearchParameters: SearchParameters = {
 const noOpSetState = (): undefined => undefined
 
 test('queries brewery stats', async () => {
-  const query = vitest.fn()
+  const query = mockFunction()
   let loadCallback: () => void = () => undefined
   render(
     <Brewery
@@ -104,14 +107,15 @@ test('queries brewery stats', async () => {
       styleId={undefined}
     />,
   )
-  expect(query.mock.calls).toEqual([])
+  assertDeepEqual(query.mock.calls, [])
   await act(async () => {
     loadCallback()
   })
-  expect(query.mock.calls).toEqual([
+  assertDeepEqual(query.mock.calls, [
     [
       {
         breweryId: undefined,
+        locationId: undefined,
         // The defaults, as no search parameter sets a filter.
         maxReviewAverage: 10,
         maxReviewCount: Infinity,
@@ -239,7 +243,7 @@ const sliderChangeTests: SliderChangeTest[] = [
 
 sliderChangeTests.forEach((testCase) => {
   test(`change ${testCase.property}`, async () => {
-    const setState = vitest.fn()
+    const setState = mockFunction()
     const { getByLabelText } = render(
       <Brewery
         linkComponent={testLink}
@@ -258,7 +262,7 @@ sliderChangeTests.forEach((testCase) => {
       ...defaultFiltersOpenParams,
     }
     expected[testCase.property] = testCase.stateValue
-    expect(setState.mock.calls).toEqual([
+    assertDeepEqual(setState.mock.calls, [
       [defaultFiltersOpenParams],
       [expected],
     ])
@@ -365,7 +369,7 @@ orderChangeTests.forEach((testCase) => {
     testCase.newOrder
   } ${testCase.newDirection}`, async () => {
     const user = setupUser()
-    const setState = vitest.fn()
+    const setState = mockFunction()
     const searchRecord: Record<string, string> = {
       ...defaultSearchParams,
       s_order: testCase.originalOrder,
@@ -389,6 +393,6 @@ orderChangeTests.forEach((testCase) => {
       s_order: testCase.newOrder,
       s_direction: testCase.newDirection,
     }
-    expect(setState.mock.calls).toEqual([[searchRecord], [expected]])
+    assertDeepEqual(setState.mock.calls, [[searchRecord], [expected]])
   })
 })

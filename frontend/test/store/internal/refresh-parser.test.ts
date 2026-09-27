@@ -1,53 +1,61 @@
-import { expect, test } from 'vitest'
+import { test } from '../../test'
+import { assertDeepEqual } from '../../assert'
 import { parseRefresh } from '../../../src/store/internal/refresh-parser'
 
 test('parse refresh', () => {
-  expect(parseRefresh({ authToken: 'auth', refreshToken: 'refresh' })).toEqual({
-    authToken: 'auth',
-    refreshToken: 'refresh',
-  })
+  assertDeepEqual(
+    parseRefresh({ authToken: 'auth', refreshToken: 'refresh' }),
+    {
+      authToken: 'auth',
+      refreshToken: 'refresh',
+    },
+  )
 })
 
 test('refuse undefined', () => {
-  expect(parseRefresh(undefined)).toEqual(undefined)
+  assertDeepEqual(parseRefresh(undefined), undefined)
 })
 
 test('refuse null', () => {
-  expect(parseRefresh(null)).toEqual(undefined)
+  assertDeepEqual(parseRefresh(null), undefined)
 })
 
 test('refuse non-object', () => {
-  expect(parseRefresh('auth')).toEqual(undefined)
+  assertDeepEqual(parseRefresh('auth'), undefined)
 })
 
 test('refuse missing auth token', () => {
-  expect(parseRefresh({ refreshToken: 'refresh' })).toEqual(undefined)
+  assertDeepEqual(parseRefresh({ refreshToken: 'refresh' }), undefined)
 })
 
 test('refuse missing refresh token', () => {
-  expect(parseRefresh({ authToken: 'auth' })).toEqual(undefined)
+  assertDeepEqual(parseRefresh({ authToken: 'auth' }), undefined)
 })
 
 test('refuse non-string auth token', () => {
-  expect(parseRefresh({ authToken: 1, refreshToken: 'refresh' })).toEqual(
+  assertDeepEqual(
+    parseRefresh({ authToken: 1, refreshToken: 'refresh' }),
     undefined,
   )
 })
 
 test('refuse non-string refresh token', () => {
-  expect(parseRefresh({ authToken: 'auth', refreshToken: 1 })).toEqual(
+  assertDeepEqual(
+    parseRefresh({ authToken: 'auth', refreshToken: 1 }),
     undefined,
   )
 })
 
 test('refuse empty auth token', () => {
-  expect(parseRefresh({ authToken: '', refreshToken: 'refresh' })).toEqual(
+  assertDeepEqual(
+    parseRefresh({ authToken: '', refreshToken: 'refresh' }),
     undefined,
   )
 })
 
 test('refuse empty refresh token', () => {
-  expect(parseRefresh({ authToken: 'auth', refreshToken: '' })).toEqual(
+  assertDeepEqual(
+    parseRefresh({ authToken: 'auth', refreshToken: '' }),
     undefined,
   )
 })

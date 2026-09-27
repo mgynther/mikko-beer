@@ -1,6 +1,8 @@
-import { render, waitFor } from '@testing-library/react'
+import { test } from '../../test'
+import { assertDeepEqual, assertDefined, assertThrows } from '../../assert'
+import { mockFunction } from '../../mock'
+import { render, waitFor } from '../../render'
 import { setupUser } from '../../user-event'
-import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../filter-time'
 import Style from '../../../src/components/style/Style'
 import { Role } from '../../../src/components/types/user/types'
@@ -365,7 +367,7 @@ test('renders not found when not found', async () => {
 })
 
 test('throw without style id', async () => {
-  expect(() =>
+  assertThrows(() =>
     render(
       <Style
         linkComponent={testLink}
@@ -377,12 +379,12 @@ test('throw without style id', async () => {
         useUrlPathParams={() => ({})}
       />,
     ),
-  ).toThrow()
+  )
 })
 
 test('updates style', async () => {
   const user = setupUser()
-  const update = vitest.fn()
+  const update = mockFunction()
   const styleName = 'Rye IPA'
   const getNode: () => ReactNode = () => (
     <Style
@@ -427,7 +429,7 @@ test('updates style', async () => {
   await user.click(removeParentButton)
   const saveButton = getByRole('button', { name: 'Save' })
   await user.click(saveButton)
-  expect(update.mock.calls).toEqual([
+  assertDeepEqual(update.mock.calls, [
     [
       {
         id: style.id,
@@ -438,14 +440,14 @@ test('updates style', async () => {
   ])
   rerender(getNode())
   await waitFor(() => {
-    expect(getByRole('heading', { name: styleName }))
+    assertDefined(getByRole('heading', { name: styleName }))
   })
-  expect(getByText('-')).toBeDefined()
+  assertDefined(getByText('-'))
 })
 
 test('cancels update', async () => {
   const user = setupUser()
-  const update = vitest.fn()
+  const update = mockFunction()
   const { getByRole } = render(
     <Style
       linkComponent={testLink}

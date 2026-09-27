@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import StyleParents from '../../../../src/components/internal/style/StyleParents'
 import type { UseDebounce } from '../../../../src/components/types/types'
 import type { ListStylesIf } from '../../../../src/components/types/style/types'
@@ -49,7 +51,7 @@ test('renders parents', async () => {
 
 test('removes parent', async () => {
   const user = setupUser()
-  const select = vitest.fn()
+  const select = mockFunction()
   const { getAllByRole } = render(
     <StyleParents
       initialParents={[parent, otherParent]}
@@ -58,14 +60,14 @@ test('removes parent', async () => {
     />,
   )
   const removeButtons = getAllByRole('button', { name: 'Remove' })
-  expect(removeButtons.length).toEqual(2)
+  assertEqual(removeButtons.length, 2)
   await user.click(removeButtons[0])
-  expect(select.mock.calls).toEqual([[[otherParent.id]]])
+  assertDeepEqual(select.mock.calls, [[[otherParent.id]]])
 })
 
 test('adds parent', async () => {
   const user = setupUser()
-  const select = vitest.fn()
+  const select = mockFunction()
   const searchFieldIf: SearchFieldIf = {
     useSearchField: () => ({
       activate: () => undefined,
@@ -90,5 +92,5 @@ test('adds parent', async () => {
   await user.type(searchField, parent.name)
   const addOption = getByRole('option', { name: parent.name })
   await user.click(addOption)
-  expect(select.mock.calls).toEqual([[[otherParent.id, parent.id]]])
+  assertDeepEqual(select.mock.calls, [[[otherParent.id, parent.id]]])
 })

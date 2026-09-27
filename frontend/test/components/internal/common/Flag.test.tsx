@@ -1,53 +1,54 @@
-import { render } from '@testing-library/react'
-import { expect, test } from 'vitest'
+import { test } from '../../../test'
+import { assertDeepEqual, assertDefined } from '../../../assert'
+import { render } from '../../../render'
 import Flag from '../../../../src/components/internal/common/Flag'
 
 test('renders Finnish flag', () => {
   const { getByText } = render(<Flag country='FI' />)
-  expect(getByText('\u{1F1EB}\u{1F1EE}')).toBeDefined()
+  assertDefined(getByText('\u{1F1EB}\u{1F1EE}'))
 })
 
 test('renders Estonian flag', () => {
   const { getByText } = render(<Flag country='EE' />)
-  expect(getByText('\u{1F1EA}\u{1F1EA}')).toBeDefined()
+  assertDefined(getByText('\u{1F1EA}\u{1F1EA}'))
 })
 
 test('renders British flag', () => {
   const { getByText } = render(<Flag country='GB' />)
-  expect(getByText('\u{1F1EC}\u{1F1E7}')).toBeDefined()
+  assertDefined(getByText('\u{1F1EC}\u{1F1E7}'))
 })
 
 test('renders Swedish flag', () => {
   const { getByText } = render(<Flag country='SE' />)
-  expect(getByText('\u{1F1F8}\u{1F1EA}')).toBeDefined()
+  assertDefined(getByText('\u{1F1F8}\u{1F1EA}'))
 })
 
 test('renders Belgian flag', () => {
   const { getByText } = render(<Flag country='BE' />)
-  expect(getByText('\u{1F1E7}\u{1F1EA}')).toBeDefined()
+  assertDefined(getByText('\u{1F1E7}\u{1F1EA}'))
 })
 
 test('renders nothing for lower case country code', () => {
   const { container } = render(<Flag country='fi' />)
-  expect(container.firstChild).toEqual(null)
+  assertDeepEqual(container.firstChild, null)
 })
 
 test('renders nothing without country', () => {
   const { container } = render(<Flag country={undefined} />)
-  expect(container.firstChild).toEqual(null)
+  assertDeepEqual(container.firstChild, null)
 })
 
 test('renders nothing for too short country', () => {
   const { container } = render(<Flag country='F' />)
-  expect(container.firstChild).toEqual(null)
+  assertDeepEqual(container.firstChild, null)
 })
 
 test('renders nothing for too long country', () => {
   const { container } = render(<Flag country='FIN' />)
-  expect(container.firstChild).toEqual(null)
+  assertDeepEqual(container.firstChild, null)
 })
 
 test('renders nothing for invalid country', () => {
   const { container } = render(<Flag country='12' />)
-  expect(container.firstChild).toEqual(null)
+  assertDeepEqual(container.firstChild, null)
 })

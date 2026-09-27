@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { Link as RouterLink, MemoryRouter, useParams } from 'react-router'
 
-import { render } from '@testing-library/react'
+import { test } from '../test'
+import { assertCallCount, assertDefined, assertEqual } from '../assert'
+import { mockFunction } from '../mock'
+import { render } from '../render'
 import { setupUser } from '../user-event'
-import { expect, test, vitest } from 'vitest'
 import { testTimes } from '../components/filter-time'
 import { dontCall } from '../dont-call'
 
@@ -503,7 +505,7 @@ test('renders app login', () => {
     </MemoryRouter>,
   )
   const loginButton = getByRole('button', { name: 'Login' })
-  expect(loginButton).toBeDefined()
+  assertDefined(loginButton)
 })
 
 test('navigates to Beers', async () => {
@@ -675,17 +677,17 @@ test('sets theme to dark', async () => {
   await user.click(moreButton)
 
   const bodyLight = document.getElementsByTagName('body')
-  expect(bodyLight[0].getAttribute('class')).toEqual('light')
+  assertEqual(bodyLight[0].getAttribute('class'), 'light')
 
   const darkCheckbox = getByRole('checkbox', { name: 'Dark' })
   await user.click(darkCheckbox)
   const bodyDark = document.getElementsByTagName('body')
-  expect(bodyDark[0].getAttribute('class')).toEqual(null)
+  assertEqual(bodyDark[0].getAttribute('class'), null)
 })
 
 test('logout', async () => {
   const user = setupUser()
-  const logout = vitest.fn(async (): Promise<void> => undefined)
+  const logout = mockFunction(async (): Promise<void> => undefined)
   const { getByRole } = render(
     <MemoryRouter>
       <RouterApp
@@ -710,5 +712,5 @@ test('logout', async () => {
   const logoutButton = getByRole('button', { name: 'Logout' })
   await user.click(logoutButton)
 
-  expect(logout).toHaveBeenCalledTimes(1)
+  assertCallCount(logout, 1)
 })

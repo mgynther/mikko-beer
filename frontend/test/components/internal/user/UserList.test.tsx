@@ -1,6 +1,8 @@
-import { render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import UserList from '../../../../src/components/internal/user/UserList'
 import {
   type ListUsersIf,
@@ -28,7 +30,7 @@ const oneUserListIf = (user: User): ListUsersIf => ({
 
 test('deletes user', async () => {
   const user = setupUser()
-  const del = vitest.fn()
+  const del = mockFunction()
   const { getByRole } = render(
     <UserList
       confirm={(): boolean => true}
@@ -42,12 +44,12 @@ test('deletes user', async () => {
   )
   const deleteButton = getByRole('button', { name: 'Delete' })
   await user.click(deleteButton)
-  expect(del.mock.calls).toEqual([[user1Id]])
+  assertDeepEqual(del.mock.calls, [[user1Id]])
 })
 
 test('does not delete user when not confirmed', async () => {
   const user = setupUser()
-  const del = vitest.fn()
+  const del = mockFunction()
   const { getByRole } = render(
     <UserList
       confirm={(): boolean => false}
@@ -61,7 +63,7 @@ test('does not delete user when not confirmed', async () => {
   )
   const deleteButton = getByRole('button', { name: 'Delete' })
   await user.click(deleteButton)
-  expect(del.mock.calls).toEqual([])
+  assertDeepEqual(del.mock.calls, [])
 })
 
 test('renders users', () => {

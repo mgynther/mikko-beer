@@ -1,5 +1,12 @@
-import { expect, test, vitest } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { test } from '../../test'
+import {
+  assertCallCount,
+  assertCalled,
+  assertCalledWith,
+  assertDefined,
+} from '../../assert'
+import { mockFunction } from '../../mock'
+import { render, waitFor } from '../../render'
 
 import updateContainer from '../../../src/storehooks/container/update'
 import type {
@@ -62,9 +69,9 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('update container', async () => {
   const user = setupUser()
-  const onUpdate = vitest.fn()
-  const onUpdated = vitest.fn()
-  const onValidate = vitest.fn()
+  const onUpdate = mockFunction()
+  const onUpdated = mockFunction()
+  const onValidate = mockFunction()
   const validate: ValidateContainer = (result: unknown) => {
     onValidate(result)
     return validatedContainer
@@ -81,17 +88,17 @@ test('update container', async () => {
 
   await user.click(getByRole('button', { name: 'Update' }))
   await waitFor(() => {
-    expect(onUpdated).toHaveBeenCalled()
+    assertCalled(onUpdated)
   })
-  expect(getByText('Not loading')).toBeDefined()
-  expect(onUpdate).toHaveBeenCalledWith(container)
-  expect(onValidate).toHaveBeenCalledWith(updated.container)
+  assertDefined(getByText('Not loading'))
+  assertCalledWith(onUpdate, [container])
+  assertCalledWith(onValidate, [updated.container])
 })
 
 test('fail to update container that does not validate', async () => {
   const user = setupUser()
-  const onUpdated = vitest.fn()
-  const onError = vitest.fn()
+  const onUpdated = mockFunction()
+  const onError = mockFunction()
 
   const { getByRole } = render(
     <Helper
@@ -109,7 +116,7 @@ test('fail to update container that does not validate', async () => {
   // update: the throw propagates out of update and what follows it is never
   // reached.
   await waitFor(() => {
-    expect(onError).toHaveBeenCalled()
+    assertCalled(onError)
   })
-  expect(onUpdated).not.toHaveBeenCalled()
+  assertCallCount(onUpdated, 0)
 })

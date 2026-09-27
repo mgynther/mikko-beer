@@ -1,7 +1,11 @@
-import { render, fireEvent } from '@testing-library/react'
-import { type UserEvent } from '@testing-library/user-event'
+import { test } from '../../../test'
+import { assertDeepEqual, assertDefined, assertEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
+import type { RenderResult } from '../../../render'
+import { fireEvent } from '../../../fire-event'
+import type { UserEvent } from '../../../user-event'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import ReviewEditor from '../../../../src/components/internal/review/ReviewEditor'
 import type { UseDebounce } from '../../../../src/components/types/types'
 import type {
@@ -161,7 +165,7 @@ const review = buildReviewRequest({ time: dateStr })
 
 async function addReview(
   getByPlaceholderText: (text: string) => HTMLElement,
-  getByRole: (text: string, props?: Record<string, unknown>) => HTMLElement,
+  getByRole: RenderResult['getByRole'],
   user: UserEvent,
 ): Promise<void> {
   const additionalInfoInput = getByPlaceholderText('Additional info')
@@ -196,7 +200,7 @@ async function selectBeer(
   const selects = getAllByRole('radio', { name: 'Select' })
   await user.click(selects[0])
   const beerSearch = getByPlaceholderText('Search beer')
-  expect(beerSearch).toBeDefined()
+  assertDefined(beerSearch)
   beerSearch.focus()
   await user.paste('Seve')
   const beerOption = await findByRole('option', {
@@ -219,7 +223,7 @@ async function selectContainer(
 
 test('adds review', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { findByRole, getAllByRole, getByPlaceholderText, getByRole } = render(
     <ReviewEditor
       currentDate={currentDate}
@@ -244,7 +248,7 @@ test('adds review', async () => {
   const filteredChanged = onChange.mock.calls.filter(
     (params) => params[0] !== undefined,
   )
-  expect(filteredChanged).toEqual([
+  assertDeepEqual(filteredChanged, [
     [
       {
         additionalInfo: additionalInfoText,
@@ -262,7 +266,7 @@ test('adds review', async () => {
 
 test('adds review with custom time', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const {
     findByRole,
     getAllByRole,
@@ -303,7 +307,7 @@ test('adds review with custom time', async () => {
     (params) => params[0] !== undefined,
   )
 
-  expect(filteredChanged).toEqual([
+  assertDeepEqual(filteredChanged, [
     [
       {
         additionalInfo: additionalInfoText,
@@ -321,7 +325,7 @@ test('adds review with custom time', async () => {
 
 test('change beer', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { findByRole, getAllByRole, getByPlaceholderText, getByRole } = render(
     <ReviewEditor
       currentDate={currentDate}
@@ -348,7 +352,7 @@ test('change beer', async () => {
 
 test('change container', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getByRole } = render(
     <ReviewEditor
       currentDate={currentDate}
@@ -369,7 +373,7 @@ test('change container', async () => {
 
 test('updates review', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const { getAllByRole, getByPlaceholderText, getByRole } = render(
     <ReviewEditor
       currentDate={currentDate}
@@ -385,10 +389,10 @@ test('updates review', async () => {
     />,
   )
   const changeButtons = getAllByRole('button', { name: 'Change' })
-  expect(changeButtons.length).toEqual(2)
+  assertEqual(changeButtons.length, 2)
   await addReview(getByPlaceholderText, getByRole, user)
   const finalChange = onChange.mock.calls[onChange.mock.calls.length - 1]
-  expect(finalChange).toEqual([
+  assertDeepEqual(finalChange, [
     {
       additionalInfo: additionalInfoText,
       beer: joinedReview.beerId,
@@ -404,7 +408,7 @@ test('updates review', async () => {
 
 test('clears location', async () => {
   const user = setupUser()
-  const onChange = vitest.fn()
+  const onChange = mockFunction()
   const location: Location = {
     id: '3134b9d0-8c2a-4021-b867-5bb992b3f184',
     name: 'Beer Hunters',
@@ -432,7 +436,7 @@ test('clears location', async () => {
   const removeButton = getByRole('button', { name: 'Remove' })
   await user.click(removeButton)
   const finalChange = onChange.mock.calls[onChange.mock.calls.length - 1]
-  expect(finalChange).toEqual([
+  assertDeepEqual(finalChange, [
     {
       additionalInfo: review.additionalInfo,
       beer: joinedReview.beerId,
@@ -462,5 +466,5 @@ test('cannot change beer or container when from storage', () => {
     />,
   )
   const changeButtons = queryAllByRole('button', { name: 'Change' })
-  expect(changeButtons.length).toEqual(0)
+  assertEqual(changeButtons.length, 0)
 })

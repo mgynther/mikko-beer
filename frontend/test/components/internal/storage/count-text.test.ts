@@ -1,4 +1,5 @@
-import { expect, test } from 'vitest'
+import { test } from '../../../test'
+import { assertEqual } from '../../../assert'
 
 import { countText } from '../../../../src/components/internal/storage/count-text'
 import { buildStorage } from '../../types/storage/builders'
@@ -9,5 +10,5 @@ test('format storage count text', () => {
     buildStorage({ hasReview: false }),
     buildStorage({ hasReview: false }),
   ]
-  expect(countText(storages)).toEqual('2/3')
+  assertEqual(countText(storages), '2/3')
 })

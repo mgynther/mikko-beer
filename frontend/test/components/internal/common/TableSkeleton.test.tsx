@@ -1,5 +1,6 @@
-import { render } from '@testing-library/react'
-import { expect, test } from 'vitest'
+import { test } from '../../../test'
+import { assertEqual } from '../../../assert'
+import { render } from '../../../render'
 import TableSkeleton from '../../../../src/components/internal/common/TableSkeleton'
 
 test('renders skeleton', () => {
@@ -11,7 +12,7 @@ test('renders skeleton', () => {
     </table>,
   )
   const cells = getAllByRole('cell')
-  expect(cells.length).toEqual(4)
+  assertEqual(cells.length, 4)
 })
 
 test('renders null', () => {
@@ -23,5 +24,5 @@ test('renders null', () => {
     </table>,
   )
   const rows = queryAllByRole('row')
-  expect(rows.length).toEqual(0)
+  assertEqual(rows.length, 0)
 })

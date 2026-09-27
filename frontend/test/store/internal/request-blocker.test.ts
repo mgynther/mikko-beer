@@ -1,4 +1,5 @@
-import { expect, test } from 'vitest'
+import { test } from '../../test'
+import { assertDeepEqual } from '../../assert'
 import { waitForTurn } from '../../../src/store/internal/request-blocker'
 import { Mutex } from 'async-mutex'
 
@@ -25,5 +26,5 @@ test('waits for turn', async () => {
   const promise1 = waitForTurn(mutex, delayed)
   const promise2 = waitForTurn(mutex, immediate)
   await Promise.all([promise1, promise2])
-  expect(results).toEqual(expected)
+  assertDeepEqual(results, expected)
 })

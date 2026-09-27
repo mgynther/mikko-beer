@@ -1,6 +1,9 @@
-import { fireEvent, render } from '@testing-library/react'
+import { test } from '../../../test'
+import { assertDeepEqual } from '../../../assert'
+import { mockFunction } from '../../../mock'
+import { render } from '../../../render'
+import { fireEvent } from '../../../fire-event'
 import { setupUser } from '../../../user-event'
-import { expect, test, vitest } from 'vitest'
 import Filters from '../../../../src/components/internal/review/Filters'
 import { openFilters } from '../../open-filters'
 import type { ReviewFilters } from '../../../../src/components/internal/review/filter-types'
@@ -49,7 +52,7 @@ const defaultFilters: ReviewFilters = {
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setIsOpen = vitest.fn()
+  const setIsOpen = mockFunction()
   const { getByRole } = render(
     <Filters
       filterState={{
@@ -60,12 +63,12 @@ test('opens filters', async () => {
     />,
   )
   await openFilters(getByRole, user)
-  expect(setIsOpen.mock.calls).toEqual([[true]])
+  assertDeepEqual(setIsOpen.mock.calls, [[true]])
 })
 
 test('closes filters', async () => {
   const user = setupUser()
-  const setIsOpen = vitest.fn()
+  const setIsOpen = mockFunction()
   const { getByRole } = render(
     <Filters
       filterState={{
@@ -77,7 +80,7 @@ test('closes filters', async () => {
   )
   const toggleButton = getByRole('button', { name: 'Filters ▲' })
   await user.click(toggleButton)
-  expect(setIsOpen.mock.calls).toEqual([[false]])
+  assertDeepEqual(setIsOpen.mock.calls, [[false]])
 })
 
 test('renders values when open', () => {
@@ -137,7 +140,7 @@ test('renders values when open', () => {
 })
 
 test('sets minimum rating', () => {
-  const setMinimumRating = vitest.fn()
+  const setMinimumRating = mockFunction()
   const { getByDisplayValue } = render(
     <Filters
       filterState={{
@@ -155,11 +158,11 @@ test('sets minimum rating', () => {
   )
   const slider = getByDisplayValue('5')
   fireEvent.change(slider, { target: { value: '6' } })
-  expect(setMinimumRating.mock.calls).toEqual([[6]])
+  assertDeepEqual(setMinimumRating.mock.calls, [[6]])
 })
 
 test('sets maximum rating', () => {
-  const setMaximumRating = vitest.fn()
+  const setMaximumRating = mockFunction()
   const { getByDisplayValue } = render(
     <Filters
       filterState={{
@@ -177,11 +180,11 @@ test('sets maximum rating', () => {
   )
   const slider = getByDisplayValue('9')
   fireEvent.change(slider, { target: { value: '8' } })
-  expect(setMaximumRating.mock.calls).toEqual([[8]])
+  assertDeepEqual(setMaximumRating.mock.calls, [[8]])
 })
 
 test('sets minimum time', () => {
-  const setMinimumTime = vitest.fn()
+  const setMinimumTime = mockFunction()
   const { getByDisplayValue } = render(
     <Filters
       filterState={{
@@ -203,7 +206,7 @@ test('sets minimum time', () => {
   )
   const slider = getByDisplayValue('6')
   fireEvent.change(slider, { target: { value: '3' } })
-  expect(setMinimumTime.mock.calls).toEqual([
+  assertDeepEqual(setMinimumTime.mock.calls, [
     [
       {
         year: 2022,
@@ -214,7 +217,7 @@ test('sets minimum time', () => {
 })
 
 test('sets maximum time', () => {
-  const setMaximumTime = vitest.fn()
+  const setMaximumTime = mockFunction()
   const { getByDisplayValue } = render(
     <Filters
       filterState={{
@@ -236,7 +239,7 @@ test('sets maximum time', () => {
   )
   const slider = getByDisplayValue('9')
   fireEvent.change(slider, { target: { value: '8' } })
-  expect(setMaximumTime.mock.calls).toEqual([
+  assertDeepEqual(setMaximumTime.mock.calls, [
     [
       {
         year: 2022,
