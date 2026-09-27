@@ -187,9 +187,9 @@ const listFilterIf: (setSearch: SetSearch) => ListFilterIf = (
 })
 
 test('lists reviews', async () => {
-  const list = mockFunction()
+  const list = mockFunction<[params: IdFilteredListReviewParams]>()
   const id = '833c90e2-e2c6-42c9-a1ee-a4454b42a302'
-  const setSearch = mockFunction()
+  const setSearch = mockFunction<[state: Record<string, string>]>()
   render(
     <ReviewsBy
       linkComponent={testLink}
@@ -224,9 +224,9 @@ test('lists reviews', async () => {
 })
 
 test('lists reviews with search parameters', async () => {
-  const list = mockFunction()
+  const list = mockFunction<[params: IdFilteredListReviewParams]>()
   const id = '301b473a-218f-4058-af00-61664c991da9'
-  const setSearch = mockFunction()
+  const setSearch = mockFunction<[state: Record<string, string>]>()
   render(
     <ReviewsBy
       linkComponent={testLink}
@@ -334,7 +334,7 @@ orderChangeTests.forEach((testCase) => {
   } to ${testCase.newOrder} ${testCase.newDirection}`, async () => {
     const user = setupUser()
     const id = '4dbab81d-b353-4f0d-97b5-390967c24c19'
-    const setSearch = mockFunction()
+    const setSearch = mockFunction<[state: Record<string, string>]>()
     const searchParams: Record<string, string> = {
       ...defaultSearchParams,
       r_order: testCase.originalOrder,
@@ -412,7 +412,7 @@ test('renders loading', async () => {
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setSearch = mockFunction()
+  const setSearch = mockFunction<[state: Record<string, string>]>()
   const { getByRole } = render(
     <ReviewsBy
       linkComponent={testLink}
@@ -482,7 +482,7 @@ const defaultFiltersOpenParams: Record<string, string> = {
 
 sliderChangeTests.forEach((testCase) => {
   test(`change ${testCase.property}`, async () => {
-    const setSearch = mockFunction()
+    const setSearch = mockFunction<[state: Record<string, string>]>()
     const { getByLabelText } = render(
       <ReviewsBy
         linkComponent={testLink}

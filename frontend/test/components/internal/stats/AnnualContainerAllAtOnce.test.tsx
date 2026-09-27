@@ -9,6 +9,7 @@ import type {
 
 import AnnualContainerAllAtOnce from '../../../../src/components/internal/stats/AnnualContainerAllAtOnce'
 import { dontCall } from '../../../dont-call'
+import type { AnnualContainerStatsQueryParams } from '../../../../src/components/types/stats/types'
 
 const breweryId = '05ad469a-21ea-4be7-8112-68ef9ee65617'
 const locationId = '6cb586b2-f4fe-4b85-9c40-96897cd367a5'
@@ -39,8 +40,9 @@ const stats2022: OneAnnualContainerStats = {
 }
 
 test('queries annual container stats', async () => {
-  const query = mockFunction()
-  const setLoadedAnnualContainers = mockFunction()
+  const query = mockFunction<[params: AnnualContainerStatsQueryParams]>()
+  const setLoadedAnnualContainers =
+    mockFunction<[locations: OneAnnualContainerStats[] | undefined]>()
   render(
     <AnnualContainerAllAtOnce
       getAnnualContainerStatsIf={{
@@ -88,8 +90,9 @@ test('queries annual container stats', async () => {
 })
 
 test('renders annual container stats', async () => {
-  const query = mockFunction()
-  const setLoadedAnnualContainers = mockFunction()
+  const query = mockFunction<[params: AnnualContainerStatsQueryParams]>()
+  const setLoadedAnnualContainers =
+    mockFunction<[locations: OneAnnualContainerStats[] | undefined]>()
   const { getByText } = render(
     <AnnualContainerAllAtOnce
       getAnnualContainerStatsIf={{

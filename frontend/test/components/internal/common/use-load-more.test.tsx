@@ -64,7 +64,7 @@ function deferredPage(): Deferred {
 }
 
 test('loads the first page', async () => {
-  const loadPage = mockFunction()
+  const loadPage = mockFunction<[skip: number]>()
   const user = setupUser()
   const { getByRole, getByText } = render(
     <LoadMore
@@ -82,7 +82,7 @@ test('loads the first page', async () => {
 })
 
 test('loads the next page after the ones it has', async () => {
-  const loadPage = mockFunction()
+  const loadPage = mockFunction<[skip: number]>()
   const user = setupUser()
   const { getByRole, getByText } = render(
     <LoadMore
@@ -111,7 +111,7 @@ test('loads an empty page, which is a loaded list of nothing', async () => {
 })
 
 test('does not load again while a page is on its way', async () => {
-  const loadPage = mockFunction()
+  const loadPage = mockFunction<[skip: number]>()
   const deferred = deferredPage()
   const user = setupUser()
   const { getByRole, getByText } = render(
@@ -139,7 +139,7 @@ test('does not load again while a page is on its way', async () => {
 })
 
 test('does not load while the caller says it is loading', async () => {
-  const loadPage = mockFunction()
+  const loadPage = mockFunction<[skip: number]>()
   const user = setupUser()
   const { getByRole } = render(
     <LoadMore
@@ -156,7 +156,7 @@ test('does not load while the caller says it is loading', async () => {
 })
 
 test('does not load when there is nothing more', async () => {
-  const loadPage = mockFunction()
+  const loadPage = mockFunction<[skip: number]>()
   const user = setupUser()
   const { getByRole } = render(
     <LoadMore
@@ -198,7 +198,7 @@ test('drops a page of a list that has moved on', async () => {
 })
 
 test('loads again after a page that failed', async () => {
-  const loadPage = mockFunction()
+  const loadPage = mockFunction<[skip: number]>()
   let hasFailed = false
   const user = setupUser()
   const { getByRole, getByText } = render(

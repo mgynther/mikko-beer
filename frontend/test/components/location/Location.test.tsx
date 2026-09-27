@@ -29,6 +29,7 @@ import type {
 } from '../../../src/components/types/stats/types'
 import type {
   GetLocationIf,
+  Location as LocationType,
   SearchLocationIf,
   UpdateLocationIf,
 } from '../../../src/components/types/location/types'
@@ -240,7 +241,7 @@ const getLocationIf: GetLocationIf = {
 
 test('updates location', async () => {
   const user = setupUser()
-  const update = mockFunction()
+  const update = mockFunction<[locationRequest: LocationType]>()
   const { getByPlaceholderText, getByRole } = render(
     <Location
       linkComponent={testLink}

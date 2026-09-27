@@ -6,7 +6,7 @@ import Rating from '../../../../src/components/internal/stats/Rating'
 import type { IdParams } from '../../../../src/components/types/stats/types'
 
 test('renders rating stats', () => {
-  const stats = mockFunction()
+  const stats = mockFunction<[params: IdParams]>()
   const breweryId = '6b6d5183-8ac7-45d0-b11c-6a5b995f36fc'
   const locationId = 'c554f83e-3962-4d8d-8221-f1e282ca9c05'
   const styleId = '6526fcde-5b04-4be8-a3f6-79d2e32350cb'

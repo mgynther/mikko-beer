@@ -70,7 +70,7 @@ test('test server responds with 500 to unexpected request', async () => {
     status: 201,
   })
 
-  const handler = mockFunction()
+  const handler = mockFunction<[e: unknown]>()
   const { getByRole } = render(
     <StoreProvider>
       <Helper

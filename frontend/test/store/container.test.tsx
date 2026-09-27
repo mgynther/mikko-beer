@@ -105,7 +105,7 @@ test('create container', async () => {
     status: 201,
   })
 
-  const onResult = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <CreateContainerHelper onResult={onResult} />
@@ -150,7 +150,7 @@ test('update container', async () => {
     status: 200,
   })
 
-  const onResult = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <UpdateContainerHelper onResult={onResult} />

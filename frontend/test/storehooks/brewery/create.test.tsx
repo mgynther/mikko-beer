@@ -66,9 +66,9 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('create brewery', async () => {
   const user = setupUser()
-  const onCreate = mockFunction()
-  const onCreated = mockFunction()
-  const onValidate = mockFunction()
+  const onCreate = mockFunction<[brewery: CreateBreweryRequest]>()
+  const onCreated = mockFunction<[brewery: Brewery]>()
+  const onValidate = mockFunction<[result: unknown]>()
 
   const { getByRole, getByText } = render(
     <Helper

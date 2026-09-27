@@ -21,6 +21,7 @@ import type { StatsFilters } from '../../../../src/components/internal/stats/fil
 import { dontCall } from '../../../dont-call'
 import { updatedItems } from './load-more'
 import type { FormattedStatsParams } from '../../../../src/components/internal/stats/search-params'
+import type { BreweryCountryStatsQueryParams } from '../../../../src/components/types/stats/types'
 
 const finland: OneBreweryCountryStats = {
   countryCode: 'FI',
@@ -107,8 +108,15 @@ const unusedStats: GetBreweryCountryStatsIf = {
 }
 
 test('queries brewery country stats', async () => {
-  const query = mockFunction()
-  const setLoadedBreweryCountries = mockFunction()
+  const query = mockFunction<[params: BreweryCountryStatsQueryParams]>()
+  const setLoadedBreweryCountries =
+    mockFunction<
+      [
+        update: (
+          current: OneBreweryCountryStats[] | undefined,
+        ) => OneBreweryCountryStats[] | undefined,
+      ]
+    >()
   let loadCallback: () => void = () => undefined
   const getBreweryCountryStatsIf: GetBreweryCountryStatsIf = {
     useStats: () => ({
@@ -180,8 +188,15 @@ test('queries brewery country stats', async () => {
 })
 
 test('queries the next page after the loaded ones', async () => {
-  const query = mockFunction()
-  const setLoadedBreweryCountries = mockFunction()
+  const query = mockFunction<[params: BreweryCountryStatsQueryParams]>()
+  const setLoadedBreweryCountries =
+    mockFunction<
+      [
+        update: (
+          current: OneBreweryCountryStats[] | undefined,
+        ) => OneBreweryCountryStats[] | undefined,
+      ]
+    >()
   let loadCallback: () => void = () => undefined
   render(
     <BreweryCountryInfiniteScroll
@@ -307,7 +322,7 @@ test('renders loading', () => {
 
 test('does not try to load more when there is no more', () => {
   let loadCallback: () => void = () => undefined
-  const query = mockFunction()
+  const query = mockFunction<[params: BreweryCountryStatsQueryParams]>()
   render(
     <BreweryCountryInfiniteScroll
       getBreweryCountryStatsIf={{
@@ -342,7 +357,7 @@ test('does not try to load more when there is no more', () => {
 
 test('does not try to load more when loading', () => {
   let loadCallback: () => void = () => undefined
-  const query = mockFunction()
+  const query = mockFunction<[params: BreweryCountryStatsQueryParams]>()
   render(
     <BreweryCountryInfiniteScroll
       getBreweryCountryStatsIf={{
@@ -376,7 +391,7 @@ test('does not try to load more when loading', () => {
 })
 
 test('sets minimum review count filter', () => {
-  const setMinimumReviewAverage = mockFunction()
+  const setMinimumReviewAverage = mockFunction<[value: number]>()
   const { getByDisplayValue } = render(
     <BreweryCountryInfiniteScroll
       getBreweryCountryStatsIf={unusedStats}
@@ -405,7 +420,7 @@ test('sets minimum review count filter', () => {
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setIsFiltersOpen = mockFunction()
+  const setIsFiltersOpen = mockFunction<[isOpen: boolean]>()
   const { getByRole } = render(
     <BreweryCountryInfiniteScroll
       getBreweryCountryStatsIf={unusedStats}

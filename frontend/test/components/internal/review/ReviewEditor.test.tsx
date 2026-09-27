@@ -23,6 +23,7 @@ import {
   buildJoinedReview,
   buildReviewRequest,
 } from '../../types/review/builders'
+import type { ReviewRequest } from '../../../../src/components/types/review/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -223,7 +224,7 @@ async function selectContainer(
 
 test('adds review', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[review: ReviewRequest | undefined]>()
   const { findByRole, getAllByRole, getByPlaceholderText, getByRole } = render(
     <ReviewEditor
       currentDate={currentDate}
@@ -266,7 +267,7 @@ test('adds review', async () => {
 
 test('adds review with custom time', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[review: ReviewRequest | undefined]>()
   const {
     findByRole,
     getAllByRole,
@@ -325,7 +326,7 @@ test('adds review with custom time', async () => {
 
 test('change beer', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[review: ReviewRequest | undefined]>()
   const { findByRole, getAllByRole, getByPlaceholderText, getByRole } = render(
     <ReviewEditor
       currentDate={currentDate}
@@ -352,7 +353,7 @@ test('change beer', async () => {
 
 test('change container', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[review: ReviewRequest | undefined]>()
   const { getByRole } = render(
     <ReviewEditor
       currentDate={currentDate}
@@ -373,7 +374,7 @@ test('change container', async () => {
 
 test('updates review', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[review: ReviewRequest | undefined]>()
   const { getAllByRole, getByPlaceholderText, getByRole } = render(
     <ReviewEditor
       currentDate={currentDate}
@@ -408,7 +409,7 @@ test('updates review', async () => {
 
 test('clears location', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[review: ReviewRequest | undefined]>()
   const location: Location = {
     id: '3134b9d0-8c2a-4021-b867-5bb992b3f184',
     name: 'Beer Hunters',

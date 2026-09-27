@@ -8,7 +8,7 @@ import { openFilters } from '../../open-filters'
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setIsOpen = mockFunction()
+  const setIsOpen = mockFunction<[isOpen: boolean]>()
   const { getByRole } = render(
     <OpenFiltersButton isOpen={false} setIsOpen={setIsOpen} />,
   )
@@ -18,7 +18,7 @@ test('opens filters', async () => {
 
 test('closes filters', async () => {
   const user = setupUser()
-  const setIsOpen = mockFunction()
+  const setIsOpen = mockFunction<[isOpen: boolean]>()
   const { getByRole } = render(
     <OpenFiltersButton isOpen={true} setIsOpen={setIsOpen} />,
   )

@@ -70,9 +70,9 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('create storage', async () => {
   const user = setupUser()
-  const onCreate = mockFunction()
-  const onCreated = mockFunction()
-  const onValidate = mockFunction()
+  const onCreate = mockFunction<[request: CreateStorageRequest]>()
+  const onCreated = mockFunction<[storage: CreatedStorage]>()
+  const onValidate = mockFunction<[result: unknown]>()
 
   const { getByRole, getByText } = render(
     <Helper

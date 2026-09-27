@@ -20,8 +20,8 @@ const container: Container = {
 
 test('updates container', async () => {
   const user = setupUser()
-  const onSaved = mockFunction()
-  const update = mockFunction()
+  const onSaved = mockFunction<[]>()
+  const update = mockFunction<[container: Container]>()
   const { getByPlaceholderText, getByRole } = render(
     <UpdateContainer
       initialContainer={container}
@@ -60,7 +60,7 @@ test('updates container', async () => {
 
 test('cancel update', async () => {
   const user = setupUser()
-  const onCancel = mockFunction()
+  const onCancel = mockFunction<[]>()
   const { getByRole } = render(
     <UpdateContainer
       initialContainer={container}

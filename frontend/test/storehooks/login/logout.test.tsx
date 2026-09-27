@@ -44,7 +44,7 @@ function Helper(props: {
 
 test('logout', async () => {
   const user = setupUser()
-  const onLogout = mockFunction()
+  const onLogout = mockFunction<[params: LogoutParams]>()
 
   const { getByRole } = render(<Helper onLogout={onLogout} />)
 

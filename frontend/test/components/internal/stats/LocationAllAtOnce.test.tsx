@@ -21,6 +21,7 @@ import type { StatsFilters } from '../../../../src/components/internal/stats/fil
 import { dontCall } from '../../../dont-call'
 import type { FormattedStatsParams } from '../../../../src/components/internal/stats/search-params'
 import { testLink } from '../../link'
+import type { LocationStatsQueryParams } from '../../../../src/components/types/stats/types'
 
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
@@ -109,8 +110,9 @@ const unusedStats: GetLocationStatsIf = {
 }
 
 test('queries location stats', async () => {
-  const query = mockFunction()
-  const setLoadedLocations = mockFunction()
+  const query = mockFunction<[params: LocationStatsQueryParams]>()
+  const setLoadedLocations =
+    mockFunction<[locations: OneLocationStats[] | undefined]>()
   render(
     <LocationAllAtOnce
       linkComponent={testLink}
@@ -213,7 +215,8 @@ test('renders location stats', () => {
 })
 
 test('clears loaded locations on filter change pending', () => {
-  const setLoadedLocations = mockFunction()
+  const setLoadedLocations =
+    mockFunction<[locations: OneLocationStats[] | undefined]>()
   render(
     <LocationAllAtOnce
       linkComponent={testLink}
@@ -271,7 +274,7 @@ test('renders loading', () => {
 })
 
 test('sets minimum review count filter', () => {
-  const setMinimumReviewAverage = mockFunction()
+  const setMinimumReviewAverage = mockFunction<[value: number]>()
   const { getByDisplayValue } = render(
     <LocationAllAtOnce
       linkComponent={testLink}
@@ -304,7 +307,7 @@ test('sets minimum review count filter', () => {
 
 test('opens filter', async () => {
   const user = setupUser()
-  const setIsFiltersOpen = mockFunction()
+  const setIsFiltersOpen = mockFunction<[isOpen: boolean]>()
   const { getByRole } = render(
     <LocationAllAtOnce
       linkComponent={testLink}

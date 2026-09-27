@@ -72,9 +72,9 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('login', async () => {
   const user = setupUser()
-  const onLogin = mockFunction()
-  const onSave = mockFunction()
-  const onValidate = mockFunction()
+  const onLogin = mockFunction<[params: LoginParams]>()
+  const onSave = mockFunction<[login: Login]>()
+  const onValidate = mockFunction<[result: unknown]>()
   const data = { authToken: 'token', refreshToken: 'refresh' }
 
   const { getByRole, getByText } = render(
@@ -102,10 +102,10 @@ test('login', async () => {
 
 test('a failed login saves no session and does not reject', async () => {
   const user = setupUser()
-  const onLogin = mockFunction()
-  const onSave = mockFunction()
-  const onValidate = mockFunction()
-  const onError = mockFunction()
+  const onLogin = mockFunction<[params: LoginParams]>()
+  const onSave = mockFunction<[login: Login]>()
+  const onValidate = mockFunction<[result: unknown]>()
+  const onError = mockFunction<[]>()
 
   const { getByRole } = render(
     <Helper
@@ -131,8 +131,8 @@ test('a failed login saves no session and does not reject', async () => {
 
 test('a login that does not validate throws', async () => {
   const user = setupUser()
-  const onSave = mockFunction()
-  const onError = mockFunction()
+  const onSave = mockFunction<[login: Login]>()
+  const onError = mockFunction<[]>()
 
   const { getByRole } = render(
     <Helper

@@ -51,7 +51,7 @@ function renderOverall(
 }
 
 test('renders overall stats with location', () => {
-  const stats = mockFunction()
+  const stats = mockFunction<[params: IdParams]>()
   const locationId = '22a1767b-e81c-42aa-b2d2-227e323d2a6c'
   const { getByText, queryByText } = renderOverall(stats, locationId)
   assertDeepEqual(stats.mock.calls, [
@@ -80,7 +80,7 @@ test('renders overall stats with location', () => {
 })
 
 test('renders overall stats without location', () => {
-  const stats = mockFunction()
+  const stats = mockFunction<[params: IdParams]>()
   const { getByText } = renderOverall(stats, undefined)
   assertDeepEqual(stats.mock.calls, [
     [

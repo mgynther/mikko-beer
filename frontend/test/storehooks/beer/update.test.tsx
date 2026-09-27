@@ -69,9 +69,9 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('update beer', async () => {
   const user = setupUser()
-  const onUpdate = mockFunction()
-  const onUpdated = mockFunction()
-  const onValidate = mockFunction()
+  const onUpdate = mockFunction<[beer: BeerWithIds]>()
+  const onUpdated = mockFunction<[]>()
+  const onValidate = mockFunction<[result: unknown]>()
   const validate: ValidateBeerWithIds = (result: unknown) => {
     onValidate(result)
     return validatedBeer
@@ -97,8 +97,8 @@ test('update beer', async () => {
 
 test('fail to update beer that does not validate', async () => {
   const user = setupUser()
-  const onUpdated = mockFunction()
-  const onError = mockFunction()
+  const onUpdated = mockFunction<[]>()
+  const onError = mockFunction<[]>()
 
   const { getByRole } = render(
     <Helper

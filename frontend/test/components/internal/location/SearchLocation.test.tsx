@@ -47,7 +47,7 @@ const locations: Location[] = [location, anotherLocation]
 
 test('selects location', async () => {
   const user = setupUser()
-  const selector = mockFunction()
+  const selector = mockFunction<[location: Location]>()
   const { getByRole } = render(
     <SearchLocation
       confirm={dontCall}
@@ -79,7 +79,7 @@ test('selects location', async () => {
 
 test('does not show create button with case-insensitive match', async () => {
   const user = setupUser()
-  const selector = mockFunction()
+  const selector = mockFunction<[location: Location]>()
   const { getByRole, queryByRole } = render(
     <SearchLocation
       confirm={dontCall}
@@ -110,7 +110,7 @@ test('does not show create button with case-insensitive match', async () => {
 
 test('shows no results when creating not enabled', async () => {
   const user = setupUser()
-  const selector = mockFunction()
+  const selector = mockFunction<[location: Location]>()
   const { getByRole, getByText } = render(
     <SearchLocation
       confirm={dontCall}
@@ -137,8 +137,8 @@ test('shows no results when creating not enabled', async () => {
 
 test('creates location', async () => {
   const user = setupUser()
-  const create = mockFunction()
-  const select = mockFunction()
+  const create = mockFunction<[locationRequest: CreateLocationRequest]>()
+  const select = mockFunction<[location: Location]>()
   const { getByRole } = render(
     <SearchLocation
       confirm={dontCall}
@@ -181,9 +181,9 @@ test('creates location', async () => {
 
 test('confirms creating location with partially matching result', async () => {
   const user = setupUser()
-  const create = mockFunction()
-  const select = mockFunction()
-  const confirmCb = mockFunction()
+  const create = mockFunction<[locationRequest: CreateLocationRequest]>()
+  const select = mockFunction<[location: Location]>()
+  const confirmCb = mockFunction<[text: string]>()
   const { getByRole } = render(
     <SearchLocation
       confirm={(text: string): boolean => {
@@ -237,9 +237,8 @@ test('confirms creating location with partially matching result', async () => {
 
 test('does not create location on reject', async () => {
   const user = setupUser()
-  const create = mockFunction()
-  const select = mockFunction()
-  const confirmCb = mockFunction()
+  const select = mockFunction<[location: Location]>()
+  const confirmCb = mockFunction<[text: string]>()
   const { getByRole } = render(
     <SearchLocation
       confirm={(text: string): boolean => {
@@ -282,7 +281,6 @@ test('does not create location on reject', async () => {
   assertDeepEqual(confirmCb.mock.calls, [
     [`Are you sure you want to create ${location.name}?`],
   ])
-  assertDeepEqual(create.mock.calls, [])
   assertDeepEqual(select.mock.calls, [])
 })
 

@@ -8,7 +8,7 @@ import LinkLikeButton from '../../../../src/components/internal/common/LinkLikeB
 
 test('handles click', async () => {
   const user = setupUser()
-  const click = mockFunction()
+  const click = mockFunction<[]>()
   const { getByRole } = render(
     <LinkLikeButton onClick={click} text='Button text' />,
   )

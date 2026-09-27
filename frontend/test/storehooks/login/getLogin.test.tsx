@@ -37,7 +37,7 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('get login', () => {
-  const onValidate = mockFunction()
+  const onValidate = mockFunction<[result: unknown]>()
   const stored = { authToken: 'stored', refreshToken: 'refresh' }
 
   const { getByText } = render(

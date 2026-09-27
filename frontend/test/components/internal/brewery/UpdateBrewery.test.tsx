@@ -6,14 +6,15 @@ import { setupUser } from '../../../user-event'
 import UpdateBrewery from '../../../../src/components/internal/brewery/UpdateBrewery'
 import { countryPlaceholder } from '../../../../src/components/internal/brewery/BreweryEditor'
 import { dontCall } from '../../../dont-call'
+import type { Brewery } from '../../../../src/components/types/brewery/types'
 
 const id = 'a992b512-c636-486c-a85f-33938da9101c'
 const newNamePlaceholder = 'New name'
 
 test('updates brewery', async () => {
   const user = setupUser()
-  const onSaved = mockFunction()
-  const update = mockFunction()
+  const onSaved = mockFunction<[]>()
+  const update = mockFunction<[breweryRequest: Brewery]>()
   const { getByPlaceholderText, getByRole } = render(
     <UpdateBrewery
       initialBrewery={{
@@ -53,7 +54,7 @@ test('updates brewery', async () => {
 
 test('cancel update', async () => {
   const user = setupUser()
-  const onCancel = mockFunction()
+  const onCancel = mockFunction<[]>()
   const { getByRole } = render(
     <UpdateBrewery
       initialBrewery={{
@@ -79,8 +80,8 @@ test('cancel update', async () => {
 
 test('updates brewery country', async () => {
   const user = setupUser()
-  const onSaved = mockFunction()
-  const update = mockFunction()
+  const onSaved = mockFunction<[]>()
+  const update = mockFunction<[breweryRequest: Brewery]>()
   const { getByPlaceholderText, getByRole } = render(
     <UpdateBrewery
       initialBrewery={{

@@ -23,8 +23,8 @@ test('renders value', () => {
 })
 
 test('changes value', async () => {
-  const setDisplayValue = mockFunction()
-  const setValue = mockFunction()
+  const setDisplayValue = mockFunction<[value: number]>()
+  const setValue = mockFunction<[value: number]>()
   const { getByDisplayValue } = render(
     <Slider
       id='slider'
@@ -44,8 +44,8 @@ test('changes value', async () => {
 })
 
 test('changes value on mouse', async () => {
-  const setDisplayValue = mockFunction()
-  const setValue = mockFunction()
+  const setDisplayValue = mockFunction<[value: number]>()
+  const setValue = mockFunction<[value: number]>()
   const { getByDisplayValue } = render(
     <Slider
       id='slider'
@@ -68,8 +68,8 @@ test('changes value on mouse', async () => {
 })
 
 test('changes value on mobile', async () => {
-  const setDisplayValue = mockFunction()
-  const setValue = mockFunction()
+  const setDisplayValue = mockFunction<[value: number]>()
+  const setValue = mockFunction<[value: number]>()
   const { getByDisplayValue } = render(
     <Slider
       id='slider'

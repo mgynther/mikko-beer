@@ -19,6 +19,7 @@ import type {
 } from '../../../../src/components/types/types'
 import { dontCall } from '../../../dont-call'
 import type { FormattedStatsParams } from '../../../../src/components/internal/stats/search-params'
+import type { BreweryCountryStatsQueryParams } from '../../../../src/components/types/stats/types'
 
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
@@ -107,8 +108,9 @@ const unusedStats: GetBreweryCountryStatsIf = {
 }
 
 test('queries brewery country stats', async () => {
-  const query = mockFunction()
-  const setLoadedBreweryCountries = mockFunction()
+  const query = mockFunction<[params: BreweryCountryStatsQueryParams]>()
+  const setLoadedBreweryCountries =
+    mockFunction<[breweryCountries: OneBreweryCountryStats[] | undefined]>()
   render(
     <BreweryCountryAllAtOnce
       getBreweryCountryStatsIf={{
@@ -211,7 +213,8 @@ test('renders brewery country stats', () => {
 })
 
 test('clears loaded brewery countries on filter change pending', () => {
-  const setLoadedBreweryCountries = mockFunction()
+  const setLoadedBreweryCountries =
+    mockFunction<[breweryCountries: OneBreweryCountryStats[] | undefined]>()
   render(
     <BreweryCountryAllAtOnce
       getBreweryCountryStatsIf={unusedStats}
@@ -272,7 +275,7 @@ test('renders loading', () => {
 })
 
 test('sets minimum review count filter', () => {
-  const setMinimumReviewAverage = mockFunction()
+  const setMinimumReviewAverage = mockFunction<[value: number]>()
   const { getByDisplayValue } = render(
     <BreweryCountryAllAtOnce
       getBreweryCountryStatsIf={unusedStats}
@@ -304,7 +307,7 @@ test('sets minimum review count filter', () => {
 
 test('opens filter', async () => {
   const user = setupUser()
-  const setIsFiltersOpen = mockFunction()
+  const setIsFiltersOpen = mockFunction<[isOpen: boolean]>()
   const { getByRole } = render(
     <BreweryCountryAllAtOnce
       getBreweryCountryStatsIf={unusedStats}

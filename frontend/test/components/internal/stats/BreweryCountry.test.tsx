@@ -16,6 +16,7 @@ import type {
   UseDebounce,
   YearMonth,
 } from '../../../../src/components/types/types'
+import type { BreweryCountryStatsQueryParams } from '../../../../src/components/types/stats/types'
 
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
@@ -73,7 +74,7 @@ const emptySearchParameters: SearchParameters = {
 const noOpSetState = (): undefined => undefined
 
 test('queries brewery country stats', async () => {
-  const query = mockFunction()
+  const query = mockFunction<[params: BreweryCountryStatsQueryParams]>()
   let loadCallback: () => void = () => undefined
   render(
     <BreweryCountry
@@ -242,7 +243,7 @@ const sliderChangeTests: SliderChangeTest[] = [
 
 sliderChangeTests.forEach((testCase) => {
   test(`change ${testCase.property}`, async () => {
-    const setState = mockFunction()
+    const setState = mockFunction<[state: Record<string, string>]>()
     const { getByLabelText } = render(
       <BreweryCountry
         breweryId={undefined}
@@ -388,7 +389,7 @@ orderChangeTests.forEach((testCase) => {
     testCase.newOrder
   } ${testCase.newDirection}`, async () => {
     const user = setupUser()
-    const setState = mockFunction()
+    const setState = mockFunction<[state: Record<string, string>]>()
     const searchRecord: Record<string, string> = {
       ...defaultSearchParams,
       s_order: testCase.originalOrder,
@@ -416,7 +417,7 @@ orderChangeTests.forEach((testCase) => {
 })
 
 test('falls back to the default sorting order', async () => {
-  const setState = mockFunction()
+  const setState = mockFunction<[state: Record<string, string>]>()
   render(
     <BreweryCountry
       breweryId={undefined}

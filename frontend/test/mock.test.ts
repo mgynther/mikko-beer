@@ -3,7 +3,7 @@ import { assertDeepEqual, assertEqual } from './assert'
 import { mockFunction } from './mock'
 
 test('records the arguments of every call', () => {
-  const mocked = mockFunction()
+  const mocked = mockFunction<[text: string, count?: number]>()
   mocked('first')
   mocked('second', 2)
   assertDeepEqual(mocked.mock.calls, [['first'], ['second', 2]])
@@ -16,13 +16,20 @@ test('returns what the implementation returns', () => {
 })
 
 test('returns undefined without an implementation', () => {
-  const mocked = mockFunction()
+  const mocked = mockFunction<[]>()
   assertEqual(mocked(), undefined)
 })
 
 test('forgets its calls when cleared', () => {
-  const mocked = mockFunction()
+  const mocked = mockFunction<[text: string]>()
   mocked('first')
   mocked.mockClear()
   assertDeepEqual(mocked.mock.calls, [])
+})
+
+test('cannot be called without its arguments being typed', () => {
+  const mocked = mockFunction()
+  // @ts-expect-error The arguments are never until the test says what they are.
+  mocked('first')
+  assertEqual(mocked.mock.calls.length, 1)
 })

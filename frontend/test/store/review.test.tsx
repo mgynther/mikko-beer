@@ -101,7 +101,7 @@ test('get review', async () => {
     status: 200,
   })
 
-  const onResult = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
   const { getByRole } = render(
     <StoreProvider>
       <GetReviewHelper onResult={onResult} />
@@ -149,7 +149,7 @@ test('list reviews', async () => {
     status: 200,
   })
 
-  const onResult = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <ListReviewsHelper onResult={onResult} />
@@ -397,7 +397,7 @@ test('update review', async () => {
     status: 200,
   })
 
-  const onResult = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <UpdateReviewHelper onResult={onResult} />

@@ -38,7 +38,7 @@ function Helper(props: {
 
 test('delete storage', async () => {
   const user = setupUser()
-  const onDelete = mockFunction()
+  const onDelete = mockFunction<[storageId: string]>()
 
   const { getByRole } = render(<Helper onDelete={onDelete} />)
 

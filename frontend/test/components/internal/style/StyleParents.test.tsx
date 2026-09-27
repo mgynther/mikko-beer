@@ -51,7 +51,7 @@ test('renders parents', async () => {
 
 test('removes parent', async () => {
   const user = setupUser()
-  const select = mockFunction()
+  const select = mockFunction<[parents: string[]]>()
   const { getAllByRole } = render(
     <StyleParents
       initialParents={[parent, otherParent]}
@@ -67,7 +67,7 @@ test('removes parent', async () => {
 
 test('adds parent', async () => {
   const user = setupUser()
-  const select = mockFunction()
+  const select = mockFunction<[parents: string[]]>()
   const searchFieldIf: SearchFieldIf = {
     useSearchField: () => ({
       activate: () => undefined,

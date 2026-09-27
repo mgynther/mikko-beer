@@ -6,13 +6,14 @@ import { setupUser } from '../../../user-event'
 import BreweryEditor, {
   countryPlaceholder,
 } from '../../../../src/components/internal/brewery/BreweryEditor'
+import type { Brewery } from '../../../../src/components/types/brewery/types'
 
 const id = 'a89fbb3e-df4b-4ee6-ad88-887936726df3'
 const namePlaceholder = 'Name'
 
 test('edits valid brewery', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[brewery: Brewery | undefined]>()
   const { getByPlaceholderText } = render(
     <BreweryEditor
       brewery={{
@@ -39,7 +40,7 @@ test('edits valid brewery', async () => {
 
 test('edits invalid brewery by empty name', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[brewery: Brewery | undefined]>()
   const { getByPlaceholderText } = render(
     <BreweryEditor
       brewery={{
@@ -60,7 +61,7 @@ test('edits invalid brewery by empty name', async () => {
 })
 
 test('renders values', async () => {
-  const onChange = mockFunction()
+  const onChange = mockFunction<[brewery: Brewery | undefined]>()
   const { getByDisplayValue } = render(
     <BreweryEditor
       brewery={{
@@ -77,7 +78,7 @@ test('renders values', async () => {
 
 test('edits valid country', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[brewery: Brewery | undefined]>()
   const { getByPlaceholderText } = render(
     <BreweryEditor
       brewery={{
@@ -106,7 +107,7 @@ test('edits valid country', async () => {
 
 test('edits country in lower case', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[brewery: Brewery | undefined]>()
   const { getByDisplayValue, getByPlaceholderText } = render(
     <BreweryEditor
       brewery={{
@@ -133,7 +134,7 @@ test('edits country in lower case', async () => {
 
 test('edits invalid brewery by non-letter country', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[brewery: Brewery | undefined]>()
   const { getByPlaceholderText } = render(
     <BreweryEditor
       brewery={{
@@ -153,7 +154,7 @@ test('edits invalid brewery by non-letter country', async () => {
 
 test('edits empty country to undefined', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[brewery: Brewery | undefined]>()
   const { getByPlaceholderText } = render(
     <BreweryEditor
       brewery={{
@@ -181,7 +182,7 @@ test('edits empty country to undefined', async () => {
 
 test('edits name of brewery with country', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[brewery: Brewery | undefined]>()
   const { getByPlaceholderText } = render(
     <BreweryEditor
       brewery={{
@@ -206,7 +207,7 @@ test('edits name of brewery with country', async () => {
 })
 
 test('renders country', async () => {
-  const onChange = mockFunction()
+  const onChange = mockFunction<[brewery: Brewery | undefined]>()
   const { getByDisplayValue } = render(
     <BreweryEditor
       brewery={{

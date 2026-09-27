@@ -5,6 +5,7 @@ import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
 import CreateUser from '../../../../src/components/internal/user/CreateUser'
 import { Role } from '../../../../src/components/types/user/types'
+import type { CreateUserRequest } from '../../../../src/components/types/user/types'
 
 interface CreateTest {
   role: Role
@@ -25,7 +26,7 @@ const createTests: CreateTest[] = [
 createTests.forEach((testCase) => {
   test('creates user', async () => {
     const user = setupUser()
-    const create = mockFunction()
+    const create = mockFunction<[user: CreateUserRequest]>()
     const { getByRole, getByPlaceholderText } = render(
       <CreateUser
         createUserIf={{
@@ -73,7 +74,7 @@ createTests.forEach((testCase) => {
 })
 
 test('shows error', async () => {
-  const create = mockFunction()
+  const create = mockFunction<[user: CreateUserRequest]>()
   const { getByText } = render(
     <CreateUser
       createUserIf={{
@@ -90,7 +91,7 @@ test('shows error', async () => {
 })
 
 test('shows created text', async () => {
-  const create = mockFunction()
+  const create = mockFunction<[user: CreateUserRequest]>()
   const { getByText } = render(
     <CreateUser
       createUserIf={{

@@ -13,6 +13,7 @@ import type { CreateLocationIf } from '../../../src/components/types/location/ty
 import { loadingIndicatorText } from '../../../src/components/internal/common/LoadingIndicator'
 import { dontCall } from '../../dont-call'
 import { testLink } from '../link'
+import type { Pagination } from '../../../src/components/types/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -119,7 +120,7 @@ test('renders loading', async () => {
 })
 
 test('stops loading more', async () => {
-  const listMore = mockFunction()
+  const listMore = mockFunction<[params: Pagination]>()
   let scrollCb: () => void = () => undefined
   function getListRequestCount(): number {
     return listMore.mock.calls.length

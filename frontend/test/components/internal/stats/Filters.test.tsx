@@ -35,7 +35,7 @@ const defaultFilters: StatsNoTimeFilters = {
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setIsOpen = mockFunction()
+  const setIsOpen = mockFunction<[isOpen: boolean]>()
   const { getByRole } = render(
     <Filters
       filterState={{
@@ -63,7 +63,7 @@ test('opens filters', async () => {
 
 test('closes filters', async () => {
   const user = setupUser()
-  const setIsOpen = mockFunction()
+  const setIsOpen = mockFunction<[isOpen: boolean]>()
   const { getByRole } = render(
     <Filters
       filterState={{
@@ -172,7 +172,7 @@ test('does not render time', () => {
 })
 
 test('sets minimum review count', () => {
-  const setMinimumReviewCount = mockFunction()
+  const setMinimumReviewCount = mockFunction<[value: number]>()
   const { getByDisplayValue } = render(
     <Filters
       filterState={{
@@ -217,7 +217,7 @@ test('sets minimum review count', () => {
 })
 
 test('sets maximum review count', () => {
-  const setMaximumReviewCount = mockFunction()
+  const setMaximumReviewCount = mockFunction<[value: number]>()
   const { getByDisplayValue } = render(
     <Filters
       filterState={{
@@ -262,7 +262,7 @@ test('sets maximum review count', () => {
 })
 
 test('sets minimum review average', () => {
-  const setMinimumReviewAverage = mockFunction()
+  const setMinimumReviewAverage = mockFunction<[value: number]>()
   const { getByDisplayValue } = render(
     <Filters
       filterState={{
@@ -307,7 +307,7 @@ test('sets minimum review average', () => {
 })
 
 test('sets maximum review average', () => {
-  const setMaximumReviewAverage = mockFunction()
+  const setMaximumReviewAverage = mockFunction<[value: number]>()
   const { getByDisplayValue } = render(
     <Filters
       filterState={{
@@ -352,7 +352,7 @@ test('sets maximum review average', () => {
 })
 
 test('sets minimum time', () => {
-  const setMinimumTime = mockFunction()
+  const setMinimumTime = mockFunction<[yearMonth: YearMonth]>()
   const { getByDisplayValue } = render(
     <Filters
       filterState={{
@@ -407,7 +407,7 @@ test('sets minimum time', () => {
 })
 
 test('sets maximum time', () => {
-  const setMaximumTime = mockFunction()
+  const setMaximumTime = mockFunction<[yearMonth: YearMonth]>()
   const { getByDisplayValue } = render(
     <Filters
       filterState={{

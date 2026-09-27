@@ -109,7 +109,7 @@ test('renders brewery country stats', () => {
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setIsFiltersOpen = mockFunction()
+  const setIsFiltersOpen = mockFunction<[isOpen: boolean]>()
   const { getByRole } = render(
     <BreweryCountryStatsTable
       breweryCountries={[finland, estonia]}
@@ -183,7 +183,8 @@ const orderTests: OrderTestData[] = [
 
 orderTests.forEach((data) => {
   test(`set order to ${data.testName}`, () => {
-    const setSortingOrder = mockFunction()
+    const setSortingOrder =
+      mockFunction<[order: BreweryCountryStatsSortingOrder]>()
     const { getByRole } = render(
       <BreweryCountryStatsTable
         breweryCountries={[finland, estonia]}
@@ -205,7 +206,7 @@ orderTests.forEach((data) => {
 })
 
 test('sets minimum review count filter', () => {
-  const setMinimumReviewCount = mockFunction()
+  const setMinimumReviewCount = mockFunction<[value: number]>()
   const { getByDisplayValue } = render(
     <BreweryCountryStatsTable
       breweryCountries={[finland, estonia]}

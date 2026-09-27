@@ -7,6 +7,10 @@ import CreateStyle from '../../../../src/components/internal/style/CreateStyle'
 import type { UseDebounce } from '../../../../src/components/types/types'
 import type { SearchFieldIf } from '../../../../src/components/types/search/types'
 import { dontCall } from '../../../dont-call'
+import type {
+  CreateStyleRequest,
+  Style,
+} from '../../../../src/components/types/style/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -32,8 +36,8 @@ const useSearch: SearchFieldIf = {
 
 test('creates style', async () => {
   const user = setupUser()
-  const select = mockFunction()
-  const create = mockFunction()
+  const select = mockFunction<[style: Style]>()
+  const create = mockFunction<[style: CreateStyleRequest]>()
   const createdId = 'cb5636a9-0c9a-4a6b-8558-29e4f0918a32'
   const name = 'Cream Ale'
   const { getByPlaceholderText, getByRole } = render(
@@ -101,7 +105,7 @@ test('creates style', async () => {
 })
 
 test('removes style', async () => {
-  const remove = mockFunction()
+  const remove = mockFunction<[]>()
   const { getByRole } = render(
     <CreateStyle
       selectStyleIf={{

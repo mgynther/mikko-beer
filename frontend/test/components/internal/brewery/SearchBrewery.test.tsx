@@ -8,6 +8,7 @@ import SearchBrewery from '../../../../src/components/internal/brewery/SearchBre
 import type { SearchFieldIf } from '../../../../src/components/types/search/types'
 import type { UseDebounce } from '../../../../src/components/types/types'
 import type { SearchBreweryIf } from '../../../../src/components/types/brewery/types'
+import type { Brewery } from '../../../../src/components/types/brewery/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -35,7 +36,7 @@ const breweries = [brewery, anotherBrewery]
 
 test('selects brewery', async () => {
   const user = setupUser()
-  const selector = mockFunction()
+  const selector = mockFunction<[brewery: Brewery]>()
   const searchBreweryIf: SearchBreweryIf = {
     useSearch: () => ({
       search: async () => breweries,

@@ -73,9 +73,9 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('update style', async () => {
   const user = setupUser()
-  const onUpdate = mockFunction()
-  const onUpdated = mockFunction()
-  const onValidate = mockFunction()
+  const onUpdate = mockFunction<[style: StyleWithParentIds]>()
+  const onUpdated = mockFunction<[]>()
+  const onValidate = mockFunction<[result: unknown]>()
   const validate: ValidateStyle = (result: unknown) => {
     onValidate(result)
     return validatedStyle
@@ -103,8 +103,8 @@ test('update style', async () => {
 
 test('fail to update style that does not validate', async () => {
   const user = setupUser()
-  const onUpdated = mockFunction()
-  const onError = mockFunction()
+  const onUpdated = mockFunction<[]>()
+  const onError = mockFunction<[]>()
 
   const { getByRole } = render(
     <Helper

@@ -76,9 +76,9 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('list breweries', async () => {
   const user = setupUser()
-  const onList = mockFunction()
-  const onListed = mockFunction()
-  const onValidate = mockFunction()
+  const onList = mockFunction<[pagination: Pagination]>()
+  const onListed = mockFunction<[list: BreweryList]>()
+  const onValidate = mockFunction<[result: unknown]>()
 
   const { getByRole, getByText } = render(
     <Helper
@@ -99,7 +99,7 @@ test('list breweries', async () => {
 })
 
 test('the brewery list the store holds is validated on the way out', () => {
-  const onValidate = mockFunction()
+  const onValidate = mockFunction<[result: unknown]>()
 
   const { getByText } = render(
     <Helper

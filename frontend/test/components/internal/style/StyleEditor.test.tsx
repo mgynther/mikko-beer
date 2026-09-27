@@ -8,6 +8,7 @@ import type { UseDebounce } from '../../../../src/components/types/types'
 import type { ListStylesIf } from '../../../../src/components/types/style/types'
 import type { SearchFieldIf } from '../../../../src/components/types/search/types'
 import { dontCall } from '../../../dont-call'
+import type { StyleWithParentIds } from '../../../../src/components/types/style/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -76,7 +77,7 @@ test('renders error', async () => {
 
 test('removes parent', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[style: StyleWithParentIds | undefined]>()
   const { getAllByRole } = render(
     <StyleEditor
       initialStyle={{
@@ -105,7 +106,7 @@ test('removes parent', async () => {
 
 test('enters name', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[style: StyleWithParentIds | undefined]>()
   const { getByPlaceholderText } = render(
     <StyleEditor
       initialStyle={{

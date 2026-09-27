@@ -51,6 +51,7 @@ import { buildStorage } from '../types/storage/builders'
 import { testLink } from '../link'
 import { buildLogin } from '../types/login/builders'
 import { buildUser } from '../types/user/builders'
+import type { StyleWithParentIds } from '../../../src/components/types/style/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -384,7 +385,7 @@ test('throw without style id', async () => {
 
 test('updates style', async () => {
   const user = setupUser()
-  const update = mockFunction()
+  const update = mockFunction<[style: StyleWithParentIds]>()
   const styleName = 'Rye IPA'
   const getNode: () => ReactNode = () => (
     <Style
@@ -447,7 +448,7 @@ test('updates style', async () => {
 
 test('cancels update', async () => {
   const user = setupUser()
-  const update = mockFunction()
+  const update = mockFunction<[style: StyleWithParentIds]>()
   const { getByRole } = render(
     <Style
       linkComponent={testLink}

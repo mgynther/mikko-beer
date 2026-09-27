@@ -83,7 +83,7 @@ test('login', async () => {
     status: 200,
   })
 
-  const onResponse = mockFunction()
+  const onResponse = mockFunction<[isSuccess: boolean, data: unknown]>()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <LoginHelper username='user1' onResponse={onResponse} />
@@ -108,7 +108,7 @@ test('failed login is an answer rather than a rejection', async () => {
     status: 401,
   })
 
-  const onResponse = mockFunction()
+  const onResponse = mockFunction<[isSuccess: boolean, data: unknown]>()
   const { getByRole } = render(
     <StoreProvider>
       <LoginHelper username='user2' onResponse={onResponse} />
@@ -184,7 +184,7 @@ test('logout', async () => {
     status: 200,
   })
 
-  const onLoggedOut = mockFunction()
+  const onLoggedOut = mockFunction<[]>()
   const { getByRole } = render(
     <StoreProvider>
       <LogoutHelper onLoggedOut={onLoggedOut} />

@@ -11,13 +11,14 @@ import type {
 } from '../../../../src/components/types/brewery/types'
 import { loadingIndicatorText } from '../../../../src/components/internal/common/LoadingIndicator'
 import { dontCall } from '../../../dont-call'
+import type { Brewery } from '../../../../src/components/types/brewery/types'
 
 const id = '37e1e052-f558-40e1-ae50-4719d2d5f3cc'
 const namePlaceholder = 'Create brewery'
 
 test('creates brewery', async () => {
   const user = setupUser()
-  const selectBrewery = mockFunction()
+  const selectBrewery = mockFunction<[brewery: Brewery]>()
   const createBreweryIf: CreateBreweryIf = {
     useCreate: () => ({
       create: async (brewery: CreateBreweryRequest) => ({
@@ -62,7 +63,7 @@ test('render loading', async () => {
 
 test('creates brewery with country', async () => {
   const user = setupUser()
-  const selectBrewery = mockFunction()
+  const selectBrewery = mockFunction<[brewery: Brewery]>()
   const createBreweryIf: CreateBreweryIf = {
     useCreate: () => ({
       create: async (brewery: CreateBreweryRequest) => ({

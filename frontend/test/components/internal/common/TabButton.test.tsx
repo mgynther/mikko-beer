@@ -6,7 +6,7 @@ import TabButton from '../../../../src/components/internal/common/TabButton'
 
 test('clicks button', () => {
   const title = 'This is title'
-  const onClick = mockFunction()
+  const onClick = mockFunction<[]>()
   const { getByRole } = render(
     <TabButton
       isCompact={false}
@@ -28,7 +28,7 @@ test('renders compact selected non-uppercase', () => {
       isCompact={true}
       isSelected={true}
       isUpperCase={false}
-      onClick={mockFunction()}
+      onClick={mockFunction<[]>()}
       title={title}
     />,
   )

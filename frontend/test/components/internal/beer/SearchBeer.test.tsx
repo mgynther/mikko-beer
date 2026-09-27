@@ -8,6 +8,7 @@ import SearchBeer from '../../../../src/components/internal/beer/SearchBeer'
 import type { SearchFieldIf } from '../../../../src/components/types/search/types'
 import type { UseDebounce } from '../../../../src/components/types/types'
 import type { SearchBeerIf } from '../../../../src/components/types/beer/types'
+import type { BeerWithIds } from '../../../../src/components/types/beer/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -51,7 +52,7 @@ const beers = [beer, anotherBeer]
 
 test('selects beer', async () => {
   const user = setupUser()
-  const selector = mockFunction()
+  const selector = mockFunction<[beer: BeerWithIds]>()
   const searchBeerIf: SearchBeerIf = {
     useSearch: () => ({
       search: async () => beers,

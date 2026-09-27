@@ -64,7 +64,7 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('change password', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[params: ChangePasswordParams]>()
 
   const { getByRole, getByText } = render(
     <Helper result='UNDEFINED' onChange={onChange} />,

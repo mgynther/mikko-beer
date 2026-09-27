@@ -6,8 +6,8 @@ import { fireEvent } from '../../../fire-event'
 import ValueFilterSlider from '../../../../src/components/internal/stats/ValueFilterSlider'
 
 test('sets value', () => {
-  const setDisplayValue = mockFunction()
-  const setValue = mockFunction()
+  const setDisplayValue = mockFunction<[value: number]>()
+  const setValue = mockFunction<[index: number]>()
   const { getByDisplayValue } = render(
     <ValueFilterSlider
       title={'Title'}
@@ -24,8 +24,8 @@ test('sets value', () => {
 })
 
 test('sets value on mobile', () => {
-  const setDisplayValue = mockFunction()
-  const setValue = mockFunction()
+  const setDisplayValue = mockFunction<[value: number]>()
+  const setValue = mockFunction<[index: number]>()
   const { getByDisplayValue } = render(
     <ValueFilterSlider
       title={'Title'}
@@ -50,8 +50,8 @@ test('defaults to first value on invalid', () => {
       title={'Title'}
       value={1}
       values={[5, 21, 194]}
-      setDisplayValue={mockFunction()}
-      setValue={mockFunction()}
+      setDisplayValue={mockFunction<[value: number]>()}
+      setValue={mockFunction<[index: number]>()}
     />,
   )
   getByDisplayValue(0)

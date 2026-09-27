@@ -22,6 +22,7 @@ import { dontCall } from '../../../dont-call'
 import { updatedItems } from './load-more'
 import type { FormattedStatsParams } from '../../../../src/components/internal/stats/search-params'
 import { testLink } from '../../link'
+import type { LocationStatsQueryParams } from '../../../../src/components/types/stats/types'
 
 const plevna: OneLocationStats = {
   locationId: 'd25daf1d-6586-4d9d-81fb-ae27f07b5fba',
@@ -106,8 +107,15 @@ const unusedStats: GetLocationStatsIf = {
 }
 
 test('queries location stats', async () => {
-  const query = mockFunction()
-  const setLoadedLocations = mockFunction()
+  const query = mockFunction<[params: LocationStatsQueryParams]>()
+  const setLoadedLocations =
+    mockFunction<
+      [
+        update: (
+          current: OneLocationStats[] | undefined,
+        ) => OneLocationStats[] | undefined,
+      ]
+    >()
   let loadCallback: () => void = () => undefined
   const getLocationStatsIf: GetLocationStatsIf = {
     useStats: () => ({
@@ -239,7 +247,7 @@ test('renders loading', () => {
 
 test('does not try to load more when there is no more', () => {
   let loadCallback: () => void = () => undefined
-  const query = mockFunction()
+  const query = mockFunction<[params: LocationStatsQueryParams]>()
   render(
     <LocationInfiniteScroll
       linkComponent={testLink}
@@ -275,7 +283,7 @@ test('does not try to load more when there is no more', () => {
 
 test('does not try to load more when loading', () => {
   let loadCallback: () => void = () => undefined
-  const query = mockFunction()
+  const query = mockFunction<[params: LocationStatsQueryParams]>()
   render(
     <LocationInfiniteScroll
       linkComponent={testLink}
@@ -310,7 +318,7 @@ test('does not try to load more when loading', () => {
 })
 
 test('sets minimum review count filter', () => {
-  const setMinimumReviewAverage = mockFunction()
+  const setMinimumReviewAverage = mockFunction<[value: number]>()
   const { getByDisplayValue } = render(
     <LocationInfiniteScroll
       linkComponent={testLink}
@@ -340,7 +348,7 @@ test('sets minimum review count filter', () => {
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setIsFiltersOpen = mockFunction()
+  const setIsFiltersOpen = mockFunction<[isOpen: boolean]>()
   const { getByRole } = render(
     <LocationInfiniteScroll
       linkComponent={testLink}

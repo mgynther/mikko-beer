@@ -11,13 +11,18 @@ import type {
 import { buildLogin } from '../../types/login/builders'
 import { buildUser } from '../../types/user/builders'
 
+// The parameters are not exported, as no layer needs them by name.
+type ChangePasswordFunction = ReturnType<
+  ChangePasswordIf['useChangePassword']
+>['changePassword']
+
 const userId = '8f19eb81-b283-440f-be76-73c1c858150c'
 
 const getLogin: GetLogin = () => buildLogin({ user: buildUser({ id: userId }) })
 
 test('changes password', async () => {
   const user = setupUser()
-  const changePassword = mockFunction()
+  const changePassword = mockFunction<Parameters<ChangePasswordFunction>>()
   const changePasswordIf: ChangePasswordIf = {
     useChangePassword: () => ({
       changePassword,

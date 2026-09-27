@@ -8,6 +8,10 @@ import type { UseDebounce } from '../../../../src/components/types/types'
 import type { StyleWithParentIds } from '../../../../src/components/types/style/types'
 import type { SearchFieldIf } from '../../../../src/components/types/search/types'
 import { dontCall } from '../../../dont-call'
+import type {
+  CreateStyleRequest,
+  Style,
+} from '../../../../src/components/types/style/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -33,7 +37,7 @@ const useSearch: SearchFieldIf = {
 
 test('selects style', async () => {
   const user = setupUser()
-  const select = mockFunction()
+  const select = mockFunction<[style: Style]>()
   const { getByPlaceholderText, getByRole } = render(
     <SelectStyle
       remove={() => undefined}
@@ -68,8 +72,8 @@ test('selects style', async () => {
 
 test('selects created style', async () => {
   const user = setupUser()
-  const create = mockFunction()
-  const select = mockFunction()
+  const create = mockFunction<[style: CreateStyleRequest]>()
+  const select = mockFunction<[style: Style]>()
   const newStyle: StyleWithParentIds = {
     id: 'ed6921a0-ae9e-46f1-9e96-677032b6c7db',
     name: 'IPA',

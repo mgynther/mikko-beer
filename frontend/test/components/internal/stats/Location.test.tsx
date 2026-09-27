@@ -18,6 +18,7 @@ import type {
 } from '../../../../src/components/types/types'
 import { openFilters } from '../../open-filters'
 import { testLink } from '../../link'
+import type { LocationStatsQueryParams } from '../../../../src/components/types/stats/types'
 
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
@@ -71,7 +72,7 @@ const emptySearchParameters: SearchParameters = {
 const noOpSetState = (): undefined => undefined
 
 test('queries location stats', async () => {
-  const query = mockFunction()
+  const query = mockFunction<[params: LocationStatsQueryParams]>()
   let loadCallback: () => void = () => undefined
   const getLocationStatsIf: GetLocationStatsIf = {
     useStats: () => ({
@@ -136,7 +137,7 @@ test('queries location stats', async () => {
 })
 
 test('queries filtered location stats', async () => {
-  const query = mockFunction()
+  const query = mockFunction<[params: LocationStatsQueryParams]>()
   const breweryId = '4737b7ed-6c81-4320-9922-a2e32614f903'
   const locationId = '434a13d1-63d4-47e2-bb22-ee1cb4bd37df'
   const styleId = 'e2e4f56d-f433-4c1d-bdbb-c980bc8b3f42'
@@ -308,7 +309,7 @@ const sliderChangeTests: SliderChangeTest[] = [
 
 sliderChangeTests.forEach((testCase) => {
   test(`change ${testCase.property}`, async () => {
-    const setState = mockFunction()
+    const setState = mockFunction<[state: Record<string, string>]>()
     const { getByLabelText } = render(
       <Location
         linkComponent={testLink}
@@ -434,7 +435,7 @@ orderChangeTests.forEach((testCase) => {
     testCase.newOrder
   } ${testCase.newDirection}`, async () => {
     const user = setupUser()
-    const setState = mockFunction()
+    const setState = mockFunction<[state: Record<string, string>]>()
     const searchRecord: Record<string, string> = {
       ...defaultSearchParams,
       s_order: testCase.originalOrder,
@@ -464,7 +465,7 @@ orderChangeTests.forEach((testCase) => {
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setState = mockFunction()
+  const setState = mockFunction<[state: Record<string, string>]>()
   const { getByRole } = render(
     <Location
       linkComponent={testLink}

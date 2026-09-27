@@ -19,6 +19,7 @@ import type { UseDebounce } from '../../../../src/components/types/types'
 import type { EditBeerIf } from '../../../../src/components/types/beer/types'
 import type { SearchFieldIf } from '../../../../src/components/types/search/types'
 import { dontCall } from '../../../dont-call'
+import type { BeerWithIds } from '../../../../src/components/types/beer/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -137,7 +138,7 @@ const initialBeer = {
 
 test('edits beer name', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[beer: BeerWithIds | undefined]>()
   const { getByPlaceholderText } = render(
     <BeerEditor
       initialBeer={{
@@ -167,7 +168,7 @@ test('edits beer name', async () => {
 
 test('edits beer breweries', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[beer: BeerWithIds | undefined]>()
   const { getByPlaceholderText, getByRole } = render(
     <BeerEditor
       initialBeer={{
@@ -203,7 +204,7 @@ test('edits beer breweries', async () => {
 
 test('edits beer styles', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[beer: BeerWithIds | undefined]>()
   const { getByPlaceholderText, getByRole } = render(
     <BeerEditor
       initialBeer={{
@@ -243,7 +244,7 @@ test('edits beer styles', async () => {
 
 test('edits invalid beer by empty name', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[beer: BeerWithIds | undefined]>()
   const { getByPlaceholderText } = render(
     <BeerEditor
       editBeerIf={dontEditBeer}
@@ -262,7 +263,7 @@ test('edits invalid beer by empty name', async () => {
 })
 
 test('renders values', async () => {
-  const onChange = mockFunction()
+  const onChange = mockFunction<[beer: BeerWithIds | undefined]>()
   const { getByText, getByDisplayValue } = render(
     <BeerEditor
       editBeerIf={dontEditBeer}

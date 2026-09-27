@@ -6,7 +6,7 @@ import { fireEvent } from '../../../fire-event'
 import MinimumReviewCount from '../../../../src/components/internal/stats/MinimumReviewCount'
 
 test('sets value', () => {
-  const setValue = mockFunction()
+  const setValue = mockFunction<[minimumReviewCount: number]>()
   const { getByDisplayValue } = render(
     <MinimumReviewCount minReviewCount={5} setMinReviewCount={setValue} />,
   )

@@ -77,7 +77,7 @@ test('renders storage with review', async () => {
 
 test('deletes storage', async () => {
   const user = setupUser()
-  const del = mockFunction()
+  const del = mockFunction<[storageId: string]>()
   const { getByRole } = render(
     <StorageItem
       linkComponent={testLink}
@@ -100,7 +100,7 @@ test('deletes storage', async () => {
 
 test('does not delete storage on not confirmed', async () => {
   const user = setupUser()
-  const del = mockFunction()
+  const del = mockFunction<[storageId: string]>()
   const { getByRole } = render(
     <StorageItem
       linkComponent={testLink}

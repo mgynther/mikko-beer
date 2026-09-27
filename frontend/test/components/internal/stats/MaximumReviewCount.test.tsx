@@ -6,7 +6,7 @@ import { fireEvent } from '../../../fire-event'
 import MaximumReviewCount from '../../../../src/components/internal/stats/MaximumReviewCount'
 
 test('sets value', () => {
-  const setValue = mockFunction()
+  const setValue = mockFunction<[maximumReviewCount: number]>()
   const { getByDisplayValue } = render(
     <MaximumReviewCount maxReviewCount={5} setMaxReviewCount={setValue} />,
   )

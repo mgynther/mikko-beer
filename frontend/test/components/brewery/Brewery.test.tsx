@@ -38,6 +38,7 @@ import type {
 } from '../../../src/components/types/review/types'
 import type { ListStoragesByIf } from '../../../src/components/types/storage/types'
 import type {
+  Brewery as BreweryType,
   GetBreweryIf,
   UpdateBreweryIf,
 } from '../../../src/components/types/brewery/types'
@@ -251,7 +252,7 @@ const getBreweryIf: GetBreweryIf = {
 
 test('updates brewery', async () => {
   const user = setupUser()
-  const update = mockFunction()
+  const update = mockFunction<[breweryRequest: BreweryType]>()
   const { getByPlaceholderText, getByRole } = render(
     <Brewery
       linkComponent={testLink}

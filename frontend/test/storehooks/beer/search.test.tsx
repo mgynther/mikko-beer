@@ -58,9 +58,9 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('search beers', async () => {
   const user = setupUser()
-  const onSearch = mockFunction()
-  const onValidate = mockFunction()
-  const onFound = mockFunction()
+  const onSearch = mockFunction<[name: string]>()
+  const onValidate = mockFunction<[result: unknown]>()
+  const onFound = mockFunction<[beers: Beer[]]>()
 
   const { getByRole, getByText } = render(
     <Helper onSearch={onSearch} onFound={onFound} onValidate={onValidate} />,

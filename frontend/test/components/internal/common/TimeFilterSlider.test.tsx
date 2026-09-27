@@ -5,6 +5,7 @@ import { render } from '../../../render'
 import { fireEvent } from '../../../fire-event'
 import TimeFilterSlider from '../../../../src/components/internal/common/TimeFilterSlider'
 import { dontCall } from '../../../dont-call'
+import type { YearMonth } from '../../../../src/components/types/types'
 
 test('renders contents', () => {
   const title = 'Time'
@@ -81,7 +82,7 @@ test('throws on invalid range', () => {
 })
 
 test('changes value', async () => {
-  const setTime = mockFunction()
+  const setTime = mockFunction<[yearMonth: YearMonth]>()
   const { getByDisplayValue } = render(
     <TimeFilterSlider
       title={'title'}

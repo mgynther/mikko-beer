@@ -10,6 +10,7 @@ import type {
 import AnnualContainerInfiniteScroll from '../../../../src/components/internal/stats/AnnualContainerInfiniteScroll'
 import { loadingIndicatorText } from '../../../../src/components/internal/common/LoadingIndicator'
 import { updatedItems } from './load-more'
+import type { AnnualContainerStatsQueryParams } from '../../../../src/components/types/stats/types'
 
 const stats2023: OneAnnualContainerStats = {
   containerId: 'c585a736-2880-47bf-a185-bf0f167cc804',
@@ -36,8 +37,15 @@ const stats2022: OneAnnualContainerStats = {
 }
 
 test('queries annual container stats', async () => {
-  const query = mockFunction()
-  const setLoadedAnnualContainers = mockFunction()
+  const query = mockFunction<[params: AnnualContainerStatsQueryParams]>()
+  const setLoadedAnnualContainers =
+    mockFunction<
+      [
+        update: (
+          current: OneAnnualContainerStats[] | undefined,
+        ) => OneAnnualContainerStats[] | undefined,
+      ]
+    >()
   let loadCallback: () => void = () => undefined
   render(
     <AnnualContainerInfiniteScroll
@@ -87,8 +95,15 @@ test('queries annual container stats', async () => {
 })
 
 test('renders annual container stats', async () => {
-  const query = mockFunction()
-  const setLoadedAnnualContainers = mockFunction()
+  const query = mockFunction<[params: AnnualContainerStatsQueryParams]>()
+  const setLoadedAnnualContainers =
+    mockFunction<
+      [
+        update: (
+          current: OneAnnualContainerStats[] | undefined,
+        ) => OneAnnualContainerStats[] | undefined,
+      ]
+    >()
   const { getByText } = render(
     <AnnualContainerInfiniteScroll
       getAnnualContainerStatsIf={{
@@ -145,7 +160,7 @@ test('renders loading', () => {
 
 test('does not try to load more when there is no more', () => {
   let loadCallback: () => void = () => undefined
-  const query = mockFunction()
+  const query = mockFunction<[params: AnnualContainerStatsQueryParams]>()
   render(
     <AnnualContainerInfiniteScroll
       getAnnualContainerStatsIf={{
@@ -171,7 +186,7 @@ test('does not try to load more when there is no more', () => {
 
 test('does not try to load more when loading', () => {
   let loadCallback: () => void = () => undefined
-  const query = mockFunction()
+  const query = mockFunction<[params: AnnualContainerStatsQueryParams]>()
   render(
     <AnnualContainerInfiniteScroll
       getAnnualContainerStatsIf={{

@@ -147,7 +147,7 @@ const sortingTests: SortingTest[] = [
 sortingTests.forEach((testCase) => {
   test(testCase.name, async () => {
     const user = setupUser()
-    const setSorting = mockFunction()
+    const setSorting = mockFunction<[sorting: ReviewSortingOrder]>()
     const { getByRole } = render(
       <ReviewHeading
         filterState={{
@@ -167,7 +167,7 @@ sortingTests.forEach((testCase) => {
 })
 
 test('no sorting buttons when not supported', () => {
-  const setSorting = mockFunction()
+  const setSorting = mockFunction<[sorting: ReviewSortingOrder]>()
   const { getByRole, queryAllByRole } = render(
     <ReviewHeading
       filterState={{

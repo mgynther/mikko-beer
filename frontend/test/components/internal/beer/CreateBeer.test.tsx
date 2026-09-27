@@ -11,6 +11,7 @@ import type {
 import type { UseDebounce } from '../../../../src/components/types/types'
 import type { SearchFieldIf } from '../../../../src/components/types/search/types'
 import { dontCall } from '../../../dont-call'
+import type { BeerWithIds } from '../../../../src/components/types/beer/types'
 
 const id = 'dbec2360-d6af-45f4-b2a0-cad732a87e20'
 const namePlaceholder = 'Name'
@@ -36,7 +37,7 @@ const dontCreate = {
 
 test('creates beer', async () => {
   const user = setupUser()
-  const selectBeer = mockFunction()
+  const selectBeer = mockFunction<[beer: BeerWithIds]>()
   const searchFieldIf: SearchFieldIf = {
     useSearchField: () => ({
       activate: () => undefined,

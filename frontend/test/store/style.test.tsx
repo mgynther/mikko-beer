@@ -205,7 +205,7 @@ test('update style', async () => {
     status: 200,
   })
 
-  const onResult = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <UpdateStyleHelper onResult={onResult} />

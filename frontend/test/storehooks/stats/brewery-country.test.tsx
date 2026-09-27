@@ -79,9 +79,9 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('brewery-country stats', async () => {
   const user = setupUser()
-  const onQuery = mockFunction()
-  const onQueried = mockFunction()
-  const onValidate = mockFunction()
+  const onQuery = mockFunction<[params: BreweryCountryStatsQueryParams]>()
+  const onQueried = mockFunction<[stats: BreweryCountryStats]>()
+  const onValidate = mockFunction<[result: unknown]>()
 
   const { getByRole, getByText } = render(
     <Helper onQuery={onQuery} onQueried={onQueried} onValidate={onValidate} />,

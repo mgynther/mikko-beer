@@ -24,7 +24,7 @@ test('renders loading text', () => {
 })
 
 test('disables save button while saving', () => {
-  const saveCb = mockFunction()
+  const saveCb = mockFunction<[]>()
   const { getByRole } = render(
     <EditActions
       isSaving={true}
@@ -53,7 +53,7 @@ test('disables save button without onSave', () => {
 })
 
 test('disables save button while saving disabled', () => {
-  const saveCb = mockFunction()
+  const saveCb = mockFunction<[]>()
   const { getByRole } = render(
     <EditActions
       isSaving={false}
@@ -69,7 +69,7 @@ test('disables save button while saving disabled', () => {
 })
 
 test('cancels', () => {
-  const cancelCb = mockFunction()
+  const cancelCb = mockFunction<[]>()
   const { getByRole } = render(
     <EditActions
       isSaving={false}
@@ -85,7 +85,7 @@ test('cancels', () => {
 })
 
 test('saves', () => {
-  const saveCb = mockFunction()
+  const saveCb = mockFunction<[]>()
   const { getByRole } = render(
     <EditActions
       isSaving={false}

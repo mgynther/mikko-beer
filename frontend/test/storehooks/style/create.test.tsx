@@ -69,8 +69,8 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('create style', async () => {
   const user = setupUser()
-  const onCreate = mockFunction()
-  const onValidate = mockFunction()
+  const onCreate = mockFunction<[style: CreateStyleRequest]>()
+  const onValidate = mockFunction<[result: unknown]>()
 
   const { getByRole, getByText } = render(
     <Helper

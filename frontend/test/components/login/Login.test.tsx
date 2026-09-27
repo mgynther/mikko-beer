@@ -4,10 +4,11 @@ import { mockFunction } from '../../mock'
 import { render } from '../../render'
 import { setupUser } from '../../user-event'
 import Login from '../../../src/components/login/Login'
+import type { LoginParams } from '../../../src/components/types/login/types'
 
 test('logs in', async () => {
   const user = setupUser()
-  const login = mockFunction()
+  const login = mockFunction<[login: LoginParams]>()
   const { getByRole, getByPlaceholderText } = render(
     <Login
       loginIf={{

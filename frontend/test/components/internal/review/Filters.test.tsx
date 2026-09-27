@@ -8,6 +8,7 @@ import Filters from '../../../../src/components/internal/review/Filters'
 import { openFilters } from '../../open-filters'
 import type { ReviewFilters } from '../../../../src/components/internal/review/filter-types'
 import { dontCall } from '../../../dont-call'
+import type { YearMonth } from '../../../../src/components/types/types'
 
 const defaultFilters: ReviewFilters = {
   minRating: {
@@ -52,7 +53,7 @@ const defaultFilters: ReviewFilters = {
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setIsOpen = mockFunction()
+  const setIsOpen = mockFunction<[isOpen: boolean]>()
   const { getByRole } = render(
     <Filters
       filterState={{
@@ -68,7 +69,7 @@ test('opens filters', async () => {
 
 test('closes filters', async () => {
   const user = setupUser()
-  const setIsOpen = mockFunction()
+  const setIsOpen = mockFunction<[isOpen: boolean]>()
   const { getByRole } = render(
     <Filters
       filterState={{
@@ -140,7 +141,7 @@ test('renders values when open', () => {
 })
 
 test('sets minimum rating', () => {
-  const setMinimumRating = mockFunction()
+  const setMinimumRating = mockFunction<[value: number]>()
   const { getByDisplayValue } = render(
     <Filters
       filterState={{
@@ -162,7 +163,7 @@ test('sets minimum rating', () => {
 })
 
 test('sets maximum rating', () => {
-  const setMaximumRating = mockFunction()
+  const setMaximumRating = mockFunction<[value: number]>()
   const { getByDisplayValue } = render(
     <Filters
       filterState={{
@@ -184,7 +185,7 @@ test('sets maximum rating', () => {
 })
 
 test('sets minimum time', () => {
-  const setMinimumTime = mockFunction()
+  const setMinimumTime = mockFunction<[yearMonth: YearMonth]>()
   const { getByDisplayValue } = render(
     <Filters
       filterState={{
@@ -217,7 +218,7 @@ test('sets minimum time', () => {
 })
 
 test('sets maximum time', () => {
-  const setMaximumTime = mockFunction()
+  const setMaximumTime = mockFunction<[yearMonth: YearMonth]>()
   const { getByDisplayValue } = render(
     <Filters
       filterState={{

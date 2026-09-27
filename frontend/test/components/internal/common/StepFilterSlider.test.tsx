@@ -24,8 +24,8 @@ test('renders contents', () => {
 })
 
 test('changes value', async () => {
-  const setDisplayValue = mockFunction()
-  const setValue = mockFunction()
+  const setDisplayValue = mockFunction<[value: number]>()
+  const setValue = mockFunction<[value: number]>()
   const { getByDisplayValue } = render(
     <StepFilterSlider
       title={'Title'}
@@ -44,8 +44,8 @@ test('changes value', async () => {
 })
 
 test('changes value on mobile', async () => {
-  const setDisplayValue = mockFunction()
-  const setValue = mockFunction()
+  const setDisplayValue = mockFunction<[value: number]>()
+  const setValue = mockFunction<[value: number]>()
   const { getByDisplayValue } = render(
     <StepFilterSlider
       title={'Title'}

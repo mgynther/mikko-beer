@@ -20,6 +20,7 @@ import type {
 import { dontCall } from '../../../dont-call'
 import type { FormattedStatsParams } from '../../../../src/components/internal/stats/search-params'
 import { testLink } from '../../link'
+import type { BreweryStatsQueryParams } from '../../../../src/components/types/stats/types'
 
 const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
@@ -110,8 +111,9 @@ const unusedStats: GetBreweryStatsIf = {
 }
 
 test('queries brewery stats', async () => {
-  const query = mockFunction()
-  const setLoadedBreweries = mockFunction()
+  const query = mockFunction<[params: BreweryStatsQueryParams]>()
+  const setLoadedBreweries =
+    mockFunction<[breweries: OneBreweryStats[] | undefined]>()
   render(
     <BreweryAllAtOnce
       linkComponent={testLink}
@@ -214,7 +216,8 @@ test('renders brewery stats', () => {
 })
 
 test('clears loaded breweries on filter change pending', () => {
-  const setLoadedBreweries = mockFunction()
+  const setLoadedBreweries =
+    mockFunction<[breweries: OneBreweryStats[] | undefined]>()
   render(
     <BreweryAllAtOnce
       linkComponent={testLink}
@@ -272,7 +275,7 @@ test('renders loading', () => {
 })
 
 test('sets minimum review count filter', () => {
-  const setMinimumReviewAverage = mockFunction()
+  const setMinimumReviewAverage = mockFunction<[value: number]>()
   const { getByDisplayValue } = render(
     <BreweryAllAtOnce
       linkComponent={testLink}
@@ -305,7 +308,7 @@ test('sets minimum review count filter', () => {
 
 test('opens filter', async () => {
   const user = setupUser()
-  const setIsFiltersOpen = mockFunction()
+  const setIsFiltersOpen = mockFunction<[isOpen: boolean]>()
   const { getByRole } = render(
     <BreweryAllAtOnce
       linkComponent={testLink}

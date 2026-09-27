@@ -64,7 +64,7 @@ test('activates', async () => {
   const user = setupUser()
   let useSearchCount = 0
   const search = {
-    activate: mockFunction(),
+    activate: mockFunction<[]>(),
     isActive: false,
   }
   const { getByRole } = render(
@@ -148,7 +148,7 @@ test('does not show items while filter empty', async () => {
 test('formats custom name', async () => {
   const itemName = 'Must not be visible'
   const customFormattedName = 'Must be visible'
-  const selector = mockFunction()
+  const selector = mockFunction<[item: { id: string; name: string }]>()
   const { getByText, queryByText } = render(
     <SearchBox
       {...defaultProps}
@@ -201,7 +201,7 @@ test('renders no results info', async () => {
 test('item is selected', async () => {
   const user = setupUser()
   const itemName = 'Must be visible'
-  const selector = mockFunction()
+  const selector = mockFunction<[item: { id: string; name: string }]>()
   const { getByRole } = render(
     <SearchBox
       {...defaultProps}
@@ -234,7 +234,7 @@ test('renders filter', async () => {
 
 test('clears filter', async () => {
   const user = setupUser()
-  const setter = mockFunction()
+  const setter = mockFunction<[filter: string]>()
   const { getByRole } = render(
     <SearchBox
       {...defaultProps}
@@ -250,15 +250,14 @@ test('clears filter', async () => {
 
 test('inputs text', async () => {
   const user = setupUser()
-  const setter = mockFunction()
+  const setter = mockFunction<[filter: string]>()
   const { getByRole } = render(
     <SearchBox {...defaultProps} setFilter={setter} />,
   )
   const input = getByRole('combobox')
   assertDefined(input)
   await user.type(input, 'Test')
-  const expected = [['T'], ['e'], ['s'], ['t']]
-  assertDeepEqual(setter.mock.calls, expected)
+  assertDeepEqual(setter.mock.calls, [['T'], ['e'], ['s'], ['t']])
 })
 
 test('shows loading indicator', async () => {
@@ -455,15 +454,15 @@ interface KeyboardRender {
   getActiveOption: () => string | null
   input: HTMLElement
   options: HTMLElement[]
-  select: MockFunction
-  setFilter: MockFunction
+  select: MockFunction<[item: SearchBoxItem]>
+  setFilter: MockFunction<[filter: string]>
 }
 
 function renderForKeyboard(
   currentOptions: SearchBoxItem[] = keyboardOptions,
 ): KeyboardRender {
-  const select = mockFunction()
-  const setFilter = mockFunction()
+  const select = mockFunction<[item: SearchBoxItem]>()
+  const setFilter = mockFunction<[filter: string]>()
   const { getAllByRole, getByRole, queryAllByRole } = render(
     <SearchBox
       {...defaultProps}

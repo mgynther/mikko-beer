@@ -46,8 +46,8 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('get style', () => {
-  const onGet = mockFunction()
-  const onValidate = mockFunction()
+  const onGet = mockFunction<[styleId: string]>()
+  const onValidate = mockFunction<[result: unknown]>()
   const data = { style: { id: styleId, name: 'Test style' } }
 
   const { getByText } = render(
@@ -67,7 +67,7 @@ test('get style', () => {
 })
 
 test('get style that has not arrived', () => {
-  const onValidate = mockFunction()
+  const onValidate = mockFunction<[result: unknown]>()
 
   const { getByText } = render(
     <Helper

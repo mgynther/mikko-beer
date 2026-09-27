@@ -55,9 +55,9 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('get review', async () => {
   const user = setupUser()
-  const onGet = mockFunction()
-  const onGot = mockFunction()
-  const onValidate = mockFunction()
+  const onGet = mockFunction<[reviewId: string]>()
+  const onGot = mockFunction<[review: Review]>()
+  const onValidate = mockFunction<[result: unknown]>()
 
   const { getByRole } = render(
     <Helper onGet={onGet} onGot={onGot} onValidate={onValidate} />,

@@ -20,6 +20,7 @@ import {
   buildJoinedReview,
   buildReviewRequest,
 } from '../../types/review/builders'
+import type { Review } from '../../../../src/components/types/review/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -176,8 +177,8 @@ async function addReview(
 
 test('updates review', async () => {
   const user = setupUser()
-  const onSaved = mockFunction()
-  const update = mockFunction()
+  const onSaved = mockFunction<[]>()
+  const update = mockFunction<[request: Review]>()
   const { getByPlaceholderText, getByRole } = render(
     <UpdateReview
       initialReview={{
@@ -220,7 +221,7 @@ test('updates review', async () => {
 
 test('cancels update', async () => {
   const user = setupUser()
-  const onCancel = mockFunction()
+  const onCancel = mockFunction<[]>()
   const { getByPlaceholderText, getByRole } = render(
     <UpdateReview
       initialReview={{

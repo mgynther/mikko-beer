@@ -69,9 +69,9 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('update location', async () => {
   const user = setupUser()
-  const onUpdate = mockFunction()
-  const onUpdated = mockFunction()
-  const onValidate = mockFunction()
+  const onUpdate = mockFunction<[location: Location]>()
+  const onUpdated = mockFunction<[]>()
+  const onValidate = mockFunction<[result: unknown]>()
   const validate: ValidateLocation = (result: unknown) => {
     onValidate(result)
     return validatedLocation
@@ -97,8 +97,8 @@ test('update location', async () => {
 
 test('fail to update location that does not validate', async () => {
   const user = setupUser()
-  const onUpdated = mockFunction()
-  const onError = mockFunction()
+  const onUpdated = mockFunction<[]>()
+  const onError = mockFunction<[]>()
 
   const { getByRole } = render(
     <Helper

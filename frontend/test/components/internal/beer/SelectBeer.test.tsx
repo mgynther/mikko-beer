@@ -52,7 +52,7 @@ const searchFieldIf: SearchFieldIf = {
 
 test('selects created beer', async () => {
   const user = setupUser()
-  const selectBeer = mockFunction()
+  const selectBeer = mockFunction<[beer: BeerWithIds]>()
   const id = 'b5a1c3e1-1dc2-4ef5-ba2d-01a7efb08be1'
   const { getByPlaceholderText, getByRole } = render(
     <SelectBeer
@@ -142,7 +142,7 @@ test('selects created beer', async () => {
 
 test('selects beer', async () => {
   const user = setupUser()
-  const selectBeer = mockFunction()
+  const selectBeer = mockFunction<[beer: BeerWithIds]>()
   const { getAllByRole, getByRole } = render(
     <SelectBeer
       select={selectBeer}

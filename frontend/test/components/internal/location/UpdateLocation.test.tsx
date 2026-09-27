@@ -8,6 +8,7 @@ import { Role } from '../../../../src/components/types/user/types'
 import type { GetLogin } from '../../../../src/components/types/login/types'
 import { buildLogin } from '../../types/login/builders'
 import { buildUser } from '../../types/user/builders'
+import type { Location } from '../../../../src/components/types/location/types'
 
 const id = 'e00e1994-026c-4be6-93f2-4b247a0f0ce8'
 const newNamePlaceholder = 'New name'
@@ -18,8 +19,8 @@ function getLogin(): GetLogin {
 
 test('updates location', async () => {
   const user = setupUser()
-  const onSaved = mockFunction()
-  const update = mockFunction()
+  const onSaved = mockFunction<[]>()
+  const update = mockFunction<[locationRequest: Location]>()
   const { getByPlaceholderText, getByRole } = render(
     <UpdateLocation
       initialLocation={{
@@ -58,7 +59,7 @@ test('updates location', async () => {
 
 test('cancel update', async () => {
   const user = setupUser()
-  const onCancel = mockFunction()
+  const onCancel = mockFunction<[]>()
   const { getByRole } = render(
     <UpdateLocation
       initialLocation={{

@@ -497,7 +497,8 @@ test('renders brewery country stats', async () => {
 
 test('sets state', async () => {
   const user = setupUser()
-  const setSearch = mockFunction()
+  const setSearch =
+    mockFunction<[mode: string, state: Record<string, string>]>()
   const statsIf: StatsIf = {
     ...emptyStatsIf,
     setSearch,
@@ -831,7 +832,8 @@ navigationTests.forEach((testCase) => {
     testCase.destinationSearch
   }`, async () => {
     const user = setupUser()
-    const setSearch = mockFunction()
+    const setSearch =
+      mockFunction<[mode: string, state: Record<string, string>]>()
     const { getByRole } = render(
       <Stats
         linkComponent={testLink}
@@ -853,7 +855,8 @@ navigationTests.forEach((testCase) => {
 
 test('navigates from overall to overall', async () => {
   const user = setupUser()
-  const setSearch = mockFunction()
+  const setSearch =
+    mockFunction<[mode: string, state: Record<string, string>]>()
   const { getByRole } = render(
     <Stats
       linkComponent={testLink}

@@ -47,7 +47,7 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('list styles', () => {
-  const onValidate = mockFunction()
+  const onValidate = mockFunction<[result: unknown]>()
 
   const { getByText } = render(
     <Helper data={listed} isLoading={false} onValidate={onValidate} />,

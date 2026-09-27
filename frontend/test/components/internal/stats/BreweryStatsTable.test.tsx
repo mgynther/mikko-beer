@@ -101,7 +101,7 @@ test('renders brewery stats without country', () => {
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setIsFiltersOpen = mockFunction()
+  const setIsFiltersOpen = mockFunction<[isOpen: boolean]>()
   const { getByRole } = render(
     <BreweryStatsTable
       linkComponent={testLink}
@@ -169,7 +169,7 @@ const orderTests: OrderTestData[] = [
 
 orderTests.forEach((data) => {
   test(`set order to ${data.testName}`, () => {
-    const setSortingOrder = mockFunction()
+    const setSortingOrder = mockFunction<[order: BreweryStatsSortingOrder]>()
     const { getByRole } = render(
       <BreweryStatsTable
         linkComponent={testLink}
@@ -192,7 +192,7 @@ orderTests.forEach((data) => {
 })
 
 test('sets minimum review count filter', () => {
-  const setMinimumReviewCount = mockFunction()
+  const setMinimumReviewCount = mockFunction<[value: number]>()
   const { getByDisplayValue } = render(
     <BreweryStatsTable
       linkComponent={testLink}

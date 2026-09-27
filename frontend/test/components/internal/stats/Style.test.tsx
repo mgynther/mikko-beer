@@ -58,7 +58,7 @@ const statsResult = {
 const minTime: YearMonth = testTimes.min.yearMonth
 const maxTime: YearMonth = testTimes.max.yearMonth
 
-const defaultParams = {
+const defaultParams: StyleStatsQueryParams = {
   breweryId: undefined,
   locationId: undefined,
   maxReviewAverage: 10,
@@ -154,7 +154,7 @@ test('renders style stats', () => {
 })
 
 test('applies filters', () => {
-  const statsRequests = mockFunction()
+  const statsRequests = mockFunction<[params: StyleStatsQueryParams]>()
   const searchRecord: Record<string, string> = {
     s_order: 'average',
     s_direction: 'desc',
@@ -197,7 +197,7 @@ test('applies filters', () => {
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setState = mockFunction()
+  const setState = mockFunction<[state: Record<string, string>]>()
   const { getByRole } = render(
     <Style
       linkComponent={testLink}
@@ -282,7 +282,7 @@ const sliderChangeTests: SliderChangeTest[] = [
 
 sliderChangeTests.forEach((testCase) => {
   test(`change ${testCase.property}`, async () => {
-    const setState = mockFunction()
+    const setState = mockFunction<[state: Record<string, string>]>()
     const { getByLabelText } = render(
       <Style
         linkComponent={testLink}
@@ -307,7 +307,7 @@ sliderChangeTests.forEach((testCase) => {
 })
 
 test('uses ids', async () => {
-  const statsRequests = mockFunction()
+  const statsRequests = mockFunction<[params: StyleStatsQueryParams]>()
   render(
     <Style
       linkComponent={testLink}
@@ -431,7 +431,7 @@ orderChangeTests.forEach((testCase) => {
     testCase.newOrder
   } ${testCase.newDirection}`, async () => {
     const user = setupUser()
-    const setState = mockFunction()
+    const setState = mockFunction<[state: Record<string, string>]>()
     const searchRecord: Record<string, string> = {
       ...defaultSearchParams,
       s_order: testCase.originalOrder,

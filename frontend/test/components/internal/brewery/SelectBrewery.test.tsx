@@ -43,7 +43,7 @@ const getSearch: (isSearchFieldActive: boolean) => SearchBreweryIf = (
 
 test('selects brewery', async () => {
   const user = setupUser()
-  const onSelect = mockFunction()
+  const onSelect = mockFunction<[brewery: Brewery]>()
   const { getByPlaceholderText, findByRole } = render(
     <SelectBrewery
       isRemoveVisible={false}
@@ -67,7 +67,7 @@ test('selects brewery', async () => {
 
 test('selects created brewery', async () => {
   const user = setupUser()
-  const onSelect = mockFunction()
+  const onSelect = mockFunction<[brewery: Brewery]>()
   const newBrewery: Brewery = {
     id: 'ca036383-f707-4a52-a26d-bd0c048c0106',
     name: 'Tuju',

@@ -291,7 +291,7 @@ test('query annual container stats', async () => {
     status: 200,
   })
 
-  const onResult = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <AnnualContainerStatsHelper
@@ -350,7 +350,7 @@ test('query brewery stats', async () => {
     status: 200,
   })
 
-  const onResult = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <BreweryStatsHelper onResult={onResult} params={breweryParams} />
@@ -405,7 +405,7 @@ test('query brewery country stats', async () => {
     status: 200,
   })
 
-  const onResult = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <BreweryCountryStatsHelper
@@ -462,7 +462,7 @@ test('query location stats', async () => {
     status: 200,
   })
 
-  const onResult = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <LocationStatsHelper
@@ -499,7 +499,7 @@ test('an infinite maximum review count is left out of the query', async () => {
     status: 200,
   })
 
-  const onResult = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
   const { getByRole } = render(
     <StoreProvider>
       <BreweryStatsHelper
@@ -530,7 +530,7 @@ test('a failed query gives undefined data rather than rejecting', async () => {
     status: 500,
   })
 
-  const onResult = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
   const { getByRole } = render(
     <StoreProvider>
       <BreweryStatsHelper

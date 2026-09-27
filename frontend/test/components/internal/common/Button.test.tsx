@@ -8,7 +8,7 @@ import Button from '../../../../src/components/internal/common/Button'
 
 test('handles click', async () => {
   const user = setupUser()
-  const clickCb = mockFunction()
+  const clickCb = mockFunction<[]>()
   const { getByRole } = render(
     <Button disabled={false} onClick={clickCb} text='Click me' />,
   )
@@ -19,7 +19,7 @@ test('handles click', async () => {
 
 test('does not handle click when disabled', async () => {
   const user = setupUser()
-  const clickCb = mockFunction()
+  const clickCb = mockFunction<[]>()
   const { getByRole } = render(
     <Button disabled={true} onClick={clickCb} text='Click me' />,
   )

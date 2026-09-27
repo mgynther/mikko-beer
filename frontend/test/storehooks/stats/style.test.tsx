@@ -53,8 +53,8 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('style stats', () => {
-  const onQuery = mockFunction()
-  const onValidate = mockFunction()
+  const onQuery = mockFunction<[params: StyleStatsQueryParams]>()
+  const onValidate = mockFunction<[result: unknown]>()
 
   const { getByText } = render(
     <Helper onQuery={onQuery} onValidate={onValidate} />,

@@ -172,7 +172,7 @@ test('delete user', async () => {
     status: 204,
   })
 
-  const onDeleted = mockFunction()
+  const onDeleted = mockFunction<[]>()
   const { getByRole } = render(
     <StoreProvider>
       <DeleteUserHelper onDeleted={onDeleted} />

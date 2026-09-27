@@ -15,6 +15,7 @@ import type { SearchFieldIf } from '../../../../src/components/types/search/type
 import type { CreateStorageIf } from '../../../../src/components/types/storage/types'
 import { dontCall } from '../../../dont-call'
 import { buildBeer } from '../../types/beer/builders'
+import type { CreateStorageRequest } from '../../../../src/components/types/storage/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -114,7 +115,7 @@ const dontCreateStorageIf: CreateStorageIf = {
 
 test('creates storage', async () => {
   const user = setupUser()
-  const create = mockFunction()
+  const create = mockFunction<[request: CreateStorageRequest]>()
   const {
     findByRole,
     getAllByRole,

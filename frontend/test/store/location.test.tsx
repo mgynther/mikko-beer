@@ -150,7 +150,7 @@ test('list locations', async () => {
     status: 200,
   })
 
-  const onResult = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <ListLocationsHelper
@@ -182,8 +182,8 @@ test('fail to list locations', async () => {
     status: 500,
   })
 
-  const onResult = mockFunction()
-  const onError = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
+  const onError = mockFunction<[]>()
   const { getByRole } = render(
     <StoreProvider>
       <ListLocationsHelper size={20} onResult={onResult} onError={onError} />
@@ -229,7 +229,7 @@ test('search locations', async () => {
     status: 200,
   })
 
-  const onResult = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <SearchLocationsHelper onResult={onResult} onError={() => undefined} />
@@ -277,7 +277,7 @@ test('create location', async () => {
     status: 201,
   })
 
-  const onResult = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <CreateLocationHelper onResult={onResult} onError={() => undefined} />
@@ -321,7 +321,7 @@ test('update location', async () => {
     status: 200,
   })
 
-  const onResult = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <UpdateLocationHelper onResult={onResult} onError={() => undefined} />

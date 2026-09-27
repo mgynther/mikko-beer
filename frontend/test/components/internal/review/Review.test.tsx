@@ -173,8 +173,8 @@ async function addReview(
 
 test('updates review', async () => {
   const user = setupUser()
-  const onChanged = mockFunction()
-  const update = mockFunction()
+  const onChanged = mockFunction<[]>()
+  const update = mockFunction<[request: ReviewType]>()
   const { getByPlaceholderText, getByRole, getByText } = render(
     <Review
       linkComponent={testLink}
@@ -229,7 +229,7 @@ test('updates review', async () => {
 
 test('update review without onChanged callback', async () => {
   const user = setupUser()
-  const update = mockFunction()
+  const update = mockFunction<[request: ReviewType]>()
   const { getByPlaceholderText, getByRole, getByText } = render(
     <Review
       linkComponent={testLink}
@@ -283,8 +283,8 @@ test('update review without onChanged callback', async () => {
 
 test('cancel editing', async () => {
   const user = setupUser()
-  const onChanged = mockFunction()
-  const update = mockFunction()
+  const onChanged = mockFunction<[]>()
+  const update = mockFunction<[request: ReviewType]>()
   const { getByRole, getByText } = render(
     <Review
       linkComponent={testLink}
@@ -320,8 +320,8 @@ test('cancel editing', async () => {
 
 test('cannot update review as viewer', async () => {
   const user = setupUser()
-  const onChanged = mockFunction()
-  const update = mockFunction()
+  const onChanged = mockFunction<[]>()
+  const update = mockFunction<[request: ReviewType]>()
   const { getByText, queryByRole } = render(
     <Review
       linkComponent={testLink}
@@ -373,8 +373,8 @@ test('renders review', async () => {
     smell: 'Nice',
     taste: 'Roasted malt, bitter, strong',
   })
-  const onChanged = mockFunction()
-  const update = mockFunction()
+  const onChanged = mockFunction<[]>()
+  const update = mockFunction<[request: ReviewType]>()
   const { getByText, getByRole } = render(
     <Review
       linkComponent={testLink}

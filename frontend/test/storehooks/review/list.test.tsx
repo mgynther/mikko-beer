@@ -81,9 +81,9 @@ function Helper(props: HelperProps): React.JSX.Element {
 
 test('list reviews', async () => {
   const user = setupUser()
-  const onList = mockFunction()
-  const onListed = mockFunction()
-  const onValidate = mockFunction()
+  const onList = mockFunction<[params: ListReviewParams]>()
+  const onListed = mockFunction<[list: JoinedReviewList]>()
+  const onValidate = mockFunction<[result: unknown]>()
 
   const { getByRole, getByText } = render(
     <Helper
@@ -104,7 +104,7 @@ test('list reviews', async () => {
 })
 
 test('the review list the store holds is validated on the way out', () => {
-  const onValidate = mockFunction()
+  const onValidate = mockFunction<[result: unknown]>()
 
   const { getByText } = render(
     <Helper

@@ -7,7 +7,7 @@ import Links from '../../../../src/components/internal/common/Links'
 import { testLink } from '../../link'
 
 test('renders links', () => {
-  const linkFormattingRequests = mockFunction()
+  const linkFormattingRequests = mockFunction<[id: string]>()
   const id1 = '95b4f459-ea6c-49f3-829a-f5ed6688def6'
   const id2 = '1138ddd1-bb90-4fa9-984b-40266c33a626'
   const { getByRole } = render(

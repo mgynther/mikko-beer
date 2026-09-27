@@ -8,6 +8,7 @@ import type {
   GetAnnualContainerStatsIf,
   OneAnnualContainerStats,
 } from '../../../../src/components/types/stats/types'
+import type { AnnualContainerStatsQueryParams } from '../../../../src/components/types/stats/types'
 
 const stats2023: OneAnnualContainerStats = {
   containerId: '08d61e11-7669-44b1-9252-a45fc99d53a7',
@@ -51,7 +52,7 @@ const usedStats: GetAnnualContainerStatsIf = {
 }
 
 test('queries annualContainer stats', async () => {
-  const query = mockFunction()
+  const query = mockFunction<[params: AnnualContainerStatsQueryParams]>()
   let loadCallback: () => void = () => undefined
   render(
     <AnnualContainer
@@ -98,7 +99,7 @@ test('queries annualContainer stats', async () => {
 })
 
 test('queries filtered annual container stats', async () => {
-  const query = mockFunction()
+  const query = mockFunction<[params: AnnualContainerStatsQueryParams]>()
   const breweryId = 'c876a4bb-8899-41de-a413-afbb5faea82c'
   const locationId = '305f744e-7e5d-4bde-b528-4e74150b8db5'
   const styleId = '84a0e394-d051-4001-852a-df997190f836'

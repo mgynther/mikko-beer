@@ -317,7 +317,7 @@ test('create storage', async () => {
     status: 201,
   })
 
-  const onResult = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <CreateStorageHelper onResult={onResult} onError={() => undefined} />
@@ -343,7 +343,7 @@ test('fail to create storage', async () => {
     status: 400,
   })
 
-  const onError = mockFunction()
+  const onError = mockFunction<[]>()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <CreateStorageHelper onResult={() => undefined} onError={onError} />
@@ -389,7 +389,7 @@ test('delete storage', async () => {
     status: 204,
   })
 
-  const onDeleted = mockFunction()
+  const onDeleted = mockFunction<[]>()
   const { getByRole } = render(
     <StoreProvider>
       <DeleteStorageHelper onDeleted={onDeleted} />

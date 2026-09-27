@@ -8,6 +8,7 @@ import type { UseDebounce } from '../../../../src/components/types/types'
 import type { StyleWithParentIds } from '../../../../src/components/types/style/types'
 import type { SearchFieldIf } from '../../../../src/components/types/search/types'
 import { dontCall } from '../../../dont-call'
+import type { CreateStyleRequest } from '../../../../src/components/types/style/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -33,7 +34,7 @@ const useSearch: SearchFieldIf = {
 
 test('removes style', async () => {
   const user = setupUser()
-  const select = mockFunction()
+  const select = mockFunction<[styles: string[]]>()
   const { getAllByRole, getByRole } = render(
     <SelectStyles
       select={select}
@@ -65,7 +66,7 @@ test('removes style', async () => {
 
 test('selects style', async () => {
   const user = setupUser()
-  const select = mockFunction()
+  const select = mockFunction<[styles: string[]]>()
   const { getByPlaceholderText, getByRole } = render(
     <SelectStyles
       select={select}
@@ -96,7 +97,7 @@ test('selects style', async () => {
 
 test('adds new style', async () => {
   const user = setupUser()
-  const select = mockFunction()
+  const select = mockFunction<[styles: string[]]>()
   const { getByRole } = render(
     <SelectStyles
       select={select}
@@ -127,8 +128,8 @@ test('adds new style', async () => {
 
 test('selects created style', async () => {
   const user = setupUser()
-  const create = mockFunction()
-  const select = mockFunction()
+  const create = mockFunction<[style: CreateStyleRequest]>()
+  const select = mockFunction<[styles: string[]]>()
   const newStyle: StyleWithParentIds = {
     id: '47c42362-221c-4ae1-8656-1cfd92acfa12',
     name: 'IPA',

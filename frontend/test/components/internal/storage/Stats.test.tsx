@@ -98,7 +98,8 @@ test('renders monthly storage stats', () => {
 
 test('switch to annual storage stats', async () => {
   const user = setupUser()
-  const setSearch = mockFunction()
+  const setSearch =
+    mockFunction<[mode: string, state: Record<string, string>]>()
   const { getByRole } = render(
     <Stats
       statsIf={{
@@ -117,7 +118,8 @@ test('switch to annual storage stats', async () => {
 
 test('switch to monthly storage stats', async () => {
   const user = setupUser()
-  const setSearch = mockFunction()
+  const setSearch =
+    mockFunction<[mode: string, state: Record<string, string>]>()
   const { getByRole } = render(
     <Stats
       statsIf={{
@@ -136,7 +138,8 @@ test('switch to monthly storage stats', async () => {
 
 test('ignore selecting current storage stats mode', async () => {
   const user = setupUser()
-  const setSearch = mockFunction()
+  const setSearch =
+    mockFunction<[mode: string, state: Record<string, string>]>()
   const { getByRole } = render(
     <Stats
       statsIf={{

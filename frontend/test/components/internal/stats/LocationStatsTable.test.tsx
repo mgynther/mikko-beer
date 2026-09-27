@@ -78,7 +78,7 @@ test('renders location stats', async () => {
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setIsFiltersOpen = mockFunction()
+  const setIsFiltersOpen = mockFunction<[isOpen: boolean]>()
   const { getByRole } = render(
     <LocationStatsTable
       linkComponent={testLink}
@@ -146,7 +146,7 @@ const orderTests: OrderTestData[] = [
 
 orderTests.forEach((data) => {
   test(`set order to ${data.testName}`, () => {
-    const setSortingOrder = mockFunction()
+    const setSortingOrder = mockFunction<[order: LocationStatsSortingOrder]>()
     const { getByRole } = render(
       <LocationStatsTable
         linkComponent={testLink}
@@ -169,7 +169,7 @@ orderTests.forEach((data) => {
 })
 
 test('sets minimum review count filter', () => {
-  const setMinimumReviewCount = mockFunction()
+  const setMinimumReviewCount = mockFunction<[value: number]>()
   const { getByDisplayValue } = render(
     <LocationStatsTable
       linkComponent={testLink}

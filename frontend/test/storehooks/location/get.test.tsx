@@ -47,8 +47,8 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('get location', () => {
-  const onGet = mockFunction()
-  const onValidate = mockFunction()
+  const onGet = mockFunction<[locationId: string]>()
+  const onValidate = mockFunction<[result: unknown]>()
   const data = { location: { id: locationId, name: 'Test location' } }
 
   const { getByText } = render(
@@ -69,7 +69,7 @@ test('get location', () => {
 })
 
 test('get location that has not arrived', () => {
-  const onValidate = mockFunction()
+  const onValidate = mockFunction<[result: unknown]>()
 
   const { getByText } = render(
     <Helper

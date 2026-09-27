@@ -4,7 +4,7 @@ import { mockFunction } from './mock'
 import { createErrorLogger } from './error-logger'
 
 test('error-logger logs', async () => {
-  const logger = mockFunction()
+  const logger = mockFunction<[...args: unknown[]]>()
   const errorLogger = createErrorLogger('testing', logger)
   const thrower = (): Promise<never> => Promise.reject(new Error('error'))
   await thrower().catch(errorLogger)

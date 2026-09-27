@@ -50,8 +50,8 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('rating stats', () => {
-  const onQuery = mockFunction()
-  const onValidate = mockFunction()
+  const onQuery = mockFunction<[params: IdParams]>()
+  const onValidate = mockFunction<[result: unknown]>()
 
   const { getByText } = render(
     <Helper onQuery={onQuery} onValidate={onValidate} />,

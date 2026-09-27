@@ -67,8 +67,8 @@ const listStyles: ListStylesIf = {
 
 test('updates style', async () => {
   const user = setupUser()
-  const onSaved = mockFunction()
-  const update = mockFunction()
+  const onSaved = mockFunction<[]>()
+  const update = mockFunction<[style: StyleWithParentIds]>()
   const newName = 'Cream Ale'
   const { getByPlaceholderText, getByRole } = render(
     <UpdateStyle
@@ -138,7 +138,7 @@ test('shows loading indicator', async () => {
 })
 
 test('cancels updating style', async () => {
-  const cancel = mockFunction()
+  const cancel = mockFunction<[]>()
   const { getByRole } = render(
     <UpdateStyle
       getStyleIf={getStyle}

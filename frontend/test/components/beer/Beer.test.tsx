@@ -37,6 +37,7 @@ import { buildLogin } from '../types/login/builders'
 import { buildJoinedReview, buildReview } from '../types/review/builders'
 import { buildUser } from '../types/user/builders'
 import { testLink } from '../link'
+import type { BeerWithIds } from '../../../src/components/types/beer/types'
 
 const useDebounce: UseDebounce<string> = (str) => [str, false]
 
@@ -308,7 +309,7 @@ test('throw on missing id', async () => {
 
 test('updates beer', async () => {
   const user = setupUser()
-  const update = mockFunction()
+  const update = mockFunction<[request: BeerWithIds]>()
   const { getByRole, getByPlaceholderText } = render(
     <Beer
       linkComponent={testLink}
@@ -406,7 +407,7 @@ test('render not found', async () => {
 })
 
 test('load reviews', async () => {
-  const useList = mockFunction()
+  const useList = mockFunction<[params: IdFilteredListReviewParams]>()
   render(
     <Beer
       linkComponent={testLink}
@@ -451,7 +452,7 @@ test('load reviews', async () => {
 
 test('sort reviews', async () => {
   const user = setupUser()
-  const setSearch = mockFunction()
+  const setSearch = mockFunction<[state: Record<string, string>]>()
   const { getByRole } = render(
     <Beer
       linkComponent={testLink}

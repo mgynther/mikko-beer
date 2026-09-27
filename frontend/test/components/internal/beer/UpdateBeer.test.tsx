@@ -12,6 +12,7 @@ import type {
 import type { SelectStyleIf } from '../../../../src/components/types/style/types'
 import type { SearchFieldIf } from '../../../../src/components/types/search/types'
 import { dontCall } from '../../../dont-call'
+import type { BeerWithIds } from '../../../../src/components/types/beer/types'
 
 const id = 'b3cee2c7-81b8-4b4d-8625-f5a3955258eb'
 const beerName = 'Kukko Pils'
@@ -98,8 +99,8 @@ const doSearch: SearchFieldIf = {
 
 test('updates beer name', async () => {
   const user = setupUser()
-  const onSaved = mockFunction()
-  const update = mockFunction()
+  const onSaved = mockFunction<[]>()
+  const update = mockFunction<[request: BeerWithIds]>()
   const { getByPlaceholderText, getByRole } = render(
     <UpdateBeer
       initialBeer={{
@@ -145,8 +146,8 @@ test('updates beer name', async () => {
 
 test('updates beer brewery', async () => {
   const user = setupUser()
-  const onSaved = mockFunction()
-  const update = mockFunction()
+  const onSaved = mockFunction<[]>()
+  const update = mockFunction<[request: BeerWithIds]>()
   const { getByPlaceholderText, getAllByRole, getByRole } = render(
     <UpdateBeer
       initialBeer={{
@@ -209,8 +210,8 @@ test('updates beer brewery', async () => {
 
 test('updates beer style', async () => {
   const user = setupUser()
-  const onSaved = mockFunction()
-  const update = mockFunction()
+  const onSaved = mockFunction<[]>()
+  const update = mockFunction<[request: BeerWithIds]>()
   const { getByPlaceholderText, getAllByRole, getByRole } = render(
     <UpdateBeer
       initialBeer={{
@@ -275,7 +276,7 @@ test('updates beer style', async () => {
 })
 
 test('cancels update', async () => {
-  const onCanceled = mockFunction()
+  const onCanceled = mockFunction<[]>()
   const { getByRole } = render(
     <UpdateBeer
       initialBeer={{

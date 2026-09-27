@@ -45,7 +45,7 @@ const getSearch: (mode: 'active' | 'inactive') => SearchBreweryIf = (
 
 test('selects one more brewery', async () => {
   const user = setupUser()
-  const onSelect = mockFunction()
+  const onSelect = mockFunction<[breweries: string[]]>()
   const { findByRole, getByPlaceholderText, getByRole } = render(
     <SelectBreweries
       initialBreweries={[brewery]}
@@ -72,7 +72,7 @@ test('selects one more brewery', async () => {
 
 test('removes selected brewery', async () => {
   const user = setupUser()
-  const onSelect = mockFunction()
+  const onSelect = mockFunction<[breweries: string[]]>()
   const { getAllByRole, getByRole } = render(
     <SelectBreweries
       initialBreweries={[brewery, anotherBrewery]}

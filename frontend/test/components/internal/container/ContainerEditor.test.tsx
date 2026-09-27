@@ -4,6 +4,7 @@ import { mockFunction } from '../../../mock'
 import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
 import ContainerEditor from '../../../../src/components/internal/container/ContainerEditor'
+import type { Container } from '../../../../src/components/types/container/types'
 
 const id = 'f8b01ff9-3daa-4137-81cd-f16cf9073d48'
 const sizePlaceholder = 'Size, for example 0.25'
@@ -11,7 +12,7 @@ const typePlaceholder = 'Type'
 
 test('edits valid container', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[container: Container | undefined]>()
   const { getByPlaceholderText } = render(
     <ContainerEditor
       initialContainer={{
@@ -40,7 +41,7 @@ test('edits valid container', async () => {
 
 test('edits invalid container by empty type', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[container: Container | undefined]>()
   const { getByPlaceholderText } = render(
     <ContainerEditor
       initialContainer={{
@@ -59,7 +60,7 @@ test('edits invalid container by empty type', async () => {
 
 test('edits invalid container by invalid size', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[container: Container | undefined]>()
   const { getByPlaceholderText } = render(
     <ContainerEditor
       initialContainer={{
@@ -79,7 +80,7 @@ test('edits invalid container by invalid size', async () => {
 })
 
 test('renders values', async () => {
-  const onChange = mockFunction()
+  const onChange = mockFunction<[container: Container | undefined]>()
   const { getByDisplayValue } = render(
     <ContainerEditor
       initialContainer={{

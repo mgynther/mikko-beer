@@ -11,7 +11,7 @@ import SelectCreateRadio, {
 
 test('basic, clicks create when already selected', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[mode: Mode]>()
   const { getByRole } = render(
     <SelectCreateRadioBasic mode={Mode.CREATE} onChange={onChange} />,
   )
@@ -24,7 +24,7 @@ test('basic, clicks create when already selected', async () => {
 
 test('basic, clicks select when already selected', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[mode: Mode]>()
   const { getByRole } = render(
     <SelectCreateRadioBasic mode={Mode.SELECT} onChange={onChange} />,
   )
@@ -37,7 +37,7 @@ test('basic, clicks select when already selected', async () => {
 
 test('basic, clicks create', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[mode: Mode]>()
   const { getByRole } = render(
     <SelectCreateRadioBasic mode={Mode.SELECT} onChange={onChange} />,
   )
@@ -50,7 +50,7 @@ test('basic, clicks create', async () => {
 
 test('basic, clicks select', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[mode: Mode]>()
   const { getByRole } = render(
     <SelectCreateRadioBasic mode={Mode.CREATE} onChange={onChange} />,
   )

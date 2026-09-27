@@ -17,7 +17,7 @@ const typePlaceholder = 'Type'
 
 test('creates container', async () => {
   const user = setupUser()
-  const selectContainer = mockFunction()
+  const selectContainer = mockFunction<[container: Container]>()
   const { getByPlaceholderText, getByRole } = render(
     <CreateContainer
       select={selectContainer}
@@ -53,7 +53,7 @@ test('creates container', async () => {
 })
 
 test('render loading', async () => {
-  const selectContainer = mockFunction()
+  const selectContainer = mockFunction<[container: Container]>()
   const { getByText } = render(
     <CreateContainer
       select={selectContainer}

@@ -44,7 +44,7 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('list users', () => {
-  const onValidate = mockFunction()
+  const onValidate = mockFunction<[result: unknown]>()
 
   const { getByText } = render(<Helper onValidate={onValidate} />)
 

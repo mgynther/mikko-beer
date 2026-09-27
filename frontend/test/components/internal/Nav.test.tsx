@@ -248,7 +248,7 @@ const themeTests: ThemeTest[] = [
 themeTests.forEach((testCase) => {
   test(`set theme from ${testCase.original} to ${testCase.new} `, async () => {
     const user = setupUser()
-    const setTheme = mockFunction()
+    const setTheme = mockFunction<[theme: Theme]>()
     const { getByRole } = render(
       <Nav
         linkComponent={testLink}
@@ -272,7 +272,7 @@ themeTests.forEach((testCase) => {
 
 test('logs out', async () => {
   const user = setupUser()
-  const logout = mockFunction()
+  const logout = mockFunction<[]>()
   const { getByRole } = render(
     <Nav
       linkComponent={testLink}
@@ -291,7 +291,7 @@ test('logs out', async () => {
 })
 
 test('do not show admin features to viewer', async () => {
-  const logout = mockFunction()
+  const logout = mockFunction<[]>()
   const { queryByRole } = render(
     <Nav
       linkComponent={testLink}
@@ -413,7 +413,7 @@ navStateTests.forEach((testCase) => {
     testCase.new
   }`, async () => {
     const user = setupUser()
-    const setNavState = mockFunction()
+    const setNavState = mockFunction<[navMenuState: NavMenuState]>()
     const { getByRole } = render(
         <Nav linkComponent={testLink}
           isAdmin={true}

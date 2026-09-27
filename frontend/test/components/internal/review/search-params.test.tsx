@@ -16,6 +16,7 @@ import type {
   ReviewSorting,
   ReviewSortingOrder,
 } from '../../../../src/components/types/review/types'
+import type { SearchRecord } from '../../../../src/components/internal/review/filter-util'
 
 const initialSorting: ReviewSorting = { order: 'time', direction: 'desc' }
 const minTime: YearMonth = testTimes.min.yearMonth
@@ -44,7 +45,7 @@ function defaultProps(overrides: Partial<HookProps> = {}): HookProps {
     minTime,
     maxTime,
     getUseDebounce: immediateDebounce,
-    setState: mockFunction(),
+    setState: mockFunction<[state: SearchRecord]>(),
     ...overrides,
   }
 }
@@ -239,13 +240,13 @@ test('minTime and maxTime are numeric timestamps', () => {
 // Group 4: mount effect ("initial setter for reload").
 
 test('mount commits formatToSearch once for empty defaults', () => {
-  const setState = mockFunction()
+  const setState = mockFunction<[state: SearchRecord]>()
   render(<Harness hookProps={defaultProps({ setState })} />)
   assertDeepEqual(setState.mock.calls, [[defaultRecord]])
 })
 
 test('mount commits formatToSearch once for populated params', () => {
-  const setState = mockFunction()
+  const setState = mockFunction<[state: SearchRecord]>()
   render(
     <Harness
       hookProps={defaultProps({
@@ -281,7 +282,7 @@ test('mount commits formatToSearch once for populated params', () => {
 
 test('min rating setter commits rounded value', async () => {
   const user = setupUser()
-  const setState = mockFunction()
+  const setState = mockFunction<[state: SearchRecord]>()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} minRatingArg={7} />,
   )
@@ -294,7 +295,7 @@ test('min rating setter commits rounded value', async () => {
 
 test('max rating setter commits value', async () => {
   const user = setupUser()
-  const setState = mockFunction()
+  const setState = mockFunction<[state: SearchRecord]>()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} maxRatingArg={9} />,
   )
@@ -307,7 +308,7 @@ test('max rating setter commits value', async () => {
 
 test('rating setter rounds to nearest integer string', async () => {
   const user = setupUser()
-  const setState = mockFunction()
+  const setState = mockFunction<[state: SearchRecord]>()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} minRatingArg={7.6} />,
   )
@@ -320,7 +321,7 @@ test('rating setter rounds to nearest integer string', async () => {
 
 test('min time setter commits formatted year-month', async () => {
   const user = setupUser()
-  const setState = mockFunction()
+  const setState = mockFunction<[state: SearchRecord]>()
   const { getByRole } = render(
     <Harness
       hookProps={defaultProps({ setState })}
@@ -336,7 +337,7 @@ test('min time setter commits formatted year-month', async () => {
 
 test('max time setter commits formatted year-month', async () => {
   const user = setupUser()
-  const setState = mockFunction()
+  const setState = mockFunction<[state: SearchRecord]>()
   const { getByRole } = render(
     <Harness
       hookProps={defaultProps({ setState })}
@@ -352,7 +353,7 @@ test('max time setter commits formatted year-month', async () => {
 
 test('setters rebuild from committed state, keeping other keys', async () => {
   const user = setupUser()
-  const setState = mockFunction()
+  const setState = mockFunction<[state: SearchRecord]>()
   const populated = {
     r_min_rating: '5',
     r_max_rating: '9',
@@ -393,7 +394,7 @@ test('pending flag plumbs through from debounce tuple', () => {
 
 test('setIsFiltersOpen true commits synchronously', async () => {
   const user = setupUser()
-  const setState = mockFunction()
+  const setState = mockFunction<[state: SearchRecord]>()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} filtersOpenArg={true} />,
   )
@@ -404,7 +405,7 @@ test('setIsFiltersOpen true commits synchronously', async () => {
 
 test('setIsFiltersOpen false commits synchronously', async () => {
   const user = setupUser()
-  const setState = mockFunction()
+  const setState = mockFunction<[state: SearchRecord]>()
   const { getByRole } = render(
     <Harness
       hookProps={defaultProps({
@@ -423,7 +424,7 @@ test('setIsFiltersOpen false commits synchronously', async () => {
 
 test('changeSortingOrder toggles direction for same order asc', async () => {
   const user = setupUser()
-  const setState = mockFunction()
+  const setState = mockFunction<[state: SearchRecord]>()
   const { getByRole } = render(
     <Harness
       hookProps={defaultProps({
@@ -445,7 +446,7 @@ test('changeSortingOrder toggles direction for same order asc', async () => {
 
 test('changeSortingOrder toggles direction for same order desc', async () => {
   const user = setupUser()
-  const setState = mockFunction()
+  const setState = mockFunction<[state: SearchRecord]>()
   const { getByRole } = render(
     <Harness
       hookProps={defaultProps({
@@ -467,7 +468,7 @@ test('changeSortingOrder toggles direction for same order desc', async () => {
 
 test('changeSortingOrder to beer_name sets ascending', async () => {
   const user = setupUser()
-  const setState = mockFunction()
+  const setState = mockFunction<[state: SearchRecord]>()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} orderArg={'beer_name'} />,
   )
@@ -480,7 +481,7 @@ test('changeSortingOrder to beer_name sets ascending', async () => {
 
 test('changeSortingOrder to non-beer_name sets descending', async () => {
   const user = setupUser()
-  const setState = mockFunction()
+  const setState = mockFunction<[state: SearchRecord]>()
   const { getByRole } = render(
     <Harness hookProps={defaultProps({ setState })} orderArg={'rating'} />,
   )

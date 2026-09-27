@@ -189,8 +189,8 @@ const reviewFilters = buildReviewFilters()
 
 test('updates review', async () => {
   const user = setupUser()
-  const onChanged = mockFunction()
-  const update = mockFunction()
+  const onChanged = mockFunction<[]>()
+  const update = mockFunction<[request: Review]>()
   const { getByPlaceholderText, getByRole, getByText } = render(
     <ReviewList
       linkComponent={testLink}
@@ -259,7 +259,7 @@ test('updates review', async () => {
 
 test('sets review sorting', async () => {
   const user = setupUser()
-  const setSorting = mockFunction()
+  const setSorting = mockFunction<[sorting: ReviewSortingOrder]>()
   const { getByRole } = render(
     <ReviewList
       linkComponent={testLink}

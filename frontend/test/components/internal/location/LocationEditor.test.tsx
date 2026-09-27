@@ -4,13 +4,14 @@ import { mockFunction } from '../../../mock'
 import { render } from '../../../render'
 import { setupUser } from '../../../user-event'
 import LocationEditor from '../../../../src/components/internal/location/LocationEditor'
+import type { Location } from '../../../../src/components/types/location/types'
 
 const id = '444f76de-2b62-4e03-bcc3-1fc068d21e38'
 const namePlaceholder = 'Name'
 
 test('edits valid location', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[location: Location | undefined]>()
   const { getByPlaceholderText } = render(
     <LocationEditor
       location={{
@@ -35,7 +36,7 @@ test('edits valid location', async () => {
 
 test('edits invalid location by empty name', async () => {
   const user = setupUser()
-  const onChange = mockFunction()
+  const onChange = mockFunction<[location: Location | undefined]>()
   const { getByPlaceholderText } = render(
     <LocationEditor
       location={{
@@ -55,7 +56,7 @@ test('edits invalid location by empty name', async () => {
 })
 
 test('renders values', async () => {
-  const onChange = mockFunction()
+  const onChange = mockFunction<[location: Location | undefined]>()
   const { getByDisplayValue } = render(
     <LocationEditor
       location={{

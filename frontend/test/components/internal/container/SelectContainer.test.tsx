@@ -45,7 +45,7 @@ const dontCreateIf: ReviewContainerIf = {
 
 test('selects container', async () => {
   const user = setupUser()
-  const onSelect = mockFunction()
+  const onSelect = mockFunction<[container: Container]>()
   const { getByRole } = render(
     <SelectContainer select={onSelect} reviewContainerIf={dontCreateIf} />,
   )
@@ -59,7 +59,7 @@ test('selects container', async () => {
 })
 
 test('render loading', async () => {
-  const onSelect = mockFunction()
+  const onSelect = mockFunction<[container: Container]>()
   const { getByText } = render(
     <SelectContainer
       select={onSelect}
@@ -79,7 +79,7 @@ test('render loading', async () => {
 
 test('selects created container', async () => {
   const user = setupUser()
-  const onSelect = mockFunction()
+  const onSelect = mockFunction<[container: Container]>()
   const newContainer: Container = {
     id: '13d3e36c-e1db-4c6e-b4f8-d28e45209882',
     type: 'bottle',

@@ -152,7 +152,7 @@ test('list beers', async () => {
     status: 200,
   })
 
-  const onResult = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <ListBeersHelper
@@ -184,8 +184,8 @@ test('fail to list beers', async () => {
     status: 500,
   })
 
-  const onResult = mockFunction()
-  const onError = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
+  const onError = mockFunction<[]>()
   const { getByRole } = render(
     <StoreProvider>
       <ListBeersHelper size={20} onResult={onResult} onError={onError} />
@@ -231,7 +231,7 @@ test('search beers', async () => {
     status: 200,
   })
 
-  const onResult = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <SearchBeersHelper onResult={onResult} onError={() => undefined} />
@@ -281,7 +281,7 @@ test('create beer', async () => {
     status: 201,
   })
 
-  const onResult = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <CreateBeerHelper onResult={onResult} onError={() => undefined} />
@@ -325,7 +325,7 @@ test('update beer', async () => {
     status: 200,
   })
 
-  const onResult = mockFunction()
+  const onResult = mockFunction<[result: unknown]>()
   const { getByRole, getByText } = render(
     <StoreProvider>
       <UpdateBeerHelper onResult={onResult} onError={() => undefined} />

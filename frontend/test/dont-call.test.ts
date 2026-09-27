@@ -15,7 +15,7 @@ test('dontCall throws', () => {
 })
 
 test('dontCallWithConsole throws and logs', () => {
-  const error = mockFunction()
+  const error = mockFunction<[...data: unknown[]]>()
   const console: Console = {
     error,
   }
@@ -26,7 +26,7 @@ test('dontCallWithConsole throws and logs', () => {
   assertCallCount(error, 1)
   const calls = error.mock.calls
   assertEqual(calls[0][0], 'must not be called, see stack')
-  const stack = calls[0][1]
+  const stack = String(calls[0][1])
   assertIncludes(stack, 'Error')
   assertIncludes(stack, 'at dontCallWithConsole')
   assertIncludes(stack, 'dont-call.ts')

@@ -44,8 +44,8 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('get storage', () => {
-  const onGet = mockFunction()
-  const onValidate = mockFunction()
+  const onGet = mockFunction<[storageId: string]>()
+  const onValidate = mockFunction<[result: unknown]>()
   const data = { storage: { id: storageId, beerName: 'Test beer' } }
 
   const { getByText } = render(

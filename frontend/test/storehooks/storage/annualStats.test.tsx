@@ -46,7 +46,7 @@ function Helper(props: {
 }
 
 test('get annual storage stats', () => {
-  const onValidate = mockFunction()
+  const onValidate = mockFunction<[result: unknown]>()
 
   const { getByText } = render(<Helper onValidate={onValidate} />)
 

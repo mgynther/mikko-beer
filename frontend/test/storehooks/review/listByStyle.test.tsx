@@ -58,8 +58,8 @@ function Helper(props: HelperProps): React.JSX.Element {
 }
 
 test('list reviews by style', () => {
-  const onList = mockFunction()
-  const onValidate = mockFunction()
+  const onList = mockFunction<[params: IdFilteredListReviewParams]>()
+  const onValidate = mockFunction<[result: unknown]>()
 
   const { getByText } = render(
     <Helper onList={onList} onValidate={onValidate} />,

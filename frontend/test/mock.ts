@@ -5,13 +5,16 @@ import { vitest } from 'vitest'
 // to them. The type is restated rather than taken from vitest for the same
 // reason: a feature of the mock that tests start to need is added here.
 
-// The arguments and the return are any for a mock created without an
-// implementation: it stands in for functions of every signature, the way
-// vitest.fn() does.
+// A mock without an implementation returns undefined, typed any so that it
+// can stand in for a function returning anything. Give it an implementation
+// when what it returns matters to the test.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any
 
-export type MockFunction<A extends unknown[] = Any[], R = Any> = ((
+// The arguments are never unless given, so an untyped mock can neither stand
+// in for a function nor have its calls asserted: what it is called with is
+// checked against what the test expects.
+export type MockFunction<A extends unknown[] = never, R = Any> = ((
   ...args: A
 ) => R) & {
   mock: {
@@ -20,7 +23,11 @@ export type MockFunction<A extends unknown[] = Any[], R = Any> = ((
   mockClear: () => void
 }
 
-export function mockFunction<A extends unknown[] = Any[], R = Any>(
+export function mockFunction<A extends unknown[] = never>(): MockFunction<A>
+export function mockFunction<A extends unknown[], R>(
+  implementation: (...args: A) => R,
+): MockFunction<A, R>
+export function mockFunction<A extends unknown[], R>(
   implementation?: (...args: A) => R,
 ): MockFunction<A, R> {
   return vitest.fn(implementation)

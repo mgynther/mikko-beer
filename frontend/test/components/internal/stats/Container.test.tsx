@@ -113,11 +113,15 @@ function renderFromRecordWithSetState(
   record: Record<string, string>,
   setState: (state: Record<string, string>) => void,
 ): ReturnType<typeof render> {
-  return renderContainer(mockFunction(), setState, toSearchParams(record))
+  return renderContainer(
+    mockFunction<[params: IdParams]>(),
+    setState,
+    toSearchParams(record),
+  )
 }
 
 test('renders container stats', () => {
-  const stats = mockFunction()
+  const stats = mockFunction<[params: IdParams]>()
   const { getByText } = renderWithStats(stats)
   assertDeepEqual(stats.mock.calls, [[{ breweryId, locationId, styleId }]])
   getByText('7.87')
@@ -330,7 +334,7 @@ const sliderChangeTests: SliderChangeTest[] = [
 
 sliderChangeTests.forEach((testCase) => {
   test(`change ${testCase.property}`, () => {
-    const setState = mockFunction()
+    const setState = mockFunction<[state: Record<string, string>]>()
     const { getByDisplayValue } = renderFromRecordWithSetState(
       defaultFiltersOpenParams,
       setState,
@@ -353,7 +357,7 @@ sliderChangeTests.forEach((testCase) => {
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setState = mockFunction()
+  const setState = mockFunction<[state: Record<string, string>]>()
   const { getByRole } = renderFromRecordWithSetState(
     defaultSearchParams,
     setState,
@@ -474,7 +478,7 @@ orderChangeTests.forEach((testCase) => {
     testCase.newOrder
   } ${testCase.newDirection}`, async () => {
     const user = setupUser()
-    const setState = mockFunction()
+    const setState = mockFunction<[state: Record<string, string>]>()
     const searchRecord: Record<string, string> = {
       ...defaultSearchParams,
       s_order: testCase.originalOrder,

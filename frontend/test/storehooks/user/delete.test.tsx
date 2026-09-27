@@ -38,7 +38,7 @@ function Helper(props: {
 
 test('delete user', async () => {
   const user = setupUser()
-  const onDelete = mockFunction()
+  const onDelete = mockFunction<[userId: string]>()
 
   const { getByRole } = render(<Helper onDelete={onDelete} />)
 

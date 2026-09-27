@@ -225,7 +225,7 @@ const getListReviewsIf: GetListReviewsIf = (cb, setSearch) => ({
 
 test('updates review', async () => {
   const user = setupUser()
-  const update = mockFunction()
+  const update = mockFunction<[request: Review]>()
   let scrollCb: () => void = () => undefined
   const { getByPlaceholderText, getByRole, getByText } = render(
     <>
@@ -308,8 +308,8 @@ const defaultSearchParams: Record<string, string> = {
 
 test('sets review sorting to rating asc', async () => {
   const user = setupUser()
-  const listParams = mockFunction()
-  const setSearch = mockFunction()
+  const listParams = mockFunction<[params: ListReviewParams]>()
+  const setSearch = mockFunction<[state: Record<string, string>]>()
   let scrollCb: () => void = () => undefined
   const listReviewsIf: ListReviewsIf = getListReviewsIf(listParams, setSearch)
   const { getByRole } = render(
@@ -387,7 +387,7 @@ test('renders loading', async () => {
 })
 
 test('stops loading more', async () => {
-  const listMore = mockFunction()
+  const listMore = mockFunction<[params: ListReviewParams]>()
   let scrollCb: () => void = () => undefined
   function getListRequestCount(): number {
     return listMore.mock.calls.length
@@ -480,7 +480,7 @@ test('stops loading more', async () => {
 })
 
 test('lists reviews with search parameters', async () => {
-  const listMore = mockFunction()
+  const listMore = mockFunction<[params: ListReviewParams]>()
   let scrollCb: () => void = () => undefined
   render(
     <>
@@ -549,8 +549,8 @@ test('lists reviews with search parameters', async () => {
 
 test('opens filters', async () => {
   const user = setupUser()
-  const setSearch = mockFunction()
-  const listParams = mockFunction()
+  const setSearch = mockFunction<[state: Record<string, string>]>()
+  const listParams = mockFunction<[params: ListReviewParams]>()
   const { getByRole } = render(
     <>
       <Reviews
@@ -622,8 +622,8 @@ const defaultFiltersOpenParams: Record<string, string> = {
 
 sliderChangeTests.forEach((testCase) => {
   test(`change ${testCase.property}`, async () => {
-    const listParams = mockFunction()
-    const setSearch = mockFunction()
+    const listParams = mockFunction<[params: ListReviewParams]>()
+    const setSearch = mockFunction<[state: Record<string, string>]>()
     const listReviewsIf: ListReviewsIf = getListReviewsIf(listParams, setSearch)
     const { getByLabelText } = render(
       <>

@@ -58,7 +58,7 @@ test('is disabled for viewer', () => {
 
 test('handles click for admin', async () => {
   const user = setupUser()
-  const clickCb = mockFunction()
+  const clickCb = mockFunction<[]>()
   const { getByRole } = render(
     <EditButton
       disabled={false}
@@ -73,7 +73,7 @@ test('handles click for admin', async () => {
 
 test('does not handle click when disabled', async () => {
   const user = setupUser()
-  const clickCb = mockFunction()
+  const clickCb = mockFunction<[]>()
   const { getByRole } = render(
     <EditButton
       disabled={true}
