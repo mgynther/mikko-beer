@@ -269,12 +269,15 @@ const isolatedLayerConfigs = layers
     },
   }))
 
-// The test runner and the assertion library are each used through one
-// wrapper, test/test.ts and test/assert.ts, so that what the tests use of
-// them stays in one file and anything new has to be added there.
+// The test runner and the assertion library are used through wrappers,
+// test/test.ts and test/mock.ts for node:test and test/assert.ts for
+// node:assert, so that what the tests use of them stays in those files and
+// anything new has to be added there.
 const testRunnerImport = {
   regex: '^node:test(?:/|$)',
-  message: 'Import suite, test and the hooks from test/test.ts.',
+  message:
+    'Import suite, test and the hooks from test/test.ts and mock functions' +
+    ' from test/mock.ts.',
 }
 const assertionImport = {
   regex: '^node:assert(?:/|$)',
@@ -384,7 +387,7 @@ export default [
     },
   },
   {
-    files: ['test/test.ts'],
+    files: ['test/test.ts', 'test/mock.ts'],
     rules: restrictedImports([assertionImport]),
   },
   {

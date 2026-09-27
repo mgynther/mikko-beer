@@ -1,12 +1,13 @@
 import { suite, test } from '../../test.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
+import { mockFunction } from '../../mock.js'
 import { createHandler } from '../../../src/crypto/internal/crypto-handler.js'
 
 suite('crypto handler', () => {
-  test('resolve key without error', (t) => {
-    const resolve = t.mock.fn<[key: Buffer]>()
-    const reject = t.mock.fn<[error: Error | null]>()
-    const log = t.mock.fn<string[]>()
+  test('resolve key without error', () => {
+    const resolve = mockFunction<[key: Buffer]>()
+    const reject = mockFunction<[error: Error | null]>()
+    const log = mockFunction<string[]>()
     const handler = createHandler(log, resolve, reject)
     const key = Buffer.from([0x01, 0xab])
     handler(null, key)
@@ -17,10 +18,10 @@ suite('crypto handler', () => {
 
   // Node's scrypt passes no key when it fails asynchronously, although its
   // typings declare the key as always present.
-  test('reject with error and no key', (t) => {
-    const resolve = t.mock.fn<[key: Buffer]>()
-    const reject = t.mock.fn<[error: Error | null]>()
-    const log = t.mock.fn<string[]>()
+  test('reject with error and no key', () => {
+    const resolve = mockFunction<[key: Buffer]>()
+    const reject = mockFunction<[error: Error | null]>()
+    const log = mockFunction<string[]>()
     const handler = createHandler(log, resolve, reject)
     const errorMessage = 'testing'
     const error = new Error(errorMessage)

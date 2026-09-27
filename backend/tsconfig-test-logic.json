@@ -3,6 +3,7 @@
   "include": [
     "src/logic/**/*",
     "test/assert.ts",
+    "test/mock.ts",
     "test/test.ts",
     "test/logic/**/*"
   ]
