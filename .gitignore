@@ -1,5 +1,3 @@
 *.swp
-backend/*.md
-backend/**/*.md
-frontend/*.md
-frontend/**/*.md
+*.md
+!/README.md
