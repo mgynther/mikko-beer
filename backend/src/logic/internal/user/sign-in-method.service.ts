@@ -18,8 +18,8 @@ import type {
 } from '../../user/sign-in-method.js'
 import type { AuthTokenConfig, JwtIf } from '../../auth/auth-token.js'
 
-export const MIN_PASSWORD_LENGTH = 8
-export const MAX_PASSWORD_LENGTH = 255
+const MIN_PASSWORD_LENGTH = 8
+const MAX_PASSWORD_LENGTH = 255
 
 export async function addPasswordSignInMethod(
   addPasswordUserIf: AddPasswordUserIf,

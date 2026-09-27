@@ -26,6 +26,7 @@ import {
   userAlreadyHasSignInMethodError,
 } from '../../../../src/logic/errors.js'
 import { expectReject } from '../../controller-error-helper.js'
+import { mockFunction } from '../../../mock.js'
 import { dummyLog as log } from '../../dummy-log.js'
 import type { AuthTokenConfig } from '../../../../src/logic/auth/auth-token.js'
 import type { SignedInUser } from '../../../../src/logic/user/signed-in-user.js'
@@ -160,17 +161,30 @@ suite('password sign-in-method service unit tests', () => {
     error: ControllerError
   }
 
+  const shortestPassword = 'password'
+  const longestPassword = 'a'.repeat(255)
+
   const passwordValidationFailureCases: PasswordValidationFailureCase[] = [
     {
-      name: 'too short',
-      password: 'passwor',
+      name: 'one character too short',
+      password: shortestPassword.slice(1),
       error: passwordTooWeakError,
     },
     {
-      name: 'too long',
-      password: 'password'.repeat(100),
+      name: 'one character too long',
+      password: `${longestPassword}a`,
       error: passwordTooLongError,
     },
+  ]
+
+  interface AcceptedPasswordCase {
+    name: string
+    password: string
+  }
+
+  const acceptedPasswordCases: AcceptedPasswordCase[] = [
+    { name: 'of the shortest length', password: shortestPassword },
+    { name: 'of the longest length', password: longestPassword },
   ]
 
   test('add password sign-in-method', async () => {
@@ -193,6 +207,33 @@ suite('password sign-in-method service unit tests', () => {
     }
     await addPasswordSignInMethod(addPasswordUserIf, userId, method, log)
   })
+
+  acceptedPasswordCases.forEach((testCase) =>
+    test(`add password sign-in-method with password ${
+      testCase.name
+    }`, async () => {
+      const insertPasswordSignInMethod = mockFunction<
+        [userPassword: UserPasswordHash],
+        Promise<void>
+      >(async () => undefined)
+      const addPasswordUserIf: AddPasswordUserIf = {
+        lockUserById: lockNoPasswordUser,
+        encryptSecret,
+        insertPasswordSignInMethod,
+        setUserUsername: async (): Promise<void> => undefined,
+      }
+      await addPasswordSignInMethod(
+        addPasswordUserIf,
+        userId,
+        {
+          ...method,
+          password: testCase.password,
+        },
+        log,
+      )
+      assertEqual(insertPasswordSignInMethod.mock.callCount(), 1)
+    }),
+  )
 
   passwordValidationFailureCases.forEach((testCase) =>
     test(`fail to add password sign-in-method with invalid password ${
@@ -256,6 +297,32 @@ suite('password sign-in-method service unit tests', () => {
     }
     await changePassword(changePasswordUserIf, userId, passwordChange, log)
   })
+
+  acceptedPasswordCases.forEach((testCase) =>
+    test(`change password to password ${testCase.name}`, async () => {
+      const updatePassword = mockFunction<
+        [userPassword: UserPasswordHash],
+        Promise<void>
+      >(async () => undefined)
+      const changePasswordUserIf: ChangePasswordUserIf = {
+        lockUserById: lockValidUser,
+        findPasswordSignInMethod: getUserPasswordHasher(userPasswordHash),
+        verifySecret: passVerifySecret,
+        encryptSecret,
+        updatePassword,
+      }
+      await changePassword(
+        changePasswordUserIf,
+        userId,
+        {
+          ...passwordChange,
+          newPassword: testCase.password,
+        },
+        log,
+      )
+      assertEqual(updatePassword.mock.callCount(), 1)
+    }),
+  )
 
   passwordValidationFailureCases.forEach((testCase) =>
     test(`fail to change password with invalid password ${
