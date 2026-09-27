@@ -9,6 +9,7 @@ import {
 } from '../../src/validation/user.js'
 import type {
   CreateAnonymousUserRequest,
+  CreateUserRequest,
   PasswordChange,
   PasswordSignInMethod,
 } from '../../src/validation/user.js'
@@ -66,7 +67,7 @@ suite('create user validation unit tests', () => {
   }
 
   test('pass with valid request', () => {
-    const expected = {
+    const expected: CreateUserRequest = {
       role: 'admin',
       passwordSignInMethod: {
         ...validRequest.passwordSignInMethod,

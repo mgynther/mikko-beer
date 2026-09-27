@@ -8,7 +8,7 @@ import {
   validateStatsIdFilter,
   validateStatsFilter,
 } from '../../src/validation/stats.js'
-import type { StatsFilter } from '../../src/validation/stats.js'
+import type { StatsFilter, StatsIdFilter } from '../../src/validation/stats.js'
 import { assertDeepEqual, assertEqual } from '../assert.js'
 
 const noFilter = {
@@ -18,7 +18,10 @@ const noFilter = {
 }
 
 suite('stats id filter validation unit tests', () => {
-  function pass(query: Record<string, unknown> | undefined, output: object) {
+  function pass(
+    query: Record<string, unknown> | undefined,
+    output: StatsIdFilter,
+  ) {
     const validationResult = validateStatsIdFilter(query)
     assertEqual(validationResult.errorCode, undefined)
     assertDeepEqual(validationResult.result, output)
@@ -126,7 +129,10 @@ suite('stats filter validation unit tests', () => {
     timeEnd: undefined,
   }
 
-  function pass(query: Record<string, unknown> | undefined, output: object) {
+  function pass(
+    query: Record<string, unknown> | undefined,
+    output: StatsFilter,
+  ) {
     const validationResult = validateStatsFilter(query)
     assertEqual(validationResult.errorCode, undefined)
     assertDeepEqual(validationResult.result, output)
@@ -277,7 +283,10 @@ statsOrderCases.forEach((statsOrderCase) => {
     statsOrderCase
 
   suite(`${title} stats order validation unit tests`, () => {
-    function pass(query: Record<string, unknown>, output: object) {
+    function pass(
+      query: Record<string, unknown>,
+      output: { property: string; direction: string },
+    ) {
       const validationResult = func(query)
       assertEqual(validationResult.errorCode, undefined)
       assertDeepEqual(validationResult.result, output)

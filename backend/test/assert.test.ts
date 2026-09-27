@@ -23,12 +23,38 @@ suite('assertion tests', () => {
 
   test('throws on failing deep equal', () => {
     assert.throws(() =>
-      assertDeepEqual({ prop: 'testing' }, { property: 'another' }),
+      assertDeepEqual<Record<string, string>>(
+        { prop: 'testing' },
+        { property: 'another' },
+      ),
+    )
+  })
+
+  test('throws on deep equal with undefined against a missing property', () => {
+    assert.throws(() =>
+      assertDeepEqual<{ prop?: string | undefined }>({ prop: undefined }, {}),
+    )
+  })
+
+  test('throws on deep equal with a class instance against a plain object', () => {
+    class Value {
+      prop = 'testing'
+    }
+    assert.throws(() => assertDeepEqual(new Value(), { prop: 'testing' }))
+  })
+
+  test('does not compile deep equal with an unknown property', () => {
+    assert.throws(() =>
+      // @ts-expect-error The value's type decides what may be expected.
+      assertDeepEqual({ prop: 'testing' }, { prop: 'testing', another: 'a' }),
     )
   })
 
   test('is not deep equal', () => {
-    assertNotDeepEqual({ prop: 'testing' }, { prop: 'testing', another: 'a' })
+    assertNotDeepEqual<Record<string, string>>(
+      { prop: 'testing' },
+      { prop: 'testing', another: 'a' },
+    )
   })
 
   test('throws on failing not deep equal', () => {
@@ -136,6 +162,19 @@ suite('assertion tests', () => {
           CustomError,
         ),
       /not a CustomError instance/,
+    )
+  })
+
+  test('does not compile throws with an error of another class', () => {
+    assert.throws(() =>
+      assertThrows(
+        () => {
+          throw new ControllerError(400, 'UnknownError', 'test')
+        },
+        // @ts-expect-error The class decides what the error may be.
+        new Error('test'),
+        ControllerError,
+      ),
     )
   })
 

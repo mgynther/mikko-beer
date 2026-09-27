@@ -8,7 +8,10 @@ import {
   validateReviewListFilter,
   validateUpdateReviewRequest,
 } from '../../src/validation/review.js'
-import type { ReviewRequest } from '../../src/validation/review.js'
+import type {
+  ReviewRequest,
+  ValidUpdateReviewRequest,
+} from '../../src/validation/review.js'
 import { assertDeepEqual, assertEqual } from '../assert.js'
 
 function validRequest(): ReviewRequest {
@@ -31,12 +34,12 @@ suite('review validation unit tests', () => {
     {
       func: validateCreateReviewRequest,
       title: (base: string) => `${base}: create`,
-      outputFormatter: (input: object) => input,
+      outputFormatter: (input: ReviewRequest): ReviewRequest => input,
     },
     {
       func: (request: unknown) => validateUpdateReviewRequest(request, id),
       title: (base: string) => `${base}: update`,
-      outputFormatter: (input: object) => ({
+      outputFormatter: (input: ReviewRequest): ValidUpdateReviewRequest => ({
         id,
         request: input,
       }),
@@ -320,7 +323,10 @@ suite('review list order validation unit tests', () => {
   ].forEach((testCase: CommonOrderCase) => {
     const { func, title } = testCase
 
-    function pass(query: Record<string, unknown>, expected: object) {
+    function pass(
+      query: Record<string, unknown>,
+      expected: { property: string; direction: string },
+    ) {
       const validationResult = func(query)
       assertEqual(validationResult.errorCode, undefined)
       assertDeepEqual(validationResult.result, expected)

@@ -1,27 +1,26 @@
 import * as assert from 'node:assert/strict'
 
-// Provides better type safety than assert.deepEqual where we know types
-// already match. Finding errors coding time vs run time is quicker.
-export function assertDeepEqual<T>(value: T, reference: T): void {
-  assert.deepEqual(value, reference)
+// The expected value is NoInfer so that the value alone decides the type: a
+// test comparing values of two different types fails to compile rather than
+// widening the type to fit both, and an expected object literal is checked for
+// properties the value's type does not have.
+
+// Strict, so a property that is undefined is not the same as a property that
+// is missing, and a class instance is not the same as a plain object.
+export function assertDeepEqual<T>(value: T, expected: NoInfer<T>): void {
+  assert.deepEqual(value, expected)
 }
 
-// Provides type where we know types already match. Finding errors coding time
-// vs run time is quicker.
-export function assertNotDeepEqual<T>(value: T, reference: T): void {
-  assert.notDeepEqual(value, reference)
+export function assertNotDeepEqual<T>(value: T, expected: NoInfer<T>): void {
+  assert.notDeepEqual(value, expected)
 }
 
-// Provides better type safety than assert.equal where we know types already
-// match. Finding errors coding time vs run time is quicker.
-export function assertEqual<T>(value: T, reference: T): void {
-  assert.equal(value, reference)
+export function assertEqual<T>(value: T, expected: NoInfer<T>): void {
+  assert.equal(value, expected)
 }
 
-// Provides type where we know types already match. Finding errors coding time
-// vs run time is quicker.
-export function assertNotEqual<T>(value: T, reference: T): void {
-  assert.notEqual(value, reference)
+export function assertNotEqual<T>(value: T, expected: NoInfer<T>): void {
+  assert.notEqual(value, expected)
 }
 
 export function assertGreaterThan(value: number, reference: number): void {
@@ -59,7 +58,7 @@ export function assertInstanceOf<T>(
 
 export function assertThrows<T extends Error>(
   func: () => void,
-  error: T,
+  error: NoInfer<T>,
   classType: Class<T>,
 ): void {
   assert.throws(func, (err: unknown) => {
@@ -71,7 +70,7 @@ export function assertThrows<T extends Error>(
 
 export async function assertRejects<T extends Error>(
   func: () => Promise<void>,
-  error: T,
+  error: NoInfer<T>,
   classType: Class<T>,
 ): Promise<void> {
   await assert.rejects(func, (err: unknown) => {

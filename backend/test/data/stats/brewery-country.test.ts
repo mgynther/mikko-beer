@@ -313,7 +313,7 @@ suite('brewery country stats tests', () => {
   interface OrderCase {
     title: string
     property: BreweryCountryStatsOrder['property']
-    ascending: object[]
+    ascending: ReturnType<typeof row>[]
   }
 
   // Every property separates the two rows, so each case also asserts the

@@ -8,6 +8,7 @@ import {
 import type {
   CreateStyleRequest,
   UpdateStyleRequest,
+  ValidUpdateStyleRequest,
 } from '../../src/validation/style.js'
 import { assertDeepEqual, assertEqual } from '../assert.js'
 
@@ -62,13 +63,13 @@ suite('style validation unit tests', () => {
       func: validateCreateStyleRequest,
       getValid: validCreateRequest,
       title: (base: string) => `${base}: create`,
-      outFormatter: (input: object) => input,
+      outFormatter: (input: CreateStyleRequest): CreateStyleRequest => input,
     },
     {
       func: (request: unknown) => validateUpdateStyleRequest(request, id),
       getValid: validUpdateRequest,
       title: (base: string) => `${base}: update`,
-      outFormatter: (input: object) => ({
+      outFormatter: (input: UpdateStyleRequest): ValidUpdateStyleRequest => ({
         id,
         request: input,
       }),
