@@ -11,7 +11,7 @@ const directory = dirname(fileURLToPath(import.meta.url))
 
 export type Level = 'INFO' | 'WARN' | 'ERROR'
 
-export type Log = (level: Level, ...args: (string | object | Error)[]) => void
+export type Log = (level: Level, ...args: unknown[]) => void
 
 export async function migrateToLatest(log: Log): Promise<void> {
   const db = new Kysely<Database>({
@@ -20,29 +20,30 @@ export async function migrateToLatest(log: Log): Promise<void> {
     }),
   })
 
-  const migrator = new Migrator({
-    db,
-    provider: new FileMigrationProvider({
-      fs,
-      path,
-      migrationFolder: path.join(directory, 'migrations'),
-    }),
-  })
+  try {
+    const migrator = new Migrator({
+      db,
+      provider: new FileMigrationProvider({
+        fs,
+        path,
+        migrationFolder: path.join(directory, 'migrations'),
+      }),
+    })
 
-  const { error, results } = await migrator.migrateToLatest()
+    const { error, results } = await migrator.migrateToLatest()
 
-  results?.forEach((it) => {
-    if (it.status === 'Success') {
-      log('INFO', `migration "${it.migrationName}" was executed successfully`)
-    } else if (it.status === 'Error') {
-      log('ERROR', `failed to execute migration "${it.migrationName}"`)
+    results?.forEach((it) => {
+      if (it.status === 'Success') {
+        log('INFO', `migration "${it.migrationName}" was executed successfully`)
+      } else if (it.status === 'Error') {
+        log('ERROR', `failed to execute migration "${it.migrationName}"`)
+      }
+    })
+
+    if (error !== undefined) {
+      throw error
     }
-  })
-
-  if (error !== undefined) {
-    log('ERROR', 'failed to migrate', error ?? '')
-    process.exit(1)
+  } finally {
+    await db.destroy()
   }
-
-  await db.destroy()
 }
