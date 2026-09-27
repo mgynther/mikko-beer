@@ -78,8 +78,8 @@ test('renders loading text when loading', () => {
 
 test('navigates to selected search result', async () => {
   const user = setupUser()
-  const navigate = mockFunction(
-    async (_url: string): Promise<void> => undefined,
+  const navigate = mockFunction<[url: string], Promise<void>>(
+    async () => undefined,
   )
   const styleId = '7fdc561f-da68-4665-b888-a82d5a03bf85'
   const { getByPlaceholderText, getByRole } = render(

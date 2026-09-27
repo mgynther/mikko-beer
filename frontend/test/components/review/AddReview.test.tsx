@@ -222,8 +222,8 @@ async function addReview(
 
 test('adds review', async () => {
   const user = setupUser()
-  const create = mockFunction(
-    async (_request: ReviewRequestWrapper): Promise<void> => undefined,
+  const create = mockFunction<[request: ReviewRequestWrapper], Promise<void>>(
+    async () => undefined,
   )
   const props: AddReviewProps = {
     createReviewIf: {
@@ -356,8 +356,8 @@ test('shows storage loading error', async () => {
 
 test('adds review from storage', async () => {
   const user = setupUser()
-  const create = mockFunction(
-    async (_request: ReviewRequestWrapper): Promise<void> => undefined,
+  const create = mockFunction<[request: ReviewRequestWrapper], Promise<void>>(
+    async () => undefined,
   )
   const props: AddReviewProps = {
     createReviewIf: {
@@ -419,8 +419,8 @@ test('adds review from storage', async () => {
 })
 
 test('navigates', async () => {
-  const navigate = mockFunction(
-    async (_url: string): Promise<void> => undefined,
+  const navigate = mockFunction<[url: string], Promise<void>>(
+    async () => undefined,
   )
   const beerId = '7795fabb-a4c4-4e43-b5d0-8b7f01aa906c'
   render(

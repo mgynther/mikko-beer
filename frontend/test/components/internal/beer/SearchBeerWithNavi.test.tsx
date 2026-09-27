@@ -51,8 +51,8 @@ const beers = [beer, anotherBeer]
 
 test('selects beer', async () => {
   const user = setupUser()
-  const selector = mockFunction(
-    async (_url: string): Promise<void> => undefined,
+  const selector = mockFunction<[url: string], Promise<void>>(
+    async () => undefined,
   )
   const searchBeerIf: SearchBeerIf = {
     useSearch: () => ({

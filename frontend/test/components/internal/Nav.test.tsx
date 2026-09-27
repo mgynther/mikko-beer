@@ -314,8 +314,8 @@ test('do not show admin features to viewer', async () => {
 
 test('searches beer', async () => {
   const user = setupUser()
-  const navigate = mockFunction(
-    async (_url: string): Promise<void> => undefined,
+  const navigate = mockFunction<[url: string], Promise<void>>(
+    async () => undefined,
   )
   const searchBeerIf: SearchBeerIf = {
     useSearch: () => ({
@@ -352,8 +352,8 @@ test('searches beer', async () => {
 
 test('searches brewery', async () => {
   const user = setupUser()
-  const navigate = mockFunction(
-    async (_url: string): Promise<void> => undefined,
+  const navigate = mockFunction<[url: string], Promise<void>>(
+    async () => undefined,
   )
   const searchBreweryIf: SearchBreweryIf = {
     useSearch: () => ({

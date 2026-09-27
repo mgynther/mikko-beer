@@ -42,8 +42,8 @@ const locations: Location[] = [location, anotherLocation]
 
 test('selects location', async () => {
   const user = setupUser()
-  const selector = mockFunction(
-    async (_url: string): Promise<void> => undefined,
+  const selector = mockFunction<[url: string], Promise<void>>(
+    async () => undefined,
   )
   const { getByRole } = render(
     <SearchLocationWithNavi
@@ -73,8 +73,8 @@ test('selects location', async () => {
 
 test('shows no results', async () => {
   const user = setupUser()
-  const selector = mockFunction(
-    async (_url: string): Promise<void> => undefined,
+  const selector = mockFunction<[url: string], Promise<void>>(
+    async () => undefined,
   )
   const { getByRole, getByText } = render(
     <SearchLocationWithNavi

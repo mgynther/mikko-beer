@@ -11,6 +11,11 @@ import { vitest } from 'vitest'
 // returns undefined, so it stands in only for a function returning void or
 // undefined, and anything else it stands in for gets an implementation that
 // returns what the type promises.
+
+// The implementation is NoInfer, so the types come from the type parameters
+// alone and the implementation is only the behaviour: an implementation cannot
+// type the mock through parameters that exist to carry a type, and one whose
+// type differs from what the test names fails to compile.
 export type MockFunction<A extends unknown[] = never, R = undefined> = ((
   ...args: A
 ) => R) & {
@@ -21,8 +26,8 @@ export type MockFunction<A extends unknown[] = never, R = undefined> = ((
 }
 
 export function mockFunction<A extends unknown[] = never>(): MockFunction<A>
-export function mockFunction<A extends unknown[], R>(
-  implementation: (...args: A) => R,
+export function mockFunction<A extends unknown[] = never, R = undefined>(
+  implementation: NoInfer<(...args: A) => R>,
 ): MockFunction<A, R>
 export function mockFunction<A extends unknown[], R>(
   implementation?: (...args: A) => R,

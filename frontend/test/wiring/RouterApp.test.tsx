@@ -687,7 +687,7 @@ test('sets theme to dark', async () => {
 
 test('logout', async () => {
   const user = setupUser()
-  const logout = mockFunction(async (): Promise<void> => undefined)
+  const logout = mockFunction<[], Promise<void>>(async () => undefined)
   const { getByRole } = render(
     <MemoryRouter>
       <RouterApp

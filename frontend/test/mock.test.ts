@@ -10,9 +10,15 @@ test('records the arguments of every call', () => {
 })
 
 test('returns what the implementation returns', () => {
-  const mocked = mockFunction((value: number): number => value * 2)
+  const mocked = mockFunction<[value: number], number>((value) => value * 2)
   assertEqual(mocked(2), 4)
   assertDeepEqual(mocked.mock.calls, [[2]])
+})
+
+test('takes its types from the type parameters, not the implementation', () => {
+  // @ts-expect-error The implementation returns number, the mock undefined.
+  const mocked = mockFunction((value: number): number => value * 2)
+  assertEqual(typeof mocked, 'function')
 })
 
 test('returns undefined without an implementation', () => {
