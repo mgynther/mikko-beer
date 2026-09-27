@@ -1,5 +1,11 @@
 import { suite, test, before, beforeEach, after, afterEach } from '../test.js'
-import { assertDeepEqual, assertRejects } from '../assert.js'
+import {
+  assertDeepEqual,
+  assertEqual,
+  assertRejects,
+  assertIncludes,
+  assertRejectsWithMessage,
+} from '../assert.js'
 
 import { testConfig } from './test-config.js'
 import type { TestConfig } from './test-config.js'
@@ -156,5 +162,37 @@ suite('initial user creation error', () => {
       ),
       [],
     )
+  })
+})
+
+suite('port in use error', () => {
+  const ctx = new TestContext(testConfig)
+
+  before(ctx.before)
+  beforeEach(ctx.beforeEach)
+
+  after(ctx.after)
+  afterEach(ctx.afterEach)
+
+  // Another instance of the application already listens on the port.
+  const startRunningApp = async (): Promise<App> => {
+    const runningApp = new App(testConfig, (): void => undefined)
+    await runningApp.start()
+    return runningApp
+  }
+
+  test('port in use rejects start', async () => {
+    const runningApp = await startRunningApp()
+    try {
+      await assertRejectsWithMessage(async () => {
+        await ctx.app()!.start()
+      }, 'EADDRINUSE')
+    } finally {
+      await runningApp.stop()
+    }
+    const logMessages = ctx.logMessages()
+    const lastLog = logMessages[logMessages.length - 1]
+    assertEqual(lastLog.level, 'ERROR')
+    assertIncludes(lastLog.message, 'Error starting,Error: listen EADDRINUSE')
   })
 })

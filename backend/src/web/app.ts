@@ -1,6 +1,7 @@
 import Koa from 'koa'
 import compress from 'koa-compress'
 import { bodyParser } from '@koa/bodyparser'
+import { once } from 'node:events'
 import type { Server } from 'node:http'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -152,9 +153,12 @@ export class App {
   async #listen(): Promise<void> {
     const port = this.#config.port
     this.#log('INFO', 'Server starting')
-    await new Promise<void>((resolve): void => {
-      this.#server = this.#koa.listen(port, resolve)
-    })
+    const server = this.#koa.listen(port)
+    // once rather than a listen callback and an error listener of our own:
+    // it rejects on the error too, and leaves no listener behind that would
+    // swallow a later error of the running server.
+    await once(server, 'listening')
+    this.#server = server
     this.#log('INFO', `Server started in port ${port}`)
   }
 

@@ -172,6 +172,7 @@ const layerDependencies = {
     '@koa/router',
     'koa',
     'koa-compress',
+    'node:events',
     'node:http',
     'node:querystring',
     'uuid',
