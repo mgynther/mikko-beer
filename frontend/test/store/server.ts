@@ -3,15 +3,20 @@ import type { IncomingMessage, ServerResponse } from 'http'
 import type { AddressInfo } from 'net'
 import { uniqueTestServerPort } from '../../src/store/internal/config/constants'
 
-// onRequest is handed the request's body, parsed, when the request arrives
-// and before it is answered: a test reads what was sent there, and one that
-// plays another browser tab changes what the application has stored.
+export interface ReceivedRequest {
+  authorization: string | undefined
+  body: unknown
+}
+
+// onRequest is handed what the request carried when it arrives and before it
+// is answered: a test reads what was sent there, and one that plays another
+// browser tab changes what the application has stored.
 interface Response<T> {
   method: 'GET' | 'POST' | 'PUT' | 'DELETE'
   pathname: string
   response: T
   status: number
-  onRequest?: (body: unknown) => void
+  onRequest?: (request: ReceivedRequest) => void
 }
 
 interface InternalResponse {
@@ -19,7 +24,7 @@ interface InternalResponse {
   pathname: string
   response: Record<string, unknown> | undefined
   status: number
-  onRequest: ((body: unknown) => void) | undefined
+  onRequest: ((request: ReceivedRequest) => void) | undefined
 }
 
 function parseBody(body: string): unknown {
@@ -58,7 +63,10 @@ export function createServer(): TestServer {
       req.method === response.method &&
       url === response.pathname
     ) {
-      response.onRequest?.(parseBody(body))
+      response.onRequest?.({
+        authorization: req.headers.authorization,
+        body: parseBody(body),
+      })
       res.writeHead(response.status, { 'Content-Type': 'application/json' })
       res.write(response.response ? JSON.stringify(response.response) : '')
       res.end()

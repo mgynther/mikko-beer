@@ -1,6 +1,7 @@
 import { emptySplitApi } from '../api'
 
-import { logout, passwordChangeResult } from './reducer'
+import { endSession } from './end-session'
+import { passwordChangeResult } from './reducer'
 import type {
   ChangePasswordParams,
   LoginParams,
@@ -44,7 +45,7 @@ const loginApi = emptySplitApi.injectEndpoints({
         try {
           await queryFulfilled
         } finally {
-          dispatch(logout())
+          endSession(dispatch)
         }
       },
       invalidatesTags: ['Login'],

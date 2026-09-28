@@ -2,7 +2,7 @@ import type {
   ChangePasswordParams,
   LoginParams,
 } from './internal/login/requests'
-import type { Login, PasswordChangeResult } from './internal/login/reducer'
+import type { PasswordChangeResult } from './internal/login/reducer'
 import {
   selectLogin,
   selectPasswordChangeResult,
@@ -14,6 +14,9 @@ import {
   useLogoutMutation,
 } from './internal/login/api'
 import { useDispatch, useSelector } from './internal/hooks'
+import { endSession } from './internal/login/end-session'
+import { readSession, writeSession } from './internal/session'
+import type { Session } from './internal/session-parser'
 
 // The public surface of the login endpoints and of the session the store
 // keeps. See store/beer.ts for why every result is built here rather than
@@ -56,17 +59,20 @@ export function useLogin(): LoginResult {
 }
 
 // The session to end is the one the store keeps, so the caller names none.
+// One another tab has already ended needs no request to end it here.
 export function useLogout(): LogoutResult {
   const [logout] = useLogoutMutation()
-  const login = useSelector(selectLogin)
+  const dispatch = useDispatch()
   return {
     logout: async (): Promise<void> => {
-      if (login.user === undefined) {
+      const session: Session | undefined = readSession()
+      if (session === undefined) {
+        endSession(dispatch)
         return
       }
       await logout({
-        userId: login.user.id,
-        body: { refreshToken: login.refreshToken },
+        userId: session.user.id,
+        body: { refreshToken: session.refreshToken },
       })
     },
   }
@@ -82,18 +88,19 @@ export function useChangePassword(): ChangePasswordResult {
   }
 }
 
-// The stored session is given out as unknown. It is restored from
+// The stored login is given out as unknown. Its user is restored from
 // localStorage at startup, where anything at all may be sitting, so what the
 // store holds is no more trustworthy than a response and is validated the
-// same way.
+// same way. The tokens are not given out at all.
 export function useStoredLogin(): unknown {
   return useSelector(selectLogin)
 }
 
-export function useSaveLogin(): (login: Login) => void {
+export function useSaveLogin(): (login: Session) => void {
   const dispatch = useDispatch()
-  return (login: Login): void => {
-    dispatch(success(login))
+  return (login: Session): void => {
+    writeSession(login)
+    dispatch(success(login.user))
   }
 }
 

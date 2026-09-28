@@ -12,29 +12,22 @@ interface StoredUser {
   role: string
 }
 
-export interface Login {
-  authToken: string
-  refreshToken: string
+// The tokens are not here: they are in the session, see session.ts, and the
+// store keeps only what the components are rendered from.
+interface StoredLogin {
   user: StoredUser | undefined
-}
-
-export interface Refresh {
-  authToken: string
-  refreshToken: string
 }
 
 export type PasswordChangeResult = 'ERROR' | 'SUCCESS' | 'UNDEFINED'
 
 interface LoginState {
-  login: Login
+  login: StoredLogin
   passwordChangeResult: PasswordChangeResult
 }
 
 export const initialState: LoginState = {
   login: {
     user: undefined,
-    authToken: '',
-    refreshToken: '',
   },
   passwordChangeResult: 'UNDEFINED',
 }
@@ -45,16 +38,11 @@ const loginSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.login.user = undefined
-      state.login.authToken = ''
-      state.login.refreshToken = ''
     },
-    success: (state, action: PayloadAction<Login>) => {
-      state.login = action.payload
-      state.passwordChangeResult = 'UNDEFINED'
-    },
-    refresh: (state, action: PayloadAction<Refresh>) => {
-      state.login.authToken = action.payload.authToken
-      state.login.refreshToken = action.payload.refreshToken
+    // The result of a password change is about the session it was made in,
+    // so a new sign-in starts without one.
+    success: (state, action: PayloadAction<StoredUser>) => {
+      state.login.user = action.payload
       state.passwordChangeResult = 'UNDEFINED'
     },
     passwordChangeResult: (
@@ -66,10 +54,9 @@ const loginSlice = createSlice({
   },
 })
 
-export const { logout, passwordChangeResult, refresh, success } =
-  loginSlice.actions
+export const { logout, passwordChangeResult, success } = loginSlice.actions
 
-export const selectLogin = (state: RootState): Login => state.login.login
+export const selectLogin = (state: RootState): StoredLogin => state.login.login
 export const selectPasswordChangeResult = (
   state: RootState,
 ): PasswordChangeResult => state.login.passwordChangeResult

@@ -51,13 +51,6 @@ test('validate stored login without user as logged out', () => {
   assertDeepEqual(validateStoredLogin({}), { user: undefined })
 })
 
-test('validate stored login leaving out the tokens', () => {
-  assertDeepEqual(
-    validateStoredLogin({ authToken: 'auth', refreshToken: 'refresh', user }),
-    { user },
-  )
-})
-
 test('fail to validate stored login with invalid user', () => {
   assertThrowsWithMessage(
     () => validateStoredLogin({ user: { id: 'id' } }),

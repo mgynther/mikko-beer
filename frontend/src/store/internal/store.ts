@@ -12,14 +12,19 @@ import themeReducer, {
   initialState as initialThemeState,
 } from './theme/reducer'
 import { asObject } from './localstorage-member-parser'
+import { readSession } from './session'
 
 const localStoreKey = 'mikkobeer-persisted'
 const fullStore = JSON.parse(localStorage.getItem(localStoreKey) ?? '{}')
 
+// The user is kept in the state as well as in the session because the
+// components are rendered from the state. The tokens are not, see session.ts.
 const persisted = {
   login: {
     ...initialLoginState,
-    ...asObject(fullStore.login),
+    login: {
+      user: readSession()?.user,
+    },
   },
   navMenu: {
     ...initialNavMenuState,
@@ -50,7 +55,6 @@ store.subscribe(() => {
   localStorage.setItem(
     localStoreKey,
     JSON.stringify({
-      login: fullState.login,
       navMenu: fullState.navMenu,
       theme: fullState.theme,
     }),
