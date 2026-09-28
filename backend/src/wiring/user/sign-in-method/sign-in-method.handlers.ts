@@ -43,10 +43,7 @@ import type {
 } from '../../../web/user/sign-in-method.js'
 
 import { authenticated } from '../../authentication/authenticated.js'
-import {
-  createFindRefreshToken,
-  createFindRefreshTokenInTransaction,
-} from '../../authentication/find-refresh-token.js'
+import { createFindRefreshTokenInTransaction } from '../../authentication/find-refresh-token.js'
 import { jwtIf } from '../../authentication/jwt-helper.js'
 import type { Config } from '../../config.js'
 import type { Context } from '../../context.js'
@@ -178,7 +175,7 @@ export function createSignInMethodHandlers(
               changePasswordUserIf,
               validatePasswordChange,
               validateUserId,
-              createFindRefreshToken(db),
+              createFindRefreshTokenInTransaction(trx),
               { authTokenPayload, id: request.id },
               request.body,
               log,
