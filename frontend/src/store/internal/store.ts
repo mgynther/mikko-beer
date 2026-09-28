@@ -5,17 +5,13 @@ import loginReducer, {
   initialState as initialLoginState,
 } from './login/reducer'
 import searchReducer from './search/reducer'
-import navMenuReducer, {
-  initialState as initialNavMenuState,
-} from './nav-menu/reducer'
-import themeReducer, {
-  initialState as initialThemeState,
-} from './theme/reducer'
-import { asObject } from './localstorage-member-parser'
+import navMenuReducer from './nav-menu/reducer'
+import themeReducer from './theme/reducer'
+import { parsePersisted } from './persisted-parser'
 import { readSession } from './session'
 
 const localStoreKey = 'mikkobeer-persisted'
-const fullStore = JSON.parse(localStorage.getItem(localStoreKey) ?? '{}')
+const settings = parsePersisted(localStorage.getItem(localStoreKey))
 
 // The user is kept in the state as well as in the session because the
 // components are rendered from the state. The tokens are not, see session.ts.
@@ -26,14 +22,8 @@ const persisted = {
       user: readSession()?.user,
     },
   },
-  navMenu: {
-    ...initialNavMenuState,
-    ...asObject(fullStore.navMenu),
-  },
-  theme: {
-    ...initialThemeState,
-    ...asObject(fullStore.theme),
-  },
+  navMenu: settings.navMenu,
+  theme: settings.theme,
 }
 
 const rootReducers = combineReducers({
