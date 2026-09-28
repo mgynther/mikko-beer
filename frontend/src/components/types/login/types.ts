@@ -5,19 +5,7 @@ export interface LoginParams {
   password: string
 }
 
-export interface LogoutParams {
-  userId: string
-  body: {
-    refreshToken: string
-  }
-}
-
-export interface Refresh {
-  authToken: string
-  refreshToken: string
-}
-
-export interface Login extends Refresh {
+export interface Login {
   user: User | undefined
 }
 
@@ -32,7 +20,7 @@ export interface LoginIf {
 
 export interface LogoutIf {
   useLogout: () => {
-    logout: (params: LogoutParams) => Promise<void>
+    logout: () => Promise<void>
   }
 }
 

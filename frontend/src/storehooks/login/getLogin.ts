@@ -1,8 +1,11 @@
-import type { GetLogin, Login, UseStoredLogin, ValidateLogin } from './types'
+import type {
+  GetLogin,
+  StoredLogin,
+  UseStoredLogin,
+  ValidateStoredLogin,
+} from './types'
 
-const loggedOut: Login = {
-  authToken: '',
-  refreshToken: '',
+const loggedOut: StoredLogin = {
   user: undefined,
 }
 
@@ -13,12 +16,12 @@ const loggedOut: Login = {
 // would leave a hand edited localStorage key bricking the application.
 const getLogin: (
   useStoredLogin: UseStoredLogin,
-  validateLogin: ValidateLogin,
-) => GetLogin = (useStoredLogin, validateLogin) => {
+  validateStoredLogin: ValidateStoredLogin,
+) => GetLogin = (useStoredLogin, validateStoredLogin) => {
   const get: GetLogin = () => {
     const login: unknown = useStoredLogin()
     try {
-      return validateLogin(login)
+      return validateStoredLogin(login)
     } catch {
       return loggedOut
     }

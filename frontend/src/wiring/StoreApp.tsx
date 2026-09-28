@@ -277,7 +277,7 @@ import {
 } from '../store/login'
 import { useNavMenu } from '../store/nav-menu'
 import { useTheme } from '../store/theme'
-import { validateLogin } from '../validation/login'
+import { validateLogin, validateStoredLogin } from '../validation/login'
 
 import changePassword from '../storehooks/login/changePassword'
 import getLoginHook from '../storehooks/login/getLogin'
@@ -310,7 +310,7 @@ function StoreApp(): React.JSX.Element {
     useDebounce: useDebounce<string>,
   }
 
-  const getLogin: GetLogin = getLoginHook(useStoredLogin, validateLogin)
+  const getLogin: GetLogin = getLoginHook(useStoredLogin, validateStoredLogin)
 
   const searchBreweryIf: SearchBreweryIf = {
     ...searchBrewery(useSearchBreweries, validateBreweryList),

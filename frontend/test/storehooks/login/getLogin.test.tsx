@@ -5,21 +5,24 @@ import { render } from '../../render'
 
 import getLogin from '../../../src/storehooks/login/getLogin'
 import type {
+  StoredLogin,
   UseStoredLogin,
-  ValidateLogin,
+  ValidateStoredLogin,
 } from '../../../src/storehooks/login/types'
-import { buildLogin } from './builders'
+import { buildUser } from '../user/builders'
 
 // Stubs for the store function and the validator, for the reason given in
 // storehooks/brewery/get.test.tsx. The session is read back out of the store
 // here, so what this proves is that the stored value goes through the
 // validator and that a value the validator rejects is reported as logged out.
-const validatedLogin = buildLogin({ authToken: 'validatedauthtoken' })
+const validatedLogin: StoredLogin = {
+  user: buildUser({ username: 'validated' }),
+}
 
 interface HelperProps {
   stored: unknown
   onValidate: (result: unknown) => void
-  validate: ValidateLogin
+  validate: ValidateStoredLogin
 }
 
 function Helper(props: HelperProps): React.JSX.Element {
@@ -31,14 +34,13 @@ function Helper(props: HelperProps): React.JSX.Element {
   return (
     <div>
       <div>{login.user === undefined ? 'No user' : login.user.username}</div>
-      <div>{login.authToken.length === 0 ? 'No token' : login.authToken}</div>
     </div>
   )
 }
 
 test('get login', () => {
   const onValidate = mockFunction<[result: unknown]>()
-  const stored = { authToken: 'stored', refreshToken: 'refresh' }
+  const stored = { user: { username: 'stored' } }
 
   const { getByText } = render(
     <Helper
@@ -48,7 +50,7 @@ test('get login', () => {
     />,
   )
 
-  assertDefined(getByText(validatedLogin.authToken))
+  assertDefined(getByText('validated'))
   assertCalledWith(onValidate, [stored])
 })
 
@@ -56,7 +58,7 @@ test('get logged out when the stored session does not validate', () => {
   // What localStorage held at startup is whatever was in localStorage.
   const { getByText } = render(
     <Helper
-      stored={{ authToken: 1 }}
+      stored={{ user: 1 }}
       onValidate={() => undefined}
       validate={() => {
         throw Error('Could not validate data')
@@ -65,5 +67,4 @@ test('get logged out when the stored session does not validate', () => {
   )
 
   assertDefined(getByText('No user'))
-  assertDefined(getByText('No token'))
 })

@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import { Routes, Route, Outlet } from 'react-router'
 
 import { Role } from '../components/types/user/types'
-import type { User } from '../components/types/user/types'
 
 import './app.css'
 
@@ -101,20 +100,14 @@ function RouterApp(props: Props): React.JSX.Element {
   } = props.storeIf
 
   const login = getLogin()
-  const isLoggedIn: boolean = login.authToken.length > 0
+  const isLoggedIn: boolean = login.user !== undefined
   const isAdmin = login.user?.role === Role.admin
 
   const { logout } = logoutIf.useLogout()
 
-  function doLogout(user: User): void {
-    logout({
-      userId: user.id,
-      body: {
-        refreshToken: login.refreshToken,
-      },
-    }).catch(createErrorLogger('logout failed', console.error))
+  function doLogout(): void {
+    logout().catch(createErrorLogger('logout failed', console.error))
   }
-  const user: User | undefined = login.user
 
   return (
     <div className='App'>
@@ -130,13 +123,7 @@ function RouterApp(props: Props): React.JSX.Element {
                 searchBreweryIf={searchBreweryIf}
                 isAdmin={isAdmin}
                 isLoggedIn={isLoggedIn}
-                logout={
-                  user
-                    ? (): void => {
-                        doLogout(user)
-                      }
-                    : undefined
-                }
+                logout={isLoggedIn ? doLogout : undefined}
                 navMenu={navMenu}
                 theme={themeSelection}
               >

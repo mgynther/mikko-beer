@@ -21,8 +21,6 @@ const admin: User = {
 function getLogin(user: User | undefined): Login {
   return {
     user,
-    authToken: '',
-    refreshToken: '',
   }
 }
 

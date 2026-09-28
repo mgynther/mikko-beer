@@ -110,8 +110,6 @@ test('does not render on missing user', async () => {
     }),
     getLogin: () => ({
       user: undefined,
-      authToken: '',
-      refreshToken: '',
     }),
   }
   const { container } = render(

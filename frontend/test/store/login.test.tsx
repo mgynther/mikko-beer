@@ -1,5 +1,10 @@
 import { beforeAll, beforeEach, afterAll, test } from '../test'
-import { assertCalled, assertCalledWith, assertDefined } from '../assert'
+import {
+  assertCallCount,
+  assertCalled,
+  assertCalledWith,
+  assertDefined,
+} from '../assert'
 import { mockFunction } from '../mock'
 import { render, waitFor } from '../render'
 
@@ -162,10 +167,7 @@ function LogoutHelper(props: { onLoggedOut: () => void }): React.JSX.Element {
       type='button'
       onClick={() => {
         ;(async (): Promise<void> => {
-          await logout({
-            userId: signedIn.user.id,
-            body: { refreshToken: signedIn.refreshToken },
-          })
+          await logout()
           props.onLoggedOut()
         })().catch(createErrorLogger('logout failed', console.error))
       }}
@@ -175,7 +177,37 @@ function LogoutHelper(props: { onLoggedOut: () => void }): React.JSX.Element {
   )
 }
 
-test('logout', async () => {
+const loggedOut = { user: undefined, authToken: '', refreshToken: '' }
+
+test('logout ends the stored session', async () => {
+  const user = setupUser()
+  const onRequest = mockFunction<[body: unknown]>()
+  server?.addResponse({
+    method: 'POST',
+    pathname: `/api/v1/user/${signedIn.user.id}/sign-out`,
+    response: { success: true },
+    status: 200,
+    onRequest,
+  })
+
+  const onLoggedOut = mockFunction<[]>()
+  const { getByRole, getByText } = render(
+    <StoreProvider>
+      <SessionHelper login={signedIn} />
+      <LogoutHelper onLoggedOut={onLoggedOut} />
+    </StoreProvider>,
+  )
+  await user.click(getByRole('button', { name: 'Save' }))
+
+  await user.click(getByRole('button', { name: 'Logout' }))
+  await waitFor(() => {
+    assertCalled(onLoggedOut)
+  })
+  assertCalledWith(onRequest, [{ refreshToken: signedIn.refreshToken }])
+  assertDefined(getByText(JSON.stringify(loggedOut)))
+})
+
+test('logout without a session sends nothing', async () => {
   const user = setupUser()
   server?.addResponse({
     method: 'POST',
@@ -183,18 +215,34 @@ test('logout', async () => {
     response: { success: true },
     status: 200,
   })
+  // Answers a second sign-out, if one is sent.
+  const onSecondRequest = mockFunction<[body: unknown]>()
+  server?.addResponse({
+    method: 'POST',
+    pathname: `/api/v1/user/${signedIn.user.id}/sign-out`,
+    response: { success: true },
+    status: 200,
+    onRequest: onSecondRequest,
+  })
 
   const onLoggedOut = mockFunction<[]>()
   const { getByRole } = render(
     <StoreProvider>
+      <SessionHelper login={signedIn} />
       <LogoutHelper onLoggedOut={onLoggedOut} />
     </StoreProvider>,
   )
-
+  await user.click(getByRole('button', { name: 'Save' }))
   await user.click(getByRole('button', { name: 'Logout' }))
   await waitFor(() => {
     assertCalled(onLoggedOut)
   })
+
+  await user.click(getByRole('button', { name: 'Logout' }))
+  await waitFor(() => {
+    assertCallCount(onLoggedOut, 2)
+  })
+  assertCallCount(onSecondRequest, 0)
 })
 
 function ChangePasswordHelper(props: { userId: string }): React.JSX.Element {
@@ -338,10 +386,6 @@ test('log out on failed token refresh', async () => {
   // A refresh that fails ends the session, which is the one way the store
   // changes it without being asked.
   await waitFor(() => {
-    assertDefined(
-      getByText(
-        JSON.stringify({ user: undefined, authToken: '', refreshToken: '' }),
-      ),
-    )
+    assertDefined(getByText(JSON.stringify(loggedOut)))
   })
 })

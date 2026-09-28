@@ -79,12 +79,10 @@ const getUseDebounce = function <T>(): UseDebounce<T> {
   return (value: T) => [value, false]
 }
 
-// Signed in means holding an auth token.
-const getUndefinedLogin: GetLogin = () =>
-  buildLogin({ authToken: '', user: undefined })
+const getUndefinedLogin: GetLogin = () => buildLogin({ user: undefined })
 
 const getAdminLogin: GetLogin = () =>
-  buildLogin({ authToken: 'auth', user: buildUser({ role: Role.admin }) })
+  buildLogin({ user: buildUser({ role: Role.admin }) })
 
 const searchFieldIf: SearchFieldIf = {
   useSearchField: () => ({

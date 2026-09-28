@@ -3,11 +3,15 @@ import type { IncomingMessage, ServerResponse } from 'http'
 import type { AddressInfo } from 'net'
 import { uniqueTestServerPort } from '../../src/store/internal/config/constants'
 
+// onRequest is handed the request's body, parsed, when the request arrives
+// and before it is answered: a test reads what was sent there, and one that
+// plays another browser tab changes what the application has stored.
 interface Response<T> {
   method: 'GET' | 'POST' | 'PUT' | 'DELETE'
   pathname: string
   response: T
   status: number
+  onRequest?: (body: unknown) => void
 }
 
 interface InternalResponse {
@@ -15,6 +19,11 @@ interface InternalResponse {
   pathname: string
   response: Record<string, unknown> | undefined
   status: number
+  onRequest: ((body: unknown) => void) | undefined
+}
+
+function parseBody(body: string): unknown {
+  return body.length === 0 ? undefined : JSON.parse(body)
 }
 
 export interface TestServer {
@@ -29,7 +38,11 @@ export function createServer(): TestServer {
   // they were added.
   let requests: Record<string, InternalResponse[]> = {}
 
-  const handler = (req: IncomingMessage, res: ServerResponse): void => {
+  const handler = (
+    req: IncomingMessage,
+    res: ServerResponse,
+    body: string,
+  ): void => {
     /* v8 ignore next -- with web request there is a string URL */
     if (typeof req.url !== 'string') {
       /* v8 ignore next -- with web request there is a string URL */
@@ -45,6 +58,7 @@ export function createServer(): TestServer {
       req.method === response.method &&
       url === response.pathname
     ) {
+      response.onRequest?.(parseBody(body))
       res.writeHead(response.status, { 'Content-Type': 'application/json' })
       res.write(response.response ? JSON.stringify(response.response) : '')
       res.end()
@@ -62,7 +76,15 @@ export function createServer(): TestServer {
     res.end()
   }
 
-  const server = createNodeServer(handler)
+  const server = createNodeServer((req, res) => {
+    let body = ''
+    req.on('data', (chunk: Buffer) => {
+      body += chunk.toString()
+    })
+    req.on('end', () => {
+      handler(req, res, body)
+    })
+  })
 
   server.listen(uniqueTestServerPort, () => {
     const addressInfo: AddressInfo | string | null = server.address()
@@ -87,6 +109,7 @@ export function createServer(): TestServer {
         ? JSON.parse(JSON.stringify(response.response))
         : undefined,
       status: response.status,
+      onRequest: response.onRequest,
     })
     requests[response.pathname] = queued
   }

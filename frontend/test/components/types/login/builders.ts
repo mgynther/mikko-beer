@@ -7,8 +7,6 @@ import { buildUser } from '../user/builders'
 // itself.
 export function buildLogin(overrides: Partial<Login> = {}): Login {
   return {
-    authToken: 'authtoken',
-    refreshToken: 'refreshtoken',
     user: buildUser(),
     ...overrides,
   }

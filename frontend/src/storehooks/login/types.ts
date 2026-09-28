@@ -6,19 +6,16 @@ import type { User } from '../user/types'
 export interface Login {
   authToken: string
   refreshToken: string
+  user: User
+}
+
+export interface StoredLogin {
   user: User | undefined
 }
 
 export interface LoginParams {
   username: string
   password: string
-}
-
-export interface LogoutParams {
-  userId: string
-  body: {
-    refreshToken: string
-  }
 }
 
 export interface ChangePasswordParams {
@@ -31,7 +28,7 @@ export interface ChangePasswordParams {
 
 export type PasswordChangeResult = 'ERROR' | 'SUCCESS' | 'UNDEFINED'
 
-export type GetLogin = () => Login
+export type GetLogin = () => StoredLogin
 
 export type GetPasswordChangeResult = () => PasswordChangeResult
 
@@ -48,7 +45,7 @@ export type UseLogin = () => {
 }
 
 export type UseLogout = () => {
-  logout: (params: LogoutParams) => Promise<void>
+  logout: () => Promise<void>
 }
 
 export type UseChangePassword = () => {
@@ -64,6 +61,8 @@ export type UsePasswordChangeResult = () => PasswordChangeResult
 
 export type ValidateLogin = (result: unknown) => Login
 
+export type ValidateStoredLogin = (result: unknown) => StoredLogin
+
 export interface LoginHookIf {
   useLogin: () => {
     login: (login: LoginParams) => Promise<void>
@@ -73,7 +72,7 @@ export interface LoginHookIf {
 
 export interface LogoutHookIf {
   useLogout: () => {
-    logout: (params: LogoutParams) => Promise<void>
+    logout: () => Promise<void>
   }
 }
 

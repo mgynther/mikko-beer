@@ -1,7 +1,6 @@
 import type {
   ChangePasswordParams,
   LoginParams,
-  LogoutParams,
 } from './internal/login/requests'
 import type { Login, PasswordChangeResult } from './internal/login/reducer'
 import {
@@ -34,7 +33,7 @@ export interface LoginResult {
 }
 
 export interface LogoutResult {
-  logout: (params: LogoutParams) => Promise<void>
+  logout: () => Promise<void>
 }
 
 export interface ChangePasswordResult {
@@ -56,11 +55,19 @@ export function useLogin(): LoginResult {
   }
 }
 
+// The session to end is the one the store keeps, so the caller names none.
 export function useLogout(): LogoutResult {
   const [logout] = useLogoutMutation()
+  const login = useSelector(selectLogin)
   return {
-    logout: async (params: LogoutParams): Promise<void> => {
-      await logout(params)
+    logout: async (): Promise<void> => {
+      if (login.user === undefined) {
+        return
+      }
+      await logout({
+        userId: login.user.id,
+        body: { refreshToken: login.refreshToken },
+      })
     },
   }
 }

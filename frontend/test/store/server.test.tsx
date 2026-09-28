@@ -5,7 +5,7 @@ import { render, waitFor } from '../render'
 import { StoreProvider } from '../../src/store/provider'
 import { createServer } from './server'
 import type { TestServer } from './server'
-import { useCreateBeer } from '../../src/store/beer'
+import { useCreateBeer, useGetBeer } from '../../src/store/beer'
 import type { CreateBeerRequest } from '../../src/store/internal/beer/requests'
 import { setupUser } from '../user-event'
 import { createErrorLogger } from '../error-logger'
@@ -95,5 +95,67 @@ test('test server responds with 500 to unexpected request', async () => {
         status: 500,
       },
     ])
+  })
+})
+
+test('test server hands the request body to onRequest', async () => {
+  const user = setupUser()
+  const beer: CreateBeerRequest = {
+    name: 'Pilsner Urquell',
+    breweries: ['e8d3a4a5-5b1f-4f2e-9d65-1c1b7f0f6a2e'],
+    styles: ['0b8f4d57-5e2c-4bd4-8a44-4c1f0b3f5c1a'],
+  }
+  const onRequest = mockFunction<[body: unknown]>()
+  server?.addResponse({
+    method: 'POST',
+    pathname: '/api/v1/beer',
+    response: {
+      beer: {
+        id: '6f6e1f0e-7a39-4b39-a3c9-3a2e7b0e4f11',
+        name: beer.name,
+        breweries: beer.breweries,
+        styles: beer.styles,
+      },
+    },
+    status: 201,
+    onRequest,
+  })
+
+  const { getByRole } = render(
+    <StoreProvider>
+      <Helper beer={beer} handleResponse={() => undefined} />
+    </StoreProvider>,
+  )
+  await user.click(getByRole('button', { name: 'Test' }))
+  await waitFor(() => {
+    assertCalledWith(onRequest, [beer])
+  })
+})
+
+function GetHelper(props: { beerId: string }): React.JSX.Element {
+  const { isLoading } = useGetBeer(props.beerId)
+  return <div>{isLoading ? 'Loading' : 'Not loading'}</div>
+}
+
+test('test server hands onRequest no body when there is none', async () => {
+  const beerId = '2d0f5b0e-94c1-4c43-9a4f-7b0d3a51e8c6'
+  const onRequest = mockFunction<[body: unknown]>()
+  server?.addResponse({
+    method: 'GET',
+    pathname: `/api/v1/beer/${beerId}`,
+    response: {
+      beer: { id: beerId, name: 'Guinness', breweries: [], styles: [] },
+    },
+    status: 200,
+    onRequest,
+  })
+
+  render(
+    <StoreProvider>
+      <GetHelper beerId={beerId} />
+    </StoreProvider>,
+  )
+  await waitFor(() => {
+    assertCalledWith(onRequest, [undefined])
   })
 })
