@@ -33,7 +33,12 @@ export function createWebServer(api: Api, errors: WebErrors): WebServer {
   koa.use(compress())
   koa.use(addHeaders)
   koa.use(createErrorMiddleware(errors.handle))
-  koa.use(bodyParser({ onError: errors.rejectUnreadableBody }))
+  koa.use(
+    bodyParser({
+      enableTypes: ['json'],
+      onError: errors.rejectUnreadableBody,
+    }),
+  )
 
   const { router, useRouter } = createRouter(
     errors.rejectRepeatedQueryParameter,

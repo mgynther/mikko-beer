@@ -2,9 +2,9 @@ import { suite, test, afterEach } from '../test.js'
 import { assertDeepEqual, assertEqual } from '../assert.js'
 import { mockFunction } from '../mock.js'
 
-import type { BeerListBody } from '../../src/web/beer/beer.js'
+import type { BeerListBody, BeerSearchBody } from '../../src/web/beer/beer.js'
 import type { ErrorResponse } from '../../src/web/error-response.js'
-import type { PaginationRequest } from '../../src/web/request.js'
+import type { BodyRequest, PaginationRequest } from '../../src/web/request.js'
 import type { WebErrors } from '../../src/web/web-server.js'
 import {
   repeatedQueryParameterResponse,
@@ -138,6 +138,26 @@ suite('web server', () => {
 
     assertEqual(res.status, unreadableBodyResponse.status)
     assertDeepEqual(await res.json(), unreadableBodyResponse.body)
+  })
+
+  test('leave a form body unread', async () => {
+    const search = mockFunction<
+      [request: BodyRequest],
+      Promise<BeerSearchBody>
+    >(async () => ({ beers: [] }))
+    await server.start({ beer: { search } })
+
+    const res = await fetch('http://localhost:3003/api/v1/beer/search', {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: 'name=Weihenstephaner',
+    })
+
+    assertEqual(res.status, 200)
+    assertDeepEqual(
+      search.mock.calls.map((call) => call.arguments),
+      [[{ authorization: undefined, body: {} }]],
+    )
   })
 
   test('close a server that never listened', async () => {
