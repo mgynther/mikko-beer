@@ -2,7 +2,7 @@ import type { Config } from './config.js'
 import type { Context } from './context.js'
 import { Database } from '../data/database.js'
 import type { log } from '../console/log.js'
-import { invalidQueryError } from '../logic/errors.js'
+import { invalidBodyError, invalidQueryError } from '../logic/errors.js'
 import { createWebServer } from '../web/web-server.js'
 import type { WebErrors, WebServer } from '../web/web-server.js'
 import { createApi } from './api.js'
@@ -25,6 +25,9 @@ export class App {
       handle: createErrorHandler(log),
       rejectRepeatedQueryParameter: (): never => {
         throw invalidQueryError
+      },
+      rejectUnreadableBody: (): never => {
+        throw invalidBodyError
       },
     }
     this.#server = createWebServer(createApi(context), webErrors)

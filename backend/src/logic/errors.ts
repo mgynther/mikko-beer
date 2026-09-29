@@ -55,6 +55,7 @@ type SignInMethodApiErros =
 
 type ErrorCode =
   | 'UnknownError'
+  | 'InvalidBody'
   | 'InvalidPagination'
   | 'InvalidQuery'
   | 'InvalidSearch'
@@ -153,6 +154,13 @@ export const referredBeerNotFoundError = new ControllerError(
   400,
   'BeerNotFound',
   'beer not found',
+)
+
+// Body
+export const invalidBodyError = new ControllerError(
+  400,
+  'InvalidBody',
+  'invalid body, could not be read',
 )
 
 // Brewery

@@ -8,6 +8,7 @@ import {
 } from '../../test.js'
 
 import { TestContext } from '../test-context.js'
+import { testConfig } from '../test-config.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
 import type {
   CreatedOrUpdatedBrewery,
@@ -220,5 +221,27 @@ suite('brewery tests', () => {
     )
 
     assertEqual(res.status, 400)
+  })
+
+  test('fail on a malformed body', async () => {
+    const res = await fetch(
+      `http://localhost:${testConfig.port}/api/v1/brewery`,
+      {
+        method: 'POST',
+        headers: {
+          ...ctx.adminAuthHeaders(),
+          'content-type': 'application/json',
+        },
+        body: '{"name": ',
+      },
+    )
+
+    assertEqual(res.status, 400)
+    assertDeepEqual(await res.json(), {
+      error: {
+        code: 'InvalidBody',
+        message: 'invalid body, could not be read',
+      },
+    })
   })
 })

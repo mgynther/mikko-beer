@@ -23,14 +23,17 @@ export interface WebErrors {
   // Throws the error a request with a repeated query parameter is answered
   // with.
   rejectRepeatedQueryParameter: () => never
+  // Throws the error a request whose body cannot be read is answered with,
+  // be it malformed, over the size limit or cut short.
+  rejectUnreadableBody: () => never
 }
 
 export function createWebServer(api: Api, errors: WebErrors): WebServer {
   const koa = new Koa()
   koa.use(compress())
-  koa.use(bodyParser())
   koa.use(addHeaders)
   koa.use(createErrorMiddleware(errors.handle))
+  koa.use(bodyParser({ onError: errors.rejectUnreadableBody }))
 
   const { router, useRouter } = createRouter(
     errors.rejectRepeatedQueryParameter,

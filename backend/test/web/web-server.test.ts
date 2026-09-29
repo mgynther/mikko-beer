@@ -10,6 +10,7 @@ import {
   repeatedQueryParameterResponse,
   testWebErrors,
   TestServer,
+  unreadableBodyResponse,
 } from './test-server.js'
 
 // Any route will do for what the server does around every route; listing
@@ -113,11 +114,8 @@ suite('web server', () => {
     assertEqual(res.status, 405)
   })
 
-  test('answer a malformed body without the error handler', async () => {
-    const handle = mockFunction<[error: unknown], ErrorResponse>(
-      testWebErrors.handle,
-    )
-    await server.start({}, { ...testWebErrors, handle })
+  test('reject a malformed body before the handler', async () => {
+    await server.start({})
 
     const res = await fetch('http://localhost:3003/api/v1/beer', {
       method: 'POST',
@@ -125,8 +123,21 @@ suite('web server', () => {
       body: '{"name": ',
     })
 
-    assertEqual(res.status, 400)
-    assertEqual(handle.mock.callCount(), 0)
+    assertEqual(res.status, unreadableBodyResponse.status)
+    assertDeepEqual(await res.json(), unreadableBodyResponse.body)
+  })
+
+  test('reject a body over the size limit before the handler', async () => {
+    await server.start({})
+
+    const res = await fetch('http://localhost:3003/api/v1/beer', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ name: 'x'.repeat(1024 * 1024) }),
+    })
+
+    assertEqual(res.status, unreadableBodyResponse.status)
+    assertDeepEqual(await res.json(), unreadableBodyResponse.body)
   })
 
   test('close a server that never listened', async () => {

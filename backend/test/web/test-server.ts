@@ -20,12 +20,24 @@ export const repeatedQueryParameterResponse: ErrorResponse = {
   },
 }
 
+export const unreadableBodyResponse: ErrorResponse = {
+  status: 400,
+  body: {
+    error: { code: 'UnreadableBody', message: 'unreadable body' },
+  },
+}
+
 class RepeatedQueryParameter extends Error {}
+
+class UnreadableBody extends Error {}
 
 export const testWebErrors: WebErrors = {
   handle: (error: unknown): ErrorResponse => {
     if (error instanceof RepeatedQueryParameter) {
       return repeatedQueryParameterResponse
+    }
+    if (error instanceof UnreadableBody) {
+      return unreadableBodyResponse
     }
     return {
       status: 500,
@@ -39,6 +51,9 @@ export const testWebErrors: WebErrors = {
   },
   rejectRepeatedQueryParameter: (): never => {
     throw new RepeatedQueryParameter()
+  },
+  rejectUnreadableBody: (): never => {
+    throw new UnreadableBody()
   },
 }
 
