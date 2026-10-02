@@ -1,7 +1,7 @@
 import { test } from '../../../test'
 import { assertDeepEqual } from '../../../assert'
 import { mockFunction } from '../../../mock'
-import { render } from '../../../render'
+import { render, waitFor } from '../../../render'
 import type { RenderResult } from '../../../render'
 import { fireEvent } from '../../../fire-event'
 import type { UserEvent } from '../../../user-event'
@@ -177,7 +177,7 @@ test('updates review', async () => {
   const update = mockFunction<[request: ReviewType], Promise<void>>(
     async () => undefined,
   )
-  const { getByPlaceholderText, getByRole, getByText } = render(
+  const { findByRole, getByPlaceholderText, getByRole, getByText } = render(
     <Review
       linkComponent={testLink}
       review={joinedReview}
@@ -203,7 +203,7 @@ test('updates review', async () => {
   )
   const beerName = getByText(joinedReview.beerName)
   await user.click(beerName)
-  const editButton = getByRole('button', { name: 'Edit' })
+  const editButton = await findByRole('button', { name: 'Edit' })
   await user.click(editButton)
   await addReview(getByPlaceholderText, getByRole, user)
   const saveButton = getByRole('button', { name: 'Save' })
@@ -234,7 +234,7 @@ test('update review without onChanged callback', async () => {
   const update = mockFunction<[request: ReviewType], Promise<void>>(
     async () => undefined,
   )
-  const { getByPlaceholderText, getByRole, getByText } = render(
+  const { findByRole, getByPlaceholderText, getByRole, getByText } = render(
     <Review
       linkComponent={testLink}
       review={joinedReview}
@@ -260,7 +260,7 @@ test('update review without onChanged callback', async () => {
   )
   const beerName = getByText(joinedReview.beerName)
   await user.click(beerName)
-  const editButton = getByRole('button', { name: 'Edit' })
+  const editButton = await findByRole('button', { name: 'Edit' })
   await user.click(editButton)
   await addReview(getByPlaceholderText, getByRole, user)
   const saveButton = getByRole('button', { name: 'Save' })
@@ -291,7 +291,7 @@ test('cancel editing', async () => {
   const update = mockFunction<[request: ReviewType], Promise<void>>(
     async () => undefined,
   )
-  const { getByRole, getByText } = render(
+  const { findByRole, getByRole, getByText } = render(
     <Review
       linkComponent={testLink}
       review={joinedReview}
@@ -317,7 +317,7 @@ test('cancel editing', async () => {
   )
   const beerName = getByText(joinedReview.beerName)
   await user.click(beerName)
-  const editButton = getByRole('button', { name: 'Edit' })
+  const editButton = await findByRole('button', { name: 'Edit' })
   await user.click(editButton)
   const cancelButton = getByRole('button', { name: 'Cancel' })
   await user.click(cancelButton)
@@ -326,6 +326,7 @@ test('cancel editing', async () => {
 
 test('cannot update review as viewer', async () => {
   const user = setupUser()
+  const loadedReview = buildReview({ smell: 'Nice' })
   const onChanged = mockFunction<[]>()
   const update = mockFunction<[request: ReviewType], Promise<void>>(
     async () => undefined,
@@ -338,7 +339,7 @@ test('cannot update review as viewer', async () => {
       reviewIf={{
         get: {
           useGet: () => ({
-            get: async (): Promise<ReviewType> => review,
+            get: async (): Promise<ReviewType> => loadedReview,
           }),
         },
         update: {
@@ -356,6 +357,7 @@ test('cannot update review as viewer', async () => {
   )
   const beerName = getByText(joinedReview.beerName)
   await user.click(beerName)
+  await waitFor(() => getByText('Nice'))
   const editButton = queryByRole('button', { name: 'Edit' })
   assertDeepEqual(editButton, null)
 })
@@ -418,6 +420,6 @@ test('renders review', async () => {
   getByText(asText(container))
   getByText('Additional info')
   getByText('Oluthuone')
-  getByText('Nice')
+  await waitFor(() => getByText('Nice'))
   getByText('Roasted malt, bitter, strong')
 })

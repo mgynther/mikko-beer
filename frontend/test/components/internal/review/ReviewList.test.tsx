@@ -1,7 +1,7 @@
 import { test } from '../../../test'
 import { assertDeepEqual } from '../../../assert'
 import { mockFunction } from '../../../mock'
-import { render } from '../../../render'
+import { render, waitFor } from '../../../render'
 import { setupUser } from '../../../user-event'
 import ReviewList from '../../../../src/components/internal/review/ReviewList'
 import type { UseDebounce } from '../../../../src/components/types/types'
@@ -193,7 +193,7 @@ test('updates review', async () => {
   const update = mockFunction<[request: Review], Promise<void>>(
     async () => undefined,
   )
-  const { getByPlaceholderText, getByRole, getByText } = render(
+  const { findByRole, getByPlaceholderText, getByRole, getByText } = render(
     <ReviewList
       linkComponent={testLink}
       filterState={{
@@ -229,7 +229,7 @@ test('updates review', async () => {
   )
   const beerName = getByText(joinedReview.beerName)
   await user.click(beerName)
-  const editButton = getByRole('button', { name: 'Edit' })
+  const editButton = await findByRole('button', { name: 'Edit' })
   await user.click(editButton)
 
   const tasteInput = getByPlaceholderText('Taste')
@@ -315,7 +315,7 @@ test('renders reviews', async () => {
   getByRole('link', { name: joinedReview.beerName })
   getByRole('link', { name: joinedReview.styles[0].name })
   getByText(joinedReview.rating)
-  getByText(review.smell)
+  await waitFor(() => getByText(review.smell))
   getByText(review.taste)
 
   getByRole('link', { name: anotherJoinedReview.breweries[0].name })

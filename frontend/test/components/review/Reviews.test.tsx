@@ -229,7 +229,7 @@ test('updates review', async () => {
     async () => undefined,
   )
   let scrollCb: () => void = () => undefined
-  const { getByPlaceholderText, getByRole, getByText } = render(
+  const { findByRole, getByPlaceholderText, getByRole, getByText } = render(
     <>
       <Reviews
         linkComponent={testLink}
@@ -269,7 +269,7 @@ test('updates review', async () => {
   })
   const beerName = getByText(joinedReview.beerName)
   await user.click(beerName)
-  const editButton = getByRole('button', { name: 'Edit' })
+  const editButton = await findByRole('button', { name: 'Edit' })
   await user.click(editButton)
 
   const tasteInput = getByPlaceholderText('Taste')

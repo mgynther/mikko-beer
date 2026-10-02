@@ -1,7 +1,7 @@
 import { test } from '../../../test'
 import { assertDeepEqual } from '../../../assert'
 import { mockFunction } from '../../../mock'
-import { act, render } from '../../../render'
+import { act, render, waitFor } from '../../../render'
 import React, { useState } from 'react'
 
 import { setupUser } from '../../../user-event'
@@ -78,7 +78,7 @@ test('loads the first page', async () => {
   )
   await user.click(getByRole('button', { name: scroll }))
   assertDeepEqual(loadPage.mock.calls, [[0]])
-  getByText('items: a b')
+  await waitFor(() => getByText('items: a b'))
 })
 
 test('loads the next page after the ones it has', async () => {
@@ -95,9 +95,10 @@ test('loads the next page after the ones it has', async () => {
     />,
   )
   await user.click(getByRole('button', { name: scroll }))
+  await waitFor(() => getByText('items: a b'))
   await user.click(getByRole('button', { name: scroll }))
   assertDeepEqual(loadPage.mock.calls, [[0], [2]])
-  getByText('items: a b c')
+  await waitFor(() => getByText('items: a b c'))
 })
 
 test('loads an empty page, which is a loaded list of nothing', async () => {
@@ -107,7 +108,7 @@ test('loads an empty page, which is a loaded list of nothing', async () => {
   )
   getByText(notLoaded)
   await user.click(getByRole('button', { name: scroll }))
-  getByText('items:')
+  await waitFor(() => getByText('items:'))
 })
 
 test('does not load again while a page is on its way', async () => {
@@ -185,7 +186,7 @@ test('drops a page of a list that has moved on', async () => {
     />,
   )
   await user.click(getByRole('button', { name: scroll }))
-  getByText('items: a b')
+  await waitFor(() => getByText('items: a b'))
   // The second page is on its way when a sort or a filter change empties the
   // list under it. Adding it to what it was asked for would put the list
   // back, and the page after it would then repeat rows the list already had.
@@ -219,5 +220,5 @@ test('loads again after a page that failed', async () => {
   getByText(notLoaded)
   await user.click(getByRole('button', { name: scroll }))
   assertDeepEqual(loadPage.mock.calls, [[0], [0]])
-  getByText('items: a')
+  await waitFor(() => getByText('items: a'))
 })
