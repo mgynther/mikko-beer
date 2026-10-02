@@ -1,13 +1,13 @@
-import { beforeAll, beforeEach, afterAll, test } from '../test'
+import { test } from '../test'
 import { assertCalledWith, assertDefined } from '../assert'
 import { mockFunction } from '../mock'
 import { render, waitFor } from '../render'
 
 import { createServer } from './server'
-import type { TestServer } from './server'
+import { createMemoryStorage } from '../memory-storage'
 import { setupUser } from '../user-event'
 
-import { StoreProvider } from '../../src/store/provider'
+import { createStoreProvider } from '../../src/store/provider'
 import {
   useCreateContainer,
   useListContainers,
@@ -17,20 +17,6 @@ import { createErrorLogger } from '../error-logger'
 
 // See store/beer.test.tsx for what the store layer's tests are for and why
 // the helpers render the data as text.
-let server: TestServer | undefined
-
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
-
 const containerId = 'a2b3c4d5-e6f7-4089-9a1b-2c3d4e5f6a7b'
 const container = {
   id: containerId,
@@ -49,14 +35,17 @@ function ListContainersHelper(): React.JSX.Element {
 }
 
 test('list containers', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const expectedResponse = { containers: [container] }
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: '/api/v1/container',
     response: expectedResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <ListContainersHelper />
@@ -96,9 +85,11 @@ function CreateContainerHelper(props: TriggerProps): React.JSX.Element {
 }
 
 test('create container', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
   const expectedResponse = { container }
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: '/api/v1/container',
     response: expectedResponse,
@@ -106,6 +97,7 @@ test('create container', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <CreateContainerHelper onResult={onResult} />
@@ -141,9 +133,11 @@ function UpdateContainerHelper(props: TriggerProps): React.JSX.Element {
 }
 
 test('update container', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
   const expectedResponse = { container }
-  server?.addResponse({
+  server.addResponse({
     method: 'PUT',
     pathname: `/api/v1/container/${containerId}`,
     response: expectedResponse,
@@ -151,6 +145,7 @@ test('update container', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <UpdateContainerHelper onResult={onResult} />

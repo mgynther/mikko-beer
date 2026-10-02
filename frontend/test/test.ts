@@ -11,18 +11,13 @@ export function test(name: string, fn: () => void | Promise<void>): void {
   vitest.test(name, fn)
 }
 
-export function beforeAll(fn: Hook): void {
-  vitest.beforeAll(fn)
-}
-
-export function beforeEach(fn: Hook): void {
-  vitest.beforeEach(fn)
-}
-
-export function afterAll(fn: Hook): void {
-  vitest.afterAll(fn)
-}
-
 export function afterEach(fn: Hook): void {
   vitest.afterEach(fn)
+}
+
+// Runs once the test that called it has finished, after its afterEach hooks.
+// A helper a test creates registers its own teardown here, so that it lives
+// exactly as long as that test.
+export function onTestFinished(fn: Hook): void {
+  vitest.onTestFinished(fn)
 }

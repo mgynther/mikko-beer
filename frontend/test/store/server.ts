@@ -1,7 +1,8 @@
 import { createServer as createNodeServer } from 'http'
-import type { IncomingMessage, ServerResponse } from 'http'
+import type { IncomingMessage, Server, ServerResponse } from 'http'
 import type { AddressInfo } from 'net'
-import { uniqueTestServerPort } from '../../src/store/internal/config/constants'
+import { onTestFinished } from '../test'
+import { assertDeepEqual } from '../assert'
 
 export interface ReceivedRequest {
   authorization: string | undefined
@@ -31,17 +32,45 @@ function parseBody(body: string): unknown {
   return body.length === 0 ? undefined : JSON.parse(body)
 }
 
+// unsettled lists what the test registered or caused and did not see
+// through: a response nothing asked for and a request nothing expected.
 export interface TestServer {
+  url: string
   addResponse: <T>(response: Response<T>) => void
+  unsettled: () => string[]
   clear: () => void
-  close: () => void
 }
 
-export function createServer(): TestServer {
+// Listens on a port the operating system picks, so that any number of
+// servers, and of test runs, can be open at once.
+function listen(server: Server): Promise<number> {
+  return new Promise((resolve) => {
+    server.listen(0, '127.0.0.1', () => {
+      const addressInfo: AddressInfo | string | null = server.address()
+      // Null is returned when not listening yet which is impossible here.
+      // String is returned when listening to pipe or Unix socket which is
+      // equally impossible.
+      /* v8 ignore next */
+      if (typeof addressInfo === 'string' || addressInfo === null) {
+        /* v8 ignore next -- See above why this is unreachable. */
+        throw new Error(
+          'server address() did not return an AddressInfo instance',
+        )
+      }
+      resolve(addressInfo.port)
+    })
+  })
+}
+
+// A server belongs to the test that created it. When the test finishes, the
+// server closes and fails the test if anything is unsettled, so a request the
+// test left running cannot reach the server of the test after it.
+export async function createServer(): Promise<TestServer> {
   // Responses are queued per path so that a test can set up several
   // responses to the same request in advance. They are served in the order
   // they were added.
   let requests: Record<string, InternalResponse[]> = {}
+  let unexpected: string[] = []
 
   const handler = (
     req: IncomingMessage,
@@ -73,6 +102,7 @@ export function createServer(): TestServer {
       queued.shift()
       return
     }
+    unexpected.push(`unexpected request ${req.method} ${parsedURL.pathname}`)
     res.writeHead(500, { 'Content-Type': 'application/json' })
     res.write(
       JSON.stringify({
@@ -94,19 +124,7 @@ export function createServer(): TestServer {
     })
   })
 
-  server.listen(uniqueTestServerPort, () => {
-    const addressInfo: AddressInfo | string | null = server.address()
-    // Null is returned when not listening yet which is impossible here.
-    // String is returned when listening to pipe or Unix socket which is
-    // equally impossible.
-    /* v8 ignore next */
-    if (typeof addressInfo === 'string' || addressInfo === null) {
-      /* v8 ignore next -- See above why this is unreachable. */
-      throw new Error('server address() did not return an AddressInfo instance')
-    }
-    const port = addressInfo.port
-    console.log('TestServer listening on port', port)
-  })
+  const port: number = await listen(server)
 
   function addTestServerResponse<T>(response: Response<T>): void {
     const queued = requests[response.pathname] ?? []
@@ -122,13 +140,27 @@ export function createServer(): TestServer {
     requests[response.pathname] = queued
   }
 
+  function unsettled(): string[] {
+    const unused: string[] = Object.values(requests)
+      .flat()
+      .map(
+        (response) => `unused response ${response.method} ${response.pathname}`,
+      )
+    return [...unexpected, ...unused]
+  }
+
+  onTestFinished(() => {
+    server.close()
+    assertDeepEqual(unsettled(), [])
+  })
+
   return {
+    url: `http://127.0.0.1:${port}`,
     addResponse: addTestServerResponse,
+    unsettled,
     clear: (): void => {
       requests = {}
-    },
-    close: (): void => {
-      server.close()
+      unexpected = []
     },
   }
 }

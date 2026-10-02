@@ -1,4 +1,4 @@
-import { beforeAll, beforeEach, afterAll, test } from '../test'
+import { test } from '../test'
 import {
   assertCallCount,
   assertCalled,
@@ -9,10 +9,10 @@ import { mockFunction } from '../mock'
 import { render, waitFor } from '../render'
 
 import { createServer } from './server'
-import type { TestServer } from './server'
+import { createMemoryStorage } from '../memory-storage'
 import { setupUser } from '../user-event'
 
-import { StoreProvider } from '../../src/store/provider'
+import { createStoreProvider } from '../../src/store/provider'
 import {
   useCreateBeer,
   useGetBeer,
@@ -30,20 +30,6 @@ import { createErrorLogger } from '../error-logger'
 //
 // The data is unknown here, so the helpers render it as text rather than
 // reaching into it. That is the whole point of the type.
-let server: TestServer | undefined
-
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
-
 const beerId = 'ac2a8f6a-0e23-4f3f-8d7e-9b0ad2e0d6d7'
 const beer = {
   id: beerId,
@@ -65,13 +51,16 @@ function GetBeerHelper(props: { beerId: string }): React.JSX.Element {
 }
 
 test('get beer', async () => {
-  server?.addResponse({
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/beer/${beerId}`,
     response: beerResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <GetBeerHelper beerId={beerId} />
@@ -86,16 +75,17 @@ test('get beer', async () => {
 })
 
 test('get beer that does not exist', async () => {
-  // A different id than the test above: a response the store has cached is
-  // served from the cache, not from the server.
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const missingId = 'b4f4a3d2-1c0e-4f5a-9b8c-7d6e5f4a3b2c'
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/beer/${missingId}`,
     response: { error: { code: 'BeerNotFound', message: 'not found' } },
     status: 404,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <GetBeerHelper beerId={missingId} />
@@ -144,8 +134,10 @@ function ListBeersHelper(props: ListProps): React.JSX.Element {
 }
 
 test('list beers', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: '/api/v1/beer?size=10&skip=0',
     response: beerListResponse,
@@ -153,6 +145,7 @@ test('list beers', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <ListBeersHelper
@@ -176,8 +169,10 @@ test('list beers', async () => {
 })
 
 test('fail to list beers', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: '/api/v1/beer?size=20&skip=0',
     response: { error: 'Nope' },
@@ -186,13 +181,12 @@ test('fail to list beers', async () => {
 
   const onResult = mockFunction<[result: unknown]>()
   const onError = mockFunction<[]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole } = render(
     <StoreProvider>
       <ListBeersHelper size={20} onResult={onResult} onError={onError} />
     </StoreProvider>,
   )
-  // The size is not the one the test above asked for: a cached response is
-  // served from the cache rather than from the server.
   await user.click(getByRole('button', { name: 'List' }))
 
   // A failed request rejects: the unwrapping is done here so that every
@@ -223,8 +217,10 @@ function SearchBeersHelper(props: TriggerProps): React.JSX.Element {
 }
 
 test('search beers', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: '/api/v1/beer/search',
     response: beerListResponse,
@@ -232,6 +228,7 @@ test('search beers', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <SearchBeersHelper onResult={onResult} onError={() => undefined} />
@@ -273,8 +270,10 @@ function CreateBeerHelper(props: TriggerProps): React.JSX.Element {
 }
 
 test('create beer', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: '/api/v1/beer',
     response: beerResponse,
@@ -282,6 +281,7 @@ test('create beer', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <CreateBeerHelper onResult={onResult} onError={() => undefined} />
@@ -317,8 +317,10 @@ function UpdateBeerHelper(props: TriggerProps): React.JSX.Element {
 }
 
 test('update beer', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'PUT',
     pathname: `/api/v1/beer/${beerId}`,
     response: beerResponse,
@@ -326,6 +328,7 @@ test('update beer', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <UpdateBeerHelper onResult={onResult} onError={() => undefined} />

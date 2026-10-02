@@ -1,13 +1,13 @@
-import { beforeAll, beforeEach, afterAll, test } from '../test'
+import { test } from '../test'
 import { assertCalled, assertDefined } from '../assert'
 import { mockFunction } from '../mock'
 import { render, waitFor } from '../render'
 
 import { createServer } from './server'
-import type { TestServer } from './server'
+import { createMemoryStorage } from '../memory-storage'
 import { setupUser } from '../user-event'
 
-import { StoreProvider } from '../../src/store/provider'
+import { createStoreProvider } from '../../src/store/provider'
 import {
   useCreateUser,
   useDeleteUser,
@@ -17,20 +17,6 @@ import { createErrorLogger } from '../error-logger'
 
 // See store/beer.test.tsx for what the store layer's tests are for and why
 // the helpers render the data as text.
-let server: TestServer | undefined
-
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
-
 const userId = 'b3c4d5e6-f708-419a-8b2c-3d4e5f6a7b8c'
 const testUser = {
   id: userId,
@@ -57,14 +43,17 @@ function ListUsersHelper(): React.JSX.Element {
 }
 
 test('list users', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const expectedResponse = { users: [testUser] }
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: '/api/v1/user',
     response: expectedResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <ListUsersHelper />
@@ -99,15 +88,18 @@ function CreateUserHelper(): React.JSX.Element {
 }
 
 test('create user', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
   const expectedResponse = { user: testUser }
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: '/api/v1/user',
     response: expectedResponse,
     status: 201,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <CreateUserHelper />
@@ -123,14 +115,17 @@ test('create user', async () => {
 })
 
 test('fail to create user', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: '/api/v1/user',
     response: { error: { code: 'UserAlreadyExists' } },
     status: 409,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <CreateUserHelper />
@@ -164,8 +159,10 @@ function DeleteUserHelper(props: { onDeleted: () => void }): React.JSX.Element {
 }
 
 test('delete user', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'DELETE',
     pathname: `/api/v1/user/${userId}`,
     response: undefined,
@@ -173,6 +170,7 @@ test('delete user', async () => {
   })
 
   const onDeleted = mockFunction<[]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole } = render(
     <StoreProvider>
       <DeleteUserHelper onDeleted={onDeleted} />

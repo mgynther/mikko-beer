@@ -4,7 +4,9 @@ import { render } from '../render'
 
 import { setupUser } from '../user-event'
 
-import { StoreProvider } from '../../src/store/provider'
+import { createServer } from './server'
+import { createMemoryStorage } from '../memory-storage'
+import { createStoreProvider } from '../../src/store/provider'
 import searchField from '../../src/store/search'
 
 // The id arrives as a function, so the test gives out ids of its own. They
@@ -25,7 +27,10 @@ function Helper(props: { id: string; label: string }): React.JSX.Element {
 }
 
 test('activate search', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <Helper id='the-field' label='The field' />
@@ -38,7 +43,10 @@ test('activate search', async () => {
 })
 
 test('only the activated search field is active', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <Helper id='first-field' label='First' />

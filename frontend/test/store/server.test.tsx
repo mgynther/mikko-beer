@@ -1,29 +1,15 @@
-import { beforeAll, beforeEach, afterAll, test } from '../test'
-import { assertCalledWith } from '../assert'
+import { test } from '../test'
+import { assertCalledWith, assertDeepEqual } from '../assert'
 import { mockFunction } from '../mock'
 import { render, waitFor } from '../render'
-import { StoreProvider } from '../../src/store/provider'
+import { createStoreProvider } from '../../src/store/provider'
 import { createServer } from './server'
-import type { ReceivedRequest, TestServer } from './server'
+import { createMemoryStorage } from '../memory-storage'
+import type { ReceivedRequest } from './server'
 import { useCreateBeer, useGetBeer } from '../../src/store/beer'
 import type { CreateBeerRequest } from '../../src/store/internal/beer/requests'
-import { clearSession } from '../../src/store/internal/session'
 import { setupUser } from '../user-event'
 import { createErrorLogger } from '../error-logger'
-
-let server: TestServer | undefined
-
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
 
 interface HelperProps {
   beer: CreateBeerRequest
@@ -52,7 +38,9 @@ function Helper(props: HelperProps): React.JSX.Element {
   )
 }
 
-test('test server responds with 500 to unexpected request', async () => {
+test('test server answers and reports an unexpected request', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
 
   const expectedResponse = {
@@ -64,7 +52,7 @@ test('test server responds with 500 to unexpected request', async () => {
     },
   }
 
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: '/api/v1/thisiswrong',
     response: expectedResponse,
@@ -72,6 +60,7 @@ test('test server responds with 500 to unexpected request', async () => {
   })
 
   const handler = mockFunction<[e: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole } = render(
     <StoreProvider>
       <Helper
@@ -97,19 +86,26 @@ test('test server responds with 500 to unexpected request', async () => {
       },
     ])
   })
+  assertDeepEqual(server.unsettled(), [
+    'unexpected request POST /api/v1/beer',
+    'unused response POST /api/v1/thisiswrong',
+  ])
+  // Both are left behind on purpose, so they are cleared before the check
+  // every test ends with.
+  server.clear()
 })
 
 test('test server hands the request to onRequest', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  // Logged out, so that the request carries no auth token.
-  clearSession()
   const beer: CreateBeerRequest = {
     name: 'Pilsner Urquell',
     breweries: ['e8d3a4a5-5b1f-4f2e-9d65-1c1b7f0f6a2e'],
     styles: ['0b8f4d57-5e2c-4bd4-8a44-4c1f0b3f5c1a'],
   }
   const onRequest = mockFunction<[request: ReceivedRequest]>()
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: '/api/v1/beer',
     response: {
@@ -124,6 +120,7 @@ test('test server hands the request to onRequest', async () => {
     onRequest,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole } = render(
     <StoreProvider>
       <Helper beer={beer} handleResponse={() => undefined} />
@@ -141,10 +138,11 @@ function GetHelper(props: { beerId: string }): React.JSX.Element {
 }
 
 test('test server hands onRequest no body when there is none', async () => {
-  clearSession()
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const beerId = '2d0f5b0e-94c1-4c43-9a4f-7b0d3a51e8c6'
   const onRequest = mockFunction<[request: ReceivedRequest]>()
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/beer/${beerId}`,
     response: {
@@ -154,6 +152,7 @@ test('test server hands onRequest no body when there is none', async () => {
     onRequest,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   render(
     <StoreProvider>
       <GetHelper beerId={beerId} />

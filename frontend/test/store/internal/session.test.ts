@@ -1,5 +1,6 @@
 import { test } from '../../test'
 import { assertDeepEqual } from '../../assert'
+import { createMemoryStorage } from '../../memory-storage'
 import {
   clearSession,
   readSession,
@@ -17,12 +18,14 @@ const session = {
 }
 
 test('read back the session written', () => {
-  writeSession(session)
-  assertDeepEqual(readSession(), session)
+  const storage = createMemoryStorage()
+  writeSession(storage, session)
+  assertDeepEqual(readSession(storage), session)
 })
 
 test('read no session once cleared', () => {
-  writeSession(session)
-  clearSession()
-  assertDeepEqual(readSession(), undefined)
+  const storage = createMemoryStorage()
+  writeSession(storage, session)
+  clearSession(storage)
+  assertDeepEqual(readSession(storage), undefined)
 })

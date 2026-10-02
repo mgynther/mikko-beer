@@ -197,10 +197,9 @@ const layerDependencies = {
   // but does not wrap it completely, so it is too easy to reach past the
   // better alternative by accident.
   //
-  // The backend url is derived in internal/config/ from the environment,
-  // which is plain parsing over import.meta.env and stays that way: the store
-  // is the only thing that talks to the backend, so it is the only thing that
-  // needs to know where it is.
+  // The store does not read its environment: the backend url arrives as an
+  // argument of every store it creates, so a test gives its store the url of
+  // its own server.
   store: ['@reduxjs/toolkit', 'async-mutex', 'react-redux'],
   // storehooks unwraps the response envelope in plain TypeScript rather than
   // with a decoder, which is what keeps io-ts inside validation. It uses no
@@ -210,12 +209,12 @@ const layerDependencies = {
   validation: ['fp-ts', 'io-ts'],
   // wiring is the composition root: it builds the *If interfaces out of the
   // storehooks, hands each of them the validators it needs, declares which
-  // component answers which path and installs the store and the router around
-  // the tree. It is the one layer that may import every other one, so it is
-  // also the one that must never be imported back. It names exported
-  // functions and passes them on: behaviour written here as a lambda would
-  // only run deep inside the application, where the tests that construct the
-  // tree cannot see it.
+  // component answers which path and installs the store, given the backend
+  // url index.tsx read from the build, and the router around the tree. It is
+  // the one layer that may import every other one, so it is also the one that
+  // must never be imported back. It names exported functions and passes them
+  // on: behaviour written here as a lambda would only run deep inside the
+  // application, where the tests that construct the tree cannot see it.
   wiring: ['react', 'react-router'],
 }
 

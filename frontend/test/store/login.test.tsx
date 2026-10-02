@@ -1,6 +1,5 @@
-import { beforeAll, beforeEach, afterAll, test } from '../test'
+import { test } from '../test'
 import {
-  assertCallCount,
   assertCalled,
   assertCalledWith,
   assertDeepEqual,
@@ -11,10 +10,11 @@ import { mockFunction } from '../mock'
 import { render, waitFor } from '../render'
 
 import { createServer } from './server'
-import type { ReceivedRequest, TestServer } from './server'
+import { createMemoryStorage } from '../memory-storage'
+import type { ReceivedRequest } from './server'
 import { setupUser } from '../user-event'
 
-import { StoreProvider } from '../../src/store/provider'
+import { createStoreProvider } from '../../src/store/provider'
 import {
   clearSession,
   readSession,
@@ -36,20 +36,6 @@ import { createErrorLogger } from '../error-logger'
 // changes behind the caller's back, and what another browser tab changes
 // behind this one's. A test plays that other tab by changing the session from
 // onRequest, while a request of this one is on its way.
-let server: TestServer | undefined
-
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
-
 const signedIn = {
   authToken: 'authtoken1',
   refreshToken: 'refreshtoken1',
@@ -89,8 +75,10 @@ function LoginHelper(props: LoginProps): React.JSX.Element {
 }
 
 test('login', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: '/api/v1/user/sign-in',
     response: signedIn,
@@ -98,6 +86,7 @@ test('login', async () => {
   })
 
   const onResponse = mockFunction<[isSuccess: boolean, data: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <LoginHelper username='user1' onResponse={onResponse} />
@@ -114,8 +103,10 @@ test('login', async () => {
 })
 
 test('failed login is an answer rather than a rejection', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: '/api/v1/user/sign-in',
     response: { error: 'InvalidCredentials' },
@@ -123,6 +114,7 @@ test('failed login is an answer rather than a rejection', async () => {
   })
 
   const onResponse = mockFunction<[isSuccess: boolean, data: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole } = render(
     <StoreProvider>
       <LoginHelper username='user2' onResponse={onResponse} />
@@ -159,7 +151,10 @@ function SessionHelper(props: { login: Session }): React.JSX.Element {
 const loggedOut = JSON.stringify({})
 
 test('saving a login stores the session and gives out the user', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <SessionHelper login={signedIn} />
@@ -170,7 +165,7 @@ test('saving a login stores the session and gives out the user', async () => {
   // It comes back out as unknown: what was in localStorage at startup is
   // whatever was in localStorage.
   assertDefined(getByText(JSON.stringify({ user: signedIn.user })))
-  assertDeepEqual(readSession(), signedIn)
+  assertDeepEqual(readSession(webStorage), signedIn)
 })
 
 function LogoutHelper(props: { onLoggedOut: () => void }): React.JSX.Element {
@@ -191,9 +186,11 @@ function LogoutHelper(props: { onLoggedOut: () => void }): React.JSX.Element {
 }
 
 test('logout ends the stored session', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
   const onRequest = mockFunction<[request: ReceivedRequest]>()
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: `/api/v1/user/${signedIn.user.id}/sign-out`,
     response: { success: true },
@@ -202,6 +199,7 @@ test('logout ends the stored session', async () => {
   })
 
   const onLoggedOut = mockFunction<[]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <SessionHelper login={signedIn} />
@@ -221,21 +219,15 @@ test('logout ends the stored session', async () => {
     },
   ])
   assertDefined(getByText(loggedOut))
-  assertEqual(readSession(), undefined)
+  assertEqual(readSession(webStorage), undefined)
 })
 
 test('logout after another tab ended the session sends nothing', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  const onRequest = mockFunction<[request: ReceivedRequest]>()
-  server?.addResponse({
-    method: 'POST',
-    pathname: `/api/v1/user/${signedIn.user.id}/sign-out`,
-    response: { success: true },
-    status: 200,
-    onRequest,
-  })
-
   const onLoggedOut = mockFunction<[]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <SessionHelper login={signedIn} />
@@ -243,13 +235,13 @@ test('logout after another tab ended the session sends nothing', async () => {
     </StoreProvider>,
   )
   await user.click(getByRole('button', { name: 'Save' }))
-  clearSession()
+  clearSession(webStorage)
 
   await user.click(getByRole('button', { name: 'Logout' }))
   await waitFor(() => {
     assertCalled(onLoggedOut)
   })
-  assertCallCount(onRequest, 0)
+  assertDeepEqual(server.unsettled(), [])
   assertDefined(getByText(loggedOut))
 })
 
@@ -293,15 +285,18 @@ const passwordChangeTests: PasswordChangeTest[] = [
 
 passwordChangeTests.forEach((testCase) => {
   test(`change password: ${testCase.name}`, async () => {
+    const server = await createServer()
+    const webStorage = createMemoryStorage()
     const user = setupUser()
     const userId = '00448764-b114-4c54-a409-05b23d14de14'
-    server?.addResponse({
+    server.addResponse({
       method: 'POST',
       pathname: `/api/v1/user/${userId}/change-password`,
       response: { success: true },
       status: testCase.status,
     })
 
+    const StoreProvider = createStoreProvider(server.url, webStorage)
     const { getByRole, getByText } = render(
       <StoreProvider>
         <ChangePasswordHelper userId={userId} />
@@ -318,15 +313,18 @@ passwordChangeTests.forEach((testCase) => {
 })
 
 test('signing in clears the result of an earlier password change', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
   const userId = signedIn.user.id
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: `/api/v1/user/${userId}/change-password`,
     response: { error: 'InvalidCredentials' },
     status: 400,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <SessionHelper login={signedIn} />
@@ -351,19 +349,21 @@ function sessionOf(userId: string, tokenSuffix: string): Session {
 }
 
 test('retry with a refreshed session after a 401', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
   const userId = '53e994bf-c4e7-4ec3-bbeb-a4b64591da00'
   const session = sessionOf(userId, '1')
   const refreshed = sessionOf(userId, '2')
 
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: `/api/v1/user/${userId}/change-password`,
     response: { success: true },
     status: 401,
   })
   const onRefresh = mockFunction<[request: ReceivedRequest]>()
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: `/api/v1/user/${userId}/refresh`,
     response: {
@@ -376,7 +376,7 @@ test('retry with a refreshed session after a 401', async () => {
   // Served after the failing one above so that the request is retried with a
   // refreshed token.
   const onRetry = mockFunction<[request: ReceivedRequest]>()
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: `/api/v1/user/${userId}/change-password`,
     response: { success: true },
@@ -384,6 +384,7 @@ test('retry with a refreshed session after a 401', async () => {
     onRequest: onRetry,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <SessionHelper login={session} />
@@ -402,27 +403,30 @@ test('retry with a refreshed session after a 401', async () => {
   assertCalledWith(onRetry, [
     { authorization: `Bearer ${refreshed.authToken}`, body: passwordChange },
   ])
-  assertDeepEqual(readSession(), refreshed)
+  assertDeepEqual(readSession(webStorage), refreshed)
 })
 
 test('log out on failed token refresh', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
   const userId = '7d869f30-4220-4910-9c2d-d4449aff8a79'
   const session = sessionOf(userId, '1')
 
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: `/api/v1/user/${userId}/change-password`,
     response: { success: true },
     status: 401,
   })
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: `/api/v1/user/${userId}/refresh`,
     response: { error: 'InvalidCredentials' },
     status: 401,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <SessionHelper login={session} />
@@ -438,35 +442,28 @@ test('log out on failed token refresh', async () => {
   await waitFor(() => {
     assertDefined(getByText(loggedOut))
   })
-  assertEqual(readSession(), undefined)
+  assertEqual(readSession(webStorage), undefined)
 })
 
 test('retry without refreshing after another tab refreshed', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
   const userId = 'a4c1e7b2-5d3f-4a8e-9b6c-1e2d3f4a5b6c'
   const session = sessionOf(userId, '1')
   const refreshedElsewhere = sessionOf(userId, '2')
 
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: `/api/v1/user/${userId}/change-password`,
     response: { success: true },
     status: 401,
     onRequest: () => {
-      writeSession(refreshedElsewhere)
+      writeSession(webStorage, refreshedElsewhere)
     },
   })
-  // Answers a refresh, if one is sent.
-  const onRefresh = mockFunction<[request: ReceivedRequest]>()
-  server?.addResponse({
-    method: 'POST',
-    pathname: `/api/v1/user/${userId}/refresh`,
-    response: { authToken: 'auth3', refreshToken: 'refresh3' },
-    status: 200,
-    onRequest: onRefresh,
-  })
   const onRetry = mockFunction<[request: ReceivedRequest]>()
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: `/api/v1/user/${userId}/change-password`,
     response: { success: true },
@@ -474,6 +471,7 @@ test('retry without refreshing after another tab refreshed', async () => {
     onRequest: onRetry,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <SessionHelper login={session} />
@@ -486,23 +484,25 @@ test('retry without refreshing after another tab refreshed', async () => {
   await waitFor(() => {
     assertDefined(getByText('SUCCESS'))
   })
-  assertCallCount(onRefresh, 0)
+  assertDeepEqual(server.unsettled(), [])
   assertCalledWith(onRetry, [
     {
       authorization: `Bearer ${refreshedElsewhere.authToken}`,
       body: passwordChange,
     },
   ])
-  assertDeepEqual(readSession(), refreshedElsewhere)
+  assertDeepEqual(readSession(webStorage), refreshedElsewhere)
 })
 
 test('retry with the session of the tab that won a refresh', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
   const userId = 'c7e2a9d4-1b6f-4c3e-8a5d-9f0e1d2c3b4a'
   const session = sessionOf(userId, '1')
   const refreshedElsewhere = sessionOf(userId, '2')
 
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: `/api/v1/user/${userId}/change-password`,
     response: { success: true },
@@ -510,17 +510,17 @@ test('retry with the session of the tab that won a refresh', async () => {
   })
   // The other tab refreshed with the same token a moment earlier, so this
   // one's token is spent.
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: `/api/v1/user/${userId}/refresh`,
     response: { error: 'InvalidCredentials' },
     status: 401,
     onRequest: () => {
-      writeSession(refreshedElsewhere)
+      writeSession(webStorage, refreshedElsewhere)
     },
   })
   const onRetry = mockFunction<[request: ReceivedRequest]>()
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: `/api/v1/user/${userId}/change-password`,
     response: { success: true },
@@ -528,6 +528,7 @@ test('retry with the session of the tab that won a refresh', async () => {
     onRequest: onRetry,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <SessionHelper login={session} />
@@ -547,33 +548,27 @@ test('retry with the session of the tab that won a refresh', async () => {
     },
   ])
   assertDefined(getByText(JSON.stringify({ user: session.user })))
-  assertDeepEqual(readSession(), refreshedElsewhere)
+  assertDeepEqual(readSession(webStorage), refreshedElsewhere)
 })
 
 test('log out without refreshing after another tab logged out', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
   const userId = 'e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b'
   const session = sessionOf(userId, '1')
 
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: `/api/v1/user/${userId}/change-password`,
     response: { success: true },
     status: 401,
     onRequest: () => {
-      clearSession()
+      clearSession(webStorage)
     },
   })
-  // Answers a refresh, if one is sent.
-  const onRefresh = mockFunction<[request: ReceivedRequest]>()
-  server?.addResponse({
-    method: 'POST',
-    pathname: `/api/v1/user/${userId}/refresh`,
-    response: { authToken: 'auth2', refreshToken: 'refresh2' },
-    status: 200,
-    onRequest: onRefresh,
-  })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <SessionHelper login={session} />
@@ -586,5 +581,5 @@ test('log out without refreshing after another tab logged out', async () => {
   await waitFor(() => {
     assertDefined(getByText(loggedOut))
   })
-  assertCallCount(onRefresh, 0)
+  assertDeepEqual(server.unsettled(), [])
 })

@@ -1,13 +1,13 @@
-import { beforeAll, beforeEach, afterAll, test } from '../test'
+import { test } from '../test'
 import { assertCalledWith, assertDefined } from '../assert'
 import { mockFunction } from '../mock'
 import { render, waitFor } from '../render'
 
 import { createServer } from './server'
-import type { TestServer } from './server'
+import { createMemoryStorage } from '../memory-storage'
 import { setupUser } from '../user-event'
 
-import { StoreProvider } from '../../src/store/provider'
+import { createStoreProvider } from '../../src/store/provider'
 import {
   useCreateStyle,
   useGetStyle,
@@ -18,20 +18,6 @@ import { createErrorLogger } from '../error-logger'
 
 // See store/beer.test.tsx for what the store layer's tests are for and why
 // the helpers render the data as text.
-let server: TestServer | undefined
-
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
-
 const styleId = 'c4d5e6f7-0819-42ab-9c3d-4e5f6a7b8c9d'
 const style = {
   id: styleId,
@@ -50,14 +36,17 @@ function GetStyleHelper(): React.JSX.Element {
 }
 
 test('get style', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const expectedResponse = { style: { ...style, children: [] } }
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/style/${styleId}`,
     response: expectedResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <GetStyleHelper />
@@ -82,14 +71,17 @@ function ListStylesHelper(): React.JSX.Element {
 }
 
 test('list styles', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const expectedResponse = { styles: [style] }
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: '/api/v1/style',
     response: expectedResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <ListStylesHelper />
@@ -125,15 +117,18 @@ function CreateStyleHelper(): React.JSX.Element {
 }
 
 test('create style', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
   const expectedResponse = { style }
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: '/api/v1/style',
     response: expectedResponse,
     status: 201,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <CreateStyleHelper />
@@ -150,14 +145,17 @@ test('create style', async () => {
 })
 
 test('fail to create style', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: '/api/v1/style',
     response: { error: { code: 'CyclicRelationship' } },
     status: 400,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <CreateStyleHelper />
@@ -196,9 +194,11 @@ function UpdateStyleHelper(props: {
 }
 
 test('update style', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
   const expectedResponse = { style }
-  server?.addResponse({
+  server.addResponse({
     method: 'PUT',
     pathname: `/api/v1/style/${styleId}`,
     response: expectedResponse,
@@ -206,6 +206,7 @@ test('update style', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <UpdateStyleHelper onResult={onResult} />

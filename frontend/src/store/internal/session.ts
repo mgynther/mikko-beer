@@ -1,17 +1,19 @@
+import type { WebStorage } from '../web-storage'
 import { parseSession } from './session-parser'
 import type { Session } from './session-parser'
 
-// The session lives in localStorage and nowhere else, and is read whenever it
-// is needed. Every tab shares it, so a tab never holds a copy that another
-// tab's refresh has made stale, and never writes such a copy back.
+// The session lives in the store's storage and nowhere else, and is read
+// whenever it is needed. In the application that storage is localStorage,
+// which every tab shares, so a tab never holds a copy that another tab's
+// refresh has made stale, and never writes such a copy back.
 const sessionKey = 'mikkobeer-session'
 
-export function readSession(): Session | undefined {
-  return parseSession(localStorage.getItem(sessionKey))
+export function readSession(storage: WebStorage): Session | undefined {
+  return parseSession(storage.getItem(sessionKey))
 }
 
-export function writeSession(session: Session): void {
-  localStorage.setItem(
+export function writeSession(storage: WebStorage, session: Session): void {
+  storage.setItem(
     sessionKey,
     JSON.stringify({
       authToken: session.authToken,
@@ -25,6 +27,6 @@ export function writeSession(session: Session): void {
   )
 }
 
-export function clearSession(): void {
-  localStorage.removeItem(sessionKey)
+export function clearSession(storage: WebStorage): void {
+  storage.removeItem(sessionKey)
 }

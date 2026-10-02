@@ -1,4 +1,4 @@
-import { beforeAll, beforeEach, afterAll, test } from '../test'
+import { test } from '../test'
 import {
   assertCallCount,
   assertCalled,
@@ -9,10 +9,10 @@ import { mockFunction } from '../mock'
 import { render, waitFor } from '../render'
 
 import { createServer } from './server'
-import type { TestServer } from './server'
+import { createMemoryStorage } from '../memory-storage'
 import { setupUser } from '../user-event'
 
-import { StoreProvider } from '../../src/store/provider'
+import { createStoreProvider } from '../../src/store/provider'
 import {
   useCreateLocation,
   useGetLocation,
@@ -30,20 +30,6 @@ import { createErrorLogger } from '../error-logger'
 //
 // The data is unknown here, so the helpers render it as text rather than
 // reaching into it. That is the whole point of the type.
-let server: TestServer | undefined
-
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
-
 const locationId = 'f8d8e7b6-5a4c-4d9e-b1f2-3a4b5c6d7e8f'
 const location = {
   id: locationId,
@@ -63,13 +49,16 @@ function GetLocationHelper(props: { locationId: string }): React.JSX.Element {
 }
 
 test('get location', async () => {
-  server?.addResponse({
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/location/${locationId}`,
     response: locationResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <GetLocationHelper locationId={locationId} />
@@ -84,16 +73,17 @@ test('get location', async () => {
 })
 
 test('get location that does not exist', async () => {
-  // A different id than the test above: a response the store has cached is
-  // served from the cache, not from the server.
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const missingId = 'd6b6c5f4-3e2a-4b7c-9d0e-1f2a3b4c5d6e'
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/location/${missingId}`,
     response: { error: { code: 'LocationNotFound', message: 'not found' } },
     status: 404,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <GetLocationHelper locationId={missingId} />
@@ -142,8 +132,10 @@ function ListLocationsHelper(props: ListProps): React.JSX.Element {
 }
 
 test('list locations', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: '/api/v1/location?size=10&skip=0',
     response: locationListResponse,
@@ -151,6 +143,7 @@ test('list locations', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <ListLocationsHelper
@@ -174,8 +167,10 @@ test('list locations', async () => {
 })
 
 test('fail to list locations', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: '/api/v1/location?size=20&skip=0',
     response: { error: 'Nope' },
@@ -184,13 +179,12 @@ test('fail to list locations', async () => {
 
   const onResult = mockFunction<[result: unknown]>()
   const onError = mockFunction<[]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole } = render(
     <StoreProvider>
       <ListLocationsHelper size={20} onResult={onResult} onError={onError} />
     </StoreProvider>,
   )
-  // The size is not the one the test above asked for: a cached response is
-  // served from the cache rather than from the server.
   await user.click(getByRole('button', { name: 'List' }))
 
   // A failed request rejects: the unwrapping is done here so that every
@@ -221,8 +215,10 @@ function SearchLocationsHelper(props: TriggerProps): React.JSX.Element {
 }
 
 test('search locations', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: '/api/v1/location/search',
     response: locationListResponse,
@@ -230,6 +226,7 @@ test('search locations', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <SearchLocationsHelper onResult={onResult} onError={() => undefined} />
@@ -269,8 +266,10 @@ function CreateLocationHelper(props: TriggerProps): React.JSX.Element {
 }
 
 test('create location', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: '/api/v1/location',
     response: locationResponse,
@@ -278,6 +277,7 @@ test('create location', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <CreateLocationHelper onResult={onResult} onError={() => undefined} />
@@ -313,8 +313,10 @@ function UpdateLocationHelper(props: TriggerProps): React.JSX.Element {
 }
 
 test('update location', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'PUT',
     pathname: `/api/v1/location/${locationId}`,
     response: locationResponse,
@@ -322,6 +324,7 @@ test('update location', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <UpdateLocationHelper onResult={onResult} onError={() => undefined} />

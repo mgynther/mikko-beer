@@ -1,12 +1,26 @@
-import { store } from './internal/store'
+import { createStore } from './internal/store'
 import { Provider } from './internal/provider'
+import type { WebStorage } from './web-storage'
 
-// The store installed into the component tree. There is one store and every
-// caller wants that one, so the public surface is a component that takes the
-// tree it wraps and nothing else: which state container is underneath, and
-// that it is a redux one at all, stays inside this layer.
-export function StoreProvider(props: {
+export type StoreProviderComponent = (props: {
   children: React.ReactNode
-}): React.JSX.Element {
-  return <Provider store={store}>{props.children}</Provider>
+}) => React.JSX.Element
+
+// Creates a store talking to the backend at backendUrl and keeping the session
+// and the settings in storage, and gives out the component that installs it
+// into the component tree. Every call is a store of its own: the application
+// makes one, and each test makes its own so that it starts from nothing
+// earlier tests left, with a server and a storage of its own. The public
+// surface is the component rather than the store, so which state container is
+// underneath, and that it is a redux one at all, stays inside this layer.
+export function createStoreProvider(
+  backendUrl: string,
+  storage: WebStorage,
+): StoreProviderComponent {
+  const store = createStore(backendUrl, storage)
+  return function StoreProvider(props: {
+    children: React.ReactNode
+  }): React.JSX.Element {
+    return <Provider store={store}>{props.children}</Provider>
+  }
 }

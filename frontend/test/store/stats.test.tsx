@@ -1,13 +1,13 @@
-import { beforeAll, beforeEach, afterAll, test } from '../test'
+import { test } from '../test'
 import { assertCalledWith, assertDefined } from '../assert'
 import { mockFunction } from '../mock'
 import { render, waitFor } from '../render'
 
 import { createServer } from './server'
-import type { TestServer } from './server'
+import { createMemoryStorage } from '../memory-storage'
 import { setupUser } from '../user-event'
 
-import { StoreProvider } from '../../src/store/provider'
+import { createStoreProvider } from '../../src/store/provider'
 import type {
   AnnualContainerStatsQueryParams,
   BreweryCountryStatsQueryParams,
@@ -31,20 +31,6 @@ import { createErrorLogger } from '../error-logger'
 
 // See store/beer.test.tsx for what the store layer's tests are for and why
 // the helpers render the data as text.
-let server: TestServer | undefined
-
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
-
 const noIds: IdParams = {
   breweryId: undefined,
   locationId: undefined,
@@ -94,14 +80,17 @@ function AnnualStatsHelper(props: { params: IdParams }): React.JSX.Element {
 const breweryId = 'f0a1b2c3-d4e5-4607-8819-2a3b4c5d6e7f'
 
 test('get annual stats', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const expectedResponse = { annual: [{ year: '2023', reviewCount: '12' }] }
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/stats/annual?brewery=${breweryId}`,
     response: expectedResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <AnnualStatsHelper params={{ ...noIds, breweryId }} />
@@ -127,14 +116,17 @@ function ContainerStatsHelper(props: { params: IdParams }): React.JSX.Element {
 const locationId = 'a1b2c3d4-e5f6-4718-9920-3b4c5d6e7f80'
 
 test('get container stats', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const expectedResponse = { container: [{ containerId: 'c', count: '2' }] }
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/stats/container?location=${locationId}`,
     response: expectedResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <ContainerStatsHelper params={{ ...noIds, locationId }} />
@@ -160,14 +152,17 @@ function OverallStatsHelper(props: { params: IdParams }): React.JSX.Element {
 const styleId = 'b2c3d4e5-f607-4829-8a31-4c5d6e7f8091'
 
 test('get overall stats', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const expectedResponse = { overall: { beerCount: '482' } }
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/stats/overall?style=${styleId}`,
     response: expectedResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <OverallStatsHelper params={{ ...noIds, styleId }} />
@@ -191,14 +186,17 @@ function RatingStatsHelper(props: { params: IdParams }): React.JSX.Element {
 }
 
 test('get rating stats', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const expectedResponse = { rating: [{ rating: '8', count: '25' }] }
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: '/api/v1/stats/rating',
     response: expectedResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <RatingStatsHelper params={noIds} />
@@ -224,13 +222,15 @@ function StyleStatsHelper(props: {
 }
 
 test('get style stats', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const params: StyleStatsQueryParams = {
     ...noIds,
     sorting: { order: 'average', direction: 'asc' },
     ...filters,
   }
   const expectedResponse = { style: [{ styleId: 's', reviewCount: '3' }] }
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname:
       `/api/v1/stats/style?order=${params.sorting.order}` +
@@ -239,6 +239,7 @@ test('get style stats', async () => {
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <StyleStatsHelper params={params} />
@@ -279,12 +280,14 @@ function AnnualContainerStatsHelper(
 }
 
 test('query annual container stats', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
   const styleId = 'c3d4e5f6-0718-492a-8b42-5d6e7f809123'
   const expectedResponse = {
     annualContainer: [{ containerId: 'c', year: '2023' }],
   }
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/stats/annual_container?size=10&skip=0&style=${styleId}`,
     response: expectedResponse,
@@ -292,6 +295,7 @@ test('query annual container stats', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <AnnualContainerStatsHelper
@@ -341,9 +345,11 @@ function BreweryStatsHelper(props: BreweryStatsProps): React.JSX.Element {
 }
 
 test('query brewery stats', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
   const expectedResponse = { brewery: [{ breweryId: 'b', reviewCount: '9' }] }
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: pagedPath('brewery', 'average'),
     response: expectedResponse,
@@ -351,6 +357,7 @@ test('query brewery stats', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <BreweryStatsHelper onResult={onResult} params={breweryParams} />
@@ -394,11 +401,13 @@ function BreweryCountryStatsHelper(
 }
 
 test('query brewery country stats', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
   const expectedResponse = {
     breweryCountry: [{ countryCode: 'FI', reviewCount: '9' }],
   }
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: pagedPath('brewery_country', 'average'),
     response: expectedResponse,
@@ -406,6 +415,7 @@ test('query brewery country stats', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <BreweryCountryStatsHelper
@@ -453,9 +463,11 @@ function LocationStatsHelper(props: LocationStatsProps): React.JSX.Element {
 }
 
 test('query location stats', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
   const expectedResponse = { location: [{ locationId: 'l', reviewCount: '9' }] }
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: pagedPath('location', 'average'),
     response: expectedResponse,
@@ -463,6 +475,7 @@ test('query location stats', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <LocationStatsHelper
@@ -485,9 +498,11 @@ test('query location stats', async () => {
 })
 
 test('an infinite maximum review count is left out of the query', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
   const expectedResponse = { brewery: [{ breweryId: 'b' }] }
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname:
       '/api/v1/stats/brewery?size=10&skip=0&order=brewery_name&direction=asc' +
@@ -500,6 +515,7 @@ test('an infinite maximum review count is left out of the query', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole } = render(
     <StoreProvider>
       <BreweryStatsHelper
@@ -522,8 +538,10 @@ test('an infinite maximum review count is left out of the query', async () => {
 })
 
 test('a failed query gives undefined data rather than rejecting', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: pagedPath('brewery', 'count'),
     response: { error: 'Nope' },
@@ -531,6 +549,7 @@ test('a failed query gives undefined data rather than rejecting', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole } = render(
     <StoreProvider>
       <BreweryStatsHelper

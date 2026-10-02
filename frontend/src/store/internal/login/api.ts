@@ -1,4 +1,5 @@
 import { emptySplitApi } from '../api'
+import { extraOf } from '../extra'
 
 import { endSession } from './end-session'
 import { passwordChangeResult } from './reducer'
@@ -41,11 +42,11 @@ const loginApi = emptySplitApi.injectEndpoints({
         method: 'POST',
         body: params.body,
       }),
-      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+      async onQueryStarted(_, { dispatch, extra, queryFulfilled }) {
         try {
           await queryFulfilled
         } finally {
-          endSession(dispatch)
+          endSession(extraOf(extra).storage, dispatch)
         }
       },
       invalidatesTags: ['Login'],

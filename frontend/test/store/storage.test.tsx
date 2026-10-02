@@ -1,13 +1,13 @@
-import { beforeAll, beforeEach, afterAll, test } from '../test'
+import { test } from '../test'
 import { assertCalled, assertCalledWith, assertDefined } from '../assert'
 import { mockFunction } from '../mock'
 import { render, waitFor } from '../render'
 
 import { createServer } from './server'
-import type { TestServer } from './server'
+import { createMemoryStorage } from '../memory-storage'
 import { setupUser } from '../user-event'
 
-import { StoreProvider } from '../../src/store/provider'
+import { createStoreProvider } from '../../src/store/provider'
 import {
   useCreateStorage,
   useDeleteStorage,
@@ -23,20 +23,6 @@ import { createErrorLogger } from '../error-logger'
 
 // See store/beer.test.tsx for what the store layer's tests are for and why
 // the helpers render the data as text.
-let server: TestServer | undefined
-
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
-
 const storageId = 'd5e6f708-19ab-42cd-9e3f-4a5b6c7d8e9f'
 const storage = {
   id: storageId,
@@ -66,14 +52,17 @@ function GetStorageHelper(): React.JSX.Element {
 }
 
 test('get storage', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const expectedResponse = { storage }
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/storage/${storageId}`,
     response: expectedResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <GetStorageHelper />
@@ -98,14 +87,17 @@ function ListStoragesHelper(): React.JSX.Element {
 }
 
 test('list storages', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const expectedResponse = storageListResponse
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: '/api/v1/storage',
     response: expectedResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <ListStoragesHelper />
@@ -128,14 +120,17 @@ function ListStoragesByBeerHelper(props: { id: string }): React.JSX.Element {
 }
 
 test('list storages by beer', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const id = '0819abcd-ef01-4523-8a6b-7c8d9e0f1234'
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/beer/${id}/storage`,
     response: storageListResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <ListStoragesByBeerHelper id={id} />
@@ -159,14 +154,17 @@ function ListStoragesByBreweryHelper(props: { id: string }): React.JSX.Element {
 }
 
 test('list storages by brewery', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const id = '19abcdef-0123-4645-9b7c-8d9e0f123456'
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/brewery/${id}/storage`,
     response: storageListResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <ListStoragesByBreweryHelper id={id} />
@@ -190,14 +188,17 @@ function ListStoragesByStyleHelper(props: { id: string }): React.JSX.Element {
 }
 
 test('list storages by style', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const id = '2abcdef0-1234-4767-8c8d-9e0f12345678'
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/style/${id}/storage`,
     response: storageListResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <ListStoragesByStyleHelper id={id} />
@@ -221,14 +222,17 @@ function AnnualStatsHelper(): React.JSX.Element {
 }
 
 test('get annual storage stats', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const expectedResponse = { annual: [{ year: '2025', count: '12' }] }
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: '/api/v1/storage/annual-stats',
     response: expectedResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <AnnualStatsHelper />
@@ -251,16 +255,19 @@ function MonthlyStatsHelper(): React.JSX.Element {
 }
 
 test('get monthly storage stats', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const expectedResponse = {
     monthly: [{ year: '2025', month: '3', count: '4' }],
   }
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: '/api/v1/storage/monthly-stats',
     response: expectedResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <MonthlyStatsHelper />
@@ -308,9 +315,11 @@ function CreateStorageHelper(props: CreateProps): React.JSX.Element {
 }
 
 test('create storage', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
   const expectedResponse = { storage }
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: '/api/v1/storage',
     response: expectedResponse,
@@ -318,6 +327,7 @@ test('create storage', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <CreateStorageHelper onResult={onResult} onError={() => undefined} />
@@ -335,8 +345,10 @@ test('create storage', async () => {
 })
 
 test('fail to create storage', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: '/api/v1/storage',
     response: { error: { code: 'InvalidStorage' } },
@@ -344,6 +356,7 @@ test('fail to create storage', async () => {
   })
 
   const onError = mockFunction<[]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <CreateStorageHelper onResult={() => undefined} onError={onError} />
@@ -381,8 +394,10 @@ function DeleteStorageHelper(props: {
 }
 
 test('delete storage', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'DELETE',
     pathname: `/api/v1/storage/${storageId}`,
     response: undefined,
@@ -390,6 +405,7 @@ test('delete storage', async () => {
   })
 
   const onDeleted = mockFunction<[]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole } = render(
     <StoreProvider>
       <DeleteStorageHelper onDeleted={onDeleted} />

@@ -15,8 +15,10 @@ import {
 } from './internal/login/api'
 import { useDispatch, useSelector } from './internal/hooks'
 import { endSession } from './internal/login/end-session'
+import { storageOf } from './internal/extra'
 import { readSession, writeSession } from './internal/session'
 import type { Session } from './internal/session-parser'
+import type { WebStorage } from './web-storage'
 
 // The public surface of the login endpoints and of the session the store
 // keeps. See store/beer.ts for why every result is built here rather than
@@ -65,9 +67,10 @@ export function useLogout(): LogoutResult {
   const dispatch = useDispatch()
   return {
     logout: async (): Promise<void> => {
-      const session: Session | undefined = readSession()
+      const storage: WebStorage = dispatch(storageOf)
+      const session: Session | undefined = readSession(storage)
       if (session === undefined) {
-        endSession(dispatch)
+        endSession(storage, dispatch)
         return
       }
       await logout({
@@ -88,8 +91,9 @@ export function useChangePassword(): ChangePasswordResult {
   }
 }
 
-// The stored login is given out as unknown. Its user is restored from
-// localStorage at startup, where anything at all may be sitting, so what the
+// The stored login is given out as unknown. Its user is restored from the
+// storage when the store is created, where anything at all may be sitting, so
+// what the
 // store holds is no more trustworthy than a response and is validated the
 // same way. The tokens are not given out at all.
 export function useStoredLogin(): unknown {
@@ -99,7 +103,7 @@ export function useStoredLogin(): unknown {
 export function useSaveLogin(): (login: Session) => void {
   const dispatch = useDispatch()
   return (login: Session): void => {
-    writeSession(login)
+    writeSession(dispatch(storageOf), login)
     dispatch(success(login.user))
   }
 }

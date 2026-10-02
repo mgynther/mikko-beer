@@ -4,7 +4,9 @@ import { render } from '../render'
 
 import { setupUser } from '../user-event'
 
-import { StoreProvider } from '../../src/store/provider'
+import { createServer } from './server'
+import { createMemoryStorage } from '../memory-storage'
+import { createStoreProvider } from '../../src/store/provider'
 import { useTheme } from '../../src/store/theme'
 
 function Helper(): React.JSX.Element {
@@ -25,7 +27,10 @@ function Helper(): React.JSX.Element {
 }
 
 test('set theme', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <Helper />

@@ -1,4 +1,4 @@
-import { beforeAll, beforeEach, afterAll, test } from '../test'
+import { test } from '../test'
 import {
   assertCallCount,
   assertCalled,
@@ -9,10 +9,10 @@ import { mockFunction } from '../mock'
 import { render, waitFor } from '../render'
 
 import { createServer } from './server'
-import type { TestServer } from './server'
+import { createMemoryStorage } from '../memory-storage'
 import { setupUser } from '../user-event'
 
-import { StoreProvider } from '../../src/store/provider'
+import { createStoreProvider } from '../../src/store/provider'
 import {
   useCreateBrewery,
   useGetBrewery,
@@ -30,20 +30,6 @@ import { createErrorLogger } from '../error-logger'
 //
 // The data is unknown here, so the helpers render it as text rather than
 // reaching into it. That is the whole point of the type.
-let server: TestServer | undefined
-
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
-
 const breweryId = 'e7c7d6a5-4f3b-4c8d-a0e1-2f3a4b5c6d7e'
 const brewery = {
   id: breweryId,
@@ -64,13 +50,16 @@ function GetBreweryHelper(props: { breweryId: string }): React.JSX.Element {
 }
 
 test('get brewery', async () => {
-  server?.addResponse({
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/brewery/${breweryId}`,
     response: breweryResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <GetBreweryHelper breweryId={breweryId} />
@@ -85,16 +74,17 @@ test('get brewery', async () => {
 })
 
 test('get brewery that does not exist', async () => {
-  // A different id than the test above: a response the store has cached is
-  // served from the cache, not from the server.
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const missingId = 'c5a5b4e3-2d1f-4a6b-8c9d-0e1f2a3b4c5d'
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/brewery/${missingId}`,
     response: { error: { code: 'BreweryNotFound', message: 'not found' } },
     status: 404,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <GetBreweryHelper breweryId={missingId} />
@@ -143,8 +133,10 @@ function ListBreweriesHelper(props: ListProps): React.JSX.Element {
 }
 
 test('list breweries', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: '/api/v1/brewery?size=10&skip=0',
     response: breweryListResponse,
@@ -152,6 +144,7 @@ test('list breweries', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <ListBreweriesHelper
@@ -175,8 +168,10 @@ test('list breweries', async () => {
 })
 
 test('fail to list breweries', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: '/api/v1/brewery?size=20&skip=0',
     response: { error: 'Nope' },
@@ -185,13 +180,12 @@ test('fail to list breweries', async () => {
 
   const onResult = mockFunction<[result: unknown]>()
   const onError = mockFunction<[]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole } = render(
     <StoreProvider>
       <ListBreweriesHelper size={20} onResult={onResult} onError={onError} />
     </StoreProvider>,
   )
-  // The size is not the one the test above asked for: a cached response is
-  // served from the cache rather than from the server.
   await user.click(getByRole('button', { name: 'List' }))
 
   // A failed request rejects: the unwrapping is done here so that every
@@ -222,8 +216,10 @@ function SearchBreweriesHelper(props: TriggerProps): React.JSX.Element {
 }
 
 test('search breweries', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: '/api/v1/brewery/search',
     response: breweryListResponse,
@@ -231,6 +227,7 @@ test('search breweries', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <SearchBreweriesHelper onResult={onResult} onError={() => undefined} />
@@ -271,8 +268,10 @@ function CreateBreweryHelper(props: TriggerProps): React.JSX.Element {
 }
 
 test('create brewery', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: '/api/v1/brewery',
     response: breweryResponse,
@@ -280,6 +279,7 @@ test('create brewery', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <CreateBreweryHelper onResult={onResult} onError={() => undefined} />
@@ -315,8 +315,10 @@ function UpdateBreweryHelper(props: TriggerProps): React.JSX.Element {
 }
 
 test('update brewery', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'PUT',
     pathname: `/api/v1/brewery/${breweryId}`,
     response: breweryResponse,
@@ -324,6 +326,7 @@ test('update brewery', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <UpdateBreweryHelper onResult={onResult} onError={() => undefined} />

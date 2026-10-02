@@ -1,13 +1,13 @@
-import { beforeAll, beforeEach, afterAll, test } from '../test'
+import { test } from '../test'
 import { assertCalledWith, assertDefined } from '../assert'
 import { mockFunction } from '../mock'
 import { render, waitFor } from '../render'
 
 import { createServer } from './server'
-import type { TestServer } from './server'
+import { createMemoryStorage } from '../memory-storage'
 import { setupUser } from '../user-event'
 
-import { StoreProvider } from '../../src/store/provider'
+import { createStoreProvider } from '../../src/store/provider'
 import type {
   IdFilteredListReviewParams,
   ListReviewParams,
@@ -28,20 +28,6 @@ import { createErrorLogger } from '../error-logger'
 
 // See store/beer.test.tsx for what the store layer's tests are for and why
 // the helpers render the data as text.
-let server: TestServer | undefined
-
-beforeAll(() => {
-  server = createServer()
-})
-
-beforeEach(() => {
-  server?.clear()
-})
-
-afterAll(() => {
-  server?.close()
-})
-
 const reviewId = 'e6f70819-abcd-43ef-8a4b-5c6d7e8f9012'
 const review = {
   id: reviewId,
@@ -93,8 +79,10 @@ function GetReviewHelper(props: TriggerProps): React.JSX.Element {
 }
 
 test('get review', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/review/${reviewId}`,
     response: { review },
@@ -102,6 +90,7 @@ test('get review', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole } = render(
     <StoreProvider>
       <GetReviewHelper onResult={onResult} />
@@ -141,8 +130,10 @@ function ListReviewsHelper(props: TriggerProps): React.JSX.Element {
 }
 
 test('list reviews', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/review?size=10&skip=0&${filterSearch}`,
     response: reviewListResponse,
@@ -150,6 +141,7 @@ test('list reviews', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <ListReviewsHelper onResult={onResult} />
@@ -178,14 +170,17 @@ function ListReviewsByBeerHelper(props: { id: string }): React.JSX.Element {
 }
 
 test('list reviews by beer', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const id = '20314254-ef01-4723-8e8f-901234567890'
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/beer/${id}/review?${filterSearch}`,
     response: reviewListResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <ListReviewsByBeerHelper id={id} />
@@ -209,14 +204,17 @@ function ListReviewsByBreweryHelper(props: { id: string }): React.JSX.Element {
 }
 
 test('list reviews by brewery', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const id = '31425365-f012-4834-9f90-123456789012'
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/brewery/${id}/review?${filterSearch}`,
     response: reviewListResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <ListReviewsByBreweryHelper id={id} />
@@ -240,14 +238,17 @@ function ListReviewsByLocationHelper(props: { id: string }): React.JSX.Element {
 }
 
 test('list reviews by location', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const id = '42536476-0123-4945-8a01-234567890123'
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/location/${id}/review?${filterSearch}`,
     response: reviewListResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <ListReviewsByLocationHelper id={id} />
@@ -271,14 +272,17 @@ function ListReviewsByStyleHelper(props: { id: string }): React.JSX.Element {
 }
 
 test('list reviews by style', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const id = '53647587-1234-4a56-9b12-345678901234'
-  server?.addResponse({
+  server.addResponse({
     method: 'GET',
     pathname: `/api/v1/style/${id}/review?${filterSearch}`,
     response: reviewListResponse,
     status: 200,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByText } = render(
     <StoreProvider>
       <ListReviewsByStyleHelper id={id} />
@@ -323,15 +327,18 @@ function CreateReviewHelper(props: { storageId: string }): React.JSX.Element {
 }
 
 test('create review', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
   const storageId = '64758698-2345-4b67-8c23-456789012345'
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: `/api/v1/review?storage=${storageId}`,
     response: { review },
     status: 201,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <CreateReviewHelper storageId={storageId} />
@@ -347,14 +354,17 @@ test('create review', async () => {
 })
 
 test('create review without storage', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'POST',
     pathname: '/api/v1/review',
     response: { review },
     status: 201,
   })
 
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <CreateReviewHelper storageId='' />
@@ -389,8 +399,10 @@ function UpdateReviewHelper(props: TriggerProps): React.JSX.Element {
 }
 
 test('update review', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
   const user = setupUser()
-  server?.addResponse({
+  server.addResponse({
     method: 'PUT',
     pathname: `/api/v1/review/${reviewId}`,
     response: { review },
@@ -398,6 +410,7 @@ test('update review', async () => {
   })
 
   const onResult = mockFunction<[result: unknown]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
   const { getByRole, getByText } = render(
     <StoreProvider>
       <UpdateReviewHelper onResult={onResult} />
