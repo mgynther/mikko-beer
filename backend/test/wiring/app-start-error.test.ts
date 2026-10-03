@@ -27,14 +27,27 @@ interface LogEntry {
 
 const errorMessage = 'this is error'
 
+// The log throws on a message starting with failingLogMessage, which stands
+// for a failure in whatever start() is doing when it logs it.
+function createLog(entries: LogEntry[], failingLogMessage?: string): log {
+  return (level: Level, ...args: unknown[]) => {
+    const message = args.map((a: unknown) => `${a}`).join()
+    entries.push({ level, message })
+    if (
+      failingLogMessage !== undefined &&
+      message.startsWith(failingLogMessage)
+    ) {
+      throw new Error(errorMessage)
+    }
+  }
+}
+
 export class TestContext {
   readonly #config: TestConfig
   readonly #failingLogMessage: string | undefined
   #app?: App
   #logMessages: LogEntry[] = []
 
-  // The logger throws on a message starting with failingLogMessage, which
-  // stands for a failure in whatever start() is doing when it logs it.
   constructor(config: TestConfig, failingLogMessage?: string) {
     this.#config = config
     this.#failingLogMessage = failingLogMessage
@@ -62,20 +75,10 @@ export class TestContext {
 
   beforeEach = async (): Promise<void> => {
     this.#logMessages = []
-    const log: log = (level: Level, ...args: unknown[]) => {
-      const message = args.map((a: unknown) => `${a}`).join()
-      this.#logMessages.push({
-        level,
-        message,
-      })
-      if (
-        this.#failingLogMessage !== undefined &&
-        message.startsWith(this.#failingLogMessage)
-      ) {
-        throw new Error(errorMessage)
-      }
-    }
-    this.#app = new App(this.#config, log)
+    this.#app = new App(
+      this.#config,
+      createLog(this.#logMessages, this.#failingLogMessage),
+    )
     await beforeTest(this.db)
   }
 
@@ -174,23 +177,19 @@ suite('port in use error', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
-  // Another instance of the application already listens on the port.
-  const startRunningApp = async (): Promise<App> => {
-    const runningApp = new App(testConfig, (): void => undefined)
-    await runningApp.start()
-    return runningApp
-  }
-
   test('port in use rejects start', async () => {
-    const runningApp = await startRunningApp()
+    // The context's application is the instance already listening on the
+    // port, and a second one is started on the port it was given.
+    const { port } = await ctx.app()!.start()
+    const logMessages: LogEntry[] = []
+    const app = new App({ ...testConfig, port }, createLog(logMessages))
     try {
       await assertRejectsWithMessage(async () => {
-        await ctx.app()!.start()
+        await app.start()
       }, 'EADDRINUSE')
     } finally {
-      await runningApp.stop()
+      await app.stop()
     }
-    const logMessages = ctx.logMessages()
     const lastLog = logMessages[logMessages.length - 1]
     assertEqual(lastLog.level, 'ERROR')
     assertIncludes(lastLog.message, 'Error starting,Error: listen EADDRINUSE')

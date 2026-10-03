@@ -6,8 +6,6 @@ import type { ErrorResponse } from '../../src/web/error-response.js'
 import { fakeApi } from './fake-api.js'
 import type { ApiOverrides } from './fake-api.js'
 
-const port = 3003
-
 // What the error callbacks of a test server answer: the message of what was
 // thrown, so that a test reaching an unexpected path fails readably.
 export const repeatedQueryParameterResponse: ErrorResponse = {
@@ -59,15 +57,25 @@ export const testWebErrors: WebErrors = {
 
 export class TestServer {
   #server: WebServer | undefined
+  #baseUrl: string = ''
+  #request?: Client
 
-  readonly request: Client = createClient(`http://localhost:${port}`)
+  get request(): Client {
+    return this.#request!
+  }
+
+  baseUrl = (): string => {
+    return this.#baseUrl
+  }
 
   start = async (
     api: ApiOverrides,
     errors: WebErrors = testWebErrors,
   ): Promise<void> => {
     this.#server = createWebServer(fakeApi(api), errors)
-    await this.#server.listen(port)
+    const port = await this.#server.listen(0)
+    this.#baseUrl = `http://localhost:${port}`
+    this.#request = createClient(this.#baseUrl)
   }
 
   afterEach = async (): Promise<void> => {

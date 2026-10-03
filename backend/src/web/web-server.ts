@@ -10,10 +10,11 @@ import { addHeaders } from './internal/headers.js'
 import type { Api } from './api.js'
 import { createRouter } from './internal/router.js'
 import { registerRoutes } from './internal/routes.js'
+import { listeningPort } from './internal/listening-port.js'
 import { createStopHandler } from './internal/stop-handler.js'
 
 export interface WebServer {
-  listen: (port: number) => Promise<void>
+  listen: (port: number) => Promise<number>
   close: () => Promise<void>
 }
 
@@ -48,13 +49,14 @@ export function createWebServer(api: Api, errors: WebErrors): WebServer {
 
   let server: Server | undefined
   return {
-    listen: async (port: number): Promise<void> => {
+    listen: async (port: number): Promise<number> => {
       const listening = koa.listen(port)
       // once rather than a listen callback and an error listener of our own:
       // it rejects on the error too, and leaves no listener behind that would
       // swallow a later error of the running server.
       await once(listening, 'listening')
       server = listening
+      return listeningPort(listening.address())
     },
     close: async (): Promise<void> => {
       await new Promise<void>((resolve, reject): void => {

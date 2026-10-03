@@ -2,6 +2,7 @@ import { suite, test, before, beforeEach, after, afterEach } from '../test.js'
 import { assertDeepEqual, assertEqual, assertIncludes } from '../assert.js'
 
 import { createClient } from '../client.js'
+import type { Client } from '../client.js'
 import { testConfig } from './test-config.js'
 import type { TestConfig } from './test-config.js'
 import {
@@ -37,7 +38,11 @@ export class TestContext {
     })
   }
 
-  request = createClient(`http://localhost:${testConfig.port}`)
+  #request?: Client
+
+  get request(): Client {
+    return this.#request!
+  }
 
   get db(): Database {
     return this.#app!.db
@@ -56,7 +61,7 @@ export class TestContext {
     this.#app = new App(this.#config, this.#log)
 
     await beforeTest(this.db)
-    await this.#app.start()
+    await this.#start()
   }
 
   // Starts the application again on the same database, as a restart of
@@ -64,7 +69,13 @@ export class TestContext {
   restart = async (): Promise<StartResult> => {
     await this.#app!.stop()
     this.#app = new App(this.#config, this.#log)
-    return await this.#app.start()
+    return await this.#start()
+  }
+
+  #start = async (): Promise<StartResult> => {
+    const result = await this.#app!.start()
+    this.#request = createClient(`http://localhost:${result.port}`)
+    return result
   }
 
   afterEach = async (): Promise<void> => {
@@ -119,9 +130,9 @@ suite('initial admin', () => {
   })
 
   test('restart creates no other initial user', async () => {
-    const result = await ctx.restart()
+    const { authToken, userId } = await ctx.restart()
 
-    assertDeepEqual(result, { authToken: '', userId: '' })
+    assertDeepEqual({ authToken, userId }, { authToken: '', userId: '' })
     assertEqual(
       ctx
         .logMessages()

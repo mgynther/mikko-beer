@@ -11,7 +11,9 @@ export interface TestConfig extends Config {
 
 export const testConfig: TestConfig = {
   generateInitialAdminPassword: false,
-  port: 3002,
+  // The operating system picks a free port for every application a test
+  // starts, so a test that leaves one running cannot answer for the next.
+  port: 0,
   authTokenSecret: '26494cafdd9e008ab95e0fb5d02b47ffe77708ecdf2a7804b6',
   authTokenExpiryDurationMin: 120,
   database: testDataConfig,

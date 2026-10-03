@@ -29,7 +29,7 @@ suite('web server', () => {
   test('add the cross-origin headers', async () => {
     await server.start({ beer: { list: listBeers() } })
 
-    const res = await fetch('http://localhost:3003/api/v1/beer')
+    const res = await fetch(`${server.baseUrl()}/api/v1/beer`)
 
     assertDeepEqual(
       [
@@ -117,7 +117,7 @@ suite('web server', () => {
   test('reject a malformed body before the handler', async () => {
     await server.start({})
 
-    const res = await fetch('http://localhost:3003/api/v1/beer', {
+    const res = await fetch(`${server.baseUrl()}/api/v1/beer`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: '{"name": ',
@@ -130,7 +130,7 @@ suite('web server', () => {
   test('reject a body over the size limit before the handler', async () => {
     await server.start({})
 
-    const res = await fetch('http://localhost:3003/api/v1/beer', {
+    const res = await fetch(`${server.baseUrl()}/api/v1/beer`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ name: 'x'.repeat(1024 * 1024) }),
@@ -147,7 +147,7 @@ suite('web server', () => {
     >(async () => ({ beers: [] }))
     await server.start({ beer: { search } })
 
-    const res = await fetch('http://localhost:3003/api/v1/beer/search', {
+    const res = await fetch(`${server.baseUrl()}/api/v1/beer/search`, {
       method: 'POST',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
       body: 'name=Weihenstephaner',

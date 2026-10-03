@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 
 import { createClient } from '../client.js'
-import type { RequestHeaders } from '../client.js'
+import type { Client, RequestHeaders } from '../client.js'
 import { testConfig } from './test-config.js'
 import type { TestConfig } from './test-config.js'
 import {
@@ -21,15 +21,18 @@ export class TestContext {
   #adminAuthToken: string = ''
   #adminUserId: string = ''
   #app?: App
+  #baseUrl: string = ''
+  #request?: Client
   #userLogger?: log
   #config: TestConfig
-
-  readonly request: ReturnType<typeof createClient>
 
   constructor(userLogger?: log, config: TestConfig = testConfig) {
     this.#userLogger = userLogger
     this.#config = config
-    this.request = createClient(`http://localhost:${config.port}`)
+  }
+
+  get request(): Client {
+    return this.#request!
   }
 
   get db(): Database {
@@ -70,6 +73,8 @@ export class TestContext {
 
     this.#adminAuthToken = result.authToken
     this.#adminUserId = result.userId
+    this.#baseUrl = `http://localhost:${result.port}`
+    this.#request = createClient(this.#baseUrl)
   }
 
   afterEach = async (): Promise<void> => {
@@ -84,6 +89,10 @@ export class TestContext {
 
   adminUserId = (): string => {
     return this.#adminUserId
+  }
+
+  baseUrl = (): string => {
+    return this.#baseUrl
   }
 
   // A valid user signed in with a password and nothing more.

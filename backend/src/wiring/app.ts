@@ -10,6 +10,10 @@ import { createErrorHandler } from './error-handler.js'
 import { createInitialUserIfNone } from './initial-user.js'
 import type { StartResult } from './initial-user.js'
 
+interface AppStartResult extends StartResult {
+  port: number
+}
+
 export class App {
   readonly #config: Config
   readonly #log: log
@@ -37,18 +41,17 @@ export class App {
     return this.#db
   }
 
-  async start(): Promise<StartResult> {
+  async start(): Promise<AppStartResult> {
     try {
       const startResult = await createInitialUserIfNone(
         this.#db,
         this.#config,
         this.#log,
       )
-      const port = this.#config.port
       this.#log('INFO', 'Server starting')
-      await this.#server.listen(port)
+      const port = await this.#server.listen(this.#config.port)
       this.#log('INFO', `Server started in port ${port}`)
-      return startResult
+      return { ...startResult, port }
     } catch (error) {
       this.#log('ERROR', 'Error starting', error)
       throw error
