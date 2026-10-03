@@ -45,6 +45,11 @@ async function createSchema(
   const { database } = config
   await sql`drop database if exists ${sql.id(database!)}`.execute(adminDb)
   await sql`create database ${sql.id(database!)}`.execute(adminDb)
+  // Nearly every test commits, and a commit that does not wait for the disk
+  // is lost only in a crash of the server, which a test database can afford.
+  const asynchronousCommit = sql`alter database ${sql.id(database!)}
+    set synchronous_commit = off`
+  await asynchronousCommit.execute(adminDb)
   await adminDb.destroy()
 
   const db = new Database(config)
