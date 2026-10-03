@@ -37,7 +37,13 @@ export function createWebServer(api: Api, errors: WebErrors): WebServer {
   koa.use(
     bodyParser({
       enableTypes: ['json'],
-      onError: errors.rejectUnreadableBody,
+      // A body over the limit is rejected before it is read, while the client
+      // may still be sending it. Such a connection is not idle when the server
+      // closes, so it would keep the close waiting until the client gives up.
+      onError: (_error: Error, ctx: Koa.Context): never => {
+        ctx.set('Connection', 'close')
+        return errors.rejectUnreadableBody()
+      },
     }),
   )
 

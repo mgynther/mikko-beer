@@ -114,7 +114,7 @@ suite('web server', () => {
     assertEqual(res.status, 405)
   })
 
-  test('reject a malformed body before the handler', async () => {
+  test('reject a malformed body before the handler and close the connection', async () => {
     await server.start({})
 
     const res = await fetch(`${server.baseUrl()}/api/v1/beer`, {
@@ -125,9 +125,10 @@ suite('web server', () => {
 
     assertEqual(res.status, unreadableBodyResponse.status)
     assertDeepEqual(await res.json(), unreadableBodyResponse.body)
+    assertEqual(res.headers.get('connection'), 'close')
   })
 
-  test('reject a body over the size limit before the handler', async () => {
+  test('reject a body over the size limit before the handler and close the connection', async () => {
     await server.start({})
 
     const res = await fetch(`${server.baseUrl()}/api/v1/beer`, {
@@ -138,6 +139,7 @@ suite('web server', () => {
 
     assertEqual(res.status, unreadableBodyResponse.status)
     assertDeepEqual(await res.json(), unreadableBodyResponse.body)
+    assertEqual(res.headers.get('connection'), 'close')
   })
 
   test('leave a form body unread', async () => {
