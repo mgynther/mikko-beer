@@ -8,8 +8,17 @@ import {
 } from '../../../test.js'
 
 import { TestContext } from '../../test-context.js'
+import type { Transaction } from '../../../../src/data/database.js'
+import type { UserPasswordHash } from '../../../../src/data/user/sign-in-method/sign-in-method.repository.js'
 import * as signInMethodRepository from '../../../../src/data/user/sign-in-method/sign-in-method.repository.js'
-import { assertEqual } from '../../../assert.js'
+import type { User } from '../../../../src/data/user/user.repository.js'
+import * as userRepository from '../../../../src/data/user/user.repository.js'
+import { assertDeepEqual, assertEqual } from '../../../assert.js'
+
+// Hashes as the crypto layer writes them; the repository stores them as is.
+const passwordHash = '$scrypt$ln=10,r=8,p=1$c2FsdHNhbHRzYWx0$a2V5a2V5a2V5a2V5'
+const otherPasswordHash =
+  '$scrypt$ln=14,r=8,p=1$b3RoZXJzYWx0b3RoZXI$b3RoZXJrZXlvdGhlcmtleQ'
 
 suite('sign-in-method tests', () => {
   const ctx = new TestContext()
@@ -30,5 +39,60 @@ suite('sign-in-method tests', () => {
       },
     )
     assertEqual(signInMethod, undefined)
+  })
+
+  async function insertUserWithPassword(): Promise<User> {
+    return await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) => {
+        const user = await userRepository.insertUser(trx, {
+          username: 'kalle',
+          role: 'viewer',
+        })
+        await signInMethodRepository.insertPasswordSignInMethod(trx, {
+          userId: user.id,
+          passwordHash,
+        })
+        return user
+      },
+    )
+  }
+
+  async function findSignInMethod(
+    userId: string,
+  ): Promise<UserPasswordHash | undefined> {
+    return await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await signInMethodRepository.findPasswordSignInMethod(trx, userId),
+    )
+  }
+
+  test('insert and find a password sign-in-method', async () => {
+    const user = await insertUserWithPassword()
+    assertDeepEqual(await findSignInMethod(user.id), {
+      userId: user.id,
+      passwordHash,
+    })
+  })
+
+  test('update password', async () => {
+    const user = await insertUserWithPassword()
+    const updated = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await signInMethodRepository.updatePassword(trx, {
+          userId: user.id,
+          passwordHash: otherPasswordHash,
+        }),
+    )
+    const expected = { userId: user.id, passwordHash: otherPasswordHash }
+    assertDeepEqual(updated, expected)
+    assertDeepEqual(await findSignInMethod(user.id), expected)
+  })
+
+  test('delete the sign-in-method with its user', async () => {
+    const user = await insertUserWithPassword()
+    await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
+      await userRepository.deleteUserById(trx, user.id)
+    })
+    assertEqual(await findSignInMethod(user.id), undefined)
   })
 })
