@@ -4,6 +4,7 @@ import type { AddressInfo } from 'net'
 import { onTestFinished } from '../test'
 import { assertDeepEqual } from '../assert'
 import { listeningPort } from './internal/listening-port'
+import { requestUrl } from './internal/request-url'
 
 export interface ReceivedRequest {
   authorization: string | undefined
@@ -68,12 +69,7 @@ export async function createServer(): Promise<TestServer> {
     res: ServerResponse,
     body: string,
   ): void => {
-    /* v8 ignore next -- with web request there is a string URL */
-    if (typeof req.url !== 'string') {
-      /* v8 ignore next -- with web request there is a string URL */
-      throw new Error('url is not a string')
-    }
-    const url: string = req.url
+    const url: string = requestUrl(req.url)
     const queued = requests[url] ?? []
     const response = queued[0]
     const parsedURL = new URL(url, `http://${req.headers.host}`)
