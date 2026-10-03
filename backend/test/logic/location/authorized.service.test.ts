@@ -145,7 +145,7 @@ suite('location authorized service unit tests', () => {
       assertDeepEqual(result, location)
     })
 
-    test(`list breweries as ${token.role}`, async () => {
+    test(`list locations as ${token.role}`, async () => {
       const result = await locationService.listLocations(
         async () => [location],
         passPaginationValidation({ skip: 0, size: 10 }),
@@ -161,7 +161,7 @@ suite('location authorized service unit tests', () => {
       })
     })
 
-    test(`searches breweries as ${token.role}`, async () => {
+    test(`search locations as ${token.role}`, async () => {
       const result = await locationService.searchLocations(
         async () => [location],
         () => ({ errorCode: undefined, result: { name: 'Kuj' } }),
