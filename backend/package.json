@@ -19,7 +19,7 @@
     "test:crypto": "npm run build:test:base -- tsconfig-test-crypto.json && npm run test:run -- build-tests/test/crypto/*.test.js build-tests/test/crypto/*/*.test.js build-tests/test/crypto/*/*/*.test.js",
     "test:jwt": "npm run build:test:base -- tsconfig-test-jwt.json && npm run test:run -- build-tests/test/jwt/*.test.js build-tests/test/jwt/*/*.test.js build-tests/test/jwt/*/*/*.test.js",
     "test:logic": "npm run build:test:base -- tsconfig-test-logic.json && npm run test:run -- build-tests/test/logic/*.test.js build-tests/test/logic/*/*.test.js build-tests/test/logic/*/*/*.test.js",
-    "test:data": "npm run build:test:base -- tsconfig-test-data.json && npm run test:run -- build-tests/test/data/*.test.js build-tests/test/data/*/*.test.js",
+    "test:data": "npm run build:test:base -- tsconfig-test-data.json && npm run test:run -- build-tests/test/data/*.test.js build-tests/test/data/*/*.test.js build-tests/test/data/*/*/*.test.js",
     "test:validation": "npm run build:test:base -- tsconfig-test-validation.json && npm run test:run -- build-tests/test/validation/*.test.js build-tests/test/validation/*/*.test.js build-tests/test/validation/*/*/*.test.js",
     "test:web": "npm run build:test:base -- tsconfig-test-web.json && npm run test:run -- build-tests/test/web/*.test.js build-tests/test/web/*/*.test.js build-tests/test/web/*/*/*.test.js",
     "test:wiring": "npm run build:test:base -- tsconfig-test.json && npm run test:run -- build-tests/test/wiring/*.test.js build-tests/test/wiring/*/*.test.js build-tests/test/wiring/*/*/*.test.js",
