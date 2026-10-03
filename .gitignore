@@ -1,3 +1,4 @@
 *.swp
 *.md
 !/README.md
+.claude/
