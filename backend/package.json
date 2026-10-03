@@ -36,7 +36,7 @@
     "koa": "3.2.1",
     "koa-compress": "5.2.2",
     "kysely": "0.29.6",
-    "pg": "8.23.0",
+    "pg": "8.23.1",
     "uuid": "14.0.2"
   },
   "devDependencies": {
@@ -44,7 +44,7 @@
     "@types/jsonwebtoken": "9.0.10",
     "@types/koa": "3.0.3",
     "@types/koa-compress": "4.0.7",
-    "@types/node": "26.6.3",
+    "@types/node": "26.6.4",
     "@types/pg": "8.23.1",
     "@typescript/native": "npm:typescript@7.0.2",
     "prettier": "3.9.9",
