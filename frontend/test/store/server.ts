@@ -3,6 +3,7 @@ import type { IncomingMessage, Server, ServerResponse } from 'http'
 import type { AddressInfo } from 'net'
 import { onTestFinished } from '../test'
 import { assertDeepEqual } from '../assert'
+import { listeningPort } from './internal/listening-port'
 
 export interface ReceivedRequest {
   authorization: string | undefined
@@ -47,17 +48,7 @@ function listen(server: Server): Promise<number> {
   return new Promise((resolve) => {
     server.listen(0, '127.0.0.1', () => {
       const addressInfo: AddressInfo | string | null = server.address()
-      // Null is returned when not listening yet which is impossible here.
-      // String is returned when listening to pipe or Unix socket which is
-      // equally impossible.
-      /* v8 ignore next */
-      if (typeof addressInfo === 'string' || addressInfo === null) {
-        /* v8 ignore next -- See above why this is unreachable. */
-        throw new Error(
-          'server address() did not return an AddressInfo instance',
-        )
-      }
-      resolve(addressInfo.port)
+      resolve(listeningPort(addressInfo))
     })
   })
 }
