@@ -383,6 +383,17 @@ suite('review tests', () => {
     assertDeepEqual(readReview, update)
   })
 
+  test('update review that does not exist', async () => {
+    const updated = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await reviewRepository.updateReview(trx, {
+          ...buildNewReview(),
+          id: '2a8c5e1f-9b3d-4f7a-a6e2-4c0d8b1f5e93',
+        }),
+    )
+    assertEqual(updated, undefined)
+  })
+
   const listCases: Array<ListCase<FullReviewListOrder>> = [
     {
       filter: {},

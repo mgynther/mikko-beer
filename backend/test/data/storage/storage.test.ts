@@ -181,6 +181,44 @@ suite('storage tests', () => {
     assertEqual(deletedStorage, undefined)
   })
 
+  test('update storage', async () => {
+    const storage = await createStorage(ctx.db)
+    const { container, updated } = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) => {
+        const container = await containerRepository.insertContainer(
+          trx,
+          buildNewContainer({ type: 'can', size: '0.50' }),
+        )
+        const updated = await storageRepository.updateStorage(trx, {
+          id: storage.id,
+          bestBefore: '2025-03-01T12:00:00.000Z',
+          beer: storage.beer,
+          container: container.id,
+        })
+        return { container, updated }
+      },
+    )
+    assertDeepEqual(updated, {
+      id: storage.id,
+      bestBefore: new Date('2025-03-01T12:00:00.000Z'),
+      beer: storage.beer,
+      container: container.id,
+    })
+  })
+
+  test('update storage that does not exist', async () => {
+    const updated = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await storageRepository.updateStorage(trx, {
+          id: '6b3e0d9c-4a7f-4c1e-8d2b-5f9a3e7c0d16',
+          bestBefore: '2025-03-01T12:00:00.000Z',
+          beer: '8c2f5a0d-3e6b-4d9a-b1c7-0e4f8a2d6b35',
+          container: '1d6a9e3c-5f2b-4a8d-9c0e-7b3f1a5d8e42',
+        }),
+    )
+    assertEqual(updated, undefined)
+  })
+
   test('do not lock storage that does not exists', async () => {
     const dummyId = 'a3386d9d-cf3f-4ae9-9101-493a117a5458'
     await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {

@@ -31,7 +31,7 @@ export async function insertLocation(
 export async function updateLocation(
   trx: Transaction,
   location: Location,
-): Promise<Location> {
+): Promise<Location | undefined> {
   const updatedLocation = await trx
     .trx()
     .updateTable('location')
@@ -40,7 +40,9 @@ export async function updateLocation(
     })
     .where('location_id', '=', location.id)
     .returningAll()
-    .executeTakeFirstOrThrow()
+    .executeTakeFirst()
+
+  if (updatedLocation === undefined) return undefined
 
   return rowToLocation(updatedLocation)
 }

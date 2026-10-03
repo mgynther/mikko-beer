@@ -29,7 +29,7 @@ export async function insertContainer(
 export async function updateContainer(
   trx: Transaction,
   container: Container,
-): Promise<Container> {
+): Promise<Container | undefined> {
   const updatedContainer = await trx
     .trx()
     .updateTable('container')
@@ -39,7 +39,9 @@ export async function updateContainer(
     })
     .where('container_id', '=', container.id)
     .returningAll()
-    .executeTakeFirstOrThrow()
+    .executeTakeFirst()
+
+  if (updatedContainer === undefined) return undefined
 
   return toContainer(updatedContainer)
 }

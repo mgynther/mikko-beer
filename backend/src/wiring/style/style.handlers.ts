@@ -73,7 +73,7 @@ export function createStyleHandlers(context: Context): StyleHandlers {
         const style = await db.executeReadWriteTransaction(
           async (trx: Transaction): Promise<StyleWithParentIds> => {
             const updateIf: UpdateStyleIf = {
-              update: async (style: Style): Promise<Style> =>
+              update: async (style: Style): Promise<Style | undefined> =>
                 await styleRepository.updateStyle(trx, style),
               lockStyles: createStyleLocker(trx),
               insertParents: createParentInserter(trx),

@@ -36,7 +36,7 @@ export async function insertBrewery(
 export async function updateBrewery(
   trx: Transaction,
   brewery: Brewery,
-): Promise<Brewery> {
+): Promise<Brewery | undefined> {
   const updatedBrewery = await trx
     .trx()
     .updateTable('brewery')
@@ -46,7 +46,9 @@ export async function updateBrewery(
     })
     .where('brewery_id', '=', brewery.id)
     .returningAll()
-    .executeTakeFirstOrThrow()
+    .executeTakeFirst()
+
+  if (updatedBrewery === undefined) return undefined
 
   return rowToBrewery(updatedBrewery)
 }

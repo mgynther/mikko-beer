@@ -67,7 +67,7 @@ export function createBreweryHandlers(context: Context): BreweryHandlers {
         const brewery = await db.executeReadWriteTransaction(
           async (trx: Transaction): Promise<Brewery> =>
             await breweryService.updateBrewery(
-              async (brewery: Brewery): Promise<Brewery> =>
+              async (brewery: Brewery): Promise<Brewery | undefined> =>
                 await breweryRepository.updateBrewery(trx, brewery),
               validateUpdateBreweryRequest,
               request.id,

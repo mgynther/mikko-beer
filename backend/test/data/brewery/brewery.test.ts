@@ -82,7 +82,7 @@ suite('brewery tests', () => {
     const changedCountry = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
         return await breweryRepository.updateBrewery(trx, {
-          ...withCountry,
+          ...brewery,
           country: 'BE',
         })
       },
@@ -92,7 +92,7 @@ suite('brewery tests', () => {
     const clearedCountry = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
         return await breweryRepository.updateBrewery(trx, {
-          ...changedCountry,
+          ...brewery,
           country: undefined,
         })
       },
@@ -197,6 +197,18 @@ suite('brewery tests', () => {
       ...brewery,
       name: 'Beer Hunters',
     })
+  })
+
+  test('update brewery that does not exist', async () => {
+    const updated = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await breweryRepository.updateBrewery(trx, {
+          id: '0c4d8e7a-3b52-4f6e-9a1d-2e7f5c8b9a03',
+          name: 'Lindemans',
+          country: 'BE',
+        }),
+    )
+    assertEqual(updated, undefined)
   })
 
   test('lock only brewery that exists', async () => {

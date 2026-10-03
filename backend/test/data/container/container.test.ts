@@ -70,6 +70,18 @@ suite('container tests', () => {
     })
   })
 
+  test('update container that does not exist', async () => {
+    const updated = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await containerRepository.updateContainer(trx, {
+          id: '9e2f6a1b-7c4d-4e8f-b3a5-6d1c0f9e8b27',
+          type: 'bottle',
+          size: '0.33',
+        }),
+    )
+    assertEqual(updated, undefined)
+  })
+
   test('lock container that exists', async () => {
     const container = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {

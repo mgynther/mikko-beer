@@ -62,6 +62,17 @@ suite('location tests', () => {
     })
   })
 
+  test('update location that does not exist', async () => {
+    const updated = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await locationRepository.updateLocation(trx, {
+          id: '5b0e3cde-8d6f-4f05-a7d7-1f0f2a0e4b8a',
+          name: 'Kuja',
+        }),
+    )
+    assertEqual(updated, undefined)
+  })
+
   test('lock only location that exists', async () => {
     const location = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {

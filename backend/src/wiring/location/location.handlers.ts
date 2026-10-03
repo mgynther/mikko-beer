@@ -67,7 +67,7 @@ export function createLocationHandlers(context: Context): LocationHandlers {
         const location = await db.executeReadWriteTransaction(
           async (trx: Transaction): Promise<Location> =>
             await locationService.updateLocation(
-              async (location: Location): Promise<Location> =>
+              async (location: Location): Promise<Location | undefined> =>
                 await locationRepository.updateLocation(trx, location),
               validateUpdateLocationRequest,
               request.id,

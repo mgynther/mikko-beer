@@ -53,7 +53,7 @@ export interface Storage {
 export async function updateStorage(
   trx: Transaction,
   storage: Storage,
-): Promise<StorageWithDate> {
+): Promise<StorageWithDate | undefined> {
   const updatedStorage = await trx
     .trx()
     .updateTable('storage')
@@ -64,7 +64,9 @@ export async function updateStorage(
     })
     .where('storage_id', '=', storage.id)
     .returningAll()
-    .executeTakeFirstOrThrow()
+    .executeTakeFirst()
+
+  if (updatedStorage === undefined) return undefined
 
   return toStorage(updatedStorage)
 }

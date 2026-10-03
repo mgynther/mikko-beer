@@ -93,7 +93,10 @@ export async function deleteBeerStyles(
     .execute()
 }
 
-export async function updateBeer(trx: Transaction, beer: Beer): Promise<Beer> {
+export async function updateBeer(
+  trx: Transaction,
+  beer: Beer,
+): Promise<Beer | undefined> {
   const updatedBeer = await trx
     .trx()
     .updateTable('beer')
@@ -102,7 +105,9 @@ export async function updateBeer(trx: Transaction, beer: Beer): Promise<Beer> {
     })
     .where('beer_id', '=', beer.id)
     .returningAll()
-    .executeTakeFirstOrThrow()
+    .executeTakeFirst()
+
+  if (updatedBeer === undefined) return undefined
 
   return {
     id: updatedBeer.beer_id,

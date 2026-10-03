@@ -131,6 +131,17 @@ suite('beer tests', () => {
     })
   })
 
+  test('update beer that does not exist', async () => {
+    const updated = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await beerRepository.updateBeer(trx, {
+          id: '3f7a9c2e-1d5b-4a8f-9e6c-0b4d2a7f1e58',
+          name: 'Kriek',
+        }),
+    )
+    assertEqual(updated, undefined)
+  })
+
   test('lock beer that exists', async () => {
     const beer = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {

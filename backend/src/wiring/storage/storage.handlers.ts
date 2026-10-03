@@ -123,7 +123,7 @@ export function createStorageHandlers(context: Context): StorageHandlers {
             const updateIf: UpdateIf = {
               updateStorage: async (
                 storage: Storage,
-              ): Promise<StorageWithDate> =>
+              ): Promise<StorageWithDate | undefined> =>
                 await storageRepository.updateStorage(trx, storage),
               lockBeer: createBeerLocker(trx),
               lockContainer: createContainerLocker(trx),

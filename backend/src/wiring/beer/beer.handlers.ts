@@ -85,7 +85,7 @@ export function createBeerHandlers(context: Context): BeerHandlers {
         const beer = await db.executeReadWriteTransaction(
           async (trx: Transaction): Promise<BeerWithBreweryAndStyleIds> => {
             const updateIf: UpdateIf = {
-              update: async (beer: Beer): Promise<Beer> =>
+              update: async (beer: Beer): Promise<Beer | undefined> =>
                 await beerRepository.updateBeer(trx, beer),
               lockBreweries: createBreweryLocker(trx),
               lockStyles: createStyleLocker(trx),

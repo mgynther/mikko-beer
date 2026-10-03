@@ -61,7 +61,7 @@ export function createContainerHandlers(context: Context): ContainerHandlers {
         const container = await db.executeReadWriteTransaction(
           async (trx: Transaction): Promise<Container> =>
             await containerService.updateContainer(
-              async (container: Container): Promise<Container> =>
+              async (container: Container): Promise<Container | undefined> =>
                 await containerRepository.updateContainer(trx, container),
               validateUpdateContainerRequest,
               { authTokenPayload, id: request.id },

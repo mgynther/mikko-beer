@@ -71,7 +71,7 @@ export async function listStyleRelationships(
 export async function updateStyle(
   trx: Transaction,
   style: Style,
-): Promise<Style> {
+): Promise<Style | undefined> {
   const updatedStyle = await trx
     .trx()
     .updateTable('style')
@@ -80,7 +80,9 @@ export async function updateStyle(
     })
     .where('style_id', '=', style.id)
     .returningAll()
-    .executeTakeFirstOrThrow()
+    .executeTakeFirst()
+
+  if (updatedStyle === undefined) return undefined
 
   return toStyle(updatedStyle)
 }

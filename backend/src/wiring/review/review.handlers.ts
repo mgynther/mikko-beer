@@ -109,7 +109,9 @@ export function createReviewHandlers(context: Context): ReviewHandlers {
         const review = await db.executeReadWriteTransaction(
           async (trx: Transaction): Promise<Review> => {
             const updateIf: UpdateIf = {
-              updateReview: async (review: Review): Promise<Review> =>
+              updateReview: async (
+                review: Review,
+              ): Promise<Review | undefined> =>
                 await reviewRepository.updateReview(trx, review),
               lockBeer: async (id: string): Promise<string | undefined> =>
                 await beerRepository.lockBeer(trx, id),

@@ -54,14 +54,16 @@ export async function insertReview(
 export async function updateReview(
   trx: Transaction,
   review: Review,
-): Promise<Review> {
+): Promise<Review | undefined> {
   const updatedReview = await trx
     .trx()
     .updateTable('review')
     .set(toRow(review))
     .where('review_id', '=', review.id)
     .returningAll()
-    .executeTakeFirstOrThrow()
+    .executeTakeFirst()
+
+  if (updatedReview === undefined) return undefined
 
   return toReview(updatedReview)
 }

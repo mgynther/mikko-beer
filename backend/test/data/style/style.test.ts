@@ -136,6 +136,17 @@ suite('style tests', () => {
     })
   })
 
+  test('update style that does not exist', async () => {
+    const updated = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await styleRepository.updateStyle(trx, {
+          id: '7d1e4b9a-6c3f-4e2a-8b5d-9f0a1c6e3b74',
+          name: 'Lambic',
+        }),
+    )
+    assertEqual(updated, undefined)
+  })
+
   test('lock only style that exists', async () => {
     const style = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
