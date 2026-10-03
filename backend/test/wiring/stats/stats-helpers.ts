@@ -1,5 +1,9 @@
 import { formatInteger, round } from '../../../src/data/stats/format.js'
 
+// Math is hard. The stats tests both hard code the expected values and
+// calculate them with these, so that an error is easier to spot when it
+// happens.
+
 function meanValue(ratings: number[]): number {
   if (ratings.length === 0) return NaN
   const sum = ratings.reduce((s, r) => s + r, 0)
@@ -10,7 +14,7 @@ export function avgRatings(ratings: number[]): string {
   return round(meanValue(ratings))
 }
 
-export function stdDevRatings(ratings: number[]): string {
+function stdDevRatings(ratings: number[]): string {
   if (ratings.length === 0) return round(null)
   const mean = meanValue(ratings)
   const variance =
@@ -18,7 +22,7 @@ export function stdDevRatings(ratings: number[]): string {
   return round(Math.sqrt(variance))
 }
 
-export function medianRatings(ratings: number[]): string {
+function medianRatings(ratings: number[]): string {
   if (ratings.length === 0) return round(null)
   const sortedRatings = [...ratings].sort((a, b) => a - b)
   const mid = sortedRatings.length / 2
@@ -30,7 +34,7 @@ export function medianRatings(ratings: number[]): string {
 
 // Mirrors Postgres MODE() WITHIN GROUP (ORDER BY rating ASC):
 // on ties, returns the lowest tied rating.
-export function modeRatings(ratings: number[]): string {
+function modeRatings(ratings: number[]): string {
   if (ratings.length === 0) {
     return formatInteger(null)
   }
@@ -48,4 +52,18 @@ export function modeRatings(ratings: number[]): string {
     }
   }
   return formatInteger(best)
+}
+
+interface DistributionStats {
+  reviewStandardDeviation: string
+  reviewMedian: string
+  reviewMode: string
+}
+
+export function distributionStats(ratings: number[]): DistributionStats {
+  return {
+    reviewStandardDeviation: stdDevRatings(ratings),
+    reviewMedian: medianRatings(ratings),
+    reviewMode: modeRatings(ratings),
+  }
 }
