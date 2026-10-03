@@ -40,7 +40,7 @@ export async function createLocation(
 }
 
 export async function updateLocation(
-  update: (location: Location) => Promise<Location>,
+  update: (location: Location) => Promise<Location | undefined>,
   validate: ValidateUpdateLocation,
   locationId: string | undefined,
   body: unknown,

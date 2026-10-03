@@ -61,6 +61,18 @@ suite('location service unit tests', () => {
     })
   })
 
+  test('fail to update location that does not exist', async () => {
+    const update = async (): Promise<undefined> => undefined
+    await expectReject(async () => {
+      await locationService.updateLocation(
+        update,
+        location.id,
+        { name: location.name },
+        log,
+      )
+    }, locationNotFoundError(location.id))
+  })
+
   test('find location', async () => {
     const finder = async (locationId: string) => {
       assertEqual(locationId, location.id)

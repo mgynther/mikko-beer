@@ -8,7 +8,7 @@ export interface CreateStyleIf {
 }
 
 export interface UpdateStyleIf {
-  update: (style: Style) => Promise<Style>
+  update: (style: Style) => Promise<Style | undefined>
   lockStyles: LockIds
   insertParents: (styleId: string, parents: string[]) => Promise<void>
   listAllRelationships: () => Promise<StyleRelationship[]>

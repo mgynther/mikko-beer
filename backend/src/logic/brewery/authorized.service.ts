@@ -25,7 +25,7 @@ export async function createBrewery(
 }
 
 export async function updateBrewery(
-  update: (brewery: Brewery) => Promise<Brewery>,
+  update: (brewery: Brewery) => Promise<Brewery | undefined>,
   validate: ValidateUpdateBrewery,
   breweryId: string | undefined,
   request: BodyRequest,

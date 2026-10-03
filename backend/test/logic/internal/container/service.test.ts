@@ -66,6 +66,18 @@ suite('container service unit tests', () => {
     })
   })
 
+  test('fail to update container that does not exist', async () => {
+    const update = async (): Promise<undefined> => undefined
+    await expectReject(async () => {
+      await containerService.updateContainer(
+        update,
+        container.id,
+        { type: container.type, size: container.size },
+        log,
+      )
+    }, containerNotFoundError(container.id))
+  })
+
   test('find container', async () => {
     const finder = async (containerId: string) => {
       assertEqual(containerId, container.id)

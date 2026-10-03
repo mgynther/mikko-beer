@@ -9,7 +9,7 @@ export interface CreateIf {
 }
 
 export interface UpdateIf {
-  updateStorage: (request: Storage) => Promise<StorageWithDate>
+  updateStorage: (request: Storage) => Promise<StorageWithDate | undefined>
   lockBeer: LockId
   lockContainer: LockId
 }

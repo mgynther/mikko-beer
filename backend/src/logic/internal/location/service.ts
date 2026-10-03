@@ -30,7 +30,7 @@ export async function createLocation(
 }
 
 export async function updateLocation(
-  update: (location: Location) => Promise<Location>,
+  update: (location: Location) => Promise<Location | undefined>,
   locationId: string,
   request: UpdateLocationRequest,
   log: log,
@@ -40,6 +40,7 @@ export async function updateLocation(
     id: locationId,
     name: request.name,
   })
+  if (location === undefined) throw locationNotFoundError(locationId)
 
   log('INFO', 'updated location with id', locationId)
   return { ...location }

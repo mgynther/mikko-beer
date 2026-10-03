@@ -67,6 +67,7 @@ export async function updateStyle(
     id: styleId,
     name: request.name,
   })
+  if (style === undefined) throw styleNotFoundError(styleId)
 
   const promises = [updateStyleIf.deleteStyleChildRelationships(styleId)]
   if (request.parents.length > 0) {

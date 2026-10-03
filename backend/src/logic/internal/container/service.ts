@@ -23,7 +23,7 @@ export async function createContainer(
 }
 
 export async function updateContainer(
-  update: (container: Container) => Promise<Container>,
+  update: (container: Container) => Promise<Container | undefined>,
   containerId: string,
   request: UpdateContainerRequest,
   log: log,
@@ -34,6 +34,7 @@ export async function updateContainer(
     type: request.type,
     size: request.size,
   })
+  if (container === undefined) throw containerNotFoundError(containerId)
 
   log('INFO', 'updated container with id', containerId)
   return { ...container }

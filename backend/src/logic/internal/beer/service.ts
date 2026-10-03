@@ -61,11 +61,12 @@ export async function updateBeer(
     referredBreweryNotFoundError,
   )
   await lockIds(updateIf.lockStyles, request.styles, referredStyleNotFoundError)
+  const beer = await updateIf.update({
+    id: beerId,
+    name: request.name,
+  })
+  if (beer === undefined) throw beerNotFoundError(beerId)
   await Promise.all([
-    updateIf.update({
-      id: beerId,
-      name: request.name,
-    }),
     updateIf.deleteBeerBreweries(beerId),
     updateIf.deleteBeerStyles(beerId),
     updateIf.insertBeerBreweries(beerId, request.breweries),

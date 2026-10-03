@@ -52,6 +52,7 @@ export async function updateStorage(
     referredContainerNotFoundError,
   )
   const storage = await updateIf.updateStorage(request)
+  if (storage === undefined) throw storageNotFoundError(request.id)
 
   log('INFO', 'updated storage', request.id)
   return {

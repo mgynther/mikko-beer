@@ -25,7 +25,7 @@ export async function createBrewery(
 }
 
 export async function updateBrewery(
-  update: (brewery: Brewery) => Promise<Brewery>,
+  update: (brewery: Brewery) => Promise<Brewery | undefined>,
   breweryId: string,
   request: UpdateBreweryRequest,
   log: log,
@@ -36,6 +36,7 @@ export async function updateBrewery(
     name: request.name,
     country: request.country,
   })
+  if (brewery === undefined) throw breweryNotFoundError(breweryId)
 
   log('INFO', 'updated brewery with id', breweryId)
   return { ...brewery }

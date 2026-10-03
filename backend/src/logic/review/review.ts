@@ -13,7 +13,7 @@ export interface CreateIf {
 }
 
 export interface UpdateIf {
-  updateReview: (review: Review) => Promise<Review>
+  updateReview: (review: Review) => Promise<Review | undefined>
   lockBeer: LockId
   lockContainer: LockId
 }

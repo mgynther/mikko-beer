@@ -137,6 +137,17 @@ suite('storage service unit tests', () => {
     assertEqual(isContainerLocked, true)
   })
 
+  test('fail to update storage that does not exist', async () => {
+    const updateIf: UpdateIf = {
+      updateStorage: async () => undefined,
+      lockBeer: lockOnly(updateRequest.beer),
+      lockContainer: lockOnly(updateRequest.container),
+    }
+    await expectReject(async () => {
+      await storageService.updateStorage(updateIf, updateRequest, log)
+    }, storageNotFoundError(updateRequest.id))
+  })
+
   test('fail to update storage with invalid beer', async () => {
     const updateStorage = async () => {
       throw new Error('must not be called')

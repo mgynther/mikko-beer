@@ -118,6 +118,18 @@ suite('brewery service unit tests', () => {
     })
   })
 
+  test('fail to update brewery that does not exist', async () => {
+    const update = async (): Promise<undefined> => undefined
+    await expectReject(async () => {
+      await breweryService.updateBrewery(
+        update,
+        brewery.id,
+        { name: brewery.name, country: 'BE' },
+        log,
+      )
+    }, breweryNotFoundError(brewery.id))
+  })
+
   test('find brewery', async () => {
     const finder = async (breweryId: string) => {
       assertEqual(breweryId, brewery.id)

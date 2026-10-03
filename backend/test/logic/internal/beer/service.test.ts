@@ -209,6 +209,22 @@ suite('beer service unit tests', () => {
     assertEqual(stylesLocked, true)
   })
 
+  // Its breweries and styles are left alone, as there is no beer to have them.
+  test('fail to update beer that does not exist', async () => {
+    const updateIf: UpdateIf = {
+      update: async () => undefined,
+      lockBreweries,
+      lockStyles,
+      deleteBeerBreweries: notCalled,
+      insertBeerBreweries: notCalled,
+      deleteBeerStyles: notCalled,
+      insertBeerStyles: notCalled,
+    }
+    await expectReject(async () => {
+      await beerService.updateBeer(updateIf, beer.id, updateBeerRequest, log)
+    }, beerNotFoundError(beer.id))
+  })
+
   test('fail to update beer with invalid brewery', async () => {
     const updateIf: UpdateIf = {
       update: async () => beer,

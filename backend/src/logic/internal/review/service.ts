@@ -75,6 +75,7 @@ export async function updateReview(
     time: new Date(request.time),
     id: reviewId,
   })
+  if (review === undefined) throw reviewNotFoundError(reviewId)
 
   log('INFO', 'updated review with id', review.id)
   return { ...review }

@@ -204,6 +204,21 @@ suite('review service unit tests', () => {
     assertDeepEqual(result, review)
   })
 
+  test('fail to update review that does not exist', async () => {
+    const updateIf: UpdateIf = {
+      ...updateIfLocks,
+      updateReview: async () => undefined,
+    }
+    await expectReject(async () => {
+      await reviewService.updateReview(
+        updateIf,
+        reviewId,
+        updateReviewRequest,
+        log,
+      )
+    }, reviewNotFoundError(reviewId))
+  })
+
   test('fail to update review with invalid beer', async () => {
     const updateIf: UpdateIf = {
       ...updateIfLocks,

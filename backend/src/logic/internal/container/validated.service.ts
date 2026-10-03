@@ -28,7 +28,7 @@ export async function createContainer(
 }
 
 export async function updateContainer(
-  update: (container: Container) => Promise<Container>,
+  update: (container: Container) => Promise<Container | undefined>,
   validate: (
     body: unknown,
     id: string | undefined,

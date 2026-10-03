@@ -23,7 +23,7 @@ export interface CreateIf {
 }
 
 export interface UpdateIf {
-  update: (beer: Beer) => Promise<Beer>
+  update: (beer: Beer) => Promise<Beer | undefined>
   lockBreweries: LockIds
   lockStyles: LockIds
   insertBeerBreweries: InsertBreweries

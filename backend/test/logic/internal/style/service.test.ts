@@ -209,6 +209,25 @@ suite('style service unit tests', () => {
     })
   })
 
+  // Its relationships are left alone, as there is no style to have them.
+  test('fail to update style that does not exist', async () => {
+    const updateIf: UpdateStyleIf = {
+      update: async () => undefined,
+      lockStyles: lockParent,
+      insertParents: notCalled,
+      deleteStyleChildRelationships: notCalled,
+      listAllRelationships: noRelationships,
+    }
+    await expectReject(async () => {
+      await styleService.updateStyle(
+        updateIf,
+        style.id,
+        updateWithParentRequest,
+        log,
+      )
+    }, styleNotFoundError(style.id))
+  })
+
   test('fail to update with invalid parent', async () => {
     const updateIf: UpdateStyleIf = {
       update,
