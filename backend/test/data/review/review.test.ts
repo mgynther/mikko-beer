@@ -11,6 +11,7 @@ import { TestContext } from '../test-context.js'
 import type { Database, Transaction } from '../../../src/data/database.js'
 import type { Beer } from '../../../src/data/beer/beer.repository.js'
 import type { Brewery } from '../../../src/data/brewery/brewery.repository.js'
+import type { Container } from '../../../src/data/container/container.repository.js'
 import type { Location } from '../../../src/data/location/location.repository.js'
 import type { Style } from '../../../src/data/style/style.repository.js'
 import * as beerRepository from '../../../src/data/beer/beer.repository.js'
@@ -21,6 +22,7 @@ import * as reviewRepository from '../../../src/data/review/review.repository.js
 import * as styleRepository from '../../../src/data/style/style.repository.js'
 import type {
   FullReviewListOrder,
+  FullReviewListRequest,
   JoinedReview,
   NewReview,
   Review,
@@ -157,6 +159,113 @@ async function insertScenario(db: Database): Promise<Scenario> {
   })
 }
 
+interface Collaboration {
+  creamAle: Beer
+  breweries: Brewery[]
+  styles: Style[]
+  container: Container
+  kuja: Location
+  atKuja: Review
+  withoutLocation: Review
+}
+
+// Nokian Panimo and Sonnisaari brew a cream ale together, which is both an
+// ale and a lager, so a review of it joins to two breweries and two styles.
+// It is reviewed at Kuja and later without a location.
+async function insertCollaboration(db: Database): Promise<Collaboration> {
+  return await db.executeReadWriteTransaction(async (trx: Transaction) => {
+    const [nokian, sonnisaari, ale, lager, container, kuja, creamAle] =
+      await Promise.all([
+        breweryRepository.insertBrewery(
+          trx,
+          buildNewBrewery({ name: 'Nokian Panimo' }),
+        ),
+        breweryRepository.insertBrewery(
+          trx,
+          buildNewBrewery({ name: 'Sonnisaari' }),
+        ),
+        styleRepository.insertStyle(trx, buildNewStyle({ name: 'Ale' })),
+        styleRepository.insertStyle(trx, buildNewStyle({ name: 'Lager' })),
+        containerRepository.insertContainer(trx, buildNewContainer()),
+        locationRepository.insertLocation(
+          trx,
+          buildNewLocation({ name: 'Kuja' }),
+        ),
+        beerRepository.insertBeer(trx, buildNewBeer({ name: 'Cream Ale' })),
+      ])
+    await Promise.all([
+      beerRepository.insertBeerBreweries(trx, [
+        { beer: creamAle.id, brewery: nokian.id },
+        { beer: creamAle.id, brewery: sonnisaari.id },
+      ]),
+      beerRepository.insertBeerStyles(trx, [
+        { beer: creamAle.id, style: ale.id },
+        { beer: creamAle.id, style: lager.id },
+      ]),
+    ])
+    const [atKuja, withoutLocation] = await Promise.all([
+      reviewRepository.insertReview(
+        trx,
+        buildNewReview({
+          beer: creamAle.id,
+          container: container.id,
+          location: kuja.id,
+          rating: 8,
+          time: new Date('2024-05-01T18:00:00.000Z'),
+        }),
+      ),
+      reviewRepository.insertReview(
+        trx,
+        buildNewReview({
+          beer: creamAle.id,
+          container: container.id,
+          location: '',
+          rating: 7,
+          time: new Date('2024-06-01T18:00:00.000Z'),
+        }),
+      ),
+    ])
+    return {
+      creamAle,
+      breweries: [nokian, sonnisaari],
+      styles: [ale, lager],
+      container,
+      kuja,
+      atKuja,
+      withoutLocation,
+    }
+  })
+}
+
+// The review as a list joins it, its breweries and styles by name.
+function joined(collaboration: Collaboration, review: Review): JoinedReview {
+  const { creamAle, breweries, styles, container, kuja } = collaboration
+  return {
+    id: review.id,
+    additionalInfo: review.additionalInfo,
+    beerId: creamAle.id,
+    beerName: creamAle.name,
+    breweries: breweries.map(({ id, name }) => ({ id, name })),
+    container,
+    location: review.location === kuja.id ? kuja : undefined,
+    rating: review.rating,
+    styles,
+    time: review.time,
+  }
+}
+
+// A list does not order the breweries and styles of a review, so a test
+// compares them by name.
+function byName(reviews: JoinedReview[]): JoinedReview[] {
+  const sorted = <T extends { name: string }>(items: T[]): T[] =>
+    items.toSorted((a, b) => a.name.localeCompare(b.name))
+  return reviews.map((review) => ({
+    ...review,
+    breweries: sorted(review.breweries),
+    styles: sorted(review.styles),
+  }))
+}
+
 function ids(reviews: Array<Review | JoinedReview>): string[] {
   return reviews.map((review) => review.id)
 }
@@ -236,6 +345,44 @@ suite('review tests', () => {
     assertEqual(readReview, undefined)
   })
 
+  test('insert and find a review without a location', async () => {
+    const review = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await reviewRepository.insertReview(
+          trx,
+          buildNewReview({ ...(await insertReferred(trx)), location: '' }),
+        ),
+    )
+    const readReview = await reviewRepository.findReviewById(ctx.db, review.id)
+    assertEqual(readReview?.location, '')
+  })
+
+  test('update review', async () => {
+    const review = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await reviewRepository.insertReview(
+          trx,
+          buildNewReview(await insertReferred(trx)),
+        ),
+    )
+    const update: Review = {
+      ...review,
+      additionalInfo: 'Second bottle',
+      location: '',
+      rating: 9,
+      smell: 'Cherries',
+      taste: 'Sour cherries',
+      time: new Date('2025-02-01T18:00:00.000Z'),
+    }
+    const updatedReview = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await reviewRepository.updateReview(trx, update),
+    )
+    assertDeepEqual(updatedReview, update)
+    const readReview = await reviewRepository.findReviewById(ctx.db, review.id)
+    assertDeepEqual(readReview, update)
+  })
+
   const listCases: Array<ListCase<FullReviewListOrder>> = [
     {
       filter: {},
@@ -291,6 +438,28 @@ suite('review tests', () => {
       assertDeepEqual(ids(list), ids(listCase.expected(reviews)))
     }),
   )
+
+  test('list a page of reviews', async () => {
+    const { reviews } = await insertScenario(ctx.db)
+    const list = await reviewRepository.listReviews(
+      ctx.db,
+      { size: 2, skip: 2 },
+      { filter: noFilter, order: { property: 'time', direction: 'asc' } },
+    )
+    assertDeepEqual(ids(list), ids([reviews.ipa1, reviews.faro]))
+  })
+
+  test('list a page of reviews of a collaboration', async () => {
+    const collaboration = await insertCollaboration(ctx.db)
+    const list = await reviewRepository.listReviews(
+      ctx.db,
+      { size: 1, skip: 1 },
+      { filter: noFilter, order: { property: 'time', direction: 'asc' } },
+    )
+    assertDeepEqual(byName(list), [
+      joined(collaboration, collaboration.withoutLocation),
+    ])
+  })
 
   const byBeerCases: Array<ListCase<ReviewListOrder>> = [
     // All reviews are of the one beer, so its name leaves them by time.
@@ -494,6 +663,81 @@ suite('review tests', () => {
         { filter: { ...noFilter, ...listCase.filter }, order: listCase.order },
       )
       assertDeepEqual(ids(list), ids(listCase.expected(reviews)))
+    }),
+  )
+
+  const timeAsc: FullReviewListRequest = {
+    filter: noFilter,
+    order: { property: 'time', direction: 'asc' },
+  }
+
+  const collaborationLists: Array<{
+    listing: string
+    list: (collaboration: Collaboration) => Promise<JoinedReview[]>
+    expected: (collaboration: Collaboration) => Review[]
+  }> = [
+    {
+      listing: 'list reviews',
+      list: async () =>
+        await reviewRepository.listReviews(
+          ctx.db,
+          { size: 50, skip: 0 },
+          timeAsc,
+        ),
+      expected: (c) => [c.atKuja, c.withoutLocation],
+    },
+    {
+      listing: 'list reviews by beer',
+      list: async (c) =>
+        await reviewRepository.listReviewsByBeer(
+          ctx.db,
+          c.creamAle.id,
+          timeAsc,
+        ),
+      expected: (c) => [c.atKuja, c.withoutLocation],
+    },
+    // Listed by one of its breweries, a review still has both.
+    {
+      listing: 'list reviews by brewery',
+      list: async (c) =>
+        await reviewRepository.listReviewsByBrewery(
+          ctx.db,
+          c.breweries[1].id,
+          timeAsc,
+        ),
+      expected: (c) => [c.atKuja, c.withoutLocation],
+    },
+    {
+      listing: 'list reviews by location',
+      list: async (c) =>
+        await reviewRepository.listReviewsByLocation(
+          ctx.db,
+          c.kuja.id,
+          timeAsc,
+        ),
+      expected: (c) => [c.atKuja],
+    },
+    // Listed by one of its styles, a review still has both.
+    {
+      listing: 'list reviews by style',
+      list: async (c) =>
+        await reviewRepository.listReviewsByStyle(
+          ctx.db,
+          c.styles[1].id,
+          timeAsc,
+        ),
+      expected: (c) => [c.atKuja, c.withoutLocation],
+    },
+  ]
+
+  collaborationLists.forEach(({ listing, list, expected }) =>
+    test(`${listing} of a collaboration with what each joins`, async () => {
+      const collaboration = await insertCollaboration(ctx.db)
+      const reviews = await list(collaboration)
+      assertDeepEqual(
+        byName(reviews),
+        expected(collaboration).map((review) => joined(collaboration, review)),
+      )
     }),
   )
 })
