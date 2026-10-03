@@ -14,6 +14,7 @@ root.render(
   <Root
     backendUrl={requireBackendUrl(import.meta.env.VITE_BACKEND_URL)}
     storage={localStorage}
+    intersectionObserver={IntersectionObserver}
   />,
 )
 

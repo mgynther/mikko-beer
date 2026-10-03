@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import type { InfiniteScroll, UseDebounce } from './types/types'
-import { className as contentEndClassName } from './ContentEnd'
+import type { UseDebounce } from './types/types'
 
 export function pad(number: number): string {
   if (number < 10) return `0${number}`
@@ -15,27 +14,6 @@ export function formatDateString(dateString: string): string {
   const dayOfMonth = pad(date.getDate())
   return `${year}-${month}-${dayOfMonth}`
 }
-
-/* v8 ignore start */
-// IntersectionObserver does not exist on Node or jsdom so it can't be tested.
-export const infiniteScroll: InfiniteScroll = (loadMore: () => void) => {
-  const observer = new IntersectionObserver((entries) => {
-    const intersecting = entries[0].isIntersecting
-    if (intersecting) {
-      loadMore()
-    }
-  })
-  const element = document.getElementById(contentEndClassName)
-  if (element !== null) {
-    observer.observe(element)
-  }
-  return () => {
-    if (element !== null) {
-      observer.unobserve(element)
-    }
-  }
-}
-/* v8 ignore end */
 
 interface NamedItem {
   name: string

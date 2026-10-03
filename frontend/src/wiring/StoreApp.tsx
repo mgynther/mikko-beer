@@ -73,7 +73,9 @@ import type {
 } from '../components/types/storage/types'
 import type { StatsHookIf, StatsIf } from '../components/types/stats/types'
 import type { SearchFieldIf } from '../components/types/search/types'
-import { getUseDebounce, infiniteScroll, useDebounce } from '../components/util'
+import { getUseDebounce, useDebounce } from '../components/util'
+import { createInfiniteScroll } from '../components/infinite-scroll'
+import type { ObserverConstructor } from '../components/infinite-scroll'
 import { useUrlPathParams, useUrlSearchParams } from '../routing/url-params'
 import { Link } from '../routing/link'
 import { navigateIf } from '../routing/navigate'
@@ -285,9 +287,14 @@ import login from '../storehooks/login/login'
 import logout from '../storehooks/login/logout'
 import { createSetSearch } from '../routing/set-search'
 import { getDate, getNextMonthDate } from './date-getter.ts'
-import type { YearMonth } from '../components/types/types.ts'
+import type { InfiniteScroll, YearMonth } from '../components/types/types.ts'
 
-function StoreApp(): React.JSX.Element {
+function StoreApp(props: {
+  intersectionObserver: ObserverConstructor
+}): React.JSX.Element {
+  const infiniteScroll: InfiniteScroll = createInfiniteScroll(
+    props.intersectionObserver,
+  )
   const createBreweryIf: CreateBreweryIf = createBrewery(
     useCreateBrewery,
     validateBrewery,

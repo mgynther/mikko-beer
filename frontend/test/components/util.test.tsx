@@ -3,12 +3,14 @@ import { assertEqual } from '../assert'
 import { render, waitFor } from '../render'
 import {
   formatDateString,
+  getUseDebounce,
   joinSortedNames,
   pad,
   useDebounce,
 } from '../../src/components/util'
 import React from 'react'
 import { setupUser } from '../user-event'
+import type { UseDebounce } from '../../src/components/types/types'
 
 test('pad under 10', () => {
   assertEqual(pad(1), '01')
@@ -58,4 +60,9 @@ test('debounce', async () => {
   input.focus()
   await user.paste('testing')
   await waitFor(() => getByText('testing'))
+})
+
+test('getUseDebounce gives useDebounce', () => {
+  const expected: UseDebounce<string> = useDebounce<string>
+  assertEqual(getUseDebounce<string>(), expected)
 })
