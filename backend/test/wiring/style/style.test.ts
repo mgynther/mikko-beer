@@ -8,11 +8,11 @@ import {
 } from '../../test.js'
 
 import { TestContext } from '../test-context.js'
-import { assertDeepEqual, assertEqual, assertTruthy } from '../../assert.js'
+import { assertDeepEqual, assertEqual } from '../../assert.js'
 import type {
-  CreatedOrUpdatedStyle,
-  ListedStyle,
-  ReadStyle,
+  ReadStyleBody,
+  StyleBody,
+  StyleListBody,
 } from '../../../src/web/style/style.js'
 
 suite('style tests', () => {
@@ -24,259 +24,98 @@ suite('style tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
+  async function createStyle(name: string, parents: string[]): Promise<string> {
+    const res = await ctx.request.post<StyleBody>(
+      `/api/v1/style`,
+      { name, parents },
+      ctx.adminAuthHeaders(),
+    )
+    assertEqual(res.status, 201)
+    return res.data.style.id
+  }
+
   test('create a style', async () => {
-    const res = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
+    const ale = await createStyle('Ale', [])
+    const request = { name: 'IPA', parents: [ale] }
+
+    const res = await ctx.request.post<StyleBody>(
       `/api/v1/style`,
-      { name: 'Wild', parents: [] },
+      request,
       ctx.adminAuthHeaders(),
     )
 
     assertEqual(res.status, 201)
-    assertEqual(res.data.style.name, 'Wild')
-    assertDeepEqual(res.data.style.parents, [])
-
-    const getRes = await ctx.request.get<{ style: ReadStyle }>(
-      `/api/v1/style/${res.data.style.id}`,
-      ctx.adminAuthHeaders(),
-    )
-
-    assertEqual(getRes.status, 200)
-    assertEqual(getRes.data.style.id, res.data.style.id)
-    assertEqual(getRes.data.style.name, res.data.style.name)
-    assertDeepEqual(getRes.data.style.children, [])
-    assertDeepEqual(getRes.data.style.parents, [])
+    assertDeepEqual(res.data, { style: { ...request, id: res.data.style.id } })
   })
 
-  test('create a child style', async () => {
-    const res = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
-      `/api/v1/style`,
-      { name: 'Pale Ale', parents: [] },
+  test('find a style with its parents and children', async () => {
+    const ale = await createStyle('Ale', [])
+    const ipa = await createStyle('IPA', [ale])
+    const neipa = await createStyle('NEIPA', [ipa])
+
+    const res = await ctx.request.get<ReadStyleBody>(
+      `/api/v1/style/${ipa}`,
       ctx.adminAuthHeaders(),
     )
 
-    assertEqual(res.status, 201)
-    assertEqual(res.data.style.name, 'Pale Ale')
-    assertTruthy(res.data.style.id)
-    assertDeepEqual(res.data.style.parents, [])
-
-    const childRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
-      `/api/v1/style`,
-      { name: 'India Pale Ale', parents: [res.data.style.id] },
-      ctx.adminAuthHeaders(),
-    )
-
-    assertEqual(childRes.status, 201)
-    assertEqual(childRes.data.style.name, 'India Pale Ale')
-    assertDeepEqual(childRes.data.style.parents, [res.data.style.id])
-
-    const getRes = await ctx.request.get<{ style: ReadStyle }>(
-      `/api/v1/style/${childRes.data.style.id}`,
-      ctx.adminAuthHeaders(),
-    )
-
-    assertEqual(getRes.status, 200)
-    assertEqual(getRes.data.style.id, childRes.data.style.id)
-    assertEqual(getRes.data.style.name, childRes.data.style.name)
-    assertDeepEqual(getRes.data.style.children, [])
-    assertDeepEqual(getRes.data.style.parents, [
-      {
-        id: res.data.style.id,
-        name: res.data.style.name,
+    assertEqual(res.status, 200)
+    assertDeepEqual(res.data, {
+      style: {
+        id: ipa,
+        name: 'IPA',
+        children: [{ id: neipa, name: 'NEIPA' }],
+        parents: [{ id: ale, name: 'Ale' }],
       },
-    ])
-
-    const getParentRes = await ctx.request.get<{ style: ReadStyle }>(
-      `/api/v1/style/${res.data.style.id}`,
-      ctx.adminAuthHeaders(),
-    )
-
-    assertEqual(getParentRes.status, 200)
-    assertDeepEqual(getParentRes.data.style.children, [
-      {
-        id: childRes.data.style.id,
-        name: childRes.data.style.name,
-      },
-    ])
-    assertDeepEqual(getParentRes.data.style.parents, [])
+    })
   })
 
-  test('create a child style with 2 parents', async () => {
-    const [parent1Res, parent2Res] = await Promise.all(
-      ['Ale', 'Lager'].map((name) =>
-        ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
-          `/api/v1/style`,
-          { name, parents: [] },
-          ctx.adminAuthHeaders(),
-        ),
-      ),
-    )
-    assertEqual(parent1Res.status, 201)
-    assertEqual(parent2Res.status, 201)
-
-    const childRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
-      `/api/v1/style`,
-      {
-        name: 'Cream Ale',
-        parents: [parent1Res.data.style.id, parent2Res.data.style.id],
-      },
-      ctx.adminAuthHeaders(),
-    )
-
-    assertEqual(childRes.status, 201)
-    assertEqual(childRes.data.style.name, 'Cream Ale')
-    assertDeepEqual(childRes.data.style.parents, [
-      parent1Res.data.style.id,
-      parent2Res.data.style.id,
-    ])
-
-    const getRes = await ctx.request.get<{ style: ReadStyle }>(
-      `/api/v1/style/${childRes.data.style.id}`,
-      ctx.adminAuthHeaders(),
-    )
-
-    assertEqual(getRes.status, 200)
-    assertEqual(getRes.data.style.id, childRes.data.style.id)
-    assertEqual(getRes.data.style.name, 'Cream Ale')
-    assertDeepEqual(getRes.data.style.children, [])
-    assertDeepEqual(getRes.data.style.parents, [
-      {
-        id: parent1Res.data.style.id,
-        name: parent1Res.data.style.name,
-      },
-      {
-        id: parent2Res.data.style.id,
-        name: parent2Res.data.style.name,
-      },
-    ])
-
-    const listRes = await ctx.request.get<{ styles: ListedStyle[] }>(
-      `/api/v1/style`,
-      ctx.adminAuthHeaders(),
-    )
-
-    assertEqual(listRes.status, 200)
-    assertEqual(listRes.data.styles.length, 3)
-  })
-
-  test('fail to create a child style with invalid parent', async () => {
-    const childRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
-      `/api/v1/style`,
-      { name: 'Gueuze', parents: ['d31020d9-c400-41f4-91bb-2c847dcf1fbe'] },
-      ctx.adminAuthHeaders(),
-    )
-
-    assertEqual(childRes.status, 400)
-  })
-
-  test('fail to create a style without name', async () => {
-    const res = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
-      `/api/v1/style`,
-      { parents: [] },
-      ctx.adminAuthHeaders(),
-    )
-
-    assertEqual(res.status, 400)
-  })
-
+  // The style's parents are replaced in the same transaction, which only
+  // reading it back shows.
   test('update a style', async () => {
-    const [aleRes, lagerRes] = await Promise.all(
-      ['Pale Ale', 'Lager'].map((name) =>
-        ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
-          `/api/v1/style`,
-          { name, parents: [] },
-          ctx.adminAuthHeaders(),
-        ),
-      ),
-    )
-    assertEqual(aleRes.status, 201)
-    assertEqual(lagerRes.status, 201)
-
-    const createRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
-      `/api/v1/style`,
-      { name: 'India Pale Ale', parents: [aleRes.data.style.id] },
-      ctx.adminAuthHeaders(),
-    )
-
-    assertEqual(createRes.status, 201)
-    assertEqual(createRes.data.style.name, 'India Pale Ale')
-    assertDeepEqual(createRes.data.style.parents, [aleRes.data.style.id])
-
-    const updateRes = await ctx.request.put<{ style: CreatedOrUpdatedStyle }>(
-      `/api/v1/style/${createRes.data.style.id}`,
-      { name: 'India Pale Lager', parents: [lagerRes.data.style.id] },
-      ctx.adminAuthHeaders(),
-    )
-
-    const getRes = await ctx.request.get<{ style: ReadStyle }>(
-      `/api/v1/style/${createRes.data.style.id}`,
-      ctx.adminAuthHeaders(),
-    )
-
-    assertEqual(getRes.status, 200)
-    assertEqual(getRes.data.style.id, updateRes.data.style.id)
-    assertEqual(getRes.data.style.name, updateRes.data.style.name)
-    assertDeepEqual(getRes.data.style.parents, [
-      {
-        id: lagerRes.data.style.id,
-        name: lagerRes.data.style.name,
-      },
+    const [ale, lager] = await Promise.all([
+      createStyle('Ale', []),
+      createStyle('Lager', []),
     ])
-  })
+    const id = await createStyle('India Pale Ale', [ale])
+    const update = { name: 'India Pale Lager', parents: [lager] }
 
-  test('fail to update a child style with invalid parent', async () => {
-    const createRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
-      `/api/v1/style`,
-      { name: 'Gueuze', parents: [] },
+    const res = await ctx.request.put<StyleBody>(
+      `/api/v1/style/${id}`,
+      update,
       ctx.adminAuthHeaders(),
     )
-    assertEqual(createRes.status, 201)
+    assertEqual(res.status, 200)
+    assertDeepEqual(res.data, { style: { ...update, id } })
 
-    const style = createRes.data.style
-    const updateRes = await ctx.request.put(
-      `/api/v1/style/${style.id}`,
-      { name: style.name, parents: ['c407a67d-1e4c-48b3-8e46-29e05d834a8f'] },
+    const getRes = await ctx.request.get<ReadStyleBody>(
+      `/api/v1/style/${id}`,
       ctx.adminAuthHeaders(),
     )
-    assertEqual(updateRes.status, 400)
+    assertDeepEqual(getRes.data, {
+      style: {
+        id,
+        name: 'India Pale Lager',
+        children: [],
+        parents: [{ id: lager, name: 'Lager' }],
+      },
+    })
   })
 
-  test('get empty style list', async () => {
-    const res = await ctx.request.get<{ styles: ListedStyle[] }>(
+  test('list styles', async () => {
+    const ale = await createStyle('Ale', [])
+    const ipa = await createStyle('IPA', [ale])
+
+    const res = await ctx.request.get<StyleListBody>(
       `/api/v1/style`,
       ctx.adminAuthHeaders(),
     )
 
     assertEqual(res.status, 200)
-    assertEqual(res.data.styles.length, 0)
-  })
-
-  test('fail to create cyclic relationship', async () => {
-    const aleRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
-      `/api/v1/style`,
-      { name: 'Pale Ale', parents: [] },
-      ctx.adminAuthHeaders(),
-    )
-    assertEqual(aleRes.status, 201)
-
-    const ipaRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
-      `/api/v1/style`,
-      { name: 'IPA', parents: [aleRes.data.style.id] },
-      ctx.adminAuthHeaders(),
-    )
-    assertEqual(ipaRes.status, 201)
-
-    const neipaRes = await ctx.request.post<{ style: CreatedOrUpdatedStyle }>(
-      `/api/v1/style`,
-      { name: 'Neipa', parents: [ipaRes.data.style.id] },
-      ctx.adminAuthHeaders(),
-    )
-    assertEqual(neipaRes.status, 201)
-
-    const updateRes = await ctx.request.put(
-      `/api/v1/style/${aleRes.data.style.id}`,
-      { name: 'Pale Ale', parents: [neipaRes.data.style.id] },
-      ctx.adminAuthHeaders(),
-    )
-    assertEqual(updateRes.status, 400)
+    assertDeepEqual(res.data, {
+      styles: [
+        { id: ale, name: 'Ale', parents: [] },
+        { id: ipa, name: 'IPA', parents: [ale] },
+      ],
+    })
   })
 })

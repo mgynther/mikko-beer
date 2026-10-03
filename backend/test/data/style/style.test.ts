@@ -178,6 +178,34 @@ suite('style tests', () => {
     ])
   })
 
+  // A cream ale is both an ale and a lager. The list does not order the
+  // parents of a style, so the test compares them sorted.
+  test('list a style with two parents once', async () => {
+    const { creamAle, ale, lager } = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) => {
+        const [creamAle, ale, lager] = await Promise.all(
+          ['Cream Ale', 'Ale', 'Lager'].map((name) =>
+            styleRepository.insertStyle(trx, buildNewStyle({ name })),
+          ),
+        )
+        await styleRepository.insertStyleRelationships(trx, [
+          { parent: ale.id, child: creamAle.id },
+          { parent: lager.id, child: creamAle.id },
+        ])
+        return { creamAle, ale, lager }
+      },
+    )
+    const styles = await styleRepository.listStyles(ctx.db)
+    assertDeepEqual(
+      styles.map((style) => ({ ...style, parents: style.parents.toSorted() })),
+      [
+        { ...ale, parents: [] },
+        { ...creamAle, parents: [ale.id, lager.id].toSorted() },
+        { ...lager, parents: [] },
+      ],
+    )
+  })
+
   test('find style with its parents and children by name', async () => {
     const { creamAle, parents, children } =
       await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
