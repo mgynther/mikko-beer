@@ -411,6 +411,20 @@ suite('storage tests', () => {
     assertDeepEqual(found && joinedByName(found), shelf.storages.creamAle)
   })
 
+  // The page is cut from the same order it is listed in, so a page of the
+  // three skips the earliest.
+  test('list a page of storages, earliest best before first', async () => {
+    const shelf = await insertShelf(ctx.db)
+    const storages = await storageRepository.listStorages(ctx.db, {
+      size: 2,
+      skip: 1,
+    })
+    assertDeepEqual(storages.map(joinedByName), [
+      shelf.storages.creamAle,
+      shelf.storages.ipa,
+    ])
+  })
+
   const lists: Array<{
     listing: string
     list: (shelf: Shelf) => Promise<JoinedStorage[]>

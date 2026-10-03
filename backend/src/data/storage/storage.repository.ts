@@ -144,11 +144,16 @@ interface StorageTableRn extends StorageTable {
   rn: number
 }
 
-const listByBestBeforeDesc = sql<StorageTableRn>`(
+// Numbered in the order the list is shown in, so that a page is a slice of
+// it. The id settles ties, so that a storage is on one page only.
+const listByBestBefore = sql<StorageTableRn>`(
   SELECT
     storage.*,
-    ROW_NUMBER() OVER(ORDER BY best_before DESC) rn
+    ROW_NUMBER() OVER(
+      ORDER BY storage.best_before ASC, beer.name ASC, storage.storage_id ASC
+    ) rn
   FROM storage
+  INNER JOIN beer ON storage.beer = beer.beer_id
   )`
 
 type PossibleListColumns =
@@ -205,7 +210,7 @@ export async function listStorages(
 
   const storages = await db
     .getDb()
-    .selectFrom(listByBestBeforeDesc.as('storage'))
+    .selectFrom(listByBestBefore.as('storage'))
     .innerJoin('beer', 'storage.beer', 'beer.beer_id')
     .innerJoin('beer_brewery', 'beer.beer_id', 'beer_brewery.beer')
     .innerJoin('brewery', 'beer_brewery.brewery', 'brewery.brewery_id')
@@ -215,8 +220,7 @@ export async function listStorages(
     .leftJoin('review', 'storage.beer', 'review.beer')
     .select(listColumns)
     .where((eb) => eb.between('rn', start, end))
-    .orderBy('best_before', 'asc')
-    .orderBy('beer_name', 'asc')
+    .orderBy('rn', 'asc')
     .execute()
 
   return toJoinedStorages(parseBreweryStorageRows(storages))
