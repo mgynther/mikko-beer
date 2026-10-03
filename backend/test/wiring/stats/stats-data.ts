@@ -1,186 +1,93 @@
-import type { CreateReviewRequest } from '../../../src/logic/review/review.js'
+import type { Client, RequestHeaders } from '../../client.js'
 import type { CreatedOrUpdatedBeer } from '../../../src/web/beer/beer.js'
 import type { CreatedOrUpdatedBrewery } from '../../../src/web/brewery/brewery.js'
 import type { CreatedOrUpdatedContainer } from '../../../src/web/container/container.js'
 import type { CreatedOrUpdatedLocation } from '../../../src/web/location/location.js'
 import type { CreatedOrUpdatedReview } from '../../../src/web/review/review.js'
 import type { CreatedOrUpdatedStyle } from '../../../src/web/style/style.js'
-import type { Client, RequestHeaders } from '../../client.js'
 import { assertEqual } from '../../assert.js'
 
 interface StatsData {
-  beers: CreatedOrUpdatedBeer[]
-  breweries: Array<{ data: { brewery: CreatedOrUpdatedBrewery } }>
-  locations: Array<{ data: { location: CreatedOrUpdatedLocation } }>
-  reviews: CreatedOrUpdatedReview[]
-  containers: Array<{ data: { container: CreatedOrUpdatedContainer } }>
-  styles: Array<{ data: { style: CreatedOrUpdatedStyle } }>
+  lindemans: CreatedOrUpdatedBrewery
+  nokian: CreatedOrUpdatedBrewery
+  kriek: CreatedOrUpdatedStyle
+  ipa: CreatedOrUpdatedStyle
+  kuja: CreatedOrUpdatedLocation
+  oluthuone: CreatedOrUpdatedLocation
+  container: CreatedOrUpdatedContainer
 }
 
+// Lindemans, a Belgian brewery, brews a kriek, which is reviewed at Kuja in
+// 2023 and rated 8, and at Oluthuone in 2024 and rated 7. Nokian Panimo, a
+// Finnish one, brews an IPA, which is reviewed at Oluthuone in 2024 and
+// rated 6. Each is drunk from the same bottle.
 export async function createStatsData(
   request: Client,
-  adminAuthHeaders: RequestHeaders,
+  headers: RequestHeaders,
 ): Promise<StatsData> {
-  const [
-    styleRes,
-    otherStyleRes,
-    breweryRes,
-    otherBreweryRes,
-    containerRes,
-    locationRes,
-    otherLocationRes,
-  ] = await Promise.all([
-    request.post<{ style: CreatedOrUpdatedStyle }>(
-      `/api/v1/style`,
-      { name: 'Kriek', parents: [] },
-      adminAuthHeaders,
-    ),
-    request.post<{ style: CreatedOrUpdatedStyle }>(
-      `/api/v1/style`,
-      { name: 'IPA', parents: [] },
-      adminAuthHeaders,
-    ),
-    request.post<{ brewery: CreatedOrUpdatedBrewery }>(
-      `/api/v1/brewery`,
-      { name: 'Lindemans', country: 'BE' },
-      adminAuthHeaders,
-    ),
-    request.post<{ brewery: CreatedOrUpdatedBrewery }>(
-      `/api/v1/brewery`,
-      { name: 'Nokian Panimo', country: 'FI' },
-      adminAuthHeaders,
-    ),
-    request.post<{ container: CreatedOrUpdatedContainer }>(
-      `/api/v1/container`,
-      { type: 'Bottle', size: '0.25' },
-      adminAuthHeaders,
-    ),
-    request.post<{ location: CreatedOrUpdatedLocation }>(
-      `/api/v1/location`,
-      { name: 'Kuja' },
-      adminAuthHeaders,
-    ),
-    request.post<{ location: CreatedOrUpdatedLocation }>(
-      `/api/v1/location`,
-      { name: 'Oluthuone' },
-      adminAuthHeaders,
-    ),
-  ])
-  assertEqual(styleRes.status, 201)
-  assertEqual(otherStyleRes.status, 201)
-  assertEqual(breweryRes.status, 201)
-  assertEqual(otherBreweryRes.status, 201)
-  assertEqual(containerRes.status, 201)
-  assertEqual(locationRes.status, 201)
-  assertEqual(otherLocationRes.status, 201)
-
-  const [beerRes, otherBeerRes, collabBeerRes] = await Promise.all([
-    request.post<{ beer: CreatedOrUpdatedBeer }>(
-      `/api/v1/beer`,
-      {
-        name: 'Lindemans Kriek',
-        breweries: [breweryRes.data.brewery.id],
-        styles: [styleRes.data.style.id],
-      },
-      adminAuthHeaders,
-    ),
-    request.post<{ beer: CreatedOrUpdatedBeer }>(
-      `/api/v1/beer`,
-      {
-        name: 'IPA',
-        breweries: [otherBreweryRes.data.brewery.id],
-        styles: [otherStyleRes.data.style.id],
-      },
-      adminAuthHeaders,
-    ),
-    request.post<{ beer: CreatedOrUpdatedBeer }>(
-      `/api/v1/beer`,
-      {
-        name: 'Wild Kriek IPA',
-        breweries: [
-          breweryRes.data.brewery.id,
-          otherBreweryRes.data.brewery.id,
-        ],
-        styles: [styleRes.data.style.id, otherStyleRes.data.style.id],
-      },
-      adminAuthHeaders,
-    ),
-  ])
-  assertEqual(beerRes.status, 201)
-  assertEqual(otherBeerRes.status, 201)
-  assertEqual(collabBeerRes.status, 201)
-
-  const createRequest: CreateReviewRequest = {
-    additionalInfo: '',
-    beer: beerRes.data.beer.id,
-    container: containerRes.data.container.id,
-    location: locationRes.data.location.id,
-    rating: 5,
-    smell: 'Cherries',
-    taste: 'Cherries, a little sour',
-    time: '2021-03-07T18:31:33.123Z',
-  }
-  const otherReviewRequest: CreateReviewRequest = {
-    additionalInfo: '',
-    beer: otherBeerRes.data.beer.id,
-    container: containerRes.data.container.id,
-    location: otherLocationRes.data.location.id,
-    rating: 7,
-    smell: 'Grapefruit',
-    taste: 'Bitter',
-    time: '2022-03-08T18:31:33.123Z',
-  }
-  const collabReviewRequest: CreateReviewRequest = {
-    additionalInfo: '',
-    beer: collabBeerRes.data.beer.id,
-    container: containerRes.data.container.id,
-    location: locationRes.data.location.id,
-    rating: 8,
-    smell: 'Grapefruit, cherries',
-    taste: 'Bitter, sour',
-    time: '2023-03-09T18:31:33.123Z',
-  }
-  const collabReview2Request: CreateReviewRequest = {
-    additionalInfo: 'Another one was not quite as good',
-    beer: collabBeerRes.data.beer.id,
-    container: containerRes.data.container.id,
-    location: otherLocationRes.data.location.id,
-    rating: 7,
-    smell: 'Grapefruit, cherries',
-    taste: 'Bitter, sour',
-    time: '2023-03-10T18:31:33.123Z',
-  }
-  const [reviewRes, otherReviewRes, collabReviewRes, collabReview2Res] =
-    await Promise.all(
-      [
-        createRequest,
-        otherReviewRequest,
-        collabReviewRequest,
-        collabReview2Request,
-      ].map((reviewRequest) =>
-        request.post<{ review: CreatedOrUpdatedReview }>(
-          `/api/v1/review`,
-          reviewRequest,
-          adminAuthHeaders,
-        ),
-      ),
+  async function create<T>(path: string, body: object): Promise<T> {
+    const res = await request.post<Record<string, T>>(
+      `/api/v1/${path}`,
+      body,
+      headers,
     )
-  assertEqual(reviewRes.status, 201)
-  assertEqual(otherReviewRes.status, 201)
-  assertEqual(collabReviewRes.status, 201)
-  assertEqual(collabReview2Res.status, 201)
-
-  return {
-    beers: [beerRes.data.beer, collabBeerRes.data.beer, otherBeerRes.data.beer],
-    breweries: [breweryRes, otherBreweryRes],
-    locations: [locationRes, otherLocationRes],
-    reviews: [
-      collabReviewRes.data.review,
-      collabReview2Res.data.review,
-      reviewRes.data.review,
-      otherReviewRes.data.review,
-    ],
-    containers: [containerRes],
-    styles: [styleRes, otherStyleRes],
+    assertEqual(res.status, 201)
+    return res.data[path]
   }
+
+  const [lindemans, nokian, kriek, ipa, kuja, oluthuone, container] =
+    await Promise.all([
+      create<CreatedOrUpdatedBrewery>('brewery', {
+        name: 'Lindemans',
+        country: 'BE',
+      }),
+      create<CreatedOrUpdatedBrewery>('brewery', {
+        name: 'Nokian Panimo',
+        country: 'FI',
+      }),
+      create<CreatedOrUpdatedStyle>('style', { name: 'Kriek', parents: [] }),
+      create<CreatedOrUpdatedStyle>('style', { name: 'IPA', parents: [] }),
+      create<CreatedOrUpdatedLocation>('location', { name: 'Kuja' }),
+      create<CreatedOrUpdatedLocation>('location', { name: 'Oluthuone' }),
+      create<CreatedOrUpdatedContainer>('container', {
+        type: 'Bottle',
+        size: '0.33',
+      }),
+    ])
+  const [lindemansKriek, nokianIpa] = await Promise.all([
+    create<CreatedOrUpdatedBeer>('beer', {
+      name: 'Lindemans Kriek',
+      breweries: [lindemans.id],
+      styles: [kriek.id],
+    }),
+    create<CreatedOrUpdatedBeer>('beer', {
+      name: 'Nokian IPA',
+      breweries: [nokian.id],
+      styles: [ipa.id],
+    }),
+  ])
+  await Promise.all(
+    [
+      { beer: lindemansKriek, location: kuja, rating: 8, time: '2023-03-07' },
+      {
+        beer: lindemansKriek,
+        location: oluthuone,
+        rating: 7,
+        time: '2024-05-01',
+      },
+      { beer: nokianIpa, location: oluthuone, rating: 6, time: '2024-06-01' },
+    ].map(({ beer, location, rating, time }) =>
+      create<CreatedOrUpdatedReview>('review', {
+        additionalInfo: '',
+        beer: beer.id,
+        container: container.id,
+        location: location.id,
+        rating,
+        smell: 'Fruity',
+        taste: 'Fresh',
+        time: `${time}T18:00:00.000Z`,
+      }),
+    ),
+  )
+  return { lindemans, nokian, kriek, ipa, kuja, oluthuone, container }
 }
