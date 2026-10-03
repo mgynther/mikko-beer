@@ -57,6 +57,24 @@ suite('user tests', () => {
     assertDeepEqual(users, [insertedUser])
   })
 
+  test('list users by username, users without one last', async () => {
+    const [matti, anonymous, liisa] = await ctx.db.executeReadWriteTransaction(
+      async (trx) => [
+        await userRepository.insertUser(trx, {
+          username: 'matti',
+          role: 'viewer',
+        }),
+        await userRepository.createAnonymousUser(trx, { role: 'admin' }),
+        await userRepository.insertUser(trx, {
+          username: 'liisa',
+          role: 'viewer',
+        }),
+      ],
+    )
+    const users = await userRepository.listUsers(ctx.db)
+    assertDeepEqual(users, [liisa, matti, anonymous])
+  })
+
   test('do not list users when there are none', async () => {
     const users = await userRepository.listUsers(ctx.db)
     assertDeepEqual(users, [])

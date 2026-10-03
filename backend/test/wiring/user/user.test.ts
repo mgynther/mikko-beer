@@ -123,14 +123,15 @@ suite('user tests', () => {
     )
 
     assertEqual(res.status, 200)
+    // The initial admin has no username, so it comes after every user that has.
     const expectedResponse: Response = {
       users: [
+        user,
         {
           id: ctx.adminUserId(),
           role: 'admin',
           username: null,
         },
-        user,
       ],
     }
     assertDeepEqual(res.data, expectedResponse)

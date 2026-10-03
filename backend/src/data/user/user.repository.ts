@@ -61,7 +61,12 @@ export async function findUserById(
 }
 
 export async function listUsers(db: Database): Promise<User[]> {
-  const rows = await db.getDb().selectFrom('user').selectAll('user').execute()
+  const rows = await db
+    .getDb()
+    .selectFrom('user')
+    .selectAll('user')
+    .orderBy('username')
+    .execute()
 
   return rows.map(toUser)
 }
