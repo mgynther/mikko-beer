@@ -69,13 +69,15 @@ export async function updateReview(
 export async function findReviewById(
   db: Database,
   id: string,
-): Promise<Review> {
+): Promise<Review | undefined> {
   const reviewRow = await db
     .getDb()
     .selectFrom('review')
     .where('review_id', '=', id)
     .selectAll('review')
-    .executeTakeFirstOrThrow()
+    .executeTakeFirst()
+
+  if (reviewRow === undefined) return undefined
 
   return toReview(reviewRow)
 }

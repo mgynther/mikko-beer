@@ -67,13 +67,12 @@ suite('review tests', () => {
     })
     await migrator.migrateTo('2025_02_02_12_56_30_use_location_in_review')
     const upReview = await reviewRepository.findReviewById(ctx.db, review.id)
-    const location = await locationRepository.findLocationById(
-      ctx.db,
-      upReview.location,
-    )
+    const location =
+      upReview &&
+      (await locationRepository.findLocationById(ctx.db, upReview.location))
     assertEqual(location?.name, locationName)
     await migrator.migrateTo('2025_01_10_23_48_20_add_location')
     const downReview = await reviewRepository.findReviewById(ctx.db, review.id)
-    assertEqual(downReview.location, locationName)
+    assertEqual(downReview?.location, locationName)
   })
 })

@@ -22,11 +22,12 @@ import * as styleRepository from '../../../src/data/style/style.repository.js'
 import type {
   FullReviewListOrder,
   JoinedReview,
+  NewReview,
   Review,
   ReviewListFilter,
   ReviewListOrder,
 } from '../../../src/data/review/review.repository.js'
-import { assertDeepEqual } from '../../assert.js'
+import { assertDeepEqual, assertEqual } from '../../assert.js'
 import { buildNewBeer } from '../beer/builders.js'
 import { buildNewBrewery } from '../brewery/builders.js'
 import { buildNewContainer } from '../container/builders.js'
@@ -192,24 +193,47 @@ suite('review tests', () => {
   after(ctx.after)
   afterEach(ctx.afterEach)
 
+  // What a review refers to, so that it can be inserted.
+  async function insertReferred(
+    trx: Transaction,
+  ): Promise<Pick<NewReview, 'beer' | 'container' | 'location'>> {
+    const [beer, container, location] = await Promise.all([
+      beerRepository.insertBeer(trx, buildNewBeer()),
+      containerRepository.insertContainer(trx, buildNewContainer()),
+      locationRepository.insertLocation(trx, buildNewLocation()),
+    ])
+    return { beer: beer.id, container: container.id, location: location.id }
+  }
+
   test('insert a review', async () => {
     await ctx.db.executeReadWriteTransaction(async (trx) => {
-      const [beer, container, location] = await Promise.all([
-        beerRepository.insertBeer(trx, buildNewBeer()),
-        containerRepository.insertContainer(trx, buildNewContainer()),
-        locationRepository.insertLocation(trx, buildNewLocation()),
-      ])
-      const reviewRequest = buildNewReview({
-        beer: beer.id,
-        container: container.id,
-        location: location.id,
-      })
+      const reviewRequest = buildNewReview(await insertReferred(trx))
       const review = await reviewRepository.insertReview(trx, reviewRequest)
       assertDeepEqual(review, {
         ...reviewRequest,
         id: review.id,
       })
     })
+  })
+
+  test('find review by id', async () => {
+    const review = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await reviewRepository.insertReview(
+          trx,
+          buildNewReview(await insertReferred(trx)),
+        ),
+    )
+    const readReview = await reviewRepository.findReviewById(ctx.db, review.id)
+    assertDeepEqual(readReview, review)
+  })
+
+  test('find review that does not exist', async () => {
+    const readReview = await reviewRepository.findReviewById(
+      ctx.db,
+      'e1480b16-477c-49a7-b0ae-e1940b183966',
+    )
+    assertEqual(readReview, undefined)
   })
 
   const listCases: Array<ListCase<FullReviewListOrder>> = [

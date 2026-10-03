@@ -136,7 +136,7 @@ export function createReviewHandlers(context: Context): ReviewHandlers {
         request: IdRequest,
       ): Promise<ReadReviewBody> => {
         const review = await reviewService.findReviewById(
-          async (reviewId: string): Promise<Review> =>
+          async (reviewId: string): Promise<Review | undefined> =>
             await reviewRepository.findReviewById(db, reviewId),
           validateReviewId,
           { authTokenPayload, id: request.id },
