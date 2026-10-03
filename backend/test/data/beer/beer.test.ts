@@ -249,6 +249,43 @@ suite('beer tests', () => {
     ])
   })
 
+  test('search beers ignoring case', async () => {
+    const createResult = await createBeers(ctx.db)
+    const beers = await beerRepository.searchBeers(ctx.db, { name: 'sEVERIN' })
+    assertDeepEqual(
+      beers.map((beer) => beer.id),
+      [createResult.beers[0].id],
+    )
+  })
+
+  test('search beers by an exact name', async () => {
+    const createResult = await createBeers(ctx.db)
+    const beers = await beerRepository.searchBeers(ctx.db, {
+      name: '"severin extra ipa"',
+    })
+    assertDeepEqual(
+      beers.map((beer) => beer.id),
+      [createResult.beers[0].id],
+    )
+  })
+
+  test('not find a beer by part of an exact name', async () => {
+    await createBeers(ctx.db)
+    const beers = await beerRepository.searchBeers(ctx.db, {
+      name: '"severin extra"',
+    })
+    assertDeepEqual(beers, [])
+  })
+
+  test('list a page of beers by name', async () => {
+    const createResult = await createBeers(ctx.db)
+    const beers = await beerRepository.listBeers(ctx.db, { size: 1, skip: 1 })
+    assertDeepEqual(
+      beers.map((beer) => beer.name),
+      [createResult.beers[1].name],
+    )
+  })
+
   interface CreamAle {
     beer: Beer
     breweries: Brewery[]
