@@ -6,9 +6,10 @@ import type { FetchQuery } from './api'
 
 // What a store gives the requests made through it and its own thunks, as the
 // extra argument of its thunks. All of it is the store's rather than the
-// module's: the mutex keeps one refresh at a time, and a store is what a
-// browser tab has one of; the fetch query talks to the backend the store was
-// created for; and the storage is where the session and the settings live.
+// module's: the mutex keeps one refresh or sign-out at a time, and a store is
+// what a browser tab has one of; the fetch query talks to the backend the
+// store was created for; and the storage is where the session and the
+// settings live.
 export interface StoreExtra {
   mutex: Mutex
   fetchQuery: FetchQuery

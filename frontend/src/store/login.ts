@@ -14,11 +14,9 @@ import {
   useLogoutMutation,
 } from './internal/login/api'
 import { useDispatch, useSelector } from './internal/hooks'
-import { endSession } from './internal/login/end-session'
 import { storageOf } from './internal/extra'
-import { readSession, writeSession } from './internal/session'
+import { writeSession } from './internal/session'
 import type { Session } from './internal/session-parser'
-import type { WebStorage } from './web-storage'
 
 // The public surface of the login endpoints and of the session the store
 // keeps. See store/beer.ts for why every result is built here rather than
@@ -37,6 +35,8 @@ export interface LoginResult {
   isLoading: boolean
 }
 
+// Logging out does not unwrap: the session ends whatever the answer, so a
+// failed sign-out leaves the caller nothing to do.
 export interface LogoutResult {
   logout: () => Promise<void>
 }
@@ -61,22 +61,11 @@ export function useLogin(): LoginResult {
 }
 
 // The session to end is the one the store keeps, so the caller names none.
-// One another tab has already ended needs no request to end it here.
 export function useLogout(): LogoutResult {
   const [logout] = useLogoutMutation()
-  const dispatch = useDispatch()
   return {
     logout: async (): Promise<void> => {
-      const storage: WebStorage = dispatch(storageOf)
-      const session: Session | undefined = readSession(storage)
-      if (session === undefined) {
-        endSession(storage, dispatch)
-        return
-      }
-      await logout({
-        userId: session.user.id,
-        body: { refreshToken: session.refreshToken },
-      })
+      await logout(undefined)
     },
   }
 }

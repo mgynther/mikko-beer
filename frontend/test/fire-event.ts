@@ -11,6 +11,7 @@ interface ChangeInit {
 }
 
 interface FireEvent {
+  click: (element: Element) => void
   change: (element: Element, init: ChangeInit) => void
   mouseDown: (element: Element) => void
   mouseUp: (element: Element) => void
@@ -19,6 +20,9 @@ interface FireEvent {
 }
 
 export const fireEvent: FireEvent = {
+  click: (element) => {
+    libraryFireEvent.click(element)
+  },
   change: (element, init) => {
     libraryFireEvent.change(element, init)
   },

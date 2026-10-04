@@ -83,19 +83,30 @@ export function createFetchQuery(backendUrl: string): FetchQuery {
   })
 }
 
+// Sends a request that the refresh token in its body authorizes, without an
+// auth token and without reauthorizing: a 401 means the refresh token is no
+// longer valid, and refreshing would only send the same token again.
+export async function fetchByRefreshToken(
+  fetchQuery: FetchQuery,
+  args: FetchArgs,
+  api: BaseQueryApi,
+): Promise<Result> {
+  return await fetchQuery(args, api, authorizedBy(undefined))
+}
+
 async function refresh(
   fetchQuery: FetchQuery,
   session: Session,
   api: BaseQueryApi,
 ): Promise<Refresh | undefined> {
-  const refreshResult = await fetchQuery(
+  const refreshResult: Result = await fetchByRefreshToken(
+    fetchQuery,
     {
       method: 'POST',
       url: `/user/${session.user.id}/refresh`,
       body: { refreshToken: session.refreshToken },
     },
     api,
-    authorizedBy(undefined),
   )
   return parseRefresh(refreshResult.data)
 }

@@ -1,5 +1,15 @@
-import { emptySplitApi } from '../api'
+import type {
+  BaseQueryApi,
+  FetchBaseQueryError,
+  FetchBaseQueryMeta,
+  QueryReturnValue,
+} from '@reduxjs/toolkit/query/react'
+
+import { emptySplitApi, fetchByRefreshToken } from '../api'
 import { extraOf } from '../extra'
+import type { StoreExtra } from '../extra'
+import { readSession } from '../session'
+import type { Session } from '../session-parser'
 
 import { endSession } from './end-session'
 import { passwordChangeResult } from './reducer'
@@ -8,6 +18,41 @@ import type {
   LoginParams,
   LogoutParams,
 } from './requests'
+
+type SignOutResult = QueryReturnValue<
+  unknown,
+  FetchBaseQueryError,
+  FetchBaseQueryMeta
+>
+
+// The mutex is held throughout, so a refresh of this tab neither replaces the
+// refresh token before it is sent nor writes a session back after it ended.
+async function signOut(api: BaseQueryApi): Promise<SignOutResult> {
+  const { fetchQuery, mutex, storage }: StoreExtra = extraOf(api.extra)
+  return await mutex.runExclusive(async (): Promise<SignOutResult> => {
+    const session: Session | undefined = readSession(storage)
+    try {
+      if (session === undefined) {
+        return { data: undefined }
+      }
+      const params: LogoutParams = {
+        userId: session.user.id,
+        body: { refreshToken: session.refreshToken },
+      }
+      return await fetchByRefreshToken(
+        fetchQuery,
+        {
+          url: `/user/${params.userId}/sign-out`,
+          method: 'POST',
+          body: params.body,
+        },
+        api,
+      )
+    } finally {
+      endSession(storage, api.dispatch)
+    }
+  })
+}
 
 const loginApi = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
@@ -36,19 +81,8 @@ const loginApi = emptySplitApi.injectEndpoints({
         }
       },
     }),
-    logout: build.mutation<unknown, Partial<LogoutParams>>({
-      query: (params: LogoutParams) => ({
-        url: `/user/${params.userId}/sign-out`,
-        method: 'POST',
-        body: params.body,
-      }),
-      async onQueryStarted(_, { dispatch, extra, queryFulfilled }) {
-        try {
-          await queryFulfilled
-        } finally {
-          endSession(extraOf(extra).storage, dispatch)
-        }
-      },
+    logout: build.mutation<unknown, undefined>({
+      queryFn: async (_, api) => await signOut(api),
       invalidatesTags: ['Login'],
     }),
   }),

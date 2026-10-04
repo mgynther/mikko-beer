@@ -7,6 +7,7 @@ import {
   assertEqual,
 } from '../assert'
 import { mockFunction } from '../mock'
+import { fireEvent } from '../fire-event'
 import { render, waitFor } from '../render'
 
 import { createServer } from './server'
@@ -212,12 +213,77 @@ test('logout ends the stored session', async () => {
   await waitFor(() => {
     assertCalled(onLoggedOut)
   })
+  // The refresh token authorizes the sign-out on its own, so an auth token
+  // that has expired cannot make it fail.
   assertCalledWith(onRequest, [
     {
-      authorization: `Bearer ${signedIn.authToken}`,
+      authorization: undefined,
       body: { refreshToken: signedIn.refreshToken },
     },
   ])
+  assertDefined(getByText(loggedOut))
+  assertEqual(readSession(webStorage), undefined)
+})
+
+test('logout answered 401 ends the session without refreshing', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
+  const user = setupUser()
+  // The refresh token is no longer valid, so refreshing with it would fail
+  // too. A refresh that succeeded would leave a token nobody signs out.
+  server.addResponse({
+    method: 'POST',
+    pathname: `/api/v1/user/${signedIn.user.id}/sign-out`,
+    response: {
+      error: { code: 'InvalidCredentials', message: 'invalid token' },
+    },
+    status: 401,
+  })
+
+  const onLoggedOut = mockFunction<[]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
+  const { getByRole, getByText } = render(
+    <StoreProvider>
+      <SessionHelper login={signedIn} />
+      <LogoutHelper onLoggedOut={onLoggedOut} />
+    </StoreProvider>,
+  )
+  await user.click(getByRole('button', { name: 'Save' }))
+
+  await user.click(getByRole('button', { name: 'Logout' }))
+  await waitFor(() => {
+    assertCalled(onLoggedOut)
+  })
+  assertDeepEqual(server.unsettled(), [])
+  assertDefined(getByText(loggedOut))
+  assertEqual(readSession(webStorage), undefined)
+})
+
+test('failed logout ends the session rather than rejecting', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
+  const user = setupUser()
+  server.addResponse({
+    method: 'POST',
+    pathname: `/api/v1/user/${signedIn.user.id}/sign-out`,
+    response: { error: { code: 'UnknownError', message: 'unknown error' } },
+    status: 500,
+  })
+
+  const onLoggedOut = mockFunction<[]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
+  const { getByRole, getByText } = render(
+    <StoreProvider>
+      <SessionHelper login={signedIn} />
+      <LogoutHelper onLoggedOut={onLoggedOut} />
+    </StoreProvider>,
+  )
+  await user.click(getByRole('button', { name: 'Save' }))
+
+  await user.click(getByRole('button', { name: 'Logout' }))
+  await waitFor(() => {
+    assertCalled(onLoggedOut)
+  })
   assertDefined(getByText(loggedOut))
   assertEqual(readSession(webStorage), undefined)
 })
@@ -582,4 +648,123 @@ test('log out without refreshing after another tab logged out', async () => {
     assertDefined(getByText(loggedOut))
   })
   assertDeepEqual(server.unsettled(), [])
+})
+
+test('logout waits for a refresh and ends the refreshed session', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
+  const user = setupUser()
+  const userId = 'f3b9c2d8-6a1e-4f7b-9c5d-2e8a4b6c1d3f'
+  const session = sessionOf(userId, '1')
+  const refreshed = sessionOf(userId, '2')
+
+  server.addResponse({
+    method: 'POST',
+    pathname: `/api/v1/user/${userId}/change-password`,
+    response: { success: true },
+    status: 401,
+  })
+  // The user logs out while the refresh is on its way, so the refresh token
+  // the logout would read at once is the one the refresh is spending.
+  server.addResponse({
+    method: 'POST',
+    pathname: `/api/v1/user/${userId}/refresh`,
+    response: {
+      authToken: refreshed.authToken,
+      refreshToken: refreshed.refreshToken,
+    },
+    status: 200,
+    onRequest: () => {
+      fireEvent.click(getByRole('button', { name: 'Logout' }))
+    },
+  })
+  server.addResponse({
+    method: 'POST',
+    pathname: `/api/v1/user/${userId}/change-password`,
+    response: { success: true },
+    status: 200,
+  })
+  const onSignOut = mockFunction<[request: ReceivedRequest]>()
+  server.addResponse({
+    method: 'POST',
+    pathname: `/api/v1/user/${userId}/sign-out`,
+    response: { success: true },
+    status: 200,
+    onRequest: onSignOut,
+  })
+
+  const onLoggedOut = mockFunction<[]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
+  const { getByRole, getByText } = render(
+    <StoreProvider>
+      <SessionHelper login={session} />
+      <ChangePasswordHelper userId={userId} />
+      <LogoutHelper onLoggedOut={onLoggedOut} />
+    </StoreProvider>,
+  )
+  await user.click(getByRole('button', { name: 'Save' }))
+
+  await user.click(getByRole('button', { name: 'Change password' }))
+  await waitFor(() => {
+    assertCalled(onLoggedOut)
+  })
+  assertCalledWith(onSignOut, [
+    {
+      authorization: undefined,
+      body: { refreshToken: refreshed.refreshToken },
+    },
+  ])
+  assertDefined(getByText('SUCCESS'))
+  assertDefined(getByText(loggedOut))
+  assertEqual(readSession(webStorage), undefined)
+})
+
+test('a request made while logging out waits for the logout', async () => {
+  const server = await createServer()
+  const webStorage = createMemoryStorage()
+  const user = setupUser()
+  const userId = '8c4e2a6f-1d3b-4e9a-b7c5-3f1a9d2e6b8c'
+  const session = sessionOf(userId, '1')
+
+  // Sent alongside the sign-out, the request would be answered 401 and
+  // refresh the session the sign-out is ending.
+  server.addResponse({
+    method: 'POST',
+    pathname: `/api/v1/user/${userId}/sign-out`,
+    response: { success: true },
+    status: 200,
+    onRequest: () => {
+      fireEvent.click(getByRole('button', { name: 'Change password' }))
+    },
+  })
+  const onChangePassword = mockFunction<[request: ReceivedRequest]>()
+  server.addResponse({
+    method: 'POST',
+    pathname: `/api/v1/user/${userId}/change-password`,
+    response: { error: 'InvalidCredentials' },
+    status: 401,
+    onRequest: onChangePassword,
+  })
+
+  const onLoggedOut = mockFunction<[]>()
+  const StoreProvider = createStoreProvider(server.url, webStorage)
+  const { getByRole, getByText } = render(
+    <StoreProvider>
+      <SessionHelper login={session} />
+      <ChangePasswordHelper userId={userId} />
+      <LogoutHelper onLoggedOut={onLoggedOut} />
+    </StoreProvider>,
+  )
+  await user.click(getByRole('button', { name: 'Save' }))
+
+  await user.click(getByRole('button', { name: 'Logout' }))
+  await waitFor(() => {
+    assertDefined(getByText('ERROR'))
+  })
+  assertCalledWith(onChangePassword, [
+    { authorization: undefined, body: passwordChange },
+  ])
+  assertDeepEqual(server.unsettled(), [])
+  assertDefined(getByText(loggedOut))
+  assertEqual(readSession(webStorage), undefined)
 })
