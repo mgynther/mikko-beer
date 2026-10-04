@@ -278,4 +278,47 @@ suite('annual container stats tests', () => {
     )
     assertDeepEqual(stats, [bottle2023(containers), can2023(containers)])
   })
+
+  test('list the sizes of a container type within a year by size', async () => {
+    const [bottle075, bottle033] = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) => {
+        const [bottle075, bottle033] = await Promise.all([
+          containerRepository.insertContainer(
+            trx,
+            buildNewContainer({ type: 'bottle', size: '0.75' }),
+          ),
+          containerRepository.insertContainer(
+            trx,
+            buildNewContainer({ type: 'bottle', size: '0.33' }),
+          ),
+        ])
+        await insertReviewedBeer(
+          trx,
+          { brewery: 'Lindemans', style: 'Kriek', location: 'Kuja' },
+          [
+            {
+              container: bottle075,
+              rating: 8,
+              time: new Date('2024-03-01T18:00:00.000Z'),
+            },
+            {
+              container: bottle033,
+              rating: 6,
+              time: new Date('2024-04-01T18:00:00.000Z'),
+            },
+          ],
+        )
+        return [bottle075, bottle033]
+      },
+    )
+    const stats = await annualContainerStatsRepository.getAnnualContainer(
+      ctx.db,
+      allResults,
+      noFilter,
+    )
+    assertDeepEqual(
+      stats.map((stat) => stat.containerId),
+      [bottle033.id, bottle075.id],
+    )
+  })
 })

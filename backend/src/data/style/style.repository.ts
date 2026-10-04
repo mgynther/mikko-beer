@@ -173,13 +173,19 @@ export async function listStyles(db: Database): Promise<StyleWithParentIds[]> {
       'style.style_id',
       'style_relationship.child',
     )
+    .leftJoin(
+      'style as parent_style',
+      'style_relationship.parent',
+      'parent_style.style_id',
+    )
     .select([
-      'style_id',
-      'name',
+      'style.style_id',
+      'style.name',
       'style.created_at',
       'style_relationship.parent as parent',
     ])
-    .orderBy('name')
+    .orderBy('style.name')
+    .orderBy('parent_style.name')
     .execute()
 
   const styleMap: Record<string, StyleWithParentIds> = {}

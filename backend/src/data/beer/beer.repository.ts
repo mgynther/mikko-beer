@@ -206,7 +206,7 @@ interface BeerTableRn extends BeerTable {
 const listByNameAsc: RawBuilder<BeerTableRn> = sql<BeerTableRn>`(
   SELECT
     beer.*,
-    ROW_NUMBER() OVER(ORDER BY beer.name ASC) rn
+    ROW_NUMBER() OVER(ORDER BY beer.name ASC, beer.beer_id ASC) rn
   FROM beer
   )`
 
@@ -267,6 +267,7 @@ export async function listBeers(
   const beers = await getSelectListQuery(db, listByNameAsc)
     .where((eb) => eb.between('rn', start, end))
     .orderBy('beer.name', 'asc')
+    .orderBy('beer.beer_id', 'asc')
     .execute()
 
   return toBeersWithBreweriesAndStyles(beers)
@@ -334,6 +335,7 @@ export async function searchBeers(
   const beers = await getSelectListQuery(db, beerNameLike)
     .where((eb) => eb.between('rn', 1, defaultSearchMaxResults))
     .orderBy('beer.name', 'asc')
+    .orderBy('beer.beer_id', 'asc')
     .execute()
 
   return toBeersWithBreweriesAndStyles(beers)

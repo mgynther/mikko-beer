@@ -357,4 +357,103 @@ suite('overall stats tests', () => {
       Error,
     )
   })
+
+  test('shows overall stats when nothing is recorded', async () => {
+    const stats = await overallStatsRepository.getOverall(ctx.db, noFilter)
+    assertDeepEqual(stats, {
+      beerCount: '0',
+      breweryCount: '0',
+      breweryCountryCount: '0',
+      containerCount: '0',
+      locationCount: '0',
+      distinctBeerReviewCount: '0',
+      reviewAverage: '-',
+      reviewCount: '0',
+      reviewStandardDeviation: '-',
+      reviewMedian: '-',
+      reviewMode: '-',
+      reviewWithLocationCount: '0',
+      reviewWithoutLocationCount: '0',
+      styleCount: '0',
+    })
+  })
+
+  // Nokian Panimo and Sonnisaari brew a cream ale together, which is both
+  // an ale and a lager, and it is reviewed once at Kuja. Joined to its
+  // breweries and styles the review is on four rows, and it still counts
+  // once whichever the filter.
+  test('counts a review of a collaboration once', async () => {
+    const { nokian, kuja, ale } = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) => {
+        const [nokian, sonnisaari, ale, lager, container, kuja, creamAle] =
+          await Promise.all([
+            breweryRepository.insertBrewery(
+              trx,
+              buildNewBrewery({ name: 'Nokian Panimo', country: 'FI' }),
+            ),
+            breweryRepository.insertBrewery(
+              trx,
+              buildNewBrewery({ name: 'Sonnisaari', country: 'FI' }),
+            ),
+            styleRepository.insertStyle(trx, buildNewStyle({ name: 'Ale' })),
+            styleRepository.insertStyle(trx, buildNewStyle({ name: 'Lager' })),
+            containerRepository.insertContainer(trx, buildNewContainer()),
+            locationRepository.insertLocation(
+              trx,
+              buildNewLocation({ name: 'Kuja' }),
+            ),
+            beerRepository.insertBeer(trx, buildNewBeer({ name: 'Cream Ale' })),
+          ])
+        await Promise.all([
+          beerRepository.insertBeerBreweries(trx, [
+            { beer: creamAle.id, brewery: nokian.id },
+            { beer: creamAle.id, brewery: sonnisaari.id },
+          ]),
+          beerRepository.insertBeerStyles(trx, [
+            { beer: creamAle.id, style: ale.id },
+            { beer: creamAle.id, style: lager.id },
+          ]),
+          reviewRepository.insertReview(
+            trx,
+            buildNewReview({
+              beer: creamAle.id,
+              container: container.id,
+              location: kuja.id,
+              rating: 8,
+            }),
+          ),
+        ])
+        return { nokian, kuja, ale }
+      },
+    )
+    const expected = {
+      beerCount: '1',
+      breweryCount: '2',
+      breweryCountryCount: '1',
+      containerCount: '1',
+      locationCount: '1',
+      distinctBeerReviewCount: '1',
+      reviewAverage: '8.00',
+      reviewCount: '1',
+      reviewStandardDeviation: '0.00',
+      reviewMedian: '8.00',
+      reviewMode: '8',
+      reviewWithLocationCount: '1',
+      reviewWithoutLocationCount: '0',
+      styleCount: '2',
+    }
+    const filters: StatsIdFilter[] = [
+      noFilter,
+      { ...noFilter, brewery: nokian.id },
+      { ...noFilter, location: kuja.id },
+      { ...noFilter, style: ale.id },
+    ]
+    const stats = await Promise.all(
+      filters.map(
+        async (filter: StatsIdFilter) =>
+          await overallStatsRepository.getOverall(ctx.db, filter),
+      ),
+    )
+    assertDeepEqual(stats, [expected, expected, expected, expected])
+  })
 })

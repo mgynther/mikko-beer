@@ -361,4 +361,122 @@ suite('style stats tests', () => {
       lagerStats(lager),
     ])
   })
+
+  test('filter by review count bounds inclusively', async () => {
+    const { ipa } = await insertStyles(ctx.db)
+    const stats = await getStyle(
+      { ...noFilter, minReviewCount: 3, maxReviewCount: 3 },
+      byName,
+    )
+    assertDeepEqual(stats, [ipaStats(ipa)])
+  })
+
+  test('filter by review average bounds inclusively', async () => {
+    const { gueuze } = await insertStyles(ctx.db)
+    const stats = await getStyle(
+      { ...noFilter, minReviewAverage: 6, maxReviewAverage: 6 },
+      byName,
+    )
+    assertDeepEqual(stats, [gueuzeStats(gueuze)])
+  })
+
+  test('filter by time bounds inclusively', async () => {
+    const { gueuze } = await insertStyles(ctx.db)
+    const stats = await getStyle(
+      {
+        ...noFilter,
+        timeStart: new Date('2024-03-01T18:00:00.000Z'),
+        timeEnd: new Date('2024-04-01T18:00:00.000Z'),
+      },
+      byName,
+    )
+    assertDeepEqual(stats, [gueuzeStats(gueuze)])
+  })
+
+  // A Koskipanimo beer of each style reviewed at the same place, so that
+  // only the ratings tell the styles apart.
+  async function insertRatedStyles(
+    ratings: Record<string, number[]>,
+  ): Promise<void> {
+    await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
+      const [container, location, brewery] = await Promise.all([
+        containerRepository.insertContainer(trx, buildNewContainer()),
+        locationRepository.insertLocation(trx, buildNewLocation()),
+        breweryRepository.insertBrewery(
+          trx,
+          buildNewBrewery({ name: 'Koskipanimo' }),
+        ),
+      ])
+      const time = new Date('2024-03-01T18:00:00.000Z')
+      await Promise.all(
+        Object.entries(ratings).map(async ([name, styleRatings]) => {
+          const [style, beer] = await Promise.all([
+            styleRepository.insertStyle(trx, buildNewStyle({ name })),
+            beerRepository.insertBeer(trx, buildNewBeer()),
+          ])
+          await Promise.all([
+            beerRepository.insertBeerBreweries(trx, [
+              { beer: beer.id, brewery: brewery.id },
+            ]),
+            beerRepository.insertBeerStyles(trx, [
+              { beer: beer.id, style: style.id },
+            ]),
+            ...styleRatings.map(
+              async (rating: number) =>
+                await reviewRepository.insertReview(
+                  trx,
+                  buildNewReview({
+                    beer: beer.id,
+                    container: container.id,
+                    location: location.id,
+                    rating,
+                    time,
+                  }),
+                ),
+            ),
+          ])
+        }),
+      )
+    })
+  }
+
+  // A tie is broken the same way whichever the direction of the order.
+  const tieCases: Array<{
+    title: string
+    property: StyleStatsOrder['property']
+    ratings: Record<string, number[]>
+    expected: string[]
+  }> = [
+    {
+      title: 'average, ties by count desc and then by name',
+      property: 'average',
+      ratings: { Bock: [7], IPA: [6, 8], Porter: [7, 7] },
+      expected: ['IPA', 'Porter', 'Bock'],
+    },
+    {
+      title: 'count, ties by average desc and then by name',
+      property: 'count',
+      ratings: { Bock: [5, 7], IPA: [6, 8], Porter: [7, 7] },
+      expected: ['IPA', 'Porter', 'Bock'],
+    },
+    {
+      title: 'std_dev, ties by count desc, average desc and then by name',
+      property: 'std_dev',
+      ratings: { Bock: [7], IPA: [8, 8], Porter: [7, 7], Stout: [8, 8] },
+      expected: ['IPA', 'Stout', 'Porter', 'Bock'],
+    },
+  ]
+
+  tieCases.forEach(({ title, property, ratings, expected }) => {
+    ;(['asc', 'desc'] as const).forEach((direction) => {
+      test(`by ${title}, ${direction}`, async () => {
+        await insertRatedStyles(ratings)
+        const stats = await getStyle(noFilter, { property, direction })
+        assertDeepEqual(
+          stats.map((stat) => stat.styleName),
+          expected,
+        )
+      })
+    })
+  })
 })

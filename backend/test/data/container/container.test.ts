@@ -7,7 +7,10 @@ import {
   afterEach,
 } from '../../test.js'
 
+import { buildNewContainer } from './builders.js'
+import { assertLockHoldsOffWrite } from '../lock.js'
 import { TestContext } from '../test-context.js'
+import type { Container } from '../../../src/data/container/container.repository.js'
 import type { Transaction } from '../../../src/data/database.js'
 import * as containerRepository from '../../../src/data/container/container.repository.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
@@ -70,6 +73,25 @@ suite('container tests', () => {
     })
   })
 
+  test('update the given container only', async () => {
+    const [can, bottle] = await insertContainers([
+      { type: 'can', size: '0.33' },
+      { type: 'bottle', size: '0.33' },
+    ])
+    await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await containerRepository.updateContainer(trx, {
+          ...can,
+          size: '0.50',
+        }),
+    )
+    const readContainer = await containerRepository.findContainerById(
+      ctx.db,
+      bottle.id,
+    )
+    assertDeepEqual(readContainer, bottle)
+  })
+
   test('update container that does not exist', async () => {
     const updated = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) =>
@@ -100,6 +122,20 @@ suite('container tests', () => {
     })
   })
 
+  test('keep a locked container from being updated until the transaction ends', async () => {
+    const [container] = await insertContainers([buildNewContainer()])
+    await assertLockHoldsOffWrite(
+      ctx.db,
+      async (trx: Transaction) =>
+        await containerRepository.lockContainer(trx, container.id),
+      async (trx: Transaction) =>
+        await containerRepository.updateContainer(trx, {
+          ...container,
+          size: '0.50',
+        }),
+    )
+  })
+
   test('do not lock container that does not exists', async () => {
     const dummyId = '296bc6bb-f250-4cb3-9e66-a54257c2e0ab'
     await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
@@ -120,4 +156,33 @@ suite('container tests', () => {
     const containers = await containerRepository.listContainers(ctx.db)
     assertDeepEqual(containers, [container])
   })
+  test('list containers by type and then by size', async () => {
+    const [can50, bottle50, can33, bottle33] = await insertContainers([
+      { type: 'can', size: '0.50' },
+      { type: 'bottle', size: '0.50' },
+      { type: 'can', size: '0.33' },
+      { type: 'bottle', size: '0.33' },
+    ])
+    const containers = await containerRepository.listContainers(ctx.db)
+    assertDeepEqual(containers, [bottle33, bottle50, can33, can50])
+  })
+
+  test('do not list containers when there are none', async () => {
+    const containers = await containerRepository.listContainers(ctx.db)
+    assertDeepEqual(containers, [])
+  })
+
+  async function insertContainers(
+    newContainers: { type: string; size: string }[],
+  ): Promise<Container[]> {
+    return await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await Promise.all(
+          newContainers.map(
+            async (newContainer: { type: string; size: string }) =>
+              await containerRepository.insertContainer(trx, newContainer),
+          ),
+        ),
+    )
+  }
 })

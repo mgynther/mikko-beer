@@ -100,7 +100,9 @@ const listByRatingAsc = (
 ): RawBuilder<ReviewTableRn> => sql<ReviewTableRn>`(
     SELECT
       review.*,
-      ROW_NUMBER() OVER(ORDER BY review.rating ASC, review.time DESC) rn
+      ROW_NUMBER() OVER(
+        ORDER BY review.rating ASC, review.time DESC, review.review_id ASC
+      ) rn
     FROM review
     WHERE review.rating >= ${reviewListFilter.minRating} AND review.rating <= ${
       reviewListFilter.maxRating
@@ -114,7 +116,9 @@ const listByRatingDesc = (
 ): RawBuilder<ReviewTableRn> => sql<ReviewTableRn>`(
     SELECT
       review.*,
-      ROW_NUMBER() OVER(ORDER BY review.rating DESC, review.time DESC) rn
+      ROW_NUMBER() OVER(
+        ORDER BY review.rating DESC, review.time DESC, review.review_id ASC
+      ) rn
     FROM review
     WHERE review.rating >= ${reviewListFilter.minRating} AND review.rating <= ${
       reviewListFilter.maxRating
@@ -138,7 +142,7 @@ const listByTimeAsc = (
 ): RawBuilder<ReviewTableRn> => sql<ReviewTableRn>`(
   SELECT
     review.*,
-    ROW_NUMBER() OVER(ORDER BY review.time ASC) rn
+    ROW_NUMBER() OVER(ORDER BY review.time ASC, review.review_id ASC) rn
   FROM review
   WHERE review.rating >= ${reviewListFilter.minRating} AND review.rating <= ${
     reviewListFilter.maxRating
@@ -152,7 +156,7 @@ const listByTimeDesc = (
 ): RawBuilder<ReviewTableRn> => sql<ReviewTableRn>`(
   SELECT
     review.*,
-    ROW_NUMBER() OVER(ORDER BY review.time DESC) rn
+    ROW_NUMBER() OVER(ORDER BY review.time DESC, review.review_id ASC) rn
   FROM review
   WHERE review.rating >= ${reviewListFilter.minRating} AND review.rating <= ${
     reviewListFilter.maxRating
@@ -186,7 +190,10 @@ interface ListQueryHelper {
 
 function getOrderByBeerName(direction: ListDirection) {
   return (query: ListQueryBuilder): ListQueryBuilder =>
-    query.orderBy('beer_name', direction).orderBy('review.time', 'asc')
+    query
+      .orderBy('beer_name', direction)
+      .orderBy('review.time', 'asc')
+      .orderBy('review.review_id', 'asc')
 }
 
 // Note that this completely ignores collaborations. If name sorting is wanted
@@ -198,16 +205,20 @@ function getOrderByBreweryName(direction: ListDirection) {
       .orderBy('brewery_name', direction)
       .orderBy('beer_name', 'asc')
       .orderBy('review.time', 'asc')
+      .orderBy('review.review_id', 'asc')
 }
 
 function getOrderByRating(direction: ListDirection) {
   return (query: ListQueryBuilder): ListQueryBuilder =>
-    query.orderBy('review.rating', direction).orderBy('review.time', 'desc')
+    query
+      .orderBy('review.rating', direction)
+      .orderBy('review.time', 'desc')
+      .orderBy('review.review_id', 'asc')
 }
 
 function getOrderByTime(direction: ListDirection) {
   return (query: ListQueryBuilder): ListQueryBuilder =>
-    query.orderBy('review.time', direction)
+    query.orderBy('review.time', direction).orderBy('review.review_id', 'asc')
 }
 
 export interface ReviewListRequest {

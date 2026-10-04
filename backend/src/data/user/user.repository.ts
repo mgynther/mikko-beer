@@ -66,6 +66,7 @@ export async function listUsers(db: Database): Promise<User[]> {
     .selectFrom('user')
     .selectAll('user')
     .orderBy('username')
+    .orderBy('user_id')
     .execute()
 
   return rows.map(toUser)

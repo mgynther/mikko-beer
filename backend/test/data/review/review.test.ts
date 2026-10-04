@@ -171,7 +171,8 @@ interface Collaboration {
 
 // Nokian Panimo and Sonnisaari brew a cream ale together, which is both an
 // ale and a lager, so a review of it joins to two breweries and two styles.
-// It is reviewed at Kuja and later without a location.
+// It is reviewed at Kuja and later without a location. The breweries and
+// styles are linked in reverse order of their names.
 async function insertCollaboration(db: Database): Promise<Collaboration> {
   return await db.executeReadWriteTransaction(async (trx: Transaction) => {
     const [nokian, sonnisaari, ale, lager, container, kuja, creamAle] =
@@ -195,12 +196,12 @@ async function insertCollaboration(db: Database): Promise<Collaboration> {
       ])
     await Promise.all([
       beerRepository.insertBeerBreweries(trx, [
-        { beer: creamAle.id, brewery: nokian.id },
         { beer: creamAle.id, brewery: sonnisaari.id },
+        { beer: creamAle.id, brewery: nokian.id },
       ]),
       beerRepository.insertBeerStyles(trx, [
-        { beer: creamAle.id, style: ale.id },
         { beer: creamAle.id, style: lager.id },
+        { beer: creamAle.id, style: ale.id },
       ]),
     ])
     const [atKuja, withoutLocation] = await Promise.all([
@@ -252,18 +253,6 @@ function joined(collaboration: Collaboration, review: Review): JoinedReview {
     styles,
     time: review.time,
   }
-}
-
-// A list does not order the breweries and styles of a review, so a test
-// compares them by name.
-function byName(reviews: JoinedReview[]): JoinedReview[] {
-  const sorted = <T extends { name: string }>(items: T[]): T[] =>
-    items.toSorted((a, b) => a.name.localeCompare(b.name))
-  return reviews.map((review) => ({
-    ...review,
-    breweries: sorted(review.breweries),
-    styles: sorted(review.styles),
-  }))
 }
 
 function ids(reviews: Array<Review | JoinedReview>): string[] {
@@ -383,6 +372,27 @@ suite('review tests', () => {
     assertDeepEqual(readReview, update)
   })
 
+  test('update the given review only', async () => {
+    const [updated, untouched] = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) => {
+        const referred = await insertReferred(trx)
+        return await Promise.all([
+          reviewRepository.insertReview(trx, buildNewReview(referred)),
+          reviewRepository.insertReview(trx, buildNewReview(referred)),
+        ])
+      },
+    )
+    await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await reviewRepository.updateReview(trx, { ...updated, rating: 9 }),
+    )
+    const readReview = await reviewRepository.findReviewById(
+      ctx.db,
+      untouched.id,
+    )
+    assertDeepEqual(readReview, untouched)
+  })
+
   test('update review that does not exist', async () => {
     const updated = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) =>
@@ -419,6 +429,15 @@ suite('review tests', () => {
       filter: { maxTime: new Date('2023-03-01T00:00:00.000Z') },
       order: { property: 'time', direction: 'asc' },
       expected: (r) => [r.ipa3, r.kriek1],
+    },
+    // Both bounds are inclusive.
+    {
+      filter: {
+        minTime: new Date('2023-02-01T18:00:00.000Z'),
+        maxTime: new Date('2023-02-01T18:00:00.000Z'),
+      },
+      order: { property: 'time', direction: 'asc' },
+      expected: (r) => [r.kriek1],
     },
     {
       filter: {},
@@ -460,6 +479,24 @@ suite('review tests', () => {
     assertDeepEqual(ids(list), ids([reviews.ipa1, reviews.faro]))
   })
 
+  test('list a page of reviews by rating', async () => {
+    const { reviews } = await insertScenario(ctx.db)
+    const pages = await Promise.all(
+      (['desc', 'asc'] as const).map(
+        async (direction) =>
+          await reviewRepository.listReviews(
+            ctx.db,
+            { size: 2, skip: 2 },
+            { filter: noFilter, order: { property: 'rating', direction } },
+          ),
+      ),
+    )
+    assertDeepEqual(pages.map(ids), [
+      ids([reviews.ipa3, reviews.faro]),
+      ids([reviews.faro, reviews.ipa3]),
+    ])
+  })
+
   test('list a page of reviews of a collaboration', async () => {
     const collaboration = await insertCollaboration(ctx.db)
     const list = await reviewRepository.listReviews(
@@ -467,7 +504,7 @@ suite('review tests', () => {
       { size: 1, skip: 1 },
       { filter: noFilter, order: { property: 'time', direction: 'asc' } },
     )
-    assertDeepEqual(byName(list), [
+    assertDeepEqual(list, [
       joined(collaboration, collaboration.withoutLocation),
     ])
   })
@@ -558,6 +595,14 @@ suite('review tests', () => {
       order: { property: 'time', direction: 'asc' },
       expected: (r) => [r.kriek1],
     },
+    {
+      filter: {
+        minTime: new Date('2024-01-15T18:00:00.000Z'),
+        maxTime: new Date('2024-01-15T18:00:00.000Z'),
+      },
+      order: { property: 'time', direction: 'asc' },
+      expected: (r) => [r.faro],
+    },
   ]
 
   byBreweryCases.forEach((listCase) =>
@@ -612,6 +657,14 @@ suite('review tests', () => {
       filter: { maxTime: new Date('2023-12-31T00:00:00.000Z') },
       order: { property: 'time', direction: 'desc' },
       expected: (r) => [r.ipa1, r.kriek1, r.ipa3],
+    },
+    {
+      filter: {
+        minTime: new Date('2023-06-01T18:00:00.000Z'),
+        maxTime: new Date('2023-06-01T18:00:00.000Z'),
+      },
+      order: { property: 'time', direction: 'desc' },
+      expected: (r) => [r.ipa1],
     },
   ]
 
@@ -746,9 +799,153 @@ suite('review tests', () => {
       const collaboration = await insertCollaboration(ctx.db)
       const reviews = await list(collaboration)
       assertDeepEqual(
-        byName(reviews),
+        reviews,
         expected(collaboration).map((review) => joined(collaboration, review)),
       )
     }),
   )
+  interface Tasting {
+    ipa: Beer
+    nokian: Brewery
+    kuja: Location
+    ale: Style
+    reviews: Review[]
+  }
+
+  // Three reviews of a Nokian Panimo IPA at Kuja, all with the same rating
+  // and time, as when tasting several bottles side by side.
+  async function insertTasting(): Promise<Tasting> {
+    return await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) => {
+        const [ipa, nokian, ale, container, kuja] = await Promise.all([
+          beerRepository.insertBeer(trx, buildNewBeer({ name: 'IPA' })),
+          breweryRepository.insertBrewery(
+            trx,
+            buildNewBrewery({ name: 'Nokian Panimo' }),
+          ),
+          styleRepository.insertStyle(trx, buildNewStyle({ name: 'Ale' })),
+          containerRepository.insertContainer(trx, buildNewContainer()),
+          locationRepository.insertLocation(
+            trx,
+            buildNewLocation({ name: 'Kuja' }),
+          ),
+        ])
+        await Promise.all([
+          beerRepository.insertBeerBreweries(trx, [
+            { beer: ipa.id, brewery: nokian.id },
+          ]),
+          beerRepository.insertBeerStyles(trx, [
+            { beer: ipa.id, style: ale.id },
+          ]),
+        ])
+        const reviews = await Promise.all(
+          [1, 2, 3].map(
+            async () =>
+              await reviewRepository.insertReview(
+                trx,
+                buildNewReview({
+                  beer: ipa.id,
+                  container: container.id,
+                  location: kuja.id,
+                  rating: 8,
+                  time: new Date('2024-05-01T18:00:00.000Z'),
+                }),
+              ),
+          ),
+        )
+        return { ipa, nokian, kuja, ale, reviews }
+      },
+    )
+  }
+
+  const tieOrders: ReviewListOrder[] = [
+    { property: 'beer_name', direction: 'asc' },
+    { property: 'beer_name', direction: 'desc' },
+    { property: 'brewery_name', direction: 'asc' },
+    { property: 'brewery_name', direction: 'desc' },
+    { property: 'rating', direction: 'asc' },
+    { property: 'rating', direction: 'desc' },
+    { property: 'time', direction: 'asc' },
+    { property: 'time', direction: 'desc' },
+  ]
+
+  const tieLists: Array<{
+    listing: string
+    list: (tasting: Tasting, order: ReviewListOrder) => Promise<JoinedReview[]>
+  }> = [
+    {
+      listing: 'list reviews by beer',
+      list: async (t, order) =>
+        await reviewRepository.listReviewsByBeer(ctx.db, t.ipa.id, {
+          filter: noFilter,
+          order,
+        }),
+    },
+    {
+      listing: 'list reviews by brewery',
+      list: async (t, order) =>
+        await reviewRepository.listReviewsByBrewery(ctx.db, t.nokian.id, {
+          filter: noFilter,
+          order,
+        }),
+    },
+    {
+      listing: 'list reviews by location',
+      list: async (t, order) =>
+        await reviewRepository.listReviewsByLocation(ctx.db, t.kuja.id, {
+          filter: noFilter,
+          order,
+        }),
+    },
+    {
+      listing: 'list reviews by style',
+      list: async (t, order) =>
+        await reviewRepository.listReviewsByStyle(ctx.db, t.ale.id, {
+          filter: noFilter,
+          order,
+        }),
+    },
+  ]
+
+  tieLists.forEach(({ listing, list }) => {
+    tieOrders.forEach((order: ReviewListOrder) => {
+      const by = `${order.property} ${order.direction}`
+      const name = `${listing} of the same time and rating by id, ${by}`
+      test(name, async () => {
+        const tasting = await insertTasting()
+        const reviews = await list(tasting, order)
+        assertDeepEqual(ids(reviews), ids(tasting.reviews).toSorted())
+      })
+    })
+  })
+
+  const fullTieOrders: FullReviewListOrder[] = [
+    { property: 'rating', direction: 'asc' },
+    { property: 'rating', direction: 'desc' },
+    { property: 'time', direction: 'asc' },
+    { property: 'time', direction: 'desc' },
+  ]
+
+  fullTieOrders.forEach((order: FullReviewListOrder) => {
+    const by = `${order.property} ${order.direction}`
+    test(`page reviews of the same time and rating by id, ${by}`, async () => {
+      const tasting = await insertTasting()
+      const pages = await Promise.all(
+        [0, 1, 2].map(
+          async (skip: number) =>
+            await reviewRepository.listReviews(
+              ctx.db,
+              { size: 1, skip },
+              { filter: noFilter, order },
+            ),
+        ),
+      )
+      assertDeepEqual(
+        pages.map(ids),
+        ids(tasting.reviews)
+          .toSorted()
+          .map((id: string) => [id]),
+      )
+    })
+  })
 })

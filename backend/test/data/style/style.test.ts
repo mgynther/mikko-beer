@@ -7,6 +7,7 @@ import {
   afterEach,
 } from '../../test.js'
 
+import { assertLockHoldsOffWrite } from '../lock.js'
 import { TestContext } from '../test-context.js'
 import type { Database, Transaction } from '../../../src/data/database.js'
 import * as styleRepository from '../../../src/data/style/style.repository.js'
@@ -116,6 +117,41 @@ suite('style tests', () => {
     assertDeepEqual(styleRelationships, [])
   })
 
+  test('delete the parent relationships of the given style only', async () => {
+    const [ale, lager, creamAle, kentucky, ipa] = await insertStyles([
+      'Ale',
+      'Lager',
+      'Cream Ale',
+      'Kentucky Common',
+      'IPA',
+    ])
+    await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
+      await styleRepository.insertStyleRelationships(trx, [
+        { parent: ale.id, child: creamAle.id },
+        { parent: lager.id, child: creamAle.id },
+        { parent: creamAle.id, child: kentucky.id },
+        { parent: ale.id, child: ipa.id },
+      ])
+      await styleRepository.deleteStyleChildRelationships(trx, creamAle.id)
+    })
+    const styleRelationships = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await styleRepository.listStyleRelationships(trx),
+    )
+    assertDeepEqual(
+      styleRelationships.toSorted(
+        (a: StyleRelationship, b: StyleRelationship) =>
+          a.child < b.child ? -1 : 1,
+      ),
+      [
+        { parent: creamAle.id, child: kentucky.id },
+        { parent: ale.id, child: ipa.id },
+      ].toSorted((a: StyleRelationship, b: StyleRelationship) =>
+        a.child < b.child ? -1 : 1,
+      ),
+    )
+  })
+
   test('update style', async () => {
     const style = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
@@ -134,6 +170,16 @@ suite('style tests', () => {
       ...style,
       name: 'IPA',
     })
+  })
+
+  test('update the given style only', async () => {
+    const [iap, lager] = await insertStyles(['IAP', 'Lager'])
+    await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await styleRepository.updateStyle(trx, { ...iap, name: 'IPA' }),
+    )
+    const readStyle = await styleRepository.findStyleById(ctx.db, lager.id)
+    assertDeepEqual(readStyle, { ...lager, children: [], parents: [] })
   })
 
   test('update style that does not exist', async () => {
@@ -163,6 +209,32 @@ suite('style tests', () => {
     })
   })
 
+  test('lock several styles', async () => {
+    const styles = await insertStyles(['Ale', 'Lager'])
+    const lockedKeys = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await styleRepository.lockStyles(
+          trx,
+          styles.map((style: Style) => style.id),
+        ),
+    )
+    assertDeepEqual(
+      lockedKeys.toSorted(),
+      styles.map((style: Style) => style.id).toSorted(),
+    )
+  })
+
+  test('keep a locked style from being updated until the transaction ends', async () => {
+    const [style] = await insertStyles(['IAP'])
+    await assertLockHoldsOffWrite(
+      ctx.db,
+      async (trx: Transaction) =>
+        await styleRepository.lockStyles(trx, [style.id]),
+      async (trx: Transaction) =>
+        await styleRepository.updateStyle(trx, { ...style, name: 'IPA' }),
+    )
+  })
+
   test('list styles', async () => {
     const insertedStyles = await createStyles(ctx.db)
     const styles = await styleRepository.listStyles(ctx.db)
@@ -178,9 +250,7 @@ suite('style tests', () => {
     ])
   })
 
-  // A cream ale is both an ale and a lager. The list does not order the
-  // parents of a style, so the test compares them sorted.
-  test('list a style with two parents once', async () => {
+  test('list a style with two parents once, the parents by name', async () => {
     const { creamAle, ale, lager } = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
         const [creamAle, ale, lager] = await Promise.all(
@@ -188,22 +258,25 @@ suite('style tests', () => {
             styleRepository.insertStyle(trx, buildNewStyle({ name })),
           ),
         )
+        // Related in reverse order of their names.
         await styleRepository.insertStyleRelationships(trx, [
-          { parent: ale.id, child: creamAle.id },
           { parent: lager.id, child: creamAle.id },
+          { parent: ale.id, child: creamAle.id },
         ])
         return { creamAle, ale, lager }
       },
     )
     const styles = await styleRepository.listStyles(ctx.db)
-    assertDeepEqual(
-      styles.map((style) => ({ ...style, parents: style.parents.toSorted() })),
-      [
-        { ...ale, parents: [] },
-        { ...creamAle, parents: [ale.id, lager.id].toSorted() },
-        { ...lager, parents: [] },
-      ],
-    )
+    assertDeepEqual(styles, [
+      { ...ale, parents: [] },
+      { ...creamAle, parents: [ale.id, lager.id] },
+      { ...lager, parents: [] },
+    ])
+  })
+
+  test('do not list styles when there are none', async () => {
+    const styles = await styleRepository.listStyles(ctx.db)
+    assertDeepEqual(styles, [])
   })
 
   test('find style with its parents and children by name', async () => {
@@ -231,4 +304,15 @@ suite('style tests', () => {
     assertDeepEqual(found?.parents, parents)
     assertDeepEqual(found?.children, children)
   })
+  async function insertStyles(names: string[]): Promise<Style[]> {
+    return await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await Promise.all(
+          names.map(
+            async (name: string) =>
+              await styleRepository.insertStyle(trx, buildNewStyle({ name })),
+          ),
+        ),
+    )
+  }
 })

@@ -10,9 +10,9 @@ Showcase aspect is mostly technical, not UX or business. While I try to make the
 
 At the moment the code is in an early and partially rough state but in use. I'm eating my own dog food so to speak. In addition to missing interesting features (such as style relationship aware statistics) technical shortcuts have been taken to get a minimal usable set of features into use. Important future work includes:
 
-* UX review and query efficiency including proper DB indices. Although it is worth mentioning that there will never be massive amounts of data in my DB so there's definitely no need to go crazy with performance fine tuning.
+* UX review.
 * More comprehensive E2E testing.
-* Data layer testing with larger data sets. At the moment backend tests can be considered smoke tests as data sets are very limited. For example pagination is not properly tested anywhere and filtering is not comprehensively tested either.
+* Performance testing. It is worth mentioning that there will never be massive amounts of data in my DB so there's definitely no need to go crazy with performance fine tuning.
 * Deleting data in the frontend which is currently missing in most places. I may choose not to implement deleting data because I don't think I need it myself. Instead it's probably better to work on UX to make it very unlikely to accidentally create duplicate data. DB constraints should prevent exact duplicates by and large but logical duplicates are possible.
 * Localization although I may opt out implementing it as I don't need other languages myself and localization implemented the way it is usually done is not an interesting challenge, much more like a chore honestly. Localization the way natural languages would require for great results meaning each localized string would involve a function for each language would be interesting but I don't see it happening in any real-world application as translators are not programmers at least in this day and age.
 

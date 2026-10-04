@@ -41,11 +41,11 @@ suite('sign-in-method tests', () => {
     assertEqual(signInMethod, undefined)
   })
 
-  async function insertUserWithPassword(): Promise<User> {
+  async function insertUserWithPassword(username = 'kalle'): Promise<User> {
     return await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) => {
         const user = await userRepository.insertUser(trx, {
-          username: 'kalle',
+          username,
           role: 'viewer',
         })
         await signInMethodRepository.insertPasswordSignInMethod(trx, {
@@ -74,6 +74,18 @@ suite('sign-in-method tests', () => {
     })
   })
 
+  test('find no sign-in-method for a user without a password', async () => {
+    await insertUserWithPassword()
+    const userWithoutPassword = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await userRepository.insertUser(trx, {
+          username: 'ville',
+          role: 'viewer',
+        }),
+    )
+    assertEqual(await findSignInMethod(userWithoutPassword.id), undefined)
+  })
+
   test('update password', async () => {
     const user = await insertUserWithPassword()
     const updated = await ctx.db.executeReadWriteTransaction(
@@ -86,6 +98,22 @@ suite('sign-in-method tests', () => {
     const expected = { userId: user.id, passwordHash: otherPasswordHash }
     assertDeepEqual(updated, expected)
     assertDeepEqual(await findSignInMethod(user.id), expected)
+  })
+
+  test('update the password of the given user only', async () => {
+    const user = await insertUserWithPassword('kalle')
+    const otherUser = await insertUserWithPassword('ville')
+    await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await signInMethodRepository.updatePassword(trx, {
+          userId: user.id,
+          passwordHash: otherPasswordHash,
+        }),
+    )
+    assertDeepEqual(await findSignInMethod(otherUser.id), {
+      userId: otherUser.id,
+      passwordHash,
+    })
   })
 
   test('delete the sign-in-method with its user', async () => {

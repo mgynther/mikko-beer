@@ -19,6 +19,9 @@ import { assertDeepEqual, assertEqual } from '../../assert.js'
 import { buildNewBeer } from './builders.js'
 import { buildNewBrewery } from '../brewery/builders.js'
 import { buildNewStyle } from '../style/builders.js'
+import { assertLockHoldsOffWrite } from '../lock.js'
+import type { BeerWithBreweriesAndStyles } from '../../../src/data/beer/beer.repository.js'
+import { defaultSearchMaxResults } from '../../../src/data/search.js'
 
 suite('beer tests', () => {
   const ctx = new TestContext()
@@ -131,6 +134,19 @@ suite('beer tests', () => {
     })
   })
 
+  test('update the given beer only', async () => {
+    const [kajre, karhu] = await insertBeers(['Viikingi Kajre', 'Karhu'])
+    await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await beerRepository.updateBeer(trx, {
+          id: kajre.id,
+          name: 'Viikingi Karje',
+        }),
+    )
+    const readBeer = await beerRepository.findBeerById(ctx.db, karhu.id)
+    assertDeepEqual(readBeer, karhu)
+  })
+
   test('update beer that does not exist', async () => {
     const updated = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) =>
@@ -165,6 +181,19 @@ suite('beer tests', () => {
       },
     )
     assertEqual(lockedKey, undefined)
+  })
+
+  test('keep a locked beer from being updated until the transaction ends', async () => {
+    const [beer] = await insertBeers(['Viikingi Kajre'])
+    await assertLockHoldsOffWrite(
+      ctx.db,
+      async (trx: Transaction) => await beerRepository.lockBeer(trx, beer.id),
+      async (trx: Transaction) =>
+        await beerRepository.updateBeer(trx, {
+          id: beer.id,
+          name: 'Viikingi Karje',
+        }),
+    )
   })
 
   test('empty beer list', async () => {
@@ -347,4 +376,116 @@ suite('beer tests', () => {
     const beers = await beerRepository.searchBeers(ctx.db, { name: 'Cream' })
     assertDeepEqual(beers, [{ ...beer, breweries, styles }])
   })
+  test('list beers by name', async () => {
+    const [weizenbock, karhu, helles] = await insertBeers([
+      'Weizenbock',
+      'Karhu',
+      'Helles',
+    ])
+    const beers = await beerRepository.listBeers(ctx.db, { size: 20, skip: 0 })
+    assertDeepEqual(beers, [helles, karhu, weizenbock])
+  })
+
+  test('list beers of the same name by id', async () => {
+    const ipas = await insertBeers(['IPA', 'IPA', 'IPA'])
+    const beers = await beerRepository.listBeers(ctx.db, { size: 20, skip: 0 })
+    assertDeepEqual(beers, ipas.toSorted(byId))
+  })
+
+  test('page beers of the same name by id', async () => {
+    const ipas = (await insertBeers(['IPA', 'IPA', 'IPA'])).toSorted(byId)
+    const pages = [
+      await beerRepository.listBeers(ctx.db, { size: 1, skip: 0 }),
+      await beerRepository.listBeers(ctx.db, { size: 1, skip: 1 }),
+      await beerRepository.listBeers(ctx.db, { size: 1, skip: 2 }),
+    ]
+    assertDeepEqual(pages, [[ipas[0]], [ipas[1]], [ipas[2]]])
+  })
+
+  test('list a page of beers counting a beer once whatever its breweries and styles', async () => {
+    const { beer, breweries, styles } = await insertCreamAle(ctx.db)
+    const [karhu] = await insertBeers(['Karhu'])
+    const pages = [
+      await beerRepository.listBeers(ctx.db, { size: 1, skip: 0 }),
+      await beerRepository.listBeers(ctx.db, { size: 1, skip: 1 }),
+    ]
+    assertDeepEqual(pages, [[{ ...beer, breweries, styles }], [karhu]])
+  })
+
+  test('search beers by name', async () => {
+    const [weizenbock, , pilsner] = await insertBeers([
+      'Weizenbock',
+      'Karhu',
+      'Pilsner Urquell',
+    ])
+    const beers = await beerRepository.searchBeers(ctx.db, { name: 'e' })
+    assertDeepEqual(beers, [pilsner, weizenbock])
+  })
+
+  test('search beers of the same name by id', async () => {
+    const ipas = await insertBeers(['IPA', 'IPA', 'IPA'])
+    const beers = await beerRepository.searchBeers(ctx.db, { name: 'ipa' })
+    assertDeepEqual(beers, ipas.toSorted(byId))
+  })
+
+  test('search the beers of the first names up to the maximum', async () => {
+    const names = Array.from(
+      { length: defaultSearchMaxResults + 1 },
+      (_: unknown, index: number) => `Lager ${String(index).padStart(2, '0')}`,
+    )
+    await insertBeers(names.toReversed())
+    const beers = await beerRepository.searchBeers(ctx.db, { name: 'lager' })
+    assertDeepEqual(
+      beers.map((beer: BeerWithBreweriesAndStyles) => beer.name),
+      names.slice(0, defaultSearchMaxResults),
+    )
+  })
+
+  function byId(
+    a: BeerWithBreweriesAndStyles,
+    b: BeerWithBreweriesAndStyles,
+  ): number {
+    return a.id < b.id ? -1 : 1
+  }
+
+  // Pale lagers by Koskipanimo, as the list and search return them.
+  async function insertBeers(
+    names: string[],
+  ): Promise<BeerWithBreweriesAndStyles[]> {
+    return await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) => {
+        const [brewery, style] = await Promise.all([
+          breweryRepository.insertBrewery(
+            trx,
+            buildNewBrewery({ name: 'Koskipanimo' }),
+          ),
+          styleRepository.insertStyle(
+            trx,
+            buildNewStyle({ name: 'Pale Lager' }),
+          ),
+        ])
+        const beers = await Promise.all(
+          names.map(
+            async (name: string) =>
+              await beerRepository.insertBeer(trx, buildNewBeer({ name })),
+          ),
+        )
+        await Promise.all([
+          beerRepository.insertBeerBreweries(
+            trx,
+            beers.map((beer: Beer) => ({ beer: beer.id, brewery: brewery.id })),
+          ),
+          beerRepository.insertBeerStyles(
+            trx,
+            beers.map((beer: Beer) => ({ beer: beer.id, style: style.id })),
+          ),
+        ])
+        return beers.map((beer: Beer) => ({
+          ...beer,
+          breweries: [{ id: brewery.id, name: brewery.name }],
+          styles: [style],
+        }))
+      },
+    )
+  }
 })

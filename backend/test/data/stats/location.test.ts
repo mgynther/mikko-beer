@@ -280,4 +280,174 @@ suite('location stats tests', () => {
     )
     assertDeepEqual(stats, [oluthuoneStats(oluthuone)])
   })
+
+  test('list a page of locations', async () => {
+    const { oluthuone } = await insertLocations(ctx.db)
+    const stats = await locationStatsRepository.getLocation(
+      ctx.db,
+      { size: 1, skip: 1 },
+      noFilter,
+      byName,
+    )
+    assertDeepEqual(stats, [oluthuoneStats(oluthuone)])
+  })
+
+  test('filter by review count bounds inclusively', async () => {
+    const { oluthuone } = await insertLocations(ctx.db)
+    const stats = await getLocation(
+      { ...noFilter, minReviewCount: 3, maxReviewCount: 3 },
+      byName,
+    )
+    assertDeepEqual(stats, [oluthuoneStats(oluthuone)])
+  })
+
+  test('filter by review average bounds inclusively', async () => {
+    const { kuja } = await insertLocations(ctx.db)
+    const stats = await getLocation(
+      { ...noFilter, minReviewAverage: 6, maxReviewAverage: 6 },
+      byName,
+    )
+    assertDeepEqual(stats, [kujaStats(kuja)])
+  })
+
+  test('filter by time bounds inclusively', async () => {
+    const { kuja } = await insertLocations(ctx.db)
+    const stats = await getLocation(
+      {
+        ...noFilter,
+        timeStart: new Date('2024-03-01T18:00:00.000Z'),
+        timeEnd: new Date('2024-04-01T18:00:00.000Z'),
+      },
+      byName,
+    )
+    assertDeepEqual(stats, [kujaStats(kuja)])
+  })
+
+  // Reviews of one Koskipanimo lager at each location, so that only the
+  // ratings tell the locations apart.
+  async function insertRatedLocations(
+    ratings: Record<string, number[]>,
+  ): Promise<void> {
+    await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
+      const [container, brewery, style, beer] = await Promise.all([
+        containerRepository.insertContainer(trx, buildNewContainer()),
+        breweryRepository.insertBrewery(
+          trx,
+          buildNewBrewery({ name: 'Koskipanimo' }),
+        ),
+        styleRepository.insertStyle(trx, buildNewStyle({ name: 'Lager' })),
+        beerRepository.insertBeer(trx, buildNewBeer()),
+      ])
+      await Promise.all([
+        beerRepository.insertBeerBreweries(trx, [
+          { beer: beer.id, brewery: brewery.id },
+        ]),
+        beerRepository.insertBeerStyles(trx, [
+          { beer: beer.id, style: style.id },
+        ]),
+      ])
+      const time = new Date('2024-03-01T18:00:00.000Z')
+      await Promise.all(
+        Object.entries(ratings).map(async ([name, locationRatings]) => {
+          const location = await locationRepository.insertLocation(
+            trx,
+            buildNewLocation({ name }),
+          )
+          await Promise.all(
+            locationRatings.map(
+              async (rating: number) =>
+                await reviewRepository.insertReview(
+                  trx,
+                  buildNewReview({
+                    beer: beer.id,
+                    container: container.id,
+                    location: location.id,
+                    rating,
+                    time,
+                  }),
+                ),
+            ),
+          )
+        }),
+      )
+    })
+  }
+
+  // A tie is broken the same way whichever the direction of the order.
+  const tieCases: Array<{
+    title: string
+    property: LocationStatsOrder['property']
+    ratings: Record<string, number[]>
+    expected: string[]
+  }> = [
+    {
+      title: 'average, ties by count desc and then by name',
+      property: 'average',
+      ratings: { Huurre: [7], Kuja: [6, 8], Oluthuone: [7, 7] },
+      expected: ['Kuja', 'Oluthuone', 'Huurre'],
+    },
+    {
+      title: 'count, ties by average desc and then by name',
+      property: 'count',
+      ratings: { Huurre: [5, 7], Kuja: [6, 8], Oluthuone: [7, 7] },
+      expected: ['Kuja', 'Oluthuone', 'Huurre'],
+    },
+    {
+      title: 'std_dev, ties by count desc, average desc and then by name',
+      property: 'std_dev',
+      ratings: {
+        Huurre: [7],
+        Kuja: [8, 8],
+        Oluthuone: [7, 7],
+        Plevna: [8, 8],
+      },
+      expected: ['Kuja', 'Plevna', 'Oluthuone', 'Huurre'],
+    },
+  ]
+
+  tieCases.forEach(({ title, property, ratings, expected }) => {
+    ;(['asc', 'desc'] as const).forEach((direction) => {
+      test(`by ${title}, ${direction}`, async () => {
+        await insertRatedLocations(ratings)
+        const stats = await getLocation(noFilter, { property, direction })
+        assertDeepEqual(
+          stats.map((stat) => stat.locationName),
+          expected,
+        )
+      })
+    })
+  })
+
+  test('leave out reviews without a location', async () => {
+    const { kuja } = await insertLocations(ctx.db)
+    await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
+      const container = await containerRepository.insertContainer(
+        trx,
+        buildNewContainer({ type: 'can', size: '0.50' }),
+      )
+      const beer = await beerRepository.insertBeer(trx, buildNewBeer())
+      await Promise.all([
+        beerRepository.insertBeerBreweries(trx, [
+          { beer: beer.id, brewery: kuja.brewery.id },
+        ]),
+        beerRepository.insertBeerStyles(trx, [
+          { beer: beer.id, style: kuja.style.id },
+        ]),
+        reviewRepository.insertReview(
+          trx,
+          buildNewReview({
+            beer: beer.id,
+            container: container.id,
+            location: '',
+            rating: 10,
+          }),
+        ),
+      ])
+    })
+    const stats = await getLocation(
+      { ...noFilter, brewery: kuja.brewery.id },
+      byName,
+    )
+    assertDeepEqual(stats, [kujaStats(kuja)])
+  })
 })

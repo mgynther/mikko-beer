@@ -106,6 +106,7 @@ export async function searchLocations(
     .selectFrom('location')
     .selectAll('location')
     .where('location.name', 'ilike', nameIlike)
+    .orderBy('location.name')
     .limit(defaultSearchMaxResults)
     .execute()
 

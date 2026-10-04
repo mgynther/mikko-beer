@@ -7,7 +7,10 @@ import {
   afterEach,
 } from '../../test.js'
 
+import { assertLockHoldsOffWrite } from '../lock.js'
 import { TestContext } from '../test-context.js'
+import type { Location } from '../../../src/data/location/location.repository.js'
+import { defaultSearchMaxResults } from '../../../src/data/search.js'
 import type { Transaction } from '../../../src/data/database.js'
 import * as locationRepository from '../../../src/data/location/location.repository.js'
 import { assertDeepEqual, assertEqual } from '../../assert.js'
@@ -62,6 +65,22 @@ suite('location tests', () => {
     })
   })
 
+  test('update the given location only', async () => {
+    const [plevna, huurre] = await insertLocations(['Plevna', 'Huurre'])
+    await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await locationRepository.updateLocation(trx, {
+          ...plevna,
+          name: 'Plevna Panimoravintola',
+        }),
+    )
+    const readLocation = await locationRepository.findLocationById(
+      ctx.db,
+      huurre.id,
+    )
+    assertDeepEqual(readLocation, huurre)
+  })
+
   test('update location that does not exist', async () => {
     const updated = await ctx.db.executeReadWriteTransaction(
       async (trx: Transaction) =>
@@ -91,32 +110,130 @@ suite('location tests', () => {
     })
   })
 
-  test('list locations', async () => {
-    const location = await ctx.db.executeReadWriteTransaction(
-      async (trx: Transaction) => {
-        return await locationRepository.insertLocation(trx, {
-          name: 'Pyynikin Brewhouse',
-        })
-      },
+  test('lock several locations', async () => {
+    const locations = await insertLocations(['Plevna', 'Huurre'])
+    const lockedKeys = await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await locationRepository.lockLocations(
+          trx,
+          locations.map((location: Location) => location.id),
+        ),
     )
+    assertDeepEqual(
+      lockedKeys.toSorted(),
+      locations.map((location: Location) => location.id).toSorted(),
+    )
+  })
+
+  test('keep a locked location from being updated until the transaction ends', async () => {
+    const [location] = await insertLocations(['Plenva'])
+    await assertLockHoldsOffWrite(
+      ctx.db,
+      async (trx: Transaction) =>
+        await locationRepository.lockLocations(trx, [location.id]),
+      async (trx: Transaction) =>
+        await locationRepository.updateLocation(trx, {
+          ...location,
+          name: 'Plevna',
+        }),
+    )
+  })
+
+  test('list locations by name', async () => {
+    const [plevna, huurre, kuja] = await insertLocations([
+      'Plevna',
+      'Huurre',
+      'Kuja',
+    ])
     const locations = await locationRepository.listLocations(ctx.db, {
       size: 20,
       skip: 0,
     })
-    assertDeepEqual(locations, [location])
+    assertDeepEqual(locations, [huurre, kuja, plevna])
   })
 
-  test('search locations', async () => {
-    const location = await ctx.db.executeReadWriteTransaction(
-      async (trx: Transaction) => {
-        return await locationRepository.insertLocation(trx, {
-          name: 'Kahdet kasvot',
-        })
-      },
-    )
-    const locations = await locationRepository.searchLocations(ctx.db, {
-      name: 'kahd',
+  test('list a page of locations', async () => {
+    const [plevna, , kuja] = await insertLocations([
+      'Plevna',
+      'Huurre',
+      'Kuja',
+      'Teerenpeli',
+    ])
+    const locations = await locationRepository.listLocations(ctx.db, {
+      size: 2,
+      skip: 1,
     })
-    assertDeepEqual(locations, [location])
+    assertDeepEqual(locations, [kuja, plevna])
   })
+
+  test('do not list locations when there are none', async () => {
+    const locations = await locationRepository.listLocations(ctx.db, {
+      size: 20,
+      skip: 0,
+    })
+    assertDeepEqual(locations, [])
+  })
+
+  test('search locations by part of the name', async () => {
+    const [, plevna] = await insertLocations(['Huurre', 'Plevna'])
+    const locations = await locationRepository.searchLocations(ctx.db, {
+      name: 'evn',
+    })
+    assertDeepEqual(locations, [plevna])
+  })
+
+  test('search locations ignoring case', async () => {
+    const [plevna] = await insertLocations(['Plevna', 'Huurre'])
+    const locations = await locationRepository.searchLocations(ctx.db, {
+      name: 'pLEVNA',
+    })
+    assertDeepEqual(locations, [plevna])
+  })
+
+  test('search locations by an exact name', async () => {
+    const [, kuja] = await insertLocations(['Kujakolli', 'Kuja'])
+    const locations = await locationRepository.searchLocations(ctx.db, {
+      name: '"kuja"',
+    })
+    assertDeepEqual(locations, [kuja])
+  })
+
+  test('search locations by name', async () => {
+    const [panimomestari, , panimoravintola] = await insertLocations([
+      'Oluthuone Panimomestari',
+      'Kahdet kasvot',
+      'Plevna Panimoravintola',
+    ])
+    const locations = await locationRepository.searchLocations(ctx.db, {
+      name: 'panimo',
+    })
+    assertDeepEqual(locations, [panimomestari, panimoravintola])
+  })
+
+  test('search the first locations by name up to the maximum', async () => {
+    const names = Array.from(
+      { length: defaultSearchMaxResults + 1 },
+      (_: unknown, index: number) => `Bar ${String(index).padStart(2, '0')}`,
+    )
+    await insertLocations(names.toReversed())
+    const locations = await locationRepository.searchLocations(ctx.db, {
+      name: 'bar',
+    })
+    assertDeepEqual(
+      locations.map((location: Location) => location.name),
+      names.slice(0, defaultSearchMaxResults),
+    )
+  })
+
+  async function insertLocations(names: string[]): Promise<Location[]> {
+    return await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await Promise.all(
+          names.map(
+            async (name: string) =>
+              await locationRepository.insertLocation(trx, { name }),
+          ),
+        ),
+    )
+  }
 })

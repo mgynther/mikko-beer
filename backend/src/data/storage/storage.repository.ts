@@ -267,7 +267,7 @@ export async function listStoragesByStyle(
   )
 }
 
-export async function joinStorageData(
+async function joinStorageData(
   query: SelectQueryBuilder<KyselyDatabase, 'beer', unknown>,
 ): Promise<DbJoinedStorage[]> {
   const storages = await query
@@ -281,6 +281,7 @@ export async function joinStorageData(
     .select(listColumns)
     .orderBy('storage.best_before', 'asc')
     .orderBy('beer_name')
+    .orderBy('storage.storage_id')
     .execute()
 
   return parseBreweryStorageRows(storages)
@@ -415,7 +416,7 @@ function parseBreweryStorageRows(
   return storageArray
 }
 
-export function toStorage(storage: StorageRow): StorageWithDate {
+function toStorage(storage: StorageRow): StorageWithDate {
   return {
     id: storage.storage_id,
     beer: storage.beer,

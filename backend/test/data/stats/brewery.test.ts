@@ -412,4 +412,129 @@ suite('brewery stats tests', () => {
       },
     ])
   })
+
+  test('list a page of breweries', async () => {
+    const { nokian } = await insertBreweries(ctx.db)
+    const stats = await breweryStatsRepository.getBrewery(
+      ctx.db,
+      { size: 1, skip: 1 },
+      noFilter,
+      byName,
+    )
+    assertDeepEqual(stats, [nokianStats(nokian)])
+  })
+
+  test('filter by review count bounds inclusively', async () => {
+    const { nokian } = await insertBreweries(ctx.db)
+    const stats = await getBrewery(
+      { ...noFilter, minReviewCount: 3, maxReviewCount: 3 },
+      byName,
+    )
+    assertDeepEqual(stats, [nokianStats(nokian)])
+  })
+
+  test('filter by review average bounds inclusively', async () => {
+    const { lindemans } = await insertBreweries(ctx.db)
+    const stats = await getBrewery(
+      { ...noFilter, minReviewAverage: 6, maxReviewAverage: 6 },
+      byName,
+    )
+    assertDeepEqual(stats, [lindemansStats(lindemans)])
+  })
+
+  test('filter by time bounds inclusively', async () => {
+    const { lindemans } = await insertBreweries(ctx.db)
+    const stats = await getBrewery(
+      {
+        ...noFilter,
+        timeStart: new Date('2024-03-01T18:00:00.000Z'),
+        timeEnd: new Date('2024-04-01T18:00:00.000Z'),
+      },
+      byName,
+    )
+    assertDeepEqual(stats, [lindemansStats(lindemans)])
+  })
+
+  // A beer of each brewery, every one a lager reviewed at the same place, so
+  // that only the ratings tell the breweries apart.
+  async function insertRatedBreweries(
+    ratings: Record<string, number[]>,
+  ): Promise<void> {
+    await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
+      const [container, location, style] = await Promise.all([
+        containerRepository.insertContainer(trx, buildNewContainer()),
+        locationRepository.insertLocation(trx, buildNewLocation()),
+        styleRepository.insertStyle(trx, buildNewStyle({ name: 'Lager' })),
+      ])
+      const time = new Date('2024-03-01T18:00:00.000Z')
+      await Promise.all(
+        Object.entries(ratings).map(async ([name, breweryRatings]) => {
+          const [brewery, beer] = await Promise.all([
+            breweryRepository.insertBrewery(trx, buildNewBrewery({ name })),
+            beerRepository.insertBeer(trx, buildNewBeer()),
+          ])
+          await Promise.all([
+            beerRepository.insertBeerBreweries(trx, [
+              { beer: beer.id, brewery: brewery.id },
+            ]),
+            beerRepository.insertBeerStyles(trx, [
+              { beer: beer.id, style: style.id },
+            ]),
+            insertReviews(
+              trx,
+              beer,
+              container,
+              location,
+              breweryRatings.map((rating: number) => ({ rating, time })),
+            ),
+          ])
+        }),
+      )
+    })
+  }
+
+  // A tie is broken the same way whichever the direction of the order.
+  const tieCases: Array<{
+    title: string
+    property: BreweryStatsOrder['property']
+    ratings: Record<string, number[]>
+    expected: string[]
+  }> = [
+    {
+      title: 'average, ties by count desc and then by name',
+      property: 'average',
+      ratings: { Lindemans: [7], 'Nokian Panimo': [6, 8], Salama: [7, 7] },
+      expected: ['Nokian Panimo', 'Salama', 'Lindemans'],
+    },
+    {
+      title: 'count, ties by average desc and then by name',
+      property: 'count',
+      ratings: { Lindemans: [5, 7], 'Nokian Panimo': [6, 8], Salama: [7, 7] },
+      expected: ['Nokian Panimo', 'Salama', 'Lindemans'],
+    },
+    {
+      title: 'std_dev, ties by count desc, average desc and then by name',
+      property: 'std_dev',
+      ratings: {
+        Lindemans: [7],
+        'Nokian Panimo': [8, 8],
+        Salama: [7, 7],
+        Sonnisaari: [8, 8],
+      },
+      expected: ['Nokian Panimo', 'Sonnisaari', 'Salama', 'Lindemans'],
+    },
+  ]
+
+  tieCases.forEach(({ title, property, ratings, expected }) => {
+    ;(['asc', 'desc'] as const).forEach((direction) => {
+      test(`by ${title}, ${direction}`, async () => {
+        await insertRatedBreweries(ratings)
+        const stats = await getBrewery(noFilter, { property, direction })
+        assertDeepEqual(
+          stats.map((stat) => stat.breweryName),
+          expected,
+        )
+      })
+    })
+  })
 })

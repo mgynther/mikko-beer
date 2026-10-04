@@ -7,6 +7,7 @@ import {
   afterEach,
 } from '../../test.js'
 
+import { assertLockHoldsOffWrite } from '../lock.js'
 import { TestContext } from '../test-context.js'
 import type { Beer } from '../../../src/data/beer/beer.repository.js'
 import type { Container } from '../../../src/data/container/container.repository.js'
@@ -82,7 +83,8 @@ interface Shelf {
 
 // A Lindemans kriek, a cream ale that Nokian Panimo brews with Sonnisaari
 // and that is both an ale and a lager, and a Nokian Panimo IPA, which is an
-// ale. Their best before dates are in that order.
+// ale. Their best before dates are in that order. The cream ale's breweries
+// and styles are linked in reverse order of their names.
 async function insertShelf(db: Database): Promise<Shelf> {
   return await db.executeReadWriteTransaction(async (trx: Transaction) => {
     const [lindemans, nokian, sonnisaari, kriekStyle, ale, lager, container] =
@@ -128,10 +130,10 @@ async function insertShelf(db: Database): Promise<Shelf> {
         beerId: beer.id,
         beerName: beer.name,
         bestBefore: storage.bestBefore,
-        breweries: breweries.map(({ id, name }) => ({ id, name })),
+        breweries: byName(breweries).map(({ id, name }) => ({ id, name })),
         container,
         hasReview: false,
-        styles: styles.map(({ id, name }) => ({ id, name })),
+        styles: byName(styles).map(({ id, name }) => ({ id, name })),
       }
     }
 
@@ -144,8 +146,8 @@ async function insertShelf(db: Database): Promise<Shelf> {
       ),
       insertShelvedBeer(
         'Cream Ale',
-        [nokian, sonnisaari],
-        [ale, lager],
+        [sonnisaari, nokian],
+        [lager, ale],
         '2024-11-01T00:00:00.000Z',
       ),
       insertShelvedBeer('IPA', [nokian], [ale], '2024-12-01T00:00:00.000Z'),
@@ -167,17 +169,13 @@ async function insertShelf(db: Database): Promise<Shelf> {
   })
 }
 
-// A storage does not order the breweries and styles of its beer, so a test
-// compares them by name.
-function joinedByName(storage: JoinedStorage): JoinedWithoutCreation {
-  const sorted = <T extends { name: string }>(items: T[]): T[] =>
-    items.toSorted((a, b) => a.name.localeCompare(b.name))
+function byName<T extends { name: string }>(items: T[]): T[] {
+  return items.toSorted((a: T, b: T) => a.name.localeCompare(b.name))
+}
+
+function withoutCreation(storage: JoinedStorage): JoinedWithoutCreation {
   const { createdAt, ...joined } = storage
-  return {
-    ...joined,
-    breweries: sorted(joined.breweries),
-    styles: sorted(joined.styles),
-  }
+  return joined
 }
 
 suite('storage tests', () => {
@@ -408,7 +406,7 @@ suite('storage tests', () => {
       ctx.db,
       shelf.storages.creamAle.id,
     )
-    assertDeepEqual(found && joinedByName(found), shelf.storages.creamAle)
+    assertDeepEqual(found && withoutCreation(found), shelf.storages.creamAle)
   })
 
   // The page is cut from the same order it is listed in, so a page of the
@@ -419,7 +417,7 @@ suite('storage tests', () => {
       size: 2,
       skip: 1,
     })
-    assertDeepEqual(storages.map(joinedByName), [
+    assertDeepEqual(storages.map(withoutCreation), [
       shelf.storages.creamAle,
       shelf.storages.ipa,
     ])
@@ -470,9 +468,196 @@ suite('storage tests', () => {
       const shelf = await insertShelf(ctx.db)
       const storages = await list(shelf)
       assertDeepEqual(
-        storages.map(joinedByName),
+        storages.map(withoutCreation),
         expected.map((beer) => shelf.storages[beer]),
       )
     })
+  })
+  interface Cellar {
+    brewery: string
+    style: string
+    beers: Record<string, string>
+    storages: StorageWithDate[]
+  }
+
+  // Koskipanimo lagers stored with the same best before date, one storage
+  // for each name given and one beer for each distinct name.
+  async function insertCellar(storedBeers: string[]): Promise<Cellar> {
+    return await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) => {
+        const [brewery, style, container] = await Promise.all([
+          breweryRepository.insertBrewery(
+            trx,
+            buildNewBrewery({ name: 'Koskipanimo' }),
+          ),
+          styleRepository.insertStyle(trx, buildNewStyle({ name: 'Lager' })),
+          containerRepository.insertContainer(trx, buildNewContainer()),
+        ])
+        const names = [...new Set(storedBeers)]
+        const beers = await Promise.all(
+          names.map(
+            async (name: string) =>
+              await beerRepository.insertBeer(trx, buildNewBeer({ name })),
+          ),
+        )
+        await Promise.all([
+          beerRepository.insertBeerBreweries(
+            trx,
+            beers.map((beer: Beer) => ({ beer: beer.id, brewery: brewery.id })),
+          ),
+          beerRepository.insertBeerStyles(
+            trx,
+            beers.map((beer: Beer) => ({ beer: beer.id, style: style.id })),
+          ),
+        ])
+        const beerIds: Record<string, string> = Object.fromEntries(
+          beers.map((beer: Beer) => [beer.name, beer.id]),
+        )
+        const storages = await Promise.all(
+          storedBeers.map(
+            async (name: string) =>
+              await storageRepository.insertStorage(trx, {
+                beer: beerIds[name],
+                bestBefore: '2025-06-01T00:00:00.000Z',
+                container: container.id,
+              }),
+          ),
+        )
+        return {
+          brewery: brewery.id,
+          style: style.id,
+          beers: beerIds,
+          storages,
+        }
+      },
+    )
+  }
+
+  const cellarLists: Array<{
+    listing: string
+    list: (cellar: Cellar) => Promise<JoinedStorage[]>
+  }> = [
+    {
+      listing: 'list storages',
+      list: async () =>
+        await storageRepository.listStorages(ctx.db, { size: 20, skip: 0 }),
+    },
+    {
+      listing: 'list storages by brewery',
+      list: async (cellar) =>
+        await storageRepository.listStoragesByBrewery(ctx.db, cellar.brewery),
+    },
+    {
+      listing: 'list storages by style',
+      list: async (cellar) =>
+        await storageRepository.listStoragesByStyle(ctx.db, cellar.style),
+    },
+  ]
+
+  cellarLists.forEach(({ listing, list }) => {
+    test(`${listing} of the same best before by beer name`, async () => {
+      const cellar = await insertCellar(['Weizenbock', 'Helles'])
+      const storages = await list(cellar)
+      assertDeepEqual(
+        storages.map((storage: JoinedStorage) => storage.beerName),
+        ['Helles', 'Weizenbock'],
+      )
+    })
+  })
+
+  const sameBeerLists = [
+    ...cellarLists,
+    {
+      listing: 'list storages by beer',
+      list: async (cellar: Cellar) =>
+        await storageRepository.listStoragesByBeer(ctx.db, cellar.beers.Helles),
+    },
+  ]
+
+  sameBeerLists.forEach(({ listing, list }) => {
+    test(`${listing} of the same beer and best before by id`, async () => {
+      const cellar = await insertCellar(['Helles', 'Helles', 'Helles'])
+      const storages = await list(cellar)
+      assertDeepEqual(
+        storages.map((storage: JoinedStorage) => storage.id),
+        cellar.storages
+          .map((storage: StorageWithDate) => storage.id)
+          .toSorted(),
+      )
+    })
+  })
+
+  test('page storages of the same beer and best before by id', async () => {
+    const cellar = await insertCellar(['Helles', 'Helles', 'Helles'])
+    const pages = [
+      await storageRepository.listStorages(ctx.db, { size: 1, skip: 0 }),
+      await storageRepository.listStorages(ctx.db, { size: 1, skip: 1 }),
+      await storageRepository.listStorages(ctx.db, { size: 1, skip: 2 }),
+    ]
+    assertDeepEqual(
+      pages.map((page: JoinedStorage[]) =>
+        page.map((storage: JoinedStorage) => storage.id),
+      ),
+      cellar.storages
+        .map((storage: StorageWithDate) => storage.id)
+        .toSorted()
+        .map((id: string) => [id]),
+    )
+  })
+
+  test('do not list storages when there are none', async () => {
+    const storages = await storageRepository.listStorages(ctx.db, {
+      size: 20,
+      skip: 0,
+    })
+    assertDeepEqual(storages, [])
+  })
+
+  test('update the given storage only', async () => {
+    const cellar = await insertCellar(['Helles', 'Helles'])
+    const [updated, untouched] = cellar.storages
+    await ctx.db.executeReadWriteTransaction(
+      async (trx: Transaction) =>
+        await storageRepository.updateStorage(trx, {
+          id: updated.id,
+          bestBefore: '2026-06-01T00:00:00.000Z',
+          beer: updated.beer,
+          container: updated.container,
+        }),
+    )
+    const found = await storageRepository.findStorageById(ctx.db, untouched.id)
+    assertDeepEqual(found?.bestBefore, untouched.bestBefore)
+  })
+
+  test('delete the given storage only', async () => {
+    const cellar = await insertCellar(['Helles', 'Helles'])
+    const [deleted, kept] = cellar.storages
+    await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
+      await storageRepository.deleteStorageById(trx, deleted.id)
+    })
+    const storages = await storageRepository.listStorages(ctx.db, {
+      size: 20,
+      skip: 0,
+    })
+    assertDeepEqual(
+      storages.map((storage: JoinedStorage) => storage.id),
+      [kept.id],
+    )
+  })
+
+  test('keep a locked storage from being updated until the transaction ends', async () => {
+    const storage = await createStorage(ctx.db)
+    await assertLockHoldsOffWrite(
+      ctx.db,
+      async (trx: Transaction) =>
+        await storageRepository.lockStorage(trx, storage.id),
+      async (trx: Transaction) =>
+        await storageRepository.updateStorage(trx, {
+          id: storage.id,
+          bestBefore: '2026-06-01T00:00:00.000Z',
+          beer: storage.beer,
+          container: storage.container,
+        }),
+    )
   })
 })

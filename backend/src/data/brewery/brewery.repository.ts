@@ -112,6 +112,7 @@ export async function searchBreweries(
     .selectFrom('brewery')
     .selectAll('brewery')
     .where('brewery.name', 'ilike', nameIlike)
+    .orderBy('brewery.name')
     .limit(defaultSearchMaxResults)
     .execute()
 

@@ -39,6 +39,19 @@ suite('user tests', () => {
     assertEqual(insertedUser.role, user.role)
   })
 
+  test('create anonymous user', async () => {
+    const createdUser = await ctx.db.executeReadWriteTransaction(
+      async (trx) =>
+        await userRepository.createAnonymousUser(trx, { role: 'viewer' }),
+    )
+    const foundUser = await userRepository.findUserById(ctx.db, createdUser.id)
+    assertDeepEqual(foundUser, {
+      id: createdUser.id,
+      username: null,
+      role: 'viewer',
+    })
+  })
+
   test('find user', async () => {
     const insertedUser = await insertUser()
     const foundUser = await userRepository.findUserById(ctx.db, insertedUser.id)
@@ -73,6 +86,21 @@ suite('user tests', () => {
     )
     const users = await userRepository.listUsers(ctx.db)
     assertDeepEqual(users, [liisa, matti, anonymous])
+  })
+
+  test('list users without a username by id', async () => {
+    const anonymousUsers = await ctx.db.executeReadWriteTransaction(
+      async (trx) => [
+        await userRepository.createAnonymousUser(trx, { role: 'viewer' }),
+        await userRepository.createAnonymousUser(trx, { role: 'viewer' }),
+        await userRepository.createAnonymousUser(trx, { role: 'viewer' }),
+      ],
+    )
+    const users = await userRepository.listUsers(ctx.db)
+    assertDeepEqual(
+      users,
+      anonymousUsers.toSorted((a: User, b: User) => (a.id < b.id ? -1 : 1)),
+    )
   })
 
   test('do not list users when there are none', async () => {
@@ -147,12 +175,14 @@ suite('user tests', () => {
   })
 
   test('lock user that does not exist by id', async () => {
-    const result = await ctx.db.executeReadWriteTransaction(async (trx) => {
-      await userRepository.lockUserById(
-        trx,
-        '93ef3418-e560-46a2-85ec-eb89927ac605',
-      )
-    })
+    await insertUser()
+    const result = await ctx.db.executeReadWriteTransaction(
+      async (trx) =>
+        await userRepository.lockUserById(
+          trx,
+          '93ef3418-e560-46a2-85ec-eb89927ac605',
+        ),
+    )
     assertEqual(result, undefined)
   })
 
@@ -165,6 +195,14 @@ suite('user tests', () => {
     })
   })
 
+  test('lock user that does not exist by username', async () => {
+    await insertUser()
+    const result = await ctx.db.executeReadWriteTransaction(
+      async (trx) => await userRepository.lockUserByUsername(trx, 'other'),
+    )
+    assertEqual(result, undefined)
+  })
+
   test('set user username', async () => {
     const insertedUser = await insertUser()
     const username = 'another username'
@@ -175,6 +213,26 @@ suite('user tests', () => {
     assertEqual(foundUser?.username, username)
   })
 
+  test('set the username of the given user only', async () => {
+    const [matti, liisa] = await ctx.db.executeReadWriteTransaction(
+      async (trx) => [
+        await userRepository.insertUser(trx, {
+          username: 'matti',
+          role: 'viewer',
+        }),
+        await userRepository.insertUser(trx, {
+          username: 'liisa',
+          role: 'viewer',
+        }),
+      ],
+    )
+    await ctx.db.executeReadWriteTransaction(async (trx) => {
+      await userRepository.setUserUsername(trx, matti.id, 'matias')
+    })
+    const foundUser = await userRepository.findUserById(ctx.db, liisa.id)
+    assertDeepEqual(foundUser, liisa)
+  })
+
   test('delete user', async () => {
     const insertedUser = await insertUser()
     await ctx.db.executeReadWriteTransaction(async (trx) => {
@@ -182,5 +240,24 @@ suite('user tests', () => {
     })
     const foundUser = await userRepository.findUserById(ctx.db, insertedUser.id)
     assertEqual(foundUser, undefined)
+  })
+  test('delete the given user only', async () => {
+    const [matti, liisa] = await ctx.db.executeReadWriteTransaction(
+      async (trx) => [
+        await userRepository.insertUser(trx, {
+          username: 'matti',
+          role: 'viewer',
+        }),
+        await userRepository.insertUser(trx, {
+          username: 'liisa',
+          role: 'viewer',
+        }),
+      ],
+    )
+    await ctx.db.executeReadWriteTransaction(async (trx) => {
+      await userRepository.deleteUserById(trx, matti.id)
+    })
+    const users = await userRepository.listUsers(ctx.db)
+    assertDeepEqual(users, [liisa])
   })
 })

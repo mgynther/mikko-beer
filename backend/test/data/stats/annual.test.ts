@@ -198,4 +198,24 @@ suite('annual stats tests', () => {
     })
     assertDeepEqual(stats, [stats2023])
   })
+
+  test('filter by brewery and a location of another brewery', async () => {
+    const { kriek, ipa } = await insertBeers(ctx.db)
+    const stats = await annualStatsRepository.getAnnual(ctx.db, {
+      ...noFilter,
+      brewery: kriek.brewery.id,
+      location: ipa.location.id,
+    })
+    assertDeepEqual(stats, [])
+  })
+
+  test('filter by brewery and a style of another brewery', async () => {
+    const { kriek, ipa } = await insertBeers(ctx.db)
+    const stats = await annualStatsRepository.getAnnual(ctx.db, {
+      ...noFilter,
+      brewery: kriek.brewery.id,
+      style: ipa.style.id,
+    })
+    assertDeepEqual(stats, [])
+  })
 })

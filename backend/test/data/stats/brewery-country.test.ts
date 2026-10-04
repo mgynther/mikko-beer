@@ -452,4 +452,110 @@ suite('brewery country stats tests', () => {
     assertDeepEqual(await withAverages(8, 10), [allFi])
     assertDeepEqual(await withAverages(4, 7.5), [allBe])
   })
+
+  test('filters by time bounds inclusively', async () => {
+    await insertAll()
+    const stats = await getStats({
+      ...defaultFilter,
+      timeStart: new Date('2023-01-01T18:00:00.000Z'),
+      timeEnd: new Date('2023-01-01T18:00:00.000Z'),
+    })
+    assertDeepEqual(stats, [row('BE', statsOf['5'], 1, 1)])
+  })
+
+  const countryBreweries: Record<string, string> = {
+    BE: 'Lindemans',
+    DK: 'Mikkeller',
+    FI: 'Nokian Panimo',
+    SE: 'Omnipollo',
+  }
+
+  // A beer of one brewery of each country, so that only the ratings tell
+  // the countries apart.
+  async function insertRatedCountries(
+    ratings: Record<string, number[]>,
+  ): Promise<void> {
+    await ctx.db.executeReadWriteTransaction(async (trx: Transaction) => {
+      const [container, location] = await Promise.all([
+        containerRepository.insertContainer(trx, buildNewContainer()),
+        locationRepository.insertLocation(trx, buildNewLocation()),
+      ])
+      await Promise.all(
+        Object.entries(ratings).map(async ([country, countryRatings]) => {
+          const [brewery, beer] = await Promise.all([
+            breweryRepository.insertBrewery(
+              trx,
+              buildNewBrewery({ name: countryBreweries[country], country }),
+            ),
+            beerRepository.insertBeer(trx, buildNewBeer()),
+          ])
+          await Promise.all([
+            beerRepository.insertBeerBreweries(trx, [
+              { beer: beer.id, brewery: brewery.id },
+            ]),
+            ...countryRatings.map(
+              async (rating: number) =>
+                await reviewRepository.insertReview(
+                  trx,
+                  buildNewReview({
+                    beer: beer.id,
+                    container: container.id,
+                    location: location.id,
+                    rating,
+                  }),
+                ),
+            ),
+          ])
+        }),
+      )
+    })
+  }
+
+  // A tie is broken the same way whichever the direction of the order.
+  const tieCases: Array<{
+    title: string
+    property: BreweryCountryStatsOrder['property']
+    ratings: Record<string, number[]>
+    expected: string[]
+  }> = [
+    {
+      title: 'review average, ties by count desc and then by country code',
+      property: 'average',
+      ratings: { BE: [7], DK: [6, 8], FI: [7, 7] },
+      expected: ['DK', 'FI', 'BE'],
+    },
+    {
+      title: 'review count, ties by average desc and then by country code',
+      property: 'count',
+      ratings: { BE: [5, 7], DK: [6, 8], FI: [7, 7] },
+      expected: ['DK', 'FI', 'BE'],
+    },
+    {
+      title:
+        'brewery count, ties by count desc, average desc and then by country code',
+      property: 'brewery_count',
+      ratings: { BE: [7], DK: [8, 8], FI: [7, 7], SE: [8, 8] },
+      expected: ['DK', 'SE', 'FI', 'BE'],
+    },
+    {
+      title:
+        'standard deviation, ties by count desc, average desc and then by country code',
+      property: 'std_dev',
+      ratings: { BE: [7], DK: [8, 8], FI: [7, 7], SE: [8, 8] },
+      expected: ['DK', 'SE', 'FI', 'BE'],
+    },
+  ]
+
+  tieCases.forEach(({ title, property, ratings, expected }) => {
+    ;(['asc', 'desc'] as const).forEach((direction) => {
+      test(`orders by ${title}, ${direction}`, async () => {
+        await insertRatedCountries(ratings)
+        const stats = await getStats(defaultFilter, { property, direction })
+        assertDeepEqual(
+          stats.map((countryStats) => countryStats.countryCode),
+          expected,
+        )
+      })
+    })
+  })
 })
