@@ -25,6 +25,9 @@ import {
   updatePassword,
 } from '../../../src/data/user/sign-in-method/sign-in-method.repository.js'
 import type { Database } from '../../../src/data/database.js'
+import { jwtIf } from '../../../src/wiring/authentication/jwt-helper.js'
+import { testConfig } from '../test-config.js'
+import type { RequestHeaders } from '../../client.js'
 
 async function findPasswordHash(
   db: Database,
@@ -172,19 +175,85 @@ suite('user tests', () => {
     })
   })
 
+  async function signOut(
+    userId: string,
+    refreshToken: string,
+    headers: RequestHeaders = {},
+  ): Promise<{ status: number; data: SignOutBody }> {
+    return await ctx.request.post<SignOutBody>(
+      `/api/v1/user/${userId}/sign-out`,
+      { refreshToken },
+      headers,
+    )
+  }
+
+  async function refresh(
+    userId: string,
+    refreshToken: string,
+  ): Promise<{ status: number; data: TokensBody }> {
+    return await ctx.request.post<TokensBody>(
+      `/api/v1/user/${userId}/refresh`,
+      { refreshToken },
+    )
+  }
+
   test('sign out a user and its auth token with it', async () => {
     const { user, authToken, refreshToken } = await ctx.createUser()
 
-    const res = await ctx.request.post<SignOutBody>(
-      `/api/v1/user/${user.id}/sign-out`,
-      { refreshToken },
-      ctx.createAuthHeaders(authToken),
-    )
+    const res = await signOut(user.id, refreshToken)
 
     assertEqual(res.status, 200)
     assertDeepEqual(res.data, { success: true })
     const getRes = await findUser(user.id, authToken)
     assertEqual(getRes.status, 404)
+    assertEqual((await refresh(user.id, refreshToken)).status, 401)
+  })
+
+  // The client may still send the auth token it holds, and by the time it
+  // signs out the token may have expired.
+  test('sign out whatever the auth token sent with it', async () => {
+    const { user, refreshToken } = await ctx.createUser()
+    const expiredAuthToken = jwtIf.sign(
+      {
+        userId: user.id,
+        role: user.role,
+        refreshTokenId: '5c1f0b7e-2d4a-4e9b-8f3c-6a7d1e2b9c04',
+      },
+      testConfig.authTokenSecret,
+      -1,
+    )
+
+    const res = await signOut(
+      user.id,
+      refreshToken,
+      ctx.createAuthHeaders(expiredAuthToken),
+    )
+
+    assertEqual(res.status, 200)
+    assertEqual((await refresh(user.id, refreshToken)).status, 401)
+  })
+
+  // A sign-out sent with a refresh token that a refresh has meanwhile
+  // replaced leaves the replacement to be signed out with.
+  test('sign out with a refresh token retired by refreshing', async () => {
+    const { user, refreshToken } = await ctx.createUser()
+    const refreshed = await refresh(user.id, refreshToken)
+
+    const retiredRes = await ctx.request.post(
+      `/api/v1/user/${user.id}/sign-out`,
+      { refreshToken },
+    )
+    const currentRes = await signOut(user.id, refreshed.data.refreshToken)
+
+    assertEqual(retiredRes.status, 401)
+    assertDeepEqual(retiredRes.data, {
+      error: { code: 'InvalidCredentials', message: 'invalid token' },
+    })
+    assertEqual(currentRes.status, 200)
+    assertEqual(
+      (await refresh(user.id, refreshed.data.refreshToken)).status,
+      401,
+    )
   })
 
   test('refresh tokens and retire the old ones', async () => {

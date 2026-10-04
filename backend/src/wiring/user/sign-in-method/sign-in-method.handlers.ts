@@ -122,38 +122,30 @@ export function createSignInMethodHandlers(
       }
     },
 
-    signOut: authenticated(
-      config,
-      async (
-        authTokenPayload: AuthTokenPayload,
-        request: IdBodyRequest,
-      ): Promise<SignOutBody> => {
-        const refreshTokenPayload: RefreshTokenPayload =
-          parseRefreshTokenPayload(
-            jwtIf,
-            validateRefreshToken,
-            request.body,
-            config.authTokenSecret,
+    signOut: async (request: RefreshRequest): Promise<SignOutBody> => {
+      const refreshTokenPayload: RefreshTokenPayload = parseRefreshTokenPayload(
+        jwtIf,
+        validateRefreshToken,
+        request.body,
+        config.authTokenSecret,
+      )
+      await db.executeReadWriteTransaction(
+        async (trx: Transaction): Promise<void> => {
+          const deleteRefreshTokenIf: DeleteRefreshTokenIf = {
+            lockUserById: async (userId: string): Promise<User | undefined> =>
+              await userRepository.lockUserById(trx, userId),
+            deleteRefreshToken: createRefreshTokenDeleter(trx),
+          }
+          await authorizedAuthTokenService.deleteRefreshToken(
+            deleteRefreshTokenIf,
+            validateUserId,
+            request.id,
+            refreshTokenPayload,
           )
-        await db.executeReadWriteTransaction(
-          async (trx: Transaction): Promise<void> => {
-            const deleteRefreshTokenIf: DeleteRefreshTokenIf = {
-              lockUserById: async (userId: string): Promise<User | undefined> =>
-                await userRepository.lockUserById(trx, userId),
-              findRefreshToken: createFindRefreshTokenInTransaction(trx),
-              deleteRefreshToken: createRefreshTokenDeleter(trx),
-            }
-            await authorizedAuthTokenService.deleteRefreshToken(
-              deleteRefreshTokenIf,
-              validateUserId,
-              { authTokenPayload, id: request.id },
-              refreshTokenPayload,
-            )
-          },
-        )
-        return { success: true }
-      },
-    ),
+        },
+      )
+      return { success: true }
+    },
 
     changePassword: authenticated(
       config,

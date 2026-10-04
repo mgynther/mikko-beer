@@ -3,16 +3,16 @@ import { suite, test } from '../../test.js'
 import * as authTokenService from '../../../src/logic/auth/authorized-auth-token.service.js'
 
 import { expectReject } from '../controller-error-helper.js'
+import type { DeleteRefreshTokenIf } from '../../../src/logic/auth/authorized-auth-token.service.js'
 import type { RefreshTokenPayload } from '../../../src/logic/auth/refresh-token.js'
 import {
+  invalidCredentialsError,
   invalidCredentialsTokenError,
   invalidUserIdError,
-  userMismatchError,
 } from '../../../src/logic/errors.js'
 import type { User, ValidateUserId } from '../../../src/logic/user/user.js'
 import { mockFunction } from '../../mock.js'
-import { assertDeepEqual } from '../../assert.js'
-import { buildAuthTokenPayload, buildDbRefreshToken } from './builders.js'
+import { assertDeepEqual, assertEqual } from '../../assert.js'
 import { buildUser } from '../user/builders.js'
 
 const validateUserId: ValidateUserId = (id: string | undefined) => ({
@@ -20,48 +20,18 @@ const validateUserId: ValidateUserId = (id: string | undefined) => ({
   result: id ?? '',
 })
 
-const adminAuthToken = buildAuthTokenPayload({
-  userId: '75c72a6f-95a0-475d-9b50-e926fe59ebc4',
-  role: 'admin',
-})
+const userId = '8460921e-08b1-4ab5-83d2-7fdde2b106fb'
+const refreshTokenId = '8c011ef7-13ac-4dae-b9cf-81c41ed7ed96'
 
-const anotherAdminAuthToken = buildAuthTokenPayload({
-  userId: '0a3207ff-d0c3-43e8-9224-a0bbef6dcc58',
-  role: 'admin',
-})
-
-const viewerAuthToken = buildAuthTokenPayload({
-  userId: '8460921e-08b1-4ab5-83d2-7fdde2b106fb',
-  role: 'viewer',
-})
-
-// Every refresh token a viewer's authorization looks up exists.
-const dbRefreshToken = buildDbRefreshToken()
-
-const adminRefreshToken: RefreshTokenPayload = {
-  userId: adminAuthToken.userId,
-  refreshTokenId: '2c6a0fb8-ca64-4859-9a7f-8a58d829ebde',
+const refreshTokenPayload: RefreshTokenPayload = {
+  userId,
+  refreshTokenId,
   isRefreshToken: true,
 }
 
-const anotherAdminRefreshToken: RefreshTokenPayload = {
-  userId: anotherAdminAuthToken.userId,
-  refreshTokenId: '393aa97f-bbd4-4f58-9ab4-962964cd4e61',
-  isRefreshToken: true,
-}
-
-const viewerRefreshTokenId = '8c011ef7-13ac-4dae-b9cf-81c41ed7ed96'
-
-const viewerRefreshToken: RefreshTokenPayload = {
-  userId: viewerAuthToken.userId,
-  refreshTokenId: viewerRefreshTokenId,
-  isRefreshToken: true,
-}
-
-const deleteRefreshToken = async (): Promise<boolean> => true
-
-async function lockUserById(userId: string): Promise<User> {
-  return buildUser({ id: userId })
+const deleteRefreshTokenIf: DeleteRefreshTokenIf = {
+  lockUserById: async (id: string): Promise<User> => buildUser({ id }),
+  deleteRefreshToken: async (): Promise<boolean> => true,
 }
 
 suite('authorized auth token service unit tests', () => {
@@ -71,145 +41,96 @@ suite('authorized auth token service unit tests', () => {
       Promise<boolean>
     >(async () => true)
     await authTokenService.deleteRefreshToken(
-      {
-        lockUserById,
-        findRefreshToken: async () => dbRefreshToken,
-        deleteRefreshToken: deleteToken,
-      },
+      { ...deleteRefreshTokenIf, deleteRefreshToken: deleteToken },
       validateUserId,
-      {
-        authTokenPayload: viewerAuthToken,
-        id: viewerAuthToken.userId,
-      },
-      viewerRefreshToken,
+      userId,
+      refreshTokenPayload,
     )
     assertDeepEqual(
       deleteToken.mock.calls.map((call) => call.arguments),
-      [[viewerRefreshTokenId]],
+      [[refreshTokenId]],
     )
   })
 
   test('fail to delete a refresh token already deleted', async () => {
     await expectReject(async () => {
       await authTokenService.deleteRefreshToken(
-        {
-          lockUserById,
-          findRefreshToken: async () => dbRefreshToken,
-          deleteRefreshToken: async () => false,
-        },
+        { ...deleteRefreshTokenIf, deleteRefreshToken: async () => false },
         validateUserId,
-        {
-          authTokenPayload: viewerAuthToken,
-          id: viewerAuthToken.userId,
-        },
-        viewerRefreshToken,
+        userId,
+        refreshTokenPayload,
       )
     }, invalidCredentialsTokenError)
   })
 
-  test("fail to delete another user's refresh token as one's own", async () => {
+  test('fail to delete a refresh token of another user than the path', async () => {
+    const deleteToken = mockFunction<
+      [refreshTokenId: string],
+      Promise<boolean>
+    >(async () => true)
     await expectReject(async () => {
       await authTokenService.deleteRefreshToken(
-        {
-          lockUserById,
-          findRefreshToken: async () => dbRefreshToken,
-          deleteRefreshToken,
-        },
+        { ...deleteRefreshTokenIf, deleteRefreshToken: deleteToken },
         validateUserId,
-        {
-          authTokenPayload: viewerAuthToken,
-          id: viewerAuthToken.userId,
-        },
-        adminRefreshToken,
+        '75c72a6f-95a0-475d-9b50-e926fe59ebc4',
+        refreshTokenPayload,
       )
     }, invalidCredentialsTokenError)
+    assertEqual(deleteToken.mock.callCount(), 0)
   })
 
-  test('delete refresh token as admin', async () => {
-    await authTokenService.deleteRefreshToken(
-      {
-        lockUserById,
-        findRefreshToken: async () => dbRefreshToken,
-        deleteRefreshToken,
-      },
-      validateUserId,
-      {
-        authTokenPayload: adminAuthToken,
-        id: adminAuthToken.userId,
-      },
-      adminRefreshToken,
-    )
-  })
-
-  // This is quite impractical in reality as another user's refresh token is
-  // needed but possible and allowed nevertheless. Disabling would require
-  // code specifically for this case so it's probably less work to just test
-  // it.
-  test("delete another admin's refresh token as admin", async () => {
-    await authTokenService.deleteRefreshToken(
-      {
-        lockUserById,
-        findRefreshToken: async () => dbRefreshToken,
-        deleteRefreshToken,
-      },
-      validateUserId,
-      {
-        authTokenPayload: adminAuthToken,
-        id: anotherAdminAuthToken.userId,
-      },
-      anotherAdminRefreshToken,
-    )
-  })
-
-  test("delete one's own refresh token as viewer", async () => {
-    await authTokenService.deleteRefreshToken(
-      {
-        lockUserById,
-        findRefreshToken: async () => dbRefreshToken,
-        deleteRefreshToken,
-      },
-      validateUserId,
-      {
-        authTokenPayload: viewerAuthToken,
-        id: viewerAuthToken.userId,
-      },
-      viewerRefreshToken,
-    )
-  })
-
-  test('fail to delete refresh token with invalid user id', async () => {
+  test('fail to delete a refresh token with an invalid path id', async () => {
     await expectReject(async () => {
       await authTokenService.deleteRefreshToken(
-        {
-          lockUserById,
-          findRefreshToken: async () => dbRefreshToken,
-          deleteRefreshToken,
-        },
+        deleteRefreshTokenIf,
         () => ({ errorCode: 'invalid-user-id', result: undefined }),
-        {
-          authTokenPayload: adminAuthToken,
-          id: adminAuthToken.userId,
-        },
-        adminRefreshToken,
+        userId,
+        refreshTokenPayload,
       )
     }, invalidUserIdError)
   })
 
-  test('fail to delete admin refresh token as viewer', async () => {
+  test('fail to delete a refresh token of a user that no longer exists', async () => {
+    const deleteToken = mockFunction<
+      [refreshTokenId: string],
+      Promise<boolean>
+    >(async () => true)
     await expectReject(async () => {
       await authTokenService.deleteRefreshToken(
         {
-          lockUserById,
-          findRefreshToken: async () => dbRefreshToken,
-          deleteRefreshToken,
+          lockUserById: async () => undefined,
+          deleteRefreshToken: deleteToken,
         },
         validateUserId,
-        {
-          authTokenPayload: viewerAuthToken,
-          id: adminAuthToken.userId,
-        },
-        viewerRefreshToken,
+        userId,
+        refreshTokenPayload,
       )
-    }, userMismatchError)
+    }, invalidCredentialsError)
+    assertEqual(deleteToken.mock.callCount(), 0)
+  })
+
+  // User deletion removes the tokens through a cascade after the user row,
+  // so deleting a token before locking its user could deadlock against it.
+  test('lock the user of the payload before deleting the token', async () => {
+    const calls: string[] = []
+    await authTokenService.deleteRefreshToken(
+      {
+        lockUserById: async (id: string): Promise<User> => {
+          calls.push(`lock user ${id}`)
+          return buildUser({ id })
+        },
+        deleteRefreshToken: async (id: string): Promise<boolean> => {
+          calls.push(`delete refresh token ${id}`)
+          return true
+        },
+      },
+      validateUserId,
+      userId,
+      refreshTokenPayload,
+    )
+    assertDeepEqual(calls, [
+      `lock user ${userId}`,
+      `delete refresh token ${refreshTokenId}`,
+    ])
   })
 })

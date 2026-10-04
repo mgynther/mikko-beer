@@ -32,7 +32,6 @@ export function signInMethodRoutes(
     200,
     async (request: RouteRequest): Promise<SignOutBody> =>
       await signInMethod.signOut({
-        authorization: request.authorization,
         id: request.params.userId,
         body: request.body,
       }),

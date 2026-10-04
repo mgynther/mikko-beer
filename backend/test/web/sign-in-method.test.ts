@@ -72,9 +72,9 @@ suite('sign-in method routes', () => {
     )
   })
 
-  test('sign out', async () => {
+  test('sign out without an authorization', async () => {
     const signOut = mockFunction<
-      [request: IdBodyRequest],
+      [request: RefreshRequest],
       Promise<SignOutBody>
     >(async () => ({ success: true }))
     await server.start({ signInMethod: { signOut } })
@@ -89,15 +89,7 @@ suite('sign-in method routes', () => {
     assertDeepEqual(res.data, { success: true })
     assertDeepEqual(
       signOut.mock.calls.map((call) => call.arguments),
-      [
-        [
-          {
-            authorization,
-            id: userId,
-            body: { refreshToken: 'refresh token' },
-          },
-        ],
-      ],
+      [[{ id: userId, body: { refreshToken: 'refresh token' } }]],
     )
   })
 

@@ -33,6 +33,6 @@ export interface RefreshRequest {
 export interface SignInMethodHandlers {
   signIn: (request: SignInRequest) => Promise<SignInBody>
   refresh: (request: RefreshRequest) => Promise<TokensBody>
-  signOut: (request: IdBodyRequest) => Promise<SignOutBody>
+  signOut: (request: RefreshRequest) => Promise<SignOutBody>
   changePassword: (request: IdBodyRequest) => Promise<void>
 }

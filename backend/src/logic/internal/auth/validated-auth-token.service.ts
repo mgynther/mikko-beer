@@ -1,14 +1,13 @@
 import * as authTokenService from './auth-token.service.js'
+import * as userService from '../user/user.service.js'
 
-import type {
-  DeleteRefreshToken,
-  RefreshTokenPayload,
-} from '../../auth/refresh-token.js'
+import type { DeleteRefreshTokenIf } from '../../auth/authorized-auth-token.service.js'
+import type { RefreshTokenPayload } from '../../auth/refresh-token.js'
 import type { ValidateUserId } from '../../user/user.js'
 import { invalidUserIdError } from '../../errors.js'
 
 export async function deleteRefreshToken(
-  deleteRefreshToken: DeleteRefreshToken,
+  deleteRefreshTokenIf: DeleteRefreshTokenIf,
   validateUserId: ValidateUserId,
   id: string | undefined,
   refreshTokenPayload: RefreshTokenPayload,
@@ -18,8 +17,12 @@ export async function deleteRefreshToken(
     throw invalidUserIdError
   }
   authTokenService.verifyRefreshTokenOwner(idResult.result, refreshTokenPayload)
+  await userService.lockUserById(
+    deleteRefreshTokenIf.lockUserById,
+    refreshTokenPayload.userId,
+  )
   await authTokenService.deleteRefreshToken(
-    deleteRefreshToken,
+    deleteRefreshTokenIf.deleteRefreshToken,
     refreshTokenPayload,
   )
 }
