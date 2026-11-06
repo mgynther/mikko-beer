@@ -30,12 +30,12 @@
   },
   "dependencies": {
     "@koa/bodyparser": "6.1.0",
-    "@koa/router": "15.7.0",
+    "@koa/router": "15.7.1",
     "ajv": "8.20.0",
     "jsonwebtoken": "9.0.3",
-    "koa": "3.2.1",
+    "koa": "3.3.0",
     "koa-compress": "5.2.2",
-    "kysely": "0.29.7",
+    "kysely": "0.29.8",
     "pg": "8.23.1",
     "uuid": "14.0.3"
   },
