@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import type React from 'react';
+import { useEffect, useState } from 'react'
 
 import type { BeerWithIds, SelectBeerIf } from '../../types/beer/types'
 import type { Container } from '../../types/container/types'

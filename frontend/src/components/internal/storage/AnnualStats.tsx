@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 
 import type { GetAnnualStorageStatsIf } from '../../types/storage/types'
 import LoadingIndicator from '../common/LoadingIndicator'

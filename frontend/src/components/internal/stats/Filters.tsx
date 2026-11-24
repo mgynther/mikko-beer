@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import type React from 'react';
+import { useState } from 'react'
 
 import MaximumReviewCount from './MaximumReviewCount'
 import MinimumReviewCount from './MinimumReviewCount'

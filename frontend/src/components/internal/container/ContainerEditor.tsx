@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import type React from 'react';
+import { useState } from 'react'
 
 import type { Container } from '../../types/container/types'
 import { isSizeValid } from './util'

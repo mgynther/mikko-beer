@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 
 import type { DeleteUserIf, ListUsersIf, User } from '../../types/user/types'
 import type { Confirm } from '../confirm'

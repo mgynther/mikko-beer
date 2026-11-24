@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 
 import { Role } from '../../types/user/types'
 import type { GetLogin, Login } from '../../types/login/types'

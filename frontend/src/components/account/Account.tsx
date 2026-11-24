@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 
 import type { ChangePasswordIf, GetLogin, Login } from '../types/login/types'
 import ChangePassword from '../internal/account/ChangePassword'

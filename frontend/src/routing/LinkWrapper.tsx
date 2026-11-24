@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 import { BrowserRouter } from 'react-router'
 
 const LinkWrapper = (props: {

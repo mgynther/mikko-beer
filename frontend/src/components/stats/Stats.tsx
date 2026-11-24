@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 
 import Annual from '../internal/stats/Annual'
 import AnnualContainerInfiniteScroll from '../internal/stats/AnnualContainer'

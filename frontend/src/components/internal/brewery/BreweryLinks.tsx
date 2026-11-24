@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 
 import { Links } from '../common/Links'
 import type { LinkComponent } from '../../common/link'

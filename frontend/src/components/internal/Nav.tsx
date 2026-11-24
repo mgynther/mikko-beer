@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 import Button from './common/Button'
 import SearchBeerWithNavi from './beer/SearchBeerWithNavi'
 import SearchBreweryWithNavi from './brewery/SearchBreweryWithNavi'

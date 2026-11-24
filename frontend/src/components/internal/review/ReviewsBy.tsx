@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 
 import type { ListReviewsByIf } from '../../types/review/types'
 import ReviewList from './ReviewList'

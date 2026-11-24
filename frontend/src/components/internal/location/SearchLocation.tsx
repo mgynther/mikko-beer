@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import type React from 'react';
+import { useEffect, useState } from 'react'
 
 import type { Location, SearchLocationIf } from '../../types/location/types'
 import type { Confirm } from '../confirm'

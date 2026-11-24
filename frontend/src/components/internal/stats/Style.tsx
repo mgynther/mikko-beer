@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 
 import { formatTitle } from '../list-helpers'
 import type {

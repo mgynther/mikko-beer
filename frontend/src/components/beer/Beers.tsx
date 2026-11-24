@@ -1,5 +1,6 @@
 import type { NavigateIf } from '../types/types'
-import React, { useEffect, useState } from 'react'
+import type React from 'react';
+import { useEffect, useState } from 'react'
 
 import type { Beer, ListBeersIf, SearchBeerIf } from '../types/beer/types'
 import type { SearchFieldIf } from '../types/search/types'

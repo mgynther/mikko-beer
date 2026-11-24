@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 
 import Filters from './Filters'
 import type { StatsFilterState } from './filter-types'

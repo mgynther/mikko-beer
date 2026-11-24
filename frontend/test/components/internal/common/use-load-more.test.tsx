@@ -2,7 +2,8 @@ import { test } from '../../../test'
 import { assertDeepEqual } from '../../../assert'
 import { mockFunction } from '../../../mock'
 import { act, render, waitFor } from '../../../render'
-import React, { useState } from 'react'
+import type React from 'react';
+import { useState } from 'react'
 
 import { setupUser } from '../../../user-event'
 

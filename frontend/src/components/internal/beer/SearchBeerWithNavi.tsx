@@ -1,5 +1,5 @@
 import type { NavigateIf } from '../../types/types'
-import React from 'react'
+import type React from 'react'
 
 import SearchBeer from './SearchBeer'
 import type { SearchBeerIf } from '../../types/beer/types'

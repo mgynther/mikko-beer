@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react'
+import type React from 'react';
+import { useEffect } from 'react'
 import { Routes, Route, Outlet } from 'react-router'
 
 import { Role } from '../components/types/user/types'
