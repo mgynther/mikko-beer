@@ -1,5 +1,5 @@
 import type { NavigateIf } from '../types/types'
-import type React from 'react';
+import type React from 'react'
 import { useEffect, useState } from 'react'
 
 import type { CreateReviewIf, ReviewRequest } from '../types/review/types'

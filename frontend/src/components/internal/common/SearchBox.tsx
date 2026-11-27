@@ -1,4 +1,4 @@
-import type React from 'react';
+import type React from 'react'
 import { useId, useRef, useState } from 'react'
 
 import Button from './Button'

@@ -1,4 +1,4 @@
-import type React from 'react';
+import type React from 'react'
 import { type SubmitEvent, useState } from 'react'
 
 import LoadingIndicator from '../common/LoadingIndicator'

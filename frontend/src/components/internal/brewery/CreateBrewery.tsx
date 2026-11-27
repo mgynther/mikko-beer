@@ -1,4 +1,4 @@
-import type React from 'react';
+import type React from 'react'
 import { useState } from 'react'
 
 import type { Brewery, CreateBreweryIf } from '../../types/brewery/types'
